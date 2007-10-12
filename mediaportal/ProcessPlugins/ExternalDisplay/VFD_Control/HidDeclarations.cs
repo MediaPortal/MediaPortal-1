@@ -49,43 +49,43 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     // API functions, listed alphabetically
     // ******************************************************************************
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError=true)]
     public static extern bool HidD_FlushQueue(int HidDeviceObject);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_FreePreparsedData(ref IntPtr PreparsedData);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern int HidD_GetAttributes(int HidDeviceObject, ref HIDD_ATTRIBUTES Attributes);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_GetFeature(int HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_GetInputReport(int HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", PreserveSig = false)]
     public static extern void HidD_GetHidGuid(ref Guid HidGuid);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_GetNumInputBuffers(int HidDeviceObject, ref int NumberBuffers);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_GetPreparsedData(int HidDeviceObject, ref IntPtr PreparsedData);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_SetFeature(int HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_SetNumInputBuffers(int HidDeviceObject, int NumberBuffers);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_SetOutputReport(int HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern int HidP_GetCaps(IntPtr PreparsedData, ref HIDP_CAPS Capabilities);
 
-    [DllImport("hid.dll")]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern int HidP_GetValueCaps(short ReportType, ref byte ValueCaps, ref short ValueCapsLength,
                                                IntPtr PreparsedData);
 

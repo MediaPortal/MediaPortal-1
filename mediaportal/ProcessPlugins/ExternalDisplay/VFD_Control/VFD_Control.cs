@@ -48,8 +48,8 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     #region Readonly Fields
 
     private readonly Hid _MyHID = new Hid();
-    private readonly uint _VendorID;
-    private readonly uint _ProductID;
+    private readonly ushort _VendorID;
+    private readonly ushort _ProductID;
 
     #endregion
 
@@ -63,7 +63,7 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
 
     #endregion
 
-    public control(uint vendorID, uint productID)
+    public control(ushort vendorID, ushort productID)
     {
       _VendorID = vendorID;
       _ProductID = productID;

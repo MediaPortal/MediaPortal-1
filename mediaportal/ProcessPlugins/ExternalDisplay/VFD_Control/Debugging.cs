@@ -61,7 +61,7 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
         }
 
         // Create the string to return.
-        ResultString = "\n" + FunctionName + "\n" + "  Result = " + ResultString.TrimEnd('\0') + "\n";
+        ResultString = FunctionName + "  Result = " + ResultString.TrimEnd('\0');
       }
       catch (Exception ex)
       {
