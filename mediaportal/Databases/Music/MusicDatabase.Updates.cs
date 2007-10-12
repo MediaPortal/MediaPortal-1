@@ -574,31 +574,31 @@ namespace MediaPortal.Music.Database
         string strTmp;
         strTmp = tag.Album;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Album = strTmp;
+        tag.Album = strTmp == "unknown" ? "" : strTmp;
         strTmp = tag.Genre;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Genre = strTmp;
+        tag.Genre = strTmp == "unknown" ? "" : strTmp;
         strTmp = tag.Artist;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Artist = strTmp;
+        tag.Artist = strTmp == "unknown" ? "" : strTmp;
         strTmp = tag.Title;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Title = strTmp;
+        tag.Title = strTmp == "unknown" ? "" : strTmp;
         strTmp = tag.AlbumArtist;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.AlbumArtist = strTmp;
+        tag.AlbumArtist = strTmp == "unknown" ? "" : strTmp;
         strTmp = tag.Lyrics;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Lyrics = strTmp;
+        tag.Lyrics = strTmp == "unknown" ? "" : strTmp;
+
+        if (tag.AlbumArtist == string.Empty)
+          tag.AlbumArtist = tag.Artist;
 
         // When we got Multiple Entries of either Artist, Genre, Albumartist in WMP notation, separated by ";",
         // we will store them separeted by "|"
         tag.Artist = FormatMultipleEntry(tag.Artist);
         tag.AlbumArtist = FormatMultipleEntry(tag.AlbumArtist);
         tag.Genre = FormatMultipleEntry(tag.Genre);
-
-        if (tag.AlbumArtist == "unknown" || tag.AlbumArtist == string.Empty)
-          tag.AlbumArtist = tag.Artist;
 
         // Extract the Coverart
         ExtractCoverArt(tag);
