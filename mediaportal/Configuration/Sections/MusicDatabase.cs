@@ -59,6 +59,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseFolderThumb;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateFolderThumb;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUpdateSinceLastImport;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStripArtistPrefix;
+    private string _artistNamePrefixes;
 
     public class MusicData
     {
@@ -149,6 +151,8 @@ namespace MediaPortal.Configuration.Sections
         monitorSharesCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         checkBoxUpdateSinceLastImport.Checked = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
         checkBoxUpdateSinceLastImport.Text = String.Format("Only update files added / changed after last import at {0}", xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"));
+        checkBoxStripArtistPrefix.Checked = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
+        _artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "the,les,die");
       }
     }
 
@@ -166,6 +170,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicfiles", "treatFolderAsAlbum", folderAsAlbumCheckBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "monitorShares", monitorSharesCheckBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "updateSinceLastImport", checkBoxUpdateSinceLastImport.Checked);
+        xmlwriter.SetValueAsBool("musicfiles", "stripartistprefixes", checkBoxStripArtistPrefix.Checked);
+        xmlwriter.SetValue("musicfiles", "artistprefixes", _artistNamePrefixes);
       }
     }
 
@@ -205,6 +211,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.fileLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressBar = new System.Windows.Forms.ProgressBar();
+      this.checkBoxStripArtistPrefix = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
@@ -214,6 +221,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.checkBoxStripArtistPrefix);
       this.groupBox1.Controls.Add(this.checkBoxUpdateSinceLastImport);
       this.groupBox1.Controls.Add(this.checkBoxCreateFolderThumb);
       this.groupBox1.Controls.Add(this.checkBoxUseFolderThumb);
@@ -237,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUpdateSinceLastImport.Checked = true;
       this.checkBoxUpdateSinceLastImport.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxUpdateSinceLastImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUpdateSinceLastImport.Location = new System.Drawing.Point(16, 272);
+      this.checkBoxUpdateSinceLastImport.Location = new System.Drawing.Point(15, 283);
       this.checkBoxUpdateSinceLastImport.Name = "checkBoxUpdateSinceLastImport";
       this.checkBoxUpdateSinceLastImport.Size = new System.Drawing.Size(262, 17);
       this.checkBoxUpdateSinceLastImport.TabIndex = 9;
@@ -249,7 +257,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCreateFolderThumb.AutoSize = true;
       this.checkBoxCreateFolderThumb.Enabled = false;
       this.checkBoxCreateFolderThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxCreateFolderThumb.Location = new System.Drawing.Point(33, 182);
+      this.checkBoxCreateFolderThumb.Location = new System.Drawing.Point(33, 170);
       this.checkBoxCreateFolderThumb.Name = "checkBoxCreateFolderThumb";
       this.checkBoxCreateFolderThumb.Size = new System.Drawing.Size(224, 17);
       this.checkBoxCreateFolderThumb.TabIndex = 8;
@@ -262,7 +270,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUseFolderThumb.Checked = true;
       this.checkBoxUseFolderThumb.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxUseFolderThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseFolderThumb.Location = new System.Drawing.Point(16, 225);
+      this.checkBoxUseFolderThumb.Location = new System.Drawing.Point(16, 213);
       this.checkBoxUseFolderThumb.Name = "checkBoxUseFolderThumb";
       this.checkBoxUseFolderThumb.Size = new System.Drawing.Size(187, 17);
       this.checkBoxUseFolderThumb.TabIndex = 7;
@@ -274,7 +282,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.checkBoxCreateArtistGenre.AutoSize = true;
       this.checkBoxCreateArtistGenre.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxCreateArtistGenre.Location = new System.Drawing.Point(33, 249);
+      this.checkBoxCreateArtistGenre.Location = new System.Drawing.Point(33, 237);
       this.checkBoxCreateArtistGenre.Name = "checkBoxCreateArtistGenre";
       this.checkBoxCreateArtistGenre.Size = new System.Drawing.Size(226, 17);
       this.checkBoxCreateArtistGenre.TabIndex = 6;
@@ -285,7 +293,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.monitorSharesCheckBox.AutoSize = true;
       this.monitorSharesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.monitorSharesCheckBox.Location = new System.Drawing.Point(16, 135);
+      this.monitorSharesCheckBox.Location = new System.Drawing.Point(16, 124);
       this.monitorSharesCheckBox.Name = "monitorSharesCheckBox";
       this.monitorSharesCheckBox.Size = new System.Drawing.Size(256, 17);
       this.monitorSharesCheckBox.TabIndex = 5;
@@ -296,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.folderAsAlbumCheckBox.AutoSize = true;
       this.folderAsAlbumCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.folderAsAlbumCheckBox.Location = new System.Drawing.Point(15, 158);
+      this.folderAsAlbumCheckBox.Location = new System.Drawing.Point(15, 146);
       this.folderAsAlbumCheckBox.Name = "folderAsAlbumCheckBox";
       this.folderAsAlbumCheckBox.Size = new System.Drawing.Size(243, 17);
       this.folderAsAlbumCheckBox.TabIndex = 2;
@@ -310,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
       this.buildThumbsCheckBox.Checked = true;
       this.buildThumbsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.buildThumbsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.buildThumbsCheckBox.Location = new System.Drawing.Point(16, 203);
+      this.buildThumbsCheckBox.Location = new System.Drawing.Point(16, 191);
       this.buildThumbsCheckBox.Name = "buildThumbsCheckBox";
       this.buildThumbsCheckBox.Size = new System.Drawing.Size(247, 17);
       this.buildThumbsCheckBox.TabIndex = 1;
@@ -370,6 +378,17 @@ namespace MediaPortal.Configuration.Sections
       this.progressBar.Name = "progressBar";
       this.progressBar.Size = new System.Drawing.Size(440, 16);
       this.progressBar.TabIndex = 1;
+      // 
+      // checkBoxStripArtistPrefix
+      // 
+      this.checkBoxStripArtistPrefix.AutoSize = true;
+      this.checkBoxStripArtistPrefix.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxStripArtistPrefix.Location = new System.Drawing.Point(15, 260);
+      this.checkBoxStripArtistPrefix.Name = "checkBoxStripArtistPrefix";
+      this.checkBoxStripArtistPrefix.Size = new System.Drawing.Size(281, 17);
+      this.checkBoxStripArtistPrefix.TabIndex = 10;
+      this.checkBoxStripArtistPrefix.Text = "Strip Artist Prefix (i.e. \"The Beatles\" ->  \"Beatles, The\")";
+      this.checkBoxStripArtistPrefix.UseVisualStyleBackColor = true;
       // 
       // MusicDatabase
       // 

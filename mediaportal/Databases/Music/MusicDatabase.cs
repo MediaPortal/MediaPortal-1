@@ -46,22 +46,16 @@ namespace MediaPortal.Music.Database
 
     private SQLiteClient MusicDbClient = null;
 
-    private static bool _treatFolderAsAlbum = false;
-    private static bool _extractEmbededCoverArt = true;
-    private static bool _useFolderThumbs = true;
-    private static bool _useFolderArtForArtistGenre = false;
-    private static bool _createMissingFolderThumbs = false;
-    private static string _supportedExtensions = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
+    private static bool _treatFolderAsAlbum;
+    private static bool _extractEmbededCoverArt;
+    private static bool _useFolderThumbs;
+    private static bool _useFolderArtForArtistGenre;
+    private static bool _createMissingFolderThumbs;
+    private static string _supportedExtensions;
+    private static bool _stripArtistPrefixes;
     private static DateTime _lastImport;
     private static System.DateTime _currentDate = DateTime.Now;
-
-    string[] ArtistNamePrefixes = new string[]
-            {
-              "the",
-              "les",
-              "die"
-            };
-
+    string[] _artistNamePrefixes;
     #endregion
 
     #region Constructors/Destructors
@@ -77,6 +71,16 @@ namespace MediaPortal.Music.Database
     /// </summary>
     private MusicDatabase()
     {
+      // Set default values 
+      _treatFolderAsAlbum = false;
+      _extractEmbededCoverArt = true;
+      _useFolderThumbs = true;
+      _useFolderArtForArtistGenre = false;
+      _createMissingFolderThumbs = false;
+      _supportedExtensions = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
+      _stripArtistPrefixes = false;
+      _currentDate = DateTime.Now;
+      
       LoadDBSettings();
       Open();
     }
@@ -115,6 +119,9 @@ namespace MediaPortal.Music.Database
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderArtForArtistGenre = xmlreader.GetValueAsBool("musicfiles", "createartistgenrethumbs", false);
         _supportedExtensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
+        _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
+        string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "the,les,die");
+        _artistNamePrefixes = artistNamePrefixes.Split(',');
 
         try
         {
@@ -179,7 +186,7 @@ namespace MediaPortal.Music.Database
           // Full Path of the file. 
               "strPath text, " +
           // Artist
-              "strArtist text, strArtistSortName text, strAlbumArtist text, " +
+              "strArtist text, strAlbumArtist text, " +
           // Album (How to handle Various Artist Albums)
               "strAlbum text, " +
           // Genre (multiple genres)

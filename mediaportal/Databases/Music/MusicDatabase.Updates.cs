@@ -591,6 +591,17 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         tag.Lyrics = strTmp == "unknown" ? "" : strTmp;
 
+        // Do we need to strip the Artist
+        if (_stripArtistPrefixes)
+        {
+          strTmp = tag.Artist;
+          StripArtistNamePrefix(ref strTmp, true);
+          tag.Artist = strTmp;
+          strTmp = tag.AlbumArtist;
+          StripArtistNamePrefix(ref strTmp, true);
+          tag.AlbumArtist = strTmp;
+        }
+
         if (tag.AlbumArtist == string.Empty)
           tag.AlbumArtist = tag.Artist;
 
@@ -638,18 +649,15 @@ namespace MediaPortal.Music.Database
       {
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
-        string sortableArtist = tag.Artist;
-        StripArtistNamePrefix(ref sortableArtist, true);
-
         strSQL = String.Format("insert into tracks ( " +
-                               "strPath, strArtist, strArtistSortName, strAlbumArtist, strAlbum, strGenre, " +
+                               "strPath, strArtist, strAlbumArtist, strAlbum, strGenre, " +
                                "strTitle, iTrack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, " +
                                "iResumeAt, iDisc, iNumDisc, iGainTrack, iPeakTrack, strLyrics, musicBrainzID, dateLastPlayed) " +
                                "values ( " +
-                               "'{0}', '{1}', '{2}', '{3}', '{4}', '{5}', " +
-                               "'{6}', {7}, {8}, {9}, {10}, {11}, {12}, {13}, " +
-                               "{14}, {15}, {16}, {17}, {18}, '{19}', '{20}', '{21}' )",
-                               strFileName, tag.Artist, sortableArtist, tag.AlbumArtist, tag.Album, tag.Genre,
+                               "'{0}', '{1}', '{2}', '{3}', '{4}', " +
+                               "'{5}', {6}, {7}, {8}, {9}, {10}, {11}, {12}, " +
+                               "{13}, {14}, {15}, {16}, {17}, '{18}', '{19}', '{20}' )",
+                               strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre,
                                tag.Title, tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, 0, 0,
                                0, tag.DiscID, tag.DiscTotal, 0, 0, tag.Lyrics, "", DateTime.MinValue
         );
@@ -1026,7 +1034,7 @@ namespace MediaPortal.Music.Database
     {
       string temp = artistName.ToLower();
 
-      foreach (string s in ArtistNamePrefixes)
+      foreach (string s in _artistNamePrefixes)
       {
         if (s.Length == 0)
           continue;
