@@ -1204,7 +1204,7 @@
         <String id="4518">Album title not found\r\nTrying: {0}</String>
         <String id="4519">Current cover art</String>
         <String id="4520">Skip</String>
-        <String id="4521">Show album info</String>
+        <String id="4521">Show album/artist info</String>
         <String id="4522">Grabbing: {0}...</String>
         <String id="4540">Now playing</String>
         <String id="4541">Playing next</String>

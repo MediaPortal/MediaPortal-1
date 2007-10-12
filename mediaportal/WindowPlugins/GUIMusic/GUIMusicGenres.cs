@@ -619,19 +619,24 @@ namespace MediaPortal.GUI.Music
     protected override void OnShowContextMenu()
     {
       GUIListItem item = facadeView.SelectedListItem;
-      int itemNo = facadeView.SelectedListItemIndex;
-      if (item == null) return;
+      MusicTag itemTag = null;
+
+      if (item == null)
+        return;
+
+      int itemNo = facadeView.SelectedListItemIndex;      
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
-      dlg.AddLocalizedString(926);    // Add to playlist
+      dlg.AddLocalizedString(926);     // Add to playlist
       dlg.AddLocalizedString(4557);    // Add all to playlist
-      dlg.AddLocalizedString(4551);   // Play next
-      dlg.AddLocalizedString(4552);   // Play now
-      dlg.AddLocalizedString(4553);   // Show playlist
+      dlg.AddLocalizedString(4551);    // Play next
+      dlg.AddLocalizedString(4552);    // Play now
+      dlg.AddLocalizedString(4521);    // Show Album Info
+      dlg.AddLocalizedString(4553);    // Show playlist
 
       if (!item.IsFolder && !item.IsRemote)
       {
@@ -651,6 +656,10 @@ namespace MediaPortal.GUI.Music
       if (dlg.SelectedLabel == -1) return;
       switch (dlg.SelectedId)
       {
+        case 4521: // Show album info
+          OnInfo(itemNo);
+          break;
+
         case 4552:  // Play now (clear playlist, play, and jump to Now playing)
           //OnPlayNow(itemNo);
           OnPlayNow(item, itemNo);
