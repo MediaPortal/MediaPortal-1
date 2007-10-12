@@ -1428,35 +1428,26 @@ namespace MediaPortal.Music.Database
 
     public bool DeleteScrobbleUser(string userName_)
     {
+      if (string.IsNullOrEmpty(userName_))
+        return false;
+
       string strSQL;
       int strUserID;
       try
       {
-        if (userName_ == null)
-          return false;
-        if (userName_.Length == 0)
-          return false;
         string strUserName = userName_;
-
         DatabaseUtility.RemoveInvalidChars(ref strUserName);
 
+        // get the UserID
         strUserID = AddScrobbleUser(strUserName);
 
-        SQLiteResultSet results;
         strSQL = String.Format("delete from scrobblesettings where idScrobbleUser = '{0}'", strUserID);
-        results = MusicDatabase.DirectExecute(strSQL);
-        if (results.Rows.Count == 1)
-        {
-          // setting removed now remove user
-          strSQL = String.Format("delete from scrobbleusers where idScrobbleUser = '{0}'", strUserID);
-          MusicDatabase.DirectExecute(strSQL);
-          return true;
-        }
-        else
-        {
-          Log.Error("MusicDatabase: could not delete settings for scrobbleuser {0} with ID {1}", strUserName, strUserID);
-          return false;
-        }
+        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+
+        // setting removed now remove user
+        strSQL = String.Format("delete from scrobbleusers where idScrobbleUser = '{0}'", strUserID);
+        MusicDatabase.DirectExecute(strSQL);
+        return true;
       }
       catch (Exception ex)
       {
