@@ -1326,7 +1326,7 @@ static DWORD crc_table[256] = {
 			pcrHi += m_pcrDuration;
 		}
 
-		LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s - pid:%x", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), header.Pid );
+		//LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s - pid:%x", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), header.Pid );
 		tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
 		tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
 		tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
