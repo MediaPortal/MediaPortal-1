@@ -1204,7 +1204,7 @@
     <String id="4518">Albumtittel ikke funnet\r\nPrøver: {0}</String>
     <String id="4519">Nåværende cover</String>
     <String id="4520">Hopp over</String>
-    <String id="4521">Vis albuminformasjon</String>
+    <String id="4521">Vis album/artist informasjon</String>
     <String id="4522">Grabbing: {0}...</String>
     <String id="4540">Spiller</String>
     <String id="4541">Neste som spilles</String>
@@ -1459,7 +1459,7 @@
     <String id="33018">blandede uspilte spor</String>
     <String id="33019">blandede favorittspor</String>
     <String id="33030">De beste albumsporene</String>
-    <String id="33031">Andre spor merket som: </string>
+    <String id="33031">Andre spor merket som: </String>
     <String id="33032">De beste sporet fra dette albummet</String>
     <String id="33033">ble ikke funnet i din samling!</String>
     <String id="33040">Kopier nå spilles spam til utklippstavlen</String>
