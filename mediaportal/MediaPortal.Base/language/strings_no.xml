@@ -1459,7 +1459,9 @@
     <String id="33018">blandede uspilte spor</String>
     <String id="33019">blandede favorittspor</String>
     <String id="33030">De beste albumsporene</String>
-    <String id="33031">Andre spor merket som: </String>
+    <String id="33031">Andre spor merket som: </string>
+    <String id="33032">De beste sporet fra dette albummet</String>
+    <String id="33033">ble ikke funnet i din samling!</String>
     <String id="33040">Kopier nå spilles spam til utklippstavlen</String>
     <String id="33041">Legg dette albumet til spillelisten</String>
     <String id="34000" prefix="Min ">Last.fm</String>
