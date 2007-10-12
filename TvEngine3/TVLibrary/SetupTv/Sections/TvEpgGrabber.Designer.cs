@@ -102,6 +102,7 @@ namespace SetupTv.Sections
 			this.mpButtonAllGrouped.TabIndex = 18;
 			this.mpButtonAllGrouped.Text = "All Grouped";
 			this.mpButtonAllGrouped.UseVisualStyleBackColor = true;
+			this.mpButtonAllGrouped.Click += new System.EventHandler(this.mpButtonAllGrouped_Click);
 			// 
 			// mpCheckBoxStoreOnlySelected
 			// 
@@ -123,6 +124,7 @@ namespace SetupTv.Sections
 			this.mpButtonNoneChannels.TabIndex = 15;
 			this.mpButtonNoneChannels.Text = "None";
 			this.mpButtonNoneChannels.UseVisualStyleBackColor = true;
+			this.mpButtonNoneChannels.Click += new System.EventHandler(this.mpButtonNoneChannels_Click);
 			// 
 			// mpButtonAllChannels
 			// 
@@ -133,6 +135,7 @@ namespace SetupTv.Sections
 			this.mpButtonAllChannels.TabIndex = 14;
 			this.mpButtonAllChannels.Text = "All";
 			this.mpButtonAllChannels.UseVisualStyleBackColor = true;
+			this.mpButtonAllChannels.Click += new System.EventHandler(this.mpButtonAllChannels_Click);
 			// 
 			// mpButtonNone
 			// 
@@ -143,6 +146,7 @@ namespace SetupTv.Sections
 			this.mpButtonNone.TabIndex = 16;
 			this.mpButtonNone.Text = "None";
 			this.mpButtonNone.UseVisualStyleBackColor = true;
+			this.mpButtonNone.Click += new System.EventHandler(this.mpButtonNone_Click);
 			// 
 			// mpButtonAll
 			// 
@@ -153,6 +157,7 @@ namespace SetupTv.Sections
 			this.mpButtonAll.TabIndex = 13;
 			this.mpButtonAll.Text = "All";
 			this.mpButtonAll.UseVisualStyleBackColor = true;
+			this.mpButtonAll.Click += new System.EventHandler(this.mpButtonAll_Click);
 			// 
 			// mpLabel2
 			// 
@@ -217,6 +222,8 @@ namespace SetupTv.Sections
 			this.mpListView1.TabIndex = 9;
 			this.mpListView1.UseCompatibleStateImageBehavior = false;
 			this.mpListView1.View = System.Windows.Forms.View.Details;
+			this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
+			this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
 			// 
 			// columnHeader1
 			// 

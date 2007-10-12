@@ -292,10 +292,6 @@ namespace SetupTv.Sections
       mpListView1.EndUpdate();
     }
 
-    private void mpListView2_ItemChecked(object sender, ItemCheckedEventArgs e)
-    {
-    }
-
     private void mpButtonAllGrouped_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
@@ -331,6 +327,8 @@ namespace SetupTv.Sections
       // Perform the sort with these new sort options.
       this.mpListView1.Sort();
     }
+
+
 
 
   }
