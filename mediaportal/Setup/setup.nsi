@@ -105,6 +105,7 @@ Page custom FilterSelection
 ; Set the output file name
 ;..................................................................................................
 OutFile "Release\${APP_NAME}_setup.exe"
+BrandingText "MediaPortal Installer by Team MediaPortal"
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
 CRCCheck on
 XPStyle on
@@ -315,45 +316,31 @@ Section -Main SEC0000
     ; NOTE: The Filters and Common DLLs found below will be deleted and unregistered manually and not via the automatic Uninstall Log
     
     ; Filters (Copy and Register)
-    File ..\xbmc\bin\Release\cdxareader.ax
-    File ..\xbmc\bin\Release\CLDump.ax
-    File ..\xbmc\bin\Release\MpgMux.ax
-    File ..\xbmc\bin\Release\MPReader.ax
-    File ..\xbmc\bin\Release\MPSA.ax
-    File ..\xbmc\bin\Release\MPTS.ax
-    File ..\xbmc\bin\Release\MPTSWriter.ax
-    File ..\xbmc\bin\Release\shoutcastsource.ax
-    File ..\xbmc\bin\Release\TSFileSource.ax
-    File ..\xbmc\bin\Release\WinTVCapWriter.ax
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $FilterDir\cdxareader.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $FilterDir\CLDump.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpgMux.ax $FilterDir\MpgMux.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPReader.ax $FilterDir\MPReader.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPSA.ax $FilterDir\MPSA.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTS.ax $FilterDir\MPTS.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTSWriter.ax $FilterDir\MPTSWriter.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\shoutcastsource.ax $FilterDir\shoutcastsource.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\TSFileSource.ax $FilterDir\TSFileSource.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $FilterDir\WinTVCapWriter.ax $FilterDir
 
-    RegDll $FilterDir\cdxareader.ax
-    RegDll $FilterDir\CLDump.ax
-    RegDll $FilterDir\MpgMux.ax
-    RegDll $FilterDir\MPReader.ax
-    RegDll $FilterDir\MPSA.ax
-    RegDll $FilterDir\MPTS.ax
-    RegDll $FilterDir\MPTSWriter.ax
-    RegDll $FilterDir\shoutcastsource.ax
-    RegDll $FilterDir\TSFileSource.ax
-    RegDll $FilterDir\WinTVCapWriter.ax
-
-    ; Install and Register only when 
+    ; Install and Register only when
+    WriteRegStr HKLM "${INSTDIR_REG_KEY}" Dscaler 0 
     ${If} $DSCALER == 1
-        File ..\xbmc\bin\Release\GenDMOProp.dll
-        File ..\xbmc\bin\Release\MpegAudio.dll
-        File ..\xbmc\bin\Release\MpegVideo.dll
-        
-        RegDll $FilterDir\GenDMOProp.dll
-        RegDll $FilterDir\MpegAudio.dll
-        RegDll $FilterDir\MpegVideo.dll
+        WriteRegStr HKLM "${INSTDIR_REG_KEY}" Dscaler 1
+        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $FilterDir\GenDMOProp.dll $FilterDir
+        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegAudio.dll $FilterDir\MpegAudio.dll $FilterDir
+        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegVideo.dll $FilterDir\MpegVideo.dll $FilterDir
     ${EndIf}
   
+    WriteRegStr HKLM "${INSTDIR_REG_KEY}" Gabest 0
     ${If} $GABEST == 1
-        File ..\xbmc\bin\Release\MpaDecFilter.ax
-        File ..\xbmc\bin\Release\Mpeg2DecFilter.ax
-        
-        RegDll $FilterDir\MpaDecFilter.ax
-        RegDll $FilterDir\Mpeg2DecFilter.ax        
+        WriteRegStr HKLM "${INSTDIR_REG_KEY}" Gabest 1
+        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $FilterDir\MpaDecFilter.ax $FilterDir
+        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $FilterDir\Mpeg2DecFilter.ax $FilterDir
     ${EndIf}
     
     ; Common DLLs
@@ -441,6 +428,7 @@ Function .onInit
     SetShellVarContext current
     
     ; Needed for Library Install
+    ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
     Push $0
     ReadRegStr $0 HKLM "${INSTDIR_REG_KEY}" Path
     ClearErrors
@@ -485,6 +473,10 @@ Section /o -un.Main UNSEC0000
 
     ; Remove the Folders
     ; Don't touch the Database, InputMappings
+    RmDir /r /REBOOTOK $INSTDIR\Burner
+    RmDir /r /REBOOTOK $INSTDIR\Cache
+    RmDir /r /REBOOTOK $CommonAppData\Burner
+    RmDir /r /REBOOTOK $CommonAppData\Cache
     RmDir /r /REBOOTOK $INSTDIR\language
     RmDir /r /REBOOTOK $INSTDIR\MusicPlayer
     RmDir /r /REBOOTOK $INSTDIR\osdskin-media
@@ -504,46 +496,36 @@ Section /o -un.Main UNSEC0000
     ;end uninstall, after uninstall from all logged paths has been performed
     !insertmacro UNINSTALL.LOG_END_UNINSTALL
     
+
+    ; Uninstall the Common DLLs and Filters, which have not been logged with the Automatic Uninstaller
+    ; They will onl be removed, when the UseCount = 0    
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\cdxareader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\CLDump.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPSA.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPTS.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPTSWriter.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\shoutcastsource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\TSFileSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\WinTVCapWriter.ax
+
+    ${If} $DSCALER == 1
+        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\GenDMOProp.dll
+        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpegAudio.dll
+        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpegVideo.dll
+    ${EndIf}
+
+    ${If} $GABEST == 1
+        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpaDecFilter.ax
+        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\Mpeg2DecFilter.ax
+    ${EndIf}
     
-    ; Remove the Common DLLs and Filters, which have not been logged with the Automatic Uninstaller
+    ; Common DLLs will not be removed. Too Dangerous
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71u.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcp71.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcr71.dll    
-
-    ; Unregister the Filter
-    UnRegDll $FilterDir\cdxareader.ax
-    UnRegDll $FilterDir\CLDump.ax
-    UnRegDll $FilterDir\MpgMux.ax
-    UnRegDll $FilterDir\MPReader.ax
-    UnRegDll $FilterDir\MPSA.ax
-    UnRegDll $FilterDir\MPTS.ax
-    UnRegDll $FilterDir\MPTSWriter.ax
-    UnRegDll $FilterDir\shoutcastsource.ax
-    UnRegDll $FilterDir\TSFileSource.ax
-    UnRegDll $FilterDir\WinTVCapWriter.ax
-    UnRegDll $FilterDir\GenDMOProp.dll
-    UnRegDll $FilterDir\MpegAudio.dll
-    UnRegDll $FilterDir\MpegVideo.dll
-    UnRegDll $FilterDir\MpaDecFilter.ax
-    UnRegDll $FilterDir\Mpeg2DecFilter.ax      
-
-    ; ... and delete them
-    Delete /REBOOTOK $FilterDir\cdxareader.ax
-    Delete /REBOOTOK $FilterDir\CLDump.ax
-    Delete /REBOOTOK $FilterDir\MpgMux.ax
-    Delete /REBOOTOK $FilterDir\MPReader.ax
-    Delete /REBOOTOK $FilterDir\MPSA.ax
-    Delete /REBOOTOK $FilterDir\MPTS.ax
-    Delete /REBOOTOK $FilterDir\MPTSWriter.ax
-    Delete /REBOOTOK $FilterDir\shoutcastsource.ax
-    Delete /REBOOTOK $FilterDir\TSFileSource.ax
-    Delete /REBOOTOK $FilterDir\WinTVCapWriter.ax
-    Delete /REBOOTOK $FilterDir\GenDMOProp.dll
-    Delete /REBOOTOK $FilterDir\MpegAudio.dll
-    Delete /REBOOTOK $FilterDir\MpegVideo.dll
-    Delete /REBOOTOK $FilterDir\MpaDecFilter.ax
-    Delete /REBOOTOK $FilterDir\Mpeg2DecFilter.ax    
 
     Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk"
@@ -571,6 +553,8 @@ SectionEnd
 Function un.onInit
     ReadRegStr $INSTDIR HKLM "${INSTDIR_REG_KEY}" Path
     ReadRegStr $FILTERDIR HKLM "${INSTDIR_REG_KEY}" PathFilter
+    ReadRegStr $GABEST HKLM "${INSTDIR_REG_KEY}" Gabest
+    ReadRegStr $DSCALER HKLM "${INSTDIR_REG_KEY}" Dscaler
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
     !insertmacro UNINSTALL.LOG_BEGIN_UNINSTALL
