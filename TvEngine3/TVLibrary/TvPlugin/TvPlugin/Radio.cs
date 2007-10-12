@@ -76,6 +76,7 @@ namespace TvPlugin
     bool sortAscending = true;
     DirectoryHistory directoryHistory = new DirectoryHistory();
     string currentFolder = null;
+    string lastFolder = "..";
     int selectedItemIndex = -1;
     public static RadioChannelGroup selectedGroup=null;
     #endregion
@@ -147,6 +148,7 @@ namespace TvPlugin
         }
 
         sortAscending = xmlreader.GetValueAsBool("myradio", "sortascending", true);
+        currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
 
       }
     }
@@ -188,6 +190,7 @@ namespace TvPlugin
         }
 
         xmlwriter.SetValueAsBool("myradio", "sortascending", sortAscending);
+        xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
       }
     }
     #endregion
@@ -422,6 +425,7 @@ namespace TvPlugin
         if (group==null)
           return;
         selectedGroup = group;
+        lastFolder = currentFolder;
         GUIListItem item=new GUIListItem();
         item.Label = "..";
         item.IsFolder = true;
