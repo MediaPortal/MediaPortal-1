@@ -42,16 +42,13 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIImageList : GUIControl
   {
-    [XMLSkinElement("align")]
-    Alignment _alignment = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("orientation")]
-    eOrientation _orientation = eOrientation.Horizontal;
-    [XMLSkinElement("textureWidth")]
-    int _textureWidth = 32;
-    [XMLSkinElement("textureHeight")]
-    int _textureHeight = 32;
-    [XMLSkinElement("percentage")]
-    string _tagLine = string.Empty;
+    [XMLSkinElement("align")]         Alignment _alignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("orientation")]   eOrientation _orientation = eOrientation.Horizontal;
+    [XMLSkinElement("textureWidth")]  int _textureWidth = 32;
+    [XMLSkinElement("textureHeight")] int _textureHeight = 32;
+    [XMLSkinElement("percentage")]    string _tagLine = string.Empty;
+  	[XMLSkinElement("imagesToDraw")]  int _imagesToDraw = -1;
+
     int m_iPercentage;
 
     ArrayList _itemList = new ArrayList();
@@ -122,7 +119,9 @@ namespace MediaPortal.GUI.Library
     void RenderHorizontal(float timePassed)
     {
       int startx = _positionX;
-      int imagesToDraw = _width / _textureWidth;
+    	int imagesToDraw = _width / _textureWidth;             // in case no fixed value exists => calculate it
+			if (_imagesToDraw > -1) imagesToDraw = _imagesToDraw;  // we have a fixed value
+
       for (int i = 0; i < imagesToDraw; ++i)
       {
         int texture = 0;
