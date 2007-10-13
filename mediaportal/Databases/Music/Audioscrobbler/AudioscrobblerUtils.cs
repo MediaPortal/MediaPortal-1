@@ -801,7 +801,7 @@ namespace MediaPortal.Music.Database
           bool foundDoubleEntry = false;
           string tmpArtist = string.Empty;
 
-          for (int s = 0; s < unfilteredList_.Count; s++)
+          for (int s = 0 ; s < unfilteredList_.Count ; s++)
           {
             tmpArtist = unfilteredList_[s].Artist.ToLowerInvariant();
             // only accept other artists than the current playing but include current "tag" since some people tag just using the artist's name..
@@ -826,7 +826,16 @@ namespace MediaPortal.Music.Database
                             mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
                       }
                       else
-                        mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
+                        // Unfortunately no album to narrow down the search
+                        if (!string.IsNullOrEmpty(unfilteredList_[s].Artist))
+                        {
+                          if (!mdb.GetSongByArtistTitle(unfilteredList_[s].Artist, unfilteredList_[s].Title, ref dbSong))
+                            // Make sure we get at least one / some usable results
+                            mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
+                        }
+
+                        else
+                          mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
 
                     if (!string.IsNullOrEmpty(dbSong.Artist))
                     {
@@ -837,7 +846,7 @@ namespace MediaPortal.Music.Database
                       if (onlyUniqueArtists)
                       {
                         // check and prevent entries from the same artist
-                        for (int j = 0; j < tmpSongs.Count; j++)
+                        for (int j = 0 ; j < tmpSongs.Count ; j++)
                         {
                           if (tmpSong.Artist == tmpSongs[j].Artist)
                           {
@@ -876,7 +885,7 @@ namespace MediaPortal.Music.Database
                       {
                         foundDoubleEntry = false;
                         // check and prevent double entries 
-                        for (int j = 0; j < tmpSongs.Count; j++)
+                        for (int j = 0 ; j < tmpSongs.Count ; j++)
                         {
                           if (dbArtists[0].Artist == (tmpSongs[j].Artist))
                           {
@@ -912,7 +921,7 @@ namespace MediaPortal.Music.Database
                       {
                         foundDoubleEntry = false;
                         // check and prevent double entries 
-                        for (int j = 0; j < tmpSongs.Count; j++)
+                        for (int j = 0 ; j < tmpSongs.Count ; j++)
                         {
                           if (dbAlbums[0].Album == (tmpSongs[j].Album))
                           {
