@@ -812,13 +812,18 @@ namespace MediaPortal.Music.Database
                 case songFilterType.Track:
                   {
                     Song dbSong = new Song();
+                    // The filename is unique so try if we get a 100% correct result first
                     if (!string.IsNullOrEmpty(unfilteredList_[s].FileName))
                       mdb.GetSongByFileName(unfilteredList_[s].FileName, ref dbSong);
                     else
-                      if (!string.IsNullOrEmpty(unfilteredList_[s].Artist))
+                      // Get the track with Artist and Album should be the 2nd best idea
+                      if (!string.IsNullOrEmpty(unfilteredList_[s].Artist) && !string.IsNullOrEmpty(unfilteredList_[s].Album))
                       {
-                        if (!mdb.GetSongByArtistTitle(unfilteredList_[s].Artist, unfilteredList_[s].Title, ref dbSong))
-                          mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
+                        if (!mdb.GetSongByArtistAlbumTitle(unfilteredList_[s].Artist, unfilteredList_[s].Album, unfilteredList_[s].Title, ref dbSong))
+                          // Maybe the album was spelled different on last.fm
+                          if (!mdb.GetSongByArtistTitle(unfilteredList_[s].Artist, unfilteredList_[s].Title, ref dbSong))
+                            // Make sure we get at least one / some usable results
+                            mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
                       }
                       else
                         mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
@@ -1763,8 +1768,12 @@ namespace MediaPortal.Music.Database
           nodeSong.WebImage = tmpCover;
           nodeSong.DateTimePlayed = tmpRelease;
 
-          if (node.Attributes["title"].Value != "")
+          if (!string.IsNullOrEmpty(node.Attributes["title"].Value))
+          {
             nodeSong.Title = node.Attributes["title"].Value;
+            // last.fm sometimes inserts this - maybe more to come...
+            nodeSong.Title = nodeSong.Title.Replace("(Album Version)", "").Trim();
+          }
 
           foreach (XmlNode child in node.ChildNodes)
           {

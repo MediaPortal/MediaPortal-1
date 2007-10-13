@@ -397,6 +397,39 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
+    public bool GetSongByArtistAlbumTitle(string aArtist, string aAlbum, string aTitle, ref Song aSong)
+    {
+      try
+      {
+        aSong.Clear();
+        string strTitle = aTitle;
+        string strAlbum = aAlbum;
+        string strArtist = aArtist;
+        DatabaseUtility.RemoveInvalidChars(ref strTitle);
+        DatabaseUtility.RemoveInvalidChars(ref strAlbum);
+        DatabaseUtility.RemoveInvalidChars(ref strArtist);
+
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%{0}%' AND strAlbum LIKE '%{1}%' AND strTitle LIKE '{2}%'", strArtist, strAlbum, strTitle);
+
+        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        if (results.Rows.Count == 0)
+          return false;
+
+        if (results.Rows.Count > 1)
+          Log.Warn("MusicDatabase: Lookups: GetSongByArtistAlbumTitle found multiple results ({3}) for {0}-{1}-{2}", strArtist, strAlbum, strTitle, Convert.ToString(results.Rows.Count));
+
+        if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
+          return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return false;
+    }
+
     public bool GetSongByArtistTitle(string aArtist, string aTitle, ref Song aSong)
     {
       try
@@ -414,7 +447,7 @@ namespace MediaPortal.Music.Database
           return false;
 
         if (results.Rows.Count > 1)
-          Log.Warn("MusicDatabase: Lookups: GetSongByArtistTitle found multiple ({2}) results for {0}-{1}", strArtist, strTitle, Convert.ToString(results.Rows.Count));
+          Log.Warn("MusicDatabase: Lookups: GetSongByArtistTitle found multiple results ({2}) for {0}-{1}", strArtist, strTitle, Convert.ToString(results.Rows.Count));
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
           return true;
@@ -441,6 +474,9 @@ namespace MediaPortal.Music.Database
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
           return false;
+
+        if (results.Rows.Count > 1)
+          Log.Warn("MusicDatabase: Lookups: GetSongByTitle found multiple results ({0}) for {1}", Convert.ToString(results.Rows.Count), strTitle);
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
           return true;
