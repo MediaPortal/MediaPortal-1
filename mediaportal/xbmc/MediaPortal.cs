@@ -1207,17 +1207,17 @@ public class MediaPortalApp : D3DApp, IRender
         }
       }
 
-      AutoPlay.StartListening();
-
       Log.Info("Main: OnResume - init InputDevices");
       InputDevices.Init();
             
       _suspended = false;
       bool result = base.ShowLastActiveModule();      
       _onResumeRunning = false;
-      ignoreContextMenuAction = false;    
-      Log.Info("Main: OnResume - Done");
-      
+      ignoreContextMenuAction = false;
+
+      AutoPlay.StartListening();
+
+      Log.Info("Main: OnResume - Done");      
     }
   }
 
@@ -1321,8 +1321,6 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen.SetInformation("Starting recorder...");
     }
     Recorder.Start();
-    AutoPlay.StartListening();
-
 
     if (splashScreen != null)
     {
@@ -1400,6 +1398,8 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Error("MediaPortalApp: Error setting date and time properties - {0}", ex.Message);
     }
+
+    AutoPlay.StartListening();
   }
 
   /// <summary>

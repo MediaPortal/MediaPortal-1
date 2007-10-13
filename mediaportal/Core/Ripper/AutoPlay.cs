@@ -99,9 +99,8 @@ namespace MediaPortal.Ripper
       StopListeningForEvents();
 
     }
+
     #region initialization + serialization
-
-
     private static void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -350,6 +349,7 @@ namespace MediaPortal.Ripper
           Log.Info("ExamineCD: Unknown media type inserted into drive {0}", strDrive);
           break;
       }
+
       StartListening();
     }
 
