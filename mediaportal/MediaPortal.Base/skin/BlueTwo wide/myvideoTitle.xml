@@ -25,6 +25,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>right</align>
+      <imagesToDraw>10</imagesToDraw>
       <percentage>#rating</percentage>
     </control>
     <control>
