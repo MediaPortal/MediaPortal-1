@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          QueueAnimation(AnimationType.WindowClose);
+         QueueAnimation(AnimationType.WindowClose);
         }
       }
     }
@@ -142,8 +142,10 @@ namespace MediaPortal.GUI.Video
 
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
-        OnUpdateState(false);
-        return base.IsAnimating(AnimationType.WindowClose);
+        // Too late to schedule a fade out animation. We are already rendering full screen video
+        //OnUpdateState(false);
+        //return base.IsAnimating(AnimationType.WindowClose);
+        return false;
       }
       if (GUIGraphicsContext.Calibrating)
       {
