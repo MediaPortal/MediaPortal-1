@@ -1441,8 +1441,8 @@ namespace MediaPortal.GUI.Music
           continue;
 
         string strFilePath = System.IO.Path.GetFullPath(pItem.Path);
-        //strFilePath = strFilePath.Substring(0, strFilePath.Length - (1 + System.IO.Path.GetFileName(pItem.Path).Length));
-        strFilePath = System.IO.Path.GetDirectoryName(strFilePath);
+        strFilePath = strFilePath.Substring(0, strFilePath.Length - (1 + System.IO.Path.GetFileName(pItem.Path).Length));
+        //strFilePath = System.IO.Path.GetDirectoryName(strFilePath);
 
         if (strFilePath != currentFolder)        
           return;
