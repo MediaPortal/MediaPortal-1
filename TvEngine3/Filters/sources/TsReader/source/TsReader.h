@@ -30,6 +30,7 @@
 #include "TeletextPin.h"
 #include "..\..\DVBSubtitle2\Source\IDVBSub.h"
 #include "ISubtitleStream.h"
+#include "IAudioStream.h"	      
 #include <map>
 using namespace std;
 
@@ -43,7 +44,7 @@ DEFINE_GUID(CLSID_TSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 
 
 
 class CTsReaderFilter : public CSource, public TSThread, public IFileSourceFilter, 
-                        public IAMFilterMiscFlags, public IAMStreamSelect, public ISubtitleStream
+                        public IAMFilterMiscFlags, public IAMStreamSelect, public ISubtitleStream, public IAudioStream
 {
 public:
 		DECLARE_IUNKNOWN
@@ -71,6 +72,10 @@ private:
     STDMETHODIMP Count(DWORD* streamCount);
     STDMETHODIMP Enable(long index, DWORD flags);
     STDMETHODIMP Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwFlags, LCID *plcid, DWORD *pdwGroup, WCHAR **ppszName, IUnknown **ppObject, IUnknown **ppUnk);
+
+	//IAudioStream
+	STDMETHODIMP SetAudioStream(__int32 stream);	
+	STDMETHODIMP GetAudioStream(__int32 &stream);
 
     //ISubtitleStream
     STDMETHODIMP SetSubtitleStream(__int32 stream);

@@ -115,7 +115,12 @@ HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
 {
   LogDebug("aud:GetMediaType()");
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  demux.GetAudioStreamType(demux.GetAudioStream(), *pmt);
+
+  int audioIndex = 0;
+  demux.GetAudioStream(audioIndex);
+
+  //demux.GetAudioStreamType(demux.GetAudioStream(), *pmt);
+  demux.GetAudioStreamType(audioIndex, *pmt);
 	return S_OK;
 }
 

@@ -861,26 +861,11 @@ namespace TvPlugin
             {
               int newIndex = 0;
               int oldIndex = 0;
-              if (TVHome.IsSingleSeat())
-              {
-                oldIndex = g_Player.CurrentAudioStream;
-                g_Player.SwitchToNextAudio();
-                newIndex = g_Player.CurrentAudioStream;
-              }
-              else
-              {
-                IAudioStream currentStream = TVHome.Card.AudioStream;
-                for (int i = 0; i < streams.Length; i++)
-                {
-                  if (streams[i] == currentStream)
-                  {
-                    oldIndex = i;
-                    break;
-                  }
-                }
-                newIndex = (oldIndex + 1) % streams.Length;
-                TVHome.Card.AudioStream = streams[newIndex];
-              }
+              
+              oldIndex = g_Player.CurrentAudioStream;
+              g_Player.SwitchToNextAudio();
+              newIndex = g_Player.CurrentAudioStream;
+                
               Log.Debug("Switching from audio stream {0} to {1}", oldIndex, newIndex);
 
               // Show OSD Label
@@ -1743,22 +1728,23 @@ namespace TvPlugin
       dlg.ShowQuickNumbers = true;
 
       IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
-      IAudioStream streamCurrent = TVHome.Card.AudioStream;
+      int streamCurrent = g_Player.CurrentAudioStream;
 
       Log.Debug("TvFullScreen: ShowAudioLanguageMenu - got {0} audio streams", streams.Length);
 
       int selected = 0;
 
-      for (int i = 0; i < streams.Length; i++)
+      if (streams.Length >= streamCurrent)
       {
-        if (streamCurrent == streams[i])
-        {
-          selected = i;
-        }
+        selected = streamCurrent;
+      }
+
+      for (int i = 0; i < streams.Length; i++)
+      {        
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}:{1}", streams[i].StreamType, streams[i].Language);
-        dlg.Add(item);
-      }
+        dlg.Add(item);        
+      }     
 
       dlg.SelectedLabel = selected;
 
@@ -1772,22 +1758,7 @@ namespace TvPlugin
       // Set new language			
       if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < streams.Length))
       {
-        // Check if we have a single seat installation in which case we have to use the g_player method to switch the audio streams
-        if (TVHome.IsSingleSeat())
-        {
-          Log.Debug("TvFullScreen: ShowAudioLanguageMenu - single seat mode");
-          g_Player.CurrentAudioStream = dlg.SelectedLabel;
-        }
-        else
-          TVHome.Card.AudioStream = streams[dlg.SelectedLabel];
-
-        // is this really needed?
-        if (g_Player.Paused == false)
-        {
-          g_Player.Pause();
-          Thread.Sleep(50);
-          g_Player.Pause();
-        }
+        g_Player.CurrentAudioStream = dlg.SelectedLabel;        
       }
     }
 

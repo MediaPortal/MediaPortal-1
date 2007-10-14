@@ -1488,6 +1488,7 @@ namespace TvPlugin
       return idx;
     }
 
+
     static public bool ViewChannelAndCheck(Channel channel)
     {
      
@@ -1889,12 +1890,14 @@ namespace TvPlugin
     #endregion
 
     static void StartPlay()
-    {
-      int prefLangId = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
-      MediaPortal.GUI.Library.Log.Debug("TVHome.StartPlay(): preferred langId:{0} {1}", prefLangId, _preferAC3);
+    {            
+      int prefLangIdx = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
+
+      MediaPortal.GUI.Library.Log.Debug("TVHome.StartPlay(): preferred lang PID:{0} {1}", prefLangIdx, _preferAC3);
+
       try
       {
-        using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software",true))
+        using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software", true))
         {
           RegistryKey subKeyMP = subkey.OpenSubKey("MediaPortal", true);
           if (subKeyMP == null)
@@ -1906,10 +1909,9 @@ namespace TvPlugin
           if (subKeyTsReader == null)
           {
             subKeyTsReader = subKeyMP.CreateSubKey("TsReader");
-          }
-          UInt32 preferAc3Value = 0;
-          if (_preferAC3) preferAc3Value = 1;
-          subKeyTsReader.SetValue("preferac3", preferAc3Value, RegistryValueKind.DWord);
+          }            
+          //ac3 is now part of the langidx
+          subKeyTsReader.SetValue("audioidx", prefLangIdx, RegistryValueKind.DWord);
           subKeyTsReader.Close();
           subKeyMP.Close();
         }
@@ -1918,7 +1920,7 @@ namespace TvPlugin
       {
         Log.Write(ex);
       }
-
+              
       Stopwatch benchClock = null;
       benchClock = Stopwatch.StartNew();
       if (TVHome.Card == null)

@@ -253,6 +253,10 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 	{
 		return GetInterface((ISubtitleStream*)this, ppv);
 	}
+  if (riid == IID_IAudioStream)
+	{
+		return GetInterface((IAudioStream*)this, ppv);
+	}
 
 	return CSource::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -930,7 +934,7 @@ STDMETHODIMP CTsReaderFilter::Count(DWORD* streamCount)
 /// Sets the current audio stream to use
 STDMETHODIMP CTsReaderFilter::Enable(long index, DWORD flags)
 {
-  m_demultiplexer.SetAudioStream((int)index);
+  bool res = m_demultiplexer.SetAudioStream((int)index);
   return S_OK;
 }
 
@@ -940,7 +944,11 @@ STDMETHODIMP CTsReaderFilter::Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwF
 {
   if (pdwFlags) 
   {
-    if (m_demultiplexer.GetAudioStream()==(int)lIndex)
+	int audioIndex = 0;
+	m_demultiplexer.GetAudioStream(audioIndex);
+
+    //if (m_demultiplexer.GetAudioStream()==(int)lIndex)
+	if (audioIndex==(int)lIndex)
       *pdwFlags=AMSTREAMSELECTINFO_EXCLUSIVE;
     else
       *pdwFlags=0;
@@ -968,6 +976,17 @@ STDMETHODIMP CTsReaderFilter::Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwF
     memcpy((*ppmt)->pbFormat,mType->pbFormat,mediaType.FormatLength());
   }
   return S_OK;
+}
+
+// IAudioStream methods 
+STDMETHODIMP CTsReaderFilter::SetAudioStream(__int32 stream)
+{
+  return m_demultiplexer.SetAudioStream(stream);
+}
+
+STDMETHODIMP CTsReaderFilter::GetAudioStream(__int32 &stream)
+{  
+  return m_demultiplexer.GetAudioStream(stream);
 }
 
 // ISubtitleStream methods 

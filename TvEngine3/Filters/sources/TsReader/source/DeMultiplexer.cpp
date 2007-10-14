@@ -57,7 +57,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bHoldAudio=false;
   m_bHoldVideo=false;
   m_bHoldSubtitle=false;
-  m_bPreferAC3=false;
+  m_iAudioIdx=-1;
   m_iPatVersion=-1;
   m_bSetAudioDiscontinuity=false;
   m_bSetVideoDiscontinuity=false;
@@ -66,16 +66,17 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   //get ac3 preference from registry key
   HKEY key;
   if (ERROR_SUCCESS==RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\MediaPortal\\TsReader",0,KEY_READ,&key))
-  {
-    DWORD preferAc3=0;
+  {    
+	DWORD audioIdx=-1;
     DWORD keyType=REG_DWORD;
-    DWORD dwSize=sizeof(DWORD);
-    if (ERROR_SUCCESS==RegQueryValueEx(key, "preferac3",0,&keyType,(LPBYTE)&preferAc3,&dwSize))
-    {
-      m_bPreferAC3= (preferAc3!=0);
-    }
+    DWORD dwSize=sizeof(DWORD);   
+
+	if (ERROR_SUCCESS==RegQueryValueEx(key, "audioIdx",0,&keyType,(LPBYTE)&audioIdx,&dwSize))
+    {	  
+      m_iAudioIdx = audioIdx;
+    }		
     RegCloseKey(key);
-  }
+  }  
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -140,12 +141,15 @@ CPidTable CDeMultiplexer::GetPidTable()
   return m_pids;
 }
 
+
+
 /// This methods selects the audio stream specified
 /// and updates the audio output pin media type if needed 
-void CDeMultiplexer::SetAudioStream(int stream)
-{
+bool CDeMultiplexer::SetAudioStream(int stream)
+{        
   //is stream index valid?
-  if (stream< 0 || stream>=m_audioStreams.size()) return;//no..
+  if (stream< 0 || stream>=m_audioStreams.size()) 
+    return S_FALSE;
 
   //get the current audio forma stream type
   int oldAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
@@ -165,7 +169,7 @@ void CDeMultiplexer::SetAudioStream(int stream)
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
   {
     newAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
-  }
+  }  
 
   //did it change?
   if (oldAudioStreamType != newAudioStreamType )
@@ -196,11 +200,14 @@ void CDeMultiplexer::SetAudioStream(int stream)
     //then start the graph again
     DoStart();
   }
+ 
+  return S_OK;
 }
 
-int CDeMultiplexer::GetAudioStream()
-{
-  return m_iAudioStream;
+bool CDeMultiplexer::GetAudioStream(__int32 &audioIndex)
+{  
+  audioIndex = m_iAudioStream;
+  return S_OK;
 }
 
 void CDeMultiplexer::GetAudioStreamInfo(int stream,char* szName)
@@ -868,7 +875,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 		}
   }
   else //if (m_pCurrentAudioBuffer->Length()>0)
-  {
+  {	
     //1111-1111-1-11-1-1100
     int pos=header.PayLoadStart;
     //packet contains rest of a pes packet
@@ -1314,20 +1321,11 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       changed=true;
     }
   }
-  
-  //do we prefer ac3?
-  if (m_bPreferAC3)
-  {
-    //then check if any stream is ac3
-    for (int i=0; i < m_audioStreams.size();++i)
-    {
-      if (SERVICE_TYPE_AUDIO_AC3 == m_audioStreams[i].audioType)
-      {
-        //this one is, use it
-        m_iAudioStream=i;
-        break;
-      }
-    }
+    
+  // lets try and select the audiotrack based on language. this could also mean ac3.
+  if (m_audioStreams.size() >=  m_iAudioIdx)
+  {		
+	m_iAudioStream = m_iAudioIdx;	
   }
   
   //get the new audio format

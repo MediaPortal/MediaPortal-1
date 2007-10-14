@@ -55,8 +55,10 @@ public:
   void       FillVideo(CTsHeader& header, byte* tsPacket);
   void       FillTeletext(CTsHeader& header, byte* tsPacket);
   CPidTable  GetPidTable();
-  void       SetAudioStream(int stream);
-  int        GetAudioStream();
+
+  bool       SetAudioStream(__int32 stream);
+  bool       GetAudioStream(__int32 &stream);
+
   void       GetAudioStreamInfo(int stream,char* szName);
   void       GetAudioStreamType(int stream,CMediaType&  pmt);
   void       GetVideoStreamType(CMediaType& pmt);
@@ -138,7 +140,8 @@ private:
 	bool m_bHoldAudio;
 	bool m_bHoldVideo;
   bool m_bHoldSubtitle;
-  bool m_bPreferAC3;
+  //bool m_bPreferAC3;
+  int m_iAudioIdx;
   int m_iPatVersion;
 
   bool m_bSetAudioDiscontinuity;

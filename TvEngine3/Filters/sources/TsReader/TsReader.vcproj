@@ -378,6 +378,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\IAudioStream.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\ISubtitleStream.h"
 				>
 			</File>
