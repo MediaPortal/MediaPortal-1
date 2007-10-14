@@ -21056,7 +21056,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft ATSC Network Provider" checkdevice="false"></filter>
-        <filter cat="tunerdevice" name="Hauppauge WinTV 885 BDA Tuner" checkdevice="true"></filter>
+        <filter cat="tunerdevice" name="Hauppauge WinTV 885 BDA Tuner/Demod" checkdevice="true"></filter>
         <filter cat="capture" name="Hauppauge WinTV 885 TS Capture" checkdevice="true"></filter>
       </filters>
       <connections>
