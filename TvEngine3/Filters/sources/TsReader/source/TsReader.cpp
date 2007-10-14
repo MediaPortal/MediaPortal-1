@@ -277,7 +277,8 @@ CBasePin * CTsReaderFilter::GetPin(int n)
   }
   else if (n == 3)
   {
-    return m_pTeletextPin;
+    // Disabled currently as it causes some seeking & channel change crashes
+    //return m_pTeletextPin;
   }
   return NULL;
 }
@@ -285,7 +286,7 @@ CBasePin * CTsReaderFilter::GetPin(int n)
 
 int CTsReaderFilter::GetPinCount()
 {
-  return 4;
+  return 3;//4;
 }
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
