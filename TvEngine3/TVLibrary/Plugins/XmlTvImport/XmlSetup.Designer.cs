@@ -55,7 +55,7 @@ namespace SetupTv.Sections
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Location = new System.Drawing.Point(360, 46);
+      this.buttonBrowse.Location = new System.Drawing.Point(360, 64);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(23, 23);
       this.buttonBrowse.TabIndex = 7;
@@ -74,7 +74,7 @@ namespace SetupTv.Sections
       // 
       // textBoxFolder
       // 
-      this.textBoxFolder.Location = new System.Drawing.Point(70, 49);
+      this.textBoxFolder.Location = new System.Drawing.Point(70, 67);
       this.textBoxFolder.Name = "textBoxFolder";
       this.textBoxFolder.Size = new System.Drawing.Size(284, 20);
       this.textBoxFolder.TabIndex = 5;
@@ -146,9 +146,10 @@ namespace SetupTv.Sections
       this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label5.Location = new System.Drawing.Point(21, 30);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(371, 13);
+      this.label5.Size = new System.Drawing.Size(371, 26);
       this.label5.TabIndex = 15;
-      this.label5.Text = "Please note that this folder should also include the xmltv.dtd file";
+      this.label5.Text = "Please note that this folder should also include the xmltv.dtd file\r\n(if referenc" +
+          "ed by the tvguide.xml file)";
       // 
       // groupBox1
       // 
@@ -274,7 +275,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.label13);
       this.Controls.Add(this.textBoxFolder);
       this.Name = "XmlSetup";
-      this.Size = new System.Drawing.Size(467, 454);
+      this.Size = new System.Drawing.Size(480, 454);
       this.Load += new System.EventHandler(this.XmlSetup_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
