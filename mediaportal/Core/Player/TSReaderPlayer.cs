@@ -141,8 +141,22 @@ namespace MediaPortal.Player
     IPin _pinAudio = null;
     IPin _pinVideo = null;
     protected ISubtitleStream _subtitleStream = null;
+    protected IAudioStream _audioStream = null;
     bool enableDvbSubtitles = false;
     #endregion
+
+    /// <summary>
+    /// Interface to the TsReader filter wich provides information about the 
+    /// audio streams and allows us to change the current audio stream
+    /// </summary>
+    /// 
+    [Guid("558D9EA6-B177-4c30-9ED5-BF2D714BCBCA"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IAudioStream
+    {
+      void SetAudioStream(Int32 stream);      
+      void GetAudioStream(ref Int32 stream);
+    }
 
     /// <summary>
     /// Interface to the TsReader filter wich provides information about the 
@@ -157,7 +171,7 @@ namespace MediaPortal.Player
       void GetSubtitleStreamType( Int32 stream, ref Int32 type );
       void GetSubtitleStreamCount( ref Int32 count );
       void GetCurrentSubtitleStream( ref Int32 stream );
-      void GetSubtitleStreamLanguage(Int32 stream, ref SUBTITLE_LANGUAGE szLanguage);
+      void GetSubtitleStreamLanguage(Int32 stream, ref SUBTITLE_LANGUAGE szLanguage);      
     }
 
     /// <summary>
@@ -437,6 +451,9 @@ namespace MediaPortal.Player
           subSelector = new SubtitleSelector(_subtitleStream, dvbSubRenderer);
         }
 
+        _audioStream = _fileSource as IAudioStream;
+        audioSelector = new AudioSelector(_audioStream);
+
         //source.SetClockMode(3);//audio renderer
         if (_audioRendererFilter != null)
         {
@@ -678,6 +695,22 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer: current pos:{0} dur:{1}", CurrentPosition, Duration);
       }
     }
+
+    /// <summary>
+    /// Property to get/set the current audio stream
+    /// </summary>
+    public override int CurrentAudioStream
+    {
+      get
+      {
+        return audioSelector.GetAudioLanguage();
+      }
+      set
+      {        
+          audioSelector.SetAudioLanguage(value);        
+      }
+    }
+
 
     /// <summary>
     /// Property to get the total number of subtitle streams
