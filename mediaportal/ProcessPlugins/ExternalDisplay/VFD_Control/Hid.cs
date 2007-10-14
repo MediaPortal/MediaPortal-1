@@ -64,8 +64,11 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
         // ***
         Result = HidApiDeclarations.HidD_FlushQueue(hidHandle);
 
-        Debug.WriteLine(Debugging.ResultOfAPICall("HidD_FlushQueue, ReadHandle"));
-        Debug.WriteLine("Result = " + Result);
+        if (Settings.Instance.ExtensiveLogging)
+        {
+          Log.Debug(Debugging.ResultOfAPICall("HidD_FlushQueue, ReadHandle"));
+          Log.Debug("Result = " + Result);
+        }
       }
       catch (Exception ex)
       {
@@ -100,8 +103,11 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
         // ***
         HidApiDeclarations.HidD_GetPreparsedData(hidHandle, ref PreparsedDataPointer);
 
-        Debug.WriteLine(Debugging.ResultOfAPICall("HidD_GetPreparsedData"));
-        Debug.WriteLine("");
+        if (Settings.Instance.ExtensiveLogging)
+        {
+          Log.Debug(Debugging.ResultOfAPICall("HidD_GetPreparsedData"));
+          Log.Debug("");
+        }
 
         // Copy the data at PreparsedDataPointer into a byte array.
         string PreparsedDataString = Convert.ToBase64String(PreparsedDataBytes);
@@ -123,26 +129,26 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
         if (Result != 0)
         {
           //  Debug data:
-          Debug.WriteLine(Debugging.ResultOfAPICall("HidP_GetCaps"));
-
-          Debug.WriteLine("");
-          Debug.WriteLine("Data String: " + PreparsedDataString);
-          Debug.WriteLine("  Usage: " + Capabilities.Usage.ToString("x"));
-          Debug.WriteLine("  Usage Page: " + Capabilities.UsagePage.ToString("x"));
-          Debug.WriteLine("  Input Report Byte Length: " + Capabilities.InputReportByteLength);
-          Debug.WriteLine("  Output Report Byte Length: " + Capabilities.OutputReportByteLength);
-          Debug.WriteLine("  Feature Report Byte Length: " + Capabilities.FeatureReportByteLength);
-          Debug.WriteLine("  Number of Link Collection Nodes: " + Capabilities.NumberLinkCollectionNodes);
-          Debug.WriteLine("  Number of Input Button Caps: " + Capabilities.NumberInputButtonCaps);
-          Debug.WriteLine("  Number of Input Value Caps: " + Capabilities.NumberInputValueCaps);
-          Debug.WriteLine("  Number of Input Data Indices: " + Capabilities.NumberInputDataIndices);
-          Debug.WriteLine("  Number of Output Button Caps: " + Capabilities.NumberOutputButtonCaps);
-          Debug.WriteLine("  Number of Output Value Caps: " + Capabilities.NumberOutputValueCaps);
-          Debug.WriteLine("  Number of Output Data Indices: " + Capabilities.NumberOutputDataIndices);
-          Debug.WriteLine("  Number of Feature Button Caps: " + Capabilities.NumberFeatureButtonCaps);
-          Debug.WriteLine("  Number of Feature Value Caps: " + Capabilities.NumberFeatureValueCaps);
-          Debug.WriteLine("  Number of Feature Data Indices: " + Capabilities.NumberFeatureDataIndices);
-
+          if (Settings.Instance.ExtensiveLogging)
+          {
+            Log.Debug(Debugging.ResultOfAPICall("HidP_GetCaps"));
+            Log.Debug("Data String: " + PreparsedDataString);
+            Log.Debug("  Usage: " + Capabilities.Usage.ToString("x"));
+            Log.Debug("  Usage Page: " + Capabilities.UsagePage.ToString("x"));
+            Log.Debug("  Input Report Byte Length: " + Capabilities.InputReportByteLength);
+            Log.Debug("  Output Report Byte Length: " + Capabilities.OutputReportByteLength);
+            Log.Debug("  Feature Report Byte Length: " + Capabilities.FeatureReportByteLength);
+            Log.Debug("  Number of Link Collection Nodes: " + Capabilities.NumberLinkCollectionNodes);
+            Log.Debug("  Number of Input Button Caps: " + Capabilities.NumberInputButtonCaps);
+            Log.Debug("  Number of Input Value Caps: " + Capabilities.NumberInputValueCaps);
+            Log.Debug("  Number of Input Data Indices: " + Capabilities.NumberInputDataIndices);
+            Log.Debug("  Number of Output Button Caps: " + Capabilities.NumberOutputButtonCaps);
+            Log.Debug("  Number of Output Value Caps: " + Capabilities.NumberOutputValueCaps);
+            Log.Debug("  Number of Output Data Indices: " + Capabilities.NumberOutputDataIndices);
+            Log.Debug("  Number of Feature Button Caps: " + Capabilities.NumberFeatureButtonCaps);
+            Log.Debug("  Number of Feature Value Caps: " + Capabilities.NumberFeatureValueCaps);
+            Log.Debug("  Number of Feature Data Indices: " + Capabilities.NumberFeatureDataIndices);
+          }
           // ***
           // API function: HidP_GetValueCaps
           // Purpose: retrieves a buffer containing an array of HidP_ValueCaps structures.
@@ -158,8 +164,8 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           HidApiDeclarations.HidP_GetValueCaps(HidApiDeclarations.HidP_Input, ref ValueCaps[0],
                                                ref Capabilities.NumberInputValueCaps, PreparsedDataPointer);
 
-          Debug.WriteLine(Debugging.ResultOfAPICall("HidP_GetValueCaps"));
-          Debug.WriteLine("");
+          if (Settings.Instance.ExtensiveLogging)
+            Log.Debug(Debugging.ResultOfAPICall("HidP_GetValueCaps"));
 
           // (To use this data, copy the ValueCaps byte array into an array of structures.)
           // ***
@@ -170,8 +176,8 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           // ***
           HidApiDeclarations.HidD_FreePreparsedData(ref PreparsedDataPointer);
 
-          Debug.WriteLine(Debugging.ResultOfAPICall("HidD_FreePreparsedData"));
-          Debug.WriteLine("");
+          if (Settings.Instance.ExtensiveLogging)
+            Log.Debug(Debugging.ResultOfAPICall("HidD_FreePreparsedData"));
         }
       }
       catch (Exception ex)
@@ -426,9 +432,11 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           // ***
           success =
             HidApiDeclarations.HidD_GetFeature(hidHandle, ref inFeatureReportBuffer[0], inFeatureReportBuffer.Length);
-
-          Debug.WriteLine(Debugging.ResultOfAPICall("ReadFile"));
-          Debug.WriteLine("");
+          if (Settings.Instance.ExtensiveLogging)
+          {
+            Log.Debug(Debugging.ResultOfAPICall("ReadFile"));
+            Log.Debug("");
+          }
         }
         catch (Exception ex)
         {
@@ -464,11 +472,12 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           // Returns: True on success, False on failure.
           // ***
           Result = FileIOApiDeclarations.CancelIo(readHandle);
-
-          Debug.WriteLine("************ReadFile error*************");
-          Debug.WriteLine(Debugging.ResultOfAPICall("CancelIo"));
-          Debug.WriteLine("");
-
+          if (Settings.Instance.ExtensiveLogging)
+          {
+            Log.Debug("************ReadFile error*************");
+            Log.Debug(Debugging.ResultOfAPICall("CancelIo"));
+            Log.Debug("");
+          }
           // The failure may have been because the device was removed,
           // so close any open handles and
           // set myDeviceDetected=False to cause the application to
@@ -476,15 +485,20 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           if (hidHandle != 0)
           {
             FileIOApiDeclarations.CloseHandle(hidHandle);
-
-            Debug.WriteLine(Debugging.ResultOfAPICall("CloseHandle (HIDHandle)"));
-            Debug.WriteLine("");
+            if (Settings.Instance.ExtensiveLogging)
+            {
+              Log.Debug(Debugging.ResultOfAPICall("CloseHandle (HIDHandle)"));
+              Log.Debug("");
+            }
           }
 
           if (hidHandle != 0)
           {
             FileIOApiDeclarations.CloseHandle(readHandle);
-            Debug.WriteLine(Debugging.ResultOfAPICall("CloseHandle (ReadHandle)"));
+            if (Settings.Instance.ExtensiveLogging)
+            {
+              Log.Debug(Debugging.ResultOfAPICall("CloseHandle (ReadHandle)"));
+            }
           }
         }
         catch (Exception ex)
@@ -524,10 +538,11 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           // ***
           eventObject =
             FileIOApiDeclarations.CreateEvent(ref Security, Convert.ToInt32(false), Convert.ToInt32(true), "");
-
-          Debug.WriteLine(Debugging.ResultOfAPICall("CreateEvent"));
-          Debug.WriteLine("");
-
+          if (Settings.Instance.ExtensiveLogging)
+          {
+            Log.Debug(Debugging.ResultOfAPICall("CreateEvent"));
+            Log.Debug("");
+          }
           // Set the members of the overlapped structure.
           hidOverlapped.Offset = 0;
           hidOverlapped.OffsetHigh = 0;
@@ -581,15 +596,17 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           // Use a larger buffer if the application can't keep up with reading each report
           // individually.
           // ***
-          Debug.Write("input report length = " + inputReportBuffer.Length);
+          if (Settings.Instance.ExtensiveLogging)
+          Log.Debug("input report length = " + inputReportBuffer.Length);
 
           FileIOApiDeclarations.ReadFile(readHandle, ref inputReportBuffer[0], inputReportBuffer.Length,
                                          ref NumberOfBytesRead, ref HIDOverlapped);
-
-          Debug.WriteLine(Debugging.ResultOfAPICall("ReadFile"));
-          Debug.WriteLine("");
-          Debug.WriteLine("waiting for ReadFile");
-
+          if (Settings.Instance.ExtensiveLogging)
+          {
+            Log.Debug(Debugging.ResultOfAPICall("ReadFile"));
+            Log.Debug("");
+            Log.Debug("waiting for ReadFile");
+          }
           // API function: WaitForSingleObject
           // Purpose: waits for at least one report or a timeout.
           // Used with overlapped ReadFile.
@@ -599,24 +616,27 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           // Returns: A result code.
 
           Result = FileIOApiDeclarations.WaitForSingleObject(EventObject, 3000);
-          Debug.WriteLine(Debugging.ResultOfAPICall("WaitForSingleObject"));
-          Debug.WriteLine("");
+          if (Settings.Instance.ExtensiveLogging)
+          {
+            Log.Debug(Debugging.ResultOfAPICall("WaitForSingleObject"));
+            Log.Debug("");
+          }
 
           // Find out if ReadFile completed or timeout.
           switch (Result)
           {
             case FileIOApiDeclarations.WAIT_OBJECT_0:
               // ReadFile has completed
-              Debug.WriteLine("");
               success = true;
-              Debug.WriteLine("ReadFile completed successfully.");
+              if (Settings.Instance.ExtensiveLogging)
+                Log.Debug("ReadFile completed successfully.");
               break;
 
             case FileIOApiDeclarations.WAIT_TIMEOUT:
               // Cancel the operation on timeout
               CancelTransfer(readHandle, hidHandle);
-              Debug.WriteLine("Readfile timeout");
-              Debug.WriteLine("");
+              if (Settings.Instance.ExtensiveLogging)
+                Log.Debug("Readfile timeout");
               success = false;
               myDeviceDetected = false;
               break;
@@ -624,8 +644,8 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
             default:
               // Cancel the operation on other error.
               CancelTransfer(readHandle, hidHandle);
-              Debug.WriteLine("");
-              Debug.WriteLine("Readfile undefined error");
+              if (Settings.Instance.ExtensiveLogging)
+                Log.Debug("Readfile undefined error");
               success = false;
               myDeviceDetected = false;
               break;
@@ -669,8 +689,8 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           success =
             HidApiDeclarations.HidD_GetInputReport(hidHandle, ref inputReportBuffer[0], inputReportBuffer.Length);
 
-          Debug.WriteLine(Debugging.ResultOfAPICall("ReadFile"));
-          Debug.WriteLine("");
+          if (Settings.Instance.ExtensiveLogging)
+            Log.Debug(Debugging.ResultOfAPICall("ReadFile"));
         }
         catch (Exception ex)
         {
@@ -743,16 +763,16 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           // ***
           Success =
             HidApiDeclarations.HidD_SetFeature(hidHandle, ref outFeatureReportBuffer[0], outFeatureReportBuffer.Length);
-
-          Debug.WriteLine(Debugging.ResultOfAPICall("Hidd_SetFeature"));
-          Debug.WriteLine("");
-          Debug.WriteLine(" FeatureReportByteLength = " + outFeatureReportBuffer.Length);
-          Debug.WriteLine(" Report ID: " + outFeatureReportBuffer[0]);
-          Debug.WriteLine(" Report Data:");
-
-          for (int i = 0; i < outFeatureReportBuffer.Length; i++)
+          if (Settings.Instance.ExtensiveLogging)
           {
-            Debug.WriteLine(" " + outFeatureReportBuffer[i].ToString("x"));
+            Log.Debug(Debugging.ResultOfAPICall("Hidd_SetFeature"));
+            Log.Debug(" FeatureReportByteLength = " + outFeatureReportBuffer.Length);
+            Log.Debug(" Report ID: " + outFeatureReportBuffer[0]);
+            Log.Debug(" Report Data:");
+            for (int i = 0; i < outFeatureReportBuffer.Length; i++)
+            {
+              Log.Debug(" " + outFeatureReportBuffer[i].ToString("x"));
+            }
           }
         }
         catch (Exception ex)
@@ -799,19 +819,20 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           // ***
           int Result = FileIOApiDeclarations.WriteFile(hidHandle, ref outputReportBuffer[0], outputReportBuffer.Length,
                                                        ref NumberOfBytesWritten, 0);
-
-          Debug.WriteLine(Debugging.ResultOfAPICall("WriteFile"));
-          Debug.WriteLine("");
-          Debug.WriteLine(" OutputReportByteLength = " + outputReportBuffer.Length);
-          Debug.WriteLine(" NumberOfBytesWritten = " + NumberOfBytesWritten);
-          Debug.WriteLine(" Report ID: " + outputReportBuffer[0]);
-          Debug.WriteLine(" Report Data:");
-
-          for (int i = 0; i < outputReportBuffer.Length; i++)
+          if (Settings.Instance.ExtensiveLogging)
           {
-            Debug.WriteLine("   " + outputReportBuffer[i].ToString("x"));
-          }
+            Log.Debug(Debugging.ResultOfAPICall("WriteFile"));
+            Log.Debug("");
+            Log.Debug(" OutputReportByteLength = " + outputReportBuffer.Length);
+            Log.Debug(" NumberOfBytesWritten = " + NumberOfBytesWritten);
+            Log.Debug(" Report ID: " + outputReportBuffer[0]);
+            Log.Debug(" Report Data:");
 
+            for (int i = 0; i < outputReportBuffer.Length; i++)
+            {
+              Log.Debug("   " + outputReportBuffer[i].ToString("x"));
+            }
+          }
           // Return True on success, False on failure.
           Success = (Result == 0) ? false : true;
         }
@@ -852,16 +873,18 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
           // ***
           Success =
             HidApiDeclarations.HidD_SetOutputReport(hidHandle, ref outputReportBuffer[0], outputReportBuffer.Length);
-
-          Debug.WriteLine(Debugging.ResultOfAPICall("Hidd_SetFeature"));
-          Debug.WriteLine("");
-          Debug.WriteLine(" OutputReportByteLength = " + outputReportBuffer.Length);
-          Debug.WriteLine(" Report ID: " + outputReportBuffer[0]);
-          Debug.WriteLine(" Report Data:");
-
-          for (int i = 0; i < outputReportBuffer.Length; i++)
+          if (Settings.Instance.ExtensiveLogging)
           {
-            Debug.WriteLine(" " + outputReportBuffer[i].ToString("x"));
+            Log.Debug(Debugging.ResultOfAPICall("Hidd_SetFeature"));
+            Log.Debug("");
+            Log.Debug(" OutputReportByteLength = " + outputReportBuffer.Length);
+            Log.Debug(" Report ID: " + outputReportBuffer[0]);
+            Log.Debug(" Report Data:");
+
+            for (int i = 0; i < outputReportBuffer.Length; i++)
+            {
+              Log.Debug(" " + outputReportBuffer[i].ToString("x"));
+            }
           }
         }
         catch (Exception ex)

@@ -37,9 +37,9 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
 
     // from hidpi.h
     // Typedef enum defines a set of integer constants for HidP_Report_Type
-    public const short HidP_Input = 0;
-    public const short HidP_Output = 1;
-    public const short HidP_Feature = 2;
+    public const ushort HidP_Input = 0;
+    public const ushort HidP_Output = 1;
+    public const ushort HidP_Feature = 2;
 
     // ******************************************************************************
     // Structures and classes for API calls, listed alphabetically
@@ -86,7 +86,7 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     public static extern int HidP_GetCaps(IntPtr PreparsedData, ref HIDP_CAPS Capabilities);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern int HidP_GetValueCaps(short ReportType, ref byte ValueCaps, ref short ValueCapsLength,
+    public static extern int HidP_GetValueCaps(ushort ReportType, ref byte ValueCaps, ref ushort ValueCapsLength,
                                                IntPtr PreparsedData);
 
     [StructLayout(LayoutKind.Sequential)]
@@ -95,9 +95,9 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
       #region Fields
 
       public int Size;
-      public short VendorID;
-      public short ProductID;
-      public short VersionNumber;
+      public ushort VendorID;
+      public ushort ProductID;
+      public ushort VersionNumber;
 
       #endregion
     }
@@ -107,22 +107,22 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     {
       #region Fields
 
-      public short Usage;
-      public short UsagePage;
-      public short InputReportByteLength;
-      public short OutputReportByteLength;
-      public short FeatureReportByteLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst=17)] public short[] Reserved;
-      public short NumberLinkCollectionNodes;
-      public short NumberInputButtonCaps;
-      public short NumberInputValueCaps;
-      public short NumberInputDataIndices;
-      public short NumberOutputButtonCaps;
-      public short NumberOutputValueCaps;
-      public short NumberOutputDataIndices;
-      public short NumberFeatureButtonCaps;
-      public short NumberFeatureValueCaps;
-      public short NumberFeatureDataIndices;
+      public ushort Usage;
+      public ushort UsagePage;
+      public ushort InputReportByteLength;
+      public ushort OutputReportByteLength;
+      public ushort FeatureReportByteLength;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst=17)] public ushort[] Reserved;
+      public ushort NumberLinkCollectionNodes;
+      public ushort NumberInputButtonCaps;
+      public ushort NumberInputValueCaps;
+      public ushort NumberInputDataIndices;
+      public ushort NumberOutputButtonCaps;
+      public ushort NumberOutputValueCaps;
+      public ushort NumberOutputDataIndices;
+      public ushort NumberFeatureButtonCaps;
+      public ushort NumberFeatureValueCaps;
+      public ushort NumberFeatureDataIndices;
 
       #endregion
     }
@@ -133,38 +133,38 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     {
       #region Fields
 
-      public short UsagePage;
+      public ushort UsagePage;
       public byte ReportID;
       public int IsAlias;
-      public short BitField;
-      public short LinkCollection;
-      public short LinkUsage;
-      public short LinkUsagePage;
+      public ushort BitField;
+      public ushort LinkCollection;
+      public ushort LinkUsage;
+      public ushort LinkUsagePage;
       public int IsRange; // If IsRange is false, UsageMin is the Usage and UsageMax is unused.
       public int IsStringRange; // If IsStringRange is false, StringMin is the string index and StringMax is unused.
       public int IsDesignatorRange; // If IsDesignatorRange is false, DesignatorMin is the designator index and DesignatorMax is unused.
       public int IsAbsolute;
       public int HasNull;
       public byte Reserved;
-      public short BitSize;
-      public short ReportCount;
-      public short Reserved2;
-      public short Reserved3;
-      public short Reserved4;
-      public short Reserved5;
-      public short Reserved6;
+      public ushort BitSize;
+      public ushort ReportCount;
+      public ushort Reserved2;
+      public ushort Reserved3;
+      public ushort Reserved4;
+      public ushort Reserved5;
+      public ushort Reserved6;
       public int LogicalMin;
       public int LogicalMax;
       public int PhysicalMin;
       public int PhysicalMax;
-      public short UsageMin;
-      public short UsageMax;
-      public short StringMin;
-      public short StringMax;
-      public short DesignatorMin;
-      public short DesignatorMax;
-      public short DataIndexMin;
-      public short DataIndexMax;
+      public ushort UsageMin;
+      public ushort UsageMax;
+      public ushort StringMin;
+      public ushort StringMax;
+      public ushort DesignatorMin;
+      public ushort DesignatorMax;
+      public ushort DataIndexMin;
+      public ushort DataIndexMax;
 
       #endregion
     }

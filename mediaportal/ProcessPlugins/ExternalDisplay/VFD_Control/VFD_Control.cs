@@ -195,15 +195,7 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
 
                 if (Settings.Instance.ExtensiveLogging)
                 {
-                  Log.Debug("ExternalDisplay.VFD_Control: Vendor ID: " + _MyHID.DeviceAttributes.VendorID.ToString("x"));
-                }
-                if (Settings.Instance.ExtensiveLogging)
-                {
-                  Log.Debug("ExternalDisplay.VFD_Control: Product ID: " + _MyHID.DeviceAttributes.ProductID.ToString("x"));
-                }
-                if (Settings.Instance.ExtensiveLogging)
-                {
-                  Log.Debug("ExternalDisplay.VFD_Control: Version Number: " + _MyHID.DeviceAttributes.VersionNumber.ToString("x"));
+                  Log.Debug("ExternalDisplay.VFD_Control: Vendor ID: {0:X}, Product ID: {1:X}, Version {2:X}" + _MyHID.DeviceAttributes.VendorID,_MyHID.DeviceAttributes.ProductID,_MyHID.DeviceAttributes.VersionNumber);
                 }
 
                 // Find out if the device matches the one we're looking for.
