@@ -1242,7 +1242,7 @@ namespace MediaPortal.Visualization
 
           if (CurrentTrackTag != null)
           {
-            string thumbPath = GetAlbumThumbName(filename, CurrentTrackTag.Artist, CurrentTrackTag.Album);
+            string thumbPath = GetAlbumOrFolderThumb(filename, CurrentTrackTag.Artist, CurrentTrackTag.Album);
 
             if (thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
             {
@@ -1937,29 +1937,33 @@ namespace MediaPortal.Visualization
       return sleepMS;
     }
 
-    private string GetAlbumThumbName(string filename, string ArtistName, string AlbumName)
+    private string GetAlbumOrFolderThumb(string filename, string ArtistName, string AlbumName)
     {
-      if (ArtistName == string.Empty)
+      if (string.IsNullOrEmpty(ArtistName) || string.IsNullOrEmpty(AlbumName))
         return string.Empty;
 
-      if (AlbumName == string.Empty)
-        return string.Empty;
+      string thumbPath = Util.Utils.GetAlbumThumbName(ArtistName, AlbumName);
 
-      string name = String.Format("{0}-{1}", ArtistName, AlbumName);
-      string thumbPath = MediaPortal.Util.Utils.GetCoverArtName(MediaPortal.Util.Thumbs.MusicAlbum, name);
-
-      if (thumbPath.Length > 0 && !Path.IsPathRooted(thumbPath))
-        thumbPath = Path.Combine(Application.StartupPath, thumbPath);
-
-      if (thumbPath.Length > 0 && File.Exists(thumbPath))
-        return thumbPath;
+      if (File.Exists(thumbPath))
+      {
+        string largeThumb = Util.Utils.ConvertToLargeCoverArt(thumbPath);
+        if (File.Exists(largeThumb))
+          return largeThumb;
+        else
+          return thumbPath;
+      }
 
       // Still no album art? Then look for the folder.jpg image
-      string pathName = Path.GetDirectoryName(filename);
-      string folderThumbPath = Path.Combine(pathName, "folder.jpg");
+      string folderThumbPath = Util.Utils.GetLocalFolderThumb(filename);
 
-      if (folderThumbPath.Length > 0 && File.Exists(folderThumbPath))
-        return folderThumbPath;
+      if (File.Exists(folderThumbPath))
+      {
+        string largeFolderThumb = Util.Utils.ConvertToLargeCoverArt(folderThumbPath);
+        if (File.Exists(largeFolderThumb))
+          return largeFolderThumb;
+        else
+          return thumbPath;
+      }
 
       return string.Empty;
     }
