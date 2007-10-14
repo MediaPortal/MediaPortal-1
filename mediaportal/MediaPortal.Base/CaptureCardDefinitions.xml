@@ -21209,4 +21209,20 @@
       </connections>
     </tv>
   </capturecard>
+  
+  <capturecard commercialname="FireDTV DVB-S2" capturename="FireDTV BDA Receiver DVBS2" devid="digital_everywhere&amp;firedtv_s2">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider" checkdevice="false"/>
+        <filter cat="tunerdevice" name="FireDTV BDA Tuner DVBS2" checkdevice="true"/>
+        <filter cat="capture" name="FireDTV BDA Receiver DVBS2" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
