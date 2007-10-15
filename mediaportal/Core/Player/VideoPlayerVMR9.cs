@@ -135,7 +135,7 @@ namespace MediaPortal.Player
           Log.Info("VideoPlayerVMR9: Found WMAudio Decoder DMO");
           //Set the filter setting to enable more than 2 audio channels
           const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
-          object val;
+          object val = true;
           IPropertyBag propBag = (IPropertyBag)baseFilter;
           int hr;
           hr = propBag.Write(g_wszWMACHiResOutput, ref val);
