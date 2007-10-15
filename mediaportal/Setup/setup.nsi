@@ -361,6 +361,7 @@ Section -Main SEC0000
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration" 
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\License.lnk" "$INSTDIR\Docs\MediaPortal License.rtf" "" "$INSTDIR\Docs\MediaPortal License.rtf" 0 "" "" "License"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPInstaller.lnk" "$INSTDIR\MPInstaller.exe" "" "$INSTDIR\MPInstaller.exe" 0 "" "" "MediaPortal Extension Installer"
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPTestTool.lnk" "$INSTDIR\MPTestTool2.exe" "" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Test Tool"
 
     CreateShortcut "$DESKTOP\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal" 
     CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration" 
@@ -533,6 +534,7 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk"
     Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\License.lnk
     Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\MPInstaller.lnk
+    Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\MPTestTool.lnk
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"
     Delete /REBOOTOK "$DESKTOP\MediaPortal Configuration.lnk"
     Delete /REBOOTOK $DESKTOP\MediaPortal.lnk
