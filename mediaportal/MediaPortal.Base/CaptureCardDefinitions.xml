@@ -20872,7 +20872,7 @@
   </capturecard>
 
   <capturecard commercialname="ASUS U3000 Hybrid (Analog)" capturename="ASUS U3000 Hybrid BDA Analog Capture (Dev1 Path2)" devid="vid_0b05&amp;pid_1736">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
