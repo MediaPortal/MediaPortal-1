@@ -1075,40 +1075,10 @@ namespace TvPlugin
       dlg.SelectedLabel = selected;
       dlg.DoModal(this.GetID);
       if (dlg.SelectedLabel < 0) return;
-      TVHome.Card = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
-      if (TVHome.Card.IsRecording && !TVHome.Card.IsTimeShifting)
-      {
-        string fileName = TVHome.Card.RecordingFileName;
-        g_Player.Stop();
-        if (System.IO.File.Exists(fileName))
-        {
-          g_Player.Play(fileName, g_Player.MediaType.Recording);
-          g_Player.SeekAbsolute(g_Player.Duration);
-          g_Player.ShowFullScreenWindow();
-        }
-        else
-        {
-          string url = server.GetRtspUrlForFile(fileName);
-          Log.Info("recording url:{0}", url);
-          if (url.Length > 0)
-          {
-            g_Player.Play(url, g_Player.MediaType.Recording);
 
-            if (g_Player.Playing)
-            {
-              g_Player.SeekAbsolute(g_Player.Duration);
-              g_Player.SeekAbsolute(g_Player.Duration);
-              g_Player.ShowFullScreenWindow();
-            }
-          }
-        }
-      }
-      else
-      {
-        g_Player.Stop();
-        StartPlay();
-      }
-      TVHome.Card.User.Name = new User().Name;
+      VirtualCard vCard = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
+      Channel channel = Navigator.GetChannel(vCard.IdChannel);
+      TVHome.ViewChannel(channel);      
     }
 
     void OnRecord()
