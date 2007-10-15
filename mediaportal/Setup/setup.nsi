@@ -240,10 +240,12 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\MPInstaller.exe
     File ..\xbmc\bin\Release\MPInstaller.Library.dll
     File ..\xbmc\bin\Release\mplogo.gif
+    File ..\xbmc\bin\Release\MPTestTool2.exe
     File ..\xbmc\bin\Release\mpviz.dll
     File ..\xbmc\bin\Release\MusicShareWatcher.exe
     File ..\xbmc\bin\Release\MusicShareWatcherHelper.dll
     File ..\xbmc\bin\Release\RemotePlugins.dll
+    File ..\xbmc\bin\Release\SG_LCD.dll
     File ..\xbmc\bin\Release\SG_VFD.dll
     File ..\xbmc\bin\Release\sqlite.dll
     File ..\xbmc\bin\Release\taglib-sharp.dll
