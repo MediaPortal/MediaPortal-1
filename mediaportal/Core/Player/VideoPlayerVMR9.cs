@@ -58,6 +58,7 @@ namespace MediaPortal.Player
         SetVideoWindow();
       }
     }
+
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces()
     {
@@ -66,8 +67,6 @@ namespace MediaPortal.Player
       Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
-      //Type comtype = null;
-      //object comobj = null;
       DsRect rect = new DsRect();
       rect.top = 0;
       rect.bottom = GUIGraphicsContext.form.Height;
@@ -103,18 +102,18 @@ namespace MediaPortal.Player
             intCount++;
           }
         }
+        //Manually add codecs based on file extension
         string extension = System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
         if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
         {
           if (strVideoCodec.Length > 0) videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
           if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
         }
-        // doesn't help for Music Videos to start..
-        //if (extension.Equals(".wmv"))
-        //{
-        //  videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMVideo Decoder DMO");
-        //  audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
-        //}
+        if (extension.Equals(".wmv"))
+        {
+          videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMVideo Decoder DMO");
+          audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
+        }
         if (extension.Equals(".mp4") || extension.Equals(".mkv"))
         {
           if (strH264VideoCodec.Length > 0) h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
@@ -128,20 +127,42 @@ namespace MediaPortal.Player
           customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
         }
         if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
+        //Check if the WMAudio Decoder DMO filter is in the graph if so set High Resolution Output > 2 channels
+        IBaseFilter baseFilter;
+        graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
+        if (baseFilter != null)
+        {
+          Log.Info("VideoPlayerVMR9: Found WMAudio Decoder DMO");
+          //Set the filter setting to enable more than 2 audio channels
+          const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
+          object val;
+          IPropertyBag propBag = (IPropertyBag)baseFilter;
+          int hr;
+          hr = propBag.Write(g_wszWMACHiResOutput, ref val);
+          if (hr != 0)
+          {
+            Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
+          }
+          else
+          {
+            Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
+          }
+          Marshal.ReleaseComObject(baseFilter);
+        }
         //int hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
-        graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
         /*if (hr != 0)
         {
           Error.SetError("Unable to play movie", "Unable to render file. Missing codecs?");
           _log.Error("VideoPlayer9:Failed to render file -> vmr9");
           return false;
         }*/
+        //Use below since above is rem'd out to allow some file formats to play
+        graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
         mediaCtrl = (IMediaControl)graphBuilder;
         mediaEvt = (IMediaEventEx)graphBuilder;
         mediaSeek = (IMediaSeeking)graphBuilder;
         mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = graphBuilder as IBasicAudio;
-        //DirectShowUtil.SetARMode(graphBuilder,AspectRatioMode.Stretched);
         DirectShowUtil.EnableDeInterlace(graphBuilder);
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
@@ -188,9 +209,7 @@ namespace MediaPortal.Player
             if (iShadow > 0) fShadow = true;
             int res = vobSub.put_TextSettings(logFont, size, txtcolor, fShadow, fOutLine, fAdvancedRenderer);
           }
-
         }
-       
         if (!Vmr9.IsVMR9Connected)
         {
           //VMR9 is not supported, switch to overlay
