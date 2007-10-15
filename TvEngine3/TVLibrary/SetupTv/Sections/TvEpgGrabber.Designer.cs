@@ -69,7 +69,7 @@ namespace SetupTv.Sections
 			this.tabControl1.Location = new System.Drawing.Point(3, 3);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(485, 405);
+			this.tabControl1.Size = new System.Drawing.Size(485, 431);
 			this.tabControl1.TabIndex = 10;
 			// 
 			// tabPage1
@@ -88,7 +88,7 @@ namespace SetupTv.Sections
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(477, 379);
+			this.tabPage1.Size = new System.Drawing.Size(477, 405);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "TV Epg grabber";
 			this.tabPage1.UseVisualStyleBackColor = true;
@@ -96,7 +96,7 @@ namespace SetupTv.Sections
 			// mpButtonAllGrouped
 			// 
 			this.mpButtonAllGrouped.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.mpButtonAllGrouped.Location = new System.Drawing.Point(77, 348);
+			this.mpButtonAllGrouped.Location = new System.Drawing.Point(77, 374);
 			this.mpButtonAllGrouped.Name = "mpButtonAllGrouped";
 			this.mpButtonAllGrouped.Size = new System.Drawing.Size(75, 23);
 			this.mpButtonAllGrouped.TabIndex = 18;
@@ -108,7 +108,7 @@ namespace SetupTv.Sections
 			// 
 			this.mpCheckBoxStoreOnlySelected.AutoSize = true;
 			this.mpCheckBoxStoreOnlySelected.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-			this.mpCheckBoxStoreOnlySelected.Location = new System.Drawing.Point(10, -16);
+			this.mpCheckBoxStoreOnlySelected.Location = new System.Drawing.Point(10, 6);
 			this.mpCheckBoxStoreOnlySelected.Name = "mpCheckBoxStoreOnlySelected";
 			this.mpCheckBoxStoreOnlySelected.Size = new System.Drawing.Size(199, 17);
 			this.mpCheckBoxStoreOnlySelected.TabIndex = 17;
@@ -118,7 +118,7 @@ namespace SetupTv.Sections
 			// mpButtonNoneChannels
 			// 
 			this.mpButtonNoneChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.mpButtonNoneChannels.Location = new System.Drawing.Point(158, 348);
+			this.mpButtonNoneChannels.Location = new System.Drawing.Point(158, 374);
 			this.mpButtonNoneChannels.Name = "mpButtonNoneChannels";
 			this.mpButtonNoneChannels.Size = new System.Drawing.Size(60, 23);
 			this.mpButtonNoneChannels.TabIndex = 15;
@@ -129,7 +129,7 @@ namespace SetupTv.Sections
 			// mpButtonAllChannels
 			// 
 			this.mpButtonAllChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.mpButtonAllChannels.Location = new System.Drawing.Point(10, 348);
+			this.mpButtonAllChannels.Location = new System.Drawing.Point(10, 374);
 			this.mpButtonAllChannels.Name = "mpButtonAllChannels";
 			this.mpButtonAllChannels.Size = new System.Drawing.Size(61, 23);
 			this.mpButtonAllChannels.TabIndex = 14;
@@ -139,8 +139,8 @@ namespace SetupTv.Sections
 			// 
 			// mpButtonNone
 			// 
-			this.mpButtonNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.mpButtonNone.Location = new System.Drawing.Point(344, 348);
+			this.mpButtonNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.mpButtonNone.Location = new System.Drawing.Point(335, 374);
 			this.mpButtonNone.Name = "mpButtonNone";
 			this.mpButtonNone.Size = new System.Drawing.Size(75, 23);
 			this.mpButtonNone.TabIndex = 16;
@@ -150,8 +150,8 @@ namespace SetupTv.Sections
 			// 
 			// mpButtonAll
 			// 
-			this.mpButtonAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.mpButtonAll.Location = new System.Drawing.Point(263, 348);
+			this.mpButtonAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.mpButtonAll.Location = new System.Drawing.Point(254, 374);
 			this.mpButtonAll.Name = "mpButtonAll";
 			this.mpButtonAll.Size = new System.Drawing.Size(75, 23);
 			this.mpButtonAll.TabIndex = 13;
@@ -164,7 +164,7 @@ namespace SetupTv.Sections
 			this.mpLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 									| System.Windows.Forms.AnchorStyles.Left)));
 			this.mpLabel2.AutoSize = true;
-			this.mpLabel2.Location = new System.Drawing.Point(251, 9);
+			this.mpLabel2.Location = new System.Drawing.Point(251, 35);
 			this.mpLabel2.Name = "mpLabel2";
 			this.mpLabel2.Size = new System.Drawing.Size(131, 13);
 			this.mpLabel2.TabIndex = 12;
@@ -180,9 +180,9 @@ namespace SetupTv.Sections
 			this.mpListView2.CheckBoxes = true;
 			this.mpListView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
-			this.mpListView2.Location = new System.Drawing.Point(254, 29);
+			this.mpListView2.Location = new System.Drawing.Point(254, 51);
 			this.mpListView2.Name = "mpListView2";
-			this.mpListView2.Size = new System.Drawing.Size(217, 313);
+			this.mpListView2.Size = new System.Drawing.Size(217, 317);
 			this.mpListView2.TabIndex = 11;
 			this.mpListView2.UseCompatibleStateImageBehavior = false;
 			this.mpListView2.View = System.Windows.Forms.View.Details;
@@ -197,7 +197,7 @@ namespace SetupTv.Sections
 			this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 									| System.Windows.Forms.AnchorStyles.Left)));
 			this.mpLabel1.AutoSize = true;
-			this.mpLabel1.Location = new System.Drawing.Point(7, 9);
+			this.mpLabel1.Location = new System.Drawing.Point(7, 35);
 			this.mpLabel1.Name = "mpLabel1";
 			this.mpLabel1.Size = new System.Drawing.Size(119, 13);
 			this.mpLabel1.TabIndex = 10;
@@ -215,9 +215,9 @@ namespace SetupTv.Sections
             this.columnHeader3});
 			this.mpListView1.FullRowSelect = true;
 			this.mpListView1.LargeImageList = this.imageList1;
-			this.mpListView1.Location = new System.Drawing.Point(10, 29);
+			this.mpListView1.Location = new System.Drawing.Point(10, 51);
 			this.mpListView1.Name = "mpListView1";
-			this.mpListView1.Size = new System.Drawing.Size(208, 313);
+			this.mpListView1.Size = new System.Drawing.Size(208, 317);
 			this.mpListView1.SmallImageList = this.imageList1;
 			this.mpListView1.TabIndex = 9;
 			this.mpListView1.UseCompatibleStateImageBehavior = false;
