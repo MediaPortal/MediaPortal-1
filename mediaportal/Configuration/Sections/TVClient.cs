@@ -55,18 +55,18 @@ namespace MediaPortal.Configuration.Sections
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _serverHostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
-        _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
-        _avoidSeeking = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
+        mpTextBoxHostname.Text = xmlreader.GetValueAsString("tvservice", "hostname", "");
+        mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
+        mpCheckBoxavoidSeekingonChannelChange.Checked = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
       }
     }
     public override void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlreader.SetValue("tvservice", "hostname", _serverHostName);
-        xmlreader.SetValueAsBool("tvservice", "preferac3", _preferAC3);            
-        xmlreader.SetValueAsBool("tvservice", "avoidSeeking", _avoidSeeking );        
+        xmlreader.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
+        xmlreader.SetValueAsBool("tvservice", "preferac3", mpCheckBoxPrefAC3.Checked);
+        xmlreader.SetValueAsBool("tvservice", "avoidSeeking", mpCheckBoxavoidSeekingonChannelChange.Checked);        
       }
     }
 
