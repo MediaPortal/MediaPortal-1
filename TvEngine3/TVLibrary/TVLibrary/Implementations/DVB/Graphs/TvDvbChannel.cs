@@ -1243,7 +1243,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (dvbChannel.PmtPid > 0)
         {
-          _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid);
+          _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId);
         }
         _tsFilterInterface.RecordSetMode(_subChannelIndex,TimeShiftingMode.TransportStream);
         Log.Log.WriteFile("subch:{0} record transport stream mode", _subChannelId);

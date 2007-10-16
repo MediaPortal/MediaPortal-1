@@ -56,7 +56,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     [PreserveSig] int RecordStopRecord(int handle);
     [PreserveSig] int RecordGetMode(int handle, out TimeShiftingMode mode);
     [PreserveSig] int RecordSetMode(int handle, TimeShiftingMode mode);
-    [PreserveSig] int RecordSetPmtPid(int handle, int pmtPid);
+    [PreserveSig] int RecordSetPmtPid(int handle, int pmtPid, int serviceId);
 
 
     [PreserveSig] int TimeShiftSetPcrPid(int handle, int pcrPid);
