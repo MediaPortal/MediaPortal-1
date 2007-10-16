@@ -289,7 +289,14 @@ namespace TvService
         if (currentTime >= schedule.StartTime.AddMinutes(-schedule.PreRecordInterval) &&
             currentTime <= schedule.EndTime.AddMinutes(schedule.PostRecordInterval))
         {
-
+          // before creating the RecordingDetail, we need to check if this once schedule wasn't created 
+          // from a everytime on ... schedule type 
+          // in that case we have it in _recordingsInProgressList already
+          foreach (RecordingDetail detail in _recordingsInProgressList)
+          {
+            if (detail.Schedule.Equals(schedule)) return false;
+            Log.Debug("Recording {0} already added in _recordingsInProgressList, skipping", schedule.ProgramName);
+          }
           newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime, false);
           return true;
         }
