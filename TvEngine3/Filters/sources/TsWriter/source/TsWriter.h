@@ -75,7 +75,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
   STDMETHOD(RecordStopRecord)(THIS_ int handle)PURE;
 	STDMETHOD(RecordGetMode) (THIS_ int handle,int *mode) PURE;
 	STDMETHOD(RecordSetMode) (THIS_ int handle,int mode) PURE;
-	STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid)PURE;
+	STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid,int serviceId)PURE;
 
 
 	STDMETHOD(TimeShiftSetPcrPid)(THIS_ int handle, int pcrPid)PURE;
@@ -200,7 +200,7 @@ public:
 		STDMETHODIMP RecordStopRecord( int handle);
 		STDMETHODIMP RecordGetMode( int handle,int *mode) ;
 		STDMETHODIMP RecordSetMode( int handle,int mode) ;
-		STDMETHODIMP RecordSetPmtPid(int handle,int mtPid);
+		STDMETHODIMP RecordSetPmtPid(int handle,int mtPid,int serviceId );
 
 
 		STDMETHODIMP TimeShiftSetPcrPid( int handle, int pcrPid);

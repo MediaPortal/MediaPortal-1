@@ -45,7 +45,7 @@ DECLARE_INTERFACE_(ITsRecorder, IUnknown)
   STDMETHOD(StopRecord)(THIS_ )PURE;
 	STDMETHOD(GetMode) (THIS_ int *mode) PURE;
 	STDMETHOD(SetMode) (THIS_ int mode) PURE;
-	STDMETHOD(SetPmtPid)(THIS_ int mtPid)PURE;
+	STDMETHOD(SetPmtPid)(THIS_ int mtPid, int serviceId)PURE;
 };
 
 class CRecorder: public CUnknown, public ITsRecorder, public IFileWriter, IPmtCallBack
@@ -56,7 +56,7 @@ public:
   DECLARE_IUNKNOWN
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
-	STDMETHODIMP SetPmtPid(int pmtPid);
+	STDMETHODIMP SetPmtPid(int pmtPid, int serviceId);
 	STDMETHODIMP AddStream(int pid,bool isAc3,bool isAudio,bool isVideo);
 	STDMETHODIMP RemoveStream(int pid);
 	STDMETHODIMP SetRecordingFileName(char* pszFileName);
@@ -103,4 +103,5 @@ private:
   bool            m_bDetermineNewStartPcr;
 
   int             m_pcrPid;
+  int             m_iServiceId;
 };

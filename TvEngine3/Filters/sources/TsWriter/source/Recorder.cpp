@@ -43,6 +43,7 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
   m_hFile=INVALID_HANDLE_VALUE;
   m_pWriteBuffer = new byte[RECORD_BUFFER_SIZE];
   m_iWriteBufferPos=0;
+  m_iServiceId=-1;
   m_iPmtPid=-1;
   m_pmtVersion=-1;
 	m_multiPlexer.SetFileWriterCallBack(this);
@@ -115,11 +116,13 @@ STDMETHODIMP CRecorder::SetPcrPid(int pcrPid)
 	return S_OK;
 }
 
-STDMETHODIMP CRecorder::SetPmtPid(int pmtPid)
+STDMETHODIMP CRecorder::SetPmtPid(int pmtPid, int serviceId )
 {
 	CEnterCriticalSection enter(m_section);
 	m_iPmtPid=pmtPid;
+  m_iServiceId=serviceId;
 	LogDebug("Recorder:pmt pid:%x",m_iPmtPid);
+  LogDebug("Recorder:serviceId:%x",serviceId);
   if (m_pPmtParser)
   {
     m_pPmtParser->SetPid(pmtPid);
@@ -377,9 +380,9 @@ void CRecorder::OnPmtReceived(int pmtPid)
 
 void CRecorder::OnPidsReceived(const CPidTable& info)
 {
-  if (m_pPmtParser && m_pmtVersion!=m_pPmtParser->GetPmtVersion() )
+  if (m_pPmtParser && m_pmtVersion!=m_pPmtParser->GetPmtVersion() && m_iServiceId == info.ServiceId )
   {
-    LogDebug("Recorder: PMT version changed from %d to %d", m_pmtVersion, m_pPmtParser->GetPmtVersion() );
+    LogDebug("Recorder: PMT version changed from %d to %d - m_iServiceId %x info.ServiceId %x", m_pmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId, info.ServiceId );
     LogDebug("Recorder: pmt:0x%x pcr:0x%x video:0x%x audio1:0x%x audio2:0x%x audio3:%x audio4:0x%x audio5:0x%x video:0x%x teletext:0x%x subtitle:0x%x",
       info.PmtPid,info.PcrPid,info.VideoPid,info.AudioPid1,info.AudioPid2,info.AudioPid3, info.AudioPid4,info.AudioPid5,info.VideoPid,info.TeletextPid,info.SubtitlePid);
 

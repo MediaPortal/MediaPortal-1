@@ -700,11 +700,11 @@ STDMETHODIMP CMpTs::RecordSetMode( int handle,int mode)
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pRecorder->SetMode(  mode) ;
 }
-STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid)
+STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->SetPmtPid( mtPid);
+	return pChannel->m_pRecorder->SetPmtPid( mtPid, serviceId );
 }
 
 
