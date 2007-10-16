@@ -76,4 +76,4 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
-[assembly: AssemblyFileVersionAttribute("0.2.2.9991")]
+[assembly: AssemblyFileVersionAttribute("0.2.2.9993")]
