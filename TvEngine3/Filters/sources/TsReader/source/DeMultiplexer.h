@@ -35,7 +35,7 @@
 #include <map>
 using namespace std;
 class CTsReaderFilter;
-class CDeMultiplexer : public CPacketSync, public TSThread, public IPatParserCallback
+class CDeMultiplexer : public CPacketSync, public IPatParserCallback
 {
 public:
   CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);

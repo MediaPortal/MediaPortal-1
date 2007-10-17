@@ -59,9 +59,11 @@ void LogDebug(const char *fmt, ...)
 	FILE* fp = fopen(logFile.c_str(),"a+");
 	if (fp!=NULL)
 	{
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			systemTime.wMilliseconds,
+			GetCurrentThreadId(),
 			buffer);
 		fclose(fp);
   }
@@ -139,7 +141,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	m_pAudioPin(NULL),
   m_demultiplexer( m_duration, *this),
   m_rtspClient(m_buffer),
-  m_pDVBSubtitle(NULL)
+  m_pDVBSubtitle(NULL),
+  m_pCallback(NULL)
 {
   char moduleFileName[1024];
 	GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
@@ -258,6 +261,10 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 		return GetInterface((IAudioStream*)this, ppv);
 	}
 
+	if ( riid == IID_ITSReader )
+	{
+		return GetInterface((ITSReader*)this, ppv);
+	}
 	return CSource::NonDelegatingQueryInterface(riid, ppv);
 }
 
@@ -287,6 +294,18 @@ CBasePin * CTsReaderFilter::GetPin(int n)
 int CTsReaderFilter::GetPinCount()
 {
   return 3;//4;
+}
+
+void CTsReaderFilter::OnMediaTypeChanged()
+{
+	if ( m_pCallback ) m_pCallback->OnMediaTypeChanged();
+}
+
+STDMETHODIMP CTsReaderFilter::SetGraphCallback(ITSReaderCallback* pCallback)
+{
+	LogDebug("CALLBACK SET");
+	m_pCallback = pCallback;
+	return S_OK;
 }
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
@@ -798,7 +817,6 @@ void CTsReaderFilter::ThreadProc()
     //since we're no longer playing
     if (m_demultiplexer.EndOfFile()) 
       break;
-
     //are we playing an RTSP stream?
     if (m_fileDuration!=NULL)
     {

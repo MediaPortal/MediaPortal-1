@@ -1350,7 +1350,8 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     //yes? then reconfigure the audio/video output pins
     //we do this in a seperate thread to prevent any lockups
-    StartThread();
+    //StartThread();
+	  m_filter.OnMediaTypeChanged();
   }
 }
 
@@ -1359,7 +1360,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 HRESULT CDeMultiplexer::DoStop()
 {
   LogDebug("demux:DoStop");
-	HRESULT hr = S_OK;
+	HRESULT hr = E_UNEXPECTED;
 
 	FILTER_INFO Info;
 	if (SUCCEEDED(m_filter.QueryFilterInfo(&Info)) && Info.pGraph != NULL)
@@ -1380,14 +1381,18 @@ HRESULT CDeMultiplexer::DoStop()
 		{
 			hr = pMediaControl->Stop(); 
 			pMediaControl->Release();
+		} else {
+			LogDebug("Could not get IMediaControl interface");
 		}
 
 		Info.pGraph->Release();
 
-		if (FAILED(hr))
+		if (FAILED(hr)) {
+			LogDebug("Stopping graph failed with 0x%x", hr);
 			return S_OK;
+		}
 	}
-	return S_OK;
+	return hr;
 }
 
 ///
@@ -1689,53 +1694,3 @@ void CDeMultiplexer::SetHoldSubtitle(bool onOff)
 }
 
 
-///
-/// Create a filter by category and name. Will enumerate all filters
-/// of the given category and return the filter whose name matches,
-/// if any.
-///
-/// @param Name of filter to create.
-/// @param Filter Will receive the pointer to the interface
-/// for the created filter.
-/// @param FilterCategory Filter category.
-///
-/// @return true if successful.
-
-void CDeMultiplexer::ThreadProc()
-{
-  try
-  {
-    LogDebug("demux:reconfigure graph");
-    while (m_filter.GetVideoPin()->IsSeeking() ||m_filter.GetAudioPin()->IsSeeking() )
-    {
-      Sleep(5);
-    }
-    //remember if graph is playing
-    HRESULT isPlaying=IsPlaying();
-
-    //stop graph
-    LogDebug("demux:  stop graph");
-    if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
-    
-    //re-render the video output pin
-    LogDebug("demux:  render video");
-    RenderFilterPin(m_filter.GetVideoPin(),false,true);
-
-    //re-render the audio output pin
-    LogDebug("demux:  render audio");
-    RenderFilterPin(m_filter.GetAudioPin(),true,false);
-
-    //if we where playing
-    if (isPlaying==S_OK )
-    {
-      //then start the graph again
-      LogDebug("demux:  start graph");
-      DoStart();
-    }
-    LogDebug("demux:reconfigure graph done");
-    }
-  catch(...)
-  {
-    LogDebug("demux:reconfigure exception");
-  }
-}

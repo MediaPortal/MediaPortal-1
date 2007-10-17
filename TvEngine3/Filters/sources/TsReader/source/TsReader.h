@@ -41,10 +41,27 @@ class CTsReader;
 class CTsReaderFilter;
 
 DEFINE_GUID(CLSID_TSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x3f);
+DEFINE_GUID(IID_ITSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x4f);
+
+DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
+{
+	STDMETHOD(OnMediaTypeChanged)  (THIS_)PURE;
+};
+
+    MIDL_INTERFACE("b9559486-e1bb-45d3-a2a2-9a7afe49b24f")
+    ITSReader : public IUnknown
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE SetGraphCallback( 
+			/* [in] */ ITSReaderCallback* pCallback
+			) = 0;
+        
+    };
 
 
 class CTsReaderFilter : public CSource, public TSThread, public IFileSourceFilter, 
-                        public IAMFilterMiscFlags, public IAMStreamSelect, public ISubtitleStream, public IAudioStream
+                        public IAMFilterMiscFlags, public IAMStreamSelect, public ISubtitleStream, public IAudioStream,
+						public ITSReader
 {
 public:
 		DECLARE_IUNKNOWN
@@ -85,6 +102,8 @@ private:
     STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
 
 public:
+	// ITSReader
+	STDMETHODIMP	SetGraphCallback(ITSReaderCallback* pCallback);
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
@@ -106,6 +125,7 @@ public:
   CTsDuration&    GetDuration();
   FILTER_STATE    State() {return m_State;};
   CRefTime        Compensation;
+  void				OnMediaTypeChanged();
 protected:
   void ThreadProc();
 private:
@@ -135,5 +155,6 @@ private:
   bool            m_bNeedSeeking;
   bool            m_bTimeShifting;
   IDVBSubtitle*   m_pDVBSubtitle;
+  ITSReaderCallback* m_pCallback;
 };
 
