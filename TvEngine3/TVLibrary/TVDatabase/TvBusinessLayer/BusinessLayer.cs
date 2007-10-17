@@ -427,7 +427,7 @@ namespace TvDatabase
             analogChannel.Frequency = detail.Frequency;
             analogChannel.IsRadio = detail.IsRadio;
             analogChannel.IsTv = detail.IsTv;
-            analogChannel.Name = detail.Name;
+						analogChannel.Name = channel.Name; //detail.Name;
             analogChannel.TunerSource = (TunerInputType)detail.TuningSource;
             analogChannel.VideoSource = (AnalogChannel.VideoInputType)detail.VideoSource;
             tvChannels.Add(analogChannel);
@@ -441,7 +441,7 @@ namespace TvDatabase
             atscChannel.Frequency = detail.Frequency;
             atscChannel.IsRadio = detail.IsRadio;
             atscChannel.IsTv = detail.IsTv;
-            atscChannel.Name = detail.Name;
+						atscChannel.Name = channel.Name; //detail.Name;
             atscChannel.NetworkId = detail.NetworkId;
             atscChannel.PcrPid = detail.PcrPid;
             atscChannel.PmtPid = detail.PmtPid;
@@ -461,7 +461,7 @@ namespace TvDatabase
             dvbcChannel.Frequency = detail.Frequency;
             dvbcChannel.IsRadio = detail.IsRadio;
             dvbcChannel.IsTv = detail.IsTv;
-            dvbcChannel.Name = detail.Name;
+						dvbcChannel.Name = channel.Name; //detail.Name;
             dvbcChannel.NetworkId = detail.NetworkId;
             dvbcChannel.PcrPid = detail.PcrPid;
             dvbcChannel.PmtPid = detail.PmtPid;
@@ -480,7 +480,7 @@ namespace TvDatabase
             dvbsChannel.Frequency = detail.Frequency;
             dvbsChannel.IsRadio = detail.IsRadio;
             dvbsChannel.IsTv = detail.IsTv;
-            dvbsChannel.Name = detail.Name;
+						dvbsChannel.Name = channel.Name; //detail.Name;
             dvbsChannel.NetworkId = detail.NetworkId;
             dvbsChannel.PcrPid = detail.PcrPid;
             dvbsChannel.PmtPid = detail.PmtPid;
@@ -503,7 +503,7 @@ namespace TvDatabase
             dvbtChannel.Frequency = detail.Frequency;
             dvbtChannel.IsRadio = detail.IsRadio;
             dvbtChannel.IsTv = detail.IsTv;
-            dvbtChannel.Name = detail.Name;
+						dvbtChannel.Name = channel.Name; //detail.Name;
             dvbtChannel.NetworkId = detail.NetworkId;
             dvbtChannel.PcrPid = detail.PcrPid;
             dvbtChannel.PmtPid = detail.PmtPid;
