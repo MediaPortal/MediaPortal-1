@@ -576,8 +576,8 @@ namespace MediaPortal.GUI.Video
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
 
-      if (currentSelectedItem >= 0 && !itemSelected)
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);
+      if (!itemSelected)
+        SelectCurrentItem();
 
       GUIWaitCursor.Hide();
     }
