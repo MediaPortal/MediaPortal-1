@@ -148,8 +148,6 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   //set index
   m_iAudioStream=stream;   
 
-  HRESULT isPlaying=IsPlaying();
-  bool didStop=false;
 
   //get the new audio stream type
   int newAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
@@ -164,15 +162,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
     {
-      // yes, time to change audio pin media type
-
-      //first stop the filter
-      if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
-
-      //render the audio pin
-      RenderFilterPin(m_filter.GetAudioPin(),true,false);
-
-      didStop=true;
+		m_filter.OnMediaTypeChanged();
     }
   }
   else
@@ -180,14 +170,6 @@ bool CDeMultiplexer::SetAudioStream(int stream)
     m_filter.GetAudioPin()->SetDiscontinuity(true);  
   }
 
-
-  //if we where playing and stopped the graph
-  if (isPlaying==S_OK && didStop)
-  {
-    //then start the graph again
-    DoStart();
-  }
- 
   return S_OK;
 }
 
@@ -1612,61 +1594,6 @@ bool AddFilter(IFilterGraph *Graph, const WCHAR *Name,
   return true;
 }   
 
-///
-/// Renders an output pin
-HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo)
-{
-  LogDebug("demux:RenderFilterPin");
-  if ( pin->IsConnected())
-  {
-    //tsreader->codec->renderer
-	  HRESULT    hr = E_FAIL;
-    IPin*     pCodecPinIn;
-    IPin*     pCodecPinOut;
-    PIN_INFO  codecInfo;
-    IFilterGraph* graph=m_filter.GetFilterGraph();
-    pin->ConnectedTo(&pCodecPinIn);
-    pCodecPinIn->QueryPinInfo(&codecInfo);
-    graph->Disconnect(pCodecPinIn);
-    pCodecPinIn->Release();
-    graph->Disconnect(pin);
-
-    ULONG      fetched;
-    IEnumPins* enumPins;
-    IPin*      codecPinsOut[1];
-    codecInfo.pFilter->EnumPins(&enumPins);
-    while (SUCCEEDED(enumPins->Next(1,codecPinsOut,&fetched)))
-    {
-      if (1!=fetched) break;
-      PIN_DIRECTION pinDir;
-      codecPinsOut[0]->QueryDirection(&pinDir);
-      if (PINDIR_OUTPUT == pinDir)
-      {
-        if (SUCCEEDED(codecPinsOut[0]->ConnectedTo(&pCodecPinOut)))
-        {
-          graph->Disconnect(pCodecPinOut);
-          pCodecPinOut->Release();
-        }
-        graph->Disconnect(codecPinsOut[0]);
-      }
-      codecPinsOut[0]->Release();
-    } 
-    enumPins->Release(); 
-    codecInfo.pFilter->Release();
-    
-
-	  IGraphBuilder *pGraphBuilder;
-	  if(SUCCEEDED(graph->QueryInterface(IID_IGraphBuilder, (void **) &pGraphBuilder)))
-	  {
-		  hr = pGraphBuilder->Render(pin);
-		  pGraphBuilder->Release();
-	  }
-
-	  //graph->Release();
-	  return hr;
-  }
-  return S_OK;
-}
 
 ///Returns whether the demuxer is allowed to block in GetAudio() or not
 bool CDeMultiplexer::HoldAudio()
