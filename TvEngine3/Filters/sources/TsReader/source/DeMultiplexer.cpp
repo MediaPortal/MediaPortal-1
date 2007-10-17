@@ -1331,7 +1331,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       
   // lets try and select the audiotrack based on language. this could also mean ac3.
   ReadAudioIndexFromRegistry();  
-  if (m_audioStreams.size() >=  m_iAudioIdx)
+  if (m_audioStreams.size() >  m_iAudioIdx)
   {		
 	m_iAudioStream = m_iAudioIdx;		
   }
