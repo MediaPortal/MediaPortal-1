@@ -61,22 +61,9 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_iPatVersion=-1;
   m_bSetAudioDiscontinuity=false;
   m_bSetVideoDiscontinuity=false;
-  m_reader=NULL;
+  m_reader=NULL;  
 
-  //get ac3 preference from registry key
-  HKEY key;
-  if (ERROR_SUCCESS==RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\MediaPortal\\TsReader",0,KEY_READ,&key))
-  {    
-	DWORD audioIdx=-1;
-    DWORD keyType=REG_DWORD;
-    DWORD dwSize=sizeof(DWORD);   
-
-	if (ERROR_SUCCESS==RegQueryValueEx(key, "audioIdx",0,&keyType,(LPBYTE)&audioIdx,&dwSize))
-    {	  
-      m_iAudioIdx = audioIdx;
-    }		
-    RegCloseKey(key);
-  }  
+  ReadAudioIndexFromRegistry();
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -450,7 +437,7 @@ CBuffer* CDeMultiplexer::GetSubtitle()
     m_vecSubtitleBuffers.erase(it);
     return subtitleBuffer;
   }
-  //no subtitle packets available
+  //no subtitle packets available  
   return NULL;
 }
 
@@ -523,7 +510,7 @@ CBuffer* CDeMultiplexer::GetVideo()
       return videoBuffer;
     }
   }
-
+    
   //no video packets available
   return NULL;
 }
@@ -1083,6 +1070,26 @@ void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
   }
 }
 
+void CDeMultiplexer::ReadAudioIndexFromRegistry()
+{
+  //get audio preference from registry key
+  HKEY key;
+  if (ERROR_SUCCESS==RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\MediaPortal\\TsReader",0,KEY_READ,&key))
+  {    
+	DWORD audioIdx=-1;
+    DWORD keyType=REG_DWORD;
+    DWORD dwSize=sizeof(DWORD);   
+
+	if (ERROR_SUCCESS==RegQueryValueEx(key, "audioIdx",0,&keyType,(LPBYTE)&audioIdx,&dwSize))
+    {	  
+	  LogDebug ("read audioindex from registry : %i", audioIdx);
+      m_iAudioIdx = audioIdx;
+    }		
+    RegCloseKey(key);
+  }  
+}
+
+
 /// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
 /// In this method we check if any audio/video/subtitle pid or format has changed
 /// If not, we simply return
@@ -1321,12 +1328,18 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       changed=true;
     }
   }
-    
+      
   // lets try and select the audiotrack based on language. this could also mean ac3.
+  ReadAudioIndexFromRegistry();  
   if (m_audioStreams.size() >=  m_iAudioIdx)
   {		
-	m_iAudioStream = m_iAudioIdx;	
+	m_iAudioStream = m_iAudioIdx;		
   }
+  else
+  {
+	m_iAudioStream = 0;
+  }  
+  LogDebug ("Setting audio index : %i", m_iAudioStream);
   
   //get the new audio format
   int newAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
@@ -1340,9 +1353,9 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
-    {
+    {	 
       changed=true;
-    }
+    }	
   }
 
   //did audio/video format change?
@@ -1350,8 +1363,8 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     //yes? then reconfigure the audio/video output pins
     //we do this in a seperate thread to prevent any lockups
-    //StartThread();
-	  m_filter.OnMediaTypeChanged();
+    //StartThread();	
+	m_filter.OnMediaTypeChanged();
   }
 }
 

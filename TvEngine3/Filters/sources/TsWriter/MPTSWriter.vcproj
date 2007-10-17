@@ -399,6 +399,18 @@
 					RelativePath=".\source\VideoAudioScrambledAnalyzer.cpp"
 					>
 				</File>
+				<Filter
+					Name="ConditionalAccess"
+					>
+					<File
+						RelativePath=".\source\ConditionalAccess.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\source\FireDtv.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="TS"
@@ -441,18 +453,6 @@
 				</File>
 				<File
 					RelativePath=".\source\EnterCriticalSection.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="ConditionalAccess"
-				>
-				<File
-					RelativePath=".\source\ConditionalAccess.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\source\FireDtv.cpp"
 					>
 				</File>
 			</Filter>

@@ -83,7 +83,7 @@ public:
   void       FlushAudio();
   void       FlushSubtitle();
   void       FlushTeletext();
-  int        GetVideoServiceType();
+  int        GetVideoServiceType();  
 private:
   struct stAudioStream
   {
@@ -146,5 +146,6 @@ private:
 
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
-  CPcr m_subtitlePcr;
+  CPcr m_subtitlePcr;  
+  void ReadAudioIndexFromRegistry();
 };

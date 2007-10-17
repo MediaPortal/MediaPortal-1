@@ -1406,13 +1406,18 @@ namespace TvPlugin
 
     static private int GetPreferedAudioStreamIndex(string langCodes, bool preferAC3)
     {
-      int idx = -1;
-      int idxLastAC3 = -1;
+      bool foundAC3 = false;
+      int idx = -1;      
       IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
+
+      Log.Info("Audio streams avail: {0}", streams.Length);
+
       for (int i = 0; i < streams.Length; i++)
       {
         if ((preferAC3) && (streams[i].StreamType == AudioStreamType.AC3))
-          idxLastAC3 = i;
+        {
+          foundAC3 = true;
+        }
         if (langCodes.Contains(streams[i].Language))
         {
           if (!preferAC3)
@@ -1425,6 +1430,7 @@ namespace TvPlugin
           {
             if ((streams[i].StreamType == AudioStreamType.AC3))
             {
+              foundAC3 = true;
               idx = i;
               Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
               break;
@@ -1433,24 +1439,21 @@ namespace TvPlugin
           }
         }
       }
-      if (idxLastAC3 != -1 && idx != -1)
+      if (foundAC3 && idx != -1)
       {
         // we got an ac3 stream with pref language in idx 
-        Log.Info("Audio stream: switching to preferred AC3 audio stream {0}", idxLastAC3);
-        return idxLastAC3;
+        Log.Info("Audio stream: switching to preferred AC3 audio stream {0}", idx);        
       }
-      if (idxLastAC3 == -1 && idx != -1)
+      else if (!foundAC3 && idx != -1)
       {
         // we got a stream with pref language in idx 
-        Log.Info("Audio stream: no AC3 switching to preferred audio stream {0}", idx);
-        return idx;
+        Log.Info("Audio stream: no AC3 switching to preferred audio stream {0}", idx);        
       }
-      if (idxLastAC3 != -1 && idx == -1 && preferAC3)
+      else if (foundAC3 && preferAC3)
       {
-        Log.Info("Audio stream: no audio stream found with preferred language using last AC3 stream {0}", idxLastAC3);
-        return idxLastAC3;
+        Log.Info("Audio stream: no audio stream found with preferred language using last AC3 stream {0}", idx);        
       }
-      if (idx == -1 && idxLastAC3 == -1)
+      else if (!foundAC3 && idx == -1)
       {
         idx = 0;
         Log.Info("Audio stream: no preferred audio stream found using first stream {0}", idx);
@@ -1538,9 +1541,7 @@ namespace TvPlugin
         */
 
         if (wasPlaying)
-          SeekToEnd(true);
-        
-
+          SeekToEnd(true);        
 
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
         if (succeeded == TvResult.Succeeded)
@@ -1563,9 +1564,47 @@ namespace TvPlugin
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
           MediaPortal.GUI.Library.Log.Info("succeeded:{0} {1}", succeeded, card);
+          //MediaPortal.GUI.Library.Log.Info("g_Player.Playing {0}", g_Player.Playing);          
+
+          //lets set the audio track for tsreader
+          int prefLangIdx = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): preferred lang idx:{0} {1}", prefLangIdx, _preferAC3);
+
+          try
+          {
+            using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software", true))
+            {
+              RegistryKey subKeyMP = subkey.OpenSubKey("MediaPortal", true);
+              if (subKeyMP == null)
+              {
+                subKeyMP = subkey.CreateSubKey("MediaPortal");
+              }
+
+              RegistryKey subKeyTsReader = subKeyMP.OpenSubKey("TsReader", true);
+              if (subKeyTsReader == null)
+              {
+                subKeyTsReader = subKeyMP.CreateSubKey("TsReader");
+              }
+              //ac3 is now part of the langidx
+              subKeyTsReader.SetValue("audioidx", prefLangIdx, RegistryValueKind.DWord);
+              subKeyTsReader.Close();
+              subKeyMP.Close();
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
+          }
 
           if (!g_Player.Playing)
+          {
             StartPlay();
+          }
+          else
+          {
+            //MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): setting audioIndex on tsreader {0}", prefLangIdx);
+            //g_Player.CurrentAudioStream = prefLangIdx;
+          }
 
           GUIWaitCursor.Hide();
 
@@ -1860,37 +1899,7 @@ namespace TvPlugin
     #endregion
 
     static void StartPlay()
-    {            
-      int prefLangIdx = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
-
-      MediaPortal.GUI.Library.Log.Debug("TVHome.StartPlay(): preferred lang PID:{0} {1}", prefLangIdx, _preferAC3);
-
-      try
-      {
-        using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software", true))
-        {
-          RegistryKey subKeyMP = subkey.OpenSubKey("MediaPortal", true);
-          if (subKeyMP == null)
-          {
-            subKeyMP = subkey.CreateSubKey("MediaPortal");
-          }
-
-          RegistryKey subKeyTsReader = subKeyMP.OpenSubKey("TsReader", true);
-          if (subKeyTsReader == null)
-          {
-            subKeyTsReader = subKeyMP.CreateSubKey("TsReader");
-          }            
-          //ac3 is now part of the langidx
-          subKeyTsReader.SetValue("audioidx", prefLangIdx, RegistryValueKind.DWord);
-          subKeyTsReader.Close();
-          subKeyMP.Close();
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-              
+    {                                
       Stopwatch benchClock = null;
       benchClock = Stopwatch.StartNew();
       if (TVHome.Card == null)
