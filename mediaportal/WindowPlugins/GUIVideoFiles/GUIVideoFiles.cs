@@ -257,6 +257,7 @@ namespace MediaPortal.GUI.Video
             }
           }
         }
+
         m_askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
 
         if (xmlreader.GetValueAsBool("movies", "rememberlastfolder", false))
@@ -1647,11 +1648,13 @@ namespace MediaPortal.GUI.Video
 
     void OnDeleteItem(GUIListItem item)
     {
-      if (item.IsRemote) return;
-      if (!virtualDirectory.RequestPin(item.Path))
-      {
+      if (item.IsRemote)
         return;
-      }
+      if (!virtualDirectory.RequestPin(item.Path))      
+        return;
+
+      currentSelectedItem = facadeView.SelectedListItemIndex;
+
       IMDBMovie movieDetails = new IMDBMovie();
 
       int idMovie = VideoDatabase.GetMovieInfo(item.Path, ref movieDetails);
@@ -1737,12 +1740,22 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      currentSelectedItem = facadeView.SelectedListItemIndex;
-      if (currentSelectedItem > 0) currentSelectedItem--;
       LoadDirectory(_currentFolder);
+
+      SelectCurrentItem();
+    }
+
+    private bool SelectCurrentItem()
+    {
       if (currentSelectedItem >= 0)
       {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);
+        return true;
+      }
+      else
+      {
+        Log.Debug("GUIVideoFiles: SelectCurrentItem - nothing to do for item {0}", currentSelectedItem.ToString());
+        return false;
       }
     }
 
@@ -1761,6 +1774,8 @@ namespace MediaPortal.GUI.Video
             DoDeleteItem(subItem);
           }
           MediaPortal.Util.Utils.DirectoryDelete(item.Path);
+          if (currentSelectedItem > 0)
+            currentSelectedItem--;
         }
       }
       else
@@ -1771,6 +1786,8 @@ namespace MediaPortal.GUI.Video
         if (item.IsRemote)
           return;
         MediaPortal.Util.Utils.DeleteRecording(item.Path);
+        if (currentSelectedItem > 0)
+          currentSelectedItem--;
       }
     }
 

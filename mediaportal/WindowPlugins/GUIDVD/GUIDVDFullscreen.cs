@@ -1,5 +1,4 @@
 #region Copyright (C) 2005-2007 Team MediaPortal
-
 /* 
  *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -20,7 +19,6 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-
 #endregion
 
 using System;
@@ -48,7 +46,7 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIDVDFullscreen : GUIWindow, ISetupForm, IShowPlugin
   {
-    private bool bINIT_from_MyVideosFullScreen=false;
+    private bool bINIT_from_MyVideosFullScreen = false;
 
     public GUIDVDFullscreen()
       : base()
@@ -61,11 +59,11 @@ namespace MediaPortal.GUI.Video
       return true;
     }
 
-		public override bool OnMessage(GUIMessage message)
-		{
-			Log.Info("DVDFullscreen: Message: {0}", message.Message.ToString());
-			if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_INIT)
-			{
+    public override bool OnMessage(GUIMessage message)
+    {
+      Log.Info("DVDFullscreen: Message: {0}", message.Message.ToString());
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_INIT)
+      {
         if (!bINIT_from_MyVideosFullScreen)
         {
           //if viz is on, this hides the DVD select dialog: GUIWindowManager.ReplaceWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
@@ -91,19 +89,19 @@ namespace MediaPortal.GUI.Video
           else
           {
             g_Player.ShowFullScreenWindow();
-            bINIT_from_MyVideosFullScreen=true;
+            bINIT_from_MyVideosFullScreen = true;
           }
         }
         else
         {
-          bINIT_from_MyVideosFullScreen=false;
+          bINIT_from_MyVideosFullScreen = false;
           Log.Info("DVDFullscreen: Returning from DVD screen");
           GUIWindowManager.ShowPreviousWindow();
         }
         return true;
-			}
-			return base.OnMessage(message);
-		}
+      }
+      return base.OnMessage(message);
+    }
 
     public override void Render(float timePassed)
     {
@@ -115,7 +113,6 @@ namespace MediaPortal.GUI.Video
     }
 
     #region ISetupForm Members
-
     public bool CanEnable()
     {
       return true;
@@ -157,23 +154,20 @@ namespace MediaPortal.GUI.Video
 
     public string Description()
     {
-      return @"Play DVD directly from via menu";
+      return @"Menu shortcut for direct DVD playback";
     }
 
     public void ShowPlugin()
     {
       // TODO:  Add GUIVideoFiles.ShowPlugin implementation
     }
-
     #endregion
 
     #region IShowPlugin Members
-
     public bool ShowDefaultHome()
     {
       return true;
     }
-
     #endregion
   }
 }
