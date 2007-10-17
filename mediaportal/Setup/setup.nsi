@@ -376,7 +376,9 @@ SectionEnd
 # Installer functions
 Function .onInit
     InitPluginsDir
-       
+    
+    !insertmacro INSTALLOPTIONS_EXTRACT "FilterSelect.ini"
+
     ; Get Windows Version
     Call GetWindowsVersion
     Pop $R0
