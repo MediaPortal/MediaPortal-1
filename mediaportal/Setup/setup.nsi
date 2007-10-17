@@ -2,8 +2,8 @@
 #
 # For the MediaPortal Installer to work you need:
 # 1. Lastest NSIS version from http://nsis.sourceforge.net/Download
-# 2. Advanced Uninstall Log NSIS Header from http://nsis.sourceforge.net/Advanced_Uninstall_Log_NSIS_Header
-# 3. Editing is much more easier, if you installe Eclipse from www.eclipse.org and the NSIS Plugin http://nsis.sourceforge.net/EclipseNSIS_-_NSIS_plugin_for_Eclipse
+# 
+# Editing is much more easier, if you installe Eclipse from www.eclipse.org and the NSIS Plugin http://nsis.sourceforge.net/EclipseNSIS_-_NSIS_plugin_for_Eclipse
 #
 #**********************************************************************************************************#
 
@@ -54,7 +54,6 @@ SetCompressor lzma
 !include MUI2.nsh
 !include LogicLib.nsh
 !include InstallOptions.nsh
-!include AdvUninstLog.nsh
 !include Library.nsh
 ;..................................................................................................
 
@@ -63,20 +62,11 @@ SetCompressor lzma
 Var StartMenuGroup  ; Holds the Startup Group
 Var WindowsVersion  ; The Windows Version
 Var CommonAppData   ; The Common Application Folder
-VAR DSCALER         ; Should we install Dscaler Filter
-VAR GABEST          ; Should we install Gabest Filter
-VAR FilterDir       ; The Directory, where the filters have been installed
+Var DSCALER         ; Should we install Dscaler Filter
+Var GABEST          ; Should we install Gabest Filter
+Var FilterDir       ; The Directory, where the filters have been installed
 Var LibInstall      ; Needed for Library Installation
-;..................................................................................................
-
-# Uninstaller Options
-;..................................................................................................
-;Specify the preferred uninstaller operation mode, either unattended or interactive.
-;Be aware only one of the following two macros has to be inserted, neither both, neither none.
-
-!insertmacro UNATTENDED_UNINSTALL
-
-;!insertmacro INTERACTIVE_UNINSTALL
+Var TmpDir          ; Needed for the Uninstaller
 ;..................................................................................................
 
 # Installer pages
@@ -143,11 +133,17 @@ FunctionEnd
 ;
 ;..................................................................................................
 Section -Main SEC0000
-    SetOutPath $INSTDIR
     SetOverwrite on   
 
+    ; Doc
+    SetOutPath $INSTDIR\Docs
+    File "..\Docs\BASS License.txt"
+    File "..\Docs\MediaPortal License.rtf"
+    File "..\Docs\SQLite Database Browser.exe"
+
+    SetOutPath $INSTDIR
+
     ; Folder
-    ; We don't monitor the folder content on installation. Simply remove the complete directory     
     File /r ..\xbmc\bin\Release\database
     File /r ..\xbmc\bin\Release\InputDeviceMappings
     File /r ..\xbmc\bin\Release\language
@@ -162,17 +158,10 @@ Section -Main SEC0000
     File /r ..\xbmc\bin\Release\WebEPG
     File /r ..\xbmc\bin\Release\Wizards
     
-    ;After set the output path open the uninstall log macros block and add files/dirs with File /r
-    ;This should be repeated every time the parent output path is changed either within the same
-    ;section, or if there are more sections including optional components.
-    !insertmacro UNINSTALL.LOG_OPEN_INSTALL
+
+    ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
         
     ;------------  Common Files and Folders for XP & Vista
-    ; Doc
-    File "..\Docs\BASS License.txt"
-    File "..\Docs\MediaPortal License.rtf"
-    File "..\Docs\SQLite Database Browser.exe"
- 
     ; Files
     File ..\xbmc\bin\Release\AppStart.exe
     File ..\xbmc\bin\Release\AppStart.exe.config
@@ -265,12 +254,6 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\XPBurnComponent.dll
     ;------------  End of Common Files and Folders for XP & Vista
     
-    ;Before changing the parent output directory we need to close the opened previously uninstall log macros block.
-    !insertmacro UNINSTALL.LOG_CLOSE_INSTALL
-    
-    ; And we open it again
-    !insertmacro UNINSTALL.LOG_OPEN_INSTALL
-    
     ; In Case of Vista some Folders / Files need to be copied to the Appplication Data Folder
     ; Simply Change the output Directory in Case of Vista
     ${if} $WindowsVersion == "Vista" 
@@ -295,11 +278,10 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\wikipedia.xml
     File ..\xbmc\bin\Release\yac-area-codes.xml
 
-   ; Close before we change the directory
-    !insertmacro UNINSTALL.LOG_CLOSE_INSTALL
+    ; We are not deleting Files and Folders after this point
     
     ; Folders
-    ; Don't monitor the folder content. we're not deleting those 2 anyhow on install 
+
     File /r ..\xbmc\bin\Release\thumbs
     File /r ..\xbmc\bin\Release\xmltv
     
@@ -373,6 +355,7 @@ SectionEnd
 Section -post SEC0001
     WriteRegStr HKLM "${INSTDIR_REG_KEY}" Path $INSTDIR
     WriteRegStr HKLM "${INSTDIR_REG_KEY}" PathFilter $FILTERDIR
+    WriteRegStr HKLM "${INSTDIR_REG_KEY}" WindowsVersion $WindowsVersion
     SetOutPath $INSTDIR
     WriteUninstaller $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -393,12 +376,7 @@ SectionEnd
 # Installer functions
 Function .onInit
     InitPluginsDir
-    
-    ; Prepare the Uninstall Log
-    !insertmacro UNINSTALL.LOG_PREPARE_INSTALL
-        
-    !insertmacro INSTALLOPTIONS_EXTRACT "FilterSelect.ini"
-      
+       
     ; Get Windows Version
     Call GetWindowsVersion
     Pop $R0
@@ -442,9 +420,6 @@ FunctionEnd
 
 Function .onInstSuccess
 
-    ;create/update log always within .onInstSuccess function
-    !insertmacro UNINSTALL.LOG_UPDATE_INSTALL
-
 FunctionEnd
 
 ; Start the Configuration after the successfull install
@@ -472,12 +447,12 @@ done${UNSECTION_ID}:
 
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
 
-Section /o -un.Main UNSEC0000
-
+Section /o -un.Main UNSEC0000    
     ; Remove the Folders
     ; Don't touch the Database, InputMappings
     RmDir /r /REBOOTOK $INSTDIR\Burner
     RmDir /r /REBOOTOK $INSTDIR\Cache
+    RmDir /r /REBOOTOK $INSTDIR\Docs
     RmDir /r /REBOOTOK $CommonAppData\Burner
     RmDir /r /REBOOTOK $CommonAppData\Cache
     RmDir /r /REBOOTOK $INSTDIR\language
@@ -492,15 +467,119 @@ Section /o -un.Main UNSEC0000
     RmDir /r /REBOOTOK $INSTDIR\WebEPG
     RmDir /r /REBOOTOK $INSTDIR\Wizards
 
-    ;uninstall from path, must be repeated for every install logged path individual
-    !insertmacro UNINSTALL.LOG_UNINSTALL "$INSTDIR"
-    !insertmacro UNINSTALL.LOG_UNINSTALL "$APPDATA\Team MediaPortal\MediaPortal"
-
-    ;end uninstall, after uninstall from all logged paths has been performed
-    !insertmacro UNINSTALL.LOG_END_UNINSTALL
+   ; Remove Files in MP Root Directory
+    Delete /REBOOTOK  $INSTDIR\AppStart.exe
+    Delete /REBOOTOK  $INSTDIR\AppStart.exe.config
+    Delete /REBOOTOK  $INSTDIR\AxInterop.WMPLib.dll
+    Delete /REBOOTOK  $INSTDIR\BallonRadio.ico
+    Delete /REBOOTOK  $INSTDIR\bass.dll
+    Delete /REBOOTOK  $INSTDIR\Bass.Net.dll
+    Delete /REBOOTOK  $INSTDIR\bass_fx.dll
+    Delete /REBOOTOK  $INSTDIR\bass_vis.dll
+    Delete /REBOOTOK  $INSTDIR\bass_vst.dll
+    Delete /REBOOTOK  $INSTDIR\bass_wadsp.dll
+    Delete /REBOOTOK  $INSTDIR\bassasio.dll
+    Delete /REBOOTOK  $INSTDIR\bassmix.dll
+    Delete /REBOOTOK  $INSTDIR\BassRegistration.dll
+    Delete /REBOOTOK  $INSTDIR\Configuration.exe
+    Delete /REBOOTOK  $INSTDIR\Configuration.exe.config
+    Delete /REBOOTOK  $INSTDIR\Core.dll
+    Delete /REBOOTOK  $INSTDIR\CSScriptLibrary.dll
+    Delete /REBOOTOK  $INSTDIR\d3dx9_30.dll
+    Delete /REBOOTOK  $INSTDIR\Databases.dll
+    Delete /REBOOTOK  $INSTDIR\defaultMusicViews.xml
+    Delete /REBOOTOK  $INSTDIR\defaultProgramViews.xml
+    Delete /REBOOTOK  $INSTDIR\defaultVideoViews.xml
+    Delete /REBOOTOK  $INSTDIR\DirectShowLib.dll
+    Delete /REBOOTOK  $INSTDIR\dlportio.dll
+    Delete /REBOOTOK  $INSTDIR\dshowhelper.dll
+    Delete /REBOOTOK  $INSTDIR\dvblib.dll
+    Delete /REBOOTOK  $INSTDIR\dxerr9.dll
+    Delete /REBOOTOK  $INSTDIR\DXUtil.dll
+    Delete /REBOOTOK  $INSTDIR\edtftpnet-1.2.2.dll
+    Delete /REBOOTOK  $INSTDIR\edtftpnet-1.2.5.dll
+    Delete /REBOOTOK  $INSTDIR\FastBitmap.dll
+    Delete /REBOOTOK  $INSTDIR\fontEngine.dll
+    Delete /REBOOTOK  $INSTDIR\FTD2XX.DLL
+    Delete /REBOOTOK  $INSTDIR\hauppauge.dll
+    Delete /REBOOTOK  $INSTDIR\HcwHelper.exe
+    Delete /REBOOTOK  $INSTDIR\ICSharpCode.SharpZipLib.dll
+    Delete /REBOOTOK  $INSTDIR\inpout32.dll
+    Delete /REBOOTOK  $INSTDIR\Interop.GIRDERLib.dll
+    Delete /REBOOTOK  $INSTDIR\Interop.iTunesLib.dll
+    Delete /REBOOTOK  $INSTDIR\Interop.TunerLib.dll
+    Delete /REBOOTOK  $INSTDIR\Interop.WMEncoderLib.dll
+    Delete /REBOOTOK  $INSTDIR\Interop.WMPLib.dll
+    Delete /REBOOTOK  $INSTDIR\Interop.X10.dll
+    Delete /REBOOTOK  $INSTDIR\KCS.Utilities.dll
+    Delete /REBOOTOK  $INSTDIR\lame_enc.dll
+    Delete /REBOOTOK  $INSTDIR\LibDriverCoreClient.dll
+    Delete /REBOOTOK  $INSTDIR\log4net.dll
+    Delete /REBOOTOK  $INSTDIR\madlldlib.dll
+    Delete /REBOOTOK  $INSTDIR\MediaPadLayer.dll
+    Delete /REBOOTOK  $INSTDIR\MediaPortalDirs.xml
+    Delete /REBOOTOK  $INSTDIR\MediaPortal.exe
+    Delete /REBOOTOK  $INSTDIR\MediaPortal.exe.config
+    Delete /REBOOTOK  $INSTDIR\MediaPortal.Support.dll
+    Delete /REBOOTOK  $INSTDIR\menu.bin
+    Delete /REBOOTOK  $INSTDIR\Microsoft.ApplicationBlocks.ApplicationUpdater.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.ApplicationBlocks.ExceptionManagement.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.Direct3D.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.Direct3DX.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.DirectDraw.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.DirectInput.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.Office.Interop.Outlook.dll
+    Delete /REBOOTOK  $INSTDIR\MPInstaller.exe
+    Delete /REBOOTOK  $INSTDIR\MPInstaller.Library.dll
+    Delete /REBOOTOK  $INSTDIR\mplogo.gif
+    Delete /REBOOTOK  $INSTDIR\MPTestTool2.exe
+    Delete /REBOOTOK  $INSTDIR\mpviz.dll
+    Delete /REBOOTOK  $INSTDIR\MusicShareWatcher.exe
+    Delete /REBOOTOK  $INSTDIR\MusicShareWatcherHelper.dll
+    Delete /REBOOTOK  $INSTDIR\RemotePlugins.dll
+    Delete /REBOOTOK  $INSTDIR\SG_LCD.dll
+    Delete /REBOOTOK  $INSTDIR\SG_VFD.dll
+    Delete /REBOOTOK  $INSTDIR\sqlite.dll
+    Delete /REBOOTOK  $INSTDIR\taglib-sharp.dll
+    Delete /REBOOTOK  $INSTDIR\TaskScheduler.dll
+    Delete /REBOOTOK  $INSTDIR\ttBdaDrvApi_Dll.dll
+    Delete /REBOOTOK  $INSTDIR\ttdvbacc.dll
+    Delete /REBOOTOK  $INSTDIR\TTPremiumSource.ax
+    Delete /REBOOTOK  $INSTDIR\TVCapture.dll
+    Delete /REBOOTOK  $INSTDIR\TVGuideScheduler.exe
+    Delete /REBOOTOK  $INSTDIR\Utils.dll
+    Delete /REBOOTOK  $INSTDIR\WebEPG.dll
+    Delete /REBOOTOK  $INSTDIR\WebEPG.exe
+    Delete /REBOOTOK  $INSTDIR\WebEPG-conf.exe
+    Delete /REBOOTOK  $INSTDIR\X10Unified.dll
+    Delete /REBOOTOK  $INSTDIR\xAPMessage.dll
+    Delete /REBOOTOK  $INSTDIR\xAPTransport.dll
+    Delete /REBOOTOK  $INSTDIR\XPBurnComponent.dll
+    ;------------  End of Files in MP Root Directory --------------
     
+    ; In Case of Vista the Files to Uninstall are in the Appplication Data Folder
+    ${if} $WindowsVersion == "Vista" 
+        StrCpy $TmpDir $CommonAppData 
+    ${Else}
+         StrCpy $TmpDir $INSTDIR 
+    ${Endif}
 
-    ; Uninstall the Common DLLs and Filters, which have not been logged with the Automatic Uninstaller
+    ; Config Files, which are in different location on Vista and XP (XML)
+    Delete /REBOOTOK  $TmpDir\CaptureCardDefinitions.xml
+    Delete /REBOOTOK  "$TmpDir\eHome Infrared Transceiver List XP.xml"
+    Delete /REBOOTOK  $TmpDir\FileDetailContents.xml
+    Delete /REBOOTOK  $TmpDir\grabber_AllGame_com.xml
+    Delete /REBOOTOK  $TmpDir\ISDNCodes.xml
+    Delete /REBOOTOK  $TmpDir\keymap.xml
+    Delete /REBOOTOK  $TmpDir\MusicVideoSettings.xml
+    Delete /REBOOTOK  $TmpDir\ProgramSettingProfiles.xml
+    Delete /REBOOTOK  $TmpDir\wikipedia.xml
+    Delete /REBOOTOK  $TmpDir\yac-area-codes.xml
+    
+    ; Uninstall the Common DLLs and Filters
     ; They will onl be removed, when the UseCount = 0    
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\cdxareader.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\CLDump.ax
@@ -528,8 +607,9 @@ Section /o -un.Main UNSEC0000
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71u.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcp71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcr71.dll    
-
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcr71.dll       
+    
+    ; Delete StartMenu- , Desktop ShortCuts and Registry Entry
     Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk"
     Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\License.lnk
@@ -559,9 +639,9 @@ Function un.onInit
     ReadRegStr $FILTERDIR HKLM "${INSTDIR_REG_KEY}" PathFilter
     ReadRegStr $GABEST HKLM "${INSTDIR_REG_KEY}" Gabest
     ReadRegStr $DSCALER HKLM "${INSTDIR_REG_KEY}" Dscaler
+    ReadRegStr $WindowsVersion HKLM "${INSTDIR_REG_KEY}" WindowsVersion
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
-    !insertmacro UNINSTALL.LOG_BEGIN_UNINSTALL
     
     ; Get the Common Application Data Folder to Store Files for Vista
     ; Set the Context to alll, so that we get the All Users folder
