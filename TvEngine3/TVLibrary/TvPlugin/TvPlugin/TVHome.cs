@@ -1417,6 +1417,7 @@ namespace TvPlugin
         if ((preferAC3) && (streams[i].StreamType == AudioStreamType.AC3))
         {
           foundAC3 = true;
+          idx = i;
         }
         if (langCodes.Contains(streams[i].Language))
         {
