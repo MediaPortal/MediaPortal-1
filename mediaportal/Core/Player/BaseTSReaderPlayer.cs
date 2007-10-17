@@ -41,10 +41,28 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {
-  class BaseTSReaderPlayer : IPlayer
+  [ComVisible(true), ComImport,
+  Guid("324FAA1F-4DA6-47B8-832B-3993D8FF4151"),
+  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface ITSReaderCallback
   {
+    [PreserveSig]
+    int OnMediaTypeChanged();
+  }
+  class BaseTSReaderPlayer : IPlayer, ITSReaderCallback
+  {
+
+    [Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B24F"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    protected interface ITSReader
+    {
+      [PreserveSig]
+      int SetTsReaderCallback(ITSReaderCallback callback);
+    }
+
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
-    protected class TsReader { }
+    protected class TsReader {
+    }
 
     #region imports
     [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
@@ -499,6 +517,11 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.InVmr9Render)
         return;
 
+      if (_bMediaTypeChanged)
+      {
+        DoGraphRebuild();
+        _bMediaTypeChanged = false;
+      }
       //Log.Info("1");
       /*
       if (_startingUp && _isLive)
@@ -1021,42 +1044,44 @@ namespace MediaPortal.Player
       {
         if (_mediaCtrl != null && _mediaSeeking != null)
         {
-          if (dTimeInSecs < 0.0d)
-            dTimeInSecs = 0.0d;
-          if (dTimeInSecs > Duration)
-            dTimeInSecs = Duration;
-          dTimeInSecs = Math.Floor(dTimeInSecs);
-          Log.Info("TSReaderPlayer seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs, Duration, CurrentPosition);
-          dTimeInSecs *= 10000000d;
-          long pStop = 0;
-          long lContentStart, lContentEnd;
-          double fContentStart, fContentEnd;
-          Log.Info("get available");
-          _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-          Log.Info("get available done");
-          fContentStart = lContentStart;
-          fContentEnd = lContentEnd;
-
-          dTimeInSecs += fContentStart;
-          long lTime = (long)dTimeInSecs;
-          Log.Info("set positions");
-          if (VMR9Util.g_vmr9 != null)
-            VMR9Util.g_vmr9.FrameCounter = 123;
-          int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-
-          if (VMR9Util.g_vmr9 != null)
-            VMR9Util.g_vmr9.FrameCounter = 123;
-          Log.Info("set positions done");
-          if (hr != 0)
+          lock (_mediaCtrl)
           {
-            Log.Error("seek failed->seek to 0 0x:{0:X}", hr);
-          }
-        }
-        UpdateCurrentPosition();
-        if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
-        _state = PlayState.Playing;
-        Log.Info("TSReaderPlayer: current pos:{0}", CurrentPosition);
+            if (dTimeInSecs < 0.0d)
+              dTimeInSecs = 0.0d;
+            if (dTimeInSecs > Duration)
+              dTimeInSecs = Duration;
+            dTimeInSecs = Math.Floor(dTimeInSecs);
+            Log.Info("TSReaderPlayer seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs, Duration, CurrentPosition);
+            dTimeInSecs *= 10000000d;
+            long pStop = 0;
+            long lContentStart, lContentEnd;
+            double fContentStart, fContentEnd;
+            Log.Info("get available");
+            _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+            Log.Info("get available done");
+            fContentStart = lContentStart;
+            fContentEnd = lContentEnd;
 
+            dTimeInSecs += fContentStart;
+            long lTime = (long)dTimeInSecs;
+            Log.Info("set positions");
+            if (VMR9Util.g_vmr9 != null)
+              VMR9Util.g_vmr9.FrameCounter = 123;
+            int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+
+            if (VMR9Util.g_vmr9 != null)
+              VMR9Util.g_vmr9.FrameCounter = 123;
+            Log.Info("set positions done");
+            if (hr != 0)
+            {
+              Log.Error("seek failed->seek to 0 0x:{0:X}", hr);
+            }
+          }
+          UpdateCurrentPosition();
+          if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
+          _state = PlayState.Playing;
+          Log.Info("TSReaderPlayer: current pos:{0}", CurrentPosition);
+        }
       }
     }
 
@@ -1196,32 +1221,123 @@ namespace MediaPortal.Player
     {
       if (_mediaSeeking == null)
         return;
-      //GetCurrentPosition(): Returns stream position. 
-      //Stream position:The current playback position, relative to the content start
-      long lStreamPos;
-      double fCurrentPos;
-      _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-      fCurrentPos = lStreamPos;
-      fCurrentPos /= 10000000d;
-      _streamPos = fCurrentPos; // save the stream position 
+      lock (_mediaCtrl)
+      {
+        //GetCurrentPosition(): Returns stream position. 
+        //Stream position:The current playback position, relative to the content start
+        long lStreamPos;
+        double fCurrentPos;
+        _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+        fCurrentPos = lStreamPos;
+        fCurrentPos /= 10000000d;
+        _streamPos = fCurrentPos; // save the stream position 
 
-      long lContentStart, lContentEnd;
-      double fContentStart, fContentEnd;
-      _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-      fContentStart = lContentStart;
-      fContentEnd = lContentEnd;
-      fContentStart /= 10000000d;
-      fContentEnd /= 10000000d;
-      // Log.Info("pos:{0} start:{1} end:{2}  pos:{3} dur:{4}", fCurrentPos, fContentStart, fContentEnd, (fCurrentPos - fContentStart), (fContentEnd - fContentStart));
+        long lContentStart, lContentEnd;
+        double fContentStart, fContentEnd;
+        _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+        fContentStart = lContentStart;
+        fContentEnd = lContentEnd;
+        fContentStart /= 10000000d;
+        fContentEnd /= 10000000d;
+        // Log.Info("pos:{0} start:{1} end:{2}  pos:{3} dur:{4}", fCurrentPos, fContentStart, fContentEnd, (fCurrentPos - fContentStart), (fContentEnd - fContentStart));
 
-      fContentEnd -= fContentStart;
-      fCurrentPos -= fContentStart;
-      _duration = fContentEnd;
-      _currentPos = fCurrentPos;
-
+        fContentEnd -= fContentStart;
+        fCurrentPos -= fContentStart;
+        _duration = fContentEnd;
+        _currentPos = fCurrentPos;
+      }
     }
     void UpdateDuration()
     {
+    }
+
+    bool _bMediaTypeChanged;
+    public int OnMediaTypeChanged()
+    {
+      _bMediaTypeChanged = true;
+      return 0;
+    }
+
+    //check if the pin connections can be kept, or if a graph rebuilding is necessary!
+    private bool GraphNeedsRebuild()
+    {
+      IEnumPins pinEnum;
+      int hr = _fileSource.EnumPins(out pinEnum);
+      if (hr != 0 || pinEnum == null) return true;
+      IPin[] pins = new IPin[1];
+      int fetched;
+      for (; ; )
+      {
+        hr = pinEnum.Next(1, pins, out fetched);
+        if (hr != 0 || fetched == 0) break;
+        IPin other;
+        hr = pins[0].ConnectedTo(out other);
+        try
+        {
+          if (hr == 0 && other != null)
+          {
+            try
+            {
+              if (!DirectShowUtil.QueryConnect(pins[0], other))
+              {
+                Log.Info("Graph needs a rebuild");
+                return true;
+              }
+            }
+            finally
+            {
+              Marshal.ReleaseComObject(other);
+            }
+          }
+        }
+        finally
+        {
+          Marshal.ReleaseComObject(pins[0]);
+        }
+      }
+      Marshal.ReleaseComObject(pinEnum);
+      //this is only debug output at the moment. always do a rebuild for now.
+      Log.Info("Graph would _not_ need a rebuild");
+      return true;
+    }
+
+    public void DoGraphRebuild()
+    {
+      Log.Info("TSReaderPlayer:OnMediaTypeChanged()");
+      if (!GraphNeedsRebuild()) return;
+      if (_mediaCtrl != null)
+      {
+        lock (_mediaCtrl)
+        {
+          int hr = _mediaCtrl.Stop();
+          if (hr != 0)
+          {
+            Log.Error("Error stopping graph: ({0:x})", hr);
+          }
+          FilterState state;
+          for (; ; )
+          {
+            hr = _mediaCtrl.GetState(200, out state);
+            if (hr != 0)
+            {
+              Log.Info("GetState failed: {0:x}");
+            }
+            else if (state == FilterState.Stopped)
+            {
+              break;
+            }
+            Log.Info("TSReaderPlayer:OnMediaTypeChanged(): Graph not yet stopped, waiting some more.");
+            _mediaCtrl.Stop();
+            System.Threading.Thread.Sleep(200);
+
+          }
+          Log.Info("Graph stopped, disconnecting pins.");
+          DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource);
+          _mediaCtrl.Run();
+        }
+        Log.Info("Reconfigure graph done");
+      }
+      return;
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
@@ -1238,7 +1354,9 @@ namespace MediaPortal.Player
         _vmr7 = new VMR7Util();
         _vmr7.AddVMR7(_graphBuilder);
 
-        _fileSource = (IBaseFilter)new TsReader();
+        TsReader reader = new TsReader();
+        _fileSource = (IBaseFilter)reader;
+        ((ITSReader)reader).SetTsReaderCallback(this);
         IBaseFilter filter = (IBaseFilter)_fileSource;
         _graphBuilder.AddFilter(filter, "TsReader");
 
@@ -1491,54 +1609,57 @@ namespace MediaPortal.Player
       if (ts.TotalMilliseconds < 100)
         return;
       long earliest, latest, current, stop, rewind, pStop;
+      lock (_mediaCtrl)
+      {
+        _mediaSeeking.GetAvailable(out earliest, out latest);
+        _mediaSeeking.GetPositions(out current, out stop);
 
-      _mediaSeeking.GetAvailable(out earliest, out latest);
-      _mediaSeeking.GetPositions(out current, out stop);
+        // Log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
+        //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,_speedRate, (latest-earliest)/10000000);
 
-      // Log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
-      //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,_speedRate, (latest-earliest)/10000000);
+        //earliest += + 30 * 10000000;
 
-      //earliest += + 30 * 10000000;
-
-      // new time = current time + 2*timerinterval* (speed)
-      long lTimerInterval = (long)ts.TotalMilliseconds;
-      if (lTimerInterval > 300)
+        // new time = current time + 2*timerinterval* (speed)
+        long lTimerInterval = (long)ts.TotalMilliseconds;
+        if (lTimerInterval > 300)
+          lTimerInterval = 300;
         lTimerInterval = 300;
-      lTimerInterval = 300;
-      rewind = (long)(current + (2 * (long)(lTimerInterval) * _speedRate));
+        rewind = (long)(current + (2 * (long)(lTimerInterval) * _speedRate));
 
-      int hr;
-      pStop = 0;
+        int hr;
+        pStop = 0;
 
-      // if we end up before the first moment of time then just
-      // start @ the beginning
-      if ((rewind < earliest) && (_speedRate < 0))
-      {
-        _speedRate = 10000;
-        rewind = earliest;
-        //Log.Info(" seek back:{0}",rewind/10000000);
+        // if we end up before the first moment of time then just
+        // start @ the beginning
+        if ((rewind < earliest) && (_speedRate < 0))
+        {
+          _speedRate = 10000;
+          rewind = earliest;
+          //Log.Info(" seek back:{0}",rewind/10000000);
+          hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+          _mediaCtrl.Run();
+          return;
+        }
+        // if we end up at the end of time then just
+        // start @ the end-100msec
+        if ((rewind > (latest - 100000)) && (_speedRate > 0))
+        {
+          _speedRate = 10000;
+          rewind = latest - 100000;
+          //Log.Info(" seek ff:{0}",rewind/10000000);
+          hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+          _mediaCtrl.Run();
+          return;
+        }
+
+        //seek to new moment in time
+        //Log.Info(" seek :{0}",rewind/10000000);
         hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-        _mediaCtrl.Run();
-        return;
-      }
-      // if we end up at the end of time then just
-      // start @ the end-100msec
-      if ((rewind > (latest - 100000)) && (_speedRate > 0))
-      {
-        _speedRate = 10000;
-        rewind = latest - 100000;
-        //Log.Info(" seek ff:{0}",rewind/10000000);
-        hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-        _mediaCtrl.Run();
-        return;
-      }
+        //according to ms documentation, this is the prefered way to do seeking
+        _mediaCtrl.StopWhenReady();
 
-      //seek to new moment in time
-      //Log.Info(" seek :{0}",rewind/10000000);
-      hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-      _mediaCtrl.Pause();
-
-      _elapsedTimer = DateTime.Now;
+        _elapsedTimer = DateTime.Now;
+      }
     }
 
     #endregion

@@ -339,7 +339,10 @@ namespace MediaPortal.Player
 
         #region add TsReader
 
-        _fileSource = (IBaseFilter)new TsReader();
+        TsReader reader = new TsReader();
+        _fileSource = (IBaseFilter)reader;
+        ITSReader ireader = (ITSReader)reader;
+        ireader.SetTsReaderCallback(this);
         Log.Info("TSReaderPlayer:add TsReader to graph");
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsReader");
         if (hr != 0)
@@ -667,25 +670,28 @@ namespace MediaPortal.Player
       {
         if (_mediaCtrl != null && _mediaSeeking != null)
         {
-          UpdateCurrentPosition();
-          if (dTimeInSecs < 0) dTimeInSecs = 0;
-          dTimeInSecs *= 10000000d;
-          long lTime = (long)dTimeInSecs;
-          long pStop = 0;
-          long lContentStart, lContentEnd;
-          _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-          lTime += lContentStart;
-          Log.Info("TsReaderPlayer:seekabs:{0} start:{1} end:{2}", lTime, lContentStart, lContentEnd);
-          /*if (lTime > lContentEnd)
+          lock (_mediaCtrl)
           {
-            System.Threading.Thread.Sleep(500);
+            UpdateCurrentPosition();
+            if (dTimeInSecs < 0) dTimeInSecs = 0;
+            dTimeInSecs *= 10000000d;
+            long lTime = (long)dTimeInSecs;
+            long pStop = 0;
+            long lContentStart, lContentEnd;
             _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-            lTime = lContentEnd;
-          }*/
-          int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-          Log.Info("TsReaderPlayer seek done:{0:X}", hr);
-          if (VMR9Util.g_vmr9 != null)
-            VMR9Util.g_vmr9.FrameCounter = 123;
+            lTime += lContentStart;
+            Log.Info("TsReaderPlayer:seekabs:{0} start:{1} end:{2}", lTime, lContentStart, lContentEnd);
+            /*if (lTime > lContentEnd)
+            {
+              System.Threading.Thread.Sleep(500);
+              _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+              lTime = lContentEnd;
+            }*/
+            int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+            Log.Info("TsReaderPlayer seek done:{0:X}", hr);
+            if (VMR9Util.g_vmr9 != null)
+              VMR9Util.g_vmr9.FrameCounter = 123;
+          }
         }
 
         UpdateCurrentPosition();
