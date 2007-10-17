@@ -169,10 +169,21 @@ namespace DShowNET.Helper
 
     public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType, Merit merit)
     {
+      return GetFilters(new Guid[] { mediaType }, new Guid[] { mediaSubType }, merit);
+    }
+
+    public static ArrayList GetFilters(Guid[] mediaType, Guid[] mediaSubType, Merit merit)
+    {
       ArrayList filters = new ArrayList();
       IEnumMoniker enumMoniker = null;
       IMoniker[] moniker = new IMoniker[1];
       IFilterMapper2 mapper = (IFilterMapper2)new FilterMapper2();
+      Guid[] types = new Guid[mediaType.Length*2];
+      for (int i = 0; i < mediaType.Length; i++)
+      {
+        types[i * 2] = mediaType[i];
+        types[i * 2 + 1] = mediaSubType[i];
+      }
       if (mapper != null)
       {
         int hResult = mapper.EnumMatchingFilters(
@@ -181,8 +192,8 @@ namespace DShowNET.Helper
           true,
           merit,
           true,
-          1,
-          new Guid[] { mediaType, mediaSubType },
+          mediaType.Length,
+          types,
           null,
           null,
           false,

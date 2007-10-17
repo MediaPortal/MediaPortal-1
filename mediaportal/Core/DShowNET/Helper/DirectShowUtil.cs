@@ -362,6 +362,21 @@ namespace DShowNET.Helper
       return ret;
     }
 
+    static private bool HasConnection(IPin pin)
+    {
+      IPin pinInConnected;
+      int hr = pin.ConnectedTo(out pinInConnected);
+      if (hr != 0 || pinInConnected == null)
+      {
+        return false;
+      }
+      else
+      {
+        Marshal.ReleaseComObject(pinInConnected);
+        return true;
+      }
+    }
+
     static private bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, IBaseFilter to)
     {
       bool ret = false;
@@ -383,7 +398,7 @@ namespace DShowNET.Helper
         if (hr != 0 || pinsFetched == 0) break;
         PinDirection direction;
         pins[0].QueryDirection(out direction);
-        if (direction == PinDirection.Input) // && TestMediaTypes(outputPin, pins[0]))
+        if (direction == PinDirection.Input && !HasConnection(pins[0])) // && TestMediaTypes(outputPin, pins[0]))
         {
             PinInfo pinInfo;
             pins[0].QueryPinInfo(out pinInfo);
@@ -482,31 +497,45 @@ namespace DShowNET.Helper
         return false;
       }
       Log.Info("Got enum");
-      while (TryNewFilters)
+      ArrayList major = new ArrayList();
+      ArrayList sub = new ArrayList();
+      if (TryNewFilters)
       {
-        AMMediaType[] mediaTypes = new AMMediaType[1];
-        int typesFetched;
-        hr = enumTypes.Next(1, mediaTypes, out typesFetched);
-        if (hr != 0 || typesFetched == 0) break;
         Log.Info("Getting corresponding filters");
-        ArrayList filters = FilterHelper.GetFilters(mediaTypes[0].majorType,
-          mediaTypes[0].subType, (Merit)0x00400000);
-        foreach ( string name in filters )
+        for (; ; )
+        {
+          AMMediaType[] mediaTypes = new AMMediaType[1];
+          int typesFetched;
+          hr = enumTypes.Next(1, mediaTypes, out typesFetched);
+          if (hr != 0 || typesFetched == 0) break;
+          major.Add(mediaTypes[0].majorType);
+          sub.Add(mediaTypes[0].subType);
+        }
+        Marshal.ReleaseComObject(enumTypes);
+        Log.Info("Found {0} media types", major.Count);
+        Guid[] majorTypes = (Guid[])major.ToArray(typeof(Guid));
+        Guid[] subTypes = (Guid[])sub.ToArray(typeof(Guid));
+        Log.Info("Loading filters");
+        ArrayList filters = FilterHelper.GetFilters(majorTypes, subTypes, (Merit)0x00400000);
+        Log.Info("Loaded {0} filters", filters.Count);
+        foreach (string name in filters)
         {
           if (!CheckFilterIsLoaded(graphBuilder, name))
           {
             Log.Info("Loading filter: {0}", name);
             IBaseFilter f = DirectShowUtil.AddFilterToGraph(graphBuilder, name);
-            if (f != null && TryConnect(graphBuilder, filtername, outputPin, f))
+            if (f != null)
             {
-              Marshal.ReleaseComObject(enumTypes);
-              Marshal.ReleaseComObject(f);
-              return true;
-            }
-            else
-            {
-              graphBuilder.RemoveFilter(f);
-              Marshal.ReleaseComObject(f);
+              if (TryConnect(graphBuilder, filtername, outputPin, f))
+              {
+                Marshal.ReleaseComObject(f);
+                return true;
+              }
+              else
+              {
+                graphBuilder.RemoveFilter(f);
+                Marshal.ReleaseComObject(f);
+              }
             }
           }
           else
@@ -515,7 +544,6 @@ namespace DShowNET.Helper
           }
         }
       }
-      Marshal.ReleaseComObject(enumTypes);
       Log.Info("TryConnect failed.");
       return outputInfo.name.StartsWith("~");
     }
@@ -570,7 +598,7 @@ namespace DShowNET.Helper
                 {
                   hr = 0;
                   if (TryConnect(graphBuilder, info.achName, pins[0]))
-                  //if (graphBuilder.Render(pins[0]) == 0)
+                  //if ((hr=graphBuilder.Render(pins[0])) == 0)
                   {
                     Log.Info("  render ok");
                   }
@@ -647,7 +675,7 @@ namespace DShowNET.Helper
                   if (hr == 0) Log.Info("  disconnected ok");
                   else
                   {
-                    Log.Error("  disconnected failed");
+                    Log.Error("  disconnected failed ({0:x})", hr);
                   }
                   Marshal.ReleaseComObject(pConnectPin);
                   pConnectPin = null;
@@ -667,6 +695,172 @@ namespace DShowNET.Helper
         } while (iFetched == 1);
         Marshal.ReleaseComObject(pinEnum);
       }
+    }
+
+    static public bool DisconnectAllPins(IGraphBuilder graphBuilder, IBaseFilter filter)
+    {
+      IEnumPins pinEnum;
+      int hr = filter.EnumPins(out pinEnum);
+      if (hr != 0 || pinEnum == null) return false;
+      FilterInfo info;
+      filter.QueryFilterInfo(out info);
+      Log.Info("Disconnecting all pins from filter {0}", info.achName);
+      bool allDisconnected = true;
+      for (; ; )
+      {
+        IPin[] pins = new IPin[1];
+        int fetched;
+        hr = pinEnum.Next(1, pins, out fetched);
+        if (hr != 0 || fetched == 0) break;
+        PinInfo pinInfo;
+        pins[0].QueryPinInfo(out pinInfo);
+        if (pinInfo.dir == PinDirection.Output)
+        {
+          if (!DisconnectPin(graphBuilder, pins[0]))
+            allDisconnected = false;
+        }
+        Marshal.ReleaseComObject(pins[0]);
+      }
+      Marshal.ReleaseComObject(pinEnum);
+      return allDisconnected;
+    }
+
+    static public bool DisconnectPin(IGraphBuilder graphBuilder, IPin pin)
+    {
+      IPin other;
+      int hr = pin.ConnectedTo(out other);
+      bool allDisconnected = true;
+      PinInfo info;
+      pin.QueryPinInfo(out info);
+      Log.Info("Disconnecting pin {0}", info.name);
+      if (hr == 0 && other != null)
+      {
+        other.QueryPinInfo(out info);
+        if (!DisconnectAllPins(graphBuilder, info.filter))
+          allDisconnected = false;
+        hr = pin.Disconnect();
+        if (hr != 0)
+        {
+          allDisconnected = false;
+          Log.Error("Error disconnecting: {0:x}", hr);
+        }
+        hr = other.Disconnect();
+        if (hr != 0)
+        {
+          allDisconnected = false;
+          Log.Error("Error disconnecting other: {0:x}", hr);
+        }
+        Marshal.ReleaseComObject(other);
+      }
+      else
+      {
+        Log.Info("  Not connected");
+      }
+      return allDisconnected;
+    }
+
+    static public bool QueryConnect(IPin pin, IPin other)
+    {
+      IEnumMediaTypes enumTypes;
+      int hr = pin.EnumMediaTypes(out enumTypes);
+      if (hr != 0 || enumTypes == null) return false;
+      int count = 0;
+      for (; ; )
+      {
+        AMMediaType[] types = new AMMediaType[1];
+        int fetched;
+        hr = enumTypes.Next(1, types, out fetched);
+        if (hr != 0 || fetched == 0) break;
+        count++;
+        if (other.QueryAccept(types[0]) == 0)
+        {
+          return true;
+        }
+      }
+      PinInfo info;
+      PinInfo infoOther;
+      pin.QueryPinInfo(out info);
+      other.QueryPinInfo(out infoOther);
+      Log.Info("Pins {0} and {1} do not accept each other. Tested {2} media types", info.name, infoOther.name, count);
+      return false;
+    }
+
+    static public bool ReRenderAll(IGraphBuilder graphBuilder, IBaseFilter filter)
+    {
+      int pinsRendered = 0;
+      bool bAllConnected = true;
+      IEnumPins pinEnum;
+      FilterInfo info;
+      filter.QueryFilterInfo(out info);
+      int hr = filter.EnumPins(out pinEnum);
+      if ((hr == 0) && (pinEnum != null))
+      {
+        Log.Info("got pins");
+        pinEnum.Reset();
+        IPin[] pins = new IPin[1];
+        int iFetched;
+        int iPinNo = 0;
+        do
+        {
+          // Get the next pin
+          //Log.Info("  get pin:{0}",iPinNo);
+          iPinNo++;
+          hr = pinEnum.Next(1, pins, out iFetched);
+          if (hr == 0)
+          {
+            if (iFetched == 1 && pins[0] != null)
+            {
+              PinInfo pinInfo = new PinInfo();
+              hr = pins[0].QueryPinInfo(out pinInfo);
+              if (hr == 0)
+              {
+                Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
+                Marshal.ReleaseComObject(pinInfo.filter);
+              }
+              else
+              {
+                Log.Info("  got pin:?");
+              }
+              PinDirection pinDir;
+              pins[0].QueryDirection(out pinDir);
+              if (pinDir == PinDirection.Output)
+              {
+                IPin pConnectPin = null;
+                
+                if (DisconnectPin(graphBuilder, pins[0]))
+                {
+                  hr = 0;
+                  if (TryConnect(graphBuilder, info.achName, pins[0]))
+                  //if ((hr = graphBuilder.Render(pins[0])) == 0)
+                  {
+                    Log.Info("  render ok");
+                  }
+                  else
+                  {
+                    Log.Error("  render {0} failed:{1:x}", pinInfo.name, hr);
+                    bAllConnected = false;
+                  }
+                  pinsRendered++;
+                }
+                if (pConnectPin != null)
+                  Marshal.ReleaseComObject(pConnectPin);
+                pConnectPin = null;
+                //else Log.Info("pin is already connected");
+              }
+              Marshal.ReleaseComObject(pins[0]);
+            }
+            else
+            {
+              iFetched = 0;
+              Log.Info("no pins?");
+              break;
+            }
+          }
+          else iFetched = 0;
+        } while (iFetched == 1);
+        Marshal.ReleaseComObject(pinEnum);
+      }
+      return bAllConnected;
     }
 
     /// <summary>
