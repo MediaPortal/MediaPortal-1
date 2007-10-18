@@ -133,12 +133,14 @@ namespace MediaPortal.Audioscrobbler
 
     void OnPlayBackEnded(g_Player.MediaType type, string filename)
     {
-      SongStoppedHandler();
+      if (type == g_Player.MediaType.Music)
+        SongStoppedHandler();
     }
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
-      SongStoppedHandler();
+      if (type == g_Player.MediaType.Music)
+        SongStoppedHandler();
     }
 
     void SongStoppedHandler()
