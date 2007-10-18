@@ -1166,6 +1166,8 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
       bool turnMonitorOn;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -1178,26 +1180,29 @@ public class MediaPortalApp : D3DApp, IRender
                                   EXECUTION_STATE.ES_DISPLAY_REQUIRED;
           oldState = SetThreadExecutionState(state);
         }
-      }
-      
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
+
         if (xmlreader.GetValueAsBool("general", "restartonresume", false))
         {
           Log.Info("Main: OnResume - prepare for restart!");
-          System.Diagnostics.Process proc = new System.Diagnostics.Process();
-          proc.EnableRaisingEvents = false;
-          proc.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
-          proc.StartInfo.FileName = Config.GetFolder(Config.Dir.Base) + "\\restart.vbs";
-          Log.Info("Main: OnResume - script {0}", proc.StartInfo.FileName );
-          proc.Start();
-          Log.Info("Main: OnResume - Still alive? mark #1");
-          System.Threading.Thread.Sleep(2000);
-          Log.Info("Main: OnResume - Still alive? mark #2");
+          Process restartScript = new Process();
+          restartScript.EnableRaisingEvents = false;
+          restartScript.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
+          restartScript.StartInfo.FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs");
+          Log.Debug("Main: OnResume - executing script {0}", restartScript.StartInfo.FileName);
+          restartScript.Start();
+          try
+          {
+            // Maybe the scripting host is not available therefore do not wait infinitely.
+            if (!restartScript.HasExited)
+              restartScript.WaitForExit();
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Main: OnResume - WaitForExit: {0}", ex.Message);
+          }
         }
       }
-
-      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+      
       if (_startWithBasicHome)
       {
         Log.Info("Main: OnResume - Switch to basic home screen");
@@ -1208,8 +1213,10 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: OnResume - Switch to home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
       }
+
       base.RecoverDevice();
 
+      // shouldn't that be set before trying to recover?
       _onResumeRunning = true;
 
       Recorder.Stop();  // bug fix from Powerscheduler
