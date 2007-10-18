@@ -70,7 +70,7 @@ namespace TvPlugin
       BigIcons = 2,
     }
 
-    #region Base variabeles
+    #region Base variables
     View currentView = View.List;
     SortMethod currentSortMethod = SortMethod.Number;
     bool sortAscending = true;
@@ -78,6 +78,8 @@ namespace TvPlugin
     string currentFolder = null;
     string lastFolder = "..";
     int selectedItemIndex = -1;
+    bool showAllChannelsGroup = true;
+    string rootGroup = "(none)";
     public static RadioChannelGroup selectedGroup=null;
     #endregion
 
@@ -148,8 +150,10 @@ namespace TvPlugin
         }
 
         sortAscending = xmlreader.GetValueAsBool("myradio", "sortascending", true);
-        currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
-
+        if (xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true))
+          currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
+        showAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "showallchannelsgroup", true);
+        rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
       }
     }
 
@@ -399,6 +403,13 @@ namespace TvPlugin
         IList groups=RadioChannelGroup.ListAll();
         foreach (RadioChannelGroup group in groups)
         {
+          if (!showAllChannelsGroup)
+          {
+            if (group.GroupName == GUILocalizeStrings.Get(972))
+              continue;
+          }
+          if (group.GroupName == rootGroup)
+            continue;
           GUIListItem item=new GUIListItem();
           item.Label = group.GroupName;
           item.IsFolder = true;
@@ -415,6 +426,43 @@ namespace TvPlugin
           listView.Add(item);
           thumbnailView.Add(item);
           totalItems++;
+        }
+        if (rootGroup != "(none)")
+        {
+          TvBusinessLayer layer = new TvBusinessLayer();
+          RadioChannelGroup root = layer.GetRadioChannelGroupByName(rootGroup);
+          if (root != null)
+          {
+            IList maps = root.ReferringRadioGroupMap();
+            foreach (RadioGroupMap map in maps)
+            {
+              Channel channel = map.ReferencedChannel();
+              GUIListItem item = new GUIListItem();
+              item.Label = channel.DisplayName;
+              item.IsFolder = false;
+              item.MusicTag = channel;
+              if (channel.IsWebstream())
+              {
+                item.IconImageBig = "DefaultMyradioStreamBig.png";
+                item.IconImage = "DefaultMyradioStream.png";
+              }
+              else
+              {
+                item.IconImageBig = "DefaultMyradioBig.png";
+                item.IconImage = "DefaultMyradio.png";
+              }
+              string thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+              if (System.IO.File.Exists(thumbnail))
+              {
+                item.IconImageBig = thumbnail;
+                item.IconImage = thumbnail;
+                item.ThumbnailImage = thumbnail;
+              }
+              listView.Add(item);
+              thumbnailView.Add(item);
+              totalItems++;
+            }
+          }
         }
         selectedGroup = null;
       }
@@ -697,7 +745,7 @@ namespace TvPlugin
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
     public bool DefaultEnabled()
     {
@@ -730,7 +778,8 @@ namespace TvPlugin
 
     public void ShowPlugin()
     {
-      // TODO:  Add Radio.ShowPlugin implementation
+      RadioSetupForm setup = new RadioSetupForm();
+      setup.ShowDialog();
     }
 
     #endregion
