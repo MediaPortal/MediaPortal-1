@@ -34,6 +34,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Hybrid;
+using TvLibrary.Implementations.RadioWebStream;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
@@ -285,7 +286,7 @@ namespace TvService
     /// Gets the type of card.
     /// </summary>
     /// <param name="cardId">id of card.</param>
-    /// <value>cardtype (Analog,DvbS,DvbT,DvbC,Atsc)</value>
+    /// <value>cardtype (Analog,DvbS,DvbT,DvbC,Atsc,WebStream)</value>
     public CardType Type
     {
       get
@@ -323,6 +324,7 @@ namespace TvService
           if ((_card as TvCardDVBS) != null) return CardType.DvbS;
           if ((_card as TvCardDvbSS2) != null) return (CardType)_card.cardType; //CardType.DvbS;
           if ((_card as TvCardDVBT) != null) return CardType.DvbT;
+          if (_card.cardType == 5) return CardType.RadioWebStream;
           return CardType.Analog;
         }
         catch (Exception ex)

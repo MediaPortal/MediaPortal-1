@@ -24,6 +24,7 @@ using System.Text;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Analog;
+using TvLibrary.Implementations.RadioWebStream;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
@@ -226,6 +227,7 @@ namespace TvLibrary.Implementations
         TvCardAnalog analogCard = new TvCardAnalog(devices[i]);
         _cards.Add(analogCard);
       }
+      _cards.Add(new RadioWebStreamCard());
     }
 
     /// <summary>

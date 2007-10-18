@@ -50,7 +50,11 @@ namespace TvControl
     /// <summary>
     /// ATSC card
     /// </summary>
-    Atsc
+    Atsc,
+    /// <summary>
+    /// RadioWebStream card
+    /// </summary>
+    RadioWebStream
   }
   /// <summary>
   /// enum describing the possible result codes for the tv engine
