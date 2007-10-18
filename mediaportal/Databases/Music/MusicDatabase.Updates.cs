@@ -923,7 +923,7 @@ namespace MediaPortal.Music.Database
       if (_useFolderArtForArtistGenre)
       {
         CreateArtistThumbs(smallThumbPath, tag.Artist.Trim(trimChars));
-        CreateGenreThumbs(tag.FileName, tag.Genre.Trim(trimChars));
+        CreateGenreThumbs(smallThumbPath, tag.Genre.Trim(trimChars));
       }
     }
 
@@ -988,9 +988,11 @@ namespace MediaPortal.Music.Database
         {
           try
           {
-            Picture.CreateThumbnail(aThumbPath, artistThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-            Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(artistThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-            Log.Info("Database: CreateArtistThumbs added thumbnails for {0}", aArtist);
+            if (Picture.CreateThumbnail(aThumbPath, artistThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+            {
+              Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(artistThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+              Log.Info("Database: CreateArtistThumbs added thumbnails for {0}", aArtist);
+            }
           }
           catch (Exception) { }
         }
@@ -1030,9 +1032,11 @@ namespace MediaPortal.Music.Database
         {
           try
           {
-            Picture.CreateThumbnail(aThumbPath, genreThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-            Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(genreThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-            Log.Info("Database: CreateGenreThumbs added thumbnails for {0}", strGenre);
+            if (Picture.CreateThumbnail(aThumbPath, genreThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+            {
+              Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(genreThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+              Log.Info("Database: CreateGenreThumbs added thumbnails for {0}", strGenre);
+            }
           }
           catch (Exception) { }
         }
