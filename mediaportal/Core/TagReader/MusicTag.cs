@@ -55,6 +55,7 @@ namespace MediaPortal.TagReader
     internal string m_Lyrics = string.Empty;
     internal int m_iDiscId = 0;
     internal int m_iNumDisc = 0;
+    internal bool m_hasAlbumArtist = false;
     #endregion
 
     #region ctor
@@ -113,6 +114,7 @@ namespace MediaPortal.TagReader
       m_Lyrics = "";
       m_iDiscId = 0;
       m_iNumDisc = 0;
+      m_hasAlbumArtist = false;
     }
 
     public bool IsMissingData
@@ -284,6 +286,12 @@ namespace MediaPortal.TagReader
     {
       get { return m_AlbumArtist; }
       set { m_AlbumArtist = value; }
+    }
+
+    public bool HasAlbumArtist
+    {
+      get { return m_hasAlbumArtist; }
+      set { m_hasAlbumArtist = value; }
     }
 
     public string Composer

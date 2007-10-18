@@ -78,9 +78,13 @@ namespace MediaPortal.TagReader
         if (artists.Length > 0)
           musictag.Artist = String.Join(";", artists).Trim(trimChars);
         musictag.Album = tag.Tag.Album;
+        musictag.HasAlbumArtist = false;
         string[] albumartists = tag.Tag.AlbumArtists;
         if (albumartists.Length > 0)
+        {
           musictag.AlbumArtist = String.Join(";", albumartists).Trim(trimChars);
+          musictag.HasAlbumArtist = true;
+        }
         musictag.BitRate = tag.Properties.AudioBitrate;
         musictag.Comment = tag.Tag.Comment;
         string[] composer = tag.Tag.Composers;

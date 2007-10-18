@@ -602,7 +602,7 @@ namespace MediaPortal.Music.Database
           tag.AlbumArtist = strTmp;
         }
 
-        if (tag.AlbumArtist == string.Empty)
+        if (!tag.HasAlbumArtist)
           tag.AlbumArtist = tag.Artist;
 
         // When we got Multiple Entries of either Artist, Genre, Albumartist in WMP notation, separated by ";",
@@ -1079,7 +1079,7 @@ namespace MediaPortal.Music.Database
           return;
 
         // Is the Artist different and also no different AlbumArtist set?
-        if (_previousMusicTag.Artist != tag.Artist && tag.AlbumArtist == tag.Artist)
+        if (_previousMusicTag.Artist != tag.Artist && !tag.HasAlbumArtist)
         {
           _foundVariousArtist = true;
           return;
@@ -1089,13 +1089,17 @@ namespace MediaPortal.Music.Database
       {
         if (_foundVariousArtist)
         {
+          // Let's add the "Varuious Artist" to the albumArtist table
+          string varArtist = "Various Artists | ";
+          AddAlbumArtist(varArtist);
+
           List<SongMap> songs = new List<SongMap>();
           GetSongsByPath(_previousDirectory, ref songs);
 
           foreach (SongMap map in songs)
           {
             int id = map.m_song.Id;
-            strSQL = string.Format("update tracks set strAlbumArtist = 'Various Artists' where idTrack={0}", id);
+            strSQL = string.Format("update tracks set strAlbumArtist = 'Various Artists | ' where idTrack={0}", id);
             MusicDatabase.DirectExecute(strSQL);
           }
         }
