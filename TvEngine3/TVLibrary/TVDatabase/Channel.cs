@@ -626,17 +626,23 @@ namespace TvDatabase
     {
       IList details = this.ReferringTuningDetail();
       if (details == null) return false;
-      if (details.Count != 1) return false;
-      TuningDetail detail = (TuningDetail)details[0];
-      return (detail.ChannelType == 5);
+      foreach (TuningDetail detail in details)
+      {
+        if (detail.ChannelType == 5)
+          return true;
+      }
+      return false;
     }
     public bool IsFMRadio()
     {
       IList details = this.ReferringTuningDetail();
       if (details == null) return false;
-      if (details.Count != 1) return false;
-      TuningDetail detail = (TuningDetail)details[0];
-      return (detail.ChannelType == 6);
+      foreach (TuningDetail detail in details)
+      {
+        if (detail.ChannelType == 6)
+          return true;
+      }
+      return false;
     }
   }
 }
