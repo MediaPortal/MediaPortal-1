@@ -706,7 +706,8 @@ namespace MediaPortal.Music.Database
           if (artist.Trim() == string.Empty)
             continue;
 
-          strSQL = String.Format("select idArtist from artist where strArtist = '{0}'", artist.Trim());
+          // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
+          strSQL = String.Format("select idArtist from artist where strArtist like '{0}'", artist.Trim());
           if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the Artist
@@ -742,7 +743,8 @@ namespace MediaPortal.Music.Database
           if (artist.Trim() == string.Empty)
             continue;
 
-          strSQL = String.Format("select idAlbumArtist from albumartist where strAlbumArtist = '{0}'", artist.Trim());
+          // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
+          strSQL = String.Format("select idAlbumArtist from albumartist where strAlbumArtist like '{0}'", artist.Trim());
           if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the AlbumArtist
@@ -777,7 +779,8 @@ namespace MediaPortal.Music.Database
           if (genre.Trim() == string.Empty)
             continue;
 
-          strSQL = String.Format("select idGenre from genre where strGenre = '{0}'", genre.Trim());
+          // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
+          strSQL = String.Format("select idGenre from genre where strGenre like '{0}'", genre.Trim());
           if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the Genre
