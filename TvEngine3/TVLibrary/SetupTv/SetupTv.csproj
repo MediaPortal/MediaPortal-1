@@ -235,6 +235,12 @@
     <Compile Include="Sections\ComboBoxEx .cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Sections\RadioCombinations.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\RadioCombinations.Designer.cs">
+      <DependentUpon>RadioCombinations.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\RadioGroups.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -434,6 +440,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Combinations.resx">
       <DependentUpon>Combinations.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\RadioCombinations.resx">
+      <DependentUpon>RadioCombinations.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\RadioGroups.resx">

@@ -211,8 +211,6 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels)
       {
         if (channel.IsRadio == false) continue;
-        if (channel.IsWebstream()) continue;
-        if (channel.IsFMRadio()) continue;
         int imageIndex = 0;
         if (channel.FreeToAir)
           imageIndex = 3;

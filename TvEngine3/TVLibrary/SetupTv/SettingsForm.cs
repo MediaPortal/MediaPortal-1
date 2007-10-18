@@ -195,6 +195,7 @@ namespace SetupTv
 
           RadioChannels radioChannels = new RadioChannels();
           AddSection(radioChannels);
+          AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
           AddChildSection(radioChannels, new RadioChannelMapping());
           AddChildSection(radioChannels, new RadioEpgGrabber());
           AddChildSection(radioChannels, new RadioGroups());
