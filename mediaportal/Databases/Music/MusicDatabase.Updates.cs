@@ -990,7 +990,7 @@ namespace MediaPortal.Music.Database
           {
             Picture.CreateThumbnail(aThumbPath, artistThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
             Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(artistThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-            Log.Info("Database: CreateArtistThumbs added thumbnails for {0}: {1}", aArtist, artistThumb);
+            Log.Info("Database: CreateArtistThumbs added thumbnails for {0}", aArtist);
           }
           catch (Exception) { }
         }
@@ -1006,8 +1006,6 @@ namespace MediaPortal.Music.Database
     {
       if (File.Exists(aThumbPath) && !string.IsNullOrEmpty(aGenre))
       {
-        // using the thumb of the first item of a gerne / artist having a thumb
-
         // The genre may contains unallowed chars
         string strGenre = Util.Utils.MakeFileName(aGenre.Trim(trimChars));
 
@@ -1034,11 +1032,13 @@ namespace MediaPortal.Music.Database
           {
             Picture.CreateThumbnail(aThumbPath, genreThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
             Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(genreThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-            Log.Info("Database: CreateGenreThumbs added thumbnails for {0}: {1}", strGenre, genreThumb);
+            Log.Info("Database: CreateGenreThumbs added thumbnails for {0}", strGenre);
           }
           catch (Exception) { }
         }
       }
+      else
+        Log.Debug("Database: CreateGenreThumbs is missing some info - file: {0}, genre: {1}", aThumbPath, aGenre);
     }
 
     /// <summary>

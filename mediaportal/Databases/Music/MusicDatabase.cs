@@ -211,7 +211,7 @@ namespace MediaPortal.Music.Database
         // Indices for Tracks table
         DatabaseUtility.AddIndex(MusicDbClient, "idxpath_strPath", "CREATE INDEX idxpath_strPath ON tracks(strPath ASC)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxartist_strArtist", "CREATE INDEX idxartist_strArtist ON tracks(strArtist ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxartist_strArtistSortName", "CREATE INDEX idxartist_strArtistSortName ON tracks(strArtistSortName ASC)");
+        //DatabaseUtility.AddIndex(MusicDbClient, "idxartist_strArtistSortName", "CREATE INDEX idxartist_strArtistSortName ON tracks(strArtistSortName ASC)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxalbum_strAlbumArtist", "CREATE INDEX idxalbum_strAlbumArtist ON tracks(strAlbumArtist ASC)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxalbum_strAlbum", "CREATE INDEX idxalbum_strAlbum ON tracks(strAlbum ASC)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxgenre_strGenre", "CREATE INDEX idxgenre_strGenre ON tracks(strGenre ASC)");

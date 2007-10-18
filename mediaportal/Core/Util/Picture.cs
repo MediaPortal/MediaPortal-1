@@ -931,7 +931,7 @@ namespace MediaPortal.Util
 
       try
       {
-        theImage = Image.FromFile(strFile);        
+        theImage = Image.FromFile(strFile, true);
 
         if (CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate))
           return true;
@@ -941,6 +941,11 @@ namespace MediaPortal.Util
           return false;
         }
 
+      }
+      catch (OutOfMemoryException)
+      {
+        Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", strFile);
+        return false;
       }
       catch (Exception ex)
       {
@@ -1028,7 +1033,7 @@ namespace MediaPortal.Util
             try
             {
               result.Save(strThumb, System.Drawing.Imaging.ImageFormat.Jpeg);
-              System.Threading.Thread.Sleep(50);
+              System.Threading.Thread.Sleep(30);
               return true;
             }
             catch (Exception ex)
