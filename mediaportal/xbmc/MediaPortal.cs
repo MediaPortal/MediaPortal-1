@@ -1165,22 +1165,6 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: OnResume - OnResume called but !_suspended");
         return;
       }
-      
-      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-      if (_startWithBasicHome)
-      {
-        Log.Info("Main: OnResume - Switch to basic home screen");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-      }
-      else
-      {
-        Log.Info("Main: OnResume - Switch to home screen");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-      }
-      base.RecoverDevice();
-
-      _onResumeRunning = true;
-      
 
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
       bool turnMonitorOn;
@@ -1195,6 +1179,38 @@ public class MediaPortalApp : D3DApp, IRender
           oldState = SetThreadExecutionState(state);
         }
       }
+      
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        if (xmlreader.GetValueAsBool("general", "restartonresume", false))
+        {
+          Log.Info("Main: OnResume - prepare for restart!");
+          System.Diagnostics.Process proc = new System.Diagnostics.Process();
+          proc.EnableRaisingEvents = false;
+          proc.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
+          proc.StartInfo.FileName = Config.GetFolder(Config.Dir.Base) + "\\restart.vbs";
+          Log.Info("Main: OnResume - script {0}", proc.StartInfo.FileName );
+          proc.Start();
+          Log.Info("Main: OnResume - Still alive? mark #1");
+          System.Threading.Thread.Sleep(2000);
+          Log.Info("Main: OnResume - Still alive? mark #2");
+        }
+      }
+
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+      if (_startWithBasicHome)
+      {
+        Log.Info("Main: OnResume - Switch to basic home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+      }
+      else
+      {
+        Log.Info("Main: OnResume - Switch to home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+      }
+      base.RecoverDevice();
+
+      _onResumeRunning = true;
 
       Recorder.Stop();  // bug fix from Powerscheduler
       if (!Recorder.Running)
