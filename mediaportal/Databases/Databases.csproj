@@ -227,6 +227,7 @@
     <Compile Include="MusicVideos\YahooTopVideos.cs" />
     <Compile Include="MusicVideos\YahooUtil.cs" />
     <Compile Include="MusicVideos\YahooVideo.cs" />
+    <Compile Include="Music\MusicDatabaseSettings.cs" />
     <Compile Include="Music\InternetLookups\AlbumInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -487,7 +487,17 @@ namespace MediaPortal.Configuration.Sections
       //RebuildDatabase();
       progressBar.Maximum = 100;
 
-      int appel = m_dbs.MusicDatabaseReorg(shares, folderAsAlbumCheckBox.Checked, checkBoxUpdateSinceLastImport.Checked);
+      // Now create a Settings Object with the Settings checked to pass to the Import
+      MusicDatabaseSettings setting = new MusicDatabaseSettings();
+      setting.CreateMissingFolderThumb = checkBoxCreateFolderThumb.Checked;
+      setting.ExtractEmbeddedCoverArt = buildThumbsCheckBox.Checked;
+      setting.StripArtistPrefixes = checkBoxStripArtistPrefix.Checked;
+      setting.TreatFolderAsAlbum = folderAsAlbumCheckBox.Checked;
+      setting.UseFolderThumbs = checkBoxUseFolderThumb.Checked;
+      setting.UseFolderThumbsForArtistGenre = checkBoxCreateArtistGenre.Checked;
+      setting.UseLastImportDate = checkBoxUpdateSinceLastImport.Checked;
+
+      int appel = m_dbs.MusicDatabaseReorg(shares, setting);
       progressBar.Value = 100;
 
       groupBox1.Enabled = true;

@@ -102,13 +102,23 @@ namespace MediaPortal.Music.Database
       {
         updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
       }
-      return MusicDatabaseReorg(shares, _treatFolderAsAlbum, updateSinceLastImport);
+      return MusicDatabaseReorg(shares, null);
     }
 
-    public int MusicDatabaseReorg(ArrayList shares, bool treatFolderAsAlbum, bool updateSinceLastImport)
+    public int MusicDatabaseReorg(ArrayList shares, MusicDatabaseSettings setting)
     {
-      // Make sure we use the selected settings if the user hasn't saved the configuration
-      _treatFolderAsAlbum = treatFolderAsAlbum;
+      // Get the values from the Setting Object, which we received from the Config
+      bool updateSinceLastImport = false;
+      if (setting != null)
+      {
+        _createMissingFolderThumbs = setting.CreateMissingFolderThumb;
+        _extractEmbededCoverArt = setting.ExtractEmbeddedCoverArt;
+        _stripArtistPrefixes = setting.StripArtistPrefixes;
+        _treatFolderAsAlbum = setting.TreatFolderAsAlbum;
+        _useFolderThumbs = setting.UseFolderThumbs;
+        _useFolderArtForArtistGenre = setting.UseFolderThumbsForArtistGenre;
+        updateSinceLastImport = setting.UseLastImportDate;
+      }
 
       if (!updateSinceLastImport)
         _lastImport = DateTime.MinValue;
