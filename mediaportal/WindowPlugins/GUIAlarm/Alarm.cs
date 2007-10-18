@@ -26,6 +26,7 @@
 using System;
 using System.Text;
 using System.Collections;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
@@ -72,7 +73,7 @@ namespace MediaPortal.GUI.Alarm
     private bool _disallowShutdown;
     private static bool _initializedStopAlarmTimer;
     private System.ComponentModel.BackgroundWorker _backgroundWorker;
-    private static int _wakeupInterval=0;
+    private static int _wakeupInterval = 0;
 
     //constants
     private const int _MaxAlarms = 20;
@@ -204,8 +205,8 @@ namespace MediaPortal.GUI.Alarm
     }
     public DateTime LastTriggeredTime
     {
-        get { return _LastTriggeredTime; }
-        set { _LastTriggeredTime = value; }
+      get { return _LastTriggeredTime; }
+      set { _LastTriggeredTime = value; }
     }
     public DateTime NextAlarmTriggerTime
     {
@@ -224,7 +225,7 @@ namespace MediaPortal.GUI.Alarm
             //resolve recurring alarm to next trigger date
             //loop through the next 7 days to 
             //find the next enabled day for the alarm
-            for (int i = 0; i < 8; i++)
+            for (int i = 0 ; i < 8 ; i++)
             {
               DateTime DateToCheck = DateTime.Now.AddDays(i);
 
@@ -383,72 +384,75 @@ namespace MediaPortal.GUI.Alarm
     {
       if (sender == _AlarmTimer)
       {
-          //check to see if this instance of the alarm has triggered for this minute
-          if (DateTime.Now.Subtract(LastTriggeredTime).TotalMinutes > 1)
+        //check to see if this instance of the alarm has triggered for this minute
+        if (DateTime.Now.Subtract(LastTriggeredTime).TotalMinutes > 1)
+        {
+          //check to see if alarm is within the current minute
+          if ((DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now) <= 0) && (DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now.AddMinutes(-1)) >= 0))
           {
-              //check to see if alarm is within the current minute
-              if ((DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now) <= 0) && (DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now.AddMinutes(-1)) >= 0))
+            if (_AlarmType == AlarmType.Recurring && IsDayEnabled() || _AlarmType == AlarmType.Once)
+            {
+              Log.Info("Alarm: {0} fired at {1}", _Name, DateTime.Now);
+
+              LastTriggeredTime = DateTime.Now;
+
+              //disallowShutdown as alarm is on
+              _disallowShutdown = true;
+
+              //reset snooze timer, if set
+              _SnoozeAlarmTime = new DateTime(1901, 1, 1);
+
+              //load alarm alert (sound, playlist, radio, or message)
+              if (!GUIGraphicsContext.IsFullScreenVideo)
               {
-                  if (_AlarmType == AlarmType.Recurring && IsDayEnabled() || _AlarmType == AlarmType.Once)
-                  {
-                      Log.Info("Alarm: {0} fired at {1}", _Name, DateTime.Now);
-
-                      LastTriggeredTime = DateTime.Now;
-
-                      //disallowShutdown as alarm is on
-                      _disallowShutdown = true;
-
-                      //reset snooze timer, if set
-                      _SnoozeAlarmTime = new DateTime(1901, 1, 1);
-
-                      //load alarm alert (sound, playlist, radio, or message)
-                      if (!GUIGraphicsContext.IsFullScreenVideo)
-                      {
-                          Play();
-                          //enable fade timer if selected
-                          if (_VolumeFade)
-                          {
-                              g_Player.Volume = 0;
-                              _VolumeFadeTimer.Enabled = true;
-                          }
-
-                      }
-
-                      //set StopAlarmTime (alarm timeout)
-                      Alarm.StopAlarmTime = DateTime.Now.AddMinutes(Alarm.AlarmTimeout);
-
-                      //load alarm dialog in different thread - allows PowerScheduler to continue working properly (as it requires the UI thread, and dialogs steal the UI thread when modal)
-                      _backgroundWorker = new System.ComponentModel.BackgroundWorker();
-                      _backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(ShowAlarmTriggeredDialog_DoWork);
-                      _backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(ShowAlarmTriggeredDialog_RunWorkerCompleted);
-
-                      //build dialog title
-                      string dialogTitle;
-                      if (this.Message == string.Empty)
-                      {
-                          dialogTitle = GUILocalizeStrings.Get(850) + " - " + this.Name;
-                      }
-                      else
-                      {
-                          dialogTitle = this.Message;
-                      }
-
-                      //run thread
-                      _backgroundWorker.RunWorkerAsync(dialogTitle);
-
-                  }
+                Play();
+                //enable fade timer if selected
+                if (_VolumeFade)
+                {
+                  g_Player.Volume = 0;
+                  _VolumeFadeTimer.Enabled = true;
+                }
 
               }
-              //else if the NextAlarmTriggerTime is before the current time, once-off alarm was missed - disable alarm
-              else if ((DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now) < 0) && (_backgroundWorker.IsBusy==false))
-              {
-                  _AlarmTimer.Enabled = false;
-                  this.Enabled = false;
-                  Alarm.SaveAlarm(this);
 
-                  Log.Info("Alarm '{0}' could not fire at {1}. Computer not on and wake up not allowed?", this.Name, this.NextAlarmTriggerTime.ToString());
+              //set StopAlarmTime (alarm timeout)
+              Alarm.StopAlarmTime = DateTime.Now.AddMinutes(Alarm.AlarmTimeout);
+
+              //load alarm dialog in different thread - allows PowerScheduler to continue working properly (as it requires the UI thread, and dialogs steal the UI thread when modal)
+              _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+              _backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(ShowAlarmTriggeredDialog_DoWork);
+              _backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(ShowAlarmTriggeredDialog_RunWorkerCompleted);
+
+              //build dialog title
+              string dialogTitle;
+              if (this.Message == string.Empty)
+              {
+                dialogTitle = GUILocalizeStrings.Get(850) + " - " + this.Name;
               }
+              else
+              {
+                dialogTitle = this.Message;
+              }
+
+              //run thread
+              _backgroundWorker.RunWorkerAsync(dialogTitle);
+
+            }
+
           }
+          //else if the NextAlarmTriggerTime is before the current time, once-off alarm was missed - disable alarm
+          else if (DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now) < 0)
+          {
+            if ((_backgroundWorker != null) && (_backgroundWorker.IsBusy))
+              return;
+
+            _AlarmTimer.Enabled = false;
+            this.Enabled = false;
+            Alarm.SaveAlarm(this);
+
+            Log.Info("Alarm '{0}' could not fire at {1}. Computer not on and wake up not allowed?", this.Name, this.NextAlarmTriggerTime.ToString());
+          }
+        }
       }
       else if (sender == _VolumeFadeTimer)
       {
@@ -470,7 +474,7 @@ namespace MediaPortal.GUI.Alarm
     public void ShowAlarmTriggeredDialog_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
     {
       if (GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog) != null)   // Don't show two dialogs at the same time
-       {
+      {
         e.Result = 1;  // try it once again in 1 minute
         return;
       }
@@ -527,18 +531,18 @@ namespace MediaPortal.GUI.Alarm
     {
       //dialog dismissed, assume alarm acknowledged, allow shutdown if criteria met
       _disallowShutdown = false;
-        
+
       SetSnoozePeriod((int)e.Result);
       _backgroundWorker.Dispose();
 
       //disable alarm if it is a once-only alarm and no snooze was required
       if ((((int)e.Result) == 0) && (this.AlarmOccurrenceType == AlarmType.Once))
       {
-          //disable the timer.
-          _AlarmTimer.Enabled = false;
+        //disable the timer.
+        _AlarmTimer.Enabled = false;
 
-          this.Enabled = false;
-          Alarm.SaveAlarm(this);
+        this.Enabled = false;
+        Alarm.SaveAlarm(this);
       }
     }
 
@@ -641,7 +645,7 @@ namespace MediaPortal.GUI.Alarm
               g_Player.Volume = 99;
               return;
             }
-            for (int i = 0; i < playlist.Count; ++i)
+            for (int i = 0 ; i < playlist.Count ; ++i)
             {
               PlayListItem playListItem = playlist[i];
               playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
@@ -795,7 +799,7 @@ namespace MediaPortal.GUI.Alarm
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        for (int i = 0; i < _MaxAlarms; i++)
+        for (int i = 0 ; i < _MaxAlarms ; i++)
         {
           string NameTag = String.Format("alarmName{0}", i);
           string MediaTypeTag = String.Format("alarmMediaType{0}", i);
@@ -919,7 +923,7 @@ namespace MediaPortal.GUI.Alarm
       get
       {
         string tempText;
-        for (int i = 0; i < _MaxAlarms; i++)
+        for (int i = 0 ; i < _MaxAlarms ; i++)
         {
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
@@ -1017,7 +1021,7 @@ namespace MediaPortal.GUI.Alarm
         if (alarmTriggerDialogsOpen > 0)
         {
           //dismiss all alarm trigger dialogs
-          for (int i = 0; i < alarmTriggerDialogsOpen; i++)
+          for (int i = 0 ; i < alarmTriggerDialogsOpen ; i++)
           {
             MediaPortal.GUI.Library.Action act = new Action();
             act.wID = MediaPortal.GUI.Library.Action.ActionType.REMOTE_6; //number for the dismiss option
@@ -1159,7 +1163,7 @@ namespace MediaPortal.GUI.Alarm
           {
             if (a.DisallowShutdown == true)
             {
-                alarmResponsible += a.Name + " ";
+              alarmResponsible += a.Name + " ";
               disallowShutdown = true;
             }
           }
@@ -1226,13 +1230,13 @@ namespace MediaPortal.GUI.Alarm
     {
       if (_Alarms == null) return DateTime.MaxValue;
 
-        //load wakeupInterval value if not there (different to powerscheduler's)
+      //load wakeupInterval value if not there (different to powerscheduler's)
       if (_wakeupInterval == 0)
       {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          {
-              _wakeupInterval = xmlreader.GetValueAsInt("alarm", "wakeupInterval", 2);
-          }
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          _wakeupInterval = xmlreader.GetValueAsInt("alarm", "wakeupInterval", 2);
+        }
       }
 
       DateTime NextStartTime = new DateTime();
@@ -1268,12 +1272,11 @@ namespace MediaPortal.GUI.Alarm
 
       //MediaPortal.GUI.Library.Log.Info("Alarm: next alarm trigger time: {0}", NextStartTime.ToString());
 
-        //account for the wakeup interval
+      //account for the wakeup interval
       return NextStartTime.AddMinutes(-_wakeupInterval);
     }
 
     #endregion
-
 
   }
 }
