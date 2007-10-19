@@ -1051,11 +1051,11 @@ namespace MediaPortal.Player
         VizWindow = tempVizWindow;
       }
 
+      VizWindow.Visible = false;
       VizWindow.Location = new System.Drawing.Point(8, 16);
       VizWindow.Name = "NativeVisualizationWindow";
       VizWindow.Size = new System.Drawing.Size(0, 0);
       VizWindow.TabIndex = 0;
-      VizWindow.Visible = false;
       VizWindow.Enabled = false;
 
       if (!foundWindow)
