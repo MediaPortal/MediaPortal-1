@@ -683,12 +683,17 @@ namespace MediaPortal.GUI.Music
       InfoScrobbler.RemoveRequest(_lastTagRequest);
 
       ImageChangeTimer.Stop();
+
+      if (ImgCoverArt != null)      
+        ImgCoverArt.FreeResources();
+
       GC.Collect();
-      base.OnPageDestroy(new_windowId);
       ControlsInitialized = false;
 
       // Make sure we clear any images we added so we revert back the coverart image
       ClearVisualizationImages();
+
+      base.OnPageDestroy(new_windowId);
     }
 
     public override void Render(float timePassed)
