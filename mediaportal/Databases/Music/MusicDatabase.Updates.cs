@@ -1017,26 +1017,30 @@ namespace MediaPortal.Music.Database
       {
         for (int i = 0 ; i < allArtists.Count ; i++)
         {
-          groupedArtistSongs.Clear();
-          imageTracks.Clear();
-          string artistThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, allArtists[i].ToString());
-          if (!File.Exists(artistThumbPath))
+          string curArtist = allArtists[i].ToString();
+          if (!string.IsNullOrEmpty(curArtist) && curArtist != "unknown")            
           {
-            if (GetSongsByArtist(allArtists[i].ToString(), ref groupedArtistSongs, true))
+            groupedArtistSongs.Clear();
+            imageTracks.Clear();
+            string artistThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, curArtist);
+            if (!File.Exists(artistThumbPath))
             {
-              for (int j = 0 ; j < groupedArtistSongs.Count ; j++)
+              if (GetSongsByArtist(curArtist, ref groupedArtistSongs, true))
               {
-                string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedArtistSongs[j].FileName);
-                if (!string.IsNullOrEmpty(coverArt))
-                  imageTracks.Add(coverArt);
+                for (int j = 0 ; j < groupedArtistSongs.Count ; j++)
+                {
+                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedArtistSongs[j].FileName);
+                  if (!string.IsNullOrEmpty(coverArt))
+                    imageTracks.Add(coverArt);
 
-                // we need a maximum of 4 covers for the preview
-                if (imageTracks.Count >= 4)
-                  break;
+                  // we need a maximum of 4 covers for the preview
+                  if (imageTracks.Count >= 4)
+                    break;
+                }
+
+                if (Util.Utils.CreateFolderPreviewThumb(imageTracks, artistThumbPath))
+                  Log.Info("MusicDatabase: Added artist thumb for {0}", curArtist);
               }
-
-              if (Util.Utils.CreateFolderPreviewThumb(imageTracks, artistThumbPath))
-                Log.Info("MusicDatabase: Added artist thumb for {0}", allArtists[i].ToString());
             }
           }
         }
@@ -1052,28 +1056,32 @@ namespace MediaPortal.Music.Database
 
       if (GetGenres(ref allGenres))
       {
-        for (int i = 0; i < allGenres.Count; i++)
+        for (int i = 0 ; i < allGenres.Count ; i++)
         {
-          groupedGenreSongs.Clear();
-          imageTracks.Clear();
-          string genreThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicGenre, allGenres[i].ToString());
-          if (!File.Exists(genreThumbPath))
-          {            
-            if (GetSongsByGenre(allGenres[i].ToString(), ref groupedGenreSongs, true))
+          string curGenre = allGenres[i].ToString();
+          if (!string.IsNullOrEmpty(curGenre) && curGenre != "unknown")
+          {
+            groupedGenreSongs.Clear();
+            imageTracks.Clear();
+            string genreThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicGenre, curGenre);
+            if (!File.Exists(genreThumbPath))
             {
-              for (int j = 0; j < groupedGenreSongs.Count; j++)
+              if (GetSongsByGenre(curGenre, ref groupedGenreSongs, true))
               {
-                string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedGenreSongs[j].FileName);
-                if (!string.IsNullOrEmpty(coverArt))
-                  imageTracks.Add(coverArt);
+                for (int j = 0 ; j < groupedGenreSongs.Count ; j++)
+                {
+                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedGenreSongs[j].FileName);
+                  if (!string.IsNullOrEmpty(coverArt))
+                    imageTracks.Add(coverArt);
 
-                // we need a maximum of 4 covers for the preview
-                if (imageTracks.Count >= 4)
-                  break;
+                  // we need a maximum of 4 covers for the preview
+                  if (imageTracks.Count >= 4)
+                    break;
+                }
+
+                if (Util.Utils.CreateFolderPreviewThumb(imageTracks, genreThumbPath))
+                  Log.Info("MusicDatabase: Added genre thumb for {0}", curGenre);
               }
-
-              if (Util.Utils.CreateFolderPreviewThumb(imageTracks, genreThumbPath))
-                Log.Info("MusicDatabase: Added genre thumb for {0}", allGenres[i].ToString());
             }
           }
         }  // for all genres
