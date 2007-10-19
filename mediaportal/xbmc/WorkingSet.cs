@@ -36,7 +36,7 @@ namespace MediaPortal
     [DllImport("kernel32")]
     static extern bool SetProcessWorkingSetSize(IntPtr handle, int minSize, int maxSize);
 
-    static public void Minimize()
+    public static void Minimize()
     {
       SetProcessWorkingSetSize(Process.GetCurrentProcess().Handle, -1, -1);
     }

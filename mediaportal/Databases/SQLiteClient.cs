@@ -188,7 +188,7 @@ namespace SQLite.NET
       }
     }
 
-    static private bool WaitForFile(string fileName)
+    private static bool WaitForFile(string fileName)
     {
       // while waking up from hibernation it can take a while before a network drive is accessible.
       // lets wait 10 sec      

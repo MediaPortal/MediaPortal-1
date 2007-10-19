@@ -1003,7 +1003,7 @@ namespace MediaPortal.Configuration.Sections
       SaveSettings();
     }
 
-    static public void UpdateList()
+    public static void UpdateList()
     {
       _reloadList = true;
     }

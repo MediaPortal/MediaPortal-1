@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.GUIPrograms
     static XmlNodeList NodeList = null;
     static XmlElement rootElement = null; 
 
-    static public int NodeCount
+    public static int NodeCount
     {
       get
       {
@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.GUIPrograms
       }
     }
 
-    static public int NodeID(int Index)
+    public static int NodeID(int Index)
     {
       int result = - 1;
       if (NodeList == null)
@@ -82,7 +82,7 @@ namespace MediaPortal.GUI.GUIPrograms
       return Convert.ToInt32(strVal.Length > 0 ? strVal : "-1");
     }
 
-    static public string NodeTitle(int Index)
+    public static string NodeTitle(int Index)
     {
       string result = "";
       if (NodeList == null)
@@ -104,7 +104,7 @@ namespace MediaPortal.GUI.GUIPrograms
       return result;
     }
 
-    static public int GetIndexOfID(int ContentID)
+    public static int GetIndexOfID(int ContentID)
     {
       int result = - 1;
       XmlNode node = null;
@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.GUIPrograms
       }
     }
 
-    static public string GetFieldValue(AppItem curApp, FileItem curFile, string strFieldName, string strValueIfEmpty)
+    public static string GetFieldValue(AppItem curApp, FileItem curFile, string strFieldName, string strValueIfEmpty)
     {
       string result = "";
       if (rootElement == null)

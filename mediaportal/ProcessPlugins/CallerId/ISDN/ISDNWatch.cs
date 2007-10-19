@@ -118,7 +118,7 @@ namespace ProcessPlugins.CallerId
       StringBuilder AereaCode);
 
     public delegate void EventHandler(string CallerId);
-    static public event EventHandler CidReceiver = null;
+    public static event EventHandler CidReceiver = null;
 
     bool stopThread = false;
     const int HeaderLength = 8;
@@ -140,7 +140,7 @@ namespace ProcessPlugins.CallerId
       }
     }
 
-    static public bool CapiInstalled
+    public static bool CapiInstalled
     {
       get
       {

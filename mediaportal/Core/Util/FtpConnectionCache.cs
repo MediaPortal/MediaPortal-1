@@ -245,7 +245,7 @@ namespace MediaPortal.Util
     /// true: found an idle connection, this is returned in ftpclient
     /// false: no idle connections found. ftpclient =null
     /// </returns>
-    static public bool InCache(string hostname, string login, string password, int port, bool active, out FTPClient ftpclient)
+    public static bool InCache(string hostname, string login, string password, int port, bool active, out FTPClient ftpclient)
     {
       ftpclient = null;
       foreach (FtpConnection client in ftpConnections)
@@ -276,7 +276,7 @@ namespace MediaPortal.Util
     /// instance of an FTPClient handling the ftp connection
     /// or null if no connection could be made
     /// </returns>
-    static public FTPClient MakeConnection(string hostname, string login, string password, int port, bool active)
+    public static FTPClient MakeConnection(string hostname, string login, string password, int port, bool active)
     {
       try
       {
@@ -313,7 +313,7 @@ namespace MediaPortal.Util
     /// this can be used to remove ftp clients which are disconnected
     /// </summary>
     /// <param name="ftpclient">FTPClient</param>
-    static public void Remove(FTPClient ftpclient)
+    public static void Remove(FTPClient ftpclient)
     {
       foreach (FtpConnection client in ftpConnections)
       {
@@ -338,7 +338,7 @@ namespace MediaPortal.Util
     /// true: download is started
     /// false: unable to download file
     /// </returns>
-    static public bool Download(FTPClient ftpclient, string orgremoteFile, string remotefile, string localfile)
+    public static bool Download(FTPClient ftpclient, string orgremoteFile, string remotefile, string localfile)
     {
       foreach (FtpConnection client in ftpConnections)
       {

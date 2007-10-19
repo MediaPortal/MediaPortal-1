@@ -45,7 +45,7 @@ namespace MediaPortal.MusicShareWatcher
   {
     #region Variables
     private bool bMonitoring;
-    static public MusicDatabase musicDB = null;
+    public static MusicDatabase musicDB = null;
     ArrayList m_Shares = new ArrayList();
     ArrayList m_Watchers = new ArrayList();
 

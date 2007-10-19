@@ -60,7 +60,7 @@ namespace MediaPortal.TagReader
     /// MusicTag instance when file has been read
     /// null when file type is not supported or if the file does not contain any information
     /// </returns>
-    static public MusicTag ReadTag(string strFile)
+    public static MusicTag ReadTag(string strFile)
     {
       if (!IsAudio(strFile))
         return null;
@@ -159,7 +159,7 @@ namespace MediaPortal.TagReader
       return null;
     }
 
-    static private bool IsAudio(string fileName)
+    private static bool IsAudio(string fileName)
     {
       string ext = System.IO.Path.GetExtension(fileName).ToLower();
 

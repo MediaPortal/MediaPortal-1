@@ -254,7 +254,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			}
 			base.OnClicked (controlId, control, actionType);
 		}
-		static public ArrayList RadioStationsFound
+		public static ArrayList RadioStationsFound
 		{
 			get { return listRadioChannels;}
 		}

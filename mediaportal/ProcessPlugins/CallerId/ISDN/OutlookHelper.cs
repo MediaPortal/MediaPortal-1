@@ -43,7 +43,7 @@ namespace ProcessPlugins.CallerId
       public bool HasPicture;
     }
 
-    static public Caller OutlookLookup(string outlookQuery)
+    public static Caller OutlookLookup(string outlookQuery)
     {
       Caller found = new Caller();
 

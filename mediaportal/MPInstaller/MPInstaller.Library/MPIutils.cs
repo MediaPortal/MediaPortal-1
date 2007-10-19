@@ -18,7 +18,7 @@ namespace MediaPortal.MPInstaller
         {
         }
 
-        static public void LoadPlugins(string pluginFile)
+        public static void LoadPlugins(string pluginFile)
         {
             if (!File.Exists(pluginFile))
             {
@@ -76,7 +76,7 @@ namespace MediaPortal.MPInstaller
         }
     
        
-        static public void StartApp(string file)
+        public static void StartApp(string file)
         {
             Process app = new Process();
             app.StartInfo.FileName = file;

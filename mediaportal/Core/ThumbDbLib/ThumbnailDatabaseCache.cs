@@ -29,11 +29,11 @@ using System.Text;
 
 namespace ThumbDBLib
 {
-  static public class ThumbnailDatabaseCache
+  public static class ThumbnailDatabaseCache
   {
     static List<ThumbnailDatabase> _cache = new List<ThumbnailDatabase>();
 
-    static public ThumbnailDatabase Get(string folder)
+    public static ThumbnailDatabase Get(string folder)
     {
       lock (_cache)
       {

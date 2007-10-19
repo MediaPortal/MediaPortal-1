@@ -866,7 +866,7 @@ namespace MediaPortal.Configuration.Sections
       LoadCards();
     }
 
-    static public void UpdateList()
+    public static void UpdateList()
     {
       reloadList = true;
     }

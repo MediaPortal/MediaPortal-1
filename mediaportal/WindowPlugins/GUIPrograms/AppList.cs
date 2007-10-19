@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.GUIPrograms
     public static SQLiteClient sqlDB = null;
     static ApplicationFactory appFactory = ApplicationFactory.AppFactory;
 
-    static public event AppItem.FilelinkLaunchEventHandler OnLaunchFilelink = null;
+    public static event AppItem.FilelinkLaunchEventHandler OnLaunchFilelink = null;
 
     public Applist(SQLiteClient initSqlDB, AppItem.FilelinkLaunchEventHandler curHandler)
     {
@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.GUIPrograms
       LoadAll();
     }
 
-    static private AppItem DBGetApp(SQLiteResultSet results, int recordIndex)
+    private static AppItem DBGetApp(SQLiteResultSet results, int recordIndex)
     {
       AppItem newApp = appFactory.GetAppItem(sqlDB, ProgramUtils.GetSourceType(results, recordIndex, "source_type"));
       newApp.OnLaunchFilelink += new AppItem.FilelinkLaunchEventHandler(LaunchFilelink);

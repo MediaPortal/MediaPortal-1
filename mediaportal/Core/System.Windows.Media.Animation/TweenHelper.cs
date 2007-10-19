@@ -170,7 +170,7 @@ namespace System.Windows.Media.Animation
 
 		#region Fields
 
-		static public double		TickCount;
+		public static double		TickCount;
 
 		#endregion Fields
 	}

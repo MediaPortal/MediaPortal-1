@@ -382,7 +382,7 @@ namespace MediaPortal.GUI.Library
     /// efficient retrieval of data. Can handle combined strings on the form
     /// Player.Caching + VideoPlayer.IsFullscreen (Logical and)
     /// Player.HasVideo | Player.HasAudio (Logical or)
-    static public int TranslateString(string strCondition)
+    public static int TranslateString(string strCondition)
     {
       if (strCondition.IndexOf("|") > 0 ||
           strCondition.IndexOf("+") > 0 ||
@@ -405,7 +405,7 @@ namespace MediaPortal.GUI.Library
 
 
 
-    static public int TranslateSingleString(string strCondition)
+    public static int TranslateSingleString(string strCondition)
     {
       if (strCondition.Length == 0) return 0;
       string strTest = strCondition;
@@ -831,7 +831,7 @@ namespace MediaPortal.GUI.Library
       return (int)m_stringParameters.Count - 1;
     }
 
-    static public void Clear()
+    public static void Clear()
     {
       //m_currentSong.Clear();
       //m_currentMovie.Clear();
@@ -972,7 +972,7 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
-    static public int TranslateWindowString(string strWindow)
+    public static int TranslateWindowString(string strWindow)
     {
       int wWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
       if (strWindow.Equals("home")) wWindowID = (int)GUIWindow.Window.WINDOW_HOME;
@@ -1061,7 +1061,7 @@ namespace MediaPortal.GUI.Library
 
     // checks the condition and returns it as necessary.  Currently used
     // for toggle button controls and visibility of images.
-    static public bool GetBool(int condition1, int dwContextWindow)
+    public static bool GetBool(int condition1, int dwContextWindow)
     {
       // check our cache
       bool result = false;
@@ -1412,7 +1412,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    static public void ResetCache()
+    public static void ResetCache()
     {
       lock (typeof(GUIInfoManager))
       {

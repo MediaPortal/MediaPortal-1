@@ -65,9 +65,9 @@ namespace MediaPortal.GUI.MSN
 
     #region  variables
     // this object will be the interface to the dotMSN library
-    static private XihSolutions.DotMSN.Messenger _messenger = null;
-    static private Conversation _currentconversation = null;
-    static private PresenceStatus _currentStatus = PresenceStatus.Online;
+    private static XihSolutions.DotMSN.Messenger _messenger = null;
+    private static Conversation _currentconversation = null;
+    private static PresenceStatus _currentStatus = PresenceStatus.Online;
     GUIDialogProgress _dlgProgress;
     bool _isDialogVisible = false;
     // bool m_bConnected=false;
@@ -114,11 +114,11 @@ namespace MediaPortal.GUI.MSN
         StartMSN(false);
     }
 
-    static public XihSolutions.DotMSN.Messenger Messenger
+    public static XihSolutions.DotMSN.Messenger Messenger
     {
       get { return _messenger; }
     }
-    static public Conversation CurrentConversation
+    public static Conversation CurrentConversation
     {
       get
       {
@@ -134,7 +134,7 @@ namespace MediaPortal.GUI.MSN
         return null;
       }
     }
-    static public void CloseConversation()
+    public static void CloseConversation()
     {
       if (_currentconversation != null)
       {
@@ -146,7 +146,7 @@ namespace MediaPortal.GUI.MSN
       _currentconversation = null;
       contactname = string.Empty;
     }
-    static public bool IsTyping
+    public static bool IsTyping
     {
       get
       {
@@ -155,7 +155,7 @@ namespace MediaPortal.GUI.MSN
         return false;
       }
     }
-    static public string ContactName
+    public static string ContactName
     {
       get { return contactname; }
     }

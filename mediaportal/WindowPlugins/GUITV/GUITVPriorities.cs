@@ -662,7 +662,7 @@ namespace MediaPortal.GUI.TV
       rec.SetProperties(prog);
     }
 
-    static public void OnSetEpisodesToKeep(TVRecording rec)
+    public static void OnSetEpisodesToKeep(TVRecording rec)
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
@@ -685,7 +685,7 @@ namespace MediaPortal.GUI.TV
       TVDatabase.SetRecordingEpisodesToKeep(rec);
     }
 
-    static public void OnSetQuality(TVRecording rec)
+    public static void OnSetQuality(TVRecording rec)
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;

@@ -78,12 +78,12 @@ namespace MediaPortal.Util
       _supportedExtensions.Add(".img");
     }
 
-    static public bool IsEnabled
+    public static bool IsEnabled
     {
       get { return _Enabled; }
     }
 
-    static public bool IsMounted(string IsoFile)
+    public static bool IsMounted(string IsoFile)
     {
       if (IsoFile == null) return false;
       if (IsoFile == string.Empty) return false;
@@ -102,7 +102,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool Mount(string IsoFile, out string VirtualDrive)
+    public static bool Mount(string IsoFile, out string VirtualDrive)
     {
       VirtualDrive = string.Empty;
       if (IsoFile == null) return false;
@@ -126,7 +126,7 @@ namespace MediaPortal.Util
       return true;
     }
 
-    static public void UnMount()
+    public static void UnMount()
     {
       if (!_Enabled) return;
       if (!System.IO.File.Exists(_Path)) return;
@@ -143,7 +143,7 @@ namespace MediaPortal.Util
       _MountedIsoFile = string.Empty;
     }
 
-    static public string GetVirtualDrive()
+    public static string GetVirtualDrive()
     {
       if (_MountedIsoFile != string.Empty) return _Drive;
       return string.Empty;
@@ -157,7 +157,7 @@ namespace MediaPortal.Util
     /// true: if file is an image file (.img, .nrg, .bin, .iso, ...)
     /// false: if the file is not an image file
     /// </returns>
-    static public bool IsImageFile(string extension)
+    public static bool IsImageFile(string extension)
     {
       if (extension == null) return false;
       if (extension == string.Empty) return false;

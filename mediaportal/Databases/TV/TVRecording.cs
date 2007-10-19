@@ -119,8 +119,8 @@ namespace MediaPortal.TV.Database
     }
 
 
-    static public readonly int HighestPriority = Int32.MaxValue;
-    static public readonly int LowestPriority = 0;
+    public static readonly int HighestPriority = Int32.MaxValue;
+    public static readonly int LowestPriority = 0;
     #region enums
     /// <summary>
     /// Type of recording

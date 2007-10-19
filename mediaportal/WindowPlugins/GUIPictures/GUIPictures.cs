@@ -1381,7 +1381,7 @@ namespace MediaPortal.GUI.Pictures
     /// <returns>
     /// true: if the specified window should maintain virtual directory
     /// false: if the specified window should not maintain virtual directory</returns>
-    static public bool KeepVirtualDirectory(int windowId)
+    public static bool KeepVirtualDirectory(int windowId)
     {
       if (windowId == (int)GUIWindow.Window.WINDOW_PICTURES)
         return true;
@@ -1390,7 +1390,7 @@ namespace MediaPortal.GUI.Pictures
       return false;
     }
 
-    static private bool ContainsFolderThumb(GUIListItem aItem)
+    private static bool ContainsFolderThumb(GUIListItem aItem)
     {
       if (!aItem.IsFolder && aItem.Path.Contains(@"folder.jpg"))
         return true;
@@ -1398,7 +1398,7 @@ namespace MediaPortal.GUI.Pictures
         return false;
     }
 
-    static public void Filter(ref List<GUIListItem> itemlist)
+    public static void Filter(ref List<GUIListItem> itemlist)
     {
       itemlist.RemoveAll(ContainsFolderThumb);
     }
@@ -1641,14 +1641,14 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    static public string GetThumbnail(string fileName)
+    public static string GetThumbnail(string fileName)
     {
       if (fileName == string.Empty)
         return string.Empty;
       return String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(fileName));
     }
 
-    static public string GetLargeThumbnail(string fileName)
+    public static string GetLargeThumbnail(string fileName)
     {
       if (fileName == string.Empty)
         return string.Empty;

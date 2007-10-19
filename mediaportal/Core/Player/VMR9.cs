@@ -90,7 +90,7 @@ namespace MediaPortal.Player
     #endregion
 
     #region static vars
-    static public VMR9Util g_vmr9 = null;
+    public static VMR9Util g_vmr9 = null;
     static int _instanceCounter = 0;
     #endregion
 

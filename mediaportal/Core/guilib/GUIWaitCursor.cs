@@ -63,7 +63,7 @@ namespace MediaPortal.GUI.Library
       guiWaitCursorThread = null;
     }
 
-    static private void GUIWaitCursorThread()
+    private static void GUIWaitCursorThread()
     {
       if (Interlocked.Increment(ref _showCount) == 1)
       {

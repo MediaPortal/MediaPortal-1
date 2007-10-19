@@ -160,7 +160,7 @@ namespace DShowNET
     }
     #endregion
 
-    static public readonly Guid KSPROPSETID_Firesat = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
+    public static readonly Guid KSPROPSETID_Firesat = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
     #region property ids
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C = 8;
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T = 6;

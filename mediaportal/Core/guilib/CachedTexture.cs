@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Library
       int _textureNumber=-1;
       public readonly bool UseNewTextureEngine = true;
       string _imageName = string.Empty;
-      static private bool logTextures = false;
+      private static bool logTextures = false;
       #endregion
 
       #region events

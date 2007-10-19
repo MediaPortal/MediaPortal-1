@@ -85,24 +85,24 @@ namespace MediaPortal.PowerScheduler
 		/// Clients can register with this event to become notified
 		/// when <see cref="OnResume"/> is called.
 		/// </summary>
-		static public event ResumeHandler OnPowerUp;
+		public static event ResumeHandler OnPowerUp;
 
 		/// <summary>
 		/// Reports changes in the hibernation stage.
 		/// </summary>
-		static public event ChangedHandler OnChanged;
+		public static event ChangedHandler OnChanged;
 
 		/// <summary>
 		/// Overall synchronization.
 		/// </summary>
-		static private object m_Sync = new object();
+		private static object m_Sync = new object();
 
 		/// <summary>
 		/// Current hibernation lock depth. If zero hibernation is allowed.
 		/// <seealso cref="AllowHibernation"/>
 		/// <seealso cref="ForbidHibernation"/>
 		/// </summary>
-		static private int m_HibCount = 0;
+		private static int m_HibCount = 0;
 
 		/// <summary>
 		/// Make sure that no instance of this class can be created.
@@ -111,7 +111,7 @@ namespace MediaPortal.PowerScheduler
 		{
 		}
 
-    static public void SystemBusy()
+    public static void SystemBusy()
     {
       // Let the system know we are busy and so not to hibernate
       SetThreadExecutionState(ExecutionState.SystemRequired);
@@ -130,7 +130,7 @@ namespace MediaPortal.PowerScheduler
 		/// is fired.
 		/// </remarks>
 		/// <exception cref="PowerException">When <see cref="SetThreadExecutionState"/> fails.</exception>
-		static public void ForbidHibernation()
+		public static void ForbidHibernation()
 		{
 			// Must synchronize
 			lock (m_Sync)
@@ -158,7 +158,7 @@ namespace MediaPortal.PowerScheduler
 		/// On success <see cref="OnChanged"/> is fired.
 		/// </remarks>
 		/// <exception cref="PowerException">When <see cref="SetThreadExecutionState"/> fails.</exception>
-		static public void AllowHibernation()
+		public static void AllowHibernation()
 		{
 			// Must synchronize
 			lock (m_Sync)
@@ -178,7 +178,7 @@ namespace MediaPortal.PowerScheduler
 		/// Synchronized check whether <see cref="m_HibCount"/> is zero or
 		/// not.
 		/// </summary>
-		static public bool HibernationAllowed
+		public static bool HibernationAllowed
 		{
 			get
 			{
@@ -194,7 +194,7 @@ namespace MediaPortal.PowerScheduler
 		/// For proper locking <see cref="ForbidHibernation"/> is called
 		/// before the <see cref="Thread.Start"/> is activated.
 		/// </remarks>
-		static public void OnResume()
+		public static void OnResume()
 		{
 			// Create wakeup thread
 			Thread pWakeUp = new Thread(new ThreadStart(WakeUp));
@@ -211,7 +211,7 @@ namespace MediaPortal.PowerScheduler
 		/// method finished with a call to <see cref="AllowHibernation"/>.
 		/// <seealso cref="OnResume"/>
 		/// </summary>
-		static private void WakeUp()
+		private static void WakeUp()
 		{
 			// Be safe
 			try

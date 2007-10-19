@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Library
     static float avgFrameRate = 0f;
     static int _noSignalTimeOut = -1;
 
-    static public int NoSignalTimeOut
+    public static int NoSignalTimeOut
     {
       get
       {
@@ -59,20 +59,20 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    static public bool IsVideoFound
+    public static bool IsVideoFound
     {
       get
       {
         return (videoState == State.NotUsed || videoState == State.VideoPresent);
       }
     }
-    static public State VideoState
+    public static State VideoState
     {
       get { return videoState; }
       set { videoState = value; }
     }
 
-    static public float AverageFrameRate
+    public static float AverageFrameRate
     {
       get { return avgFrameRate; }
       set
@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.Library
         avgFrameRate = value;
       }
     }
-    static public int AverageSyncOffset
+    public static int AverageSyncOffset
     {
       get { return avgSyncOffset; }
       set
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Library
         avgSyncOffset = value;
       }
     }
-    static public int AverageDeviationSyncOffset
+    public static int AverageDeviationSyncOffset
     {
       get { return avgDevSyncOffset; }
       set
@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.Library
         avgDevSyncOffset = value;
       }
     }
-    static public int FramesDrawn
+    public static int FramesDrawn
     {
       get { return framesDrawn; }
       set
@@ -104,7 +104,7 @@ namespace MediaPortal.GUI.Library
         framesDrawn = value;
       }
     }
-    static public int FramesDropped
+    public static int FramesDropped
     {
       get { return framesDropped; }
       set
@@ -112,14 +112,14 @@ namespace MediaPortal.GUI.Library
         framesDropped = value;
       }
     }
-    static public int Jitter
+    public static int Jitter
     {
       get { return jitter; }
       set { jitter = value; }
     }
 
 
-    static public void Update(IQualProp quality)
+    public static void Update(IQualProp quality)
     {
       try
       {

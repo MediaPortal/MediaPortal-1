@@ -103,7 +103,7 @@ namespace MediaPortal.Player
 			return new VolumeHandler(new int[] { 0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535 });
 		}
 
-		static public void Dispose()
+		public static void Dispose()
 		{
 			if (_instance==null) return;
 			if(_instance._mixer != null)

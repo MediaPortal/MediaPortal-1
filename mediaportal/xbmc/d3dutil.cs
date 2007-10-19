@@ -49,7 +49,7 @@ namespace MediaPortal
     /// <summary>
     /// Gets the number of ColorChanelBits from a format
     /// </summary>
-    static public int GetColorChannelBits(Format format)
+    public static int GetColorChannelBits(Format format)
     {
       switch (format)
       {
@@ -88,7 +88,7 @@ namespace MediaPortal
     /// <summary>
     /// Gets the number of alpha channel bits 
     /// </summary>
-    static public int GetAlphaChannelBits(Format format)
+    public static int GetAlphaChannelBits(Format format)
     {
       switch (format)
       {
@@ -127,7 +127,7 @@ namespace MediaPortal
     /// <summary>
     /// Gets the number of depth bits
     /// </summary>
-    static public int GetDepthBits(DepthFormat format)
+    public static int GetDepthBits(DepthFormat format)
     {
       switch (format)
       {
@@ -154,7 +154,7 @@ namespace MediaPortal
     /// <summary>
     /// Gets the number of stencil bits
     /// </summary>
-    static public int GetStencilBits(DepthFormat format)
+    public static int GetStencilBits(DepthFormat format)
     {
       switch (format)
       {

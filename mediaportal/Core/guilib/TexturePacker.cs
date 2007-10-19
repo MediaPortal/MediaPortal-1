@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.Library
     }
     #endregion
 
-    static public void Cleanup()
+    public static void Cleanup()
     {
       // Check if mediaportal is new than packedgfx, then delete packedgfx (will be recreated at next run)
       // purpose is to have fresh packedgfx containing _all_ media.

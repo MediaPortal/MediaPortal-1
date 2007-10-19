@@ -48,7 +48,7 @@ namespace MediaPortal.TV.Teletext
       Recorder.OnTvChannelChanged += new MediaPortal.TV.Recording.Recorder.OnTvChannelChangeHandler(OnTvChannelChanged);
     }
 
-    static private void OnTvViewingStarted(int card, TVCaptureDevice device)
+    private static void OnTvViewingStarted(int card, TVCaptureDevice device)
     {
       _grabbing = false;
       device.GrabTeletext(_grabbing);
@@ -56,32 +56,32 @@ namespace MediaPortal.TV.Teletext
       Log.Info("teletext: grab teletext for card:{0}", device.Graph.CommercialName);
     }
 
-    static private void OnTvViewingStopped(int card, TVCaptureDevice device)
+    private static void OnTvViewingStopped(int card, TVCaptureDevice device)
     {
       _grabbing = false;
       device.GrabTeletext(_grabbing);
       Log.Info("teletext: stop grabbing teletext for card:{0}", device.Graph.CommercialName);
     }
 
-    static private void OnTvChannelChanged(string tvChannelName)
+    private static void OnTvChannelChanged(string tvChannelName)
     {
       _teletextDecoder.ClearBuffer();
       Log.Info("teletext: clear teletext cache");
     }
 
-    static public void SaveData(IntPtr dataPtr)
+    public static void SaveData(IntPtr dataPtr)
     {
       _teletextDecoder.SaveData(dataPtr);
     }
-    static public void SaveAnalogData(IntPtr dataPtr, int len)
+    public static void SaveAnalogData(IntPtr dataPtr, int len)
     {
       _teletextDecoder.SaveAnalogData(dataPtr, len);
     }
-    static public DVBTeletext TeletextCache
+    public static DVBTeletext TeletextCache
     {
       get { return _teletextDecoder; }
     }
-    static public bool Grab
+    public static bool Grab
     {
       get
       {

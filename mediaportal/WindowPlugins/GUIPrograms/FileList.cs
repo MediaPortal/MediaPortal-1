@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.GUIPrograms
     }
 
 
-    static private FileItem DBGetFileItem(SQLiteResultSet results, int iRecord)
+    private static FileItem DBGetFileItem(SQLiteResultSet results, int iRecord)
     {
       FileItem newFile = new FileItem(sqlDB);
       newFile.FileID = ProgramUtils.GetIntDef(results, iRecord, "fileid",  - 1);
@@ -112,7 +112,7 @@ namespace MediaPortal.GUI.GUIPrograms
       return newFile;
     }
 
-    static private ProgramFilterItem DBGetFilterItem(SQLiteResultSet results, int iRecord)
+    private static ProgramFilterItem DBGetFilterItem(SQLiteResultSet results, int iRecord)
     {
       ProgramFilterItem newFilter = new ProgramFilterItem();
       string fieldtype = ProgramUtils.Get(results, iRecord, "fieldtype");

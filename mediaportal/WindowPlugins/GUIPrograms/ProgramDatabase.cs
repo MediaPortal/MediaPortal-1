@@ -254,7 +254,7 @@ namespace MediaPortal.GUI.GUIPrograms
 
 
 
-    static public Applist AppList
+    public static Applist AppList
     {
       get
       {
@@ -262,7 +262,7 @@ namespace MediaPortal.GUI.GUIPrograms
       }
     }
 
-    static public void GetFilesByFilter(string sql, out ArrayList files, bool artistTable, bool albumTable, bool songTable, bool genreTable)
+    public static void GetFilesByFilter(string sql, out ArrayList files, bool artistTable, bool albumTable, bool songTable, bool genreTable)
     {
       files=new ArrayList();
       try
@@ -330,7 +330,7 @@ namespace MediaPortal.GUI.GUIPrograms
     }
 
 
-    static public SQLiteResultSet GetResults(string sql)
+    public static SQLiteResultSet GetResults(string sql)
     {
       try
       {

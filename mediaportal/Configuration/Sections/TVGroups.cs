@@ -429,7 +429,7 @@ namespace MediaPortal.Configuration.Sections
       SaveGroups();
     }
 
-    static public void UpdateList()
+    public static void UpdateList()
     {
       _reloadList = true;
     }

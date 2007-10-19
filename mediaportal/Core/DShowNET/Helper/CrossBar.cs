@@ -48,7 +48,7 @@ namespace DShowNET.Helper
     /// <param name="graphbuilder">IGraphBuilder </param>
     /// <param name="m_captureGraphBuilder">ICaptureGraphBuilder2 </param>
     /// <param name="captureFilter">IBaseFilter containing the capture device filter</param>
-    static public void Reset(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder, IBaseFilter captureFilter)
+    public static void Reset(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder, IBaseFilter captureFilter)
     {
       if (graphbuilder == null) return;
       if (m_captureGraphBuilder == null) return;
@@ -70,7 +70,7 @@ namespace DShowNET.Helper
     /// <param name="logActions">true : log all actions in the logfile
     ///                          false: dont log
     /// </param>
-    static public void Route(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder, IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool useRgb, bool logActions)
+    public static void Route(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder, IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool useRgb, bool logActions)
     {
       if (graphbuilder == null) return;
       if (m_captureGraphBuilder == null) return;
@@ -255,7 +255,7 @@ namespace DShowNET.Helper
     /// <param name="logActions">true : log all actions in the logfile
     ///                          false: dont log
     /// </param>
-    static public void RouteEx(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder, IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool useRgb, string cardName)
+    public static void RouteEx(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder, IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool useRgb, string cardName)
     {
       if (graphbuilder == null) return;
       if (m_captureGraphBuilder == null) return;

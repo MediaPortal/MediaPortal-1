@@ -192,7 +192,7 @@ namespace MediaPortal.TV.Recording
         }
       }
       return false;
-    }//static public bool IsRecordingSchedule(TVRecording rec, out int card)
+    }//public static bool IsRecordingSchedule(TVRecording rec, out int card)
 
     public bool IsBusy
     {

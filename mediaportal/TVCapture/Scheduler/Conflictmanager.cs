@@ -41,7 +41,7 @@ namespace MediaPortal.TV.Recording
     static List<TVRecording> _conflictingRecordings = null;
 
     public delegate void OnConflictsUpdatedHandler();
-    static public event OnConflictsUpdatedHandler OnConflictsUpdated = null;
+    public static event OnConflictsUpdatedHandler OnConflictsUpdated = null;
     static ConflictManager()
     {
       TVDatabase.OnRecordingsChanged += new MediaPortal.TV.Database.TVDatabase.OnRecordingChangedHandler(TVDatabase_OnRecordingsChanged);
@@ -73,7 +73,7 @@ namespace MediaPortal.TV.Recording
         OnConflictsUpdated();
     }
 
-    static public bool IsConflict(TVRecording rec)
+    public static bool IsConflict(TVRecording rec)
     {
       if (_recordings == null || _util == null)
       {
@@ -130,7 +130,7 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
-    static public void GetConflictingSeries(TVRecording rec, List<TVRecording> recSeries)
+    public static void GetConflictingSeries(TVRecording rec, List<TVRecording> recSeries)
     {
       recSeries.Clear();
       if (Recorder.Count <= 0) return;
@@ -177,7 +177,7 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    static public void GetConflictingSeries2(TVRecording rec, List<TVRecording> recSeries)
+    public static void GetConflictingSeries2(TVRecording rec, List<TVRecording> recSeries)
     {
       recSeries.Clear();
       if (Recorder.Count <= 0) return;
@@ -218,7 +218,7 @@ namespace MediaPortal.TV.Recording
     }
 
 
-    static public TVRecording[] GetConflictingRecordings(TVRecording episode)
+    public static TVRecording[] GetConflictingRecordings(TVRecording episode)
     {
       if (Recorder.Count <= 0) return null;
 
@@ -252,7 +252,7 @@ namespace MediaPortal.TV.Recording
       return conflictingRecordings;
     }
 
-    static public TVUtil Util
+    public static TVUtil Util
     {
       get
       {
@@ -262,7 +262,7 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    static private void TVDatabase_OnRecordingsChanged(TVDatabase.RecordingChange change)
+    private static void TVDatabase_OnRecordingsChanged(TVDatabase.RecordingChange change)
     {
       if (change == TVDatabase.RecordingChange.Added ||
         change == TVDatabase.RecordingChange.CanceledSerie ||
@@ -279,7 +279,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="record_1">A recording...</param>
     /// <param name="record_1">Another recording</param>
     /// <returns>true : overlapping, false : no overlapping</returns>
-    static private bool IsOverlap(TVRecording record_1, TVRecording record_2)
+    private static bool IsOverlap(TVRecording record_1, TVRecording record_2)
     {
       DateTime Start1, Start2, End1, End2;
 
@@ -300,7 +300,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="arec">The recording you wan't to try to assign</param>
     /// <param name="cardrec">An array of Recordings lists (one list for each card)</param>
     /// <returns>True if succeed, False either</returns>
-    static private bool AssignRecToCard(TVRecording arec, List<TVRecording>[] cardrec)
+    private static bool AssignRecToCard(TVRecording arec, List<TVRecording>[] cardrec)
     {
       int _cardscount = Recorder.Count;
       //Log.Info("Found {0} cards", _cardscount);

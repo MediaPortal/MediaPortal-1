@@ -30,8 +30,8 @@ namespace MediaPortal.ControlDevices
 {
   public abstract class AbstractControlSettings : IControlSettings
   {
-    static private string CONFIG_SECTION = "controldevice";
-    static private string CONFIG_FILE = "MediaPortal.xml";
+    private static string CONFIG_SECTION = "controldevice";
+    private static string CONFIG_FILE = "MediaPortal.xml";
     protected IControlPlugin _plugin;
     protected string _prefix;
     protected bool _enabled;

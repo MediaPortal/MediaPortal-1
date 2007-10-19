@@ -975,7 +975,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    static public void SelectArtist(string artist)
+    public static void SelectArtist(string artist)
     {
       _showArtist = artist;
     }

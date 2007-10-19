@@ -41,7 +41,7 @@ namespace MediaPortal.Util
 			//
 		}
 
-		static public Bitmap Resize(ref Bitmap borg1, int nWidth, int nHeight, bool bBilinear, bool bKeepAspectRatio)
+		public static Bitmap Resize(ref Bitmap borg1, int nWidth, int nHeight, bool bBilinear, bool bKeepAspectRatio)
 		{
 			
 

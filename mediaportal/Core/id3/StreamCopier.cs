@@ -30,7 +30,7 @@ namespace Roger.ID3
 {
 	class StreamCopier
 	{
-		static public void Copy(Stream source, Stream destination, long byteCount)
+		public static void Copy(Stream source, Stream destination, long byteCount)
 		{
 			long bytesRemaining = byteCount;
 			int bufferLength = 1024 * 1024;
@@ -48,7 +48,7 @@ namespace Roger.ID3
 			}
 		}
 
-		static public void Copy(Stream source, Stream destination)
+		public static void Copy(Stream source, Stream destination)
 		{
 			int bufferLength = 1024 * 1024;
 			byte[] buffer = new byte[bufferLength];

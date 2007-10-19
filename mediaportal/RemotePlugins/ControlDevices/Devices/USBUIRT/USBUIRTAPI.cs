@@ -69,38 +69,38 @@ namespace MediaPortal.ControlDevices.USBUIRT
     }
 
     [DllImport("uuirtdrv.dll")]
-    static public extern IntPtr UUIRTOpen();
+    public static extern IntPtr UUIRTOpen();
 
     [DllImport("uuirtdrv.dll")]
-    static public extern bool UUIRTClose(IntPtr hHandle);
+    public static extern bool UUIRTClose(IntPtr hHandle);
 
     [DllImport("uuirtdrv.dll")]
     static extern bool UUIRTGetDrvInfo(ref int puDrvVersion);
 
     [DllImport("uuirtdrv.dll")]
-    static public extern bool UUIRTGetUUIRTInfo(IntPtr hHandle, ref UUINFO puuInfo);
+    public static extern bool UUIRTGetUUIRTInfo(IntPtr hHandle, ref UUINFO puuInfo);
 
     [DllImport("uuirtdrv.dll")]
-    static public extern bool UUIRTGetUUIRTConfig(IntPtr hHandle, ref uint puConfig);
+    public static extern bool UUIRTGetUUIRTConfig(IntPtr hHandle, ref uint puConfig);
 
     [DllImport("uuirtdrv.dll")]
-    static public extern bool UUIRTSetUUIRTConfig(IntPtr hHandle, uint uConfig);
+    public static extern bool UUIRTSetUUIRTConfig(IntPtr hHandle, uint uConfig);
 
     [DllImport("uuirtdrv.dll")]
-    static public extern bool UUIRTTransmitIR(IntPtr hHandle, string IRCode, int codeFormat, int repeatCount, int inactivityWaitTime, IntPtr hEvent, int res1, int res2);
+    public static extern bool UUIRTTransmitIR(IntPtr hHandle, string IRCode, int codeFormat, int repeatCount, int inactivityWaitTime, IntPtr hEvent, int res1, int res2);
 
     [DllImport("uuirtdrv.dll")]
-    static public extern bool UUIRTLearnIR(IntPtr hHandle, int codeFormat, [MarshalAs(UnmanagedType.LPStr)] StringBuilder ircode, IRLearnCallbackDelegate progressProc, int userData, ref int pAbort, int param1, [MarshalAs(UnmanagedType.AsAny)] Object o, [MarshalAs(UnmanagedType.AsAny)] Object oo);
+    public static extern bool UUIRTLearnIR(IntPtr hHandle, int codeFormat, [MarshalAs(UnmanagedType.LPStr)] StringBuilder ircode, IRLearnCallbackDelegate progressProc, int userData, ref int pAbort, int param1, [MarshalAs(UnmanagedType.AsAny)] Object o, [MarshalAs(UnmanagedType.AsAny)] Object oo);
 
     [DllImport("uuirtdrv.dll")]
-    static public extern bool UUIRTSetReceiveCallback(IntPtr hHandle, UUIRTReceiveCallbackDelegate receiveProc, int none);
+    public static extern bool UUIRTSetReceiveCallback(IntPtr hHandle, UUIRTReceiveCallbackDelegate receiveProc, int none);
 
     [DllImport("uuirtdrv.dll")]
-    static public extern bool UUIRTSetUUIRTGPIOCfg(IntPtr hHandle, int index, ref UUGPIO GpioSt);
+    public static extern bool UUIRTSetUUIRTGPIOCfg(IntPtr hHandle, int index, ref UUGPIO GpioSt);
     //HUUHANDLE	  hHandle, int index, PUUGPIO pGpioSt);
 
     [DllImport("uuirtdrv.dll")]
-    static public extern bool UUIRTGetUUIRTGPIOCfg(IntPtr hHandle, ref int numSlots, ref uint dwPortPins, ref UUGPIO GpioSt);
+    public static extern bool UUIRTGetUUIRTGPIOCfg(IntPtr hHandle, ref int numSlots, ref uint dwPortPins, ref UUGPIO GpioSt);
     //(HUUHANDLE hHandle, int *pNumSlots, UINT32 *pdwPortPins, PUUGPIO pGPIOStruct);
   }
 }

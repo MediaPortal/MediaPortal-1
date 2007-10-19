@@ -340,7 +340,7 @@ namespace MediaPortal.ServiceImplementations
       {
         WriteFile(LogType.Log, format, arg);
       }
-    } //static public void WriteFile(LogType type, string format, params object[] arg)
+    } //public static void WriteFile(LogType type, string format, params object[] arg)
 
     public void SetLogLevel(Level logLevel)
     {

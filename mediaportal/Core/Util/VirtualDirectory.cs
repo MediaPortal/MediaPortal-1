@@ -538,7 +538,7 @@ namespace MediaPortal.Util
     /// true: if file is an image file (.img, .nrg, .bin, .iso, ...)
     /// false: if the file is not an image file
     /// </returns>
-    static public bool IsImageFile(string extension)
+    public static bool IsImageFile(string extension)
     {
       return DaemonTools.IsImageFile(extension);
     }
@@ -2208,7 +2208,7 @@ namespace MediaPortal.Util
       Log.Info("*****Start listening to drives");
     }
 
-    static public void SetInitialDefaultShares(bool addOptical, bool addMusic, bool addPictures, bool addVideos)
+    public static void SetInitialDefaultShares(bool addOptical, bool addMusic, bool addPictures, bool addVideos)
     {
       ArrayList sharesVideos = new ArrayList();
       ArrayList sharesMusic = new ArrayList();
@@ -2274,7 +2274,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public string GetShareNameDefault(string folder)
+    public static string GetShareNameDefault(string folder)
     {
       string name = folder;
       int pos = folder.LastIndexOf(@"\");

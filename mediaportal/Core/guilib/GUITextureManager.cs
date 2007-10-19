@@ -65,7 +65,7 @@ namespace MediaPortal.GUI.Library
       dispose(false);
     }
 
-    static public void Dispose()
+    public static void Dispose()
     {
       dispose(true);
     }
@@ -100,16 +100,16 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    static public void StartPreLoad()
+    public static void StartPreLoad()
     {
       //TODO
     }
-    static public void EndPreLoad()
+    public static void EndPreLoad()
     {
       //TODO
     }
 
-    static public Image Resample(Image imgSrc, int iMaxWidth, int iMaxHeight)
+    public static Image Resample(Image imgSrc, int iMaxWidth, int iMaxHeight)
     {
       int width = imgSrc.Width;
       int height = imgSrc.Height;
@@ -177,7 +177,7 @@ namespace MediaPortal.GUI.Library
     }
 
 
-    static public int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight)
+    public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
       string fileName = GetFileName(fileNameOrg);
       if (fileName == "") return 0;
@@ -290,7 +290,7 @@ namespace MediaPortal.GUI.Library
       }
       return 0;
     }
-    static public int LoadFromMemory(System.Drawing.Image memoryImage, string name, long lColorKey, int iMaxWidth, int iMaxHeight)
+    public static int LoadFromMemory(System.Drawing.Image memoryImage, string name, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
       Log.Info("load from memory:{0}", name);
       string cacheName = name;
@@ -523,7 +523,7 @@ namespace MediaPortal.GUI.Library
       return texture;
     }
 
-    static public Image GetImage(string fileNameOrg)
+    public static Image GetImage(string fileNameOrg)
     {
       string fileName = GetFileName(fileNameOrg);
       if (fileNameOrg.StartsWith("["))
@@ -593,7 +593,7 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
-    static public CachedTexture.Frame GetTexture(string fileNameOrg, int iImage, out int iTextureWidth, out int iTextureHeight)
+    public static CachedTexture.Frame GetTexture(string fileNameOrg, int iImage, out int iTextureWidth, out int iTextureHeight)
     {
       iTextureWidth = 0;
       iTextureHeight = 0;
@@ -618,7 +618,7 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
-    static public void ReleaseTexture(string fileName)
+    public static void ReleaseTexture(string fileName)
     {
       if (fileName == string.Empty) return;
 
@@ -652,12 +652,12 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    static public void PreLoad(string fileName)
+    public static void PreLoad(string fileName)
     {
       //TODO
     }
 
-    static public void CleanupThumbs()
+    public static void CleanupThumbs()
     {
       Log.Debug("TextureManager: CleanupThumbs()");
       try
@@ -685,7 +685,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    static public bool IsTemporary(string fileName)
+    public static bool IsTemporary(string fileName)
     {
       if (fileName.Length == 0) return false;
       if (fileName == "-") return false;
@@ -721,17 +721,17 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
-    static public void Init()
+    public static void Init()
     {
       _packer.PackSkinGraphics(GUIGraphicsContext.Skin);
     }
 
-    static public bool GetPackedTexture(string fileName, out float uoff, out float voff, out float umax, out float vmax, out int textureWidth, out int textureHeight, out Texture tex, out int _packedTextureNo)
+    public static bool GetPackedTexture(string fileName, out float uoff, out float voff, out float umax, out float vmax, out int textureWidth, out int textureHeight, out Texture tex, out int _packedTextureNo)
     {
       return _packer.Get(fileName, out uoff, out voff, out umax, out vmax, out textureWidth, out textureHeight, out tex, out _packedTextureNo);
     }
 
-    static public void Clear()
+    public static void Clear()
     {
       _packer.Dispose();
       _packer = new TexturePacker();

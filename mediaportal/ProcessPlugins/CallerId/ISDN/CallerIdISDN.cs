@@ -68,7 +68,7 @@ namespace ProcessPlugins.CallerId
     ISDNWatch ISDNWatch;
 
 
-    static private Hashtable AreaCodeLookup
+    private static Hashtable AreaCodeLookup
     {
       get
       {
@@ -117,7 +117,7 @@ namespace ProcessPlugins.CallerId
       }
     }
 
-    static private Hashtable CountryCodeLookup
+    private static Hashtable CountryCodeLookup
     {
       get
       {
@@ -161,7 +161,7 @@ namespace ProcessPlugins.CallerId
       }
     }
 
-    static private Hashtable CountryTranslator
+    private static Hashtable CountryTranslator
     {
       get
       {

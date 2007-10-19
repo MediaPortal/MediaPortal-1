@@ -247,7 +247,7 @@ namespace MediaPortal.TV.Teletext
       _pageDescription = new string[900];
     }
 
-    static public bool IsTopTextPage(int pageNumber, int subPageNumber)
+    public static bool IsTopTextPage(int pageNumber, int subPageNumber)
     {
       if (pageNumber >= TOP_BASIC_PAGE && pageNumber < 0x1fd) return true;
       return false;

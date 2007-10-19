@@ -60,46 +60,46 @@ namespace MediaPortal.Util
       large = 192,
     }
 
-    static public readonly string TvNotifyIcon = "tvguide_notify_button.png";
-    static public readonly string TvRecordingIcon = "tvguide_record_button.png";
-    static public readonly string TvRecordingSeriesIcon = "tvguide_recordserie_button.png";
-    static public readonly string TvConflictRecordingIcon = "tvguide_recordconflict_button.png";
-    static public readonly string TvConflictRecordingSeriesIcon = "tvguide_recordserie_conflict_button.png";
+    public static readonly string TvNotifyIcon = "tvguide_notify_button.png";
+    public static readonly string TvRecordingIcon = "tvguide_record_button.png";
+    public static readonly string TvRecordingSeriesIcon = "tvguide_recordserie_button.png";
+    public static readonly string TvConflictRecordingIcon = "tvguide_recordconflict_button.png";
+    public static readonly string TvConflictRecordingSeriesIcon = "tvguide_recordserie_conflict_button.png";
 
-    static public readonly string MusicFolder = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Folder");
-    static public readonly string MusicAlbum = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Albums");
-    static public readonly string MusicArtists = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Artists");
-    static public readonly string MusicGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Genre");
+    public static readonly string MusicFolder = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Folder");
+    public static readonly string MusicAlbum = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Albums");
+    public static readonly string MusicArtists = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Artists");
+    public static readonly string MusicGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Genre");
 
-    static public readonly string MovieTitle = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Title");
-    static public readonly string MovieActors = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Actors");
-    static public readonly string MovieGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Genre");
+    public static readonly string MovieTitle = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Title");
+    public static readonly string MovieActors = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Actors");
+    public static readonly string MovieGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Genre");
 
-    static public readonly string TVChannel = Config.GetSubFolder(Config.Dir.Thumbs, @"TV\Logos");
-    static public readonly string TVShows = Config.GetSubFolder(Config.Dir.Thumbs, @"TV\Shows");
-    static public readonly string TVRecorded = Config.GetSubFolder(Config.Dir.Thumbs, @"TV\Recorded");
+    public static readonly string TVChannel = Config.GetSubFolder(Config.Dir.Thumbs, @"TV\Logos");
+    public static readonly string TVShows = Config.GetSubFolder(Config.Dir.Thumbs, @"TV\Shows");
+    public static readonly string TVRecorded = Config.GetSubFolder(Config.Dir.Thumbs, @"TV\Recorded");
 
-    static public readonly string Radio = Config.GetSubFolder(Config.Dir.Thumbs, @"Radio");
-    static public readonly string Pictures = Config.GetSubFolder(Config.Dir.Thumbs, @"Pictures");
-    static public readonly string Yac = Config.GetSubFolder(Config.Dir.Thumbs, @"yac");
-    static public readonly string News = Config.GetSubFolder(Config.Dir.Thumbs, @"News");
-    static public readonly string Trailers = Config.GetSubFolder(Config.Dir.Thumbs, @"Trailers");
+    public static readonly string Radio = Config.GetSubFolder(Config.Dir.Thumbs, @"Radio");
+    public static readonly string Pictures = Config.GetSubFolder(Config.Dir.Thumbs, @"Pictures");
+    public static readonly string Yac = Config.GetSubFolder(Config.Dir.Thumbs, @"yac");
+    public static readonly string News = Config.GetSubFolder(Config.Dir.Thumbs, @"News");
+    public static readonly string Trailers = Config.GetSubFolder(Config.Dir.Thumbs, @"Trailers");
 
-    static public ThumbQuality _currentThumbQuality = ThumbQuality.average;
-    static public CompositingQuality _currentCompositingQuality = CompositingQuality.Default;
-    static public InterpolationMode _currentInterpolationMode = InterpolationMode.Default;
-    static public SmoothingMode _currentSmoothingMode = SmoothingMode.Default;
+    public static ThumbQuality _currentThumbQuality = ThumbQuality.average;
+    public static CompositingQuality _currentCompositingQuality = CompositingQuality.Default;
+    public static InterpolationMode _currentInterpolationMode = InterpolationMode.Default;
+    public static SmoothingMode _currentSmoothingMode = SmoothingMode.Default;
 
-    static public LargeThumbSize _currentLargeThumbSize = LargeThumbSize.average;
-    static public ThumbSize _currentThumbSize = ThumbSize.average;
-    static public ImageFormat _currentThumbFormat = ImageFormat.Jpeg;
+    public static LargeThumbSize _currentLargeThumbSize = LargeThumbSize.average;
+    public static ThumbSize _currentThumbSize = ThumbSize.average;
+    public static ImageFormat _currentThumbFormat = ImageFormat.Jpeg;
 
     static Thumbs()
     {
       LoadSettings();
     }
 
-    static private void LoadSettings()
+    private static void LoadSettings()
     {
       try
       {
@@ -138,7 +138,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public void CreateFolders()
+    public static void CreateFolders()
     {
       try
       {
@@ -169,7 +169,7 @@ namespace MediaPortal.Util
     /// <summary>
     /// Change thumbnail quality
     /// </summary>
-    static public ThumbQuality Quality
+    public static ThumbQuality Quality
     {
       get
       {
@@ -185,7 +185,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public CompositingQuality Compositing
+    public static CompositingQuality Compositing
     {
       get
       {
@@ -193,7 +193,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public InterpolationMode Interpolation
+    public static InterpolationMode Interpolation
     {
       get
       {
@@ -201,7 +201,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public SmoothingMode Smoothing
+    public static SmoothingMode Smoothing
     {
       get
       {
@@ -209,7 +209,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public ThumbSize ThumbResolution
+    public static ThumbSize ThumbResolution
     {
       get
       {
@@ -217,7 +217,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public LargeThumbSize ThumbLargeResolution
+    public static LargeThumbSize ThumbLargeResolution
     {
       get
       {
@@ -225,7 +225,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public ImageFormat ThumbFormat
+    public static ImageFormat ThumbFormat
     {
       get
       {
@@ -234,7 +234,7 @@ namespace MediaPortal.Util
     }
     #endregion
 
-    static private void SetQualityParams(ThumbQuality quality_)
+    private static void SetQualityParams(ThumbQuality quality_)
     {
       switch (quality_)
       {

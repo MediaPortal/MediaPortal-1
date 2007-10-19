@@ -44,13 +44,13 @@ namespace MediaPortal.GUI.GUIPrograms
       //
     }
 
-    static public int StartWindow
+    public static int StartWindow
     {
       get { return m_iStartWindow; }
       set { m_iStartWindow = value; }
     }
 
-    static public string View
+    public static string View
     {
       get { return view; }
       set { view = value; }

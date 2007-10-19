@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.Library
     static string errorReason=string.Empty;
     static string errorDescription=string.Empty;
 		
-    static public string Description
+    public static string Description
     {
       get { return errorDescription;}
       set 
@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.Library
       }
     }
     
-    static public string Reason
+    public static string Reason
     {
       get { return errorReason;}
       set 
@@ -54,14 +54,14 @@ namespace MediaPortal.GUI.Library
         errorReason=value;
       }
     }
-    static public int ReasonId
+    public static int ReasonId
     {
       set 
       { 
         Reason=GUILocalizeStrings.Get(value);
       }
     }
-    static public int DescriptionId
+    public static int DescriptionId
     {
       set 
       { 
@@ -69,19 +69,19 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    static public void SetError(string reason, string description)
+    public static void SetError(string reason, string description)
     {
       Reason=reason;
       Description=description;
     }
     
-    static public void SetError(int reasonId, int descriptionId)
+    public static void SetError(int reasonId, int descriptionId)
     {
       ReasonId=reasonId;
       DescriptionId=descriptionId;
     }
 
-    static public void Clear()
+    public static void Clear()
     {
       Reason=string.Empty;
       Description=string.Empty;

@@ -174,7 +174,7 @@ namespace MediaPortal.Profile
     {
     }
 
-    static public void SaveCache()
+    public static void SaveCache()
     {
       foreach (ISettingsProvider doc in xmlCache)
       {

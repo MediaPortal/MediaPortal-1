@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    static public Freedb.CDInfoDetail MusicCD
+    public static Freedb.CDInfoDetail MusicCD
     {
       get { return m_musicCD; }
       set { m_musicCD = value; }
@@ -1238,7 +1238,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    static public string GetCoverArt(bool isfolder, string filename, MusicTag tag)
+    public static string GetCoverArt(bool isfolder, string filename, MusicTag tag)
     {
       if (isfolder)
       {
@@ -1328,7 +1328,7 @@ namespace MediaPortal.GUI.Music
         filmstrip.InfoImageFileName = item.ThumbnailImage;
     }
 
-    static public bool IsMusicWindow(int window)
+    public static bool IsMusicWindow(int window)
     {
       if (window == (int)GUIWindow.Window.WINDOW_MUSIC)
         return true;
@@ -2053,7 +2053,7 @@ namespace MediaPortal.GUI.Music
     /// <returns>
     /// true: if the specified window should maintain virtual directory
     /// false: if the specified window should not maintain virtual directory</returns>
-    static public bool KeepVirtualDirectory(int windowId)
+    public static bool KeepVirtualDirectory(int windowId)
     {
       if (windowId == (int)GUIWindow.Window.WINDOW_ARTIST_INFO)
         return true;

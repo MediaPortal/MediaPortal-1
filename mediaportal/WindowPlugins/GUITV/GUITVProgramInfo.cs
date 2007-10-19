@@ -71,12 +71,12 @@ namespace MediaPortal.GUI.TV
       Update();
     }
 
-    static public TVProgram CurrentProgram
+    public static TVProgram CurrentProgram
     {
       get { return currentProgram; }
       set { currentProgram = value; }
     }
-    static public TVRecording CurrentRecording
+    public static TVRecording CurrentRecording
     {
       set
       {

@@ -50,20 +50,20 @@ namespace DShowNET.Helper
     // ------------------ Public Properties --------------------
 
     /// <summary> Collection of available video capture devices. </summary>
-    static public FilterCollection VideoInputDevices;
+    public static FilterCollection VideoInputDevices;
     /// <summary> Collection of available audio capture devices. </summary>
-    static public FilterCollection AudioInputDevices;
+    public static FilterCollection AudioInputDevices;
     /// <summary> Collection of available video compressors. </summary>
-    static public FilterCollection VideoCompressors;
+    public static FilterCollection VideoCompressors;
     /// <summary> Collection of available audio compressors. </summary>
-    static public FilterCollection AudioCompressors;
-    static public FilterCollection LegacyFilters;
-    static public FilterCollection AudioRenderers;
-    static public FilterCollection WDMEncoders;
-    static public FilterCollection WDMcrossbars;
-    static public FilterCollection WDMTVTuners;
-    static public FilterCollection BDAReceivers;
-    static public FilterCollection AllFilters;
+    public static FilterCollection AudioCompressors;
+    public static FilterCollection LegacyFilters;
+    public static FilterCollection AudioRenderers;
+    public static FilterCollection WDMEncoders;
+    public static FilterCollection WDMcrossbars;
+    public static FilterCollection WDMTVTuners;
+    public static FilterCollection BDAReceivers;
+    public static FilterCollection AllFilters;
 
     static Filters()
     {

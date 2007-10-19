@@ -643,7 +643,7 @@ namespace MediaPortal.TV.Recording
     }
     //
     //
-    static public string GetLanguageFromCode(string code)
+    public static string GetLanguageFromCode(string code)
     {
       int n = 0;
       if (code == null)
@@ -2470,7 +2470,7 @@ namespace MediaPortal.TV.Recording
       serviceData.serviceName = getString468A(sn, service_name_length);
       return serviceData;
     }
-    static public string getString468A(byte[] b, int l1)
+    public static string getString468A(byte[] b, int l1)
     {
       //			int in_emphasis = 0;
       int i = 0;

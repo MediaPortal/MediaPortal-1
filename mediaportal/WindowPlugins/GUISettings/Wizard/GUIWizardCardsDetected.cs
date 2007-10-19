@@ -208,7 +208,7 @@ namespace MediaPortal.GUI.Settings.Wizard
             if (btnBack == control) GUIWindowManager.ShowPreviousWindow();
 			base.OnClicked (controlId, control, actionType);
 		}
-		static public void ScanNextCardType()
+		public static void ScanNextCardType()
 		{
 			Log.Info("ScanNextCardType:cards:{0}",Recorder.Count);
 			if (Recorder.Count>0)

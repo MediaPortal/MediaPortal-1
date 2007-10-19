@@ -742,7 +742,7 @@ namespace MediaPortal.GUI.Video
     }
     #endregion
 
-    static public void GetStringFromKeyboard(ref string strLine)
+    public static void GetStringFromKeyboard(ref string strLine)
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard) return;

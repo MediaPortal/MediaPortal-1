@@ -116,7 +116,7 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region public methods
-    static public void Transcode(TVRecorded rec, bool manual)
+    public static void Transcode(TVRecorded rec, bool manual)
     {
       int bitRate, FPS, Priority, QualityIndex, ScreenSizeIndex, Type, AutoHours;
       bool deleteOriginal, AutoDeleteOriginal, AutoCompress;
@@ -223,7 +223,7 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    static public void Cancel(TranscoderInfo info)
+    public static void Cancel(TranscoderInfo info)
     {
       lock (queue)
       {
@@ -238,7 +238,7 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    static public void ReQueue(TranscoderInfo info)
+    public static void ReQueue(TranscoderInfo info)
     {
       lock (queue)
       {
@@ -254,7 +254,7 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    static public void Clear()
+    public static void Clear()
     {
       lock (queue)
       {
@@ -275,14 +275,14 @@ namespace MediaPortal.TV.Recording
         } while (deleted);
       }
     }
-    static public ArrayList Queue
+    public static ArrayList Queue
     {
       get
       {
         return queue;
       }
     }
-    static public bool IsTranscoding(TVRecorded rec)
+    public static bool IsTranscoding(TVRecorded rec)
     {
       lock (queue)
       {

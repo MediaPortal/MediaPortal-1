@@ -70,12 +70,12 @@ namespace MediaPortal.Util
     /// <param name="iHeight">height of the returned texture</param>
     /// <returns>Texture with image or null if image could not be loaded</returns>
     /// 
-    static public Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom, out int iWidth, out int iHeight)
+    public static Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom, out int iWidth, out int iHeight)
     {
       return Load(strPic, iRotate, iMaxWidth, iMaxHeight, bRGB, bZoom, false, out iWidth, out iHeight);
     }
 
-    static public Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom, bool bOversized, out int iWidth, out int iHeight)
+    public static Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom, bool bOversized, out int iWidth, out int iHeight)
     {
       iWidth = 0;
       iHeight = 0;
@@ -229,7 +229,7 @@ namespace MediaPortal.Util
     /// <param name="iWidth">width of returned texture</param>
     /// <param name="iHeight">height of returned texture</param>
     /// <returns>Texture with image or null if image could not be loaded</returns>
-    static public Texture ConvertImageToTexture(Bitmap theImage, out int iWidth, out int iHeight)
+    public static Texture ConvertImageToTexture(Bitmap theImage, out int iWidth, out int iHeight)
     {
       iWidth = 0;
       iHeight = 0;
@@ -288,8 +288,8 @@ namespace MediaPortal.Util
     /// <param name="iTextureTop">y (top) offset in texture</param>
     /// <param name="bHiQuality">true :render in hi quality but slow, 
     ///                          false:render in lo quality but fast,  </param>
-    //static public void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
-    static public void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
+    //public static void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
+    public static void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
     {
       if (texture == null)
         return;
@@ -440,8 +440,8 @@ namespace MediaPortal.Util
     /// <param name="iTextureTop">y (top) offset in texture</param>
     /// <param name="bHiQuality">true :render in hi quality but slow, 
     ///                          false:render in lo quality but fast,  </param>
-    //static public void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
-    static public void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
+    //public static void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
+    public static void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
     {
       if (texture == null)
         return;
@@ -592,8 +592,8 @@ namespace MediaPortal.Util
     /// <param name="iTextureLeft">x (left) offset in texture</param>
     /// <param name="iTextureTop">y (top) offset in texture</param>
     /// <param name="lColorDiffuse">diffuse color</param>
-    //static public void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
-    static public void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
+    //public static void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
+    public static void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
     {
       if (texture == null)
         return;
@@ -755,8 +755,8 @@ namespace MediaPortal.Util
     /// <param name="iTextureLeft">x (left) offset in texture</param>
     /// <param name="iTextureTop">y (top) offset in texture</param>
     /// <param name="lColorDiffuse">diffuse color</param>
-    //static public void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
-    static public void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
+    //public static void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
+    public static void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, long lColorDiffuse)
     {
       if (texture == null)
         return;
@@ -918,7 +918,7 @@ namespace MediaPortal.Util
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
     /// </param>
-    static public bool CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+    public static bool CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
       if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0)
         return false;
@@ -974,7 +974,7 @@ namespace MediaPortal.Util
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
     /// </param>
-    static public bool CreateThumbnail(Image theImage, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+    public static bool CreateThumbnail(Image theImage, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
       if (string.IsNullOrEmpty(strThumb) || iMaxHeight <= 0 || iMaxHeight <= 0)
         return false;
@@ -1043,7 +1043,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public void DrawLine(int x1, int y1, int x2, int y2, long color)
+    public static void DrawLine(int x1, int y1, int x2, int y2, long color)
     {
       Vector2[] vec = new Vector2[2];
       vec[0].X = x1;
@@ -1058,7 +1058,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public void DrawRectangle(Rectangle rect, long color, bool fill)
+    public static void DrawRectangle(Rectangle rect, long color, bool fill)
     {
       if (fill)
       {

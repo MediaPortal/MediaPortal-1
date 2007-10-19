@@ -1311,7 +1311,7 @@ namespace MediaPortal.GUI.Music
     {
     }
 
-    static public string GetArtistCoverArtName(string artist)
+    public static string GetArtistCoverArtName(string artist)
     {
       return MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, artist);
     }

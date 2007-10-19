@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Library
     static Hashtable _properties = new Hashtable();
     static bool _isChanged = false;
     public delegate void OnPropertyChangedHandler(string tag, string tagValue);
-    static public event OnPropertyChangedHandler OnPropertyChanged;
+    public static event OnPropertyChangedHandler OnPropertyChanged;
 
     /// <summary>
     /// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
@@ -258,7 +258,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set if the properties have changed.
     /// </summary>
-    static public bool Changed
+    public static bool Changed
     {
       get { return _isChanged; }
       set { _isChanged = value; }
@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     /// <param name="tag">property name</param>
     /// <param name="tagvalue">property value</param>
-    static public void SetProperty(string tag, string tagvalue)
+    public static void SetProperty(string tag, string tagvalue)
     {
       if (tag == null) return;
       if (tagvalue == null) return;
@@ -300,7 +300,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     /// <param name="tag">property name</param>
     /// <returns>property value</returns>
-    static public string GetProperty(string tag)
+    public static string GetProperty(string tag)
     {
       if (tag == null) return string.Empty;
       if (tag == string.Empty) return string.Empty;
@@ -316,7 +316,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Removes the player properties from the hashtable.
     /// </summary>
-    static public void RemovePlayerProperties()
+    public static void RemovePlayerProperties()
     {
       SetProperty("#Play.Current.Thumb", string.Empty);
       SetProperty("#Play.Current.File", string.Empty);
@@ -378,7 +378,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     /// <param name="line ">The identification of the propertie (e.g.,#title).</param>
     /// <returns>The value of the property.</returns>
-    static public string Parse(string line)
+    public static string Parse(string line)
     {
       if (line == null) return string.Empty;
       if (line == string.Empty) return string.Empty;

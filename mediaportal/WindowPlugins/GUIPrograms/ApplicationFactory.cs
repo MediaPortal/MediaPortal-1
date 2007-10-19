@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.GUIPrograms
   /// </summary>
   public class ApplicationFactory
   {
-    static public ApplicationFactory AppFactory = new ApplicationFactory();
+    public static ApplicationFactory AppFactory = new ApplicationFactory();
 
     // singleton. Dont allow any instance of this class
     private ApplicationFactory(){}

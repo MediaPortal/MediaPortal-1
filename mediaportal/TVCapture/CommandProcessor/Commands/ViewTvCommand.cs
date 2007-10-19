@@ -248,7 +248,7 @@ namespace MediaPortal.TV.Recording
       handler.OnTvStart(handler.CurrentCardIndex, dev);
       handler.ResetTimeshiftTimer();
       Succeeded = true;
-    }//static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
+    }//public static void StartViewing(string channel, bool TVOnOff, bool timeshift)
 
 
     void TurnTvOff(CommandProcessor handler, int exceptCard)

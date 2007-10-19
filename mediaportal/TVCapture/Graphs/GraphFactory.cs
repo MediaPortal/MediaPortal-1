@@ -38,7 +38,7 @@ namespace MediaPortal.TV.Recording
 		{
 		}
 		
-		static public ITuning CreateTuning(TVCaptureDevice card)
+		public static ITuning CreateTuning(TVCaptureDevice card)
 		{
 			if (!card.CreateGraph()) return null;
 			if (card.Network == NetworkType.Analog) return new AnalogTVTuning();
@@ -56,7 +56,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="card">Tvcapture card which must be supported by the newly created graphbuilder</param>
     /// <returns>Object which can create a DirectShow graph for this card or null if TVCapture card is not supported</returns>
     /// <seealso>MediaPortal.TV.Recording.TVCaptureDevice</seealso>
-    static public IGraph CreateGraph(TVCaptureDevice card)
+    public static IGraph CreateGraph(TVCaptureDevice card)
     {
 
       if (card.CardType == TVCapture.CardTypes.Digital_BDA)

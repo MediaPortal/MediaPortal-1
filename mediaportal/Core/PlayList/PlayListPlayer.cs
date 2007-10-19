@@ -136,7 +136,7 @@ namespace MediaPortal.Playlists
     {
     }
 
-    static private PlayListPlayer singletonPlayer = new PlayListPlayer();
+    private static PlayListPlayer singletonPlayer = new PlayListPlayer();
 
     public static PlayListPlayer SingletonPlayer
     {

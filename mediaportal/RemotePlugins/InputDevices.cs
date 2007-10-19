@@ -116,14 +116,14 @@ namespace MediaPortal.InputDevices
 
     #region Fields
 
-    static private HidListener HidListener = new HidListener();
-    static private MCE2005Remote MCE2005Remote = new MCE2005Remote();
-    static private HcwRemote HCWRemote = new HcwRemote();
-    static private X10Remote X10Remote = new X10Remote();
-    static private DirectInputHandler diRemote = new DirectInputHandler();
-    static private IrTrans IrTrans = new IrTrans();
-    static private FireDTVRemote FireDTVRemote = new FireDTVRemote();
-    static private AppCommands _lastHidRequest;
+    private static HidListener HidListener = new HidListener();
+    private static MCE2005Remote MCE2005Remote = new MCE2005Remote();
+    private static HcwRemote HCWRemote = new HcwRemote();
+    private static X10Remote X10Remote = new X10Remote();
+    private static DirectInputHandler diRemote = new DirectInputHandler();
+    private static IrTrans IrTrans = new IrTrans();
+    private static FireDTVRemote FireDTVRemote = new FireDTVRemote();
+    private static AppCommands _lastHidRequest;
     
     static int _lastHidRequestTick;
     static bool _initialized = false;

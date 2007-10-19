@@ -36,14 +36,14 @@ namespace MediaPortal.Database
   {
     static IFolderSettings _database = DatabaseFactory.GetFolderDatabase();
 
-    static public void Dispose()
+    public static void Dispose()
     {
       _database.Dispose();
       _database = null;
     }
 
 
-    static private bool WaitForPath(string pathName)
+    private static bool WaitForPath(string pathName)
     {
       // while waking up from hibernation it can take a while before a network drive is accessible.
       // lets wait 10 sec      
@@ -64,17 +64,17 @@ namespace MediaPortal.Database
       return (count < 100);
     }
 
-    static public void DeleteFolderSetting(string path, string Key)
+    public static void DeleteFolderSetting(string path, string Key)
     {
       bool res = WaitForPath(path);
       _database.DeleteFolderSetting(path, Key);
     }
-    static public void AddFolderSetting(string path, string Key, Type type, object Value)
+    public static void AddFolderSetting(string path, string Key, Type type, object Value)
     {
       bool res = WaitForPath(path);
       _database.AddFolderSetting( path,  Key,  type,  Value);
     }
-    static public void GetFolderSetting(string path, string Key, Type type, out object Value)
+    public static void GetFolderSetting(string path, string Key, Type type, out object Value)
     {
       bool res = WaitForPath(path);
       _database.GetFolderSetting(path, Key, type, out Value);

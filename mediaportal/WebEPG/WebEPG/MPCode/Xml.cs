@@ -36,8 +36,8 @@ namespace MediaPortal.Webepg.Profile
   public class Xml : IDisposable
   {
     // Fields
-    //static private string		_rootName = "profile";
-    //static private Encoding _encoding = Encoding.UTF8;
+    //private static string		_rootName = "profile";
+    //private static Encoding _encoding = Encoding.UTF8;
     //static XmlDocument			_doc=null;
     //static string						_strFileName="";
     //static bool							_bChanged=false;

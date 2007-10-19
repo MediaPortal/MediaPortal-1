@@ -57,10 +57,10 @@ namespace MediaPortal.Player
     static string _currentFilePlaying = "";
     static MediaType _currentMedia;
     static Player.IPlayerFactory _factory;
-    static public bool Starting = false;
+    public static bool Starting = false;
     static ArrayList _seekStepList = new ArrayList();
     static int _seekStepTimeout;
-    static public bool configLoaded = false;
+    public static bool configLoaded = false;
     static string[] _driveSpeedCD;
     static string[] _driveSpeedDVD;
     static string[] _disableCDSpeed;
@@ -80,9 +80,9 @@ namespace MediaPortal.Player
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
     public delegate void EndedHandler(MediaType type, string filename);
     public delegate void StartedHandler(MediaType type, string filename);
-    static public event StoppedHandler PlayBackStopped;
-    static public event EndedHandler PlayBackEnded;
-    static public event StartedHandler PlayBackStarted;
+    public static event StoppedHandler PlayBackStopped;
+    public static event EndedHandler PlayBackEnded;
+    public static event StartedHandler PlayBackStarted;
     #endregion
 
     #region ctor/dtor
@@ -1168,7 +1168,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public int Volume
+    public static int Volume
     {
       get
       {
@@ -1196,7 +1196,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public int PositionX
+    public static int PositionX
     {
       get
       {
@@ -1212,7 +1212,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public int PositionY
+    public static int PositionY
     {
       get
       {
@@ -1228,7 +1228,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public int RenderWidth
+    public static int RenderWidth
     {
       get
       {
@@ -1244,7 +1244,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public bool Visible
+    public static bool Visible
     {
       get
       {
@@ -1260,7 +1260,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public int RenderHeight
+    public static int RenderHeight
     {
       get
       {
@@ -1276,7 +1276,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public double Duration
+    public static double Duration
     {
       get
       {
@@ -1285,7 +1285,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public double CurrentPosition
+    public static double CurrentPosition
     {
       get
       {
@@ -1294,7 +1294,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public double StreamPosition
+    public static double StreamPosition
     {
       get
       {
@@ -1303,7 +1303,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public double ContentStart
+    public static double ContentStart
     {
       get
       {
@@ -1312,7 +1312,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public bool FullScreen
+    public static bool FullScreen
     {
       get
       {
@@ -1328,7 +1328,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public int Width
+    public static int Width
     {
       get
       {
@@ -1337,7 +1337,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public int Height
+    public static int Height
     {
       get
       {
@@ -1346,7 +1346,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public void SeekRelative(double dTime)
+    public static void SeekRelative(double dTime)
     {
       if (_player == null) return;
       _player.SeekRelative(dTime);
@@ -1357,7 +1357,7 @@ namespace MediaPortal.Player
       GUIGraphicsContext.SendMessage(msgUpdate);
     }
 
-    static public void StepNow()
+    public static void StepNow()
     {
       if (_currentStep != 0 && _player != null)
       {
@@ -1380,7 +1380,7 @@ namespace MediaPortal.Player
     /// </summary>
     /// <param name="Step"></param>
     /// <returns></returns>
-    static public string GetSingleStep(int Step)
+    public static string GetSingleStep(int Step)
     {
       if (Step >= 0)
       {
@@ -1415,7 +1415,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public string GetStepDescription()
+    public static string GetStepDescription()
     {
       if (_player == null) return "";
       int m_iTimeToStep = (int)_currentStep;
@@ -1426,7 +1426,7 @@ namespace MediaPortal.Player
       return GetSingleStep(_currentStep);
     }
 
-    static public int GetSeekStep(out bool bStart, out bool bEnd)
+    public static int GetSeekStep(out bool bStart, out bool bEnd)
     {
       bStart = false;
       bEnd = false;
@@ -1437,7 +1437,7 @@ namespace MediaPortal.Player
       return m_iTimeToStep;
     }
 
-    static public void SeekStep(bool bFF)
+    public static void SeekStep(bool bFF)
     {
       if (!configLoaded)
       {
@@ -1485,7 +1485,7 @@ namespace MediaPortal.Player
       _seekTimer = DateTime.Now;
     }
 
-    static public void SeekRelativePercentage(int iPercentage)
+    public static void SeekRelativePercentage(int iPercentage)
     {
       if (_player == null) return;
       _player.SeekRelativePercentage(iPercentage);
@@ -1496,7 +1496,7 @@ namespace MediaPortal.Player
       _seekTimer = DateTime.MinValue;
     }
 
-    static public void SeekAbsolute(double dTime)
+    public static void SeekAbsolute(double dTime)
     {
       if (_player == null) return;
       Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
@@ -1509,7 +1509,7 @@ namespace MediaPortal.Player
       Speed = Speed;
     }
 
-    static public void SeekAsolutePercentage(int iPercentage)
+    public static void SeekAsolutePercentage(int iPercentage)
     {
       if (_player == null) return;
       _player.SeekAsolutePercentage(iPercentage);
@@ -1520,7 +1520,7 @@ namespace MediaPortal.Player
       _seekTimer = DateTime.MinValue;
     }
 
-    static public bool HasVideo
+    public static bool HasVideo
     {
       get
       {
@@ -1529,7 +1529,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public bool IsVideo
+    public static bool IsVideo
     {
       get
       {
@@ -1542,7 +1542,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public bool HasSubs
+    public static bool HasSubs
     {
       get
       {
@@ -1551,7 +1551,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public void RenderSubtitles()
+    public static void RenderSubtitles()
     {
       if (_player == null) return;
       if (_subs == null) return;
@@ -1561,13 +1561,13 @@ namespace MediaPortal.Player
       }
     }
 
-    static public void WndProc(ref Message m)
+    public static void WndProc(ref Message m)
     {
       if (_player == null) return;
       _player.WndProc(ref m);
     }
 
-    static public void Process()
+    public static void Process()
     {
       if (GUIGraphicsContext.InVmr9Render) return;
       if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
@@ -1609,7 +1609,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property which returns the total number of audio streams available
     /// </summary>
-    static public int AudioStreams
+    public static int AudioStreams
     {
       get
       {
@@ -1620,7 +1620,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property to get/set the current audio stream
     /// </summary>
-    static public int CurrentAudioStream
+    public static int CurrentAudioStream
     {
       get
       {
@@ -1638,7 +1638,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property to get the name for an audio stream
     /// </summary>
-    static public string AudioLanguage(int iStream)
+    public static string AudioLanguage(int iStream)
     {
       if (_player == null) return Strings.Unknown;
 
@@ -1649,7 +1649,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property to get the total number of subtitle streams
     /// </summary>
-    static public int SubtitleStreams
+    public static int SubtitleStreams
     {
       get
       {
@@ -1660,7 +1660,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property to get/set the current subtitle stream
     /// </summary>
-    static public int CurrentSubtitleStream
+    public static int CurrentSubtitleStream
     {
       get
       {
@@ -1678,7 +1678,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Property to get/set the name for a subtitle stream
     /// </summary>
-    static public string SubtitleLanguage(int iStream)
+    public static string SubtitleLanguage(int iStream)
     {
       if (_player == null) return Strings.Unknown;
 
@@ -1688,7 +1688,7 @@ namespace MediaPortal.Player
 
     #endregion
 
-    static public bool EnableSubtitle
+    public static bool EnableSubtitle
     {
       get
       {
@@ -1702,7 +1702,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public void SetVideoWindow()
+    public static void SetVideoWindow()
     {
       if (_player == null) return;
       _player.SetVideoWindow();
@@ -1753,7 +1753,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// returns video window rectangle
     /// </summary>
-    static public Rectangle VideoWindow
+    public static Rectangle VideoWindow
     {
       get
       {
@@ -1765,7 +1765,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// returns video source rectangle displayed
     /// </summary>
-    static public Rectangle SourceWindow
+    public static Rectangle SourceWindow
     {
       get
       {
@@ -1774,19 +1774,19 @@ namespace MediaPortal.Player
       }
     }
 
-    static public int GetHDC()
+    public static int GetHDC()
     {
       if (_player == null) return 0;
       return _player.GetHDC();
     }
 
-    static public void ReleaseHDC(int HDC)
+    public static void ReleaseHDC(int HDC)
     {
       if (_player == null) return;
       _player.ReleaseHDC(HDC);
     }
 
-    static public bool CanSeek
+    public static bool CanSeek
     {
       get
       {
@@ -1801,7 +1801,7 @@ namespace MediaPortal.Player
     /// Calls are directly pushed to the embedded player. And care 
     /// is taken not to do multiple calls to the player.
     /// </summary>
-    static public void SwitchToNextAudio()
+    public static void SwitchToNextAudio()
     {
       if (_player != null)
       {
@@ -1837,7 +1837,7 @@ namespace MediaPortal.Player
       }
     }
 
-    static public void SwitchToNextSubtitle()
+    public static void SwitchToNextSubtitle()
     {
       if (EnableSubtitle)
       {
@@ -1926,7 +1926,7 @@ namespace MediaPortal.Player
       return 0;
     }
 
-    static public bool JumpToNextChapter()
+    public static bool JumpToNextChapter()
     {
       if (!Playing)
         return false;
@@ -1939,7 +1939,7 @@ namespace MediaPortal.Player
       }
       return false;
     }
-    static public bool JumpToPrevChapter()
+    public static bool JumpToPrevChapter()
     {
       if (!Playing)
         return false;

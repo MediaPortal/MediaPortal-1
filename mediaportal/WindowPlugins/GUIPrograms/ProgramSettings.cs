@@ -34,8 +34,8 @@ namespace MediaPortal.GUI.GUIPrograms
   /// </summary>
   public class ProgramSettings
   {
-    static public SQLiteClient sqlDB = null;
-    static public ProgramViewHandler viewHandler = null;
+    public static SQLiteClient sqlDB = null;
+    public static ProgramViewHandler viewHandler = null;
 
     // singleton. Dont allow any instance of this class
     private ProgramSettings(){}
@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.GUIPrograms
     static ProgramSettings(){}
 
 
-    static public string ReadSetting(string Key)
+    public static string ReadSetting(string Key)
     {
       SQLiteResultSet results;
       string res = null;
@@ -71,12 +71,12 @@ namespace MediaPortal.GUI.GUIPrograms
       return res;
     }
 
-    static public bool KeyExists(string Key)
+    public static bool KeyExists(string Key)
     {
       return (CountKey(Key) > 0);
     }
 
-    static public void WriteSetting(string Key, string Value)
+    public static void WriteSetting(string Key, string Value)
     {
       if (KeyExists(Key))
       {
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.GUIPrograms
       }
     }
 
-    static public void DeleteSetting(string Key)
+    public static void DeleteSetting(string Key)
     {
       sqlDB.Execute("delete from setting where key = '" + Key + "'");
     }

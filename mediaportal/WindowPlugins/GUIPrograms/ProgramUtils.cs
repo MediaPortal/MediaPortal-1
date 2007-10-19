@@ -95,12 +95,12 @@ namespace MediaPortal.GUI.GUIPrograms
 
     static ProgramUtils(){}
 
-    static public string Encode(string strValue)
+    public static string Encode(string strValue)
     {
       return strValue.Replace("'", "''");
     }
 
-    static public string Get(SQLiteResultSet results, int iRecord, string strColumn)
+    public static string Get(SQLiteResultSet results, int iRecord, string strColumn)
     {
       if (null == results)
         return "";
@@ -121,12 +121,12 @@ namespace MediaPortal.GUI.GUIPrograms
       return "";
     }
 
-    static public bool StrToBoolean(string val)
+    public static bool StrToBoolean(string val)
     {
       return (val == "T");
     }
 
-    static public string BooleanToStr(bool val)
+    public static string BooleanToStr(bool val)
     {
       if (val)
       {
@@ -138,7 +138,7 @@ namespace MediaPortal.GUI.GUIPrograms
       }
     }
 
-    static public int StrToIntDef(string strVal, int nDefValue)
+    public static int StrToIntDef(string strVal, int nDefValue)
     {
       int nResult = nDefValue;
       try
@@ -154,7 +154,7 @@ namespace MediaPortal.GUI.GUIPrograms
       return nResult;
     }
 
-    static public int GetIntDef(SQLiteResultSet results, int iRecord, string strColumn, int nDefValue)
+    public static int GetIntDef(SQLiteResultSet results, int iRecord, string strColumn, int nDefValue)
     // do a safe conversion.....
     {
       int nResult = nDefValue;
@@ -167,7 +167,7 @@ namespace MediaPortal.GUI.GUIPrograms
     }
 
 
-    static public DateTime StrToDateDef(string strVal, DateTime dteDefValue)
+    public static DateTime StrToDateDef(string strVal, DateTime dteDefValue)
     {
       DateTime dteResult = dteDefValue;
       try
@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.GUIPrograms
     }
 
 
-    static public DateTime GetDateDef(SQLiteResultSet results, int iRecord, string strColumn, DateTime dteDefValue)
+    public static DateTime GetDateDef(SQLiteResultSet results, int iRecord, string strColumn, DateTime dteDefValue)
     {
       DateTime dteResult = dteDefValue;
       string strValue = Get(results, iRecord, strColumn);
@@ -194,22 +194,22 @@ namespace MediaPortal.GUI.GUIPrograms
     }
 
 
-    static public bool GetBool(SQLiteResultSet results, int iRecord, string strColumn)
+    public static bool GetBool(SQLiteResultSet results, int iRecord, string strColumn)
     {
       return (Get(results, iRecord, strColumn) == "T");
     }
 
-    static public ProcessWindowStyle GetProcessWindowStyle(SQLiteResultSet results, int iRecord, string strColumn)
+    public static ProcessWindowStyle GetProcessWindowStyle(SQLiteResultSet results, int iRecord, string strColumn)
     {
       return (StringToWindowStyle(Get(results, iRecord, strColumn)));
     }
 
-    static public myProgSourceType GetSourceType(SQLiteResultSet results, int iRecord, string strColumn)
+    public static myProgSourceType GetSourceType(SQLiteResultSet results, int iRecord, string strColumn)
     {
       return (StringToSourceType(Get(results, iRecord, strColumn)));
     }
 
-    static public string WindowStyleToStr(ProcessWindowStyle val)
+    public static string WindowStyleToStr(ProcessWindowStyle val)
     {
       string res = "";
       switch (val)
@@ -231,7 +231,7 @@ namespace MediaPortal.GUI.GUIPrograms
     }
 
 
-    static public ProcessWindowStyle StringToWindowStyle(string strValue)
+    public static ProcessWindowStyle StringToWindowStyle(string strValue)
     {
       if (strValue.ToLower().Trim() == "hidden")
       {
@@ -249,7 +249,7 @@ namespace MediaPortal.GUI.GUIPrograms
         return ProcessWindowStyle.Normal;
     }
 
-    static public string SourceTypeToStr(myProgSourceType val)
+    public static string SourceTypeToStr(myProgSourceType val)
     {
       string res = "";
       switch (val)
@@ -286,7 +286,7 @@ namespace MediaPortal.GUI.GUIPrograms
     }
 
 
-    static public myProgSourceType StringToSourceType(string strValue)
+    public static myProgSourceType StringToSourceType(string strValue)
     {
       if (strValue == cMYFILEMEEDIO)
       {
@@ -328,7 +328,7 @@ namespace MediaPortal.GUI.GUIPrograms
         return myProgSourceType.UNKNOWN;
     }
 
-    static public void RemoveInvalidChars(ref string strTxt)
+    public static void RemoveInvalidChars(ref string strTxt)
     {
       if (strTxt == null)
       {
@@ -359,7 +359,7 @@ namespace MediaPortal.GUI.GUIPrograms
       strTxt = strReturn;
     }
 
-    static public void AddBackButton(GUIFacadeControl facadeView)
+    public static void AddBackButton(GUIFacadeControl facadeView)
     {
       // add BACK-Button
       GUIListItem gliBack = new GUIListItem(ProgramUtils.cBackLabel);
@@ -371,13 +371,13 @@ namespace MediaPortal.GUI.GUIPrograms
       facadeView.Add(gliBack);
     }
 
-    static private void gliBack_OnItemSelected(GUIListItem item, GUIControl parent)
+    private static void gliBack_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       GUIPrograms.ThumbnailPath = "";
     }
 
 
-    static public string GetAvailableExtensions(string curDirectory)
+    public static string GetAvailableExtensions(string curDirectory)
     {
       string Result = "";
       string Checker = "#";
@@ -403,7 +403,7 @@ namespace MediaPortal.GUI.GUIPrograms
       return Result;
     }
 
-    static public void SetFileExtensions(VirtualDirectory virtDir, string ValidExtensions)
+    public static void SetFileExtensions(VirtualDirectory virtDir, string ValidExtensions)
     {
       ValidExtensions = ValidExtensions.Replace(" ", "");
       ArrayList extensions = new ArrayList(ValidExtensions.Split(','));
@@ -421,7 +421,7 @@ namespace MediaPortal.GUI.GUIPrograms
       virtDir.SetExtensions(extensions);
     }
 
-    static public string NormalizedString(string strVal)
+    public static string NormalizedString(string strVal)
     {
       string strRes = strVal;
       // trim away trailing [..] (..) codes

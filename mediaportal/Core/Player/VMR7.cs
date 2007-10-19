@@ -53,7 +53,7 @@ namespace MediaPortal.Player
 	public class VMR7Util
 	{
 		
-		static public VMR7Util g_vmr7=null;
+		public static VMR7Util g_vmr7=null;
 		public IBaseFilter		VMR7Filter = null;
 		IQualProp quality=null;
 		IVMRMixerBitmap m_mixerBitmap=null;

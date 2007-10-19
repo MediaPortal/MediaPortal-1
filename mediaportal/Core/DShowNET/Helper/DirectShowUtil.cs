@@ -48,7 +48,7 @@ namespace DShowNET.Helper
     {
     }
 
-    static public IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
+    public static IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
     {
       try
       {
@@ -85,7 +85,7 @@ namespace DShowNET.Helper
       }
     }
 
-    static public IBaseFilter AddAudioRendererToGraph(IGraphBuilder graphBuilder, string strFilterName, bool setAsReferenceClock)
+    public static IBaseFilter AddAudioRendererToGraph(IGraphBuilder graphBuilder, string strFilterName, bool setAsReferenceClock)
     {
       try
       {
@@ -241,7 +241,7 @@ namespace DShowNET.Helper
 
 
 
-    static public IPin FindSourcePinOf(IBaseFilter filter)
+    public static IPin FindSourcePinOf(IBaseFilter filter)
     {
       int hr = 0;
       IEnumPins pinEnum;
@@ -278,7 +278,7 @@ namespace DShowNET.Helper
       return null;
     }
 
-    static private void ListMediaTypes(IPin pin)
+    private static void ListMediaTypes(IPin pin)
     {
       IEnumMediaTypes types;
       pin.EnumMediaTypes(out types);
@@ -297,7 +297,7 @@ namespace DShowNET.Helper
     }
 
 
-    static private bool TestMediaTypes(IPin pin, IPin receiver)
+    private static bool TestMediaTypes(IPin pin, IPin receiver)
     {
       bool ret = false;
       IEnumMediaTypes types;
@@ -324,12 +324,12 @@ namespace DShowNET.Helper
     }
 
     
-    static private bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin)
+    private static bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin)
     {
       return TryConnect(graphBuilder, filtername, outputPin, true);
     }
 
-    static private bool CheckFilterIsLoaded(IGraphBuilder graphBuilder, String name)
+    private static bool CheckFilterIsLoaded(IGraphBuilder graphBuilder, String name)
     {
       int hr;
       bool ret = false;
@@ -362,7 +362,7 @@ namespace DShowNET.Helper
       return ret;
     }
 
-    static private bool HasConnection(IPin pin)
+    private static bool HasConnection(IPin pin)
     {
       IPin pinInConnected;
       int hr = pin.ConnectedTo(out pinInConnected);
@@ -377,7 +377,7 @@ namespace DShowNET.Helper
       }
     }
 
-    static private bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, IBaseFilter to)
+    private static bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, IBaseFilter to)
     {
       bool ret = false;
       int hr;
@@ -470,7 +470,7 @@ namespace DShowNET.Helper
       }
     }
 
-    static private bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, bool TryNewFilters)
+    private static bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, bool TryNewFilters)
     {
       int hr;
       Log.Info("----------------TryConnect-------------");
@@ -548,11 +548,11 @@ namespace DShowNET.Helper
       return outputInfo.name.StartsWith("~");
     }
 
-    static public bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter)
+    public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
       return RenderOutputPins(graphBuilder, filter, 100);
     }
-    static public bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, int maxPinsToRender)
+    public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, int maxPinsToRender)
     {
       int pinsRendered = 0;
       bool bAllConnected = true;
@@ -630,7 +630,7 @@ namespace DShowNET.Helper
       return bAllConnected;
     }
 
-    static public void DisconnectOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter)
+    public static void DisconnectOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
       IEnumPins pinEnum;
       int hr = filter.EnumPins(out pinEnum);
@@ -697,7 +697,7 @@ namespace DShowNET.Helper
       }
     }
 
-    static public bool DisconnectAllPins(IGraphBuilder graphBuilder, IBaseFilter filter)
+    public static bool DisconnectAllPins(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
       IEnumPins pinEnum;
       int hr = filter.EnumPins(out pinEnum);
@@ -725,7 +725,7 @@ namespace DShowNET.Helper
       return allDisconnected;
     }
 
-    static public bool DisconnectPin(IGraphBuilder graphBuilder, IPin pin)
+    public static bool DisconnectPin(IGraphBuilder graphBuilder, IPin pin)
     {
       IPin other;
       int hr = pin.ConnectedTo(out other);
@@ -759,7 +759,7 @@ namespace DShowNET.Helper
       return allDisconnected;
     }
 
-    static public bool QueryConnect(IPin pin, IPin other)
+    public static bool QueryConnect(IPin pin, IPin other)
     {
       IEnumMediaTypes enumTypes;
       int hr = pin.EnumMediaTypes(out enumTypes);
@@ -785,7 +785,7 @@ namespace DShowNET.Helper
       return false;
     }
 
-    static public bool ReRenderAll(IGraphBuilder graphBuilder, IBaseFilter filter)
+    public static bool ReRenderAll(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
       int pinsRendered = 0;
       bool bAllConnected = true;
@@ -869,7 +869,7 @@ namespace DShowNET.Helper
     /// Mediaportal handles AR itself
     /// </summary>
     /// <param name="graphBuilder"></param>
-    static public void SetARMode(IGraphBuilder graphBuilder, AspectRatioMode ARRatioMode)
+    public static void SetARMode(IGraphBuilder graphBuilder, AspectRatioMode ARRatioMode)
     {
       int hr;
       IBaseFilter overlay;
@@ -1001,12 +1001,12 @@ namespace DShowNET.Helper
     /// Mediaportal handles AR itself
     /// </summary>
     /// <param name="graphBuilder"></param>
-    static public void EnableDeInterlace(IGraphBuilder graphBuilder)
+    public static void EnableDeInterlace(IGraphBuilder graphBuilder)
     {
       //not used anymore
     }
 
-    static public IPin FindVideoPort(ref ICaptureGraphBuilder2 captureGraphBuilder, ref IBaseFilter videoDeviceFilter, ref Guid mediaType)
+    public static IPin FindVideoPort(ref ICaptureGraphBuilder2 captureGraphBuilder, ref IBaseFilter videoDeviceFilter, ref Guid mediaType)
     {
       IPin pPin;
       DsGuid cat = new DsGuid(PinCategory.VideoPort);
@@ -1016,7 +1016,7 @@ namespace DShowNET.Helper
       return pPin;
     }
 
-    static public IPin FindPreviewPin(ref ICaptureGraphBuilder2 captureGraphBuilder, ref IBaseFilter videoDeviceFilter, ref Guid mediaType)
+    public static IPin FindPreviewPin(ref ICaptureGraphBuilder2 captureGraphBuilder, ref IBaseFilter videoDeviceFilter, ref Guid mediaType)
     {
       IPin pPin;
       DsGuid cat = new DsGuid(PinCategory.Preview);
@@ -1026,7 +1026,7 @@ namespace DShowNET.Helper
       return pPin;
     }
 
-    static public IPin FindCapturePin(ref ICaptureGraphBuilder2 captureGraphBuilder, ref IBaseFilter videoDeviceFilter, ref Guid mediaType)
+    public static IPin FindCapturePin(ref ICaptureGraphBuilder2 captureGraphBuilder, ref IBaseFilter videoDeviceFilter, ref Guid mediaType)
     {
       IPin pPin = null;
       DsGuid cat = new DsGuid(PinCategory.Capture);
@@ -1036,7 +1036,7 @@ namespace DShowNET.Helper
       return pPin;
     }
 
-    static public IBaseFilter GetFilterByName(IGraphBuilder graphBuilder, string name)
+    public static IBaseFilter GetFilterByName(IGraphBuilder graphBuilder, string name)
     {
       int hr = 0;
       IEnumFilters ienumFilt = null;
@@ -1082,7 +1082,7 @@ namespace DShowNET.Helper
       return null;
     }
 
-    static public void RemoveFilters(IGraphBuilder m_graphBuilder)
+    public static void RemoveFilters(IGraphBuilder m_graphBuilder)
     {
       int hr;
       if (m_graphBuilder == null) return;
@@ -1140,7 +1140,7 @@ namespace DShowNET.Helper
     {
       return texture.GetObjectByValue(magicConstant);
     }
-    static public void FindFilterByClassID(IGraphBuilder m_graphBuilder, Guid classID, out IBaseFilter filterFound)
+    public static void FindFilterByClassID(IGraphBuilder m_graphBuilder, Guid classID, out IBaseFilter filterFound)
     {
       filterFound = null;
 
@@ -1216,7 +1216,7 @@ namespace DShowNET.Helper
           Marshal.ReleaseComObject(bagObj); bagObj = null;
       }
     }
-    static public IPin FindPin(IBaseFilter filter, PinDirection dir, string strPinName)
+    public static IPin FindPin(IBaseFilter filter, PinDirection dir, string strPinName)
     {
       int hr = 0;
 
@@ -1254,7 +1254,7 @@ namespace DShowNET.Helper
       }
       return null;
     }
-    static public void RemoveDownStreamFilters(IGraphBuilder graphBuilder, IBaseFilter fromFilter, bool remove)
+    public static void RemoveDownStreamFilters(IGraphBuilder graphBuilder, IBaseFilter fromFilter, bool remove)
     {
       IEnumPins enumPins;
       fromFilter.EnumPins(out enumPins);
@@ -1290,7 +1290,7 @@ namespace DShowNET.Helper
         graphBuilder.RemoveFilter(fromFilter);
       Marshal.ReleaseComObject(enumPins);
     }
-    static public void RemoveDownStreamFilters(IGraphBuilder graphBuilder, IPin pin)
+    public static void RemoveDownStreamFilters(IGraphBuilder graphBuilder, IPin pin)
     {
       IPin pinConnected;
       pin.ConnectedTo(out pinConnected);

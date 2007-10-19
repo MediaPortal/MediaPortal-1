@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Library
     {
     }
 
-    static public int Count
+    public static int Count
     {
       get { return _listFonts.Count; }
     }
@@ -63,7 +63,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     /// <param name="strFilename">The filename from where the fonts are loaded.</param>
     /// <returns>true if loaded else false</returns>
-    static public bool LoadFonts(string strFilename)
+    public static bool LoadFonts(string strFilename)
     {
       // Clear current set of fonts
       Dispose();
@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     /// <param name="iFont">The font number</param>
     /// <returns>A GUIFont instance representing the fontnumber or a default GUIFont if the number does not exists.</returns>
-    static public GUIFont GetFont(int iFont)
+    public static GUIFont GetFont(int iFont)
     {
       if (iFont >= 0 && iFont < _listFonts.Count)
         return _listFonts[iFont];
@@ -165,7 +165,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     /// <param name="strFontName">The name of the font</param>
     /// <returns>A GUIFont instance representing the strFontName or a default GUIFont if the strFontName does not exists.</returns>
-    static public GUIFont GetFont(string strFontName)
+    public static GUIFont GetFont(string strFontName)
     {
       for (int i = 0; i < _listFonts.Count; ++i)
       {
@@ -178,7 +178,7 @@ namespace MediaPortal.GUI.Library
       return GetFont("debug");
     }
 
-    static public void Present()
+    public static void Present()
     {
 
       FontEnginePresentTextures();
@@ -191,7 +191,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Disposes all GUIFonts.
     /// </summary>
-    static public void Dispose()
+    public static void Dispose()
     {
       Log.Info("  fonts.Dispose()");
       foreach (GUIFont font in _listFonts)
@@ -203,7 +203,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Sets the device and the FVF.
     /// </summary>
-    static public void SetDevice()
+    public static void SetDevice()
     {
       Log.Info("  fonts.SetDevice()");
       IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
@@ -217,7 +217,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Initializes the device objects of the GUIFonts.
     /// </summary>
-    static public void InitializeDeviceObjects()
+    public static void InitializeDeviceObjects()
     {
       Log.Info("  fonts.InitializeDeviceObjects()");
       IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);

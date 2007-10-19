@@ -32,6 +32,6 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class Strings
 	{
-		static public readonly string Unknown="unknown";
+		public static readonly string Unknown="unknown";
 	}
 }

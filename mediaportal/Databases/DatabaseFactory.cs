@@ -38,7 +38,7 @@ namespace MediaPortal.Database
   {
     static bool UseADO = false;
 
-    static public IFolderSettings GetFolderDatabase()
+    public static IFolderSettings GetFolderDatabase()
     {
       if (UseADO)
         return new FolderSettingAdo();
@@ -46,7 +46,7 @@ namespace MediaPortal.Database
         return new FolderSettingsSqlLite();
     }
 
-    static public IPictureDatabase GetPictureDatabase()
+    public static IPictureDatabase GetPictureDatabase()
     {
       if (UseADO)
         return new PictureDatabaseADO();
@@ -54,7 +54,7 @@ namespace MediaPortal.Database
         return new PictureDatabaseSqlLite();
     }
 
-    static public IRadioDatabase GetRadioDatabase()
+    public static IRadioDatabase GetRadioDatabase()
     {
       if (UseADO)
         return new RadioDatabaseADO();
@@ -62,7 +62,7 @@ namespace MediaPortal.Database
         return new RadioDatabaseSqlLite();
     }
 
-    static public IVideoDatabase GetVideoDatabase()
+    public static IVideoDatabase GetVideoDatabase()
     {
       if (UseADO)
         return null;

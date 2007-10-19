@@ -53,12 +53,12 @@ namespace MediaPortal.GUI.Library
 
     static IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
 
-    static public void RegisterLayer(IRenderLayer renderer, LayerType zOrder)
+    public static void RegisterLayer(IRenderLayer renderer, LayerType zOrder)
     {
       _layers[(int)zOrder] = renderer;
     }
 
-    static public void UnRegisterLayer(IRenderLayer renderer)
+    public static void UnRegisterLayer(IRenderLayer renderer)
     {
       for (int i = 0; i < MAX_LAYERS; ++i)
       {
@@ -69,12 +69,12 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    static public IRenderLayer GetLayer(LayerType zOrder)
+    public static IRenderLayer GetLayer(LayerType zOrder)
     {
       return _layers[(int)zOrder];
     }
 
-    static public void Render(float timePassed)
+    public static void Render(float timePassed)
     {
       if (GUIGraphicsContext.BlankScreen) return;
       int videoLayer = (int)LayerType.Video;

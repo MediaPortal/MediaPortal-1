@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Library
     /// Loads the keymap file and creates the mapping.
     /// </summary>
     /// <returns>True if the load was successfull, false if it failed.</returns>
-    static public bool Load()
+    public static bool Load()
     {
 
       mapWindows.Clear();
@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Library
     /// Loads a supplementary keymap file and adds it to the map previously built from keymap.xml
     /// </summary>
     /// <returns>True if the load was successfull, false if it failed.</returns>
-    static public bool Load(string strFilename)
+    public static bool Load(string strFilename)
     {
 
       //mapWindows.Clear();
@@ -264,7 +264,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="key">The key that caused the key action.</param>
     /// <param name="action">The Action that is initialized by this method.</param>
     /// <returns>True if the translation was successful, false if not.</returns>
-    static public bool GetAction(int iWindow, Key key, ref Action action)
+    public static bool GetAction(int iWindow, Key key, ref Action action)
     {
       // try to get the action from the current window
       if (key == null) return false;
@@ -323,7 +323,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="wWindow">The window id.</param>
     /// <param name="action">The action</param>
     /// <returns>True if it is found in the map, fales if not.</returns>
-    static public bool GetActionDetail(int wWindow, Action action)
+    public static bool GetActionDetail(int wWindow, Action action)
     {
       if (action.wID == 0) return false;
       for (int iw = 0; iw < mapWindows.Count; ++iw)
@@ -345,7 +345,7 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
-    static public bool HasKeyMapped(int iWindow, Key key)
+    public static bool HasKeyMapped(int iWindow, Key key)
     {
       string strSoundFile;
       int wAction = GetActionCode(iWindow, key, out strSoundFile);

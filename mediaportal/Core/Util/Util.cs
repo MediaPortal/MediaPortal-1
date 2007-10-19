@@ -98,8 +98,8 @@ namespace MediaPortal.Util
     static extern bool CloseHandle(IntPtr hObject);
 
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
-    static public event UtilEventHandler OnStartExternal = null;	// Event: Start external process / waeberd & mPod
-    static public event UtilEventHandler OnStopExternal = null;		// Event: Stop external process	/ waeberd & mPod
+    public static event UtilEventHandler OnStartExternal = null;	// Event: Start external process / waeberd & mPod
+    public static event UtilEventHandler OnStopExternal = null;		// Event: Stop external process	/ waeberd & mPod
     static ArrayList m_AudioExtensions = new ArrayList();
     static ArrayList m_VideoExtensions = new ArrayList();
     static ArrayList m_PictureExtensions = new ArrayList();
@@ -170,7 +170,7 @@ namespace MediaPortal.Util
       get { return m_PictureExtensions; }
     }
 
-    static public string GetDriveSerial(string drive)
+    public static string GetDriveSerial(string drive)
     {
       if (drive == null) return string.Empty;
       //receives volume name of drive
@@ -191,7 +191,7 @@ namespace MediaPortal.Util
       else return "";
     }
 
-    static public string GetDriveName(string drive)
+    public static string GetDriveName(string drive)
     {
       if (drive == null) return string.Empty;
       //receives volume name of drive
@@ -212,7 +212,7 @@ namespace MediaPortal.Util
       else return "";
     }
 
-    static public int getDriveType(string drive)
+    public static int getDriveType(string drive)
     {
       if (drive == null) return 2;
       if ((GetDriveType(drive) & 5) == 5) return 5;//cd
@@ -223,7 +223,7 @@ namespace MediaPortal.Util
       return 0;
     }
 
-    static public long GetDiskSize(string drive)
+    public static long GetDiskSize(string drive)
     {
       long diskSize = 0;
       try
@@ -242,7 +242,7 @@ namespace MediaPortal.Util
       return diskSize;
     }
 
-    static public string GetSize(long dwFileSize)
+    public static string GetSize(long dwFileSize)
     {
       if (dwFileSize < 0) return "0";
       string szTemp;
@@ -288,7 +288,7 @@ namespace MediaPortal.Util
       return szTemp;
     }
 
-    static public bool IsLiveTv(string strPath)
+    public static bool IsLiveTv(string strPath)
     {
       if (strPath == null) return false;
       try
@@ -300,7 +300,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsLiveRadio(string strPath)
+    public static bool IsLiveRadio(string strPath)
     {
       if (strPath == null) return false;
       try
@@ -312,7 +312,7 @@ namespace MediaPortal.Util
 
     }
 
-    static public bool IsVideo(string strPath)
+    public static bool IsVideo(string strPath)
     {
       if (strPath == null)                           return false;
       if (IsLastFMStream(strPath))                   return false;
@@ -348,7 +348,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsLastFMStream(string aPath)
+    public static bool IsLastFMStream(string aPath)
     {
       if (aPath.StartsWith(@"http://"))
       {
@@ -361,7 +361,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsAVStream(string strPath)
+    public static bool IsAVStream(string strPath)
     {
       if (strPath == null) return false;
       if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
@@ -371,7 +371,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsAudio(string strPath)
+    public static bool IsAudio(string strPath)
     {
       if (strPath == null)              return false;
       if (IsLastFMStream(strPath))      return true;
@@ -391,7 +391,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsPicture(string strPath)
+    public static bool IsPicture(string strPath)
     {
       if (strPath == null) return false;
       try
@@ -410,7 +410,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsPlayList(string strPath)
+    public static bool IsPlayList(string strPath)
     {
       if (strPath == null) return false;
       try
@@ -427,7 +427,7 @@ namespace MediaPortal.Util
       }
       return false;
     }
-    static public bool IsProgram(string strPath)
+    public static bool IsProgram(string strPath)
     {
       if (strPath == null) return false;
       try
@@ -441,7 +441,7 @@ namespace MediaPortal.Util
       }
       return false;
     }
-    static public bool IsShortcut(string strPath)
+    public static bool IsShortcut(string strPath)
     {
       if (strPath == null) return false;
       try
@@ -595,7 +595,7 @@ namespace MediaPortal.Util
       }
     }  
 
-    static public string SecondsToShortHMSString(int lSeconds)
+    public static string SecondsToShortHMSString(int lSeconds)
     {
       if (lSeconds < 0) return ("0:00");
       int hh = lSeconds / 3600;
@@ -608,12 +608,12 @@ namespace MediaPortal.Util
       return strHMS;
     }
 
-    static public string SecondsToHMSString(TimeSpan timespan)
+    public static string SecondsToHMSString(TimeSpan timespan)
     {
       return SecondsToHMSString(timespan.Seconds);
     }
 
-    static public string SecondsToHMSString(int lSeconds)
+    public static string SecondsToHMSString(int lSeconds)
     {
       if (lSeconds < 0) return ("0:00");
       int hh = lSeconds / 3600;
@@ -629,7 +629,7 @@ namespace MediaPortal.Util
       return strHMS;
     }
 
-    static public string GetShortDayString(DateTime dt)
+    public static string GetShortDayString(DateTime dt)
     {
       try
       {
@@ -652,7 +652,7 @@ namespace MediaPortal.Util
       return string.Empty;
     }
 
-    static public string SecondsToHMString(int lSeconds)
+    public static string SecondsToHMString(int lSeconds)
     {
       if (lSeconds < 0) return "0:00";
       int hh = lSeconds / 3600;
@@ -667,14 +667,14 @@ namespace MediaPortal.Util
       return strHM;
     }
 
-    static public long GetUnixTime(DateTime desiredTime_)
+    public static long GetUnixTime(DateTime desiredTime_)
     {
       TimeSpan ts = (desiredTime_ - new DateTime(1970, 1, 1, 0, 0, 0));
      
       return (long)ts.TotalSeconds;
     }
 
-    static public void GetQualifiedFilename(string strBasePath, ref string strFileName)
+    public static void GetQualifiedFilename(string strBasePath, ref string strFileName)
     {
       if (strFileName == null) return;
       if (strFileName.Length <= 2) return;
@@ -702,14 +702,14 @@ namespace MediaPortal.Util
       strFileName = System.IO.Path.Combine(strBasePath, strFileName);
     }
 
-    static public string stripHTMLtags(string strHTML)
+    public static string stripHTMLtags(string strHTML)
     {
       if (strHTML == null) return string.Empty;
       if (strHTML.Length == 0) return string.Empty;
       string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", string.Empty);
       return stripped.Trim();
     }
-    static public bool IsNetwork(string strPath)
+    public static bool IsNetwork(string strPath)
     {
       if (strPath == null) return false;
       if (strPath.Length < 2) return false;
@@ -718,7 +718,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsHD(string strPath)
+    public static bool IsHD(string strPath)
     {
       if (strPath == null) return false;
       if (strPath.Length < 2) return false;
@@ -727,7 +727,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsCDDA(string strFile)
+    public static bool IsCDDA(string strFile)
     {
       if (strFile == null) return false;
       if (strFile.Length <= 0) return false;
@@ -736,7 +736,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsDVD(string strFile)
+    public static bool IsDVD(string strFile)
     {
       if (strFile == null) return false;
       if (strFile.Length < 2) return false;
@@ -745,7 +745,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool IsRemovable(string strFile)
+    public static bool IsRemovable(string strFile)
     {
       if (strFile == null) return false;
       if (strFile.Length < 2) return false;
@@ -754,7 +754,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public string GetObjectCountLabel(int iTotalItems)
+    public static string GetObjectCountLabel(int iTotalItems)
     {
       string strObjects = string.Empty;
 
@@ -766,7 +766,7 @@ namespace MediaPortal.Util
       return strObjects;
     }
 
-    static public string GetSongCountLabel(int iTotalItems, int iTotalSeconds)
+    public static string GetSongCountLabel(int iTotalItems, int iTotalSeconds)
     {
       string strObjects = string.Empty;
 
@@ -780,7 +780,7 @@ namespace MediaPortal.Util
       return strObjects;
     }
 
-    static public bool GetDVDLabel(string strFile, out string strLabel)
+    public static bool GetDVDLabel(string strFile, out string strLabel)
     {
       strLabel = "";
       if (strFile == null) return false;
@@ -789,7 +789,7 @@ namespace MediaPortal.Util
       strLabel = GetDriveName(strDrive);
       return true;
     }
-    static public bool ShouldStack(string strFile1, string strFile2)
+    public static bool ShouldStack(string strFile1, string strFile2)
     {
       if (strFile1 == null) return false;
       if (strFile2 == null) return false;
@@ -831,7 +831,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public void RemoveStackEndings(ref string strFileName)
+    public static void RemoveStackEndings(ref string strFileName)
     {
 
       if (strFileName == null) return;
@@ -847,7 +847,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public string GetThumb(string strLine)
+    public static string GetThumb(string strLine)
     {
       if (string.IsNullOrEmpty(strLine))
         return "000";
@@ -866,7 +866,7 @@ namespace MediaPortal.Util
       return "000";
     }
 
-    static public string SplitFilename(string strFileNameAndPath)
+    public static string SplitFilename(string strFileNameAndPath)
     {
       string path = string.Empty;
       string singlefilename = string.Empty;
@@ -874,7 +874,7 @@ namespace MediaPortal.Util
       return singlefilename;
     }
 
-    static public void Split(string strFileNameAndPath, out string strPath, out string strFileName)
+    public static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
       strFileName = "";
       strPath = "";
@@ -909,7 +909,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public bool EjectCDROM(string strDrive)
+    public static bool EjectCDROM(string strDrive)
     {
       bool result = false;
       strDrive = @"\\.\" + strDrive;
@@ -934,12 +934,12 @@ namespace MediaPortal.Util
       return result;
     }
 
-    static public void EjectCDROM()
+    public static void EjectCDROM()
     {
       mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
     }
 
-    static public Process StartProcess(ProcessStartInfo procStartInfo, bool bWaitForExit)
+    public static Process StartProcess(ProcessStartInfo procStartInfo, bool bWaitForExit)
     {
       Process proc = new Process();
       proc.StartInfo = procStartInfo;
@@ -976,7 +976,7 @@ namespace MediaPortal.Util
       return proc;
     }
 
-    static public Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bMinimized)
+    public static Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bMinimized)
     {
       if (strProgram == null) return null;
       if (strProgram.Length == 0) return null;
@@ -997,7 +997,7 @@ namespace MediaPortal.Util
       return StartProcess(procInfo, bWaitForExit);
     }
 
-    static public bool PlayDVD()
+    public static bool PlayDVD()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -1045,7 +1045,7 @@ namespace MediaPortal.Util
       return true;
     }
 
-    static public bool PlayMovie(string strFile)
+    public static bool PlayMovie(string strFile)
     {
       if (strFile == null) return false;
       if (strFile.Length == 0) return false;
@@ -1121,7 +1121,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public DateTime longtodate(long ldate)
+    public static DateTime longtodate(long ldate)
     {
       try
       {
@@ -1142,7 +1142,7 @@ namespace MediaPortal.Util
       return DateTime.Now;
     }
 
-    static public long datetolong(DateTime dt)
+    public static long datetolong(DateTime dt)
     {
       try
       {
@@ -1167,7 +1167,7 @@ namespace MediaPortal.Util
       return 0;
     }
 
-    static public string MakeFileName(string strText)
+    public static string MakeFileName(string strText)
     {
       int k = 0;
       int j = 0;
@@ -1215,7 +1215,7 @@ namespace MediaPortal.Util
       return strFName;
     }
 
-    static public string MakeDirectoryPath(string strText)
+    public static string MakeDirectoryPath(string strText)
     {
       if (strText == null) return string.Empty;
       if (strText.Length == 0) return string.Empty;
@@ -1229,7 +1229,7 @@ namespace MediaPortal.Util
       return strFName;
     }
 
-    static public bool FileDelete(string strFile)
+    public static bool FileDelete(string strFile)
     {
       if (strFile == null) return true;
       if (strFile.Length == 0) return true;
@@ -1245,7 +1245,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public bool DirectoryDelete(string strDir)
+    public static bool DirectoryDelete(string strDir)
     {
       if (strDir == null) return false;
       if (strDir.Length == 0) return false;
@@ -1260,7 +1260,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-    static public void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
+    public static void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
     {
       if (strURL == null) return;
       if (strURL.Length == 0) return;
@@ -1297,7 +1297,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public void DownLoadAndCacheImage(string strURL, string strFile)
+    public static void DownLoadAndCacheImage(string strURL, string strFile)
     {
       if (strURL == null) return;
       if (strURL.Length == 0) return;
@@ -1336,7 +1336,7 @@ namespace MediaPortal.Util
 
     }
 
-    static public void DownLoadImage(string strURL, string strFile)
+    public static void DownLoadImage(string strURL, string strFile)
     {
       if (strURL == null) return;
       if (strURL.Length == 0) return;
@@ -1382,7 +1382,7 @@ namespace MediaPortal.Util
     }
 
 
-    static public string RemoveTrailingSlash(string strLine)
+    public static string RemoveTrailingSlash(string strLine)
     {
       if (strLine == null) return string.Empty;
       if (strLine.Length == 0) return string.Empty;
@@ -1398,7 +1398,7 @@ namespace MediaPortal.Util
       return strPath;
     }
 
-    static public void RGB2YUV(int R, int G, int B, out int Y, out int U, out int V)
+    public static void RGB2YUV(int R, int G, int B, out int Y, out int U, out int V)
     {
       Y = (int)(((float)R) * 0.257f + ((float)G) * 0.504f + ((float)B) * 0.098f + 16.0f);
       U = (int)(((float)R) * -0.148f + ((float)G) * -0.291f + ((float)B) * 0.439f + 128.0f);
@@ -1408,7 +1408,7 @@ namespace MediaPortal.Util
       V = V & 0xff;
     }
 
-    static public void RGB2YUV(int iRGB, out int YUV)
+    public static void RGB2YUV(int iRGB, out int YUV)
     {
       int Y, U, V;
       RGB2YUV((iRGB >> 16) & 0xff, (iRGB >> 8) & 0xff, (iRGB & 0xff), out Y, out U, out V);
@@ -1419,12 +1419,12 @@ namespace MediaPortal.Util
       YUV = Y + U + V;
     }
 
-    static public string GetFilename(string strPath)
+    public static string GetFilename(string strPath)
     {
       return GetFilename(strPath, false);
     }
 
-    static public string GetFilename(string strPath, bool withoutExtension)
+    public static string GetFilename(string strPath, bool withoutExtension)
     {
       if (strPath == null) return string.Empty;
       if (strPath.Length == 0) return string.Empty;
@@ -1561,7 +1561,7 @@ namespace MediaPortal.Util
     private static extern int sndPlaySoundA(string lpszSoundName, int uFlags);
     [DllImport("winmm.dll")]
     private static extern int PlaySound(byte[] pszSound, Int16 hMod, long fdwSound);
-    static public int GetNextForwardSpeed(int iCurSpeed)
+    public static int GetNextForwardSpeed(int iCurSpeed)
     {
       switch (iCurSpeed)
       {
@@ -1590,7 +1590,7 @@ namespace MediaPortal.Util
       return 1;
     }
 
-    static public int GetNextRewindSpeed(int iCurSpeed)
+    public static int GetNextRewindSpeed(int iCurSpeed)
     {
       switch (iCurSpeed)
       {
@@ -1618,7 +1618,7 @@ namespace MediaPortal.Util
       return 1;
     }
 
-    static public string FilterFileName(string strName)
+    public static string FilterFileName(string strName)
     {
       if (strName == null) return string.Empty;
       if (strName.Length == 0) return string.Empty;
@@ -1634,7 +1634,7 @@ namespace MediaPortal.Util
       return strName;
     }
 
-    static public string RemoveParenthesis(string name)
+    public static string RemoveParenthesis(string name)
     {
       while (name.IndexOf("(") != -1)
       {
@@ -1665,7 +1665,7 @@ namespace MediaPortal.Util
       return name;
     }
 
-    static public string EncryptLine(string strLine)
+    public static string EncryptLine(string strLine)
     {
       if (strLine == null)            return string.Empty;
       if (strLine.Length == 0)        return string.Empty;
@@ -1677,7 +1677,7 @@ namespace MediaPortal.Util
       return strRet;
     }
 
-    static public string GetAlbumThumbName(string ArtistName, string AlbumName)
+    public static string GetAlbumThumbName(string ArtistName, string AlbumName)
     {
       if (string.IsNullOrEmpty(ArtistName) || string.IsNullOrEmpty(AlbumName))
         return string.Empty;
@@ -1688,7 +1688,7 @@ namespace MediaPortal.Util
       return GetCoverArtName(Thumbs.MusicAlbum, name);
     }
 
-    static public string GetFolderThumb(string strFile)
+    public static string GetFolderThumb(string strFile)
     {
       if (strFile == null)              return string.Empty;
       if (strFile.Length == 0)          return string.Empty;
@@ -1700,7 +1700,7 @@ namespace MediaPortal.Util
       return strFolderJpg;
     }
 
-    static public string GetLocalFolderThumb(string strFile)
+    public static string GetLocalFolderThumb(string strFile)
     {
       if (strFile == null)              return string.Empty;
       if (strFile.Length == 0)          return string.Empty;
@@ -1712,7 +1712,7 @@ namespace MediaPortal.Util
       return strFolderJpg;
     }
 
-    static public string GetLocalFolderThumbForDir(string strDirPath)
+    public static string GetLocalFolderThumbForDir(string strDirPath)
     {
       if (string.IsNullOrEmpty(strDirPath))
         return string.Empty;      
@@ -1722,7 +1722,7 @@ namespace MediaPortal.Util
       return strFolderJpg;
     }
 
-    static public string GetCoverArt(string strFolder, string strFileName)
+    public static string GetCoverArt(string strFolder, string strFileName)
     {
       if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
         return string.Empty;
@@ -1740,7 +1740,7 @@ namespace MediaPortal.Util
       return string.Empty;
     }
 
-    static public string ConvertToLargeCoverArt(string smallArt)
+    public static string ConvertToLargeCoverArt(string smallArt)
     {
       if (smallArt == null)             return string.Empty;
       if (smallArt.Length == 0)         return string.Empty;
@@ -1752,7 +1752,7 @@ namespace MediaPortal.Util
       return smallArt.Replace(smallExt, LargeExt);
     }
 
-    static public string GetCoverArtName(string strFolder, string strFileName)
+    public static string GetCoverArtName(string strFolder, string strFileName)
     {
       if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
         return string.Empty;
@@ -1765,7 +1765,7 @@ namespace MediaPortal.Util
       return strThumb;
     }
 
-    static public string GetLargeCoverArtName(string strFolder, string strFileName)
+    public static string GetLargeCoverArtName(string strFolder, string strFileName)
     {
       if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
         return string.Empty;
@@ -1773,7 +1773,7 @@ namespace MediaPortal.Util
       return Utils.GetCoverArtName(strFolder, strFileName + "L");
     }
 
-    static private void AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
+    private static void AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
     {
       try
       {
@@ -1794,7 +1794,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath)
+    public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath)
     {
       bool result = false;
 
@@ -1894,7 +1894,7 @@ namespace MediaPortal.Util
       return result;
     }
 
-    static public string GetThumbExtension()
+    public static string GetThumbExtension()
     {
       if (Thumbs.ThumbFormat == ImageFormat.Jpeg)
         return ".jpg";
@@ -1910,7 +1910,7 @@ namespace MediaPortal.Util
       return ".jpg";
     }
 
-    static public void DeleteFiles(string strDir, string strPattern)
+    public static void DeleteFiles(string strDir, string strPattern)
     {
       if (strDir == null) return;
       if (strDir.Length == 0) return;
@@ -1937,7 +1937,7 @@ namespace MediaPortal.Util
 
     }
 
-    static public void StopMCEServices()
+    public static void StopMCEServices()
     {
       // Stop Vista & XP services
       bool ehRecvrExist = false;
@@ -2031,7 +2031,7 @@ namespace MediaPortal.Util
         Log.Error("!!! MediaPortal needs to be run as Administrator on Vista to stop the Media Center services that occupy your TV cards/remote control !!!");
     }
 
-    static public void RestartMCEServices()
+    public static void RestartMCEServices()
     {
       if (_restartMCEehRecvr || _restartMCEehSched)
       {
@@ -2070,7 +2070,7 @@ namespace MediaPortal.Util
       }
     }
 
-    static public DateTime ParseDateTimeString(string dateTime)
+    public static DateTime ParseDateTimeString(string dateTime)
     {
       try
       {
@@ -2177,7 +2177,7 @@ namespace MediaPortal.Util
       return freeBytesAvailable;
     }
 
-    static public void DeleteOldTimeShiftFiles(string path)
+    public static void DeleteOldTimeShiftFiles(string path)
     {
       if (path == null) return;
       if (path == string.Empty) return;
@@ -2245,7 +2245,7 @@ namespace MediaPortal.Util
       catch (Exception) { }
     }//void DeleteOldTimeShiftFiles(string path)
 
-    static public void DeleteRecording(string recordingFilename)
+    public static void DeleteRecording(string recordingFilename)
     {
       Utils.FileDelete(recordingFilename);
 
@@ -2299,7 +2299,7 @@ namespace MediaPortal.Util
     /// </summary>
     /// <param name="forceShutDown"></param>
     /// <returns></returns>
-    static public void HibernateSystem(bool forceShutDown)
+    public static void HibernateSystem(bool forceShutDown)
     {
       Log.Info("Utils: Hibernate system");
       WindowsController.ExitWindows(RestartOptions.Hibernate, forceShutDown);
@@ -2310,13 +2310,13 @@ namespace MediaPortal.Util
     /// </summary>
     /// <param name="forceShutDown"></param>
     /// <returns></returns>
-    static public void SuspendSystem(bool forceShutDown)
+    public static void SuspendSystem(bool forceShutDown)
     {
       Log.Info("Utils: Suspend system");
       WindowsController.ExitWindows(RestartOptions.Suspend, forceShutDown);
     }
 
-    static public string EncryptPin(string code)
+    public static string EncryptPin(string code)
     {
       string result = string.Empty;
       foreach (char c in code)
@@ -2329,7 +2329,7 @@ namespace MediaPortal.Util
 
     }
 
-    static public string DecryptPin(string code)
+    public static string DecryptPin(string code)
     {
       string result = string.Empty;
       foreach (char c in code)

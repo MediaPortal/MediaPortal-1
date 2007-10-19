@@ -53,7 +53,7 @@ namespace MediaPortal.TV.Recording
     {
     }
 
-    static public void Init()
+    public static void Init()
     {
       _tvChannelList.Clear();
       TVDatabase.GetChannels(ref _tvChannelList);
@@ -74,7 +74,7 @@ namespace MediaPortal.TV.Recording
     /// Tags updated are:
     /// #TV.Record.channel, #TV.Record.start,#TV.Record.stop, #TV.Record.genre, #TV.Record.title, #TV.Record.description, #TV.Record.thumb
     /// </remarks>
-    static public void UpdateRecordingProperties()
+    public static void UpdateRecordingProperties()
     {
       // handle properties...
       if (Recorder.IsRecording())
@@ -163,7 +163,7 @@ namespace MediaPortal.TV.Recording
     /// Empties/clears all tv related skin tags. Gets called during startup en shutdown of
     /// the scheduler
     /// </summary>
-    static public void Clean()
+    public static void Clean()
     {
       _currentTvChannel = null;
       _lastTvRecording = null;

@@ -735,7 +735,7 @@ namespace MediaPortal.GUI.TV
     /// <summary>
     /// When called this method will switch to the previous TV channel
     /// </summary>
-    static public void OnPreviousChannel()
+    public static void OnPreviousChannel()
     {
       Log.Info("GUITVHome:OnPreviousChannel()");
       if (GUIGraphicsContext.IsFullScreenVideo)
@@ -751,7 +751,7 @@ namespace MediaPortal.GUI.TV
       Navigator.ZapToPreviousChannel(false);
     }
 
-    static public bool ViewChannelAndCheck(string channel)
+    public static bool ViewChannelAndCheck(string channel)
     {
       if (!Recorder.Running)
       {
@@ -803,7 +803,7 @@ namespace MediaPortal.GUI.TV
       return false;
     }
 
-    static public void ViewChannel(string channel)
+    public static void ViewChannel(string channel)
     {
       if (g_Player.Playing)
       {
@@ -831,7 +831,7 @@ namespace MediaPortal.GUI.TV
     /// <summary>
     /// When called this method will switch to the next TV channel
     /// </summary>
-    static public void OnNextChannel()
+    public static void OnNextChannel()
     {
       Log.Info("GUITVHome:OnNextChannel()");
       if (GUIGraphicsContext.IsFullScreenVideo)
@@ -852,12 +852,12 @@ namespace MediaPortal.GUI.TV
     /// <summary>
     /// When called this method will switch to the last viewed TV channel   // mPod
     /// </summary>
-    static public void OnLastViewedChannel()
+    public static void OnLastViewedChannel()
     {
       Navigator.ZapToLastViewedChannel();
     }
 
-    static public bool IsTVOn
+    public static bool IsTVOn
     {
       get { return _isTvOn; }
       set { _isTvOn = value; }
@@ -866,7 +866,7 @@ namespace MediaPortal.GUI.TV
     /// <summary>
     /// Gets the channel navigator that can be used for channel zapping.
     /// </summary>
-    static public ChannelNavigator Navigator
+    public static ChannelNavigator Navigator
     {
       get { return m_navigator; }
     }

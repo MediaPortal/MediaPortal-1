@@ -42,7 +42,7 @@ namespace MediaPortal.TV.DiskSpace
     static bool importing = false;
     static List<TVChannel> channels = new List<TVChannel>();
     static List<TVRecorded> recordings = new List<TVRecorded>();
-    static public void ImportDvrMsFiles()
+    public static void ImportDvrMsFiles()
     {
       //dont import during recording...
       if (Recorder.IsAnyCardRecording()) return;

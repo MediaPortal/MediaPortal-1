@@ -50,8 +50,8 @@ namespace MediaPortal.Util
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     unsafe private static extern void GrabBitmaps(string fileName);
 
-    //static public bool GrabFrame(string fileName, string imageFileName, System.Drawing.Imaging.ImageFormat format, int width, int height)
-    static public bool GrabFrame(string fileName, string imageFileName)
+    //public static bool GrabFrame(string fileName, string imageFileName, System.Drawing.Imaging.ImageFormat format, int width, int height)
+    public static bool GrabFrame(string fileName, string imageFileName)
     {
       try
       {

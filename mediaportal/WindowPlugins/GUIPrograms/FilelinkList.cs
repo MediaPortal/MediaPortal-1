@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.GUIPrograms
     static SQLiteClient sqlDB = null;
 
 
-    static private FilelinkItem DBGetFilelinkItem(SQLiteResultSet results, int iRecord)
+    private static FilelinkItem DBGetFilelinkItem(SQLiteResultSet results, int iRecord)
     {
       FilelinkItem newLink = new FilelinkItem(sqlDB);
       newLink.FileID = ProgramUtils.GetIntDef(results, iRecord, "fileid",  - 1);

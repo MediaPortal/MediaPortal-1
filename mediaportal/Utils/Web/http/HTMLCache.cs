@@ -178,7 +178,7 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     /// <param name="Page">The page.</param>
     /// <returns>filename</returns>
-    static private string GetCacheFileName(HTTPRequest Page)
+    private static string GetCacheFileName(HTTPRequest Page)
     {
       uint gethash = (uint)Page.Uri.GetHashCode();
 

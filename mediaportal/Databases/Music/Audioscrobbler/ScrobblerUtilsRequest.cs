@@ -67,7 +67,7 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
-    static private uint _lastRequestID = 0;
+    private static uint _lastRequestID = 0;
 
     public readonly uint ID;
     public readonly RequestType Type;

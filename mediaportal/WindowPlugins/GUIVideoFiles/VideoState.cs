@@ -39,25 +39,25 @@ namespace MediaPortal.GUI.Video
       // TODO: Add constructor logic here
       //
     }
-    static public string View
+    public static string View
     {
       get { return view; }
       set { view = value; }
     }
 
-    static public string TempPlaylistDirectory
+    public static string TempPlaylistDirectory
     {
       get { return m_strTempPlaylistDirectory; }
       set { m_strTempPlaylistDirectory = value; }
     }
 
-    static public int TempPlaylistWindow
+    public static int TempPlaylistWindow
     {
       get { return m_iTempPlaylistWindow; }
       set { m_iTempPlaylistWindow = value; }
     }
 
-    static public int StartWindow
+    public static int StartWindow
     {
       get { return m_iStartWindow; }
       set { m_iStartWindow = value; }

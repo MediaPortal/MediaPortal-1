@@ -42,7 +42,7 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Takes a screenshot.
 		/// </summary>
-		static public void TakeScreenshot()
+		public static void TakeScreenshot()
     {
       //TODO implement this functionality.
 		}

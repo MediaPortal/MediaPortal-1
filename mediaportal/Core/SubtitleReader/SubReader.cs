@@ -80,7 +80,7 @@ namespace MediaPortal.Subtitle
         }
       }
 
-      static public SubTitles ReadTag(string strFile)
+      public static SubTitles ReadTag(string strFile)
       {
         foreach (ISubtitleReader reader in m_readers)
         {

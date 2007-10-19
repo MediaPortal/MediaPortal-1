@@ -298,7 +298,7 @@ namespace MediaPortal.GUI.Library
     /// Clear() method. This method gets called when user switches skin. It removes any static vars
     /// the GUIWindow class has
     /// </summary>
-    static public void Clear()
+    public static void Clear()
     {
       GUIControlFactory.ClearReferences();
     }

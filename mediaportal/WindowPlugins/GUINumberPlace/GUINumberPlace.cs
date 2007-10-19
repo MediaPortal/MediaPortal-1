@@ -214,7 +214,7 @@ namespace MediaPortal.GUI.NumberPlace
     protected GUIButtonControl btnClear = null;
 
 
-    static private readonly string pluginConfigFileName = "mynumberplace";
+    private static readonly string pluginConfigFileName = "mynumberplace";
 
     protected static long m_dwCellIncorrectTextColor = 0xFFFF0000;
     protected static long m_dwTextColor = 0xFFFFFFFF;

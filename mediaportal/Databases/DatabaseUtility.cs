@@ -41,12 +41,12 @@ namespace MediaPortal.Database
     {
     }
 
-    static public void CompactDatabase(SQLiteClient m_db)
+    public static void CompactDatabase(SQLiteClient m_db)
     {
       m_db.Execute("vacuum");
     }
 
-    static public void SetPragmas(SQLiteClient m_db)
+    public static void SetPragmas(SQLiteClient m_db)
     {
       m_db.Execute("PRAGMA cache_size=4096");
       m_db.Execute("PRAGMA page_size=8192");
@@ -64,7 +64,7 @@ namespace MediaPortal.Database
     /// <param name="column">column name</param>
     /// <returns>true if table + column exists
     /// false if table does not exists or if table doesnt contain the specified column</returns>
-    static public bool TableColumnExists(SQLiteClient m_db, string table, string column)
+    public static bool TableColumnExists(SQLiteClient m_db, string table, string column)
     {
       SQLiteResultSet results;
       if (m_db == null)
@@ -93,7 +93,7 @@ namespace MediaPortal.Database
     /// <param name="table">name of table</param>
     /// <returns>true: table exists
     /// false: table does not exist</returns>
-    static public bool TableExists(SQLiteClient m_db, string table)
+    public static bool TableExists(SQLiteClient m_db, string table)
     {
       SQLiteResultSet results;
       if (m_db == null)
@@ -120,7 +120,7 @@ namespace MediaPortal.Database
       return false;
     }
 
-    static public void AddIndex(SQLiteClient dbHandle, string indexName, string strSQL)
+    public static void AddIndex(SQLiteClient dbHandle, string indexName, string strSQL)
     {
       SQLiteResultSet results;
       bool res = false;
@@ -157,7 +157,7 @@ namespace MediaPortal.Database
     /// <param name="strTable">name of table</param>
     /// <param name="strSQL">SQL command to create the new table</param>
     /// <returns>true if table is created</returns>
-    static public bool AddTable(SQLiteClient dbHandle, string strTable, string strSQL)
+    public static bool AddTable(SQLiteClient dbHandle, string strTable, string strSQL)
     {
       if (TableExists(dbHandle, strTable))
         return false;
@@ -174,7 +174,7 @@ namespace MediaPortal.Database
       return true;
     }
 
-    static public int GetAsInt(SQLiteResultSet results, int iRecord, string strColum)
+    public static int GetAsInt(SQLiteResultSet results, int iRecord, string strColum)
     {
       string result = Get(results, iRecord, strColum);
       if (result == null)
@@ -195,7 +195,7 @@ namespace MediaPortal.Database
     }
 
 
-    static public int GetAsInt(SQLiteResultSet results, int iRecord, int column)
+    public static int GetAsInt(SQLiteResultSet results, int iRecord, int column)
     {
       string result = Get(results, iRecord, column);
       try
@@ -208,7 +208,7 @@ namespace MediaPortal.Database
       return 0;
     }
 
-    static public long GetAsInt64(SQLiteResultSet results, int iRecord, int column)
+    public static long GetAsInt64(SQLiteResultSet results, int iRecord, int column)
     {
       string result = Get(results, iRecord, column);
       try
@@ -221,7 +221,7 @@ namespace MediaPortal.Database
       return 0;
     }
 
-    static public long GetAsInt64(SQLiteResultSet results, int iRecord, string strColum)
+    public static long GetAsInt64(SQLiteResultSet results, int iRecord, string strColum)
     {
       string result = Get(results, iRecord, strColum);
       if (result == null)
@@ -241,7 +241,7 @@ namespace MediaPortal.Database
       return returnValue;
     }
 
-    static public DateTime GetAsDateTime(SQLiteResultSet results, int iRecord, string aTimestampColum)
+    public static DateTime GetAsDateTime(SQLiteResultSet results, int iRecord, string aTimestampColum)
     {
       DateTime finalResult = DateTime.MinValue;
       if (results == null || string.IsNullOrEmpty(aTimestampColum) || results.Rows.Count < 1 || results.Rows.Count < iRecord)
@@ -266,7 +266,7 @@ namespace MediaPortal.Database
     }
 
 
-    static public string Get(SQLiteResultSet results, int iRecord, int column)
+    public static string Get(SQLiteResultSet results, int iRecord, int column)
     {
       if (null == results)
         return string.Empty;
@@ -283,7 +283,7 @@ namespace MediaPortal.Database
       ;
     }
 
-    static public string Get(SQLiteResultSet results, int iRecord, string strColum)
+    public static string Get(SQLiteResultSet results, int iRecord, string strColum)
     {
       if (null == results)
         return string.Empty;
@@ -321,7 +321,7 @@ namespace MediaPortal.Database
 
 
 
-    static public void RemoveInvalidChars(ref string strTxt)
+    public static void RemoveInvalidChars(ref string strTxt)
     {
       if (strTxt == null)
       {
@@ -351,7 +351,7 @@ namespace MediaPortal.Database
         strReturn = Strings.Unknown;
       strTxt = strReturn;
     }
-    static public string FilterText(string strTxt)
+    public static string FilterText(string strTxt)
     {
       if (strTxt == null)
       {
@@ -380,7 +380,7 @@ namespace MediaPortal.Database
       return strReturn;
     }
 
-    static public void Split(string strFileNameAndPath, out string strPath, out string strFileName)
+    public static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
       strFileNameAndPath = strFileNameAndPath.Trim();
       strFileName = "";

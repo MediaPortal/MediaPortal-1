@@ -1060,7 +1060,7 @@ namespace MediaPortal.GUI.Video
       return CheckMovie(idMovie);
     }
 
-    static public bool CheckMovie(int idMovie)
+    public static bool CheckMovie(int idMovie)
     {
       IMDBMovie movieDetails = new IMDBMovie();
       VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
@@ -1104,7 +1104,7 @@ namespace MediaPortal.GUI.Video
       return false;
     }
 
-    static public void GetStringFromKeyboard(ref string strLine)
+    public static void GetStringFromKeyboard(ref string strLine)
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard) return;
@@ -1196,12 +1196,12 @@ namespace MediaPortal.GUI.Video
         filmstrip.InfoImageFileName = item.ThumbnailImage;
     }
 
-    static public void PlayMovieFromPlayList(bool askForResumeMovie)
+    public static void PlayMovieFromPlayList(bool askForResumeMovie)
     {
       PlayMovieFromPlayList(askForResumeMovie, -1);
     }
 
-    static public void PlayMovieFromPlayList(bool askForResumeMovie, int iMovieIndex)
+    public static void PlayMovieFromPlayList(bool askForResumeMovie, int iMovieIndex)
     {
       string filename;
       if (iMovieIndex == -1)
@@ -1263,7 +1263,7 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    static public bool PlayMountedImageFile(int WindowID, string file)
+    public static bool PlayMountedImageFile(int WindowID, string file)
     {
       Log.Info("GUIVideoFiles: PlayMountedImageFile - {0}", file);
       if (MountImageFile(WindowID, file))
@@ -1292,7 +1292,7 @@ namespace MediaPortal.GUI.Video
       return false;
     }
 
-    static public bool MountImageFile(int WindowID, string file)
+    public static bool MountImageFile(int WindowID, string file)
     {
       Log.Debug("GUIVideoFiles: MountImageFile");
       if (!DaemonTools.IsMounted(file))
@@ -1798,7 +1798,7 @@ namespace MediaPortal.GUI.Video
     /// <returns>
     /// true: belongs to the my videos plugin
     /// false: does not belong to the my videos plugin</returns>
-    static public bool IsVideoWindow(int windowId)
+    public static bool IsVideoWindow(int windowId)
     {
       if (windowId == (int)GUIWindow.Window.WINDOW_DVD) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return true;
@@ -1820,7 +1820,7 @@ namespace MediaPortal.GUI.Video
     /// <returns>
     /// true: if the specified window should maintain virtual directory
     /// false: if the specified window should not maintain virtual directory</returns>
-    static public bool KeepVirtualDirectory(int windowId)
+    public static bool KeepVirtualDirectory(int windowId)
     {
       if (windowId == (int)GUIWindow.Window.WINDOW_DVD) return true;
       if (windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return true;
@@ -1834,7 +1834,7 @@ namespace MediaPortal.GUI.Video
       return false;
     }
 
-    static private bool IsFolderPinProtected(string folder)
+    private static bool IsFolderPinProtected(string folder)
     {
       int pinCode = 0;
       return virtualDirectory.IsProtectedShare(folder, out pinCode);
@@ -1992,13 +1992,13 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    static public void Reset()
+    public static void Reset()
     {
       Log.Debug("GUIVideoFiles: Resetting virtual directory");
       virtualDirectory.Reset();
     }
 
-    static public void PlayMovie(int idMovie)
+    public static void PlayMovie(int idMovie)
     {
       int selectedFileIndex = 1;
       ArrayList movies = new ArrayList();
