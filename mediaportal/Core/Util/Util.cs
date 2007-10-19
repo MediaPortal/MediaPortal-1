@@ -1850,8 +1850,19 @@ namespace MediaPortal.Util
               int width = imgFolder.Width;
               int height = imgFolder.Height;
 
-              int thumbnailWidth = (width - 30) / 2;
-              int thumbnailHeight = (height - 30) / 2;
+              int thumbnailWidth = 256;
+              int thumbnailHeight = 256;
+              // draw a fullsize thumb if only 1 pic is available
+              if (aPictureList.Count == 1)
+              {
+                thumbnailWidth = (width - 20);
+                thumbnailHeight = (height - 20);
+              }
+              else
+              {
+                thumbnailWidth = (width - 30) / 2;
+                thumbnailHeight = (height - 30) / 2;
+              }
 
               using (Bitmap bmp = new Bitmap(width, height))
               {
@@ -1867,8 +1878,7 @@ namespace MediaPortal.Util
                   y = 0;
                   w = thumbnailWidth;
                   h = thumbnailHeight;
-                  //Load first of 4 images for the folder thumb.
-                  //Avoid crashes caused by damaged image files:
+                  //Load first of 4 images for the folder thumb.                  
                   try
                   {
                     AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);

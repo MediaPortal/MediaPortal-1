@@ -69,6 +69,15 @@ namespace MediaPortal
     }
 
     /// <summary>
+    /// Stops the splash screen after given wait time
+    /// </summary>
+    public void Stop(int aWaitTime)
+    {
+      Thread.Sleep(aWaitTime);
+      stopRequested = true;
+    }
+
+    /// <summary>
     /// Determine if the Splash has been closed
     /// </summary>
     public bool isStopped()
@@ -97,14 +106,14 @@ namespace MediaPortal
       frm.Show();
       frm.Update();
       frm.FadeIn();
-      while (!stopRequested) //run until stop of splashscreen is requested
+      while (!stopRequested && frm.Focused) //run until stop of splashscreen is requested
       {
         if (oldInfo != info)
         {
           frm.SetInformation(info);
           oldInfo = info;
         }
-        Thread.Sleep(10);
+        Thread.Sleep(25);
       }
       frm.FadeOut();
       frm.Close();  //closes, and disposes the form
@@ -157,8 +166,8 @@ namespace MediaPortal
           string year = strVersion[2].Substring(6, 4);
           string time = strVersion[3].Substring(0, 5);
           string build = strVersion[4].Substring(0, 13).Trim();
-          Log.Info("Version: {0} {1} ({2}.{3}.{4} / {5} CET)", strVersion[1], build, day, month, year, time);
-          cvsLabel.Text = string.Format("{0} {1} ({2}.{3}.{4}/{5} CET)", strVersion[1], build, day, month, year, time);
+          cvsLabel.Text = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
+          Log.Info("Version: {0}", cvsLabel.Text);          
         }
         Update();
       }
@@ -183,7 +192,7 @@ namespace MediaPortal
         while (Opacity <= 0.9)
         {
           Opacity += 0.02;
-          Thread.Sleep(10);
+          Thread.Sleep(15);
         }
       }
 
@@ -192,8 +201,9 @@ namespace MediaPortal
         while (Opacity >= 0.02)
         {
           Opacity -= 0.02;
-          Thread.Sleep(10);
+          Thread.Sleep(15);
         }
+        SendToBack();
         Hide();
       }
 

@@ -492,14 +492,23 @@ namespace MediaPortal.Music.Database
 
     public bool GetSongsByArtist(string aArtist, ref List<Song> aSongList)
     {
+      return GetSongsByArtist(aArtist, ref aSongList, false);
+    }
+
+    private bool GetSongsByArtist(string aArtist, ref List<Song> aSongList, bool aGroupAlbum)
+    {
       try
       {
         string strArtist = aArtist;
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
         aSongList.Clear();
-        // TODO: check whether we need LIKE %<artist>% here
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%{0}%'", strArtist);
+        
+        string strSQL = string.Empty;
+        if (aGroupAlbum)
+          strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%{0}%' GROUP BY strAlbum ORDER BY iYear DESC", strArtist);
+        else
+          strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%{0}%' ORDER BY strArtist", strArtist);
 
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -637,7 +646,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
         if (aGroupAlbums)
-          sql = string.Format("SELECT * FROM tracks WHERE strGenre LIKE '%{0}%' GROUP BY strAlbum ORDER BY  iYear DESC", strGenre);
+          sql = string.Format("SELECT * FROM tracks WHERE strGenre LIKE '%{0}%' GROUP BY strAlbum ORDER BY iYear DESC", strGenre);
         else
           sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%{0}%' ORDER BY strTitle ASC", strGenre);
         GetSongsByFilter(sql, out aSongList, "genre");
@@ -861,7 +870,7 @@ namespace MediaPortal.Music.Database
         for (int i = 0 ; i < results.Rows.Count ; ++i)
         {
           string strArtist = DatabaseUtility.Get(results, i, "strArtist");
-          aArtistArray.Add(strArtist);
+          aArtistArray.Add(strArtist.Trim(new char[] { '|', ' ' }));
         }
 
         if (aArtistArray.Count > 0)

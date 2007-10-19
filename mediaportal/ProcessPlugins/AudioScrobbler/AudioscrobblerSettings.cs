@@ -798,7 +798,7 @@ namespace MediaPortal.AudioScrobbler
         {
           try
           {
-            string curArtist = CoverArtists[i].ToString().Trim(new char[] { '|', ' ' });
+            string curArtist = CoverArtists[i].ToString();
             ListViewItem listItem = new ListViewItem(curArtist);
 
             // check low res

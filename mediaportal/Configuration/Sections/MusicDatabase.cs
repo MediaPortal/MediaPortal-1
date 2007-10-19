@@ -293,9 +293,9 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCreateArtist.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateArtist.Location = new System.Drawing.Point(15, 45);
       this.checkBoxCreateArtist.Name = "checkBoxCreateArtist";
-      this.checkBoxCreateArtist.Size = new System.Drawing.Size(171, 17);
+      this.checkBoxCreateArtist.Size = new System.Drawing.Size(156, 17);
       this.checkBoxCreateArtist.TabIndex = 7;
-      this.checkBoxCreateArtist.Text = "create artist thumbs (first found)";
+      this.checkBoxCreateArtist.Text = "create artist preview thumbs";
       this.checkBoxCreateArtist.UseVisualStyleBackColor = true;
       // 
       // groupBoxUseForThumbs
@@ -409,9 +409,9 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox.Name = "sharesListBox";
       this.sharesListBox.Size = new System.Drawing.Size(440, 79);
       this.sharesListBox.TabIndex = 0;
+      this.sharesListBox.DoubleClick += new System.EventHandler(this.sharesListBox_DoubleClick);
       this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
-      this.sharesListBox.DoubleClick += new System.EventHandler(this.sharesListBox_DoubleClick);
       // 
       // groupBox2
       // 
