@@ -344,11 +344,12 @@ namespace MediaPortal.GUI.Music
         string selectedValue = filter.SelectedValue;
         Database.DatabaseUtility.RemoveInvalidChars(ref selectedValue);
         
-        // Do we have a Multiplevalues field, then we need compare with like
+        // If we have a multiple values field then we need to compare with like
         if (IsMultipleValueField(GetField(filter.Where)))
-          whereClause += String.Format(" {0} like '%{1} |%'", GetField(filter.Where), selectedValue);
+          whereClause += String.Format("{0} like '{1} |%'", GetField(filter.Where), selectedValue);
         else
-          whereClause += String.Format(" {0} = '{1}'", GetField(filter.Where), selectedValue);
+          // use like for case insensitivity
+          whereClause += String.Format("{0} like '{1}'", GetField(filter.Where), selectedValue);
       }
     }
 
@@ -399,9 +400,10 @@ namespace MediaPortal.GUI.Music
 
         // Do we have a Multiplevalues field, then we need compare with like
         if (IsMultipleValueField(GetField(filter.Where)))
-          whereClause += String.Format(" {0} like '%{1} |%'", GetField(filter.Where), selectedValue);
+          whereClause += String.Format(" {0} like '{1} |%'", GetField(filter.Where), selectedValue);
         else
-          whereClause += String.Format(" {0} = '{1}'", GetField(filter.Where), selectedValue);
+          // use like for case insensitivity
+          whereClause += String.Format(" {0} like '{1}'", GetField(filter.Where), selectedValue);
       }
     }
 
