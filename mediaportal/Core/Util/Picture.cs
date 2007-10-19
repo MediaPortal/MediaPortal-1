@@ -1013,40 +1013,27 @@ namespace MediaPortal.Util
         {
           Log.Error("Picture: Error deleting old thumbnail - {0}", ex.Message);
         }
-        
-        Image imageThumb = null;
-        try
-        {
-          //Image.GetThumbnailImageAbort myCallback =new Image.GetThumbnailImageAbort(ThumbnailCallback);
-          //imageThumb=theImage.GetThumbnailImage(iWidth,iHeight,myCallback, IntPtr.Zero);
-          //imageThumb.Save(strThumb,System.Drawing.Imaging.ImageFormat.Jpeg);
 
-          using (Bitmap result = new Bitmap(iWidth, iHeight))
-          {
-            using (Graphics g = Graphics.FromImage(result))
-            {
-              g.CompositingQuality = Thumbs.Compositing;
-              g.InterpolationMode = Thumbs.Interpolation;
-              g.SmoothingMode = Thumbs.Smoothing;
-              g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
-            }
-            try
-            {
-              result.Save(strThumb, System.Drawing.Imaging.ImageFormat.Jpeg);
-              System.Threading.Thread.Sleep(30);
-              return true;
-            }
-            catch (Exception ex)
-            {
-              Log.Error("Picture: Error saving new thumbnail {0} - {1}", strThumb, ex.Message);
-              return false;
-            }
-          }
-        }
-        finally
+        using (Bitmap result = new Bitmap(iWidth, iHeight))
         {
-          if (imageThumb != null)
-            imageThumb.Dispose();
+          using (Graphics g = Graphics.FromImage(result))
+          {
+            g.CompositingQuality = Thumbs.Compositing;
+            g.InterpolationMode = Thumbs.Interpolation;
+            g.SmoothingMode = Thumbs.Smoothing;
+            g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
+          }
+          try
+          {
+            result.Save(strThumb, System.Drawing.Imaging.ImageFormat.Jpeg);
+            System.Threading.Thread.Sleep(30);
+            return true;
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Picture: Error saving new thumbnail {0} - {1}", strThumb, ex.Message);
+            return false;
+          }
         }
       }
       catch (Exception ex)
@@ -1054,7 +1041,7 @@ namespace MediaPortal.Util
         Log.Error("Picture.CreateThumbnail exception err. Exception: {0} stack:{1}", ex.Message, ex.StackTrace);
         return false;
       }
-    }//static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+    }
 
     static public void DrawLine(int x1, int y1, int x2, int y2, long color)
     {

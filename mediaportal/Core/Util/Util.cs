@@ -47,6 +47,7 @@ using MediaPortal.Player;
 using MediaPortal.Configuration;
 using System.Threading;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace MediaPortal.Util
 {
@@ -1770,6 +1771,127 @@ namespace MediaPortal.Util
         return string.Empty;
 
       return Utils.GetCoverArtName(strFolder, strFileName + "L");
+    }
+
+    static private void AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
+    {
+      try
+      {
+        // Add a thumbnail of the specified picture file to the image referenced by g, draw it at the given location and size.
+        using (Image img = Image.FromFile(strFileName))
+        {
+          if (img != null)
+            g.DrawImage(img, x, y, w, h);
+        }
+      }
+      catch (OutOfMemoryException)
+      {
+        Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!", strFileName);
+      }
+      catch (Exception ex)
+      {
+        Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
+      }
+    }
+
+    static public bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath)
+    {
+      bool result = false;
+
+      if (aPictureList.Count > 0)
+      {
+        try
+        {
+          string defaultBackground = GUIGraphicsContext.Skin + @"\media\previewbackground.png";
+          if (File.Exists(defaultBackground))
+          {
+            using (Image imgFolder = Image.FromFile(defaultBackground))
+            {
+              int width = imgFolder.Width;
+              int height = imgFolder.Height;
+
+              int thumbnailWidth = (width - 30) / 2;
+              int thumbnailHeight = (height - 30) / 2;
+
+              using (Bitmap bmp = new Bitmap(width, height))
+              {
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                  g.CompositingQuality = Thumbs.Compositing;
+                  g.InterpolationMode = Thumbs.Interpolation;
+                  g.SmoothingMode = Thumbs.Smoothing;
+
+                  g.DrawImage(imgFolder, 0, 0, width, height);
+                  int x, y, w, h;
+                  x = 0;
+                  y = 0;
+                  w = thumbnailWidth;
+                  h = thumbnailHeight;
+                  //Load first of 4 images for the folder thumb.
+                  //Avoid crashes caused by damaged image files:
+                  try
+                  {
+                    AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
+                    System.Threading.Thread.Sleep(30);
+
+                    //If exists load second of 4 images for the folder thumb.
+                    if (aPictureList.Count > 1)
+                    {
+                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
+                      System.Threading.Thread.Sleep(30);
+                    }
+
+                    //If exists load third of 4 images for the folder thumb.
+                    if (aPictureList.Count > 2)
+                    {
+                      AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
+                      System.Threading.Thread.Sleep(30);
+                    }
+
+                    //If exists load fourth of 4 images for the folder thumb.
+                    if (aPictureList.Count > 3)
+                    {
+                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                      System.Threading.Thread.Sleep(30);
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Error("Utils: An exception occured creating folder preview thumb: {0}", ex.Message);
+                  }
+                }//using (Graphics g = Graphics.FromImage(bmp) )
+
+                try
+                {
+                  string thumbnailImageName = aThumbPath + @"\folder.jpg";
+                  if (System.IO.File.Exists(thumbnailImageName))
+                    Util.Utils.FileDelete(thumbnailImageName);
+
+                  bmp.Save(thumbnailImageName, System.Drawing.Imaging.ImageFormat.Jpeg);
+                  System.Threading.Thread.Sleep(50);
+                  if (System.IO.File.Exists(thumbnailImageName))
+                    result = true;
+                  // File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);
+                }
+                catch (Exception)
+                {
+                }
+              }//using (Bitmap bmp = new Bitmap(210,210))
+            }
+          }
+          else
+            Log.Warn("Utils: Your skin does not supply previewbackground.png to create folder preview thumbs!");
+
+        }
+        catch (Exception exm)
+        {
+          Log.Error("Utils: An error occured creating folder preview thumbs: {0}", exm.Message);
+        }
+      }  //if (pictureList.Count>0)
+      else
+        result = false;
+
+      return result;
     }
 
     static public string GetThumbExtension()
