@@ -1677,6 +1677,34 @@ namespace MediaPortal.Util
       return strRet;
     }
 
+    public static string TryEverythingToGetFolderThumbByFilename(string aSongPath)
+    {
+      string strThumb = string.Empty;
+
+      strThumb = GetLocalFolderThumb(aSongPath);
+      if (File.Exists(strThumb))
+      {
+        return strThumb;
+      }
+      else
+      {
+        // nothing locally - try the share itself
+        string strRemoteFolderThumb = string.Empty;
+        strRemoteFolderThumb = GetFolderThumb(aSongPath);
+
+        if (File.Exists(strRemoteFolderThumb))
+          return strRemoteFolderThumb;
+        else
+        {
+          // last chance - maybe some other program left a "cover.jpg"
+          strRemoteFolderThumb = strRemoteFolderThumb.Replace("folder.jpg", "cover.jpg");
+          if (File.Exists(strRemoteFolderThumb))
+            return strRemoteFolderThumb;
+        }
+      }
+      return string.Empty;
+    }
+
     public static string GetAlbumThumbName(string ArtistName, string AlbumName)
     {
       if (string.IsNullOrEmpty(ArtistName) || string.IsNullOrEmpty(AlbumName))
@@ -1802,7 +1830,19 @@ namespace MediaPortal.Util
       {
         try
         {
-          string defaultBackground = GUIGraphicsContext.Skin + @"\media\previewbackground.png";
+          string currentSkin = GUIGraphicsContext.Skin;
+
+          // when launched by configuration exe this might be the case
+          if (string.IsNullOrEmpty(currentSkin))
+          {
+            using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+              currentSkin = Application.StartupPath + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "BlueTwo");
+            }
+          }
+
+          string defaultBackground = currentSkin + @"\media\previewbackground.png";
+     
           if (File.Exists(defaultBackground))
           {
             using (Image imgFolder = Image.FromFile(defaultBackground))
@@ -1863,18 +1903,18 @@ namespace MediaPortal.Util
 
                 try
                 {
-                  string thumbnailImageName = aThumbPath + @"\folder.jpg";
-                  if (System.IO.File.Exists(thumbnailImageName))
-                    Util.Utils.FileDelete(thumbnailImageName);
+                  if (System.IO.File.Exists(aThumbPath))
+                    Util.Utils.FileDelete(aThumbPath);
 
-                  bmp.Save(thumbnailImageName, System.Drawing.Imaging.ImageFormat.Jpeg);
+                  bmp.Save(aThumbPath, System.Drawing.Imaging.ImageFormat.Jpeg);
                   System.Threading.Thread.Sleep(50);
-                  if (System.IO.File.Exists(thumbnailImageName))
+                  if (System.IO.File.Exists(aThumbPath))
                     result = true;
                   // File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);
                 }
-                catch (Exception)
+                catch (Exception ex2)
                 {
+                  Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath, ex2.Message);
                 }
               }//using (Bitmap bmp = new Bitmap(210,210))
             }

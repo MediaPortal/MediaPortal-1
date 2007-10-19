@@ -35,15 +35,16 @@ namespace MediaPortal.Music.Database
     bool _treatFolderAsAlbum;
     bool _extractEmbededCoverArt;
     bool _useFolderThumbs;
-    bool _useFolderArtForArtistGenre;
+    bool _createArtistThumbs;
+    bool _createGenreThumbs;
     bool _createMissingFolderThumbs;  
     bool _stripArtistPrefixes;
     bool _useLastImportDate;
 
 
     public MusicDatabaseSettings()
-		{
-		}
+	{
+	}
 
     public bool TreatFolderAsAlbum
     {
@@ -63,10 +64,16 @@ namespace MediaPortal.Music.Database
       set { _useFolderThumbs = value; }
     }
 
-    public bool UseFolderThumbsForArtistGenre
+    public bool CreateArtistPreviews
     {
-      get { return _useFolderArtForArtistGenre; }
-      set { _useFolderArtForArtistGenre = value; }
+      get { return _createArtistThumbs; }
+      set { _createArtistThumbs = value; }
+    }
+
+    public bool CreateGenrePreviews
+    {
+      get { return _createGenreThumbs; }
+      set { _createGenreThumbs = value; }
     }
 
     public bool CreateMissingFolderThumb

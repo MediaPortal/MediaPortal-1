@@ -116,7 +116,8 @@ namespace MediaPortal.Music.Database
         _stripArtistPrefixes = setting.StripArtistPrefixes;
         _treatFolderAsAlbum = setting.TreatFolderAsAlbum;
         _useFolderThumbs = setting.UseFolderThumbs;
-        _useFolderArtForArtistGenre = setting.UseFolderThumbsForArtistGenre;
+        _createArtistPreviews = setting.CreateArtistPreviews;
+        _createGenrePreviews = setting.CreateGenrePreviews;
         updateSinceLastImport = setting.UseLastImportDate;
       }
 
@@ -166,6 +167,9 @@ namespace MediaPortal.Music.Database
 
         int GetFilesResult = GetFiles(8, 85, ref fileCount);
         Log.Info("Musicdatabasereorg: Add / Update files: {0} files added / updated", GetFilesResult);
+
+        if (_createGenrePreviews)
+          CreateGenreThumbs();
       }
 
       catch (Exception ex)
@@ -211,7 +215,7 @@ namespace MediaPortal.Music.Database
       }
       return (int)Errors.ERROR_OK;
     }
-
+    
     /// <summary>
     /// Compress the database to save space
     /// </summary>
@@ -497,6 +501,9 @@ namespace MediaPortal.Music.Database
           OnDatabaseReorgChanged(MyArgs);
         }
       } //end for-each
+
+
+
       Log.Info("Musicdatabasereorg: Checked {0} files.", totalFiles);
       Log.Info("Musicdatabasereorg: {0} skipped because of creation before the last import", totalFiles - AddedCounter);
 
@@ -916,11 +923,8 @@ namespace MediaPortal.Music.Database
       if (_useFolderThumbs || _createMissingFolderThumbs)
         CreateFolderThumbs(tag.FileName, smallThumbPath);
 
-      if (_useFolderArtForArtistGenre)
-      {
-        CreateArtistThumbs(smallThumbPath, tag.Artist.Trim(trimChars));
-        CreateGenreThumbs(smallThumbPath, tag.Genre.Trim(trimChars));
-      }
+      if (_createArtistPreviews)
+        CreateArtistThumbs(smallThumbPath, tag.Artist.Trim(trimChars));      
     }
 
     private void CreateFolderThumbs(string strSongPath, string strSmallThumb)
@@ -995,51 +999,73 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    /// <summary>
-    /// Creates a thumb for the given genre
-    /// </summary>
-    /// <param name="aThumbPath">Path to an image of which the thumb will be extracted</param>
-    /// <param name="aGenre">Genre the thumb will represent</param>
-    private void CreateGenreThumbs(string aThumbPath, string aGenre)
+
+    private void CreateGenreThumbs()
     {
-      if (File.Exists(aThumbPath) && !string.IsNullOrEmpty(aGenre))
+      ArrayList allGenres = new ArrayList();
+      List<Song> groupedGenreSongs = new List<Song>();
+      List<String> imageTracks = new List<string>();
+
+      if (GetGenres(ref allGenres))
       {
-        // The genre may contains unallowed chars
-        string strGenre = Util.Utils.MakeFileName(aGenre.Trim(trimChars));
-
-        //// Sometimes the genre contains a number code in brackets -> remove that
-        //// (code borrowed from addGenre() method)
-        //if (String.Compare(strGenre.Substring(0, 1), "(") == 0)
-        //{
-        //  bool FixedTheCode = false;
-        //  for (int i = 1; (i < 10 && i < strGenre.Length & !FixedTheCode); ++i)
-        //  {
-        //    if (String.Compare(strGenre.Substring(i, 1), ")") == 0)
-        //    {
-        //      strGenre = strGenre.Substring(i + 1, (strGenre.Length - i - 1));
-        //      FixedTheCode = true;
-        //    }
-        //  }
-        //}
-        // Now the genre is clean -> build a filename out of it
-        string genreThumb = Util.Utils.GetCoverArtName(Thumbs.MusicGenre, strGenre);
-
-        if (!File.Exists(genreThumb))
+        for (int i = 0; i < allGenres.Count; i++)
         {
-          try
-          {
-            if (Picture.CreateThumbnail(aThumbPath, genreThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+          groupedGenreSongs.Clear();
+          imageTracks.Clear();
+          string genreThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicGenre, allGenres[i].ToString());
+          if (!File.Exists(genreThumbPath))
+          {            
+            if (GetSongsByGenre(allGenres[i].ToString(), ref groupedGenreSongs, true))
             {
-              Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(genreThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-              Log.Info("Database: CreateGenreThumbs added thumbnails for {0}", strGenre);
+              for (int j = 0; j < groupedGenreSongs.Count; j++)
+              {
+                string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedGenreSongs[j].FileName);
+                if (!string.IsNullOrEmpty(coverArt))
+                  imageTracks.Add(coverArt);
+
+                // we need a maximum of 4 covers for the preview
+                if (imageTracks.Count >= 4)
+                  break;
+              }
+
+              if (Util.Utils.CreateFolderPreviewThumb(imageTracks, genreThumbPath))
+                Log.Info("MusicDatabase: Added genre thumb for {0}", allGenres[i].ToString());
             }
           }
-          catch (Exception) { }
-        }
+        }  // for all genres
       }
-      else
-        Log.Debug("Database: CreateGenreThumbs is missing some info - file: {0}, genre: {1}", aThumbPath, aGenre);
     }
+
+    ///// <summary>
+    ///// Creates a thumb for the given genre
+    ///// </summary>
+    ///// <param name="aThumbPath">Path to an image of which the thumb will be extracted</param>
+    ///// <param name="aGenre">Genre the thumb will represent</param>
+    //private void CreateGenreThumbs(string aThumbPath, string aGenre)
+    //{
+    //  if (File.Exists(aThumbPath) && !string.IsNullOrEmpty(aGenre))
+    //  {
+    //    // The genre may contains unallowed chars
+    //    string strGenre = Util.Utils.MakeFileName(aGenre.Trim(trimChars));
+    //    // Now the genre is clean -> build a filename out of it
+    //    string genreThumb = Util.Utils.GetCoverArtName(Thumbs.MusicGenre, strGenre);
+
+    //    if (!File.Exists(genreThumb))
+    //    {
+    //      try
+    //      {
+    //        if (Picture.CreateThumbnail(aThumbPath, genreThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+    //        {
+    //          Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(genreThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+    //          Log.Info("Database: CreateGenreThumbs added thumbnails for {0}", strGenre);
+    //        }
+    //      }
+    //      catch (Exception) { }
+    //    }
+    //  }
+    //  else
+    //    Log.Debug("Database: CreateGenreThumbs is missing some info - file: {0}, genre: {1}", aThumbPath, aGenre);
+    //}
 
     /// <summary>
     /// Move the Prefix of an artist to the end of the string for better sorting

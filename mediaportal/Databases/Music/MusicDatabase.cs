@@ -49,7 +49,8 @@ namespace MediaPortal.Music.Database
     private static bool _treatFolderAsAlbum;
     private static bool _extractEmbededCoverArt;
     private static bool _useFolderThumbs;
-    private static bool _useFolderArtForArtistGenre;
+    private static bool _createArtistPreviews;
+    private static bool _createGenrePreviews;
     private static bool _createMissingFolderThumbs;
     private static string _supportedExtensions;
     private static bool _stripArtistPrefixes;
@@ -75,7 +76,8 @@ namespace MediaPortal.Music.Database
       _treatFolderAsAlbum = false;
       _extractEmbededCoverArt = true;
       _useFolderThumbs = true;
-      _useFolderArtForArtistGenre = false;
+      _createArtistPreviews = false;
+      _createGenrePreviews = true;
       _createMissingFolderThumbs = false;
       _supportedExtensions = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
       _stripArtistPrefixes = false;
@@ -117,7 +119,8 @@ namespace MediaPortal.Music.Database
         _extractEmbededCoverArt = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
-        _useFolderArtForArtistGenre = xmlreader.GetValueAsBool("musicfiles", "createartistgenrethumbs", false);
+        _createArtistPreviews = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
+        _createGenrePreviews = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
         _supportedExtensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");

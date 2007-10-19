@@ -546,32 +546,7 @@ namespace MediaPortal.GUI.Music
 
       // no succes with album cover try folder cache
       if (thumb == string.Empty)
-      {
-        strThumb = Util.Utils.GetLocalFolderThumb(fileName);
-        if (System.IO.File.Exists(strThumb))
-        {
-          thumb = strThumb;
-        }
-        else
-        {
-          // nothing locally - try the share itself
-          string strRemoteFolderThumb = string.Empty;          
-          strRemoteFolderThumb = Util.Utils.GetFolderThumb(fileName);
-
-          if (System.IO.File.Exists(strRemoteFolderThumb))
-            thumb = strRemoteFolderThumb;
-          else
-          {
-            // last chance - maybe some other program left a "cover.jpg"
-            if (isCurrent)
-            {
-              strRemoteFolderThumb = strRemoteFolderThumb.Replace("folder.jpg", "cover.jpg");
-              if (System.IO.File.Exists(strRemoteFolderThumb))
-                thumb = strRemoteFolderThumb;
-            }
-          }
-        }
-      }
+        Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName);      
 
       if (isCurrent)
       {

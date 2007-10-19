@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.Pictures
                 if (recreateThumbs || (!item.IsRemote && !System.IO.File.Exists(thumbnailImage)))
                 {
                   System.Threading.Thread.Sleep(50);                  
-                  if (CreateFolderThumb(item.Path))
+                  if (CreateFolderThumb(item.Path, recreateThumbs))
                   {
                     System.Threading.Thread.Sleep(150);
                     Log.Debug("GUIPictures: Creation of missing folder preview thumb for {0}", item.Path);
@@ -146,11 +146,12 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private bool CreateFolderThumb(string path)
+    private bool CreateFolderThumb(string path, bool recreateAll)
     {
       // find first 4 jpegs in this subfolder
       List<GUIListItem> itemlist = vDir.GetDirectoryUnProtectedExt(path, true);
-      GUIPictures.Filter(ref itemlist);
+      if (!recreateAll)
+        GUIPictures.Filter(ref itemlist);
       List<string> pictureList = new List<string>();
       foreach (GUIListItem subitem in itemlist)
       {
@@ -165,7 +166,7 @@ namespace MediaPortal.GUI.Pictures
         }
       }
       // combine those 4 image files into one folder.jpg
-      if (Util.Utils.CreateFolderPreviewThumb(pictureList, path))
+      if (Util.Utils.CreateFolderPreviewThumb(pictureList, Path.Combine(path, @"Folder.jpg")))
         return true;
       else
         return false;

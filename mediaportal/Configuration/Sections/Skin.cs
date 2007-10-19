@@ -101,9 +101,7 @@ namespace MediaPortal.Configuration.Sections
             if (isInvalidDirectory == false)
             {
               //
-              // Check if we have a home.xml located in the directory, if so we consider it as a
-              // valid skin directory
-              //
+              // Check if we have a references.xml located in the directory, if so we consider it as a valid skin directory              
               string filename = Path.Combine(SkinDirectory, Path.Combine(directoryName, "references.xml"));
               if (File.Exists(filename))
               {

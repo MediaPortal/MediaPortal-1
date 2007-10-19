@@ -623,17 +623,27 @@ namespace MediaPortal.Music.Database
 
     public bool GetSongsByGenre(string aGenre, ref List<Song> aSongList)
     {
+      return GetSongsByGenre(aGenre, ref aSongList, false);
+    }
+
+    private bool GetSongsByGenre(string aGenre, ref List<Song> aSongList, bool aGroupAlbums)
+    {
       try
       {
         aSongList.Clear();
 
         string strGenre = aGenre;
+        string sql = string.Empty;
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%{0}%' order by strTitle asc", strGenre);
+        if (aGroupAlbums)
+          sql = string.Format("SELECT * FROM tracks WHERE strGenre LIKE '%{0}%' GROUP BY strAlbum ORDER BY  iYear DESC", strGenre);
+        else
+          sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%{0}%' ORDER BY strTitle ASC", strGenre);
         GetSongsByFilter(sql, out aSongList, "genre");
 
-        return true;
+        if (aSongList.Count > 0)
+          return true;
       }
       catch (Exception ex)
       {

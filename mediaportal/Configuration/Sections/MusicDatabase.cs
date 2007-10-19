@@ -48,20 +48,22 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private System.Windows.Forms.CheckedListBox sharesListBox;
     private MediaPortal.UserInterface.Controls.MPButton startButton;
-    private MediaPortal.UserInterface.Controls.MPCheckBox buildThumbsCheckBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private System.Windows.Forms.ProgressBar progressBar;
     private MediaPortal.UserInterface.Controls.MPLabel fileLabel;
     private System.ComponentModel.IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPCheckBox folderAsAlbumCheckBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox monitorSharesCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateArtistGenre;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseFolderThumb;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateFolderThumb;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUpdateSinceLastImport;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStripArtistPrefix;
-    private MediaPortal.UserInterface.Controls.MPLabel lbPrefixes;
     private MediaPortal.UserInterface.Controls.MPTextBox tbPrefixes;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxUseForThumbs;
+    private MediaPortal.UserInterface.Controls.MPCheckBox buildThumbsCheckBox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseFolderThumb;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxUseAlbumThumbs;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateArtist;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateFolderThumb;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateGenre;
 
     public class MusicData
     {
@@ -145,13 +147,14 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         buildThumbsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
-        checkBoxCreateArtistGenre.Checked = xmlreader.GetValueAsBool("musicfiles", "createartistgenrethumbs", false);
+        checkBoxCreateArtist.Checked = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
+        checkBoxCreateGenre.Checked = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
         checkBoxUseFolderThumb.Checked = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
         checkBoxCreateFolderThumb.Checked = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         folderAsAlbumCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
         monitorSharesCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         checkBoxUpdateSinceLastImport.Checked = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
-        checkBoxUpdateSinceLastImport.Text = String.Format("Only update files added / changed after last import at {0}", xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"));
+        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}", xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"));
         checkBoxStripArtistPrefix.Checked = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         tbPrefixes.Text = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
       }
@@ -165,7 +168,8 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("musicfiles", "extractthumbs", buildThumbsCheckBox.Checked);
-        xmlwriter.SetValueAsBool("musicfiles", "createartistgenrethumbs", checkBoxCreateArtistGenre.Checked);
+        xmlwriter.SetValueAsBool("musicfiles", "createartistthumbs", checkBoxCreateArtist.Checked);
+        xmlwriter.SetValueAsBool("musicfiles", "creategenrethumbs", checkBoxCreateGenre.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "useFolderThumbs", checkBoxUseFolderThumb.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "createMissingFolderThumbs", checkBoxCreateFolderThumb.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "treatFolderAsAlbum", folderAsAlbumCheckBox.Checked);
@@ -200,22 +204,26 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxUseAlbumThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxCreateGenre = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxCreateFolderThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxCreateArtist = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxUseForThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxUseFolderThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buildThumbsCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbPrefixes = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lbPrefixes = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxStripArtistPrefix = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUpdateSinceLastImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxCreateFolderThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxUseFolderThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxCreateArtistGenre = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.monitorSharesCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.folderAsAlbumCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.buildThumbsCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.startButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.sharesListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.fileLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressBar = new System.Windows.Forms.ProgressBar();
       this.groupBox1.SuspendLayout();
+      this.groupBoxUseAlbumThumbs.SuspendLayout();
+      this.groupBoxUseForThumbs.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -224,16 +232,13 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.groupBoxUseAlbumThumbs);
+      this.groupBox1.Controls.Add(this.groupBoxUseForThumbs);
       this.groupBox1.Controls.Add(this.tbPrefixes);
-      this.groupBox1.Controls.Add(this.lbPrefixes);
       this.groupBox1.Controls.Add(this.checkBoxStripArtistPrefix);
       this.groupBox1.Controls.Add(this.checkBoxUpdateSinceLastImport);
-      this.groupBox1.Controls.Add(this.checkBoxCreateFolderThumb);
-      this.groupBox1.Controls.Add(this.checkBoxUseFolderThumb);
-      this.groupBox1.Controls.Add(this.checkBoxCreateArtistGenre);
       this.groupBox1.Controls.Add(this.monitorSharesCheckBox);
       this.groupBox1.Controls.Add(this.folderAsAlbumCheckBox);
-      this.groupBox1.Controls.Add(this.buildThumbsCheckBox);
       this.groupBox1.Controls.Add(this.startButton);
       this.groupBox1.Controls.Add(this.sharesListBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -242,34 +247,112 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Size = new System.Drawing.Size(472, 339);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Scan Music Folders";
+      this.groupBox1.Text = "Scan music shares";
+      // 
+      // groupBoxUseAlbumThumbs
+      // 
+      this.groupBoxUseAlbumThumbs.Controls.Add(this.checkBoxCreateGenre);
+      this.groupBoxUseAlbumThumbs.Controls.Add(this.checkBoxCreateFolderThumb);
+      this.groupBoxUseAlbumThumbs.Controls.Add(this.checkBoxCreateArtist);
+      this.groupBoxUseAlbumThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxUseAlbumThumbs.Location = new System.Drawing.Point(246, 165);
+      this.groupBoxUseAlbumThumbs.Name = "groupBoxUseAlbumThumbs";
+      this.groupBoxUseAlbumThumbs.Size = new System.Drawing.Size(210, 96);
+      this.groupBoxUseAlbumThumbs.TabIndex = 14;
+      this.groupBoxUseAlbumThumbs.TabStop = false;
+      this.groupBoxUseAlbumThumbs.Text = "Use existing album thumbs to:";
+      // 
+      // checkBoxCreateGenre
+      // 
+      this.checkBoxCreateGenre.AutoSize = true;
+      this.checkBoxCreateGenre.Checked = true;
+      this.checkBoxCreateGenre.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxCreateGenre.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxCreateGenre.Location = new System.Drawing.Point(15, 22);
+      this.checkBoxCreateGenre.Name = "checkBoxCreateGenre";
+      this.checkBoxCreateGenre.Size = new System.Drawing.Size(161, 17);
+      this.checkBoxCreateGenre.TabIndex = 10;
+      this.checkBoxCreateGenre.Text = "create genre preview thumbs";
+      this.checkBoxCreateGenre.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxCreateFolderThumb
+      // 
+      this.checkBoxCreateFolderThumb.AutoSize = true;
+      this.checkBoxCreateFolderThumb.Enabled = false;
+      this.checkBoxCreateFolderThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxCreateFolderThumb.Location = new System.Drawing.Point(15, 68);
+      this.checkBoxCreateFolderThumb.Name = "checkBoxCreateFolderThumb";
+      this.checkBoxCreateFolderThumb.Size = new System.Drawing.Size(137, 17);
+      this.checkBoxCreateFolderThumb.TabIndex = 9;
+      this.checkBoxCreateFolderThumb.Text = "create missing folder.jpg";
+      this.checkBoxCreateFolderThumb.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxCreateArtist
+      // 
+      this.checkBoxCreateArtist.AutoSize = true;
+      this.checkBoxCreateArtist.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxCreateArtist.Location = new System.Drawing.Point(15, 45);
+      this.checkBoxCreateArtist.Name = "checkBoxCreateArtist";
+      this.checkBoxCreateArtist.Size = new System.Drawing.Size(171, 17);
+      this.checkBoxCreateArtist.TabIndex = 7;
+      this.checkBoxCreateArtist.Text = "create artist thumbs (first found)";
+      this.checkBoxCreateArtist.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxUseForThumbs
+      // 
+      this.groupBoxUseForThumbs.Controls.Add(this.checkBoxUseFolderThumb);
+      this.groupBoxUseForThumbs.Controls.Add(this.buildThumbsCheckBox);
+      this.groupBoxUseForThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxUseForThumbs.Location = new System.Drawing.Point(16, 165);
+      this.groupBoxUseForThumbs.Name = "groupBoxUseForThumbs";
+      this.groupBoxUseForThumbs.Size = new System.Drawing.Size(210, 76);
+      this.groupBoxUseForThumbs.TabIndex = 13;
+      this.groupBoxUseForThumbs.TabStop = false;
+      this.groupBoxUseForThumbs.Text = "Use for thumb creation:";
+      // 
+      // checkBoxUseFolderThumb
+      // 
+      this.checkBoxUseFolderThumb.AutoSize = true;
+      this.checkBoxUseFolderThumb.Checked = true;
+      this.checkBoxUseFolderThumb.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxUseFolderThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUseFolderThumb.Location = new System.Drawing.Point(15, 22);
+      this.checkBoxUseFolderThumb.Name = "checkBoxUseFolderThumb";
+      this.checkBoxUseFolderThumb.Size = new System.Drawing.Size(143, 17);
+      this.checkBoxUseFolderThumb.TabIndex = 8;
+      this.checkBoxUseFolderThumb.Text = "folder.jpg (recommended)";
+      this.checkBoxUseFolderThumb.UseVisualStyleBackColor = true;
+      // 
+      // buildThumbsCheckBox
+      // 
+      this.buildThumbsCheckBox.AutoSize = true;
+      this.buildThumbsCheckBox.Checked = true;
+      this.buildThumbsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.buildThumbsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.buildThumbsCheckBox.Location = new System.Drawing.Point(15, 45);
+      this.buildThumbsCheckBox.Name = "buildThumbsCheckBox";
+      this.buildThumbsCheckBox.Size = new System.Drawing.Size(151, 17);
+      this.buildThumbsCheckBox.TabIndex = 2;
+      this.buildThumbsCheckBox.Text = "cover art embedded in files";
+      this.buildThumbsCheckBox.UseVisualStyleBackColor = true;
       // 
       // tbPrefixes
       // 
       this.tbPrefixes.BorderColor = System.Drawing.Color.Empty;
-      this.tbPrefixes.Location = new System.Drawing.Point(86, 265);
+      this.tbPrefixes.Location = new System.Drawing.Point(301, 109);
       this.tbPrefixes.Name = "tbPrefixes";
-      this.tbPrefixes.Size = new System.Drawing.Size(361, 20);
+      this.tbPrefixes.Size = new System.Drawing.Size(155, 20);
       this.tbPrefixes.TabIndex = 12;
-      // 
-      // lbPrefixes
-      // 
-      this.lbPrefixes.AutoSize = true;
-      this.lbPrefixes.Location = new System.Drawing.Point(30, 267);
-      this.lbPrefixes.Name = "lbPrefixes";
-      this.lbPrefixes.Size = new System.Drawing.Size(47, 13);
-      this.lbPrefixes.TabIndex = 11;
-      this.lbPrefixes.Text = "Prefixes:";
       // 
       // checkBoxStripArtistPrefix
       // 
       this.checkBoxStripArtistPrefix.AutoSize = true;
       this.checkBoxStripArtistPrefix.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxStripArtistPrefix.Location = new System.Drawing.Point(15, 245);
+      this.checkBoxStripArtistPrefix.Location = new System.Drawing.Point(16, 110);
       this.checkBoxStripArtistPrefix.Name = "checkBoxStripArtistPrefix";
-      this.checkBoxStripArtistPrefix.Size = new System.Drawing.Size(281, 17);
+      this.checkBoxStripArtistPrefix.Size = new System.Drawing.Size(279, 17);
       this.checkBoxStripArtistPrefix.TabIndex = 10;
-      this.checkBoxStripArtistPrefix.Text = "Strip Artist Prefix (i.e. \"The Beatles\" ->  \"Beatles, The\")";
+      this.checkBoxStripArtistPrefix.Text = "Strip artist prefix (i.e. \"The Beatles\" ->  \"Beatles, The\")";
       this.checkBoxStripArtistPrefix.UseVisualStyleBackColor = true;
       // 
       // checkBoxUpdateSinceLastImport
@@ -278,66 +361,29 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUpdateSinceLastImport.Checked = true;
       this.checkBoxUpdateSinceLastImport.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxUpdateSinceLastImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUpdateSinceLastImport.Location = new System.Drawing.Point(15, 287);
+      this.checkBoxUpdateSinceLastImport.Location = new System.Drawing.Point(16, 278);
       this.checkBoxUpdateSinceLastImport.Name = "checkBoxUpdateSinceLastImport";
-      this.checkBoxUpdateSinceLastImport.Size = new System.Drawing.Size(262, 17);
+      this.checkBoxUpdateSinceLastImport.Size = new System.Drawing.Size(178, 17);
       this.checkBoxUpdateSinceLastImport.TabIndex = 9;
-      this.checkBoxUpdateSinceLastImport.Text = "Only update files added / changed after last import";
+      this.checkBoxUpdateSinceLastImport.Text = "Only update new / changed files";
       this.checkBoxUpdateSinceLastImport.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxCreateFolderThumb
-      // 
-      this.checkBoxCreateFolderThumb.AutoSize = true;
-      this.checkBoxCreateFolderThumb.Enabled = false;
-      this.checkBoxCreateFolderThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxCreateFolderThumb.Location = new System.Drawing.Point(33, 156);
-      this.checkBoxCreateFolderThumb.Name = "checkBoxCreateFolderThumb";
-      this.checkBoxCreateFolderThumb.Size = new System.Drawing.Size(224, 17);
-      this.checkBoxCreateFolderThumb.TabIndex = 8;
-      this.checkBoxCreateFolderThumb.Text = "Create missing folder.jpg from album thumb";
-      this.checkBoxCreateFolderThumb.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxUseFolderThumb
-      // 
-      this.checkBoxUseFolderThumb.AutoSize = true;
-      this.checkBoxUseFolderThumb.Checked = true;
-      this.checkBoxUseFolderThumb.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxUseFolderThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseFolderThumb.Location = new System.Drawing.Point(16, 201);
-      this.checkBoxUseFolderThumb.Name = "checkBoxUseFolderThumb";
-      this.checkBoxUseFolderThumb.Size = new System.Drawing.Size(187, 17);
-      this.checkBoxUseFolderThumb.TabIndex = 7;
-      this.checkBoxUseFolderThumb.Text = "Use folder.jpg to create thumbnails";
-      this.checkBoxUseFolderThumb.UseVisualStyleBackColor = true;
-      this.checkBoxUseFolderThumb.CheckedChanged += new System.EventHandler(this.checkBoxUseFolderThumb_CheckedChanged);
-      // 
-      // checkBoxCreateArtistGenre
-      // 
-      this.checkBoxCreateArtistGenre.AutoSize = true;
-      this.checkBoxCreateArtistGenre.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxCreateArtistGenre.Location = new System.Drawing.Point(33, 223);
-      this.checkBoxCreateArtistGenre.Name = "checkBoxCreateArtistGenre";
-      this.checkBoxCreateArtistGenre.Size = new System.Drawing.Size(226, 17);
-      this.checkBoxCreateArtistGenre.TabIndex = 6;
-      this.checkBoxCreateArtistGenre.Text = "Create artist and genre thumbs from first file";
-      this.checkBoxCreateArtistGenre.UseVisualStyleBackColor = true;
       // 
       // monitorSharesCheckBox
       // 
       this.monitorSharesCheckBox.AutoSize = true;
       this.monitorSharesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.monitorSharesCheckBox.Location = new System.Drawing.Point(16, 110);
+      this.monitorSharesCheckBox.Location = new System.Drawing.Point(16, 310);
       this.monitorSharesCheckBox.Name = "monitorSharesCheckBox";
-      this.monitorSharesCheckBox.Size = new System.Drawing.Size(256, 17);
+      this.monitorSharesCheckBox.Size = new System.Drawing.Size(199, 17);
       this.monitorSharesCheckBox.TabIndex = 5;
-      this.monitorSharesCheckBox.Text = "Monitor shares for changes and update database";
+      this.monitorSharesCheckBox.Text = "Auto-update DB on changes in share";
       this.monitorSharesCheckBox.UseVisualStyleBackColor = true;
       // 
       // folderAsAlbumCheckBox
       // 
       this.folderAsAlbumCheckBox.AutoSize = true;
       this.folderAsAlbumCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.folderAsAlbumCheckBox.Location = new System.Drawing.Point(15, 132);
+      this.folderAsAlbumCheckBox.Location = new System.Drawing.Point(16, 133);
       this.folderAsAlbumCheckBox.Name = "folderAsAlbumCheckBox";
       this.folderAsAlbumCheckBox.Size = new System.Drawing.Size(243, 17);
       this.folderAsAlbumCheckBox.TabIndex = 2;
@@ -345,25 +391,12 @@ namespace MediaPortal.Configuration.Sections
       this.folderAsAlbumCheckBox.UseVisualStyleBackColor = true;
       this.folderAsAlbumCheckBox.CheckedChanged += new System.EventHandler(this.folderAsAlbumCheckBox_CheckedChanged);
       // 
-      // buildThumbsCheckBox
-      // 
-      this.buildThumbsCheckBox.AutoSize = true;
-      this.buildThumbsCheckBox.Checked = true;
-      this.buildThumbsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.buildThumbsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.buildThumbsCheckBox.Location = new System.Drawing.Point(16, 177);
-      this.buildThumbsCheckBox.Name = "buildThumbsCheckBox";
-      this.buildThumbsCheckBox.Size = new System.Drawing.Size(247, 17);
-      this.buildThumbsCheckBox.TabIndex = 1;
-      this.buildThumbsCheckBox.Text = "Use coverart embedded in MP3s for thumbnails";
-      this.buildThumbsCheckBox.UseVisualStyleBackColor = true;
-      // 
       // startButton
       // 
       this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.startButton.Location = new System.Drawing.Point(240, 307);
+      this.startButton.Location = new System.Drawing.Point(246, 307);
       this.startButton.Name = "startButton";
-      this.startButton.Size = new System.Drawing.Size(216, 22);
+      this.startButton.Size = new System.Drawing.Size(210, 22);
       this.startButton.TabIndex = 4;
       this.startButton.Text = "Update database from selected shares";
       this.startButton.UseVisualStyleBackColor = true;
@@ -376,9 +409,9 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox.Name = "sharesListBox";
       this.sharesListBox.Size = new System.Drawing.Size(440, 79);
       this.sharesListBox.TabIndex = 0;
-      this.sharesListBox.DoubleClick += new System.EventHandler(this.sharesListBox_DoubleClick);
       this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
+      this.sharesListBox.DoubleClick += new System.EventHandler(this.sharesListBox_DoubleClick);
       // 
       // groupBox2
       // 
@@ -420,6 +453,10 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
+      this.groupBoxUseAlbumThumbs.ResumeLayout(false);
+      this.groupBoxUseAlbumThumbs.PerformLayout();
+      this.groupBoxUseForThumbs.ResumeLayout(false);
+      this.groupBoxUseForThumbs.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
 
@@ -516,7 +553,8 @@ namespace MediaPortal.Configuration.Sections
       setting.StripArtistPrefixes = checkBoxStripArtistPrefix.Checked;
       setting.TreatFolderAsAlbum = folderAsAlbumCheckBox.Checked;
       setting.UseFolderThumbs = checkBoxUseFolderThumb.Checked;
-      setting.UseFolderThumbsForArtistGenre = checkBoxCreateArtistGenre.Checked;
+      setting.CreateArtistPreviews = checkBoxCreateArtist.Checked;
+      setting.CreateGenrePreviews = checkBoxCreateGenre.Checked;
       setting.UseLastImportDate = checkBoxUpdateSinceLastImport.Checked;
 
       int appel = m_dbs.MusicDatabaseReorg(shares, setting);
@@ -577,11 +615,11 @@ namespace MediaPortal.Configuration.Sections
     private void checkBoxUseFolderThumb_CheckedChanged(object sender, EventArgs e)
     {
       if (checkBoxUseFolderThumb.Checked)
-        checkBoxCreateArtistGenre.Enabled = true;
+        checkBoxCreateArtist.Enabled = true;
       else
       {
-        checkBoxCreateArtistGenre.Checked = false;
-        checkBoxCreateArtistGenre.Enabled = false;
+        checkBoxCreateArtist.Checked = false;
+        checkBoxCreateArtist.Enabled = false;
       }
     }
   }
