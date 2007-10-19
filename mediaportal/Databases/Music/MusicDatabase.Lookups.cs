@@ -416,7 +416,7 @@ namespace MediaPortal.Music.Database
           return false;
 
         if (results.Rows.Count > 1)
-          Log.Warn("MusicDatabase: Lookups: GetSongByArtistAlbumTitle found multiple results ({3}) for {0}-{1}-{2}", strArtist, strAlbum, strTitle, Convert.ToString(results.Rows.Count));
+          Log.Warn("MusicDatabase: Lookups: GetSongByArtistAlbumTitle found multiple results ({3}) for {0} - {1} - {2}", strArtist, strAlbum, strTitle, Convert.ToString(results.Rows.Count));
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
           return true;
@@ -447,7 +447,7 @@ namespace MediaPortal.Music.Database
           return false;
 
         if (results.Rows.Count > 1)
-          Log.Warn("MusicDatabase: Lookups: GetSongByArtistTitle found multiple results ({2}) for {0}-{1}", strArtist, strTitle, Convert.ToString(results.Rows.Count));
+          Log.Warn("MusicDatabase: Lookups: GetSongByArtistTitle found multiple results ({2}) for {0} - {1}", strArtist, strTitle, Convert.ToString(results.Rows.Count));
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
           return true;
