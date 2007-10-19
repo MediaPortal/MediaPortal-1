@@ -584,10 +584,10 @@ namespace MediaPortal.Music.Database
         string strTmp;
         strTmp = tag.Album;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Album = strTmp == "unknown" ? "" : strTmp;
+        tag.Album = strTmp;   // For Albums, we need the string unknown, in case they're empty
         strTmp = tag.Genre;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Genre = strTmp == "unknown" ? "" : strTmp;
+        tag.Genre = strTmp;   // We want to see unknown Genre
         strTmp = tag.Artist;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         tag.Artist = strTmp == "unknown" ? "" : strTmp;
@@ -601,25 +601,14 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         tag.Lyrics = strTmp == "unknown" ? "" : strTmp;
 
-        // Do we need to strip the Artist
-        if (_stripArtistPrefixes)
-        {
-          strTmp = tag.Artist;
-          StripArtistNamePrefix(ref strTmp, true);
-          tag.Artist = strTmp;
-          strTmp = tag.AlbumArtist;
-          StripArtistNamePrefix(ref strTmp, true);
-          tag.AlbumArtist = strTmp;
-        }
-
         if (!tag.HasAlbumArtist)
           tag.AlbumArtist = tag.Artist;
 
         // When we got Multiple Entries of either Artist, Genre, Albumartist in WMP notation, separated by ";",
         // we will store them separeted by "|"
-        tag.Artist = FormatMultipleEntry(tag.Artist);
-        tag.AlbumArtist = FormatMultipleEntry(tag.AlbumArtist);
-        tag.Genre = FormatMultipleEntry(tag.Genre);
+        tag.Artist = FormatMultipleEntry(tag.Artist, true);
+        tag.AlbumArtist = FormatMultipleEntry(tag.AlbumArtist, true);
+        tag.Genre = FormatMultipleEntry(tag.Genre, false);
 
         // Extract the Coverart
         ExtractCoverArt(tag);
@@ -633,15 +622,22 @@ namespace MediaPortal.Music.Database
     /// Multiple Entry fields need to be formatted to contain a | at the end to be able to search correct
     /// </summary>
     /// <param name="str"></param>
+    /// <param name="strip"></param>
     /// <returns></returns>
-    public string FormatMultipleEntry(string str)
+    public string FormatMultipleEntry(string str, bool strip)
     {
       string[] strSplit = str.Split(new char[] { ';', '|' });
       // Can't use a Join as i need to trim all the elements 
       string strJoin = "";
       foreach (string strTmp in strSplit)
       {
-        strJoin += String.Format("{0} | ", strTmp.Trim());
+        string s = strTmp.Trim();
+        // Strip Artist / AlbumArtist but NOT Genres
+        if (_stripArtistPrefixes && strip)
+        {
+          StripArtistNamePrefix(ref s, true);
+        }
+        strJoin += String.Format("{0} | ", s.Trim());
       }
       return strJoin;
     }
@@ -1120,6 +1116,25 @@ namespace MediaPortal.Music.Database
             int id = map.m_song.Id;
             strSQL = string.Format("update tracks set strAlbumArtist = 'Various Artists | ' where idTrack={0}", id);
             MusicDatabase.DirectExecute(strSQL);
+
+            // Now we need to remove the Artist of the song from the AlbumArtist table,
+            // if he's not an AlbumArtist in a different album
+            Song song = map.m_song as Song;
+            string[] strAlbumArtistSplit = song.AlbumArtist.Split(new char[] { '|' });
+            foreach (string strTmp in strAlbumArtistSplit)
+            {
+              string strAlbumArtist = strTmp.Trim(trimChars);
+              DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
+
+              strSQL = string.Format("select strAlbumArtist from tracks where strAlbumArtist like '%{0} |%'", strAlbumArtist);
+              if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
+              {
+                // No AlbumArtist entry found, so let's remove this artist from albumartist
+                strSQL = String.Format("delete from albumartist where strAlbumArtist like '%{0}%'", strAlbumArtist);
+                MusicDatabase.DirectExecute(strSQL);
+              }
+
+            }
           }
         }
 
