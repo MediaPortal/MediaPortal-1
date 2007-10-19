@@ -618,8 +618,7 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnShowContextMenu()
     {
-      GUIListItem item = facadeView.SelectedListItem;
-      MusicTag itemTag = null;
+      GUIListItem item = facadeView.SelectedListItem;      
 
       if (item == null)
         return;
@@ -754,15 +753,7 @@ namespace MediaPortal.GUI.Music
         playlistItem.Duration = song.Duration;
 
         MusicTag tag = new MusicTag();
-        tag.Album = song.Album;
-        tag.Artist = song.Artist;
-        tag.Duration = song.Duration;
-        tag.Genre = song.Genre;
-        tag.Rating = song.Rating;
-        tag.TimesPlayed = song.TimesPlayed;
-        tag.Title = song.Title;
-        tag.Track = song.Track;
-        tag.Year = song.Year;
+        tag = song.ToMusicTag();
         playlistItem.MusicTag = tag;
 
         playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
@@ -842,15 +833,7 @@ namespace MediaPortal.GUI.Music
         item.Duration = song.Duration;
 
         MusicTag tag = new MusicTag();
-        tag.Title = song.Title;
-        tag.Album = song.Album;
-        tag.Artist = song.Artist;
-        tag.AlbumArtist = song.AlbumArtist;
-        tag.Duration = song.Duration;
-        tag.Genre = song.Genre;
-        tag.Track = song.Track;
-        tag.Year = song.Year;
-        tag.Rating = song.Rating;
+        tag = song.ToMusicTag();
         item.Duration = tag.Duration;
         tag.TimesPlayed = song.TimesPlayed;
 
@@ -995,15 +978,7 @@ namespace MediaPortal.GUI.Music
     void AddSongToPlayList(Song song, PlayList playList)
     {
       MusicTag tag = new MusicTag();
-      tag.Album = song.Album;
-      tag.Artist = song.Artist;
-      tag.Duration = song.Duration;
-      tag.Genre = song.Genre;
-      tag.Rating = song.Rating;
-      tag.TimesPlayed = song.TimesPlayed;
-      tag.Title = song.Title;
-      tag.Track = song.Track;
-      tag.Year = song.Year;
+      tag = song.ToMusicTag();
 
       PlayListItem playlistItem = new PlayListItem();
       playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
@@ -1100,15 +1075,7 @@ namespace MediaPortal.GUI.Music
         {
           Song song = (Song)pItem.AlbumInfoTag;
           MusicTag tag = new MusicTag();
-          tag.Title = song.Title;
-          tag.Album = song.Album;
-          tag.Artist = song.Artist;
-          tag.AlbumArtist = song.AlbumArtist;
-          tag.Duration = song.Duration;
-          tag.Genre = song.Genre;
-          tag.Track = song.Track;
-          tag.Year = song.Year;
-          tag.Rating = song.Rating;
+          tag = song.ToMusicTag();
 
           PlayListItem pli = new PlayListItem();
           pli.MusicTag = tag;

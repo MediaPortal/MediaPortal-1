@@ -657,12 +657,7 @@ namespace MediaPortal.GUI.Music
           if (dbs.GetSongByFileName(item.Path, ref song))
           {
             MusicTag tag = new MusicTag();
-            tag.Album = song.Album;
-            tag.Artist = song.Artist;
-            tag.Genre = song.Genre;
-            tag.Duration = song.Duration;
-            tag.Title = song.Title;
-            tag.Track = song.Track;
+            tag = song.ToMusicTag();
             item.MusicTag = tag;
           }
           else
@@ -979,14 +974,7 @@ namespace MediaPortal.GUI.Music
       playlistItem.Duration = song.Duration;
 
       MusicTag tag = new MusicTag();
-      tag.Title = song.Title;
-      tag.Album = song.Album;
-      tag.Artist = song.Artist;
-      tag.Duration = song.Duration;
-      tag.Genre = song.Genre;
-      tag.Track = song.Track;
-      tag.Year = song.Year;
-      tag.Rating = song.Rating;
+      tag = song.ToMusicTag();
 
       playlistItem.MusicTag = tag;
 

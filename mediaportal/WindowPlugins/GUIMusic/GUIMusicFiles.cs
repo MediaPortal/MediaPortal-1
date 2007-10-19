@@ -1664,12 +1664,7 @@ namespace MediaPortal.GUI.Music
                 else if (bFound)
                 {
                   tag = new MusicTag();
-                  tag.Album = song.Album;
-                  tag.Artist = song.Artist;
-                  tag.Genre = song.Genre;
-                  tag.Duration = song.Duration;
-                  tag.Title = song.Title;
-                  tag.Track = song.Track;
+                  tag = song.ToMusicTag();
                   pItem.MusicTag = tag;
                   pItem.Label = song.Title;
                   //pItem.Path = strCDROMPath;

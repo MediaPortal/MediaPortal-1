@@ -808,13 +808,7 @@ namespace MediaPortal.GUI.Music
         PlayListItem playListItem = playlist[i];
         m_database.GetSongByFileName(playListItem.FileName, ref song);
         MusicTag tag = new MusicTag();
-        tag.Album = song.Album;
-        tag.Artist = song.Artist;
-        tag.Genre = song.Genre;
-        tag.Duration = song.Duration;
-        tag.Title = song.Title;
-        tag.Track = song.Track;
-        tag.Rating = song.Rating;
+        tag = song.ToMusicTag();
         playListItem.MusicTag = tag;
         playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
       }

@@ -360,12 +360,15 @@ namespace MediaPortal.Music.Database
 
       tmpTag.Title = this.Title;
       tmpTag.Album = this.Album;
+      tmpTag.AlbumArtist = this.AlbumArtist;
       tmpTag.Artist = this.Artist;
       tmpTag.Duration = this.Duration;
       tmpTag.Genre = this.Genre;
       tmpTag.Track = this.Track;
       tmpTag.Year = this.Year;
       tmpTag.Rating = this.Rating;
+      tmpTag.TimesPlayed = this.TimesPlayed;
+      tmpTag.Lyrics = this.Lyrics;
 
       return tmpTag;
     }
