@@ -21231,13 +21231,91 @@
   </capturecard>
   
   <capturecard commercialname="Real Hybrid PCI SL" capturename="Conexant 2388x AVStream TS Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_885214f1&amp;rev_05">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
         <filter cat="tunerdevice" name="Conexant 2388x BDA Tuner/Demod" checkdevice="true"></filter>
         <filter cat="capture" name="Conexant 2388x AVStream TS Capture" checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Kazimogo USB DVB-T" capturename="AF9015 BDA Filter" devid="vid_15a4&amp;pid_9016&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
+        <filter cat="tunerdevice" name="AF9015 BDA Filter" checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV-NOVA-HD-S2 PCI" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_69060070&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider" checkdevice="false"></filter>
+        <filter cat="tunerdevice" name="Hauppauge WinTV 88x DVB-S/S2 Tuner/Demod" checkdevice="true"></filter>
+        <filter cat="capture" name="Hauppauge WinTV 88x TS Capture" checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV Pro PCI 4000i" capturename="Pinnacle Stargate Capture" devid="ven_11bd&amp;dev_0040&amp;subsys_004511bd&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider" checkdevice="false"></filter>
+        <filter cat="tunerdevice" name="Pinnacle Stargate Tuner" checkdevice="true"></filter>
+        <filter cat="capture" name="Pinnacle Stargate Capture" checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV Pro PCI 4000i" capturename="Pinnacle Stargate Capture" devid="ven_11bd&amp;dev_0041&amp;subsys_004511bd&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider" checkdevice="false"></filter>
+        <filter cat="tunerdevice" name="Pinnacle Stargate Tuner" checkdevice="true"></filter>
+        <filter cat="capture" name="Pinnacle Stargate Capture" checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Liteon TVT-1060" capturename="BDA Digital Capture" devid="vid_04ca&amp;pid_f016">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
+        <filter cat="tunerdevice" name="BDA Digital Tuner" checkdevice="true"></filter>
+        <filter cat="capture" name="BDA Digital Capture" checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
