@@ -1613,7 +1613,7 @@ namespace TvDatabase
       {
         for (int i = 0; i < days; ++i)
         {
-          if (dtDay.DayOfWeek == rec.StartTime.DayOfWeek)
+          if ((dtDay.DayOfWeek == rec.StartTime.DayOfWeek) && (dtDay.Date >= rec.StartTime.Date))
           {
             Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int)ScheduleRecordingType.Once;

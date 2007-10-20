@@ -614,7 +614,7 @@ namespace TvDatabase
               iMinProg = program.EndTime.Minute;
               if (iHourProg == EndTime.Hour && iMinProg == EndTime.Minute)
               {
-                if (StartTime.DayOfWeek == program.StartTime.DayOfWeek)
+                if ((StartTime.DayOfWeek == program.StartTime.DayOfWeek) && (program.StartTime.Date >= StartTime.Date))
                 {
                   if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
                   return true;

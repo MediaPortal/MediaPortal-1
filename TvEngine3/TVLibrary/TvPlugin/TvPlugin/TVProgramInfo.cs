@@ -44,34 +44,21 @@ namespace TvPlugin
   /// </summary>
   public class TVProgramInfo : GUIWindow
   {
-    [SkinControlAttribute(17)]
-    protected GUILabelControl lblProgramGenre = null;
-    [SkinControlAttribute(15)]
-    protected GUITextScrollUpControl lblProgramDescription = null;
-    [SkinControlAttribute(14)]
-    protected GUILabelControl lblProgramTime = null;
-    [SkinControlAttribute(13)]
-    protected GUIFadeLabel lblProgramTitle = null;
-    [SkinControlAttribute(16)]
-    protected GUIFadeLabel lblProgramChannel = null;
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnRecord = null;
-    [SkinControlAttribute(3)]
-    protected GUIButtonControl btnAdvancedRecord = null;
-    [SkinControlAttribute(4)]
-    protected GUIButtonControl btnKeep = null;
-    [SkinControlAttribute(5)]
-    protected GUIToggleButtonControl btnNotify = null;
-    [SkinControlAttribute(10)]
-    protected GUIListControl lstUpcomingEpsiodes = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnQuality = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnEpisodes = null;
-    [SkinControlAttribute(8)]
-    protected GUIButtonControl btnPreRecord = null;
-    [SkinControlAttribute(9)]
-    protected GUIButtonControl btnPostRecord = null;
+    [SkinControlAttribute(17)] protected GUILabelControl lblProgramGenre = null;
+    [SkinControlAttribute(15)] protected GUITextScrollUpControl lblProgramDescription = null;
+    [SkinControlAttribute(14)] protected GUILabelControl lblProgramTime = null;
+    [SkinControlAttribute(13)] protected GUIFadeLabel lblProgramTitle = null;
+    [SkinControlAttribute(16)] protected GUIFadeLabel lblProgramChannel = null;
+    [SkinControlAttribute(2)]  protected GUIButtonControl btnRecord = null;
+    [SkinControlAttribute(3)]  protected GUIButtonControl btnAdvancedRecord = null;
+    [SkinControlAttribute(4)]  protected GUIButtonControl btnKeep = null;
+    [SkinControlAttribute(5)]  protected GUIToggleButtonControl btnNotify = null;
+    [SkinControlAttribute(10)] protected GUIListControl lstUpcomingEpsiodes = null;
+    [SkinControlAttribute(6)]  protected GUIButtonControl btnQuality = null;
+    [SkinControlAttribute(7)]  protected GUIButtonControl btnEpisodes = null;
+    [SkinControlAttribute(8)]  protected GUIButtonControl btnPreRecord = null;
+    [SkinControlAttribute(9)]  protected GUIButtonControl btnPostRecord = null;
+
     static Program currentProgram = null;
 
     public TVProgramInfo()
@@ -327,6 +314,7 @@ namespace TvPlugin
         {
           Schedule schedule = item.TVTag as Schedule;
           Program episode = item.MusicTag as Program;
+					Log.Info("TVProgrammInfo.OnClicked: {0}, {1}", schedule.ToString(), episode.ToString());
           OnEpisodeClicked(episode, schedule);
         }
       }
@@ -708,6 +696,9 @@ namespace TvPlugin
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
+			Schedule schedule = item.TVTag as Schedule;
+			Program episode = item.MusicTag as Program;
+			Log.Info("TVProgrammInfo.item_OnItemSelected: {0}, {1}", schedule.ToString(), episode.ToString());
       UpdateProgramDescription(item.TVTag as Schedule, item.MusicTag as Program);
     }
 

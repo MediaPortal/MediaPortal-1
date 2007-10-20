@@ -362,7 +362,7 @@ namespace TvService
 
       if (type == ScheduleRecordingType.Weekly)
       {
-        if (currentTime.DayOfWeek == schedule.StartTime.DayOfWeek)
+			  if ((currentTime.DayOfWeek == schedule.StartTime.DayOfWeek) &&(currentTime.Date >= schedule.StartTime.Date))
         {
           DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
           DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
