@@ -22,6 +22,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 
 namespace TvLibrary.Log
 {
@@ -186,6 +187,7 @@ namespace TvLibrary.Log
       }
     }
 
+		
     /// <summary>
     /// Logs the message to the error file
     /// </summary>
@@ -252,11 +254,13 @@ namespace TvLibrary.Log
 
           using (StreamWriter writer = new StreamWriter(GetFileName(logType), true))
           {
+						string thread = Thread.CurrentThread.Name;
+						if (thread == null)
+						{
+							thread = Thread.CurrentThread.ManagedThreadId.ToString();
+						}
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-            writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ");
-            String log = String.Format("{0:X} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
-            writer.Write( log );
-            writer.WriteLine(format, arg);
+						writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, string.Format(format, arg));
             writer.Close();
           }
         }
