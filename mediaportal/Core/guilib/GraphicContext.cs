@@ -58,6 +58,7 @@ namespace MediaPortal.GUI.Library
       STARTING,		// starting up
       RUNNING,		// running
       STOPPING,		// stopping
+			SUSPENDING, // system in suspend mode
       LOST
     }
     /// <summary>

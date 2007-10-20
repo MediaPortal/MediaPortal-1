@@ -1072,8 +1072,9 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
       ignoreContextMenuAction = true;
-      _suspended = true;      
-      SaveLastActiveModule();      
+      _suspended = true;
+    	GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;  // this will close all open dialogs
+      SaveLastActiveModule();
 
       Log.Info("Main: Stopping playback");
       if (GUIGraphicsContext.IsPlaying)
