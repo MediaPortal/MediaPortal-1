@@ -214,12 +214,14 @@ namespace MediaPortal.Music.Database
 
     public void GetSongsByFilter(string aSQL, out List<Song> aSongs, string filter)
     {
-      Log.Debug("SQL Filter: {0}", aSQL);
+      Log.Debug("MusicDatabase: GetSongsByFilter - SQL: {0}, Filter: {1}", aSQL, filter);
       aSongs = new List<Song>();
+      //if (string.IsNullOrEmpty(filter))
+      //  return;
       try
       {
         SQLiteResultSet results = MusicDatabase.DirectExecute(aSQL);
-        Song song;
+        Song song = null;
 
         for (int i = 0 ; i < results.Rows.Count ; i++)
         {
@@ -251,7 +253,8 @@ namespace MediaPortal.Music.Database
               song.Artist = song.AlbumArtist;         // Make Artist equal to AlbumArtist (used by facadeView)
             // Set the Pathname for Cover Art Retrieval
             columnIndex = (int)results.ColumnIndices["strPath"];
-            song.FileName = String.Format("{0}\\",System.IO.Path.GetDirectoryName(fields.fields[columnIndex]));
+            //song.FileName = String.Format("{0}\\", System.IO.Path.GetDirectoryName(fields.fields[columnIndex]));
+            song.FileName = fields.fields[columnIndex];
           }
           if (filter == "genre")
           {
@@ -275,7 +278,7 @@ namespace MediaPortal.Music.Database
 
     public void GetSongsByIndex(string aSQL, out List<Song> aSongs, int aLevel, string filter)
     {
-      Log.Debug("SQL Index: {0}", aSQL);
+      Log.Debug("MusicDatabase: GetSongsByIndex - SQL: {0}, Level: {1}, Filter: {2}", aSQL, aLevel, filter);      
       aSongs = new List<Song>();
       try
       {
