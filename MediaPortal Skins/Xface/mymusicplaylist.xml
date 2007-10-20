@@ -122,7 +122,7 @@
     </control>
     <import>common.facade.music2.xml</import>
      <control>
-      <id>1</id>
+      <id>0</id>
       <type>image</type>
       <posX>145</posX>
       <posY>232</posY>
@@ -143,7 +143,7 @@
     </control>
     <control>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>112</posX>
       <posY>210</posY>
       <width>225</width>
@@ -154,7 +154,7 @@
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
-      <id>1</id>
+      <id>0</id>
       <posX>89</posX>
       <posY>445</posY>
       <width>300</width>
@@ -166,7 +166,7 @@
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
-      <id>1</id>
+      <id>0</id>
       <posX>89</posX>
       <posY>475</posY>
       <width>300</width>
@@ -177,7 +177,7 @@
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
-      <id>1</id>
+      <id>0</id>
       <posX>89</posX>
       <posY>505</posY>
       <width>365</width>

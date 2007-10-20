@@ -76,7 +76,7 @@
           <type>button</type>
           <id>8</id>
           <label>137</label>
-          <onleft>9</onleft>
+          <onleft>8</onleft>
           <onright>50</onright>
           <onup>6</onup>
           <ondown>12</ondown>
@@ -89,14 +89,14 @@
           <onleft>12</onleft>
           <onright>50</onright>
           <onup>8</onup>
-          <ondown>10</ondown>
+          <ondown>13</ondown>
         </control>
         <control>
           <description>Eject Disc</description>
           <type>button</type>
-          <id>10</id>
+          <id>13</id>
           <label>654</label>
-          <onleft>10</onleft>
+          <onleft>13</onleft>
           <onright>50</onright>
           <onup>12</onup>
           <ondown>11</ondown>
@@ -116,36 +116,36 @@
           <label>4540</label>
           <onleft>11</onleft>
           <onright>50</onright>
-          <onup>10</onup>
-          <ondown>8</ondown>
+          <onup>13</onup>
+          <ondown>9</ondown>
           <hyperlink>510</hyperlink>
         </control>
         <control>
           <description>Playlist button</description>
           <type>button</type>
-          <id>8</id>
+          <id>9</id>
           <label>4555</label>
           <action>33</action>
-          <onleft>8</onleft>
+          <onleft>9</onleft>
           <onright>50</onright>
           <onup>11</onup>
-          <ondown>14</ondown>
+          <ondown>10</ondown>
         </control>
         <control>
           <description>My Playlists</description>
           <type>button</type>
-          <id>14</id>
+          <id>10</id>
           <label>983</label>
-          <onleft>14</onleft>
+          <onleft>10</onleft>
           <onright>50</onright>
-          <onup>8</onup>
+          <onup>9</onup>
           <ondown>99</ondown>
         </control>
       </control>
     </control>
     <import>common.facade.music2.xml</import>
     <control>
-      <id>1</id>
+      <id>0</id>
       <type>image</type>
       <posX>145</posX>
       <posY>232</posY>
@@ -155,7 +155,7 @@
       <visible>facadeview.list</visible>
     </control>
     <control>
-      <id>1</id>
+      <id>0</id>
       <type>image</type>
       <posX>145</posX>
       <posY>232</posY>
@@ -166,7 +166,7 @@
     </control>
     <control>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>112</posX>
       <posY>210</posY>
       <width>225</width>
@@ -177,7 +177,7 @@
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
-      <id>1</id>
+      <id>0</id>
       <posX>89</posX>
       <posY>445</posY>
       <width>300</width>
@@ -189,7 +189,7 @@
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
-      <id>1</id>
+      <id>0</id>
       <posX>89</posX>
       <posY>475</posY>
       <width>300</width>
@@ -200,7 +200,7 @@
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
-      <id>1</id>
+      <id>0</id>
       <posX>89</posX>
       <posY>505</posY>
       <width>365</width>

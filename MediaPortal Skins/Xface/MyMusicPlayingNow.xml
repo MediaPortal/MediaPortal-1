@@ -286,6 +286,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
       <visible>no</visible>
     </control>
@@ -305,6 +306,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
       <visible>no</visible>
     </control>
@@ -324,6 +326,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
       <visible>no</visible>
     </control>
@@ -343,6 +346,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
       <visible>no</visible>
     </control>
@@ -362,6 +366,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
       <visible>no</visible>
     </control>
@@ -381,6 +386,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
       <visible>no</visible>
     </control>
@@ -400,6 +406,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
       <visible>no</visible>
     </control>
@@ -419,6 +426,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
       <visible>no</visible>
     </control>
@@ -438,6 +446,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
       <visible>no</visible>
     </control>
@@ -457,6 +466,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
       <visible>no</visible>
     </control>
@@ -476,6 +486,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
       <visible>no</visible>
     </control>
@@ -495,13 +506,14 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
       <visible>no</visible>
     </control>
     <control>
       <type>imagelist</type>
       <id>1337</id>
-      <posX>475</posX>
+      <posX>484</posX>
       <posY>666</posY>
       <width>128</width>
       <height>30</height>
@@ -513,6 +525,7 @@
       </subitems>
       <orientation>horizontal</orientation>
       <align>right</align>
+      <imagesToDraw>5</imagesToDraw>
       <percentage>#Play.Current.Rating</percentage>
     </control>
     <control>
