@@ -2094,8 +2094,7 @@ namespace TvService
 			while (true)
 			{
 				//Log.Write("Controller:   Heartbeat Monitor ping");
-
-				DateTime now = DateTime.Now;
+				
 				Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
 
 				//for each card
@@ -2112,6 +2111,7 @@ namespace TvService
 							User tmpUser = users[i];
 							if (tmpUser.HeartBeat > DateTime.MinValue)
 							{
+                DateTime now = DateTime.Now;
 								TimeSpan ts = tmpUser.HeartBeat - now;
 
 								// more than 30 seconds have elapsed since last heartbeat was received.
