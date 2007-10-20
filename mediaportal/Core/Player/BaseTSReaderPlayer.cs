@@ -254,8 +254,17 @@ namespace MediaPortal.Player
         AMMediaType sType; AMStreamSelectInfoFlags sFlag;
         int sPDWGroup, sPLCid; string sName;
         object pppunk, ppobject;
-        // The offset +2 is necessary because the first 2 streams are always non-audio and the following are the audio streams
-        pStrm.Info(iStream + 2, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        
+        if (IsTimeShifting)
+        {
+          // The offset +2 is necessary because the first 2 streams are always non-audio and the following are the audio streams
+          pStrm.Info(iStream + 2, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        }
+        else
+        {
+          pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        }
+        
         return sName.Trim();
       }
       else
@@ -1298,7 +1307,8 @@ namespace MediaPortal.Player
       Marshal.ReleaseComObject(pinEnum);
       //this is only debug output at the moment. always do a rebuild for now.
       Log.Info("Graph would _not_ need a rebuild");
-      return true;
+      //return true;
+      return false;
     }
 
     public void DoGraphRebuild()
