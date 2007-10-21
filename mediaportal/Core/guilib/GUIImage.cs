@@ -61,11 +61,7 @@ namespace MediaPortal.GUI.Library
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     unsafe private static extern void FontEnginePresentTextures();
 
-    [XMLSkinElement("colorkey")]
-    private long m_dwColorKey = 0;
-    //private VertexBuffer						m_vbBuffer=null;
-    [XMLSkinElement("texture")]
-    private string _textureFileNameTag = "";
+
     /// <summary>The width of the current texture.</summary>
     private int _textureWidth = 0;
     private int _textureHeight = 0;
@@ -76,22 +72,20 @@ namespace MediaPortal.GUI.Library
     private int m_dwItems = 0;
     private int _currentAnimationLoop = 0;
     private int _currentFrameNumber = 0;
-    [XMLSkinElement("keepaspectratio")]
-    private bool _keepAspectRatio = false;
-    [XMLSkinElement("zoom")]
-    private bool _zoomIn = false;
-    [XMLSkinElement("zoomfromtop")]
-    private bool _zoomFromTop = false;
-    [XMLSkinElement("fixedheight")]
-    private bool _isFixedHeight = false;
-    [XMLSkinElement("RepeatBehavior")]
-    protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
-    [XMLSkinAttribute("texture", "flipX")]
-    protected bool _flipX = false;
-    [XMLSkinAttribute("texture", "flipY")]
-    protected bool _flipY = false;
-    [XMLSkinAttribute("texture", "diffuse")]
-    protected string _diffuseFileName = "";
+
+    [XMLSkinElement("colorkey")]             private long m_dwColorKey = 0;
+    [XMLSkinElement("texture")]              private string _textureFileNameTag = "";
+    [XMLSkinElement("keepaspectratio")]      private bool _keepAspectRatio = false;
+    [XMLSkinElement("zoom")]                 private bool _zoomIn = false;
+    [XMLSkinElement("zoomfromtop")]          private bool _zoomFromTop = false;
+    [XMLSkinElement("fixedheight")]          private bool _isFixedHeight = false;
+    [XMLSkinElement("RepeatBehavior")]       protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
+    [XMLSkinAttribute("texture", "flipX")]   protected bool _flipX = false;
+    [XMLSkinAttribute("texture", "flipY")]   protected bool _flipY = false;
+    [XMLSkinAttribute("texture", "diffuse")] protected string _diffuseFileName = "";
+    [XMLSkinElement("filtered")]             bool _filterImage = true;
+    [XMLSkinElement("centered")]             bool _centerImage = false;
+
     int _diffuseTexWidth = 0;
     int _diffuseTexHeight = 0;
     Texture _diffuseTexture = null;
@@ -106,10 +100,7 @@ namespace MediaPortal.GUI.Library
     private Rectangle m_destRect;
     string _cachedTextureFileName = "";
     int g_nAnisotropy = 0;
-    [XMLSkinElement("filtered")]
-    bool _filterImage = true;
-    [XMLSkinElement("centered")]
-    bool _centerImage = false;
+
 
     DateTime _animationTimer = DateTime.MinValue;
     bool _containsProperty = false;
@@ -1160,7 +1151,7 @@ namespace MediaPortal.GUI.Library
         {
           // then free our resources, and reload the (new) image
           if (logtextures)
-            Log.Info("GUIImage:PreRender() image changed:{0}->{1}", _cachedTextureFileName, fileName);
+            Log.Debug("GUIImage:PreRender() image changed:{0}->{1}", _cachedTextureFileName, fileName);
           FreeResourcesAndRegEvent();
           _cachedTextureFileName = fileName;
           if (fileName.Length == 0)
@@ -1365,7 +1356,7 @@ namespace MediaPortal.GUI.Library
         return;// same file, no need to do anything
 
       if (logtextures)
-        Log.Info("GUIImage:SetFileName() {0}", fileName);
+        Log.Debug("GUIImage:SetFileName() {0}", fileName);
       _textureFileNameTag = fileName;
       if (_textureFileNameTag.IndexOf("#") >= 0)
         _containsProperty = true;
