@@ -110,6 +110,11 @@ namespace MediaPortal.TagReader
         musictag.TrackTotal = (int)tag.Tag.TrackCount;
         musictag.DiscID = (int)tag.Tag.Disc;
         musictag.DiscTotal = (int)tag.Tag.DiscCount;
+
+        // To display Multiple Disc Albums correctly, we add the discid mupltplied by 100
+        if (musictag.DiscID > 0)
+          musictag.Track += (musictag.DiscID * 100);
+
         musictag.Year = (int)tag.Tag.Year;
 
         if (tag.MimeType == "taglib/mp3")
