@@ -50,7 +50,7 @@
         <posY>290</posY>
         <width>285</width>
         <height>300</height>
-        <texture>tetris\scoreboard.png</texture>
+        <texture>-</texture>
         <colordiffuse>ffffffff</colordiffuse>
       </control>
       <control>

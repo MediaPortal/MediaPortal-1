@@ -32,14 +32,14 @@
     </control>
     <control>
       <type>multiimage</type>
-      <id>0</id>
-      <posX>370</posX>
+      <id>400</id>
+      <posX>335</posX>
       <posY>703</posY>
       <width>68</width>
       <height>35</height>
       <imagepath>Play</imagepath>
       <timeperimage>40</timeperimage>
-      <fadetime>10</fadetime>
+      <fadetime>20</fadetime>
       <loop>yes</loop>
       <randomize>false</randomize>
       <visible>Player.playing</visible>
@@ -93,7 +93,7 @@
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>370</posX>
+      <posX>335</posX>
       <posY>580</posY>
       <width>275</width>
       <label>#Play.Current.Artist</label>
@@ -104,7 +104,7 @@
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>370</posX>
+      <posX>335</posX>
       <posY>615</posY>
       <width>275</width>
       <label>#Play.Current.Album</label>
@@ -114,7 +114,7 @@
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>370</posX>
+      <posX>335</posX>
       <posY>640</posY>
       <width>275</width>
       <label>#Play.Current.Title</label>
@@ -125,7 +125,7 @@
     </control>
     <control>
       <type>label</type>
-      <posX>370</posX>
+      <posX>335</posX>
       <posY>665</posY>
       <label>#Play.Current.Duration</label>
       <align>left</align>
@@ -135,37 +135,49 @@
       <animation effect="fade" time="800" delay="250">WindowClose</animation>
     </control>
     <control>
-      <description>music rectangle</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>48</posX>
-      <posY>540</posY>
-      <width>330</width>
-      <height>225</height>
-      <texture>playback_background.png</texture>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
-    <control>
       <description>video preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>96</posX>
-      <posY>568</posY>
-      <width>238</width>
-      <height>131</height>
+      <posX>153</posX>
+      <posY>562</posY>
+      <width>147</width>
+      <height>148</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
     </control>
+     <control>
+      <description>music rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>128</posX>
+      <posY>552</posY>
+      <width>182</width>
+      <height>175</height>
+      <texture>Framefocus.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+     <control>
+      <description>music rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>124</posX>
+      <posY>729</posY>
+      <width>185</width>
+      <height>19</height>
+      <texture>osd_progress_background_smal.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
     <control>
       <description>progress bar</description>
       <type>progress</type>
       <id>20</id>
-      <posX>126</posX>
-      <posY>701</posY>
-      <width>190</width>
+      <posX>113</posX>
+      <posY>720</posY>
+      <width>200</width>
       <label>#percentage</label>
       <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>

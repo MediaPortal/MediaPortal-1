@@ -7,7 +7,7 @@
   <!--<define>#header.image:mynumberplace_logo.png</define>
   <define>#header.hover:hover_mynumberplace.png</define>-->
   <controls>
-    <import>common.window.xml</import>
+    <import>common.window2.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>button group</description>
@@ -16,8 +16,8 @@
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
-      <posX>113</posX>
-      <posY>129</posY>
+      <posX>69</posX>
+      <posY>89</posY>
       <layout>StackLayout</layout>
       <control>
         <description>New Game</description>
@@ -74,6 +74,8 @@
     <control>
       <description>info group</description>
       <type>group</type>
+       <posX>128</posX>
+        <posY>505</posY>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
@@ -86,14 +88,14 @@
         <posY>505</posY>
         <width>250</width>
         <height>180</height>
-        <texture>tetris\scoreboard.png</texture>
+        <texture>-</texture>
         <colordiffuse>60ffffff</colordiffuse>
       </control>
       <control>
         <description>Highscore: label</description>
         <type>label</type>
         <id>21</id>
-        <posX>142</posX>
+        <posX>102</posX>
         <posY>510</posY>
         <label>19008</label>
       </control>
@@ -101,7 +103,7 @@
         <description>Time</description>
         <type>label</type>
         <id>22</id>
-        <posX>360</posX>
+        <posX>320</posX>
         <posY>510</posY>
         <width>162</width>
         <align>right</align>
@@ -113,7 +115,7 @@
         <description>Rank1: label</description>
         <type>label</type>
         <id>24</id>
-        <posX>142</posX>
+        <posX>102</posX>
         <posY>574</posY>
         <label>#numberplace.name1</label>
       </control>
@@ -121,7 +123,7 @@
         <description>Rank1 Score: label</description>
         <type>label</type>
         <id>25</id>
-        <posX>360</posX>
+        <posX>320</posX>
         <posY>574</posY>
         <width>162</width>
         <align>right</align>
@@ -131,7 +133,7 @@
         <description>Rank2 Name: label</description>
         <type>label</type>
         <id>26</id>
-        <posX>142</posX>
+        <posX>102</posX>
         <posY>608</posY>
         <label>#numberplace.name2</label>
       </control>
@@ -139,7 +141,7 @@
         <description>Rank2 Score: label</description>
         <type>label</type>
         <id>27</id>
-        <posX>360</posX>
+        <posX>320</posX>
         <posY>608</posY>
         <width>162</width>
         <align>right</align>
@@ -149,7 +151,7 @@
         <description>Rank3 Name: label</description>
         <type>label</type>
         <id>28</id>
-        <posX>142</posX>
+        <posX>102</posX>
         <posY>642</posY>
         <label>#numberplace.name3</label>
       </control>
@@ -157,7 +159,7 @@
         <description>Rank3 Score: label</description>
         <type>label</type>
         <id>29</id>
-        <posX>360</posX>
+        <posX>340</posX>
         <posY>642</posY>
         <width>162</width>
         <align>right</align>
