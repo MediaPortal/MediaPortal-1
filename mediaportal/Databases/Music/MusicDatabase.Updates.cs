@@ -645,8 +645,8 @@ namespace MediaPortal.Music.Database
     public string FormatMultipleEntry(string str, bool strip)
     {
       string[] strSplit = str.Split(new char[] { ';', '|' });
-      // Can't use a Join as i need to trim all the elements 
-      string strJoin = "";
+      // Can't use a simple String.Join as i need to trim all the elements 
+      string strJoin = "| ";
       foreach (string strTmp in strSplit)
       {
         string s = strTmp.Trim();
@@ -1182,8 +1182,8 @@ namespace MediaPortal.Music.Database
       {
         if (_foundVariousArtist)
         {
-          // Let's add the "Varuious Artist" to the albumArtist table
-          string varArtist = "Various Artists | ";
+          // Let's add the "Various Artist" to the albumArtist table
+          string varArtist = "| Various Artists | ";
           AddAlbumArtist(varArtist);
 
           List<SongMap> songs = new List<SongMap>();
@@ -1192,7 +1192,7 @@ namespace MediaPortal.Music.Database
           foreach (SongMap map in songs)
           {
             int id = map.m_song.Id;
-            strSQL = string.Format("update tracks set strAlbumArtist = 'Various Artists | ' where idTrack={0}", id);
+            strSQL = string.Format("update tracks set strAlbumArtist = '| Various Artists | ' where idTrack={0}", id);
             MusicDatabase.DirectExecute(strSQL);
 
             // Now we need to remove the Artist of the song from the AlbumArtist table,
@@ -1204,7 +1204,7 @@ namespace MediaPortal.Music.Database
               string strAlbumArtist = strTmp.Trim(trimChars);
               DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
 
-              strSQL = string.Format("select strAlbumArtist from tracks where strAlbumArtist like '%{0} |%'", strAlbumArtist);
+              strSQL = string.Format("select strAlbumArtist from tracks where strAlbumArtist like '%| {0} |%'", strAlbumArtist);
               if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
               {
                 // No AlbumArtist entry found, so let's remove this artist from albumartist

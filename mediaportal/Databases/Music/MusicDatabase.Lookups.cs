@@ -47,10 +47,10 @@ namespace MediaPortal.Music.Database
 
       aSong.Id = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.idTrack");
       aSong.FileName = DatabaseUtility.Get(aResult, aRow, "tracks.strPath");
-      aSong.Artist = DatabaseUtility.Get(aResult, aRow, "tracks.strArtist").Trim(new char[] { '|', ' ' });
-      aSong.AlbumArtist = DatabaseUtility.Get(aResult, aRow, "tracks.strAlbumArtist").Trim(new char[] { '|', ' ' });
+      aSong.Artist = DatabaseUtility.Get(aResult, aRow, "tracks.strArtist").Trim(trimChars);
+      aSong.AlbumArtist = DatabaseUtility.Get(aResult, aRow, "tracks.strAlbumArtist").Trim(trimChars);
       aSong.Album = DatabaseUtility.Get(aResult, aRow, "tracks.strAlbum");
-      aSong.Genre = DatabaseUtility.Get(aResult, aRow, "tracks.strGenre").Trim(new char[] { '|', ' ' });
+      aSong.Genre = DatabaseUtility.Get(aResult, aRow, "tracks.strGenre").Trim(trimChars);
       aSong.Title = DatabaseUtility.Get(aResult, aRow, "tracks.strTitle");
       aSong.Track = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iTrack");
       aSong.TrackTotal = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iNumTracks");
@@ -157,7 +157,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
         double AVGPlayCount;
 
-        strSQL = String.Format("select avg(iTimesPlayed) from tracks where strArtist like '{0}%'", strArtist);
+        strSQL = String.Format("select avg(iTimesPlayed) from tracks where strArtist like '%| {0} |%'", strArtist);
         SQLiteResultSet result = MusicDatabase.DirectExecute(strSQL);
         
         Double.TryParse(result.Rows[0].fields[0], System.Globalization.NumberStyles.Number, new System.Globalization.CultureInfo("en-US"), out AVGPlayCount);
@@ -231,23 +231,23 @@ namespace MediaPortal.Music.Database
           if (filter == "artist")
           {
             columnIndex = (int)results.ColumnIndices["strArtist"];
-            song.Artist = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });
+            song.Artist = fields.fields[columnIndex].Trim(trimChars);
           }
           if (filter == "albumartist")
           {
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
-            song.AlbumArtist = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });                        
+            song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);                        
           }
           if (filter == "album")
           {
             columnIndex = (int)results.ColumnIndices["strAlbum"];
             song.Album = fields.fields[columnIndex];
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
-            song.AlbumArtist = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });  
+            song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);  
             if (song.AlbumArtist.ToLowerInvariant().Contains("unknown"))
             {
               columnIndex = (int)results.ColumnIndices["strArtist"];
-              song.Artist = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });
+              song.Artist = fields.fields[columnIndex].Trim(trimChars);
             }
             else
               song.Artist = song.AlbumArtist;         // Make Artist equal to AlbumArtist (used by facadeView)
@@ -260,7 +260,7 @@ namespace MediaPortal.Music.Database
           {
             AssignAllSongFieldsFromResultSet(ref song, results, i);
             columnIndex = (int)results.ColumnIndices["strGenre"];
-            song.Genre = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });            
+            song.Genre = fields.fields[columnIndex].Trim(trimChars);            
           }
           if (filter == "tracks")
           {
@@ -412,7 +412,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '{0}%' AND strAlbum LIKE '{1}%' AND strTitle LIKE '{2}%'", strArtist, strAlbum, strTitle);
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}%' AND strTitle LIKE '{2}%'", strArtist, strAlbum, strTitle);
 
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -443,7 +443,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strTitle);
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '{0}%' AND strTitle LIKE '{1}%'",strArtist, strTitle);
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strTitle LIKE '{1}%'", strArtist, strTitle);
 
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -509,9 +509,9 @@ namespace MediaPortal.Music.Database
         
         string strSQL = string.Empty;
         if (aGroupAlbum)
-          strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '{0}%' GROUP BY strAlbum ORDER BY iYear DESC", strArtist);
+          strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' GROUP BY strAlbum ORDER BY iYear DESC", strArtist);
         else
-          strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '{0}%' ORDER BY strArtist", strArtist);
+          strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' ORDER BY strArtist", strArtist);
 
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -595,7 +595,7 @@ namespace MediaPortal.Music.Database
         if (variousArtists.Length == 0)
           variousArtists = "Various Artists";
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '{0}%' ORDER BY strAlbum asc", strAlbumArtist);
+        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' ORDER BY strAlbum asc", strAlbumArtist);
         GetSongsByFilter(sql, out aSongList, "tracks");
         return true;
       }
@@ -619,7 +619,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '{0}%' AND strAlbum LIKE '{1}%' order by iTrack asc", strAlbumArtist, strAlbum);
+        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}%' order by iTrack asc", strAlbumArtist, strAlbum);
         GetSongsByFilter(sql, out aSongList, "tracks");
 
         return true;
@@ -649,9 +649,9 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
         if (aGroupAlbums)
-          sql = string.Format("SELECT * FROM tracks WHERE strGenre LIKE '{0}%' GROUP BY strAlbum ORDER BY iYear DESC", strGenre);
+          sql = string.Format("SELECT * FROM tracks WHERE strGenre LIKE '%| {0} |%' GROUP BY strAlbum ORDER BY iYear DESC", strGenre);
         else
-          sql = string.Format("SELECT * FROM tracks WHERE strGenre like '{0}%' ORDER BY strTitle ASC", strGenre);
+          sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%| {0} |%' ORDER BY strTitle ASC", strGenre);
         GetSongsByFilter(sql, out aSongList, "genre");
 
         if (aSongList.Count > 0)
@@ -814,16 +814,16 @@ namespace MediaPortal.Music.Database
         switch (aSearchKind)
         {
           case 0:
-            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '{0}%' ", strArtist);
+            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%| {0}%' ", strArtist);
             break;
           case 1:
             strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%{0}%' ", strArtist);
             break;
           case 2:
-            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%{0}' ", strArtist);
+            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%{0} |%' ", strArtist);
             break;
           case 3:
-            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '{0}' ", strArtist);
+            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%| {0} |%' ", strArtist);
             break;
           case 4:
             strArtist.Replace('ä', '%');
@@ -831,7 +831,7 @@ namespace MediaPortal.Music.Database
             strArtist.Replace('ü', '%');
             strArtist.Replace('/', '%');
             strArtist.Replace('-', '%');
-            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%{0}%' ", strArtist);
+            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%| {0} |%' ", strArtist);
             break;
           default:
             return false;
@@ -865,7 +865,7 @@ namespace MediaPortal.Music.Database
       {
         aArtistArray.Clear();
 
-        string strSQL = String.Format("SELECT DISTINCT strArtist FROM tracks ORDER BY strArtist");
+        string strSQL = String.Format("SELECT DISTINCT strArtist FROM artist ORDER BY strArtist");
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
           return false;
@@ -873,7 +873,7 @@ namespace MediaPortal.Music.Database
         for (int i = 0 ; i < results.Rows.Count ; ++i)
         {
           string strArtist = DatabaseUtility.Get(results, i, "strArtist");
-          aArtistArray.Add(strArtist.Trim(new char[] { '|', ' ' }));
+          aArtistArray.Add(strArtist.Trim(trimChars));
         }
 
         if (aArtistArray.Count > 0)
