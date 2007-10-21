@@ -289,7 +289,7 @@ namespace MediaPortal.GUI.TV
 
     }
 
-    public override bool OnMessage(GUIMessage message)
+/*    public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
       {
@@ -299,104 +299,87 @@ namespace MediaPortal.GUI.TV
       }
       return base.OnMessage(message);
     }
-
+*/
     void Update()
     {
       SetHistory();
       listView.Clear();
       titleView.Clear();
-      if (currentLevel == 0 && currentSearchMode == SearchMode.Genre)
-      {
-        listView.IsVisible = true;
-        titleView.IsVisible = false;
-        GUIControl.FocusControl(GetID, listView.GetID);
-        btnEpisode.Disabled = true;
-        btnLetter.Disabled = true;
-        btnShow.Disabled = true;
-        lblProgramDescription.IsVisible = false;
-        if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
-        lblProgramTime.IsVisible = false;
-        lblProgramTitle.IsVisible = false;
-        listView.Height = lblProgramDescription.YPosition - listView.YPosition;
-        lblNumberOfItems.YPosition = listView.SpinY;
-      }
-      else
-      {
-        if (filterLetter != "#")
-        {
-          listView.IsVisible = false;
-          titleView.IsVisible = true;
-          GUIControl.FocusControl(GetID, titleView.GetID);
+			if (currentLevel == 0 && currentSearchMode == SearchMode.Genre)
+			{
+				listView.IsVisible = true;
+				titleView.IsVisible = false;
+				GUIControl.FocusControl(GetID, listView.GetID);
+				btnEpisode.Disabled = true;
+				btnLetter.Disabled = true;
+				btnShow.Disabled = true;
+				lblProgramDescription.IsVisible = false;
+				if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
+				lblProgramTime.IsVisible = false;
+				lblProgramTitle.IsVisible = false;
+				listView.Height = lblProgramDescription.YPosition - listView.YPosition;
+				lblNumberOfItems.YPosition = listView.SpinY;
+			}
+			else
+			{
+				listView.IsVisible = false;
+				titleView.IsVisible = true;
+				GUIControl.FocusControl(GetID, titleView.GetID);
 
-          if (filterShow == string.Empty)
-          {
-            lblProgramDescription.IsVisible = false;
-            if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
-            lblProgramTime.IsVisible = false;
-            lblProgramTitle.IsVisible = false;
-            if (imgTvLogo != null)
-              imgTvLogo.IsVisible = false;
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(1);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 55;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
-              titleView.FreeResources();
-              titleView.AllocResources();
-            }
-          }
-          else
-          {
-            lblProgramDescription.IsVisible = true;
-            if (lblProgramGenre != null) lblProgramGenre.IsVisible = true;
-            lblProgramTime.IsVisible = true;
-            lblProgramTitle.IsVisible = true;
-            if (imgTvLogo != null)
-              imgTvLogo.IsVisible = true;
-            if (titleView.SubItemCount == 2)
-            {
-              string subItem = (string)titleView.GetSubItem(0);
-              int h = Int32.Parse(subItem.Substring(1));
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.Height = h;
+				if (filterShow == string.Empty)
+				{
+					lblProgramDescription.IsVisible = false;
+					if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
+					lblProgramTime.IsVisible = false;
+					lblProgramTitle.IsVisible = false;
+					if (imgTvLogo != null)
+						imgTvLogo.IsVisible = false;
+					if (titleView.SubItemCount == 2)
+					{
+						string subItem = (string) titleView.GetSubItem(1);
+						int h = Int32.Parse(subItem.Substring(1));
+						GUIGraphicsContext.ScaleVertical(ref h);
+						titleView.Height = h;
+						h = Int32.Parse(subItem.Substring(1));
+						h -= 55;
+						GUIGraphicsContext.ScaleVertical(ref h);
+						titleView.SpinY = titleView.YPosition + h;
+						titleView.FreeResources();
+						titleView.AllocResources();
+					}
+				}
+				else
+				{
+					lblProgramDescription.IsVisible = true;
+					if (lblProgramGenre != null) lblProgramGenre.IsVisible = true;
+					lblProgramTime.IsVisible = true;
+					lblProgramTitle.IsVisible = true;
+					if (imgTvLogo != null)
+						imgTvLogo.IsVisible = true;
+					if (titleView.SubItemCount == 2)
+					{
+						string subItem = (string) titleView.GetSubItem(0);
+						int h = Int32.Parse(subItem.Substring(1));
+						GUIGraphicsContext.ScaleVertical(ref h);
+						titleView.Height = h;
 
-              h = Int32.Parse(subItem.Substring(1));
-              h -= 50;
-              GUIGraphicsContext.ScaleVertical(ref h);
-              titleView.SpinY = titleView.YPosition + h;
+						h = Int32.Parse(subItem.Substring(1));
+						h -= 50;
+						GUIGraphicsContext.ScaleVertical(ref h);
+						titleView.SpinY = titleView.YPosition + h;
 
-              titleView.FreeResources();
-              titleView.AllocResources();
-            }
-            lblNumberOfItems.YPosition = titleView.SpinY;
-          }
-        }
-        else
-        {
-          listView.IsVisible = true;
-          titleView.IsVisible = false;
-          GUIControl.FocusControl(GetID, listView.GetID);
+						titleView.FreeResources();
+						titleView.AllocResources();
+					}
+					lblNumberOfItems.YPosition = titleView.SpinY;
+				}
+				btnEpisode.Disabled = false;
+				btnLetter.Disabled = false;
+				btnShow.Disabled = false;
+				lblNumberOfItems.YPosition = listView.SpinY;
+			}
 
-          lblProgramDescription.IsVisible = false;
-          if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
-          lblProgramTime.IsVisible = false;
-          lblProgramTitle.IsVisible = false;
-          if (imgTvLogo != null)
-            imgTvLogo.IsVisible = false;
-        }
-        btnEpisode.Disabled = false;
-        btnLetter.Disabled = false;
-        btnShow.Disabled = false;
-        lblNumberOfItems.YPosition = listView.SpinY;
-
-      }
-
-      List<TVProgram> programs = new List<TVProgram>();
+    	List<TVProgram> programs = new List<TVProgram>();
       List<TVProgram> episodes = new List<TVProgram>();
       int itemCount = 0;
       switch (currentSearchMode)
@@ -488,6 +471,7 @@ namespace MediaPortal.GUI.TV
               item.Label2 = strTime;
               item.Path = program.Title;
               item.MusicTag = program;
+							item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
               bool isSerie;
               if (IsRecording(program, out isSerie))
               {
@@ -609,6 +593,7 @@ namespace MediaPortal.GUI.TV
                 item.Label2 = strTime;
               item.Path = program.Title;
               item.MusicTag = program;
+							item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
               bool isSerie;
               if (IsRecording(program, out isSerie))
               {
@@ -686,6 +671,7 @@ namespace MediaPortal.GUI.TV
               item.Label2 = strTime;
               item.Path = program.Title;
               item.MusicTag = program;
+            	item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
               bool isSerie;
               if (IsRecording(program, out isSerie))
               {
@@ -756,8 +742,13 @@ namespace MediaPortal.GUI.TV
       RestoreHistory();
     }
 
+  	private void item_OnItemSelected(GUIListItem item, GUIControl parent)
+  	{
+  		UpdateDescription();
+  	}
 
-    void SetHistory()
+
+  	void SetHistory()
     {
       GUIListItem item = GetSelectedItem();
       if (item == null) return;
