@@ -409,7 +409,7 @@ namespace MediaPortal.GUI.Music
 
     void BuildOrder(FilterDefinition filter, ref string orderClause)
     {
-      orderClause = " order by " + GetField(filter.Where) + " ";
+      orderClause = " order by " + GetSortField(filter) + " ";
       if (!filter.SortAscending) orderClause += "desc";
       else orderClause += "asc";
       if (filter.Limit > 0)
@@ -484,6 +484,19 @@ namespace MediaPortal.GUI.Music
         return "0";
       }
       return "";
+    }
+
+    string GetSortField(FilterDefinition filter)
+    {
+      // Don't allow anything else but the fieldnames itself on Multiple Fields
+      if (filter.Where == "artist" || filter.Where == "albumartist" || filter.Where == "genre")
+        return GetField(filter.Where);
+
+      if (filter.DefaultSort == "Date") return GetField("year");
+      if (filter.DefaultSort == "Name") return GetField("title");
+      if (filter.DefaultSort == "Duration") return "iDuration";
+
+      return GetField(filter.Where);
     }
 
     public void SetLabel(Song song, ref GUIListItem item)
