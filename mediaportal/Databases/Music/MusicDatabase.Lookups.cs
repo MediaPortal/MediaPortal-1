@@ -895,7 +895,7 @@ namespace MediaPortal.Music.Database
         aAlbumInfoList.Clear();
 
         string strSQL;
-        strSQL = String.Format("SELECT DISTINCT strAlbum, strAlbumArtist, strArtist FROM tracks ORDER BY strArtist, strAlbumArtist, strAlbum");
+        strSQL = String.Format("SELECT strAlbum, strAlbumArtist, strArtist, iYear FROM tracks GROUP BY strAlbum ORDER BY strAlbumArtist, strAlbum, iYear");
         
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -931,7 +931,7 @@ namespace MediaPortal.Music.Database
 
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
-        string strSQL = "SELECT DISTINCT strAlbum, * FROM tracks where strAlbum like ";
+        string strSQL = "SELECT * FROM tracks WHERE strAlbum LIKE ";
         switch (aSearchKind)
         {
           case 0:
@@ -949,6 +949,7 @@ namespace MediaPortal.Music.Database
           default:
             return false;
         }
+        strSQL += " GROUP BY strAlbum";
        
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
