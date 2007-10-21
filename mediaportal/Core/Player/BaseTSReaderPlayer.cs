@@ -1330,7 +1330,7 @@ namespace MediaPortal.Player
             hr = _mediaCtrl.GetState(200, out state);
             if (hr != 0)
             {
-              Log.Info("GetState failed: {0:x}");
+              Log.Info("GetState failed: {0:x}", hr);
             }
             else if (state == FilterState.Stopped)
             {
