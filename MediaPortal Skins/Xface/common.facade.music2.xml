@@ -35,6 +35,10 @@
           <posX>90</posX>
           <width>1250</width>
           <font>font12</font>
+          <thumbHeight>120</thumbHeight>
+          <thumbPosX>28</thumbPosX>
+          <thumbPosY>6</thumbPosY>
+          <thumbZoom>no</thumbZoom>
         </control>
         <control>
           <description>Filmstrip view</description>
@@ -47,22 +51,22 @@
           <thumbHeight>179</thumbHeight>
           <thumbPosY>12</thumbPosY>
           <imageFolderFocus>Framefocus.png</imageFolderFocus>
-	      <frame>Frame.png</frame>
+          <frame>Frame.png</frame>
           <frameFocus>Covertop.png</frameFocus>
           <itemWidth>203</itemWidth>
           <itemHeight>310</itemHeight>
           <textureHeight>310</textureHeight>
           <font>font12</font>
           <textXOff>8</textXOff>
-		  <textYOff>-50</textYOff>
+          <textYOff>-50</textYOff>
           <selectedColor>00ffffff</selectedColor>
           <textcolor>ffffffff</textcolor>
           <colordiffuse>00ffffff</colordiffuse>
           <remoteColor>00ffffff</remoteColor>
           <downloadColor>00ffffff</downloadColor>
           <background>Coverbig.png</background>
-          <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
-          <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
+          <thumbs flipY="true" diffuse="Thumb_Mask.png"/>
+          <InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
           <showFrame>yes</showFrame>
           <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
@@ -74,7 +78,7 @@
           <description>playlist listcontrol</description>
           <type>playlistcontrol</type>
           <id>50</id>
-       <posX>375</posX>
+          <posX>375</posX>
           <width>950</width>
           <textureHeight>45</textureHeight>
           <font>font16</font>
@@ -85,17 +89,17 @@
           <IconXOff>64</IconXOff>
           <IconYOff>4</IconYOff>
           <upBtnWidth>43</upBtnWidth>
-		<downBtnWidth>47</downBtnWidth>
-		<deleteBtnWidth>47</deleteBtnWidth>
-		<upBtnHeight>45</upBtnHeight>
-		<downBtnHeight>45</downBtnHeight>
-		<deleteBtnHeight>45</deleteBtnHeight>
-		<upBtnXOffset>772</upBtnXOffset>
-		<downBtnXOffset>819</downBtnXOffset>
-		<deleteBtnXOffset>870</deleteBtnXOffset>
-		<upBtnYOffset>1</upBtnYOffset>
-		<downBtnYOffset>1</downBtnYOffset>
-		<deleteBtnYOffset>1</deleteBtnYOffset>
+          <downBtnWidth>47</downBtnWidth>
+          <deleteBtnWidth>47</deleteBtnWidth>
+          <upBtnHeight>45</upBtnHeight>
+          <downBtnHeight>45</downBtnHeight>
+          <deleteBtnHeight>45</deleteBtnHeight>
+          <upBtnXOffset>772</upBtnXOffset>
+          <downBtnXOffset>819</downBtnXOffset>
+          <deleteBtnXOffset>870</deleteBtnXOffset>
+          <upBtnYOffset>1</upBtnYOffset>
+          <downBtnYOffset>1</downBtnYOffset>
+          <deleteBtnYOffset>1</deleteBtnYOffset>
           <scrollOffset>1</scrollOffset>
         </control>
       </control>

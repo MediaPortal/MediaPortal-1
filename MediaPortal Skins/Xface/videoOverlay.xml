@@ -18,7 +18,7 @@
     </control>
     <control>
       <type>multiimage</type>
-      <id>1</id>
+      <id>0</id>
       <posX>370</posX>
       <posY>703</posY>
       <width>68</width>
@@ -28,7 +28,7 @@
       <fadetime>10</fadetime>
       <loop>yes</loop>
       <randomize>false</randomize>
-      <visible>Player.HasVideo + Player.playing</visible>
+      <visible>Player.playing</visible>
       <animation effect="fade" time="10">VisibleChange</animation>
     </control>
     <control>

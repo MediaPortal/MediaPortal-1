@@ -68,11 +68,11 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>762</posX>
-      <posY>580</posY>
+      <posY>582</posY>
       <width>365</width>
       <label>#selecteditem</label>
+      <textcolor>e0000000</textcolor>
       <font>font14</font>
-      <textcolor>Black</textcolor>
       <visible>!facadeview.list</visible>
     </control>
     <control>
@@ -85,10 +85,11 @@
       <posY>615</posY>
       <width>365</width>
       <label>#selecteditem2</label>
+      <textcolor>e0000000</textcolor>
       <font>font13</font>
       <visible>!facadeview.list</visible>
     </control>
-    <control>
+<!--    <control>
       <type>image</type>
       <posX>637</posX>
       <posY>588</posY>
@@ -97,7 +98,7 @@
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <visible>!facadeview.list</visible>
     </control>
-<!--     <control>
+     <control>
       <type>image</type>
       <posX>633</posX>
       <posY>578</posY>

@@ -167,9 +167,9 @@
 		<shadedColor>20ffffff</shadedColor>
 		<selectedColor>FFF8BC70</selectedColor>
 		<playedColor>ffa0d0ff</playedColor>
-		<textcolor>ffffffff</textcolor>
-		<textcolor2>ffffffff</textcolor2>
-		<textcolor3>ffffffff</textcolor3>
+		<textcolor>FFdddddd</textcolor>
+		<textcolor2>FFdddddd</textcolor2>
+		<textcolor3>FFdddddd</textcolor3>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>
 		<downloadColor>ff80ff80</downloadColor>
@@ -205,9 +205,9 @@
 		<font>font12</font>
 		<shadedColor>20ffffff</shadedColor>
 		<selectedColor>FFF8BC70</selectedColor>
-		<textcolor>ffffffff</textcolor>
-		<textcolor2>ffffffff</textcolor2>
-		<textcolor3>ffffffff</textcolor3>
+		<textcolor>FFdddddd</textcolor>
+		<textcolor2>FFdddddd</textcolor2>
+		<textcolor3>FFdddddd</textcolor3>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>
 		<downloadColor>ff80ff80</downloadColor>
@@ -249,9 +249,9 @@
 		<font>font12</font>
 		<shadedColor>20ffffff</shadedColor>
 		<selectedColor>FFF8BC70</selectedColor>
-		<textcolor>ffffffff</textcolor>
-		<textcolor2>ffffffff</textcolor2>
-		<textcolor3>ffffffff</textcolor3>
+		<textcolor>FFdddddd</textcolor>
+		<textcolor2>FFdddddd</textcolor2>
+		<textcolor3>FFdddddd</textcolor3>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>
 		<downloadColor>ff80ff80</downloadColor>
@@ -287,9 +287,9 @@
 		<font>font13</font>
 		<shadedColor>20ffffff</shadedColor>
 		<selectedColor>FFF8BC70</selectedColor>
-		<textcolor>ffffffff</textcolor>
-		<textcolor2>ffffffff</textcolor2>
-		<textcolor3>ffffffff</textcolor3>
+		<textcolor>FFdddddd</textcolor>
+		<textcolor2>FFdddddd</textcolor2>
+		<textcolor3>FFdddddd</textcolor3>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>
 		<downloadColor>ff80ff80</downloadColor>
@@ -351,7 +351,7 @@
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
 		<font>font13</font>
 		<selectedColor>00ffffff</selectedColor>
-		<textcolor>ffffffff</textcolor>
+		<textcolor>FFdddddd</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>
 		<downloadColor>ff80ff80</downloadColor>
@@ -400,7 +400,7 @@
 		<textureHeight>391</textureHeight>
 		<font>font12</font>
 		<selectedColor>ffffffff</selectedColor>
-		<textcolor>ffffffff</textcolor>
+		<textcolor>FFdddddd</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>
 		<downloadColor>ff80ff80</downloadColor>
