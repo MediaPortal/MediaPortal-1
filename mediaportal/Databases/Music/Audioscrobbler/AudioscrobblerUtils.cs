@@ -414,7 +414,7 @@ namespace MediaPortal.Music.Database
   public class AudioscrobblerUtils
   {
     private bool _useDebugLog = false;
-    private bool _doCoverLookups = true;    
+    private bool _doCoverLookups = true;
     private string _defaultUser = "";
     private Object LookupLock;
 
@@ -636,8 +636,9 @@ namespace MediaPortal.Music.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))        
       {
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-        _doCoverLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);        
+        _doCoverLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
       }
+
       MusicDatabase mdb = MusicDatabase.Instance;
       _currentNeighbourMode = lastFMFeed.weeklyartistchart;
 
@@ -819,9 +820,9 @@ namespace MediaPortal.Music.Database
                       // Get the track with Artist and Album should be the 2nd best idea
                       if (!string.IsNullOrEmpty(unfilteredList_[s].Artist) && !string.IsNullOrEmpty(unfilteredList_[s].Album))
                       {
-                        if (!mdb.GetSongByArtistAlbumTitle(unfilteredList_[s].Artist, unfilteredList_[s].Album, unfilteredList_[s].Title, ref dbSong))
+                        if (!mdb.GetSongByArtistAlbumTitle(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Album, unfilteredList_[s].Title, ref dbSong))
                           // Maybe the album was spelled different on last.fm
-                          if (!mdb.GetSongByArtistTitle(unfilteredList_[s].Artist, unfilteredList_[s].Title, ref dbSong))
+                          if (!mdb.GetSongByArtistTitle(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Title, ref dbSong))
                             // Make sure we get at least one / some usable results
                             mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
                       }
@@ -829,7 +830,7 @@ namespace MediaPortal.Music.Database
                         // Unfortunately no album to narrow down the search
                         if (!string.IsNullOrEmpty(unfilteredList_[s].Artist))
                         {
-                          if (!mdb.GetSongByArtistTitle(unfilteredList_[s].Artist, unfilteredList_[s].Title, ref dbSong))
+                          if (!mdb.GetSongByArtistTitle(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Title, ref dbSong))
                             // Make sure we get at least one / some usable results
                             mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
                         }
@@ -955,7 +956,7 @@ namespace MediaPortal.Music.Database
 
     public List<Song> getTopAlbums(string artistToSearch_)
     {
-      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(artistToSearch_));
       List<Song> TopAlbums = new List<Song>();
 
       TopAlbums = ParseXMLDocForTopAlbums(urlArtist);
@@ -978,52 +979,52 @@ namespace MediaPortal.Music.Database
     public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks, bool aMarkLocalInURL)
     {
       int failover = 0;
-      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(artistToSearch_));
       string urlAlbum = AudioscrobblerBase.getValidURLLastFMString(albumToSearch_);
       List<Song> albumTracks = new List<Song>();
       do
       {
         albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
 
-        if (albumTracks.Count == 0)
-        {
-          failover++;
-          switch (failover)
-          {
-            case 1:
-              urlArtist = AudioscrobblerBase.getValidURLLastFMString("The " + artistToSearch_);
-              break;
-            case 2:
-              urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
-              urlAlbum = AudioscrobblerBase.getValidURLLastFMString("The " + albumToSearch_);
-              break;
-            case 3:
-              urlArtist = AudioscrobblerBase.getValidURLLastFMString("The " + artistToSearch_);
-              urlAlbum = AudioscrobblerBase.getValidURLLastFMString("The " + albumToSearch_);
-              break;
-            case 4:
-              urlArtist = artistToSearch_.Replace("oe", "ö");
-              urlArtist = urlArtist.Replace("ae", "ä");
-              urlArtist = urlArtist.Replace("ue", "ü");
-              urlArtist = AudioscrobblerBase.getValidURLLastFMString(urlArtist);
-              urlAlbum = albumToSearch_.Replace("oe", "ö");
-              urlAlbum = urlAlbum.Replace("ae", "ä");
-              urlAlbum = urlAlbum.Replace("ue", "ü");
-              urlAlbum = AudioscrobblerBase.getValidURLLastFMString(urlAlbum);
-              break;
-            case 5:
-              if (artistToSearch_.IndexOf("&") > 0)
-                urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_.Remove(artistToSearch_.IndexOf("&")));
-              else
-                goto default;
-              break;
-            default:
-              Log.Debug("AudioScrobblerUtils: No album info found for {0}", artistToSearch_ + " - " + albumToSearch_);
-              failover = 0;
-              break;
-          }
-        }
-        else
+        //if (albumTracks.Count == 0)
+        //{
+        //  failover++;
+        //  switch (failover)
+        //  {
+        //    case 1:
+        //      urlArtist = AudioscrobblerBase.getValidURLLastFMString("The " + artistToSearch_);
+        //      break;
+        //    case 2:
+        //      urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+        //      urlAlbum = AudioscrobblerBase.getValidURLLastFMString("The " + albumToSearch_);
+        //      break;
+        //    case 3:
+        //      urlArtist = AudioscrobblerBase.getValidURLLastFMString("The " + artistToSearch_);
+        //      urlAlbum = AudioscrobblerBase.getValidURLLastFMString("The " + albumToSearch_);
+        //      break;
+        //    case 4:
+        //      urlArtist = artistToSearch_.Replace("oe", "ö");
+        //      urlArtist = urlArtist.Replace("ae", "ä");
+        //      urlArtist = urlArtist.Replace("ue", "ü");
+        //      urlArtist = AudioscrobblerBase.getValidURLLastFMString(urlArtist);
+        //      urlAlbum = albumToSearch_.Replace("oe", "ö");
+        //      urlAlbum = urlAlbum.Replace("ae", "ä");
+        //      urlAlbum = urlAlbum.Replace("ue", "ü");
+        //      urlAlbum = AudioscrobblerBase.getValidURLLastFMString(urlAlbum);
+        //      break;
+        //    case 5:
+        //      if (artistToSearch_.IndexOf("&") > 0)
+        //        urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_.Remove(artistToSearch_.IndexOf("&")));
+        //      else
+        //        goto default;
+        //      break;
+        //    default:
+        //      Log.Debug("AudioScrobblerUtils: No album info found for {0}", artistToSearch_ + " - " + albumToSearch_);
+        //      failover = 0;
+        //      break;
+        //  }
+        //}
+        //else
           failover = 0;
 
       } while (failover != 0);
@@ -1044,7 +1045,7 @@ namespace MediaPortal.Music.Database
 
             foreach (Song localSong in filteredSongs)
             {
-              if (localSong.Artist.ToLowerInvariant() == albumTracks[i].Artist.ToLowerInvariant() && localSong.Title.ToLowerInvariant() == albumTracks[i].Title.ToLowerInvariant())
+              if (localSong.Artist.ToLowerInvariant() == AudioscrobblerBase.StripArtistPrefix(albumTracks[i].Artist).ToLowerInvariant() && localSong.Title.ToLowerInvariant() == albumTracks[i].Title.ToLowerInvariant())
                 albumTracks[i].URL = "local";
             }            
           }
@@ -1068,7 +1069,7 @@ namespace MediaPortal.Music.Database
       int randomPosition = 0;
       int calcRandValue = 0;
       Random rand = new Random();
-      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(artistToSearch_));
       string urlTrack = AudioscrobblerBase.getValidURLLastFMString(trackToSearch_);
       string tmpGenre = string.Empty;
       List<Song> tagTracks = new List<Song>();
@@ -1187,7 +1188,7 @@ namespace MediaPortal.Music.Database
     public Song getArtistInfo(string artistToSearch_)
     {
       Song tmpSong = new Song();
-      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(artistToSearch_));
 
       tmpSong = ParseXMLDocForArtistInfo(urlArtist);
 
@@ -1215,14 +1216,14 @@ namespace MediaPortal.Music.Database
 
     public List<Song> getTagsForArtist(string artistToSearch_)
     {
-      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(artistToSearch_));
 
       return ParseXMLDocForUsedTags(urlArtist, "", lastFMFeed.topartisttags);
     }
 
     public List<Song> getTagsForTrack(string artistToSearch_, string trackToSearch_)
     {
-      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(artistToSearch_));
       string urlTrack = AudioscrobblerBase.getValidURLLastFMString(trackToSearch_);
 
       return ParseXMLDocForUsedTags(urlArtist, urlTrack, lastFMFeed.toptracktags);
@@ -1314,7 +1315,7 @@ namespace MediaPortal.Music.Database
 
     public List<Song> getSimilarArtists(string Artist_, bool randomizeList_)
     {
-      Artist_ = AudioscrobblerBase.getValidURLLastFMString(Artist_);
+      Artist_ = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(Artist_));
       if (randomizeList_)
       {
         Random rand = new Random();

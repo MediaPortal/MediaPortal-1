@@ -653,7 +653,7 @@ namespace MediaPortal.Music.Database
         // Strip Artist / AlbumArtist but NOT Genres
         if (_stripArtistPrefixes && strip)
         {
-          StripArtistNamePrefix(ref s, true);
+          Util.Utils.StripArtistNamePrefix(ref s, true);
         }
         strJoin += String.Format("{0} | ", s.Trim());
       }
@@ -1118,42 +1118,6 @@ namespace MediaPortal.Music.Database
     //  else
     //    Log.Debug("Database: CreateGenreThumbs is missing some info - file: {0}, genre: {1}", aThumbPath, aGenre);
     //}
-
-    /// <summary>
-    /// Move the Prefix of an artist to the end of the string for better sorting
-    /// i.e. "The Rolling Stones" -> "Rolling Stones, The" 
-    /// </summary>
-    /// <param name="artistName"></param>
-    /// <param name="appendPrefix"></param>
-    /// <returns></returns>
-    private bool StripArtistNamePrefix(ref string artistName, bool appendPrefix)
-    {
-      string temp = artistName.ToLower();
-
-      foreach (string s in _artistNamePrefixes)
-      {
-        if (s.Length == 0)
-          continue;
-
-        string prefix = s;
-        prefix = prefix.Trim().ToLower();
-        int pos = temp.IndexOf(prefix + " ");
-        if (pos == 0)
-        {
-          string tempName = artistName.Substring(prefix.Length).Trim();
-
-          if (appendPrefix)
-            artistName = string.Format("{0}, {1}", tempName, artistName.Substring(0, prefix.Length));
-
-          else
-            artistName = temp;
-
-          return true;
-        }
-      }
-
-      return false;
-    }
 
     private void UpdateVariousArtist(MusicTag tag)
     {

@@ -87,7 +87,9 @@ namespace MediaPortal.Music.Database
     private static string olduser;
     private static string oldpass;
 
-    //private string cacheFile;
+    // Utils
+    private static bool _artistsStripped = false;
+    private static string _artistPrefixes = string.Empty;
 
     // Other internal properties.    
     private static Thread submitThread;
@@ -145,6 +147,8 @@ namespace MediaPortal.Music.Database
       {
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         _recordToProfile = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
+        _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
+        _artistsStripped = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
 
         string tmpPass;
         ParseLock = new object();
@@ -907,7 +911,7 @@ namespace MediaPortal.Music.Database
       sb.Append("s=");
       sb.Append(sessionID);
       sb.Append("&a=");
-      sb.Append(getValidURLLastFMString(CurrentSong.Artist));
+      sb.Append(getValidURLLastFMString(UndoArtistPrefix(CurrentSong.Artist)));
       sb.Append("&t=");
       sb.Append(System.Web.HttpUtility.UrlEncode(CurrentSong.Title));
       sb.Append("&b=");
@@ -1278,6 +1282,54 @@ namespace MediaPortal.Music.Database
         }
         return outString;
       }
+    }
+
+    public static string UndoArtistPrefix(string aStrippedArtist)
+    {
+      //"The, Les, Die"
+      if (_artistsStripped)
+      {
+        try
+        {
+          string[] allPrefixes = null;
+          allPrefixes = _artistPrefixes.Split(',');
+          if (allPrefixes != null && allPrefixes.Length > 0)
+          {
+            for (int i = 0; i < allPrefixes.Length; i++)
+            {
+              string cpyPrefix = allPrefixes[i];
+              if (aStrippedArtist.ToLowerInvariant().EndsWith(cpyPrefix.ToLowerInvariant()))
+              {
+                // strip the separating "," as well
+                int prefixPos = aStrippedArtist.IndexOf(',');
+                if (prefixPos > 0)
+                {
+                  aStrippedArtist = aStrippedArtist.Remove(prefixPos);
+                  cpyPrefix = cpyPrefix.Trim(new char[] { ' ', ',' });
+                  aStrippedArtist = cpyPrefix + " " + aStrippedArtist;
+                  // abort here since artists should only have one prefix stripped
+                  return aStrippedArtist;
+                }
+              }
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("AudioscrobblerBase: An error occured undoing prefix strip for artist: {0} - {1}", aStrippedArtist, ex.Message);
+        }
+      }
+
+      return aStrippedArtist;
+    }
+
+    public static string StripArtistPrefix(string aArtistToStrip)
+    {
+      //"The, Les, Die"
+      if (_artistsStripped)
+        Util.Utils.StripArtistNamePrefix(ref aArtistToStrip, true);        
+      
+      return aArtistToStrip;
     }
     #endregion
 

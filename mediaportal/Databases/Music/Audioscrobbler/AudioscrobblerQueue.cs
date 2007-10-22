@@ -231,7 +231,7 @@ namespace MediaPortal.Music.Database
         sb.AppendFormat(
              "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}&m[{0}]={9}",
              i,
-             AudioscrobblerBase.getValidURLLastFMString(track.Artist),
+             AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(track.Artist)),
              System.Web.HttpUtility.UrlEncode(track.Title),
              track.StartTime,
              "P" /* chosen by user */ ,

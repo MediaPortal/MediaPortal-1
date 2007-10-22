@@ -103,6 +103,9 @@ namespace MediaPortal.Util
     static ArrayList m_AudioExtensions = new ArrayList();
     static ArrayList m_VideoExtensions = new ArrayList();
     static ArrayList m_PictureExtensions = new ArrayList();
+
+    static string[] _artistNamePrefixes;
+
     static bool m_bHideExtensions = false;
     static bool enableGuiSounds;
 
@@ -128,6 +131,8 @@ namespace MediaPortal.Util
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
+        string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
+        _artistNamePrefixes = artistNamePrefixes.Split(',');
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
         Tokens tok = new Tokens(strTmp, new char[] { ',' });
@@ -1958,6 +1963,42 @@ namespace MediaPortal.Util
         return ".bmp";
 
       return ".jpg";
+    }
+
+    /// <summary>
+    /// Move the Prefix of an artist to the end of the string for better sorting
+    /// i.e. "The Rolling Stones" -> "Rolling Stones, The" 
+    /// </summary>
+    /// <param name="artistName"></param>
+    /// <param name="appendPrefix"></param>
+    /// <returns></returns>
+    public static bool StripArtistNamePrefix(ref string artistName, bool appendPrefix)
+    {
+      string temp = artistName.ToLower();
+
+      foreach (string s in _artistNamePrefixes)
+      {
+        if (s.Length == 0)
+          continue;
+
+        string prefix = s;
+        prefix = prefix.Trim().ToLower();
+        int pos = temp.IndexOf(prefix + " ");
+        if (pos == 0)
+        {
+          string tempName = artistName.Substring(prefix.Length).Trim();
+
+          if (appendPrefix)
+            artistName = string.Format("{0}, {1}", tempName, artistName.Substring(0, prefix.Length));
+
+          else
+            artistName = temp;
+
+          return true;
+        }
+      }
+
+      return false;
     }
 
     public static void DeleteFiles(string strDir, string strPattern)
