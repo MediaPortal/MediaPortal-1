@@ -3,8 +3,10 @@
 # For the MediaPortal Installer to work you need:
 # 1. Lastest NSIS version from http://nsis.sourceforge.net/Download
 # 
-# Editing is much more easier, if you installe Eclipse from www.eclipse.org and the NSIS Plugin http://nsis.sourceforge.net/EclipseNSIS_-_NSIS_plugin_for_Eclipse
+# Editing is much more easier, if you install HM NSIS Edit from http://hmne.sourceforge.net
 #
+# ATTENTION: You need to have the vcredist_x86.exe package in the setup folder.
+#            Haven't uploaded it, to save 2.5 MB in SVN
 #**********************************************************************************************************#
 
 !define APP_NAME "MediaPortal 0.2.3.0 RC3"
@@ -138,6 +140,7 @@ Section -Main SEC0000
     ; Doc
     SetOutPath $INSTDIR\Docs
     File "..\Docs\BASS License.txt"
+    File "..\Docs\LICENSE.rtf"
     File "..\Docs\MediaPortal License.rtf"
     File "..\Docs\SQLite Database Browser.exe"
 
@@ -234,6 +237,7 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\MusicShareWatcher.exe
     File ..\xbmc\bin\Release\MusicShareWatcherHelper.dll
     File ..\xbmc\bin\Release\RemotePlugins.dll
+    File ..\xbmc\bin\Release\restart.vbs
     File ..\xbmc\bin\Release\SG_LCD.dll
     File ..\xbmc\bin\Release\SG_VFD.dll
     File ..\xbmc\bin\Release\sqlite.dll
@@ -260,6 +264,9 @@ Section -Main SEC0000
         ; We have a special MediaPortalDirs.xml   
         File MediaPortalDirs.xml
         
+        ; We need to have the custom Inputmapping dir created
+        CreateDirectory "$CommonAppData\InputDeviceMappings\custom"
+        
         ;From here on, the Vista specific files should go to the common App Folder
         SetOutPath $CommonAppData 
     ${Else}
@@ -281,10 +288,8 @@ Section -Main SEC0000
     ; We are not deleting Files and Folders after this point
     
     ; Folders
-
     File /r ..\xbmc\bin\Release\thumbs
-    File /r ..\xbmc\bin\Release\xmltv
-    
+    File /r ..\xbmc\bin\Release\xmltv   
     
     ; The Following Filters and Dll need to be copied to \windows\system32 for xp
     ; In Vista they stay in the Install Directory
@@ -318,6 +323,23 @@ Section -Main SEC0000
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $FilterDir\GenDMOProp.dll $FilterDir
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegAudio.dll $FilterDir\MpegAudio.dll $FilterDir
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegVideo.dll $FilterDir\MpegVideo.dll $FilterDir
+        ; Write Default Values for Filter into the registry
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "MPEG Audio over SPDIF" 0
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "SPDIF Audio Time Offset" 0
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Speaker Config" 1
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Use SPDIF for AC3 & DTS" 0
+        
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "3:2 playback smoothing" 1
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Colour space to output" 1
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Deinterlace Mode" 2
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Display Forced Subtitles" 1
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Do Analog Blanking" 1
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "DVB Aspect Preferences" 0
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Hardcode for PAL with ffdshow" 0
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "IDCT to Use" 2
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Use accurate aspect ratios" 1
+        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Video Delay" 0
     ${EndIf}
   
     WriteRegStr HKLM "${INSTDIR_REG_KEY}" Gabest 0
@@ -325,6 +347,28 @@ Section -Main SEC0000
         WriteRegStr HKLM "${INSTDIR_REG_KEY}" Gabest 1
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $FilterDir\MpaDecFilter.ax $FilterDir
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $FilterDir\Mpeg2DecFilter.ax $FilterDir
+        
+        ; Write Default Values for Filter into the registry
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Dynamic Range" 0
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 LFE" 0
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Speaker Config" 2
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3Decoder" 0
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Boost" 0
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Dynamic Range" 0
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS LFE" 0
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Speaker Config" 2
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTSDecoder" 0
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Normalize" 0
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Output Format" 0
+        
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Brightness" 128
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Contrast" 100
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Deinterlace" 0
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Enable Planar YUV Modes" 1
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Forced Subtitles" 1
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Hue" 180
+        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Saturation" 100
     ${EndIf}
     
     ; Common DLLs
@@ -333,38 +377,47 @@ Section -Main SEC0000
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71u.dll $FilterDir\MFC71u.dll $FilterDir
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcp71.dll $FilterDir\msvcp71.dll $FilterDir
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcr71.dll $FilterDir\msvcr71.dll $FilterDir
-
+ 
+    WriteRegStr HKLM "${INSTDIR_REG_KEY}\Components" Main 1
     
-    ; Create the Statmenu and the Desktop shortcuts
+    ; Write the Install / Config Dir into the registry for the Public SVN Installer to recognize the environment
+    WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ApplicationDir $INSTDIR
+    
+    ${if} $WindowsVersion == "Vista"
+       WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $CommonAppData 
+    ${Else}
+        WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $INSTDIR
+    ${Endif}
+SectionEnd
+
+# This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
+;..................................................................................................
+Section -post SEC0001
+    WriteRegStr HKLM "${INSTDIR_REG_KEY}" Path $INSTDIR
+    WriteRegStr HKLM "${INSTDIR_REG_KEY}" PathFilter $FILTERDIR
+    WriteRegStr HKLM "${INSTDIR_REG_KEY}" WindowsVersion $WindowsVersion
+  
+    ; Create the Statmenu and the Desktop shortcuts  
+    
+    ; The OutputPath specifies the Working Directory used for the Shortcuts
+    SetOutPath $INSTDIR
+    WriteUninstaller $INSTDIR\uninstall.exe
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails 
+    CreateDirectory $SMPROGRAMS\$StartMenuGroup 
     SetShellVarContext current
-    SetOutPath $SMPROGRAMS\$StartMenuGroup
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal" 
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk" "$INSTDIR\MediaPortal.exe" "-auto" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal Debug"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration" 
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\License.lnk" "$INSTDIR\Docs\MediaPortal License.rtf" "" "$INSTDIR\Docs\MediaPortal License.rtf" 0 "" "" "License"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPInstaller.lnk" "$INSTDIR\MPInstaller.exe" "" "$INSTDIR\MPInstaller.exe" 0 "" "" "MediaPortal Extension Installer"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPTestTool.lnk" "$INSTDIR\MPTestTool2.exe" "" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Test Tool"
-
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall.exe
+    
     CreateShortcut "$DESKTOP\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal" 
     CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration" 
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}\Components" Main 1
-SectionEnd
-
-# THis Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
-;..................................................................................................
-Section -post SEC0001
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}" Path $INSTDIR
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}" PathFilter $FILTERDIR
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}" WindowsVersion $WindowsVersion
-    SetOutPath $INSTDIR
-    WriteUninstaller $INSTDIR\uninstall.exe
-    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    ; THe OutputPath specifies the Working Directory used for the Shortcuts
-    SetOutPath $INSTDIR
-    ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails 
-    CreateDirectory $SMPROGRAMS\$StartMenuGroup
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_END
+    
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
@@ -375,6 +428,20 @@ Section -post SEC0001
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
 SectionEnd
 
+; This section installs the VC++ Redist Library
+Section -Redist SEC0002
+    SetOutPath $INSTDIR
+    SetOverwrite on
+    
+    ; Now Copy the VC Redist File, which will be executed as part of the install
+    File vcredist_x86.exe
+
+    ; Installing VC++ Redist Package
+    DetailPrint "Installing VC++ Redist Package"
+    ExecWait '"$INSTDIR\vcredist_x86.exe" /q:a /c:"VCREDI~3.EXE /q:a /c:""msiexec /i vcredist.msi /qb!"" "'
+    DetailPrint "Finished Installing VC++ Redist Package"
+    Delete /REBOOTOK  $INSTDIR\vcredist_x86.exe
+SectionEnd
 
 # Installer functions
 Function .onInit
@@ -393,9 +460,9 @@ Function .onInit
         MessageBox MB_OK|MB_ICONSTOP "MediaPortal is not support on Windows $WindowsVersion. Installation aborted"
         Abort
     ${EndIf}
-    ${if} $WindowsVersion == "2000" 
-    ${OrIf} $WindowsVersion == "2003"
-        MessageBox MB_OK|MB_ICONSTOP "MediaPortal is not support on Windows $WindowsVersion. Use at your own risk"
+    ${If} $WindowsVersion == "2003"
+        ; MS Reports also XP 64 as NT 5.2. So we default on XP
+        StrCpy $WindowsVersion 'XP'
     ${EndIf}   
     
     ; Check if .Net is installed
@@ -612,8 +679,10 @@ Section /o -un.Main UNSEC0000
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71u.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcp71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcr71.dll       
-    
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcr71.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC80.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC80u.dll
+
     ; Delete StartMenu- , Desktop ShortCuts and Registry Entry
     Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk"
