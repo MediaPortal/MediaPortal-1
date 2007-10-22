@@ -130,6 +130,7 @@ namespace MediaPortal.Player
         //Check if the WMAudio Decoder DMO filter is in the graph if so set High Resolution Output > 2 channels
         IBaseFilter baseFilter;
         graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
+        int hr;
         if (baseFilter != null)
         {
           Log.Info("VideoPlayerVMR9: Found WMAudio Decoder DMO");
@@ -137,7 +138,6 @@ namespace MediaPortal.Player
           const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
           object val = true;
           IPropertyBag propBag = (IPropertyBag)baseFilter;
-          int hr;
           hr = propBag.Write(g_wszWMACHiResOutput, ref val);
           if (hr != 0)
           {
@@ -149,15 +149,99 @@ namespace MediaPortal.Player
           }
           Marshal.ReleaseComObject(baseFilter);
         }
-        //int hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
-        /*if (hr != 0)
+        hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+        if (hr != 0)
         {
           Error.SetError("Unable to play movie", "Unable to render file. Missing codecs?");
-          _log.Error("VideoPlayer9:Failed to render file -> vmr9");
+          Log.Error("VideoPlayer9: Failed to render file -> vmr9");
           return false;
-        }*/
-        //Use below since above is rem'd out to allow some file formats to play
-        graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+        }
+        //Use below if some file formats don't play
+        //graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+
+        //Now we check if AC3 Filter is in the graph as a post processing filter with extension .wmv
+        //If so we now force WMAudio to connect to the AC3Filter as by default is does not connect
+        IBaseFilter ac3Filter;
+        graphBuilder.FindFilterByName("AC3Filter", out ac3Filter);
+        if (ac3Filter != null & extension.Equals(".wmv"))
+        {
+          try
+          {
+            Log.Info("VideoPlayerVMR9: AC3Filter & extension = *.wmv");
+            //check if AC3Filter's input pin is not connected
+            IPin pinIn, pinConnected;
+            pinIn = DsFindPin.ByDirection(ac3Filter, PinDirection.Input, 0);
+            //check if the input is connected to an audio decoder
+            pinIn.ConnectedTo(out pinConnected);
+            if (pinConnected != null)
+            {
+              //pin is connected so proceed is not possible
+              Marshal.ReleaseComObject(pinIn);
+              Log.Info("VideoPlayerVMR9: AC3Filter already connected!");
+              return false;
+            }
+            Log.Info("VideoPlayerVMR9: AC3Filter not connected, continue...");
+            Marshal.ReleaseComObject(pinIn);
+            // We have to remove the audio renderer as we cannot connect to it afterwards once it has been connect too
+            graphBuilder.RemoveFilter(audioRendererFilter);
+            //Here we find out output & input pins of both audio filters
+            IPin sourcePin = null;
+            IPin sinkPin = null;
+            sourcePin = DirectShowUtil.FindPin(audioCodecFilter, PinDirection.Output, "out0");
+            sinkPin = DirectShowUtil.FindPin(ac3Filter, PinDirection.Input, "In");
+            if (sourcePin != null && sinkPin != null)
+            {
+              Log.Info("VideoPlayerVMR9: sinkPin & sourcePin found");
+              //Disconnect the WMAudio Decoder filter from the DirectSound Renderer
+              graphBuilder.Disconnect(sourcePin);
+            }
+            else
+            {
+              Log.Info("VideoPlayerVMR9: sinkPin & sourcePin NOT found");
+              Marshal.ReleaseComObject(sourcePin);
+              Marshal.ReleaseComObject(sinkPin);
+              return false;
+            }
+            //Now force the connection to AC3 Filter
+            hr = graphBuilder.Connect(sourcePin, sinkPin);
+            if (hr != 0)
+            {
+              Log.Info("VideoPlayerVMR9: could not connect WMAudio to AC3Filter...");
+              return false;
+            }
+            Log.Info("VideoPlayerVMR9: WMAudio connected to AC3Filter...");
+            Marshal.ReleaseComObject(sourcePin);
+            Marshal.ReleaseComObject(sinkPin);
+            //Then re-connect the AC3 Filter output to Audio renderer
+            IPin ac3OutPin = null;
+            IPin dsInPin = null;
+            ac3OutPin = DirectShowUtil.FindPin(ac3Filter, PinDirection.Output, "Out");
+            if (ac3OutPin != null)
+            {
+              //We now re-add the audio renderer...
+              if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
+              // And now render from the AC3Filter....
+              hr = graphBuilder.Render(ac3OutPin);
+              if (hr != 0)
+              {
+                Log.Info("VideoPlayerVMR9: could not connect AC3Filter to Audio Renderer");
+                return false;
+              }
+              Log.Info("VideoPlayerVMR9: AC3Filter connected to Audio Renderer...");
+            }
+            else
+              Log.Info("VideoPlayerVMR9: ac3OutPin NOT FOUND!");
+            //We are successful now we release the remaining resources
+            Marshal.ReleaseComObject(ac3OutPin);
+            Marshal.ReleaseComObject(dsInPin);
+          }
+          catch (Exception ex)
+          {
+            //_lastError = String.Format("Unable to create graph");
+            Log.Error(ex);
+          }
+          Marshal.ReleaseComObject(ac3Filter);
+        }
         mediaCtrl = (IMediaControl)graphBuilder;
         mediaEvt = (IMediaEventEx)graphBuilder;
         mediaSeek = (IMediaSeeking)graphBuilder;
