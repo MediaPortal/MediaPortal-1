@@ -1,13 +1,12 @@
 <window>
-	<animation effect="fade" time="400">WindowOpen</animation>
+    <animation effect="fade" time="400">WindowOpen</animation>
     <animation effect="fade" time="400">WindowClose</animation>
 
   <id>2008</id> 
   <defaultcontrol>1</defaultcontrol> 
   <allowoverlay>yes</allowoverlay>
   <controls>
-
-	 <control>
+     <control>
       <type>image</type>
       <id>0</id>
       <posX>0</posX>
@@ -31,9 +30,9 @@
      <control>
   	<type>image</type> 
 	<id>0</id> 
-	<posX>292</posX> 
+	<posX>283</posX> 
 	<posY>155</posY> 
-	<width>736</width> 
+	<width>800</width> 
 	<height>420</height> 
 	<texture>context_background.png</texture> 
 	<colordiffuse>ddffffff</colordiffuse>
@@ -52,6 +51,21 @@
       <textcolor>white</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>      
+    </control>
+
+    <control>
+      <description>Movie Title value</description>
+      <type>fadelabel</type>
+      <id>20</id>
+      <posX>300</posX>
+      <posY>270</posY>
+      <width>720</width>
+      <label>-</label>
+      <font>font12</font>
+      <align>center</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
 
     <control>
@@ -84,11 +98,6 @@
 		<onup>34</onup>
 		<colordiffuse>ddffffff</colordiffuse>
 	</control>
-
-
-
-
-
 	<control>
 		<description>CD1</description> 
 		<type>button</type> 
@@ -367,7 +376,7 @@
 		<textureFocus>button-cd-focus.png</textureFocus> 
 		<textureNoFocus>button-cd-nofocus.png</textureNoFocus> 
 		<onright>101</onright> 
-		<onleft>109</onleft> 
+		<onleft>119</onleft> 
 	</control>
 
     </controls>
