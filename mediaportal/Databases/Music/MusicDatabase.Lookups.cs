@@ -242,15 +242,14 @@ namespace MediaPortal.Music.Database
           {
             columnIndex = (int)results.ColumnIndices["strAlbum"];
             song.Album = fields.fields[columnIndex];
+            columnIndex = (int)results.ColumnIndices["strArtist"];
+            song.Artist = fields.fields[columnIndex].Trim(trimChars);
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
-            song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);  
+            song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);
             if (song.AlbumArtist.ToLowerInvariant().Contains("unknown"))
-            {
-              columnIndex = (int)results.ColumnIndices["strArtist"];
-              song.Artist = fields.fields[columnIndex].Trim(trimChars);
-            }
-            else
-              song.Artist = song.AlbumArtist;         // Make Artist equal to AlbumArtist (used by facadeView)
+              song.AlbumArtist = song.Artist;
+            
+
             // Set the Pathname for Cover Art Retrieval
             columnIndex = (int)results.ColumnIndices["strPath"];
             //song.FileName = String.Format("{0}\\", System.IO.Path.GetDirectoryName(fields.fields[columnIndex]));
@@ -400,7 +399,55 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-    public bool GetSongByArtistAlbumTitle(string aArtist, string aAlbum, string aTitle, ref Song aSong)
+    public bool GetSongByMusicTagInfo(string aArtist, string aAlbum, string aTitle, bool inexactFallback, ref Song aSong)
+    {
+      //Log.Debug("MusicDatabase: GetSongByMusicTagInfo - Artist: {0}, Album: {1}, Title: {2}, Nearest match: {3}", aArtist, aAlbum, aTitle, Convert.ToString(inexactFallback));
+      aSong.Clear();
+
+      // we have all info - try exact
+      if (!string.IsNullOrEmpty(aArtist) && !string.IsNullOrEmpty(aAlbum) && !string.IsNullOrEmpty(aTitle))
+      {
+        if (GetSongByArtistAlbumTitle(aArtist, aAlbum, aTitle, ref aSong))
+          return true;
+        else
+          if (!inexactFallback)
+            return false;
+      }
+
+      // An artist may have the same title in different versions (e.g. live, EP) on different discs - therefore this is the 2nd best option
+      if (!string.IsNullOrEmpty(aAlbum) && !string.IsNullOrEmpty(aTitle))
+      {
+        if (GetSongByAlbumTitle(aAlbum, aTitle, ref aSong))
+          return true;
+        else
+          if (!inexactFallback)
+            return false;
+      }
+
+      // Maybe the album was spelled different on last.fm or is mistagged in the local collection
+      if (!string.IsNullOrEmpty(aArtist) && !string.IsNullOrEmpty(aTitle))
+      {
+        if (GetSongByArtistTitle(aArtist, aTitle, ref aSong))
+          return true;
+        else
+          if (!inexactFallback)
+            return false;
+      }
+
+      // Make sure we get at least one / some usable results
+      if (!string.IsNullOrEmpty(aTitle))
+      {
+        if (GetSongByTitle(aTitle, ref aSong))
+          return true;
+        else
+          return false;
+      }
+
+      Log.Warn("MusicDatabase: GetSongByMusicTagInfo did not get usable params! Artist: {0}, Album: {1}, Title: {2}, Nearest Match: {3}", aArtist, aAlbum, aTitle, Convert.ToString(inexactFallback));
+      return false;
+    }
+
+    private bool GetSongByArtistAlbumTitle(string aArtist, string aAlbum, string aTitle, ref Song aSong)
     {
       try
       {
@@ -412,7 +459,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}%' AND strTitle LIKE '{2}%'", strArtist, strAlbum, strTitle);
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}%' AND strTitle LIKE '{2}'", strArtist, strAlbum, strTitle);
 
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -433,7 +480,38 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-    public bool GetSongByArtistTitle(string aArtist, string aTitle, ref Song aSong)
+    private bool GetSongByAlbumTitle(string aAlbum, string aTitle, ref Song aSong)
+    {
+      try
+      {
+        aSong.Clear();
+        string strTitle = aTitle;
+        string strAlbum = aAlbum;
+        DatabaseUtility.RemoveInvalidChars(ref strTitle);
+        DatabaseUtility.RemoveInvalidChars(ref strAlbum);
+
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strAlbum LIKE '{0}' AND strTitle LIKE '{1}'", strAlbum, strTitle);
+
+        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        if (results.Rows.Count == 0)
+          return false;
+
+        if (results.Rows.Count > 1)
+          Log.Warn("MusicDatabase: Lookups: GetSongByAlbumTitle found multiple results ({2}) for {0} - {1}", strAlbum, strTitle, Convert.ToString(results.Rows.Count));
+
+        if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
+          return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return false;
+    }
+
+    private bool GetSongByArtistTitle(string aArtist, string aTitle, ref Song aSong)
     {
       try
       {
@@ -443,7 +521,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strTitle);
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strTitle LIKE '{1}%'", strArtist, strTitle);
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strTitle LIKE '{1}'", strArtist, strTitle);
 
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -464,7 +542,7 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-    public bool GetSongByTitle(string aTitle, ref Song aSong)
+    private bool GetSongByTitle(string aTitle, ref Song aSong)
     {
       try
       {

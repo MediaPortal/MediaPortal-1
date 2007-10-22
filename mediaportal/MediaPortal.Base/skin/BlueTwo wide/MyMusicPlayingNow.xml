@@ -60,6 +60,7 @@
       <width>350</width>
       <height>350</height>
       <texture>-</texture>
+      <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>yes</zoom>
     </control>

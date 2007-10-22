@@ -817,26 +817,22 @@ namespace MediaPortal.Music.Database
                     if (!string.IsNullOrEmpty(unfilteredList_[s].FileName))
                       mdb.GetSongByFileName(unfilteredList_[s].FileName, ref dbSong);
                     else
-                      // Get the track with Artist and Album should be the 2nd best idea
-                      if (!string.IsNullOrEmpty(unfilteredList_[s].Artist) && !string.IsNullOrEmpty(unfilteredList_[s].Album))
-                      {
-                        if (!mdb.GetSongByArtistAlbumTitle(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Album, unfilteredList_[s].Title, ref dbSong))
-                          // Maybe the album was spelled different on last.fm
-                          if (!mdb.GetSongByArtistTitle(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Title, ref dbSong))
-                            // Make sure we get at least one / some usable results
-                            mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
-                      }
-                      else
-                        // Unfortunately no album to narrow down the search
-                        if (!string.IsNullOrEmpty(unfilteredList_[s].Artist))
-                        {
-                          if (!mdb.GetSongByArtistTitle(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Title, ref dbSong))
-                            // Make sure we get at least one / some usable results
-                            mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
-                        }
+                      mdb.GetSongByMusicTagInfo(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Album, unfilteredList_[s].Title, true, ref dbSong);
 
-                        else
-                          mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
+                      //if (!string.IsNullOrEmpty(unfilteredList_[s].Artist) && !string.IsNullOrEmpty(unfilteredList_[s].Album))
+                      //{
+                      //  if (!mdb.GetSongByArtistAlbumTitle(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Album, unfilteredList_[s].Title, ref dbSong))                          
+                      //    if (!mdb.GetSongByArtistTitle(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Title, ref dbSong))                            
+                      //      mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
+                      //}
+                      //else                        
+                      //  if (!string.IsNullOrEmpty(unfilteredList_[s].Artist))
+                      //  {
+                      //    if (!mdb.GetSongByArtistTitle(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Title, ref dbSong))                            
+                      //      mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
+                      //  }
+                      //  else
+                      //    mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong);
 
                     if (!string.IsNullOrEmpty(dbSong.Artist))
                     {

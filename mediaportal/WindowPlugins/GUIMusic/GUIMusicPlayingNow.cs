@@ -171,6 +171,8 @@ namespace MediaPortal.GUI.Music
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
 
+      // GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
+
       LoadSettings();
     }
 
@@ -200,6 +202,19 @@ namespace MediaPortal.GUI.Music
       }
 
       _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
+    }
+
+    void OnThreadMessage(GUIMessage message)
+    {
+      //switch (message.Message)
+      //{
+      //  case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
+      //    if (PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+      //    {      
+      //      OnSongInserted();
+      //    }
+      //    break;
+      //}
     }
 
     void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
@@ -512,35 +527,36 @@ namespace MediaPortal.GUI.Music
         if (currentPlaylist.Count > 0)
         {
           MusicDatabase mdb = MusicDatabase.Instance;
-          MusicTag listTag = new MusicTag();
-          List<GUIListItem> guiListItemList = new List<GUIListItem>();
-          GUIListItem queueItem = new GUIListItem();
+          Song addSong = new Song();
+          MusicTag tempTag = new MusicTag();
+          tempTag = (MusicTag)chosenTrack_.MusicTag;
 
-          listTag = (MusicTag)chosenTrack_.MusicTag;
-          guiListItemList.Add(chosenTrack_);
-
-          if (mdb.GetSongs(2, listTag.Title, ref guiListItemList))
+          if (mdb.GetSongByMusicTagInfo(tempTag.Artist, tempTag.Album, tempTag.Title, true, ref addSong))
           {
-            MusicTag tempTag = new MusicTag();
+            if (AddSongToPlaylist(ref addSong, _enqueueDefault))
+              Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", addSong.Artist, addSong.Title);
+            //if (mdb.GetSongs(1, listTag.Title, ref guiListItemList))
+            //{
+            //  MusicTag tempTag = new MusicTag();
 
-            foreach (GUIListItem alternativeSong in guiListItemList)
-            {
-              tempTag = GetTrackTag(mdb, alternativeSong.Path, false);
-              if (tempTag != null && tempTag.Artist != string.Empty)
-              {
-                if (tempTag.Artist.ToUpperInvariant() == listTag.Artist.ToUpperInvariant())
-                {
-                  queueItem = alternativeSong;
-                  queueItem.MusicTag = tempTag;
-                }
-              }
-            }
-            if (queueItem != null && queueItem.MusicTag != null)
-              if (AddSongToPlaylist(ref queueItem, _enqueueDefault))
-                Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
+            //  foreach (GUIListItem alternativeSong in guiListItemList)
+            //  {
+            //    tempTag = GetTrackTag(mdb, alternativeSong.Path, false);
+            //    if (tempTag != null && tempTag.Artist != string.Empty)
+            //    {
+            //      if (tempTag.Artist.ToUpperInvariant() == listTag.Artist.ToUpperInvariant())
+            //      {
+            //        queueItem = alternativeSong;
+            //        queueItem.MusicTag = tempTag;
+            //      }
+            //    }
+            //  }
+            //  if (queueItem != null && queueItem.MusicTag != null)
+            //    if (AddSongToPlaylist(ref queueItem, _enqueueDefault))
+            //      Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", listTag.Artist, listTag.Title);
           }
           else
-            Log.Info("GUIMusicPlayingNow: DB lookup for Song {0} unsuccessful", listTag.Artist + " - " + listTag.Title);
+            Log.Info("GUIMusicPlayingNow: DB lookup for Artist: {0} Title: {1} unsuccessful", tempTag.Artist, tempTag.Title);
         }
         else
         // not using playlists here...
@@ -1064,11 +1080,6 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Rating", (Convert.ToDecimal(2 * CurrentTrackTag.Rating + 1)).ToString());
           GUIPropertyManager.SetProperty("#duration", MediaPortal.Util.Utils.SecondsToHMSString(CurrentTrackTag.Duration));
 
-          //if (ImgListNextRating != null)
-          //{
-          //  int rating = CurrentTrackTag.Rating;
-          //  ImgListRating.Percentage = rating;
-          //}
           if (InfoNeeded)
           {
             UpdateAlbumInfo();
@@ -1093,37 +1104,43 @@ namespace MediaPortal.GUI.Music
               GUIPropertyManager.SetProperty("#Play.Next.Title", GUILocalizeStrings.Get(4542));
         }
 
-        if (NextTrackTag != null)
-        {
-          LblUpNext.Visible = true;
-          string strNextTrack = String.Format("{0} {1}", GUILocalizeStrings.Get(435), NextTrackTag.Track);   //	"Track: "
-          if (NextTrackTag.Track <= 0)
-            strNextTrack = string.Empty;
+        UpdateNextTrackInfo();
 
-          string strYear = String.Format("{0} {1}", GUILocalizeStrings.Get(436), NextTrackTag.Year); //	"Year: "
-          if (NextTrackTag.Year <= 1900)
-            strYear = string.Empty;
-
-          GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
-          GUIPropertyManager.SetProperty("#Play.Next.Track", strNextTrack);
-          GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
-          GUIPropertyManager.SetProperty("#Play.Next.Artist", NextTrackTag.Artist);
-          GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
-          GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
-          GUIPropertyManager.SetProperty("#Play.Next.Rating", (Convert.ToDecimal(2 * NextTrackTag.Rating + 1)).ToString());
-        }
-        else
-        {
-          LblUpNext.Visible = false;
-          GUIPropertyManager.SetProperty("#Play.Next.Title", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Next.Track", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Next.Album", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Next.Artist", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Next.Genre", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Next.Year", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Next.Rating", "0");
-        }
         _trackChanged = false;
+      }
+    }
+
+    private void UpdateNextTrackInfo()
+    {
+      if (NextTrackTag != null)
+      {
+        LblUpNext.Visible = true;
+        string strNextTrack = String.Format("{0} {1}", GUILocalizeStrings.Get(435), NextTrackTag.Track);   //	"Track: "
+        if (NextTrackTag.Track <= 0)
+          strNextTrack = string.Empty;
+
+        string strYear = String.Format("{0} {1}", GUILocalizeStrings.Get(436), NextTrackTag.Year); //	"Year: "
+        if (NextTrackTag.Year <= 1900)
+          strYear = string.Empty;
+
+        GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
+        GUIPropertyManager.SetProperty("#Play.Next.Track", strNextTrack);
+        GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
+        GUIPropertyManager.SetProperty("#Play.Next.Artist", NextTrackTag.Artist);
+        GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
+        GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
+        GUIPropertyManager.SetProperty("#Play.Next.Rating", (Convert.ToDecimal(2 * NextTrackTag.Rating + 1)).ToString());
+      }
+      else
+      {
+        LblUpNext.Visible = false;
+        GUIPropertyManager.SetProperty("#Play.Next.Title", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Track", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Album", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Artist", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Genre", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Year", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Rating", "0");
       }
     }
 
@@ -1160,8 +1177,7 @@ namespace MediaPortal.GUI.Music
 
       if (!isNextSongCdTrack)
       {
-        // NextTrackTag = GetTrackTag(dbs, NextTrackFileName, UseID3);
-        // see above..
+        //NextTrackFileName = PlaylistPlayer.GetNext();
         NextTrackTag = GetTrackTag(dbs, NextTrackFileName, true);
       }
 
@@ -1460,6 +1476,7 @@ namespace MediaPortal.GUI.Music
       else
         PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
 
+      OnSongInserted();
       return true;
     }
 
