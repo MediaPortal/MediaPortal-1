@@ -575,7 +575,7 @@ namespace MediaPortal.GUI.Library
             {
               GUIListItem pItem = _listItems[iItem];
               bool bFocus = (_cursorX == iCol && _cursorY == iRow);
-              RenderItem(timePassed, iRow * _rowCount + iCol, bFocus, dwPosX, dwPosY, pItem, i == 0);
+              RenderItem(timePassed, iRow * _columnCount + iCol, bFocus, dwPosX, dwPosY, pItem, i == 0);
               if (iItem < iStartItem) iStartItem = iItem;
               if (iItem > iEndItem) iEndItem = iItem;
             }
