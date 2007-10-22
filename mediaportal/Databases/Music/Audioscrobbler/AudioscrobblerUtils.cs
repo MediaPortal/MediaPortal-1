@@ -1068,7 +1068,7 @@ namespace MediaPortal.Music.Database
     {
       int randomPosition = 0;
       int calcRandValue = 0;
-      Random rand = new Random();
+      PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
       string urlArtist = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(artistToSearch_));
       string urlTrack = AudioscrobblerBase.getValidURLLastFMString(trackToSearch_);
       string tmpGenre = string.Empty;
@@ -1247,7 +1247,7 @@ namespace MediaPortal.Music.Database
 
       if (randomizeList_)
       {
-        Random rand = new Random();
+        PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
         List<Song> taggedArtists = new List<Song>();
         List<Song> randomTaggedArtists = new List<Song>();
         
@@ -1318,7 +1318,7 @@ namespace MediaPortal.Music.Database
       Artist_ = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(Artist_));
       if (randomizeList_)
       {
-        Random rand = new Random();
+        PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
         List<Song> similarArtists = new List<Song>();
         List<Song> randomSimilarArtists = new List<Song>();
         similarArtists = ParseXMLDocForSimilarArtists(Artist_);
@@ -1416,7 +1416,13 @@ namespace MediaPortal.Music.Database
       if (imageUrl != "")
       {
         // do not download last.fm's placeholder
-        if ((imageUrl.IndexOf("no_album") <= 0) && (imageUrl.IndexOf("no_artist") <= 0) && (imageUrl.IndexOf(@"/noimage/") <= 0) && (!imageUrl.EndsWith(@"160/260045.jpg")))
+        if ((imageUrl.IndexOf("no_album") <= 0) 
+         && (imageUrl.IndexOf("no_artist") <= 0)
+         && (imageUrl.IndexOf(@"/noimage/") <= 0)
+         // almost useless because Last.fm currently has redundant images - TODO: image comparison algo
+         && (!imageUrl.EndsWith(@"160/260045.jpg"))
+         && (!imageUrl.EndsWith(@"160/2765129.gif"))
+         && (!imageUrl.EndsWith(@"160/311112.gif")))
         {
           //Create the album subdir in thumbs if it does not exist.
           if (!System.IO.Directory.Exists(thumbspath))
@@ -1451,8 +1457,6 @@ namespace MediaPortal.Music.Database
                 {
                   try
                   {
-                    //oldFile.Delete();
-                    //newFile.MoveTo(fullPath);
                     Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
                     Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
                     Log.Debug("MyMusic: fetched better thumb {0} overwriting existing one", fullLargePath);
@@ -1466,8 +1470,6 @@ namespace MediaPortal.Music.Database
               }
               else
               {
-                //System.IO.FileInfo saveFile = new System.IO.FileInfo(tmpFile);
-                //saveFile.MoveTo(fullPath);
                 Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
                 Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
                 Log.Info("MyMusic: Thumb successfully downloaded: {0}", fullLargePath);
@@ -1492,8 +1494,7 @@ namespace MediaPortal.Music.Database
 
     private List<Song> fetchRandomTracks(offlineMode randomMode_)
     {
-      int addedSongs = 0;
-      //      Random thisOne = new Random();
+      int addedSongs = 0;      
       MusicDatabase dbs = MusicDatabase.Instance;
       List<Song> randomSongList = new List<Song>();
       Song randomSong = new Song();
@@ -1501,7 +1502,6 @@ namespace MediaPortal.Music.Database
       int loops = 0;
 
       // fetch more than needed since there could be double entries
-
       while (addedSongs < _limitRandomListCount * 3)
       {
         loops++;
@@ -1510,8 +1510,6 @@ namespace MediaPortal.Music.Database
         dbs.GetRandomSong(ref lookupSong);
         randomSong = lookupSong.Clone();
 
-        // dirty hack to improve .NET's shitty random.next()
-        //if (thisOne.Next(0, 6) == thisOne.Next(0, 6))
         bool found = false;
         for (int i = 0; i < randomSongList.Count; i++)
           if (randomSongList[i].Artist == randomSong.Artist)
@@ -1576,7 +1574,7 @@ namespace MediaPortal.Music.Database
 
       if (randomizeList_)
       {
-        Random rand = new Random();
+        PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
         int neighboursAdded = 0;
         int randomPosition;
         // make sure we do not get an endless loop

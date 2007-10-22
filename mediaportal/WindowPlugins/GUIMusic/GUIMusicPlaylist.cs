@@ -1475,7 +1475,7 @@ namespace MediaPortal.GUI.Music
         return false;
 
       PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
-      // Random rand = new Random();
+      
       int randomPosition;
 
       while (songsAdded < _maxScrobbledSongsPerArtist)
