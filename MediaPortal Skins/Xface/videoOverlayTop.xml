@@ -7,24 +7,30 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>233</posX>
-      <posY>570</posY>
+     <posX>370</posX>
+      <posY>703</posY>
+      <width>68</width>
+      <height>35</height>
       <texture>logo_pause.png</texture>
     </control>
     <control>
       <description>FF logo</description>
       <type>image</type>
       <id>5</id>
-      <posX>233</posX>
-      <posY>570</posY>
+      <posX>370</posX>
+      <posY>703</posY>
+      <width>68</width>
+      <height>35</height>
       <texture>logo_fastforward.png</texture>
     </control>
     <control>
       <description>RW logo</description>
       <type>image</type>
       <id>6</id>
-      <posX>233</posX>
-      <posY>570</posY>
+     <posX>370</posX>
+      <posY>703</posY>
+      <width>68</width>
+      <height>35</height>
       <texture>logo_rewind.png</texture>
     </control>
   </controls>

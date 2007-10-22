@@ -31,27 +31,14 @@
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
-      <type>multiimage</type>
-      <id>400</id>
-      <posX>335</posX>
-      <posY>703</posY>
-      <width>68</width>
-      <height>35</height>
-      <imagepath>Play</imagepath>
-      <timeperimage>40</timeperimage>
-      <fadetime>20</fadetime>
-      <loop>yes</loop>
-      <randomize>false</randomize>
-      <visible>Player.playing</visible>
-      <animation effect="fade" time="10">VisibleChange</animation>
-    </control>
-    <control>
       <description>play logo</description>
       <type>image</type>
       <id>3</id>
-      <posX>28</posX>
-      <posY>605</posY>
-      <texture>-</texture>
+     <posX>335</posX>
+      <posY>703</posY>
+      <width>68</width>
+      <height>35</height>
+      <texture>logo_play3.png</texture>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
@@ -59,7 +46,7 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>370</posX>
+      <posX>335</posX>
       <posY>703</posY>
       <width>68</width>
       <height>35</height>
@@ -71,7 +58,7 @@
       <description>FF logo</description>
       <type>image</type>
       <id>7</id>
-      <posX>370</posX>
+      <posX>335</posX>
       <posY>703</posY>
       <width>68</width>
       <height>35</height>
@@ -83,7 +70,7 @@
       <description>RW logo</description>
       <type>image</type>
       <id>8</id>
-      <posX>370</posX>
+      <posX>335</posX>
       <posY>703</posY>
       <width>68</width>
       <height>35</height>
