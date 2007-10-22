@@ -95,8 +95,6 @@
 <Channel siteId="103" id="VH 1 - CLASSIC" />
 <Channel siteId="114" id="MTV HITS" />
 <Channel siteId="112" id="MEZZO" />
-<Channel siteId="0" id="" />
-<Channel siteId="0" style="background-color:#E6E6E6" id="--- ערוצי מבוגרים ---" />
 <Channel siteId="95" id="adult channel" />
 <Channel siteId="129" id="PLAYBOY" />
 <Channel siteId="134" id="blue HUSTLER" />
@@ -122,7 +120,8 @@
 <Channel siteId="108" id="ARTE" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://mouse.tv2day.co.il/Guide.asp?chday=[DAY_OFFSET]&amp;chid=[ID]" post="" external="false" encoding="" />
+    <Site url="http://mouse.tv2day.co.il/Guide.asp?chday=[DAY_OF_WEEK]&amp;chid=[ID]" post="" external="false" encoding="" />
+    <Search startOffset="1"/>
     <Html>
       <Template name="default" start="&lt;table dir=&quot;rtl&quot;  border=&quot;0&quot; cellpadding=&quot;0&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot;&gt;" end="&lt;LINK media=&quot;all&quot; href=&quot;./css/css.css&quot; type=&quot;text/css&quot; rel=&quot;stylesheet&quot;&gt;">
         <SectionTemplate tags="TABF">
