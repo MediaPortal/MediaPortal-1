@@ -1307,8 +1307,9 @@ namespace MediaPortal.Player
       Marshal.ReleaseComObject(pinEnum);
       //this is only debug output at the moment. always do a rebuild for now.
       Log.Info("Graph would _not_ need a rebuild");
-      //return true;
-      return false;
+      Log.Warn("BaseTSReaderPlayer: GraphNeedsRebuild() original return value is false.");
+      return true;
+      //return false; // Eabin ; this one breaks channel change, when going from one channel with mpeg audio to another with ac3 and vice versa.     
     }
 
     public void DoGraphRebuild()
