@@ -696,10 +696,31 @@ namespace TvPlugin
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-			Schedule schedule = item.TVTag as Schedule;
-			Program episode = item.MusicTag as Program;
-			Log.Info("TVProgrammInfo.item_OnItemSelected: {0}, {1}", schedule.ToString(), episode.ToString());
-      UpdateProgramDescription(item.TVTag as Schedule, item.MusicTag as Program);
+      if (item != null && parent != null)
+      {
+        Program episode = null;
+        Schedule schedule = null;
+
+        if (item.TVTag != null)        
+          schedule = item.TVTag as Schedule;        
+        else
+          Log.Warn("TVProgrammInfo.item_OnItemSelected: item.TVTag was NULL!");
+
+        if (item.MusicTag != null)        
+          episode = item.MusicTag as Program;
+        else
+          Log.Warn("TVProgrammInfo.item_OnItemSelected: item.MusicTag was NULL!");
+
+        if (schedule != null && episode != null)
+        {
+          Log.Info("TVProgrammInfo.item_OnItemSelected: {0}, {1}", schedule.ToString(), episode.ToString());
+          UpdateProgramDescription(item.TVTag as Schedule, item.MusicTag as Program);
+        }
+        else
+          Log.Warn("TVProgrammInfo.item_OnItemSelected: schedule or episode was NULL!");
+      }
+      else
+        Log.Warn("TVProgrammInfo.item_OnItemSelected: params where NULL!");
     }
 
     private bool SkipForConflictingRecording(Schedule rec)
