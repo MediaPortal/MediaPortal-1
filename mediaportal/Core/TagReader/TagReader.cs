@@ -159,7 +159,7 @@ namespace MediaPortal.TagReader
       }
       catch (Exception ex)
       {
-        Log.Error("TagReader: Exception reading file {0}. {1}", strFile, ex.Message);
+        Log.Warn("TagReader: Exception reading file {0}. {1}", strFile, ex.Message);
       }
       return null;
     }
