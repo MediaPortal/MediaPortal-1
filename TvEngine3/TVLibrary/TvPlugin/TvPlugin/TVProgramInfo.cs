@@ -28,14 +28,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+
+using Gentle.Common;
+using Gentle.Framework;
+
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 
 using TvDatabase;
 using TvControl;
-using Gentle.Common;
-using Gentle.Framework;
+
 
 namespace TvPlugin
 {
@@ -122,35 +125,9 @@ namespace TvPlugin
 
     void UpdateProgramDescription(Schedule rec, Program program)
     {
-      if (program == null) return;
-      /*
-      if (rec == null) return;
-      IList progs = new ArrayList();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      progs = layer.GetPrograms(rec.ReferencedChannel(), rec.StartTime, rec.EndTime);
-      if (progs.Count > 0)
-      {
-        foreach (Program prog in progs)
-        {
-          if (prog.StartTime == rec.StartTime && prog.EndTime == rec.EndTime && prog.ReferencedChannel() == rec.ReferencedChannel())
-          {
-            currentProgram = prog;
-            break;
-          }
-        }
-      }
-      if (currentProgram != null)
-      {
-        string strTime = String.Format("{0} {1} - {2}",
-          Utils.GetShortDayString(currentProgram.StartTime),
-          currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-          currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+      if (program == null)
+        return;
 
-        lblProgramGenre.Label = currentProgram.Genre;
-        lblProgramTime.Label = strTime;
-        lblProgramDescription.Label = currentProgram.Description;
-        lblProgramTitle.Label = currentProgram.Title;
-      }*/
       string strTime = String.Format("{0} {1} - {2}",
         Utils.GetShortDayString(program.StartTime),
         program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
@@ -272,6 +249,7 @@ namespace TvPlugin
       if (itemToSelect != -1)
         lstUpcomingEpsiodes.SelectedListItemIndex = itemToSelect;
     }
+
     bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
     {
       recordingSchedule = null;
@@ -287,7 +265,6 @@ namespace TvPlugin
       }
       return false;
     }
-
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
@@ -312,14 +289,20 @@ namespace TvPlugin
         GUIListItem item = lstUpcomingEpsiodes.SelectedListItem;
         if (item != null)
         {
-          Schedule schedule = item.TVTag as Schedule;
           Program episode = item.MusicTag as Program;
-					Log.Info("TVProgrammInfo.OnClicked: {0}, {1}", schedule.ToString(), episode.ToString());
+          Schedule schedule = item.TVTag as Schedule;
+          
+          Log.Info("TVProgrammInfo.OnClicked: {0}, {1}", schedule.ToString(), episode.ToString());
+
           OnEpisodeClicked(episode, schedule);
         }
+        else
+          Log.Warn("TVProgrammInfo.OnClicked: item {0} was NULL!", lstUpcomingEpsiodes.SelectedItem.ToString());
       }
+      
       base.OnClicked(controlId, control, actionType);
     }
+    
     void OnPreRecordInterval()
     {
       Schedule rec;
@@ -380,6 +363,7 @@ namespace TvPlugin
       ///GUITVPriorities.OnSetQuality(rec);
       Update();
     }
+
     void OnSetEpisodes()
     {
       Schedule rec;
@@ -414,7 +398,10 @@ namespace TvPlugin
       }
       else
       {
-        OnRecordProgram(episode);
+        if (episode != null)
+          OnRecordProgram(episode);
+        else
+          Log.Warn("TVProgrammInfo.OnEpisodeClicked: episode is NULL - not scheduling new record");
       }
     }
 
@@ -631,7 +618,6 @@ namespace TvPlugin
       Schedule rec;
       if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
 
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
       dlg.Reset();
@@ -696,28 +682,29 @@ namespace TvPlugin
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      if (item != null && parent != null)
+      if (item != null)
       {
         Program episode = null;
-        Schedule schedule = null;
+        //Schedule schedule = null;
 
-        if (item.TVTag != null)        
-          schedule = item.TVTag as Schedule;        
-        else
-          Log.Warn("TVProgrammInfo.item_OnItemSelected: item.TVTag was NULL!");
+        //if (item.TVTag != null)
+        //  schedule = item.TVTag as Schedule;
+        //else
+        //{
+        //  Log.Warn("TVProgrammInfo.item_OnItemSelected: item.TVTag was NULL!");
+        //  return;
+        //}
 
-        if (item.MusicTag != null)        
+        if (item.MusicTag != null)
           episode = item.MusicTag as Program;
-        else
-          Log.Warn("TVProgrammInfo.item_OnItemSelected: item.MusicTag was NULL!");
 
-        if (schedule != null && episode != null)
+        if (episode != null)
         {
-          Log.Info("TVProgrammInfo.item_OnItemSelected: {0}, {1}", schedule.ToString(), episode.ToString());
-          UpdateProgramDescription(item.TVTag as Schedule, item.MusicTag as Program);
+          Log.Info("TVProgrammInfo.item_OnItemSelected: {0}", episode.ToString());
+          UpdateProgramDescription(null, episode);
         }
         else
-          Log.Warn("TVProgrammInfo.item_OnItemSelected: schedule or episode was NULL!");
+          Log.Warn("TVProgrammInfo.item_OnItemSelected: episode was NULL!");
       }
       else
         Log.Warn("TVProgrammInfo.item_OnItemSelected: params where NULL!");
