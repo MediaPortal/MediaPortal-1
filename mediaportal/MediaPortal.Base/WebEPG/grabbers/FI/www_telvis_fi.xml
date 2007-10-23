@@ -18,14 +18,13 @@
     <Site url="http://www.telvis.fi/tvopas/?vw=channel&amp;ch=[ID]&amp;sh=all&amp;dy=[DD].[MM].[YYYY]" post="" external="false" encoding="" />
     <Html>
       <Template name="default">
-        <SectionTemplate tags="DSPH">
+        <SectionTemplate tags="DSH">
           <TemplateText>
             &lt;div&gt;&lt;div&gt;
             &lt;h4&gt;
             &lt;span&gt;&lt;#START&gt;&lt;/span&gt;
             &lt;#TITLE&gt;
             &lt;/h4&gt;
-            &lt;p&gt;
             &lt;#DESCRIPTION&gt;
             &lt;script&gt;&lt;/script&gt;
             &lt;/p&gt;
