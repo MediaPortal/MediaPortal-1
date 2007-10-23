@@ -201,7 +201,7 @@ namespace TvService
     {
       foreach (User existingUser in _users)
       {
-        if (existingUser.Name == user.Name)
+        if (existingUser.Name == user.Name && existingUser.CardId == user.CardId)
         {
           user = (User)existingUser.Clone();
           return;

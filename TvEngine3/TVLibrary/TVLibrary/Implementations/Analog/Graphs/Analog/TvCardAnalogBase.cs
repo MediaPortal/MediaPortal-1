@@ -2913,6 +2913,12 @@ namespace TvLibrary.Implementations.Analog
       if (_graphBuilder == null) return;
       Log.Log.WriteFile("analog:Dispose()");
       if (!CheckThreadId()) return;
+
+      if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording) {
+        // Stop the graph first. To ensure that the timeshift files are no longer blocked
+        StopGraph();
+      }
+
       // Decompose the graph
       //int hr = (_graphBuilder as IMediaControl).StopWhenReady();
       int hr = (_graphBuilder as IMediaControl).Stop();

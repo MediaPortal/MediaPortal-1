@@ -1168,6 +1168,12 @@ namespace TvService
             return false;
           }
         }
+        HybridCard hybridCard = _cards[cardId].Card as HybridCard;
+        if (hybridCard != null) {
+          if (!hybridCard.IsCardIdActive(cardId)) {
+            return true;
+          }
+        }
 
         if (false == _cards[cardId].TimeShifter.IsTimeShifting(ref user)) return true;
         Fire(this, new TvServerEventArgs(TvServerEventType.EndTimeShifting, GetVirtualCard(user), user));
@@ -2152,10 +2158,12 @@ namespace TvService
     public void RemoveUserFromOtherCards(int cardId, User user)
     {
       Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
+      ITVCard card = _cards[cardId].Card;
       while (enumerator.MoveNext())
       {
         KeyValuePair<int, ITvCardHandler> key = enumerator.Current;
         if (key.Key == cardId) continue;
+        if (key.Value.Card == card) continue;
         key.Value.Users.RemoveUser(user);
       }
     }

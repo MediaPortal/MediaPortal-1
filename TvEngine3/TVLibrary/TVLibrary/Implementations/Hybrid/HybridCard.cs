@@ -95,6 +95,17 @@ namespace TvLibrary.Implementations.Hybrid
       }
       return null;
     }
+
+    /// <summary>
+    /// Checks if the active card is the one with given id
+    /// </summary>
+    /// <param name="idCard">ID of the card to check</param>
+    /// <returns> 
+    ///   <c>true</c> if card with the given id is active; otherwise, <c>false</c>.
+    /// </returns>
+    public bool IsCardIdActive(int idCard) {
+      return _idCards[_currentCardIndex] == idCard;
+    }
     #endregion
 
     #region properties

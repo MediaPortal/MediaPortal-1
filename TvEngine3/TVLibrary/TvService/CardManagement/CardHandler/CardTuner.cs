@@ -279,6 +279,9 @@ namespace TvService
     public bool IsDifferentTransponder(IChannel transponder1, IChannel transponder2)
     {
       DVBCChannel dvbcChannelNew = transponder2 as DVBCChannel;
+      // Check the type of the channel. If they are different, than we are definitely 
+      // on a different transponder. This could happen with hybrid card.
+      if (!transponder1.GetType().Equals(transponder2.GetType())) return true;
       if (dvbcChannelNew != null)
       {
         DVBCChannel dvbcChannelCurrent = transponder1 as DVBCChannel;

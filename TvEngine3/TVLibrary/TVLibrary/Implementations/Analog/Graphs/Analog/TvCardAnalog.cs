@@ -92,6 +92,7 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="id">The id.</param>
     public void FreeSubChannel(int id)
     {
+      Dispose();
     }
     /// <summary>
     /// Gets the sub channel.
