@@ -294,10 +294,16 @@ namespace TvService
           // in that case we have it in _recordingsInProgressList already
           foreach (RecordingDetail detail in _recordingsInProgressList)
           {
-            if (detail.Schedule.Equals(schedule)) return false;
-            Log.Debug("Recording {0} already added in _recordingsInProgressList, skipping", schedule.ProgramName);
+            if (detail.Program.StartTime == schedule.StartTime
+              && detail.Program.EndTime == schedule.EndTime
+              && detail.Program.Title == schedule.ProgramName)
+            {          
+              Log.Debug("Recording {0} already added in _recordingsInProgressList, skipping", schedule.ProgramName);
+              return false;
+            }
           }
           newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime, false);
+          Log.Debug("Recording {0}  added in _recordingsInProgressList", schedule.ProgramName);
           return true;
         }
         return false;
