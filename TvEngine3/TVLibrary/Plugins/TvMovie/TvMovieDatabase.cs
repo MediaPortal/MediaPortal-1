@@ -570,7 +570,7 @@ namespace TvEngine
 
             foreach (Channel ch in allChannels)
             {
-              if (ch.DisplayName == channelName.Channel)
+              if (ch.Name == channelName.Channel)
               {
                 progChannel = ch;
                 break;
@@ -682,7 +682,7 @@ namespace TvEngine
       {
         string newStart = mapping.TimeSharingStart;
         string newEnd = mapping.TimeSharingEnd;
-        string newChannel = Channel.Retrieve(mapping.IdChannel).DisplayName;
+        string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
         string newStation = mapping.StationName;
 
         mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
@@ -695,7 +695,7 @@ namespace TvEngine
     {
       if (_channelList != null)
         foreach (Channel channel in _channelList)
-          if (channel.DisplayName == channelName)
+          if (channel.Name == channelName)
             return true;
 
       return false;
@@ -930,7 +930,7 @@ namespace TvEngine
       IList allChannels = Channel.ListAll();
       foreach (Channel ch in allChannels)
       {
-        if (ch.DisplayName == channel)
+        if (ch.Name == channel)
         {
           progChannel = ch;
           break;

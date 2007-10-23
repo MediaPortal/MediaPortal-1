@@ -216,7 +216,7 @@ namespace SetupTv.Sections
 
       foreach (Channel channel in mpChannelList)
       {
-        TreeNode stationNode = new TreeNode(channel.DisplayName);
+        TreeNode stationNode = new TreeNode(channel.Name);
         treeViewChannels.Nodes.Add(stationNode);
       }
 
@@ -250,11 +250,6 @@ namespace SetupTv.Sections
 
       selectedChannel.Nodes.Add(selectedStation);
       selectedChannel.Expand();
-
-      //TvBusinessLayer layer = new TvBusinessLayer();
-      //Setting setting = layer.GetSetting("TvMovieLastUpdate");
-      //setting.Value = "0";
-      //setting.Persist();
     }
 
 
@@ -351,7 +346,7 @@ namespace SetupTv.Sections
             string channelName = string.Empty;
             try
             {
-              channelName = Channel.Retrieve(mapping.IdChannel).DisplayName;
+              channelName = Channel.Retrieve(mapping.IdChannel).Name;
               TreeNode channelNode = FindChannel(channelName);
               if (channelNode != null)
               {
