@@ -289,10 +289,16 @@ namespace TvPlugin
         GUIListItem item = lstUpcomingEpsiodes.SelectedListItem;
         if (item != null)
         {
-          Program episode = item.MusicTag as Program;
-          Schedule schedule = item.TVTag as Schedule;
+          Program episode = null;
+          Schedule schedule = null;
+
+          if (item.MusicTag != null)
+            episode = item.MusicTag as Program;
+          if (item.TVTag != null)
+            schedule = item.TVTag as Schedule;
           
-          Log.Info("TVProgrammInfo.OnClicked: {0}, {1}", schedule.ToString(), episode.ToString());
+          // evaluate if not null when logging is needed!
+          // Log.Info("TVProgrammInfo.OnClicked: {0}, {1}", schedule.ProgramName, episode.Title);
 
           OnEpisodeClicked(episode, schedule);
         }
