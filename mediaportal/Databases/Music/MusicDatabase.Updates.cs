@@ -38,6 +38,7 @@ namespace MediaPortal.Music.Database
   using MediaPortal.ServiceImplementations;
   using MediaPortal.TagReader;
   using MediaPortal.Util;
+  using System.Drawing;
   #endregion
 
   #region Reorg class
@@ -862,18 +863,18 @@ namespace MediaPortal.Music.Database
           }
           catch (Exception)
           {
-            Log.Error("Musicdatabasereorg: Update tags for {0} failed because of DB exception", strFileName);
+            Log.Error("MusicDatabase: Update tags for {0} failed because of DB exception", strFileName);
             return false;
           }
         }
         else
         {
-          Log.Info("Musicdatabasereorg: cannot get tag for {0}", strFileName);
+          Log.Info("MusicDatabase: cannot get tag for {0}", strFileName);
         }
       }
       catch (Exception ex)
       {
-        Log.Error("Musicdatabasereorg: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Error("MusicDatabase: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
       return true;
     }
@@ -898,16 +899,29 @@ namespace MediaPortal.Music.Database
               // Prevent creation of the thumbnail multiple times, when all songs of an album contain coverart
               DateTime fileDate = System.IO.File.GetLastWriteTime(smallThumbPath);
               TimeSpan span = _currentDate - fileDate;
-              if (span.Hours > 0)
+              if (span.Days > 0)
                 extractFile = true;
             }
 
             if (extractFile)
             {
-              if (!Util.Picture.CreateThumbnail(tag.CoverArtImage, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
-                Log.Debug("Could not extract thumbnail from {0}", tag.FileName);
-              if (!Util.Picture.CreateThumbnail(tag.CoverArtImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
-                Log.Debug("Could not extract thumbnail from {0}", tag.FileName);
+              Image mp3TagImage = null;
+              try
+              {
+                mp3TagImage = tag.CoverArtImage;
+              }
+              catch (Exception)
+              {
+                Log.Warn("MusicDatabase: Invalid cover art image found in {0}-{1}! {2}", tag.Artist, tag.Title, tag.FileName);
+              }
+
+              if (mp3TagImage != null)
+              {
+                if (!Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+                  Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
+                if (!Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
+                  Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
+              }
             }
           }
           catch (Exception) { }
@@ -923,9 +937,9 @@ namespace MediaPortal.Music.Database
           if (System.IO.File.Exists(sharefolderThumb))
           {
             if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
-              Log.Debug("Could not create album thumb from folder {0}", tag.FileName);
+              Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
             if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
-              Log.Debug("Could not create large album thumb from folder {0}", tag.FileName);
+              Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
           }
         }
       }
