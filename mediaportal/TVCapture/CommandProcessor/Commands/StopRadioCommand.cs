@@ -81,14 +81,7 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-      if (stopped)
-      {
-        Succeeded = true;
-      }
-      else
-      {
-        Succeeded = true;
-      }
+      Succeeded = stopped;
     }
   }
 }
