@@ -426,6 +426,24 @@ Section -post SEC0001
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall.exe
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
+    
+    ; Associate .mpi files with MPInstaller
+    !define Index "Line${__LINE__}"
+    ; backup the association, if it already exsists
+    ReadRegStr $1 HKCR ".mpi" ""
+    StrCmp $1 "" "${Index}-NoBackup"
+    StrCmp $1 "MediaPortal.Installer" "${Index}-NoBackup"
+    WriteRegStr HKCR ".mpi" "backup_val" $1
+    
+    "${Index}-NoBackup:"
+    WriteRegStr HKCR ".mpi" "" "MediaPortal.Installer"
+    WriteRegStr HKCR "MediaPortal.Installer" "" "MediaPortal Installer"
+    WriteRegStr HKCR "MediaPortal.Installer\shell" "" "open"
+    WriteRegStr HKCR "MediaPortal.Installer\DefaultIcon" "" "$INSTDIR\MPInstaller.exe,0"
+    WriteRegStr HKCR "MediaPortal.Installer\shell\open\command" "" '$INSTDIR\MPInstaller.exe "%1"'
+ 
+    System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+    !undef Index   
 SectionEnd
 
 ; This section installs the VC++ Redist Library
@@ -705,6 +723,27 @@ Section -un.post UNSEC0001
     DeleteRegKey /IfEmpty HKLM "${INSTDIR_REG_KEY}\Components"
     DeleteRegKey /IfEmpty HKLM "${INSTDIR_REG_KEY}"
     RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
+    
+    ; Remove File Association for .mpi files
+    !define Index "Line${__LINE__}"
+    ReadRegStr $1 HKCR ".mpi" ""
+    StrCmp $1 "MediaPortal.Installer" 0 "${Index}-NoOwn" ; only do this if we own it
+    ReadRegStr $1 HKCR ".mpi" "backup_val"
+    StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
+    DeleteRegKey HKCR ".mpi"
+    Goto "${Index}-NoOwn"
+    
+    "${Index}-Restore:"
+    WriteRegStr HKCR ".mpi" "" $1
+    DeleteRegValue HKCR ".mpi" "backup_val"
+   
+    DeleteRegKey HKCR "MediaPortal.Installer" ;Delete key with association settings
+ 
+    System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+    
+    "${Index}-NoOwn:"
+    !undef Index
+    
 SectionEnd
 
 # Uninstaller functions
