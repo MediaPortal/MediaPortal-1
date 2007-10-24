@@ -1522,7 +1522,11 @@ namespace TvPlugin
         }
 
 
-        User user = new User();        
+        User user = new User();
+        if (TVHome.Card != null)
+        {
+          user.CardId = TVHome.Card.Id;
+        }
 
         GUIWaitCursor.Show();
         bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
