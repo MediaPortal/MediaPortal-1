@@ -2389,15 +2389,6 @@ namespace MediaPortal.GUI.Pictures
         _useRandomTransitions = xmlreader.GetValueAsBool("pictures", "random", true);
         _autoShuffle = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
         _autoRepeat = xmlreader.GetValueAsBool("pictures", "autoRepeat", false);
-        _autoShuffleMusic = xmlreader.GetValueAsBool("musicfiles", "autoShuffle", false);
-        //                              _isBackgroundMusicEnabled = xmlreader.GetValueAsBool("pictures", "backgroundmusic", false);
-        _isBackgroundMusicEnabled = true;
-
-        if (_isBackgroundMusicEnabled)
-        {
-          string extensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.pls,.wpl");
-          _musicFileExtensions = extensions.Split(',');
-        }
       }
     }
 
@@ -2413,11 +2404,12 @@ namespace MediaPortal.GUI.Pictures
     {
       if (g_Player.IsMusic || g_Player.IsRadio || g_Player.IsTV || g_Player.IsVideo)
         return;
-
-      if (_musicFileExtensions == null)
+      
+      // Load Music related settings here, as the Loadsetting for pictures is called too late for the Backgroundmusic task
+      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          _musicFileExtensions = reader.GetValueAsString("music", "extensions", ".mp3,.pls,.wpl").Split(',');
+        _musicFileExtensions = reader.GetValueAsString("music", "extensions", ".mp3,.pls,.wpl").Split(',');
+        _autoShuffleMusic = reader.GetValueAsBool("musicfiles", "autoshuffle", false);
       }
 
       foreach (string extension in _musicFileExtensions)
