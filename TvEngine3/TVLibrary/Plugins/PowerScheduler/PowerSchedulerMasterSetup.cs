@@ -198,7 +198,7 @@ namespace TvEngine.PowerScheduler
       newcfg.Minutes = cfg.Minutes;
       // newcfg.Days = cfg.Days;
       newcfg.LastRun = cfg.LastRun;
-      string[] time = maskedTextBox1.Text.Split(':');
+      string[] time = maskedTextBox1.Text.Split(System.Globalization.DateTimeFormatInfo.CurrentInfo.TimeSeparator[0]);
       newcfg.Hour = Convert.ToInt32(time[0]);
       newcfg.Minutes = Convert.ToInt32(time[1]);
       CheckDay(newcfg, EPGGrabDays.Monday, checkBox8.Checked);
@@ -266,6 +266,5 @@ namespace TvEngine.PowerScheduler
         tbEpgCmd.Text = openFileDialog1.FileName;
       }
     }
-
   }
 }
