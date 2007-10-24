@@ -669,7 +669,7 @@ namespace MediaPortal.Player
             switch (_playBackType)
             {
               case (int)PlayBackType.NORMAL:
-                _CrossFadeIntervalMS = 0;
+                _CrossFadeIntervalMS = 100;
                 type = "Normal";
                 break;
 
@@ -679,7 +679,7 @@ namespace MediaPortal.Player
                 break;
 
               case (int)PlayBackType.CROSSFADE:
-                _CrossFadeIntervalMS = _DefaultCrossFadeIntervalMS;
+                _CrossFadeIntervalMS = _DefaultCrossFadeIntervalMS == 0 ? 4000 : _DefaultCrossFadeIntervalMS;
                 type = "Crossfading";
                 break;
             }
@@ -1016,7 +1016,7 @@ namespace MediaPortal.Player
           if (_CrossFadeIntervalMS == 0)
           {
             _playBackType = (int)PlayBackType.NORMAL;
-            _CrossFadeIntervalMS = 0;
+            _CrossFadeIntervalMS = 100;
           }
           else
             _playBackType = (int)PlayBackType.CROSSFADE;
@@ -1032,7 +1032,6 @@ namespace MediaPortal.Player
       GUIGraphicsContext.form.SuspendLayout();
 
       bool foundWindow = false;
-      VisualizationWindow tempVizWindow = null;
 
       // Check if the MP window already has our viz window in it's control collection...
       foreach (Control ctrl in GUIGraphicsContext.form.Controls)
@@ -1040,26 +1039,20 @@ namespace MediaPortal.Player
         if (ctrl.Name == "NativeVisualizationWindow" && ctrl is VisualizationWindow)
         {
           foundWindow = true;
-          tempVizWindow = (VisualizationWindow)ctrl;
           break;
         }
       }
 
-      if (foundWindow && tempVizWindow != null)
-      {
-        VizWindow.Dispose();
-        VizWindow = tempVizWindow;
-      }
-
-      VizWindow.Visible = false;
-      VizWindow.Location = new System.Drawing.Point(8, 16);
-      VizWindow.Name = "NativeVisualizationWindow";
-      VizWindow.Size = new System.Drawing.Size(0, 0);
-      VizWindow.TabIndex = 0;
-      VizWindow.Enabled = false;
-
       if (!foundWindow)
+      {
+        VizWindow.Visible = false;
+        VizWindow.Location = new System.Drawing.Point(8, 16);
+        VizWindow.Name = "NativeVisualizationWindow";
+        VizWindow.Size = new System.Drawing.Size(0, 0);
+        VizWindow.TabIndex = 0;
+        VizWindow.Enabled = false;
         GUIGraphicsContext.form.Controls.Add(VizWindow);
+      }
 
       GUIGraphicsContext.form.ResumeLayout();
     }
@@ -1072,23 +1065,14 @@ namespace MediaPortal.Player
     {
       GUIGraphicsContext.form.SuspendLayout();
 
-      bool foundWindow = false;
-      VisualizationWindow tempVizWindow = null;
-
       // Check if the MP window already has our viz window in it's control collection...
       foreach (Control ctrl in GUIGraphicsContext.form.Controls)
       {
         if (ctrl.Name == "NativeVisualizationWindow" && ctrl is VisualizationWindow)
         {
-          foundWindow = true;
-          tempVizWindow = (VisualizationWindow)ctrl;
+          GUIGraphicsContext.form.Controls.Remove(VizWindow);
           break;
         }
-      }
-
-      if (foundWindow && tempVizWindow != null)
-      {
-        GUIGraphicsContext.form.Controls.Remove(VizWindow);
       }
 
       GUIGraphicsContext.form.ResumeLayout();
@@ -1263,14 +1247,13 @@ namespace MediaPortal.Player
         if (Path.GetExtension(file.Name).ToLower() != ".dll")
           continue;
 
-        Log.Debug("  Core Audioplayer: Loading: {0}", file.FullName);
         pluginHandle = Bass.BASS_PluginLoad(file.FullName);
 
         if (pluginHandle != 0)
         {
           DecoderPluginHandles.Add(pluginHandle);
           decoderCount++;
-          Log.Debug("BASS: Added: {0}", file.FullName);
+          Log.Debug("BASS: Added DecoderPlugin: {0}", file.FullName);
         }
 
         else
@@ -1709,7 +1692,7 @@ namespace MediaPortal.Player
             _VideoWidth = GUIGraphicsContext.VideoWindow.Width;
             _VideoHeight = GUIGraphicsContext.VideoWindow.Height;
 
-            // Add the Viswindow to the Mainform Control
+            // Re-Add the Viswindow to the Mainform Control (It got removed on a manual Stop)
             SetVisualizationWindow();
             SetVideoWindow();
 
