@@ -1193,8 +1193,11 @@ namespace MediaPortal.Music.Database
         cleanString = cleanString.Remove(dotIndex);
 
       // TODO: build REGEX here
-
-      // substitute "&" with "and"
+      // replace our artist concatenation
+      // cleanString = cleanString.Replace("|", "&");
+      if (cleanString.Contains("|"))
+        cleanString = cleanString.Remove(cleanString.IndexOf("|"));
+      // substitute "&" with "and" <-- as long as needed
       cleanString = cleanString.Replace("&", " and ");
       // make sure there's only one space
       cleanString = cleanString.Replace("  ", " ");
@@ -1203,16 +1206,17 @@ namespace MediaPortal.Music.Database
       // clean soundtracks
       cleanString = cleanString.Replace("OST ", " ");
       cleanString = cleanString.Replace("Soundtrack - ", " ");
-      if (cleanString.EndsWith("Soundtrack"))
-        cleanString.Remove(cleanString.IndexOf("Soundtrack"));
-      if (cleanString.EndsWith("OST"))
-        cleanString.Remove(cleanString.IndexOf("OST"));
-      if (cleanString.EndsWith(" EP"))
-        cleanString.Remove(cleanString.IndexOf(" EP"));
-      if (cleanString.EndsWith(" (EP)"))
-        cleanString.Remove(cleanString.IndexOf(" (EP)"));
 
-      return cleanString;
+      if (cleanString.EndsWith("Soundtrack"))
+        cleanString = cleanString.Remove(cleanString.IndexOf("Soundtrack"));
+      if (cleanString.EndsWith("OST"))
+        cleanString = cleanString.Remove(cleanString.IndexOf("OST"));
+      if (cleanString.EndsWith(" EP"))
+        cleanString = cleanString.Remove(cleanString.IndexOf(" EP"));
+      if (cleanString.EndsWith(" (EP)"))
+        cleanString = cleanString.Remove(cleanString.IndexOf(" (EP)"));
+
+      return cleanString.Trim();
     }
 
     private static string removeEndingChars(string inputString_)
