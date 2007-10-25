@@ -900,10 +900,10 @@ namespace MediaPortal.GUI.Music
                   duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
                   break;
                 case MusicSort.SortMethod.Artist:
-                  duration = Convert.ToString(tag.Duration);
+                  duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
                   break;
                 case MusicSort.SortMethod.Album:
-                  duration = Convert.ToString(tag.Duration);
+                  duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
                   break;
                 case MusicSort.SortMethod.Filename:
                   duration = Convert.ToString(tag.Duration);
