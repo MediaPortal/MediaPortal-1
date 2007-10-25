@@ -1330,7 +1330,7 @@ namespace MediaPortal.AudioScrobbler
       this.buttonGetTaggedArtists.TabIndex = 4;
       this.buttonGetTaggedArtists.Text = "Get artists";
       this.buttonGetTaggedArtists.UseVisualStyleBackColor = true;
-      this.buttonGetTaggedArtists.Click += new System.EventHandler(this.buttonGetTaggedArtists_Click);
+      this.buttonGetTaggedArtists.Click += new System.EventHandler(this.buttonTaggedArtists_Click);
       // 
       // buttonTagsRefresh
       // 

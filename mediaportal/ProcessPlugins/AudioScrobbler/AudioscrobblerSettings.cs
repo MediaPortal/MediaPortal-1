@@ -27,7 +27,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
+
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -260,12 +262,11 @@ namespace MediaPortal.AudioScrobbler
       {
         try
         {
-          if (Convert.ToInt16(((ListViewItem)y).SubItems[col].Text) == Convert.ToInt16(((ListViewItem)x).SubItems[col].Text))
-            return 0;
-          if (Convert.ToInt16(((ListViewItem)y).SubItems[col].Text) > Convert.ToInt16(((ListViewItem)x).SubItems[col].Text))
-            return 1;
-          else
-            return -1;
+          double xval = Convert.ToDouble(((ListViewItem)x).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
+          double yval = Convert.ToDouble(((ListViewItem)y).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
+
+          return -(xval.CompareTo(yval));
+
         }
         catch (Exception)
         {
@@ -385,7 +386,7 @@ namespace MediaPortal.AudioScrobbler
     private void textBoxTagToSearch_KeyUp(object sender, KeyEventArgs e)
     {
       if (e.KeyCode == Keys.Enter)
-        buttonGetTaggedArtists_Click(sender, e);
+        buttonTaggedArtists_Click(sender, e);
     }
 
     private void comboBoxUserName_SelectedIndexChanged(object sender, EventArgs e)
@@ -489,7 +490,7 @@ namespace MediaPortal.AudioScrobbler
       buttonTagsRefresh.Enabled = true;
     }
 
-    private void buttonGetTaggedArtists_Click(object sender, EventArgs e)
+    private void buttonTaggedArtists_Click(object sender, EventArgs e)
     {
       buttonGetTaggedArtists.Enabled = false;
       listViewTags.Clear();
@@ -524,7 +525,7 @@ namespace MediaPortal.AudioScrobbler
       songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedtracks, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
       listViewTags.Columns.Add("Track", 170);
       listViewTags.Columns.Add("Artist", 170);
-      listViewTags.Columns.Add("Popularity", 70);
+      listViewTags.Columns.Add("Played", 70);
       for (int i = 0; i < songList.Count; i++)
         listViewTags.Items.Add(BuildListViewTrackArtist(songList[i], true, false));
       buttonTaggedTracks.Enabled = true;
@@ -642,7 +643,7 @@ namespace MediaPortal.AudioScrobbler
       changeControlsSuggestions(true);
       lastFmLookup.ArtistMatchPercent = trackBarArtistMatch.Value;
 
-      progressBarSuggestions.PerformStep();
+//      progressBarSuggestions.PerformStep();
       songList = new List<Song>();
       similarList = new List<Song>();
 
@@ -654,6 +655,8 @@ namespace MediaPortal.AudioScrobbler
 
       if (songList.Count > 7)
       {
+        listViewSuggestions.SuspendLayout();
+
         for (int i = 0; i <= 7; i++)
         {
           similarList.AddRange(lastFmLookup.getSimilarArtists(songList[i].ToURLArtistString(), false));
@@ -674,10 +677,12 @@ namespace MediaPortal.AudioScrobbler
           if (!foundDoubleEntry)
             listViewSuggestions.Items.Add(BuildListViewArtist(similarList[i], false, true));
         }
-        //listViewSuggestions.Sorting = SortOrder.Descending;
-        //listViewSuggestions.AllowColumnReorder = true;
-        listViewSuggestions.ListViewItemSorter = new ListViewItemComparer(1);
 
+        listViewSuggestions.Sorting = SortOrder.Descending;
+        listViewSuggestions.ListViewItemSorter = new ListViewItemComparer(1);
+        progressBarSuggestions.PerformStep();
+
+        listViewSuggestions.ResumeLayout();
       }
       else
         listViewSuggestions.Items.Add("Not enough overall top artists found");

@@ -443,7 +443,7 @@ namespace MediaPortal.Music.Database
           return false;
       }
 
-      Log.Warn("MusicDatabase: GetSongByMusicTagInfo did not get usable params! Artist: {0}, Album: {1}, Title: {2}, Nearest Match: {3}", aArtist, aAlbum, aTitle, Convert.ToString(inexactFallback));
+      Log.Debug("MusicDatabase: GetSongByMusicTagInfo did not get usable params! Artist: {0}, Album: {1}, Title: {2}, Nearest Match: {3}", aArtist, aAlbum, aTitle, Convert.ToString(inexactFallback));
       return false;
     }
 
@@ -466,7 +466,7 @@ namespace MediaPortal.Music.Database
           return false;
 
         if (results.Rows.Count > 1)
-          Log.Warn("MusicDatabase: Lookups: GetSongByArtistAlbumTitle found multiple results ({3}) for {0} - {1} - {2}", strArtist, strAlbum, strTitle, Convert.ToString(results.Rows.Count));
+          Log.Debug("MusicDatabase: Lookups: GetSongByArtistAlbumTitle found multiple results ({3}) for {0} - {1} - {2}", strArtist, strAlbum, strTitle, Convert.ToString(results.Rows.Count));
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
           return true;
@@ -497,7 +497,7 @@ namespace MediaPortal.Music.Database
           return false;
 
         if (results.Rows.Count > 1)
-          Log.Warn("MusicDatabase: Lookups: GetSongByAlbumTitle found multiple results ({2}) for {0} - {1}", strAlbum, strTitle, Convert.ToString(results.Rows.Count));
+          Log.Debug("MusicDatabase: Lookups: GetSongByAlbumTitle found multiple results ({2}) for {0} - {1}", strAlbum, strTitle, Convert.ToString(results.Rows.Count));
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
           return true;
@@ -528,7 +528,7 @@ namespace MediaPortal.Music.Database
           return false;
 
         if (results.Rows.Count > 1)
-          Log.Warn("MusicDatabase: Lookups: GetSongByArtistTitle found multiple results ({2}) for {0} - {1}", strArtist, strTitle, Convert.ToString(results.Rows.Count));
+          Log.Debug("MusicDatabase: Lookups: GetSongByArtistTitle found multiple results ({2}) for {0} - {1}", strArtist, strTitle, Convert.ToString(results.Rows.Count));
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
           return true;
@@ -557,7 +557,7 @@ namespace MediaPortal.Music.Database
           return false;
 
         if (results.Rows.Count > 1)
-          Log.Warn("MusicDatabase: Lookups: GetSongByTitle found multiple results ({0}) for {1}", Convert.ToString(results.Rows.Count), strTitle);
+          Log.Debug("MusicDatabase: Lookups: GetSongByTitle found multiple results ({0}) for {1}", Convert.ToString(results.Rows.Count), strTitle);
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
           return true;
@@ -876,7 +876,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Fetches artists by name using the given precision
     /// </summary>
-    /// <param name="aSearchKind">0 = starts with, 1 = contains, 2 = ends with, 3 = contains exact</param>
+    /// <param name="aSearchKind">0 = starts with, 1 = contains, 2 = ends with, 3 = exact, 4 = clean before</param>
     /// <param name="aArtist">The song title you're searching</param>
     /// <param name="aArtistArray">An array to be filled with results</param>
     /// <returns>Whether search was successful</returns>
@@ -892,24 +892,25 @@ namespace MediaPortal.Music.Database
         switch (aSearchKind)
         {
           case 0:
-            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%| {0}%' ", strArtist);
+            strSQL = String.Format("SELECT * FROM artist WHERE strArtist LIKE '{0}%' ", strArtist);
             break;
           case 1:
-            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%{0}%' ", strArtist);
+            strSQL = String.Format("SELECT * FROM artist WHERE strArtist LIKE '%{0}%' ", strArtist);
             break;
           case 2:
-            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%{0} |%' ", strArtist);
+            strSQL = String.Format("SELECT * FROM artist WHERE strArtist LIKE '%{0}' ", strArtist);
             break;
           case 3:
-            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%| {0} |%' ", strArtist);
+            strSQL = String.Format("SELECT * FROM artist WHERE strArtist LIKE '{0}' ", strArtist);
             break;
           case 4:
-            strArtist.Replace('ä', '%');
-            strArtist.Replace('ö', '%');
-            strArtist.Replace('ü', '%');
-            strArtist.Replace('/', '%');
-            strArtist.Replace('-', '%');
-            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%| {0} |%' ", strArtist);
+            strArtist = strArtist.Replace('ä', '%');
+            strArtist = strArtist.Replace('ö', '%');
+            strArtist = strArtist.Replace('ü', '%');
+            strArtist = strArtist.Replace('/', '%');
+            strArtist = strArtist.Replace('-', '%');
+            strArtist = strArtist.Replace("%%", "%");
+            strSQL = String.Format("SELECT * FROM artist where strArtist LIKE '%{0}%' ", strArtist);
             break;
           default:
             return false;
@@ -1329,6 +1330,7 @@ namespace MediaPortal.Music.Database
       return false;
     }
     
+    [Obsolete]
     public int GetArtistId(string aArtist)
     {
       try
@@ -1337,7 +1339,7 @@ namespace MediaPortal.Music.Database
           return -1;
 
         string strSQL;
-        strSQL = String.Format("select DISTINCT artist.idArtist from artist where artist.strArtist='{0}'", aArtist);
+        strSQL = String.Format("select DISTINCT artist.idArtist from artist where artist.strArtist LIKE '{0}'", aArtist);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count == 0)
