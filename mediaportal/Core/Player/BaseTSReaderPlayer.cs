@@ -1308,14 +1308,14 @@ namespace MediaPortal.Player
       //this is only debug output at the moment. always do a rebuild for now.
       Log.Info("Graph would _not_ need a rebuild");
       Log.Warn("BaseTSReaderPlayer: GraphNeedsRebuild() original return value is false.");
-      return true;
-      //return false; // Eabin ; this one breaks channel change, when going from one channel with mpeg audio to another with ac3 and vice versa.     
+      //return true;
+      return false; // Eabin ; this one breaks channel change, when going from one channel with mpeg audio to another with ac3 and vice versa.     
     }
 
     public void DoGraphRebuild()
     {
       Log.Info("TSReaderPlayer:OnMediaTypeChanged()");
-      if (!GraphNeedsRebuild()) return;
+      bool needRebuild = GraphNeedsRebuild();
       if (_mediaCtrl != null)
       {
         lock (_mediaCtrl)
@@ -1339,11 +1339,20 @@ namespace MediaPortal.Player
             }
             Log.Info("TSReaderPlayer:OnMediaTypeChanged(): Graph not yet stopped, waiting some more.");
             _mediaCtrl.Stop();
-            System.Threading.Thread.Sleep(200);
+            System.Threading.Thread.Sleep(100);
 
           }
-          Log.Info("Graph stopped, disconnecting pins.");
-          DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource);
+          Log.Info("Graph stopped.");
+          if (needRebuild)
+          {
+            Log.Info("Doing full graph rebuild.");
+            DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource, true);
+          }
+          else
+          {
+            Log.Info("Reconnecting all pins of base filter.");
+            DirectShowUtil.ReConnectAll(_graphBuilder, _fileSource);
+          }
           _mediaCtrl.Run();
         }
         Log.Info("Reconfigure graph done");
