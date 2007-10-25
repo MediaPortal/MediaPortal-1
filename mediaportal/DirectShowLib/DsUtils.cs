@@ -885,6 +885,17 @@ namespace DirectShowLib
             }
         }
 
+        /// <summary>
+        ///  Free the nested interfaces within a FilterInfo struct.
+        /// </summary>
+        public static void FreeFilterInfo(FilterInfo filterInfo)
+        {
+          if (filterInfo.pGraph != null)
+          {
+            Marshal.ReleaseComObject(filterInfo.pGraph);
+            filterInfo.pGraph = null;
+          }
+        }
     }
 
 
