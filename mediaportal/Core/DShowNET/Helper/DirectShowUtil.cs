@@ -785,7 +785,8 @@ namespace DShowNET.Helper
       return false;
     }
 
-    public static bool ReRenderAll(IGraphBuilder graphBuilder, IBaseFilter filter)
+    //fullRebuild: if false, only pins that already had a connection will be rebuilt. dummy for now
+    public static bool ReRenderAll(IGraphBuilder graphBuilder, IBaseFilter filter, bool fullRebuild)
     {
       int pinsRendered = 0;
       bool bAllConnected = true;
@@ -825,8 +826,6 @@ namespace DShowNET.Helper
               pins[0].QueryDirection(out pinDir);
               if (pinDir == PinDirection.Output)
               {
-                IPin pConnectPin = null;
-                
                 if (DisconnectPin(graphBuilder, pins[0]))
                 {
                   hr = 0;
@@ -842,9 +841,6 @@ namespace DShowNET.Helper
                   }
                   pinsRendered++;
                 }
-                if (pConnectPin != null)
-                  Marshal.ReleaseComObject(pConnectPin);
-                pConnectPin = null;
                 //else Log.Info("pin is already connected");
               }
               Marshal.ReleaseComObject(pins[0]);
@@ -863,6 +859,72 @@ namespace DShowNET.Helper
       return bAllConnected;
     }
 
+    public static bool ReConnectAll(IGraphBuilder graphBuilder, IBaseFilter filter)
+    {
+      bool bAllConnected = true;
+      IEnumPins pinEnum;
+      FilterInfo info;
+      filter.QueryFilterInfo(out info);
+      int hr = filter.EnumPins(out pinEnum);
+      if ((hr == 0) && (pinEnum != null))
+      {
+        Log.Info("got pins");
+        pinEnum.Reset();
+        IPin[] pins = new IPin[1];
+        int iFetched;
+        int iPinNo = 0;
+        do
+        {
+          // Get the next pin
+          //Log.Info("  get pin:{0}",iPinNo);
+          iPinNo++;
+          hr = pinEnum.Next(1, pins, out iFetched);
+          if (hr == 0)
+          {
+            if (iFetched == 1 && pins[0] != null)
+            {
+              PinInfo pinInfo = new PinInfo();
+              hr = pins[0].QueryPinInfo(out pinInfo);
+              if (hr == 0)
+              {
+                Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
+                Marshal.ReleaseComObject(pinInfo.filter);
+              }
+              else
+              {
+                Log.Info("  got pin:?");
+              }
+              PinDirection pinDir;
+              pins[0].QueryDirection(out pinDir);
+              if (pinDir == PinDirection.Output)
+              {
+                IPin other;
+                hr = pins[0].ConnectedTo(out other);
+                if (hr == 0 && other != null)
+                {
+                  Log.Info("Reconnecting {0}:{1}", info.achName, pinInfo.name);
+                  hr = graphBuilder.Reconnect(pins[0]);
+                  if (hr != 0)
+                  {
+                    Log.Warn("Reconnect failed: {0}:{1}, code: 0x{2:x}", info.achName, pinInfo.name, hr);
+                  }
+                }
+              }
+              Marshal.ReleaseComObject(pins[0]);
+            }
+            else
+            {
+              iFetched = 0;
+              Log.Info("no pins?");
+              break;
+            }
+          }
+          else iFetched = 0;
+        } while (iFetched == 1);
+        Marshal.ReleaseComObject(pinEnum);
+      }
+      return bAllConnected;
+    }
     /// <summary>
     /// Find the overlay mixer and/or the VMR9 windowless filters
     /// and tell them we dont want a fixed Aspect Ratio
