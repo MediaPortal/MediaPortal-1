@@ -32,6 +32,8 @@
 #include "pmtparser.h"
 
 #define WRITE_BUFFER_SIZE 32900
+#define IGNORE_AFTER_TUNE 25                        // how many TS packets to ignore after tuning
+#define TS_QUEUE_SIZE 50                           // how many TS packets fits in TS buffer
 
 #define PID_PAT                               0     // PID for PAT table
 #define TABLE_ID_PAT                          0     // TABLE ID for PAT
@@ -149,8 +151,10 @@ static DWORD crc_table[256] = {
 		m_iPmtVersion=0;
 		m_pWriteBuffer = new byte[WRITE_BUFFER_SIZE];
 		m_iWriteBufferPos=0;
+    m_TsPacketCount=0;
 		m_fDump=NULL;
 		m_bIgnoreNextPcrJump=false;
+    m_bClearTsQueue=false;
 	}
 	//*******************************************************************
 	//* dtor
@@ -158,6 +162,11 @@ static DWORD crc_table[256] = {
 	CTimeShifting::~CTimeShifting(void)
 	{
 		delete [] m_pWriteBuffer;
+    for (int i=0; i < m_tsQueue.size();++i)
+    {
+      delete[] m_tsQueue[i];
+    }    
+    m_tsQueue.clear();
 	}
 
 	//*******************************************************************
@@ -200,12 +209,20 @@ static DWORD crc_table[256] = {
 	//*******************************************************************
 	STDMETHODIMP CTimeShifting::Pause( BYTE onOff) 
 	{
-		if (onOff!=0) 
-			m_bPaused=TRUE;
+		CEnterCriticalSection enter(m_section);
+    if (onOff!=0)
+    {
+			m_bClearTsQueue=true;
+      m_bPaused=TRUE;
+    }
 		else
+    {
 			m_bPaused=FALSE;
+    }
 		if (m_bPaused)
+    {
 			LogDebug("Timeshifter:paused:yes"); 
+    }
 		else
 		{
 			LogDebug("Timeshifter:paused:no"); 
@@ -225,6 +242,10 @@ static DWORD crc_table[256] = {
 		try
 		{
 			LogDebug("Timeshifter:pcr pid:0x%x",pcrPid); 
+      LogDebug("Timeshifter:SetPcrPid clear old PIDs");
+      m_vecPids.clear();
+      m_bClearTsQueue=true;
+      m_TsPacketCount=0;
 
 			m_multiPlexer.ClearStreams();
 			m_multiPlexer.SetPcrPid(pcrPid);
@@ -269,8 +290,6 @@ static DWORD crc_table[256] = {
 		{
 			LogDebug("Timeshifter:pmt pid:0x%x",pmtPid);
       m_pmtPid=pmtPid;
-      LogDebug("Timeshifter:SetPmtPid clear old PIDs");
-      m_vecPids.clear();
 		}
 		catch(...)
 		{
@@ -582,6 +601,9 @@ static DWORD crc_table[256] = {
 			m_highestPcr.Reset();
 			m_vecPids.clear();
 			m_multiPlexer.Reset();
+      m_tsQueue.clear();
+      m_pcrHole.Reset();
+      m_backwardsPcrHole.Reset();
 			FAKE_NETWORK_ID   = 0x456;
 			FAKE_TRANSPORT_ID = 0x4;
 			FAKE_SERVICE_ID   = 0x89;
@@ -653,30 +675,100 @@ static DWORD crc_table[256] = {
 		}
 		catch(...)
 		{
-			LogDebug("Timeshifter:Write exception");
+			LogDebug("Timeshifter:Flush exception");
 		}
 	}
 
 
 	//*******************************************************************
-	//* Write a datablock to i/o buffer
+  //* Write a datablock to i/o buffer
 	//* When the i/o buffer is full, it is flushed to the timeshifting file
-	//* buffer: block of data
+	//* Uses internal TS packet queue to allow "rollback" of TS packets
+  //* on a channel change
+  //*
+  //* buffer: block of data
 	//* len   : length of buffer
 	//*******************************************************************
-	void CTimeShifting::Write(byte* buffer, int len)
-	{
-		if (!m_bTimeShifting) return;
-		if (buffer==NULL) return;
-		if (len <=0) return;
-		CEnterCriticalSection enter(m_section);
-		if (len + m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
-		{
-			Flush();
-		}
-		memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
-		m_iWriteBufferPos+=len;
-	}
+  void CTimeShifting::Write(byte* buffer, int len)
+  {
+    if (!m_bTimeShifting) return;
+    if (buffer == NULL) return;
+    if (len != 188) return; //sanity check
+    if (m_pWriteBuffer == NULL) return; //sanity check
+    if (m_bPaused || m_bClearTsQueue) 
+    {
+       try
+       {
+          LogDebug("Timeshifter: clear TS packet queue"); 
+	        for (int i=0; i < m_tsQueue.size();++i)
+          {
+            delete[] m_tsQueue[i];
+          }
+          m_tsQueue.clear();
+          m_bClearTsQueue = false;
+          ZeroMemory(m_pWriteBuffer, WRITE_BUFFER_SIZE);
+          m_iWriteBufferPos = 0;
+        }
+        catch(...)
+        {
+          LogDebug("Timeshifter:Write exception - 1");
+        }
+        return;
+      }
+      CEnterCriticalSection enter(m_section);
+
+      if (m_tsQueue.size() < TS_QUEUE_SIZE)
+      {
+        // Put all TS packets to the queue so we can drop some TS packets
+        // when tuning to new channel
+        try
+        {
+          char* tmp = new char[len];
+          if (tmp!=NULL)
+          {
+            memcpy(tmp,buffer,len);
+            m_tsQueue.push_back(tmp);
+          }
+        }
+        catch(...)
+        {
+          LogDebug("Timeshifter:Write exception - 2");
+          return;
+        }
+      }
+
+      if (m_tsQueue.size() >= TS_QUEUE_SIZE)
+      {
+        try  
+        {      
+          // Copy first TS packet from the queue to the I/O buffer
+          if (m_iWriteBufferPos >= 0 && m_iWriteBufferPos+188 <= WRITE_BUFFER_SIZE)
+          {
+            vector<char*>::iterator it = m_tsQueue.begin();
+            char* tmp = *it;
+            m_tsQueue.erase(it);
+            memcpy(&m_pWriteBuffer[m_iWriteBufferPos], tmp,188);
+            delete[] tmp;
+            m_iWriteBufferPos+=188;
+          }
+          else
+          {
+             LogDebug("Timeshifter:Write m_iWriteBufferPos overflow!");
+             m_iWriteBufferPos=0;
+          }
+        }
+        catch(...)
+        {
+          LogDebug("Timeshifter:Write exception - 3");
+          return;
+        }
+
+        if (m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
+        {
+	        Flush();
+        }
+      }  
+    }
 
 	//*******************************************************************
 	//* returns the buffer size
@@ -815,10 +907,11 @@ static DWORD crc_table[256] = {
 	//*******************************************************************
 	void CTimeShifting::WriteTs(byte* tsPacket)
 	{	  	  
-		if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
+		m_TsPacketCount++;
+    if( m_TsPacketCount < IGNORE_AFTER_TUNE ) return;
+    if (m_pcrPid<0 || m_vecPids.size()==0 || m_pmtPid<0) return;
 
 		m_tsHeader.Decode(tsPacket);
-
 		if (m_tsHeader.TransportError) 
 		{
 		  LogDebug("  m_tsHeader.TransportError - IGNORE TS PACKET!");
@@ -833,7 +926,6 @@ static DWORD crc_table[256] = {
 
 		bool writeTS = true;
 		int start=0;
-				
 
 		if (m_iPacketCounter>=100)
 		{
@@ -891,11 +983,10 @@ static DWORD crc_table[256] = {
 
 					  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 					  {						
-						if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
-						info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-						Write(pkt,188);
-						m_iPacketCounter++;
-  						
+						  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
+						  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
+						  Write(pkt,188);
+						  m_iPacketCounter++;
 					  }
 					  return;
 				  }
@@ -1263,35 +1354,40 @@ static DWORD crc_table[256] = {
 
 		if (pcrNew > m_highestPcr)
 		{
-			diff = pcrNew - m_prevPcr;
 			m_highestPcr = pcrNew;
 		}
-		else
-		{
-			diff = m_prevPcr - pcrNew;
-			m_highestPcr = pcrNew;
-		}
+  
+    if (pcrNew > m_prevPcr)
+    {
+      diff = pcrNew - m_prevPcr;
+    }
+    else
+    {
+      diff = m_prevPcr - pcrNew;
+    }
 
-    if( m_bDetermineNewStartPcr )
+    if (m_bDetermineNewStartPcr)
     {
       LogDebug( "not allowed to patch PCRs yet - m_bDetermineNewStartPcr = true" );
     }
 
-		if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0 && !m_bDetermineNewStartPcr )
+		// PCR value has jumped too much in the stream
+    if (diff.ToClock() > 10L && m_prevPcr.ToClock() > 0 && !m_bDetermineNewStartPcr )
 		{
-			if( m_bIgnoreNextPcrJump )
+      if (m_bIgnoreNextPcrJump)
 			{
 				LogDebug( "Ignoring first PCR jump after channel change! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() , header.Pid);
 				m_bIgnoreNextPcrJump=false;
 			}
 			else
 			{
-				if( diff.ToClock() > 95443L ) // Max PCR value 95443.71768
+				if (diff.ToClock() > 95443L) // Max PCR value 95443.71768
 				{
 					m_bPCRRollover = true;
 					m_pcrDuration = m_prevPcr;
 					m_pcrDuration -= m_startPcr;
 					m_pcrHole.Reset();
+          m_backwardsPcrHole.Reset();
 					m_startPcr.Reset();
 					m_highestPcr.Reset();
 
@@ -1300,7 +1396,7 @@ static DWORD crc_table[256] = {
 				else
 				{      
 					CPcr step;
-					step.FromClock(0.02); // an estimated PCR step
+					step.FromClock(0.02); // an estimated PCR step, to be fixed with some average from the stream...
 
 					if (pcrNew > m_prevPcr)
 					{
@@ -1310,8 +1406,8 @@ static DWORD crc_table[256] = {
 					}
 					else
 					{
-						m_pcrHole -= diff;
-						m_pcrHole += step;
+						m_backwardsPcrHole += diff;
+						m_backwardsPcrHole += step;
 						LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() , header.Pid);
 					}
 				}
@@ -1320,13 +1416,14 @@ static DWORD crc_table[256] = {
 
 		pcrHi -= m_startPcr;
 		pcrHi -= m_pcrHole;
+    pcrHi += m_backwardsPcrHole;
 
-		if( m_bPCRRollover )
+		if (m_bPCRRollover)
 		{
 			pcrHi += m_pcrDuration;
 		}
 
-		//LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s - pid:%x", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), header.Pid );
+		//LogDebug("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
 		tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
 		tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
 		tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));

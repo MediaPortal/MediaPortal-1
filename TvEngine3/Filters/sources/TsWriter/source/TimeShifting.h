@@ -87,8 +87,6 @@ class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter
 public:
 	struct PidInfo
 	{
-
-
 		int  realPid;
 		int  fakePid;
 		int  serviceType;
@@ -175,9 +173,13 @@ private:
   CAdaptionField  m_adaptionField;
   CPcr            m_prevPcr;
   CPcr            m_pcrHole;
+  CPcr            m_backwardsPcrHole;
   CPcr            m_pcrDuration;
   bool            m_bPCRRollover;
   bool            m_bIgnoreNextPcrJump;
   FILE*           m_fDump;
 
+  vector<char*>   m_tsQueue;
+  bool            m_bClearTsQueue;
+  long            m_TsPacketCount;
 };
