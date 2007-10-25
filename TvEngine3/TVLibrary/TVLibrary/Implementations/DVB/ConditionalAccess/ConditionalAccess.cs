@@ -613,10 +613,13 @@ namespace TvLibrary.Implementations.DVB
         {
           if (_hauppauge != null)
           {
-            Log.Log.Info("Setting BDA Digital Demodulator to 256QAM");
+            Log.Log.Info("Setting ATSC BDA Digital Demodulator to 256QAM");
             _hauppauge.SetATSCQAM(channel);
           }
-          else Log.Log.Info("CheckATSCQAM: ATSC QAM card not found, continuing...");
+          else
+          {
+            Log.Log.Info("ATSC QAM card does not support BDA Digital Demodulator setting, continuing...");
+          }
         }
       }
       catch (Exception ex)

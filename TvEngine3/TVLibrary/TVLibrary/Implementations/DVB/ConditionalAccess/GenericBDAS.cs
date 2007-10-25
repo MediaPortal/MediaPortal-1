@@ -46,25 +46,22 @@ namespace TvLibrary.Implementations.DVB
 
     public GenericBDAS(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     {
-
       _TunerDevice = (IBDA_Topology)tunerFilter;
       _isGenericBDAS = true;
       /*
-       * It should probaly be implemented a function which handle a list of DBA devices
+       * It should probaly be implemented a function which handle a list of BDA devices
        * that is compatible with "put_Range" function.
        * I have only tested this with Terratec Cinergy DVB-S 1200.
        * However, it should work with other Philips SAA-7146 based cards as well.
        * Use this at your own risk!!
        * /Digi
-       * 
        */
-
-
     }
+
+
 
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
-
       switch (channel.DisEqc)
       {
         case DisEqcType.Level1AA: SendDiSEqCCommand(0x00); break;
@@ -75,9 +72,9 @@ namespace TvLibrary.Implementations.DVB
         case DisEqcType.SimpleB: SendDiSEqCCommand(0x01); break;
         default:
           return;
-
       }
     }
+
     /// <summary>
     /// Sends the DiSEqC command.
     /// </summary>

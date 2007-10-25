@@ -214,16 +214,14 @@ namespace TvLibrary.Implementations.DVB
         hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
         hr = atscLocator.put_SymbolRate(-1);//atscChannel.SymbolRate);
         hr = atscLocator.put_TSID(-1);//atscChannel.TransportId);
-        //Log.Log.Info("TVCardATSC: Put Frequency {0}", atscChannel.Frequency);
         hr = atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
         hr = atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
-        //Log.Log.Info("TVCardATSC: Put Modulation {0}", atscChannel.ModulationType);
+        _tuningSpace.put_InputType(TunerInputType.Cable);
         hr = atscLocator.put_Modulation(atscChannel.ModulationType);
         hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
         hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);
         _tuneRequest.put_Locator(locator);
         _conditionalAccess.CheckATSCQAM(atscChannel);
-        //Log.Log.Info("TVCardATSC: SubmitTuneRequest");
         ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
         RunGraph(ch.SubChannelId);
         return ch;
