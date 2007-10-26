@@ -3319,6 +3319,12 @@
 		<carrier frequency="714000" bandwidth="8" />
 		<carrier frequency="730000" bandwidth="8" />
 	</country>
+	
+	<country name="Swiss - Graubuenden - Chur" offset="125">
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+	</country>
+	
 	<country name="Taiwan - All Regions" offset="0">
 		<carrier frequency="533000" bandwidth="6" />
 		<carrier frequency="539000" bandwidth="6" />
