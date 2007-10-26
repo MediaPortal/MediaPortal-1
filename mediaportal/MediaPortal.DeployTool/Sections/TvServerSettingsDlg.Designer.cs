@@ -32,6 +32,7 @@ namespace MediaPortal.DeployTool
       this.textBoxDir = new System.Windows.Forms.TextBox();
       this.labelInstDir = new System.Windows.Forms.Label();
       this.labelHeading = new System.Windows.Forms.Label();
+      this.checkBoxFirewall = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // buttonBrowse
@@ -72,10 +73,23 @@ namespace MediaPortal.DeployTool
       this.labelHeading.TabIndex = 18;
       this.labelHeading.Text = "Please set the needed options for the TV-Server installation:";
       // 
+      // checkBoxFirewall
+      // 
+      this.checkBoxFirewall.AutoSize = true;
+      this.checkBoxFirewall.Checked = true;
+      this.checkBoxFirewall.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxFirewall.Location = new System.Drawing.Point(9, 110);
+      this.checkBoxFirewall.Name = "checkBoxFirewall";
+      this.checkBoxFirewall.Size = new System.Drawing.Size(331, 17);
+      this.checkBoxFirewall.TabIndex = 22;
+      this.checkBoxFirewall.Text = "Configure Windows Firewall to allow external access to TvServer";
+      this.checkBoxFirewall.UseVisualStyleBackColor = true;
+      // 
       // TvServerSettingsDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.checkBoxFirewall);
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.textBoxDir);
       this.Controls.Add(this.labelInstDir);
@@ -87,6 +101,7 @@ namespace MediaPortal.DeployTool
       this.Controls.SetChildIndex(this.labelInstDir, 0);
       this.Controls.SetChildIndex(this.textBoxDir, 0);
       this.Controls.SetChildIndex(this.buttonBrowse, 0);
+      this.Controls.SetChildIndex(this.checkBoxFirewall, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -98,5 +113,6 @@ namespace MediaPortal.DeployTool
     private System.Windows.Forms.TextBox textBoxDir;
     private System.Windows.Forms.Label labelInstDir;
     private System.Windows.Forms.Label labelHeading;
+    private System.Windows.Forms.CheckBox checkBoxFirewall;
   }
 }

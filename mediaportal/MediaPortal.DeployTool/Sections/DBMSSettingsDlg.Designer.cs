@@ -35,6 +35,7 @@ namespace MediaPortal.DeployTool
       this.labelPassword = new System.Windows.Forms.Label();
       this.labelPasswordDesc = new System.Windows.Forms.Label();
       this.buttonBrowse = new System.Windows.Forms.Button();
+      this.checkBoxFirewall = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // labelHeading
@@ -103,10 +104,23 @@ namespace MediaPortal.DeployTool
       this.buttonBrowse.UseVisualStyleBackColor = true;
       this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
       // 
+      // checkBoxFirewall
+      // 
+      this.checkBoxFirewall.AutoSize = true;
+      this.checkBoxFirewall.Checked = true;
+      this.checkBoxFirewall.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxFirewall.Location = new System.Drawing.Point(10, 182);
+      this.checkBoxFirewall.Name = "checkBoxFirewall";
+      this.checkBoxFirewall.Size = new System.Drawing.Size(363, 17);
+      this.checkBoxFirewall.TabIndex = 11;
+      this.checkBoxFirewall.Text = "Configure Windows Firewall to allow external access to database server";
+      this.checkBoxFirewall.UseVisualStyleBackColor = true;
+      // 
       // DBMSSettingsDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.checkBoxFirewall);
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.labelPasswordDesc);
       this.Controls.Add(this.textBoxPassword);
@@ -115,7 +129,7 @@ namespace MediaPortal.DeployTool
       this.Controls.Add(this.labelInstDir);
       this.Controls.Add(this.labelHeading);
       this.Name = "DBMSSettingsDlg";
-      this.Size = new System.Drawing.Size(620, 206);
+      this.Size = new System.Drawing.Size(620, 224);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.labelHeading, 0);
       this.Controls.SetChildIndex(this.labelInstDir, 0);
@@ -124,6 +138,7 @@ namespace MediaPortal.DeployTool
       this.Controls.SetChildIndex(this.textBoxPassword, 0);
       this.Controls.SetChildIndex(this.labelPasswordDesc, 0);
       this.Controls.SetChildIndex(this.buttonBrowse, 0);
+      this.Controls.SetChildIndex(this.checkBoxFirewall, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -138,5 +153,6 @@ namespace MediaPortal.DeployTool
     private System.Windows.Forms.Label labelPassword;
     private System.Windows.Forms.Label labelPasswordDesc;
     private System.Windows.Forms.Button buttonBrowse;
+    private System.Windows.Forms.CheckBox checkBoxFirewall;
   }
 }

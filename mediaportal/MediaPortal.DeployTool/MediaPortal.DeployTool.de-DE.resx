@@ -153,6 +153,9 @@
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Durchsuchen</value>
   </data>
+  <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Windows Firewall für externen Zugriff auf Datenbankserver konfigurieren</value>
+  </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
     <value>Sie müssen einen gültigen Installationspfad für den SQL-Server eintragen</value>
   </data>
@@ -283,6 +286,9 @@
     <value>MediaPortal Deploy Tool</value>
     <comment>Name for the title bar of the app</comment>
   </data>
+  <data name="MainWindow_AppName_SVN" xml:space="preserve">
+    <value>MediaPortal Deploy Tool -- SVN Modus</value>
+  </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>zurück</value>
   </data>
@@ -341,6 +347,9 @@
   <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
     <value>Durchsuchen</value>
   </data>
+  <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Windows Firewall für externen Zugriff auf TvServer konfigurieren</value>
+  </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
     <value>Sie müssen einen gültigen Installationspfad für die TV-Server Installation eintragen</value>
   </data>
@@ -358,6 +367,9 @@
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
     <value>Das Deployment Tool wird Sie durch den Installationsvorgang leiten</value>
+  </data>
+  <data name="Welcome_labelHeading2_SVN" xml:space="preserve">
+    <value>Das Deployment Tool wird alle installierten Applikationen updaten</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
     <value>Bitte wählen Sie Ihre Srache aus</value>

@@ -50,6 +50,7 @@ namespace MediaPortal.DeployTool
     {
       labelHeading.Text = Localizer.Instance.GetString("TvServerSettings_labelHeading");
       labelInstDir.Text = Localizer.Instance.GetString("TvServerSettings_labelInstDir");
+      checkBoxFirewall.Text = Localizer.Instance.GetString("TvServerSettings_checkBoxFirewall");
       buttonBrowse.Text = Localizer.Instance.GetString("TvServerSettings_buttonBrowse");
     }
     public override DeployDialog GetNextDialog()
@@ -68,6 +69,10 @@ namespace MediaPortal.DeployTool
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("TVServerDir", textBoxDir.Text);
+      if (checkBoxFirewall.Checked)
+        InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
+      else
+        InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "0");
     }
     #endregion
 

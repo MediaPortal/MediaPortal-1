@@ -46,13 +46,19 @@ namespace MediaPortal.DeployTool
     public override void UpdateUI()
     {
       labelHeading1.Text = Localizer.Instance.GetString("Welcome_labelHeading1");
-      labelHeading2.Text = Localizer.Instance.GetString("Welcome_labelHeading2");
+      if (InstallationProperties.Instance.Get("SVNMode") == "true")
+        labelHeading2.Text = Localizer.Instance.GetString("Welcome_labelHeading2_SVN");
+      else
+        labelHeading2.Text = Localizer.Instance.GetString("Welcome_labelHeading2");
       labelHeading3.Text = Localizer.Instance.GetString("Welcome_labelHeading3");
     }
     public override DeployDialog GetNextDialog()
     {
       DialogFlowHandler.Instance.ResetHistory();
-      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE);
+      if (InstallationProperties.Instance.Get("SVNMode") == "true")
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation_SVN);
+      else
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE);
     }
     public override bool SettingsValid()
     {

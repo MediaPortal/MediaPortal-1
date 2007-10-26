@@ -153,6 +153,9 @@
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Browse</value>
   </data>
+  <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Configure Windows Firewall to allow external access to database server</value>
+  </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
     <value>You have to supply a valid installation path for the SQL-Server.</value>
   </data>
@@ -283,6 +286,9 @@
     <value>MediaPortal Deploy Tool</value>
     <comment>Name for the title bar of the app</comment>
   </data>
+  <data name="MainWindow_AppName_SVN" xml:space="preserve">
+    <value>MediaPortal Deploy Tool -- SVN Mode</value>
+  </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>back</value>
   </data>
@@ -341,6 +347,9 @@
   <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
     <value>Browse</value>
   </data>
+  <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Configure Windows Firewall to allow external access to TvServer</value>
+  </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
     <value>You have to supply a valid installation path for the TV-Server.</value>
   </data>
@@ -358,6 +367,9 @@
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
     <value>This deployment tool will guide you through the installation process</value>
+  </data>
+  <data name="Welcome_labelHeading2_SVN" xml:space="preserve">
+    <value>This deployment tool will update all installed applications to the current svn revision</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
     <value>Please select your language before you continue</value>

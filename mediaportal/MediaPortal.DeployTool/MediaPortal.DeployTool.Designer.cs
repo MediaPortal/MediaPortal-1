@@ -169,6 +169,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure Windows Firewall to allow external access to database server.
+        /// </summary>
+        internal static string DBMSSettings_checkBoxFirewall {
+            get {
+                return ResourceManager.GetString("DBMSSettings_checkBoxFirewall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have to supply a valid installation path for the SQL-Server..
         /// </summary>
         internal static string DBMSSettings_errInvalidInstallationPath {
@@ -556,6 +565,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MediaPortal Deploy Tool -- SVN Mode.
+        /// </summary>
+        internal static string MainWindow_AppName_SVN {
+            get {
+                return ResourceManager.GetString("MainWindow_AppName_SVN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to back.
         /// </summary>
         internal static string MainWindow_backButton {
@@ -727,6 +745,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure Windows Firewall to allow external access to TvServer.
+        /// </summary>
+        internal static string TvServerSettings_checkBoxFirewall {
+            get {
+                return ResourceManager.GetString("TvServerSettings_checkBoxFirewall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have to supply a valid installation path for the TV-Server..
         /// </summary>
         internal static string TvServerSettings_errInvalidPath {
@@ -777,6 +804,15 @@ namespace MediaPortal.DeployTool {
         internal static string Welcome_labelHeading2 {
             get {
                 return ResourceManager.GetString("Welcome_labelHeading2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This deployment tool will update all installed applications to the current svn revision.
+        /// </summary>
+        internal static string Welcome_labelHeading2_SVN {
+            get {
+                return ResourceManager.GetString("Welcome_labelHeading2_SVN", resourceCulture);
             }
         }
         

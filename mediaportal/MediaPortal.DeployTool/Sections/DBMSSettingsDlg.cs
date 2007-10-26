@@ -53,6 +53,7 @@ namespace MediaPortal.DeployTool
       labelHeading.Text = Localizer.Instance.GetString("DBMSSettings_labelHeading");
       labelInstDir.Text = Localizer.Instance.GetString("DBMSSettings_labelInstDir");
       buttonBrowse.Text = Localizer.Instance.GetString("DBMSSettings_buttonBrowse");
+      checkBoxFirewall.Text = Localizer.Instance.GetString("DBMSSettings_checkBoxFirewall");
       labelPassword.Text = Localizer.Instance.GetString("DBMSSettings_labelPassword");
       labelPasswordDesc.Text = Localizer.Instance.GetString("DBMSSettings_labelPasswordDesc");
     }
@@ -81,6 +82,10 @@ namespace MediaPortal.DeployTool
     {
       InstallationProperties.Instance.Set("DBMSDir", textBoxDir.Text);
       InstallationProperties.Instance.Set("DBMSPassword", textBoxPassword.Text);
+      if (checkBoxFirewall.Checked)
+        InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
+      else
+        InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "0");
     }
     #endregion
 

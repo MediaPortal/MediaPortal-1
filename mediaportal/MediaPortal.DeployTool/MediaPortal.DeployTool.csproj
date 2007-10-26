@@ -67,6 +67,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
+    <Compile Include="InstallationChecks\WindowsFirewallChecker.cs" />
+    <Compile Include="InstallationChecks\TvServerChecker_SVN.cs" />
+    <Compile Include="InstallationChecks\TvPluginChecker_SVN.cs" />
+    <Compile Include="InstallationChecks\MediaPortalChecker_SVN.cs" />
     <Compile Include="InstallationChecks\MySQLChecker.cs" />
     <Compile Include="InstallationChecks\MSSQLExpressChecker.cs" />
     <Compile Include="InstallationChecks\TvPluginChecker.cs" />
@@ -114,6 +118,10 @@
     <EmbeddedResource Include="Sections\BaseInstallationTypeDlg.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\InstallDlg_SVN.resx">
+      <DependentUpon>InstallDlg_SVN.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\CustomInstallationTypeDlg.resx">
       <DependentUpon>CustomInstallationTypeDlg.cs</DependentUpon>
@@ -167,6 +175,12 @@
     <Compile Include="Sections\BaseInstallationTypeDlg.Designer.cs">
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\InstallDlg_SVN.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\InstallDlg_SVN.Designer.cs">
+      <DependentUpon>InstallDlg_SVN.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\CustomInstallationTypeDlg.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -215,6 +229,7 @@
     <Compile Include="Sections\WelcomeDlg.Designer.cs">
       <DependentUpon>WelcomeDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="SnapshotLookup.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
