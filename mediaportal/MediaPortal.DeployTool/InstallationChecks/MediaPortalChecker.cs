@@ -48,48 +48,46 @@ namespace MediaPortal.DeployTool
     }
     public bool Install()
     {
-      string msi = Path.GetTempPath() + "\\setup.msi";
-      string targetDir=InstallationProperties.Instance["MPDir"];
-      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("MediaPortal"), "Setup.msi", msi);
-      string parameters="/i \""+msi+"\" /qb TARGETDIR=\""+targetDir+"\" /L* \""+Path.GetTempPath()+"\\mpinst.log\"";
-      Process setup=Process.Start("msiexec",parameters);
+      string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal");
+      string targetDir = InstallationProperties.Instance["MPDir"];
+      Process setup = Process.Start(nsis, "/S /D=" + targetDir);
       setup.WaitForExit();
-      StreamReader sr = new StreamReader(Path.GetTempPath() + "\\mpinst.log");
-      bool installOk=false;
-      while (!sr.EndOfStream)
-      {
-        string line = sr.ReadLine();
-        if (line.Contains("Installation completed successfully"))
-        {
-          installOk = true;
-          break;
-        }
-      }
-      sr.Close();
-      return installOk;
+      return (setup.ExitCode==0);
     }
     public bool UnInstall()
     {
-      Process setup = Process.Start("msiexec", "/X {87819CFA-1786-484D-B0DE-10B5FBF2625D}");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
+      if (key == null)
+      {
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0 RC3");
+        if (key == null)
+          return false;
+      }
+      Process setup = Process.Start((string)key.GetValue("UninstallString"));
       setup.WaitForExit();
+      key.Close();
       return true;
     }
     public CheckResult CheckStatus()
     {
       CheckResult result;
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal"));
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{87819CFA-1786-484D-B0DE-10B5FBF2625D}");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
       if (key == null)
-        result.state = CheckState.NOT_INSTALLED;
-      else
       {
-        string version = (string)key.GetValue("DisplayVersion");
-        key.Close();
-        if (version == "0.2.3")
-          result.state = CheckState.INSTALLED;
-        else
-          result.state = CheckState.VERSION_MISMATCH;
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0 RC3");
+        if (key == null)
+        {
+          result.state = CheckState.NOT_INSTALLED;
+          return result;
+        }
       }
+      string version = (string)key.GetValue("DisplayVersion");
+      key.Close();
+      if (version == "0.2.3.0")
+        result.state = CheckState.INSTALLED;
+      else
+        result.state = CheckState.VERSION_MISMATCH;
       return result;
     }
   }

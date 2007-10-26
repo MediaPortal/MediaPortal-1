@@ -13,7 +13,7 @@
     </MySQL>	
 	<MediaPortal>
 		<URL>http://...</URL>
-		<FILE>mediaportal_0.2.3.zip</FILE>
+		<FILE>MediaPortal_0.2.3.0_RC3_Setup.exe</FILE>
 	</MediaPortal>
 	<TvServer>
 		<URL>http://...</URL>

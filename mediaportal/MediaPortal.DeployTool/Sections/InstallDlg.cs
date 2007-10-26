@@ -50,7 +50,7 @@ namespace MediaPortal.DeployTool
     private void ConfigureFirewallProfile(string profile)
     {
       // Applications
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Shared Access\\Parameters\\FirewallPolicy\\"+profile+"\\AuthorizedApplications\\List");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\"+profile+"\\AuthorizedApplications\\List",true);
       key.SetValue(InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe", InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe:*:Enabled:TvService.exe", RegistryValueKind.String);
       if (InstallationProperties.Instance["InstallType"] == "singleseat" || InstallationProperties.Instance["InstallType"] == "tvserver_master")
       {
@@ -65,7 +65,7 @@ namespace MediaPortal.DeployTool
       key.Flush();
       key.Close();
       // Ports
-      key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Shared Access\\Parameters\\FirewallPolicy\\"+profile+"\\GloballyOpenPorts\\List");
+      key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\"+profile+"\\GloballyOpenPorts\\List",true);
       key.SetValue("554:TCP", "554:TCP:*:Enabled:MediaPortal TvServer RTSP Streaming (TCP)", RegistryValueKind.String);
       for (int i = 6970; i < 10000; i++)
         key.SetValue(i.ToString() + ":UDP", i.ToString() + ":UDP:*:Enabled:MediaPortal TvServer RTSP Streaming (UDP Port " + i.ToString() + ")", RegistryValueKind.String);
