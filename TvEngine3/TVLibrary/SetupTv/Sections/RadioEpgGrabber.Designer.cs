@@ -53,9 +53,8 @@ namespace SetupTv.Sections
 			// 
 			this.mpListView1.AllowDrop = true;
 			this.mpListView1.AllowRowReorder = true;
-			this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-									| System.Windows.Forms.AnchorStyles.Left)
-									| System.Windows.Forms.AnchorStyles.Right)));
+			this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+									| System.Windows.Forms.AnchorStyles.Left)));
 			this.mpListView1.CheckBoxes = true;
 			this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
@@ -126,6 +125,8 @@ namespace SetupTv.Sections
 			// 
 			// mpLabel2
 			// 
+			this.mpLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+									| System.Windows.Forms.AnchorStyles.Left)));
 			this.mpLabel2.AutoSize = true;
 			this.mpLabel2.Location = new System.Drawing.Point(236, 3);
 			this.mpLabel2.Name = "mpLabel2";
