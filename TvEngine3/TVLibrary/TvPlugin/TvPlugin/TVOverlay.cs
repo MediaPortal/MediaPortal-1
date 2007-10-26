@@ -94,8 +94,7 @@ namespace TvPlugin
       }
     }
     public bool ShouldRenderLayer()
-    {
-      TVHome.SendHeartBeat(); // this is the only place needed to send the heartbeat from.
+    {      
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
       //{
       //  OnUpdateState(false);

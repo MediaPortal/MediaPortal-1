@@ -58,10 +58,8 @@ namespace TvPlugin
   public class TVHome : GUIWindow, ISetupForm, IShowPlugin
   {
 
-		#region constants
-
-		public const int HEARTBEAT_INTERVAL = 5; //seconds
-
+		#region constants		
+    public const int HEARTBEAT_INTERVAL = 5; //seconds
 		#endregion
 
     #region variables
@@ -72,14 +70,14 @@ namespace TvPlugin
       IMG_REC_RECTANGLE = 23,
 
     };
+    //heartbeat related stuff
+    private Thread heartBeatTransmitterThread = null;    
 
+		static DateTime _updateProgressTimer = DateTime.MinValue;    
     static ChannelNavigator m_navigator;
     static TVUtil _util;
     static VirtualCard _card = null;
-    DateTime _updateTimer = DateTime.Now;
-		static DateTime _updateHeartBeatTimer = DateTime.Now;
-    static DateTime _updateProgressTimer = DateTime.MinValue;
-    static bool _sendingHeartBeat = false;
+    DateTime _updateTimer = DateTime.Now;		
     bool _autoTurnOnTv = false;
     static bool _autoswitchTVon = false;
     int _lagtolerance = 10; //Added by joboehl
@@ -118,6 +116,7 @@ namespace TvPlugin
     static bool _connected = false;
 
     static protected TvServer _server;
+
     #endregion
 
     public TVHome()
@@ -136,6 +135,7 @@ namespace TvPlugin
       }
       GetID = (int)GUIWindow.Window.WINDOW_TV;
       Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
+      startHeartBeatThread();
     }
 
     void Application_ApplicationExit(object sender, EventArgs e)
@@ -150,9 +150,53 @@ namespace TvPlugin
             TVHome.Card.StopTimeShifting();
           }
         }
+        stopHeartBeatThread();
       }
       catch (Exception)
       {
+      }
+    }
+
+    private void HeartBeatTransmitter()
+    {
+      while (true)
+      {
+        if (TVHome.Connected && TVHome.Card.IsTimeShifting)
+        {          
+            // send heartbeat to tv server each 5 sec.
+            // this way we signal to the server that we are alive thus avoid being kicked.
+            Log.Debug("TVHome: sending HeartBeat signal to server.");
+            RemoteControl.Instance.HeartBeat(TVHome.Card.User);           
+        }
+        Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
+      }
+    }		
+
+    private void startHeartBeatThread()
+    {
+      // setup heartbeat transmitter thread.						
+      // thread already running, then leave it.
+      if (heartBeatTransmitterThread != null)
+      {
+        if (heartBeatTransmitterThread.IsAlive)
+        {
+          return;
+        }
+      }
+      Log.Debug("TVHome: HeartBeat Transmitter started.");
+      heartBeatTransmitterThread = new Thread(HeartBeatTransmitter);
+      heartBeatTransmitterThread.Start();
+    }
+
+    private void stopHeartBeatThread()
+    {
+      if (heartBeatTransmitterThread != null)
+      {
+        if (heartBeatTransmitterThread.IsAlive)
+        {
+          Log.Debug("TVHome: HeartBeat Transmitter stopped.");
+          heartBeatTransmitterThread.Abort();
+        }
       }
     }
 
@@ -342,7 +386,7 @@ namespace TvPlugin
     /// <returns></returns>
     public override void DeInit()
     {
-      OnPageDestroy(-1);
+      OnPageDestroy(-1);      
     }
 
     public override bool SupportsDelayedLoad
@@ -985,26 +1029,7 @@ namespace TvPlugin
 
     public static void UpdateTimeShift()
     {
-    }
-
-    public static void SendHeartBeat()
-    {
-      if (_sendingHeartBeat) return;
-      _sendingHeartBeat = true;
-
-			TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;			
-
-			if (tshb.TotalSeconds > HEARTBEAT_INTERVAL && TVHome.Connected && TVHome.Card.IsTimeShifting)
-			{
-				// send heartbeat to tv server each 5 sec.
-				// this way we signal to the server that we are alive thus avoid being kicked.
-        Log.Debug("TVHome.SendHeartBeat: sending HeartBeat signal to server.");
-				RemoteControl.Instance.HeartBeat(TVHome.Card.User);
-				_updateHeartBeatTimer = DateTime.Now;				
-			}
-
-      _sendingHeartBeat = false;
-    }
+    }    
 
     void OnActiveStreams()
     {
@@ -2030,8 +2055,11 @@ namespace TvPlugin
 
     #endregion
 
-    #region Private members
+		#region constants		
+		#endregion
 
+    #region Private members
+		
     private List<Channel> _channelList = new List<Channel>();
     private List<ChannelGroup> m_groups = new List<ChannelGroup>(); // Contains all channel groups (including an "all channels" group)
     private int m_currentgroup = 0;
@@ -2043,8 +2071,7 @@ namespace TvPlugin
     private Channel m_currentChannel = null;
     private IList channels = new ArrayList();
     private bool reentrant = false;
-
-
+		
     #endregion
 
     #region Constructors
@@ -2073,6 +2100,7 @@ namespace TvPlugin
 
       ReLoad();
     }
+    
     public void ReLoad()
     {
       try
@@ -2340,9 +2368,11 @@ namespace TvPlugin
           
           TVHome.ViewChannel(zappingTo);          
           reentrant = false;
+					
           return true;
-        }
+        }				
       }
+      
       reentrant = false;
       return false;
     }
