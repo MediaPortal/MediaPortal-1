@@ -25,4 +25,5 @@ private:
   CTsDuration&  m_duration;
   CPcr          m_pcrFound;
   int           m_seekPid;
+  bool          m_useBinarySearch;
 };

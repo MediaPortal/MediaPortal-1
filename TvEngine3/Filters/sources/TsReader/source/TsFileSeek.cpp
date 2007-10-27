@@ -23,14 +23,14 @@
 #include "TsFileSeek.h"
 #include "adaptionfield.h"
 
-const float SEEKING_ACCURACY = 0.05;
+const float SEEKING_ACCURACY = 0.025;
 const int MAX_SEEKING_ITERATIONS = 50;
-const bool useBinarySearch = true;
 
 extern void LogDebug(const char *fmt, ...) ;
 CTsFileSeek::CTsFileSeek( CTsDuration& duration)
 :m_duration(duration)
 {
+  m_useBinarySearch = true;
 }
 
 CTsFileSeek::~CTsFileSeek(void)
@@ -64,6 +64,16 @@ void CTsFileSeek::Seek(CRefTime refTime)
 
   filePos/=188;
   filePos*=188;
+
+  if( m_duration.FirstStartPcr() > m_duration.EndPcr() )
+  {
+    // no PCR rollover is allowed when using binary search with seeking
+    m_useBinarySearch = false;
+  }
+  else
+  {
+    m_useBinarySearch = true;
+  }
 
   seekTimeStamp /= 1000.0f; // convert to seconds.
 
@@ -150,7 +160,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
       }
       else
       {
-        if( useBinarySearch )
+        if( m_useBinarySearch )
         {
           double diff = fabs( seekTimeStamp - clockFound );
           LogDebug(" got %f at filepos %x diff %f", clockFound, (DWORD)filePos, diff);
