@@ -44,34 +44,34 @@ void CPmtParser::SetPmtCallBack(IPmtCallBack* callback)
 
 bool CPmtParser::IsReady()
 {
-  return _isFound;
+	return _isFound;
 }
 void CPmtParser::OnNewSection(CSection& sections)
 { 
-  byte* section=(&sections.Data)[0];
-  int sectionLen=sections.SectionLength;
+	byte* section=(&sections.Data)[0];
+	int sectionLen=sections.SectionLength;
 
-  m_tsHeader.Decode(section);
-  int start=m_tsHeader.PayLoadStart;
-  int table_id = section[start+0];
+	m_tsHeader.Decode(section);
+	int start=m_tsHeader.PayLoadStart;
+	int table_id = section[start+0];
 	if (table_id!=2) return;
-  int section_syntax_indicator = (section[start+1]>>7) & 1;
-  int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
-  int program_number = (section[start+3]<<8)+section[start+4];
-  int version_number = ((section[start+5]>>1)&0x1F);
-  int current_next_indicator = section[start+5] & 1;
-  int section_number = section[start+6];
-  int last_section_number = section[start+7];
-  int pcr_pid=((section[start+8]& 0x1F)<<8)+section[start+9];
-  int program_info_length = ((section[start+10] & 0xF)<<8)+section[start+11];
-  int len2 = program_info_length;
-  int pointer = 12;
-  int len1 = section_length -( 9 + program_info_length +4);
-  int x;
+	int section_syntax_indicator = (section[start+1]>>7) & 1;
+	int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
+	int program_number = (section[start+3]<<8)+section[start+4];
+	int version_number = ((section[start+5]>>1)&0x1F);
+	int current_next_indicator = section[start+5] & 1;
+	int section_number = section[start+6];
+	int last_section_number = section[start+7];
+	int pcr_pid=((section[start+8]& 0x1F)<<8)+section[start+9];
+	int program_info_length = ((section[start+10] & 0xF)<<8)+section[start+11];
+	int len2 = program_info_length;
+	int pointer = 12;
+	int len1 = section_length -( 9 + program_info_length +4);
+	int x;
 	
   m_pmtVersion=version_number;
   
-  if (!_isFound)
+	if (!_isFound)
 	{
 		//LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
 		_isFound=true;	
@@ -80,49 +80,51 @@ void CPmtParser::OnNewSection(CSection& sections)
 			m_pmtCallback->OnPmtReceived(GetPid());
 		}
 	}
-  // loop 1
-  while (len2 > 0)
-  {
-	  int indicator=section[start+pointer];
-	  int descriptorLen=section[start+pointer+1];
-	  len2 -= (descriptorLen+2);
-	  pointer += (descriptorLen+2);
-  }
-  // loop 2
-  int stream_type=0;
-  int elementary_PID=0;
-  int ES_info_length=0;
-  int audioToSet=0;
+
+	// loop 1
+	while (len2 > 0)
+	{
+		int indicator=section[start+pointer];
+		int descriptorLen=section[start+pointer+1];
+		len2 -= (descriptorLen+2);
+		pointer += (descriptorLen+2);
+	}
+	// loop 2
+	int stream_type=0;
+	int elementary_PID=0;
+	int ES_info_length=0;
+	int audioToSet=0;
   int subtitleToSet=0;
 
-  m_pidInfo.Reset();
-  m_pidInfo.PmtPid=GetPid();
-  m_pidInfo.ServiceId=program_number;
-  while (len1 > 0)
-  {
-	  //if (start+pointer+4>=sectionLen+9) return ;
-	  stream_type = section[start+pointer];
-	  elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
-	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
-   // LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
+	m_pidInfo.Reset();
+	m_pidInfo.PmtPid=GetPid();
+	m_pidInfo.ServiceId=program_number;
+	while (len1 > 0)
+	{
+		//if (start+pointer+4>=sectionLen+9) return ;
+    int curSubtitle=-1;
+		stream_type = section[start+pointer];
+		elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
+		ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
+		// LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
 		if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 || stream_type==SERVICE_TYPE_VIDEO_MPEG2)
-	  {
+		{
 			//mpeg2 video
-		  if(m_pidInfo.VideoPid==0)
+			if(m_pidInfo.VideoPid==0)
 			{
 				m_pidInfo.VideoPid=elementary_PID;
 				m_pidInfo.videoServiceType=stream_type;
 			}
-	  }
+		}
 		if(stream_type==SERVICE_TYPE_VIDEO_MPEG4 || stream_type==SERVICE_TYPE_VIDEO_H264)
-	  {
+		{
 			//h.264/mpeg4 video
-		  if(m_pidInfo.VideoPid==0)
+			if(m_pidInfo.VideoPid==0)
 			{
-			  m_pidInfo.VideoPid=elementary_PID;
+				m_pidInfo.VideoPid=elementary_PID;
 				m_pidInfo.videoServiceType=stream_type;
 			}
-	  }
+		}
 		if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || stream_type==SERVICE_TYPE_AUDIO_MPEG2 || stream_type==SERVICE_TYPE_AUDIO_AC3)
 	  {
 			//mpeg 2 audio
@@ -167,17 +169,17 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  pointer += 5;
 	  len1 -= 5;
 	  len2 = ES_info_length;
-	  while (len2 > 0)
-	  {
-		  if (pointer+1>=sectionLen) 
+		while (len2 > 0)
+		{
+			if (pointer+1>=sectionLen) 
 			{
 				LogDebug("pmt parser check1");
 				return ;
 			}
-		  x = 0;
-		  int indicator=section[start+pointer];
-		  x = section[start+pointer + 1] + 2;
-		  if(indicator==DESCRIPTOR_DVB_AC3)
+			x = 0;
+			int indicator=section[start+pointer];
+			x = section[start+pointer + 1] + 2;
+			if(indicator==DESCRIPTOR_DVB_AC3)
 			{
 			  m_pidInfo.AC3Pid=elementary_PID;
 			}
@@ -230,15 +232,41 @@ void CPmtParser::OnNewSection(CSection& sections)
 			{
 				if (stream_type==SERVICE_TYPE_DVB_SUBTITLES2)
 				{
-					BYTE d[3];
-					d[0]=section[start+pointer+2];
+          subtitleToSet++;
+			    curSubtitle=subtitleToSet;
+				  BYTE d[3];
+          d[0]=section[start+pointer+2];
 					d[1]=section[start+pointer+3];
 					d[2]=section[start+pointer+4];
-					m_pidInfo.SubtitlePid=elementary_PID;
-					m_pidInfo.SubLang1_1=d[0];
-					m_pidInfo.SubLang1_2=d[1];
-					m_pidInfo.SubLang1_3=d[2];
-				}
+
+			    switch(curSubtitle)
+			    {
+			    case 1:
+					  m_pidInfo.SubtitlePid1=elementary_PID;
+					  m_pidInfo.SubLang1_1=d[0];
+					  m_pidInfo.SubLang1_2=d[1];
+					  m_pidInfo.SubLang1_3=d[2];
+				    break;
+			    case 2:
+					  m_pidInfo.SubtitlePid2=elementary_PID;
+					  m_pidInfo.SubLang2_1=d[0];
+					  m_pidInfo.SubLang2_2=d[1];
+					  m_pidInfo.SubLang2_3=d[2];
+				    break;
+			    case 3:
+					  m_pidInfo.SubtitlePid3=elementary_PID;
+					  m_pidInfo.SubLang3_1=d[0];
+					  m_pidInfo.SubLang3_2=d[1];
+					  m_pidInfo.SubLang3_3=d[2];
+				    break;
+			    case 4:
+					  m_pidInfo.SubtitlePid4=elementary_PID;
+					  m_pidInfo.SubLang4_1=d[0];
+					  m_pidInfo.SubLang4_2=d[1];
+					  m_pidInfo.SubLang4_3=d[2];
+				    break;
+          }
+        }
 			}
 		  len2 -= x;
 		  len1 -= x;

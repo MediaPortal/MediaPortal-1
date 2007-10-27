@@ -70,8 +70,14 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 										 char** audioLanguage4,
 										 char** audioLanguage5,
 										 int* teletextPid,
-										 int* subtitlePid,
+										 int* subtitlePid1,
+                     int* subtitlePid2,
+                     int* subtitlePid3,
+                     int* subtitlePid4,
 										 char** subLanguage1,
+                     char** subLanguage2,
+                     char** subLanguage3,
+                     char** subLanguage4,
 										 int* videoStreamType)PURE;
 	STDMETHOD(SetCallBack)(THIS_ IChannelScanCallback* callback)PURE;
 
@@ -127,8 +133,14 @@ public:
 										 char** audioLanguage4,
 										 char** audioLanguage5,
 										 int* teletextPid,
-										 int* subtitlePid,
+										 int* subtitlePid1,
+                     int* subtitlePid2,
+                     int* subtitlePid3,
+                     int* subtitlePid4,
 										 char** subLanguage1,
+                     char** subLanguage2,
+                     char** subLanguage3,
+                     char** subLanguage4,
 										 int* videoStreamType);
 	STDMETHODIMP SetCallBack(IChannelScanCallback* callback);
 

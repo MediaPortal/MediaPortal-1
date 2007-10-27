@@ -382,9 +382,10 @@ void CRecorder::OnPidsReceived(const CPidTable& info)
 {
   if (m_pPmtParser && m_pmtVersion!=m_pPmtParser->GetPmtVersion() && m_iServiceId == info.ServiceId )
   {
-    LogDebug("Recorder: PMT version changed from %d to %d - m_iServiceId %x info.ServiceId %x", m_pmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId, info.ServiceId );
-    LogDebug("Recorder: pmt:0x%x pcr:0x%x video:0x%x audio1:0x%x audio2:0x%x audio3:%x audio4:0x%x audio5:0x%x video:0x%x teletext:0x%x subtitle:0x%x",
-      info.PmtPid,info.PcrPid,info.VideoPid,info.AudioPid1,info.AudioPid2,info.AudioPid3, info.AudioPid4,info.AudioPid5,info.VideoPid,info.TeletextPid,info.SubtitlePid);
+    LogDebug("Recorder: PMT version changed from %d to %d - ServiceId %x", m_pmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId );
+    LogDebug("Recorder: pmt:0x%x pcr:0x%x video:0x%x audio1:0x%x audio2:0x%x audio3:%x audio4:0x%x audio5:0x%x video:0x%x teletext:0x%x subtitle:0x%x subtitle:0x%x subtitle:0x%x subtitle:0x%x",
+      info.PmtPid,info.PcrPid,info.VideoPid,info.AudioPid1,info.AudioPid2,info.AudioPid3, info.AudioPid4,info.AudioPid5,info.VideoPid,info.TeletextPid,
+      info.SubtitlePid1,info.SubtitlePid2,info.SubtitlePid3,info.SubtitlePid4);
 
     if (m_pmtVersion==-1)
     {
@@ -398,7 +399,10 @@ void CRecorder::OnPidsReceived(const CPidTable& info)
     m_pmtVersion=m_pPmtParser->GetPmtVersion();
     
     // AddStream() makes sure that duplicates aren't inserted
-    if (info.SubtitlePid!=0)AddStream(info.SubtitlePid, false, false, false);
+    if (info.SubtitlePid1!=0)AddStream(info.SubtitlePid1, false, false, false);
+    if (info.SubtitlePid2!=0)AddStream(info.SubtitlePid2, false, false, false);
+    if (info.SubtitlePid3!=0)AddStream(info.SubtitlePid3, false, false, false);
+    if (info.SubtitlePid4!=0)AddStream(info.SubtitlePid4, false, false, false);
     if (info.AC3Pid!=0)AddStream(info.AC3Pid, true, false, false);
     if (info.AudioPid1!=0)AddStream(info.AudioPid1, false, true, false);
     if (info.AudioPid2!=0)AddStream(info.AudioPid2, false, true, false);

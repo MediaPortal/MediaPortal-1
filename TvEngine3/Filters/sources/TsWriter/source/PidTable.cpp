@@ -63,7 +63,23 @@ void CPidTable::Reset()
   Lang5_3=0;
   AC3Pid=0;
   TeletextPid=0;
-  SubtitlePid=0;
+  SubtitlePid1=0;
+  SubtitlePid2=0;
+  SubtitlePid3=0;
+  SubtitlePid4=0;
+	BYTE SubLang1_1;
+	BYTE SubLang1_2;
+	BYTE SubLang1_3;
+	BYTE SubLang2_1;
+	BYTE SubLang2_2;
+	BYTE SubLang2_3;
+	BYTE SubLang3_1;
+	BYTE SubLang3_2;
+	BYTE SubLang3_3;
+	BYTE SubLang4_1;
+	BYTE SubLang4_2;
+	BYTE SubLang4_3;
+
   ServiceId=-1;
 	videoServiceType=-1;
 }
@@ -102,7 +118,23 @@ void CPidTable::Copy(const CPidTable &pids)
   Lang5_3=pids.Lang5_3;
   AC3Pid=pids.AC3Pid;
   TeletextPid=pids.TeletextPid;
-  SubtitlePid=pids.SubtitlePid;
+  SubtitlePid1=pids.SubtitlePid1;
+  SubLang1_1=pids.SubLang1_1;
+  SubLang1_2=pids.SubLang1_2;
+  SubLang1_3=pids.SubLang1_3;
+  SubtitlePid2=pids.SubtitlePid2;
+  SubLang2_1=pids.SubLang2_1;
+  SubLang2_2=pids.SubLang2_2;
+  SubLang2_3=pids.SubLang2_3;
+  SubtitlePid3=pids.SubtitlePid3;
+  SubLang3_1=pids.SubLang3_1;
+  SubLang3_2=pids.SubLang3_2;
+  SubLang3_3=pids.SubLang3_3;
+  SubtitlePid4=pids.SubtitlePid4;
+  SubLang4_1=pids.SubLang4_1;
+  SubLang4_2=pids.SubLang4_2;
+  SubLang4_3=pids.SubLang4_3;
+
   ServiceId=pids.ServiceId;
-	videoServiceType=pids.videoServiceType;
+  videoServiceType=pids.videoServiceType;
 }

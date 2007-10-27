@@ -155,8 +155,14 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 									 char** audioLanguage4,
 									 char** audioLanguage5,
 									 int* teletextPid,
-									 int* subtitlePid,
+									 int* subtitlePid1,
+                   int* subtitlePid2,
+                   int* subtitlePid3,
+                   int* subtitlePid4,
 									 char** subLanguage1,
+                   char** subLanguage2,
+                   char** subLanguage3,
+                   char** subLanguage4,
 									 int* videoStreamType)
 {
 	static char sServiceName[128];
@@ -167,6 +173,9 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 	static char sAudioLang4[10];
 	static char sAudioLang5[10];
 	static char ssubLanguage1[10];
+  static char ssubLanguage2[10];
+  static char ssubLanguage3[10];
+  static char ssubLanguage4[10];
 	CEnterCriticalSection enter(m_section);
 	try
 	{
@@ -178,6 +187,9 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 		strcpy(sAudioLang4,"");
 		strcpy(sAudioLang5,"");
     strcpy(ssubLanguage1,"");
+    strcpy(ssubLanguage2,"");
+    strcpy(ssubLanguage3,"");
+    strcpy(ssubLanguage4,"");
 		*networkId=0;
 		*transportId=0;
 		*serviceId=0;
@@ -248,8 +260,14 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 			*audioLanguage2=sAudioLang2;
 			*audioLanguage3=sAudioLang3;
 			*teletextPid=info.PidTable.TeletextPid;
-			*subtitlePid=info.PidTable.SubtitlePid;
+			*subtitlePid1=info.PidTable.SubtitlePid1;
+      *subtitlePid2=info.PidTable.SubtitlePid2;
+      *subtitlePid3=info.PidTable.SubtitlePid3;
+      *subtitlePid4=info.PidTable.SubtitlePid4;
       *subLanguage1=ssubLanguage1;
+      *subLanguage2=ssubLanguage2;
+      *subLanguage3=ssubLanguage3;
+      *subLanguage4=ssubLanguage4;
 			*videoStreamType=info.PidTable.videoServiceType;
 		}
 	}
