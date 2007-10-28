@@ -1460,6 +1460,8 @@
     <String id="33019">Pistes favorites</String>
     <String id="33030">Pistes Top album</String>
     <String id="33031">Autres pistes tagguées avec : </String>
+    <String id="33032">La piste de cet album pourrait ne</String>
+    <String id="33033">pas être trouvée</String>
     <String id="33040">Copier joué maintenant spam au presse-papier</String>
     <String id="33041">Ajouter cet album à la playlist</String>
     <String id="34000" prefix="Mon ">Last.fm</String>
