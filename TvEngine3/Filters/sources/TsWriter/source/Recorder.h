@@ -95,6 +95,7 @@ private:
   CPcr            m_highestPcr;
   CPcr            m_startPcr;
   CPcr            m_pcrHole;
+  CPcr            m_backwardsPcrHole;
   CPcr            m_pcrDuration;
   bool            m_bPCRRollover;
   
@@ -104,4 +105,5 @@ private:
 
   int             m_pcrPid;
   int             m_iServiceId;
+  unsigned long   m_TsPacketCount;
 };

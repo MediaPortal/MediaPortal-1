@@ -26,11 +26,11 @@
 #include <streams.h>
 #include <initguid.h>
 
-
 #include "AdaptionField.h"
 #include "recorder.h"
 #define ERROR_FILE_TOO_LARGE 223
 #define RECORD_BUFFER_SIZE 256000
+#define IGNORE_AFTER_TUNE 75                        // how many TS packets to ignore after tuning
 extern void LogDebug(const char *fmt, ...) ;
 
 //FILE* fpOut=NULL;
@@ -47,6 +47,7 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
   m_iPmtPid=-1;
   m_pmtVersion=-1;
 	m_multiPlexer.SetFileWriterCallBack(this);
+  m_TsPacketCount=0;
   m_pPmtParser=new CPmtParser();
   if (m_pPmtParser)
   {
@@ -110,6 +111,7 @@ STDMETHODIMP CRecorder::SetPcrPid(int pcrPid)
 {
 	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder:pcr pid:%x",pcrPid);
+  m_TsPacketCount=0;
 	m_pcrPid = pcrPid;
   
 	m_multiPlexer.SetPcrPid(pcrPid);
@@ -329,6 +331,8 @@ void CRecorder::Write(byte* buffer, int len)
 void CRecorder::WriteTs(byte* tsPacket)
 {
 	if (!m_bRecording) return;
+  m_TsPacketCount++;
+  if( m_TsPacketCount < IGNORE_AFTER_TUNE ) return;
 
   bool writePid = false;
 
@@ -440,21 +444,24 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 		m_bStartPcrFound=true;
 		m_startPcr  = pcrNew;
     m_highestPcr= pcrNew;
-		LogDebug("Pcr new start pcr :%s", m_startPcr.ToString());
+			LogDebug("Pcr new start pcr :%s - pid:%x", m_startPcr.ToString() , header.Pid);
 	} 
 
   CPcr pcrHi=pcrNew;
   CPcr diff;
 
-  if (pcrNew > m_highestPcr)
+	if (pcrNew > m_highestPcr)
+	{
+		m_highestPcr = pcrNew;
+	}
+
+  if (pcrNew > m_prevPcr)
   {
     diff = pcrNew - m_prevPcr;
-	  m_highestPcr = pcrNew;
   }
   else
   {
     diff = m_prevPcr - pcrNew;
-    m_highestPcr = pcrNew;
   }
 
   if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0)
@@ -465,6 +472,7 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
       m_pcrDuration = m_prevPcr;
       m_pcrDuration -= m_startPcr;
       m_pcrHole.Reset();
+      m_backwardsPcrHole.Reset();
       m_startPcr.Reset();
       m_highestPcr.Reset();
 
@@ -483,8 +491,8 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
       }
       else
       {
-        m_pcrHole -= diff;
-        m_pcrHole += step;
+						m_backwardsPcrHole += diff;
+						m_backwardsPcrHole += step;
         LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
       }
     }
@@ -492,13 +500,14 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 
   pcrHi -= m_startPcr;
   pcrHi -= m_pcrHole;
+    pcrHi += m_backwardsPcrHole;
 
   if( m_bPCRRollover )
   {
     pcrHi += m_pcrDuration;
   }
 
-  //LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s - pid:%x", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), header.Pid );
+		//LogDebug("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
   tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
