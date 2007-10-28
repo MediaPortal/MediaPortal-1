@@ -933,6 +933,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_72BD748BC8D040FB956C84B608A69506"
+        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7372C3FAF329455DA53192D49F35A168"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1001,12 +1007,6 @@
         {
         "MsmKey" = "8:_7C0D4FCAF4E644A9857719465EAFE3C0"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7D8E3F61FA9048128E5922C36ACB6EF4"
-        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1275,6 +1275,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_AB0D172E3F1C46D5BAF984CE1A169410"
+        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_ABEC693197A14A9182F7B3B0B453011A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1451,12 +1457,6 @@
         {
         "MsmKey" = "8:_BC0DBFB3A0C84B6182D4BDA0ADBFFFA0"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_BD5140BB04F04EF69FAA02B589E0F4CD"
-        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2014,6 +2014,12 @@
         "Entry"
         {
         "MsmKey" = "8:_FB02DCA155AF46898169FF4DED7F08CC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FB2B05D7AF97493C89ADB767C9DADF3D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3627,7 +3633,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ServerBlaster, Version=0.1.2.19906, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ServerBlaster, Version=0.1.2.42323, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_49310EFF9FC746BE83BC658F5A309336"
@@ -5654,7 +5660,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Blaster, Version=0.1.2.19907, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Blaster, Version=0.1.2.21055, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_B580D78F8FBE416C927910A5D9B9C3A9"
@@ -6606,7 +6612,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Zap2itPlugin, Version=1.8.2815.19905, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Zap2itPlugin, Version=1.8.2856.42321, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_E1D7E5E3F1824426A1439349F3C09151"
@@ -7139,6 +7145,26 @@
             {
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\31.5°E Optus A3.ini"
             "TargetName" = "8:31.5°E Optus A3.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FB2B05D7AF97493C89ADB767C9DADF3D"
+            {
+            "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\Finland-HTV.dvbc"
+            "TargetName" = "8:Finland-HTV.dvbc"
             "Tag" = "8:"
             "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
@@ -7923,11 +7949,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_7D8E3F61FA9048128E5922C36ACB6EF4"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_72BD748BC8D040FB956C84B608A69506"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
                 "Properties"
                 {
                 }
@@ -7951,11 +7977,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_BD5140BB04F04EF69FAA02B589E0F4CD"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_AB0D172E3F1C46D5BAF984CE1A169410"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
                 "Properties"
                 {
                 }
