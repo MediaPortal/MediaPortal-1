@@ -420,7 +420,7 @@ void CRecorder::OnPidsReceived(const CPidTable& info)
 }
 //*******************************************************************
 //* PatchPcr()
-//* Patches the PCR so the start of the timeshifting file always starts
+//* Patches the PCR so the start of the .ts file always starts
 //* with a PCR of 0. 
 //*******************************************************************
 void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
@@ -445,7 +445,7 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 		m_bStartPcrFound=true;
 		m_startPcr  = pcrNew;
     m_highestPcr= pcrNew;
-			LogDebug("Pcr new start pcr :%s - pid:%x", m_startPcr.ToString() , header.Pid);
+    LogDebug("Pcr new start pcr :%s - pid:%x", m_startPcr.ToString() , header.Pid);
 	} 
 
   CPcr pcrHi=pcrNew;
@@ -492,8 +492,8 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
       }
       else
       {
-						m_backwardsPcrHole += diff;
-						m_backwardsPcrHole += step;
+				m_backwardsPcrHole += diff;
+				m_backwardsPcrHole += step;
         LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
       }
     }
@@ -501,14 +501,14 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 
   pcrHi -= m_startPcr;
   pcrHi -= m_pcrHole;
-    pcrHi += m_backwardsPcrHole;
+  pcrHi += m_backwardsPcrHole;
 
   if( m_bPCRRollover )
   {
     pcrHi += m_pcrDuration;
   }
 
-		//LogDebug("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
+  //LogDebug("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
   tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
