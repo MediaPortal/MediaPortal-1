@@ -181,5 +181,5 @@ private:
 
   vector<char*>   m_tsQueue;
   bool            m_bClearTsQueue;
-  long            m_TsPacketCount;
+  unsigned long   m_TsPacketCount;
 };

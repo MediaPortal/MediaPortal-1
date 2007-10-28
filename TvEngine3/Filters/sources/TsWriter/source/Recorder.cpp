@@ -30,7 +30,8 @@
 #include "recorder.h"
 #define ERROR_FILE_TOO_LARGE 223
 #define RECORD_BUFFER_SIZE 256000
-#define IGNORE_AFTER_TUNE 75                        // how many TS packets to ignore after tuning
+#define IGNORE_AFTER_TUNE 75        // how many TS packets to ignore after tuning
+
 extern void LogDebug(const char *fmt, ...) ;
 
 //FILE* fpOut=NULL;
