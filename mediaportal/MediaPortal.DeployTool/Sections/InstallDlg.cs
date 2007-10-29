@@ -46,49 +46,6 @@ namespace MediaPortal.DeployTool
       UpdateUI();
     }
 
-    #region Windows firewall configuration
-    private void ConfigureFirewallProfile(string profile)
-    {
-      // Applications
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\"+profile+"\\AuthorizedApplications\\List",true);
-      key.SetValue(InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe", InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe:*:Enabled:TvService.exe", RegistryValueKind.String);
-      if (InstallationProperties.Instance["InstallType"] == "singleseat" || InstallationProperties.Instance["InstallType"] == "tvserver_master")
-      {
-        if (InstallationProperties.Instance["DBMSType"] == "mssql")
-        {
-          key.SetValue(InstallationProperties.Instance["DBMSDir"] + "\\MSSQL.1\\MSSQL\\Binn\\sqlservr.exe", InstallationProperties.Instance["DBMSDir"] + "\\MSSQL.1\\MSSQL\\Binn\\sqlservr.exe:*:Enabled:sqlservr.exe", RegistryValueKind.String);
-          key.SetValue(InstallationProperties.Instance["DBMSDir"] + "\\90\\Shared\\sqlbrowser.exe", InstallationProperties.Instance["DBMSDir"] + "\\90\\Shared\\sqlbrowser.exe:*:Enabled:sqlbrowser.exe", RegistryValueKind.String);
-        }
-        else
-          key.SetValue(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-net.exe", InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-net.exe:*:Enable:mysqld-nt.exe", RegistryValueKind.String);
-      }
-      key.Flush();
-      key.Close();
-      // Ports
-      key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\"+profile+"\\GloballyOpenPorts\\List",true);
-      key.SetValue("554:TCP", "554:TCP:*:Enabled:MediaPortal TvServer RTSP Streaming (TCP)", RegistryValueKind.String);
-      for (int i = 6970; i < 10000; i++)
-        key.SetValue(i.ToString() + ":UDP", i.ToString() + ":UDP:*:Enabled:MediaPortal TvServer RTSP Streaming (UDP Port " + i.ToString() + ")", RegistryValueKind.String);
-      if (InstallationProperties.Instance["InstallType"] == "singleseat" || InstallationProperties.Instance["InstallType"] == "tvserver_master")
-      {
-        if (InstallationProperties.Instance["DBMSType"] == "mssql")
-        {
-          key.SetValue("1433:TCP", "1433:TCP:*:Enabled:Microsoft SQL Server Express (TCP)", RegistryValueKind.String);
-          key.SetValue("1434:UDP", "1434:UDP:*:Enabled:Microsoft SQL Server Express (UDP)");
-        }
-        else
-          key.SetValue("3306:TCP", "3306:TCP:*:Enabled:MySQL Server 5 (TCP)");
-      }
-      key.Flush();
-      key.Close();
-    }
-    private void ConfigureWindowsFirewall()
-    {
-      ConfigureFirewallProfile("StandardProfile");
-      ConfigureFirewallProfile("DomainProfile");
-    }
-    #endregion
-
     #region IDeplayDialog interface
     public override void UpdateUI()
     {
@@ -115,8 +72,6 @@ namespace MediaPortal.DeployTool
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("finished", "yes");
-      if (InstallationProperties.Instance["InstallType"] != "client")
-        ConfigureWindowsFirewall();
     }
     #endregion
 
@@ -178,6 +133,7 @@ namespace MediaPortal.DeployTool
           AddPackageToListView(new MySQLChecker());
         AddPackageToListView(new TvServerChecker());
         AddPackageToListView(new TvPluginServerChecker());
+        AddPackageToListView(new WindowsFirewallChecker());
       }
       else if (InstallationProperties.Instance["InstallType"] == "tvserver_master")
       {
@@ -186,10 +142,12 @@ namespace MediaPortal.DeployTool
         else
           AddPackageToListView(new MySQLChecker());
         AddPackageToListView(new TvServerChecker());
+        AddPackageToListView(new WindowsFirewallChecker());
       }
       else if (InstallationProperties.Instance["InstallType"] == "tvserver_slave")
       {
         AddPackageToListView(new TvServerChecker());
+        AddPackageToListView(new WindowsFirewallChecker());
       }
       else if (InstallationProperties.Instance["InstallType"] == "client")
       {

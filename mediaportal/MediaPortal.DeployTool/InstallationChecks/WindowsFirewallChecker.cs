@@ -105,9 +105,29 @@ namespace MediaPortal.DeployTool
       result.state = CheckState.INSTALLED;
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"]=="1")
       {
-        RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile\\AuthorizedApplications\\List", true);
+        RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile\\GloballyOpenPorts\\List", true);
+        if (key.GetValue("554:TCP") == null)
+          result.state = CheckState.NOT_INSTALLED;
+        key.Close();
       }
-
+      if (result.state == CheckState.INSTALLED)
+      {
+        if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
+        {
+          RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile\\GloballyOpenPorts\\List", true);
+          if (InstallationProperties.Instance["DBMSType"] == "mssql")
+          {
+            if (key.GetValue("1433:TCP")==null)
+              result.state = CheckState.NOT_INSTALLED;
+          }
+          else
+          {
+            if (key.GetValue("3306:TCP") == null)
+              result.state = CheckState.NOT_INSTALLED;
+          }
+          key.Close();
+        }
+      }
       return result;
     }
   }
