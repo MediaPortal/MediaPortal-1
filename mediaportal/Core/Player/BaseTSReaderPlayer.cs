@@ -118,8 +118,7 @@ namespace MediaPortal.Player
     protected IBaseFilter _audioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
     protected IBaseFilter _subtitleFilter = null;
-    protected SubtitleSelector subSelector = null;
-    protected AudioSelector audioSelector = null;
+    protected SubtitleSelector subSelector = null;    
     protected SubtitleRenderer dvbSubRenderer = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
     /// <summary> control interface. </summary>
@@ -202,7 +201,7 @@ namespace MediaPortal.Player
     public override int CurrentAudioStream
     {
       get
-      {
+      {       
         return _curAudioStream;
       }
       set

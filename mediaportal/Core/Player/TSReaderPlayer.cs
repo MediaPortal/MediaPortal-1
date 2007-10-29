@@ -140,24 +140,10 @@ namespace MediaPortal.Player
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
     IPin _pinVideo = null;
-    protected ISubtitleStream _subtitleStream = null;
-    protected IAudioStream _audioStream = null;
+    protected ISubtitleStream _subtitleStream = null;    
     bool enableDvbSubtitles = false;
     #endregion
-
-    /// <summary>
-    /// Interface to the TsReader filter wich provides information about the 
-    /// audio streams and allows us to change the current audio stream
-    /// </summary>
-    /// 
-    [Guid("558D9EA6-B177-4c30-9ED5-BF2D714BCBCA"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAudioStream
-    {
-      void SetAudioStream(Int32 stream);      
-      void GetAudioStream(ref Int32 stream);
-    }
-
+    
     /// <summary>
     /// Interface to the TsReader filter wich provides information about the 
     /// subtitle streams and allows us to change the current subtitle stream
@@ -453,9 +439,7 @@ namespace MediaPortal.Player
           }
           subSelector = new SubtitleSelector(_subtitleStream, dvbSubRenderer);
         }
-
-        _audioStream = _fileSource as IAudioStream;
-        audioSelector = new AudioSelector(_audioStream);
+            
 
         //source.SetClockMode(3);//audio renderer
         if (_audioRendererFilter != null)
@@ -686,7 +670,7 @@ namespace MediaPortal.Player
               System.Threading.Thread.Sleep(500);
               _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
               lTime = lContentEnd;
-            }*/
+            }*/            
             int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
             Log.Info("TsReaderPlayer seek done:{0:X}", hr);
             if (VMR9Util.g_vmr9 != null)
@@ -700,23 +684,7 @@ namespace MediaPortal.Player
 
         Log.Info("TSReaderPlayer: current pos:{0} dur:{1}", CurrentPosition, Duration);
       }
-    }
-
-    /// <summary>
-    /// Property to get/set the current audio stream
-    /// </summary>
-    public override int CurrentAudioStream
-    {
-      get
-      {
-        return audioSelector.GetAudioLanguage();
-      }
-      set
-      {        
-          audioSelector.SetAudioLanguage(value);        
-      }
-    }
-
+    }    
 
     /// <summary>
     /// Property to get the total number of subtitle streams

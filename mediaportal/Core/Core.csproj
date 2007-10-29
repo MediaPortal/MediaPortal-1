@@ -284,7 +284,6 @@
     <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
     <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
     <Compile Include="MusicPlayer\Visualization\WinampViz.cs" />
-    <Compile Include="Player\AudioSelector.cs" />
     <Compile Include="Player\FrameGrabber.cs" />
     <Compile Include="guilib\Animations.cs" />
     <Compile Include="guilib\GUIActionGroup.cs" />
