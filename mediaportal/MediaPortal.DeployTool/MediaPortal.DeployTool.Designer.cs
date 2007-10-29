@@ -385,6 +385,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download revent snapshot-&gt;Update with recent snapshot.
+        /// </summary>
+        internal static string Install_actionDownloadUpdate {
+            get {
+                return ResourceManager.GetString("Install_actionDownloadUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Install.
         /// </summary>
         internal static string Install_actionInstall {
@@ -552,6 +561,15 @@ namespace MediaPortal.DeployTool {
         internal static string Install_stateVersionMismatch {
             get {
                 return ResourceManager.GetString("Install_stateVersionMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to lookup the most recent svn revision on the MediaPortal homepage.
+        /// </summary>
+        internal static string InstallDlg_VersionLookupFailed {
+            get {
+                return ResourceManager.GetString("InstallDlg_VersionLookupFailed", resourceCulture);
             }
         }
         

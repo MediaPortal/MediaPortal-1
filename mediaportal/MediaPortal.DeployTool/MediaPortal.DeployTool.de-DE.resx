@@ -225,6 +225,9 @@
   <data name="Install_actionDownloadInstall" xml:space="preserve">
     <value>Herunterladen-&gt;Installieren</value>
   </data>
+  <data name="Install_actionDownloadUpdate" xml:space="preserve">
+    <value>Aktuellen Snapshot herunterladen-&gt;Mit aktuellen Snapshot updaten</value>
+  </data>
   <data name="Install_actionInstall" xml:space="preserve">
     <value>Installieren</value>
   </data>
@@ -281,6 +284,9 @@
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
     <value>Eine andere Version ist bereits installiert</value>
+  </data>
+  <data name="InstallDlg_VersionLookupFailed" xml:space="preserve">
+    <value>Die Version der aktuellsten SVN Revision konnte nicht auf der Mediaportal Homepage ermittelt werden.</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>MediaPortal Deploy Tool</value>

@@ -35,6 +35,9 @@ namespace MediaPortal.DeployTool
 {
   class MediaPortalChecker_SVN: IInstallationPackage
   {
+    private string newestRevision = "";
+    private string downloadURL = "";
+
     public string GetDisplayName()
     {
       return "MediaPortal Snapshot";
@@ -43,12 +46,14 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       HTTPDownload dlg = new HTTPDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MediaPortal"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal"));
+
+      File.Delete(Application.StartupPath + "\\deploy\\MP_Snapshot.exe");
+      DialogResult result = dlg.ShowDialog(downloadURL, Application.StartupPath + "\\deploy\\MP_Snapshot.exe");
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal");
+      string nsis = Application.StartupPath + "\\deploy\\MP_Snapshot.exe";
       string targetDir = InstallationProperties.Instance["MPDir"];
       Process setup = Process.Start(nsis, "/S /D=" + targetDir);
       setup.WaitForExit();
@@ -56,22 +61,12 @@ namespace MediaPortal.DeployTool
     }
     public bool UnInstall()
     {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
-      if (key == null)
-      {
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0 RC3");
-        if (key == null)
-          return false;
-      }
-      Process setup = Process.Start((string)key.GetValue("UninstallString"));
-      setup.WaitForExit();
-      key.Close();
       return true;
     }
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal"));
+      result.needsDownload = true;
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
       if (key == null)
       {
@@ -82,9 +77,27 @@ namespace MediaPortal.DeployTool
           return result;
         }
       }
-      string version = (string)key.GetValue("DisplayVersion");
+      if (newestRevision == "")
+      {
+        if (!SnapshotLookup.GetSnapshotInfo(SnapshotType.MediaPortal, out downloadURL, out newestRevision))
+        {
+          key.Close();
+          downloadURL = "";
+          newestRevision = "";
+          result.state = CheckState.VERSION_LOOKUP_FAILED;
+          return result;
+        }
+      }
+      string exePath=(string)key.GetValue("Path");
       key.Close();
-      if (version == "0.2.3.0")
+      StreamReader reader=new StreamReader(exePath+"\\MediaPortal.exe.config");
+      for (int i=0;i<12;i++)
+        reader.ReadLine();
+      string revision=reader.ReadLine();
+      reader.Close();
+      revision = revision.Remove(0, revision.IndexOf("Build")+6);
+      revision = revision.Substring(0, 5);
+      if (revision==newestRevision)
         result.state = CheckState.INSTALLED;
       else
         result.state = CheckState.VERSION_MISMATCH;

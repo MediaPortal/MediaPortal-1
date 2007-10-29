@@ -8,7 +8,8 @@ namespace MediaPortal.DeployTool
   {
     NOT_INSTALLED,
     INSTALLED,
-    VERSION_MISMATCH
+    VERSION_MISMATCH,
+    VERSION_LOOKUP_FAILED
   }
   public struct CheckResult
   {

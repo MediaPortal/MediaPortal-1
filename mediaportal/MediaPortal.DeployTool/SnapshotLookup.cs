@@ -17,6 +17,7 @@ namespace MediaPortal.DeployTool
     {
       line = line.Remove(0, line.IndexOf("shot: ") + 6);
       line = line.Replace(' ', '-');
+      line=line.Insert(line.IndexOf(DateTime.Now.Year.ToString()) + 4, "-");
       revision = line.Substring(line.IndexOf(':') + 1, 5);
       line = line.Substring(0, line.IndexOf("Revision") - 4);
       downloadUrl = "http://svn.team-mediaportal.com/MediaPortal_SVN-Snaps_based_on_V0.2.3.0_Release/MediaPortal-svn--" + line + "-Rev" + revision + ".exe";

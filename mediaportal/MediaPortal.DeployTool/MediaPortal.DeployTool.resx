@@ -225,6 +225,9 @@
   <data name="Install_actionDownloadInstall" xml:space="preserve">
     <value>Download-&gt;install</value>
   </data>
+  <data name="Install_actionDownloadUpdate" xml:space="preserve">
+    <value>Download revent snapshot-&gt;Update with recent snapshot</value>
+  </data>
   <data name="Install_actionInstall" xml:space="preserve">
     <value>Install</value>
   </data>
@@ -281,6 +284,9 @@
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
     <value>Another version is already installed</value>
+  </data>
+  <data name="InstallDlg_VersionLookupFailed" xml:space="preserve">
+    <value>Failed to lookup the most recent svn revision on the MediaPortal homepage</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>MediaPortal Deploy Tool</value>
