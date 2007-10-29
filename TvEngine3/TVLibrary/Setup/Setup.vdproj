@@ -933,12 +933,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_72BD748BC8D040FB956C84B608A69506"
-        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_7372C3FAF329455DA53192D49F35A168"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1275,12 +1269,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_AB0D172E3F1C46D5BAF984CE1A169410"
-        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_ABEC693197A14A9182F7B3B0B453011A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1295,6 +1283,12 @@
         {
         "MsmKey" = "8:_AE6AE61489C943EA901143B2C9AF6DCA"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AE9AAC24D70C4E42BC77D6CEB3F5E586"
+        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1985,6 +1979,12 @@
         {
         "MsmKey" = "8:_F6F78967B4994AFB961DBEA645275419"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F780DB32CE144723B7C5BEC6666F3568"
+        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2884,7 +2884,7 @@
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\Sweden Comhem Göteborg.dvbc"
             "TargetName" = "8:Sweden Comhem Göteborg.dvbc"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -6835,7 +6835,7 @@
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\Sweden Comhem Stockholm.dvbc"
             "TargetName" = "8:Sweden Comhem Stockholm.dvbc"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7949,20 +7949,6 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_72BD748BC8D040FB956C84B608A69506"
-            {
-            "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
-                "Properties"
-                {
-                }
-            "LanguageId" = "3:0"
-            "Exclude" = "11:FALSE"
-            "Folder" = "8:"
-            "Feature" = "8:"
-            "IsolateTo" = "8:"
-            }
             "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_9CCD9023620943089B74B25C0BBF5D12"
             {
             "UseDynamicProperties" = "11:TRUE"
@@ -7977,11 +7963,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_AB0D172E3F1C46D5BAF984CE1A169410"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_AE9AAC24D70C4E42BC77D6CEB3F5E586"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
                 "Properties"
                 {
                 }
@@ -7996,6 +7982,20 @@
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:FALSE"
             "SourcePath" = "8:C:\\Program Files\\Common Files\\Merge Modules\\Microsoft_VC80_MFC_x86.msm"
+                "Properties"
+                {
+                }
+            "LanguageId" = "3:0"
+            "Exclude" = "11:FALSE"
+            "Folder" = "8:"
+            "Feature" = "8:"
+            "IsolateTo" = "8:"
+            }
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_F780DB32CE144723B7C5BEC6666F3568"
+            {
+            "UseDynamicProperties" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
                 "Properties"
                 {
                 }
