@@ -1629,12 +1629,10 @@ namespace TvPlugin
           if (!g_Player.Playing)
           {
             StartPlay();
-          }
-          else
-          {
-            //MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): setting audioIndex on tsreader {0}", prefLangIdx);
-            //g_Player.CurrentAudioStream = prefLangIdx;
-          }
+          }          
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): setting audioIndex on tsreader {0}", prefLangIdx);
+          g_Player.CurrentAudioStream = prefLangIdx;
+
 
           GUIWaitCursor.Hide();
 
