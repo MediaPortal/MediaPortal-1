@@ -255,12 +255,7 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
   if (riid == IID_ISubtitleStream)
 	{
 		return GetInterface((ISubtitleStream*)this, ppv);
-	}
-  if (riid == IID_IAudioStream)
-	{
-		return GetInterface((IAudioStream*)this, ppv);
-	}
-
+	}  
 	if ( riid == IID_ITSReader )
 	{
 		return GetInterface((ITSReader*)this, ppv);

@@ -138,6 +138,12 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   if (stream< 0 || stream>=m_audioStreams.size()) 
     return S_FALSE;
 
+  //if we are changing to the same audio track as the current one, then ignore.
+  if (m_iAudioStream == stream)
+  {
+	return S_FALSE;
+  }
+
   //get the current audio forma stream type
   int oldAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())

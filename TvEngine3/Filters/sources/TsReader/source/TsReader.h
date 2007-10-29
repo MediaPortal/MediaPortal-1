@@ -60,7 +60,7 @@ DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
 
 
 class CTsReaderFilter : public CSource, public TSThread, public IFileSourceFilter, 
-                        public IAMFilterMiscFlags, public IAMStreamSelect, public ISubtitleStream, public IAudioStream,
+                        public IAMFilterMiscFlags, public IAMStreamSelect, public ISubtitleStream,
 						public ITSReader
 {
 public:
