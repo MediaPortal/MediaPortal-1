@@ -28,6 +28,7 @@ using MediaPortal.GUI.Library;
 using System.Collections.Generic;
 using MediaPortal.TagReader;
 using System.Collections;
+using MediaPortal.Util;
 
 namespace MediaPortal.Playlists
 {
@@ -154,16 +155,19 @@ namespace MediaPortal.Playlists
 
     public virtual void Shuffle()
     {
-      Random r = new System.Random(DateTime.Now.Millisecond);
+      PseudoRandomNumberGenerator r = new PseudoRandomNumberGenerator();
 
       // iterate through each catalogue item performing arbitrary swaps
-      for (int item = 0; item < Count; item++)
+      if (Count > 1)
       {
-        int nArbitrary = r.Next(Count);
+        for (int item = 0 ; item < Count ; item++)
+        {
+          int nArbitrary = r.Next(0, Count - 1);
 
-        PlayListItem anItem = _listPlayListItems[nArbitrary];
-        _listPlayListItems[nArbitrary] = _listPlayListItems[item];
-        _listPlayListItems[item] = anItem;
+          PlayListItem anItem = _listPlayListItems[nArbitrary];
+          _listPlayListItems[nArbitrary] = _listPlayListItems[item];
+          _listPlayListItems[item] = anItem;
+        }
       }
     }
 

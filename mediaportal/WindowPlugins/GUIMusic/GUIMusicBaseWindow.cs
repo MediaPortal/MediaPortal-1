@@ -782,9 +782,9 @@ namespace MediaPortal.GUI.Music
 
       if (_autoShuffleOnLoad)
       {
-        Random r = new Random((int)DateTime.Now.Ticks);
-        int shuffleCount = r.Next() % 50;
-        for (int i = 0; i < shuffleCount; ++i)
+        //PseudoRandomNumberGenerator r = new PseudoRandomNumberGenerator();
+        //int shuffleCount = r.Next() % 50;
+        //for (int i = 0; i < shuffleCount; ++i)
         {
           playlist.Shuffle();
         }
