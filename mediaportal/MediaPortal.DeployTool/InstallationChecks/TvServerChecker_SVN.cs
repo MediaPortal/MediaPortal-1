@@ -30,6 +30,7 @@ using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.ServiceProcess;
 
 namespace MediaPortal.DeployTool
 {
@@ -50,37 +51,26 @@ namespace MediaPortal.DeployTool
     }
     public bool Install()
     {
+      ServiceController ctrl = new ServiceController();
+      ctrl.ServiceName = "TvService";
+      if (ctrl.Status==ServiceControllerStatus.Running)
+        ctrl.Stop();
       string msi = Path.GetTempPath() + "\\setup.msi";
       string targetDir = InstallationProperties.Instance["TVServerDir"];
       string revision = InstallationProperties.Instance["tve3_newestrevision"];
-      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\tve3_snapshopt_"+revision+".zip", "Setup.msi", msi);
-      string parameters = "/i \"" + msi + "\" /qb TARGETDIR=\"" + targetDir + "\" /L* \"" + Path.GetTempPath() + "\\tvserverinst.log\"";
+      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\tve3_snapshot_"+revision+".zip", "Setup.msi", msi);
+      string parameters = "/a \"" + msi + "\" /qb TARGETDIR=\"" + targetDir + "\"";
       Process setup = Process.Start("msiexec", parameters);
       setup.WaitForExit();
-      StreamReader sr = new StreamReader(Path.GetTempPath() + "\\tvserverinst.log");
-      bool installOk = false;
-      while (!sr.EndOfStream)
-      {
-        string line = sr.ReadLine();
-        if (line.Contains("Installation completed successfully"))
-        {
-          installOk = true;
-          break;
-        }
-      }
-      sr.Close();
-      return installOk;
+      return true;
     }
     public bool UnInstall()
     {
-      Process setup = Process.Start("msiexec", "/X {4B738773-EE07-413D-AFB7-BB0AB04A5488}");
-      setup.WaitForExit();
       return true;
     }
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      //result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
       result.needsDownload = true;
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
       if (key == null)
@@ -100,27 +90,23 @@ namespace MediaPortal.DeployTool
         }
         else
         {
-          InstallationProperties.Instance.Set("tv3_downloadurl", downloadURL);
-          InstallationProperties.Instance.Set("tv3_newestrevision", newestRevision);
+          InstallationProperties.Instance.Set("tve3_downloadurl", downloadURL);
+          InstallationProperties.Instance.Set("tve3_newestrevision", newestRevision);
         }
       }
-      /*
-      string exePath = (string)key.GetValue("Path");
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\tve3_snapshot_" + InstallationProperties.Instance["tve3_newestrevision"] + ".zip");
       key.Close();
-      StreamReader reader = new StreamReader(exePath + "\\TvService.exe.config");
-      for (int i = 0; i < 12; i++)
-        reader.ReadLine();
-      string revision = reader.ReadLine();
-      reader.Close();
-      revision = revision.Remove(0, revision.IndexOf("Build") + 6);
-      revision = revision.Substring(0, 5);
-      if (revision == newestRevision)
+      key=Registry.LocalMachine.OpenSubKey("SOFTWARE\\Team MediaPortal\\MediaPortal TV Server",false);
+      string exePath = (string)key.GetValue("InstallPath");
+      InstallationProperties.Instance.Set("TVServerDir", exePath);
+      key.Close();
+      FileVersionInfo vi=FileVersionInfo.GetVersionInfo(exePath+"TvService.exe");
+      string revision=vi.ProductVersion;
+      revision=revision.Remove(0,revision.LastIndexOf('.')+1);
+      if (revision == InstallationProperties.Instance["tv3_newestrevision"])
         result.state = CheckState.INSTALLED;
       else
         result.state = CheckState.VERSION_MISMATCH;
-      */
-      result.state = CheckState.VERSION_MISMATCH;
-      result.needsDownload = true;
       return result;
     }
   }

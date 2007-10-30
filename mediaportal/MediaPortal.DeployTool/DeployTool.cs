@@ -55,7 +55,7 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       Localizer.Instance.SwitchCulture("en-US");
       UpdateUI();
-      InstallationProperties.Instance.Add("SVNMode", "true");
+      InstallationProperties.Instance.Add("SVNMode", "false");
       string[] cmdArgs = Environment.GetCommandLineArgs();
       foreach (string arg in cmdArgs)
       {

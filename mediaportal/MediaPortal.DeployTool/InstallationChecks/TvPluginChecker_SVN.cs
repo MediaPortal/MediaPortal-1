@@ -43,52 +43,65 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       HTTPDownload dlg = new HTTPDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("TvServer"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
+      string url = InstallationProperties.Instance["tve3_downloadurl"];
+      string revision = InstallationProperties.Instance["tve3_newestrevision"];
+      DialogResult result = dlg.ShowDialog(url, Application.StartupPath + "\\deploy\\tve3_snapshot_" + revision + ".zip");
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
       string msi = Path.GetTempPath() + "\\SetupPlugin.msi";
-      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer"), "SetupPlugin.msi", msi);
-      string parameters = "/i \"" + msi + "\" /qb /L* \"" + Path.GetTempPath() + "\\tvplugininst.log\"";
+      string targetDir = InstallationProperties.Instance["MPDir"];
+      string revision = InstallationProperties.Instance["tve3_newestrevision"];
+      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\tve3_snapshot_" + revision + ".zip", "SetupPlugin.msi", msi);
+      string parameters = "/a \"" + msi + "\" /qb TARGETDIR=\"" + targetDir + "\"";
       Process setup = Process.Start("msiexec", parameters);
       setup.WaitForExit();
-      StreamReader sr = new StreamReader(Path.GetTempPath() + "\\tvplugininst.log");
-      bool installOk = false;
-      while (!sr.EndOfStream)
-      {
-        string line = sr.ReadLine();
-        if (line.Contains("Installation completed successfully"))
-        {
-          installOk = true;
-          break;
-        }
-      }
-      sr.Close();
-      return installOk;
+      return true;
     }
     public bool UnInstall()
     {
-      Process setup = Process.Start("msiexec", "/X {F7444E89-5BC0-497E-9650-E50539860DE0}");
-      setup.WaitForExit();
       return true;
     }
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
+      result.needsDownload = true;
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F7444E89-5BC0-497E-9650-E50539860DE0}");
       if (key == null)
-        result.state = CheckState.NOT_INSTALLED;
-      else
       {
-        string version = (string)key.GetValue("DisplayVersion");
-        key.Close();
-        if (version == "1.0.0")
-          result.state = CheckState.INSTALLED;
-        else
-          result.state = CheckState.VERSION_MISMATCH;
+        result.state = CheckState.NOT_INSTALLED;
+        return result;
       }
+      if (InstallationProperties.Instance["tve3_newestrevision"] == null)
+      {
+        string downloadURL;
+        string newestRevision;
+        if (!SnapshotLookup.GetSnapshotInfo(SnapshotType.TvServer, out downloadURL, out newestRevision))
+        {
+          key.Close();
+          result.state = CheckState.VERSION_LOOKUP_FAILED;
+          return result;
+        }
+        else
+        {
+          InstallationProperties.Instance.Set("tve3_downloadurl", downloadURL);
+          InstallationProperties.Instance.Set("tve3_newestrevision", newestRevision);
+        }
+      }
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\tve3_snapshot_" + InstallationProperties.Instance["tve3_newestrevision"] + ".zip");
+      key.Close();
+      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Team MediaPortal\\Mediaportal", false);
+      string exePath = (string)key.GetValue("InstallPath");
+      InstallationProperties.Instance.Set("MPDir", exePath);
+      key.Close();
+      FileVersionInfo vi = FileVersionInfo.GetVersionInfo(exePath + "Plugins\\Windows\\TvPlugin.dll");
+      string revision = vi.ProductVersion;
+      revision = revision.Remove(0, revision.LastIndexOf('.') + 1);
+      if (revision == InstallationProperties.Instance["tv3_newestrevision"])
+        result.state = CheckState.INSTALLED;
+      else
+        result.state = CheckState.VERSION_MISMATCH;
       return result;
     }
   }
