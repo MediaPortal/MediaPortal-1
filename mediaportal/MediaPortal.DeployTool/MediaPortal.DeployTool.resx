@@ -226,7 +226,7 @@
     <value>Download-&gt;install</value>
   </data>
   <data name="Install_actionDownloadUpdate" xml:space="preserve">
-    <value>Download revent snapshot-&gt;Update with recent snapshot</value>
+    <value>Download recent snapshot-&gt;Update with recent snapshot</value>
   </data>
   <data name="Install_actionInstall" xml:space="preserve">
     <value>Install</value>

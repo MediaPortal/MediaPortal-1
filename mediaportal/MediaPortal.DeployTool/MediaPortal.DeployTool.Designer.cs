@@ -385,7 +385,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download revent snapshot-&gt;Update with recent snapshot.
+        ///   Looks up a localized string similar to Download recent snapshot-&gt;Update with recent snapshot.
         /// </summary>
         internal static string Install_actionDownloadUpdate {
             get {
