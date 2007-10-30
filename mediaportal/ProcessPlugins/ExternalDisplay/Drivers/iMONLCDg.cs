@@ -482,7 +482,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
         }
         if (!File.Exists(Config.GetFile(Config.Dir.Base, "SG_VFDv3.dll")))
         {
-          _errorMessage = "Required file \"SG_VFD.dll\" is not installed!";
+          _errorMessage = "Required file \"SG_VFDv3.dll\" is not installed!";
           _isDisabled = true;
         }
         return _isDisabled;
