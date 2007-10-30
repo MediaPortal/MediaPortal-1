@@ -142,8 +142,14 @@ namespace TvLibrary.Interfaces.Analyzer
                        out IntPtr audioLanguage4,
                        out IntPtr audioLanguage5,
                        out short teletextPid,
-                       out short subtitlePid,
-                       out IntPtr subtitleLanguage,
+                       out short subtitlePid1,
+                       out short subtitlePid2,
+                       out short subtitlePid3,
+                       out short subtitlePid4,
+                       out IntPtr subtitleLanguage1,
+                       out IntPtr subtitleLanguage2,
+                       out IntPtr subtitleLanguage3,
+                       out IntPtr subtitleLanguage4,
                        out short videoStreamType);
     
     [PreserveSig]

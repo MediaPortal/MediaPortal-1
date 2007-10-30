@@ -220,9 +220,15 @@ namespace TvLibrary.Implementations.DVB
             IntPtr audioLanguage3;
             IntPtr audioLanguage4;
             IntPtr audioLanguage5;
-            IntPtr subtitleLanguage;
+            IntPtr subtitleLanguage1;
+            IntPtr subtitleLanguage2;
+            IntPtr subtitleLanguage3;
+            IntPtr subtitleLanguage4;
             short teletextPid;
-            short subtitlePid;
+            short subtitlePid1;
+            short subtitlePid2;
+            short subtitlePid3;
+            short subtitlePid4;
             string strAudioLanguage1 = "";
             string strAudioLanguage2 = "";
             string strAudioLanguage3 = "";
@@ -248,7 +254,8 @@ namespace TvLibrary.Implementations.DVB
                     out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
                     out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid, out audio4Pid, out audio5Pid,
                     out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out audioLanguage4, out audioLanguage5,
-                    out teletextPid, out subtitlePid, out subtitleLanguage, out videoStreamType);
+                    out teletextPid, out subtitlePid1, out subtitlePid2, out subtitlePid3, out subtitlePid4,
+                    out subtitleLanguage1, out subtitleLanguage2, out subtitleLanguage3, out subtitleLanguage4, out videoStreamType);
               bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
               string name = DvbTextConverter.Convert(serviceName, "");
               Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", i, networkId, transportId, serviceId, pmtPid, name, videoPid, audio1Pid, ac3Pid, serviceType);
@@ -350,10 +357,28 @@ namespace TvLibrary.Implementations.DVB
                   pidInfo.TeletextPid(teletextPid);
                   info.AddPid(pidInfo);
                 }
-                if (subtitlePid > 0)
+                if (subtitlePid1 > 0)
                 {
                   PidInfo pidInfo = new PidInfo();
-                  pidInfo.SubtitlePid(subtitlePid);
+                  pidInfo.SubtitlePid(subtitlePid1);
+                  info.AddPid(pidInfo);
+                }
+                if (subtitlePid2 > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.SubtitlePid(subtitlePid2);
+                  info.AddPid(pidInfo);
+                }
+                if (subtitlePid3 > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.SubtitlePid(subtitlePid3);
+                  info.AddPid(pidInfo);
+                }
+                if (subtitlePid4 > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.SubtitlePid(subtitlePid4);
                   info.AddPid(pidInfo);
                 }
                 // This is needed to have the transponder for the 9 day dish epg guide discovered by the scan and to add the channel 
