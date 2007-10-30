@@ -43,14 +43,17 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       HTTPDownload dlg = new HTTPDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("TvServer"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
+      string url = InstallationProperties.Instance["tve3_downloadurl"];
+      string revision = InstallationProperties.Instance["tve3_newestrevision"];
+      DialogResult result = dlg.ShowDialog(url, Application.StartupPath + "\\deploy\\tve3_snapshot_"+revision+".zip");
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
       string msi = Path.GetTempPath() + "\\setup.msi";
       string targetDir = InstallationProperties.Instance["TVServerDir"];
-      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer"), "Setup.msi", msi);
+      string revision = InstallationProperties.Instance["tve3_newestrevision"];
+      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\tve3_snapshopt_"+revision+".zip", "Setup.msi", msi);
       string parameters = "/i \"" + msi + "\" /qb TARGETDIR=\"" + targetDir + "\" /L* \"" + Path.GetTempPath() + "\\tvserverinst.log\"";
       Process setup = Process.Start("msiexec", parameters);
       setup.WaitForExit();
@@ -77,19 +80,47 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
+      //result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
+      result.needsDownload = true;
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
       if (key == null)
-        result.state = CheckState.NOT_INSTALLED;
-      else
       {
-        string version = (string)key.GetValue("DisplayVersion");
-        key.Close();
-        if (version == "1.0.0")
-          result.state = CheckState.INSTALLED;
-        else
-          result.state = CheckState.VERSION_MISMATCH;
+        result.state = CheckState.NOT_INSTALLED;
+        return result;
       }
+      if (InstallationProperties.Instance["tve3_newestrevision"]==null)
+      {
+        string downloadURL;
+        string newestRevision;
+        if (!SnapshotLookup.GetSnapshotInfo(SnapshotType.TvServer, out downloadURL, out newestRevision))
+        {
+          key.Close();
+          result.state = CheckState.VERSION_LOOKUP_FAILED;
+          return result;
+        }
+        else
+        {
+          InstallationProperties.Instance.Set("tv3_downloadurl", downloadURL);
+          InstallationProperties.Instance.Set("tv3_newestrevision", newestRevision);
+        }
+      }
+      /*
+      string exePath = (string)key.GetValue("Path");
+      key.Close();
+      StreamReader reader = new StreamReader(exePath + "\\TvService.exe.config");
+      for (int i = 0; i < 12; i++)
+        reader.ReadLine();
+      string revision = reader.ReadLine();
+      reader.Close();
+      revision = revision.Remove(0, revision.IndexOf("Build") + 6);
+      revision = revision.Substring(0, 5);
+      if (revision == newestRevision)
+        result.state = CheckState.INSTALLED;
+      else
+        result.state = CheckState.VERSION_MISMATCH;
+      */
+      result.state = CheckState.VERSION_MISMATCH;
+      result.needsDownload = true;
       return result;
     }
   }
