@@ -119,14 +119,15 @@ namespace MediaPortal.Player
           if (strH264VideoCodec.Length > 0) h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
           if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
         }
-        // FlipGer: add custom filters to graph
+        if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
+        //We now add custom filters after the Audio Renderer as AC3Filter failed to connect otherwise.
+        //FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
           customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
         }
-        if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
         //Check if the WMAudio Decoder DMO filter is in the graph if so set High Resolution Output > 2 channels
         IBaseFilter baseFilter;
         graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
@@ -159,9 +160,10 @@ namespace MediaPortal.Player
         //Use below if some file formats don't play
         //graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
 
+        //Below is now redundant as adding the PostProcessor filter (i.e. AC3Filter after the Audio Renderer was added fixed the stickiness)
         //Now we check if AC3 Filter is in the graph as a post processing filter with extension .wmv
-        //If so we now force WMAudio to connect to the AC3Filter as by default is does not connect
-        IBaseFilter ac3Filter;
+        //If so we now force WMAudio to connect to the oAC3Filter as by default is does not connect
+        /*IBaseFilter ac3Filter;
         graphBuilder.FindFilterByName("AC3Filter", out ac3Filter);
         if (ac3Filter != null & extension.Equals(".wmv"))
         {
@@ -180,20 +182,22 @@ namespace MediaPortal.Player
               Log.Info("VideoPlayerVMR9: AC3Filter already connected!");
               return false;
             }
-            Log.Info("VideoPlayerVMR9: AC3Filter not connected, continue...");
+            //Log.Info("VideoPlayerVMR9: AC3Filter not connected, continue...");
             Marshal.ReleaseComObject(pinIn);
-            // We have to remove the audio renderer as we cannot connect to it afterwards once it has been connect too
-            graphBuilder.RemoveFilter(audioRendererFilter);
             //Here we find out output & input pins of both audio filters
             IPin sourcePin = null;
             IPin sinkPin = null;
+            
             sourcePin = DirectShowUtil.FindPin(audioCodecFilter, PinDirection.Output, "out0");
             sinkPin = DirectShowUtil.FindPin(ac3Filter, PinDirection.Input, "In");
+            
             if (sourcePin != null && sinkPin != null)
             {
               Log.Info("VideoPlayerVMR9: sinkPin & sourcePin found");
               //Disconnect the WMAudio Decoder filter from the DirectSound Renderer
               graphBuilder.Disconnect(sourcePin);
+              // We have to remove the audio renderer as we cannot connect to it afterwards once it has been connect too
+              graphBuilder.RemoveFilter(audioRendererFilter);
             }
             else
             {
@@ -209,7 +213,7 @@ namespace MediaPortal.Player
               Log.Info("VideoPlayerVMR9: could not connect WMAudio to AC3Filter...");
               return false;
             }
-            Log.Info("VideoPlayerVMR9: WMAudio connected to AC3Filter...");
+            //Log.Info("VideoPlayerVMR9: WMAudio connected to AC3Filter...");
             Marshal.ReleaseComObject(sourcePin);
             Marshal.ReleaseComObject(sinkPin);
             //Then re-connect the AC3 Filter output to Audio renderer
@@ -227,7 +231,7 @@ namespace MediaPortal.Player
                 Log.Info("VideoPlayerVMR9: could not connect AC3Filter to Audio Renderer");
                 return false;
               }
-              Log.Info("VideoPlayerVMR9: AC3Filter connected to Audio Renderer...");
+              //Log.Info("VideoPlayerVMR9: AC3Filter connected to Audio Renderer...");
             }
             else
               Log.Info("VideoPlayerVMR9: ac3OutPin NOT FOUND!");
@@ -241,7 +245,8 @@ namespace MediaPortal.Player
             Log.Error(ex);
           }
           Marshal.ReleaseComObject(ac3Filter);
-        }
+        }*/
+
         mediaCtrl = (IMediaControl)graphBuilder;
         mediaEvt = (IMediaEventEx)graphBuilder;
         mediaSeek = (IMediaSeeking)graphBuilder;

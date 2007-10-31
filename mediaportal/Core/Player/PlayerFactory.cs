@@ -229,10 +229,10 @@ namespace MediaPortal.Player
       // with the MS MPEG filter
       // currently switchable via a hidden flag.
 
-      bool bUseTsFileSourceForMpegs = true;
+      bool bUseTsFileSourceForMpegs = false;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        bUseTsFileSourceForMpegs = xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
+        bUseTsFileSourceForMpegs = xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", false);
       }
       bool playWithTsFileSource = false;
       bool isMpg = false;
