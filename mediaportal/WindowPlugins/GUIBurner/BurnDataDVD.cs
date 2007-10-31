@@ -246,11 +246,12 @@ namespace MediaPortal.GUI.GUIBurner
           BurnerProcess.StartInfo.CreateNoWindow = true;
         }
 
+        string discName = string.Format("\"MP-DVD-{0}\"", DateTime.Now.ToShortDateString());
         string imgFolder = Path.Combine(_TempFolderPath, "DVD_Image");
         string isofile = Path.Combine(_TempFolderPath, "dvd.iso");
 
         BurnerProcess.StartInfo.FileName = Config.GetFile(Config.Dir.BurnerSupport, "mkisofs.exe");
-        string args = "-V \"MyDvd\" -l -allow-lowercase -o \"" + isofile + "\" \"" + imgFolder + "\"";
+        string args = "-V " + discName + " -l -allow-lowercase -o \"" + isofile + "\" \"" + imgFolder + "\"";
         BurnerProcess.StartInfo.Arguments = args;
 
         BurnerProcess.Exited += new EventHandler(BurnProcess_Exited);

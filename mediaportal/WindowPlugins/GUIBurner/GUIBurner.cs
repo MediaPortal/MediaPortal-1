@@ -38,6 +38,8 @@ using MediaPortal.Ripper;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 
+using XPBurn;
+
 namespace MediaPortal.GUI.GUIBurner
 {
   /// <summary>
@@ -99,7 +101,7 @@ namespace MediaPortal.GUI.GUIBurner
       public string path;
     }
 
-    private XPBurn.XPBurnCD CDBurner = null;         // Microsoft code from http://msdn.microsoft.com/vcsharp/downloads/samples/xpburn/
+    private XPBurnCD CDBurner = null;         // Microsoft code from http://msdn.microsoft.com/vcsharp/downloads/samples/xpburn/
                                                      // http://download.microsoft.com/download/6/9/c/69c5d1b7-e3ac-4986-99f1-0c55dc374d66/xpburn.msi
 
     //string[] video = new string[50];
@@ -173,7 +175,7 @@ namespace MediaPortal.GUI.GUIBurner
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         fastFormat = xmlreader.GetValueAsBool("burner", "fastformat", true);
-        tmpFolder = xmlreader.GetValueAsString("burner", "temp_folder", "c:\\");
+        tmpFolder = xmlreader.GetValueAsString("burner", "temp_folder", Path.GetTempPath());
         dvdBurnFolder = xmlreader.GetValueAsString("burner", "dvdburnexe_folder", "c:\\");
 
         recorder = xmlreader.GetValueAsInt("burner", "recorder", 0);
@@ -188,9 +190,11 @@ namespace MediaPortal.GUI.GUIBurner
       driveCount = 0;
       GetDrives();
 
+      tmpFolder = Util.Utils.RemoveTrailingSlash(tmpFolder);
+
       try
       {
-        CDBurner = new XPBurn.XPBurnCD();
+        CDBurner = new XPBurnCD();
         CDBurner.BurnerDrive = CDBurner.RecorderDrives[recorder].ToString();
       }
       catch (Exception ex)
@@ -346,8 +350,6 @@ namespace MediaPortal.GUI.GUIBurner
                 currentState = States.STATE_MAKE_DATA_DVD;
                 ShowList();
                 break;
-
-
 
               case States.STATE_MAKE_VIDEO_DVD:
                 ImportVideoPlaylist();
@@ -1200,7 +1202,10 @@ namespace MediaPortal.GUI.GUIBurner
       if (null != dlgYesNo)
       {
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100));    // Burner
-        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(2108));    // Insert blank media
+        //if (CDBurner.MediaInfo.isUsable)
+        //  dlgYesNo.SetLine(1, string.Empty);
+        //else
+          dlgYesNo.SetLine(1, GUILocalizeStrings.Get(2108));    // Insert blank media
         dlgYesNo.SetLine(2, GUILocalizeStrings.Get(2109));    // then press OK
         dlgYesNo.DoModal(GetID);
         if (dlgYesNo.IsConfirmed)
@@ -1223,7 +1228,7 @@ namespace MediaPortal.GUI.GUIBurner
 
           Log.Info("BurnDVD BurnType: {0}", bTyp.ToString());
 
-          string strTempFolder = tmpFolder + @"DVD";
+          string strTempFolder = tmpFolder + @"\DVD";
 
           if (bTyp == BurnTypes.VIDEO_DVD)
           {
@@ -1275,13 +1280,18 @@ namespace MediaPortal.GUI.GUIBurner
       AutoPlay.StopListening();
 
       GUIPropertyManager.SetProperty("#burner_size", "");
-      GUIPropertyManager.SetProperty("#convert_info", "");
+      GUIPropertyManager.SetProperty("#convert_info", "");      
 
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (dlgYesNo != null)
       {
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100));
-        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(2108));
+
+        if (CDBurner.MediaInfo.isWritable && CDBurner.MediaInfo.isUsable)
+          dlgYesNo.SetLine(1, string.Empty);
+        else
+          // Please insert blank CD/DVD
+          dlgYesNo.SetLine(1, GUILocalizeStrings.Get(2108));
         dlgYesNo.SetLine(2, GUILocalizeStrings.Get(2109));
         dlgYesNo.DoModal(GetID);
         if (dlgYesNo.IsConfirmed)  // Burn the CD
@@ -1295,15 +1305,16 @@ namespace MediaPortal.GUI.GUIBurner
             bool FileCanBeUsed = File.Exists(cItem.Path);
             if (bTyp == BurnTypes.AUDIO_CD)
             {
+              string strTempFolder = Util.Utils.RemoveTrailingSlash(tmpFolder);
               string outName = System.IO.Path.ChangeExtension(cItem.FileInfo.Name, ".wav");
               GUIPropertyManager.SetProperty("#burner_size", "MP3->WAV  " + outName);
               //ConvertMP3toWAV(cItem.Path + "\\" + cItem.FileInfo.Name, tmpFolder + "\\" + outName);
-              if (ConvertMP3toWAV(cItem.Path, tmpFolder + "\\" + outName))
+              if (ConvertMP3toWAV(cItem.Path, strTempFolder + "\\" + outName))
               {
                 cItem.Label = outName;
                 cItem.FileInfo.Name = outName;
 
-                FileInfo fi = new FileInfo(tmpFolder + "\\" + outName);
+                FileInfo fi = new FileInfo(strTempFolder + "\\" + outName);
                 cItem.FileInfo.Length = (int)fi.Length;
 
                 cItem.Path = fi.FullName;

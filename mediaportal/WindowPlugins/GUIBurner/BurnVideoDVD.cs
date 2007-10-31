@@ -314,6 +314,7 @@ namespace MediaPortal.GUI.GUIBurner
         BurnerProcess.EnableRaisingEvents = true;
         BurnerProcess.StartInfo.WorkingDirectory = _TempFolderPath;
         BurnerProcess.StartInfo.UseShellExecute = false;
+        
         if (!_InDebugMode)                 // Show output if in Debug mode
         {
           BurnerProcess.StartInfo.RedirectStandardOutput = true;
@@ -378,7 +379,6 @@ namespace MediaPortal.GUI.GUIBurner
         SW_ConfigFile.WriteLine("      </pgc>");
         SW_ConfigFile.WriteLine("    </menus>");
         SW_ConfigFile.WriteLine("  </vmgm>");
-
 
         for (int i = 0; i < NumberOfFiles; i++)
         {
@@ -495,11 +495,12 @@ namespace MediaPortal.GUI.GUIBurner
           BurnerProcess.StartInfo.CreateNoWindow = true;
         }
 
+        string discName = string.Format("\"MP-DVD-{0}\"", DateTime.Now.ToShortDateString());
         string imgFolder = Path.Combine(_TempFolderPath, "DVD_Image");
         string isofile = Path.Combine(_TempFolderPath, "dvd.iso");
 
         BurnerProcess.StartInfo.FileName = Config.GetFile(Config.Dir.BurnerSupport, "mkisofs.exe");
-        string args = "-V \"MyDvd\" -o \"" + isofile + "\" -dvd-video \"" + imgFolder + "\"";
+        string args = "-V " + discName + " -o \"" + isofile + "\" -dvd-video \"" + imgFolder + "\"";
         BurnerProcess.StartInfo.Arguments = args;
 
         BurnerProcess.Exited += new EventHandler(BurnProcess_Exited);

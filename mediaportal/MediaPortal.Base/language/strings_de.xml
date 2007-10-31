@@ -1057,8 +1057,8 @@
         <String id="2105">Daten-CD erstellen</String>
         <String id="2106">Daten-DVD erstellen</String>
         <String id="2107">Kopieren starten</String>
-        <String id="2108">Bitte Rohling einlegen und</String>
-        <String id="2109">anschliessend bestätigen</String>
+        <String id="2108">Bitte einen Rohling einlegen!</String>
+        <String id="2109">Möchten Sie fortfahren?</String>
         <String id="2110">Zu kopierende CD/DVD einlegen</String>
         <String id="2111">Fertig!</String>
         <String id="2112">Warte auf CD/DVD</String>

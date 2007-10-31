@@ -231,6 +231,12 @@ namespace MediaPortal.GUI.GUIBurner
           }
         }
 
+        if (!Directory.Exists(@"C:\Windows\Fonts"))
+        {
+          MessageBox.Show(@"C:\Windows\Fonts does not exist - please link/copy it or DVD-Menus will stay empty!");
+          Log.Warn(@"Burner setup: Error locating C:\Windows\Fonts !");
+        }
+
         SaveSettings();
         this.Close();
       }
