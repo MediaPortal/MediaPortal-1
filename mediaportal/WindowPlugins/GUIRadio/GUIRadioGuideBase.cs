@@ -570,10 +570,11 @@ namespace MediaPortal.GUI.Radio
             }
             UpdateCurrentProgram();
 
-            Log.Info("turn tv on");
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
-            msg.SendToTargetWindow = true;
-            GUIWindowManager.SendThreadMessage(msg);
+            // GEMX: Fixes mantis 1130. Doesn't make sense to resume TV when in RADIO guide 
+            //Log.Info("turn tv on");
+            //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
+            //msg.SendToTargetWindow = true;
+            //GUIWindowManager.SendThreadMessage(msg);
 
             return true;
           }
