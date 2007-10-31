@@ -1057,8 +1057,8 @@
         <String id="2105">Daten-CD erstellen</String>
         <String id="2106">Daten-DVD erstellen</String>
         <String id="2107">Kopieren starten</String>
-        <String id="2108">Rohling einlegen</String>
-        <String id="2109">Anschliessend OK betätigen</String>
+        <String id="2108">Bitte Rohling einlegen und</String>
+        <String id="2109">anschliessend bestätigen</String>
         <String id="2110">Zu kopierende CD/DVD einlegen</String>
         <String id="2111">Fertig!</String>
         <String id="2112">Warte auf CD/DVD</String>
@@ -1081,7 +1081,7 @@
         <String id="2129">CD wird vorbereitet.</String>
         <String id="2130">Block</String>
         <String id="2131">von</String>
-        <String id="2132">CD wird geschlossen. Voraussichtliche Dauer:</String>
+        <String id="2132">CD wird geschlossen. Voraussichtliche Dauer: {0} Sekunden</String>
         <String id="2133">TV-Aufnahmen</String>
         <String id="2134">Video</String>
         <String id="2135">Audio</String>

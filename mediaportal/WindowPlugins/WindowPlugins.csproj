@@ -238,10 +238,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\plugins\Windows\XihSolutions.DotMSN.dll</HintPath>
     </Reference>
-    <Reference Include="XPBurnComponent, Version=1.0.1.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>GUIBurner\XPBurnComponent.dll</HintPath>
-    </Reference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
@@ -278,6 +274,10 @@
       <Name>WebEPG %28WebEPG\WebEPG%29</Name>
       <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\XPImapiBurner\XPImapiBurner.csproj">
+      <Project>{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}</Project>
+      <Name>XPImapiBurner</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -79,8 +79,10 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
 
 
 rem MyBurner plugin dependencies
-xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
 xcopy /y %1\WindowPlugins\GUIBurner\madlldlib.dll .
+xcopy /y %1\XPImapiBurner\bin\%2\XPBurnComponent.dll .
+REM xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
+
 
 
 REM Copy All new files from base

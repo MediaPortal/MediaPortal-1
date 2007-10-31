@@ -99,22 +99,18 @@ namespace MediaPortal.GUI.GUIBurner
       public string path;
     }
 
+    private XPBurn.XPBurnCD CDBurner = null;         // Microsoft code from http://msdn.microsoft.com/vcsharp/downloads/samples/xpburn/
+                                                     // http://download.microsoft.com/download/6/9/c/69c5d1b7-e3ac-4986-99f1-0c55dc374d66/xpburn.msi
 
-    private XPBurn.XPBurnCD CDBurner = null;         // Microsoft code from http://msdn.microsoft.com/vcsharp/downloads/samples/xpburn/     
+    //string[] video = new string[50];
+    //string[] vname = new string[50];
+    //string[] sound = new string[50];
+    //string[] sname = new string[50];
+    //string[] pictures = new string[50];
+    //string[] pname = new string[50];
 
-
-    // MK Have no idea what this lot is!!
-    // Think they might be the share drives setup in MP
-    string[] video = new string[50];
-    string[] vname = new string[50];
-    string[] sound = new string[50];
-    string[] sname = new string[50];
-    string[] pictures = new string[50];
-    string[] pname = new string[50];
-
-    private string recordpath1 = "";  // for TV card 1
-    private string recordpath2 = "";	// for TV card 2
-
+    //private string recordpath1 = "";  // for TV card 1
+    //private string recordpath2 = "";	// for TV card 2
 
     private int recorder;                         // Recorder name
     private string recorderdrive = "";            // Drive letter
@@ -142,6 +138,7 @@ namespace MediaPortal.GUI.GUIBurner
     private bool AspectRatio4x3 = true;           // Which aspect ratio for the DVD
     private bool LeaveFilesForDebugging = true;   // Leave temporary files to aid debugging
     private bool DummyBurn = false;               // Tell the BurnDVD not to actually burn the DVD
+    private bool DoNotEject = true;               // Do not eject the disc after burning has finished
 
     static ArrayList mp3_extensions = new ArrayList();
     static ArrayList video_extensions = new ArrayList();
@@ -150,9 +147,7 @@ namespace MediaPortal.GUI.GUIBurner
     public static int soundFileSize = 0;
     private static long lStartTime = 0;
 
-    // Convert to short pathnames
-    // (madlldlib)
-
+    // Convert to short pathnames (madlldlib)
     [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
     [return: MarshalAs(UnmanagedType.U4)]
     public static extern int
@@ -169,6 +164,41 @@ namespace MediaPortal.GUI.GUIBurner
     public GUIBurner()
     {
       GetID = (int)GUIWindow.Window.WINDOW_MY_BURNER;
+    }
+    #endregion
+
+    #region Serialisation
+    private void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        fastFormat = xmlreader.GetValueAsBool("burner", "fastformat", true);
+        tmpFolder = xmlreader.GetValueAsString("burner", "temp_folder", "c:\\");
+        dvdBurnFolder = xmlreader.GetValueAsString("burner", "dvdburnexe_folder", "c:\\");
+
+        recorder = xmlreader.GetValueAsInt("burner", "recorder", 0);
+        recorderdrive = xmlreader.GetValueAsString("burner", "recorderdrive", "");
+
+        PalTvFormat = xmlreader.GetValueAsBool("burner", "PalTvFormat", true);
+        AspectRatio4x3 = xmlreader.GetValueAsBool("burner", "AspectRatio4x3", true);
+        LeaveFilesForDebugging = xmlreader.GetValueAsBool("burner", "leavedebugfiles", true);
+        DummyBurn = xmlreader.GetValueAsBool("burner", "dummyburn", false);
+        DoNotEject = xmlreader.GetValueAsBool("burner", "DoNotEject", true);
+      }
+      driveCount = 0;
+      GetDrives();
+
+      try
+      {
+        CDBurner = new XPBurn.XPBurnCD();
+        CDBurner.BurnerDrive = CDBurner.RecorderDrives[recorder].ToString();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Problem creating XPBurn");
+        Log.Error(ex);
+      }
+
     }
     #endregion
 
@@ -274,18 +304,16 @@ namespace MediaPortal.GUI.GUIBurner
                 ShowList();
                 break;
 
-
-
               // If on Audio CD Menu
               case States.STATE_MAKE_AUDIO_CD:
                 burnType = BurnTypes.AUDIO_CD;
-                BurnCD(burnType);
+                  BurnCD(burnType);
                 break;
 
               // If on Data CD Menu
               case States.STATE_MAKE_DATA_CD:
                 burnType = BurnTypes.DATA_CD;
-                BurnCD(burnType);
+                  BurnCD(burnType);
                 break;
 
               // If on Video DVD Menu
@@ -454,53 +482,53 @@ namespace MediaPortal.GUI.GUIBurner
                   LoadListControl(item.Path, currentExt);
                 #endregion
               }
-              else if (item.Label.StartsWith("["))		// is a share
-              {
-                #region Share
-                String shareName = item.Label.Substring(1);
-                shareName = shareName.Substring(0, shareName.Length - 1);
-                if (shareName == GUILocalizeStrings.Get(2133))
-                {
-                  currentFolder = recordpath1;
-                  LoadListControl(currentFolder, currentExt);
-                }
-                if (shareName == GUILocalizeStrings.Get(2144)) // if two tv cards installed
-                {
-                  currentFolder = recordpath1;
-                  LoadListControl(currentFolder, currentExt);
-                }
-                if (shareName == GUILocalizeStrings.Get(2145))
-                {
-                  currentFolder = recordpath2;
-                  LoadListControl(currentFolder, currentExt);
-                }
-                else
-                {
-                  for (int i = 0; i < 50; i++)
-                  {
-                    if (pname[i] == shareName)
-                    {
-                      currentFolder = pictures[i];
-                      LoadListControl(currentFolder, currentExt);
-                      break;
-                    }
-                    if (sname[i] == shareName)
-                    {
-                      currentFolder = sound[i];
-                      LoadListControl(currentFolder, currentExt);
-                      break;
-                    }
-                    if (vname[i] == shareName)
-                    {
-                      currentFolder = video[i];
-                      LoadListControl(currentFolder, currentExt);
-                      break;
-                    }
-                  }
-                }
-                LoadListControl(currentFolder, currentExt);
-                #endregion
-              }
+              //else if (item.Label.StartsWith("["))		// is a share
+              //{
+              //  #region Share
+              //  String shareName = item.Label.Substring(1);
+              //  shareName = shareName.Substring(0, shareName.Length - 1);
+              //  if (shareName == GUILocalizeStrings.Get(2133))
+              //  {
+              //    currentFolder = recordpath1;
+              //    LoadListControl(currentFolder, currentExt);
+              //  }
+              //  if (shareName == GUILocalizeStrings.Get(2144)) // if two tv cards installed
+              //  {
+              //    currentFolder = recordpath1;
+              //    LoadListControl(currentFolder, currentExt);
+              //  }
+              //  if (shareName == GUILocalizeStrings.Get(2145))
+              //  {
+              //    currentFolder = recordpath2;
+              //    LoadListControl(currentFolder, currentExt);
+              //  }
+              //  else
+              //  {
+              //    for (int i = 0; i < 50; i++)
+              //    {
+              //      if (pname[i] == shareName)
+              //      {
+              //        currentFolder = pictures[i];
+              //        LoadListControl(currentFolder, currentExt);
+              //        break;
+              //      }
+              //      if (sname[i] == shareName)
+              //      {
+              //        currentFolder = sound[i];
+              //        LoadListControl(currentFolder, currentExt);
+              //        break;
+              //      }
+              //      if (vname[i] == shareName)
+              //      {
+              //        currentFolder = video[i];
+              //        LoadListControl(currentFolder, currentExt);
+              //        break;
+              //      }
+              //    }
+              //  }
+              //  LoadListControl(currentFolder, currentExt);
+              //  #endregion
+              //}
               else if (item.IsFolder)								  // is a folder
               {
                 #region Folder
@@ -617,9 +645,9 @@ namespace MediaPortal.GUI.GUIBurner
       {
         int st = MadlldlibWrapper.DecodeMP3(inputFile, outputFile, MadlldlibWrapper.DEC_WAV, status, defaultCallback);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Info("Error converting MP3");
+        Log.Warn("Error converting MP3: {0}", ex.Message);
       }
       // this prevents garbage collection
       // from occurring on callback
@@ -1065,68 +1093,7 @@ namespace MediaPortal.GUI.GUIBurner
             break;
         }
       }
-    }
-
-    private void LoadSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        fastFormat = xmlreader.GetValueAsBool("burner", "fastformat", true);
-        tmpFolder = xmlreader.GetValueAsString("burner", "temp_folder", "c:\\");
-        dvdBurnFolder = xmlreader.GetValueAsString("burner", "dvdburnexe_folder", "c:\\");
-
-        recorder = xmlreader.GetValueAsInt("burner", "recorder", 0);
-        recorderdrive = xmlreader.GetValueAsString("burner", "recorderdrive", "");
-
-        PalTvFormat = xmlreader.GetValueAsBool("burner", "PalTvFormat", true);
-        AspectRatio4x3 = xmlreader.GetValueAsBool("burner", "AspectRatio4x3", true);
-        LeaveFilesForDebugging = xmlreader.GetValueAsBool("burner", "leavedebugfiles", true);
-        DummyBurn = xmlreader.GetValueAsBool("burner", "dummyburn", false);
-
-        #region No idea what these are for
-        for (int i = 0; i < 50; i++)
-        {
-          sound[i] = xmlreader.GetValueAsString("music", "sharepath" + i.ToString(), " ").Trim();
-          sname[i] = xmlreader.GetValueAsString("music", "sharename" + i.ToString(), " ").Trim();
-          vname[i] = xmlreader.GetValueAsString("movies", "sharename" + i.ToString(), " ").Trim();
-          video[i] = xmlreader.GetValueAsString("movies", "sharepath" + i.ToString(), " ").Trim();
-          pname[i] = xmlreader.GetValueAsString("pictures", "sharename" + i.ToString(), " ").Trim();
-          pictures[i] = xmlreader.GetValueAsString("pictures", "sharepath" + i.ToString(), " ").Trim();
-
-          if (pname[i].Contains("CD/") == false && pictures[i] != "")
-          {
-            drives[driveCount] = "[" + pname[i] + "]";
-            driveCount++;
-          }
-
-          if (vname[i].Contains("CD/") == false && video[i] != "")
-          {
-            drives[driveCount] = "[" + vname[i] + "]";
-            driveCount++;
-          }
-          if (sname[i].Contains("CD/") == false && sound[i] != "")
-          {
-            drives[driveCount] = "[" + sname[i] + "]";
-            driveCount++;
-          }
-        }
-        #endregion
-      }
-      driveCount = 0;
-      GetDrives();
-
-      try
-      {
-        CDBurner = new XPBurn.XPBurnCD();
-        CDBurner.BurnerDrive = CDBurner.RecorderDrives[recorder].ToString();
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Problem creating XPBurn");
-        Log.Error(ex);
-      }
-
-    }
+    }   
 
     private void okDialog(string header, string text2)
     {
@@ -1303,7 +1270,6 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void BurnCD(BurnTypes bTyp)
     {
-
       AutoPlay.StopListening();
 
       GUIPropertyManager.SetProperty("#burner_size", "");
@@ -1333,9 +1299,11 @@ namespace MediaPortal.GUI.GUIBurner
 
               cItem.Label = outName;
               cItem.FileInfo.Name = outName;
-              cItem.Path = tmpFolder;
+              
               FileInfo fi = new FileInfo(tmpFolder + "\\" + outName);
               cItem.FileInfo.Length = (int)fi.Length;
+
+              cItem.Path = fi.FullName;
             }
 
             // Otherwise we are a data CD and dont need to do any conversions
@@ -1343,30 +1311,30 @@ namespace MediaPortal.GUI.GUIBurner
             try
             {
               //CDBurner.AddFile(cItem.Path + "\\" + cItem.Label, cItem.Path + "\\" + cItem.Label);
-              CDBurner.AddFile(cItem.Path, cItem.Path + "\\" + cItem.Label);
-              Log.Info("Add File: {0}", cItem.Path + "\\" + cItem.Label);
+              //CDBurner.AddFile(cItem.Path, cItem.Path + "\\" + cItem.Label);
+              //CDBurner.AddFile(cItem.Path, tmpFolder + "\\" + cItem.Label);
+              CDBurner.AddFile(cItem.Path, cItem.Label);
+
+              Log.Info("MyBurner: Added File: {0}", cItem.Path);
             }
             catch (Exception ex)
             {
-              Log.Info("MyBurner: ", ex.Message);
+              Log.Info("MyBurner: {0}", ex.Message);
             }
           }
-
-
 
           if (bTyp == BurnTypes.AUDIO_CD)
           {
             CDBurner.ActiveFormat = XPBurn.RecordType.afMusic;
-            Log.Info("Burn Audio");
+            Log.Info("MyBurner: Burn type - Audio");
           }
           else
           {
             CDBurner.ActiveFormat = XPBurn.RecordType.afData;
-            Log.Info("Burn Data");
+            Log.Info("MyBurner: Burn type - Data");
           }
 
-
-          if (CDBurner.MediaInfo.isWritable == false)
+          if (CDBurner.MediaInfo.isWritable == false) // MultiSession??? || CDBurner.MediaInfo.isBlank == false)
           {
             okDialog(GUILocalizeStrings.Get(2100), GUILocalizeStrings.Get(2127)); // The CD is not writable
 
@@ -1383,7 +1351,7 @@ namespace MediaPortal.GUI.GUIBurner
 
             try
             {
-              CDBurner.RecordDisc(false, false);
+              CDBurner.RecordDisc(DummyBurn, !DoNotEject);
             }
             catch (Exception ex)
             {
@@ -1532,7 +1500,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void CDBurner_ClosingDisc(int nEstimatedSeconds)
     {
-      GUIPropertyManager.SetProperty("#convert_info", GUILocalizeStrings.Get(2132) + " " + nEstimatedSeconds.ToString());
+      GUIPropertyManager.SetProperty("#convert_info", string.Format(GUILocalizeStrings.Get(2132), nEstimatedSeconds.ToString()));
     }
 
     private void CDBurner_BurnComplete(uint status)

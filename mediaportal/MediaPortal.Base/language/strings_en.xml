@@ -1080,7 +1080,7 @@
         <String id="2129">Preparing to Burn</String>
         <String id="2130">Block</String>
         <String id="2131">of</String>
-        <String id="2132">Closing disc: estimated time:</String>
+        <String id="2132">Closing disc. Estimated time: {0} secs</String>
         <String id="2133">TV-Recordings</String>
         <String id="2134">Video</String>
         <String id="2135">Audio</String>

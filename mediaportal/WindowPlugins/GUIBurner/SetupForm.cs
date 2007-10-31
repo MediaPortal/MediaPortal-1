@@ -78,6 +78,7 @@ namespace MediaPortal.GUI.GUIBurner
     private RadioButton radioButtonAspectRatio4x3;
     private MediaPortal.UserInterface.Controls.MPLabel labelDVDburnPathCorrect;
     private MediaPortal.UserInterface.Controls.MPLabel labelCygwinPathCorrect;
+    private CheckBox checkBoxDoNotEject;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -114,6 +115,7 @@ namespace MediaPortal.GUI.GUIBurner
 
         checkBoxLeaveFileForDebug.Checked = xmlreader.GetValueAsBool("burner", "leavedebugfiles", true);
         checkBoxDontBurnDVD.Checked = xmlreader.GetValueAsBool("burner", "dummyburn", false);
+        checkBoxDoNotEject.Checked = xmlreader.GetValueAsBool("burner", "DoNotEject", true);
 
         try
         {
@@ -151,6 +153,7 @@ namespace MediaPortal.GUI.GUIBurner
 
         xmlwriter.SetValueAsBool("burner", "leavedebugfiles", checkBoxLeaveFileForDebug.Checked);
         xmlwriter.SetValueAsBool("burner", "dummyburn", checkBoxDontBurnDVD.Checked);
+        xmlwriter.SetValueAsBool("burner", "DoNotEject", checkBoxDoNotEject.Checked);
       }
     }
     #endregion
@@ -311,6 +314,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.groupBoxSupportFiles = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelCygwinPathCorrect = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelDVDburnPathCorrect = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabelCygwinDownload = new System.Windows.Forms.LinkLabel();
       this.linkLabelDVDBurnDownload = new System.Windows.Forms.LinkLabel();
@@ -337,7 +341,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.mpTextBoxBurnerDriver = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonOK = new MediaPortal.UserInterface.Controls.MPButton();
-      this.labelCygwinPathCorrect = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxDoNotEject = new System.Windows.Forms.CheckBox();
       this.groupBoxSupportFiles.SuspendLayout();
       this.groupBoxOptions.SuspendLayout();
       this.groupBoxAspectRatio.SuspendLayout();
@@ -355,17 +359,27 @@ namespace MediaPortal.GUI.GUIBurner
       this.groupBoxSupportFiles.Controls.Add(this.buttonSelectDvdBurnPathLocation);
       this.groupBoxSupportFiles.Controls.Add(this.textBoxDVDBurnExePath);
       this.groupBoxSupportFiles.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxSupportFiles.Location = new System.Drawing.Point(12, 253);
+      this.groupBoxSupportFiles.Location = new System.Drawing.Point(12, 275);
       this.groupBoxSupportFiles.Name = "groupBoxSupportFiles";
-      this.groupBoxSupportFiles.Size = new System.Drawing.Size(616, 125);
+      this.groupBoxSupportFiles.Size = new System.Drawing.Size(616, 112);
       this.groupBoxSupportFiles.TabIndex = 61;
       this.groupBoxSupportFiles.TabStop = false;
       this.groupBoxSupportFiles.Text = "Necessary support files";
       // 
+      // labelCygwinPathCorrect
+      // 
+      this.labelCygwinPathCorrect.AutoSize = true;
+      this.labelCygwinPathCorrect.Location = new System.Drawing.Point(18, 28);
+      this.labelCygwinPathCorrect.Name = "labelCygwinPathCorrect";
+      this.labelCygwinPathCorrect.Size = new System.Drawing.Size(208, 13);
+      this.labelCygwinPathCorrect.TabIndex = 69;
+      this.labelCygwinPathCorrect.Text = "CYGWIN support files successfully located";
+      this.labelCygwinPathCorrect.Visible = false;
+      // 
       // labelDVDburnPathCorrect
       // 
       this.labelDVDburnPathCorrect.AutoSize = true;
-      this.labelDVDburnPathCorrect.Location = new System.Drawing.Point(18, 66);
+      this.labelDVDburnPathCorrect.Location = new System.Drawing.Point(18, 53);
       this.labelDVDburnPathCorrect.Name = "labelDVDburnPathCorrect";
       this.labelDVDburnPathCorrect.Size = new System.Drawing.Size(164, 13);
       this.labelDVDburnPathCorrect.TabIndex = 68;
@@ -392,7 +406,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.linkLabelDVDBurnDownload.AutoSize = true;
       this.linkLabelDVDBurnDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.linkLabelDVDBurnDownload.LinkArea = new System.Windows.Forms.LinkArea(28, 9);
-      this.linkLabelDVDBurnDownload.Location = new System.Drawing.Point(18, 66);
+      this.linkLabelDVDBurnDownload.Location = new System.Drawing.Point(18, 53);
       this.linkLabelDVDBurnDownload.Name = "linkLabelDVDBurnDownload";
       this.linkLabelDVDBurnDownload.Size = new System.Drawing.Size(394, 17);
       this.linkLabelDVDBurnDownload.TabIndex = 66;
@@ -404,7 +418,7 @@ namespace MediaPortal.GUI.GUIBurner
       // labeldvdburnPath
       // 
       this.labeldvdburnPath.AutoSize = true;
-      this.labeldvdburnPath.Location = new System.Drawing.Point(18, 92);
+      this.labeldvdburnPath.Location = new System.Drawing.Point(18, 82);
       this.labeldvdburnPath.Name = "labeldvdburnPath";
       this.labeldvdburnPath.Size = new System.Drawing.Size(138, 13);
       this.labeldvdburnPath.TabIndex = 61;
@@ -412,7 +426,7 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // buttonSelectDvdBurnPathLocation
       // 
-      this.buttonSelectDvdBurnPathLocation.Location = new System.Drawing.Point(568, 86);
+      this.buttonSelectDvdBurnPathLocation.Location = new System.Drawing.Point(568, 76);
       this.buttonSelectDvdBurnPathLocation.Name = "buttonSelectDvdBurnPathLocation";
       this.buttonSelectDvdBurnPathLocation.Size = new System.Drawing.Size(30, 24);
       this.buttonSelectDvdBurnPathLocation.TabIndex = 60;
@@ -422,7 +436,7 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // textBoxDVDBurnExePath
       // 
-      this.textBoxDVDBurnExePath.Location = new System.Drawing.Point(171, 89);
+      this.textBoxDVDBurnExePath.Location = new System.Drawing.Point(171, 79);
       this.textBoxDVDBurnExePath.Name = "textBoxDVDBurnExePath";
       this.textBoxDVDBurnExePath.Size = new System.Drawing.Size(380, 20);
       this.textBoxDVDBurnExePath.TabIndex = 59;
@@ -430,6 +444,7 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // groupBoxOptions
       // 
+      this.groupBoxOptions.Controls.Add(this.checkBoxDoNotEject);
       this.groupBoxOptions.Controls.Add(this.groupBoxAspectRatio);
       this.groupBoxOptions.Controls.Add(this.groupBoxDVDFormat);
       this.groupBoxOptions.Controls.Add(this.checkBoxDontBurnDVD);
@@ -441,7 +456,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.groupBoxOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxOptions.Location = new System.Drawing.Point(12, 94);
       this.groupBoxOptions.Name = "groupBoxOptions";
-      this.groupBoxOptions.Size = new System.Drawing.Size(616, 144);
+      this.groupBoxOptions.Size = new System.Drawing.Size(616, 164);
       this.groupBoxOptions.TabIndex = 60;
       this.groupBoxOptions.TabStop = false;
       this.groupBoxOptions.Text = "Options";
@@ -451,7 +466,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.groupBoxAspectRatio.Controls.Add(this.radioButtonAspectRatio16x9);
       this.groupBoxAspectRatio.Controls.Add(this.radioButtonAspectRatio4x3);
       this.groupBoxAspectRatio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAspectRatio.Location = new System.Drawing.Point(467, 85);
+      this.groupBoxAspectRatio.Location = new System.Drawing.Point(267, 91);
       this.groupBoxAspectRatio.Name = "groupBoxAspectRatio";
       this.groupBoxAspectRatio.Size = new System.Drawing.Size(130, 45);
       this.groupBoxAspectRatio.TabIndex = 69;
@@ -486,7 +501,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.groupBoxDVDFormat.Controls.Add(this.radioButtonTvFormatNtsc);
       this.groupBoxDVDFormat.Controls.Add(this.radioButtonTvFormatPal);
       this.groupBoxDVDFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxDVDFormat.Location = new System.Drawing.Point(317, 86);
+      this.groupBoxDVDFormat.Location = new System.Drawing.Point(120, 91);
       this.groupBoxDVDFormat.Name = "groupBoxDVDFormat";
       this.groupBoxDVDFormat.Size = new System.Drawing.Size(130, 45);
       this.groupBoxDVDFormat.TabIndex = 68;
@@ -519,7 +534,7 @@ namespace MediaPortal.GUI.GUIBurner
       // checkBoxDontBurnDVD
       // 
       this.checkBoxDontBurnDVD.AutoSize = true;
-      this.checkBoxDontBurnDVD.Location = new System.Drawing.Point(120, 114);
+      this.checkBoxDontBurnDVD.Location = new System.Drawing.Point(420, 120);
       this.checkBoxDontBurnDVD.Name = "checkBoxDontBurnDVD";
       this.checkBoxDontBurnDVD.Size = new System.Drawing.Size(126, 17);
       this.checkBoxDontBurnDVD.TabIndex = 67;
@@ -529,11 +544,13 @@ namespace MediaPortal.GUI.GUIBurner
       // checkBoxLeaveFileForDebug
       // 
       this.checkBoxLeaveFileForDebug.AutoSize = true;
-      this.checkBoxLeaveFileForDebug.Location = new System.Drawing.Point(120, 91);
+      this.checkBoxLeaveFileForDebug.Checked = true;
+      this.checkBoxLeaveFileForDebug.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxLeaveFileForDebug.Location = new System.Drawing.Point(420, 97);
       this.checkBoxLeaveFileForDebug.Name = "checkBoxLeaveFileForDebug";
-      this.checkBoxLeaveFileForDebug.Size = new System.Drawing.Size(178, 17);
+      this.checkBoxLeaveFileForDebug.Size = new System.Drawing.Size(166, 17);
       this.checkBoxLeaveFileForDebug.TabIndex = 63;
-      this.checkBoxLeaveFileForDebug.Text = "Keep Temp Files For Debugging";
+      this.checkBoxLeaveFileForDebug.Text = "Keep temp files for debugging";
       this.checkBoxLeaveFileForDebug.UseVisualStyleBackColor = true;
       // 
       // labelTempHint
@@ -645,15 +662,18 @@ namespace MediaPortal.GUI.GUIBurner
       this.buttonOK.UseVisualStyleBackColor = true;
       this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
       // 
-      // labelCygwinPathCorrect
+      // checkBoxDoNotEject
       // 
-      this.labelCygwinPathCorrect.AutoSize = true;
-      this.labelCygwinPathCorrect.Location = new System.Drawing.Point(18, 28);
-      this.labelCygwinPathCorrect.Name = "labelCygwinPathCorrect";
-      this.labelCygwinPathCorrect.Size = new System.Drawing.Size(208, 13);
-      this.labelCygwinPathCorrect.TabIndex = 69;
-      this.labelCygwinPathCorrect.Text = "CYGWIN support files successfully located";
-      this.labelCygwinPathCorrect.Visible = false;
+      this.checkBoxDoNotEject.AutoSize = true;
+      this.checkBoxDoNotEject.Checked = true;
+      this.checkBoxDoNotEject.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxDoNotEject.Location = new System.Drawing.Point(420, 131);
+      this.checkBoxDoNotEject.Name = "checkBoxDoNotEject";
+      this.checkBoxDoNotEject.Size = new System.Drawing.Size(168, 17);
+      this.checkBoxDoNotEject.TabIndex = 70;
+      this.checkBoxDoNotEject.Text = "Do not eject disc after burning";
+      this.checkBoxDoNotEject.UseVisualStyleBackColor = true;
+      this.checkBoxDoNotEject.Visible = false;
       // 
       // BurnerSetupForm
       // 
