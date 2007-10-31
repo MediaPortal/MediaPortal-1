@@ -606,7 +606,7 @@ namespace MediaPortal.GUI.GUIBurner
     }
 
 
-    private void ConvertMP3toWAV(string inputFile, string outputFile)
+    private bool ConvertMP3toWAV(string inputFile, string outputFile)
     {
       lStartTime = DateTime.Now.Ticks;
       StringBuilder inputFilePath = new StringBuilder();
@@ -622,7 +622,6 @@ namespace MediaPortal.GUI.GUIBurner
       GetShortPathName(outputFile, outputFilePath, MAX_STRLEN);
 
       // Assign if returned path is not zero:
-
       if (inputFilePath.Length > 0)
         inputFile = inputFilePath.ToString();
 
@@ -630,8 +629,9 @@ namespace MediaPortal.GUI.GUIBurner
         outputFile = outputFilePath.ToString();
 
       // Determine file size
-      FileInfo fi = new FileInfo(inputFile);
-      soundFileSize = (int)fi.Length;
+      FileInfo wavFileInfo = null;
+      FileInfo srcFileInfo = new FileInfo(inputFile);
+      soundFileSize = (int)srcFileInfo.Length;
 
       // status/error message reporting. 
       // String length must be set 
@@ -644,15 +644,17 @@ namespace MediaPortal.GUI.GUIBurner
       try
       {
         int st = MadlldlibWrapper.DecodeMP3(inputFile, outputFile, MadlldlibWrapper.DEC_WAV, status, defaultCallback);
+        GC.KeepAlive(defaultCallback); // this prevents garbage collection
+        wavFileInfo = new FileInfo(outputFile);
       }
       catch (Exception ex)
       {
         Log.Warn("Error converting MP3: {0}", ex.Message);
       }
-      // this prevents garbage collection
-      // from occurring on callback
 
-      GC.KeepAlive(defaultCallback);
+      bool result = (File.Exists(outputFile) && wavFileInfo != null && (wavFileInfo.Length > srcFileInfo.Length));
+
+      return result;
     }
     #endregion
 
@@ -1290,20 +1292,24 @@ namespace MediaPortal.GUI.GUIBurner
           {
             GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY, i);
 
+            bool FileCanBeUsed = File.Exists(cItem.Path);
             if (bTyp == BurnTypes.AUDIO_CD)
             {
               string outName = System.IO.Path.ChangeExtension(cItem.FileInfo.Name, ".wav");
               GUIPropertyManager.SetProperty("#burner_size", "MP3->WAV  " + outName);
               //ConvertMP3toWAV(cItem.Path + "\\" + cItem.FileInfo.Name, tmpFolder + "\\" + outName);
-              ConvertMP3toWAV(cItem.Path, tmpFolder + "\\" + outName);
+              if (ConvertMP3toWAV(cItem.Path, tmpFolder + "\\" + outName))
+              {
+                cItem.Label = outName;
+                cItem.FileInfo.Name = outName;
 
-              cItem.Label = outName;
-              cItem.FileInfo.Name = outName;
-              
-              FileInfo fi = new FileInfo(tmpFolder + "\\" + outName);
-              cItem.FileInfo.Length = (int)fi.Length;
+                FileInfo fi = new FileInfo(tmpFolder + "\\" + outName);
+                cItem.FileInfo.Length = (int)fi.Length;
 
-              cItem.Path = fi.FullName;
+                cItem.Path = fi.FullName;
+              }
+              else
+                FileCanBeUsed = false;
             }
 
             // Otherwise we are a data CD and dont need to do any conversions
@@ -1311,15 +1317,15 @@ namespace MediaPortal.GUI.GUIBurner
             try
             {
               //CDBurner.AddFile(cItem.Path + "\\" + cItem.Label, cItem.Path + "\\" + cItem.Label);
-              //CDBurner.AddFile(cItem.Path, cItem.Path + "\\" + cItem.Label);
-              //CDBurner.AddFile(cItem.Path, tmpFolder + "\\" + cItem.Label);
-              CDBurner.AddFile(cItem.Path, cItem.Label);
-
-              Log.Info("MyBurner: Added File: {0}", cItem.Path);
+              if (FileCanBeUsed)
+              {
+                CDBurner.AddFile(cItem.Path, cItem.Label);
+                Log.Info("MyBurner: Added File: {0}", cItem.Path);
+              }
             }
             catch (Exception ex)
             {
-              Log.Info("MyBurner: {0}", ex.Message);
+              Log.Error("MyBurner: {0}", ex.Message);
             }
           }
 
@@ -1334,7 +1340,7 @@ namespace MediaPortal.GUI.GUIBurner
             Log.Info("MyBurner: Burn type - Data");
           }
 
-          if (CDBurner.MediaInfo.isWritable == false) // MultiSession??? || CDBurner.MediaInfo.isBlank == false)
+          if (CDBurner.MediaInfo.isWritable == false || CDBurner.MediaInfo.isUsable == false) // MultiSession??? || CDBurner.MediaInfo.isBlank == false)
           {
             okDialog(GUILocalizeStrings.Get(2100), GUILocalizeStrings.Get(2127)); // The CD is not writable
 
@@ -1355,7 +1361,7 @@ namespace MediaPortal.GUI.GUIBurner
             }
             catch (Exception ex)
             {
-              Log.Info("MyBurner: ", ex.Message);
+              Log.Error("MyBurner: ", ex.Message);
             }
           }
 
