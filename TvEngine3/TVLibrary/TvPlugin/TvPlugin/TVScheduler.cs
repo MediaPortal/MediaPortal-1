@@ -399,6 +399,7 @@ namespace TvPlugin
         else //if (showSeries == false)
         {
           //single recording
+          if (rec.IsSerieIsCanceled(rec.StartTime)) continue;
           item.Label = rec.ProgramName;
           item.TVTag = rec;
           item.MusicTag = rec;

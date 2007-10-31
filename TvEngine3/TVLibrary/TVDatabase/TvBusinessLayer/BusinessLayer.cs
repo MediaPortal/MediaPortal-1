@@ -1425,12 +1425,11 @@ namespace TvDatabase
       foreach (Schedule schedule in schedulesList)
       {
         if (DateTime.Now > schedule.EndTime) continue;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
         List<Schedule> episodes = GetRecordingTimes(schedule);
         foreach (Schedule episode in episodes)
         {
           if (DateTime.Now > episode.EndTime) continue;
-          if (episode.Canceled != Schedule.MinSchedule) continue;
+          if (episode.IsSerieIsCanceled(episode.StartTime)) continue;
           AssignSchedulesToCard(episode, cardSchedules);
         }
       }
@@ -1439,7 +1438,7 @@ namespace TvDatabase
       foreach (Schedule newEpisode in newEpisodes)
       {
         if (DateTime.Now > newEpisode.EndTime) continue;
-        if (newEpisode.Canceled != Schedule.MinSchedule) continue;
+        if (newEpisode.IsSerieIsCanceled(newEpisode.StartTime)) continue;
 
         if (!AssignSchedulesToCard(newEpisode, cardSchedules))
         {
