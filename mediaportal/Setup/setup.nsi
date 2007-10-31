@@ -238,8 +238,8 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\MusicShareWatcherHelper.dll
     File ..\xbmc\bin\Release\RemotePlugins.dll
     File ..\xbmc\bin\Release\restart.vbs
-    File ..\xbmc\bin\Release\SG_LCD.dll
     File ..\xbmc\bin\Release\SG_VFD.dll
+    File ..\xbmc\bin\Release\SG_VFDv3.dll
     File ..\xbmc\bin\Release\sqlite.dll
     File ..\xbmc\bin\Release\taglib-sharp.dll
     File ..\xbmc\bin\Release\TaskScheduler.dll
@@ -630,8 +630,8 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $INSTDIR\MusicShareWatcher.exe
     Delete /REBOOTOK  $INSTDIR\MusicShareWatcherHelper.dll
     Delete /REBOOTOK  $INSTDIR\RemotePlugins.dll
-    Delete /REBOOTOK  $INSTDIR\SG_LCD.dll
     Delete /REBOOTOK  $INSTDIR\SG_VFD.dll
+    Delete /REBOOTOK  $INSTDIR\SG_VFDv3.dll
     Delete /REBOOTOK  $INSTDIR\sqlite.dll
     Delete /REBOOTOK  $INSTDIR\taglib-sharp.dll
     Delete /REBOOTOK  $INSTDIR\TaskScheduler.dll
