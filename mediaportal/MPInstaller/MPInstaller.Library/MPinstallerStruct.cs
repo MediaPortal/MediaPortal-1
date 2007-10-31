@@ -814,7 +814,19 @@ namespace MediaPortal.MPInstaller
         if (String.IsNullOrEmpty(flst.SubType.Trim()))
           ret = Config.GetFolder(Config.Dir.Base) + @"\";
         else
-          ret = Config.GetFolder(Config.Dir.Base) + @"\" + flst.SubType + @"\";
+          if (flst.SubType.StartsWith("%"))
+          {
+            ret = flst.SubType;
+            foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
+            {
+              ret = ret.Replace("%" + option.ToString() + "%", Config.GetFolder(option));
+            }
+            ret += @"\";
+          }
+          else
+          {
+            ret = Config.GetFolder(Config.Dir.Base) + @"\" + flst.SubType + @"\";
+          }
       }
       if (flst.Type == TEXT_TYPE)
       {

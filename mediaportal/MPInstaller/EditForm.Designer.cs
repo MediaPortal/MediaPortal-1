@@ -54,6 +54,7 @@ namespace MediaPortal.MPInstaller
           this.soundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.animationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.tetrisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+          this.systemFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.textToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,7 +122,7 @@ namespace MediaPortal.MPInstaller
           this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
           this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
           this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-          this.systemFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+          this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
           this.menuStrip1.SuspendLayout();
           this.contextMenuStrip1.SuspendLayout();
           this.tabPage_Skin.SuspendLayout();
@@ -306,37 +307,44 @@ namespace MediaPortal.MPInstaller
           // componentToolStripMenuItem
           // 
           this.componentToolStripMenuItem.Name = "componentToolStripMenuItem";
-          this.componentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.componentToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.componentToolStripMenuItem.Text = "Component";
           this.componentToolStripMenuItem.Click += new System.EventHandler(this.componentToolStripMenuItem_Click);
           // 
           // mediaToolStripMenuItem
           // 
           this.mediaToolStripMenuItem.Name = "mediaToolStripMenuItem";
-          this.mediaToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.mediaToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.mediaToolStripMenuItem.Text = "Media";
           this.mediaToolStripMenuItem.Click += new System.EventHandler(this.mediaToolStripMenuItem_Click);
           // 
           // soundsToolStripMenuItem
           // 
           this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
-          this.soundsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.soundsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.soundsToolStripMenuItem.Text = "Sounds";
           this.soundsToolStripMenuItem.Click += new System.EventHandler(this.soundsToolStripMenuItem_Click);
           // 
           // animationsToolStripMenuItem
           // 
           this.animationsToolStripMenuItem.Name = "animationsToolStripMenuItem";
-          this.animationsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.animationsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.animationsToolStripMenuItem.Text = "Animations";
           this.animationsToolStripMenuItem.Click += new System.EventHandler(this.animationsToolStripMenuItem_Click);
           // 
           // tetrisToolStripMenuItem
           // 
           this.tetrisToolStripMenuItem.Name = "tetrisToolStripMenuItem";
-          this.tetrisToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.tetrisToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.tetrisToolStripMenuItem.Text = "Tetris";
           this.tetrisToolStripMenuItem.Click += new System.EventHandler(this.tetrisToolStripMenuItem_Click);
+          // 
+          // systemFontToolStripMenuItem
+          // 
+          this.systemFontToolStripMenuItem.Name = "systemFontToolStripMenuItem";
+          this.systemFontToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+          this.systemFontToolStripMenuItem.Text = "System Font";
+          this.systemFontToolStripMenuItem.Click += new System.EventHandler(this.systemFontToolStripMenuItem_Click);
           // 
           // languageToolStripMenuItem
           // 
@@ -416,14 +424,14 @@ namespace MediaPortal.MPInstaller
           // postSetupToolStripMenuItem
           // 
           this.postSetupToolStripMenuItem.Name = "postSetupToolStripMenuItem";
-          this.postSetupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.postSetupToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
           this.postSetupToolStripMenuItem.Text = "Post Setup";
           this.postSetupToolStripMenuItem.Click += new System.EventHandler(this.postSetupToolStripMenuItem_Click);
           // 
           // setupGroupsToolStripMenuItem
           // 
           this.setupGroupsToolStripMenuItem.Name = "setupGroupsToolStripMenuItem";
-          this.setupGroupsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.setupGroupsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
           this.setupGroupsToolStripMenuItem.Text = "Setup Groups";
           this.setupGroupsToolStripMenuItem.Click += new System.EventHandler(this.setupGroupsToolStripMenuItem_Click);
           // 
@@ -907,10 +915,25 @@ namespace MediaPortal.MPInstaller
           // othert_comboBox1
           // 
           this.othert_comboBox1.FormattingEnabled = true;
+          this.othert_comboBox1.Items.AddRange(new object[] {
+            "%Log%",
+            "%Skin%",
+            "%Language%",
+            "%Database%",
+            "%Plugins%",
+            "%Thumbs%",
+            "%Cache%",
+            "%Weather%",
+            "%CustomInputDevice%",
+            "%Config%",
+            "%CustomInputDefault%",
+            "%BurnerSupport%"});
           this.othert_comboBox1.Location = new System.Drawing.Point(9, 28);
           this.othert_comboBox1.Name = "othert_comboBox1";
           this.othert_comboBox1.Size = new System.Drawing.Size(269, 21);
           this.othert_comboBox1.TabIndex = 1;
+          this.toolTip1.SetToolTip(this.othert_comboBox1, "%Log%\r\n%Skin%\r\n%Language%\r\n%Database%\r\n%Plugins%\r\n%Thumbs%\r\n%Cache%\r\n%Weather%\r\n%" +
+                  "CustomInputDevice%\r\n%Config%\r\n%CustomInputDefault%\r\n%BurnerSupport%");
           this.othert_comboBox1.TextChanged += new System.EventHandler(this.tab_other_change);
           // 
           // label8
@@ -981,13 +1004,6 @@ namespace MediaPortal.MPInstaller
           // folderBrowserDialog1
           // 
           this.folderBrowserDialog1.ShowNewFolderButton = false;
-          // 
-          // systemFontToolStripMenuItem
-          // 
-          this.systemFontToolStripMenuItem.Name = "systemFontToolStripMenuItem";
-          this.systemFontToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-          this.systemFontToolStripMenuItem.Text = "System Font";
-          this.systemFontToolStripMenuItem.Click += new System.EventHandler(this.systemFontToolStripMenuItem_Click);
           // 
           // EditForm
           // 
@@ -1125,6 +1141,7 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
       private System.Windows.Forms.ToolStripMenuItem internalPluginToolStripMenuItem;
       private System.Windows.Forms.ToolStripMenuItem systemFontToolStripMenuItem;
+      private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 
