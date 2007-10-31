@@ -454,7 +454,8 @@ namespace MediaPortal.GUI.GUIBurner
     ///<summary>Called to provide status updates to any BurnDataDVDStatusUpdate event listeners</summary>
     private void ProvideStatusUpdate(string status)
     {
-      LogWrite("ProvideStatusUpdate: ", status.ToString());
+      if (_InDebugMode)
+        Log.Debug("ProvideStatusUpdate: {0}", status.ToString());
 
       if (BurnDVDStatusUpdate != null)
       {
@@ -528,7 +529,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void ProcessingError(string ErrorTitle, string ErrorText)
     {
-      LogWrite("Processing Error: " + ErrorTitle, ErrorText);
+      Log.Error("Processing Error: {0} - {1}",  ErrorTitle, ErrorText);
       ProvideStatusUpdate("Processing Error: " + ErrorTitle + ": " + ErrorText);
       if (BurnDVDError != null)
       {
