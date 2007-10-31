@@ -1051,6 +1051,9 @@ namespace TvPlugin
         for (int i = 0; i < users.Length; ++i)
         {
           User user = users[i];
+          if (card.IdCard != user.CardId) {
+            continue;
+          }
           bool isRecording;
           bool isTimeShifting;
           VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);

@@ -268,6 +268,7 @@ namespace SetupTv.Sections
         ListViewItem item;
         int cardNo = 0;
         int off = 0;
+        bool userFound = false;
         foreach (Card card in _cards)
         {
           cardNo++;
@@ -327,9 +328,16 @@ namespace SetupTv.Sections
             continue;
           }
 
+          userFound = false;
           for (int i = 0; i < usersForCard.Length; ++i)
           {
             string tmp = "idle";
+            // Check if the card id fits. Hybrid cards share the context and therefor have
+            // the same users.
+            if (usersForCard[i].CardId != card.IdCard) {
+              continue;
+            }
+            userFound = true;
             vcard = new VirtualCard(usersForCard[i]);
             item.SubItems[0].Text = cardNo.ToString();
             item.SubItems[1].Text = vcard.Type.ToString();
@@ -363,6 +371,15 @@ namespace SetupTv.Sections
             {
               item = mpListView1.Items[off];
             }
+          }
+          // If we haven't found a user that fits, than it is a hybrid card which is inactive
+          // This means that the card is idle.
+          if (!userFound) {
+            item.SubItems[2].Text = "idle";
+            item.SubItems[3].Text = "";
+            item.SubItems[4].Text = "";
+            item.SubItems[5].Text = "";
+            off++;
           }
         }
         for (int i = off; i < mpListView1.Items.Count; ++i)

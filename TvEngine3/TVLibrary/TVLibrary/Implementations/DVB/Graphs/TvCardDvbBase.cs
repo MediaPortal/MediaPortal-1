@@ -433,12 +433,12 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId()) return;
       if (_epgGrabbing)
       {
-        _epgGrabbing = false;
         if (_epgGrabberCallback != null && _epgGrabbing)
         {
           Log.Log.Epg("dvb:cancel epg->stop graph");
           _epgGrabberCallback.OnEpgCancelled();
         }
+        _epgGrabbing = false;
       }
       _epgGrabbing = false;
       _isScanning = false;
@@ -1238,12 +1238,12 @@ namespace TvLibrary.Implementations.DVB
 
       if (_epgGrabbing)
       {
-        _epgGrabbing = false;
         if (_epgGrabberCallback != null && _epgGrabbing)
         {
           Log.Log.Epg("dvb:cancel epg->decompose");
           _epgGrabberCallback.OnEpgCancelled();
         }
+        _epgGrabbing = false;
       }
 
       FreeAllSubChannels();

@@ -391,7 +391,7 @@ namespace TvService
             return "";
           }
         }
-        return _card.DevicePath;
+        return _dbsCard.DevicePath;
       }
       catch (Exception ex)
       {

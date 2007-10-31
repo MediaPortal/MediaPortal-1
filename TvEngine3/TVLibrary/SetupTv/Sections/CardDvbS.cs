@@ -622,6 +622,12 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
         }
+        // Check if the card is locked for scanning.
+        User user;
+        if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user)) {
+          MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+          return;
+        }
         Thread scanThread = new Thread(new ThreadStart(DoScan));
         scanThread.Start();
       }
