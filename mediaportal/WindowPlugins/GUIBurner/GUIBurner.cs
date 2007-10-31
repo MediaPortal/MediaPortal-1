@@ -1223,7 +1223,7 @@ namespace MediaPortal.GUI.GUIBurner
 
           Log.Info("BurnDVD BurnType: {0}", bTyp.ToString());
 
-          string strTempFolder = tmpFolder + @"\DVD";
+          string strTempFolder = tmpFolder + @"DVD";
 
           if (bTyp == BurnTypes.VIDEO_DVD)
           {

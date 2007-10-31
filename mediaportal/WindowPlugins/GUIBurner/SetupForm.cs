@@ -214,12 +214,23 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void buttonOK_Click(object sender, System.EventArgs e)
     {
-      if (textBoxTempPath.Text == "")
+      if (string.IsNullOrEmpty(textBoxTempPath.Text))
       {
         MessageBox.Show("Please select a Temp folder");
       }
       else
       {
+        if (!Directory.Exists(textBoxTempPath.Text))
+        {
+          try
+          {
+            Directory.CreateDirectory(textBoxTempPath.Text);
+          }
+          catch (Exception)
+          {             
+          }
+        }
+
         SaveSettings();
         this.Close();
       }

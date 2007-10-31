@@ -143,9 +143,9 @@ namespace MediaPortal.GUI.GUIBurner
       
       // Make the DVD dir that we just deleted above
       System.IO.Directory.CreateDirectory(_TempFolderPath);
-
-      LogWrite("BurnVideoDVDInit", "TempFolderPath: " + _TempFolderPath);
-      LogWrite("BurnVideoDVDInit", "Debug Mode: " + _InDebugMode.ToString());
+      
+      Log.Debug("BurnVideoDVDInit", "TempFolderPath: " + _TempFolderPath);
+      Log.Debug("BurnVideoDVDInit", "Debug Mode: " + _InDebugMode.ToString());
     }
 
     #endregion
@@ -236,7 +236,7 @@ namespace MediaPortal.GUI.GUIBurner
       try
       {
         _CurrentProcess = "Generating DVD Menu - menuGen.exe";
-        LogWrite("Entered MenuGeneration Process", "");
+        Log.Debug("Entered MenuGeneration Process", "");
 
         ProvideStatusUpdate("Creating DVD Menus");
 
@@ -297,7 +297,7 @@ namespace MediaPortal.GUI.GUIBurner
         SW_MenuGen.Close();
         #endregion
 
-        LogWrite("Finished MenuGeneration", "Copying MenuGen Executable");
+        Log.Info("Finished MenuGeneration", "Copying MenuGen Executable");
 
 
         // Copy menugen to strTempFolder. 
@@ -306,7 +306,7 @@ namespace MediaPortal.GUI.GUIBurner
         string DestFile = Path.Combine(_TempFolderPath, "menuGen.exe");
         File.Copy(SourceFile, DestFile);
 
-        LogWrite("Finished MenuGen Executable Copy", "Starting MenuGen Execution");
+        Log.Debug("Finished MenuGen Executable Copy", "Starting MenuGen Execution");
 
         #region MenuGen execution
         // Create the DVD menu files
@@ -347,7 +347,7 @@ namespace MediaPortal.GUI.GUIBurner
       try
       {
         _CurrentProcess = "Config.xml Writer";
-        LogWrite("Starting ConfigXMLCreation", "");
+        Log.Debug("Starting ConfigXMLCreation", "");
 
         ProvideStatusUpdate("Creating Config file for DVD Generation program");
 
@@ -415,7 +415,7 @@ namespace MediaPortal.GUI.GUIBurner
         System.EventArgs e = new EventArgs();
         BurnProcess_Exited(this, e);
 
-        LogWrite("Finished Config XML Creation", "");
+        Log.Info("Finished Config XML Creation", "");
       }
       catch (Exception ex)
       {
@@ -429,7 +429,7 @@ namespace MediaPortal.GUI.GUIBurner
       try
       {
         _CurrentProcess = "DVD Image Creation - dvdauthor.exe";
-        LogWrite("Entered DVDFilesCreation", "");
+        Log.Debug("Entered DVDFilesCreation", "");
 
         ProvideStatusUpdate("Creating DVD filesystem");
 
@@ -456,7 +456,7 @@ namespace MediaPortal.GUI.GUIBurner
         BurnerProcess.Exited += new EventHandler(BurnProcess_Exited);
         //         BurnerProcess.OutputDataReceived += new System.Diagnostics.DataReceivedEventHandler(processOutputHandler);
 
-        LogWrite("Starting DVDFilesCreation Process", "Args: " + args);
+        Log.Info("Starting DVDFilesCreation Process", "Args: " + args);
         BurnerProcess.Start();
 
         if (!BurnerProcess.HasExited)
@@ -480,7 +480,7 @@ namespace MediaPortal.GUI.GUIBurner
       try
       {
         _CurrentProcess = "DVD ISO Creation - mkisofs.exe";
-        LogWrite("Entered ISOFileCreation", "");
+        Log.Debug("Entered ISOFileCreation", "");
 
         ProvideStatusUpdate("Generating ISO image of DVD filesystem");
 
@@ -505,7 +505,7 @@ namespace MediaPortal.GUI.GUIBurner
         BurnerProcess.Exited += new EventHandler(BurnProcess_Exited);
         BurnerProcess.OutputDataReceived += new System.Diagnostics.DataReceivedEventHandler(MakeISOOutputDataReceivedHandler);
 
-        LogWrite("Starting ISOFileCreation", "Args: " + args);
+        Log.Info("Starting ISOFileCreation", "Args: " + args);
         BurnerProcess.Start();
 
         if (!BurnerProcess.HasExited)
@@ -529,7 +529,7 @@ namespace MediaPortal.GUI.GUIBurner
       {
         _CurrentProcess = "Burning the DVD - dvdburn.exe";
 
-        LogWrite("Entered WriteDVD", "BurnOption: " + _BurnTheDVD.ToString());
+        Log.Debug("Entered WriteDVD", "BurnOption: " + _BurnTheDVD.ToString());
 
         if (_BurnTheDVD == true)
         {
@@ -558,7 +558,7 @@ namespace MediaPortal.GUI.GUIBurner
           BurnerProcess.Exited += new EventHandler(BurnProcess_Exited);
           //            BurnerProcess.OutputDataReceived += new System.Diagnostics.DataReceivedEventHandler(processOutputHandler);
 
-          LogWrite("Starting DVDBurn", "Args: " + args);
+          Log.Info("Starting DVDBurn", "Args: " + args);
           BurnerProcess.Start();
 
           if (!BurnerProcess.HasExited)
@@ -584,7 +584,7 @@ namespace MediaPortal.GUI.GUIBurner
     ///<summary>Called for each Step in the DVD Creation after the File Conversion(s). </summary>
     private void NextStep_DVDCreation()
     {
-      LogWrite("NextStep_DVDCreation", "CurrentState: " + _CurrentBurnState.ToString());
+      Log.Debug("NextStep_DVDCreation", "CurrentState: " + _CurrentBurnState.ToString());
       switch (_CurrentBurnState)
       {
         case DVDBurnStates.Step1: // Menu Generation
@@ -627,7 +627,7 @@ namespace MediaPortal.GUI.GUIBurner
     ///<summary>Called for each File Stepping through the File Conversion(s).</summary>
     private void NextStep_FileConversion()
     {
-      LogWrite("NextStep_FileConversion", "CurrentState: " + _CurrentConvertState.ToString() + " CurrentFile: " + _CurrentFileName);
+      Log.Debug("NextStep_FileConversion", "CurrentState: " + _CurrentConvertState.ToString() + " CurrentFile: " + _CurrentFileName);
       switch (_CurrentConvertState)
       {
         #region Convert input file to a DVD formatted MPG file using Mencoder
@@ -676,7 +676,7 @@ namespace MediaPortal.GUI.GUIBurner
               BurnerProcess.Exited += new EventHandler(BurnerProcess_Exited);
               BurnerProcess.OutputDataReceived += new DataReceivedEventHandler(FileConversionOutputDataReceivedHandler);
 
-              LogWrite("Starting: " + _CurrentProcess, "Exe Arguments: " + args);
+              Log.Debug("Starting: " + _CurrentProcess, "Exe Arguments: " + args);
 
               BurnerProcess.Start();
 
@@ -718,7 +718,7 @@ namespace MediaPortal.GUI.GUIBurner
     ///<summary>Called to provide status updates to any BurnVideoDVDStatusUpdate event listeners</summary>
     private void ProvideStatusUpdate(string status)
     {
-      LogWrite("ProvideStatusUpdate: ", status.ToString());
+      Log.Debug("ProvideStatusUpdate: ", status.ToString());
 
       if (BurnDVDStatusUpdate != null)
       {
@@ -733,7 +733,7 @@ namespace MediaPortal.GUI.GUIBurner
     ///to move to the next step.</summary>
     private void BurnerProcess_Exited(object sender, EventArgs e)
     {
-      //LogWrite("Convert Video Step Exited: ", _CurrentConvertState.ToString());
+      //Log.Debug("Convert Video Step Exited: ", _CurrentConvertState.ToString());
       ProvideStatusUpdate("Convert Process Exited: " + _CurrentProcess);
 
       //one process has finished, start next process
@@ -745,7 +745,7 @@ namespace MediaPortal.GUI.GUIBurner
     ///Also announces the CompletedStep event to any listeners</summary>
     private void BurnProcess_Exited(object sender, EventArgs e)
     {
-      LogWrite("Burn DVD Step Exited: Step: ", _CurrentBurnState.ToString());
+      Log.Debug("Burn DVD Step Exited: Step: ", _CurrentBurnState.ToString());
       ProvideStatusUpdate("DVD Burn Process Exited: " + _CurrentProcess);
 
       //one process has finished, start next process
@@ -823,7 +823,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void ProcessingError(string ErrorTitle, string ErrorText)
     {
-      LogWrite("Processing Error: " + ErrorTitle, ErrorText);
+      Log.Error("Processing Error: " + ErrorTitle, ErrorText);
       ProvideStatusUpdate("Processing Error: " + ErrorTitle + ": " + ErrorText);
       if (BurnDVDError != null)
       {
@@ -833,15 +833,15 @@ namespace MediaPortal.GUI.GUIBurner
     }
     #endregion
 
-    #region LogWriting
-    ///<summary>Called to Write to the MediaPortal.Log file when in DebugMode.</summary>
-    ///<param name="EntryTitle">Log Entry Title Text.</param>
-    ///<param name="EntryText">Log entry Main Text.</param>
-    private void LogWrite(string EntryTitle, string EntryText)
-    {
-        Log.Info("My Burner Plugin->BurnVideoDVD Class: {0} - {1}", EntryTitle, EntryText);
-    }
-    #endregion
+    //#region LogWriting
+    /////<summary>Called to Write to the MediaPortal.Log file when in DebugMode.</summary>
+    /////<param name="EntryTitle">Log Entry Title Text.</param>
+    /////<param name="EntryText">Log entry Main Text.</param>
+    //private void Log.Debug(string EntryTitle, string EntryText)
+    //{
+    //    Log.Info("My Burner Plugin->BurnVideoDVD Class: {0} - {1}", EntryTitle, EntryText);
+    //}
+    //#endregion
 
     ///<summary>Simple Cleanup that deletes the temp files and directory</summary>
     private void CleanUp()
