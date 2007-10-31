@@ -519,10 +519,11 @@ namespace TvPlugin
         dlg.AddLocalizedString(979); //Play recording from beginning
         dlg.AddLocalizedString(980); //Play recording from live point
       }
-      else
-      {
-        dlg.AddLocalizedString(882);//Quality settings
-      }
+      // Quality control is currently not implemented, so we don't want to confuse the user
+      //else
+      //{
+      //  dlg.AddLocalizedString(882);//Quality settings
+      //}
       dlg.AddLocalizedString(1048); // settings
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;

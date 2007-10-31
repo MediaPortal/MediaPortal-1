@@ -57,7 +57,8 @@ namespace TvPlugin
     [SkinControlAttribute(4)]  protected GUIButtonControl btnKeep = null;
     [SkinControlAttribute(5)]  protected GUIToggleButtonControl btnNotify = null;
     [SkinControlAttribute(10)] protected GUIListControl lstUpcomingEpsiodes = null;
-    [SkinControlAttribute(6)]  protected GUIButtonControl btnQuality = null;
+    // Quality control is currently not implemented, so we don't want to confuse the user
+    //[SkinControlAttribute(6)]  protected GUIButtonControl btnQuality = null;
     [SkinControlAttribute(7)]  protected GUIButtonControl btnEpisodes = null;
     [SkinControlAttribute(8)]  protected GUIButtonControl btnPreRecord = null;
     [SkinControlAttribute(9)]  protected GUIButtonControl btnPostRecord = null;
@@ -181,7 +182,7 @@ namespace TvPlugin
         btnRecord.Label = GUILocalizeStrings.Get(1039);//dont record
         btnAdvancedRecord.Disabled = true;
         btnKeep.Disabled = false;
-        btnQuality.Disabled = false;
+        //btnQuality.Disabled = false;
         btnEpisodes.Disabled = !isSeries;
         btnPreRecord.Disabled = false;
         btnPostRecord.Disabled = false;
@@ -191,7 +192,7 @@ namespace TvPlugin
         btnRecord.Label = GUILocalizeStrings.Get(264);//record
         btnAdvancedRecord.Disabled = false;
         btnKeep.Disabled = true;
-        btnQuality.Disabled = true;
+        //btnQuality.Disabled = true;
         btnEpisodes.Disabled = true;
         btnPreRecord.Disabled = true;
         btnPostRecord.Disabled = true;
@@ -274,8 +275,9 @@ namespace TvPlugin
         OnPostRecordInterval();
       if (control == btnEpisodes)
         OnSetEpisodes();
-      if (control == btnQuality)
-        OnSetQuality();
+      // Quality control is currently not implemented, so we don't want to confuse the user
+      //if (control == btnQuality)
+      //  OnSetQuality();
       if (control == btnKeep)
         OnKeep();
       if (control == btnRecord)
