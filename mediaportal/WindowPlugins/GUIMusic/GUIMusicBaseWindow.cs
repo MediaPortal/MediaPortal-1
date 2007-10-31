@@ -668,6 +668,9 @@ namespace MediaPortal.GUI.Music
         case MusicSort.SortMethod.Rating:
           strLine = GUILocalizeStrings.Get(367);
           break;
+        case MusicSort.SortMethod.AlbumArtist:
+          strLine = GUILocalizeStrings.Get(269);    // Also display Artist for AlbumArtist
+          break;
       }
 
       if (btnSortBy != null)
@@ -910,6 +913,9 @@ namespace MediaPortal.GUI.Music
                   break;
                 case MusicSort.SortMethod.Rating:
                   duration = Convert.ToString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.AlbumArtist:
+                  duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
                   break;
               }
             }

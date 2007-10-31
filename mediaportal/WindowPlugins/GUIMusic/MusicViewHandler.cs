@@ -515,7 +515,10 @@ namespace MediaPortal.GUI.Music
         // Don't clear the label in case of a Group/Index view, to show the counter
         if (definition.SqlOperator != "group")
         {
-          item.Label2 = song.Artist;
+          if (song.AlbumArtist != "")
+            item.Label2 = song.AlbumArtist;   // Use the AlbumArtist if it's available
+          else
+            item.Label2 = song.Artist;
         }
         item.Label3 = string.Empty;
       }

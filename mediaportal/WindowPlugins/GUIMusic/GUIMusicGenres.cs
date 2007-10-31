@@ -279,10 +279,16 @@ namespace MediaPortal.GUI.Music
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
               {
                 FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
+                // Convert sort string to sort enumeration
                 int defaultSort = sortStrings.IndexOf(def.DefaultSort);
 
                 if (defaultSort != -1)
-                  sortby[i, j] = (MusicSort.SortMethod)defaultSort;
+                {
+                  if ((def.Where == "albumartist" || def.Where == "album") && def.DefaultSort == "Artist")
+                    sortby[i, j] = MusicSort.SortMethod.AlbumArtist;
+                  else
+                    sortby[i, j] = (MusicSort.SortMethod)defaultSort;
+                }
                 else
                   sortby[i, j] = MusicSort.SortMethod.Name;
               }
@@ -298,7 +304,11 @@ namespace MediaPortal.GUI.Music
       }
       set
       {
-        sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;
+        FilterDefinition def = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+        if ((def.Where == "albumartist" || def.Where == "album") && value == MusicSort.SortMethod.Artist)
+          sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = MusicSort.SortMethod.AlbumArtist;
+        else
+          sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;
       }
     }
 

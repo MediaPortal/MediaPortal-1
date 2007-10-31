@@ -55,7 +55,8 @@ namespace MediaPortal.GUI.Music
       Artist = 6,
       Album = 7,
       Filename = 8,
-      Rating = 9
+      Rating = 9,
+      AlbumArtist = 10  // Only used internally when albumartists or albums need to be sorted by Artist
     }
     public int Compare(GUIListItem item1, GUIListItem item2)
     {
@@ -176,12 +177,6 @@ namespace MediaPortal.GUI.Music
           string artist2 = "";
           if (item1.MusicTag != null) artist1 = ((MusicTag)item1.MusicTag).Artist;
           if (item2.MusicTag != null) artist2 = ((MusicTag)item2.MusicTag).Artist;
-
-          if (artist1 == "" && ((MusicTag)item1.MusicTag).AlbumArtist != "")
-            artist1 = ((MusicTag)item1.MusicTag).AlbumArtist;
-          if (artist2 == "" && ((MusicTag)item2.MusicTag).AlbumArtist != "")
-            artist2 = ((MusicTag)item2.MusicTag).AlbumArtist;
-          
           if (bAscending)
           {
             return String.Compare(artist1, artist2, true);
@@ -189,6 +184,20 @@ namespace MediaPortal.GUI.Music
           else
           {
             return String.Compare(artist2, artist1, true);
+          }
+
+        case SortMethod.AlbumArtist:
+          string albumartist1 = "";
+          string albumartist2 = "";
+          if (item1.MusicTag != null) albumartist1 = ((MusicTag)item1.MusicTag).AlbumArtist;
+          if (item2.MusicTag != null) albumartist2 = ((MusicTag)item2.MusicTag).AlbumArtist;
+          if (bAscending)
+          {
+            return String.Compare(albumartist1, albumartist2, true);
+          }
+          else
+          {
+            return String.Compare(albumartist2, albumartist1, true);
           }
 
         case SortMethod.Album:
