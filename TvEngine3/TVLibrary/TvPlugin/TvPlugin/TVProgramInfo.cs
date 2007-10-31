@@ -57,8 +57,7 @@ namespace TvPlugin
     [SkinControlAttribute(4)]  protected GUIButtonControl btnKeep = null;
     [SkinControlAttribute(5)]  protected GUIToggleButtonControl btnNotify = null;
     [SkinControlAttribute(10)] protected GUIListControl lstUpcomingEpsiodes = null;
-    // Quality control is currently not implemented, so we don't want to confuse the user
-    //[SkinControlAttribute(6)]  protected GUIButtonControl btnQuality = null;
+    [SkinControlAttribute(6)]  protected GUIButtonControl btnQuality = null;
     [SkinControlAttribute(7)]  protected GUIButtonControl btnEpisodes = null;
     [SkinControlAttribute(8)]  protected GUIButtonControl btnPreRecord = null;
     [SkinControlAttribute(9)]  protected GUIButtonControl btnPostRecord = null;
@@ -176,7 +175,8 @@ namespace TvPlugin
           }
         }
       }
-
+      // Quality control is currently not implemented, so we don't want to confuse the user
+      btnQuality.Disabled = true;
       if (isRecording)
       {
         btnRecord.Label = GUILocalizeStrings.Get(1039);//dont record
