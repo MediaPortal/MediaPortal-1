@@ -56,6 +56,7 @@ namespace TvService
   {
     #region variables
     bool _started = false;
+    bool _priorityApplied = false;
     TVController _controller;
     List<PowerEventHandler> _powerEventHandlers;
     #endregion
@@ -83,15 +84,8 @@ namespace TvService
       catch (Exception ex)
       {      
         Log.Write(ex);
-      } // apply process priority.
-      try
-      {
-        applyProcessPriority();
-      }
-      catch (Exception)
-      {
-        //applyProcessPriority can generate an exception when we cannot connect to the database
-      }
+      } 
+
       InitializeComponent();
     }
 
@@ -107,6 +101,22 @@ namespace TvService
     {
       if (_started)
         return;
+
+      // apply process priority on initial service start.
+      if (!_priorityApplied)
+      {
+        try
+        {
+          RequestAdditionalTime(60000);  // starting database can be slow so increase default timeout
+          applyProcessPriority();
+          _priorityApplied = true;
+        }
+        catch (Exception)
+        {
+          // applyProcessPriority can generate an exception when we cannot connect to the database
+        }
+      }
+
       Log.WriteFile("TV service starting");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
