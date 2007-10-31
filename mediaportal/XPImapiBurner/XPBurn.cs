@@ -201,6 +201,7 @@ namespace XPBurn
           if (dataChunk.length % 2352 != 0)
             nBlocksCount++;
 
+          // why might this fail now but worked okay before?
           fMusicDiscWriter.CreateAudioTrack((int)nBlocksCount);
 
           for (ulong k = 0 ; k < nBlocksCount ; k++)
@@ -219,10 +220,8 @@ namespace XPBurn
             fMusicDiscWriter.AddAudioTrackBlocks(ref blocks[0], 2352);
 
           }
-
           fMusicDiscWriter.CloseAudioTrack();
-          fileStream.Close();
-
+          
         }
       }
       catch (Exception)
