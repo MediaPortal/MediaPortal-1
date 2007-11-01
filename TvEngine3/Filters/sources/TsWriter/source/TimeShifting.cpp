@@ -1326,9 +1326,9 @@ static DWORD crc_table[256] = {
 				m_bDetermineNewStartPcr=false;
 
 				CPcr duration=m_highestPcr ;
-				duration-= m_startPcr;
-				CPcr newStartPcr = pcrNew;
-				newStartPcr -=duration ;
+				duration-=m_startPcr;
+				CPcr newStartPcr=pcrNew;
+				newStartPcr-=duration ;
 				LogDebug("Pcr start    :%s",m_startPcr.ToString());
 				LogDebug("Pcr high     :%s",m_highestPcr.ToString());
 				LogDebug("Pcr duration :%s",duration.ToString());
@@ -1337,7 +1337,7 @@ static DWORD crc_table[256] = {
 
 				m_startPcr  = newStartPcr;
 				m_highestPcr= newStartPcr;
-				m_prevPcr = newStartPcr;
+				m_prevPcr   = newStartPcr;
 			}
 		}
 
@@ -1418,8 +1418,8 @@ static DWORD crc_table[256] = {
 		}
 
 		pcrHi -= m_startPcr;
-		pcrHi -= m_pcrHole;
     pcrHi += m_backwardsPcrHole;
+    pcrHi -= m_pcrHole;
 
 		if (m_bPCRRollover)
 		{

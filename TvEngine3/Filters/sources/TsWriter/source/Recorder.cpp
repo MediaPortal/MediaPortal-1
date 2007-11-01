@@ -502,8 +502,8 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
   }
 
   pcrHi -= m_startPcr;
-  pcrHi -= m_pcrHole;
   pcrHi += m_backwardsPcrHole;
+  pcrHi -= m_pcrHole;
 
   if( m_bPCRRollover )
   {
