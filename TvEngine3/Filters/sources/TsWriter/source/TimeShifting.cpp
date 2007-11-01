@@ -1318,7 +1318,8 @@ static DWORD crc_table[256] = {
 		m_adaptionField.Decode(header,tsPacket);
 		if (m_adaptionField.PcrFlag==false) return;
 		CPcr pcrNew=m_adaptionField.Pcr;
-		if (m_bStartPcrFound)
+		bool logNextPcr = false;
+    if (m_bStartPcrFound)
 		{
 			if (m_bDetermineNewStartPcr )
 			{
@@ -1374,9 +1375,10 @@ static DWORD crc_table[256] = {
 		// PCR value has jumped too much in the stream
     if (diff.ToClock() > 10L && m_prevPcr.ToClock() > 0 && !m_bDetermineNewStartPcr )
 		{
+      logNextPcr = true;
       if (m_bIgnoreNextPcrJump)
 			{
-				LogDebug( "Ignoring first PCR jump after channel change! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() , header.Pid);
+				LogDebug( "Ignoring first PCR jump after channel change" );
 				m_bIgnoreNextPcrJump=false;
 			}
 			else
@@ -1391,24 +1393,25 @@ static DWORD crc_table[256] = {
 					m_startPcr.Reset();
 					m_highestPcr.Reset();
 
-					LogDebug( "PCR rollover detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
+					LogDebug( "PCR rollover detected" );
 				}
 				else
 				{      
-					CPcr step;
+					logNextPcr = true;
+          CPcr step;
 					step.FromClock(0.02); // an estimated PCR step, to be fixed with some average from the stream...
 
 					if (pcrNew > m_prevPcr)
 					{
 						m_pcrHole += diff;
-						m_pcrHole -= step; 
-						LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
+						m_pcrHole -= step;
+						LogDebug( "Jump forward in PCR detected" );
 					}
 					else
 					{
 						m_backwardsPcrHole += diff;
 						m_backwardsPcrHole += step;
-						LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() , header.Pid);
+            LogDebug( "Jump backward in PCR detected" );
 					}
 				}
 			}
@@ -1423,7 +1426,10 @@ static DWORD crc_table[256] = {
 			pcrHi += m_pcrDuration;
 		}
 
-		//LogDebug("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
+		if( logNextPcr )
+    {
+      LogDebug("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
+    }
 		tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
 		tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
 		tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));

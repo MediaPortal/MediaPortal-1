@@ -429,7 +429,8 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
   m_adaptionField.Decode(header,tsPacket);
   if (m_adaptionField.PcrFlag==false) return;
   CPcr pcrNew=m_adaptionField.Pcr;
-	if (m_bStartPcrFound)
+	bool logNextPcr = false;  
+  if (m_bStartPcrFound)
 	{
 		if (m_bDetermineNewStartPcr )
 		{
@@ -467,6 +468,7 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 
   if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0)
   {
+    bool logNextPcr = true;
     if( diff.ToClock() > 95443L ) // Max PCR value 95443.71768
     {
       m_bPCRRollover = true;
@@ -477,7 +479,7 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
       m_startPcr.Reset();
       m_highestPcr.Reset();
 
-      LogDebug( "PCR rollover detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
+      LogDebug( "PCR rollover detected!" );
     }
     else
     {      
@@ -488,13 +490,13 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
       {
         m_pcrHole += diff;
         m_pcrHole -= step; 
-        LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
+        LogDebug( "Jump forward in PCR detected!" );
       }
       else
       {
 				m_backwardsPcrHole += diff;
 				m_backwardsPcrHole += step;
-        LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
+        LogDebug( "Jump backward in PCR detected!" );
       }
     }
   }
@@ -508,7 +510,10 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
     pcrHi += m_pcrDuration;
   }
 
-  //LogDebug("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
+  if( logNextPcr )
+  {
+    LogDebug("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
+  }
   tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
