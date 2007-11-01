@@ -21463,8 +21463,7 @@
         <connection sourcefilter="tvaudio" sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"></connection>
-        <connection sourcefilter="capture" sourcepin="4" sinkfilter="encoder" sinkpin="0"></connection>
-        <connection sourcefilter="capture" sourcepin="1" sinkfilter="encoder" sinkpin="1"></connection>
+        <connection sourcefilter="capture" sourcepin="3" sinkfilter="encoder" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -21502,8 +21501,7 @@
         <connection sourcefilter="tvaudio" sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"></connection>
-        <connection sourcefilter="capture" sourcepin="4" sinkfilter="encoder" sinkpin="0"></connection>
-        <connection sourcefilter="capture" sourcepin="1" sinkfilter="encoder" sinkpin="1"></connection>
+        <connection sourcefilter="capture" sourcepin="3" sinkfilter="encoder" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
