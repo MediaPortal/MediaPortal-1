@@ -619,6 +619,14 @@ namespace MediaPortal.Player
     {
       get { return _BassFreed; }
     }
+
+    /// <summary>
+    /// Returns the Stream, currently played
+    /// </summary>
+    public override int CurrentAudioStream
+    {
+      get { return GetCurrentVizStream(); }
+    }
     #endregion
 
     #region Constructors/Destructors
