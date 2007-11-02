@@ -387,7 +387,10 @@ namespace TvPlugin
             {
               logo = "defaultVideoBig.png";
             }
-            item.PinImage = Thumbs.TvRecordingSeriesIcon;
+            if (rec.ReferringConflicts().Count > 0)
+              item.PinImage = Thumbs.TvConflictRecordingSeriesIcon;
+            else
+              item.PinImage = Thumbs.TvRecordingSeriesIcon;
             item.ThumbnailImage = logo;
             item.IconImageBig = logo;
             item.IconImage = logo;
@@ -411,10 +414,21 @@ namespace TvPlugin
           item.ThumbnailImage = strLogo;
           item.IconImageBig = strLogo;
           item.IconImage = strLogo;
+          bool conflicting=(rec.ReferringConflicts().Count>0);
           if (rec.ScheduleType != (int)(ScheduleRecordingType.Once))
-            item.PinImage = Thumbs.TvRecordingSeriesIcon;
+          {
+            if (conflicting)
+              item.PinImage = Thumbs.TvConflictRecordingSeriesIcon;
+            else
+              item.PinImage = Thumbs.TvRecordingSeriesIcon;
+          }
           else
-            item.PinImage = Thumbs.TvRecordingIcon;
+          {
+            if (conflicting)
+              item.PinImage = Thumbs.TvConflictRecordingIcon;
+            else
+              item.PinImage = Thumbs.TvRecordingIcon;
+          }
           listSchedules.Add(item);
           total++;
         }

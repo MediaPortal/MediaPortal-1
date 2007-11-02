@@ -481,7 +481,6 @@ namespace TvPlugin
         rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         if (SkipForConflictingRecording(rec)) return;
 
-        rec.Persist();
         TvServer server = new TvServer();
         server.OnNewSchedule();
       }
@@ -782,13 +781,21 @@ namespace TvPlugin
                   Program prog = new Program(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName, "-", "-", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
                   OnRecordProgram(prog);
                 }
+                rec.Persist();
                 break;
               }
-            case 2: return false;   // No Skipping new Recording
+            case 2:
+              rec.Persist();
+              Schedule conflictingSchedule = (Schedule)conflicts[0];
+              Conflict dbConflict = new Conflict(rec.IdSchedule,conflictingSchedule.IdSchedule,rec.IdChannel,rec.StartTime);
+              dbConflict.Persist();
+              return false;   // No Skipping new Recording
             default: return true;   // Skipping new Recording
           }
         }
       }
+      else
+        rec.Persist();
       return false;
     }
 

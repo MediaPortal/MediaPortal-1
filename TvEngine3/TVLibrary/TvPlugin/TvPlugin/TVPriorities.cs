@@ -219,6 +219,7 @@ namespace TvPlugin
       int total = 0;
       foreach (Schedule rec in itemlist)
       {
+        if (rec.IsSerieIsCanceled(rec.StartTime)) continue;
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}.{1}", total, rec.ProgramName);
         item.TVTag = rec;
