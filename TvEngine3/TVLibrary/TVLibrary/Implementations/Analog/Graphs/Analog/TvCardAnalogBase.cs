@@ -2156,17 +2156,15 @@ namespace TvLibrary.Implementations.Analog
     /// Adds 3 filters to the graph so we can grab teletext
     /// On return the graph looks like this:
     //
-    //	[							 ]		 [  tee/sink	]			 [	wst			]			[ sample	]
-    //	[	capture			 ]		 [		to			]----->[	codec		]---->[ grabber	]
-    //	[						vbi]---->[	sink			]			 [					]			[					]
+    //	[							 ]		 [  tee/sink	]			 [	wst or	]			[ sample	]
+    //	[	capture			 ]		 [		to			]----->[	vbi 		]---->[ grabber	]
+    //	[						vbi]---->[	sink			]			 [	codec		]			[					]
     /// </summary>
     void SetupTeletext()
     {
       if (!CheckThreadId()) return;
-
       int hr;
       Log.Log.WriteFile("analog: SetupTeletext()");
-
       DsDevice[] devices;
       Guid guidBaseFilter = typeof(IBaseFilter).GUID;
       object obj;
@@ -2180,7 +2178,6 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add tee/sink filter");
         return;
       }
-
       //connect capture filter -> tee sink filter
       IPin pin = DsFindPin.ByDirection(_teeSink, PinDirection.Input, 0);
       hr = _graphBuilder.Connect(_pinVBI, pin);
@@ -2194,7 +2191,6 @@ namespace TvLibrary.Implementations.Analog
         _teeSink = _filterWstDecoder = _filterGrabber = null;
         return;
       }
-
       //find the WST codec filter
       devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVBICodec);
       foreach (DsDevice device in devices)
@@ -2202,13 +2198,33 @@ namespace TvLibrary.Implementations.Analog
         if (device.Name.IndexOf("WST") >= 0)
         {
           //found it, add it to the graph
+          Log.Log.Info("analog:SinkGraphEx.SetupTeletext(): Found WST Codec filter");
           device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
           _filterWstDecoder = (IBaseFilter)obj;
           hr = _graphBuilder.AddFilter((IBaseFilter)_filterWstDecoder, device.Name);
           if (hr != 0)
           {
             //failed...
-            Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add WSTCODEC filter");
+            Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add WST Codec filter");
+            _graphBuilder.RemoveFilter(_teeSink);
+            Marshal.ReleaseComObject(_teeSink);
+            _teeSink = _filterWstDecoder = _filterGrabber = null;
+            return;
+          }
+          break;
+        }
+        //Look for VBI Codec for Vista users as Vista doesn't use WST Codec anymore
+        if (device.Name.IndexOf("VBI") >= 0)
+        {
+          //found it, add it to the graph
+          Log.Log.Info("analog:SinkGraphEx.SetupTeletext(): Found VBI Codec filter");
+          device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
+          _filterWstDecoder = (IBaseFilter)obj;
+          hr = _graphBuilder.AddFilter((IBaseFilter)_filterWstDecoder, device.Name);
+          if (hr != 0)
+          {
+            //failed...
+            Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add VBI Codec filter");
             _graphBuilder.RemoveFilter(_teeSink);
             Marshal.ReleaseComObject(_teeSink);
             _teeSink = _filterWstDecoder = _filterGrabber = null;
@@ -2219,13 +2235,12 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_filterWstDecoder == null)
       {
-        Log.Log.Error("analog: unable  to add WST Codec filter");
+        Log.Log.Error("analog: unable to find WST Codec or VBI Codec filter");
         _graphBuilder.RemoveFilter(_teeSink);
         Marshal.ReleaseComObject(_teeSink);
         _teeSink = _filterWstDecoder = _filterGrabber = null;
         return;
       }
-
       //connect tee sink filter-> wst codec filter
       IPin pinOut = DsFindPin.ByDirection(_teeSink, PinDirection.Output, 0);
       pin = DsFindPin.ByDirection(_filterWstDecoder, PinDirection.Input, 0);
@@ -2244,13 +2259,10 @@ namespace TvLibrary.Implementations.Analog
         _teeSink = null;
         return;
       }
-
       //create and add the sample grabber filter to the graph
       _filterGrabber = (IBaseFilter)new SampleGrabber();
       ISampleGrabber sampleGrabberInterface = (ISampleGrabber)_filterGrabber;
       _graphBuilder.AddFilter(_filterGrabber, "Sample Grabber");
-
-
       //setup the sample grabber filter
       AMMediaType mt = new AMMediaType();
       mt.majorType = MediaType.VBI;
@@ -2258,7 +2270,6 @@ namespace TvLibrary.Implementations.Analog
       sampleGrabberInterface.SetCallback(this, 1);
       sampleGrabberInterface.SetMediaType(mt);
       sampleGrabberInterface.SetBufferSamples(true);
-
       //connect the wst codec filter->sample grabber filter
       pinOut = DsFindPin.ByDirection(_filterWstDecoder, PinDirection.Output, 0);
       pin = DsFindPin.ByDirection(_filterGrabber, PinDirection.Input, 0);
@@ -2278,10 +2289,8 @@ namespace TvLibrary.Implementations.Analog
         _teeSink = _filterWstDecoder = _filterGrabber = null;
         return;
       }
-
       //done
       Log.Log.WriteFile("analog: teletext setup");
-
     }
     #endregion
 
