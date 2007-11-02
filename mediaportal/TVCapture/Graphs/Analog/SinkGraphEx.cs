@@ -74,7 +74,6 @@ namespace MediaPortal.TV.Recording
     #region variables
     IBaseFilter _filterSampleGrabber = null;
     ISampleGrabber _sampleGrabberInterface = null;
-    bool vistaVBICodec = false;
     #endregion
 
     #region Constructors
