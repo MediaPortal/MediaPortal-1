@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <capturecards>
   <capturecard commercialname="Hauppauge WinTV USB" capturename="Hauppauge WinTV USB Pro Capture" devid="vid_0573&amp;pid_4d21">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -21455,7 +21455,7 @@
         <filter cat="tvaudio" name="Hauppauge WinTV 885 TvAudio" checkdevice="true"></filter>
         <filter cat="crossbar" name="Hauppauge WinTV 885 Crossbar" checkdevice="true"></filter>
         <filter cat="capture" name="Hauppauge WinTV 885 Video Capture" checkdevice="true"></filter>
-        <filter cat="encoder" name="Hauppauge WinTV 885 Encoder" checkdevice="true"></filter>
+        <filter cat="encoder" name="Hauppauge WinTV 885 MPEG Encoder" checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner" sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"></connection>
@@ -21493,7 +21493,7 @@
         <filter cat="tvaudio" name="Hauppauge WinTV 885 TvAudio" checkdevice="true"></filter>
         <filter cat="crossbar" name="Hauppauge WinTV 885 Crossbar" checkdevice="true"></filter>
         <filter cat="capture" name="Hauppauge WinTV 885 Video Capture" checkdevice="true"></filter>
-        <filter cat="encoder" name="Hauppauge WinTV 885 Encoder" checkdevice="true"></filter>
+        <filter cat="encoder" name="Hauppauge WinTV 885 MPEG Encoder" checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner" sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"></connection>
