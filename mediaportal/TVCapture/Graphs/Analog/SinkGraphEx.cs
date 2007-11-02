@@ -74,6 +74,7 @@ namespace MediaPortal.TV.Recording
     #region variables
     IBaseFilter _filterSampleGrabber = null;
     ISampleGrabber _sampleGrabberInterface = null;
+    bool vistaVBICodec = false;
     #endregion
 
     #region Constructors
@@ -464,12 +465,17 @@ namespace MediaPortal.TV.Recording
       IBaseFilter wstCodec = DirectShowUtil.GetFilterByName(_graphBuilderInterface, "WST Codec");
       if (wstCodec == null)
       {
-        _graphBuilderInterface.RemoveFilter(teesink);
-        Marshal.ReleaseComObject(teesink);
-        Log.Error("SinkGraphEx.SetupTeletext(): Failed to find WST Codec");
-        return;
+        Log.Info("SinkGraphEx.SetupTeletext(): Failed to find WST Codec trying VBI Codec...");
+        //Now check if the VBI Codec is availbale for Vista systems since WST is no longer used going forward.
+        IBaseFilter vbiCodec = DirectShowUtil.GetFilterByName(_graphBuilderInterface, "VBI Codec");
+        if (wstCodec == null)
+        {
+          _graphBuilderInterface.RemoveFilter(teesink);
+          Marshal.ReleaseComObject(teesink);
+          Log.Error("SinkGraphEx.SetupTeletext(): Failed to find VBI or WST Codec");
+          return;
+        }
       }
-
       int hr = _captureGraphBuilderInterface.RenderStream(new DsGuid(ClassId.PinCategoryVBI), null, _filterCapture, teesink, wstCodec);
       if (hr != 0)
       {
@@ -481,12 +487,9 @@ namespace MediaPortal.TV.Recording
         Log.Info("Teletext not available on {0}", _cardName);
         return;
       }
-
-
       _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
       _sampleGrabberInterface = (ISampleGrabber)_filterSampleGrabber;
       _graphBuilderInterface.AddFilter(_filterSampleGrabber, "Sample Grabber");
-
       AMMediaType mt = new AMMediaType();
       mt.majorType = MediaType.VBI;
       mt.subType = MediaSubTypeEx.Teletext;
