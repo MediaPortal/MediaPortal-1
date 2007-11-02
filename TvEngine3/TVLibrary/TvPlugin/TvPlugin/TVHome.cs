@@ -272,6 +272,7 @@ namespace TvPlugin
       Restore();
       PreInit();
       ResetAllControls();
+      Connected = RemoteControl.IsConnected;
     }
     public override bool IsTv
     {
