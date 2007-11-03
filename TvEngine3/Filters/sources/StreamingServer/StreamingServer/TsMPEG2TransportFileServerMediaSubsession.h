@@ -17,6 +17,7 @@ protected:
       // called only by createNew();
   virtual ~TsMPEG2TransportFileServerMediaSubsession();
   virtual float duration() const;
+  virtual __int64 filelength() const;
 
 private: // redefined virtual functions
 	virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);

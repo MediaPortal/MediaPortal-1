@@ -573,7 +573,14 @@ BOOL CTsFileDuration::IsTimeShifting(FileReader *pFileReader, BOOL *timeMode)
 	m_LastStartSize = fileStart;
 	return (fileStart ? TRUE : FALSE) & (readonly ? TRUE : FALSE);
 }
+__int64 CTsFileDuration::GetFileSize ()
+{  
+  __int64 fileStart;
+  __int64 fileSize = 0;
 
+  m_pFileReader->GetFileSize(&fileStart, &fileSize);
+  return fileSize;
+}
 
 
 HRESULT CTsFileDuration::GetPositions( LONGLONG * pCurrent, LONGLONG * pStop )

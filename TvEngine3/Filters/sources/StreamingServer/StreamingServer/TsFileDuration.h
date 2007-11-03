@@ -14,6 +14,7 @@ public:
 	int OpenFile();
 	int CloseFile();
   float Duration();
+  __int64 GetFileSize ();
 private:
   __int64 ConvertPCRtoRT(__int64 pcrtime);
   BOOL IsTimeShifting(FileReader *pFileReader, BOOL *timeMode);

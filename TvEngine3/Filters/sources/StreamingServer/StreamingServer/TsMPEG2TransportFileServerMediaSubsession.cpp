@@ -49,7 +49,9 @@ RTPSink* TsMPEG2TransportFileServerMediaSubsession::createNewRTPSink(Groupsock* 
 				  1, True, False /*no 'M' bit*/);
 }
 void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* inputSource, float seekNPT)
-{
+{  
+
+  
   MPEG2TransportStreamFramer* framer=(MPEG2TransportStreamFramer*)inputSource;
   TsStreamFileSource* source=(TsStreamFileSource*)framer->inputSource();
   if (seekNPT==0.0f)
@@ -61,12 +63,31 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
   if (seekNPT<0) seekNPT=0;
   if (seekNPT>(fileDuration-0.5f)) seekNPT=(fileDuration-0.5f);
   if (seekNPT <0) seekNPT=0;
+
+
+  // This should fix the seeking being carried out to early.
+  // if this happens (on multiseat) u get end up with a black screen and no sound, until u do a manaual seek.
+  __int64	fileSizeInitial = filelength();
+  __int64	fileSizeActual = filelength();
+  DWORD dwTick=GetTickCount();	
+  while (fileSizeInitial == fileSizeActual && (GetTickCount() - dwTick <=5000)) // lets exit the loop if filesize isnt increased for 5 secs.	
+  {		
+	Log("waiting for TS file to grow ; %d, %d ", (DWORD)fileSizeInitial, (DWORD)fileSizeActual);
+	fileSizeActual = filelength();	
+	Sleep(100);	
+  }
+  Log("TS file grown - now ready for the actual seek ; initial size %d, actual size %d, wait(ms) %d", (DWORD)fileSizeInitial, (DWORD)fileSizeActual, (GetTickCount() - dwTick));
+
+
   float pos=seekNPT / fileDuration;
   __int64 fileSize=source->fileSize();
   pos*=fileSize;
   pos/=188;
   pos*=188;
   __int64 newPos=(__int64) pos;
+
+
+  
 
   source->seekToByteAbsolute(newPos);
 	Log("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
@@ -80,4 +101,19 @@ float TsMPEG2TransportFileServerMediaSubsession::duration() const
   duration.UpdateDuration();
   duration.CloseFile();
   return duration.Duration();
+}
+
+
+__int64 TsMPEG2TransportFileServerMediaSubsession::filelength() const
+{  
+  __int64	fileSizeTmp = 0;
+
+  CTsFileDuration duration;
+  duration.SetFileName((char*)m_fileName);
+  duration.OpenFile();
+
+  fileSizeTmp = duration.GetFileSize();
+  
+  duration.CloseFile();
+  return fileSizeTmp;
 }
