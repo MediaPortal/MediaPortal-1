@@ -2213,25 +2213,30 @@ namespace TvLibrary.Implementations.Analog
           }
           break;
         }
-        //Look for VBI Codec for Vista users as Vista doesn't use WST Codec anymore
-        if (device.Name.IndexOf("VBI") >= 0)
-        {
-          //found it, add it to the graph
-          Log.Log.Info("analog:SinkGraphEx.SetupTeletext(): Found VBI Codec filter");
-          device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
-          _filterWstDecoder = (IBaseFilter)obj;
-          hr = _graphBuilder.AddFilter((IBaseFilter)_filterWstDecoder, device.Name);
-          if (hr != 0)
+      }
+      //Look for VBI Codec for Vista users as Vista doesn't use WST Codec anymore
+      if (_filterWstDecoder == null)
+      {
+        devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSMULTIVBICodec);
+        foreach (DsDevice device in devices)
+          if (device.Name.IndexOf("VBI") >= 0)
           {
-            //failed...
-            Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add VBI Codec filter");
-            _graphBuilder.RemoveFilter(_teeSink);
-            Marshal.ReleaseComObject(_teeSink);
-            _teeSink = _filterWstDecoder = _filterGrabber = null;
-            return;
+            //found it, add it to the graph
+            Log.Log.Info("analog:SinkGraphEx.SetupTeletext(): Found VBI Codec filter");
+            device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
+            _filterWstDecoder = (IBaseFilter)obj;
+            hr = _graphBuilder.AddFilter((IBaseFilter)_filterWstDecoder, device.Name);
+            if (hr != 0)
+            {
+              //failed...
+              Log.Log.Error("analog:SinkGraphEx.SetupTeletext(): Unable to add VBI Codec filter");
+              _graphBuilder.RemoveFilter(_teeSink);
+              Marshal.ReleaseComObject(_teeSink);
+              _teeSink = _filterWstDecoder = _filterGrabber = null;
+              return;
+            }
+            break;
           }
-          break;
-        }
       }
       if (_filterWstDecoder == null)
       {
