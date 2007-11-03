@@ -302,7 +302,7 @@ namespace TvLibrary.Implementations.DVB
         hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("ATSC QAM: Get  returned:{0:X}", hr);
+          Log.Log.Info("ATSC QAM: Set returned:{0:X}", hr);
         }
       }
 

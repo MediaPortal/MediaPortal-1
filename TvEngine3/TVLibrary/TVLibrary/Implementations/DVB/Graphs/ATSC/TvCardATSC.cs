@@ -216,7 +216,7 @@ namespace TvLibrary.Implementations.DVB
         hr = atscLocator.put_TSID(-1);//atscChannel.TransportId);
         hr = atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
         hr = atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
-        _tuningSpace.put_InputType(TunerInputType.Cable);
+        //_tuningSpace.put_InputType(TunerInputType.Cable);
         hr = atscLocator.put_Modulation(atscChannel.ModulationType);
         hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
         hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);

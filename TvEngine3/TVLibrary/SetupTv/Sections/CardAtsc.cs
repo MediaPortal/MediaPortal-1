@@ -240,8 +240,8 @@ namespace SetupTv.Sections
           if (checkBoxQAM.Checked)
           {
             Log.WriteFile("ATSC tune: QAM checkbox selected... using Modulation 256Qam");
-            //tuneChannel.PhysicalChannel = index +1;
-            tuneChannel.PhysicalChannel = -1;
+            tuneChannel.PhysicalChannel = index +1;
+            //tuneChannel.PhysicalChannel = -1;
             tuneChannel.Frequency = _atscChannels[index].frequency;
             tuneChannel.ModulationType = ModulationType.Mod256Qam;
           }
