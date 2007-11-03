@@ -2113,17 +2113,17 @@ namespace TvPlugin
         try
         {
           XmlDocument doc = new XmlDocument();
-          doc.Load(MediaPortal.Configuration.Config.GetFile(Config.Dir.Config, "gentle.config"));
+          doc.Load("gentle.config");
           XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
           XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
           XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
           node.InnerText = connectionString;
           nodeProvider.InnerText = provider;
-          doc.Save(MediaPortal.Configuration.Config.GetFile(Config.Dir.Config, "gentle.config"));
+          doc.Save("gentle.config");
         }
         catch (Exception ex)
         {
-            Log.Error("Unable to create/modify gentle.config from path {0}: {1}, {2}", MediaPortal.Configuration.Config.GetFile(Config.Dir.Config, "gentle.config"), ex.Message, ex.StackTrace);
+          Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
         }
 
         MediaPortal.GUI.Library.Log.Info("ChannelNavigator::Reload()");
