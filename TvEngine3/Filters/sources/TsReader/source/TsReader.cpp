@@ -682,9 +682,8 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     seek.Seek(seekTime);
   }
   else
-  {
+  {	
     //yes, we're playing a RTSP stream
-    
     //stop the RTSP steam
     LogDebug("CTsReaderFilter::  Seek->stop rtsp");
     m_rtspClient.Stop();
@@ -693,9 +692,11 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     float milli=m_duration.Duration().Millisecs();
     milli/=1000.0;
     if (startTime >= milli-40.0f)
-    {
+    { 
       startTime=milli+40.0f;
-    }
+    }	
+
+	
 
     LogDebug("CTsReaderFilter::  Seek->start client from %f/ %f",startTime,milli);
     //clear the buffers
@@ -704,6 +705,15 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     m_buffer.Run(true);
     //start rtsp stream from the seek-time
     m_rtspClient.Play(startTime);
+	
+	DWORD dwTick=GetTickCount();
+	while (m_buffer.Size() == 0 && GetTickCount() - dwTick <=5000) // lets exit the loop if no data received for 5 secs.	
+	{
+	  LogDebug("CTsReaderFilter:: Seek-->buffer empty, sleep(100ms)");
+	  Sleep(100);	  		  
+	  dwTick=GetTickCount();	  
+	}
+
     m_tickCount=GetTickCount();
 
     //update the duration of the stream
