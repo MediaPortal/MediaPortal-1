@@ -1423,9 +1423,12 @@ static DWORD crc_table[256] = {
 			}
 		}
 
-		pcrHi -= m_startPcr;
+    /*pcrHi -= m_startPcr;
     pcrHi += m_backwardsPcrHole;
-    pcrHi -= m_pcrHole;
+    pcrHi -= m_pcrHole;*/
+
+    double result = pcrHi.ToClock() - m_startPcr.ToClock() + m_backwardsPcrHole.ToClock() - m_pcrHole.ToClock();
+    pcrHi.FromClock(result);
 
 		if (m_bPCRRollover)
 		{
