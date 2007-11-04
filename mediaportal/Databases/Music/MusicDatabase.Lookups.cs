@@ -103,7 +103,7 @@ namespace MediaPortal.Music.Database
       try
       {
         int NumOfSongs;
-        strSQL = String.Format("SELECT count(*) FROM tracks");
+        strSQL = String.Format("SELECT count(idTrack) FROM tracks");
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         SQLiteResultSet.Row row = results.Rows[0];
         NumOfSongs = Int32.Parse(results.Rows[0].fields[0]);
