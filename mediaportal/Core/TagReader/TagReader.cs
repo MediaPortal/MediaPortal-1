@@ -164,6 +164,32 @@ namespace MediaPortal.TagReader
       return null;
     }
 
+    public static bool WriteLyrics(string strFile, string strLyrics)
+    {
+      if (!IsAudio(strFile))
+        return false;
+
+      try
+      {
+        // Set the flag to use the standard System Encoding set by the user
+        // Otherwise Latin1 is used as default, which causes characters in various languages being displayed wrong
+        TagLib.ByteVector.UseBrokenLatin1Behavior = true;
+        TagLib.File tag = TagLib.File.Create(strFile);
+        tag.Tag.Lyrics = strLyrics;
+        tag.Save();
+        return true;
+      }
+      catch (UnsupportedFormatException)
+      {
+        Log.Warn("Tagreader: Unsupported File Format {0}", strFile);
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("TagReader: Exception writing file {0}. {1}", strFile, ex.Message);
+      }
+      return false;
+    }
+
     private static bool IsAudio(string fileName)
     {
       string ext = System.IO.Path.GetExtension(fileName).ToLower();
