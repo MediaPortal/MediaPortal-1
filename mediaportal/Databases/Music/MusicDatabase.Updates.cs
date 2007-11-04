@@ -94,6 +94,295 @@ namespace MediaPortal.Music.Database
 
     private char[] trimChars = { ' ', '\x00', '|' };
 
+    #region Favorite / Ratings
+    public void SetFavorite(Song aSong)
+    {
+      try
+      {
+        if (aSong.Id == -1)
+          return;
+
+        int iFavorite = 0;
+        if (aSong.Favorite)
+          iFavorite = 1;
+        string strSQL = String.Format("UPDATE tracks SET iFavorite={0} WHERE idTrack={1}", iFavorite, aSong.Id);
+        MusicDatabase.DirectExecute(strSQL);
+        return;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void SetRating(string aFilename, int aRating)
+    {
+      if (string.IsNullOrEmpty(aFilename))
+        return;
+
+      try
+      {
+        Song song = new Song();
+        string strFileName = aFilename;
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);
+
+        strSQL = String.Format("UPDATE tracks SET iRating={0} WHERE strPath='{1}'", aRating, strFileName);
+
+        MusicDatabase.DirectExecute(strSQL);
+        return;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return;
+    }
+    #endregion
+
+    #region Top100
+    public void ResetTop100()
+    {
+      try
+      {
+        string strSQL = String.Format("UPDATE tracks SET iTimesPlayed=0");
+        MusicDatabase.DirectExecute(strSQL);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public bool IncrTop100CounterByFileName(string aFileName)
+    {
+      try
+      {
+        Song song = new Song();
+        string strFileName = aFileName;
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);
+
+        strSQL = String.Format("SELECT * from tracks WHERE strPath = '{0}'", strFileName);
+
+        SQLiteResultSet results = MusicDbClient.Execute(strSQL);
+        if (results.Rows.Count == 0)
+          return false;
+
+        int idSong = DatabaseUtility.GetAsInt(results, 0, "idTrack");
+        int iTimesPlayed = DatabaseUtility.GetAsInt(results, 0, "iTimesPlayed");
+
+        strSQL = String.Format("UPDATE tracks SET iTimesPlayed={0} where idTrack='{1}'", ++iTimesPlayed, idSong);
+        if (MusicDatabase.DirectExecute(strSQL).Rows.Count > 0)
+        {
+          Log.Debug("MusicDatabase: increased playcount for song {1} to {0}", Convert.ToString(iTimesPlayed), aFileName);
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return false;
+    }
+    #endregion
+
+    #region Album / Artist Info
+    public void AddAlbumInfo(AlbumInfo aAlbumInfo)
+    {
+      string strSQL;
+      try
+      {
+        AlbumInfo album = aAlbumInfo.Clone();
+        string strTmp;
+        //				strTmp = album.Album; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Album = strTmp;
+        //				strTmp = album.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Genre = strTmp;
+        //				strTmp = album.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Artist = strTmp;
+        strTmp = album.Tones;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        album.Tones = strTmp == "unknown" ? "" : strTmp;
+        strTmp = album.Styles;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        album.Styles = strTmp == "unknown" ? "" : strTmp;
+        strTmp = album.Review;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        album.Review = strTmp == "unknown" ? "" : strTmp;
+        strTmp = album.Image;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        album.Image = strTmp == "unknown" ? "" : strTmp;
+        strTmp = album.Tracks;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        album.Tracks = strTmp == "unknown" ? "" : strTmp;
+        //strTmp=album.Path  ;RemoveInvalidChars(ref strTmp);album.Path=strTmp;
+
+        if (null == MusicDbClient)
+          return;
+
+        strSQL = String.Format("delete from albuminfo where strAlbum like '{0}' and strArtist like '{1}%'", album.Album, album.Artist);
+        MusicDbClient.Execute(strSQL);
+
+        strSQL = String.Format("insert into albuminfo (strAlbum,strArtist, strTones,strStyles,strReview,strImage,iRating,iYear,strTracks) values('{0}','{1}','{2}','{3}','{4}','{5}',{6},{7},'{8}')",
+                            album.Album,
+                            album.Artist,
+                            album.Tones,
+                            album.Styles,
+                            album.Review,
+                            album.Image,
+                            album.Rating,
+                            album.Year,
+                            album.Tracks);
+
+        MusicDbClient.Execute(strSQL);
+
+        return;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return;
+    }
+
+    public void AddArtistInfo(ArtistInfo aArtistInfo)
+    {
+      string strSQL;
+      try
+      {
+        ArtistInfo artist = aArtistInfo.Clone();
+        string strTmp;
+        //strTmp = artist.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); artist.Artist = strTmp;
+        strTmp = artist.Born;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Born = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.YearsActive;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.YearsActive = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.Genres;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Genres = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.Instruments;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Instruments = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.Tones;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Tones = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.Styles;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Styles = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.AMGBio;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.AMGBio = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.Image;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Image = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.Albums;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Albums = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.Compilations;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Compilations = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.Singles;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Singles = strTmp == "unknown" ? "" : strTmp;
+        strTmp = artist.Misc;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        artist.Misc = strTmp == "unknown" ? "" : strTmp;
+
+        if (null == MusicDbClient)
+          return;
+
+        strSQL = String.Format("delete from artistinfo where strArtist like '{0}%'", artist.Artist);
+        SQLiteResultSet results;
+        results = MusicDbClient.Execute(strSQL);
+
+        strSQL = String.Format("insert into artistinfo (strArtist,strBorn,strYearsActive,strGenres,strTones,strStyles,strInstruments,strImage,strAMGBio, strAlbums,strCompilations,strSingles,strMisc) values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}' )",
+          artist.Artist,
+          artist.Born,
+          artist.YearsActive,
+          artist.Genres,
+          artist.Tones,
+          artist.Styles,
+          artist.Instruments,
+          artist.Image,
+          artist.AMGBio,
+          artist.Albums,
+          artist.Compilations,
+          artist.Singles,
+          artist.Misc);
+
+        MusicDbClient.Execute(strSQL);
+        return;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return;
+    }
+
+    public void DeleteAlbumInfo(string aAlbumName, string aArtistName)
+    {
+      string strAlbum = aAlbumName;
+      DatabaseUtility.RemoveInvalidChars(ref strAlbum);
+      string strArtist = aArtistName;
+      DatabaseUtility.RemoveInvalidChars(ref strArtist);
+      SQLiteResultSet results;
+      results = MusicDbClient.Execute(strSQL);
+      strSQL = String.Format("delete from albuminfo where strAlbum like '{0} ' and strArtist like '{1}%'", strAlbum, strArtist);
+      MusicDbClient.Execute(strSQL);
+    }
+
+    public void DeleteArtistInfo(string aArtistName)
+    {
+      string strArtist = aArtistName;
+      DatabaseUtility.RemoveInvalidChars(ref strArtist);
+      strSQL = String.Format("delete from artistinfo where strArtist like '{0}'", strArtist);
+      MusicDatabase.DirectExecute(strSQL);
+    }
+    #endregion
+
+    #region Lyrics
+    public bool UpdateLyrics(string aFileName, string aLyrics)
+    {
+      try
+      {
+        string strFileName = aFileName;
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);
+        string strLyrics = aLyrics;
+        DatabaseUtility.RemoveInvalidChars(ref strLyrics);
+
+        strSQL = String.Format("SELECT * from tracks WHERE strPath = '{0}'", strFileName);
+
+        SQLiteResultSet results = MusicDbClient.Execute(strSQL);
+        if (results.Rows.Count == 0)
+          return false;
+
+        int idSong = DatabaseUtility.GetAsInt(results, 0, "idTrack");
+
+        strSQL = String.Format("UPDATE tracks SET strLyrics='{0}' where idTrack='{1}'", strLyrics, idSong);
+        if (MusicDatabase.DirectExecute(strSQL).Rows.Count == 0)
+        {
+          Log.Debug("MusicDatabase: Updated Lyrics for song {0}", aFileName);
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return false;
+    }
+    #endregion
 
     #region		Database rebuild
     public int MusicDatabaseReorg(ArrayList shares)
