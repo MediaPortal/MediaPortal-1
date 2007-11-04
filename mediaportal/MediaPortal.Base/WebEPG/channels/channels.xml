@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1354</entry>
+    <entry name="TotalChannels">1360</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -4760,12 +4760,12 @@
     <entry name="FullName">UKTV Drama Plus 1</entry>
   </section>
   <section name="1189">
-    <entry name="ChannelID">uktvg2@uktv.co.uk</entry>
-    <entry name="FullName">UKTV G2</entry>
+    <entry name="ChannelID">dave@uktv.co.uk</entry>
+    <entry name="FullName">Dave</entry>
   </section>
   <section name="1190">
     <entry name="ChannelID">uktvg2p1@uktv.co.uk</entry>
-    <entry name="FullName">UKTV G2 Plus 1</entry>
+    <entry name="FullName">Dave Plus 1</entry>
   </section>
   <section name="1191">
     <entry name="ChannelID">uktvgold@uktv.co.uk</entry>
@@ -5431,6 +5431,18 @@
     <entry name="ChannelID">fem@tvnorge.no</entry>
     <entry name="FullName">FEM</entry>
   </section>
+  <section name="1357">
+    <entry name="ChannelID">thomascook.com</entry>
+    <entry name="FullName">Thomas Cook TV</entry>
+  </section>
+  <section name="1358">
+    <entry name="ChannelID">p1@channel4.com</entry>
+    <entry name="FullName">Channel 4+1</entry>
+  </section>
+  <section name="1359">
+    <entry name="ChannelID">1@virginmediatv.co.uk</entry>
+    <entry name="FullName">Virigin 1</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -6095,7 +6107,7 @@
     <entry name="166">1251</entry>
   </section>
   <section name="GB">
-    <entry name="TotalChannels">443</entry>
+    <entry name="TotalChannels">446</entry>
     <entry name="0">1</entry>
     <entry name="1">14</entry>
     <entry name="2">15</entry>
@@ -6540,6 +6552,9 @@
     <entry name="441">1351</entry>
     <entry name="442">1352</entry>
     <entry name="443">1353</entry>
+    <entry name="444">1357</entry>
+    <entry name="445">1358</entry>
+    <entry name="446">1359</entry>
   </section>
   <section name="GR">
     <entry name="TotalChannels">11</entry>
