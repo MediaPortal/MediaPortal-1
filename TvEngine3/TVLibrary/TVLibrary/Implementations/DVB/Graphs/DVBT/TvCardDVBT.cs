@@ -186,7 +186,6 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
-
     #region tuning & recording
     /// <summary>
     /// Tunes the specified channel.
@@ -302,7 +301,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
-
 
     /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.

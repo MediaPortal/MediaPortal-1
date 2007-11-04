@@ -107,10 +107,10 @@ namespace TvLibrary.Implementations.DVB
       dvbtChannel.PmtPid = info.network_pmt_PID;
       dvbtChannel.PcrPid = info.pcr_pid;
       dvbtChannel.FreeToAir = !info.scrambled;
-
+      dvbtChannel.VideoPid = info.videoPid;
+      dvbtChannel.AudioPid = info.audioPid;
       Log.Log.Write("Found: {0}", dvbtChannel);
       return dvbtChannel;
     }
-
   }
 }

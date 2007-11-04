@@ -294,38 +294,51 @@ namespace SetupTv.Sections
         }
 
         //dvbt
-        if (textBox9.Text.Length != 0)
+        if (textBoxDVBTfreq.Text.Length != 0)
         {
-          int freq, onid, tsid, sid;
-          if (Int32.TryParse(textBox9.Text, out freq))
+          int lcn, freq, onid, tsid, sid, audio, video;
+          if (Int32.TryParse(textBoxDVBTChannel.Text, out lcn))
           {
-            if (Int32.TryParse(textBox8.Text, out onid))
+            if (Int32.TryParse(textBoxDVBTfreq.Text, out freq))
             {
-              if (Int32.TryParse(textBox7.Text, out tsid))
+              if (Int32.TryParse(textBox8.Text, out onid))
               {
-                if (Int32.TryParse(textBox6.Text, out sid))
+                if (Int32.TryParse(textBox7.Text, out tsid))
                 {
-                  if (onid > 0 && tsid >= 0 && sid >= 0)
+                  if (Int32.TryParse(textBox6.Text, out sid))
                   {
-                    DVBTChannel dvbtChannel = new DVBTChannel();
-                    dvbtChannel.IsTv = _isTv;
-                    dvbtChannel.IsRadio = !_isTv;
-                    dvbtChannel.Name = _channel.Name;
-                    dvbtChannel.Frequency = freq;
-                    dvbtChannel.NetworkId = onid;
-                    dvbtChannel.TransportId = tsid;
-                    dvbtChannel.ServiceId = sid;
-                    if (comboBoxBandWidth.SelectedIndex == 0)
-                      dvbtChannel.BandWidth = 7;
-                    else
-                      dvbtChannel.BandWidth = 8;
-                    layer.AddTuningDetails(_channel, dvbtChannel);
+                    if (Int32.TryParse(textBoxAudio.Text, out audio))
+                    {
+                      if (Int32.TryParse(textBoxVideo.Text, out video))
+                      {
+                        if (onid > 0 && tsid >= 0 && sid >= 0)
+                        {
+                          DVBTChannel dvbtChannel = new DVBTChannel();
+                          dvbtChannel.IsTv = _isTv;
+                          dvbtChannel.IsRadio = !_isTv;
+                          dvbtChannel.Name = _channel.Name;
+                          dvbtChannel.LogicalChannelNumber = lcn;
+                          dvbtChannel.Frequency = freq;
+                          dvbtChannel.NetworkId = onid;
+                          dvbtChannel.TransportId = tsid;
+                          dvbtChannel.ServiceId = sid;
+                          if (comboBoxBandWidth.SelectedIndex == 0)
+                            dvbtChannel.BandWidth = 7;
+                          else
+                            dvbtChannel.BandWidth = 8;
+                          dvbtChannel.VideoPid = video;
+                          dvbtChannel.AudioPid = audio;
+                          layer.AddTuningDetails(_channel, dvbtChannel);
+                        }
+                      }
+                    }
                   }
                 }
               }
             }
           }
         }
+
         // Webstream
         if (edStreamURL.Text != "")
         {
@@ -333,6 +346,7 @@ namespace SetupTv.Sections
           _channel.Persist();
           layer.AddWebStreamTuningDetails(_channel, edStreamURL.Text, (int)nudStreamBitrate.Value);
         }
+
         // FM Radio
         if (edFMFreq.Text != "")
         {
@@ -454,10 +468,11 @@ namespace SetupTv.Sections
           detail.Persist();
         }
 
-        //dvbt tab
+        //DVBT tab
         if (detail.ChannelType == 4)
         {
-          detail.Frequency = Int32.Parse(textBox9.Text);
+          detail.ChannelNumber = Int32.Parse(textBoxDVBTChannel.Text);
+          detail.Frequency = Int32.Parse(textBoxDVBTfreq.Text);
           detail.NetworkId = Int32.Parse(textBox8.Text);
           detail.TransportId = Int32.Parse(textBox7.Text);
           detail.ServiceId = Int32.Parse(textBox6.Text);
@@ -465,6 +480,8 @@ namespace SetupTv.Sections
             detail.Bandwidth = 7;
           else
             detail.Bandwidth = 8;
+          detail.AudioPid = Int32.Parse(textBoxAudio.Text);
+          detail.VideoPid = Int32.Parse(textBoxVideo.Text);
           detail.Persist();
         }
         //Webstream tab
@@ -523,7 +540,6 @@ namespace SetupTv.Sections
       //general tab
       textBoxName.Text = _channel.DisplayName;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
-
       if (_newChannel)
       {
         _analog = true;
@@ -537,7 +553,7 @@ namespace SetupTv.Sections
         textBoxProgram.Text = "";
         textboxFreq.Text = "";
         textBox5.Text = "";
-        textBox9.Text = "";
+        textBoxDVBTfreq.Text = "";
         return;
       }
       foreach (TuningDetail detail in _channel.ReferringTuningDetail())
@@ -621,8 +637,6 @@ namespace SetupTv.Sections
               comboBoxPol.SelectedIndex = 2;
               break;
           }
-          //if (((ModulationType)detail.Modulation) == ModulationType.Mod8Vsb)
-          //comboBoxModulation.SelectedIndex = 1;
           comboBoxModulation.SelectedIndex = (int)detail.Modulation + 1;
           comboBoxInnerFecRate.SelectedIndex = 1 + detail.InnerFecRate;
           comboBoxPilot.SelectedIndex = (int)detail.Pilot;
@@ -637,7 +651,6 @@ namespace SetupTv.Sections
               break;
             }
           }
-
           if (sat != null)
           {
             for (int i = 0; i < comboBoxSatellite.Items.Count; ++i)
@@ -651,11 +664,12 @@ namespace SetupTv.Sections
           }
         }
 
-        //dvbt tab
+        //DVBT tab
         if (detail.ChannelType == 4 || _newChannel)
         {
           _dvbt = true;
-          textBox9.Text = detail.Frequency.ToString();
+          textBoxDVBTChannel.Text = detail.ChannelNumber.ToString();
+          textBoxDVBTfreq.Text = detail.Frequency.ToString();
           textBox8.Text = detail.NetworkId.ToString();
           textBox7.Text = detail.TransportId.ToString();
           textBox6.Text = detail.ServiceId.ToString();
@@ -663,6 +677,8 @@ namespace SetupTv.Sections
             comboBoxBandWidth.SelectedIndex = 0;
           else
             comboBoxBandWidth.SelectedIndex = 1;
+          textBoxVideo.Text = detail.VideoPid.ToString();
+          textBoxAudio.Text = detail.AudioPid.ToString();
         }
 
         //webstream tab

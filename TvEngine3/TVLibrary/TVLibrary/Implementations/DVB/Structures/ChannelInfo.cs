@@ -119,6 +119,14 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// Logical channel number
     /// </summary>
     public int LCN;
+    /// <summary>
+    /// Video PID
+    /// </summary>
+    public int videoPid;
+    /// <summary>
+    /// Audio PID
+    /// </summary>
+    public int audioPid;
 
 
     /// <summary>

@@ -933,6 +933,9 @@ namespace SetupTv.Sections
                 dvbtChannel.Provider = provider;
                 dvbtChannel.ServiceId = serviceId;
                 dvbtChannel.TransportId = transportId;
+                dvbtChannel.VideoPid = videoPid;
+                dvbtChannel.AudioPid = audioPid;
+                dvbtChannel.LogicalChannelNumber = channelNumber;
                 layer.AddTuningDetails(dbChannel, dvbtChannel);
                 break;
               case 5: //Webstream

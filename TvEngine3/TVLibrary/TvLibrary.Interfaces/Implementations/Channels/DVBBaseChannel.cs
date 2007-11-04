@@ -40,6 +40,8 @@ namespace TvLibrary.Channels
     int _pmtPid;
     int _pcrPid;
     int _lcn;
+    int _videoPid;
+    int _audioPid;
     bool _isRadio;
     bool _isTv;
     bool _freeToAir;
@@ -62,7 +64,10 @@ namespace TvLibrary.Channels
       _isRadio = chan._isRadio;
       _isTv = chan._isTv;
       _freeToAir = chan._freeToAir;
+      _videoPid = chan._videoPid;
+      _audioPid = chan._audioPid;
     }
+
     public DVBBaseChannel()
     {
       _channelName = "";
@@ -73,11 +78,13 @@ namespace TvLibrary.Channels
       _serviceId = -1;
       _transportId = -1;
       _lcn = 10000;
+      _audioPid = -1;
+      _videoPid = -1;
     }
 
     #region properties
     /// <summary>
-    /// gets/set the pid of the PCR
+    /// gets/set the LCN of the channel
     /// </summary>
     public int LogicalChannelNumber
     {
@@ -147,7 +154,6 @@ namespace TvLibrary.Channels
         _serviceId = value;
       }
     }
-
     /// <summary>
     /// gets/sets the transport id of the channel
     /// </summary>
@@ -162,7 +168,6 @@ namespace TvLibrary.Channels
         _transportId = value;
       }
     }
-
     /// <summary>
     /// gets/sets the channel name
     /// </summary>
@@ -177,7 +182,6 @@ namespace TvLibrary.Channels
         _channelName = value;
       }
     }
-
     /// <summary>
     /// gets/sets the channel provider name
     /// </summary>
@@ -206,7 +210,6 @@ namespace TvLibrary.Channels
         _channelFrequency = value;
       }
     }
-    
     /// <summary>
     /// boolean indication if this is a radio channel
     /// </summary>
@@ -221,7 +224,6 @@ namespace TvLibrary.Channels
         _isRadio = value;
       }
     }
-
     /// <summary>
     /// boolean indication if this is a tv channel
     /// </summary>
@@ -250,7 +252,34 @@ namespace TvLibrary.Channels
         _freeToAir = value;
       }
     }
-
+    /// <summary>
+    /// gets/sets the AudioPid
+    /// </summary>
+    public int AudioPid
+    {
+      get
+      {
+        return _audioPid;
+      }
+      set
+      {
+        _audioPid = value;
+      }
+    }
+    /// <summary>
+    /// gets/sets the VideoPid
+    /// </summary>
+    public int VideoPid
+    {
+      get
+      {
+        return _videoPid;
+      }
+      set
+      {
+        _videoPid = value;
+      }
+    }
     #endregion
 
     /// <summary>
@@ -298,6 +327,9 @@ namespace TvLibrary.Channels
       if (ch.Provider != Provider) return false;
       if (ch.ServiceId != ServiceId) return false;
       if (ch.TransportId != TransportId) return false;
+      if (ch.VideoPid != VideoPid) return false;
+      if (ch.AudioPid != AudioPid) return false;
+      if (ch.LogicalChannelNumber != LogicalChannelNumber) return false;
       return true;
     }
     /// <summary>
@@ -308,9 +340,7 @@ namespace TvLibrary.Channels
     /// </returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _channelName.GetHashCode() ^ _providerName.GetHashCode() ^
-             _pmtPid.GetHashCode() ^  _pcrPid.GetHashCode() ^_networkId.GetHashCode() ^
-             _serviceId.GetHashCode() ^ _transportId.GetHashCode() ^ _lcn.GetHashCode();
+      return base.GetHashCode() ^ _channelName.GetHashCode() ^ _providerName.GetHashCode() ^ _pmtPid.GetHashCode() ^ _pcrPid.GetHashCode() ^ _networkId.GetHashCode() ^ _serviceId.GetHashCode() ^ _transportId.GetHashCode() ^ _lcn.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
     }
   }
 }

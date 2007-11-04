@@ -1465,7 +1465,7 @@ namespace TvPlugin
               Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
               break;
             }
-            else idx = i;
+            //else idx = i; //Not good, if an available AC3 stream = false & preferred language = null then you should use the first stream.
           }
         }
       }

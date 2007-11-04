@@ -404,6 +404,9 @@ namespace TvDatabase
             dvbtChannel.Provider = detail.Provider;
             dvbtChannel.ServiceId = detail.ServiceId;
             dvbtChannel.TransportId = detail.TransportId;
+            //dvbtChannel.VideoPid = detail.VideoPid;
+            //dvbtChannel.AudioPid = detail.AudioPid;
+            dvbtChannel.LogicalChannelNumber = detail.ChannelNumber;
             return dvbtChannel;
         }
       }
@@ -510,6 +513,9 @@ namespace TvDatabase
             dvbtChannel.Provider = detail.Provider;
             dvbtChannel.ServiceId = detail.ServiceId;
             dvbtChannel.TransportId = detail.TransportId;
+            dvbtChannel.LogicalChannelNumber = detail.ChannelNumber;
+            //dvbtChannel.VideoPid = detail.VideoPid;
+            //dvbtChannel.AudioPid = detail.AudioPid;
             tvChannels.Add(dvbtChannel);
             break;
         }
@@ -651,6 +657,7 @@ namespace TvDatabase
       if (dvbtChannel != null)
       {
         bandwidth = dvbtChannel.BandWidth;
+        channelNumber = dvbtChannel.LogicalChannelNumber;
         channelType = 4;
       }
 
@@ -668,6 +675,8 @@ namespace TvDatabase
         isRadio = dvbChannel.IsRadio;
         isTv = dvbChannel.IsTv;
         freeToAir = dvbChannel.FreeToAir;
+        videoPid = dvbChannel.VideoPid;
+        audioPid = dvbChannel.AudioPid;
       }
 
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
@@ -766,6 +775,7 @@ namespace TvDatabase
       if (dvbtChannel != null)
       {
         bandwidth = dvbtChannel.BandWidth;
+        channelNumber = dvbtChannel.LogicalChannelNumber;
         channelType = 4;
       }
 
@@ -783,6 +793,8 @@ namespace TvDatabase
         isRadio = dvbChannel.IsRadio;
         isTv = dvbChannel.IsTv;
         freeToAir = dvbChannel.FreeToAir;
+        videoPid = dvbChannel.VideoPid;
+        audioPid = dvbChannel.AudioPid;
       }
 
       detail.Name = channelName;
