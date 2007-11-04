@@ -29,7 +29,6 @@ using System.Xml;
 using System.Windows.Forms;
 using TvControl;
 using DirectShowLib;
-
 using Gentle.Common;
 using Gentle.Framework;
 using DirectShowLib.BDA;
@@ -81,7 +80,6 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
-
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
@@ -89,12 +87,10 @@ namespace SetupTv.Sections
       lvwColumnSorter2.Order = SortOrder.Descending;
       lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
       this.mpListView1.ListViewItemSorter = lvwColumnSorter;
-
     }
 
     public override void OnSectionDeActivated()
     {
-
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
         Channel ch = (Channel)mpListView1.Items[i].Tag;
@@ -139,16 +135,13 @@ namespace SetupTv.Sections
       UpdateMenu();
       _redrawTab1 = false;
       IList dbsCards = Card.ListAll();
-
       CountryCollection countries = new CountryCollection();
       Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
-
       foreach (Card card in dbsCards)
       {
         cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
       }
       base.OnSectionActivated();
-
       mpListView1.BeginUpdate();
       mpListView1.Items.Clear();
       IList chs = Channel.ListAll();
@@ -158,7 +151,6 @@ namespace SetupTv.Sections
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
       IList allmaps = ChannelMap.ListAll();
-
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel ch in channels)
       {
@@ -246,7 +238,7 @@ namespace SetupTv.Sections
           float frequency;
           switch (detail.ChannelType)
           {
-            case 0://analog
+            case 0://Analog
               if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
               {
                 frequency = detail.Frequency;
@@ -263,23 +255,24 @@ namespace SetupTv.Sections
               item.SubItems.Add(String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel, detail.MinorChannel));
               break;
 
-            case 2:// DVBC
+            case 2:// DVB-C
               frequency = detail.Frequency;
               frequency /= 1000.0f;
               item.SubItems.Add(String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate));
               break;
 
-            case 3:// DVBS
+            case 3:// DVB-S
               frequency = detail.Frequency;
               frequency /= 1000.0f;
               item.SubItems.Add(String.Format("{0} MHz {1}", frequency.ToString("f2"), (((Polarisation)detail.Polarisation))));
               break;
 
-            case 4:// DVBT
+            case 4:// DVB-T
               frequency = detail.Frequency;
               frequency /= 1000.0f;
               item.SubItems.Add(String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth));
               break;
+
             case 5:// Webstream
               item.SubItems.Add(detail.Url);
               break;
@@ -917,6 +910,7 @@ namespace SetupTv.Sections
                 dvbsChannel.BandType = (BandType)band;
                 dvbsChannel.Pilot = (Pilot)pilot;
                 dvbsChannel.RollOff = (Rolloff)rollOff;
+                dvbsChannel.LogicalChannelNumber = channelNumber;
                 layer.AddTuningDetails(dbChannel, dvbsChannel);
                 break;
               case 4: //DVBTChannel

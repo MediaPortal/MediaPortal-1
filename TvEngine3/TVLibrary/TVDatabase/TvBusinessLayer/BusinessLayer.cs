@@ -389,6 +389,7 @@ namespace TvDatabase
             dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
             dvbsChannel.Pilot = (Pilot)detail.Pilot;
             dvbsChannel.RollOff = (Rolloff)detail.RollOff;
+            dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
             return dvbsChannel;
           case 4: //DVBTChannel
             DVBTChannel dvbtChannel = new DVBTChannel();
@@ -497,6 +498,7 @@ namespace TvDatabase
             dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
             dvbsChannel.Pilot = (Pilot)detail.Pilot;
             dvbsChannel.RollOff = (Rolloff)detail.RollOff;
+            dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
             tvChannels.Add(dvbsChannel);
             break;
           case 4: //DVBTChannel
@@ -617,6 +619,7 @@ namespace TvDatabase
         videoInputType = (int)analogChannel.VideoSource;
         channelType = 0;
       }
+
       ATSCChannel atscChannel = tvChannel as ATSCChannel;
       if (atscChannel != null)
       {
@@ -650,6 +653,11 @@ namespace TvDatabase
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
         rollOff = (int)dvbsChannel.RollOff;
+        if (dvbsChannel.LogicalChannelNumber > 999)
+        {
+          channelNumber = channel.IdChannel;
+        }
+        else channelNumber = dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
 
@@ -768,6 +776,11 @@ namespace TvDatabase
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
         rollOff = (int)dvbsChannel.RollOff;
+        if (dvbsChannel.LogicalChannelNumber > 999)
+        {
+          channelNumber = channel.IdChannel;
+        }
+        else channelNumber = dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
 

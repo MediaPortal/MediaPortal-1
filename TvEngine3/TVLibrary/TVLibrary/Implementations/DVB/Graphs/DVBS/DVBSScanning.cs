@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
@@ -113,7 +112,6 @@ namespace TvLibrary.Implementations.DVB
             dvbsChannel.FreeToAir = !info.scrambled;
             dvbsChannel.SatelliteIndex = tuningChannel.SatelliteIndex;
             dvbsChannel.ModulationType = tuningChannel.ModulationType;
-
             dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)tuningChannel.InnerFecRate;
             dvbsChannel.Pilot = tuningChannel.Pilot;
             dvbsChannel.RollOff = tuningChannel.RollOff;

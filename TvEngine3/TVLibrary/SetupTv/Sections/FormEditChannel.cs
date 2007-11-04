@@ -228,62 +228,66 @@ namespace SetupTv.Sections
         //DVB-S
         if (textBox5.Text.Length != 0)
         {
-          int freq, onid, tsid, sid, symbolrate, switchfreq;
-          if (Int32.TryParse(textBox5.Text, out freq))
+          int lcn, freq, onid, tsid, sid, symbolrate, switchfreq;
+          if (Int32.TryParse(textBoxDVBSChannel.Text, out lcn))
           {
-            if (Int32.TryParse(textBox4.Text, out onid))
+            if (Int32.TryParse(textBox5.Text, out freq))
             {
-              if (Int32.TryParse(textBox3.Text, out tsid))
+              if (Int32.TryParse(textBox4.Text, out onid))
               {
-                if (Int32.TryParse(textBox2.Text, out sid))
+                if (Int32.TryParse(textBox3.Text, out tsid))
                 {
-                  if (Int32.TryParse(textBox1.Text, out symbolrate))
+                  if (Int32.TryParse(textBox2.Text, out sid))
                   {
-                    if (Int32.TryParse(textBoxSwitch.Text, out switchfreq))
+                    if (Int32.TryParse(textBox1.Text, out symbolrate))
                     {
-                      if (onid > 0 && tsid >= 0 && sid >= 0)
+                      if (Int32.TryParse(textBoxSwitch.Text, out switchfreq))
                       {
-                        DVBSChannel dvbsChannel = new DVBSChannel();
-                        dvbsChannel.IsTv = _isTv;
-                        dvbsChannel.IsRadio = !_isTv;
-                        dvbsChannel.Name = _channel.Name;
-                        dvbsChannel.Frequency = freq;
-                        dvbsChannel.NetworkId = onid;
-                        dvbsChannel.TransportId = tsid;
-                        dvbsChannel.ServiceId = sid;
-                        dvbsChannel.SymbolRate = symbolrate;
-                        dvbsChannel.SwitchingFrequency = switchfreq;
-                        dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
-                        dvbsChannel.Pilot = (Pilot)(comboBoxPilot.SelectedIndex + 1);
-                        dvbsChannel.RollOff = (Rolloff)(comboBoxRollOff.SelectedIndex + 1);
-                        dvbsChannel.ModulationType = (ModulationType)(comboBoxModulation.SelectedIndex + 1);
-                        switch (comboBoxPol.SelectedIndex)
+                        if (onid > 0 && tsid >= 0 && sid >= 0)
                         {
-                          case 0:
-                            dvbsChannel.Polarisation = Polarisation.LinearH;
-                            break;
-                          case 1:
-                            dvbsChannel.Polarisation = Polarisation.LinearV;
-                            break;
-                          case 2:
-                            dvbsChannel.Polarisation = Polarisation.CircularL;
-                            break;
-                          case 3:
-                            dvbsChannel.Polarisation = Polarisation.CircularR;
-                            break;
-                        }
-                        dvbsChannel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
-
-                        IList satellites = Satellite.ListAll();
-                        foreach (Satellite sat in satellites)
-                        {
-                          if (sat.SatelliteName == comboBoxSatellite.SelectedItem.ToString())
+                          DVBSChannel dvbsChannel = new DVBSChannel();
+                          dvbsChannel.IsTv = _isTv;
+                          dvbsChannel.IsRadio = !_isTv;
+                          dvbsChannel.Name = _channel.Name;
+                          dvbsChannel.Frequency = freq;
+                          dvbsChannel.NetworkId = onid;
+                          dvbsChannel.TransportId = tsid;
+                          dvbsChannel.ServiceId = sid;
+                          dvbsChannel.SymbolRate = symbolrate;
+                          dvbsChannel.SwitchingFrequency = switchfreq;
+                          dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
+                          dvbsChannel.Pilot = (Pilot)(comboBoxPilot.SelectedIndex + 1);
+                          dvbsChannel.RollOff = (Rolloff)(comboBoxRollOff.SelectedIndex + 1);
+                          dvbsChannel.ModulationType = (ModulationType)(comboBoxModulation.SelectedIndex + 1);
+                          dvbsChannel.LogicalChannelNumber = lcn;
+                          switch (comboBoxPol.SelectedIndex)
                           {
-                            dvbsChannel.SatelliteIndex = sat.IdSatellite;
-                            break;
+                            case 0:
+                              dvbsChannel.Polarisation = Polarisation.LinearH;
+                              break;
+                            case 1:
+                              dvbsChannel.Polarisation = Polarisation.LinearV;
+                              break;
+                            case 2:
+                              dvbsChannel.Polarisation = Polarisation.CircularL;
+                              break;
+                            case 3:
+                              dvbsChannel.Polarisation = Polarisation.CircularR;
+                              break;
                           }
+                          dvbsChannel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
+
+                          IList satellites = Satellite.ListAll();
+                          foreach (Satellite sat in satellites)
+                          {
+                            if (sat.SatelliteName == comboBoxSatellite.SelectedItem.ToString())
+                            {
+                              dvbsChannel.SatelliteIndex = sat.IdSatellite;
+                              break;
+                            }
+                          }
+                          layer.AddTuningDetails(_channel, dvbsChannel);
                         }
-                        layer.AddTuningDetails(_channel, dvbsChannel);
                       }
                     }
                   }
@@ -434,6 +438,7 @@ namespace SetupTv.Sections
           detail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
           detail.RollOff = (int)(Rolloff)(comboBoxRollOff.SelectedIndex - 1);
           detail.Modulation = (int)(ModulationType)(comboBoxModulation.SelectedIndex - 1);
+          detail.ChannelNumber = Int32.Parse(textBoxDVBSChannel.Text);
           switch (comboBoxPol.SelectedIndex)
           {
             case 0:
@@ -622,6 +627,7 @@ namespace SetupTv.Sections
           textBox2.Text = detail.ServiceId.ToString();
           textBox1.Text = detail.Symbolrate.ToString();
           textBoxSwitch.Text = detail.SwitchingFrequency.ToString();
+          textBoxDVBSChannel.Text = detail.ChannelNumber.ToString();
           switch ((Polarisation)detail.Polarisation)
           {
             case Polarisation.LinearH:
