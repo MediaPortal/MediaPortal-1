@@ -178,6 +178,7 @@ namespace MediaPortal.TV.Recording
                 nextrec.Start = nextProg.Start;
                 nextrec.EndTime = nextProg.EndTime;
                 nextrec.End = nextProg.End;
+                nextrec.Channel = nextProg.Channel;
                 nextrec.ID = -1; // a new schedule will be created in db
                 TVDatabase.AddRecording(ref nextrec);
                 // set current rec type to once

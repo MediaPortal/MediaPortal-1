@@ -223,6 +223,7 @@ namespace MediaPortal.TV.Recording
                       rec.Start = prog2Min.Start;
                       rec.EndTime = prog2Min.EndTime;
                       rec.End = prog2Min.End;
+                      rec.Channel = prog2Min.Channel;
                       TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.Modified);
                     }
                     //then send the announcement that we are about to record this recording in 2 minutes from now
