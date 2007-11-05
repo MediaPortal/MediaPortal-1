@@ -1032,8 +1032,14 @@ namespace MediaPortal.Music.Database
     {
       try
       {
+        string strArtist = aArtistName;
+        DatabaseUtility.RemoveInvalidChars(ref strArtist);
+
+        string strAlbum = aAlbumName;
+        DatabaseUtility.RemoveInvalidChars(ref strAlbum);
+
         string strSQL;
-        strSQL = String.Format("select * from albuminfo where strArtist like '{0}%' and strAlbum  like '{1}'", aArtistName, aAlbumName);
+        strSQL = String.Format("select * from albuminfo where strArtist like '{0}%' and strAlbum  like '{1}'", strArtist, strAlbum);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count != 0)
@@ -1108,8 +1114,11 @@ namespace MediaPortal.Music.Database
         if (MusicDbClient == null)
           return -1;
 
+        string strArtist = aArtist;
+        DatabaseUtility.RemoveInvalidChars(ref strArtist);
+
         string strSQL;
-        strSQL = String.Format("select DISTINCT artist.idArtist from artist where artist.strArtist LIKE '{0}'", aArtist);
+        strSQL = String.Format("select DISTINCT artist.idArtist from artist where artist.strArtist LIKE '{0}'", strArtist);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count == 0)
