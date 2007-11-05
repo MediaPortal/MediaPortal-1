@@ -284,7 +284,7 @@ namespace MediaPortal
                                   ((byte)(0)));
         this.cvsLabel.Location = new System.Drawing.Point(24, 79);
         this.cvsLabel.Name = "cvsLabel";
-        this.cvsLabel.Size = new System.Drawing.Size(180, 16);
+        this.cvsLabel.Size = new System.Drawing.Size(200, 16);
         this.cvsLabel.TabIndex = 5;
         this.cvsLabel.Text = "";
         this.cvsLabel.TextAlign = System.Drawing.ContentAlignment.TopLeft;
