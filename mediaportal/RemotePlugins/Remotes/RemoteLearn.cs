@@ -301,13 +301,18 @@ namespace MediaPortal.InputDevices
       {
 
         doc = new XmlDocument();
-        string path = "InputDeviceMappings\\defaults\\" + xmlFile;
+        string path = Config.GetFile(Config.Dir.CustomInputDefault, xmlFile);
 
         if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
-          path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
+        {
+            path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
+            Log.Info("RemoteLearning Path problem 1 - " + path);
+        }
         if (!File.Exists(path))
         {
           MessageBox.Show("Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults", "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          Log.Info("RemoteLearning Path problem 2 - " + path);
+          this.Close();
           return;
         }
 
@@ -340,7 +345,7 @@ namespace MediaPortal.InputDevices
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        Log.Info(ex.Message);
         File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile));
         LoadMapping(m_sRemoteModel + ".xml", true);
       }
