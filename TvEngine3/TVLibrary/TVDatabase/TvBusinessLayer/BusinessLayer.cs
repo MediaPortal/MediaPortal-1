@@ -626,8 +626,8 @@ namespace TvDatabase
         majorChannel = atscChannel.MajorChannel;
         minorChannel = atscChannel.MinorChannel;
         channelNumber = atscChannel.PhysicalChannel;
-        videoPid = atscChannel.VideoPid;
-        audioPid = atscChannel.AudioPid;
+        //videoPid = atscChannel.VideoPid;
+        //audioPid = atscChannel.AudioPid;
         modulation = (int)atscChannel.ModulationType;
         channelType = 1;
       }
@@ -749,8 +749,8 @@ namespace TvDatabase
         majorChannel = atscChannel.MajorChannel;
         minorChannel = atscChannel.MinorChannel;
         channelNumber = atscChannel.PhysicalChannel;
-        videoPid = atscChannel.VideoPid;
-        audioPid = atscChannel.AudioPid;
+        //videoPid = atscChannel.VideoPid;
+        //audioPid = atscChannel.AudioPid;
         modulation = (int)atscChannel.ModulationType;
         channelType = 1;
       }

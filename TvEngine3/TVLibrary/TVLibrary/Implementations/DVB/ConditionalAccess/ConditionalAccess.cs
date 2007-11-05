@@ -48,6 +48,7 @@ namespace TvLibrary.Implementations.DVB
     Dictionary<int, ConditionalAccessContext> _mapSubChannels;
     GenericBDAS _genericbdas = null;
     WinTvCiModule _winTvCiModule = null;
+    GenericATSC _genericatsc = null;
     #endregion
 
     //ctor
@@ -106,6 +107,16 @@ namespace TvLibrary.Implementations.DVB
           return;
         }
         _technoTrend = null;
+
+
+        Log.Log.WriteFile("Check for Generic ATSC QAM card");
+        _genericatsc = new GenericATSC(tunerFilter, analyzerFilter);
+        if (_genericatsc.IsGenericATSC)
+        {
+          Log.Log.WriteFile("Generic ATSC QAM card detected");
+          return;
+        }
+        _genericatsc = null;
 
         Log.Log.WriteFile("Check for Hauppauge");
         _hauppauge = new Hauppauge(tunerFilter, analyzerFilter);
@@ -611,14 +622,17 @@ namespace TvLibrary.Implementations.DVB
       {
         if (channel.ModulationType == ModulationType.Mod256Qam)
         {
+          if (_genericatsc != null)
+          {
+            Log.Log.Info("Setting Generic ATSC modulation to 256QAM");
+            _genericatsc.SetXPATSCQam(channel);
+            //we set _hauppauge to null so we don't set the tuner properties twice
+            _hauppauge = null;
+          }
           if (_hauppauge != null)
           {
             Log.Log.Info("Setting ATSC BDA Digital Demodulator to 256QAM");
             _hauppauge.SetATSCQAM(channel);
-          }
-          else
-          {
-            Log.Log.Info("ATSC QAM card does not support BDA Digital Demodulator setting, continuing...");
           }
         }
       }

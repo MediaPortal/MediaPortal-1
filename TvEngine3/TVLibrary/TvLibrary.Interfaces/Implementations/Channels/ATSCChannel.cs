@@ -198,8 +198,8 @@ namespace TvLibrary.Channels
       if (ch.ModulationType != ModulationType) return false;
       if (ch.PhysicalChannel != PhysicalChannel) return false;
       if (ch.SymbolRate != SymbolRate) return false;
-      if (ch.AudioPid != AudioPid) return false;
-      if (ch.VideoPid != VideoPid) return false;
+      //if (ch.AudioPid != AudioPid) return false;
+      //if (ch.VideoPid != VideoPid) return false;
       return true;
     }
     /// <summary>
