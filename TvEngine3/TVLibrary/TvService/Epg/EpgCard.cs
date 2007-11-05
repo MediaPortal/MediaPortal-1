@@ -832,7 +832,7 @@ namespace TvService
         {
           if (lastProgram.StartTime == program.StartTime && lastProgram.EndTime == program.EndTime)
           {
-            Log.Error("Dupe skipped: Channel={0}, starttime={1}, endtime={2}", channel.DisplayName, program.StartTime.ToString(), program.EndTime);
+            //Log.Error("Dupe skipped: Channel={0}, starttime={1}, endtime={2}", channel.DisplayName, program.StartTime.ToString(), program.EndTime);
             continue;
           }
         }
