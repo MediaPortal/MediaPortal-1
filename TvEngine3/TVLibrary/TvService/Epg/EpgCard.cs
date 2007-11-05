@@ -795,6 +795,7 @@ namespace TvService
       Log.Epg("Epg: card:{0} :{1} {2}  lastUpdate:{3}", _user.CardId, channelNr, channel.Name, channel.LastGrabTime);
 
       //IList progs = channel.ReferringProgram();
+      /*
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TvDatabase.Program));
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
       sb.AddOrderByField(false, "starttime");
@@ -807,8 +808,14 @@ namespace TvService
       {
         TvDatabase.Program p = (TvDatabase.Program)programsInDbs[0];
         lastProgram = p.EndTime;
-      }
+      }*/
+      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(TvDatabase.Program));
+      sb.AddConstraint(Operator.Equals,"idChannel",channel.IdChannel);
+      SqlStatement stmt=sb.GetStatement();
+      stmt.Execute();
 
+      string lastTitle = "";
+      EpgProgram lastProgram = null;
       foreach (EpgProgram program in epgChannel.Programs)
       {
         if (_state != EpgState.Updating)
@@ -821,7 +828,15 @@ namespace TvService
           Log.Epg("Epg: card:{0} updating card not idle", _user.CardId);
           return false;
         }
-        if (program.EndTime <= lastProgram) continue;
+        if (lastProgram != null)
+        {
+          if (lastProgram.StartTime == program.StartTime && lastProgram.EndTime == program.EndTime)
+          {
+            Log.Error("Dupe skipped: Channel={0}, starttime={1}, endtime={2}", channel.DisplayName, program.StartTime.ToString(), program.EndTime);
+            continue;
+          }
+        }
+        //if (program.EndTime <= lastProgram) continue;
         string title = "";
         string description = "";
         string genre = "";
@@ -869,6 +884,7 @@ namespace TvService
         if (description == null) description = "";
         if (genre == null) genre = "";
         if (classification == null) classification = "";
+
         NameValueCollection values = new NameValueCollection();
         values.Add("%TITLE%", title);
         values.Add("%DESCRIPTION%", description);
@@ -880,7 +896,8 @@ namespace TvService
         values.Add("%NEWLINE%", Environment.NewLine);
         TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, EvalTemplate(_titleTemplate,values), EvalTemplate(_descriptionTemplate,values), genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentalRating);
         newProgram.Persist();
-        lastProgram = program.EndTime;
+        lastProgram = program;
+        //lastProgram = program.EndTime;
 
       }//foreach (EpgProgram program in epgChannel.Programs)
 
