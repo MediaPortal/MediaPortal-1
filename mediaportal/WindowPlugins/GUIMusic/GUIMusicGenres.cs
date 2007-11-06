@@ -791,7 +791,6 @@ namespace MediaPortal.GUI.Music
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
       string strObjects = string.Empty;
-      TimeSpan totalPlayingTime = new TimeSpan();
 
       List<Song> songs = handler.Execute();
       if (songs.Count > 0)    // some songs in there?
@@ -847,8 +846,6 @@ namespace MediaPortal.GUI.Music
         item.Duration = tag.Duration;
         tag.TimesPlayed = song.TimesPlayed;
 
-        if (item.Duration > 0)
-          totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, item.Duration));
         item.Rating = song.Rating;
         item.Year = song.Year;
         item.AlbumInfoTag = song;
@@ -861,13 +858,6 @@ namespace MediaPortal.GUI.Music
       string strSelectedItem = m_history.Get(m_strDirectory);
       int iItem = 0;
 
-      int iTotalItems = facadeView.Count;
-      if (facadeView.Count > 0)
-      {
-        GUIListItem rootItem = facadeView[0];
-        if (rootItem.Label == "..") iTotalItems--;
-      }
-
       for (int i = 0; i < facadeView.Count; ++i)
       {
         GUIListItem item = facadeView[i];
@@ -878,13 +868,6 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      //set object count label
-      if (totalPlayingTime.Seconds > 0)
-        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
-      else
-        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
-
-      SetLabels();
       OnSort();
       for (int i = 0; i < facadeView.Count; ++i)
       {

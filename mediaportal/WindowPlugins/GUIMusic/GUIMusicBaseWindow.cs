@@ -858,6 +858,7 @@ namespace MediaPortal.GUI.Music
     protected virtual void SetLabels()
     {
       MusicSort.SortMethod method = CurrentSortMethod;
+      TimeSpan totalPlayingTime = new TimeSpan();
 
       for (int i = 0; i < facadeView.Count; ++i)
       {
@@ -918,6 +919,9 @@ namespace MediaPortal.GUI.Music
                   duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
                   break;
               }
+
+              if (tag.Duration > 0)
+                totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
             }
             else
             {
@@ -927,8 +931,11 @@ namespace MediaPortal.GUI.Music
           else
           {
             duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+
+            if (tag.Duration > 0)
+              totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
           }
-          
+
           string rating = tag.Rating.ToString();
           if (tag.Track <= 0)
             trackNr = "";
@@ -940,8 +947,17 @@ namespace MediaPortal.GUI.Music
             date = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           ;
 
-          string line1 = _sortTags1[(int)method];
-          string line2 = _sortTags2[(int)method];
+          string line1, line2;
+          if (method == MusicSort.SortMethod.AlbumArtist)
+          {
+            line1 = _sortTags1[(int)MusicSort.SortMethod.Artist];   // Use Artist sort string for AlbumArtist
+            line2 = _sortTags2[(int)MusicSort.SortMethod.Artist];
+          }
+          else
+          {
+            line1 = _sortTags1[(int)method];
+            line2 = _sortTags2[(int)method];
+          }
           line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%track%", trackNr);
           line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%track%", trackNr);
           line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filesize%", fileSize);
@@ -1048,6 +1064,19 @@ namespace MediaPortal.GUI.Music
         }
       }*/
       }
+
+      int iTotalItems = facadeView.Count;
+      if (facadeView.Count > 0)
+      {
+        GUIListItem rootItem = facadeView[0];
+        if (rootItem.Label == "..") iTotalItems--;
+      }
+
+      //set object count label
+      if (totalPlayingTime.TotalSeconds > 0)
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
+      else
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
     }
 
     protected void SwitchView()

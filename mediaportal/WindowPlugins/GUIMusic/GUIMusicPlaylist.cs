@@ -775,7 +775,7 @@ namespace MediaPortal.GUI.Music
           }
 
           //set object count label
-          if (totalPlayingTime.Seconds > 0)
+          if (totalPlayingTime.TotalSeconds > 0)
             GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
           else
             GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));

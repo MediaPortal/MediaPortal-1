@@ -381,8 +381,6 @@ namespace MediaPortal.GUI.Music
         currentFolder = strNewDirectory;
         GUIControl.ClearControl(GetID, facadeView.GetID);
 
-        TimeSpan totalPlayingTime = new TimeSpan();
-
         List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
 
         string strSelectedItem = m_history.Get(currentFolder);
@@ -390,12 +388,6 @@ namespace MediaPortal.GUI.Music
         OnRetrieveMusicInfo(ref itemlist, false);
         foreach (GUIListItem item in itemlist)
         {
-          MusicTag tag = item.MusicTag as MusicTag;
-          if (tag != null)
-          {
-            if (tag.Duration > 0)
-              totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
-          }
           item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
           facadeView.Add(item);
@@ -422,20 +414,6 @@ namespace MediaPortal.GUI.Music
             break;
           }
         }
-
-        int iTotalItems = itemlist.Count;
-        if (itemlist.Count > 0)
-        {
-          GUIListItem rootItem = itemlist[0];
-          if (rootItem.Label == "..")
-            iTotalItems--;
-        }
-
-        //set object count label
-        if (totalPlayingTime.Seconds > 0)
-          GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
-        else
-          GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
 
         //set selected item
         if (m_iItemSelected >= 0 && !itemSelected)

@@ -776,7 +776,7 @@ namespace MediaPortal.Util
       string strObjects = string.Empty;
 
       if (iTotalItems == 1)
-        strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1063),
+        strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(179),
           MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Song
       else
         strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
