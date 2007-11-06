@@ -123,8 +123,8 @@ namespace TvPlugin
     {
       //ServiceProvider services = GlobalServiceProvider.Instance;
 
-
-      MediaPortal.GUI.Library.Log.Info("TVHome:ctor");
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
+      MediaPortal.GUI.Library.Log.Info("TVHome V"+versionInfo.FileVersion+":ctor");
       try
       {
         m_navigator = new ChannelNavigator();

@@ -116,8 +116,8 @@ namespace TvService
           // applyProcessPriority can generate an exception when we cannot connect to the database
         }
       }
-
-      Log.WriteFile("TV service starting");
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      Log.WriteFile("TV service V"+versionInfo.FileVersion+" starting");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       Process currentProcess = Process.GetCurrentProcess();
