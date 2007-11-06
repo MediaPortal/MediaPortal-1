@@ -131,40 +131,47 @@ namespace TvPlugin
 
       if (g_Player.IsTV && g_Player.Playing)
       {
-        IList schedulesList = Schedule.ListAll();
-        foreach (Schedule rec in schedulesList)
+        try
         {
-          //Check if alerady notified user
-          foreach (Schedule notifiedRec in _notifiedRecordings)
+          IList schedulesList = Schedule.ListAll();
+          foreach (Schedule rec in schedulesList)
           {
-            if (rec == notifiedRec)
+            //Check if alerady notified user
+            foreach (Schedule notifiedRec in _notifiedRecordings)
             {
-              return;
-
-            }
-          }
-          //Check if timing it's time 
-          DateTime start = rec.StartTime.AddMinutes(-rec.PreRecordInterval);
-          DateTime preNotifyRec = preNotifySecs;
-          if ( preNotifySecs < start ) { preNotifyRec = start; };
-          if (preNotifySecs > start && rec.StartTime > DateTime.Now)
-          {
-            //check if freecard is available. 
-            if ((int)TVHome.TvServer.GetChannelState(rec.IdChannel, TVHome.Card.User) == 0) //not tunnable
-            {
-              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-              if (pDlgOK != null)
+              if (rec == notifiedRec)
               {
-                _notifiedRecordings.Add(rec);
-                pDlgOK.SetHeading(605);//my tv
-                pDlgOK.SetLine(1, rec.ProgramName);
-                pDlgOK.SetLine(2, "is scheduled to begin recording shortly.");
-                pDlgOK.SetLine(3, "Your TV Viewing might be disrupted");
-                pDlgOK.SetLine(4, "since no free card is available.");
-                pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+                return;
+
+              }
+            }
+            //Check if timing it's time 
+            DateTime start = rec.StartTime.AddMinutes(-rec.PreRecordInterval);
+            DateTime preNotifyRec = preNotifySecs;
+            if (preNotifySecs < start) { preNotifyRec = start; };
+            if (preNotifySecs > start && rec.StartTime > DateTime.Now)
+            {
+              //check if freecard is available. 
+              if ((int)TVHome.TvServer.GetChannelState(rec.IdChannel, TVHome.Card.User) == 0) //not tunnable
+              {
+                GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                if (pDlgOK != null)
+                {
+                  _notifiedRecordings.Add(rec);
+                  pDlgOK.SetHeading(605);//my tv
+                  pDlgOK.SetLine(1, rec.ProgramName);
+                  pDlgOK.SetLine(2, "is scheduled to begin recording shortly.");
+                  pDlgOK.SetLine(3, "Your TV Viewing might be disrupted");
+                  pDlgOK.SetLine(4, "since no free card is available.");
+                  pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+                }
               }
             }
           }
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("Tv NotifyManager: Exception at recording notification {0}", ex.ToString());
         }
       }
     }
