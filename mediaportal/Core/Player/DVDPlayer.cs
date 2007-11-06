@@ -1120,11 +1120,11 @@ namespace MediaPortal.Player
             _speed = value;
             if (_speed >= 1)
             {
-              _dvdCtrl.PlayForwards((double)_speed, DvdCmdFlags.None, out _cmdOption);
+              _dvdCtrl.PlayForwards((double)_speed, DvdCmdFlags.Flush, out _cmdOption);
             }
             else if (_speed < 0)
             {
-              _dvdCtrl.PlayBackwards((double)-_speed, DvdCmdFlags.None, out _cmdOption);
+              _dvdCtrl.PlayBackwards((double)-_speed, DvdCmdFlags.Flush, out _cmdOption);
             }
           }
           catch (Exception)
