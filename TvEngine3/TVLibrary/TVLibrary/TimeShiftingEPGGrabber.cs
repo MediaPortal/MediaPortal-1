@@ -106,7 +106,20 @@ namespace TvLibrary
     /// <returns></returns>
     public override int OnEpgReceived()
     {
-      _epg =new List<EpgChannel>(_card.Epg);
+      List<EpgChannel> grabbedEpg = null;
+      try
+      {
+        grabbedEpg = _card.Epg;
+      }
+      catch (Exception)
+      {
+      }
+      if (grabbedEpg == null)
+      {
+        Log.Log.Epg("TimeshiftingEPG: No epg received.");
+        return 0;
+      }
+      _epg =new List<EpgChannel>(grabbedEpg);
       Log.Log.Epg("TimeshiftingEPG: OnEPGReceived got {0} channels",_epg.Count);
       if (_epg.Count == 0)
         Log.Log.Epg("TimeshiftingEPG: No epg received.");
