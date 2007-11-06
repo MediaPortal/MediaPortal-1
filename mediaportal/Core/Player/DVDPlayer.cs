@@ -1217,7 +1217,7 @@ namespace MediaPortal.Player
             try
             {
 
-              int hr = _dvdCtrl.PlayAtTime(timeCode, DvdCmdFlags.Block, out _cmdOption);
+              int hr = _dvdCtrl.PlayAtTime(timeCode, DvdCmdFlags.Block|DvdCmdFlags.Flush, out _cmdOption);
               if (hr != 0)
               {
                 if (((uint)hr) == VFW_E_DVD_OPERATION_INHIBITED) Log.Info("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) not allowed at this point", hours, minutes, seconds);
@@ -1638,7 +1638,7 @@ namespace MediaPortal.Player
                 return false;
 
               Speed = 1;
-              int hr = _dvdCtrl.PlayNextChapter(DvdCmdFlags.SendEvents, out _cmdOption);
+              int hr = _dvdCtrl.PlayNextChapter(DvdCmdFlags.SendEvents|DvdCmdFlags.Flush, out _cmdOption);
               if (hr < 0)
               {
                 Log.Error("!!! PlayNextChapter error : 0x" + hr.ToString("x"));
@@ -1661,7 +1661,7 @@ namespace MediaPortal.Player
                 return false;
 
               Speed = 1;
-              int hr = _dvdCtrl.PlayPrevChapter(DvdCmdFlags.SendEvents, out _cmdOption);
+              int hr = _dvdCtrl.PlayPrevChapter(DvdCmdFlags.SendEvents | DvdCmdFlags.Flush, out _cmdOption);
               if (hr < 0)
               {
                 Log.Error("DVDPlayer:!!! PlayPrevChapter error : 0x" + hr.ToString("x"));
