@@ -911,6 +911,8 @@ namespace SetupTv.Sections
                 dvbsChannel.Pilot = (Pilot)pilot;
                 dvbsChannel.RollOff = (Rolloff)rollOff;
                 dvbsChannel.LogicalChannelNumber = channelNumber;
+                dvbsChannel.VideoPid = videoPid;
+                dvbsChannel.AudioPid = audioPid;
                 layer.AddTuningDetails(dbChannel, dvbsChannel);
                 break;
               case 4: //DVBTChannel

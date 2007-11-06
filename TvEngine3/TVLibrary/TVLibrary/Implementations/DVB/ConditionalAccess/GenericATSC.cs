@@ -19,12 +19,6 @@
  *
  */
 
-/*
- * I have only tested this with Terratec Cinergy DVB-S 1200.
- * However, it should work with other Philips SAA-7146 based cards as well.
- * Use this at your own risk!!
- * /Digi
- */
 using System;
 using System.Collections.Generic;
 using System.Text;

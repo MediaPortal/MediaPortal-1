@@ -6,19 +6,15 @@ using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Text;
 using System.Globalization;
-
-//using System.Data.OleDb;
 using TvDatabase;
 using Gentle.Common;
 using Gentle.Framework;
 using MySql.Data.MySqlClient;
-
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Channels;
 using TvLibrary.Log;
 using TvLibrary;
-
 using DirectShowLib;
 using DirectShowLib.BDA;
 
@@ -346,8 +342,8 @@ namespace TvDatabase
             atscChannel.ServiceId = detail.ServiceId;
             atscChannel.SymbolRate = detail.Symbolrate;
             atscChannel.TransportId = detail.TransportId;
-            atscChannel.AudioPid = detail.AudioPid;
             atscChannel.VideoPid = detail.VideoPid;
+            atscChannel.AudioPid = detail.AudioPid;
             atscChannel.ModulationType = (ModulationType)detail.Modulation;
             return atscChannel;
           case 2: //DVBCChannel
@@ -390,6 +386,8 @@ namespace TvDatabase
             dvbsChannel.Pilot = (Pilot)detail.Pilot;
             dvbsChannel.RollOff = (Rolloff)detail.RollOff;
             dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
+            dvbsChannel.VideoPid = detail.VideoPid;
+            dvbsChannel.AudioPid = detail.AudioPid;
             return dvbsChannel;
           case 4: //DVBTChannel
             DVBTChannel dvbtChannel = new DVBTChannel();
@@ -405,8 +403,8 @@ namespace TvDatabase
             dvbtChannel.Provider = detail.Provider;
             dvbtChannel.ServiceId = detail.ServiceId;
             dvbtChannel.TransportId = detail.TransportId;
-            //dvbtChannel.VideoPid = detail.VideoPid;
-            //dvbtChannel.AudioPid = detail.AudioPid;
+            dvbtChannel.VideoPid = detail.VideoPid;
+            dvbtChannel.AudioPid = detail.AudioPid;
             dvbtChannel.LogicalChannelNumber = detail.ChannelNumber;
             return dvbtChannel;
         }
@@ -499,6 +497,8 @@ namespace TvDatabase
             dvbsChannel.Pilot = (Pilot)detail.Pilot;
             dvbsChannel.RollOff = (Rolloff)detail.RollOff;
             dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
+            dvbsChannel.VideoPid = detail.VideoPid;
+            dvbsChannel.AudioPid = detail.AudioPid;
             tvChannels.Add(dvbsChannel);
             break;
           case 4: //DVBTChannel
@@ -516,8 +516,8 @@ namespace TvDatabase
             dvbtChannel.ServiceId = detail.ServiceId;
             dvbtChannel.TransportId = detail.TransportId;
             dvbtChannel.LogicalChannelNumber = detail.ChannelNumber;
-            //dvbtChannel.VideoPid = detail.VideoPid;
-            //dvbtChannel.AudioPid = detail.AudioPid;
+            dvbtChannel.VideoPid = detail.VideoPid;
+            dvbtChannel.AudioPid = detail.AudioPid;
             tvChannels.Add(dvbtChannel);
             break;
         }

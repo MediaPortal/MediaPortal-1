@@ -59,12 +59,12 @@ namespace SetupTv.Sections
       this.label7 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
       this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.textBoxDVBSChannel = new System.Windows.Forms.TextBox();
+      this.label47 = new System.Windows.Forms.Label();
       this.comboBoxRollOff = new System.Windows.Forms.ComboBox();
       this.label36 = new System.Windows.Forms.Label();
       this.comboBoxPilot = new System.Windows.Forms.ComboBox();
       this.label35 = new System.Windows.Forms.Label();
-      this.comboBoxSatellite = new System.Windows.Forms.ComboBox();
-      this.label34 = new System.Windows.Forms.Label();
       this.comboBoxInnerFecRate = new System.Windows.Forms.ComboBox();
       this.label33 = new System.Windows.Forms.Label();
       this.comboBoxModulation = new System.Windows.Forms.ComboBox();
@@ -132,8 +132,10 @@ namespace SetupTv.Sections
       this.tabFMRadio = new System.Windows.Forms.TabPage();
       this.edFMFreq = new System.Windows.Forms.TextBox();
       this.label42 = new System.Windows.Forms.Label();
-      this.textBoxDVBSChannel = new System.Windows.Forms.TextBox();
-      this.label47 = new System.Windows.Forms.Label();
+      this.textBoxDVBSVideo = new System.Windows.Forms.TextBox();
+      this.label48 = new System.Windows.Forms.Label();
+      this.textBoxDVBSAudio = new System.Windows.Forms.TextBox();
+      this.label49 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -464,14 +466,16 @@ namespace SetupTv.Sections
       // 
       // tabPage4
       // 
+      this.tabPage4.Controls.Add(this.textBoxDVBSVideo);
+      this.tabPage4.Controls.Add(this.label48);
+      this.tabPage4.Controls.Add(this.textBoxDVBSAudio);
+      this.tabPage4.Controls.Add(this.label49);
       this.tabPage4.Controls.Add(this.textBoxDVBSChannel);
       this.tabPage4.Controls.Add(this.label47);
       this.tabPage4.Controls.Add(this.comboBoxRollOff);
       this.tabPage4.Controls.Add(this.label36);
       this.tabPage4.Controls.Add(this.comboBoxPilot);
       this.tabPage4.Controls.Add(this.label35);
-      this.tabPage4.Controls.Add(this.comboBoxSatellite);
-      this.tabPage4.Controls.Add(this.label34);
       this.tabPage4.Controls.Add(this.comboBoxInnerFecRate);
       this.tabPage4.Controls.Add(this.label33);
       this.tabPage4.Controls.Add(this.comboBoxModulation);
@@ -499,6 +503,23 @@ namespace SetupTv.Sections
       this.tabPage4.Text = "DVB-S";
       this.tabPage4.UseVisualStyleBackColor = true;
       // 
+      // textBoxDVBSChannel
+      // 
+      this.textBoxDVBSChannel.Location = new System.Drawing.Point(84, 8);
+      this.textBoxDVBSChannel.Name = "textBoxDVBSChannel";
+      this.textBoxDVBSChannel.Size = new System.Drawing.Size(130, 20);
+      this.textBoxDVBSChannel.TabIndex = 66;
+      this.textBoxDVBSChannel.Text = "0";
+      // 
+      // label47
+      // 
+      this.label47.AutoSize = true;
+      this.label47.Location = new System.Drawing.Point(10, 11);
+      this.label47.Name = "label47";
+      this.label47.Size = new System.Drawing.Size(49, 13);
+      this.label47.TabIndex = 67;
+      this.label47.Text = "Channel:";
+      // 
       // comboBoxRollOff
       // 
       this.comboBoxRollOff.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -510,7 +531,7 @@ namespace SetupTv.Sections
             ".25 Roll Off",
             ".35 Roll Off",
             "Max"});
-      this.comboBoxRollOff.Location = new System.Drawing.Point(275, 84);
+      this.comboBoxRollOff.Location = new System.Drawing.Point(276, 33);
       this.comboBoxRollOff.Name = "comboBoxRollOff";
       this.comboBoxRollOff.Size = new System.Drawing.Size(114, 21);
       this.comboBoxRollOff.TabIndex = 64;
@@ -518,7 +539,7 @@ namespace SetupTv.Sections
       // label36
       // 
       this.label36.AutoSize = true;
-      this.label36.Location = new System.Drawing.Point(226, 88);
+      this.label36.Location = new System.Drawing.Point(220, 37);
       this.label36.Name = "label36";
       this.label36.Size = new System.Drawing.Size(45, 13);
       this.label36.TabIndex = 65;
@@ -534,7 +555,7 @@ namespace SetupTv.Sections
             "Off",
             "On",
             "Max"});
-      this.comboBoxPilot.Location = new System.Drawing.Point(275, 57);
+      this.comboBoxPilot.Location = new System.Drawing.Point(276, 6);
       this.comboBoxPilot.Name = "comboBoxPilot";
       this.comboBoxPilot.Size = new System.Drawing.Size(114, 21);
       this.comboBoxPilot.TabIndex = 62;
@@ -542,40 +563,11 @@ namespace SetupTv.Sections
       // label35
       // 
       this.label35.AutoSize = true;
-      this.label35.Location = new System.Drawing.Point(226, 62);
+      this.label35.Location = new System.Drawing.Point(220, 11);
       this.label35.Name = "label35";
       this.label35.Size = new System.Drawing.Size(30, 13);
       this.label35.TabIndex = 63;
       this.label35.Text = "Pilot:";
-      // 
-      // comboBoxSatellite
-      // 
-      this.comboBoxSatellite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSatellite.FormattingEnabled = true;
-      this.comboBoxSatellite.Items.AddRange(new object[] {
-            "Default",
-            "Undefined",
-            "1/2",
-            "2/3",
-            "3/4",
-            "3/5",
-            "4/5",
-            "5/6",
-            "5/11",
-            "7/8"});
-      this.comboBoxSatellite.Location = new System.Drawing.Point(86, 7);
-      this.comboBoxSatellite.Name = "comboBoxSatellite";
-      this.comboBoxSatellite.Size = new System.Drawing.Size(303, 21);
-      this.comboBoxSatellite.TabIndex = 60;
-      // 
-      // label34
-      // 
-      this.label34.AutoSize = true;
-      this.label34.Location = new System.Drawing.Point(12, 10);
-      this.label34.Name = "label34";
-      this.label34.Size = new System.Drawing.Size(47, 13);
-      this.label34.TabIndex = 61;
-      this.label34.Text = "Satellite:";
       // 
       // comboBoxInnerFecRate
       // 
@@ -592,15 +584,15 @@ namespace SetupTv.Sections
             "5/6",
             "5/11",
             "7/8"});
-      this.comboBoxInnerFecRate.Location = new System.Drawing.Point(87, 266);
+      this.comboBoxInnerFecRate.Location = new System.Drawing.Point(85, 266);
       this.comboBoxInnerFecRate.Name = "comboBoxInnerFecRate";
-      this.comboBoxInnerFecRate.Size = new System.Drawing.Size(134, 21);
+      this.comboBoxInnerFecRate.Size = new System.Drawing.Size(129, 21);
       this.comboBoxInnerFecRate.TabIndex = 9;
       // 
       // label33
       // 
       this.label33.AutoSize = true;
-      this.label33.Location = new System.Drawing.Point(12, 269);
+      this.label33.Location = new System.Drawing.Point(10, 269);
       this.label33.Name = "label33";
       this.label33.Size = new System.Drawing.Size(75, 13);
       this.label33.TabIndex = 59;
@@ -647,15 +639,15 @@ namespace SetupTv.Sections
             "Mod8psk2",
             "ModDirectTV",
             "ModMax"});
-      this.comboBoxModulation.Location = new System.Drawing.Point(86, 240);
+      this.comboBoxModulation.Location = new System.Drawing.Point(84, 240);
       this.comboBoxModulation.Name = "comboBoxModulation";
-      this.comboBoxModulation.Size = new System.Drawing.Size(134, 21);
+      this.comboBoxModulation.Size = new System.Drawing.Size(129, 21);
       this.comboBoxModulation.TabIndex = 8;
       // 
       // label32
       // 
       this.label32.AutoSize = true;
-      this.label32.Location = new System.Drawing.Point(12, 245);
+      this.label32.Location = new System.Drawing.Point(10, 245);
       this.label32.Name = "label32";
       this.label32.Size = new System.Drawing.Size(62, 13);
       this.label32.TabIndex = 57;
@@ -663,16 +655,16 @@ namespace SetupTv.Sections
       // 
       // textBoxSwitch
       // 
-      this.textBoxSwitch.Location = new System.Drawing.Point(86, 159);
+      this.textBoxSwitch.Location = new System.Drawing.Point(84, 159);
       this.textBoxSwitch.Name = "textBoxSwitch";
-      this.textBoxSwitch.Size = new System.Drawing.Size(134, 20);
+      this.textBoxSwitch.Size = new System.Drawing.Size(129, 20);
       this.textBoxSwitch.TabIndex = 5;
       this.textBoxSwitch.Text = "11700000";
       // 
       // label9
       // 
       this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(12, 162);
+      this.label9.Location = new System.Drawing.Point(10, 162);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(63, 13);
       this.label9.TabIndex = 55;
@@ -690,15 +682,15 @@ namespace SetupTv.Sections
             "Level 1 B/A",
             "Level 1 A/B",
             "Level 1 B/B"});
-      this.comboBoxDisEqc.Location = new System.Drawing.Point(86, 213);
+      this.comboBoxDisEqc.Location = new System.Drawing.Point(84, 213);
       this.comboBoxDisEqc.Name = "comboBoxDisEqc";
-      this.comboBoxDisEqc.Size = new System.Drawing.Size(134, 21);
+      this.comboBoxDisEqc.Size = new System.Drawing.Size(129, 21);
       this.comboBoxDisEqc.TabIndex = 7;
       // 
       // label10
       // 
       this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(12, 218);
+      this.label10.Location = new System.Drawing.Point(10, 218);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(44, 13);
       this.label10.TabIndex = 53;
@@ -713,15 +705,15 @@ namespace SetupTv.Sections
             "Vertical",
             "CircularL",
             "CircularR"});
-      this.comboBoxPol.Location = new System.Drawing.Point(86, 185);
+      this.comboBoxPol.Location = new System.Drawing.Point(84, 185);
       this.comboBoxPol.Name = "comboBoxPol";
-      this.comboBoxPol.Size = new System.Drawing.Size(134, 21);
+      this.comboBoxPol.Size = new System.Drawing.Size(129, 21);
       this.comboBoxPol.TabIndex = 6;
       // 
       // label11
       // 
       this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(12, 187);
+      this.label11.Location = new System.Drawing.Point(10, 187);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(64, 13);
       this.label11.TabIndex = 51;
@@ -729,16 +721,16 @@ namespace SetupTv.Sections
       // 
       // textBox1
       // 
-      this.textBox1.Location = new System.Drawing.Point(86, 135);
+      this.textBox1.Location = new System.Drawing.Point(84, 135);
       this.textBox1.Name = "textBox1";
-      this.textBox1.Size = new System.Drawing.Size(134, 20);
+      this.textBox1.Size = new System.Drawing.Size(129, 20);
       this.textBox1.TabIndex = 4;
       this.textBox1.Text = "22000";
       // 
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(12, 138);
+      this.label12.Location = new System.Drawing.Point(10, 138);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(59, 13);
       this.label12.TabIndex = 49;
@@ -746,40 +738,40 @@ namespace SetupTv.Sections
       // 
       // textBox2
       // 
-      this.textBox2.Location = new System.Drawing.Point(86, 111);
+      this.textBox2.Location = new System.Drawing.Point(84, 111);
       this.textBox2.Name = "textBox2";
-      this.textBox2.Size = new System.Drawing.Size(134, 20);
+      this.textBox2.Size = new System.Drawing.Size(129, 20);
       this.textBox2.TabIndex = 3;
       this.textBox2.Text = "-1";
       // 
       // textBox3
       // 
-      this.textBox3.Location = new System.Drawing.Point(86, 85);
+      this.textBox3.Location = new System.Drawing.Point(84, 85);
       this.textBox3.Name = "textBox3";
-      this.textBox3.Size = new System.Drawing.Size(134, 20);
+      this.textBox3.Size = new System.Drawing.Size(129, 20);
       this.textBox3.TabIndex = 2;
       this.textBox3.Text = "-1";
       // 
       // textBox4
       // 
-      this.textBox4.Location = new System.Drawing.Point(86, 59);
+      this.textBox4.Location = new System.Drawing.Point(84, 59);
       this.textBox4.Name = "textBox4";
-      this.textBox4.Size = new System.Drawing.Size(134, 20);
+      this.textBox4.Size = new System.Drawing.Size(129, 20);
       this.textBox4.TabIndex = 1;
       this.textBox4.Text = "-1";
       // 
       // textBox5
       // 
-      this.textBox5.Location = new System.Drawing.Point(86, 33);
+      this.textBox5.Location = new System.Drawing.Point(84, 33);
       this.textBox5.Name = "textBox5";
-      this.textBox5.Size = new System.Drawing.Size(134, 20);
+      this.textBox5.Size = new System.Drawing.Size(129, 20);
       this.textBox5.TabIndex = 0;
       this.textBox5.Text = "11097000";
       // 
       // label13
       // 
       this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(12, 88);
+      this.label13.Location = new System.Drawing.Point(10, 88);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(64, 13);
       this.label13.TabIndex = 44;
@@ -788,7 +780,7 @@ namespace SetupTv.Sections
       // label14
       // 
       this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(12, 115);
+      this.label14.Location = new System.Drawing.Point(10, 115);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(55, 13);
       this.label14.TabIndex = 43;
@@ -797,7 +789,7 @@ namespace SetupTv.Sections
       // label15
       // 
       this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(12, 62);
+      this.label15.Location = new System.Drawing.Point(10, 62);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(59, 13);
       this.label15.TabIndex = 42;
@@ -806,7 +798,7 @@ namespace SetupTv.Sections
       // label16
       // 
       this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(12, 33);
+      this.label16.Location = new System.Drawing.Point(10, 33);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(60, 13);
       this.label16.TabIndex = 41;
@@ -1273,22 +1265,39 @@ namespace SetupTv.Sections
       this.label42.TabIndex = 8;
       this.label42.Text = "Frequency:";
       // 
-      // textBoxDVBSChannel
+      // textBoxDVBSVideo
       // 
-      this.textBoxDVBSChannel.Location = new System.Drawing.Point(275, 33);
-      this.textBoxDVBSChannel.Name = "textBoxDVBSChannel";
-      this.textBoxDVBSChannel.Size = new System.Drawing.Size(114, 20);
-      this.textBoxDVBSChannel.TabIndex = 66;
-      this.textBoxDVBSChannel.Text = "0";
+      this.textBoxDVBSVideo.Location = new System.Drawing.Point(276, 60);
+      this.textBoxDVBSVideo.Name = "textBoxDVBSVideo";
+      this.textBoxDVBSVideo.Size = new System.Drawing.Size(114, 20);
+      this.textBoxDVBSVideo.TabIndex = 69;
+      this.textBoxDVBSVideo.Text = "-1";
       // 
-      // label47
+      // label48
       // 
-      this.label47.AutoSize = true;
-      this.label47.Location = new System.Drawing.Point(226, 36);
-      this.label47.Name = "label47";
-      this.label47.Size = new System.Drawing.Size(49, 13);
-      this.label47.TabIndex = 67;
-      this.label47.Text = "Channel:";
+      this.label48.AutoSize = true;
+      this.label48.Location = new System.Drawing.Point(220, 64);
+      this.label48.Name = "label48";
+      this.label48.Size = new System.Drawing.Size(52, 13);
+      this.label48.TabIndex = 71;
+      this.label48.Text = "VideoPid:";
+      // 
+      // textBoxDVBSAudio
+      // 
+      this.textBoxDVBSAudio.Location = new System.Drawing.Point(276, 84);
+      this.textBoxDVBSAudio.Name = "textBoxDVBSAudio";
+      this.textBoxDVBSAudio.Size = new System.Drawing.Size(114, 20);
+      this.textBoxDVBSAudio.TabIndex = 68;
+      this.textBoxDVBSAudio.Text = "-1";
+      // 
+      // label49
+      // 
+      this.label49.AutoSize = true;
+      this.label49.Location = new System.Drawing.Point(220, 87);
+      this.label49.Name = "label49";
+      this.label49.Size = new System.Drawing.Size(52, 13);
+      this.label49.TabIndex = 70;
+      this.label49.Text = "AudioPid:";
       // 
       // FormEditChannel
       // 
@@ -1397,8 +1406,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label33;
     private System.Windows.Forms.ComboBox comboBoxModulation;
     private System.Windows.Forms.Label label32;
-    private System.Windows.Forms.ComboBox comboBoxSatellite;
-    private System.Windows.Forms.Label label34;
     private System.Windows.Forms.ComboBox comboBoxRollOff;
     private System.Windows.Forms.Label label36;
     private System.Windows.Forms.ComboBox comboBoxPilot;
@@ -1430,5 +1437,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label46;
     private System.Windows.Forms.TextBox textBoxDVBSChannel;
     private System.Windows.Forms.Label label47;
+    private System.Windows.Forms.TextBox textBoxDVBSVideo;
+    private System.Windows.Forms.Label label48;
+    private System.Windows.Forms.TextBox textBoxDVBSAudio;
+    private System.Windows.Forms.Label label49;
   }
 }
