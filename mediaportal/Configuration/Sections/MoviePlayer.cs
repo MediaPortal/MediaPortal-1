@@ -188,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
                 H264DecFilterFound = true;
               }
             }
-            if (H264DecFilterFound) videoCodec = "CoreAVC Video Decoder";
+            if (H264DecFilterFound) h264videoCodec = "CoreAVC Video Decoder";
           }
         }
         audioCodecComboBox.Text = audioCodec;
