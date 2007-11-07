@@ -49,19 +49,23 @@
   <ItemGroup>
     <Reference Include="DaggerLib, Version=1.0.2856.27998, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Dokumente und Einstellungen\kwa5do\Desktop\DSGraphEdit\DSGraphEdit\bin\Release\DaggerLib.dll</HintPath>
+      <HintPath>libs\DaggerLib.dll</HintPath>
     </Reference>
-    <Reference Include="DaggerLib.DSGraphEdit, Version=1.0.2866.20485, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DaggerLib.DSGraphEdit, Version=1.0.2866.28351, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Dokumente und Einstellungen\kwa5do\Desktop\DSGraphEdit\DSGraphEdit\bin\Release\DaggerLib.DSGraphEdit.dll</HintPath>
+      <HintPath>libs\DaggerLib.DSGraphEdit.dll</HintPath>
     </Reference>
     <Reference Include="DirectShowLib-2005, Version=2.0.0.0, Culture=neutral, PublicKeyToken=67e7b740cdfc2d3f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Dokumente und Einstellungen\kwa5do\Desktop\DSGraphEdit\DSGraphEdit\bin\Release\DirectShowLib-2005.dll</HintPath>
+      <HintPath>libs\DirectShowLib-2005.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaFoundation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=36fa660e1d6ebf8d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\MediaFoundation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
