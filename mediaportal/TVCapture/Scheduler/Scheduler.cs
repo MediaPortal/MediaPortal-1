@@ -192,6 +192,18 @@ namespace MediaPortal.TV.Recording
                 if (rec.StartTime <= prog.StartTime && rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
                 {
                   // yes, then record it
+                  // everytime on... needed update if not done already
+                  if (rec.RecType == TVRecording.RecordingType.EveryTimeOnEveryChannel)
+                  {
+                    rec.StartTime = prog.StartTime;
+                    rec.Start = prog.Start;
+                    rec.EndTime = prog.EndTime;
+                    rec.End = prog.End;
+                    rec.Channel = prog.Channel;
+                    TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.Modified);
+                  }
+
+                  //
                   if (!Record(handler, dtCurrentTime, rec, prog, rec.PreRecord, rec.PostRecord))
                   {
 										Log.Error("Scheduler.Process Error: Could not start recording ({0})", rec.ToString());
