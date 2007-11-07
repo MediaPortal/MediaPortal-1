@@ -22,6 +22,20 @@
       </control>
     </control>
     <control>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <layout>GridLayout(2, 6, 52, 8, 1)</layout>
+      <posX>113</posX>
+      <posY>240</posY>
+      <control>
+        <type>button</type>
+        <textXOff>28</textXOff>
+        <id>25</id>
+        <label>8008</label>
+      </control>
+    </control>
+    <control>
       <type>label</type>
       <description>Please specify the IP address or hostname</description>
       <id>1</id>
