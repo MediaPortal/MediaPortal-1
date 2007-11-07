@@ -118,9 +118,9 @@ namespace MPTestTool
 
       totalActions = logs.Count;
 
-      if (Directory.Exists(_tmpDir))
-        Directory.Delete(_tmpDir, true);
-      Directory.CreateDirectory(_tmpDir);
+
+      if (!Directory.Exists(_tmpDir))
+        Directory.CreateDirectory(_tmpDir);
 
       foreach (ILogCreator logCreator in logs)
       {

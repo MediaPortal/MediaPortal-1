@@ -60,6 +60,7 @@ namespace MPTestTool
       this.label4 = new System.Windows.Forms.Label();
       this.LaunchMPButton = new System.Windows.Forms.Button();
       this.tmrUnAttended = new System.Windows.Forms.Timer(this.components);
+      this.tmrMPWatcher = new System.Windows.Forms.Timer(this.components);
       this.settingsGroup.SuspendLayout();
       this.step2Group.SuspendLayout();
       this.step1Group.SuspendLayout();
@@ -318,6 +319,11 @@ namespace MPTestTool
       this.tmrUnAttended.Interval = 1000;
       this.tmrUnAttended.Tick += new System.EventHandler(this.tmrUnAttended_Tick);
       // 
+      // tmrMPWatcher
+      // 
+      this.tmrMPWatcher.Interval = 5000;
+      this.tmrMPWatcher.Tick += new System.EventHandler(this.tmrMPWatcher_Tick);
+      // 
       // MPTestTool
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -374,6 +380,7 @@ namespace MPTestTool
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.Button LaunchMPButton;
     private System.Windows.Forms.Timer tmrUnAttended;
+    private System.Windows.Forms.Timer tmrMPWatcher;
   }
 }
 

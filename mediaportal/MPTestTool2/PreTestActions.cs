@@ -62,17 +62,14 @@ namespace MPTestTool
 			base.setAction("Clearing EventLogs...");
       Update();
 			int subActions = logNames.Length;
-			try {
-				foreach (string strLogName in logNames)
-				{
-					EventLog e = new EventLog(strLogName);
-					e.Clear();
-					updateProgress(subActions);
-				}
-			} catch (Exception ex)
-			{
-				Utils.ErrorDlg(ex.ToString());
-			}
+  		foreach (string strLogName in logNames)
+	  	{
+			  EventLog e = new EventLog(strLogName);
+        try {
+				  e.Clear();
+        } catch (Exception) {}
+				updateProgress(subActions);
+  		}
 			if (subActions == 0)
 				updateProgress(1);
 		}

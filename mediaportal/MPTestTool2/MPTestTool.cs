@@ -32,16 +32,21 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using DaggerLib.DSGraphEdit;
 
 namespace MPTestTool
 {
   public partial class MPTestTool : Form
   {
     #region Variables
-    string _tempDir = Path.GetTempPath()+"\\MPTemp";
+    string _tempDir = "";
     string _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)+"\\MediaPortalLogs.zip";
     bool _autoMode = false;
     bool _crashed = false;
+    Process _processMP = null;
+    int _lastMPLogLevel = 2;
+    int _graphsCreated = 0;
+    List<string> _knownPids = new List<string>();
     #endregion
 
     #region Helper functions
@@ -65,6 +70,10 @@ namespace MPTestTool
     public MPTestTool()
     {
       InitializeComponent();
+      _tempDir=Path.GetTempPath();
+      if (!_tempDir.EndsWith("\\"))
+        _tempDir += "\\";
+      _tempDir += "MPTemp";
       tbZipFile.Text = _zipFile;
       if (!ParseCommandLine())
         Application.Exit();
@@ -165,6 +174,11 @@ namespace MPTestTool
     {
       PerformPostTestActions();
     }
+    private void menuItem7_Click(object sender, EventArgs e)
+    {
+      AboutForm dlg = new AboutForm();
+      dlg.ShowDialog();
+    }
     #endregion
 
     #region Perform actions
@@ -193,27 +207,23 @@ namespace MPTestTool
     }
     void LaunchMediaPortalAction()
     {
+      _knownPids.Clear();
+      if (!Directory.Exists(_tempDir))
+        Directory.CreateDirectory(_tempDir);
       setStatus("Launching MediaPortal...");
       // Set the loglevel to "debug"
-      int lastLogLevel;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Application.StartupPath+"\\MediaPortal.xml",false))
       {
-        lastLogLevel=xmlreader.GetValueAsInt("general", "loglevel", 1);
+        _lastMPLogLevel = xmlreader.GetValueAsInt("general", "loglevel", 1);
         xmlreader.SetValue("general", "loglevel", 3);
       }
-      Process pr = new Process();
-      pr.StartInfo.WorkingDirectory = Application.StartupPath;
-      pr.StartInfo.FileName = "mediaportal.exe";
-      pr.Start();
+      _processMP = new Process();
+      _processMP.StartInfo.WorkingDirectory = Application.StartupPath;
+      _processMP.StartInfo.FileName = "mediaportal.exe";
+      _processMP.Start();
       setStatus("MediaPortal started. Waiting for exit...");
       Update();
-      pr.WaitForExit();
-      // Reset the loglevel to "debug"
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Application.StartupPath + "\\MediaPortal.xml",false))
-      {
-        xmlreader.SetValue("general", "loglevel", lastLogLevel);
-      }
-      setStatus("idle");
+      tmrMPWatcher.Enabled = true;
     }
     void PerformPostTestActions()
     {
@@ -240,21 +250,75 @@ namespace MPTestTool
     }
     #endregion
 
+    #region Timer callbacks
     private void tmrUnAttended_Tick(object sender, EventArgs e)
     {
       tmrUnAttended.Enabled = false;
       PerformPreTestActions();
       LaunchMediaPortalAction();
-      PerformPostTestActions();
-      preTestButton.Enabled = true;
-      LaunchMPButton.Enabled = true;
-      postTestButton.Enabled = true;
     }
-
-    private void menuItem7_Click(object sender, EventArgs e)
+    private void tmrMPWatcher_Tick(object sender, EventArgs e)
     {
-      AboutForm dlg = new AboutForm();
-      dlg.ShowDialog();
+      tmrMPWatcher.Enabled = false;
+      if (_processMP.HasExited)
+      {
+        // Reset the loglevel to "debug"
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Application.StartupPath + "\\MediaPortal.xml", false))
+        {
+          xmlreader.SetValue("general", "loglevel", _lastMPLogLevel);
+        }
+        setStatus("idle");
+        PerformPostTestActions();
+        preTestButton.Enabled = true;
+        LaunchMPButton.Enabled = true;
+        postTestButton.Enabled = true;
+        return;
+      }
+      List<DSGrapheditROTEntry> rotEntries = DaggerDSUtils.GetFilterGraphsFromROT();
+      foreach (DSGrapheditROTEntry rot in rotEntries)
+      {
+        if (!_knownPids.Contains(rot.ToString()))
+        {
+          _knownPids.Add(rot.ToString());
+          MakeGraphSnapshot(rot);
+        }
+      }
+      tmrMPWatcher.Enabled = true;
+    }
+    #endregion
+
+    private void MakeGraphSnapshot(DSGrapheditROTEntry rotEntry)
+    {
+      _graphsCreated++;
+      DSGraphEditPanel panel=null;
+      try
+      {
+        panel = new DSGraphEditPanel(rotEntry.ConnectToROTEntry());
+      }
+      catch (Exception)
+      {
+        return;
+      }
+      if (panel == null)
+        return;
+      panel.Width = 3000;
+      panel.ShowPinNames = true;
+      panel.ShowTimeSlider = false;
+      panel.dsDaggerUIGraph1.AutoArrangeWidthOffset = 150;
+      panel.dsDaggerUIGraph1.ArrangeNodes(DaggerLib.UI.AutoArrangeStyle.All);
+      Bitmap b = new Bitmap(panel.Width, panel.Height); 
+      panel.DrawToBitmap(b, panel.Bounds);
+      string imgFile = _tempDir + "\\graph_" + rotEntry.ToString() + ".jpg";
+      try
+      {
+        b.Save(imgFile, System.Drawing.Imaging.ImageFormat.Jpeg);
+      }
+      catch (Exception ex)
+      {
+        Utils.ErrorDlg("Exception raised while trying to save graph snapshot. file=[" + imgFile + "] message=[" + ex.Message + "]");
+      }
+      b.Dispose(); 
+      panel.Dispose();
     }
   }
 }

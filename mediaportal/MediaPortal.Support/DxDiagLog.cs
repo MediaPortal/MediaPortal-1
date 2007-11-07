@@ -41,18 +41,14 @@ namespace MediaPortal.Support
 
     public void CreateLogs(string destinationFolder)
     {
-      string tmpFile = Environment.GetEnvironmentVariable("SystemDrive") + "\\_dxdiag.txt";
       string dstFile = destinationFolder + "\\dxdiag.txt";
-      CreateDxDiagFile(tmpFile);
-      if (File.Exists(dstFile)) 
-        File.Delete(dstFile);
-      File.Move(tmpFile, dstFile);
+      CreateDxDiagFile(dstFile);
     }
 
     private void CreateDxDiagFile(string tmpFile)
     {
       string executable = Environment.GetEnvironmentVariable("windir") + @"\system32\dxdiag.exe";
-      string arguments = "/whql:off /t " + tmpFile;
+      string arguments = "/whql:off /t \"" + tmpFile+"\"";
       runner.Arguments = arguments;
       runner.Executable = executable;
       runner.Run();
