@@ -166,7 +166,7 @@ void Magazine::EndPage(){
 
 	langInfoLock.Lock();
 
-	hash_map<int,DVBLANG>::iterator it = langInfo.find(pageNumInProgress);
+	::hash_map< int,DVBLANG >::iterator it = langInfo.find(pageNumInProgress);
 	if(it != langInfo.end())
 	{	
 		DVBLANG& lang = (*it).second;
