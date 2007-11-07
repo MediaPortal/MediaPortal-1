@@ -7,9 +7,9 @@
 #include <queue>
 #include <dxva2api.h>
 #include "callback.h"
+#include "myqueue.h"
 #pragma warning(pop)
 using namespace std;
-
 #define CHECK_HR(hr, msg) if ( FAILED(hr) ) Log( msg );
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
@@ -25,13 +25,13 @@ enum RENDER_STATE
 	RENDER_STATE_SHUTDOWN
 };
 
+
 typedef struct _SchedulerParams
 {
 	EVRCustomPresenter* pPresenter;
 	CCritSec csLock;
 	CAMEvent eHasWork;
 	BOOL bDone;
-	int iTimerSet;
 } SchedulerParams;
 
 class EVRCustomPresenter
@@ -42,9 +42,9 @@ class EVRCustomPresenter
 	public IMFAsyncCallback,
 	public IQualProp,
 	public IMFRateSupport,
-  public IMFVideoDisplayControl,
-  public IEVRTrustedVideoPlugin,
-  public IMFVideoPositionMapper,
+	public IMFVideoDisplayControl,
+	public IEVRTrustedVideoPlugin,
+	public IMFVideoPositionMapper,
 	public CCritSec
 {
 
@@ -122,7 +122,6 @@ public:
         /* [in] */ float flRate,
         /* [unique][out][in] */ float *pflNearestSupportedRate);
 
-
         virtual HRESULT STDMETHODCALLTYPE GetNativeVideoSize( 
             /* [unique][out][in] */  SIZE *pszVideo,
             /* [unique][out][in] */  SIZE *pszARVideo) ;
@@ -198,12 +197,12 @@ public:
 	HRESULT CheckForScheduledSample(LONGLONG *pNextSampleTime, DWORD msLastSleepTime);
 	//returns true if there was some input to be processed
 	BOOL CheckForInput();
-	HRESULT ProcessInputNotify();
+	HRESULT ProcessInputNotify(int* samplesProcessed);
   void EnableFrameSkipping(bool onOff);
 protected:
 	void ReleaseSurfaces();
-	void Paint(CComPtr<IDirect3DSurface9> pSurface);
-	HRESULT SetMediaType(CComPtr<IMFMediaType> pType);
+	HRESULT Paint(CComPtr<IDirect3DSurface9> pSurface);
+	HRESULT SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHasChanged);
 	void ReAllocSurfaces();
 	HRESULT LogOutputTypes();
 	HRESULT GetAspectRatio(CComPtr<IMFMediaType> pType, int* piARX, int* piARY);
@@ -212,19 +211,21 @@ protected:
 	BOOL CheckForEndOfStream();
 	void	StartWorkers();
 	void	StopWorkers();
-	void	StartThread(PHANDLE handle, SchedulerParams** ppParams,
-					UINT (CALLBACK *ThreadProc)(void*), UINT* threadId);
+	void	StartThread(PHANDLE handle, SchedulerParams* pParams,
+					UINT (CALLBACK *ThreadProc)(void*), UINT* threadId, int threadPriority);
 	void	EndThread(HANDLE hThread, SchedulerParams* params);
 	void    NotifyThread(SchedulerParams* params);
 	void    NotifyScheduler();
 	void    NotifyWorker();
-	HRESULT GetTimeToSchedule(CComPtr<IMFSample> pSample, LONGLONG* pDelta);
+	HRESULT GetTimeToSchedule(IMFSample* pSample, LONGLONG* pDelta);
 	void  Flush();
-	void ScheduleSample(CComPtr<IMFSample> pSample);
+	void ScheduleSample(IMFSample* pSample);
+	IMFSample* PeekSample();
+	BOOL PopSample();
 	HRESULT TrackSample(IMFSample *pSample);
-	HRESULT GetFreeSample(CComPtr<IMFSample>& ppSample);
-	void	ReturnSample(CComPtr<IMFSample> pSample);
-	HRESULT PresentSample(CComPtr<IMFSample> pSample);
+	HRESULT GetFreeSample(IMFSample** ppSample);
+	void	ReturnSample(IMFSample* pSample, BOOL tryNotify);
+	HRESULT PresentSample(IMFSample* pSample);
 	void    ResetStatistics();
 
     CComPtr<IDirect3DDevice9> m_pD3DDev;
@@ -239,10 +240,12 @@ protected:
 	CComPtr<IDirect3DSurface9> surfaces[NUM_SURFACES];
 	CComPtr<IMFSample> samples[NUM_SURFACES];
 	CCritSec m_lockSamples;
-	vector<CComPtr<IMFSample>> m_vFreeSamples;
-	queue<CComPtr<IMFSample>> m_vScheduledSamples;
-	SchedulerParams *m_schedulerParams;
-	SchedulerParams *m_workerParams;
+	CCritSec m_lockScheduledSamples;
+	int m_iFreeSamples;
+	IMFSample* m_vFreeSamples[NUM_SURFACES];
+	CMyQueue<IMFSample*> m_qScheduledSamples;
+	SchedulerParams m_schedulerParams;
+	SchedulerParams m_workerParams;
 	BOOL		  m_bSchedulerRunning;
 	HANDLE		  m_hScheduler;
 	HANDLE		  m_hWorker;
@@ -259,8 +262,10 @@ protected:
 	BOOL		m_bfirstFrame;
 	BOOL		m_bfirstInput;
 	BOOL		m_bInputAvailable;
-	LONG		m_lInputAvailable;
+	//LONG		m_lInputAvailable;
 	BOOL		m_bendStreaming;
+	BOOL		m_bReallocSurfaces;
+	BOOL	    m_bFlush;
 	int m_iFramesDrawn, m_iFramesDropped, m_iJitter;
 	LONGLONG m_hnsLastFrameTime, m_hnsTotalDiff;
 	RENDER_STATE m_state;

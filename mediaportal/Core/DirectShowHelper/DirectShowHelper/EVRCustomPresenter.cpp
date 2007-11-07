@@ -59,6 +59,7 @@ CAutoLock lock(obj); \
 
 
 void Log(const char *fmt, ...) ;
+void LogRotate();
 HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA);
 
 
@@ -84,34 +85,19 @@ void LogGUID( REFGUID guid ) {
 	CoTaskMemFree(str);
 }
 
-//avoid dependency into MFGetService, aparently only availabe on vista
-HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService,
-    REFIID riid, LPVOID* ppvObject ) 
-{
-	if ( ppvObject == NULL ) return E_POINTER;
-	HRESULT hr;
-	IMFGetService* pGetService;
-	hr = punkObject->QueryInterface(__uuidof(IMFGetService),
-		(void**)&pGetService);
-	if ( SUCCEEDED(hr) ) {
-		hr = pGetService->GetService(guidService, riid, ppvObject);
-		SAFE_RELEASE(pGetService);
-	}
-	return hr;
-}
 
 void CALLBACK TimerCallback(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 {
 	SchedulerParams *p = (SchedulerParams*)dwUser;
+	Log("Callback %d", uTimerID);
 	TIME_LOCK(&p->csLock, 3, "TimeCallback");
 	if ( p->bDone ) Log("The end is near");
-	p->iTimerSet--;
 	p->eHasWork.Set();
 }
 
 #define MIN(x,y) ((x)<(y))?(x):(y)
 //wait for a maximum of 500 ms
-#define MAX_WAIT (10000*500)
+#define MAX_WAIT (500)
 //if we have at least 10 ms spare time to next frame, get new sample
 #define MIN_TIME_TO_PROCESS (10000*10)
 
@@ -120,20 +106,19 @@ UINT CALLBACK WorkerThread(void* param)
 	SchedulerParams *p = (SchedulerParams*)param;
 	while ( true ) 
 	{
-		//TIME_LOCK(&p->csLock, 10, "Worker thread main lock");
-    p->csLock.Lock();
+		p->csLock.Lock();
 		if ( p->bDone ) 
 		{
-			Log("Worker done, deleting data");
+			Log("Worker done.");
 			p->csLock.Unlock();
-			delete p;
 			//AvRevertMmThreadCharacteristics(hMmThread);
 			return 0;
 		}
 		
-		while (p->pPresenter->CheckForInput());
-
+		if ( !p->pPresenter->CheckForInput() ) {
+		}
 		p->csLock.Unlock();
+		LOG_TRACE("Worker sleeping.");
 		while ( !p->eHasWork.Wait() );
 		LOG_TRACE( "Worker woken up" );
 	}
@@ -145,42 +130,53 @@ UINT CALLBACK SchedulerThread(void* param)
 {
 	SchedulerParams *p = (SchedulerParams*)param;
 	LONGLONG hnsSampleTime = 0;
-	/*DWORD dwTaskIndex;
-	HANDLE hMmThread;
+	DWORD dwTaskIndex;
+	MMRESULT lastTimerId = 0;
+	DWORD delay = 0;
+	/*HANDLE hMmThread;
 	hMmThread = AvSetMmThreadCharacteristics("Playback", &dwTaskIndex);
 	AvSetMmThreadPriority(hMmThread, AVRT_PRIORITY_HIGH);*/
 	while ( true ) 
 	{
+		if ( lastTimerId > 0 ) timeKillEvent(lastTimerId);
 		//Log("Scheduler callback");
-		//TIME_LOCK(&p->csLock, 10, "Scheduler thread main lock");
-    p->csLock.Lock();
-		if ( p->bDone ) Log("Trying to end things, waiting for timers : %d", p->iTimerSet);
-		if ( p->bDone && p->iTimerSet <= 0 ) 
+		DWORD now=GetTickCount();
+		p->csLock.Lock();
+		LOG_TRACE("Scheduler got lock");
+		DWORD diff=GetTickCount()-now;
+		if ( diff > 10 ) Log("High lock latency in SchedulerThread: %d ms", diff);
+		//if ( p->bDone ) Log("Trying to end things, waiting for timers : %d", p->iTimerSet);
+
+		if ( p->bDone ) 
 		{
-			Log("Scheduler done, deleting data");
+			Log("Scheduler done.");
+			if ( lastTimerId > 0 ) timeKillEvent(lastTimerId);
 			p->csLock.Unlock();
-			delete p;
 			//AvRevertMmThreadCharacteristics(hMmThread);
 			return 0;
 		}
 		
-		DWORD delay = 0;
 		p->pPresenter->CheckForScheduledSample(&hnsSampleTime, delay);
 		LOG_TRACE("Got scheduling time: %I64d", hnsSampleTime);
 		if ( hnsSampleTime > 0) { 
-			p->iTimerSet ++;
 			//Sleep(hnsSampleTime/10000);
 			//wait for a maximum of 500 ms!
+			//we try to be 3ms early and let vsync do the rest :) --> TODO better^H^H^H^H^H^H real estimation of next vblank!
 			delay = MIN(hnsSampleTime/10000, MAX_WAIT);
-			LOG_TRACE( "Setting event in %d ms", delay );
-			timeSetEvent(delay,1,
-				TimerCallback, (DWORD)param, TIME_ONESHOT|TIME_KILL_SYNCHRONOUS);
-			/*Log( "Next event: %d hns", hnsSampleTime );*/
 		}
 		else
 		{
-			delay = 0;
+			//backup check to avoid starvation (and work around unknown bugs)
+			delay = MAX_WAIT;
 		} 
+		if ( delay > 0 ) {
+			LOG_TRACE("Setting Timer");
+			lastTimerId = timeSetEvent(delay,0,
+				(LPTIMECALLBACK)(HANDLE)p->eHasWork, 0, TIME_ONESHOT|TIME_KILL_SYNCHRONOUS|TIME_CALLBACK_EVENT_SET);
+		}
+		else {
+			p->eHasWork.Set();
+		}
 		p->csLock.Unlock();
 		while ( !p->eHasWork.Wait() );
 		LOG_TRACE( "Scheduler woken up" );
@@ -191,11 +187,12 @@ UINT CALLBACK SchedulerThread(void* param)
 
 
 EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor)
-: m_refCount(1)
+: m_refCount(1), m_qScheduledSamples(NUM_SURFACES)
 {
   m_enableFrameSkipping=true;
     if (m_pMFCreateVideoSampleFromSurface!=NULL)
     {
+		LogRotate();
         Log("----------v0.37---------------------------");
         m_hMonitor=monitor;
         m_pD3DDev=direct3dDevice;
@@ -207,12 +204,14 @@ EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevic
             m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
         }
         m_pCallback=pCallback;
-		m_lInputAvailable = 0;
-		m_bInputAvailable = FALSE;
+//		m_lInputAvailable = 0;
+//		m_bInputAvailable = FALSE;
 		m_bendStreaming = FALSE;
 		m_state = RENDER_STATE_SHUTDOWN;
         m_bSchedulerRunning = FALSE;
+		m_bReallocSurfaces = FALSE;
         m_fRate = 1.0f;
+		m_iFreeSamples = 0;
         //TODO: use ZeroMemory
         /*for ( int i=0; i<NUM_SURFACES; i++ ) {
             chains[i] = NULL;
@@ -237,7 +236,7 @@ EVRCustomPresenter::~EVRCustomPresenter()
 	HRESULT hr;
 	m_pDeviceManager =  NULL;
 	Log("Done");
-	m_vFreeSamples.clear();
+	for ( int i=0; i<NUM_SURFACES; i++ ) m_vFreeSamples[i] = 0;
 }	
 
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetParameters( 
@@ -406,6 +405,9 @@ HRESULT EVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLooku
 	HRESULT hr = S_OK;
     DWORD   cCount = 0;
 
+	//just to make sure....
+	ReleaseServicePointers();
+
     // Ask for the mixer
     cCount = 1;
     hr = pLookup->LookupService(      
@@ -472,6 +474,8 @@ HRESULT EVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLooku
 HRESULT EVRCustomPresenter::ReleaseServicePointers() 
 {
 	Log("ReleaseServicePointers");
+	//on some channel changes it may happen that ReleaseServicePointers is called only after InitServicePointers is called
+	//to avoid this race condition, we only release when not in state begin_streamingi
 	m_pMediaType.Release();
 	m_pMixer.Release();
 	m_pClock.Release();
@@ -517,7 +521,7 @@ HRESULT EVRCustomPresenter::TrackSample(IMFSample *pSample)
     return hr;
 }
 
-HRESULT EVRCustomPresenter::GetTimeToSchedule(CComPtr<IMFSample> pSample, LONGLONG *phnsDelta) 
+HRESULT EVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *phnsDelta) 
 {
 	LONGLONG hnsPresentationTime = 0; // Target presentation time
 	LONGLONG hnsTimeNow = 0;          // Current presentation time
@@ -618,7 +622,7 @@ HRESULT EVRCustomPresenter::GetAspectRatio(CComPtr<IMFMediaType> pType, int* piA
 	return hr;
 }
 
-HRESULT EVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType)
+HRESULT EVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHasChanged)
 {
 	if (pType == NULL) 
 	{
@@ -632,9 +636,18 @@ HRESULT EVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType)
 	LARGE_INTEGER u64;
 //	UINT32 u32;
 	
+	hr = pType->GetUINT64(MF_MT_FRAME_RATE, (UINT64*)&u64);
+	if ( SUCCEEDED(hr) ) {
+		Log("Media frame rate: %d / %d", u64.HighPart, u64.LowPart);
+	}
+
 	CHECK_HR(pType->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&u64), "Getting Framesize failed!");
-	m_iVideoWidth = u64.HighPart;
-	m_iVideoHeight = u64.LowPart;
+
+	MFVideoArea Area;
+	UINT32 rSize;
+	CHECK_HR(pType->GetBlob(MF_MT_GEOMETRIC_APERTURE, (UINT8*)&Area, sizeof(Area), &rSize), "Failed to get MF_MT_GEOMETRIC_APERTURE");
+	m_iVideoWidth = u64.HighPart; //Area.Area.cx; //u64.HighPart;
+	m_iVideoHeight = u64.LowPart; //Area.Area.cy; //u64.LowPart;
 	//use video size as default value for aspect ratios
 	m_iARX = m_iVideoWidth;
 	m_iARY = m_iVideoHeight;
@@ -645,14 +658,40 @@ HRESULT EVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType)
 	GUID subtype;
 	CHECK_HR(pType->GetGUID(MF_MT_SUBTYPE, &subtype), "Could not get subtype");
 	LogGUID( subtype );
+	if ( m_pMediaType == NULL )
+	{
+		*pbHasChanged = TRUE;
+	}
+	else
+	{
+		BOOL doMatch;
+		hr = m_pMediaType->Compare(pType, MF_ATTRIBUTES_MATCH_ALL_ITEMS, &doMatch);
+		if ( SUCCEEDED(hr) )
+		{
+			*pbHasChanged = !doMatch;
+		}
+		else
+		{
+			hr = S_OK;
+			Log("Could not compare media type to old media type. assuming a change (0x%x)", hr);
+			*pbHasChanged = TRUE;
+		}
+	}
 	m_pMediaType = pType;
-	return hr;
+	if ( !*pbHasChanged )
+	{
+		Log("Detected same media type as last one.");
+	}
+	return S_OK;
 }
 
 void EVRCustomPresenter::ReAllocSurfaces()
 {
 	Log("ReallocSurfaces");
 	//TIME_LOCK(this, 20, "ReAllocSurfaces")
+	//make sure both threads are paused
+	CAutoLock wLock(&m_workerParams.csLock);
+	CAutoLock sLock(&m_schedulerParams.csLock);
 	ReleaseSurfaces();
 
 	// set the presentation parameters
@@ -666,7 +705,7 @@ void EVRCustomPresenter::ReAllocSurfaces()
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.Windowed = true;
 	d3dpp.EnableAutoDepthStencil = false;
-	d3dpp.AutoDepthStencilFormat = D3DFMT_R8G8B8;
+	d3dpp.AutoDepthStencilFormat = D3DFMT_X8R8G8B8;
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
@@ -676,6 +715,7 @@ void EVRCustomPresenter::ReAllocSurfaces()
 	CHECK_HR(m_pDeviceManager->OpenDeviceHandle(&hDevice), "Cannot open device handle");
 	CHECK_HR(m_pDeviceManager->LockDevice(hDevice, &pDevice, TRUE), "Cannot lock device");
 	HRESULT hr;
+	Log("Textures will be %dx%d", m_iVideoWidth, m_iVideoHeight);
 	for ( int i=0; i<NUM_SURFACES; i++ ) {
 		hr = pDevice->CreateTexture(m_iVideoWidth, m_iVideoHeight, 1,
 			D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
@@ -704,9 +744,10 @@ void EVRCustomPresenter::ReAllocSurfaces()
 			return;
 		}
 		Log("Adding sample: 0x%x", samples[i]);
-		m_vFreeSamples.push_back(samples[i]);
+		m_vFreeSamples[i] = samples[i];
 		//Log("Chain created");
 	} 
+	m_iFreeSamples = NUM_SURFACES;
 	CHECK_HR(m_pDeviceManager->UnlockDevice(hDevice, FALSE), "failed: Unlock device");
 	Log("Releasing device: %d", pDevice->Release());
 	CHECK_HR(m_pDeviceManager->CloseDeviceHandle(hDevice), "failed: CloseDeviceHandle");
@@ -728,24 +769,29 @@ HRESULT EVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType, I
 			Log("Successfully cloned media type");
 		}
 	    (*pType)->SetUINT32 (MF_MT_PAN_SCAN_ENABLED, 0);
-		CHECK_HR((*pType)->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&i64Size.QuadPart), "Failed to get MF_MT_FRAME_SIZE");
-		Log("Frame size: %dx%d",i64Size.HighPart, i64Size.LowPart); 
-   		/*i64Size.HighPart = VideoFormat->videoInfo.dwWidth;
-   		i64Size.LowPart	 = VideoFormat->videoInfo.dwHeight;
-   		(*pType)->SetUINT64 (MF_MT_FRAME_SIZE, i64Size.QuadPart);
+
+		i64Size.HighPart = 800;
+   		i64Size.LowPart	 = 600;
+   		//(*pType)->SetUINT64 (MF_MT_FRAME_SIZE, i64Size.QuadPart);
    
-	  
 	  i64Size.HighPart = 1;
 	  i64Size.LowPart  = 1;
-	  (*pType)->SetUINT64 (MF_MT_PIXEL_ASPECT_RATIO, i64Size.QuadPart);*/
+	  //(*pType)->SetUINT64 (MF_MT_PIXEL_ASPECT_RATIO, i64Size.QuadPart);
+
+	  CHECK_HR((*pType)->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&i64Size.QuadPart), "Failed to get MF_MT_FRAME_SIZE");
+  	  Log("Frame size: %dx%d",i64Size.HighPart, i64Size.LowPart); 
+	  
 	  MFVideoArea Area;
 	  UINT32 rSize;
 	  /*Log("Would set aperture: %dx%d", VideoFormat->videoInfo.dwWidth,
-		  VideoFormat->videoInfo.dwHeight);
+		  VideoFormat->videoInfo.dwHeight);*/
 	  ZeroMemory( &Area, sizeof(MFVideoArea) );
-	  Area.Area.cx = VideoFormat->videoInfo.dwWidth;
-	  Area.Area.cy = VideoFormat->videoInfo.dwHeight;
-	  pMediaType->SetBlob(MF_MT_GEOMETRIC_APERTURE, (UINT8*)&Area, sizeof(MFVideoArea));*/
+	  //TODO get the real screen size, and calculate area
+	  //corresponding to the given aspect ratio
+	  Area.Area.cx = MIN(800, i64Size.HighPart);
+	  Area.Area.cy = MIN(450, i64Size.LowPart);
+	  //for hardware scaling, use the following line:
+	  //(*pType)->SetBlob(MF_MT_GEOMETRIC_APERTURE, (UINT8*)&Area, sizeof(MFVideoArea));
 		CHECK_HR((*pType)->GetBlob(MF_MT_GEOMETRIC_APERTURE, (UINT8*)&Area, sizeof(Area), &rSize), "Failed to get MF_MT_GEOMETRIC_APERTURE");
 		Log("Aperture size: %x:%x, %dx%d", Area.OffsetX.value, Area.OffsetY.value,
 			Area.Area.cx, Area.Area.cy); 
@@ -755,7 +801,7 @@ HRESULT EVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType, I
 HRESULT EVRCustomPresenter::LogOutputTypes()
 {
 	Log("--Dumping output types----");
-	CAutoLock lock(this);
+	//CAutoLock lock(this);
     HRESULT hr = S_OK;
     BOOL fFoundMediaType = FALSE;
 
@@ -800,9 +846,10 @@ HRESULT EVRCustomPresenter::LogOutputTypes()
 
 HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
 {
+	CAutoLock wLock(&m_workerParams.csLock);
+	CAutoLock sLock(&m_schedulerParams.csLock);
 	Log("RenegotiateMediaOutputType");
-	CAutoLock lock(this);
-	LogOutputTypes();
+	//LogOutputTypes();
     HRESULT hr = S_OK;
     BOOL fFoundMediaType = FALSE;
 
@@ -826,6 +873,7 @@ HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
         hr = m_pMixer->GetOutputAvailableType(0, iTypeIndex++, &pMixerType);
         if (FAILED(hr))
         {
+			Log("ERR: Cannot find usable media type!");
             break;
         }
         // Step 2. Check if we support this media type.
@@ -852,17 +900,24 @@ HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
         if (SUCCEEDED(hr))
         {
 			Log( "New media type successfully negotiated!" );
-			
-            hr = SetMediaType(pType);
+			BOOL bHasChanged;
+            hr = SetMediaType(pType, &bHasChanged);
 			//m_pMediaType = pType;
 			if (SUCCEEDED(hr))
 			{
-				ReAllocSurfaces();
+				if ( bHasChanged )
+				{
+					ReAllocSurfaces();
+				}
+			}
+			else
+			{
+				Log("ERR: Could not set media type on self: 0x%x!", hr);
 			}
         }
 
         // Step 6. Set output media type on mixer.
-        if (SUCCEEDED(hr))
+        if (SUCCEEDED(hr)) 
         {
 			Log("Setting media type on mixer");
             hr = m_pMixer->SetOutputType(0, pType, 0);
@@ -871,7 +926,7 @@ HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
             if (FAILED(hr))
             {
 				Log( "Could not set output type: 0x%x", hr );
-                SetMediaType(NULL);
+                SetMediaType(NULL, NULL);
             }
         }
 
@@ -883,43 +938,48 @@ HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
     return hr;
 }
 
-HRESULT EVRCustomPresenter::GetFreeSample(CComPtr<IMFSample> &ppSample) 
+HRESULT EVRCustomPresenter::GetFreeSample(IMFSample** ppSample) 
 {
-	CAutoLock lock (&m_lockSamples);
+	TIME_LOCK(&m_lockSamples,5,"GetFreeSample");
 	//TODO hold lock?
-	LOG_TRACE( "Trying to get free sample, size: %d", m_vFreeSamples.size());
-	if ( m_vFreeSamples.size() == 0 ) return E_FAIL;
-	ppSample = m_vFreeSamples.back();
-	m_vFreeSamples.pop_back();
+	LOG_TRACE( "Trying to get free sample, size: %d", m_iFreeSamples);
+	if ( m_iFreeSamples == 0 ) return E_FAIL;
+	m_iFreeSamples--;
+	*ppSample = m_vFreeSamples[m_iFreeSamples];
+	m_vFreeSamples[m_iFreeSamples] = NULL;
 	
 	return S_OK;
 }
 
 void EVRCustomPresenter::Flush()
 {
-	//CAutoLock lock(this);
-	TIME_LOCK(&m_lockSamples, 10, "Flush")
-	Log( "Flushing: size=%d", m_vScheduledSamples.size() );
-	while ( m_vScheduledSamples.size()>0 )
+	CAutoLock sLock(&m_lockSamples);
+	CAutoLock ssLock(&m_lockScheduledSamples);
+	LOG_TRACE( "Flushing: size=%d", m_qScheduledSamples.Count() );
+	while ( m_qScheduledSamples.Count()>0 )
 	{
-		CComPtr<IMFSample> pSample = m_vScheduledSamples.front();
-		m_vScheduledSamples.pop();
-		ReturnSample(pSample);
+		IMFSample* pSample = PeekSample();
+		if ( pSample != NULL ) 
+		{
+			PopSample();
+			ReturnSample(pSample, FALSE);
+		}
 	}
+	m_bFlush = FALSE;
 }
 
-void EVRCustomPresenter::ReturnSample(CComPtr<IMFSample> pSample)
+void EVRCustomPresenter::ReturnSample(IMFSample* pSample, BOOL tryNotify)
 {
 	//CAutoLock lock(this);
 	TIME_LOCK(&m_lockSamples, 5, "ReturnSample")
-	LOG_TRACE( "Sample returned: now having %d samples", m_vFreeSamples.size()+1);
-	m_vFreeSamples.push_back(pSample);
+	LOG_TRACE( "Sample returned: now having %d samples", m_iFreeSamples+1);
+	m_vFreeSamples[m_iFreeSamples++] = pSample;
 	//todo, if queue was empty, do something?
-	if ( m_vScheduledSamples.size() == 0 ) CheckForEndOfStream();
-	if ( m_vFreeSamples.size() == 1 ) NotifyWorker();
+	if ( m_qScheduledSamples.Count() == 0 ) CheckForEndOfStream();
+	if ( tryNotify && m_iFreeSamples == 1 && m_bInputAvailable ) NotifyWorker();
 }
 
-HRESULT EVRCustomPresenter::PresentSample(CComPtr<IMFSample> pSample)
+HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
 {
     HRESULT hr = S_OK;
     IMFMediaBuffer* pBuffer = NULL;
@@ -946,28 +1006,29 @@ HRESULT EVRCustomPresenter::PresentSample(CComPtr<IMFSample> pSample)
 
         // Present the swap surface
 		DWORD then = GetTickCount();
-		Paint(pSurface);
+		CHECK_HR(hr = Paint(pSurface), "failed: Paint");
 		DWORD diff = GetTickCount() - then;
 		LOG_TRACE("Paint() latency: %d ms", diff);
-
 		// Calculate offset to scheduled time
-		LONGLONG hnsTimeNow, hnsSystemTime, hnsTimeScheduled;
-		m_pClock->GetCorrelatedTime(0, &hnsTimeNow, &hnsSystemTime);
+		if ( m_pClock != NULL ) {
+			LONGLONG hnsTimeNow, hnsSystemTime, hnsTimeScheduled;
+			m_pClock->GetCorrelatedTime(0, &hnsTimeNow, &hnsSystemTime);
 
-		pSample->GetSampleTime(&hnsTimeScheduled);
-		if ( hnsTimeScheduled > 0 )
-		{
-			LONGLONG deviation = hnsTimeNow - hnsTimeScheduled;
-			if ( deviation < 0 ) deviation = -deviation;
-			m_hnsTotalDiff += deviation;
+			pSample->GetSampleTime(&hnsTimeScheduled);
+			if ( hnsTimeScheduled > 0 )
+			{
+				LONGLONG deviation = hnsTimeNow - hnsTimeScheduled;
+				if ( deviation < 0 ) deviation = -deviation;
+				m_hnsTotalDiff += deviation;
+			}
+			if ( m_hnsLastFrameTime != 0 )
+			{
+				LONGLONG hnsDiff = hnsTimeNow - m_hnsLastFrameTime;
+				//todo: expected: standard deviation!
+				m_iJitter = hnsDiff / 10000;
+			}
+			m_hnsLastFrameTime = hnsTimeNow;
 		}
-		if ( m_hnsLastFrameTime != 0 )
-		{
-			LONGLONG hnsDiff = hnsTimeNow - m_hnsLastFrameTime;
-			//todo: expected: standard deviation!
-			m_iJitter = hnsDiff / 10000;
-		}
-		m_hnsLastFrameTime = hnsTimeNow;
 		m_iFramesDrawn++;
         /*CHECK_HR(hr = pSwapChain->Present(NULL, NULL, NULL, NULL, 0),
 			"failed: Present");*/
@@ -995,43 +1056,31 @@ HRESULT EVRCustomPresenter::PresentSample(CComPtr<IMFSample> pSample)
 
 BOOL EVRCustomPresenter::CheckForInput()
 {
-	static int counter=0;
-	LOG_TRACE("CheckForInput");
-	//make sure we try new samples as long as there are
-	//either known samples available (processoutput did
-	//return successfuly), or we got processinput messages
-	//m_lInputAvailable ensures that we enter ProcessInputNotify
-	//at least once for every message we got.
-	if ( (m_lInputAvailable == 0 && !m_bInputAvailable) || m_vFreeSamples.size() == 0 ) {
-		//Log("No input, because %d or %d==0 &&!%d", m_lInputAvailable, m_vFreeSamples.size(), m_bInputAvailable);
-		return FALSE;
-	}
-	if ( m_lInputAvailable > 0 ) 
-	{
-		m_bInputAvailable = TRUE;
-		InterlockedDecrement(&m_lInputAvailable);
-	}
 
-	ProcessInputNotify();
-	/*counter++;
-	if ( counter > 250 ) {
-		counter = 0;
-		LogOutputTypes();
-	}*/
-	return TRUE;
+	int counter;
+	ProcessInputNotify(&counter);
+	//if ( counter == 0 ) Log("Unneccessary call to ProcessInputNotify");
+	return counter != 0;
 }
 
 HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, DWORD msLastSleepTime)
 {
 	HRESULT hr = S_OK;
-//	CAutoLock lock(this);
-	TIME_LOCK(&m_lockSamples, 1, "CheckForScheduledSample")
-	LOG_TRACE("Checking for scheduled sample (size: %d)", m_vScheduledSamples.size());
-	while ( m_vScheduledSamples.size() > 0 ) {
-		CComPtr<IMFSample> pSample = m_vScheduledSamples.front();
+	int samplesProcessed=0;
+	LOG_TRACE("Checking for scheduled sample (size: %d)", m_qScheduledSamples.Count());
+	*pNextSampleTime = 0;
+	if ( m_bFlush )
+	{
+		Flush();
+		return S_OK;
+	}
+	while ( m_qScheduledSamples.Count() > 0 ) {
+		IMFSample* pSample = PeekSample();
+		if ( pSample == NULL ) break;
 		if ( m_state == RENDER_STATE_STARTED ) 
 		{
 			CHECK_HR(hr=GetTimeToSchedule(pSample, pNextSampleTime), "Couldn't get time to schedule!");
+			if ( FAILED(hr) ) *pNextSampleTime = 1;
 		}
 		else if ( m_bfirstFrame )
 		{
@@ -1040,30 +1089,31 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, D
 		else
 		{
 			*pNextSampleTime = 0; //not now!
-			return hr;
+			break;
 		}
 		LOG_TRACE( "Time to schedule: %I64d", *pNextSampleTime );
-		//if we are ahead only 1 ms, present this sample anyway
+		//if we are ahead only 3 ms, present this sample anyway, as the vsync will be waited for anyway
 		//else sleep for some time
-		if ( *pNextSampleTime > 10000 ) {
-			return hr;
+		if ( *pNextSampleTime > 30000 ) {
+			break;
 		}
-		m_vScheduledSamples.pop();
+		PopSample();
+		samplesProcessed++;
 		//skip only if we have a newer sample available
 		if ( *pNextSampleTime < -600000  ) {
-			if ( m_vScheduledSamples.size() > 0 || *pNextSampleTime < -1500000 ) 
+			if (  m_qScheduledSamples.Count() > 0 ) //BREAKS DVD NAVIGATION: || *pNextSampleTime < -1500000 ) 
 			{
 				//skip!
 				m_iFramesDropped++;
 			
-        if (!m_enableFrameSkipping)
-        {
-          CHECK_HR(PresentSample(pSample), "PresentSample failed");
-        }
-        else
-        {
-				 Log( "skipping frame, behind %I64d ms, last sleep time %d ms.", -*pNextSampleTime/10000, msLastSleepTime );
-        }
+				if (!m_enableFrameSkipping)
+				{
+				  CHECK_HR(PresentSample(pSample), "PresentSample failed");
+				}
+				else
+				{
+						 Log( "skipping frame, behind %I64d ms, last sleep time %d ms.", -*pNextSampleTime/10000, msLastSleepTime );
+				}
 			}
 			else
 			{
@@ -1076,48 +1126,56 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, D
     {
 			CHECK_HR(PresentSample(pSample), "PresentSample failed");
 		}
-		ReturnSample(pSample);
+		*pNextSampleTime = 0;
+		ReturnSample(pSample, TRUE);
 	}
-	*pNextSampleTime = 0;
+	//if ( samplesProcessed == 0 ) Log("Useless call to CheckForScheduledSamples");
 	return hr;
 } 
 
 void EVRCustomPresenter::StartWorkers()
 {
 	CAutoLock lock(this);
-	StartThread(&m_hScheduler, &m_schedulerParams, SchedulerThread, &m_uSchedulerThreadId);
-	StartThread(&m_hWorker, &m_workerParams, WorkerThread, &m_uWorkerThreadId);
+	if ( m_bSchedulerRunning ) return;
+	StartThread(&m_hScheduler, &m_schedulerParams, SchedulerThread, &m_uSchedulerThreadId, THREAD_PRIORITY_TIME_CRITICAL);
+	StartThread(&m_hWorker, &m_workerParams, WorkerThread, &m_uWorkerThreadId, THREAD_PRIORITY_ABOVE_NORMAL);
 	m_bSchedulerRunning = TRUE;
 }
 
 void EVRCustomPresenter::StopWorkers()
 {
+	Log("Stopping workers...");
 	CAutoLock lock(this);
+	Log("Threads running : %s", m_bSchedulerRunning?"TRUE":"FALSE");
 	if ( !m_bSchedulerRunning ) return;
-	EndThread(m_hScheduler, m_schedulerParams);
-	EndThread(m_hWorker, m_workerParams);
+	EndThread(m_hScheduler, &m_schedulerParams);
+	EndThread(m_hWorker, &m_workerParams);
 	m_bSchedulerRunning = FALSE;
 }
 
-void EVRCustomPresenter::StartThread(PHANDLE handle, SchedulerParams** ppParams,
-					UINT  (CALLBACK *ThreadProc)(void*), UINT* threadId)
+void EVRCustomPresenter::StartThread(PHANDLE handle, SchedulerParams* pParams,
+					UINT  (CALLBACK *ThreadProc)(void*), UINT* threadId, int priority)
 {
 	Log("Starting thread!");
-	*ppParams = new SchedulerParams();
-	(*ppParams)->pPresenter = this;
-	(*ppParams)->bDone = FALSE;
-	(*ppParams)->iTimerSet = 0;
+	pParams->pPresenter = this;
+	pParams->bDone = FALSE;
+	
 	*handle = (HANDLE)_beginthreadex(NULL, 0, ThreadProc,
-		*ppParams, 0, threadId);
-	SetThreadPriority(*handle, THREAD_PRIORITY_ABOVE_NORMAL);
+		pParams, 0, threadId);
+	Log("Started thread. id: 0x%x, handle: 0x%x", *threadId, *handle);
+	SetThreadPriority(*handle, priority);
 }
 
 void EVRCustomPresenter::EndThread(HANDLE hThread, SchedulerParams* params)
 {
+	Log("Ending thread 0x%x, 0x%x", hThread, params);
 	params->csLock.Lock();
+	Log("Got lock.");
 	params->bDone = TRUE;
-	params->csLock.Unlock();
+	Log("Notifying thread...");
 	params->eHasWork.Set();
+	Log("Set done.");
+	params->csLock.Unlock();
 	Log("Waiting for thread to end...");
 	WaitForSingleObject(hThread, INFINITE);
 	Log("Waiting done");
@@ -1141,45 +1199,56 @@ void EVRCustomPresenter::NotifyThread(SchedulerParams* params)
 void EVRCustomPresenter::NotifyScheduler()
 {
 	LOG_TRACE( "NotifyScheduler()" );
-	NotifyThread(m_schedulerParams);
+	NotifyThread(&m_schedulerParams);
 }
 
 void EVRCustomPresenter::NotifyWorker()
 {
 	LOG_TRACE( "NotifyWorker()" );
-	NotifyThread(m_workerParams);
+	NotifyThread(&m_workerParams);
 }
 
-void EVRCustomPresenter::ScheduleSample(CComPtr<IMFSample> pSample)
+BOOL EVRCustomPresenter::PopSample()
 {
-//	CAutoLock lock(this);
-	m_lockSamples.Lock();
-	LOG_TRACE( "Scheduling Sample, size: %d", m_vScheduledSamples.size() );
-	m_vScheduledSamples.push(pSample);
-	if ( m_vScheduledSamples.size() == 1 )
+	CAutoLock lock(&m_lockScheduledSamples);
+	LOG_TRACE("Removing scheduled sample, size: %d", m_qScheduledSamples.Count());
+	if ( m_qScheduledSamples.Count() > 0 )
 	{
-		m_lockSamples.Unlock();
-		NotifyScheduler();
+		m_qScheduledSamples.Get();
+		return TRUE;
 	}
-	else
+	return FALSE;
+}
+
+IMFSample* EVRCustomPresenter::PeekSample()
+{
+	CAutoLock lock(&m_lockScheduledSamples);
+	if ( m_qScheduledSamples.Count() == 0 )
 	{
-		m_lockSamples.Unlock();
+		Log("ERR: PeekSample: empty queue!");
+		return NULL;
 	}
+	return m_qScheduledSamples.Peek();
+}
+
+void EVRCustomPresenter::ScheduleSample(IMFSample* pSample)
+{
+	CAutoLock lock(&m_lockScheduledSamples);
+	LOG_TRACE( "Scheduling Sample, size: %d", m_qScheduledSamples.Count() );
+	m_qScheduledSamples.Put(pSample);
+	if (m_qScheduledSamples.Count() == 1) NotifyScheduler();
 }
 
 BOOL EVRCustomPresenter::CheckForEndOfStream()
 {
 	//CAutoLock lock(this);
-	LOG_TRACE("CheckForEndOfStream");
 	if ( !m_bendStreaming )
 	{
-		LOG_TRACE("No message from mixer yet");
 		return FALSE;
 	}
 	//samples pending
-	if ( m_vScheduledSamples.size() > 0 )
+	if ( m_qScheduledSamples.Count() > 0 )
 	{
-		LOG_TRACE("Still having scheduled samples");
 		return FALSE;
 	}
 	if ( m_pEventSink ) 
@@ -1193,31 +1262,41 @@ BOOL EVRCustomPresenter::CheckForEndOfStream()
 }
 
 
-HRESULT EVRCustomPresenter::ProcessInputNotify()
+HRESULT EVRCustomPresenter::ProcessInputNotify(int* samplesProcessed)
 {
-	//CAutoLock lock(this);
-	//TIME_LOCK(this, 1, "ProcessInputNotify")
+	//TIME_LOCK(this, 1, "ProcessInputNotify");
+	//TIME_LOCK(&m_lockSamples, 5, "ProcessInputNotify")
+	LOG_TRACE("ProcessInputNotify");
 	HRESULT hr=S_OK;
-	if ( m_pClock ) {
+	*samplesProcessed = 0;
+	if ( m_pClock != NULL ) {
 		MFCLOCK_STATE state;
 		m_pClock->GetState(0, &state);
-		if ( state == MFCLOCK_STATE_PAUSED && !m_bfirstInput) 
+		if (state == MFCLOCK_STATE_PAUSED && !m_bfirstInput) 
 		{
-			Log( "Not processing data in pause mode");
+			Log( "Should not be processing data in pause mode");
 			m_bInputAvailable = FALSE;
 			return S_OK;
 		}
 	}
 	//try to process as many samples as possible:
 	BOOL bhasMoreSamples = true;
+	m_bInputAvailable = FALSE;
 	do {
-		CComPtr<IMFSample> sample;
-		hr = GetFreeSample(sample);
+		IMFSample* sample;
+		hr = GetFreeSample(&sample);
 		if ( FAILED(hr) ) {
-			//Log( "No free sample available" );
-			LOG_TRACE("Still more input available");
-			return S_OK;
+			//LOG_TRACE( "No free sample available" );
+			m_bInputAvailable = TRUE;
+			//double-checked locking, in case someone freed a sample between the above 2 steps and we would miss notification
+			hr = GetFreeSample(&sample);
+			if ( FAILED(hr) ) {
+				LOG_TRACE("Still more input available");
+				return S_OK;
+			}
+			m_bInputAvailable = FALSE;
 		}
+		if ( m_pMixer == NULL ) return E_POINTER;
 		DWORD dwStatus;
 		MFT_OUTPUT_DATA_BUFFER outputSamples[1];
 		outputSamples[0].dwStreamID = 0; 
@@ -1229,19 +1308,20 @@ HRESULT EVRCustomPresenter::ProcessInputNotify()
 		SAFE_RELEASE(outputSamples[0].pEvents);
 //		LONGLONG latency;
 		if ( SUCCEEDED( hr ) ) {
-			LOG_TRACE("Processoutput succeeded, status: %d", dwStatus);
+			//if ( m_lInputAvailable > 0 ) InterlockedDecrement(&m_lInputAvailable);
 			//Log("Scheduling sample");
 			m_bfirstInput = false;
+			*samplesProcessed++;
 			ScheduleSample(sample);
 		} else {
-			ReturnSample(sample);
+			ReturnSample(sample, FALSE);
 			switch ( hr ) {
 				case MF_E_TRANSFORM_NEED_MORE_INPUT:
 					//we are done for now
 					hr = S_OK;
 					bhasMoreSamples = false;
 					LOG_TRACE("Need more input...");
-					m_bInputAvailable = FALSE;
+					//m_bInputAvailable = FALSE;
 					CheckForEndOfStream();
 					break;
 				case MF_E_TRANSFORM_STREAM_CHANGE:
@@ -1250,6 +1330,8 @@ HRESULT EVRCustomPresenter::ProcessInputNotify()
 				case MF_E_TRANSFORM_TYPE_NOT_SET:
 					//no errors, just infos why it didn't succeed
 					Log( "ProcessOutput: change of type" );
+					bhasMoreSamples = FALSE;
+					//hr = S_OK;
 					hr = RenegotiateMediaOutputType();
 					break;
 				default:
@@ -1278,6 +1360,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage(
 			//Streaming has started. No particular action is required by this message, but you can use it to allocate resources.
 			Log("ProcessMessage %x", eMessage);
 			m_bendStreaming = FALSE;
+			m_state = RENDER_STATE_STARTED;
 			ResetStatistics();
 			StartWorkers();
 			break;
@@ -1286,21 +1369,13 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage(
 			//Streaming has ended. Release any resources that you allocated in response to the MFVP_MESSAGE_BEGINSTREAMING message.
 			Log("ProcessMessage %x", eMessage);
 			//m_bendStreaming = TRUE;
-			StopWorkers();
-			m_state = RENDER_STATE_SHUTDOWN;
-			DWORD flags;
-			CHECK_HR(m_pMixer->GetOutputStatus(&flags), "nadamixa");
-			if ( flags & MFT_OUTPUT_STATUS_SAMPLE_READY )
-				Log("Ending with sample ready");
-			else
-				Log("Ending without samples ready");
-			//Flush();
+			m_state = RENDER_STATE_STOPPED;
 			break;
 
 		case MFVP_MESSAGE_PROCESSINPUTNOTIFY:
 			//The mixer has received a new input sample and might be able to generate a new output frame. The presenter should call IMFTransform::ProcessOutput on the mixer. See Processing Output.
 			//Log("Message 2: %d", m_lInputAvailable);
-			InterlockedIncrement(&m_lInputAvailable);
+			//InterlockedIncrement(&m_lInputAvailable);
 			NotifyWorker();
 			break;
 
@@ -1315,8 +1390,10 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage(
 
 		case MFVP_MESSAGE_FLUSH:
 			//The EVR is flushing the data in its rendering pipeline. The presenter should discard any video frames that are scheduled for presentation.
-			Log("ProcessMessage %x", eMessage);
-			Flush();
+			LOG_TRACE("ProcessMessage %x", eMessage);
+			//delegate to avoid a weird deadlock with application-idle handler Flush();
+			m_bFlush = TRUE;
+			NotifyScheduler();
 			break;
 
 		case MFVP_MESSAGE_STEP:
@@ -1346,7 +1423,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStart(
 	Log("OnClockStart");
 	m_state = RENDER_STATE_STARTED;
 	Flush();
-	m_bInputAvailable = TRUE;
+//	m_bInputAvailable = TRUE;
 	NotifyWorker();
 	NotifyScheduler();
 	return S_OK;
@@ -1365,6 +1442,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockPause(
     /* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockPause");
+	m_bfirstFrame = TRUE;
 	m_state = RENDER_STATE_PAUSED;
 	return S_OK;
 }
@@ -1374,7 +1452,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockRestart(
 {
 	Log("OnClockRestart");
 	m_state = RENDER_STATE_STARTED;
-	m_bInputAvailable = TRUE;
+//	m_bInputAvailable = TRUE;
 	NotifyScheduler();
 	NotifyWorker();
 	return S_OK;
@@ -1474,22 +1552,24 @@ void EVRCustomPresenter::ReleaseCallBack()
 }
 void EVRCustomPresenter::ReleaseSurfaces()
 {
-	//CAutoLock lock(this);
 	Log("ReleaseSurfaces()");
+	CAutoLock lock(this);
 	HANDLE hDevice;
 	CHECK_HR(m_pDeviceManager->OpenDeviceHandle(&hDevice), "failed opendevicehandle");
 	IDirect3DDevice9* pDevice;
 	CHECK_HR(m_pDeviceManager->LockDevice(hDevice, &pDevice, TRUE), "failed: lockdevice");
+	//make sure that the surface is not in use anymore before we delete it.
 	if ( m_pCallback != NULL )
-		m_pCallback->PresentImage(0,0,0,0,0);
+		m_pCallback->PresentSurface(0,0,0,0,0);
 	Flush();
-	m_vFreeSamples.clear();
+	m_iFreeSamples = 0;
 	for ( int i=0; i<NUM_SURFACES; i++ ) {
 		//Log("Delete: %d, 0x%x", i, chains[i]);
 		samples[i] = NULL;
 		surfaces[i] = NULL;
 		chains[i] = NULL;
 		textures[i] = NULL;
+		m_vFreeSamples[i] = NULL;
 	}
 
 	/*if (m_pCallback!=NULL)
@@ -1501,7 +1581,7 @@ void EVRCustomPresenter::ReleaseSurfaces()
 	Log("ReleaseSurfaces() done");
 }
 
-void EVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
+HRESULT EVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 {
 	try
 	{
@@ -1509,16 +1589,19 @@ void EVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 		{
 			if (pSurface!=NULL)
 			{
+				HRESULT hr;
 				DWORD dwPtr;
+				//disabled, because of garbeled image.
+				/*
 				void *pContainer = NULL;
-				/*pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
+				pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
 				if (pContainer!=NULL)
 				{
 					LPDIRECT3DTEXTURE9 pTexture=(LPDIRECT3DTEXTURE9)pContainer;
 
 					dwPtr=(DWORD)(pTexture);
 					if ( dwPtr == 0 ) Log("WARNING: null-texture-pointer!");
-					m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY,dwPtr);
+					hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY,dwPtr);
 					if (m_bfirstFrame)
 					{
 						m_bfirstFrame=false;
@@ -1528,10 +1611,10 @@ void EVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 					}
 					pTexture->Release();
 					
-					return;
+					return hr;
 				}*/
 				dwPtr=(DWORD)(IDirect3DSurface9*)pSurface;
-				m_pCallback->PresentSurface(
+				hr = m_pCallback->PresentSurface(
 					m_iVideoWidth, m_iVideoHeight, 
 					m_iARX,m_iARY,dwPtr);
 				if (m_bfirstFrame)
@@ -1540,7 +1623,7 @@ void EVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 					pSurface->GetDesc(&desc);
 					m_bfirstFrame=false;
 				}
-				return;
+				return hr;
 			}
 		}
 	}
@@ -1548,6 +1631,7 @@ void EVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 	{
 		Log("vmr9:Paint() invalid exception");
 	}
+	return E_FAIL;
 }
 
 

@@ -31,3 +31,6 @@ extern TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface;
 
 typedef HRESULT __stdcall TMFCreateMediaType(IMFMediaType** ppIMediaType);
 extern TMFCreateMediaType* m_pMFCreateMediaType;
+
+HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService,
+    REFIID riid, LPVOID* ppvObject );
