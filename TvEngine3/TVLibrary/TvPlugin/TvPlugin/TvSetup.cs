@@ -4,17 +4,20 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
 using System.Text;
 using TvControl;
 using TvDatabase;
 using Gentle.Common;
 using Gentle.Framework;
+
 namespace TvPlugin
 {
   public class TvSetup : GUIWindow
   {
     string _hostName;
     [SkinControlAttribute(24)]    protected GUIButtonControl btnChange = null;
+    [SkinControlAttribute(25)]    protected GUIButtonControl btnBack = null;
     [SkinControlAttribute(30)]    protected GUILabelControl lblHostName = null;
 
     public TvSetup()
@@ -125,6 +128,14 @@ namespace TvPlugin
             return;
           }
         }
+      }
+      else if (control == btnBack)
+      {
+        bool basicHome;
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+        int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;
+        GUIWindowManager.ActivateWindow(homeWindow);
       }
       base.OnClicked(controlId, control, actionType);
     }
