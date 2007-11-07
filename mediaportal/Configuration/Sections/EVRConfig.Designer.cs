@@ -28,10 +28,11 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EVRConfig));
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelEVRHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.EVRCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.VMR9Tips = new MediaPortal.UserInterface.Controls.MPToolTip();
-      this.labelEVRHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -42,10 +43,19 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(459, 98);
+      this.mpGroupBox1.Size = new System.Drawing.Size(459, 194);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Enhanced Video Renderer Settings";
+      // 
+      // labelEVRHint
+      // 
+      this.labelEVRHint.AutoSize = true;
+      this.labelEVRHint.Location = new System.Drawing.Point(46, 67);
+      this.labelEVRHint.Name = "labelEVRHint";
+      this.labelEVRHint.Size = new System.Drawing.Size(263, 78);
+      this.labelEVRHint.TabIndex = 7;
+      this.labelEVRHint.Text = resources.GetString("labelEVRHint.Text");
       // 
       // EVRCheckBox
       // 
@@ -59,15 +69,6 @@ namespace MediaPortal.Configuration.Sections
       this.VMR9Tips.SetToolTip(this.EVRCheckBox, "Provides hardware-accelerated playback for certain video types under Windows Vist" +
               "a, if your graphics card supports it.");
       this.EVRCheckBox.UseVisualStyleBackColor = true;
-      // 
-      // labelEVRHint
-      // 
-      this.labelEVRHint.AutoSize = true;
-      this.labelEVRHint.Location = new System.Drawing.Point(46, 67);
-      this.labelEVRHint.Name = "labelEVRHint";
-      this.labelEVRHint.Size = new System.Drawing.Size(263, 13);
-      this.labelEVRHint.TabIndex = 7;
-      this.labelEVRHint.Text = "Note: You need .NET3 Framework or Vista to use this!";
       // 
       // EVRConfig
       // 
