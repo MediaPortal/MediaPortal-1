@@ -80,6 +80,7 @@ namespace MediaPortal.Configuration.Sections
     ListViewItem currentlyCheckedItem = null;
     static bool reloadList = false;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonClear;
+    private Label lblCheckedHint;
     ListViewColumnSorter _columnSorter;
 
 
@@ -138,6 +139,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.btnMapChannelToCard = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnUnmapChannelFromCard = new MediaPortal.UserInterface.Controls.MPButton();
@@ -147,7 +149,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
       this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
+      this.lblCheckedHint = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -219,6 +221,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // stationsListView
       // 
+      this.stationsListView.AllowDrop = true;
+      this.stationsListView.AllowRowReorder = true;
       this.stationsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -232,9 +236,9 @@ namespace MediaPortal.Configuration.Sections
             this.columnHeader6});
       this.stationsListView.FullRowSelect = true;
       this.stationsListView.HideSelection = false;
-      this.stationsListView.Location = new System.Drawing.Point(16, 16);
+      this.stationsListView.Location = new System.Drawing.Point(16, 37);
       this.stationsListView.Name = "stationsListView";
-      this.stationsListView.Size = new System.Drawing.Size(432, 312);
+      this.stationsListView.Size = new System.Drawing.Size(432, 291);
       this.stationsListView.TabIndex = 0;
       this.stationsListView.UseCompatibleStateImageBehavior = false;
       this.stationsListView.View = System.Windows.Forms.View.Details;
@@ -284,6 +288,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.lblCheckedHint);
       this.tabPage1.Controls.Add(this.mpButtonClear);
       this.tabPage1.Controls.Add(this.stationsListView);
       this.tabPage1.Controls.Add(this.deleteButton);
@@ -297,6 +302,17 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Radio Stations";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // mpButtonClear
+      // 
+      this.mpButtonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonClear.Location = new System.Drawing.Point(16, 357);
+      this.mpButtonClear.Name = "mpButtonClear";
+      this.mpButtonClear.Size = new System.Drawing.Size(72, 22);
+      this.mpButtonClear.TabIndex = 6;
+      this.mpButtonClear.Text = "Clear";
+      this.mpButtonClear.UseVisualStyleBackColor = true;
+      this.mpButtonClear.Click += new System.EventHandler(this.mpButtonClear_Click);
       // 
       // tabPage2
       // 
@@ -383,23 +399,21 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxCard.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxCard.Location = new System.Drawing.Point(160, 20);
       this.comboBoxCard.Name = "comboBoxCard";
       this.comboBoxCard.Size = new System.Drawing.Size(288, 21);
       this.comboBoxCard.TabIndex = 1;
       this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
       // 
-      // mpButtonClear
+      // lblCheckedHint
       // 
-      this.mpButtonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonClear.Enabled = true;
-      this.mpButtonClear.Location = new System.Drawing.Point(16, 357);
-      this.mpButtonClear.Name = "mpButtonClear";
-      this.mpButtonClear.Size = new System.Drawing.Size(72, 22);
-      this.mpButtonClear.TabIndex = 6;
-      this.mpButtonClear.Text = "Clear";
-      this.mpButtonClear.UseVisualStyleBackColor = true;
-      this.mpButtonClear.Click += new System.EventHandler(this.mpButtonClear_Click);
+      this.lblCheckedHint.AutoSize = true;
+      this.lblCheckedHint.Location = new System.Drawing.Point(13, 12);
+      this.lblCheckedHint.Name = "lblCheckedHint";
+      this.lblCheckedHint.Size = new System.Drawing.Size(321, 13);
+      this.lblCheckedHint.TabIndex = 7;
+      this.lblCheckedHint.Text = "Note: If you select a station it will autostart everytime MP comes up";
       // 
       // RadioStations
       // 
@@ -408,6 +422,7 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
+      this.tabPage1.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.ResumeLayout(false);
 
