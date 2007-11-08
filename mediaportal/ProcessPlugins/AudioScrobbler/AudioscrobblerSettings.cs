@@ -923,7 +923,7 @@ namespace MediaPortal.AudioScrobbler
             listItem.SubItems.Add(curAlbum);
 
             // check low res
-            string strThumb = MediaPortal.Util.Utils.GetAlbumThumbName(curArtist, curAlbum);
+            string strThumb = Util.Utils.GetAlbumThumbName(curArtist, curAlbum);
             if (System.IO.File.Exists(strThumb))
               listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
             else

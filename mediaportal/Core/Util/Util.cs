@@ -24,6 +24,9 @@
 #endregion
 
 using System;
+using System.Threading;
+using System.Globalization;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -45,9 +48,9 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Player;
 using MediaPortal.Configuration;
-using System.Threading;
-using System.Globalization;
-using System.Collections.Generic;
+using MediaPortal.TagReader;
+using MediaPortal.Threading;
+using MediaPortal.Services;
 
 namespace MediaPortal.Util
 {
@@ -57,6 +60,164 @@ namespace MediaPortal.Util
   /// </summary>
   public class Utils
   {
+    #region ThumbCacher
+
+    /// <summary>
+    /// searches for folder.jpg in the mp3 directory and creates cached thumbs in MP's thumbs\folder dir
+    /// </summary>
+    public class FolderThumbCacher
+    {
+      string _filename = string.Empty;
+      bool _overWrite = false;
+      Work work;
+
+      // aFilePath must only be the path of the directory
+      public FolderThumbCacher(string aFilePath, bool aOverWriteExisting)
+      {
+        _filename = aFilePath;
+        _overWrite = aOverWriteExisting;
+        work = new Work(new DoWorkHandler(this.PerformRequest));
+        work.ThreadPriority = ThreadPriority.Lowest;
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+      }
+
+      void PerformRequest()
+      {
+        bool replace = _overWrite;
+        string filename = _filename;
+        string strFolderThumb = string.Empty;
+        strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
+
+        string strRemoteFolderThumb = string.Empty;
+        strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+
+        if (System.IO.File.Exists(strRemoteFolderThumb))
+        {
+          // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
+          // -- punish him with slowness and create the thumbs for the next time...
+          try
+          {
+            Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumb cache for {0}", strRemoteFolderThumb);
+            string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
+
+            if (!System.IO.File.Exists(strFolderThumb) || replace)
+              MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+            if (!System.IO.File.Exists(localFolderLThumb) || replace)
+            {
+              // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
+              System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
+              if (fiRemoteFolderArt.Length < 32000)
+                System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+              else
+                MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+            }
+
+            return;
+          }
+          catch (Exception)
+          {
+            return;
+          }
+        }
+      }
+    }
+
+    #endregion
+
+    #region FolderThumbWorker
+
+    /// <summary>
+    /// searches for album art and stores it as folder.jpg in the mp3 directory
+    /// </summary>
+    public class FolderThumbWorker
+    {
+      string _filename = string.Empty;
+      MusicTag _filetag = null;
+      Work work;
+
+      // Filename is a full path+file
+      public FolderThumbWorker(string Filename, MusicTag FileTag)
+      {
+        _filename = Filename;
+        _filetag = FileTag;
+        work = new Work(new DoWorkHandler(this.PerformRequest));
+        work.ThreadPriority = ThreadPriority.Lowest;
+
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+      }
+
+      private void PerformRequest()
+      {
+        lock (this)
+        {
+          MusicTag musicTag = _filetag;
+          string filename = _filename;
+          string strFolderThumb = string.Empty;
+          strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(filename);
+
+          string strRemoteFolderThumb = string.Empty;
+          //strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+          strRemoteFolderThumb = MediaPortal.Util.Utils.GetFolderThumb(filename);
+
+          if (!System.IO.File.Exists(strRemoteFolderThumb))
+          {
+            // no folder.jpg in this share but maybe there's downloaded album art we can save now.
+            try
+            {
+              if (musicTag != null && musicTag.Album != string.Empty && musicTag.Artist != string.Empty)
+              {
+                string albumThumb = Util.Utils.GetAlbumThumbName(musicTag.Artist, musicTag.Album);
+
+                if (System.IO.File.Exists(albumThumb))
+                {
+                  string largeAlbumThumb = Util.Utils.ConvertToLargeCoverArt(albumThumb);
+                  if (System.IO.File.Exists(largeAlbumThumb))
+                    System.IO.File.Copy(largeAlbumThumb, strRemoteFolderThumb, false);
+                  else
+                    System.IO.File.Copy(albumThumb, strRemoteFolderThumb, false);
+
+                  Log.Info("GUIMusicFiles: Using album art for missing folder thumb {0}", strRemoteFolderThumb);
+
+
+                  // now we need to cache that new thumb, too
+                  if (System.IO.File.Exists(strRemoteFolderThumb))
+                  {
+                    try
+                    {
+                      Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumb cache for {0}", strRemoteFolderThumb);
+                      string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
+
+                      if (!System.IO.File.Exists(strFolderThumb))
+                        MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                      if (!System.IO.File.Exists(localFolderLThumb))
+                      {
+                        // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
+                        System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
+                        if (fiRemoteFolderArt.Length < 32000)
+                          System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+                        else
+                          MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+                      }
+                      return;
+                    }
+                    catch (Exception)
+                    {
+                      return;
+                    }
+                  }
+                }
+              }
+            }
+            catch (Exception)
+            {
+              return;
+            }
+          }
+        }
+      }
+    }
+
+    #endregion
 
     [DllImport("kernel32.dll")]
     extern static bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable, out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
@@ -1723,11 +1884,21 @@ namespace MediaPortal.Util
 
     public static string GetFolderThumb(string strFile)
     {
-      if (strFile == null)              return string.Empty;
-      if (strFile.Length == 0)          return string.Empty;
+      if (string.IsNullOrEmpty(strFile))
+        return string.Empty;
 
       string strPath, strFileName;
       Utils.Split(strFile, out strPath, out strFileName);
+      string strFolderJpg = String.Format(@"{0}\folder.jpg", strPath);
+
+      return strFolderJpg;
+    }
+
+    public static string GetFolderThumbForDir(string strPath)
+    {
+      if (string.IsNullOrEmpty(strPath))
+        return string.Empty;
+
       string strFolderJpg = String.Format(@"{0}\folder.jpg", strPath);
 
       return strFolderJpg;

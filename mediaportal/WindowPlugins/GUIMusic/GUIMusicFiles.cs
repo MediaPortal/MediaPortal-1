@@ -1230,9 +1230,8 @@ namespace MediaPortal.GUI.Music
         else
         {
           if (_createMissingFolderThumbCache)
-          { 
-            //StartMissingThumbCreation(filename);
-            FolderThumbCacher thumbworker = new FolderThumbCacher(filename);
+          {             
+            Util.Utils.FolderThumbCacher thumbworker = new Util.Utils.FolderThumbCacher(filename, false);
           }
         }
         return string.Empty;
@@ -1257,7 +1256,7 @@ namespace MediaPortal.GUI.Music
           string folderThumb = Util.Utils.GetFolderThumb(filename);
           if (!System.IO.File.Exists(folderThumb))
           {
-            FolderThumbWorker thumbCreator = new FolderThumbWorker(filename, tag);
+            Util.Utils.FolderThumbWorker thumbCreator = new Util.Utils.FolderThumbWorker(filename, tag);
           }
         }
         return strThumb;
