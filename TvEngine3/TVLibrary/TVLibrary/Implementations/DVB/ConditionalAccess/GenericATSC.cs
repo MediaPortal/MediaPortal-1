@@ -70,11 +70,12 @@ namespace TvLibrary.Implementations.DVB
       IPin pin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
       if (pin != null)
       {
-        _propertySet = tunerFilter as DirectShowLib.IKsPropertySet;
+        _propertySet = pin as DirectShowLib.IKsPropertySet;
         if (_propertySet != null)
         {
           KSPropertySupport supported;
           _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+          Log.Log.Info("GenericATSC: QuerySupported: {0}", supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
             Log.Log.Info("GenericATSC: QAM capable card found!");
