@@ -211,12 +211,12 @@ namespace TvLibrary.Implementations.DVB
         _tuningSpace.get_DefaultLocator(out locator);
         IATSCLocator atscLocator = (IATSCLocator)locator;
         int hr;
+        //hr = _tuningSpace.put_InputType(TunerInputType.Cable);
         hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
         hr = atscLocator.put_SymbolRate(-1);//atscChannel.SymbolRate);
         hr = atscLocator.put_TSID(-1);//atscChannel.TransportId);
         hr = atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
         hr = atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
-        //_tuningSpace.put_InputType(TunerInputType.Cable);
         hr = atscLocator.put_Modulation(atscChannel.ModulationType);
         hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
         hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);

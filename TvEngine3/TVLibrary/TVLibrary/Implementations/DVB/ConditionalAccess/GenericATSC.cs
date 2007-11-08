@@ -50,7 +50,7 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region constants
-    Guid guidBdaQAMTunerExtention = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1, 0x55, 0x84, 0xc7);
+    Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
     #endregion
 
     #region variables
@@ -74,8 +74,7 @@ namespace TvLibrary.Implementations.DVB
         if (_propertySet != null)
         {
           KSPropertySupport supported;
-          _propertySet.QuerySupported(guidBdaQAMTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-          //Log.Log.Info("GenericATSC: QuerySupported: {0}", supported);
+          _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
             Log.Log.Info("GenericATSC: QAM capable card found!");
@@ -92,31 +91,28 @@ namespace TvLibrary.Implementations.DVB
     {
       int hr;
       KSPropertySupport supported;
-      //Query supported
-      _propertySet.QuerySupported(guidBdaQAMTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-      //Log.Log.Info("GenericATSC: BdaQAMTunerExtention supported: {0}", supported);
-      //Set the modulation if supported...
+      _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+      //Log.Log.Info("GenericATSC: BdaDigitalDemodulator supported: {0}", supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
         Log.Log.Info("GenericATSC: Set ModulationType: {0}", channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
-        hr = _propertySet.Set(guidBdaQAMTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 0, _tempValue, 4);
+        hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
         if (hr != 0)
         {
           Log.Log.Info("GenericATSC: Set returned:{0:X}", hr);
         }
       }
-
-      //below is for info only - uncomment if debugging
-      //get modulation
-      /*int length;
+      //Blow is for debug only...
+      /*
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
         Log.Log.Info("GenericATSC: Get ModulationType");
         Marshal.WriteInt32(_tempValue, (Int32)0);
-        hr = _propertySet.Get(guidBdaQAMTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 0, _tempValue, 4, out length);
+        hr = _propertySet.Get(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
         Log.Log.Info("GenericATSC: Get   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
-      }*/
+      }
+      */
     }
 
     /// <summary>

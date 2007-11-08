@@ -48,7 +48,9 @@ namespace TvLibrary.Implementations.DVB
     Dictionary<int, ConditionalAccessContext> _mapSubChannels;
     GenericBDAS _genericbdas = null;
     WinTvCiModule _winTvCiModule = null;
-    GenericATSC _genericatsc = null;
+    GenericATSC _isgenericatsc = null;
+    OnAirATSC _isonairatsc = null;
+    ViXSATSC _isvixsatsc = null;
     #endregion
 
     //ctor
@@ -108,16 +110,6 @@ namespace TvLibrary.Implementations.DVB
         }
         _technoTrend = null;
 
-
-        Log.Log.WriteFile("Check for Generic ATSC QAM card");
-        _genericatsc = new GenericATSC(tunerFilter, analyzerFilter);
-        if (_genericatsc.IsGenericATSC)
-        {
-          Log.Log.WriteFile("Generic ATSC QAM card detected");
-          return;
-        }
-        _genericatsc = null;
-
         Log.Log.WriteFile("Check for Hauppauge");
         _hauppauge = new Hauppauge(tunerFilter, analyzerFilter);
         if (_hauppauge.IsHauppauge)
@@ -128,7 +120,34 @@ namespace TvLibrary.Implementations.DVB
         }
         _hauppauge = null;
 
-        Log.Log.WriteFile("Check for Generic BDA card");
+        Log.Log.WriteFile("Check for ViXS ATSC QAM card");
+        _isvixsatsc = new ViXSATSC(tunerFilter, analyzerFilter);
+        if (_isvixsatsc.IsViXSATSC)
+        {
+          Log.Log.WriteFile("ViXS ATSC QAM card detected");
+          return;
+        }
+        _isvixsatsc = null;
+
+        Log.Log.WriteFile("Check for OnAir ATSC QAM card");
+        _isonairatsc = new OnAirATSC(tunerFilter, analyzerFilter);
+        if (_isonairatsc.IsOnAirATSC)
+        {
+          Log.Log.WriteFile("OnAir ATSC QAM card detected");
+          return;
+        }
+        _isonairatsc = null;
+
+        Log.Log.WriteFile("Check for Generic ATSC QAM card");
+        _isgenericatsc = new GenericATSC(tunerFilter, analyzerFilter);
+        if (_isgenericatsc.IsGenericATSC)
+        {
+          Log.Log.WriteFile("Generic ATSC QAM card detected");
+          return;
+        }
+        _isgenericatsc = null;
+
+        Log.Log.WriteFile("Check for Generic DVB-S card");
         _genericbdas = new GenericBDAS(tunerFilter, analyzerFilter);
         if (_genericbdas.IsGenericBDAS)
         {
@@ -620,19 +639,22 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        if (channel.ModulationType == ModulationType.Mod256Qam)
+        if (channel.ModulationType == ModulationType.Mod64Qam || channel.ModulationType == ModulationType.Mod256Qam)
         {
-          if (_genericatsc != null)
+          if (_isgenericatsc != null)
           {
-            Log.Log.Info("Setting Generic ATSC modulation to 256QAM");
-            _genericatsc.SetXPATSCQam(channel);
-            //we set _hauppauge to null so we don't set the tuner properties twice
-            _hauppauge = null;
+            Log.Log.Info("Setting Generic ATSC modulation to {0}", channel.ModulationType);
+            _isgenericatsc.SetXPATSCQam(channel);
           }
-          if (_hauppauge != null)
+          if (_isonairatsc != null)
           {
-            Log.Log.Info("Setting ATSC BDA Digital Demodulator to 256QAM");
-            _hauppauge.SetATSCQAM(channel);
+            Log.Log.Info("Setting OnAir ATSC modulation to {0}", channel.ModulationType);
+            _isonairatsc.SetOnAirQam(channel);
+          }
+          if (_isvixsatsc != null)
+          {
+            Log.Log.Info("Setting ViXS ATSC BDA modulation to {0}", channel.ModulationType);
+            _isvixsatsc.SetViXSQam(channel);
           }
         }
       }

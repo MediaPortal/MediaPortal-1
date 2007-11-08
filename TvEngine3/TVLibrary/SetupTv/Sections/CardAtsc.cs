@@ -222,7 +222,6 @@ namespace SetupTv.Sections
           minchan = 0;
           maxchan = _channelCount;
         }
-        //Log.WriteFile("ATSC tune: using min channel {0} & max channel {1}",minchan, maxchan);
         for (int index = minchan; index < maxchan; ++index)
         {
           if (_stopScanning) return;
@@ -261,6 +260,20 @@ namespace SetupTv.Sections
             RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
           }
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+          UpdateStatus();
+          if (channels == null || channels.Length == 0)
+          {
+            if (checkBoxQAM.Checked)
+            {
+              //try Modulation 64Qam now
+              tuneChannel.PhysicalChannel = index + 1;
+              tuneChannel.Frequency = _atscChannels[index].frequency;
+              tuneChannel.ModulationType = ModulationType.Mod64Qam;
+              line = line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: No signal", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
+              item.Text = line;
+              channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+            }
+          }
           UpdateStatus();
           if (channels == null || channels.Length == 0)
           {
