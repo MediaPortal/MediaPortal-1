@@ -50,7 +50,7 @@ namespace MediaPortal.Database
     {
       m_db.Execute("PRAGMA cache_size=4096");
       m_db.Execute("PRAGMA page_size=8192");
-      m_db.Execute("PRAGMA synchronous='NORMAL'");
+      m_db.Execute("PRAGMA synchronous='OFF'");
       m_db.Execute("PRAGMA count_changes=1");
       m_db.Execute("PRAGMA full_column_names=0");
       m_db.Execute("PRAGMA short_column_names=0");

@@ -2576,8 +2576,8 @@ namespace MediaPortal.TV.Database
           m_db.Execute(strSQL);
           Log.WriteFile(LogType.EPG, "RemoveOldPrograms done");
 
-          DatabaseUtility.CompactDatabase(m_db);
-          Log.WriteFile(LogType.EPG, "vacuum done");
+          //DatabaseUtility.CompactDatabase(m_db);
+          //Log.WriteFile(LogType.EPG, "vacuum done");
         }
         catch (Exception ex)
         {

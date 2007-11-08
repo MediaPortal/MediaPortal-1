@@ -63,7 +63,7 @@ namespace MediaPortal.Configuration.Sections
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
       public string DeviceID = new String(' ', 128);
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public string DeviceKey = new String(' ', 128);    
+      public string DeviceKey = new String(' ', 128);
     }
 
     [DllImport("user32.dll")]
@@ -91,18 +91,18 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "minimizeonstartup", "false" },
       new string[] { "general", "minimizeonexit", "false" },
       new string[] { "general", "autohidemouse", "true" },
-	  new string[] { "general", "mousesupport", "false" }, 
+	    new string[] { "general", "mousesupport", "false" }, 
       new string[] { "general", "hideextensions", "true" },
       new string[] { "general", "animations", "true" },
-	  new string[] { "general", "autostart", "false" },
-	  new string[] { "general", "baloontips", "false" },
-	  new string[] { "general", "dblclickasrightclick", "false" },
-	  new string[] { "general", "hidetaskbar", "false" },
-	  new string[] { "general", "alwaysontop", "false" },
+	    new string[] { "general", "autostart", "false" },
+	    new string[] { "general", "baloontips", "false" },
+	    new string[] { "general", "dblclickasrightclick", "false" },
+	    new string[] { "general", "hidetaskbar", "false" },
+	    new string[] { "general", "alwaysontop", "false" },
 	 	  new string[] { "general", "enableguisounds", "true" },
-	  new string[] { "general", "screensaver", "false" },
+	    new string[] { "general", "screensaver", "false" },
       new string[] { "general", "turnoffmonitor", "false" },
-	  new string[] { "general", "startbasichome", "false" },
+	    new string[] { "general", "startbasichome", "false" },
       new string[] { "general", "turnmonitoronafterresume", "false" },
       new string[] { "general", "enables3trick","true" },
       new string[] { "general", "autosize", "false" },
@@ -135,12 +135,12 @@ namespace MediaPortal.Configuration.Sections
           monitorname = info.DeviceString;
         if (monitorname == null)
           monitorname = "";
-        
+
         foreach (AdapterInformation adapter in Manager.Adapters)
         {
           if (screen.DeviceName.StartsWith(adapter.Information.DeviceName.Trim()))
           {
-            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3}",               
+            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3}",
               monitorname, screen.Bounds.Width, screen.Bounds.Height,
               adapter.Information.Description));
           }
@@ -151,13 +151,13 @@ namespace MediaPortal.Configuration.Sections
         //
         // Load general settings
         //
-        for (int index = 0; index < sectionEntries.Length; index++)
+        for (int index = 0 ; index < sectionEntries.Length ; index++)
         {
           string[] currentSection = sectionEntries[index];
           settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
         }
 
-        loglevel = xmlreader.GetValueAsString("general", "loglevel", "3");
+        loglevel = xmlreader.GetValueAsString("general", "loglevel", "2");
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
         screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
 
@@ -190,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Load general settings
         //
-        for (int index = 0; index < sectionEntries.Length; index++)  // Leave out last setting (focus)!
+        for (int index = 0 ; index < sectionEntries.Length ; index++)  // Leave out last setting (focus)!
         {
           string[] currentSection = sectionEntries[index];
           xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
@@ -245,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private void settingsCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
-    {      
+    {
       if (sectionEntries[e.Index][1].Equals("usescreenselector"))
         cbScreen.Enabled = e.NewValue == CheckState.Checked;
     }
