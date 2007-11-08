@@ -9,7 +9,7 @@
   <controls>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-	<control>
+    <control>
       <type>label</type>
       <id>1</id>
       <posX>500</posX>
@@ -21,7 +21,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <control>
       <description>group element</description>
       <type>group</type>
@@ -30,7 +29,7 @@
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
       <posX>113</posX>
-      <posY>110</posY>
+      <posY>110</posY>      
       <layout>StackLayout</layout>
       <control>
         <description>View-As button</description>
@@ -47,12 +46,19 @@
         <label>191</label>
         <onright>50</onright>
       </control>
-	  <control>
+      <control>
         <description>Repeat on/off button</description>
         <type>togglebutton</type>
         <id>30</id>
         <label>486</label>
         <onright>50</onright>
+      </control>
+      <control>
+        <description>My Playlists</description>
+        <type>button</type>
+        <id>10</id>
+        <label>983</label>
+        <onright>50</onright>        
       </control>
       <control>
         <description>Save button</description>
@@ -68,35 +74,20 @@
         <label>192</label>
         <onright>50</onright>
       </control>
-      <!--
-      <control>
+<!--       <control>
         <description>Play button</description>
         <type>button</type>
         <id>23</id>
         <label>208</label>
         <onright>50</onright>
-      </control>
-      -->
+        <visible>false</visible>
+      </control> -->
       <control>
-        <description>scrobble mode button</description>
-        <type>button</type>
-        <id>28</id>
-        <label>33001</label>
-        <onright>50</onright>
-      </control>
-      <control>
-        <description>scrobble user button</description>
-        <type>button</type>
-        <id>29</id>
-        <label>Scrobbler: </label>
-        <onright>50</onright>
-      </control>
-      <control>
-        <description>scrobble on/off button</description>
-        <type>togglebutton</type>
-        <id>27</id>
-        <label>33000</label>
-        <onright>50</onright>
+        <type>image</type>
+        <description>Divider image</description>
+        <id>999</id>
+        <texture>hbar1.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
       </control>
       <control>
         <description>Now playing</description>
@@ -105,14 +96,31 @@
         <label>4540</label>
         <hyperlink>510</hyperlink>
         <onright>50</onright>
+        <!-- <ondown>99</ondown> -->
+      </control>         
+      <control>
+        <description>scrobble mode button</description>
+        <type>button</type>
+        <id>28</id>
+        <label>33001</label>
+        <onright>50</onright>
+        <visible>plugin.isenabled(Audioscrobbler)</visible>
       </control>
       <control>
-        <description>My Playlists</description>
-        <type>button</type>
-        <id>10</id>
-        <label>983</label>
+        <description>scrobble on/off button</description>
+        <type>togglebutton</type>
+        <id>27</id>
+        <label>33000</label>
         <onright>50</onright>
-        <ondown>99</ondown>
+        <visible>plugin.isenabled(Audioscrobbler)</visible>
+      </control>      
+      <control>
+        <description>scrobble user button</description>
+        <type>button</type>
+        <id>29</id>
+        <label>Scrobbler: </label>
+        <onright>50</onright>
+        <visible>plugin.isenabled(Audioscrobbler)</visible>
       </control>
     </control>
     <import>common.facade.music.xml</import>

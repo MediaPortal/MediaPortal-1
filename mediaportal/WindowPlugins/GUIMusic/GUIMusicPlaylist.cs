@@ -95,6 +95,7 @@ namespace MediaPortal.GUI.Music
     const int REINSERT_AFTER_THIS_MANY_SONGS = 10;
 
     #region Variables
+    MusicDatabase mdb = null;
     DirectoryHistory m_history = new DirectoryHistory();
     string m_strDirectory = string.Empty;
     int m_iItemSelected = -1;
@@ -114,6 +115,7 @@ namespace MediaPortal.GUI.Music
     private bool _enableScrobbling = false;
     private bool _useSimilarRandom = true;
     private bool _rememberStartTrack = true;
+    private List<string> _scrobbleUsers = new List<string>(1);
     private AudioscrobblerUtils ascrobbler = null;
     private ScrobblerUtilsRequest _lastRequest;
     #endregion
@@ -140,8 +142,7 @@ namespace MediaPortal.GUI.Music
     }
 
     private void LoadScrobbleUserSettings()
-    {
-      MusicDatabase mdb = MusicDatabase.Instance;
+    {      
       string currentUID = Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser));
       ScrobblerOn = (mdb.AddScrobbleUserSettings(currentUID, "iScrobbleDefault", -1) == 1) ? true : false;
       _maxScrobbledArtistsForSongs = mdb.AddScrobbleUserSettings(currentUID, "iAddArtists", -1);
@@ -167,12 +168,13 @@ namespace MediaPortal.GUI.Music
           currentOfflineMode = offlineMode.random;
           break;
       }
-      Log.Info("GUIMusicPlayList: Scrobblesettings loaded for {0} - Active: {1} , Trackpreference: {2}", _currentScrobbleUser, Convert.ToString(ScrobblerOn), Convert.ToString(_preferCountForTracks));
+      Log.Info("GUIMusicPlayList: Scrobblesettings loaded for {0} - dynamic playlist inserts: {1}", _currentScrobbleUser, Convert.ToString(ScrobblerOn));
     }
 
     #region overrides
     public override bool Init()
     {
+      mdb = MusicDatabase.Instance;
       m_strDirectory = System.IO.Directory.GetCurrentDirectory();
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -182,7 +184,10 @@ namespace MediaPortal.GUI.Music
         _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", false);
       }
 
-      LoadScrobbleUserSettings();
+      _scrobbleUsers = mdb.GetAllScrobbleUsers();
+      // no users in database
+      if (_scrobbleUsers.Count > 0 && _enableScrobbling)
+        LoadScrobbleUserSettings();
 
       ascrobbler = AudioscrobblerUtils.Instance;
       //      ScrobbleLock = new object();
@@ -198,6 +203,7 @@ namespace MediaPortal.GUI.Music
 
       base.DeInit();
     }
+
     protected override string SerializeName
     {
       get
@@ -272,6 +278,9 @@ namespace MediaPortal.GUI.Music
       if (ScrobblerOn)
         btnScrobble.Selected = true;
 
+      if (_scrobbleUsers.Count < 2)
+        btnScrobbleUser.Visible = false;
+
       btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;
 
       LoadDirectory(string.Empty);
@@ -319,12 +328,8 @@ namespace MediaPortal.GUI.Music
 
       if (control == btnScrobbleUser)
       {
-        MusicDatabase mdb = MusicDatabase.Instance;
-        List<string> scrobbleusers = new List<string>();
-
-        scrobbleusers = mdb.GetAllScrobbleUsers();
         // no users in database
-        if (scrobbleusers.Count == 0)
+        if (_scrobbleUsers.Count == 0)
           return;
         //for (int i = 0; i < scrobbleusers.Count; i++)       
         GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -334,7 +339,7 @@ namespace MediaPortal.GUI.Music
           dlg.SetHeading(GUILocalizeStrings.Get(497));//Menu
           int selected = 0;
           int count = 0;
-          foreach (string scrobbler in scrobbleusers)
+          foreach (string scrobbler in _scrobbleUsers)
           {
             dlg.Add(scrobbler);
             if (scrobbler == _currentScrobbleUser)
@@ -636,7 +641,7 @@ namespace MediaPortal.GUI.Music
           break;
         // delaying internet lookups for smooth playback start
         case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
-          if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && ScrobblerOn == true) // && playlistPlayer.CurrentSong != 0)
+          if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && ScrobblerOn && _enableScrobbling) // && playlistPlayer.CurrentSong != 0)
           {
             DoScrobbleLookups();
           }
