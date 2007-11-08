@@ -137,13 +137,15 @@ namespace TvLibrary.Teletext
           }
 
 
-          if (packetNumber == 30)
+          if (packetNumber == 30 && magazine == 0)
           {
+            /*
             byte type = (byte)(Hamming.Decode[rowData[off + 2]]);
             if ((type != 0) && (type != 2))
             {
               continue;
             }
+             */
             //Log.Write("Packet Number:{0}, type:{1}", packetNumber, type);
             string channelName = "";
             for (int i = 0; i < 20; i++)
