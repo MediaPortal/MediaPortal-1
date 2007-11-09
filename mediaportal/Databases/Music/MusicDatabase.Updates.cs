@@ -823,16 +823,24 @@ namespace MediaPortal.Music.Database
       {
         foreach (string dir in Directory.GetDirectories(path))
         {
-          foreach (string file in Directory.GetFiles(dir, "*.*"))
+          try
           {
-            CheckFileForInclusion(file, ref totalFiles);
-            if ((totalFiles % 10) == 0)
+            foreach (string file in Directory.GetFiles(dir, "*.*"))
             {
-              DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
-              MyArgs.progress = 4;
-              MyArgs.phase = String.Format("Counting files in Shares: {0} files found", totalFiles);
-              OnDatabaseReorgChanged(MyArgs);
+              CheckFileForInclusion(file, ref totalFiles);
+              if ((totalFiles % 10) == 0)
+              {
+                DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
+                MyArgs.progress = 4;
+                MyArgs.phase = String.Format("Counting files in Shares: {0} files found", totalFiles);
+                OnDatabaseReorgChanged(MyArgs);
+              }
             }
+          }
+          catch(Exception ex)
+          {
+            // We might not be able to access a folder. i.e. System Volume Information
+            Log.Warn("Musicdatabasereorg: Unable to process files in directory {0}. {1}", dir, ex.Message);
           }
           CountFilesInPath(dir, ref totalFiles);
         }
