@@ -238,27 +238,27 @@ namespace MediaPortal.Visualization
                 {
                     try
                     {
-                        // The WMP viz is expecting 0 - 128 for the left channel and 128 - 255 for the right 
-                        // channel so we need to convert the data accordingly
+                      // Following code taken as a sugesstion from Symphy (Thx for the contribution)
+                      
+                      // Convert float value between -1 and 1 to 0 and 255
+                      float val = (buf[i] + 1f) * 127.5f;
 
-                        float val = buf[i];
+                      if (val < 0)
+                        val = 0;
+                      else if (val > 255)
+                        val = 255;
 
-                        // Convert the data to positive values
-                        if (val < 0)
-                            val *= -1f;
-
-                        // Left Channel
-                        if (i % 2 == 0)
-                        {
-                            audioData[x] = (byte)((val * 128f) + .5f);
-                        }
-
-                        // Right Channel
-                        else
-                        {
-                            audioData[x + 1024] = (byte)((val * 128f) + 128.5f);
-                            x++;
-                        }
+                      // Left Channel
+                      if (i % 2 == 0)
+                      {
+                        audioData[x] = (byte)val;
+                      }
+                      // Right Channel
+                      else
+                      {
+                        audioData[x + 1024] = (byte)val;
+                        x++;
+                      }
                     }
 
                     catch (Exception)
@@ -329,13 +329,12 @@ namespace MediaPortal.Visualization
             {
                 try
                 {
-                    float val = (fft[i] * 255);
-
-                    if (val < 0)
-                        val = 0;
-
-                    if (val > 255)
-                        val = 255;
+                  // Following code taken as a sugesstion from Symphy (Thx for the contribution)
+                  float val = (90f + ((float)Math.Log10(fft[i]) * 20f)) * (255f / 90f);
+                  if (val < 0)
+                    val = 0;
+                  else if (val > 255)
+                    val = 255;
 
                     audioData[i] = (byte)val;
                     audioData[i + 1024] = (byte)val;
