@@ -475,14 +475,14 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     {
       get
       {
+        if (!File.Exists(Config.GetFile(Config.Dir.Base, "SG_VFDv5.dll")))
+        {
+          _errorMessage = "Required file \"SG_VFDv5.dll\" is not installed!";
+          _isDisabled = true;
+        }
         if (!File.Exists(Config.GetFile(Config.Dir.Base, "SG_VFD.dll")))
         {
           _errorMessage = "Required file \"SG_VFD.dll\" is not installed!";
-          _isDisabled = true;
-        }
-        if (!File.Exists(Config.GetFile(Config.Dir.Base, "SG_VFDv3.dll")))
-        {
-          _errorMessage = "Required file \"SG_VFDv3.dll\" is not installed!";
           _isDisabled = true;
         }
         return _isDisabled;
@@ -807,7 +807,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
         {
           _isDisabled = true;
           _errorMessage = ex.Message;
-          Log.Info("IDisplay(API) iMONLCDg.Setup() - caught an exception. Did you copy SG_VFD.sll to you windows\\system32 directory??");
+          Log.Info("IDisplay(API) iMONLCDg.Setup() - caught an exception. Did you copy SG_VFD.dll to you windows\\system32 directory??");
         }
       }
       #endregion
@@ -3163,22 +3163,22 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     #region Interop declarations SG_VFD.dll
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_Init")]
+    [DllImport("SG_VFDv5.dll", EntryPoint = "iMONVFD_Init")]
     private static extern bool Open(int vfdType, int resevered);
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_Uninit")]
+    [DllImport("SG_VFDv5.dll", EntryPoint = "iMONVFD_Uninit")]
     private static extern void Close();
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_IsInited")]
+    [DllImport("SG_VFDv5.dll", EntryPoint = "iMONVFD_IsInited")]
     private static extern bool IsOpen();
 
-    [DllImport("SG_VFDv3.dll", EntryPoint = "iMONVFD_SetText")]         // VFD specific
+    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_SetText")]         // VFD specific
     private static extern bool iMONVFD_SetText(string firstLine, string secondLine);
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_SetEQ")]
+    [DllImport("SG_VFDv5.dll", EntryPoint = "iMONVFD_SetEQ")]
     public static extern bool SetEQ(int arEQValue);
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONLCD_SendData")]        // LCD specific
+    [DllImport("SG_VFDv5.dll", EntryPoint = "iMONLCD_SendData")]        // LCD specific
     public static extern bool iMONLCD_SendData(ref ulong bitMap);
     //    public static extern unsafe bool iMONLCD_SendData(Int64* bitMap);
 
