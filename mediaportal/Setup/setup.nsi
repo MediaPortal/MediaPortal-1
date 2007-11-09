@@ -5,11 +5,9 @@
 # 
 # Editing is much more easier, if you install HM NSIS Edit from http://hmne.sourceforge.net
 #
-# ATTENTION: You need to have the vcredist_x86.exe package in the setup folder.
-#            Haven't uploaded it, to save 2.5 MB in SVN
 #**********************************************************************************************************#
 
-!define APP_NAME "MediaPortal 0.2.3.0 RC3"
+!define APP_NAME "MediaPortal 0.2.3.0"
 
 Name "${APP_NAME}"
 
@@ -46,6 +44,7 @@ SetCompressor lzma
 !define MUI_FINISHPAGE_RUN  
 !define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
 !define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
+!define MUI_FINISHPAGE_TITLE "MediaPortal successfully installed!"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 ;..................................................................................................
@@ -161,8 +160,13 @@ Section -Main SEC0000
     File /r ..\xbmc\bin\Release\WebEPG
     File /r ..\xbmc\bin\Release\Wizards
     
-
     ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
+
+    ; VC Redist Files
+    File ..\xbmc\bin\Release\mfc80u.dll
+    File ..\xbmc\bin\Release\Microsoft.VC80.CRT.manifest
+    File ..\xbmc\bin\Release\Microsoft.VC80.MFC.manifest
+    File ..\xbmc\bin\Release\msvcr80.dll
         
     ;------------  Common Files and Folders for XP & Vista
     ; Files
@@ -184,10 +188,13 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\Core.dll
     File ..\xbmc\bin\Release\CSScriptLibrary.dll
     File ..\xbmc\bin\Release\d3dx9_30.dll
+    File ..\xbmc\bin\Release\DaggerLib.dll
+    File ..\xbmc\bin\Release\DaggerLib.DSGraphEdit.dll
     File ..\xbmc\bin\Release\Databases.dll
     File ..\xbmc\bin\Release\defaultMusicViews.xml
     File ..\xbmc\bin\Release\defaultProgramViews.xml
     File ..\xbmc\bin\Release\defaultVideoViews.xml
+    File ..\xbmc\bin\Release\DirectShowLib-2005.dll
     File ..\xbmc\bin\Release\DirectShowLib.dll
     File ..\xbmc\bin\Release\dlportio.dll
     File ..\xbmc\bin\Release\dshowhelper.dll
@@ -214,6 +221,7 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\LibDriverCoreClient.dll
     File ..\xbmc\bin\Release\log4net.dll
     File ..\xbmc\bin\Release\madlldlib.dll
+    File ..\xbmc\bin\Release\MediaFoundation.dll
     File ..\xbmc\bin\Release\MediaPadLayer.dll
     File ..\xbmc\bin\Release\MediaPortal.exe
     File ..\xbmc\bin\Release\MediaPortal.exe.config
@@ -239,7 +247,7 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\RemotePlugins.dll
     File ..\xbmc\bin\Release\restart.vbs
     File ..\xbmc\bin\Release\SG_VFD.dll
-    File ..\xbmc\bin\Release\SG_VFDv3.dll
+    File ..\xbmc\bin\Release\SG_VFDv5.dll
     File ..\xbmc\bin\Release\sqlite.dll
     File ..\xbmc\bin\Release\taglib-sharp.dll
     File ..\xbmc\bin\Release\TaskScheduler.dll
@@ -407,7 +415,7 @@ Section -post SEC0001
     CreateDirectory $SMPROGRAMS\$StartMenuGroup 
     SetShellVarContext current
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal" 
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk" "$INSTDIR\MediaPortal.exe" "-auto" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal Debug"
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk" "$INSTDIR\MPTestTool2.exe" "-auto" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Debug"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration" 
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\License.lnk" "$INSTDIR\Docs\MediaPortal License.rtf" "" "$INSTDIR\Docs\MediaPortal License.rtf" 0 "" "" "License"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPInstaller.lnk" "$INSTDIR\MPInstaller.exe" "" "$INSTDIR\MPInstaller.exe" 0 "" "" "MediaPortal Extension Installer"
@@ -444,21 +452,6 @@ Section -post SEC0001
  
     System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
     !undef Index   
-SectionEnd
-
-; This section installs the VC++ Redist Library
-Section -Redist SEC0002
-    SetOutPath $INSTDIR
-    SetOverwrite on
-    
-    ; Now Copy the VC Redist File, which will be executed as part of the install
-    File vcredist_x86.exe
-
-    ; Installing VC++ Redist Package
-    DetailPrint "Installing VC++ Redist Package"
-    ExecWait '"$INSTDIR\vcredist_x86.exe" /q:a /c:"VCREDI~3.EXE /q:a /c:""msiexec /i vcredist.msi /qb!"" "'
-    DetailPrint "Finished Installing VC++ Redist Package"
-    Delete /REBOOTOK  $INSTDIR\vcredist_x86.exe
 SectionEnd
 
 # Installer functions
@@ -558,6 +551,12 @@ Section /o -un.Main UNSEC0000
     RmDir /r /REBOOTOK $INSTDIR\Wizards
 
    ; Remove Files in MP Root Directory
+      ; VC Redist Files
+    Delete /REBOOTOK  $INSTDIR\mfc80u.dll
+    Delete /REBOOTOK  $INSTDIR\Microsoft.VC80.CRT.manifest
+    Delete /REBOOTOK  $INSTDIR\Microsoft.VC80.MFC.manifest
+    Delete /REBOOTOK  $INSTDIR\msvcr80.dll
+    
     Delete /REBOOTOK  $INSTDIR\AppStart.exe
     Delete /REBOOTOK  $INSTDIR\AppStart.exe.config
     Delete /REBOOTOK  $INSTDIR\AxInterop.WMPLib.dll
@@ -576,10 +575,13 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $INSTDIR\Core.dll
     Delete /REBOOTOK  $INSTDIR\CSScriptLibrary.dll
     Delete /REBOOTOK  $INSTDIR\d3dx9_30.dll
+    Delete /REBOOTOK  $INSTDIR\DaggerLib.dll
+    Delete /REBOOTOK  $INSTDIR\DaggerLib.DSGraphEdit.dll
     Delete /REBOOTOK  $INSTDIR\Databases.dll
     Delete /REBOOTOK  $INSTDIR\defaultMusicViews.xml
     Delete /REBOOTOK  $INSTDIR\defaultProgramViews.xml
     Delete /REBOOTOK  $INSTDIR\defaultVideoViews.xml
+    Delete /REBOOTOK  $INSTDIR\DirectShowLib-2005.dll
     Delete /REBOOTOK  $INSTDIR\DirectShowLib.dll
     Delete /REBOOTOK  $INSTDIR\dlportio.dll
     Delete /REBOOTOK  $INSTDIR\dshowhelper.dll
@@ -606,6 +608,7 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $INSTDIR\LibDriverCoreClient.dll
     Delete /REBOOTOK  $INSTDIR\log4net.dll
     Delete /REBOOTOK  $INSTDIR\madlldlib.dll
+    Delete /REBOOTOK  $INSTDIR\MediaFoundation.dll
     Delete /REBOOTOK  $INSTDIR\MediaPadLayer.dll
     Delete /REBOOTOK  $INSTDIR\MediaPortalDirs.xml
     Delete /REBOOTOK  $INSTDIR\MediaPortal.exe
@@ -631,7 +634,7 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $INSTDIR\MusicShareWatcherHelper.dll
     Delete /REBOOTOK  $INSTDIR\RemotePlugins.dll
     Delete /REBOOTOK  $INSTDIR\SG_VFD.dll
-    Delete /REBOOTOK  $INSTDIR\SG_VFDv3.dll
+    Delete /REBOOTOK  $INSTDIR\SG_VFDv5.dll
     Delete /REBOOTOK  $INSTDIR\sqlite.dll
     Delete /REBOOTOK  $INSTDIR\taglib-sharp.dll
     Delete /REBOOTOK  $INSTDIR\TaskScheduler.dll
