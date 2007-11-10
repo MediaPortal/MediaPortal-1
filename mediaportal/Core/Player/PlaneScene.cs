@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 using DShowNET;
 using MediaPortal.Util;
 using System.Threading;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {

@@ -36,6 +36,7 @@ using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {

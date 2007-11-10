@@ -12,13 +12,13 @@ using DShowNET.Helper;
 using System.IO;
 using System.Drawing.Imaging;
 
-namespace MediaPortal.Player
+namespace MediaPortal.Player.Subtitles
 {
   /// <summary>
   /// Structure used in communication with subtitle filter
   /// </summary>
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
-  public struct SUBTITLE
+  public struct NATIVE_SUBTITLE
   {
     // start of bitmap fields
     public Int32 bmType;
@@ -92,6 +92,10 @@ namespace MediaPortal.Player
 
   public class Subtitle
   {
+      public static int idCount = 0;
+      public Subtitle(){
+        id = idCount++;
+      }
     public Bitmap subBitmap;
     public uint width;
     public uint height;
@@ -130,8 +134,8 @@ namespace MediaPortal.Player
   }
 
   [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-  public delegate int SubtitleCallback(ref SUBTITLE sub);
-  public delegate int TextSubtitleCallback(/*ref TEXT_SUBTITLE sub*/IntPtr textsub);
+  public delegate int SubtitleCallback(ref NATIVE_SUBTITLE sub);
+  //public delegate int TextSubtitleCallback(/*ref TEXT_SUBTITLE sub*/IntPtr textsub);
   public delegate int ResetCallback();
   public delegate int UpdateTimeoutCallback(ref Int64 timeOut);
   public delegate void PageInfoCallback(TeletextPageEntry entry);
@@ -156,10 +160,11 @@ namespace MediaPortal.Player
     // important, these delegates must NOT be garbage collected
     // or horrible things will happen when the native code tries to call those!
     private SubtitleCallback callBack;
-    private TextSubtitleCallback textCallBack;
+   // private TextSubtitleCallback textCallBack;
     private ResetCallback resetCallBack;
     private UpdateTimeoutCallback updateTimeoutCallBack;
     private PageInfoCallback pageInfoCallback;
+    private double posOnLastRender; //file position on last render
 
     /// <summary>
     /// Texture storing the current/last subtitle
@@ -210,7 +215,7 @@ namespace MediaPortal.Player
       {
         instance = new SubtitleRenderer();
         instance.callBack = new SubtitleCallback(instance.OnSubtitle);
-        instance.textCallBack = new TextSubtitleCallback(instance.OnTextSubtitle);
+        //instance.textCallBack = new TextSubtitleCallback(instance.OnTextSubtitle);
         instance.resetCallBack = new ResetCallback(instance.Reset);
         instance.updateTimeoutCallBack = new UpdateTimeoutCallback(instance.UpdateTimeout);
       }
@@ -263,6 +268,7 @@ namespace MediaPortal.Player
       // Fixed seeking, currently TsPlayer & TsReader is not reseting the base time when seeking
       //this.startPos = startPos;
       clearOnNextRender = true;
+      posOnLastTextSub = -1;
       Log.Debug("New StartPos is " + startPos);
       return 0;
     }
@@ -318,7 +324,7 @@ namespace MediaPortal.Player
     /// for the duration of OnSubtitle.
     /// </summary>
     /// <returns></returns>
-    public int OnSubtitle(ref SUBTITLE sub)
+    public int OnSubtitle(ref NATIVE_SUBTITLE sub)
     {
       if (!useBitmap) return 0; // TODO: Might be good to let this cache and then check in Render method because bitmap subs arrive a while before display
       Log.Debug("OnSubtitle - stream position " + player.StreamPosition);
@@ -374,32 +380,44 @@ namespace MediaPortal.Player
       return 0;
     }
 
-      public int OnTextSubtitle(IntPtr p /*ref TEXT_SUBTITLE sub*/)
+      private double posOnLastTextSub = -1;
+      private bool lastTextSubBlank = false;
+      private bool useMinSeperation = false;
+
+      public void OnTextSubtitle(ref TEXT_SUBTITLE sub)
       {
-          TEXT_SUBTITLE sub = new TEXT_SUBTITLE();
-          Log.Debug("On\nText\nSubtitle\ncalled");
+          bool blank = false;
+          Log.Debug("On TextSubtitle called");
           try
           {
-              sub = (TEXT_SUBTITLE)Marshal.PtrToStructure(p, typeof(TEXT_SUBTITLE));
-              Log.Debug("Page: " + sub.page);
-              Log.Debug("Character table: " + sub.encoding);
-              Log.Debug("Start line: " + sub.startTextLine + " total lines " + sub.totalTextLines);
-              Log.Debug("Timeout: " + sub.timeOut);
-              Log.Debug("Timestamp" + sub.timeStamp);
-              Log.Debug("Language: " + sub.language);
-              String content = sub.text;
-              if (content.Trim().Length > 0) // debug log subtitles
+              if (sub.page == activeSubPage)
               {
-                  StringTokenizer st = new StringTokenizer(content, new char[] { '\n' });
-                  while (st.HasMore)
+                  Log.Debug("Page: " + sub.page);
+                  Log.Debug("Character table: " + sub.encoding);
+                  Log.Debug("Start line: " + sub.startTextLine + " total lines " + sub.totalTextLines);
+                  Log.Debug("Timeout: " + sub.timeOut);
+                  Log.Debug("Timestamp" + sub.timeStamp);
+                  Log.Debug("Language: " + sub.language);
+                  String content = sub.text;
+                  Log.Debug("Content: ");
+                  if (content.Trim().Length > 0) // debug log subtitles
                   {
-                      Log.Debug(st.NextToken());
+                      StringTokenizer st = new StringTokenizer(content, new char[] { '\n' });
+                      while (st.HasMore)
+                      {
+                          Log.Debug(st.NextToken());
+                      }
+                  }
+                  else
+                  {
+                      blank = true;
+                      Log.Debug("<BLANK PAGE>");
                   }
               }
           }
           catch (Exception e)
           {
-              Log.Error("Problem marshalling TEXT_SUBTITLE");
+              Log.Error("Problem with TEXT_SUBTITLE");
               Log.Error(e);
           }
 
@@ -409,7 +427,7 @@ namespace MediaPortal.Player
               pageEntry.language = String.Copy(sub.language);
               pageEntry.encoding = (TeletextCharTable)sub.encoding;
               pageEntry.page = sub.page;
-              
+
               if (pageInfoCallback != null)
               {
                   pageInfoCallback(pageEntry);
@@ -419,34 +437,50 @@ namespace MediaPortal.Player
               if (!renderSubtitles || useBitmap || (activeSubPage != pageEntry.page))
               {
                   Log.Debug("Text subtitle (page {0}) discarded: useBitmap is {1} and activeSubPage is {2}", pageEntry.page, useBitmap, activeSubPage);
-                  return 0;
+                  return;
               }
-              else {
+              else
+              {
                   Log.Debug("Text subtitle (page {0}) ACCEPTED: useBitmap is {1} and activeSubPage is {2}", pageEntry.page, useBitmap, activeSubPage);
               }
 
               Subtitle subtitle = new Subtitle();
               subtitle.subBitmap = RenderText(sub.text, sub.startTextLine, sub.totalTextLines);
               subtitle.timeOut = sub.timeOut;
-              subtitle.presentTime = player.CurrentPosition; // compute present time in SECONDS, text subs are show immediatly
+              
+              //Log.Debug("SubtitleRenderer : player.CurrentPosition");
+              // DO NOT CALL player.CurrentPosition, can cause Deadlock because we are in one of TsReaders own threads!
+              if (posOnLastTextSub > 0 && useMinSeperation)
+              {
+                  subtitle.presentTime = posOnLastTextSub + (lastTextSubBlank ? 0.25f : 2.0f); // present time in seconds, compares to player.StreamPos
+              }
+              else {
+                  subtitle.presentTime = 0;
+              }
+
+              //Log.Debug("SubtitleRenderer : player.CurrentPosition DONE");
               subtitle.height = 576;
               subtitle.width = 720;
               subtitle.firstScanLine = (int)(sub.startTextLine / (float)sub.totalTextLines) * 576; //sub.firstScanLine;
+
+              posOnLastTextSub = posOnLastRender;
+              lastTextSubBlank = blank;
 
               lock (subtitles)
               {
                   subtitles.AddLast(subtitle);
 
-                  Log.Debug("SubtitleRenderer: Text subtitle added, now have " + subtitles.Count + " subtitles in cache " + subtitle.ToString());
+                  Log.Debug("SubtitleRenderer: Text subtitle added, now have " + subtitles.Count + " subtitles in cache " + subtitle.ToString() + " pos on last render was " + posOnLastRender);
               }
           }
-          catch (Exception e) {
+          catch (Exception e)
+          {
               Log.Error("Problem processing text subtitle");
               Log.Error(e);
           }
-          return 0;
-      }
 
+          return;
+      }
 
       public Bitmap RenderText(string lines, int startLine, int totalLines)
       {
@@ -555,9 +589,9 @@ namespace MediaPortal.Player
       }
       subFilter.StatusTest(111);
       IntPtr pCallback = Marshal.GetFunctionPointerForDelegate(callBack);
-      IntPtr pTextCallback = Marshal.GetFunctionPointerForDelegate(textCallBack);
+      //IntPtr pTextCallback = Marshal.GetFunctionPointerForDelegate(textCallBack);
       subFilter.SetBitmapCallback(pCallback);
-      subFilter.SetTeletextCallback(pTextCallback);
+      //subFilter.SetTeletextCallback(pTextCallback);
 
       subFilter.StatusTest(222);
 
@@ -611,6 +645,8 @@ namespace MediaPortal.Player
           }
         }
       }
+
+      posOnLastRender = player.StreamPosition;
 
       // Check for subtitle if we dont have one currently or if the current one is beyond its timeout
       if (currentSubtitle == null || currentSubtitle.presentTime + currentSubtitle.timeOut <= player.StreamPosition || timeForNext)

@@ -38,6 +38,8 @@ using DirectShowLib.BDA;
 using DShowNET.Helper;
 using DShowNET.TsFileSink;
 using MediaPortal.Configuration;
+using MediaPortal.Player.Teletext;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {
@@ -140,7 +142,9 @@ namespace MediaPortal.Player
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
     IPin _pinVideo = null;
-    protected ISubtitleStream _subtitleStream = null;    
+    protected ISubtitleStream _subtitleStream = null;
+    protected TeletextReceiver _ttxtReceiver = null;
+    protected ITeletextSource _teletextSource = null;
     bool enableDvbSubtitles = false;
     #endregion
     
@@ -302,7 +306,7 @@ namespace MediaPortal.Player
           {
             _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
             SubtitleRenderer.GetInstance().SetPlayer(this);
-            dvbSubRenderer = SubtitleRenderer.GetInstance();
+            _dvbSubRenderer = SubtitleRenderer.GetInstance();
             
           }
           catch (Exception e)
@@ -437,7 +441,20 @@ namespace MediaPortal.Player
           {
             Log.Error("Unable to get ISubtitleStream interface");
           }
-          subSelector = new SubtitleSelector(_subtitleStream, dvbSubRenderer);
+          _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer);
+
+          //Log.Debug("TSReaderPlayer: Obtaining TeletextSource");
+          _teletextSource = _fileSource as ITeletextSource;
+
+          if (_teletextSource == null)
+          {
+              Log.Error("Unable to get ITeletextSource interface");
+          }
+
+          Log.Debug("TSReaderPlayer: Creating Teletext Receiver ->");
+          _ttxtReceiver = new TeletextReceiver(_teletextSource, new TeletextSubtitleDecoder(_dvbSubRenderer));
+
+          _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer);
         }
             
 
@@ -581,8 +598,8 @@ namespace MediaPortal.Player
           while ((hr = Marshal.ReleaseComObject(_subtitleFilter)) > 0)
             ;
           _subtitleFilter = null;
-          if (this.dvbSubRenderer != null) this.dvbSubRenderer.SetPlayer(null);
-          this.dvbSubRenderer = null;
+          if (this._dvbSubRenderer != null) this._dvbSubRenderer.SetPlayer(null);
+          this._dvbSubRenderer = null;
         }
 
         // FlipGer: release custom filters
@@ -679,7 +696,7 @@ namespace MediaPortal.Player
         }
 
         UpdateCurrentPosition();
-        if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
+        if (_dvbSubRenderer != null) _dvbSubRenderer.OnSeek(CurrentPosition);
         _state = PlayState.Playing;
 
         Log.Info("TSReaderPlayer: current pos:{0} dur:{1}", CurrentPosition, Duration);
@@ -695,7 +712,7 @@ namespace MediaPortal.Player
       {
           if (enableDvbSubtitles)
           {
-              return subSelector.CountOptions();
+              return _subSelector.CountOptions();
           }
           else return 0;
       }
@@ -710,7 +727,7 @@ namespace MediaPortal.Player
       {
           if (enableDvbSubtitles)
           {
-              return subSelector.GetCurrentOption();
+              return _subSelector.GetCurrentOption();
           }
           else return 0;
       }
@@ -718,7 +735,7 @@ namespace MediaPortal.Player
       {
         if (enableDvbSubtitles)
         {
-            subSelector.SetOption(value);
+            _subSelector.SetOption(value);
         } 
       }
     }
@@ -730,7 +747,7 @@ namespace MediaPortal.Player
     {
       if (enableDvbSubtitles)
       {
-          return subSelector.GetCurrentLanguage();
+          return _subSelector.GetCurrentLanguage();
       }
       else
       {
@@ -747,7 +764,7 @@ namespace MediaPortal.Player
       {
         if (enableDvbSubtitles)
         {
-          return dvbSubRenderer.RenderSubtitles;
+          return _dvbSubRenderer.RenderSubtitles;
         }
         else
         {
@@ -758,7 +775,7 @@ namespace MediaPortal.Player
       {
         if (enableDvbSubtitles)
         {
-          dvbSubRenderer.RenderSubtitles = value;
+          _dvbSubRenderer.RenderSubtitles = value;
         }
       }
     }

@@ -4,7 +4,7 @@ using System.Text;
 using System.Diagnostics;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.Player
+namespace MediaPortal.Player.Subtitles
 {
     public enum SubtitleType{
         Teletext = 0,
@@ -17,7 +17,7 @@ namespace MediaPortal.Player
         public int bitmapIndex; // index among bitmap subs, only for bitmap subs :)
         public string language;
 
-        public string ToString() {
+        public override string ToString() {
             if (type == SubtitleType.Bitmap)
             {
                 return "Bitmap Lang " + language;

@@ -38,6 +38,7 @@ using DirectShowLib.BDA;
 using DShowNET.Helper;
 using DShowNET.TsFileSink;
 using MediaPortal.Configuration;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {

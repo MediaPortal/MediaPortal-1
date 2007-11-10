@@ -183,11 +183,11 @@ namespace MediaPortal.Player
     protected bool m_bVisible = false;
     protected DateTime updateTimer;
     protected FilterStreams FStreams = null;
-    protected double[] chapters = null;
+    protected double[] _chapters = null;
 
     public override double[] Chapters
     {
-        get { return chapters; }
+        get { return _chapters; }
     }
     VMR7Util vmr7 = null;
     protected g_Player.MediaType _mediaType;
@@ -1415,7 +1415,7 @@ namespace MediaPortal.Player
           {
             if (foundfilter[0] != null && fetched == 1)
             {
-              if (chapters == null)
+              if (_chapters == null)
               {
                 IAMExtendedSeeking pEs = foundfilter[0] as IAMExtendedSeeking;
                 if (pEs != null)
@@ -1423,12 +1423,12 @@ namespace MediaPortal.Player
                   int markerCount = 0;
                   if (pEs.get_MarkerCount(out markerCount) == 0 && markerCount > 0)
                   {
-                    chapters = new double[markerCount];
+                    _chapters = new double[markerCount];
                     for (int i = 1; i <= markerCount; i++)
                     {
                       double markerTime = 0;
                       pEs.GetMarkerTime(i, out markerTime);
-                      chapters[i - 1] = markerTime;
+                      _chapters[i - 1] = markerTime;
                       //there is no usage to chapter's names right now
                       //string name = null;
                       //pEs.GetMarkerName(i, out name);

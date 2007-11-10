@@ -38,6 +38,7 @@ using DirectShowLib;
 using DShowNET.Helper;
 using DShowNET.TsFileSink;
 using MediaPortal.Configuration;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {
@@ -118,8 +119,8 @@ namespace MediaPortal.Player
     protected IBaseFilter _audioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
     protected IBaseFilter _subtitleFilter = null;
-    protected SubtitleSelector subSelector = null;    
-    protected SubtitleRenderer dvbSubRenderer = null;
+    protected SubtitleSelector _subSelector = null;    
+    protected SubtitleRenderer _dvbSubRenderer = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
@@ -1086,7 +1087,7 @@ namespace MediaPortal.Player
             }
           }
           UpdateCurrentPosition();
-          if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
+          if (_dvbSubRenderer != null) _dvbSubRenderer.OnSeek(CurrentPosition);
           _state = PlayState.Playing;
           Log.Info("TSReaderPlayer: current pos:{0}", CurrentPosition);
         }
