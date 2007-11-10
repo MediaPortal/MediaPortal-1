@@ -737,6 +737,8 @@ void CTsReaderFilter::SeekDone(CRefTime& rtSeek)
   //m_demultiplexer.Flush();
   m_bSeeking=false;
   
+  m_demultiplexer.CallTeletextEventCallback(TELETEXT_EVENT_SEEK_END,TELETEXT_EVENTVALUE_NONE);
+
   if (m_pDVBSubtitle)
   {
     m_pDVBSubtitle->SetFirstPcr(m_duration.StartPcr().PcrReferenceBase);
@@ -752,6 +754,7 @@ void CTsReaderFilter::SeekDone(CRefTime& rtSeek)
 void CTsReaderFilter::SeekStart()
 {
   LogDebug("CTsReaderFilter::--SeekStart()--");
+  m_demultiplexer.CallTeletextEventCallback(TELETEXT_EVENT_SEEK_START,TELETEXT_EVENTVALUE_NONE);
   m_bSeeking=true;
 }
 

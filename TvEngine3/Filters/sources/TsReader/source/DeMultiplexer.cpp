@@ -1599,5 +1599,8 @@ void CDeMultiplexer::SetTeletextServiceInfoCallback(int (CALLBACK *pTeletextSICa
 }
 
 void CDeMultiplexer::CallTeletextEventCallback(int eventCode,unsigned long int eventValue){
-	(*pTeletextEventCallback)(eventCode,eventValue);
+	if(pTeletextEventCallback != NULL){
+		//LogDebug("CallTeletextEventCallback %i %i", eventCode,eventValue); 
+		(*pTeletextEventCallback)(eventCode,eventValue);
+	}
 }
