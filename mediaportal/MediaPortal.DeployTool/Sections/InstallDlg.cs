@@ -126,6 +126,7 @@ namespace MediaPortal.DeployTool
       if (InstallationProperties.Instance["InstallType"] == "singleseat")
       {
         AddPackageToListView(new DirectX9Checker());
+        AddPackageToListView(new VCRedistChecker());
         AddPackageToListView(new MediaPortalChecker());
         if (InstallationProperties.Instance["DBMSType"] == "mssql")
           AddPackageToListView(new MSSQLExpressChecker());
@@ -137,6 +138,7 @@ namespace MediaPortal.DeployTool
       }
       else if (InstallationProperties.Instance["InstallType"] == "tvserver_master")
       {
+        AddPackageToListView(new VCRedistChecker());
         if (InstallationProperties.Instance["DBMSType"] == "mssql")
           AddPackageToListView(new MSSQLExpressChecker());
         else
@@ -146,6 +148,7 @@ namespace MediaPortal.DeployTool
       }
       else if (InstallationProperties.Instance["InstallType"] == "tvserver_slave")
       {
+        AddPackageToListView(new VCRedistChecker());
         AddPackageToListView(new TvServerChecker());
         AddPackageToListView(new WindowsFirewallChecker());
       }

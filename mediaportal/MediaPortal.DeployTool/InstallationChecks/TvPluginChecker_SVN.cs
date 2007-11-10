@@ -91,14 +91,14 @@ namespace MediaPortal.DeployTool
       }
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\tve3_snapshot_" + InstallationProperties.Instance["tve3_newestrevision"] + ".zip");
       key.Close();
-      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Team MediaPortal\\Mediaportal", false);
+      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Team MediaPortal\\Mediaportal TV Client Plugin", false);
       string exePath = (string)key.GetValue("InstallPath");
       InstallationProperties.Instance.Set("MPDir", exePath);
       key.Close();
       FileVersionInfo vi = FileVersionInfo.GetVersionInfo(exePath + "Plugins\\Windows\\TvPlugin.dll");
       string revision = vi.ProductVersion;
       revision = revision.Remove(0, revision.LastIndexOf('.') + 1);
-      if (revision == InstallationProperties.Instance["tv3_newestrevision"])
+      if (revision == InstallationProperties.Instance["tve3_newestrevision"])
         result.state = CheckState.INSTALLED;
       else
         result.state = CheckState.VERSION_MISMATCH;

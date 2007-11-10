@@ -62,6 +62,7 @@ namespace MediaPortal.DeployTool
       string parameters = "/a \"" + msi + "\" /qb TARGETDIR=\"" + targetDir + "\"";
       Process setup = Process.Start("msiexec", parameters);
       setup.WaitForExit();
+      ctrl.Start();
       return true;
     }
     public bool UnInstall()
@@ -103,7 +104,7 @@ namespace MediaPortal.DeployTool
       FileVersionInfo vi=FileVersionInfo.GetVersionInfo(exePath+"TvService.exe");
       string revision=vi.ProductVersion;
       revision=revision.Remove(0,revision.LastIndexOf('.')+1);
-      if (revision == InstallationProperties.Instance["tv3_newestrevision"])
+      if (revision == InstallationProperties.Instance["tve3_newestrevision"])
         result.state = CheckState.INSTALLED;
       else
         result.state = CheckState.VERSION_MISMATCH;

@@ -31,6 +31,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace MediaPortal.DeployTool
 {
@@ -53,6 +54,8 @@ namespace MediaPortal.DeployTool
     public DeployTool()
     {
       InitializeComponent();
+      if (!Directory.Exists(Application.StartupPath + "\\deploy"))
+        Directory.CreateDirectory(Application.StartupPath + "\\deploy");
       Localizer.Instance.SwitchCulture("en-US");
       UpdateUI();
       InstallationProperties.Instance.Add("SVNMode", "false");

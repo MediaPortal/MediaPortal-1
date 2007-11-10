@@ -67,6 +67,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
+    <Compile Include="InstallationChecks\VCRedistChecker.cs" />
     <Compile Include="InstallationChecks\WindowsFirewallChecker.cs" />
     <Compile Include="InstallationChecks\TvServerChecker_SVN.cs" />
     <Compile Include="InstallationChecks\TvPluginChecker_SVN.cs" />
