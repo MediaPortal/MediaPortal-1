@@ -285,7 +285,7 @@ namespace MediaPortal.Player.Teletext
                 }
                 else if (data_unit_id == 0x02)
                 { //EBU teletext non-subtitle data
-                    Log.Debug("EBU Teletext non-subtitle data");
+                    //Log.Debug("EBU Teletext non-subtitle data");
                     byte data_unit_length = data[offset + 1];
 
                     // always the same length for teletext data (see section 4.4)

@@ -131,7 +131,8 @@ namespace MediaPortal.Player.Teletext
 			        else assert( m_iStreamId == tsPacket[pos+3], "Stream id changed!"); // stream id should not change!
 
                     if(m_iWritePos != 0){
-                        throw new Exception("Buffer is not empty, but new packet is being received!");
+                        //throw new Exception("Buffer is not empty, but new packet is being received!");
+                        Log.Error("PESDECODER: Buffer is not empty, but new packet is being received!");
                     }
 			        m_iWritePos = 0;
 
