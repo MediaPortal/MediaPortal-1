@@ -23,7 +23,10 @@ namespace MediaPortal.Player.Teletext
         }
 
         private void assert(bool ok, string msg) {
-            if (!ok) throw new Exception("Assertion failed! " + msg);
+            if (!ok)
+            { //throw new Exception("Assertion failed! " + msg);
+                Log.Error("Assertion failed! " + msg);
+            }
         }
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -138,6 +141,8 @@ namespace MediaPortal.Player.Teletext
                         //Log.Debug("Teletext: Buffer out value : {0}", eventValue);
                         ProcessPackets(eventValue);
                         break;
+                    default:
+                        throw new Exception("Unknown event type!");
                 }
 
             }
@@ -306,34 +311,3 @@ namespace MediaPortal.Player.Teletext
         private bool discardPackets = false;
     }
 }
-
-
-/*
-
-
-            workerRun = true;
-            ThreadStart workerStart = new ThreadStart(PacketThread) ;
-            Thread worker = new Thread(workerStart);
-            worker.IsBackground = true;
-            worker.Priority = ThreadPriority.Highest;
-            worker.Start();
-
-
-*/
-//ManualResetEvent packetEvent = new ManualResetEvent(false);
-
-/* private void PacketThread() {
-     Log.Debug("TeletextReceiver: Starting PacketThread");
-     while (workerRun) {
-         //packetEvent.WaitOne();
-         //packetEvent.Reset();
-         lock (this)
-         {
-             Monitor.Wait(this);
-             if (tsPackets.Count > 0) {
-                 pesDecoder.OnTsPacket(tsPackets.Dequeue());
-             }
-         }
-     }
-     Log.Debug("TeletextReceiver : stopping PacketThread");
- }*/

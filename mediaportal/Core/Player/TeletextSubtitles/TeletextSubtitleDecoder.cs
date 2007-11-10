@@ -119,7 +119,9 @@ namespace MediaPortal.Player.Subtitles
 
         public bool AcceptsDataUnitID(byte id) {
             //Log.Debug("Decoder: Asked about accepting unit id {0}", id);
-            return id == 0x03/* || id == 0x02*/;
+            // We need to accept both EMU Teletext subs and non-subs
+            // because some providers transmit the subs in non-sub PES packets :)
+            return id == 0x03 || id == 0x02;
         }
 
         public void Reset() {

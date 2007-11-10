@@ -55,7 +55,7 @@ namespace MediaPortal.Player.Subtitles
             assert(mag == magID, "Inconsistent magazine id");
             assert(pageNumInProgress == -1 || (pageNumInProgress >= 100 && pageNumInProgress <= 966), "PageNumInProgress out of range");
 
-            if (header.isTimeFiller())
+            if (header.isTimeFiller() || !header.isSubtitle() )
             { // time filling header to indicate end of page
                 if (pageNumInProgress != -1)
                 { // if we were working on a previous page its finished now
