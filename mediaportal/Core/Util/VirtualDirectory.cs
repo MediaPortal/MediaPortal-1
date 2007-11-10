@@ -310,7 +310,7 @@ namespace MediaPortal.Util
       string[] drives = Environment.GetLogicalDrives();
       foreach (string drive in drives)
       {
-        if (drive[0] > 'B' && Util.Utils.getDriveType(drive) == Removable)
+        if (drive[0] > 'B' && Util.Utils.GetTypeOfDrive(drive) == Removable)
         {
           bool driveFound = false;
           string driveName = Util.Utils.GetDriveName(drive);
@@ -2160,7 +2160,7 @@ namespace MediaPortal.Util
       string[] drives = Environment.GetLogicalDrives();
       foreach (string drive in drives)
       {
-        if (drive[0] > 'B' && Util.Utils.getDriveType(drive) == Removable)
+        if (drive[0] > 'B' && Util.Utils.GetTypeOfDrive(drive) == Removable)
         {
           bool driveFound = false;
           string driveName = Util.Utils.GetDriveName(drive);
@@ -2220,7 +2220,7 @@ namespace MediaPortal.Util
         string[] drives = Environment.GetLogicalDrives();
         foreach (string drive in drives)
         {
-          int driveType = Util.Utils.getDriveType(drive);
+          int driveType = Util.Utils.GetTypeOfDrive(drive);
           if (driveType == (int)DriveType.CDRom)
           {
             string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());

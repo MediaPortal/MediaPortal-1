@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("orientation")]
     protected eOrientation _orientation = eOrientation.Horizontal;
 
-    protected bool autoCheck = true;
+    protected bool _autoCheck = true;
     protected int _startInt = 0;
     protected int _endInt = 100;
     protected float _startFloat = 0.0f;
@@ -1168,8 +1168,8 @@ namespace MediaPortal.GUI.Library
 
     public bool AutoCheck
     {
-      get { return autoCheck; }
-      set { autoCheck = value; }
+      get { return _autoCheck; }
+      set { _autoCheck = value; }
     }
 
     public GUISpinControl.SpinSelect SelectedButton

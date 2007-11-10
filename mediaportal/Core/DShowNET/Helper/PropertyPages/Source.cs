@@ -37,14 +37,14 @@ namespace DShowNET.Helper
 
 		// --------------------- Private/Internal properties -------------------------
 
-		protected string				name;				// Name of the source
+		protected string				_name;				// Name of the source
 
 
 
 		// ----------------------- Public properties -------------------------
 
 		/// <summary> The name of the source. Read-only. </summary>
-		public string Name { get { return( name ); } }
+		public string Name { get { return( _name ); } }
 
 		/// <summary> Obtains the String representation of this instance. </summary>
 		public override string ToString() { return( Name ); }
@@ -72,7 +72,7 @@ namespace DShowNET.Helper
 		/// <summary> Release unmanaged resources. </summary>
 		public virtual void Dispose()
 		{
-			name = null;
+			_name = null;
 		}
 
 	}

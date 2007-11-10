@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.View
 	[Serializable]
 	public class FilterDefinition
 	{
-		protected bool	 distinct=false;
+		protected bool	 _distinct=false;
 		protected bool	 sortAscending=true;
 		protected string restriction="";
 		protected string whereClause="";
@@ -55,8 +55,8 @@ namespace MediaPortal.GUI.View
     [XmlElement("distinct")]
     public bool Distinct
     {
-      get { return distinct;}
-      set { distinct=value;}
+      get { return _distinct;}
+      set { _distinct=value;}
     }
     [XmlElement("SortAscending")]
     public bool SortAscending
