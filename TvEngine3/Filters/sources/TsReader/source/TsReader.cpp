@@ -94,18 +94,11 @@ const AMOVIESETUP_MEDIATYPE acceptSubtitlePinTypes =
 	&MEDIASUBTYPE_MPEG2_TRANSPORT      // minor type
 };
 
-const AMOVIESETUP_MEDIATYPE acceptTeletextPinTypes =
-{
-  &MEDIATYPE_Stream,           // major type
-	&MEDIASUBTYPE_MPEG2_TRANSPORT      // minor type
-};
-
 const AMOVIESETUP_PIN audioVideoPin[] =
 {
 	{L"Audio",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptAudioPinTypes},
 	{L"Video",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptVideoPinTypes},
-	{L"Subtitle",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptSubtitlePinTypes},
-	{L"Teletext",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptTeletextPinTypes}
+	{L"Subtitle",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptSubtitlePinTypes}
 };
 
 const AMOVIESETUP_FILTER TSReader =
@@ -163,7 +156,6 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);
 	m_pVideoPin = new CVideoPin(GetOwner(), this, phr,&m_section);
 	m_pSubtitlePin = new CSubtitlePin(GetOwner(), this, phr,&m_section);
-	m_pTeletextPin = new CTeletextPin(GetOwner(), this, phr,&m_section);
   
   m_bSeeking=false;
 
@@ -193,9 +185,6 @@ CTsReaderFilter::~CTsReaderFilter()
   
 	hr=m_pSubtitlePin->Disconnect();
 	delete m_pSubtitlePin;
-
-	hr=m_pTeletextPin->Disconnect();
-	delete m_pTeletextPin;
 
   if (m_pDVBSubtitle) 
   {
@@ -252,6 +241,10 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 	{
 		return GetInterface((IAMStreamSelect*)this, ppv);
 	}
+    if (riid == IID_ITeletextSource)
+	{
+		return GetInterface((ITeletextSource*)this, ppv);
+	}  
   if (riid == IID_ISubtitleStream)
 	{
 		return GetInterface((ISubtitleStream*)this, ppv);
@@ -277,18 +270,13 @@ CBasePin * CTsReaderFilter::GetPin(int n)
   {
     return m_pSubtitlePin;
   }
-  else if (n == 3)
-  {
-    // Disabled currently as it causes some seeking & channel change crashes
-    //return m_pTeletextPin;
-  }
   return NULL;
 }
 
 
 int CTsReaderFilter::GetPinCount()
 {
-  return 3;//4;
+  return 3;
 }
 
 void CTsReaderFilter::OnMediaTypeChanged()
@@ -312,7 +300,7 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   CAutoLock cObjectLock(m_pLock);
 		 
 	if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(true);
-	if(m_pTeletextPin) m_pTeletextPin->SetRunningStatus(true);
+
   //are we using RTSP or local file
   if (m_fileDuration==NULL)
   {
@@ -349,10 +337,6 @@ STDMETHODIMP CTsReaderFilter::Stop()
   if (m_pSubtitlePin)
   {
     m_pSubtitlePin->SetRunningStatus(false);
-  }
-  if (m_pTeletextPin)
-  {
-    m_pTeletextPin->SetRunningStatus(false);
   }
 
   //stop duration thread
@@ -790,12 +774,6 @@ CSubtitlePin* CTsReaderFilter::GetSubtitlePin()
   return m_pSubtitlePin;
 }
 
-//Returns the teletext output pin
-CTeletextPin* CTsReaderFilter::GetTeletextPin()
-{
-  return m_pTeletextPin;
-}
-
 IDVBSubtitle* CTsReaderFilter::GetSubtitleFilter()
 {
   /*if( !m_pDVBSubtitle )
@@ -1011,6 +989,28 @@ STDMETHODIMP CTsReaderFilter::SetAudioStream(__int32 stream)
 STDMETHODIMP CTsReaderFilter::GetAudioStream(__int32 &stream)
 {  
   return m_demultiplexer.GetAudioStream(stream);
+}
+
+// ITeletextSource methods
+STDMETHODIMP CTsReaderFilter::SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int))
+{
+  LogDebug("Setting Teletext TS packet callback");
+  m_demultiplexer.SetTeletextPacketCallback(pPacketCallback);
+  return S_OK;
+}
+
+STDMETHODIMP CTsReaderFilter::SetTeletextServiceInfoCallback( int (CALLBACK *pSICallback)(int,byte,byte,byte,byte) )
+{ 
+  LogDebug("Setting Teletext Service Info callback");
+  m_demultiplexer.SetTeletextServiceInfoCallback(pSICallback);
+  return S_OK;
+}
+
+STDMETHODIMP CTsReaderFilter::SetTeletextEventCallback( int (CALLBACK *pEventCallback)(int ecode,DWORD64 ev) )
+{ 
+  LogDebug("Setting Teletext Event callback");
+  m_demultiplexer.SetTeletextEventCallback(pEventCallback);
+  return S_OK;
 }
 
 // ISubtitleStream methods 

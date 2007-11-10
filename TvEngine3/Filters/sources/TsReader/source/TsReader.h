@@ -27,10 +27,10 @@
 #include "TSThread.h"
 #include "rtspclient.h"
 #include "memorybuffer.h"
-#include "TeletextPin.h"
 #include "..\..\DVBSubtitle2\Source\IDVBSub.h"
 #include "ISubtitleStream.h"
 #include "IAudioStream.h"	      
+#include "ITeletextSource.h"
 #include <map>
 using namespace std;
 
@@ -60,7 +60,7 @@ DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
 
 
 class CTsReaderFilter : public CSource, public TSThread, public IFileSourceFilter, 
-                        public IAMFilterMiscFlags, public IAMStreamSelect, public ISubtitleStream,
+                        public IAMFilterMiscFlags, public IAMStreamSelect, public ISubtitleStream, public ITeletextSource,
 						public ITSReader
 {
 public:
@@ -101,6 +101,13 @@ private:
     STDMETHODIMP GetCurrentSubtitleStream(__int32 &stream);
     STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
 
+	//ITeletextSource
+	STDMETHODIMP SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int));
+	STDMETHODIMP SetTeletextEventCallback (int (CALLBACK *EventCallback)(int,DWORD64) ); 
+	STDMETHODIMP SetTeletextServiceInfoCallback (int (CALLBACK *pServiceInfoCallback)(int,byte,byte,byte,byte) ); 
+
+	
+
 public:
 	// ITSReader
 	STDMETHODIMP	SetGraphCallback(ITSReaderCallback* pCallback);
@@ -119,7 +126,6 @@ public:
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
   CSubtitlePin*   GetSubtitlePin();
-  CTeletextPin*   GetTeletextPin();
   IDVBSubtitle*   GetSubtitleFilter();
   bool            IsTimeShifting();
   CTsDuration&    GetDuration();
@@ -136,7 +142,6 @@ private:
 	CAudioPin*	    m_pAudioPin;
 	CVideoPin*	    m_pVideoPin;
 	CSubtitlePin*	m_pSubtitlePin;
-	CTeletextPin*	m_pTeletextPin;
 	WCHAR           m_fileName[1024];
 	CCritSec        m_section;
 	CCritSec        m_CritSecDuration;

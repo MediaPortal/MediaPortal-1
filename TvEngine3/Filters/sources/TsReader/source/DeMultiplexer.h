@@ -46,7 +46,6 @@ public:
   CBuffer*   GetVideo();
   CBuffer*   GetAudio();
   CBuffer*   GetSubtitle();
-  CBuffer*   GetTeletext();
 	void       OnTsPacket(byte* tsPacket);
 	void       OnNewChannel(CChannelInfo& info);
   void       SetFileReader(FileReader* reader);
@@ -84,6 +83,12 @@ public:
   void       FlushSubtitle();
   void       FlushTeletext();
   int        GetVideoServiceType();  
+
+  void SetTeletextEventCallback(int (CALLBACK *pTeletextResetCallback)(int,DWORD64));
+  void SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int));
+  void SetTeletextServiceInfoCallback(int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte));
+
+  void CallTeletextEventCallback(int eventCode,unsigned long int eventValue);
 private:
   struct stAudioStream
   {
@@ -113,12 +118,10 @@ private:
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
   CCritSec m_sectionSubtitle;
-  CCritSec m_sectionTeletext;
   CCritSec m_sectionRead;
 	FileReader* m_reader;
   CPatParser m_patParser;
   CPidTable m_pids;
-  vector<CBuffer*> m_vecTeletextBuffers; // Ziphnor
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;
   vector<CBuffer*> m_vecAudioBuffers;
@@ -148,4 +151,12 @@ private:
   bool m_bSetVideoDiscontinuity;
   CPcr m_subtitlePcr;  
   void ReadAudioIndexFromRegistry();
+
+  int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte);
+   int (CALLBACK *pTeletextPacketCallback)(byte*, int);
+   int (CALLBACK *pTeletextEventCallback)(int,DWORD64);
+
+    // used to sync teletext packets with video
+	DWORD64 m_inVideoBuffer;
+	DWORD64 m_outVideoBuffer;
 };

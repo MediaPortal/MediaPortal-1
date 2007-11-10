@@ -47,7 +47,6 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentVideoBuffer = new CBuffer();
   m_pCurrentAudioBuffer = new CBuffer();
   m_pCurrentSubtitleBuffer = new CBuffer();
-  m_pCurrentTeletextBuffer = new CBuffer();
   m_iAudioStream=0;
   m_iSubtitleStream=0;
   m_audioPid=0;
@@ -62,6 +61,9 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bSetAudioDiscontinuity=false;
   m_bSetVideoDiscontinuity=false;
   m_reader=NULL;  
+  pTeletextEventCallback = NULL;
+  pTeletextPacketCallback = NULL;
+  pTeletextServiceInfoCallback = NULL;
 
   ReadAudioIndexFromRegistry();
 }
@@ -137,12 +139,6 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   //is stream index valid?
   if (stream< 0 || stream>=m_audioStreams.size()) 
     return S_FALSE;
-
-  //if we are changing to the same audio track as the current one, then ignore.
-  if (m_iAudioStream == stream)
-  {
-	return S_FALSE;
-  }
 
   //get the current audio forma stream type
   int oldAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
@@ -335,6 +331,10 @@ void CDeMultiplexer::FlushVideo()
     CBuffer* videoBuffer=*it;
     delete videoBuffer;
     it=m_vecVideoBuffers.erase(it);
+	m_outVideoBuffer++;
+  }
+  if(this->pTeletextEventCallback != NULL){
+	  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
   }
   m_pCurrentVideoBuffer = new CBuffer();
 }
@@ -368,21 +368,6 @@ void CDeMultiplexer::FlushSubtitle()
   m_pCurrentSubtitleBuffer = new CBuffer();
 }
 
-void CDeMultiplexer::FlushTeletext()
-{
-  LogDebug("demux:flush teletext");
-  CAutoLock lock (&m_sectionTeletext);
-  delete m_pCurrentTeletextBuffer;
-  ivecBuffers it = m_vecTeletextBuffers.begin();
-  while (it != m_vecTeletextBuffers.end())
-  {
-    CBuffer* teletextBuffer = *it;
-    delete teletextBuffer;
-    it = m_vecTeletextBuffers.erase(it);
-  }
-  m_pCurrentTeletextBuffer = new CBuffer();
-}
-
 /// Flushes all buffers 
 ///
 void CDeMultiplexer::Flush()
@@ -397,7 +382,6 @@ void CDeMultiplexer::Flush()
   FlushAudio();
   FlushVideo();
   FlushSubtitle();
-  FlushTeletext();
   SetHoldAudio(holdAudio);
   SetHoldVideo(holdVideo);
   SetHoldSubtitle(holdSubtitle);
@@ -426,33 +410,6 @@ CBuffer* CDeMultiplexer::GetSubtitle()
     return subtitleBuffer;
   }
   //no subtitle packets available  
-  return NULL;
-}
-
-///
-///Returns the next teletext packet
-// or NULL if there is none available
-CBuffer* CDeMultiplexer::GetTeletext()
-{
-  //if there is no teletext pid, then simply return NULL
-  if (m_pids.TeletextPid==0) return NULL;
-  if (m_bEndOfFile) return NULL;
-  if (m_bHoldSubtitle) return NULL; // FIXME
-  //ReadFromFile(false,false);
-  //if (m_bEndOfFile) return NULL;
-
-	CAutoLock lock (&m_sectionTeletext);
-  //are there subtitle packets in the buffer?
-  if (m_vecTeletextBuffers.size()!=0)
-  {
-    //yup, then return the next one
-    
-    ivecBuffers it =m_vecTeletextBuffers.begin();
-    CBuffer* teletextBuffer=*it;
-    m_vecTeletextBuffers.erase(it);
-    return teletextBuffer;
-  }
-  //no subtitle packets available
   return NULL;
 }
 
@@ -495,6 +452,10 @@ CBuffer* CDeMultiplexer::GetVideo()
     {
       CBuffer* videoBuffer=*it;
       m_vecVideoBuffers.erase(it);
+	  m_outVideoBuffer++;
+	  if(this->pTeletextEventCallback != NULL){
+		  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
+	  }
       return videoBuffer;
     }
   }
@@ -727,18 +688,13 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   if( m_pids.TeletextPid > 0 && m_pids.TeletextPid != m_currentTeletextPid )
   {
     IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-    if( pDVBSubtitleFilter )
+	if( pTeletextServiceInfoCallback )
     {
-	  //LogDebug("Calling SetTeletextPid %i", m_pids.TeletextPid);
-      pDVBSubtitleFilter->SetTeletextPid(m_pids.TeletextPid);
 	  std::vector<TeletextServiceInfo>::iterator vit = m_pids.TeletextInfo.begin();
 	  while(vit != m_pids.TeletextInfo.end()){
 			TeletextServiceInfo& info = *vit;
-			if(info.page >= 100 && info.IsSubtitleInfo()){
-				//LogDebug("Calling NotifySubPageInfo %i", info.page);
-				DVBLANG lang(info.lang[0],info.lang[1],info.lang[2]);
-				pDVBSubtitleFilter->NotifySubPageInfo(info.page, lang);
-			}
+			LogDebug("Calling Teletext Service info callback");
+			(*pTeletextServiceInfoCallback)(info.page, info.type, (byte)info.lang[0],(byte)info.lang[1],(byte)info.lang[2]);
 			vit++;
 	  }
       m_currentTeletextPid = m_pids.TeletextPid;
@@ -905,7 +861,12 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
       //yes, then store current buffer
       if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
         m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
-      m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
+
+	  m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
+	  m_inVideoBuffer++;
+	  if(this->pTeletextEventCallback != NULL){
+		  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_IN_UPDATE,m_inVideoBuffer);
+	  }
       //and create a new one
       m_pCurrentVideoBuffer = new CBuffer();
     }
@@ -961,7 +922,11 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
       if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
         m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
       m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
-      
+      m_inVideoBuffer++;
+	  if(this->pTeletextEventCallback != NULL){
+		  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_IN_UPDATE,m_inVideoBuffer);
+	  }
+
       //and create a new one
       m_pCurrentVideoBuffer = new CBuffer();
     }
@@ -1029,32 +994,10 @@ void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
 	
   if (m_pids.TeletextPid==0) return;
   if (header.Pid!=m_pids.TeletextPid) return;
-  if (m_filter.GetTeletextPin()->IsConnected()==false) return;
   if ( header.AdaptionFieldOnly() ) return;
 
-  CAutoLock lock (&m_sectionTeletext);
-
-  if ( false==header.AdaptionFieldOnly() ) 
-  {
-    if (m_vecTeletextBuffers.size()>=  MAX_BUF_SIZE) 
-    {
-	  LogDebug("TeletextBuffer contains too much (%i buffers already)!", m_vecTeletextBuffers.size());
-	  int s = m_vecTeletextBuffers.size();
-	  if(m_vecTeletextBuffers.begin() == m_vecTeletextBuffers.end()){
-		LogDebug("Too many teletext buffers, but yet teletext buffer vector is empty!");
-		return;
-	  }
-	  //else m_vecTeletextBuffers.erase(m_vecSubtitleBuffers.begin());
-	  m_vecTeletextBuffers.clear();
-    }
-
-    //m_pCurrentTeletextBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
-    //m_pCurrentTeletextBuffer->SetPts(m_subtitlePcr);
-    m_pCurrentTeletextBuffer->Add(tsPacket,188); // we only want data
-	
-    m_vecTeletextBuffers.push_back(m_pCurrentTeletextBuffer);
-	//LogDebug("Teletext buffers %i", ++addCount);
-    m_pCurrentTeletextBuffer = new CBuffer();
+  if(pTeletextPacketCallback != NULL){
+	(*pTeletextPacketCallback)(tsPacket,188);
   }
 }
 
@@ -1143,6 +1086,10 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid2);
   LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid3);
   LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid4);
+
+  if(pTeletextEventCallback != NULL){
+	(*pTeletextEventCallback)(TELETEXT_EVENT_RESET,TELETEXT_EVENTVALUE_NONE);
+  }
 
   IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
   if( pDVBSubtitleFilter )
@@ -1640,3 +1587,17 @@ void CDeMultiplexer::SetHoldSubtitle(bool onOff)
 }
 
 
+void CDeMultiplexer::SetTeletextEventCallback(int (CALLBACK *pTeletextEventCallback)(int eventcode, DWORD64 eval)){
+	this->pTeletextEventCallback = pTeletextEventCallback;
+}
+void CDeMultiplexer::SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int)){
+	this->pTeletextPacketCallback = pTeletextPacketCallback;
+}
+
+void CDeMultiplexer::SetTeletextServiceInfoCallback(int (CALLBACK *pTeletextSICallback)(int, byte,byte,byte,byte)){
+	this->pTeletextServiceInfoCallback = pTeletextSICallback;
+}
+
+void CDeMultiplexer::CallTeletextEventCallback(int eventCode,unsigned long int eventValue){
+	(*pTeletextEventCallback)(eventCode,eventValue);
+}
