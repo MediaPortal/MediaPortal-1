@@ -1062,17 +1062,11 @@ static DWORD crc_table[256] = {
 		}
 
 		if (m_tsHeader.Pid==m_pcrPid)
-		{			
+		{
 			byte pkt[200];
 			memcpy(pkt,tsPacket,188);
 			int pid=FAKE_PCR_PID;
 			PatchPcr(pkt,m_tsHeader);
-
-			// writeTS determines if a TS packet gets written to the timeshifting file or not.
-			// invalid headers are skipped, such as scrambled packets.				
-			writeTS = true; 						  			
-			if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) writeTS = false; 
-
 			pkt[1]=( (pid>>8) & 0x1f);
 			pkt[2]=(pid&0xff);
 			pkt[3]=(2<<4);// Adaption Field Control==adaptation field only, no payload
@@ -1088,7 +1082,7 @@ static DWORD crc_table[256] = {
 					//LogDebug("pcr:%x->%x %d", m_pcrPid,FAKE_PCR_PID,info.ContintuityCounter);
 				}				
 
-				if (writeTS) Write(pkt,188);
+				Write(pkt,188);
 				m_iPacketCounter++;
 			}
 			return;
