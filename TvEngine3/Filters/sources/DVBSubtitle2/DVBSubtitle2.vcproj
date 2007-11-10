@@ -246,31 +246,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Hamming.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\source\dvbsubs\subtitle.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\source\SubtitleInputPin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TeletextConversion.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TeletextDecoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TeletextInputPin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TeletextPageHeader.cpp"
 				>
 			</File>
 		</Filter>
@@ -284,10 +264,6 @@
 			</File>
 			<File
 				RelativePath=".\source\dvbsubs\DVBSubDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\Hamming.h"
 				>
 			</File>
 			<File
@@ -312,22 +288,6 @@
 			</File>
 			<File
 				RelativePath=".\source\dvbsubs\tables.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TeletextConversion.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TeletextDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TeletextInputPin.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\TeletextPageHeader.h"
 				>
 			</File>
 		</Filter>

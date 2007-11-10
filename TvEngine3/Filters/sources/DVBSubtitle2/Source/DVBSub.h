@@ -34,7 +34,6 @@
 
 #include "IDVBSub.h"
 
-class CTeletextInputPin;
 class CSubtitleInputPin;
 class CDVBSubDecoder;
 
@@ -102,14 +101,11 @@ private:
 
 public:
 
-  CTeletextInputPin*  m_pTeletextInputPin;
-
   CSubtitleInputPin*  m_pSubtitlePin;
   
 private: // data
 
   int                 m_subtitlePid;
-  int                 m_teletextPid;
 
   CDVBSubDecoder*     m_pSubDecoder;      // Subtitle decoder
   IMediaSeeking*      m_pIMediaSeeking;   // Media seeking interface

@@ -24,8 +24,6 @@
 #include <bdaiface.h>
 #include "DVBSub.h"
 #include "SubtitleInputPin.h"
-#include "TeletextInputPin.h"
-
 extern void LogDebug( const char *fmt, ... );
 extern void LogDebugPTS( const char *fmt, uint64_t pts );
 
@@ -40,11 +38,6 @@ const AMOVIESETUP_MEDIATYPE sudPinTypesIn =
 	&MEDIATYPE_NULL, &MEDIASUBTYPE_NULL
 };
 
-const AMOVIESETUP_MEDIATYPE sudPinTypesTeletext =
-{
-	&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_DVB_SI
-};
-
 const AMOVIESETUP_PIN sudPins[] =
 {
 	{
@@ -57,18 +50,7 @@ const AMOVIESETUP_PIN sudPins[] =
 		L"In",				        // Connects to pin
 		1,							      // Number of types
 		&sudPinTypesSubtitle  // Pin information
-	},
-	{
-		L"TeletextIn",				        // Pin string name
-			FALSE,						    // Is it rendered
-			FALSE,						    // Is it an output
-			FALSE,						    // Allowed none
-			FALSE,						    // Likewise many
-			&CLSID_NULL,					// Connects to filter
-			L"TeletextIn",				        // Connects to pin
-			1,							      // Number of types
-			&sudPinTypesTeletext  // Pin information
-	},
+	}
 };
 
 
@@ -92,7 +74,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 {
   ::DeleteFile("c:\\DVBsub.log");
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 6 (+teletext mod) ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 6 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -124,23 +106,6 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
     return;
   }
 
-	// Create Teletext input pin
-	m_pTeletextInputPin = new CTeletextInputPin( this,
-		GetOwner(),
-		this,
-		&m_Lock,
-		&m_ReceiveLock,
-		phr); 
-
-	if ( m_pTeletextInputPin == NULL )
-	{
-		if( phr )
-		{
-			*phr = E_OUTOFMEMORY;
-		}
-		return;
-	}
-
   if( m_pSubDecoder )
   {
     m_pSubDecoder->SetObserver( this );
@@ -165,7 +130,6 @@ CDVBSub::~CDVBSub()
 
 	delete m_pSubDecoder;
 	delete m_pSubtitlePin;
-	delete m_pTeletextInputPin;
   
   LogDebug( "CDVBSub::~CDVBSub() - end" );
 }
@@ -179,9 +143,6 @@ CBasePin * CDVBSub::GetPin( int n )
   if( n == 0 )
 		return m_pSubtitlePin;
 
-  if( n == 1 )
-		return m_pTeletextInputPin;
-
   return NULL;
 }
 
@@ -191,7 +152,8 @@ CBasePin * CDVBSub::GetPin( int n )
 //
 int CDVBSub::GetPinCount()
 {
-	return 2; // subtitle in, teletext in
+	return 1;
+	//return 2; // subtitle in, teletext in
 }
 
 
@@ -310,12 +272,7 @@ STDMETHODIMP CDVBSub::StatusTest(int status)
 
 
 STDMETHODIMP CDVBSub::NotifySubPageInfo(int page, DVBLANG& lang){
-	LogDebug("CDVBSub::NotifySubPageInfo");
-  if( m_pTeletextInputPin )
-  {
-    m_pTeletextInputPin->NotifySubPageInfo(page,lang);
-  
-  }
+	//obsolete
     return S_OK;
 }
 
@@ -324,25 +281,8 @@ STDMETHODIMP CDVBSub::NotifySubPageInfo(int page, DVBLANG& lang){
 //
 STDMETHODIMP CDVBSub::SetTeletextPid( LONG pPid )
 {
-  LogDebug( "CDVBSub::SetTeletextPid() %d", pPid );
-  
-  if( m_teletextPid != pPid )
-  {
-    LogDebug( "Teletext PID has changed!" );
-    Reset();
-  }
-  
-  m_subtitlePid = pPid;
-
-  if( m_pTeletextInputPin )
-  {
-    m_pTeletextInputPin->SetTeletextPid( pPid );
-    return S_OK;
-  }
-  else
-  {
-    return S_FALSE;
-  }
+	//obsolete
+	return S_OK;
 }
 
 //
@@ -481,15 +421,6 @@ void CDVBSub::NotifySubtitle()
 }
 
 void CDVBSub::NotifyTeletextSubtitle(TEXT_SUBTITLE& sub){
-	LogDebug("New text subtitle");
-	if( m_pTextSubtitleObserver != NULL)
-	{
-		//LogDebug("Calling text subtitle observer with text: %s",sub.text);
-		(*m_pTextSubtitleObserver)(&sub);
-	}
-	else{
-		LogDebug("No text subtitle observer to call");
-	}
 }
 
 //
@@ -570,13 +501,10 @@ STDMETHODIMP CDVBSub::SetBitmapCallback( int (CALLBACK *pSubtitleObserver)(SUBTI
   return S_OK;
 }
 
-//
-// SetTeletextCallback
-//
+
 STDMETHODIMP CDVBSub::SetTeletextCallback( int (CALLBACK *pTextSubtitleObserver)(TEXT_SUBTITLE* sub) )
 {
-	LogDebug( "SetTeletextCallback called" );
-	m_pTextSubtitleObserver = pTextSubtitleObserver;
+	//obsolete
 	return S_OK;
 }
 
