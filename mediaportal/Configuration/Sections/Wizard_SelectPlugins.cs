@@ -361,7 +361,7 @@ namespace MediaPortal.Configuration.Sections
       string[] drives = Environment.GetLogicalDrives();
       foreach (string drive in drives)
       {
-        int driveType = Util.Utils.getDriveType(drive);
+        int driveType = Util.Utils.GetTypeOfDrive(drive);
         if (driveType != (int)DriveType.Fixed) continue;
         labelHD.Text = String.Format("{0}", drive);
         ScanFolder(labelHD.Text, true, true, true);

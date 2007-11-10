@@ -712,7 +712,7 @@ namespace MediaPortal.Configuration.Sections
       for (char drive = 'a'; drive <= 'z'; drive++)
       {
         string driveLetter = String.Format("{0}:", drive);
-        if (MediaPortal.Util.Utils.getDriveType(driveLetter) == 3)
+        if (MediaPortal.Util.Utils.GetTypeOfDrive(driveLetter) == 3)
         {
           comboDrives.Items.Add(driveLetter);
         }

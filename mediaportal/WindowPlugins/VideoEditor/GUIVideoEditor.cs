@@ -524,7 +524,7 @@ namespace WindowPlugins.VideoEditor
 			cntDrives = 0;
 			foreach (string drive in Environment.GetLogicalDrives())
 			{
-				switch ((DriveType)MediaPortal.Util.Utils.getDriveType(drive))
+				switch ((DriveType)MediaPortal.Util.Utils.GetTypeOfDrive(drive))
 				{
 					case DriveType.Removable:
 					case DriveType.CD:

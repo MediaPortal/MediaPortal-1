@@ -549,7 +549,7 @@ namespace MediaPortal.GUI.Music
             dlg.AddLocalizedString(4521);   //Show Album Info
             dlg.AddLocalizedString(928);    //find coverart               
 
-            if (!item.IsFolder && MediaPortal.Util.Utils.getDriveType(item.Path.Substring(0, 2)) == 5)
+            if (!item.IsFolder && MediaPortal.Util.Utils.GetTypeOfDrive(item.Path.Substring(0, 2)) == 5)
             {
               dlg.AddLocalizedString(1100); //Import CD              
               dlg.AddLocalizedString(1101); //Import Track
@@ -567,7 +567,7 @@ namespace MediaPortal.GUI.Music
           }
         }
 
-        if (MediaPortal.Util.Utils.getDriveType(item.Path) == 5)
+        if (MediaPortal.Util.Utils.GetTypeOfDrive(item.Path) == 5)
           dlg.AddLocalizedString(654); //Eject
 
         int iPincodeCorrect;
@@ -624,7 +624,7 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 654: // Eject
-          if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5)
+          if (MediaPortal.Util.Utils.GetTypeOfDrive(item.Path) != 5)
             MediaPortal.Util.Utils.EjectCDROM();
           else
             MediaPortal.Util.Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));

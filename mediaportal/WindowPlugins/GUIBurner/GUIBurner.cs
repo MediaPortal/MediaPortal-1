@@ -1086,7 +1086,7 @@ namespace MediaPortal.GUI.GUIBurner
     {
       foreach (string drive in Environment.GetLogicalDrives())
       {
-        switch ((DriveType)Util.Utils.getDriveType(drive))
+        switch ((DriveType)Util.Utils.GetTypeOfDrive(drive))
         {
           case DriveType.Removable:
           case DriveType.Fixed:

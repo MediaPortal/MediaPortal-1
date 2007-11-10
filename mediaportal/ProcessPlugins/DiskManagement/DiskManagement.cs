@@ -59,7 +59,7 @@ namespace ProcessPlugins.DiskSpace
       for (char drive = 'a'; drive <= 'z'; drive++)
       {
         string driveLetter = String.Format("{0}:", drive);
-        if (Utils.getDriveType(driveLetter) == 3)
+        if (Utils.GetTypeOfDrive(driveLetter) == 3)
         {
           bool newDrive = true;
           foreach (string tmpDrive in drives)
