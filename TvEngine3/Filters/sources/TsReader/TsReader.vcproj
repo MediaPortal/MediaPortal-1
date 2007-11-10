@@ -313,10 +313,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\TeletextPin.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\source\TsDuration.cpp"
 				>
 			</File>
@@ -386,6 +382,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\ITeletextSource.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\MediaSeeking.h"
 				>
 			</File>
@@ -447,10 +447,6 @@
 			</File>
 			<File
 				RelativePath=".\source\SubtitlePin.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TeletextPin.h"
 				>
 			</File>
 			<File
