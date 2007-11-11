@@ -27,33 +27,6 @@
 extern void LogDebug( const char *fmt, ... );
 extern void LogDebugPTS( const char *fmt, uint64_t pts );
 
-// Setup data
-const AMOVIESETUP_MEDIATYPE sudPinTypesSubtitle =
-{
-	&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_DVB_SI
-};
-
-const AMOVIESETUP_MEDIATYPE sudPinTypesIn =
-{
-	&MEDIATYPE_NULL, &MEDIASUBTYPE_NULL
-};
-
-const AMOVIESETUP_PIN sudPins[] =
-{
-	{
-		L"In",				        // Pin string name
-		FALSE,						    // Is it rendered
-		FALSE,						    // Is it an output
-		FALSE,						    // Allowed none
-		FALSE,						    // Likewise many
-		&CLSID_NULL,				  // Connects to filter
-		L"In",				        // Connects to pin
-		1,							      // Number of types
-		&sudPinTypesSubtitle  // Pin information
-	}
-};
-
-
 //
 // Constructor
 //

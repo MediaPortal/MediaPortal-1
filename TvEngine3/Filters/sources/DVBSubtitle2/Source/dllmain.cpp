@@ -26,14 +26,36 @@
 
 static bool folderOk = false;
 
+// Setup data
+const AMOVIESETUP_MEDIATYPE sudPinTypesSubtitle =
+{
+	&MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT
+};
+
+const AMOVIESETUP_PIN sudPins[] =
+{
+	{
+		L"SubtitleIn",				        // Pin string name
+		FALSE,						    // Is it rendered
+		FALSE,						    // Is it an output
+		FALSE,						    // Allowed none
+		FALSE,						    // Likewise many
+		&CLSID_NULL,				  // Connects to filter
+		L"SubtitleIn",				        // Connects to pin
+		1,							      // Number of types
+		&sudPinTypesSubtitle  // Pin information
+	}
+};
+
 const AMOVIESETUP_FILTER FilterInfo =
 {
   &CLSID_DVBSub2,		      // Filter CLSID
   L"MediaPortal DVBSub2",  // String name
   MERIT_DO_NOT_USE,			  // Filter merit
-  0,										  // Number pins
-  NULL									  // Pin details
+  1,										  // Number pins
+  sudPins									  // Pin details
 };
+
 
 CFactoryTemplate g_Templates[1] = 
 {
