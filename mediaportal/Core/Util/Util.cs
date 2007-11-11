@@ -378,7 +378,7 @@ namespace MediaPortal.Util
       else return "";
     }
 
-    public static int GetTypeOfDrive(string drive)
+    public static int getDriveType(string drive)
     {
       if (drive == null) return 2;
       if ((GetDriveType(drive) & 5) == 5) return 5;//cd
@@ -880,7 +880,7 @@ namespace MediaPortal.Util
       if (strPath == null) return false;
       if (strPath.Length < 2) return false;
       string strDrive = strPath.Substring(0, 2);
-      if (GetTypeOfDrive(strDrive) == 4) return true;
+      if (getDriveType(strDrive) == 4) return true;
       return false;
     }
 
@@ -889,7 +889,7 @@ namespace MediaPortal.Util
       if (strPath == null) return false;
       if (strPath.Length < 2) return false;
       string strDrive = strPath.Substring(0, 2);
-      if (GetTypeOfDrive(strDrive) == 3) return true;
+      if (getDriveType(strDrive) == 3) return true;
       return false;
     }
 
@@ -907,7 +907,7 @@ namespace MediaPortal.Util
       if (strFile == null) return false;
       if (strFile.Length < 2) return false;
       string strDrive = strFile.Substring(0, 2);
-      if (GetTypeOfDrive(strDrive) == 5) return true;
+      if (getDriveType(strDrive) == 5) return true;
       return false;
     }
 
@@ -916,7 +916,7 @@ namespace MediaPortal.Util
       if (strFile == null) return false;
       if (strFile.Length < 2) return false;
       string strDrive = strFile.Substring(0, 2);
-      if (GetTypeOfDrive(strDrive) == 2) return true;
+      if (getDriveType(strDrive) == 2) return true;
       return false;
     }
 

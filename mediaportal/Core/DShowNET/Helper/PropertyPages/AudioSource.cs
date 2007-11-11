@@ -52,7 +52,7 @@ namespace DShowNET.Helper
 			if ( (pin as IAMAudioInputMixer) == null )
 				throw new NotSupportedException( "The input pin does not support the IAMAudioInputMixer interface" );
 			this.Pin = pin;
-			this._name = getName( pin );
+			this.name = getName( pin );
 		}
 
 

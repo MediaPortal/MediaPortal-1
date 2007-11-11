@@ -421,7 +421,7 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (string drive in drives)
       {
-        if (Util.Utils.GetTypeOfDrive(drive) == (int)driveType)
+        if (Util.Utils.getDriveType(drive) == (int)driveType)
         {
           bool driveFound = false;
           string driveName = Util.Utils.GetDriveName(drive);

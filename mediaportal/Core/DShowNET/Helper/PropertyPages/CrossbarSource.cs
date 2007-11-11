@@ -90,7 +90,7 @@ namespace DShowNET.Helper
 			this.OutputPin = outputPin;
 			this.InputPin = inputPin;
 			this.ConnectorType = connectorType;
-			this._name = getName( connectorType );
+			this.name = getName( connectorType );
 		}
 
 		// --------------------------- Private methods ----------------------------

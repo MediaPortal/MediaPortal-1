@@ -50,7 +50,7 @@ namespace MediaPortal.GUI.Video
       for (int i = rootDrives.Count - 1; i >= 0; i--)
       {
         GUIListItem item = (GUIListItem)rootDrives[i];
-        if (Util.Utils.GetTypeOfDrive(item.Path) == 5) //cd or dvd drive
+        if (Util.Utils.getDriveType(item.Path) == 5) //cd or dvd drive
         {
           string driverLetter = item.Path.Substring(0, 1);
           string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Video
       {
         g_Player.Stop();
       }
-      if (Util.Utils.GetTypeOfDrive(drive) == 5) //cd or dvd drive
+      if (Util.Utils.getDriveType(drive) == 5) //cd or dvd drive
       {
         string driverLetter = drive.Substring(0, 1);
         string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);

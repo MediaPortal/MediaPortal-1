@@ -1469,7 +1469,7 @@ namespace MediaPortal.GUI.Video
             if (!VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))
               dlg.AddLocalizedString(102); //Scan            
             dlg.AddLocalizedString(368); //IMDB
-            if (MediaPortal.Util.Utils.GetTypeOfDrive(item.Path) != 5)
+            if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5)
               dlg.AddLocalizedString(925); //delete            
             else
               dlg.AddLocalizedString(654); //Eject            
@@ -1483,7 +1483,7 @@ namespace MediaPortal.GUI.Video
             dlg.AddLocalizedString(368); //IMDB
             if (item.IsPlayed)
               dlg.AddLocalizedString(830); //Reset watched status
-            if (MediaPortal.Util.Utils.GetTypeOfDrive(item.Path) != 5)
+            if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5)
               dlg.AddLocalizedString(925); //Delete
             if (!IsFolderPinProtected(item.Path) && !item.IsRemote && fileMenuEnabled)
               dlg.AddLocalizedString(500); // FileMenu
@@ -1521,7 +1521,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 654: // Eject
-          if (MediaPortal.Util.Utils.GetTypeOfDrive(item.Path) != 5) MediaPortal.Util.Utils.EjectCDROM();
+          if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5) MediaPortal.Util.Utils.EjectCDROM();
           else MediaPortal.Util.Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
           LoadDirectory(string.Empty);
           break;
