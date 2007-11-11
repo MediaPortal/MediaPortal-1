@@ -31,13 +31,12 @@ using MySql.Data.MySqlClient;
 using System.Windows.Forms;
 using System.Xml;
 using System.Net;
+using TvLibrary.Log;
 
 namespace SetupTv
 {
   public partial class SetupDatabaseForm : Form
   {
-    int _currentSchemaVersion = 33;
-
     enum ProviderType
     {
       SqlServer,
@@ -183,10 +182,10 @@ namespace SetupTv
         switch (_provider)
         {
           case ProviderType.SqlServer:
-            stream = assm.GetManifestResourceStream("SetupTv."+prefix+"database.sql");
+            stream = assm.GetManifestResourceStream("SetupTv."+prefix+"_sqlserver_database.sql");
             break;
           case ProviderType.MySql:
-            stream = assm.GetManifestResourceStream("SetupTv."+prefix+"mysqldatabase.sql");
+            stream = assm.GetManifestResourceStream("SetupTv."+prefix+"_mysql_database.sql");
             break;
         }
         StreamReader reader = new StreamReader(stream);
@@ -396,9 +395,13 @@ namespace SetupTv
       Close();
     }
 
-    public bool ShouldDoUpgrade(out bool isPreviousVersion)
+    /// <summary>
+    /// Gets the current schema version (-1= No database installed)
+    /// </summary>
+    /// <returns>the current schema version</returns>
+    public int GetCurrentShemaVersion()
     {
-      isPreviousVersion = false;
+      int currentSchemaVersion = -1;
       LoadConnectionDetailsFromConfig(false);
       try
       {
@@ -418,21 +421,15 @@ namespace SetupTv
                   {
                     if (reader.Read())
                     {
-                      int version = (int)reader["versionNumber"];
+                      currentSchemaVersion = (int)reader["versionNumber"];
                       reader.Close();
                       connect.Close();
-                      if (version != _currentSchemaVersion)
-                      {
-                        isPreviousVersion = (_currentSchemaVersion -1 == version);
-                        return true;
-                      }
-                      return false;
                     }
-                    else return true;
                   }
                 }
               }
             }
+            break;
           
           case ProviderType.MySql:
             {
@@ -447,27 +444,21 @@ namespace SetupTv
                   {
                     if (reader.Read())
                     {
-                      int version = (int)reader["versionNumber"];
+                      currentSchemaVersion = (int)reader["versionNumber"];
                       reader.Close();
                       connect.Close();
-                      if (version != _currentSchemaVersion)
-                      {
-                        isPreviousVersion = (_currentSchemaVersion-1 == version);
-                        return true;
-                      }
-                      return false;
                     }
-                    else return true;
                   }
                 }
               }
-            }          
+            }
+            break;
         }
-        return false;
+        return currentSchemaVersion;
       }
       catch (Exception)
       {
-        return true;
+        return -1;
       }
       finally
       {
@@ -479,11 +470,40 @@ namespace SetupTv
       }
     }
 
+    private bool ResourceExists(string[] names, string resource)
+    {
+      foreach (string name in names)
+      {
+        if (name == resource)
+          return true;
+      }
+      return false;
+    }
     /// <summary>
-    /// Checks whether the supplied Database server is installed locally.
+    /// Upgrades the db schema 
     /// </summary>
-    /// <param name="DBServerName"></param>
+    /// <param name="currentSchemaVersion">the current schema version, the db has</param>
     /// <returns></returns>
+    public bool UpgradeDBSchema(int currentSchemaVersion)
+    {
+      Assembly assm = Assembly.GetExecutingAssembly();
+      string[] names = assm.GetManifestResourceNames();
+      Stream stream = null;
+      for (int version = currentSchemaVersion + 1; version < 100; version++)
+      {
+        if (ResourceExists(names, "SetupTv." + version.ToString() + "_upgrade_sqlserver_database.sql"))
+        {
+          if (ExecuteSQLScript(version.ToString() + "_upgrade"))
+            Log.Info("- database upgraded to schema version " + version.ToString());
+          else
+            return false;
+        }
+        else
+          break;
+      }
+      return true;
+    }
+
     public bool IsDatabaseOnLocalMachine(string DBServerName)
     {
       // please add better check if needed

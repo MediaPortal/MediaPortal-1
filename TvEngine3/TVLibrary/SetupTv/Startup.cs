@@ -109,33 +109,25 @@ namespace SetupTv
       }
 
       Log.Info("---- check if database needs to be updated/created ----");
-      bool isPreviousVersion;
-      if (dlg.ShouldDoUpgrade(out isPreviousVersion))
+      int currentSchemaVersion = dlg.GetCurrentShemaVersion();
+      if (currentSchemaVersion==-1)
       {
-        Log.Info("---- update/create database ----");
-        if (isPreviousVersion)
+        Log.Info("---- create database ----");
+        if (!dlg.ExecuteSQLScript("create"))
         {
-          if (!dlg.ExecuteSQLScript("upgrade"))
-          {
-            if (MessageBox.Show("Failed to upgrade the database.\nIt has to be updated and will therefore get deleted and recreated.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
-            {
-              dlg.Close();
-              return;
-            }
-            dlg.ExecuteSQLScript("create");
-          }
+          MessageBox.Show("Failed to create the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
         }
         else
-        {
-          if (MessageBox.Show("The database cannot be upgraded and will therefore be (re)created.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
-          {
-            dlg.Close();
-            return;
-          }
-          dlg.ExecuteSQLScript("create");
-        }
+          Log.Info("- Database created.");
+        currentSchemaVersion = dlg.GetCurrentShemaVersion();
       }
-
+      Log.Info("---- upgrade database schema ----");
+      if (!dlg.UpgradeDBSchema(currentSchemaVersion))
+      {
+        MessageBox.Show("Failed to upgrade the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
       Log.Info("---- check if tvservice is running ----");
       int cards = 0;
       try
