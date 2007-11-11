@@ -441,7 +441,6 @@ namespace MediaPortal.Player
           {
             Log.Error("Unable to get ISubtitleStream interface");
           }
-          _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer);
 
           //Log.Debug("TSReaderPlayer: Obtaining TeletextSource");
           _teletextSource = _fileSource as ITeletextSource;
