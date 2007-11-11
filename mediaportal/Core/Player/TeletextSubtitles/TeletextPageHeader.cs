@@ -23,7 +23,7 @@ namespace MediaPortal.Player.Subtitles
             }
             else pageNum = -1;
 
-            Log.Debug("TeletextPageHeader page: {0}", pageNum);
+            //Log.Debug("TeletextPageHeader page: {0}", pageNum);
             //int subpage = ((unham(data[offset + 4], data[offset+5]) << 8) | unham(data[offset+2], data[offset+3])) & 0x3F7F;
 
             language = ((Hamming.unham(data[offset + 6], data[offset + 7]) >> 5) & 0x07);
@@ -41,7 +41,7 @@ namespace MediaPortal.Player.Subtitles
 
             if (magazineSerial)
             {
-                Log.Debug("Magazine {0} is in serial mode", mag);
+               // Log.Debug("Magazine {0} is in serial mode", mag);
             }
         }
 

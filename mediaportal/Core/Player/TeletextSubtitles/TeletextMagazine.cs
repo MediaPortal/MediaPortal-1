@@ -67,6 +67,10 @@ namespace MediaPortal.Player.Subtitles
                 return;
             }
 
+            if (header.isSerial() && !this.isSerial) {
+                Log.Debug("MagID {0} is in serial mode", magID);
+                this.isSerial = true;
+            }
             int new_page_num = header.PageNumber();
             language = header.Language();
 
@@ -237,6 +241,7 @@ namespace MediaPortal.Player.Subtitles
             this.subRender = subRender;
         }
 
+        private bool isSerial = false;
         private int pageNumInProgress;
         private int language; // encoding language
         private SubtitleRenderer subRender;

@@ -103,7 +103,7 @@ namespace MediaPortal.Player.Teletext
 
         public void assert(bool b, string msg) {
             if (!b) {
-                throw new Exception("Assertion failed in PESDecoder: " + msg);
+                Log.Error("Assertion failed in PESDecoder: " + msg);
             }
         }
 
@@ -132,7 +132,7 @@ namespace MediaPortal.Player.Teletext
 
                     if(m_iWritePos != 0){
                         //throw new Exception("Buffer is not empty, but new packet is being received!");
-                        Log.Error("PESDECODER: Buffer is not empty, but new packet is being received!");
+                        Log.Warn("PESDECODER: Buffer is not empty, but new packet is being received!");
                     }
 			        m_iWritePos = 0;
 
