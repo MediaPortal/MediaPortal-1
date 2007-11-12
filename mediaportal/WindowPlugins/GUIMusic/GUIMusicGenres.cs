@@ -512,7 +512,7 @@ namespace MediaPortal.GUI.Music
                   strThumb = MediaPortal.Util.Utils.GetFolderThumb(item.Path);
                   if (System.IO.File.Exists(strThumb))
                   {
-                    Util.Utils.FolderThumbCacher thumbworker = new Util.Utils.FolderThumbCacher(item.Path, false);
+                    FolderThumbCacher thumbworker = new FolderThumbCacher(item.Path, false);
                   }
                 }
               }

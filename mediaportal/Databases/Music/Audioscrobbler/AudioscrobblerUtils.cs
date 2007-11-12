@@ -485,7 +485,7 @@ namespace MediaPortal.Music.Database
               }
               lock (_queueMutex)
                 _running = false;
-            });
+            }, "ScrobblerUtilsRequest", QueuePriority.High, ThreadPriority.Normal);
           }
         }
       }

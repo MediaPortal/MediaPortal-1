@@ -1750,7 +1750,7 @@ namespace MediaPortal.GUI.Music
                     Util.Utils.FileDelete(folderjpg);
                     File.Copy(thumb, folderjpg);
                     // cache the new folder.jpg so the user does not have to rescan the collection
-                    Util.Utils.FolderThumbCacher thumbworker = new Util.Utils.FolderThumbCacher(strPath, true);
+                    FolderThumbCacher thumbworker = new FolderThumbCacher(strPath, true);
                   }
                   catch (Exception)
                   {
@@ -1816,7 +1816,7 @@ namespace MediaPortal.GUI.Music
 
           coverImg.Save(folderjpg);
           // no need to check for that option as it is the user's decision.   if (_createMissingFolderThumbCache)         
-          Util.Utils.FolderThumbCacher thumbworker = new Util.Utils.FolderThumbCacher(sharePath, true);
+          FolderThumbCacher thumbworker = new FolderThumbCacher(sharePath, true);
           result = true;
         }
 

@@ -1340,9 +1340,18 @@ namespace MediaPortal.Music.Database
               {
                 for (int j = 0 ; j < groupedArtistSongs.Count ; j++)
                 {
+                  bool foundDup = false;
                   string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedArtistSongs[j].FileName);
                   if (!string.IsNullOrEmpty(coverArt))
-                    imageTracks.Add(coverArt);
+                  {
+                    foreach (string dupCheck in imageTracks)
+                    {
+                      if (dupCheck == coverArt)
+                        foundDup = true;
+                    }
+                    if (!foundDup)
+                      imageTracks.Add(coverArt);
+                  }
 
                   // we need a maximum of 4 covers for the preview
                   if (imageTracks.Count >= 4)
@@ -1381,10 +1390,18 @@ namespace MediaPortal.Music.Database
               {
                 for (int j = 0 ; j < groupedGenreSongs.Count ; j++)
                 {
+                  bool foundDup = false;
                   string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedGenreSongs[j].FileName);
                   if (!string.IsNullOrEmpty(coverArt))
-                    imageTracks.Add(coverArt);
-
+                  {
+                    foreach (string dupCheck in imageTracks)
+                    {
+                      if (dupCheck == coverArt)
+                        foundDup = true;
+                    }
+                    if (!foundDup)
+                      imageTracks.Add(coverArt);
+                  }
                   // we need a maximum of 4 covers for the preview
                   if (imageTracks.Count >= 4)
                     break;
