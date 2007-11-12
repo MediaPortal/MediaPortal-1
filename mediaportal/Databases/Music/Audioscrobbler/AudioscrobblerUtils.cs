@@ -688,6 +688,7 @@ namespace MediaPortal.Music.Database
       //}
 
       _randomNessPercent = (tmpRand >= 25) ? tmpRand : 77;
+      ArtistMatchPercent = 100 - (int)(0.9 * _randomNessPercent);
       _unwantedTags = buildTagBlacklist();
       LookupLock = new object();      
     }
