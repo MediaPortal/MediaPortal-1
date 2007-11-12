@@ -48,14 +48,14 @@
         <label>137</label>
         <onright>50</onright>
       </control>
-      <control>
+<!--      <control>
         <description>Rotating Menu</description>
         <type>button</type>
         <id>1337</id>
         <label>Music Menu</label>
         <hyperlink>8888</hyperlink>
         <onright>50</onright>
-      </control>
+      </control> -->
       <control>
         <description>Play CD</description>
         <type>button</type>
@@ -70,8 +70,7 @@
         <label>654</label>
         <action>100</action>
         <onright>50</onright>
-      </control>
-      <!--
+      </control>      
       <control>
         <type>image</type>
         <description>Divider image</description>
@@ -79,7 +78,6 @@
         <texture>hbar1.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
-      -->
       <control>
         <description>Now playing</description>
         <type>button</type>

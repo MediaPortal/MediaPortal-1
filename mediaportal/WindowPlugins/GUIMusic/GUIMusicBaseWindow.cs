@@ -1074,7 +1074,8 @@ namespace MediaPortal.GUI.Music
       {
         dlg.Add(view.LocalizedName);
       }
-      dlg.AddLocalizedString(4540); // Now playing
+      
+      //dlg.AddLocalizedString(4540); // Now playing
 
       // set the focus to currently used view
       if (this.GetID == (int)GUIWindow.Window.WINDOW_MUSIC_FILES)
