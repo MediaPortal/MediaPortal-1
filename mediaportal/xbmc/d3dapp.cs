@@ -2107,40 +2107,45 @@ namespace MediaPortal
     /// </summary>
     protected override void OnResize(EventArgs e)
     {
-      if (_fromTray)
-        _fromTray = false;
-      else
-        SavePlayerState();
-
-      if (notifyIcon != null)
-        if (notifyIcon.Visible == false && this.WindowState == FormWindowState.Minimized)
-        {
-          notifyIcon.Visible = true;
-          this.Hide();
-
-          if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
-          {
-            if (g_Player.Volume > 0)
-            {
-              m_iVolume = g_Player.Volume;
-              g_Player.Volume = 0;
-            }
-            if (g_Player.Paused == false)
-              g_Player.Pause();
-          }
-
-          return;
-        }
-        else if (notifyIcon.Visible == true && this.WindowState != FormWindowState.Minimized)
-          notifyIcon.Visible = false;
-
-      active = !(this.WindowState == FormWindowState.Minimized);
-
       try
       {
+        if (_fromTray)
+          _fromTray = false;
+        else
+          SavePlayerState();
+
+        if (notifyIcon != null)
+        {
+          if (notifyIcon.Visible == false && this.WindowState == FormWindowState.Minimized)
+          {
+            notifyIcon.Visible = true;
+            this.Hide();
+
+            if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
+            {
+              if (g_Player.Volume > 0)
+              {
+                m_iVolume = g_Player.Volume;
+                g_Player.Volume = 0;
+              }
+              if (g_Player.Paused == false)
+                g_Player.Pause();
+            }
+
+            return;
+          }
+          else if (notifyIcon.Visible == true && this.WindowState != FormWindowState.Minimized)
+            notifyIcon.Visible = false;
+        }
+
+        active = !(this.WindowState == FormWindowState.Minimized);
+
         base.OnResize(e);
       }
-      catch { }
+      catch(Exception ex)
+      {
+        Log.Error("d3dapp: An error occured in OnResize - {0}", ex.Message);
+      }
     }
 
 
