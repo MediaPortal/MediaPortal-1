@@ -108,7 +108,8 @@ namespace MediaPortal.Configuration
     public SettingsForm()
     {
       // start the splashscreen      
-      splashScreen.Version = "0.2.3 RC3";
+      string version = System.Configuration.ConfigurationManager.AppSettings["version"];
+      splashScreen.Version = version;
       splashScreen.Run();
 
       Log.Info("SettingsForm constructor");
