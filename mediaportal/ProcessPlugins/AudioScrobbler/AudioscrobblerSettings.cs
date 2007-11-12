@@ -811,7 +811,10 @@ namespace MediaPortal.AudioScrobbler
             if (System.IO.File.Exists(strThumb))
               listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
             else
+            {
               listItem.SubItems.Add("none");
+              Log.Info("Audioscrobbler: Artist cover missing: {0}", curArtist);
+            }
 
             // check high res
             strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
@@ -927,7 +930,10 @@ namespace MediaPortal.AudioScrobbler
             if (System.IO.File.Exists(strThumb))
               listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
             else
+            {
               listItem.SubItems.Add("none");
+              Log.Info("Audioscrobbler: Album cover missing: {0} - {1}", curArtist, curAlbum);
+            }
 
             // check high res
             strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
