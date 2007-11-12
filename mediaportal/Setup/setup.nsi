@@ -5,6 +5,8 @@
 # 
 # Editing is much more easier, if you install HM NSIS Edit from http://hmne.sourceforge.net
 #
+# ATTENTION: You need to have the vcredist_x86.exe package in the setup folder.
+#            Haven't uploaded it, to save 2.5 MB in SVN
 #**********************************************************************************************************#
 
 !define APP_NAME "MediaPortal 0.2.3.0"
@@ -44,7 +46,6 @@ SetCompressor lzma
 !define MUI_FINISHPAGE_RUN  
 !define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
 !define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
-!define MUI_FINISHPAGE_TITLE "MediaPortal successfully installed!"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 ;..................................................................................................
@@ -68,6 +69,7 @@ Var GABEST          ; Should we install Gabest Filter
 Var FilterDir       ; The Directory, where the filters have been installed
 Var LibInstall      ; Needed for Library Installation
 Var TmpDir          ; Needed for the Uninstaller
+Var UninstAll       ; Set, when the user decided to uninstall everything
 ;..................................................................................................
 
 # Installer pages
@@ -83,6 +85,7 @@ Page custom FilterSelection
 
 
 !insertmacro MUI_UNPAGE_CONFIRM
+UnInstPage custom un.UninstallOpionsSelection
 !insertmacro MUI_UNPAGE_INSTFILES
 ;..................................................................................................
 
@@ -160,13 +163,8 @@ Section -Main SEC0000
     File /r ..\xbmc\bin\Release\WebEPG
     File /r ..\xbmc\bin\Release\Wizards
     
-    ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
 
-    ; VC Redist Files
-    File ..\xbmc\bin\Release\mfc80u.dll
-    File ..\xbmc\bin\Release\Microsoft.VC80.CRT.manifest
-    File ..\xbmc\bin\Release\Microsoft.VC80.MFC.manifest
-    File ..\xbmc\bin\Release\msvcr80.dll
+    ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
         
     ;------------  Common Files and Folders for XP & Vista
     ; Files
@@ -247,7 +245,7 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\RemotePlugins.dll
     File ..\xbmc\bin\Release\restart.vbs
     File ..\xbmc\bin\Release\SG_VFD.dll
-    File ..\xbmc\bin\Release\SG_VFDv5.dll
+    File ..\xbmc\bin\Release\SG_VFDv3.dll
     File ..\xbmc\bin\Release\sqlite.dll
     File ..\xbmc\bin\Release\taglib-sharp.dll
     File ..\xbmc\bin\Release\TaskScheduler.dll
@@ -454,6 +452,21 @@ Section -post SEC0001
     !undef Index   
 SectionEnd
 
+; This section installs the VC++ Redist Library
+Section -Redist SEC0002
+    SetOutPath $INSTDIR
+    SetOverwrite on
+    
+    ; Now Copy the VC Redist File, which will be executed as part of the install
+    File vcredist_x86.exe
+
+    ; Installing VC++ Redist Package
+    DetailPrint "Installing VC++ Redist Package"
+    ExecWait '"$INSTDIR\vcredist_x86.exe" /q:a /c:"VCREDI~3.EXE /q:a /c:""msiexec /i vcredist.msi /qb!"" "'
+    DetailPrint "Finished Installing VC++ Redist Package"
+    Delete /REBOOTOK  $INSTDIR\vcredist_x86.exe
+SectionEnd
+
 # Installer functions
 Function .onInit
     InitPluginsDir
@@ -528,11 +541,24 @@ done${UNSECTION_ID}:
 
 # Uninstaller sections
 
+# Custom Page for Uninstall User settings
+; This shows the Uninstall User Serrings Page
+;..................................................................................................
+LangString UNINSTALL_SETTINGS_TITLE ${LANG_ENGLISH} "Uninstall User settings"
+LangString UNINSTALL_SETTINGS_SUBTITLE ${LANG_ENGLISH} "Attention: This will remove all your customised settings including Skins and Databases."
+
+Function un.UninstallOpionsSelection ;Function name defined with Page command
+  !insertmacro MUI_HEADER_TEXT "$(UNINSTALL_SETTINGS_TITLE)" "$(UNINSTALL_SETTINGS_SUBTITLE)"
+  !insertmacro INSTALLOPTIONS_DISPLAY "UnInstallOptions.ini"
+  
+  ; Get the values selected in the Check Boxes
+  !insertmacro INSTALLOPTIONS_READ $UninstAll "UninstallOptions.ini" "Field 1" "State"
+FunctionEnd
+
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 Section /o -un.Main UNSEC0000    
     ; Remove the Folders
-    ; Don't touch the Database, InputMappings
     RmDir /r /REBOOTOK $INSTDIR\Burner
     RmDir /r /REBOOTOK $INSTDIR\Cache
     RmDir /r /REBOOTOK $INSTDIR\Docs
@@ -543,7 +569,8 @@ Section /o -un.Main UNSEC0000
     RmDir /r /REBOOTOK $INSTDIR\osdskin-media
     RmDir /r /REBOOTOK $INSTDIR\plugins
     RmDir /r /REBOOTOK $INSTDIR\scripts
-    RmDir /r /REBOOTOK $INSTDIR\skin
+    RmDir /r /REBOOTOK $INSTDIR\skin\BlueTwo
+    RmDir /r /REBOOTOK "$INSTDIR\skin\BlueTwo wide"
     RmDir /r /REBOOTOK $INSTDIR\TTPremiumBoot
     RmDir /r /REBOOTOK $INSTDIR\Tuningparameters
     RmDir /r /REBOOTOK $INSTDIR\weather
@@ -551,12 +578,6 @@ Section /o -un.Main UNSEC0000
     RmDir /r /REBOOTOK $INSTDIR\Wizards
 
    ; Remove Files in MP Root Directory
-      ; VC Redist Files
-    Delete /REBOOTOK  $INSTDIR\mfc80u.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.VC80.CRT.manifest
-    Delete /REBOOTOK  $INSTDIR\Microsoft.VC80.MFC.manifest
-    Delete /REBOOTOK  $INSTDIR\msvcr80.dll
-    
     Delete /REBOOTOK  $INSTDIR\AppStart.exe
     Delete /REBOOTOK  $INSTDIR\AppStart.exe.config
     Delete /REBOOTOK  $INSTDIR\AxInterop.WMPLib.dll
@@ -633,8 +654,9 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $INSTDIR\MusicShareWatcher.exe
     Delete /REBOOTOK  $INSTDIR\MusicShareWatcherHelper.dll
     Delete /REBOOTOK  $INSTDIR\RemotePlugins.dll
+    Delete /REBOOTOK  $INSTDIR\restart.vbs
     Delete /REBOOTOK  $INSTDIR\SG_VFD.dll
-    Delete /REBOOTOK  $INSTDIR\SG_VFDv5.dll
+    Delete /REBOOTOK  $INSTDIR\SG_VFDv3.dll
     Delete /REBOOTOK  $INSTDIR\sqlite.dll
     Delete /REBOOTOK  $INSTDIR\taglib-sharp.dll
     Delete /REBOOTOK  $INSTDIR\TaskScheduler.dll
@@ -671,6 +693,13 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $TmpDir\ProgramSettingProfiles.xml
     Delete /REBOOTOK  $TmpDir\wikipedia.xml
     Delete /REBOOTOK  $TmpDir\yac-area-codes.xml
+    
+    ; Do we need to deinstall everything? Then remove also the CommonAppData and InstDir
+    ${If} $UninstAll == 1
+        DetailPrint "Removing User Settings"
+        RmDir /r /REBOOTOK $CommonAppData
+        RmDir /r /REBOOTOK $INSTDIR
+    ${EndIf}
     
     ; Uninstall the Common DLLs and Filters
     ; They will onl be removed, when the UseCount = 0    
@@ -758,6 +787,9 @@ Function un.onInit
     ReadRegStr $WindowsVersion HKLM "${INSTDIR_REG_KEY}" WindowsVersion
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
+    
+    ; Extract the Uninstall Option Custom Page
+    !insertmacro INSTALLOPTIONS_EXTRACT "UnInstallOptions.ini"
     
     ; Get the Common Application Data Folder to Store Files for Vista
     ; Set the Context to alll, so that we get the All Users folder
