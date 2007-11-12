@@ -587,9 +587,9 @@ namespace MediaPortal.Music.Database
         if (results == null)
           return (int)Errors.ERROR_REORG_SONGS;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("Musicdatabasereorg: Unable to retrieve songs from database in DeleteNonExistingSongs()");
+        Log.Error("Musicdatabasereorg: Unable to retrieve songs from database in DeleteNonExistingSongs() {0}", ex.Message);
         return (int)Errors.ERROR_REORG_SONGS;
       }
       int removed = 0;
@@ -627,17 +627,11 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        if (null == MusicDbClient)
-          return;
-
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
-        string strSQL;
+        string strSQL = String.Format("select idTrack, strArtist, strAlbumArtist, strGenre from tracks where strPath = '{0}'", strFileName);
 
-        strSQL = String.Format("select idTrack, strArtist, strAlbumArtist, strGenre from tracks where strPath = '{0}'", strFileName);
-
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
+        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count > 0)
         {
           int idTrack = DatabaseUtility.GetAsInt(results, 0, "tracks.idTrack");
@@ -647,7 +641,8 @@ namespace MediaPortal.Music.Database
 
           // Delete
           strSQL = String.Format("delete from tracks where idTrack={0}", idTrack);
-          MusicDbClient.Execute(strSQL);
+          if (MusicDatabase.DirectExecute(strSQL).Rows.Count > 0)
+            Log.Info("Musicdatabase: Deleted no longer existing or moved song {0}", strFileName);
 
           // Check if we have now Artists and Genres for which no song exists
           if (bCheck)
@@ -661,11 +656,11 @@ namespace MediaPortal.Music.Database
               {
                 // Delete artist with no songs
                 strSQL = String.Format("delete from artist where strArtist = '{0}'", artist.Trim());
-                MusicDbClient.Execute(strSQL);
+                MusicDatabase.DirectExecute(strSQL);
 
                 // Delete artist info
                 strSQL = String.Format("delete from artistinfo where strArtist = '{0}'", artist.Trim());
-                MusicDbClient.Execute(strSQL);
+                MusicDatabase.DirectExecute(strSQL);
               }
             }
 
@@ -678,11 +673,11 @@ namespace MediaPortal.Music.Database
               {
                 // Delete artist with no songs
                 strSQL = String.Format("delete from albumartist where strAlbumArtist = '{0}'", artist.Trim());
-                MusicDbClient.Execute(strSQL);
+                MusicDatabase.DirectExecute(strSQL);
 
                 // Delete artist info
                 strSQL = String.Format("delete from artistinfo where strArtist = '{0}'", artist.Trim());
-                MusicDbClient.Execute(strSQL);
+                MusicDatabase.DirectExecute(strSQL);
               }
             }
 
@@ -695,16 +690,16 @@ namespace MediaPortal.Music.Database
               {
                 // Delete genres with no songs
                 strSQL = String.Format("delete from genre where strGenre = '{0}'", genre.Trim());
-                MusicDbClient.Execute(strSQL);
+                MusicDatabase.DirectExecute(strSQL);
               }
             }
           }
         }
         return;
       }
-      catch (Exception ex)
+      catch (Exception ex1)
       {
-        Log.Error("Musicdatabase Exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("Musicdatabase: Exception err:{0} stack:{1}", ex1.Message, ex1.StackTrace);
         Open();
       }
       return;
@@ -888,15 +883,18 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
-    /// Retrieves the Tags from a file and formats them suiteable for insertion into the databse
+    /// Retrieves the ID3-Tags from a file and tries to extract coverart
     /// </summary>
-    /// <param name="strFileName"></param>
-    /// <returns></returns>
+    /// <param name="strFileName">The full path for a music file to process</param>
+    /// <returns>A MusicTag with escaped chars formatted suiteable for insertion into the database</returns>
     public MusicTag GetTag(string strFileName)
     {
       MusicTag tag = TagReader.ReadTag(strFileName);
       if (tag != null)
       {
+        // Extract the Coverart first because else the quote string escape will result in double "'" for the coverart filenames
+        ExtractCoverArt(tag);
+
         string strTmp;
         strTmp = tag.Album;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
@@ -925,9 +923,6 @@ namespace MediaPortal.Music.Database
         tag.Artist = FormatMultipleEntry(tag.Artist, true);
         tag.AlbumArtist = FormatMultipleEntry(tag.AlbumArtist, true);
         tag.Genre = FormatMultipleEntry(tag.Genre, false);
-
-        // Extract the Coverart
-        ExtractCoverArt(tag);
 
         return tag;
       }
@@ -971,16 +966,16 @@ namespace MediaPortal.Music.Database
       {
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
-        strSQL = String.Format("insert into tracks ( " +
-                               "strPath, strArtist, strAlbumArtist, strAlbum, strGenre, " +
-                               "strTitle, iTrack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, " +
-                               "iResumeAt, iDisc, iNumDisc, iGainTrack, iPeakTrack, strLyrics, musicBrainzID, dateLastPlayed) " +
-                               "values ( " +
-                               "'{0}', '{1}', '{2}', '{3}', '{4}', " +
-                               "'{5}', {6}, {7}, {8}, {9}, {10}, {11}, {12}, " +
-                               "{13}, {14}, {15}, {16}, {17}, '{18}', '{19}', '{20}' )",
-                               strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre,
-                               tag.Title, tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, 0, 0,
+        strSQL = String.Format(@"insert into tracks (
+                               strPath, strArtist, strAlbumArtist, strAlbum, strGenre, 
+                               strTitle, iTrack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, 
+                               iResumeAt, iDisc, iNumDisc, iGainTrack, iPeakTrack, strLyrics, musicBrainzID, dateLastPlayed) 
+                               values ( 
+                               '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', 
+                               {6}, {7}, {8}, {9}, {10}, {11}, {12}, 
+                               {13}, {14}, {15}, {16}, {17}, '{18}', '{19}', '{20}' )",
+                               strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Title,
+                               tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, 0, 0,
                                0, tag.DiscID, tag.DiscTotal, 0, 0, tag.Lyrics, "", DateTime.MinValue
         );
         try
@@ -1134,12 +1129,12 @@ namespace MediaPortal.Music.Database
         {
           DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
-          strSQL = String.Format("update tracks " +
-                                 "set strArtist = '{0}', strAlbumArtist = '{1}', strAlbum = '{2}', " +
-                                 "strGenre = '{3}', strTitle = '{4}', iTrack = {5}, iNumTracks = {6}, " +
-                                 "iDuration = {7}, iYear = {8}, iRating = {9}, iDisc = {10}, iNumDisc = {11}, " +
-                                 "strLyrics = '{12}' " +
-                                 "where strPath = '{13}'",
+          strSQL = String.Format(@"update tracks 
+                                 set strArtist = '{0}', strAlbumArtist = '{1}', strAlbum = '{2}', 
+                                 strGenre = '{3}', strTitle = '{4}', iTrack = {5}, iNumTracks = {6}, 
+                                 iDuration = {7}, iYear = {8}, iRating = {9}, iDisc = {10}, iNumDisc = {11}, 
+                                 strLyrics = '{12}' 
+                                 where strPath = '{13}'",
                                  tag.Artist, tag.AlbumArtist, tag.Album,
                                  tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
                                  tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,

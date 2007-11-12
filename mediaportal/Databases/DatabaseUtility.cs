@@ -319,65 +319,47 @@ namespace MediaPortal.Database
       return string.Empty;
     }
 
-
-
     public static void RemoveInvalidChars(ref string strTxt)
     {
-      if (strTxt == null)
-      {
-        strTxt = Strings.Unknown;
-        return;
-      }
-      if (strTxt.Length == 0)
-      {
-        strTxt = Strings.Unknown;
-        return;
-      }
-      string strReturn = string.Empty;
-      for (int i = 0; i < (int)strTxt.Length; ++i)
-      {
-        char k = strTxt[i];
-        if (k == '\'')
-        {
-          strReturn += "'";
-        }
-        if ((byte)k == 0)// remove 0-bytes from the string
-          k = (char)32;
+      strTxt = FilterText(strTxt);
+      return;
+      //if (strTxt == null)
+      //{
+      //  strTxt = Strings.Unknown;
+      //  return;
+      //}
+      //if (strTxt.Length == 0)
+      //{
+      //  strTxt = Strings.Unknown;
+      //  return;
+      //}
+      //string strReturn = string.Empty;
+      //for (int i = 0; i < (int)strTxt.Length; ++i)
+      //{
+      //  char k = strTxt[i];
+      //  if (k == '\'')
+      //  {
+      //    strReturn += "'";
+      //  }
+      //  if ((byte)k == 0)// remove 0-bytes from the string
+      //    k = (char)32;
 
-        strReturn += k;
-      }
-      strReturn = strReturn.Trim();
-      if (strReturn == string.Empty)
-        strReturn = Strings.Unknown;
-      strTxt = strReturn;
+      //  strReturn += k;
+      //}
+      //strReturn = strReturn.Trim();
+      //if (strReturn == string.Empty)
+      //  strReturn = Strings.Unknown;
+      //strTxt = strReturn;
     }
+
     public static string FilterText(string strTxt)
     {
-      if (strTxt == null)
-      {
+      if (string.IsNullOrEmpty(strTxt))      
         return Strings.Unknown;
-      }
-      if (strTxt.Length == 0)
-      {
-        return Strings.Unknown;
-      }
-      string strReturn = string.Empty;
-      for (int i = 0; i < (int)strTxt.Length; ++i)
-      {
-        char k = strTxt[i];
-        if (k == '\'')
-        {
-          strReturn += "'";
-        }
-        if ((byte)k == 0)// remove 0-bytes from the string
-          k = (char)32;
 
-        strReturn += k;
-      }
-      strReturn = strReturn.Trim();
-      if (strReturn == string.Empty)
-        strReturn = Strings.Unknown;
-      return strReturn;
+      strTxt = strTxt.Replace("'", "''").Trim();
+
+      return strTxt;
     }
 
     public static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
