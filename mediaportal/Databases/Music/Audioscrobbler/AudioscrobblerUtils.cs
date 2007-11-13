@@ -415,6 +415,7 @@ namespace MediaPortal.Music.Database
   {
     private bool _useDebugLog = false;
     private bool _doCoverLookups = true;
+    private bool _decodeUtf8 = false;
     private string _defaultUser = "";
     private Object LookupLock;
 
@@ -653,6 +654,7 @@ namespace MediaPortal.Music.Database
       {
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         _doCoverLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
+        _decodeUtf8 = xmlreader.GetValueAsBool("audioscrobbler", "decodeutf8", false);
       }
 
       MusicDatabase mdb = MusicDatabase.Instance;
@@ -1752,13 +1754,13 @@ namespace MediaPortal.Music.Database
         string tmpArtist = string.Empty;
         string tmpAlbum = string.Empty;
         DateTime tmpRelease = DateTime.MinValue;
-        
-        if (nodes[0].Attributes["artist"].Value != "")
-          tmpArtist = nodes[0].Attributes["artist"].Value;
+
+        if (!string.IsNullOrEmpty(nodes[0].Attributes["artist"].Value))
+          tmpArtist = DecodeUtf8String(nodes[0].Attributes["artist"].Value);
         else
           tmpArtist = artist_;
-        if (nodes[0].Attributes["title"].Value != "")
-          tmpAlbum = nodes[0].Attributes["title"].Value;
+        if (!string.IsNullOrEmpty(nodes[0].Attributes["title"].Value))
+          tmpAlbum = DecodeUtf8String(nodes[0].Attributes["title"].Value);
         else
           tmpAlbum = album_;
 
@@ -1791,7 +1793,7 @@ namespace MediaPortal.Music.Database
 
           if (!string.IsNullOrEmpty(node.Attributes["title"].Value))
           {
-            nodeSong.Title = node.Attributes["title"].Value;
+            nodeSong.Title = DecodeUtf8String(node.Attributes["title"].Value);
             // last.fm sometimes inserts this - maybe more to come...
             nodeSong.Title = nodeSong.Title.Replace("(Album Version)", "").Trim();
           }
@@ -1844,7 +1846,7 @@ namespace MediaPortal.Music.Database
           foreach (XmlNode mainchild in node.ChildNodes)
           { 
             if (mainchild.Name == "name" && mainchild.ChildNodes.Count != 0)
-              nodeSong.Album = mainchild.ChildNodes[0].Value;
+              nodeSong.Album = DecodeUtf8String(mainchild.ChildNodes[0].Value);
             else if (mainchild.Name == "mbid" && mainchild.ChildNodes.Count != 0)
               nodeSong.MusicBrainzID = mainchild.ChildNodes[0].Value;
             else if (mainchild.Name == "reach" && mainchild.ChildNodes.Count != 0)
@@ -1880,12 +1882,12 @@ namespace MediaPortal.Music.Database
 
         doc.Load(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
         XmlNodeList nodes = doc.SelectNodes(@"//similarartists");
-        
-        if (nodes[0].Attributes["artist"].Value != "")
-          artistInfo.Artist = nodes[0].Attributes["artist"].Value;
-        if (nodes[0].Attributes["picture"].Value != "")
+
+        if (!string.IsNullOrEmpty(nodes[0].Attributes["artist"].Value))
+          artistInfo.Artist = DecodeUtf8String(nodes[0].Attributes["artist"].Value);
+        if (!string.IsNullOrEmpty(nodes[0].Attributes["picture"].Value))
           artistInfo.WebImage = nodes[0].Attributes["picture"].Value;
-        if (nodes[0].Attributes["mbid"].Value != "")
+        if (!string.IsNullOrEmpty(nodes[0].Attributes["mbid"].Value))
           artistInfo.MusicBrainzID = nodes[0].Attributes["mbid"].Value;        
       }
       catch
@@ -1907,11 +1909,11 @@ namespace MediaPortal.Music.Database
 
         foreach (XmlNode node in nodes)
         {
-          Song nodeSong = new Song();
+          Song nodeSong = new Song();          
           foreach (XmlNode child in node.ChildNodes)
           {
-            if (child.Name == "name" && child.ChildNodes.Count != 0)
-              nodeSong.Artist = child.ChildNodes[0].Value;
+            if (child.Name == "name" && child.ChildNodes.Count != 0)            
+              nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
             else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
               nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
             else if (child.Name == "url" && child.ChildNodes.Count != 0)
@@ -1921,7 +1923,6 @@ namespace MediaPortal.Music.Database
             else if (child.Name == "match" && child.ChildNodes.Count != 0)
               nodeSong.LastFMMatch = child.ChildNodes[0].Value;
           }
-
           SimilarArtistList.Add(nodeSong);
         }
       }
@@ -1975,7 +1976,7 @@ namespace MediaPortal.Music.Database
             nodeSong.Artist = artist_;
             nodeSong.Title = track_;
             if (child.Name == "name" && child.ChildNodes.Count != 0)
-              nodeSong.Genre = child.ChildNodes[0].Value;
+              nodeSong.Genre = DecodeUtf8String(child.ChildNodes[0].Value);
             if (child.Name == "url" && child.ChildNodes.Count != 0)
               nodeSong.URL = child.ChildNodes[0].Value;
             if (child.Name == "count" && child.ChildNodes.Count != 0)
@@ -2026,24 +2027,24 @@ namespace MediaPortal.Music.Database
             switch (searchType_)
             {
               case lastFMFeed.taggedartists:
-                if (node.Attributes["name"].Value != "")
-                  nodeSong.Artist = node.Attributes["name"].Value;
+                if (!string.IsNullOrEmpty(node.Attributes["name"].Value))
+                  nodeSong.Artist = DecodeUtf8String(node.Attributes["name"].Value);
                 if (child.Name == "image" && child.ChildNodes.Count != 0)
                   nodeSong.WebImage = child.ChildNodes[0].Value;
                 break;
               case lastFMFeed.taggedalbums:
-                if (node.Attributes["name"].Value != "")
-                  nodeSong.Album = node.Attributes["name"].Value;
+                if (!string.IsNullOrEmpty(node.Attributes["name"].Value))
+                  nodeSong.Album = DecodeUtf8String(node.Attributes["name"].Value);
                 if (child.Name == "artist" && child.ChildNodes.Count != 0)
-                  if (child.Attributes["name"].Value != "")
-                    nodeSong.Artist = child.Attributes["name"].Value;
+                  if (string.IsNullOrEmpty(child.Attributes["name"].Value))
+                    nodeSong.Artist = DecodeUtf8String(child.Attributes["name"].Value);
                 break;
               case lastFMFeed.taggedtracks:
-                if (node.Attributes["name"].Value != "")
-                  nodeSong.Title = node.Attributes["name"].Value;
+                if (!string.IsNullOrEmpty(node.Attributes["name"].Value))
+                  nodeSong.Title = DecodeUtf8String(node.Attributes["name"].Value);
                 if (child.Name == "artist" && child.ChildNodes.Count != 0)
-                  if (child.Attributes["name"].Value != "")
-                    nodeSong.Artist = child.Attributes["name"].Value;
+                  if (!string.IsNullOrEmpty(child.Attributes["name"].Value))
+                    nodeSong.Artist = DecodeUtf8String(child.Attributes["name"].Value);
                 break;
 
             }
@@ -2084,9 +2085,9 @@ namespace MediaPortal.Music.Database
               case (lastFMFeed.recenttracks):
                 {
                   if (child.Name == "artist" && child.ChildNodes.Count != 0)
-                    nodeSong.Artist = child.ChildNodes[0].Value;
+                    nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
                   else if (child.Name == "name" && child.ChildNodes.Count != 0)
-                    nodeSong.Title = child.ChildNodes[0].Value;
+                    nodeSong.Title = DecodeUtf8String(child.ChildNodes[0].Value);
                   else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
                     nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
                   else if (child.Name == "url" && child.ChildNodes.Count != 0)
@@ -2098,9 +2099,9 @@ namespace MediaPortal.Music.Database
               case (lastFMFeed.topartists):
                 {
                   if (child.Name == "name" && child.ChildNodes.Count != 0)
-                    nodeSong.Artist = child.ChildNodes[0].Value;
+                    nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
                   //else if (child.Name == "name" && child.ChildNodes.Count != 0)
-                  //  nodeSong.Title = child.ChildNodes[0].Value;
+                  //  nodeSong.Title = ConvertUtf8StringToSystemCodepage(child.ChildNodes[0].Value);
                   else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
                     nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
                   else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
@@ -2116,9 +2117,9 @@ namespace MediaPortal.Music.Database
               case (lastFMFeed.toptracks):
                 {
                   if (child.Name == "artist" && child.ChildNodes.Count != 0)
-                    nodeSong.Artist = child.ChildNodes[0].Value;
+                    nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
                   else if (child.Name == "name" && child.ChildNodes.Count != 0)
-                    nodeSong.Title = child.ChildNodes[0].Value;
+                    nodeSong.Title = DecodeUtf8String(child.ChildNodes[0].Value);
                   else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
                     nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
                   else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
@@ -2130,7 +2131,7 @@ namespace MediaPortal.Music.Database
               case (lastFMFeed.toptags):
                 {
                   if (child.Name == "name" && child.ChildNodes.Count != 0)
-                    nodeSong.Artist = child.ChildNodes[0].Value;
+                    nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
                   else if (child.Name == "count" && child.ChildNodes.Count != 0)
                     nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
                   else if (child.Name == "url" && child.ChildNodes.Count != 0)
@@ -2140,8 +2141,8 @@ namespace MediaPortal.Music.Database
               // doesn't work atm
               case (lastFMFeed.chartstoptags):
                 {
-                  if (node.Attributes["name"].Value != "")
-                    nodeSong.Artist = node.Attributes["name"].Value;
+                  if (!string.IsNullOrEmpty(node.Attributes["name"].Value))
+                    nodeSong.Artist = DecodeUtf8String(node.Attributes["name"].Value);
                   if (node.Attributes["count"].Value != "")
                     nodeSong.TimesPlayed = Convert.ToInt32(node.Attributes["count"].Value);
                   if (node.Attributes["url"].Value != "")
@@ -2179,7 +2180,7 @@ namespace MediaPortal.Music.Database
               case (lastFMFeed.systemrecs):
                 {
                   if (child.Name == "name" && child.ChildNodes.Count != 0)
-                    nodeSong.Artist = child.ChildNodes[0].Value;
+                    nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
                   else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
                     nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
                   else if (child.Name == "url" && child.ChildNodes.Count != 0)
@@ -2218,11 +2219,11 @@ namespace MediaPortal.Music.Database
           foreach (XmlNode mainchild in node.ChildNodes)
           {
             if (mainchild.Name == "creator" && mainchild.ChildNodes.Count != 0)
-              nodeSong.Artist = mainchild.ChildNodes[0].Value;
+              nodeSong.Artist = DecodeUtf8String(mainchild.ChildNodes[0].Value);
             else if (mainchild.Name == "title" && mainchild.ChildNodes.Count != 0)
-              nodeSong.Title = mainchild.ChildNodes[0].Value;
+              nodeSong.Title = DecodeUtf8String(mainchild.ChildNodes[0].Value);
             else if (mainchild.Name == "album" && mainchild.ChildNodes.Count != 0)
-              nodeSong.Album = mainchild.ChildNodes[0].Value;
+              nodeSong.Album = DecodeUtf8String(mainchild.ChildNodes[0].Value);
             else if (mainchild.Name == "location" && mainchild.ChildNodes.Count != 0)
               nodeSong.URL = mainchild.ChildNodes[0].Value;
             else if (mainchild.Name == "image" && mainchild.ChildNodes.Count != 0)
@@ -2243,6 +2244,31 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Utils
+    public string DecodeUtf8String(string aUtf8String)
+    {
+      if (_decodeUtf8)
+      {
+        try
+        {
+          byte[] Utf8Array = Encoding.UTF8.GetBytes(aUtf8String);
+          Encoding sysencoding = Encoding.Default;
+          string WindowsString = Encoding.GetEncoding(sysencoding.WindowsCodePage).GetString(Utf8Array);
+
+          if (WindowsString != aUtf8String)
+            Log.Debug("AudioscrobblerUtils: Encoding changed - UTF8: {0}, System: {1}", aUtf8String, WindowsString);
+
+          return WindowsString;
+        }
+        catch (Exception ex)
+        {
+          Log.Warn("AudioscrobblerUtils: Could not convert to system encoding - {0}, {1}", aUtf8String, ex.Message);
+          return aUtf8String;
+        }
+      }
+      else
+        return aUtf8String;
+    }
+
     public List<Song> TryFilterBelowMinimumMatch(List<Song> aUnfilteredList)
     {
       bool allContainMatchValue = true;
