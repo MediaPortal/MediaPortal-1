@@ -207,10 +207,9 @@ HRESULT CAudioPin::BreakConnect()
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
   try
-  {
+  {		
     //get file-duration and set m_rtDuration
     GetDuration(NULL);
-
     //if the filter is currently seeking to a new position
     //or this pin is currently seeking to a new position then
     //we dont try to read any packets, but simply return...
@@ -219,13 +218,14 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       LogDebug("aud:isseeking");
 		  Sleep(20);
       pSample->SetTime(NULL,NULL); 
-	    pSample->SetActualDataLength(0);
+	  pSample->SetActualDataLength(0);
       pSample->SetDiscontinuity(TRUE);
       pSample->SetSyncPoint(FALSE);
+	  m_bInFillBuffer=false;	   
 		  return NOERROR;
 	  }
 
-    //get next buffer from demultiplexer
+    //get next buffer from demultiplexer	
     m_bInFillBuffer=true;
 	  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
     CBuffer* buffer=NULL;
@@ -318,10 +318,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             }
           }
         }
-
         //adjust the timestamp with the compensation
         cRefTime -=m_pTsReaderFilter->Compensation;
-
         //now we have the final timestamp, set timestamp in sample
         REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
         pSample->SetTime(&refTime,&refTime);  
@@ -346,7 +344,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 	    pSample->SetActualDataLength(buffer->Length());
       pSample->GetPointer(&pSampleBuffer);
       memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
-
       //delete the buffer and return
       delete buffer;
       m_bInFillBuffer=false;
@@ -434,7 +431,7 @@ bool CAudioPin::IsSeeking()
 /// m_rtStart contains the time we need to seek to...
 /// 
 void CAudioPin::UpdateFromSeek()
-{
+{  
   m_binUpdateFromSeek=true;
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   CTsDuration tsduration=m_pTsReaderFilter->GetDuration();
@@ -450,7 +447,7 @@ void CAudioPin::UpdateFromSeek()
     if (m_lastSeek==m_rtStart)
     {
       LogDebug("aud:skip seek");
-      m_binUpdateFromSeek=false;
+      m_binUpdateFromSeek=false;	
       return;
     }
   }
@@ -488,7 +485,8 @@ void CAudioPin::UpdateFromSeek()
   //tell demuxer to stop deliver audio data and wait until 
   //FillBuffer() finished
   demux.SetHoldAudio(true);
-  while (m_bInFillBuffer) Sleep(1);
+  while (m_bInFillBuffer) Sleep(1);  
+
   CAutoLock lock(&m_bufferLock);
 
   //if a pin-output thread exists...

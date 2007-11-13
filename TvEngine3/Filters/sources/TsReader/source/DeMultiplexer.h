@@ -53,6 +53,7 @@ public:
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
   void       FillTeletext(CTsHeader& header, byte* tsPacket);
+  void		 SetEndOfFile(bool bEndOfFile);
   CPidTable  GetPidTable();
 
   bool       SetAudioStream(__int32 stream);

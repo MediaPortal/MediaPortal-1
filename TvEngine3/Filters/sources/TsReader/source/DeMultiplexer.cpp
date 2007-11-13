@@ -535,6 +535,10 @@ void CDeMultiplexer::Start()
   m_bScanning=false;
 }
 
+void CDeMultiplexer::SetEndOfFile(bool bEndOfFile)
+{
+  m_bEndOfFile=bEndOfFile;
+}
 /// Returns true if we reached the end of the file
 bool CDeMultiplexer::EndOfFile()
 {
@@ -576,39 +580,11 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
           //LogDebug("NO read:%d",dwReadBytes);
           break;
         }
-
         //When needed, stop reading data so outputpin does not get blocked
         if (isAudio && m_bHoldAudio) return false;
         if (isVideo && m_bHoldVideo) return false;
       }
-      
-      if (result==false) 
-      {
-        if (m_filter.State()==State_Running)
-        {
-          if (m_filter.IsTimeShifting()==FALSE)
-          {
-            IFilterGraph* graph=m_filter.GetFilterGraph();
-            if (graph!=NULL)
-            {
-              IMediaSeeking * ptrMediaPos;
-              if (SUCCEEDED(graph->QueryInterface(IID_IMediaSeeking , (void**)&ptrMediaPos) ) )
-              {
-                LONGLONG currentPos;
-                ptrMediaPos->GetCurrentPosition(&currentPos);
-                ptrMediaPos->Release();
-                double clock =currentPos;clock /=10000000.0;
-                float clockEnd=m_duration.EndPcr().ToClock() ;
-                if (clock>=clockEnd && clockEnd>0 )
-                {
-                  LogDebug("End of rtsp stream...");
-                  m_bEndOfFile=true;
-                }
-              }
-            }
-          }
-        }
-      }
+
       //return if we succeeded
       if (result==true) 
         return true;
@@ -634,7 +610,6 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
         LogDebug("Read failed...");
       }
     }
-    
 		//Failed to read any data
     if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) )
     {
@@ -653,18 +628,15 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
         return false;
       }
     }
-
     //failed to read data
     //we didnt reach the EOF
     //sleep 50 msecs and try again
     Sleep(50);
-
     //but when we didnt read data for >=5 secs, we return anyway to prevent lockups
     if (GetTickCount() - dwTick >=5000) break;
-    
     if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) )
       return false;
-  }
+  } //end of while
   return false;
 }
 /// This method gets called via ReadFile() when a new TS packet has been received

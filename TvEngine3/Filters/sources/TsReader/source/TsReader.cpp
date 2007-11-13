@@ -137,6 +137,11 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_pDVBSubtitle(NULL),
   m_pCallback(NULL)
 {
+
+ // use the following line if u r having trouble setting breakpoints
+ // #pragma comment( lib, "strmbasd" )
+
+
   char moduleFileName[1024];
 	GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
 	string logFile=moduleFileName;
@@ -312,6 +317,11 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
       m_buffer.Clear();
       m_buffer.Run(true);
       m_rtspClient.Continue();
+
+	  m_demultiplexer.SetHoldAudio(false);
+      m_demultiplexer.SetHoldVideo(false);
+      m_demultiplexer.SetHoldSubtitle(false);
+
 	    LogDebug(" CTsReaderFilter::Run()  --> rtsp running");
     }
   }
@@ -387,7 +397,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
     {
       //not seeking, is rtsp streaming at the moment?
       if (!m_rtspClient.IsRunning())
-      {
+      {	
         //not streaming atm
         //stop audio/video pins from blocking in FillBuffer()
         m_demultiplexer.SetHoldAudio(true);
@@ -424,20 +434,44 @@ STDMETHODIMP CTsReaderFilter::Pause()
       {
         //we are streaming at the moment.
         //pause the streaming
-        LogDebug("  -- Pause()  ->pause rtsp");
+        LogDebug("  -- Pause()  ->pause rtsp");		
+		m_demultiplexer.Flush();
+		m_buffer.Clear();
+		m_demultiplexer.SetHoldAudio(true);
+		m_demultiplexer.SetHoldVideo(true);
+		m_demultiplexer.SetHoldSubtitle(true);
+
         m_buffer.Run(false);
         m_rtspClient.Pause();
-      }
+     }
     }
+	else //we are seeking
+	{	  
+		IMediaSeeking * ptrMediaPos;
+
+        if (SUCCEEDED(GetFilterGraph()->QueryInterface(IID_IMediaSeeking , (void**)&ptrMediaPos) ) )
+        {
+          LONGLONG currentPos;
+          ptrMediaPos->GetCurrentPosition(&currentPos);
+          ptrMediaPos->Release();
+          double clock =currentPos;clock /=10000000.0;
+          float clockEnd=m_duration.EndPcr().ToClock() ;
+          if (clock>=clockEnd && clockEnd>0 )
+          {
+            LogDebug("End of rtsp stream...");
+            m_demultiplexer.SetEndOfFile(true);
+          }
+        }
+	}
   }
 
   //is the duration update thread running?
   if (!IsThreadRunning())
   {
     //nop? then start it
-    //LogDebug("  CTsReaderFilter::Pause()->start duration thread");
+    //LogDebug("  CTsReaderFilter::Pause()->start duration thread");	
     StartThread();
-  }
+  }  
   return hr;
 }
 
@@ -669,8 +703,9 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
   {	
     //yes, we're playing a RTSP stream
     //stop the RTSP steam
+
     LogDebug("CTsReaderFilter::  Seek->stop rtsp");
-    m_rtspClient.Stop();
+	m_rtspClient.Stop();
     double startTime=m_seekTime.Millisecs();
     startTime/=1000.0f;
     float milli=m_duration.Duration().Millisecs();
@@ -706,8 +741,9 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     pcrstart=m_duration.StartPcr();
     duration+=pcrstart.ToClock();
     pcrEnd.FromClock(duration);
-    m_duration.Set( pcrstart, pcrEnd,pcrMax);
+    m_duration.Set( pcrstart, pcrEnd,pcrMax);	
     LogDebug("CTsReaderFilter::  Seek->start client done duration:%2.2f",duration);
+	
   }
 }
 
