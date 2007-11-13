@@ -859,7 +859,7 @@ namespace MediaPortal.Music.Database
       {
         aArtistArray.Clear();
         string strArtist = aArtist;
-        //DatabaseUtility.RemoveInvalidChars(ref strArtist);
+        DatabaseUtility.RemoveInvalidChars(ref strArtist); // <-- who commented that before (rtv)?
 
         string strSQL = string.Empty;
         switch (aSearchKind)
