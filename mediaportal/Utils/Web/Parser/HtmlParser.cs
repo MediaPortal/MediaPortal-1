@@ -218,17 +218,14 @@ namespace MediaPortal.Utils.Web
       int start = -1;
       char delim = '>';
 
-      if ((start = result.ToLower().IndexOf("href=")) != -1 || (start = result.ToLower().IndexOf("onclick=")) != -1)
+      if (result.ToLower().IndexOf("href=") != -1)
+        start += result.ToLower().IndexOf("href=")+5;
+      if (result.ToLower().IndexOf("onclick=") != -1)
+        start+=result.ToLower().IndexOf("onclick=")+8;
+      if (result[start+1]=='\"' || result[start+1]=='\'')
       {
-        for (int i = 0; i < result.Length - start; i++)
-        {
-          if (result[start + i] == '\"' || result[start + i] == '\'')
-          {
-            delim = result[start + i];
-            start = start + i;
-            break;
-          }
-        }
+        start++;
+        delim=result[start];
       }
 
       int end = -1;
