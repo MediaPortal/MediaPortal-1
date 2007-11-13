@@ -761,7 +761,7 @@ namespace MediaPortal.AudioScrobbler
       for (int i = 0; i < songList.Count; i++)
       {
         MusicDatabase mdb = MusicDatabase.Instance;
-        if (!mdb.GetArtists(4, songList[i].Artist, ref artistsInDB))
+        if (mdb.GetArtists(4, songList[i].Artist, ref artistsInDB))
         {
           bool foundDoubleEntry = false;
           for (int j = 0; j < listViewNeighbours.Items.Count; j++)
