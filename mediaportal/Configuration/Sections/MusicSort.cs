@@ -33,9 +33,9 @@ namespace MediaPortal.Configuration.Sections
   public class MusicSort : MediaPortal.Configuration.SectionSettings
   {
     private System.ComponentModel.IContainer components = null;
-    private ComboBox comboBox1;
-    private TextBox tbSortRight;
-    private TextBox tbSortLeft;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBox1;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbSortRight;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbSortLeft;
 
     const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
     const string defaultFileTag = "[%filename%]";
@@ -45,19 +45,20 @@ namespace MediaPortal.Configuration.Sections
     string[] defaultSortTags2 = { "%duration%", "%year%", "%filesize%", "%duration%", "%duration%", "%duration%", "%duration%", "%duration%", "%filesize%", "%rating%" };
 
     string[] sortTags1 = new string[20];
-    private TabControl tabControl1;
-    private TabPage tabPage1;
-    private GroupBox groupBox3;
-    private GroupBox groupBox4;
-    private Label label15;
-    private Label label16;
-    private Label label17;
-    private Label label18;
-    private TextBox textBoxSample;
-    private Label label19;
-    private Label label20;
-    private Label label21;
-    private Label label38;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
+    private MediaPortal.UserInterface.Controls.MPLabel label15;
+    private MediaPortal.UserInterface.Controls.MPLabel label16;
+    private MediaPortal.UserInterface.Controls.MPLabel label17;
+    private MediaPortal.UserInterface.Controls.MPLabel label18;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxSample;
+    private MediaPortal.UserInterface.Controls.MPLabel label19;
+    private MediaPortal.UserInterface.Controls.MPLabel label20;
+    private MediaPortal.UserInterface.Controls.MPLabel label21;
+    private MediaPortal.UserInterface.Controls.MPLabel label38;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowSort;
     string[] sortTags2 = new string[20];
     /// <summary>
     /// 
@@ -86,6 +87,8 @@ namespace MediaPortal.Configuration.Sections
       comboBox1.Items.Clear();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        checkBoxShowSort.Checked = xmlreader.GetValueAsBool("musicfiles", "showSortButton", false);
+
         for (int i = 0; i < sortModes.Length; ++i)
         {
           sortTags1[i] = xmlreader.GetValueAsString("mymusic", sortModes[i] + "1", defaultSortTags1[i]);
@@ -139,6 +142,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        xmlwriter.SetValueAsBool("musicfiles", "showSortButton", checkBoxShowSort.Checked);
         for (int i = 0; i < sortModes.Length; ++i)
         {
           xmlwriter.SetValue("mymusic", sortModes[i] + "1", sortTags1[i]);
@@ -185,6 +189,7 @@ namespace MediaPortal.Configuration.Sections
       this.label20 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label21 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label38 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxShowSort = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -193,7 +198,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbSortRight
       // 
-      this.tbSortRight.Location = new System.Drawing.Point(344, 75);
+      this.tbSortRight.BorderColor = System.Drawing.Color.Empty;
+      this.tbSortRight.Location = new System.Drawing.Point(345, 98);
       this.tbSortRight.Name = "tbSortRight";
       this.tbSortRight.Size = new System.Drawing.Size(71, 20);
       this.tbSortRight.TabIndex = 4;
@@ -202,7 +208,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbSortLeft
       // 
-      this.tbSortLeft.Location = new System.Drawing.Point(96, 75);
+      this.tbSortLeft.BorderColor = System.Drawing.Color.Empty;
+      this.tbSortLeft.Location = new System.Drawing.Point(96, 98);
       this.tbSortLeft.Name = "tbSortLeft";
       this.tbSortLeft.Size = new System.Drawing.Size(248, 20);
       this.tbSortLeft.TabIndex = 3;
@@ -211,9 +218,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBox1
       // 
+      this.comboBox1.BorderColor = System.Drawing.Color.Empty;
       this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBox1.FormattingEnabled = true;
-      this.comboBox1.Location = new System.Drawing.Point(96, 20);
+      this.comboBox1.Location = new System.Drawing.Point(96, 48);
       this.comboBox1.Name = "comboBox1";
       this.comboBox1.Size = new System.Drawing.Size(88, 21);
       this.comboBox1.TabIndex = 0;
@@ -236,12 +244,14 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
       this.tabPage1.Size = new System.Drawing.Size(464, 374);
       this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Music Sort";
+      this.tabPage1.Text = "Music sort";
+      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // groupBox3
       // 
       this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.checkBoxShowSort);
       this.groupBox3.Controls.Add(this.groupBox4);
       this.groupBox3.Controls.Add(this.textBoxSample);
       this.groupBox3.Controls.Add(this.label19);
@@ -251,9 +261,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.label21);
       this.groupBox3.Controls.Add(this.comboBox1);
       this.groupBox3.Controls.Add(this.label38);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(16, 16);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(432, 268);
+      this.groupBox3.Size = new System.Drawing.Size(432, 282);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       // 
@@ -263,7 +274,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.label18);
       this.groupBox4.Controls.Add(this.label16);
       this.groupBox4.Controls.Add(this.label17);
-      this.groupBox4.Location = new System.Drawing.Point(96, 144);
+      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox4.Location = new System.Drawing.Point(96, 162);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(320, 104);
       this.groupBox4.TabIndex = 21;
@@ -313,7 +325,8 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.BackColor = System.Drawing.SystemColors.ControlLight;
-      this.textBoxSample.Location = new System.Drawing.Point(96, 104);
+      this.textBoxSample.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxSample.Location = new System.Drawing.Point(96, 129);
       this.textBoxSample.Name = "textBoxSample";
       this.textBoxSample.ReadOnly = true;
       this.textBoxSample.Size = new System.Drawing.Size(320, 20);
@@ -322,7 +335,7 @@ namespace MediaPortal.Configuration.Sections
       // label19
       // 
       this.label19.AutoSize = true;
-      this.label19.Location = new System.Drawing.Point(16, 24);
+      this.label19.Location = new System.Drawing.Point(16, 51);
       this.label19.Name = "label19";
       this.label19.Size = new System.Drawing.Size(72, 13);
       this.label19.TabIndex = 18;
@@ -331,7 +344,7 @@ namespace MediaPortal.Configuration.Sections
       // label20
       // 
       this.label20.AutoSize = true;
-      this.label20.Location = new System.Drawing.Point(96, 52);
+      this.label20.Location = new System.Drawing.Point(93, 78);
       this.label20.Name = "label20";
       this.label20.Size = new System.Drawing.Size(217, 13);
       this.label20.TabIndex = 0;
@@ -340,7 +353,7 @@ namespace MediaPortal.Configuration.Sections
       // label21
       // 
       this.label21.AutoSize = true;
-      this.label21.Location = new System.Drawing.Point(16, 108);
+      this.label21.Location = new System.Drawing.Point(16, 132);
       this.label21.Name = "label21";
       this.label21.Size = new System.Drawing.Size(45, 13);
       this.label21.TabIndex = 5;
@@ -349,11 +362,22 @@ namespace MediaPortal.Configuration.Sections
       // label38
       // 
       this.label38.AutoSize = true;
-      this.label38.Location = new System.Drawing.Point(16, 80);
+      this.label38.Location = new System.Drawing.Point(16, 101);
       this.label38.Name = "label38";
       this.label38.Size = new System.Drawing.Size(42, 13);
       this.label38.TabIndex = 3;
       this.label38.Text = "Format:";
+      // 
+      // checkBoxShowSort
+      // 
+      this.checkBoxShowSort.AutoSize = true;
+      this.checkBoxShowSort.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShowSort.Location = new System.Drawing.Point(19, 19);
+      this.checkBoxShowSort.Name = "checkBoxShowSort";
+      this.checkBoxShowSort.Size = new System.Drawing.Size(183, 17);
+      this.checkBoxShowSort.TabIndex = 22;
+      this.checkBoxShowSort.Text = "Show button to switch sort modes";
+      this.checkBoxShowSort.UseVisualStyleBackColor = true;
       // 
       // MusicSort
       // 

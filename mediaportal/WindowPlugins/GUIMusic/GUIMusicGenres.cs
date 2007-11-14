@@ -354,23 +354,24 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+
       string view = MusicState.View;
+
       if (view == string.Empty)
         view = ((ViewDefinition)handler.Views[0]).Name;
 
-      if (_currentView != null && _currentView.Name == view)
-      {
-        handler.Restore(_currentView, _currentLevel);
-      }
-      else
-      {
+      if (_currentView != null && _currentView.Name == view)      
+        handler.Restore(_currentView, _currentLevel);      
+      else      
         handler.CurrentView = view;
-      }
+      
+
       LoadDirectory(m_strDirectory);
-      if (facadeView.Count <= 0)
-      {
+
+      if (facadeView.Count <= 0)      
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
-      }
+      
+
       if (_showArtist != string.Empty)
       {
         for (int i = 0; i < facadeView.Count; ++i)
@@ -394,7 +395,14 @@ namespace MediaPortal.GUI.Music
         playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
       }
 
-      //btnPlaylistFolder.Disabled = true;
+      if (btnSortBy != null)
+      {
+        if (!_showSortButton)
+        {
+          btnSortBy.Visible = false;
+          btnSortBy.FreeResources();
+        }
+      }
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -1286,7 +1294,9 @@ namespace MediaPortal.GUI.Music
         facadeView.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
 
       UpdateButtonStates();
-      btnSortBy.Disabled = !isSortable;
+
+      if (btnSortBy != null)
+        btnSortBy.Disabled = !isSortable;
     }
   }
 }

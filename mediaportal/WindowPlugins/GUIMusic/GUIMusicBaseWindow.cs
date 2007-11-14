@@ -81,8 +81,8 @@ namespace MediaPortal.GUI.Music
 
     public static bool _createMissingFolderThumbCache = true;
     public static bool _createMissingFolderThumbs = false;
-    public bool _useFolderThumbs = true;
-    public bool _dirsAreAlbums = false;
+    public bool _useFolderThumbs = true;    
+    public bool _showSortButton = false;
 
     protected View currentView = View.List;
     protected View currentViewRoot = View.List;
@@ -92,7 +92,8 @@ namespace MediaPortal.GUI.Music
     protected bool m_bSortAscendingRoot;
     protected string m_strPlayListPath = string.Empty;
     private bool m_bUseID3 = false;
-    private bool _autoShuffleOnLoad = false;    
+    private bool _autoShuffleOnLoad = false;
+    
 
     protected MusicViewHandler handler;
     protected MusicDatabase m_database;
@@ -190,7 +191,7 @@ namespace MediaPortal.GUI.Music
         _createMissingFolderThumbCache = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
-        // _dirsAreAlbums = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
+        _showSortButton = xmlreader.GetValueAsBool("musicfiles", "showSortButton", false);
 
         currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
         currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);
@@ -1059,7 +1060,8 @@ namespace MediaPortal.GUI.Music
       }
       
       OnSort();
-      GUIControl.FocusControl(GetID, btnSortBy.GetID);
+      if (btnSortBy != null)
+        GUIControl.FocusControl(GetID, btnSortBy.GetID);
     }
 
     protected void OnShowViews()

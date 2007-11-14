@@ -28,17 +28,17 @@
         <onup>17</onup>
       </control>
       <control>
-        <description>Sort</description>
-        <type>sortbutton</type>
-        <id>3</id>
-        <label>103</label>
-        <onright>50</onright>
-      </control>
-      <control>
         <description>Switch View</description>
         <type>button</type>
         <id>6</id>
         <label>457</label>
+        <onright>50</onright>
+      </control>      
+      <control>
+        <description>Sort</description>
+        <type>sortbutton</type>
+        <id>3</id>
+        <label>103</label>
         <onright>50</onright>
       </control>
       <control>
@@ -48,14 +48,6 @@
         <label>137</label>
         <onright>50</onright>
       </control>
-<!--      <control>
-        <description>Rotating Menu</description>
-        <type>button</type>
-        <id>1337</id>
-        <label>Music Menu</label>
-        <hyperlink>8888</hyperlink>
-        <onright>50</onright>
-      </control> -->
       <control>
         <description>Play CD</description>
         <type>button</type>

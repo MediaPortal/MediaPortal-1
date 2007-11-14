@@ -41,26 +41,16 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public abstract class GUIControl : Control
   {
-    [XMLSkinElement("subtype")]
-    protected string _subType = "";
-    [XMLSkinElement("onleft")]
-    protected int _leftControlId = 0;
-    [XMLSkinElement("onright")]
-    protected int _rightControlId = 0;
-    [XMLSkinElement("onup")]
-    protected int _upControlId = 0;
-    [XMLSkinElement("ondown")]
-    protected int _downControlId = 0;
-    [XMLSkinElement("colordiffuse")]
-    protected long _diffuseColor = 0xFFFFFFFF;
-    [XMLSkinElement("id")]
-    protected int _controlId = 0;
-    [XMLSkinElement("type")]
-    protected string _controlType = "";
-    [XMLSkinElement("description")]
-    protected string _description = "";
-    [XMLSkinElement("dimColor")]
-    protected int _dimColor = 0x60ffffff;
+    [XMLSkinElement("subtype")]             protected string _subType = "";
+    [XMLSkinElement("onleft")]              protected int _leftControlId = 0;
+    [XMLSkinElement("onright")]             protected int _rightControlId = 0;
+    [XMLSkinElement("onup")]                protected int _upControlId = 0;
+    [XMLSkinElement("ondown")]              protected int _downControlId = 0;
+    [XMLSkinElement("colordiffuse")]        protected long _diffuseColor = 0xFFFFFFFF;
+    [XMLSkinElement("id")]                  protected int _controlId = 0;
+    [XMLSkinElement("type")]                protected string _controlType = "";
+    [XMLSkinElement("description")]         protected string _description = "";
+    [XMLSkinElement("dimColor")]            protected int _dimColor = 0x60ffffff;
 
     protected int _parentControlId = 0;
     protected bool _isSelected = false;
@@ -1490,6 +1480,7 @@ namespace MediaPortal.GUI.Library
     {
       return _visibleCondition; ;
     }
+
     public virtual List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions /* = true */)
     {
       if (false == GUIGraphicsContext.Animations) return null;
