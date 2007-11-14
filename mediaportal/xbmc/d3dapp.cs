@@ -2107,7 +2107,6 @@ namespace MediaPortal
 
             return;
           }
-          return;
           else if (notifyIcon.Visible == true && this.WindowState != FormWindowState.Minimized)
             notifyIcon.Visible = false;
         }
