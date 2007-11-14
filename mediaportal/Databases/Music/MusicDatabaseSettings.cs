@@ -28,13 +28,14 @@ using System;
 namespace MediaPortal.Music.Database
 {
 	/// <summary>
-	/// 
+	/// Contains all Music DB settings
 	/// </summary>
 	public class MusicDatabaseSettings
 	{
     bool _treatFolderAsAlbum;
     bool _extractEmbededCoverArt;
     bool _useFolderThumbs;
+    bool _useAllImages;
     bool _createArtistThumbs;
     bool _createGenreThumbs;
     bool _createMissingFolderThumbs;  
@@ -43,8 +44,8 @@ namespace MediaPortal.Music.Database
 
 
     public MusicDatabaseSettings()
-	{
-	}
+    {
+    }
 
     public bool TreatFolderAsAlbum
     {
@@ -62,6 +63,12 @@ namespace MediaPortal.Music.Database
     {
       get { return _useFolderThumbs; }
       set { _useFolderThumbs = value; }
+    }
+
+    public bool UseAllImages
+    {
+      get { return _useAllImages; }
+      set { _useAllImages = value; }
     }
 
     public bool CreateArtistPreviews

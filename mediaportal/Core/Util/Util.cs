@@ -1701,8 +1701,37 @@ namespace MediaPortal.Util
           return strRemoteFolderThumb;
         else
         {
-          // last chance - maybe some other program left a "cover.jpg"
-          strRemoteFolderThumb = strRemoteFolderThumb.Replace("folder.jpg", "cover.jpg");
+          // last chance - maybe some other program left useable images
+          string searchPath = Path.GetDirectoryName(aSongPath);
+          string[] imageFiles = Directory.GetFiles(searchPath, @"*.png", SearchOption.TopDirectoryOnly);
+          if (imageFiles.Length < 1) // WMP leaves files like AlbumArt_{18289833-9C5D-4D3F-9971-F3F9EBDC03E7}_Large.jpg
+            imageFiles = Directory.GetFiles(searchPath, @"*Large.jpg", SearchOption.TopDirectoryOnly);
+          if (imageFiles.Length < 1)
+            imageFiles = Directory.GetFiles(searchPath, @"*.jpg", SearchOption.TopDirectoryOnly);
+
+          long maxSize = 0;
+          for (int i = 0 ; i < imageFiles.Length ; i++)
+          {
+            try
+            {
+              // get the largest pic available
+              FileInfo fi = new FileInfo(imageFiles[i]);
+              if (fi.Length > maxSize)
+              {
+                strRemoteFolderThumb = imageFiles[i];
+                maxSize = fi.Length;
+              }
+              // prefer the front cover over booklets or cd prints
+              if (imageFiles[i].ToLowerInvariant().Contains(@"front") || imageFiles[i].ToLowerInvariant().Contains(@"vorne"))
+              {
+                strRemoteFolderThumb = imageFiles[i];
+                break;
+              }
+            }
+            catch (Exception)
+            {
+            }
+          }
           if (File.Exists(strRemoteFolderThumb))
             return strRemoteFolderThumb;
         }

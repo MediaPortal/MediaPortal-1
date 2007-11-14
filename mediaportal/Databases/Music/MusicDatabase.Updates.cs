@@ -89,8 +89,9 @@ namespace MediaPortal.Music.Database
     private ArrayList availableFiles;
 
     private string _previousDirectory = null;
+    private string _previousNegHitDir = null;
     private MusicTag _previousMusicTag = null;
-    private bool _foundVariousArtist = false;
+    private bool _foundVariousArtist = false;    
 
     private char[] trimChars = { ' ', '\x00', '|' };
 
@@ -406,6 +407,7 @@ namespace MediaPortal.Music.Database
         _stripArtistPrefixes = setting.StripArtistPrefixes;
         _treatFolderAsAlbum = setting.TreatFolderAsAlbum;
         _useFolderThumbs = setting.UseFolderThumbs;
+        _useAllImages = setting.UseAllImages;
         _createArtistPreviews = setting.CreateArtistPreviews;
         _createGenrePreviews = setting.CreateGenrePreviews;
         updateSinceLastImport = setting.UseLastImportDate;
@@ -455,23 +457,17 @@ namespace MediaPortal.Music.Database
         MyArgs.phase = "Scanning new files";
         OnDatabaseReorgChanged(MyArgs);
 
-        int GetFilesResult = GetFiles(10, 80, ref fileCount);
+        int GetFilesResult = GetFiles(10, 74, ref fileCount);
         Log.Info("Musicdatabasereorg: Add / Update files: {0} files added / updated", GetFilesResult);
 
         if (_createArtistPreviews)
         {
-          MyArgs.progress = 85;
-          MyArgs.phase = "Creating artist preview thumbs";
-          OnDatabaseReorgChanged(MyArgs);
-          CreateArtistThumbs();
+          CreateArtistThumbs(75, 85);
         }
 
         if (_createGenrePreviews)
         {
-          MyArgs.progress = 90;
-          MyArgs.phase = "Creating genre preview thumbs";
-          OnDatabaseReorgChanged(MyArgs);
-          CreateGenreThumbs();
+          CreateGenreThumbs(86, 94);
         }
       }
 
@@ -1222,23 +1218,51 @@ namespace MediaPortal.Music.Database
       // no mp3 coverart - use folder art if present to get an album thumb
       if (_useFolderThumbs)
       {
-        // only create for the first file
-        if (!System.IO.File.Exists(smallThumbPath))
+        // Scan folders only one time per song
+        if (string.IsNullOrEmpty(_previousNegHitDir) || (Path.GetDirectoryName(tag.FileName) != _previousNegHitDir))
         {
-          string sharefolderThumb = MediaPortal.Util.Utils.GetFolderThumb(tag.FileName);
-          if (System.IO.File.Exists(sharefolderThumb))
+          if (!System.IO.File.Exists(smallThumbPath))
           {
-            if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
-              Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
-            if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
-              Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
+            string sharefolderThumb;
+            bool scanNow = false;
+
+            if (_useAllImages)
+            {
+              sharefolderThumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(tag.FileName);
+              if (string.IsNullOrEmpty(sharefolderThumb))
+              {
+                _previousNegHitDir = Path.GetDirectoryName(tag.FileName);
+                Log.Debug("MusicDatabase: No useable album art images found in {0}", _previousNegHitDir);
+              }
+              else
+              {
+                _previousNegHitDir = string.Empty;
+                scanNow = true;
+              }
+            }
+            else
+            {
+              sharefolderThumb = Util.Utils.GetFolderThumb(tag.FileName);
+              if (System.IO.File.Exists(sharefolderThumb))
+                scanNow = true;
+            }
+
+            if (scanNow)
+            {
+              if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+                Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
+              if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
+                Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
+
+              CreateFolderThumbs(tag.FileName, smallThumbPath);
+            }
           }
         }
       }
-
-      // create the local folder thumb cache / and folder.jpg itself if not present
-      if (_useFolderThumbs || _createMissingFolderThumbs)
-        CreateFolderThumbs(tag.FileName, smallThumbPath);  
+      else
+        // create the local folder thumb cache / and folder.jpg itself if not present
+        if (_createMissingFolderThumbs)
+          CreateFolderThumbs(tag.FileName, smallThumbPath);
     }
 
     private void CreateFolderThumbs(string strSongPath, string strSmallThumb)
@@ -1293,31 +1317,12 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    //private void CreateArtistThumbs(string aThumbPath, string aArtist)
-    //{
-    //  if (File.Exists(aThumbPath) && !string.IsNullOrEmpty(aArtist))
-    //  {
-    //    string artistThumb = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(aArtist.Trim(trimChars)));
-    //    if (!File.Exists(artistThumb))
-    //    {
-    //      try
-    //      {
-    //        if (Picture.CreateThumbnail(aThumbPath, artistThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
-    //        {
-    //          Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(artistThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-    //          Log.Info("Database: CreateArtistThumbs added thumbnails for {0}", aArtist);
-    //        }
-    //      }
-    //      catch (Exception) { }
-    //    }
-    //  }
-    //}
-
-    private void CreateArtistThumbs()
+    private void CreateArtistThumbs(int aProgressStart, int aProgressEnd)
     {
+      DatabaseReorgEventArgs MyArtistArgs = new DatabaseReorgEventArgs();
       ArrayList allArtists = new ArrayList();
       List<Song> groupedArtistSongs = new List<Song>();
-      List<String> imageTracks = new List<string>();
+      List<String> imageTracks = new List<string>();      
 
       if (GetAllArtists(ref allArtists))
       {
@@ -1326,6 +1331,12 @@ namespace MediaPortal.Music.Database
           string curArtist = allArtists[i].ToString();
           if (!string.IsNullOrEmpty(curArtist) && curArtist != "unknown")            
           {
+            MyArtistArgs.phase = string.Format("Creating artist preview thumbs: {1}/{2} - {0}", curArtist, Convert.ToString(i + 1), Convert.ToString(allArtists.Count));
+            // range = 80-90
+            int artistProgress = aProgressStart + (((i + 1) / allArtists.Count) * (aProgressEnd-aProgressStart));
+            MyArtistArgs.progress = artistProgress;
+            OnDatabaseReorgChanged(MyArtistArgs);
+
             groupedArtistSongs.Clear();
             imageTracks.Clear();
             string artistThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, curArtist);
@@ -1363,8 +1374,9 @@ namespace MediaPortal.Music.Database
     }
 
 
-    private void CreateGenreThumbs()
+    private void CreateGenreThumbs(int aProgressStart, int aProgressEnd)
     {
+      DatabaseReorgEventArgs MyGenreArgs = new DatabaseReorgEventArgs();
       ArrayList allGenres = new ArrayList();
       List<Song> groupedGenreSongs = new List<Song>();
       List<String> imageTracks = new List<string>();
@@ -1376,6 +1388,11 @@ namespace MediaPortal.Music.Database
           string curGenre = allGenres[i].ToString();
           if (!string.IsNullOrEmpty(curGenre) && curGenre != "unknown")
           {
+            MyGenreArgs.phase = string.Format("Creating genre preview thumbs: {1}/{2} - {0}", curGenre, Convert.ToString(i + 1), Convert.ToString(allGenres.Count));
+            int genreProgress = aProgressStart + (((i + 1) / allGenres.Count) * (aProgressEnd - aProgressStart));
+            MyGenreArgs.progress = genreProgress;
+            OnDatabaseReorgChanged(MyGenreArgs);
+
             groupedGenreSongs.Clear();
             imageTracks.Clear();
             string genreThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicGenre, curGenre);
@@ -1409,38 +1426,7 @@ namespace MediaPortal.Music.Database
           }
         }  // for all genres
       }
-    }
-
-    ///// <summary>
-    ///// Creates a thumb for the given genre
-    ///// </summary>
-    ///// <param name="aThumbPath">Path to an image of which the thumb will be extracted</param>
-    ///// <param name="aGenre">Genre the thumb will represent</param>
-    //private void CreateGenreThumbs(string aThumbPath, string aGenre)
-    //{
-    //  if (File.Exists(aThumbPath) && !string.IsNullOrEmpty(aGenre))
-    //  {
-    //    // The genre may contains unallowed chars
-    //    string strGenre = Util.Utils.MakeFileName(aGenre.Trim(trimChars));
-    //    // Now the genre is clean -> build a filename out of it
-    //    string genreThumb = Util.Utils.GetCoverArtName(Thumbs.MusicGenre, strGenre);
-
-    //    if (!File.Exists(genreThumb))
-    //    {
-    //      try
-    //      {
-    //        if (Picture.CreateThumbnail(aThumbPath, genreThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
-    //        {
-    //          Picture.CreateThumbnail(aThumbPath, Util.Utils.ConvertToLargeCoverArt(genreThumb), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-    //          Log.Info("Database: CreateGenreThumbs added thumbnails for {0}", strGenre);
-    //        }
-    //      }
-    //      catch (Exception) { }
-    //    }
-    //  }
-    //  else
-    //    Log.Debug("Database: CreateGenreThumbs is missing some info - file: {0}, genre: {1}", aThumbPath, aGenre);
-    //}
+    } 
 
     private void UpdateVariousArtist(MusicTag tag)
     {
