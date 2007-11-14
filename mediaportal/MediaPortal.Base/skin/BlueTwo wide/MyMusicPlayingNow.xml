@@ -18,7 +18,7 @@
       <width>1250</width>
       <height>189</height>
       <texture>osd_bg.png</texture>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -29,7 +29,7 @@
       <width>120</width>
       <height>168</height>
       <texture>music.png</texture>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -38,7 +38,7 @@
       <posX>113</posX>
       <posY>26</posY>
       <texture flipY="true" diffuse="Thumb_Mask.png">music_logo.png</texture>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -49,7 +49,7 @@
       <width>400</width>
       <height>484</height>
       <texture>nowplaying_background.png</texture>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -74,7 +74,7 @@
       <height>26</height>
       <label>#Play.Current.Title</label>
       <font>font18</font>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>fadelabel</type>
@@ -86,7 +86,7 @@
       <height>26</height>
       <label>#Play.Current.Artist</label>
       <font>font16</font>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>fadelabel</type>
@@ -98,7 +98,7 @@
       <height>28</height>
       <label>#Play.Current.Track</label>
       <font>font16</font>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>fadelabel</type>
@@ -123,7 +123,7 @@
       <font>font13</font>
       <align>left</align>
       <!-- 			<textcolor>white</textcolor> -->
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -132,7 +132,7 @@
       <posY>482</posY>
       <width>220</width>
       <texture>osd_progress_background.png</texture>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>progress</type>
@@ -152,7 +152,7 @@
       <font>font14</font>
       <align>left</align>
       <textcolor>80ffffff</textcolor>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>label</type>

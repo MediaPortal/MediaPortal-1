@@ -10,7 +10,7 @@
     <control>
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <layout>GridLayout(2, 6, 52, 8, 1)</layout>
       <posX>113</posX>
       <posY>190</posY>
@@ -24,7 +24,7 @@
     <control>
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <layout>GridLayout(2, 6, 52, 8, 1)</layout>
       <posX>113</posX>
       <posY>240</posY>

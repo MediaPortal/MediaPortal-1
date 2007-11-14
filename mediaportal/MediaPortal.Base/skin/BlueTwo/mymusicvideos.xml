@@ -12,9 +12,9 @@
       <description>group element</description>
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="0,-300">WindowClose</animation>
       <posX>60</posX>
       <posY>97</posY>
       <layout>StackLayout</layout>
@@ -72,9 +72,9 @@
       <description>group element</description>
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="0,-300">WindowClose</animation>
       <posX>60</posX>
       <posY>97</posY>
       <layout>StackLayout</layout>
@@ -113,9 +113,9 @@
       <type>image</type>
       <id>36</id>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="0,-300">WindowClose</animation>
       <posX>65</posX>
       <posY>369</posY>
       <texture />
@@ -126,9 +126,9 @@
       <id>50</id>
       <scrollOffset>2</scrollOffset>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
     </control>
   </controls>
 </window>

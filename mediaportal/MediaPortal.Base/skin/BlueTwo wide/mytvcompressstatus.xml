@@ -19,7 +19,7 @@
       <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Time</description>
@@ -32,7 +32,7 @@
       <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Number of Files Label</description>
@@ -44,7 +44,7 @@
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -58,13 +58,13 @@
       <align>right</align>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>group</type>
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <control>
         <description>View-As button</description>
         <type>button</type>
@@ -105,7 +105,7 @@
       <type>group</type>
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <control>
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
@@ -205,7 +205,7 @@
       <colordiffuse>60ffffff</colordiffuse>
       <texture>previewbackground.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>TV preview window</description>
@@ -219,7 +219,7 @@
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

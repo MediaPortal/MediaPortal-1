@@ -18,7 +18,7 @@
       <height>53</height>
       <layout>StackLayout</layout>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <mpe>
         <layout>Grid</layout>
         <spring>no</spring>
@@ -49,7 +49,7 @@
       <label>-</label>
       <disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
@@ -60,7 +60,7 @@
       <label>-</label>
       <textcolor>ffb2d4f5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>textboxscrollup</type>
@@ -75,7 +75,7 @@
       <label>#TV.RecordedTV.Description</label>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
@@ -87,7 +87,7 @@
       <align>right</align>
       <textcolor>ffb2d4f5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>image</type>
@@ -99,7 +99,7 @@
       <height>178</height>
       <texture>playback_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>videowindow</type>
@@ -113,7 +113,7 @@
       <textureFocus>tv_green_border.png</textureFocus>
       <action>18</action>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>fadelabel</type>
@@ -125,7 +125,7 @@
       <font>font14</font>
       <disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
@@ -136,7 +136,7 @@
       <label>-</label>
       <textcolor>ffb2d4f5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>textboxscrollup</type>
@@ -151,7 +151,7 @@
       <label>-</label>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
@@ -163,7 +163,7 @@
       <align>right</align>
       <textcolor>ffb2d4f5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

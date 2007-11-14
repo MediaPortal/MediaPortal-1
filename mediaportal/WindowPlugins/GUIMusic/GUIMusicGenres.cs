@@ -507,12 +507,18 @@ namespace MediaPortal.GUI.Music
               }
               else
               {
-                if (_createMissingFolderThumbCache)
+                // build folder.jpg from coverart
+                if (_createMissingFolderThumbs)
+                {                  
+                    FolderThumbCreator thumbbuilder = new FolderThumbCreator(item.Path, song.ToMusicTag());                  
+                }
+                // cache the folder thumb - created thumbs will be cached automatically
+                if (_createMissingFolderThumbCache && !_createMissingFolderThumbs)
                 {
-                  strThumb = MediaPortal.Util.Utils.GetFolderThumb(item.Path);
+                  strThumb = Util.Utils.GetFolderThumb(item.Path);
                   if (System.IO.File.Exists(strThumb))
                   {
-                    FolderThumbCacher thumbworker = new FolderThumbCacher(item.Path, false);
+                    FolderThumbCacher thumbworker = new FolderThumbCacher(System.IO.Path.GetDirectoryName(strThumb), false);
                   }
                 }
               }

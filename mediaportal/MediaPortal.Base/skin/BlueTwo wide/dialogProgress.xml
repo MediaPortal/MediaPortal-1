@@ -12,8 +12,8 @@
       <posY>437</posY>
       <width>488</width>
       <texture>osd_progress_background.png</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>progress control</description>
@@ -22,8 +22,8 @@
       <posX>418</posX>
       <posY>436</posY>
       <width>509</width>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Cancel button</description>
@@ -40,8 +40,8 @@
       <onright>10</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

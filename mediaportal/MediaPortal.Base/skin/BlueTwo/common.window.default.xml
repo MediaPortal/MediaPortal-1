@@ -16,8 +16,8 @@
       <font>font48</font>
       <textcolor>33ffffff</textcolor>
       <label>#header.text</label>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Page text label</description>
@@ -29,8 +29,8 @@
       <font>font16</font>
       <align>right</align>
       <textcolor>White</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -43,8 +43,8 @@
       <font>font14</font>
       <textcolor>White</textcolor>
       <align>right</align>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>image</type>
@@ -52,8 +52,8 @@
       <posX>75</posX>
       <posY>370</posY>
       <texture>#header.hover</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Number of Files Label</description>
@@ -64,8 +64,8 @@
       <label>#itemcount</label>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Date</description>
@@ -77,8 +77,8 @@
       <align>right</align>
       <font>font14</font>
       <textcolor>ffa9d0f7</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Time</description>
@@ -90,8 +90,8 @@
       <align>right</align>
       <font>font14</font>
       <textcolor>ffa9d0f7</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

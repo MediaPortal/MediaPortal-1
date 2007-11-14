@@ -18,7 +18,7 @@
       <posY>20</posY>
       <texture>radio_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>image</type>
@@ -27,7 +27,7 @@
       <posY>370</posY>
       <texture>hover_my radio.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Date</description>
@@ -40,7 +40,7 @@
       <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Time</description>
@@ -53,7 +53,7 @@
       <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Guide Text Label</description>
@@ -66,7 +66,7 @@
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>TVGUIDE Panel</description>
@@ -79,7 +79,7 @@
       <colordiffuse>60ffffff</colordiffuse>
       <texture>-</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <!-- Timeheader background must be dedfined before Timeheader label template -->
     <!-- b/c Timeheader is on the background and will be rendered first -->
@@ -93,7 +93,7 @@
       <height>28</height>
       <texture>button_small_settings_nofocus.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>time header label template</description>
@@ -104,7 +104,7 @@
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>day spin control</description>
@@ -122,7 +122,7 @@
       <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
       <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>time interval spin control</description>
@@ -140,7 +140,7 @@
       <onleft>6</onleft>
       <onright>8</onright>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Channel template</description>
@@ -151,7 +151,7 @@
       <width>124</width>
       <height>34</height>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Channel image template</description>
@@ -163,7 +163,7 @@
       <zoom>yes</zoom>
       <texture>defaultVideoBig.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>channel Label template</description>
@@ -176,7 +176,7 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Current program title</description>
@@ -189,7 +189,7 @@
       <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Current program time</description>
@@ -202,7 +202,7 @@
       <font>font16</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Current program genre</description>
@@ -215,7 +215,7 @@
       <font>font16</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Description1</description>
@@ -230,7 +230,7 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <!--	<control>
 		<description>template for program genre light area</description>
@@ -249,7 +249,7 @@
       <font>font13</font>
       <textcolor>FF101010</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>vertical timeline</description>
@@ -261,7 +261,7 @@
       <colordiffuse>c0ffffff</colordiffuse>
       <texture>tvguide_slider.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>template for program title darkarea </description>
@@ -272,7 +272,7 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <!--	<control>
 		<description>template for genre  dark area</description>
@@ -293,7 +293,7 @@
       <height>20</height>
       <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Vertical scrollbar</description>
@@ -305,7 +305,7 @@
       <height>294</height>
       <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>record pin</description>
@@ -316,7 +316,7 @@
       <texture>tvguide_record_button.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

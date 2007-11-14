@@ -15,8 +15,8 @@
       <posX>60</posX>
       <posY>20</posY>
       <texture>#header.image</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Header Label</description>
@@ -26,8 +26,8 @@
       <posY>96</posY>
       <label>#header.label</label>
       <font>font18</font>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Hover image</description>
@@ -39,8 +39,8 @@
       <height>158</height>
       <texture>#header.hover</texture>
       <visible>!videoplayer.usingoverlays</visible>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

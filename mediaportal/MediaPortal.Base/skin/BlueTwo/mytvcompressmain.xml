@@ -18,7 +18,7 @@
       <align>left</align>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>description line#2 Label</description>
@@ -30,7 +30,7 @@
       <align>left</align>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>description line#3 Label</description>
@@ -42,7 +42,7 @@
       <align>left</align>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>description line#4 Label</description>
@@ -54,7 +54,7 @@
       <align>left</align>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>description line#5 Label</description>
@@ -66,7 +66,7 @@
       <align>left</align>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Date</description>
@@ -79,7 +79,7 @@
       <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Time</description>
@@ -92,7 +92,7 @@
       <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>group</type>
@@ -110,7 +110,7 @@
         <ondown>3</ondown>
         <hyperlink>611</hyperlink>
         <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
       </control>
       <control>
         <description>Compress</description>
@@ -125,7 +125,7 @@
         <ondown>4</ondown>
         <hyperlink>612</hyperlink>
         <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
       </control>
       <control>
         <description>Settings button</description>
@@ -140,7 +140,7 @@
         <onup>3</onup>
         <ondown>5</ondown>
         <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
       </control>
       <control>
         <description>Status</description>
@@ -155,7 +155,7 @@
         <ondown>99</ondown>
         <hyperlink>613</hyperlink>
         <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
       </control>
     </control>
     <control>
@@ -168,7 +168,7 @@
       <height>134</height>
       <texture>playback_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>TV preview window</description>
@@ -182,7 +182,7 @@
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

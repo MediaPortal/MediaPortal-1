@@ -11,7 +11,7 @@
       <posX>40</posX>
       <posY>10</posY>
       <texture>rec.png</texture>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
   </controls>

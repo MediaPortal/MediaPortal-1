@@ -20,8 +20,8 @@
       <width>409</width>
       <height>202</height>
       <texture>dialog_background.png</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>image</type>
@@ -31,8 +31,8 @@
       <width>409</width>
       <height>202</height>
       <texture>dialog_background.png</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Heading text label</description>
@@ -43,8 +43,8 @@
       <label>181</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>options listcontrol</description>
@@ -60,8 +60,8 @@
       <ondown>5</ondown>
       <spinPosX>450</spinPosX>
       <spinPosY>370</spinPosY>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

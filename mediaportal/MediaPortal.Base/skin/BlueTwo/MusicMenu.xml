@@ -24,7 +24,7 @@
 			<font>dingbats</font>
 			<textcolor>40ffffff</textcolor>
 			<animation effect="fade" time="250">WindowOpen</animation>
-			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -1075,7 +1075,7 @@
             <visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)]</visible>
             <animation effect="zoom" start="100,100" end="99,99" center="0,0" time="500">visiblechange</animation>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
        </control>
 		<control>
 			<description>music rectangle</description>
@@ -1087,7 +1087,7 @@
 			<height>133</height>
 			<texture>playback_background.png</texture>
 			<visible>Player.HasMedia</visible>
-			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
 			<animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
@@ -1101,7 +1101,7 @@
 			<keepaspectratio>yes</keepaspectratio>
 			<centered>yes</centered>
 			<texture>#Play.Current.Thumb</texture>
-			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
 			<animation effect="fade" time="250">WindowOpen</animation>
 		</control>
 		<control>
@@ -1114,7 +1114,7 @@
 			<font>font12</font>
 			<label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>
 			<textcolor>EFFFFFFF</textcolor>
-			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
 			<animation effect="fade" time="250">WindowOpen</animation>
 			<id>5</id>
 		</control>
@@ -1129,7 +1129,7 @@
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
 			<animation effect="fade" time="250">WindowOpen</animation>
-			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
 		</control>
 		<control>
 			<description>Time</description>
@@ -1142,7 +1142,7 @@
 			<font>font13</font>
 			<textcolor>ffffffff</textcolor>
 			<animation effect="fade" time="250">WindowOpen</animation>
-			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
 		</control>
 		<control>
 			<type>image</type>
@@ -1151,7 +1151,7 @@
 			<posY>20</posY>
 			<texture flipY="true" diffuse="Thumb_Mask.png">music_menu_logo.png</texture>
 			<animation effect="fade" time="250">WindowOpen</animation>
-			<animation effect="fade" time="500">WindowClose</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
 		</control>
 	</controls>
 </window>

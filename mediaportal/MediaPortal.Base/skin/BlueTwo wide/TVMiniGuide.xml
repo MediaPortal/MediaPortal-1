@@ -93,8 +93,8 @@
       <label>10105</label>
       <font>font14</font>
       <textcolor>Black</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>      
     </control>
 <!--     <control>
       <description>Heading text label</description>
@@ -105,8 +105,8 @@
       <label>181</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>   -->  
     <control>
       <description>time label</description>

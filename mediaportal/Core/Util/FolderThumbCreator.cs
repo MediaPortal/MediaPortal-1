@@ -32,6 +32,7 @@ using MediaPortal.Services;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.TagReader;
 using MediaPortal.Threading;
+using System.IO;
 
 
 namespace MediaPortal.Util
@@ -58,7 +59,7 @@ namespace MediaPortal.Util
 
         private void PerformRequest()
         {
-            lock (this)
+            lock (work)
             {
                 MusicTag musicTag = _filetag;
                 string filename = _filename;
@@ -92,28 +93,7 @@ namespace MediaPortal.Util
                                 // now we need to cache that new thumb, too
                                 if (System.IO.File.Exists(strRemoteFolderThumb))
                                 {
-                                    try
-                                    {
-                                        Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumb cache for {0}", strRemoteFolderThumb);
-                                        string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
-
-                                        if (!System.IO.File.Exists(strFolderThumb))
-                                            MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-                                        if (!System.IO.File.Exists(localFolderLThumb))
-                                        {
-                                            // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
-                                            System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
-                                            if (fiRemoteFolderArt.Length < 32000)
-                                                System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
-                                            else
-                                                MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-                                        }
-                                        return;
-                                    }
-                                    catch (Exception)
-                                    {
-                                        return;
-                                    }
+                                  FolderThumbCacher cacheNow = new FolderThumbCacher(Path.GetDirectoryName(strRemoteFolderThumb), false);
                                 }
                             }
                         }

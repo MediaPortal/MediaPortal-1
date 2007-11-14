@@ -20,7 +20,7 @@
             <height>189</height>
             <texture>osd_bg.png</texture>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>image</type>
@@ -32,7 +32,7 @@
             <height>168</height>
             <texture>music.png</texture>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>image</type>
@@ -42,7 +42,7 @@
             <posY>26</posY>
             <texture>radio_logo.png</texture>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>image</type>
@@ -54,7 +54,7 @@
             <height>484</height>
             <texture>nowplaying_background.png</texture>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>image</type>
@@ -68,7 +68,7 @@
             <!-- <texture>F:\\Quellen\\Mediaportal-trunk\\xbmc\\bin\\Debug\\skin\\BlueTwo\\media\\missing_coverart.png</texture>  -->
             <centered>yes</centered>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <description>start a stream</description>
@@ -82,7 +82,7 @@
             <onup>666</onup>
             <ondown>20</ondown>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <description>chose tag</description>
@@ -96,7 +96,7 @@
             <onup>10</onup>
             <ondown>30</ondown>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <description>choose friend</description>
@@ -110,7 +110,7 @@
             <onup>20</onup>
             <ondown>35</ondown>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <description>toggle submit mode</description>
@@ -125,7 +125,7 @@
             <ondown>40</ondown>
             <visible>true</visible>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <description>toggle discovery mode</description>
@@ -140,7 +140,7 @@
             <ondown>50</ondown>
             <visible>false</visible>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>     
         <control>
             <type>fadelabel</type>
@@ -154,7 +154,7 @@
             <font>font18</font>
             <disabledcolor>ff800000</disabledcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>fadelabel</type>
@@ -168,7 +168,7 @@
             <font>font16</font>
             <disabledcolor>ff808080</disabledcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>label</type>
@@ -182,7 +182,7 @@
             <align>left</align>
             <textcolor>ffffffff</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>label</type>
@@ -196,7 +196,7 @@
             <align>left</align>
             <textcolor>80ffffff</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>label</type>
@@ -209,7 +209,7 @@
             <align>left</align>
             <textcolor>white</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>label</type>
@@ -222,7 +222,7 @@
             <align>right</align>
             <textcolor>white</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>textbox</type>
@@ -236,7 +236,7 @@
             <align>left</align>
             <textcolor>80ffffff</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <control>
             <type>textbox</type>
@@ -250,7 +250,7 @@
             <align>left</align>
             <textcolor>80ffffff</textcolor>
             <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="500">WindowClose</animation>
+            <animation effect="fade" time="250">WindowClose</animation>
         </control>
         <!--
       <control>

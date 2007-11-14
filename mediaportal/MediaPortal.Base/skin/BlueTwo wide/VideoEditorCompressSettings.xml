@@ -12,8 +12,8 @@
 			<width>404</width>
 			<height>350</height>
 			<texture>context_background.png</texture>
-			<animation effect="fade" time="200">WindowOpen</animation>
-			<animation effect="fade" time="200">WindowClose</animation>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
 		</control>
 		<control>
 			<description>Header</description>

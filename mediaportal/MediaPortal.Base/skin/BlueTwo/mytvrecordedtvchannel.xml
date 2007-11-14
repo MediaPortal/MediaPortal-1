@@ -17,7 +17,7 @@
       <posY>20</posY>
       <texture>television_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>image</type>
@@ -28,7 +28,7 @@
       <height>158</height>
       <texture>hover_my tv.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
@@ -41,7 +41,7 @@
       <align>right</align>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
@@ -52,7 +52,7 @@
       <label>#itemcount</label>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>fadelabel</type>
@@ -64,7 +64,7 @@
       <align>right</align>
       <disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>group</type>
@@ -75,7 +75,7 @@
       <width>198</width>
       <height>108</height>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <mpe>
         <layout>Grid</layout>
         <spring>no</spring>
@@ -132,7 +132,7 @@
       <width>438</width>
       <height>467</height>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <mpe>
         <layout>Grid</layout>
         <spring>no</spring>
@@ -236,7 +236,7 @@
       <height>134</height>
       <texture>playback_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <type>videowindow</type>
@@ -250,7 +250,7 @@
       <textureFocus>tv_green_border.png</textureFocus>
       <action>18</action>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>

@@ -98,7 +98,7 @@
       <height>20</height>
       <label>#Play.Current.Track</label>
       <font>font16</font>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>fadelabel</type>
@@ -123,7 +123,7 @@
       <font>font14</font>
       <align>left</align>
       <!-- 			<textcolor>white</textcolor> -->
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>image</type>
@@ -132,7 +132,7 @@
       <posY>373</posY>
       <width>180</width>
       <texture>osd_progress_background.png</texture>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>progress</type>
@@ -152,7 +152,7 @@
       <font>font14</font>
       <align>left</align>
       <textcolor>80ffffff</textcolor>
-      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>label</type>

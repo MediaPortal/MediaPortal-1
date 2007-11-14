@@ -10,7 +10,7 @@
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <type>image</type>
       <id>1</id>
       <posX>60</posX>
@@ -19,7 +19,7 @@
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <type>label</type>
       <id>1</id>
       <posX>250</posX>
@@ -28,8 +28,8 @@
       <font>font16</font>
       <align>right</align>
       <textcolor>White</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Number of Files Label</description>
@@ -40,12 +40,12 @@
       <label>#itemcount</label>
       <align>left</align>
       <textcolor>White</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
@@ -59,7 +59,7 @@
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
       <type>image</type>
       <id>1</id>
       <posX>77</posX>
@@ -68,8 +68,8 @@
       <height>158</height>
       <texture>#header.hover</texture>
       <visible>!videoplayer.usingoverlays</visible>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
   </controls>
 </window>
