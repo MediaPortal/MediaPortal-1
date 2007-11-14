@@ -87,7 +87,7 @@ namespace MediaPortal.Configuration.Sections
       comboBox1.Items.Clear();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        checkBoxShowSort.Checked = xmlreader.GetValueAsBool("musicfiles", "showSortButton", false);
+        checkBoxShowSort.Checked = xmlreader.GetValueAsBool("musicfiles", "showSortButton", true);
 
         for (int i = 0; i < sortModes.Length; ++i)
         {

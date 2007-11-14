@@ -191,7 +191,7 @@ namespace MediaPortal.GUI.Music
         _createMissingFolderThumbCache = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
-        _showSortButton = xmlreader.GetValueAsBool("musicfiles", "showSortButton", false);
+        _showSortButton = xmlreader.GetValueAsBool("musicfiles", "showSortButton", true);
 
         currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
         currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);

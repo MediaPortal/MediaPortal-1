@@ -421,7 +421,7 @@ namespace MediaPortal.Music.Database
 
     // Similar mode intelligence params
     private static int _minimumArtistMatchPercent = 50;
-    private int _limitRandomListCount = 5;
+    private int _limitRandomListCount = 10;
     private int _randomNessPercent = 75;
 
     // Neighbour mode intelligence params
@@ -1104,7 +1104,7 @@ namespace MediaPortal.Music.Database
           // only use the "better" 50% for randomness
           //calcRandValue = ((tagTracks.Count / 2) - 1) * _randomNessPercent / 100;
 
-          // only use the top 5 tags
+          // only use the top 10 tags
           if (tagTracks.Count > _limitRandomListCount)
             calcRandValue = (_limitRandomListCount) * _randomNessPercent / 100;
           else
@@ -1264,11 +1264,11 @@ namespace MediaPortal.Music.Database
       {
         PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
         List<Song> taggedArtists = new List<Song>(50);
-        List<Song> randomTaggedArtists = new List<Song>();
+        List<Song> randomTaggedArtists = new List<Song>(_limitRandomListCount);
         
         int artistsAdded = 0;
         int randomPosition;
-        int oldRandomLimit = 5;
+        int oldRandomLimit = 10;
         oldRandomLimit = _limitRandomListCount;
         _limitRandomListCount = 50;
 
@@ -1335,7 +1335,7 @@ namespace MediaPortal.Music.Database
       {
         PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
         List<Song> similarArtists = new List<Song>(50);
-        List<Song> randomSimilarArtists = new List<Song>();
+        List<Song> randomSimilarArtists = new List<Song>(_limitRandomListCount);
         similarArtists = ParseXMLDocForSimilarArtists(Artist_);
         int artistsAdded = 0;
         int randomPosition;
@@ -1511,7 +1511,7 @@ namespace MediaPortal.Music.Database
     {
       int addedSongs = 0;      
       MusicDatabase dbs = MusicDatabase.Instance;
-      List<Song> randomSongList = new List<Song>();
+      List<Song> randomSongList = new List<Song>(_limitRandomListCount);
       Song randomSong = new Song();
       Song lookupSong = new Song();
       int loops = 0;

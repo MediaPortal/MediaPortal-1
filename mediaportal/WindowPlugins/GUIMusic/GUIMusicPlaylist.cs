@@ -181,7 +181,7 @@ namespace MediaPortal.GUI.Music
       {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
-        _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", false);
+        _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", true);
       }
 
       _scrobbleUsers = mdb.GetAllScrobbleUsers();
