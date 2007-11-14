@@ -513,7 +513,7 @@ namespace MediaPortal.GUI.Music
                     FolderThumbCreator thumbbuilder = new FolderThumbCreator(item.Path, song.ToMusicTag());                  
                 }
                 // cache the folder thumb - created thumbs will be cached automatically
-                if (_createMissingFolderThumbCache && !_createMissingFolderThumbs)
+                if (_createMissingFolderThumbCache)
                 {
                   strThumb = Util.Utils.GetFolderThumb(item.Path);
                   if (System.IO.File.Exists(strThumb))

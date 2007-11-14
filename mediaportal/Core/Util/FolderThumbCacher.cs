@@ -36,63 +36,66 @@ using MediaPortal.Threading;
 
 namespace MediaPortal.Util
 {
-    /// <summary>
-    /// searches for folder.jpg in the mp3 directory and creates cached thumbs in MP's thumbs\folder dir
-    /// </summary>
-    public class FolderThumbCacher
+  /// <summary>
+  /// searches for folder.jpg in the mp3 directory and creates cached thumbs in MP's thumbs\folder dir
+  /// </summary>
+  public class FolderThumbCacher
+  {
+    string _filename = string.Empty;
+    bool _overWrite = false;
+    Work work;
+
+    // aFilePath must only be the path of the directory
+    public FolderThumbCacher(string aFilePath, bool aOverWriteExisting)
     {
-        string _filename = string.Empty;
-        bool _overWrite = false;
-        Work work;
-
-        // aFilePath must only be the path of the directory
-        public FolderThumbCacher(string aFilePath, bool aOverWriteExisting)
-        {
-            _filename = aFilePath;
-            _overWrite = aOverWriteExisting;
-            work = new Work(new DoWorkHandler(this.PerformRequest));
-            work.ThreadPriority = ThreadPriority.Lowest;
-            GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
-        }
-
-        void PerformRequest()
-        {
-            bool replace = _overWrite;
-            string filename = _filename;
-            string strFolderThumb = string.Empty;
-            strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
-
-            string strRemoteFolderThumb = string.Empty;
-            strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
-
-            if (System.IO.File.Exists(strRemoteFolderThumb))
-            {
-                // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
-                // -- punish him with slowness and create the thumbs for the next time...
-                try
-                {
-                    Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumb cache for {0}", strRemoteFolderThumb);
-                    string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
-
-                    if (!System.IO.File.Exists(strFolderThumb) || replace)
-                        MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-                    if (!System.IO.File.Exists(localFolderLThumb) || replace)
-                    {
-                        // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
-                        System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
-                        if (fiRemoteFolderArt.Length < 32000)
-                            System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
-                        else
-                            MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-                    }
-
-                    return;
-                }
-                catch (Exception)
-                {
-                    return;
-                }
-            }
-        }
+      lock (_filename)
+      {
+        _filename = aFilePath;
+        _overWrite = aOverWriteExisting;
+        work = new Work(new DoWorkHandler(this.PerformRequest));
+        work.ThreadPriority = ThreadPriority.Lowest;
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+      }
     }
+
+    void PerformRequest()
+    {
+      bool replace = _overWrite;
+      string filename = _filename;
+      string strFolderThumb = string.Empty;
+      strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
+
+      string strRemoteFolderThumb = string.Empty;
+      strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+
+      if (System.IO.File.Exists(strRemoteFolderThumb))
+      {
+        // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
+        // -- punish him with slowness and create the thumbs for the next time...
+        try
+        {
+          Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumb cache for {0}", strRemoteFolderThumb);
+          string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
+
+          if (!System.IO.File.Exists(strFolderThumb) || replace)
+            MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+          if (!System.IO.File.Exists(localFolderLThumb) || replace)
+          {
+            // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
+            System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
+            if (fiRemoteFolderArt.Length < 32000)
+              System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+            else
+              MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+          }
+
+          return;
+        }
+        catch (Exception)
+        {
+          return;
+        }
+      }
+    }
+  }
 }

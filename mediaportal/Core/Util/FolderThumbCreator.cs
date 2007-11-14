@@ -37,73 +37,74 @@ using System.IO;
 
 namespace MediaPortal.Util
 {
-    /// <summary>
-    /// searches for album art and stores it as folder.jpg in the mp3 directory
-    /// </summary>
-    public class FolderThumbCreator
+  /// <summary>
+  /// searches for album art and stores it as folder.jpg in the mp3 directory
+  /// </summary>
+  public class FolderThumbCreator
+  {
+    string _filename = string.Empty;
+    MusicTag _filetag = null;
+    Work work;
+
+    // Filename is a full path+file
+    public FolderThumbCreator(string Filename, MusicTag FileTag)
     {
-        string _filename = string.Empty;
-        MusicTag _filetag = null;
-        Work work;
+      lock (_filename)
+      {
+        _filename = Filename;
+        _filetag = FileTag;
+        work = new Work(new DoWorkHandler(this.PerformRequest));
+        work.ThreadPriority = ThreadPriority.Lowest;
 
-        // Filename is a full path+file
-        public FolderThumbCreator(string Filename, MusicTag FileTag)
-        {
-            _filename = Filename;
-            _filetag = FileTag;
-            work = new Work(new DoWorkHandler(this.PerformRequest));
-            work.ThreadPriority = ThreadPriority.Lowest;
-
-            GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
-        }
-
-        private void PerformRequest()
-        {
-            lock (work)
-            {
-                MusicTag musicTag = _filetag;
-                string filename = _filename;
-                string strFolderThumb = string.Empty;
-                strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(filename);
-
-                string strRemoteFolderThumb = string.Empty;
-                //strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
-                strRemoteFolderThumb = MediaPortal.Util.Utils.GetFolderThumb(filename);
-
-                if (!System.IO.File.Exists(strRemoteFolderThumb))
-                {
-                    // no folder.jpg in this share but maybe there's downloaded album art we can save now.
-                    try
-                    {
-                        if (musicTag != null && musicTag.Album != string.Empty && musicTag.Artist != string.Empty)
-                        {
-                            string albumThumb = Util.Utils.GetAlbumThumbName(musicTag.Artist, musicTag.Album);
-
-                            if (System.IO.File.Exists(albumThumb))
-                            {
-                                string largeAlbumThumb = Util.Utils.ConvertToLargeCoverArt(albumThumb);
-                                if (System.IO.File.Exists(largeAlbumThumb))
-                                    System.IO.File.Copy(largeAlbumThumb, strRemoteFolderThumb, false);
-                                else
-                                    System.IO.File.Copy(albumThumb, strRemoteFolderThumb, false);
-
-                                Log.Info("GUIMusicFiles: Using album art for missing folder thumb {0}", strRemoteFolderThumb);
-
-
-                                // now we need to cache that new thumb, too
-                                if (System.IO.File.Exists(strRemoteFolderThumb))
-                                {
-                                  FolderThumbCacher cacheNow = new FolderThumbCacher(Path.GetDirectoryName(strRemoteFolderThumb), false);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        return;
-                    }
-                }
-            }
-        }
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+      }
     }
+
+    private void PerformRequest()
+    {
+      MusicTag musicTag = _filetag;
+      string filename = _filename;
+      string strFolderThumb = string.Empty;
+      strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(filename);
+
+      string strRemoteFolderThumb = string.Empty;
+      //strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+      strRemoteFolderThumb = MediaPortal.Util.Utils.GetFolderThumb(filename);
+
+      if (!System.IO.File.Exists(strRemoteFolderThumb))
+      {
+        // no folder.jpg in this share but maybe there's downloaded album art we can save now.
+        try
+        {
+          if (musicTag != null && musicTag.Album != string.Empty && musicTag.Artist != string.Empty)
+          {
+            string albumThumb = Util.Utils.GetAlbumThumbName(musicTag.Artist, musicTag.Album);
+
+            if (System.IO.File.Exists(albumThumb))
+            {
+              string largeAlbumThumb = Util.Utils.ConvertToLargeCoverArt(albumThumb);
+              if (System.IO.File.Exists(largeAlbumThumb))
+                System.IO.File.Copy(largeAlbumThumb, strRemoteFolderThumb, false);
+              else
+                System.IO.File.Copy(albumThumb, strRemoteFolderThumb, false);
+
+              Log.Info("GUIMusicFiles: Using album art for missing folder thumb {0}", strRemoteFolderThumb);
+
+
+              // now we need to cache that new thumb, too
+              if (System.IO.File.Exists(strRemoteFolderThumb))
+              {
+                FolderThumbCacher cacheNow = new FolderThumbCacher(Path.GetDirectoryName(strRemoteFolderThumb), false);
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+          return;
+        }
+      }
+
+    }
+  }
 }
