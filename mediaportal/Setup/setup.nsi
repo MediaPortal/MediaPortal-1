@@ -245,7 +245,7 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\RemotePlugins.dll
     File ..\xbmc\bin\Release\restart.vbs
     File ..\xbmc\bin\Release\SG_VFD.dll
-    File ..\xbmc\bin\Release\SG_VFDv3.dll
+    File ..\xbmc\bin\Release\SG_VFDv5.dll
     File ..\xbmc\bin\Release\sqlite.dll
     File ..\xbmc\bin\Release\taglib-sharp.dll
     File ..\xbmc\bin\Release\TaskScheduler.dll
