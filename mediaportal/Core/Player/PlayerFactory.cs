@@ -41,12 +41,12 @@ namespace MediaPortal.Player
     static ArrayList _externalPlayerList = new ArrayList();
     static bool _externalPlayersLoaded = false;
 
-    // Just for testing
-    static bool _useTSReader = System.IO.File.Exists("C:\\useTsReader.txt");
+    //static bool _useTSReader = System.IO.File.Exists("C:\\useTsReader.txt");
+    // TsReader.ax is now the default (and only) filter for .ts files. 
+    static bool _useTSReader = true; 
 
     public PlayerFactory()
     {
-
     }
 
     public enum StreamingPlayers : int
