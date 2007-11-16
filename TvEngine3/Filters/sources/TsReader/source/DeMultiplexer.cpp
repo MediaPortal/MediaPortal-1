@@ -32,7 +32,7 @@
 #include "MediaFormats.h"
 #include <cassert>
 
-#define MAX_BUF_SIZE 800
+#define MAX_BUF_SIZE 8000
 #define OUTPUT_PACKET_LENGTH 0x6000e
 #define BUFFER_LENGTH        0x1000
 extern void LogDebug(const char *fmt, ...) ;
@@ -298,8 +298,6 @@ bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
   return S_OK;
 }
 
-
-
 void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
 {
 	pmt.InitMediaType();
@@ -331,7 +329,7 @@ void CDeMultiplexer::FlushVideo()
     CBuffer* videoBuffer=*it;
     delete videoBuffer;
     it=m_vecVideoBuffers.erase(it);
-	m_outVideoBuffer++;
+	  m_outVideoBuffer++;
   }
   if(this->pTeletextEventCallback != NULL){
 	  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
@@ -369,7 +367,6 @@ void CDeMultiplexer::FlushSubtitle()
 }
 
 /// Flushes all buffers 
-///
 void CDeMultiplexer::Flush()
 {
   LogDebug("demux:flushing");
@@ -396,8 +393,6 @@ CBuffer* CDeMultiplexer::GetSubtitle()
   if (m_currentSubtitlePid==0) return NULL;
   if (m_bEndOfFile) return NULL;
   if (m_bHoldSubtitle) return NULL;
-  //ReadFromFile(false,false);
-  //if (m_bEndOfFile) return NULL;
 
   //are there subtitle packets in the buffer?
   if (m_vecSubtitleBuffers.size()!=0)
@@ -628,14 +623,11 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
         return false;
       }
     }
-    //failed to read data
-    //we didnt reach the EOF
-    //sleep 50 msecs and try again
+    //failed to read data. we didnt reach the EOF. Sleep 50 msecs and try again
     Sleep(50);
     //but when we didnt read data for >=5 secs, we return anyway to prevent lockups
     if (GetTickCount() - dwTick >=5000) break;
-    if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) )
-      return false;
+    if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) ) return false;
   } //end of while
   return false;
 }
@@ -660,15 +652,16 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   if( m_pids.TeletextPid > 0 && m_pids.TeletextPid != m_currentTeletextPid )
   {
     IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-	if( pTeletextServiceInfoCallback )
-    {
-	  std::vector<TeletextServiceInfo>::iterator vit = m_pids.TeletextInfo.begin();
-	  while(vit != m_pids.TeletextInfo.end()){
-			TeletextServiceInfo& info = *vit;
-			LogDebug("Calling Teletext Service info callback");
-			(*pTeletextServiceInfoCallback)(info.page, info.type, (byte)info.lang[0],(byte)info.lang[1],(byte)info.lang[2]);
-			vit++;
-	  }
+	  if( pTeletextServiceInfoCallback )
+      {
+      std::vector<TeletextServiceInfo>::iterator vit = m_pids.TeletextInfo.begin();
+      while(vit != m_pids.TeletextInfo.end())
+      {
+		    TeletextServiceInfo& info = *vit;
+		    LogDebug("Calling Teletext Service info callback");
+		    (*pTeletextServiceInfoCallback)(info.page, info.type, (byte)info.lang[0],(byte)info.lang[1],(byte)info.lang[2]);
+		    vit++;
+      }
       m_currentTeletextPid = m_pids.TeletextPid;
     }
   }
@@ -727,11 +720,13 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 /// ifso, it decodes the PES audio packet and stores it in the audio buffers
 void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 {
+  //LogDebug("FillAudio - audio PID %d", m_audioPid );
+  
   if (m_iAudioStream<0 || m_iAudioStream>=m_audioStreams.size()) return;
   m_audioPid= m_audioStreams[m_iAudioStream].pid;
   if (m_audioPid==0 || m_audioPid != header.Pid) return;
   if (m_filter.GetAudioPin()->IsConnected()==false) return;
-	if ( header.AdaptionFieldOnly() ) return;
+  if ( header.AdaptionFieldOnly() ) return;
 
 	CAutoLock lock (&m_sectionAudio);
   //does tspacket contain the start of a pes packet?
@@ -836,7 +831,8 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 
 	  m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
 	  m_inVideoBuffer++;
-	  if(this->pTeletextEventCallback != NULL){
+	  if(this->pTeletextEventCallback != NULL)
+    {
 		  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_IN_UPDATE,m_inVideoBuffer);
 	  }
       //and create a new one
@@ -895,10 +891,10 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
         m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
       m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
       m_inVideoBuffer++;
-	  if(this->pTeletextEventCallback != NULL){
+	  if(this->pTeletextEventCallback != NULL)
+    {
 		  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_IN_UPDATE,m_inVideoBuffer);
 	  }
-
       //and create a new one
       m_pCurrentVideoBuffer = new CBuffer();
     }
@@ -963,13 +959,13 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 
 void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
 {
-	
   if (m_pids.TeletextPid==0) return;
   if (header.Pid!=m_pids.TeletextPid) return;
   if ( header.AdaptionFieldOnly() ) return;
 
-  if(pTeletextPacketCallback != NULL){
-	(*pTeletextPacketCallback)(tsPacket,188);
+  if(pTeletextPacketCallback != NULL)
+  {
+	  (*pTeletextPacketCallback)(tsPacket,188);
   }
 }
 
@@ -979,13 +975,13 @@ void CDeMultiplexer::ReadAudioIndexFromRegistry()
   HKEY key;
   if (ERROR_SUCCESS==RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\MediaPortal\\TsReader",0,KEY_READ,&key))
   {    
-	DWORD audioIdx=-1;
+	  DWORD audioIdx=-1;
     DWORD keyType=REG_DWORD;
     DWORD dwSize=sizeof(DWORD);   
 
 	if (ERROR_SUCCESS==RegQueryValueEx(key, "audioIdx",0,&keyType,(LPBYTE)&audioIdx,&dwSize))
     {	  
-	  LogDebug ("read audioindex from registry : %i", audioIdx);
+	    LogDebug ("read audioindex from registry : %i", audioIdx);
       m_iAudioIdx = audioIdx;
     }		
     RegCloseKey(key);
@@ -1059,8 +1055,9 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid3);
   LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid4);
 
-  if(pTeletextEventCallback != NULL){
-	(*pTeletextEventCallback)(TELETEXT_EVENT_RESET,TELETEXT_EVENTVALUE_NONE);
+  if(pTeletextEventCallback != NULL)
+  {
+	  (*pTeletextEventCallback)(TELETEXT_EVENT_RESET,TELETEXT_EVENTVALUE_NONE);
   }
 
   IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());

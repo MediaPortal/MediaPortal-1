@@ -181,7 +181,7 @@ void CPatParser::OnNewSection(CSection& sections)
   {
 	  int offset = (8 +(i * 4));
 	  int pmtPid = ((section[start+offset+2] & 0x1F)<<8) + section[start+offset+3];
-	  if (pmtPid < 0x10 || pmtPid >=0x1fff) 
+    if (pmtPid < 0x10 || pmtPid >=0x1fff) 
 	  {
       //invalid pmt pid
 		  return ;
@@ -197,7 +197,7 @@ void CPatParser::OnNewSection(CSection& sections)
 			  break;
 		  }
 	  }
-    if (!found && pmtPid>0x12)	  
+    if (!found && pmtPid>=0x10)	  
 	  {
 		  CPmtParser* pmtParser = new CPmtParser();
 		  pmtParser->SetTableId(2);

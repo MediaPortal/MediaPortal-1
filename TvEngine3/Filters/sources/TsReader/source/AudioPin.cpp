@@ -270,7 +270,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       m_bDiscontinuity=FALSE;
     }
 
-
     //if we got a new buffer
     if (buffer!=NULL)
     {

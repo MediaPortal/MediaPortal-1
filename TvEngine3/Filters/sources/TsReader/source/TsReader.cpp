@@ -543,7 +543,6 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   else if ((length > 7) && (strnicmp(url, "rtsp://",7) == 0))
   {
     //rtsp:// stream 
-
     //open stream
     LogDebug("open rtsp:%s", url);
     if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
@@ -655,7 +654,6 @@ double CTsReaderFilter::UpdateDuration()
 }
 
 // IAMFilterMiscFlags
-
 ULONG CTsReaderFilter::GetMiscFlags()
 {
 	return AM_FILTER_MISC_FLAGS_IS_SOURCE;
@@ -677,7 +675,7 @@ double CTsReaderFilter::GetStartTime()
 void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
 {
   //dont seek to the same location as last time
-   //if (m_seekTime==seekTime) return;
+  //if (m_seekTime==seekTime) return;
 
   LogDebug("CTsReaderFilter::Seek--");
   m_seekTime=seekTime;
@@ -703,9 +701,8 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
   {	
     //yes, we're playing a RTSP stream
     //stop the RTSP steam
-
     LogDebug("CTsReaderFilter::  Seek->stop rtsp");
-	m_rtspClient.Stop();
+	  m_rtspClient.Stop();
     double startTime=m_seekTime.Millisecs();
     startTime/=1000.0f;
     float milli=m_duration.Duration().Millisecs();
@@ -715,8 +712,6 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
       startTime=milli+40.0f;
     }	
 
-	
-
     LogDebug("CTsReaderFilter::  Seek->start client from %f/ %f",startTime,milli);
     //clear the buffers
     m_demultiplexer.Flush();
@@ -725,13 +720,13 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     //start rtsp stream from the seek-time
     m_rtspClient.Play(startTime);
 	
-	DWORD dwTick=GetTickCount();
-	while (m_buffer.Size() == 0 && GetTickCount() - dwTick <=5000) // lets exit the loop if no data received for 5 secs.	
-	{
-	  LogDebug("CTsReaderFilter:: Seek-->buffer empty, sleep(100ms)");
-	  Sleep(100);	  		  
-	  dwTick=GetTickCount();	  
-	}
+    DWORD dwTick=GetTickCount();
+    while (m_buffer.Size() == 0 && GetTickCount() - dwTick <=5000) // lets exit the loop if no data received for 5 secs.	
+    {
+      LogDebug("CTsReaderFilter:: Seek-->buffer empty, sleep(100ms)");
+      Sleep(100);	  		  
+      dwTick=GetTickCount();	  
+    }
 
     m_tickCount=GetTickCount();
 
@@ -743,7 +738,6 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     pcrEnd.FromClock(duration);
     m_duration.Set( pcrstart, pcrEnd,pcrMax);	
     LogDebug("CTsReaderFilter::  Seek->start client done duration:%2.2f",duration);
-	
   }
 }
 
@@ -795,19 +789,16 @@ void CTsReaderFilter::SeekStart()
 }
 
 ///Returns the audio output pin
-///
 CAudioPin* CTsReaderFilter::GetAudioPin()
 {
   return m_pAudioPin;
 }
 ///Returns the video output pin
-///
 CVideoPin* CTsReaderFilter::GetVideoPin()
 {
   return m_pVideoPin;
 }
 ///Returns the subtitle output pin
-///
 CSubtitlePin* CTsReaderFilter::GetSubtitlePin()
 {
   return m_pSubtitlePin;
@@ -1085,7 +1076,6 @@ STDMETHODIMP CTsReaderFilter::GetCurrentSubtitleStream(__int32 &stream)
 // be careful with this method, can cause deadlock with CSync::Stop, so should only be called in Run()
 HRESULT CTsReaderFilter::FindSubtitleFilter()
 {
-  
   if( m_pDVBSubtitle )
 		return S_OK;
   //LogDebug( "FindSubtitleFilter - start");
