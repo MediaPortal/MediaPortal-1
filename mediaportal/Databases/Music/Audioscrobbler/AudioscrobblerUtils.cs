@@ -776,9 +776,16 @@ namespace MediaPortal.Music.Database
 
     #region Public methods
 
+    public Song getMusicBrainzInfo(string artistToSearch_)
+    {
+      string urlArtist = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(artistToSearch_));
+
+      return GetMbInfoForArtist(urlArtist);
+    }
+
     public List<Song> getAudioScrobblerFeed(lastFMFeed feed_, string asUser_)
     {
-      if (asUser_ == "")
+      if (string.IsNullOrEmpty(asUser_))
         asUser_ = _defaultUser;
 
       switch (feed_)
@@ -2199,6 +2206,103 @@ namespace MediaPortal.Music.Database
       }
       return songList;
     }
+    #endregion
+
+    #region MusicBrainz - Parser
+
+    private Song GetMbInfoForArtist(string aArtist)
+    {
+      List<Song> MbArtists = new List<Song>(50);
+      MbArtists = ParseMusicBrainzXML(string.Format(@"http://musicbrainz.org/ws/1/artist/?type=xml&name={0}", aArtist));
+
+      foreach (Song logSong in MbArtists)
+      {
+        Log.Debug("AudioscrobblerUtils: Artist found with MusicBrainz: {0}", logSong.ToLastFMMatchString(false));
+      }
+      
+      return MbArtists.Count > 0 ? MbArtists[0] : new Song();
+    }
+
+    private List<Song> ParseMusicBrainzXML(string aLocation)
+    {
+      List<Song> RESTresults = new List<Song>(25);
+      
+      try
+      {
+        string tempFile = System.IO.Path.GetTempFileName();
+        XmlDocument doc = new XmlDocument();
+
+        doc.Load(aLocation);
+        doc.Save(tempFile);
+
+        using (XmlReader reader = XmlReader.Create(tempFile))
+        {
+          Song mbContainer = null;
+          while (reader.Read())
+          {
+            switch (reader.Depth)
+            {
+              case 2:
+                if (reader.LocalName == "artist")
+                {
+                  // we reenter level 2 after adding all level 3 info - now we'll add the item
+                  if (mbContainer != null && !string.IsNullOrEmpty(mbContainer.MusicBrainzID))
+                  {
+                    Song addInfo = mbContainer.Clone();
+                    RESTresults.Add(addInfo);
+                    mbContainer.Clear();
+                  }
+                  else
+                    mbContainer = new Song();
+
+                  mbContainer.MusicBrainzID = reader.GetAttribute("id");
+                  mbContainer.LastFMMatch = reader.GetAttribute(@"ext:score");
+                }
+                break;
+              case 3:
+                if (string.IsNullOrEmpty(reader.Name))
+                  continue;
+
+                if (reader.Name == "name")
+                  mbContainer.Artist = reader.ReadString();
+                else
+                  if (reader.Name == "sort-name")
+                    mbContainer.Title = reader.ReadString();
+                  else
+                    if (reader.Name.Contains("life-span"))
+                    {
+                      try
+                      {
+                        // unlikely - most dates are simply years - need to check what is common..
+                        DateTime born = DateTime.UtcNow;
+                        if (DateTime.TryParse(reader.ReadString(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out born))
+                          mbContainer.Year = born.Year;
+                      }
+                      catch (Exception)
+                      {
+                      }                      
+                    }
+                    else
+                      if (reader.Name == "disambiguation")
+                        mbContainer.Genre = reader.ReadString();
+                break;
+              default:
+                continue;
+                break;
+            }
+            
+          } // <-- while reading
+        }
+        System.IO.File.Delete(tempFile);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerUtils: Couldn't fetch MusicBrainz XML - {0},{1}", ex.Message, ex.StackTrace);
+      }
+
+      return RESTresults;
+    }
+
     #endregion
 
     #region XSPF - Parser
