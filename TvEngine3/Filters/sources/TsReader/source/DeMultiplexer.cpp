@@ -1237,11 +1237,11 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   ReadAudioIndexFromRegistry();  
   if (m_audioStreams.size() >  m_iAudioIdx)
   {		
-	m_iAudioStream = m_iAudioIdx;		
+	  m_iAudioStream = m_iAudioIdx;		
   }
   else
   {
-	m_iAudioStream = 0;
+	  m_iAudioStream = 0;
   }  
   LogDebug ("Setting audio index : %i", m_iAudioStream);
   
