@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1360</entry>
+    <entry name="TotalChannels">1361</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -5443,6 +5443,10 @@
     <entry name="ChannelID">1@virginmediatv.co.uk</entry>
     <entry name="FullName">Virigin 1</entry>
   </section>
+  <section name="1360">
+    <entry name="ChannelID">filmclassics@premiere.de</entry>
+	<entry name="FullName">Premiere Filmclassics</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -5704,7 +5708,7 @@
     <entry name="78">1251</entry>
   </section>
   <section name="DE">
-    <entry name="TotalChannels">138</entry>
+    <entry name="TotalChannels">139</entry>
     <entry name="0">0</entry>
     <entry name="1">2</entry>
     <entry name="2">13</entry>
@@ -5843,6 +5847,7 @@
     <entry name="135">1252</entry>
     <entry name="136">1253</entry>
     <entry name="137">1254</entry>
+	<entry name="138">1360</entry>
   </section>
   <section name="DK">
     <entry name="TotalChannels">48</entry>

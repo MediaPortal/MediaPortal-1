@@ -92,7 +92,7 @@
     <Channel id="prem1@premiere.de" siteId="153" />
     <Channel id="prem2@premiere.de" siteId="154" />
     <Channel id="prem3@premiere.de" siteId="155" />
-    <Channel id="prem4@premiere.de" siteId="156" />
+    <Channel id="prem4@premiere.de" siteId="224" />
     <Channel id="prem5@premiere.de" siteId="157" />
     <Channel id="prem6@premiere.de" siteId="158" />
     <Channel id="prem7@premiere.de" siteId="159" />
@@ -115,6 +115,7 @@
     <Channel id="bluemovie.cc" siteId="196" />
     <Channel id="extra@bluemovie.cc" siteId="197" />
     <Channel id="dir1@premiere.de" siteId="201" />
+	<Channel id="filmclassics@premiere.de" siteId="220" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.tvinfo.de/exe.php3?target=senderlist.inc&amp;newD=[_D]&amp;newM=[_M]&amp;newY=[YYYY]&amp;showSenderID=[ID]" post="" external="false" encoding="" />
