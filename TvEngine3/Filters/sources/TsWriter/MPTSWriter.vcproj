@@ -317,7 +317,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\WinTvUsbCI\USB2CIIFace.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\VideoAnalyzer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\WinTvUsbCI\WinTvUsbCI.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\WinTvUsbCI\WinTvUsbCI.h"
 				>
 			</File>
 			<Filter
