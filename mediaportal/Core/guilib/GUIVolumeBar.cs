@@ -179,5 +179,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public string TextureName
+    {
+      get { return _textureName; }
+      set { _textureName = value; }
+    }
+
+    public Alignment TextAlignment {
+      get { return _alignment; }
+      set { _alignment = value; }
+    }
 	}
 }

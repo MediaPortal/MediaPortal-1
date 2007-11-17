@@ -366,6 +366,11 @@ namespace MediaPortal.GUI.Library
       set { _textOffsetY = value; }
     }
 
+    public GUIControl.Alignment TextAlignment {
+      get { return _textAlignment; }
+      set { _textAlignment = value; }
+    }
+
     public override int DimColor
     {
       get { return base.DimColor; }

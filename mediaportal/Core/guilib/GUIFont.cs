@@ -190,6 +190,16 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set the style of the font.
+    /// </summary>
+    public FontStyle FontStyle
+    {
+      get { return _fontStyle; }
+      set { _fontStyle = value; }
+    }
+
+
+    /// <summary>
     /// Creates a system font.
     /// </summary>
     /// <param name="strFileName">The system font name (E.g., Arial).</param>

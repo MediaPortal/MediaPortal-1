@@ -431,6 +431,13 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get the filename of the hover texture when the GUIButtonControl.
+    /// </summary>
+    public string HoverFilename{
+      get { return _hoverFilename; }  
+    }
+
+    /// <summary>
     /// Set the color of the text on the GUIButtonControl. 
     /// </summary>
     public long TextColor
@@ -438,6 +445,15 @@ namespace MediaPortal.GUI.Library
       get { return _textColor; }
       set { _textColor = value; }
     }
+
+    /// <summary>
+    /// Get/Set the color of the text on the GUIButtonControl when it has no focus. 
+    /// </summary>
+    public long TextColorNoFocus {
+      get { return _textColorNoFocus; }
+      set { _textColorNoFocus = value; }
+    }
+
 
     /// <summary>
     /// Get/set the name of the font of the text of the GUIButtonControl.
@@ -541,6 +557,50 @@ namespace MediaPortal.GUI.Library
       {
         if (value < 0) return;
         _textOffsetY = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/set the X-Position of the hover.
+    /// </summary>
+    public int HoverX {
+      get { return _hoverX; }
+      set {
+        if (value < 0) return;
+        _hoverX = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/set the Y-Position of the hover.
+    /// </summary>
+    public int HoverY {
+      get { return _hoverY; }
+      set {
+        if (value < 0) return;
+        _hoverY = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/set the width of the hover.
+    /// </summary>
+    public int HoverWidth {
+      get { return _hoverWidth; }
+      set {
+        if (value < 0) return;
+        _hoverWidth = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/set the height of the hover.
+    /// </summary>
+    public int HoverHeight {
+      get { return _hoverHeight; }
+      set {
+        if (value < 0) return;
+        _hoverHeight = value;
       }
     }
 

@@ -462,6 +462,13 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get the name of the middle texture when the control has the focus
+    /// </summary>
+    public string BackTextureMidNameFocus {
+      get { return _imageMidFocus.FileName; }
+    }
+
+    /// <summary>
     /// Perform an update after a change has occured. E.g. change to a new position.
     /// </summary>		
     protected override void Update()

@@ -595,6 +595,10 @@ namespace MediaPortal.GUI.Library
 
       }
     }
+    public GUIControl.Alignment TextAlignment {
+      get { return _textAlignment; }
+      set { _textAlignment = value; }
+    }
 
   }
 }

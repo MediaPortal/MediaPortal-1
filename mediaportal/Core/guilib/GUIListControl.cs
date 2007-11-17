@@ -2993,5 +2993,54 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public GUIControl.Alignment TextAlignment {
+      get { return _textAlignment; }
+      set { _textAlignment = value; }
+    }
+
+    public ListType TypeOfList {
+      get { return _listType; }
+      set { _listType = value; }
+    }
+
+    public int ItemsPerPage {
+      get { return _itemsPerPage; }
+      set { _itemsPerPage = value; }
+    }
+
+    public int Offset {
+      get { return _offset; }
+      set { _offset = value; }
+    }
+
+    public int CursorX {
+      get { return _cursorX; }
+      set { _cursorX = value; }
+    }
+
+    public bool DrawFocus{
+      get { return _drawFocus; }
+      set { _drawFocus = value; }
+    }
+
+    public List<GUIListItem> ListItems {
+      get { return _listItems; }
+      set { _listItems = value; }
+    }
+
+    public long PlayedColor {
+      get { return _playedColor; }
+      set { _playedColor = value; }
+    }
+
+    public long RemoteColor {
+      get { return _remoteColor; }
+      set { _remoteColor = value; }
+    }
+
+    public long DownloadColor {
+      get { return _downloadColor; }
+      set { _downloadColor = value; }
+    }
   }
 }
