@@ -432,7 +432,7 @@
       <id>304</id>
       <posX>145</posX>
       <posY>290</posY>
-      <texture>osd_dialog_big.png</texture>
+      <texture>-</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>

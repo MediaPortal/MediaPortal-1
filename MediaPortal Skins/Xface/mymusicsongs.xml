@@ -71,16 +71,6 @@
           <onleft>6</onleft>
           <onright>50</onright>
           <onup>3</onup>
-          <ondown>12</ondown>
-        </control>
-        <control>
-          <description>Search</description>
-          <type>button</type>
-          <id>12</id>
-          <label>137</label>
-          <onleft>12</onleft>
-          <onright>50</onright>
-          <onup>6</onup>
           <ondown>9</ondown>
         </control>
         <control>
@@ -90,7 +80,7 @@
           <label>890</label>
           <onleft>9</onleft>
           <onright>50</onright>
-          <onup>12</onup>
+          <onup>6</onup>
           <ondown>13</ondown>
         </control>
         <control>

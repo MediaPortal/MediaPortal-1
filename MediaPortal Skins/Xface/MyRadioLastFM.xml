@@ -18,7 +18,7 @@
       <posY>566</posY>
       <width>1250</width>
       <height>189</height>
-      <texture>osd_bg.png</texture>
+      <texture>VisualizationTrackInfo.png</texture>
       <visible>false</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -267,7 +267,7 @@
          <posY>333</posY>
          <width>250</width>
          <height>100</height>
-	 <itemWidth>35</itemWidth>  
+	 <itemWidth>35</itemWidth>
 	 <itemHeight>15</itemHeight>
 	 <spaceBetweenItems>2</spaceBetweenItems>
 	 <textureHeight>14</textureHeight>

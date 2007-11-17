@@ -95,7 +95,7 @@
 			<posY>0</posY>
 			<width>1366</width>
 			<height>768</height>
-			<texture>Background4.png</texture>
+			<texture>background.png</texture>
 			<colordiffuse>ccffffff</colordiffuse>
 			<animation effect="fade" time="1000" reversible="false">visiblechange</animation>
 		</control>

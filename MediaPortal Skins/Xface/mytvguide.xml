@@ -75,19 +75,19 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-	 <control>
+     <control>
       <description>Guide Text Label</description>
       <type>label</type>
       <id>11</id>
-      <posX>374</posX>
+     <posX>374</posX>
       <posY>39</posY>
       <!-- <label>4</label> -->
-      <label>TV.Guide</label>
-      <font>font14</font>
+      <label>#TV.Guide.Group</label>
+      <font>font16</font>
       <align>right</align>
-      <textcolor>White</textcolor>
+      <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
 	<control>
 		<description>TVGUIDE Panel</description>

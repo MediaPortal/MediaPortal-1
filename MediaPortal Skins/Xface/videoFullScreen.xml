@@ -4,6 +4,19 @@
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
+    <control>
+      <description>bar image</description>
+       <posX>50</posX>
+      <posY>10</posY>
+      <width>1290</width>
+      <height>78</height>
+      <texture>osd_bg_top.png</texture>
+      <type>image</type>
+      <id>0</id>
+      <colordiffuse>White</colordiffuse>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
    <import>common.progressbar.xml</import>
     <control>
       <description>row 1 label</description>
@@ -160,11 +173,11 @@
       <description>bar image</description>
       <type>image</type>
       <id>105</id>
-      <posX>173</posX>
-      <posY>632</posY>
-      <width>1000</width>
-      <height>89</height>
-      <texture>-</texture>
+       <posX>50</posX>
+      <posY>10</posY>
+      <width>1290</width>
+      <height>78</height>
+      <texture>osd_bg_top.png</texture>
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>

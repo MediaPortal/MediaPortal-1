@@ -27,19 +27,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-      <control>
-      <description>Scheduler Text Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>374</posX>
-      <posY>39</posY>
-      <label>646</label>
-      <font>font14</font>
-      <align>right</align>
-      <textcolor>White</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
     <control>
       <description>Number of Files Label</description>
       <type>label</type>
@@ -192,11 +179,11 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>440</posX>
-      <posY>586</posY>
+      <posY>532</posY>
       <width>333</width>
       <label>#TV.Scheduled.Title</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ffFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

@@ -7,6 +7,19 @@
   <define>#currentplaytime:#TV.View.start</define>
   <define>#currentremaining:#TV.View.stop</define>
   <controls>
+   <control>
+      <description>bar image</description>
+       <posX>50</posX>
+      <posY>10</posY>
+      <width>1290</width>
+      <height>78</height>
+      <texture>osd_bg_top.png</texture>
+      <type>image</type>
+      <id>0</id>
+      <colordiffuse>White</colordiffuse>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
   <import>common.progressbar.xml</import>
     <control>
       <description>row 1 label</description>

@@ -7,7 +7,7 @@
       <id>0</id>
       <width>1366</width>
       <height>768</height>
-      <texture>background4.png</texture>
+      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
@@ -72,7 +72,7 @@
       <width>365</width>
       <label>#selecteditem</label>
       <textcolor>e0000000</textcolor>
-      <font>font14</font>      
+      <font>font14</font>
       <visible>!facadeview.list+!facadeview.playlist</visible>
     </control>
     <control>
