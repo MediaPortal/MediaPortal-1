@@ -97,8 +97,9 @@ namespace MediaPortal.GUI.Library
     public const int MaxNumfontVertices = 100 * 6;
     private int _StartCharacter = 32;
     private int _EndCharacter = 255;
-    private bool _useRTLLang;
+    private bool _useRTLLang = false;
     #endregion
+
     #region ctors
     /// <summary>
     /// Constructor of the GUIFont class.
@@ -144,8 +145,7 @@ namespace MediaPortal.GUI.Library
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        _useRTLLang = xmlreader.GetValueAsBool("skin", "rtllang", false);
+      _useRTLLang = System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
     }
 
     public int ID
@@ -308,9 +308,9 @@ namespace MediaPortal.GUI.Library
                                 long dwShadowColor)
     {
 
-      for (int x = -iShadowWidth; x < iShadowWidth; x++)
+      for (int x = -iShadowWidth ; x < iShadowWidth ; x++)
       {
-        for (int y = -iShadowHeight; y < iShadowHeight; y++)
+        for (int y = -iShadowHeight ; y < iShadowHeight ; y++)
         {
           DrawText((float)x + fOriginX, (float)y + fOriginY, dwShadowColor, strText, alignment, -1);
         }
@@ -328,14 +328,14 @@ namespace MediaPortal.GUI.Library
 
 
     #region RTL handling
-    private static string reverse(string a)
+    private string reverse(string a)
     {
       string temp = "";
       string flipsource = "()[]{}<>";
       string fliptarget = ")(][}{><";
 
       int i, j;
-      for (j = 0, i = a.Length - 1; i >= 0; i--, j++)
+      for (j = 0, i = a.Length - 1 ; i >= 0 ; i--, j++)
       {
         if (flipsource.Contains(a[i].ToString()))
           temp += fliptarget[flipsource.IndexOf(a[i])].ToString();
@@ -353,125 +353,287 @@ namespace MediaPortal.GUI.Library
     /// UNICODE standard of handling bidirectional language is a very long document...
     /// http://unicode.org/reports/tr9/
     /// this code is a try to implement some of the standard.
-    /// Warning - this function shouldn't run on normal LTR text
     /// 
-    /// Author: leo212
-    /// Known Bugs: Cannot handle correct with parentheses in non-rtl language.
-    /// for example: "text (text)" in converted to "(text (text"
+    /// Author: leo212 
     /// 
     /// </remarks>
     /// <param name="text">The text in logical (reading) order</param>
     /// <returns>The text in display order</returns>	
-    private string HandleRTLText(string inLTRText)
+    public string HandleRTLText(string inLTRText)
     {
       try
       {
- 		string strRTLChars = "";
+        bool rtl = isRTL(inLTRText);
+        string directions = findDirections(inLTRText);
+        string result = "";
+
+        if (directions.Length > 0)
+        {
+          char lastDir = directions[0];
+          int lastIndex = 0;
+
+          string text;
+          if (!rtl)
+          {
+            for (int i = 1 ; i <= directions.Length ; i++)
+            {
+              if (i == directions.Length || directions[i] != lastDir)
+              {
+                text = inLTRText.Substring(lastIndex, i - lastIndex);
+                if (lastDir == 'R')
+                {
+                  result += reverse(text);
+                }
+                else
+                {
+                  result += text;
+                }
+
+                if (i < directions.Length) lastDir = directions[i];
+                lastIndex = i;
+              }
+            }
+          }
+          else
+          {
+            lastIndex = directions.Length - 1;
+            lastDir = directions[directions.Length - 1];
+            for (int i = directions.Length - 2 ; i >= -1 ; i--)
+            {
+              if (i == -1 || directions[i] != lastDir)
+              {
+                text = inLTRText.Substring(i + 1, lastIndex - i);
+                if (lastDir == 'R')
+                {
+                  result += reverse(text);
+                }
+                else
+                {
+                  result += text;
+                }
+
+                if (i >= 0) lastDir = directions[i];
+                lastIndex = i;
+              }
+            }
+          }
+        }
+        return result;
+      }
+      catch (Exception exp)
+      {
+        Log.Error(exp);
+        return inLTRText;
+      }
+    }
+
+    private static bool isRTL(string inLTRText)
+    {
+      try
+      {
+        string strRTLChars = "";
         const int firstRTLCharacter = 0x05B0;
         const int lastRTLCharacter = 0x06F0;
-        for (int i=firstRTLCharacter; i<=lastRTLCharacter; i++)
+        int i;
+        for (i = firstRTLCharacter ; i <= lastRTLCharacter ; i++)
         {
-        	strRTLChars+=Char.ConvertFromUtf32(i).ToString();
+          strRTLChars += Char.ConvertFromUtf32(i).ToString();
         }
 
-        const string strNeutralChars = " ,.?:;'[]{}\\|/`~!@#$%^&*()-=_+*\"";
-        string result = "";
-        string idxChar;
+        const string strNeutralChars = " ,.?:;\\|/`~!@#$%^&*-=_+*";
+        const string strDelimiterChars = "[]{}()\"\"''";
+        const string strNumbers = "0123456789";
 
-        bool isRTL = true;
+        // find the first non-neutral character
+        i = 0;
+        bool found = false;
+        bool rtl = false;
 
-        if (inLTRText.Length > 0)
+        while (i < inLTRText.Length && !found)
         {
-	        // scan for RTL characters
-	        int i = 0;
-	           
-	        inLTRText = reverse(inLTRText);
-	        //isRTL = strRTLChars.Contains(inLTRText[0].ToString());
-	        i = -1;
-	        int start;
-	        int end;
-	       
-	        while (i < inLTRText.Length - 1)
-	        {
-	          if (isRTL)
-	          {
-	            start = i + 1;
-	            //bool hebflag=true;
-	            bool containsRTL = false;
-	            bool neutralContain = false;
-	            //int neutralpos = -1;
-	
-	            // loop over the RTL and the neutral chars until somthing else comes up.
-	            do
-	            {
-	              i++;
-	              idxChar = inLTRText[i].ToString();
-	              containsRTL = strRTLChars.Contains(idxChar);
-	              neutralContain = strNeutralChars.Contains(idxChar);
-	            }
-	            while ((containsRTL || neutralContain) & i < inLTRText.Length - 1);
-	
-	            // if we didn't reach to the end, we going back 1 charcter
-	            if (i < inLTRText.Length - 1)
-	              i--;
-	
-	            end = i;
-	
-	            result += inLTRText.Substring(start, end - start + 1);
-	            isRTL = false;
-	          }
-	          else
-	          {
-	            start = i + 1;
-	            bool engflag = true;
-	            bool engContain = false;
-	            bool neutralContain = false;
-	            int neutralpos = -1;
-	
-	            // loop over the non-RTL and the neutral chars until somthing else comes up.
-	            do
-	            {
-	              i++;
-	              idxChar = inLTRText[i].ToString();
-	              
-	              neutralContain = strNeutralChars.Contains(idxChar);
-	              engContain = (!strRTLChars.Contains(idxChar) & !neutralContain);
-	
-	              // mark the last index of neutral character series
-	              if (neutralContain && engflag)
-	              {
-	                engflag = false;
-	                neutralpos = i;
-	              }
-	              if (engContain)
-	              {
-	                engflag = true;
-	                neutralpos = -1;
-	              }
-	            }
-	            while ((engContain || neutralContain) & i < inLTRText.Length - 1);
-	
-	            // if we didn't reach to the end, we going back 1 charcter
-	            if (i < inLTRText.Length - 1)
-	              i--;
-	
-	            if (neutralpos < 0)
-	            {
-	              end = i;
-	            }
-	            else
-	            {
-	              end = neutralpos - 1;
-	              i = neutralpos - 1;
-	            }
-	
-	            result += reverse(inLTRText.Substring(start, end - start + 1));
-	            isRTL = true;
-	          }
-	        }
+          if (!strNumbers.Contains(inLTRText[i].ToString()) && !strNeutralChars.Contains(inLTRText[i].ToString()) && !strDelimiterChars.Contains(inLTRText[i].ToString()))
+          {
+            found = true;
+            if (strRTLChars.Contains(inLTRText[i].ToString()))
+            {
+              rtl = true;
+            }
+          }
+          i++;
+        }
+        return rtl;
+      }
+      catch (Exception exp)
+      {
+        Log.Error(exp);
+        return false;
+      }
+    }
+
+    private static string findDirections(string inLTRText)
+    {
+      try
+      {
+        string strRTLChars = "";
+        const int firstRTLCharacter = 0x05B0;
+        const int lastRTLCharacter = 0x06F0;
+        int i;
+        for (i = firstRTLCharacter ; i <= lastRTLCharacter ; i++)
+        {
+          strRTLChars += Char.ConvertFromUtf32(i).ToString();
         }
 
-        return result;
+        const string strNeutralChars = " ,.?:;\\|/`~!@#$%^&*-=_+*";
+        const string strDelimiterChars = "[]{}()\"\"''";
+        const string strStickyChars = ",.?:;\\|/`~!@#$%^&*-=_+*";
+        const string strNumbers = "0123456789";
+
+        // mark directions
+        String directions = "";
+
+        // find the first non-neutral character
+        i = 0;
+        bool found = false;
+        bool rtl = false;
+
+        while (i < inLTRText.Length && !found)
+        {
+          if (!strNumbers.Contains(inLTRText[i].ToString()) && !strNeutralChars.Contains(inLTRText[i].ToString()) && !strDelimiterChars.Contains(inLTRText[i].ToString()))
+          {
+            found = true;
+            if (strRTLChars.Contains(inLTRText[i].ToString()))
+            {
+              rtl = true;
+            }
+          }
+          i++;
+        }
+
+        // mark directions of text
+        for (i = 0 ; i < inLTRText.Length ; i++)
+        {
+          if (strNeutralChars.Contains(inLTRText[i].ToString()))
+          {
+            if (strStickyChars.Contains(inLTRText[i].ToString()))
+            {
+              directions += "S";
+            }
+            else
+            {
+              if (rtl)
+              {
+                directions += "R";
+              }
+              else
+              {
+                directions += "L";
+              }
+            }
+          }
+          else if (strDelimiterChars.Contains(inLTRText[i].ToString()))
+          {
+            // mark its direction
+            if (rtl)
+            {
+              directions += "R";
+            }
+            else
+            {
+              directions += "L";
+            }
+
+            // find the opposite delimiter
+            int j = strDelimiterChars.IndexOf(inLTRText[i]);
+            if (j % 2 == 0)
+            {
+              j++;
+            }
+            else
+            {
+              j--;
+            }
+            j = inLTRText.IndexOf(strDelimiterChars[j], i + 1);
+
+            if (j < 0)
+            {
+              j = inLTRText.Length;
+            }
+
+            directions += findDirections(inLTRText.Substring(i + 1, j - i - 1));
+
+            // mark the direction of the last delimiter
+            if (j < inLTRText.Length)
+            {
+              if (rtl)
+              {
+                directions += "R";
+              }
+              else
+              {
+                directions += "L";
+              }
+
+              // jump to the next index
+              i = j + 1;
+            }
+            else
+            {
+              i = j;
+            }
+          }
+          else if (strRTLChars.Contains(inLTRText[i].ToString()))
+          {
+            rtl = true;
+            directions += "R";
+          }
+          else
+          {
+            if (!strNumbers.Contains(inLTRText[i].ToString()))
+            {
+              rtl = false;
+              directions += "L";
+            }
+            else
+            {
+              directions += "L";
+            }
+          }
+
+        }
+
+        // handle sticky chars
+        char lastDir = '\0';
+        i = 0;
+        while (lastDir == '\0' && i < directions.Length)
+        {
+          char c = directions[i];
+          if (c != 'S')
+          {
+            lastDir = c;
+          }
+          i++;
+        }
+        if (lastDir == '\0') lastDir = directions[0];
+        char[] dircarr = directions.ToCharArray();
+        for (int j = dircarr.Length - 1 ; j >= 0 ; j--)
+        {
+          if (dircarr[j] == 'S')
+          {
+            dircarr[j] = lastDir;
+          }
+          lastDir = dircarr[j];
+        }
+
+        for (int j = 0 ; j < dircarr.Length ; j++)
+        {
+          if (dircarr[j] == 'S')
+          {
+            dircarr[j] = lastDir;
+          }
+          lastDir = dircarr[j];
+        }
+
+        return new String(dircarr);
       }
       catch (Exception exp)
       {
@@ -551,7 +713,7 @@ namespace MediaPortal.GUI.Library
         anagra.DrawString(text + "|", font, Brushes.Black,
           width - measured_width, -font.Height / 2);
 
-        for (int i = width - 1; i >= 0; i--)
+        for (int i = width - 1 ; i >= 0 ; i--)
         {
           measured_width--;
           if (bitmap.GetPixel(i, 0).R != 255)    // found a non-white pixel ?
@@ -578,7 +740,7 @@ namespace MediaPortal.GUI.Library
       float fRowHeight = (_textureCoords[0, 3] - _textureCoords[0, 1]) * _textureHeight;
       textheight = fRowHeight;
 
-      for (int i = 0; i < text.Length; ++i)
+      for (int i = 0 ; i < text.Length ; ++i)
       {
         char c = text[i];
         if (c == '\n')
@@ -654,7 +816,7 @@ namespace MediaPortal.GUI.Library
       // Calculate the dimensions for the smallest power-of-two texture which
       // can hold all the printable characters
       _textureWidth = _textureHeight = 256;
-      for (; ; )
+      for ( ; ; )
       {
         try
         {
@@ -685,7 +847,7 @@ namespace MediaPortal.GUI.Library
         _textureScale = (float)d3dCaps.MaxTextureWidth / (float)_textureWidth;
         _textureWidth = _textureHeight = d3dCaps.MaxTextureWidth;
 
-        for (; ; )
+        for ( ; ; )
         {
           // Create a new, smaller font
           _fontHeight = (int)Math.Floor(_fontHeight * _textureScale);
@@ -836,7 +998,7 @@ namespace MediaPortal.GUI.Library
       }
 
       int length = _textureCoords.GetLength(0);
-      for (int i = 0; i < length; ++i)
+      for (int i = 0 ; i < length ; ++i)
       {
         FontEngineSetCoordinate(ID, i, 0, _textureCoords[i, 0], _textureCoords[i, 1], _textureCoords[i, 2], _textureCoords[i, 3]);
       }
@@ -864,7 +1026,7 @@ namespace MediaPortal.GUI.Library
       _spacingPerChar = (int)Math.Ceiling(size.Width * 0.4);
       x = 0;
 
-      for (char c = (char)_StartCharacter; c < (char)_EndCharacter; c++)
+      for (char c = (char)_StartCharacter ; c < (char)_EndCharacter ; c++)
       {
         str = c.ToString();
         // We need to do some things here to get the right sizes.  The default implemententation of MeasureString
