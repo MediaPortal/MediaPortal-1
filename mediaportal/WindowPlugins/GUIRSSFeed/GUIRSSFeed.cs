@@ -472,7 +472,7 @@ namespace MediaPortal.GUI.RSS
 
                 if (System.IO.File.Exists(strTemp))
                 {
-                  MediaPortal.Util.Picture.CreateThumbnail(strTemp, m_strSiteIcon, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                  MediaPortal.Util.Picture.CreateThumbnail(strTemp, m_strSiteIcon, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
                 }
 
                 MediaPortal.Util.Utils.FileDelete(strTemp);                

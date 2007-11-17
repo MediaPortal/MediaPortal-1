@@ -1968,17 +1968,17 @@ namespace MediaPortal.Util
 
                   using (Image thumbImage = Image.FromFile(tmpFile))
                   {
-                    if (Picture.CreateThumbnail(thumbImage, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+                    if (Picture.CreateThumbnail(thumbImage, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true))
                     {
-                      System.Threading.Thread.Sleep(50);
+                      System.Threading.Thread.Sleep(30);
                       // we do not want a folderL.jpg
                       if (!aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
                       {
                         aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
-                        Picture.CreateThumbnail(thumbImage, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+                        Picture.CreateThumbnail(thumbImage, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
                       }
                     }
-                    System.Threading.Thread.Sleep(50);
+                    System.Threading.Thread.Sleep(30);
                     if (System.IO.File.Exists(aThumbPath))
                       result = true;
                       // File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);

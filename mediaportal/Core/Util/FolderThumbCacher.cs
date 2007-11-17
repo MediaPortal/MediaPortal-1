@@ -78,7 +78,7 @@ namespace MediaPortal.Util
           string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
 
           if (!System.IO.File.Exists(strFolderThumb) || replace)
-            MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+            MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true);
           if (!System.IO.File.Exists(localFolderLThumb) || replace)
           {
             // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
@@ -86,7 +86,7 @@ namespace MediaPortal.Util
             if (fiRemoteFolderArt.Length < 32000)
               System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
             else
-              MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+              MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
           }
 
           return;

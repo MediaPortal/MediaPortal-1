@@ -100,9 +100,9 @@ namespace MediaPortal.GUI.Pictures
                 {
                   int iRotate = dbs.GetRotation(item.Path);
                   System.Threading.Thread.Sleep(30);
-                  if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate))
+                  if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
                   {
-                    System.Threading.Thread.Sleep(150);
+                    System.Threading.Thread.Sleep(75);
                     Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
                   }
                 }
@@ -114,9 +114,9 @@ namespace MediaPortal.GUI.Pictures
                   {
                     int iRotate = dbs.GetRotation(item.Path);
                     System.Threading.Thread.Sleep(30);
-                    if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate))
+                    if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge))
                     {
-                      System.Threading.Thread.Sleep(200);
+                      System.Threading.Thread.Sleep(100);
                       Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
                     }
                   }
@@ -1073,10 +1073,10 @@ namespace MediaPortal.GUI.Pictures
         dbs.SetRotation(item.Path, rotate);
       }
       string thumbnailImage = GetThumbnail(item.Path);
-      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, rotate);
+      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, rotate, Thumbs.SpeedThumbsSmall);
 
       thumbnailImage = GetLargeThumbnail(item.Path);
-      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, rotate);
+      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, rotate, Thumbs.SpeedThumbsLarge);
       System.Threading.Thread.Sleep(50);
       GUIControl.RefreshControl(GetID, facadeView.GetID);
     }

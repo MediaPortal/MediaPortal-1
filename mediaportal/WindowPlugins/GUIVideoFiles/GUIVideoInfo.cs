@@ -445,15 +445,15 @@ namespace MediaPortal.GUI.Video
               }
               if (System.IO.File.Exists(temporaryFilename))
               {
-                MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
                 if (System.IO.File.Exists(temporaryFilenameLarge))
                 {
-                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
                 }
                 else
                 {
-                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
                 }
               }
               MediaPortal.Util.Utils.FileDelete(temporaryFilename);

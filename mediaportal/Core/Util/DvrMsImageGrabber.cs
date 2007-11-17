@@ -81,9 +81,9 @@ namespace MediaPortal.Util
           return false;
         }
 
-        Util.Picture.CreateThumbnail("temp.bmp", imageFileName, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+        Util.Picture.CreateThumbnail("temp.bmp", imageFileName, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true);
         string imageFileNameL = Util.Utils.ConvertToLargeCoverArt(imageFileName);
-        if (!Util.Picture.CreateThumbnail("temp.bmp", imageFileNameL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
+        if (!Util.Picture.CreateThumbnail("temp.bmp", imageFileNameL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false))
           return false;
         
         return true;

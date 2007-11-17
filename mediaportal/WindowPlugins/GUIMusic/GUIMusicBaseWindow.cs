@@ -1827,10 +1827,10 @@ namespace MediaPortal.GUI.Music
           if (System.IO.File.Exists(thumbPath))
             System.IO.File.Delete(thumbPath);
 
-          if (MediaPortal.Util.Picture.CreateThumbnail(coverImg, thumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+          if (MediaPortal.Util.Picture.CreateThumbnail(coverImg, thumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
           {
             result = true;
-            MediaPortal.Util.Picture.CreateThumbnail(coverImg, thumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+            MediaPortal.Util.Picture.CreateThumbnail(coverImg, thumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
           }
         }
       }

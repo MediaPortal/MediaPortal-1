@@ -48,16 +48,16 @@ namespace MediaPortal.Util
 
     public enum LargeThumbSize : int
     {
-      small = 300,
-      average = 512,
-      large = 768,
+      small = 400,
+      average = 500,
+      large = 600,
     }
 
     public enum ThumbSize : int
     {
-      small = 96,
-      average = 128,
-      large = 192,
+      small = 100,
+      average = 120,
+      large = 140,
     }
 
     public static readonly string TvNotifyIcon = "tvguide_notify_button.png";
@@ -166,6 +166,50 @@ namespace MediaPortal.Util
     }
 
     #region Public getters and setters
+    public static bool SpeedThumbsSmall
+    {
+      get
+      {
+        switch (_currentThumbQuality)
+        {
+          case ThumbQuality.fastest:
+            return true;
+          case ThumbQuality.fast:
+            return true;
+          case ThumbQuality.average:
+            return true;
+          case ThumbQuality.higher:
+            return true;
+          case ThumbQuality.highest:
+            return false;
+          default:
+            return true;            
+        }
+      }
+    }
+
+    public static bool SpeedThumbsLarge
+    {
+      get
+      {
+        switch (_currentThumbQuality)
+        {
+          case ThumbQuality.fastest:
+            return true;
+          case ThumbQuality.fast:
+            return true;
+          case ThumbQuality.average:
+            return false;
+          case ThumbQuality.higher:
+            return false;
+          case ThumbQuality.highest:
+            return false;
+          default:
+            return true;            
+        }
+      }
+    }
+
     /// <summary>
     /// Change thumbnail quality
     /// </summary>

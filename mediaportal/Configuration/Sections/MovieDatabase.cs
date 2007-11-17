@@ -2978,8 +2978,8 @@ namespace MediaPortal.Configuration.Sections
 
         try
         {
-          MediaPortal.Util.Picture.CreateThumbnail(tbLocalImage.Text, strThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-          MediaPortal.Util.Picture.CreateThumbnail(tbLocalImage.Text, LargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+          if (MediaPortal.Util.Picture.CreateThumbnail(tbLocalImage.Text, strThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+            MediaPortal.Util.Picture.CreateThumbnail(tbLocalImage.Text, LargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
         }
         catch (Exception)
         {

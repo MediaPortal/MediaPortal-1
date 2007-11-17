@@ -1205,9 +1205,9 @@ namespace MediaPortal.Music.Database
 
               if (mp3TagImage != null)
               {
-                if (!Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+                if (!Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
                   Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
-                if (!Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
+                if (!Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
                   Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
               }
             }
@@ -1249,9 +1249,9 @@ namespace MediaPortal.Music.Database
 
             if (scanNow)
             {
-              if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0))
+              if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
                 Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
-              if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0))
+              if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
                 Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
 
               CreateFolderThumbs(tag.FileName, smallThumbPath);
@@ -1281,12 +1281,12 @@ namespace MediaPortal.Music.Database
           {
             if (_createMissingFolderThumbs)
             {
-              MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+              MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
 
               if (_useFolderThumbs)
               {
                 if (!System.IO.File.Exists(localFolderThumb))
-                  MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                  MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
                 if (!System.IO.File.Exists(localFolderLThumb))
                   System.IO.File.Copy(folderThumb, localFolderLThumb, true);
               }
@@ -1297,7 +1297,7 @@ namespace MediaPortal.Music.Database
             if (_useFolderThumbs)
             {
               if (!System.IO.File.Exists(localFolderThumb))
-                MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+                MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
               if (!System.IO.File.Exists(localFolderLThumb))
               {
                 // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
@@ -1305,7 +1305,7 @@ namespace MediaPortal.Music.Database
                 if (fiRemoteFolderArt.Length < 32000)
                   System.IO.File.Copy(folderThumb, localFolderLThumb, true);
                 else
-                  MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+                  MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
               }
             }
           }

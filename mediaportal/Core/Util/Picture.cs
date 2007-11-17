@@ -918,47 +918,39 @@ namespace MediaPortal.Util
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
     /// </param>
-    public static bool CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+    public static bool CreateThumbnail(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight, int iRotate, bool aFastMode)
     {
-      if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0)
-        return false;
-      if (strFile == string.Empty || strThumb == string.Empty)
-        return false;
-      if (!System.IO.File.Exists(strFile))
-        return false;
+      if (string.IsNullOrEmpty(aInputFilename) || string.IsNullOrEmpty(aThumbTargetPath) || iMaxHeight <= 0 || iMaxHeight <= 0) return false;      
+      if (!System.IO.File.Exists(aInputFilename)) return false;
 
-      Image theImage = null;
+      Image myImage = null;
 
       try
       {
-        theImage = Image.FromFile(strFile, true);
+        myImage = Image.FromFile(aInputFilename, true);
 
-        if (CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate))
-          return true;
-        else
-        {
-          Log.Warn("Picture: Creating thumbnail failed for {0}", strFile);
-          return false;
-        }
-
+        return CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
       }
       catch (OutOfMemoryException)
       {
-        Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", strFile);
+        Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", aInputFilename);
         return false;
       }
       catch (Exception ex)
       {
-        Log.Error("Picture.CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("Picture: CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         return false;
       }
       finally
       {
-        if (theImage != null)
-        {
-          theImage.Dispose();
-        }
+        if (myImage != null)
+          myImage.Dispose();
       }
+    }
+
+    public static bool ThumbnailCallback()
+    {
+      return false;
     }
 
     /// <summary>
@@ -974,72 +966,83 @@ namespace MediaPortal.Util
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
     /// </param>
-    public static bool CreateThumbnail(Image theImage, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+    public static bool CreateThumbnail(Image aDrawingImage, string aThumbTargetPath, int aThumbWidth, int aThumbHeight, int aRotation, bool aFastMode)
     {
-      if (string.IsNullOrEmpty(strThumb) || iMaxHeight <= 0 || iMaxHeight <= 0)
-        return false;
+      if (string.IsNullOrEmpty(aThumbTargetPath) || aThumbHeight <= 0 || aThumbHeight <= 0) return false;
+      
+      Bitmap myBitmap = null;
+      Image myThumbnail = null;
 
       try
       {
-        switch (iRotate)
+        switch (aRotation)
         {
-          case 1:
-            theImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            break;
-          case 2:
-            theImage.RotateFlip(RotateFlipType.Rotate180FlipNone);
-            break;
-          case 3:
-            theImage.RotateFlip(RotateFlipType.Rotate270FlipNone);
-            break;
-          default:
-            break;
+          case 1: aDrawingImage.RotateFlip(RotateFlipType.Rotate90FlipNone);  break;
+          case 2: aDrawingImage.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
+          case 3: aDrawingImage.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
+          default: break;
         }
 
-        int iWidth = iMaxWidth;
-        int iHeight = iMaxHeight;
-        float fAR = (theImage.Width) / ((float)theImage.Height);
+        int iWidth = aThumbWidth;
+        int iHeight = aThumbHeight;
+        float fAR = (aDrawingImage.Width) / ((float)aDrawingImage.Height);
 
-        if (theImage.Width > theImage.Height)
+        if (aDrawingImage.Width > aDrawingImage.Height)
           iHeight = (int)Math.Floor((((float)iWidth) / fAR));
         else
           iWidth = (int)Math.Floor((fAR * ((float)iHeight)));
 
         try
         {
-          Utils.FileDelete(strThumb);
+          Utils.FileDelete(aThumbTargetPath);
         }
         catch (Exception ex)
         {
           Log.Error("Picture: Error deleting old thumbnail - {0}", ex.Message);
         }
 
-        using (Bitmap result = new Bitmap(iWidth, iHeight))
+        if (aFastMode)
         {
-          using (Graphics g = Graphics.FromImage(result))
+          Image.GetThumbnailImageAbort myCallback = new Image.GetThumbnailImageAbort(ThumbnailCallback);
+          myBitmap = new Bitmap(aDrawingImage, iWidth, iHeight);
+          myThumbnail = myBitmap.GetThumbnailImage(iWidth, iHeight, myCallback, IntPtr.Zero);
+        }
+        else
+        {
+          myBitmap = new Bitmap(iWidth, iHeight);
+          using (Graphics g = Graphics.FromImage(myBitmap))
           {
             g.CompositingQuality = Thumbs.Compositing;
             g.InterpolationMode = Thumbs.Interpolation;
             g.SmoothingMode = Thumbs.Smoothing;
-            g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
-          }
-          try
-          {
-            result.Save(strThumb, System.Drawing.Imaging.ImageFormat.Jpeg);
-            System.Threading.Thread.Sleep(30);
-            return true;
-          }
-          catch (Exception ex)
-          {
-            Log.Error("Picture: Error saving new thumbnail {0} - {1}", strThumb, ex.Message);
-            return false;
+            g.DrawImage(aDrawingImage, new Rectangle(0, 0, iWidth, iHeight));
           }
         }
+
+        try
+        {
+          myBitmap.Save(aThumbTargetPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+          // even if run in background thread wait a little so the main process does not starve on IO
+          System.Threading.Thread.Sleep(10);
+          return true;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture: Error saving new thumbnail {0} - {1}", aThumbTargetPath, ex.Message);
+          return false;
+        }
+
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        Log.Error("Picture.CreateThumbnail exception err. Exception: {0} stack:{1}", ex.Message, ex.StackTrace);
         return false;
+      }
+      finally
+      {
+        if (myThumbnail != null)
+          myThumbnail.Dispose();
+        if (myBitmap != null)
+          myBitmap.Dispose();
       }
     }
 

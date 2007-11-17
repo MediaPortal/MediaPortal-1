@@ -1861,8 +1861,8 @@ namespace MediaPortal.GUI.Video
           MediaPortal.Util.Utils.DownLoadImage(url, strTemp);
           if (System.IO.File.Exists(strTemp))
           {
-            MediaPortal.Util.Picture.CreateThumbnail(strTemp, strThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-            MediaPortal.Util.Picture.CreateThumbnail(strTemp, LargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+            if (MediaPortal.Util.Picture.CreateThumbnail(strTemp, strThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+              MediaPortal.Util.Picture.CreateThumbnail(strTemp, LargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
           }
           else
             Log.Debug("GUIVideoFiles: unable to download thumb {0}->{1}", url, strTemp);
