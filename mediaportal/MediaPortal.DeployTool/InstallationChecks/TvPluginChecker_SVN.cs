@@ -57,6 +57,7 @@ namespace MediaPortal.DeployTool
       string parameters = "/a \"" + msi + "\" /qb TARGETDIR=\"" + targetDir + "\"";
       Process setup = Process.Start("msiexec", parameters);
       setup.WaitForExit();
+      File.Delete(msi);
       return true;
     }
     public bool UnInstall()

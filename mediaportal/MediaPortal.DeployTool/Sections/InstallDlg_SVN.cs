@@ -67,7 +67,10 @@ namespace MediaPortal.DeployTool
         return false;
       }
       else
+      {
+        Directory.Delete(Application.StartupPath + "\\deploy");
         return true;
+      }
     }
     public override void SetProperties()
     {
