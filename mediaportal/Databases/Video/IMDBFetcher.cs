@@ -712,6 +712,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public static void DownloadCoverArt(string type, string imageUrl, string title)
     {
       try

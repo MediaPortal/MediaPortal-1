@@ -2332,28 +2332,36 @@ namespace MediaPortal.Configuration.Sections
       string LargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
       MediaPortal.Util.Utils.FileDelete(strThumb);
       MediaPortal.Util.Utils.FileDelete(LargeThumb);
+
       IMDBFetcher.DownloadCoverArt(Thumbs.MovieTitle, textBoxPictureURL.Text, tbTitle.Text);
 
       string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
       if (System.IO.File.Exists(file))
       {
-        using (Image img = Image.FromFile(file))
+        try
         {
-          Bitmap result = new Bitmap(img.Width, img.Height);
-          using (Graphics g = Graphics.FromImage(result))
+          using (Image img = Image.FromFile(file))
           {
-            g.CompositingQuality = Thumbs.Compositing;
-            g.InterpolationMode = Thumbs.Interpolation;
-            g.SmoothingMode = Thumbs.Smoothing;
-            g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height));
+            Bitmap result = new Bitmap(img.Width, img.Height);
+            using (Graphics g = Graphics.FromImage(result))
+            {
+              g.CompositingQuality = Thumbs.Compositing;
+              g.InterpolationMode = Thumbs.Interpolation;
+              g.SmoothingMode = Thumbs.Smoothing;
+              g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height));
+            }
+            pictureBox1.Image = result;
           }
-          pictureBox1.Image = result;
+        }
+        catch (Exception)
+        {
         }
         VideoDatabase.SetThumbURL(CurrentMovie.ID, textBoxPictureURL.Text);
         useLocalImage = false;
         tbLocalImage.Text = "";
       }
     }
+
     private void btnAmazon_Click(object sender, System.EventArgs e)
     {
       btnAmazon.Enabled = false;

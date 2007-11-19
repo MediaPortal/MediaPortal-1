@@ -662,7 +662,6 @@ namespace MediaPortal.GUI.Video
           return;
         }
 
-
         if (!CheckMovie(movieFileName)) return;
         bool askForResumeMovie = true;
         if (mapSettings.Stack)
@@ -1901,7 +1900,6 @@ namespace MediaPortal.GUI.Video
 
     static void DownloadActors(IMDBMovie movieDetails)
     {
-
       char[] splitter = { '\n', ',' };
       string[] actors = movieDetails.Cast.Split(splitter);
       if (actors.Length > 0)

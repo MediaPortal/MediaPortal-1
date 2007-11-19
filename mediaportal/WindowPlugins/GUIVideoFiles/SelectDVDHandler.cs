@@ -273,7 +273,7 @@ namespace MediaPortal.GUI.Video
 
           if (!System.IO.File.Exists(strThumb) || string.IsNullOrEmpty(strThumb))
           {
-            strThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, System.IO.Path.ChangeExtension(file, ".jpg"));
+            strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle, Util.Utils.MakeFileName(Util.Utils.SplitFilename(System.IO.Path.ChangeExtension(file, ".jpg"))));
             if (!System.IO.File.Exists(strThumb))
               continue;
           }
