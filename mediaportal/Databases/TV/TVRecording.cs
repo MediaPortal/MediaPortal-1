@@ -119,8 +119,8 @@ namespace MediaPortal.TV.Database
     }
 
 
-    public static readonly int HighestPriority = Int32.MaxValue;
-    public static readonly int LowestPriority = 0;
+    static public readonly int HighestPriority = Int32.MaxValue;
+    static public readonly int LowestPriority = 0;
     #region enums
     /// <summary>
     /// Type of recording
@@ -466,7 +466,6 @@ namespace MediaPortal.TV.Database
             }
           }
           break;
-
         case RecordingType.WeekEnds:
           if (program.StartTime.DayOfWeek == DayOfWeek.Saturday || program.StartTime.DayOfWeek == DayOfWeek.Sunday)
           {
@@ -487,7 +486,6 @@ namespace MediaPortal.TV.Database
             }
           }
           break;
-
         case RecordingType.Weekly:
           if (program.Channel == Channel)
           {
@@ -513,6 +511,58 @@ namespace MediaPortal.TV.Database
     }//IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
 
     /// <summary>
+    /// Given a periodic recording and a date, returns the next start and end
+    /// dates starting from dtTime.
+    /// </summary>
+    /// <param name="dtTime">time</param>
+    /// <param name="recording">TVRecording</param>
+    /// <returns>dtStart and dtEnd</returns>
+    private void GetNewRecordingDates(DateTime dtTime, TVRecording recording, ref DateTime dtStart, ref DateTime dtEnd)
+    {
+      TimeSpan tDiff;
+      DateTime wEnd, actualdaytwelve;
+
+      dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, recording.StartTime.Hour, recording.StartTime.Minute, 0);
+      actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+      tDiff = recording.EndTime - recording.StartTime;
+      // On recordings that span across midnight, correct the starting date so
+      // after 12:00 we consider that the recording will start later that day,
+      // before 12:00 we consider that the recording started the day before so a correction is applied
+      wEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, recording.EndTime.Hour, recording.EndTime.Minute, 0);
+      if ((wEnd < dtStart) && (dtTime < actualdaytwelve))
+      {
+        dtStart = dtStart.AddDays(-1);
+        Log.Debug("TVRecording: Recording a program that started the day before, correction applied");
+      }
+      dtEnd = dtStart + tDiff;
+      Log.Debug("TVRecording: GetNewRecordingDates (dtStart, dtEnd): {0}, {1}", dtStart.ToString(), dtEnd.ToString());
+    }
+
+    /// <summary>
+    /// Overloaded procedure.
+    /// </summary>
+    private void GetNewRecordingDates(DateTime dtTime, TVProgram program, ref DateTime dtStart, ref DateTime dtEnd)
+    {
+      TimeSpan tDiff;
+      DateTime wEnd, actualdaytwelve;
+
+      dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, program.StartTime.Hour, program.StartTime.Minute, 0);
+      actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+      tDiff = program.EndTime - program.StartTime;
+      // On recordings that span across midnight, correct the starting date so
+      // after 12:00 we consider that the recording will start later that day,
+      // before 12:00 we consider that the recording started the day before so a correction is applied
+      wEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, program.EndTime.Hour, program.EndTime.Minute, 0);
+      if ((wEnd < dtStart) && (dtTime < actualdaytwelve))
+      {
+        dtStart = dtStart.AddDays(-1);
+        Log.Debug("TVRecording: Recording a program that started the day before, correction applied");
+      }
+      dtEnd = dtStart + tDiff;
+      Log.Debug("TVRecording: GetNewRecordingDates (dtStart, dtEnd):  {0}, {1}", dtStart.ToString(), dtEnd.ToString());
+    }
+
+    /// <summary>
     /// Checks whether the recording should be recording at the specified time including the pre/post intervals
     /// </summary>
     /// <param name="dtTime">time</param>
@@ -526,6 +576,7 @@ namespace MediaPortal.TV.Database
       DateTime dtStart;
       DateTime dtEnd;
       DateTime actualdaytwelve;
+
       switch (RecType)
       {
         // record program just once
@@ -542,20 +593,25 @@ namespace MediaPortal.TV.Database
 
         // record program daily at same time & channel
         case RecordingType.Daily:
+          //<--------- begin old code --------->
           // check if recording start/date time is correct
-          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+          //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+          //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
           // dtend < dtstart means that the program starts before 00:00 and ends after
           // We have to care that we will change of dayweek while recording
           // As the year/month/day values are used to adjust a periodic recording
           // we need to adjust the start/end values before testing the interval
           // this depends if "Now" is before of after midnight
           // so if now < 12:00 or now >12:00
-          actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+          //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+          //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+          //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+          //<--------- end old code --------->
 
-
-          if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-          if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+          //IG 2007-9-13: Use new function to get the new start/end dates
+          dtStart = new DateTime();
+          dtEnd = new DateTime();
+          GetNewRecordingDates(dtTime, this, ref dtStart, ref dtEnd);
 
           if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
           {
@@ -570,14 +626,20 @@ namespace MediaPortal.TV.Database
 
         // record program daily at same time & channel
         case RecordingType.WeekDays:
+          //<--------- begin old code --------->
           // check if recording start/date time is correct
-          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-          actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+          //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+          //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+          //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+          //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+          //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+          //<--------- end old code --------->
 
+          //IG 2007-9-13: Use new function to get the new start/end dates
+          dtStart = new DateTime();
+          dtEnd = new DateTime();
+          GetNewRecordingDates(dtTime, this, ref dtStart, ref dtEnd);
 
-          if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-          if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
           if (dtStart.DayOfWeek >= DayOfWeek.Monday && dtStart.DayOfWeek <= DayOfWeek.Friday)
           {
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -593,14 +655,20 @@ namespace MediaPortal.TV.Database
           break;
 
         case RecordingType.WeekEnds:
+          //<--------- begin old code --------->
           // check if recording start/date time is correct
-          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-          actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+          //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+          //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+          //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+          //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+          //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+          //<--------- end old code --------->
 
+          //IG 2007-9-13: Use new function to get the new start/end dates
+          dtStart = new DateTime();
+          dtEnd = new DateTime();
+          GetNewRecordingDates(dtTime, this, ref dtStart, ref dtEnd);
 
-          if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-          if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
           if (dtStart.DayOfWeek == DayOfWeek.Saturday || dtStart.DayOfWeek == DayOfWeek.Sunday)
           {
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
@@ -628,16 +696,23 @@ namespace MediaPortal.TV.Database
             _dayOfWeek = _tempDate.DayOfWeek;
           }
           else _dayOfWeek = dtTime.DayOfWeek;
+
           if (this.StartTime.DayOfWeek == _dayOfWeek)
           {
+            //<--------- begin old code --------->
             // check if start/end time of recording is correct
-            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+            //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+            //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+            //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+            //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+            //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+            //<--------- end old code --------->
 
+            //IG 2007-8-9: get next date for this weekly recording
+            dtStart = new DateTime();
+            dtEnd = new DateTime();
+            GetNewRecordingDates(dtTime, this, ref dtStart, ref dtEnd);
 
-            if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-            if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
             {
               // not canceled?
@@ -709,6 +784,7 @@ namespace MediaPortal.TV.Database
       DateTime dtStart;
       DateTime dtEnd;
       DateTime actualdaytwelve;
+
       switch (RecType)
       {
         // record program just once
@@ -744,26 +820,36 @@ namespace MediaPortal.TV.Database
           if (currentProgram == null) return false;   //we need a program
           if (currentProgram.Channel == this.Channel) //check channel is correct
           {
+            //<--------- begin old code --------->
             // check if program start/date time is correct
-            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
-            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
-            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+            //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
+            //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+            //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+            //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+            //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+            //<--------- end old code --------->
 
+            //IG 2007-9-13: Use new function to get the new start/end dates
+            dtStart = new DateTime();
+            dtEnd = new DateTime();
+            GetNewRecordingDates(dtTime, currentProgram, ref dtStart, ref dtEnd);
 
-            if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-            if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
             if (dtStart.DayOfWeek >= DayOfWeek.Monday && dtStart.DayOfWeek <= DayOfWeek.Friday)
             {
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
+                //<--------- begin old code --------->
                 // check if recording start/date time is correct
-                dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-                dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-                actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+                //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+                //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+                //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+                //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+                //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+                //<--------- end old code --------->
 
+                //IG 2007-9-13: Use new function to get the new start/end dates
+                GetNewRecordingDates(dtTime, this, ref dtStart, ref dtEnd);
 
-                if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-                if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
                 if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
                 {
                   // not canceled?
@@ -782,26 +868,36 @@ namespace MediaPortal.TV.Database
           if (currentProgram == null) return false;   //we need a program
           if (currentProgram.Channel == this.Channel) //check channel is correct
           {
+            //<--------- begin old code --------->
             // check if program start/date time is correct
-            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
-            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
-            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+            //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
+            //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+            //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+            //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+            //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+            //<--------- end old code --------->
 
+            //IG 2007-9-13: Use new function to get the new start/end dates
+            dtStart = new DateTime();
+            dtEnd = new DateTime();
+            GetNewRecordingDates(dtTime, currentProgram, ref dtStart, ref dtEnd);
 
-            if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-            if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
             if (dtStart.DayOfWeek == DayOfWeek.Saturday || dtStart.DayOfWeek == DayOfWeek.Sunday)
             {
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
+                //<--------- begin old code --------->
                 // check if recording start/date time is correct
-                dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-                dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-                actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+                //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+                //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+                //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+                //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+                //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+                //<--------- end old code --------->
 
+                //IG 2007-9-13: Use new function to get the new start/end dates
+                GetNewRecordingDates(dtTime, this, ref dtStart, ref dtEnd);
 
-                if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-                if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
                 if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
                 {
                   // not canceled?
@@ -820,24 +916,34 @@ namespace MediaPortal.TV.Database
           if (currentProgram == null) return false;   //we need a program
           if (currentProgram.Channel == this.Channel) //check channel is correct
           {
+            //<--------- begin old code --------->
             // check if program start/date time is correct
-            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
-            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
-            actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+            //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
+            //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+            //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+            //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+            //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+            //<--------- end old code --------->
 
+            //IG 2007-9-13: Use new function to get the new start/end dates
+            dtStart = new DateTime();
+            dtEnd = new DateTime();
+            GetNewRecordingDates(dtTime, currentProgram, ref dtStart, ref dtEnd);
 
-            if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-            if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
             if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
             {
+              //<--------- begin old code --------->
               // check if recording start/date time is correct
-              dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-              dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-              actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+              //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+              //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+              //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+              //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+              //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+              //<--------- end old code --------->
 
+              //IG 2007-9-13: Use new function to get the new start/end dates
+              GetNewRecordingDates(dtTime, this, ref dtStart, ref dtEnd);
 
-              if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-              if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
                 // not canceled?
@@ -861,24 +967,29 @@ namespace MediaPortal.TV.Database
             // we gotta use the previous DayOfWeek
             DayOfWeek _dayOfWeek;
             actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
-            if ((this.EndTime.Hour < this.StartTime.Hour) && dtTime < actualdaytwelve)
+            if ((this.EndTime.Hour < this.StartTime.Hour) && (dtTime < actualdaytwelve))
             {
               DateTime _tempDate = dtTime;
               _tempDate = _tempDate.AddDays(-1);
               _dayOfWeek = _tempDate.DayOfWeek;
             }
             else _dayOfWeek = dtTime.DayOfWeek;
+
             if (currentProgram.StartTime.DayOfWeek == _dayOfWeek)
             {
-
+              //<--------- begin old code --------->
               // check if start/end time of program is correct
-              dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
-              dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
-              actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+              //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
+              //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
+              //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+              //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+              //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+              //<--------- end old code --------->
 
-
-              if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-              if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+              //IG 2007-8-9: get next date for this weekly recording
+              dtStart = new DateTime();
+              dtEnd = new DateTime();
+              GetNewRecordingDates(dtTime, currentProgram, ref dtStart, ref dtEnd);
 
               if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
@@ -886,14 +997,17 @@ namespace MediaPortal.TV.Database
                 // check if day of week of recording matches 
                 if (this.StartTime.DayOfWeek == dtTime.DayOfWeek)
                 {
+                  //<--------- begin old code --------->
                   // check if start/end time of recording is correct
-                  dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-                  dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
-                  actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+                  //dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+                  //dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+                  //actualdaytwelve = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, 12, 0, 0);
+                  //if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
+                  //if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
+                  //<--------- end old code --------->
+                  //IG 2007-8-9: get next date for this weekly recording
+                  GetNewRecordingDates(dtTime, this, ref dtStart, ref dtEnd);
 
-
-                  if (dtEnd < dtStart && dtTime > actualdaytwelve) { dtEnd = dtEnd.AddDays(1); }
-                  if (dtEnd < dtStart && dtTime < actualdaytwelve) { dtStart = dtStart.AddDays(-1); }
                   if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
                   {
                     // not canceled?
@@ -960,7 +1074,7 @@ namespace MediaPortal.TV.Database
     /// <returns>Returns a string describing the recording</returns>
     public override string ToString()
     {
-      string strLine = string.Empty;
+      string strLine = String.Empty;
       switch (RecType)
       {
         case RecordingType.Once:
@@ -1117,11 +1231,11 @@ namespace MediaPortal.TV.Database
 
     public void SetProperties(TVProgram prog)
     {
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", string.Empty);
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", string.Empty);
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Time", string.Empty);
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Description", string.Empty);
-      GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Time", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", String.Empty);
 
       string strTime = String.Format("{0} {1} - {2}",
         MediaPortal.Util.Utils.GetShortDayString(StartTime),
@@ -1138,9 +1252,9 @@ namespace MediaPortal.TV.Database
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", string.Empty);
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", string.Empty);
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", String.Empty);
       }
 
 
