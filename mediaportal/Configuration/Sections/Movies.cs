@@ -75,6 +75,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowPanScan;
 
     string m_strDefaultRegionLanguage = "English";
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEachFolderIsMovie;
 
     //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
@@ -107,6 +108,7 @@ namespace MediaPortal.Configuration.Sections
         cbAllowZoom149.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom149", true);
         cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("movies", "allowarletterbox", true);
         cbAllowPanScan.Checked = xmlreader.GetValueAsBool("movies", "allowarpanscan", true);
+        checkBoxEachFolderIsMovie.Checked = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
 
         string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
         playListFolder += @"\My Playlists";
@@ -182,6 +184,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("movies", "playlists", folderNameTextBox.Text);
 
         xmlwriter.SetValueAsBool("movies", "markwatched", checkBoxShowWatched.Checked);
+        xmlwriter.SetValueAsBool("movies", "eachFolderIsMovie", checkBoxEachFolderIsMovie.Checked);
 
         xmlwriter.SetValueAsBool("subtitles", "enabled", showSubtitlesCheckBox.Checked);
         xmlwriter.SetValue("subtitles", "shadow", dropShadowTextBox.Text);
@@ -256,6 +259,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowPanScan = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.checkBoxEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -268,6 +272,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.checkBoxEachFolderIsMovie);
       this.groupBox1.Controls.Add(this.checkBoxShowWatched);
       this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
       this.groupBox1.Controls.Add(this.label1);
@@ -278,7 +283,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(432, 147);
+      this.groupBox1.Size = new System.Drawing.Size(432, 168);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
@@ -291,7 +296,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxShowWatched.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxShowWatched.Location = new System.Drawing.Point(19, 116);
       this.checkBoxShowWatched.Name = "checkBoxShowWatched";
-      this.checkBoxShowWatched.Size = new System.Drawing.Size(395, 17);
+      this.checkBoxShowWatched.Size = new System.Drawing.Size(381, 17);
       this.checkBoxShowWatched.TabIndex = 6;
       this.checkBoxShowWatched.Text = "Mark every already watched file (deactivate for performance with many files)";
       this.checkBoxShowWatched.UseVisualStyleBackColor = true;
@@ -341,7 +346,7 @@ namespace MediaPortal.Configuration.Sections
       this.folderNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.folderNameTextBox.Location = new System.Drawing.Point(136, 63);
       this.folderNameTextBox.Name = "folderNameTextBox";
-      this.folderNameTextBox.Size = new System.Drawing.Size(200, 21);
+      this.folderNameTextBox.Size = new System.Drawing.Size(200, 20);
       this.folderNameTextBox.TabIndex = 3;
       // 
       // repeatPlaylistCheckBox
@@ -350,7 +355,7 @@ namespace MediaPortal.Configuration.Sections
       this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(19, 93);
       this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
-      this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(153, 17);
+      this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(152, 17);
       this.repeatPlaylistCheckBox.TabIndex = 5;
       this.repeatPlaylistCheckBox.Text = "Repeat/loop video playlists";
       this.repeatPlaylistCheckBox.UseVisualStyleBackColor = true;
@@ -410,7 +415,7 @@ namespace MediaPortal.Configuration.Sections
       this.dropShadowTextBox.BorderColor = System.Drawing.Color.Empty;
       this.dropShadowTextBox.Location = new System.Drawing.Point(136, 76);
       this.dropShadowTextBox.Name = "dropShadowTextBox";
-      this.dropShadowTextBox.Size = new System.Drawing.Size(280, 21);
+      this.dropShadowTextBox.Size = new System.Drawing.Size(280, 20);
       this.dropShadowTextBox.TabIndex = 5;
       // 
       // label4
@@ -427,7 +432,7 @@ namespace MediaPortal.Configuration.Sections
       this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.showSubtitlesCheckBox.Location = new System.Drawing.Point(16, 24);
       this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
-      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(93, 17);
+      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(92, 17);
       this.showSubtitlesCheckBox.TabIndex = 0;
       this.showSubtitlesCheckBox.Text = "Show subtitles";
       this.showSubtitlesCheckBox.UseVisualStyleBackColor = true;
@@ -451,7 +456,7 @@ namespace MediaPortal.Configuration.Sections
       this.subtitlesFontTextBox.Location = new System.Drawing.Point(136, 52);
       this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
       this.subtitlesFontTextBox.ReadOnly = true;
-      this.subtitlesFontTextBox.Size = new System.Drawing.Size(200, 21);
+      this.subtitlesFontTextBox.Size = new System.Drawing.Size(200, 20);
       this.subtitlesFontTextBox.TabIndex = 2;
       // 
       // label6
@@ -496,7 +501,7 @@ namespace MediaPortal.Configuration.Sections
       this.gAllowedModes.Controls.Add(this.cbAllowStretch);
       this.gAllowedModes.Controls.Add(this.cbAllowPanScan);
       this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gAllowedModes.Location = new System.Drawing.Point(16, 169);
+      this.gAllowedModes.Location = new System.Drawing.Point(16, 190);
       this.gAllowedModes.Name = "gAllowedModes";
       this.gAllowedModes.Size = new System.Drawing.Size(186, 189);
       this.gAllowedModes.TabIndex = 1;
@@ -507,7 +512,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbAllowNormal.AutoSize = true;
       this.cbAllowNormal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowNormal.Location = new System.Drawing.Point(15, 15);
+      this.cbAllowNormal.Location = new System.Drawing.Point(15, 22);
       this.cbAllowNormal.Name = "cbAllowNormal";
       this.cbAllowNormal.Size = new System.Drawing.Size(57, 17);
       this.cbAllowNormal.TabIndex = 0;
@@ -518,7 +523,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbAllowZoom149.AutoSize = true;
       this.cbAllowZoom149.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowZoom149.Location = new System.Drawing.Point(15, 84);
+      this.cbAllowZoom149.Location = new System.Drawing.Point(15, 91);
       this.cbAllowZoom149.Name = "cbAllowZoom149";
       this.cbAllowZoom149.Size = new System.Drawing.Size(75, 17);
       this.cbAllowZoom149.TabIndex = 3;
@@ -529,9 +534,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbAllowOriginal.AutoSize = true;
       this.cbAllowOriginal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowOriginal.Location = new System.Drawing.Point(15, 38);
+      this.cbAllowOriginal.Location = new System.Drawing.Point(15, 45);
       this.cbAllowOriginal.Name = "cbAllowOriginal";
-      this.cbAllowOriginal.Size = new System.Drawing.Size(133, 17);
+      this.cbAllowOriginal.Size = new System.Drawing.Size(131, 17);
       this.cbAllowOriginal.TabIndex = 1;
       this.cbAllowOriginal.Text = "Original Source Format";
       this.cbAllowOriginal.UseVisualStyleBackColor = true;
@@ -540,9 +545,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbAllowZoom.AutoSize = true;
       this.cbAllowZoom.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowZoom.Location = new System.Drawing.Point(15, 61);
+      this.cbAllowZoom.Location = new System.Drawing.Point(15, 68);
       this.cbAllowZoom.Name = "cbAllowZoom";
-      this.cbAllowZoom.Size = new System.Drawing.Size(50, 17);
+      this.cbAllowZoom.Size = new System.Drawing.Size(51, 17);
       this.cbAllowZoom.TabIndex = 2;
       this.cbAllowZoom.Text = "Zoom";
       this.cbAllowZoom.UseVisualStyleBackColor = true;
@@ -551,9 +556,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbAllowLetterbox.AutoSize = true;
       this.cbAllowLetterbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowLetterbox.Location = new System.Drawing.Point(15, 153);
+      this.cbAllowLetterbox.Location = new System.Drawing.Point(15, 160);
       this.cbAllowLetterbox.Name = "cbAllowLetterbox";
-      this.cbAllowLetterbox.Size = new System.Drawing.Size(90, 17);
+      this.cbAllowLetterbox.Size = new System.Drawing.Size(86, 17);
       this.cbAllowLetterbox.TabIndex = 6;
       this.cbAllowLetterbox.Text = "4:3 Letterbox";
       this.cbAllowLetterbox.UseVisualStyleBackColor = true;
@@ -562,9 +567,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbAllowStretch.AutoSize = true;
       this.cbAllowStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowStretch.Location = new System.Drawing.Point(15, 107);
+      this.cbAllowStretch.Location = new System.Drawing.Point(15, 114);
       this.cbAllowStretch.Name = "cbAllowStretch";
-      this.cbAllowStretch.Size = new System.Drawing.Size(59, 17);
+      this.cbAllowStretch.Size = new System.Drawing.Size(58, 17);
       this.cbAllowStretch.TabIndex = 4;
       this.cbAllowStretch.Text = "Stretch";
       this.cbAllowStretch.UseVisualStyleBackColor = true;
@@ -573,9 +578,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbAllowPanScan.AutoSize = true;
       this.cbAllowPanScan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowPanScan.Location = new System.Drawing.Point(15, 130);
+      this.cbAllowPanScan.Location = new System.Drawing.Point(15, 137);
       this.cbAllowPanScan.Name = "cbAllowPanScan";
-      this.cbAllowPanScan.Size = new System.Drawing.Size(108, 17);
+      this.cbAllowPanScan.Size = new System.Drawing.Size(110, 17);
       this.cbAllowPanScan.TabIndex = 5;
       this.cbAllowPanScan.Text = "4:3 Pan and Scan";
       this.cbAllowPanScan.UseVisualStyleBackColor = true;
@@ -589,6 +594,17 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "Subtitles";
       this.tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxEachFolderIsMovie
+      // 
+      this.checkBoxEachFolderIsMovie.AutoSize = true;
+      this.checkBoxEachFolderIsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEachFolderIsMovie.Location = new System.Drawing.Point(19, 139);
+      this.checkBoxEachFolderIsMovie.Name = "checkBoxEachFolderIsMovie";
+      this.checkBoxEachFolderIsMovie.Size = new System.Drawing.Size(181, 17);
+      this.checkBoxEachFolderIsMovie.TabIndex = 7;
+      this.checkBoxEachFolderIsMovie.Text = "Every movie has its own directory";
+      this.checkBoxEachFolderIsMovie.UseVisualStyleBackColor = true;
       // 
       // Movies
       // 

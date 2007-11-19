@@ -74,7 +74,7 @@ namespace MediaPortal.GUI.Video
             GUIListItem ritem = (GUIListItem)rootDrives[0];
             return ritem.Path; // Only one DVD available, play it!
           }
-          SetIMDBThumbs(rootDrives, false);
+          SetIMDBThumbs(rootDrives, false, true);
           // Display a dialog with all drives to select from
           GUIDialogSelect2 dlgSel = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
           if (null == dlgSel)
@@ -198,7 +198,7 @@ namespace MediaPortal.GUI.Video
       return false;
     }
 
-    public void SetIMDBThumbs(ArrayList items, bool markWatchedFiles)
+    public void SetIMDBThumbs(ArrayList items, bool markWatchedFiles, bool eachMovieHasDedicatedFolder)
     {
       GUIListItem pItem;
       IMDBMovie movieDetails = new IMDBMovie();
@@ -222,8 +222,13 @@ namespace MediaPortal.GUI.Video
             MediaPortal.Util.Utils.SetDefaultIcons(pItem);
             continue;
           }
+
+          // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
           else
-            file = GetFolderVideoFile(pItem.Path);
+          {
+            if (eachMovieHasDedicatedFolder)
+              file = GetFolderVideoFile(pItem.Path);
+          }
 
         }
         else if (!pItem.IsFolder || (pItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(pItem.Path).ToLower())))

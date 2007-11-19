@@ -36,7 +36,7 @@ namespace MediaPortal.Services
   {
     string ShowSelectDVDDialog(int parentId);
     bool OnPlayDVD(string drive, int parentId);
-    void SetIMDBThumbs(ArrayList items, bool markWatchedFiles);
+    void SetIMDBThumbs(ArrayList items, bool markWatchedFilesm, bool eachMovieHasDedicatedFolder);
     string GetFolderVideoFile(string path);
   }
 }

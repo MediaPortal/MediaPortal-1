@@ -32,6 +32,7 @@ using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using System.IO;
 
 namespace MediaPortal.GUI.Video
 {
@@ -302,7 +303,7 @@ namespace MediaPortal.GUI.Video
         string largeCoverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
         MediaPortal.Util.Utils.FileDelete(coverArtImage);
         MediaPortal.Util.Utils.FileDelete(largeCoverArtImage);
-        Refresh(true);
+        Refresh(false);
         Update();
         int idMovie = currentMovie.ID;
         if (idMovie >= 0)
@@ -421,15 +422,15 @@ namespace MediaPortal.GUI.Video
           coverArtImage = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
           string largeCoverArtImage = MediaPortal.Util.Utils.ConvertToLargeCoverArt(coverArtImage);
           
-          if (!System.IO.File.Exists(coverArtImage))
+          if (!File.Exists(coverArtImage))
           {
             string imageExtension;
-            imageExtension = System.IO.Path.GetExtension(imageUrl);
+            imageExtension = Path.GetExtension(imageUrl);
             if (imageExtension.Length > 0)
             {
-              string temporaryFilename = "temp";
+              string temporaryFilename = Path.GetTempFileName();
               temporaryFilename += imageExtension;
-              string temporaryFilenameLarge = "tempL";
+              string temporaryFilenameLarge = Util.Utils.ConvertToLargeCoverArt(temporaryFilename);
               temporaryFilenameLarge += imageExtension;
               MediaPortal.Util.Utils.FileDelete(temporaryFilename);
               MediaPortal.Util.Utils.FileDelete(temporaryFilenameLarge);
@@ -437,24 +438,20 @@ namespace MediaPortal.GUI.Video
               if (imageUrl.Length > 7 && imageUrl.Substring(0, 7).Equals("file://"))
               {
                 // Local image, don't download, just copy
-                System.IO.File.Copy(imageUrl.Substring(7), temporaryFilename);
+                File.Copy(imageUrl.Substring(7), temporaryFilename);
               }
               else
               {
                 MediaPortal.Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
               }
-              if (System.IO.File.Exists(temporaryFilename))
+              if (File.Exists(temporaryFilename))
               {
                 MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
-                if (System.IO.File.Exists(temporaryFilenameLarge))
-                {
-                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-                }
-                else
-                {
-                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-                }
+                if (File.Exists(temporaryFilenameLarge))                
+                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);                
+                else                
+                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);                
               }
               MediaPortal.Util.Utils.FileDelete(temporaryFilename);
             }//if ( strExtension.Length>0)
@@ -464,14 +461,14 @@ namespace MediaPortal.GUI.Video
             }
           }
 
-          if (((System.IO.File.Exists(coverArtImage)) && (FolderForThumbs != string.Empty)) || forceFolderThumb)
+          if (((File.Exists(coverArtImage)) && (FolderForThumbs != string.Empty)) || forceFolderThumb)
           {
             // copy icon to folder also;
             string strFolderImage = string.Empty;              
             if (forceFolderThumb)
-              strFolderImage = System.IO.Path.GetFullPath(currentMovie.Path);
+              strFolderImage = Path.GetFullPath(currentMovie.Path);
             else
-              strFolderImage = System.IO.Path.GetFullPath(FolderForThumbs);
+              strFolderImage = Path.GetFullPath(FolderForThumbs);
 
             strFolderImage += "\\folder.jpg"; //TODO                  
             try
@@ -479,13 +476,13 @@ namespace MediaPortal.GUI.Video
               MediaPortal.Util.Utils.FileDelete(strFolderImage);
               if (forceFolderThumb)
               {
-                if (System.IO.File.Exists(largeCoverArtImage))
-                  System.IO.File.Copy(largeCoverArtImage, strFolderImage, true);
+                if (File.Exists(largeCoverArtImage))
+                  File.Copy(largeCoverArtImage, strFolderImage, true);
                 else
-                  System.IO.File.Copy(coverArtImage, strFolderImage, true);
+                  File.Copy(coverArtImage, strFolderImage, true);
               }
               else
-                System.IO.File.Copy(coverArtImage, strFolderImage, false);
+                File.Copy(coverArtImage, strFolderImage, false);
             }
             catch (Exception ex1)
             {
