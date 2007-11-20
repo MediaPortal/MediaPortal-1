@@ -168,60 +168,60 @@ namespace MediaPortal.MPInstaller
           // newToolStripMenuItem
           // 
           this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-          this.newToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+          this.newToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.newToolStripMenuItem.Text = "New Proiect";
           this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
           // 
           // openProiectToolStripMenuItem
           // 
           this.openProiectToolStripMenuItem.Name = "openProiectToolStripMenuItem";
-          this.openProiectToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-          this.openProiectToolStripMenuItem.Text = "Open Proiect ..";
+          this.openProiectToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+          this.openProiectToolStripMenuItem.Text = "Open Project ..";
           this.openProiectToolStripMenuItem.Click += new System.EventHandler(this.openProiectToolStripMenuItem_Click);
           // 
           // sToolStripMenuItem
           // 
           this.sToolStripMenuItem.Name = "sToolStripMenuItem";
-          this.sToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-          this.sToolStripMenuItem.Text = "Save Proiect";
+          this.sToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+          this.sToolStripMenuItem.Text = "Save Project";
           this.sToolStripMenuItem.Click += new System.EventHandler(this.sToolStripMenuItem_Click);
           // 
           // saveProiectAsToolStripMenuItem
           // 
           this.saveProiectAsToolStripMenuItem.Name = "saveProiectAsToolStripMenuItem";
-          this.saveProiectAsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-          this.saveProiectAsToolStripMenuItem.Text = "Save Proiect As..";
+          this.saveProiectAsToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+          this.saveProiectAsToolStripMenuItem.Text = "Save Project As..";
           this.saveProiectAsToolStripMenuItem.Click += new System.EventHandler(this.saveProiectAsToolStripMenuItem_Click);
           // 
           // buildToolStripMenuItem
           // 
           this.buildToolStripMenuItem.Name = "buildToolStripMenuItem";
-          this.buildToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+          this.buildToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.buildToolStripMenuItem.Text = "Build";
           this.buildToolStripMenuItem.Click += new System.EventHandler(this.buildToolStripMenuItem_Click);
           // 
           // toolStripSeparator1
           // 
           this.toolStripSeparator1.Name = "toolStripSeparator1";
-          this.toolStripSeparator1.Size = new System.Drawing.Size(165, 6);
+          this.toolStripSeparator1.Size = new System.Drawing.Size(166, 6);
           // 
           // optionsToolStripMenuItem
           // 
           this.optionsToolStripMenuItem.Enabled = false;
           this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-          this.optionsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+          this.optionsToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.optionsToolStripMenuItem.Text = "Options";
           this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
           // 
           // toolStripSeparator2
           // 
           this.toolStripSeparator2.Name = "toolStripSeparator2";
-          this.toolStripSeparator2.Size = new System.Drawing.Size(165, 6);
+          this.toolStripSeparator2.Size = new System.Drawing.Size(166, 6);
           // 
           // exitToolStripMenuItem
           // 
           this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-          this.exitToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+          this.exitToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.exitToolStripMenuItem.Text = "Exit";
           this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
           // 
@@ -513,7 +513,7 @@ namespace MediaPortal.MPInstaller
           // 
           this.saveFileDialog1.CreatePrompt = true;
           this.saveFileDialog1.DefaultExt = "xml";
-          this.saveFileDialog1.Filter = "Proiect files (*.xmp)|*.xmp|All files |*.*";
+          this.saveFileDialog1.Filter = "Project files (*.xmp)|*.xmp|All files |*.*";
           // 
           // tabPage_Skin
           // 

@@ -517,7 +517,16 @@ namespace MediaPortal.MPInstaller
       FileName = InstalDir + @"\" + "config.xml";
       //LoadFromFile();
     }
-
+    
+    public void NormalizeNames()
+    {
+      foreach (MPpackageStruct pk in this.lst)
+      {
+        pk._intalerStruct.Name = pk._intalerStruct.Name.Replace("(MPI)", "");
+        pk._intalerStruct.Name = pk._intalerStruct.Name.Replace("(Mpi)", "");
+      }
+    }
+    
     public void Compare(MPInstallHelper mp)
     {
       foreach (MPpackageStruct pk in this.lst)
@@ -732,6 +741,7 @@ namespace MediaPortal.MPInstaller
         }
         //XmlNode nodeoption = ver.SelectSingleNode("Option");
         //this.BuildFileName = nodeoption.SelectSingleNode("BuildFileName").InnerText;
+        NormalizeNames();
       }
     }
 

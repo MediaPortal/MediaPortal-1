@@ -143,6 +143,18 @@ namespace MediaPortal.MPInstaller
               pictureBox2.Visible = false;
             }
             richTextBox1.Text = String.Format("  Name : {0} \n\n  Author : {1} \n\n  Version : {2} \n\n  Description :\n {3} \n", package._intalerStruct.Name, package._intalerStruct.Author, package._intalerStruct.Version, package._intalerStruct.Description);
+            foreach (string sk in package.SkinList)
+            {
+              if (package.InstalledSkinList.Contains(sk))
+                skinlister.Items.Add(sk, true);
+              else
+                skinlister.Items.Add(sk, false);
+            }
+            foreach (string sk in package.InstalledSkinList)
+            {
+              if (!package.SkinList.Contains(sk))
+                skinlister.Items.Add(sk, true);
+            }
             if (!this.Visible) this.ShowDialog();
             break;
           }

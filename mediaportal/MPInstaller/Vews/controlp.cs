@@ -119,7 +119,7 @@ namespace MediaPortal.MPInstaller
             imageList1.Images.Add(pk._intalerStruct.Logo);
             item1.ImageIndex = imageList1.Images.Count - 1;
           }
-          if (pk.isNew) item1.ForeColor = Color.Red;
+          if (pk.isNew) item1.ForeColor = Color.Blue;
           if (pk.isUpdated) item1.ForeColor = Color.BlueViolet;
           item1.ToolTipText = pk._intalerStruct.Description;
           item1.SubItems.Add(pk._intalerStruct.Author);
@@ -498,12 +498,14 @@ namespace MediaPortal.MPInstaller
       dw.Text = "Download online list";
       dw.ShowDialog();
       LoadListFiles();
+      mozPane1.SelectItem(0);
       LoadToListview("All");
     }
 
     private void LoadListFiles()
     {
       lst.LoadFromFile();
+      lst.NormalizeNames();
       for (int i = 0; i < lst.lst.Count; i++)
       {
         ((MPpackageStruct)lst.lst[i]).isInstalled = true;
@@ -513,6 +515,7 @@ namespace MediaPortal.MPInstaller
       if (File.Exists(temp_file))
       {
         lst_online.LoadFromFile(temp_file);
+        lst_online.NormalizeNames();
         lst_online.Compare(lst);
         lst.AddRange(lst_online);
       }

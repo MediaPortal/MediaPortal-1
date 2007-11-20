@@ -70,7 +70,7 @@ namespace MediaPortal.MPInstaller
       if (!IsGoodToSave())
         return;
 
-      saveFileDialog1.Filter = "Proiect files (*.xmp)|*.xmp|All files (*.*)|*.*";
+      saveFileDialog1.Filter = "Project files (*.xmp)|*.xmp|All files (*.*)|*.*";
       saveFileDialog1.DefaultExt = "*.xmp";
       _struct.AddFileList(bossview);
       if (Path.GetFileName(proiect_file_name) == "Untitled" || String.IsNullOrEmpty(proiect_file_name.Trim()))
@@ -276,7 +276,7 @@ namespace MediaPortal.MPInstaller
     private void openProiectToolStripMenuItem_Click(object sender, EventArgs e)
     {
       string fil;
-      openFileDialog1.Filter = "Proiect files (*.xmp)|*.xmp|All files (*.*)|*.*";
+      openFileDialog1.Filter = "Project files (*.xmp)|*.xmp|All files (*.*)|*.*";
       openFileDialog1.FileName = "";
       openFileDialog1.DefaultExt = "*.xmp";
       if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
@@ -377,7 +377,7 @@ namespace MediaPortal.MPInstaller
         proiectt_textBox1.Focus();
         return;
       }
-      saveFileDialog1.Filter = "Proiect files (*.xmp)|*.xmp|All files (*.*)|*.*";
+      saveFileDialog1.Filter = "Project files (*.xmp)|*.xmp|All files (*.*)|*.*";
       saveFileDialog1.DefaultExt = "*.xmp";
       if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
