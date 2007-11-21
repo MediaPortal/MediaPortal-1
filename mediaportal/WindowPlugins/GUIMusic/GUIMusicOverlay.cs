@@ -450,18 +450,14 @@ namespace MediaPortal.GUI.Music
       string skin = GUIGraphicsContext.Skin;
       thumb = string.Empty;
       MusicTag tag = null;
-      
-      //if (_useID3)  // <-- always use it since one file lookup isn't a performance issue (especially with the new tagreader and it's < 0.1 seconds)
-      //{
-        //yes, then try reading the tag from the file
-        tag = TagReader.TagReader.ReadTag(fileName);
-      //}
+
+      tag = TagReader.TagReader.ReadTag(fileName);
 
       // if we're playing a radio
       if (Recorder.IsRadio())
       {
         tag = new MusicTag();
-        string cover = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, Recorder.RadioStationName());
+        string cover = Util.Utils.GetCoverArt(Thumbs.Radio, Recorder.RadioStationName());
         if (cover != string.Empty)
           thumb = cover;
         tag.Title = Recorder.RadioStationName();
@@ -537,7 +533,7 @@ namespace MediaPortal.GUI.Music
 
       string strThumb = string.Empty;
 
-      if (isCurrent && tag != null)
+      if (tag != null)
       {
         strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
         if (System.IO.File.Exists(strThumb))
@@ -545,13 +541,13 @@ namespace MediaPortal.GUI.Music
       }
 
       // no succes with album cover try folder cache
-      if (thumb == string.Empty)
-        Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName);      
+      if (string.IsNullOrEmpty(thumb))
+        thumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName);      
 
       if (isCurrent)
       {
         // let us test if there is a larger cover art image
-        string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(thumb);
+        string strLarge = Util.Utils.ConvertToLargeCoverArt(thumb);
         if (System.IO.File.Exists(strLarge))
         {
           //Log.Debug("GUIMusicOverlay: using larger thumb - {0}", strLarge);
