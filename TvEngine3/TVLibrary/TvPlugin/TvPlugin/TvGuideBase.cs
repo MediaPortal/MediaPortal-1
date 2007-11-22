@@ -2499,7 +2499,7 @@ namespace TvPlugin
               bool recMatchFound = false;
               foreach (Schedule rec in _recordingList)
               {
-                if (rec.ProgramName.Equals(_currentProgram.Title))
+                if (rec.ProgramName.Equals(_currentProgram.Title) && rec.ScheduleType != 3 && rec.ScheduleType != 4)
                 {
                   recMatchFound = true;
 
