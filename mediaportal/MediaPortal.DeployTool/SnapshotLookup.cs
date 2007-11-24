@@ -40,10 +40,10 @@ namespace MediaPortal.DeployTool
       switch (sType)
       {
         case SnapshotType.MediaPortal:
-          url = "http://forum.team-mediaportal.com/mediaportal_nightly_builds_v0_2_3_0-f229.html";
+          url = Utils.GetDownloadURL("MediaPortal_SVN_Base");
           break;
         case SnapshotType.TvServer:
-          url = "http://forum.team-mediaportal.com/tv_server_nightly_builds-f197.html";
+          url = Utils.GetDownloadURL("TvServer_SVN_Base");
           break;
       }
       HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
