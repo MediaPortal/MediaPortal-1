@@ -1374,6 +1374,8 @@ namespace MediaPortal.GUI.TV
             _dialogYesNoVisible = false;
             _bottomDialogMenuVisible = false;
             _statusTimeOutTimer = DateTime.Now;
+            imgVolumeBar.Current = VolumeHandler.Instance.Step;
+            imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
             RenderVolume(false);
             ScreenStateChanged();
             UpdateGUI();

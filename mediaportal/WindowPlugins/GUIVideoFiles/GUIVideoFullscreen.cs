@@ -1007,6 +1007,8 @@ namespace MediaPortal.GUI.Video
             _needToClearScreen = true;
             UpdateGUI();
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
+            imgVolumeBar.Current = VolumeHandler.Instance.Step;
+            imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
             RenderVolume(false);
             RenderForbidden(false);
             if (!screenState.Paused)
