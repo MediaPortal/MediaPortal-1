@@ -64,7 +64,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   pTeletextEventCallback = NULL;
   pTeletextPacketCallback = NULL;
   pTeletextServiceInfoCallback = NULL;
-
+  m_iAudioReadCount = 0;
   ReadAudioIndexFromRegistry();
 }
 
@@ -370,6 +370,9 @@ void CDeMultiplexer::FlushSubtitle()
 void CDeMultiplexer::Flush()
 {
   LogDebug("demux:flushing");
+
+  m_iAudioReadCount = 0;
+  
   bool holdAudio=HoldAudio();
   bool holdVideo=HoldVideo();
   bool holdSubtitle=HoldSubtitle();
@@ -463,7 +466,9 @@ CBuffer* CDeMultiplexer::GetVideo()
 ///Returns the next audio packet
 // or NULL if there is none available
 CBuffer* CDeMultiplexer::GetAudio()
-{
+{  
+   
+
   //if there is no audio pid, then simply return NULL
   if (  m_audioPid==0)
   {
@@ -474,7 +479,36 @@ CBuffer* CDeMultiplexer::GetAudio()
   // when there are no audio packets at the moment
   // then try to read some from the current file
   while (m_vecAudioBuffers.size()==0) 
-  {
+  {	
+	if (m_audioStreams.size() > 1)
+	{
+	  if( m_iAudioReadCount > 10 && m_iAudioStream == 0) // no audio packets avail. lets try the next audio stream if any available
+	  {	  
+		int previousAudioStream = m_iAudioStream;
+		int newAudioStream = m_iAudioStream;
+		if (m_audioStreams.size() > newAudioStream+1)
+		{
+		  newAudioStream++; //try next avail stream
+		}
+		else
+		{
+		  newAudioStream = 0; // try the first stream
+		}
+
+		if (previousAudioStream != newAudioStream)
+		{	  
+		  LogDebug("demux:no audio found with stream index = %i, setting audio index = %i", previousAudioStream, newAudioStream);	  
+
+		  SetAudioStream( newAudioStream );
+		  m_iAudioReadCount = 0;
+		}
+	  }	
+	  else
+	  {
+		m_iAudioReadCount++;
+	  }
+	}
+
     //if filter is stopped or 
     //end of file has been reached or
     //demuxer should stop getting audio packets
@@ -528,6 +562,8 @@ void CDeMultiplexer::Start()
   }
   m_streamPcr.Reset();
   m_bScanning=false;
+
+  m_iAudioReadCount=0;
 }
 
 void CDeMultiplexer::SetEndOfFile(bool bEndOfFile)

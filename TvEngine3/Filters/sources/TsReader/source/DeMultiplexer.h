@@ -140,6 +140,9 @@ private:
   unsigned int m_currentSubtitlePid;
   unsigned int m_iSubtitleStream;
   unsigned int m_currentTeletextPid; // Ziphnor
+
+  unsigned int m_iAudioReadCount;
+
   bool m_bScanning;
 	bool m_bHoldAudio;
 	bool m_bHoldVideo;
