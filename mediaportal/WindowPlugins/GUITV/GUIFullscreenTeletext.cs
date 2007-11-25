@@ -91,15 +91,15 @@ namespace MediaPortal.GUI.TV
       base.OnPageLoad();
       int left = GUIGraphicsContext.Width / 20;
       int top = GUIGraphicsContext.Height / 20;
-      if (imgTeletextForeground != null) {
-        imgTeletextForeground.Width = GUIGraphicsContext.Width - (2 * left);
-        imgTeletextForeground.Height = GUIGraphicsContext.Height - (2 * top);
-        imgTeletextForeground.SetPosition(left, top);
+      if (imgTeletextFirst != null) {
+        imgTeletextFirst.Width = GUIGraphicsContext.Width - (2 * left);
+        imgTeletextFirst.Height = GUIGraphicsContext.Height - (2 * top);
+        imgTeletextFirst.SetPosition(left, top);
       }
-      if (imgTeletextBackground != null) {
-        imgTeletextBackground.Width = GUIGraphicsContext.Width - (2 * left);
-        imgTeletextBackground.Height = GUIGraphicsContext.Height - (2 * top);
-        imgTeletextBackground.SetPosition(left, top);
+      if (imgTeletextSecond != null) {
+        imgTeletextSecond.Width = GUIGraphicsContext.Width - (2 * left);
+        imgTeletextSecond.Height = GUIGraphicsContext.Height - (2 * top);
+        imgTeletextSecond.SetPosition(left, top);
       }
       InitializeWindow(true);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
@@ -125,12 +125,14 @@ namespace MediaPortal.GUI.TV
     public override void Render(float timePassed) {
       // Force the fullscreen video
       GUIGraphicsContext.IsFullScreenVideo = true;
-      // Only the render one of the images, if no update is running
-      if (!_updatingForegroundImage) {
-        imgTeletextForeground.Render(timePassed);
+      // Only render one of the images
+      if (_updateFirst)
+      {
+        imgTeletextFirst.Render(timePassed);
       }
-      if (!_updatingBackgroundImage) {
-        imgTeletextBackground.Render(timePassed);
+      else
+      {
+        imgTeletextSecond.Render(timePassed);
       }
     }
     #endregion

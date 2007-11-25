@@ -30,9 +30,9 @@ namespace MediaPortal.GUI.TV
     [SkinControlAttribute(27)]
     protected GUILabelControl lblMessage = null;
     [SkinControlAttribute(500)]
-    protected GUIImage imgTeletextForeground = null;
+    protected GUIImage imgTeletextFirst = null;
     [SkinControlAttribute(501)]
-    protected GUIImage imgTeletextBackground = null;
+    protected GUIImage imgTeletextSecond = null;
     #endregion
 
     #region variables
@@ -47,8 +47,6 @@ namespace MediaPortal.GUI.TV
     protected int _requestPtr = 0;
     protected int _renderPtr = 0;
     protected byte[] receivedPage;
-    protected bool _updatingForegroundImage;
-    protected bool _updatingBackgroundImage;
     protected DateTime _startTime = DateTime.MinValue;
     protected bool _hiddenMode;
     protected bool _transparentMode;
@@ -58,6 +56,7 @@ namespace MediaPortal.GUI.TV
     protected bool _rememberLastValues;
     protected bool _updating;
     protected int _percentageOfMaximumHeight;
+    protected bool _updateFirst=true;
     #endregion
 
     #region Property
@@ -95,15 +94,15 @@ namespace MediaPortal.GUI.TV
       TeletextGrabber.TeletextCache.PercentageOfMaximumHeight = _percentageOfMaximumHeight;
 
       // Initialize the images
-      if (imgTeletextForeground != null)
+      if (imgTeletextFirst != null)
       {
-        imgTeletextForeground.ColorKey = System.Drawing.Color.HotPink.ToArgb();
-        TeletextGrabber.TeletextCache.SetPageSize(imgTeletextForeground.Width, imgTeletextForeground.Height);
+        imgTeletextFirst.ColorKey = System.Drawing.Color.HotPink.ToArgb();
+        TeletextGrabber.TeletextCache.SetPageSize(imgTeletextFirst.Width, imgTeletextFirst.Height);
       }
-      if (imgTeletextBackground != null)
+      if (imgTeletextSecond != null)
       {
-        imgTeletextBackground.ColorKey = System.Drawing.Color.HotPink.ToArgb();
-        TeletextGrabber.TeletextCache.SetPageSize(imgTeletextBackground.Width, imgTeletextBackground.Height);
+        imgTeletextSecond.ColorKey = System.Drawing.Color.HotPink.ToArgb();
+        TeletextGrabber.TeletextCache.SetPageSize(imgTeletextSecond.Width, imgTeletextSecond.Height);
       }
 
       _requestPtr = 0;
@@ -416,35 +415,38 @@ namespace MediaPortal.GUI.TV
         try
         {
           Log.Debug("dvb-teletext redraw start");
-          // First update the foreground image. Step 1 make it invisible
-          _updatingForegroundImage = true;
-          imgTeletextForeground.IsVisible = false;
-          // Clear the old image
-          System.Drawing.Image img = (Image)bmpTeletextPage.Clone();
-          imgTeletextForeground.FileName = "";
-          GUITextureManager.ReleaseTexture("[teletextpage]");
-          // Set the new image and make the image visible again
-          imgTeletextForeground.MemoryImage = img;
-          imgTeletextForeground.FileName = "[teletextpage]";
-          imgTeletextForeground.Centered = false;
-          imgTeletextForeground.KeepAspectRatio = false;
-          imgTeletextForeground.IsVisible = true;
-          _updatingForegroundImage = false;
-          // Update the background image now. Therefore make image invisible
-          _updatingBackgroundImage = true;
-          imgTeletextBackground.IsVisible = false;
-
-          // Clear the old image
-          System.Drawing.Image img2 = (Image)bmpTeletextPage.Clone();
-          imgTeletextBackground.FileName = "";
-          GUITextureManager.ReleaseTexture("[teletextpage2]");
-          // Set the new image and make the image visible again
-          imgTeletextBackground.MemoryImage = img2;
-          imgTeletextBackground.FileName = "[teletextpage2]";
-          imgTeletextBackground.Centered = false;
-          imgTeletextBackground.KeepAspectRatio = false;
-          imgTeletextBackground.IsVisible = true;
-          _updatingBackgroundImage = false;
+          if (_updateFirst)
+          {
+            _updateFirst = !_updateFirst;
+            // Update first image. Step 1 make it invisible
+            imgTeletextFirst.IsVisible = false;
+            // Clear the old image
+            System.Drawing.Image img = (Image)bmpTeletextPage.Clone();
+            imgTeletextFirst.FileName = "";
+            GUITextureManager.ReleaseTexture("[teletextpage]");
+            // Set the new image and make the image visible again
+            imgTeletextFirst.MemoryImage = img;
+            imgTeletextFirst.FileName = "[teletextpage]";
+            imgTeletextFirst.Centered = false;
+            imgTeletextFirst.KeepAspectRatio = false;
+            imgTeletextFirst.IsVisible = true;
+          }
+          else
+          {
+            _updateFirst = !_updateFirst;
+            // Update second image
+            imgTeletextSecond.IsVisible = false;
+            // Clear the old image
+            System.Drawing.Image img2 = (Image)bmpTeletextPage.Clone();
+            imgTeletextSecond.FileName = "";
+            GUITextureManager.ReleaseTexture("[teletextpage2]");
+            // Set the new image and make the image visible again
+            imgTeletextSecond.MemoryImage = img2;
+            imgTeletextSecond.FileName = "[teletextpage2]";
+            imgTeletextSecond.Centered = false;
+            imgTeletextSecond.KeepAspectRatio = false;
+            imgTeletextSecond.IsVisible = true;
+          }
           Log.Debug("dvb-teletext redraw End");
         }
         catch (Exception ex)
