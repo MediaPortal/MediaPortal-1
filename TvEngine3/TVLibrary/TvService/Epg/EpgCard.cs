@@ -979,7 +979,7 @@ namespace TvService
 
     private string GetStarRatingStr(int starRating)
     {
-      string rating = "<undefined>";
+      string rating = "";
       switch (starRating)
       {
         case 1:
