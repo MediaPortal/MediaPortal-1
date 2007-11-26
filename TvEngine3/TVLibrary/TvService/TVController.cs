@@ -1753,7 +1753,29 @@ namespace TvService
         return;
       }
     }
+    /// <summary>
+    /// This method should be called by a client to indicate that
+    /// there is a new or modified Schedule in the database
+    /// this override allows to pass a custom TvServerEventArgs instance
+    /// </summary>
+    public void OnNewSchedule(EventArgs args)
+    {
+      try
+      {
+        if (_scheduler != null)
+        {
+          _scheduler.ResetTimer();
+        }
+        TvServerEventArgs tvargs = (TvServerEventArgs)args;
+        Fire(this, new TvServerEventArgs(TvServerEventType.ScheduledAdded, tvargs.Schedules, tvargs.Conflicts, tvargs.ArgsUpdatedState));
 
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+        return;
+      }
+    }
     /// <summary>
     /// Enable or disable the epg-grabber
     /// </summary>

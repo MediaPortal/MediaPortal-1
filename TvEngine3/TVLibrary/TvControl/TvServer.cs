@@ -262,7 +262,21 @@ namespace TvControl
         HandleFailure(ex);
       }
     }
-
+    /// <summary>
+    /// This method should be called by a client to indicate that
+    /// there is a new or modified Schedule in the database
+    /// </summary>
+    public void OnNewSchedule(EventArgs args)
+    {
+      try
+      {
+        RemoteControl.Instance.OnNewSchedule(args);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+    }
     /// <summary>
     /// Enable or disable the epg-grabber
     /// </summary>

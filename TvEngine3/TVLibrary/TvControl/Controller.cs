@@ -339,6 +339,12 @@ namespace TvControl
     void OnNewSchedule();
 
     /// <summary>
+    /// This method should be called by a client to indicate that
+    /// there is a new or modified Schedule in the database
+    /// </summary>
+    void OnNewSchedule(EventArgs args);
+
+    /// <summary>
     /// Enable or disable the epg-grabber
     /// </summary>
     bool EpgGrabberEnabled { get;set;}
