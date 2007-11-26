@@ -238,13 +238,18 @@ void CEpgDecoder::DecodeCombinedStarRating_MPAARatingDescriptor(byte* data,EPGEv
 
 	the next bits and bytes describe, but i haven't figured out the order yet:
 				SC,L,N,V 
-	http://dvbn.happysat.org/viewtopic.php?t=16912&highlight=parental+rating */
+	http://dvbn.happysat.org/viewtopic.php?t=16912&highlight=parental+rating 
 	
-	int starRating=(int)data[2]&0x7;
+	According to this thread http://board.mytheatre.ru/viewtopic.php?t=1265&postdays=0&postorder=asc&highlight=star+rating&start=0
+	the bits were wrong before */
+
+	//int starRating=(int)data[2]&0x7;
+	int starRating=(int)data[3]&0xE0; // bits 13-15
 	if (starRating>0 && starRating<8)
 		epgEvent.starRating=starRating;
-	byte bPRating=data[3]&0x38;
-	epgEvent.classification="<unknown>";
+	//byte bPRating=data[3]&0x38;
+	byte bPRating=data[3]&0x1C;		// bits 10-12
+	epgEvent.classification="";
 	switch (bPRating)
 	{
 		case 0:
