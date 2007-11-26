@@ -76,10 +76,10 @@ namespace TvEngine.Events
     /// Event indicating that a  conflict has been deleted
     /// </summary>
     ConflictDeleted,
-		/// <summary>
-		/// Event indicating that the program db was updated
-		/// </summary>
-		ProgramUpdated,
+    /// <summary>
+    /// Event indicating that the program db was updated
+    /// </summary>
+    ProgramUpdated,
   };
 
   public class TvServerEventArgs : EventArgs
@@ -94,6 +94,11 @@ namespace TvEngine.Events
     Schedule _schedule = null;
     Recording _recording = null;
     Conflict _conflict = null;
+    // Added by Broce for exchanges between TVPlugin & ConflictsManager
+    IList<Schedule> _schedules = null;
+    IList<Conflict> _conflicts = null;
+    object _argsUpdatedState = null;
+    //
     TvServerEventType _eventType;
     #endregion
 
@@ -164,6 +169,20 @@ namespace TvEngine.Events
       _user = user;
       _channel = channel;
       _conflict = conflict;
+    }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
+    /// </summary>
+    /// <param name="eventType">Type of the event.</param>
+    /// <param name="schedulesList">a IList of schedules</param>
+    /// <param name="conflictsList">a IList of conflicts</param>
+    /// <param name="argUpdated">bool flag</param>
+    public TvServerEventArgs(TvServerEventType eventType, IList<Schedule> schedulesList, IList<Conflict> conflictsList, object argsUpdated)
+    {
+      _eventType = eventType;
+      _schedules = schedulesList;
+      _conflicts = conflictsList;
+      _argsUpdatedState = argsUpdated;
     }
     #endregion
 
@@ -253,7 +272,23 @@ namespace TvEngine.Events
         return _schedule;
       }
     }
-
+    // Added by Broce for exchanges between TVPlugin & ConflictsManager
+    public IList<Schedule> Schedules
+    {
+      get { return _schedules; }
+      set { _schedules = value; }
+    }
+    public IList<Conflict> Conflicts
+    {
+      get { return _conflicts; }
+      set { _conflicts = value; }
+    }
+    public object ArgsUpdatedState
+    {
+      get { return _argsUpdatedState; }
+      set { _argsUpdatedState = value; }
+    }
+    //
     /// <summary>
     /// Gets the type of the event.
     /// </summary>
