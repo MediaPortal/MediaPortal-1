@@ -133,7 +133,7 @@ DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMeth
 	}
 	else // if (dwMoveMethod == FILE_BEGIN)
 	{
-		m_currentPosition = llDistanceToMove;
+		m_currentPosition = m_startPosition + llDistanceToMove;
 	}
 
 	if (m_currentPosition < m_startPosition)
@@ -201,6 +201,7 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 		}
 
 		__int64 seekPosition = m_currentPosition - file->startPosition;
+
 		m_TSFile.SetFilePointer(seekPosition, FILE_BEGIN);
     __int64 posSeeked=m_TSFile.GetFilePointer();
     if (posSeeked!=seekPosition)
