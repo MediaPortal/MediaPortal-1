@@ -681,7 +681,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_REWIND:
           {
-            if (g_Player.IsTimeShifting)
+            if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
               g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
               if (g_Player.Paused) g_Player.Pause();
@@ -694,7 +694,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_FORWARD:
           {
-            if (g_Player.IsTimeShifting)
+            if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
               g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
               if (g_Player.Paused) g_Player.Pause();
@@ -733,7 +733,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_STEP_BACK:
           {
-            if (g_Player.IsTimeShifting)
+            if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
               if (g_Player.Paused)
               {
@@ -756,7 +756,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_STEP_FORWARD:
           {
-            if (g_Player.IsTimeShifting)
+            if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
               if (g_Player.Paused)
               {
@@ -779,7 +779,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_BIG_STEP_BACK:
           {
-            if (g_Player.IsTimeShifting)
+            if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
               if (g_Player.Paused)
               {
@@ -798,7 +798,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
           {
-            if (g_Player.IsTimeShifting)
+            if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
               if (g_Player.Paused)
               {
@@ -815,7 +815,7 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_PAUSE:
           {
-            if (g_Player.IsTimeShifting)
+            if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
               g_Player.Pause();
             }
@@ -836,7 +836,7 @@ namespace TvPlugin
         case Action.ActionType.ACTION_PLAY:
 
         case Action.ActionType.ACTION_MUSIC_PLAY:
-          if (g_Player.IsTimeShifting)
+          if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
           {
             g_Player.StepNow();
             g_Player.Speed = 1;
@@ -1441,7 +1441,7 @@ namespace TvPlugin
 
       /*if (TVHome.Navigator.Groups.Count > 1)
         dlg.AddLocalizedString(971); // Group*/
-      if (TVHome.Card.HasTeletext)
+      if (TVHome.Card.HasTeletext && !g_Player.IsTVRecording)
         dlg.AddLocalizedString(1441); // Fullscreen teletext
       dlg.AddLocalizedString(941); // Change aspect ratio
       if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
@@ -1456,10 +1456,16 @@ namespace TvPlugin
         dlg.AddLocalizedString(492); // Audio language menu
       }
       dlg.AddLocalizedString(11000);  // Crop settings
-      dlg.AddLocalizedString(100748); // Program Information
-      if (File.Exists(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml"))
+
+      if (!g_Player.IsTVRecording)
+        dlg.AddLocalizedString(100748); // Program Information
+      if (File.Exists(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml") && !g_Player.IsTVRecording)
         dlg.AddLocalizedString(200041); // tuning details
-      dlg.AddLocalizedString(601);    //Record Now
+
+      if (!g_Player.IsTVRecording)
+      {
+        dlg.AddLocalizedString(601);    //Record Now
+      }
       dlg.AddLocalizedString(970);    // Previous window
 
       _isDialogVisible = true;

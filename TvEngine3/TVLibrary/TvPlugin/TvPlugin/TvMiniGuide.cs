@@ -265,7 +265,7 @@ namespace TvPlugin
                 if (AutoZap)
                 {
                   string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
-                  if (TVHome.Navigator.CurrentChannel != selectedChan)
+                  if ((TVHome.Navigator.CurrentChannel != selectedChan) || g_Player.IsTVRecording)
                   {                    
                     changeChannel = (Channel)_tvChannelList[lstChannels.SelectedListItemIndex];                    
                   }
@@ -274,7 +274,8 @@ namespace TvPlugin
                 Close();
                 
                 if (changeChannel != null)
-                {                  
+                {
+                  TVHome.UserChannelChanged = true;
                   TVHome.ViewChannel(changeChannel);                  
                 }
               }

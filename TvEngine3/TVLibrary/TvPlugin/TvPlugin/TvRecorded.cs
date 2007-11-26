@@ -150,6 +150,7 @@ namespace TvPlugin
 
     ViewAs currentViewMethod = ViewAs.Album;
     SortMethod currentSortMethod = SortMethod.Date;
+    private static Recording m_oActiveRecording = null;
     bool m_bSortAscending = true;
     bool _deleteWatchedShows = false;
     bool _createRecordedThumbs = true;
@@ -171,7 +172,10 @@ namespace TvPlugin
       GetID = (int)GUIWindow.Window.WINDOW_RECORDEDTV;
     }
     public override void OnAdded()
-    {
+    {      
+      // replace g_player's ShowFullScreenWindowTV
+      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
+
       Log.Info("TvRecorded:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
       Restore();
@@ -185,6 +189,12 @@ namespace TvPlugin
         return true;
       }
     }
+
+    public static Recording ActiveRecording()
+    {
+      return m_oActiveRecording;
+    }
+
 
 
     #region Serialisation
@@ -263,7 +273,30 @@ namespace TvPlugin
     }
     #endregion
 
+
+    /// <summary>
+    /// This function replaces g_player.ShowFullScreenWindowTV
+    /// </summary>
+    ///<returns></returns>        
+    private static bool ShowFullScreenWindowTVHandler()
+    {
+      if (g_Player.IsTVRecording)
+      {
+        // watching TV
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+          return true;
+        Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen tv");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+        GUIGraphicsContext.IsFullScreenVideo = true;
+        return true;
+      }
+
+      return g_Player.ShowFullScreenWindowTVDefault();
+    }
+
     #region overrides
+
+
     public override bool Init()
     {
       g_Player.PlayBackStopped += new MediaPortal.Player.g_Player.StoppedHandler(OnPlayRecordingBackStopped);
@@ -756,6 +789,7 @@ namespace TvPlugin
       }
     }
 
+    
     bool OnPlayRecording(int iItem)
     {
 
@@ -773,6 +807,7 @@ namespace TvPlugin
 
 
       Recording rec = (Recording)pItem.TVTag;
+      m_oActiveRecording = rec;
 
       // if we are currently playing a TV recording and want to play a new tv recoding, then we will avoid the .stop() call, since it will 
       // simly show the last TV channel (time consuming).

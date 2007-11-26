@@ -392,32 +392,35 @@ namespace TvPlugin
             {
               OnPreviousChannel();
             }
-            if (iControl == btnPreviousProgram.GetID)
+            if (!g_Player.IsTVRecording)
             {
-              Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
-              if (prog != null)
+              if (iControl == btnPreviousProgram.GetID)
               {
-                prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.StartTime.Subtract(new TimeSpan(0, 1, 0)));
+                Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
                 if (prog != null)
                 {
-                  m_dateTime = prog.StartTime.AddMinutes(1);
+                  prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.StartTime.Subtract(new TimeSpan(0, 1, 0)));
+                  if (prog != null)
+                  {
+                    m_dateTime = prog.StartTime.AddMinutes(1);
+                  }
                 }
-              }
-              ShowPrograms();
+                ShowPrograms();
 
-            }
-            if (iControl == btnNextProgram.GetID)
-            {
-              Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
-              if (prog != null)
+              }
+              if (iControl == btnNextProgram.GetID)
               {
-                prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(+1));
+                Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
                 if (prog != null)
                 {
-                  m_dateTime = prog.StartTime.AddMinutes(1);
+                  prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(+1));
+                  if (prog != null)
+                  {
+                    m_dateTime = prog.StartTime.AddMinutes(1);
+                  }
                 }
+                ShowPrograms();
               }
-              ShowPrograms();
             }
 
             if (iControl >= (int)Controls.OSD_VOLUMESLIDER)		// one of the settings (sub menu) controls is sending us a message
@@ -664,15 +667,38 @@ namespace TvPlugin
 
     void Get_TimeInfo()
     {
-      string strChannel = GetChannelName();
-      string strTime = strChannel;
-      Program prog = TVHome.Navigator.GetChannel(strChannel).CurrentProgram;
-      if (prog != null)
+      string strTime = "";
+      if (!g_Player.IsTVRecording)
       {
-
-        strTime = String.Format("{0}-{1}",
+        string strChannel = GetChannelName();
+        strTime = strChannel;
+        Program prog = TVHome.Navigator.GetChannel(strChannel).CurrentProgram;
+        if (prog != null)
+        {
+          strTime = String.Format("{0}-{1}",
           prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
           prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        }
+      }
+      else
+      {
+
+        long currentPosition = (long)(g_Player.CurrentPosition);
+        int hh = (int)(currentPosition / 3600) % 100;
+        int mm = (int)((currentPosition / 60) % 60);
+        int ss = (int)((currentPosition / 1) % 60);
+        DateTime startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hh, mm, ss);
+
+        long duration = (long)(g_Player.Duration);
+        hh = (int)(duration / 3600) % 100;
+        mm = (int)((duration / 60) % 60);
+        ss = (int)((duration / 1) % 60);
+        DateTime endTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hh, mm, ss);
+                
+        strTime = String.Format("{0}-{1}",
+        startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+        endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        
       }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Controls.OSD_TIMEINFO, 0, 0, null);
       msg.Label = strTime;
@@ -1213,7 +1239,7 @@ namespace TvPlugin
     private void OnPreviousChannel()
     {
       Log.Debug("GUITV OSD: OnPreviousChannel");
-      if (!TVHome.Card.IsTimeShifting) return;
+      if (!TVHome.Card.IsTimeShifting && !g_Player.IsTVRecording) return;
       TVHome.Navigator.ZapToPreviousChannel(false);
 
       ShowPrograms();
@@ -1223,7 +1249,7 @@ namespace TvPlugin
     private void OnNextChannel()
     {
       Log.Debug("GUITV OSD: OnNextChannel");
-      if (!TVHome.Card.IsTimeShifting) return;
+      if (!TVHome.Card.IsTimeShifting && !g_Player.IsTVRecording) return;
 
       TVHome.Navigator.ZapToNextChannel(false);
 
@@ -1259,7 +1285,23 @@ namespace TvPlugin
 
     string GetChannelName()
     {
-      return TVHome.Navigator.ZapChannel.DisplayName;
+      if (g_Player.IsTVRecording)
+      {
+        Recording rec = TvPlugin.TvRecorded.ActiveRecording();
+        if (rec != null)
+        {
+          return rec.ReferencedChannel().DisplayName;
+        }
+        else
+        {
+          return "";
+        }
+        
+      }
+      else
+      {
+        return TVHome.Navigator.ZapChannel.DisplayName;
+      }
     }
 
     void ShowPrograms()
@@ -1300,7 +1342,7 @@ namespace TvPlugin
 
       Program prog = TVHome.Navigator.Channel.CurrentProgram; //TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);      
 
-      if (prog != null)
+      if (prog != null && !g_Player.IsTVRecording)
       {
         string strTime = String.Format("{0}-{1}",
           prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
@@ -1324,7 +1366,7 @@ namespace TvPlugin
         if (tbProgramDescription != null)
         {
           tbProgramDescription.Label = prog.Description;
-        }        
+        }
 
         // next program
         prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(1));
@@ -1336,11 +1378,44 @@ namespace TvPlugin
           }
         }
       }
+      else if (g_Player.IsTVRecording)
+      {        
+        Recording rec = null;
+        string description = "";
+        string title = "";
+        string startTime = ""; // DateTime.MinValue;
+        string endTime = ""; //  DateTime.MaxValue;
+        string remaining = "";
+
+        rec = TvRecorded.ActiveRecording();
+        if (rec != null)
+        {
+          description = rec.Description;
+          title = rec.Title;
+
+          long currentPosition = (long)(g_Player.CurrentPosition);          
+          startTime = Utils.SecondsToHMSString((int)currentPosition);                              
+
+          long duration = (long)(g_Player.Duration);          
+          endTime = Utils.SecondsToHMSString((int)duration);
+          
+          remaining = "0";                    
+          tbOnTvNow.Label = title;
+          GUIPropertyManager.SetProperty("#TV.View.start", startTime);
+          GUIPropertyManager.SetProperty("#TV.View.stop", endTime);          
+
+          if (tbProgramDescription != null)
+          {
+            tbProgramDescription.Label = description;
+          }
+        }
+      }
+
       else
       {
         tbOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
         tbOnTvNext.Label = GUILocalizeStrings.Get(736); // no epg for this channel
-        
+
         GUIPropertyManager.SetProperty("#TV.View.start", string.Empty);
         GUIPropertyManager.SetProperty("#TV.View.stop", string.Empty);
         GUIPropertyManager.SetProperty("#TV.View.remaining", string.Empty);
@@ -1349,57 +1424,111 @@ namespace TvPlugin
           lblCurrentTime.Label = String.Empty;
         }
       }
+      
+      
       UpdateProgressBar();
     }
 
     void UpdateProgressBar()
-    {      
-      double fPercent;
-      Program  prog = TVHome.Navigator.GetChannel(GetChannelName()).CurrentProgram;
+    {                              
+
+      if (!g_Player.IsTVRecording)
+      {
+        double fPercent;
+        Program prog = TVHome.Navigator.GetChannel(GetChannelName()).CurrentProgram;
+
+        if (prog == null)
+        {
+          GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+          return;
+        }
+        string strTime = String.Format("{0}-{1}",
+          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+        TimeSpan ts = prog.EndTime - prog.StartTime;
+        double iTotalSecs = ts.TotalSeconds;
+        ts = DateTime.Now - prog.StartTime;
+        double iCurSecs = ts.TotalSeconds;
+        fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+        fPercent *= 100.0d;
+        GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+        Get_TimeInfo();
+
+        bool updateProperties = false;
+        if (previousProgram == null)
+        {
+          m_dateTime = DateTime.Now;
+          previousProgram = prog.Clone();
+          ShowPrograms();
+          updateProperties = true;
+        }
+        else if (previousProgram.StartTime != prog.StartTime || previousProgram.IdChannel != prog.IdChannel)
+        {
+          m_dateTime = DateTime.Now;
+          previousProgram = prog.Clone();
+          ShowPrograms();
+          updateProperties = true;
+        }
+        if (updateProperties)
+        {
+          GUIPropertyManager.SetProperty("#TV.View.channel", prog.ReferencedChannel().DisplayName);
+          GUIPropertyManager.SetProperty("#TV.View.start", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          GUIPropertyManager.SetProperty("#TV.View.stop", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+          GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
+          GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
+          GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
+        }
+      }
+
+      else
+      {
+        Recording rec = null;
+        string description = "";
+        string title = "";
+        string startTime = "";
+        string endTime = ""; 
+        string channelDisplayName = "";
+        string genre = "";
+
+        rec = TvRecorded.ActiveRecording();
+        if (rec != null)
+        {
+          description = rec.Description;
+          title = rec.Title;
+
+          long currentPosition = (long)(g_Player.CurrentPosition);          
+          startTime = Utils.SecondsToHMSString((int)currentPosition);          
+
+          long duration = (long)(g_Player.Duration);          
+          endTime = Utils.SecondsToHMSString((int)duration);          
+
+          channelDisplayName = rec.ReferencedChannel().DisplayName + " (" + GUILocalizeStrings.Get(949) + ")";
+          genre = rec.Genre;
+
+          double fPercent;          
+          if (rec == null)
+          {
+            GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+            return;
+          }
+          
+          fPercent = ((double)currentPosition) / ((double)duration);
+          fPercent *= 100.0d;
+
+          GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+          Get_TimeInfo();         
+
+          GUIPropertyManager.SetProperty("#TV.View.channel", channelDisplayName);
+          GUIPropertyManager.SetProperty("#TV.View.start", startTime);
+          GUIPropertyManager.SetProperty("#TV.View.stop", endTime);         
+          GUIPropertyManager.SetProperty("#TV.View.genre", genre);
+          GUIPropertyManager.SetProperty("#TV.View.title", title);
+          GUIPropertyManager.SetProperty("#TV.View.description", description);       
+        }
+      }        
       
-      if (prog == null)
-      {
-        GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
-        return;
-      }
-      string strTime = String.Format("{0}-{1}",
-        prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-        prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-      TimeSpan ts = prog.EndTime - prog.StartTime;
-      double iTotalSecs = ts.TotalSeconds;
-      ts = DateTime.Now - prog.StartTime;
-      double iCurSecs = ts.TotalSeconds;
-      fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
-      fPercent *= 100.0d;
-      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
-      Get_TimeInfo();
-
-      bool updateProperties = false;
-      if (previousProgram == null)
-      {
-        m_dateTime = DateTime.Now;
-        previousProgram = prog.Clone();
-        ShowPrograms();
-        updateProperties = true;
-      }
-      else if (previousProgram.StartTime != prog.StartTime || previousProgram.IdChannel != prog.IdChannel)
-      {
-        m_dateTime = DateTime.Now;
-        previousProgram = prog.Clone();
-        ShowPrograms();
-        updateProperties = true;
-      }
-      if (updateProperties)
-      {        
-        GUIPropertyManager.SetProperty("#TV.View.channel", prog.ReferencedChannel().DisplayName);
-        GUIPropertyManager.SetProperty("#TV.View.start", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        GUIPropertyManager.SetProperty("#TV.View.stop", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
-        GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
-        GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
-        GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);         
-      }
     }
 
     public bool InWindow(int x, int y)
