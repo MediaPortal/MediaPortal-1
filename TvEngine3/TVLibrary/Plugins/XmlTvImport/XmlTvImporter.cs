@@ -31,6 +31,9 @@ using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 using System.Runtime.CompilerServices;
 
+using Gentle.Common;
+using Gentle.Framework;
+
 namespace TvEngine
 {
   public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll
@@ -126,6 +129,50 @@ namespace TvEngine
         return new SetupTv.Sections.XmlSetup();
       }
     }
+
+    /// <summary>
+    /// Forces the import of the tvguide. Usable when testing the grabber
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public void ForceImport(String folder,bool importXML,bool importLST)
+    {
+     
+      string fileName = folder + @"\tvguide.xml";
+
+      if (System.IO.File.Exists(fileName) && importXML)
+      {
+          importXML = true;
+      }
+
+      fileName = folder + @"\tvguide.lst";
+
+      if (importLST && System.IO.File.Exists(fileName))
+      {
+        DateTime fileTime = DateTime.Parse(System.IO.File.GetLastWriteTime(fileName).ToString()); // for rounding errors!!!
+        importLST = true;
+      }
+
+      if (importXML || importLST)
+      {
+        // Allow for deleting of all existing programs before adding the new ones. 
+        // Already imported programs might incorrect data depending on the grabber & setup
+        TvBusinessLayer layer = new TvBusinessLayer();
+        if (layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true")
+        {
+          SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
+          SqlStatement stmt = sb.GetStatement();
+          stmt.Execute();
+        }
+        ThreadParams tp = new ThreadParams();
+        tp._importDate = DateTime.MinValue;
+        tp._importLST = importLST;
+        tp._importXML = importXML;
+
+        this.ThreadFunctionImportTVGuide(tp);
+      }
+    }
+
     #endregion
 
     #region private members
@@ -141,14 +188,17 @@ namespace TvEngine
       TvBusinessLayer layer = new TvBusinessLayer();
       string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
       DateTime lastTime;
+
       try
       {
         lastTime = DateTime.Parse(layer.GetSetting("xmlTvLastUpdate", "").Value);
       }
       catch (Exception e)
       {
+        Log.Info("xmlTvLastUpdate not found, forcing import {0}",e.Message);
         lastTime = DateTime.MinValue;
       }
+
 
       bool importXML = false;
       bool importLST = false;
@@ -171,15 +221,16 @@ namespace TvEngine
       if (layer.GetSetting("xmlTvImportLST", "true").Value == "true" && System.IO.File.Exists(fileName))
       {
         DateTime fileTime = DateTime.Parse(System.IO.File.GetLastWriteTime(fileName).ToString()); // for rounding errors!!!
-        if (lastTime  < fileTime)
+        if (lastTime < fileTime)
         {
           importLST = true;
           if (fileTime > importDate) importDate = fileTime;
         }
       }
-
+ 
       if (importXML || importLST)
       {
+      
         StartImport(importXML, importLST, importDate);
       }
     }
@@ -198,18 +249,15 @@ namespace TvEngine
       if (importXML)
       {
         string fileName = folder + @"\tvguide.xml";
+
         try
         {
           //check if file can be opened for reading....
-          Encoding fileEncoding = Encoding.Default;
-          FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-          StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
-          fileIn.Close();
-          streamIn.Close();
+          IOUtil.CheckFileAccessRights(fileName, FileMode.Open,FileAccess.Read, FileShare.Read);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-          Log.Error(@"plugin:xmltv StartImport - Exception " + fileName);
+          Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
           return;
         }
       }
@@ -219,31 +267,36 @@ namespace TvEngine
         string fileName = folder + @"\tvguide.lst";
         try
         {
-          //check if file can be opened for reading....
-          Encoding fileEncoding = Encoding.Default;
-          FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-          StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
-          fileIn.Close();
-          streamIn.Close();
+          IOUtil.CheckFileAccessRights(fileName, FileMode.Open,FileAccess.Read, FileShare.Read);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-          Log.Error(@"plugin:xmltv StartImport - Exception " + fileName);
+          Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
           return;
         }
       }
 
+      // Allow for deleting of all existing programs before adding the new ones. 
+      // Already imported programs might have incorrect data depending on the grabber & setup
+      // f.e when grabbing programs many days ahead
+      if (layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true")
+      {
+        SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(Program));
+        SqlStatement stmt = sb.GetStatement();
+        stmt.Execute();
+      }
 
       _workerThreadRunning = true;
       ThreadParams param = new ThreadParams();
-      param._importXML= importXML;
-      param._importLST= importLST;
+      param._importXML = importXML;
+      param._importLST = importLST;
       param._importDate = importDate;
       Thread workerThread = new Thread(new ParameterizedThreadStart(ThreadFunctionImportTVGuide));
       workerThread.Priority = ThreadPriority.Lowest;
-      workerThread.Start( param );
+      workerThread.Start(param);
     }
 
+    
     private class ThreadParams
     {
       public bool _importXML;
@@ -251,7 +304,7 @@ namespace TvEngine
       public DateTime _importDate;
     };
 
-    void ThreadFunctionImportTVGuide( object aparam )
+    void ThreadFunctionImportTVGuide(object aparam)
     {
       SetStandbyAllowed(false);
       try
@@ -305,6 +358,7 @@ namespace TvEngine
               Log.WriteFile(@"plugin:xmltv importing " + tvguideFileName);
 
               XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
+
               import.Import(tvguideFileName, false);
 
               numChannels += import.ImportStats.Channels;
