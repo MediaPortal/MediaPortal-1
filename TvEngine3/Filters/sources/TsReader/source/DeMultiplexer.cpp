@@ -480,7 +480,7 @@ CBuffer* CDeMultiplexer::GetAudio()
   // then try to read some from the current file
   while (m_vecAudioBuffers.size()==0) 
   {	
-	if (m_audioStreams.size() > 1)
+	/*if (m_audioStreams.size() > 1)
 	{
 	  if( m_iAudioReadCount > 10 && m_iAudioStream == 0) // no audio packets avail. lets try the next audio stream if any available
 	  {	  
@@ -507,7 +507,7 @@ CBuffer* CDeMultiplexer::GetAudio()
 	  {
 		m_iAudioReadCount++;
 	  }
-	}
+	}*/
 
     //if filter is stopped or 
     //end of file has been reached or
