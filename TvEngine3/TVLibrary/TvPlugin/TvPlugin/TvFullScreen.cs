@@ -878,6 +878,13 @@ namespace TvPlugin
             }
           }
           break;
+
+        case Action.ActionType.ACTION_STOP:
+          if (g_Player.IsTVRecording)
+          {
+            g_Player.Stop();
+          }
+          break;
       }
 
       base.OnAction(action);
@@ -1407,8 +1414,7 @@ namespace TvPlugin
           if (_msnWindowVisible) return true;
           if (message.SenderControlId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
           break;
-        #endregion
-
+        #endregion       
       }
 
       if (_msnWindowVisible)
