@@ -74,6 +74,10 @@ namespace MediaPortal.Player
     static string _currentDescription = ""; //actual program metadata - usefull for tv - avoids extra DB Lookups. 
     static string _currentFileName = ""; //holds the actual file being played. Usefull for rtsp streams. 
     static double[] _chapters = null;
+    static double[] _jumpPoints = null;
+    static bool _autoComSkip = false;
+    static bool _loadAutoComSkipSetting = true;
+
     #endregion
 
     #region events
@@ -425,6 +429,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.IsPlayingVideo = false;
         CachePlayer();
         _chapters = null;
+        _jumpPoints = null;
       }
     }
 
@@ -1610,6 +1615,21 @@ namespace MediaPortal.Player
             StepNow();
           }
         }
+        else if (_autoComSkip && _jumpPoints != null && _player.Speed == 1)
+        {
+          double currentPos = _player.CurrentPosition;
+          foreach (double jumpFrom in _jumpPoints)
+          {
+            if (jumpFrom != 0 && currentPos <= jumpFrom + 1.0 && currentPos >= jumpFrom - 0.1)
+            {
+              Log.Debug("g_Player.Process() - Current Position: {0}, JumpPoint: {1}", currentPos, jumpFrom);
+
+              JumpToNextChapter();
+              break;
+            }
+          }
+        }
+
       }
     }
 
@@ -1867,51 +1887,85 @@ namespace MediaPortal.Player
     static bool LoadChapters(string videoFile)
     {
       _chapters = null;
+      _jumpPoints = null;
+
       try
       {
         string chapterFile = Path.ChangeExtension(videoFile, ".txt");
         if (!File.Exists(chapterFile))
           return false;
+        
         Log.Debug("g_Player.LoadChapters() - Chapter file found for video \"{0}\"", videoFile);
+
+        if (_loadAutoComSkipSetting)
+        {
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            _autoComSkip = xmlreader.GetValueAsBool("comskip", "automaticskip", false);
+
+          Log.Debug("g_Player.LoadChapters() - Automatic ComSkip mode is {0}", _autoComSkip ? "on." : "off.");
+
+          _loadAutoComSkipSetting = false;
+        }
+
         ArrayList chapters = new ArrayList();
-        StreamReader file = new StreamReader(chapterFile);
-        string line = file.ReadLine();
-        int fps;
-        if (!int.TryParse(line.Substring(line.LastIndexOf(' ') + 1), out fps))
+        ArrayList jumps = new ArrayList();
+
+        using (StreamReader file = new StreamReader(chapterFile))
         {
-          Log.Warn("g_Player.LoadChapters() - Invalid chapter file \"{0}\"", chapterFile);
-          return false;
+          string line = file.ReadLine();
+          
+          int fps;
+          if (!int.TryParse(line.Substring(line.LastIndexOf(' ') + 1), out fps))
+          {
+            Log.Warn("g_Player.LoadChapters() - Invalid chapter file \"{0}\"", chapterFile);
+            return false;
+          }
+
+          double framesPerSecond = fps / 100.0;
+          char[] splitChar = new char[] { '\t' };
+          string[] tokens;
+          int time;
+
+          while (!file.EndOfStream)
+          {
+            line = file.ReadLine();
+            if (String.IsNullOrEmpty(line))
+              continue;
+
+            tokens = line.Split(splitChar);
+            if (tokens.Length != 2)
+              continue;
+
+            if (int.TryParse(tokens[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
+              jumps.Add(time / framesPerSecond);
+
+            if (int.TryParse(tokens[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
+              chapters.Add(time / framesPerSecond);
+          }
         }
-        double framesPerSecond = fps / 100.0;
-        char[] splitChar = new char[] { '\t' };
-        string[] tokens;
-        int time;
-        while (!file.EndOfStream)
-        {
-          line = file.ReadLine();
-          if (String.IsNullOrEmpty(line))
-            continue;
-          tokens = line.Split(splitChar);
-          if (tokens.Length != 2)
-            continue;
-          if (int.TryParse(tokens[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
-            chapters.Add(time / framesPerSecond);
-        }
-        file.Close();
+
         if (chapters.Count == 0)
         {
           Log.Warn("g_Player.LoadChapters() - No chapters found in file \"{0}\"", chapterFile);
           return false;
         }
+
         _chapters = new double[chapters.Count];
         chapters.CopyTo(_chapters);
+
+        if (jumps.Count > 0)
+        {
+          _jumpPoints = new double[jumps.Count];
+          jumps.CopyTo(_jumpPoints);
+        }
+
+        return true;
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
+        Log.Error("g_Player.LoadChapters() - {0}", ex.ToString());
         return false;
       }
-      return true;
     }
 
     static double NextChapterTime(double currentPos)
@@ -1922,6 +1976,7 @@ namespace MediaPortal.Player
           {
             return _chapters[index];
           }
+
       return -1;  // no skip
     }
     static double PreviousChapterTime(double currentPos)
@@ -1932,6 +1987,7 @@ namespace MediaPortal.Player
           {
             return _chapters[index];
           }
+
       return 0;
     }
 
@@ -1939,26 +1995,32 @@ namespace MediaPortal.Player
     {
       if (!Playing)
         return false;
+
       double nextChapter = NextChapterTime(_player.CurrentPosition);
       Log.Debug("g_Player.JumpNextChapter() - Current Position: {0}, Next Chapter: {1}", _player.CurrentPosition, nextChapter);
+      
       if (nextChapter > 0 && nextChapter < _player.Duration)
       {
         SeekAbsolute(nextChapter);
         return true;
       }
+      
       return false;
     }
     public static bool JumpToPrevChapter()
     {
       if (!Playing)
         return false;
+      
       double prevChapter = PreviousChapterTime(_player.CurrentPosition);
       Log.Debug("g_Player.JumpPrevChapter() - Current Position: {0}, Previous Chapter: {1}", _player.CurrentPosition, prevChapter);
+
       if (prevChapter >= 0 && prevChapter < _player.Duration)
       {
         SeekAbsolute(prevChapter);
         return true;
       }
+
       return false;
     }
     #endregion

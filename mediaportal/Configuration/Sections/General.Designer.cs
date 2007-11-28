@@ -76,7 +76,7 @@ namespace MediaPortal.Configuration.Sections
             "AboveNormal",
             "Normal",
             "BelowNormal"});
-      this.mpThreadPriority.Location = new System.Drawing.Point(99, 360);
+      this.mpThreadPriority.Location = new System.Drawing.Point(99, 376);
       this.mpThreadPriority.MinimumSize = new System.Drawing.Size(100, 0);
       this.mpThreadPriority.Name = "mpThreadPriority";
       this.mpThreadPriority.Size = new System.Drawing.Size(361, 21);
@@ -86,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.lbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(6, 390);
+      this.lbDebug.Location = new System.Drawing.Point(6, 406);
       this.lbDebug.Name = "lbDebug";
       this.lbDebug.Size = new System.Drawing.Size(57, 13);
       this.lbDebug.TabIndex = 3;
@@ -107,7 +107,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(3, 3);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(466, 438);
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(466, 454);
       this.groupBoxGeneralSettings.TabIndex = 1;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General Settings";
@@ -116,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(6, 363);
+      this.label1.Location = new System.Drawing.Point(6, 379);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(57, 13);
       this.label1.TabIndex = 1;
@@ -134,7 +134,7 @@ namespace MediaPortal.Configuration.Sections
             "Warning",
             "Information",
             "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(99, 387);
+      this.cbDebug.Location = new System.Drawing.Point(99, 403);
       this.cbDebug.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbDebug.Name = "cbDebug";
       this.cbDebug.Size = new System.Drawing.Size(361, 21);
@@ -144,7 +144,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.lbScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.lbScreen.AutoSize = true;
-      this.lbScreen.Location = new System.Drawing.Point(6, 416);
+      this.lbScreen.Location = new System.Drawing.Point(6, 432);
       this.lbScreen.Name = "lbScreen";
       this.lbScreen.Size = new System.Drawing.Size(44, 13);
       this.lbScreen.TabIndex = 5;
@@ -158,7 +158,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbScreen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbScreen.Enabled = false;
       this.cbScreen.FormattingEnabled = true;
-      this.cbScreen.Location = new System.Drawing.Point(99, 413);
+      this.cbScreen.Location = new System.Drawing.Point(99, 429);
       this.cbScreen.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbScreen.Name = "cbScreen";
       this.cbScreen.Size = new System.Drawing.Size(361, 21);
@@ -192,10 +192,11 @@ namespace MediaPortal.Configuration.Sections
             "Autosize window mode to skin",
             "Use VRM9 for playback of web streams",
             "Show last active module when starting/resuming from standby",
-            "Use screenselector to choose on which screen MP should start"});
+            "Use screenselector to choose on which screen MP should start",
+            "Automatically skip commercials for videos with ComSkip data available"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 334);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 349);
       this.settingsCheckedListBox.TabIndex = 0;
       this.settingsCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.settingsCheckedListBox_ItemCheck);
       // 
@@ -205,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.groupBoxGeneralSettings);
       this.Name = "General";
-      this.Size = new System.Drawing.Size(472, 441);
+      this.Size = new System.Drawing.Size(472, 457);
       this.groupBoxGeneralSettings.ResumeLayout(false);
       this.groupBoxGeneralSettings.PerformLayout();
       this.ResumeLayout(false);

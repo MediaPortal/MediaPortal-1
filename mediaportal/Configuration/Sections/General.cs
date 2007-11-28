@@ -110,7 +110,8 @@ namespace MediaPortal.Configuration.Sections
       //new string[] { "general", "allowfocus", "false" }
       new string[] { "general","usevrm9forwebstreams","false" },
       new string[] { "general","showlastactivemodule","false" },
-      new string[] { "screenselector","usescreenselector","false" }
+      new string[] { "screenselector","usescreenselector","false" },
+      new string[] { "comskip","automaticskip","false" }
       };
 
     // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars
