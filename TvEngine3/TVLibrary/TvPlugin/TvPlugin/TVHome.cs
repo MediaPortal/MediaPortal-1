@@ -84,7 +84,7 @@ namespace TvPlugin
     DateTime _dtlastTime = DateTime.Now;
     TvCropManager _cropManager = new TvCropManager();
     TvNotifyManager _notifyManager = new TvNotifyManager();
-    static string _preferredLanguages = "";
+    static string[] _preferredLanguages;
     static bool _preferAC3 = false;
     static bool _rebuildGraphOnNewVideoSpecs = true;
     static bool _rebuildGraphOnNewAudioSpecs = true;
@@ -367,7 +367,10 @@ namespace TvPlugin
         if (strValue.Equals("original")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
         if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
         if (strValue.Equals("panscan")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-        _preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
+
+        string preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
+        _preferredLanguages = preferredLanguages.Split(';');
+
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _rebuildGraphOnNewVideoSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewVideoSpecs", true);
         _rebuildGraphOnNewAudioSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", true);
@@ -1428,9 +1431,12 @@ namespace TvPlugin
 
       }
       else //recording is playing
-      {
+      {                
         double currentPosition = (double)(g_Player.CurrentPosition);
         double duration = (double)(g_Player.Duration);
+
+        string startTime = Utils.SecondsToHMSString((int)currentPosition);
+        string endTime = Utils.SecondsToHMSString((int)duration);
 
         double percentLivePoint = ((double)currentPosition) / ((double)duration);
         percentLivePoint *= 100.0d;        
@@ -1440,7 +1446,14 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");        
         GUIPropertyManager.SetProperty("#TV.View.channel", TvRecorded.ActiveRecording().ReferencedChannel().DisplayName + " (" + GUILocalizeStrings.Get(949) + ")");
         GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
-        GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);        
+        GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
+
+
+        
+        GUIPropertyManager.SetProperty("#TV.View.start", startTime);
+        GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
+        //GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));                
+
       }
 
     }
@@ -1463,7 +1476,7 @@ namespace TvPlugin
       Navigator.ZapToPreviousChannel(false);
     }
 
-    static private int GetPreferedAudioStreamIndex(string langCodes, bool preferAC3)
+    static private int GetPreferedAudioStreamIndex()
     {
       bool foundAC3 = false;
       int idx = -1;      
@@ -1473,30 +1486,40 @@ namespace TvPlugin
 
       for (int i = 0; i < streams.Length; i++)
       {
-        if ((preferAC3) && (streams[i].StreamType == AudioStreamType.AC3))
+        if ((_preferAC3) && (streams[i].StreamType == AudioStreamType.AC3))
         {
           foundAC3 = true;
           idx = i;
-        }
-        if (langCodes.Contains(streams[i].Language))
+        }   
+     
+        for (int j = 0;  j < _preferredLanguages.Length; j++)
         {
-          if (!preferAC3)
+          string lang = _preferredLanguages[j];
+          if (lang.Contains(streams[i].Language) && lang.Length > 0)
           {
-            idx = i;
-            Log.Info("Audio stream: switching to preferred language audio stream {0}", idx);
-            break;
-          }
-          else
-          {
-            if ((streams[i].StreamType == AudioStreamType.AC3))
+            if (!_preferAC3) // DO not prefer ac3
             {
-              foundAC3 = true;
               idx = i;
-              Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
+              Log.Info("Audio stream: switching to preferred language audio stream {0}", idx);
               break;
             }
-            //else idx = i; //Not good, if an available AC3 stream = false & preferred language = null then you should use the first stream.
-          }
+            else // prefer ac3
+            {
+              if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
+              {
+                foundAC3 = true;
+                idx = i;
+                Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
+                break;
+              }
+              else // not AC3
+              {
+                idx = i;
+              }
+              //else idx = i; //Not good, if an available AC3 stream = false & preferred language = null then you should use the first stream.
+            }
+            break;
+          }          
         }
       }
       if (foundAC3 && idx != -1)
@@ -1506,10 +1529,10 @@ namespace TvPlugin
       }
       else if (!foundAC3 && idx != -1)
       {
-        // we got a stream with pref language in idx 
+        // we got a non-ac3 stream with pref language in idx 
         Log.Info("Audio stream: no AC3 switching to preferred audio stream {0}", idx);        
       }
-      else if (foundAC3 && preferAC3)
+      else if (foundAC3 && _preferAC3)
       {
         Log.Info("Audio stream: no audio stream found with preferred language using last AC3 stream {0}", idx);        
       }
@@ -1533,7 +1556,7 @@ namespace TvPlugin
           return false;
         }
         MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
-        if (g_Player.Playing && !_autoTurnOnTv && !_userChannelChanged)
+        if (g_Player.Playing && _autoTurnOnTv && !_userChannelChanged)
         {
           //- Changed by joboehl - Enable TV to autoturnon on channel selection. 
           if (g_Player.IsTVRecording) return true;
@@ -1583,7 +1606,7 @@ namespace TvPlugin
         {
           return true;
         }
-        else
+        else if (g_Player.IsTVRecording)
         {
           // we are playing back a tv recording. stop it now, then tune to new channel.
           _userChannelChanged = false;
@@ -1640,7 +1663,7 @@ namespace TvPlugin
           //MediaPortal.GUI.Library.Log.Info("g_Player.Playing {0}", g_Player.Playing);          
 
           //lets set the audio track for tsreader
-          int prefLangIdx = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
+          int prefLangIdx = GetPreferedAudioStreamIndex();
           MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): preferred lang idx:{0} {1}", prefLangIdx, _preferAC3);
 
           try
