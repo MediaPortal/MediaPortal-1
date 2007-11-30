@@ -19,6 +19,7 @@
  *
  */
 using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -40,7 +41,7 @@ namespace TvEngine
   {
     #region variables
     bool _workerThreadRunning = false;
-    System.Timers.Timer _timer1;
+    System.Timers.Timer _timer1;	
     #endregion
 
     #region properties
@@ -98,10 +99,11 @@ namespace TvEngine
     {
       Log.WriteFile("plugin: xmltv started");
       CheckNewTVGuide();
+			//RetrieveRemoteTvGuide();
       _timer1 = new System.Timers.Timer();
       _timer1.Interval = 60000;
       _timer1.Enabled = true;
-      _timer1.Elapsed += new System.Timers.ElapsedEventHandler(_timer1_Elapsed);
+      _timer1.Elapsed += new System.Timers.ElapsedEventHandler(_timer1_Elapsed);			
     }
 
 
@@ -130,14 +132,200 @@ namespace TvEngine
       }
     }
 
+		private void DownloadFileCallback(object sender, DownloadStringCompletedEventArgs e)
+		{
+			// funny, even though the file has failed to download, this event is still called???
+			// no way to check for failed downloads
+
+			//System.Diagnostics.Debugger.Launch();
+
+			try
+			{
+				TvBusinessLayer layer = new TvBusinessLayer();
+				string info = "";
+				string result = null;
+				
+				try
+				{
+					if (e.Result != null || e.Result.Length > 0)
+					{
+						result = e.Result;
+					}
+				}
+				catch (Exception ex)
+				{
+					info = "Download failed: (" + ex.InnerException.Message + ").";
+				}
+
+				if (result != null)
+				{
+					if (result.Length == 0)
+					{
+						info = "File empty.";
+					}
+					else
+					{
+						info = "File downloaded.";
+						TextWriter tw = null;
+						try
+						{
+							string path = layer.GetSetting("xmlTv", "").Value;
+							path = path + @"\tvguide.xml";
+							tw = new StreamWriter(path);
+							tw.Write(e.Result);
+						}
+						catch (Exception ex)
+						{
+							info += " Trouble writing to file. [" + ex.Message + "]";
+						}
+						finally
+						{
+							if (tw != null) tw.Close();
+						}
+					}
+				}
+
+				Setting setting;
+				setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
+				setting.Value = info;
+				setting.Persist();
+
+				setting = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "");
+				setting.Value = DateTime.Now.ToString();
+				setting.Persist();
+
+				Log.Info(info);
+			}
+			catch(Exception ex)
+			{
+			}
+			finally
+			{
+				//always remember to turn on the timer again.
+				_timer1.Enabled = true;
+			}
+		}
+
+		public bool RetrieveRemoteFile(String folder, string URL)
+		{
+			//System.Diagnostics.Debugger.Launch();
+			bool status = false;
+			string lastTransferAt = "";
+			string transferStatus = "";
+
+			TvBusinessLayer layer = new TvBusinessLayer();
+			Setting setting;
+
+			string errMsg = "";
+			if (URL.Length == 0)
+			{
+				errMsg = "No URL defined.";
+				Log.Error(errMsg);				
+				setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
+				setting.Value = errMsg;
+				setting.Persist();
+				return status;
+			}
+
+			if (folder.Length == 0)
+			{
+				errMsg = "No tvguide.xml path defined.";
+				Log.Error(errMsg);
+				setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
+				setting.Value = errMsg;
+				setting.Persist();
+				return status;
+			}
+
+			lastTransferAt = DateTime.Now.ToString();
+			transferStatus = "downloading...";			
+
+			WebClient Client = new WebClient();
+			
+
+			bool isHTTP = (URL.ToLower().IndexOf("http://") == 0);
+			bool isFTP = (URL.ToLower().IndexOf("ftp://") == 0);
+
+			if (isFTP)
+			{
+				// grab username, password and server from the URL
+				// ftp://user:pass@www.somesite.com/TVguide.xml
+
+				Log.Info("FTP URL detected.");
+
+				int passwordEndIdx = URL.IndexOf("@");
+
+				if (passwordEndIdx > -1)
+				{
+					Log.Info("FTP username/password detected.");
+
+					int userStartIdx = 6; //6 is the length of chars in  --> "ftp://"
+					int userEndIdx = URL.IndexOf(":", userStartIdx);
+
+					string user = URL.Substring(userStartIdx, (userEndIdx - userStartIdx));
+					string pass = URL.Substring(userEndIdx + 1, (passwordEndIdx - userEndIdx - 1));
+					URL = "ftp://" + URL.Substring(passwordEndIdx + 1);
+
+					Client.Credentials = new NetworkCredential(user, pass);
+				}
+				else
+				{
+					Log.Info("no FTP username/password detected. Using anonymous access.");
+				}
+			}
+			else
+			{
+				Log.Info ("HTTP URL detected.");
+			}
+
+			Log.Info("initiating download of remote file from " + URL);
+			Uri uri = new Uri(URL);
+			//Client.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(DownloadFileCallback);
+			Client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadFileCallback);
+			
+			try
+			{
+				//Client.DownloadFileAsync(uri, folder + @"\tvguide.xml");				
+				Client.DownloadStringAsync(uri);
+				status = true;
+			}
+			catch (WebException ex)
+			{
+				errMsg = "An error occurred while downloading the file: " + URL + " (" + ex.Message + ").";
+				Log.Error(errMsg);
+				lastTransferAt = errMsg;
+			}
+			catch (InvalidOperationException ex)
+			{
+				errMsg = "The " + folder + @"\tvguide.xml file is in use by another thread (" + ex.Message + ").";
+				Log.Error(errMsg);
+				lastTransferAt = errMsg;
+			}
+			catch (Exception ex)
+			{
+				errMsg = "Unknown error @ " + URL + "(" + ex.Message + ").";
+				Log.Error(errMsg);
+				lastTransferAt = errMsg;
+			}
+
+			setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
+			setting.Value = transferStatus;
+			setting.Persist();
+
+			setting = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "");
+			setting.Value = lastTransferAt;
+			setting.Persist();
+
+			return status;
+		}
+
     /// <summary>
     /// Forces the import of the tvguide. Usable when testing the grabber
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     public void ForceImport(String folder,bool importXML,bool importLST)
-    {
-     
+    {     
       string fileName = folder + @"\tvguide.xml";
 
       if (System.IO.File.Exists(fileName) && importXML)
@@ -179,8 +367,45 @@ namespace TvEngine
 
     void _timer1_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
+			bool inProgress = RetrieveRemoteTvGuide();
+
+			if (inProgress) // we are downloading a remove tvguide.xml, wait for it to complete, before trying to read it (avoiding file locks)
+			{
+				_timer1.Enabled = false;
+			}
+
       CheckNewTVGuide();
     }
+
+		[MethodImpl(MethodImplOptions.Synchronized)]
+		protected bool RetrieveRemoteTvGuide()
+		{
+			//System.Diagnostics.Debugger.Launch();
+			TvBusinessLayer layer = new TvBusinessLayer();
+
+			bool remoteSchedulerEnabled = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
+			if (!remoteSchedulerEnabled)
+			{
+				return false;
+			}
+
+			DateTime defaultRemoteScheduleTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 6, 30, 0);
+			string remoteScheduleTimeStr = layer.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).Value;
+			DateTime remoteScheduleTime = (DateTime)(System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(1990, 5, 6)).ConvertFrom(remoteScheduleTimeStr));
+
+			DateTime now = DateTime.Now;
+			if (now.Hour == remoteScheduleTime.Hour && now.Minute == remoteScheduleTime.Minute)
+			{				
+				string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
+				string URL = layer.GetSetting("xmlTvRemoteURL", "").Value;
+				return RetrieveRemoteFile(folder, URL);				
+			}
+			else
+			{
+				//Log.Info("Not the time to fetch remote file yet");
+			}
+			return false;
+		}
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected void CheckNewTVGuide()
@@ -306,6 +531,8 @@ namespace TvEngine
 
     void ThreadFunctionImportTVGuide(object aparam)
     {
+			//System.Diagnostics.Debugger.Launch();
+
       SetStandbyAllowed(false);
       try
       {
@@ -318,77 +545,77 @@ namespace TvEngine
         int numChannels = 0, numPrograms = 0;
         string errors = "";
 
-        try
-        {
-          if (param._importXML)
-          {
-            string fileName = folder + @"\tvguide.xml";
-            Log.Write("plugin:xmltv importing " + fileName);
+				try
+				{
+					if (param._importXML)
+					{
+						string fileName = folder + @"\tvguide.xml";
+						Log.Write("plugin:xmltv importing " + fileName);
 
-            XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
-            import.Import(fileName, false);
+						XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
+						import.Import(fileName, false);
 
-            numChannels += import.ImportStats.Channels;
-            numPrograms += import.ImportStats.Programs;
+						numChannels += import.ImportStats.Channels;
+						numPrograms += import.ImportStats.Programs;
 
-            if (import.ErrorMessage.Length != 0)
-              errors += "tvguide.xml:" + import.ErrorMessage + "; ";
-          }
+						if (import.ErrorMessage.Length != 0)
+							errors += "tvguide.xml:" + import.ErrorMessage + "; ";
+					}
 
-          if (param._importLST)
-          {
-            string fileName = folder + @"\tvguide.lst";
-            Log.Write("plugin:xmltv importing files in " + fileName);
+					if (param._importLST)
+					{
+						string fileName = folder + @"\tvguide.lst";
+						Log.Write("plugin:xmltv importing files in " + fileName);
 
-            Encoding fileEncoding = Encoding.Default;
-            FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
+						Encoding fileEncoding = Encoding.Default;
+						FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+						StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
 
-            while (!fileIn.EndOfStream)
-            {
-              string tvguideFileName = fileIn.ReadLine();
-              if (tvguideFileName.Length == 0) continue;
+						while (!fileIn.EndOfStream)
+						{
+							string tvguideFileName = fileIn.ReadLine();
+							if (tvguideFileName.Length == 0) continue;
 
-              if (!System.IO.Path.IsPathRooted(tvguideFileName))
-              {
-                // extend by directory
-                tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
-              }
+							if (!System.IO.Path.IsPathRooted(tvguideFileName))
+							{
+								// extend by directory
+								tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
+							}
 
-              Log.WriteFile(@"plugin:xmltv importing " + tvguideFileName);
+							Log.WriteFile(@"plugin:xmltv importing " + tvguideFileName);
 
-              XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
+							XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
 
-              import.Import(tvguideFileName, false);
+							import.Import(tvguideFileName, false);
 
-              numChannels += import.ImportStats.Channels;
-              numPrograms += import.ImportStats.Programs;
+							numChannels += import.ImportStats.Channels;
+							numPrograms += import.ImportStats.Programs;
 
-              if (import.ErrorMessage.Length != 0)
-                errors += tvguideFileName + ": " + import.ErrorMessage + "; ";
-            }
-          }
+							if (import.ErrorMessage.Length != 0)
+								errors += tvguideFileName + ": " + import.ErrorMessage + "; ";
+						}
+					}
 
-          setting = layer.GetSetting("xmlTvResultLastImport", "");
-          setting.Value = DateTime.Now.ToString();
-          setting.Persist();
-          setting = layer.GetSetting("xmlTvResultChannels", "");
-          setting.Value = numChannels.ToString();
-          setting.Persist();
-          setting = layer.GetSetting("xmlTvResultPrograms", "");
-          setting.Value = numPrograms.ToString();
-          setting.Persist();
-          setting = layer.GetSetting("xmlTvResultStatus", "");
-          setting.Value = errors;
-          setting.Persist();
-          Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
+					setting = layer.GetSetting("xmlTvResultLastImport", "");
+					setting.Value = DateTime.Now.ToString();
+					setting.Persist();
+					setting = layer.GetSetting("xmlTvResultChannels", "");
+					setting.Value = numChannels.ToString();
+					setting.Persist();
+					setting = layer.GetSetting("xmlTvResultPrograms", "");
+					setting.Value = numPrograms.ToString();
+					setting.Persist();
+					setting = layer.GetSetting("xmlTvResultStatus", "");
+					setting.Value = errors;
+					setting.Persist();
+					Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
 
-        }
-        catch (Exception ex)
-        {
-          Log.Error(@"plugin:xmltv import failed");
-          Log.Write(ex);
-        }
+				}
+				catch (Exception ex)
+				{
+					Log.Error(@"plugin:xmltv import failed");
+					Log.Write(ex);
+				}				
 
         setting = layer.GetSetting("xmlTvLastUpdate", "");
         setting.Value = param._importDate.ToString();

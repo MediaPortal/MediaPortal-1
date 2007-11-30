@@ -49,7 +49,7 @@ namespace SetupTv.Sections
     {
       InitializeComponent();
 
-    }
+    }		
 
     public override void OnSectionDeActivated()
     {
@@ -57,15 +57,19 @@ namespace SetupTv.Sections
       Setting setting = layer.GetSetting("xmlTv");
       setting.Value = textBoxFolder.Text;
       setting.Persist();
+
       setting = layer.GetSetting("xmlTvUseTimeZone", "true");
       setting.Value = checkBox1.Checked ? "true" : "false";
       setting.Persist();
+
       setting = layer.GetSetting("xmlTvImportXML", "true");
       setting.Value = cbImportXML.Checked ? "true" : "false";
       setting.Persist();
+
       setting = layer.GetSetting("xmlTvImportLST", "true");
       setting.Value = cbImportLST.Checked ? "true" : "false";
       setting.Persist();
+
       setting = layer.GetSetting("xmlTvTimeZoneHours", "0");
       setting.Value = textBoxHours.Text;
       setting.Persist();
@@ -76,8 +80,20 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("xmlTvDeleteBeforeImport", "true");
       setting.Value = checkBoxDeleteBeforeImport.Checked ? "true" : "false";
-
       setting.Persist();
+
+			setting = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml");
+			setting.Value = txtRemoteURL.Text;
+      setting.Persist();
+
+			setting = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30");
+			setting.Value = dateTimePickerScheduler.Text;
+      setting.Persist();
+
+			setting = layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false");
+			setting.Value = chkScheduler.Checked ? "true" : "false";
+      setting.Persist();						
+			
 
       base.OnSectionDeActivated();
     }
@@ -114,6 +130,12 @@ namespace SetupTv.Sections
       labelChannels.Text = layer.GetSetting("xmlTvResultChannels", "").Value;
       labelPrograms.Text = layer.GetSetting("xmlTvResultPrograms", "").Value;
       labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
+
+			chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
+			txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;						
+			dateTimePickerScheduler.Text = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value;
+			lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
+			lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;						
 
       // load all distinct groups
       try
@@ -739,5 +761,33 @@ namespace SetupTv.Sections
       folderBrowserDialogTVGuide.ShowDialog();
       textBoxFolder.Text = folderBrowserDialogTVGuide.SelectedPath;
     }
+
+
+		private void retrieveRemoteFile()
+		{
+			XmlTvImporter importer = new XmlTvImporter();
+			importer.RetrieveRemoteFile(textBoxFolder.Text, txtRemoteURL.Text);
+			
+			TvBusinessLayer layer = new TvBusinessLayer();
+
+			lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
+			lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;						
+		}
+
+		private void btnGetNow_Click(object sender, EventArgs e)
+		{
+			retrieveRemoteFile();
+		}
+
+		private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			//persist stuff when changing tabs in the plugin.
+			this.OnSectionDeActivated();
+
+			//load settings
+			this.OnSectionActivated();
+		}
+
+
   }
 }
