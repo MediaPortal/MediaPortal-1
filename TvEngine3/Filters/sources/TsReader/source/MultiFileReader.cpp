@@ -139,8 +139,10 @@ DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMeth
 	if (m_currentPosition < m_startPosition)
 		m_currentPosition = m_startPosition;
 
-	if (m_currentPosition > m_endPosition)
+	if (m_currentPosition > m_endPosition) {
+		LogDebug("Seeking beyond the end position: %I64d > %%I64d", m_currentPosition, m_endPosition);
 		m_currentPosition = m_endPosition;
+	}
 
 	RefreshTSBufferFile();
 	return S_OK;
@@ -591,7 +593,7 @@ void MultiFileReader::setBufferPointer()
 
 __int64 MultiFileReader::GetFileSize()
 {
-  return m_endPosition;
+  return m_endPosition - m_startPosition;
   if (m_cachedFileSize==0)
   {
     RefreshTSBufferFile();
