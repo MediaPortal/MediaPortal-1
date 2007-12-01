@@ -149,7 +149,7 @@ namespace TvEngine
 				{
 					if (e.Result != null || e.Result.Length > 0)
 					{
-						result = e.Result;
+						result = e.Result;						
 					}
 				}
 				catch (Exception ex)
@@ -285,7 +285,8 @@ namespace TvEngine
 			
 			try
 			{
-				//Client.DownloadFileAsync(uri, folder + @"\tvguide.xml");				
+				//Client.DownloadFileAsync(uri, folder + @"\tvguide.xml");								
+				Client.Encoding = System.Text.Encoding.UTF8;
 				Client.DownloadStringAsync(uri);
 				status = true;
 			}
