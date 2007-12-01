@@ -1490,37 +1490,40 @@ namespace TvPlugin
         {
           foundAC3 = true;
           idx = i;
-        }   
-     
-        for (int j = 0;  j < _preferredLanguages.Length; j++)
-        {
-          string lang = _preferredLanguages[j];
-          if (lang.Contains(streams[i].Language) && lang.Length > 0)
-          {
-            if (!_preferAC3) // DO not prefer ac3
-            {
-              idx = i;
-              Log.Info("Audio stream: switching to preferred language audio stream {0}", idx);
-              break;
-            }
-            else // prefer ac3
-            {
-              if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
-              {
-                foundAC3 = true;
-                idx = i;
-                Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
-                break;
-              }
-              else // not AC3
-              {
-                idx = i;
-              }
-              //else idx = i; //Not good, if an available AC3 stream = false & preferred language = null then you should use the first stream.
-            }
-            break;
-          }          
         }
+
+				if (_preferredLanguages != null)
+				{
+					for (int j = 0; j < _preferredLanguages.Length; j++)
+					{
+						string lang = _preferredLanguages[j];
+						if (lang.Contains(streams[i].Language) && lang.Length > 0)
+						{
+							if (!_preferAC3) // DO not prefer ac3
+							{
+								idx = i;
+								Log.Info("Audio stream: switching to preferred language audio stream {0}", idx);
+								break;
+							}
+							else // prefer ac3
+							{
+								if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
+								{
+									foundAC3 = true;
+									idx = i;
+									Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
+									break;
+								}
+								else // not AC3
+								{
+									idx = i;
+								}
+								//else idx = i; //Not good, if an available AC3 stream = false & preferred language = null then you should use the first stream.
+							}
+							break;
+						}
+					}
+				}
       }
       if (foundAC3 && idx != -1)
       {
