@@ -138,9 +138,9 @@ namespace TvEngine
 			// no way to check for failed downloads
 
 			//System.Diagnostics.Debugger.Launch();
-
+			TextWriter tw = null;
 			try
-			{
+			{				
 				TvBusinessLayer layer = new TvBusinessLayer();
 				string info = "";
 				string result = null;
@@ -166,22 +166,36 @@ namespace TvEngine
 					else
 					{
 						info = "File downloaded.";
-						TextWriter tw = null;
-						try
-						{
-							string path = layer.GetSetting("xmlTv", "").Value;
-							path = path + @"\tvguide.xml";
-							tw = new StreamWriter(path);
-							tw.Write(e.Result);
+
+						//check if file can be opened for writing....																		
+						string path = layer.GetSetting("xmlTv", "").Value;
+						path = path + @"\tvguide.xml";
+						bool waitingForFileAccess = true;
+						int retries = 0;
+						
+						//in case the destination file is locked by another process, retry each 30 secs, but max 5 min. before giving up
+						while (waitingForFileAccess && retries < 10)
+						{							
+							try
+							{
+								//IOUtil.CheckFileAccessRights(path, FileMode.Open, FileAccess.Write, FileShare.Write);
+								tw = new StreamWriter(path);
+								tw.Write(e.Result);
+								waitingForFileAccess = false;
+							}
+							catch (Exception ex)
+							{
+								Log.Info("file is locked, retrying in 30secs. [" + ex.Message + "]");
+								retries++;
+								Thread.Sleep(30000); //wait 30 sec. before retrying.
+							}									 																								
 						}
-						catch (Exception ex)
+							
+						if (waitingForFileAccess) 
 						{
-							info += " Trouble writing to file. [" + ex.Message + "]";
+							info = "Trouble writing to file.";
 						}
-						finally
-						{
-							if (tw != null) tw.Close();
-						}
+						
 					}
 				}
 
@@ -202,6 +216,7 @@ namespace TvEngine
 			finally
 			{
 				//always remember to turn on the timer again.
+				if (tw != null) tw.Close();
 				_timer1.Enabled = true;
 			}
 		}
@@ -370,7 +385,7 @@ namespace TvEngine
     {
 			bool inProgress = RetrieveRemoteTvGuide();
 
-			if (inProgress) // we are downloading a remove tvguide.xml, wait for it to complete, before trying to read it (avoiding file locks)
+			if (inProgress) // we are downloading a remote tvguide.xml, wait for it to complete, before trying to read it (avoiding file locks)
 			{
 				_timer1.Enabled = false;
 			}
@@ -535,6 +550,9 @@ namespace TvEngine
 			//System.Diagnostics.Debugger.Launch();
 
       SetStandbyAllowed(false);
+			FileStream streamIn = null;
+			StreamReader fileIn = null; 
+	
       try
       {
         ThreadParams param = (ThreadParams)aparam;
@@ -569,9 +587,9 @@ namespace TvEngine
 						Log.Write("plugin:xmltv importing files in " + fileName);
 
 						Encoding fileEncoding = Encoding.Default;
-						FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-						StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
-
+						streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+						fileIn = new StreamReader(streamIn, fileEncoding, true);						
+						
 						while (!fileIn.EndOfStream)
 						{
 							string tvguideFileName = fileIn.ReadLine();
@@ -625,9 +643,18 @@ namespace TvEngine
       finally
       {
         Log.WriteFile(@"plugin:xmltv import done");
-
+				if (streamIn != null)
+				{
+					streamIn.Close();
+					streamIn.Dispose();
+				}
+				if (fileIn != null)
+				{
+					fileIn.Close();
+					fileIn.Dispose();
+				}
         _workerThreadRunning = false;
-        SetStandbyAllowed(true);
+        SetStandbyAllowed(true);				
       }
     }
 

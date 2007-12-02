@@ -60,10 +60,17 @@ namespace TvEngine
       {
         try
         {
-          if (fileStream != null)
-            fileStream.Close();
-          if (streamReader != null)
-            streamReader.Close();
+					if (fileStream != null)
+					{
+						fileStream.Close();
+						fileStream.Dispose();
+
+					}
+					if (streamReader != null)
+					{
+						streamReader.Close();
+						streamReader.Dispose();
+					}
         }
         catch (Exception)
         {

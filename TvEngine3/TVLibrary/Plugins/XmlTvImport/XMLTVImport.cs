@@ -133,7 +133,7 @@ namespace TvEngine
     }
 
     public bool Import(string fileName, bool showProgress)
-    {
+    {		
       _errorMessage = "";
       if (_isImporting == true)
       {
@@ -147,6 +147,7 @@ namespace TvEngine
       TvBusinessLayer layer = new TvBusinessLayer();
 
       bool result = false;
+			XmlTextReader xmlReader = null;
 
 
       // remove old programs
@@ -214,7 +215,7 @@ namespace TvEngine
 
           int iChannel = 0;
 
-          XmlTextReader xmlReader = new XmlTextReader(fileName);
+          xmlReader = new XmlTextReader(fileName);					
 
           #region import non-mapped channels by their display-name
           if (xmlReader.ReadToDescendant("tv"))
@@ -315,11 +316,10 @@ namespace TvEngine
           
           SqlStatement stmt = sb.GetStatement(true);
           allChannels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-
           if (allChannels.Count == 0)
           {
             _isImporting = false;
-            xmlReader.Close();
+						if (xmlReader != null) xmlReader.Close();				
             return true;
           }
           
@@ -372,7 +372,7 @@ namespace TvEngine
           if (showProgress && ShowProgress != null) ShowProgress(_status);
 
           Log.Debug("xmltvimport: Reading TV programs");
-
+					if (xmlReader != null) xmlReader.Close();					
           xmlReader = new XmlTextReader(fileName);
           if (xmlReader.ReadToDescendant("tv"))
           {
@@ -694,9 +694,8 @@ namespace TvEngine
                   }
                 }
                 // get the next programme
-              } while (xmlReader.ReadToNextSibling("programme"));
-
-              xmlReader.Close();
+              } while (xmlReader.ReadToNextSibling("programme"));							
+							//if (xmlReader != null) xmlReader.Close();
 
                   #endregion
 
@@ -829,6 +828,7 @@ namespace TvEngine
       Programs = null;
       _isImporting = false;
       //      TVDatabase.SupressEvents = false;
+			if (xmlReader != null) xmlReader.Close();
       return result;
     }
 
