@@ -172,9 +172,10 @@ namespace TvPlugin
       GetID = (int)GUIWindow.Window.WINDOW_RECORDEDTV;
     }
     public override void OnAdded()
-    {      
+    {			
       // replace g_player's ShowFullScreenWindowTV
       g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
+			g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowVideoHandler; // singleseaters uses this
 
       Log.Info("TvRecorded:OnAdded");
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
@@ -279,7 +280,7 @@ namespace TvPlugin
     /// </summary>
     ///<returns></returns>        
     private static bool ShowFullScreenWindowTVHandler()
-    {
+    {			
       if (g_Player.IsTVRecording)
       {
         // watching TV
@@ -289,10 +290,28 @@ namespace TvPlugin
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
-      }
-
+      }			
       return g_Player.ShowFullScreenWindowTVDefault();
     }
+
+		/// <summary>
+		/// This function replaces g_player.ShowFullScreenWindowVideo
+		/// </summary>
+		///<returns></returns>        
+		private static bool ShowFullScreenWindowVideoHandler()
+		{
+			if (g_Player.IsTVRecording)
+			{
+				// watching TV
+				if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+					return true;
+				Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+				GUIGraphicsContext.IsFullScreenVideo = true;
+				return true;
+			}
+			return g_Player.ShowFullScreenWindowVideoDefault();
+		}
 
     #region overrides
 
