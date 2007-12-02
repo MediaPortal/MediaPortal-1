@@ -68,7 +68,7 @@ namespace MediaPortal.DeployTool
       }
       else
       {
-        Directory.Delete(Application.StartupPath + "\\deploy");
+        Directory.Delete(Application.StartupPath + "\\deploy",true);
         return true;
       }
     }
