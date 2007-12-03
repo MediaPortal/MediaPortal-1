@@ -2546,23 +2546,23 @@ namespace MediaPortal
           FullRender();
           //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic)         
           //if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic && !g_Player.HasVideo)
-          if (g_Player.Playing && !g_Player.IsExternalPlayer && !g_Player.IsMusic && !g_Player.HasVideo)
-          {
-            if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
-              loopCount++;
-            //else if (loopCount > 0)
-            else if (GUIGraphicsContext.CurrentFPS > GUIGraphicsContext.MaxFPS)
-              loopCount--;
+          //if (g_Player.Playing && !g_Player.IsExternalPlayer && !g_Player.IsMusic && !g_Player.IsVideo)
+          //{
+          //  if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
+          //    loopCount++;
+          //  //else if (loopCount > 0)
+          //  else if (GUIGraphicsContext.CurrentFPS > GUIGraphicsContext.MaxFPS)
+          //    loopCount--;
 
-            sleepCount++;
-            if (sleepCount >= loopCount)
-            {
-              WaitForFrameClock();
-              sleepCount = 0;
-              UpdateStats();
-            }
-          }
-          else
+          //  sleepCount++;
+          //  if (sleepCount >= loopCount)
+          //  {
+          //    WaitForFrameClock();
+          //    sleepCount = 0;
+          //    UpdateStats();
+          //  }
+          //}
+          //else
           {
             loopCount = 1;
             WaitForFrameClock();
