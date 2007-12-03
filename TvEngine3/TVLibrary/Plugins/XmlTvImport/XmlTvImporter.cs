@@ -133,10 +133,7 @@ namespace TvEngine
     }
 
 		private void DownloadFileCallback(object sender, DownloadStringCompletedEventArgs e)
-		{
-			// funny, even though the file has failed to download, this event is still called???
-			// no way to check for failed downloads
-
+		{			
 			//System.Diagnostics.Debugger.Launch();
 			TextWriter tw = null;
 			try
@@ -217,7 +214,7 @@ namespace TvEngine
 			{
 				//always remember to turn on the timer again.
 				if (tw != null) tw.Close();
-				_timer1.Enabled = true;
+				if (_timer1 != null) _timer1.Enabled = true;
 			}
 		}
 

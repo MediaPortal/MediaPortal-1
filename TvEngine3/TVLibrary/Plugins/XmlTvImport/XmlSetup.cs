@@ -557,64 +557,77 @@ namespace SetupTv.Sections
 
       int iChannel = 0;
 
-      if (xmlReader.ReadToDescendant("tv"))
-      {
-        // get the first channel
-        if (xmlReader.ReadToDescendant("channel"))
-        {
-          do
-          {
-            String id = xmlReader.GetAttribute("id");
-            if (id == null || id.Length == 0)
-            {
-              Log.Error("  channel#{0} doesnt contain an id", iChannel);
-            }
-            else
-            {
-              // String displayName = null;
+			try
+			{
+				if (xmlReader.ReadToDescendant("tv"))
+				{
+					// get the first channel
+					if (xmlReader.ReadToDescendant("channel"))
+					{
+						do
+						{
+							String id = xmlReader.GetAttribute("id");
+							if (id == null || id.Length == 0)
+							{
+								Log.Error("  channel#{0} doesnt contain an id", iChannel);
+							}
+							else
+							{
+								// String displayName = null;
 
-              XmlReader xmlChannel = xmlReader.ReadSubtree();
-              xmlChannel.ReadStartElement();  // read channel
-              // now, xmlChannel is positioned on the first sub-element of <channel>
-              List<string> displayNames = new List<string>();
+								XmlReader xmlChannel = xmlReader.ReadSubtree();
+								xmlChannel.ReadStartElement();  // read channel
+								// now, xmlChannel is positioned on the first sub-element of <channel>
+								List<string> displayNames = new List<string>();
 
-              while (!xmlChannel.EOF)
-              {
-                if (xmlChannel.NodeType == XmlNodeType.Element)
-                {
-                  switch (xmlChannel.Name)
-                  {
-                    case "display-name":
-                    case "Display-Name":
-                      displayNames.Add(xmlChannel.ReadString());
-                      //else xmlChannel.Skip();
-                      break;
-                    // could read more stuff here, like icon...
-                    default:
-                      // unknown, skip entire node
-                      xmlChannel.Skip();
-                      break;
-                  }
-                }
-                else
-                  xmlChannel.Read();
-              }
-              foreach (string displayName in displayNames)
-              {
-                if (displayName != null)
-                {
-                  Channel channel = new Channel(displayName, false, false, -1, new DateTime(), false, new DateTime(), -1, false, id, false,displayName);
-                  channels.Add(channel);
-                }
-              }
-            }
-            iChannel++;
-          }
-          while (xmlReader.ReadToNextSibling("channel"));
+								while (!xmlChannel.EOF)
+								{
+									if (xmlChannel.NodeType == XmlNodeType.Element)
+									{
+										switch (xmlChannel.Name)
+										{
+											case "display-name":
+											case "Display-Name":
+												displayNames.Add(xmlChannel.ReadString());
+												//else xmlChannel.Skip();
+												break;
+											// could read more stuff here, like icon...
+											default:
+												// unknown, skip entire node
+												xmlChannel.Skip();
+												break;
+										}
+									}
+									else
+										xmlChannel.Read();
+								}
+								foreach (string displayName in displayNames)
+								{
+									if (displayName != null)
+									{
+										Channel channel = new Channel(displayName, false, false, -1, new DateTime(), false, new DateTime(), -1, false, id, false, displayName);
+										channels.Add(channel);
+									}
+								}
+							}
+							iChannel++;
+						}
+						while (xmlReader.ReadToNextSibling("channel"));
 
-        }
-      }
-      xmlReader.Close();
+					}
+				}
+			}
+			catch 
+			{
+			}
+			finally
+			{
+				if (xmlReader !=null) 
+				{
+					xmlReader.Close();
+					xmlReader = null;
+				}
+			}
 
       return channels;
     }

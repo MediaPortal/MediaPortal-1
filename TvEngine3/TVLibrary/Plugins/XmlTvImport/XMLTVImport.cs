@@ -110,8 +110,13 @@ namespace TvEngine
     private int ParseStarRating(string epgRating)
     {
       // format = 5.2/10
-      // check if the epgRating is within a xml tag
+      // check if the epgRating is within a xml tag			
       epgRating = epgRating.Trim();
+			if (epgRating.Length == 0)
+			{
+				return -1;
+			}
+
       if (epgRating.StartsWith("<"))
       {
         int endStartTagIdx = epgRating.IndexOf(">") + 1;
@@ -133,12 +138,11 @@ namespace TvEngine
     }
 
     public bool Import(string fileName, bool showProgress)
-    {		
+    {
+			//System.Diagnostics.Debugger.Launch();
       _errorMessage = "";
       if (_isImporting == true)
       {
-
-
         _errorMessage = "already importing...";
         return false;
       }
@@ -257,7 +261,12 @@ namespace TvEngine
                     else
                       xmlChannel.Read();
                   }
-                  xmlChannel.Close();
+									if (xmlChannel != null)
+									{
+										xmlChannel.Close();
+										xmlChannel = null;
+
+									}									
 
                   if (displayName == null || displayName.Length == 0)
                   {
@@ -319,7 +328,12 @@ namespace TvEngine
           if (allChannels.Count == 0)
           {
             _isImporting = false;
-						if (xmlReader != null) xmlReader.Close();				
+						if (xmlReader != null)
+						{
+							xmlReader.Close();
+							xmlReader = null;
+						}
+
             return true;
           }
           
@@ -372,7 +386,11 @@ namespace TvEngine
           if (showProgress && ShowProgress != null) ShowProgress(_status);
 
           Log.Debug("xmltvimport: Reading TV programs");
-					if (xmlReader != null) xmlReader.Close();					
+					if (xmlReader != null)
+					{
+						xmlReader.Close();
+						xmlReader = null;
+					}
           xmlReader = new XmlTextReader(fileName);
           if (xmlReader.ReadToDescendant("tv"))
           {
@@ -423,8 +441,8 @@ namespace TvEngine
                         else xmlProg.Skip();
                         break;
 											case "date": if (nodeDate == null) nodeDate = xmlProg.ReadString(); else xmlProg.Skip(); break;
-											case "star-rating": if (nodeStarRating == null) nodeStarRating = xmlProg.ReadString(); else xmlProg.Skip(); break;
-											case "rating": if (nodeClassification == null) nodeClassification = xmlProg.ReadString(); else xmlProg.Skip(); break;
+											case "star-rating": if (nodeStarRating == null) nodeStarRating = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+											case "rating": if (nodeClassification == null) nodeClassification = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
                       default:
                         // unknown, skip entire node
                         xmlProg.Skip();
@@ -434,7 +452,11 @@ namespace TvEngine
                   else
                     xmlProg.Read();
                 }
-                xmlProg.Close();
+								if (xmlProg != null)
+								{
+									xmlProg.Close();
+									xmlProg = null;
+								}
               #endregion
 
                 #region verify/convert values (programme)
@@ -828,7 +850,11 @@ namespace TvEngine
       Programs = null;
       _isImporting = false;
       //      TVDatabase.SupressEvents = false;
-			if (xmlReader != null) xmlReader.Close();
+			if (xmlReader != null)
+			{
+				xmlReader.Close();
+				xmlReader = null;
+			}
       return result;
     }
 
