@@ -1517,6 +1517,7 @@ namespace TvPlugin
 								else // not AC3
 								{
 									idx = i;
+									break;
 								}
 								//else idx = i; //Not good, if an available AC3 stream = false & preferred language = null then you should use the first stream.
 							}
@@ -1524,6 +1525,7 @@ namespace TvPlugin
 						}
 					}
 				}
+				if (idx > -1) break; // we have found an audio track
       }
       if (foundAC3 && idx != -1)
       {
