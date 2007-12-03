@@ -1719,7 +1719,6 @@ public class MediaPortalApp : D3DApp, IRender
 
     try
     {
-      //	Log.Info("app:render()");
       reentrant = true;
       // if there's no DX9 device (during resizing for exmaple) then just return
       if (GUIGraphicsContext.DX9Device == null)
@@ -1736,15 +1735,13 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 
-
-      //Log.Info("render frame:{0}",frames);//remove
       ++frames;
       // clear the surface
       GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target , Color.Black, 1.0f, 0);
       GUIGraphicsContext.DX9Device.BeginScene();
 
       CreateStateBlock();
-      MediaPortal.GUI.Library.GUIGraphicsContext.SetScalingResolution(0, 0, false);
+      GUIGraphicsContext.SetScalingResolution(0, 0, false);
       // ask the layer manager to render all layers
       GUILayerManager.Render(timePassed);
       RenderStats();
@@ -1764,11 +1761,6 @@ public class MediaPortalApp : D3DApp, IRender
         g_Player.Stop();
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
       }
-      /*
-  catch (Exception ex) // remove
-  {
-    Log.Info("exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-  }*/
     }
 
     catch (Exception ex)

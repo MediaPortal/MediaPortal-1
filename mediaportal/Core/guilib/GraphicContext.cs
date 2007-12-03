@@ -1189,6 +1189,7 @@ namespace MediaPortal.GUI.Library
         return (difftime);
       }
     }
+
     public static bool InVmr9Render
     {
       get

@@ -48,6 +48,7 @@ namespace MediaPortal.Player
     public StreamBufferPlayer9()
     {
     }
+
     protected override void OnInitialized()
     {
       if ( _vmr9 != null )
@@ -291,8 +292,8 @@ namespace MediaPortal.Player
         while ( GUIGraphicsContext.InVmr9Render )
         {
           counter++;
-          System.Threading.Thread.Sleep(1);
-          if ( counter > 200 )
+          System.Threading.Thread.Sleep(100);
+          if ( counter > 100 )
             break;
         }
 
@@ -376,9 +377,10 @@ namespace MediaPortal.Player
 
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
+
         GC.Collect();
-        GC.Collect();
-        GC.Collect();
+        //GC.Collect();
+        //GC.Collect();
       }
       catch ( Exception ex )
       {
@@ -491,8 +493,8 @@ namespace MediaPortal.Player
         while ( GUIGraphicsContext.InVmr9Render )
         {
           counter++;
-          System.Threading.Thread.Sleep(1);
-          if ( counter > 200 )
+          System.Threading.Thread.Sleep(100);
+          if ( counter > 100 )
             break;
         }
 
@@ -503,7 +505,7 @@ namespace MediaPortal.Player
           Log.Info("StreamBufferPlayer9: vmr9 dispose");
           _vmr9.Dispose();
           _vmr9 = null;
-        }
+        }        
       }
       else
       {

@@ -477,8 +477,9 @@ namespace MediaPortal.Player
           while (GUIGraphicsContext.InVmr9Render)
           {
             counter++;
-            System.Threading.Thread.Sleep(1);
-            if (counter > 200) break;
+            System.Threading.Thread.Sleep(100);
+            if (counter > 100)
+              break;
           }
           hr = _mediaCtrl.Stop();
           FilterState state;
@@ -578,6 +579,7 @@ namespace MediaPortal.Player
 
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
+
         GC.Collect();
         Log.Info("cleanup done");
       }
@@ -602,6 +604,7 @@ namespace MediaPortal.Player
           return (_mediaType == g_Player.MediaType.TV || _mediaType == g_Player.MediaType.Recording);
       }
     }
+
     public override bool IsRadio
     {
       get
@@ -901,6 +904,7 @@ namespace MediaPortal.Player
         }
       }
     }
+
     public override int Width
     {
       get

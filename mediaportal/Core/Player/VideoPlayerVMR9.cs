@@ -353,8 +353,8 @@ namespace MediaPortal.Player
           while (GUIGraphicsContext.InVmr9Render)
           {
             counter++;
-            System.Threading.Thread.Sleep(1);
-            if (counter > 200) break;
+            System.Threading.Thread.Sleep(100);
+            if (counter > 100) break;
           }
           hr = mediaCtrl.Stop();
           FilterState state;
@@ -421,6 +421,7 @@ namespace MediaPortal.Player
         }
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;
+
         GC.Collect();
       }
       catch (Exception ex)

@@ -666,7 +666,7 @@ namespace MediaPortal.Player
         {
           counter++;
           System.Threading.Thread.Sleep(100);
-          if (counter > 5)
+          if (counter > 100)
             break;
         }
 
@@ -767,9 +767,10 @@ namespace MediaPortal.Player
 
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
+
         GC.Collect();
-        GC.Collect();
-        GC.Collect();
+        //GC.Collect();
+        //GC.Collect();
       }
       catch (Exception ex)
       {
