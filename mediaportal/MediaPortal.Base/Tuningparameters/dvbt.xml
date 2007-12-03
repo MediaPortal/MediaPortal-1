@@ -1766,6 +1766,38 @@
 		<carrier frequency="738000" bandwidth="8"></carrier>
 		<carrier frequency="794000" bandwidth="8"></carrier>
 	</country>
+	<country name="Lithuania - Vilnius">
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+	</country>
+	<country name="Lithuania - Kauans">
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Lithuania - Klaipeda">
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+	</country>
+	<country name="Lithuania - Siauliai">
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+	</country>
+	<country name="Lithuania - Panevezys">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+	</country>
 	<country name="Luxembourg - All Regions" offset="125">
 		<carrier frequency="191500" bandwidth="7"></carrier>
 		<carrier frequency="498000" bandwidth="8"></carrier>
