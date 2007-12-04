@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2013</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>black.bmp</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>177</posX>
+      <posY>196</posY>
+      <width>436</width>
+      <height>246</height>
+      <texture>dialog_background.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>dialog Heading</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>215</posX>
+      <posY>230</posY>
+      <label>934</label>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Rating label</description>
+      <type>label</type>
+      <id>3</id>
+      <posX>215</posX>
+      <posY>270</posY>
+      <label>204</label>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>right button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>475</posX>
+      <posY>295</posY>
+      <width>26</width>
+      <height>27</height>
+      <textureFocus>arrow_round_right_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+      <label />
+      <onleft>11</onleft>
+      <onright>10</onright>
+      <onup>13</onup>
+      <ondown>13</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>left button</description>
+      <type>button</type>
+      <id>11</id>
+      <posX>235</posX>
+      <posY>295</posY>
+      <width>26</width>
+      <height>27</height>
+      <textureFocus>arrow_round_left_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+      <label />
+      <onleft>11</onleft>
+      <onright>10</onright>
+      <onup>13</onup>
+      <ondown>13</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>OK button</description>
+      <type>button</type>
+      <id>12</id>
+      <posX>530</posX>
+      <posY>235</posY>
+      <textYOff>7</textYOff>
+      <width>44</width>
+      <height>44</height>
+      <textureFocus>dialogue_ok_focus.png</textureFocus>
+      <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>13</onleft>
+      <onright>10</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>next item</description>
+      <type>button</type>
+      <id>13</id>
+      <posX>295</posX>
+      <posY>360</posY>
+      <width>26</width>
+      <height>27</height>
+      <textureFocus>arrow_round_right_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+      <label />
+      <onleft>14</onleft>
+      <onright>12</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Play</description>
+      <type>button</type>
+      <id>14</id>
+      <posX>265</posX>
+      <posY>360</posY>
+      <width>26</width>
+      <height>27</height>
+      <textureFocus>osd_play_focus.png</textureFocus>
+      <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>15</onleft>
+      <onright>13</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>previous item</description>
+      <type>button</type>
+      <id>15</id>
+      <posX>235</posX>
+      <posY>360</posY>
+      <width>26</width>
+      <height>27</height>
+      <textureFocus>arrow_round_left_focus.png</textureFocus>
+      <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+      <label />
+      <onleft>15</onleft>
+      <onright>14</onright>
+      <onup>10</onup>
+      <ondown>10</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Title</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>215</posX>
+      <posY>335</posY>
+      <label>204</label>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>100</id>
+      <posX>275</posX>
+      <posY>290</posY>
+      <texture>star.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>101</id>
+      <posX>315</posX>
+      <posY>290</posY>
+      <texture>star.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>102</id>
+      <posX>355</posX>
+      <posY>290</posY>
+      <texture>star.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>103</id>
+      <posX>395</posX>
+      <posY>290</posY>
+      <texture>star.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>104</id>
+      <posX>435</posX>
+      <posY>290</posY>
+      <texture>star.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>
