@@ -1006,9 +1006,7 @@ namespace MediaPortal.GUI.Video
             ScreenStateChanged();
             _needToClearScreen = true;
             UpdateGUI();
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
-            imgVolumeBar.Current = VolumeHandler.Instance.Step;
-            imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);            
             RenderVolume(false);
             RenderForbidden(false);
             if (!screenState.Paused)
@@ -1787,12 +1785,11 @@ namespace MediaPortal.GUI.Video
       {
         _isVolumeVisible = false;
         imgVolumeBar.Visible = false;
-        imgVolumeMuteIcon.Visible = false;
+        imgVolumeMuteIcon.Visible = false;        
         return;
       }
       else
-      {
-        imgVolumeBar.Visible = true;
+      {        
         if (VolumeHandler.Instance.IsMuted)
         {
           imgVolumeMuteIcon.Visible = true;
@@ -1801,12 +1798,13 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          imgVolumeBar.Current = VolumeHandler.Instance.Step;
           imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+          imgVolumeBar.Current = VolumeHandler.Instance.Step;          
           imgVolumeMuteIcon.Visible = false;
           imgVolumeBar.Image1 = 2;
           imgVolumeBar.Image2 = 1;
         }
+        imgVolumeBar.Visible = true;
       }
     }
 

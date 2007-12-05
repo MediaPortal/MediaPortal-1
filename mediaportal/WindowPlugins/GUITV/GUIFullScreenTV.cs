@@ -1373,9 +1373,7 @@ namespace MediaPortal.GUI.TV
             _notifyDialogVisible = false;
             _dialogYesNoVisible = false;
             _bottomDialogMenuVisible = false;
-            _statusTimeOutTimer = DateTime.Now;
-            imgVolumeBar.Current = VolumeHandler.Instance.Step;
-            imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+            _statusTimeOutTimer = DateTime.Now;            
             RenderVolume(false);
             ScreenStateChanged();
             UpdateGUI();
@@ -2513,12 +2511,11 @@ namespace MediaPortal.GUI.TV
       {
         _isVolumeVisible = false;
         imgVolumeBar.Visible = false;
-        imgVolumeMuteIcon.Visible = false;
+        imgVolumeMuteIcon.Visible = false;        
         return;
       }
       else
-      {
-        imgVolumeBar.Visible = true;
+      {        
         if (VolumeHandler.Instance.IsMuted)
         {
           imgVolumeMuteIcon.Visible = true;
@@ -2527,12 +2524,13 @@ namespace MediaPortal.GUI.TV
         }
         else
         {
-          imgVolumeBar.Current = VolumeHandler.Instance.Step;
           imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+          imgVolumeBar.Current = VolumeHandler.Instance.Step;          
           imgVolumeMuteIcon.Visible = false;
           imgVolumeBar.Image1 = 2;
           imgVolumeBar.Image2 = 1;
         }
+        imgVolumeBar.Visible = true;
       }
     }
 			
