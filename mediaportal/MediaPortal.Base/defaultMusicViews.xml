@@ -50,17 +50,17 @@
 <a1:ArrayList id="ref-12" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-28"/>
 <_size>4</_size>
-<_version>125</_version>
+<_version>140</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-14" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-29"/>
 <_size>4</_size>
-<_version>130</_version>
+<_version>135</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-16" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-30"/>
-<_size>4</_size>
-<_version>119</_version>
+<_size>3</_size>
+<_version>123</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-18" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-31"/>
@@ -103,345 +103,346 @@
 <item href="#ref-44"/>
 <item href="#ref-45"/>
 <item href="#ref-46"/>
-<item href="#ref-47"/>
 </SOAP-ENC:Array>
 <SOAP-ENC:Array id="ref-31" SOAP-ENC:arrayType="xsd:anyType[8]">
+<item href="#ref-47"/>
 <item href="#ref-48"/>
 <item href="#ref-49"/>
 <item href="#ref-50"/>
-<item href="#ref-51"/>
 </SOAP-ENC:Array>
 <SOAP-ENC:Array id="ref-32" SOAP-ENC:arrayType="xsd:anyType[8]">
+<item href="#ref-51"/>
 <item href="#ref-52"/>
 <item href="#ref-53"/>
 <item href="#ref-54"/>
-<item href="#ref-55"/>
 </SOAP-ENC:Array>
 <SOAP-ENC:Array id="ref-33" SOAP-ENC:arrayType="xsd:anyType[4]">
+<item href="#ref-55"/>
 <item href="#ref-56"/>
-<item href="#ref-57"/>
 </SOAP-ENC:Array>
 <SOAP-ENC:Array id="ref-34" SOAP-ENC:arrayType="xsd:anyType[4]">
-<item href="#ref-58"/>
+<item href="#ref-57"/>
 </SOAP-ENC:Array>
 <SOAP-ENC:Array id="ref-35" SOAP-ENC:arrayType="xsd:anyType[4]">
-<item href="#ref-59"/>
+<item href="#ref-58"/>
 </SOAP-ENC:Array>
 <a3:FilterDefinition id="ref-36" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction id="ref-60">1</restriction>
-<whereClause id="ref-61">artist</whereClause>
-<fromStatement id="ref-62"></fromStatement>
-<sqloperator id="ref-63">group</sqloperator>
-<whereValue id="ref-64">*</whereValue>
-<selectedValue href="#ref-62"/>
-<defaultView id="ref-65">List</defaultView>
-<defaultSort id="ref-66">Artist</defaultSort>
+<restriction id="ref-59">1</restriction>
+<whereClause id="ref-60">artist</whereClause>
+<fromStatement id="ref-61"></fromStatement>
+<sqloperator id="ref-62">group</sqloperator>
+<whereValue id="ref-63">*</whereValue>
+<selectedValue href="#ref-61"/>
+<defaultView id="ref-64">List</defaultView>
+<defaultSort id="ref-65">Artist</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-37" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction id="ref-67"></restriction>
-<whereClause href="#ref-61"/>
-<fromStatement href="#ref-62"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-64"/>
-<selectedValue href="#ref-62"/>
-<defaultView href="#ref-65"/>
-<defaultSort href="#ref-66"/>
+<restriction id="ref-66"></restriction>
+<whereClause href="#ref-60"/>
+<fromStatement href="#ref-61"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView href="#ref-64"/>
+<defaultSort href="#ref-65"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-38" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause id="ref-68">album</whereClause>
-<fromStatement href="#ref-62"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-64"/>
-<selectedValue href="#ref-62"/>
-<defaultView id="ref-69">Big Icons</defaultView>
-<defaultSort id="ref-70">Album</defaultSort>
+<restriction href="#ref-66"/>
+<whereClause id="ref-67">album</whereClause>
+<fromStatement href="#ref-61"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView id="ref-68">Big Icons</defaultView>
+<defaultSort id="ref-69">Album</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-39" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause id="ref-71">track</whereClause>
-<fromStatement href="#ref-62"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-64"/>
-<selectedValue href="#ref-62"/>
-<defaultView href="#ref-65"/>
-<defaultSort id="ref-72">Track</defaultSort>
+<restriction href="#ref-66"/>
+<whereClause id="ref-70">track</whereClause>
+<fromStatement href="#ref-61"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView href="#ref-64"/>
+<defaultSort id="ref-71">Track</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-40" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction id="ref-73">1</restriction>
-<whereClause id="ref-74">albumartist</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator id="ref-75">group</sqloperator>
-<whereValue id="ref-76">*</whereValue>
-<selectedValue href="#ref-67"/>
-<defaultView id="ref-77">List</defaultView>
-<defaultSort id="ref-78">Artist</defaultSort>
+<restriction id="ref-72">1</restriction>
+<whereClause id="ref-73">albumartist</whereClause>
+<fromStatement href="#ref-61"/>
+<sqloperator id="ref-74">group</sqloperator>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView id="ref-75">List</defaultView>
+<defaultSort id="ref-76">Artist</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-41" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause href="#ref-74"/>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-77"/>
-<defaultSort href="#ref-78"/>
+<restriction href="#ref-66"/>
+<whereClause href="#ref-73"/>
+<fromStatement href="#ref-61"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView href="#ref-75"/>
+<defaultSort href="#ref-76"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-42" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause id="ref-79">album</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-69"/>
-<defaultSort id="ref-80">Album</defaultSort>
+<restriction href="#ref-66"/>
+<whereClause id="ref-77">album</whereClause>
+<fromStatement href="#ref-61"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView href="#ref-68"/>
+<defaultSort id="ref-78">Album</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-43" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause id="ref-81">track</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-77"/>
-<defaultSort id="ref-82">Track</defaultSort>
+<restriction href="#ref-66"/>
+<whereClause id="ref-79">track</whereClause>
+<fromStatement href="#ref-61"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView href="#ref-75"/>
+<defaultSort id="ref-80">Track</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-44" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction id="ref-83">1</restriction>
-<whereClause href="#ref-68"/>
-<fromStatement href="#ref-62"/>
-<sqloperator href="#ref-63"/>
-<whereValue href="#ref-64"/>
-<selectedValue href="#ref-62"/>
-<defaultView href="#ref-65"/>
-<defaultSort href="#ref-70"/>
+<restriction id="ref-81">1</restriction>
+<whereClause href="#ref-67"/>
+<fromStatement href="#ref-61"/>
+<sqloperator href="#ref-62"/>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView href="#ref-64"/>
+<defaultSort href="#ref-69"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-45" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause href="#ref-68"/>
-<fromStatement href="#ref-62"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-64"/>
-<selectedValue href="#ref-62"/>
-<defaultView href="#ref-69"/>
-<defaultSort href="#ref-70"/>
+<restriction href="#ref-66"/>
+<whereClause href="#ref-67"/>
+<fromStatement href="#ref-61"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView href="#ref-68"/>
+<defaultSort href="#ref-69"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-46" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-62"/>
-<whereClause id="ref-84">artist</whereClause>
-<fromStatement href="#ref-62"/>
-<sqloperator href="#ref-62"/>
-<whereValue href="#ref-64"/>
-<selectedValue href="#ref-62"/>
-<defaultView id="ref-85">List</defaultView>
-<defaultSort id="ref-86">Artist</defaultSort>
+<restriction href="#ref-66"/>
+<whereClause href="#ref-70"/>
+<fromStatement href="#ref-61"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-63"/>
+<selectedValue href="#ref-61"/>
+<defaultView href="#ref-64"/>
+<defaultSort href="#ref-71"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-47" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause href="#ref-71"/>
-<fromStatement href="#ref-62"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-64"/>
-<selectedValue href="#ref-62"/>
-<defaultView href="#ref-65"/>
-<defaultSort href="#ref-72"/>
+<restriction href="#ref-66"/>
+<whereClause id="ref-82">genre</whereClause>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-66"/>
+<whereValue id="ref-83">*</whereValue>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-64"/>
+<defaultSort id="ref-84">Name</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-48" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause id="ref-87">genre</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-65"/>
-<defaultSort id="ref-88">Name</defaultSort>
+<restriction href="#ref-66"/>
+<whereClause href="#ref-60"/>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-83"/>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-64"/>
+<defaultSort href="#ref-65"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-49" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause href="#ref-61"/>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-65"/>
-<defaultSort href="#ref-66"/>
+<restriction href="#ref-66"/>
+<whereClause href="#ref-67"/>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-83"/>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-68"/>
+<defaultSort href="#ref-69"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-50" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause href="#ref-68"/>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-69"/>
-<defaultSort href="#ref-70"/>
+<restriction href="#ref-66"/>
+<whereClause href="#ref-70"/>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-83"/>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-64"/>
+<defaultSort href="#ref-71"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-51" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause href="#ref-71"/>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-65"/>
-<defaultSort href="#ref-72"/>
+<restriction href="#ref-66"/>
+<whereClause id="ref-85">year</whereClause>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-83"/>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-64"/>
+<defaultSort href="#ref-84"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-52" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause id="ref-89">year</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-65"/>
-<defaultSort href="#ref-88"/>
+<restriction href="#ref-66"/>
+<whereClause id="ref-86">artist</whereClause>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-83"/>
+<selectedValue href="#ref-66"/>
+<defaultView id="ref-87">List</defaultView>
+<defaultSort id="ref-88">Artist</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-53" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause id="ref-90">artist</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView id="ref-91">List</defaultView>
-<defaultSort id="ref-92">Artist</defaultSort>
+<restriction href="#ref-66"/>
+<whereClause id="ref-89">album</whereClause>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-83"/>
+<selectedValue href="#ref-66"/>
+<defaultView id="ref-90">Big Icons</defaultView>
+<defaultSort id="ref-91">Album</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-54" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause id="ref-93">album</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView id="ref-94">Big Icons</defaultView>
-<defaultSort id="ref-95">Album</defaultSort>
+<restriction href="#ref-66"/>
+<whereClause id="ref-92">track</whereClause>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-83"/>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-64"/>
+<defaultSort id="ref-93">Track</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-55" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause id="ref-96">track</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-65"/>
-<defaultSort id="ref-97">Track</defaultSort>
+<restriction id="ref-94">1</restriction>
+<whereClause id="ref-95">title</whereClause>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-62"/>
+<whereValue id="ref-96">*</whereValue>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-64"/>
+<defaultSort id="ref-97">Title</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-56" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction id="ref-98">1</restriction>
-<whereClause id="ref-99">title</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-63"/>
-<whereValue id="ref-100">*</whereValue>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-65"/>
-<defaultSort id="ref-101">Title</defaultSort>
+<restriction href="#ref-66"/>
+<whereClause href="#ref-92"/>
+<fromStatement href="#ref-66"/>
+<sqloperator href="#ref-66"/>
+<whereValue href="#ref-96"/>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-64"/>
+<defaultSort id="ref-98">Title</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-57" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
-<sortAscending>true</sortAscending>
-<restriction href="#ref-67"/>
-<whereClause href="#ref-96"/>
-<fromStatement href="#ref-67"/>
-<sqloperator href="#ref-67"/>
-<whereValue href="#ref-100"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-65"/>
-<defaultSort id="ref-102">Title</defaultSort>
-<limit>-1</limit>
+<sortAscending>false</sortAscending>
+<restriction id="ref-99">0</restriction>
+<whereClause id="ref-100">timesplayed</whereClause>
+<fromStatement href="#ref-66"/>
+<sqloperator id="ref-101">&#62;</sqloperator>
+<whereValue href="#ref-83"/>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-64"/>
+<defaultSort id="ref-102">Rating</defaultSort>
+<limit>100</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-58" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
-<sortAscending>false</sortAscending>
-<restriction id="ref-103">0</restriction>
-<whereClause id="ref-104">timesplayed</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator id="ref-105">&#62;</sqloperator>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-65"/>
-<defaultSort id="ref-106">Rating</defaultSort>
-<limit>100</limit>
-</a3:FilterDefinition>
-<a3:FilterDefinition id="ref-59" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-<distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction id="ref-107">1</restriction>
-<whereClause id="ref-108">favorites</whereClause>
-<fromStatement href="#ref-67"/>
-<sqloperator id="ref-109">=</sqloperator>
-<whereValue href="#ref-76"/>
-<selectedValue href="#ref-67"/>
-<defaultView href="#ref-65"/>
-<defaultSort id="ref-110">Rating</defaultSort>
+<restriction id="ref-103">1</restriction>
+<whereClause id="ref-104">favorites</whereClause>
+<fromStatement href="#ref-66"/>
+<sqloperator id="ref-105">=</sqloperator>
+<whereValue href="#ref-83"/>
+<selectedValue href="#ref-66"/>
+<defaultView href="#ref-64"/>
+<defaultSort id="ref-106">Rating</defaultSort>
 <limit>-1</limit>
 </a3:FilterDefinition>
 </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-em/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.2.9991%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+ition id="ref-59" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.3.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<distinct>false</distinct>
+<sortAscending>true</sortAscending>
+<restriction id="ref-108">1</restriction>
+<whereClause id="ref-109">favorites</whereClause>
+<fromStatement href="#ref-67"/>
+<sqloperator id="ref-110">=</sqloperator>
+<whereValue href="#ref-76"/>
+<selectedValue href="#ref-67"/>
+<defaultView href="#ref-65"/>
+<defaultSort id="ref-111">Rating</defaultSort>
+<limit>-1</limit>
+</a3:FilterDefinition>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+tal.GUI.View/Core%2C%20Version%3D0.2.2.9991%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction id="ref-102">1</restriction>

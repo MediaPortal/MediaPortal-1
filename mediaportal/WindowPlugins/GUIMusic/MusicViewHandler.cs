@@ -53,6 +53,8 @@ namespace MediaPortal.GUI.Music
     MusicDatabase database;
     int restrictionLength = 0;   // used to sum up the length of all restrictions
 
+    Song currentSong = null;    // holds the current Song selected in the list
+
     public MusicViewHandler()
     {
       if (!File.Exists(customMusicViews))
@@ -169,7 +171,7 @@ namespace MediaPortal.GUI.Music
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
       definition.SelectedValue = GetFieldValue(song, definition.Where).ToString();
       if (currentLevel + 1 < currentView.Filters.Count) currentLevel++;
-
+      currentSong = song;
     }
 
     public List<Song> Execute()
@@ -205,12 +207,16 @@ namespace MediaPortal.GUI.Music
         // Handle the grouping of songs
         if (definition.SqlOperator == "group")
         {
-          string searchTable = table;
+          string searchTable = table;        
+          string countField = searchField;   // when grouping on ALnums, we need to count the artists
           // We don't have an album table anymore, so change the table to search for to tracks here.
           if (table == "album")
+          {
             searchTable = "tracks";
+            countField = "strArtist";
+          }
 
-          sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) IX, Count(distinct {0}) from {2} GROUP BY IX", searchField, definition.Restriction, searchTable);
+          sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) as IX, Count(distinct {2}) from {3} GROUP BY IX", searchField, definition.Restriction, countField, searchTable);
           database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
           return songs;
         }
@@ -228,7 +234,7 @@ namespace MediaPortal.GUI.Music
           case "album":
             sql = String.Format("select distinct strAlbum, strArtist, strAlbumArtist, strPath from tracks ");
             if (whereClause != string.Empty) sql += "where " + whereClause;
-            sql += " group by strAlbum";
+            sql += " group by strArtist";   // We need to group on Artist, to show Albums with same name for different artists
             if (orderClause != string.Empty) sql += orderClause;
             break;
 
@@ -303,7 +309,7 @@ namespace MediaPortal.GUI.Music
           if (table == "album")
           {
             from = String.Format("{0}, strArtist, strAlbumArtist, strPath from tracks", GetField(defCurrent.Where));
-            whereClause += " group by strAlbum ";
+            whereClause += " group by strArtist ";
           }
 
           sql = String.Format("select distinct {0} {1} {2}", from, whereClause, orderClause);
@@ -313,6 +319,16 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
+        // get previous filter to see, if we had an album 
+        FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[CurrentLevel - 1];
+        if (defPrevious.Where == "album")
+        {
+          if (whereClause != "")
+            whereClause += " and ";
+
+          whereClause += String.Format("strAlbumArtist like '%| {0} |%'", currentSong.Artist);
+        }
+
         sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);
 
         database.GetSongsByFilter(sql, out songs, "tracks");
