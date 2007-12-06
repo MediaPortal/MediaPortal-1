@@ -213,7 +213,7 @@ namespace MediaPortal.GUI.Music
           if (table == "album")
           {
             searchTable = "tracks";
-            countField = "strArtist";
+            countField = "strAlbumArtist";
           }
 
           sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) as IX, Count(distinct {2}) from {3} GROUP BY IX", searchField, definition.Restriction, countField, searchTable);
@@ -234,7 +234,7 @@ namespace MediaPortal.GUI.Music
           case "album":
             sql = String.Format("select distinct strAlbum, strArtist, strAlbumArtist, strPath from tracks ");
             if (whereClause != string.Empty) sql += "where " + whereClause;
-            sql += " group by strArtist";   // We need to group on Artist, to show Albums with same name for different artists
+            sql += " group by strAlbumArtist";   // We need to group on Artist, to show Albums with same name for different artists
             if (orderClause != string.Empty) sql += orderClause;
             break;
 
