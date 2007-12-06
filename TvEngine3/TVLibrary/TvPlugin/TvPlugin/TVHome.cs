@@ -1561,15 +1561,40 @@ namespace TvPlugin
           return false;
         }
         MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
-        if (g_Player.Playing && _autoTurnOnTv && !_userChannelChanged)
+
+        // do we stop the player when changing channel ?
+        // _userChannelChanged is true if user did interactively change the channel, like with mini ch. list. etc.
+        if (!_userChannelChanged)
         {
-          //- Changed by joboehl - Enable TV to autoturnon on channel selection. 
-          if (g_Player.IsTVRecording) return true;
-          if (g_Player.IsVideo) return true;
-          //if (g_Player.IsTV) return true;
-          if (g_Player.IsDVD) return true;
-          if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
+          if (g_Player.Playing)
+          {
+            if (!_autoTurnOnTv) //respect the autoturnontv setting.
+            {
+              //if (g_Player.IsTV) return true;
+              if (g_Player.IsTVRecording) return true;
+              if (g_Player.IsVideo) return true;
+              if (g_Player.IsDVD) return true;
+              if (g_Player.IsMusic) return true;
+            }
+            else
+            {
+              if (g_Player.IsTVRecording) return true;
+              if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)
+              {                
+                g_Player.Stop();
+              }
+            }
+          }
         }
+        else
+        {
+          if (g_Player.IsTVRecording) //we are watching a recording, we have now issued a ch. change..stop the player.
+          {
+            _userChannelChanged = false;
+            g_Player.Stop();
+          }
+        }
+
         if (Navigator.Channel != null)
         {
           if (channel.IdChannel != Navigator.Channel.IdChannel || (Navigator.LastViewedChannel == null))
@@ -1606,18 +1631,7 @@ namespace TvPlugin
               return true;
             }
         }
-
-        if (!_userChannelChanged && g_Player.IsTVRecording)
-        {
-          return true;
-        }
-        else if (g_Player.IsTVRecording)
-        {
-          // we are playing back a tv recording. stop it now, then tune to new channel.
-          _userChannelChanged = false;
-          g_Player.Stop();
-        }
-
+       
         User user = new User();
         if (TVHome.Card != null)
         {
