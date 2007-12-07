@@ -117,11 +117,11 @@ namespace ProcessPlugins.ComSkipLauncher
       // 
       // radioButtonStart
       // 
-      this.radioButtonStart.Enabled = false;
       this.radioButtonStart.Location = new System.Drawing.Point(8, 16);
       this.radioButtonStart.Name = "radioButtonStart";
       this.radioButtonStart.Size = new System.Drawing.Size(120, 24);
       this.radioButtonStart.TabIndex = 0;
+      this.radioButtonStart.TabStop = true;
       this.radioButtonStart.Text = "Recording Start";
       this.toolTips.SetToolTip(this.radioButtonStart, "Launch ComSkip as soon as the recording starts (this requires the LiveTV setting " +
               "in comskip.ini)");
