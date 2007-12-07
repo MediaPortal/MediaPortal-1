@@ -346,8 +346,8 @@ namespace TvLibrary.Implementations.Analog
           {
             _haupPauge = new Hauppauge(_filterCapture, string.Empty);
             _haupPauge.SetStream(103);
-            _haupPauge.SetAudioBitRate(224);
-            _haupPauge.SetVideoBitRate(4000, 6000, true);
+            _haupPauge.SetAudioBitRate(384);
+            _haupPauge.SetVideoBitRate(6000, 8000, true);
             int min, max;
             bool vbr;
             _haupPauge.GetVideoBitRate(out min, out max, out vbr);

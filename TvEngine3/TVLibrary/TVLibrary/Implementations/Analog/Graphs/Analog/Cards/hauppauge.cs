@@ -90,8 +90,8 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Constructor: Require the Hauppauge capture filter, and the deviceid for the card to be passed in
     /// </summary>
-		public Hauppauge(IBaseFilter filter, string tuner)
-		{
+	public Hauppauge(IBaseFilter filter, string tuner)
+	{
       try
       {
         //Don't create the class if we don't have any filter;
@@ -149,7 +149,7 @@ namespace TvLibrary.Implementations.Analog
       {
         Log.Log.WriteFile("Hauppauge Init failed " + ex.Message);
       }
-		}
+	}
 
     /// <summary>
     /// Toggles Dynamic Noise Reduction on/off
@@ -178,8 +178,8 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Get the video bit rate
     /// </summary>
-		public bool GetVideoBitRate(out int minKbps, out int maxKbps,out bool isVBR)
-		{
+	public bool GetVideoBitRate(out int minKbps, out int maxKbps,out bool isVBR)
+	{
       maxKbps = minKbps = -1;
       isVBR = false;
       try
@@ -198,13 +198,13 @@ namespace TvLibrary.Implementations.Analog
       }
 
 			return true;
-		}
+	}
 
     /// <summary>
     /// Sets the video bit rate
     /// </summary>
-		public bool SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
-		{
+	public bool SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
+	{
       try
       {
         if (hauppaugelib != IntPtr.Zero)
@@ -222,7 +222,7 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("Hauppauge Set Vid Rate " + ex.Message);
       }
       return false;
-		}
+	}
 
     /// <summary>
     /// Get the audio bit rate
@@ -360,7 +360,7 @@ namespace TvLibrary.Implementations.Analog
       disposed = true;
     }
 
-    ~Hauppauge()      
+   ~Hauppauge()      
    {
       Dispose(false);
    }
