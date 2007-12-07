@@ -86,6 +86,7 @@ namespace TvPlugin
     TvNotifyManager _notifyManager = new TvNotifyManager();
     static string[] _preferredLanguages;
     static bool _preferAC3 = false;
+    static bool _autoFullScreen = false;
     static bool _rebuildGraphOnNewVideoSpecs = true;
     static bool _rebuildGraphOnNewAudioSpecs = true;
     static bool _avoidSeeking = false;
@@ -375,6 +376,7 @@ namespace TvPlugin
         _rebuildGraphOnNewVideoSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewVideoSpecs", true);
         _rebuildGraphOnNewAudioSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", true);
         _avoidSeeking = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
+        _autoFullScreen = xmlreader.GetValueAsBool("tvservice", "autofullscreen", false);
       }
     }
 
@@ -746,6 +748,13 @@ namespace TvPlugin
       }
       _onPageLoadDone = true;
       GUIWaitCursor.Hide();
+
+      int prevWinId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
+
+      if (_autoFullScreen && !g_Player.FullScreen && (prevWinId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && prevWinId != (int)GUIWindow.Window.WINDOW_TVGUIDE && prevWinId != (int)GUIWindow.Window.WINDOW_SEARCHTV && prevWinId != (int)GUIWindow.Window.WINDOW_RECORDEDTV && prevWinId != (int)GUIWindow.Window.WINDOW_SCHEDULER))
+      {        
+        g_Player.ShowFullScreenWindow();
+      }
     }
 
 
@@ -1020,7 +1029,7 @@ namespace TvPlugin
     /// <returns></returns>
     private static bool ShowFullScreenWindowTVHandler()
     {
-      if (!g_Player.Playing && Card.IsTimeShifting)
+      if (g_Player.IsTV && Card.IsTimeShifting)
       {
         // watching TV
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
@@ -1552,7 +1561,7 @@ namespace TvPlugin
 
     static public bool ViewChannelAndCheck(Channel channel)
     {
-     
+      //System.Diagnostics.Debugger.Launch();
       try
       {                    
         if (channel == null)
