@@ -123,13 +123,14 @@ namespace SetupTv.Sections
 	      0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
       };
     #endregion
-    [ComImport, Guid("4F8BF30C-3BEB-43A3-8BF2-10096FD28CF2")]
-    protected class TsFileSource { }
+    [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
+    protected class TsReader
+    {
+    }
 
     protected IFilterGraph2 _graphBuilder = null;
     protected DsROTEntry _rotEntry;
-    protected TsFileSource _tsFileSource;
-    protected IBaseFilter _mpegDemux;
+    protected IBaseFilter _tsReader;
     protected IPin _pinVideo;
     protected IPin _pinAudio;
     IMediaControl _mediaCtrl;
@@ -141,49 +142,50 @@ namespace SetupTv.Sections
       _graphBuilder = (IFilterGraph2)new FilterGraph();
       _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
+      TsReader reader = new TsReader();
+      _tsReader = (IBaseFilter)reader;
+      Log.Info("TSReaderPlayer:add TsReader to graph");
+      _graphBuilder.AddFilter((IBaseFilter)_tsReader, "TsReader");
 
-      Log.WriteFile("add tsfilesource");
-      _tsFileSource = new TsFileSource();
-      _graphBuilder.AddFilter((IBaseFilter)_tsFileSource, "TsFileSource");
-
-
-      #region add mpeg-2 demux filter
-
-      Log.WriteFile("add mpeg-2 demux");
-      MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
-      _mpegDemux = (IBaseFilter)demux;
-      hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
-      #endregion
-
-      #region load file in tsfilesource
-      Log.WriteFile("load file in tsfilesource");
-      IFileSourceFilter interfaceFile = (IFileSourceFilter)_tsFileSource;
+      #region load file in TsReader
+      Log.WriteFile("load file in Ts");
+      IFileSourceFilter interfaceFile = (IFileSourceFilter)_tsReader;
       if (interfaceFile == null)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
+        Log.WriteFile("TSReaderPlayer:Failed to get IFileSourceFilter");
         return false;
       }
       hr = interfaceFile.Load(fileName, null);
 
       if (hr != 0)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:Failed to load file");
+        Log.WriteFile("TSReaderPlayer:Failed to load file");
         return false;
       }
       #endregion
 
 
       #region render pin
-      IPin pin = DsFindPin.ByDirection((IBaseFilter)_tsFileSource, PinDirection.Output, 0);
-      Log.WriteFile("render pins");
-      hr = _graphBuilder.Render(pin);
-      if (hr != 0)
+      Log.Info("TSReaderPlayer:render TsReader outputs");
+      IEnumPins enumPins;
+      _tsReader.EnumPins(out enumPins);
+      IPin[] pins = new IPin[2];
+      int fetched = 0;
+      while (enumPins.Next(1, pins, out fetched) == 0)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to render video output pin:{0:X}", hr);
+        if (fetched != 1) break;
+        PinDirection direction;
+        pins[0].QueryDirection(out direction);
+        if (direction == PinDirection.Input)
+        {
+          Marshal.ReleaseComObject(pins[0]);
+          continue;
+        }
+        _graphBuilder.Render(pins[0]);
+        Marshal.ReleaseComObject(pins[0]);
       }
-
-      Marshal.ReleaseComObject(pin);
-
+       Marshal.ReleaseComObject(enumPins);
+	  
       #endregion
 
 
@@ -198,7 +200,7 @@ namespace SetupTv.Sections
       Log.WriteFile("run graph");
       _mediaCtrl = (IMediaControl)_graphBuilder;
       hr = _mediaCtrl.Run();
-      Log.WriteFile("TSStreamBufferPlayer9:running:{0:X}", hr);
+      Log.WriteFile("TSReaderPlayer:running:{0:X}", hr);
 
       return true;
     }
@@ -220,13 +222,9 @@ namespace SetupTv.Sections
       {
         Marshal.ReleaseComObject(_pinVideo); _pinVideo = null;
       }
-      if (_mpegDemux != null)
+      if (_tsReader != null)
       {
-        Marshal.ReleaseComObject(_mpegDemux); _mpegDemux = null;
-      }
-      if (_tsFileSource != null)
-      {
-        Marshal.ReleaseComObject(_tsFileSource); _tsFileSource = null;
+        Marshal.ReleaseComObject(_tsReader); _tsReader = null;
       }
       if (_rotEntry != null)
       {
