@@ -55,13 +55,16 @@ namespace TvPlugin
   /// <summary>v
   /// Summary description for Class1.
   /// </summary>
-  public class TVHome : GUIWindow, ISetupForm, IShowPlugin
+	public class TVHome : GUIWindow, ISetupForm, IShowPlugin, IPluginReceiver
   {
 
 		#region constants		
     public const int HEARTBEAT_INTERVAL = 5; //seconds
+		private const int WM_POWERBROADCAST = 0x0218;
+		private const int PBT_APMRESUMESUSPEND = 0x0007;
+		private const int PBT_APMRESUMESTANDBY = 0x0008;
 		#endregion
-
+		
     #region variables
     enum Controls
     {
@@ -87,6 +90,7 @@ namespace TvPlugin
     static string[] _preferredLanguages;
     static bool _preferAC3 = false;
     static bool _autoFullScreen = false;
+    static bool _resumed = false;
 		static bool _showlastactivemodule = false;
 		static bool _showlastactivemoduleFullscreen = false;
     static bool _rebuildGraphOnNewVideoSpecs = true;
@@ -595,7 +599,45 @@ namespace TvPlugin
       }
       base.OnAction(action);
     }
+
+		private void OnResume()
+		{
+			Log.Debug("TVHome.OnResume()");
+      _resumed = true;
+		}
+
+		public void Start()
+		{
+			Log.Debug("TVHome.Start()");
+		}
+
+		public void Stop()
+		{
+			Log.Debug("TVHome.Stop()");
+		}
+
     
+		public bool WndProc(ref System.Windows.Forms.Message msg)
+		{
+			if (msg.Msg == WM_POWERBROADCAST)
+			{
+
+				switch (msg.WParam.ToInt32())
+				{
+					case PBT_APMRESUMESUSPEND:
+            Log.Info("TVHome.WndProc(): Windows has resumed from hibernate mode");
+						OnResume();
+						break;					
+					case PBT_APMRESUMESTANDBY:
+            Log.Info("TVHome.WndProc(): Windows has resumed from standby mode");
+						OnResume();
+						break;
+				}
+        return true;
+			}
+      return false;
+		}
+		
 
     protected override void OnPageLoad()
     {
@@ -753,16 +795,25 @@ namespace TvPlugin
 
       int prevWinId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
 
-			//if using showlastactivemodule feature and last module is fullscreen, then do not set fullscreen
-			if (!_onPageLoadDone && (!_showlastactivemodule || (_showlastactivemodule && !_showlastactivemoduleFullscreen)))
+			// if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
+      // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
+			bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen);      
+
+      if (_resumed)
+			{
+				showlastActModFS = true;
+			}
+			if (!showlastActModFS)
 			{
 				if (_autoFullScreen && !g_Player.FullScreen && (prevWinId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && prevWinId != (int)GUIWindow.Window.WINDOW_TVGUIDE && prevWinId != (int)GUIWindow.Window.WINDOW_SEARCHTV && prevWinId != (int)GUIWindow.Window.WINDOW_RECORDEDTV && prevWinId != (int)GUIWindow.Window.WINDOW_SCHEDULER))
-				{        
+				{
+					Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");					
 					g_Player.ShowFullScreenWindow();
 				}
 			}
 
 			_onPageLoadDone = true;
+      _resumed = false;
 			GUIWaitCursor.Hide();
     }
 
