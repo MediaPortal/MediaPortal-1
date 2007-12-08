@@ -87,6 +87,8 @@ namespace TvPlugin
     static string[] _preferredLanguages;
     static bool _preferAC3 = false;
     static bool _autoFullScreen = false;
+		static bool _showlastactivemodule = false;
+		static bool _showlastactivemoduleFullscreen = false;
     static bool _rebuildGraphOnNewVideoSpecs = true;
     static bool _rebuildGraphOnNewAudioSpecs = true;
     static bool _avoidSeeking = false;
@@ -360,6 +362,8 @@ namespace TvPlugin
       {
         m_navigator.LoadSettings(xmlreader);        
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
+				_showlastactivemodule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
+				_showlastactivemoduleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
 
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -745,16 +749,21 @@ namespace TvPlugin
         }
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.DisplayName);
-      }
-      _onPageLoadDone = true;
-      GUIWaitCursor.Hide();
+      }      
 
       int prevWinId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
 
-      if (_autoFullScreen && !g_Player.FullScreen && (prevWinId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && prevWinId != (int)GUIWindow.Window.WINDOW_TVGUIDE && prevWinId != (int)GUIWindow.Window.WINDOW_SEARCHTV && prevWinId != (int)GUIWindow.Window.WINDOW_RECORDEDTV && prevWinId != (int)GUIWindow.Window.WINDOW_SCHEDULER))
-      {        
-        g_Player.ShowFullScreenWindow();
-      }
+			//if using showlastactivemodule feature and last module is fullscreen, then do not set fullscreen
+			if (!_onPageLoadDone && (!_showlastactivemodule || (_showlastactivemodule && !_showlastactivemoduleFullscreen)))
+			{
+				if (_autoFullScreen && !g_Player.FullScreen && (prevWinId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && prevWinId != (int)GUIWindow.Window.WINDOW_TVGUIDE && prevWinId != (int)GUIWindow.Window.WINDOW_SEARCHTV && prevWinId != (int)GUIWindow.Window.WINDOW_RECORDEDTV && prevWinId != (int)GUIWindow.Window.WINDOW_SCHEDULER))
+				{        
+					g_Player.ShowFullScreenWindow();
+				}
+			}
+
+			_onPageLoadDone = true;
+			GUIWaitCursor.Hide();
     }
 
 
