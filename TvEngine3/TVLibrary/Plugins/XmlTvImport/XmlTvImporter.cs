@@ -39,8 +39,15 @@ namespace TvEngine
 {
   public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll
   {
+		#region constants
+		private const int remoteFileDonwloadTimeoutSecs = 360; //6 minutes
+		#endregion
+
     #region variables
     bool _workerThreadRunning = false;
+		bool _remoteFileDonwloadInProgress = false;
+		DateTime _remoteFileDonwloadInProgressAt = DateTime.MinValue;
+		
     System.Timers.Timer _timer1;	
     #endregion
 
@@ -172,7 +179,31 @@ namespace TvEngine
 						
 						//in case the destination file is locked by another process, retry each 30 secs, but max 5 min. before giving up
 						while (waitingForFileAccess && retries < 10)
-						{							
+						{
+							/*
+							bool canRead = false;
+							bool canWrite = false;
+							IOUtil.CheckFileAccessRights(path, ref canRead, ref canWrite);
+
+							if (canWrite)
+							{
+								tw = new StreamWriter(path);
+								tw.Write(e.Result);
+								waitingForFileAccess = false;
+							}
+							else
+							{
+								Log.Info("file is locked for writing, retrying in 30secs.");
+								retries++;
+								Thread.Sleep(30000); //wait 30 sec. before retrying.
+							}
+							*/
+
+							if (!_remoteFileDonwloadInProgress)
+							{
+								return;
+							}
+
 							try
 							{
 								//IOUtil.CheckFileAccessRights(path, FileMode.Open, FileAccess.Write, FileShare.Write);
@@ -185,7 +216,7 @@ namespace TvEngine
 								Log.Info("file is locked, retrying in 30secs. [" + ex.Message + "]");
 								retries++;
 								Thread.Sleep(30000); //wait 30 sec. before retrying.
-							}									 																								
+							}				 																								
 						}
 							
 						if (waitingForFileAccess) 
@@ -211,17 +242,19 @@ namespace TvEngine
 			{
 			}
 			finally
-			{
-				//always remember to turn on the timer again.
-				if (tw != null) tw.Close();
-				if (_timer1 != null) _timer1.Enabled = true;
+			{				
+				if (tw != null) tw.Close();				
+				_remoteFileDonwloadInProgress = false; //signal that we are done downloading.
 			}
 		}
 
-		public bool RetrieveRemoteFile(String folder, string URL)
+		public void RetrieveRemoteFile(String folder, string URL)
 		{
-			//System.Diagnostics.Debugger.Launch();
-			bool status = false;
+			//System.Diagnostics.Debugger.Launch();			
+			if (_remoteFileDonwloadInProgress)
+			{
+				return;
+			}
 			string lastTransferAt = "";
 			string transferStatus = "";
 
@@ -236,7 +269,8 @@ namespace TvEngine
 				setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
 				setting.Value = errMsg;
 				setting.Persist();
-				return status;
+				_remoteFileDonwloadInProgress = false;
+				return;
 			}
 
 			if (folder.Length == 0)
@@ -246,7 +280,8 @@ namespace TvEngine
 				setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
 				setting.Value = errMsg;
 				setting.Persist();
-				return status;
+				_remoteFileDonwloadInProgress = false;
+				return;
 			}
 
 			lastTransferAt = DateTime.Now.ToString();
@@ -299,8 +334,9 @@ namespace TvEngine
 			{
 				//Client.DownloadFileAsync(uri, folder + @"\tvguide.xml");								
 				Client.Encoding = System.Text.Encoding.UTF8;
-				Client.DownloadStringAsync(uri);
-				status = true;
+				_remoteFileDonwloadInProgress = true;
+				_remoteFileDonwloadInProgressAt = DateTime.Now;
+				Client.DownloadStringAsync(uri);				
 			}
 			catch (WebException ex)
 			{
@@ -327,9 +363,7 @@ namespace TvEngine
 
 			setting = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "");
 			setting.Value = lastTransferAt;
-			setting.Persist();
-
-			return status;
+			setting.Persist();			
 		}
 
     /// <summary>
@@ -380,26 +414,60 @@ namespace TvEngine
 
     void _timer1_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-			bool inProgress = RetrieveRemoteTvGuide();
+			RetrieveRemoteTvGuide();
 
-			if (inProgress) // we are downloading a remote tvguide.xml, wait for it to complete, before trying to read it (avoiding file locks)
+			DateTime now = DateTime.Now;
+
+			if (_remoteFileDonwloadInProgress) // we are downloading a remote tvguide.xml, wait for it to complete, before trying to read it (avoiding file locks)
 			{
-				_timer1.Enabled = false;
+				// check if the download has been going on for too long, then flag it as failed.
+				TimeSpan ts = now - _remoteFileDonwloadInProgressAt;
+				if (ts.TotalSeconds > remoteFileDonwloadTimeoutSecs)
+				{
+					//timed out;
+					_remoteFileDonwloadInProgress = false;
+					TvBusinessLayer layer = new TvBusinessLayer();
+					Setting setting;
+					setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
+					setting.Value = "File transfer timed out.";
+					setting.Persist();
+
+					setting = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "");
+					setting.Value = now.ToString();
+					setting.Persist();
+
+					Log.Info("File transfer timed out.");
+				}
+				else
+				{
+					Log.Info("File transfer is in progress. Waiting...");
+					return;
+				}
+			}
+			else
+			{
+				CheckNewTVGuide();				
 			}
 
-      CheckNewTVGuide();
+      
     }
 
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		protected bool RetrieveRemoteTvGuide()
+		protected void RetrieveRemoteTvGuide()
 		{
 			//System.Diagnostics.Debugger.Launch();
+			if (_remoteFileDonwloadInProgress)
+			{
+				return;
+			}
+
 			TvBusinessLayer layer = new TvBusinessLayer();
 
 			bool remoteSchedulerEnabled = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
 			if (!remoteSchedulerEnabled)
 			{
-				return false;
+				_remoteFileDonwloadInProgress = false;
+				return;
 			}
 
 			DateTime defaultRemoteScheduleTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 6, 30, 0);
@@ -411,13 +479,12 @@ namespace TvEngine
 			{				
 				string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
 				string URL = layer.GetSetting("xmlTvRemoteURL", "").Value;
-				return RetrieveRemoteFile(folder, URL);				
+				RetrieveRemoteFile(folder, URL);								
 			}
 			else
 			{
 				//Log.Info("Not the time to fetch remote file yet");
-			}
-			return false;
+			}			
 		}
 
     [MethodImpl(MethodImplOptions.Synchronized)]
@@ -457,7 +524,7 @@ namespace TvEngine
       fileName = folder + @"\tvguide.lst";
 
       if (layer.GetSetting("xmlTvImportLST", "true").Value == "true" && System.IO.File.Exists(fileName))
-      {
+      {				
         DateTime fileTime = DateTime.Parse(System.IO.File.GetLastWriteTime(fileName).ToString()); // for rounding errors!!!
         if (lastTime < fileTime)
         {
@@ -487,7 +554,18 @@ namespace TvEngine
       if (importXML)
       {
         string fileName = folder + @"\tvguide.xml";
+				/*
+				bool canRead = false;
+				bool canWrite = false;
+				IOUtil.CheckFileAccessRights(fileName, ref canRead, ref canWrite);
 
+				if (!canRead)
+				{
+					Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access.");
+					return;
+				}
+				*/
+				
         try
         {
           //check if file can be opened for reading....
@@ -497,12 +575,22 @@ namespace TvEngine
         {
           Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
           return;
-        }
+        }				
       }
 
       if (importLST)
       {
         string fileName = folder + @"\tvguide.lst";
+				/*bool canRead = false;
+				bool canWrite = false;
+				IOUtil.CheckFileAccessRights(fileName, ref canRead, ref canWrite);
+
+				if (!canRead)
+				{
+					Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access.");
+					return;
+				}*/
+				
         try
         {
           IOUtil.CheckFileAccessRights(fileName, FileMode.Open,FileAccess.Read, FileShare.Read);

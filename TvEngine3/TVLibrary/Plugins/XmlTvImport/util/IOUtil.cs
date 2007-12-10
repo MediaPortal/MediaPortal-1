@@ -38,6 +38,34 @@ namespace TvEngine
 {
   class IOUtil
   {
+
+		public static void CheckFileAccessRights(string fileName, ref bool canRead, ref bool canWrite)
+		{
+			canRead = false;
+			canWrite = false;
+			FileStream fs = null;
+
+			try
+			{
+				fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+				canRead = fs.CanRead;
+			}
+			finally
+			{
+				if (fs != null) fs.Close();
+			}
+
+			try
+			{
+				fs = new FileStream(fileName, FileMode.Open, FileAccess.Write);
+				canWrite = fs.CanWrite;
+			}
+			finally
+			{
+				if (fs != null) fs.Close();
+			}
+
+		}
     /// <summary>
     /// Check's if the file has the accessrights specified in the input parameters
     /// </summary>
@@ -48,18 +76,17 @@ namespace TvEngine
     public static void CheckFileAccessRights(string fileName,FileMode fm,FileAccess fa,FileShare fs)
     {
       FileStream fileStream = null;
-      StreamReader streamReader = null;
-
+      StreamReader streamReader = null;			
       try
       {
         Encoding fileEncoding = Encoding.Default;
         fileStream = File.Open(fileName, fm, fa, fs);
-        streamReader = new StreamReader(fileStream, fileEncoding, true);
+        streamReader = new StreamReader(fileStream, fileEncoding, true);				
       }
       finally
       {
-        try
-        {
+				try
+				{
 					if (fileStream != null)
 					{
 						fileStream.Close();
@@ -71,10 +98,10 @@ namespace TvEngine
 						streamReader.Close();
 						streamReader.Dispose();
 					}
-        }
-        catch (Exception)
-        {
-        }
+				}
+				finally
+				{
+				}
       }
     }
   }

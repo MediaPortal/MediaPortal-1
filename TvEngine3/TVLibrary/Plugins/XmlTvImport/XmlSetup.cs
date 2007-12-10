@@ -471,6 +471,23 @@ namespace SetupTv.Sections
         if (importXML)
         {
           fileName = folder + @"\tvguide.xml";
+					/*
+					bool canRead = false;
+					bool canWrite = false;
+					IOUtil.CheckFileAccessRights(fileName, ref canRead, ref canWrite);
+
+					if (canRead)
+					{
+						// all ok, get channels
+						Log.WriteFile(@"plugin:xmltv loading " + fileName);
+						listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
+					}
+					else
+					{
+						MessageBox.Show("Can't open tvguide.xml for reading");
+						Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "].");
+					}*/
+					
           try
           {
             //check if file can be opened for reading....
