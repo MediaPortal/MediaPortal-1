@@ -232,9 +232,9 @@ namespace MediaPortal.GUI.Music
             break;
 
           case "album":
-            sql = String.Format("select distinct strAlbum, strArtist, strAlbumArtist, strPath from tracks ");
+              sql = String.Format("select strAlbum, strAlbumArtist, strPath from tracks ");
             if (whereClause != string.Empty) sql += "where " + whereClause;
-            sql += " group by strAlbumArtist";   // We need to group on Artist, to show Albums with same name for different artists
+            sql += " group by strAlbum";   // We need to group on Artist, to show Albums with same name for different artists
             if (orderClause != string.Empty) sql += orderClause;
             break;
 
@@ -308,8 +308,8 @@ namespace MediaPortal.GUI.Music
           // We don't have an album table anymore, so change the table to search for to tracks here.
           if (table == "album")
           {
-            from = String.Format("{0}, strArtist, strAlbumArtist, strPath from tracks", GetField(defCurrent.Where));
-            whereClause += " group by strArtist ";
+            from = String.Format("{0}, strAlbumArtist, strPath from tracks", GetField(defCurrent.Where));
+            whereClause += " group by strAlbum ";
           }
 
           sql = String.Format("select distinct {0} {1} {2}", from, whereClause, orderClause);

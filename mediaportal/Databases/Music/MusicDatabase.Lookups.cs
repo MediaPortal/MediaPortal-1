@@ -215,13 +215,9 @@ namespace MediaPortal.Music.Database
           {
             columnIndex = (int)results.ColumnIndices["strAlbum"];
             song.Album = fields.fields[columnIndex];
-            columnIndex = (int)results.ColumnIndices["strArtist"];
-            song.Artist = fields.fields[columnIndex].Trim(trimChars);
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
+            song.Artist = fields.fields[columnIndex].Trim(trimChars);
             song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);
-            if (song.AlbumArtist.ToLowerInvariant().Contains("unknown"))
-              song.AlbumArtist = song.Artist;
-            
 
             // Set the Pathname for Cover Art Retrieval
             columnIndex = (int)results.ColumnIndices["strPath"];
