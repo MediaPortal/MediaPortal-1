@@ -2390,7 +2390,7 @@ namespace MediaPortal.Music.Database
         int removedItems = aUnfilteredList.Count;
         aUnfilteredList.RemoveAll(IsSongBelowMinPercentage);
         removedItems -= aUnfilteredList.Count;
-        Log.Debug("AudioscrobblerUtils: TryFilterBelowMinimumMatch removed {0} songs which were not exact enough", removedItems.ToString());
+        Log.Debug("AudioscrobblerUtils: TryFilterBelowMinimumMatch removed {0} items which were not exact enough", removedItems.ToString());
       }
 
       return aUnfilteredList;

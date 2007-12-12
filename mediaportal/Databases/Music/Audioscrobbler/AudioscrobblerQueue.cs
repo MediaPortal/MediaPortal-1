@@ -114,7 +114,7 @@ namespace MediaPortal.Music.Database
       if (!dirty)
         return;
 
-      XmlTextWriter writer = new XmlTextWriter(xml_path, Encoding.Default);
+      XmlTextWriter writer = new XmlTextWriter(xml_path, Encoding.UTF8);
 
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 4;
