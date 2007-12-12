@@ -199,7 +199,8 @@
     <Compile Include="Remotes\DirectInputRemote\DirectInputListener.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Remotes\FireDTV\FireDTV interfaces\FireSATControl.cs">
+    <Compile Include="Remotes\FireDTV\FireDTV interfaces\FireSATControl.cs" />
+    <Compile Include="Remotes\FireDTV\FireDTV interfaces\FireSATSourceFilterInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Remotes\FireDTV\FireDTV interfaces\FireSATDefines.cs">
