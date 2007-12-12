@@ -37,6 +37,7 @@ using Microsoft.Win32;
 
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 #endregion
 
@@ -72,7 +73,7 @@ namespace MediaPortal.InputDevices.FireDTV
                 {
                     if (rkey == null)
                     {
-                        Log.Info("FireDTVRemote: Trying to enable FireDTV remote, but software not installed!");
+                        Log.Info("FireDTVRemote: Trying to enable FireDTV remote but its software is not installed!");
                         return;
                     }
                     else
@@ -80,18 +81,35 @@ namespace MediaPortal.InputDevices.FireDTV
                         string dllPath = rkey.GetValue("InstallFolder").ToString();
                         string fullDllPath = string.Format("{0}{1}", dllPath.Substring(0, dllPath.LastIndexOf('\\') + 1), "Tools\\");
                         bool _apiFound = File.Exists(fullDllPath + "FiresatApi.dll");
+
+                        // second try in MediaPortal's base directory
                         if (!_apiFound)
                         {
-                            Log.Error("FireDTVRemote: Trying to enable FireDTV remote, but dll not found!");
+                            fullDllPath = Config.GetFile(Config.Dir.Base, "FiresatApi.dll");
+                            _apiFound = File.Exists(fullDllPath + "FiresatApi.dll");
+                        }
+
+                        if (!_apiFound)
+                        {
+                            Log.Error("FireDTVRemote: Trying to enable FireDTV remote but FiresatApi.dll could not be found!");
                             return;
                         }
-                        Log.Info("FireDTVRemote: DLL found in directory: {0}", fullDllPath);
-                        FireDTVControl.SetDllDirectory(fullDllPath);
+
+                        Log.Info("FireDTVRemote: Using FiresatApi.dll of directory: {0}", fullDllPath);
+
+                        try
+                        {
+                            FireDTVControl.SetDllDirectory(fullDllPath);
+                        }
+                        catch (Exception)
+                        {
+                            Log.Error("FireDTVRemote: Trying to enable FireDTV remote but failed to set its path");
+                        }                        
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("FireDTVRemote: Trying to enable FireDTV remote, but failed to find dll with error: {0}", ex.Message);
+                    Log.Error("FireDTVRemote: Trying to enable FireDTV remote but failed to find dll with error: {0}", ex.Message);
                     return;
                 }
             }
