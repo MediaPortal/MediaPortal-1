@@ -833,7 +833,7 @@ namespace MediaPortal.Configuration.Sections
       GrabbercomboBox.Items.Add("tv_grab_na_dd");
       GrabbercomboBox.Items.Add("tv_grab_nl");
       GrabbercomboBox.Items.Add("tv_grab_nl_wolf");
-      GrabbercomboBox.Items.Add("tv_grab_no");
+      GrabbercomboBox.Items.Add("tv_grab_no_gfeed");
       GrabbercomboBox.Items.Add("tv_grab_pt");
       GrabbercomboBox.Items.Add("tv_grab_se");
       GrabbercomboBox.Items.Add("tv_grab_se_swedb");
@@ -1058,7 +1058,7 @@ namespace MediaPortal.Configuration.Sections
       ParameterForm parameters = new ParameterForm();
 
       if (GrabbercomboBox.Text == ("tv_grab_dk") | GrabbercomboBox.Text == ("tv_grab_es") | GrabbercomboBox.Text == ("tv_grab_es_digital")
-        | GrabbercomboBox.Text == ("tv_grab_fi") | GrabbercomboBox.Text == ("tv_grab_hr") | GrabbercomboBox.Text == ("tv_grab_huro") | GrabbercomboBox.Text == ("tv_grab_no")
+        | GrabbercomboBox.Text == ("tv_grab_fi") | GrabbercomboBox.Text == ("tv_grab_hr") | GrabbercomboBox.Text == ("tv_grab_huro") | GrabbercomboBox.Text == ("tv_grab_no_gfeed")
         | GrabbercomboBox.Text == ("tv_grab_pt") | GrabbercomboBox.Text == ("tv_grab_se") | GrabbercomboBox.Text == ("tv_grab_nl_wolf")
         | (GrabbercomboBox.Text == "tv_grab_se_swedb") | (GrabbercomboBox.Text == "tv_grab_uk_bleb") | (GrabbercomboBox.Text == "tv_grab_uk_rt"))
       {

@@ -163,8 +163,8 @@ namespace MediaPortal.TVGuideScheduler
 				case "tv_grab_nl_wolf":
 
 					break;
-				case "tv_grab_no":
-					m_strConfigFile = "tv_grab_no.conf";
+                case "tv_grab_no_gfeed":
+                    m_strConfigFile = "tv_grab_no_gfeed.conf";
 					m_intDays = 7;
 					m_intOffset = 0;
 					break;
