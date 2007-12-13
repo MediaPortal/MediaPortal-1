@@ -32,7 +32,6 @@ DEFINE_GUID(IID_IAudioStream,
 
 
 DECLARE_INTERFACE_( IAudioStream, IUnknown )
-{  
-  STDMETHOD(SetAudioStream)( __int32 stream ) PURE;  
+{    
   STDMETHOD(GetAudioStream)( __int32 &stream ) PURE;
 };

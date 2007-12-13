@@ -182,16 +182,16 @@ bool CDeMultiplexer::GetAudioStream(__int32 &audioIndex)
 }
 
 void CDeMultiplexer::GetAudioStreamInfo(int stream,char* szName)
-{
+{  
   if (stream <0 || stream>=m_audioStreams.size())
   {
     szName[0]=szName[1]=szName[2]=0;
     return;
   }
-    szName[0]=m_audioStreams[stream].language[0];
-    szName[1]=m_audioStreams[stream].language[1];
-    szName[2]=m_audioStreams[stream].language[2];
-    szName[3]=m_audioStreams[stream].language[3];
+  szName[0]=m_audioStreams[stream].language[0];
+  szName[1]=m_audioStreams[stream].language[1];
+  szName[2]=m_audioStreams[stream].language[2];
+  szName[3]=m_audioStreams[stream].language[3];
 }
 int CDeMultiplexer::GetAudioStreamCount()
 {
@@ -199,51 +199,51 @@ int CDeMultiplexer::GetAudioStreamCount()
 }
 
 void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
-{
-  if (m_iAudioStream< 0 || m_iAudioStream >=m_audioStreams.size())
-  {
-	    pmt.InitMediaType();
-	    pmt.SetType      (& MEDIATYPE_Audio);
-	    pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
-	    pmt.SetSampleSize(1);
-	    pmt.SetTemporalCompression(FALSE);
-	    pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
-      return;
+{  
+  if (m_iAudioStream< 0 || stream >=m_audioStreams.size())
+  {	
+	pmt.InitMediaType();
+	pmt.SetType      (& MEDIATYPE_Audio);
+	pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
+	pmt.SetSampleSize(1);
+	pmt.SetTemporalCompression(FALSE);
+	pmt.SetVariableSize();
+	pmt.SetFormatType(&FORMAT_WaveFormatEx);
+	pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
+	return;
   }
 
-  switch (m_audioStreams[m_iAudioStream].audioType)
+  switch (m_audioStreams[stream].audioType)
   {
     case SERVICE_TYPE_AUDIO_MPEG1:
-	    pmt.InitMediaType();
-	    pmt.SetType      (& MEDIATYPE_Audio);
-	    pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
-	    pmt.SetSampleSize(1);
-	    pmt.SetTemporalCompression(FALSE);
-	    pmt.SetVariableSize();
+	  pmt.InitMediaType();
+	  pmt.SetType      (& MEDIATYPE_Audio);
+	  pmt.SetSubtype   (& MEDIASUBTYPE_MPEG1Audio);
+	  pmt.SetSampleSize(1);
+	  pmt.SetTemporalCompression(FALSE);
+	  pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG1AudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_MPEG2:
-	    pmt.InitMediaType();
-	    pmt.SetType      (& MEDIATYPE_Audio);
-	    pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
-	    pmt.SetSampleSize(1);
-	    pmt.SetTemporalCompression(FALSE);
-	    pmt.SetVariableSize();
+	  pmt.InitMediaType();
+	  pmt.SetType      (& MEDIATYPE_Audio);
+	  pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
+	  pmt.SetSampleSize(1);
+	  pmt.SetTemporalCompression(FALSE);
+	  pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_AC3:
-	    pmt.InitMediaType();
-	    pmt.SetType      (& MEDIATYPE_Audio);
-	    pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);
-	    pmt.SetSampleSize(1);
-	    pmt.SetTemporalCompression(FALSE);
-	    pmt.SetVariableSize();
+	  pmt.InitMediaType();
+	  pmt.SetType      (& MEDIATYPE_Audio);
+	  pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);
+	  pmt.SetSampleSize(1);
+	  pmt.SetTemporalCompression(FALSE);
+	  pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
       break;
   }
 }

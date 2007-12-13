@@ -332,7 +332,7 @@ static DWORD crc_table[256] = {
 	//* descriptor_data : original DVB SI descriptor from the PMT
 	// * Added by Ziphnor
 	//*******************************************************************
-	STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descriptor_data){
+	STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descriptor_data, bool isAC3, bool isMpeg1, bool isMpeg2){
 		//LogDebug("AddStreamWDesc PID %i", pid);
 		if (pid==0) return S_OK;
 		CEnterCriticalSection enter(m_section);
@@ -364,6 +364,45 @@ static DWORD crc_table[256] = {
 				FAKE_TELETEXT_PID++;
 				m_multiPlexer.AddPesStream(pid,false,false,true);
 			}
+			else if (descriptor_tag == DESCRIPTOR_MPEG_ISO639_Lang)
+			{			  			 
+				PidInfo info;
+				info.realPid=pid;
+				info.fakePid=FAKE_AUDIO_PID;
+				info.seenStart=false;
+				if (isMpeg1)
+				{
+				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG1;
+				}
+				else if (isMpeg2)
+				{
+				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG2;
+				}
+				else if (isAC3)
+				{
+				  info.serviceType = SERVICE_TYPE_AUDIO_AC3;
+				}
+				
+				info.ContintuityCounter=0;
+				//strcpy(info.language,language);
+				int descriptor_length = descriptor_data[1] + 2;
+				memcpy(info.descriptor_data,descriptor_data,descriptor_length);
+				info.descriptor_valid = true;
+
+				m_vecPids.push_back(info);
+				LogDebug("Timeshifter:add (with descriptor) ISO639 stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				FAKE_AUDIO_PID++;
+				
+				if (isMpeg1 || isMpeg2)
+				{
+				  m_multiPlexer.AddPesStream(pid,false,true,false);
+				}
+				else if (isAC3)
+				{
+				  m_multiPlexer.AddPesStream(pid,true,false,false);
+				}
+								
+			}					
 			// feel free to add more descriptor types here, they will automatically work with 
 			// WriteFakePMT as the descriptor is given
 			else{

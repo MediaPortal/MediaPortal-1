@@ -258,6 +258,10 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 	{
 		return GetInterface((ITSReader*)this, ppv);
 	}
+	if ( riid == IID_IAudioStream )
+	{
+		return GetInterface((IAudioStream*)this, ppv);
+	}
 	return CSource::NonDelegatingQueryInterface(riid, ppv);
 }
 
@@ -953,7 +957,6 @@ void CTsReaderFilter::RemoveGraphFromRot()
       pROT->Revoke(m_dwGraphRegister);
 }
 
-
 /// method which implements IAMStreamSelect.Count
 /// returns the number of audio streams available
 STDMETHODIMP CTsReaderFilter::Count(DWORD* streamCount)
@@ -1011,11 +1014,12 @@ STDMETHODIMP CTsReaderFilter::Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwF
 }
 
 // IAudioStream methods 
+/*
 STDMETHODIMP CTsReaderFilter::SetAudioStream(__int32 stream)
 {
   return m_demultiplexer.SetAudioStream(stream);
 }
-
+*/
 STDMETHODIMP CTsReaderFilter::GetAudioStream(__int32 &stream)
 {  
   return m_demultiplexer.GetAudioStream(stream);

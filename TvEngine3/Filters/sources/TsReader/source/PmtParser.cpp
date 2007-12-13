@@ -47,7 +47,7 @@ bool CPmtParser::IsReady()
 	return _isFound;
 }
 void CPmtParser::OnNewSection(CSection& sections)
-{ 
+{   
 	byte* section=(&sections.Data)[0];
 	int sectionLen=sections.SectionLength;
 
@@ -91,7 +91,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	int elementary_PID=0;
 	int ES_info_length=0;
 	int audioToSet=0;
-  int subtitleToSet=0;
+	int subtitleToSet=0;
 
 	m_pidInfo.Reset();
 	m_pidInfo.PmtPid=GetPid();
@@ -124,8 +124,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 			}
 		}
 		if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || stream_type==SERVICE_TYPE_AUDIO_MPEG2 || stream_type==SERVICE_TYPE_AUDIO_AC3)
-		{
-			//mpeg1/mpeg 2/ac3 audio
+		{				  
 			audioToSet++;
 			curAudio=audioToSet;
 			switch(curAudio)
@@ -169,6 +168,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 		pointer += 5;
 		len1 -= 5;
 		len2 = ES_info_length;
+		
 		while (len2 > 0)
 		{
 			if (pointer+1>=sectionLen) 
@@ -177,10 +177,12 @@ void CPmtParser::OnNewSection(CSection& sections)
 				return ;
 			}
 			x = 0;
+			
 			int indicator=section[start+pointer];
 			x = section[start+pointer + 1] + 2;
+						
 			if(indicator==DESCRIPTOR_DVB_AC3)
-			{
+			{								
 				if (curAudio<0) 
 				{
 					audioToSet++;
@@ -190,17 +192,17 @@ void CPmtParser::OnNewSection(CSection& sections)
 				{
 				case 1:
 					m_pidInfo.AudioPid1=elementary_PID;
-					m_pidInfo.AudioServiceType1=SERVICE_TYPE_AUDIO_AC3;
+					m_pidInfo.AudioServiceType1=SERVICE_TYPE_AUDIO_AC3;					
 					break;
 				case 2:
 					m_pidInfo.AudioPid2=elementary_PID;
-					m_pidInfo.AudioServiceType2=SERVICE_TYPE_AUDIO_AC3;
+					m_pidInfo.AudioServiceType2=SERVICE_TYPE_AUDIO_AC3;				
 					break;
 				case 3:
 					m_pidInfo.AudioPid3=elementary_PID;
 					m_pidInfo.AudioServiceType3=SERVICE_TYPE_AUDIO_AC3;
 					break;
-				case 4:
+				case 4:				  
 					m_pidInfo.AudioPid4=elementary_PID;
 					m_pidInfo.AudioServiceType4=SERVICE_TYPE_AUDIO_AC3;
 					break;
@@ -222,18 +224,26 @@ void CPmtParser::OnNewSection(CSection& sections)
 					break;
 				}
 			}
-
+			
 			if(indicator==DESCRIPTOR_MPEG_ISO639_Lang)
-			{	
+			{					
 				if (pointer+4>=sectionLen) 
 				{
 					LogDebug("pmt parser check2");
 					return ;
 				}
+
+				if (curAudio<0) 
+				{
+					audioToSet++;
+					curAudio=audioToSet;
+				}
+
 				BYTE d[3];
 				d[0]=section[start+pointer+2];
 				d[1]=section[start+pointer+3];
 				d[2]=section[start+pointer+4];
+
 				if(curAudio==1)
 				{
 					m_pidInfo.Lang1_1=d[0];
@@ -282,7 +292,6 @@ void CPmtParser::OnNewSection(CSection& sections)
 					m_pidInfo.Lang8_2=d[1];
 					m_pidInfo.Lang8_3=d[2];
 				}
-
 			}
 			if(indicator==0x46){
 				LogDebug("VBI teletext descriptor");

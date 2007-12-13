@@ -54,7 +54,7 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 {
 	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
 	STDMETHOD(AddStream)(THIS_ int pid, int serviceType, char* language)PURE;
-	STDMETHOD(AddStreamWithDescriptor)(THIS_ int pid, const byte* descriptor_data)PURE;
+	STDMETHOD(AddStreamWithDescriptor)(THIS_ int pid, const byte* descriptor_data, bool isAC3, bool isMpeg1, bool isMpeg2)PURE;	 
 	STDMETHOD(RemoveStream)(THIS_ int pid)PURE;
 	
   STDMETHOD(SetTimeShiftingFileName)(THIS_ char* pszFileName)PURE;
@@ -106,7 +106,7 @@ public:
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
 	STDMETHODIMP AddStream(int pid, int serviceType, char* language);
-	STDMETHODIMP AddStreamWithDescriptor(int pid, const byte* descriptor_data);
+	STDMETHODIMP AddStreamWithDescriptor(int pid, const byte* descriptor_data,  bool isAC3, bool isMpeg1, bool isMpeg2);
 	STDMETHODIMP RemoveStream(int pid);
 	STDMETHODIMP SetTimeShiftingFileName(char* pszFileName);
 	STDMETHODIMP Start();
@@ -134,7 +134,7 @@ public:
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
 
-private:
+private:  
   void Flush();
 	void WriteTs(byte* tsPacket);
   void WriteFakePAT();  

@@ -721,12 +721,12 @@ STDMETHODIMP CMpTs:: TimeShiftAddStream( int handle, int pid, int serviceType, c
 	return pChannel->m_pTimeShifting->AddStream( pid,  serviceType, language);
 }
 
-STDMETHODIMP CMpTs:: TimeShiftAddStreamWithDescriptor( int handle, int pid, byte* data)
+STDMETHODIMP CMpTs:: TimeShiftAddStreamWithDescriptor( int handle, int pid, byte* data,  bool isAC3, bool isMpeg1, bool isMpeg2)
 {
 	//LogDebug("TimeShiftAddStreamWithDescriptor PID : %i", pid);
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-  return pChannel->m_pTimeShifting->AddStreamWithDescriptor( pid, data);
+  return pChannel->m_pTimeShifting->AddStreamWithDescriptor( pid, data, isAC3, isMpeg1, isMpeg2);
 }
 
 STDMETHODIMP CMpTs:: TimeShiftRemoveStream( int handle, int pid)
