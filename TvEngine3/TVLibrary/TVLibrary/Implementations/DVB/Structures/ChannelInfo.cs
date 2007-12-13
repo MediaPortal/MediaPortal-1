@@ -441,7 +441,7 @@ namespace TvLibrary.Implementations.DVB.Structures
               
               //Log.Log.Write("  descriptor2:{0:X}", indicator);
               if (x + pointer < buf.Length) // parse descriptor data
-              {
+              {								
                 byte[] data = new byte[x];
                 System.Array.Copy(buf, pointer, data, 0, x);
                 if (indicator == 9)
@@ -454,23 +454,37 @@ namespace TvLibrary.Implementations.DVB.Structures
                 switch (indicator)
                 {
                   case 0x02: // video
+										pidInfo.isAudio = false;
+										pidInfo.isVideo = true;
+										pidInfo.isTeletext = false;
+										pidInfo.isDVBSubtitle = false;
+										pidInfo.isAC3Audio = false;
+										pidInfo.stream_type = 0x02;
+										break;
                   case 0x03: // audio
                     //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
+										pidInfo.isAudio = true;										
+										pidInfo.isVideo = false;
+										pidInfo.isTeletext = false;
+										pidInfo.isDVBSubtitle = false;
+										pidInfo.isAC3Audio = false;
+										pidInfo.stream_type = 0x03;
                     break;
                   case 0x09:
                     pmtEs.Descriptors.Add(data);
                     pmtEs.ElementaryStreamInfoLength += data.Length;
                     break;
-                  case 0x0A: //MPEG_ISO639_Lang
-                    pidInfo.language = DVB_GetMPEGISO639Lang(data);
+                  case 0x0A: //MPEG_ISO639_Lang																														
+										pidInfo.language = DVB_GetMPEGISO639Lang(data);
+										pidInfo.SetDescriptorData(data); // remember the original descriptor																				
                     break;
-                  case 0x6A: //AC3
+                  case 0x6A: //AC3									
                     pidInfo.isAudio = false;
                     pidInfo.isVideo = false;
                     pidInfo.isTeletext = false;
                     pidInfo.isDVBSubtitle = false;
                     pidInfo.isAC3Audio = true;
-                    pidInfo.stream_type = 0x81;
+                    pidInfo.stream_type = 0x81;																				
                     break;
                   case 0x56://teletext
                     pidInfo.isAC3Audio = false;
@@ -523,7 +537,8 @@ namespace TvLibrary.Implementations.DVB.Structures
       }
       //pat.pidCache = pidText;
       //caPMT.Dump();
-    }
+    }		
+
     private string DVB_GetMPEGISO639Lang(byte[] b)
     {
 

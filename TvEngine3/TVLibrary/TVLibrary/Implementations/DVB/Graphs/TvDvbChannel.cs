@@ -1154,30 +1154,59 @@ namespace TvLibrary.Implementations.DVB
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
       _tsFilterInterface.TimeShiftSetPcrPid(_subChannelIndex, _channelInfo.pcr_pid);
       _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid);
-
-
-     // bool storeTeletext = 
-          
-        
-          //_linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
+     
+      //_linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
       foreach (PidInfo info in _channelInfo.pids)
-      {
-        if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle)
+      {				
+        if (info.isVideo || info.isDVBSubtitle)
         {
           Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
           _tsFilterInterface.TimeShiftAddStream(_subChannelIndex,info.pid, info.stream_type, info.language); // stream_type == service_type i guess
         }
-        else if (info.isTeletext && info.HasDescriptorData()) {
-            Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method)", _subChannelId, info.stream_type, info);
-            //Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );
-            unsafe { // we need to pass a pointer to the descriptor data
-                fixed (byte* data = info.GetDescriptorData()) {
-                    IntPtr pData = new IntPtr(data);
-                    _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData);
-                }
-            }
-            
-        }
+				else if (info.isAC3Audio || info.IsMpeg1Audio || info.IsMpeg2Audio)
+				{
+					if (info.HasDescriptorData())
+					{						
+						unsafe
+						{ // we need to pass a pointer to the descriptor data
+							fixed (byte* data = info.GetDescriptorData())
+							{
+								IntPtr pData = new IntPtr(data);
+								if (info.isAC3Audio)
+								{
+									_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, true, false, false);
+								}
+								else if (info.IsMpeg1Audio)
+								{
+									_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, true, false);
+								}
+								else if (info.IsMpeg2Audio)
+								{
+									_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, true);
+								}
+							}
+						}
+					}
+					else
+					{						
+						Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
+						_tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess
+					}
+				}
+				else if (info.isTeletext && info.HasDescriptorData())
+				{
+					Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ttxt))", _subChannelId, info.stream_type, info);
+					//Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );
+					unsafe
+					{ // we need to pass a pointer to the descriptor data
+						fixed (byte* data = info.GetDescriptorData())
+						{
+							IntPtr pData = new IntPtr(data);
+							_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
+						}
+					}
+
+				}
       }
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
       _dateTimeShiftStarted = DateTime.Now;
