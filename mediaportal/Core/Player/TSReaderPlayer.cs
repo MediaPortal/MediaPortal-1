@@ -142,12 +142,20 @@ namespace MediaPortal.Player
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
     IPin _pinVideo = null;
+    protected IAudioStream _audioStream = null;
     protected ISubtitleStream _subtitleStream = null;
     protected TeletextReceiver _ttxtReceiver = null;
     protected ITeletextSource _teletextSource = null;
     bool enableDvbSubtitles = false;
     #endregion
-    
+
+    [Guid("558D9EA6-B177-4c30-9ED5-BF2D714BCBCA"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IAudioStream
+    {
+      void GetAudioStream(ref Int32 stream);
+    }
+
     /// <summary>
     /// Interface to the TsReader filter wich provides information about the 
     /// subtitle streams and allows us to change the current subtitle stream
@@ -434,6 +442,15 @@ namespace MediaPortal.Player
           Log.Error("Unable to get IMediaSeeking interface#1");
         }
 
+
+        _audioStream = _fileSource as IAudioStream;
+        if (_audioStream == null)
+        {
+          Log.Error("Unable to get IAudioStream interface");
+        }
+
+        _audioSelector = new AudioSelector(_audioStream);        
+
         if (enableDvbSubtitles)
         {
           _subtitleStream = _fileSource as ISubtitleStream;
@@ -453,7 +470,7 @@ namespace MediaPortal.Player
           Log.Debug("TSReaderPlayer: Creating Teletext Receiver ->");
           _ttxtReceiver = new TeletextReceiver(_teletextSource, new TeletextSubtitleDecoder(_dvbSubRenderer));
 
-          _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer);
+          _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer);          
         }
             
 

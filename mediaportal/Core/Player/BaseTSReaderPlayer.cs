@@ -121,6 +121,7 @@ namespace MediaPortal.Player
     protected IBaseFilter _subtitleFilter = null;
     protected SubtitleSelector _subSelector = null;    
     protected SubtitleRenderer _dvbSubRenderer = null;
+    protected AudioSelector _audioSelector = null;    
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
@@ -232,6 +233,58 @@ namespace MediaPortal.Player
       }
     }
 
+
+    /// <summary>
+    /// Property to get the type of an audio stream
+    /// </summary>
+    public override string AudioType(int iStream)
+    {
+      if ((iStream + 1) > AudioStreams)
+        return Strings.Unknown;
+
+      if (_interfaceTSReader == null)
+      {
+        Log.Info("TSReaderPlayer: Unable to get AudioType -> TSReader not initialized");
+        return Strings.Unknown;
+      }
+
+      IAMStreamSelect pStrm = _interfaceTSReader as IAMStreamSelect;
+      if (pStrm != null)
+      {
+        AMMediaType sType; AMStreamSelectInfoFlags sFlag;
+        int sPDWGroup, sPLCid; string sName;
+        object pppunk, ppobject;
+
+        pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        /*
+        if (IsTimeShifting)
+        {
+          // The offset +2 is necessary because the first 2 streams are always non-audio and the following are the audio streams
+          pStrm.Info(iStream + 1, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        }
+        else
+        {
+          pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        }
+        */
+        if (sType.subType == MEDIASUBTYPE_AC3_AUDIO)
+        {
+          return "AC3";
+        }
+        if (sType.subType == MEDIASUBTYPE_MPEG1_AUDIO)
+        {
+          return "Mpeg1";
+        }
+        if (sType.subType == MEDIASUBTYPE_MPEG2_AUDIO)
+        {
+          return "Mpeg2";
+        }
+        return Strings.Unknown;       
+      }
+      else
+        return Strings.Unknown;
+    }
+
     /// <summary>
     /// Implements the AudioLanguage member which interfaces the TSFileSource filter to get the IAMStreamSelect interface for getting info about a stream
     /// </summary>
@@ -239,7 +292,7 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public override string AudioLanguage(int iStream)
     {
-      if (iStream > AudioStreams)
+      if ((iStream+1) > AudioStreams)
         return Strings.Unknown;
 
       if (_interfaceTSReader == null)
@@ -254,7 +307,9 @@ namespace MediaPortal.Player
         AMMediaType sType; AMStreamSelectInfoFlags sFlag;
         int sPDWGroup, sPLCid; string sName;
         object pppunk, ppobject;
-        
+
+        pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        /*
         if (IsTimeShifting)
         {
           // The offset +2 is necessary because the first 2 streams are always non-audio and the following are the audio streams
@@ -264,7 +319,8 @@ namespace MediaPortal.Player
         {
           pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
         }
-        
+        */
+
         return sName.Trim();
       }
       else
@@ -415,6 +471,11 @@ namespace MediaPortal.Player
         OnInitialized();
         Log.Info("TSReaderPlayer:running pos:{0} duration:{1} {2}", Duration, CurrentPosition, dur);
       }
+      
+      // update the curaudiostream from the current audio stream running in tsreader.
+      // tvplugin might set the initial track to some other index
+      _curAudioStream = _audioSelector.GetAudioStream();
+
       return true;
     }
 
@@ -1687,6 +1748,12 @@ namespace MediaPortal.Player
     {
       CloseInterfaces();
     }
+    #endregion
+
+    #region private properties -guids
+    private static Guid MEDIASUBTYPE_AC3_AUDIO { get { return new Guid("e06d802c-db46-11cf-b4d1-00805f6cbbea"); } }
+    private static Guid MEDIASUBTYPE_MPEG2_AUDIO { get { return new Guid("e06d802b-db46-11cf-b4d1-00805f6cbbea"); } }
+    private static Guid MEDIASUBTYPE_MPEG1_AUDIO { get { return new Guid("e436eb87-524f-11ce-9f53-0020af0ba770"); } }
     #endregion
   }
 }

@@ -452,6 +452,14 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
+        /// <summary>
+    /// Property to get the type of an audio stream
+    /// </summary>
+    public virtual string AudioType(int iStream)
+    {
+      return Strings.Unknown;
+    }    
+
     /// <summary>
     /// Property to get the total number of subtitle streams
     /// </summary>

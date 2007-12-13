@@ -15,9 +15,6 @@ namespace MediaPortal.Configuration.Sections
   {
     #region variables
     private string _preferredLanguages;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-    private CheckBox mpCheckBoxavoidSeekingonChannelChange;
-    private Label mpLabel6;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private MediaPortal.UserInterface.Controls.MPTextBox mpTextBoxHostname;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
@@ -27,6 +24,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPListView mpListViewLanguages;
     private IList<string> _languagesAvail;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxPrefAudioOverLang;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
     private IList<string> _languageCodes;
     #endregion
 
@@ -73,7 +72,7 @@ namespace MediaPortal.Configuration.Sections
       {
         mpTextBoxHostname.Text = xmlreader.GetValueAsString("tvservice", "hostname", "");
         mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
-        mpCheckBoxavoidSeekingonChannelChange.Checked = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
+        mpCheckBoxPrefAudioOverLang.Checked = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);        
         _preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
       }
 
@@ -146,7 +145,8 @@ namespace MediaPortal.Configuration.Sections
         string prefLangs = "";
         xmlreader.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
         xmlreader.SetValueAsBool("tvservice", "preferac3", mpCheckBoxPrefAC3.Checked);
-        xmlreader.SetValueAsBool("tvservice", "avoidSeeking", mpCheckBoxavoidSeekingonChannelChange.Checked);
+        xmlreader.SetValueAsBool("tvservice", "preferAudioTypeOverLang", mpCheckBoxPrefAudioOverLang.Checked);
+        
         foreach (ListViewItem item in mpListViewLanguages.Items)
         {
           if (item.Checked)
@@ -159,51 +159,19 @@ namespace MediaPortal.Configuration.Sections
 
     private void InitializeComponent()
     {
-      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpCheckBoxavoidSeekingonChannelChange = new System.Windows.Forms.CheckBox();
-      this.mpLabel6 = new System.Windows.Forms.Label();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpTextBoxHostname = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpCheckBoxPrefAudioOverLang = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewLanguages = new MediaPortal.UserInterface.Controls.MPListView();
       this.mpCheckBoxPrefAC3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpGroupBox3.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // mpGroupBox3
-      // 
-      this.mpGroupBox3.Controls.Add(this.mpCheckBoxavoidSeekingonChannelChange);
-      this.mpGroupBox3.Controls.Add(this.mpLabel6);
-      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox3.Location = new System.Drawing.Point(10, 71);
-      this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(359, 55);
-      this.mpGroupBox3.TabIndex = 11;
-      this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "Channel change preference";
-      // 
-      // mpCheckBoxavoidSeekingonChannelChange
-      // 
-      this.mpCheckBoxavoidSeekingonChannelChange.AutoSize = true;
-      this.mpCheckBoxavoidSeekingonChannelChange.Location = new System.Drawing.Point(264, 27);
-      this.mpCheckBoxavoidSeekingonChannelChange.Name = "mpCheckBoxavoidSeekingonChannelChange";
-      this.mpCheckBoxavoidSeekingonChannelChange.Size = new System.Drawing.Size(15, 14);
-      this.mpCheckBoxavoidSeekingonChannelChange.TabIndex = 11;
-      this.mpCheckBoxavoidSeekingonChannelChange.UseVisualStyleBackColor = true;
-      // 
-      // mpLabel6
-      // 
-      this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(17, 27);
-      this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new System.Drawing.Size(217, 13);
-      this.mpLabel6.TabIndex = 10;
-      this.mpLabel6.Text = "Try avoiding seeking during channel change";
       // 
       // mpGroupBox2
       // 
@@ -236,17 +204,39 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
+      this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAudioOverLang);
+      this.mpGroupBox1.Controls.Add(this.mpLabel4);
       this.mpGroupBox1.Controls.Add(this.mpLabel1);
       this.mpGroupBox1.Controls.Add(this.mpListViewLanguages);
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAC3);
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(10, 132);
+      this.mpGroupBox1.Location = new System.Drawing.Point(10, 71);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(365, 268);
       this.mpGroupBox1.TabIndex = 9;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Audio preferences";
+      // 
+      // mpCheckBoxPrefAudioOverLang
+      // 
+      this.mpCheckBoxPrefAudioOverLang.AutoSize = true;
+      this.mpCheckBoxPrefAudioOverLang.BackColor = System.Drawing.SystemColors.ButtonFace;
+      this.mpCheckBoxPrefAudioOverLang.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxPrefAudioOverLang.Location = new System.Drawing.Point(332, 230);
+      this.mpCheckBoxPrefAudioOverLang.Name = "mpCheckBoxPrefAudioOverLang";
+      this.mpCheckBoxPrefAudioOverLang.Size = new System.Drawing.Size(13, 12);
+      this.mpCheckBoxPrefAudioOverLang.TabIndex = 11;
+      this.mpCheckBoxPrefAudioOverLang.UseVisualStyleBackColor = false;
+      // 
+      // mpLabel4
+      // 
+      this.mpLabel4.AutoSize = true;
+      this.mpLabel4.Location = new System.Drawing.Point(168, 229);
+      this.mpLabel4.Name = "mpLabel4";
+      this.mpLabel4.Size = new System.Drawing.Size(158, 13);
+      this.mpLabel4.TabIndex = 10;
+      this.mpLabel4.Text = "Prefer audiotype over language:";
       // 
       // mpLabel1
       // 
@@ -260,7 +250,7 @@ namespace MediaPortal.Configuration.Sections
       // mpListViewLanguages
       // 
       this.mpListViewLanguages.AllowDrop = true;
-      this.mpListViewLanguages.AllowRowReorder = false;
+      this.mpListViewLanguages.AllowRowReorder = true;
       this.mpListViewLanguages.CheckBoxes = true;
       this.mpListViewLanguages.HideSelection = false;
       this.mpListViewLanguages.Location = new System.Drawing.Point(6, 40);
@@ -292,13 +282,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // TVClient
       // 
-      this.Controls.Add(this.mpGroupBox3);
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "TVClient";
       this.Size = new System.Drawing.Size(399, 410);
-      this.mpGroupBox3.ResumeLayout(false);
-      this.mpGroupBox3.PerformLayout();
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
@@ -306,5 +293,7 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
+
+    
   }
 }

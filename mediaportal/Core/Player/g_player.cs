@@ -939,7 +939,7 @@ namespace MediaPortal.Player
           return bResult;
         }
         _isInitalized = false;
-      }
+      }     
       finally
       {
         Starting = false;
@@ -1676,6 +1676,17 @@ namespace MediaPortal.Player
 
       string stream = _player.AudioLanguage(iStream);
       return MediaPortal.Util.Utils.TranslateLanguageString(stream);
+    }
+
+    /// <summary>
+    /// Property to get the type of an audio stream
+    /// </summary>
+    public static string AudioType(int iStream)
+    {
+      if (_player == null) return Strings.Unknown;
+
+      string stream = _player.AudioType(iStream);
+      return stream;
     }
 
     /// <summary>
