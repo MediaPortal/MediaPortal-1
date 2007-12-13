@@ -89,13 +89,11 @@ namespace TvPlugin
     TvNotifyManager _notifyManager = new TvNotifyManager();
     static string[] _preferredLanguages;
     static bool _preferAC3 = false;
+    static bool _preferAudioTypeOverLang = false;
     static bool _autoFullScreen = false;
     static bool _resumed = false;
 		static bool _showlastactivemodule = false;
-		static bool _showlastactivemoduleFullscreen = false;
-    static bool _rebuildGraphOnNewVideoSpecs = true;
-    static bool _rebuildGraphOnNewAudioSpecs = true;
-    static bool _avoidSeeking = false;
+		static bool _showlastactivemoduleFullscreen = false;    
     static bool _playbackStopped = false;
     static bool _onPageLoadDone = false;
     static bool _userChannelChanged = false;
@@ -381,9 +379,7 @@ namespace TvPlugin
         _preferredLanguages = preferredLanguages.Split(';');
 
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
-        _rebuildGraphOnNewVideoSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewVideoSpecs", true);
-        _rebuildGraphOnNewAudioSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", true);
-        _avoidSeeking = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
+        _preferAudioTypeOverLang = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
         _autoFullScreen = xmlreader.GetValueAsBool("tvservice", "autofullscreen", false);
       }
     }
@@ -422,8 +418,7 @@ namespace TvPlugin
     {
       MediaPortal.GUI.Library.Log.Info("TVHome:Init");
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_TV;
-
+      GetID = (int)GUIWindow.Window.WINDOW_TV;      
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
       return bResult;
@@ -451,7 +446,7 @@ namespace TvPlugin
           }
       }
     }
-
+    
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       _playbackStopped = true;
@@ -797,9 +792,15 @@ namespace TvPlugin
 
 			// if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
       // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
-			bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen);      
+			bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen);
+      bool useDelay = false;
 
-      if (_resumed)
+			if (_resumed && !showlastActModFS)
+			{
+        useDelay = true;
+				showlastActModFS = false;
+			}
+			else if (_resumed)
 			{
 				showlastActModFS = true;
 			}
@@ -807,8 +808,17 @@ namespace TvPlugin
 			{
 				if (_autoFullScreen && !g_Player.FullScreen && (prevWinId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && prevWinId != (int)GUIWindow.Window.WINDOW_TVGUIDE && prevWinId != (int)GUIWindow.Window.WINDOW_SEARCHTV && prevWinId != (int)GUIWindow.Window.WINDOW_RECORDEDTV && prevWinId != (int)GUIWindow.Window.WINDOW_SCHEDULER))
 				{
-					Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");					
-					g_Player.ShowFullScreenWindow();
+          Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
+          //if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
+          if (useDelay)
+          {
+            Thread tvDelayThread = new Thread(TvDelayThread);
+            tvDelayThread.Start();              
+          }
+          else //no delay needed here, since this is when the system is being used normally
+          {            
+            g_Player.ShowFullScreenWindow();
+          }
 				}
 			}
 
@@ -817,7 +827,12 @@ namespace TvPlugin
 			GUIWaitCursor.Hide();
     }
 
-
+    private void TvDelayThread()
+    {
+      //we have to use a small delay before calling tvfullscreen.                                    
+      Thread.Sleep(200);
+      g_Player.ShowFullScreenWindow();
+    }
 
 
     protected override void OnPageDestroy(int newWindowId)
@@ -1545,76 +1560,159 @@ namespace TvPlugin
       Navigator.ZapToPreviousChannel(false);
     }
 
-    static private int GetPreferedAudioStreamIndex()
-    {
-      bool foundAC3 = false;
-      int idx = -1;      
-      IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
+    static public int GetPreferedAudioStreamIndex(IAudioStream[] streams) // also used from tvrecorded class
+    {      
+      int idxFirstAc3 = -1;         // the index of the first avail. ac3 found
+      int idxFirstmpeg = -1;        // the index of the first avail. mpg found
+      int idxLangAc3 = -1;          // the index of ac3 found based on lang. pref
+      int idxLangmpeg = -1;         // the index of mpg found based on lang. pref   
+      int idx = -1;                 // the chosen audio index we return
+      string langSel = "";          // find audio based on this language.
+      string ac3BasedOnLang = "";   // for debugging, what lang. in prefs. where used to choose the ac3 audio track ?
+      string mpegBasedOnLang = "";  // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?
 
-      Log.Info("Audio streams avail: {0}", streams.Length);
+      if (_preferredLanguages != null)
+      {
+        Log.Debug("TVHome.GetPreferedAudioStreamIndex(): preferred LANG(s):{0} preferAC3:{1} _preferAudioTypeOverLang:{2}", String.Join(";",_preferredLanguages), _preferAC3, _preferAudioTypeOverLang);
+      }
+      else
+      {
+        Log.Debug("TVHome.GetPreferedAudioStreamIndex(): preferred LANG(s):{0} preferAC3:{1} _preferAudioTypeOverLang:{2}", "n/a", _preferAC3, _preferAudioTypeOverLang);
+      }
+      Log.Debug("Audio streams avail: {0}", streams.Length);
+
+      if (streams.Length == 1)
+      {
+        Log.Info("Audio stream: switching to preferred AC3/MPEG audio stream 0 (only 1 track avail.)");                
+        return 0;
+      }
 
       for (int i = 0; i < streams.Length; i++)
       {
-        if ((_preferAC3) && (streams[i].StreamType == AudioStreamType.AC3))
+        //tag the first found ac3 and mpeg indexes
+        if (streams[i].StreamType == AudioStreamType.AC3)
         {
-          foundAC3 = true;
-          idx = i;
+          if (idxFirstAc3 == -1) idxFirstAc3 = i;
         }
-
+        else
+        {
+          if (idxFirstmpeg == -1) idxFirstmpeg = i;
+        }
+        
+        //now find the ones based on LANG prefs.
 				if (_preferredLanguages != null)
 				{
 					for (int j = 0; j < _preferredLanguages.Length; j++)
 					{
-						string lang = _preferredLanguages[j];
-						if (lang.Contains(streams[i].Language) && lang.Length > 0)
+            if (_preferredLanguages[j].Length == 0) continue;
+            langSel = _preferredLanguages[j];            
+            if (langSel.Contains(streams[i].Language) && langSel.Length > 0)
 						{
-							if (!_preferAC3) // DO not prefer ac3
-							{
-								idx = i;
-								Log.Info("Audio stream: switching to preferred language audio stream {0}", idx);
-								break;
-							}
-							else // prefer ac3
-							{
-								if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
-								{
-									foundAC3 = true;
-									idx = i;
-									Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
-									break;
-								}
-								else // not AC3
-								{
-									idx = i;
-									break;
-								}
-								//else idx = i; //Not good, if an available AC3 stream = false & preferred language = null then you should use the first stream.
-							}
-							break;
+              if ((streams[i].StreamType == AudioStreamType.AC3)) //is the audio track an AC3 track ?
+              {
+                if (idxLangAc3 == -1)
+                {
+                  idxLangAc3 = i;
+                  ac3BasedOnLang = langSel;
+                }
+              }
+              else //audiotrack is mpeg
+              {
+                if (idxLangmpeg == -1)
+                {
+                  idxLangmpeg = i;
+                  mpegBasedOnLang = langSel;
+                }
+              }																					
 						}
-					}
+            if (idxLangAc3 > -1 && idxLangmpeg > -1) break;
+					} //for loop
 				}
-				if (idx > -1) break; // we have found an audio track
+        if (idxFirstAc3 > -1 && idxFirstmpeg > -1 && idxLangAc3 > -1 && idxLangmpeg > -1) break;
       }
-      if (foundAC3 && idx != -1)
+
+      if (_preferAC3)
       {
-        // we got an ac3 stream with pref language in idx 
-        Log.Info("Audio stream: switching to preferred AC3 audio stream {0}", idx);        
+        if (_preferredLanguages != null)
+        {
+          //did we find an ac3 track that matches our LANG prefs ?
+          if (idxLangAc3 > -1)
+          {
+            idx = idxLangAc3;
+            Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, based on LANG {1}", idx, ac3BasedOnLang);                    
+          }
+          //if not, did we even find an ac3 track ?
+          else if (idxFirstAc3 > -1)
+          {
+            //we did find an AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
+            if (_preferAudioTypeOverLang || (idxLangmpeg == -1 && _preferAudioTypeOverLang))
+            {
+              idx = idxFirstAc3;
+              Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, NOT based on LANG (none avail. matching {1})", idx, ac3BasedOnLang);
+            }            
+            else
+            {
+              Log.Info("Audio stream: ignoring AC3 audio stream {0} (_preferAudioTypeOverLang is enabled - using mpeg instead))", idxFirstAc3);
+            }
+          }
+          //if not then proceed with mpeg lang. selection below.
+        }
+        else
+        {
+          //did we find an ac3 track ?
+          if (idxFirstAc3 > -1)
+          {
+            idx = idxFirstAc3;
+            Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, NOT based on LANG", idx);                    
+          }
+          //if not then proceed with mpeg lang. selection below.
+        }
       }
-      else if (!foundAC3 && idx != -1)
+
+      if (idx == -1 && _preferAC3)
       {
-        // we got a non-ac3 stream with pref language in idx 
-        Log.Info("Audio stream: no AC3 switching to preferred audio stream {0}", idx);        
+        Log.Info("Audio stream: no preferred AC3 audio stream found, trying mpeg instead.");        
       }
-      else if (foundAC3 && _preferAC3)
+
+      if (idx == -1 || !_preferAC3) // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
       {
-        Log.Info("Audio stream: no audio stream found with preferred language using last AC3 stream {0}", idx);        
+        if (_preferredLanguages != null)
+        {
+          //did we find a mpeg track that matches our LANG prefs ?
+          if (idxLangmpeg > -1)
+          {
+            idx = idxLangmpeg;
+            Log.Info("Audio stream: switching to preferred MPEG audio stream {0}, based on LANG {1}", idx, mpegBasedOnLang);                    
+          }
+          //if not, did we even find a mpeg track ?
+          else if (idxFirstmpeg > -1)
+          {
+            //we did find a AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
+            if (_preferAudioTypeOverLang || (idxLangAc3 == -1 && _preferAudioTypeOverLang))
+            {
+              idx = idxFirstmpeg;
+              Log.Info("Audio stream: switching to preferred MPEG audio stream {0}, NOT based on LANG (none avail. matching {1})", idx, mpegBasedOnLang);
+            }
+            else
+            {
+              idx = idxLangAc3;
+              Log.Info("Audio stream: ignoring MPEG audio stream {0} (_preferAudioTypeOverLang is enabled using AC3 instead))", idx);
+            }
+          }
+        }
+        else
+        {
+          idx = idxFirstmpeg;
+          Log.Info("Audio stream: switching to preferred MPEG audio stream {0}, NOT based on LANG", idx);                  
+        }
       }
-      else if (!foundAC3 && idx == -1)
+
+      if (idx == -1)
       {
         idx = 0;
-        Log.Info("Audio stream: no preferred audio stream found using first stream {0}", idx);
+        Log.Info("Audio stream: switching to preferred AC3/MPEG audio stream {0}", idx);                
       }
+     
       return idx;
     }
 
@@ -1634,26 +1732,21 @@ namespace TvPlugin
         // do we stop the player when changing channel ?
         // _userChannelChanged is true if user did interactively change the channel, like with mini ch. list. etc.
         if (!_userChannelChanged)
-        {
-          if (g_Player.Playing)
-          {
-            if (!_autoTurnOnTv) //respect the autoturnontv setting.
-            {
-              //if (g_Player.IsTV) return true;
-              if (g_Player.IsTVRecording) return true;
-              if (g_Player.IsVideo) return true;
-              if (g_Player.IsDVD) return true;
-              if (g_Player.IsMusic) return true;
-            }
-            else
-            {
-              if (g_Player.IsTVRecording) return true;
-              if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)
-              {                
-                g_Player.Stop();
-              }
-            }
+        {          
+          if (g_Player.IsTVRecording) return true;
+          if (!_autoTurnOnTv) //respect the autoturnontv setting.
+          {              
+            if (g_Player.IsVideo) return true;
+            if (g_Player.IsDVD) return true;
+            if (g_Player.IsMusic) return true;
           }
+          else
+          {              
+            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)
+            {                
+              g_Player.Stop();
+            }
+          }          
         }
         else
         {
@@ -1751,8 +1844,7 @@ namespace TvPlugin
           //MediaPortal.GUI.Library.Log.Info("g_Player.Playing {0}", g_Player.Playing);          
 
           //lets set the audio track for tsreader
-          int prefLangIdx = GetPreferedAudioStreamIndex();
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): preferred lang idx:{0} {1}", prefLangIdx, _preferAC3);
+          int prefLangIdx = GetPreferedAudioStreamIndex(TVHome.Card.AvailableAudioStreams);          
 
           try
           {
@@ -1783,20 +1875,12 @@ namespace TvPlugin
           if (!g_Player.Playing)
           {
             StartPlay();
-          }          
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): setting audioIndex on tsreader {0}", prefLangIdx);
-          g_Player.CurrentAudioStream = prefLangIdx;
-
+          }                    
 
           GUIWaitCursor.Hide();
 
-          // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.
-          
-          if (!_avoidSeeking)          
-          {            
-            //g_Player.ContinueGraph();                        
-            g_Player.SeekAbsolute(g_Player.Duration);            
-          }
+          // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.                    
+          g_Player.SeekAbsolute(g_Player.Duration);                      
           
           _playbackStopped = false;
           //TVHome.Connected = true;

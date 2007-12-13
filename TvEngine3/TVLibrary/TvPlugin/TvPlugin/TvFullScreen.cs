@@ -854,17 +854,33 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
         case Action.ActionType.ACTION_NEXT_AUDIO:
-          {
-            IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
+          {            
+            //IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
 
-            if (streams.Length > 1)
+            if (g_Player.AudioStreams > 1)
             {
               int newIndex = 0;
               int oldIndex = 0;
-              
+              string audioLang = g_Player.AudioLanguage(oldIndex);
               oldIndex = g_Player.CurrentAudioStream;
               g_Player.SwitchToNextAudio();
+
+              // hack for recorded TV (multiseat)-->
+              // if we change audio track on a tv rec. the video will get stuck (like pause)
+              // a way to circumvent this is to carry out a small delayed seek.
+              // this is most likely a workaround for a bug in tsreader or in streamingserver.
+              if (g_Player.IsTVRecording && !TVHome.IsSingleSeat())
+              {
+                Thread seekDelayThread = new Thread(SeekDelayThread);
+                seekDelayThread.Start();
+              }                
+
               newIndex = g_Player.CurrentAudioStream;
+
+              if (newIndex + 1 > g_Player.AudioStreams)
+              {
+                newIndex = 0;
+              }
                 
               Log.Debug("Switching from audio stream {0} to {1}", oldIndex, newIndex);
 
@@ -872,7 +888,9 @@ namespace TvPlugin
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-              msg.Label = string.Format("{0}:{1} ({2}/{3})", streams[newIndex].StreamType, streams[newIndex].Language, newIndex + 1, streams.Length);
+              //msg.Label = string.Format("{0}:{1} ({2}/{3})", streams[newIndex].StreamType, streams[newIndex].Language, newIndex + 1, streams.Length);
+              msg.Label = string.Format("{0}:{1} ({2}/{3})", g_Player.AudioType(newIndex), g_Player.AudioLanguage(newIndex), newIndex + 1, g_Player.AudioStreams);              
+           
               Log.Debug(msg.Label);
               OnMessage(msg);
             }
@@ -1456,8 +1474,9 @@ namespace TvPlugin
         dlg.AddLocalizedString(902); // MSN Online contacts
       }
 
-      IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
-      if (streams != null && streams.Length > 0)
+      //IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
+      //if (streams != null && streams.Length > 0)
+      if (g_Player.AudioStreams > 0)
       {
         dlg.AddLocalizedString(492); // Audio language menu
       }
@@ -1740,26 +1759,26 @@ namespace TvPlugin
       dlg.SetHeading(492); // set audio language menu
 
       dlg.ShowQuickNumbers = true;
-
-      IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
-      int streamCurrent = g_Player.CurrentAudioStream;
-
-      Log.Debug("TvFullScreen: ShowAudioLanguageMenu - got {0} audio streams", streams.Length);
-
       int selected = 0;
+      int nrOfstreams = 0;
+     
+      int streamCurrent = g_Player.CurrentAudioStream;
+      nrOfstreams = g_Player.AudioStreams;
 
-      if (streams.Length >= streamCurrent)
+      Log.Debug("TvFullScreen: ShowAudioLanguageMenu - got {0} audio streams", nrOfstreams);
+
+      if (nrOfstreams >= streamCurrent)
       {
         selected = streamCurrent;
       }
 
-      for (int i = 0; i < streams.Length; i++)
-      {        
+      for (int i = 0; i < g_Player.AudioStreams; i++)
+      {
         GUIListItem item = new GUIListItem();
-        item.Label = String.Format("{0}:{1}", streams[i].StreamType, streams[i].Language);
-        dlg.Add(item);        
-      }     
-
+        item.Label = String.Format("{0}:{1}", g_Player.AudioType(i),  g_Player.AudioLanguage(i));
+        dlg.Add(item);
+      }      
+      
       dlg.SelectedLabel = selected;
 
       _isDialogVisible = true;
@@ -1770,10 +1789,28 @@ namespace TvPlugin
       if (dlg.SelectedLabel < 0) return;
 
       // Set new language			
-      if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < streams.Length))
-      {
-        g_Player.CurrentAudioStream = dlg.SelectedLabel;        
+      if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < nrOfstreams))
+      {        
+        g_Player.CurrentAudioStream = dlg.SelectedLabel;
+        
+        // hack for recorded TV (multiseat)-->
+        // if we change audio track on a tv rec. the video will get stuck (like pause)
+        // a way to circumvent this is to carry out a small delayed seek.
+        // this is most likely a workaround for a bug in tsreader or in streamingserver.
+        if (g_Player.IsTVRecording && !TVHome.IsSingleSeat())
+        {                                        
+          Thread seekDelayThread = new Thread(SeekDelayThread);
+          seekDelayThread.Start();               
+        }                
       }
+    }
+
+
+    private void SeekDelayThread()
+    {
+      //we have to use a small delay before calling seekabs.                                    
+      Thread.Sleep(1200);
+      g_Player.SeekAbsolute(g_Player.CurrentPosition + 1);
     }
 
     void ShowLinkedChannelsMenu(IList linkages)

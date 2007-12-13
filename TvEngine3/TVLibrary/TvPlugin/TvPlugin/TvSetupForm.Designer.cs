@@ -51,6 +51,7 @@ namespace TvPlugin
       this.toolTipChannelChangeVideoChanged = new System.Windows.Forms.ToolTip(this.components);
       this.toolTipChannelChangeAudioChanged = new System.Windows.Forms.ToolTip(this.components);
       this.toolSeeking = new System.Windows.Forms.ToolTip(this.components);
+      this.label1 = new System.Windows.Forms.Label();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
@@ -70,6 +71,7 @@ namespace TvPlugin
       this.mpGroupBox1.TabIndex = 4;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Audio stream preference";
+      this.mpGroupBox1.Visible = false;
       // 
       // mpButtonSelectLanguages
       // 
@@ -131,6 +133,7 @@ namespace TvPlugin
       this.mpGroupBox2.TabIndex = 5;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "TvServer";
+      this.mpGroupBox2.Visible = false;
       // 
       // mpTextBoxHostname
       // 
@@ -159,6 +162,7 @@ namespace TvPlugin
       this.mpButtonOk.TabIndex = 6;
       this.mpButtonOk.Text = "Ok";
       this.mpButtonOk.UseVisualStyleBackColor = true;
+      this.mpButtonOk.Visible = false;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // mpButtonCancel
@@ -170,6 +174,7 @@ namespace TvPlugin
       this.mpButtonCancel.TabIndex = 7;
       this.mpButtonCancel.Text = "Cancel";
       this.mpButtonCancel.UseVisualStyleBackColor = true;
+      this.mpButtonCancel.Visible = false;
       // 
       // mpGroupBox3
       // 
@@ -186,6 +191,7 @@ namespace TvPlugin
       this.mpGroupBox3.TabIndex = 8;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Channel change preference";
+      this.mpGroupBox3.Visible = false;
       // 
       // mpCheckBoxPrefRebuildGraphAudioChanged
       // 
@@ -269,12 +275,22 @@ namespace TvPlugin
       // 
       this.toolSeeking.ToolTipTitle = "Avoid Seeking";
       // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(27, 349);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(262, 13);
+      this.label1.TabIndex = 9;
+      this.label1.Text = "Please find the settings under \'Television->TV Client\'...";
+      // 
       // TvSetupForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
       this.ClientSize = new System.Drawing.Size(317, 369);
+      this.Controls.Add(this.label1);
       this.Controls.Add(this.mpGroupBox3);
       this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.mpButtonOk);
@@ -292,6 +308,7 @@ namespace TvPlugin
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -318,6 +335,7 @@ namespace TvPlugin
     private System.Windows.Forms.CheckBox mpCheckBoxavoidSeekingonChannelChange;
     private System.Windows.Forms.Label mpLabel6;
     private System.Windows.Forms.ToolTip toolSeeking;
+    private System.Windows.Forms.Label label1;
 
 
   }
