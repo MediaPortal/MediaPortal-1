@@ -220,9 +220,21 @@ namespace TvService
 
             return TvResult.ChannelIsScrambled;
           }
+					
 
           if (subchannel.IsTimeShifting)
           {
+						if (!WaitForTimeShiftFile(ref user, fileName + ".tsbuffer"))
+						{
+							if (_cardHandler.IsScrambled(ref user))
+							{
+								_cardHandler.Users.RemoveUser(user);
+								return TvResult.ChannelIsScrambled;
+							}
+							_cardHandler.Users.RemoveUser(user);
+							return TvResult.NoVideoAudioDetected;
+						}
+
             context.OnZap(user);
             if (_linkageScannerEnabled)
               _cardHandler.Card.StartLinkageScanner(_linkageGrabber);
@@ -243,8 +255,7 @@ namespace TvService
             _cardHandler.Users.RemoveUser(user);
             return TvResult.UnableToStartGraph;
           }
-          fileName += ".tsbuffer";
-
+					fileName += ".tsbuffer";
           if (!WaitForTimeShiftFile(ref user, fileName))
           {
             if (_cardHandler.IsScrambled(ref user))
@@ -393,6 +404,7 @@ namespace TvService
       if (!WaitForUnScrambledSignal(ref user)) return false;
       DateTime timeStart = DateTime.Now;
       ulong fileSize = 0;
+			ulong initialFileSize = 0;
       if (_cardHandler.Card.SubChannels.Length <= 0) return false;
       IChannel channel = _cardHandler.Card.SubChannels[0].CurrentChannel;
       bool isRadio = channel.IsRadio;
@@ -401,50 +413,107 @@ namespace TvService
         minTimeShiftFile = 100 * 1024;//100Kb
 
       timeStart = DateTime.Now;
+			bool initialFileSizeRetrieved = false;
+
+			FileStream stream = null;
+			BinaryReader reader = null;
+			
       try
-      {
+      {				
         while (true)
-        {
+        {					
           if (System.IO.File.Exists(fileName))
           {
-            using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-              if (stream.Length > 0)
-              {
-                using (BinaryReader reader = new BinaryReader(stream))
-                {
-                  stream.Seek(0, SeekOrigin.Begin);
+						if (stream == null)
+						{						
+							stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+						}						
+            if (stream.Length > 0)
+            {							
+							if (reader == null)
+							{
+								reader = new BinaryReader(stream);
+							}
 
-                  ulong newfileSize = reader.ReadUInt64();
-                  if (newfileSize != fileSize)
-                  {
-                    Log.Write("card: timeshifting fileSize:{0}", fileSize);
-                    timeStart = DateTime.Now;
-                  }
-                  fileSize = newfileSize;
-                  if (fileSize >= minTimeShiftFile)
-                  {
-                    TimeSpan ts = DateTime.Now - timeStart;
-                    Log.Write("card: timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);
-                    return true;
-                  }
-                }
-              }
-            }
+							if (!initialFileSizeRetrieved)
+							{
+								try
+								{
+									initialFileSizeRetrieved = true;
+									stream.Seek(0, SeekOrigin.Begin);
+									initialFileSize = reader.ReadUInt64();									
+								}
+								catch (Exception e)
+								{
+									if (reader != null)
+									{
+										reader.Close();
+										reader = null;
+									}
+								}
+							}
+							stream.Seek(0, SeekOrigin.Begin);
+							ulong newfileSize = 0;
+							try
+							{
+								if (reader == null)
+								{
+									reader = new BinaryReader(stream);
+								}
+								newfileSize = reader.ReadUInt64();
+							}
+							catch (Exception e)
+							{
+								Log.Write(e.Message);
+								if (reader != null)
+								{
+									reader.Close();
+									reader = null;
+								}
+							}
+							if (newfileSize > fileSize)
+							{
+								Log.Write("card: timeshifting fileSize:{0}", fileSize);
+								timeStart = DateTime.Now;
+							}
+							fileSize = newfileSize;
+
+							if (fileSize >= (initialFileSize + minTimeShiftFile))
+							{
+								TimeSpan ts = DateTime.Now - timeStart;
+								Log.Write("card: timeshifting fileSize:{0} {1}", fileSize, ts.TotalMilliseconds);
+								return true;
+							}              
+            }            
           }
+
           System.Threading.Thread.Sleep(100);
           TimeSpan timeOut = DateTime.Now - timeStart;
           if (timeOut.TotalMilliseconds >= 15000)
-          {
+          {						
             Log.Write("card: timeshifting fileSize:{0} TIMEOUT", fileSize);
             return false;
           }
         }
-      }
+      }			
       catch (Exception ex)
       {
         Log.Write(ex);
       }
+			finally
+			{
+				if (reader != null)
+				{
+					reader.Close();
+					reader = null;
+				}
+
+				if (stream != null)
+				{
+					stream.Close();
+					stream.Dispose();
+				}
+			}
       return false;
     }
 
