@@ -72,7 +72,7 @@ namespace MediaPortal.InputDevices.FireDTV
                 string fullDllPath = Config.GetFile(Config.Dir.Base, "FiresatApi.dll");                
                 if (File.Exists(fullDllPath))
                 {
-                    Log.Info("FireDTVRemote: Using FiresatApi.dll located in MediaPortal's base dir {0}", fullDllPath);
+                    Log.Info("FireDTV: Using FiresatApi.dll located in MediaPortal's base dir {0}", fullDllPath);
                 }
                 else
                 {
@@ -80,11 +80,11 @@ namespace MediaPortal.InputDevices.FireDTV
                     fullDllPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"FireDTV\Tools\FiresatApi.dll");
                     if (File.Exists(fullDllPath))
                     {
-                        Log.Info("FireDTVRemote: Using FiresatApi.dll located in FireDTV's install path {0}", fullDllPath);
+                        Log.Info("FireDTV: Using FiresatApi.dll located in FireDTV's install path {0}", fullDllPath);
                     }
                     else
                     {
-                        Log.Error("FireDTVRemote: FiresatApi.dll could not be found on your system!");
+                        Log.Error("FireDTV: FiresatApi.dll could not be found on your system!");
                         return;
                     }
                 }
@@ -95,12 +95,12 @@ namespace MediaPortal.InputDevices.FireDTV
                 }
                 catch (Exception ex1)
                 {
-                    Log.Error("FireDTVRemote: Trying to enable FireDTV remote but failed to set its path. Error: {0}", ex1.Message);
+                    Log.Error("FireDTV: Trying to enable FireDTV remote but failed to set its path. Error: {0}", ex1.Message);
                 }
             }
             catch (Exception ex)
             {
-                Log.Error("FireDTVRemote: Trying to enable FireDTV remote but failed with error: {0}", ex.Message);
+                Log.Error("FireDTV: Trying to enable FireDTV remote but failed with error: {0}", ex.Message);
                 return;
             }
 
