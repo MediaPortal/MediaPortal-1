@@ -1692,11 +1692,11 @@
 		<carrier frequency="690000" bandwidth="8"></carrier>
 	</country>
 	<country name="Germany - Rhein/Main" offset="125">
-		<carrier frequency="198500" bandwidth="8"></carrier>
+		<carrier frequency="198500" bandwidth="7"></carrier>
 		<carrier frequency="482000" bandwidth="8"></carrier>
 		<carrier frequency="578000" bandwidth="8"></carrier>
+		<carrier frequency="602000" bandwidth="8"></carrier>
 		<carrier frequency="738000" bandwidth="8"></carrier>
-		<carrier frequency="762000" bandwidth="8"></carrier>
 		<carrier frequency="818000" bandwidth="8"></carrier>
 	</country>
 	<country name="Germany - Stuttgart" offset="125">
