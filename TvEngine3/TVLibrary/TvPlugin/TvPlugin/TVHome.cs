@@ -799,7 +799,7 @@ namespace TvPlugin
 
 			// if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
       // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
-			bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen);
+      bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && _resumed);
       bool useDelay = false;
 
 			if (_resumed && !showlastActModFS)
@@ -1907,8 +1907,10 @@ namespace TvPlugin
         }
 
         GUIWaitCursor.Hide();
+        GUIDialogYesNo pDlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-        if (pDlgOK != null)
+
+        if (pDlgOK != null && pDlgYesNo != null)
         {
           errorMessage = GUILocalizeStrings.Get(1500);
           switch (succeeded)
@@ -1960,46 +1962,91 @@ namespace TvPlugin
               }
               break;
           }
-          string[] lines = errorMessage.Split('\r');
-          pDlgOK.SetHeading(605);//my tv
-
-          pDlgOK.SetLine(1, channel.Name);
-
-          pDlgOK.SetLine(2, lines[0]);
-          if (lines.Length > 1)
-            pDlgOK.SetLine(3, lines[1]);
-          else
-            pDlgOK.SetLine(3, "");
-
-          if (lines.Length > 2)
-            pDlgOK.SetLine(4, lines[2]);
-          else
-            pDlgOK.SetLine(4, "");
-
-          if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+          if (wasPlaying) //show yes no dialogue
           {
-            pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-            // If failed and wasPlaying TV, fallback to the last viewed channel. 
-            if (!g_Player.IsTimeShifting && wasPlaying)
+            string[] lines = errorMessage.Split('\r');
+            pDlgYesNo.SetHeading(605);//my tv
+            pDlgYesNo.SetLine(1, channel.Name);
+            pDlgYesNo.SetLine(2, lines[0]);            
+            if (lines.Length > 1)
+              pDlgYesNo.SetLine(3, lines[1]);
+            else
+              pDlgYesNo.SetLine(3, "");
+            if (lines.Length > 2)
+              pDlgYesNo.SetLine(4, lines[2]);
+            else
+              pDlgYesNo.SetLine(4, "");
+
+            //pDlgYesNo.SetLine(5, "Tune previous channel?"); //Tune previous channel?            
+
+            if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
             {
-              ViewChannelAndCheck(Navigator.Channel);
-              GUIWaitCursor.Hide();
+              pDlgYesNo.DoModal(GUIWindowManager.ActiveWindowEx);
+              // If failed and wasPlaying TV, fallback to the last viewed channel. 
+
+              if (wasPlaying && pDlgYesNo.IsConfirmed)
+              {
+                ViewChannelAndCheck(Navigator.Channel);
+                GUIWaitCursor.Hide();
+              }
+            }
+            else
+            {
+              ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
+              Thread showDlgThread = new Thread(pThread);
+
+              // If failed and wasPlaying TV, fallback to the last viewed channel. 
+              if (wasPlaying)
+              {
+                ViewChannelAndCheck(Navigator.Channel);
+                GUIWaitCursor.Hide();
+              }
+              // show the dialog asynch.
+              // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+              showDlgThread.Start(pDlgOK);
             }
           }
-          else
-          {            
-            ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
-            Thread showDlgThread = new Thread (pThread);          
+          else //show ok
+          {
+            string[] lines = errorMessage.Split('\r');
+            pDlgOK.SetHeading(605);//my tv
+            pDlgOK.SetLine(1, channel.Name);
+            pDlgOK.SetLine(2, lines[0]);
+            if (lines.Length > 1)
+              pDlgOK.SetLine(3, lines[1]);
+            else
+              pDlgOK.SetLine(3, "");
+            if (lines.Length > 2)
+              pDlgOK.SetLine(4, lines[2]);
+            else
+              pDlgOK.SetLine(4, "");
 
-            // If failed and wasPlaying TV, fallback to the last viewed channel. 
-            if (!g_Player.IsTimeShifting && wasPlaying)
+            if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
             {
-              ViewChannelAndCheck(Navigator.Channel);
-              GUIWaitCursor.Hide();
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+              // If failed and wasPlaying TV, fallback to the last viewed channel. 
+
+              if (wasPlaying && pDlgOK.IsConfirmed)
+              {
+                ViewChannelAndCheck(Navigator.Channel);
+                GUIWaitCursor.Hide();
+              }
             }
-            // show the dialog asynch.
-            // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-            showDlgThread.Start(pDlgOK);            
+            else
+            {
+              ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
+              Thread showDlgThread = new Thread(pThread);
+
+              // If failed and wasPlaying TV, fallback to the last viewed channel. 
+              if (wasPlaying)
+              {
+                ViewChannelAndCheck(Navigator.Channel);
+                GUIWaitCursor.Hide();
+              }
+              // show the dialog asynch.
+              // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+              showDlgThread.Start(pDlgOK);
+            }
           }
         }
         return false;
