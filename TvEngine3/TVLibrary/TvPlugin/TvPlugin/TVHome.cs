@@ -1580,7 +1580,7 @@ namespace TvPlugin
 
       if (_preferredLanguages != null)
       {
-        Log.Debug("TVHome.GetPreferedAudioStreamIndex(): preferred LANG(s):{0} preferAC3:{1} _preferAudioTypeOverLang:{2}", String.Join(";",_preferredLanguages), _preferAC3, _preferAudioTypeOverLang);
+        Log.Debug("TVHome.GetPreferedAudioStreamIndex(): preferred LANG(s):{0} preferAC3:{1} preferAudioTypeOverLang:{2}", String.Join(";",_preferredLanguages), _preferAC3, _preferAudioTypeOverLang);
       }
       else
       {
@@ -1653,13 +1653,13 @@ namespace TvPlugin
           {
             //we did find an AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
             if (_preferAudioTypeOverLang || (idxLangmpeg == -1 && _preferAudioTypeOverLang))
-            {
+            {          
               idx = idxFirstAc3;
-              Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, NOT based on LANG (none avail. matching {1})", idx, ac3BasedOnLang);
+              Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, NOT based on LANG (none avail. matching {1})", idx, ac3BasedOnLang);              
             }            
             else
-            {
-              Log.Info("Audio stream: ignoring AC3 audio stream {0} (_preferAudioTypeOverLang is enabled - using mpeg instead))", idxFirstAc3);
+            {             
+              Log.Info("Audio stream: ignoring AC3 audio stream {0}", idxFirstAc3);              
             }
           }
           //if not then proceed with mpeg lang. selection below.
@@ -1702,8 +1702,11 @@ namespace TvPlugin
             }
             else
             {
-              idx = idxLangAc3;
-              Log.Info("Audio stream: ignoring MPEG audio stream {0} (_preferAudioTypeOverLang is enabled using AC3 instead))", idx);
+              if (idxLangAc3 > -1)
+              {
+                idx = idxLangAc3;
+                Log.Info("Audio stream: ignoring MPEG audio stream {0}", idx);
+              }
             }
           }
         }
