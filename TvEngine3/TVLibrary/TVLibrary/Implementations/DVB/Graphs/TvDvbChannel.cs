@@ -1157,56 +1157,46 @@ namespace TvLibrary.Implementations.DVB
      
       //_linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
       foreach (PidInfo info in _channelInfo.pids)
-      {				
-        if (info.isVideo || info.isDVBSubtitle)
-        {
-          Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
-          _tsFilterInterface.TimeShiftAddStream(_subChannelIndex,info.pid, info.stream_type, info.language); // stream_type == service_type i guess
-        }
-				else if (info.isAC3Audio || info.IsMpeg1Audio || info.IsMpeg2Audio)
+      {
+				if (info.HasDescriptorData())
 				{
-					if (info.HasDescriptorData())
-					{						
-						unsafe
-						{ // we need to pass a pointer to the descriptor data
-							fixed (byte* data = info.GetDescriptorData())
-							{
-								IntPtr pData = new IntPtr(data);
-								if (info.isAC3Audio)
-								{
-									_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, true, false, false);
-								}
-								else if (info.IsMpeg1Audio)
-								{
-									_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, true, false);
-								}
-								else if (info.IsMpeg2Audio)
-								{
-									_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, true);
-								}
-							}
-						}
-					}
-					else
-					{						
-						Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
-						_tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess
-					}
-				}
-				else if (info.isTeletext && info.HasDescriptorData())
-				{
-					Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ttxt))", _subChannelId, info.stream_type, info);
-					//Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );
 					unsafe
 					{ // we need to pass a pointer to the descriptor data
 						fixed (byte* data = info.GetDescriptorData())
 						{
 							IntPtr pData = new IntPtr(data);
-							_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
+							if (info.isAC3Audio)
+							{
+								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ac3))", _subChannelId, info.stream_type, info);
+								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, true, false, false);
+							}
+							else if (info.IsMpeg2Audio)
+							{
+								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Mpeg2Audio))", _subChannelId, info.stream_type, info);
+								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, true);
+							}
+							else if (info.IsMpeg1Audio || info.isAudio)
+							{
+								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Mpeg1Audio))", _subChannelId, info.stream_type, info);
+								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, true, false);
+							}
+							else if (info.isTeletext)
+							{
+								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ttxt))", _subChannelId, info.stream_type, info);
+								//Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
+								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
+							}
 						}
-					}
-
+					}					
 				}
+				else //no descriptor data, add em the old way.
+				{
+					if (info.isVideo || info.isDVBSubtitle || info.isAudio || info.isAC3Audio)
+					{
+						Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
+						_tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess
+					}
+				}        								
       }
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
       _dateTimeShiftStarted = DateTime.Now;

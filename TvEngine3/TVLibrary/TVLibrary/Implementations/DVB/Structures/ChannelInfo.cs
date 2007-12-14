@@ -411,12 +411,14 @@ namespace TvLibrary.Implementations.DVB.Structures
             break;
           case 0x3://MPEG-1 AUDIO ISO/IEC 11172 
             pidInfo.isAudio = true;
+						pidInfo.isAC3Audio = false;
             break;
           case 0x4://MPEG-3 AUDIO ISO/IEC 13818-3 
             pidInfo.isAudio = true;
+						pidInfo.isAC3Audio = false;
             break;
           case 0x81://AC3 AUDIO
-            pidInfo.isAudio = true;
+            pidInfo.isAudio = false;
             pidInfo.isAC3Audio = true;
             break;
         }
