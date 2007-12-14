@@ -66,53 +66,44 @@ namespace MediaPortal.InputDevices.FireDTV
         /// <param name="windowHandle"></param>
         public FireDTVControl(IntPtr windowHandle)
         {
-            // try to locate the FireDTV installation directory
-            using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DigitalEverywhere\\FireDTV"))
+            try
             {
-                try
+                // First try in MediaPortal's base directory
+                string fullDllPath = Config.GetFile(Config.Dir.Base, "FiresatApi.dll");                
+                if (File.Exists(fullDllPath))
                 {
-                    if (rkey == null)
+                    Log.Info("FireDTVRemote: Using FiresatApi.dll located in MediaPortal's base dir {0}", fullDllPath);
+                }
+                else
+                {
+                    // Look for Digital Everywhere's software which uses a hardcoded path
+                    fullDllPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"FireDTV\Tools\FiresatApi.dll");
+                    if (File.Exists(fullDllPath))
                     {
-                        Log.Info("FireDTVRemote: Trying to enable FireDTV remote but its software is not installed!");
-                        return;
+                        Log.Info("FireDTVRemote: Using FiresatApi.dll located in FireDTV's install path {0}", fullDllPath);
                     }
                     else
                     {
-                        string dllPath = rkey.GetValue("InstallFolder").ToString();
-                        string fullDllPath = string.Format("{0}{1}", dllPath.Substring(0, dllPath.LastIndexOf('\\') + 1), "Tools\\");
-                        bool _apiFound = File.Exists(fullDllPath + "FiresatApi.dll");
-
-                        // second try in MediaPortal's base directory
-                        if (!_apiFound)
-                        {
-                            fullDllPath = Config.GetFile(Config.Dir.Base, "FiresatApi.dll");
-                            _apiFound = File.Exists(fullDllPath + "FiresatApi.dll");
-                        }
-
-                        if (!_apiFound)
-                        {
-                            Log.Error("FireDTVRemote: Trying to enable FireDTV remote but FiresatApi.dll could not be found!");
-                            return;
-                        }
-
-                        Log.Info("FireDTVRemote: Using FiresatApi.dll of directory: {0}", fullDllPath);
-
-                        try
-                        {
-                            FireDTVControl.SetDllDirectory(fullDllPath);
-                        }
-                        catch (Exception)
-                        {
-                            Log.Error("FireDTVRemote: Trying to enable FireDTV remote but failed to set its path");
-                        }                        
+                        Log.Error("FireDTVRemote: FiresatApi.dll could not be found on your system!");
+                        return;
                     }
                 }
-                catch (Exception ex)
+
+                try
                 {
-                    Log.Error("FireDTVRemote: Trying to enable FireDTV remote but failed to find dll with error: {0}", ex.Message);
-                    return;
+                    FireDTVControl.SetDllDirectory(fullDllPath);
+                }
+                catch (Exception ex1)
+                {
+                    Log.Error("FireDTVRemote: Trying to enable FireDTV remote but failed to set its path. Error: {0}", ex1.Message);
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error("FireDTVRemote: Trying to enable FireDTV remote but failed with error: {0}", ex.Message);
+                return;
+            }
+
             _windowHandle = windowHandle;
 
             // initialise the library
@@ -202,7 +193,10 @@ namespace MediaPortal.InputDevices.FireDTV
                     throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to WDM Driver Count");
                 return (int)WDMCount;
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                Log.Error("FireSATControl: Error getting WDM Devices {0}", ex.Message);
+            }
             return 0;
         }
 
@@ -216,7 +210,10 @@ namespace MediaPortal.InputDevices.FireDTV
                     throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to BDA Driver Count");
                 return (int)BDACount;
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                Log.Error("FireSATControl: Error getting BDA Devices {0}", ex.Message);
+            }
             return 0;
         }
 
