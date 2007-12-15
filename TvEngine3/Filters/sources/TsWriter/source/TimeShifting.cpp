@@ -372,7 +372,8 @@ static DWORD crc_table[256] = {
 				info.seenStart=false;
 				if (isMpeg1)
 				{
-				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG1;
+					// Should be mapped to MPEG2 because otherwise not playable
+				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG2;
 				}
 				else if (isMpeg2)
 				{
