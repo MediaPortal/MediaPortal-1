@@ -178,11 +178,16 @@ namespace TvLibrary.Implementations
         for (int i = 0; i < devices.Length; i++)
         {
 
-          string name = devices[i].Name.ToLower();
+					string name = devices[i].Name;
+					if (name == null)
+					{						
+						name = "unknown";						
+					}
+          name = name.ToLower();
           //Log.Log.WriteFile("Found card:{0}", name);
           //Console.ReadLine();
           IBaseFilter tmp;
-          graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+					graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
           if (ConnectFilter(graphBuilder, networkDVBT, tmp))
           {
             Log.Log.WriteFile("Detected DVB-T card:{0}", name);
@@ -222,7 +227,12 @@ namespace TvLibrary.Implementations
       devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSTVTuner);
       for (int i = 0; i < devices.Length; i++)
       {
-        string name = devices[i].Name.ToLower();
+				string name = devices[i].Name;
+				if (name == null)
+				{
+					name = "unknown";
+				}
+        name = name.ToLower();
         Log.Log.WriteFile("Detected analog card:{0}", name);
         TvCardAnalog analogCard = new TvCardAnalog(devices[i]);
         _cards.Add(analogCard);
