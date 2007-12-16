@@ -316,7 +316,7 @@ namespace MediaPortal.GUI.Music
         return;
 
       // When Playing an Internet Stream, via BASS, we set the properties inside the BASS audio engine to be able to detect track changes
-      if (BassMusicPlayer.IsDefaultMusicPlayer && (fileName.ToLower().StartsWith("http") || fileName.ToLower().StartsWith("http")))
+      if (BassMusicPlayer.IsDefaultMusicPlayer && (fileName.ToLower().StartsWith("http") || fileName.ToLower().StartsWith("mms")))
         return;
      
       GUIPropertyManager.RemovePlayerProperties();
