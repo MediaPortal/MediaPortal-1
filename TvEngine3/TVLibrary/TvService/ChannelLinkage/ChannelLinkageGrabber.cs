@@ -109,7 +109,7 @@ namespace TvService
         Log.Info("Portal channel with networkId={0}, transportId={1}, serviceId={2} not found", pChannel.NetworkId, pChannel.TransportId, pChannel.ServiceId);
         return;
       }
-      layer.DeleteLinkageMapForPortalChannel(dbPortalChannel);
+      Gentle.Framework.Broker.Execute("delete from ChannelLinkageMap WHERE idPortalChannel=" + dbPortalChannel.IdChannel.ToString());
       foreach (LinkedChannel lChannel in pChannel.LinkedChannels)
       {
         Channel dbLinkedChannnel = layer.GetChannelByTuningDetail(lChannel.NetworkId, lChannel.TransportId, lChannel.ServiceId);
@@ -155,23 +155,25 @@ namespace TvService
       bool anyChanges = false;
       foreach (PortalChannel pChannel in linkages)
       {
-        PortalChannel cachedPChannel = GetCachedPortalChannel(pChannel);
+        Log.Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId, pChannel.TransportId);
+        foreach (LinkedChannel lchan in pChannel.LinkedChannels)
+          Log.Info("[Linkage Scanner] - {0}", lchan.Name);
+        PersistPortalChannel(pChannel);
+        /*
+        PortalChannel cachedPChannel = null; //GetCachedPortalChannel(pChannel);
         if (cachedPChannel == null)
         {
           _cashedLinkages.Add(pChannel);
           PersistPortalChannel(pChannel);
-          anyChanges = true;
           continue;
         }
         if (!CompareLinkedChannels(cachedPChannel.LinkedChannels, pChannel.LinkedChannels))
         {
           cachedPChannel.LinkedChannels = pChannel.LinkedChannels;
           PersistPortalChannel(pChannel);
-          anyChanges = true;
         }
+        */
       }
-      if (anyChanges)
-        Gentle.Common.CacheManager.Clear();
     }
     #endregion
   }

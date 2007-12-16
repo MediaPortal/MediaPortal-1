@@ -955,15 +955,6 @@ namespace TvDatabase
       stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection(typeof(ChannelLinkageMap), stmt.Execute());
     }
-    public void DeleteLinkageMapForPortalChannel(Channel PortalChannel)
-    {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(ChannelLinkageMap));
-      DateTime dtYesterday = DateTime.Now.AddDays(-1);
-      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      sb.AddConstraint(Operator.Equals,"idPortalChannel",PortalChannel.IdChannel);
-      SqlStatement stmt = sb.GetStatement(true);
-      stmt.Execute();
-    }
     #endregion
 
     #region programs
