@@ -503,13 +503,17 @@ STDMETHODIMP CDump::StartTimeShifting( )
 	CAutoLock lock(&m_Lock);
 	if (strlen(m_strTimeShiftFileName)==0) return E_FAIL;
 
+	if (m_bIsTimeShifting)
+	{
+		StopTimeShifting();
+	}
 	
-	::DeleteFile((LPCTSTR) m_strRecordingFileName);
+	::DeleteFile((LPCTSTR) m_strTimeShiftFileName);
 	LogDebug("Start TimeShifting:'%s'",m_strTimeShiftFileName);
   
-  m_tsWriter.Initialize(m_strTimeShiftFileName);
-  m_bIsTimeShifting=true;
-  m_bPaused=false;
+	m_tsWriter.Initialize(m_strTimeShiftFileName);
+	m_bIsTimeShifting=true;
+	m_bPaused=false;
 	WCHAR wstrFileName[2048];
 	MultiByteToWideChar(CP_ACP,0,m_strTimeShiftFileName,-1,wstrFileName,1+strlen(m_strTimeShiftFileName));
 	return S_OK;
@@ -519,10 +523,14 @@ STDMETHODIMP CDump::StopTimeShifting( )
 {
 	CAutoLock lock(&m_Lock);
 
-	LogDebug("Stop TimeShifting:'%s'",m_strTimeShiftFileName);
-	m_tsWriter.Close();
-	strcpy(m_strTimeShiftFileName,"");
-  m_bIsTimeShifting=false;
+	if (m_bIsTimeShifting)
+	{
+		LogDebug("Stop TimeShifting:'%s'",m_strTimeShiftFileName);
+		m_tsWriter.Close();
+		strcpy(m_strTimeShiftFileName,"");
+		m_bIsTimeShifting=false;
+		::DeleteFile((LPCTSTR) m_strTimeShiftFileName);
+	}
 	return S_OK;
 }
 

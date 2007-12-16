@@ -130,8 +130,8 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
 	{	
-				LogDebug("MultiFileWriter: OpenFile failed to create file");
         DWORD dwErr = GetLastError();
+		LogDebug("MultiFileWriter: OpenFile failed to create file:%d",dwErr);
         return HRESULT_FROM_WIN32(dwErr);
 	}
 

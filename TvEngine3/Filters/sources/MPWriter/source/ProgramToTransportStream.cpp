@@ -9,6 +9,9 @@ CProgramToTransportStream::CProgramToTransportStream(void)
   LogDebug("CProgramToTransportStream::ctor");
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   m_env = BasicUsageEnvironment::createNew(*scheduler);
+  m_outputSink=NULL;
+  m_inputSource=NULL;
+  m_tsFrames=NULL;
 }
 
 CProgramToTransportStream::~CProgramToTransportStream(void)
@@ -138,17 +141,22 @@ void CProgramToTransportStream::StartBufferThread()
 void CProgramToTransportStream::StopBufferThread()
 {
   LogDebug("CProgramToTransportStream::StopBufferThread()");
-	if (!m_BufferThreadActive)
-		return;
+//	if (!m_BufferThreadActive)
+//		return;
 
   //StopThread(INFINITE);
 
 	
-  Medium::close(m_outputSink);
-  Medium::close(m_inputSource);
-  Medium::close(m_tsFrames);
+  if (m_outputSink!=NULL)
+   Medium::close(m_outputSink);
+  if (m_inputSource!=NULL)
+	Medium::close(m_inputSource);
+
+  if (m_tsFrames!=NULL)
+	Medium::close(m_tsFrames);
   m_outputSink=NULL;
   m_inputSource=NULL;
+  m_tsFrames=NULL;
   LogDebug("CProgramToTransportStream::Thread stopped()");
 
 	m_BufferThreadActive = false;
