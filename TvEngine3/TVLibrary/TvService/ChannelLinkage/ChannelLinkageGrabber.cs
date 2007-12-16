@@ -47,9 +47,7 @@ namespace TvService
     public ChannelLinkageGrabber(ITVCard card)
     {
       _card = card;
-      _cashedLinkages = new List<PortalChannel>();
-      InitCache();
-    }
+     }
     #endregion
 
     #region callback
