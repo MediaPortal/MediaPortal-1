@@ -2486,6 +2486,8 @@ namespace TvLibrary.Implementations.DVB
                 {
                   DateTime dtUTC = new DateTime(starttime_y, starttime_m, starttime_d, starttime_hh, starttime_mm, starttime_ss, 0);
                   DateTime dtStart = dtUTC.ToLocalTime();
+                  if (dtStart < DateTime.Now.AddDays(-1) || dtStart > DateTime.Now.AddMonths(2))
+                    continue;
                   DateTime dtEnd = dtStart.AddHours(duration_hh);
                   dtEnd = dtEnd.AddMinutes(duration_mm);
                   dtEnd = dtEnd.AddSeconds(duration_ss);
@@ -2530,8 +2532,11 @@ namespace TvLibrary.Implementations.DVB
                   Log.Log.Write(ex);
                 }
               }//for (uint i = 0; i < eventCount; ++i)
-              epgChannel.Sort();
-              epgChannels.Add(epgChannel);
+              if (epgChannel.Programs.Count > 0)
+              {
+                epgChannel.Sort();
+                epgChannels.Add(epgChannel);
+              }
             }//for (uint x = 0; x < channelCount; ++x)
           }
           // free the epg infos in TsWriter so that the mem used gets released 

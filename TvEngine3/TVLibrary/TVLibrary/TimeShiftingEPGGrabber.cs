@@ -232,6 +232,13 @@ namespace TvLibrary
         if (dbChannel == null)
         {
           Log.Log.Epg("TimeshiftingEPG: no channel found for nid={0} tid={1} sid={2}", dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
+          foreach (EpgProgram ei in epgChannel.Programs)
+          {
+            string title = "";
+            if (ei.Text.Count > 0)
+              title = ei.Text[0].Title;
+            Log.Log.Epg("                   -> {0}-{1}  {2}", ei.StartTime, ei.EndTime, title);
+          }
           continue;
         }
         if (_storeOnlySelectedChannels)
@@ -242,7 +249,7 @@ namespace TvLibrary
             continue;
           }
         }
-        DateTime newestEntry = layer.GetNewestProgramForChannel(dbChannel.IdChannel);
+        /*DateTime newestEntry = layer.GetNewestProgramForChannel(dbChannel.IdChannel);
         if (epgChannel.Programs[epgChannel.Programs.Count - 1].StartTime <= newestEntry)
         {
           Log.Log.Epg("TimeshiftingEPG: no new epg entries for channel {0}", dbChannel.DisplayName);
@@ -252,10 +259,13 @@ namespace TvLibrary
         layer.RemoveOldPrograms(dbChannel.IdChannel);
         IList dbPrograms = layer.GetPrograms(dbChannel, newestEntry);
         for (int i=epgOffset;i<epgChannel.Programs.Count;i++)
+        {*/
+        Gentle.Framework.Broker.Execute("delete from program where idChannel=" + dbChannel.IdChannel);
+        for (int i=0;i<epgChannel.Programs.Count;i++)
         {
           EpgProgram epgProgram = epgChannel.Programs[i];
-          if (!ProgramExists(dbPrograms, epgProgram.StartTime, epgProgram.EndTime))
-          {
+          //if (!ProgramExists(dbPrograms, epgProgram.StartTime, epgProgram.EndTime))
+          //{
             string title; string description; string genre; int starRating; string classification; int parentRating;
             GetEPGLanguage(epgProgram.Text, out title, out description, out genre,out starRating, out classification, out parentRating);
             NameValueCollection values = new NameValueCollection();
@@ -270,7 +280,7 @@ namespace TvLibrary
             Program prog = new Program(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime,EvalTemplate(_titleTemplate,values) ,EvalTemplate(_descriptionTemplate,values),genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentRating);
             prog.Persist();
             iInserted++;
-          }
+          //}
         }
         dbChannel.LastGrabTime = DateTime.Now;
         dbChannel.Persist();
