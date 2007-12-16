@@ -41,7 +41,6 @@ namespace TvService
   {
     #region variables
     ITVCard _card;
-    List<PortalChannel> _cashedLinkages;
     #endregion
 
     #region ctor
@@ -66,40 +65,6 @@ namespace TvService
     #endregion
 
     #region private methods
-    private void InitCache()
-    {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      IList linkages = ChannelLinkageMap.ListAll();
-      PortalChannel pChannel=null;
-      int lastPortalChannelId = -1;
-      foreach (ChannelLinkageMap map in linkages)
-      {
-        if (map.IdPortalChannel != lastPortalChannelId)
-        {
-          if (pChannel != null)
-            _cashedLinkages.Add(pChannel);
-          Channel chan2 = layer.GetChannel(map.IdPortalChannel);
-          IList details2=chan2.ReferringTuningDetail();
-          TuningDetail detail2=(TuningDetail)details2[0];
-          pChannel = new PortalChannel();
-          pChannel.NetworkId = (ushort)detail2.NetworkId;
-          pChannel.TransportId = (ushort)detail2.TransportId;
-          pChannel.ServiceId = (ushort)detail2.ServiceId;
-          lastPortalChannelId=map.IdPortalChannel;
-        }
-        LinkedChannel lChannel = new LinkedChannel();
-        Channel chan = layer.GetChannel(map.IdLinkedChannel);
-        IList details=chan.ReferringTuningDetail();
-        TuningDetail detail=(TuningDetail)details[0];
-        lChannel.Name = chan.DisplayName;
-        lChannel.NetworkId = (ushort)detail.NetworkId;
-        lChannel.TransportId = (ushort)detail.TransportId;
-        lChannel.ServiceId = (ushort)detail.ServiceId;
-        pChannel.LinkedChannels.Add(lChannel);
-      }
-      if (pChannel != null)
-        _cashedLinkages.Add(pChannel);
-    }
     private void PersistPortalChannel(PortalChannel pChannel)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -124,55 +89,18 @@ namespace TvService
         map.Persist();
       }
     }
-    private PortalChannel GetCachedPortalChannel(PortalChannel pChannel)
-    {
-      foreach (PortalChannel pChan in _cashedLinkages)
-      {
-        if ((pChan.NetworkId == pChannel.NetworkId) && (pChan.ServiceId == pChannel.ServiceId) && (pChan.TransportId == pChannel.TransportId))
-          return pChan;
-      }
-      return null;
-    }
-    private bool CompareLinkedChannels(List<LinkedChannel> cachedLinks, List<LinkedChannel> links)
-    {
-      if (links.Count != cachedLinks.Count)
-      {
-        return false;
-      }
-      for (int i = 0; i < links.Count; i++)
-      {
-        if ((cachedLinks[i].Name != links[i].Name) || (cachedLinks[i].NetworkId != links[i].NetworkId) || (cachedLinks[i].ServiceId != links[i].ServiceId) || (cachedLinks[i].TransportId != links[i].TransportId))
-          return false;
-      }
-      return true;
-    }
     private void UpdateDatabaseThread()
     {
       System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 
       List<PortalChannel> linkages=_card.ChannelLinkages;
       Log.Info("ChannelLinkage received. {0} portal channels read", linkages.Count);
-      bool anyChanges = false;
       foreach (PortalChannel pChannel in linkages)
       {
         Log.Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId, pChannel.TransportId);
         foreach (LinkedChannel lchan in pChannel.LinkedChannels)
           Log.Info("[Linkage Scanner] - {0}", lchan.Name);
         PersistPortalChannel(pChannel);
-        /*
-        PortalChannel cachedPChannel = null; //GetCachedPortalChannel(pChannel);
-        if (cachedPChannel == null)
-        {
-          _cashedLinkages.Add(pChannel);
-          PersistPortalChannel(pChannel);
-          continue;
-        }
-        if (!CompareLinkedChannels(cachedPChannel.LinkedChannels, pChannel.LinkedChannels))
-        {
-          cachedPChannel.LinkedChannels = pChannel.LinkedChannels;
-          PersistPortalChannel(pChannel);
-        }
-        */
       }
     }
     #endregion
