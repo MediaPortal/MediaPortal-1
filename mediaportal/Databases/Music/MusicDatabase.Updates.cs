@@ -971,7 +971,7 @@ namespace MediaPortal.Music.Database
                                {6}, {7}, {8}, {9}, {10}, {11}, {12}, 
                                {13}, {14}, {15}, {16}, {17}, '{18}', '{19}', '{20}' )",
                                strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Title,
-                               tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, 0, 0,
+                               tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
                                0, tag.DiscID, tag.DiscTotal, 0, 0, tag.Lyrics, "", DateTime.MinValue
         );
         try
