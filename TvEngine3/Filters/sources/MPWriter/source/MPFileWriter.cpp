@@ -501,12 +501,14 @@ STDMETHODIMP CDump::SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFil
 STDMETHODIMP CDump::StartTimeShifting( )
 {
 	CAutoLock lock(&m_Lock);
-	if (strlen(m_strTimeShiftFileName)==0) return E_FAIL;
 
 	if (m_bIsTimeShifting)
 	{
-		StopTimeShifting();
+		LogDebug("Stop TimeShifting:'%s'",m_strTimeShiftFileName);
+		m_tsWriter.Close();
+		m_bIsTimeShifting=false;
 	}
+	if (strlen(m_strTimeShiftFileName)==0) return E_FAIL;
 	
 	::DeleteFile((LPCTSTR) m_strTimeShiftFileName);
 	LogDebug("Start TimeShifting:'%s'",m_strTimeShiftFileName);
@@ -555,6 +557,7 @@ STDMETHODIMP CDump::SetRecordingFileName(char* pszFileName)
 STDMETHODIMP CDump::StartRecord( )
 {
 	CAutoLock lock(&m_Lock);
+  StopRecord( );
 	if (strlen(m_strRecordingFileName)==0) return E_FAIL;
 
 	::DeleteFile((LPCTSTR) m_strRecordingFileName);
