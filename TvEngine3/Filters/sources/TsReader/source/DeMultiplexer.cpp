@@ -216,14 +216,15 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
   switch (m_audioStreams[stream].audioType)
   {
     case SERVICE_TYPE_AUDIO_MPEG1:
+		// Should be mapped to MPEG2 because otherwise not playable
 	  pmt.InitMediaType();
 	  pmt.SetType      (& MEDIATYPE_Audio);
-	  pmt.SetSubtype   (& MEDIASUBTYPE_MPEG1Audio);
+	  pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
 	  pmt.SetSampleSize(1);
 	  pmt.SetTemporalCompression(FALSE);
 	  pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG1AudioFormat));
+      pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_MPEG2:
 	  pmt.InitMediaType();
