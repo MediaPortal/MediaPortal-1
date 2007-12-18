@@ -136,18 +136,18 @@ namespace MediaPortal.Player
         {
           Log.Info("VideoPlayerVMR9: Found WMAudio Decoder DMO");
           //Set the filter setting to enable more than 2 audio channels
-          const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
-          object val = true;
-          IPropertyBag propBag = (IPropertyBag)baseFilter;
-          hr = propBag.Write(g_wszWMACHiResOutput, ref val);
-          if (hr != 0)
-          {
-            Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
-          }
-          else
-          {
-            Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
-          }
+          //const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
+          //object val = true;
+          //IPropertyBag propBag = (IPropertyBag)baseFilter;
+          //hr = propBag.Write(g_wszWMACHiResOutput, ref val);
+          //if (hr != 0)
+          //{
+          //  Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
+          //}
+          //else
+          //{
+          //  Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
+          //}
           Marshal.ReleaseComObject(baseFilter);
         }
         hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
