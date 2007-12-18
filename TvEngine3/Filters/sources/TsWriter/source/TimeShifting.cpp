@@ -155,6 +155,7 @@ static DWORD crc_table[256] = {
 		m_fDump=NULL;
 		m_bIgnoreNextPcrJump=false;
     m_bClearTsQueue=false;
+		rclock=new CPcrRefClock();
 	}
 	//*******************************************************************
 	//* dtor
@@ -1351,6 +1352,7 @@ static DWORD crc_table[256] = {
 	//*******************************************************************
 	void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 	{
+		CPcr myPcr=rclock->GetAsPCR();
 		//LogDebug("pcr pid:%x  head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x",header.Pid, tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5]);
 		if (header.PayLoadOnly()) return;
 		//LogDebug(" pcrflag:%x", (tsPacket[5]&0x10));
@@ -1481,6 +1483,8 @@ static DWORD crc_table[256] = {
 		tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
 
 		m_prevPcr = pcrNew;
+		CPcr tmpPcr=m_startPcr+myPcr;
+		//LogDebug("myPcr: %s tsPCR: %s",tmpPcr.ToString(),m_prevPcr.ToString());
 	}
 
 	//*******************************************************************

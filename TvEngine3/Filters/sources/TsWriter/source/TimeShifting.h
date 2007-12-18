@@ -26,6 +26,7 @@
 #include "tsheader.h"
 #include "adaptionfield.h"
 #include "pcr.h"
+#include "PcrRefClock.h"
 #include <vector>
 #include <map>
 using namespace std;
@@ -182,4 +183,5 @@ private:
   vector<char*>   m_tsQueue;
   bool            m_bClearTsQueue;
   unsigned long   m_TsPacketCount;
+  CPcrRefClock*	  rclock;
 };

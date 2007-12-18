@@ -269,6 +269,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\PcrRefClock.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\PesPacket.cpp"
 				>
 			</File>
@@ -491,6 +495,10 @@
 			</File>
 			<File
 				RelativePath=".\source\Pcr.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\PcrRefClock.h"
 				>
 			</File>
 			<File
