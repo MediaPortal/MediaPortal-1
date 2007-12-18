@@ -244,12 +244,12 @@ void CEpgDecoder::DecodeCombinedStarRating_MPAARatingDescriptor(byte* data,EPGEv
 	the bits were wrong before */
 
 	//int starRating=(int)data[2]&0x7;
-	int starRating=(int)data[3]&0xE0; // bits 13-15
+	int starRating=((int)(data[2]&0xE0)>>5); // bits 13-15
 	if (starRating>0 && starRating<8)
 		epgEvent.starRating=starRating;
 	//byte bPRating=data[3]&0x38;
-	byte bPRating=data[3]&0x1C;		// bits 10-12
-	epgEvent.classification="";
+	byte bPRating=((data[2]&0x1C)>>2);		// bits 10-12
+	epgEvent.classification= "";
 	switch (bPRating)
 	{
 		case 0:
