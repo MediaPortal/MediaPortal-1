@@ -64,9 +64,23 @@ namespace TvPlugin
 
     static Program currentProgram = null;
 
+    List<int> RecordingIntervalValues = new List<int>();
+
     public TVProgramInfo()
     {
       GetID = (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO;//748
+
+      //Fill the list with all available pre & post intervals
+      RecordingIntervalValues.Add(0);
+      RecordingIntervalValues.Add(1);
+      RecordingIntervalValues.Add(3);
+      RecordingIntervalValues.Add(5);
+      RecordingIntervalValues.Add(10);
+      RecordingIntervalValues.Add(15);
+      RecordingIntervalValues.Add(30);
+      RecordingIntervalValues.Add(45);
+      RecordingIntervalValues.Add(60);
+      RecordingIntervalValues.Add(90);
     }
 
     public override void OnAdded()
@@ -322,22 +336,35 @@ namespace TvPlugin
         dlg.ShowQuickNumbers = false;
         dlg.SetHeading(GUILocalizeStrings.Get(1444));//pre-record
         dlg.Add(GUILocalizeStrings.Get(886));//default
-        for (int minute = 0; minute < 20; minute++)
+
+        foreach (int interval in RecordingIntervalValues)
         {
-          dlg.Add(String.Format("{0} {1}", minute, GUILocalizeStrings.Get(3004)));
+          if (interval == 1)
+          {
+            dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3003))); // minute
+          }
+          else
+          {
+            dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3004))); // minutes
+          }
         }
         if (rec.PreRecordInterval < 0) dlg.SelectedLabel = 0;
-        else dlg.SelectedLabel = rec.PreRecordInterval + 1;
+        else if (RecordingIntervalValues.IndexOf(rec.PreRecordInterval) == -1) dlg.SelectedLabel = 4; // select 5 minutes if the value is not part of the list
+        else dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.PreRecordInterval) + 1;
+  
         dlg.DoModal(GetID);
+   
         if (dlg.SelectedLabel < 0) return;
-        rec.PreRecordInterval = dlg.SelectedLabel - 1;
+
+        rec.PreRecordInterval = RecordingIntervalValues[dlg.SelectedLabel - 1];
         rec.Persist();
+        
         TvServer server = new TvServer();
         server.OnNewSchedule();
       }
       Update();
     }
-
+  
     void OnPostRecordInterval()
     {
       Schedule rec;
@@ -349,15 +376,27 @@ namespace TvPlugin
         dlg.ShowQuickNumbers = false;
         dlg.SetHeading(GUILocalizeStrings.Get(1445));//pre-record
         dlg.Add(GUILocalizeStrings.Get(886));//default
-        for (int minute = 0; minute < 20; minute++)
+
+        foreach (int interval in RecordingIntervalValues)
         {
-          dlg.Add(String.Format("{0} {1}", minute, GUILocalizeStrings.Get(3004)));
+          if (interval == 1)
+          {
+            dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3003))); // minute
+          }
+          else
+          {
+            dlg.Add(String.Format("{0} {1}", interval, GUILocalizeStrings.Get(3004))); // minutes
+          }
         }
+        
         if (rec.PostRecordInterval < 0) dlg.SelectedLabel = 0;
-        else dlg.SelectedLabel = rec.PostRecordInterval + 1;
+        else if (RecordingIntervalValues.IndexOf(rec.PostRecordInterval) == -1) dlg.SelectedLabel = 4; // select 5 minutes if the value is not part of the list
+        else dlg.SelectedLabel = RecordingIntervalValues.IndexOf(rec.PostRecordInterval) + 1;
+
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel < 0) return;
-        rec.PostRecordInterval = dlg.SelectedLabel - 1;
+
+        rec.PostRecordInterval = RecordingIntervalValues[dlg.SelectedLabel - 1];
         rec.Persist();
       }
       Update();
