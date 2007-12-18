@@ -387,6 +387,7 @@ namespace TvService
             }
           }
         }
+				
         cardsInDbs = Card.ListAll();
         foreach (Card dbsCard in cardsInDbs)
         {
@@ -396,7 +397,31 @@ namespace TvService
             card = localcards[dbsCard.IdCard];
           }
           TvCardHandler tvcard = new TvCardHandler(dbsCard,card);
-          _cards[dbsCard.IdCard] = tvcard;
+          _cards[dbsCard.IdCard] = tvcard;	
+				
+					// remove any old timeshifting TS files	
+					try
+					{
+						string[] files = Directory.GetFiles(dbsCard.TimeShiftFolder);
+
+						foreach (string file in files)
+						{
+							FileInfo fInfo = new FileInfo(file);
+							bool delFile = (fInfo.Extension.ToLower().IndexOf(".tsbuffer") == 0);
+
+							if (!delFile)
+							{
+								delFile = (fInfo.Extension.ToLower().IndexOf(".ts") == 0) && (fInfo.Name.ToLower().IndexOf("tsbuffer") > 0);
+							}
+							if (delFile) File.Delete(fInfo.FullName);
+						}
+					}
+					catch (Exception)
+					{
+						//ignore any errors encountered
+					}
+					
+					
         }
 
         Log.WriteFile("Controller: setup streaming");
