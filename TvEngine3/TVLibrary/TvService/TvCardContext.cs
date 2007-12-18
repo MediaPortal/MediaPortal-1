@@ -181,7 +181,7 @@ namespace TvService
 
 		public void HeartBeatUser(User user)
 		{
-			Log.Debug("user:{0} heartbeat received", user.Name);
+			//Log.Debug("user:{0} heartbeat received", user.Name);
 
 			foreach (User existingUser in _users)
 			{

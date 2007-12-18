@@ -170,14 +170,14 @@ namespace TvPlugin
         {          
             // send heartbeat to tv server each 5 sec.
             // this way we signal to the server that we are alive thus avoid being kicked.
-            Log.Debug("TVHome: sending HeartBeat signal to server.");
+            // Log.Debug("TVHome: sending HeartBeat signal to server.");
             try
             {
               RemoteControl.Instance.HeartBeat(TVHome.Card.User);
             }
             catch (Exception e)
             {
-              Log.Debug("TVHome: failed sending HeartBeat signal to server. ({0})", e.Message);
+              Log.Error("TVHome: failed sending HeartBeat signal to server. ({0})", e.Message);
             }
         }
         Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
