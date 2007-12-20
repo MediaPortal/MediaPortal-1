@@ -2466,7 +2466,8 @@ namespace TvLibrary.Implementations.DVB
                 if (starttime_mm > 59) starttime_mm = 59;
                 if (starttime_ss > 59) starttime_ss = 59;
 
-                if (duration_hh > 23) duration_hh = 23;
+                // DON'T ENABLE THIS. Some entries can be indeed >23 Hours !!!
+                //if (duration_hh > 23) duration_hh = 23;
                 if (duration_mm > 59) duration_mm = 59;
                 if (duration_ss > 59) duration_ss = 59;
 
