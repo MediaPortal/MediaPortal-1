@@ -74,6 +74,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAutoFullscreen;
     public int pluginVersion;
 
     public Television()
@@ -164,6 +165,7 @@ namespace MediaPortal.Configuration.Sections
       this.channelNumberMaxLengthNumUpDn = new System.Windows.Forms.NumericUpDown();
       this.lblChanNumMaxLen = new System.Windows.Forms.Label();
       this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbAutoFullscreen = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbTurnOnTv = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.gAllowedModes = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbAllowNormal = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -214,14 +216,14 @@ namespace MediaPortal.Configuration.Sections
       this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 44);
       this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
       this.h264videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.h264videoCodecComboBox.TabIndex = 11;
+      this.h264videoCodecComboBox.TabIndex = 3;
       // 
       // mpLabel1
       // 
       this.mpLabel1.Location = new System.Drawing.Point(16, 48);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(132, 17);
-      this.mpLabel1.TabIndex = 10;
+      this.mpLabel1.TabIndex = 2;
       this.mpLabel1.Text = "H.264 Video decoder";
       // 
       // cbDeinterlace
@@ -238,14 +240,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeinterlace.Location = new System.Drawing.Point(168, 116);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
-      this.cbDeinterlace.TabIndex = 7;
+      this.cbDeinterlace.TabIndex = 9;
       // 
       // label8
       // 
       this.label8.Location = new System.Drawing.Point(16, 120);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(96, 16);
-      this.label8.TabIndex = 6;
+      this.label8.TabIndex = 8;
       this.label8.Text = "Deinterlace mode:";
       // 
       // defaultZoomModeComboBox
@@ -265,14 +267,14 @@ namespace MediaPortal.Configuration.Sections
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 140);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
-      this.defaultZoomModeComboBox.TabIndex = 9;
+      this.defaultZoomModeComboBox.TabIndex = 11;
       // 
       // label6
       // 
       this.label6.Location = new System.Drawing.Point(16, 144);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(112, 16);
-      this.label6.TabIndex = 8;
+      this.label6.TabIndex = 10;
       this.label6.Text = "Default zoom mode:";
       // 
       // videoCodecComboBox
@@ -299,7 +301,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 72);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(88, 17);
-      this.label3.TabIndex = 2;
+      this.label3.TabIndex = 4;
       this.label3.Text = "Audio decoder";
       // 
       // audioCodecComboBox
@@ -311,14 +313,14 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 68);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioCodecComboBox.TabIndex = 3;
+      this.audioCodecComboBox.TabIndex = 5;
       // 
       // labelAudioRenderer
       // 
       this.labelAudioRenderer.Location = new System.Drawing.Point(16, 96);
       this.labelAudioRenderer.Name = "labelAudioRenderer";
       this.labelAudioRenderer.Size = new System.Drawing.Size(88, 16);
-      this.labelAudioRenderer.TabIndex = 4;
+      this.labelAudioRenderer.TabIndex = 6;
       this.labelAudioRenderer.Text = "Audio renderer:";
       // 
       // audioRendererComboBox
@@ -330,7 +332,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 92);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioRendererComboBox.TabIndex = 5;
+      this.audioRendererComboBox.TabIndex = 7;
       // 
       // radioButton1
       // 
@@ -350,10 +352,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
       this.groupBox4.Controls.Add(this.label7);
       this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox4.Location = new System.Drawing.Point(192, 244);
+      this.groupBox4.Location = new System.Drawing.Point(192, 191);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(280, 75);
-      this.groupBox4.TabIndex = 3;
+      this.groupBox4.TabIndex = 2;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Timeshifting";
       // 
@@ -398,10 +400,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
       this.groupBox3.Controls.Add(this.lblChanNumMaxLen);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(192, 325);
+      this.groupBox3.Location = new System.Drawing.Point(192, 278);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(280, 100);
-      this.groupBox3.TabIndex = 4;
+      this.groupBox3.TabIndex = 3;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Channel Numbers";
       // 
@@ -412,7 +414,7 @@ namespace MediaPortal.Configuration.Sections
       this.byIndexCheckBox.Location = new System.Drawing.Point(17, 20);
       this.byIndexCheckBox.Name = "byIndexCheckBox";
       this.byIndexCheckBox.Size = new System.Drawing.Size(182, 17);
-      this.byIndexCheckBox.TabIndex = 1;
+      this.byIndexCheckBox.TabIndex = 0;
       this.byIndexCheckBox.Text = "Select channel by index (non-US)";
       this.byIndexCheckBox.UseVisualStyleBackColor = true;
       // 
@@ -423,7 +425,7 @@ namespace MediaPortal.Configuration.Sections
       this.showChannelNumberCheckBox.Location = new System.Drawing.Point(17, 43);
       this.showChannelNumberCheckBox.Name = "showChannelNumberCheckBox";
       this.showChannelNumberCheckBox.Size = new System.Drawing.Size(135, 17);
-      this.showChannelNumberCheckBox.TabIndex = 2;
+      this.showChannelNumberCheckBox.TabIndex = 1;
       this.showChannelNumberCheckBox.Text = "Show channel numbers";
       this.showChannelNumberCheckBox.UseVisualStyleBackColor = true;
       // 
@@ -443,7 +445,7 @@ namespace MediaPortal.Configuration.Sections
             0});
       this.channelNumberMaxLengthNumUpDn.Name = "channelNumberMaxLengthNumUpDn";
       this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 20);
-      this.channelNumberMaxLengthNumUpDn.TabIndex = 4;
+      this.channelNumberMaxLengthNumUpDn.TabIndex = 3;
       this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[] {
             3,
             0,
@@ -456,31 +458,44 @@ namespace MediaPortal.Configuration.Sections
       this.lblChanNumMaxLen.Location = new System.Drawing.Point(31, 68);
       this.lblChanNumMaxLen.Name = "lblChanNumMaxLen";
       this.lblChanNumMaxLen.Size = new System.Drawing.Size(141, 13);
-      this.lblChanNumMaxLen.TabIndex = 3;
+      this.lblChanNumMaxLen.TabIndex = 2;
       this.lblChanNumMaxLen.Text = "Channel number max. length";
       // 
       // groupBox5
       // 
       this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox5.Controls.Add(this.cbAutoFullscreen);
       this.groupBox5.Controls.Add(this.cbTurnOnTv);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox5.Location = new System.Drawing.Point(192, 191);
+      this.groupBox5.Location = new System.Drawing.Point(192, 380);
       this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(280, 47);
-      this.groupBox5.TabIndex = 2;
+      this.groupBox5.Size = new System.Drawing.Size(277, 44);
+      this.groupBox5.TabIndex = 4;
       this.groupBox5.TabStop = false;
-      this.groupBox5.Text = "Auto on";
+      this.groupBox5.Text = "When entering MyTV:";
+      // 
+      // cbAutoFullscreen
+      // 
+      this.cbAutoFullscreen.AutoSize = true;
+      this.cbAutoFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAutoFullscreen.Location = new System.Drawing.Point(98, 19);
+      this.cbAutoFullscreen.Name = "cbAutoFullscreen";
+      this.cbAutoFullscreen.Size = new System.Drawing.Size(152, 17);
+      this.cbAutoFullscreen.TabIndex = 1;
+      this.cbAutoFullscreen.Text = "Directly show fullscreen TV";
+      this.cbAutoFullscreen.UseVisualStyleBackColor = true;
+      this.cbAutoFullscreen.CheckedChanged += new System.EventHandler(this.cbAutoFullscreen_CheckedChanged);
       // 
       // cbTurnOnTv
       // 
       this.cbTurnOnTv.AutoSize = true;
       this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbTurnOnTv.Location = new System.Drawing.Point(16, 19);
+      this.cbTurnOnTv.Location = new System.Drawing.Point(6, 19);
       this.cbTurnOnTv.Name = "cbTurnOnTv";
-      this.cbTurnOnTv.Size = new System.Drawing.Size(206, 17);
+      this.cbTurnOnTv.Size = new System.Drawing.Size(78, 17);
       this.cbTurnOnTv.TabIndex = 0;
-      this.cbTurnOnTv.Text = "Auto turn TV on when entering My TV ";
+      this.cbTurnOnTv.Text = "Turn on TV";
       this.cbTurnOnTv.UseVisualStyleBackColor = true;
       // 
       // gAllowedModes
@@ -641,6 +656,7 @@ namespace MediaPortal.Configuration.Sections
         cbAllowPanScan.Checked = xmlreader.GetValueAsBool("mytv", "allowarpanscan", false);
 
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
+        cbAutoFullscreen.Checked = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
         cbTurnOnTimeShift.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
 
         textBoxTimeShiftBuffer.Text = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
@@ -755,8 +771,9 @@ namespace MediaPortal.Configuration.Sections
       {
         if (cbDeinterlace.SelectedIndex >= 0)
           xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
-
+        
         xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
+        xmlwriter.SetValueAsBool("mytv", "autofullscreen", cbAutoFullscreen.Checked);
         xmlwriter.SetValueAsBool("mytv", "autoturnontimeshifting", cbTurnOnTimeShift.Checked);
         xmlwriter.SetValueAsBool("mytv", "byindex", byIndexCheckBox.Checked);
         xmlwriter.SetValueAsBool("mytv", "showchannelnumber", showChannelNumberCheckBox.Checked);
@@ -797,6 +814,12 @@ namespace MediaPortal.Configuration.Sections
     {
       //if ( !cbTurnOnTv.Checked )
       //  cbTurnOnTimeShift.Checked = false;
+    }
+
+    private void cbAutoFullscreen_CheckedChanged(object sender, EventArgs e)
+    {
+      if (cbAutoFullscreen.Checked)
+        cbTurnOnTv.Checked = true;
     }
   }
 }

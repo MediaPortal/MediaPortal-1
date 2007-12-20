@@ -47,8 +47,15 @@ namespace MediaPortal.GUI.TV
   /// <summary>v
   /// Summary description for Class1.
   /// </summary>
-  public class GUITVHome : GUIWindow, ISetupForm, IShowPlugin
+  public class GUITVHome : GUIWindow, ISetupForm, IShowPlugin, IPluginReceiver
   {
+
+    #region constants
+    private const int WM_POWERBROADCAST = 0x0218;
+    private const int PBT_APMRESUMESUSPEND = 0x0007;
+    private const int PBT_APMRESUMESTANDBY = 0x0008;
+    #endregion
+
     #region variables
     enum Controls
     {
@@ -60,6 +67,12 @@ namespace MediaPortal.GUI.TV
 
     static bool _isTvOn = true;
     static bool _isTimeShifting = true;
+    static bool _autoFullScreen = false;
+    static bool _autoFullScreenOnly = false;
+    static bool _resumed = false;
+    static bool _showlastactivemodule = false;
+    static bool _showlastactivemoduleFullscreen = false;    
+
     static ChannelNavigator m_navigator = new ChannelNavigator();
     static GUITVCropManager _cropManager = new GUITVCropManager();
 
@@ -101,6 +114,10 @@ namespace MediaPortal.GUI.TV
         _isTvOn = xmlreader.GetValueAsBool("mytv", "tvon", false);
         _isTimeShifting = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
+        _showlastactivemodule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
+        _showlastactivemoduleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
+        _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
+        _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
 
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if (strValue.Equals("zoom"))
@@ -255,6 +272,44 @@ namespace MediaPortal.GUI.TV
       base.OnAction(action);
     }
 
+    private void OnResume()
+    {
+      Log.Debug("TVHome.OnResume()");
+      _resumed = true;
+    }
+
+    public void Start()
+    {
+      Log.Debug("TVHome.Start()");
+    }
+
+    public void Stop()
+    {
+      Log.Debug("TVHome.Stop()");
+    }
+
+
+    public bool WndProc(ref System.Windows.Forms.Message msg)
+    {
+      if (msg.Msg == WM_POWERBROADCAST)
+      {
+
+        switch (msg.WParam.ToInt32())
+        {
+          case PBT_APMRESUMESUSPEND:
+            Log.Info("TVHome.WndProc(): Windows has resumed from hibernate mode");
+            OnResume();
+            break;
+          case PBT_APMRESUMESTANDBY:
+            Log.Info("TVHome.WndProc(): Windows has resumed from standby mode");
+            OnResume();
+            break;
+        }
+        return true;
+      }
+      return false;
+    }
+
     protected override void OnPageLoad()
     {
       if (m_navigator == null)
@@ -312,6 +367,53 @@ namespace MediaPortal.GUI.TV
 
       UpdateStateOfButtons();
       UpdateProgressPercentageBar();
+
+      // if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
+      // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
+      bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && _resumed);
+      bool useDelay = false;
+
+      if (_resumed && !showlastActModFS)
+      {
+        useDelay = true;
+        showlastActModFS = false;
+      }
+      else if (_resumed)
+      {
+        showlastActModFS = true;
+      }
+      if (!showlastActModFS)
+      {
+        if (_autoFullScreen && !g_Player.FullScreen && (PreviousWindowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && PreviousWindowId != (int)GUIWindow.Window.WINDOW_TVGUIDE && PreviousWindowId != (int)GUIWindow.Window.WINDOW_SEARCHTV && PreviousWindowId != (int)GUIWindow.Window.WINDOW_RECORDEDTV && PreviousWindowId != (int)GUIWindow.Window.WINDOW_SCHEDULER))
+        {
+          Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
+          //if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
+          if (useDelay)
+          {
+            Thread tvDelayThread = new Thread(TvDelayThread);
+            tvDelayThread.Start();
+          }
+          else //no delay needed here, since this is when the system is being used normally
+          {
+            Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
+            g_Player.ShowFullScreenWindow();
+          }
+        }
+        else if (_autoFullScreenOnly && !g_Player.FullScreen && (PreviousWindowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN))
+        {
+          Log.Debug("TVHome.OnPageLoad(): autoFullScreenOnly set, returning to previous window");
+          GUIWindowManager.ShowPreviousWindow();
+        }
+      }
+      _resumed = false;
+    }
+
+    private void TvDelayThread()
+    {
+      //we have to use a small delay before calling tvfullscreen.                                    
+      Thread.Sleep(200);
+      Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
+      g_Player.ShowFullScreenWindow();
     }
 
     protected override void OnPageDestroy(int newWindowId)
