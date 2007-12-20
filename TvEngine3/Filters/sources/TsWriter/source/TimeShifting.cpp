@@ -485,7 +485,7 @@ static DWORD crc_table[256] = {
 				info.realPid=pid;
 				info.fakePid=FAKE_SUBTITLE_PID;
 				info.seenStart=false;
-				info.serviceType=serviceType;
+				info.serviceType=0x59;
 				info.ContintuityCounter=0;
 				strcpy(info.language,language);
 				m_vecPids.push_back(info);
