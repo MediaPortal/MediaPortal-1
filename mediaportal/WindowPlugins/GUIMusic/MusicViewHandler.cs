@@ -380,9 +380,7 @@ namespace MediaPortal.GUI.Music
         }
         if (whereClause != "")
           whereClause += " and ";
-        else
-          whereClause = "where ";
-
+        
         string restriction = filter.Restriction;
         restriction = restriction.Replace("*", "%");
         Database.DatabaseUtility.RemoveInvalidChars(ref restriction);
