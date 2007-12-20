@@ -56,7 +56,7 @@ namespace MediaPortal.Playlists
         playlist.Name = Path.GetFileName(playlistFileName);
         basePath = Path.GetDirectoryName(Path.GetFullPath(playlistFileName));
 
-        using (file = new StreamReader(playlistFileName))
+        using (file = new StreamReader(playlistFileName, Encoding.Default))
         {
           if (file == null)
             return false;
