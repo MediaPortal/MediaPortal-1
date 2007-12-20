@@ -31,9 +31,11 @@ namespace MediaPortal.Configuration.Sections
       {
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          mpNonsquare.Checked = xmlreader.GetValueAsBool("mytv", "nonsquare", false);
+          mpNonsquare.Checked = xmlreader.GetValueAsBool("general", "nonsquare", true); // http://msdn2.microsoft.com/en-us/library/ms787438(VS.85).aspx
           DXEclusiveCheckbox.Checked = xmlreader.GetValueAsBool("general", "exclusivemode", true);
-          mpVMR9FilterMethod.Text = xmlreader.GetValueAsString("mytv", "dx9filteringmode", "None");
+          mpVMR9FilterMethod.Text = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering"); // http://msdn2.microsoft.com/en-us/library/ms788066.aspx
+          checkBoxVMRWebStreams.Checked = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
+          checkBoxDecimateMask.Checked = xmlreader.GetValueAsBool("general", "dx9decimatemask", false); // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
         }
         _init = true;
       }
@@ -44,11 +46,11 @@ namespace MediaPortal.Configuration.Sections
       if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValueAsBool("mytv", "nonsquare", mpNonsquare.Checked);
+        xmlwriter.SetValueAsBool("general", "nonsquare", mpNonsquare.Checked);
         xmlwriter.SetValueAsBool("general", "exclusivemode", DXEclusiveCheckbox.Checked);
-        xmlwriter.SetValue("mytv", "dx9filteringmode", mpVMR9FilterMethod.Text);
-        
-      
+        xmlwriter.SetValue("general", "dx9filteringmode", mpVMR9FilterMethod.Text);
+        xmlwriter.SetValueAsBool("general", "usevrm9forwebstreams", checkBoxVMRWebStreams.Checked);
+        xmlwriter.SetValueAsBool("general", "dx9decimatemask", checkBoxDecimateMask.Checked);
       }
     }
 

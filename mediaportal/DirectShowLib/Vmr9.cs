@@ -103,19 +103,19 @@ namespace DirectShowLib
     public enum VMR9MixerPrefs
     {
         None = 0,
-        NoDecimation = 0x00000001, // No decimation - full size
-        DecimateOutput = 0x00000002, // decimate output by 2 in x & y
-        ARAdjustXorY = 0x00000004, // adjust the aspect ratio in x or y
+        NoDecimation = 0x00000001,    // No decimation - full size
+        DecimateOutput = 0x00000002,  // decimate output by 2 in x & y
+        ARAdjustXorY = 0x00000004,    // adjust the aspect ratio in x or y
         NonSquareMixing = 0x00000008, // assume AP can handle non-square mixing, avoids intermediate scales
         DecimateMask = 0x0000000F,
 
-        BiLinearFiltering = 0x00000010, // use bi-linear filtering
-        PointFiltering = 0x00000020, // use point filtering
-        AnisotropicFiltering = 0x00000040, //
-        PyramidalQuadFiltering = 0x00000080, // 4-sample tent
+        BiLinearFiltering = 0x00000010,     // use bi-linear filtering
+        PointFiltering = 0x00000020,        // use point filtering
+        AnisotropicFiltering = 0x00000040,  //
+        PyramidalQuadFiltering = 0x00000080,// 4-sample tent
         GaussianQuadFiltering = 0x00000100, // 4-sample gaussian
-        FilteringReserved = 0x00000E00, // bits reserved for future use.
-        FilteringMask = 0x00000FF0, // OR of all above flags
+        FilteringReserved = 0x00000E00,     // bits reserved for future use.
+        FilteringMask = 0x00000FF0,         // OR of all above flags
 
         RenderTargetRGB = 0x00001000,
         RenderTargetYUV = 0x00002000, // Uses DXVA to perform mixing
