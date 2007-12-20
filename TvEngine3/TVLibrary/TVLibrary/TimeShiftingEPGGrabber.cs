@@ -136,30 +136,6 @@ namespace TvLibrary
     #endregion
 
     #region Database update routines
-    private int GetEPGOffset(List<EpgProgram> programs, DateTime newestEntry)
-    {
-      int off = 0;
-      for (int i=0;i<programs.Count;i++)
-      {
-        if (programs[i].StartTime>=newestEntry)
-        {
-          off = i;
-          break;
-        }
-      }
-      return off;
-    }
-    private bool ProgramExists(IList dbPrograms, DateTime startTime, DateTime endTime)
-    {
-      foreach (Program prog in dbPrograms)
-      {
-        if (DateTime.Compare(prog.StartTime, startTime) == 0 && DateTime.Compare(prog.EndTime, endTime) == 0)
-        {
-          return true;
-        }
-      }
-      return false;
-    }
     private void GetEPGLanguage(List<EpgLanguageText> texts,out string title, out string description, out string genre,out int starRating,out string classification, out int parentalRating)
     {
       title = "";
@@ -249,38 +225,33 @@ namespace TvLibrary
             continue;
           }
         }
-        /*DateTime newestEntry = layer.GetNewestProgramForChannel(dbChannel.IdChannel);
-        if (epgChannel.Programs[epgChannel.Programs.Count - 1].StartTime <= newestEntry)
-        {
-          Log.Log.Epg("TimeshiftingEPG: no new epg entries for channel {0}", dbChannel.DisplayName);
-          continue;
-        }
-        int epgOffset = GetEPGOffset(epgChannel.Programs,newestEntry);
-        layer.RemoveOldPrograms(dbChannel.IdChannel);
-        IList dbPrograms = layer.GetPrograms(dbChannel, newestEntry);
-        for (int i=epgOffset;i<epgChannel.Programs.Count;i++)
-        {*/
         Gentle.Framework.Broker.Execute("delete from program where idChannel=" + dbChannel.IdChannel);
-        for (int i=0;i<epgChannel.Programs.Count;i++)
+        EpgProgram lastProgram = null;
+        for (int i = 0; i < epgChannel.Programs.Count; i++)
         {
           EpgProgram epgProgram = epgChannel.Programs[i];
-          //if (!ProgramExists(dbPrograms, epgProgram.StartTime, epgProgram.EndTime))
-          //{
-            string title; string description; string genre; int starRating; string classification; int parentRating;
-            GetEPGLanguage(epgProgram.Text, out title, out description, out genre,out starRating, out classification, out parentRating);
-            NameValueCollection values = new NameValueCollection();
-            values.Add("%TITLE%", title);
-            values.Add("%DESCRIPTION%", description);
-            values.Add("%GENRE%", genre);
-            values.Add("%STARRATING%", starRating.ToString());
-            values.Add("%STARRATING_STR%", GetStarRatingStr(starRating));
-            values.Add("%CLASSIFICATION%", classification);
-            values.Add("%PARENTALRATING%", parentRating.ToString());
-            values.Add("%NEWLINE%", Environment.NewLine);
-            Program prog = new Program(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime,EvalTemplate(_titleTemplate,values) ,EvalTemplate(_descriptionTemplate,values),genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentRating);
-            prog.Persist();
-            iInserted++;
-          //}
+          // Check for dupes
+          if (lastProgram != null)
+          {
+            if (epgProgram.StartTime == lastProgram.StartTime && epgProgram.EndTime == lastProgram.EndTime)
+              continue;
+          }
+            
+          string title; string description; string genre; int starRating; string classification; int parentRating;
+          GetEPGLanguage(epgProgram.Text, out title, out description, out genre, out starRating, out classification, out parentRating);
+          NameValueCollection values = new NameValueCollection();
+          values.Add("%TITLE%", title);
+          values.Add("%DESCRIPTION%", description);
+          values.Add("%GENRE%", genre);
+          values.Add("%STARRATING%", starRating.ToString());
+          values.Add("%STARRATING_STR%", GetStarRatingStr(starRating));
+          values.Add("%CLASSIFICATION%", classification);
+          values.Add("%PARENTALRATING%", parentRating.ToString());
+          values.Add("%NEWLINE%", Environment.NewLine);
+          Program prog = new Program(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime, EvalTemplate(_titleTemplate, values), EvalTemplate(_descriptionTemplate, values), genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification, parentRating);
+          prog.Persist();
+          iInserted++;
+          lastProgram = epgProgram;
         }
         dbChannel.LastGrabTime = DateTime.Now;
         dbChannel.Persist();
