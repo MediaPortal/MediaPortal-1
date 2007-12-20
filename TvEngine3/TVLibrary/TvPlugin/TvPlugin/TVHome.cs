@@ -91,6 +91,7 @@ namespace TvPlugin
     static bool _preferAC3 = false;
     static bool _preferAudioTypeOverLang = false;
     static bool _autoFullScreen = false;
+    static bool _autoFullScreenOnly = false;
     static bool _resumed = false;
 		static bool _showlastactivemodule = false;
 		static bool _showlastactivemoduleFullscreen = false;    
@@ -387,7 +388,8 @@ namespace TvPlugin
 
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _preferAudioTypeOverLang = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
-        _autoFullScreen = xmlreader.GetValueAsBool("tvservice", "autofullscreen", false);
+        _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
+        _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
       }
     }
 
@@ -793,9 +795,7 @@ namespace TvPlugin
         }
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.DisplayName);
-      }      
-
-      int prevWinId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
+      }
 
 			// if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
       // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
@@ -813,7 +813,7 @@ namespace TvPlugin
 			}
 			if (!showlastActModFS)
 			{
-				if (_autoFullScreen && !g_Player.FullScreen && (prevWinId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && prevWinId != (int)GUIWindow.Window.WINDOW_TVGUIDE && prevWinId != (int)GUIWindow.Window.WINDOW_SEARCHTV && prevWinId != (int)GUIWindow.Window.WINDOW_RECORDEDTV && prevWinId != (int)GUIWindow.Window.WINDOW_SCHEDULER))
+				if (_autoFullScreen && !g_Player.FullScreen && (PreviousWindowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && PreviousWindowId != (int)GUIWindow.Window.WINDOW_TVGUIDE && PreviousWindowId != (int)GUIWindow.Window.WINDOW_SEARCHTV && PreviousWindowId != (int)GUIWindow.Window.WINDOW_RECORDEDTV && PreviousWindowId != (int)GUIWindow.Window.WINDOW_SCHEDULER))
 				{
           Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
           //if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
@@ -827,7 +827,12 @@ namespace TvPlugin
             g_Player.ShowFullScreenWindow();
           }
 				}
-			}
+        else if (_autoFullScreenOnly && !g_Player.FullScreen && (PreviousWindowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN))
+        {
+          Log.Debug("TVHome.OnPageLoad(): autoFullScreenOnly set, returning to previous window");
+          GUIWindowManager.ShowPreviousWindow();
+        }
+      }
 
 			_onPageLoadDone = true;
       _resumed = false;
