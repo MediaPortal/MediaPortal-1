@@ -604,7 +604,7 @@ namespace MediaPortal.Visualization
         {
           _EnableStatusOverlays = xmlreader.GetValueAsBool("musicvisualization", "enableStatusOverlays", false);
           ShowTrackOverlay = xmlreader.GetValueAsBool("musicvisualization", "showTrackInfo", true);
-          _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
+          _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
         }
 
         // No need to load the skin file if we're not going to be showing the 

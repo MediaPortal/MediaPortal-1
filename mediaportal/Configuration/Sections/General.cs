@@ -83,46 +83,41 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
     }
 
-    string loglevel = "3";  // Debug is default
+    string loglevel = "2";  // info is default
     int screennumber = 0;   // 0 is the primary screen
 
     string[][] sectionEntries = new string[][] { 
-      new string[] { "general", "startfullscreen", "false" },
-      new string[] { "general", "minimizeonstartup", "false" },
-      new string[] { "general", "minimizeonexit", "false" },
-      new string[] { "general", "autohidemouse", "true" },
-	    new string[] { "general", "mousesupport", "false" }, 
-      new string[] { "general", "hideextensions", "true" },
-      new string[] { "general", "animations", "true" },
-	    new string[] { "general", "autostart", "false" },
-	    new string[] { "general", "baloontips", "false" },
-	    new string[] { "general", "dblclickasrightclick", "false" },
-	    new string[] { "general", "hidetaskbar", "false" },
-	    new string[] { "general", "alwaysontop", "false" },
-	 	  new string[] { "general", "enableguisounds", "true" },
-	    new string[] { "general", "screensaver", "false" },
-      new string[] { "general", "turnoffmonitor", "false" },
-	    new string[] { "general", "startbasichome", "false" },
-      new string[] { "general", "turnmonitoronafterresume", "false" },
-      new string[] { "general", "enables3trick","true" },
-      new string[] { "general", "autosize", "false" },
-      // new string[] { "general", "userenderthread", "true" }
-      //new string[] { "general", "allowfocus", "false" }
-      new string[] { "general","usevrm9forwebstreams","false" },
-      new string[] { "general","showlastactivemodule","false" },
-      new string[] { "screenselector","usescreenselector","false" },
-      new string[] { "comskip","automaticskip","false" }
+      new string[] { "general", "startbasichome", "false" },            // 0 Start with basic home screen
+      new string[] { "general", "startfullscreen", "true" },            // 1 Start MediaPortal in fullscreen mode
+      new string[] { "general", "autosize", "false" },                  // 2 Autosize window mode to skin
+      new string[] { "general", "alwaysontop", "false" },               // 3 Keep MediaPortal always on top
+      new string[] { "general", "hidetaskbar", "false" },               // 4 Hide taskbar in fullscreen mode      
+      new string[] { "general", "autostart", "false" },                 // 5 Autostart MediaPortal on Windows startup
+      new string[] { "general", "minimizeonstartup", "false" },         // 6 Minimize to tray on start up
+      new string[] { "general", "minimizeonexit", "false" },            // 7 Minimize to tray on GUI exit
+      new string[] { "general", "mousesupport", "false" },              // 8 Show special mouse controls (scrollbars, etc)      
+      new string[] { "general", "hideextensions", "true" },             // 9 Hide file extensions like .mp3, .avi, .mpg,...
+      new string[] { "general", "enableguisounds", "true" },            // 10 Enable GUI sound effects
+      new string[] { "general", "animations", "true" },                 // 11 Enable animations / transitions	  
+	  new string[] { "general", "baloontips", "false" },                // 12 Disable Windows tray area's balloon tips (for all apps)
+	  new string[] { "general", "screensaver", "false" },               // 13 Blank screen in fullscreen mode when MediaPortal is idle
+      new string[] { "general", "turnoffmonitor", "false" },            // 14 Turn off monitor when blanking screen	    
+      new string[] { "general", "turnmonitoronafterresume", "true" },   // 15 Turn monitor/tv on when resuming from standby
+      new string[] { "general", "enables3trick", "true" },              // 16 Allow S3 standby although wake up devices are present
+      new string[] { "general", "restartonresume", "false" },           // 17 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
+      new string[] { "general", "showlastactivemodule", "false" },      // 18 Show last active module when starting / resuming from standby
+      new string[] { "comskip", "automaticskip", "false" },             // 19 Automatically skip commercials for videos with ComSkip data available
+      new string[] { "screenselector", "usescreenselector", "false" }   // 20 Use screenselector to choose on which screen MP should start
+      
+      //new string[] { "general", "autohidemouse", "true" }, 
+      //new string[] { "general", "dblclickasrightclick", "false" },
+      //new string[] { "general", "userenderthread", "true" }
+      //new string[] { "general", "allowfocus", "false" }      
       };
 
-    // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars
-    //              AND be aware that "allowfocus" has to be last item in the list
-    //              AND be careful cause depending on where you add a setting, the indexes might change
-    //              (e.g. SaveSettings depends on the index!!!)
+    // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars    
+    //              AND be careful cause depending on where you add a setting, the indexes might have changed!!!
 
-
-    /// <summary>
-    /// 
-    /// </summary>
     public override void LoadSettings()
     {
       cbScreen.Items.Clear();
@@ -149,10 +144,8 @@ namespace MediaPortal.Configuration.Sections
       }
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        //
         // Load general settings
-        //
-        for (int index = 0 ; index < sectionEntries.Length ; index++)
+        for (int index = 0; index < sectionEntries.Length; index++)
         {
           string[] currentSection = sectionEntries[index];
           settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
@@ -168,15 +161,9 @@ namespace MediaPortal.Configuration.Sections
         }
         cbScreen.SelectedIndex = screennumber;
 
-        string prio = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
+        string prio = xmlreader.GetValueAsString("general", "ThreadPriority", "Normal");
         // Set the selected index, otherwise the SelectedItem in SaveSettings will be null, if the box isn't checked
         mpThreadPriority.SelectedIndex = mpThreadPriority.Items.IndexOf(prio);
-
-        //numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
-
-        //// Allow Focus
-        //using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", false))
-        //  settingsCheckedListBox.SetItemChecked(settingsCheckedListBox.Items.Count - 1, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
       }
     }
 
@@ -186,12 +173,12 @@ namespace MediaPortal.Configuration.Sections
       {
         // Save Debug Level
         xmlwriter.SetValue("general", "loglevel", cbDebug.SelectedIndex);
-        xmlwriter.SetValue("MP", "ThreadPriority", mpThreadPriority.SelectedItem.ToString());
+        xmlwriter.SetValue("general", "ThreadPriority", mpThreadPriority.SelectedItem.ToString());
         xmlwriter.SetValue("screenselector", "screennumber", cbScreen.SelectedIndex);
         //
         // Load general settings
         //
-        for (int index = 0 ; index < sectionEntries.Length ; index++)  // Leave out last setting (focus)!
+        for (int index = 0; index < sectionEntries.Length; index++)  // Leave out last setting (focus)!
         {
           string[] currentSection = sectionEntries[index];
           xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
@@ -201,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        if (settingsCheckedListBox.GetItemChecked(7))
+        if (settingsCheckedListBox.GetItemChecked(5)) // autostart on boot
         {
           string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
@@ -212,27 +199,16 @@ namespace MediaPortal.Configuration.Sections
             subkey.DeleteValue("MediaPortal", false);
 
         Int32 iValue = 1;
-        if (settingsCheckedListBox.GetItemChecked(8))
+        if (settingsCheckedListBox.GetItemChecked(12)) // disable ballon tips
           iValue = 0;
 
         using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true))
           subkey.SetValue("EnableBalloonTips", iValue);
 
-        if (settingsCheckedListBox.GetItemChecked(settingsCheckedListBox.Items.Count - 2))
+        if (settingsCheckedListBox.GetItemChecked(3)) // always on top
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
             subkey.SetValue("ForegroundLockTimeout", 0);
 
-        //// Allow Focus
-        //using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
-        //{
-        //  bool focusChecked = ((int)subkey.GetValue("ForegroundLockTimeout", 200000) == 0);
-
-        //  if (focusChecked != settingsCheckedListBox.GetItemChecked(18))
-        //    if (settingsCheckedListBox.GetItemChecked(settingsCheckedListBox.Items.Count - 1))
-        //      subkey.SetValue("ForegroundLockTimeout", 0);
-        //    else
-        //      subkey.SetValue("ForegroundLockTimeout", 200000);
-        //}
 
         IntPtr result = IntPtr.Zero;
         SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero, Marshal.StringToBSTR(string.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);

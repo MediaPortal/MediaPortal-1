@@ -134,7 +134,7 @@ namespace MediaPortal.Visualization
       SSVisualizationName = vizPluginInfo.Name;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
       {
-        _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
+        _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
       }
       Log.Info("Visualization Manager: Callback created.");
     }
