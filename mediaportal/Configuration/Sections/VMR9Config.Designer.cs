@@ -30,13 +30,13 @@ namespace MediaPortal.Configuration.Sections
     {
       this.mpNonsquare = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxDecimateMask = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.labelFilteringHint = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxVMRWebStreams = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.DXEclusiveCheckbox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpVMR9FilterMethod = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.VMR9Tips = new MediaPortal.UserInterface.Controls.MPToolTip();
-      this.checkBoxVMRWebStreams = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.labelFilteringHint = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.checkBoxDecimateMask = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -70,6 +70,40 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video Mixing Renderer 9 - Advanced settings";
+      // 
+      // checkBoxDecimateMask
+      // 
+      this.checkBoxDecimateMask.AutoSize = true;
+      this.checkBoxDecimateMask.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDecimateMask.Location = new System.Drawing.Point(30, 117);
+      this.checkBoxDecimateMask.Name = "checkBoxDecimateMask";
+      this.checkBoxDecimateMask.Size = new System.Drawing.Size(399, 17);
+      this.checkBoxDecimateMask.TabIndex = 8;
+      this.checkBoxDecimateMask.Text = "Use Decimate (enable only if TV/Video has >= double resolution of your screen)";
+      this.checkBoxDecimateMask.UseVisualStyleBackColor = true;
+      this.checkBoxDecimateMask.Visible = false;
+      // 
+      // labelFilteringHint
+      // 
+      this.labelFilteringHint.AutoSize = true;
+      this.labelFilteringHint.Location = new System.Drawing.Point(174, 147);
+      this.labelFilteringHint.Name = "labelFilteringHint";
+      this.labelFilteringHint.Size = new System.Drawing.Size(224, 13);
+      this.labelFilteringHint.TabIndex = 7;
+      this.labelFilteringHint.Text = "Filtering mode (Gaussian Quad recommended)";
+      // 
+      // checkBoxVMRWebStreams
+      // 
+      this.checkBoxVMRWebStreams.AutoSize = true;
+      this.checkBoxVMRWebStreams.Checked = true;
+      this.checkBoxVMRWebStreams.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxVMRWebStreams.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxVMRWebStreams.Location = new System.Drawing.Point(30, 36);
+      this.checkBoxVMRWebStreams.Name = "checkBoxVMRWebStreams";
+      this.checkBoxVMRWebStreams.Size = new System.Drawing.Size(317, 17);
+      this.checkBoxVMRWebStreams.TabIndex = 6;
+      this.checkBoxVMRWebStreams.Text = "Use VMR9 for playback of web streams (enables OSD menus)";
+      this.checkBoxVMRWebStreams.UseVisualStyleBackColor = true;
       // 
       // DXEclusiveCheckbox
       // 
@@ -110,41 +144,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(0, 13);
       this.label1.TabIndex = 1;
-      // 
-      // checkBoxVMRWebStreams
-      // 
-      this.checkBoxVMRWebStreams.AutoSize = true;
-      this.checkBoxVMRWebStreams.Checked = true;
-      this.checkBoxVMRWebStreams.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxVMRWebStreams.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxVMRWebStreams.Location = new System.Drawing.Point(30, 36);
-      this.checkBoxVMRWebStreams.Name = "checkBoxVMRWebStreams";
-      this.checkBoxVMRWebStreams.Size = new System.Drawing.Size(317, 17);
-      this.checkBoxVMRWebStreams.TabIndex = 6;
-      this.checkBoxVMRWebStreams.Text = "Use VMR9 for playback of web streams (enables OSD menus)";
-      this.checkBoxVMRWebStreams.UseVisualStyleBackColor = true;
-      // 
-      // labelFilteringHint
-      // 
-      this.labelFilteringHint.AutoSize = true;
-      this.labelFilteringHint.Location = new System.Drawing.Point(174, 147);
-      this.labelFilteringHint.Name = "labelFilteringHint";
-      this.labelFilteringHint.Size = new System.Drawing.Size(224, 13);
-      this.labelFilteringHint.TabIndex = 7;
-      this.labelFilteringHint.Text = "Filtering mode (Gaussian Quad recommended)";
-      // 
-      // checkBoxDecimateMask
-      // 
-      this.checkBoxDecimateMask.AutoSize = true;
-      this.checkBoxDecimateMask.Checked = true;
-      this.checkBoxDecimateMask.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxDecimateMask.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDecimateMask.Location = new System.Drawing.Point(30, 117);
-      this.checkBoxDecimateMask.Name = "checkBoxDecimateMask";
-      this.checkBoxDecimateMask.Size = new System.Drawing.Size(303, 17);
-      this.checkBoxDecimateMask.TabIndex = 8;
-      this.checkBoxDecimateMask.Text = "Render only at target resolution (improves HD performance)";
-      this.checkBoxDecimateMask.UseVisualStyleBackColor = true;
       // 
       // VMR9Config
       // 

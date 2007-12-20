@@ -421,9 +421,9 @@ namespace MediaPortal.Player
                   hr.Set(mixer.SetMixingPrefs(dwPrefs));
                 }
 
-                // Enable DecimateMask
+                // Enable DecimateMask - this will effectively use only half of the input width & length
                 if (xmlreader.GetValueAsBool("general", "dx9decimatemask", false))
-                {
+                {                  
                   mixer.GetMixingPrefs(out dwPrefs);
                   dwPrefs &= ~VMR9MixerPrefs.DecimateMask;
                   dwPrefs |= VMR9MixerPrefs.DecimateOutput;
