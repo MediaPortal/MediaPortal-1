@@ -254,9 +254,19 @@ namespace SQLite.NET
       if (dbHandle != IntPtr.Zero)
       {
         Log.Info("SQLiteClient: Closing database: {0}", databaseName);
-        sqlite3_close(dbHandle);
-        dbHandle = IntPtr.Zero;
-        databaseName = string.Empty;
+				try
+				{
+					sqlite3_close(dbHandle);
+				}
+				catch (Exception e)
+				{
+					Log.Error("SQLiteClient: Trouble closing database: {0} ({1})", databaseName, e.Message);
+				}
+				finally
+				{
+					dbHandle = IntPtr.Zero;
+					databaseName = string.Empty;
+				}
       }
     }
 
