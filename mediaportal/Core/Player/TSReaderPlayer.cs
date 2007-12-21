@@ -138,6 +138,7 @@ namespace MediaPortal.Player
 	      0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
       };
     #endregion
+    
     #region variables
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
@@ -197,6 +198,7 @@ namespace MediaPortal.Player
     protected override void OnInitialized()
     {
       Log.Info("TSReaderPlayer: OnInitialized");
+
       if (_vmr9 != null)
       {
         _vmr9.Enable(true);
@@ -204,6 +206,8 @@ namespace MediaPortal.Player
         SetVideoWindow();
       }
     }
+        
+    
     public override void SetVideoWindow()
     {
       if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
@@ -341,6 +345,8 @@ namespace MediaPortal.Player
         _fileSource = (IBaseFilter)reader;
         ITSReader ireader = (ITSReader)reader;
         ireader.SetTsReaderCallback(this);
+
+        ireader.SetRequestAudioChangeCallback(this);
         Log.Info("TSReaderPlayer:add TsReader to graph");
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsReader");
         if (hr != 0)

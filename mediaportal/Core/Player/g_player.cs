@@ -84,9 +84,12 @@ namespace MediaPortal.Player
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
     public delegate void EndedHandler(MediaType type, string filename);
     public delegate void StartedHandler(MediaType type, string filename);
+    public delegate void AudioTracksReadyHandler();
+
     public static event StoppedHandler PlayBackStopped;
     public static event EndedHandler PlayBackEnded;
     public static event StartedHandler PlayBackStarted;
+    public static event AudioTracksReadyHandler AudioTracksReady;
     #endregion
 
     #region ctor/dtor
@@ -324,6 +327,12 @@ namespace MediaPortal.Player
     #endregion
 
     #region public members
+
+    internal static void OnAudioTracksReady()
+    {
+      AudioTracksReady();
+    }
+
     //called when current playing file is stopped
     static void OnStopped()
     {
@@ -1754,7 +1763,7 @@ namespace MediaPortal.Player
     public static void Init()
     {
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(g_Player.OnVideoWindowChanged);
-      GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(g_Player.OnGammaContrastBrightnessChanged);
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(g_Player.OnGammaContrastBrightnessChanged);      
     }
 
     static void OnGammaContrastBrightnessChanged()

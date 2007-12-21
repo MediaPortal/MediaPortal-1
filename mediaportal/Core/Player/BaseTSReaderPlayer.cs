@@ -48,9 +48,19 @@ namespace MediaPortal.Player
   public interface ITSReaderCallback
   {
     [PreserveSig]
-    int OnMediaTypeChanged();
+    int OnMediaTypeChanged();    
   }
-  class BaseTSReaderPlayer : IPlayer, ITSReaderCallback
+
+  [ComVisible(true), ComImport,
+  Guid("324FAA1F-4DA6-47B8-832B-3993D8FF4152"),
+  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface ITSReaderCallbackAudioChange
+  {    
+    [PreserveSig]
+    int OnRequestAudioChange();
+  }
+
+  class BaseTSReaderPlayer : IPlayer, ITSReaderCallback, ITSReaderCallbackAudioChange
   {
 
     [Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B24F"),
@@ -59,8 +69,10 @@ namespace MediaPortal.Player
     {
       [PreserveSig]
       int SetTsReaderCallback(ITSReaderCallback callback);
+      [PreserveSig]
+      int SetRequestAudioChangeCallback(ITSReaderCallbackAudioChange callback);
     }
-
+    
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
     protected class TsReader {
     }
@@ -82,11 +94,13 @@ namespace MediaPortal.Player
     }
     #endregion
 
+    public delegate void AudioTracksReadyHandler();
+
     #region variables
     protected int iSpeed = 1;
     protected IBaseFilter _fileSource = null;
 
-    protected int _curAudioStream = 0;
+    protected int _curAudioStream = 0;    
     protected int _positionX = 0;
     protected int _positionY = 0;
     protected int _width = 200;
@@ -208,6 +222,7 @@ namespace MediaPortal.Player
       }
       set
       {
+        //_curAudioStreamRequest = value; // in tvhome, when we set currentaudiostream, tsreader might not be ready yet, so we wait for the "OnRequestAudioChange" callback and then set it.
         if (value > AudioStreams)
         {
           Log.Info("TSReaderPlayer: Unable to set CurrentAudioStream -> value does not exist");
@@ -591,6 +606,12 @@ namespace MediaPortal.Player
       {
         DoGraphRebuild();
         _bMediaTypeChanged = false;
+      }
+      if (_bRequestAudioChange)
+      {
+        Log.Info("TSReaderPlayer:OnRequestAudioChange()");
+        _bRequestAudioChange = false;
+        g_Player.OnAudioTracksReady();
       }
       //Log.Info("1");
       /*
@@ -1322,9 +1343,16 @@ namespace MediaPortal.Player
     }
 
     bool _bMediaTypeChanged;
+    bool _bRequestAudioChange;
     public int OnMediaTypeChanged()
     {
       _bMediaTypeChanged = true;
+      return 0;
+    }
+
+    public int OnRequestAudioChange()
+    {
+      _bRequestAudioChange = true;
       return 0;
     }
 
@@ -1435,6 +1463,7 @@ namespace MediaPortal.Player
         TsReader reader = new TsReader();
         _fileSource = (IBaseFilter)reader;
         ((ITSReader)reader).SetTsReaderCallback(this);
+        ((ITSReader)reader).SetRequestAudioChangeCallback(this);
         IBaseFilter filter = (IBaseFilter)_fileSource;
         _graphBuilder.AddFilter(filter, "TsReader");
 
