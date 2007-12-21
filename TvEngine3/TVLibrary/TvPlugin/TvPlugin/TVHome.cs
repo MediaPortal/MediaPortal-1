@@ -46,6 +46,7 @@ using MediaPortal.Configuration;
 using TvDatabase;
 using TvControl;
 using TvLibrary.Interfaces;
+using TvLibrary.Implementations.DVB;
 
 
 using Gentle.Common;
@@ -277,7 +278,7 @@ namespace TvPlugin
     public override void OnAdded()
     {
       MediaPortal.GUI.Library.Log.Info("TVHome:OnAdded");
-
+      
       // replace g_player's ShowFullScreenWindowTV
       g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
 
@@ -428,7 +429,10 @@ namespace TvPlugin
       MediaPortal.GUI.Library.Log.Info("TVHome:Init");
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml");
       GetID = (int)GUIWindow.Window.WINDOW_TV;      
+
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
+      g_Player.AudioTracksReady += new g_Player.AudioTracksReadyHandler(OnAudioTracksReady);
+
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
       return bResult;
     }
@@ -455,7 +459,14 @@ namespace TvPlugin
           }
       }
     }
-    
+
+    void OnAudioTracksReady()
+    {
+      Log.Debug("TVHome.OnAudioTracksReady()");
+      int prefLangIdx = TVHome.GetPreferedAudioStreamIndex();
+      g_Player.CurrentAudioStream = prefLangIdx;
+    }
+
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       _playbackStopped = true;
@@ -1572,7 +1583,7 @@ namespace TvPlugin
       Navigator.ZapToPreviousChannel(false);
     }
 
-    static public int GetPreferedAudioStreamIndex(IAudioStream[] streams) // also used from tvrecorded class
+    static public int GetPreferedAudioStreamIndex() // also used from tvrecorded class
     {      
       int idxFirstAc3 = -1;         // the index of the first avail. ac3 found
       int idxFirstmpeg = -1;        // the index of the first avail. mpg found
@@ -1582,6 +1593,36 @@ namespace TvPlugin
       string langSel = "";          // find audio based on this language.
       string ac3BasedOnLang = "";   // for debugging, what lang. in prefs. where used to choose the ac3 audio track ?
       string mpegBasedOnLang = "";  // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?
+
+      IAudioStream[] streams;
+
+      List<IAudioStream> streamsList = new List<IAudioStream>();
+      for (int i = 0; i < g_Player.AudioStreams; i++)
+      {
+        DVBAudioStream stream = new DVBAudioStream();
+
+        string streamType = g_Player.AudioType(i);
+
+        switch (streamType)
+        {
+          case "AC3":
+            stream.StreamType = AudioStreamType.AC3;
+            break;
+          case "Mpeg1":
+            stream.StreamType = AudioStreamType.Mpeg1;
+            break;
+          case "Mpeg2":
+            stream.StreamType = AudioStreamType.Mpeg2;
+            break;
+          default:
+            stream.StreamType = AudioStreamType.Unknown;
+            break;
+        }
+
+        stream.Language = g_Player.AudioLanguage(i);
+        streamsList.Add(stream);
+      }
+      streams = (IAudioStream[])streamsList.ToArray();
 
       if (_preferredLanguages != null)
       {
@@ -1856,42 +1897,12 @@ namespace TvPlugin
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
           MediaPortal.GUI.Library.Log.Info("succeeded:{0} {1}", succeeded, card);
-          //MediaPortal.GUI.Library.Log.Info("g_Player.Playing {0}", g_Player.Playing);          
-
-          //lets set the audio track for tsreader
-          int prefLangIdx = GetPreferedAudioStreamIndex(TVHome.Card.AvailableAudioStreams);          
-
-          try
-          {
-            using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software", true))
-            {
-              RegistryKey subKeyMP = subkey.OpenSubKey("MediaPortal", true);
-              if (subKeyMP == null)
-              {
-                subKeyMP = subkey.CreateSubKey("MediaPortal");
-              }
-
-              RegistryKey subKeyTsReader = subKeyMP.OpenSubKey("TsReader", true);
-              if (subKeyTsReader == null)
-              {
-                subKeyTsReader = subKeyMP.CreateSubKey("TsReader");
-              }
-              //ac3 is now part of the langidx
-              subKeyTsReader.SetValue("audioidx", prefLangIdx, RegistryValueKind.DWord);
-              subKeyTsReader.Close();
-              subKeyMP.Close();
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-          }
-
+          
           if (!g_Player.Playing)
           {
             StartPlay();
-          }                    
-
+          }
+          //g_Player.CurrentAudioStream = prefLangIdx;
           GUIWaitCursor.Hide();
 
           // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.                    

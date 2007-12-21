@@ -154,7 +154,7 @@ private:
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
   CPcr m_subtitlePcr;  
-  void ReadAudioIndexFromRegistry();
+  //void ReadAudioIndexFromRegistry();
 
   int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte);
    int (CALLBACK *pTeletextPacketCallback)(byte*, int);

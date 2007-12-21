@@ -1308,38 +1308,8 @@ namespace TvPlugin
     {
       if (type != g_Player.MediaType.Recording) return;
 
-      // set audio track based on user prefs.
-      List<IAudioStream> streams = new List<IAudioStream>();
-
-      //IAudioStream[] streams = new IAudioStream[g_Player.AudioStreams];
-
-      for (int i = 0; i < g_Player.AudioStreams; i++)
-      {
-        DVBAudioStream stream = new DVBAudioStream();
-        
-        string streamType = g_Player.AudioType(i);
-
-        switch (streamType)
-        {
-          case "AC3":
-            stream.StreamType = AudioStreamType.AC3;
-            break;
-          case "Mpeg1":
-            stream.StreamType = AudioStreamType.Mpeg1;
-            break;
-          case "Mpeg2":
-            stream.StreamType = AudioStreamType.Mpeg2;
-            break;
-          default:
-            stream.StreamType = AudioStreamType.Unknown;
-            break;
-        }
-        
-        stream.Language = g_Player.AudioLanguage(i);
-        streams.Add(stream);        
-      }
-
-      int prefLangIdx = TVHome.GetPreferedAudioStreamIndex( (IAudioStream[]) streams.ToArray());
+      // set audio track based on user prefs. 
+      int prefLangIdx = TVHome.GetPreferedAudioStreamIndex();
 
       MediaPortal.GUI.Library.Log.Debug("TVRecorded.OnPlayRecordingBackStarted(): setting audioIndex on tsreader {0}", prefLangIdx);
       g_Player.CurrentAudioStream = prefLangIdx;

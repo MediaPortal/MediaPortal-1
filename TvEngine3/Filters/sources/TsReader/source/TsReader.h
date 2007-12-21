@@ -42,10 +42,16 @@ class CTsReaderFilter;
 
 DEFINE_GUID(CLSID_TSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x3f);
 DEFINE_GUID(IID_ITSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x4f);
+//DEFINE_GUID(IID_ITSReaderAudioChange, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x5f);
 
 DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
 {
-	STDMETHOD(OnMediaTypeChanged)  (THIS_)PURE;
+	STDMETHOD(OnMediaTypeChanged)  (THIS_)PURE;	
+};
+
+DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
+{	
+	STDMETHOD(OnRequestAudioChange)  (THIS_)PURE;
 };
 
     MIDL_INTERFACE("b9559486-e1bb-45d3-a2a2-9a7afe49b24f")
@@ -54,10 +60,11 @@ DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
     public:
         virtual HRESULT STDMETHODCALLTYPE SetGraphCallback( 
 			/* [in] */ ITSReaderCallback* pCallback
+			) = 0;		        
+		virtual HRESULT STDMETHODCALLTYPE SetRequestAudioChangeCallback( 
+			ITSReaderAudioChange* pCallback
 			) = 0;
-        
     };
-
 
 class CTsReaderFilter : public CSource, 
 						public TSThread, 
@@ -117,6 +124,7 @@ private:
 public:
 	// ITSReader
 	STDMETHODIMP	SetGraphCallback(ITSReaderCallback* pCallback);
+	STDMETHODIMP	SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
@@ -138,6 +146,7 @@ public:
   FILTER_STATE    State() {return m_State;};
   CRefTime        Compensation;
   void				OnMediaTypeChanged();
+  void				OnRequestAudioChange();
 protected:
   void ThreadProc();
 private:
@@ -167,5 +176,6 @@ private:
   bool            m_bTimeShifting;
   IDVBSubtitle*   m_pDVBSubtitle;
   ITSReaderCallback* m_pCallback;
+  ITSReaderAudioChange* m_pRequestAudioCallback;
 };
 

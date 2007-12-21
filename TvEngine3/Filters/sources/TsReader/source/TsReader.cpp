@@ -135,7 +135,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_demultiplexer( m_duration, *this),
   m_rtspClient(m_buffer),
   m_pDVBSubtitle(NULL),
-  m_pCallback(NULL)
+  m_pCallback(NULL),
+  m_pRequestAudioCallback(NULL)
 {
 
  // use the following line if u r having trouble setting breakpoints
@@ -293,10 +294,22 @@ void CTsReaderFilter::OnMediaTypeChanged()
 	if ( m_pCallback ) m_pCallback->OnMediaTypeChanged();
 }
 
+void CTsReaderFilter::OnRequestAudioChange()
+{
+	if ( m_pRequestAudioCallback ) m_pRequestAudioCallback->OnRequestAudioChange();
+}
+
 STDMETHODIMP CTsReaderFilter::SetGraphCallback(ITSReaderCallback* pCallback)
 {
 	LogDebug("CALLBACK SET");
 	m_pCallback = pCallback;
+	return S_OK;
+}
+
+STDMETHODIMP CTsReaderFilter::SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback)
+{
+	LogDebug("SetRequestAudioChangeCallback SET");
+	m_pRequestAudioCallback = pCallback;
 	return S_OK;
 }
 

@@ -65,7 +65,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   pTeletextPacketCallback = NULL;
   pTeletextServiceInfoCallback = NULL;
   m_iAudioReadCount = 0;
-  ReadAudioIndexFromRegistry();
+  //ReadAudioIndexFromRegistry();
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -468,7 +468,7 @@ CBuffer* CDeMultiplexer::GetVideo()
 // or NULL if there is none available
 CBuffer* CDeMultiplexer::GetAudio()
 {  
-   
+   if (m_iAudioStream == -1) return NULL;
 
   //if there is no audio pid, then simply return NULL
   if (  m_audioPid==0)
@@ -1006,6 +1006,7 @@ void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
   }
 }
 
+/*
 void CDeMultiplexer::ReadAudioIndexFromRegistry()
 {
   //get audio preference from registry key
@@ -1024,7 +1025,7 @@ void CDeMultiplexer::ReadAudioIndexFromRegistry()
     RegCloseKey(key);
   }  
 }
-
+*/
 
 /// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
 /// In this method we check if any audio/video/subtitle pid or format has changed
@@ -1203,12 +1204,12 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.audioType=m_pids.AudioServiceType8;
     m_audioStreams.push_back(audio);
   }
-
+/*
   if (m_iAudioStream>=m_audioStreams.size())
   {
     m_iAudioStream=0;
   }
-
+*/
   m_subtitleStreams.clear();
   
   if (m_pids.SubtitlePid1!=0) 
@@ -1268,19 +1269,11 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     {
       changed=true;
     }
-  }
-      
-  // lets try and select the audiotrack based on language. this could also mean ac3.
-  ReadAudioIndexFromRegistry();  
-  if (m_audioStreams.size() >  m_iAudioIdx)
-  {		
-	  m_iAudioStream = m_iAudioIdx;		
-  }
-  else
-  {
-	  m_iAudioStream = 0;
-  }  
-  LogDebug ("Setting audio index : %i", m_iAudioStream);
+  }        
+
+  m_iAudioStream = 0;
+
+  LogDebug ("Setting initial audio index to : %i", m_iAudioStream);
   
   //get the new audio format
   int newAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
@@ -1306,6 +1299,13 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     //we do this in a seperate thread to prevent any lockups
     //StartThread();	
 	m_filter.OnMediaTypeChanged();
+  }
+
+  //if we have more than 1 audio track available, tell host application that we are ready to receive an audio track change.
+  if (m_audioStreams.size() > 1)
+  {
+	LogDebug("OnRequestAudioChange()");
+	m_filter.OnRequestAudioChange();
   }
 }
 
