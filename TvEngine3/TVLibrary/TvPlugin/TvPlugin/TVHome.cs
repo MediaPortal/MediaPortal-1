@@ -428,8 +428,9 @@ namespace TvPlugin
     {
       MediaPortal.GUI.Library.Log.Info("TVHome:Init");
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_TV;      
+      GetID = (int)GUIWindow.Window.WINDOW_TV;
 
+      g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.AudioTracksReady += new g_Player.AudioTracksReadyHandler(OnAudioTracksReady);
 
@@ -465,6 +466,15 @@ namespace TvPlugin
       Log.Debug("TVHome.OnAudioTracksReady()");
       int prefLangIdx = TVHome.GetPreferedAudioStreamIndex();
       g_Player.CurrentAudioStream = prefLangIdx;
+    }
+
+    void OnPlayBackStarted(g_Player.MediaType type, string filename)
+    {
+      // when we are watching TV and suddenly decides to watch a audio/video etc., we want to make sure that the TV is stopped on server.
+      if (type != g_Player.MediaType.TV)
+      {
+        TVHome.Card.StopTimeShifting();
+      }
     }
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
