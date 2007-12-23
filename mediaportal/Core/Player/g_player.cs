@@ -960,6 +960,14 @@ namespace MediaPortal.Player
     {
       try
       {
+        // when we are watching TV and suddenly decides to watch a video, we want to make sure that the TV is stopped.
+        /*if (g_Player.IsTimeShifting && g_Player.IsTV)
+        {
+          Log.Info("player: Stopping timeshifting.");
+          g_Player.Stop();
+        }
+        */
+
         Starting = true;
         ChangeDriveSpeed(strFile, DriveType.CD);
         //stop radio
@@ -976,13 +984,7 @@ namespace MediaPortal.Player
           //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
           //GUIWindowManager.SendMessage(msgTv);
         }				
-
-				// when we are watching TV and suddenly decides to watch a video, we want to make sure that the TV is stopped.
-				if (g_Player.IsTimeShifting && g_Player.IsTV)
-				{
-					Log.Info("player: Stopping timeshifting.");
-					g_Player.Stop();
-				}
+				
 
         _currentStep = 0;
         _currentStepIndex = -1;
