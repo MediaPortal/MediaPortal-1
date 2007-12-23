@@ -1310,7 +1310,7 @@ namespace MediaPortal.Player
 #endif
     protected void UpdateCurrentPosition()
     {
-      if (_mediaSeeking == null)
+      if (_mediaSeeking == null || _graphBuilder == null)
         return;
       lock (_mediaCtrl)
       {
