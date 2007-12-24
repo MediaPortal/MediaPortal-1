@@ -512,7 +512,7 @@ namespace MediaPortal.GUI.Pictures
           _update = false;
           _lastSlideShown = -1;
           _currentSlideIndex = -1;
-          LoadSettings();
+          // LoadSettings();
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
@@ -1097,8 +1097,8 @@ namespace MediaPortal.GUI.Pictures
 
     public void StartSlideShow()
     {
+      LoadSettings();
       _isBackgroundMusicPlaying = false;
-
       if (_autoShuffle)
         Shuffle();
 
@@ -1107,10 +1107,9 @@ namespace MediaPortal.GUI.Pictures
 
     public void StartSlideShow(string path)
     {
+      LoadSettings();
       _isBackgroundMusicPlaying = false;
-
       StartBackgroundMusic(path);
-
       if (_autoShuffle)
         Shuffle();
 
