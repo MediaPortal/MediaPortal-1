@@ -131,7 +131,6 @@ CPidTable CDeMultiplexer::GetPidTable()
 }
 
 
-
 /// This methods selects the audio stream specified
 /// and updates the audio output pin media type if needed 
 bool CDeMultiplexer::SetAudioStream(int stream)
@@ -150,7 +149,6 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   //set index
   m_iAudioStream=stream;   
 
-
   //get the new audio stream type
   int newAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
@@ -164,7 +162,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
     {
-		m_filter.OnMediaTypeChanged();
+		  m_filter.OnMediaTypeChanged();
     }
   }
   else
@@ -202,47 +200,37 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
 {  
   if (m_iAudioStream< 0 || stream >=m_audioStreams.size())
   {	
-	pmt.InitMediaType();
-	pmt.SetType      (& MEDIATYPE_Audio);
-	pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
-	pmt.SetSampleSize(1);
-	pmt.SetTemporalCompression(FALSE);
-	pmt.SetVariableSize();
-	pmt.SetFormatType(&FORMAT_WaveFormatEx);
-	pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
-	return;
+	  pmt.InitMediaType();
+	  pmt.SetType      (& MEDIATYPE_Audio);
+	  pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
+	  pmt.SetSampleSize(1);
+	  pmt.SetTemporalCompression(FALSE);
+	  pmt.SetVariableSize();
+	  pmt.SetFormatType(&FORMAT_WaveFormatEx);
+	  pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
+	  return;
   }
 
   switch (m_audioStreams[stream].audioType)
   {
-    case SERVICE_TYPE_AUDIO_MPEG1:
-		// Should be mapped to MPEG2 because otherwise not playable
-	  pmt.InitMediaType();
-	  pmt.SetType      (& MEDIATYPE_Audio);
-	  pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
-	  pmt.SetSampleSize(1);
-	  pmt.SetTemporalCompression(FALSE);
-	  pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
-      break;
+    case SERVICE_TYPE_AUDIO_MPEG1:// Should be mapped to MPEG2 because otherwise not playable
     case SERVICE_TYPE_AUDIO_MPEG2:
-	  pmt.InitMediaType();
-	  pmt.SetType      (& MEDIATYPE_Audio);
-	  pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
-	  pmt.SetSampleSize(1);
-	  pmt.SetTemporalCompression(FALSE);
-	  pmt.SetVariableSize();
+	    pmt.InitMediaType();
+	    pmt.SetType      (& MEDIATYPE_Audio);
+	    pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
+	    pmt.SetSampleSize(1);
+	    pmt.SetTemporalCompression(FALSE);
+	    pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_AC3:
-	  pmt.InitMediaType();
-	  pmt.SetType      (& MEDIATYPE_Audio);
-	  pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);
-	  pmt.SetSampleSize(1);
-	  pmt.SetTemporalCompression(FALSE);
-	  pmt.SetVariableSize();
+	    pmt.InitMediaType();
+	    pmt.SetType      (& MEDIATYPE_Audio);
+	    pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);
+	    pmt.SetSampleSize(1);
+	    pmt.SetTemporalCompression(FALSE);
+	    pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
       break;
@@ -417,7 +405,6 @@ CBuffer* CDeMultiplexer::GetSubtitle()
 // or NULL if there is none available
 CBuffer* CDeMultiplexer::GetVideo()
 { 
-
   //if there is no video pid, then simply return NULL
   if (m_pids.VideoPid==0)
   {
@@ -506,7 +493,7 @@ CBuffer* CDeMultiplexer::GetAudio()
 	  }	
 	  else
 	  {
-		m_iAudioReadCount++;
+		  m_iAudioReadCount++;
 	  }
 	}*/
 
@@ -945,7 +932,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 }
 
 /// This method will check if the tspacket is an subtitle packet
-/// ifso, it decodes the PES subtitle packet and stores it in the subtitle buffers
+/// if so store it in the subtitle buffers
 void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 {
   if (m_filter.GetSubtitlePin()->IsConnected()==false) return;
@@ -1030,7 +1017,7 @@ void CDeMultiplexer::ReadAudioIndexFromRegistry()
 /// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
 /// In this method we check if any audio/video/subtitle pid or format has changed
 /// If not, we simply return
-/// If something has changed we reconfigure the audio/video output pins if needed
+/// If something has changed we ask teh MP to rebuild the graph
 void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 {
   if (info.PatVersion != m_iPatVersion)
@@ -1039,6 +1026,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     m_iPatVersion=info.PatVersion;
     m_bSetAudioDiscontinuity=true;
     m_bSetVideoDiscontinuity=true;
+    Flush();
   }
 	//CAutoLock lock (&m_section);
   CPidTable pids=info.PidTable;
@@ -1295,17 +1283,16 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   //did audio/video format change?
   if (changed)
   {
-    //yes? then reconfigure the audio/video output pins
-    //we do this in a seperate thread to prevent any lockups
-    //StartThread();	
-	m_filter.OnMediaTypeChanged();
+    //notify the ITSReaderCallback. MP will then rebuild the graph
+    m_filter.OnMediaTypeChanged();
   }
 
-  //if we have more than 1 audio track available, tell host application that we are ready to receive an audio track change.
+  //if we have more than 1 audio track available, tell host application that we are ready 
+  //to receive an audio track change.
   if (m_audioStreams.size() > 1)
   {
-	LogDebug("OnRequestAudioChange()");
-	m_filter.OnRequestAudioChange();
+    LogDebug("OnRequestAudioChange()");
+    m_filter.OnRequestAudioChange();
   }
 }
 
