@@ -1580,19 +1580,24 @@ void CDeMultiplexer::SetHoldSubtitle(bool onOff)
 }
 
 
-void CDeMultiplexer::SetTeletextEventCallback(int (CALLBACK *pTeletextEventCallback)(int eventcode, DWORD64 eval)){
+void CDeMultiplexer::SetTeletextEventCallback(int (CALLBACK *pTeletextEventCallback)(int eventcode, DWORD64 eval))
+{
 	this->pTeletextEventCallback = pTeletextEventCallback;
 }
-void CDeMultiplexer::SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int)){
+void CDeMultiplexer::SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int))
+{
 	this->pTeletextPacketCallback = pTeletextPacketCallback;
 }
 
-void CDeMultiplexer::SetTeletextServiceInfoCallback(int (CALLBACK *pTeletextSICallback)(int, byte,byte,byte,byte)){
+void CDeMultiplexer::SetTeletextServiceInfoCallback(int (CALLBACK *pTeletextSICallback)(int, byte,byte,byte,byte))
+{
 	this->pTeletextServiceInfoCallback = pTeletextSICallback;
 }
 
-void CDeMultiplexer::CallTeletextEventCallback(int eventCode,unsigned long int eventValue){
-	if(pTeletextEventCallback != NULL){
+void CDeMultiplexer::CallTeletextEventCallback(int eventCode,unsigned long int eventValue)
+{
+	if(pTeletextEventCallback != NULL)
+  {
 		//LogDebug("CallTeletextEventCallback %i %i", eventCode,eventValue); 
 		(*pTeletextEventCallback)(eventCode,eventValue);
 	}
