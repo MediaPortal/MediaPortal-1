@@ -1916,7 +1916,7 @@ namespace TvPlugin
           GUIWaitCursor.Hide();
 
           // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.                    
-          g_Player.SeekAbsolute(g_Player.Duration);                      
+          SeekToEnd(true);
           
           _playbackStopped = false;
           //TVHome.Connected = true;
@@ -2088,10 +2088,8 @@ namespace TvPlugin
       }
     }
 
-
     public static void ShowDlg (object Dialogue)
     {
-      
       GUIDialogOK pDlgOK = null;
 
       if (Dialogue is GUIDialogOK)
@@ -2312,7 +2310,7 @@ namespace TvPlugin
       Log.Info("tvhome:SeektoEnd({0})", zapping);
       double duration = g_Player.Duration;
       double position = g_Player.CurrentPosition;
-      if (Math.Abs(duration - position) <= 3) return;
+      if (Math.Abs(duration - position) <= 2) return;
 
       string timeshiftFileName = TVHome.Card.TimeShiftFileName;
       bool useRtsp = System.IO.File.Exists("usertsp.txt");
