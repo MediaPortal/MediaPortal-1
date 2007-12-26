@@ -51,6 +51,9 @@ namespace TvService
     ITvCardHandler _cardHandler;
     bool _linkageScannerEnabled;
     bool _timeshiftingEpgGrabberEnabled;
+		int _waitForTimeshifting = 15;			
+		int _waitForUnscrambled = 5;
+
     ChannelLinkageGrabber _linkageGrabber = null;
     /// <summary>
     /// Initializes a new instance of the <see cref="TimerShifter"/> class.
@@ -64,6 +67,9 @@ namespace TvService
 
       _linkageGrabber = new ChannelLinkageGrabber(cardHandler.Card);
       _timeshiftingEpgGrabberEnabled = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
+
+			_waitForTimeshifting = Int32.Parse(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
+			_waitForUnscrambled = Int32.Parse(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value);
     }
 
 
@@ -377,7 +383,7 @@ namespace TvService
           Log.Write("card:   scrambled, sleep 100");
           System.Threading.Thread.Sleep(100);
           TimeSpan timeOut = DateTime.Now - timeStart;
-          if (timeOut.TotalMilliseconds >= 5000)
+          if (timeOut.TotalMilliseconds >= (_waitForUnscrambled * 1000))
           {
             Log.Write("card:   return scrambled");
             return false;
@@ -489,7 +495,7 @@ namespace TvService
 
           System.Threading.Thread.Sleep(100);
           TimeSpan timeOut = DateTime.Now - timeStart;
-          if (timeOut.TotalMilliseconds >= 15000)
+					if (timeOut.TotalMilliseconds >= (_waitForTimeshifting * 1000))
           {						
             Log.Write("card: timeshifting fileSize:{0} TIMEOUT", fileSize);
             return false;

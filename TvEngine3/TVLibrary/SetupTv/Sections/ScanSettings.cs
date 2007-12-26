@@ -95,6 +95,8 @@ namespace SetupTv.Sections
       edTitleTemplate.Text = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
       edDescriptionTemplate.Text = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
 
+			textBoxWaitTimeshifting.Text = layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value;
+			textBoxWaitUnscrambled.Text = layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value;
 
       
     }
@@ -178,6 +180,14 @@ namespace SetupTv.Sections
       s = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%");
       s.Value = edDescriptionTemplate.Text;
       s.Persist();
+
+			s = layer.GetSetting("timeshiftWaitForTimeshifting", "15");
+			s.Value = textBoxWaitTimeshifting.Text;
+			s.Persist();
+
+			s = layer.GetSetting("timeshiftWaitForUnscrambled", "5");
+			s.Value = textBoxWaitUnscrambled.Text;
+			s.Persist();			
     }
 
     private void mpComboBoxPrio_SelectedIndexChanged(object sender, EventArgs e)

@@ -98,6 +98,12 @@ namespace SetupTv.Sections
 			this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
 			this.textBoxMinfiles = new System.Windows.Forms.TextBox();
 			this.label18 = new System.Windows.Forms.Label();
+			this.label40 = new System.Windows.Forms.Label();
+			this.textBoxWaitUnscrambled = new System.Windows.Forms.TextBox();
+			this.label41 = new System.Windows.Forms.Label();
+			this.textBoxWaitTimeshifting = new System.Windows.Forms.TextBox();
+			this.label42 = new System.Windows.Forms.Label();
+			this.label43 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.groupBox4.SuspendLayout();
@@ -733,6 +739,12 @@ namespace SetupTv.Sections
 			// 
 			// groupBox3
 			// 
+			this.groupBox3.Controls.Add(this.label43);
+			this.groupBox3.Controls.Add(this.label42);
+			this.groupBox3.Controls.Add(this.label41);
+			this.groupBox3.Controls.Add(this.textBoxWaitTimeshifting);
+			this.groupBox3.Controls.Add(this.label40);
+			this.groupBox3.Controls.Add(this.textBoxWaitUnscrambled);
 			this.groupBox3.Controls.Add(this.label2);
 			this.groupBox3.Controls.Add(this.textBoxMaxFiles);
 			this.groupBox3.Controls.Add(this.label16);
@@ -744,7 +756,7 @@ namespace SetupTv.Sections
 			this.groupBox3.Controls.Add(this.label18);
 			this.groupBox3.Location = new System.Drawing.Point(13, 14);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(325, 97);
+			this.groupBox3.Size = new System.Drawing.Size(442, 152);
 			this.groupBox3.TabIndex = 17;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Timeshifting";
@@ -752,7 +764,7 @@ namespace SetupTv.Sections
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(195, 73);
+			this.label2.Location = new System.Drawing.Point(273, 73);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(55, 13);
 			this.label2.TabIndex = 23;
@@ -760,7 +772,7 @@ namespace SetupTv.Sections
 			// 
 			// textBoxMaxFiles
 			// 
-			this.textBoxMaxFiles.Location = new System.Drawing.Point(89, 42);
+			this.textBoxMaxFiles.Location = new System.Drawing.Point(167, 42);
 			this.textBoxMaxFiles.Name = "textBoxMaxFiles";
 			this.textBoxMaxFiles.Size = new System.Drawing.Size(100, 20);
 			this.textBoxMaxFiles.TabIndex = 19;
@@ -768,7 +780,7 @@ namespace SetupTv.Sections
 			// label16
 			// 
 			this.label16.AutoSize = true;
-			this.label16.Location = new System.Drawing.Point(195, 49);
+			this.label16.Location = new System.Drawing.Point(273, 49);
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(25, 13);
 			this.label16.TabIndex = 22;
@@ -786,7 +798,7 @@ namespace SetupTv.Sections
 			// label17
 			// 
 			this.label17.AutoSize = true;
-			this.label17.Location = new System.Drawing.Point(195, 23);
+			this.label17.Location = new System.Drawing.Point(273, 23);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(25, 13);
 			this.label17.TabIndex = 21;
@@ -803,14 +815,14 @@ namespace SetupTv.Sections
 			// 
 			// textBoxMaxFileSize
 			// 
-			this.textBoxMaxFileSize.Location = new System.Drawing.Point(89, 68);
+			this.textBoxMaxFileSize.Location = new System.Drawing.Point(167, 68);
 			this.textBoxMaxFileSize.Name = "textBoxMaxFileSize";
 			this.textBoxMaxFileSize.Size = new System.Drawing.Size(100, 20);
 			this.textBoxMaxFileSize.TabIndex = 18;
 			// 
 			// textBoxMinfiles
 			// 
-			this.textBoxMinfiles.Location = new System.Drawing.Point(89, 16);
+			this.textBoxMinfiles.Location = new System.Drawing.Point(167, 16);
 			this.textBoxMinfiles.Name = "textBoxMinfiles";
 			this.textBoxMinfiles.Size = new System.Drawing.Size(100, 20);
 			this.textBoxMinfiles.TabIndex = 20;
@@ -823,6 +835,56 @@ namespace SetupTv.Sections
 			this.label18.Size = new System.Drawing.Size(48, 13);
 			this.label18.TabIndex = 15;
 			this.label18.Text = "Minimum";
+			// 
+			// label40
+			// 
+			this.label40.AutoSize = true;
+			this.label40.Location = new System.Drawing.Point(14, 97);
+			this.label40.Name = "label40";
+			this.label40.Size = new System.Drawing.Size(137, 13);
+			this.label40.TabIndex = 24;
+			this.label40.Text = "Wait for unscrambled signal";
+			// 
+			// textBoxWaitUnscrambled
+			// 
+			this.textBoxWaitUnscrambled.Location = new System.Drawing.Point(167, 94);
+			this.textBoxWaitUnscrambled.Name = "textBoxWaitUnscrambled";
+			this.textBoxWaitUnscrambled.Size = new System.Drawing.Size(100, 20);
+			this.textBoxWaitUnscrambled.TabIndex = 25;
+			// 
+			// label41
+			// 
+			this.label41.AutoSize = true;
+			this.label41.Location = new System.Drawing.Point(14, 123);
+			this.label41.Name = "label41";
+			this.label41.Size = new System.Drawing.Size(115, 13);
+			this.label41.TabIndex = 26;
+			this.label41.Text = "Wait for timeshifting file";
+			// 
+			// textBoxWaitTimeshifting
+			// 
+			this.textBoxWaitTimeshifting.Location = new System.Drawing.Point(167, 120);
+			this.textBoxWaitTimeshifting.Name = "textBoxWaitTimeshifting";
+			this.textBoxWaitTimeshifting.Size = new System.Drawing.Size(100, 20);
+			this.textBoxWaitTimeshifting.TabIndex = 27;
+			// 
+			// label42
+			// 
+			this.label42.AutoSize = true;
+			this.label42.Location = new System.Drawing.Point(273, 97);
+			this.label42.Name = "label42";
+			this.label42.Size = new System.Drawing.Size(24, 13);
+			this.label42.TabIndex = 28;
+			this.label42.Text = "sec";
+			// 
+			// label43
+			// 
+			this.label43.AutoSize = true;
+			this.label43.Location = new System.Drawing.Point(273, 123);
+			this.label43.Name = "label43";
+			this.label43.Size = new System.Drawing.Size(24, 13);
+			this.label43.TabIndex = 29;
+			this.label43.Text = "sec";
 			// 
 			// ScanSettings
 			// 
@@ -924,6 +986,12 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label36;
     private System.Windows.Forms.Label label38;
     private System.Windows.Forms.Label label39;
+		private System.Windows.Forms.Label label42;
+		private System.Windows.Forms.Label label41;
+		private System.Windows.Forms.TextBox textBoxWaitTimeshifting;
+		private System.Windows.Forms.Label label40;
+		private System.Windows.Forms.TextBox textBoxWaitUnscrambled;
+		private System.Windows.Forms.Label label43;
 
   }
 }
