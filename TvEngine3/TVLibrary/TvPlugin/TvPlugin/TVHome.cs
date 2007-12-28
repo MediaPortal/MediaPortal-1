@@ -166,6 +166,12 @@ namespace TvPlugin
 
     private void HeartBeatTransmitter()
     {
+
+      // when debugging we want to disable heartbeats
+      #if DEBUG
+        return;
+      #endif
+
       while (true)
       {
         if (TVHome.Connected && TVHome.Card.IsTimeShifting)
@@ -471,7 +477,7 @@ namespace TvPlugin
     void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
       // when we are watching TV and suddenly decides to watch a audio/video etc., we want to make sure that the TV is stopped on server.
-      if (type != g_Player.MediaType.TV)
+      if ((type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio) && TVHome.Card.IsTimeShifting)
       {
         TVHome.Card.StopTimeShifting();
       }
@@ -480,7 +486,7 @@ namespace TvPlugin
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       _playbackStopped = true;
-      if (type != g_Player.MediaType.TV) return;
+      if (type != g_Player.MediaType.TV || type != g_Player.MediaType.Radio) return;
       GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       //if (currentWindow.IsTv) return;
       if (TVHome.Card.IsTimeShifting == false) return;
@@ -1867,7 +1873,7 @@ namespace TvPlugin
         }
 
         GUIWaitCursor.Show();
-        bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
+        bool wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting) && (g_Player.IsTV || g_Player.IsRadio);
 
 
         //Start timeshifting the new tv channel
@@ -1907,15 +1913,16 @@ namespace TvPlugin
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
           MediaPortal.GUI.Library.Log.Info("succeeded:{0} {1}", succeeded, card);
-          
+
           if (!g_Player.Playing)
           {
             StartPlay();
           }
+
           //g_Player.CurrentAudioStream = prefLangIdx;
           GUIWaitCursor.Hide();
 
-          // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.                    
+          // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.                                        
           SeekToEnd(true);
           
           _playbackStopped = false;
