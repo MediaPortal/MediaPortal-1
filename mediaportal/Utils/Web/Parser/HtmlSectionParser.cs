@@ -304,21 +304,21 @@ namespace MediaPortal.Utils.Web
           if (i + 1 < tags.Count)
           {
             tag = tags[i + 1];
-            if (char.ToUpper(tag.TagName[0]) == 'Z')
-            {
-              isOptionalTag = true;
-              if (tag.IsClose && i + 2 < tags.Count && char.ToUpper(tags[i + 2].TagName[0]) != 'Z')
-              {
-                  isOptionalTag = false;
-              }
+            //if (char.ToUpper(tag.TagName[0]) == 'Z')
+            //{
+            //  isOptionalTag = true;
+            //  if (tag.IsClose && i + 2 < tags.Count && char.ToUpper(tags[i + 2].TagName[0]) != 'Z')
+            //  {
+            //    isOptionalTag = false;
+            //  }
 
-              start = tag.Index + tag.Length;
-              i++;
-              if (i + 1 < tags.Count)
-                tag = tags[i + 1];
-              else
-                break;
-            }
+            //  start = tag.Index + tag.Length;
+            //  i++;
+            //  if (i + 1 < tags.Count)
+            //    tag = tags[i + 1];
+            //  else
+            //    break;
+            //}
             end = tag.Index;
           }
           else

@@ -106,6 +106,7 @@ namespace MediaPortal.Utils.Web
 
       // replace unicode characters
       stripped = stripped.Replace((char)145, '’');
+      stripped = stripped.Replace((char)146, '’');
       stripped = stripped.Replace((char)150, '-');
       stripped = stripped.Replace((char)160, ' ');
 

@@ -102,8 +102,9 @@ namespace MediaPortal.Utils.Web
         if (sub.Length != 0)
         {
           MatchTag start = (MatchTag)_page.tags[sub.Index];
-          MatchTag end = (MatchTag)_page.tags[sub.Index + sub.Length - 1];
-          source = _pageSource.Substring(start.Index, end.Index + end.Length - start.Index);
+          // get source data until the start of the next tag
+          MatchTag end = (MatchTag)_page.tags[sub.Index + sub.Length]; //  - 1];
+          source = _pageSource.Substring(start.Index, end.Index - start.Index); //end.Index + end.Length - start.Index);
         }
       }
 
