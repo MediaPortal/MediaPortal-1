@@ -1684,7 +1684,7 @@ namespace MediaPortal.Util
 
     public static string TryEverythingToGetFolderThumbByFilename(string aSongPath)
     {
-      string strThumb = string.Empty;
+      string strThumb = string.Empty;      
 
       strThumb = GetLocalFolderThumb(aSongPath);
       if (File.Exists(strThumb))
@@ -1703,6 +1703,10 @@ namespace MediaPortal.Util
         {
           // last chance - maybe some other program left useable images
           string searchPath = Path.GetDirectoryName(aSongPath);
+          if (!Directory.Exists(searchPath))
+          {
+            return string.Empty;
+          }
           string[] imageFiles = Directory.GetFiles(searchPath, @"*.png", SearchOption.TopDirectoryOnly);
           if (imageFiles.Length < 1) // WMP leaves files like AlbumArt_{18289833-9C5D-4D3F-9971-F3F9EBDC03E7}_Large.jpg
             imageFiles = Directory.GetFiles(searchPath, @"*Large.jpg", SearchOption.TopDirectoryOnly);
