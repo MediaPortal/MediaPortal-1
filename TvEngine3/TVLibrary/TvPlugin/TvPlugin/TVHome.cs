@@ -487,7 +487,7 @@ namespace TvPlugin
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       _playbackStopped = true;
-      if (type != g_Player.MediaType.TV || type != g_Player.MediaType.Radio) return;
+      if (type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio) return;
       //GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       //if (currentWindow.IsTv) return;
       if (TVHome.Card.IsTimeShifting == false) return;
