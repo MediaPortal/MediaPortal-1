@@ -1892,6 +1892,17 @@ namespace TvPlugin
         videoState = VideoRendererStatistics.State.VideoPresent;
       }
 
+      //check if the tv recording has reached the end ...if so, stop it.
+      if (g_Player.IsTVRecording)
+      {
+        double currentPosition = (double)(g_Player.CurrentPosition);
+        double duration = (double)(g_Player.Duration);
+
+        if (currentPosition > duration)
+        {
+          g_Player.Stop();
+        }
+      }
 
       GUIGraphicsContext.IsFullScreenVideo = true;
     }

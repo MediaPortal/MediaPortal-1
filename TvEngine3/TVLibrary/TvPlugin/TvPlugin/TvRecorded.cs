@@ -393,9 +393,12 @@ namespace TvPlugin
       LoadSettings();
       LoadDirectory();
 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
-      msg.SendToTargetWindow = true;
-      GUIWindowManager.SendThreadMessage(msg);
+      if (!g_Player.IsTVRecording)
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
+        msg.SendToTargetWindow = true;
+        GUIWindowManager.SendThreadMessage(msg);
+      }
 
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);

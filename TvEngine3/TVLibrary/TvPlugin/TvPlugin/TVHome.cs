@@ -477,17 +477,18 @@ namespace TvPlugin
     void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
       // when we are watching TV and suddenly decides to watch a audio/video etc., we want to make sure that the TV is stopped on server.
-      if ((type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio) && TVHome.Card.IsTimeShifting)
-      {
-        TVHome.Card.StopTimeShifting();
-      }
+      GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+      if (currentWindow.IsTv) return;
+      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_RADIO) return;
+      
+      TVHome.Card.StopTimeShifting();      
     }
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       _playbackStopped = true;
       if (type != g_Player.MediaType.TV || type != g_Player.MediaType.Radio) return;
-      GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+      //GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       //if (currentWindow.IsTv) return;
       if (TVHome.Card.IsTimeShifting == false) return;
       if (TVHome.Card.IsRecording == true) return;
@@ -1811,10 +1812,11 @@ namespace TvPlugin
             if (g_Player.IsVideo) return true;
             if (g_Player.IsDVD) return true;
             if (g_Player.IsMusic) return true;
+            if (g_Player.IsRadio) return true;
           }
           else
           {              
-            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)
+            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic || g_Player.IsRadio)
             {                
               g_Player.Stop();
             }
