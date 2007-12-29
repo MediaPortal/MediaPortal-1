@@ -248,6 +248,7 @@ namespace MediaPortal.Player
         #region add vmr9
         if (_isRadio == false)
         {
+          Cleanup(); //before adding vmr9 - make sure that cleanup is done, otherwise MP could hang in (_vmr9.AddVMR9)
           Log.Info("TSReaderPlayer: add _vmr9");
           _vmr9 = new VMR9Util();
           _vmr9.AddVMR9(_graphBuilder);
@@ -531,19 +532,28 @@ namespace MediaPortal.Player
 
     void Cleanup()
     {
+      /*
       if (_graphBuilder == null)
       {
         Log.Info("TSReaderPlayer:grapbuilder=null");
         return;
       }
+      */
 
       int hr;
       Log.Info("TSReaderPlayer:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
-        _videoWin = _graphBuilder as IVideoWindow;
-        if (_videoWin != null)
-          _videoWin.put_Visible(OABool.False);
+        if (_graphBuilder != null)
+        {
+          _videoWin = _graphBuilder as IVideoWindow;
+          if (_videoWin != null)
+            _videoWin.put_Visible(OABool.False);
+        }
+        else
+        {
+          Log.Info("TSReaderPlayer:grapbuilder=null");
+        }
         if (_vmr9 != null)
         {
           Log.Info("TSReaderPlayer: vmr9 disable");
@@ -625,13 +635,16 @@ namespace MediaPortal.Player
         }
 
         // FlipGer: release custom filters
-        for (int i = 0; i < customFilters.Length; i++)
+        if (customFilters != null)
         {
-          if (customFilters[i] != null)
+          for (int i = 0; i < customFilters.Length; i++)
           {
-            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+            if (customFilters[i] != null)
+            {
+              while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+            }
+            customFilters[i] = null;
           }
-          customFilters[i] = null;
         }
         if (_mpegDemux != null)
         {
