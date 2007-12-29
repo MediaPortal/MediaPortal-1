@@ -20,6 +20,7 @@
     <Channel id="sport1@canalplus.no" siteId="106" />
     <Channel id="zebra@tv2.no" siteId="107" />
     <Channel id="hd@canalplus.no" siteId="108" />
+    <Channel id="nrksuper@nrk.no" siteId="112" />
   </Channels>
 
   <Listing type="Html">
