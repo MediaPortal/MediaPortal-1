@@ -6,26 +6,20 @@
     <Channel id="film@tv2.no" siteId="tv2film" />  
     <Channel id="nyhetskanalen@tv2.no" siteId="tv2nyhet" /> 
     <Channel id="sport@tv2.no" siteId="tv2sport" /> 
-    <Channel id="mix@canalplus.no" siteId="canplmix" /> 
     <Channel id="sport2@canalplus.no" siteId="canplspo2" />
-    <Channel id="hd@canalplus.no" siteId="canplhd" /> 
+    <Channel id="hd@canalplus.no" siteId="canplfilmhd" /> 
     <Channel id="Showtime" siteId="showtime" />
     <Channel id="nrk1@nrk.no" siteId="nrktv1" />
     <Channel id="nrk2@nrk.no" siteId="nrktv2" />
     <Channel id="tv2.no" siteId="tv2" />
-    <Channel id="zebra@tv2.no" siteId="tv2xtra" /> 
+    <Channel id="zebra@tv2.no" siteId="tv2zebra" /> 
     <Channel id="tvnorge.no" siteId="tvn" />
     <Channel id="tv3.no" siteId="tv3" />
-    <Channel id="ztv.no" siteId="ztvnor" />
     <Channel id="3plus.dk" siteId="tv3pldan" />
     <Channel id="3sat.de" siteId="3sat" />
     <Channel id="animalplanet.com" siteId="animal" />
     <Channel id="bbcprime.com" siteId="bbcprime" />
-    <Channel id="bbcworld.com" siteId="bbcworld" />
-    <Channel id="film1@canalplus.no" siteId="canplfilm1" />
-    <Channel id="film2@canalplus.no" siteId="canplfilm2" />
-    <Channel id="film3@canalplus.no" siteId="canplfilm3" />
-    <Channel id="sport1@canalplus.no" siteId="canplspo" /> 
+    <Channel id="bbcworld.com" siteId="bbcworld" /> 
     <Channel id="cartoonnetwork.no" siteId="cartoon" />
     <Channel id="club" siteId="club" />
     <Channel id="cnbc@msn.com" siteId="cnbc" />
@@ -36,7 +30,7 @@
     <Channel id="sci_trek@discovery.com" siteId="dscitrek" />
     <Channel id="travel_adventure@discovery.com" siteId="dtravel" />
     <Channel id="disneychannel.no" siteId="disney" />
-    <Channel id="dr1@dr.dk" siteId="dtv1" />
+    <Channel id="dr1@dr.dk" siteId="dr1" />
     <Channel id="dr2@dr.dk" siteId="dr2" />
     <Channel id="dsf.de" siteId="dsf" />
     <Channel id="dw-world.de" siteId="dw" />
@@ -71,7 +65,6 @@
     <Channel id="tv3.se" siteId="tv3sve" />
     <Channel id="tv4@tv4.se" siteId="tv4" />
     <Channel id="tv5.org" siteId="tv5" />
-    <Channel id="tv6.at" siteId="tv6sve" />
     <Channel id="tv8.se" siteId="tv8" />
     <Channel id="vh1.com" siteId="vh1" />
     <Channel id="explorer@viasat.no" siteId="viaexpl" />
