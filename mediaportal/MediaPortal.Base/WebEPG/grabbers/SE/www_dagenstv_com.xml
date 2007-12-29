@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="10" timezone="W. Europe Standard Time" version="2.0.2" />
+  <Info availableDays="14" timezone="W. Europe Standard Time" version="2.1.0" />
   <Channels>
     <Channel id="24@svt.se" siteId="101" />
     <Channel id="3plus.dk" siteId="83" />
     <Channel id="3sat.de" siteId="1" />
+    <Channel id="action@canalplus.se" siteId="227" />
     <Channel id="action@tv1000.se" siteId="207" />
     <Channel id="action@viasat.se" siteId="28" />
     <Channel id="aljazeera.tv" siteId="262" />
@@ -23,11 +24,13 @@
     <Channel id="classic@tv1000.se" siteId="208" />
     <Channel id="cnbc@msn.com" siteId="56" />
     <Channel id="cnni-emea@cnn.com" siteId="5" />
+    <Channel id="comedy@canalplus.se" siteId="298" />
     <Channel id="di.tv" siteId="231" />
     <Channel id="discovery@discovery.com" siteId="7" />
     <Channel id="disneychannel.se" siteId="147" />
     <Channel id="dr1@dr.dk" siteId="58" />
     <Channel id="dr2@dr.dk" siteId="59" />
+    <Channel id="drama@canalplus.se" siteId="255" />
     <Channel id="dsf.de" siteId="8" />
     <Channel id="e.tv" siteId="225" />
     <Channel id="espn.com" siteId="196" />
@@ -41,9 +44,7 @@
     <Channel id="fakta@tv4.se" siteId="230" />
     <Channel id="family@tv1000.se" siteId="210" />
     <Channel id="film@tv4.se" siteId="176" />
-    <Channel id="film1@canalplus.se" siteId="256" />
-    <Channel id="film2@canalplus.se" siteId="257" />
-    <Channel id="film3@canalplus.se" siteId="227" />
+    <Channel id="first@canalplus.se" siteId="256" />
     <Channel id="fst@yle.fi" siteId="219" />
     <Channel id="ftv.com" siteId="82" />
     <Channel id="godnetwork.com" siteId="111" />
@@ -53,11 +54,13 @@
     <Channel id="hallmarkchannel.com" siteId="13" />
     <Channel id="HD@canalplus.se" siteId="229" />
     <Channel id="HD@discovery.com" siteId="263" />
+    <Channel id="HD@nationalgeographic.com" siteId="293" />
     <Channel id="HDsport@canalplus.se" siteId="271" />
     <Channel id="hd@svt.se" siteId="264" />
     <Channel id="hd@tv4.se" siteId="292" />
     <Channel id="hd@voom.tv" siteId="265" />
     <Channel id="history@viasat.se" siteId="215" />
+    <Channel id="hits@canalplus.se" siteId="257" />
     <Channel id="hrt1@hrt.hr" siteId="50" />
     <Channel id="hustler.TV" siteId="175" />
     <Channel id="int@ort.ru" siteId="139" />
@@ -71,7 +74,6 @@
     <Channel id="manutd.com" siteId="193" />
     <Channel id="mdr.de" siteId="91" />
     <Channel id="mezzo.tv" siteId="46" />
-    <Channel id="mix@canalplus.se" siteId="255" />
     <Channel id="MTV@mtve.com" siteId="14" />
     <Channel id="MTV2@mtve.com" siteId="74" />
     <Channel id="mtv3@mtv3.fi" siteId="39" />
@@ -112,6 +114,7 @@
     <Channel id="sport2@canalplus.se" siteId="258" />
     <Channel id="sport2@viasatsport.se" siteId="197" />
     <Channel id="sport3@viasatsport.se" siteId="198" />
+    <Channel id="sportextra@canalplus.se" siteId="299" />
     <Channel id="star" siteId="114" />
     <Channel id="stockholm@kanallokal.se" siteId="238" />
     <Channel id="svt1@svt.se" siteId="21" />
@@ -154,26 +157,13 @@
   <Listing type="Html">
     <Site url="http://www.dagenstv.com/se/chart/?dat=[YYYY]-[MM]-[DD]&amp;cha=[ID]" post="" external="false" encoding="" />
     <Html>
-      <Template name="default" start="&lt;!-- Start">
-        <SectionTemplate tags="TS">
+      <Template name="default" start="&lt;!-- Start" end="&lt;div class=&quot;dm&quot;&gt;">
+        <SectionTemplate tags="D">
           <TemplateText>
-&lt;tr&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;span&gt;&lt;#START&gt;&lt;/span&gt;
-&lt;z(&gt;&lt;span&gt;&lt;#END&gt;&lt;/span&gt;&lt;/z)?&gt;
-&lt;span&gt;&lt;#TITLE&gt;&lt;/span&gt;&lt;/td&gt;
-&lt;td&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;td&gt;&lt;span&gt;&lt;#DESCRIPTION&gt;&lt;/span&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;div&gt;
+&lt;div&gt;&lt;#START&gt;(&lt;#END&gt;)&lt;/div&gt;
+&lt;div&gt;&lt;#TITLE&gt;&lt;/div&gt;
+&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;z(&gt;&lt;div&gt;&lt;z)*&gt;&lt;/div&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
@@ -188,8 +178,4 @@
       </Searches>
     </Html>
   </Listing>
-  <Actions>
-    <Modify channel="*" field="#TITLE" search="Bolibompa" action="Remove" />
-    <Modify channel="*" field="#TITLE" search="Bobster" action="Remove" />
-  </Actions>
 </Grabber>
