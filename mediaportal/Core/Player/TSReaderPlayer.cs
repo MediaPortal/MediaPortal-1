@@ -242,13 +242,13 @@ namespace MediaPortal.Player
 
       try
       {
+				Cleanup(); //before adding vmr9 - make sure that cleanup is done, otherwise MP could hang in (_vmr9.AddVMR9)
         _graphBuilder = (IGraphBuilder)new FilterGraph();
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
         #region add vmr9
         if (_isRadio == false)
-        {
-          Cleanup(); //before adding vmr9 - make sure that cleanup is done, otherwise MP could hang in (_vmr9.AddVMR9)
+        {          
           Log.Info("TSReaderPlayer: add _vmr9");
           _vmr9 = new VMR9Util();
           _vmr9.AddVMR9(_graphBuilder);
