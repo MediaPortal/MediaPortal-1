@@ -156,6 +156,11 @@ namespace MediaPortal.InputDevices
     {
       if ((EKeyState == X10.EX10Key.X10KEY_ON || EKeyState == X10.EX10Key.X10KEY_REPEAT) && lSequence != 2)
       {
+        if (_x10UseChannelControl && (lAddress != _x10Channel))
+        {
+            return;
+        }
+
         int keypress = (int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString());
         if (X10KeyPressed != null)
         {
