@@ -500,6 +500,7 @@ namespace MediaPortal.Player
           {
             while (true)
             {
+							Log.Debug("TSReaderPlayer: waiting for vmr9 connection");
               Application.DoEvents();
               System.Threading.Thread.Sleep(100);
             }
