@@ -264,6 +264,7 @@ namespace MediaPortal.GUI.Music
             {
               whereClause = "";
               BuildRestriction(defRoot, ref whereClause);
+              if (whereClause != string.Empty) whereClause = String.Format("where {0}",whereClause);
               sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);
             }
             break;
