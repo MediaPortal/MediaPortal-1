@@ -1180,28 +1180,39 @@ namespace TvLibrary.Implementations.DVB
 								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Mpeg1Audio))", _subChannelId, info.stream_type, info);
 								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, true, false);
 							}
-							else if (info.isTeletext)
-							{
-								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ttxt))", _subChannelId, info.stream_type, info);
-								//Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
-								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
-							}
+              else if (info.isTeletext)
+              {
+                Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ttxt))", _subChannelId, info.stream_type, info);
+                //Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
+                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
+              }              
               else if (info.isDVBSubtitle)
               {
                 Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Subtitles))", _subChannelId, info.stream_type, info);
                 //Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
                 _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
               }
+              else
+              {
+                Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (unknown type))", _subChannelId, info.stream_type, info);
+                _tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess                
+              }
 						}
 					}					
 				}
 				else //no descriptor data, add em the old way.
 				{
-					if (info.isVideo || info.isDVBSubtitle || info.isAudio || info.isAC3Audio)
-					{
-						Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
-						_tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess
-					}
+          if (info.isVideo || info.isDVBSubtitle || info.isAudio || info.isAC3Audio)
+          {
+            Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
+            _tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess
+          }
+          /*
+          else
+          {
+            Log.Log.WriteFile("no descr. data : subch:{0} {1}:{2}", _subChannelId, info.stream_type, info);
+          }
+          */
 				}        								
       }
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
@@ -1687,7 +1698,8 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       return false;
-    }
+    }I mean.
+
 #endif
     #endregion
     #endregion
