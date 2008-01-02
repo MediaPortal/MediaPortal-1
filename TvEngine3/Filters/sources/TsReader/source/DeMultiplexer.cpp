@@ -538,7 +538,7 @@ void CDeMultiplexer::Start()
   DWORD dwBytesProcessed=0;
   while (ReadFromFile(false,false))
   {
-    if (dwBytesProcessed>1000000 || GetAudioStreamCount()>0)
+    if (dwBytesProcessed>5000000 || GetAudioStreamCount()>0)
     {
       m_reader->SetFilePointer(0,FILE_BEGIN);
       Flush();
