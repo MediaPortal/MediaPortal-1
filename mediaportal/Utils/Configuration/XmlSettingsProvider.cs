@@ -41,19 +41,23 @@ namespace MediaPortal.Profile
     {
       filename = xmlFileName;
       document = new XmlDocument();
-      if (File.Exists(filename))
+      bool docLoaded = false;
+      try
       {
         document.Load(filename);
-        if (document.DocumentElement == null) document = null;
+        if (document.DocumentElement == null) 
+          document = null;
       }
-      else if (File.Exists(filename + ".bak"))
+      catch (Exception ex)
       {
-        document.Load(filename + ".bak");
+        if (File.Exists(filename + ".bak"))
+          document.Load(filename + ".bak");
+        if (File.Exists(filename + ".xml"))
+          File.Delete(filename + ".xml");
         if (document.DocumentElement == null) document = null;
       }
       if (document == null)
         document = new XmlDocument();
-
     }
     public string FileName
     {
