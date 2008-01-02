@@ -365,6 +365,22 @@ STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descrip
 			FAKE_TELETEXT_PID++;
 			m_multiPlexer.AddPesStream(pid,false,false,true);
 		}
+		else if(descriptor_tag == DESCRIPTOR_DVB_SUBTITLING){
+			PidInfo info;
+			info.realPid=pid;
+			info.fakePid=FAKE_SUBTITLE_PID;
+			info.seenStart=false;
+			info.ContintuityCounter=0;
+			//strcpy(info.language,language);
+			int descriptor_length = descriptor_data[1] + 2;
+			memcpy(info.descriptor_data,descriptor_data,descriptor_length);
+			info.descriptor_valid = true;
+			info.serviceType=0x06;
+			m_vecPids.push_back(info);
+			LogDebug("Timeshifter:add (with descriptor) subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+			FAKE_SUBTITLE_PID++;
+			m_multiPlexer.AddPesStream(pid,false,false,true);
+		}
 		else if (descriptor_tag == DESCRIPTOR_MPEG_ISO639_Lang)
 		{			  			 
 			PidInfo info;
@@ -408,7 +424,7 @@ STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descrip
 		// feel free to add more descriptor types here, they will automatically work with 
 		// WriteFakePMT as the descriptor is given
 		else{
-			LogDebug("WARNING: AddStreamWithDesc(pid,descriptor) doesnt support descriptor type %X, ignoring", descriptor_tag);
+			LogDebug("WARNING: AddStreamWithDesc(pid,descriptor) doesnt support descriptor type 0x%x, ignoring", descriptor_tag);
 		}
 	}
 	catch(...)

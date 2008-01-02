@@ -508,6 +508,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                       pidInfo.isTeletext = false;
                       pidInfo.isDVBSubtitle = true;
                       pidInfo.stream_type = 0x6;
+                      pidInfo.SetDescriptorData(data);
                       pidInfo.language = DVB_SubtitleDescriptior(data);
                     }
                     break;

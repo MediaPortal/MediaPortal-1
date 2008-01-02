@@ -1186,6 +1186,12 @@ namespace TvLibrary.Implementations.DVB
 								//Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
 								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
 							}
+              else if (info.isDVBSubtitle)
+              {
+                Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Subtitles))", _subChannelId, info.stream_type, info);
+                //Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
+                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
+              }
 						}
 					}					
 				}
