@@ -408,6 +408,8 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       LoadAll();
+      string dllsToLoad = "";
+      string dllsToSkip = "";
       using (Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         foreach (ListViewItem item in listViewPlugins.Items)
@@ -419,8 +421,16 @@ namespace MediaPortal.Configuration.Sections
           bool isPlugins = itemTag.IsPlugins;
 
           xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), isEnabled);
-          xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DllName, isEnabled);
-
+          if (isEnabled)
+          {
+            if (dllsToLoad.IndexOf(itemTag.DllName) == -1)
+              dllsToLoad += itemTag.DllName + ";";
+          }
+          else
+          {
+            if (dllsToSkip.IndexOf(itemTag.DllName) == -1)
+              dllsToSkip += itemTag.DllName + ";";
+          }
           if ((isEnabled) && (!isHome && !isPlugins))
           {
             isHome = true;
@@ -432,6 +442,24 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), isPlugins);
             xmlwriter.SetValueAsBool("pluginswindows", itemTag.Type, isEnabled);
           }
+        }
+        string[] dLoad = dllsToLoad.Split(';');
+        foreach (string dll in dLoad)
+        {
+          if (dll == "") continue;
+          if (dllsToSkip.IndexOf(dll+";")!=-1)
+            dllsToSkip=dllsToSkip.Remove(dllsToSkip.IndexOf(dll+";"),dll.Length+1);
+        }
+        foreach (string dll in dLoad)
+        {
+          if (dll == "") continue;
+          xmlwriter.SetValueAsBool("pluginsdlls", dll, true);
+        }
+        string[] dSkip = dllsToSkip.Split(';');
+        foreach (string dll in dSkip)
+        {
+          if (dll == "") continue;
+          xmlwriter.SetValueAsBool("pluginsdlls", dll, false);
         }
       }
     }
@@ -563,7 +591,6 @@ namespace MediaPortal.Configuration.Sections
       {
         itemTag.IsEnabled = itemTag.SetupForm.DefaultEnabled();
       }
-
       updateListViewItem(listViewPlugins.FocusedItem);
     }
 
