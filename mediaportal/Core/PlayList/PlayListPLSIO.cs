@@ -135,13 +135,13 @@ namespace MediaPortal.Playlists
           if (durationLine.Length > 0 && infoLine.Length > 0 && fileName.Length > 0)
           {
             int duration = System.Int32.Parse(durationLine);
-            duration *= 1000;
-
+           
             string tmp = fileName.ToLower();
             PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
             if (tmp.IndexOf("http:") < 0 && tmp.IndexOf("mms:") < 0 && tmp.IndexOf("rtp:") < 0)
             {
               MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
+              newItem.FileName = fileName;
               newItem.Type = PlayListItem.PlayListItemType.AudioStream;
             }           
             playlist.Add(newItem);
