@@ -383,14 +383,17 @@ STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descrip
 		}
 		else if (descriptor_tag == DESCRIPTOR_MPEG_ISO639_Lang)
 		{			  			 
+			if (m_pcrPid == pid)
+			{
+				FAKE_PCR_PID = FAKE_AUDIO_PID;
+			}
 			PidInfo info;
 			info.realPid=pid;
 			info.fakePid=FAKE_AUDIO_PID;
 			info.seenStart=false;
 			if (isMpeg1)
 			{
-				// Should be mapped to MPEG2 because otherwise not playable
-			  info.serviceType = SERVICE_TYPE_AUDIO_MPEG2;
+			  info.serviceType = SERVICE_TYPE_AUDIO_MPEG1;
 			}
 			else if (isMpeg2)
 			{
