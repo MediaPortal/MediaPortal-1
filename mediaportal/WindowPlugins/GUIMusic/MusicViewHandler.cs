@@ -327,7 +327,10 @@ namespace MediaPortal.GUI.Music
           if (whereClause != "")
             whereClause += " and ";
 
-          whereClause += String.Format("strAlbumArtist like '%| {0} |%'", currentSong.Artist);
+          string selectedArtist = currentSong.Artist;
+          Database.DatabaseUtility.RemoveInvalidChars(ref selectedArtist);
+        
+          whereClause += String.Format("strAlbumArtist like '%| {0} |%'", selectedArtist);
         }
 
         sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);
