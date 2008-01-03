@@ -40,28 +40,20 @@ namespace TvLibrary
     DateTime _grabStartTime;
     private List<EpgChannel> _epg;
     private bool _updateThreadRunning;
-    private string _epgLanguages;
-    private bool _storeOnlySelectedChannels;
-    private string _titleTemplate;
-    private string _descriptionTemplate;
+    private EpgDBUpdater _dbUpdater;
     #endregion
 
     public TimeShiftingEPGGrabber(ITVCard card)
     {
       _card = card;
       TvBusinessLayer layer = new TvBusinessLayer();
-      _epgLanguages = layer.GetSetting("epgLanguages").Value;
-      _storeOnlySelectedChannels = (layer.GetSetting("epgStoreOnlySelected","no").Value=="yes");
-      _grabStartTime = DateTime.Now;
-      _epgTimer = new System.Timers.Timer();
       double timeout;
       if (!double.TryParse(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value, out timeout))
         timeout = 2;
       _epgTimer.Interval = timeout*60000;
       _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
       _updateThreadRunning = false;
-      _titleTemplate = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
-      _descriptionTemplate = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
+      _dbUpdater = new EpgDBUpdater("TimeshiftingEpgGrabber", false);
     }
     public bool StartGrab()
     {
@@ -82,7 +74,7 @@ namespace TvLibrary
       TimeSpan ts = DateTime.Now - _grabStartTime;
       if (ts.TotalMinutes > 2)
       {
-        Log.Log.Epg("TimeshiftingEPG: timeout after {1} mins", ts.TotalMinutes);
+        Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {1} mins", ts.TotalMinutes);
         _epgTimer.Enabled = false;
         _card.AbortGrabbing();
       }
@@ -116,13 +108,13 @@ namespace TvLibrary
       }
       if (grabbedEpg == null)
       {
-        Log.Log.Epg("TimeshiftingEPG: No epg received.");
+        Log.Log.Epg("TimeshiftingEpgGrabber: No epg received.");
         return 0;
       }
       _epg =new List<EpgChannel>(grabbedEpg);
-      Log.Log.Epg("TimeshiftingEPG: OnEPGReceived got {0} channels",_epg.Count);
+      Log.Log.Epg("TimeshiftingEpgGrabber: OnEPGReceived got {0} channels",_epg.Count);
       if (_epg.Count == 0)
-        Log.Log.Epg("TimeshiftingEPG: No epg received.");
+        Log.Log.Epg("TimeshiftingEpgGrabber: No epg received.");
       else
       {
         Thread workerThread = new Thread(new ThreadStart(UpdateDatabaseThread));
@@ -136,57 +128,6 @@ namespace TvLibrary
     #endregion
 
     #region Database update routines
-    private void GetEPGLanguage(List<EpgLanguageText> texts,out string title, out string description, out string genre,out int starRating,out string classification, out int parentalRating)
-    {
-      title = "";
-      description = "";
-      genre = "";
-      starRating = 0;
-      classification = "";
-      
-      parentalRating = -1;
-
-      if (texts.Count != 0)
-      {
-        int offset = -1;
-        for (int i = 0; i < texts.Count; ++i)
-        {
-          if (texts[0].Language.ToLower() == "all")
-          {
-            offset = i;
-            break;
-          }
-          if (_epgLanguages.Length == 0 || _epgLanguages.ToLower().IndexOf(texts[i].Language.ToLower()) >= 0)
-          {
-            offset = i;
-            break;
-          }
-        }
-        if (offset != -1)
-        {
-          title = texts[offset].Title;
-          description = texts[offset].Description;
-          genre = texts[offset].Genre;
-          starRating = texts[offset].StarRating;
-          classification = texts[offset].Classification;
-          parentalRating = texts[offset].ParentalRating;
-        }
-        else
-        {
-          title = texts[0].Title;
-          description = texts[0].Description;
-          genre = texts[0].Genre;
-          starRating = texts[0].StarRating;
-          classification = texts[0].Classification;
-          parentalRating = texts[0].ParentalRating;
-        }
-      }
-
-      if (title == null) title = "";
-      if (description == null) description = "";
-      if (genre == null) genre = "";
-      if (classification == null) classification = "";
-    }
     private void UpdateDatabaseThread()
     {
       if (_epg == null)
@@ -196,110 +137,12 @@ namespace TvLibrary
       System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
       TvBusinessLayer layer = new TvBusinessLayer();
       foreach (EpgChannel epgChannel in _epg)
-      {
-        int iInserted = 0;
-        DVBBaseChannel dvbChannel = (DVBBaseChannel)epgChannel.Channel;
-        if (epgChannel.Programs.Count == 0)
-        {
-          Log.Log.Epg("TimeshiftingEPG: no epg info for channel found with nid={0} tid={1} sid={2}", dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
-          continue;
-        }
-        Channel dbChannel = layer.GetChannelByTuningDetail(dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
-        if (dbChannel == null)
-        {
-          Log.Log.Epg("TimeshiftingEPG: no channel found for nid={0} tid={1} sid={2}", dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
-          foreach (EpgProgram ei in epgChannel.Programs)
-          {
-            string title = "";
-            if (ei.Text.Count > 0)
-              title = ei.Text[0].Title;
-            Log.Log.Epg("                   -> {0}-{1}  {2}", ei.StartTime, ei.EndTime, title);
-          }
-          continue;
-        }
-        if (_storeOnlySelectedChannels)
-        {
-          if (!dbChannel.GrabEpg)
-          {
-            Log.Log.Epg("TimeshiftingEPG: channel {0} is not configured to grab epg.", dbChannel.DisplayName);
-            continue;
-          }
-        }
-        Gentle.Framework.Broker.Execute("delete from program where idChannel=" + dbChannel.IdChannel);
-        EpgProgram lastProgram = null;
-        for (int i = 0; i < epgChannel.Programs.Count; i++)
-        {
-          EpgProgram epgProgram = epgChannel.Programs[i];
-          // Check for dupes
-          if (lastProgram != null)
-          {
-            if (epgProgram.StartTime == lastProgram.StartTime && epgProgram.EndTime == lastProgram.EndTime)
-              continue;
-          }
-            
-          string title; string description; string genre; int starRating; string classification; int parentRating;
-          GetEPGLanguage(epgProgram.Text, out title, out description, out genre, out starRating, out classification, out parentRating);
-          NameValueCollection values = new NameValueCollection();
-          values.Add("%TITLE%", title);
-          values.Add("%DESCRIPTION%", description);
-          values.Add("%GENRE%", genre);
-          values.Add("%STARRATING%", starRating.ToString());
-          values.Add("%STARRATING_STR%", GetStarRatingStr(starRating));
-          values.Add("%CLASSIFICATION%", classification);
-          values.Add("%PARENTALRATING%", parentRating.ToString());
-          values.Add("%NEWLINE%", Environment.NewLine);
-          Program prog = new Program(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime, EvalTemplate(_titleTemplate, values), EvalTemplate(_descriptionTemplate, values), genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification, parentRating);
-          prog.Persist();
-          iInserted++;
-          lastProgram = epgProgram;
-        }
-        dbChannel.LastGrabTime = DateTime.Now;
-        dbChannel.Persist();
-        Log.Log.Epg("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
-      }
-      Log.Log.Epg("TimeshiftingEPG: Finished updating the database.");
+        _dbUpdater.UpdateEpgForChannel(epgChannel);
+      Log.Log.Epg("TimeshiftingEpgGrabber: Finished updating the database.");
       _epg.Clear();
       _epg = null;
       _card.IsEpgGrabbing = false;
       _updateThreadRunning = false;
-    }
-    #endregion
-
-    #region Template helper
-    private string GetStarRatingStr(int starRating)
-    {
-      string rating = "";
-      switch (starRating)
-      {
-        case 1:
-          rating = "*";
-          break;
-        case 2:
-          rating = "*+";
-          break;
-        case 3:
-          rating = "**";
-          break;
-        case 4:
-          rating = "**+";
-          break;
-        case 5:
-          rating = "***";
-          break;
-        case 6:
-          rating = "***+";
-          break;
-        case 7:
-          rating = "****";
-          break;
-      }
-      return rating;
-    }
-    private string EvalTemplate(string template, NameValueCollection values)
-    {
-      for (int i = 0; i < values.Count; i++)
-        template = template.Replace(values.Keys[i], values[i]);
-      return template;
     }
     #endregion
   }

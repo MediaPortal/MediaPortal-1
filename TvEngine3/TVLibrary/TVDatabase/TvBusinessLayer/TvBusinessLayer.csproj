@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BusinessLayer.cs" />
+    <Compile Include="EpgDBUpdater.cs" />
     <Compile Include="NowAndNext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

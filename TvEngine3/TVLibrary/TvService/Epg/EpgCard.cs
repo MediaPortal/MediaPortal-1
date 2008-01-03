@@ -45,7 +45,6 @@ namespace TvService
     #region const
     const int EpgGrabInterval = 60;//secs
     int _epgTimeOut = (10 * 60);// 10 mins
-    int _epgReGrabAfter = 240;//4 hours
     #endregion
 
     #region enums
@@ -76,9 +75,7 @@ namespace TvService
     bool _disposed = false;
     Card _card;
     User _user;
-    bool _storeOnlySelectedChannels;
-    string _titleTemplate;
-    string _descriptionTemplate;
+    EpgDBUpdater _dbUpdater;
     #endregion
 
     #region ctor
@@ -99,11 +96,7 @@ namespace TvService
       _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
       _eventHandler = new TvServerEventHandler(controller_OnTvServerEvent);
-      TvBusinessLayer layer = new TvBusinessLayer();
-      _titleTemplate = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
-      _descriptionTemplate = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
-      Setting setting = layer.GetSetting("epgStoreOnlySelected");
-      _storeOnlySelectedChannels = (setting.Value == "yes");
+      _dbUpdater = new EpgDBUpdater("IdleEpgGrabber", true);
       controller.OnTvServerEvent += _eventHandler;
     }
 
@@ -179,11 +172,11 @@ namespace TvService
       try
       {
         //is epg grabbing in progress?
-        if (_state == EpgState.Idle)
+        /*if (_state == EpgState.Idle)
         {
           Log.Epg("Epg: card:{0} OnEpgReceived while idle", _user.CardId);
           return 0;
-        }
+        }*/
         //is epg grabber already updating the database?
 
         if (_state == EpgState.Updating)
@@ -215,7 +208,7 @@ namespace TvService
         //did we receive epg info?
         if (epg.Count == 0)
         {
-          //no epg found for this channel
+          //no epg found for this transponder
           Log.Epg("Epg: card:{0} no epg found", _user.CardId);
           if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
           {
@@ -278,12 +271,7 @@ namespace TvService
       }
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
-      if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
-      {
-        _epgReGrabAfter = 240;
-      }
-      s = layer.GetSetting("timeoutEPG", "10");
+      Setting s = layer.GetSetting("timeoutEPG", "10");
       if (Int32.TryParse(s.Value, out _epgTimeOut) == false)
       {
         _epgTimeOut = 10;
@@ -374,6 +362,7 @@ namespace TvService
                 _transponders[_currentTransponderIndex].InUse = false;
                 _currentTransponderIndex = -1;
               }
+              _reEntrant = false;
               return;
             }
           }
@@ -386,21 +375,6 @@ namespace TvService
             //and go back to idle mode
             Log.Epg("Epg: card:{0} timeout after {1} mins", _user.CardId, ts.TotalMinutes);
             _tvController.AbortEPGGrabbing(_user.CardId);
-/*            if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
-            {
-              Transponder transponder = _transponders[_currentTransponderIndex];
-              transponder.OnTimeOut();
-              transponder.InUse = false;
-              _currentTransponderIndex = -1;
-            }
-            _tvController.StopGrabbingEpg(_user);
-            //DatabaseManager.Instance.SaveChanges();
-            //DatabaseManager.Instance.ClearQueryCache();
-
-
-            _grabStartTime = DateTime.MinValue;
-            _state = EpgState.Idle;
-            _user.CardId = -1;*/
           }
         }
       }
@@ -675,63 +649,28 @@ namespace TvService
         }
         return;
       }
-      //remove old programs from the epg
-      Log.Epg("Epg: card:{0} Remove old programs from database", _user.CardId);
       TvBusinessLayer layer = new TvBusinessLayer();
-      layer.RemoveOldPrograms();
-      IList channels = TuningDetail.ListAll();
-      bool timeOut = false;
       Log.Epg("Epg: card:{0} Updating database with new programs", _user.CardId);
+      bool timeOut = false;
       try
       {
-        int channelNr = 0;
         foreach (EpgChannel epgChannel in _epg)
         {
-          channelNr++;
-          bool found = false;
-
-          foreach (TuningDetail detail in channels)
+          _dbUpdater.UpdateEpgForChannel(epgChannel);
+          if (_state != EpgState.Updating)
           {
-            if (_isRunning == false) return;
-            DVBBaseChannel dvbChannel = epgChannel.Channel as DVBBaseChannel;
-            if (detail.NetworkId == dvbChannel.NetworkId &&
-                detail.TransportId == dvbChannel.TransportId &&
-                detail.ServiceId == dvbChannel.ServiceId)
-            {
-              found = true;
-
-              bool success = UpdateDatabaseChannel(channelNr, epgChannel, GetChannel(detail.IdChannel));
-              if (_state != EpgState.Updating)
-              {
-                Log.Epg("Epg: card:{0} stopped updating state changed", _user.CardId);
-                timeOut = true;
-                return;
-              }
-              if (IsCardIdle(_user) == false)
-              {
-                Log.Epg("Epg: card:{0} stopped updating card not idle", _user.CardId);
-                timeOut = true;
-                return;
-              }
-              if (success)
-              {
-                //SaveOptions options = new SaveOptions();
-                //options.IsTransactional = false;
-                //options.UpdateBatchSize = 5000;
-                //DatabaseManager.Instance.SaveChanges(options);
-                //DatabaseManager.Instance.SaveChanges();
-                Thread.Sleep(500);
-              }
-              break;
-            }
+            Log.Epg("Epg: card:{0} stopped updating state changed", _user.CardId);
+            timeOut = true;
+            return;
           }
-          if (!found)
+          if (IsCardIdle(_user) == false)
           {
-            DVBBaseChannel dvbChannel = epgChannel.Channel as DVBBaseChannel;
-            Log.Epg("EPG: no channel found for {0} networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",
-                     epgChannel.Channel.Name,dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
+            Log.Epg("Epg: card:{0} stopped updating card not idle", _user.CardId);
+            timeOut = true;
+            return;
           }
         }
+        Log.Epg("Epg: card:{0} Finished updating the database.",_user.CardId);
       }
       catch (Exception ex)
       {
@@ -756,154 +695,8 @@ namespace TvService
         }
         _state = EpgState.Idle;
         _user.CardId = -1;
-        Gentle.Common.CacheManager.Clear();
 				_tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ProgramUpdated));
       }
-    }
-
-    /// <summary>
-    /// method which updates the epg in the database for a single channel
-    /// </summary>
-    /// <param name="channelNr">channel number (for logging)</param>
-    /// <param name="epgChannel">EpgChannel object containing all epg data for this channel</param>
-    /// <param name="channel">channel database object</param>
-    /// <returns>true if succeeded otherwise false</returns>
-    bool UpdateDatabaseChannel(int channelNr, EpgChannel epgChannel, Channel channel)
-    {
-      if (channel == null)
-      {
-        return false;
-      }
-      if (_storeOnlySelectedChannels)
-      {
-        if (!channel.GrabEpg)
-        {
-          Log.Epg("Epg: card:{0} :{1} {2} not needed. Channel not configured to grab/store epg", _user.CardId, channelNr, channel.Name);
-          return false;
-        }
-      }
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("epgLanguages");
-      string epgLanguages = setting.Value;
-
-      TimeSpan ts = DateTime.Now - channel.LastGrabTime;
-      if (ts.TotalMinutes < _epgReGrabAfter)
-      {
-        Log.Epg("Epg: card:{0} :{1} {2} not needed lastUpdate:{3}", _user.CardId, channelNr, channel.Name, channel.LastGrabTime);
-        return false;
-      }
-      Log.Epg("Epg: card:{0} :{1} {2}  lastUpdate:{3}", _user.CardId, channelNr, channel.Name, channel.LastGrabTime);
-
-      //IList progs = channel.ReferringProgram();
-      /*
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TvDatabase.Program));
-      sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
-      sb.AddOrderByField(false, "starttime");
-      sb.SetRowLimit(5);
-      SqlStatement stmt = sb.GetStatement(true);
-      IList programsInDbs = ObjectFactory.GetCollection(typeof(TvDatabase.Program), stmt.Execute());
-
-      DateTime lastProgram = DateTime.MinValue;
-      if (programsInDbs.Count > 0)
-      {
-        TvDatabase.Program p = (TvDatabase.Program)programsInDbs[0];
-        lastProgram = p.EndTime;
-      }*/
-      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof(TvDatabase.Program));
-      sb.AddConstraint(Operator.Equals,"idChannel",channel.IdChannel);
-      SqlStatement stmt=sb.GetStatement();
-      stmt.Execute();
-
-      string lastTitle = "";
-      EpgProgram lastProgram = null;
-      foreach (EpgProgram program in epgChannel.Programs)
-      {
-        if (_state != EpgState.Updating)
-        {
-          Log.Epg("Epg: card:{0} stopped updating state changed", _user.CardId);
-          return false;
-        }
-        if (IsCardIdle(_user) == false)
-        {
-          Log.Epg("Epg: card:{0} updating card not idle", _user.CardId);
-          return false;
-        }
-        if (lastProgram != null)
-        {
-          if (lastProgram.StartTime == program.StartTime && lastProgram.EndTime == program.EndTime)
-          {
-            //Log.Error("Dupe skipped: Channel={0}, starttime={1}, endtime={2}", channel.DisplayName, program.StartTime.ToString(), program.EndTime);
-            continue;
-          }
-        }
-        //if (program.EndTime <= lastProgram) continue;
-        string title = "";
-        string description = "";
-        string genre = "";
-        int starRating = 0;
-        string classification = "";
-        int parentalRating = -1;
-
-        if (program.Text.Count != 0)
-        {
-          int offset = -1;
-          for (int i = 0; i < program.Text.Count; ++i)
-          {
-            if (program.Text[0].Language.ToLower() == "all")
-            {
-              offset = i;
-              break;
-            }
-            if (epgLanguages.Length == 0 || epgLanguages.ToLower().IndexOf(program.Text[i].Language.ToLower()) >= 0)
-            {
-              offset = i;
-              break;
-            }
-          }
-          if (offset != -1)
-          {
-            title = program.Text[offset].Title;
-            description = program.Text[offset].Description;
-            genre = program.Text[offset].Genre;
-            starRating = program.Text[offset].StarRating;
-            classification = program.Text[offset].Classification;
-            parentalRating = program.Text[offset].ParentalRating;
-          }
-          else
-          {
-            title = program.Text[0].Title;
-            description = program.Text[0].Description;
-            genre = program.Text[0].Genre;
-            starRating = program.Text[0].StarRating;
-            classification = program.Text[0].Classification;
-            parentalRating = program.Text[0].ParentalRating;
-          }
-        }
-
-        if (title == null) title = "";
-        if (description == null) description = "";
-        if (genre == null) genre = "";
-        if (classification == null) classification = "";
-
-        NameValueCollection values = new NameValueCollection();
-        values.Add("%TITLE%", title);
-        values.Add("%DESCRIPTION%", description);
-        values.Add("%GENRE%", genre);
-        values.Add("%STARRATING%", starRating.ToString());
-        values.Add("%STARRATING_STR%", GetStarRatingStr(starRating));
-        values.Add("%CLASSIFICATION%", classification);
-        values.Add("%PARENTALRATING%", parentalRating.ToString());
-        values.Add("%NEWLINE%", Environment.NewLine);
-        TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, EvalTemplate(_titleTemplate,values), EvalTemplate(_descriptionTemplate,values), genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentalRating);
-        newProgram.Persist();
-        lastProgram = program;
-        //lastProgram = program.EndTime;
-
-      }//foreach (EpgProgram program in epgChannel.Programs)
-
-      channel.LastGrabTime = DateTime.Now;
-      channel.Persist();
-      return true;
     }
     #endregion
 
@@ -977,41 +770,6 @@ namespace TvService
       return Channel.Retrieve(idChannel);
     }
 
-    private string GetStarRatingStr(int starRating)
-    {
-      string rating = "";
-      switch (starRating)
-      {
-        case 1:
-          rating = "*";
-          break;
-        case 2:
-          rating = "*+";
-          break;
-        case 3:
-          rating = "**";
-          break;
-        case 4:
-          rating = "**+";
-          break;
-        case 5:
-          rating = "***";
-          break;
-        case 6:
-          rating = "***+";
-          break;
-        case 7:
-          rating = "****";
-          break;
-      }
-      return rating;
-    }
-    private string EvalTemplate(string template, NameValueCollection values)
-    {
-      for (int i = 0; i < values.Count; i++)
-        template = template.Replace(values.Keys[i], values[i]);
-      return template;
-    }
     #endregion
     #endregion
 

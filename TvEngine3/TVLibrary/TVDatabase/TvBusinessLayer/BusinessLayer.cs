@@ -976,10 +976,10 @@ namespace TvDatabase
     public void RemoveOldPrograms(int idChannel)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
-      DateTime dtThisMorning = DateTime.Now.Date;
+      DateTime dtToKeep = DateTime.Now.AddHours(-4.0);
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
-      sb.AddConstraint(String.Format("startTime < '{0}'", dtThisMorning.ToString(GetDateTimeString(), mmddFormat)));
+      sb.AddConstraint(String.Format("startTime < '{0}'", dtToKeep.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
@@ -1742,6 +1742,12 @@ namespace TvDatabase
       if (groups.Count == 0) return null;
       return (RadioChannelGroup)groups[0];
     }
+    #endregion
+
+    #region EPG Updating
+    string _titleTemplate;
+    string _descriptionTemplate;
+    string _epgLanguages;
     #endregion
   }
 }

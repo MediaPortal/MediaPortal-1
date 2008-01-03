@@ -177,6 +177,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="34_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="34_upgrade_sqlserver_database.sql" />
     <None Include="App.config" />
     <EmbeddedResource Include="create_mysql_database.sql" />
     <EmbeddedResource Include="create_sqlserver_database.sql" />

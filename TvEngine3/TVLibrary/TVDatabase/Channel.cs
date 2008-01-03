@@ -49,6 +49,8 @@ namespace TvDatabase
     private bool freetoair;
     [TableColumn("displayName", NotNull = true)]
     private string displayName;
+    [TableColumn("epgHasGaps")]
+    private bool epgHasGaps;
     #endregion
 
     #region Constructors
@@ -70,6 +72,7 @@ namespace TvDatabase
       this.externalId = externalId;
       this.freetoair = freetoair;
       this.displayName = displayName;
+      this.epgHasGaps = false;
     }
 
     /// <summary> 
@@ -91,6 +94,7 @@ namespace TvDatabase
       this.externalId = externalId;
       this.freetoair = freetoair;
       this.displayName = displayName;
+      this.epgHasGaps = false;
     }
     #endregion
 
@@ -225,6 +229,14 @@ namespace TvDatabase
     {
       get { return visibleInGuide; }
       set { isChanged |= visibleInGuide != value; visibleInGuide = value; }
+    }
+    /// <summary>
+    /// Property relating to database column epgHasGaps
+    /// </summary>
+    public bool EpgHasGaps
+    {
+      get { return epgHasGaps; }
+      set { isChanged |= epgHasGaps != value; epgHasGaps = value; }
     }
     #endregion
 
