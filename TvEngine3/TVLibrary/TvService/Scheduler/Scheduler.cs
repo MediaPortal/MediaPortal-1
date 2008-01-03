@@ -518,7 +518,7 @@ namespace TvService
       }
       if (cardInfo == null)
       {
-        Log.Write("Scheduler : all cards busy, check if any card is already tuned to channel:{0}", recording.Channel);
+        Log.Write("Scheduler : all cards busy, check if any card is already tuned to channel:{0}", recording.Channel.Name);
         //all cards in use, check if a card is already tuned to the channel we want to record
         foreach (CardDetail card in freeCards)
         {
@@ -541,7 +541,7 @@ namespace TvService
         //all cards in use, no card tuned to the channel, use the first one.
         TvBusinessLayer layer = new TvBusinessLayer();
         User tmpUser = new User();
-        tmpUser.CardId = freeCards[0].Id;
+				tmpUser = _tvController.GetUserForCard(freeCards[0].Id); //BAV - testing
         if ((_tvController.IsRecording(ref tmpUser) == false) && (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes"))
         {
           if (_tvController.IsTimeShifting(ref tmpUser)) { _tvController.StopTimeShifting(ref tmpUser); }
@@ -630,7 +630,7 @@ namespace TvService
         _user.CardId = recording.CardInfo.Id;
         _user.Name = string.Format("scheduler{0}", recording.Schedule.IdSchedule);
         _user.IsAdmin = true;
-        Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
+        Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
         _controller.StopRecording(ref _user);
 
         if (_controller.SupportsSubChannels(recording.CardInfo.Id) == false)
@@ -704,7 +704,7 @@ namespace TvService
     /// <param name="idSchedule">database schedule id</param>
     public void StopRecordingSchedule(int idSchedule)
     {
-      Log.Write("recList:StopRecordingSchedule{0}", idSchedule);
+      Log.Write("recList:StopRecordingSchedule {0}", idSchedule);
 
       foreach (RecordingDetail rec in _recordingsInProgressList)
       {
@@ -740,7 +740,7 @@ namespace TvService
     /// <param name="cardId">id of the card</param>
     public void StopRecordingOnCard(int cardId)
     {
-      Log.Write("recList:StopRecordingOnCard{0}", cardId);
+      Log.Write("recList:StopRecordingOnCard {0}", cardId);
       foreach (RecordingDetail rec in _recordingsInProgressList)
       {
         if (rec.CardInfo.Id == cardId)
