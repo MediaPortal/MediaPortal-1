@@ -827,7 +827,7 @@ namespace TvPlugin
 
 			// if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
       // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
-      bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && _resumed);
+			bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && _resumed && _autoTurnOnTv);
       bool useDelay = false;
 
 			if (_resumed && !showlastActModFS)
@@ -851,8 +851,20 @@ namespace TvPlugin
             tvDelayThread.Start();              
           }
           else //no delay needed here, since this is when the system is being used normally
-          {            
-            g_Player.ShowFullScreenWindow();
+          {
+						// wait for timeshifting to complete
+						int waits = 0;
+						while (_playbackStopped && waits < 100)
+						{
+							//Log.Debug("TVHome.OnPageLoad(): waiting for timeshifting to start");
+							Thread.Sleep(100);
+							waits++;
+						}
+						if (!_playbackStopped)
+						{
+							//Log.Debug("TVHome.OnPageLoad(): timeshifting has started - waits: {0}", waits);
+							g_Player.ShowFullScreenWindow();
+						}
           }
 				}
         else if (_autoFullScreenOnly && !g_Player.FullScreen && (PreviousWindowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN))
@@ -871,7 +883,20 @@ namespace TvPlugin
     {
       //we have to use a small delay before calling tvfullscreen.                                    
       Thread.Sleep(200);
-      g_Player.ShowFullScreenWindow();
+
+			// wait for timeshifting to complete
+			int waits = 0;
+			while (_playbackStopped && waits < 100)
+			{
+				//Log.Debug("TVHome.OnPageLoad(): waiting for timeshifting to start");
+				Thread.Sleep(100);
+				waits++;
+			}
+			if (!_playbackStopped)
+			{
+				//Log.Debug("TVHome.OnPageLoad(): timeshifting has started - waits: {0}", waits);
+				g_Player.ShowFullScreenWindow();
+			}
     }
 
 
