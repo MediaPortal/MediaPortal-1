@@ -488,6 +488,11 @@ namespace TvPlugin
     {
       _playbackStopped = true;
       if (type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio) return;
+
+      // todo
+      // check the possible reason why playback was stopped
+      // maybe the server kicked the client b/c a recording on another transponder was due.
+
       //GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       //if (currentWindow.IsTv) return;
       if (TVHome.Card.IsTimeShifting == false) return;
@@ -2027,8 +2032,9 @@ namespace TvPlugin
           }
           if (wasPlaying) //show yes no dialogue
           {
-            string[] lines = errorMessage.Split('\r');
-            pDlgYesNo.SetHeading(605);//my tv
+            string[] lines = errorMessage.Split('\r');            
+            string caption = GUILocalizeStrings.Get(605) + " - " + GUILocalizeStrings.Get(1512);
+            pDlgYesNo.SetHeading(caption);//my tv
             pDlgYesNo.SetLine(1, channel.Name);
             pDlgYesNo.SetLine(2, lines[0]);            
             if (lines.Length > 1)
