@@ -90,6 +90,7 @@ namespace MediaPortal.Plugins.Process
     private List<IStandbyHandler> _standbyHandlers;
     private List<IWakeupHandler> _wakeupHandlers;
     private bool _idle;
+    private bool _shutdownInitiated = false;
     /// <summary>
     /// Indicating whether the PowerScheduler is in standby-mode.
     /// </summary>
@@ -253,7 +254,7 @@ namespace MediaPortal.Plugins.Process
     }
 
     private void SafeExitWindows(RestartOptions how, bool force, MediaPortal.Util.WindowsController.AfterExitWindowsHandler after)
-    {
+    {    
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
         // shutdown method and force mode are ignored by delegated suspend/hibernate requests
@@ -265,8 +266,15 @@ namespace MediaPortal.Plugins.Process
         }
 
         try
-        {
-          RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", (int)how, force);
+        {          
+          // persist the next wakeup datetime, this way 'resume last active module' feature is able to tell the difference between a wakeup done by 
+          // a user or by the PS plugin
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          {                        
+            DateTime nextWakeUp = GetNextWakeupTime(DateTime.Now);            
+            xmlwriter.SetValue("psclientplugin", "nextwakeup", nextWakeUp.ToString());
+            string res = xmlwriter.GetValueAsString("psclientplugin", "nextwakeup", DateTime.MaxValue.ToString());
+          }
         }
         catch (Exception e)
         {
@@ -331,7 +339,7 @@ namespace MediaPortal.Plugins.Process
       bool disallow = DisAllowShutdown;
 
       Log.Info("PSClientPlugin: Shutdown is allowed {0} ; forced: {1}", !disallow, force);
-
+      
       if (disallow && !force)
       {
         lock (this)
@@ -598,11 +606,10 @@ namespace MediaPortal.Plugins.Process
         int activeWindow = GUIWindowManager.ActiveWindow;
         if (activeWindow != homeWindow && activeWindow != (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
         {
-          LogVerbose("PSClientPlugin.UserShutdownNow: going to home screen");
-
-          GUIWindowManager.ActivateWindow(homeWindow);
-
-          LogVerbose("PSClientPlugin.UserShutdownNow: gone to home screen");
+          //LogVerbose("PSClientPlugin.UserShutdownNow: going to home screen");
+          //GUIWindowManager.ActivateWindow(homeWindow);
+          _shutdownInitiated = true;
+          //LogVerbose("PSClientPlugin.UserShutdownNow: gone to home screen");
         }
       }
       return 0;
@@ -838,12 +845,11 @@ namespace MediaPortal.Plugins.Process
     public bool UserInterfaceIdle
     {
       get
-      {
+      {                
         if (!g_Player.Playing)
         {
           // No media is playing, see if user is still active then
-
-          if (_settings.GetSetting("HomeOnly").Get<bool>())
+          if (_settings.GetSetting("HomeOnly").Get<bool>() && !_shutdownInitiated)
           {
             int activeWindow = GUIWindowManager.ActiveWindow;
             if (activeWindow == (int)GUIWindow.Window.WINDOW_HOME || activeWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME ||
