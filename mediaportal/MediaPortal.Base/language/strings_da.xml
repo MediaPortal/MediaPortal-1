@@ -926,6 +926,7 @@
         <String id="1509">Ingen tuning-detaljer for kanalen</String>
         <String id="1510">Forbindelsen til TV-server tabt</String>
         <String id="1511">Ingen aktive streams</String>
+        <String id="1512">Start forrige kanal?</String>
         <String id="1950" prefix="Min ">Status</String>
         <String id="1951">Harddisk</String>
         <String id="1952">Blæser</String>
