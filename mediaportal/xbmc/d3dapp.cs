@@ -1736,6 +1736,30 @@ namespace MediaPortal
         showLastActiveModule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
         lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
         lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
+
+        // check if system has been awaken by user or psclient.
+        // if by psclient, DO NOT resume last active module
+        if (showLastActiveModule)
+        {
+          string psClientNextwakeupStr = xmlreader.GetValueAsString("psclientplugin", "nextwakeup", DateTime.MaxValue.ToString());
+          DateTime now = DateTime.Now;
+          DateTime psClientNextwakeupDate = Convert.ToDateTime(psClientNextwakeupStr);
+          TimeSpan ts = psClientNextwakeupDate - now;
+
+          Log.Debug("ShowLastActiveModule() - psclientplugin nextwakeup {0}", psClientNextwakeupStr);
+          Log.Debug("ShowLastActiveModule() - timediff in minutes {0}", ts.TotalMinutes);
+
+          if (ts.TotalMinutes < 2 && ts.TotalMinutes > -2)
+          {
+            Log.Debug("ShowLastActiveModule() - system probably awoken by PSclient, ignoring ShowLastActiveModule");
+            return false;
+          }
+          else
+          {
+            Log.Debug("ShowLastActiveModule() - system probably awoken by user, continuing with ShowLastActiveModule");
+          }
+        }
+        
       }
 
       Log.Debug("d3dapp: ShowLastActiveModule active : {0}", showLastActiveModule); 
