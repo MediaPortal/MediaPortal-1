@@ -925,6 +925,7 @@
     <String id="1509">Ingen kanal-informasjon for denne kanalen</String>
     <String id="1510">Tilkoblingen til TV Service mistet</String>
     <String id="1511">Ingen aktive streams</String>
+    <String id="1512">Tilbake til forrige kanal?</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Vifte</String>
