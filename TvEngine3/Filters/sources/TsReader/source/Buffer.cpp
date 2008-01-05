@@ -38,7 +38,6 @@ CBuffer::CBuffer()
 
 CBuffer::~CBuffer()
 {
-  
   bufferCount--;
 	delete [] m_pBuffer;
 	m_pBuffer=NULL;
@@ -117,7 +116,6 @@ byte* CBuffer::Data()
 		return NULL;
 	}
 	return m_pBuffer;
-
 }
 
 ///***************************************************************
@@ -144,14 +142,36 @@ void CBuffer::SetPcr(CPcr& firstPcr,CPcr& maxPcr)
 // Adds data contained in pBuffer to this pes packet
 void CBuffer::Add(CBuffer* pBuffer)
 {
-	memcpy(&m_pBuffer[m_iLength], pBuffer->Data(), pBuffer->Length());
-	m_iLength+=pBuffer->Length();
+	if(pBuffer && ( MAX_BUFFER_SIZE >= m_iLength + pBuffer->Length()))
+  {
+    memcpy(&m_pBuffer[m_iLength], pBuffer->Data(), pBuffer->Length());
+	  m_iLength+=pBuffer->Length();
+  }
+  else
+  {
+    LogDebug("CBuffer::Add CBuffer - sanity check failed! MAX_BUFFER_SIZE %d lenght %d", MAX_BUFFER_SIZE, pBuffer->Length()+m_iLength );
+    if(pBuffer == NULL)
+    {
+      LogDebug("  pBuffer was NULL!");
+    }
+  }
 }
 
 ///***************************************************************
 // Adds data contained to this pes packet
 void CBuffer::Add(byte* data, int len)
 {
-	memcpy(&m_pBuffer[m_iLength], data, len);
-	m_iLength+=len;
+	if((MAX_BUFFER_SIZE >= m_iLength + len ) && data) 
+  {
+    memcpy(&m_pBuffer[m_iLength], data, len);
+	  m_iLength+=len;
+  }
+  else
+  {
+    LogDebug("CBuffer::Add - sanity check failed! MAX_BUFFER_SIZE %d lenght %d", MAX_BUFFER_SIZE, m_iLength + len );
+    if(data == NULL)
+    {
+      LogDebug("  data was NULL!");
+    }
+  }
 }
