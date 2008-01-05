@@ -176,6 +176,7 @@ namespace MediaPortal.Player.Subtitles
                     {
                         ThreadStart rt = new ThreadStart(RetrieveBitmapSubtitles);
                         Thread t = new Thread(rt);
+                        t.Start();
                         t.Join();
                         CheckForPreferedLanguage();
                     }
