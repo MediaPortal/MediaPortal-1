@@ -337,7 +337,7 @@ namespace TvService
             if (channel != null)
             {
               TvDatabase.Program p = channel.CurrentProgram;
-              if (p.StartTime != history.StartTime)
+              if (p != null && p.StartTime != history.StartTime)
               {
                 history.Save();
                 existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description, p.Genre, false, 0);
