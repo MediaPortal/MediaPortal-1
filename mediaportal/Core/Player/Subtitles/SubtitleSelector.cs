@@ -116,7 +116,6 @@ namespace MediaPortal.Player.Subtitles
 
             bitmapSubtitleCache = new List<SubtitleOption>();
 
-
             RetrieveBitmapSubtitles();
 
             if (preferedLanguages.Count > 0)
@@ -167,26 +166,28 @@ namespace MediaPortal.Player.Subtitles
 
         private int OnSubtitleStreamEvent(int eid, UInt64 evalue)
         {
-            lock (syncLock)
-            {
-                if (eid == 0)
-                {
-                    Log.Debug("SubtitleSelector: ISubtitleStream alerts of update");
-                    if (currentOption == autoSelectOption)
-                    {
-                        ThreadStart rt = new ThreadStart(RetrieveBitmapSubtitles);
-                        Thread t = new Thread(rt);
-                        t.Start();
-                        t.Join();
-                        CheckForPreferedLanguage();
-                    }
-                }
-                else
-                {
-                    Log.Error("OnSubtitleStreamUpdate: Unknown event id {0}", eid);
-                }
-                return 0;
-            }
+            return 0;
+            //lock (syncLock)
+            //{
+            //    if (eid == 0)
+            //    {
+            //        Log.Debug("SubtitleSelector: ISubtitleStream alerts of update");
+            //        if (currentOption == autoSelectOption)
+            //        {
+            //            //ThreadStart rt = new ThreadStart(RetrieveBitmapSubtitles);
+            //            //Thread t = new Thread(rt);
+            //            //t.Start();
+            //            //t.Join();
+            //            RetrieveBitmapSubtitles();
+            //            CheckForPreferedLanguage();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Log.Error("OnSubtitleStreamUpdate: Unknown event id {0}", eid);
+            //    }
+            //    return 0;
+            //}
         }
 
         private void OnPageInfo(TeletextPageEntry entry)
