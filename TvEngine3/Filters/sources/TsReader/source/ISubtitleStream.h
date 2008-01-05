@@ -29,6 +29,9 @@
 DEFINE_GUID(IID_ISubtitleStream, 
   0x43fed769, 0xc5ee, 0x46aa, 0x91, 0x2d, 0x7e, 0xbd, 0xae, 0x4e, 0xe9, 0x3a);
 
+const int SUBTITLESTREAM_EVENT_UPDATE = 0;
+
+const DWORD64 SUBTITLESTREAM_EVENTVALUE_NONE = 0;
 
 DECLARE_INTERFACE_( ISubtitleStream, IUnknown )
 {
@@ -37,4 +40,5 @@ DECLARE_INTERFACE_( ISubtitleStream, IUnknown )
   STDMETHOD(GetSubtitleStreamCount)( __int32 &count ) PURE;
   STDMETHOD(GetCurrentSubtitleStream)( __int32 &stream ) PURE;
   STDMETHOD(GetSubtitleStreamLanguage)( __int32 stream,char* szLanguage ) PURE;
+  STDMETHOD(SetSubtitleStreamEventCallback)( int (CALLBACK *pSubEventCallback)(int eventcode, DWORD64 eval)) PURE; 
 };

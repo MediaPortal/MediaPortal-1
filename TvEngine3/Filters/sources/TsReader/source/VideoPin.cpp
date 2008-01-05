@@ -241,6 +241,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
     CBuffer* buffer=NULL;
     while (buffer==NULL)
     {
+
       {
         CAutoLock lock(&m_bufferLock);
         buffer=demux.GetVideo();

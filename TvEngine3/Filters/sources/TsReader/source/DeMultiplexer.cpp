@@ -62,6 +62,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bSetVideoDiscontinuity=false;
   m_reader=NULL;  
   pTeletextEventCallback = NULL;
+  pSubEventCallback = NULL;
   pTeletextPacketCallback = NULL;
   pTeletextServiceInfoCallback = NULL;
   m_iAudioReadCount = 0;
@@ -275,6 +276,13 @@ bool CDeMultiplexer::GetSubtitleStreamCount(__int32 &count)
   return S_OK;
 }
 
+bool CDeMultiplexer::SetSubtitleStreamEventCallback( int (CALLBACK *cb)(int eventcode, DWORD64 eval)){
+	//LogDebug("SetSubtitleStreamEventCallback %X",cb);
+	pSubEventCallback = cb;
+	//(*pSubEventCallback)(SUBTITLESTREAM_EVENT_UPDATE,SUBTITLESTREAM_EVENTVALUE_NONE);
+	return S_OK;
+}
+
 bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
 {
   if (m_iSubtitleStream< 0 || m_iSubtitleStream >=m_subtitleStreams.size())
@@ -318,11 +326,11 @@ void CDeMultiplexer::FlushVideo()
     CBuffer* videoBuffer=*it;
     delete videoBuffer;
     it=m_vecVideoBuffers.erase(it);
-	  m_outVideoBuffer++;
+	/*m_outVideoBuffer++;*/
   }
-  if(this->pTeletextEventCallback != NULL){
-	  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
-  }
+  //if(this->pTeletextEventCallback != NULL){
+	 // this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
+  //}
   m_pCurrentVideoBuffer = new CBuffer();
 }
 void CDeMultiplexer::FlushAudio()
@@ -438,10 +446,10 @@ CBuffer* CDeMultiplexer::GetVideo()
     {
       CBuffer* videoBuffer=*it;
       m_vecVideoBuffers.erase(it);
-	  m_outVideoBuffer++;
-	  if(this->pTeletextEventCallback != NULL){
-		  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
-	  }
+	  //m_outVideoBuffer++;
+	  //if(this->pTeletextEventCallback != NULL){
+		 // this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
+	  //}
       return videoBuffer;
     }
   }
@@ -854,11 +862,10 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
         m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
 
 	  m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
-	  m_inVideoBuffer++;
-	  if(this->pTeletextEventCallback != NULL)
-    {
+	 // m_inVideoBuffer++;
+	  /*if(this->pTeletextEventCallback != NULL){
 		  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_IN_UPDATE,m_inVideoBuffer);
-	  }
+	  }*/
       //and create a new one
       m_pCurrentVideoBuffer = new CBuffer();
     }
@@ -914,11 +921,10 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
       if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
         m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
       m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
-      m_inVideoBuffer++;
-	  if(this->pTeletextEventCallback != NULL)
-    {
-		  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_IN_UPDATE,m_inVideoBuffer);
-	  }
+   //   m_inVideoBuffer++;
+	  //if(this->pTeletextEventCallback != NULL){
+		 // this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_IN_UPDATE,m_inVideoBuffer);
+	  //}
       //and create a new one
       m_pCurrentVideoBuffer = new CBuffer();
     }
@@ -987,9 +993,15 @@ void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
   if (header.Pid!=m_pids.TeletextPid) return;
   if ( header.AdaptionFieldOnly() ) return;
 
-  if(pTeletextPacketCallback != NULL)
-  {
-	  (*pTeletextPacketCallback)(tsPacket,188);
+ 
+
+  if(pTeletextEventCallback != NULL){
+	  LogDebug("Compensation: %i",m_filter.Compensation.Millisecs());	  
+	  (*pTeletextEventCallback)(TELETEXT_EVENT_COMPENSATION_UPDATE,m_filter.Compensation.Millisecs() * 90);
+	  (*pTeletextEventCallback)(TELETEXT_EVENT_PACKET_PCR_UPDATE,m_streamPcr.PcrReferenceBase - m_duration.FirstStartPcr().PcrReferenceBase);
+  }
+  if(pTeletextPacketCallback != NULL){
+	(*pTeletextPacketCallback)(tsPacket,188);
   }
 }
 
@@ -1293,6 +1305,12 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     LogDebug("OnRequestAudioChange()");
     m_filter.OnRequestAudioChange();
+  }
+
+  
+  if( pSubEventCallback != NULL ){
+//	  LogDebug("Calling pSubEventCallback");
+	(*pSubEventCallback)(SUBTITLESTREAM_EVENT_UPDATE,SUBTITLESTREAM_EVENTVALUE_NONE);
   }
 }
 
@@ -1602,3 +1620,23 @@ void CDeMultiplexer::CallTeletextEventCallback(int eventCode,unsigned long int e
 		(*pTeletextEventCallback)(eventCode,eventValue);
 	}
 }
+
+/*void CDeMultiplexer::SyncTeletext(){
+	if(pTeletextEventCallback!=NULL){
+		IMediaSeeking * ptrMediaPos;
+		LogDebug("StreamPCR %llu",m_streamPcr.PcrReferenceBase - m_duration.FirstStartPcr().PcrReferenceBase);
+
+	if (SUCCEEDED(m_filter.GetFilterGraph()->QueryInterface(IID_IMediaSeeking , (void**)&ptrMediaPos) ) )
+	{
+		LONGLONG currentPos;
+		ptrMediaPos->GetCurrentPosition(&currentPos);
+
+		//LogDebug("CurrentPos %llu -> %llu",currentPos,( ( currentPos / 1000 ) * 9 ));
+		ptrMediaPos->Release();
+
+		(*pTeletextEventCallback)(TELETEXT_EVENT_CURRENT_PCR_UPDATE, m_streamPcr.PcrReferenceBase - m_duration.FirstStartPcr().PcrReferenceBase - m_filter.Compensation.Millisecs() * 90);
+
+	}
+	LogDebug("After get curpos");
+	}
+}*/

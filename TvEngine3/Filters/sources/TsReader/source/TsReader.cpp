@@ -249,11 +249,20 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 	}
     if (riid == IID_ITeletextSource)
 	{
+		LogDebug("filt:IID_ITeletextSource()");
 		return GetInterface((ITeletextSource*)this, ppv);
 	}  
-  if (riid == IID_ISubtitleStream)
+	if (riid == IID_ISubtitleStream)
 	{
-		return GetInterface((ISubtitleStream*)this, ppv);
+		LogDebug("filt:IID_ISubtitleStream()");
+		HRESULT hr =  GetInterface((ISubtitleStream*)this, ppv);
+		if(SUCCEEDED(hr)){
+			LogDebug("SUCCESS",hr);
+		}
+		else{
+			LogDebug("FAILED",hr);
+		}
+		return hr;
 	}  
 	if ( riid == IID_ITSReader )
 	{
@@ -1086,6 +1095,10 @@ STDMETHODIMP CTsReaderFilter::GetCurrentSubtitleStream(__int32 &stream)
   return m_demultiplexer.GetCurrentSubtitleStream(stream);
 }
 
+STDMETHODIMP CTsReaderFilter::SetSubtitleStreamEventCallback( int (CALLBACK *pSubEventCallback)(int eventcode, DWORD64 eval)){
+	//LogDebug("CTsReaderFilter SetSubtitleStreamEventCallback");
+	return m_demultiplexer.SetSubtitleStreamEventCallback( pSubEventCallback );
+}
 
 //
 // FindSubtitleFilter
