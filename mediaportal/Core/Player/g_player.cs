@@ -330,7 +330,10 @@ namespace MediaPortal.Player
 
     internal static void OnAudioTracksReady()
     {
-      AudioTracksReady();
+        if (AudioTracksReady != null) // FIXME: the event handler might not be set if TV plugin is not installed! 
+        {
+            AudioTracksReady();
+        }
     }
 
     //called when current playing file is stopped
