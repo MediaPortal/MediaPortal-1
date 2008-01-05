@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>3007</id>
   <defaultcontrol>213</defaultcontrol>
@@ -64,8 +64,8 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>610</posX>
-      <posY>494</posY>
+      <posX>650</posX>
+      <posY>670</posY>
       <texture>rec.png</texture>
       <colordiffuse>50ffffff</colordiffuse>
     </control>
