@@ -42,12 +42,12 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_bSeekingDone( true ),
   m_startTimestamp( -1 ),
   m_CurrentSeekPosition( 0 ),
-  m_currentTimeCompensation( 0 ),
+  //m_currentTimeCompensation( 0 ),
   m_prevSubtitleTimestamp( 0 )
 {
   ::DeleteFile("c:\\DVBsub.log");
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 6 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 10 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -393,7 +393,8 @@ void CDVBSub::NotifySubtitle()
   }
 }
 
-void CDVBSub::NotifyTeletextSubtitle(TEXT_SUBTITLE& sub){
+void CDVBSub::NotifyTeletextSubtitle( TEXT_SUBTITLE& sub )
+{
 }
 
 //

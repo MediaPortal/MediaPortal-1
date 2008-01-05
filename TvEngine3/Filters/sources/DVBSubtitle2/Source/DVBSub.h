@@ -116,10 +116,10 @@ private: // data
   REFERENCE_TIME      m_CurrentSeekPosition;
   LONGLONG            m_basePCR;
   LONGLONG            m_prevSubtitleTimestamp;
-  REFERENCE_TIME      m_currentTimeCompensation;
+  CRefTime            m_currentTimeCompensation;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
-  int				  (CALLBACK *m_pTextSubtitleObserver) (TEXT_SUBTITLE* sub);
+  int				          (CALLBACK *m_pTextSubtitleObserver) (TEXT_SUBTITLE* sub);
   int                 (CALLBACK *m_pResetObserver) ();
   int                 (CALLBACK *m_pUpdateTimeoutObserver) (__int64* pTimeout);
 
