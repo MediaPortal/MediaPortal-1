@@ -12,14 +12,14 @@ namespace MediaPortal.Player.Teletext
     {
         private struct Packet
         {
-            public Packet(byte[] buf, UInt64 inBufCount)
+            public Packet(byte[] buf, UInt64 release)
             {
                 buffer = buf;
-                inBufferCount = inBufCount;
+                releaseTime = release;
             }
 
             public byte[] buffer;
-            public UInt64 inBufferCount;
+            public UInt64 releaseTime;
         }
 
         private void assert(bool ok, string msg) {
@@ -42,12 +42,15 @@ namespace MediaPortal.Player.Teletext
         TeletextPacketCallback packetCallback;
         TeletextServiceInfoCallback serviceInfoCallback;
 
-        private Queue<Packet> tsPackets;
-        private UInt64 lastInBufferCount;
+       // private Queue<Packet> tsPackets;
+       // private UInt64 lastInBufferCount;
+        private UInt64 lastStreamPCR;
+        private UInt64 lastCompensation;
         
         private const int MAX_PACKETS_IN_BUFFER = 5000;
 
-        public TeletextReceiver(ITeletextSource source, IDVBTeletextDecoder ttxtDecoder) {
+        public TeletextReceiver(ITeletextSource source, IDVBTeletextDecoder ttxtDecoder)
+        {
             assert(source != null, "Source is null");
             assert(ttxtDecoder != null, "Decoder is null");
             Log.Debug("Setting up teletext receiver ... ");
@@ -62,18 +65,13 @@ namespace MediaPortal.Player.Teletext
             source.SetTeletextEventCallback(Marshal.GetFunctionPointerForDelegate(eventCallback));
             source.SetTeletextServiceInfoCallback(Marshal.GetFunctionPointerForDelegate(serviceInfoCallback));
 
-            tsPackets = new Queue<Packet>();
+            //tsPackets = new Queue<Packet>();
 
             Log.Debug("Setting up ttxtdecoder and pes decoder");
             this.ttxtDecoder = ttxtDecoder;
             pesDecoder = new PESDecoder(new PESCallback(OnPesPacket));
             Log.Debug("Done setting up teletext receiver ... ");
-
-
         }
-
-
-
 
         /// <summary>
         /// Called from TsReader when a Ts packet containing teletext data 
@@ -88,23 +86,29 @@ namespace MediaPortal.Player.Teletext
                 assert(len == 188, "TS packet length is not 188");
                 byte[] buffer = new byte[len];
                 Marshal.Copy(pbuf, buffer, 0, len); // copy buffer
-                while(tsPackets.Count >= MAX_PACKETS_IN_BUFFER){
+                /*while(tsPackets.Count >= MAX_PACKETS_IN_BUFFER){
                     Log.Debug("Skipping packets, buffer over full!");
                     tsPackets.Dequeue();
                 }
-                tsPackets.Enqueue(new Packet(buffer, lastInBufferCount));
+                tsPackets.Enqueue(new Packet(buffer, lastStreamPCR));*/
+
+                pesDecoder.OnTsPacket(buffer,lastStreamPCR);
             }
         }
 
-        public void ProcessPackets(UInt64 outBufferCount) {
-            while (tsPackets.Count > 0 && tsPackets.Peek().inBufferCount <= outBufferCount) {
-                // process the teletext buffers
-                // that were put on the teletext buffer just after, or before
-                // the video packet indicated by outBufferCount
-                pesDecoder.OnTsPacket(tsPackets.Dequeue().buffer); 
+        /*public void ProcessPackets(UInt64 nowTime) {
+            lock (this)
+            {
+                while (tsPackets.Count > 0 && tsPackets.Peek().releaseTime <= nowTime)
+                {
+                    // process the teletext buffers
+                    // that were put on the teletext buffer just after, or before
+                    // the video packet indicated by outBufferCount
+                    pesDecoder.OnTsPacket(tsPackets.Dequeue().buffer);
+                }
             }
+        }*/
 
-        }
         private bool IntToBool(int i) {
             if (i != 0) return true;
             else return false;
@@ -119,7 +123,7 @@ namespace MediaPortal.Player.Teletext
                         Log.Debug("Teletext: RESET");
                         pesDecoder.Reset();
                         ttxtDecoder.Reset();
-                        tsPackets.Clear();
+                       // tsPackets.Clear();
                         break;
                     case TeletextEvent.SEEK_START:
                         Log.Debug("Teletext: SEEK_START");
@@ -130,16 +134,32 @@ namespace MediaPortal.Player.Teletext
                         
                         pesDecoder.Reset();
                         ttxtDecoder.Reset();
-                        tsPackets.Clear();
+                       // tsPackets.Clear();
                         discardPackets = false;
-                        break;
+                          break;
                     case TeletextEvent.BUFFER_IN_UPDATE:
+                        Log.Error("TeletextReceiver: Call to OnEvent with obsolete event value (BUFFER_IN_UPDATE)");
                         //Log.Debug("Teletext: Buffer in update value : {0}", eventValue); 
-                        lastInBufferCount = eventValue;
+                        //lastInBufferCount = eventValue;
                         break;
                     case TeletextEvent.BUFFER_OUT_UPDATE:
+                        Log.Error("TeletextReceiver: Call to OnEvent with obsolete event value (BUFFER_OUT_UPDATE)");
                         //Log.Debug("Teletext: Buffer out value : {0}", eventValue);
-                        ProcessPackets(eventValue);
+                        //ProcessPackets(eventValue);
+                        break;
+                    case TeletextEvent.PACKET_PCR_UPDATE:
+                        //if(lastStreamPCR != eventValue) Log.Debug("Teletext: Packet PCR : {0}", eventValue);
+                        lastStreamPCR = eventValue;
+                        
+                        //ProcessPackets(eventValue);
+                        break;
+                    case TeletextEvent.COMPENSATION_UPDATE:
+                        
+                        if (eventValue != lastCompensation)
+                        {
+                            lastCompensation = eventValue;
+                           // Log.Debug("Teletext: Compensation Update : {0}", eventValue);
+                        }
                         break;
                     default:
                         throw new Exception("Unknown event type!");
@@ -160,6 +180,19 @@ namespace MediaPortal.Player.Teletext
             }
         }
 
+
+        public UInt64 DecodePTS(byte[] header_PTS, byte PTS_DTS_flag){
+            assert(header_PTS.Length == 5, "Input to DecodePTS is of incorrect length!");
+            byte mark = (byte)(header_PTS[0] & 0xF0);
+            assert(mark == PTS_DTS_flag, "Header extension starts incorrectly! " + mark + " vs. " + PTS_DTS_flag );
+            
+            
+            UInt64 PTS = 0;
+            Log.Debug("TEST: " + (1 << 60));
+            PTS &= ((UInt64)(header_PTS[0] & 0x0E)) << 32;
+            return PTS;
+        }
+
         /// <summary>
         /// Decodes a PES packet containing a teletext packet
         /// 
@@ -170,7 +203,7 @@ namespace MediaPortal.Player.Teletext
         /// <param name="data"></param>
         /// <param name="datalen"></param>
         /// <param name="isStart"></param>
-        public void OnPesPacket(int streamid, byte[] header, int headerlen, byte[] data, int datalen, bool isStart) {
+        public void OnPesPacket(int streamid, byte[] header, int headerlen, byte[] data, int datalen, bool isStart, UInt64 presentTime) {
             // header must start with 0x00 0x00 0x01
             assert(header[0] == 0x00 && header[1] == 0x00 && header[2] == 0x01, "Header start bytes incorrect");
             assert(headerlen == 45, "Header length incorrect"); // header must be 45 bytes
@@ -187,17 +220,22 @@ namespace MediaPortal.Player.Teletext
 
             assert((header[6] & 0xC0) == 0x80, "First two bits of 6th byte wrong"); // the first two bits of the 6th header byte MUST be 10
 
-            assert((header[7] & 0xC0) != 0x40, "Wrong PTS_DTS flag value"); // the PTS DTS bits are forbidden to be 01
+            byte PTS_DTS_flag = (byte)((header[7] & 0xC0) >> 6);
+            assert(PTS_DTS_flag != 0x01, "PTS_DTS_flag != 0x01");
 
-            /*byte PTS_DTS_flag = (byte)(header[7] & 0xC0);
-            if (PTS_DTS_flag == 0x10 || PTS_DTS_flag == 0x11)
+            //Log.Debug("Header len:" + headerlen);
+            if (PTS_DTS_flag == 0x02 || PTS_DTS_flag == 0x03)
             {
-                //Log.Debug("PES packet contains PTS!");
+                /*byte[] header_PTS = new byte[5];
+                Array.Copy(header,header_PTS,5);
+                UInt64 PTS = DecodePTS(header_PTS, PTS_DTS_flag);
+                Log.Debug("PES packet contains PTS = " + PTS);*/
             }
-            else {
-                assert(PTS_DTS_flag == 0x00);
+            else
+            {
+                assert(PTS_DTS_flag == 0x00, "PTS_DTS_flag != 0x00 " + PTS_DTS_flag);
                 //Log.Debug("PES PACKET DOES NOT CONTAIN PTS");
-            }*/
+            }
 
             byte PES_HEADER_DATA_LENGTH = header[8];
             assert(PES_HEADER_DATA_LENGTH == 0x24, "PES header length incorrect");
@@ -281,7 +319,7 @@ namespace MediaPortal.Player.Teletext
                     byte[] teletextPacketData = new byte[size-2];
                     Array.Copy(data, offset + 2, teletextPacketData, 0,size-2); // pass data_field to decoder
 
-                    ttxtDecoder.OnTeletextPacket(teletextPacketData);
+                    ttxtDecoder.OnTeletextPacket(teletextPacketData,presentTime);
                 }
                 else if (data_unit_id == 0x02)
                 { //EBU teletext non-subtitle data
@@ -298,7 +336,7 @@ namespace MediaPortal.Player.Teletext
                     byte[] teletextPacketData = new byte[size - 2];
                     Array.Copy(data, offset + 2, teletextPacketData, 0, size - 2); // pass data_field to decoder
 
-                    ttxtDecoder.OnTeletextPacket(teletextPacketData);
+                    ttxtDecoder.OnTeletextPacket(teletextPacketData,presentTime);
                 }
                 dataLeft -= size;
             }

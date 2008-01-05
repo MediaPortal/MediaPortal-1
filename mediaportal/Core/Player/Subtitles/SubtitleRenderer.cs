@@ -199,6 +199,8 @@ namespace MediaPortal.Player.Subtitles
         renderSubtitles = value;
         if (value == false)
         {
+            activeSubPage = -1;
+            useBitmap = false;
           clearOnNextRender = true;
         }
       }
@@ -241,12 +243,15 @@ namespace MediaPortal.Player.Subtitles
           if (option.type == SubtitleType.Teletext) {
               useBitmap = false;
               activeSubPage = option.entry.page;
+              Log.Debug("SubtitleRender: Now rendering {0} teletext subtitle page {1}", option.language,activeSubPage);
           }
           else if (option.type == SubtitleType.Bitmap)
           {
               useBitmap = true;
+              Log.Debug("SubtitleRender: Now rendering bitmap subtitles in {0}", option.language);
           }
-          else {
+          else
+          {
               Log.Error("Unknown subtitle option " + option);
           }
       }
@@ -268,7 +273,7 @@ namespace MediaPortal.Player.Subtitles
       // Fixed seeking, currently TsPlayer & TsReader is not reseting the base time when seeking
       //this.startPos = startPos;
       clearOnNextRender = true;
-      posOnLastTextSub = -1;
+      //posOnLastTextSub = -1;
       Log.Debug("New StartPos is " + startPos);
       return 0;
     }
@@ -380,13 +385,13 @@ namespace MediaPortal.Player.Subtitles
       return 0;
     }
 
-      private double posOnLastTextSub = -1;
+     /* private double posOnLastTextSub = -1;
       private bool lastTextSubBlank = false;
-      private bool useMinSeperation = false;
+      private bool useMinSeperation = false;*/
 
       public void OnTextSubtitle(ref TEXT_SUBTITLE sub)
       {
-          bool blank = false;
+          //bool blank = false;
           Log.Debug("On TextSubtitle called");
           try
           {
@@ -410,7 +415,7 @@ namespace MediaPortal.Player.Subtitles
                   }
                   else
                   {
-                      blank = true;
+                      //blank = true;
                       Log.Debug("<BLANK PAGE>");
                   }
               }
@@ -447,24 +452,25 @@ namespace MediaPortal.Player.Subtitles
               Subtitle subtitle = new Subtitle();
               subtitle.subBitmap = RenderText(sub.text, sub.startTextLine, sub.totalTextLines);
               subtitle.timeOut = sub.timeOut;
+              subtitle.presentTime = sub.timeStamp / 100000.0f + startPos;
               
               //Log.Debug("SubtitleRenderer : player.CurrentPosition");
               // DO NOT CALL player.CurrentPosition, can cause Deadlock because we are in one of TsReaders own threads!
-              if (posOnLastTextSub > 0 && useMinSeperation)
+             /* if (posOnLastTextSub > 0 && useMinSeperation)
               {
                   subtitle.presentTime = posOnLastTextSub + (lastTextSubBlank ? 0.25f : 2.0f); // present time in seconds, compares to player.StreamPos
               }
               else {
                   subtitle.presentTime = 0;
-              }
+              }*/
 
               //Log.Debug("SubtitleRenderer : player.CurrentPosition DONE");
               subtitle.height = 576;
               subtitle.width = 720;
               subtitle.firstScanLine = (int)(sub.startTextLine / (float)sub.totalTextLines) * 576; //sub.firstScanLine;
 
-              posOnLastTextSub = posOnLastRender;
-              lastTextSubBlank = blank;
+             // posOnLastTextSub = posOnLastRender;
+             // lastTextSubBlank = blank;
 
               lock (subtitles)
               {
@@ -614,7 +620,7 @@ namespace MediaPortal.Player.Subtitles
         return;
       }
       //Log.Debug("\n\n***** SubtitleRenderer: Subtitle render *********");
-      //Log.Debug(" Stream pos: "+player.StreamPosition); 
+     // Log.Debug(" Stream pos: "+player.StreamPosition); 
       //if (!GUIGraphicsContext.IsFullScreenVideo) return;
 
       if (clearOnNextRender)

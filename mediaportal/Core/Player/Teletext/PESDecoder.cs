@@ -6,7 +6,7 @@ using MediaPortal.GUI.Library;
 namespace MediaPortal.Player.Teletext
 {
     delegate void PESCallback(int streamid, byte[] header, int headerlen,
-                                       byte[] data, int datalen, bool isStart);
+                                       byte[] data, int datalen, bool isStart, UInt64 presentTime);
 
     class PESDecoder
     {
@@ -65,6 +65,7 @@ namespace MediaPortal.Player.Teletext
                 return false;
             }
 
+
             // Assume that correct pid is passed!
             /*if (header.Pid != m_pid) 
             {
@@ -107,7 +108,7 @@ namespace MediaPortal.Player.Teletext
             }
         }
 
-        public void OnTsPacket(byte[] tsPacket)
+        public void OnTsPacket(byte[] tsPacket, UInt64 presentTime)
         {
            // Log.Debug("PESDECODER ONTSPACKET");
     	    TSHeader header = new TSHeader(tsPacket);
@@ -177,7 +178,7 @@ namespace MediaPortal.Player.Teletext
 		        if (m_iWritePos>0 && cb !=null)
 		        {
                     //Log.Debug("PESDECODER: CALLING CALLBACK");
-			        cb(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iWritePos, m_bStart);
+			        cb(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iWritePos, m_bStart,presentTime);
 
 			        m_bStart=false;
 				    m_iWritePos=0;

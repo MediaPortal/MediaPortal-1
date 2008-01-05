@@ -28,14 +28,14 @@ namespace MediaPortal.Player.Subtitles
 
         private static void assert(bool ok, string msg)
         {
-            if (!ok) throw new Exception("Assertion failed in TeletextSubtitleDecoder : " + msg );
+            if (!ok) Log.Error("Assertion failed in TeletextSubtitleDecoder : " + msg );
         }
         
         public void OnServiceInfo(int page, byte type, string iso_lang) {
             TeletextMagazine.OnServiceInfo(page, type, iso_lang);
         }
 
-        public void OnTeletextPacket(byte[] data)
+        public void OnTeletextPacket(byte[] data, UInt64 presentTime)
         {
             assert(data.Length == DATA_FIELD_SIZE, "Data length not as expected! " + data.Length);
 		    // data_field
@@ -98,7 +98,7 @@ namespace MediaPortal.Player.Subtitles
 
                 /*if (header.isSubtitle())
                 {*/
-                   magazines[magIndex].StartPage(header);
+                   magazines[magIndex].StartPage(header, presentTime);
                 //}
 		    }
 		    else if(Y >= 1 && Y <= 25){ // display content

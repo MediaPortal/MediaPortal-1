@@ -45,8 +45,9 @@ namespace MediaPortal.Player.Subtitles
             }
         }
 
-        public void StartPage(TeletextPageHeader header)
+        public void StartPage(TeletextPageHeader header, UInt64 presentTime)
         {
+            this.presentTime = presentTime;
             int mag = header.Magazine();
             if (mag != magID)
             {
@@ -170,7 +171,7 @@ namespace MediaPortal.Player.Subtitles
             sub.encoding = language;
             sub.page = pageNumInProgress;
             sub.startTextLine = 0;
-            sub.totalTextLines = 25;
+            sub.totalTextLines = 26;
             lock (langInfo) {
                 if (langInfo.ContainsKey(sub.page))
                 {
@@ -180,8 +181,8 @@ namespace MediaPortal.Player.Subtitles
             }
             
             sub.text = textBuilder.ToString();
-            sub.timeOut = 99999999; // no timeout needed
-            sub.timeStamp = 0; // no timestamp needed
+            sub.timeOut = ulong.MaxValue; // never timeout (will be replaced by other page)
+            sub.timeStamp = presentTime;
             assert(sub.text != null, "Sub.text == null!");
             subRender.OnTextSubtitle(ref sub);
             pageNumInProgress = -1;   
@@ -241,6 +242,7 @@ namespace MediaPortal.Player.Subtitles
             this.subRender = subRender;
         }
 
+        private UInt64 presentTime;
         private bool isSerial = false;
         private int pageNumInProgress;
         private int language; // encoding language
