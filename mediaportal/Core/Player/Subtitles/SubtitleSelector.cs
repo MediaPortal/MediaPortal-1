@@ -238,10 +238,24 @@ namespace MediaPortal.Player.Subtitles
                 if (!pageEntries.ContainsKey(entry.page))
                 {
                     pageEntries.Add(entry.page, entry);
-                    if (currentOption == autoSelectOption)
+                    if (currentOption.isAuto) 
                     {
-                        //Log.Debug("New subtitle page, check prefered");
-                        CheckForPreferedLanguage();
+                        SubtitleOption prefered = CheckForPreferedLanguage();
+                        if (prefered != null)
+                        {
+                            currentOption.bitmapIndex = prefered.bitmapIndex;
+                            currentOption.entry = prefered.entry;
+                            currentOption.language = prefered.language;
+                            currentOption.type = prefered.type;
+                            Log.Debug("Auto-selection of " + currentOption);
+                        }
+                        else
+                        {
+                            currentOption.type = SubtitleType.None;
+                        }
+
+                        subRender.SetSubtitleOption(currentOption);
+                        // we cannot update the bitmap sub stream here
                     }
                 }
             }
