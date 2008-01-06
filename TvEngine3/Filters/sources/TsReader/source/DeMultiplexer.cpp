@@ -1307,9 +1307,9 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   }
 
   
-  if( pSubUpdateCallback != NULL && m_subtitleStreams.size() > 0){
+  if( pSubUpdateCallback != NULL){
 	  int bitmap_index = -1;
-	  (*pSubUpdateCallback)(m_subtitleStreams.size(),&m_subtitleStreams[0],&bitmap_index);
+	  (*pSubUpdateCallback)(m_subtitleStreams.size(),(m_subtitleStreams.size() > 0 ? &m_subtitleStreams[0] : NULL),&bitmap_index);
 	  if(bitmap_index >= 0){
 		  LogDebug("Calling SetSubtitleStream from OnNewChannel:  %i", bitmap_index);  
 		  SetSubtitleStream(bitmap_index);
