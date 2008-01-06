@@ -11,8 +11,7 @@ namespace MediaPortal.Player.Subtitles
     public enum SubtitleType
     {
         Teletext = 0,
-        Bitmap = 1,
-        Auto = 2
+        Bitmap = 1
     }
 
     // TODO: Have an AUTO subtitle option!
@@ -23,6 +22,7 @@ namespace MediaPortal.Player.Subtitles
         public TeletextPageEntry entry; // only for teletext
         public int bitmapIndex; // index among bitmap subs, only for bitmap subs :)
         public string language;
+        public bool isAuto = false;
 
         public override string ToString()
         {
@@ -33,10 +33,6 @@ namespace MediaPortal.Player.Subtitles
             else if (type == SubtitleType.Teletext)
             {
                 return "Teletext Lang\t" + entry.language + "\tpage : " + entry.page;
-            }
-            else if (type == SubtitleType.Auto)
-            {
-                return "Auto select";
             }
             else
             {
@@ -77,7 +73,7 @@ namespace MediaPortal.Player.Subtitles
     class SubtitleSelector
     {
         private SubtitleOption autoSelectOption;
-        private delegate int SubtitleStreamEventCallback(int count, IntPtr pOpts);
+        private delegate int SubtitleStreamEventCallback(int count, IntPtr pOpts, ref int bitmapindex);
         private SubtitleStreamEventCallback subStreamCallback;
         private object syncLock = new object();
 
@@ -131,7 +127,7 @@ namespace MediaPortal.Player.Subtitles
             {
                 autoSelectOption = new SubtitleOption();
                 autoSelectOption.language = "Auto";
-                autoSelectOption.type = SubtitleType.Auto;
+                autoSelectOption.isAuto = true;
 
                 SetOption(0); // the autoselect mode will have index 0 (ugly)
             }
@@ -177,17 +173,16 @@ namespace MediaPortal.Player.Subtitles
 
 
 
-        private int OnSubtitleReset(int count, IntPtr pOpts)
+        private int OnSubtitleReset(int count, IntPtr pOpts, ref int selected_bitmap_index)
         {
             Log.Debug("OnSubtitleReset");
+            Log.Debug("selected_bitmap_index " + selected_bitmap_index);
             lock (syncLock)
             {
                 bitmapSubtitleCache.Clear();
                 pageEntries.Clear();
                 
-
-                Log.Debug("Size of SUBTITLESTREAM struct: " + Marshal.SizeOf(new SUBTITLESTREAM()));
-                Log.Debug("Number of options {0}", count);
+                Log.Debug("Number of bitmap options {0}", count);
                 IntPtr current = pOpts;
                 for (int i = 0; i < count; i++)
                 {
@@ -202,7 +197,26 @@ namespace MediaPortal.Player.Subtitles
                     current = (IntPtr)(((int)current) + Marshal.SizeOf(bOpt));
                 }
 
-                CheckForPreferedLanguage();
+                selected_bitmap_index = -1; // we didnt select a bitmap index
+
+                if (currentOption.isAuto)
+                {
+                    SubtitleOption prefered = CheckForPreferedLanguage();
+                    if (prefered != null)
+                    {
+                        currentOption.bitmapIndex = prefered.bitmapIndex;
+                        currentOption.entry = prefered.entry;
+                        currentOption.language = prefered.language;
+                        currentOption.type = prefered.type;
+                        Log.Debug("Auto-selection of " + currentOption);
+                        subRender.SetSubtitleOption(currentOption);
+                    }
+                    if (currentOption.type == SubtitleType.Bitmap) {
+                        selected_bitmap_index = currentOption.bitmapIndex;
+                        Log.Debug("Returns selected_bitmap_index == {0} to ISubStream", selected_bitmap_index);
+                    }
+                }
+                
             }
             return 0;
         }
@@ -227,7 +241,7 @@ namespace MediaPortal.Player.Subtitles
         /// Attempts to auto choose a subtitle option
         /// based on the prefered languages
         /// </summary>
-        private void CheckForPreferedLanguage()
+        private SubtitleOption CheckForPreferedLanguage()
         {
             Log.Debug("SubtitleSelector: CheckForPreferedLanguage");
             List<SubtitleOption> options = CollectOptions();
@@ -251,13 +265,7 @@ namespace MediaPortal.Player.Subtitles
                     prefOptIndex = optIndex;
                 }
             }
-
-            if (prefered != null)
-            { 
-                Log.Debug("Detected subtitle in prefered language : " + prefered.language);
-                subRender.SetSubtitleOption(options[prefOptIndex]);
-                lastSubtitleIndex = prefOptIndex;
-            }
+            return prefered;
         }
 
         private List<SubtitleOption> CollectOptions()
@@ -293,10 +301,13 @@ namespace MediaPortal.Player.Subtitles
 
         public int GetCurrentOption()
         {
-            if (currentOption == autoSelectOption) return 0; // really ugly :)
-            else return lastSubtitleIndex;
+            return lastSubtitleIndex;
         }
 
+        /// <summary>
+        /// Call only on MP main thread
+        /// </summary>
+        /// <param name="index"></param>
         public void SetOption(int index)
         {
             Log.Debug("SetOption {0}", index);
@@ -310,13 +321,21 @@ namespace MediaPortal.Player.Subtitles
             lastSubtitleIndex = index;
             currentOption = option;
             
-            if (option == autoSelectOption)
+            if (option.isAuto)
             {
                 Log.Debug("SubtitleSelector : Set autoselect mode");
-                CheckForPreferedLanguage();
-                return; // nothing more to do
+                SubtitleOption prefered = CheckForPreferedLanguage();
+                if (prefered != null)
+                {
+                    option.bitmapIndex = prefered.bitmapIndex;
+                    option.entry = prefered.entry;
+                    option.language = prefered.language;
+                    option.type = prefered.type;
+                    Log.Debug("Auto-selection of " + option);
+                }
             }
-            else if (option.type == SubtitleType.Bitmap)
+            
+            if (option.type == SubtitleType.Bitmap)
             {
                 dvbStreams.SetSubtitleStream(option.bitmapIndex);
             }
@@ -331,6 +350,9 @@ namespace MediaPortal.Player.Subtitles
                 Log.Error("Calling GetCurrentLanguage with no subtitle set!");
                 return Strings.Unknown;
             }
+            else if (currentOption.isAuto) {
+                return "Auto:" + currentOption.language;
+            }
             else if (currentOption.type == SubtitleType.Teletext && currentOption.entry.language.Trim().Length == 0)
             {
                 return "p" + currentOption.entry.page;
@@ -341,8 +363,8 @@ namespace MediaPortal.Player.Subtitles
         private MediaPortal.Player.TSReaderPlayer.ISubtitleStream dvbStreams;
         private SubtitleRenderer subRender;
         private List<string> preferedLanguages;
-        private int lastSubtitleIndex; // in auto mode this is auto selected index
-        private SubtitleOption currentOption; // in auto mode this will be the auto option itself, not the autoselected option (really bad style :)
+        private int lastSubtitleIndex; 
+        private SubtitleOption currentOption;
         private Dictionary<int, TeletextPageEntry> pageEntries;
 
         private List<SubtitleOption> bitmapSubtitleCache;
