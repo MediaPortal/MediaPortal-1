@@ -92,7 +92,7 @@ namespace TvDatabase
       EndTime = endTime;
       KeepDate = MinSchedule;
       KeepMethod = (int)KeepMethodType.UntilSpaceNeeded;
-      MaxAirings = 5;
+    	MaxAirings = Int32.MaxValue; //BAV: changed due to mantis bug 1162 - old value 5;
       PostRecordInterval = 0;
       PreRecordInterval = 0;
       Priority = 0;

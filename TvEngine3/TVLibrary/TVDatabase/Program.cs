@@ -538,5 +538,10 @@ namespace TvDatabase
       Program p = new Program(idChannel, StartTime, EndTime, Title, Description, Genre, Notify, OriginalAirDate, SeriesNum, EpisodeNum, StarRating, Classification, parentalRating);
       return p;
     }
+
+		public override string ToString()
+		{
+			return String.Format("{0}(ID:{1}) on {2} {3} - {4}", Title, idProgram, IdChannel, StartTime, EndTime);
+		}
   }
 }
