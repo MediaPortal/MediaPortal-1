@@ -333,6 +333,7 @@ namespace MediaPortal.Player.Subtitles
                     option.type = prefered.type;
                     Log.Debug("Auto-selection of " + option);
                 }
+                else return; // do nothing
             }
             
             if (option.type == SubtitleType.Bitmap)
