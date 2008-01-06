@@ -871,6 +871,8 @@ namespace MediaPortal.GUI.Library
           _viewList.SelectedListItemIndex = value;
         else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
           _viewAlbum.SelectedListItemIndex = value;
+        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+          _viewThumbnail.SelectedListItemIndex = value;
         else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
           _viewPlayList.SelectedListItemIndex = value;
       }

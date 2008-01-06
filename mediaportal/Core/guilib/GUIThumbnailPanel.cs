@@ -2303,7 +2303,13 @@ namespace MediaPortal.GUI.Library
         }
         return -1;
       }
-    }
+      set
+      {
+          SelectItem(value);
+          OnSelectionChanged();
+          _refresh = true;
+      }
+  }
 
     public void Clear()
     {
