@@ -248,7 +248,7 @@ namespace MediaPortal.Player.Subtitles
           else if (option.type == SubtitleType.Bitmap)
           {
               useBitmap = true;
-              Log.Debug("SubtitleRender: Now rendering bitmap subtitles in {0}", option.language);
+              Log.Debug("SubtitleRender: Now rendering bitmap subtitles in language {0}", option.language);
           }
           else
           {

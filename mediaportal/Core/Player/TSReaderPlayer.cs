@@ -171,7 +171,7 @@ namespace MediaPortal.Player
       void GetSubtitleStreamCount( ref Int32 count );
       void GetCurrentSubtitleStream( ref Int32 stream );
       void GetSubtitleStreamLanguage(Int32 stream, ref SUBTITLE_LANGUAGE szLanguage);
-      void SetSubtitleStreamEventCallback(IntPtr callBack);
+      void SetSubtitleResetCallback(IntPtr callBack);
     }
 
     /// <summary>
