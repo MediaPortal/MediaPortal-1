@@ -240,6 +240,10 @@ namespace MediaPortal.Player.Subtitles
 
       public void SetSubtitleOption(SubtitleOption option)
       {
+          if (option.type == SubtitleType.None) {
+              useBitmap = false;
+              activeSubPage = 0;
+          }
           if (option.type == SubtitleType.Teletext) {
               useBitmap = false;
               activeSubPage = option.entry.page;

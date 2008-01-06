@@ -11,7 +11,8 @@ namespace MediaPortal.Player.Subtitles
     public enum SubtitleType
     {
         Teletext = 0,
-        Bitmap = 1
+        Bitmap = 1,
+        None
     }
 
     // TODO: Have an AUTO subtitle option!
@@ -33,6 +34,10 @@ namespace MediaPortal.Player.Subtitles
             else if (type == SubtitleType.Teletext)
             {
                 return "Teletext Lang\t" + entry.language + "\tpage : " + entry.page;
+            }
+            else if (type == SubtitleType.None)
+            {
+                return "None";
             }
             else
             {
@@ -126,8 +131,9 @@ namespace MediaPortal.Player.Subtitles
             if (preferedLanguages.Count > 0)
             {
                 autoSelectOption = new SubtitleOption();
-                autoSelectOption.language = "Auto";
+                autoSelectOption.language = "None";
                 autoSelectOption.isAuto = true;
+                autoSelectOption.type = SubtitleType.None;
 
                 SetOption(0); // the autoselect mode will have index 0 (ugly)
             }
@@ -209,8 +215,12 @@ namespace MediaPortal.Player.Subtitles
                         currentOption.language = prefered.language;
                         currentOption.type = prefered.type;
                         Log.Debug("Auto-selection of " + currentOption);
-                        subRender.SetSubtitleOption(currentOption);
                     }
+                    else { 
+                        currentOption.type = SubtitleType.None;
+                    }
+
+                    subRender.SetSubtitleOption(currentOption);
                     if (currentOption.type == SubtitleType.Bitmap) {
                         selected_bitmap_index = currentOption.bitmapIndex;
                         Log.Debug("Returns selected_bitmap_index == {0} to ISubStream", selected_bitmap_index);
@@ -333,7 +343,10 @@ namespace MediaPortal.Player.Subtitles
                     option.type = prefered.type;
                     Log.Debug("Auto-selection of " + option);
                 }
-                else return; // do nothing
+                else {
+                    option.type = SubtitleType.None;
+                    subRender.SetSubtitleOption(option);
+                }
             }
             
             if (option.type == SubtitleType.Bitmap)
