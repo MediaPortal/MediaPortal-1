@@ -33,6 +33,7 @@ public:
 		m_count++;
 		m_elements[m_insertPos] = elem;
 		m_insertPos = NextIdx(m_insertPos);
+		return true;
 	}
 
 	T Get()
