@@ -987,7 +987,7 @@ namespace TvDatabase
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      sb.AddConstraint(String.Format("startTime >= '{0}' and endTime <= '{1}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat), DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
+      sb.AddConstraint(String.Format("startTime <= '{0}' and endTime >= '{1}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat), DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
       IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
       return progs;
