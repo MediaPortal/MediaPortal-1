@@ -884,7 +884,7 @@
         <String id="1052">Brani</String>
         <String id="1053">Chiamante sconosciuto</String>
         <String id="1054">(in registrazione)</String>
-        <String id="1055">(Pausa TV in corso)</String>
+        <String id="1055">(Buffer TV in corso)</String>
         <String id="1056">(non disponibile)</String>
         <String id="1061">Rimovibile</String>
         <String id="1062">Oggetto</String>
@@ -925,6 +925,7 @@
         <String id="1509">Nessun dettaglio di sintonia per il canale</String>
         <String id="1510">Connessione al Server TV persa</String>
         <String id="1511">Nessun flusso attivo</String>
+        <String id="1512">Tornare al canale precedente?</String>
         <String id="1950" prefix="Il Mio ">Stato</String>
         <String id="1951">Hard Disk</String>
         <String id="1952">Ventola</String>
