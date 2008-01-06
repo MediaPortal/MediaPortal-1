@@ -499,10 +499,18 @@ namespace MediaPortal.Player
         {
           if (!_vmr9.IsVMR9Connected)
           {
+            int count = 0;
             while (true)
             {
 							Log.Debug("TSReaderPlayer: waiting for vmr9 connection");
               Application.DoEvents();
+              if( count > 20 )
+              {
+                Log.Debug("TSReaderPlayer: no vmr9 connection, stopping");
+                g_Player.Stop();
+                return false;
+              }
+              count++;
               System.Threading.Thread.Sleep(100);
             }
             /*
