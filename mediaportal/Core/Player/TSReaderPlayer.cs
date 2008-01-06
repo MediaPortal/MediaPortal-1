@@ -508,6 +508,7 @@ namespace MediaPortal.Player
               {
                 Log.Debug("TSReaderPlayer: no vmr9 connection, stopping");
                 g_Player.Stop();
+                Cleanup();
                 return false;
               }
               count++;
