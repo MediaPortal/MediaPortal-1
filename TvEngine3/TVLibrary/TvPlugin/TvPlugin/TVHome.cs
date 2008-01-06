@@ -2367,12 +2367,14 @@ namespace TvPlugin
         //streaming....
         if (zapping)
         {
-          //System.Threading.Thread.Sleep(100);
-          /* Disabled because at least DVB radio entered an endless seeking loop
-          Log.Info("tvhome:SeektoEnd({0}/{1})", position, duration);
-          if (duration > 0 || position > 0)
-            g_Player.SeekAbsolute(duration + 10);
-           */
+          // avoid seeking on radion in multiseat, b/c of a an unsolved bug in tsreader.ax
+          if (!g_Player.IsRadio)
+          {
+            //System.Threading.Thread.Sleep(100);            
+            Log.Info("tvhome:SeektoEnd({0}/{1})", position, duration);
+            if (duration > 0 || position > 0)
+              g_Player.SeekAbsolute(duration + 10);
+          }
         }
       }
     }
