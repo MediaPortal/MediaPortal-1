@@ -62,7 +62,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bSetVideoDiscontinuity=false;
   m_reader=NULL;  
   pTeletextEventCallback = NULL;
-  pSubEventCallback = NULL;
+  pSubUpdateCallback = NULL;
   pTeletextPacketCallback = NULL;
   pTeletextServiceInfoCallback = NULL;
   m_iAudioReadCount = 0;
@@ -276,10 +276,10 @@ bool CDeMultiplexer::GetSubtitleStreamCount(__int32 &count)
   return S_OK;
 }
 
-bool CDeMultiplexer::SetSubtitleStreamEventCallback( int (CALLBACK *cb)(int eventcode, DWORD64 eval)){
-	//LogDebug("SetSubtitleStreamEventCallback %X",cb);
-	pSubEventCallback = cb;
-	//(*pSubEventCallback)(SUBTITLESTREAM_EVENT_UPDATE,SUBTITLESTREAM_EVENTVALUE_NONE);
+bool CDeMultiplexer::SetSubtitleResetCallback( int (CALLBACK *cb)(int, void*)){
+	//LogDebug("SetSubtitleResetCallback %X",cb);
+	pSubUpdateCallback = cb;
+	//(*pSubUpdateCallback)(SUBTITLESTREAM_EVENT_UPDATE,SUBTITLESTREAM_EVENTVALUE_NONE);
 	return S_OK;
 }
 
@@ -1307,9 +1307,8 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   }
 
   
-  if( pSubEventCallback != NULL ){
-//	  LogDebug("Calling pSubEventCallback");
-	(*pSubEventCallback)(SUBTITLESTREAM_EVENT_UPDATE,SUBTITLESTREAM_EVENTVALUE_NONE);
+  if( pSubUpdateCallback != NULL && m_subtitleStreams.size() > 0){
+	  (*pSubUpdateCallback)(m_subtitleStreams.size(),&m_subtitleStreams[0]);
   }
 }
 

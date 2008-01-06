@@ -40,5 +40,5 @@ DECLARE_INTERFACE_( ISubtitleStream, IUnknown )
   STDMETHOD(GetSubtitleStreamCount)( __int32 &count ) PURE;
   STDMETHOD(GetCurrentSubtitleStream)( __int32 &stream ) PURE;
   STDMETHOD(GetSubtitleStreamLanguage)( __int32 stream,char* szLanguage ) PURE;
-  STDMETHOD(SetSubtitleStreamEventCallback)( int (CALLBACK *pSubEventCallback)(int eventcode, DWORD64 eval)) PURE; 
+  STDMETHOD(SetSubtitleResetCallback)( int (CALLBACK *pSubUpdateCallback)(int count, void* opts)) PURE; 
 };
