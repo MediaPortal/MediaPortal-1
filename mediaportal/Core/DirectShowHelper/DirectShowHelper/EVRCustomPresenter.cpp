@@ -212,6 +212,7 @@ EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevic
 		m_bReallocSurfaces = FALSE;
         m_fRate = 1.0f;
 		m_iFreeSamples = 0;
+		m_dwLastStatLogTime = 0;
         //TODO: use ZeroMemory
         /*for ( int i=0; i<NUM_SURFACES; i++ ) {
             chains[i] = NULL;
@@ -356,7 +357,11 @@ void EVRCustomPresenter::ResetStatistics()
 			m_iFramesDrawn = 0;
 			m_iFramesDropped = 0;
 			m_hnsLastFrameTime = 0;
-			m_iJitter = 0;
+			m_iFramesForStats = 0;
+			m_iExpectedFrameDuration = 0;
+			m_iMinFrameTimeDiff = MAXINT;
+			m_iMaxFrameTimeDiff = 0;
+			m_dwVariance = 0;
 }
 
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetSlowestRate( 
@@ -639,6 +644,9 @@ HRESULT EVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHa
 	hr = pType->GetUINT64(MF_MT_FRAME_RATE, (UINT64*)&u64);
 	if ( SUCCEEDED(hr) ) {
 		Log("Media frame rate: %d / %d", u64.HighPart, u64.LowPart);
+		m_iExpectedFrameDuration = (1000*u64.LowPart) / u64.HighPart;
+	} else {
+		m_iExpectedFrameDuration = 0;
 	}
 
 	CHECK_HR(pType->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&u64), "Getting Framesize failed!");
@@ -1004,12 +1012,8 @@ HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
             (void**)&pSwapChain),
 			"failed: GetContainer");*/
 
-        // Present the swap surface
-		DWORD then = GetTickCount();
-		CHECK_HR(hr = Paint(pSurface), "failed: Paint");
-		DWORD diff = GetTickCount() - then;
-		LOG_TRACE("Paint() latency: %d ms", diff);
 		// Calculate offset to scheduled time
+		m_iFramesDrawn++;
 		if ( m_pClock != NULL ) {
 			LONGLONG hnsTimeNow, hnsSystemTime, hnsTimeScheduled;
 			m_pClock->GetCorrelatedTime(0, &hnsTimeNow, &hnsSystemTime);
@@ -1021,17 +1025,28 @@ HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
 				if ( deviation < 0 ) deviation = -deviation;
 				m_hnsTotalDiff += deviation;
 			}
-			if ( m_hnsLastFrameTime != 0 )
+			if ( m_hnsLastFrameTime != 0  && m_iExpectedFrameDuration > 0 )
 			{
+				m_iFramesForStats ++;
+				if ( m_iFramesForStats > 1000 )
+				{
+					m_iFramesForStats = 1;
+					m_dwVariance = 0;
+				}
 				LONGLONG hnsDiff = hnsTimeNow - m_hnsLastFrameTime;
-				//todo: expected: standard deviation!
-				m_iJitter = hnsDiff / 10000;
+				int duration = (hnsDiff/10000);
+				int dev = m_iExpectedFrameDuration - duration;
+				m_dwVariance += dev*dev;
+				if (duration < m_iMinFrameTimeDiff) m_iMinFrameTimeDiff = duration;
+				if (duration > m_iMaxFrameTimeDiff) m_iMaxFrameTimeDiff = duration;
 			}
 			m_hnsLastFrameTime = hnsTimeNow;
 		}
-		m_iFramesDrawn++;
-        /*CHECK_HR(hr = pSwapChain->Present(NULL, NULL, NULL, NULL, 0),
-			"failed: Present");*/
+        // Present the swap surface
+		DWORD then = GetTickCount();
+		CHECK_HR(hr = Paint(pSurface), "failed: Paint");
+		DWORD diff = GetTickCount() - then;
+		LOG_TRACE("Paint() latency: %d ms", diff);
     }
 
     SAFE_RELEASE(pBuffer);
@@ -1063,10 +1078,15 @@ BOOL EVRCustomPresenter::CheckForInput()
 	return counter != 0;
 }
 
+void EVRCustomPresenter::LogStats()
+{
+}
+
 HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, DWORD msLastSleepTime)
 {
 	HRESULT hr = S_OK;
 	int samplesProcessed=0;
+	LogStats();
 	LOG_TRACE("Checking for scheduled sample (size: %d)", m_qScheduledSamples.Count());
 	*pNextSampleTime = 0;
 	if ( m_bFlush )
@@ -1658,7 +1678,14 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_Jitter(int *iJitter)
 {
 	/*Log("evr:get_Jitter: %d, deviation: %d", m_iJitter,
 		(int)(m_hnsTotalDiff / m_iFramesDrawn) );*/
-	*iJitter = m_iJitter;
+	if ( m_dwVariance != 0 && m_iFramesForStats > 0 ) 
+	{
+		*iJitter = sqrt((double)m_dwVariance/m_iFramesForStats);
+	}
+	else
+	{
+		*iJitter = 0;
+	}
 	return S_OK;
 }
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_AvgSyncOffset(int *piAvg)

@@ -200,6 +200,7 @@ public:
 	HRESULT ProcessInputNotify(int* samplesProcessed);
   void EnableFrameSkipping(bool onOff);
 protected:
+	void LogStats();
 	void ReleaseSurfaces();
 	HRESULT Paint(CComPtr<IDirect3DSurface9> pSurface);
 	HRESULT SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHasChanged);
@@ -266,7 +267,12 @@ protected:
 	BOOL		m_bendStreaming;
 	BOOL		m_bReallocSurfaces;
 	BOOL	    m_bFlush;
-	int m_iFramesDrawn, m_iFramesDropped, m_iJitter;
+	DWORD m_dwLastStatLogTime;
+	int m_iExpectedFrameDuration;
+	int m_iMaxFrameTimeDiff;
+	int m_iMinFrameTimeDiff;
+	DWORD m_dwVariance;
+	int m_iFramesDrawn, m_iFramesDropped, m_iFramesForStats;
 	LONGLONG m_hnsLastFrameTime, m_hnsTotalDiff;
 	RENDER_STATE m_state;
   bool  m_enableFrameSkipping;
