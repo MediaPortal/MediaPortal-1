@@ -244,7 +244,7 @@ namespace MediaPortal.Player.Subtitles
               useBitmap = false;
               activeSubPage = 0;
           }
-          if (option.type == SubtitleType.Teletext) {
+          else if (option.type == SubtitleType.Teletext) {
               useBitmap = false;
               activeSubPage = option.entry.page;
               Log.Debug("SubtitleRender: Now rendering {0} teletext subtitle page {1}", option.language,activeSubPage);
