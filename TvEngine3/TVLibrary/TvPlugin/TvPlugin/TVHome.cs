@@ -84,7 +84,7 @@ namespace TvPlugin
     DateTime _updateTimer = DateTime.Now;		
     static bool _autoTurnOnTv = false;    
     int _lagtolerance = 10; //Added by joboehl
-    bool _settingsLoaded = false;
+    static bool _settingsLoaded = false;
     DateTime _dtlastTime = DateTime.Now;
     TvCropManager _cropManager = new TvCropManager();
     TvNotifyManager _notifyManager = new TvNotifyManager();
@@ -126,12 +126,8 @@ namespace TvPlugin
 
     #endregion
 
-    public TVHome()
+    static TVHome()
     {
-      //ServiceProvider services = GlobalServiceProvider.Instance;
-
-      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
-      MediaPortal.GUI.Library.Log.Info("TVHome V"+versionInfo.FileVersion+":ctor");
       try
       {
         m_navigator = new ChannelNavigator();
@@ -140,6 +136,15 @@ namespace TvPlugin
       {
         MediaPortal.GUI.Library.Log.Error(ex);
       }
+      LoadSettings();
+    }
+
+    public TVHome()
+    {
+      //ServiceProvider services = GlobalServiceProvider.Instance;
+
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
+      MediaPortal.GUI.Library.Log.Info("TVHome V"+versionInfo.FileVersion+":ctor");
       GetID = (int)GUIWindow.Window.WINDOW_TV;
       Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
       startHeartBeatThread();
@@ -371,7 +376,7 @@ namespace TvPlugin
     }
 
     #region Serialisation
-    void LoadSettings()
+    static void LoadSettings()
     {
       if (_settingsLoaded) return;
       _settingsLoaded = true;
@@ -780,7 +785,6 @@ namespace TvPlugin
       {
         m_navigator = new ChannelNavigator();			// Create the channel navigator (it will load groups and channels)
       }
-      LoadSettings();
       
 
       base.OnPageLoad();
@@ -1072,7 +1076,6 @@ namespace TvPlugin
       {
         case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
           {
-            LoadSettings();
             if (_autoTurnOnTv)
             {
               //restart viewing...  
