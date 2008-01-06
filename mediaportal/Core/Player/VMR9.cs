@@ -360,12 +360,18 @@ namespace MediaPortal.Player
       _scene = new PlaneScene(_renderFrame, this);
       _scene.Init();
 
+      HResult hr;
       if (_useEvr)
+      {
         EvrInit(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
-      //(uint)GUIGraphicsContext.ActiveForm);
+        //(uint)GUIGraphicsContext.ActiveForm);
+        hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
+      }
       else
+      {
         Vmr9Init(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
-      HResult hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
+        hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
+      }
       if (hr != 0)
       {
         if (_useEvr)
@@ -753,7 +759,7 @@ namespace MediaPortal.Player
       if (_threadId != Thread.CurrentThread.ManagedThreadId)
       {
         Log.Error("VMR9:Dispose() from wrong thread");
-        return;
+        //return;
       }
       if (_vmr9Filter == null)
       {
