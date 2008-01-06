@@ -70,7 +70,7 @@ public:
   bool       GetSubtitleStreamCount(__int32 &count);
   bool       GetCurrentSubtitleStream(__int32 &stream);
   bool       GetSubtitleStreamLanguage(__int32 stream, char* szLanguage);
-  bool		 SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts));
+  bool		 SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
 
   bool       EndOfFile();
 	bool			 HoldAudio();
@@ -161,7 +161,7 @@ private:
   int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte);
    int (CALLBACK *pTeletextPacketCallback)(byte*, int);
    int (CALLBACK *pTeletextEventCallback)(int,DWORD64);
-   int (CALLBACK *pSubUpdateCallback)(int c, void* opts);
+   int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
 
     // used to sync teletext packets with video
 	//DWORD64 m_inVideoBuffer;

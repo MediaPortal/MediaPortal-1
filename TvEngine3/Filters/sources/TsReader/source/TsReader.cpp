@@ -1095,7 +1095,7 @@ STDMETHODIMP CTsReaderFilter::GetCurrentSubtitleStream(__int32 &stream)
   return m_demultiplexer.GetCurrentSubtitleStream(stream);
 }
 
-STDMETHODIMP CTsReaderFilter::SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts)){
+STDMETHODIMP CTsReaderFilter::SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select)){
 	//LogDebug("CTsReaderFilter SetSubtitleResetCallback");
 	return m_demultiplexer.SetSubtitleResetCallback( pSubUpdateCallback );
 }

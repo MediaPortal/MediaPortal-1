@@ -113,7 +113,7 @@ private:
     STDMETHODIMP GetSubtitleStreamCount(__int32 &count);
     STDMETHODIMP GetCurrentSubtitleStream(__int32 &stream);
     STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
-	STDMETHODIMP SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int count, void* opts)); 
+	STDMETHODIMP SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int count, void* opts, int* select)); 
 
 	//ITeletextSource
 	STDMETHODIMP SetTeletextTSPacketCallBack ( int (CALLBACK *pPacketCallback)(byte*, int));
