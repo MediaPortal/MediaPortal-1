@@ -108,6 +108,7 @@ namespace SetupTv.Sections
         item.SubItems.Add(schedule.ProgramName);
         item.SubItems.Add(String.Format("{0} mins", schedule.PreRecordInterval));
         item.SubItems.Add(String.Format("{0} mins",schedule.PostRecordInterval));
+        item.SubItems.Add(schedule.MaxAirings.ToString());
         if (schedule.IsSerieIsCanceled(schedule.StartTime))
         {
           item.Font = new Font(item.Font, FontStyle.Strikeout);
