@@ -5,6 +5,12 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player.Subtitles
 {
+    public struct LineContent
+    {
+        public bool doubleHeight;
+        public string line;
+    }
+
     class TeletextMagazine
     {
 
@@ -151,12 +157,39 @@ namespace MediaPortal.Player.Subtitles
             Array.Copy(pageContent, text, TELETEXT_LINES * TELETEXT_WIDTH);
             TextConversion.Convert(language, text);
 
-            //StringBuilder sbuf = new StringBuilder();
+            LineContent[] lc = new LineContent[TELETEXT_LINES];
+
+            string realLang = "";
+
+            lock (langInfo)
+            {
+                if (langInfo.ContainsKey(pageNumInProgress))
+                {
+                    realLang = langInfo[pageNumInProgress];
+                }
+            }
+
+            for (int line = 0; line < TELETEXT_LINES; line++) {
+                StringBuilder lineBuilder = new StringBuilder();
+                for (int c = 0; c < TELETEXT_WIDTH; c++) {
+                    lineBuilder.Append((char)text[line*TELETEXT_WIDTH + c]);
+                }
+                lc[line] = new LineContent();
+                if(realLang != ""){
+                    lc[line].line = TextConversion.ConvertLineLangSpecific(realLang,lineBuilder.ToString());
+                }
+                else{
+                    lc[line].line = lineBuilder.ToString();
+                }
+                lc[line].doubleHeight = true;
+            }
+
             StringBuilder textBuilder = new StringBuilder();
             for (int i = 0; i < text.Length; i++)
             {
                 //sbuf.Append((char)text[i]);
                 textBuilder.Append((char)text[i]);
+                
                 //sbuf.Append("" + ((int)pageContent[i]) + " ");
                 if (((i + 1) % 40) == 0)
                 {
@@ -170,17 +203,11 @@ namespace MediaPortal.Player.Subtitles
             TEXT_SUBTITLE sub = new TEXT_SUBTITLE();
             sub.encoding = language;
             sub.page = pageNumInProgress;
-            sub.startTextLine = 0;
-            sub.totalTextLines = 26;
-            lock (langInfo) {
-                if (langInfo.ContainsKey(sub.page))
-                {
-                    sub.language = langInfo[sub.page];
-                }
-                else sub.language = "";
-            }
+
+            sub.language = realLang;
             
             sub.text = textBuilder.ToString();
+            sub.lc = lc;
             sub.timeOut = ulong.MaxValue; // never timeout (will be replaced by other page)
             sub.timeStamp = presentTime;
             assert(sub.text != null, "Sub.text == null!");

@@ -58,9 +58,7 @@ namespace MediaPortal.Player.Subtitles
       
       public int page;
       public string text; // subtitle lines seperated by newline characters
-      public int startTextLine;
-      public int totalTextLines;
-
+      public LineContent[] lc;
       public UInt64 timeStamp;
       public UInt64 timeOut; // in seconds
 
@@ -403,7 +401,6 @@ namespace MediaPortal.Player.Subtitles
               {
                   Log.Debug("Page: " + sub.page);
                   Log.Debug("Character table: " + sub.encoding);
-                  Log.Debug("Start line: " + sub.startTextLine + " total lines " + sub.totalTextLines);
                   Log.Debug("Timeout: " + sub.timeOut);
                   Log.Debug("Timestamp" + sub.timeStamp);
                   Log.Debug("Language: " + sub.language);
@@ -454,27 +451,13 @@ namespace MediaPortal.Player.Subtitles
               }
 
               Subtitle subtitle = new Subtitle();
-              subtitle.subBitmap = RenderText(sub.text, sub.startTextLine, sub.totalTextLines);
+              subtitle.subBitmap = RenderText(sub.lc);
               subtitle.timeOut = sub.timeOut;
               subtitle.presentTime = sub.timeStamp / 100000.0f + startPos;
               
-              //Log.Debug("SubtitleRenderer : player.CurrentPosition");
-              // DO NOT CALL player.CurrentPosition, can cause Deadlock because we are in one of TsReaders own threads!
-             /* if (posOnLastTextSub > 0 && useMinSeperation)
-              {
-                  subtitle.presentTime = posOnLastTextSub + (lastTextSubBlank ? 0.25f : 2.0f); // present time in seconds, compares to player.StreamPos
-              }
-              else {
-                  subtitle.presentTime = 0;
-              }*/
-
-              //Log.Debug("SubtitleRenderer : player.CurrentPosition DONE");
               subtitle.height = 576;
               subtitle.width = 720;
-              subtitle.firstScanLine = (int)(sub.startTextLine / (float)sub.totalTextLines) * 576; //sub.firstScanLine;
-
-             // posOnLastTextSub = posOnLastRender;
-             // lastTextSubBlank = blank;
+              subtitle.firstScanLine = 0;
 
               lock (subtitles)
               {
@@ -492,33 +475,35 @@ namespace MediaPortal.Player.Subtitles
           return;
       }
 
-      public Bitmap RenderText(string lines, int startLine, int totalLines)
+      public static Bitmap RenderText(LineContent[] lc)
       {
+
           int w = 720;
           int h = 576;
 
           Bitmap bmp = new Bitmap(w, h);
-
-          int hOffset = (int)(h * (startLine / (float)totalLines));
-
-          Console.WriteLine(hOffset);
 
           using (Graphics gBmp = Graphics.FromImage(bmp))
           using (SolidBrush brush = new SolidBrush(Color.FromArgb(255, 255, 255)))
           using (SolidBrush blackBrush = new SolidBrush(Color.FromArgb(0, 0, 0)))
           {
               gBmp.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-              using (System.Drawing.Font fnt = new System.Drawing.Font("Courier", 14, FontStyle.Bold)) // fixed width font!
+              for (int i = 0; i < lc.Length; i++)
               {
+                  using (System.Drawing.Font fnt = new System.Drawing.Font("Courier", (lc[i].doubleHeight ? 22 : 15), FontStyle.Bold)) // fixed width font!
+                  {
+                      int vertOffset = (h / lc.Length) * i;
 
-                  SizeF size = gBmp.MeasureString(lines, fnt);
-                  //gBmp.FillRectangle(new SolidBrush(Color.Pink), new Rectangle(0, 0, w, h));
-                  int vOffset = (int)((w - size.Width) / 2); // center based on actual text width
-                  gBmp.DrawString(lines, fnt, blackBrush, new PointF(vOffset + 1, hOffset + 0));
-                  gBmp.DrawString(lines, fnt, blackBrush, new PointF(vOffset + 0, hOffset + 1));
-                  gBmp.DrawString(lines, fnt, blackBrush, new PointF(vOffset - 1, hOffset + 0));
-                  gBmp.DrawString(lines, fnt, blackBrush, new PointF(vOffset + 0, hOffset - 1));
-                  gBmp.DrawString(lines, fnt, brush, new PointF(vOffset, hOffset));
+                      SizeF size = gBmp.MeasureString(lc[i].line, fnt);
+                      //gBmp.FillRectangle(new SolidBrush(Color.Pink), new Rectangle(0, 0, w, h));
+                      int horzOffset = (int)((w - size.Width) / 2); // center based on actual text width
+                      gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset + 1, vertOffset + 0));
+                      gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset + 0, vertOffset + 1));
+                      gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset - 1, vertOffset + 0));
+                      gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset + 0, vertOffset - 1));
+                      gBmp.DrawString(lc[i].line, fnt, brush, new PointF(horzOffset, vertOffset));
+
+                  }
               }
           }
           return bmp;

@@ -7,7 +7,34 @@ namespace MediaPortal.Player.Subtitles
 {
     class TextConversion
     {
-        private static byte[,] vtx2iso8559_1_table = new byte[8,96]
+        private static Dictionary<string, Dictionary<char, char>> langSpecificMap;
+
+
+        static TextConversion() {
+            langSpecificMap = new Dictionary<string, Dictionary<char, char>>();
+            langSpecificMap["dan"] = new Dictionary<char, char>();
+            langSpecificMap["dan"]['ö'] = 'ø';
+            langSpecificMap["dan"]['ä'] = 'æ';
+        }
+
+        public static string ConvertLineLangSpecific(string lang, string line)
+        {
+            //Log.Debug("ConvertLineLangSpecific {0} {1}", lang, line);
+            if (!langSpecificMap.ContainsKey(lang)) return line;
+
+            StringBuilder lineBuilder = new StringBuilder();
+            for (int i = 0; i < line.Length; i++) {
+                char c = line[i];
+                if (langSpecificMap[lang].ContainsKey(c))
+                {
+                    lineBuilder.Append(langSpecificMap[lang][c]);
+                }
+                else lineBuilder.Append(c);
+            }
+            return lineBuilder.ToString();
+        }
+
+        private static byte[,] vtx2iso8559_1_table = new byte[8, 96]
         {
           /* English */
           { 0x20,0x21,0x22,0xa3,0x24,0x25,0x26,0x27,0x28,0x29,0x2a,0x2b,0x2c,0x2d,0x2e,0x2f,   // 0x20-0x2f
@@ -72,16 +99,18 @@ namespace MediaPortal.Player.Subtitles
             assert(lang >= 0 && lang <= 7, "ConvertLine: Lang outside range!");
             for (int col = 0; col < len; col++)
             {
-                teletext[col] = (char)vtx2iso8559_1_table[lang,(teletext[col] & 0x7f) - 0x20];
+                teletext[col] = (char)vtx2iso8559_1_table[lang, (teletext[col] & 0x7f) - 0x20];
             }
         }
 
-        public static void Convert(int lang, byte[] teletext) { 
+        public static void Convert(int lang, byte[] teletext)
+        {
             assert(lang >= 0 && lang <= 7, "Convert: Lang outside range!");
             Log.Debug("Convert: Input data length {0} teletext");
-            for (int i = 0; i < teletext.Length; i++) {
+            for (int i = 0; i < teletext.Length; i++)
+            {
                 //Log.Debug("" + (teletext[i] & 0x7f));
-                
+
                 int charIndex = (teletext[i] & 0x7f) - 0x20;
                 //assert(charIndex >= 0, "Convert: About to index position [" +lang + ", " + charIndex + "] source pos is " + i+ "( line " + (i % 25) + ")");
 
@@ -90,7 +119,7 @@ namespace MediaPortal.Player.Subtitles
                     Log.Debug("Convert: About to index position [" + lang + ", " + charIndex + "] source pos is " + i + "( line " + (i % 25) + ")");
                     continue;
                 }
-                teletext[i] = vtx2iso8559_1_table[lang,charIndex];
+                teletext[i] = vtx2iso8559_1_table[lang, charIndex];
             }
         }
 
