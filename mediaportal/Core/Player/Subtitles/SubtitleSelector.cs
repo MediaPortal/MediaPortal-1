@@ -205,7 +205,7 @@ namespace MediaPortal.Player.Subtitles
 
                 selected_bitmap_index = -1; // we didnt select a bitmap index
 
-                if (currentOption.isAuto)
+                if (currentOption != null && currentOption.isAuto)
                 {
                     SubtitleOption prefered = CheckForPreferedLanguage();
                     if (prefered != null)
@@ -238,7 +238,7 @@ namespace MediaPortal.Player.Subtitles
                 if (!pageEntries.ContainsKey(entry.page))
                 {
                     pageEntries.Add(entry.page, entry);
-                    if (currentOption.isAuto) 
+                    if (currentOption != null && currentOption.isAuto) 
                     {
                         SubtitleOption prefered = CheckForPreferedLanguage();
                         if (prefered != null)
