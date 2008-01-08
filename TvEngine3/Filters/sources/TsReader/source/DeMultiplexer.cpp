@@ -996,8 +996,8 @@ void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
   if(pTeletextEventCallback != NULL)
   {
 	  //LogDebug("Compensation: %i",m_filter.Compensation.Millisecs());	  
-	  (*pTeletextEventCallback)(TELETEXT_EVENT_COMPENSATION_UPDATE,m_filter.Compensation.Millisecs() * 90);
-	  (*pTeletextEventCallback)(TELETEXT_EVENT_PACKET_PCR_UPDATE,m_streamPcr.PcrReferenceBase - m_duration.FirstStartPcr().PcrReferenceBase);
+	  //(*pTeletextEventCallback)(TELETEXT_EVENT_COMPENSATION_UPDATE,m_filter.Compensation.Millisecs() * 90);
+	  (*pTeletextEventCallback)(TELETEXT_EVENT_PACKET_PCR_UPDATE,m_streamPcr.PcrReferenceBase - m_duration.FirstStartPcr().PcrReferenceBase - (m_filter.Compensation.Millisecs() * 90 ));
   }
   if(pTeletextPacketCallback != NULL){
 	(*pTeletextPacketCallback)(tsPacket,188);
