@@ -42,12 +42,7 @@ namespace MediaPortal.Player.Teletext
         TeletextPacketCallback packetCallback;
         TeletextServiceInfoCallback serviceInfoCallback;
 
-       // private Queue<Packet> tsPackets;
-       // private UInt64 lastInBufferCount;
         private UInt64 lastStreamPCR;
-        private UInt64 lastCompensation;
-        
-        private const int MAX_PACKETS_IN_BUFFER = 5000;
 
         public TeletextReceiver(ITeletextSource source, IDVBTeletextDecoder ttxtDecoder)
         {
@@ -86,28 +81,10 @@ namespace MediaPortal.Player.Teletext
                 assert(len == 188, "TS packet length is not 188");
                 byte[] buffer = new byte[len];
                 Marshal.Copy(pbuf, buffer, 0, len); // copy buffer
-                /*while(tsPackets.Count >= MAX_PACKETS_IN_BUFFER){
-                    Log.Debug("Skipping packets, buffer over full!");
-                    tsPackets.Dequeue();
-                }
-                tsPackets.Enqueue(new Packet(buffer, lastStreamPCR));*/
 
                 pesDecoder.OnTsPacket(buffer,lastStreamPCR);
             }
         }
-
-        /*public void ProcessPackets(UInt64 nowTime) {
-            lock (this)
-            {
-                while (tsPackets.Count > 0 && tsPackets.Peek().releaseTime <= nowTime)
-                {
-                    // process the teletext buffers
-                    // that were put on the teletext buffer just after, or before
-                    // the video packet indicated by outBufferCount
-                    pesDecoder.OnTsPacket(tsPackets.Dequeue().buffer);
-                }
-            }
-        }*/
 
         private bool IntToBool(int i) {
             if (i != 0) return true;
@@ -139,27 +116,21 @@ namespace MediaPortal.Player.Teletext
                           break;
                     case TeletextEvent.BUFFER_IN_UPDATE:
                         Log.Error("TeletextReceiver: Call to OnEvent with obsolete event value (BUFFER_IN_UPDATE)");
-                        //Log.Debug("Teletext: Buffer in update value : {0}", eventValue); 
-                        //lastInBufferCount = eventValue;
                         break;
                     case TeletextEvent.BUFFER_OUT_UPDATE:
                         Log.Error("TeletextReceiver: Call to OnEvent with obsolete event value (BUFFER_OUT_UPDATE)");
-                        //Log.Debug("Teletext: Buffer out value : {0}", eventValue);
-                        //ProcessPackets(eventValue);
                         break;
                     case TeletextEvent.PACKET_PCR_UPDATE:
                         //if(lastStreamPCR != eventValue) Log.Debug("Teletext: Packet PCR : {0}", eventValue);
                         lastStreamPCR = eventValue;
-                        
-                        //ProcessPackets(eventValue);
                         break;
                     case TeletextEvent.COMPENSATION_UPDATE:
-                        
-                        if (eventValue != lastCompensation)
-                        {
-                            lastCompensation = eventValue;
-                           // Log.Debug("Teletext: Compensation Update : {0}", eventValue);
-                        }
+                        Log.Error("TeletextReceiver: Call to OnEvent with obsolete event value (COMPENSATION_UPDATE)");
+                        //if (eventValue != lastCompensation)
+                        //{
+                        //    lastCompensation = eventValue;
+                        //    Log.Debug("Teletext: Compensation Update : {0}", eventValue);
+                        //}
                         break;
                     default:
                         throw new Exception("Unknown event type!");

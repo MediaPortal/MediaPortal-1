@@ -395,6 +395,7 @@ namespace MediaPortal.Player.Subtitles
       {
           //bool blank = false;
           Log.Debug("On TextSubtitle called");
+
           try
           {
               if (sub.page == activeSubPage)
@@ -404,7 +405,13 @@ namespace MediaPortal.Player.Subtitles
                   Log.Debug("Timeout: " + sub.timeOut);
                   Log.Debug("Timestamp" + sub.timeStamp);
                   Log.Debug("Language: " + sub.language);
+
                   String content = sub.text;
+                  if (content == null)
+                  {
+                      Log.Error("OnTextSubtitle: sub.txt == null!");
+                      return;
+                  }
                   Log.Debug("Content: ");
                   if (content.Trim().Length > 0) // debug log subtitles
                   {
@@ -453,7 +460,7 @@ namespace MediaPortal.Player.Subtitles
               Subtitle subtitle = new Subtitle();
               subtitle.subBitmap = RenderText(sub.lc);
               subtitle.timeOut = sub.timeOut;
-              subtitle.presentTime = sub.timeStamp / 100000.0f + startPos;
+              subtitle.presentTime = sub.timeStamp / 90000.0f + startPos;
               
               subtitle.height = 576;
               subtitle.width = 720;
