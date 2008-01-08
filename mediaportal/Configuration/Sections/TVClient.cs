@@ -15,7 +15,8 @@ namespace MediaPortal.Configuration.Sections
   {
     #region variables
     private string _preferredAudioLanguages;
-		private string _preferredSubLanguages;		
+		private string _preferredSubLanguages;
+		private IList<string> _languageCodes;
 
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private MediaPortal.UserInterface.Controls.MPTextBox mpTextBoxHostname;
@@ -56,9 +57,8 @@ namespace MediaPortal.Configuration.Sections
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
 		private ColumnHeader columnHeader4;
-		private ColumnHeader columnHeader3;
-    private IList<string> _languageCodesAudio;
-		private IList<string> _languageCodesSub;
+		private ColumnHeader columnHeader3;    
+		
     #endregion
 
     public TVClient()
@@ -138,10 +138,9 @@ namespace MediaPortal.Configuration.Sections
                   MethodInfo inf = t.GetMethod("GetLanguages", BindingFlags.Public | BindingFlags.Instance);
                   _languagesAvail = inf.Invoke(newObj, null) as List<String>;
                   inf = t.GetMethod("GetLanguageCodes", BindingFlags.Public | BindingFlags.Instance);
-									_languageCodesAudio = (List<String>)inf.Invoke(newObj, null);
-									_languageCodesSub = (List<String>)inf.Invoke(newObj, null);
+									_languageCodes = (List<String>)inf.Invoke(newObj, null);									
 
-									if (_languagesAvail == null || _languageCodesAudio == null || _languageCodesSub == null)
+									if (_languagesAvail == null || _languageCodes == null)
                   {
                     Log.Debug("Failed to load languages");
                     return;
@@ -151,36 +150,76 @@ namespace MediaPortal.Configuration.Sections
                     mpListViewAvailAudioLang.Items.Clear();
 										mpListViewPreferredAudioLang.Items.Clear();
                     for (int i = 0; i < _languagesAvail.Count; i++)
-                    {
-                      ListViewItem item = new ListViewItem();
-                      item.Text = _languagesAvail[i];
-											item.Tag = _languageCodesAudio[i];
-                      //item.Checked = _preferredLanguages.Contains(_languageCodes[i]);
-											if (_preferredAudioLanguages.Contains(_languageCodesAudio[i]))
+                    {                      
+											if (!_preferredAudioLanguages.Contains(_languagesAvail[i]))
 											{
-												mpListViewPreferredAudioLang.Items.Add(item);
-											}
-											else
-											{
+												ListViewItem item = new ListViewItem();
+												item.Text = _languagesAvail[i];
+												item.Tag = _languageCodes[i];                      
 												mpListViewAvailAudioLang.Items.Add(item);
 											}
                     }
 
+										if (_preferredAudioLanguages.Length > 0)
+										{
+											string[] langArr = _preferredAudioLanguages.Split(';');
+
+											for (int i = 0; i < langArr.Length; i++)
+											{
+												string langStr = langArr[i];
+												if (langStr.Trim().Length > 0)
+												{
+													for (int j = 0; j < _languagesAvail.Count; j++)
+													{
+														if (_languageCodes[j].Contains(langStr))
+														{
+															ListViewItem item = new ListViewItem();
+															item.Text = _languagesAvail[j];
+															item.Tag = _languageCodes[j];
+
+															mpListViewPreferredAudioLang.Items.Add(item);
+															break;
+														}
+													}
+												}
+											}
+										}
+
 										mpListViewAvailSubLang.Items.Clear();
 										mpListViewPreferredSubLang.Items.Clear();
 										for (int i = 0; i < _languagesAvail.Count; i++)
-										{
-											ListViewItem item = new ListViewItem();
-											item.Text = _languagesAvail[i];
-											item.Tag = _languageCodesSub[i];
-											//item.Checked = _preferredLanguages.Contains(_languageCodes[i]);
-											if (_preferredSubLanguages.Contains(_languageCodesSub[i]))
+										{																						
+											if (!_preferredSubLanguages.Contains(_languagesAvail[i]))
 											{
-												mpListViewPreferredSubLang.Items.Add(item);
-											}
-											else
-											{
+												ListViewItem item = new ListViewItem();
+												item.Text = _languagesAvail[i];
+												item.Tag = _languageCodes[i];
 												mpListViewAvailSubLang.Items.Add(item);
+											}											
+										}
+
+										if (_preferredSubLanguages.Length > 0)
+										{
+											string[] langArr = _preferredSubLanguages.Split(';');
+
+											for (int i = 0; i < langArr.Length; i++)
+											{
+												string langStr = langArr[i];
+												if (langStr.Trim().Length > 0)
+												{
+													for (int j = 0; j < _languagesAvail.Count; j++)
+													{
+														if (_languageCodes[j].Contains(langStr))
+														{
+															ListViewItem item = new ListViewItem();
+															item.Text = _languagesAvail[j];
+															item.Tag = _languageCodes[j];
+
+															mpListViewPreferredSubLang.Items.Add(item);
+															break;
+														}
+													}
+												}
 											}
 										}
 
