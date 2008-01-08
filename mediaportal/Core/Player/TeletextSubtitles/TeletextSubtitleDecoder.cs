@@ -10,10 +10,22 @@ namespace MediaPortal.Player.Subtitles
     {
         private SubtitleRenderer subRender;
 
+        public SubtitleRenderer SubtitleRender
+        {
+            get { return subRender; }
+        }
+        
+        public delegate void PageInfoCallback(TeletextPageEntry entry);
+        private PageInfoCallback pageInfoCallback;
+
+        public PageInfoCallback SubPageInfoCallback
+        {
+            get { return pageInfoCallback; }
+        }
+
         private const int DATA_FIELD_SIZE = 44;
         public TeletextSubtitleDecoder(SubtitleRenderer subRender) {
             assert(subRender != null, "SubtitleRender is null!");
-            Log.Debug("TeletextSubtitleDecoder ctor ... ");
             this.subRender = subRender;
             magazines = new TeletextMagazine[8];
             for (int i = 0; i < 8; i++)
@@ -21,9 +33,8 @@ namespace MediaPortal.Player.Subtitles
                 magazines[i] = new TeletextMagazine();
                 magazines[i].SetMag(i + 1);
                 magazines[i].Clear();
-                magazines[i].SetSubtitleRender(subRender);
+                magazines[i].SetOwner(this);
             }
-            Log.Debug("TeletextSubtitleDecoder ctor end");
         }
 
         private static void assert(bool ok, string msg)
@@ -33,6 +44,11 @@ namespace MediaPortal.Player.Subtitles
         
         public void OnServiceInfo(int page, byte type, string iso_lang) {
             TeletextMagazine.OnServiceInfo(page, type, iso_lang);
+        }
+
+        public void SetPageInfoCallback(PageInfoCallback cb)
+        {
+            this.pageInfoCallback = cb;
         }
 
         public void OnTeletextPacket(byte[] data, UInt64 presentTime)

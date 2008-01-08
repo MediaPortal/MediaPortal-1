@@ -136,7 +136,6 @@ namespace MediaPortal.Player.Subtitles
   //public delegate int TextSubtitleCallback(/*ref TEXT_SUBTITLE sub*/IntPtr textsub);
   public delegate int ResetCallback();
   public delegate int UpdateTimeoutCallback(ref Int64 timeOut);
-  public delegate void PageInfoCallback(TeletextPageEntry entry);
 
   public class SubtitleRenderer
   {
@@ -161,7 +160,7 @@ namespace MediaPortal.Player.Subtitles
    // private TextSubtitleCallback textCallBack;
     private ResetCallback resetCallBack;
     private UpdateTimeoutCallback updateTimeoutCallBack;
-    private PageInfoCallback pageInfoCallback;
+    
     private double posOnLastRender; //file position on last render
 
     /// <summary>
@@ -232,9 +231,7 @@ namespace MediaPortal.Player.Subtitles
       player = p;
     }
 
-      public void SetPageInfoCallback(PageInfoCallback cb) {
-          this.pageInfoCallback = cb;
-      }
+
 
       public void SetSubtitleOption(SubtitleOption option)
       {
@@ -436,25 +433,15 @@ namespace MediaPortal.Player.Subtitles
 
           try
           {
-              TeletextPageEntry pageEntry = new TeletextPageEntry();
-              pageEntry.language = String.Copy(sub.language);
-              pageEntry.encoding = (TeletextCharTable)sub.encoding;
-              pageEntry.page = sub.page;
-
-              if (pageInfoCallback != null)
-              {
-                  pageInfoCallback(pageEntry);
-              }
-
               // if we dont need the subtitle
-              if (!renderSubtitles || useBitmap || (activeSubPage != pageEntry.page))
+              if (!renderSubtitles || useBitmap || (activeSubPage != sub.page))
               {
-                  Log.Debug("Text subtitle (page {0}) discarded: useBitmap is {1} and activeSubPage is {2}", pageEntry.page, useBitmap, activeSubPage);
+                  Log.Debug("Text subtitle (page {0}) discarded: useBitmap is {1} and activeSubPage is {2}", sub.page, useBitmap, activeSubPage);
                   return;
               }
               else
               {
-                  Log.Debug("Text subtitle (page {0}) ACCEPTED: useBitmap is {1} and activeSubPage is {2}", pageEntry.page, useBitmap, activeSubPage);
+                  Log.Debug("Text subtitle (page {0}) ACCEPTED: useBitmap is {1} and activeSubPage is {2}", sub.page, useBitmap, activeSubPage);
               }
 
               Subtitle subtitle = new Subtitle();
@@ -602,9 +589,6 @@ namespace MediaPortal.Player.Subtitles
 
       IntPtr pUpdateTimeoutCallBack = Marshal.GetFunctionPointerForDelegate(updateTimeoutCallBack);
       subFilter.SetUpdateTimeoutCallback(pUpdateTimeoutCallBack);
-
-      //IntPtr pTextCallback = Marshal.GetFunctionPointerForDelegate(textCallBack); // needed for when teletext stuff is added
-      //subFilter.SetTextCallback(pTextCallback);
 
       return filter;
     }

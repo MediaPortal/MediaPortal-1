@@ -193,8 +193,6 @@ namespace MediaPortal.Player.Subtitles
                 //sbuf.Append("" + ((int)pageContent[i]) + " ");
                 if (((i + 1) % 40) == 0)
                 {
-                   // if(hasContent)Log.Debug("Line {0}: " + sbuf.ToString(), (i + 1) % 25);
-                    //sbuf = new StringBuilder();
                     textBuilder.Append('\n');
                 }
             }
@@ -211,7 +209,18 @@ namespace MediaPortal.Player.Subtitles
             sub.timeOut = ulong.MaxValue; // never timeout (will be replaced by other page)
             sub.timeStamp = presentTime;
             assert(sub.text != null, "Sub.text == null!");
-            subRender.OnTextSubtitle(ref sub);
+
+            if (owner.SubPageInfoCallback != null)
+            {
+                TeletextPageEntry pageEntry = new TeletextPageEntry();
+                pageEntry.language = String.Copy(sub.language);
+                pageEntry.encoding = (TeletextCharTable)sub.encoding;
+                pageEntry.page = sub.page;
+
+                owner.SubPageInfoCallback(pageEntry);
+            }
+
+            owner.SubtitleRender.OnTextSubtitle(ref sub);
             pageNumInProgress = -1;   
         }
 
@@ -226,7 +235,6 @@ namespace MediaPortal.Player.Subtitles
             SanityCheck();
             byte[] line_data = new byte[TELETEXT_WIDTH];
             Array.Copy(pageContent, Math.Max(l - 1, 0) * TELETEXT_WIDTH, line_data, 0, TELETEXT_WIDTH);
-            //return (byte*)(pageContent + max(l-1,0)*TELETEXT_WIDTH);
             return line_data;
         }
 
@@ -241,8 +249,6 @@ namespace MediaPortal.Player.Subtitles
 
         void SanityCheck()
         {
-            //assert(_CrtIsValidPointer(pageContent));
-            //assert(_CrtIsValidPointer(pageContent,TELETEXT_LINES*TELETEXT_WIDTH,TRUE));
             assert(magID == -1 || (magID <= 8 && magID >= 0), "SanityCheck: mag id out of range");
         }
 
@@ -252,11 +258,6 @@ namespace MediaPortal.Player.Subtitles
             return pageNumInProgress != -1;
         }
 
-        /*void SetLanguage(int page, DVBLANG lang){
-            //CAutoLock lock(&langInfoLock);
-            langInfo[page] = lang;
-        }*/
-
         public void SetMag(int mag)
         {
             //assert(pageNumInProgress == -1 && language == -1);
@@ -265,15 +266,17 @@ namespace MediaPortal.Player.Subtitles
             SanityCheck();
         }
 
-        public void SetSubtitleRender(SubtitleRenderer subRender) {
-            this.subRender = subRender;
+        public void SetOwner(TeletextSubtitleDecoder owner) {
+            assert(owner != null, "TeletextSubtitleDecoder must not be null!");
+            this.owner = owner;
         }
+        
 
         private UInt64 presentTime;
         private bool isSerial = false;
         private int pageNumInProgress;
+        TeletextSubtitleDecoder owner;
         private int language; // encoding language
-        private SubtitleRenderer subRender;
         private byte[] pageContent; // indexed by line and character (col)
         private static Dictionary<int,string> langInfo = new Dictionary<int,string>(); // DVB SI language info for sub pages
 

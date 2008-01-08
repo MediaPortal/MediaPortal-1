@@ -108,8 +108,8 @@ namespace MediaPortal.Configuration.Sections
 				_preferredAudioLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
 				_preferredSubLanguages = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
 
-				mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbsubtitles", false);
-				mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "ttxtsubtitles", false);
+				mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
+				mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
       }
 
       if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
@@ -252,8 +252,8 @@ namespace MediaPortal.Configuration.Sections
         xmlreader.SetValueAsBool("tvservice", "preferac3", mpCheckBoxPrefAC3.Checked);
         xmlreader.SetValueAsBool("tvservice", "preferAudioTypeOverLang", mpCheckBoxPrefAudioOverLang.Checked);
 
-				xmlreader.SetValueAsBool("tvservice", "dvbsubtitles", mpCheckBoxEnableDVBSub.Checked);
-				xmlreader.SetValueAsBool("tvservice", "ttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
+				xmlreader.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
+				xmlreader.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
 				        
 				
         foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)

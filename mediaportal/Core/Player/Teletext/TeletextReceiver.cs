@@ -317,6 +317,12 @@ namespace MediaPortal.Player.Teletext
 
         private PESDecoder pesDecoder;
         private IDVBTeletextDecoder ttxtDecoder;
+
+        public IDVBTeletextDecoder TtxtDecoder
+        {
+            get { return ttxtDecoder; }
+        }
+
         private bool discardPackets = false;
     }
 }

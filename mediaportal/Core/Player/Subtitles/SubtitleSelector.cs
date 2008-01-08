@@ -82,13 +82,9 @@ namespace MediaPortal.Player.Subtitles
         private SubtitleStreamEventCallback subStreamCallback;
         private object syncLock = new object();
 
-        public SubtitleSelector(MediaPortal.Player.TSReaderPlayer.ISubtitleStream dvbStreams, SubtitleRenderer subRender)
+        public SubtitleSelector(MediaPortal.Player.TSReaderPlayer.ISubtitleStream dvbStreams, SubtitleRenderer subRender, TeletextSubtitleDecoder subDecoder)
         {
             Log.Debug("SubtitleSelector ctor");
-            if (dvbStreams == null)
-            {
-                throw new Exception("Nullpointer input not allowed ( ISubtitleStream )");
-            }
             if (subRender == null)
             {
                 throw new Exception("Nullpointer input not allowed ( SubtitleRenderer)");
@@ -123,27 +119,34 @@ namespace MediaPortal.Player.Subtitles
 
             pageEntries = new Dictionary<int, TeletextPageEntry>();
             
-
             bitmapSubtitleCache = new List<SubtitleOption>();
 
-            RetrieveBitmapSubtitles();
-
-            if (preferedLanguages.Count > 0)
+            lock (syncLock)
             {
-                autoSelectOption = new SubtitleOption();
-                autoSelectOption.language = "None";
-                autoSelectOption.isAuto = true;
-                autoSelectOption.type = SubtitleType.None;
+                if (subDecoder != null)
+                {
+                    subDecoder.SetPageInfoCallback(new MediaPortal.Player.Subtitles.TeletextSubtitleDecoder.PageInfoCallback(OnPageInfo));
+                }
+                
+                if (dvbStreams != null)
+                {
+                    RetrieveBitmapSubtitles();
+                    subStreamCallback = new SubtitleStreamEventCallback(OnSubtitleReset);
+                    IntPtr pSubStreamCallback = Marshal.GetFunctionPointerForDelegate(subStreamCallback);
+                    Log.Debug("Calling SetSubtitleStreamEventCallback");
+                    dvbStreams.SetSubtitleResetCallback(pSubStreamCallback);
+                }
 
-                SetOption(0); // the autoselect mode will have index 0 (ugly)
+                if (preferedLanguages.Count > 0)
+                {
+                    autoSelectOption = new SubtitleOption();
+                    autoSelectOption.language = "None";
+                    autoSelectOption.isAuto = true;
+                    autoSelectOption.type = SubtitleType.None;
+
+                    SetOption(0); // the autoselect mode will have index 0 (ugly)
+                }
             }
-
-            subRender.SetPageInfoCallback(new PageInfoCallback(OnPageInfo));
-            subStreamCallback = new SubtitleStreamEventCallback(OnSubtitleReset);
-            IntPtr pSubStreamCallback = Marshal.GetFunctionPointerForDelegate(subStreamCallback);
-            Log.Debug("Calling SetSubtitleStreamEventCallback");
-            dvbStreams.SetSubtitleResetCallback(pSubStreamCallback);
-
             Log.Debug("End SubtitleSelector ctor");
         }
 

@@ -147,7 +147,8 @@ namespace MediaPortal.Player
     protected ISubtitleStream _subtitleStream = null;
     protected TeletextReceiver _ttxtReceiver = null;
     protected ITeletextSource _teletextSource = null;
-    bool enableDvbSubtitles = false;
+    bool enableDVBBitmapSubtitles = false;
+    bool enableDVBTtxtSubtitles = false;
     #endregion
 
     [Guid("558D9EA6-B177-4c30-9ED5-BF2D714BCBCA"),
@@ -284,7 +285,8 @@ namespace MediaPortal.Player
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
           strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
           strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
-          enableDvbSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbsubtitles", false);
+          enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
+          enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
           if (strValue.Equals("zoom"))
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -314,23 +316,19 @@ namespace MediaPortal.Player
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
         if (strAudioRenderer.Length > 0)
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
-        if (enableDvbSubtitles == true)
-        {
+
+      if (enableDVBBitmapSubtitles)
+      {
           try
           {
-            _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
-            SubtitleRenderer.GetInstance().SetPlayer(this);
-            _dvbSubRenderer = SubtitleRenderer.GetInstance();
-            
+              _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
           }
           catch (Exception e)
           {
-            Log.Error(e);
+              Log.Error(e);
           }
+      }
 
-        }
-
-        Log.Debug("Is subtitle fitler null? {0}", (_subtitleFilter == null));
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
@@ -457,16 +455,30 @@ namespace MediaPortal.Player
           Log.Error("Unable to get IAudioStream interface");
         }
 
-        _audioSelector = new AudioSelector(_audioStream);        
+        _audioSelector = new AudioSelector(_audioStream);
 
-        if (enableDvbSubtitles)
+        if (enableDVBTtxtSubtitles || enableDVBBitmapSubtitles) {
+            try
+            {
+                SubtitleRenderer.GetInstance().SetPlayer(this);
+                _dvbSubRenderer = SubtitleRenderer.GetInstance();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+        }
+
+        if (enableDVBBitmapSubtitles)
         {
           _subtitleStream = _fileSource as ISubtitleStream;
           if (_subtitleStream == null)
           {
             Log.Error("Unable to get ISubtitleStream interface");
           }
+        }
 
+        if( enableDVBTtxtSubtitles ){
           //Log.Debug("TSReaderPlayer: Obtaining TeletextSource");
           _teletextSource = _fileSource as ITeletextSource;
 
@@ -475,13 +487,19 @@ namespace MediaPortal.Player
               Log.Error("Unable to get ITeletextSource interface");
           }
 
-          Log.Debug("TSReaderPlayer: Creating Teletext Receiver ->");
-          _ttxtReceiver = new TeletextReceiver(_teletextSource, new TeletextSubtitleDecoder(_dvbSubRenderer));
+          Log.Debug("TSReaderPlayer: Creating Teletext Receiver");
+          TeletextSubtitleDecoder ttxtDecoder = new TeletextSubtitleDecoder(_dvbSubRenderer);
+          _ttxtReceiver = new TeletextReceiver(_teletextSource, ttxtDecoder);
 
-          _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer);          
+           // regardless of whether dvb subs are enabled, the following call is okay
+          // if _subtitleStream is null the subtitle will just not setup for bitmap subs 
+          _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, ttxtDecoder);
+        }
+        else if (enableDVBBitmapSubtitles) {
+            // if only dvb subs are enabled, pass null for ttxtDecoder
+            _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
         }
             
-
         //source.SetClockMode(3);//audio renderer
         if (_audioRendererFilter != null)
         {
@@ -757,7 +775,7 @@ namespace MediaPortal.Player
     {
       get 
       {
-          if (enableDvbSubtitles)
+          if (_subSelector != null)
           {
               return _subSelector.CountOptions();
           }
@@ -772,7 +790,7 @@ namespace MediaPortal.Player
     {
       get 
       {
-          if (enableDvbSubtitles)
+          if (_subSelector != null)
           {
               return _subSelector.GetCurrentOption();
           }
@@ -780,7 +798,7 @@ namespace MediaPortal.Player
       }
       set 
       {
-        if (enableDvbSubtitles)
+          if (_subSelector != null)
         {
             _subSelector.SetOption(value);
         } 
@@ -792,7 +810,7 @@ namespace MediaPortal.Player
     /// </summary>
     public override string SubtitleLanguage(int iStream)
     {
-      if (enableDvbSubtitles)
+        if (_subSelector != null)
       {
           return _subSelector.GetCurrentLanguage();
       }
@@ -809,7 +827,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (enableDvbSubtitles)
+          if (_subSelector != null)
         {
           return _dvbSubRenderer.RenderSubtitles;
         }
@@ -820,7 +838,7 @@ namespace MediaPortal.Player
       }
       set
       {
-        if (enableDvbSubtitles)
+          if (_subSelector != null)
         {
           _dvbSubRenderer.RenderSubtitles = value;
         }
