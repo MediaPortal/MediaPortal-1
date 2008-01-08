@@ -284,7 +284,7 @@ namespace MediaPortal.Player
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
           strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
           strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
-          enableDvbSubtitles = xmlreader.GetValueAsBool("mytv", "dvbsubtitles", false);
+          enableDvbSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbsubtitles", false);
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
           if (strValue.Equals("zoom"))
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;

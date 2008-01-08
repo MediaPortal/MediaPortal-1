@@ -103,9 +103,9 @@ namespace MediaPortal.Player.Subtitles
             using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
             {
                 preferedLanguages = new List<string>();
-                string languages = reader.GetValueAsString("mytv", "sublangs", "");
+                string languages = reader.GetValueAsString("tvservice", "preferredsublanguages", "");
                 Log.Debug("SubtitleSelector: sublangs entry content: " + languages);
-                StringTokenizer st = new StringTokenizer(languages, ",");
+                StringTokenizer st = new StringTokenizer(languages, ";");
                 while (st.HasMore)
                 {
                     string lang = st.NextToken();

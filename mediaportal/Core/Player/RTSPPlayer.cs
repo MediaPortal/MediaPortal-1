@@ -205,7 +205,7 @@ namespace MediaPortal.Player
             strAudiorenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
             postProcessingFilterSection = "mytv";
           }
-          enableDvbSubtitles = xmlreader.GetValueAsBool("mytv", "dvbsubtitles", false);
+          enableDvbSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbsubtitles", false);
           // FlipGer: load infos for custom filters
           int intCount = 0;
           while (xmlreader.GetValueAsString(postProcessingFilterSection, "filter" + intCount.ToString(), "undefined") != "undefined")
