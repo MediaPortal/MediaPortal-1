@@ -395,7 +395,7 @@ namespace TvPlugin
         if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
         if (strValue.Equals("panscan")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
 
-        string preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
+				string preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
         _preferredLanguages = preferredLanguages.Split(';');
 
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
