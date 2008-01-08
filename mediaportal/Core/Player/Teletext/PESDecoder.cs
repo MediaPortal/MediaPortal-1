@@ -138,6 +138,10 @@ namespace MediaPortal.Player.Teletext
 			        m_iWritePos = 0;
 
 			        m_iPesHeaderLen=tsPacket[pos+8]+9;
+                    
+                    if (m_pesHeader.Length < m_iPesHeaderLen) {
+                        Log.Error("PESDecoder: Reported header length is bigger than header buffer! : {0} vs {1}", m_pesHeader.Length, m_iPesHeaderLen);
+                    }
                     Array.Copy(tsPacket, pos, m_pesHeader, 0, m_iPesHeaderLen);
 			       //above replaces -> memcpy(m_pesHeader,&tsPacket[pos],m_iPesHeaderLen);
 			        
@@ -164,9 +168,11 @@ namespace MediaPortal.Player.Teletext
                 return;
 	        }
 
+            assert(pos > 0 && pos < 188, "Pos error : " + pos);
 	        assert(m_iWritePos + 188-pos <= MAX_PES_PACKET, "About to exceed buffer size!"); // check that the buffer is not overrunning
 
             int bytesToWrite = 188 -pos;
+            assert(bytesToWrite < 188, "Bytes to write too big : " + bytesToWrite);
             Array.Copy(tsPacket,pos,m_pesBuffer,m_iWritePos, bytesToWrite);
 	        m_iWritePos += bytesToWrite;
 
