@@ -1028,9 +1028,12 @@ void CDeMultiplexer::ReadAudioIndexFromRegistry()
 /// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
 /// In this method we check if any audio/video/subtitle pid or format has changed
 /// If not, we simply return
-/// If something has changed we ask teh MP to rebuild the graph
+/// If something has changed we ask the MP to rebuild the graph
 void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 {
+  //CAutoLock lock (&m_section);
+  CPidTable pids=info.PidTable;
+  
   if (info.PatVersion != m_iPatVersion)
   {
     LogDebug("OnNewChannel pat version:%d->%d",m_iPatVersion, info.PatVersion);
@@ -1039,33 +1042,34 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     m_bSetVideoDiscontinuity=true;
     Flush();
   }
-	//CAutoLock lock (&m_section);
-  CPidTable pids=info.PidTable;
-  //do we have at least an audio pid?
-  if (pids.AudioPid1==0) return; // no? then return
+  else
+  {
+    //do we have at least an audio pid?
+    if (pids.AudioPid1==0) return; // no? then return
 
-  //check if something changed
-  if (  m_pids.AudioPid1==pids.AudioPid1 && m_pids.AudioServiceType1==pids.AudioServiceType1 &&
-				m_pids.AudioPid2==pids.AudioPid2 && m_pids.AudioServiceType2==pids.AudioServiceType2 &&
-				m_pids.AudioPid3==pids.AudioPid3 && m_pids.AudioServiceType3==pids.AudioServiceType3 &&
-				m_pids.AudioPid4==pids.AudioPid4 && m_pids.AudioServiceType4==pids.AudioServiceType4 &&
-				m_pids.AudioPid5==pids.AudioPid5 && m_pids.AudioServiceType5==pids.AudioServiceType5 &&
-				m_pids.AudioPid6==pids.AudioPid6 && m_pids.AudioServiceType6==pids.AudioServiceType6 &&
-				m_pids.AudioPid7==pids.AudioPid7 && m_pids.AudioServiceType7==pids.AudioServiceType7 &&
-				m_pids.AudioPid8==pids.AudioPid8 && m_pids.AudioServiceType8==pids.AudioServiceType8 &&
-				m_pids.PcrPid==pids.PcrPid &&
-				m_pids.PmtPid==pids.PmtPid &&
-				m_pids.SubtitlePid1==pids.SubtitlePid1 &&
-        m_pids.SubtitlePid2==pids.SubtitlePid2 &&
-        m_pids.SubtitlePid3==pids.SubtitlePid3 &&
-        m_pids.SubtitlePid4==pids.SubtitlePid4 )
-	{
-		if ( pids.videoServiceType==m_pids.videoServiceType && m_pids.VideoPid==pids.VideoPid) 
-    {
-      //nothing changed so return
-      return;
+    //check if something changed
+    if (  m_pids.AudioPid1==pids.AudioPid1 && m_pids.AudioServiceType1==pids.AudioServiceType1 &&
+				  m_pids.AudioPid2==pids.AudioPid2 && m_pids.AudioServiceType2==pids.AudioServiceType2 &&
+				  m_pids.AudioPid3==pids.AudioPid3 && m_pids.AudioServiceType3==pids.AudioServiceType3 &&
+				  m_pids.AudioPid4==pids.AudioPid4 && m_pids.AudioServiceType4==pids.AudioServiceType4 &&
+				  m_pids.AudioPid5==pids.AudioPid5 && m_pids.AudioServiceType5==pids.AudioServiceType5 &&
+				  m_pids.AudioPid6==pids.AudioPid6 && m_pids.AudioServiceType6==pids.AudioServiceType6 &&
+				  m_pids.AudioPid7==pids.AudioPid7 && m_pids.AudioServiceType7==pids.AudioServiceType7 &&
+				  m_pids.AudioPid8==pids.AudioPid8 && m_pids.AudioServiceType8==pids.AudioServiceType8 &&
+				  m_pids.PcrPid==pids.PcrPid &&
+				  m_pids.PmtPid==pids.PmtPid &&
+				  m_pids.SubtitlePid1==pids.SubtitlePid1 &&
+          m_pids.SubtitlePid2==pids.SubtitlePid2 &&
+          m_pids.SubtitlePid3==pids.SubtitlePid3 &&
+          m_pids.SubtitlePid4==pids.SubtitlePid4 )
+	  {
+      if ( pids.videoServiceType==m_pids.videoServiceType && m_pids.VideoPid==pids.VideoPid) 
+      {
+        //nothing changed so return
+        return;
+      }
     }
-	}
+  }
 
   //remember the old audio & video formats
   int oldVideoServiceType=m_pids.videoServiceType ;
