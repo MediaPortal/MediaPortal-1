@@ -75,7 +75,6 @@ namespace MediaPortal.GUI.Music
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
 
-    private bool m_useGlobalSearch = false;
     private bool m_foundGlobalSearch = false;
     #endregion
 
@@ -89,7 +88,7 @@ namespace MediaPortal.GUI.Music
 
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
     }
-    
+
     #region Serialisation
     protected override void LoadSettings()
     {
@@ -97,13 +96,9 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
-        
-        m_useGlobalSearch = xmlreader.GetValueAsBool("musicmisc", "useglobalsearch", false);
-        if (m_useGlobalSearch)
-        {
-          if (PluginManager.IsWindowPlugInEnabled("MediaPortal.GUI.GlobalSearch.GUIGlobalMusicSearch"))
-            m_foundGlobalSearch = true;
-        }
+
+        if (PluginManager.IsWindowPlugInEnabled("MediaPortal.GUI.GlobalSearch.GUIGlobalMusicSearch"))
+          m_foundGlobalSearch = true;
 
         _shareList.Clear();
         for (int i = 0; i < 20; i++)
@@ -324,7 +319,7 @@ namespace MediaPortal.GUI.Music
         if (facadeView.Focus)
         {
           GUIListItem item = facadeView[0];
-          
+
           if ((item != null) && item.IsFolder && (item.Label == ".."))
           {
             handler.CurrentLevel--;
@@ -338,7 +333,7 @@ namespace MediaPortal.GUI.Music
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeView[0];
-        
+
         if ((item != null) && item.IsFolder && (item.Label == ".."))
         {
           handler.CurrentLevel--;
@@ -360,17 +355,17 @@ namespace MediaPortal.GUI.Music
       if (view == string.Empty)
         view = ((ViewDefinition)handler.Views[0]).Name;
 
-      if (_currentView != null && _currentView.Name == view)      
-        handler.Restore(_currentView, _currentLevel);      
-      else      
+      if (_currentView != null && _currentView.Name == view)
+        handler.Restore(_currentView, _currentLevel);
+      else
         handler.CurrentView = view;
-      
+
 
       LoadDirectory(m_strDirectory);
 
-      if (facadeView.Count <= 0)      
+      if (facadeView.Count <= 0)
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
-      
+
 
       if (_showArtist != string.Empty)
       {
@@ -427,7 +422,7 @@ namespace MediaPortal.GUI.Music
     {
       if (control == btnSearch)
       {
-        if (m_useGlobalSearch && m_foundGlobalSearch)
+        if (m_foundGlobalSearch)
         {
           GUIWindowManager.ActivateWindow(30885);   // Check in GlobalSerach source
         }
@@ -517,8 +512,8 @@ namespace MediaPortal.GUI.Music
               {
                 // build folder.jpg from coverart
                 if (_createMissingFolderThumbs)
-                {                  
-                    FolderThumbCreator thumbbuilder = new FolderThumbCreator(item.Path, song.ToMusicTag());                  
+                {
+                  FolderThumbCreator thumbbuilder = new FolderThumbCreator(item.Path, song.ToMusicTag());
                 }
                 // cache the folder thumb - created thumbs will be cached automatically
                 if (_createMissingFolderThumbCache)
@@ -642,12 +637,12 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnShowContextMenu()
     {
-      GUIListItem item = facadeView.SelectedListItem;      
+      GUIListItem item = facadeView.SelectedListItem;
 
       if (item == null)
         return;
 
-      int itemNo = facadeView.SelectedListItemIndex;      
+      int itemNo = facadeView.SelectedListItemIndex;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
