@@ -135,7 +135,7 @@ namespace ProcessPlugins.AutoCropper
       }
 
       // bottom up scan
-      for (int line = frame.Height - 1; line > frame.Height / 2; line--)
+      for (int line = frame.Height - 8; line > frame.Height / 2; line--)
       {
         ScanLine(line, bottomStart, bottomEnd);
         if (IsContent())
