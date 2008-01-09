@@ -429,12 +429,9 @@ namespace MediaPortal.Player
         Log.Error("VideoPlayerVMR9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
       //switch back to directx windowed mode
-      if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
-      {
-        Log.Info("VideoPlayerVMR9: Disabling DX9 exclusive mode");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msg);
-      }
+      Log.Info("VideoPlayerVMR9: Disabling DX9 exclusive mode");
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msg);
     }
   }
 }

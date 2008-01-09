@@ -128,12 +128,9 @@ namespace MediaPortal.Player
       _graphState = PlayState.Init;
       _currentFile = strFile;
 
-      if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
-      {
-        Log.Info("AudioPlayerWMP9: Disabling DX9 exclusive mode");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msg);
-      }
+      Log.Info("AudioPlayerWMP9: Disabling DX9 exclusive mode");
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msg);
 
       _notifyPlaying = true;
       GC.Collect();

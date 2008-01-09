@@ -200,12 +200,9 @@ namespace MediaPortal.Player
         newPlayer = GetExternalPlayer(fileName);
         if (newPlayer != null)
         {
-          if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
-          {
-            Log.Info("PlayerFactory: Disabling DX9 exclusive mode");
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-            GUIWindowManager.SendMessage(msg);
-          }
+          Log.Info("PlayerFactory: Disabling DX9 exclusive mode");
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
           return newPlayer;
         }
       }
@@ -377,12 +374,9 @@ namespace MediaPortal.Player
         newPlayer = GetExternalPlayer(fileName);
         if (newPlayer != null)
         {
-          if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
-          {
-            Log.Info("PlayerFactory: Disabling DX9 exclusive mode");
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-            GUIWindowManager.SendMessage(msg);
-          }
+          Log.Info("PlayerFactory: Disabling DX9 exclusive mode");
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
           return newPlayer;
         }
       }

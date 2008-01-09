@@ -1092,13 +1092,9 @@ namespace MediaPortal.Player
         GC.Collect(); GC.Collect(); GC.Collect();
 
         // switch back to directx windowed mode
-        if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
-        {
-          Log.Info("VideoPlayerVMR7: Disabling DX9 exclusive mode");
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(msg);
-        }
-
+        Log.Info("VideoPlayerVMR7: Disabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
       }
       catch (Exception ex)
       {
