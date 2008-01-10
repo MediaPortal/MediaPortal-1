@@ -275,6 +275,7 @@ namespace MediaPortal.Plugins.Process
             xmlwriter.SetValue("psclientplugin", "nextwakeup", nextWakeUp.ToString());
             string res = xmlwriter.GetValueAsString("psclientplugin", "nextwakeup", DateTime.MaxValue.ToString());
           }
+					RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", (int)how, force);
         }
         catch (Exception e)
         {
