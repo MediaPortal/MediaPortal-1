@@ -41,10 +41,10 @@ using MediaPortal.UserInterface.Controls;
 namespace SetupTv.Sections
 {
   public partial class TvSchedules : SectionSettings
-  {		
+  {
     public TvSchedules()
       : this("TV Schedules")
-    {			
+    {
     }
 
     public TvSchedules(string name)
@@ -107,8 +107,13 @@ namespace SetupTv.Sections
         }
         item.SubItems.Add(schedule.ProgramName);
         item.SubItems.Add(String.Format("{0} mins", schedule.PreRecordInterval));
-        item.SubItems.Add(String.Format("{0} mins",schedule.PostRecordInterval));
-        item.SubItems.Add(schedule.MaxAirings.ToString());
+        item.SubItems.Add(String.Format("{0} mins", schedule.PostRecordInterval));
+
+        if (schedule.MaxAirings.ToString() == int.MaxValue.ToString())
+          item.SubItems.Add("Keep all");
+        else
+          item.SubItems.Add(schedule.MaxAirings.ToString());
+
         if (schedule.IsSerieIsCanceled(schedule.StartTime))
         {
           item.Font = new Font(item.Font, FontStyle.Strikeout);
@@ -116,27 +121,27 @@ namespace SetupTv.Sections
         listView1.Items.Add(item);
       }
 
-			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
-      private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-      {
-          mpButtonDel_Click(null, null);
-      }
+    private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      mpButtonDel_Click(null, null);
+    }
 
-      private void mpButtonDel_Click(object sender, EventArgs e)
-      {                    
-          foreach (ListViewItem item in listView1.SelectedItems)
-          {
-            Schedule schedule = (Schedule)item.Tag;            
-            TvServer server = new TvServer();
-            server.StopRecordingSchedule(schedule.IdSchedule);
-            schedule.Delete();
-            
-            listView1.Items.Remove(item);
-          }
-					listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+    private void mpButtonDel_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in listView1.SelectedItems)
+      {
+        Schedule schedule = (Schedule)item.Tag;
+        TvServer server = new TvServer();
+        server.StopRecordingSchedule(schedule.IdSchedule);
+        schedule.Delete();
+
+        listView1.Items.Remove(item);
       }
-		
+      listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+    }
+
   }
 }

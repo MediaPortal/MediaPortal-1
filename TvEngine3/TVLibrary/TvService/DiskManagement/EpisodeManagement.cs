@@ -80,14 +80,6 @@ namespace TvService
 
     void CheckEpsiodesForRecording(Schedule schedule, TvDatabase.Program program)
     {
-      // temporary disabling episodes deletion as it caused several unexpected behaviors for some users
-      // as we don't tell anything to user before deletion , some got important recordings deleted :s
-      // that we don't want
-      // anyway this feature has to be discussed it seems as MaxAiring value seems to be a bit abstrat
-      // for most people
-      // Broce
-      return;
-      /*
       if (!schedule.DoesUseEpisodeManagement) return;
 
       //check how many episodes we got
@@ -125,7 +117,6 @@ namespace TvService
 				}
       	oldestEpisode.Remove();
       }
-       * */
     }
     #endregion
 
