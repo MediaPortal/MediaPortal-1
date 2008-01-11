@@ -144,7 +144,7 @@ namespace MediaPortal.Player.Subtitles
     private static SubtitleRenderer instance = null;
     private IDVBSubtitleSource subFilter = null;
     private long subCounter = 0;
-    private const int MAX_SUBTITLES_IN_QUEUE = 200;
+    private const int MAX_SUBTITLES_IN_QUEUE = 20;
     /// <summary>
     /// The coordinates of current vertex buffer
     /// </summary>
