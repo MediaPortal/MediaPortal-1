@@ -35,6 +35,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using Mpeg2SplitterPackage;
+using TsCutterPackage;
 
 namespace WindowPlugins.VideoEditor
 {
@@ -274,6 +275,11 @@ namespace WindowPlugins.VideoEditor
     {
       progressBar.Percentage = percentage;
       progressLbl.Label = percentage.ToString();
+    }
+
+    private void tsFileCutter_OnInitFailed()
+    {
+      MessageBox(GUILocalizeStrings.Get(200051), GUILocalizeStrings.Get(2081)); // Invalid videofile, Cannot cut
     }
 
     protected override void OnPageDestroy(int new_windowId)
@@ -552,6 +558,7 @@ namespace WindowPlugins.VideoEditor
       Unknown,
       Dvrms,
       Mpeg,
+      Ts
     }
 
     private void GetFiletype()
@@ -566,6 +573,9 @@ namespace WindowPlugins.VideoEditor
           break;
         case ".mpg":
           cutType = FileTypes.Mpeg;
+          break;
+        case ".ts":
+          cutType = FileTypes.Ts;
           break;
         default:
           cutType = FileTypes.Unknown;
@@ -628,12 +638,62 @@ namespace WindowPlugins.VideoEditor
           progressLbl.IsVisible = true;
           cutBtn.IsEnabled = false;
           cutThread.Start();
-          //CutMpeg(); 
+          break;
+        case FileTypes.Ts:
+          cutThread = new Thread(new ThreadStart(CutTs));
+          cutThread.Priority = ThreadPriority.BelowNormal;
+
+          progressBar.Percentage = 0;
+          progressBar.IsVisible = true;
+          progressLbl.IsVisible = true;
+          cutBtn.IsEnabled = false;
+          cutThread.Start();
           break;
         default:
           MessageBox(GUILocalizeStrings.Get(2080), GUILocalizeStrings.Get(2081)); // Unsupported filetype, Cannot cut
           break;
       }
+    }
+
+    private void CutTs()
+    {
+      outFilename = new FileInfo(inFilename.FullName);
+      int tmp = inFilename.FullName.LastIndexOf('.');
+      string newInFilename = inFilename.FullName.Remove(tmp) + "_original" + inFilename.Extension;
+      inFilename.MoveTo(newInFilename);
+
+      // TsFileCutter expects the cutpoint as the intervalls to cut out, currently the intervalls show the parts to keep
+      // so we have to "revert" the cutPointsList"
+      List<TimeDomain> cutList = new List<TimeDomain>();
+      if (cutPointsList.Count == 1)
+      {
+        if (cutPointsList[0].StartTime == 0)
+          cutList.Add(new TimeDomain(cutPointsList[0].EndTime,g_Player.Duration));
+        else
+        {
+          cutList.Add(new TimeDomain(0,cutPointsList[0].StartTime));
+          cutList.Add(new TimeDomain(cutPointsList[0].EndTime,g_Player.Duration));
+        }
+      }
+      else
+      {
+        if (cutPointsList[0].StartTime!=0)
+          cutList.Add(new TimeDomain(0,cutPointsList[0].StartTime));
+        for (int i = 1; i < cutPointsList.Count; i++)
+          cutList.Add(new TimeDomain( cutPointsList[i-1].EndTime,cutPointsList[0].StartTime));
+        // Don't add the last cutpoint if the last endtime is the end of the file
+        if ((int)cutPointsList[cutPointsList.Count-1].EndTime!=(int)g_Player.Duration)
+          cutList.Add(new TimeDomain(cutPointsList[cutPointsList.Count-1].EndTime,g_Player.Duration));
+      }
+
+      TsFileCutter cutter = new TsFileCutter();
+      cutter.InitStreams(inFilename.FullName, outFilename.FullName, cutList);
+      cutter.OnProgress+=dvrMod_OnProgress;
+      cutter.OnFinished+=dvrMod_OnFinished;
+      cutter.OnInitFailed += tsFileCutter_OnInitFailed;
+      cutter.Cut();
+      progressLbl.Label = "0";
+      progressBar.Percentage = 0;
     }
 
     private void CutMpeg()

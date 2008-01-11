@@ -1693,5 +1693,6 @@
         <String id="200048">Re-create all thumbnails</String>
         <String id="200049">Only watched recording for this show</String>
         <String id="200050">This will delete your recordings from harddisc</String>		
+		<String id="200051">Invalid video file</String>
     </Section>
 </Language>

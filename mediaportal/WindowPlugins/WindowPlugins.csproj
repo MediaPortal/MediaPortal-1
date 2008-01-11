@@ -960,6 +960,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="VideoEditor\BufferedTsFileReader.cs" />
     <Compile Include="VideoEditor\CompressSettings.cs" />
     <Compile Include="VideoEditor\Converter.cs" />
     <Compile Include="VideoEditor\DvrMsModifier.cs" />
@@ -968,7 +969,9 @@
     <Compile Include="VideoEditor\Mpeg2Divx.cs" />
     <Compile Include="VideoEditor\Mpeg2Splitter.cs" />
     <Compile Include="VideoEditor\MpegModifier.cs" />
+    <Compile Include="VideoEditor\PcrUtils.cs" />
     <Compile Include="VideoEditor\TimeDomain.cs" />
+    <Compile Include="VideoEditor\TsFileCutter.cs" />
     <Compile Include="VideoEditor\VideoEditorConfiguration.cs">
       <SubType>Form</SubType>
     </Compile>

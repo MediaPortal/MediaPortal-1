@@ -1693,5 +1693,6 @@
         <String id="200048">Alle Vorschaubilder neu erstellen</String>     
         <String id="200049">Nur bereits gesehene Aufnahmen</String>
         <String id="200050">Die Aufnahmen werden auch von Ihrer Festplatte gelöscht</String>				
+		<String id="200051">Videodatei ist ungültig</String>
     </Section>
 </Language>
