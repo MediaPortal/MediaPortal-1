@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2008 Team MediaPortal
  *  Author: Frodo
  *	http://www.team-mediaportal.com
  *

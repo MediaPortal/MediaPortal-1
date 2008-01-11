@@ -6,7 +6,7 @@
    Copyright (C) Dave Chapman 2002,2004
 
    Modifications & additional code: 
-   Copyright (C) 2006-2007 Team MediaPortal
+   Copyright (C) 2006-2008 Team MediaPortal
    http://www.team-mediaportal.com
   
    This program is free software; you can redistribute it and/or

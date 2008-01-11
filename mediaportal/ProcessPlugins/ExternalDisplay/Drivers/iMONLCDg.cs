@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2007 Team MediaPortal
+#region Copyright (C) 2005-2008 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
  * 
  *  Modified iMONLCD.cs Aug 8, 2007 by RalphY
