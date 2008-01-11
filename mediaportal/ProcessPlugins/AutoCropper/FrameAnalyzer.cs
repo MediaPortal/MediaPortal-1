@@ -129,7 +129,7 @@ namespace ProcessPlugins.AutoCropper
           topLine = line;
           foundTop = true;
           if (verboseLog) Log.Debug("Found top line: {0}", topLine);
-          DrawLine(topLine, topStart, topEnd, Color.Red);
+          //DrawLine(topLine, topStart, topEnd, Color.Red);
           break;
         }
       }
@@ -143,7 +143,7 @@ namespace ProcessPlugins.AutoCropper
           foundBottom = true;
           bottomLine = line;
           if (verboseLog) Log.Debug("Found bottom line: {0}", bottomLine);
-          DrawLine(bottomLine, bottomStart, bottomEnd, Color.Coral);
+          //DrawLine(bottomLine, bottomStart, bottomEnd, Color.Coral);
           break;
         }
       }
@@ -157,14 +157,14 @@ namespace ProcessPlugins.AutoCropper
         return false;
       }
 
-      //DrawLine(topLine, 0, frame.Width - 1, Color.Red);
-      //DrawLine(bottomLine, 0, frame.Width - 1, Color.Yellow);
+      DrawLine(topLine, 0, frame.Width - 1, Color.Red);
+      DrawLine(bottomLine, 0, frame.Width - 1, Color.Yellow);
 
       bounds.Y = topLine;
       bounds.X = 0;
       bounds.Height = bottomLine - topLine + 1;
       bounds.Width = frame.Width;
-      return true;
+       return true;
     }
 
     /// <summary>
@@ -232,10 +232,10 @@ namespace ProcessPlugins.AutoCropper
         if (histG[i] > 0 && i >= maxG) maxG = i;
         if (histB[i] > 0 && i >= maxB) maxB = i;
       }
-      //Log.Debug("Max : {0}, {1}, {2}", maxR, maxG, maxB);
+     // Log.Debug("Max : {0}, {1}, {2}", maxR, maxG, maxB);
 
       // for now, try to just rely on max value
-      if (maxR > 30 || maxG > 30 || maxB > 30) return true;
+      if (maxR > 40 || maxG > 40 || maxB > 40) return true;
 
       return false;
     }
