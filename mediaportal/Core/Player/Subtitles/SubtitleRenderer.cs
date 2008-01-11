@@ -144,6 +144,7 @@ namespace MediaPortal.Player.Subtitles
     private static SubtitleRenderer instance = null;
     private IDVBSubtitleSource subFilter = null;
     private long subCounter = 0;
+    private const int MAX_SUBTITLES_IN_QUEUE = 200;
     /// <summary>
     /// The coordinates of current vertex buffer
     /// </summary>
@@ -372,8 +373,13 @@ namespace MediaPortal.Player.Subtitles
 
           lock (subtitles)
           {
-            subtitles.AddLast(subtitle);
-            Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
+              while(subtitles.Count >= MAX_SUBTITLES_IN_QUEUE)
+              {
+                  Log.Debug("SubtitleRenderer: Subtitle queue too big, discarding first element");
+                  subtitles.RemoveFirst();
+              }
+              subtitles.AddLast(subtitle);
+              Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
           }
         }
         catch (Exception e)
@@ -455,6 +461,10 @@ namespace MediaPortal.Player.Subtitles
 
               lock (subtitles)
               {
+                  while(subtitles.Count >= MAX_SUBTITLES_IN_QUEUE) {
+                      Log.Debug("SubtitleRenderer: Subtitle queue too big, discarding first element");
+                      subtitles.RemoveFirst();
+                  }
                   subtitles.AddLast(subtitle);
 
                   Log.Debug("SubtitleRenderer: Text subtitle added, now have " + subtitles.Count + " subtitles in cache " + subtitle.ToString() + " pos on last render was " + posOnLastRender);

@@ -219,7 +219,8 @@ namespace MediaPortal.Player.Subtitles
                         currentOption.type = prefered.type;
                         Log.Debug("Auto-selection of " + currentOption);
                     }
-                    else { 
+                    else {
+                        currentOption.language = "None";
                         currentOption.type = SubtitleType.None;
                     }
 
@@ -255,6 +256,7 @@ namespace MediaPortal.Player.Subtitles
                         else
                         {
                             currentOption.type = SubtitleType.None;
+                            currentOption.language = "None";
                         }
 
                         subRender.SetSubtitleOption(currentOption);
@@ -362,6 +364,7 @@ namespace MediaPortal.Player.Subtitles
                 }
                 else {
                     option.type = SubtitleType.None;
+                    currentOption.language = "None";
                     subRender.SetSubtitleOption(option);
                 }
             }
