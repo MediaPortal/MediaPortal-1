@@ -632,7 +632,6 @@ namespace TvDatabase
     {
       get
       {
-        if (ScheduleType == (int)ScheduleRecordingType.Once) return false;
         if (MaxAirings == Int32.MaxValue) return false;
         if (MaxAirings < 1) return false;
         return true;
