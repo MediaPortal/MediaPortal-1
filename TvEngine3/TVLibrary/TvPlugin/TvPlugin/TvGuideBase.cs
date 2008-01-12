@@ -199,8 +199,10 @@ namespace TvPlugin
     public override int GetFocusControlId()
     {
       if (_cursorX >= 0) return 1;
-      if (GetControl((int)Controls.SPINCONTROL_DAY).Focus == true) return (int)Controls.SPINCONTROL_DAY;
-      if (GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus == true) return (int)Controls.SPINCONTROL_TIME_INTERVAL;
+      GUIControl c = GetControl((int)Controls.SPINCONTROL_DAY);  
+      if (c != null && c.Focus == true) return (int)Controls.SPINCONTROL_DAY;
+      c = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL);
+      if (c != null && c.Focus == true) return (int)Controls.SPINCONTROL_TIME_INTERVAL;
       return -1;
     }
 
