@@ -388,12 +388,9 @@ namespace MediaPortal.Player
       }
 
       //switch back to directx windowed mode
-      if ( !GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow) )
-      {
-        Log.Info("StreamBufferPlayer9: Disabling DX9 exclusive mode");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msg);
-      }
+      Log.Info("StreamBufferPlayer9: Disabling DX9 exclusive mode");
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msg);
 
       Log.Info("StreamBufferPlayer9: Cleanup done");
     }

@@ -208,7 +208,6 @@ namespace MediaPortal.Player
         SetVideoWindow();
       }
     }
-        
     
     public override void SetVideoWindow()
     {
@@ -219,11 +218,12 @@ namespace MediaPortal.Player
       }
 
       if (!_updateNeeded)
+      {
         return;
+      }
 
       _updateNeeded = false;
       _isStarted = true;
-
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
@@ -240,7 +240,7 @@ namespace MediaPortal.Player
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
-      //Log.Info("TSStreamBufferPlayer9: build graph");
+      //Log.Info("TSReaderPlayer: build graph");
 
       try
       {
@@ -302,7 +302,6 @@ namespace MediaPortal.Player
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
           if (strValue.Equals("zoom149"))
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
-
         }
         if (_isRadio == false)
         {
@@ -366,7 +365,7 @@ namespace MediaPortal.Player
           Log.Error("TSReaderPlayer:Failed to get IFileSourceFilter");
           return false;
         }
-        //Log.Info("TSStreamBufferPlayer9: open file:{0}",filename);
+        //Log.Info("TSReaderPlayer: open file:{0}",filename);
 
         Log.Info("TSReaderPlayer: open file with mediatype:{0}", filename);
         AMMediaType mpeg2ProgramStream = new AMMediaType();
@@ -448,7 +447,6 @@ namespace MediaPortal.Player
           Log.Error("Unable to get IMediaSeeking interface#1");
         }
 
-
         _audioStream = _fileSource as IAudioStream;
         if (_audioStream == null)
         {
@@ -457,16 +455,17 @@ namespace MediaPortal.Player
 
         _audioSelector = new AudioSelector(_audioStream);
 
-        if (enableDVBTtxtSubtitles || enableDVBBitmapSubtitles) {
-            try
-            {
-                SubtitleRenderer.GetInstance().SetPlayer(this);
-                _dvbSubRenderer = SubtitleRenderer.GetInstance();
-            }
-            catch (Exception e)
-            {
-                Log.Error(e);
-            }
+        if (enableDVBTtxtSubtitles || enableDVBBitmapSubtitles) 
+        {
+          try
+          {
+            SubtitleRenderer.GetInstance().SetPlayer(this);
+            _dvbSubRenderer = SubtitleRenderer.GetInstance();
+          }
+          catch (Exception e)
+          {
+            Log.Error(e);
+          }
         }
 
         if (enableDVBBitmapSubtitles)
@@ -484,31 +483,31 @@ namespace MediaPortal.Player
 
           if (_teletextSource == null)
           {
-              Log.Error("Unable to get ITeletextSource interface");
+            Log.Error("Unable to get ITeletextSource interface");
           }
 
           Log.Debug("TSReaderPlayer: Creating Teletext Receiver");
           TeletextSubtitleDecoder ttxtDecoder = new TeletextSubtitleDecoder(_dvbSubRenderer);
           _ttxtReceiver = new TeletextReceiver(_teletextSource, ttxtDecoder);
 
-           // regardless of whether dvb subs are enabled, the following call is okay
+          // regardless of whether dvb subs are enabled, the following call is okay
           // if _subtitleStream is null the subtitle will just not setup for bitmap subs 
           _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, ttxtDecoder);
         }
-        else if (enableDVBBitmapSubtitles) {
-            // if only dvb subs are enabled, pass null for ttxtDecoder
-            _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
+        else if (enableDVBBitmapSubtitles) 
+        {
+          // if only dvb subs are enabled, pass null for ttxtDecoder
+          _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
         }
             
-        //source.SetClockMode(3);//audio renderer
         if (_audioRendererFilter != null)
         {
-          //Log.Info("TSStreamBufferPlayer9:set reference clock");
+          //Log.Info("TSReaderPlayer:set reference clock");
           IMediaFilter mp = _graphBuilder as IMediaFilter;
           IReferenceClock clock = _audioRendererFilter as IReferenceClock;
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);
-          //Log.Info("TSStreamBufferPlayer9:set reference clock:{0:X}", hr);
+          //Log.Info("TSReaderPlayer:set reference clock:{0:X}", hr);
           _basicAudio = (IBasicAudio)_graphBuilder;
           //_mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
         }
@@ -532,19 +531,11 @@ namespace MediaPortal.Player
               count++;
               System.Threading.Thread.Sleep(100);
             }
-            /*
-            //_vmr9 is not supported, switch to overlay
-            Log.Info("TSStreamBufferPlayer9: switch to overlay");
-            _mediaCtrl = null;
-            Cleanup();
-            return base.GetInterfaces(filename);
-             */
           }
 
           _vmr9.SetDeinterlaceMode();
         }
         return true;
-
       }
       catch (Exception ex)
       {
@@ -557,6 +548,11 @@ namespace MediaPortal.Player
     protected override void CloseInterfaces()
     {
       Cleanup();
+      // Switch back to directx windowed mode. This cannot be done in Cleanup() as it's 
+      // used also when starting up the playback!
+      Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode");
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msg);
     }
 
     void Cleanup()
@@ -700,19 +696,11 @@ namespace MediaPortal.Player
         _state = PlayState.Init;
 
         GC.Collect();
-        //GC.Collect();
-        //GC.Collect();
       }
       catch (Exception ex)
       {
         Log.Error("TSReaderPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
-
-      //switch back to directx windowed mode
-      Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msg);
-
       Log.Info("TSReaderPlayer: Cleanup done");
     }
 
@@ -752,7 +740,9 @@ namespace MediaPortal.Player
             int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
             Log.Info("TsReaderPlayer seek done:{0:X}", hr);
             if (VMR9Util.g_vmr9 != null)
+            {
               VMR9Util.g_vmr9.FrameCounter = 123;
+            }
           }
         }
 
@@ -771,11 +761,14 @@ namespace MediaPortal.Player
     {
       get 
       {
-          if (_subSelector != null)
-          {
-              return _subSelector.CountOptions();
-          }
-          else return 0;
+        if (_subSelector != null)
+        {
+          return _subSelector.CountOptions();
+        }
+        else
+        {
+          return 0;
+        }
       }
     }
 
@@ -786,17 +779,20 @@ namespace MediaPortal.Player
     {
       get 
       {
-          if (_subSelector != null)
-          {
-              return _subSelector.GetCurrentOption();
-          }
-          else return 0;
+        if (_subSelector != null)
+        {
+          return _subSelector.GetCurrentOption();
+        }
+        else
+        {
+          return 0;
+        }
       }
       set 
       {
-          if (_subSelector != null)
+        if (_subSelector != null)
         {
-            _subSelector.SetOption(value);
+          _subSelector.SetOption(value);
         } 
       }
     }
@@ -806,9 +802,9 @@ namespace MediaPortal.Player
     /// </summary>
     public override string SubtitleLanguage(int iStream)
     {
-        if (_subSelector != null)
+      if (_subSelector != null)
       {
-          return _subSelector.GetCurrentLanguage();
+        return _subSelector.GetCurrentLanguage();
       }
       else
       {
@@ -823,7 +819,7 @@ namespace MediaPortal.Player
     {
       get
       {
-          if (_subSelector != null)
+        if (_subSelector != null)
         {
           return _dvbSubRenderer.RenderSubtitles;
         }
@@ -834,7 +830,7 @@ namespace MediaPortal.Player
       }
       set
       {
-          if (_subSelector != null)
+        if (_subSelector != null)
         {
           _dvbSubRenderer.RenderSubtitles = value;
         }
