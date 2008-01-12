@@ -489,7 +489,7 @@ void CAudioPin::UpdateFromSeek()
   CAutoLock lock(&m_bufferLock);
 
   //if a pin-output thread exists...
-  // GEMX: multiseat: use old behaviour -> If ThreadExists do init a new seek else just seek (otherwise breaks channel changes while streaming)
+  // GEMX: streaming: use old behaviour -> If ThreadExists do init a new seek else just seek (otherwise breaks channel changes while streaming)
   //       singleseat: always tell the filter that we are starting a seek operation - This fixes rewinding/forwarding
   if (ThreadExists() || !m_pTsReaderFilter->IsStreaming()) 
   {
