@@ -105,13 +105,13 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 			return E_FAIL;
 		EPGChannel& channel=it->second; 
 
-
 		//did we already receive this section ?
 		key=crc32 ((char*)buf,len);
 		EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);
 		if (itSec!=channel.mapSectionsReceived.end())
-      return S_FINISHED; //yes
+			return S_FINISHED; //yes
 		channel.mapSectionsReceived[key]=true;
+		
 
 		m_epgTimeout=time(NULL);
 		int start=14;

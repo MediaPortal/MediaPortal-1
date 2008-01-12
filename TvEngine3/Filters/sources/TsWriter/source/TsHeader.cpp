@@ -78,11 +78,11 @@ void CTsHeader::Decode(byte *data)
   // 4. 00 - RESERVED for future use 									0x00
 
 	SyncByte=data[0];
-  if (SyncByte!=0x47)
-  {
-    TransportError=true;
-    return;
-  }
+	if (SyncByte!=0x47)
+	{
+		TransportError=true;
+		return;
+	}
 	TransportError=(data[1] & 0x80)>0?true:false;
 	PayloadUnitStart=(data[1] & 0x40)>0?true:false;
 	TransportPriority=(data[1] & 0x20)>0?true:false;
@@ -105,6 +105,9 @@ void CTsHeader::Decode(byte *data)
       else PayLoadStart=data[4]+5;
     }
   }
+  // sanity check, encountered a situation where the payload start was 210 which would not work since ts packets are only 188 bytes
+  if (PayLoadStart>180)
+	  TransportError=true;
 }
 
 void CTsHeader::LogHeader()
