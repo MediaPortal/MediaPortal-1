@@ -20,6 +20,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Text;
@@ -30,6 +31,33 @@ using TvLibrary.Channels;
 
 namespace TvDatabase
 {
+  public class EpgHole
+  {
+    public DateTime start;
+    public DateTime end;
+    public EpgHole(DateTime start, DateTime end)
+    {
+      this.start = start;
+      this.end = end;
+    }
+    public bool FitsInHole(DateTime start, DateTime end)
+    {
+      return (start >= this.start && end <= this.end);
+    }
+  }
+  public class EpgHoleCollection : List<EpgHole>
+  {
+    public bool FitsInAnyHole(DateTime start, DateTime end)
+    {
+      foreach (EpgHole hole in this)
+      {
+        if (hole.FitsInHole(start, end))
+          return true;
+      }
+      return false;
+    }
+  }
+
   public class EpgDBUpdater
   {
     #region Variables
@@ -72,6 +100,25 @@ namespace TvDatabase
         return;
       Log.Epg("{0}: {1} lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
       _layer.RemoveOldPrograms(dbChannel.IdChannel);
+
+      EpgHoleCollection holes = new EpgHoleCollection();
+      if (dbChannel.EpgHasGaps)
+      {
+        Log.Epg("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
+        IList infos = _layer.GetPrograms(dbChannel, DateTime.Now);
+        if (infos.Count > 1)
+        {
+          for (int i = 1; i < infos.Count; i++)
+          {
+            Program prev = (Program)infos[i - 1];
+            Program current = (Program)infos[i];
+            TimeSpan diff=current.StartTime-prev.EndTime;
+            if (diff.TotalMinutes > 5)
+              holes.Add(new EpgHole(prev.EndTime, current.StartTime));
+          }
+        }
+        Log.Epg("{0}: {1} Found {2} epg holes.", _grabberName, dbChannel.DisplayName,holes.Count);
+      }
       DateTime dbLastProgram = _layer.GetNewestProgramForChannel(dbChannel.IdChannel);
       EpgProgram lastProgram = null;
       for (int i = 0; i < epgChannel.Programs.Count; i++)
@@ -87,7 +134,11 @@ namespace TvDatabase
             hasGaps = true;
         }
         if (epgProgram.StartTime <= dbLastProgram)
-          continue;
+        {
+          if (epgProgram.StartTime < DateTime.Now) continue;
+          if (!holes.FitsInAnyHole(epgProgram.StartTime, epgProgram.EndTime)) continue;
+          Log.Epg("{0}: Great we stuffed an epg hole {1}-{2} :-)", _grabberName, epgProgram.StartTime.ToShortDateString()+" "+epgProgram.StartTime.ToShortTimeString(), epgProgram.EndTime.ToShortDateString()+" "+epgProgram.EndTime.ToShortTimeString());
+        }
         AddProgramAndApplyTemplates(dbChannel, epgProgram);
         iInserted++;
         lastProgram = epgProgram;
