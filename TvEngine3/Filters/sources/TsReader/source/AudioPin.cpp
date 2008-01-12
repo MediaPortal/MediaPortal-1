@@ -489,9 +489,10 @@ void CAudioPin::UpdateFromSeek()
   CAutoLock lock(&m_bufferLock);
 
   //if a pin-output thread exists...
-  // GEMX: always tell the filter that we are starting a seek operation - This fixes rewinding/forwarding
-  //if (ThreadExists()) 
-  //{
+  // GEMX: multiseat: use old behaviour -> If ThreadExists do init a new seek else just seek (otherwise breaks channel changes while streaming)
+  //       singleseat: always tell the filter that we are starting a seek operation - This fixes rewinding/forwarding
+  if (ThreadExists() || !m_pTsReaderFilter->IsStreaming()) 
+  {
       //tell the filter we are starting a seek operation
       m_pTsReaderFilter->SeekStart();
 			
@@ -516,12 +517,12 @@ void CAudioPin::UpdateFromSeek()
       // and restart the thread
       Run();
 			//LogDebug("aud seek running");
-  /*}
+  }
   else
   {
     //no thread running? then simply seek to the position
     m_pTsReaderFilter->Seek(rtSeek,false);
-  }*/
+  }
 	
   //tell demuxer to start deliver audio packets again
 	demux.SetHoldAudio(false);

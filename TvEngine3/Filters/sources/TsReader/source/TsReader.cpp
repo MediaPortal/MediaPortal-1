@@ -1141,6 +1141,12 @@ CTsDuration& CTsReaderFilter::GetDuration()
 {
   return m_duration;
 }
+
+bool CTsReaderFilter::IsStreaming()
+{
+	return (m_fileDuration==NULL);;
+}
+
 ////////////////////////////////////////////////////////////////////////
 //
 // Exported entry points for registration and unregistration 

@@ -148,6 +148,7 @@ public:
   CRefTime        Compensation;
   void				OnMediaTypeChanged();
   void				OnRequestAudioChange();
+  bool			  IsStreaming();
 protected:
   void ThreadProc();
 private:
