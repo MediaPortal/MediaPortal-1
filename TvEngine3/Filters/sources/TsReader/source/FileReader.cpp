@@ -91,7 +91,6 @@ HRESULT FileReader::OpenFile()
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) 
   {
-
     LogDebug("FileReader::OpenFile() file already open");
 		return NOERROR;
 	}
@@ -122,30 +121,29 @@ HRESULT FileReader::OpenFile()
 	m_bReadOnly = FALSE;
 
 	// Try to open the file
-	m_hFile = ::CreateFileW(pFileName,   // The filename
-						 (DWORD) GENERIC_READ,          // File access
-						 (DWORD) FILE_SHARE_READ,       // Share access
-						 NULL,                  // Security
-						 (DWORD) OPEN_EXISTING,         // Open flags
-						 (DWORD) 0,             // More flags
-						 NULL);                 // Template
+	m_hFile = ::CreateFileW(pFileName,      // The filename
+						 (DWORD) GENERIC_READ,        // File access
+						 (DWORD) FILE_SHARE_READ,     // Share access
+						 NULL,                        // Security
+						 (DWORD) OPEN_EXISTING,       // Open flags
+						 (DWORD) 0,                   // More flags
+						 NULL);                       // Template
 
 	if (m_hFile == INVALID_HANDLE_VALUE) 
   {
-
 		//Test incase file is being recorded to
 		m_hFile = ::CreateFileW(pFileName,		// The filename
 							(DWORD) GENERIC_READ,				// File access
 							(DWORD) (FILE_SHARE_READ |
-							FILE_SHARE_WRITE),   // Share access
-							NULL,						// Security
-							(DWORD) OPEN_EXISTING,				// Open flags
+							FILE_SHARE_WRITE),          // Share access
+							NULL,						            // Security
+							(DWORD) OPEN_EXISTING,		  // Open flags
 //							(DWORD) 0,
 							(DWORD) FILE_ATTRIBUTE_NORMAL,		// More flags
 //							FILE_ATTRIBUTE_NORMAL |
-//							FILE_FLAG_RANDOM_ACCESS,	// More flags
-//							FILE_FLAG_SEQUENTIAL_SCAN,	// More flags
-							NULL);						// Template
+//							FILE_FLAG_RANDOM_ACCESS,	      // More flags
+//							FILE_FLAG_SEQUENTIAL_SCAN,	    // More flags
+							NULL);						                // Template
 
 		if (m_hFile == INVALID_HANDLE_VALUE)
 		{
@@ -157,22 +155,26 @@ HRESULT FileReader::OpenFile()
 		m_bReadOnly = TRUE;
 	}
 
+  //LogDebug("FileReader::OpenFile() handle %i %ws", m_hFile, pFileName );
+
 	WCHAR infoName[512];
 	wcscpy(infoName, pFileName);
 	wcscat(infoName, L".info");
 
-	m_hInfoFile = ::CreateFileW(infoName, // The filename
-			(DWORD) GENERIC_READ,    // File access
+	m_hInfoFile = ::CreateFileW(infoName,   // The filename
+			(DWORD) GENERIC_READ,               // File access
 			(DWORD) (FILE_SHARE_READ |
-			FILE_SHARE_WRITE),   // Share access
-			NULL,      // Security
-			(DWORD) OPEN_EXISTING,    // Open flags
+			FILE_SHARE_WRITE),                  // Share access
+			NULL,                               // Security
+			(DWORD) OPEN_EXISTING,              // Open flags
 //			(DWORD) 0,
-			(DWORD) FILE_ATTRIBUTE_NORMAL, // More flags
-//			FILE_FLAG_SEQUENTIAL_SCAN,	// More flags
+			(DWORD) FILE_ATTRIBUTE_NORMAL,      // More flags
+//			FILE_FLAG_SEQUENTIAL_SCAN,	      // More flags
 //			FILE_ATTRIBUTE_NORMAL |
-//			FILE_FLAG_RANDOM_ACCESS,	// More flags
+//			FILE_FLAG_RANDOM_ACCESS,	        // More flags
 			NULL);
+
+  //LogDebug("FileReader::OpenFile() info file handle %i", m_hInfoFile);
 
 	SetFilePointer(0, FILE_BEGIN);
 	m_llBufferPointer = 0;	
@@ -196,6 +198,9 @@ HRESULT FileReader::CloseFile()
     LogDebug("FileReader::CloseFile() no open file");
 		return S_OK;
 	}
+
+  //LogDebug("FileReader::CloseFile() handle %i %ws", m_hFile, m_pFileName);
+  //LogDebug("FileReader::CloseFile() info file handle %i", m_hInfoFile);
 
 //	BoostThread Boost;
 
@@ -246,7 +251,6 @@ HRESULT FileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
 			}
 		}
 
-
 		DWORD dwSizeLow;
 		DWORD dwSizeHigh;
 
@@ -285,10 +289,9 @@ HRESULT FileReader::GetInfoFileSize(__int64 *lpllsize)
 		li.LowPart = dwSizeLow;
 		li.HighPart = dwSizeHigh;
 		m_infoFileSize = li.QuadPart;
-
 	}
-		*lpllsize = m_infoFileSize;
-		return S_OK;
+	*lpllsize = m_infoFileSize;
+	return S_OK;
 }
 
 HRESULT FileReader::GetStartPosition(__int64 *lpllpos)

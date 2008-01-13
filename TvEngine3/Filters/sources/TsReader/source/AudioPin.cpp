@@ -218,10 +218,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       LogDebug("aud:isseeking");
 		  Sleep(20);
       pSample->SetTime(NULL,NULL); 
-	  pSample->SetActualDataLength(0);
+	    pSample->SetActualDataLength(0);
       pSample->SetDiscontinuity(TRUE);
       pSample->SetSyncPoint(FALSE);
-	  m_bInFillBuffer=false;	   
+	    m_bInFillBuffer=false;	   
 		  return NOERROR;
 	  }
 
@@ -349,9 +349,15 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       return NOERROR;
     }
   }
+  
+  // Should we return something else than NOERROR when hitting an exception?
+  catch(int e)
+  {
+    LogDebug("aud:fillbuffer exception %d", e);
+  }
   catch(...)
   {
-    LogDebug("aud:fillbuffer exception");
+    LogDebug("aud:fillbuffer exception ...");
   }
   m_bInFillBuffer=false;
   return NOERROR;

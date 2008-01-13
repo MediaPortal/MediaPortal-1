@@ -138,10 +138,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_pCallback(NULL),
   m_pRequestAudioCallback(NULL)
 {
-
  // use the following line if u r having trouble setting breakpoints
  // #pragma comment( lib, "strmbasd" )
-
 
   char moduleFileName[1024];
 	GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
@@ -152,7 +150,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   strcpy(logFileName, logFile.c_str() );
   ::DeleteFile(logFileName);
 
-  LogDebug("-------------- v1.0.0.1 (+ttxt mod) ----------------");
+  LogDebug("-------------- v1.0.2 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
