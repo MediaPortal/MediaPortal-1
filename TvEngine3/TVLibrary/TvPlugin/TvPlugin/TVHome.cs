@@ -490,8 +490,7 @@ namespace TvPlugin
     }
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
-    {
-      _playbackStopped = true;
+    {      
       if (type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio) return;
 
       // todo
@@ -504,6 +503,7 @@ namespace TvPlugin
       if (TVHome.Card.IsRecording == true) return;
       TVHome.Card.User.Name = new User().Name;
       TVHome.Card.StopTimeShifting();
+			_playbackStopped = true;
     }
 
     public override void OnAction(Action action)
@@ -679,7 +679,38 @@ namespace TvPlugin
 			}
       return false;
 		}
-		
+
+		private static bool wasPrevWinTVplugin()
+		{
+			bool result = false;
+			
+			int act =GUIWindowManager.ActiveWindow;
+			int prev = GUIWindowManager.GetWindow(act).PreviousWindowId;
+
+			//plz any newly added ID's to this list.
+
+			result = (prev == (int)GUIWindow.Window.WINDOW_RADIO ||
+								prev == (int)GUIWindow.Window.WINDOW_RADIO_GUIDE ||
+								prev == (int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS ||
+								prev == (int)GUIWindow.Window.WINDOW_SETTINGS_SORT_CHANNELS ||
+								prev == (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG ||
+								prev == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+								prev == (int)GUIWindow.Window.WINDOW_TVGUIDE ||
+								prev == (int)GUIWindow.Window.WINDOW_MINI_GUIDE ||
+								prev == (int)GUIWindow.Window.WINDOW_TV_SEARCH ||
+								prev == (int)GUIWindow.Window.WINDOW_TV_SEARCHTYPE ||
+								prev == (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
+								prev == (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO ||
+								prev == (int)GUIWindow.Window.WINDOW_RECORDEDTV ||
+								prev == (int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO ||
+								prev == (int)GUIWindow.Window.WINDOW_SETTINGS_RECORDINGS ||
+								prev == (int)GUIWindow.Window.WINDOW_SCHEDULER ||
+								prev == (int)GUIWindow.Window.WINDOW_SEARCHTV ||
+								prev == (int)GUIWindow.Window.WINDOW_TV_TUNING_DETAILS
+				);
+			
+			return result;
+		}
 
     protected override void OnPageLoad()
     {
@@ -828,6 +859,11 @@ namespace TvPlugin
         MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channel.DisplayName);
         if (_autoTurnOnTv && !_playbackStopped)
         {
+					if (!wasPrevWinTVplugin())
+					{						
+						_userChannelChanged = false;
+					}					
+
           ViewChannelAndCheck(channel);
         }
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
@@ -850,7 +886,7 @@ namespace TvPlugin
 			}
 			if (!showlastActModFS)
 			{
-				if (_autoFullScreen && !g_Player.FullScreen && (PreviousWindowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && PreviousWindowId != (int)GUIWindow.Window.WINDOW_TVGUIDE && PreviousWindowId != (int)GUIWindow.Window.WINDOW_SEARCHTV && PreviousWindowId != (int)GUIWindow.Window.WINDOW_RECORDEDTV && PreviousWindowId != (int)GUIWindow.Window.WINDOW_SCHEDULER))
+				if (_autoFullScreen && !g_Player.FullScreen && (!wasPrevWinTVplugin()))
 				{
           Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
           //if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
@@ -862,6 +898,7 @@ namespace TvPlugin
           else //no delay needed here, since this is when the system is being used normally
           {
 						// wait for timeshifting to complete
+						/*
 						int waits = 0;
 						while (_playbackStopped && waits < 100)
 						{
@@ -874,6 +911,8 @@ namespace TvPlugin
 							//Log.Debug("TVHome.OnPageLoad(): timeshifting has started - waits: {0}", waits);
 							g_Player.ShowFullScreenWindow();
 						}
+						*/
+						g_Player.ShowFullScreenWindow();
           }
 				}
         else if (_autoFullScreenOnly && !g_Player.FullScreen && (PreviousWindowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN))
