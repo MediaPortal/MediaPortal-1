@@ -106,7 +106,7 @@ void CTsHeader::Decode(byte *data)
     }
   }
   // sanity check, encountered a situation where the payload start was 210 which would not work since ts packets are only 188 bytes
-  if (PayLoadStart>187)
+  if (PayLoadStart>188)
   {
     LogDebug("PayLoadStart too big!  :%d : setting TransportError=true;", PayLoadStart);
     TransportError=true;
