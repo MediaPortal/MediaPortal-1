@@ -60,7 +60,7 @@ namespace TvPlugin
   {
 
 		#region constants		
-    public const int HEARTBEAT_INTERVAL = 5; //seconds
+    private const int HEARTBEAT_INTERVAL = 5; //seconds
 		private const int WM_POWERBROADCAST = 0x0218;
 		private const int PBT_APMRESUMESUSPEND = 0x0007;
 		private const int PBT_APMRESUMESTANDBY = 0x0008;
@@ -173,10 +173,11 @@ namespace TvPlugin
     {
 
       // when debugging we want to disable heartbeats
+      
       #if DEBUG
         return;
       #endif
-
+      
       while (true)
       {
         if (TVHome.Connected && TVHome.Card.IsTimeShifting)
@@ -689,8 +690,7 @@ namespace TvPlugin
 
 			//plz any newly added ID's to this list.
 
-			result = (prev == (int)GUIWindow.Window.WINDOW_RADIO ||
-								prev == (int)GUIWindow.Window.WINDOW_RADIO_GUIDE ||
+			result = (
 								prev == (int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS ||
 								prev == (int)GUIWindow.Window.WINDOW_SETTINGS_SORT_CHANNELS ||
 								prev == (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG ||
@@ -829,7 +829,7 @@ namespace TvPlugin
       // start viewing tv... 
       GUIGraphicsContext.IsFullScreenVideo = false;
       Channel channel = Navigator.Channel;
-      if (channel == null)
+      if (channel == null || channel.IsRadio)
       {
         if (Navigator.CurrentGroup != null && Navigator.Groups.Count > 0)
         {
@@ -848,6 +848,7 @@ namespace TvPlugin
 
       if (channel != null)
       {
+        /*
         if (TVHome.Card.IsTimeShifting)
         {
           int id = TVHome.Card.IdChannel;
@@ -856,6 +857,7 @@ namespace TvPlugin
             channel = Channel.Retrieve(id);
           }
         }
+        */
         MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channel.DisplayName);
         if (_autoTurnOnTv && !_playbackStopped)
         {
@@ -1888,7 +1890,7 @@ namespace TvPlugin
           }
           else
           {              
-            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic || g_Player.IsRadio)
+            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)// || g_Player.IsRadio)
             {                
               g_Player.Stop();
             }

@@ -40,9 +40,12 @@ using MediaPortal.Radio.Database;
 
 using TvDatabase;
 using TvControl;
+using System.Threading;
+using System.Windows.Forms;
 
 using Gentle.Common;
 using Gentle.Framework;
+
 namespace TvPlugin
 {
   public class Radio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
@@ -83,12 +86,94 @@ namespace TvPlugin
     public static RadioChannelGroup selectedGroup=null;
     #endregion
 
+    //heartbeat related stuff
+    private const int HEARTBEAT_INTERVAL = 5; //seconds
+    private Thread heartBeatTransmitterThread = null;    
+
     public Radio()
     {
       GetID = (int)GUIWindow.Window.WINDOW_RADIO;
-
       LoadSettings();
+      startHeartBeatThread();
+
+      Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
+    }
+
+    void Application_ApplicationExit(object sender, EventArgs e)
+    {
+      try
+      {
+        if (TVHome.Card.IsTimeShifting)
+        {
+          if (!TVHome.Card.IsRecording)
+          {
+            TVHome.Card.User.Name = new User().Name;
+            TVHome.Card.StopTimeShifting();
+          }
+        }
+        stopHeartBeatThread();
+      }
+      catch (Exception)
+      {
+      }
+    }
+
+    private void HeartBeatTransmitter()
+    {
+
+      // when debugging we want to disable heartbeats
+
+#if DEBUG
+      return;
+#endif
+      
+      while (true)
+      {
+        if (TVHome.Connected && TVHome.Card.IsTimeShifting)
+        {
+          // send heartbeat to tv server each 5 sec.
+          // this way we signal to the server that we are alive thus avoid being kicked.
+          // Log.Debug("Radio: sending HeartBeat signal to server.");
+          try
+          {
+            RemoteControl.Instance.HeartBeat(TVHome.Card.User);
+          }
+          catch (Exception e)
+          {
+            Log.Error("Radio: failed sending HeartBeat signal to server. ({0})", e.Message);
+          }
+        }
+        Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
+      }
+    }
+
+    private void startHeartBeatThread()
+    {
+      // setup heartbeat transmitter thread.						
+      // thread already running, then leave it.
+      if (heartBeatTransmitterThread != null)
+      {
+        if (heartBeatTransmitterThread.IsAlive)
+        {
+          return;
+        }
+      }
+      Log.Debug("Radio: HeartBeat Transmitter started.");
+      heartBeatTransmitterThread = new Thread(HeartBeatTransmitter);
+      heartBeatTransmitterThread.Start();
+    }
+
+    private void stopHeartBeatThread()
+    {
+      if (heartBeatTransmitterThread != null)
+      {
+        if (heartBeatTransmitterThread.IsAlive)
+        {
+          Log.Debug("Radio: HeartBeat Transmitter stopped.");
+          heartBeatTransmitterThread.Abort();
+        }
+      }
     }
 
     void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
