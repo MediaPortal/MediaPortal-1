@@ -1519,6 +1519,7 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 	if (false==header.PayloadUnitStart) return;
 
 	int start=header.PayLoadStart;
+	if (start>=188) return;
 	if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
 
 	byte* pesHeader=&tsPacket[start];

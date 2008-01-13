@@ -47,6 +47,12 @@ enum PidType
   Other=2
 };
 
+typedef struct stLastPtsDtsRecord
+{
+	CPcr pts;
+	CPcr dts;
+} LastPtsDtsRecord;
+
 // {89459BF6-D00E-4d28-928E-9DA8F76B6D3A}
 DEFINE_GUID(IID_ITsTimeshifting,0x89459bf6, 0xd00e, 0x4d28, 0x92, 0x8e, 0x9d, 0xa8, 0xf7, 0x6b, 0x6d, 0x3a);
 
@@ -184,4 +190,6 @@ private:
   bool            m_bClearTsQueue;
   unsigned long   m_TsPacketCount;
   CPcrRefClock*	  rclock;
+  map<unsigned short,LastPtsDtsRecord> mapLastPtsDts;
+  typedef map<unsigned short,LastPtsDtsRecord>::iterator impapLastPtsDts;
 };
