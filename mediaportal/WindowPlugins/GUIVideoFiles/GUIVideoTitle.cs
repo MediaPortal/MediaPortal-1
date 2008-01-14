@@ -639,26 +639,26 @@ namespace MediaPortal.GUI.Video
               listItem.IconImage = coverArtImage;
             }
           }
-          else if (movie.Actor != string.Empty)
-          {            
-            coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieActors, movie.Actor);
-            if (System.IO.File.Exists(coverArtImage))
-            {
-              listItem.ThumbnailImage = coverArtImage;
-              listItem.IconImageBig = coverArtImage;
-              listItem.IconImage = coverArtImage;
-            }
-          }
-          else if (movie.SingleGenre != string.Empty)
-          {
-            coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieGenre, movie.SingleGenre);
-            if (System.IO.File.Exists(coverArtImage))
-            {
-              listItem.ThumbnailImage = coverArtImage;
-              listItem.IconImageBig = coverArtImage;
-              listItem.IconImage = coverArtImage;
-            }
-          }
+          //else if (movie.Actor != string.Empty)
+          //{            
+          //  coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieActors, movie.Actor);
+          //  if (System.IO.File.Exists(coverArtImage))
+          //  {
+          //    listItem.ThumbnailImage = coverArtImage;
+          //    listItem.IconImageBig = coverArtImage;
+          //    listItem.IconImage = coverArtImage;
+          //  }
+          //}
+          //else if (movie.SingleGenre != string.Empty)
+          //{
+          //  coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieGenre, movie.SingleGenre);
+          //  if (System.IO.File.Exists(coverArtImage))
+          //  {
+          //    listItem.ThumbnailImage = coverArtImage;
+          //    listItem.IconImageBig = coverArtImage;
+          //    listItem.IconImage = coverArtImage;
+          //  }
+          //}
         }
         // let's try to assign better covers
         if (!string.IsNullOrEmpty(coverArtImage))
