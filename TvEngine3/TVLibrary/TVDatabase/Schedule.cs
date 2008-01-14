@@ -738,7 +738,7 @@ namespace TvDatabase
 
     public override string ToString()
     {
-      return String.Format("{0} on {1} {2} - {3}", ProgramName, IdChannel, StartTime, EndTime);
+      return String.Format("{0} on {1} {2} - {3}  ID={4}", ProgramName, IdChannel, StartTime, EndTime, idSchedule);
     }
   }
 }

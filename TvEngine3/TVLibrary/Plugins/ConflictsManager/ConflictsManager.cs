@@ -162,6 +162,7 @@ namespace TvEngine
       getWorkingDaysSchedules(scheduleList, scheduleListToParse);
       getEveryTimeOnEveryChannelSchedules(scheduleList, scheduleListToParse);
       getEveryTimeOnThisChannelSchedules(scheduleList, scheduleListToParse);
+    	removeCanceledSchedules(scheduleListToParse);
 
       // test section
       bool cmDebug = cmLayer.GetSetting("CMDebugMode", "false").Value == "true";// activate debug mode
@@ -241,71 +242,75 @@ namespace TvEngine
     /// <returns>Array of List<Schedule> : one per card, index [0] contains unassigned schedules</returns>
     private List<Schedule>[] AssignSchedulesToCards(IList Schedules)
     {
-      IList cardsList = cmLayer.Cards;
-      // creates an array of Schedule Lists
-      // element [0] will be filled with conflicting schedules
-      // element [x] will be filled with the schedules assigned to card with idcard=x
-      List<Schedule>[] cardSchedules = new List<Schedule>[cardsList.Count + 1];
-      for (int i = 0; i < cardsList.Count + 1; i++) cardSchedules[i] = new List<Schedule>();
+    	IList cardsList = cmLayer.Cards;
+    	// creates an array of Schedule Lists
+    	// element [0] will be filled with conflicting schedules
+    	// element [x] will be filled with the schedules assigned to card with idcard=x
+    	List<Schedule>[] cardSchedules = new List<Schedule>[cardsList.Count + 1];
+    	for (int i = 0; i < cardsList.Count + 1; i++) cardSchedules[i] = new List<Schedule>();
 
-      #region assigns schedules from table
-      //
-      Dictionary<int, int> cardno = new Dictionary<int, int>();
-      int n = 1;
-      foreach (Card _card in _cards)
-      {
-        cardno.Add(_card.IdCard, n);
-        n++;
-      }
-      //
-      foreach (Schedule schedule in Schedules)
-      {
-        bool assigned = false;
-        Schedule lastOverlappingSchedule = null;
-        int lastBusyCard = 0;
-        bool overlap = false;
-        
-        foreach (Card card in cardsList)
-        {
-          if (card.canViewTvChannel(schedule.IdChannel))
-          {
-            // checks if any schedule assigned to this cards overlaps current parsed schedule
-            bool free = true;
-            foreach (Schedule assignedShedule in cardSchedules[cardno[card.IdCard]])
-            {
-              if (schedule.IsOverlapping(assignedShedule))
-              {
-                if(!(schedule.isSameTransponder(assignedShedule) && card.supportSubChannels) )
-                free = false;
-                //_overlap = true;
-                lastOverlappingSchedule = assignedShedule;
-                lastBusyCard = card.IdCard;
-                break;
-              }
-            }
-            if (free)
-            {
-              cardSchedules[cardno[card.IdCard]].Add(schedule);
-              assigned = true;
-              if (overlap)
-              {
-                schedule.RecommendedCard = card.IdCard;
-                schedule.Persist();
-              }
-              break;
-            }
-          }
-        }
-        if (!assigned)
-        {
-          cardSchedules[0].Add(schedule);
-          Conflict newConflict = new Conflict(schedule.IdSchedule, lastOverlappingSchedule.IdSchedule, schedule.IdChannel, schedule.StartTime);
-          newConflict.IdCard = lastBusyCard;
-          newConflict.Persist();
+    	#region assigns schedules from table
 
-        }
-      }
-      #endregion
+    	//
+    	Dictionary<int, int> cardno = new Dictionary<int, int>();
+    	int n = 1;
+    	foreach (Card _card in _cards)
+    	{
+    		cardno.Add(_card.IdCard, n);
+    		n++;
+    	}
+    	//
+			foreach (Schedule schedule in Schedules)
+			{
+				bool assigned = false;
+				Schedule lastOverlappingSchedule = null;
+				int lastBusyCard = 0;
+				bool overlap = false;
+
+				foreach (Card card in cardsList)
+				{
+					if (card.canViewTvChannel(schedule.IdChannel))
+					{
+						// checks if any schedule assigned to this cards overlaps current parsed schedule
+						bool free = true;
+						foreach (Schedule assignedShedule in cardSchedules[cardno[card.IdCard]])
+						{
+							if (schedule.IsOverlapping(assignedShedule))
+							{
+								if (!(schedule.isSameTransponder(assignedShedule) && card.supportSubChannels))
+								{
+									free = false;
+									//_overlap = true;
+									lastOverlappingSchedule = assignedShedule;
+									lastBusyCard = card.IdCard;
+									break;
+								}
+							}
+						}
+						if (free)
+						{
+							cardSchedules[cardno[card.IdCard]].Add(schedule);
+							assigned = true;
+							if (overlap)
+							{
+								schedule.RecommendedCard = card.IdCard;
+								schedule.Persist();
+							}
+							break;
+						}
+					}
+				}
+				if (!assigned)
+				{
+					cardSchedules[0].Add(schedule);
+					Conflict newConflict =
+						new Conflict(schedule.IdSchedule, lastOverlappingSchedule.IdSchedule, schedule.IdChannel, schedule.StartTime);
+					newConflict.IdCard = lastBusyCard;
+					newConflict.Persist();
+				}
+			}
+
+    	#endregion
 
       return cardSchedules;
     }
@@ -561,13 +566,15 @@ namespace TvEngine
     /// <returns>a collection containing the schedules</returns>
     private void getEveryTimeOnEveryChannelSchedules(IList schedulesList, IList refFillList)
     {
-      IList programsList = Program.ListAll();
+      //IList programsList = Program.ListAll();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
         if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.EveryTimeOnEveryChannel) continue;
-        foreach (Program program in programsList)
+      	IList programsList = Program.RetrieveByTitleAndTimesInterval(schedule.ProgramName, schedule.StartTime,
+      		                                        schedule.StartTime.AddMonths(1));
+				foreach (Program program in programsList)
         {
           if ((program.Title == schedule.ProgramName) && (program.IdChannel == schedule.IdChannel) && (program.EndTime >= DateTime.Now))
           {
@@ -619,6 +626,28 @@ namespace TvEngine
       layer = null;
       foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
     }
+
+		/// <summary>
+		/// Removes every cancled schedule.
+		/// </summary>
+		/// <param name="refFillList">The schedules list.</param>
+		/// <returns></returns>
+		private void removeCanceledSchedules(IList refFillList)
+		{
+			IList canceledList = CanceledSchedule.ListAll();
+			foreach (CanceledSchedule canceled in canceledList)
+			{
+				foreach (Schedule sched in refFillList)
+				{
+					if ((canceled.IdSchedule == sched.IdSchedule) && (canceled.CancelDateTime == sched.StartTime))
+					{
+						refFillList.Remove(sched);
+						break;
+					}
+				}
+			}
+		}
+
 
     /// <summary>
     /// checks if the decryptLimit for a card, regarding to a list of assigned shedules

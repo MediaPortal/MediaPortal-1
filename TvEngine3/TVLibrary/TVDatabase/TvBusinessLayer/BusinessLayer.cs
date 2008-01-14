@@ -1440,7 +1440,6 @@ namespace TvDatabase
       // as he decided to keep them before. That's why they are in the db
       foreach (Schedule schedule in schedulesList)
       {
-        if (DateTime.Now > schedule.EndTime) continue;
         List<Schedule> episodes = GetRecordingTimes(schedule);
         foreach (Schedule episode in episodes)
         {
