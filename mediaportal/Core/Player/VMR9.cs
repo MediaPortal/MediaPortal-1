@@ -418,7 +418,7 @@ namespace MediaPortal.Player
 
               dwPrefs |= VMR9MixerPrefs.RenderTargetYUV; // YUV saves graphics bandwith  http://msdn2.microsoft.com/en-us/library/ms788177(VS.85).aspx
               hr.Set(mixer.SetMixingPrefs(dwPrefs));
-              Log.Debug("VMR9Helper: enabled YUV mixing - " + hr.ToDXString());
+              Log.Debug("VMR9: Enabled YUV mixing - " + hr.ToDXString());
 
               using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
               {
@@ -428,7 +428,7 @@ namespace MediaPortal.Player
                   mixer.GetMixingPrefs(out dwPrefs);
                   dwPrefs |= VMR9MixerPrefs.NonSquareMixing;
                   hr.Set(mixer.SetMixingPrefs(dwPrefs));
-                  Log.Debug("VRM9Helper: Turning on nonsquare mixing - " + hr.ToDXString());
+                  Log.Debug("VRM9: Turning on nonsquare mixing - " + hr.ToDXString());
                   hr.Set(mixer.SetMixingPrefs(dwPrefs));
                 }
 
@@ -439,7 +439,7 @@ namespace MediaPortal.Player
                   dwPrefs &= ~VMR9MixerPrefs.DecimateMask;
                   dwPrefs |= VMR9MixerPrefs.DecimateOutput;
                   hr.Set(mixer.SetMixingPrefs(dwPrefs));
-                  Log.Debug("VRM9Helper: Enable decimatemask - " + hr.ToDXString());
+                  Log.Debug("VRM9: Enable decimatemask - " + hr.ToDXString());
                   hr.Set(mixer.SetMixingPrefs(dwPrefs));
                 }
                 
@@ -466,7 +466,7 @@ namespace MediaPortal.Player
                   dwPrefs |= VMR9MixerPrefs.GaussianQuadFiltering;
 
                 hr.Set(mixer.SetMixingPrefs(dwPrefs));
-                Log.Debug("VRM9Helper: Set filter mode - " + filtermode9 + " " + hr.ToDXString());
+                Log.Debug("VRM9: Set filter mode - " + filtermode9 + " " + hr.ToDXString());
               }
             }
           }
