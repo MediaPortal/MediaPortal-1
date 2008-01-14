@@ -926,6 +926,7 @@
         <String id="1509">Keine Tuning-Details für diesen Kanal</String>
         <String id="1510">Verbindung zum TV Service verloren</String>
         <String id="1511">Keine Streams aktiv</String>
+        <String id="1512">Vorherigen Kanal zeigen?</String>
         <String id="1950" prefix="Mein ">Status</String>
         <String id="1951">Festplatte</String>
         <String id="1952">Lüfter</String>
