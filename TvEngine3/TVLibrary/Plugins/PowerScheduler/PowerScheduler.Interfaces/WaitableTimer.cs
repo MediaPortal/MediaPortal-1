@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2007 Team MediaPorta
+#region Copyright (C) 2005-2008 Team MediaPorta
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
