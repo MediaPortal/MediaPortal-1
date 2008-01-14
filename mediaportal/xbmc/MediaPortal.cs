@@ -3160,7 +3160,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED:
         bool fullscreen = (message.Param1 != 0);
-        Log.Info("Main: DX exclusive mode: {0}", fullscreen && isMaximized);
+        Log.Info("Main: Received DX exclusive mode switch message. Fullscreen && maximized == {0}", fullscreen && isMaximized);
         if (isMaximized == false || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
           return;
@@ -3169,7 +3169,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (fullscreen)
         {
           //switch to fullscreen mode
-          Log.Info("Main: Goto fullscreen: {0}", GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
+          Log.Debug("Main: Goto fullscreen: {0}", GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
           if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
           {
             SwitchFullScreenOrWindowed(false);
@@ -3178,7 +3178,7 @@ public class MediaPortalApp : D3DApp, IRender
         else
         {
           //switch to windowed mode
-          Log.Info("Main: Goto windowed mode: {0}",
+          Log.Debug("Main: Goto windowed mode: {0}",
                    GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
           if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
           {

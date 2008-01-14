@@ -309,9 +309,9 @@ namespace MediaPortal
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
-        useEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useevr", false);
-        Log.Info("Loaded useevr: {0}", useEnhancedVideoRenderer);
-        if (useEnhancedVideoRenderer) useExclusiveDirectXMode = false;
+        useEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useevr", false);        
+        if (useEnhancedVideoRenderer) 
+          useExclusiveDirectXMode = false;
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
@@ -822,9 +822,9 @@ namespace MediaPortal
       catch (Exception ex)
       {
         if (windowed)
-          Log.Debug("D3D: Switch to windowed mode failed - {0}", ex.ToString());
+          Log.Warn("D3D: Switch to windowed mode failed - {0}", ex.ToString());
         else
-          Log.Debug("D3D: Switch to exclusive mode failed - {0}", ex.ToString());
+          Log.Warn("D3D: Switch to exclusive mode failed - {0}", ex.ToString());
 
         BuildPresentParamsFromSettings(!bWindowed);
         try

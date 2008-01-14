@@ -183,9 +183,9 @@ namespace MediaPortal.GUI.Library
       {
         _useSeparateRenderThread = value;
         if (_useSeparateRenderThread)
-          Log.Info("GraphicContext: using separate thread for GUI rendering");
-        else
-          Log.Info("GraphicContext: not using separate thread for GUI rendering");
+          Log.Warn("GraphicContext: Using separate thread for GUI rendering");
+        //else
+        //  Log.Info("GraphicContext: not using separate thread for GUI rendering");
       }
     }
     /// <summary>
@@ -400,7 +400,7 @@ namespace MediaPortal.GUI.Library
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
         turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
 
-        Log.Info("GraphicContext: MP will render at {0} FPS, use animations={1}", m_iMaxFPS, Convert.ToString(m_bAnimations));
+        Log.Info("GraphicContext: MP will render at {0} FPS, use animations = {1}", m_iMaxFPS, Convert.ToString(m_bAnimations));
       }
     }
 
@@ -1135,6 +1135,7 @@ namespace MediaPortal.GUI.Library
       get { return m_fVMR9FPS; }
       set { m_fVMR9FPS = value; }
     }
+
     public static bool Vmr9Active
     {
       get
@@ -1146,11 +1147,10 @@ namespace MediaPortal.GUI.Library
         if (value != vmr9Active)
         {
           vmr9Active = value;
-          if (vmr9Active) Log.Info("VMR9: now active");
-          else
-          {
-            Log.Info("VMR9: not active");
-          }
+          if (vmr9Active)
+            Log.Debug("VMR9: Now active");
+          else          
+            Log.Debug("VMR9: Inactive");          
         }
       }
     }
