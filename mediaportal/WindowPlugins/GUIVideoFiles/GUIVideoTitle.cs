@@ -464,10 +464,25 @@ namespace MediaPortal.GUI.Video
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(itemCount));
 
-      SetIMDBThumbs(itemlist);      
+      if (handler.CurrentLevel < handler.MaxLevels)
+      {
+        if (handler.CurrentLevelWhere.ToLower() == "genre")        
+          SetGenreThumbs(itemlist);
+        
+        if (handler.CurrentLevelWhere.ToLower() == "actor")        
+          SetActorThumbs(itemlist);
+        
+        if (handler.CurrentLevelWhere.ToLower() == "title")        
+          SetIMDBThumbs(itemlist);        
+      }
+      else
+        SetIMDBThumbs(itemlist);
+
       OnSort();
 
       SwitchView();
+
+      // quite ugly to loop again to search the selected item...
       for (int i = 0; i < facadeView.Count; ++i)
       {
         GUIListItem item = facadeView[itemIndex];
@@ -488,6 +503,46 @@ namespace MediaPortal.GUI.Video
       if (itemCount == 0)
       {
         btnViews.Focus = true;
+      }
+    }
+
+    protected void SetGenreThumbs(ArrayList itemlist)
+    {
+      foreach (GUIListItem item in itemlist)
+      {
+        // get the genre somewhere since the label isn't set yet.
+        IMDBMovie Movie = item.AlbumInfoTag as IMDBMovie;
+        string GenreCover = Util.Utils.GetCoverArt(Thumbs.MovieGenre, Movie.SingleGenre);
+
+        SetItemThumb(item, GenreCover);
+      }
+    }
+
+    protected void SetActorThumbs(ArrayList itemlist)
+    {
+      foreach (GUIListItem item in itemlist)
+      {
+        // get the genre somewhere since the label isn't set yet.
+        IMDBMovie Movie = item.AlbumInfoTag as IMDBMovie;
+        string ActorCover = Util.Utils.GetCoverArt(Thumbs.MovieActors, Movie.Actor);
+
+        SetItemThumb(item, ActorCover);
+      }
+    }
+
+    protected void SetItemThumb(GUIListItem aItem, string aThumbPath)
+    {
+      if (!string.IsNullOrEmpty(aThumbPath))
+      {
+        aItem.IconImage = aThumbPath;
+        aItem.IconImageBig = aThumbPath;
+
+        // check whether there is some larger cover art
+        string LargeCover = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
+        if (System.IO.File.Exists(LargeCover))
+          aItem.ThumbnailImage = LargeCover;
+        else
+          aItem.ThumbnailImage = aThumbPath;
       }
     }
 
@@ -583,11 +638,20 @@ namespace MediaPortal.GUI.Video
               listItem.IconImageBig = coverArtImage;
               listItem.IconImage = coverArtImage;
             }
-
           }
           else if (movie.Actor != string.Empty)
           {            
             coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieActors, movie.Actor);
+            if (System.IO.File.Exists(coverArtImage))
+            {
+              listItem.ThumbnailImage = coverArtImage;
+              listItem.IconImageBig = coverArtImage;
+              listItem.IconImage = coverArtImage;
+            }
+          }
+          else if (movie.SingleGenre != string.Empty)
+          {
+            coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieGenre, movie.SingleGenre);
             if (System.IO.File.Exists(coverArtImage))
             {
               listItem.ThumbnailImage = coverArtImage;
