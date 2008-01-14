@@ -1893,7 +1893,7 @@ namespace TvPlugin
       }
 
       //check if the tv recording has reached the end ...if so, stop it.
-      if (g_Player.IsTVRecording)
+      if (g_Player.IsTVRecording && !TvRecorded.IsLiveRecording())
       {
         double currentPosition = (double)(g_Player.CurrentPosition);
         double duration = (double)(g_Player.Duration);

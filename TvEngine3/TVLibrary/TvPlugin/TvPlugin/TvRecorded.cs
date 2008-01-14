@@ -154,9 +154,10 @@ namespace TvPlugin
     ViewAs currentViewMethod = ViewAs.Album;
     SortMethod currentSortMethod = SortMethod.Date;
     private static Recording m_oActiveRecording = null;
+    private static bool m_bIsLiveRecording = false;
     bool m_bSortAscending = true;
     bool _deleteWatchedShows = false;
-    bool _createRecordedThumbs = true;
+    bool _createRecordedThumbs = true;    
     int m_iSelectedItem = 0;
     string currentShow = String.Empty;
     //bool _creatingThumbNails = false;
@@ -197,6 +198,11 @@ namespace TvPlugin
     public static Recording ActiveRecording()
     {
       return m_oActiveRecording;
+    }
+
+    public static bool IsLiveRecording()
+    {
+      return m_bIsLiveRecording;
     }
 
 
@@ -832,7 +838,20 @@ namespace TvPlugin
 
 
       Recording rec = (Recording)pItem.TVTag;
+      IList itemlist = Recording.ListAll();
+
       m_oActiveRecording = rec;
+      m_bIsLiveRecording = false;
+      TvServer server = new TvServer();
+      VirtualCard card;
+      foreach (Recording recItem in itemlist)
+      {
+        if (rec.IdRecording == recItem.IdRecording && server.IsRecording(recItem.ReferencedChannel().Name, out card))
+        {
+          m_bIsLiveRecording = true;
+          break;
+        }
+      }
 
       // if we are currently playing a TV recording and want to play a new tv recoding, then we will avoid the .stop() call, since it will 
       // simly show the last TV channel (time consuming).
@@ -1310,7 +1329,7 @@ namespace TvPlugin
     private void OnPlayRecordingBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
       if (type != g_Player.MediaType.Recording) return;
-
+      
       // set audio track based on user prefs. 
       int prefLangIdx = TVHome.GetPreferedAudioStreamIndex();
 
@@ -1339,7 +1358,8 @@ namespace TvPlugin
     //  rec.TimesWatched = 0;
     //  TVDatabase.PlayedRecordedTV(rec);
     //}
-    #endregion
+    #endregion    
+
 
   }
 }
