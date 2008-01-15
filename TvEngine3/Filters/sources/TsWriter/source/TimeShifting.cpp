@@ -60,6 +60,9 @@ int FAKE_AUDIO_PID    = 0x40;                 // pid we use for the audio strean
 int FAKE_SUBTITLE_PID = 0x50;                 // pid we use for subtitles
 int FAKE_TELETEXT_PID = 0x60; // Ziphnor
 
+double MAX_ALLOWED_PCR_DIFF = 10.0; // (clock value) if pcr/pts/dts difference between last and current value is higher than
+								    //			   this value a hole/jump is assumed
+
 extern void LogDebug(const char *fmt, ...) ;
 
 /* CRC table for PSI sections */
@@ -156,6 +159,7 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
 	m_bIgnoreNextPcrJump=false;
   m_bClearTsQueue=false;
 	rclock=new CPcrRefClock();
+	m_mapLastPtsDts.clear();
 }
 //*******************************************************************
 //* dtor
@@ -617,6 +621,7 @@ STDMETHODIMP CTimeShifting::Start()
 		m_startPcr.Reset();
 		m_bStartPcrFound=false;
 		m_highestPcr.Reset();
+		m_mapLastPtsDts.clear();
 		m_iPacketCounter=0;
 		m_iWriteBufferPos=0;
 		LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
@@ -674,6 +679,7 @@ STDMETHODIMP CTimeShifting::Reset()
 		FAKE_SUBTITLE_PID = 0x50;
 		m_iPacketCounter=0;
 		m_bPaused=FALSE;
+		m_mapLastPtsDts.clear();
 	}
 	catch(...)
 	{
@@ -1434,7 +1440,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
   }
 
 	// PCR value has jumped too much in the stream
-  if (diff.ToClock() > 10L && m_prevPcr.ToClock() > 0 && !m_bDetermineNewStartPcr )
+  if (diff.ToClock() > MAX_ALLOWED_PCR_DIFF && m_prevPcr.ToClock() > 0 && !m_bDetermineNewStartPcr )
 	{
     logNextPcr = true;
     if (m_bIgnoreNextPcrJump)
@@ -1519,7 +1525,11 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 	if (false==header.PayloadUnitStart) return;
 
 	int start=header.PayLoadStart;
-	if (start>=188) return;
+	if (start>=188) 
+	{
+		LogDebug("ERROR: payload start>188. payloadStart=%d adaptionControl=%d adaptionFieldLength=%d",start,header.AdaptionControl,header.AdaptionFieldLength);
+		return;
+	}
 	if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
 
 	byte* pesHeader=&tsPacket[start];
@@ -1529,16 +1539,45 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 	{
 		return ;
 	}
+	imapLastPtsDts it=m_mapLastPtsDts.find(header.Pid);
+	if (it==m_mapLastPtsDts.end())
+	{
+		LastPtsDtsRecord lastRec;
+		lastRec.pts.Reset();
+		lastRec.dts.Reset();
+		m_mapLastPtsDts[header.Pid]=lastRec;
+		it=m_mapLastPtsDts.find(header.Pid);
+	}
+	LastPtsDtsRecord &lastPtsDts=it->second;
 	if (pts.IsValid)
 	{
 		CPcr ptsorg=pts;
 		pts -= startPcr;
 		pts -= m_pcrHole;
-
 		if( m_bPCRRollover )
-		{
 			pts += m_pcrDuration;
+		/* GEMX: deactivated. code is currently being tested
+		if (lastPtsDts.pts.IsValid)
+		{
+			double diff=0;
+			if (pts.ToClock()>lastPtsDts.pts.ToClock())
+				diff=pts.ToClock()-lastPtsDts.pts.ToClock();
+			else
+				diff=lastPtsDts.pts.ToClock()-pts.ToClock();
+			// Only apply pcr hole patching if pts also jumped
+			lastPtsDts.pts=pts;
+			if (diff>MAX_ALLOWED_PCR_DIFF && m_pcrHole.IsValid)
+					pts -= m_pcrHole;
+			else
+			{
+				if (!m_pcrHole.IsValid)
+					LogDebug("Pcr hole detected but pts did not jump. Don't applying pts hole patching");
+			}
 		}
+		else
+			lastPtsDts.pts=pts;
+		*/
+
 		// 9       10        11        12      13
 		//76543210 76543210 76543210 76543210 76543210
 		//0011pppM pppppppp pppppppM pppppppp pppppppM 
@@ -1558,9 +1597,28 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 			dts -= m_pcrHole;
 
 			if( m_bPCRRollover )
-			{
 				dts += m_pcrDuration;
+			/* GEMX: deactivated. code is currently being tested
+			if (lastPtsDts.dts.IsValid)
+			{
+				double diff=0;
+				if (dts.ToClock()>lastPtsDts.dts.ToClock())
+					diff=dts.ToClock()-lastPtsDts.dts.ToClock();
+				else
+					diff=lastPtsDts.dts.ToClock()-dts.ToClock();
+				// Only apply pcr hole patching if dts also jumped
+				lastPtsDts.dts=dts;
+				if (diff>MAX_ALLOWED_PCR_DIFF && m_pcrHole.IsValid)
+					dts -= m_pcrHole;
+				else
+				{
+					if (!m_pcrHole.IsValid)
+						LogDebug("Pcr hole detected but dts did not jump. Don't applying pts hole patching");
+				}
 			}
+			else
+				lastPtsDts.dts=dts;
+			*/
 
 			// 14       15        16        17      18
 			//76543210 76543210 76543210 76543210 76543210

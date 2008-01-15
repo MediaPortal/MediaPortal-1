@@ -92,11 +92,12 @@ void CTsHeader::Decode(byte *data)
 	ContinuityCounter=data[3] & 0x0F;
 	AdaptionFieldLength=0;
 	PayLoadStart=4;
-	if (AdaptionControl >=ADAPTIONFIELDONLY ) 
+	if (AdaptionControl == ADAPTIONFIELDANDPAYLOAD ) 
 	{
 		AdaptionFieldLength=data[4];
 		PayLoadStart=5+AdaptionFieldLength;
 	}
+	/* Could result in wrong values
   if (AdaptionControl == PAYLOADONLY ) 
   {
     if (PayloadUnitStart)
@@ -104,7 +105,7 @@ void CTsHeader::Decode(byte *data)
       if (data[4]==0&& data[5]==0 && data[6]==1) PayLoadStart=4;
       else PayLoadStart=data[4]+5;
     }
-  }
+  }*/
 }
 
 void CTsHeader::LogHeader()

@@ -190,6 +190,6 @@ private:
   bool            m_bClearTsQueue;
   unsigned long   m_TsPacketCount;
   CPcrRefClock*	  rclock;
-  map<unsigned short,LastPtsDtsRecord> mapLastPtsDts;
-  typedef map<unsigned short,LastPtsDtsRecord>::iterator impapLastPtsDts;
+  map<unsigned short,LastPtsDtsRecord> m_mapLastPtsDts;
+  typedef map<unsigned short,LastPtsDtsRecord>::iterator imapLastPtsDts;
 };
