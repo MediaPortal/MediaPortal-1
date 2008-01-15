@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -78,11 +78,11 @@ void CTsHeader::Decode(byte *data)
   // 4. 00 - RESERVED for future use 									0x00
 
 	SyncByte=data[0];
-	if (SyncByte!=0x47)
-	{
-		TransportError=true;
-		return;
-	}
+  if (SyncByte!=0x47)
+  {
+    TransportError=true;
+    return;
+  }
 	TransportError=(data[1] & 0x80)>0?true:false;
 	PayloadUnitStart=(data[1] & 0x40)>0?true:false;
 	TransportPriority=(data[1] & 0x20)>0?true:false;
@@ -92,12 +92,11 @@ void CTsHeader::Decode(byte *data)
 	ContinuityCounter=data[3] & 0x0F;
 	AdaptionFieldLength=0;
 	PayLoadStart=4;
-	if (AdaptionControl == ADAPTIONFIELDANDPAYLOAD ) 
+	if (AdaptionControl >=ADAPTIONFIELDONLY ) 
 	{
 		AdaptionFieldLength=data[4];
 		PayLoadStart=5+AdaptionFieldLength;
 	}
-	/* Could result in wrong values
   if (AdaptionControl == PAYLOADONLY ) 
   {
     if (PayloadUnitStart)
@@ -105,7 +104,7 @@ void CTsHeader::Decode(byte *data)
       if (data[4]==0&& data[5]==0 && data[6]==1) PayLoadStart=4;
       else PayLoadStart=data[4]+5;
     }
-  }*/
+  }
 }
 
 void CTsHeader::LogHeader()
@@ -125,4 +124,5 @@ void CTsHeader::LogHeader()
 	Log("  PayLoadOnly            :%d", PayLoadOnly());
 	Log("  AdaptionFieldOnly      :%d", AdaptionFieldOnly());
 	Log("  AdaptionFieldAndPayLoad:%d", AdaptionFieldAndPayLoad());
+
 }

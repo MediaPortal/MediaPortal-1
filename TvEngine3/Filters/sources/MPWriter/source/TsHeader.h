@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -23,10 +23,8 @@
 class CTsHeader
 {
 public:
-	CTsHeader();
 	CTsHeader(byte* tsPacket);
 	virtual ~CTsHeader(void);
-	void Decode(byte *data);
 	void LogHeader();
 	bool PayLoadOnly();
 	bool AdaptionFieldOnly();
@@ -43,5 +41,6 @@ public:
 	BYTE AdaptionFieldLength;
 	BYTE PayLoadStart;
 private:
+	void Decode(byte *data);
 	byte* m_packet;
 };
