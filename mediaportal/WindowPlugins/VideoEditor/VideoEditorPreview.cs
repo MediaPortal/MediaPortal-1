@@ -685,6 +685,12 @@ namespace WindowPlugins.VideoEditor
         if ((int)cutPointsList[cutPointsList.Count-1].EndTime!=(int)g_Player.Duration)
           cutList.Add(new TimeDomain(cutPointsList[cutPointsList.Count-1].EndTime,g_Player.Duration));
       }
+      Log.Info("Cutpointslist:");
+      foreach (TimeDomain td in cutPointsList)
+        Log.Info("  "+td.StartTimeSp.Minutes.ToString()+":"+td.StartTimeSp.Seconds.ToString()+" - "+td.EndTimeSp.Minutes.ToString()+":"+td.EndTimeSp.Seconds.ToString());
+      Log.Info("\"negative\" cutpoints");
+      foreach (TimeDomain td in cutList)
+        Log.Info("  " + td.StartTimeSp.Minutes.ToString() + ":" + td.StartTimeSp.Seconds.ToString() + " - " + td.EndTimeSp.Minutes.ToString() + ":" + td.EndTimeSp.Seconds.ToString());
 
       TsFileCutter cutter = new TsFileCutter();
       cutter.InitStreams(inFilename.FullName, outFilename.FullName, cutList);
