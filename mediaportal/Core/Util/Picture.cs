@@ -1022,6 +1022,7 @@ namespace MediaPortal.Util
         try
         {
           myBitmap.Save(aThumbTargetPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+          File.SetAttributes(aThumbTargetPath, File.GetAttributes(aThumbTargetPath) | FileAttributes.Hidden);          
           // even if run in background thread wait a little so the main process does not starve on IO
           System.Threading.Thread.Sleep(10);
           return true;

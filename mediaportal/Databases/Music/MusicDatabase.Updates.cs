@@ -1288,7 +1288,10 @@ namespace MediaPortal.Music.Database
                 if (!System.IO.File.Exists(localFolderThumb))
                   MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
                 if (!System.IO.File.Exists(localFolderLThumb))
+                {
                   System.IO.File.Copy(folderThumb, localFolderLThumb, true);
+                  File.SetAttributes(folderThumb, File.GetAttributes(folderThumb) | FileAttributes.Hidden);
+                }
               }
             }
           }
@@ -1303,7 +1306,10 @@ namespace MediaPortal.Music.Database
                 // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
                 System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(folderThumb);
                 if (fiRemoteFolderArt.Length < 32000)
+                {
                   System.IO.File.Copy(folderThumb, localFolderLThumb, true);
+                  File.SetAttributes(folderThumb, File.GetAttributes(folderThumb) | FileAttributes.Hidden);
+                }
                 else
                   MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
               }

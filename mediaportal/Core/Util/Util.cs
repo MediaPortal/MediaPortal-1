@@ -1930,27 +1930,27 @@ namespace MediaPortal.Util
                   try
                   {
                     AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
-                    System.Threading.Thread.Sleep(30);
+                    System.Threading.Thread.Sleep(10);
 
                     //If exists load second of 4 images for the folder thumb.
                     if (aPictureList.Count > 1)
                     {
                       AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
-                      System.Threading.Thread.Sleep(30);
+                      System.Threading.Thread.Sleep(10);
                     }
 
                     //If exists load third of 4 images for the folder thumb.
                     if (aPictureList.Count > 2)
                     {
                       AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
-                      System.Threading.Thread.Sleep(30);
+                      System.Threading.Thread.Sleep(10);
                     }
 
                     //If exists load fourth of 4 images for the folder thumb.
                     if (aPictureList.Count > 3)
                     {
                       AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
-                      System.Threading.Thread.Sleep(30);
+                      System.Threading.Thread.Sleep(10);
                     }
                   }
                   catch (Exception ex)
@@ -1973,8 +1973,7 @@ namespace MediaPortal.Util
                   using (Image thumbImage = Image.FromFile(tmpFile))
                   {
                     if (Picture.CreateThumbnail(thumbImage, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true))
-                    {
-                      System.Threading.Thread.Sleep(30);
+                    {                      
                       // we do not want a folderL.jpg
                       if (!aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
                       {
@@ -1982,10 +1981,9 @@ namespace MediaPortal.Util
                         Picture.CreateThumbnail(thumbImage, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
                       }
                     }
-                    System.Threading.Thread.Sleep(30);
+                    System.Threading.Thread.Sleep(10);
                     if (System.IO.File.Exists(aThumbPath))
-                      result = true;
-                      // File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);
+                      result = true;                      
                   }
                 }
                 catch (Exception ex2)

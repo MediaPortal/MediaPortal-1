@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 
@@ -63,12 +64,12 @@ namespace MediaPortal.Util
       bool replace = _overWrite;
       string filename = _filename;
       string strFolderThumb = string.Empty;
-      strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
+      strFolderThumb = Util.Utils.GetLocalFolderThumbForDir(filename);
 
       string strRemoteFolderThumb = string.Empty;
-      strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
+      strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", Util.Utils.RemoveTrailingSlash(filename));
 
-      if (System.IO.File.Exists(strRemoteFolderThumb))
+      if (File.Exists(strRemoteFolderThumb))
       {
         // if there was no cached thumb although there was a folder.jpg then the user didn't scan his collection:
         // -- punish him with slowness and create the thumbs for the next time...
@@ -77,16 +78,19 @@ namespace MediaPortal.Util
           Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumb cache for {0}", strRemoteFolderThumb);
           string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
 
-          if (!System.IO.File.Exists(strFolderThumb) || replace)
-            MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true);
-          if (!System.IO.File.Exists(localFolderLThumb) || replace)
+          if (!File.Exists(strFolderThumb) || replace)
+            Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true);
+          if (!File.Exists(localFolderLThumb) || replace)
           {
             // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
-            System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(strRemoteFolderThumb);
+            FileInfo fiRemoteFolderArt = new FileInfo(strRemoteFolderThumb);
             if (fiRemoteFolderArt.Length < 32000)
-              System.IO.File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+            {
+              File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
+              File.SetAttributes(localFolderLThumb, File.GetAttributes(localFolderLThumb) | FileAttributes.Hidden);                
+            }
             else
-              MediaPortal.Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+              Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
           }
 
           return;

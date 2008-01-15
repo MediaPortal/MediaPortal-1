@@ -1817,6 +1817,7 @@ namespace MediaPortal.GUI.Music
             System.IO.File.Delete(folderjpg);
 
           coverImg.Save(folderjpg);
+          File.SetAttributes(folderjpg, File.GetAttributes(folderjpg) | FileAttributes.Hidden);
           // no need to check for that option as it is the user's decision.   if (_createMissingFolderThumbCache)         
           FolderThumbCacher thumbworker = new FolderThumbCacher(sharePath, true);
           result = true;

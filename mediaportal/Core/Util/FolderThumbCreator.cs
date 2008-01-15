@@ -84,17 +84,24 @@ namespace MediaPortal.Util
             {
               string largeAlbumThumb = Util.Utils.ConvertToLargeCoverArt(albumThumb);
               if (System.IO.File.Exists(largeAlbumThumb))
+              {
                 System.IO.File.Copy(largeAlbumThumb, strRemoteFolderThumb, false);
+                File.SetAttributes(strRemoteFolderThumb, File.GetAttributes(strRemoteFolderThumb) | FileAttributes.Hidden);
+              }
               else
+              {
                 System.IO.File.Copy(albumThumb, strRemoteFolderThumb, false);
+                File.SetAttributes(strRemoteFolderThumb, File.GetAttributes(strRemoteFolderThumb) | FileAttributes.Hidden);
+              }
 
               Log.Info("GUIMusicFiles: Using album art for missing folder thumb {0}", strRemoteFolderThumb);
 
 
               // now we need to cache that new thumb, too
               if (System.IO.File.Exists(strRemoteFolderThumb))
-              {
+              {                  
                 FolderThumbCacher cacheNow = new FolderThumbCacher(Path.GetDirectoryName(strRemoteFolderThumb), false);
+                File.SetAttributes(strRemoteFolderThumb, File.GetAttributes(strRemoteFolderThumb) | FileAttributes.Hidden);                
               }
             }
           }
