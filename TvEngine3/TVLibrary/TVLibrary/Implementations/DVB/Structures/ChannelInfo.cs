@@ -460,8 +460,7 @@ namespace TvLibrary.Implementations.DVB.Structures
 										pidInfo.isVideo = true;
 										pidInfo.isTeletext = false;
 										pidInfo.isDVBSubtitle = false;
-										pidInfo.isAC3Audio = false;
-										pidInfo.stream_type = 0x02;
+										pidInfo.isAC3Audio = false;										
 										break;
                   case 0x03: // audio
                     //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
