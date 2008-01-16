@@ -97,7 +97,8 @@ void CTsHeader::Decode(byte *data)
 		AdaptionFieldLength=data[4];
 		PayLoadStart=5+AdaptionFieldLength;
 	}
-	/* Could result in wrong values
+	// Could result in wrong values 
+  // TODO fix SectionDecoder before this fix can be taken into use
   if (AdaptionControl == PAYLOADONLY ) 
   {
     if (PayloadUnitStart)
@@ -105,7 +106,7 @@ void CTsHeader::Decode(byte *data)
       if (data[4]==0&& data[5]==0 && data[6]==1) PayLoadStart=4;
       else PayLoadStart=data[4]+5;
     }
-  }*/
+  }
 }
 
 void CTsHeader::LogHeader()
@@ -125,5 +126,4 @@ void CTsHeader::LogHeader()
 	LogDebug("  PayLoadOnly            :%d", PayLoadOnly());
 	LogDebug("  AdaptionFieldOnly      :%d", AdaptionFieldOnly());
 	LogDebug("  AdaptionFieldAndPayLoad:%d", AdaptionFieldAndPayLoad());
-
 }
