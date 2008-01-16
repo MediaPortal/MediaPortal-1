@@ -135,7 +135,7 @@ namespace TvPlugin
 
     public override bool OnMessage(GUIMessage message)
     {
-      //      needRefresh = true;
+			//      needRefresh = true;
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
@@ -144,20 +144,24 @@ namespace TvPlugin
             m_bRunning = false;
             return true;
           }
+				case GUIMessage.MessageType.GUI_MSG_CLICKED:
+					m_bRunning = false;
+					break;
       }
       return base.OnMessage(message);
     }
 
     public override void OnAction(Action action)
     {
-      switch (action.wID)
+			switch (action.wID)
       {
         case Action.ActionType.ACTION_CONTEXT_MENU:
-          if (GetFocusControlId() == -1)
+          /*if (GetFocusControlId() == -1)
           {
             m_bRunning = false;
             return;
-          }
+          }*/
+      		m_bRunning = false;
           break;
         case Action.ActionType.ACTION_CLOSE_DIALOG:
           m_bRunning = false;
@@ -168,6 +172,9 @@ namespace TvPlugin
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           m_bRunning = false;
           return;
+				case Action.ActionType.ACTION_SELECT_ITEM:
+					m_bRunning = false;
+      		break;
       }
       base.OnAction(action);
     }
@@ -176,7 +183,7 @@ namespace TvPlugin
     public bool ShouldRenderLayer()
     {
       //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
-      return true;
+      return m_bRunning;
     }
 
     public void RenderLayer(float timePassed)
