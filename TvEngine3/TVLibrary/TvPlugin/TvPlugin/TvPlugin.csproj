@@ -94,6 +94,7 @@
     <Compile Include="teletext\TvFullscreenTeletext.cs" />
     <Compile Include="teletext\TvTeletextBase.cs" />
     <Compile Include="TvChannelSettings.cs" />
+    <Compile Include="TVConflicts.cs" />
     <Compile Include="TvCropManager.cs" />
     <Compile Include="TvCropSettings.cs" />
     <Compile Include="TvEpgSettings.cs" />
