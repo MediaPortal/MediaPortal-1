@@ -337,7 +337,7 @@ STDMETHODIMP CTimeShifting::GetMode(int *mode)
 //* descriptor_data : original DVB SI descriptor from the PMT
 // * Added by Ziphnor
 //*******************************************************************
-STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descriptor_data, bool isAC3, bool isMpeg1, bool isMpeg2){
+STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descriptor_data, int data_length, bool isAC3, bool isMpeg1, bool isMpeg2){
 	//LogDebug("AddStreamWDesc PID %i", pid);
 	if (pid==0) return S_OK;
 	CEnterCriticalSection enter(m_section);
@@ -350,88 +350,100 @@ STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descrip
 	}
 
 	try{
-		byte descriptor_tag = descriptor_data[0];
-		
-		if(descriptor_tag == DESCRIPTOR_DVB_TELETEXT){
-			PidInfo info;
-			info.realPid=pid;
-			info.fakePid=FAKE_TELETEXT_PID;
-			info.seenStart=false;
-			info.serviceType = 0x06;
-			info.ContintuityCounter=0;
-			//strcpy(info.language,language);
-			int descriptor_length = descriptor_data[1] + 2;
-			memcpy(info.descriptor_data,descriptor_data,descriptor_length);
-			info.descriptor_valid = true;
-
-			m_vecPids.push_back(info);
-			LogDebug("Timeshifter:add (with descriptor) teletext stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-			FAKE_TELETEXT_PID++;
-			m_multiPlexer.AddPesStream(pid,false,false,true);
-		}
-		else if(descriptor_tag == DESCRIPTOR_DVB_SUBTITLING){
-			PidInfo info;
-			info.realPid=pid;
-			info.fakePid=FAKE_SUBTITLE_PID;
-			info.seenStart=false;
-			info.ContintuityCounter=0;
-			//strcpy(info.language,language);
-			int descriptor_length = descriptor_data[1] + 2;
-			memcpy(info.descriptor_data,descriptor_data,descriptor_length);
-			info.descriptor_valid = true;
-			info.serviceType=0x06;
-			m_vecPids.push_back(info);
-			LogDebug("Timeshifter:add (with descriptor) subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-			FAKE_SUBTITLE_PID++;
-			m_multiPlexer.AddPesStream(pid,false,false,true);
-		}
-		else if (descriptor_tag == DESCRIPTOR_MPEG_ISO639_Lang)
-		{			  			 
-			if (m_pcrPid == pid)
-			{
-				FAKE_PCR_PID = FAKE_AUDIO_PID;
-			}
-			PidInfo info;
-			info.realPid=pid;
-			info.fakePid=FAKE_AUDIO_PID;
-			info.seenStart=false;
-			if (isMpeg1)
-			{
-			  info.serviceType = SERVICE_TYPE_AUDIO_MPEG1;
-			}
-			else if (isMpeg2)
-			{
-			  info.serviceType = SERVICE_TYPE_AUDIO_MPEG2;
-			}
-			else if (isAC3)
-			{
-			  info.serviceType = SERVICE_TYPE_AUDIO_AC3;
-			}
+		PidInfo info;
+		int pointer=0;
+		int info_pointer=0;
+		int len = data_length;
+		while ( len > 0 ) {
+			bool copy_descriptor = false;
+			byte descriptor_tag = descriptor_data[pointer];
+			int descriptor_length = descriptor_data[pointer+1] + 2;
+			const byte* x = descriptor_data + pointer;
 			
-			info.ContintuityCounter=0;
-			//strcpy(info.language,language);
-			int descriptor_length = descriptor_data[1] + 2;
-			memcpy(info.descriptor_data,descriptor_data,descriptor_length);
-			info.descriptor_valid = true;
+			if(descriptor_tag == DESCRIPTOR_DVB_TELETEXT){
+				info.realPid=pid;
+				info.fakePid=FAKE_TELETEXT_PID;
+				info.seenStart=false;
+				info.serviceType = 0x06;
+				info.ContintuityCounter=0;
+				//strcpy(info.language,language);
+				copy_descriptor = true;
 
+				LogDebug("Timeshifter:add (with descriptor) teletext stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				FAKE_TELETEXT_PID++;
+				m_multiPlexer.AddPesStream(pid,false,false,true);
+			}
+			else if(descriptor_tag == DESCRIPTOR_DVB_SUBTITLING){
+				info.realPid=pid;
+				info.fakePid=FAKE_SUBTITLE_PID;
+				info.seenStart=false;
+				info.ContintuityCounter=0;
+				//strcpy(info.language,language);
+				copy_descriptor = true;
+				info.serviceType=0x06;
+				LogDebug("Timeshifter:add (with descriptor) subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				FAKE_SUBTITLE_PID++;
+				m_multiPlexer.AddPesStream(pid,false,false,true);
+			}
+			else if (descriptor_tag == DESCRIPTOR_MPEG_ISO639_Lang)
+			{			  			 
+				if (m_pcrPid == pid)
+				{
+					FAKE_PCR_PID = FAKE_AUDIO_PID;
+				}
+				info.realPid=pid;
+				info.fakePid=FAKE_AUDIO_PID;
+				info.seenStart=false;
+				if (isMpeg1)
+				{
+				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG1;
+				}
+				else if (isMpeg2)
+				{
+				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG2;
+				}
+				else if (isAC3)
+				{
+				  info.serviceType = SERVICE_TYPE_AUDIO_AC3;
+				}
+				
+				info.ContintuityCounter=0;
+				//strcpy(info.language,language);
+				copy_descriptor = true;
+
+				LogDebug("Timeshifter:add (with descriptor) ISO639 stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				FAKE_AUDIO_PID++;
+				
+				if (isMpeg1 || isMpeg2)
+				{
+				  m_multiPlexer.AddPesStream(pid,false,true,false);
+				}
+				else if (isAC3)
+				{
+				  m_multiPlexer.AddPesStream(pid,true,false,false);
+				}
+								
+			} else if ( descriptor_tag == DESCRIPTOR_STREAM_IDENTIFIER ) {
+				copy_descriptor = true;
+			}
+			// feel free to add more descriptor types here, they will automatically work with 
+			// WriteFakePMT as the descriptor is given
+			else{
+				LogDebug("WARNING: AddStreamWithDesc(pid,descriptor) doesnt support descriptor type 0x%x, ignoring", descriptor_tag);
+			}
+
+			if ( copy_descriptor ) {
+				LogDebug("Copying Descriptor: stream_type: %d, tag: %d, length: %d",
+					info.serviceType, x[0], descriptor_length);
+				memcpy(info.descriptor_data+info_pointer,x,descriptor_length);
+				info_pointer += descriptor_length;
+				info.descriptor_valid = true;
+			}
+			pointer += descriptor_length;
+			len -= descriptor_length;
+		}
+		if ( info.descriptor_valid ) {
 			m_vecPids.push_back(info);
-			LogDebug("Timeshifter:add (with descriptor) ISO639 stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-			FAKE_AUDIO_PID++;
-			
-			if (isMpeg1 || isMpeg2)
-			{
-			  m_multiPlexer.AddPesStream(pid,false,true,false);
-			}
-			else if (isAC3)
-			{
-			  m_multiPlexer.AddPesStream(pid,true,false,false);
-			}
-							
-		}					
-		// feel free to add more descriptor types here, they will automatically work with 
-		// WriteFakePMT as the descriptor is given
-		else{
-			LogDebug("WARNING: AddStreamWithDesc(pid,descriptor) doesnt support descriptor type 0x%x, ignoring", descriptor_tag);
 		}
 	}
 	catch(...)
@@ -1294,12 +1306,13 @@ void CTimeShifting::WriteFakePMT()
 		}
 		else if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
 		{ 
+			//use constant here and in for loop, or strlen() in both?
 			int esLen=strlen(info.language)+5;
 			pmt[offset++]=esLen+2;   // ES_info_length (low)
 			pmt[offset++]=DESCRIPTOR_DVB_SUBTITLING;   // descriptor indicator
 			pmt[offset++]=esLen;
 			pmtLength+=3;
-			for (int i=0; i < 3;++i)
+			for (int i=0; i < strlen(info.language);++i)
 			{
 				pmt[offset++]=info.language[i];
 				pmtLength++;
@@ -1326,9 +1339,9 @@ void CTimeShifting::WriteFakePMT()
 			PidInfo& info = *it;
 			int descriptor_length = info.descriptor_data[1] + 2; // 0 is tag, 1 is length		
 			//LogDebug("Descriptor (total) length is %i", descriptor_length);
-			if(pmtLength + descriptor_length + 4 >= 188) // if it will make the PMT too big
-      { 
-				LogDebug("Cant fit descriptor for fake PID %i because it would make fake PMT not fit in one ts packet! ",info.fakePid);
+			if(pmtLength + 4 >= 188) // if it will make the PMT too big
+			{ 
+				LogDebug("Cant fit new descriptor for fake PID %i because it would make fake PMT not fit in one ts packet! ",info.fakePid);
 				it++;
 				continue;
 			}
@@ -1342,13 +1355,27 @@ void CTimeShifting::WriteFakePMT()
 			// (if we have the original descriptor we just reuse it)
 			
 			//LogDebug("Writing Fake PMT with original DESCRIPTOR tag %X for real PID %i, fake pid %i", info.descriptor_data[0], info.realPid, info.fakePid );
-
-			pmt[offset++] = descriptor_length; // ES_info_length(low) // what is the descriptor is so big it needs the high bits as well?
+			int pointer=0;
+			byte* pEsInfoLength = pmt + offset;
+			offset++;
 			pmtLength++;
+			*pEsInfoLength = 0;
+			while ( info.descriptor_data[pointer] != 0xFF && pointer < sizeof(info.descriptor_data)) {
+				descriptor_length = info.descriptor_data[pointer+1]+2;
+				//LogDebug("Adding stream descriptor: stream_type: %d, type: %d, length: %d", 
+				//	info.serviceType, info.descriptor_data[pointer], descriptor_length);
+				if(pmtLength + descriptor_length + 4 >= 188) // if it will make the PMT too big
+				{ 
+					LogDebug("Cant fit another descriptor for fake PID %i because it would make fake PMT not fit in one ts packet (pmtLength: %d, descriptor_length: %d)! ",info.fakePid, pmtLength, descriptor_length );
+					break;
+				}
+				*pEsInfoLength += descriptor_length; // ES_info_length(low) // what is the descriptor is so big it needs the high bits as well?
 
-			memcpy(&pmt[offset], info.descriptor_data, descriptor_length); // copy descriptor content
-			offset += descriptor_length;
-			pmtLength += descriptor_length;
+				memcpy(&pmt[offset], info.descriptor_data+pointer, descriptor_length); // copy descriptor content
+				offset += descriptor_length;
+				pmtLength += descriptor_length;
+				pointer += descriptor_length;
+			}
 			it++;
 	}
 

@@ -61,7 +61,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
 
     [PreserveSig] int TimeShiftSetPcrPid(int handle, int pcrPid);
     [PreserveSig] int TimeShiftAddStream(int handle, int pid, int serviceType, [In, MarshalAs(UnmanagedType.LPStr)]		string language);
-    [PreserveSig] int TimeShiftAddStreamWithDescriptor(int handle, int pid, IntPtr descriptor_data, bool isAC3, bool isMpeg1, bool isMpeg2);
+    [PreserveSig] int TimeShiftAddStreamWithDescriptor(int handle, int pid, IntPtr descriptor_data, int descriptor_length, bool isAC3, bool isMpeg1, bool isMpeg2);
     [PreserveSig] int TimeShiftRemoveStream(int handle, int pid);
     [PreserveSig] int TimeShiftSetTimeShiftingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     [PreserveSig] int TimeShiftStart(int handle);

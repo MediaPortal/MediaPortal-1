@@ -84,16 +84,28 @@ namespace TvLibrary.Implementations.DVB.Structures
       /// Set the content of the descriptor for this PID
       /// </summary>
       /// <param name="data"></param>
-      public void SetDescriptorData(byte[] data) {
+      public void AddDescriptorData(byte[] data) {
           if (data != null)
           {
-              this.descriptor_data = new byte[data[1] + 2]; // descriptor_length and tag
+            int start = 0;
+            int descriptor_length = data[1] + 2;
+            if (this.descriptor_data == null)
+            {
+              this.descriptor_data = new byte[descriptor_length]; // descriptor_length and tag
+            }
+            else
+            {
+              start = this.descriptor_data.Length;
+              byte[] newDesc = new byte[this.descriptor_data.Length + descriptor_length];
+              System.Array.Copy(this.descriptor_data, newDesc, this.descriptor_data.Length);
+              this.descriptor_data = newDesc;
+            }
               if (this.descriptor_data.Length != data.Length)
               {
                   Log.Log.WriteFile("PROBLEM : descriptor lengths dont match {0} {1}", data.Length, descriptor_data.Length);
               }
               else Log.Log.WriteFile("Set descriptor data with length {0}", descriptor_data.Length);
-              System.Array.Copy(data, this.descriptor_data, descriptor_data.Length);
+              System.Array.Copy(data, 0, this.descriptor_data, start, descriptor_length);
           }
       }
 

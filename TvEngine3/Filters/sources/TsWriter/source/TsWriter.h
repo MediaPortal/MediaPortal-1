@@ -80,7 +80,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 
 	STDMETHOD(TimeShiftSetPcrPid)(THIS_ int handle, int pcrPid)PURE;
 	STDMETHOD(TimeShiftAddStream)(THIS_ int handle, int pid, int serviceType, char* language)PURE;
-	STDMETHOD(TimeShiftAddStreamWithDescriptor)(THIS_ int handle, int pid, byte* descriptor_data, bool isAC3, bool isMpeg1, bool isMpeg2);
+	STDMETHOD(TimeShiftAddStreamWithDescriptor)(THIS_ int handle, int pid, byte* descriptor_data, int descriptor_length, bool isAC3, bool isMpeg1, bool isMpeg2);
 	STDMETHOD(TimeShiftRemoveStream)(THIS_ int handle, int pid)PURE;
 	STDMETHOD(TimeShiftSetTimeShiftingFileName)(THIS_ int handle, char* pszFileName)PURE;
 	STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
@@ -205,7 +205,7 @@ public:
 
 		STDMETHODIMP TimeShiftSetPcrPid( int handle, int pcrPid);
 		STDMETHODIMP TimeShiftAddStream( int handle, int pid, int serviceType, char* language);
-		STDMETHODIMP TimeShiftAddStreamWithDescriptor( int handle, int pid, byte* descriptor_data, bool isAC3, bool isMpeg1, bool isMpeg2);
+		STDMETHODIMP TimeShiftAddStreamWithDescriptor( int handle, int pid, byte* descriptor_data, int descriptor_length, bool isAC3, bool isMpeg1, bool isMpeg2);
 		STDMETHODIMP TimeShiftRemoveStream( int handle, int pid);
 		STDMETHODIMP TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName);
 		STDMETHODIMP TimeShiftStart( int handle );

@@ -42,6 +42,7 @@ using namespace std;
 #define DESCRIPTOR_DVB_TELETEXT			0x56
 #define DESCRIPTOR_DVB_SUBTITLING		0x59
 #define DESCRIPTOR_MPEG_ISO639_Lang		0x0a
+#define DESCRIPTOR_STREAM_IDENTIFIER	0x52
 
 class IPmtCallBack
 {

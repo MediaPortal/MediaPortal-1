@@ -477,7 +477,10 @@ namespace TvLibrary.Implementations.DVB.Structures
                     break;
                   case 0x0A: //MPEG_ISO639_Lang																														
 										pidInfo.language = DVB_GetMPEGISO639Lang(data);
-										pidInfo.SetDescriptorData(data); // remember the original descriptor																				
+										pidInfo.AddDescriptorData(data); // remember the original descriptor																				
+                    break;
+                  case 0x52: //stream identifier
+                    pidInfo.AddDescriptorData(data);
                     break;
                   case 0x6A: //AC3									
                     pidInfo.isAudio = false;
@@ -494,7 +497,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.isTeletext = true;
                     pidInfo.isDVBSubtitle = false;
                     pidInfo.stream_type = 0x6; // Ziphnor
-                    pidInfo.SetDescriptorData(data); // remember the original descriptor
+                    pidInfo.AddDescriptorData(data); // remember the original descriptor
                     pidInfo.teletextLANG = DVB_GetTeletextDescriptor(data);
                     break;
                   //case 0xc2:
@@ -507,7 +510,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                       pidInfo.isTeletext = false;
                       pidInfo.isDVBSubtitle = true;
                       pidInfo.stream_type = 0x6;
-                      pidInfo.SetDescriptorData(data);
+                      pidInfo.AddDescriptorData(data);
                       pidInfo.language = DVB_SubtitleDescriptior(data);
                     }
                     break;

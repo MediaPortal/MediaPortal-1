@@ -1160,6 +1160,7 @@ namespace TvLibrary.Implementations.DVB
       {
 				if (info.HasDescriptorData())
 				{
+          int descriptorLength = info.GetDescriptorData().Length;
 					unsafe
 					{ // we need to pass a pointer to the descriptor data
 						fixed (byte* data = info.GetDescriptorData())
@@ -1168,29 +1169,29 @@ namespace TvLibrary.Implementations.DVB
 							if (info.isAC3Audio)
 							{
 								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ac3))", _subChannelId, info.stream_type, info);
-								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, true, false, false);
+								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, true, false, false);
 							}
 							else if (info.IsMpeg2Audio)
 							{
 								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Mpeg2Audio))", _subChannelId, info.stream_type, info);
-								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, true);
+                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, false, false, true);
 							}
 							else if (info.IsMpeg1Audio || info.isAudio)
 							{
 								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Mpeg1Audio))", _subChannelId, info.stream_type, info);
-								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, true, false);
+                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, false, true, false);
 							}
               else if (info.isTeletext)
               {
                 Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ttxt))", _subChannelId, info.stream_type, info);
                 //Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
-                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
+                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, false, false, false);
               }              
               else if (info.isDVBSubtitle)
               {
                 Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Subtitles))", _subChannelId, info.stream_type, info);
                 //Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
-                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, false, false, false);
+                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, false, false, false);
               }
               else
               {

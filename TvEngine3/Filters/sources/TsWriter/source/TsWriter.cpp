@@ -86,9 +86,9 @@ void LogDebug(const char *fmt, ...)
 	{
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
 			logbuffer);
 		fclose(fp);
     //::OutputDebugStringA(logbuffer);::OutputDebugStringA("\n");
@@ -721,12 +721,12 @@ STDMETHODIMP CMpTs:: TimeShiftAddStream( int handle, int pid, int serviceType, c
 	return pChannel->m_pTimeShifting->AddStream( pid,  serviceType, language);
 }
 
-STDMETHODIMP CMpTs:: TimeShiftAddStreamWithDescriptor( int handle, int pid, byte* data,  bool isAC3, bool isMpeg1, bool isMpeg2)
+STDMETHODIMP CMpTs:: TimeShiftAddStreamWithDescriptor( int handle, int pid, byte* data,  int dataLength, bool isAC3, bool isMpeg1, bool isMpeg2)
 {
 	//LogDebug("TimeShiftAddStreamWithDescriptor PID : %i", pid);
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-  return pChannel->m_pTimeShifting->AddStreamWithDescriptor( pid, data, isAC3, isMpeg1, isMpeg2);
+  return pChannel->m_pTimeShifting->AddStreamWithDescriptor( pid, data, dataLength, isAC3, isMpeg1, isMpeg2);
 }
 
 STDMETHODIMP CMpTs:: TimeShiftRemoveStream( int handle, int pid)
