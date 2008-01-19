@@ -1163,15 +1163,44 @@ namespace TvService
       _cards[user.CardId].StopCard(user);
     }
 
+		public bool StopTimeShifting(ref User user, TvStoppedReason reason)
+		{
+			int cardId = user.CardId;
+			if (cardId > 0)
+			{				
+				_cards[cardId].Users.SetTvStoppedReason(user, reason);
+			}
+			return this.StopTimeShifting(ref user);
+		}
+
+		public TvStoppedReason GetTvStoppedReason(User user)
+		{
+			int cardId = user.CardId;
+			if (cardId < 0) return TvStoppedReason.UnknownReason;			
+
+			try
+			{
+				if (_cards[cardId].DataBaseCard.Enabled == false) return TvStoppedReason.UnknownReason;
+				return _cards[cardId].Users.GetTvStoppedReason(user);
+			}
+			catch (Exception ex)
+			{
+				Log.Write(ex);
+			}
+			
+			return TvStoppedReason.UnknownReason;			
+
+		}
+
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
     /// <param name="cardId">id of the card.</param>
     /// <returns></returns>
     public bool StopTimeShifting(ref User user)
-    {						
-      if (user.CardId < 0) return false;
-      int cardId = user.CardId;
+    {
+			int cardId = user.CardId;
+			if (cardId < 0) return false;      
       try
       {
         if (_cards[cardId].DataBaseCard.Enabled == false) return true;
@@ -2172,7 +2201,7 @@ namespace TvService
 								if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
 								{
 									Log.Write("Controller:   Heartbeat Monitor (30+ sec. max idletime allowed)- kicking idle user {0}", tmpUser.Name);
-									bool res = StopTimeShifting(ref tmpUser);
+									bool res = StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);
 								}
 							}							
 						}

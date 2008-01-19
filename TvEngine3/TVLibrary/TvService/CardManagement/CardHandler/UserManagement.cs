@@ -164,6 +164,22 @@ namespace TvService
 			context.HeartBeatUser(user);
 		}
 
+		public TvStoppedReason GetTvStoppedReason(User user)
+		{
+			TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+			if (context == null) return TvStoppedReason.UnknownReason;
+
+			return context.GetTimeshiftStoppedReason(user);
+		}
+
+		public void SetTvStoppedReason(User user, TvStoppedReason reason)
+		{
+			TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+			if (context == null) return;
+
+			context.SetTimeshiftStoppedReason(user, reason);
+		}
+
     /// <summary>
     /// Determines whether the card is locked and ifso returns by which user
     /// </summary>

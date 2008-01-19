@@ -56,6 +56,30 @@ namespace TvControl
     /// </summary>
     RadioWebStream
   }
+
+	 /// <summary>
+  /// enum describing the possible result codes for the tv engine when TV suddenly stops
+  /// </summary>
+	public enum TvStoppedReason
+	{
+		/// <summary>
+		/// Timeshifting stopped because of an unknown reason.
+		/// </summary>
+		UnknownReason,
+		/// <summary>
+		/// Timeshifting stopped because a recording started which needed the card.
+		/// </summary>
+		RecordingStarted,
+		/// <summary>
+		/// Timeshifting stopped because client was kicked by server admin.
+		/// </summary>
+		KickedByAdmin,
+		/// <summary>
+		/// Timeshifting stopped because client heartbeat timed out.
+		/// </summary>
+		HeartBeatTimeOut
+	}
+
   /// <summary>
   /// enum describing the possible result codes for the tv engine
   /// </summary>
@@ -108,7 +132,7 @@ namespace TvControl
     /// <summary>
     /// Operation failed since we are not the owner of the card
     /// </summary>
-    NotTheOwner
+    NotTheOwner		
   }
 
   /// <summary>
@@ -657,6 +681,22 @@ namespace TvControl
     /// TvResult indicating whether method succeeded
     /// </returns>
     TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card);
+
+
+		/// <summary>
+		/// Stops the time shifting.
+		/// </summary>
+		/// <param name="user">user credentials.</param>
+		/// <param name="reason">reason why timeshifting is stopped.</param>
+		/// <returns>true if success otherwise false</returns>
+		bool StopTimeShifting(ref User user, TvStoppedReason reason);
+
+		/// <summary>
+		/// Gets the reason why timeshifting stopped.
+		/// </summary>
+		/// <param name="User">The user.</param>		
+		/// <returns>TvStoppedReason</returns>
+		TvStoppedReason GetTvStoppedReason(User user);
 
     /// <summary>
     /// Stops the time shifting.

@@ -36,6 +36,7 @@ namespace TvControl
     int _cardId;
     int _subChannel;
     int _idChannel;
+		TvStoppedReason _timeshiftStoppedReason;
 		DateTime _lastHeartBeat;
     [NonSerialized]
     object _history;
@@ -51,6 +52,7 @@ namespace TvControl
       _idChannel = -1;
       _subChannel=-1;
 			_lastHeartBeat = DateTime.MinValue;
+			_timeshiftStoppedReason = TvStoppedReason.UnknownReason;
     }
 
     /// <summary>
@@ -64,6 +66,7 @@ namespace TvControl
       _isAdmin = isAdmin;
       _cardId = -1;
       _subChannel = -1;
+			_timeshiftStoppedReason = TvStoppedReason.UnknownReason;
     }
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
@@ -77,6 +80,7 @@ namespace TvControl
       _isAdmin = isAdmin;
       _cardId = cardId;
       _subChannel = -1;
+			_timeshiftStoppedReason = TvStoppedReason.UnknownReason;
     }
 
     /// <summary>
@@ -185,6 +189,20 @@ namespace TvControl
 			}
 		}
 
+		public TvStoppedReason TvStoppedReason
+		{
+			get
+			{
+				return _timeshiftStoppedReason;
+			}
+			set
+			{
+				_timeshiftStoppedReason = value;
+			}
+		}
+
+		
+
     #region ICloneable Members
 
     /// <summary>
@@ -201,6 +219,7 @@ namespace TvControl
       user._cardId = _cardId;
       user._subChannel = _subChannel;
       user._idChannel = _idChannel;
+			user._timeshiftStoppedReason = _timeshiftStoppedReason;
       return user;
     }
 

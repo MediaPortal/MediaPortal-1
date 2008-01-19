@@ -209,7 +209,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+              Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);							
               return TvResult.UnknownError;
             }
           }
@@ -223,21 +223,20 @@ namespace TvService
           {
             Log.Write("card: channel is scrambled");
             _cardHandler.Users.RemoveUser(user);
-
+						this.Stop(ref user);
             return TvResult.ChannelIsScrambled;
-          }
-					
+          }					
 
           if (subchannel.IsTimeShifting)
           {
 						if (!WaitForTimeShiftFile(ref user, fileName + ".tsbuffer"))
 						{
-							if (_cardHandler.IsScrambled(ref user))
-							{
-								_cardHandler.Users.RemoveUser(user);
-								return TvResult.ChannelIsScrambled;
-							}
 							_cardHandler.Users.RemoveUser(user);
+							this.Stop(ref user);
+							if (_cardHandler.IsScrambled(ref user))
+							{								
+								return TvResult.ChannelIsScrambled;
+							}							
 							return TvResult.NoVideoAudioDetected;
 						}
 
@@ -259,17 +258,18 @@ namespace TvService
           if (result == false)
           {
             _cardHandler.Users.RemoveUser(user);
+						this.Stop(ref user);
             return TvResult.UnableToStartGraph;
           }
 					fileName += ".tsbuffer";
           if (!WaitForTimeShiftFile(ref user, fileName))
           {
+						_cardHandler.Users.RemoveUser(user);
+						this.Stop(ref user);
             if (_cardHandler.IsScrambled(ref user))
-            {
-              _cardHandler.Users.RemoveUser(user);
+            {              
               return TvResult.ChannelIsScrambled;
-            }
-            _cardHandler.Users.RemoveUser(user);
+            }            
             return TvResult.NoVideoAudioDetected;
           }
           context.OnZap(user);
@@ -290,6 +290,8 @@ namespace TvService
       {
         Log.Write(ex);
       }
+
+			this.Stop(ref user);
       return TvResult.UnknownError;
     }
 

@@ -51,6 +51,7 @@ namespace TvService
   {
     #region variables
     List<User> _users;
+		List<User> _usersOld; //holding a list of all the timeshifting users that have been stopped - mkaing it possible for the client to query the possible stop reason.
     User _owner;
     System.Timers.Timer _timer = new System.Timers.Timer();
     #endregion
@@ -62,6 +63,7 @@ namespace TvService
     public TvCardContext()
     {
       _users = new List<User>();
+			_usersOld = new List<User>();
       _owner = null;
       _timer.Interval = 60000;
       _timer.Enabled = true;
@@ -203,7 +205,9 @@ namespace TvService
       {
         if (existingUser.Name == user.Name && existingUser.CardId == user.CardId)
         {
+					TvStoppedReason reason = user.TvStoppedReason;
           user = (User)existingUser.Clone();
+					user.TvStoppedReason = reason;
           return;
         }
       }
@@ -242,6 +246,42 @@ namespace TvService
         }
       }
     }
+
+		/// <summary>
+		/// Sets the timeshifting stopped reason.
+		/// </summary>
+		/// <param name="user">user.</param>		
+		/// <param name="reason">TvStoppedReason.</param>		
+		public void SetTimeshiftStoppedReason(User user, TvStoppedReason reason)
+		{
+			foreach (User existingUser in _users)
+			{
+				if (existingUser.Name == user.Name)
+				{
+					existingUser.TvStoppedReason = reason;
+					return;
+				}
+			}			
+		}
+
+		/// <summary>
+		/// Gets the timeshifting stopped reason.
+		/// </summary>
+		/// <param name="user">user.</param>		
+		public TvStoppedReason GetTimeshiftStoppedReason(User user)
+		{			
+			foreach (User existingUser in _usersOld)
+			{
+				if (existingUser.Name == user.Name)
+				{
+					User userFound = null;
+					userFound = (User)existingUser.Clone();
+					//_usersOld.Remove(userFound);
+					return userFound.TvStoppedReason;
+				}
+			}
+			return TvStoppedReason.UnknownReason;
+		}
 
     /// <summary>
     /// Gets the users.
@@ -288,15 +328,30 @@ namespace TvService
     }
 
 
-    public void OnStopUser( User user)
-    {
-      History history = user.History as History;
-      if (history != null)
-      {
-        history.Save();
-      }
-      user.History = null;
-    }
+		public void OnStopUser(User user)
+		{
+			if (!user.IsAdmin)
+			{
+
+				for (int i = 0; i < _usersOld.Count; i++)
+				{
+					User existingUser = (User)_usersOld[i];
+					if (existingUser.Name == user.Name)
+					{						
+						_usersOld.Remove(existingUser);
+					}					
+				}
+
+				_usersOld.Add(user);
+			}
+
+			History history = user.History as History;
+			if (history != null)
+			{
+				history.Save();
+			}
+			user.History = null;
+		}
 
     public void OnZap(User user)
     {

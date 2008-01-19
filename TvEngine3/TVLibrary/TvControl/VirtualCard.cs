@@ -517,6 +517,28 @@ namespace TvControl
       }
     }
 
+		/// <summary>
+		/// Returns the reason as to why TV timeshifting stopped
+		/// </summary>		
+		[XmlIgnore]
+		public TvStoppedReason GetTimeshiftStoppedReason
+		{
+			get
+      {
+        try
+        {
+					if (User.CardId < 0) return TvStoppedReason.UnknownReason;
+          RemoteControl.HostName = _server;
+          return RemoteControl.Instance.GetTvStoppedReason(_user);
+        }
+        catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
+        return TvStoppedReason.UnknownReason;
+      }
+		}
+
     /// <summary>
     /// Returns if card is currently scanning or not
     /// </summary>

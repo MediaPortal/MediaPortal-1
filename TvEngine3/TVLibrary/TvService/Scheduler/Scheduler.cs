@@ -544,9 +544,9 @@ namespace TvService
 				tmpUser = _tvController.GetUserForCard(freeCards[0].Id); //BAV - testing
         if ((_tvController.IsRecording(ref tmpUser) == false) && (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes"))
         {
-          if (_tvController.IsTimeShifting(ref tmpUser)) { _tvController.StopTimeShifting(ref tmpUser); }
+					if (_tvController.IsTimeShifting(ref tmpUser)) { _tvController.StopTimeShifting(ref tmpUser, TvStoppedReason.RecordingStarted); }
           cardInfo = freeCards[0];
-          Log.Write("Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+          Log.Write("Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}, kicking user:{2}", cardInfo.Id, cardInfo.Card.Priority, tmpUser.Name);
         }
         else
         {

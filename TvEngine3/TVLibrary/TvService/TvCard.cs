@@ -1849,12 +1849,11 @@ namespace TvService
 
           if (!WaitForTimeShiftFile(ref user, fileName))
           {
+          	RemoveUser(user);
             if (IsScrambled(ref user))
-            {
-              RemoveUser(user);
+            {              
               return TvResult.ChannelIsScrambled;
-            }
-            RemoveUser(user);
+            }            
             return TvResult.NoVideoAudioDetected;
           }
           context.OnZap(user);
