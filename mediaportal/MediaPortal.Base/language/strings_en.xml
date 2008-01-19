@@ -925,7 +925,11 @@
         <String id="1509">No tuning details for the channel</String>
         <String id="1510">Connection to TV service lost</String>
         <String id="1511">No active streams</String>
-        <String id="1512">Tune previous ch.?</String>
+        <String id="1512">Tune previous ch.?</String>        
+        <String id="1513">Timeshifting stopped due to scheduled\rrecording</String>
+        <String id="1514">Timeshifting stopped by an\radministrator</String>
+        <String id="1515">Timeshifting stopped by the\rTV-server</String>
+        <String id="1516">Timeshifting stopped for an\runknown reason</String>
         <String id="1950" prefix="My ">Status</String>
         <String id="1951">Harddisk</String>
         <String id="1952">Fan</String>
@@ -1693,6 +1697,5 @@
         <String id="200048">Re-create all thumbnails</String>
         <String id="200049">Only watched recording for this show</String>
         <String id="200050">This will delete your recordings from harddisc</String>		
-		<String id="200051">Invalid video file</String>
     </Section>
 </Language>
