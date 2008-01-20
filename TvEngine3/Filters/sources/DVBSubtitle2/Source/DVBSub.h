@@ -62,15 +62,12 @@ public:
   // IDVBSubtitleSource
   virtual HRESULT STDMETHODCALLTYPE StatusTest( int status );
   virtual HRESULT STDMETHODCALLTYPE SetBitmapCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub));
-  virtual HRESULT STDMETHODCALLTYPE SetTeletextCallback( int (CALLBACK *pSTextubtitleObserver)(TEXT_SUBTITLE* sub));
   virtual HRESULT STDMETHODCALLTYPE SetResetCallback( int (CALLBACK *pResetObserver)() );
   
   // IDVBSubtitle
   virtual HRESULT STDMETHODCALLTYPE SetUpdateTimeoutCallback( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) );
   virtual HRESULT STDMETHODCALLTYPE Test( int status );
   virtual HRESULT STDMETHODCALLTYPE SetSubtitlePid( LONG pPid );
-  virtual HRESULT STDMETHODCALLTYPE SetTeletextPid( LONG pPid );
-  virtual HRESULT STDMETHODCALLTYPE NotifySubPageInfo(int page, DVBLANG& lang);
   virtual HRESULT STDMETHODCALLTYPE SetFirstPcr( LONGLONG pPcr );
   virtual HRESULT STDMETHODCALLTYPE SeekDone( CRefTime& rtSeek );
   virtual HRESULT STDMETHODCALLTYPE SetTimeCompensation( CRefTime& rtCompensation );
@@ -82,7 +79,6 @@ public:
 
   // From MSubdecoderObserver
   void NotifySubtitle();
-  void NotifyTeletextSubtitle(TEXT_SUBTITLE& sub);
   void UpdateSubtitleTimeout( uint64_t pTimeout );
   
   void NotifySeeking();
@@ -119,7 +115,6 @@ private: // data
   CRefTime            m_currentTimeCompensation;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
-  int				          (CALLBACK *m_pTextSubtitleObserver) (TEXT_SUBTITLE* sub);
   int                 (CALLBACK *m_pResetObserver) ();
   int                 (CALLBACK *m_pUpdateTimeoutObserver) (__int64* pTimeout);
 

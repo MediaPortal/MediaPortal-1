@@ -35,19 +35,17 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_pSubtitlePin( NULL ),
 	m_pSubDecoder( NULL ),
   m_pSubtitleObserver( NULL ),
-  m_pTextSubtitleObserver( NULL ),
   m_pUpdateTimeoutObserver( NULL ),
   m_pResetObserver( NULL ),
   m_pIMediaSeeking( NULL ),
   m_bSeekingDone( true ),
   m_startTimestamp( -1 ),
   m_CurrentSeekPosition( 0 ),
-  //m_currentTimeCompensation( 0 ),
   m_prevSubtitleTimestamp( 0 )
 {
   ::DeleteFile("c:\\DVBsub.log");
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 10 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 11 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -125,8 +123,7 @@ CBasePin * CDVBSub::GetPin( int n )
 //
 int CDVBSub::GetPinCount()
 {
-	return 1;
-	//return 2; // subtitle in, teletext in
+	return 1; // subtitle in
 }
 
 
@@ -243,20 +240,6 @@ STDMETHODIMP CDVBSub::StatusTest(int status)
 	return S_OK;
 }
 
-
-STDMETHODIMP CDVBSub::NotifySubPageInfo(int page, DVBLANG& lang){
-	//obsolete
-    return S_OK;
-}
-
-//
-// SetSubtitlePid
-//
-STDMETHODIMP CDVBSub::SetTeletextPid( LONG pPid )
-{
-	//obsolete
-	return S_OK;
-}
 
 //
 // SetSubtitlePid
@@ -393,9 +376,6 @@ void CDVBSub::NotifySubtitle()
   }
 }
 
-void CDVBSub::NotifyTeletextSubtitle( TEXT_SUBTITLE& sub )
-{
-}
 
 //
 // UpdateSubtitleTimeout
@@ -475,12 +455,6 @@ STDMETHODIMP CDVBSub::SetBitmapCallback( int (CALLBACK *pSubtitleObserver)(SUBTI
   return S_OK;
 }
 
-
-STDMETHODIMP CDVBSub::SetTeletextCallback( int (CALLBACK *pTextSubtitleObserver)(TEXT_SUBTITLE* sub) )
-{
-	//obsolete
-	return S_OK;
-}
 
 //
 // SetResetCallback

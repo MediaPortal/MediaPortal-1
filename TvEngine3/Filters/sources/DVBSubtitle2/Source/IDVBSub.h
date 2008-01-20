@@ -43,7 +43,6 @@ DEFINE_GUID(IID_IDVBSubtitleSource,
 DECLARE_INTERFACE_( IDVBSubtitleSource, IUnknown )
 {
   STDMETHOD(SetBitmapCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
-  STDMETHOD(SetTeletextCallback) ( int (CALLBACK *pSTextSubtitleObserver)(TEXT_SUBTITLE* sub) ) PURE;
   STDMETHOD(SetResetCallback)( int (CALLBACK *pResetObserver)() ) PURE;
   STDMETHOD(SetUpdateTimeoutCallback)( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) ) PURE; 
   STDMETHOD(StatusTest)( int testval ) PURE;
@@ -53,9 +52,7 @@ DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
 {
   STDMETHOD(Test)( int status ) PURE;
   STDMETHOD(NotifyChannelChange)() PURE;
-  STDMETHOD(NotifySubPageInfo)(int page, DVBLANG& lang) PURE;
   STDMETHOD(SetSubtitlePid)( LONG pPid ) PURE;
-  STDMETHOD(SetTeletextPid)( LONG pPid ) PURE;
   STDMETHOD(SetFirstPcr)( LONGLONG pPcr ) PURE;
   STDMETHOD(SeekDone)( CRefTime& rtSeek ) PURE;
   STDMETHOD(SetTimeCompensation)( CRefTime& rtCompensation ) PURE;
