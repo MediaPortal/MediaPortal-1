@@ -108,13 +108,6 @@ namespace MediaPortal.Player.Subtitles
     }
   }
 
-  /*
-  STDMETHOD(SetBitmapCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
-  STDMETHOD(SetTeletextCallback) ( int (CALLBACK *pSTextSubtitleObserver)(TEXT_SUBTITLE* sub) ) PURE;
-  STDMETHOD(SetResetCallback)( int (CALLBACK *pResetObserver)() ) PURE;
-  STDMETHOD(SetUpdateTimeoutCallback)( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) ) PURE; 
-  STDMETHOD(StatusTest)( int testval ) PURE;
- */
   /// <summary>
   /// Interface to the subtitle filter, which
   /// allows us to get notified of subtitles and
@@ -125,7 +118,6 @@ namespace MediaPortal.Player.Subtitles
   public interface IDVBSubtitleSource
   {
     void SetBitmapCallback(IntPtr callBack);
-    void SetTeletextCallback(IntPtr callBack);
     void SetResetCallback(IntPtr callBack);
     void SetUpdateTimeoutCallback(IntPtr callBack);
     void StatusTest(int status);
@@ -133,7 +125,6 @@ namespace MediaPortal.Player.Subtitles
 
   [UnmanagedFunctionPointer(CallingConvention.StdCall)]
   public delegate int SubtitleCallback(ref NATIVE_SUBTITLE sub);
-  //public delegate int TextSubtitleCallback(/*ref TEXT_SUBTITLE sub*/IntPtr textsub);
   public delegate int ResetCallback();
   public delegate int UpdateTimeoutCallback(ref Int64 timeOut);
 
@@ -588,9 +579,7 @@ namespace MediaPortal.Player.Subtitles
       }
       subFilter.StatusTest(111);
       IntPtr pCallback = Marshal.GetFunctionPointerForDelegate(callBack);
-      //IntPtr pTextCallback = Marshal.GetFunctionPointerForDelegate(textCallBack);
       subFilter.SetBitmapCallback(pCallback);
-      //subFilter.SetTeletextCallback(pTextCallback);
 
       subFilter.StatusTest(222);
 
