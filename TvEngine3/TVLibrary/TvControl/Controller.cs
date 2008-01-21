@@ -671,6 +671,17 @@ namespace TvControl
     /// <param name="user">The user.</param>
     void StopCard(User user);
 
+
+		/// <summary>
+    /// Query what card would be used for timeshifting on any given channel
+    /// </summary>
+    /// <param name="user">user credentials.</param>
+    /// <param name="idChannel">The id channel.</param>    
+    /// <returns>
+    /// returns card id which would be used when doing the actual timeshifting.
+    /// </returns>
+		int TimeShiftingWouldUseCard(ref User user, int idChannel);
+
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>

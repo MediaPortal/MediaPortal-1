@@ -1613,6 +1613,73 @@ namespace TvService
       }
     }
 
+		/// <summary>
+    /// Query what card would be used for timeshifting on any given channel
+    /// </summary>
+    /// <param name="user">user credentials.</param>
+    /// <param name="idChannel">The id channel.</param>    
+    /// <returns>
+		/// CardDetail which would be used when doing the actual timeshifting.
+    /// </returns>
+		public int TimeShiftingWouldUseCard(ref User user, int idChannel)
+		{
+			CardDetail cardDetail;						
+			Channel channel = Channel.Retrieve(idChannel);
+      Log.Write("Controller: TimeShiftingWouldUseCard {0} {1}", channel.DisplayName, channel.IdChannel);      
+      TvResult result;
+
+			try
+			{
+				ICardAllocation allocation = CardAllocationFactory.Create(false);
+				List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result);
+				if (freeCards.Count == 0)
+				{
+					// enumerate all cards and check if some card is already timeshifting the channel requested
+					Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
+
+					//for each card
+					while (enumerator.MoveNext())
+					{
+						KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
+						//get a list of all users for this card
+						User[] users = keyPair.Value.Users.GetUsers();
+						if (users != null)
+						{
+							//for each user
+							for (int i = 0; i < users.Length; ++i)
+							{
+								User tmpUser = users[i];
+								//is user timeshifting?
+								if (keyPair.Value.TimeShifter.IsTimeShifting(ref tmpUser))
+								{
+									//yes, is user timeshifting the correct channel
+									if (keyPair.Value.CurrentDbChannel(ref tmpUser) == channel.IdChannel)
+									{
+										//yes, if card does not support subchannels (analog cards)
+										//then assign user to this card
+										VirtualCard card = GetVirtualCard(tmpUser);
+										return card.Id;
+									}
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					//get first free card
+					return freeCards[0].Id;
+				}
+			}
+			catch (Exception ex)
+			{				
+				Log.Write(ex);
+				return -1;
+			}
+			return -1;
+		}
+
+
     
     /// <summary>
     /// Start timeshifting on a specific channel
