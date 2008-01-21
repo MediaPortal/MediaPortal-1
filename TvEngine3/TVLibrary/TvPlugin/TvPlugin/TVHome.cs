@@ -100,6 +100,7 @@ namespace TvPlugin
 		static bool _onPageLoadDone = false;
 		static bool _userChannelChanged = false;
 		static private bool _doingHandleServerNotConnected = false;
+    static private bool _doingChannelChange = false;
 		Stopwatch benchClock = null;
 
 		[SkinControlAttribute(2)]
@@ -276,6 +277,10 @@ namespace TvPlugin
 			}
 		}
 
+    static public bool DoingChannelChange()
+    {
+      return _doingChannelChange;
+    }
 
 		static public bool HandleServerNotConnected()
 		{
@@ -1913,6 +1918,7 @@ namespace TvPlugin
 
 		static public bool ViewChannelAndCheck(Channel channel)
 		{
+      _doingChannelChange = false;
 			//System.Diagnostics.Debugger.Launch();
 			try
 			{
@@ -1950,7 +1956,7 @@ namespace TvPlugin
 						_userChannelChanged = false;
 						g_Player.Stop();
 					}
-				}
+				}        
 
 				if (Navigator.Channel != null)
 				{
@@ -1989,6 +1995,8 @@ namespace TvPlugin
 						}
 				}
 
+        _doingChannelChange = true;
+
 				User user = new User();
 				if (TVHome.Card != null)
 				{
@@ -2002,37 +2010,52 @@ namespace TvPlugin
 				//Start timeshifting the new tv channel
 				TvServer server = new TvServer();
 				VirtualCard card;
-				bool _return = false;
+				bool _return = false;			
+        
+        if (wasPlaying)
+        {
+          // we need to stop player HERE if card has changed.        
+          int newCardId = server.TimeShiftingWouldUseCard(ref user, channel.IdChannel);
 
-				// issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.        
-				/*
-				if (!_avoidSeeking)
-				{          
-					g_Player.PauseGraph();
-				}
-				*/
+          //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
+          bool cardChanged = false;
 
-				if (wasPlaying)
-					SeekToEnd(true);        
+          if (newCardId == -1)
+          {
+            cardChanged = false;
+          }
+          else
+          {
+            cardChanged = (TVHome.Card.Id != newCardId); // || TVHome.Card.RTSPUrl != newCard.RTSPUrl || TVHome.Card.TimeShiftFileName != newCard.TimeShiftFileName);
+          }
+          
+          if (cardChanged)
+          {
+            if (wasPlaying)
+            {
+              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", TVHome.Card.Id, newCardId, TVHome.Card.RTSPUrl);
+              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", TVHome.Card.TimeShiftFileName);
+              g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
+              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (card changed) - timeshifting continueing.");
+            }
+            succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+          }
+          else
+          {
+            g_Player.PauseGraph();
+            succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+            SeekToEnd(true);
+            g_Player.ContinueGraph();
+          }
+        }
+        else
+        {
+          succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+        }               
 
-				succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 				if (succeeded == TvResult.Succeeded)
 				{
-					//timeshifting succeeded
-
-
-					//Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
-					bool cardChanged = (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName);
-					if (cardChanged)
-					{
-						if (wasPlaying)
-						{
-							MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}/{3}", TVHome.Card.Id, card.Id, TVHome.Card.RTSPUrl, card.RTSPUrl);
-							MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}/{1}", TVHome.Card.TimeShiftFileName, Card.TimeShiftFileName);
-							g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
-							MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (card changed) - timeshifting continueing.");
-						}
-					}
+					//timeshifting succeeded					          
 					TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
 					MediaPortal.GUI.Library.Log.Info("succeeded:{0} {1}", succeeded, card);
@@ -2040,19 +2063,13 @@ namespace TvPlugin
 					if (!g_Player.Playing)
 					{
 						StartPlay();
-					}
-
-					//g_Player.CurrentAudioStream = prefLangIdx;
-					GUIWaitCursor.Hide();
-
-					// issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.                                        
-					SeekToEnd(true);
-
+					}          
+                    
 					_playbackStopped = false;
-					//TVHome.Connected = true;
 
+          GUIWaitCursor.Hide();
+          _doingChannelChange = false;
 					return true;
-
 				}
 				else
 				{
@@ -2066,9 +2083,7 @@ namespace TvPlugin
 				}
 
 				GUIWaitCursor.Hide();
-				
-				
-
+								
 				//if (pDlgOK != null && pDlgYesNo != null)
 				
 				errorMessage = GUILocalizeStrings.Get(1500);
@@ -2140,32 +2155,30 @@ namespace TvPlugin
 
 					//pDlgYesNo.SetLine(5, "Tune previous channel?"); //Tune previous channel?            
 
+          /*if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+          {
+            g_Player.FullScreen = false;
+          }*/
 					if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
 					{
-						pDlgYesNo.DoModal(GUIWindowManager.ActiveWindowEx);
+            pDlgYesNo.DoModal((int)GUIWindowManager.ActiveWindowEx);
 						// If failed and wasPlaying TV, fallback to the last viewed channel. 
 
-						if (wasPlaying && pDlgYesNo.IsConfirmed)
+						if (pDlgYesNo.IsConfirmed)
 						{
 							ViewChannelAndCheck(Navigator.Channel);
 							GUIWaitCursor.Hide();
 						}
 					}
 					else
-					{
-						GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+					{            
 						ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
 						Thread showDlgThread = new Thread(pThread);
-
-						// If failed and wasPlaying TV, fallback to the last viewed channel. 
-						if (wasPlaying)
-						{
-							ViewChannelAndCheck(Navigator.Channel);
-							GUIWaitCursor.Hide();
-						}
+						
+						GUIWaitCursor.Hide();						
 						// show the dialog asynch.
 						// this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-						showDlgThread.Start(pDlgOK);
+            showDlgThread.Start(pDlgYesNo);
 					}
 				}
 				else //show ok
@@ -2183,57 +2196,50 @@ namespace TvPlugin
 						pDlgOK.SetLine(4, lines[2]);
 					else
 						pDlgOK.SetLine(4, "");
-
+          
 					if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
 					{
-						pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-						// If failed and wasPlaying TV, fallback to the last viewed channel. 
-
-						if (wasPlaying && pDlgOK.IsConfirmed)
-						{
-							ViewChannelAndCheck(Navigator.Channel);
-							GUIWaitCursor.Hide();
-						}
+						pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);          						
 					}
 					else
 					{
 						ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
 						Thread showDlgThread = new Thread(pThread);
-
-						// If failed and wasPlaying TV, fallback to the last viewed channel. 
-						if (wasPlaying)
-						{
-							ViewChannelAndCheck(Navigator.Channel);
-							GUIWaitCursor.Hide();
-						}
+						
 						// show the dialog asynch.
 						// this fixes a hang situation that would happen when resuming TV with showlastactivemodule
 						showDlgThread.Start(pDlgOK);
 					}
 				}
-				
+        _doingChannelChange = false;
 				return false;
 			}
 			catch (Exception ex)
 			{
 				Log.Debug("TvPlugin:ViewChannelandCheck Exception {0}", ex.ToString());
 				GUIWaitCursor.Hide();
+        _doingChannelChange = false;
 				return false;
-			}
+			}      
 		}
 
 		public static void ShowDlg(object Dialogue)
 		{
 			GUIDialogOK pDlgOK = null;
+      GUIDialogYesNo pDlgYESNO = null;
 
 			if (Dialogue is GUIDialogOK)
 			{
 				pDlgOK = (GUIDialogOK)Dialogue;
 			}
-			else
-			{
-				return;
-			}
+      else if (Dialogue is GUIDialogYesNo)
+      {
+        pDlgYESNO = (GUIDialogYesNo)Dialogue;
+      }
+      else
+      {
+        return;
+      }
 
 			GUIWindow guiWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
 
@@ -2252,7 +2258,16 @@ namespace TvPlugin
 				count++;
 			}
 
-			pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+      if (pDlgOK != null) pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+      if (pDlgYESNO != null)
+      {
+        pDlgYESNO.DoModal(GUIWindowManager.ActiveWindowEx);
+        // If failed and wasPlaying TV, fallback to the last viewed channel. 						
+        if (pDlgYESNO.IsConfirmed)
+        {
+          //ViewChannelAndCheck(Navigator.Channel); not working from thread
+        }
+      }
 		}
 
 		static public void ViewChannel(Channel channel)
@@ -2444,7 +2459,6 @@ namespace TvPlugin
 			Log.Info("tvhome:SeektoEnd({0})", zapping);
 			double duration = g_Player.Duration;
 			double position = g_Player.CurrentPosition;
-			if (Math.Abs(duration - position) <= 2) return;
 
 			string timeshiftFileName = TVHome.Card.TimeShiftFileName;
 			bool useRtsp = System.IO.File.Exists("usertsp.txt");

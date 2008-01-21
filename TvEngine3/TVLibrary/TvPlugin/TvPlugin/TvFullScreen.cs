@@ -2282,7 +2282,7 @@ namespace TvPlugin
       else if (_zapOsdVisible)
         _zapWindow.Render(timePassed);
 
-      if (g_Player.Playing) return;
+      if (g_Player.Playing || TVHome.DoingChannelChange()) return;
       if (_isStartingTSForRecording) return;
 
       //close window
