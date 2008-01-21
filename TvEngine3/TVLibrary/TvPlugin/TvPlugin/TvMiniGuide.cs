@@ -273,6 +273,12 @@ namespace TvPlugin
                 _canceled = false;
                 Close();
                 
+                //This one shows the zapOSD when changing channel from mini GUIDE, this is currently unwanted.
+                /*
+                TvFullScreen TVWindow = (TvFullScreen)GUIWindowManager.GetWindow((int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                if (TVWindow != null) TVWindow.UpdateOSD(changeChannel.Name);                
+                */ 
+                
                 if (changeChannel != null)
                 {
                   TVHome.UserChannelChanged = true;

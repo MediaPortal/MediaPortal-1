@@ -2013,7 +2013,7 @@ namespace TvPlugin
 				*/
 
 				if (wasPlaying)
-					SeekToEnd(true);
+					SeekToEnd(true);        
 
 				succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 				if (succeeded == TvResult.Succeeded)
@@ -3002,89 +3002,107 @@ namespace TvPlugin
 			}
 		}
 
-		/// <summary>
-		/// Changes to the next channel in the current group.
-		/// </summary>
-		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-		public void ZapToNextChannel(bool useZapDelay)
-		{
-			Channel currentChan = null;
-			int currindex;
-			if (m_zapchannel == null)
-			{
-				currindex = GetChannelIndex(Channel);
-				currentChan = Channel;
-			}
-			else
-			{
-				currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel
-				currentChan = Channel;
-			}
-			// Step to next channel
-			currindex++;
-			if (currindex >= CurrentGroup.ReferringGroupMap().Count)
-				currindex = 0;
-			GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
-			Channel chan = (Channel)gm.ReferencedChannel();
-			TVHome.UserChannelChanged = true;
-			m_zapchannel = chan;
+    /// <summary>
+    /// Changes to the next channel in the current group.
+    /// </summary>
+    /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
+    public void ZapToNextChannel(bool useZapDelay)
+    {
+      Channel currentChan = null;
+      int currindex;
+      if (m_zapchannel == null)
+      {
+        currindex = GetChannelIndex(Channel);
+        currentChan = Channel;
+      }
+      else
+      {
+        currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel 
+        currentChan = Channel;
+      }
+      GroupMap gm;
+      Channel chan;
+      //check if channel is visible 
+      //if not find next visible 
+      do
+      {
+        // Step to next channel 
+        currindex++;
+        if (currindex >= CurrentGroup.ReferringGroupMap().Count)
+        {
+          currindex = 0;
+        }
+        gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
+        chan = (Channel)gm.ReferencedChannel();
+      }
+      while (!chan.VisibleInGuide);
+      
+      TVHome.UserChannelChanged = true;
+      m_zapchannel = chan;
+      MediaPortal.GUI.Library.Log.Info("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
+      if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+      {
+        if (useZapDelay) 
+          m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+        else 
+          m_zaptime = DateTime.Now;
+      }
+      else
+      {
+        m_zaptime = DateTime.Now;
+      }
+    }
 
-			MediaPortal.GUI.Library.Log.Info("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
-			if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-			{
-				if (useZapDelay)
-					m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
-				else
-					m_zaptime = DateTime.Now;
-			}
-			else
-			{
-				m_zaptime = DateTime.Now;
-			}
-		}
+    /// <summary>
+    /// Changes to the previous channel in the current group.
+    /// </summary>
+    /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
+    public void ZapToPreviousChannel(bool useZapDelay)
+    {
+      Channel currentChan = null;
+      int currindex;
+      if (m_zapchannel == null)
+      {
+        currentChan = Channel;
+        currindex = GetChannelIndex(Channel);
+      }
+      else
+      {
+        currentChan = m_zapchannel;
+        currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel 
+      }
+      GroupMap gm;
+      Channel chan;
+      //check if channel is visible 
+      //if not find next visible 
+      do
+      { // Step to prev channel 
+        currindex--;
+        if (currindex < 0)
+        {
+          currindex = CurrentGroup.ReferringGroupMap().Count - 1;
+        }
+        gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
+        chan = (Channel)gm.ReferencedChannel();
+      }
+      while (!chan.VisibleInGuide);
 
-		/// <summary>
-		/// Changes to the previous channel in the current group.
-		/// </summary>
-		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-		public void ZapToPreviousChannel(bool useZapDelay)
-		{
-			Channel currentChan = null;
-			int currindex;
-			if (m_zapchannel == null)
-			{
-				currentChan = Channel;
-				currindex = GetChannelIndex(Channel);
-			}
-			else
-			{
-				currentChan = m_zapchannel;
-				currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel
-			}
-			// Step to previous channel
-			currindex--;
-			if (currindex < 0)
-				currindex = CurrentGroup.ReferringGroupMap().Count - 1;
-
-
-			GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
-			Channel chan = (Channel)gm.ReferencedChannel();
-			TVHome.UserChannelChanged = true;
-			m_zapchannel = chan;
-
-			MediaPortal.GUI.Library.Log.Info("Navigator:ZapPrevious {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
-			if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-			{
-				if (useZapDelay)
-					m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
-				else
-					m_zaptime = DateTime.Now;
-			}
-			else
-			{
-				m_zaptime = DateTime.Now;
-			}
-		}
+      TVHome.UserChannelChanged = true;
+      m_zapchannel = chan;
+      MediaPortal.GUI.Library.Log.Info("Navigator:ZapPrevious {0}->{1}",
+      currentChan.DisplayName, m_zapchannel.DisplayName);
+      if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+      {
+        if (useZapDelay)
+          m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+        else
+          m_zaptime = DateTime.Now;
+      }
+      else
+      {
+        m_zaptime = DateTime.Now;
+      }
+    }
 
 		/// <summary>
 		/// Changes to the next channel group.

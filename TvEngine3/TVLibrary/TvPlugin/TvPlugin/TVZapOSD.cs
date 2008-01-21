@@ -66,6 +66,7 @@ namespace TvPlugin
 
     bool m_bNeedRefresh = false;
     DateTime m_dateTime = DateTime.Now;
+    private string channelName = "";
 
     IList tvChannelList;
 
@@ -170,8 +171,9 @@ namespace TvPlugin
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       m_bNeedRefresh = false;
       m_dateTime = DateTime.Now;
-      SetCurrentChannelLogo();
-      base.OnPageLoad();
+      channelName = GetChannelName();
+      SetCurrentChannelLogo();      
+      base.OnPageLoad();      
 
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
     }
@@ -179,15 +181,13 @@ namespace TvPlugin
 
     void Get_TimeInfo()
     {
-      string strChannel = GetChannelName();
-      string strTime = strChannel;
-      Program prog = TVHome.Navigator.GetChannel(strChannel).CurrentProgram;
+      string strTime = channelName;
+      Program prog = TVHome.Navigator.GetChannel(channelName).CurrentProgram;
       if (prog != null)
       {
-
         strTime = String.Format("{0}-{1}",
-          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+        prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       }
       if (lblCurrentTime != null)
       {
@@ -256,31 +256,32 @@ namespace TvPlugin
       Log.Debug("GUITV OSD: OnNextChannel");
       if (!TVHome.Card.IsTimeShifting) return;
       TVHome.Navigator.ZapToPreviousChannel(true);
-
-      SetCurrentChannelLogo();
+      channelName = GetChannelName();
+      SetCurrentChannelLogo();      
       m_dateTime = DateTime.Now;
     }
 
     private void OnNextChannel()
     {
-
-      Log.Debug("GUITV ZAPOSD: OnNextChannel");
-      if (!TVHome.Card.IsTimeShifting) return;
+      Log.Debug("GUITV ZAPOSD: OnNextChannel");      
+      if (!TVHome.Card.IsTimeShifting) return;      
       TVHome.Navigator.ZapToNextChannel(true);
+      channelName = GetChannelName();
       SetCurrentChannelLogo();
+      
       m_dateTime = DateTime.Now;
     }
 
     public void UpdateChannelInfo()
     {
+      channelName = GetChannelName();
       SetCurrentChannelLogo();
     }
 
 
     void SetCurrentChannelLogo()
     {
-      string strChannel = GetChannelName();
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
       if (System.IO.File.Exists(strLogo))
       {
         if (imgTvChannelLogo != null)
@@ -323,15 +324,15 @@ namespace TvPlugin
       {
         VirtualCard card;
         TvServer server = new TvServer();
-        imgRecIcon.IsVisible = server.IsRecording(GetChannelName(), out card);
+        imgRecIcon.IsVisible = server.IsRecording(channelName, out card);
       }
 
       if (lblCurrentChannel != null)
       {
-        lblCurrentChannel.Label = GetChannelName();
+        lblCurrentChannel.Label = channelName;
       }
 
-      Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
+      Program prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(m_dateTime);
       if (prog != null)
       {
         string strTime = String.Format("{0}-{1}",
@@ -359,7 +360,7 @@ namespace TvPlugin
         }
 
         // next program
-        prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(1));
+        prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(prog.EndTime.AddMinutes(1));
         if (prog != null)
         {
           if (lblOnTvNext != null)
@@ -390,17 +391,16 @@ namespace TvPlugin
     }
 
     void UpdateProgressBar()
-    {
+    {      
       double fPercent;
-      Program prog = TVHome.Navigator.GetChannel(GetChannelName()).CurrentProgram;
+      Program prog = TVHome.Navigator.GetChannel(channelName).CurrentProgram;
       if (prog == null)
-      {
-        GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+      {        
         return;
       }
       string strTime = String.Format("{0}-{1}",
-        prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-        prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+      prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+      prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
       TimeSpan ts = prog.EndTime - prog.StartTime;
       double iTotalSecs = ts.TotalSeconds;
@@ -408,7 +408,7 @@ namespace TvPlugin
       double iCurSecs = ts.TotalSeconds;
       fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
       fPercent *= 100.0d;
-      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());      
     }
   }
 }
