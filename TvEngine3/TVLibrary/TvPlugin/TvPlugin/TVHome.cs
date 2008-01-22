@@ -48,7 +48,6 @@ using TvControl;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 
-
 using Gentle.Common;
 using Gentle.Framework;
 namespace TvPlugin
@@ -58,7 +57,6 @@ namespace TvPlugin
 	/// </summary>
 	public class TVHome : GUIWindow, ISetupForm, IShowPlugin, IPluginReceiver
 	{
-
 		#region constants
 		private const int HEARTBEAT_INTERVAL = 5; //seconds
 		private const int WM_POWERBROADCAST = 0x0218;
@@ -262,7 +260,6 @@ namespace TvPlugin
 			Log.Debug("TVHome: HeartBeat Transmitter started.");
 			heartBeatTransmitterThread = new Thread(HeartBeatTransmitter);
 			heartBeatTransmitterThread.Start();
-
 		}
 
 		private void stopHeartBeatThread()
@@ -1279,10 +1276,8 @@ namespace TvPlugin
 				GUIGraphicsContext.IsFullScreenVideo = true;
 				return true;
 			}
-
 			return g_Player.ShowFullScreenWindowTVDefault();
 		}
-
 
 		/// <summary>
 		/// check if we have a single seat environment
@@ -1443,7 +1438,6 @@ namespace TvPlugin
 			else
 			{
 				server.StopRecordingSchedule(card.RecordingScheduleId);
-
 			}
 			UpdateStateOfButtons();
 		}
@@ -1558,11 +1552,9 @@ namespace TvPlugin
 
 			if (!g_Player.IsTVRecording)
 			{
-
 				if (Navigator.Channel == null) return;
 				try
 				{
-
 					if (Navigator.CurrentChannel == null)
 					{
 						GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
@@ -1640,7 +1632,6 @@ namespace TvPlugin
 						return;
 					}
 
-
 					// caclulate total duration of the current program
 					ts = (prog.EndTime - prog.StartTime);
 					double programDuration = ts.TotalSeconds;
@@ -1698,14 +1689,10 @@ namespace TvPlugin
 				GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
 				GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
 
-
-
 				GUIPropertyManager.SetProperty("#TV.View.start", startTime);
 				GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
 				//GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));                
-
 			}
-
 		}
 
 		/// <summary>
@@ -2005,7 +1992,6 @@ namespace TvPlugin
 
 				GUIWaitCursor.Show();
 				bool wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting) && (g_Player.IsTV || g_Player.IsRadio);
-
 
 				//Start timeshifting the new tv channel
 				TvServer server = new TvServer();
@@ -2321,7 +2307,6 @@ namespace TvPlugin
 			return false;
 		}
 
-
 		/// <summary>
 		/// Gets the channel navigator that can be used for channel zapping.
 		/// </summary>
@@ -2434,9 +2419,9 @@ namespace TvPlugin
 				benchClock.Stop();
 				Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
 				benchClock.Reset();
-				benchClock.Start();
+				//benchClock.Start();
 				//SeekToEnd(false);
-				Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
+				//Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
 			}
 			else
 			{
@@ -2446,9 +2431,9 @@ namespace TvPlugin
 				benchClock.Stop();
 				Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
 				benchClock.Reset();
-				benchClock.Start();
-				//        SeekToEnd(true);
-				Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
+				//benchClock.Start();
+				//SeekToEnd(true);
+				//Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
 				//SeekToEnd(true);
 			}
 			benchClock.Stop();
