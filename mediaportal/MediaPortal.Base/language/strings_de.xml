@@ -924,9 +924,13 @@
         <String id="1507">Unbekannter Kanal</String>
         <String id="1508">Kanal wurde keiner Karte zugewiesen</String>
         <String id="1509">Keine Tuning-Details für diesen Kanal</String>
-        <String id="1510">Verbindung zum TV Service verloren</String>
+        <String id="1510">Verbindung zum TV-Service verloren</String>
         <String id="1511">Keine Streams aktiv</String>
         <String id="1512">Vorherigen Kanal zeigen?</String>
+        <String id="1513">TV wurde für eine geplante Aufnahme gestoppt</String>
+        <String id="1514">TV wurde von einem Administrator gestoppt</String>
+        <String id="1515">TV wurde vom TV-Server gestoppt</String>
+        <String id="1516">TV wurde aus unbekannten Gründen gestoppt</String>
         <String id="1950" prefix="Mein ">Status</String>
         <String id="1951">Festplatte</String>
         <String id="1952">Lüfter</String>

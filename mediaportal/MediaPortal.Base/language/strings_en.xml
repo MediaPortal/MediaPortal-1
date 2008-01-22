@@ -926,7 +926,7 @@
         <String id="1510">Connection to TV service lost</String>
         <String id="1511">No active streams</String>
         <String id="1512">Tune previous ch.?</String>        
-        <String id="1513">Timeshifting stopped due to scheduled\rrecording</String>
+        <String id="1513">Timeshifting stopped due to a scheduled\rrecording</String>
         <String id="1514">Timeshifting stopped by an\radministrator</String>
         <String id="1515">Timeshifting stopped by the\rTV-server</String>
         <String id="1516">Timeshifting stopped for an\runknown reason</String>
