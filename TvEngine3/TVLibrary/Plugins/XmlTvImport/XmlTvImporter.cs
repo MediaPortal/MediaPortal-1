@@ -37,7 +37,7 @@ using Gentle.Framework;
 
 namespace TvEngine
 {
-  public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll
+	public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler
   {
 		#region constants
 		private const int remoteFileDonwloadTimeoutSecs = 360; //6 minutes
@@ -784,5 +784,33 @@ namespace TvEngine
     }
 
     #endregion
-  }
+
+		#region IWakeupHandler Members
+
+		DateTime IWakeupHandler.GetNextWakeupTime(DateTime earliestWakeupTime)
+		{
+			DateTime now = DateTime.Now;
+			TvBusinessLayer layer = new TvBusinessLayer();
+			DateTime defaultRemoteScheduleTime = new DateTime(now.Year, now.Month, now.Day, 6, 30, 0);
+			string remoteScheduleTimeStr = layer.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).Value;
+			
+			DateTime remoteScheduleTime = (DateTime)(System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(now.Year, now.Month, now.Day)).ConvertFrom(remoteScheduleTimeStr));
+
+			if (now < remoteScheduleTime)
+			{
+				remoteScheduleTime.AddDays(1);
+			}
+
+			Log.Debug ("plugin:xmltv: IWakeupHandler.GetNextWakeupTime {0}", remoteScheduleTime);
+
+			return remoteScheduleTime;
+		}
+
+		string IWakeupHandler.HandlerName
+		{
+			get { return "XmlTvImporter Remote Download Job"; }
+		}
+
+		#endregion
+	}
 }
