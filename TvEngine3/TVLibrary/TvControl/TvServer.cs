@@ -181,6 +181,27 @@ namespace TvControl
       return false;
     }
 
+		/// <summary>
+		/// Query what card would be used for timeshifting on any given channel
+		/// </summary>
+		/// <param name="user">user credentials.</param>
+		/// <param name="idChannel">The id channel.</param>    
+		/// <returns>
+		/// returns card id which would be used when doing the actual timeshifting.
+		/// </returns>
+		public int TimeShiftingWouldUseCard(ref User user, int idChannel)
+		{		
+			try
+			{
+				return RemoteControl.Instance.TimeShiftingWouldUseCard(ref user, idChannel);				
+			}
+			catch (Exception ex)
+			{
+				HandleFailure(ex);				
+			}
+			return -1;
+		}
+
     /// <summary>
     /// Start timeshifting on a specific channel
     /// </summary>
