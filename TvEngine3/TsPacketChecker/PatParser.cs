@@ -49,6 +49,7 @@ namespace TsPacketChecker
 
     public override void OnNewSection(Section section)
     {
+      if (section.table_id != TableId) return;
       int pmtCount = 0;
       int loop = (section.section_length - 9) / 4;
       for (int i=0;i<loop;i++)

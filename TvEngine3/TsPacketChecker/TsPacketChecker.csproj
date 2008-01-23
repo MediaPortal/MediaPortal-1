@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WindowsApplication13</RootNamespace>
-    <AssemblyName>WindowsApplication13</AssemblyName>
+    <AssemblyName>TsPacketChecker</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -74,8 +74,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="SdtParser.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="SectionDecoder.cs" />
+    <Compile Include="StringUtils.cs" />
     <Compile Include="TsHeader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

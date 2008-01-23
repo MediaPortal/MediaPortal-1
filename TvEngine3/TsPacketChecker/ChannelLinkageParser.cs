@@ -60,7 +60,7 @@ namespace TsPacketChecker
         return;
       PortalChannel pchannel = new PortalChannel(transport_id, network_id, service_id);
       channels.Add(key, pchannel);
-      TreeNode pNode=baseNode.Nodes.Add("nid: " + transport_id.ToString() + " nid: " + network_id.ToString() + " sid: " + service_id.ToString());
+      TreeNode pNode=baseNode.Nodes.Add("#"+service_id.ToString()+" nid: " + transport_id.ToString() + " nid: " + network_id.ToString() + " sid: " + service_id.ToString());
 
       int start = 14;
       while (start + 11 <= section.section_length+1)
@@ -88,7 +88,7 @@ namespace TsPacketChecker
               name += (char)section.Data[start + off +9+i];
             lchannel.displayName = name;
             pchannel.linkedChannels.Add(lchannel);
-            pNode.Nodes.Add("["+name+"] nid: " + lchannel.transport_id.ToString() + " nid: " + lchannel.network_id.ToString() + " sid: " + lchannel.service_id.ToString());
+            pNode.Nodes.Add("["+name+"] tid: " + lchannel.transport_id.ToString() + " nid: " + lchannel.network_id.ToString() + " sid: " + lchannel.service_id.ToString());
           }
           off += descriptor_len+2;
         } // while (off < descriptors_len)

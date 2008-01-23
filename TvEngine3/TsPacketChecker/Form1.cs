@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using System.Xml;
 
 namespace TsPacketChecker
 {
@@ -16,6 +17,8 @@ namespace TsPacketChecker
   {
     private bool stopThread;
     private BufferedTsFileReader reader;
+    private string caption = "TsPacketChecker (by gemx)";
+    private string tsFile="";
 
     public Form1()
     {
@@ -39,15 +42,97 @@ namespace TsPacketChecker
     }
     #endregion
 
+    #region Import/Export functions
+    public void TreeViewToXml(String path)
+    {
+      XmlDocument xmlDocument = new XmlDocument();
+      xmlDocument.AppendChild(xmlDocument.CreateElement("ROOT"));
+      XmlRekursivExport(xmlDocument,xmlDocument.DocumentElement, TrSections.Nodes);
+      xmlDocument.Save(path);
+    }
+
+    public void XmlToTreeView(String path)
+    {
+      XmlDocument xmlDocument = new XmlDocument();
+      xmlDocument.Load(path);
+      TrSections.Nodes.Clear();
+      XmlRekursivImport(TrSections.Nodes, xmlDocument.DocumentElement.ChildNodes);
+    }
+
+    private XmlNode XmlRekursivExport(XmlDocument xmlDocument,XmlNode nodeElement, TreeNodeCollection treeNodeCollection)
+    {
+      XmlNode xmlNode = null;
+      foreach (TreeNode treeNode in treeNodeCollection)
+      {
+        xmlNode = xmlDocument.CreateElement("TreeViewNode");
+
+        xmlNode.Attributes.Append(xmlDocument.CreateAttribute("value"));
+        xmlNode.Attributes["value"].Value = treeNode.Text;
+
+
+        if (nodeElement != null)
+          nodeElement.AppendChild(xmlNode);
+
+        if (treeNode.Nodes.Count > 0)
+        {
+          XmlRekursivExport(xmlDocument,xmlNode, treeNode.Nodes);
+        }
+      }
+      return xmlNode;
+    }
+
+    private void XmlRekursivImport(TreeNodeCollection elem, XmlNodeList xmlNodeList)
+    {
+      TreeNode treeNode;
+      foreach (XmlNode myXmlNode in xmlNodeList)
+      {
+        treeNode = new TreeNode(myXmlNode.Attributes["value"].Value);
+
+        if (myXmlNode.ChildNodes.Count > 0)
+        {
+          XmlRekursivImport(treeNode.Nodes, myXmlNode.ChildNodes);
+        }
+        elem.Add(treeNode);
+      }
+    }
+    #endregion
 
     #region Form events
-    private void btnSelectFile_Click(object sender, EventArgs e)
+    private void opentsToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      openDlg.Filter = "Ts Files (*.ts)|*.ts";
       if (openDlg.ShowDialog() == DialogResult.OK)
-        edTsFile.Text = openDlg.FileName;
+      {
+        tsFile = openDlg.FileName;
+        this.Text = caption + " - " + tsFile;
+      }
+    }
+    private void importFromXMLToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      openDlg.Filter = "XML Files (*.xml)|*.xml";
+      if (openDlg.ShowDialog() == DialogResult.OK)
+      {
+        tsFile = "";
+        this.Text = caption + " - " + openDlg.FileName;
+        XmlToTreeView(openDlg.FileName);
+      }
+    }
+    private void exportToXMLToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      if (saveDlg.ShowDialog() == DialogResult.OK)
+      {
+        TreeViewToXml(saveDlg.FileName);
+        MessageBox.Show("The data has been successfully exported.", "Information");
+      }
+    }
+    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      Close();
     }
     private void btnAnalyze_Click(object sender, EventArgs e)
     {
+      if (tsFile == "")
+        opentsToolStripMenuItem_Click(null, new EventArgs());
       stopThread = false;
       Thread worker = new Thread(new ThreadStart(AnalyzeTs));
       worker.Start();
@@ -60,13 +145,26 @@ namespace TsPacketChecker
 
     private void AnalyzeTs()
     {
+      if (!System.IO.File.Exists(tsFile))
+      {
+        MessageBox.Show("The ts file doesn't exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
       PrBar.Value = 0;
       WriteLog("Analyzer running...");
       byte[] tsPacket;
       
       reader = new BufferedTsFileReader();
-      reader.Open(edTsFile.Text, 50000);
-      reader.SeekToFirstPacket();
+      if (!reader.Open(tsFile, 50000))
+      {
+        MessageBox.Show("Error opening the ts file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+      if (!reader.SeekToFirstPacket())
+      {
+        MessageBox.Show("No snyc byte found in whole file. Doesn't seem to be a valid ts file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
       TsHeader header;
 
       TreeNode patNode= new TreeNode("PAT");
@@ -75,6 +173,8 @@ namespace TsPacketChecker
       CatParser catParser = new CatParser(catNode);
       TreeNode linkageNode = new TreeNode("ChannelLinkage");
       ChannelLinkageParser linkageParser = new ChannelLinkageParser(linkageNode);
+      TreeNode sdtNode = new TreeNode("SDT");
+      SdtParser sdtParser = new SdtParser(sdtNode);
       PacketChecker checker = new PacketChecker(double.Parse(edPcrDiff.Text));
       while (reader.GetNextPacket(out tsPacket, out header))
       {
@@ -104,6 +204,7 @@ namespace TsPacketChecker
             catNode.Tag = true;
           }
         }
+        sdtParser.OnTsPacket(tsPacket);
         linkageParser.OnTsPacket(tsPacket);
 
         PrBar.Value = reader.GetPositionInPercent();
@@ -113,6 +214,8 @@ namespace TsPacketChecker
       PrBar.Value = 100;
       WriteLog("Finished.");
       AddThreadSafeSectionNode(linkageNode);
+      sdtNode.Text = "SDT (" + sdtParser.GetServiceCount().ToString() + " services)";
+      AddThreadSafeSectionNode(sdtNode);     
       WriteLog(checker.GetStatistics());
       WriteLog(checker.GetErrorDetails());
     }

@@ -87,7 +87,8 @@ namespace TsPacketChecker
         int es_descriptors_length = ((section[ndx++] & 0x0f) << 8) + section[ndx++];
         if (es_descriptors_length > 0)
         {
-          int ind = section[ndx];
+          int descriptor_tag = section[ndx];
+          int descriptor_len = section[ndx+1];
         }
         ndx += es_descriptors_length;
         baseNode.Nodes.Add("pid: 0x" + pid.ToString("x") + " " + StreamTypeToStr(stream_type));
