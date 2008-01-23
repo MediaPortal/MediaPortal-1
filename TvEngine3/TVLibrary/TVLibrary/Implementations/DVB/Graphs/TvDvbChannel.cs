@@ -1195,8 +1195,11 @@ namespace TvLibrary.Implementations.DVB
               }
               else
               {
-                Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (unknown type))", _subChannelId, info.stream_type, info);
-                _tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess                
+                if (info.isVideo)
+                {
+                  Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (unknown type))", _subChannelId, info.stream_type, info);
+                  _tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess                
+                }
               }
 						}
 					}					
