@@ -6,6 +6,7 @@ namespace TsPacketChecker
 {
   public class PidInfo
   {
+    public bool shouldCheck;
     public Pcr lastPcr;
     public Pcr lastPts;
     public byte continuityCounter;
@@ -14,6 +15,7 @@ namespace TsPacketChecker
     public List<string> payloadStartErrorTexts;
     public PidInfo()
     {
+      shouldCheck = false;
       lastPcr = new Pcr();
       lastPts = new Pcr();
       continuityCounter = 0xFF;

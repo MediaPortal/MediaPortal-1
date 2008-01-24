@@ -190,6 +190,7 @@ namespace TsPacketChecker
           {
             WriteLog("- PAT and PMT parsers finished.");
             AddThreadSafeSectionNode(patNode);
+            checker.AddPidsToCheck(patParser.GetPmtStreamPids());
             patNode.Tag = true;
           }
         }

@@ -25,6 +25,14 @@ namespace TsPacketChecker
       TableId = 0;
     }
 
+    public List<ushort> GetPmtStreamPids()
+    {
+      List<ushort> streamPids = new List<ushort>();
+      foreach (PmtParser pmtp in pmtParsers)
+        streamPids.AddRange(pmtp.streamPids);
+      return streamPids;
+    }
+
     public override void OnTsPacket(byte[] tsPacket)
     {
       if (IsReady) return;

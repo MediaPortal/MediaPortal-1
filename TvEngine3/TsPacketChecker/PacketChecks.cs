@@ -49,6 +49,7 @@ namespace TsPacketChecker
     }
     private void CheckPcr(TsHeader header, byte[] tsPacket, ref PidInfo pi)
     {
+      if (!pi.shouldCheck) return;
       if (!PacketContainsPcr(header, tsPacket)) return;
       Pcr pcr = new Pcr(tsPacket);
       if (pi.lastPcr.isValid)
@@ -64,6 +65,7 @@ namespace TsPacketChecker
     }
     private void CheckPtsDts(TsHeader header, byte[] tsPacket, ref PidInfo pi)
     {
+      if (!pi.shouldCheck) return;
       ulong offset = PacketContainsPtsDts(header, tsPacket, ref pi);
       if (offset == 0) return;
       Pcr pts; Pcr dts;
@@ -81,6 +83,7 @@ namespace TsPacketChecker
     }
     #endregion
 
+    #region Constructor
     public PacketChecker(double maxAllowedPcrDiff)
     {
       droppedPackets = 0;
@@ -91,7 +94,17 @@ namespace TsPacketChecker
       diffAllowed = maxAllowedPcrDiff;
       pids = new SortedDictionary<ushort, PidInfo>();
     }
+    #endregion
 
+    #region Public methods
+    public void AddPidsToCheck(List<ushort> streamPids)
+    {
+      foreach (ushort pid in streamPids)
+      {
+        if (pids.ContainsKey(pid))
+          pids[pid].shouldCheck = true;
+      }
+    }
     public void ProcessPacket(byte[] tsPacket,TsHeader header)
     {
       if (header.TransportError)
@@ -147,5 +160,6 @@ namespace TsPacketChecker
       }
       return log;
     }
+    #endregion
   }
 }

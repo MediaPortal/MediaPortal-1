@@ -6,6 +6,147 @@ namespace TsPacketChecker
 {
   class StringUtils
   {
+    public static string StreamIdentifier2Str(int stream_ident)
+    {
+      switch (stream_ident)
+      {
+        #region MPEG-2 video (0x101-0x108)
+        case 0x101:
+          return "MPEG-2 video, 4:3 aspect ratio, 25 Hz";
+        case 0x102:
+          return "MPEG-2 video, 16:9 aspect ratio with pan vectors, 25 Hz";
+        case 0x103:
+          return "MPEG-2 video, 16:9 aspect ratio without pan vectors, 25 Hz";
+        case 0x104:
+          return "MPEG-2 video, >16:9 aspect ratio, 25 Hz";
+        case 0x105:
+          return "MPEG-2 video, 4:3 aspect ratio, 30 Hz";
+        case 0x106:
+          return "MPEG-2 video, 16:9 aspect ratio with pan vectors, 30 Hz";
+        case 0x107:
+          return "MPEG-2 video, 16:9 aspect ratio without pan vectors, 30 Hz";
+        case 0x108:
+          return "MPEG-2 video, >16:9 aspect ratio, 30 Hz";
+        #endregion
+
+        #region MPEG-2 HD video (0x109-0x110)
+        case 0x109:
+          return "MPEG-2 high definition video, 4:3 aspect ratio, 25 Hz";
+        case 0x10A:
+          return "MPEG-2 high definition video, 16:9 aspect ratio with pan vectors, 25 Hz";
+        case 0x10B:
+          return "MPEG-2 high definition video, 16:9 aspect ratio without pan vectors, 25 Hz";
+        case 0x10C:
+          return "MPEG-2 high definition video, >16:9 aspect ratio, 25 Hz";
+        case 0x10D:
+          return "MPEG-2 high definition video, 4:3 aspect ratio, 30 Hz";
+        case 0x10E:
+          return "MPEG-2 high definition video, 16:9 aspect ratio with pan vectors, 30 Hz";
+        case 0x10F:
+          return "MPEG-2 high definition video, 16:9 aspect ratio without pan vectors, 30 Hz";
+        case 0x110:
+          return "MPEG-2 high definition video, >16:9 aspect ratio, 30 Hz";
+        #endregion
+
+        #region MPEG-1 audio (0x201-0x241)
+        case 0x201:
+          return "MPEG-1 Layer 2 audio, single mono channel";
+        case 0x202:
+          return "MPEG-1 Layer 2 audio, dual mono channel";
+        case 0x203:
+          return "MPEG-1 Layer 2 audio, stereo (2 channels)";
+        case 0x204:
+          return "MPEG-1 Layer 2 audio, multilingual, multi-channel)";
+        case 0x205:
+          return "MPEG-1 Layer 2 audio, surround sound";
+        case 0x240:
+          return "MPEG-1 Layer 2 audio description for visually impaired";
+        case 0x241:
+          return "MPEG-1 Layer 2 audio for the hard of hearing";
+        #endregion
+
+        #region Teletext (0x301-0x302)
+        case 0x301:
+          return "EBU Teletext subtitles";
+        case 0x302:
+          return "associated EBU Teletext";
+        #endregion
+
+        case 0x303:
+          return "VBI data";
+
+        #region DVB subtitles (0x310-0x323)
+        case 0x310:
+          return "DVB subtitles (normal) with no monitor aspect ratio critical";
+        case 0x311:
+          return "DVB subtitles (normal) for display 4:3 aspect ratio monitor";
+        case 0x312:
+          return "DVB subtitles (normal) for display 16:9 aspect ratio monitor";
+        case 0x313:
+          return "DVB subtitles (normal) for display 2.21:1 aspect ratio monitor";
+        case 0x320:
+          return "DVB subtitles (for the hard hearing) with no monitor aspect ratio critical";
+        case 0x321:
+          return "DVB subtitles (for the hard hearing) for display 4:3 aspect ratio monitor";
+        case 0x322:
+          return "DVB subtitles (for the hard hearing) for display 16:9 aspect ratio monitor";
+        case 0x323:
+          return "DVB subtitles (for the hard hearing) for display 2.21:1 aspect ratio monitor";
+        #endregion
+
+        #region H.264/AVC video (0x501-0x510)
+        case 0x501:
+          return "H.264/AVC standard definition video, 4:3 aspect ratio, 25 Hz";
+        case 0x503:
+          return "H.264/AVC standard definition video, 16:9 aspect ratio, 25 Hz";
+        case 0x504:
+          return "H.264/AVC standard definition video, >16:9 aspect ratio, 25 Hz";
+        case 0x505:
+          return "H.264/AVC standard definition video, 4:3 aspect ratio, 30 Hz";
+        case 0x507:
+          return "H.264/AVC standard definition video, 16:9 aspect ratio, 30 Hz";
+        case 0x508:
+          return "H.264/AVC standard definition video, >16:9 aspect ratio, 30 Hz";
+        case 0x50B:
+          return "H.264/AVC high definition video, 16:9 aspect ratio, 25 Hz";
+        case 0x50C:
+          return "H.264/AVC high definition video, >16:9 aspect ratio, 25 Hz";
+        case 0x50F:
+          return "H.264/AVC high definition video, 16:9 aspect ratio, 30 Hz";
+        case 0x510:
+          return "H.264/AVC high definition video, >16:9 aspect ratio, 30 Hz";
+        #endregion
+
+        #region HE-ACC audio (0x601-0x642)
+        case 0x601:
+          return "HE-AAC audio, single mono channel";
+        case 0x603:
+          return "HE-AAC audio, stereo";
+        case 0x605:
+          return "HE-AAC audio, surround sound";
+        case 0x640:
+          return "HE-AAC audio description for the visually impaired";
+        case 0x641:
+          return "HE-AAC audio for the hard of hearing";
+        case 0x642:
+          return "HE-AAC audio receiver-mixed supplementary audio";
+        #endregion
+
+        #region HE-AAC v2 audio (0x643-0x646)
+        case 0x643:
+          return "HE-AAC v2 audio, stereo";
+        case 0x644:
+          return "HE-AAC v2 audio description for the visually impaired";
+        case 0x645:
+          return "HE-AAC v2 audio for the hard of hearing";
+        case 0x646:
+          return "HE-AAC v2 audio receiver-mixed supplementary audio";
+        #endregion
+
+        default:
+          return "unknown (0x" + stream_ident.ToString("x")+")";
+      }
+    }
     public static string CA_System_ID2Str(int ca_id)
     {
       if (ca_id == 0)
@@ -110,6 +251,48 @@ namespace TsPacketChecker
         return "Latens Systems Ltd";
 
       return "Unknown CA_System_ID (0x" + ca_id.ToString("x") + ")";
+    }
+
+    public static string StreamTypeToStr(int streamType)
+    {
+      switch (streamType)
+      {
+        case 0x00:
+          return "ITU-T | ISO/IEC reserved";
+        case 0x01:
+          return "[Video MPEG-1] ISO/IEC 11172-2 Video";
+        case 0x02:
+          return "[Video MPEG-2] (ITU-T Rec. H.262 | ISO/IEC 13818-2 Video or ISO/IEC 11172-2 constrained parameter video stream)";
+        case 0x03:
+          return "[Audio MPEG-1] (ISO/IEC 11172-3 Audio)";
+        case 0x04:
+          return "[Audio MPEG-2] (ISO/IEC 13818-3 Audio)";
+        case 0x5:
+          return "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 private_sections";
+        case 0x06:
+          return "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 PES packets containing private data";
+        case 0x07:
+          return "[MHW-MHEG] ISO/IEC 13522 MHEG";
+        case 0x08:
+          return "Annex A - DSM CC";
+        case 0x09:
+          return "[DATA] ITU-T Rec. H.222.1";
+        case 0x0A:
+          return "ISO/IEC 13818-6 type A";
+        case 0x0B:
+          return "ISO/IEC 13818-6 type B";
+        case 0x0C:
+          return "ISO/IEC 13818-6 type C";
+        case 0x0D:
+          return "ISO/IEC 13818-6 type D";
+        case 0x0E:
+          return "ISO/IEC 13818-1 auxiliary";
+      }
+      if (streamType >= 0x0F && streamType <= 0x7F)
+        return "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved";
+      if (streamType > 0x80)
+        return "User private";
+      return "Unknown";
     }
 
     public static string getString468A(byte[] data, int offset, int len)
