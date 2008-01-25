@@ -25,21 +25,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Runtime.InteropServices;
 
-namespace DirectShowLib
+namespace DirectShowLib.BDA
 {
+    #region Declarations
+    #endregion
+
     #region Interfaces
 
     [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("52d6f586-9f0f-4824-8fc8-e32ca04930c2"),
+    Guid("583ec3cc-4960-4857-982b-41a33ea0a006"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IDMOWrapperFilter
+    public interface IAttributeSet
     {
         [PreserveSig]
-        int Init(
-            [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
-            [In, MarshalAs(UnmanagedType.LPStruct)] Guid catDMO
-            );
+        int SetAttrib(
+          [In] Guid guidAttribute,
+          [In] IntPtr pbAttribute,
+          [In] int dwAttributeLength
+          );
+    }
+
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("52dbd1ec-e48f-4528-9232-f442a68f0ae1"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IAttributeGet
+    {
+        [PreserveSig]
+        int GetCount([Out] out int plCount);
+
+        [PreserveSig]
+        int GetAttribIndexed(
+          [In] int lIndex,
+          [Out] out Guid guidAttribute,
+          [In, Out] IntPtr pbAttribute,
+          [In, Out] ref int dwAttributeLength
+          );
+
+        [PreserveSig]
+        int GetAttrib(
+          [In] Guid guidAttribute,
+          [In, Out] IntPtr pbAttribute,
+          [In, Out] ref int dwAttributeLength
+          );
     }
 
     #endregion
+
 }

@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-#pragma warning disable 618
+
 namespace DirectShowLib.SBE
 {
     #region Declarations
@@ -89,12 +64,13 @@ namespace DirectShowLib.SBE
         ContentBecomingStale, // STREAMBUFFER_EC_CONTENT_BECOMING_STALE
         WriteFailure, // STREAMBUFFER_EC_WRITE_FAILURE
         ReadFailure, // STREAMBUFFER_EC_READ_FAILURE
-        RateChanged // STREAMBUFFER_EC_RATE_CHANGED
+        RateChanged, // STREAMBUFFER_EC_RATE_CHANGED
+        PrimaryAudio // STREAMBUFFER_EC_PRIMARY_AUDIO
     }
 
 
     /// <summary>
-    /// From g_wszStreamBufferRecording* static const WCHAR 
+    /// From g_wszStreamBufferRecording* static const WCHAR
     /// </summary>
     sealed public class StreamBufferRecording
     {
@@ -104,7 +80,7 @@ namespace DirectShowLib.SBE
 
         ////////////////////////////////////////////////////////////////
         //
-        // List of pre-defined attributes 
+        // List of pre-defined attributes
         //
         public readonly string Duration = "Duration";
 
@@ -173,7 +149,7 @@ namespace DirectShowLib.SBE
 
         ////////////////////////////////////////////////////////////////
         //
-        // These optional attributes may be used to give information 
+        // These optional attributes may be used to give information
         // about the branding of the content.
         //
         public readonly string BannerImageType = "BannerImageType";
@@ -184,7 +160,7 @@ namespace DirectShowLib.SBE
 
         ////////////////////////////////////////////////////////////////
         //
-        // Optional attributes, used to give information 
+        // Optional attributes, used to give information
         // about video stream properties.
         //
         public readonly string AspectRatioX = "AspectRatioX";
@@ -233,7 +209,76 @@ namespace DirectShowLib.SBE
 
     #region Interfaces
 
-    [Guid("9ce50f2d-6ba7-40fb-a034-50b1a674ec78"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("7E2D2A1E-7192-4bd7-80C1-061FD1D10402"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IStreamBufferConfigure3 : IStreamBufferConfigure2
+    {
+        #region IStreamBufferConfigure
+
+        [PreserveSig]
+        new int SetDirectory([In, MarshalAs(UnmanagedType.LPWStr)] string pszDirectoryName);
+
+        [PreserveSig]
+        new int GetDirectory([Out, MarshalAs(UnmanagedType.LPWStr)] out string pszDirectoryName);
+
+        [PreserveSig]
+        new int SetBackingFileCount(
+            [In] int dwMin,
+            [In] int dwMax
+            );
+
+        [PreserveSig]
+        new int GetBackingFileCount(
+            [Out] out int dwMin,
+            [Out] out int dwMax
+            );
+
+        [PreserveSig]
+        new int SetBackingFileDuration([In] int dwSeconds);
+
+        [PreserveSig]
+        new int GetBackingFileDuration([Out] out int pdwSeconds);
+
+        #endregion
+
+        #region IStreamBufferConfigure2
+
+        [PreserveSig]
+        new int SetMultiplexedPacketSize([In] int cbBytesPerPacket);
+
+        [PreserveSig]
+        new int GetMultiplexedPacketSize([Out] out int pcbBytesPerPacket);
+
+        [PreserveSig]
+        new int SetFFTransitionRates(
+            [In] int dwMaxFullFrameRate,
+            [In] int dwMaxNonSkippingRate
+            );
+
+        [PreserveSig]
+        new int GetFFTransitionRates(
+            [Out] out int pdwMaxFullFrameRate,
+            [Out] out int pdwMaxNonSkippingRate
+            );
+
+        #endregion
+
+        [PreserveSig]
+        int SetStartRecConfig([In, MarshalAs(UnmanagedType.Bool)] bool fStartStopsCur);
+
+        [PreserveSig]
+        int GetStartRecConfig([Out, MarshalAs(UnmanagedType.Bool)] out bool pfStartStopsCur);
+
+        [PreserveSig]
+        int SetNamespace([In, MarshalAs(UnmanagedType.LPWStr)] string pszNamespace);
+
+        [PreserveSig]
+        int GetNamespace([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszNamespace);
+    }
+
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("9ce50f2d-6ba7-40fb-a034-50b1a674ec78"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferInitialize
     {
@@ -247,7 +292,8 @@ namespace DirectShowLib.SBE
             );
     }
 
-    [Guid("afd1f242-7efd-45ee-ba4e-407a25c9a77a"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("afd1f242-7efd-45ee-ba4e-407a25c9a77a"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferSink
     {
@@ -265,7 +311,8 @@ namespace DirectShowLib.SBE
         int IsProfileLocked();
     }
 
-    [Guid("DB94A660-F4FB-4bfa-BCC6-FE159A4EEA93"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("DB94A660-F4FB-4bfa-BCC6-FE159A4EEA93"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferSink2 : IStreamBufferSink
     {
@@ -290,7 +337,8 @@ namespace DirectShowLib.SBE
         int UnlockProfile();
     }
 
-    [Guid("974723f2-887a-4452-9366-2cff3057bc8f"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("974723f2-887a-4452-9366-2cff3057bc8f"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferSink3 : IStreamBufferSink2
     {
@@ -322,7 +370,8 @@ namespace DirectShowLib.SBE
         int SetAvailableFilter([In, Out] ref long prtMin);
     }
 
-    [Guid("1c5bd776-6ced-4f44-8164-5eab0e98db12"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("1c5bd776-6ced-4f44-8164-5eab0e98db12"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferSource
     {
@@ -330,7 +379,8 @@ namespace DirectShowLib.SBE
         int SetStreamSink([In] IStreamBufferSink pIStreamBufferSink);
     }
 
-    [Guid("ba9b6c99-f3c7-4ff2-92db-cfdd4851bf31"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("ba9b6c99-f3c7-4ff2-92db-cfdd4851bf31"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferRecordControl
     {
@@ -348,7 +398,8 @@ namespace DirectShowLib.SBE
             );
     }
 
-    [Guid("9E259A9B-8815-42ae-B09F-221970B154FD"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("9E259A9B-8815-42ae-B09F-221970B154FD"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferRecComp
     {
@@ -378,7 +429,8 @@ namespace DirectShowLib.SBE
         int Cancel();
     }
 
-    [Guid("16CA4E03-FE69-4705-BD41-5B7DFC0C95F3"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("16CA4E03-FE69-4705-BD41-5B7DFC0C95F3"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferRecordingAttribute
     {
@@ -420,15 +472,16 @@ namespace DirectShowLib.SBE
         int EnumAttributes([Out] out IEnumStreamBufferRecordingAttrib ppIEnumStreamBufferAttrib);
     }
 
-    [Guid("C18A9162-1E82-4142-8C73-5690FA62FE33"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("C18A9162-1E82-4142-8C73-5690FA62FE33"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IEnumStreamBufferRecordingAttrib
     {
         [PreserveSig]
         int Next(
             [In] int cRequest,
-            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)]	StreamBufferAttribute[]	pStreamBufferAttribute,
-            [Out] out int pcReceived
+            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] StreamBufferAttribute[] pStreamBufferAttribute,
+            [In] IntPtr pcReceived
             );
 
         [PreserveSig]
@@ -441,7 +494,8 @@ namespace DirectShowLib.SBE
         int Clone([Out] out IEnumStreamBufferRecordingAttrib ppIEnumStreamBufferAttrib);
     }
 
-    [Guid("ce14dfae-4098-4af7-bbf7-d6511f835414"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("ce14dfae-4098-4af7-bbf7-d6511f835414"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferConfigure
     {
@@ -470,7 +524,8 @@ namespace DirectShowLib.SBE
         int GetBackingFileDuration([Out] out int pdwSeconds);
     }
 
-    [Guid("53E037BF-3992-4282-AE34-2487B4DAE06B"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("53E037BF-3992-4282-AE34-2487B4DAE06B"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferConfigure2 : IStreamBufferConfigure
     {
@@ -521,7 +576,8 @@ namespace DirectShowLib.SBE
             );
     }
 
-    [Guid("f61f5c26-863d-4afa-b0ba-2f81dc978596"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("f61f5c26-863d-4afa-b0ba-2f81dc978596"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferMediaSeeking : IMediaSeeking
     {
@@ -597,7 +653,8 @@ namespace DirectShowLib.SBE
         #endregion
     }
 
-    [Guid("3a439ab0-155f-470a-86a6-9ea54afd6eaf"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("3a439ab0-155f-470a-86a6-9ea54afd6eaf"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferMediaSeeking2 : IStreamBufferMediaSeeking
     {
@@ -679,7 +736,8 @@ namespace DirectShowLib.SBE
             );
     }
 
-    [Guid("9D2A2563-31AB-402e-9A6B-ADB903489440"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("9D2A2563-31AB-402e-9A6B-ADB903489440"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamBufferDataCounters
     {

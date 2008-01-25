@@ -192,7 +192,7 @@ namespace TvLibrary.Channels
     ModulationType _modulation = ModulationType.ModQpsk;
     BinaryConvolutionCodeRate _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
     Pilot _pilot = Pilot.NotSet;
-    Rolloff _rollOff = Rolloff.NotSet;
+    RollOff _rollOff = RollOff.NotSet;
     int _satelliteIndex;
     #endregion
 
@@ -211,7 +211,7 @@ namespace TvLibrary.Channels
       _modulation = chan.ModulationType;
       _innerFecRate = chan.InnerFecRate;
       _pilot = chan.Pilot;
-      _rollOff = chan.RollOff;
+      _rollOff = chan.Rolloff;
       _satelliteIndex = chan.SatelliteIndex;
     }
 
@@ -227,7 +227,7 @@ namespace TvLibrary.Channels
       _modulation = ModulationType.ModQpsk;
       _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
       _pilot = Pilot.NotSet;
-      _rollOff = Rolloff.NotSet;
+      _rollOff = RollOff.NotSet;
     }
 
     #region properties
@@ -361,7 +361,7 @@ namespace TvLibrary.Channels
     /// <summary>
     /// gets/sets the Roll-Off setting for this channel
     /// </summary>
-    public Rolloff RollOff
+    public RollOff Rolloff
     {
       get
       {
@@ -383,7 +383,7 @@ namespace TvLibrary.Channels
     public override string ToString()
     {
       string line = String.Format("DVBS:{0} SymbolRate:{1} Modulation:{2} Polarisation:{3} InnerFecRate:{4} DisEqc:{5} band:{6} Pilot:{7} RollOff:{8}",
-          base.ToString(), SymbolRate, ModulationType, Polarisation, InnerFecRate, DisEqc, BandType, Pilot, RollOff);
+          base.ToString(), SymbolRate, ModulationType, Polarisation, InnerFecRate, DisEqc, BandType, Pilot, Rolloff);
       return line;
     }
 
@@ -408,7 +408,7 @@ namespace TvLibrary.Channels
       if (ch.ModulationType != ModulationType) return false;
       if (ch.InnerFecRate != InnerFecRate) return false;
       if (ch.Pilot != Pilot) return false;
-      if (ch.RollOff != RollOff) return false;
+      if (ch.Rolloff != Rolloff) return false;
 
       return true;
     }

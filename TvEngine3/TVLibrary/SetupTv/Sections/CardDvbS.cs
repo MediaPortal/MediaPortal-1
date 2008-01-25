@@ -88,7 +88,7 @@ namespace SetupTv.Sections
       public ModulationType Modulation = ModulationType.ModNotSet;
       public BinaryConvolutionCodeRate InnerFecRate = BinaryConvolutionCodeRate.RateNotSet;
       public Pilot Pilot = Pilot.NotSet;
-      public Rolloff RollOff = Rolloff.NotSet;
+      public RollOff Rolloff = RollOff.NotSet;
 
       public int CompareTo(Transponder other)
       {
@@ -253,7 +253,7 @@ namespace SetupTv.Sections
                 for (int idx = 3; idx < tpdata.Length; ++idx)
                 {
                   string fieldValue = tpdata[idx].ToLower();
-                  if (fieldValue == "8psk") transponder.Modulation = ModulationType.Mod8psk;
+                  if (fieldValue == "8psk") transponder.Modulation = ModulationType.Mod8Psk;
                   if (fieldValue == "qpsk") transponder.Modulation = ModulationType.ModQpsk;
                   if (fieldValue == "16apsk") transponder.Modulation = ModulationType.Mod16Apsk;
                   if (fieldValue == "32apsk") transponder.Modulation = ModulationType.Mod32Apsk;
@@ -289,12 +289,12 @@ namespace SetupTv.Sections
                   if (fieldValue == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
 
 
-                  if (fieldValue == "off") transponder.Pilot = Pilot.PilotOff;
-                  if (fieldValue == "on") transponder.Pilot = Pilot.PilotOn;
+                  if (fieldValue == "off") transponder.Pilot = Pilot.Off;
+                  if (fieldValue == "on") transponder.Pilot = Pilot.On;
 
-                  if (fieldValue == "0.20") transponder.RollOff = Rolloff.RollOff_20;
-                  if (fieldValue == "0.25") transponder.RollOff = Rolloff.RollOff_25;
-                  if (fieldValue == "0.35") transponder.RollOff = Rolloff.RollOff_35;
+                  if (fieldValue == "0.20") transponder.Rolloff = RollOff.Twenty;
+                  if (fieldValue == "0.25") transponder.Rolloff = RollOff.TwentyFive;
+                  if (fieldValue == "0.35") transponder.Rolloff = RollOff.ThirtyFive;
                 }
                 _transponders.Add(transponder);
                 _count += 1;
@@ -767,12 +767,12 @@ namespace SetupTv.Sections
         if (checkEnableDVBS2.Checked)
         {
           tuneChannel.Pilot = _transponders[index].Pilot;
-          tuneChannel.RollOff = _transponders[index].RollOff;
+          tuneChannel.Rolloff = _transponders[index].Rolloff;
         }
         if (!checkEnableDVBS2.Checked)
         {
           tuneChannel.Pilot = Pilot.NotSet;
-          tuneChannel.RollOff = Rolloff.NotSet;
+          tuneChannel.Rolloff = RollOff.NotSet;
         }
         if (bandType == BandType.Circular)
         {
@@ -1150,7 +1150,7 @@ namespace SetupTv.Sections
       tuneChannel.SymbolRate = transponder.SymbolRate;
       tuneChannel.ModulationType = transponder.Modulation;
       tuneChannel.Pilot = transponder.Pilot;
-      tuneChannel.RollOff = transponder.RollOff;
+      tuneChannel.Rolloff = transponder.Rolloff;
       tuneChannel.InnerFecRate = transponder.InnerFecRate;
       tuneChannel.BandType = BandType.Universal;
       tuneChannel.DisEqc = DisEqcType.None;

@@ -507,11 +507,12 @@ namespace TvLibrary.Implementations.DVB
       DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
       DsDevice usbWinTvDevice = null;
       int hr = 0;
-
+      Log.Log.WriteFile("AddWinTvCIModule: capDevices {0}", capDevices.Length);
       for (int capIndex = 0; capIndex < capDevices.Length; capIndex++)
       {
         if (capDevices[capIndex].Name != null)
         {
+          Log.Log.WriteFile("AddWinTvCIModule: {0}", capDevices[capIndex].Name.ToLower());
           if (capDevices[capIndex].Name.ToLower() == "wintvciusbbda source")
           {
             if (false == DevicesInUse.Instance.IsUsed(capDevices[capIndex]))
@@ -661,7 +662,7 @@ namespace TvLibrary.Implementations.DVB
           AMMediaType[] mediaTypes = new AMMediaType[21];
           enumMedia.Next(20, mediaTypes, out fetched);
           if (fetched > 0)
-          {
+          {          
             for (int i = 0; i < fetched; ++i)
             {
               //Log.Log.Write("{0}", i);

@@ -261,7 +261,7 @@ namespace SetupTv.Sections
                               dvbsChannel.SwitchingFrequency = switchfreq;
                               dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
                               dvbsChannel.Pilot = (Pilot)(comboBoxPilot.SelectedIndex + 1);
-                              dvbsChannel.RollOff = (Rolloff)(comboBoxRollOff.SelectedIndex + 1);
+                              dvbsChannel.Rolloff = (RollOff)(comboBoxRollOff.SelectedIndex + 1);
                               dvbsChannel.ModulationType = (ModulationType)(comboBoxModulation.SelectedIndex + 1);
                               dvbsChannel.LogicalChannelNumber = lcn;
                               dvbsChannel.VideoPid = audio;
@@ -443,7 +443,7 @@ namespace SetupTv.Sections
           detail.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
           detail.InnerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
           detail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
-          detail.RollOff = (int)(Rolloff)(comboBoxRollOff.SelectedIndex - 1);
+          detail.RollOff = (int)(RollOff)(comboBoxRollOff.SelectedIndex - 1);
           detail.Modulation = (int)(ModulationType)(comboBoxModulation.SelectedIndex - 1);
           detail.ChannelNumber = Int32.Parse(textBoxDVBSChannel.Text);
           detail.VideoPid = Int32.Parse(textBoxDVBSVideo.Text);

@@ -26,9 +26,7 @@ using DirectShowLib;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
-  [ComVisible(true), ComImport,
-Guid("3B687F98-41DD-4b40-A7A3-FD6A08799D5B"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComVisible(true), ComImport, Guid("3B687F98-41DD-4b40-A7A3-FD6A08799D5B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IWinTvUsbCI
   {
     [PreserveSig]

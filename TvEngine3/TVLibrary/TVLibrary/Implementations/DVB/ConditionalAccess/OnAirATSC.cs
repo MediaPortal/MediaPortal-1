@@ -89,7 +89,7 @@ namespace TvLibrary.Implementations.DVB
           KSPropertySupport supported;
           //Use the Modulation mode below the SDK
           _propertySet.QuerySupported(guidOnAirNimTuner, (int)NimTunerProperties.INIM_DMODE_MODE, out supported);
-          Log.Log.Info("OnAirATSC: QuerySupported: {0}", supported);
+          //Log.Log.Info("OnAirATSC: QuerySupported: {0}", supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
             Log.Log.Info("OnAirATSC: QAM capable card found!");

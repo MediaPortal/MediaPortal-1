@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
@@ -88,7 +63,7 @@ namespace DirectShowLib
         public int  lColorEnable;
         public int  dwReserved1;
     }
-    
+
     public enum AspectRatioMode
     {
         Stretched,
@@ -101,7 +76,8 @@ namespace DirectShowLib
 
     #region Interfaces
 
-    [Guid("EBF47182-8764-11d1-9E69-00C04FD7C15B"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("EBF47182-8764-11d1-9E69-00C04FD7C15B"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMixerPinConfig2 : IMixerPinConfig
     {
@@ -112,7 +88,7 @@ namespace DirectShowLib
             int dwLeft,
             int dwTop,
             int dwRight,
-            int dwBottom);    
+            int dwBottom);
 
         [PreserveSig]
         new int GetRelativePosition(
@@ -186,7 +162,8 @@ namespace DirectShowLib
             );
     }
 
-    [Guid("593CDDE1-0759-11d1-9E69-00C04FD7C15B"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("593CDDE1-0759-11d1-9E69-00C04FD7C15B"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMixerPinConfig
     {
@@ -195,7 +172,7 @@ namespace DirectShowLib
             int dwLeft,
             int dwTop,
             int dwRight,
-            int dwBottom);    
+            int dwBottom);
 
         [PreserveSig]
         int GetRelativePosition(
@@ -256,7 +233,6 @@ namespace DirectShowLib
             [Out, MarshalAs(UnmanagedType.Bool)] out bool pbStreamTransparent
             );
     }
-
 
     #endregion
 }

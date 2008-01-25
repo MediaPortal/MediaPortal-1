@@ -771,7 +771,7 @@ namespace TvLibrary.Implementations.DVB
             _previousChannel.DisEqc == channel.DisEqc &&
             _previousChannel.Polarisation == channel.Polarisation &&
             _previousChannel.Pilot == channel.Pilot &&
-            _previousChannel.RollOff == channel.RollOff &&
+            _previousChannel.Rolloff == channel.Rolloff &&
             _previousChannel.InnerFecRate == channel.InnerFecRate)
         {
           Log.Log.WriteFile("FireDTV: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",

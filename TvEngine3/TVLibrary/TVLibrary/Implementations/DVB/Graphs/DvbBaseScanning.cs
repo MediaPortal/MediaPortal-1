@@ -407,7 +407,7 @@ namespace TvLibrary.Implementations.DVB
                       }
                     }
                     else
-                      info.service_name = String.Format("{0:X}", info.serviceID);
+                      info.service_name = String.Format("Unknown {0:X}", info.serviceID);
                   }
                   IChannel dvbChannel = CreateNewChannel(info);
                   if (dvbChannel != null)

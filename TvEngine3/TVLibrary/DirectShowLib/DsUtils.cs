@@ -1,34 +1,9 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /************************************************************************
 
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -56,11 +31,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Reflection;
 using DirectShowLib.Dvd;
-using DirectShowLib.BDA;
+
 #if !USING_NET11
 using System.Runtime.InteropServices.ComTypes;
 #endif
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
   #region Declarations
@@ -170,9 +145,7 @@ namespace DirectShowLib
 
       for (int i = 0; i < this.cElems; i++)
       {
-        // In 32Bits OSs IntPtr constructor cast Int64 as Int32. 
-        // It should work on 32Bits and 64 Bits OSs...
-        IntPtr ptr = new IntPtr(this.pElems.ToInt64() + (IntPtr.Size * i));
+        IntPtr ptr = new IntPtr(this.pElems.ToInt64() + (Marshal.SizeOf(typeof(Guid)) * i));
         retval[i] = (Guid)Marshal.PtrToStructure(ptr, typeof(Guid));
       }
 
@@ -395,6 +368,192 @@ namespace DirectShowLib
     public static DsGuid FromGuid(Guid g)
     {
       return new DsGuid(g);
+    }
+  }
+
+  /// <summary>
+  /// DirectShowLib.DsInt is a wrapper class around a <see cref="System.Int32"/> value type.
+  /// </summary>
+  /// <remarks>
+  /// This class is necessary to enable null paramters passing.
+  /// </remarks>
+  [StructLayout(LayoutKind.Sequential)]
+  public class DsInt
+  {
+    private int Value;
+
+    /// <summary>
+    /// Constructor
+    /// Initialize a new instance of DirectShowLib.DsInt with the Value parameter
+    /// </summary>
+    /// <param name="Value">Value to assign to this new instance</param>
+    public DsInt(int Value)
+    {
+      this.Value = Value;
+    }
+
+    /// <summary>
+    /// Get a string representation of this DirectShowLib.DsInt Instance.
+    /// </summary>
+    /// <returns>A string representing this instance</returns>
+    public override string ToString()
+    {
+      return this.Value.ToString();
+    }
+
+    public override int GetHashCode()
+    {
+      return this.Value.GetHashCode();
+    }
+
+    /// <summary>
+    /// Define implicit cast between DirectShowLib.DsInt and System.Int64 for languages supporting this feature.
+    /// VB.Net doesn't support implicit cast. <see cref="DirectShowLib.DsInt.ToInt64"/> for similar functionality.
+    /// <code>
+    ///   // Define a new DsInt instance
+    ///   DsInt dsI = new DsInt(0x12345678);
+    ///   // Do implicit cast between DsInt and Int32
+    ///   int i = dsI;
+    ///
+    ///   Console.WriteLine(i.ToString());
+    /// </code>
+    /// </summary>
+    /// <param name="g">DirectShowLib.DsInt to be cast</param>
+    /// <returns>A casted System.Int32</returns>
+    public static implicit operator int(DsInt l)
+    {
+      return l.Value;
+    }
+
+    /// <summary>
+    /// Define implicit cast between System.Int32 and DirectShowLib.DsInt for languages supporting this feature.
+    /// VB.Net doesn't support implicit cast. <see cref="DirectShowLib.DsGuid.FromInt32"/> for similar functionality.
+    /// <code>
+    ///   // Define a new Int32 instance
+    ///   int i = 0x12345678;
+    ///   // Do implicit cast between Int64 and DsInt
+    ///   DsInt dsI = i;
+    ///
+    ///   Console.WriteLine(dsI.ToString());
+    /// </code>
+    /// </summary>
+    /// <param name="g">System.Int32 to be cast</param>
+    /// <returns>A casted DirectShowLib.DsInt</returns>
+    public static implicit operator DsInt(int l)
+    {
+      return new DsInt(l);
+    }
+
+    /// <summary>
+    /// Get the System.Int32 equivalent to this DirectShowLib.DsInt instance.
+    /// </summary>
+    /// <returns>A System.Int32</returns>
+    public int ToInt32()
+    {
+      return this.Value;
+    }
+
+    /// <summary>
+    /// Get a new DirectShowLib.DsInt instance for a given System.Int32
+    /// </summary>
+    /// <param name="g">The System.Int32 to wrap into a DirectShowLib.DsInt</param>
+    /// <returns>A new instance of DirectShowLib.DsInt</returns>
+    public static DsInt FromInt32(int l)
+    {
+      return new DsInt(l);
+    }
+  }
+
+  /// <summary>
+  /// DirectShowLib.DsShort is a wrapper class around a <see cref="System.Int16"/> value type.
+  /// </summary>
+  /// <remarks>
+  /// This class is necessary to enable null paramters passing.
+  /// </remarks>
+  [StructLayout(LayoutKind.Sequential)]
+  public class DsShort
+  {
+    private short Value;
+
+    /// <summary>
+    /// Constructor
+    /// Initialize a new instance of DirectShowLib.DsShort with the Value parameter
+    /// </summary>
+    /// <param name="Value">Value to assign to this new instance</param>
+    public DsShort(short Value)
+    {
+      this.Value = Value;
+    }
+
+    /// <summary>
+    /// Get a string representation of this DirectShowLib.DsShort Instance.
+    /// </summary>
+    /// <returns>A string representing this instance</returns>
+    public override string ToString()
+    {
+      return this.Value.ToString();
+    }
+
+    public override int GetHashCode()
+    {
+      return this.Value.GetHashCode();
+    }
+
+    /// <summary>
+    /// Define implicit cast between DirectShowLib.DsShort and System.Int16 for languages supporting this feature.
+    /// VB.Net doesn't support implicit cast. <see cref="DirectShowLib.DsShort.ToInt64"/> for similar functionality.
+    /// <code>
+    ///   // Define a new DsShort instance
+    ///   DsShort dsS = new DsShort(0x1234);
+    ///   // Do implicit cast between DsShort and Int16
+    ///   short s = dsS;
+    ///
+    ///   Console.WriteLine(s.ToString());
+    /// </code>
+    /// </summary>
+    /// <param name="g">DirectShowLib.DsShort to be cast</param>
+    /// <returns>A casted System.Int16</returns>
+    public static implicit operator short(DsShort l)
+    {
+      return l.Value;
+    }
+
+    /// <summary>
+    /// Define implicit cast between System.Int16 and DirectShowLib.DsShort for languages supporting this feature.
+    /// VB.Net doesn't support implicit cast. <see cref="DirectShowLib.DsGuid.FromInt16"/> for similar functionality.
+    /// <code>
+    ///   // Define a new Int16 instance
+    ///   short s = 0x1234;
+    ///   // Do implicit cast between Int64 and DsShort
+    ///   DsShort dsS = s;
+    ///
+    ///   Console.WriteLine(dsS.ToString());
+    /// </code>
+    /// </summary>
+    /// <param name="g">System.Int16 to be cast</param>
+    /// <returns>A casted DirectShowLib.DsShort</returns>
+    public static implicit operator DsShort(short l)
+    {
+      return new DsShort(l);
+    }
+
+    /// <summary>
+    /// Get the System.Int16 equivalent to this DirectShowLib.DsShort instance.
+    /// </summary>
+    /// <returns>A System.Int16</returns>
+    public short ToInt16()
+    {
+      return this.Value;
+    }
+
+    /// <summary>
+    /// Get a new DirectShowLib.DsShort instance for a given System.Int64
+    /// </summary>
+    /// <param name="g">The System.Int16 to wrap into a DirectShowLib.DsShort</param>
+    /// <returns>A new instance of DirectShowLib.DsShort</returns>
+    public static DsShort FromInt16(short l)
+    {
+      return new DsShort(l);
     }
   }
 
@@ -1015,7 +1174,7 @@ namespace DirectShowLib
     }
   }
 
-  
+
   public class DsDevice : IDisposable
   {
 #if USING_NET11
@@ -1034,11 +1193,7 @@ namespace DirectShowLib
       m_Mon = Mon;
       m_Name = null;
     }
-    public DsDevice(string name)
-    {
-      m_Name = name;
 
-    }
 #if USING_NET11
         public UCOMIMoniker Mon
 #else
@@ -1061,7 +1216,6 @@ namespace DirectShowLib
         }
         return m_Name;
       }
-
     }
 
     /// <summary>
@@ -1120,8 +1274,8 @@ namespace DirectShowLib
 #endif
 
 #if USING_NET11
-						int j;
-						while ((enumMon.Next(1, mon, out j) == 0))
+                        int j;
+                        while ((enumMon.Next(1, mon, out j) == 0))
 #else
             while ((enumMon.Next(1, mon, IntPtr.Zero) == 0))
 #endif
@@ -1249,8 +1403,7 @@ namespace DirectShowLib
 
       // Get the pin enumerator
       hr = vSource.EnumPins(out ppEnum);
-      if (hr != 0) return null;
-      if (ppEnum == null) return null;
+      DsError.ThrowExceptionForHR(hr);
 
       try
       {
@@ -1259,7 +1412,7 @@ namespace DirectShowLib
         {
           // Read the direction
           hr = pPins[0].QueryDirection(out ppindir);
-          if (hr != 0) return null;
+          DsError.ThrowExceptionForHR(hr);
 
           // Is it the right direction?
           if (ppindir == vDir)
@@ -1593,6 +1746,7 @@ namespace DirectShowLib
       {
         Marshal.WriteInt32(p, x * 4, 0);
       }
+
       return p;
     }
 
@@ -1680,7 +1834,7 @@ namespace DirectShowLib
       return new EMTMarshaler(cookie);
     }
   }
-  
+
   // c# does not correctly create structures that contain ByValArrays of structures (or enums!).  Instead
   // of allocating enough room for the ByValArray of structures, it only reserves room for a ref,
   // even when decorated with ByValArray and SizeConst.  Needless to say, if DirectShow tries to
@@ -1850,6 +2004,8 @@ namespace DirectShowLib
       return new DKAMarshaler(cookie);
     }
   }
+
+
 
   #endregion
 }

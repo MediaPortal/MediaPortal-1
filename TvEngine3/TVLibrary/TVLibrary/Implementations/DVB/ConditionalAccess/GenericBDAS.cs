@@ -80,7 +80,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="ulRange">The DisEqCPort</param>
     /// <returns>true if succeeded, otherwise false</returns>
-    protected bool SendDiSEqCCommand(ulong ulRange)
+    protected bool SendDiSEqCCommand(int ulRange)
     {
       int hr = 0;
 
@@ -133,7 +133,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="ulRange">The DisEqCPort Port.</param>
     /// <returns>true if succeeded, otherwise false</returns>
-    protected bool ReadDiSEqCCommand(out ulong ulRange)
+    protected bool ReadDiSEqCCommand(out int ulRange)
     {
       int hr = 0;
       ulRange = 0;

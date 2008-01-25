@@ -250,8 +250,8 @@ namespace TvLibrary.Implementations.DVB
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("Hauppauge: Set Roll-Off: {0}", channel.RollOff);
-        Marshal.WriteInt32(_tempValue, (Int32)channel.RollOff);
+        Log.Log.Info("Hauppauge: Set Roll-Off: {0}", channel.Rolloff);
+        Marshal.WriteInt32(_tempValue, (Int32)channel.Rolloff);
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance, 32, _tempValue, 4);
         Log.Log.Info("Hauppauge:   returned:{0:X}", hr);
       }

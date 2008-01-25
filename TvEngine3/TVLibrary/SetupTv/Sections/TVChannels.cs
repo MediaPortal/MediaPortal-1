@@ -909,7 +909,7 @@ namespace SetupTv.Sections
                 dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)InnerFecRate;
                 dvbsChannel.BandType = (BandType)band;
                 dvbsChannel.Pilot = (Pilot)pilot;
-                dvbsChannel.RollOff = (Rolloff)rollOff;
+                dvbsChannel.Rolloff = (RollOff)rollOff;
                 dvbsChannel.LogicalChannelNumber = channelNumber;
                 dvbsChannel.VideoPid = videoPid;
                 dvbsChannel.AudioPid = audioPid;

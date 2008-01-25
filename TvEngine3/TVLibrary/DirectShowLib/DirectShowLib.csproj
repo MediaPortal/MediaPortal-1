@@ -54,6 +54,7 @@
     <Compile Include="amstream.cs" />
     <Compile Include="amvideo.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="atscpsipparser.cs" />
     <Compile Include="austream.cs" />
     <Compile Include="AxCore.cs" />
     <Compile Include="AXExtend.cs" />
@@ -64,9 +65,12 @@
     <Compile Include="DES.cs" />
     <Compile Include="DevEnum.cs" />
     <Compile Include="DMODShow.cs" />
+    <Compile Include="dsattrib.cs" />
     <Compile Include="DsUtils.cs" />
+    <Compile Include="dvbsiparser.cs" />
     <Compile Include="DVDIf.cs" />
     <Compile Include="DynGraph.cs" />
+    <Compile Include="encdec.cs" />
     <Compile Include="EvCode.cs" />
     <Compile Include="IL21Dec.cs" />
     <Compile Include="MediaObj.cs" />
@@ -76,6 +80,8 @@
     <Compile Include="mmstream.cs" />
     <Compile Include="mpconfig.cs" />
     <Compile Include="Mpeg2Data.cs" />
+    <Compile Include="mpeg2psiparser.cs" />
+    <Compile Include="Mpeg2Structs.cs" />
     <Compile Include="other.cs" />
     <Compile Include="PlayList.cs" />
     <Compile Include="QEdit.cs" />

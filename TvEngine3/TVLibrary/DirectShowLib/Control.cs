@@ -1,32 +1,8 @@
-#region
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -48,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
@@ -169,128 +145,131 @@ namespace DirectShowLib
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
-	[Guid("56a868b9-0ad4-11ce-b03a-0020af0ba770"),
-		InterfaceType(ComInterfaceType.InterfaceIsDual)]
-	public interface IAMCollection
-	{
-		[PreserveSig]
-		int get_Count([Out] out int plCount);
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868b9-0ad4-11ce-b03a-0020af0ba770"),
+    InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IAMCollection
+    {
+        [PreserveSig]
+        int get_Count([Out] out int plCount);
 
-		[PreserveSig]
-		int Item(
-			[In] int lItem,
-			[Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk
-			);
+        [PreserveSig]
+        int Item(
+            [In] int lItem,
+            [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk
+            );
 
-		[PreserveSig]
-		int get__NewEnum([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
-	}
+        [PreserveSig]
+        int get__NewEnum([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
+    }
 
-	[Guid("56a868ba-0ad4-11ce-b03a-0020af0ba770"),
-		InterfaceType(ComInterfaceType.InterfaceIsDual)]
-	public interface IFilterInfo
-	{
-		[PreserveSig]
-		int FindPin(
-			[In, MarshalAs(UnmanagedType.BStr)] string strPinID,
-			[Out, MarshalAs(UnmanagedType.IDispatch)] out object ppUnk
-			);
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868ba-0ad4-11ce-b03a-0020af0ba770"),
+    InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IFilterInfo
+    {
+        [PreserveSig]
+        int FindPin(
+            [In, MarshalAs(UnmanagedType.BStr)] string strPinID,
+            [Out, MarshalAs(UnmanagedType.IDispatch)] out object ppUnk
+            );
 
-		[PreserveSig]
-		int get_Name([Out, MarshalAs(UnmanagedType.BStr)] out string strName);
+        [PreserveSig]
+        int get_Name([Out, MarshalAs(UnmanagedType.BStr)] out string strName);
 
-		[PreserveSig]
-		int get_VendorInfo([Out, MarshalAs(UnmanagedType.BStr)] string strVendorInfo);
+        [PreserveSig]
+        int get_VendorInfo([Out, MarshalAs(UnmanagedType.BStr)] string strVendorInfo);
 
-		[PreserveSig]
-		int get_Filter([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
+        [PreserveSig]
+        int get_Filter([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
 
-		[PreserveSig]
-		int get_Pins([Out, MarshalAs(UnmanagedType.IDispatch)] out object ppUnk);
+        [PreserveSig]
+        int get_Pins([Out, MarshalAs(UnmanagedType.IDispatch)] out object ppUnk);
 
-		[PreserveSig]
-		int get_IsFileSource([Out] out int pbIsSource);
+        [PreserveSig]
+        int get_IsFileSource([Out] out int pbIsSource);
 
-		[PreserveSig]
-		int get_Filename([Out, MarshalAs(UnmanagedType.BStr)] out string pstrFilename);
+        [PreserveSig]
+        int get_Filename([Out, MarshalAs(UnmanagedType.BStr)] out string pstrFilename);
 
-		[PreserveSig]
-		int put_Filename([In, MarshalAs(UnmanagedType.BStr)] string strFilename);
-	}
+        [PreserveSig]
+        int put_Filename([In, MarshalAs(UnmanagedType.BStr)] string strFilename);
+    }
 
-	[Guid("56a868bb-0ad4-11ce-b03a-0020af0ba770"),
-		InterfaceType(ComInterfaceType.InterfaceIsDual)]
-	public interface IRegFilterInfo
-	{
-		[PreserveSig]
-		int get_Name([Out, MarshalAs(UnmanagedType.BStr)] out string strName);
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868bb-0ad4-11ce-b03a-0020af0ba770"),
+    InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IRegFilterInfo
+    {
+        [PreserveSig]
+        int get_Name([Out, MarshalAs(UnmanagedType.BStr)] out string strName);
 
-		[PreserveSig]
-		int Filter([Out, MarshalAs(UnmanagedType.IDispatch)] out object ppUnk);
-	}
+        [PreserveSig]
+        int Filter([Out, MarshalAs(UnmanagedType.IDispatch)] out object ppUnk);
+    }
 
-	[Guid("56a868bc-0ad4-11ce-b03a-0020af0ba770"),
-		InterfaceType(ComInterfaceType.InterfaceIsDual)]
-	public interface IMediaTypeInfo
-	{
-		[PreserveSig]
-		int get_Type([Out, MarshalAs(UnmanagedType.BStr)] out string strType);
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868bc-0ad4-11ce-b03a-0020af0ba770"),
+    InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IMediaTypeInfo
+    {
+        [PreserveSig]
+        int get_Type([Out, MarshalAs(UnmanagedType.BStr)] out string strType);
 
-		[PreserveSig]
-		int get_Subtype([Out, MarshalAs(UnmanagedType.BStr)] out string strType);
-	}
+        [PreserveSig]
+        int get_Subtype([Out, MarshalAs(UnmanagedType.BStr)] out string strType);
+    }
 
-	[Guid("56a868bd-0ad4-11ce-b03a-0020af0ba770"),
-		InterfaceType(ComInterfaceType.InterfaceIsDual)]
-	public interface IPinInfo
-	{
-		[PreserveSig]
-		int get_Pin([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868bd-0ad4-11ce-b03a-0020af0ba770"),
+    InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IPinInfo
+    {
+        [PreserveSig]
+        int get_Pin([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
 
-		[PreserveSig]
-		int get_ConnectedTo([Out, MarshalAs(UnmanagedType.IDispatch)] out object ppUnk);
+        [PreserveSig]
+        int get_ConnectedTo([Out, MarshalAs(UnmanagedType.IDispatch)] out object ppUnk);
 
-		[PreserveSig]
-		int get_ConnectionMediaType([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
+        [PreserveSig]
+        int get_ConnectionMediaType([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
 
-		[PreserveSig]
-		int get_FilterInfo([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
+        [PreserveSig]
+        int get_FilterInfo([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
 
-		[PreserveSig]
-		int get_Name([Out, MarshalAs(UnmanagedType.BStr)] out string ppUnk);
+        [PreserveSig]
+        int get_Name([Out, MarshalAs(UnmanagedType.BStr)] out string ppUnk);
 
-		[PreserveSig]
-		int get_Direction([Out] int ppDirection);
+        [PreserveSig]
+        int get_Direction([Out] int ppDirection);
 
-		[PreserveSig]
-		int get_PinID([Out, MarshalAs(UnmanagedType.BStr)] out string strPinID);
+        [PreserveSig]
+        int get_PinID([Out, MarshalAs(UnmanagedType.BStr)] out string strPinID);
 
-		[PreserveSig]
-		int get_MediaTypes([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
+        [PreserveSig]
+        int get_MediaTypes([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk);
 
-		[PreserveSig]
-		int Connect([In, MarshalAs(UnmanagedType.IUnknown)] object pPin);
+        [PreserveSig]
+        int Connect([In, MarshalAs(UnmanagedType.IUnknown)] object pPin);
 
-		[PreserveSig]
-		int ConnectDirect([In, MarshalAs(UnmanagedType.IUnknown)] object pPin);
+        [PreserveSig]
+        int ConnectDirect([In, MarshalAs(UnmanagedType.IUnknown)] object pPin);
 
-		[PreserveSig]
-		int ConnectWithType(
-			[In, MarshalAs(UnmanagedType.IUnknown)] object pPin,
-			[In, MarshalAs(UnmanagedType.IUnknown)] object pMediaType
-			);
+        [PreserveSig]
+        int ConnectWithType(
+            [In, MarshalAs(UnmanagedType.IUnknown)] object pPin,
+            [In, MarshalAs(UnmanagedType.IUnknown)] object pMediaType
+            );
 
-		[PreserveSig]
-		int Disconnect();
+        [PreserveSig]
+        int Disconnect();
 
-		[PreserveSig]
-		int Render();
-	}
+        [PreserveSig]
+        int Render();
+    }
 
-#endif
-
-    [Guid("bc9bcf80-dcd2-11d2-abf6-00a0c905f375"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("bc9bcf80-dcd2-11d2-abf6-00a0c905f375"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMStats
     {
@@ -338,7 +317,8 @@ namespace DirectShowLib
             );
     }
 
-    [Guid("56a868b4-0ad4-11ce-b03a-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868b4-0ad4-11ce-b03a-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IVideoWindow
     {
@@ -420,11 +400,11 @@ namespace DirectShowLib
         [PreserveSig]
         int get_MessageDrain([Out] out IntPtr drain);
 
-        // Use ColorTranslator to break out RGB        
+        // Use ColorTranslator to break out RGB
         [PreserveSig]
         int get_BorderColor([Out] out int color);
 
-        // Use ColorTranslator to break out RGB        
+        // Use ColorTranslator to break out RGB
         [PreserveSig]
         int put_BorderColor([In] int color);
 
@@ -441,8 +421,8 @@ namespace DirectShowLib
         int NotifyOwnerMessage(
             [In] IntPtr hwnd, // HWND *
             [In] int msg,
-            [In] int wParam, // WPARAM
-            [In] int lParam // LPARAM
+            [In] IntPtr wParam, // WPARAM
+            [In] IntPtr lParam // LPARAM
             );
 
         [PreserveSig]
@@ -488,7 +468,8 @@ namespace DirectShowLib
         int IsCursorHidden([Out] out OABool hideCursor);
     }
 
-    [Guid("56a868b3-0ad4-11ce-b03a-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868b3-0ad4-11ce-b03a-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IBasicAudio
     {
@@ -505,7 +486,8 @@ namespace DirectShowLib
         int get_Balance([Out] out int plBalance);
     }
 
-    [Guid("56a868b5-0ad4-11ce-b03a-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868b5-0ad4-11ce-b03a-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IBasicVideo
     {
@@ -637,7 +619,8 @@ namespace DirectShowLib
         int IsUsingDefaultDestination();
     }
 
-    [Guid("329bb360-f6ea-11d1-9038-00a0c9697298"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("329bb360-f6ea-11d1-9038-00a0c9697298"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IBasicVideo2 : IBasicVideo
     {
@@ -779,7 +762,8 @@ namespace DirectShowLib
             );
     }
 
-    [Guid("56a868b6-0ad4-11ce-b03a-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868b6-0ad4-11ce-b03a-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IMediaEvent
     {
@@ -789,8 +773,8 @@ namespace DirectShowLib
         [PreserveSig]
         int GetEvent(
             [Out] out EventCode lEventCode,
-            [Out] out int lParam1,
-            [Out] out int lParam2,
+            [Out] out IntPtr lParam1,
+            [Out] out IntPtr lParam2,
             [In] int msTimeout
             );
 
@@ -809,12 +793,13 @@ namespace DirectShowLib
         [PreserveSig]
         int FreeEventParams(
             [In] EventCode lEvCode,
-            [In] int lParam1,
-            [In] int lParam2
+            [In] IntPtr lParam1,
+            [In] IntPtr lParam2
             );
     }
 
-    [Guid("56a868c0-0ad4-11ce-b03a-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868c0-0ad4-11ce-b03a-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IMediaEventEx : IMediaEvent
     {
@@ -826,8 +811,8 @@ namespace DirectShowLib
         [PreserveSig]
         new int GetEvent(
             [Out] out EventCode lEventCode,
-            [Out] out int lParam1,
-            [Out] out int lParam2,
+            [Out] out IntPtr lParam1,
+            [Out] out IntPtr lParam2,
             [In] int msTimeout
             );
 
@@ -846,8 +831,8 @@ namespace DirectShowLib
         [PreserveSig]
         new int FreeEventParams(
             [In] EventCode lEvCode,
-            [In] int lParam1,
-            [In] int lParam2
+            [In] IntPtr lParam1,
+            [In] IntPtr lParam2
             );
 
         #endregion
@@ -866,7 +851,8 @@ namespace DirectShowLib
         int GetNotifyFlags([Out] out NotifyFlags lplNoNotifyFlags);
     }
 
-    [Guid("56a868b2-0ad4-11ce-b03a-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868b2-0ad4-11ce-b03a-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IMediaPosition
     {
@@ -904,7 +890,8 @@ namespace DirectShowLib
         int CanSeekBackward([Out] out OABool pCanSeekBackward);
     }
 
-    [Guid("56a868b1-0ad4-11ce-b03a-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868b1-0ad4-11ce-b03a-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IMediaControl
     {
@@ -942,7 +929,8 @@ namespace DirectShowLib
         int StopWhenReady();
     }
 
-    [Guid("56a868b7-0ad4-11ce-b03a-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868b7-0ad4-11ce-b03a-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IQueueCommand
     {
@@ -972,7 +960,8 @@ namespace DirectShowLib
             );
     }
 
-    [Guid("56a868b8-0ad4-11ce-b03a-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868b8-0ad4-11ce-b03a-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDeferredCommand
     {

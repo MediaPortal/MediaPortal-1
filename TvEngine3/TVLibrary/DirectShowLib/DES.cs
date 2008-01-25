@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -51,7 +26,7 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using System.Text;
-#pragma warning disable 618
+
 namespace DirectShowLib.DES
 {
     #region Utility Classes
@@ -63,13 +38,14 @@ namespace DirectShowLib.DES
             // Prevent people from trying to instantiate this class
         }
 
-        public const int E_NotInTree	= unchecked((int)0x80040400);
-        public const int E_RenderEngineIsBroken	= unchecked((int)0x80040401);
-        public const int E_MustInitRenderer	= unchecked((int)0x80040402);
-        public const int E_NotDetermind	= unchecked((int)0x80040403);
+        public const int E_NotInTree = unchecked((int)0x80040400);
+        public const int E_RenderEngineIsBroken = unchecked((int)0x80040401);
+        public const int E_MustInitRenderer = unchecked((int)0x80040402);
+        public const int E_NotDetermind = unchecked((int)0x80040403);
         public const int E_NoTimeline = unchecked((int)0x80040404);
         public const int S_WarnOutputReset = unchecked((int)40404);
     }
+
 
     sealed public class DESError
     {
@@ -146,8 +122,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_AMTimeline
     /// </summary>
-    [ComImport,
-    Guid("78530B75-61F9-11D2-8CAD-00A024580902")]
+    [ComImport, Guid("78530B75-61F9-11D2-8CAD-00A024580902")]
     public class AMTimeline
     {
     }
@@ -155,8 +130,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_PropertySetter
     /// </summary>
-    [ComImport,
-    Guid("ADF95821-DED7-11d2-ACBE-0080C75E246E")]
+    [ComImport, Guid("ADF95821-DED7-11d2-ACBE-0080C75E246E")]
     public class PropertySetter
     {
     }
@@ -164,8 +138,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_AMTimelineObj
     /// </summary>
-    [ComImport,
-    Guid("78530B78-61F9-11D2-8CAD-00A024580902")]
+    [ComImport, Guid("78530B78-61F9-11D2-8CAD-00A024580902")]
     public class AMTimelineObj
     {
     }
@@ -173,8 +146,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_AMTimelineSrc
     /// </summary>
-    [ComImport,
-    Guid("78530B7A-61F9-11D2-8CAD-00A024580902")]
+    [ComImport, Guid("78530B7A-61F9-11D2-8CAD-00A024580902")]
     public class AMTimelineSrc
     {
     }
@@ -182,8 +154,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_AMTimelineTrack
     /// </summary>
-    [ComImport,
-    Guid("8F6C3C50-897B-11d2-8CFB-00A0C9441E20")]
+    [ComImport, Guid("8F6C3C50-897B-11d2-8CFB-00A0C9441E20")]
     public class AMTimelineTrack
     {
     }
@@ -191,8 +162,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_AMTimelineComp
     /// </summary>
-    [ComImport,
-    Guid("74D2EC80-6233-11d2-8CAD-00A024580902")]
+    [ComImport, Guid("74D2EC80-6233-11d2-8CAD-00A024580902")]
     public class AMTimelineComp
     {
     }
@@ -200,8 +170,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_AMTimelineGroup
     /// </summary>
-    [ComImport,
-    Guid("F6D371E1-B8A6-11d2-8023-00C0DF10D434")]
+    [ComImport, Guid("F6D371E1-B8A6-11d2-8023-00C0DF10D434")]
     public class AMTimelineGroup
     {
     }
@@ -209,8 +178,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_AMTimelineTrans
     /// </summary>
-    [ComImport,
-    Guid("74D2EC81-6233-11d2-8CAD-00A024580902")]
+    [ComImport, Guid("74D2EC81-6233-11d2-8CAD-00A024580902")]
     public class AMTimelineTrans
     {
     }
@@ -218,8 +186,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_AMTimelineEffect
     /// </summary>
-    [ComImport,
-    Guid("74D2EC82-6233-11d2-8CAD-00A024580902")]
+    [ComImport, Guid("74D2EC82-6233-11d2-8CAD-00A024580902")]
     public class AMTimelineEffect
     {
     }
@@ -227,8 +194,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_RenderEngine
     /// </summary>
-    [ComImport,
-    Guid("64D8A8E0-80A2-11d2-8CF3-00A0C9441E20")]
+    [ComImport, Guid("64D8A8E0-80A2-11d2-8CF3-00A0C9441E20")]
     public class RenderEngine
     {
     }
@@ -236,8 +202,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_SmartRenderEngine
     /// </summary>
-    [ComImport,
-    Guid("498B0949-BBE9-4072-98BE-6CCAEB79DC6F")]
+    [ComImport, Guid("498B0949-BBE9-4072-98BE-6CCAEB79DC6F")]
     public class SmartRenderEngine
     {
     }
@@ -245,8 +210,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_AudMixer
     /// </summary>
-    [ComImport,
-    Guid("036A9790-C153-11d2-9EF7-006008039E37")]
+    [ComImport, Guid("036A9790-C153-11d2-9EF7-006008039E37")]
     public class AudMixer
     {
     }
@@ -254,8 +218,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_Xml2Dex
     /// </summary>
-    [ComImport,
-    Guid("18C628EE-962A-11D2-8D08-00A0C9441E20")]
+    [ComImport, Guid("18C628EE-962A-11D2-8D08-00A0C9441E20")]
     public class Xml2Dex
     {
     }
@@ -263,8 +226,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_MediaLocator
     /// </summary>
-    [ComImport,
-    Guid("CC1101F2-79DC-11D2-8CE6-00A0C9441E20")]
+    [ComImport, Guid("CC1101F2-79DC-11D2-8CE6-00A0C9441E20")]
     public class MediaLocator
     {
     }
@@ -272,8 +234,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_MediaDet
     /// </summary>
-    [ComImport,
-    Guid("65BD0711-24D2-4ff7-9324-ED2E5D3ABAFA")]
+    [ComImport, Guid("65BD0711-24D2-4ff7-9324-ED2E5D3ABAFA")]
     public class MediaDet
     {
     }
@@ -281,8 +242,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_DxtCompositor
     /// </summary>
-    [ComImport,
-    Guid("BB44391D-6ABD-422f-9E2E-385C9DFF51FC")]
+    [ComImport, Guid("BB44391D-6ABD-422f-9E2E-385C9DFF51FC")]
     public class DxtCompositor
     {
     }
@@ -290,8 +250,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_DxtAlphaSetter
     /// </summary>
-    [ComImport,
-    Guid("506D89AE-909A-44f7-9444-ABD575896E35")]
+    [ComImport, Guid("506D89AE-909A-44f7-9444-ABD575896E35")]
     public class DxtAlphaSetter
     {
     }
@@ -299,8 +258,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_DxtJpeg
     /// </summary>
-    [ComImport,
-    Guid("DE75D012-7A65-11D2-8CEA-00A0C9441E20")]
+    [ComImport, Guid("DE75D012-7A65-11D2-8CEA-00A0C9441E20")]
     public class DxtJpeg
     {
     }
@@ -308,8 +266,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_ColorSource
     /// </summary>
-    [ComImport,
-    Guid("0cfdd070-581a-11d2-9ee6-006008039e37")]
+    [ComImport, Guid("0cfdd070-581a-11d2-9ee6-006008039e37")]
     public class ColorSource
     {
     }
@@ -317,8 +274,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From CLSID_DxtKey
     /// </summary>
-    [ComImport,
-    Guid("C5B19592-145E-11d3-9F04-006008039E37")]
+    [ComImport, Guid("C5B19592-145E-11d3-9F04-006008039E37")]
     public class DxtKey
     {
     }
@@ -327,8 +283,6 @@ namespace DirectShowLib.DES
     #endregion
 
     #region Declarations
-
-#if ALLOW_UNTESTED_INTERFACES
 
     /// <summary>
     /// From unnamed enum
@@ -342,15 +296,13 @@ namespace DirectShowLib.DES
         Hue
     }
 
-
-#endif
-
     /// <summary>
     /// From TIMELINE_MAJOR_TYPE
     /// </summary>
     [Flags]
     public enum TimelineMajorType
     {
+        None = 0,
         Composite = 1,
         Effect = 0x10,
         Group = 0x80,
@@ -391,7 +343,7 @@ namespace DirectShowLib.DES
     /// <summary>
     /// From SCompFmt0
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=4)]
+    [StructLayout(LayoutKind.Sequential)]
     public class SCompFmt0
     {
         public int nFormatId;
@@ -505,9 +457,8 @@ namespace DirectShowLib.DES
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("E31FB81B-1335-11D1-8189-0000F87557DB")]
     public interface IDXEffect
     {
@@ -542,12 +493,12 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("4EE9EAD9-DA4D-43D0-9383-06B90C08B12B"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("4EE9EAD9-DA4D-43D0-9383-06B90C08B12B"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDxtAlphaSetter : IDXEffect
     {
-    #region IDXEffect Methods
+        #region IDXEffect Methods
 
         [PreserveSig]
         new int get_Capabilities(
@@ -579,7 +530,7 @@ namespace DirectShowLib.DES
             float newVal
             );
 
-    #endregion
+        #endregion
 
         [PreserveSig]
         int get_Alpha(
@@ -602,12 +553,12 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("BB44391E-6ABD-422F-9E2E-385C9DFF51FC"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("BB44391E-6ABD-422F-9E2E-385C9DFF51FC"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDxtCompositor : IDXEffect
     {
-    #region IDXEffect
+        #region IDXEffect
 
         [PreserveSig]
         new int get_Capabilities(
@@ -639,7 +590,7 @@ namespace DirectShowLib.DES
             float newVal
             );
 
-    #endregion
+        #endregion
 
         [PreserveSig]
         int get_OffsetX(
@@ -722,12 +673,12 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("DE75D011-7A65-11D2-8CEA-00A0C9441E20"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("DE75D011-7A65-11D2-8CEA-00A0C9441E20"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDxtJpeg : IDXEffect
     {
-    #region IDXEffect
+        #region IDXEffect
 
         [PreserveSig]
         new int get_Capabilities(
@@ -759,7 +710,7 @@ namespace DirectShowLib.DES
             float newVal
             );
 
-    #endregion
+        #endregion
 
         [PreserveSig]
         int get_MaskNum(
@@ -878,12 +829,12 @@ namespace DirectShowLib.DES
         int LoadDefSettings();
     }
 
-
-    [Guid("3255DE56-38FB-4901-B980-94B438010D7B"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("3255DE56-38FB-4901-B980-94B438010D7B"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDxtKey : IDXEffect
     {
-    #region IDXEffect
+        #region IDXEffect
 
         [PreserveSig]
         new int get_Capabilities(
@@ -915,7 +866,7 @@ namespace DirectShowLib.DES
             float newVal
             );
 
-    #endregion
+        #endregion
 
         [PreserveSig]
         int get_KeyType(
@@ -978,8 +929,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("F03FA8DE-879A-4D59-9B2C-26BB1CF83461")]
     public interface IFindCompressorCB
     {
@@ -991,8 +942,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsDual),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsDual),
     Guid("AE9472BE-B0C3-11D2-8D24-00A0C9441E20")]
     public interface IGrfCache
     {
@@ -1009,8 +960,8 @@ namespace DirectShowLib.DES
         int DoConnectionsNow();
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("4ada63a0-72d5-11d2-952a-0060081840bc")]
     public interface IResize
     {
@@ -1045,10 +996,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-#endif
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("E43E73A2-0EFA-11D3-9601-00A0C9441E20")]
     public interface IAMErrorLog
     {
@@ -1062,8 +1011,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("963566DA-BE21-4EAF-88E9-35704F8F52A1")]
     public interface IAMSetErrorLog
     {
@@ -1078,8 +1027,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("78530B74-61F9-11D2-8CAD-00A024580902")]
     public interface IAMTimeline
     {
@@ -1236,8 +1185,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("EAE58536-622E-11D2-8CAD-00A024580902")]
     public interface IAMTimelineComp
     {
@@ -1292,8 +1241,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("BCE0C264-622D-11D2-8CAD-00A024580902")]
     public interface IAMTimelineEffect
     {
@@ -1301,8 +1250,8 @@ namespace DirectShowLib.DES
         int EffectGetPriority(out int pVal);
     }
 
-
-    [Guid("EAE58537-622E-11D2-8CAD-00A024580902"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("EAE58537-622E-11D2-8CAD-00A024580902"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMTimelineEffectable
     {
@@ -1330,8 +1279,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("9EED4F00-B8A6-11D2-8023-00C0DF10D434"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("9EED4F00-B8A6-11D2-8023-00C0DF10D434"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMTimelineGroup
     {
@@ -1434,8 +1383,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("78530B77-61F9-11D2-8CAD-00A024580902"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("78530B77-61F9-11D2-8CAD-00A024580902"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMTimelineObj
     {
@@ -1636,8 +1585,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("A0F840A0-D590-11D2-8D55-00A0C9441E20")]
     public interface IAMTimelineSplittable
     {
@@ -1652,8 +1601,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("78530B79-61F9-11D2-8CAD-00A024580902"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("78530B79-61F9-11D2-8CAD-00A024580902"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMTimelineSrc
     {
@@ -1774,8 +1723,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("EAE58538-622E-11D2-8CAD-00A024580902"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("EAE58538-622E-11D2-8CAD-00A024580902"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMTimelineTrack
     {
@@ -1863,8 +1812,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("BCE0C265-622D-11D2-8CAD-00A024580902")]
     public interface IAMTimelineTrans
     {
@@ -1909,8 +1858,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("378FA386-622E-11D2-8CAD-00A024580902"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("378FA386-622E-11D2-8CAD-00A024580902"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMTimelineTransable
     {
@@ -1951,8 +1900,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("A8ED5F80-C2C7-11D2-8D39-00A0C9441E20"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("A8ED5F80-C2C7-11D2-8D39-00A0C9441E20"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMTimelineVirtualTrack
     {
@@ -1965,8 +1914,8 @@ namespace DirectShowLib.DES
         int SetTrackDirty();
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("65BD0710-24D2-4ff7-9324-ED2E5D3ABAFA")]
     public interface IMediaDet
     {
@@ -2053,8 +2002,8 @@ namespace DirectShowLib.DES
             double SeekTime);
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("288581E0-66CE-11D2-918F-00C0DF10D434")]
     public interface IMediaLocator
     {
@@ -2072,8 +2021,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("AE9472BD-B0C3-11D2-8D24-00A0C9441E20")]
     public interface IPropertySetter
     {
@@ -2139,8 +2088,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("6BEE3A81-66C9-11D2-918F-00C0DF10D434")]
     public interface IRenderEngine
     {
@@ -2248,8 +2197,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [Guid("F03FA8CE-879A-4D59-9B2C-26BB1CF83461"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("F03FA8CE-879A-4D59-9B2C-26BB1CF83461"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ISmartRenderEngine
     {
@@ -2275,8 +2224,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsDual),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsDual),
     Guid("18C628ED-962A-11D2-8D08-00A0C9441E20")]
     public interface IXml2Dex
     {
@@ -2356,8 +2305,8 @@ namespace DirectShowLib.DES
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("6BEE3A82-66C9-11d2-918F-00C0DF10D434")]
     public interface IRenderEngine2
     {
@@ -2366,7 +2315,6 @@ namespace DirectShowLib.DES
             [In] Guid ResizerGuid
             );
     }
-
 
     #endregion
 }

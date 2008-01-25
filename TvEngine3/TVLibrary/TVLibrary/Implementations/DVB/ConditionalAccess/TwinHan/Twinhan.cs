@@ -32,7 +32,6 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class Twinhan : IDiSEqCController
   {
-
     #region guids
     readonly Guid THBDA_TUNER = new Guid("E5644CC4-17A1-4eed-BD90-74FDA1D65423");
     readonly Guid GUID_THBDA_CMD = new Guid("255E0082-2017-4b03-90F8-856A62CB3D67");
@@ -43,7 +42,6 @@ namespace TvLibrary.Implementations.DVB
     readonly uint THBDA_IOCTL_SET_DiSEqC = 0xaa0001a0;//CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS) 
     readonly uint THBDA_IOCTL_GET_DiSEqC = 0xaa0001a4;//CTL_CODE(THBDA_IO_INDEX, 105, METHOD_BUFFERED, FILE_ANY_ACCESS) 
     readonly uint THBDA_IOCTL_SET_LNB_DATA = 0xaa000200;//CTL_CODE(THBDA_IO_INDEX, 128, METHOD_BUFFERED, FILE_ANY_ACCESS) 
-
     #endregion
 
     #region variables
@@ -72,7 +70,6 @@ namespace TvLibrary.Implementations.DVB
       _ptrOutBuffer = Marshal.AllocCoTaskMem(8192);
       _ptrOutBuffer2 = Marshal.AllocCoTaskMem(8192);
       _ptrDiseqc = Marshal.AllocCoTaskMem(8192);
-
       _captureFilter = tunerFilter;
       _initialized = false;
       _camPresent = false;
@@ -99,7 +96,6 @@ namespace TvLibrary.Implementations.DVB
       get
       {
         if (_initialized) return _isTwinHanCard;
-
         bool result = IsTwinhanCard();
         if (result)
         {
@@ -107,9 +103,6 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("twinhan: CAM inserted");
           }
-          //SetLnbData(false, 9750, 10600, 11700, 1, 0);
-          //System.Threading.Thread.Sleep(100);
-          //SetLnbData(true, 9750, 10600, 11700, 1, 0);
         }
         return result;
       }
@@ -124,12 +117,6 @@ namespace TvLibrary.Implementations.DVB
     {
       CIState = 0;
       MMIState = 0;
-      /*
-       typedef struct {
-        ULONG ulCIState;
-        ULONG ulMMIState;
-      } THCIState, *PTHCIState;
-      */
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
       if (pin != null)
       {
@@ -157,7 +144,6 @@ namespace TvLibrary.Implementations.DVB
             Marshal.WriteInt32(_thbdaBuf, 28, _ptrOutBuffer.ToInt32()); //LPVOID outbuffer
             Marshal.WriteInt32(_thbdaBuf, 32, 4096);                //DWORD outbuffersize
             Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//LPVOID bytesreturned
-
             int hr = propertySet.Set(propertyGuid, 0, _thbdaBuf, thbdaLen, _thbdaBuf, thbdaLen);
             if (hr == 0)
             {
@@ -175,9 +161,9 @@ namespace TvLibrary.Implementations.DVB
           {
           }
         }
-        //Marshal.ReleaseComObject(pin);
       }
     }
+
     /// <summary>
     /// Determines whether a cam is present or not
     /// </summary>
@@ -193,6 +179,7 @@ namespace TvLibrary.Implementations.DVB
       if (CIState != 0) return true;
       return false;
     }
+
     /// <summary>
     /// Determines whether the cam is ready
     /// </summary>
@@ -214,9 +201,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_initialized) return _isTwinHanCard;
       Log.Log.WriteFile("Twinhan: check for twinhan driver");
-
       bool success = false;
-
       try
       {
         int thbdaLen = 0x28;
@@ -239,7 +224,6 @@ namespace TvLibrary.Implementations.DVB
           Marshal.WriteInt32(_thbdaBuf, 28, (int)IntPtr.Zero);
           Marshal.WriteInt32(_thbdaBuf, 32, 0);
           Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);
-
           IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
           if (pin != null)
           {
@@ -247,16 +231,12 @@ namespace TvLibrary.Implementations.DVB
             if (propertySet != null)
             {
               Guid propertyGuid = THBDA_TUNER;
-
               int hr = propertySet.Set(propertyGuid, 0, _thbdaBuf, thbdaLen, _thbdaBuf, thbdaLen);
               if (hr == 0)
               {
-                Log.Log.WriteFile("twinhan card detected");
                 success = true;
               }
-              //Marshal.ReleaseComObject(propertySet);
             }
-            //Marshal.ReleaseComObject(pin);
           }
         }
         finally
@@ -265,11 +245,9 @@ namespace TvLibrary.Implementations.DVB
       }
       finally
       {
-
       }
       return success;
     }
-
 
     /// <summary>
     /// Gets the answer from the CAM after sending the PMT .
@@ -281,7 +259,6 @@ namespace TvLibrary.Implementations.DVB
       {
         return "";
       }
-
       for (int i = 0; i < 1024; ++i)
       {
         Marshal.WriteByte(_ptrPmt, i, 0);
@@ -304,7 +281,6 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_thbdaBuf, 28, _ptrPmt.ToInt32());//lpOutBuffer
       Marshal.WriteInt32(_thbdaBuf, 32, 1024);//nOutBufferSize
       Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
-
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
       if (pin != null)
       {
@@ -318,7 +294,6 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("GetPmtReply() failed 0x{0:X}", hr);
           }
-
           Log.Log.WriteFile("GetPmtReply() returned {0} bytes", back);
           Marshal.ReleaseComObject(propertySet);
           try
@@ -340,7 +315,6 @@ namespace TvLibrary.Implementations.DVB
               writer.Flush();
             }
           }
-
         }
         Marshal.ReleaseComObject(pin);
       }
@@ -359,12 +333,8 @@ namespace TvLibrary.Implementations.DVB
     {
       if (IsCamPresent() == false) return;
       int camNumber = (int)camType;
-
-
       Log.Log.WriteFile("Twinhan: send PMT cam:{0} len:{1} video:0x{2:X} audio:0x{3:X}", camType, caPMTLen, videoPid, audioPid);
-
-      if (caPMT.Length == 0)
-        return;
+      if (caPMT.Length == 0) return;
       string line = "";
       for (int i = 0; i < caPMTLen; ++i)
       {
@@ -391,7 +361,6 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_thbdaBuf, 28, (int)IntPtr.Zero);//lpOutBuffer
       Marshal.WriteInt32(_thbdaBuf, 32, 0);//nOutBufferSize
       Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
-
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
       if (pin != null)
       {
@@ -401,7 +370,6 @@ namespace TvLibrary.Implementations.DVB
           Guid propertyGuid = THBDA_TUNER;
           int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
           int back = Marshal.ReadInt32(_ptrDwBytesReturned);
-
           if (hr != 0)
           {
             Log.Log.WriteFile("Twinhan: cam failed 0x{0:X}", hr);
@@ -409,15 +377,11 @@ namespace TvLibrary.Implementations.DVB
           else
             Log.Log.WriteFile("Twinhan: cam returned ok 0x{0:X}", hr);
           Marshal.ReleaseComObject(propertySet);
-
         }
         Marshal.ReleaseComObject(pin);
       }
-
-      //System.Threading.Thread.Sleep(1000);
-      //GetPmtReply();
-
     }
+
     /// <summary>
     /// Sends the diseq command.
     /// </summary>
@@ -425,15 +389,11 @@ namespace TvLibrary.Implementations.DVB
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       byte disEqcPort = (byte)BandTypeConverter.GetAntennaNr(channel);
-
       byte turnon22Khz = 0;
       Int32 LNBLOFLowBand = 9750;
       Int32 LNBLOFHighBand = 10600;
       Int32 LNBLOFHiLoSW = 11700;
-
       BandTypeConverter.GetDefaultLnbSetup(parameters, channel.BandType, out LNBLOFLowBand, out LNBLOFHighBand, out LNBLOFHiLoSW);
-     // if (LNBLOFHiLoSW == 0) LNBLOFHiLoSW = 18000; // dont use lo/hi switch...
-
       if (BandTypeConverter.IsHiBand(channel, parameters))
       {
         turnon22Khz = 2;
@@ -442,7 +402,6 @@ namespace TvLibrary.Implementations.DVB
       {
         turnon22Khz = 1;
       }
-
       SetLnbData(true, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, turnon22Khz, disEqcPort);
       SendDiseqcCommandTest(parameters, channel);
     }
@@ -463,7 +422,6 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 17, (byte)disEqcPort);    //17: DiSEqC_Port
       Marshal.WriteByte(_ptrDiseqc, 18, 0);
       Marshal.WriteByte(_ptrDiseqc, 19, 0);
-
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
       Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
@@ -481,7 +439,6 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_thbdaBuf, 28, (int)IntPtr.Zero);//lpOutBuffer
       Marshal.WriteInt32(_thbdaBuf, 32, 0);//nOutBufferSize
       Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
-
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
       if (pin != null)
       {
@@ -497,37 +454,21 @@ namespace TvLibrary.Implementations.DVB
           else
             Log.Log.WriteFile("TwinHan SetLNB ok 0x{0:X}", hr);
           Marshal.ReleaseComObject(propertySet);
-
         }
         Marshal.ReleaseComObject(pin);
       }
     }
 
     #region IDiSEqCController Members
-
     public void SendDiseqcCommandTest(ScanParameters parameters, DVBSChannel channel)
     {
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
-      //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
-
-
-      //bit 0	(1)	: 0=low band, 1 = hi band
-      //bit 1 (2) : 0=vertical, 1 = horizontal
-      //bit 3 (4) : 0=satellite position A, 1=satellite position B
-      //bit 4 (8) : 0=switch option A, 1=switch option  B
-      // LNB    option  position
-      // 1        A         A
-      // 2        A         B
-      // 3        B         A
-      // 4        B         B
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-
       bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
       cmd |= (byte)((isHorizontal) ? 2 : 0);
       cmd |= (byte)((antennaNr - 1) << 2);
-
       byte[] diseqc = new byte[4];
       diseqc[0] = 0xe0;
       diseqc[1] = 0x10;
@@ -547,13 +488,11 @@ namespace TvLibrary.Implementations.DVB
       int disEqcLen = 16;
       for (int i = 0; i < 12; ++i)
         Marshal.WriteByte(_ptrDiseqc, 4 + i, 0);
-
       Marshal.WriteInt32(_ptrDiseqc, 0, (int)diSEqC.Length);//command len
       for (int i = 0; i < diSEqC.Length; ++i)
       {
         Marshal.WriteByte(_ptrDiseqc, 4 + i, diSEqC[i]);
       }
-
       string line = "";
       for (int i = 0; i < disEqcLen; ++i)
       {
@@ -577,7 +516,6 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_thbdaBuf, 28, (int)IntPtr.Zero);//lpOutBuffer
       Marshal.WriteInt32(_thbdaBuf, 32, 0);//nOutBufferSize
       Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
-
       bool success = false;
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
       if (pin != null)
@@ -597,7 +535,6 @@ namespace TvLibrary.Implementations.DVB
             success = true;
           }
           Marshal.ReleaseComObject(propertySet);
-
         }
         Marshal.ReleaseComObject(pin);
       }
@@ -617,7 +554,6 @@ namespace TvLibrary.Implementations.DVB
       int disEqcLen = 16;
       for (int i = 0; i < 16; ++i)
         Marshal.WriteByte(_ptrDiseqc, i, 0);
-
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
       Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
@@ -635,7 +571,6 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_thbdaBuf, 28, (int)_ptrDiseqc.ToInt32());//lpOutBuffer
       Marshal.WriteInt32(_thbdaBuf, 32, disEqcLen);//nOutBufferSize
       Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
-
       bool success = false;
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
       if (pin != null)
@@ -654,7 +589,6 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("TwinHan get DiSEqC ok 0x{0:X}", hr);
             success = true;
           }
-
           string line = "";
           for (int i = 0; i < 16; ++i)
           {
@@ -662,9 +596,7 @@ namespace TvLibrary.Implementations.DVB
             line += String.Format("{0:X} ", k);
           }
           Log.Log.Write("reply:{0}", line);
-
           success = true;
-
           int bytesReturned = Marshal.ReadInt32(_ptrDiseqc);
           if (bytesReturned > 0)
           {
@@ -674,15 +606,12 @@ namespace TvLibrary.Implementations.DVB
               reply[i] = Marshal.ReadByte(_ptrDiseqc, 4 + i);
             }
           }
-
           Marshal.ReleaseComObject(propertySet);
-
         }
         Marshal.ReleaseComObject(pin);
       }
       return success;
     }
-
     #endregion
   }
 }

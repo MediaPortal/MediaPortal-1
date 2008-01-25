@@ -114,7 +114,7 @@ namespace TvLibrary.Implementations.DVB
             dvbsChannel.ModulationType = tuningChannel.ModulationType;
             dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)tuningChannel.InnerFecRate;
             dvbsChannel.Pilot = tuningChannel.Pilot;
-            dvbsChannel.RollOff = tuningChannel.RollOff;
+            dvbsChannel.Rolloff = tuningChannel.Rolloff;
             dvbsChannel.VideoPid = info.videoPid;
             dvbsChannel.AudioPid = info.audioPid;
             Log.Log.Write("Found: {0}", dvbsChannel);

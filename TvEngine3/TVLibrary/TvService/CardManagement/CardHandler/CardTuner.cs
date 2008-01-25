@@ -307,7 +307,7 @@ namespace TvService
         if (dvbsChannelNew.SatelliteIndex != dvbsChannelCurrent.SatelliteIndex) return true;
         if (dvbsChannelNew.InnerFecRate != dvbsChannelCurrent.InnerFecRate) return true;
         if (dvbsChannelNew.Pilot != dvbsChannelCurrent.Pilot) return true;
-        if (dvbsChannelNew.RollOff != dvbsChannelCurrent.RollOff) return true;
+        if (dvbsChannelNew.Rolloff != dvbsChannelCurrent.Rolloff) return true;
         if (dvbsChannelNew.DisEqc != dvbsChannelCurrent.DisEqc) return true;
         return false;
       }

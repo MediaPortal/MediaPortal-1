@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -49,12 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib.BDA
 {
     #region Declarations
-
-#if ALLOW_UNTESTED_INTERFACES
 
     /// <summary>
     /// From BDA_EVENT_ID
@@ -118,7 +91,86 @@ namespace DirectShowLib.BDA
         public int dwStride;
     }
 
-#endif
+    /// <summary>
+    /// From ScanModulationTypes
+    /// </summary>
+    [Flags]
+    public enum ScanModulationTypes
+    {
+      ScanMod16QAM = 0x00000001,
+      ScanMod32QAM = 0x00000002,
+      ScanMod64QAM = 0x00000004,
+      ScanMod80QAM = 0x00000008,
+      ScanMod96QAM = 0x00000010,
+      ScanMod112QAM = 0x00000020,
+      ScanMod128QAM = 0x00000040,
+      ScanMod160QAM = 0x00000080,
+      ScanMod192QAM = 0x00000100,
+      ScanMod224QAM = 0x00000200,
+      ScanMod256QAM = 0x00000400,
+      ScanMod320QAM = 0x00000800,
+      ScanMod384QAM = 0x00001000,
+      ScanMod448QAM = 0x00002000,
+      ScanMod512QAM = 0x00004000,
+      ScanMod640QAM = 0x00008000,
+      ScanMod768QAM = 0x00010000,
+      ScanMod896QAM = 0x00020000,
+      ScanMod1024QAM = 0x00040000,
+      ScanModQPSK = 0x00080000,
+      ScanModBPSK = 0x00100000,
+      ScanModOQPSK = 0x00200000,
+      ScanMod8VSB = 0x00400000,
+      ScanMod16VSB = 0x00800000,
+      ScanModAM_RADIO = 0x01000000,
+      ScanModFM_RADIO = 0x02000000,
+      ScanMod8PSK = 0x04000000,
+      ScanModRF = 0x08000000,
+      MCEDigitalCable = ModulationType.Mod640Qam | ModulationType.Mod256Qam,
+      MCETerrestrialATSC = ModulationType.Mod8Vsb,
+      MCEAnalogTv = ModulationType.ModRF,
+      MCEAll_TV = unchecked((int)0xffffffff),
+    }
+
+    /// <summary>
+    /// From RollOff
+    /// </summary>
+    public enum RollOff
+    {
+      NotSet = -1,
+      NotDefined = 0,
+      Twenty = 1,
+      TwentyFive,
+      ThirtyFive,
+      Max
+    }
+
+    /// <summary>
+    /// From Pilot
+    /// </summary>
+    public enum Pilot
+    {
+      NotSet = -1,
+      NotDefined = 0,
+      Off = 1,
+      On,
+      Max
+    }
+
+    /// <summary>
+    /// From ApplicationTypeType
+    /// </summary>
+    public enum ApplicationTypeType
+    {
+      SCTE28ConditionalAccess = 0,
+      SCTE28PODHostBindingInformation,
+      SCTE28IPService,
+      SCTE28NetworkInterfaceSCTE55_2,
+      SCTE28NetworkInterfaceSCTE55_1,
+      SCTE28CopyProtection,
+      SCTE28Diagnostic,
+      SCTE28Undesignated,
+      SCTE28Reserved,
+    }
 
     /// <summary>
     /// From FECMethod
@@ -129,6 +181,9 @@ namespace DirectShowLib.BDA
         MethodNotDefined = 0,
         Viterbi = 1, // FEC is a Viterbi Binary Convolution.
         RS204_188, // The FEC is Reed-Solomon 204/188 (outer FEC)
+        Ldpc,
+        Bch,
+        RS147_130,
         Max,
     }
 
@@ -142,17 +197,17 @@ namespace DirectShowLib.BDA
         Rate1_2 = 1, // 1/2
         Rate2_3, // 2/3
         Rate3_4, // 3/4
-        Rate3_5, // 3/5
-        Rate4_5, // 4/5
+        Rate3_5,
+        Rate4_5,
         Rate5_6, // 5/6
-        Rate5_11, // 5/11
+        Rate5_11,
         Rate7_8, // 7/8
-        Rate1_4, // 1/4
-        Rate1_3, // 1/3
-        Rate2_5, // 2/5
-        Rate6_7, // 6/7
-        Rate8_9, // 8/9
-        Rate9_10, // 9/10
+        Rate1_4,
+        Rate1_3,
+        Rate2_5,
+        Rate6_7,
+        Rate8_9,
+        Rate9_10,
         RateMax
     }
 
@@ -209,22 +264,22 @@ namespace DirectShowLib.BDA
         Mod768Qam,
         Mod896Qam,
         Mod1024Qam,
-        ModQpsk, // Quadrature Phase Shift Keying (including backwards compatible mode)
-        ModBpsk, // Binary Phase Shift Keying
-        ModOqpsk, // Offset QPSK
-        Mod8Vsb, // 8-Level Vestigial Sideband
-        Mod16Vsb, // 16-Level Vestigial Sideband
+        ModQpsk,
+        ModBpsk,
+        ModOqpsk,
+        Mod8Vsb,
+        Mod16Vsb,
         ModAnalogAmplitude, // std am
         ModAnalogFrequency, // std fm
-        Mod8psk, // 8 Phase Shift Keying (including backwards compatible mode)
-        ModRf, // analog TV (Video standards such as NTSC/PAL/SECAM specified in IAnalogLocator VideoStandard property)
-        Mod16Apsk, // DVB-S2 modulation 16-Level APSK
-        Mod32Apsk, // DVB-S2 modulation 32-Level APSK
-        ModQpsk2, // Non-Backwards Compatible Quadrature Phase Shift Keying
-        Mod8psk2, // Non-Backwards Compatible 8 Phase Shift Keying
-        ModDirectTV,  // DIRECTV DSS
+        Mod8Psk,
+        ModRF,
+        Mod16Apsk,
+        Mod32Apsk,
+        ModNbcQpsk,
+        ModNbc8Psk,
+        ModDirectTv,
         ModMax
-    } 
+    }
 
     /// <summary>
     /// From DVBSystemType
@@ -272,32 +327,10 @@ namespace DirectShowLib.BDA
         ModeNotDefined = 0,
         Mode2K = 1, // Transmission uses 1705 carriers (use a 2K FFT)
         Mode8K, // Transmission uses 6817 carriers (use an 8K FFT)
+        Mode4K,
+        Mode2KInterleaved,
+        Mode4KInterleaved,
         ModeMax,
-    }
-
-    /// <summary>
-    /// From Roll-Off
-    /// </summary>
-    public enum Rolloff
-    {
-      NotSet = -1,
-      NotDefined = 0,
-      RollOff_20 = 1, // .20 Roll Off (DVB-S2 Only)
-      RollOff_25, // .25 Roll Off (DVB-S2 Only)
-      RollOff_35, // .35 Roll Off (DVB-S2 Only)
-      RollOffMax
-    }
-
-    /// <summary>
-    /// From Pilot
-    /// </summary>
-    public enum Pilot
-    {
-      NotSet = -1,
-      NotDefined = 0,
-      PilotOff = 1, // Pilot Off (DVB-S2 Only)
-      PilotOn, // Pilot On  (DVB-S2 Only)
-      PilotMax
     }
 
     /// <summary>
@@ -329,23 +362,25 @@ namespace DirectShowLib.BDA
     public enum MPEG2StreamType
     {
         BdaUninitializedMpeg2StreamType = -1,
-        Reserved1 = 0x0,
-        IsoIec11172_2_Video = Reserved1 + 1,
-        IsoIec13818_2_Video = IsoIec11172_2_Video + 1,
-        IsoIec11172_3_Audio = IsoIec13818_2_Video + 1,
-        IsoIec13818_3_Audio = IsoIec11172_3_Audio + 1,
-        IsoIec13818_1_PrivateSection = IsoIec13818_3_Audio + 1,
-        IsoIec13818_1_Pes = IsoIec13818_1_PrivateSection + 1,
-        IsoIec13522_Mheg = IsoIec13818_1_Pes + 1,
-        AnnexADsmCC = IsoIec13522_Mheg + 1,
-        ItuTRecH222_1 = AnnexADsmCC + 1,
-        IsoIec13818_6_TypeA = ItuTRecH222_1 + 1,
-        IsoIec13818_6_TypeB = IsoIec13818_6_TypeA + 1,
-        IsoIec13818_6_TypeC = IsoIec13818_6_TypeB + 1,
-        IsoIec13818_6_TypeD = IsoIec13818_6_TypeC + 1,
-        IsoIec13818_1_Auxiliary = IsoIec13818_6_TypeD + 1,
-        IsoIec13818_1_Reserved = IsoIec13818_1_Auxiliary + 1,
-        UserPrivate = IsoIec13818_1_Reserved + 1
+        Reserved1 = 0x00,
+        IsoIec11172_2_Video = 0x01,
+        IsoIec13818_2_Video = 0x02,
+        IsoIec11172_3_Audio = 0x03,
+        IsoIec13818_3_Audio = 0x04,
+        IsoIec13818_1_PrivateSection = 0x05,
+        IsoIec13818_1_Pes = 0x06,
+        IsoIec13522_Mheg = 0x07,
+        AnnexADsmCC = 0x08,
+        ItuTRecH222_1 = 0x09,
+        IsoIec13818_6_TypeA = 0x0a,
+        IsoIec13818_6_TypeB = 0x0b,
+        IsoIec13818_6_TypeC = 0x0c,
+        IsoIec13818_6_TypeD = 0x0d,
+        IsoIec13818_1_Auxiliary = 0x0e,
+        IsoIec13818_1_Reserved = 0x0f,
+        UserPrivate = 0x10,
+        IsoIecUserPrivate = 0x80,
+        DolbyAc3Audio = 0x81
     }
 
     /// <summary>
@@ -364,10 +399,23 @@ namespace DirectShowLib.BDA
     [StructLayout(LayoutKind.Sequential)]
     public struct BDATemplateConnection
     {
-      public int FromNodeType;
-      public int FromNodePinType;
-      public int ToNodeType;
-      public int ToNodePinType;
+        public int FromNodeType;
+        public int FromNodePinType;
+        public int ToNodeType;
+        public int ToNodePinType;
     }
+
+    /// <summary>
+    /// From BDA_Comp_Flags
+    /// </summary>
+    [Flags]
+    public enum BDACompFlags
+    {
+        NotDefined = 0x00000000, // BDACOMP_NOT_DEFINED
+        ExcludeTSFromTR = 0x00000001, // BDACOMP_EXCLUDE_TS_FROM_TR
+        IncludeLocatorInTR = 0x00000002, // BDACOMP_INCLUDE_LOCATOR_IN_TR
+    }
+
+
     #endregion
 }

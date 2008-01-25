@@ -1,35 +1,53 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+#region license
+
+/*
+DirectShowLib - Provide access to DirectShow interfaces via .NET
+Copyright (C) 2007
+http://sourceforge.net/projects/directshownet/
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#endregion
+
+using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle("DirectShowLib")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DirectShowLib")]
-[assembly: AssemblyCopyright("Copyright ©  2006")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
-
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("a07a0acb-ca42-47ec-900b-a45e1a5ef9e5")]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly : AssemblyTitle("DirectShow Net Library")]
+[assembly : AssemblyDescription(".NET Interfaces for calling DirectShow.  See http://directshownet.sourceforge.net/")]
+[assembly : AssemblyConfiguration("")]
+[assembly : AssemblyCompany("")]
+[assembly : Guid("6D0386CE-37E6-4f77-B678-07C584105DC6")]
+[assembly : AssemblyVersion("2.0.0.0")]
+#if DEBUG
+[assembly : AssemblyProduct("Debug Version")]
+#else
+[assembly : AssemblyProduct("Release Version")]
+#endif
+[assembly : AssemblyCopyright("GNU Lesser General Public License v2.1")]
+[assembly : AssemblyTrademark("")]
+[assembly : AssemblyCulture("")]
+[assembly : AssemblyDelaySign(false)]
+// Path is relative to the resulting executable (\Bin\Debug)
+#if USING_NET11
+[assembly : AssemblyKeyFile("..\\..\\DShowNET.snk")]
+#endif
+[assembly : AssemblyKeyName("")]
+[assembly : ComVisible(false)]
+[assembly : CLSCompliant(true)]
+[assembly : SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode=true)]

@@ -27,7 +27,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,9 +50,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+
 #if !USING_NET11
 using System.Runtime.InteropServices.ComTypes;
 #endif
+
 namespace DirectShowLib.MultimediaStreaming
 {
     #region Declarations
@@ -98,13 +100,12 @@ namespace DirectShowLib.MultimediaStreaming
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
-
-    [Guid("BEBE595D-9A6F-11D0-8FDE-00C04FD9189D"), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("BEBE595D-9A6F-11D0-8FDE-00C04FD9189D"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMMediaStream : IMediaStream
     {
-    #region IMediaStream Methods
+        #region IMediaStream Methods
 
         [PreserveSig]
         new int GetMultiMediaStream(
@@ -141,7 +142,7 @@ namespace DirectShowLib.MultimediaStreaming
             int dwFlags
             );
 
-    #endregion
+        #endregion
 
         [PreserveSig]
         int Initialize(
@@ -172,9 +173,8 @@ namespace DirectShowLib.MultimediaStreaming
             );
     }
 
-
-#endif
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("BEBE595C-9A6F-11D0-8FDE-00C04FD9189D")]
     public interface IAMMultiMediaStream : IMultiMediaStream
     {
@@ -182,7 +182,7 @@ namespace DirectShowLib.MultimediaStreaming
 
         [PreserveSig]
         new int GetInformation(
-            out MMSSF pdwFlags, 
+            out MMSSF pdwFlags,
             out StreamType pStreamType
             );
 
@@ -279,8 +279,8 @@ namespace DirectShowLib.MultimediaStreaming
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("AB6B4AFA-F6E4-11D0-900D-00C04FD9189D")]
     public interface IAMMediaTypeStream : IMediaStream
     {
@@ -355,8 +355,8 @@ namespace DirectShowLib.MultimediaStreaming
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("AB6B4AFB-F6E4-11D0-900D-00C04FD9189D")]
     public interface IAMMediaTypeSample : IStreamSample
     {
@@ -477,7 +477,8 @@ namespace DirectShowLib.MultimediaStreaming
             );
     }
 
-    [Guid("BEBE595E-9A6F-11D0-8FDE-00C04FD9189D"), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("BEBE595E-9A6F-11D0-8FDE-00C04FD9189D"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMediaStreamFilter : IBaseFilter
     {
@@ -500,7 +501,7 @@ namespace DirectShowLib.MultimediaStreaming
 
         [PreserveSig]
         new int Run(
-            long tStart
+            [In] long tStart
             );
 
         [PreserveSig]
@@ -554,11 +555,7 @@ namespace DirectShowLib.MultimediaStreaming
 
         [PreserveSig]
         int AddMediaStream(
-#if ALLOW_UNTESTED_INTERFACES
             [In, MarshalAs(UnmanagedType.Interface)] IAMMediaStream pAMMediaStream
-#else
-            [In, MarshalAs(UnmanagedType.Interface)] object pAMMediaStream
-#endif
             );
 
         [PreserveSig]
@@ -601,7 +598,6 @@ namespace DirectShowLib.MultimediaStreaming
         [PreserveSig]
         int EndOfStream();
     }
-
 
     #endregion
 }

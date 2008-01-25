@@ -384,7 +384,7 @@ namespace TvDatabase
             dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
             dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
             dvbsChannel.Pilot = (Pilot)detail.Pilot;
-            dvbsChannel.RollOff = (Rolloff)detail.RollOff;
+            dvbsChannel.Rolloff = (RollOff)detail.RollOff;
             dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
             dvbsChannel.VideoPid = detail.VideoPid;
             dvbsChannel.AudioPid = detail.AudioPid;
@@ -495,7 +495,7 @@ namespace TvDatabase
             dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
             dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
             dvbsChannel.Pilot = (Pilot)detail.Pilot;
-            dvbsChannel.RollOff = (Rolloff)detail.RollOff;
+            dvbsChannel.Rolloff = (RollOff)detail.RollOff;
             dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
             dvbsChannel.VideoPid = detail.VideoPid;
             dvbsChannel.AudioPid = detail.AudioPid;
@@ -604,7 +604,7 @@ namespace TvDatabase
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
-      int rollOff = (int)Rolloff.NotSet;
+      int rollOff = (int)RollOff.NotSet;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -652,7 +652,7 @@ namespace TvDatabase
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
-        rollOff = (int)dvbsChannel.RollOff;
+        rollOff = (int)dvbsChannel.Rolloff;
         if (dvbsChannel.LogicalChannelNumber > 999)
         {
           channelNumber = channel.IdChannel;
@@ -728,7 +728,7 @@ namespace TvDatabase
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
-      int rollOff = (int)Rolloff.NotSet;
+      int rollOff = (int)RollOff.NotSet;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -775,7 +775,7 @@ namespace TvDatabase
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
-        rollOff = (int)dvbsChannel.RollOff;
+        rollOff = (int)dvbsChannel.Rolloff;
         if (dvbsChannel.LogicalChannelNumber > 999)
         {
           channelNumber = channel.IdChannel;
@@ -876,7 +876,7 @@ namespace TvDatabase
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
-      int rollOff = (int)Rolloff.NotSet;
+      int rollOff = (int)RollOff.NotSet;
       if (url == null)
         url = "";
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
@@ -919,7 +919,7 @@ namespace TvDatabase
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
       int pilot = (int)Pilot.NotSet;
-      int rollOff = (int)Rolloff.NotSet;
+      int rollOff = (int)RollOff.NotSet;
       string url = "";
       int bitrate = 0;
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,

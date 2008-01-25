@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,12 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib.Dvd
 {
     #region Declarations
 
-#if ALLOW_UNTESTED_INTERFACES
     /// <summary>
     /// From DVD_ATR
     /// </summary>
@@ -103,8 +77,6 @@ namespace DirectShowLib.Dvd
         public int ChapterNum;
         public int TimeCode;
     }
-
-#endif
 
     /// <summary>
     /// From DVD_DOMAIN
@@ -166,6 +138,7 @@ namespace DirectShowLib.Dvd
     [Flags]
     public enum DvdTimeCodeFlags
     {
+        None = 0,
         FPS25 = 0x00000001,
         FPS30 = 0x00000002,
         DropFrame = 0x00000004,
@@ -178,6 +151,7 @@ namespace DirectShowLib.Dvd
     [Flags]
     public enum ValidUOPFlag
     {
+        None = 0,
         PlayTitleOrAtTime = 0x00000001,
         PlayChapter = 0x00000002,
         PlayTitle = 0x00000004,
@@ -227,7 +201,11 @@ namespace DirectShowLib.Dvd
         ResetOnStop = 1,
         NotifyParentalLevelChange = 2,
         HMSFTimeCodeEvents = 3,
-        AudioDuringFFwdRew = 4
+        AudioDuringFFwdRew = 4,
+        EnableNonblockingAPIs = 5,
+        CacheSizeInMB = 6,
+        EnablePortableBookmarks = 7,
+        EnableExtendedCopyProtectErrors = 8,
     }
 
     /// <summary>
@@ -247,6 +225,7 @@ namespace DirectShowLib.Dvd
     [Flags]
     public enum DvdParentalLevel
     {
+        None = 0,
         Level8 = 0x8000,
         Level7 = 0x4000,
         Level6 = 0x2000,
@@ -320,6 +299,7 @@ namespace DirectShowLib.Dvd
     [Flags]
     public enum DvdKaraokeDownMix
     {
+        None = 0,
         Mix_0to0 = 0x0001,
         Mix_1to0 = 0x0002,
         Mix_2to0 = 0x0004,
@@ -342,6 +322,7 @@ namespace DirectShowLib.Dvd
     [Flags]
     public enum DvdKaraokeContents : short
     {
+        None = 0,
         GuideVocal1 = 0x0001,
         GuideVocal2 = 0x0002,
         GuideMelody1 = 0x0004,
@@ -464,6 +445,7 @@ namespace DirectShowLib.Dvd
     [Flags]
     public enum DvdAudioCaps
     {
+        None = 0,
         AC3 = 0x00000001,
         MPEG2 = 0x00000002,
         LPCM = 0x00000004,
@@ -483,7 +465,9 @@ namespace DirectShowLib.Dvd
         SWDecPrefer = 0x04,
         SWDecOnly = 0x08,
         NoVPE = 0x100,
-        VMR9Only = 0x800
+        DoNotClear = 0x200,
+        VMR9Only = 0x800,
+        EvrOnly =0x1000,
     }
 
     /// <summary>
@@ -501,6 +485,7 @@ namespace DirectShowLib.Dvd
     [Flags]
     public enum AMOverlayNotifyFlags
     {
+        None = 0,
         VisibleChange = 0x00000001,
         SourceChange = 0x00000002,
         DestChange = 0x00000004
@@ -604,7 +589,7 @@ namespace DirectShowLib.Dvd
     /// <summary>
     /// From DVD_KaraokeAttributes
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    [StructLayout(LayoutKind.Sequential, Pack=1, Size=32)]
     public class DvdKaraokeAttributes
     {
         public byte bVersion;
@@ -716,8 +701,8 @@ namespace DirectShowLib.Dvd
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
-    [Guid("A70EFE61-E2A3-11d0-A9BE-00AA0061BE93"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("A70EFE61-E2A3-11d0-A9BE-00AA0061BE93"),
     Obsolete("The IDvdControl interface is deprecated. Use IDvdControl2 instead.", false),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDvdControl
@@ -841,7 +826,8 @@ namespace DirectShowLib.Dvd
             );
     }
 
-    [Guid("A70EFE60-E2A3-11d0-A9BE-00AA0061BE93"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("A70EFE60-E2A3-11d0-A9BE-00AA0061BE93"),
     Obsolete("The IDvdInfo interface is deprecated. Use IDvdInfo2 instead.", false),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDvdInfo
@@ -962,7 +948,8 @@ namespace DirectShowLib.Dvd
             );
     }
 
-    [Guid("153ACC21-D83B-11d1-82BF-00A0C9696C8F"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("153ACC21-D83B-11d1-82BF-00A0C9696C8F"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDDrawExclModeVideo
     {
@@ -1005,7 +992,8 @@ namespace DirectShowLib.Dvd
             );
     }
 
-    [Guid("913c24a0-20ab-11d2-9038-00a0c9697298"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("913c24a0-20ab-11d2-9038-00a0c9697298"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDDrawExclModeVideoCallback
     {
@@ -1035,9 +1023,9 @@ namespace DirectShowLib.Dvd
             [In] int dwARHeight
             );
     }
-#endif
 
-    [Guid("FCC152B6-F372-11d0-8E00-00C04FD7C08B"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("FCC152B6-F372-11d0-8E00-00C04FD7C08B"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDvdGraphBuilder
     {
@@ -1058,7 +1046,8 @@ namespace DirectShowLib.Dvd
             );
     }
 
-    [Guid("33BC7430-EEC0-11D2-8201-00A0C9D74842"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("33BC7430-EEC0-11D2-8201-00A0C9D74842"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDvdControl2
     {
@@ -1278,7 +1267,8 @@ namespace DirectShowLib.Dvd
             );
     }
 
-    [Guid("34151510-EEC0-11D2-8201-00A0C9D74842"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("34151510-EEC0-11D2-8201-00A0C9D74842"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDvdInfo2
     {
@@ -1465,7 +1455,7 @@ namespace DirectShowLib.Dvd
 
         [PreserveSig]
         int GetCmdFromEvent(
-            [In] int lParam1,
+            [In] IntPtr lParam1,
             [Out] out IDvdCmd pCmdObj
             );
 
@@ -1500,7 +1490,8 @@ namespace DirectShowLib.Dvd
             );
     }
 
-    [Guid("5a4a97e4-94ee-4a55-9751-74b5643aa27d"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("5a4a97e4-94ee-4a55-9751-74b5643aa27d"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDvdCmd
     {
@@ -1511,7 +1502,8 @@ namespace DirectShowLib.Dvd
         int WaitForEnd();
     }
 
-    [Guid("86303d6d-1c4a-4087-ab42-f711167048ef"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("86303d6d-1c4a-4087-ab42-f711167048ef"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDvdState
     {

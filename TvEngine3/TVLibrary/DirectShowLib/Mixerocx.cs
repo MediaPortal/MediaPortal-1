@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
@@ -61,13 +36,14 @@ namespace DirectShowLib
     [Flags]
     public enum MixerData
     {
+        None = 0,
         AspectRatio = 0x00000001, // picture aspect ratio changed
         NativeSize = 0x00000002, // native size of video changed
         Palette = 0x00000004 // palette of video changed
     }
 
     /// <summary>
-    /// #define MIXER_STATE_* defines
+    /// From MIXER_STATE_* defines
     /// </summary>
     public enum MixerState
     {
@@ -82,7 +58,8 @@ namespace DirectShowLib
 
     #region Interfaces
 
-    [Guid("81A3BD31-DEE1-11d1-8508-00A0C91F9CA0"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("81A3BD31-DEE1-11d1-8508-00A0C91F9CA0"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMixerOCXNotify
     {
@@ -96,7 +73,8 @@ namespace DirectShowLib
         int OnDataChange([In] MixerData ulDataFlags);
     }
 
-    [Guid("81A3BD32-DEE1-11d1-8508-00A0C91F9CA0"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("81A3BD32-DEE1-11d1-8508-00A0C91F9CA0"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMixerOCX
     {

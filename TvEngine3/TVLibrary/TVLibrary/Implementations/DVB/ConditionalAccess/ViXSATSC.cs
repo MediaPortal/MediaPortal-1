@@ -78,7 +78,7 @@ namespace TvLibrary.Implementations.DVB
           //Log.Log.Info("GenericATSC: QuerySupported: {0}", supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Info("ViXS ATSC: QAM capable card found!");
+            //Log.Log.Info("ViXS ATSC: QAM capable card found!");
             _isViXSATSC = true;
           }
         }
