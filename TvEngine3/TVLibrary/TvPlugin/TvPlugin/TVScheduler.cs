@@ -68,9 +68,10 @@ namespace TvPlugin
     bool m_bSortAscending = true;
     int m_iSelectedItem = 0;
     bool needUpdate = false;
+  	private Schedule selectedItem = null;
 
 
-    public TvScheduler()
+  	public TvScheduler()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SCHEDULER;
     }
@@ -154,6 +155,7 @@ namespace TvPlugin
 
       LoadSettings();
       needUpdate = false;
+			selectedItem = null;
       LoadDirectory();
 
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
@@ -360,77 +362,105 @@ namespace TvPlugin
 
     #region scheduled tv methods
 
+		GUIListItem Schedule2ListItem(Schedule schedule)
+		{
+			GUIListItem item = new GUIListItem();
+			if (schedule == null) return item;
+			item.Label = schedule.ProgramName;
+
+			item.TVTag = schedule;
+			string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
+			if (!System.IO.File.Exists(strLogo))
+			{
+				strLogo = "defaultVideoBig.png";
+			}
+			bool conflicting = (schedule.ReferringConflicts().Count > 0);
+			if (schedule.ScheduleType != (int)(ScheduleRecordingType.Once))
+			{
+				if (conflicting)
+					item.PinImage = Thumbs.TvConflictRecordingSeriesIcon;
+				else
+					item.PinImage = Thumbs.TvRecordingSeriesIcon;
+			}
+			else
+			{
+				if (conflicting)
+					item.PinImage = Thumbs.TvConflictRecordingIcon;
+				else
+					item.PinImage = Thumbs.TvRecordingIcon;
+			}
+			item.ThumbnailImage = strLogo;
+			item.IconImageBig = strLogo;
+			item.IconImage = strLogo;
+			return item;
+		}
+
     void LoadDirectory()
     {
       GUIControl.ClearControl(GetID, listSchedules.GetID);
       IList schedulesList = Schedule.ListAll();
       int total = 0;
       bool showSeries = btnSeries.Selected;
-      foreach (Schedule rec in schedulesList)
-      {
-        List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(rec);
-        GUIListItem item = new GUIListItem();
-        if (rec.ScheduleType!=0) // !=once
-        {
-          for (int serieNr = 0; serieNr < seriesList.Count; ++serieNr)
-          {
-            Schedule recSeries = (Schedule)seriesList[serieNr];
-            if (DateTime.Now > recSeries.EndTime) continue;
-            if (recSeries.Canceled != Schedule.MinSchedule) continue;
 
-            item = new GUIListItem();
-            item.Label = recSeries.ProgramName;
-            item.TVTag = recSeries;
-            item.MusicTag = rec;
-            string logo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.ReferencedChannel().DisplayName);
-            if (!System.IO.File.Exists(logo))
-            {
-              logo = "defaultVideoBig.png";
-            }
-            if (rec.ReferringConflicts().Count > 0)
-              item.PinImage = Thumbs.TvConflictRecordingSeriesIcon;
-            else
-              item.PinImage = Thumbs.TvRecordingSeriesIcon;
-            item.ThumbnailImage = logo;
-            item.IconImageBig = logo;
-            item.IconImage = logo;
-            listSchedules.Add(item);
-            total++;
-            if (showSeries) break;
-          }
+			if ((selectedItem != null) && (showSeries == false))
+    	{
+				List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(selectedItem);
+
+				GUIListItem item = new GUIListItem();
+				item.Label = "..";
+				item.IsFolder = true;
+				listSchedules.Add(item);
+				total++;
+
+    		foreach (Schedule schedule in seriesList)
+    		{
+					if (DateTime.Now > schedule.EndTime) continue;
+					if (schedule.Canceled != Schedule.MinSchedule) continue;
+
+					item = Schedule2ListItem(schedule);
+					item.MusicTag = schedule;
+					listSchedules.Add(item);
+					total++;
+    		}
+
+    	}
+			else foreach (Schedule rec in schedulesList)
+      {
+        GUIListItem item = new GUIListItem();
+        if (rec.ScheduleType != (int)ScheduleRecordingType.Once) 
+        {
+					if (showSeries == false)
+					{
+						item = Schedule2ListItem(rec);
+						item.MusicTag = rec;
+						item.IsFolder = true;
+						listSchedules.Add(item);
+						total++;
+					}
+					else
+					{
+						List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(rec);
+						for (int serieNr = 0; serieNr < seriesList.Count; ++serieNr)
+						{
+							Schedule recSeries = (Schedule) seriesList[serieNr];
+							if (DateTime.Now > recSeries.EndTime) continue;
+							if (recSeries.Canceled != Schedule.MinSchedule) continue;
+
+							item = Schedule2ListItem(rec);
+							item.MusicTag = rec;
+							listSchedules.Add(item);
+							total++;
+							if (showSeries) break;
+						}
+					}
         } //if (recs.Count > 1 && currentSortMethod == SortMethod.Date)
         else //if (showSeries == false)
         {
           //single recording
           if (showSeries) continue;
           if (rec.IsSerieIsCanceled(rec.StartTime)) continue;
-          item.Label = rec.ProgramName;
-          item.TVTag = rec;
-          item.MusicTag = rec;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
-          if (!System.IO.File.Exists(strLogo))
-          {
-            strLogo = "defaultVideoBig.png";
-          }
-          item.ThumbnailImage = strLogo;
-          item.IconImageBig = strLogo;
-          item.IconImage = strLogo;
-          bool conflicting=(rec.ReferringConflicts().Count>0);
-          if (rec.ScheduleType != (int)(ScheduleRecordingType.Once))
-          {
-            if (conflicting)
-              item.PinImage = Thumbs.TvConflictRecordingSeriesIcon;
-            else
-              item.PinImage = Thumbs.TvRecordingSeriesIcon;
-          }
-          else
-          {
-            if (conflicting)
-              item.PinImage = Thumbs.TvConflictRecordingIcon;
-            else
-              item.PinImage = Thumbs.TvRecordingIcon;
-          }
-          listSchedules.Add(item);
+					item = Schedule2ListItem(rec);
+					listSchedules.Add(item);
           total++;
         }
       }//foreach (Schedule rec in itemlist)
@@ -482,6 +512,7 @@ namespace TvPlugin
     {
       SortMethod method = currentSortMethod;
       bool bAscending = m_bSortAscending;
+			bool showSeries = btnSeries.Selected;
 
       for (int i = 0; i < GetItemCount(); ++i)
       {
@@ -490,7 +521,89 @@ namespace TvPlugin
         Schedule rec = (Schedule)item.TVTag;
 
         item.Label = rec.ProgramName;
-        item.Label2 = GetDate(rec);
+				if (showSeries == false)
+				{
+					string strTime;
+					string strType;
+
+					switch (rec.ScheduleType)
+					{
+						case (int) ScheduleRecordingType.Once:
+							item.Label2 = String.Format("{0} {1} - {2}",
+							                            MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
+							                            rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+							                            rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+							;
+							break;
+						case (int) ScheduleRecordingType.Daily:
+							strTime = String.Format("{0}-{1}",
+							                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+							                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+							strType = GUILocalizeStrings.Get(648);
+							item.Label2 = String.Format("{0} {1}", strType, strTime);
+							break;
+
+						case (int) ScheduleRecordingType.WorkingDays:
+							strTime = String.Format("{0}-{1} {2}-{3}",
+							                        GUILocalizeStrings.Get(657), //657=Mon
+							                        GUILocalizeStrings.Get(661), //661=Fri
+							                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+							                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+							strType = GUILocalizeStrings.Get(648);
+							item.Label2 = String.Format("{0} {1}", strType, strTime);
+							break;
+
+						case (int) ScheduleRecordingType.Weekends:
+							strTime = String.Format("{0}-{1} {2}-{3}",
+							                        GUILocalizeStrings.Get(662), //662=Sat
+							                        GUILocalizeStrings.Get(663), //663=Sun
+							                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+							                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+							strType = GUILocalizeStrings.Get(649);
+							item.Label2 = String.Format("{0} {1}", strType, strTime);
+							break;
+						case (int) ScheduleRecordingType.Weekly:
+							string day;
+							switch (rec.StartTime.DayOfWeek)
+							{
+								case DayOfWeek.Monday:
+									day = GUILocalizeStrings.Get(11);
+									break;
+								case DayOfWeek.Tuesday:
+									day = GUILocalizeStrings.Get(12);
+									break;
+								case DayOfWeek.Wednesday:
+									day = GUILocalizeStrings.Get(13);
+									break;
+								case DayOfWeek.Thursday:
+									day = GUILocalizeStrings.Get(14);
+									break;
+								case DayOfWeek.Friday:
+									day = GUILocalizeStrings.Get(15);
+									break;
+								case DayOfWeek.Saturday:
+									day = GUILocalizeStrings.Get(16);
+									break;
+								default:
+									day = GUILocalizeStrings.Get(17);
+									break;
+							}
+
+							strTime = String.Format("{0}-{1}",
+							                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+							                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+							strType = GUILocalizeStrings.Get(649);
+							item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
+							break;
+						case (int) ScheduleRecordingType.EveryTimeOnThisChannel:
+							item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.ReferencedChannel().DisplayName});
+							break;
+						case (int) ScheduleRecordingType.EveryTimeOnEveryChannel:
+							item.Label2 = GUILocalizeStrings.Get(651);
+							break;
+					}
+				}
+				else item.Label2 = GetDate(rec);
       }
     }
 
@@ -511,6 +624,32 @@ namespace TvPlugin
       m_iSelectedItem = GetSelectedItemNo();
       GUIListItem item = GetItem(iItem);
       if (item == null) return;
+			if (item.IsFolder)
+			{
+				bool noitems = false;
+				if (item.Label == "..")
+				{
+					if (selectedItem != null)
+					{
+						selectedItem = null;
+					}
+					LoadDirectory();
+					return;
+				}
+				if (selectedItem == null)
+				{
+					List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(item.TVTag as Schedule);
+					if (seriesList.Count < 1) noitems = true;  // no items existing
+					else selectedItem = item.TVTag as Schedule;
+				}
+				if (noitems == false)
+				{
+					LoadDirectory();
+					return;
+				}
+			}
+
+
       Schedule rec = item.TVTag as Schedule;
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
