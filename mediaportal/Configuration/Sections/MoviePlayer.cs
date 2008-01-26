@@ -59,6 +59,8 @@ namespace MediaPortal.Configuration.Sections
     private System.ComponentModel.IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox wmvGroupBox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox wmvCheckBox;
     bool _init = false;
     
     public MoviePlayer()
@@ -78,17 +80,13 @@ namespace MediaPortal.Configuration.Sections
       base.OnSectionActivated();
       if (_init == false)
       {
-        // 
         // Fetch available audio and video renderers
-        //
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
-        //
         // Populate video and audio codecs
-        //
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
-        //Remove Cyberlink Muxer from the list to avoid confusion.
+        //Remove Cyberlink Muxer from the list to avoid newbie user confusion.
         if (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
         {
           availableVideoFilters.Remove("CyberLink MPEG Muxer");
@@ -120,6 +118,7 @@ namespace MediaPortal.Configuration.Sections
         externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
         audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
         useTsFileSourceForMpegs=xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
+        wmvCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "wmvaudio", false);
         // Set codecs
         string videoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
         string h264videoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
@@ -209,11 +208,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("movieplayer", "arguments", parametersTextBox.Text);
         xmlwriter.SetValueAsBool("movieplayer", "internal", !externalPlayerCheckBox.Checked);
         xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
-
+        xmlwriter.SetValueAsBool("movieplayer", "wmvaudio", wmvCheckBox.Checked);
         xmlwriter.SetValueAsBool("movieplayer", "useTsFileSourceForMpegs", useTsFileSourceForMpegs);
-
-
-        //
         // Set codecs
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "mpeg2videocodec", videoCodecComboBox.Text);
@@ -252,6 +248,8 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -259,10 +257,11 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.wmvGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.wmvCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
+      this.wmvGroupBox.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -277,7 +276,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.fileNameTextBox);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 136);
+      this.groupBox1.Location = new System.Drawing.Point(0, 202);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 112);
       this.groupBox1.TabIndex = 1;
@@ -372,7 +371,26 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 128);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Settings";
+      this.mpGroupBox1.Text = "Codec Settings (internal player)";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(16, 48);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(146, 16);
+      this.mpLabel1.TabIndex = 8;
+      this.mpLabel1.Text = "H.264 video decoder:";
+      // 
+      // h264videoCodecComboBox
+      // 
+      this.h264videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.h264videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 44);
+      this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
+      this.h264videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
+      this.h264videoCodecComboBox.TabIndex = 9;
       // 
       // audioRendererComboBox
       // 
@@ -431,27 +449,33 @@ namespace MediaPortal.Configuration.Sections
       this.label5.TabIndex = 2;
       this.label5.Text = "Audio decoder:";
       // 
-      // mpLabel1
+      // wmvGroupBox
       // 
-      this.mpLabel1.Location = new System.Drawing.Point(16, 48);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(146, 16);
-      this.mpLabel1.TabIndex = 8;
-      this.mpLabel1.Text = "H.264 video decoder:";
-      // 
-      // h264videoCodecComboBox
-      // 
-      this.h264videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.wmvGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.h264videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 44);
-      this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
-      this.h264videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.h264videoCodecComboBox.TabIndex = 9;
+      this.wmvGroupBox.Controls.Add(this.wmvCheckBox);
+      this.wmvGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.wmvGroupBox.Location = new System.Drawing.Point(0, 134);
+      this.wmvGroupBox.Name = "wmvGroupBox";
+      this.wmvGroupBox.Size = new System.Drawing.Size(472, 62);
+      this.wmvGroupBox.TabIndex = 7;
+      this.wmvGroupBox.TabStop = false;
+      this.wmvGroupBox.Text = "WMV playback (internal player)";
+      // 
+      // wmvCheckBox
+      // 
+      this.wmvCheckBox.AutoSize = true;
+      this.wmvCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.wmvCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.wmvCheckBox.Name = "wmvCheckBox";
+      this.wmvCheckBox.Size = new System.Drawing.Size(233, 17);
+      this.wmvCheckBox.TabIndex = 0;
+      this.wmvCheckBox.Text = "Use 5.1 audio playback for WMV movie files";
+      this.wmvCheckBox.UseVisualStyleBackColor = true;
       // 
       // MoviePlayer
       // 
+      this.Controls.Add(this.wmvGroupBox);
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.groupBox1);
       this.Name = "MoviePlayer";
@@ -459,6 +483,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
+      this.wmvGroupBox.ResumeLayout(false);
+      this.wmvGroupBox.PerformLayout();
       this.ResumeLayout(false);
 
     }

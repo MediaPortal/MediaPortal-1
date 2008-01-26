@@ -84,12 +84,14 @@ namespace MediaPortal.Player
         string strAudiorenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
+        bool wmvAudio;
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
           strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
           strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+          wmvAudio = xmlreader.GetValueAsBool("movieplayer", "wmvaudio", false);
           // FlipGer: load infos for custom filters
           int intCount = 0;
           while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
@@ -132,31 +134,31 @@ namespace MediaPortal.Player
         IBaseFilter baseFilter;
         graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
         int hr;
-        if (baseFilter != null)
-        {
-          Log.Info("VideoPlayerVMR9: Found WMAudio Decoder DMO");
-          //Set the filter setting to enable more than 2 audio channels
-          //const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
-          //object val = true;
-          //IPropertyBag propBag = (IPropertyBag)baseFilter;
-          //hr = propBag.Write(g_wszWMACHiResOutput, ref val);
-          //if (hr != 0)
-          //{
-          //  Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
-          //}
-          //else
-          //{
-          //  Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
-          //}
-          Marshal.ReleaseComObject(baseFilter);
-        }
-        hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
-        if (hr != 0)
-        {
-          Error.SetError("Unable to play movie", "Unable to render file. Missing codecs?");
-          Log.Error("VideoPlayer9: Failed to render file -> vmr9");
-          return false;
-        }
+        if (baseFilter != null && wmvAudio != false) //Also check configuration option enabled
+          {
+            Log.Info("VideoPlayerVMR9: Found WMAudio Decoder DMO");
+            //Set the filter setting to enable more than 2 audio channels
+            const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
+            object val = true;
+            IPropertyBag propBag = (IPropertyBag)baseFilter;
+            hr = propBag.Write(g_wszWMACHiResOutput, ref val);
+            if (hr != 0)
+            {
+              Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
+            }
+            else
+            {
+              Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
+            }
+            Marshal.ReleaseComObject(baseFilter);
+          }
+          hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+          if (hr != 0)
+          {
+            Error.SetError("Unable to play movie", "Unable to render file. Missing codecs?");
+            Log.Error("VideoPlayer9: Failed to render file -> vmr9");
+            return false;
+          }
         //Use below if some file formats don't play
         //graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
 
