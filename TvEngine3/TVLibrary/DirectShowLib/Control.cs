@@ -811,8 +811,8 @@ namespace DirectShowLib
         [PreserveSig]
         new int GetEvent(
             [Out] out EventCode lEventCode,
-            [Out] out IntPtr lParam1,
-            [Out] out IntPtr lParam2,
+            [Out] out int lParam1,
+            [Out] out int lParam2,
             [In] int msTimeout
             );
 
@@ -831,8 +831,8 @@ namespace DirectShowLib
         [PreserveSig]
         new int FreeEventParams(
             [In] EventCode lEvCode,
-            [In] IntPtr lParam1,
-            [In] IntPtr lParam2
+            [In] int lParam1,
+            [In] int lParam2
             );
 
         #endregion

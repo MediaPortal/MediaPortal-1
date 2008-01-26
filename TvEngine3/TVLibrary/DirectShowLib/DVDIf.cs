@@ -1455,7 +1455,7 @@ namespace DirectShowLib.Dvd
 
         [PreserveSig]
         int GetCmdFromEvent(
-            [In] IntPtr lParam1,
+            [In] int lParam1,
             [Out] out IDvdCmd pCmdObj
             );
 
