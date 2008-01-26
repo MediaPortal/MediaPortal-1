@@ -23,6 +23,7 @@
 class CTsHeader
 {
 public:
+	CTsHeader();
 	CTsHeader(byte* tsPacket);
 	virtual ~CTsHeader(void);
 	void LogHeader();
@@ -40,6 +41,8 @@ public:
 	BYTE ContinuityCounter	;
 	BYTE AdaptionFieldLength;
 	BYTE PayLoadStart;
+	bool HasAdaptionField;
+	bool HasPayload;
 private:
 	void Decode(byte *data);
 	byte* m_packet;

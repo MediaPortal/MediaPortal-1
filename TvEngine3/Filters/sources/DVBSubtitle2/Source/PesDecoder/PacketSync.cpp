@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable : 4995)
 #include <windows.h>
 #include "PacketSync.h"
 
@@ -39,24 +40,41 @@ void CPacketSync::OnRawData(byte* pData, int nDataLen)
 {
 	//LogDebug("On raw data");
 	int syncOffset=0;
-	if (m_tempBufferPos >=0 )
+	if (m_tempBufferPos > 0 )
 	{
 		syncOffset = TS_PACKET_LEN - m_tempBufferPos;
 		memcpy(&m_tempBuffer[m_tempBufferPos], pData, syncOffset);
+    if (m_tempBuffer[0] == TS_PACKET_SYNC) 
+    {
 		OnTsPacket(m_tempBuffer);
+    }
 		m_tempBufferPos = 0;
 	}
 
 	while (syncOffset < nDataLen)
 	{
-		if (syncOffset + TS_PACKET_LEN > nDataLen){ 
-			
-			break;
-		}
+		if (syncOffset + TS_PACKET_LEN > nDataLen) break;
 		if (pData[syncOffset] != TS_PACKET_SYNC) 
 		{
-			syncOffset++;
-			continue;
+      //check if this is a corrupted packet...
+      int nextPkt=syncOffset + TS_PACKET_LEN;
+      if (nextPkt < nDataLen) 
+      {
+        if (pData[nextPkt]==TS_PACKET_SYNC)
+        {
+          syncOffset=nextPkt;
+        }
+        else
+        {
+			    syncOffset++;
+			    continue;
+        }
+      }
+      else
+      {
+			  syncOffset++;
+			  continue;
+      }
 		}
 		OnTsPacket( &pData[syncOffset] );
 		syncOffset += TS_PACKET_LEN;
