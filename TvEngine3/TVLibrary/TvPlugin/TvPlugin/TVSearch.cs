@@ -150,9 +150,9 @@ namespace TvPlugin
         }
       }
 
-      switch (action.wID)
+      /*switch (action.wID)
       {
-      }
+      }*/
       base.OnAction(action);
     }
 

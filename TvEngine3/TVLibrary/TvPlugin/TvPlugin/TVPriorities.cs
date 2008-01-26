@@ -85,12 +85,11 @@ namespace TvPlugin
       return bResult;
     }
 
-
     public override void OnAction(Action action)
     {
-      switch (action.wID)
+      /*switch (action.wID)
       {
-      }
+      }*/
       base.OnAction(action);
     }
     protected override void OnPageLoad()
@@ -487,7 +486,7 @@ namespace TvPlugin
         case 979: // Play recording from beginning
           if (g_Player.Playing && g_Player.IsTVRecording)
           {
-            g_Player.Stop();
+            g_Player.Stop(true);
           }
           //TVHome.IsTVOn = true;
           TVHome.ViewChannel(rec.ReferencedChannel());

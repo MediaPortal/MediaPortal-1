@@ -2488,7 +2488,7 @@ namespace TvPlugin
           //view this channel
           if (g_Player.Playing && g_Player.IsTVRecording)
           {
-            g_Player.Stop();
+            g_Player.Stop(true);
           }
           try
           {
@@ -2532,7 +2532,7 @@ namespace TvPlugin
                     {
                       case 979: // Play recording from beginning 
                         {
-                          g_Player.Stop();
+                          g_Player.Stop(true);
                           if (System.IO.File.Exists(fileName))
                           {
                             g_Player.Play(fileName, g_Player.MediaType.Recording);

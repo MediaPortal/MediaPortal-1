@@ -293,6 +293,14 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Method to stop playing
+    /// </summary>
+    public virtual void Stop(bool keepExclusiveModeOn)
+    {
+      Stop(); // currently only TsReaderPlayer uses this
+    }
+
+    /// <summary>
     /// Method to stop playing but at the same time keep timeshifting on server
     /// </summary>
     public virtual void StopAndKeepTimeShifting()

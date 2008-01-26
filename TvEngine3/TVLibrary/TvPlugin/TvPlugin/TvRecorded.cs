@@ -75,7 +75,7 @@ namespace TvPlugin
       //try
       //{
       //  _creatingThumbNails = true;
-      IList recordings = Recording.ListAll();
+      /*IList recordings = Recording.ListAll();
       foreach (Recording rec in recordings)
       {
         string thumbNail = Utils.GetCoverArtName(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, @".png")));
@@ -119,7 +119,7 @@ namespace TvPlugin
       //finally
       //{
       //  _creatingThumbNails = false;
-      //}
+      //}*/
     }
   }
   #endregion
@@ -757,7 +757,6 @@ namespace TvPlugin
       }
       GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
 
-
       btnSortBy.IsAscending = m_bSortAscending;
 
       if (currentViewMethod == ViewAs.List)
@@ -819,11 +818,9 @@ namespace TvPlugin
         }
       }
     }
-
     
     bool OnPlayRecording(int iItem)
     {
-
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null) return false;
       if (pItem.IsFolder)
@@ -835,7 +832,6 @@ namespace TvPlugin
         LoadDirectory();
         return false;
       }
-
 
       Recording rec = (Recording)pItem.TVTag;
       IList itemlist = Recording.ListAll();
@@ -858,7 +854,8 @@ namespace TvPlugin
       // instead we just playback the newly selected TV recording
       if (!g_Player.IsTVRecording)
       {
-        g_Player.Stop();
+        Log.Info("OnPlayRecording - calling g_Player.Stop(true); ");
+        g_Player.Stop(true);
       }
 
       if (TVHome.Card != null)
@@ -881,31 +878,31 @@ namespace TvPlugin
         if (!dlgYesNo.IsConfirmed) stoptime = 0;
       }
       /*
-              IMDBMovie movieDetails = new IMDBMovie();
-              VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
-              int idMovie = VideoDatabase.GetMovieId(rec.FileName);
-              int idFile = VideoDatabase.GetFileId(rec.FileName);
-              if (idMovie >= 0 && idFile >= 0 )
-              {
-                Log.Info("play got movie id:{0} for {1}", idMovie, rec.FileName);
-                stoptime = VideoDatabase.GetMovieStopTime(idMovie);
-                if (stoptime > 0)
-                {
-                  string title = System.IO.Path.GetFileName(rec.FileName);
-                  if (movieDetails.Title != String.Empty) title = movieDetails.Title;
+        IMDBMovie movieDetails = new IMDBMovie();
+        VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
+        int idMovie = VideoDatabase.GetMovieId(rec.FileName);
+        int idFile = VideoDatabase.GetFileId(rec.FileName);
+        if (idMovie >= 0 && idFile >= 0 )
+        {
+          Log.Info("play got movie id:{0} for {1}", idMovie, rec.FileName);
+          stoptime = VideoDatabase.GetMovieStopTime(idMovie);
+          if (stoptime > 0)
+          {
+            string title = System.IO.Path.GetFileName(rec.FileName);
+            if (movieDetails.Title != String.Empty) title = movieDetails.Title;
 
-                  GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                  if (null == dlgYesNo) return false;
-                  dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-                  dlgYesNo.SetLine(1, rec.Channel);
-                  dlgYesNo.SetLine(2, title);
-                  dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(stoptime));
-                  dlgYesNo.SetDefaultToYes(true);
-                  dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+            GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+            if (null == dlgYesNo) return false;
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
+            dlgYesNo.SetLine(1, rec.Channel);
+            dlgYesNo.SetLine(2, title);
+            dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(stoptime));
+            dlgYesNo.SetDefaultToYes(true);
+            dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
-                  if (!dlgYesNo.IsConfirmed) stoptime = 0;
-                }
-              }
+            if (!dlgYesNo.IsConfirmed) stoptime = 0;
+          }
+        }
       */
       string fileName = rec.FileName;
 
@@ -1297,7 +1294,6 @@ namespace TvPlugin
       if (filename.Substring(0, 4) == "rtsp") { filename = g_Player.currentFileName; };
 
       g_Player.Stop();
-
 
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);

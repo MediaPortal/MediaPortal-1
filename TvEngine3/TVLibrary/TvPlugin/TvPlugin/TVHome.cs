@@ -81,7 +81,7 @@ namespace TvPlugin
 		static VirtualCard _card = null;
 		DateTime _updateTimer = DateTime.Now;
 		static bool _autoTurnOnTv = false;
-		int _lagtolerance = 10; //Added by joboehl
+		//int _lagtolerance = 10; //Added by joboehl
 		static bool _settingsLoaded = false;
 		DateTime _dtlastTime = DateTime.Now;
 		TvCropManager _cropManager = new TvCropManager();
@@ -99,7 +99,7 @@ namespace TvPlugin
 		static bool _userChannelChanged = false;
 		static private bool _doingHandleServerNotConnected = false;
     static private bool _doingChannelChange = false;
-		Stopwatch benchClock = null;
+		//Stopwatch benchClock = null;
 
 		[SkinControlAttribute(2)]
 		protected GUIButtonControl btnTvGuide = null;
@@ -808,7 +808,7 @@ namespace TvPlugin
 			{
 				IList cards = TvDatabase.Card.ListAll();
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				// lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.        
 				if (TVHome.Connected && RemoteControl.IsConnected)
@@ -864,7 +864,6 @@ namespace TvPlugin
 			{
 				m_navigator = new ChannelNavigator();			// Create the channel navigator (it will load groups and channels)
 			}
-
 
 			base.OnPageLoad();
 
@@ -1065,8 +1064,6 @@ namespace TvPlugin
 
 			benchClock.Stop();
 			Log.Debug("TVHome.OnSelecChannel(): Total Time {0} ms", benchClock.ElapsedMilliseconds.ToString());
-
-
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -1115,10 +1112,8 @@ namespace TvPlugin
 						}
 						else
 						{
-
 							Log.Warn("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
-
-							g_Player.Stop();
+							g_Player.Stop(true);
 						}
 					}
 					SaveSettings();
@@ -1667,7 +1662,7 @@ namespace TvPlugin
 
 				catch (Exception ex)
 				{
-					MediaPortal.GUI.Library.Log.Info("grrrr:{0}", ex.Source, ex.StackTrace);
+          MediaPortal.GUI.Library.Log.Info("UpdateProgressPercentageBar:{0}", ex.Source, ex.StackTrace);
 				}
 
 			}
@@ -1932,7 +1927,7 @@ namespace TvPlugin
 					{
 						if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)// || g_Player.IsRadio)
 						{
-							g_Player.Stop();
+							g_Player.Stop(true); // tell that we are zapping so exclusive mode is not going to be disabled
 						}
 					}
 				}
@@ -1941,7 +1936,7 @@ namespace TvPlugin
 					if (g_Player.IsTVRecording) //we are watching a recording, we have now issued a ch. change..stop the player.
 					{
 						_userChannelChanged = false;
-						g_Player.Stop();
+						g_Player.Stop(true);
 					}
 				}        
 
@@ -1996,7 +1991,7 @@ namespace TvPlugin
 				//Start timeshifting the new tv channel
 				TvServer server = new TvServer();
 				VirtualCard card;
-				bool _return = false;			
+				//bool _return = false;			
         
         if (wasPlaying)
         {

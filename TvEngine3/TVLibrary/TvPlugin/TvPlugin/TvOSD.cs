@@ -1385,7 +1385,7 @@ namespace TvPlugin
         string title = "";
         string startTime = ""; // DateTime.MinValue;
         string endTime = ""; //  DateTime.MaxValue;
-        string remaining = "";
+        //string remaining = "";
 
         rec = TvRecorded.ActiveRecording();
         if (rec != null)
@@ -1399,7 +1399,7 @@ namespace TvPlugin
           long duration = (long)(g_Player.Duration);          
           endTime = Utils.SecondsToHMSString((int)duration);
           
-          remaining = "0";                    
+          //remaining = "0";                    
           tbOnTvNow.Label = title;
           GUIPropertyManager.SetProperty("#TV.View.start", startTime);
           GUIPropertyManager.SetProperty("#TV.View.stop", endTime);          

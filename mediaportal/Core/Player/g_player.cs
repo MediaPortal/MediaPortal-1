@@ -404,7 +404,7 @@ namespace MediaPortal.Player
       }
     }
 
-    private static void doStop(bool keepTimeShifting)
+    private static void doStop(bool keepTimeShifting, bool keepExclusiveModeOn)
     {
       if (driveSpeedReduced)
       {
@@ -419,15 +419,22 @@ namespace MediaPortal.Player
       }
       if (_player != null)
       {
-        Log.Info("g_Player.Stop() keepTimeShifting = {0}", keepTimeShifting);
+        Log.Info("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting, keepExclusiveModeOn);
         OnStopped();
         GUIGraphicsContext.ShowBackground = true;
-        if (!keepTimeShifting)
+        if (!keepTimeShifting && !keepExclusiveModeOn)
         {
+          Log.Info("g_Player.doStop() - stop");
           _player.Stop();
+        }
+        else if (keepExclusiveModeOn)
+        {
+          Log.Info("g_Player.doStop() - stop, keep exclusive mode on");
+          _player.Stop(true);
         }
         else
         {
+          Log.Info("g_Player.doStop() - StopAndKeepTimeShifting");
           _player.StopAndKeepTimeShifting();
         }
         if (GUIGraphicsContext.form != null)
@@ -447,15 +454,28 @@ namespace MediaPortal.Player
 
     public static void StopAndKeepTimeShifting()
     {
-      doStop(true);
+      doStop(true, false);
     }
 
+    public static void Stop(bool keepExclusiveModeOn)
+    {
+      Log.Info("g_Player.Stop() - keepExclusiveModeOn = {0}" ,keepExclusiveModeOn);
+      if (keepExclusiveModeOn)
+      {
+        doStop(false, true);
+      }
+      else
+      {
+        Stop();
+      }
+    }
+    
     public static void Stop()
     {
       // we have to save the fullscreen status of the tv3 plugin for later use for the lastactivemodulefullscreen feature.
       bool currentmodulefullscreen = (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
       GUIPropertyManager.SetProperty("#currentmodulefullscreenstate", Convert.ToString(currentmodulefullscreen));
-      doStop(false);
+      doStop(false, false);
     }
 
     static void CachePlayer()
@@ -987,7 +1007,6 @@ namespace MediaPortal.Player
           //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
           //GUIWindowManager.SendMessage(msgTv);
         }				
-				
 
         _currentStep = 0;
         _currentStepIndex = -1;

@@ -233,13 +233,6 @@ namespace MediaPortal.Player
       Speed = 1;
       Log.Info("TSReaderPlayer: GetInterfaces()");
 
-      // switch back to directx fullscreen mode
-      Log.Info("TSReaderPlayer: Enabling DX9 exclusive mode");
-      if (_isRadio == false)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
-        GUIWindowManager.SendMessage(msg);
-      }
       //Log.Info("TSReaderPlayer: build graph");
 
       try
@@ -477,7 +470,8 @@ namespace MediaPortal.Player
           }
         }
 
-        if( enableDVBTtxtSubtitles ){
+        if( enableDVBTtxtSubtitles )
+        {
           //Log.Debug("TSReaderPlayer: Obtaining TeletextSource");
           _teletextSource = _fileSource as ITeletextSource;
 
@@ -548,10 +542,24 @@ namespace MediaPortal.Player
     protected override void CloseInterfaces()
     {
       Cleanup();
-      // Switch back to directx windowed mode. This cannot be done in Cleanup() as it's 
-      // used also when starting up the playback!
-      Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+    }
+
+    protected override void ExclusiveMode(bool onOff)
+    {
+      GUIMessage msg = null;
+      if (onOff)
+      {
+        Log.Info("TSReaderPlayer: Enabling DX9 exclusive mode");
+        if (_isRadio == false)
+        {
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+        }
+      }
+      else
+      {
+        Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode");
+		msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+      }
       GUIWindowManager.SendMessage(msg);
     }
 

@@ -615,8 +615,9 @@ namespace TvPlugin
 
     void SetLabels()
     {
+      // TODO: why this is disabled?      
       return;
-      SortMethod method = currentSortMethod;
+      /*SortMethod method = currentSortMethod;
 
       for (int i = 0; i < GetItemCount(); ++i)
       {
@@ -641,7 +642,7 @@ namespace TvPlugin
             }
           }
         }
-      }
+      }*/
     }
 
     #region Sort Members
@@ -807,8 +808,9 @@ namespace TvPlugin
       if (g_Player.Playing)
       {
         if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && channel.IsWebstream()))
+        {
           g_Player.Stop();
-
+        }
       }
       if (channel.IsFMRadio() || channel.IsWebstream())
         g_Player.PlayAudioStream(GetPlayPath(channel));

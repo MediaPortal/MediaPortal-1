@@ -774,7 +774,7 @@ namespace TvPlugin
 
         case 979: // Play recording from beginning
           {
-            g_Player.Stop();
+            g_Player.Stop(true);
             if (System.IO.File.Exists(fileName))
             {
               g_Player.Play(fileName, g_Player.MediaType.Recording);

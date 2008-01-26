@@ -74,7 +74,8 @@ namespace MediaPortal.Player
     }
     
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
-    protected class TsReader {
+    protected class TsReader 
+    {
     }
 
     #region imports
@@ -143,7 +144,6 @@ namespace MediaPortal.Player
     /// <summary> graph event interface. </summary>
     protected IMediaEventEx _mediaEvt = null;
 
-
     /// <summary> video preview window interface. </summary>
     protected IVideoWindow _videoWin = null;
 
@@ -188,7 +188,7 @@ namespace MediaPortal.Player
     #region public members
 
     /// <summary>
-    /// Implements the AudioStreams member which interfaces the TSFileSource filter to get the IAMStreamSelect interface for enumeration of available streams
+    /// Implements the AudioStreams member which interfaces the TsReader filter to get the IAMStreamSelect interface for enumeration of available streams
     /// </summary>
     public override int AudioStreams
     {
@@ -212,7 +212,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Implements the CurrentAudioStream member which interfaces the TSFileSource filter to get the IAMStreamSelect interface for enumeration and switching of available audio streams
+    /// Implements the CurrentAudioStream member which interfaces the TsReader filter to get the IAMStreamSelect interface for enumeration and switching of available audio streams
     /// </summary>
     public override int CurrentAudioStream
     {
@@ -247,8 +247,7 @@ namespace MediaPortal.Player
         return;
       }
     }
-
-
+    
     /// <summary>
     /// Property to get the type of an audio stream
     /// </summary>
@@ -301,7 +300,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Implements the AudioLanguage member which interfaces the TSFileSource filter to get the IAMStreamSelect interface for getting info about a stream
+    /// Implements the AudioLanguage member which interfaces the TsReader filter to get the IAMStreamSelect interface for getting info about a stream
     /// </summary>
     /// <param name="iStream"></param>
     /// <returns></returns>
@@ -376,6 +375,8 @@ namespace MediaPortal.Player
         _isLive = true;
       }
 
+      ExclusiveMode(true);
+
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
 
       _isVisible = false;
@@ -407,15 +408,13 @@ namespace MediaPortal.Player
       }
       _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
-
-
-
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
       {
         Log.Error("TSReaderPlayer:SetNotifyWindow() failed");
         _currentFile = "";
         CloseInterfaces();
+        ExclusiveMode(false);
         return false;
       }
       if (_videoWin != null)
@@ -433,6 +432,7 @@ namespace MediaPortal.Player
           Log.Error("TSReaderPlayer:GetVideoSize() failed");
           _currentFile = "";
           CloseInterfaces();
+          ExclusiveMode(false);
           return false;
         }
         Log.Info("TSReaderPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
@@ -444,6 +444,7 @@ namespace MediaPortal.Player
         Log.Error("TSReaderPlayer:_mediaCtrl==null");
         _currentFile = "";
         CloseInterfaces();
+        ExclusiveMode(false);
         return false;
       }
 
@@ -572,11 +573,9 @@ namespace MediaPortal.Player
       Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
         rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
 
-
       Log.Info("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
         rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
         rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
-
 
       if (rSource.Y == 0)
       {
@@ -593,7 +592,6 @@ namespace MediaPortal.Player
     {
       get { return _state == PlayState.Ended; }
     }
-
 
     public override void Process()
     {
@@ -897,7 +895,6 @@ namespace MediaPortal.Player
       base.WndProc(ref m);
     }
 
-
     public override int PositionX
     {
       get { return _positionX; }
@@ -910,6 +907,7 @@ namespace MediaPortal.Player
         }
       }
     }
+
     public override int PositionY
     {
       get { return _positionY; }
@@ -922,6 +920,7 @@ namespace MediaPortal.Player
         }
       }
     }
+
     public override int RenderWidth
     {
       get { return _width; }
@@ -934,6 +933,7 @@ namespace MediaPortal.Player
         }
       }
     }
+
     public override int RenderHeight
     {
       get { return _height; }
@@ -946,6 +946,7 @@ namespace MediaPortal.Player
         }
       }
     }
+
     public override double Duration
     {
       get
@@ -956,6 +957,7 @@ namespace MediaPortal.Player
         return _duration;
       }
     }
+
     public override double CurrentPosition
     {
       get
@@ -977,6 +979,7 @@ namespace MediaPortal.Player
     {
       get { return 0.0; }
     }
+
     public override bool FullScreen
     {
       get
@@ -992,6 +995,7 @@ namespace MediaPortal.Player
         }
       }
     }
+
     public override int Width
     {
       get
@@ -1056,22 +1060,31 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
+      Stop(false);
+    }
+
+    public override void Stop(bool keepExclsuiveModeOn)
+    {
       // set the current audio stream to the first one
       _curAudioStream = 0;
       if (SupportsReplay)
       {
-        Log.Info("TSReaderPlayer:stop");
+        Log.Info("TSReaderPlayer:stop (zapping)");
         if (_mediaCtrl == null)
           return;
         _mediaCtrl.Stop();
       }
       else
       {
+        // Do not disable the exclusive mode if we are zapping
         CloseInterfaces();
+        if (!keepExclsuiveModeOn)
+        {
+          ExclusiveMode(false);
+        }
       }
     }
-
-
+    
     public override int Volume
     {
       get { return _volume; }
@@ -1129,7 +1142,6 @@ namespace MediaPortal.Player
     public override void SeekAbsolute(double dTimeInSecs)
     {
       Log.Info("TSReaderPlayer: SeekAbsolute:seekabs:{0}", dTimeInSecs);
-
 
       if (_state != PlayState.Init)
       {
@@ -1190,7 +1202,9 @@ namespace MediaPortal.Player
           fCurPercent = fCurPercent + (double)iPercentage;
           fCurPercent *= fOnePercent;
           if (fCurPercent < 0.0d)
+          {
             fCurPercent = 0.0d;
+          }
           if (fCurPercent < Duration)
           {
             SeekAbsolute(fCurPercent);
@@ -1207,9 +1221,13 @@ namespace MediaPortal.Player
         {
 
           if (iPercentage < 0)
+          {
             iPercentage = 0;
+          }
           if (iPercentage >= 100)
+          {
             iPercentage = 100;
+          }
           double fPercent = Duration / 100.0f;
           fPercent *= (double)iPercentage;
           SeekAbsolute(fPercent);
@@ -1228,7 +1246,6 @@ namespace MediaPortal.Player
     {
       get { return (_isRadio == false); }
     }
-
 
     #endregion
 
@@ -1266,6 +1283,7 @@ namespace MediaPortal.Player
       if (!IsTimeShifting)
       {
         CloseInterfaces();
+        ExclusiveMode(false);
         _state = PlayState.Ended;
       }
       else
@@ -1273,6 +1291,7 @@ namespace MediaPortal.Player
         _endOfFileDetected = true;
       }
     }
+
     void CheckVideoResolutionChanges()
     {
       if (_videoWin == null || _basicVideo == null)
@@ -1338,6 +1357,7 @@ namespace MediaPortal.Player
         _currentPos = fCurrentPos;
       }
     }
+
     void UpdateDuration()
     {
     }
@@ -1525,7 +1545,6 @@ namespace MediaPortal.Player
         if (strVideoCodec.ToLower().IndexOf("nvidia") >= 0)
           _isUsingNvidiaCodec = true;
 
-        //render outputpins of SBE
         DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
@@ -1546,13 +1565,13 @@ namespace MediaPortal.Player
         _basicVideo = _graphBuilder as IBasicVideo2;
         _basicAudio = _graphBuilder as IBasicAudio;
 
-        //Log.Info("TSStreamBufferPlayer:SetARMode");
+        //Log.Info("TSReaderPlayer:SetARMode");
         DirectShowUtil.SetARMode(_graphBuilder, AspectRatioMode.Stretched);
 
         _graphBuilder.SetDefaultSyncSource();
-        //Log.Info("TSStreamBufferPlayer: set Deinterlace");
+        //Log.Info("TSReaderPlayer: set Deinterlace");
 
-        //Log.Info("TSStreamBufferPlayer: done");
+        //Log.Info("TSReaderPlayer: done");
         return true;
       }
       catch (Exception ex)
@@ -1581,8 +1600,6 @@ namespace MediaPortal.Player
       Log.Info("TSReaderPlayer:cleanup DShow graph");
       try
       {
-
-
         if (_mediaCtrl != null)
         {
           hr = _mediaCtrl.Stop();
@@ -1599,7 +1616,6 @@ namespace MediaPortal.Player
         _mediaSeeking = null;
         _basicAudio = null;
         _basicVideo = null;
-
 
         if (_videoCodecFilter != null)
         {
@@ -1659,14 +1675,12 @@ namespace MediaPortal.Player
         _state = PlayState.Init;
         GUIGraphicsContext.form.Invalidate(true);
         GC.Collect();
-        GC.Collect();
-        GC.Collect();
       }
       catch (Exception ex)
       {
         Log.Error("TSReaderPlayer:exception while cleanuping DShow graph {0} {1}", ex.Message, ex.StackTrace);
       }
-      //Log.Info("TSStreamBufferPlayer:cleanup done");
+      Log.Info("TSReaderPlayer:cleanup done");
     }
 
     void OnGraphNotify()
@@ -1689,7 +1703,7 @@ namespace MediaPortal.Player
               MovieEnded();
             }
             //else
-            //Log.Info("TSStreamBufferPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
+            //Log.Info("TSReaderPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
           }
           else
             break;
@@ -1700,13 +1714,16 @@ namespace MediaPortal.Player
       while (hr == 0 && counter < 20);
     }
 
+    protected virtual void ExclusiveMode(bool onOff)
+    { 
+    }
 
     protected virtual void OnInitialized()
     {
     }
+    
     protected void DoFFRW()
     {
-
       if (!Playing)
         return;
 
