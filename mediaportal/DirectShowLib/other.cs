@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,12 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
 
-#if ALLOW_UNTESTED_INTERFACES
 
     /// <summary>
     /// From AM_WST_STYLE
@@ -112,14 +86,13 @@ namespace DirectShowLib
     /// <summary>
     /// From DDSCAPS2
     /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct DDSCaps2
     {
-        [FieldOffset(0)] public int       dwCaps;
-        [FieldOffset(4)] public int       dwCaps2;
-        [FieldOffset(8)] public int       dwCaps3;
-        [FieldOffset(12)] public int       dwCaps4; // Is this supposed to be a array?
-        [FieldOffset(12)] public int       dwVolumeDepth;
+        public int       dwCaps;
+        public int       dwCaps2;
+        public int       dwCaps3;
+        public int       dwCaps4;
     }
 
     /// <summary>
@@ -159,12 +132,11 @@ namespace DirectShowLib
         public IntPtr                  pMiscData; // LPVOID
     }
 
-#endif
 
     /// <summary>
     /// From AM_WST_LEVEL
     /// </summary>
-    public enum WSTLevel 
+    public enum WSTLevel
     {
         Level1_5 = 0
     }
@@ -243,9 +215,9 @@ namespace DirectShowLib
     [StructLayout(LayoutKind.Sequential)]
     public struct WSTPage
     {
-        public int	dwPageNr ;
-        public int	dwSubPageNr ;
-        public IntPtr pucPageData; // BYTE	*
+        public int dwPageNr ;
+        public int dwSubPageNr ;
+        public IntPtr pucPageData; // BYTE *
     }
 
     /// <summary>
@@ -273,7 +245,7 @@ namespace DirectShowLib
     /// From ACM_MPEG_* defines
     /// </summary>
     [Flags]
-    public enum AcmMpegHeadFlags
+    public enum AcmMpegHeadFlags : short
     {
         None = 0x0,
         PrivateBit = 0x1,
@@ -286,7 +258,7 @@ namespace DirectShowLib
     /// <summary>
     /// From MPEG1WAVEFORMAT
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack=2)]
     public class MPEG1WaveFormat
     {
         public WaveFormatEx wfx;
@@ -300,13 +272,24 @@ namespace DirectShowLib
         public int dwPTSHigh;
     }
 
+    /// <summary>
+    /// From _AM_ASFWRITERCONFIG_PARAM
+    /// </summary>
+    public enum ASFWriterConfig
+    {
+        None = 0,
+        AutoIndex = 1,
+        MultiPass = 2,
+        DontCompress = 3
+    }
+
     #endregion
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
 
-    [Guid("c47a3420-005c-11d2-9038-00a0c9697298"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("c47a3420-005c-11d2-9038-00a0c9697298"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMParse
     {
@@ -320,7 +303,8 @@ namespace DirectShowLib
         int Flush();
     }
 
-    [Guid("a8809222-07bb-48ea-951c-33158100625b"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("a8809222-07bb-48ea-951c-33158100625b"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IGetCapabilitiesKey
     {
@@ -328,7 +312,8 @@ namespace DirectShowLib
         int GetCapabilitiesKey( [Out] out IntPtr pHKey ); // HKEY
     }
 
-    [Guid("256A6A21-FBAD-11d1-82BF-00A0C9696C8F"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("256A6A21-FBAD-11d1-82BF-00A0C9696C8F"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMVideoAcceleratorNotify
     {
@@ -345,7 +330,8 @@ namespace DirectShowLib
             [Out] IntPtr ppMiscData); // LPVOID
     }
 
-    [Guid("256A6A22-FBAD-11d1-82BF-00A0C9696C8F"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("256A6A22-FBAD-11d1-82BF-00A0C9696C8F"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMVideoAccelerator
     {
@@ -411,7 +397,8 @@ namespace DirectShowLib
             [In] IMediaSample pMediaSample);
     }
 
-    [Guid("56a868fd-0ad4-11ce-b0a3-0020af0ba770"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("56a868fd-0ad4-11ce-b0a3-0020af0ba770"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMFilterGraphCallback
     {
@@ -419,7 +406,8 @@ namespace DirectShowLib
         int UnableToRender(IPin pPin);
     }
 
-    [Guid("AB6B4AFE-F6E4-11d0-900D-00C04FD9189D"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("AB6B4AFE-F6E4-11d0-900D-00C04FD9189D"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDirectDrawMediaSample
     {
@@ -432,7 +420,8 @@ namespace DirectShowLib
         int LockMediaSamplePointer();
     }
 
-    [Guid("AB6B4AFC-F6E4-11d0-900D-00C04FD9189D"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("AB6B4AFC-F6E4-11d0-900D-00C04FD9189D"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDirectDrawMediaSampleAllocator
     {
@@ -442,9 +431,9 @@ namespace DirectShowLib
 
     }
 
-#endif
 
-    [Guid("45086030-F7E4-486a-B504-826BB5792A3B"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("45086030-F7E4-486a-B504-826BB5792A3B"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IConfigAsfWriter
     {
@@ -452,7 +441,7 @@ namespace DirectShowLib
         Obsolete("This method is now obsolete because it assumes version 4.0 Windows Media Format SDK profiles. Use GetCurrentProfile or GetCurrentProfileGuid instead to correctly identify a profile.", false)]
         int ConfigureFilterUsingProfileId([In] int dwProfileId);
 
-        [PreserveSig, 
+        [PreserveSig,
         Obsolete("This method is now obsolete because it assumes version 4.0 Windows Media Format SDK profiles. Use GetCurrentProfile or GetCurrentProfileGuid instead to correctly identify a profile.", false)]
         int GetCurrentProfileId([Out] out int pdwProfileId);
 
@@ -479,7 +468,8 @@ namespace DirectShowLib
         int GetIndexMode([Out, MarshalAs(UnmanagedType.Bool)] out bool pbIndexFile);
     }
 
-    [Guid("546F4260-D53E-11cf-B3F0-00AA003761C5"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("546F4260-D53E-11cf-B3F0-00AA003761C5"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMDirectSound
     {
@@ -508,7 +498,8 @@ namespace DirectShowLib
         int GetFocusWindow(out IntPtr hWnd, [Out, MarshalAs(UnmanagedType.Bool)] out bool bSet);
     }
 
-    [Guid("C056DE21-75C2-11d3-A184-00105AEF9F33"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("C056DE21-75C2-11d3-A184-00105AEF9F33"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMWstDecoder
     {
@@ -567,7 +558,8 @@ namespace DirectShowLib
         int SetCurrentPage([In] WSTPage WstPage);
     }
 
-    [Guid("b45dd570-3c77-11d1-abe1-00a0c905f375"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("b45dd570-3c77-11d1-abe1-00a0c905f375"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMpegAudioDecoder
     {
@@ -635,6 +627,96 @@ namespace DirectShowLib
         int get_AudioFormat(
             out MPEG1WaveFormat lpFmt
             );
+    }
+
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("6d5140c1-7436-11ce-8034-00aa006009fa"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IServiceProvider
+    {
+        int QueryService(
+            [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid guidService,
+            [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid riid,
+            [MarshalAs(UnmanagedType.IUnknown)] out object ppvObject
+            );
+    }
+
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("FC4801A3-2BA9-11CF-A229-00AA003D7352"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IObjectWithSite
+    {
+        [PreserveSig]
+        int SetSite(
+            [In, MarshalAs(UnmanagedType.IUnknown)] object pUnkSite
+            );
+
+        [PreserveSig]
+        int GetSite(
+            [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid riid,
+            [MarshalAs(UnmanagedType.IUnknown)] out object ppvSite
+            );
+    }
+
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("7989CCAA-53F0-44f0-884A-F3B03F6AE066"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IConfigAsfWriter2 : IConfigAsfWriter
+    {
+        #region IConfigAsfWriter Methods
+
+        [PreserveSig,
+        Obsolete("This method is now obsolete because it assumes version 4.0 Windows Media Format SDK profiles. Use GetCurrentProfile or GetCurrentProfileGuid instead to correctly identify a profile.", false)]
+        new int ConfigureFilterUsingProfileId([In] int dwProfileId);
+
+        [PreserveSig,
+        Obsolete("This method is now obsolete because it assumes version 4.0 Windows Media Format SDK profiles. Use GetCurrentProfile or GetCurrentProfileGuid instead to correctly identify a profile.", false)]
+        new int GetCurrentProfileId([Out] out int pdwProfileId);
+
+        [PreserveSig,
+        Obsolete("Using Guids is considered obsolete by MS.  The preferred approach is using an IWMProfile.  See ConfigureFilterUsingProfile", false)]
+        new int ConfigureFilterUsingProfileGuid([In, MarshalAs(UnmanagedType.LPStruct)] Guid guidProfile);
+
+        [PreserveSig,
+        Obsolete("Using Guids is considered obsolete by MS.  The preferred approach is using an IWMProfile.  See GetCurrentProfile", false)]
+        new int GetCurrentProfileGuid([Out] out Guid pProfileGuid);
+
+        [PreserveSig,
+        Obsolete("This method requires IWMProfile, which in turn requires several other interfaces.  Rather than duplicate all those interfaces here, it is recommended that you use the WindowsMediaLib from http://DirectShowNet.SourceForge.net", false)]
+        new int ConfigureFilterUsingProfile([In] IntPtr pProfile);
+
+        [PreserveSig,
+        Obsolete("This method requires IWMProfile, which in turn requires several other interfaces.  Rather than duplicate all those interfaces here, it is recommended that you use the WindowsMediaLib from http://DirectShowNet.SourceForge.net", false)]
+        new int GetCurrentProfile([Out] out IntPtr ppProfile);
+
+        [PreserveSig]
+        new int SetIndexMode([In, MarshalAs(UnmanagedType.Bool)] bool bIndexFile);
+
+        [PreserveSig]
+        new int GetIndexMode([Out, MarshalAs(UnmanagedType.Bool)] out bool pbIndexFile);
+
+        #endregion
+
+        [PreserveSig]
+        int StreamNumFromPin(
+            IPin pPin,
+            out short pwStreamNum);
+
+        [PreserveSig]
+        int SetParam(
+            ASFWriterConfig dwParam,
+            int dwParam1,
+            int dwParam2);
+
+        [PreserveSig]
+        int GetParam(
+            ASFWriterConfig dwParam,
+            out int pdwParam1,
+            IntPtr pdwParam2);
+
+        [PreserveSig]
+        int ResetMultiPassState();
+
     }
 
     #endregion

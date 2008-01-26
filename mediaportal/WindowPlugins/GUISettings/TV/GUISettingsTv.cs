@@ -139,7 +139,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
       }
-      ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
+      ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {

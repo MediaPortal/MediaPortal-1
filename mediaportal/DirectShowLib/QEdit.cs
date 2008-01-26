@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
@@ -63,14 +38,14 @@ namespace DirectShowLib
     {
         None = 0,
         IsInterlaced          = 0x00000001,
-        OneFieldPerSample     = 0x00000002, 
-        Field1First           = 0x00000004, 
-        Unused                = 0x00000008, 
-        FieldPatternMask      = 0x00000030, 
-        FieldPatField1Only    = 0x00000000, 
-        FieldPatField2Only    = 0x00000010, 
-        FieldPatBothRegular   = 0x00000020, 
-        FieldPatBothIrregular = 0x00000030, 
+        OneFieldPerSample     = 0x00000002,
+        Field1First           = 0x00000004,
+        Unused                = 0x00000008,
+        FieldPatternMask      = 0x00000030,
+        FieldPatField1Only    = 0x00000000,
+        FieldPatField2Only    = 0x00000010,
+        FieldPatBothRegular   = 0x00000020,
+        FieldPatBothIrregular = 0x00000030,
         DisplayModeMask       = 0x000000c0,
         DisplayModeBobOnly    = 0x00000000,
         DisplayModeWeaveOnly  = 0x00000040,
@@ -94,8 +69,8 @@ namespace DirectShowLib
     {
         None = 0,
         Used      = 0x00000001,
-        PadTo4x3  = 0x00000002, 
-        PadTo16x9 = 0x00000004, 
+        PadTo4x3  = 0x00000002,
+        PadTo16x9 = 0x00000004,
     }
 
     /// <summary>
@@ -151,7 +126,8 @@ namespace DirectShowLib
 
     #region Interfaces
 
-    [Guid("6B652FFF-11FE-4fce-92AD-0266B5D7C78F"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("6B652FFF-11FE-4fce-92AD-0266B5D7C78F"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ISampleGrabber
     {
@@ -181,8 +157,8 @@ namespace DirectShowLib
         int SetCallback(ISampleGrabberCB pCallback, int WhichMethodToCallback);
     }
 
-
-    [Guid("0579154A-2B53-4994-B0D0-E773148EFF85"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("0579154A-2B53-4994-B0D0-E773148EFF85"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ISampleGrabberCB
     {

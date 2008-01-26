@@ -118,6 +118,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="atscpsipparser.cs" />
     <Compile Include="austream.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -148,15 +149,18 @@
     <Compile Include="DMODShow.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="dsattrib.cs" />
     <Compile Include="DsUtils.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="dvbsiparser.cs" />
     <Compile Include="DVDIf.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DynGraph.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="encdec.cs" />
     <Compile Include="EvCode.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -184,6 +188,8 @@
     <Compile Include="Mpeg2Data.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mpeg2psiparser.cs" />
+    <Compile Include="Mpeg2Structs.cs" />
     <Compile Include="other.cs">
       <SubType>Code</SubType>
     </Compile>

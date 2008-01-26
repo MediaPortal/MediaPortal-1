@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,13 +25,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib.DMO
 {
     #region Declarations
 
-    public class MediaParamTimeFormat
+    sealed public class MediaParamTimeFormat
     {
+        private MediaParamTimeFormat()
+        {
+            // Prevent people from trying to instantiate this class
+        }
+
         /// <summary> GUID_TIME_REFERENCE </summary>
         public static readonly Guid Reference = new Guid(0x93ad712b, 0xdaa0, 0x4ffe, 0xbc, 0x81, 0xb0, 0xce, 0x50, 0x0f, 0xcd, 0xd9);
 
@@ -122,17 +102,18 @@ namespace DirectShowLib.DMO
     [Flags]
     public enum MPCaps
     {
+        None = 0,
         Jump = 0x1,
         Linear = 0x2,
         Square = 0x4,
-        InvSquare	= 0x8,
+        InvSquare = 0x8,
         Sine = 0x10
     }
 
     /// <summary>
     /// From MP_PARAMINFO
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=4)]
+    [StructLayout(LayoutKind.Sequential, Pack = 4, CharSet = CharSet.Unicode)]
     public struct ParamInfo
     {
         public MPType mpType;
@@ -150,7 +131,8 @@ namespace DirectShowLib.DMO
 
     #region Interfaces
 
-    [ComVisible(true), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("6D6CBB60-A223-44AA-842F-A2F06750BE6D")]
     public interface IMediaParamInfo
     {
@@ -161,13 +143,13 @@ namespace DirectShowLib.DMO
 
         [PreserveSig]
         int GetParamInfo(
-            [In] int dwParamIndex, 
+            [In] int dwParamIndex,
             out ParamInfo pInfo
             );
 
         [PreserveSig]
         int GetParamText(
-            [In] int dwParamIndex, 
+            [In] int dwParamIndex,
             out IntPtr ip
             );
 
@@ -178,55 +160,54 @@ namespace DirectShowLib.DMO
 
         [PreserveSig]
         int GetSupportedTimeFormat(
-            [In] int dwFormatIndex, 
+            [In] int dwFormatIndex,
             out Guid pguidTimeFormat
             );
 
         [PreserveSig]
         int GetCurrentTimeFormat(
-            out Guid pguidTimeFormat, 
+            out Guid pguidTimeFormat,
             out int pTimeData
             );
     }
 
-
-    [ComVisible(true), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("6D6CBB61-A223-44AA-842F-A2F06750BE6E")]
     public interface IMediaParams
     {
         [PreserveSig]
         int GetParam(
-            [In] int dwParamIndex, 
+            [In] int dwParamIndex,
             out MPData pValue
             );
 
         [PreserveSig]
         int SetParam(
-            [In] int dwParamIndex, 
+            [In] int dwParamIndex,
             [In] MPData value
             );
 
         [PreserveSig]
         int AddEnvelope(
-            [In] int dwParamIndex, 
-            [In] int cSegments, 
+            [In] int dwParamIndex,
+            [In] int cSegments,
             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1)] MPEnvelopeSegment [] pEnvelopeSegments
             );
 
         [PreserveSig]
         int FlushEnvelope(
-            [In] int dwParamIndex, 
-            [In] long refTimeStart, 
+            [In] int dwParamIndex,
+            [In] long refTimeStart,
             [In] long refTimeEnd
             );
 
         [PreserveSig]
         int SetTimeFormat(
-            [In] Guid MediaParamTimeFormat, 
+            [In] Guid MediaParamTimeFormat,
             [In] int mpTimeData
             );
     }
-
 
     #endregion
 }

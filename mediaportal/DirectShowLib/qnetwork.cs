@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
@@ -61,6 +36,7 @@ namespace DirectShowLib
     [Flags]
     public enum AMExtendedSeekingCapabilities
     {
+        None = 0,
         CanSeek = 1,
         CanScan = 2,
         MarkerSeek = 4,
@@ -69,14 +45,14 @@ namespace DirectShowLib
         Buffering = 32,
         SendsVideoFrameReady = 64
     }
-    
+
     #endregion
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
 
-    [Guid("FA2AA8F1-8B62-11D0-A520-000000000000"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("FA2AA8F1-8B62-11D0-A520-000000000000"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMNetShowConfig
     {
@@ -148,7 +124,8 @@ namespace DirectShowLib
 
     }
 
-    [Guid("FA2AA8F2-8B62-11D0-A520-000000000000"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("FA2AA8F2-8B62-11D0-A520-000000000000"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMChannelInfo
     {
@@ -172,7 +149,8 @@ namespace DirectShowLib
 
     }
 
-    [Guid("FA2AA8F3-8B62-11D0-A520-000000000000"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("FA2AA8F3-8B62-11D0-A520-000000000000"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMNetworkStatus
     {
@@ -199,7 +177,8 @@ namespace DirectShowLib
 
     }
 
-    [Guid("FA2AA8F5-8B62-11D0-A520-000000000000"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("FA2AA8F5-8B62-11D0-A520-000000000000"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMNetShowExProps
     {
@@ -232,7 +211,8 @@ namespace DirectShowLib
 
     }
 
-    [Guid("FA2AA8F6-8B62-11D0-A520-000000000000"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("FA2AA8F6-8B62-11D0-A520-000000000000"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMExtendedErrorInfo
     {
@@ -247,7 +227,8 @@ namespace DirectShowLib
 
     }
 
-    [Guid("AAE7E4E2-6388-11D1-8D93-006097C9A2B2"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("AAE7E4E2-6388-11D1-8D93-006097C9A2B2"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMNetShowPreroll
     {
@@ -259,7 +240,8 @@ namespace DirectShowLib
 
     }
 
-    [Guid("4746B7C8-700E-11D1-BECC-00C04FB6E937"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("4746B7C8-700E-11D1-BECC-00C04FB6E937"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDShowPlugin
     {
@@ -270,9 +252,10 @@ namespace DirectShowLib
         int get_UserAgent([MarshalAs(UnmanagedType.BStr)] out string pUserAgent);
 
     }
-#endif
 
-    [Guid("FA2AA8F4-8B62-11D0-A520-000000000000"),
+
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("FA2AA8F4-8B62-11D0-A520-000000000000"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMMediaContent
     {
@@ -317,7 +300,8 @@ namespace DirectShowLib
 
     }
 
-    [Guid("FA2AA8F9-8B62-11D0-A520-000000000000"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("FA2AA8F9-8B62-11D0-A520-000000000000"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMExtendedSeeking
     {
@@ -335,7 +319,7 @@ namespace DirectShowLib
 
         [PreserveSig]
         int GetMarkerName(
-            int MarkerNum, 
+            int MarkerNum,
             [MarshalAs(UnmanagedType.BStr)] out string pbstrMarkerName
             );
 
@@ -347,7 +331,8 @@ namespace DirectShowLib
 
     }
 
-    [Guid("CE8F78C1-74D9-11D2-B09D-00A0C9A81117"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("CE8F78C1-74D9-11D2-B09D-00A0C9A81117"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMMediaContent2
     {

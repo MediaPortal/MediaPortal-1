@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
@@ -206,7 +181,7 @@ namespace DirectShowLib
     /// From MPEG_CONTEXT
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack=1)]
-    public struct MPEGContext
+    public class MPEGContext
     {
         public MPEGContextType Type;
         public MPEGContextUnion U;
@@ -229,51 +204,97 @@ namespace DirectShowLib
 
     #region Interfaces
 
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
+
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    Guid("BDCDD913-9ECD-4fb2-81AE-ADF747EA75A5")]
+    public interface IMpeg2TableFilter
+    {
+        [PreserveSig]
+        int AddPID( 
+            short pid
+            );
+        
+        [PreserveSig]
+        int AddTable(
+            short pid,
+            byte tid
+            );
+        
+        [PreserveSig]
+        int AddExtension(
+            short pid,
+            byte tid,
+            short eid
+            );
+        
+        [PreserveSig]
+        int RemovePID(
+            short pid
+            );
+        
+        [PreserveSig]
+        int RemoveTable(
+            short pid,
+            byte tid
+            );
+        
+        [PreserveSig]
+        int RemoveExtension( 
+            short pid,
+            byte tid,
+            short eid
+            );
+        
+    }
+
+
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("9B396D40-F380-4E3C-A514-1A82BF6EBFE6")]
     public interface IMpeg2Data
     {
         [PreserveSig]
         int GetSection(
-            [In] short pid, 
-            [In] byte tid, 
-            [In] MPEG2Filter pFilter, 
-            [In] int dwTimeout, 
+            [In] short pid,
+            [In] byte tid,
+            [In] MPEG2Filter pFilter,
+            [In] int dwTimeout,
             [MarshalAs(UnmanagedType.Interface)] out ISectionList ppSectionList
             );
 
         [PreserveSig]
         int GetTable(
-            [In] short pid, 
-            [In] byte tid, 
-            [In] MPEG2Filter pFilter, 
-            [In] int dwTimeout, 
+            [In] short pid,
+            [In] byte tid,
+            [In] MPEG2Filter pFilter,
+            [In] int dwTimeout,
             [MarshalAs(UnmanagedType.Interface)] out ISectionList ppSectionList
             );
 
         [PreserveSig]
         int GetStreamOfSections(
-            [In] short pid, 
-            [In] byte tid, 
-            [In] MPEG2Filter pFilter, 
-            [In] IntPtr hDataReadyEvent, 
+            [In] short pid,
+            [In] byte tid,
+            [In] MPEG2Filter pFilter,
+            [In] IntPtr hDataReadyEvent,
             [MarshalAs(UnmanagedType.Interface)] out IMpeg2Stream ppMpegStream
             );
     }
 
-
-    [Guid("400CC286-32A0-4CE4-9041-39571125A635"), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("400CC286-32A0-4CE4-9041-39571125A635"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMpeg2Stream
     {
         [PreserveSig]
         int Initialize(
-            [In] MPEGRequestType requestType, 
-            [In, MarshalAs(UnmanagedType.Interface)] IMpeg2Data pMpeg2Data, 
-            [In, MarshalAs(UnmanagedType.LPStruct)] MPEGContext pContext, 
-            [In] short pid, 
-            [In] byte tid, 
-            [In, MarshalAs(UnmanagedType.LPStruct)] MPEG2Filter pFilter, 
+            [In] MPEGRequestType requestType,
+            [In, MarshalAs(UnmanagedType.Interface)] IMpeg2Data pMpeg2Data,
+            [In, MarshalAs(UnmanagedType.LPStruct)] MPEGContext pContext,
+            [In] short pid,
+            [In] byte tid,
+            [In, MarshalAs(UnmanagedType.LPStruct)] MPEG2Filter pFilter,
             [In] IntPtr hDataReadyEvent
             );
 
@@ -283,20 +304,20 @@ namespace DirectShowLib
             );
     }
 
-
-    [ComImport, Guid("AFEC1EB5-2A64-46C6-BF4B-AE3CCB6AFDB0"), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("AFEC1EB5-2A64-46C6-BF4B-AE3CCB6AFDB0"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ISectionList
     {
         [PreserveSig]
         int Initialize(
-            [In] MPEGRequestType requestType, 
-            [In, MarshalAs(UnmanagedType.Interface)] IMpeg2Data pMpeg2Data, 
-            [In, MarshalAs(UnmanagedType.LPStruct)] MPEGContext pContext, 
-            [In] short pid, 
-            [In] byte tid, 
-            [In, MarshalAs(UnmanagedType.LPStruct)] MPEG2Filter pFilter, 
-            [In] int timeout, 
+            [In] MPEGRequestType requestType,
+            [In, MarshalAs(UnmanagedType.Interface)] IMpeg2Data pMpeg2Data,
+            [In, MarshalAs(UnmanagedType.LPStruct)] MPEGContext pContext,
+            [In] short pid,
+            [In] byte tid,
+            [In, MarshalAs(UnmanagedType.LPStruct)] MPEG2Filter pFilter,
+            [In] int timeout,
             [In] IntPtr hDoneEvent
             );
 
@@ -315,8 +336,8 @@ namespace DirectShowLib
 
         [PreserveSig]
         int GetSectionData(
-            [In] short SectionNumber, 
-            [Out] out int pdwRawPacketLength, 
+            [In] short SectionNumber,
+            [Out] out int pdwRawPacketLength,
             [Out] out IntPtr ppSection // PSECTION*
             );
 
@@ -330,7 +351,6 @@ namespace DirectShowLib
             out byte pTableId
             );
     }
-
 
     #endregion
 }

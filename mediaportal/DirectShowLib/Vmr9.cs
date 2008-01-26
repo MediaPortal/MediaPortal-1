@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
@@ -61,6 +36,7 @@ namespace DirectShowLib
     [Flags]
     public enum VMR9PresentationFlags
     {
+        None = 0,
         SyncPoint = 0x00000001,
         Preroll = 0x00000002,
         Discontinuity = 0x00000004,
@@ -74,11 +50,13 @@ namespace DirectShowLib
     [Flags]
     public enum VMR9SurfaceAllocationFlags
     {
+        None = 0,
         ThreeDRenderTarget = 0x0001,
         DXVATarget = 0x0002,
         TextureSurface = 0x0004,
         OffscreenSurface = 0x0008,
-        UsageReserved = 0x00F0,
+        RGBDynamicSwitch = 0x0010,
+        UsageReserved = 0x00e0,
         UsageMask = 0x00FF
     }
 
@@ -88,6 +66,7 @@ namespace DirectShowLib
     [Flags]
     public enum VMR9ProcAmpControlFlags
     {
+        None = 0,
         Brightness = 0x00000001,
         Contrast = 0x00000002,
         Hue = 0x00000004,
@@ -103,19 +82,19 @@ namespace DirectShowLib
     public enum VMR9MixerPrefs
     {
         None = 0,
-        NoDecimation = 0x00000001,    // No decimation - full size
-        DecimateOutput = 0x00000002,  // decimate output by 2 in x & y
-        ARAdjustXorY = 0x00000004,    // adjust the aspect ratio in x or y
+        NoDecimation = 0x00000001, // No decimation - full size
+        DecimateOutput = 0x00000002, // decimate output by 2 in x & y
+        ARAdjustXorY = 0x00000004, // adjust the aspect ratio in x or y
         NonSquareMixing = 0x00000008, // assume AP can handle non-square mixing, avoids intermediate scales
         DecimateMask = 0x0000000F,
 
-        BiLinearFiltering = 0x00000010,     // use bi-linear filtering
-        PointFiltering = 0x00000020,        // use point filtering
-        AnisotropicFiltering = 0x00000040,  //
-        PyramidalQuadFiltering = 0x00000080,// 4-sample tent
+        BiLinearFiltering = 0x00000010, // use bi-linear filtering
+        PointFiltering = 0x00000020, // use point filtering
+        AnisotropicFiltering = 0x00000040, //
+        PyramidalQuadFiltering = 0x00000080, // 4-sample tent
         GaussianQuadFiltering = 0x00000100, // 4-sample gaussian
-        FilteringReserved = 0x00000E00,     // bits reserved for future use.
-        FilteringMask = 0x00000FF0,         // OR of all above flags
+        FilteringReserved = 0x00000E00, // bits reserved for future use.
+        FilteringMask = 0x00000FF0, // OR of all above flags
 
         RenderTargetRGB = 0x00001000,
         RenderTargetYUV = 0x00002000, // Uses DXVA to perform mixing
@@ -151,6 +130,7 @@ namespace DirectShowLib
     [Flags]
     public enum VMR9AlphaBitmapFlags
     {
+        None = 0,
         Disable = 0x00000001,
         hDC = 0x00000002,
         EntireDDS = 0x00000004,
@@ -165,6 +145,7 @@ namespace DirectShowLib
     [Flags]
     public enum VMR9DeinterlacePrefs
     {
+        None = 0,
         NextBest = 0x01,
         BOB = 0x02,
         Weave = 0x04,
@@ -177,6 +158,7 @@ namespace DirectShowLib
     [Flags]
     public enum VMR9RenderPrefs
     {
+        None = 0,
         DoNotRenderBorder = 0x00000001, // app paints color keys
         Mask = 0x00000001, // OR of all above flags
     }
@@ -187,6 +169,7 @@ namespace DirectShowLib
     [Flags]
     public enum VMR9Mode
     {
+        None = 0,
         Windowed = 0x00000001,
         Windowless = 0x00000002,
         Renderless = 0x00000004,
@@ -207,6 +190,7 @@ namespace DirectShowLib
     /// </summary>
     public enum VMR9SampleFormat
     {
+        None = 0,
         Reserved = 1,
         ProgressiveFrame = 2,
         FieldInterleavedEvenFirst = 3,
@@ -270,7 +254,7 @@ namespace DirectShowLib
     {
         public int uDevID;
         public DsRect rcMonitor;
-        public int hMon;
+        public IntPtr hMon;
         public int dwFlags;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)] public string szDevice;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst=512)] public string szDescription;
@@ -370,9 +354,9 @@ namespace DirectShowLib
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
 
-    [Guid("dfc581a1-6e1f-4c3a-8d0a-5e9792ea2afc"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("dfc581a1-6e1f-4c3a-8d0a-5e9792ea2afc"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRSurface9
     {
@@ -389,9 +373,8 @@ namespace DirectShowLib
         int GetSurface([Out, MarshalAs(UnmanagedType.IUnknown)] out object lplpSurface);
     }
 
-#endif
 
-    [ComVisible(true),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
     Guid("69188c61-12a3-40f0-8ffc-342e7b433fd7"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRImagePresenter9
@@ -407,12 +390,11 @@ namespace DirectShowLib
 
     }
 
-    [ComVisible(true),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
     Guid("6de9a68a-a928-4522-bf57-655ae3866456"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRSurfaceAllocatorEx9 : IVMRSurfaceAllocator9
     {
-
         #region IVMRSurfaceAllocator9 Methods
 
         [PreserveSig]
@@ -448,8 +430,8 @@ namespace DirectShowLib
             );
     }
 
-
-    [Guid("dca3f5df-bb3a-4d03-bd81-84614bfbfa0c"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("dca3f5df-bb3a-4d03-bd81-84614bfbfa0c"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRSurfaceAllocatorNotify9
     {
@@ -486,7 +468,7 @@ namespace DirectShowLib
             );
     }
 
-    [ComVisible(true),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
     Guid("8d5148ea-3f5d-46cf-9df1-d1b896eedb1f"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRSurfaceAllocator9
@@ -513,7 +495,8 @@ namespace DirectShowLib
         int AdviseNotify([In] IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify);
     }
 
-    [Guid("5a804648-4f66-4867-9c43-4f5c822cf1b8"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("5a804648-4f66-4867-9c43-4f5c822cf1b8"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRFilterConfig9
     {
@@ -539,7 +522,8 @@ namespace DirectShowLib
         int GetRenderingMode([Out] out VMR9Mode Mode);
     }
 
-    [Guid("8f537d09-f85e-4414-b23b-502e54c79927"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("8f537d09-f85e-4414-b23b-502e54c79927"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRWindowlessControl9
     {
@@ -590,7 +574,8 @@ namespace DirectShowLib
         int GetBorderColor([Out] out int lpClr);
     }
 
-    [Guid("00d96c29-bbde-4efc-9901-bb5036392146"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("00d96c29-bbde-4efc-9901-bb5036392146"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRAspectRatioControl9
     {
@@ -601,7 +586,8 @@ namespace DirectShowLib
         int SetAspectRatioMode([In] VMRAspectRatioMode lpdwARMode);
     }
 
-    [Guid("a215fb8d-13c2-4f7f-993c-003d6271a459"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("a215fb8d-13c2-4f7f-993c-003d6271a459"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRDeinterlaceControl9
     {
@@ -644,7 +630,8 @@ namespace DirectShowLib
             );
     }
 
-    [Guid("4a5c89eb-df51-4654-ac2a-e48e02bbabf6"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("4a5c89eb-df51-4654-ac2a-e48e02bbabf6"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRImageCompositor9
     {
@@ -673,7 +660,8 @@ namespace DirectShowLib
             [In] int cStreams
             );
     }
-    [ComVisible(true),
+
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
     Guid("45c15cab-6e22-420a-8043-ae1f0ac02c7d"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRImagePresenterConfig9
@@ -685,7 +673,8 @@ namespace DirectShowLib
         int GetRenderingPrefs([Out] out VMR9RenderPrefs dwRenderFlags);
     }
 
-    [Guid("ced175e5-1935-4820-81bd-ff6ad00c9108"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("ced175e5-1935-4820-81bd-ff6ad00c9108"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRMixerBitmap9
     {
@@ -699,43 +688,44 @@ namespace DirectShowLib
         int GetAlphaBitmapParameters([Out] out VMR9AlphaBitmap pBmpParms);
     }
 
-    [Guid("1a777eaa-47c8-4930-b2c9-8fee1c1b0f3b"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("1a777eaa-47c8-4930-b2c9-8fee1c1b0f3b"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRMixerControl9
     {
         [PreserveSig]
         int SetAlpha(
-            [In] int dwStreamID, 
+            [In] int dwStreamID,
             [In] float Alpha
             );
 
         [PreserveSig]
         int GetAlpha(
-            [In] int dwStreamID, 
+            [In] int dwStreamID,
             [Out] out float Alpha
             );
 
         [PreserveSig]
         int SetZOrder(
-            [In] int dwStreamID, 
+            [In] int dwStreamID,
             [In] int dwZ
             );
 
         [PreserveSig]
         int GetZOrder(
-            [In] int dwStreamID, 
+            [In] int dwStreamID,
             [Out] out int dwZ
             );
 
         [PreserveSig]
         int SetOutputRect(
-            [In] int dwStreamID, 
+            [In] int dwStreamID,
             [In] ref NormalizedRect pRect
             );
 
         [PreserveSig]
         int GetOutputRect(
-            [In] int dwStreamID, 
+            [In] int dwStreamID,
             [Out] out NormalizedRect pRect
             );
 
@@ -753,24 +743,25 @@ namespace DirectShowLib
 
         [PreserveSig]
         int SetProcAmpControl(
-            [In] int dwStreamID, 
+            [In] int dwStreamID,
             [In] ref VMR9ProcAmpControl lpClrControl
             );
 
         [PreserveSig]
         int GetProcAmpControl(
-            [In] int dwStreamID, 
+            [In] int dwStreamID,
             [In, Out] ref VMR9ProcAmpControl lpClrControl
             );
 
         [PreserveSig]
         int GetProcAmpControlRange(
-            [In] int dwStreamID, 
+            [In] int dwStreamID,
             [In, Out] ref VMR9ProcAmpControlRange lpClrControl
             );
     }
 
-    [Guid("46c2e457-8ba0-4eef-b80b-0680f0978749"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("46c2e457-8ba0-4eef-b80b-0680f0978749"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRMonitorConfig9
     {
@@ -794,7 +785,8 @@ namespace DirectShowLib
             );
     }
 
-    [Guid("d0cfe38b-93e7-4772-8957-0400c49a4485"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("d0cfe38b-93e7-4772-8957-0400c49a4485"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVMRVideoStreamControl9
     {

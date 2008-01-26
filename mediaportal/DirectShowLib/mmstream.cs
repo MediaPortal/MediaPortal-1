@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,10 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib.MultimediaStreaming
 {
     #region Utility classes
+
     sealed public class MsResults
     {
         private MsResults()
@@ -262,7 +238,7 @@ namespace DirectShowLib.MultimediaStreaming
     public enum MMSSF
     {
         HasClock = 0x1,
-        SupportSeek	= 0x2,
+        SupportSeek = 0x2,
         Asynchronous = 0x4
     }
 
@@ -270,8 +246,13 @@ namespace DirectShowLib.MultimediaStreaming
 
     #region GUIDS
 
-    public class MSPID
+    sealed public class MSPID
     {
+        private MSPID()
+        {
+            // Prevent people from trying to instantiate this class
+        }
+
         /// <summary> MSPID_PrimaryVideo </summary>
         public static readonly Guid PrimaryVideo = new Guid(0xa35ff56a, 0x9fda, 0x11d0, 0x8f, 0xdf, 0x0, 0xc0, 0x4f, 0xd9, 0x18, 0x9d);
 
@@ -283,7 +264,8 @@ namespace DirectShowLib.MultimediaStreaming
 
     #region Interfaces
 
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("B502D1BD-9A57-11D0-8FDE-00C04FD9189D")]
     public interface IMediaStream
     {
@@ -323,8 +305,8 @@ namespace DirectShowLib.MultimediaStreaming
             );
     }
 
-
-    [Guid("B502D1BC-9A57-11D0-8FDE-00C04FD9189D"), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("B502D1BC-9A57-11D0-8FDE-00C04FD9189D"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMultiMediaStream
     {
@@ -377,8 +359,8 @@ namespace DirectShowLib.MultimediaStreaming
             );
     }
 
-
-    [Guid("B502D1BE-9A57-11D0-8FDE-00C04FD9189D"), 
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("B502D1BE-9A57-11D0-8FDE-00C04FD9189D"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IStreamSample
     {

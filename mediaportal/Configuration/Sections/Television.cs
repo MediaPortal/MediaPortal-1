@@ -98,7 +98,7 @@ namespace MediaPortal.Configuration.Sections
         // Populate video and audio codecs
         //
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-        ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
+        ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
         //Remove Cyberlink Muxer from the list to avoid confusion.
@@ -728,7 +728,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (h264videoCodec == string.Empty)
         {
-          ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
+          ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
           bool h264DecFilterFound = false;
           if (availableH264VideoFilters.Count > 0)
           {

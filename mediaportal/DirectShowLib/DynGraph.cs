@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -49,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
@@ -100,13 +75,8 @@ namespace DirectShowLib
 
     #region Interfaces
 
-    //--------------------------------------------------------------------
-    //
-    //  IPinFlowControl - supported by output pins
-    //
-    //--------------------------------------------------------------------
-
-    [Guid("c56e9858-dbf3-4f6b-8119-384af2060deb"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("c56e9858-dbf3-4f6b-8119-384af2060deb"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IPinFlowControl
     {
@@ -117,8 +87,8 @@ namespace DirectShowLib
             );
     }
 
-
-    [Guid("DCFBDCF6-0DC2-45f5-9AB2-7C330EA09C29"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("DCFBDCF6-0DC2-45f5-9AB2-7C330EA09C29"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IFilterChain
     {
@@ -147,7 +117,8 @@ namespace DirectShowLib
             );
     }
 
-    [Guid("ade0fd60-d19d-11d2-abf6-00a0c905f375"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("ade0fd60-d19d-11d2-abf6-00a0c905f375"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IGraphConfigCallback
     {
@@ -159,7 +130,8 @@ namespace DirectShowLib
 
     }
 
-    [Guid("03A1EB8E-32BF-4245-8502-114D08A9CB88"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("03A1EB8E-32BF-4245-8502-114D08A9CB88"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IGraphConfig
     {
@@ -169,7 +141,7 @@ namespace DirectShowLib
             [In] IPin pInputPin,
             [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmtFirstConnection,
             [In] IBaseFilter pUsingFilter, // can be NULL
-            [In] IntPtr hAbortEvent, // HANDLE 
+            [In] IntPtr hAbortEvent, // HANDLE
             [In] AMGraphConfigReconnect dwFlags
             );
 
@@ -227,7 +199,8 @@ namespace DirectShowLib
             );
     }
 
-    [Guid("4a9a62d3-27d4-403d-91e9-89f540e55534"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("4a9a62d3-27d4-403d-91e9-89f540e55534"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IPinConnection
     {

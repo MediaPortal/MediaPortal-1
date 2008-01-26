@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -50,12 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib.DMO
 {
     #region Declarations
 
-#if ALLOW_UNTESTED_INTERFACES
 
     /// <summary>
     /// From DMO_QUALITY_STATUS_FLAGS
@@ -64,10 +38,9 @@ namespace DirectShowLib.DMO
     public enum DMOQualityStatus
     {
         None = 0x0,
-        Enabled	= 0x1
+        Enabled = 0x1
     }
 
-#endif
 
     /// <summary>
     /// From _DMO_OUTPUT_DATA_BUFFER_FLAGS
@@ -79,7 +52,7 @@ namespace DirectShowLib.DMO
         SyncPoint = 0x1,
         Time = 0x2,
         TimeLength = 0x4,
-        InComplete	= 0x1000000
+        InComplete = 0x1000000
     } ;
     /// <summary>
     /// From DMO_ENUM_FLAGS
@@ -128,8 +101,8 @@ namespace DirectShowLib.DMO
     [Flags]
     public enum DMOInplaceProcess
     {
-        Normal	= 0,
-        Zero	= 0x1
+        Normal = 0,
+        Zero = 0x1
     }
 
     /// <summary>
@@ -141,7 +114,7 @@ namespace DirectShowLib.DMO
         None = 0x0,
         WholeSamples = 0x1,
         SingleSamplePerBuffer = 0x2,
-        FixedSampleSize	= 0x4,
+        FixedSampleSize = 0x4,
         HoldsBuffers = 0x8
     }
 
@@ -152,10 +125,10 @@ namespace DirectShowLib.DMO
     public enum DMOOutputStreamInfo
     {
         None = 0x0,
-        WholeSamples	= 0x1,
-        SingleSamplePerBuffer	= 0x2,
-        FixedSampleSize	= 0x4,
-        Discardable	= 0x8,
+        WholeSamples = 0x1,
+        SingleSamplePerBuffer = 0x2,
+        FixedSampleSize = 0x4,
+        Discardable = 0x8,
         Optional = 0x10
     }
 
@@ -188,7 +161,7 @@ namespace DirectShowLib.DMO
     public enum DMOVideoOutputStream
     {
         None = 0x0,
-        NeedsPreviousSample	= 0x1
+        NeedsPreviousSample = 0x1
     }
 
     /// <summary>
@@ -219,8 +192,13 @@ namespace DirectShowLib.DMO
 
     #region GUIDS
 
-    public class DMOCategory
+    sealed public class DMOCategory
     {
+        private DMOCategory()
+        {
+            // Prevent people from trying to instantiate this class
+        }
+
         /// <summary> DMOCATEGORY_AUDIO_DECODER </summary>
         public static readonly Guid AudioDecoder = new Guid(0x57f2db8b, 0xe6bb, 0x4513, 0x9d, 0x43, 0xdc, 0xd2, 0xa6, 0x59, 0x31, 0x25);
 
@@ -403,9 +381,9 @@ namespace DirectShowLib.DMO
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
 
-    [Guid("65ABEA96-CF36-453F-AF8A-705E98F16260"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("65ABEA96-CF36-453F-AF8A-705E98F16260"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDMOQualityControl
     {
@@ -426,18 +404,17 @@ namespace DirectShowLib.DMO
     }
 
 
-#endif
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("2C3CD98A-2BFA-4A53-9C27-5249BA64BA0F")]
     public interface IEnumDMO
     {
         [PreserveSig]
         int Next(
             int cItemsToFetch,
-            [Out, MarshalAs(UnmanagedType.LPArray)] Guid[] pCLSID,
-            [Out, MarshalAs(UnmanagedType.LPArray)] string[] Names,
-            out int pcItemsFetched
+            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] Guid[] pCLSID,
+            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0, ArraySubType=UnmanagedType.LPWStr)] string[] Names,
+            [In] IntPtr pcItemsFetched
             );
 
         [PreserveSig]
@@ -454,8 +431,8 @@ namespace DirectShowLib.DMO
             );
     }
 
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("651B9AD0-0FC7-4AA9-9538-D89931010741")]
     public interface IMediaObjectInPlace
     {
@@ -478,8 +455,8 @@ namespace DirectShowLib.DMO
             );
     }
 
-
-    [Guid("59EFF8B9-938C-4A26-82F2-95CB84CDC837"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("59EFF8B9-938C-4A26-82F2-95CB84CDC837"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMediaBuffer
     {
@@ -500,8 +477,8 @@ namespace DirectShowLib.DMO
             );
     }
 
-
-    [ComVisible(true), Guid("D8AD0F58-5494-4102-97C5-EC798E59BCF4"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("D8AD0F58-5494-4102-97C5-EC798E59BCF4"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IMediaObject
     {
@@ -633,7 +610,8 @@ namespace DirectShowLib.DMO
             );
     }
 
-    [Guid("BE8F4F4E-5B16-4D29-B350-7F6B5D9298AC"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("BE8F4F4E-5B16-4D29-B350-7F6B5D9298AC"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDMOVideoOutputOptimizations
     {
@@ -661,7 +639,6 @@ namespace DirectShowLib.DMO
             out DMOVideoOutputStream pdwRequestedFeatures
             );
     }
-
 
     #endregion
 }

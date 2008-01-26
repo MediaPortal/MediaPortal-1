@@ -1,33 +1,8 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 #region license
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2006
+Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -48,24 +23,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endregion
 
 using System.Runtime.InteropServices;
-#pragma warning disable 618
+
 namespace DirectShowLib
 {
     #region Declarations
-
-#if ALLOW_UNTESTED_INTERFACES
-	/// <summary>
-	/// From AM_LINE21_CCSTYLE
-	/// </summary>
-	public enum AMLine21CCStyle
-	{
-		None = 0,
-		PopOn,
-		PaintOn,
-		RollUp
-	}
-
-#endif
 
     /// <summary>
     /// From AM_LINE21_CCLEVEL
@@ -112,7 +73,8 @@ namespace DirectShowLib
 
     #region Interfaces
 
-    [Guid("6E8D4A21-310C-11d0-B79A-00AA003767A7"),
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("6E8D4A21-310C-11d0-B79A-00AA003767A7"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMLine21Decoder
     {
@@ -155,7 +117,6 @@ namespace DirectShowLib
         [PreserveSig]
         int SetDrawBackgroundMode([In] AMLine21DrawBGMode Mode);
     }
-
 
     #endregion
 }
