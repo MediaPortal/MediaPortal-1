@@ -31,16 +31,28 @@
 #include "bdaapi_cimsg.h"
 
 // Technotrend device names
-#define LBDG2_NAME_C_TUNER           L"TechnoTrend BDA/DVB-C Tuner"
-#define LBDG2_NAME_S_TUNER           L"TechnoTrend BDA/DVB-S Tuner"
-#define LBDG2_NAME_T_TUNER           L"TechnoTrend BDA/DVB-T Tuner"
-#define LBUDGET3NAME_TUNER           L"TTHybridTV BDA DVBT Tuner"
-#define LBUDGET3NAME_TUNER_ANLG      L"TTHybridTV BDA Analog TV Tuner"
-#define LUSB2BDA_DVB_NAME_C_TUNER    L"USB 2.0 BDA DVB-C Tuner"
-#define LUSB2BDA_DVB_NAME_S_TUNER    L"USB 2.0 BDA DVB-S Tuner"
-#define LUSB2BDA_DVB_NAME_T_TUNER    L"USB 2.0 BDA DVB-T Tuner"
-#define LUSB2BDA_DVBS_NAME_PIN_TUNER L"Pinnacle PCTV 400e Tuner"
-
+#define LBDG2_NAME                       L"TechnoTrend BDA/DVB Capture"
+#define LBDG2_NAME_C_TUNER               L"TechnoTrend BDA/DVB-C Tuner"
+#define LBDG2_NAME_S_TUNER               L"TechnoTrend BDA/DVB-S Tuner"
+#define LBDG2_NAME_T_TUNER               L"TechnoTrend BDA/DVB-T Tuner"
+#define LBDG2_NAME_NEW                   L"ttBudget2 BDA DVB Capture"
+#define LBDG2_NAME_C_TUNER_NEW           L"ttBudget2 BDA DVB-C Tuner"
+#define LBDG2_NAME_S_TUNER_NEW           L"ttBudget2 BDA DVB-S Tuner"
+#define LBDG2_NAME_T_TUNER_NEW           L"ttBudget2 BDA DVB-T Tuner"
+#define LBUDGET3NAME                     L"TTHybridTV BDA Digital Capture"
+#define LBUDGET3NAME_TUNER               L"TTHybridTV BDA DVBT Tuner"
+#define LBUDGET3NAME_ATSC_TUNER          L"TTHybridTV BDA ATSC Tuner"
+#define LBUDGET3NAME_TUNER_ANLG          L"TTHybridTV BDA Analog TV Tuner"
+#define LBUDGET3NAME_ANLG                L"TTHybridTV BDA Analog Capture"
+#define LUSB2BDA_DVB_NAME                L"USB 2.0 BDA DVB Capture"
+#define LUSB2BDA_DSS_NAME                L"USB 2.0 BDA DSS Capture"
+#define LUSB2BDA_DSS_NAME_TUNER          L"USB 2.0 BDA DSS Tuner"
+#define LUSB2BDA_DVB_NAME_C_TUNER        L"USB 2.0 BDA DVB-C Tuner"
+#define LUSB2BDA_DVB_NAME_S_TUNER        L"USB 2.0 BDA DVB-S Tuner"
+#define LUSB2BDA_DVB_NAME_S_TUNER_FAKE   L"USB 2.0 BDA (DVB-T Fake) DVB-T Tuner"
+#define LUSB2BDA_DVB_NAME_T_TUNER        L"USB 2.0 BDA DVB-T Tuner"
+#define LUSB2BDA_DVBS_NAME_PIN           L"Pinnacle PCTV 4XXe Capture"
+#define LUSB2BDA_DVBS_NAME_PIN_TUNER     L"Pinnacle PCTV 4XXe Tuner"
 
 //slot status
 #define	CI_SLOT_EMPTY							0
@@ -277,7 +289,11 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   if (wcscmp(info.achName,LBDG2_NAME_C_TUNER)==0) m_deviceType=BUDGET_2;
   if (wcscmp(info.achName,LBDG2_NAME_S_TUNER)==0) m_deviceType=BUDGET_2;
   if (wcscmp(info.achName,LBDG2_NAME_T_TUNER)==0) m_deviceType=BUDGET_2;
+  if (wcscmp(info.achName,LBDG2_NAME_C_TUNER_NEW)==0) m_deviceType=BUDGET_2;
+  if (wcscmp(info.achName,LBDG2_NAME_S_TUNER_NEW)==0) m_deviceType=BUDGET_2;
+  if (wcscmp(info.achName,LBDG2_NAME_T_TUNER_NEW)==0) m_deviceType=BUDGET_2;
   if (wcscmp(info.achName,LBUDGET3NAME_TUNER)==0) m_deviceType=BUDGET_3;
+  if (wcscmp(info.achName,LBUDGET3NAME_ATSC_TUNER)==0) m_deviceType=BUDGET_3;
   if (wcscmp(info.achName,LBUDGET3NAME_TUNER_ANLG)==0) m_deviceType=BUDGET_3;
   if (wcscmp(info.achName,LUSB2BDA_DVB_NAME_C_TUNER)==0) m_deviceType=USB_2;
   if (wcscmp(info.achName,LUSB2BDA_DVB_NAME_S_TUNER)==0) m_deviceType=USB_2;
@@ -309,7 +325,6 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
     LogDebug("Technotrend: unable to get proc adress of bdaapiOpenHWIdx");
     return S_OK;
   }
-
 
   memset(&m_technoTrendStructure,0,sizeof(m_technoTrendStructure));
   m_technoTrendStructure.p01Context=m_technoTrendStructure.p02Context=m_technoTrendStructure.p03Context=m_technoTrendStructure.p04Context=this;
