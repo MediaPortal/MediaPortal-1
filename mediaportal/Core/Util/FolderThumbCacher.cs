@@ -49,7 +49,7 @@ namespace MediaPortal.Util
     // aFilePath must only be the path of the directory
     public FolderThumbCacher(string aFilePath, bool aOverWriteExisting)
     {
-      lock (_filename)
+      lock (aFilePath)
       {
         _filename = aFilePath;
         _overWrite = aOverWriteExisting;
@@ -75,31 +75,21 @@ namespace MediaPortal.Util
         // -- punish him with slowness and create the thumbs for the next time...
         try
         {
-          Log.Info("GUIMusicFiles: On-Demand-Creating missing folder thumb cache for {0}", strRemoteFolderThumb);
+          Log.Info("FolderThumbCacher: Creating missing folder thumb cache for {0}", strRemoteFolderThumb);
           string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
 
           if (!File.Exists(strFolderThumb) || replace)
             Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true);
-          if (!File.Exists(localFolderLThumb) || replace)
-          {
-            // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
-            FileInfo fiRemoteFolderArt = new FileInfo(strRemoteFolderThumb);
-            if (fiRemoteFolderArt.Length < 32000)
-            {
-              File.Copy(strRemoteFolderThumb, localFolderLThumb, true);
-              File.SetAttributes(localFolderLThumb, File.GetAttributes(localFolderLThumb) | FileAttributes.Hidden);                
-            }
-            else
-              Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
-          }
-
-          return;
+          if (!File.Exists(localFolderLThumb) || replace)          
+            Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          return;
+          Log.Error("FolderThumbCacher: Error processing {0} - {1}", strRemoteFolderThumb, ex);          
         }
       }
+      else
+        Log.Debug("FolderThumbCacher: No folder thumb at {0}", strRemoteFolderThumb);
     }
   }
 }

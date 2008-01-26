@@ -509,6 +509,8 @@ namespace MediaPortal.Music.Database
         {
           xmlreader.SetValue("musicfiles", "lastImport", startTime.ToString("yyyy-M-d H:m:s", System.Globalization.CultureInfo.InvariantCulture));
         }
+
+        GC.Collect();
       }
       return (int)Errors.ERROR_OK;
     }
@@ -1170,8 +1172,8 @@ namespace MediaPortal.Music.Database
     private void ExtractCoverArt(MusicTag tag)
     {      
       string tagAlbumName = string.Format("{0}-{1}", tag.Artist.Trim(trimChars), tag.Album.Trim(trimChars));
-      string smallThumbPath = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
-      string largeThumbPath = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
+      string smallThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
+      string largeThumbPath = Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
 
       if (tag.CoverArtImageBytes != null)
       {
@@ -1223,6 +1225,7 @@ namespace MediaPortal.Music.Database
         {
           if (!System.IO.File.Exists(smallThumbPath))
           {
+            // No Album thumb found - create one.
             string sharefolderThumb;
             bool scanNow = false;
 
@@ -1257,6 +1260,11 @@ namespace MediaPortal.Music.Database
               CreateFolderThumbs(tag.FileName, smallThumbPath);
             }
           }
+          else
+          {
+            // Album thumb found - nevertheless we'll make sure there's a folder cache for it.
+            CreateFolderThumbs(tag.FileName, smallThumbPath);
+          }
         }
       }
       else
@@ -1267,10 +1275,10 @@ namespace MediaPortal.Music.Database
 
     private void CreateFolderThumbs(string strSongPath, string strSmallThumb)
     {
-      if (System.IO.File.Exists(strSmallThumb) && strSongPath != string.Empty)
+      if (File.Exists(strSmallThumb) && !string.IsNullOrEmpty(strSongPath))
       {
-        string folderThumb = MediaPortal.Util.Utils.GetFolderThumb(strSongPath);
-        string localFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(strSongPath);
+        string folderThumb = Util.Utils.GetFolderThumb(strSongPath);
+        string localFolderThumb = Util.Utils.GetLocalFolderThumb(strSongPath);
         string localFolderLThumb = localFolderThumb;
         localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderLThumb);
 
@@ -1280,40 +1288,14 @@ namespace MediaPortal.Music.Database
           if (!System.IO.File.Exists(folderThumb))
           {
             if (_createMissingFolderThumbs)
-            {
-              MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-
-              if (_useFolderThumbs)
-              {
-                if (!System.IO.File.Exists(localFolderThumb))
-                  MediaPortal.Util.Picture.CreateThumbnail(strSmallThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-                if (!System.IO.File.Exists(localFolderLThumb))
-                {
-                  System.IO.File.Copy(folderThumb, localFolderLThumb, true);
-                  File.SetAttributes(folderThumb, File.GetAttributes(folderThumb) | FileAttributes.Hidden);
-                }
-              }
-            }
+              Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
           }
-          else
+
+          if (!File.Exists(localFolderThumb))
+            Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+          if (!File.Exists(localFolderLThumb))
           {
-            if (_useFolderThumbs)
-            {
-              if (!System.IO.File.Exists(localFolderThumb))
-                MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-              if (!System.IO.File.Exists(localFolderLThumb))
-              {
-                // just copy the folder.jpg if it is reasonable in size - otherwise re-create it
-                System.IO.FileInfo fiRemoteFolderArt = new System.IO.FileInfo(folderThumb);
-                if (fiRemoteFolderArt.Length < 32000)
-                {
-                  System.IO.File.Copy(folderThumb, localFolderLThumb, true);
-                  File.SetAttributes(folderThumb, File.GetAttributes(folderThumb) | FileAttributes.Hidden);
-                }
-                else
-                  MediaPortal.Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-              }
-            }
+              Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
           }
         }
         catch (Exception ex1)
