@@ -399,7 +399,7 @@ namespace TvPlugin
       LoadSettings();
       LoadDirectory();
 
-      if (!g_Player.IsTVRecording)
+      if (!g_Player.IsTVRecording && !g_Player.Playing)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
         msg.SendToTargetWindow = true;

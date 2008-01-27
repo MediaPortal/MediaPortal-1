@@ -173,7 +173,7 @@ namespace TvPlugin
 		}
 
 		private void HeartBeatTransmitter()
-		{						
+		{      
 			while (true)
 			{
 				if (TVHome.Connected && TVHome.Card.IsTimeShifting)
@@ -194,7 +194,7 @@ namespace TvPlugin
             }
 #endif
 				}
-				else if (TVHome.Connected && !TVHome.Card.IsTimeShifting && !_playbackStopped)
+        else if (TVHome.Connected && !TVHome.Card.IsTimeShifting && !_playbackStopped && _onPageLoadDone && (!g_Player.IsMusic && !g_Player.IsDVD && !g_Player.IsRadio && !g_Player.IsVideo))
 				{
 					// check the possible reason why timeshifting has suddenly stopped
 					// maybe the server kicked the client b/c a recording on another transponder was due.
@@ -237,10 +237,10 @@ namespace TvPlugin
 							}
 							pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
 						}
-					}					
-					Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-					GUIGraphicsContext.OnAction(keyAction);
-					_playbackStopped = true;
+            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+            GUIGraphicsContext.OnAction(keyAction);
+            _playbackStopped = true;
+					}										
 				}
 				Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
 			}
@@ -764,7 +764,7 @@ namespace TvPlugin
 		{
 			// when suspending MP while watching fullscreen TV, the player is stopped ok, but it returns to tvhome, which starts timeshifting.
 			// this could lead the tv server timeshifting even though client is asleep.
-			// although we have to make sure that resuming again activates TV, this is done by checking previous window ID.
+			// although we have to make sure that resuming again activates TV, this is done by checking previous window ID.      
 			GUIWaitCursor.Show();
 			if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
 			{
@@ -933,7 +933,7 @@ namespace TvPlugin
 			{
 				showlastActModFS = true;
 			}
-			if (!showlastActModFS)
+			if (!showlastActModFS && (g_Player.IsTV || g_Player.IsTVRecording))
 			{
 				if (_autoFullScreen && !g_Player.FullScreen && (!wasPrevWinTVplugin()))
 				{
@@ -1933,7 +1933,7 @@ namespace TvPlugin
 				}
 				else
 				{
-					if (g_Player.IsTVRecording) //we are watching a recording, we have now issued a ch. change..stop the player.
+          if (g_Player.IsTVRecording && _userChannelChanged) //we are watching a recording, we have now issued a ch. change..stop the player.
 					{
 						_userChannelChanged = false;
 						g_Player.Stop(true);
