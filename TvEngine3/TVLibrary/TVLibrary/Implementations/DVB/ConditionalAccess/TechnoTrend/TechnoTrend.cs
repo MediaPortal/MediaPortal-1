@@ -22,7 +22,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
 using DirectShowLib;
 using DirectShowLib.BDA;
 using System.Windows.Forms;
@@ -105,11 +104,9 @@ namespace TvLibrary.Implementations.DVB
       {
         Marshal.WriteByte(ptrPmt, i, pmt[i]);
       }
-
       _technoTrendInterface.DescrambleService(ptrPmt, (short)PMTlength, ref succeeded);
       return succeeded;
     }
-
 
     /// <summary>
     /// Instructs the technotrend card to descramble all programs mentioned in subChannels.
@@ -136,7 +133,6 @@ namespace TvLibrary.Implementations.DVB
         }
       }
 
-
       for (int i = 0; i < filteredChannels.Count; ++i)
       {
         ConditionalAccessContext context = filteredChannels[i];
@@ -153,8 +149,6 @@ namespace TvLibrary.Implementations.DVB
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_technoTrendInterface == null) return;
-
-
       if (_previousChannel != null)
       {
         if (_previousChannel.Frequency == channel.Frequency &&
@@ -171,8 +165,6 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDataInstance, 0, 0xE0);//diseqc command 1. uFraming=0xe0
       Marshal.WriteByte(_ptrDataInstance, 1, 0x10);//diseqc command 1. uAddress=0x10
       Marshal.WriteByte(_ptrDataInstance, 2, 0x38);//diseqc command 1. uCommand=0x38
-
-
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
       //bit 3 (4) : 0=satellite position A, 1=satellite position B
@@ -184,8 +176,6 @@ namespace TvLibrary.Implementations.DVB
       // 4        B         B
       bool hiBand = BandTypeConverter.IsHiBand(channel,parameters);
       Log.Log.WriteFile("TechnoTrend SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}", channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
-
-
       bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
