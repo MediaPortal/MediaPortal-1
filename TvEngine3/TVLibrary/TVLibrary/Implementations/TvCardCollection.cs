@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Analog;
@@ -45,6 +46,18 @@ namespace TvLibrary.Implementations
     public TvCardCollection()
     {
       Log.Log.WriteFile("----------------------------");
+      // Logic here to delay detection of cards
+      // Ideally this should occur after standby event.
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting;
+      setting = layer.GetSetting("delayCardDetect", "0");
+      int delayDetect = Convert.ToInt32(setting.Value);
+      if (delayDetect >= 1)
+      {
+        Log.Log.WriteFile("Detecting Cards in {0} seconds", delayDetect);
+        System.Threading.Thread.Sleep(delayDetect * 1000);
+      }
+      Log.Log.WriteFile("Detecting Cards");
       _cards = new List<ITVCard>();
       DetectCards();
     }

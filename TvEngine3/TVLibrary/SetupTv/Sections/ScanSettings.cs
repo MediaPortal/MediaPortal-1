@@ -28,9 +28,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 using DirectShowLib;
-
 using TvDatabase;
-
 using TvControl;
 using TvLibrary;
 using TvLibrary.Log;
@@ -60,13 +58,15 @@ namespace SetupTv.Sections
       textBoxPMT.Text = layer.GetSetting("timeoutPMT", "10").Value;
       textBoxSDT.Text = layer.GetSetting("timeoutSDT", "20").Value;
 
+      Setting setting;
+      setting = layer.GetSetting("delayCardDetect", "0");
+      delayDetectUpDown.Value = Convert.ToDecimal(setting.Value);
+
       checkBoxEnableEPGWhileIdle.Checked=(layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
       textBoxEpgTimeOut.Text = layer.GetSetting("timeoutEPG", "10").Value;
       textBoxEPGRefresh.Text = layer.GetSetting("timeoutEPGRefresh", "240").Value;
-
       checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
       textBoxTSEpgTimeout.Text = layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value;
-
 
       textBoxMinfiles.Text = layer.GetSetting("timeshiftMinFiles", "6").Value;
       textBoxMaxFiles.Text = layer.GetSetting("timeshiftMaxFiles", "20").Value;
@@ -75,7 +75,6 @@ namespace SetupTv.Sections
       checkBoxEnableLinkageScanner.Checked=(layer.GetSetting("linkageScannerEnabled","no").Value=="yes");
 
       mpComboBoxPrio.Items.Clear();
-            
       mpComboBoxPrio.Items.Add("Realtime");
       mpComboBoxPrio.Items.Add("High");
       mpComboBoxPrio.Items.Add("Above Normal");
@@ -187,7 +186,11 @@ namespace SetupTv.Sections
 
 			s = layer.GetSetting("timeshiftWaitForUnscrambled", "5");
 			s.Value = textBoxWaitUnscrambled.Text;
-			s.Persist();			
+			s.Persist();
+
+      s = layer.GetSetting("delayCardDetect", "0");
+      s.Value = delayDetectUpDown.Value.ToString();
+      s.Persist();
     }
 
     private void mpComboBoxPrio_SelectedIndexChanged(object sender, EventArgs e)
