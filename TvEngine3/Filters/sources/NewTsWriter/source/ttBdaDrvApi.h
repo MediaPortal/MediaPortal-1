@@ -42,20 +42,20 @@
 #endif
 #else
 #ifdef __cplusplus 
-#define TTBDADRVAPI extern "C" __declspec(dllimport) 
+#define TTBDADRVAPI extern "C" __declspec(dllimport)
 #else
 #define TTBDADRVAPI __declspec(dllimport)
 #endif
 #endif
 
-// You must define TTUSBIR_STATIC_LIBRARY in your project if you use
+// You must define TTBDADRVAPI_STATIC_LIBRARY in your project if you use
 // the static (not DLL) version of the library!
 #ifdef TTBDADRVAPI_STATIC_LIBRARY
 #undef TTBDADRVAPI
 #define TTBDADRVAPI
 #endif
 
-#include <Mpeg2data.h>          // for the bdaapiReadPSIFast()
+#include <mpeg2data.h>          // for the bdaapiReadPSIFast() (CComPtr <IMpeg2Data>)
 #include <atlbase.h>            // for the bdaapiReadPSIFast()
 #include <windows.h>
 #include "bdaapi_Typedefs.h"
@@ -73,12 +73,15 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiOpenIR    (HANDLE      hOpen,
                                       PIRCBFCN    CallbackFcn = NULL,
                                       PVOID       Context = NULL);
 TTBDADRVAPI TYPE_RET_VAL bdaapiCloseIR   (HANDLE      hOpen);
-TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCI(HANDLE            hOpen,TS_CiCbFcnPointer CbFuncPointer);
+TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCI(HANDLE            hOpen,
+                                      TS_CiCbFcnPointer CbFuncPointer);
 TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCISlim(HANDLE                hOpen,
                                           TS_CiCbFcnPointerSlim CbFuncPointer);
 TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCIWithoutPointer(HANDLE hOpen);
 TTBDADRVAPI TYPE_RET_VAL bdaapiCloseCI   (HANDLE   hOpen);
-TTBDADRVAPI TYPE_RET_VAL bdaapiInstallDemuxReadEvent(HANDLE   hOpen,PIRCBFCN CallbackFcn = NULL,PVOID    Context = NULL);
+TTBDADRVAPI TYPE_RET_VAL bdaapiInstallDemuxReadEvent(HANDLE   hOpen,
+                                                 PIRCBFCN CallbackFcn = NULL,
+                                                 PVOID    Context = NULL);
 TTBDADRVAPI TYPE_RET_VAL bdaapiUninstallDemuxReadEvent(HANDLE   hOpen);
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -95,7 +98,8 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiSetDiSEqCMsg(HANDLE        hOpen,
                                         Polarisation  ePolarity);
 TTBDADRVAPI TYPE_RET_VAL bdaapiSetVideoport(HANDLE hOpen, BOOL bCIMode,
                                                       BOOL *bCIOut);
-TTBDADRVAPI TYPE_RET_VAL bdaapiSetDVBTAntPwr(HANDLE hOpen,BOOL   bAntPwrOnOff);
+TTBDADRVAPI TYPE_RET_VAL bdaapiSetDVBTAntPwr(HANDLE hOpen,
+                                             BOOL   bAntPwrOnOff);
 TTBDADRVAPI TYPE_RET_VAL bdaapiSetDrvDemuxFilter(HANDLE      hOpen,
                                                  TYPE_FILTER FilterType,
                                                  WORD        wPID,
@@ -105,18 +109,22 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiSetDrvDemuxFilter(HANDLE      hOpen,
                                                  BYTE       &FilterID);
 TTBDADRVAPI TYPE_RET_VAL bdaapiDelDrvDemuxFilter(HANDLE hOpen,
                                                  BYTE   FilterID);
+TTBDADRVAPI TYPE_RET_VAL bdaapiSetIRWakeUpCode(HANDLE hOpen,
+                                               DWORD  dwIRCode);
+TTBDADRVAPI TYPE_RET_VAL bdaapiSetLED(HANDLE         hOpen,
+                                      TYPE_LED_COLOR LEDState);
 //
 /////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////
 // functions to get something from the driver
 
-TTBDADRVAPI TYPE_RET_VAL bdaapiGetDrvVersion(HANDLE hOpen, BYTE *v1, BYTE *v2,BYTE *v3, BYTE *v4);
+TTBDADRVAPI TYPE_RET_VAL bdaapiGetDrvVersion(HANDLE hOpen, BYTE *v1, BYTE *v2,
+                                                           BYTE *v3, BYTE *v4);
 TTBDADRVAPI TYPE_RET_VAL bdaapiGetMAC(HANDLE hOpen, DWORD *dwHigh, DWORD *dwLow);
-TTBDADRVAPI TYPE_RET_VAL bdaapiGetDeviceIDs(HANDLE hOpen, WORD *wVendor,
-                                                      WORD *wSubVendor,
-                                                      WORD *wDevice,
-                                                      WORD *wSubDevice);
+TTBDADRVAPI TYPE_RET_VAL bdaapiGetDeviceIDs(HANDLE hOpen,
+                                            WORD *wVendor, WORD *wSubVendor,
+                                            WORD *wDevice, WORD *wSubDevice);
 TTBDADRVAPI TYPE_RET_VAL bdaapiGetUSBHighspeedMode(HANDLE hOpen,
                                                    BOOL   *bDevIsHighspeed);
 TTBDADRVAPI TYPE_RET_VAL bdaapiGetDVBTAutoOffsetMode(HANDLE hOpen, BOOL *bAutoOnOff);
@@ -127,6 +135,9 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiGetDevNameAndFEType(HANDLE          hOpen,
 TTBDADRVAPI TYPE_RET_VAL bdaapiGetHwIdx(HANDLE  hOpen,
                                         DWORD  &dwHwIdx);
 
+TTBDADRVAPI TYPE_RET_VAL bdaapiGetDevicePath(HANDLE hOpen,
+                                             char * pDevicePath,
+                                             int    iDevicePathLength);
 
 TTBDADRVAPI TYPE_RET_VAL bdaapiCIReadPSIFast(HANDLE               hOpen,
                                              WORD                 PNR,
@@ -145,6 +156,9 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiCIMultiDecode(HANDLE hOpen,
                                              WORD  *PNR,
                                              int    NrOfPnrs);
 
+TTBDADRVAPI TYPE_RET_VAL bdaapiGetProductSellerID(HANDLE         hOpen,
+                                                  PRODUCT_SELLER &ps);
+
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -160,9 +174,10 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiCIAnswer(HANDLE hOpen,
 TTBDADRVAPI TYPE_RET_VAL bdaapiCIMenuAnswer(HANDLE hOpen,
                                             BYTE   nSlot,
                                             BYTE   Selection);
-TTBDADRVAPI int	     bdaapiCIConvertCharBuf(HANDLE hOpen,
-                                            char   *string,
-                                            int    len);
+TTBDADRVAPI TYPE_RET_VAL bdaapiCIConvertCharBuf(HANDLE hOpen,
+												char*  pString,
+												int    iInputLen,
+												int&   riOutputLen);
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -179,6 +194,44 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiUserEEPROM_Read (HANDLE hOpen,
                                                 BYTE   Length);
 //
 /////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+// tuning via IOCTL
+TTBDADRVAPI TYPE_RET_VAL bdaapiTune(HANDLE  hOpen,
+						            PVOID   pTune,
+						            int     iSize);
+TTBDADRVAPI TYPE_RET_VAL bdaapiGetTuneStats(HANDLE  hOpen,
+								            DWORD  *pStats,
+								            int     iSize);
+//
+/////////////////////////////////////////////////////////////////////////////
+
+// transport stream analysis
+TTBDADRVAPI TYPE_RET_VAL bdaapiTSAnalysisOnOff     (HANDLE hOpen,
+                                                    BOOL   bOnOff);
+TTBDADRVAPI TYPE_RET_VAL bdaapiTSAnalysisGetGlobals(HANDLE  hOpen,
+                                                    DWORD  *dwCount,
+                                                    DWORD  *dwContErr,
+                                                    DWORD  *dwTotalFrames,
+                                                    DWORD  *dwDroppedFrames,
+                                                    DWORD  *dwFifoFullErrors,
+                                                    DWORD  *dwCountDrvIn,
+                                                    DWORD  *dwContErrDrvIn);
+TTBDADRVAPI TYPE_RET_VAL bdaapiTSStartStop         (HANDLE hOpen,
+                                                    BOOL bOnOff);   // TRUE = Start, FALSE = Stop
+// 4 analysing tune requests
+TTBDADRVAPI TYPE_RET_VAL bdaapiTuningAnalReset(HANDLE hOpen);
+TTBDADRVAPI TYPE_RET_VAL bdaapiTuningAnalGet  (HANDLE  hOpen,
+                                               DWORD  *dwTuneSuccess,
+                                               DWORD  *dwTuneError,
+                                               DWORD  *dwTuneSuccessDVBS2,
+                                               DWORD  *dwTuneErrorDVBS2);
+
+// HS 4 testing CI 
+TYPE_RET_VAL bdaapiExtractPMT(HANDLE hOpen,
+                              WORD   wPNrSId,
+                              BYTE*  PmtBuf,
+                              WORD&  wLen);
 
 #endif // #ifndef TTBDADRVAPI_H
 

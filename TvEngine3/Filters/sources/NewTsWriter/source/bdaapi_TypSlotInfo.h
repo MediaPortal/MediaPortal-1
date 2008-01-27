@@ -20,7 +20,7 @@
 /// \brief
 ///     CI slot informations.
 /////////////////////////////////////////////////////////////////////////////
-typedef struct
+typedef struct _TYP_SLOT_INFO
 {
     /// CI status
 	BYTE	nStatus;

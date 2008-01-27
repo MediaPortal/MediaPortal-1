@@ -18,20 +18,28 @@
 
 #include "bdaapi_TypSlotinfo.h" // typ_SlotInfo
 
-#define BDG2_NAME                   TEXT("TechnoTrend BDA/DVB Capture")
-#define BDG2_NAME_C_TUNER           TEXT("TechnoTrend BDA/DVB-C Tuner")
-#define BDG2_NAME_S_TUNER           TEXT("TechnoTrend BDA/DVB-S Tuner")
-#define BDG2_NAME_T_TUNER           TEXT("TechnoTrend BDA/DVB-T Tuner")
-#define BUDGET3NAME                 TEXT("TTHybridTV BDA Digital Capture")
-#define BUDGET3NAME_TUNER           TEXT("TTHybridTV BDA DVBT Tuner")
-#define BUDGET3NAME_TUNER_ANLG      TEXT("TTHybridTV BDA Analog TV Tuner")
-#define BUDGET3NAME_ANLG            TEXT("TTHybridTV BDA Analog Capture")
-#define USB2BDA_DVB_NAME            TEXT("USB 2.0 BDA DVB Capture")
-#define USB2BDA_DVB_NAME_C_TUNER    TEXT("USB 2.0 BDA DVB-C Tuner")
-#define USB2BDA_DVB_NAME_S_TUNER    TEXT("USB 2.0 BDA DVB-S Tuner")
-#define USB2BDA_DVB_NAME_T_TUNER    TEXT("USB 2.0 BDA DVB-T Tuner")
-#define USB2BDA_DVBS_NAME_PIN       TEXT("Pinnacle PCTV 400e Capture")
-#define USB2BDA_DVBS_NAME_PIN_TUNER TEXT("Pinnacle PCTV 400e Tuner")
+#define BDG2_NAME                       TEXT("TechnoTrend BDA/DVB Capture")
+#define BDG2_NAME_C_TUNER               TEXT("TechnoTrend BDA/DVB-C Tuner")
+#define BDG2_NAME_S_TUNER               TEXT("TechnoTrend BDA/DVB-S Tuner")
+#define BDG2_NAME_T_TUNER               TEXT("TechnoTrend BDA/DVB-T Tuner")
+#define BDG2_NAME_NEW                   TEXT("ttBudget2 BDA DVB Capture")
+#define BDG2_NAME_C_TUNER_NEW           TEXT("ttBudget2 BDA DVB-C Tuner")
+#define BDG2_NAME_S_TUNER_NEW           TEXT("ttBudget2 BDA DVB-S Tuner")
+#define BDG2_NAME_T_TUNER_NEW           TEXT("ttBudget2 BDA DVB-T Tuner")
+#define BUDGET3NAME                     TEXT("TTHybridTV BDA Digital Capture")
+#define BUDGET3NAME_TUNER               TEXT("TTHybridTV BDA DVBT Tuner")
+#define BUDGET3NAME_ATSC_TUNER          TEXT("TTHybridTV BDA ATSC Tuner")
+#define BUDGET3NAME_TUNER_ANLG          TEXT("TTHybridTV BDA Analog TV Tuner")
+#define BUDGET3NAME_ANLG                TEXT("TTHybridTV BDA Analog Capture")
+#define USB2BDA_DVB_NAME                TEXT("USB 2.0 BDA DVB Capture")
+#define USB2BDA_DSS_NAME                TEXT("USB 2.0 BDA DSS Capture")
+#define USB2BDA_DSS_NAME_TUNER          TEXT("USB 2.0 BDA DSS Tuner")
+#define USB2BDA_DVB_NAME_C_TUNER        TEXT("USB 2.0 BDA DVB-C Tuner")
+#define USB2BDA_DVB_NAME_S_TUNER        TEXT("USB 2.0 BDA DVB-S Tuner")
+#define USB2BDA_DVB_NAME_S_TUNER_FAKE   TEXT("USB 2.0 BDA (DVB-T Fake) DVB-T Tuner")
+#define USB2BDA_DVB_NAME_T_TUNER        TEXT("USB 2.0 BDA DVB-T Tuner")
+#define USB2BDA_DVBS_NAME_PIN           TEXT("Pinnacle PCTV 4XXe Capture")
+#define USB2BDA_DVBS_NAME_PIN_TUNER     TEXT("Pinnacle PCTV 4XXe Tuner")
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -50,7 +58,11 @@ typedef enum
     /// USB 2.0
     USB_2,
     /// USB 2.0 Pinnacle
-    USB_2_PINNACLE
+    USB_2_PINNACLE,
+    /// USB 2.0 DSS
+    USB_2_DSS,
+    /// Budget 2 - new driver with only one sys file
+    //BUDGET_2_NEW
 } DEVICE_CAT;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -59,16 +71,35 @@ typedef enum
 typedef enum
 {
     /// not set
-    FE_UNKNOWN = 0,
+    TYPE_FE_UNKNOWN = 0,
     /// DVB-C
-    FE_DVB_C,
+    TYPE_FE_DVB_C,
     /// DVB-S
-    FE_DVB_S,
+    TYPE_FE_DVB_S,
     /// DVB-S2
-    FE_DVB_S2,
+    TYPE_FE_DVB_S2,
     /// DVB-T
-    FE_DVB_T
-} FRONT_END_TYPE;
+    TYPE_FE_DVB_T,
+	/// ATSC
+    TYPE_FE_ATSC,
+    /// DSS
+    TYPE_FE_DSS,
+    /// DVB-C and DVB-T
+    TYPE_FE_DVB_CT
+} TYPE_FRONT_END;
+
+/////////////////////////////////////////////////////////////////////////////
+/// Lists the seller of the product.
+/////////////////////////////////////////////////////////////////////////////
+typedef enum
+{
+    /// not set
+    PS_UNKNOWN = 0,
+    /// TechnoTrend
+    PS_TECHNOTREND,
+    /// Technisat
+    PS_TECHNISAT
+} PRODUCT_SELLER;
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -76,39 +107,49 @@ typedef enum
 /////////////////////////////////////////////////////////////////////////////
 typedef enum
 {
-    /// 0 operation finished successful
+    /// operation finished successful
     RET_SUCCESS = 0,
-    /// 1 operation is not implemented for the opened handle
+    /// operation is not implemented for the opened handle
     RET_NOT_IMPL,
-    /// 2 operation is not supported for the opened handle
+    /// operation is not supported for the opened handle
     RET_NOT_SUPPORTED,
-    /// 3 the given HANDLE seems not to be correct
+    /// the given HANDLE seems not to be correct
     RET_ERROR_HANDLE,
-    /// 4 the internal IOCTL subsystem has no device handle
+    /// the internal IOCTL subsystem has no device handle
     RET_IOCTL_NO_DEV_HANDLE,
-    /// 5 the internal IOCTL failed
+    /// the internal IOCTL failed
     RET_IOCTL_FAILED,
-    /// 6 the infrared interface is already initialised
+    /// the infrared interface is already initialised
     RET_IR_ALREADY_OPENED,
-    /// 7 the infrared interface is not initialised
+    /// the infrared interface is not initialised
     RET_IR_NOT_OPENED,
-    /// 8 length exceeds maximum in EEPROM-Userspace operation
+    /// length exceeds maximum in EEPROM-Userspace operation
     RET_TO_MANY_BYTES,
-    /// 9 common interface hardware error
+    /// common interface hardware error
     RET_CI_ERROR_HARDWARE,
-    /// a common interface already opened
+    /// common interface already opened
     RET_CI_ALREADY_OPENED,
-    /// b operation finished with timeout
+    /// operation finished with timeout
     RET_TIMEOUT,
-    /// c read psi failed
+    /// read psi failed
     RET_READ_PSI_FAILED,
-    /// d not set
+    /// not set
     RET_NOT_SET,
-    /// e operation finished with general error
+    /// operation finished with general error
     RET_ERROR,
-	  /// f operation finished with ilegal pointer
+	/// operation finished with ilegal pointer
     RET_ERROR_POINTER
 } TYPE_RET_VAL;
+
+/////////////////////////////////////////////////////////////////////////////
+/// \brief
+///     Lists all possible LED states of USB bicolor LEDs.
+/////////////////////////////////////////////////////////////////////////////
+typedef enum
+{
+    TYPE_LED_RED = 0,
+    TYPE_LED_GREEN
+} TYPE_LED_COLOR;
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -457,10 +498,12 @@ typedef struct
 typedef struct
 {
     char            szTunerFilterName[MAX_PATH];
+    char            szTunerFilterName2[MAX_PATH];
     char            szCaptureFilterName[MAX_PATH];
     char            szAnlgTunerFilterName[MAX_PATH];
     char            szAnlgCaptureFilterName[MAX_PATH];
-    FRONT_END_TYPE  FeType;
+    char            szProductName[MAX_PATH];
+    TYPE_FRONT_END  FeType;
 } TS_FilterNames,  *pTS_FilterNames;
 
 #endif // #ifndef BDAAPITYPEDEFS_H

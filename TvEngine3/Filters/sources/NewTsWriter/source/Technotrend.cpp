@@ -1,23 +1,23 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+*	Copyright (C) 2006-2008 Team MediaPortal
+*	http://www.team-mediaportal.com
+*
+*  This Program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2, or (at your option)
+*  any later version.
+*   
+*  This Program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*  GNU General Public License for more details.
+*   
+*  You should have received a copy of the GNU General Public License
+*  along with GNU Make; see the file COPYING.  If not, write to
+*  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+*  http://www.gnu.org/copyleft/gpl.html
+*
+*/
 #pragma warning(disable : 4995)
 #include <windows.h>
 #include <commdlg.h>
@@ -31,29 +31,60 @@
 #include "bdaapi_cimsg.h"
 
 // Technotrend device names
-#define LBDG2_NAME_C_TUNER           L"TechnoTrend BDA/DVB-C Tuner"
-#define LBDG2_NAME_S_TUNER           L"TechnoTrend BDA/DVB-S Tuner"
-#define LBDG2_NAME_T_TUNER           L"TechnoTrend BDA/DVB-T Tuner"
-#define LBUDGET3NAME_TUNER           L"TTHybridTV BDA DVBT Tuner"
-#define LBUDGET3NAME_TUNER_ANLG      L"TTHybridTV BDA Analog TV Tuner"
-#define LUSB2BDA_DVB_NAME_C_TUNER    L"USB 2.0 BDA DVB-C Tuner"
-#define LUSB2BDA_DVB_NAME_S_TUNER    L"USB 2.0 BDA DVB-S Tuner"
-#define LUSB2BDA_DVB_NAME_T_TUNER    L"USB 2.0 BDA DVB-T Tuner"
-#define LUSB2BDA_DVBS_NAME_PIN_TUNER L"Pinnacle PCTV 400e Tuner"
+#define LBDG2_NAME                       L"TechnoTrend BDA/DVB Capture"
+#define LBDG2_NAME_C_TUNER               L"TechnoTrend BDA/DVB-C Tuner"
+#define LBDG2_NAME_S_TUNER               L"TechnoTrend BDA/DVB-S Tuner"
+#define LBDG2_NAME_T_TUNER               L"TechnoTrend BDA/DVB-T Tuner"
+#define LBDG2_NAME_NEW                   L"ttBudget2 BDA DVB Capture"
+#define LBDG2_NAME_C_TUNER_NEW           L"ttBudget2 BDA DVB-C Tuner"
+#define LBDG2_NAME_S_TUNER_NEW           L"ttBudget2 BDA DVB-S Tuner"
+#define LBDG2_NAME_T_TUNER_NEW           L"ttBudget2 BDA DVB-T Tuner"
+#define LBUDGET3NAME                     L"TTHybridTV BDA Digital Capture"
+#define LBUDGET3NAME_TUNER               L"TTHybridTV BDA DVBT Tuner"
+#define LBUDGET3NAME_ATSC_TUNER          L"TTHybridTV BDA ATSC Tuner"
+#define LBUDGET3NAME_TUNER_ANLG          L"TTHybridTV BDA Analog TV Tuner"
+#define LBUDGET3NAME_ANLG                L"TTHybridTV BDA Analog Capture"
+#define LUSB2BDA_DVB_NAME                L"USB 2.0 BDA DVB Capture"
+#define LUSB2BDA_DSS_NAME                L"USB 2.0 BDA DSS Capture"
+#define LUSB2BDA_DSS_NAME_TUNER          L"USB 2.0 BDA DSS Tuner"
+#define LUSB2BDA_DVB_NAME_C_TUNER        L"USB 2.0 BDA DVB-C Tuner"
+#define LUSB2BDA_DVB_NAME_S_TUNER        L"USB 2.0 BDA DVB-S Tuner"
+#define LUSB2BDA_DVB_NAME_S_TUNER_FAKE   L"USB 2.0 BDA (DVB-T Fake) DVB-T Tuner"
+#define LUSB2BDA_DVB_NAME_T_TUNER        L"USB 2.0 BDA DVB-T Tuner"
+#define LUSB2BDA_DVBS_NAME_PIN           L"Pinnacle PCTV 4XXe Capture"
+#define LUSB2BDA_DVBS_NAME_PIN_TUNER     L"Pinnacle PCTV 4XXe Tuner"
 
-
-//slot status
-#define	CI_SLOT_EMPTY							0
-#define	CI_SLOT_MODULE_INSERTED		1
-#define	CI_SLOT_MODULE_OK					2
-#define CI_SLOT_CA_OK							3
-#define	CI_SLOT_DBG_MSG						4
-#define	CI_SLOT_UNKNOWN_STATE			0xFF
+//Slot Status
+/// Common interface slot is empty.
+#define	CI_SLOT_EMPTY               0
+/// A CAM is inserted into the common interface.
+#define	CI_SLOT_MODULE_INSERTED     1
+/// CAM initialisation ready.
+#define	CI_SLOT_MODULE_OK           2
+/// CAM initialisation ready.
+#define CI_SLOT_CA_OK               3
+/// CAM initialisation ready.
+#define	CI_SLOT_DBG_MSG             4
+/// Slot state could not be determined.
+#define	CI_SLOT_UNKNOWN_STATE       0xFF
 
 //SendCIMessage Tags
-#define	CI_PSI_COMPLETE					0xC
-#define	CI_MODULE_READY					0xD
-#define	CI_SWITCH_PRG_REPLY			0xE
+#define	CI_MSG_NONE                 0
+#define	CI_MSG_CI_INFO              1
+#define	CI_MSG_MENU                 2
+#define	CI_MSG_LIST                 3
+#define	CI_MSG_TEXT                 4
+#define	CI_MSG_REQUEST_INPUT        5
+#define	CI_MSG_INPUT_COMPLETE       6
+#define	CI_MSG_LIST_MORE            7
+#define	CI_MSG_MENU_MORE            8
+#define	CI_MSG_CLOSE_MMI_IMM        9
+#define	CI_MSG_SECTION_REQUEST      0xA
+#define	CI_MSG_CLOSE_FILTER         0xB
+#define	CI_PSI_COMPLETE             0xC
+#define	CI_MODULE_READY             0xD
+#define	CI_SWITCH_PRG_REPLY         0xE
+#define	CI_MSG_TEXT_MORE            0xF
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -97,7 +128,7 @@ CTechnotrend::~CTechnotrend(void)
     }
     else
     {
-       LogDebug("Technotrend: unable to get proc adress of bdaapiCloseCI");
+      LogDebug("Technotrend: unable to get proc adress of bdaapiCloseCI");
     }
 
     BDAAPICLOSE closeapi=(BDAAPICLOSE)GetProcAddress(m_dll,"_bdaapiClose@4");
@@ -107,7 +138,7 @@ CTechnotrend::~CTechnotrend(void)
     }
     else
     {
-       LogDebug("Technotrend: unable to get proc adress of bdaapiClose");
+      LogDebug("Technotrend: unable to get proc adress of bdaapiClose");
     }
   }
   if (m_dll!=NULL)
@@ -277,14 +308,18 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   if (wcscmp(info.achName,LBDG2_NAME_C_TUNER)==0) m_deviceType=BUDGET_2;
   if (wcscmp(info.achName,LBDG2_NAME_S_TUNER)==0) m_deviceType=BUDGET_2;
   if (wcscmp(info.achName,LBDG2_NAME_T_TUNER)==0) m_deviceType=BUDGET_2;
+  if (wcscmp(info.achName,LBDG2_NAME_C_TUNER_NEW)==0) m_deviceType=BUDGET_2;
+  if (wcscmp(info.achName,LBDG2_NAME_S_TUNER_NEW)==0) m_deviceType=BUDGET_2;
+  if (wcscmp(info.achName,LBDG2_NAME_T_TUNER_NEW)==0) m_deviceType=BUDGET_2;
   if (wcscmp(info.achName,LBUDGET3NAME_TUNER)==0) m_deviceType=BUDGET_3;
+  if (wcscmp(info.achName,LBUDGET3NAME_ATSC_TUNER)==0) m_deviceType=BUDGET_3;
   if (wcscmp(info.achName,LBUDGET3NAME_TUNER_ANLG)==0) m_deviceType=BUDGET_3;
   if (wcscmp(info.achName,LUSB2BDA_DVB_NAME_C_TUNER)==0) m_deviceType=USB_2;
   if (wcscmp(info.achName,LUSB2BDA_DVB_NAME_S_TUNER)==0) m_deviceType=USB_2;
   if (wcscmp(info.achName,LUSB2BDA_DVB_NAME_T_TUNER)==0) m_deviceType=USB_2;
   if (wcscmp(info.achName,LUSB2BDA_DVBS_NAME_PIN_TUNER)==0) m_deviceType=USB_2_PINNACLE;
   if (m_deviceType==UNKNOWN) return S_OK;
-  
+
   LogDebug("Technotrend: card detected type:%d",m_deviceType);
   UINT deviceId;
   if (!GetDeviceID(tunerFilter, deviceId) )
@@ -309,7 +344,6 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
     LogDebug("Technotrend: unable to get proc adress of bdaapiOpenHWIdx");
     return S_OK;
   }
-
 
   memset(&m_technoTrendStructure,0,sizeof(m_technoTrendStructure));
   m_technoTrendStructure.p01Context=m_technoTrendStructure.p02Context=m_technoTrendStructure.p03Context=m_technoTrendStructure.p04Context=this;
@@ -368,7 +402,7 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   {
     LogDebug("Technotrend: unable to get proc adress of bdaapiOpenCI");
   }
-	
+
 
   return S_OK;
 }
@@ -428,7 +462,7 @@ STDMETHODIMP CTechnotrend::SetAntennaPower( BOOL onOff)
 //**************************************************************************************************
 STDMETHODIMP CTechnotrend::SetDisEqc(BYTE* diseqc, BYTE len, BYTE Repeat,BYTE Toneburst,int ePolarity)
 {
-	char buffer[129];
+  char buffer[129];
   strcpy(buffer,"");
   for (int i=0; i < (int)len;++i)
   {
@@ -447,7 +481,7 @@ STDMETHODIMP CTechnotrend::SetDisEqc(BYTE* diseqc, BYTE len, BYTE Repeat,BYTE To
   {
     LogDebug("Technotrend: unable to get proc adress of bdaapiSetDiSEqCMsg");
   }
-	
+
   return S_OK;
 }
 
@@ -464,11 +498,11 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
   *succeeded=FALSE;
   BOOL enabled=FALSE;
   m_ciStatus=-1;
-	LogDebug("TechnoTrend: Get CI Slot State");
+  LogDebug("TechnoTrend: Get CI Slot State");
   BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"_bdaapiCIGetSlotStatus@8");
   if (getSlotState!=NULL)
   {
-	  hr=getSlotState(m_hBdaApi,0);
+    hr=getSlotState(m_hBdaApi,0);
     if (hr!=RET_SUCCESS)
     {
       LogDebug("Technotrend: bdaapiCIGetSlotStatus failed:%d", hr);
@@ -478,14 +512,14 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
   {
     LogDebug("Technotrend: unable to get proc adress of bdaapiCIGetSlotStatus");
   }
-	LogDebug("TechnoTrend: DescrambleMultiple:(%d)",NrOfOfPrograms);
+  LogDebug("TechnoTrend: DescrambleMultiple:(%d)",NrOfOfPrograms);
   for (int i=0; i < NrOfOfPrograms;++i)
   {
     LogDebug("TechnoTrend: DescrambleMultiple: serviceId:%d", pNrs[i]);
   }
-	if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
   {
-    
+
     BDAAPICIMULTIDECODE readPSI=(BDAAPICIMULTIDECODE)GetProcAddress(m_dll,"_bdaapiCIMultiDecode@12");
     if (readPSI!=NULL)
     {
@@ -496,7 +530,7 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
         {
           *succeeded=TRUE;
           LogDebug("TechnoTrend: services decoded:%x %d",hr,m_ciStatus);
-      
+
         }
         else
         {
@@ -514,13 +548,13 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
       LogDebug("Technotrend: unable to get proc adress of bdaapiCIMultiDecode");
     }
   }
-	else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE || m_slotStatus==CI_SLOT_EMPTY)
-	{
-		//no CAM inserted
-      LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
+  else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE || m_slotStatus==CI_SLOT_EMPTY)
+  {
+    //no CAM inserted
+    LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
     *succeeded=TRUE;
-	}
-  
+  }
+
   return S_OK;
 }
 //**************************************************************************************************
@@ -536,11 +570,11 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
   *succeeded=FALSE;
   BOOL enabled=FALSE;
   m_ciStatus=-1;
-	LogDebug("TechnoTrend: Get CI Slot State");
+  LogDebug("TechnoTrend: Get CI Slot State");
   BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"_bdaapiCIGetSlotStatus@8");
   if (getSlotState!=NULL)
   {
-	  hr=getSlotState(m_hBdaApi,0);
+    hr=getSlotState(m_hBdaApi,0);
     if (hr!=RET_SUCCESS)
     {
       LogDebug("Technotrend: bdaapiCIGetSlotStatus failed:%d", hr);
@@ -550,8 +584,8 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
   {
     LogDebug("Technotrend: unable to get proc adress of bdaapiCIGetSlotStatus");
   }
-	LogDebug("TechnoTrend: DescrambleService:(%d)",m_slotStatus);
-	if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
+  LogDebug("TechnoTrend: DescrambleService:(%d)",m_slotStatus);
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
   {
     BDAAPICIREADPSIFASTWITHPMT readPSI=(BDAAPICIREADPSIFASTWITHPMT)GetProcAddress(m_dll,"_bdaapiCIReadPSIFastWithPMT@12");
     //BDAAPICIREADPSIFASTDRVDEMUX readPSI=(BDAAPICIREADPSIFASTDRVDEMUX)GetProcAddress(m_dll,"_bdaapiCIReadPSIFastDrvDemux@8");
@@ -564,7 +598,7 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
         {
           *succeeded=TRUE;
           LogDebug("TechnoTrend: service decoded:%x %d",hr,m_ciStatus);
-      
+
         }
         else
         {
@@ -582,13 +616,13 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
       LogDebug("Technotrend: unable to get proc adress of bdaapiCIReadPSIFastDrvDemux");
     }
   }
-	else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE || m_slotStatus==CI_SLOT_EMPTY)
-	{
-		//no CAM inserted
-      LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
+  else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE || m_slotStatus==CI_SLOT_EMPTY)
+  {
+    //no CAM inserted
+    LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
     *succeeded=TRUE;
-	}
-  
+  }
+
   return S_OK;
 }
 //**************************************************************************************************
@@ -647,38 +681,38 @@ void CTechnotrend::OnCaChange(BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus)
 {
   try
   {
-	  LogDebug("$ OnCaChange slot:%d reply:%d status:%d",nSlot,nReplyTag,wStatus);
-	  switch(nReplyTag)	
-	  {
-		  case CI_PSI_COMPLETE:
-			  LogDebug("$ CI: ### Number of programs : %04d",wStatus);
-		  break;
+    LogDebug("$ OnCaChange slot:%d reply:%d status:%d",nSlot,nReplyTag,wStatus);
+    switch(nReplyTag)	
+    {
+    case CI_PSI_COMPLETE:
+      LogDebug("$ CI: ### Number of programs : %04d",wStatus);
+      break;
 
-		  case CI_MODULE_READY:
-			  LogDebug("$ CI: CI_MODULE_READY in OnCAStatus not supported");
-		  break;
-		  case CI_SWITCH_PRG_REPLY:
-		  {
-			  switch(wStatus)
-			  {
-				  case ERR_INVALID_DATA:
-					  LogDebug("$ CI: ERROR::SetProgram failed !!! (invalid PNR)");
-				  break;
-				  case ERR_NO_CA_RESOURCE:
-					  LogDebug("$ CI: ERROR::SetProgram failed !!! (no CA resource available)");
-				  break;
-				  case ERR_NONE:
-					  LogDebug("$ CI:    SetProgram OK");
-					  m_ciStatus=1;
-				  break;
-				  default:
-				  break;
-			  }
-		  }
-		  break;
-		  default:
-		  break;
-	  }
+    case CI_MODULE_READY:
+      LogDebug("$ CI: CI_MODULE_READY in OnCAStatus not supported");
+      break;
+    case CI_SWITCH_PRG_REPLY:
+      {
+        switch(wStatus)
+        {
+        case ERR_INVALID_DATA:
+          LogDebug("$ CI: ERROR::SetProgram failed !!! (invalid PNR)");
+          break;
+        case ERR_NO_CA_RESOURCE:
+          LogDebug("$ CI: ERROR::SetProgram failed !!! (no CA resource available)");
+          break;
+        case ERR_NONE:
+          LogDebug("$ CI:    SetProgram OK");
+          m_ciStatus=1;
+          break;
+        default:
+          break;
+        }
+      }
+      break;
+    default:
+      break;
+    }
   }
   catch(...)
   {
@@ -700,7 +734,7 @@ void CTechnotrend::OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
     else if (nStatus==4) LogDebug("Technotrend: slot:%d dbg msg",nSlot);
     else  LogDebug("Technotrend: slot:%d unknown state:%x",nSlot,nStatus);
     m_slotStatus=nStatus;
-  	
+
     if (csInfo!=NULL)
     {
       LogDebug("Technotrend:    CI status:%d ",csInfo->nStatus);
