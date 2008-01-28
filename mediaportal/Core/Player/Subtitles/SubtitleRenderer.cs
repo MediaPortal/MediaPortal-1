@@ -88,25 +88,31 @@ namespace MediaPortal.Player.Subtitles
         public string language;
     }
 
-  public class Subtitle
-  {
-      public static int idCount = 0;
-      public Subtitle(){
-        id = idCount++;
-      }
-    public Bitmap subBitmap;
-    public uint width;
-    public uint height;
-    public double presentTime;  // NOTE: in seconds
-    public double timeOut;      // NOTE: in seconds
-    public int firstScanLine;
-    public long id = 0;
-
-    public override string ToString()
+    public class Subtitle
     {
-      return "Subtitle " + id + " meta data: Timeout=" + timeOut + " timestamp=" + presentTime;
+        public static int idCount = 0;
+        public Subtitle()
+        {
+            id = idCount++;
+        }
+        public Bitmap subBitmap;
+        public uint width;
+        public uint height;
+        public double presentTime;  // NOTE: in seconds
+        public double timeOut;      // NOTE: in seconds
+        public int firstScanLine;
+        public long id = 0;
+
+        public void Dispose()
+        {
+            if (subBitmap != null) subBitmap.Dispose();
+        }
+
+        public override string ToString()
+        {
+            return "Subtitle " + id + " meta data: Timeout=" + timeOut + " timestamp=" + presentTime;
+        }
     }
-  }
 
   /// <summary>
   /// Interface to the subtitle filter, which
@@ -313,6 +319,20 @@ namespace MediaPortal.Player.Subtitles
       return 0;
     }
 
+      private void AddSubtitle(Subtitle sub)
+      {
+          lock (subtitles)
+          {
+              while (subtitles.Count >= MAX_SUBTITLES_IN_QUEUE)
+              {
+                  Log.Debug("SubtitleRenderer: Subtitle queue too big, discarding first element");
+                  subtitles.First.Value.Dispose();
+                  subtitles.RemoveFirst();
+              }
+              subtitles.AddLast(sub);
+              Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
+          }
+      }
 
     /// <summary>
     /// Callback from subtitle filter, alerting us that a new subtitle is available
@@ -362,16 +382,7 @@ namespace MediaPortal.Player.Subtitles
 
           // subtitle.subBitmap.Save("C:\\users\\petert\\sub" + subtitle.id + ".bmp"); // debug
 
-          lock (subtitles)
-          {
-              while(subtitles.Count >= MAX_SUBTITLES_IN_QUEUE)
-              {
-                  Log.Debug("SubtitleRenderer: Subtitle queue too big, discarding first element");
-                  subtitles.RemoveFirst();
-              }
-              subtitles.AddLast(subtitle);
-              Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
-          }
+          AddSubtitle(subtitle);
         }
         catch (Exception e)
         {
@@ -450,16 +461,7 @@ namespace MediaPortal.Player.Subtitles
               subtitle.width = 720;
               subtitle.firstScanLine = 0;
 
-              lock (subtitles)
-              {
-                  while(subtitles.Count >= MAX_SUBTITLES_IN_QUEUE) {
-                      Log.Debug("SubtitleRenderer: Subtitle queue too big, discarding first element");
-                      subtitles.RemoveFirst();
-                  }
-                  subtitles.AddLast(subtitle);
-
-                  Log.Debug("SubtitleRenderer: Text subtitle added, now have " + subtitles.Count + " subtitles in cache " + subtitle.ToString() + " pos on last render was " + posOnLastRender);
-              }
+              AddSubtitle(subtitle);
           }
           catch (Exception e)
           {
