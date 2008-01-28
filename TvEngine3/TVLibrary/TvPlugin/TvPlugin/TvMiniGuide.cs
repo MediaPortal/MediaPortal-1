@@ -277,11 +277,12 @@ namespace TvPlugin
                 /*
                 TvFullScreen TVWindow = (TvFullScreen)GUIWindowManager.GetWindow((int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
                 if (TVWindow != null) TVWindow.UpdateOSD(changeChannel.Name);                
-                */ 
-                
+                */
+
+                TVHome.UserChannelChanged = true;
+
                 if (changeChannel != null)
-                {
-                  TVHome.UserChannelChanged = true;
+                {                  
                   TVHome.ViewChannel(changeChannel);                  
                 }
               }
