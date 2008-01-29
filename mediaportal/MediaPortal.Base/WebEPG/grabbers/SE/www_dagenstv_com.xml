@@ -162,8 +162,8 @@
           <TemplateText>
 &lt;div&gt;
 &lt;div&gt;&lt;#START&gt;(&lt;#END&gt;)&lt;/div&gt;
-&lt;div&gt;&lt;#TITLE&gt;&lt;/div&gt;
-&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;z(&gt;&lt;div&gt;&lt;z)*&gt;&lt;/div&gt;
+&lt;div&gt;&lt;#TITLE&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;#DESCRIPTION&gt;&lt;z(&gt;&lt;div&gt;&lt;z)*&gt;&lt;/div&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
