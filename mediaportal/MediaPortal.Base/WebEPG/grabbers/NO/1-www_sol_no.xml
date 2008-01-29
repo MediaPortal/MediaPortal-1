@@ -77,6 +77,8 @@
     <Channel id="nrk3@nrk.no" siteId="nrk3" />
     <Channel id="viasat4@viasat.no" siteId="viasat4" />
     <Channel id="fem@tvnorge.no" siteId="fem" />
+    <Channel id="toon@disney.no" siteId="toondisney" />
+    <Channel id="playhouse@disney.no" siteId="disneyplay" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="" />

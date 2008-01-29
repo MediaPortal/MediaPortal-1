@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1361</entry>
+    <entry name="TotalChannels">1367</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -5447,6 +5447,30 @@
     <entry name="ChannelID">filmclassics@premiere.de</entry>
 	<entry name="FullName">Premiere Filmclassics</entry>
   </section>
+    <section name="1361">
+    <entry name="ChannelID">film@tv2.no</entry>
+	<entry name="FullName">TV2 Film</entry>
+  </section>
+    <section name="1362">
+    <entry name="ChannelID">zebra@tv2.no</entry>
+	<entry name="FullName">TV2 Zebra</entry>
+  </section>
+    <section name="1363">
+    <entry name="ChannelID">nrksuper@nrk.no</entry>
+	<entry name="FullName">NRK Super</entry>
+  </section>
+    <section name="1364">
+    <entry name="ChannelID">nyhetskanalen@tv2.no</entry>
+	<entry name="FullName">TV2 Nyheter</entry>
+  </section>
+    <section name="1365">
+    <entry name="ChannelID">toon@disney.no</entry>
+	<entry name="FullName">Toon Disney</entry>
+  </section>
+    <section name="1366">
+    <entry name="ChannelID">playhouse@disney.no</entry>
+	<entry name="FullName">Playhouse Disney</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -6659,7 +6683,7 @@
     <entry name="66">1251</entry>
   </section>
   <section name="NO">
-    <entry name="TotalChannels">82</entry>
+    <entry name="TotalChannels">88</entry>
     <entry name="0">24</entry>
     <entry name="1">25</entry>
     <entry name="2">60</entry>
@@ -6742,6 +6766,12 @@
     <entry name="79">1354</entry>
     <entry name="80">1355</entry>
     <entry name="81">1356</entry>
+    <entry name="82">1361</entry>
+    <entry name="83">1362</entry>
+    <entry name="84">1363</entry>
+    <entry name="85">1364</entry>
+    <entry name="86">1365</entry>
+    <entry name="87">1366</entry>
   </section>
   <section name="NZ">
     <entry name="TotalChannels">6</entry>

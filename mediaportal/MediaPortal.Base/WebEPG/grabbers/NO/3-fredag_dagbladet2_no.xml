@@ -8,8 +8,10 @@
     <Channel id="jetix.no" siteId="82" />
     <Channel id="action@tv1000.no" siteId="78" />
     <Channel id="classic@tv1000.no" siteId="79" />
-    <Channel id="family@tv1000.no" siteId="80" />  
+    <Channel id="family@tv1000.no" siteId="80" /> 
+    <Channel id="toon@disney.no" siteId="85" /> 
     <Channel id="sport2@canalplus.no" siteId="88" />
+    <Channel id="playhouse@disney.no" siteId="89" />
     <Channel id="film@tv2.no" siteId="93" />
     <Channel id="nyhetskanalen@tv2.no" siteId="94" />
     <Channel id="sport@tv2.no" siteId="95" />
