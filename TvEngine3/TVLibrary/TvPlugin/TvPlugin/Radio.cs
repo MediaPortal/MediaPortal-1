@@ -280,6 +280,11 @@ namespace TvPlugin
 
         xmlwriter.SetValueAsBool("myradio", "sortascending", sortAscending);
         xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
+
+        if (TVHome.Navigator.Channel.IsRadio)
+        {
+          xmlwriter.SetValue("myradio", "channel", TVHome.Navigator.Channel.DisplayName);
+        }        
       }
     }
     #endregion

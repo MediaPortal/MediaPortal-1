@@ -1119,8 +1119,19 @@ namespace TvPlugin
 					SaveSettings();
 				}
 
-				// turn tv on/off
-				ViewChannelAndCheck(Navigator.Channel);
+				// turn tv on/off        
+        if (Navigator.Channel.IsTv)
+        {
+				  ViewChannelAndCheck(Navigator.Channel);
+        }
+        else // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
+        {
+          MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml");
+          string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
+          Channel currentChannel = Navigator.GetChannel(currentchannelName);
+          ViewChannelAndCheck(currentChannel);
+        }
+
 				UpdateStateOfButtons();
 				UpdateProgressPercentageBar();
 				benchClock.Stop();
@@ -1931,15 +1942,16 @@ namespace TvPlugin
 						}
 					}
 				}
-				else
-				{
-          if (g_Player.IsTVRecording && _userChannelChanged) //we are watching a recording, we have now issued a ch. change..stop the player.
-					{
-						_userChannelChanged = false;
-						g_Player.Stop(true);
-					}
-				}        
-
+				else if (g_Player.IsTVRecording && _userChannelChanged) //we are watching a recording, we have now issued a ch. change..stop the player.
+				{					
+					_userChannelChanged = false;
+					g_Player.Stop(true);					
+				}
+        else if ((channel.IsTv && g_Player.IsRadio) || (channel.IsRadio && g_Player.IsTV))
+        {
+          g_Player.Stop(true);
+        }
+        
 				if (Navigator.Channel != null)
 				{
 					if (channel.IdChannel != Navigator.Channel.IdChannel || (Navigator.LastViewedChannel == null))
@@ -1986,7 +1998,7 @@ namespace TvPlugin
 				}
 
 				GUIWaitCursor.Show();
-				bool wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting) && (g_Player.IsTV || g_Player.IsRadio);
+				bool wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio);
 
 				//Start timeshifting the new tv channel
 				TvServer server = new TvServer();
@@ -3290,7 +3302,10 @@ namespace TvPlugin
 			{
 				try
 				{
-					xmlwriter.SetValue("mytv", "channel", m_currentChannel.DisplayName);
+          if (m_currentChannel.IsTv)
+          {
+            xmlwriter.SetValue("mytv", "channel", m_currentChannel.DisplayName);
+          }
 				}
 				catch (Exception)
 				{
