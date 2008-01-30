@@ -388,11 +388,6 @@ namespace MediaPortal.Music.Database
     #region		Database rebuild
     public int MusicDatabaseReorg(ArrayList shares)
     {
-      bool updateSinceLastImport = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
-      }
       return MusicDatabaseReorg(shares, null);
     }
 
@@ -400,6 +395,10 @@ namespace MediaPortal.Music.Database
     {
       // Get the values from the Setting Object, which we received from the Config
       bool updateSinceLastImport = false;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
+      }
       if (setting != null)
       {
         _createMissingFolderThumbs = setting.CreateMissingFolderThumb;
