@@ -138,12 +138,12 @@ void CEpgParser::OnNewSection(int pid,int tableId,CSection& section)
 	try
 	{
 		//LogDebug("epg new section pid:%x tableid:%x sid:%x len:%x",pid,tableId,section.TransportId,section.SectionLength);
-		if (section.SectionLength>0)
+		if (section.section_length>0)
 		{
 			if (pid==PID_EPG_PREMIERE_DIREKT || pid==PID_EPG_PREMIERE_SPORT)
-				m_epgDecoder.DecodePremierePrivateEPG(section.Data, section.SectionLength);
+				m_epgDecoder.DecodePremierePrivateEPG(section.Data, section.section_length);
 			else
-				m_epgDecoder.DecodeEPG(section.Data, section.SectionLength);
+				m_epgDecoder.DecodeEPG(section.Data, section.section_length);
 		}
 	}
 	catch(...)

@@ -1311,7 +1311,7 @@ namespace TvLibrary.Implementations.DVB
           if (chan != null)
           {
             //HACK: Currently Premiere Direkt Feeds (nid=133) have the free_ca flag in SDT set to true (means not scrambled), so we have to override this
-            if ((!chan.FreeToAir) || (chan.NetworkId==133))
+            if ((!chan.FreeToAir) || (chan.NetworkId==133 && !chan.Provider.Equals("BetaDigital")))
             {
               if (_newCA == false)
               {

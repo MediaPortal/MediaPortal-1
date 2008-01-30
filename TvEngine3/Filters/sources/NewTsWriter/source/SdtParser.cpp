@@ -55,8 +55,8 @@ void CSdtParser::SetCallback(ISdtCallBack* callback)
 void  CSdtParser::OnNewSection(CSection& sections)
 {
   byte* section=(&sections.Data)[0];
-  int sectionLen=sections.SectionLength;
-  if (sections.TableId!=0x42 && sections.TableId!=0x46) return;
+	int sectionLen=sections.section_length;
+	if (sections.table_id!=0x42 && sections.table_id!=0x46) return;
   
   long original_network_id = ((section[8])<<8)+section[9];
  // LogDebug("decodeSDTTable len=%d section no:%d last section no:%d cni:%d version:%d si:%d", 
@@ -102,13 +102,13 @@ void  CSdtParser::OnNewSection(CSection& sections)
         CChannelInfo info;
 			  DVB_GetService(section+pointer,info);
         info.NetworkId=original_network_id;
-		info.TransportId=sections.TransportId;
+				info.TransportId=sections.table_id_extension;
         info.ServiceId=service_id;
         info.EIT_schedule_flag=EIT_schedule_flag;
         info.EIT_present_following_flag=EIT_present_following_flag;
         info.RunningStatus=running_status;
         info.FreeCAMode=free_CA_mode;
-		info.OtherMux = (sections.TableId==0x46);
+				info.OtherMux = (sections.table_id==0x46);
 				m_bFound=true;
         if (m_pCallback!=NULL)
           m_pCallback->OnSdtReceived(info);

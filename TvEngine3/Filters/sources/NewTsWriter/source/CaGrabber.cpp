@@ -94,15 +94,15 @@ void CCaGrabber::OnNewSection(CSection& section)
 {
 	try
 	{
- 		if (section.Version == m_iCaVersion) return;
+		if (section.version_number == m_iCaVersion) return;
 	  CEnterCriticalSection enter(m_section);
 
-	  if (section.TableId!=1) return;
-    if (section.SectionLength<0 || section.SectionLength>=MAX_SECTION_LENGTH) return;
+		if (section.table_id!=1) return;
+		if (section.section_length<0 || section.section_length>=MAX_SECTION_LENGTH) return;
 
-		LogDebug("cagrabber: got ca version:%d %d", section.Version,m_iCaVersion);
-		m_iCaVersion=section.Version;
-		m_iCaLength=section.SectionLength;
+		LogDebug("cagrabber: got ca version:%d %d", section.version_number,m_iCaVersion);
+		m_iCaVersion=section.version_number;
+		m_iCaLength=section.section_length;
 
 		memcpy(m_caData,section.Data,m_iCaLength);
 		if (memcmp(m_caData,m_caPrevData,m_iCaLength)!=0)

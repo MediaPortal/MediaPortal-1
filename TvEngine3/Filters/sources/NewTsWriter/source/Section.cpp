@@ -35,36 +35,59 @@ CSection::~CSection(void)
 
 void CSection::Reset()
 {
-  TableId=-1;
-  Version=-1;
-  SectionNumber=-1;
-  SectionLength=-1;
-  SectionSyntaxIndicator=-1;
-  CurrentNextIndicator=-1;
-  BufferPos=0;
-  SectionLength=0;
-  TransportId=0;
-  LastSectionNumber=0;
+	table_id = -1;
+  table_id_extension = -1;
+  section_length = -1;
+  section_number = -1;
+  version_number = -1;
+  section_syntax_indicator = -1;
+  BufferPos = 0;
+}
 
+int CSection::CalcSectionLength(byte* tsPacket,int start)
+{
+	if (BufferPos < 3)
+  {
+		byte bHi=0;
+    byte bLow=0;
+    if (BufferPos==1)
+		{
+			bHi=tsPacket[start];
+      bLow=tsPacket[start+1];
+    }
+    else if (BufferPos==2)
+    {
+			bHi=Data[1];
+      bLow=tsPacket[start];
+    }
+    section_length=(int)(((bHi & 0xF) << 8) + bLow);
+  }
+  else
+		section_length = (int)(((Data[1] & 0xF) << 8) + Data[2]);
+  return section_length;
 }
 
 bool CSection::DecodeHeader()
 {
-	//if (BufferPos<8) return false;
-	TableId=Data[0];
-	SectionSyntaxIndicator = (Data[1]>>7) & 1;
-	SectionLength=((Data[1] & 0xF) << 8) + Data[2];
-	TransportId=(Data[3]<<8)+Data[4];
-	CurrentNextIndicator=Data[5] & 1;
-	Version = ((Data[5]>>1)&0x1F);
-	SectionNumber=Data[6];
-	LastSectionNumber=Data[7];	
+	if (BufferPos<8) return false;
+  table_id = Data[0];
+  section_syntax_indicator = ((Data[1] >> 7) & 1);
+  if (section_length==-1)
+		section_length=(((Data[1] & 0xF) << 8) + Data[2]);
+  table_id_extension=((Data[3] << 8) +Data[4]);
+  version_number = ((Data[5] >> 1) & 0x1F);
+  section_number = Data[6];
+  section_syntax_indicator = ((Data[1] >> 7) & 1);
 	return true;
 }
 
+
+
 bool CSection::SectionComplete()
 {
-	if (!DecodeHeader())
+	if (!DecodeHeader() && BufferPos > section_length && section_length>0)
+		return true;
+  if (!DecodeHeader())
 		return false;
-	return (BufferPos>=SectionLength);
+  return (BufferPos >= section_length);
 }

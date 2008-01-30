@@ -17,11 +17,6 @@ namespace TsPacketChecker
     public int section_number;
     public int version_number;
     public int section_syntax_indicator;
-    public int program_number;
-
-    public int SectionPos;
-    public uint NetworkId;
-    public int TransportId;
     public int last_section_number;
 
     public int BufferPos;

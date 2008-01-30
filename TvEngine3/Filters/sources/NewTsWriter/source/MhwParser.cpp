@@ -121,7 +121,7 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 		byte* section=&(sections.Data[m_tsHeader.PayLoadStart]);
 		int table_id = section[0];
 
-		int sectionLength=sections.SectionLength;
+		int sectionLength=sections.section_length;
 		if (pid==0xd2)
 		{
 			if (table_id==0x90 ||(table_id >=0x70 && table_id <=0x7f) )

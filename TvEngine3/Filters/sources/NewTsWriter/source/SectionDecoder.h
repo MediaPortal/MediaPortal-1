@@ -45,9 +45,9 @@ public:
 protected:
 private:
 	int StartNewSection(byte* tsPacket,int index,int sectionLen);
-	int AddToSection(byte* tsPacket, int index, int sectionLen);
+	int AppendSection(byte* tsPacket, int index, int sectionLen);
 	int SnapshotSectionLength(byte* tsPacket,int start);
-  void ProcessSection();
+
   bool        m_bLog;
   bool        m_bCrcCheck;
   int			    m_pid;

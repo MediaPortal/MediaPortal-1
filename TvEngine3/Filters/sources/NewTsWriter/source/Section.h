@@ -28,15 +28,17 @@ public:
   virtual ~CSection(void);
   void   Reset();
   bool	 DecodeHeader();
+	int		 CalcSectionLength(byte* tsPacket, int start);
   bool   SectionComplete();
-  int    Version;
-  int    SectionNumber;
-  int    LastSectionNumber;
-  long    TransportId;
-  int    BufferPos;
-  int    SectionLength;
-  int	 TableId;
-  int	 SectionSyntaxIndicator;
-  int	 CurrentNextIndicator;
+
+	int table_id;
+	int table_id_extension;
+	int section_length;
+	int section_number;
+	int version_number;
+	int section_syntax_indicator;
+	int last_section_number;
+
+	int BufferPos;
   byte   *Data;
 };

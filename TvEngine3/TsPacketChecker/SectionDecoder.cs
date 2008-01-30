@@ -60,10 +60,10 @@ namespace TsPacketChecker
         m_section.Reset();
     }
 
-    private int StartNewSection(byte[] tsPacket,int index,int sectionLen)
+    private int StartNewSection(byte[] tsPacket, int index, int sectionLen)
     {
-      int newstart=-1;
-      int len=-1;
+      int newstart = -1;
+      int len = -1;
       if (sectionLen > -1)
       {
         if (index + sectionLen < 185)
@@ -84,7 +84,7 @@ namespace TsPacketChecker
       }
       m_section.Reset();
       Array.Copy(tsPacket, index, m_section.Data, 0, len);
-      m_section.BufferPos=len;
+      m_section.BufferPos = len;
       m_section.DecodeHeader();
       return newstart;
     }

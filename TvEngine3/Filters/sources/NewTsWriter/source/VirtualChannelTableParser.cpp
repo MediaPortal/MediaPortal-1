@@ -111,9 +111,9 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
   //dump table!
 
   int section_syntax_indicator = (buf[1]>>7) & 1;
-  int private_indicator = (buf[1]>>6) & 1;
-	int section_length = newSection.SectionLength;
-  int transport_stream_id = (buf[3]<<8)+buf[4];
+  int private_indicator = (buf[1]>>6) & 1; 
+	int section_length = newSection.section_length;
+	int transport_stream_id = newSection.table_id_extension;
   int version_number = ((buf[5]>>1)&0x1F);
 	if (table_id==0xc8)
 	{

@@ -88,18 +88,18 @@ void CPmtGrabber::OnNewSection(CSection& section)
 {
 	try
 	{
- 		if (section.Version == m_iPmtVersion) 
+		if (section.version_number == m_iPmtVersion) 
 			return;
 		
 	  CEnterCriticalSection enter(m_section);
 
-		if (section.TableId!=2)
+		if (section.table_id!=2)
 		{
-			LogDebug("got tableid=%d",section.TableId);
+			LogDebug("got tableid=%d",section.table_id);
 		  return;
 		}
 
-    if (section.SectionLength<0 || section.SectionLength>=MAX_SECTION_LENGTH) return;
+		if (section.section_length<0 || section.section_length>=MAX_SECTION_LENGTH) return;
 
     long serviceId = (section.Data[3] << 8) + section.Data[4];
 		LogDebug("service_id=%d",serviceId);
@@ -112,9 +112,9 @@ void CPmtGrabber::OnNewSection(CSection& section)
 			LogDebug("pmtgrabber: serviceid mismatch %d != %d",serviceId,m_iServiceId);
 			return;
 		}
-		LogDebug("pmtgrabber: got pmt version:%d %d", section.Version,m_iPmtVersion);
-		m_iPmtVersion=section.Version;
-		m_iPmtLength=section.SectionLength;
+		LogDebug("pmtgrabber: got pmt version:%d %d", section.version_number,m_iPmtVersion);
+		m_iPmtVersion=section.version_number;
+		m_iPmtLength=section.section_length;
 
 		memcpy(m_pmtData,section.Data,m_iPmtLength);
 		if (memcmp(m_pmtData,m_pmtPrevData,m_iPmtLength)!=0)

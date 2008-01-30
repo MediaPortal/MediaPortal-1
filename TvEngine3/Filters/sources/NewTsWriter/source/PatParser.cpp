@@ -382,7 +382,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 void CPatParser::OnNewSection(CSection& sections)
 {
   byte* section=sections.Data;
-  int section_length=sections.SectionLength;
+	int section_length=sections.section_length;
 
   
  // DWORD crc= crc32((char*)&section[start],sections.SectionLength+start+3-5);
@@ -415,7 +415,7 @@ void CPatParser::OnNewSection(CSection& sections)
 			if (it==m_mapChannels.end())
 			{
 				CChannelInfo info;
-				info.TransportId=sections.TransportId;
+				info.TransportId=sections.table_id_extension;
 				info.ServiceId=serviceId;
         info.PidTable.PmtPid=pmtPid;
 				m_mapChannels[serviceId]=info;

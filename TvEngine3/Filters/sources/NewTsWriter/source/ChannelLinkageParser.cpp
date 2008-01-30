@@ -189,7 +189,7 @@ void CChannelLinkageParser::OnNewSection(int pid, int tableId, CSection& section
 	try
 	{
 		byte* section=sections.Data;
-		int sectionLength=sections.SectionLength;
+		int sectionLength=sections.section_length;
 		if (sectionLength>0)
 		{
 			DecodeLinkage(section,sectionLength);

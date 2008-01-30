@@ -49,11 +49,10 @@ bool CPmtParser::IsReady()
 void CPmtParser::OnNewSection(CSection& sections)
 { 
 	byte* section=(&sections.Data)[0];
-	int sectionLen=sections.SectionLength;
+	int sectionLen=sections.section_length;
 
-	//m_tsHeader.Decode(section);
-	int start=0;//m_tsHeader.PayLoadStart;
-	int table_id = section[start+0];
+	int start=0;
+	int table_id = sections.table_id;
 	if (table_id!=2) return;
 	int section_syntax_indicator = (section[start+1]>>7) & 1;
 	int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
