@@ -47,24 +47,22 @@ namespace TsPacketChecker
 
     public override void OnTsPacket(byte[] tsPacket)
     {
-      if (IsReady) return;
+      if (IsReady) 
+        return;
       if (patReady)
       {
+        pmtReady = true;
         foreach (PmtParser pmtp in pmtParsers)
         {
           pmtp.OnTsPacket(tsPacket);
-          pmtReady = true;
           if (!pmtp.IsReady)
-          {
             pmtReady = false;
-            break;
-          }
         }
         if (pmtReady)
           IsReady = true;
-        return;
       }
-      base.OnTsPacket(tsPacket);
+      else       
+        base.OnTsPacket(tsPacket);
     }
 
     public override void OnNewSection(Section section)

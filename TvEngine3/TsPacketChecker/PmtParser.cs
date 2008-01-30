@@ -38,15 +38,15 @@ namespace TsPacketChecker
     {
       if (IsReady) return;
 
+      if (sections.table_id_extension != service_id) return;
+      if (sections.table_id_extension == 6033)
+      {
+        int xc = 564;
+      }
       byte[] section = sections.Data;
       int section_length = sections.section_length;
 
-      int program_nr = sections.table_id_extension;
-      if (program_nr != service_id) return;
-      if (sections.table_id_extension == 6024)
-      {
-        int bp = 1;
-      }
+     
       int pcrPid = ((section[8] & 0x1F) << 8) + section[9];
       if (addToNode)
       {

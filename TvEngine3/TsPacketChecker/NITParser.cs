@@ -269,6 +269,9 @@ namespace TsPacketChecker
     #region Descriptor decoders
     private void DVB_GetLogicalChannelNumber(int original_network_id, int transport_stream_id, byte[] buf, int start)
     {
+      netInfo.service_id = (0x100 * buf[start]) + buf[start + 1];
+      netInfo.LCN = (0x100 * (buf[start + 2] & 0x3)) + buf[start + 3];
+      return;
       // 32 bits per record
       int n = buf[start + 1] / 4;
       if (n < 1)
