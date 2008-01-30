@@ -157,13 +157,19 @@
   <Listing type="Html">
     <Site url="http://www.dagenstv.com/se/chart/?dat=[YYYY]-[MM]-[DD]&amp;cha=[ID]" post="" external="false" encoding="" />
     <Html>
-      <Template name="default" start="&lt;!-- Start" end="&lt;div class=&quot;dm&quot;&gt;">
-        <SectionTemplate tags="D">
+      <Template name="default" start="&lt;!-- Program --&gt;" end="&lt;!-- Slut Content-tabell --&gt;">
+        <SectionTemplate tags="DA">
           <TemplateText>
 &lt;div&gt;
-&lt;div&gt;&lt;#START&gt;(&lt;#END&gt;)&lt;/div&gt;
-&lt;div&gt;&lt;#TITLE&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;#DESCRIPTION&gt;&lt;z(&gt;&lt;div&gt;&lt;z)*&gt;&lt;/div&gt;
+&lt;a&gt;&lt;/a&gt;
+&lt;div&gt;
+&lt;#START&gt;(&lt;#END&gt;)
+&lt;/div&gt;
+&lt;div&gt;
+&lt;#TITLE&gt;
+&lt;/div&gt;
+&lt;div&gt;
+&lt;#DESCRIPTION&gt;.&lt;z(&gt;[ ]&lt;z)*&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
