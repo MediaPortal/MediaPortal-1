@@ -45,7 +45,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 {
   ::DeleteFile("c:\\DVBsub.log");
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 12 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 13 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();

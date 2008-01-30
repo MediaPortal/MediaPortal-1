@@ -53,9 +53,10 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 {
   m_pesDecoder = new CPesDecoder( this );
   m_pesDecoder->SetPid( -1 );
+  m_pesDecoder->SetStreamId( 0xBD ); // PES private stream
 
   Reset();
-	LogDebug( "Subtitle: Input pin created" );
+  LogDebug( "Subtitle: Input pin created" );
 }
 
 
@@ -76,8 +77,8 @@ HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
   if( ( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT ) &&
       ( pmt->majortype == MEDIATYPE_Stream ) )
 	{
-    LogDebug("Subtitle: CSubtitleInputPin::CheckMediaType() - found MEDIASUBTYPE_MPEG2_TRANSPORT");
-    return S_OK;
+      LogDebug("Subtitle: CSubtitleInputPin::CheckMediaType() - found MEDIASUBTYPE_MPEG2_TRANSPORT");
+      return S_OK;
 	}
 	return S_FALSE;
 }

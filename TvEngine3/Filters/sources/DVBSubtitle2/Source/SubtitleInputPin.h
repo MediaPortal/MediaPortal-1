@@ -40,7 +40,7 @@ public:
 			          CDVBSubDecoder* pSubDecoder,
                 HRESULT *phr );
 
-	~CSubtitleInputPin();
+  ~CSubtitleInputPin();
 
   // Do something with this media sample
   STDMETHODIMP Receive( IMediaSample *pSample );
@@ -69,10 +69,10 @@ public:
 
 private:
 
-	CDVBSubDecoder*		m_pSubDecoder;
+  CDVBSubDecoder*		m_pSubDecoder;
   CPesDecoder*      m_pesDecoder;
 	
-	LONG  m_SubtitlePid;
+  LONG  m_SubtitlePid;
 
   CDVBSub* const    m_pDVBSub;				// Main renderer object
   CCritSec * const	m_pReceiveLock;   // Sample critical section
