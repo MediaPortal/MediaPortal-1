@@ -132,17 +132,18 @@ bool CPesDecoder::OnTsPacket( byte* tsPacket )
 			if ( m_iStreamId < 0 )
       {
 		    LogDebug("PES decoder - no stream ID set!");
-				assert( m_iStreamId >= 0 );
 			}
 			else 
       {
         int streamId = tsPacket[pos+3];
-        
         // Stream ID should be the same or padding stream id
-        assert( m_iStreamId == streamId || streamId == PADDING_STREAM_ID ); 
-        if( streamId == PADDING_STREAM_ID )
+        if( streamId != m_iStreamId )
         {
-          return false;
+          if( streamId != PADDING_STREAM_ID )
+          {
+            LogDebug("PES decoder - wrong stream ID received! - %d", streamId );
+          }
+        return false;
         }
       }
 
