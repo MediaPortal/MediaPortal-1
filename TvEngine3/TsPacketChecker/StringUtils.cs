@@ -300,6 +300,8 @@ namespace TsPacketChecker
       byte em_ON = 0x86;
       byte em_OFF = 0x87;
       if (len < 1) return "";
+      if (offset + len > data.Length)
+        return "";
 
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < len; i++)

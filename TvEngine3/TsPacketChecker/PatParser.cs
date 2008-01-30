@@ -11,6 +11,7 @@ namespace TsPacketChecker
     public bool IsReady;
     private bool patReady;
     private bool pmtReady;
+    private bool addToNode;
     private List<PmtParser> pmtParsers;
 
     public PatParser(TreeNode nodeToAdd)
@@ -20,11 +21,22 @@ namespace TsPacketChecker
       IsReady = false;
       patReady = false;
       pmtReady = false;
+      addToNode = true;
       pmtParsers = new List<PmtParser>();
       Pid = 0;
       TableId = 0;
     }
 
+    public void Reset()
+    {
+      base.Reset();
+      IsReady = false;
+      patReady = false;
+      pmtReady = false;
+      addToNode = false;
+      foreach (PmtParser pmtp in pmtParsers)
+        pmtp.Reset();
+    }
     public List<ushort> GetPmtStreamPids()
     {
       List<ushort> streamPids = new List<ushort>();
@@ -66,14 +78,20 @@ namespace TsPacketChecker
         int program_nr=((section.Data[offset] )<<8) + section.Data[offset+1];
 	      int pmt_pid = ((section.Data[offset+2] & 0x1F)<<8) + section.Data[offset+3];
 
-        if (pmt_pid <= 0x11 || pmt_pid > 0x1FFF) continue;
-        TreeNode pmtNode=baseNode.Nodes.Add("# " + program_nr.ToString() + " pmt pid: 0x" + pmt_pid.ToString("x"));
-        pmtNode=pmtNode.Nodes.Add("PMT");
-        pmtParsers.Add(new PmtParser(pmt_pid, pmtNode));
+        if (pmt_pid <= 0x10 || pmt_pid > 0x1FFF) continue;
+        if (addToNode)
+        {
+          TreeNode pmtNode = baseNode.Nodes.Add("# " + program_nr.ToString() + " pmt pid: 0x" + pmt_pid.ToString("x"));
+          pmtNode.ForeColor = System.Drawing.Color.Red;
+          pmtNode = pmtNode.Nodes.Add("PMT");
+          //if (pmtParsers.Count==0)
+          pmtParsers.Add(new PmtParser(pmt_pid,program_nr,pmtNode));
+        }
         pmtCount++;
       }
       patReady = true;
-      baseNode.Text = "PAT (" + pmtParsers.Count.ToString() + " programs)";
+      if (addToNode)
+        baseNode.Text = "PAT (" + pmtParsers.Count.ToString() + " programs)";
     }
   }
 }

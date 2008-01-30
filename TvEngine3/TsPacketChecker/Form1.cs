@@ -133,6 +133,8 @@ namespace TsPacketChecker
     {
       if (tsFile == "")
         opentsToolStripMenuItem_Click(null, new EventArgs());
+      edLog.Text = "";
+      TrSections.Nodes.Clear();
       stopThread = false;
       Thread worker = new Thread(new ThreadStart(AnalyzeTs));
       worker.Start();
@@ -175,8 +177,12 @@ namespace TsPacketChecker
       ChannelLinkageParser linkageParser = new ChannelLinkageParser(linkageNode);
       TreeNode sdtNode = new TreeNode("SDT");
       SdtParser sdtParser = new SdtParser(sdtNode);
+      TreeNode nitNode = new TreeNode("NIT");
+      NITParser nitParser = new NITParser(nitNode);
       PacketChecker checker = new PacketChecker(double.Parse(edPcrDiff.Text));
-      while (reader.GetNextPacket(out tsPacket, out header))
+
+      int maxPATPidsCount = 0;
+       while (reader.GetNextPacket(out tsPacket, out header))
       {
         checker.ProcessPacket(tsPacket, header);
         if (header.TransportError) continue;
@@ -186,12 +192,21 @@ namespace TsPacketChecker
           patParser.OnTsPacket(tsPacket);
         else
         {
+          List<ushort> streamPids = patParser.GetPmtStreamPids();
           if (!(bool)patNode.Tag)
           {
             WriteLog("- PAT and PMT parsers finished.");
             AddThreadSafeSectionNode(patNode);
-            checker.AddPidsToCheck(patParser.GetPmtStreamPids());
+            checker.AddPidsToCheck(streamPids);
             patNode.Tag = true;
+          }
+          patParser.Reset();
+          if (maxPATPidsCount != streamPids.Count)
+          {
+            if (maxPATPidsCount > 0)
+              WriteLog("- [Warning] Got different number of pmts and pid than in prev. run. prev. max=" + maxPATPidsCount.ToString() + " current=" + streamPids.Count.ToString());
+            if (maxPATPidsCount<streamPids.Count)
+              maxPATPidsCount = streamPids.Count;
           }
         }
         if (!catParser.IsReady)
@@ -205,18 +220,24 @@ namespace TsPacketChecker
             catNode.Tag = true;
           }
         }
-        sdtParser.OnTsPacket(tsPacket);
+        nitParser.OnTsPacket(tsPacket);
         linkageParser.OnTsPacket(tsPacket);
-
+        sdtParser.OnTsPacket(tsPacket);
         PrBar.Value = reader.GetPositionInPercent();
         if (stopThread) break;
       }
       reader.Close();
       PrBar.Value = 100;
       WriteLog("Finished.");
-      AddThreadSafeSectionNode(linkageNode);
+      WriteLog("Incomplete sections=" + PatParser.incompleteSections.ToString());
+      WriteLog("max PAT/PMT pid count: " + maxPATPidsCount.ToString());
+      if (!(bool)patNode.Tag)
+        AddThreadSafeSectionNode(patNode);
+      nitNode.Text += " (" + nitParser.GetChannelCount().ToString() + " channels)";
+      AddThreadSafeSectionNode(nitNode);
       sdtNode.Text = "SDT (" + sdtParser.GetServiceCount().ToString() + " services)";
-      AddThreadSafeSectionNode(sdtNode);     
+      AddThreadSafeSectionNode(sdtNode);
+      AddThreadSafeSectionNode(linkageNode);
       WriteLog(checker.GetStatistics());
       WriteLog(checker.GetErrorDetails());
     }

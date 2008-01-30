@@ -19,6 +19,11 @@ namespace TsPacketChecker
     public int section_syntax_indicator;
     public int program_number;
 
+    public int SectionPos;
+    public uint NetworkId;
+    public int TransportId;
+    public int last_section_number;
+
     public int BufferPos;
     public byte[] Data;
     #endregion
@@ -39,15 +44,39 @@ namespace TsPacketChecker
       section_syntax_indicator = -1;
       BufferPos = 0;
       for (int i = 0; i < Data.Length; i++)
-        Data[i] = 0;
+        Data[i] = 0xFF;
     }
-    private bool DecodeHeader()
+    public int CalcSectionLength(byte[] tsPacket,int start)
     {
-      if (BufferPos < 8) return false;
+      if (BufferPos < 3)
+      {
+        byte bHi=0;
+        byte bLow=0;
+        if (BufferPos==1)
+        {
+          bHi=tsPacket[start];
+          bLow=tsPacket[start+1];
+        }
+        else if (BufferPos==2)
+        {
+          bHi=Data[1];
+          bLow=tsPacket[start];
+        }
+        section_length=(int)(((bHi & 0xF) << 8) + bLow);
+      }
+      else
+        section_length = (int)(((Data[1] & 0xF) << 8) + Data[2]);
+      return section_length;
+    }
+    public bool DecodeHeader()
+    {
+      if (BufferPos < 8) 
+        return false;
       table_id = (int)Data[0];
       section_syntax_indicator = (int)((Data[1] >> 7) & 1);
-      section_length=(int)(((Data[1] & 0xF) << 8) + Data[2]);
-      table_id_extension=(int)((Data[3] << 8) +Data[4]);
+      if (section_length==-1)
+        section_length=(int)(((Data[1] & 0xF) << 8) + Data[2]);
+      table_id_extension=((Data[3] << 8) +Data[4]);
       version_number = (int)((Data[5] >> 1) & 0x1F);
       section_number = (int)Data[6];
       section_syntax_indicator = (int)((Data[1] >> 7) & 1);
@@ -55,6 +84,8 @@ namespace TsPacketChecker
     }
     public bool SectionComplete()
     {
+      if (!DecodeHeader() && BufferPos > section_length && section_length>0)
+        return true;
       if (!DecodeHeader())
         return false;
       return (BufferPos >= section_length);
