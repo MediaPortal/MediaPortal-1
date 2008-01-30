@@ -328,8 +328,8 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 {
 		m_id=0;
 
-		LogDebug("CMpTs::ctor()");
 		DeleteFile("TsWriter.log");
+		LogDebug("CMpTs::ctor()");
 		
 	b_dumpRawPakets=false;
     m_pFilter = new CMpTsFilter(this, GetOwner(), &m_Lock, phr);

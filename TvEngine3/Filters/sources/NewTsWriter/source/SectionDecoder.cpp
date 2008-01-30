@@ -94,7 +94,7 @@ int CSectionDecoder::StartNewSection(byte* tsPacket,int index,int sectionLen)
 {
 	int newstart=-1;
   int len=-1;
-  if (index+sectionLen < 186)
+  if (index+sectionLen < 184)
   {
 		len=sectionLen+3;
     newstart = index+sectionLen+3;
@@ -107,6 +107,7 @@ int CSectionDecoder::StartNewSection(byte* tsPacket,int index,int sectionLen)
   m_section.Reset();
 	memcpy(m_section.Data,&tsPacket[index],len);
   m_section.BufferPos=len;
+	m_section.DecodeHeader();
   return newstart;
 }
 
@@ -134,9 +135,19 @@ int CSectionDecoder::AddToSection(byte* tsPacket, int index, int sectionLen)
 
 int CSectionDecoder::SnapshotSectionLength(byte* tsPacket,int start)
 {
-	if (start >= 185)
+	if (start >= 184)
 		return -1;
   return (int)(((tsPacket[start+1] & 0xF) << 8) + tsPacket[start+2]);
+}
+
+bool OnlyStuffingBytesFollowing(byte* tsPacket,int start)
+{
+	for (int i=start;i<188;i++)
+	{
+		if (tsPacket[i]!=0xFF) 
+			return false;
+	}
+	return true;
 }
 
 void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
@@ -151,6 +162,11 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 		int start = header.PayLoadStart;
 		if (header.PayloadUnitStart)
 		{
+			if (m_section.BufferPos != 0)
+      {
+          OnNewSection(m_section);
+          m_section.Reset();
+			}
 			int n = tsPacket[start];
 			start = start + n + 1;
 
@@ -173,12 +189,14 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 
 		while (start < 188)
 		{
-			if (tsPacket[start] == 0xFF) break; // Only stuffing bytes following
+			// if (tsPacket[start] == 0xFF) break; // Only stuffing bytes following - THAT'S WRONG 0xFF is just reserved. Other sections maybe following
+			if (OnlyStuffingBytesFollowing(tsPacket,start)) 
+				break;
 			if (m_section.BufferPos==0)
 			{
 				int section_length=SnapshotSectionLength(tsPacket,start);
 				if (section_length!=-1)
-					start+=StartNewSection(tsPacket,start,section_length);
+					start=StartNewSection(tsPacket,start,section_length);
 				else
 					break;
 			}

@@ -50,7 +50,7 @@ void CSection::Reset()
 
 bool CSection::DecodeHeader()
 {
-	if (BufferPos<8) return false;
+	//if (BufferPos<8) return false;
 	TableId=Data[0];
 	SectionSyntaxIndicator = (Data[1]>>7) & 1;
 	SectionLength=((Data[1] & 0xF) << 8) + Data[2];

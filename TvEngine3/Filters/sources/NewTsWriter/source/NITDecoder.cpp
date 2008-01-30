@@ -37,7 +37,7 @@ CNITDecoder::~CNITDecoder(void)
 
 void CNITDecoder::OnNewSection(CSection& sections)
 {
-	byte* section=&(sections.Data[5]);
+	byte* section=sections.Data;
 	decodeNITTable(section);
 }
 
