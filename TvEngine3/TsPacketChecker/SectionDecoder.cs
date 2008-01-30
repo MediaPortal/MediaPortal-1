@@ -158,16 +158,11 @@ namespace TsPacketChecker
           else
             start = AddToSection(tsPacket, start, len);
         }
-        if (m_section.SectionComplete() && m_section.section_length>0)
+        if (m_section.SectionComplete() && m_section.section_length > 0)
         {
-          if (m_section.table_id_extension == 6029 && m_section.table_id == 2)
-            ;
-          else
-          {
-            OnNewSection(m_section);
-            if (OnSectionDecoded != null)
-              OnSectionDecoded(m_section);
-          }
+          OnNewSection(m_section);
+          if (OnSectionDecoded != null)
+            OnSectionDecoded(m_section);
           m_section.Reset();
         }
         pointer_field=0;
