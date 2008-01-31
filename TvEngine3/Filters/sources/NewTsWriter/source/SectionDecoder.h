@@ -36,11 +36,9 @@ public:
 	void OnTsPacket(CTsHeader& header,byte* tsPacket);
   void SetPid(int pid);
   int  GetPid();
-  void SetTableId(int tableId);
 	void Reset();
   void EnableLogging(bool onOff);
   void EnableCrcCheck(bool onOff);
-  int  GetTableId();
   virtual void OnNewSection(CSection& section);
 protected:
 private:
@@ -51,7 +49,6 @@ private:
   bool        m_bLog;
   bool        m_bCrcCheck;
   int			    m_pid;
-  int			    m_tableId;
   CSection		m_section;
 	int         m_iContinuityCounter;
 	ISectionCallback* m_pCallback;

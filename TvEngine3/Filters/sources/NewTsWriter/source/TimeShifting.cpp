@@ -1581,8 +1581,6 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 		CPcr ptsorg=pts;
 		pts -= startPcr;
 		//pts -= m_pcrHole;
-		if( m_bPCRRollover )
-			pts += m_pcrDuration;
 		// GEMX: deactivated. code is currently being tested
 		if (lastPtsDts.pts.IsValid)
 		{
@@ -1595,6 +1593,8 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 			lastPtsDts.pts=pts;
 			if (diff>MAX_ALLOWED_PCR_DIFF && m_pcrHole.IsValid)
 					pts -= m_pcrHole;
+			if( m_bPCRRollover )
+				pts += m_pcrDuration;
 			//else
 			//{
 			//	if (!m_pcrHole.IsValid)
@@ -1623,8 +1623,6 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 			dts -= startPcr;
 			//dts -= m_pcrHole;
 
-			if( m_bPCRRollover )
-				dts += m_pcrDuration;
 			// GEMX: deactivated. code is currently being tested
 			if (lastPtsDts.dts.IsValid)
 			{
@@ -1637,6 +1635,8 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 				lastPtsDts.dts=dts;
 				if (diff>MAX_ALLOWED_PCR_DIFF && m_pcrHole.IsValid)
 					dts -= m_pcrHole;
+				if( m_bPCRRollover )
+					dts += m_pcrDuration;
 				//else
 				//{
 				//	if (!m_pcrHole.IsValid)

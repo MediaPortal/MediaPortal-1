@@ -31,26 +31,15 @@ CChannelLinkageParser::CChannelLinkageParser(void)
 	CEnterCriticalSection enter(m_section);
 	m_bScanning=false;
 	m_bScanningDone=false;
-	for (int i=0x4e; i <=0x6f;++i)
-	{
-		CSectionDecoder* pDecoder= new CSectionDecoder();
-		pDecoder->SetPid(PID_EPG);
-		pDecoder->SetTableId(i);
-		pDecoder->EnableCrcCheck(false);
-		m_vecDecoders.push_back(pDecoder);
-		pDecoder->SetCallBack(this);
-	}
+	sectionDecoder=new CSectionDecoder();
+	sectionDecoder->SetPid(PID_EPG);
+	sectionDecoder->SetCallBack(this);
 }
 
 CChannelLinkageParser::~CChannelLinkageParser(void)
 {
 	CEnterCriticalSection enter(m_section);
-	for (int i=0; i < (int)m_vecDecoders.size();++i)
-	{
-		CSectionDecoder* pDecoder = m_vecDecoders[i];
-		delete pDecoder;
-	}
-	m_vecDecoders.clear();
+	delete sectionDecoder;
 }
 
 void CChannelLinkageParser::Start()
@@ -67,11 +56,7 @@ void CChannelLinkageParser::Reset()
 	CEnterCriticalSection enter(m_section);
 	m_bScanning=false;
 	m_bScanningDone=false;
-	for (int i=0; i < (int)m_vecDecoders.size();++i)
-	{
-		CSectionDecoder* pDecoder = m_vecDecoders[i];
-		pDecoder->Reset();
-	}
+	sectionDecoder->Reset();
 	m_mapChannels.clear();
 }
 
@@ -176,28 +161,16 @@ void CChannelLinkageParser::OnTsPacket(CTsHeader& header, byte* tsPacket)
 	if (m_bScanning==false) return;
 
 	CEnterCriticalSection enter(m_section);
-	for (int i=0; i < (int)m_vecDecoders.size();++i)
-	{
-		CSectionDecoder* pDecoder = m_vecDecoders[i];
-		pDecoder->OnTsPacket(header,tsPacket);
-	}
+	sectionDecoder->OnTsPacket(header,tsPacket);
 }
 
-void CChannelLinkageParser::OnNewSection(int pid, int tableId, CSection& sections)
+void CChannelLinkageParser::OnNewSection(int pid, int tableId, CSection& section)
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		byte* section=sections.Data;
-		int sectionLength=sections.section_length;
-		if (sectionLength>0)
-		{
-			DecodeLinkage(section,sectionLength);
-		}
-		else
-		{
-			int x=1;
-		}
+		if (section.table_id>0x4e && section.table_id<0x70)
+			DecodeLinkage(section.Data,section.section_length);
 	}
 	catch(...)
 	{

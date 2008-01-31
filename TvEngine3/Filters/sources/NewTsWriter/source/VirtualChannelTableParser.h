@@ -56,7 +56,7 @@ private:
   vector<CChannelInfo> m_vecChannels;
   int m_iVctVersionC8;
 	int m_iVctVersionC9;
-  CSectionDecoder* m_decoder[2];
+  CSectionDecoder* m_decoder;
   IAtscCallback* m_pCallback;
   CTsHeader             m_tsHeader;
 };

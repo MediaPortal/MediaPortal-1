@@ -26,7 +26,6 @@ void LogDebug(const char *fmt, ...) ;
 CSdtParser::CSdtParser(void)
 {
   SetPid(PID_SDT);
-  SetTableId(0x42);
   EnableCrcCheck(false);
   Reset();
   m_pCallback=NULL;

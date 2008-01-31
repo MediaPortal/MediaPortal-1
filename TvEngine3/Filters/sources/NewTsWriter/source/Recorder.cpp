@@ -53,7 +53,6 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
   if (m_pPmtParser)
   {
     m_pPmtParser->SetPmtCallBack(this);
-    m_pPmtParser->SetTableId(2);
   }
 }
 CRecorder::~CRecorder(void)

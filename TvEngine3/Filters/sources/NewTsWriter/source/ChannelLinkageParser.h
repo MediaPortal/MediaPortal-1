@@ -78,20 +78,20 @@ public:
 
 
 private:
-    vector<CSectionDecoder*> m_vecDecoders;
-	CCriticalSection m_section;
+		bool GetChannelByindex(ULONG channel, PortalChannel& portalChannel);
+		void DecodeLinkage(byte* buf, int len);
+
+		CCriticalSection m_section;
     CTsHeader             m_tsHeader;
 
-	bool	m_bScanning;
-	bool	m_bScanningDone;
-	time_t  m_scanTimeout;
-
-	bool GetChannelByindex(ULONG channel, PortalChannel& portalChannel);
-	void DecodeLinkage(byte* buf, int len);
-	map<unsigned long,PortalChannel> m_mapChannels;
-	typedef map<unsigned long,PortalChannel>::iterator imapChannels;
-	long	   m_prevChannelIndex;
-	long	   m_prevLinkIndex;
-	PortalChannel m_prevChannel;
-	LinkedChannel   m_prevLink;
+		CSectionDecoder* sectionDecoder;
+		bool	m_bScanning;
+		bool	m_bScanningDone;
+		time_t  m_scanTimeout;
+		map<unsigned long,PortalChannel> m_mapChannels;
+		typedef map<unsigned long,PortalChannel>::iterator imapChannels;
+		long	   m_prevChannelIndex;
+		long	   m_prevLinkIndex;
+		PortalChannel m_prevChannel;
+		LinkedChannel   m_prevLink;
 };

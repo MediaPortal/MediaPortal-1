@@ -27,7 +27,6 @@ extern void LogDebug(const char *fmt, ...) ;
 CNITDecoder::CNITDecoder(void)
 {
 	SetPid(PID_NIT);
-	SetTableId(0x40);
   EnableCrcCheck(false);
 }
 
@@ -37,6 +36,8 @@ CNITDecoder::~CNITDecoder(void)
 
 void CNITDecoder::OnNewSection(CSection& sections)
 {
+	if (sections.table_id!=0x40) return;
+
 	byte* section=sections.Data;
 	decodeNITTable(section);
 }

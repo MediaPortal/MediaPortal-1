@@ -64,7 +64,6 @@ private:
 	void				               UpdateHwPids();
   CVirtualChannelTableParser m_vctParser;
   CSdtParser                 m_sdtParser;
-  CSdtParser                 m_sdtParserOther;
 	CNITDecoder                m_nitDecoder;
   void                       CleanUp();
 	//CConditionalAccess* m_pConditionalAccess;

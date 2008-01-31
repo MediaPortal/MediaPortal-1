@@ -61,7 +61,6 @@ STDMETHODIMP CCaGrabber::Reset()
 	LogDebug("cagrabber: reset");
 	CSectionDecoder::Reset();
 	CSectionDecoder::SetPid(1);
-	CSectionDecoder::SetTableId(1);
 	memset(m_caPrevData,0,sizeof(m_caPrevData));
 	m_iCaVersion=-1;
 	return S_OK;
@@ -94,6 +93,7 @@ void CCaGrabber::OnNewSection(CSection& section)
 {
 	try
 	{
+		if (section.table_id!=1) return; 	
 		if (section.version_number == m_iCaVersion) return;
 	  CEnterCriticalSection enter(m_section);
 

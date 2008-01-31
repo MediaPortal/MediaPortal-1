@@ -27,17 +27,17 @@ extern void LogDebug(const char *fmt, ...) ;
 CEpgParser::CEpgParser(void)
 {
 	// standard epg
-	for (int i=0x4e; i <=0x6f;++i)
-		AddSectionDecoder(PID_EPG,i);
+	//for (int i=0x4e; i <=0x6f;++i)
+	AddSectionDecoder(PID_EPG);
 	// DISH / BEV epg
-	for (int i=0x80; i <=0xfe;++i) {
-		AddSectionDecoder(PID_DISH_EPG,i);
-		AddSectionDecoder(PID_BEV_EPG,i);
-	}
+	//for (int i=0x80; i <=0xfe;++i) {
+	AddSectionDecoder(PID_DISH_EPG);
+	AddSectionDecoder(PID_BEV_EPG);
+	//}
 	// Premiere DIREKT Portal
-	AddSectionDecoder(PID_EPG_PREMIERE_DIREKT,0xA0);
+	AddSectionDecoder(PID_EPG_PREMIERE_DIREKT);
 	// Premiere SPORT Portal
-	AddSectionDecoder(PID_EPG_PREMIERE_SPORT,0xA0);
+	AddSectionDecoder(PID_EPG_PREMIERE_SPORT);
 }
 
 CEpgParser::~CEpgParser(void)
@@ -132,12 +132,30 @@ void CEpgParser::OnTsPacket(CTsHeader& header, byte* tsPacket)
 	}
 }
 
+bool CEpgParser::IsSectionWanted(int pid,int table_id)
+{
+	switch (pid)
+	{
+		case PID_EPG:
+			return (table_id>=0x4e && table_id<=0x6f);
+		case PID_DISH_EPG || PID_BEV_EPG:
+			return (table_id>=0x80 && table_id<=0xfe);
+		case PID_EPG_PREMIERE_DIREKT:
+			return (table_id==0xa0);
+		case PID_EPG_PREMIERE_SPORT:
+			return (table_id==0xa0);
+	}
+	return false;
+}
+
 void CEpgParser::OnNewSection(int pid,int tableId,CSection& section)
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("epg new section pid:%x tableid:%x sid:%x len:%x",pid,tableId,section.TransportId,section.SectionLength);
+		if (!IsSectionWanted(pid,tableId)) return;
+
 		if (section.section_length>0)
 		{
 			if (pid==PID_EPG_PREMIERE_DIREKT || pid==PID_EPG_PREMIERE_SPORT)
@@ -152,12 +170,11 @@ void CEpgParser::OnNewSection(int pid,int tableId,CSection& section)
 	}
 }
 
-void CEpgParser::AddSectionDecoder(int pid,int tableId)
+void CEpgParser::AddSectionDecoder(int pid)
 {
 	CSectionDecoder* pDecoder= new CSectionDecoder();
-    pDecoder->SetPid(pid);
-    pDecoder->SetTableId(tableId);
-    pDecoder->EnableCrcCheck(false);
-    m_vecDecoders.push_back(pDecoder);
+  pDecoder->SetPid(pid);
+  pDecoder->EnableCrcCheck(false);
+  m_vecDecoders.push_back(pDecoder);
 	pDecoder->SetCallBack(this);
 }

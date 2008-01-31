@@ -49,6 +49,7 @@ public:
 	void	OnTsPacket(CTsHeader& header,byte* tsPacket);
 	void  OnNewSection(int pid, int tableId, CSection& section);
 private:
+	bool IsSectionWanted(int pid, int table_id);
   vector<CSectionDecoder*> m_vecDecoders;
 	CMhwDecoder m_mhwDecoder;
 	time_t      m_TimeOutTimer;

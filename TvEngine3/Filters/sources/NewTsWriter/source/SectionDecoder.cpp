@@ -32,7 +32,6 @@ void LogDebug(const char *fmt, ...) ;
 CSectionDecoder::CSectionDecoder(void)
 {
   m_pid=-1;
-  m_tableId=-1;
   m_iContinuityCounter=0;
   m_section.Reset();
 	m_pCallback=NULL;
@@ -63,15 +62,6 @@ int CSectionDecoder::GetPid()
   return m_pid;
 }
 
-void CSectionDecoder::SetTableId(int tableId)
-{
-  m_tableId=tableId;
-}
-
-int CSectionDecoder::GetTableId()
-{
-  return m_tableId;
-}
 void CSectionDecoder::Reset()
 {
   m_section.Reset();
@@ -84,7 +74,7 @@ void CSectionDecoder::EnableCrcCheck(bool onOff)
 
 void CSectionDecoder::OnTsPacket(byte* tsPacket)
 {
-  if (m_tableId < 0 || m_pid < 0) return;
+  if (m_pid < 0) return;
   if (tsPacket==NULL) return;
 
   m_header.Decode(tsPacket);
@@ -150,7 +140,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 {
 	try
 	{
-		if (m_pid >= 0x1fff || m_tableId == -1) return;
+		if (m_pid >= 0x1fff) return;
 		if (header.Pid != m_pid) return;
 		if (!header.HasPayload) return;
 
@@ -165,9 +155,10 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
       else
         start++;
     }
-
+	  int numloops=0;
 		while (start < 188)
     {
+			numloops++;
 			if (m_section.BufferPos == 0)
       {
 				if (!header.PayloadUnitStart) return;
@@ -179,6 +170,12 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
       {
         if (m_section.section_length == -1)
           m_section.CalcSectionLength(tsPacket, start);
+				if (m_section.section_length==0)
+				{
+					LogDebug("!!! CSectionDecoder::OnTsPacket got a section with section length: 0 on pid: %X tableid: %X bufferpos: %d - Discarding whole packet.",header.Pid,m_section.Data[0],m_section.BufferPos);
+					m_section.Reset();
+					return;
+				}
         int len = m_section.section_length - m_section.BufferPos;
         if (pointer_field != 0 && ((start + len) > pointer_field))
         {
@@ -199,6 +196,12 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
         m_section.Reset();
       }
       pointer_field=0;
+			if (numloops>100)
+			{
+				LogDebug("!!! CSectionDecoder::OnTsPacket Entered infinite loop. pid: %X start: %d BufferPos: %d SectionLength: %d - Discarding section and moving to next packet",header.Pid,start,m_section.BufferPos,m_section.section_length);
+				m_section.Reset();
+				return;
+			}
     }
 	}
 	catch(...)

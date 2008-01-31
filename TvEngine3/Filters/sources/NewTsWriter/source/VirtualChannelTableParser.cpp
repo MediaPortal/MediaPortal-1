@@ -27,18 +27,11 @@
 extern void LogDebug(const char *fmt, ...) ;
 CVirtualChannelTableParser::CVirtualChannelTableParser(void)
 {
-  m_decoder[0] = new CSectionDecoder();
-  m_decoder[0]->SetPid(PID_VCT);
-  m_decoder[0]->SetTableId(0xc8);
-  m_decoder[0]->SetCallBack(this);
-  m_decoder[0]->Reset();
+  m_decoder = new CSectionDecoder();
+  m_decoder->SetPid(PID_VCT);
+  m_decoder->SetCallBack(this);
+  m_decoder->Reset();
 
-  
-  m_decoder[1] = new CSectionDecoder();
-  m_decoder[1]->SetPid(PID_VCT);
-  m_decoder[1]->SetTableId(0xc9);
-  m_decoder[1]->SetCallBack(this);
-  m_decoder[1]->Reset();
   m_iVctVersionC8=-1;
   m_iVctVersionC9=-1;
 	//LogDebug("vct: ctor");
@@ -48,8 +41,7 @@ CVirtualChannelTableParser::CVirtualChannelTableParser(void)
 CVirtualChannelTableParser::~CVirtualChannelTableParser(void)
 {
 	//LogDebug("vct: dtor");
-  delete m_decoder[0];
-  delete m_decoder[1];
+  delete m_decoder;
 }
 
 
@@ -60,8 +52,7 @@ void CVirtualChannelTableParser::SetCallback(IAtscCallback* callback)
 void CVirtualChannelTableParser::Reset()
 {
 	//LogDebug("vct: Reset()");
-	m_decoder[0]->Reset();
-	m_decoder[1]->Reset();
+	m_decoder->Reset();
   m_vecChannels.clear();
   m_iVctVersionC8=-1;
   m_iVctVersionC9=-1;
@@ -69,8 +60,7 @@ void CVirtualChannelTableParser::Reset()
 
 void CVirtualChannelTableParser::OnTsPacket(byte* tsPacket)
 {
-	m_decoder[0]->OnTsPacket(tsPacket);
-	m_decoder[1]->OnTsPacket(tsPacket);
+	m_decoder->OnTsPacket(tsPacket);
 }
 
 int CVirtualChannelTableParser::Count()
@@ -100,6 +90,8 @@ bool CVirtualChannelTableParser::GetChannelInfo(int serviceId,CChannelInfo& info
 
 void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& newSection)
 {
+	if (tableId!=0xC8 && tableId!=0xC9) return;
+
   byte* section=newSection.Data;
   
   m_tsHeader.Decode(section);

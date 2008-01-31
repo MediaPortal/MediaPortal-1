@@ -36,7 +36,6 @@ CPatParser::CPatParser(void)
 {
 	//m_pConditionalAccess=NULL;
   Reset(NULL);
-  SetTableId(0);
   SetPid(PID_PAT);
 }
 
@@ -71,13 +70,9 @@ void  CPatParser::Reset(IChannelScanCallback* callback)
   CleanUp();
   m_vctParser.Reset();
   m_sdtParser.Reset();
-  m_sdtParserOther.Reset();
 	m_nitDecoder.Reset();
 	//UpdateHwPids();
   m_sdtParser.SetCallback(this);
-  m_sdtParser.SetTableId(0x42);
-  m_sdtParserOther.SetCallback(this);
-  m_sdtParserOther.SetTableId(0x46);
   m_vctParser.SetCallback(this);
   m_tickCount = GetTickCount();
 }
@@ -349,7 +344,6 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 	if (pid==PID_SDT)
   {
     m_sdtParser.OnTsPacket(tsPacket);
-    m_sdtParserOther.OnTsPacket(tsPacket);
     return;
   }
 
@@ -381,6 +375,8 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 //*****************************************************************************
 void CPatParser::OnNewSection(CSection& sections)
 {
+	if (sections.table_id!=0) return;
+
   byte* section=sections.Data;
 	int section_length=sections.section_length;
 
@@ -427,7 +423,6 @@ void CPatParser::OnNewSection(CSection& sections)
 			if (it2==m_mapPmtParsers.end())
 			{
 		    CPmtParser* pmtParser = new CPmtParser();
-		    pmtParser->SetTableId(2);
 		    pmtParser->SetPid(pmtPid);
 			  pmtParser->SetPmtCallBack(this);
 		    m_mapPmtParsers[pmtPid]=pmtParser ;

@@ -53,8 +53,10 @@ public:
 	void	OnTsPacket(CTsHeader& header,byte* tsPacket);
 	void  OnNewSection(int pid, int tableId, CSection& section); 
 
-    void AddSectionDecoder(int pid,int tableId);
+    void AddSectionDecoder(int pid);
 private:
+	bool	IsSectionWanted(int pid,int table_id);
+
   vector<CSectionDecoder*> m_vecDecoders;
 	CEpgDecoder m_epgDecoder;
 	bool				m_bGrabbing;

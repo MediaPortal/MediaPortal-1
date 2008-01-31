@@ -34,30 +34,17 @@ CMhwParser::CMhwParser(void)
 
   CSectionDecoder* pDecoder= new CSectionDecoder();
   pDecoder->SetPid(PID_MHW1);
-  pDecoder->SetTableId(0x90);
 	pDecoder->SetCallBack(this);
   pDecoder->EnableCrcCheck(false);
  // pDecoder->EnableLogging(true);
   m_vecDecoders.push_back(pDecoder);
 
-  for (int i=0x70; i <=0x7f;++i)
-  {
-    pDecoder= new CSectionDecoder();
-    pDecoder->SetPid(PID_MHW1);
-    pDecoder->SetTableId(i);
-		pDecoder->SetCallBack(this);
-    pDecoder->EnableCrcCheck(false);
-    m_vecDecoders.push_back(pDecoder);
-  }
-  for (int i=0x90; i <=0x92;++i)
-  {
-    pDecoder= new CSectionDecoder();
-    pDecoder->SetPid(PID_MHW2);
-    pDecoder->SetTableId(i);
-		pDecoder->SetCallBack(this);
-    pDecoder->EnableCrcCheck(false);
-    m_vecDecoders.push_back(pDecoder);
-  }
+	pDecoder= new CSectionDecoder();
+  pDecoder->SetPid(PID_MHW2);
+	pDecoder->SetCallBack(this);
+  pDecoder->EnableCrcCheck(false);
+ // pDecoder->EnableLogging(true);
+  m_vecDecoders.push_back(pDecoder);
 }
 
 CMhwParser::~CMhwParser(void)
@@ -109,32 +96,35 @@ void CMhwParser::OnTsPacket(CTsHeader& header,byte* tsPacket)
 	}
 }
 
+bool CMhwParser::IsSectionWanted(int pid, int table_id)
+{
+	if (pid==PID_MHW1)
+		return (table_id == 0x90 || (table_id>=0x70 && table_id<=0x7f));
+	if (pid==PID_MHW2)
+		return (table_id>=0x90 && table_id<=0x92);
+	return false;
+}
+
 void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 {
 	try
 	{
 		CEnterCriticalSection enter(m_section);
 //		LogDebug("mhw new section pid:%x tableid:%x %x %x len:%d",pid,tableId,sections.Data[4],sections.Data[5],sections.Data[6], sections.SectionLength);
-		m_tsHeader.Decode(&sections.Data[0]);
-		if (m_tsHeader.PayLoadStart< 0 || m_tsHeader.PayLoadStart>188) return;
+		if (!IsSectionWanted(pid,tableId)) return;
 
-		byte* section=&(sections.Data[m_tsHeader.PayLoadStart]);
-		int table_id = section[0];
-
+		byte* section=sections.Data;
+		int table_id = sections.table_id;
 		int sectionLength=sections.section_length;
-		if (pid==0xd2)
+
+		if (pid==PID_MHW1)
 		{
-			if (table_id==0x90 ||(table_id >=0x70 && table_id <=0x7f) )
-			{
-//				LogDebug("mhw ParseTitles %d",sectionLength);
-				if ( m_mhwDecoder.ParseTitles(section,sectionLength))
-				{
+			//LogDebug("mhw ParseTitles %d",sectionLength);
+			if ( m_mhwDecoder.ParseTitles(section,sectionLength))
 					m_TimeOutTimer=time(NULL);
-				}
-//				LogDebug("mhw ParseTitles done");
-			}
+			//	LogDebug("mhw ParseTitles done");
 		}
-		if (pid==0xd3)
+		if (pid==PID_MHW2)
 		{
 			if (table_id==0x90)
 			{

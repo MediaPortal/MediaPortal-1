@@ -53,7 +53,6 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid, long serviceId)
 		LogDebug("pmtgrabber: grab pmt:%x sid:%x", pmtPid,serviceId);
 		CSectionDecoder::Reset();
 		CSectionDecoder::SetPid(pmtPid);
-		CSectionDecoder::SetTableId(2);
 		m_iPmtVersion=-1;
 		m_iServiceId=serviceId;
 		memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
@@ -88,6 +87,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
 {
 	try
 	{
+		if (section.table_id!=2) return;
 		if (section.version_number == m_iPmtVersion) 
 			return;
 		
