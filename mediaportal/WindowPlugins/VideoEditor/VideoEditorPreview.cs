@@ -680,7 +680,7 @@ namespace WindowPlugins.VideoEditor
         if (cutPointsList[0].StartTime!=0)
           cutList.Add(new TimeDomain(0,cutPointsList[0].StartTime));
         for (int i = 1; i < cutPointsList.Count; i++)
-          cutList.Add(new TimeDomain( cutPointsList[i-1].EndTime,cutPointsList[0].StartTime));
+          cutList.Add(new TimeDomain( cutPointsList[i-1].EndTime,cutPointsList[i].StartTime));
         // Don't add the last cutpoint if the last endtime is the end of the file
         if ((int)cutPointsList[cutPointsList.Count-1].EndTime!=(int)durationOld)
           cutList.Add(new TimeDomain(cutPointsList[cutPointsList.Count-1].EndTime,durationOld));
