@@ -132,19 +132,19 @@ void CChannelLinkageScanner::OnTsPacket(byte* tsPacket)
       int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
       if (pid!=PID_EPG) return;
       {
-		m_header.Decode(tsPacket);
-		CEnterCriticalSection enter(m_section);
-	    m_ChannelLinkageParser.OnTsPacket(m_header,tsPacket);
+				m_header.Decode(tsPacket);
+				CEnterCriticalSection enter(m_section);
+				m_ChannelLinkageParser.OnTsPacket(m_header,tsPacket);
       }
-	  if (m_ChannelLinkageParser.IsScanningDone())
-	  {
-		m_bScanning=false;
-		if (m_pCallBack!=NULL)
-		{
-		  LogDebug("ChannelLinkageScanner: do callback");
-		  m_pCallBack->OnLinkageReceived();
-		}
-	  }
+			if (m_ChannelLinkageParser.IsScanningDone())
+			{
+				m_bScanning=false;
+				if (m_pCallBack!=NULL)
+				{
+					LogDebug("ChannelLinkageScanner: do callback");
+					m_pCallBack->OnLinkageReceived();
+				}
+			}
 	}
 	catch(...)
 	{

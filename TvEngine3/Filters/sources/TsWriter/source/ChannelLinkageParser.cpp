@@ -169,7 +169,7 @@ void CChannelLinkageParser::OnNewSection(int pid, int tableId, CSection& section
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		if (section.table_id>0x4e && section.table_id<0x70)
+		if (section.table_id>=0x4e && section.table_id<0x70)
 			DecodeLinkage(section.Data,section.section_length);
 	}
 	catch(...)
