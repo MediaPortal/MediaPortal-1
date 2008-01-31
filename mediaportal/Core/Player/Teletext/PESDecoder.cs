@@ -122,14 +122,23 @@ namespace MediaPortal.Player.Teletext
                 hasPayloadStart = true;
 		        if (tsPacket[pos+0]==0 && tsPacket[pos+1]==0 && tsPacket[pos+2]==1)
 		        {
+                    int streamId = tsPacket[pos + 3];
+
 			        if (m_iStreamId<0){ //if stream id not set yet, get it from this 
-				        m_iStreamId=tsPacket[pos+3];
+                        m_iStreamId = streamId;
                         if (m_iStreamId < 0)
                         {
-                            throw new Exception("Stream id less than zero :" +  m_iStreamId);
+                            Log.Warn("Stream id less than zero :" + m_iStreamId);
                         }
 			        }
-			        else assert( m_iStreamId == tsPacket[pos+3], "Stream id changed!"); // stream id should not change!
+                    else if (streamId != m_iStreamId)
+                    {
+                        if (streamId != 0xBE) // if not a padding stream
+                        {
+                            Log.Warn("PES decoder - wrong stream ID received! - {0}", streamId);
+                        }
+                        return;
+                    }
 
                     if(m_iWritePos != 0){
                         //throw new Exception("Buffer is not empty, but new packet is being received!");
