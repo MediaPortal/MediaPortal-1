@@ -81,7 +81,7 @@
     <Channel id="playhouse@disney.no" siteId="disneyplay" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="" />
+    <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" />
     <Html>
       <Template name="default">
         <SectionTemplate tags="T">
@@ -112,7 +112,7 @@
       </Template>
       <Sublinks>
         <Sublink search="tvguiden" template="Details">
-          <Link url="http://www.sol.no/underholdning/tv/guiden/expand.cgi?[1]" post="" external="false" encoding="" />
+          <Link url="http://www.sol.no/underholdning/tv/guiden/expand.cgi?[1]" post="" external="false" encoding="utf-8" />
         </Sublink>
       </Sublinks>
       <Searches>
