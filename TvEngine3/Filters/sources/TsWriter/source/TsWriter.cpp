@@ -27,7 +27,7 @@
 #include <initguid.h>
 #include <shlobj.h>
 #include "TsWriter.h"
-#include "tsheader.h"
+#include "..\..\shared\tsheader.h"
 
 // Setup data
 const AMOVIESETUP_MEDIATYPE sudPinTypes =

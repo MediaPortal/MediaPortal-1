@@ -19,12 +19,12 @@
  *
  */
 #pragma once
-#include "sectiondecoder.h"
-#include "isectioncallback.h"
+#include "..\..\shared\sectiondecoder.h"
+#include "..\..\shared\isectioncallback.h"
 #include "mhwdecoder.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
-#include "Tsheader.h"
+#include "..\..\shared\Tsheader.h"
 #include <vector>
 using namespace std;
 

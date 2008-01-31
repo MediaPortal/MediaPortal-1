@@ -20,27 +20,30 @@
  */
 #pragma once
 
-#include "..\..\shared\TsHeader.h"
-
-class CPcrDecoder
+class CTsHeader
 {
 public:
-	CPcrDecoder(void);
-	virtual ~CPcrDecoder(void);
-	void	SetPcrPid(int pid);
-	int		GetPcrPid();
-	void	Reset();
-	void	OnTsPacket(byte* tsPacket);
+	CTsHeader();
+	CTsHeader(byte* tsPacket);
+	virtual ~CTsHeader(void);
+	void Decode(byte *data);
+	void LogHeader();
+	bool PayLoadOnly();
+	bool AdaptionFieldOnly();
+	bool AdaptionFieldAndPayLoad();
 
-	UINT64 PcrHigh();
-	UINT64     PcrLow();
-	UINT64 Pcr();
-	bool    GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts);
-  void    ChangePtsDts(byte* header, UINT64 startPcr);
-
+	BYTE SyncByte			;
+	bool TransportError		;
+	bool PayloadUnitStart	;
+	bool TransportPriority	;
+	unsigned short Pid		;
+	BYTE TScrambling		;
+	BYTE AdaptionControl	;
+	BYTE ContinuityCounter	;
+	BYTE AdaptionFieldLength;
+	BYTE PayLoadStart;
+	bool HasAdaptionField;
+	bool HasPayload;
 private:
-	int    m_pcrPid;
-	UINT64 m_pcrHigh;
-	UINT64 m_pcrLow;
-  CTsHeader m_tsHeader;
+	byte* m_packet;
 };

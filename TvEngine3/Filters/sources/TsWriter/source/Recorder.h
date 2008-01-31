@@ -24,7 +24,7 @@
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include "timeshifting.h"
-#include "tsheader.h"
+#include "..\..\shared\TsHeader.h"
 #include "PmtParser.h"
 #include <vector>
 using namespace std;

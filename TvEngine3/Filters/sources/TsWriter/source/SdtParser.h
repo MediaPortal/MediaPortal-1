@@ -19,10 +19,10 @@
  *
  */
 #pragma once
-#include "sectiondecoder.h"
+#include "..\..\shared\sectiondecoder.h"
 #include "PidTable.h"
 #include "ChannelInfo.h"
-#include "tsheader.h"
+#include "..\..\shared\tsheader.h"
 #include <vector>
 using namespace std;
 

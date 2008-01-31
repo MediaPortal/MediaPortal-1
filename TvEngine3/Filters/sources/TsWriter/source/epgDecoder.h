@@ -25,7 +25,7 @@
 #include <list>
 #include <string>
 using namespace std;
-#include "dvbutil.h"
+#include "..\..\shared\dvbutil.h"
 #include "criticalsection.h"
 using namespace Mediaportal;
 

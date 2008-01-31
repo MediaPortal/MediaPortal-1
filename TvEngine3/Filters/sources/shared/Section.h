@@ -20,27 +20,25 @@
  */
 #pragma once
 
-#include "..\..\shared\TsHeader.h"
-
-class CPcrDecoder
+#define MAX_SECTION_LENGTH 4300
+class CSection
 {
 public:
-	CPcrDecoder(void);
-	virtual ~CPcrDecoder(void);
-	void	SetPcrPid(int pid);
-	int		GetPcrPid();
-	void	Reset();
-	void	OnTsPacket(byte* tsPacket);
+  CSection(void);
+  virtual ~CSection(void);
+  void   Reset();
+  bool	 DecodeHeader();
+	int		 CalcSectionLength(byte* tsPacket, int start);
+  bool   SectionComplete();
 
-	UINT64 PcrHigh();
-	UINT64     PcrLow();
-	UINT64 Pcr();
-	bool    GetPtsDts(byte* pesHeader, UINT64& pts, UINT64& dts);
-  void    ChangePtsDts(byte* header, UINT64 startPcr);
+	int table_id;
+	int table_id_extension;
+	int section_length;
+	int section_number;
+	int version_number;
+	int section_syntax_indicator;
+	int last_section_number;
 
-private:
-	int    m_pcrPid;
-	UINT64 m_pcrHigh;
-	UINT64 m_pcrLow;
-  CTsHeader m_tsHeader;
+	int BufferPos;
+  byte   *Data;
 };

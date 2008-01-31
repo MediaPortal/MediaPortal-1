@@ -20,13 +20,13 @@
  */
 #pragma once
 
-#include "sectiondecoder.h"
+#include "..\..\shared\sectiondecoder.h"
 #include "PmtParser.h"
 #include "sdtParser.h"
 #include "NitDecoder.h"
 #include "channelinfo.h"
 #include "VirtualChannelTableParser.h"
-#include "tsheader.h"
+#include "..\..\shared\tsheader.h"
 //#include "conditionalAccess.h"
 #include <vector>
 #include <map>

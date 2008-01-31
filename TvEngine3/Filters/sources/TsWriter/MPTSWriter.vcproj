@@ -384,11 +384,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\Section.cpp"
+					RelativePath="..\shared\Section.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\source\SectionDecoder.cpp"
+					RelativePath="..\shared\SectionDecoder.cpp"
 					>
 				</File>
 				<File
@@ -436,7 +436,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\TsHeader.cpp"
+					RelativePath="..\shared\TsHeader.cpp"
 					>
 				</File>
 			</Filter>
@@ -464,7 +464,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\DvbUtil.cpp"
+					RelativePath="..\shared\DvbUtil.cpp"
 					>
 				</File>
 				<File
@@ -541,7 +541,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\TsHeader.h"
+					RelativePath="..\shared\TsHeader.h"
 					>
 				</File>
 			</Filter>
@@ -589,7 +589,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\ISectionCallback.h"
+					RelativePath="..\shared\ISectionCallback.h"
 					>
 				</File>
 				<File
@@ -621,11 +621,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\Section.h"
+					RelativePath="..\shared\Section.h"
 					>
 				</File>
 				<File
-					RelativePath=".\source\SectionDecoder.h"
+					RelativePath="..\shared\SectionDecoder.h"
 					>
 				</File>
 				<File
@@ -657,7 +657,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\DvbUtil.h"
+					RelativePath="..\shared\DvbUtil.h"
 					>
 				</File>
 				<File

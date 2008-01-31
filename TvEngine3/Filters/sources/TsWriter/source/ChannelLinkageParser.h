@@ -19,13 +19,13 @@
  *
  */
 #pragma once
-#include "sectiondecoder.h"
-#include "isectioncallback.h"
+#include "..\..\shared\sectiondecoder.h"
+#include "..\..\shared\isectioncallback.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
-#include "TsHeader.h"
+#include "..\..\shared\TsHeader.h"
 #include <string>
-#include "dvbutil.h"
+#include "..\..\shared\dvbutil.h"
 #include <vector>
 #include <map>
 using namespace std;

@@ -23,7 +23,7 @@
 #include "mhwparser.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
-#include "TsHeader.h"
+#include "..\..\shared\TsHeader.h"
 
 using namespace Mediaportal;
 

@@ -19,11 +19,11 @@
  *
  */
 #pragma once
-#include "sectiondecoder.h"
-#include "section.h"
+#include "..\..\shared\sectiondecoder.h"
+#include "..\..\shared\section.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
-#include "TsHeader.h"
+#include "..\..\shared\TsHeader.h"
 
 using namespace Mediaportal;
 

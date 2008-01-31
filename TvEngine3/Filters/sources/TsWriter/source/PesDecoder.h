@@ -20,7 +20,7 @@
  */
 #pragma once
 
-#include "tsHeader.h"
+#include "..\..\shared\TsHeader.h"
 #include "pespacket.h"
 #include "pcr.h"
 

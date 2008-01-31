@@ -28,7 +28,7 @@
 #include <initguid.h>
 
 #include "teletextgrabber.h"
-#include "TsHeader.h"
+#include "..\..\shared\TsHeader.h"
 
 
 extern void LogDebug(const char *fmt, ...) ;

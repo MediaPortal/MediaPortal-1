@@ -19,37 +19,39 @@
  *
  */
 #pragma once
+#include "ISectionCallback.h"
+#include "dvbutil.h"
+#include "Section.h"
+#include "TsHeader.h"
 
-#include "..\..\shared\TsHeader.h"
-class CVideoAudioScrambledAnalyzer
+#define MAX_SECTIONS 256
+
+class CSectionDecoder : public CDvbUtil
 {
 public:
-  enum ScrambleState
-  {
-    Unknown,
-    Scrambled,
-    UnScrambled
-  };
-	CVideoAudioScrambledAnalyzer(void);
-	~CVideoAudioScrambledAnalyzer(void);
-
-	void SetVideoPid(int pid);
-	int  GetVideoPid();
-	
-	void SetAudioPid(int pid);
-	int  GetAudioPid();
-
-	bool IsAudioScrambled();
-	bool IsVideoScrambled();
-
-	void Reset();
+  CSectionDecoder(void);
+  ~CSectionDecoder(void);
+	void SetCallBack(ISectionCallback* callback);
 	void OnTsPacket(byte* tsPacket);
-
+	void OnTsPacket(CTsHeader& header,byte* tsPacket);
+  void SetPid(int pid);
+  int  GetPid();
+	void Reset();
+  void EnableLogging(bool onOff);
+  void EnableCrcCheck(bool onOff);
+  virtual void OnNewSection(CSection& section);
+protected:
 private:
-  void Dump(bool audio, bool video);
-	int m_videoPid;
-	int m_audioPid;
-	enum ScrambleState m_bAudioEncrypted;
-	enum ScrambleState m_bVideoEncrypted;
-  CTsHeader  m_tsheader;
+	int StartNewSection(byte* tsPacket,int index,int sectionLen);
+	int AppendSection(byte* tsPacket, int index, int sectionLen);
+	int SnapshotSectionLength(byte* tsPacket,int start);
+
+  bool        m_bLog;
+  bool        m_bCrcCheck;
+  int			    m_pid;
+  CSection		m_section;
+	int         m_iContinuityCounter;
+	ISectionCallback* m_pCallback;
+  CTsHeader m_header;
+  CTsHeader m_headerSection;
 };

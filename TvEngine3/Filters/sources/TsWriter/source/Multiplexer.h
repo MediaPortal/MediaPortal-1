@@ -21,7 +21,7 @@
 #pragma once
 #include "pcrdecoder.h"
 #include "pesdecoder.h"
-#include "tsheader.h"
+#include "..\..\shared\TsHeader.h"
 #include "adaptionfield.h"
 #include "pcr.h"
 //#include "patparser.h"

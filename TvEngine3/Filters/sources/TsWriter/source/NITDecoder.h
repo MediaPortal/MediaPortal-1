@@ -19,8 +19,8 @@
  *
  */
 #pragma once
-#include "sectiondecoder.h"
-#include "section.h"
+#include "..\..\shared\sectiondecoder.h"
+#include "..\..\shared\section.h"
 #include <vector>
 using namespace std;
 

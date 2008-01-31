@@ -21,7 +21,7 @@
 #pragma once
 #include "criticalsection.h"
 #include "entercriticalsection.h"
-#include "TsHeader.h"
+#include "..\..\shared\TsHeader.h"
 #include "ChannelLinkageParser.h"
 
 using namespace Mediaportal;

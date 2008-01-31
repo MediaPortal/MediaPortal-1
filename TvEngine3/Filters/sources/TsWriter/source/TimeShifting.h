@@ -23,7 +23,7 @@
 #include "multifilewriter.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
-#include "tsheader.h"
+#include "..\..\shared\TsHeader.h"
 #include "adaptionfield.h"
 #include "pcr.h"
 #include "PcrRefClock.h"
