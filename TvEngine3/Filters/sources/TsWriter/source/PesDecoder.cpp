@@ -21,7 +21,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include "pesdecoder.h"
-#include "packetsync.h"
+#include "..\..\shared\packetsync.h"
 
 
 extern void LogDebug(const char *fmt, ...) ;

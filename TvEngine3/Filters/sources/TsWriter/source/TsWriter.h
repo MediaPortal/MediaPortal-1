@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include "packetsync.h"
+#include "..\..\shared\packetsync.h"
 #include "multiplexer.h"
 #include "videoanalyzer.h"
 #include "channelscan.h"

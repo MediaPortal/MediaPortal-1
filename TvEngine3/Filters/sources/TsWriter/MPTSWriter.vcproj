@@ -432,7 +432,7 @@
 				Name="TS"
 				>
 				<File
-					RelativePath=".\source\PacketSync.cpp"
+					RelativePath="..\shared\PacketSync.cpp"
 					>
 				</File>
 				<File
@@ -537,7 +537,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\PacketSync.h"
+					RelativePath="..\shared\PacketSync.h"
 					>
 				</File>
 				<File

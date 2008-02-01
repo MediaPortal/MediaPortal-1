@@ -20,7 +20,7 @@
  */
 #include <windows.h>
 #include "VideoAudioScrambledAnalyzer.h"
-#include "packetsync.h"
+#include "..\..\shared\packetsync.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 

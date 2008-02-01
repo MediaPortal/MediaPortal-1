@@ -172,7 +172,20 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
           m_section.CalcSectionLength(tsPacket, start);
 				if (m_section.section_length==0)
 				{
-					LogDebug("!!! CSectionDecoder::OnTsPacket got a section with section length: 0 on pid: %X tableid: %X bufferpos: %d - Discarding whole packet.",header.Pid,m_section.Data[0],m_section.BufferPos);
+					LogDebug("!!! CSectionDecoder::OnTsPacket got a section with section length: 0 on pid: 0x%X tableid: 0x%X bufferpos: %d start: %d - Discarding whole packet.",header.Pid,m_section.Data[0],m_section.BufferPos,start);
+					/*LogDebug("0x%x 0x%x 0x%x",m_section.Data[0],m_section.Data[1],m_section.Data[2]);
+					LogDebug("0x%x 0x%x 0x%x",tsPacket[start],tsPacket[start+1],tsPacket[start+2]);
+					bool allzero=true;
+					for (int i=start;i<188;i++)
+					{
+						if (tsPacket[i]!=0)
+						{
+							allzero=false;
+							break;
+						}
+					}
+					if (allzero)
+					LogDebug("ALL ZERO");*/
 					m_section.Reset();
 					return;
 				}
