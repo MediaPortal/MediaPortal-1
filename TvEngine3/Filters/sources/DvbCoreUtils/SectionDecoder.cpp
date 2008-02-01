@@ -24,8 +24,6 @@
 #include <stdlib.h>
 #include "..\shared\SectionDecoder.h"
 #include "..\shared\Tsheader.h"
-//#include "packetsync.h"
-extern DWORD crc32 (char *data, int len);
 
 void LogDebug(const char *fmt, ...) ;
 
@@ -191,9 +189,13 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
       }
       if (m_section.SectionComplete() && m_section.section_length > 0)
       {
-        OnNewSection(m_section);
-				if (m_pCallback!=NULL)
-					m_pCallback->OnNewSection(header.Pid,m_section.table_id,m_section);
+				DWORD crc=crc32((char*)m_section.Data,m_section.section_length);
+				if (crc==0 || (m_bCrcCheck==false))
+				{
+					OnNewSection(m_section);
+					if (m_pCallback!=NULL)
+						m_pCallback->OnNewSection(header.Pid,m_section.table_id,m_section);
+				}
         m_section.Reset();
       }
       pointer_field=0;

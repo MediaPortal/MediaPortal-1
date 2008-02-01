@@ -21,9 +21,9 @@
 #include <windows.h>
 #include <time.h>
 #include "ChannelLinkageParser.h"
+#include "..\..\shared\dvbutil.h"
 #pragma warning(disable : 4995)
 
-extern DWORD crc32 (char *data, int len);
 extern void LogDebug(const char *fmt, ...) ;
 
 CChannelLinkageParser::CChannelLinkageParser(void)

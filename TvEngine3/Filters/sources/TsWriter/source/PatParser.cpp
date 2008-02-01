@@ -25,10 +25,10 @@
 #include <time.h>
 #include <streams.h>
 #include <initguid.h>
-
+#include "..\..\shared\dvbutil.h"
 #include "PatParser.h"
 
-extern DWORD crc32 (char *data, int len);
+
 void LogDebug(const char *fmt, ...) ;
 
 //*****************************************************************************

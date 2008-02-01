@@ -20,6 +20,8 @@
  */
 #pragma once
 
+DWORD crc32 (char *data, int len);
+
 class CDvbUtil
 {
 public:

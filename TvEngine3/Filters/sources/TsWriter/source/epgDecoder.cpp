@@ -28,8 +28,8 @@
 #include "autostring.h"
 #include "entercriticalsection.h"
 #include "DN_EIT_Helper.h"
+#include "..\..\shared\dvbutil.h"
 
-extern DWORD crc32 (char *data, int len);
 extern void LogDebug(const char *fmt, ...) ;
 
 #define S_FINISHED (S_OK+1)
