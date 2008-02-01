@@ -21,7 +21,7 @@
 			ConfigurationType="2"
 			UseOfMFC="0"
 			UseOfATL="0"
-			ATLMinimizesCRunTimeLibraryUsage="true"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
 			<Tool
@@ -81,12 +81,12 @@
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="strmbase.lib winmm.lib strmiids.lib "
+				AdditionalDependencies="dvbcoreutils.lib strmbase.lib winmm.lib strmiids.lib"
 				ShowProgress="0"
 				OutputFile="Release/TsWriter.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(DS_BASECLASSES)\XP32_RETAIL&quot;"
+				AdditionalLibraryDirectories="&quot;$(DS_BASECLASSES)\XP32_RETAIL&quot;;&quot;$(InputDir)\..\shared&quot;"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
@@ -443,34 +443,6 @@
 			<Filter
 				Name="SHARED"
 				>
-				<File
-					RelativePath="..\shared\AdaptionField.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\DvbUtil.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\PacketSync.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\Pcr.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\Section.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\SectionDecoder.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\TsHeader.cpp"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -678,6 +650,10 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath="..\shared\DvbCoreUtils.lib"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
