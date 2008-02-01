@@ -8,14 +8,14 @@ namespace TsPacketChecker
   class SdtParser
   {
     private TreeNode baseNode;
-    private List<int> servicesReceived;
+    private List<ulong> servicesReceived;
     SectionDecoder dec1;
     SectionDecoder dec2;
 
     public SdtParser(TreeNode nodeToAdd)
     {
       baseNode = nodeToAdd;
-      servicesReceived = new List<int>();
+      servicesReceived = new List<ulong>();
       dec1 = new SectionDecoder(0x11, 0x42);
       dec1.OnSectionDecoded += OnNewSection;
       dec2 = new SectionDecoder(0x11, 0x46);
@@ -50,14 +50,17 @@ namespace TsPacketChecker
       int transport_id = section.table_id_extension;
       int network_id=(section.Data[8]<<8)+section.Data[9];
 
-      int key = (network_id << 32);
-      key += (transport_id << 16);
+      ulong nid = (ulong)network_id;
+      ulong tid = (ulong)transport_id;
+
+      //ulong key = (ulong)(nid << 32);
+      //key += (ulong)(tid << 16);
 
       int start = 11;
       while (start < section.section_length)
       {
         int service_id = (section.Data[start] << 8) + section.Data[start + 1];
-        key += service_id;
+        ulong key = (ulong)service_id;
         int descriptor_loop_len = ((section.Data[start + 3] << 8) | (section.Data[start + 4])) & 0xfff;
         if (!servicesReceived.Contains(key))
         {

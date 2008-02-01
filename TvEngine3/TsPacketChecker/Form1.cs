@@ -32,9 +32,21 @@ namespace TsPacketChecker
     {
       TrSections.Nodes.Add(sectionNode);
     }
+    protected delegate void MethodSortTreeView();
+    void SortTreeView()
+    {
+      TrSections.TreeViewNodeSorter = new NodeSorter();
+      TrSections.Sort();
+    }
+
+
     private void AddThreadSafeSectionNode(TreeNode node)
     {
       Invoke(new MethodAddSectionNode(AddSectionNode), new Object[] { node });
+    }
+    private void ThreadSafeSort()
+    {
+      Invoke(new MethodSortTreeView(SortTreeView));
     }
     private void WriteLog(string msg)
     {
@@ -188,16 +200,17 @@ namespace TsPacketChecker
         if (header.TransportError) continue;
         if (header.Pid >= 0x1FFF) continue;
 
+        List<ushort> streamPids = patParser.GetPmtStreamPids();
+        checker.AddPidsToCheck(streamPids);
         if (!patParser.IsReady)
           patParser.OnTsPacket(tsPacket);
         else
         {
-          List<ushort> streamPids = patParser.GetPmtStreamPids();
+          
           if (!(bool)patNode.Tag)
           {
             WriteLog("- PAT and PMT parsers finished.");
             AddThreadSafeSectionNode(patNode);
-            checker.AddPidsToCheck(streamPids);
             patNode.Tag = true;
           }
           patParser.Reset();
@@ -229,6 +242,7 @@ namespace TsPacketChecker
       reader.Close();
       PrBar.Value = 100;
       WriteLog("Finished.");
+      ThreadSafeSort();
       WriteLog("Incomplete sections=" + PatParser.incompleteSections.ToString());
       WriteLog("max PAT/PMT pid count: " + maxPATPidsCount.ToString());
       if (!(bool)patNode.Tag)
@@ -242,4 +256,33 @@ namespace TsPacketChecker
       WriteLog(checker.GetErrorDetails());
     }
   }
+  public class NodeSorter : System.Collections.IComparer
+  {
+    public int Compare(object x, object y)
+    {
+      TreeNode tx = x as TreeNode;
+      TreeNode ty = y as TreeNode;
+
+      string s1 = tx.Text;
+      string s2 = ty.Text;
+      if (s1[0] == '#')
+      {
+        s1 = s1.Remove(0, 1);
+        s2 = s2.Remove(0, 1);
+        s1 = s1.Trim();
+        s2 = s2.Trim();
+        int n1 = Int32.Parse(s1.Substring(0, s1.IndexOf(" ")));
+        int n2 = Int32.Parse(s2.Substring(0, s2.IndexOf(" ")));
+        if (n1 > n2)
+          return 1;
+        else if (n1 == n2)
+          return 0;
+        else
+          return -1;
+      }
+      else
+        return String.Compare(s1, s2);
+    }
+  }
+
 }

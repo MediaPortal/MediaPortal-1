@@ -23,7 +23,7 @@ namespace TsPacketChecker
     {
       if (!header.PayloadUnitStart)
         return 0;
-      if (header.PayLoadStart > 170 && header.HasPayload)
+      if (header.PayLoadStart > 185 && header.HasPayload)
       {
         totalPayloadStartErrors++;
         pi.payloadStartErrorTexts.Add(" payloadStart=" + header.PayLoadStart.ToString() + " HasAdaption=" + header.HasAdaptionField.ToString() + " HasPayload=" + header.HasPayload.ToString() + " AdaptionFieldSize=" + tsPacket[4].ToString());
@@ -36,16 +36,21 @@ namespace TsPacketChecker
     #endregion
 
     #region Continuity checks
-    private void CheckContinuityCounter(byte cc, ref PidInfo pi)
+    private bool CheckContinuityCounter(byte cc, ref PidInfo pi)
     {
+      bool isOk = true;
       if (pi.continuityCounter != 0xFF)
       {
         byte expected = (byte)(pi.continuityCounter + 1);
         if (expected == 16) expected = 0;
         if (cc != expected)
+        {
           totalCCErrors++;
+          isOk = false;
+        }
       }
       pi.continuityCounter = cc;
+      return isOk;
     }
     private void CheckPcr(TsHeader header, byte[] tsPacket, ref PidInfo pi)
     {
