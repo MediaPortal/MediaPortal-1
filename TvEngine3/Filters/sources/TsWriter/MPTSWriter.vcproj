@@ -440,10 +440,6 @@
 					>
 				</File>
 			</Filter>
-			<Filter
-				Name="SHARED"
-				>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
