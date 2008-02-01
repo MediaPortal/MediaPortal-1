@@ -23,14 +23,14 @@
 #include "MultiFileReader.h"
 #include "tsDuration.h"
 #include "pcrdecoder.h"
-#include "packetSync.h"
+#include "..\..\shared\packetSync.h"
 #include "pidtable.h"
-#include "tsheader.h"
+#include "..\..\shared\tsheader.h"
 #include "patparser.h"
 #include "channelInfo.h"
 #include "PidTable.h"
 #include "TSThread.h"
-#include "Pcr.h"
+#include "..\..\shared\Pcr.h"
 #include <vector>
 #include <map>
 using namespace std;

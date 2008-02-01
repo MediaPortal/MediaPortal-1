@@ -28,7 +28,7 @@
 #include <initguid.h>
 
 #include "PatParser.h"
-#include "tsheader.h"
+#include "..\..\shared\tsheader.h"
 
 void LogDebug(const char *fmt, ...) ;
 CPatParser::CPatParser(void)
@@ -37,7 +37,6 @@ CPatParser::CPatParser(void)
   m_packetsReceived=0;
 	m_pCallback=NULL;
   Reset();
-  SetTableId(0);
   SetPid(0);
 	m_iState=Idle;
 }
@@ -148,39 +147,31 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 	}
 }
 
-void CPatParser::OnNewSection(CSection& sections)
+void CPatParser::OnNewSection(CSection& section)
 {
-  byte* section=sections.Data;
+	if (section.table_id!=0) return;
 
-  CTsHeader header(section);
-  int start=header.PayLoadStart;
-  int table_id = section[start];
-  if (table_id!=0) return ;
-  int section_syntax_indicator = (section[start+1]>>7) & 1;
-  int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
-  int transport_stream_id = (section[start+3]<<8)+section[start+4];
-  int version_number = ((section[start+5]>>1)&0x1F);
-  int current_next_indicator = section[start+5] & 1;
-  int section_number = section[start+6];
-  int last_section_number = section[start+7];
+	int section_syntax_indicator = (section.Data[1]>>7) & 1;
+	int transport_stream_id = section.table_id_extension;
+	int current_next_indicator = section.Data[5] & 1;
 
-	if (version_number!=m_iPatTableVersion)
+	if (section.version_number!=m_iPatTableVersion)
 	{
 		//LogDebug("PatParser: new pat table %d->%d", m_iPatTableVersion,version_number);
 		CleanUp();
-		m_iPatTableVersion=version_number;
+		m_iPatTableVersion=section.version_number;
 		m_iState=Parsing;	
 	}
 //	  LogDebug("DecodePat  %d section:%d lastsection:%d sectionlen:%d",
 //						  version_number,section_number,last_section_number,section_length);
 
   int pmtcount=0;
-  int loop =(section_length - 9) / 4;
+  int loop =(section.section_length - 9) / 4;
 	bool newPmtsAdded=false;
   for(int i=0; i < loop; i++)
   {
 	  int offset = (8 +(i * 4));
-	  int pmtPid = ((section[start+offset+2] & 0x1F)<<8) + section[start+offset+3];
+		int pmtPid = ((section.Data[offset+2] & 0x1F)<<8) + section.Data[offset+3];
     if (pmtPid < 0x10 || pmtPid >=0x1fff) 
 	  {
       //invalid pmt pid
@@ -200,7 +191,6 @@ void CPatParser::OnNewSection(CSection& sections)
     if (!found && pmtPid>=0x10)	  
 	  {
 		  CPmtParser* pmtParser = new CPmtParser();
-		  pmtParser->SetTableId(2);
 		  pmtParser->SetPid(pmtPid);
 			//pmtParser->SetPmtCallBack(this);
 		  m_pmtParsers.push_back( pmtParser );

@@ -19,7 +19,7 @@
  *
  */
 #pragma once
-#include "pcr.h"
+#include "..\..\shared\pcr.h"
 #define MAX_BUFFER_SIZE 0x10000
 class CBuffer
 {

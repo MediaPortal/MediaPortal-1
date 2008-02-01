@@ -20,7 +20,7 @@
  */
 #pragma once
 
-#include "sectiondecoder.h"
+#include "..\..\shared\sectiondecoder.h"
 #include "PmtParser.h"
 #include "channelinfo.h"
 #include <vector>

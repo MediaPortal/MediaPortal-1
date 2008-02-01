@@ -20,7 +20,7 @@
  */
 #include <streams.h>
 #include "TsDuration.h"
-#include "AdaptionField.h"
+#include "..\..\shared\AdaptionField.h"
 extern void LogDebug(const char *fmt, ...) ;
 
 CTsDuration::CTsDuration()

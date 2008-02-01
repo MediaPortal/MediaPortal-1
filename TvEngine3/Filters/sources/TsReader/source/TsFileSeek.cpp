@@ -21,7 +21,7 @@
 #include <streams.h>
 #include <math.h>
 #include "TsFileSeek.h"
-#include "adaptionfield.h"
+#include "..\..\shared\adaptionfield.h"
 
 const float SEEKING_ACCURACY = 0.025;
 const int MAX_SEEKING_ITERATIONS = 50;

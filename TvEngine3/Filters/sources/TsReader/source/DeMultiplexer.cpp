@@ -23,7 +23,7 @@
 #include <streams.h>
 #include "demultiplexer.h"
 #include "buffer.h"
-#include "adaptionfield.h"
+#include "..\..\shared\adaptionfield.h"
 #include "tsreader.h"
 #include "audioPin.h"
 #include "videoPin.h"

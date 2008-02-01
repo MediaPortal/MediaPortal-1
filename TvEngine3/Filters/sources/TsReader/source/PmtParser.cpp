@@ -46,27 +46,18 @@ bool CPmtParser::IsReady()
 {
 	return _isFound;
 }
-void CPmtParser::OnNewSection(CSection& sections)
+void CPmtParser::OnNewSection(CSection& section)
 {   
-	byte* section=(&sections.Data)[0];
-	int sectionLen=sections.SectionLength;
+	if (section.table_id!=2) return;
 
-	m_tsHeader.Decode(section);
-	int start=m_tsHeader.PayLoadStart;
-	int table_id = section[start+0];
-	if (table_id!=2) return;
-	int section_syntax_indicator = (section[start+1]>>7) & 1;
-	int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
-	int program_number = (section[start+3]<<8)+section[start+4];
-	int version_number = ((section[start+5]>>1)&0x1F);
-	int current_next_indicator = section[start+5] & 1;
-	int section_number = section[start+6];
-	int last_section_number = section[start+7];
-	int pcr_pid=((section[start+8]& 0x1F)<<8)+section[start+9];
-	int program_info_length = ((section[start+10] & 0xF)<<8)+section[start+11];
+
+
+	int program_number = section.table_id_extension;
+	int pcr_pid=((section.Data[8]& 0x1F)<<8)+section.Data[9];
+	int program_info_length = ((section.Data[10] & 0xF)<<8)+section.Data[11];
 	int len2 = program_info_length;
 	int pointer = 12;
-	int len1 = section_length -( 9 + program_info_length +4);
+	int len1 = section.section_length -( 9 + program_info_length +4);
 	int x;
 	if (!_isFound)
 	{
@@ -81,8 +72,8 @@ void CPmtParser::OnNewSection(CSection& sections)
 	// loop 1
 	while (len2 > 0)
 	{
-		int indicator=section[start+pointer];
-		int descriptorLen=section[start+pointer+1];
+		int indicator=section.Data[pointer];
+		int descriptorLen=section.Data[pointer+1];
 		len2 -= (descriptorLen+2);
 		pointer += (descriptorLen+2);
 	}
@@ -101,9 +92,9 @@ void CPmtParser::OnNewSection(CSection& sections)
 		//if (start+pointer+4>=sectionLen+9) return ;
 		int curAudio=-1;
     int curSubtitle=-1;
-		stream_type = section[start+pointer];
-		elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
-		ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
+		stream_type = section.Data[pointer];
+		elementary_PID = ((section.Data[pointer+1]&0x1F)<<8)+section.Data[pointer+2];
+		ES_info_length = ((section.Data[pointer+3] & 0xF)<<8)+section.Data[pointer+4];
 		// LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
 		if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 || stream_type==SERVICE_TYPE_VIDEO_MPEG2)
 		{
@@ -171,15 +162,15 @@ void CPmtParser::OnNewSection(CSection& sections)
 		
 		while (len2 > 0)
 		{
-			if (pointer+1>=sectionLen) 
+			if (pointer+1>=section.section_length) 
 			{
 				LogDebug("pmt parser check1");
 				return ;
 			}
 			x = 0;
 			
-			int indicator=section[start+pointer];
-			x = section[start+pointer + 1] + 2;
+			int indicator=section.Data[pointer];
+			x = section.Data[pointer + 1] + 2;
 						
 			if(indicator==DESCRIPTOR_DVB_AC3)
 			{								
@@ -227,7 +218,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 			
 			if(indicator==DESCRIPTOR_MPEG_ISO639_Lang)
 			{					
-				if (pointer+4>=sectionLen) 
+				if (pointer+4>=section.section_length) 
 				{
 					LogDebug("pmt parser check2");
 					return ;
@@ -240,9 +231,9 @@ void CPmtParser::OnNewSection(CSection& sections)
 				}
 
 				BYTE d[3];
-				d[0]=section[start+pointer+2];
-				d[1]=section[start+pointer+3];
-				d[2]=section[start+pointer+4];
+				d[0]=section.Data[pointer+2];
+				d[1]=section.Data[pointer+3];
+				d[2]=section.Data[pointer+4];
 
 				if(curAudio==1)
 				{
@@ -298,8 +289,8 @@ void CPmtParser::OnNewSection(CSection& sections)
 			}
 			if(indicator==DESCRIPTOR_DVB_TELETEXT /*&& m_pidInfo.TeletextPid==0*/){
 				m_pidInfo.TeletextPid=elementary_PID;
-				assert(section[start+pointer+0] == DESCRIPTOR_DVB_TELETEXT);
-				int descriptorLen = section[start+pointer+1];
+				assert(section.Data[pointer+0] == DESCRIPTOR_DVB_TELETEXT);
+				int descriptorLen = section.Data[pointer+1];
 
 				int varBytes = 5; // 4 additional fields for a total of 32 bits (see 6.2.40)
 				
@@ -312,11 +303,11 @@ void CPmtParser::OnNewSection(CSection& sections)
 				//LogDebug("Descriptor length %i, N= %i", descriptorLen, N);
 				for(int j = 0; j < N; j++){
 					BYTE ISO_639_language_code[3];
-					ISO_639_language_code[0] = section[start+pointer + varBytes*j + 2];
-					ISO_639_language_code[1] = section[start+pointer + varBytes*j + 3];
-					ISO_639_language_code[2] = section[start+pointer + varBytes*j + 4];
+					ISO_639_language_code[0] = section.Data[pointer + varBytes*j + 2];
+					ISO_639_language_code[1] = section.Data[pointer + varBytes*j + 3];
+					ISO_639_language_code[2] = section.Data[pointer + varBytes*j + 4];
 
-					BYTE b3 = section[start+pointer + varBytes*j + 5];
+					BYTE b3 = section.Data[pointer + varBytes*j + 5];
 					BYTE teletext_type = (b3 & 0xF8) >> 3; // 5 first(msb) bits
 					
 					assert(teletext_type <= 0x05); // 0x06 and upwards reserved for future use and shouldnt appear
@@ -327,7 +318,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 
 					int teletext_magazine_number = (b3 & 0x07); // last(lsb) 3 bits
 
-					int teletext_page_number = (section[start+pointer + varBytes*j + 6]);
+					int teletext_page_number = (section.Data[+pointer + varBytes*j + 6]);
 
 					int real_page_tens  = (teletext_page_number & 0xF0) >> 4;
 					int real_page_units = teletext_page_number & 0x0F;
@@ -362,9 +353,9 @@ void CPmtParser::OnNewSection(CSection& sections)
           subtitleToSet++;
 			    curSubtitle=subtitleToSet;
 				  BYTE d[3];
-          d[0]=section[start+pointer+2];
-					d[1]=section[start+pointer+3];
-					d[2]=section[start+pointer+4];
+          d[0]=section.Data[pointer+2];
+					d[1]=section.Data[pointer+3];
+					d[2]=section.Data[pointer+4];
 
 			    switch(curSubtitle)
 			    {

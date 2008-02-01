@@ -19,9 +19,9 @@
  *
  */
 #pragma once
-#include "sectiondecoder.h"
+#include "..\..\shared\sectiondecoder.h"
 #include "PidTable.h"
-#include "tsheader.h"
+#include "..\..\shared\tsheader.h"
 #include "pidtable.h"
 #include <map>
 using namespace std;
@@ -54,7 +54,7 @@ class CPmtParser: public  CSectionDecoder
 public:
   CPmtParser(void);
   virtual ~CPmtParser(void);
-	void		OnNewSection(CSection& sections);
+	void		OnNewSection(CSection& section);
 	void    SetPmtCallBack(IPmtCallBack* callback);
   bool    IsReady();
   CPidTable& GetPidInfo();

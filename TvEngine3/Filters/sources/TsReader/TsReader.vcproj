@@ -225,10 +225,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\source\AdaptionField.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\source\AudioPin.cpp"
 				>
 			</File>
@@ -242,10 +238,6 @@
 			</File>
 			<File
 				RelativePath=".\source\DeMultiplexer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\DvbUtil.cpp"
 				>
 			</File>
 			<File
@@ -273,15 +265,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\PacketSync.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\source\PatParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\Pcr.cpp"
 				>
 			</File>
 			<File
@@ -301,14 +285,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\Section.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\SectionDecoder.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\source\SubtitlePin.cpp"
 				>
 			</File>
@@ -318,10 +294,6 @@
 			</File>
 			<File
 				RelativePath=".\source\TsFileSeek.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TsHeader.cpp"
 				>
 			</File>
 			<File
@@ -350,10 +322,6 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\source\AdaptionField.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\AudioPin.h"
 				>
 			</File>
@@ -363,10 +331,6 @@
 			</File>
 			<File
 				RelativePath=".\source\DeMultiplexer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\DvbUtil.h"
 				>
 			</File>
 			<File
@@ -406,15 +370,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\PacketSync.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\PatParser.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\Pcr.h"
 				>
 			</File>
 			<File
@@ -438,14 +394,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\Section.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\SectionDecoder.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\SubtitlePin.h"
 				>
 			</File>
@@ -459,10 +407,6 @@
 			</File>
 			<File
 				RelativePath=".\source\TsFileSeek.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TsHeader.h"
 				>
 			</File>
 			<File
@@ -1045,6 +989,196 @@
 			</File>
 			<File
 				RelativePath="..\StreamingServer\StreamingServer\liveMedia\WAVAudioFileSource.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="SHARED"
+			>
+			<File
+				RelativePath="..\shared\AdaptionField.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\shared\AdaptionField.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\DvbUtil.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\shared\DvbUtil.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ISectionCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\PacketSync.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\shared\PacketSync.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\Pcr.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\shared\Pcr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\Section.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\shared\Section.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\SectionDecoder.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\shared\SectionDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\TsHeader.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\shared\TsHeader.h"
 				>
 			</File>
 		</Filter>
