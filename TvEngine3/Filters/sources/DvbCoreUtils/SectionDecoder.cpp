@@ -189,7 +189,7 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
       }
       if (m_section.SectionComplete() && m_section.section_length > 0)
       {
-				DWORD crc=crc32((char*)m_section.Data,m_section.section_length);
+				DWORD crc=crc32((char*)m_section.Data,m_section.section_length+3);
 				if (crc==0 || (m_bCrcCheck==false))
 				{
 					OnNewSection(m_section);

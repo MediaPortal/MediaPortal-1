@@ -50,7 +50,7 @@ void CPmtParser::OnNewSection(CSection& section)
 {   
 	if (section.table_id!=2) return;
 
-
+	try{
 
 	int program_number = section.table_id_extension;
 	int pcr_pid=((section.Data[8]& 0x1F)<<8)+section.Data[9];
@@ -318,7 +318,7 @@ void CPmtParser::OnNewSection(CSection& section)
 
 					int teletext_magazine_number = (b3 & 0x07); // last(lsb) 3 bits
 
-					int teletext_page_number = (section.Data[+pointer + varBytes*j + 6]);
+					int teletext_page_number = (section.Data[pointer + varBytes*j + 6]);
 
 					int real_page_tens  = (teletext_page_number & 0xF0) >> 4;
 					int real_page_units = teletext_page_number & 0x0F;
@@ -397,6 +397,7 @@ void CPmtParser::OnNewSection(CSection& section)
 		//  m_pidInfo.PmtPid, m_pidInfo.PcrPid,m_pidInfo.VideoPid,m_pidInfo.AudioPid1,m_pidInfo.AC3Pid,m_pidInfo.ServiceId);
 		m_pmtCallback->OnPidsReceived(m_pidInfo);
 	}
+	} catch (...) { LogDebug("Exception in PmtParser");}
 }
 
 

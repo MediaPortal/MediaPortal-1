@@ -39,6 +39,7 @@ CPatParser::CPatParser(void)
   Reset();
   SetPid(0);
 	m_iState=Idle;
+	//EnableLogging(true);
 }
 
 CPatParser::~CPatParser(void)
@@ -150,10 +151,9 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 void CPatParser::OnNewSection(CSection& section)
 {
 	if (section.table_id!=0) return;
-
+	try{
 	int section_syntax_indicator = (section.Data[1]>>7) & 1;
 	int transport_stream_id = section.table_id_extension;
-	int current_next_indicator = section.Data[5] & 1;
 
 	if (section.version_number!=m_iPatTableVersion)
 	{
@@ -198,6 +198,7 @@ void CPatParser::OnNewSection(CSection& section)
 			newPmtsAdded=true;
 	  }
   }
+	} catch (...) { LogDebug("Exception in PatParser"); }
 }
 
 void CPatParser::Dump()
