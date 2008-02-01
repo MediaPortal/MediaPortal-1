@@ -146,6 +146,11 @@ namespace TsPacketChecker
         {
           if (m_section.section_length == -1)
             m_section.CalcSectionLength(tsPacket, start);
+          if (m_section.section_length == 0)
+          {
+            m_section.Reset();
+            return;
+          }
           int len = m_section.section_length - m_section.BufferPos;
           if (pointer_field != 0 && ((start + len) > pointer_field))
           {

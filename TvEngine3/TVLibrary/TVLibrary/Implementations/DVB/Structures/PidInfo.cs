@@ -103,6 +103,8 @@ namespace TvLibrary.Implementations.DVB.Structures
               if (this.descriptor_data.Length != data.Length)
               {
                   Log.Log.WriteFile("PROBLEM : descriptor lengths dont match {0} {1}", data.Length, descriptor_data.Length);
+                  if (descriptor_length > data.Length)
+                    descriptor_length = data.Length;
               }
               else Log.Log.WriteFile("Set descriptor data with length {0}", descriptor_data.Length);
               System.Array.Copy(data, 0, this.descriptor_data, start, descriptor_length);

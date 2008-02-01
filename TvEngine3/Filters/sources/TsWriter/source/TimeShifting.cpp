@@ -290,6 +290,7 @@ STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descrip
 
 	try{
 		PidInfo info;
+		info.serviceType=0;
 		int pointer=0;
 		int info_pointer=0;
 		int len = data_length;
@@ -370,10 +371,48 @@ STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descrip
 			else{
 				LogDebug("WARNING: AddStreamWithDesc(pid,descriptor) doesnt support descriptor type 0x%x, ignoring", descriptor_tag);
 			}
+			
+			if (info.serviceType==0 && (isMpeg1 || isMpeg2 || isAC3) )
+			{
+				if (m_pcrPid == pid)
+				{
+					FAKE_PCR_PID = FAKE_AUDIO_PID;
+				}
+				info.realPid=pid;
+				info.fakePid=FAKE_AUDIO_PID;
+				info.seenStart=false;
+				if (isMpeg1)
+				{
+				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG1;
+				}
+				else if (isMpeg2)
+				{
+				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG2;
+				}
+				else if (isAC3)
+				{
+				  info.serviceType = SERVICE_TYPE_AUDIO_AC3;
+				}
+				info.ContintuityCounter=0;
+				//strcpy(info.language,language);
+				copy_descriptor = true;
+
+				LogDebug("Timeshifter:add (with descriptor) audio stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				FAKE_AUDIO_PID++;
+				
+				if (isMpeg1 || isMpeg2)
+				{
+				  m_multiPlexer.AddPesStream(pid,false,true,false);
+				}
+				else if (isAC3)
+				{
+				  m_multiPlexer.AddPesStream(pid,true,false,false);
+				}
+			}
 
 			if ( copy_descriptor ) {
 				LogDebug("Copying Descriptor: stream_type: %d, tag: %d, length: %d",
-					info.serviceType, x[0], descriptor_length);
+					info.serviceType, descriptor_tag, descriptor_length);
 				memcpy(info.descriptor_data+info_pointer,x,descriptor_length);
 				info_pointer += descriptor_length;
 				info.descriptor_valid = true;
