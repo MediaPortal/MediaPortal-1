@@ -22,7 +22,7 @@
 #define PCRREFCLOCK_H
 
 #include "Windows.h"
-#include "Pcr.h"
+#include "..\..\shared\Pcr.h"
 
 class CPcrRefClock
 {

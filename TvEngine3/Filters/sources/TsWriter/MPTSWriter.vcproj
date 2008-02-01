@@ -233,10 +233,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\source\AdaptionField.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\source\CaGrabber.cpp"
 				>
 			</File>
@@ -262,10 +258,6 @@
 			</File>
 			<File
 				RelativePath=".\source\KNC\KNCBDACI.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\Pcr.cpp"
 				>
 			</File>
 			<File
@@ -384,14 +376,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\shared\Section.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\SectionDecoder.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\source\VirtualChannelTableParser.cpp"
 					>
 				</File>
@@ -429,18 +413,6 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="TS"
-				>
-				<File
-					RelativePath="..\shared\PacketSync.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\TsHeader.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="Writer"
 				>
 				<File
@@ -464,11 +436,39 @@
 					>
 				</File>
 				<File
+					RelativePath=".\source\EnterCriticalSection.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="SHARED"
+				>
+				<File
+					RelativePath="..\shared\AdaptionField.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\shared\DvbUtil.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\source\EnterCriticalSection.cpp"
+					RelativePath="..\shared\PacketSync.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\Pcr.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\Section.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\SectionDecoder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\TsHeader.cpp"
 					>
 				</File>
 			</Filter>
@@ -478,7 +478,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\source\AdaptionField.h"
+				RelativePath=".\source\CaGrabber.h"
 				>
 			</File>
 			<File
@@ -491,10 +491,6 @@
 			</File>
 			<File
 				RelativePath=".\source\EpgScanner.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\Pcr.h"
 				>
 			</File>
 			<File
@@ -529,22 +525,6 @@
 				RelativePath=".\WinTvUsbCI.h"
 				>
 			</File>
-			<Filter
-				Name="TS"
-				>
-				<File
-					RelativePath=".\source\CaGrabber.h"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\PacketSync.h"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\TsHeader.h"
-					>
-				</File>
-			</Filter>
 			<Filter
 				Name="PES"
 				>
@@ -589,10 +569,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\shared\ISectionCallback.h"
-					>
-				</File>
-				<File
 					RelativePath=".\source\MHWDecoder.h"
 					>
 				</File>
@@ -618,14 +594,6 @@
 				</File>
 				<File
 					RelativePath=".\source\SdtParser.h"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\Section.h"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\SectionDecoder.h"
 					>
 				</File>
 				<File
@@ -657,10 +625,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\shared\DvbUtil.h"
-					>
-				</File>
-				<File
 					RelativePath=".\source\EnterCriticalSection.h"
 					>
 				</File>
@@ -674,6 +638,42 @@
 				</File>
 				<File
 					RelativePath=".\source\FireDtv.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="SHARED"
+				>
+				<File
+					RelativePath="..\shared\AdaptionField.h"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\DvbUtil.h"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\ISectionCallback.h"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\PacketSync.h"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\Pcr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\Section.h"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\SectionDecoder.h"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\TsHeader.h"
 					>
 				</File>
 			</Filter>

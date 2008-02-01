@@ -22,8 +22,8 @@
 #include "pcrdecoder.h"
 #include "pesdecoder.h"
 #include "..\..\shared\TsHeader.h"
-#include "adaptionfield.h"
-#include "pcr.h"
+#include "..\..\shared\adaptionfield.h"
+#include "..\..\shared\pcr.h"
 //#include "patparser.h"
 #include <vector>
 #include <map>

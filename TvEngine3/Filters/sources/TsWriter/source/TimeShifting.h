@@ -24,8 +24,8 @@
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include "..\..\shared\TsHeader.h"
-#include "adaptionfield.h"
-#include "pcr.h"
+#include "..\..\shared\adaptionfield.h"
+#include "..\..\shared\pcr.h"
 #include "PcrRefClock.h"
 #include <vector>
 #include <map>

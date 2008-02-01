@@ -19,7 +19,7 @@
  *
  */
 #pragma once
-#include "pcr.h"
+#include "..\..\shared\pcr.h"
 
 class CBuffer
 {

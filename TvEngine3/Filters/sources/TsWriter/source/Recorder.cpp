@@ -26,7 +26,7 @@
 #include <streams.h>
 #include <initguid.h>
 
-#include "AdaptionField.h"
+#include "..\..\shared\AdaptionField.h"
 #include "recorder.h"
 #define ERROR_FILE_TOO_LARGE 223
 #define RECORD_BUFFER_SIZE 256000

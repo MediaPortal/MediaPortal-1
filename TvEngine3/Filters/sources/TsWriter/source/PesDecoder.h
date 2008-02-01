@@ -22,7 +22,7 @@
 
 #include "..\..\shared\TsHeader.h"
 #include "pespacket.h"
-#include "pcr.h"
+#include "..\..\shared\pcr.h"
 
 #define MAX_PES_PACKET 0x80000
 class CPesDecoder;

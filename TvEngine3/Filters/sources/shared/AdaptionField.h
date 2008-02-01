@@ -19,7 +19,7 @@
  *
  */
 #pragma once
-#include "..\..\shared\TsHeader.h"
+#include "TsHeader.h"
 #include "pcr.h" 
 
 class CAdaptionField
