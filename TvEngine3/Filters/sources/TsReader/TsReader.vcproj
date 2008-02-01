@@ -61,7 +61,7 @@
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				CallingConvention="2"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -78,11 +78,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="Strmiids.lib"
-				AdditionalDependencies="strmbase.lib quartz.lib winmm.lib msvcrt.lib  ws2_32.lib"
+				AdditionalDependencies="dvbcoreutils.lib strmbase.lib quartz.lib winmm.lib msvcrt.lib  ws2_32.lib"
 				OutputFile="Release/TsReader.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(DS_BASECLASSES)\XP32_RETAIL\&quot;"
+				AdditionalLibraryDirectories="&quot;$(DS_BASECLASSES)\XP32_RETAIL\&quot;;&quot;$(InputDir)\..\shared&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				ModuleDefinitionFile=".\source\TsReader.def"
@@ -160,7 +160,7 @@
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
-				CallingConvention="2"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -176,11 +176,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbasd.lib quartz.lib winmm.lib msvcrtd.lib ws2_32.lib"
+				AdditionalDependencies="dvbcoreutilsd.lib strmbasd.lib quartz.lib winmm.lib msvcrtd.lib ws2_32.lib"
 				OutputFile="Debug/TsReader.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(DXSDK_DIR)\Lib&quot;;&quot;$(DS_BASECLASSES)\XP32_Debug&quot;"
+				AdditionalLibraryDirectories="&quot;$(DXSDK_DIR)\Lib&quot;;&quot;$(DS_BASECLASSES)\XP32_Debug&quot;;&quot;$(InputDir)\..\shared&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
 				ModuleDefinitionFile=".\source\TsReader.def"
@@ -996,52 +996,8 @@
 			Name="SHARED"
 			>
 			<File
-				RelativePath="..\shared\AdaptionField.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\shared\AdaptionField.h"
 				>
-			</File>
-			<File
-				RelativePath="..\shared\DvbUtil.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\shared\DvbUtil.h"
@@ -1052,130 +1008,20 @@
 				>
 			</File>
 			<File
-				RelativePath="..\shared\PacketSync.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\shared\PacketSync.h"
 				>
-			</File>
-			<File
-				RelativePath="..\shared\Pcr.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\shared\Pcr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\shared\Section.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\shared\Section.h"
 				>
 			</File>
 			<File
-				RelativePath="..\shared\SectionDecoder.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\shared\SectionDecoder.h"
 				>
-			</File>
-			<File
-				RelativePath="..\shared\TsHeader.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\shared\TsHeader.h"
