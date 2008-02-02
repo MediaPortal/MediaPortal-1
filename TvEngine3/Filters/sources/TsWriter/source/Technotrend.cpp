@@ -121,7 +121,7 @@ CTechnotrend::~CTechnotrend(void)
 {
   if (m_dll!=NULL && m_hBdaApi != INVALID_HANDLE_VALUE)
   {
-    BDAAPICLOSECI closeCI=(BDAAPICLOSECI)GetProcAddress(m_dll,"_bdaapiCloseCI@4");
+    BDAAPICLOSECI closeCI=(BDAAPICLOSECI)GetProcAddress(m_dll,"bdaapiCloseCI");
     if (closeCI!=NULL)
     {
       closeCI(m_hBdaApi);
@@ -131,7 +131,7 @@ CTechnotrend::~CTechnotrend(void)
       LogDebug("Technotrend: unable to get proc adress of bdaapiCloseCI");
     }
 
-    BDAAPICLOSE closeapi=(BDAAPICLOSE)GetProcAddress(m_dll,"_bdaapiClose@4");
+    BDAAPICLOSE closeapi=(BDAAPICLOSE)GetProcAddress(m_dll,"bdaapiClose");
     if (closeapi!=NULL)
     {
       closeapi(m_hBdaApi);
@@ -328,7 +328,7 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
     m_deviceType=UNKNOWN;  
     return S_OK;
   }
-  BDAAPIOPENHWIDX openHwIdx= (BDAAPIOPENHWIDX)GetProcAddress(m_dll,"_bdaapiOpenHWIdx@8");
+  BDAAPIOPENHWIDX openHwIdx= (BDAAPIOPENHWIDX)GetProcAddress(m_dll,"bdaapiOpenHWIdx");
   if (openHwIdx!=NULL)
   {
     m_hBdaApi = openHwIdx(m_deviceType, deviceId);
@@ -367,7 +367,7 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
 
   BDAAPIOPENCI openCI;
   TYPE_RET_VAL result;
-  openCI=(BDAAPIOPENCI)GetProcAddress(m_dll,"_bdaapiOpenCI@116");
+  openCI=(BDAAPIOPENCI)GetProcAddress(m_dll,"bdaapiOpenCI");
   if (openCI!=NULL)
   {
     result=openCI(m_hBdaApi, m_technoTrendStructure);
@@ -380,7 +380,7 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
     LogDebug("Technotrend: bdaapiOpenCI succeeded");
 
     BYTE v1,v2,v3,v4;
-    BDAAPIGETDRVVERSION getDrvVersion=(BDAAPIGETDRVVERSION)GetProcAddress(m_dll,"_bdaapiGetDrvVersion@20");
+    BDAAPIGETDRVVERSION getDrvVersion=(BDAAPIGETDRVVERSION)GetProcAddress(m_dll,"bdaapiGetDrvVersion");
     if (getDrvVersion!=NULL)
     {
       result=getDrvVersion(m_hBdaApi,&v1,&v2,&v3,&v4);
@@ -439,7 +439,7 @@ STDMETHODIMP CTechnotrend::SetAntennaPower( BOOL onOff)
 {
   if (m_deviceType==USB_2_PINNACLE || m_deviceType==USB_2)
   {
-    BDAAPISETDVBTANTPWR setPower=(BDAAPISETDVBTANTPWR)GetProcAddress(m_dll,"_bdaapiSetDVBTAntPwr@8");
+    BDAAPISETDVBTANTPWR setPower=(BDAAPISETDVBTANTPWR)GetProcAddress(m_dll,"bdaapiSetDVBTAntPwr");
     if (setPower!=NULL)
     {
       HRESULT hr=setPower(m_hBdaApi,onOff);
@@ -471,7 +471,7 @@ STDMETHODIMP CTechnotrend::SetDisEqc(BYTE* diseqc, BYTE len, BYTE Repeat,BYTE To
     strcat(buffer,tmp);
   }
   LogDebug("TechnoTrend:SetDiseqc:%s repeat:%d tone:%d pol:%d", buffer,Repeat,Toneburst,ePolarity);
-  BDAAPISETDISEQCMSG setDisEqc=(BDAAPISETDISEQCMSG)GetProcAddress(m_dll,"_bdaapiSetDiSEqCMsg@24");
+  BDAAPISETDISEQCMSG setDisEqc=(BDAAPISETDISEQCMSG)GetProcAddress(m_dll,"bdaapiSetDiSEqCMsg");
   if (setDisEqc!=NULL)
   {
     TYPE_RET_VAL result=setDisEqc(m_hBdaApi,diseqc,len,Repeat,Toneburst,(Polarisation)ePolarity);
@@ -499,7 +499,7 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
   BOOL enabled=FALSE;
   m_ciStatus=-1;
   LogDebug("TechnoTrend: Get CI Slot State");
-  BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"_bdaapiCIGetSlotStatus@8");
+  BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"bdaapiCIGetSlotStatus");
   if (getSlotState!=NULL)
   {
     hr=getSlotState(m_hBdaApi,0);
@@ -520,7 +520,7 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
   if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
   {
 
-    BDAAPICIMULTIDECODE readPSI=(BDAAPICIMULTIDECODE)GetProcAddress(m_dll,"_bdaapiCIMultiDecode@12");
+    BDAAPICIMULTIDECODE readPSI=(BDAAPICIMULTIDECODE)GetProcAddress(m_dll,"bdaapiCIMultiDecode");
     if (readPSI!=NULL)
     {
       hr = readPSI(m_hBdaApi, pNrs,NrOfOfPrograms);
@@ -571,7 +571,7 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
   BOOL enabled=FALSE;
   m_ciStatus=-1;
   LogDebug("TechnoTrend: Get CI Slot State");
-  BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"_bdaapiCIGetSlotStatus@8");
+  BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"bdaapiCIGetSlotStatus");
   if (getSlotState!=NULL)
   {
     hr=getSlotState(m_hBdaApi,0);
@@ -587,7 +587,7 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
   LogDebug("TechnoTrend: DescrambleService:(%d)",m_slotStatus);
   if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
   {
-    BDAAPICIREADPSIFASTWITHPMT readPSI=(BDAAPICIREADPSIFASTWITHPMT)GetProcAddress(m_dll,"_bdaapiCIReadPSIFastWithPMT@12");
+    BDAAPICIREADPSIFASTWITHPMT readPSI=(BDAAPICIREADPSIFASTWITHPMT)GetProcAddress(m_dll,"bdaapiCIReadPSIFastWithPMT");
     //BDAAPICIREADPSIFASTDRVDEMUX readPSI=(BDAAPICIREADPSIFASTDRVDEMUX)GetProcAddress(m_dll,"_bdaapiCIReadPSIFastDrvDemux@8");
     if (readPSI!=NULL)
     {
