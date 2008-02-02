@@ -174,6 +174,8 @@ namespace SetupTv.Sections
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       IList maps = card.ReferringChannelMap();
 
+			// get cardtype, dvb, analogue etc.		
+			CardType cardType = RemoteControl.Instance.Type(card.IdCard);						
 
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (ChannelMap map in maps)
@@ -207,6 +209,52 @@ namespace SetupTv.Sections
       {
         if (channel.IsTv == false) continue;
         if (channel.IsWebstream()) continue;
+
+				// only add channels that is tuneable on the device selected.
+				bool foundValidTuningDetail = false;
+				foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
+				{										
+					switch (cardType)
+					{
+						case CardType.Analog:
+							foundValidTuningDetail = (tDetail.ChannelType == 0);
+							break;
+
+						case CardType.Atsc:
+							foundValidTuningDetail = (tDetail.ChannelType == 1);
+							break;
+
+						case CardType.DvbC:
+							foundValidTuningDetail = (tDetail.ChannelType == 2);
+							break;
+
+						case CardType.DvbS:
+							foundValidTuningDetail = (tDetail.ChannelType == 3);
+							break;
+
+						case CardType.DvbT:
+							foundValidTuningDetail = (tDetail.ChannelType == 4);
+							break;
+
+						case CardType.RadioWebStream:
+							foundValidTuningDetail = (tDetail.ChannelType == 5);
+							break;
+
+						default:
+							foundValidTuningDetail = true;
+							break;
+					}
+					
+					if (foundValidTuningDetail)
+					{
+						break;
+					}
+				}
+				if (!foundValidTuningDetail)
+				{
+					continue;
+				}
+
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;

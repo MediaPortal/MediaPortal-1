@@ -141,7 +141,7 @@ namespace SetupTv.Sections
 					if (user.CardId > -1) break;
         }
 				
-				bool res = TvControl.RemoteControl.Instance.StopTimeShifting(ref user);				
+				bool res = TvControl.RemoteControl.Instance.StopTimeShifting(ref user, TvStoppedReason.KickedByAdmin);				
 
 				if (res)
 				{
