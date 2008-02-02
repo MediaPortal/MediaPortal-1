@@ -28,13 +28,13 @@
 
 #include "videoanalyzer.h"
 
-
 extern void LogDebug(const char *fmt, ...) ;
 
 CVideoAnalyzer::CVideoAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsVideoAnalyzer"), pUnk)
 {
 }
+
 CVideoAnalyzer::~CVideoAnalyzer(void)
 {
 		m_videoAudioAnalyzer.Reset();
@@ -53,6 +53,7 @@ STDMETHODIMP CVideoAnalyzer::SetVideoPid( int videoPid)
 	}
 	return S_OK;
 }
+
 STDMETHODIMP CVideoAnalyzer::GetVideoPid( int* videoPid)
 {
 	try
@@ -79,6 +80,7 @@ STDMETHODIMP CVideoAnalyzer::SetAudioPid( int audioPid)
 	}
 	return S_OK;
 }
+
 STDMETHODIMP CVideoAnalyzer::GetAudioPid( int* audioPid)
 {
 	try
@@ -104,6 +106,7 @@ STDMETHODIMP CVideoAnalyzer::IsVideoEncrypted( int* yesNo)
 	}
 	return S_OK;
 }
+
 STDMETHODIMP CVideoAnalyzer::IsAudioEncrypted( int* yesNo)
 {
 	try

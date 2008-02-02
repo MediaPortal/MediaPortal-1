@@ -30,9 +30,7 @@
 #include "teletextgrabber.h"
 #include "..\..\shared\TsHeader.h"
 
-
 extern void LogDebug(const char *fmt, ...) ;
-
 
 CTeletextGrabber::CTeletextGrabber(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsTxtGrabber"), pUnk)
@@ -43,13 +41,13 @@ CTeletextGrabber::CTeletextGrabber(LPUNKNOWN pUnk, HRESULT *phr)
 	m_pCallback=NULL;
 	m_pBuffer = new byte[20000];
 }
+
 CTeletextGrabber::~CTeletextGrabber(void)
 {
 	delete[] m_pBuffer;
 }
 
-
-STDMETHODIMP CTeletextGrabber::SetTeletextPid( int teletextPid)
+STDMETHODIMP CTeletextGrabber::SetTeletextPid(int teletextPid)
 {
 	CEnterCriticalSection enter(m_section);
 	try
@@ -64,7 +62,7 @@ STDMETHODIMP CTeletextGrabber::SetTeletextPid( int teletextPid)
 	return S_OK;
 }
 
-STDMETHODIMP CTeletextGrabber::SetCallBack( ITeletextCallBack* callback)
+STDMETHODIMP CTeletextGrabber::SetCallBack(ITeletextCallBack* callback)
 {
 	CEnterCriticalSection enter(m_section);
 	LogDebug("TeletextGrabber: set callback:%x", callback);
@@ -72,7 +70,7 @@ STDMETHODIMP CTeletextGrabber::SetCallBack( ITeletextCallBack* callback)
 	return S_OK;
 }
 
-STDMETHODIMP CTeletextGrabber::Start( )
+STDMETHODIMP CTeletextGrabber::Start()
 {
 	CEnterCriticalSection enter(m_section);
 	LogDebug("TeletextGrabber: start");
@@ -81,7 +79,7 @@ STDMETHODIMP CTeletextGrabber::Start( )
 	return S_OK;
 }
 
-STDMETHODIMP CTeletextGrabber::Stop( )
+STDMETHODIMP CTeletextGrabber::Stop()
 {
 	CEnterCriticalSection enter(m_section);
 	LogDebug("TeletextGrabber: stop");
@@ -109,4 +107,3 @@ void CTeletextGrabber::OnTsPacket(byte* tsPacket)
 		m_iPacketCounter=0;
 	}
 }
-
