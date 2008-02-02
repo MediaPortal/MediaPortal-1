@@ -166,10 +166,10 @@
 &lt;#START&gt;(&lt;#END&gt;)
 &lt;/div&gt;
 &lt;div&gt;
-&lt;#TITLE&gt;
+&lt;#TITLE&gt;&lt;div&gt;&lt;/div&gt;
 &lt;/div&gt;
 &lt;div&gt;
-&lt;#DESCRIPTION&gt;.&lt;z(&gt;[ ]&lt;z)*&gt;
+&lt;div&gt;&lt;/div&gt;&lt;#DESCRIPTION&gt; [&lt;#NOTUSED] 
           </TemplateText>
         </SectionTemplate>
       </Template>
