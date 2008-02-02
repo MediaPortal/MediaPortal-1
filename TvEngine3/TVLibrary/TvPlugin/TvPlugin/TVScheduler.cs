@@ -447,6 +447,7 @@ namespace TvPlugin
 
 							item = Schedule2ListItem(rec);
 							item.MusicTag = rec;
+							item.TVTag = recSeries;
 							listSchedules.Add(item);
 							total++;
 						}
