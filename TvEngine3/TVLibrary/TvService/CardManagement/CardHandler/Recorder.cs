@@ -75,6 +75,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return false;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
         lock (this)
         {
           if (_cardHandler.IsLocal == false)
@@ -147,6 +148,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return false;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
         Log.Write("card: StopRecording {0}", _cardHandler.DataBaseCard.IdCard);
         lock (this)
         {
@@ -232,6 +234,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return false;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -269,6 +272,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return "";
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return "";
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -307,6 +311,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return DateTime.MinValue;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return DateTime.MinValue;
         if (_cardHandler.IsLocal == false)
         {
           try

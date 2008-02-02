@@ -269,6 +269,11 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
         }
+				else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+				{
+					MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+					return;
+				}
         // Check if the card is locked for scanning.
         User user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user)) {
@@ -480,6 +485,11 @@ namespace SetupTv.Sections
         MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
         return;
       }
+			else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+			{
+				MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+				return;
+			}
       RemoteControl.Instance.EpgGrabberEnabled = false;
       mpButton1.Enabled = false;
       DVBCChannel tuneChannel = new DVBCChannel();

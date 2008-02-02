@@ -181,6 +181,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;
         TvResult result;
         Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name, user.CardId, user.SubChannel);
         if (_cardHandler.IsScrambled(ref user))
@@ -247,6 +248,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return false;
+				if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
         if (_cardHandler.IsLocal == false)
         {
           try

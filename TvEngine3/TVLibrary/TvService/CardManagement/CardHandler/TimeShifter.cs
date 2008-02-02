@@ -82,6 +82,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return "";
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return "";
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -120,6 +121,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return false;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -159,6 +161,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return DateTime.MinValue;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return DateTime.MinValue;
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -197,6 +200,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;
         Log.Write("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);
         lock (this)
         {
@@ -305,6 +309,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return true;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return true;
         if (false == IsTimeShifting(ref user)) return true;
         if (_cardHandler.Recorder.IsRecording(ref user)) return true;
 
@@ -357,6 +362,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;
         Log.WriteFile("card: CardTimeShift {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
         if (IsTimeShifting(ref user)) return TvResult.Succeeded;
         return Start(ref user, ref fileName);
@@ -376,6 +382,7 @@ namespace TvService
     public bool WaitForUnScrambledSignal(ref User user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false) return false;
+      if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
       Log.Write("card: WaitForUnScrambledSignal");
       DateTime timeStart = DateTime.Now;
       while (true)
@@ -408,6 +415,7 @@ namespace TvService
     public bool WaitForTimeShiftFile(ref User user, string fileName)
     {
       if (_cardHandler.DataBaseCard.Enabled == false) return false;
+      if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
       Log.Write("card: WaitForTimeShiftFile");
       if (!WaitForUnScrambledSignal(ref user)) return false;
       DateTime timeStart = DateTime.Now;
@@ -416,7 +424,7 @@ namespace TvService
       if (_cardHandler.Card.SubChannels.Length <= 0) return false;
       IChannel channel = _cardHandler.Card.SubChannels[0].CurrentChannel;
       bool isRadio = channel.IsRadio;
-      ulong minTimeShiftFile = 500 * 1024;//500Kb
+      ulong minTimeShiftFile = 100 * 1024;//500Kb
       if (isRadio)
         minTimeShiftFile = 100 * 1024;//100Kb
       

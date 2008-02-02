@@ -94,6 +94,13 @@ namespace TvService
               continue;
             }
 
+						if (!RemoteControl.Instance.CardPresent(cardId))
+						{
+							//not found, so skip the card
+							Log.Info("Controller:    card:{0} type:{1} is not present", cardId, tvcard.Type);
+							continue;
+						}
+
             if (tvcard.Tuner.CanTune(tuningDetail) == false)
             {
               //card cannot tune to this channel, so skip it

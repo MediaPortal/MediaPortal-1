@@ -110,6 +110,7 @@ namespace TvLibrary.Implementations.DVB
     protected DsDevice _deviceWinTvUsb = null;
     protected bool _epgGrabbing = false;
     protected bool _isScanning = false;
+		protected bool _cardPresent = true;
     protected GraphState _graphState = GraphState.Idle;
     protected BaseEpgGrabber _epgGrabberCallback = null;
     CamType _camType;
@@ -1785,6 +1786,22 @@ namespace TvLibrary.Implementations.DVB
         _epgGrabbing = value;
       }
     }
+
+		/// <summary>
+		/// returns true if card is currently present
+		/// </summary>
+		public bool CardPresent
+		{
+			get
+			{
+				return _cardPresent;
+			}
+			set
+			{
+				_cardPresent = value;
+			}
+		}
+
 
     /// <summary>
     /// returns true if card is currently scanning

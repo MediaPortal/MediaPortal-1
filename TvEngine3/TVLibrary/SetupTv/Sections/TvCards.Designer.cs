@@ -54,6 +54,7 @@ namespace SetupTv.Sections
 			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+			this.colInit = new System.Windows.Forms.ColumnHeader();
 			this.contextMenuStrip2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -74,7 +75,8 @@ namespace SetupTv.Sections
             this.colPriority,
             this.colType,
             this.colCAMLimit,
-            this.colName});
+            this.colName,
+            this.colInit});
 			this.mpListView1.ContextMenuStrip = this.contextMenuStrip2;
 			this.mpListView1.FullRowSelect = true;
 			this.mpListView1.LargeImageList = this.imageList1;
@@ -263,6 +265,10 @@ namespace SetupTv.Sections
 			this.columnHeader8.Text = "Name";
 			this.columnHeader8.Width = 200;
 			// 
+			// colInit
+			// 
+			this.colInit.Text = "Init";
+			// 
 			// TvCards
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -305,5 +311,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
     private System.Windows.Forms.ColumnHeader colCAMLimit;
     private System.Windows.Forms.Button buttonEdit;
+		private System.Windows.Forms.ColumnHeader colInit;
   }
 }

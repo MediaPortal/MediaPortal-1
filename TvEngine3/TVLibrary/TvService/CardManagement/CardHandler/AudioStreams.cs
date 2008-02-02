@@ -69,6 +69,7 @@ namespace TvService
     public IAudioStream[] Streams(User user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false) return new List<IAudioStream>().ToArray();
+      if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new List<IAudioStream>().ToArray();
       if (_cardHandler.IsLocal == false)
       {
         try
@@ -98,6 +99,7 @@ namespace TvService
     public IAudioStream GetCurrent(User user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false) return null;
+      if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return null;
       if (_cardHandler.IsLocal == false)
       {
         try
@@ -128,6 +130,9 @@ namespace TvService
       if (_cardHandler.DataBaseCard.Enabled == false)
         return;
 
+	  if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+	  	return;
+	  	
       Log.WriteFile("card: SetCurrentAudioStream: {0} - {1}", _cardHandler.DataBaseCard.IdCard, stream);
       if (_cardHandler.IsLocal == false)
       {

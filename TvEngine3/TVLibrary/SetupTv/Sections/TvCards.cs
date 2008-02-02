@@ -143,22 +143,37 @@ namespace SetupTv.Sections
             cardType = cardTypes[card.DevicePath].ToString();
           }
           ListViewItem item = mpListView1.Items.Add("",0);
-          item.SubItems.Add(card.Priority.ToString());
+          item.SubItems.Add(card.Priority.ToString());					
+					
           if (card.Enabled)
-          {
-            item.Checked = true;
-            item.Font = new Font(item.Font, FontStyle.Regular);
-            item.Text = "Yes";
+          {												
+						item.Checked = true;
+						item.Font = new Font(item.Font, FontStyle.Regular);
+						item.Text = "Yes";
+						
           }
-          else
+					else
           {
             item.Checked = false;
             item.Font = new Font(item.Font, FontStyle.Strikeout);
             item.Text = "No";
-          }
+          }					
+
           item.SubItems.Add(cardType);
           item.SubItems.Add(card.DecryptLimit.ToString());
           item.SubItems.Add(card.Name);
+
+					//check if card is really available before setting to enabled.
+					bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
+					if (!cardPresent)
+					{
+						item.SubItems.Add("No");
+					}
+					else
+					{
+						item.SubItems.Add("Yes");
+					}
+
           item.Tag = card;
         }
 				
@@ -226,8 +241,9 @@ namespace SetupTv.Sections
         card.Priority = mpListView1.Items.Count - i;
         if (card.Enabled != mpListView1.Items[i].Checked)
           _needRestart = true;
-        card.Enabled = mpListView1.Items[i].Checked;
-        card.Persist();
+				
+				card.Enabled = mpListView1.Items[i].Checked;
+				card.Persist();				
       }
     }
 

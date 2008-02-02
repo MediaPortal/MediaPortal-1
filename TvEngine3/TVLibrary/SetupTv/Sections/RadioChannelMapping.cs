@@ -94,6 +94,8 @@ namespace SetupTv.Sections
       foreach (Card card in cards)
       {
         if (card.Enabled == false) continue;
+				if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
+				
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }
       if (mpComboBoxCard.Items.Count>0)

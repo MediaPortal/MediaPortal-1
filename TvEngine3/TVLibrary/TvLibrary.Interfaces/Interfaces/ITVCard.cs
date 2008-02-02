@@ -78,9 +78,11 @@ namespace TvLibrary.Interfaces
     /// </summary>
     string Name { get;set;}
 
+		bool CardPresent { get;set;}
+
     /// <summary>
     /// Gets/sets the card device
-    /// </summary>
+    /// </summary>		
     string DevicePath { get;}
 
     /// <summary>

@@ -149,6 +149,7 @@ namespace TvLibrary.Implementations.Analog
     protected IVbiCallback _teletextCallback = null;
     private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
     protected ScanParameters _parameters;
+		protected bool _cardPresent = true;
     #endregion
 
     #region ctor
@@ -166,6 +167,21 @@ namespace TvLibrary.Implementations.Analog
       _parameters = new ScanParameters();
     }
     #endregion
+
+		/// <summary>
+		/// returns true if card is currently present
+		/// </summary>
+		public bool CardPresent
+		{
+			get
+			{
+				return _cardPresent;
+			}
+			set
+			{
+				_cardPresent = value;
+			}
+		}
 
     public ScanParameters Parameters
     {

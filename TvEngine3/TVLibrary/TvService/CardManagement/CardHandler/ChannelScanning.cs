@@ -70,6 +70,7 @@ namespace TvService
         try
         {
           if (_cardHandler.DataBaseCard.Enabled == false) return false;
+					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
           if (_cardHandler.IsLocal == false)
           {
             try
@@ -103,6 +104,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return new List<IChannel>().ToArray();
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new List<IChannel>().ToArray();
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -135,6 +137,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return new List<IChannel>().ToArray();
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new List<IChannel>().ToArray();
         if (_cardHandler.IsLocal == false)
         {
           try

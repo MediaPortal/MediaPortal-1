@@ -1315,7 +1315,9 @@ namespace TvPlugin
 			foreach (Card card in cards)
 			{
 				if (card.Enabled == false) continue;
+				if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
 				User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+				if (users == null) return;				
 				for (int i = 0; i < users.Length; ++i)
 				{
 					User user = users[i];

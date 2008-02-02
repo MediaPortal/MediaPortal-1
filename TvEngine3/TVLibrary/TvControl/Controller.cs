@@ -54,7 +54,11 @@ namespace TvControl
     /// <summary>
     /// RadioWebStream card
     /// </summary>
-    RadioWebStream
+    RadioWebStream,
+		/// <summary>
+		/// Unknown card
+		/// </summary>
+		Unknown
   }
 
 	 /// <summary>
@@ -211,6 +215,12 @@ namespace TvControl
     /// </summary>
     /// <returns>true if card can tune to the channel otherwise false</returns>
     bool CanTune(int cardId, IChannel channel);
+
+		/// <summary>
+		/// Method to check if card is currently present and detected
+		/// </summary>
+		/// <returns>true if card is present otherwise false</returns>
+		bool CardPresent(int cardId);
 
     /// <summary>
     /// Gets the device path for a card.

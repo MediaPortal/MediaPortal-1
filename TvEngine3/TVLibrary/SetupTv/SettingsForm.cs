@@ -146,15 +146,13 @@ namespace SetupTv
             }
           }
 
-          IList cards = Card.ListAll();
           foreach (Server server in dbsServers)
           {
             int cardNo = 1;
             TvCards cardPage = new TvCards(server.HostName);
             AddChildSection(servers, cardPage, 0);
             foreach (Card dbsCard in server.ReferringCard())
-            {
-
+            {							
               CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
               string cardName = dbsCard.Name;
               switch (type)
@@ -180,7 +178,11 @@ namespace SetupTv
                 case CardType.Atsc:
                   cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
                   AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
-                  break;
+                  break;								
+								case CardType.Unknown:
+									cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
+									AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
+									break;
               }
               cardNo++;
             }

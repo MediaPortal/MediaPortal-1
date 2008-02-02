@@ -68,6 +68,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return false;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -104,6 +105,7 @@ namespace TvService
     public bool HasTeletext(User user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false) return false;
+      if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
       if (_cardHandler.IsLocal == false)
       {
         try
@@ -136,6 +138,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return new TimeSpan(0, 0, 0, 15);
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new TimeSpan(0, 0, 0, 15);
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -173,6 +176,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return;
         if (_cardHandler.IsLocal == false)
         {
           try
@@ -213,6 +217,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return new byte[] { 1 };
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new byte[] { 1 };
         if (_cardHandler.IsLocal == false)
         {
           try

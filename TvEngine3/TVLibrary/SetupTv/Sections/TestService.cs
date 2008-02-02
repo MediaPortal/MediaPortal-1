@@ -298,9 +298,22 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
+						item.SubItems[6].Text = card.Name;
             off++;
             continue;
           }
+
+					if (!RemoteControl.Instance.CardPresent(card.IdCard))
+					{
+						item.SubItems[2].Text = "n/a";
+						item.SubItems[3].Text = "";
+						item.SubItems[4].Text = "";
+						item.SubItems[5].Text = "";
+						item.SubItems[6].Text = card.Name;
+						off++;
+						continue;
+					}
+					
 
           User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null)
@@ -312,6 +325,7 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
+						item.SubItems[6].Text = card.Name;
             off++;
             continue;
           }
@@ -324,6 +338,7 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
+						item.SubItems[6].Text = card.Name;
             off++;
             continue;
           }
@@ -379,6 +394,7 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
+						item.SubItems[6].Text = card.Name;
             off++;
           }
         }

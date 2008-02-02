@@ -113,6 +113,7 @@ namespace TvService
       foreach (Card card in cards)
       {
         if (false == card.Enabled) continue;
+        if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
         EpgCard epgCard = new EpgCard(_tvController, card);
         _epgCards.Add(epgCard);
       }

@@ -42,6 +42,7 @@ namespace TvLibrary.Implementations.Hybrid
     List<ITVCard> _cards = new List<ITVCard>();
     List<int> _idCards = new List<int>();
     int _currentCardIndex = 0;
+		protected bool _cardPresent = true;
     #endregion
 
     #region ctor
@@ -109,6 +110,22 @@ namespace TvLibrary.Implementations.Hybrid
     #endregion
 
     #region properties
+
+		/// <summary>
+		/// returns true if card is currently present
+		/// </summary>
+		public bool CardPresent
+		{
+			get
+			{
+				return _cardPresent;
+			}
+			set
+			{
+				_cardPresent = value;
+			}
+		}
+
     /// <summary>
     /// Gets the count.
     /// </summary>

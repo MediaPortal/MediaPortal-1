@@ -68,6 +68,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return false;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
         if (_cardHandler.IsLocal == false)
         {
           //RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
@@ -94,6 +95,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return;
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return;
         if (_cardHandler.IsLocal == false)
         {
           //RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
@@ -120,6 +122,7 @@ namespace TvService
       get
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return new List<EpgChannel>();
+        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new List<EpgChannel>();
         if (_cardHandler.IsLocal == false)
         {
           //RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
@@ -144,6 +147,7 @@ namespace TvService
         try
         {
           if (_cardHandler.DataBaseCard.Enabled == false) return false;
+          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
           if (_cardHandler.IsLocal == false)
           {
             try
