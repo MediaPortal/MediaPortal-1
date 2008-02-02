@@ -402,7 +402,7 @@ namespace TvPlugin
       int total = 0;
       bool showSeries = btnSeries.Selected;
 
-			if ((selectedItem != null) && (showSeries == false))
+			if ((selectedItem != null) && (showSeries))
     	{
 				List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(selectedItem);
 
@@ -422,14 +422,13 @@ namespace TvPlugin
 					listSchedules.Add(item);
 					total++;
     		}
-
     	}
 			else foreach (Schedule rec in schedulesList)
       {
         GUIListItem item = new GUIListItem();
         if (rec.ScheduleType != (int)ScheduleRecordingType.Once) 
         {
-					if (showSeries == false)
+					if (showSeries)
 					{
 						item = Schedule2ListItem(rec);
 						item.MusicTag = rec;
@@ -450,14 +449,13 @@ namespace TvPlugin
 							item.MusicTag = rec;
 							listSchedules.Add(item);
 							total++;
-							if (showSeries) break;
 						}
 					}
         } //if (recs.Count > 1 && currentSortMethod == SortMethod.Date)
-        else //if (showSeries == false)
+        else
         {
           //single recording
-          if (showSeries) continue;
+          if (showSeries) continue;  // do not show single recordings if showSeries is enabled
           if (rec.IsSerieIsCanceled(rec.StartTime)) continue;
 					item = Schedule2ListItem(rec);
 					listSchedules.Add(item);
@@ -521,7 +519,7 @@ namespace TvPlugin
         Schedule rec = (Schedule)item.TVTag;
 
         item.Label = rec.ProgramName;
-				if (showSeries == false)
+				if (showSeries)
 				{
 					string strTime;
 					string strType;
