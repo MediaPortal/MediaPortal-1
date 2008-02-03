@@ -67,6 +67,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   pTeletextServiceInfoCallback = NULL;
   m_iAudioReadCount = 0;
   //ReadAudioIndexFromRegistry();
+	m_lastVideoPTS.IsValid=false;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -879,6 +880,19 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
       CPcr dts;
       if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
       {
+				double diff;
+				if (!m_lastVideoPTS.IsValid)
+					m_lastVideoPTS=pts;
+				if (m_lastVideoPTS>pts)
+					diff=m_lastVideoPTS.ToClock()-pts.ToClock();
+				else
+					diff=pts.ToClock()-m_lastVideoPTS.ToClock();
+				m_lastVideoPTS=pts;
+				if (diff>10.0)
+				{
+					LogDebug("DeMultiplexer::FillVideoVideo pts jump found, flushing video");
+					FlushVideo();
+				}
         m_pCurrentVideoBuffer->SetPts(pts);
       }
       //skip pes header
