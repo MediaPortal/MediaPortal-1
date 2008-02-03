@@ -1167,7 +1167,7 @@ void CTimeShifting::WriteFakePAT()
 	if (m_iPatContinuityCounter>0xf) m_iPatContinuityCounter=0;
 
 	BYTE pat[200];
-	memset(pat,0,sizeof(pat));
+	memset(pat,0xFF,sizeof(pat));
 	pat[0]=0x47;
 	pat[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 	pat[2]=(pid&0xff);
