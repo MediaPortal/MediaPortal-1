@@ -707,7 +707,7 @@ namespace TvService
 		{			
 			string devicePath = "";
 			IList cards = _ourServer.ReferringCard();
-			if (cardId >= cards.Count) return false;
+			if (!_cards.ContainsKey(cardId)) return false;
       foreach (Card card in cards)
       {
 				if (card.IdCard == cardId)
