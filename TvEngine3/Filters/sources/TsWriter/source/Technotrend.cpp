@@ -89,17 +89,17 @@
 extern void LogDebug(const char *fmt, ...) ;
 
 //*** type defs for GetProcAddress
-typedef TYPE_RET_VAL (FAR PASCAL *BDAAPIOPENCI)(HANDLE hOpen,TS_CiCbFcnPointer CbFuncPointer);
-typedef TYPE_RET_VAL (FAR PASCAL *BDAAPIGETDRVVERSION)(HANDLE hOpen, BYTE *v1, BYTE *v2,BYTE *v3, BYTE *v4);
-typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICLOSECI)(HANDLE   hOpen);
-typedef void         (FAR PASCAL *BDAAPICLOSE)(HANDLE      hOpen);
-typedef TYPE_RET_VAL (FAR PASCAL *BDAAPISETDVBTANTPWR)(HANDLE hOpen,BOOL   bAntPwrOnOff);
-typedef TYPE_RET_VAL (FAR PASCAL *BDAAPISETDISEQCMSG)(HANDLE        hOpen,BYTE         *pData,BYTE          Bytes,BYTE          Repeat,BYTE          Toneburst,Polarisation  ePolarity);
-typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICIGETSLOTSTATUS)(HANDLE hOpen, BYTE nSlot);
-typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICIREADPSIFASTWITHPMT)(HANDLE hOpen,BYTE   *pPMT,WORD   wLength);
-typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICIREADPSIFASTDRVDEMUX)(HANDLE hOpen,WORD   PNR);
-typedef HANDLE       (FAR PASCAL *BDAAPIOPENHWIDX) (DEVICE_CAT DevType,UINT        uiDevID);
-typedef TYPE_RET_VAL (FAR PASCAL *BDAAPICIMULTIDECODE)(HANDLE hOpen,WORD  *PNR,int    NrOfPnrs);
+typedef TYPE_RET_VAL (*BDAAPIOPENCI)(HANDLE hOpen,TS_CiCbFcnPointer CbFuncPointer);
+typedef TYPE_RET_VAL (*BDAAPIGETDRVVERSION)(HANDLE hOpen, BYTE *v1, BYTE *v2,BYTE *v3, BYTE *v4);
+typedef TYPE_RET_VAL (*BDAAPICLOSECI)(HANDLE   hOpen);
+typedef void         (*BDAAPICLOSE)(HANDLE      hOpen);
+typedef TYPE_RET_VAL (*BDAAPISETDVBTANTPWR)(HANDLE hOpen,BOOL   bAntPwrOnOff);
+typedef TYPE_RET_VAL (*BDAAPISETDISEQCMSG)(HANDLE        hOpen,BYTE         *pData,BYTE          Bytes,BYTE          Repeat,BYTE          Toneburst,Polarisation  ePolarity);
+typedef TYPE_RET_VAL (*BDAAPICIGETSLOTSTATUS)(HANDLE hOpen, BYTE nSlot);
+typedef TYPE_RET_VAL (*BDAAPICIREADPSIFASTWITHPMT)(HANDLE hOpen,BYTE   *pPMT,WORD   wLength);
+typedef TYPE_RET_VAL (*BDAAPICIREADPSIFASTDRVDEMUX)(HANDLE hOpen,WORD   PNR);
+typedef HANDLE       (*BDAAPIOPENHWIDX) (DEVICE_CAT DevType,UINT        uiDevID);
+typedef TYPE_RET_VAL (*BDAAPICIMULTIDECODE)(HANDLE hOpen,WORD  *PNR,int    NrOfPnrs);
 
 //**************************************************************************************************
 //* ctor
@@ -152,7 +152,7 @@ CTechnotrend::~CTechnotrend(void)
 //**************************************************************************************************
 //* callback from driver when the CI slot state changes
 //**************************************************************************************************
-static void __stdcall OnSlotStatusCallback(PVOID Context,BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
+static void OnSlotStatusCallback(PVOID Context,BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
 {
   CTechnotrend* technoTrend=(CTechnotrend*)Context;
   technoTrend->OnSlotChange( nSlot, nStatus, csInfo);
@@ -161,7 +161,7 @@ static void __stdcall OnSlotStatusCallback(PVOID Context,BYTE nSlot,BYTE nStatus
 //**************************************************************************************************
 //* callback from driver when the CA state changes
 //**************************************************************************************************
-static void __stdcall OnCaStatusCallback(PVOID Context,BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus)
+static void OnCaStatusCallback(PVOID Context,BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus)
 {
   CTechnotrend* technoTrend=(CTechnotrend*)Context;
   technoTrend->OnCaChange(nSlot,nReplyTag,wStatus);
@@ -170,7 +170,7 @@ static void __stdcall OnCaStatusCallback(PVOID Context,BYTE  nSlot,BYTE  nReplyT
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnDisplayString(PVOID Context,BYTE  nSlot,char* pString,WORD  wLength)
+static void OnDisplayString(PVOID Context,BYTE  nSlot,char* pString,WORD  wLength)
 {
   LogDebug("TechnoTrend:OnDisplayString slot:%d %s", nSlot,pString);
 }
@@ -178,7 +178,7 @@ static void __stdcall OnDisplayString(PVOID Context,BYTE  nSlot,char* pString,WO
 //**************************************************************************************************
 //* callback from driver to display the CI menu
 //**************************************************************************************************
-static void __stdcall OnDisplayMenu(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
+static void OnDisplayMenu(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
 {
   LogDebug("TechnoTrend:OnDisplayMenu slot:%d", nSlot);
 }
@@ -192,7 +192,7 @@ static void __stdcall OnDisplayMenu(PVOID Context,BYTE  nSlot,WORD  wItems,char*
 /// \param pStringArray Contains all strings of the list.
 /// \param wLength      Length of the string array.
 //**************************************************************************************************
-static void __stdcall OnDisplayList(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
+static void OnDisplayList(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
 {
   LogDebug("TechnoTrend:OnDisplayList slot:%d items:%d len:%d", nSlot, wItems, wLength);
   char* szBuf = new char[wLength+1];
@@ -214,7 +214,7 @@ static void __stdcall OnDisplayList(PVOID Context,BYTE  nSlot,WORD  wItems,char*
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnSwitchOsdOff(PVOID Context,BYTE  nSlot)
+static void OnSwitchOsdOff(PVOID Context,BYTE  nSlot)
 {
   LogDebug("TechnoTrend:CI_OnSwitchOsdOff slot:%d", nSlot);
 }
@@ -222,7 +222,7 @@ static void __stdcall OnSwitchOsdOff(PVOID Context,BYTE  nSlot)
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnInputRequest(PVOID Context,BYTE  nSlot,BOOL  bBlindAnswer,BYTE  nExpectedLength, DWORD dwKeyMask)
+static void OnInputRequest(PVOID Context,BYTE  nSlot,BOOL  bBlindAnswer,BYTE  nExpectedLength, DWORD dwKeyMask)
 {
   LogDebug("TechnoTrend:CI_OnInputRequest slot:%d", nSlot);
 }
@@ -230,7 +230,7 @@ static void __stdcall OnInputRequest(PVOID Context,BYTE  nSlot,BOOL  bBlindAnswe
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnLscSetDescriptor(PVOID Context,BYTE  nSlot,TYPE_CONNECT_DESCR* pDescriptor)
+static void OnLscSetDescriptor(PVOID Context,BYTE  nSlot,TYPE_CONNECT_DESCR* pDescriptor)
 {
   LogDebug("TechnoTrend:OnLscSetDescriptor slot:%d", nSlot);
 }
@@ -238,7 +238,7 @@ static void __stdcall OnLscSetDescriptor(PVOID Context,BYTE  nSlot,TYPE_CONNECT_
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnLscConnect(PVOID Context,BYTE  nSlot)
+static void OnLscConnect(PVOID Context,BYTE  nSlot)
 {
   LogDebug("TechnoTrend:OnLscConnect slot:%d", nSlot);
 }
@@ -246,7 +246,7 @@ static void __stdcall OnLscConnect(PVOID Context,BYTE  nSlot)
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnLscDisconnect(PVOID Context,BYTE  nSlot)
+static void OnLscDisconnect(PVOID Context,BYTE  nSlot)
 {
   LogDebug("TechnoTrend:OnLscDisconnect slot:%d", nSlot);
 }
@@ -254,7 +254,7 @@ static void __stdcall OnLscDisconnect(PVOID Context,BYTE  nSlot)
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnLscSetParams(PVOID Context,BYTE  nSlot,BYTE  BufferSize,BYTE  Timeout10Ms)
+static void OnLscSetParams(PVOID Context,BYTE  nSlot,BYTE  BufferSize,BYTE  Timeout10Ms)
 {
   LogDebug("TechnoTrend:OnLscSetParams slot:%d", nSlot);
 }
@@ -262,7 +262,7 @@ static void __stdcall OnLscSetParams(PVOID Context,BYTE  nSlot,BYTE  BufferSize,
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnLscEnquireStatus(PVOID Context,BYTE  nSlot)
+static void OnLscEnquireStatus(PVOID Context,BYTE  nSlot)
 {
   LogDebug("TechnoTrend:OnLscEnquireStatus slot:%d", nSlot);
 }
@@ -270,7 +270,7 @@ static void __stdcall OnLscEnquireStatus(PVOID Context,BYTE  nSlot)
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnLscGetNextBuffer(PVOID Context,BYTE  nSlot,BYTE  PhaseID)
+static void OnLscGetNextBuffer(PVOID Context,BYTE  nSlot,BYTE  PhaseID)
 {
   LogDebug("TechnoTrend:OnLscGetNextBuffer slot:%d", nSlot);
 }
@@ -278,7 +278,7 @@ static void __stdcall OnLscGetNextBuffer(PVOID Context,BYTE  nSlot,BYTE  PhaseID
 //**************************************************************************************************
 //* callback from driver 
 //**************************************************************************************************
-static void __stdcall OnLscTransmitBuffer(PVOID Context,BYTE  nSlot,BYTE  PhaseID,BYTE* pData,WORD  nLength)
+static void OnLscTransmitBuffer(PVOID Context,BYTE  nSlot,BYTE  PhaseID,BYTE* pData,WORD  nLength)
 {
   LogDebug("TechnoTrend:OnLscTransmitBuffer slot:%d", nSlot);
 }
@@ -727,11 +727,11 @@ void CTechnotrend::OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
 {
   try
   {
-    if (nStatus==0) LogDebug("Technotrend: slot:%d empty",nSlot);  
-    else if (nStatus==1) LogDebug("Technotrend: slot:%d module inserted",nSlot);
-    else if (nStatus==2) LogDebug("Technotrend: slot:%d module ok",nSlot);
-    else if (nStatus==3) LogDebug("Technotrend: slot:%d ca ok",nSlot);
-    else if (nStatus==4) LogDebug("Technotrend: slot:%d dbg msg",nSlot);
+    if (nStatus==CI_SLOT_EMPTY) LogDebug("Technotrend: slot:%d empty",nSlot);  
+		else if (nStatus==CI_SLOT_MODULE_INSERTED) LogDebug("Technotrend: slot:%d module inserted",nSlot);
+		else if (nStatus==CI_SLOT_MODULE_OK) LogDebug("Technotrend: slot:%d module ok",nSlot);
+		else if (nStatus==CI_SLOT_CA_OK) LogDebug("Technotrend: slot:%d ca ok",nSlot);
+		else if (nStatus==CI_SLOT_DBG_MSG) LogDebug("Technotrend: slot:%d dbg msg",nSlot);
     else  LogDebug("Technotrend: slot:%d unknown state:%x",nSlot,nStatus);
     m_slotStatus=nStatus;
 
