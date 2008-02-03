@@ -152,37 +152,38 @@ namespace SetupTv
             TvCards cardPage = new TvCards(server.HostName);
             AddChildSection(servers, cardPage, 0);
             foreach (Card dbsCard in server.ReferringCard())
-            {							
-              CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
-              string cardName = dbsCard.Name;
-              switch (type)
-              {
-                case CardType.Analog:
-                  cardName = String.Format("{0} Analog {1}", cardNo, cardName);
-                  AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-                  break;
+            {
+              if (RemoteControl.Instance.CardPresent(dbsCard.IdCard)) {
+                CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
+                string cardName = dbsCard.Name;
+                switch (type) {
+                  case CardType.Analog:
+                    cardName = String.Format("{0} Analog {1}", cardNo, cardName);
+                    AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
+                    break;
 
-                case CardType.DvbT:
-                  cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
-                  AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
-                  //AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
-                  break;
-                case CardType.DvbC:
-                  cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
-                  AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
-                  break;
-                case CardType.DvbS:
-                  cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
-                  AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
-                  break;
-                case CardType.Atsc:
-                  cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
-                  AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
-                  break;								
-								case CardType.Unknown:
-									cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
-									AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-									break;
+                  case CardType.DvbT:
+                    cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
+                    AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
+                    //AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
+                    break;
+                  case CardType.DvbC:
+                    cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
+                    AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
+                    break;
+                  case CardType.DvbS:
+                    cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
+                    AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
+                    break;
+                  case CardType.Atsc:
+                    cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
+                    AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
+                    break;
+                  case CardType.Unknown:
+                    cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
+                    AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
+                    break;
+                }
               }
               cardNo++;
             }

@@ -705,28 +705,43 @@ namespace TvService
     /// <returns>true if card is present otherwise false</returns>		
     public bool CardPresent(int cardId)
     {
-      string devicePath = "";
-      IList cards = _ourServer.ReferringCard();
-      if (!_cards.ContainsKey(cardId)) return false;
-      foreach (Card card in cards)
-      {
-        if (card.IdCard == cardId)
-        {
-          devicePath = card.DevicePath;
-          break;
-        }
+      if (!IsLocal(cardId)) {
+        RemoteControl.HostName = _cards[cardId].DataBaseCard.ReferencedServer().HostName;
+        return RemoteControl.Instance.CardPresent(cardId);
       }
-      if (devicePath.Length > 0)
-      {
-        for (int i = 0; i < _localCardCollection.Cards.Count; i++)
-        {
-          if (_localCardCollection.Cards[i].DevicePath == devicePath)
-          {
+      if (!_cards.ContainsKey(cardId)) return false;
+      string devicePath = _cards[cardId].Card.DevicePath;
+      if (devicePath.Length > 0) {
+        // Remove it from the local card collection
+        for (int i = 0; i < _localCardCollection.Cards.Count; i++) {
+          if (_localCardCollection.Cards[i].DevicePath == devicePath) {
             return _localCardCollection.Cards[i].CardPresent;
           }
         }
       }
       return false;
+    }
+
+    /// <summary>
+    /// Method to remove a non-present card from the local card collection
+    /// </summary>
+    /// <returns>true if card is present otherwise false</returns>		
+    public void CardRemove(int cardId) {
+      if(!IsLocal(cardId)){
+        RemoteControl.HostName = _cards[cardId].DataBaseCard.ReferencedServer().HostName;
+        RemoteControl.Instance.CardRemove(cardId);
+        return;
+      }
+      if (!_cards.ContainsKey(cardId)) return;
+      string devicePath = _cards[cardId].Card.DevicePath;
+      if (devicePath.Length > 0) {
+        // Remove database instance
+        _cards[cardId].DataBaseCard.Remove();
+        // Remove it from the card collection
+        _cards.Remove(cardId);
+        // Remove it from the local card collection
+        _localCardCollection.Cards.Remove(_cards[cardId].Card);
+      }
     }
 
     /// <summary>

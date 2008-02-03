@@ -223,6 +223,12 @@ namespace TvControl
 		bool CardPresent(int cardId);
 
     /// <summary>
+    /// Method to remove a non-present card from the local card collection
+    /// </summary>
+    /// <returns>true if card is present otherwise false</returns>		
+    void CardRemove(int cardId);
+
+    /// <summary>
     /// Gets the device path for a card.
     /// </summary>
     /// <param name="cardId">id of the card.</param>
