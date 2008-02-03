@@ -2446,8 +2446,8 @@ namespace TvService
     {
       try
       {
-        int idCard = user.CardId;
-				if (idCard >= _cards.Count) return TvResult.CardIsDisabled;
+        int idCard = user.CardId;				
+				if (!_cards.ContainsKey(idCard)) return TvResult.CardIsDisabled;
         if (_cards[idCard].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
 				if (!CardPresent(idCard)) return TvResult.CardIsDisabled;
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
@@ -2471,8 +2471,8 @@ namespace TvService
     /// <returns>TvResult indicating whether method succeeded</returns>
     TvResult CardTimeShift(ref User user, ref string fileName)
     {
-      int idCard = user.CardId;
-			if (idCard >= _cards.Count) return TvResult.CardIsDisabled;
+      int idCard = user.CardId;			
+			if (!_cards.ContainsKey(idCard)) return TvResult.CardIsDisabled;
       if (_cards[idCard].IsLocal)
       {
         Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), user));
