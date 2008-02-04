@@ -82,20 +82,21 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return "";
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return "";
-        if (_cardHandler.IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.TimeShiftFileName(ref user);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return "";
-          }
-        }
+  
+				try
+				{
+					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return "";
+					if (_cardHandler.IsLocal == false)
+					{
+						return RemoteControl.Instance.TimeShiftFileName(ref user);
+					}
+				}
+				catch (Exception)
+				{
+					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+					return "";
+				}
 
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
         if (context == null) return null;
@@ -121,20 +122,21 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return false;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
-        if (_cardHandler.IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.IsTimeShifting(ref user);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return false;
-          }
-        }
+
+				try
+				{
+					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
+					if (_cardHandler.IsLocal == false)
+					{
+						return RemoteControl.Instance.IsTimeShifting(ref user);
+					}
+				}
+				catch (Exception)
+				{
+					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+					return false;
+				}
 
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
         if (context == null) return false;
@@ -161,20 +163,22 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return DateTime.MinValue;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return DateTime.MinValue;
-        if (_cardHandler.IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.TimeShiftStarted(user);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return DateTime.MinValue;
-          }
-        }
+
+				try
+				{
+					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return DateTime.MinValue;
+					if (_cardHandler.IsLocal == false)
+					{
+						return RemoteControl.Instance.TimeShiftStarted(user);
+					}
+				}
+				catch (Exception)
+				{
+					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+					return DateTime.MinValue;
+				}
+
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
         if (context == null) return DateTime.MinValue;
         context.GetUser(ref user);
@@ -200,23 +204,26 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;
-        Log.Write("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);
+                
         lock (this)
-        {
-          if (_cardHandler.IsLocal == false)
-          {
-            try
-            {
-              RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-              return RemoteControl.Instance.StartTimeShifting(ref user, ref fileName);
-            }
-            catch (Exception)
-            {
-              Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);							
-              return TvResult.UnknownError;
-            }
-          }
+        {          
+					try
+					{
+						RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+						if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;
+
+						Log.Write("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);
+
+						if (_cardHandler.IsLocal == false)
+						{
+							return RemoteControl.Instance.StartTimeShifting(ref user, ref fileName);
+						}
+					}
+					catch (Exception)
+					{
+						Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+						return TvResult.UnknownError;
+					}
 
           TvCardContext context = _cardHandler.Card.Context as TvCardContext;
           if (context == null) return TvResult.UnknownChannel;
@@ -308,29 +315,33 @@ namespace TvService
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return true;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return true;
-        if (false == IsTimeShifting(ref user)) return true;
+        if (_cardHandler.DataBaseCard.Enabled == false) return true;        
+				if (false == IsTimeShifting(ref user)) return true;
         if (_cardHandler.Recorder.IsRecording(ref user)) return true;
-
-        Log.Write("card: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel);
+        
         lock (this)
         {
-          bool result = false;
-          if (_cardHandler.IsLocal == false)
-          {
-            try
-            {
-              RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-              result = RemoteControl.Instance.StopTimeShifting(ref user);
-              return result;
-            }
-            catch (Exception)
-            {
-              Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-              return false;
-            }
-          }
+          bool result = false;          					
+
+					try
+					{
+						RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+						if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return true;
+
+						Log.Write("card: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel);
+
+						if (_cardHandler.IsLocal == false)
+						{
+							result = RemoteControl.Instance.StopTimeShifting(ref user);
+							return result;
+						}
+					}
+					catch (Exception)
+					{
+						Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+						return false;
+					}
+
           TvCardContext context = _cardHandler.Card.Context as TvCardContext;
           if (context == null) return true;
           if (_linkageScannerEnabled)
@@ -361,8 +372,19 @@ namespace TvService
     {
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;
+        if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;        
+
+				try
+				{
+					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;										
+				}
+				catch (Exception)
+				{
+					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+					return TvResult.UnknownError;
+				}
+
         Log.WriteFile("card: CardTimeShift {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
         if (IsTimeShifting(ref user)) return TvResult.Succeeded;
         return Start(ref user, ref fileName);
@@ -382,7 +404,16 @@ namespace TvService
     public bool WaitForUnScrambledSignal(ref User user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false) return false;
-      if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
+			try
+			{
+				RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+				if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
+			}
+			catch (Exception)
+			{
+				Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+				return false;
+			}
       Log.Write("card: WaitForUnScrambledSignal");
       DateTime timeStart = DateTime.Now;
       while (true)
@@ -415,7 +446,16 @@ namespace TvService
     public bool WaitForTimeShiftFile(ref User user, string fileName)
     {
       if (_cardHandler.DataBaseCard.Enabled == false) return false;
-      if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
+			try
+			{
+				RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+				if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
+			}
+			catch (Exception)
+			{
+				Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+				return false;
+			}
       Log.Write("card: WaitForTimeShiftFile");
       if (!WaitForUnScrambledSignal(ref user)) return false;
       DateTime timeStart = DateTime.Now;

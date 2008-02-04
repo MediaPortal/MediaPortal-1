@@ -110,10 +110,23 @@ namespace TvService
       _isRunning = true;
       IList cards = Card.ListAll();
       _epgCards = new List<EpgCard>();
+			
+
       foreach (Card card in cards)
-      {
+      {				
         if (false == card.Enabled) continue;
-        if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
+
+				try
+				{
+					RemoteControl.HostName = card.ReferencedServer().HostName;
+					if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
+				}
+				catch (Exception)
+				{
+					Log.Error("card: unable to connect to slave controller at:{0}", card.ReferencedServer().HostName);
+					continue;
+				}				        
+
         EpgCard epgCard = new EpgCard(_tvController, card);
         _epgCards.Add(epgCard);
       }

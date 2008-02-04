@@ -124,12 +124,21 @@ namespace TvService
               continue;
             }
 
-						if (!RemoteControl.Instance.CardPresent(cardId))
+						try
 						{
-							//not found, so skip the card
-							Log.Info("Controller:    card:{0} type:{1} is not present", cardId, tvcard.Type);
-							continue;
+							RemoteControl.HostName = keyPair.Value.DataBaseCard.ReferencedServer().HostName;							
+							if (!RemoteControl.Instance.CardPresent(cardId))
+							{
+								//not found, so skip the card
+								Log.Info("Controller:    card:{0} type:{1} is not present", cardId, tvcard.Type);
+								continue;
+							}
 						}
+						catch (Exception)
+						{
+							Log.Error("card: unable to connect to slave controller at:{0}", keyPair.Value.DataBaseCard.ReferencedServer().HostName);
+							continue;
+						}						
 
             if (tvcard.Tuner.CanTune(tuningDetail) == false)
             {

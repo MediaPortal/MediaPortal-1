@@ -181,7 +181,18 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;
+        
+				try
+				{
+					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return TvResult.CardIsDisabled;
+				}
+				catch (Exception)
+				{
+					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+					return TvResult.UnknownError;
+				}
+
         TvResult result;
         Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name, user.CardId, user.SubChannel);
         if (_cardHandler.IsScrambled(ref user))
@@ -248,20 +259,22 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false) return false;
-				if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
-        if (_cardHandler.IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.CanTune(_cardHandler.DataBaseCard.IdCard, channel);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return false;
-          }
-        }
+
+				try
+				{
+					RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+					if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return false;
+
+					if (_cardHandler.IsLocal == false)
+					{
+						return RemoteControl.Instance.CanTune(_cardHandler.DataBaseCard.IdCard, channel);
+					}
+				}
+				catch (Exception)
+				{
+					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+					return false;
+				}
         return _cardHandler.Card.CanTune(channel);
       }
       catch (Exception ex)

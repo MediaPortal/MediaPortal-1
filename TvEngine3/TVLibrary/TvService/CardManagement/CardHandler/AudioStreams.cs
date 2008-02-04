@@ -69,20 +69,21 @@ namespace TvService
     public IAudioStream[] Streams(User user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false) return new List<IAudioStream>().ToArray();
-      if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new List<IAudioStream>().ToArray();
-      if (_cardHandler.IsLocal == false)
-      {
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          return RemoteControl.Instance.AvailableAudioStreams(user);
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return null;
-        }
-      }
+      
+			try
+			{
+				RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+				if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return new List<IAudioStream>().ToArray();
+				if (_cardHandler.IsLocal == false)
+				{
+					return RemoteControl.Instance.AvailableAudioStreams(user);
+				}
+			}
+			catch (Exception)
+			{
+				Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+				return null;
+			}
 
       TvCardContext context = _cardHandler.Card.Context as TvCardContext;
       if (context == null) return new List<IAudioStream>().ToArray();
@@ -99,20 +100,22 @@ namespace TvService
     public IAudioStream GetCurrent(User user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false) return null;
-      if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return null;
-      if (_cardHandler.IsLocal == false)
-      {
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          return RemoteControl.Instance.GetCurrentAudioStream(user);
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return null;
-        }
-      }
+      
+			try
+			{
+				RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+				if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return null;
+				if (_cardHandler.IsLocal == false)
+				{
+					return RemoteControl.Instance.GetCurrentAudioStream(user);
+				}
+			}
+			catch (Exception)
+			{
+				Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+				return null;
+			}
+
       TvCardContext context = _cardHandler.Card.Context as TvCardContext;
       if (context == null) return null;
       context.GetUser(ref user);
@@ -127,28 +130,28 @@ namespace TvService
     /// <param name="stream">The stream.</param>
     public void Set(User user, IAudioStream stream)
     {
-      if (_cardHandler.DataBaseCard.Enabled == false)
-        return;
+			if (_cardHandler.DataBaseCard.Enabled == false)
+			{
+				return;
+			}
+	  
+			try
+			{
+				RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+				if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard)) return;
+				Log.WriteFile("card: SetCurrentAudioStream: {0} - {1}", _cardHandler.DataBaseCard.IdCard, stream);
+				if (_cardHandler.IsLocal == false)
+				{
+					Log.WriteFile("card: SetCurrentAudioStream: controlling remote instance {0}", RemoteControl.HostName);
+					RemoteControl.Instance.SetCurrentAudioStream(user, stream);
+				}
+			}
+			catch (Exception)
+			{
+				Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+				return;
+			}
 
-	  if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-	  	return;
-	  	
-      Log.WriteFile("card: SetCurrentAudioStream: {0} - {1}", _cardHandler.DataBaseCard.IdCard, stream);
-      if (_cardHandler.IsLocal == false)
-      {
-        try
-        {
-          Log.WriteFile("card: SetCurrentAudioStream: controlling remote instance {0}", RemoteControl.HostName);
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          RemoteControl.Instance.SetCurrentAudioStream(user, stream);
-          return;
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return;
-        }
-      }
       TvCardContext context = _cardHandler.Card.Context as TvCardContext;
       if (context == null)
       {
