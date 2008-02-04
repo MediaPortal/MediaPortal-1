@@ -24,6 +24,7 @@
 #include "..\..\shared\TsHeader.h"
 #include "..\..\shared\adaptionfield.h"
 #include "..\..\shared\pcr.h"
+#include "PmtParser.h"
 //#include "patparser.h"
 #include <vector>
 #include <map>
@@ -44,8 +45,7 @@ public:
 	virtual ~CMultiplexer(void);
 	void SetPcrPid(int pcrPid);
 	int  GetPcrPid();
-	void AddPesStream(int pid, bool isAc3,bool isAudio, bool isVideo);
-	void RemovePesStream(int pid);
+	void AddPesStream(PidInfo2 pidInfo);
 	void OnTsPacket(byte* tsPacket);
 	void Reset();
 	void ClearStreams();
@@ -53,6 +53,7 @@ public:
 	int OnNewPesPacket(CPesDecoder* decoder);
 
 private:
+	bool IsStreamWanted(int stream_type);
 	int  WritePackHeader(byte* buf, CPcr& pcr);
   int  WriteSystemHeader(byte* buf);
   int  WritePaddingHeader(byte* buf, int full_padding_size);

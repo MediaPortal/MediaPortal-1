@@ -92,13 +92,10 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 {
 	if (tableId!=0xC8 && tableId!=0xC9) return;
 
-  byte* section=newSection.Data;
+  byte* buf=newSection.Data;
   
-  m_tsHeader.Decode(section);
-  int startOff=m_tsHeader.PayLoadStart;
-  byte* buf=&section[startOff];
-  int table_id = buf[0];
-  if (table_id!=0xc8 && table_id != 0xc9) return;
+  int startOff=0;
+	int table_id =newSection.table_id;
 
   //dump table!
 

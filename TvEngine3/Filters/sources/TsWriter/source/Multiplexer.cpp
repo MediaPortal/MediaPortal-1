@@ -84,31 +84,25 @@ int CMultiplexer::GetPcrPid()
 	return m_pcrPid;
 }
 
-void CMultiplexer::RemovePesStream(int pid)
+bool CMultiplexer::IsStreamWanted(int stream_type)
 {
-	ivecPesDecoders it;
-	it=m_pesDecoders.begin(); 
-	while (it != m_pesDecoders.end())
-	{
-		CPesDecoder* decoder=*it;
-		if (decoder->GetPid()== pid) 
-		{
-			delete[] decoder;
-			m_pesDecoders.erase(it);
-			return;
-		}
-		++it;
-	}
-  m_system_header_size=get_system_header_size();
+		return (stream_type==SERVICE_TYPE_VIDEO_MPEG1 || 
+					stream_type==SERVICE_TYPE_VIDEO_MPEG2 || 
+					stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
+					stream_type==SERVICE_TYPE_VIDEO_H264 ||
+					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
+					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
+					stream_type==SERVICE_TYPE_AUDIO_AC3 
+					);
 }
 
-void CMultiplexer::AddPesStream(int pid, bool isAc3, bool isAudio, bool isVideo)
+void CMultiplexer::AddPesStream(PidInfo2 pidInfo)
 {
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
-		if (decoder->GetPid()== pid) return;
+		if (decoder->GetPid()== pidInfo.elementaryPid) return;
 	}
 	
 //	LogDebug("mux: add pes pid:%x", pid);
@@ -125,18 +119,18 @@ void CMultiplexer::AddPesStream(int pid, bool isAc3, bool isAudio, bool isVideo)
 	}
 
 	CPesDecoder* decoder = new CPesDecoder(this);
-	decoder->SetPid(pid);
-	if (isAc3)
+	decoder->SetPid(pidInfo.elementaryPid);
+	if (pidInfo.streamType==SERVICE_TYPE_AUDIO_AC3)
 	{
 		//LogDebug("mux pid:%x audio stream id:%x", pid,audioStreamId);
 		decoder->SetStreamId(ac3StreamId);
 	}
-	else if (isAudio)
+	else if (pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2)
 	{
 		//LogDebug("mux pid:%x audio stream id:%x", pid,audioStreamId);
 		decoder->SetStreamId(audioStreamId);
 	}
-	else if (isVideo)
+	else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264)
 	{
 		//LogDebug("mux pid:%x video stream id:%x", pid,videoStreamId);
 		decoder->SetStreamId(videoStreamId);

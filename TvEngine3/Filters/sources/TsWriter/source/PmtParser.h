@@ -24,6 +24,7 @@
 #include "..\..\shared\tsheader.h"
 #include "pidtable.h"
 #include <map>
+#include <vector>
 using namespace std;
 
 #define SERVICE_TYPE_VIDEO_MPEG1		0x1
@@ -44,11 +45,28 @@ using namespace std;
 #define DESCRIPTOR_MPEG_ISO639_Lang		0x0a
 #define DESCRIPTOR_STREAM_IDENTIFIER	0x52
 
+typedef struct stPidInfo2
+{
+public:
+	int elementaryPid;
+	int streamType;
+	byte rawDescriptorData[188];
+	int rawDescriptorSize;
+}PidInfo2;
+
+typedef vector<stPidInfo2>::iterator ivecPidInfo2;
+
 class IPmtCallBack
 {
 public:
 	virtual void OnPmtReceived(int pmtPid)=0;
   virtual void OnPidsReceived(const CPidTable& info)=0;
+};
+
+class IPmtCallBack2
+{
+public:
+	virtual void OnPmtReceived2(int pcrPid,vector<PidInfo2> info)=0;
 };
 
 class CPmtParser: public  CSectionDecoder
@@ -58,6 +76,7 @@ public:
   virtual ~CPmtParser(void);
 	void		OnNewSection(CSection& sections);
 	void    SetPmtCallBack(IPmtCallBack* callback);
+	void    SetPmtCallBack2(IPmtCallBack2* callback);
   bool    IsReady();
   CPidTable& GetPidInfo();
   int GetPmtVersion();
@@ -66,6 +85,8 @@ private:
   int 				m_pmtVersion;
 	bool			_isFound;
 	IPmtCallBack* m_pmtCallback;
+	IPmtCallBack2* m_pmtCallback2;
   CTsHeader             m_tsHeader;
   CPidTable  m_pidInfo;  
+	vector<PidInfo2> m_pidInfos2;
 };

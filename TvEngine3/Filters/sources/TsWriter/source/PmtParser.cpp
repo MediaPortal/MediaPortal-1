@@ -42,6 +42,11 @@ void CPmtParser::SetPmtCallBack(IPmtCallBack* callback)
 	m_pmtCallback=callback;
 }
 
+void CPmtParser::SetPmtCallBack2(IPmtCallBack2* callback)
+{
+	m_pmtCallback2=callback;
+}
+
 bool CPmtParser::IsReady()
 {
 	return _isFound;
@@ -54,6 +59,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	int start=0;
 	int table_id = sections.table_id;
 	if (table_id!=2) return;
+
 	int section_syntax_indicator = (section[start+1]>>7) & 1;
 	int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
 	int program_number = (section[start+3]<<8)+section[start+4];
@@ -95,6 +101,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	int audioToSet=0;
 	int subtitleToSet=0;
 
+	m_pidInfos2.clear();
 	m_pidInfo.Reset();
 	m_pidInfo.PmtPid=GetPid();
 	m_pidInfo.ServiceId=program_number;
@@ -105,6 +112,16 @@ void CPmtParser::OnNewSection(CSection& sections)
 		stream_type = section[start+pointer];
 		elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
 		ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
+
+		PidInfo2 pidInfo2;
+		pidInfo2.elementaryPid=elementary_PID;
+		pidInfo2.streamType=stream_type;
+		if (pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES1 || pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
+			pidInfo2.streamType=-1; // wait for the descriptors to specify the detailed stream type
+		pidInfo2.rawDescriptorSize=ES_info_length;
+		memset(pidInfo2.rawDescriptorData,0xFF,ES_info_length);
+		memcpy(pidInfo2.rawDescriptorData,&section[start+pointer+5],ES_info_length);
+
 		// LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
 		if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 || stream_type==SERVICE_TYPE_VIDEO_MPEG2)
 		{
@@ -181,6 +198,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 			if(indicator==DESCRIPTOR_DVB_AC3)
 			{
 			  m_pidInfo.AC3Pid=elementary_PID;
+				pidInfo2.streamType=SERVICE_TYPE_AUDIO_AC3;
 			}
 		  if(indicator==DESCRIPTOR_MPEG_ISO639_Lang)
 		  {	
@@ -225,12 +243,16 @@ void CPmtParser::OnNewSection(CSection& sections)
 			  }
 		  }
 		  if(indicator==DESCRIPTOR_DVB_TELETEXT && m_pidInfo.TeletextPid==0)
-			  m_pidInfo.TeletextPid=elementary_PID;
+			{
+				m_pidInfo.TeletextPid=elementary_PID;
+				pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2;
+			}
 
 			if(indicator==DESCRIPTOR_DVB_SUBTITLING)
 			{
 				if (stream_type==SERVICE_TYPE_DVB_SUBTITLES2)
 				{
+					pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2;
           subtitleToSet++;
 			    curSubtitle=subtitleToSet;
 				  BYTE d[3];
@@ -271,6 +293,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  len1 -= x;
 		  pointer += x;
 	  }
+		m_pidInfos2.push_back(pidInfo2);
   }
   if (m_pmtCallback!=NULL)
   {
@@ -278,6 +301,8 @@ void CPmtParser::OnNewSection(CSection& sections)
 	//  m_pidInfo.PmtPid, m_pidInfo.PcrPid,m_pidInfo.VideoPid,m_pidInfo.AudioPid1,m_pidInfo.AC3Pid,m_pidInfo.ServiceId);
     m_pmtCallback->OnPidsReceived(m_pidInfo);
   }
+	if (m_pmtCallback2!=NULL)
+		m_pmtCallback2->OnPmtReceived2(pcr_pid,m_pidInfos2);
 }
 
 

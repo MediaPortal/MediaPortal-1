@@ -36,10 +36,6 @@ DEFINE_GUID(IID_ITsRecorder,0xb45662e3, 0x2749, 0x4a34, 0x99, 0x3a, 0xc, 0x16, 0
 // video anayzer interface
 DECLARE_INTERFACE_(ITsRecorder, IUnknown)
 {
-	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
-	STDMETHOD(AddStream)(THIS_ int pid,bool isAc3, bool isAudio,bool isVideo)PURE;
-	STDMETHOD(RemoveStream)(THIS_ int pid)PURE;
-	
   STDMETHOD(SetRecordingFileName)(THIS_ char* pszFileName)PURE;
   STDMETHOD(StartRecord)(THIS_ )PURE;
   STDMETHOD(StopRecord)(THIS_ )PURE;
@@ -48,17 +44,14 @@ DECLARE_INTERFACE_(ITsRecorder, IUnknown)
 	STDMETHOD(SetPmtPid)(THIS_ int mtPid, int serviceId)PURE;
 };
 
-class CRecorder: public CUnknown, public ITsRecorder, public IFileWriter, IPmtCallBack
+class CRecorder: public CUnknown, public ITsRecorder, public IFileWriter, IPmtCallBack2
 {
 public:
 	CRecorder(LPUNKNOWN pUnk, HRESULT *phr);
 	~CRecorder(void);
   DECLARE_IUNKNOWN
 	
-	STDMETHODIMP SetPcrPid(int pcrPid);
 	STDMETHODIMP SetPmtPid(int pmtPid, int serviceId);
-	STDMETHODIMP AddStream(int pid,bool isAc3,bool isAudio,bool isVideo);
-	STDMETHODIMP RemoveStream(int pid);
 	STDMETHODIMP SetRecordingFileName(char* pszFileName);
 	STDMETHODIMP StartRecord();
 	STDMETHODIMP StopRecord();
@@ -66,15 +59,19 @@ public:
 	STDMETHODIMP SetMode(int mode) ;
 
 	void OnTsPacket(byte* tsPacket);
-	void Write(byte* buffer, int len);
 
-	void OnPmtReceived(int pmtPid);
-  void OnPidsReceived(const CPidTable& info);
+	void OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos);
 
-  void PatchPcr(byte* tsPacket,CTsHeader& header);
-  void PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr);
 private:
+	void SetPcrPid(int pcrPid);
+	bool IsStreamWanted(int streamType);
+	void AddStream(PidInfo2 pidInfo2);
+	void Write(byte* buffer, int len);
   void WriteTs(byte* tsPacket);
+	void WriteFakePAT();  
+  void WriteFakePMT();
+	void PatchPcr(byte* tsPacket,CTsHeader& header);
+  void PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr);
 	CMultiplexer     m_multiPlexer;
 	bool				     m_bRecording;
 	char				     m_szFileName[2048];
@@ -82,9 +79,8 @@ private:
 	HANDLE           m_hFile;
 	CCriticalSection m_section;
   TimeShiftingMode m_timeShiftMode;
-	vector<int>			 m_vecPids;
-	typedef vector<int>::iterator itvecPids;
-  byte*            m_pWriteBuffer;
+	vector<PidInfo2> m_vecPids;
+	byte*            m_pWriteBuffer;
   int              m_iWriteBufferPos;
   int              m_iPmtPid;
   int              m_iPart;
@@ -106,4 +102,8 @@ private:
   int             m_pcrPid;
   int             m_iServiceId;
   unsigned long   m_TsPacketCount;
+	unsigned long   m_FakeTsPacketCount;
+
+	int							m_iPmtContinuityCounter;
+	int							m_iPatContinuityCounter;
 };

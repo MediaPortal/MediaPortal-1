@@ -39,7 +39,7 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
 :CUnknown( NAME ("MpTsRecorder"), pUnk)
 {
 	strcpy(m_szFileName,"");
-  m_timeShiftMode=ProgramStream;
+	m_timeShiftMode=ProgramStream;
 	m_bRecording=false;
   m_hFile=INVALID_HANDLE_VALUE;
   m_pWriteBuffer = new byte[RECORD_BUFFER_SIZE];
@@ -49,10 +49,11 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
   m_pmtVersion=-1;
 	m_multiPlexer.SetFileWriterCallBack(this);
   m_TsPacketCount=0;
+	m_FakeTsPacketCount=0;
   m_pPmtParser=new CPmtParser();
   if (m_pPmtParser)
   {
-    m_pPmtParser->SetPmtCallBack(this);
+    m_pPmtParser->SetPmtCallBack2(this);
   }
 }
 CRecorder::~CRecorder(void)
@@ -75,7 +76,7 @@ void CRecorder::OnTsPacket(byte* tsPacket)
 	  if (m_tsHeader.TransportError) return;
 	  CEnterCriticalSection enter(m_section);
     
-    if (m_tsHeader.Pid==m_iPmtPid && m_pPmtParser )
+    if (m_tsHeader.Pid==m_iPmtPid && m_pPmtParser && m_pmtVersion==-1 )
     {
       m_pPmtParser->OnTsPacket(tsPacket);
     }
@@ -90,6 +91,7 @@ void CRecorder::OnTsPacket(byte* tsPacket)
     }
 	}
 }
+
 
 STDMETHODIMP CRecorder::SetMode(int mode) 
 {
@@ -107,17 +109,6 @@ STDMETHODIMP CRecorder::GetMode(int *mode)
 	return S_OK;
 }
 
-STDMETHODIMP CRecorder::SetPcrPid(int pcrPid)
-{
-	CEnterCriticalSection enter(m_section);
-	LogDebug("Recorder:pcr pid:%x",pcrPid);
-  m_TsPacketCount=0;
-	m_pcrPid = pcrPid;
-  
-	m_multiPlexer.SetPcrPid(pcrPid);
-	return S_OK;
-}
-
 STDMETHODIMP CRecorder::SetPmtPid(int pmtPid, int serviceId )
 {
 	CEnterCriticalSection enter(m_section);
@@ -128,57 +119,6 @@ STDMETHODIMP CRecorder::SetPmtPid(int pmtPid, int serviceId )
   if (m_pPmtParser)
   {
     m_pPmtParser->SetPid(pmtPid);
-  }
-	return S_OK;
-}
-
-STDMETHODIMP CRecorder::AddStream(int pid,bool isAc3,bool isAudio,bool isVideo)
-{
-	CEnterCriticalSection enter(m_section);
-  bool pidFound=false;
-  itvecPids it = m_vecPids.begin();
-
-  // Do not add duplicate PIDs in the vector, easier to do here than in the OnPidsReceived
-  while (it!=m_vecPids.end())
-  {
-    if (pid==*it)
-    {
-      pidFound = true;
-    }
-    ++it;
-  }
-
-  if( !pidFound )
-  {
-	  if (isAudio)
-		  LogDebug("Recorder:add audio stream pid:%x",pid);
-	  else if (isVideo)
-		  LogDebug("Recorder:add video stream pid:%x",pid);
-	  else 
-		  LogDebug("Recorder:add private stream pid:%x",pid);
-    
-    m_vecPids.push_back(pid);
-	  m_multiPlexer.AddPesStream(pid,isAc3,isAudio,isVideo);
-  }
-  return S_OK;
-}
-
-STDMETHODIMP CRecorder::RemoveStream(int pid)
-{
-	CEnterCriticalSection enter(m_section);
-	LogDebug("Recorder:remove pes stream pid:%x",pid);
-	m_multiPlexer.RemovePesStream(pid);
-  itvecPids it = m_vecPids.begin();
-  while (it!=m_vecPids.end())
-  {
-    if (*it==pid)
-    {
-      it=m_vecPids.erase(it);
-    }
-    else
-    {
-      ++it;
-    }
   }
 	return S_OK;
 }
@@ -221,6 +161,8 @@ STDMETHODIMP CRecorder::StartRecord()
 	m_bRecording=true;
 	//::DeleteFile("out.ts");
 	//fpOut =fopen("out.ts","wb+");
+	m_iPmtContinuityCounter=-1;
+	m_iPatContinuityCounter=-1;
 	return S_OK;
 }
 STDMETHODIMP CRecorder::StopRecord()
@@ -245,6 +187,62 @@ STDMETHODIMP CRecorder::StopRecord()
 	return S_OK;
 }
 
+
+
+void CRecorder::SetPcrPid(int pcrPid)
+{
+	LogDebug("Recorder:pcr pid:%x",pcrPid);
+  m_TsPacketCount=0;
+	m_pcrPid = pcrPid;
+  
+	m_multiPlexer.SetPcrPid(pcrPid);
+}
+
+bool CRecorder::IsStreamWanted(int stream_type)
+{
+	return (stream_type==SERVICE_TYPE_VIDEO_MPEG1 || 
+					stream_type==SERVICE_TYPE_VIDEO_MPEG2 || 
+					stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
+					stream_type==SERVICE_TYPE_VIDEO_H264 ||
+					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
+					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
+					stream_type==SERVICE_TYPE_AUDIO_AC3 ||
+					stream_type==SERVICE_TYPE_DVB_SUBTITLES2
+					);
+}
+
+void CRecorder::AddStream(PidInfo2 pidInfo)
+{
+  bool pidFound=false;
+  ivecPidInfo2 it = m_vecPids.begin();
+  while (it!=m_vecPids.end())
+  {
+		PidInfo2 info=*it;
+		if (info.elementaryPid==pidInfo.elementaryPid)
+    {
+      pidFound = true;
+    }
+    ++it;
+  }
+
+  if( !pidFound )
+  {
+		if (IsStreamWanted(pidInfo.streamType))
+		{
+			LogDebug("Recorder: add stream pid: 0x%x stream type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.rawDescriptorSize);
+			PidInfo2 pi;
+			pi.elementaryPid=pidInfo.elementaryPid;
+			pi.streamType=pidInfo.streamType;
+			pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
+			memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
+			memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
+			m_vecPids.push_back(pi);
+			m_multiPlexer.AddPesStream(pi);
+		}
+		else
+						LogDebug("Recorder: stream rejected pid: 0x%x stream type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.rawDescriptorSize);
+  }
+}
 
 void CRecorder::Write(byte* buffer, int len)
 {
@@ -332,23 +330,26 @@ void CRecorder::WriteTs(byte* tsPacket)
 {
 	if (!m_bRecording) return;
   m_TsPacketCount++;
+	m_FakeTsPacketCount++;
   if( m_TsPacketCount < IGNORE_AFTER_TUNE ) return;
-
+	if (m_pcrPid<0 || m_vecPids.size()==0 || m_iPmtPid<0) return;
+	
+	if (m_FakeTsPacketCount>=100)
+	{
+		WriteFakePAT();
+		WriteFakePMT();
+		m_FakeTsPacketCount=0;
+	}
   bool writePid = false;
 
   int PayLoadUnitStart=0;
   if (m_tsHeader.PayloadUnitStart) PayLoadUnitStart=1;
 
-  if (m_tsHeader.Pid==0 ||m_tsHeader.Pid==0x11 || m_tsHeader.Pid==m_iPmtPid || m_tsHeader.Pid==m_pcrPid)
-  {
-    //PAT/PMT/SDT/PCR
-    writePid = true;
-  }
-
-  itvecPids it = m_vecPids.begin();
+  ivecPidInfo2 it = m_vecPids.begin();
   while (it!=m_vecPids.end())
   {
-    if (m_tsHeader.Pid==*it)
+		PidInfo2 info=*it;
+		if (m_tsHeader.Pid==info.elementaryPid)
     {
       writePid = true;
     }
@@ -377,46 +378,167 @@ void CRecorder::WriteTs(byte* tsPacket)
   }
 }
 
-void CRecorder::OnPmtReceived(int pmtPid)
+//*******************************************************************
+//* WriteFakePAT()
+//* Constructs a PAT table and writes it to the timeshifting file
+//*******************************************************************
+void CRecorder::WriteFakePAT()
 {
-  //LogDebug("Recorder: OnPmtReceived");
+	int pid=0;
+	int tableId=0;
+	int patVersion=0;
+	int transportId=m_iServiceId;
+	int pmtPid=m_iPmtPid;
+	int sectionLenght=9+4;
+	int current_next_indicator=1;
+	int section_number = 0;
+	int last_section_number = 0;
+
+	int PayLoadUnitStart=1;
+	int AdaptionControl=1;
+	m_iPatContinuityCounter++;
+	if (m_iPatContinuityCounter>0xf) m_iPatContinuityCounter=0;
+
+	BYTE pat[200];
+	memset(pat,0xFF,sizeof(pat));
+	pat[0]=0x47;
+	pat[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+	pat[2]=(pid&0xff);
+	pat[3]=(AdaptionControl<<4) +m_iPatContinuityCounter;		//0x10
+	pat[4]=0;																								//0
+
+	pat[5]=tableId;//table id																//0
+	pat[6]=0xb0+((sectionLenght>>8)&0xf);										//0xb0
+	pat[7]=sectionLenght&0xff;
+	pat[8]=(transportId>>8)&0xff;
+	pat[9]=(transportId)&0xff;
+	pat[10]=((patVersion&0x1f)<<1)+current_next_indicator;
+	pat[11]=section_number;
+	pat[12]=last_section_number;
+	pat[13]=(m_iServiceId>>8)&0xff;
+	pat[14]=(m_iServiceId)&0xff;
+	pat[15]=((pmtPid>>8)&0xff)|0xe0;
+	pat[16]=(pmtPid)&0xff;
+
+	int len=17;
+	DWORD crc= crc32((char*)&pat[5],len-5);
+	pat[len]=(byte)((crc>>24)&0xff);
+	pat[len+1]=(byte)((crc>>16)&0xff);
+	pat[len+2]=(byte)((crc>>8)&0xff);
+	pat[len+3]=(byte)((crc)&0xff);
+	Write(pat,188);
 }
 
-void CRecorder::OnPidsReceived(const CPidTable& info)
+//*******************************************************************
+//* WriteFakePMT()
+//* Constructs a PMT table and writes it to the timeshifting file
+//*******************************************************************
+void CRecorder::WriteFakePMT()
 {
-  if (m_pPmtParser && m_pmtVersion!=m_pPmtParser->GetPmtVersion() && m_iServiceId == info.ServiceId )
+	int program_info_length=0;
+	int sectionLenght=9+2*5+5;
+
+	int current_next_indicator=1;
+	int section_number = 0;
+	int last_section_number = 0;
+	int transportId=m_iServiceId;
+
+	int tableId=2;
+	int pid=m_iPmtPid;
+	int PayLoadUnitStart=1;
+	int AdaptionControl=1;
+
+	m_iPmtContinuityCounter++;
+	if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
+
+	BYTE pmt[256]; 
+
+	memset(pmt,0xff,sizeof(pmt));
+	pmt[0]=0x47;
+	pmt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+	pmt[2]=(pid&0xff);
+	pmt[3]=(AdaptionControl<<4) +m_iPmtContinuityCounter;
+	pmt[4]=0;
+	byte* pmtPtr=&pmt[4];
+	pmt[5]=tableId;//table id
+	pmt[6]=0;
+	pmt[7]=0;
+	pmt[8]=(m_iServiceId>>8)&0xff;
+	pmt[9]=(m_iServiceId)&0xff;
+	pmt[10]=((m_pmtVersion&0x1f)<<1)+current_next_indicator;
+	pmt[11]=section_number;
+	pmt[12]=last_section_number;
+	pmt[13]=(m_pcrPid>>8)&0xff;
+	pmt[14]=(m_pcrPid)&0xff;
+	pmt[15]=(program_info_length>>8)&0xff;
+	pmt[16]=(program_info_length)&0xff;
+
+	int pmtLength=9+4;
+	int offset=17;
+	ivecPidInfo2 it=m_vecPids.begin();
+	while (it!=m_vecPids.end())
+	{
+		PidInfo2 info=*it;
+		pmt[offset++]=info.streamType;
+		pmt[offset++]=0xe0+((info.elementaryPid>>8)&0x1F); // reserved; elementary_pid (high)
+		pmt[offset++]=(info.elementaryPid)&0xff; // elementary_pid (low)
+		pmt[offset++]=0; // es_length (high)
+		pmt[offset++]=0; // es_length (low)
+		pmtLength+=5;
+		if (info.rawDescriptorData!=NULL)
+		{
+			pmt[offset-1]=info.rawDescriptorSize;
+			memcpy(&pmt[offset],info.rawDescriptorData,info.rawDescriptorSize);
+			offset += info.rawDescriptorSize;
+			pmtLength += info.rawDescriptorSize;
+		}
+		++it;
+	}
+	unsigned section_length = (pmtLength);
+	pmt[6]=0xb0+((section_length>>8)&0xf);
+	pmt[7]=section_length&0xff;
+
+	DWORD crc= crc32((char*)&pmt[5],offset-5);
+	pmt[offset++]=(byte)((crc>>24)&0xff);
+	pmt[offset++]=(byte)((crc>>16)&0xff);
+	pmt[offset++]=(byte)((crc>>8)&0xff);
+	pmt[offset++]=(byte)((crc)&0xff);
+
+	if(pmtLength > 188) LogDebug("ERROR: Pmt length : %i ( >188 )!!!!",pmtLength);
+
+	Write(pmt,188);
+}
+
+void CRecorder::OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos)
+{
+  if (m_pPmtParser && m_pmtVersion!=m_pPmtParser->GetPmtVersion())
   {
     LogDebug("Recorder: PMT version changed from %d to %d - ServiceId %x", m_pmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId );
-    LogDebug("Recorder: pmt:0x%x pcr:0x%x video:0x%x audio1:0x%x audio2:0x%x audio3:%x audio4:0x%x audio5:0x%x video:0x%x teletext:0x%x subtitle:0x%x subtitle:0x%x subtitle:0x%x subtitle:0x%x",
-      info.PmtPid,info.PcrPid,info.VideoPid,info.AudioPid1,info.AudioPid2,info.AudioPid3, info.AudioPid4,info.AudioPid5,info.VideoPid,info.TeletextPid,
-      info.SubtitlePid1,info.SubtitlePid2,info.SubtitlePid3,info.SubtitlePid4);
 
-    if (m_pmtVersion==-1)
+    /*if (m_pmtVersion==-1)
     {
       LogDebug("Recorder: first PMT change, ignore it!" );
       m_pmtVersion=m_pPmtParser->GetPmtVersion();
       return;
-    }
+    }*/
+		m_pmtVersion=m_pPmtParser->GetPmtVersion();
 
     LogDebug("Recorder: clear PIDs vector" );
     m_vecPids.clear();
     m_pmtVersion=m_pPmtParser->GetPmtVersion();
-    
-    // AddStream() makes sure that duplicates aren't inserted
-    if (info.SubtitlePid1!=0)AddStream(info.SubtitlePid1, false, false, false);
-    if (info.SubtitlePid2!=0)AddStream(info.SubtitlePid2, false, false, false);
-    if (info.SubtitlePid3!=0)AddStream(info.SubtitlePid3, false, false, false);
-    if (info.SubtitlePid4!=0)AddStream(info.SubtitlePid4, false, false, false);
-    if (info.AC3Pid!=0)AddStream(info.AC3Pid, true, false, false);
-    if (info.AudioPid1!=0)AddStream(info.AudioPid1, false, true, false);
-    if (info.AudioPid2!=0)AddStream(info.AudioPid2, false, true, false);
-    if (info.AudioPid3!=0)AddStream(info.AudioPid3, false, true, false);
-    if (info.AudioPid4!=0)AddStream(info.AudioPid4, false, true, false);
-    if (info.AudioPid5!=0)AddStream(info.AudioPid5, false, true, false);
-    if (info.VideoPid!=0)AddStream(info.VideoPid, false, false, true); 
-    if (info.TeletextPid!=0)AddStream(info.TeletextPid, false, false, false); 
+
+		SetPcrPid(pcrPid);
+		m_multiPlexer.SetPcrPid(pcrPid);
+		ivecPidInfo2 it=pidInfos.begin();
+		while (it!=pidInfos.end())
+		{
+			PidInfo2 info=*it;
+			AddStream(info);
+			++it;
+		}
   }
 }
+
 //*******************************************************************
 //* PatchPcr()
 //* Patches the PCR so the start of the .ts file always starts
@@ -589,12 +711,7 @@ void CRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 			pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
 			pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
 		}
-	
-		//pts.Reset();
-		//dts.Reset();
-		//if (CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
-		//{
-		//	LogDebug("pts:%s dts:%s", pts.ToString(),dts.ToString());
-		//}
 	}
 }
+
+

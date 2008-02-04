@@ -67,9 +67,6 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(PmtGetPMTData) (THIS_ int handle,   BYTE *pmtData);
 
 	
-	STDMETHOD(RecordSetPcrPid)(THIS_ int handle,int pcrPid)PURE;
-	STDMETHOD(RecordAddStream)(THIS_ int handle,int pid,bool isAc3,bool isAudio,bool isVideo)PURE;
-	STDMETHOD(RecordRemoveStream)(THIS_ int handle,int pid)PURE;
   STDMETHOD(RecordSetRecordingFileName)(THIS_ int handle,char* pszFileName)PURE;
   STDMETHOD(RecordStartRecord)(THIS_ int handle)PURE;
   STDMETHOD(RecordStopRecord)(THIS_ int handle)PURE;
@@ -192,9 +189,6 @@ public:
 		STDMETHODIMP PmtGetPMTData (int handle,BYTE *pmtData);
 
 		
-		STDMETHODIMP RecordSetPcrPid( int handle,int pcrPid);
-		STDMETHODIMP RecordAddStream( int handle,int pid,bool isAc3,bool isAudio,bool isVideo);
-		STDMETHODIMP RecordRemoveStream( int handle,int pid);
 		STDMETHODIMP RecordSetRecordingFileName( int handle,char* pszFileName);
 		STDMETHODIMP RecordStartRecord( int handle);
 		STDMETHODIMP RecordStopRecord( int handle);

@@ -650,25 +650,6 @@ STDMETHODIMP CMpTs::PmtGetPMTData (int handle,BYTE *pmtData)
 	return pChannel->m_pPmtGrabber->GetPMTData (pmtData);
 }
 
-
-STDMETHODIMP CMpTs::RecordSetPcrPid( int handle,int pcrPid)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->SetPcrPid( pcrPid);
-}
-STDMETHODIMP CMpTs::RecordAddStream( int handle,int pid,bool isAc3,bool isAudio,bool isVideo)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->AddStream( pid,isAc3,isAudio,isVideo);
-}
-STDMETHODIMP CMpTs::RecordRemoveStream( int handle,int pid)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->RemoveStream(  pid);
-}
 STDMETHODIMP CMpTs::RecordSetRecordingFileName( int handle,char* pszFileName)
 {
   CTsChannel* pChannel=GetTsChannel(handle);

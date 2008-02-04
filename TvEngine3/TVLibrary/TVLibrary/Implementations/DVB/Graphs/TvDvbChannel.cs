@@ -1040,12 +1040,6 @@ namespace TvLibrary.Implementations.DVB
         {
           hwPids.Add((ushort)0x1ffb);//ATSC
         }
-        //if (_epgGrabbing)
-        //{
-        //  hwPids.Add((ushort)0xd2);//MHW
-        //  hwPids.Add((ushort)0xd3);//MHW
-        //  hwPids.Add((ushort)0x12);//EIT
-        //}
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pcr", _subChannelId, info.pcr_pid);
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pmt", _subChannelId, info.network_pmt_PID);
 
@@ -1228,7 +1222,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     void SetRecorderPids()
     {
-        Log.Log.WriteFile("SetRecorderPids");
+      Log.Log.WriteFile("SetRecorderPids");
       if (_channelInfo == null) return;
       if (_channelInfo.pids.Count == 0) return;
       if (_currentChannel == null) return;
@@ -1236,56 +1230,13 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) return;
 
-
-      _tsFilterInterface.RecordSetPcrPid(_subChannelIndex,_channelInfo.pcr_pid);
-      bool programStream = true;
-      //bool audioPidSet = false;
-      foreach (PidInfo info in _channelInfo.pids)
+      if (_recordTransportStream)
       {
-        if (info.isAC3Audio || info.isAudio || info.isVideo ||info.isDVBSubtitle || info.isTeletext)
-        {
-          bool addPid = false;
-          if (info.isVideo)
-          {
-            addPid = true;
-            if (info.IsMpeg4Video || info.IsH264Video)
-            {
-              programStream = false;
-            }
-          }
-          if (info.isAudio || info.isAC3Audio)
-          {
-            //if (audioPidSet == false)
-            //{
-            addPid = true;
-            //audioPidSet = true;
-            //}
-          }
-          if (info.isDVBSubtitle || info.isTeletext)
-          {
-            addPid = true;
-          }
-
-          if (addPid)
-          {
-            Log.Log.WriteFile("subch:{0} set record {1}", _subChannelId, info);
-            _tsFilterInterface.RecordAddStream(_subChannelIndex, info.pid, info.isAC3Audio,(info.isAC3Audio || info.isAudio), info.isVideo);
-          }
-        }
-      }
-      if (programStream == false || _recordTransportStream)
-      {
-        ATSCChannel atscChannel = dvbChannel as ATSCChannel;
-        if (atscChannel != null)
-        {
-          //VCT
-          _tsFilterInterface.RecordAddStream(_subChannelIndex, 0x1ffb, false,false, false);
-        }
         if (dvbChannel.PmtPid > 0)
         {
           _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId);
         }
-        _tsFilterInterface.RecordSetMode(_subChannelIndex,TimeShiftingMode.TransportStream);
+        _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
         Log.Log.WriteFile("subch:{0} record transport stream mode", _subChannelId);
       }
       else

@@ -33,34 +33,6 @@ namespace TvLibrary.Interfaces.Analyzer
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsRecorder
   {
-    /// <summary>
-    /// Sets the PCR pid.
-    /// </summary>
-    /// <param name="pcrPid">The PCR pid.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int SetPcrPid(short pcrPid);
-    /// <summary>
-    /// Adds the stream.
-    /// </summary>
-    /// <param name="pid">The pid.</param>
-    /// <param name="isAudio">if set to <c>true</c> [is audio].</param>
-    /// <param name="isVideo">if set to <c>true</c> [is video].</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int AddStream(short pid, bool isAc3,bool isAudio, bool isVideo);
-    /// <summary>
-    /// Removes the stream.
-    /// </summary>
-    /// <param name="pid">The pid.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int RemoveStream(short pid);
-    /// <summary>
-    /// Sets the name of the recording file.
-    /// </summary>
-    /// <param name="fileName">Name of the file.</param>
-    /// <returns></returns>
     [PreserveSig]
     int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     /// <summary>
