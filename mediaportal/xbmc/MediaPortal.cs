@@ -231,7 +231,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string MPThreadPriority = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
+        string MPThreadPriority = xmlreader.GetValueAsString("general", "ThreadPriority", "Normal");
         if (MPThreadPriority == "AboveNormal")
         {
           Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
