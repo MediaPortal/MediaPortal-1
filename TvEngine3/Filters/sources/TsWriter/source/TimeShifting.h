@@ -59,11 +59,6 @@ DEFINE_GUID(IID_ITsTimeshifting,0x89459bf6, 0xd00e, 0x4d28, 0x92, 0x8e, 0x9d, 0x
 // video anayzer interface
 DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 {
-	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
-	STDMETHOD(AddStream)(THIS_ int pid, int serviceType, char* language)PURE;
-	STDMETHOD(AddStreamWithDescriptor)(THIS_ int pid, const byte* descriptor_data, int descriptor_length, bool isAC3, bool isMpeg1, bool isMpeg2)PURE;	 
-	STDMETHOD(RemoveStream)(THIS_ int pid)PURE;
-	
   STDMETHOD(SetTimeShiftingFileName)(THIS_ char* pszFileName)PURE;
   STDMETHOD(Start)(THIS_ )PURE;
   STDMETHOD(Stop)(THIS_ )PURE;
@@ -84,12 +79,12 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 	STDMETHOD(GetFileBufferSize) (THIS_ __int64 *lpllsize) PURE;
 	STDMETHOD(SetMode) (THIS_ int mode) PURE;
 	STDMETHOD(GetMode) (THIS_ int *mode) PURE;
-	STDMETHOD(SetPmtPid) (THIS_ int pmtPid) PURE;
+	STDMETHOD(SetPmtPid) (THIS_ int pmtPid,int serviceId) PURE;
 	STDMETHOD(Pause) (THIS_ BYTE onOff) PURE;
 };
 
 //** timeshifting class
-class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter
+class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter, IPmtCallBack2
 {
 public:
 	struct PidInfo
@@ -112,10 +107,6 @@ public:
 	~CTimeShifting(void);
   DECLARE_IUNKNOWN
 	
-	STDMETHODIMP SetPcrPid(int pcrPid);
-	STDMETHODIMP AddStream(int pid, int serviceType, char* language);
-	STDMETHODIMP AddStreamWithDescriptor(int pid, const byte* descriptor_data, int descriptor_length, bool isAC3, bool isMpeg1, bool isMpeg2);
-	STDMETHODIMP RemoveStream(int pid);
 	STDMETHODIMP SetTimeShiftingFileName(char* pszFileName);
 	STDMETHODIMP Start();
 	STDMETHODIMP Stop();
@@ -137,12 +128,16 @@ public:
 	STDMETHODIMP GetFileBufferSize( __int64 *lpllsize) ;
 	STDMETHODIMP SetMode(int mode) ;
 	STDMETHODIMP GetMode(int *mode) ;
-	STDMETHODIMP SetPmtPid(int pmtPid);
+	STDMETHODIMP SetPmtPid(int pmtPid,int serviceId);
 	STDMETHODIMP Pause( BYTE onOff) ;
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
 
 private:  
+	void OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos);
+	void SetPcrPid(int pcrPid);
+	bool IsStreamWanted(int stream_type);
+	void AddStream(PidInfo2 pidInfo);
   void Flush();
 	void WriteTs(byte* tsPacket);
   void WriteFakePAT();  
@@ -153,14 +148,15 @@ private:
 
 	MultiFileWriterParam m_params;
   TimeShiftingMode     m_timeShiftMode;
-	CMultiplexer         m_multiPlexer;
+	CPmtParser*					m_pPmtParser;
 	bool				         m_bTimeShifting;
 	char				         m_szFileName[2048];
 	MultiFileWriter*     m_pTimeShiftFile;
 	CCriticalSection     m_section;
-  int                  m_pmtPid;
+  int                  m_iPmtPid;
   int                  m_pcrPid;
-	vector<PidInfo>			 m_vecPids;
+	int									 m_iServiceId;
+	vector<PidInfo2>			 m_vecPids;
 	typedef vector<PidInfo>::iterator itvecPids;
 	bool								 m_bSeenAudioStart;
 	bool								 m_bSeenVideoStart;
@@ -193,4 +189,6 @@ private:
   CPcrRefClock*	  rclock;
   map<unsigned short,LastPtsDtsRecord> m_mapLastPtsDts;
   typedef map<unsigned short,LastPtsDtsRecord>::iterator imapLastPtsDts;
+
+	bool kwasi;
 };

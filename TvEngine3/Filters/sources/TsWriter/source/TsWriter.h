@@ -74,11 +74,6 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(RecordSetMode) (THIS_ int handle,int mode) PURE;
 	STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid,int serviceId)PURE;
 
-
-	STDMETHOD(TimeShiftSetPcrPid)(THIS_ int handle, int pcrPid)PURE;
-	STDMETHOD(TimeShiftAddStream)(THIS_ int handle, int pid, int serviceType, char* language)PURE;
-	STDMETHOD(TimeShiftAddStreamWithDescriptor)(THIS_ int handle, int pid, byte* descriptor_data, int descriptor_length, bool isAC3, bool isMpeg1, bool isMpeg2);
-	STDMETHOD(TimeShiftRemoveStream)(THIS_ int handle, int pid)PURE;
 	STDMETHOD(TimeShiftSetTimeShiftingFileName)(THIS_ int handle, char* pszFileName)PURE;
 	STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
 	STDMETHOD(TimeShiftStop)(THIS_ int handle )PURE;
@@ -86,7 +81,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(TimeShiftGetBufferSize) (THIS_ int handle, long * size) PURE;
 	STDMETHOD(TimeShiftSetMode) (THIS_ int handle, int mode) PURE;
 	STDMETHOD(TimeShiftGetMode) (THIS_ int handle, int *mode) PURE;
-	STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid) PURE;
+	STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid,int serviceId) PURE;
 	STDMETHOD(TimeShiftPause) (THIS_ int handle, BYTE onOff) PURE;
 	STDMETHOD(TimeShiftSetParams) (THIS_ int handle, int minFiles, int maxFiles, ULONG chunkSize) PURE;
 
@@ -196,11 +191,6 @@ public:
 		STDMETHODIMP RecordSetMode( int handle,int mode) ;
 		STDMETHODIMP RecordSetPmtPid(int handle,int mtPid,int serviceId );
 
-
-		STDMETHODIMP TimeShiftSetPcrPid( int handle, int pcrPid);
-		STDMETHODIMP TimeShiftAddStream( int handle, int pid, int serviceType, char* language);
-		STDMETHODIMP TimeShiftAddStreamWithDescriptor( int handle, int pid, byte* descriptor_data, int descriptor_length, bool isAC3, bool isMpeg1, bool isMpeg2);
-		STDMETHODIMP TimeShiftRemoveStream( int handle, int pid);
 		STDMETHODIMP TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName);
 		STDMETHODIMP TimeShiftStart( int handle );
 		STDMETHODIMP TimeShiftStop( int handle );
@@ -208,7 +198,7 @@ public:
 		STDMETHODIMP TimeShiftGetBufferSize( int handle, long * size) ;
 		STDMETHODIMP TimeShiftSetMode( int handle, int mode) ;
 		STDMETHODIMP TimeShiftGetMode( int handle, int *mode) ;
-		STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid) ;
+		STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId) ;
 		STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
 	  STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
 

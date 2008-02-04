@@ -49,9 +49,12 @@ typedef struct stPidInfo2
 {
 public:
 	int elementaryPid;
+	int fakePid;
 	int streamType;
+	int logicalStreamType;
 	byte rawDescriptorData[188];
 	int rawDescriptorSize;
+	bool seenStart;
 }PidInfo2;
 
 typedef vector<stPidInfo2>::iterator ivecPidInfo2;
@@ -78,10 +81,12 @@ public:
 	void    SetPmtCallBack(IPmtCallBack* callback);
 	void    SetPmtCallBack2(IPmtCallBack2* callback);
   bool    IsReady();
+	void		SetFilter(int pid,int serviceId);
   CPidTable& GetPidInfo();
   int GetPmtVersion();
 private:
   int				m_pmtPid;
+	int				m_serviceId;
   int 				m_pmtVersion;
 	bool			_isFound;
 	IPmtCallBack* m_pmtCallback;

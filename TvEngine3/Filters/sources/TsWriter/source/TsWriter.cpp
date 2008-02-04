@@ -630,7 +630,6 @@ STDMETHODIMP CMpTs::AnalyzerReset(int handle )
 	return pChannel->m_pVideoAnalyzer->Reset(  );
 }
 
-
 STDMETHODIMP CMpTs::PmtSetPmtPid(int handle,int pmtPid, long serviceId)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -688,34 +687,6 @@ STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId )
 }
 
 
-STDMETHODIMP CMpTs:: TimeShiftSetPcrPid( int handle, int pcrPid)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->SetPcrPid( pcrPid);
-}
-STDMETHODIMP CMpTs:: TimeShiftAddStream( int handle, int pid, int serviceType, char* language)
-{
-  //LogDebug("TimeShiftAddStream %X", serviceType);
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->AddStream( pid,  serviceType, language);
-}
-
-STDMETHODIMP CMpTs:: TimeShiftAddStreamWithDescriptor( int handle, int pid, byte* data,  int dataLength, bool isAC3, bool isMpeg1, bool isMpeg2)
-{
-	//LogDebug("TimeShiftAddStreamWithDescriptor PID : %i", pid);
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-  return pChannel->m_pTimeShifting->AddStreamWithDescriptor( pid, data, dataLength, isAC3, isMpeg1, isMpeg2);
-}
-
-STDMETHODIMP CMpTs:: TimeShiftRemoveStream( int handle, int pid)
-{
-  CTsChannel* pChannel=GetTsChannel(handle);
-  if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->RemoveStream( pid);
-}
 STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -790,11 +761,11 @@ STDMETHODIMP CMpTs:: TimeShiftGetMode( int handle, int *mode)
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pTimeShifting->GetMode( mode);
 }
-STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid) 
+STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->SetPmtPid( pmtPid);
+	return pChannel->m_pTimeShifting->SetPmtPid( pmtPid,serviceId);
 }
 STDMETHODIMP CMpTs:: TimeShiftPause( int handle, BYTE onOff) 
 {

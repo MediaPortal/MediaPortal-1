@@ -31,10 +31,17 @@ CPmtParser::CPmtParser()
 	m_pmtCallback=NULL;
 	_isFound=false;
   m_pmtVersion = -1;
+	m_serviceId=-1;
 }
 
 CPmtParser::~CPmtParser(void)
 {
+}
+
+void CPmtParser::SetFilter(int pid,int serviceId)
+{
+	SetPid(pid);
+	m_serviceId=serviceId;
 }
 
 void CPmtParser::SetPmtCallBack(IPmtCallBack* callback)
@@ -59,6 +66,12 @@ void CPmtParser::OnNewSection(CSection& sections)
 	int start=0;
 	int table_id = sections.table_id;
 	if (table_id!=2) return;
+	if (sections.table_id_extension!=m_serviceId) return;
+	if (sections.version_number==m_pmtVersion) 
+	{
+		_isFound=true;
+		return;
+	}
 
 	int section_syntax_indicator = (section[start+1]>>7) & 1;
 	int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
@@ -76,7 +89,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	
 	m_pmtVersion=version_number;
   
-	if (!_isFound)
+	/*if (!_isFound)
 	{
 		LogDebug("got pmt:%x service id:%x", GetPid(), program_number);
 		_isFound=true;	
@@ -84,7 +97,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 		{
 			m_pmtCallback->OnPmtReceived(GetPid());
 		}
-	}
+	}*/
 
 	// loop 1
 	while (len2 > 0)
@@ -114,10 +127,13 @@ void CPmtParser::OnNewSection(CSection& sections)
 		ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
 
 		PidInfo2 pidInfo2;
+		pidInfo2.fakePid=-1;
 		pidInfo2.elementaryPid=elementary_PID;
 		pidInfo2.streamType=stream_type;
-		if (pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES1 || pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
-			pidInfo2.streamType=-1; // wait for the descriptors to specify the detailed stream type
+		if (pidInfo2.streamType!=SERVICE_TYPE_DVB_SUBTITLES2)
+			pidInfo2.logicalStreamType=stream_type;
+		else
+			pidInfo2.logicalStreamType=-1;
 		pidInfo2.rawDescriptorSize=ES_info_length;
 		memset(pidInfo2.rawDescriptorData,0xFF,ES_info_length);
 		memcpy(pidInfo2.rawDescriptorData,&section[start+pointer+5],ES_info_length);
@@ -198,7 +214,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 			if(indicator==DESCRIPTOR_DVB_AC3)
 			{
 			  m_pidInfo.AC3Pid=elementary_PID;
-				pidInfo2.streamType=SERVICE_TYPE_AUDIO_AC3;
+				pidInfo2.logicalStreamType=SERVICE_TYPE_AUDIO_AC3;
 			}
 		  if(indicator==DESCRIPTOR_MPEG_ISO639_Lang)
 		  {	
@@ -242,17 +258,18 @@ void CPmtParser::OnNewSection(CSection& sections)
 				  m_pidInfo.Lang5_3=d[2];
 			  }
 		  }
-		  if(indicator==DESCRIPTOR_DVB_TELETEXT && m_pidInfo.TeletextPid==0)
+		  if(indicator==DESCRIPTOR_DVB_TELETEXT)
 			{
-				m_pidInfo.TeletextPid=elementary_PID;
-				pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2;
+				pidInfo2.logicalStreamType=DESCRIPTOR_DVB_TELETEXT;
+				if (m_pidInfo.TeletextPid==0)
+					m_pidInfo.TeletextPid=elementary_PID;
 			}
 
 			if(indicator==DESCRIPTOR_DVB_SUBTITLING)
 			{
 				if (stream_type==SERVICE_TYPE_DVB_SUBTITLES2)
 				{
-					pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2;
+					pidInfo2.logicalStreamType=SERVICE_TYPE_DVB_SUBTITLES2;
           subtitleToSet++;
 			    curSubtitle=subtitleToSet;
 				  BYTE d[3];

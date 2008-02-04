@@ -78,12 +78,12 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
 	m_params.maxSize=268435424;
 	m_params.minFiles=6;
 
-	m_pmtPid=-1;
+	m_iPmtPid=-1;
 	m_pcrPid=-1;
+	m_iServiceId=-1;
 	m_timeShiftMode=ProgramStream;
 	m_bTimeShifting=false;
 	m_pTimeShiftFile=NULL;
-	m_multiPlexer.SetFileWriterCallBack(this);
 
 	m_bStartPcrFound=false;
 	m_startPcr.Reset();
@@ -98,6 +98,8 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
 	m_bIgnoreNextPcrJump=false;
   m_bClearTsQueue=false;
 	rclock=new CPcrRefClock();
+	m_pPmtParser=new CPmtParser();
+  m_pPmtParser->SetPmtCallBack2(this);
 	m_mapLastPtsDts.clear();
 }
 //*******************************************************************
@@ -111,6 +113,8 @@ CTimeShifting::~CTimeShifting(void)
     delete[] m_tsQueue[i];
   }    
   m_tsQueue.clear();
+	m_pPmtParser->Reset();
+	delete m_pPmtParser;
 }
 
 //*******************************************************************
@@ -120,26 +124,20 @@ CTimeShifting::~CTimeShifting(void)
 //*******************************************************************
 void CTimeShifting::OnTsPacket(byte* tsPacket)
 {
+	CTsHeader header(tsPacket);
+	if (header.Pid==m_iPmtPid)
+      m_pPmtParser->OnTsPacket(tsPacket);
 	if (m_bPaused) return;
 	if (m_bTimeShifting)
 	{
-		CTsHeader header(tsPacket);
 		if (header.Pid==0x1fff) return;
 
 		if (header.SyncByte!=0x47) return;
 		if (header.TransportError) return;
+
 		CEnterCriticalSection enter(m_section);
-		//* timeshifting to mpeg-2 program stream
-		if (m_timeShiftMode==ProgramStream)
-		{
-			//* then feed packet to multiplexer for transform transport stream into program stream
-			m_multiPlexer.OnTsPacket(tsPacket);
-		}
-		else
-		{
-			//* timeshifting to mpeg-2 transport stream. Just write packet to file
-			WriteTs(tsPacket);
-		}
+
+		WriteTs(tsPacket);
 	}
 }
 
@@ -171,54 +169,7 @@ STDMETHODIMP CTimeShifting::Pause( BYTE onOff)
 	{
 		LogDebug("Timeshifter:paused:no"); 
 		Flush();
-		m_iPacketCounter=200;//write fake pat/pmt
-	}
-	return S_OK;
-}
-
-//*******************************************************************
-//* Sets the pcr pid to timeshift
-//* pcrPid = the PCR pid
-//*******************************************************************
-STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
-{
-	CEnterCriticalSection enter(m_section);
-	try
-	{
-		LogDebug("Timeshifter:pcr pid:0x%x",pcrPid); 
-    LogDebug("Timeshifter:SetPcrPid clear old PIDs");
-    m_vecPids.clear();
-    m_bClearTsQueue=true;
-    m_TsPacketCount=0;
-
-		m_multiPlexer.ClearStreams();
-		m_multiPlexer.SetPcrPid(pcrPid);
-		if (m_bTimeShifting)
-		{
-			LogDebug("Timeshifter:determine new start pcr"); 
-			m_bDetermineNewStartPcr=true;
-			m_bIgnoreNextPcrJump=true;
-		}
-		m_pcrPid=pcrPid;
-		m_vecPids.clear();
-		FAKE_NETWORK_ID   = 0x456;
-		FAKE_TRANSPORT_ID = 0x4;
-		FAKE_SERVICE_ID   = 0x89;
-		FAKE_PMT_PID      = 0x20;
-		FAKE_PCR_PID      = 0x30;//0x21;
-		FAKE_VIDEO_PID    = 0x30;
-		FAKE_AUDIO_PID    = 0x40;
-		FAKE_SUBTITLE_PID = 0x50;
-		m_iPatVersion++;
-		if (m_iPatVersion>15) 
-			m_iPatVersion=0;
-		m_iPmtVersion++;
-		if (m_iPmtVersion>15) 
-			m_iPmtVersion=0;
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:SetPcrPid exception");
+		//m_iPacketCounter=200;//write fake pat/pmt
 	}
 	return S_OK;
 }
@@ -227,18 +178,13 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 //* Sets the PMT pid to timeshift
 //* pmtPid = the PMT pid
 //*******************************************************************
-STDMETHODIMP CTimeShifting::SetPmtPid(int pmtPid)
+STDMETHODIMP CTimeShifting::SetPmtPid(int pmtPid,int serviceId)
 {
 	CEnterCriticalSection enter(m_section);
-	try
-	{
-		LogDebug("Timeshifter:pmt pid:0x%x",pmtPid);
-    m_pmtPid=pmtPid;
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:SetPmtPid exception");
-	}
+	LogDebug("Timeshifter:pmt pid:0x%x serviceId: 0x%x",pmtPid,serviceId);
+  m_iPmtPid=pmtPid;
+	m_iServiceId=serviceId;
+	m_pPmtParser->SetFilter(pmtPid,serviceId);
 	return S_OK;
 }
 
@@ -269,280 +215,121 @@ STDMETHODIMP CTimeShifting::GetMode(int *mode)
 }
 
 //*******************************************************************
-//* Adds a stream to the timeshift file (unsupported streams ignored)
-//* Original descriptor_data required. WriteFakePMT will write the original
-//* descriptor into the PMT associating it with the fake PID.
-//* pid             : pid to add
-//* descriptor_data : original DVB SI descriptor from the PMT
-// * Added by Ziphnor
+//* Sets the pcr pid to timeshift
+//* pcrPid = the PCR pid
 //*******************************************************************
-STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descriptor_data, int data_length, bool isAC3, bool isMpeg1, bool isMpeg2){
-	//LogDebug("AddStreamWDesc PID %i", pid);
-	if (pid==0) return S_OK;
-	CEnterCriticalSection enter(m_section);
-	itvecPids it=m_vecPids.begin();
-	while (it!=m_vecPids.end())
-	{
-		PidInfo& info=*it;
-		if (info.realPid==pid) return S_OK;
-		++it;
-	}
+void CTimeShifting::SetPcrPid(int pcrPid)
+{
+		CEnterCriticalSection enter(m_section);
+		LogDebug("Timeshifter:pcr pid:0x%x",pcrPid); 
+    LogDebug("Timeshifter:SetPcrPid clear old PIDs");
+    m_vecPids.clear();
+    m_bClearTsQueue=true;
+    m_TsPacketCount=0;
 
-	try{
-		PidInfo info;
-		info.serviceType=0;
-		int pointer=0;
-		int info_pointer=0;
-		int len = data_length;
-		while ( len > 0 ) {
-			bool copy_descriptor = false;
-			byte descriptor_tag = descriptor_data[pointer];
-			int descriptor_length = descriptor_data[pointer+1] + 2;
-			const byte* x = descriptor_data + pointer;
-			
-			if(descriptor_tag == DESCRIPTOR_DVB_TELETEXT){
-				info.realPid=pid;
-				info.fakePid=FAKE_TELETEXT_PID;
-				info.seenStart=false;
-				info.serviceType = 0x06;
-				info.ContintuityCounter=0;
-				//strcpy(info.language,language);
-				copy_descriptor = true;
-
-				LogDebug("Timeshifter:add (with descriptor) teletext stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-				FAKE_TELETEXT_PID++;
-				//m_multiPlexer.AddPesStream(pid,false,false,true);
-			}
-			else if(descriptor_tag == DESCRIPTOR_DVB_SUBTITLING){
-				info.realPid=pid;
-				info.fakePid=FAKE_SUBTITLE_PID;
-				info.seenStart=false;
-				info.ContintuityCounter=0;
-				//strcpy(info.language,language);
-				copy_descriptor = true;
-				info.serviceType=0x06;
-				LogDebug("Timeshifter:add (with descriptor) subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-				FAKE_SUBTITLE_PID++;
-				//m_multiPlexer.AddPesStream(pid,false,false,true);
-			}
-			else if (descriptor_tag == DESCRIPTOR_MPEG_ISO639_Lang)
-			{			  			 
-				if (m_pcrPid == pid)
-				{
-					FAKE_PCR_PID = FAKE_AUDIO_PID;
-				}
-				info.realPid=pid;
-				info.fakePid=FAKE_AUDIO_PID;
-				info.seenStart=false;
-				if (isMpeg1)
-				{
-				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG1;
-				}
-				else if (isMpeg2)
-				{
-				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG2;
-				}
-				else if (isAC3)
-				{
-				  info.serviceType = SERVICE_TYPE_AUDIO_AC3;
-				}
-				
-				info.ContintuityCounter=0;
-				//strcpy(info.language,language);
-				copy_descriptor = true;
-
-				LogDebug("Timeshifter:add (with descriptor) ISO639 stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-				FAKE_AUDIO_PID++;
-				
-				if (isMpeg1 || isMpeg2)
-				{
-				  //m_multiPlexer.AddPesStream(pid,false,true,false);
-				}
-				else if (isAC3)
-				{
-				  //m_multiPlexer.AddPesStream(pid,true,false,false);
-				}
-								
-			} else if ( descriptor_tag == DESCRIPTOR_STREAM_IDENTIFIER ) {
-				copy_descriptor = true;
-			}
-			// feel free to add more descriptor types here, they will automatically work with 
-			// WriteFakePMT as the descriptor is given
-			else{
-				LogDebug("WARNING: AddStreamWithDesc(pid,descriptor) doesnt support descriptor type 0x%x, ignoring", descriptor_tag);
-			}
-			
-			if (info.serviceType==0 && (isMpeg1 || isMpeg2 || isAC3) )
-			{
-				if (m_pcrPid == pid)
-				{
-					FAKE_PCR_PID = FAKE_AUDIO_PID;
-				}
-				info.realPid=pid;
-				info.fakePid=FAKE_AUDIO_PID;
-				info.seenStart=false;
-				if (isMpeg1)
-				{
-				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG1;
-				}
-				else if (isMpeg2)
-				{
-				  info.serviceType = SERVICE_TYPE_AUDIO_MPEG2;
-				}
-				else if (isAC3)
-				{
-				  info.serviceType = SERVICE_TYPE_AUDIO_AC3;
-				}
-				info.ContintuityCounter=0;
-				//strcpy(info.language,language);
-				copy_descriptor = true;
-
-				LogDebug("Timeshifter:add (with descriptor) audio stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-				FAKE_AUDIO_PID++;
-				
-				if (isMpeg1 || isMpeg2)
-				{
-				  //m_multiPlexer.AddPesStream(pid,false,true,false);
-				}
-				else if (isAC3)
-				{
-				  //m_multiPlexer.AddPesStream(pid,true,false,false);
-				}
-			}
-
-			if ( copy_descriptor ) {
-				LogDebug("Copying Descriptor: stream_type: %d, tag: %d, length: %d",
-					info.serviceType, descriptor_tag, descriptor_length);
-				memcpy(info.descriptor_data+info_pointer,x,descriptor_length);
-				info_pointer += descriptor_length;
-				info.descriptor_valid = true;
-			}
-			pointer += descriptor_length;
-			len -= descriptor_length;
+		if (m_bTimeShifting)
+		{
+			LogDebug("Timeshifter:determine new start pcr"); 
+			m_bDetermineNewStartPcr=true;
+			m_bIgnoreNextPcrJump=true;
 		}
-		if ( info.descriptor_valid ) {
-			m_vecPids.push_back(info);
-		}
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:AddStream(pid,byte*) exception");
-	}
-	return S_OK;
+		m_pcrPid=pcrPid;
+		m_vecPids.clear();
+		FAKE_NETWORK_ID   = 0x456;
+		FAKE_TRANSPORT_ID = 0x4;
+		FAKE_SERVICE_ID   = 0x89;
+		FAKE_PMT_PID      = 0x20;
+		FAKE_PCR_PID      = 0x30;//0x21;
+		FAKE_VIDEO_PID    = 0x30;
+		FAKE_AUDIO_PID    = 0x40;
+		FAKE_SUBTITLE_PID = 0x50;
+		m_iPatVersion++;
+		if (m_iPatVersion>15) 
+			m_iPatVersion=0;
+		m_iPmtVersion++;
+		if (m_iPmtVersion>15) 
+			m_iPmtVersion=0;
 }
 
-//*******************************************************************
-//* Adds an audio/video stream to the timeshift file
-//* pid         : pid to add
-//* serviceType : service type of pid. Indicates if its audio/video and which encoding is ued
-//* language    : The video/audio language
-//*******************************************************************
-STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
+bool CTimeShifting::IsStreamWanted(int stream_type)
 {
-	if (pid==0) return S_OK;
-	CEnterCriticalSection enter(m_section);
-	itvecPids it=m_vecPids.begin();
-	while (it!=m_vecPids.end())
-	{
-		PidInfo& info=*it;
-		if (info.realPid==pid) return S_OK;
-		++it;
-	}
+	return (stream_type==SERVICE_TYPE_VIDEO_MPEG1 || 
+					stream_type==SERVICE_TYPE_VIDEO_MPEG2 || 
+					stream_type==SERVICE_TYPE_VIDEO_MPEG4 || 
+					stream_type==SERVICE_TYPE_VIDEO_H264 ||
+					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
+					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
+					stream_type==SERVICE_TYPE_AUDIO_AC3 ||
+					stream_type==SERVICE_TYPE_DVB_SUBTITLES2 ||
+					stream_type==DESCRIPTOR_DVB_TELETEXT
+					);
+}
 
-	try
+void CTimeShifting::AddStream(PidInfo2 pidInfo)
+{
+  ivecPidInfo2 it = m_vecPids.begin();
+  while (it!=m_vecPids.end())
+  {
+		PidInfo2 info=*it;
+		if (info.elementaryPid==pidInfo.elementaryPid)
+      return;
+    ++it;
+  }
+
+	if (IsStreamWanted(pidInfo.logicalStreamType))
 	{
-		if (SERVICE_TYPE_AUDIO_MPEG1==serviceType||SERVICE_TYPE_AUDIO_MPEG2==serviceType||serviceType==SERVICE_TYPE_AUDIO_AC3)
+		PidInfo2 pi;
+		pi.seenStart=false;
+		pi.fakePid=-1;
+		pi.elementaryPid=pidInfo.elementaryPid;
+		pi.streamType=pidInfo.streamType;
+		pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
+		memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
+		memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
+		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2)
 		{
-			if (m_pcrPid == pid)
-			{
-				FAKE_PCR_PID = FAKE_AUDIO_PID;
-			}
-			PidInfo info;
-			info.realPid=pid;
-			info.fakePid=FAKE_AUDIO_PID;
-			info.seenStart=false;
-			info.serviceType=serviceType;
-			info.ContintuityCounter=0;
-			strcpy(info.language,language);
-			m_vecPids.push_back(info);
-
-			LogDebug("Timeshifter:add audio stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+			pi.fakePid=FAKE_AUDIO_PID;
 			FAKE_AUDIO_PID++;
-			/*if (serviceType==SERVICE_TYPE_AUDIO_AC3)
-				m_multiPlexer.AddPesStream(pid,true,false,false);
-			else
-				m_multiPlexer.AddPesStream(pid,false,true,false);*/
 		}
-		else if (serviceType==SERVICE_TYPE_VIDEO_MPEG1||serviceType==SERVICE_TYPE_VIDEO_MPEG2||serviceType==SERVICE_TYPE_VIDEO_MPEG4||serviceType==SERVICE_TYPE_VIDEO_H264)
+		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264)
 		{
-			//if (m_pcrPid == pid)
-			//{
-			//	FAKE_PCR_PID = FAKE_VIDEO_PID;
-			//}
-			//LogDebug("Timeshifter:add video pes stream pid:%x",pid);
-			PidInfo info;
-			info.realPid=pid;
-			info.fakePid=FAKE_VIDEO_PID;
-			info.seenStart=false;
-			info.serviceType=serviceType;
-			info.ContintuityCounter=0;
-			strcpy(info.language,language);
-			m_vecPids.push_back(info);
-			LogDebug("Timeshifter:add video stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+			pi.fakePid=FAKE_VIDEO_PID;
 			FAKE_VIDEO_PID++;
-			//m_multiPlexer.AddPesStream(pid,false,false,true);
 		}
-		else if (serviceType==SERVICE_TYPE_DVB_SUBTITLES1||serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
+		else if (pidInfo.logicalStreamType==DESCRIPTOR_DVB_TELETEXT)
 		{
-			PidInfo info;
-			info.realPid=pid;
-			info.fakePid=FAKE_SUBTITLE_PID;
-			info.seenStart=false;
-			info.serviceType=serviceType;
-			info.ContintuityCounter=0;
-			strcpy(info.language,language);
-			m_vecPids.push_back(info);
-			LogDebug("Timeshifter:add subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+			pi.fakePid=FAKE_TELETEXT_PID;
+			FAKE_TELETEXT_PID++;
+		}
+		else if (pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES2)
+		{
+			pi.fakePid=FAKE_SUBTITLE_PID;
 			FAKE_SUBTITLE_PID++;
-			//m_multiPlexer.AddPesStream(pid,false,false,true);
 		}
-		else 
-		{
-			PidInfo info;
-			info.realPid=pid;
-			info.fakePid=pid;
-			info.serviceType=serviceType;
-			info.seenStart=false;
-			info.ContintuityCounter=0;
-			strcpy(info.language,language);
-			LogDebug("Timeshifter:add stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-			m_vecPids.push_back(info);
-		}
+		if (pi.elementaryPid==m_pcrPid)
+			FAKE_PCR_PID=pi.fakePid;
+		LogDebug("Timeshifting: add stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
+		m_vecPids.push_back(pi);
 	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:AddPesStream exception");
-	}
-	return S_OK;
+	else
+		LogDebug("TimeShifting: stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 }
 
-//*******************************************************************
-//* Removes a stream from the timeshift file
-//* pid         : pid to remove
-//*******************************************************************
-STDMETHODIMP CTimeShifting::RemoveStream(int pid)
+void CTimeShifting::OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos)
 {
-	CEnterCriticalSection enter(m_section);
-	try
-	{
-		//LogDebug("Timeshifter:remove pes stream pid:%x",pid);
-		//m_multiPlexer.RemovePesStream(pid);
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:RemovePesStream exception");
-	}
-	return S_OK;
+		CEnterCriticalSection enter(m_section);
+
+    LogDebug("Timeshifter: PMT version changed from %d to %d - ServiceId %x", m_iPmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId );
+		m_iPmtVersion=m_pPmtParser->GetPmtVersion();
+		SetPcrPid(pcrPid);
+		ivecPidInfo2 it=pidInfos.begin();
+		while (it!=pidInfos.end())
+		{
+			PidInfo2 info=*it;
+			AddStream(info);
+			++it;
+		}
+
 }
 
 //*******************************************************************
@@ -556,14 +343,13 @@ STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
 	{
 		LogDebug("Timeshifter:set filename:%s",pszFileName);
 		m_iPacketCounter=0;
-		m_pmtPid=-1;
+		m_iPmtPid=-1;
 		m_pcrPid=-1;
 		m_vecPids.clear();
 		m_startPcr.Reset();
 		m_bStartPcrFound=false;
 		m_highestPcr.Reset();
 		m_bDetermineNewStartPcr=false;
-		m_multiPlexer.Reset();
 		strcpy(m_szFileName,pszFileName);
 		strcat(m_szFileName,".tsbuffer");
 	}
@@ -615,21 +401,7 @@ STDMETHODIMP CTimeShifting::Start()
 		m_iPacketCounter=0;
 		m_iWriteBufferPos=0;
 		LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
-		LogDebug("Timeshifter:real pcr:%x fake pcr:%x",m_pcrPid,FAKE_PCR_PID);
-		LogDebug("Timeshifter:real pmt:%x fake pmt:%x",m_pmtPid,FAKE_PMT_PID);
-		itvecPids it=m_vecPids.begin();
-		while (it!=m_vecPids.end())
-		{
-			PidInfo& info=*it;
-			LogDebug("Timeshifter:real pid:%x fake pid:%x type:%x",info.realPid,info.fakePid,info.serviceType);
-			++it;
-		}
 		m_bTimeShifting=true;
-		if (m_timeShiftMode==TransportStream)
-		{
-			WriteFakePAT();
-			WriteFakePMT();
-		}
 		m_bPaused=FALSE;
 	}
 	catch(...)
@@ -648,14 +420,14 @@ STDMETHODIMP CTimeShifting::Reset()
 	try
 	{
 		LogDebug("Timeshifter:Reset");
-		m_pmtPid=-1;
+		m_iPmtPid=-1;
 		m_pcrPid=-1;
 		m_bDetermineNewStartPcr=false;
 		m_startPcr.Reset();
 		m_bStartPcrFound=false;
 		m_highestPcr.Reset();
 		m_vecPids.clear();
-		m_multiPlexer.Reset();
+		m_pPmtParser->Reset();
     m_tsQueue.clear();
     m_pcrHole.Reset();
     m_backwardsPcrHole.Reset();
@@ -691,7 +463,7 @@ STDMETHODIMP CTimeShifting::Stop()
 
 		LogDebug("Timeshifter:Stop timeshifting:'%s'",m_szFileName);
 		m_bTimeShifting=false;
-		m_multiPlexer.Reset();
+		m_pPmtParser->Reset();
 		if (m_pTimeShiftFile!=NULL)
 		{
 			m_pTimeShiftFile->CloseFile();
@@ -963,9 +735,10 @@ STDMETHODIMP CTimeShifting::GetFileBufferSize(__int64 *lpllsize)
 //*******************************************************************
 void CTimeShifting::WriteTs(byte* tsPacket)
 {	  	  
+	CEnterCriticalSection enter(m_section);
 	m_TsPacketCount++;
   if( m_TsPacketCount < IGNORE_AFTER_TUNE ) return;
-  if (m_pcrPid<0 || m_vecPids.size()==0 || m_pmtPid<0) return;
+  if (m_pcrPid<0 || m_vecPids.size()==0 || m_iPmtPid<0) return;
 
 	m_tsHeader.Decode(tsPacket);
 	if (m_tsHeader.TransportError) 
@@ -973,12 +746,6 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 	  LogDebug("  m_tsHeader.TransportError - IGNORE TS PACKET!");
 	  return;
 	}
-	/*if (m_tsHeader.TScrambling!=0) 
-	{
-	  LogDebug("  m_tsHeader.TScrambling!=0 - IGNORE TS PACKET!");
-	  return;
-	}
-	*/
 
 	bool writeTS = true;
 	int start=0;
@@ -993,15 +760,13 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 	int PayLoadUnitStart=0;
 	if (m_tsHeader.PayloadUnitStart) PayLoadUnitStart=1;
 
-	itvecPids it=m_vecPids.begin();
-	itvecPids itPcr=m_vecPids.end();
+	ivecPidInfo2 it=m_vecPids.begin();
+	ivecPidInfo2 itPcr=m_vecPids.end();
 	while (it!=m_vecPids.end())
 	{
-		PidInfo& info=*it;
-		if (info.fakePid==FAKE_PCR_PID)
-			itPcr=it;
+		PidInfo2 &info=*it;
 
-		if (m_tsHeader.Pid==info.realPid)
+		if (m_tsHeader.Pid==info.elementaryPid)
 		{
 			// writeTS determines if a TS packet gets written to the timeshifting file or not.
 			// invalid headers are skipped, such as scrambled packets.				
@@ -1016,7 +781,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 			}
 			if (writeTS)
 			{
-			  if (info.serviceType==SERVICE_TYPE_VIDEO_MPEG1 || info.serviceType==SERVICE_TYPE_VIDEO_MPEG2||info.serviceType==SERVICE_TYPE_VIDEO_MPEG4||info.serviceType==SERVICE_TYPE_VIDEO_H264)
+				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2||info.streamType==SERVICE_TYPE_VIDEO_MPEG4||info.streamType==SERVICE_TYPE_VIDEO_H264)
 			  {
 				  //        PatchPcr(tsPacket,m_tsHeader);
 				  //video
@@ -1035,19 +800,19 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				  int pid=info.fakePid;
 				  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
 				  pkt[2]=(pid&0xff);
-				  if (m_tsHeader.Pid==m_pcrPid)  PatchPcr(pkt,m_tsHeader);
+				  if (m_tsHeader.Pid==m_pcrPid)  
+						PatchPcr(pkt,m_tsHeader);
 
 				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				  {						
 					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
-					  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
 					  Write(pkt,188);
 					  m_iPacketCounter++;
 				  }
 				  return;
 			  }
 
-			  if (info.serviceType==SERVICE_TYPE_AUDIO_MPEG1 || info.serviceType==SERVICE_TYPE_AUDIO_MPEG2|| info.serviceType==SERVICE_TYPE_AUDIO_AC3)
+			  if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2|| info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3)
 			  {
 				  //audio
 				  if (!info.seenStart)
@@ -1070,14 +835,13 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				  {						  
 					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  							
-					  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
 					  Write(pkt,188);
 					  m_iPacketCounter++;
 				  }
 				  return;
 			  }
 
-			  if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
+			  if (info.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || info.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
 			  {
 				  //subtitle pid...
 				  byte pkt[200];
@@ -1090,7 +854,6 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				  {						  						  
 					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
-					  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
 					  Write(pkt,188);
 					  m_iPacketCounter++;
 				  }
@@ -1107,7 +870,6 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 
 			  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 			  {							  
-				  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
 				  Write(pkt,188);
 				  m_iPacketCounter++;
 			  }
@@ -1130,14 +892,6 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 
 		if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 		{						
-			if(itPcr!=m_vecPids.end())
-			{				  
-				PidInfo& info=*itPcr;					
-				//pkt[3] &=0xf0;
-				//pkt[3] += (info.ContintuityCounter&0xf);
-				//LogDebug("pcr:%x->%x %d", m_pcrPid,FAKE_PCR_PID,info.ContintuityCounter);
-			}				
-
 			Write(pkt,188);
 			m_iPacketCounter++;
 		}
@@ -1244,119 +998,25 @@ void CTimeShifting::WriteFakePMT()
 
 	int pmtLength=9+4;
 	int offset=17;
-	itvecPids it=m_vecPids.begin();
-
-	vector<PidInfo> toEndOfPMT; // hack: delays teletext descriptor until last so its only stored if it fits (Ziphnor)
-	// TODO: Fix this method so it can write a PMT thats larger than one TsPacket!! (Ziphnor)
-
+	ivecPidInfo2 it=m_vecPids.begin();
 	while (it!=m_vecPids.end())
 	{
-		PidInfo& info=*it;
-
-		if(info.descriptor_valid)
-    { // we have the full descriptor data so we just copy it into the PMT
-			// hack: delay until last part of PMT
-			toEndOfPMT.push_back(info);
-			it++;
-			continue;
-		}
-
-		int serviceType=info.serviceType;
-		if (serviceType==SERVICE_TYPE_AUDIO_AC3)
-		{
-			//AC3 is represented as stream type 6
-			serviceType=SERVICE_TYPE_DVB_SUBTITLES2; // ugly hack
-		}
-
-		pmt[offset++]=serviceType;
+		PidInfo2 info=*it;
+		pmt[offset++]=info.streamType;
 		pmt[offset++]=0xe0+((info.fakePid>>8)&0x1F); // reserved; elementary_pid (high)
 		pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
-		pmt[offset++]=0xF0;// reserved; ES_info_length (high)
-		pmtLength+=4;
-
-		if (info.serviceType==SERVICE_TYPE_AUDIO_AC3)
+		pmt[offset++]=0; // es_length (high)
+		pmt[offset++]=0; // es_length (low)
+		pmtLength+=5;
+		if (info.rawDescriptorData!=NULL)
 		{
-			int esLen=0;
-			pmt[offset++]=esLen+2;						// ES_info_length (low)
-			pmt[offset++]=DESCRIPTOR_DVB_AC3; // descriptor indicator
-			pmt[offset++]=esLen;
-			pmtLength+=3;
-		}
-		else if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
-		{ 
-			//use constant here and in for loop, or strlen() in both?
-			int esLen=strlen(info.language)+5;
-			pmt[offset++]=esLen+2;   // ES_info_length (low)
-			pmt[offset++]=DESCRIPTOR_DVB_SUBTITLING;   // descriptor indicator
-			pmt[offset++]=esLen;
-			pmtLength+=3;
-			for (int i=0; i < strlen(info.language);++i)
-			{
-				pmt[offset++]=info.language[i];
-				pmtLength++;
-			}
-			pmt[offset++]=0x10;
-			pmt[offset++]=0x00;
-			pmt[offset++]=0x01;
-			pmt[offset++]=0x00;
-			pmt[offset++]=0x01;
-			pmtLength+=5;
-		}
-		else
-		{
-			pmt[offset++]=0;   // ES_info_length (low)
-			pmtLength++;
+			pmt[offset-1]=info.rawDescriptorSize;
+			memcpy(&pmt[offset],info.rawDescriptorData,info.rawDescriptorSize);
+			offset += info.rawDescriptorSize;
+			pmtLength += info.rawDescriptorSize;
 		}
 		++it;
 	}
-
-	it = toEndOfPMT.begin();
-	//LogDebug("WRiting %i pid descriptors at end of fake pmt",toEndOfPMT.size());
-	while(it != toEndOfPMT.end())
-  {
-			PidInfo& info = *it;
-			int descriptor_length = info.descriptor_data[1] + 2; // 0 is tag, 1 is length		
-			//LogDebug("Descriptor (total) length is %i", descriptor_length);
-			if(pmtLength + 4 >= 188) // if it will make the PMT too big
-			{ 
-				LogDebug("Cant fit new descriptor for fake PID %i because it would make fake PMT not fit in one ts packet! ",info.fakePid);
-				it++;
-				continue;
-			}
-			pmt[offset++]=info.serviceType;
-			pmt[offset++]=0xe0+((info.fakePid>>8)&0x1F); // reserved; elementary_pid (high)
-			pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
-			pmt[offset++]=0xF0;// reserved; ES_info_length (high)
-			pmtLength+=4;
-
-			// NOTE: This is completely generic and will work with all stream types
-			// (if we have the original descriptor we just reuse it)
-			
-			//LogDebug("Writing Fake PMT with original DESCRIPTOR tag %X for real PID %i, fake pid %i", info.descriptor_data[0], info.realPid, info.fakePid );
-			int pointer=0;
-			byte* pEsInfoLength = pmt + offset;
-			offset++;
-			pmtLength++;
-			*pEsInfoLength = 0;
-			while ( info.descriptor_data[pointer] != 0xFF && pointer < sizeof(info.descriptor_data)) {
-				descriptor_length = info.descriptor_data[pointer+1]+2;
-				//LogDebug("Adding stream descriptor: stream_type: %d, type: %d, length: %d", 
-				//	info.serviceType, info.descriptor_data[pointer], descriptor_length);
-				if(pmtLength + descriptor_length + 4 >= 188) // if it will make the PMT too big
-				{ 
-					LogDebug("Cant fit another descriptor for fake PID %i because it would make fake PMT not fit in one ts packet (pmtLength: %d, descriptor_length: %d)! ",info.fakePid, pmtLength, descriptor_length );
-					break;
-				}
-				*pEsInfoLength += descriptor_length; // ES_info_length(low) // what is the descriptor is so big it needs the high bits as well?
-
-				memcpy(&pmt[offset], info.descriptor_data+pointer, descriptor_length); // copy descriptor content
-				offset += descriptor_length;
-				pmtLength += descriptor_length;
-				pointer += descriptor_length;
-			}
-			it++;
-	}
-
 	unsigned section_length = (pmtLength);
 	pmt[6]=0xb0+((section_length>>8)&0xf);
 	pmt[7]=section_length&0xff;

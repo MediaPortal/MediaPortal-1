@@ -52,18 +52,18 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
 	m_FakeTsPacketCount=0;
   m_pPmtParser=new CPmtParser();
   if (m_pPmtParser)
-  {
     m_pPmtParser->SetPmtCallBack2(this);
-  }
 }
 CRecorder::~CRecorder(void)
 {
+	CEnterCriticalSection enter(m_section);
   if (m_hFile!=INVALID_HANDLE_VALUE)
   {
 	  CloseHandle(m_hFile);
 	  m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
   }
   delete [] m_pWriteBuffer;
+	m_pPmtParser->Reset();
   delete m_pPmtParser;
 }
 
@@ -207,49 +207,46 @@ bool CRecorder::IsStreamWanted(int stream_type)
 					stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
 					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
 					stream_type==SERVICE_TYPE_AUDIO_AC3 ||
-					stream_type==SERVICE_TYPE_DVB_SUBTITLES2
+					stream_type==SERVICE_TYPE_DVB_SUBTITLES2 ||
+					stream_type==DESCRIPTOR_DVB_TELETEXT
 					);
 }
 
 void CRecorder::AddStream(PidInfo2 pidInfo)
 {
-  bool pidFound=false;
   ivecPidInfo2 it = m_vecPids.begin();
   while (it!=m_vecPids.end())
   {
 		PidInfo2 info=*it;
 		if (info.elementaryPid==pidInfo.elementaryPid)
-    {
-      pidFound = true;
-    }
+			return;
     ++it;
   }
 
-  if( !pidFound )
-  {
-		if (IsStreamWanted(pidInfo.streamType))
-		{
-			LogDebug("Recorder: add stream pid: 0x%x stream type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.rawDescriptorSize);
-			PidInfo2 pi;
-			pi.elementaryPid=pidInfo.elementaryPid;
-			pi.streamType=pidInfo.streamType;
-			pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
-			memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
-			memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
-			m_vecPids.push_back(pi);
-			m_multiPlexer.AddPesStream(pi);
-		}
-		else
-						LogDebug("Recorder: stream rejected pid: 0x%x stream type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.rawDescriptorSize);
-  }
+	if (IsStreamWanted(pidInfo.logicalStreamType))
+	{
+		LogDebug("Recorder: add stream pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
+		PidInfo2 pi;
+		pi.seenStart=false;
+		pi.fakePid=-1;
+		pi.elementaryPid=pidInfo.elementaryPid;
+		pi.streamType=pidInfo.streamType;
+		pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
+		memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
+		memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
+		m_vecPids.push_back(pi);
+		m_multiPlexer.AddPesStream(pi);
+	}
+	else
+		LogDebug("Recorder: stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 }
 
 void CRecorder::Write(byte* buffer, int len)
 {
+	CEnterCriticalSection enter(m_section);
 	if (!m_bRecording) return;
   if (buffer==NULL) return;
   if (len <=0) return;
-	CEnterCriticalSection enter(m_section);
   if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
   {
 	  try
@@ -511,32 +508,22 @@ void CRecorder::WriteFakePMT()
 
 void CRecorder::OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos)
 {
-  if (m_pPmtParser && m_pmtVersion!=m_pPmtParser->GetPmtVersion())
-  {
-    LogDebug("Recorder: PMT version changed from %d to %d - ServiceId %x", m_pmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId );
+	CEnterCriticalSection enter(m_section);
+	LogDebug("Recorder: PMT version changed from %d to %d - ServiceId %x", m_pmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId );
 
-    /*if (m_pmtVersion==-1)
-    {
-      LogDebug("Recorder: first PMT change, ignore it!" );
-      m_pmtVersion=m_pPmtParser->GetPmtVersion();
-      return;
-    }*/
-		m_pmtVersion=m_pPmtParser->GetPmtVersion();
+	m_pmtVersion=m_pPmtParser->GetPmtVersion();
+  LogDebug("Recorder: clear PIDs vector" );
+  m_vecPids.clear();
+  m_pmtVersion=m_pPmtParser->GetPmtVersion();
 
-    LogDebug("Recorder: clear PIDs vector" );
-    m_vecPids.clear();
-    m_pmtVersion=m_pPmtParser->GetPmtVersion();
-
-		SetPcrPid(pcrPid);
-		m_multiPlexer.SetPcrPid(pcrPid);
-		ivecPidInfo2 it=pidInfos.begin();
-		while (it!=pidInfos.end())
-		{
-			PidInfo2 info=*it;
-			AddStream(info);
-			++it;
-		}
-  }
+  SetPcrPid(pcrPid);
+	ivecPidInfo2 it=pidInfos.begin();
+	while (it!=pidInfos.end())
+	{
+		PidInfo2 info=*it;
+		AddStream(info);
+		++it;
+	}
 }
 
 //*******************************************************************
