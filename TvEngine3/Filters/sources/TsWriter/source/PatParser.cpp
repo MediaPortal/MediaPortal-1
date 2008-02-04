@@ -359,7 +359,6 @@ void CPatParser::OnTsPacket(byte* tsPacket)
     if (pid==parser->GetPid())
     {
 		  parser->OnTsPacket(tsPacket);
-      return;
     }
   }
 	if (m_pCallback!=NULL)
@@ -423,7 +422,7 @@ void CPatParser::OnNewSection(CSection& sections)
 			if (it2==m_mapPmtParsers.end())
 			{
 		    CPmtParser* pmtParser = new CPmtParser();
-		    pmtParser->SetPid(pmtPid);
+		    pmtParser->SetFilter(pmtPid,serviceId);
 			  pmtParser->SetPmtCallBack(this);
 		    m_mapPmtParsers[pmtPid]=pmtParser ;
 			  newPmtsAdded=true;
