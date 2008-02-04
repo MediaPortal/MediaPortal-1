@@ -55,11 +55,6 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     [PreserveSig] int RecordSetMode(int handle, TimeShiftingMode mode);
     [PreserveSig] int RecordSetPmtPid(int handle, int pmtPid, int serviceId);
 
-
-    [PreserveSig] int TimeShiftSetPcrPid(int handle, int pcrPid);
-    [PreserveSig] int TimeShiftAddStream(int handle, int pid, int serviceType, [In, MarshalAs(UnmanagedType.LPStr)]		string language);
-    [PreserveSig] int TimeShiftAddStreamWithDescriptor(int handle, int pid, IntPtr descriptor_data, int descriptor_length, bool isAC3, bool isMpeg1, bool isMpeg2);
-    [PreserveSig] int TimeShiftRemoveStream(int handle, int pid);
     [PreserveSig] int TimeShiftSetTimeShiftingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     [PreserveSig] int TimeShiftStart(int handle);
     [PreserveSig] int TimeShiftStop(int handle);
@@ -67,7 +62,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     [PreserveSig] int TimeShiftGetBufferSize(int handle, out long size);
     [PreserveSig] int TimeShiftSetMode(int handle, TimeShiftingMode  mode);
     [PreserveSig] int TimeShiftGetMode(int handle, out TimeShiftingMode mode);
-    [PreserveSig] int TimeShiftSetPmtPid(int handle, int pmtPid);
+    [PreserveSig] int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId);
     [PreserveSig] int TimeShiftPause(int handle, byte onOff);
     [PreserveSig] int TimeShiftSetParams(int handle, int minFiles, int maxFiles, UInt32 chunkSize);
 

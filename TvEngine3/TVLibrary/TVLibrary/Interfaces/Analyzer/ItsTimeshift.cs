@@ -47,44 +47,6 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsTimeShift
   {
-    /// <summary>
-    /// Sets the PCR pid.
-    /// </summary>
-    /// <param name="pcrPid">The PCR pid.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int SetPcrPid(short pcrPid);
-    /// <summary>
-    /// Adds a stream.
-    /// </summary>
-    /// <param name="pid">The pid.</param>
-    /// <param name="serviceType">Type of the service.</param>
-    /// <param name="language">The language.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int AddStream(short pid, short serviceType,[In, MarshalAs(UnmanagedType.LPStr)] string language);
-
-    /// <summary>
-    /// Adds a stream.
-    /// </summary>
-    /// <param name="pid">The pid.</param>
-    /// <param name="data">Original descriptor data (will be re-used in fake PMT)</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int AddStreamWithDescriptor(short pid, IntPtr data);
-
-    /// <summary>
-    /// Removes a stream.
-    /// </summary>
-    /// <param name="pid">The pid.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int RemoveStream(short pid);
-    /// <summary>
-    /// Sets the name of the time shifting file.
-    /// </summary>
-    /// <param name="fileName">Name of the file.</param>
-    /// <returns></returns>
     [PreserveSig]
     int SetTimeShiftingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     /// <summary>
@@ -216,7 +178,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <param name="pmtPid">The PMT pid.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetPmtPid(short pmtPid);
+    int SetPmtPid(int pmtPid, int serviceId);
     /// <summary>
     /// pauses or continues writing to the timeshifting file.
     /// </summary>

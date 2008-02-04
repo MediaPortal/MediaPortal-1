@@ -70,6 +70,8 @@ namespace TvService
 
 			_waitForTimeshifting = Int32.Parse(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
 			_waitForUnscrambled = Int32.Parse(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value);
+      _timeshiftingEpgGrabberEnabled = false;
+      Log.Epg("SORRY - TIMESHIFTING EPG GRABBER IS DISABLED IN THIS SNAPSHOT");
     }
 
 

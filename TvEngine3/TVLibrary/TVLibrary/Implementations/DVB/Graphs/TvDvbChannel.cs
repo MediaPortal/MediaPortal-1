@@ -1146,11 +1146,11 @@ namespace TvLibrary.Implementations.DVB
 
 
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
-      _tsFilterInterface.TimeShiftSetPcrPid(_subChannelIndex, _channelInfo.pcr_pid);
-      _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid);
+      _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid,dvbChannel.ServiceId);
      
       //_linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
-      foreach (PidInfo info in _channelInfo.pids)
+      //Timeshifter adds the pids himself now
+      /*foreach (PidInfo info in _channelInfo.pids)
       {
 				if (info.HasDescriptorData())
 				{
@@ -1205,14 +1205,9 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
             _tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess
           }
-          /*
-          else
-          {
-            Log.Log.WriteFile("no descr. data : subch:{0} {1}:{2}", _subChannelId, info.stream_type, info);
-          }
-          */
 				}        								
-      }
+      }*/
+      
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
       _dateTimeShiftStarted = DateTime.Now;
     }
