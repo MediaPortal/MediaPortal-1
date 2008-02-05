@@ -25,17 +25,14 @@ using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
-
-
   /// <summary>
   /// Interface to the epg grabber com object
   /// </summary>
   [ComVisible(true), ComImport,
- Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
+  Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsEpgScanner
   {
-
     /// <summary>
     /// Start grabbing the EPG.
     /// </summary>
