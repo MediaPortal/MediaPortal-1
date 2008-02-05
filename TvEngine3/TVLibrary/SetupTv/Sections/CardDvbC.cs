@@ -402,7 +402,8 @@ namespace SetupTv.Sections
             else
             {
               //update tuning details...
-              layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
+							TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
+							td.Persist();
             }
 
             if (channel.IsTv)

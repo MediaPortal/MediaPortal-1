@@ -146,7 +146,7 @@ namespace SetupTv.Sections
         User user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber,out user))
         {
-          MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+          MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning another part of a hybrid card.");
           return;
         }
         Thread scanThread = new Thread(new ThreadStart(DoScan));
@@ -325,7 +325,8 @@ namespace SetupTv.Sections
             else
             {
               //update tuning details...
-              layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
+              TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
+							td.Persist();
             }
 
             if (channel.IsTv)

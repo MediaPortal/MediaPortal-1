@@ -408,9 +408,28 @@ namespace SetupTv.Sections
     private void mpButtonDel_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
+			IList schedules = Schedule.ListAll();
+			TvServer server = new TvServer();
+
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
-        Channel channel = (Channel)item.Tag;
+        Channel channel = (Channel)item.Tag;				
+
+				//also delete any still active schedules
+				if (schedules != null)
+				{
+					for (int i = schedules.Count-1; i>-1; i--)
+					{
+						Schedule schedule = (Schedule)schedules[i];
+						if (schedule.IdChannel == channel.IdChannel)
+						{							
+							server.StopRecordingSchedule(schedule.IdSchedule);
+							schedule.Delete();
+							schedules.RemoveAt(i);
+						}
+					}
+				}
+
         channel.Delete();
         mpListView1.Items.Remove(item);
       }
