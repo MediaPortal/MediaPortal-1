@@ -28,9 +28,12 @@
 #include "VirtualChannelTableParser.h"
 #include "..\..\shared\tsheader.h"
 //#include "conditionalAccess.h"
+#include "criticalsection.h"
+#include "entercriticalsection.h"
 #include <vector>
 #include <map>
 using namespace std;
+using namespace Mediaportal;
 
 
 DECLARE_INTERFACE_(IChannelScanCallback, IUnknown)
@@ -40,7 +43,7 @@ DECLARE_INTERFACE_(IChannelScanCallback, IUnknown)
 
 #define PID_PAT 0x0
 
-class CPatParser : public CSectionDecoder, public IPmtCallBack, public ISdtCallBack, public IAtscCallback
+class CPatParser : public CSectionDecoder, public ISdtCallBack, public IAtscCallback
 {
 public:
   CPatParser(void);
@@ -54,22 +57,15 @@ public:
   int         Count();
   bool        GetChannel(int index, CChannelInfo& info);
   void        Dump();
-	//void				SetConditionalAccess(CConditionalAccess* access);
-	void				OnPmtReceived(int pmtPid);
-  void        OnPidsReceived(const CPidTable& info);
 	void        OnSdtReceived(const CChannelInfo& sdtInfo);
   void        OnChannel(const CChannelInfo& info);
 
 private:
-	void				               UpdateHwPids();
+	CCriticalSection m_section;
   CVirtualChannelTableParser m_vctParser;
   CSdtParser                 m_sdtParser;
 	CNITDecoder                m_nitDecoder;
   void                       CleanUp();
-	//CConditionalAccess* m_pConditionalAccess;
-
-  map<int,CPmtParser*> m_mapPmtParsers;
-  typedef map<int,CPmtParser*> ::iterator itPmtParser;
 
   map<int,CChannelInfo> m_mapChannels;
   typedef map<int,CChannelInfo> ::iterator itChannels;
@@ -77,4 +73,5 @@ private:
 	IChannelScanCallback* m_pCallback;
   DWORD                 m_tickCount;
   CTsHeader             m_tsHeader;
+	bool									m_finished;
 };

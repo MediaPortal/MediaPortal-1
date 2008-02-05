@@ -175,6 +175,24 @@ STDMETHODIMP CTimeShifting::Pause( BYTE onOff)
 }
 
 //*******************************************************************
+//* Sets the video / audio observer
+//*******************************************************************
+STDMETHODIMP CTimeShifting::SetVideoAudioObserver (IVideoAudioObserver* callback)
+{
+  if( callback )
+  {
+    LogDebug("Timeshifter:SetVideoAudioObserver observer ok");
+    m_pVideoAudioObserver = callback;
+    return S_OK;
+  }
+  else
+  {
+    return S_FALSE;
+    LogDebug("Timeshifter:SetVideoAudioObserver observer was null");  
+  }
+}
+
+//*******************************************************************
 //* Sets the PMT pid to timeshift
 //* pmtPid = the PMT pid
 //*******************************************************************
@@ -791,6 +809,8 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 					  {
 						  info.seenStart=true;
 						  LogDebug("timeshift: start of video detected");
+              if(m_pVideoAudioObserver)
+								m_pVideoAudioObserver->OnNotify(PidType::Video);
 					  }
 				  }
 				  if (!info.seenStart) return;
@@ -821,6 +841,8 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 					  {
 						  info.seenStart=true;
 						  LogDebug("timeshift: start of audio detected");
+              if(m_pVideoAudioObserver)
+								m_pVideoAudioObserver->OnNotify(PidType::Audio);
 					  }
 				  }
 				  if (!info.seenStart) return;

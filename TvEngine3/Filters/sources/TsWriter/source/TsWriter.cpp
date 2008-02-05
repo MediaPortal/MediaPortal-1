@@ -784,6 +784,14 @@ STDMETHODIMP CMpTs::TimeShiftSetParams(int handle, int minFiles, int maxFiles, U
   pChannel->m_pTimeShifting->SetChunkReserve(chunkSize);
   return S_OK;
 }
+
+STDMETHODIMP CMpTs::SetVideoAudioObserver(int handle, IVideoAudioObserver* callback)
+{
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_FALSE;
+  return pChannel->m_pTimeShifting->SetVideoAudioObserver(callback);
+}
+
 STDMETHODIMP CMpTs::TTxStart( int handle)
 {
   CTsChannel* pChannel=GetTsChannel(handle);

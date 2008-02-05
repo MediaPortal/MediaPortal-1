@@ -130,13 +130,16 @@
     <Compile Include="Interfaces\Analyzer\ITsChannel.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelLinkageScanner.cs" />
     <Compile Include="Interfaces\Analyzer\ITsFilter.cs" />
-    <Compile Include="Interfaces\Analyzer\ITsRecorder.cs" />
     <Compile Include="Interfaces\Analyzer\ITsChannelScan.cs" />
     <Compile Include="Interfaces\Analyzer\ITsEpgScanner.cs" />
     <Compile Include="Interfaces\Analyzer\ITsPmtGrabber.cs" />
+    <Compile Include="Interfaces\Analyzer\ITsRecorder.cs" />
     <Compile Include="Interfaces\Analyzer\ITsTeletextGrabber.cs" />
+    <Compile Include="Interfaces\Analyzer\ItsTimeshift.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Interfaces\Analyzer\ITsVideoAnalyzer.cs" />
-    <Compile Include="Interfaces\Analyzer\ItsTimeshift.cs" />
+    <Compile Include="Interfaces\Analyzer\IVideoAudioObserver.cs" />
     <Compile Include="Interfaces\Analyzer\IWinTvUsbCI.cs" />
     <Compile Include="Interfaces\TsFileSink\ITsFileSink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

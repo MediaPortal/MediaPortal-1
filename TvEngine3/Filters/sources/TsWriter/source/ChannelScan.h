@@ -156,7 +156,6 @@ private:
 	bool m_bIsParsingNIT;
 	CMpTsFilter* m_pFilter;
 	CCriticalSection m_section;
-	CConditionalAccess*	m_pConditionalAccess;
 	IChannelScanCallback* m_pCallback;
   CNITDecoder m_nit;
 };

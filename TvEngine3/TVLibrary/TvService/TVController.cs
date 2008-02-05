@@ -1288,7 +1288,15 @@ namespace TvService
           _epgGrabber.Stop();
         }
 
-        bool isTimeShifting = _cards[cardId].TimeShifter.IsTimeShifting(ref user);
+        bool isTimeShifting=true;
+        try
+        {
+          isTimeShifting = _cards[cardId].TimeShifter.IsTimeShifting(ref user);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("KWASI: " + ex.Message);
+        }
         TvResult result = _cards[cardId].TimeShifter.Start(ref user, ref fileName);
         if (result == TvResult.Succeeded)
         {

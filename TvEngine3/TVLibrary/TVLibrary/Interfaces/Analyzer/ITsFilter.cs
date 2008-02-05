@@ -65,18 +65,15 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     [PreserveSig] int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId);
     [PreserveSig] int TimeShiftPause(int handle, byte onOff);
     [PreserveSig] int TimeShiftSetParams(int handle, int minFiles, int maxFiles, UInt32 chunkSize);
-
+    [PreserveSig] int SetVideoAudioObserver(int handle, IVideoAudioObserver observer);
 
     [PreserveSig] int TTxStart(int handle);
     [PreserveSig] int TTxStop(int handle);
     [PreserveSig] int TTxSetTeletextPid(int handle, int teletextPid);
     [PreserveSig] int TTxSetCallBack(int handle, ITeletextCallBack callback);
-    [PreserveSig]
-    int CaSetCallBack(int handle, ICACallback callback);
-    [PreserveSig]
-    int CaGetCaData(int handle, IntPtr caData);
-    [PreserveSig]
-    int CaReset(int handle);
+    [PreserveSig] int CaSetCallBack(int handle, ICACallback callback);
+    [PreserveSig] int CaGetCaData(int handle, IntPtr caData);
+    [PreserveSig] int CaReset(int handle);
 
   }
 }

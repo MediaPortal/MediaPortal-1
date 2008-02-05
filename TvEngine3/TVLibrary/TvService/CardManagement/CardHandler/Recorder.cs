@@ -61,8 +61,6 @@ namespace TvService
 			TvBusinessLayer layer = new TvBusinessLayer();
       _cardHandler = cardHandler;
 			_timeshiftingEpgGrabberEnabled = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
-      _timeshiftingEpgGrabberEnabled = false;
-      Log.Epg("SORRY - TIMESHIFTING EPG GRABBER IS DISABLED IN THIS SNAPSHOT");
     }
     /// <summary>
     /// Starts recording.

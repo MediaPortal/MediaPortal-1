@@ -68,8 +68,7 @@ CRecorder::~CRecorder(void)
 }
 
 void CRecorder::OnTsPacket(byte* tsPacket)
-{
-	if (m_bRecording)
+{	if (m_bRecording)
 	{
 	  m_tsHeader.Decode(tsPacket);
     if (m_tsHeader.SyncByte!=0x47) return;

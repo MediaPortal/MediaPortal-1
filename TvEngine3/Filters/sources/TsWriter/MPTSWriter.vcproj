@@ -249,27 +249,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\Knc.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\Knc.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\KNC\KNCBDACI.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\PcrRefClock.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\PesPacket.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\PesPacket.h"
 				>
 			</File>
 			<File
@@ -278,14 +258,6 @@
 			</File>
 			<File
 				RelativePath=".\source\Recorder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\Technotrend.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\Technotrend.h"
 				>
 			</File>
 			<File
@@ -301,10 +273,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\TsChannel.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\TsWriter.cpp"
 				>
 			</File>
@@ -313,19 +281,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\WinTvUsbCI\USB2CIIFace.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\VideoAnalyzer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\WinTvUsbCI\WinTvUsbCI.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\WinTvUsbCI\WinTvUsbCI.h"
 				>
 			</File>
 			<Filter
@@ -396,6 +352,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\source\PesPacket.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\source\VideoAudioScrambledAnalyzer.cpp"
 					>
 				</File>
@@ -421,6 +381,22 @@
 				</File>
 				<File
 					RelativePath=".\source\MultiFileWriter.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Conditional Access"
+				>
+				<File
+					RelativePath=".\source\Knc.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\Technotrend.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\WinTvUsbCI\WinTvUsbCI.cpp"
 					>
 				</File>
 			</Filter>
@@ -462,6 +438,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\Knc.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\PcrRefClock.h"
 				>
 			</File>
@@ -482,6 +462,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\TsChannel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\TsWriter.h"
 				>
 			</File>
@@ -490,7 +474,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\WinTvUsbCI.h"
+				RelativePath=".\source\videoaudioobserver.h"
 				>
 			</File>
 			<Filter
@@ -506,6 +490,10 @@
 				</File>
 				<File
 					RelativePath=".\source\PesDecoder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\PesPacket.h"
 					>
 				</File>
 				<File
@@ -606,6 +594,22 @@
 				</File>
 				<File
 					RelativePath=".\source\FireDtv.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\KNC\KNCBDACI.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\Technotrend.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\WinTvUsbCI\USB2CIIFace.h"
+					>
+				</File>
+				<File
+					RelativePath=".\WinTvUsbCI.h"
 					>
 				</File>
 			</Filter>

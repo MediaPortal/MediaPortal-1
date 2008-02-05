@@ -34,7 +34,7 @@ void LogDebug(const char *fmt, ...) ;
 //*****************************************************************************
 CPatParser::CPatParser(void)
 {
-	//m_pConditionalAccess=NULL;
+	m_finished=false;
   Reset(NULL);
   SetPid(PID_PAT);
 }
@@ -48,33 +48,30 @@ CPatParser::~CPatParser(void)
 //*****************************************************************************
 void  CPatParser::CleanUp()
 {
-  itPmtParser it=m_mapPmtParsers.begin();
-  while (it!=m_mapPmtParsers.end())
-  {
-    CPmtParser* parser=it->second;
-    delete parser;
-    it=m_mapPmtParsers.erase(it);
-  }
   m_mapChannels.clear();
-	m_mapPmtParsers.clear();
   m_bDumped=false;
 }
 
 //*****************************************************************************
 void  CPatParser::Reset(IChannelScanCallback* callback)
 {
-	m_pCallback=callback;
 //	Dump();
 	LogDebug("PatParser:Reset(%d)",m_pCallback);
 	CSectionDecoder::Reset();
+	SetPid(PID_PAT);
   CleanUp();
   m_vctParser.Reset();
   m_sdtParser.Reset();
 	m_nitDecoder.Reset();
-	//UpdateHwPids();
+
   m_sdtParser.SetCallback(this);
   m_vctParser.SetCallback(this);
+	
+	m_pCallback=callback;
+
   m_tickCount = GetTickCount();
+	m_finished=false;
+	LogDebug("PatParser::Reset done");
 }
 
  
@@ -103,16 +100,12 @@ BOOL CPatParser::IsReady()
 
   if (m_vctParser.Count() > 0)
   {
+		m_finished=true;
     return TRUE;
   }
 	if (m_nitDecoder.Ready()==false) 
 	{
 //		LogDebug("nit not ready");
-		return FALSE;
-	}
-  if (m_mapPmtParsers.size()==false) 
-	{
-		//LogDebug("no pmt parsers ");
 		return FALSE;
 	}
   if (false==m_sdtParser.IsReady()) 
@@ -121,15 +114,6 @@ BOOL CPatParser::IsReady()
 		return FALSE;
 	}
   
-  for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
-  {
-    CPmtParser* parser=it->second;
-    if (false==parser->IsReady()) 
-		{
-		  //LogDebug("pmt not ready");
-			return FALSE;
-		}
-  }
 	int x=0;
 	for (itChannels it=m_mapChannels.begin(); it !=m_mapChannels.end();++it)
   {
@@ -143,6 +127,7 @@ BOOL CPatParser::IsReady()
 		}
 		x++;
 	}
+	m_finished=true;
   return TRUE;
 }
 
@@ -251,76 +236,6 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 			}
 		}
 	}
-	/*
-  else
-  {
-    if (sdtInfo.OtherMux==false)
-    { 
-      m_tickCount = GetTickCount();
-      CChannelInfo info;
-			info.NetworkId=sdtInfo.NetworkId;
-			info.TransportId=sdtInfo.TransportId;
-			info.ServiceId=sdtInfo.ServiceId;
-			info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
-			info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
-			info.RunningStatus=sdtInfo.RunningStatus;
-			info.FreeCAMode=sdtInfo.FreeCAMode;
-			info.ServiceType=sdtInfo.ServiceType;
-			info.OtherMux=sdtInfo.OtherMux;
-			info.SdtReceived=true;
-			info.PmtReceived=false;
-			strcpy(info.ProviderName,sdtInfo.ProviderName);
-      
-      int number=0;
-      char compareBuffer[255];
-      for (itChannels it2 = m_mapChannels.begin();it2!=m_mapChannels.end();++it2)
-      {
-        CChannelInfo& info2=it2->second;
-        if (info2.ServiceId==sdtInfo.ServiceId) continue;
-        if (number==0)
-			    strcpy(compareBuffer,sdtInfo.ServiceName);
-        else
-          sprintf(compareBuffer,"%s (%d)", sdtInfo.ServiceName,number);
-          if (strcmp(info2.ServiceName,compareBuffer)==0) number++;
-      }
-      if (number==0)
-			  strcpy(info.ServiceName,sdtInfo.ServiceName);
-      else
-        sprintf(info.ServiceName,"%s (%d)", sdtInfo.ServiceName,number);
-
-      m_mapChannels[info.ServiceId]=info;
-    }
-  }*/
-  return;
-  
-}
-
-//*****************************************************************************
-void CPatParser::OnPidsReceived(const CPidTable& pidTable)
-{
-  if (m_vctParser.Count()!=0) return;
-  itChannels it=m_mapChannels.find(pidTable.ServiceId);
-  if (it!=m_mapChannels.end())
-  {
-    CChannelInfo& info=it->second;
-		if (info.PmtReceived==false) 
-		{
-      //LogDebug("1OnPidsRecv %x %x %x= %x %x %x", pidTable.VideoPid,pidTable.AudioPid1,pidTable.AC3Pid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AC3Pid);
-      m_tickCount = GetTickCount();
-			//LogDebug("PMT: onid:%x tsid:%x nit:%x p:%s s:%s other:%d", info.NetworkId,info.TransportId,info.ServiceId, info.ProviderName,info.ServiceName, info.OtherMux);
-			info.PidTable=pidTable;
-			info.PmtReceived=true;
-      //LogDebug("2OnPidsRecv %x %x %x= %x %x %x", pidTable.VideoPid,pidTable.AudioPid1,pidTable.AC3Pid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AC3Pid);
-			if (m_pCallback!=NULL)
-			{
-				if (IsReady() )
-        {
-					m_pCallback->OnScannerDone();
-          m_pCallback=NULL;
-        }
-			}
-		}
-	}
   return;
   
 }
@@ -328,8 +243,11 @@ void CPatParser::OnPidsReceived(const CPidTable& pidTable)
 //*****************************************************************************
 void CPatParser::OnTsPacket(byte* tsPacket)
 {
+	CEnterCriticalSection enter(m_section);
+	if (m_finished) return;
   int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
 
+	
   if (pid==PID_NIT) 
   {
     m_nitDecoder.OnTsPacket(tsPacket);
@@ -346,20 +264,10 @@ void CPatParser::OnTsPacket(byte* tsPacket)
     m_sdtParser.OnTsPacket(tsPacket);
     return;
   }
-
   if (pid==PID_PAT)
   {
-    CSectionDecoder::OnTsPacket(tsPacket);
+		CSectionDecoder::OnTsPacket(tsPacket);
     return;
-  }
-
-  for (itPmtParser it=m_mapPmtParsers.begin(); it != m_mapPmtParsers.end() ;++it)
-  {
-    CPmtParser* parser=it->second;
-    if (pid==parser->GetPid())
-    {
-		  parser->OnTsPacket(tsPacket);
-    }
   }
 	if (m_pCallback!=NULL)
 	{
@@ -379,12 +287,8 @@ void CPatParser::OnNewSection(CSection& sections)
   byte* section=sections.Data;
 	int section_length=sections.section_length;
 
-  
- // DWORD crc= crc32((char*)&section[start],sections.SectionLength+start+3-5);
-
   int pmtcount=0;
   int loop =(section_length - 9) / 4;
-	bool newPmtsAdded=false;
   for(int i=0; i < loop; i++)
   {
 	  int offset = (8 +(i * 4));
@@ -417,23 +321,8 @@ void CPatParser::OnNewSection(CSection& sections)
         m_tickCount = GetTickCount();
 			//	LogDebug("pat: tsid:%x sid:%x pmt:%x", transport_stream_id,serviceId,pmtPid);
 			}
-
-			itPmtParser it2= m_mapPmtParsers.find(pmtPid);
-			if (it2==m_mapPmtParsers.end())
-			{
-		    CPmtParser* pmtParser = new CPmtParser();
-		    pmtParser->SetFilter(pmtPid,serviceId);
-			  pmtParser->SetPmtCallBack(this);
-		    m_mapPmtParsers[pmtPid]=pmtParser ;
-			  newPmtsAdded=true;
-        m_tickCount = GetTickCount();
-	    }
     }
   }
-	if (newPmtsAdded)
-	{
-			//UpdateHwPids();
-	}
 }
 
 //*****************************************************************************
@@ -458,40 +347,4 @@ void CPatParser::Dump()
 }
 
 //*****************************************************************************
-void CPatParser::OnPmtReceived(int pid)
-{
-	//LogDebug("PatParser:  received pmt:%x", pid);
-	//if ((m_mapPmtParsers.size()+5) <=16) return;
-	//UpdateHwPids();
-}
 
-//*****************************************************************************
-void CPatParser::UpdateHwPids()
-{/*
-	//if (m_pConditionalAccess==NULL) return;
-	vector<int> pids;
-	pids.push_back(0x0); //pat
-	pids.push_back(0x10);//NIT
-	pids.push_back(0x11);//sdt
-	pids.push_back(0x1ffb);//atsc virtual channel table
-	pids.push_back(0x1fff);//padding stream..
-	for (int i=0; i < (int)m_mapPmtParsers.size();++i)
-	{
-		CPmtParser* parser = m_mapPmtParsers[i];
-		if (parser->Ready() == false)
-		{
-			pids.push_back( parser->GetPid() );
-		}
-		if (pids.size()>=16) break;
-	}
-	char buf[1024];
-	strcpy(buf,"");
-	for (int i=0; i < (int)pids.size();++i)
-	{
-		char tmp[100];
-		sprintf(tmp,"%x,", pids[i]);
-		strcat(buf,tmp);
-	}
-	LogDebug("PatParser: filter pids:%s", buf);
-	//m_pConditionalAccess->SetPids(pids);*/
-}

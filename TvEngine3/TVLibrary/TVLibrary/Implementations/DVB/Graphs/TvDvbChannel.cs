@@ -43,8 +43,11 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
 {
-  public class TvDvbChannel : ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel
+  public class TvDvbChannel : ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel, IVideoAudioObserver
   {
+    public delegate void AudioVideoObserverEvent(PidType pidType);
+    public event AudioVideoObserverEvent audioVideoEvent;
+
     #region enums
     /// <summary>
     /// Different states of the card
@@ -541,6 +544,10 @@ namespace TvLibrary.Implementations.DVB
           _startTimeShifting = false;
           SetTimeShiftPids();
           _tsFilterInterface.TimeShiftStart(_subChannelIndex);
+
+          Log.Log.WriteFile("Set video / audio observer");
+          _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
+
           _graphState = GraphState.TimeShifting;
         }
       }
@@ -1106,6 +1113,10 @@ namespace TvLibrary.Implementations.DVB
           _tsFilterInterface.TimeShiftReset(_subChannelIndex);
           SetTimeShiftPids();
           _tsFilterInterface.TimeShiftStart(_subChannelIndex);
+
+          Log.Log.WriteFile("Set video / audio observer");
+          _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
+
           _graphState = GraphState.TimeShifting;
         }
         if (_startRecording)
@@ -1149,64 +1160,6 @@ namespace TvLibrary.Implementations.DVB
       _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid,dvbChannel.ServiceId);
      
       //_linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
-      //Timeshifter adds the pids himself now
-      /*foreach (PidInfo info in _channelInfo.pids)
-      {
-				if (info.HasDescriptorData())
-				{
-          int descriptorLength = info.GetDescriptorData().Length;
-					unsafe
-					{ // we need to pass a pointer to the descriptor data
-						fixed (byte* data = info.GetDescriptorData())
-						{
-							IntPtr pData = new IntPtr(data);
-							if (info.isAC3Audio)
-							{
-								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ac3))", _subChannelId, info.stream_type, info);
-								_tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, true, false, false);
-							}
-							else if (info.IsMpeg2Audio)
-							{
-								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Mpeg2Audio))", _subChannelId, info.stream_type, info);
-                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, false, false, true);
-							}
-							else if (info.IsMpeg1Audio || info.isAudio)
-							{
-								Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Mpeg1Audio))", _subChannelId, info.stream_type, info);
-                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, false, true, false);
-							}
-              else if (info.isTeletext)
-              {
-                Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (ttxt))", _subChannelId, info.stream_type, info);
-                //Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
-                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, false, false, false);
-              }              
-              else if (info.isDVBSubtitle)
-              {
-                Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (Subtitles))", _subChannelId, info.stream_type, info);
-                //Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );									
-                _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData, descriptorLength, false, false, false);
-              }
-              else
-              {
-                if (info.isVideo)
-                {
-                  Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method (unknown type))", _subChannelId, info.stream_type, info);
-                  _tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess                
-                }
-              }
-						}
-					}					
-				}
-				else //no descriptor data, add em the old way.
-				{
-          if (info.isVideo || info.isDVBSubtitle || info.isAudio || info.isAC3Audio)
-          {
-            Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
-            _tsFilterInterface.TimeShiftAddStream(_subChannelIndex, info.pid, info.stream_type, info.language); // stream_type == service_type i guess
-          }
-				}        								
-      }*/
       
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
       _dateTimeShiftStarted = DateTime.Now;
@@ -1530,6 +1483,30 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
+
+    #region IVideoAudioObserver
+    /// <summary>
+    /// Called when tswriter.ax has seen the video / audio data for the first time
+    /// </summary>
+    /// <returns></returns>
+    public int OnNotify(PidType pidType)
+    {
+      try
+      {
+        Log.Log.WriteFile("PID seen - type = {0}", pidType);
+        if (audioVideoEvent != null)
+        {
+          audioVideoEvent(pidType);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+      return 0;
+    }
+    #endregion
+
 
     #region IPMTCallback Members
     /// <summary>

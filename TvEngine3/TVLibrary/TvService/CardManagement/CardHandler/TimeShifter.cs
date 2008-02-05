@@ -24,6 +24,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Net;
 using System.Net.Sockets;
@@ -31,6 +32,7 @@ using DirectShowLib.SBE;
 using TvLibrary;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Hybrid;
@@ -54,6 +56,10 @@ namespace TvService
 		int _waitForTimeshifting = 15;			
 		int _waitForUnscrambled = 5;
 
+    ManualResetEvent _eventAudio; // gets signaled when audio PID is seen
+    ManualResetEvent _eventVideo; // gets signaled when video PID is seen
+    bool _eventsReady = false;
+
     ChannelLinkageGrabber _linkageGrabber = null;
     /// <summary>
     /// Initializes a new instance of the <see cref="TimerShifter"/> class.
@@ -61,6 +67,10 @@ namespace TvService
     /// <param name="cardHandler">The card handler.</param>
     public TimeShifter(ITvCardHandler cardHandler)
     {
+      _eventAudio = new ManualResetEvent(false);
+      _eventVideo = new ManualResetEvent(false);
+      _eventsReady = true;
+
       _cardHandler = cardHandler;
       TvBusinessLayer layer = new TvBusinessLayer();
       _linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
@@ -70,8 +80,6 @@ namespace TvService
 
 			_waitForTimeshifting = Int32.Parse(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
 			_waitForUnscrambled = Int32.Parse(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value);
-      _timeshiftingEpgGrabberEnabled = false;
-      Log.Epg("SORRY - TIMESHIFTING EPG GRABBER IS DISABLED IN THIS SNAPSHOT");
     }
 
 
@@ -138,8 +146,7 @@ namespace TvService
 				{
 					Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
 					return false;
-				}
-
+				} 
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
         if (context == null) return false;
         context.GetUser(ref user);
@@ -195,6 +202,22 @@ namespace TvService
       }
     }
 
+    private void AudioVideoEventHandler(PidType pidType)
+		{
+      Log.Info("audioVideoEventHandler {0}", pidType);
+      // we are only interested in video and audio PIDs
+      if( pidType == PidType.Audio )
+      {
+        _eventAudio.Set();
+      }
+
+      if (pidType == PidType.Video)
+      {
+        _eventVideo.Set();
+      }
+		}
+
+
     /// <summary>
     /// Start timeshifting.
     /// </summary>
@@ -231,6 +254,15 @@ namespace TvService
           if (context == null) return TvResult.UnknownChannel;
           context.GetUser(ref user);
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+          ((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+          ((TvDvbChannel)subchannel).audioVideoEvent += new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+
+          if (!_eventsReady)
+          {
+            _eventAudio = new ManualResetEvent(false);
+            _eventVideo = new ManualResetEvent(false);
+            _eventsReady = true;
+          }
           if (subchannel == null) return TvResult.UnknownChannel;
           if (WaitForUnScrambledSignal(ref user) == false)
           {
@@ -320,6 +352,16 @@ namespace TvService
         if (_cardHandler.DataBaseCard.Enabled == false) return true;        
 				if (false == IsTimeShifting(ref user)) return true;
         if (_cardHandler.Recorder.IsRecording(ref user)) return true;
+
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+        ((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+
+        _eventVideo.Close();
+        _eventAudio.Close();
+        _eventsReady = false;
+
+        Log.Write("card: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel);
+         
         
         lock (this)
         {
@@ -460,6 +502,9 @@ namespace TvService
 			}
       Log.Write("card: WaitForTimeShiftFile");
       if (!WaitForUnScrambledSignal(ref user)) return false;
+      int wait = _waitForTimeshifting * 1000; // in ms
+      int waitForEvent = wait / 5;
+
       DateTime timeStart = DateTime.Now;
       ulong fileSize = 0;
 			ulong initialFileSize = 0;
@@ -469,6 +514,46 @@ namespace TvService
       ulong minTimeShiftFile = 100 * 1024;//500Kb
       if (isRadio)
         minTimeShiftFile = 100 * 1024;//100Kb
+
+      // TODO: add support for analog side
+      if (_cardHandler.Type != CardType.Analog)
+      {
+        if (isRadio)
+        {
+          Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio");
+
+          // wait for audio PID to be seen
+          if (_eventAudio.WaitOne(waitForEvent, true))
+          {
+            // start of the video & audio is seen
+            Log.Write("card: WaitForTimeShiftFile - start of audio is seen");
+            _eventVideo.Reset();
+            _eventAudio.Reset();
+            return true;
+          }
+        }
+        else
+        {
+          Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio & _eventVideo");
+
+          // block until video & audio PIDs are seen or the timeout is reached
+          if (_eventAudio.WaitOne(waitForEvent, true))
+          {
+            _eventAudio.Reset();
+            if (_eventVideo.WaitOne(waitForEvent, true))
+            {
+              // start of the video & audio is seen
+              Log.Write("card: WaitForTimeShiftFile - start of the video & audio is seen");
+              _eventVideo.Reset();
+              return true;
+            }
+          }
+        }
+
+        Log.Write("card: WaitForTimeShiftFile - new observer based method didn't work, using the old one as fall back!");
+      }
+
+      timeStart = DateTime.Now;
       
 			bool initialFileSizeRetrieved = false;
 

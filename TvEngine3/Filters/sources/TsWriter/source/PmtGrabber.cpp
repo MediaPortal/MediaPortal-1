@@ -75,7 +75,6 @@ STDMETHODIMP CPmtGrabber::SetCallBack( IPMTCallback* callback)
 void CPmtGrabber::OnTsPacket(byte* tsPacket)
 {
 	if (m_pCallback==NULL) return;
-	if (GetPid()<=0) return;
   int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
   if (pid != GetPid()) return;
 	CEnterCriticalSection enter(m_section);
@@ -92,12 +91,6 @@ void CPmtGrabber::OnNewSection(CSection& section)
 			return;
 		
 	  CEnterCriticalSection enter(m_section);
-
-		if (section.table_id!=2)
-		{
-			LogDebug("got tableid=%d",section.table_id);
-		  return;
-		}
 
 		if (section.section_length<0 || section.section_length>=MAX_SECTION_LENGTH) return;
 

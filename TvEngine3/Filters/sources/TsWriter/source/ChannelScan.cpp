@@ -38,7 +38,6 @@ CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter)
   m_bIsParsingNIT=false;
 	m_bIsParsing=false;
 	m_pFilter=filter;
-	m_pConditionalAccess=NULL;
 	m_pCallback=NULL;
 }
 CChannelScan::~CChannelScan(void)
@@ -55,13 +54,6 @@ STDMETHODIMP CChannelScan::Start()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		if (m_pConditionalAccess!=NULL)
-		{
-			delete m_pConditionalAccess;
-			m_pConditionalAccess=NULL;
-		}
-	//	m_pConditionalAccess = new CConditionalAccess(m_pFilter->GetFilterGraph());
-		//m_patParser.SetConditionalAccess(m_pConditionalAccess);
 		m_patParser.Reset(m_pCallback);
 		m_bIsParsing=true;
 	}
@@ -73,18 +65,12 @@ STDMETHODIMP CChannelScan::Start()
 }
 STDMETHODIMP CChannelScan::Stop()
 {
-	m_bIsParsing=false;
 	CEnterCriticalSection enter(m_section);
+	m_bIsParsing=false;
 	try
 	{
 		m_pCallback=NULL;
 		m_patParser.Reset(NULL);
-		//m_patParser.SetConditionalAccess(NULL);
-		//if (m_pConditionalAccess!=NULL)
-		//{
-		//	delete m_pConditionalAccess; 
-		//}
-		m_pConditionalAccess=NULL;
 	}
 	catch(...)
 	{
@@ -280,9 +266,9 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 
 void CChannelScan::OnTsPacket(byte* tsPacket)
 {
+	CEnterCriticalSection enter(m_section);
 	if (m_bIsParsing)
 	{
-	  CEnterCriticalSection enter(m_section);
 		m_patParser.OnTsPacket(tsPacket);
 	}
   if (m_bIsParsingNIT)

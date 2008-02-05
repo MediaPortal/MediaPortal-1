@@ -27,6 +27,7 @@
 #include "..\..\shared\adaptionfield.h"
 #include "..\..\shared\pcr.h"
 #include "PcrRefClock.h"
+#include "videoaudioobserver.h"
 #include <vector>
 #include <map>
 using namespace std;
@@ -81,6 +82,7 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 	STDMETHOD(GetMode) (THIS_ int *mode) PURE;
 	STDMETHOD(SetPmtPid) (THIS_ int pmtPid,int serviceId) PURE;
 	STDMETHOD(Pause) (THIS_ BYTE onOff) PURE;
+  STDMETHOD(SetVideoAudioObserver)(IVideoAudioObserver* callback)PURE;
 };
 
 //** timeshifting class
@@ -130,6 +132,7 @@ public:
 	STDMETHODIMP GetMode(int *mode) ;
 	STDMETHODIMP SetPmtPid(int pmtPid,int serviceId);
 	STDMETHODIMP Pause( BYTE onOff) ;
+	STDMETHODIMP SetVideoAudioObserver (IVideoAudioObserver* callback);
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
 
@@ -189,6 +192,5 @@ private:
   CPcrRefClock*	  rclock;
   map<unsigned short,LastPtsDtsRecord> m_mapLastPtsDts;
   typedef map<unsigned short,LastPtsDtsRecord>::iterator imapLastPtsDts;
-
-	bool kwasi;
+	IVideoAudioObserver *m_pVideoAudioObserver;
 };

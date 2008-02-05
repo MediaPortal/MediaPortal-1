@@ -90,8 +90,6 @@ namespace TvService
     /// </summary>
     public void Start()
     {
-      Log.Epg("SORRY - IDLE EPG GRABBER IS DISABLED IN THIS SNAPSHOT.");
-      return;
       TvBusinessLayer layer = new TvBusinessLayer();
       if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
       {
