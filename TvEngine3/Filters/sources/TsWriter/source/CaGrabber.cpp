@@ -31,28 +31,15 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
-FILE* fDump=NULL;
-
-
 CCaGrabber::CCaGrabber(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown( NAME ("MpTsCaGrabber"), pUnk)
 {
-  FILE* fTest=fopen("dump.txt","r");
-  if (fTest!=NULL)
-  {
-    fclose(fTest);
-    ::DeleteFile("C:\\dump.ts");
-    fDump=fopen("c:\\dump.ts","wb+");
-  }
-
 	m_pCallback=NULL;
 	Reset();
 }
+
 CCaGrabber::~CCaGrabber(void)
 {
-  if (fDump!=NULL)
-    fclose(fDump);
-  fDump=NULL;
 }
 
 
@@ -77,11 +64,6 @@ void CCaGrabber::OnTsPacket(byte* tsPacket)
 {
 	if (m_pCallback==NULL) return;
 
-  if (fDump!=NULL)
-  {
-    fwrite(tsPacket,1,188,fDump);
-  }
-
   int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
   if (pid != 1) return;
 	CEnterCriticalSection enter(m_section);
@@ -97,7 +79,6 @@ void CCaGrabber::OnNewSection(CSection& section)
 		if (section.version_number == m_iCaVersion) return;
 	  CEnterCriticalSection enter(m_section);
 
-		if (section.table_id!=1) return;
 		if (section.section_length<0 || section.section_length>=MAX_SECTION_LENGTH) return;
 
 		LogDebug("cagrabber: got ca version:%d %d", section.version_number,m_iCaVersion);
@@ -113,6 +94,7 @@ void CCaGrabber::OnNewSection(CSection& section)
 				LogDebug("cagrabber: do calback");
 				m_pCallback->OnCaReceived();
 			}
+			m_pCallback=NULL;
 		}
 	}
 	catch(...)

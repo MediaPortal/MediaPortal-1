@@ -79,7 +79,6 @@ void CPmtGrabber::OnTsPacket(byte* tsPacket)
   if (pid != GetPid()) return;
 	CEnterCriticalSection enter(m_section);
 	CSectionDecoder::OnTsPacket(tsPacket);
-
 }
 
 void CPmtGrabber::OnNewSection(CSection& section)
@@ -87,21 +86,19 @@ void CPmtGrabber::OnNewSection(CSection& section)
 	try
 	{
 		if (section.table_id!=2) return;
-		if (section.version_number == m_iPmtVersion) 
-			return;
+		if (section.version_number == m_iPmtVersion) return;
 		
 	  CEnterCriticalSection enter(m_section);
 
 		if (section.section_length<0 || section.section_length>=MAX_SECTION_LENGTH) return;
 
-    long serviceId = (section.Data[3] << 8) + section.Data[4];
+		long serviceId = section.table_id_extension;
 		LogDebug("service_id=%d",serviceId);
     if (m_iPmtVersion<0)
-    {
 		  LogDebug("pmtgrabber: got pmt %x sid:%x",GetPid(), serviceId);
-    }
+
 		if (serviceId != m_iServiceId) 
-		{
+		{	
 			LogDebug("pmtgrabber: serviceid mismatch %d != %d",serviceId,m_iServiceId);
 			return;
 		}
@@ -118,6 +115,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
 				LogDebug("pmtgrabber: do calback");
 				m_pCallback->OnPMTReceived();
 			}
+			m_pCallback=NULL;
 		}
 	}
 	catch(...)

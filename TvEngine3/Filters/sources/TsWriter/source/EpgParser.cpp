@@ -138,7 +138,9 @@ bool CEpgParser::IsSectionWanted(int pid,int table_id)
 	{
 		case PID_EPG:
 			return (table_id>=0x4e && table_id<=0x6f);
-		case PID_DISH_EPG || PID_BEV_EPG:
+		case PID_DISH_EPG:
+			return (table_id>=0x80 && table_id<=0xfe);
+		case  PID_BEV_EPG:
 			return (table_id>=0x80 && table_id<=0xfe);
 		case PID_EPG_PREMIERE_DIREKT:
 			return (table_id==0xa0);
@@ -175,6 +177,6 @@ void CEpgParser::AddSectionDecoder(int pid)
 	CSectionDecoder* pDecoder= new CSectionDecoder();
   pDecoder->SetPid(pid);
   pDecoder->EnableCrcCheck(false);
-  m_vecDecoders.push_back(pDecoder);
 	pDecoder->SetCallBack(this);
+  m_vecDecoders.push_back(pDecoder);
 }
