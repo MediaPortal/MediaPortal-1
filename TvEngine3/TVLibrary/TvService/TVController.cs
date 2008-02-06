@@ -130,7 +130,7 @@ namespace TvService
     /// </returns>
     bool IsLocal(int cardId)
     {
-      if (ValidateTvControllerParams(cardId)) return false;
+      if (ValidateTvControllerParams(cardId, false)) return false;
       return _cards[cardId].IsLocal;
     }
 
@@ -2739,18 +2739,23 @@ namespace TvService
 
 		#region private methods
 
-		private bool ValidateTvControllerParams(int cardId)
+		private bool ValidateTvControllerParams(int cardId, bool checkCardPresent)
 		{
-			if (cardId < 0 || !_cards.ContainsKey(cardId) || (!CardPresent(cardId)))
+			if (cardId < 0 || !_cards.ContainsKey(cardId) || (checkCardPresent && !CardPresent(cardId)))
 			{
 				StackTrace st = new StackTrace(true);
 				StackFrame sf = new StackFrame();
 				sf = st.GetFrame(0);
-				Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1} CardPresent {2}", cardId, _cards.ContainsKey(cardId), CardPresent(cardId));				
+				Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1} CardPresent {2}", cardId, _cards.ContainsKey(cardId), CardPresent(cardId));
 				Log.Error("{0}", st);
 				return true;
 			}
 			return false;
+		}
+
+		private bool ValidateTvControllerParams(int cardId)
+		{
+			return ValidateTvControllerParams(cardId, true);
 		}
 
 		private bool ValidateTvControllerParams (User user)
