@@ -28,6 +28,7 @@ using System.Text;
 using System.Xml;
 using System.Net;
 using System.Net.Sockets;
+using System.Diagnostics;
 using DirectShowLib.SBE;
 using TvLibrary;
 using TvLibrary.Implementations;
@@ -43,6 +44,7 @@ using TvControl;
 using TvEngine;
 using TvDatabase;
 using TvEngine.Events;
+
 namespace TvService
 {
   /// <summary>
@@ -2336,8 +2338,14 @@ namespace TvService
 
     public void DiSEqCGotoPosition(int cardId, byte position)
     {
-			if (!_cards.ContainsKey(cardId)) return;
-			if (cardId < 0) return;
+			if (cardId < 0 || !_cards.ContainsKey(cardId))
+			{
+				Log.Error("TVController:DiSEqCGotoPosition - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1}", cardId, _cards.ContainsKey(cardId));
+				StackTrace st = new StackTrace(true);
+				Log.Error("{0}", st);
+				return;
+			}
+
       _cards[cardId].DisEqC.GotoStoredPosition(position);
     }
     #endregion
@@ -2348,9 +2356,21 @@ namespace TvService
     /// <param name="cardId">The card id.</param>
     public void StopGrabbingEpg(User user)
     {
-			if (user == null) return;
-      if (user.CardId < 0) return;
-      if (!_cards.ContainsKey(user.CardId)) return;
+			if (user == null || user.CardId < 0 || !_cards.ContainsKey(user.CardId))
+			{
+				if (user != null)
+				{
+					Log.Error("TVController:StopGrabbingEpg - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2}", user, user.CardId, _cards.ContainsKey(user.CardId));
+				}
+				else
+				{
+					Log.Error("TVController:StopGrabbingEpg - incorrect parameters used! user NULL");
+				}
+				StackTrace st = new StackTrace(true);
+				Log.Error("{0}", st);
+				return;
+			}
+
       _cards[user.CardId].Epg.Stop(user);
     }
 
@@ -2379,8 +2399,14 @@ namespace TvService
 
     public User[] GetUsersForCard(int cardId)
     {
-			if (!_cards.ContainsKey(cardId)) return null;
-			if (cardId < 0) return null;
+			if (cardId < 0 || !_cards.ContainsKey(cardId))
+			{
+				Log.Error("TVController:GetUsersForCard - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1}", cardId, _cards.ContainsKey(cardId));
+				StackTrace st = new StackTrace(true);
+				Log.Error("{0}", st);
+				return null;
+			}
+
       return _cards[cardId].Users.GetUsers();
     }
 
@@ -2542,9 +2568,20 @@ namespace TvService
     /// </returns>
     public bool IsOwner(int cardId, User user)
     {
-			if (user == null) return false;
-      if (cardId < 0) return false;
-      if (!_cards.ContainsKey(cardId)) return false;
+			if (user == null || user.CardId < 0 || !_cards.ContainsKey(user.CardId))
+			{
+				if (user != null)
+				{
+					Log.Error("TVController:IsOwner - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2}", user, user.CardId, _cards.ContainsKey(user.CardId));
+				}
+				else
+				{
+					Log.Error("TVController:IsOwner - incorrect parameters used! user NULL");
+				}
+				StackTrace st = new StackTrace(true);
+				Log.Error("{0}", st);
+				return false;
+			}
       return _cards[cardId].Users.IsOwner(user);
     }
 
@@ -2555,9 +2592,11 @@ namespace TvService
     /// <param name="user">The user.</param>
     public void RemoveUserFromOtherCards(int cardId, User user)
     {
-			if (user == null) return;
-			if (!_cards.ContainsKey(cardId)) return;
-			if (cardId < 0) return;
+			if (ValidateTvControllerParamErr(user) || ValidateTvControllerParamErr(cardId))
+			{							
+				return;
+			}
+			
       Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
       ITVCard card = _cards[cardId].Card;
       while (enumerator.MoveNext())
@@ -2571,16 +2610,21 @@ namespace TvService
 
     public bool SupportsSubChannels(int cardId)
     {
-      if (cardId < 0) return false;
-      if (!_cards.ContainsKey(cardId)) return false;
+			if (ValidateTvControllerParamErr(cardId))
+			{				
+				return false;
+			}
+
       return _cards[cardId].SupportsSubChannels;
     }
 
     public void HeartBeat(User user)
     {
-      if (user == null) return;
-      if (user.CardId < 0) return;
-      if (!_cards.ContainsKey(user.CardId)) return;
+			if (ValidateTvControllerParamErr(user))
+			{				
+				return;
+			}
+
       _cards[user.CardId].Users.HeartBeartUser(user);
     }
 
@@ -2592,19 +2636,19 @@ namespace TvService
     /// <returns>TvResult indicating whether method succeeded</returns>
     TvResult CardTune(ref User user, IChannel channel, Channel dbChannel)
     {
-			if (user == null) return TvResult.UnknownError;
+			if (ValidateTvControllerParamErr(user))
+			{				
+				return TvResult.CardIsDisabled;
+			}
+			
       try
       {
-        int idCard = user.CardId;        
-				if (!_cards.ContainsKey(idCard)) return TvResult.CardIsDisabled;
-				if (idCard < 0) return TvResult.CardIsDisabled;
-
-        if (_cards[idCard].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
-        if (!CardPresent(idCard)) return TvResult.CardIsDisabled;
+				if (_cards[user.CardId].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
+				if (!CardPresent(user.CardId)) return TvResult.CardIsDisabled;
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
-        TvResult result = _cards[idCard].Tuner.CardTune(ref user, channel, dbChannel);
+				TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);
 
-        RemoveUserFromOtherCards(idCard, user);
+				RemoveUserFromOtherCards(user.CardId, user);
         Log.Info("control1:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
         return result;
       }
@@ -2622,16 +2666,16 @@ namespace TvService
     /// <returns>TvResult indicating whether method succeeded</returns>
     TvResult CardTimeShift(ref User user, ref string fileName)
     {
-			if (user == null) return TvResult.UnknownError;
-      int idCard = user.CardId;      
-			if (!_cards.ContainsKey(idCard)) return TvResult.CardIsDisabled;
-			if (idCard < 0) return TvResult.UnknownError;
+			if (ValidateTvControllerParamErr(user))			
+			{								
+				return TvResult.UnknownError;
+			}
 
-      if (_cards[idCard].IsLocal)
+			if (_cards[user.CardId].IsLocal)
       {
         Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), user));
       }
-      return _cards[idCard].TimeShifter.CardTimeShift(ref user, ref fileName);
+			return _cards[user.CardId].TimeShifter.CardTimeShift(ref user, ref fileName);
     }
 
     /// <summary>
@@ -2742,8 +2786,11 @@ namespace TvService
 
     public bool IsTunedToTransponder(int cardId, IChannel transponder)
     {
-      if (cardId < 0) return false;
-      if (!_cards.ContainsKey(cardId)) return false;
+			if (ValidateTvControllerParamErr(cardId))			
+			{				
+				return false;
+			}
+      
       return _cards[cardId].Tuner.IsTunedToTransponder(transponder);
     }
 
@@ -2772,10 +2819,11 @@ namespace TvService
     /// <returns></returns>
     VirtualCard GetVirtualCard(User user)
     {
-			if (user == null) return null;
-			if (!_cards.ContainsKey(user.CardId)) return null;
-			if (user.CardId < 0) return null;
-
+			if (ValidateTvControllerParamErr(user))
+			{
+				return null;
+			}			
+			
       VirtualCard card = new VirtualCard(user);
       card.RecordingFormat = _cards[user.CardId].DataBaseCard.RecordingFormat;
       card.RecordingFolder = _cards[user.CardId].DataBaseCard.RecordingFolder;
@@ -2828,6 +2876,46 @@ namespace TvService
 
         return true;
       }
-    }
-  }
+		}
+
+		#region private methods
+
+		private bool ValidateTvControllerParamErr(int cardId)
+		{
+			if (cardId < 0 || !_cards.ContainsKey(cardId))
+			{
+				StackTrace st = new StackTrace(true);
+				StackFrame sf = new StackFrame();
+				sf = st.GetFrame(0);
+				Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1}", cardId, _cards.ContainsKey(cardId));				
+				Log.Error("{0}", st);
+				return true;
+			}
+			return false;
+		}
+
+		private bool ValidateTvControllerParamErr (User user)
+		{			
+			if (user == null || user.CardId < 0 || !_cards.ContainsKey(user.CardId))
+			{
+				StackTrace st = new StackTrace(true);
+				StackFrame sf = new StackFrame();
+				sf = st.GetFrame(0);
+
+				if (user != null)
+				{
+					Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2}", user, user.CardId, _cards.ContainsKey(user.CardId));
+				}
+				else
+				{
+					Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! user NULL");
+				}				
+				Log.Error("{0}", st);
+				return true;
+			}
+			return false;
+		}
+
+		#endregion
+	}
 }
