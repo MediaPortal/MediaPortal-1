@@ -58,6 +58,7 @@ namespace TvService
 
     ManualResetEvent _eventAudio; // gets signaled when audio PID is seen
     ManualResetEvent _eventVideo; // gets signaled when video PID is seen
+    bool _eventsReady = false;
 
     ChannelLinkageGrabber _linkageGrabber = null;
     /// <summary>
@@ -68,6 +69,7 @@ namespace TvService
     {
       _eventAudio = new ManualResetEvent(false);
       _eventVideo = new ManualResetEvent(false);
+      _eventsReady = true;
 
       _cardHandler = cardHandler;
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -255,9 +257,12 @@ namespace TvService
           ((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
           ((TvDvbChannel)subchannel).audioVideoEvent += new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
 
-          _eventAudio = new ManualResetEvent(false);
-          _eventVideo = new ManualResetEvent(false);
-
+          if (!_eventsReady)
+          {
+            _eventAudio = new ManualResetEvent(false);
+            _eventVideo = new ManualResetEvent(false);
+            _eventsReady = true;
+          }
           if (subchannel == null) return TvResult.UnknownChannel;
           if (WaitForUnScrambledSignal(ref user) == false)
           {
@@ -350,6 +355,10 @@ namespace TvService
 
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
         ((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+
+        _eventVideo.Close();
+        _eventAudio.Close();
+        _eventsReady = false;
 
         Log.Write("card: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel);
          
@@ -519,9 +528,7 @@ namespace TvService
             // start of the video & audio is seen
             Log.Write("card: WaitForTimeShiftFile - start of audio is seen");
             _eventVideo.Reset();
-            _eventVideo.Close();
             _eventAudio.Reset();
-            _eventAudio.Close();
             return true;
           }
         }
@@ -533,13 +540,11 @@ namespace TvService
           if (_eventAudio.WaitOne(waitForEvent, true))
           {
             _eventAudio.Reset();
-            _eventAudio.Close();
             if (_eventVideo.WaitOne(waitForEvent, true))
             {
               // start of the video & audio is seen
               Log.Write("card: WaitForTimeShiftFile - start of the video & audio is seen");
               _eventVideo.Reset();
-              _eventVideo.Close();
               return true;
             }
           }
@@ -640,17 +645,6 @@ namespace TvService
 					stream.Close();
 					stream.Dispose();
 				}
-
-        if (_eventAudio != null)
-        {
-          _eventAudio.Reset();
-          _eventAudio.Close();
-        }
-        if (_eventVideo != null)
-        {
-          _eventVideo.Reset();
-          _eventVideo.Close();
-        }
 			}
       return false;
     }
