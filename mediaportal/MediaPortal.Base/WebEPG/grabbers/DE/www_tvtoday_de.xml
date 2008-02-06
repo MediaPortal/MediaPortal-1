@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" version="2.1.0" />
+  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
     <!-- Haupt -->
     <Channel id="ard.de" siteId="ARD" />
@@ -56,7 +56,6 @@
     <Channel id="neunlive.de" siteId="NLIVE" />
     <Channel id="qvc.de" siteId="QVC" />
     <Channel id="tw1.at" siteId="TW1" />
-    <Channel id="terranova.de" siteId="TENO" />
     <Channel id="comedycentral.de" siteId="CC" />
     <!-- News -->
     <Channel id="bbcworld.com" siteId="BBC" />
@@ -122,41 +121,41 @@
     <Search maxlistings="30" />
     <Html>
       <Template name="default">
-        <SectionTemplate tags="TASB">
+        <SectionTemplate tags="TB">
           <TemplateText>
-            &lt;tr valign="top"&gt;
-            &lt;td&gt;
-            &lt;span class="tv-sendung-uhrzeit"&gt;&lt;#START&gt;&lt;br/&gt;-&lt;br/&gt;&lt;#END&gt;&lt;/span&gt;
-            &lt;/td&gt;
-            &lt;td&gt;
-            &lt;img/&gt;
-            &lt;script language="Javascript"&gt;
-            &lt;/script&gt;
-            &lt;/td&gt;
-            &lt;td&gt;&lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;z(&gt;&lt;span class="tv-sendung-info"&gt;&lt;#SUBTITLE&gt;&lt;/span&gt;&lt;/z)?&gt;
-            &lt;br/&gt;
-            &lt;span class="tv-sendung-info"&gt;(&lt;a&gt;&lt;b&gt;Arte&lt;/b&gt;&lt;/a&gt;) &lt;#DURATION&gt; Min. Showview &lt;#SHOWVIEW&gt;&lt;br/&gt;&lt;#GENRE&gt;&lt;img/&gt;&lt;img/&gt;&lt;/span&gt;
-            &lt;/td&gt;
-            &lt;td&gt;
-            &lt;a&gt;&lt;img/&gt;&lt;/a&gt;&lt;br/&gt;
-            &lt;/td&gt;
-            &lt;/tr&gt;
+           &lt;tr valign="top"&gt;
+				&lt;td&gt;
+					&lt;span class="tv-sendung-uhrzeit"&gt;&lt;#START&gt;&lt;br/&gt;-&lt;br/&gt;&lt;#END&gt;&lt;/span&gt;
+				&lt;/td&gt;
+				&lt;td&gt;
+					&lt;img/&gt;
+					&lt;script language="Javascript"&gt;&lt;/script&gt;
+				&lt;/td&gt;
+				&lt;td&gt;&lt;#NOTUSED&gt;&lt;/td&gt;
+				&lt;td&gt;
+					&lt;#TITLE&gt;
+					&lt;#NOTUSED2&gt;&lt;br/&gt;
+					&lt;span class="tv-sendung-info"&gt;
+						(&lt;a&gt;&lt;b&gt;ARD&lt;/b&gt;&lt;/a&gt;) &lt;#DURATION&gt; Min. Showview &lt;#SHOWVIEW&gt;&lt;br/&gt;&lt;#GENRE&gt;
+						
+					&lt;/span&gt;
+				&lt;/td&gt;
+				&lt;td&gt;
+					&lt;a&gt;&lt;img/&gt;&lt;/a&gt;&lt;br/&gt;
+				&lt;/td&gt;
+			&lt;/tr&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
       <Template name="Details">
         <SectionTemplate tags="T">
           <TemplateText>
-            &lt;td align="left" class="tv-sendung-info"&gt;&lt;#DESCRIPTION&gt;&lt;br/&gt;&gt; &lt;#END&gt; | &lt;#DURATION&gt; Min. | &lt;#SHOWVIEW&gt;
-            &lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-            &lt;td align="left"&gt;&lt;img /&gt;&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-            &lt;td align="left" class="tv-sendung-info"&gt;
-            &lt;/td&gt;
-            &lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;br/&gt;&gt; &lt;#END&gt; | &lt;#DURATION&gt; Min. | &lt;#SHOWVIEW&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
