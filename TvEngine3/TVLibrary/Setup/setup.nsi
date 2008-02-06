@@ -9,7 +9,7 @@
 #            Haven't uploaded it, to save 2.5 MB in SVN
 #**********************************************************************************************************#
 
-Name "MediaPortal TV Server"
+Name "MediaPortal TV Server / Client"
 
 SetCompressor /SOLID lzma
 RequestExecutionLevel admin
@@ -49,22 +49,23 @@ Var LibInstall
 Var LibInstall2
 Var CommonAppData
 Var MPBaseDir
+Var InstallPath
 
 
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_COMPONENTS
-!define MUI_PAGE_CUSTOMFUNCTION_PRE dir_pre             # Check, if the Server Component has been selected. Only display the directory page in this vase
+!define MUI_PAGE_CUSTOMFUNCTION_PRE dir_pre          # Check, if the Server Component has been selected. Only display the directory page in this vase
 !insertmacro MUI_PAGE_DIRECTORY
-!define MUI_PAGE_CUSTOMFUNCTION_PRE startmenu_pre       # Check, if the Server Component has been selected. Only display the Startmenu page in this vase
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_INSTFILES
 !define MUI_PAGE_CUSTOMFUNCTION_PRE finish_pre       # Check, if the Server Component has been selected. Only display the Startmenu page in this vase
 !insertmacro MUI_PAGE_FINISH
 
 # Uninstall Pages
-!insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_COMPONENTS
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.dir_pre        # Check, if the Server Component has been selected. Only display the directory page in this vase
+!insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
 # Installer languages
@@ -91,6 +92,21 @@ ShowUninstDetails show
 Section "MediaPortal TV Server" SecServer
     SetOverwrite on
     DetailPrint "Installing MediaPortal TV Server"
+    
+    ReadRegStr $InstallPath HKLM "${REGKEY}" InstallPath
+    ${If} $InstallPath != ""
+        MessageBox MB_OKCANCEL|MB_ICONQUESTION "TV Server is already installed.\r\nPress 'OK' to overwrite the existing installation\r\nPress 'Cancel' to Abort the installation" IDOK lbl_install IDCANCEL 0
+        DetailPrint "User pressed Cancel. Skipping installation"
+        Return
+      lbl_install:
+        # Uninstall / Stop the TV Service before proceeding with the installation 
+        DetailPrint "DeInstalling TVService"
+        ExecWait '"$InstallPath\TVService.exe" /uninstall'
+        DetailPrint "Finished DeInstalling TVService"
+    ${EndIf}    
+    
+    Pop $0
+    
     #---------------------------- File Copy ----------------------
     # The Plugin Directory
     SetOutPath $INSTDIR\Plugins
@@ -102,7 +118,7 @@ Section "MediaPortal TV Server" SecServer
     File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.Interfaces.dll
     File ..\Plugins\ServerBlaster\ServerBlaster\bin\Release\ServerBlaster.dll
     File ..\Plugins\TvMovie\bin\Release\TvMovie.dll
-    File ..\Plugins\XmlTvImport\obj\Release\XmlTvImport.dll
+    File ..\Plugins\XmlTvImport\bin\Release\XmlTvImport.dll
     
     # Tuning Parameter Directory
     SetOutPath $INSTDIR
@@ -168,26 +184,14 @@ Section "MediaPortal TV Server" SecServer
     WriteRegStr HKLM "${REGKEY}" InstallPath $INSTDIR
     
     # Create Short Cuts
-    SetOutPath $INSTDIR
-    WriteUninstaller $INSTDIR\uninstall-tve3.exe
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     SetOutPath $SMPROGRAMS\$StartMenuGroup
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk" "$CommonAppData\log" "" "$CommonAppData\log" 0 "" "" "TV Server Log Files"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall-tve3.exe
+    # Change outpath back to the install dir, so that the shortcut to SetupTV gets the correct working directory
+    SetOutPath $INSTDIR
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
     !insertmacro MUI_STARTMENU_WRITE_END
-    
-    # Write Uninstall Information
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" URLInfoAbout "${URL}"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $INSTDIR\uninstall-tve3.exe
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall-tve3.exe
-    WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
-    WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
-    
 SectionEnd
 
 Section "MediaPortal TV Plugin/Client" SecClient
@@ -198,6 +202,7 @@ Section "MediaPortal TV Plugin/Client" SecClient
     DetailPrint "Installing MediaPortal TVPlugin"
     
     ${If} $MPBaseDir == ""
+        MessageBox MB_OK|MB_ICONEXCLAMATION "Couldn't find an existing MediaPortal Installation.\r\nAborting the TV Plugin installation"       
         DetailPrint "No MediaPortal Installation found. Skipping installation"
         Return
     ${EndIf}
@@ -214,6 +219,7 @@ Section "MediaPortal TV Plugin/Client" SecClient
     
     # Common Files
     SetOutPath $MPBaseDir
+    File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.Interfaces.dll
     File ..\TvControl\bin\Release\TvControl.dll
     File ..\TVDatabase\bin\Release\TVDatabase.dll
     File ..\TVDatabase\references\Gentle.Common.DLL
@@ -250,99 +256,28 @@ Section -Redist SecRedist
     Delete /REBOOTOK  $INSTDIR\vcredist_x86.exe
 SectionEnd
 
-LangString DESC_SECClient ${LANG_ENGLISH} "Installs the MediaPortal TVServer Client Plugin"
-LangString DESC_SECServer ${LANG_ENGLISH} "Installs the MediaPortal TVServer"
+# This section is executed at the end to do some house keeping
+Section -post 
+    # Write the Uninstaller
+    SetOutPath $INSTDIR
+    WriteUninstaller $INSTDIR\uninstall-tve3.exe
+    
+    # Create Uninstaller Short Cut
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    SetOutPath $SMPROGRAMS\$StartMenuGroup
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall-tve3.exe
+    !insertmacro MUI_STARTMENU_WRITE_END
 
-!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SECClient)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SECServer)
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
-
-# Macro for selecting uninstaller sections
-!macro SELECT_UNSECTION SECTION_NAME UNSECTION_ID
-    Push $R0
-    ReadRegStr $R0 HKLM "${REGKEY}\Components" "${SECTION_NAME}"
-    StrCmp $R0 1 0 next${UNSECTION_ID}
-    !insertmacro SelectSection "${UNSECTION_ID}"
-    GoTo done${UNSECTION_ID}
-next${UNSECTION_ID}:
-    !insertmacro UnselectSection "${UNSECTION_ID}"
-    # Make the unselected section read only
-    !insertmacro SetSectionFlag "${UNSECTION_ID}" 16
-done${UNSECTION_ID}:
-    Pop $R0
-!macroend
-
-# Uninstaller sections
-Section /o un.SecServer UNSecServer
-    
-    # Remove Folders
-    RmDir /r /REBOOTOK $INSTDIR\Plugins
-    RmDir /r /REBOOTOK $INSTDIR\TuningParameters
-    
-    # De-instell the service
-        # Installing the TVService 
-    DetailPrint "DeInstalling TVService"
-    ExecWait '"$INSTDIR\TVService.exe" /uninstall'
-    DetailPrint "Finished Installing TVService"
-       
-    # Unregister the Filters
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\mpFileWriter.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\MpgMux.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\PDMpgMux.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\RTPSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\RtspSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\TSFileSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\TsReader.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\TsWriter.ax
-    
-    # And finally remove the complete install dir
-    RmDir /r $InstDir
-    
-    # Remove Registry Keys and Start Menu
-    DeleteRegValue HKLM "${REGKEY}\Components" SecServer
-    DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
-    Delete /REBOOTOK $INSTDIR\uninstall-tve3.exe
-    DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
-    DeleteRegValue HKLM "${REGKEY}" InstallPath
-    DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
-    DeleteRegKey /IfEmpty HKLM "${REGKEY}"
-    RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
-    RmDir /REBOOTOK $INSTDIR
+    # Write Uninstall Information
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" URLInfoAbout "${URL}"
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $INSTDIR\uninstall-tve3.exe
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall-tve3.exe
+    WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
+    WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
 SectionEnd
-
-# Uninstaller sections
-Section /o un.SecClient UNSecClient
-    
-    # The Plugins
-    Delete /REBOOTOK  $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
-    Delete /REBOOTOK  $MPBaseDir\Plugins\Windows\TvPlugin.dll
-    
-    # Common Files
-    Delete /REBOOTOK  $MPBaseDir\TvControl.dll
-    Delete /REBOOTOK  $MPBaseDir\TVDatabase.dll
-    Delete /REBOOTOK  $MPBaseDir\Gentle.Common.DLL
-    Delete /REBOOTOK  $MPBaseDir\Gentle.Framework.DLL
-    Delete /REBOOTOK  $MPBaseDir\Gentle.Provider.MySQL.dll
-    Delete /REBOOTOK  $MPBaseDir\Gentle.Provider.SQLServer.dll
-    Delete /REBOOTOK  $MPBaseDir\log4net.dll
-    Delete /REBOOTOK  $MPBaseDir\MySql.Data.dll
-    Delete /REBOOTOK  $MPBaseDir\TvBusinessLayer.dll
-    Delete /REBOOTOK  $MPBaseDir\TvLibrary.Interfaces.dll
-    Delete /REBOOTOK  $MPBaseDir\Gentle.config
-    
-    #Unregister the Filters
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
-   
-    DeleteRegValue HKLM "${REGKEY}\Components" SecClient
-    DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
-    DeleteRegKey /IfEmpty HKLM "${REGKEY}"
-SectionEnd
-
 
 # Installer functions
 Function .onInit
@@ -367,13 +302,164 @@ Function .onInit
     ; Needed for Library Install
     ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
     Push $0
-    ReadRegSTR $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+    ReadRegSTR $0 HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
     ClearErrors
     StrCmp $0 "" +2
     StrCpy $LibInstall2 1
     Pop $0 
     
 FunctionEnd
+
+# Uninstall TV Server
+Section /o "un.MediaPortal TV Server" UNSecServer
+     
+    # De-instell the service
+    DetailPrint "DeInstalling TVService"
+    ExecWait '"$INSTDIR\TVService.exe" /uninstall'
+    DetailPrint "Finished DeInstalling TVService"
+       
+    # Unregister the Filters
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\mpFileWriter.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\PDMpgMux.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\RTPSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\RtspSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\TSFileSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\TsReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\TsWriter.ax
+
+    # Remove Folders
+    RmDir /r /REBOOTOK $INSTDIR\Plugins
+    RmDir /r /REBOOTOK $INSTDIR\TuningParameters
+    
+    # And finally remove all the files installed
+    # Leave the directory in place, as it might contain user modified files
+    Delete /REBOOTOK $INSTDIR\DirectShowLib.dll
+    Delete /REBOOTOK $INSTDIR\dvblib.dll
+    Delete /REBOOTOK $INSTDIR\PluginBase.dll
+    Delete /REBOOTOK $INSTDIR\PowerScheduler.Interfaces.DLL
+    Delete /REBOOTOK $INSTDIR\Blaster.exe
+    Delete /REBOOTOK $INSTDIR\mp.ico
+    Delete /REBOOTOK $INSTDIR\SetupTv.exe
+    Delete /REBOOTOK $INSTDIR\SetupTv.exe.config
+    Delete /REBOOTOK $INSTDIR\TvControl.dll
+    Delete /REBOOTOK $INSTDIR\TVDatabase.dll
+    Delete /REBOOTOK $INSTDIR\Gentle.Common.DLL
+    Delete /REBOOTOK $INSTDIR\Gentle.Framework.DLL
+    Delete /REBOOTOK $INSTDIR\Gentle.Provider.MySQL.dll
+    Delete /REBOOTOK $INSTDIR\Gentle.Provider.SQLServer.dll
+    Delete /REBOOTOK $INSTDIR\log4net.dll
+    Delete /REBOOTOK $INSTDIR\MySql.Data.dll
+    Delete /REBOOTOK $INSTDIR\TvBusinessLayer.dll
+    Delete /REBOOTOK $INSTDIR\TvLibrary.Interfaces.dll
+    Delete /REBOOTOK $INSTDIR\TVLibrary.dll
+    Delete /REBOOTOK $INSTDIR\Germany_Unitymedia_NRW.dvbc
+    Delete /REBOOTOK $INSTDIR\Gentle.config
+    Delete /REBOOTOK $INSTDIR\TvService.exe
+    Delete /REBOOTOK $INSTDIR\TvService.exe.config
+    Delete /REBOOTOK $INSTDIR\SetupControls.dll
+    #Filters
+    Delete /REBOOTOK $INSTDIR\dxerr9.dll
+    Delete /REBOOTOK $INSTDIR\hauppauge.dll
+    Delete /REBOOTOK $INSTDIR\KNCBDACTRL.dll
+    Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
+    Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
+    Delete /REBOOTOK $INSTDIR\StreamingServer.dll
+    Delete /REBOOTOK $INSTDIR\mpFileWriter.ax
+    Delete /REBOOTOK $INSTDIR\MpgMux.ax
+    Delete /REBOOTOK $INSTDIR\PDMpgMux.ax
+    Delete /REBOOTOK $INSTDIR\RTPSource.ax
+    Delete /REBOOTOK $INSTDIR\RtspSource.ax
+    Delete /REBOOTOK $INSTDIR\TSFileSource.ax
+    Delete /REBOOTOK $INSTDIR\TsReader.ax
+    Delete /REBOOTOK $INSTDIR\TsWriter.ax
+    
+    # Remove Registry Keys and Start Menu
+    DeleteRegValue HKLM "${REGKEY}\Components" SecServer
+    DeleteRegValue HKLM "${REGKEY}" InstallPath
+    
+    # Check, if we have a Client installed. If Not, we can cleanup the registry and start menu
+    Push $R0
+    ReadRegStr $R0 HKLM "${REGKEY}\Components" SecClient
+    ${If} $R0 == ""
+        DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
+        Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
+        Delete /REBOOTOK $INSTDIR\uninstall-tve3.exe
+        DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
+        RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup       
+        DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
+        DeleteRegKey /IfEmpty HKLM "${REGKEY}"           
+    ${EndIf}
+    Pop $R0
+SectionEnd
+
+# Uninstall TV Plugin
+Section /o "un.MediaPortal TV Plugin/Client" UNSecClient
+    
+    # The Plugins
+    Delete /REBOOTOK  $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
+    Delete /REBOOTOK  $MPBaseDir\Plugins\Windows\TvPlugin.dll
+    
+    # Common Files
+    Delete /REBOOTOK  $MPBaseDir\PowerScheduler.Interfaces.dll
+    Delete /REBOOTOK  $MPBaseDir\TvControl.dll
+    Delete /REBOOTOK  $MPBaseDir\TVDatabase.dll
+    Delete /REBOOTOK  $MPBaseDir\Gentle.Common.DLL
+    Delete /REBOOTOK  $MPBaseDir\Gentle.Framework.DLL
+    Delete /REBOOTOK  $MPBaseDir\Gentle.Provider.MySQL.dll
+    Delete /REBOOTOK  $MPBaseDir\Gentle.Provider.SQLServer.dll
+    Delete /REBOOTOK  $MPBaseDir\log4net.dll
+    Delete /REBOOTOK  $MPBaseDir\MySql.Data.dll
+    Delete /REBOOTOK  $MPBaseDir\TvBusinessLayer.dll
+    Delete /REBOOTOK  $MPBaseDir\TvLibrary.Interfaces.dll
+    Delete /REBOOTOK  $MPBaseDir\Gentle.config
+    
+    #Unregister the Filters
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
+   
+    Delete /REBOOTOK  $MPBaseDir\DVBSub2.ax
+    Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
+    Delete /REBOOTOK  $MPBaseDir\TSFileSource.ax
+    Delete /REBOOTOK  $MPBaseDir\TsReader.ax
+   
+    DeleteRegValue HKLM "${REGKEY}\Components" SecClient
+    
+    # Check, if we have a TV Server installed. If Not, we can cleanup the registry and start menu
+    Push $R0
+    Push $R1
+    ReadRegStr $R0 HKLM "${REGKEY}\Components" SecServer
+    ${If} $R0 == ""    
+        # Get the uninstall string, so that we can delete the exe
+        ReadRegStr $R1 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString       
+        Delete /REBOOTOK $R1
+        Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
+        DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
+        DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
+        RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup           
+        DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
+        DeleteRegKey /IfEmpty HKLM "${REGKEY}"
+    ${EndIf}
+    Pop $R0
+    Pop $R1
+SectionEnd
+
+# Macro for selecting uninstaller sections
+!macro SELECT_UNSECTION SECTION_NAME UNSECTION_ID
+    Push $R0
+    ReadRegStr $R0 HKLM "${REGKEY}\Components" "${SECTION_NAME}"
+    StrCmp $R0 1 0 next${UNSECTION_ID}
+    !insertmacro SelectSection "${UNSECTION_ID}"
+    GoTo done${UNSECTION_ID}
+next${UNSECTION_ID}:
+    !insertmacro UnselectSection "${UNSECTION_ID}"
+    # Make the unselected section read only
+    !insertmacro SetSectionFlag "${UNSECTION_ID}" 16
+done${UNSECTION_ID}:
+    Pop $R0
+!macroend
 
 # Uninstaller functions
 Function un.onInit
@@ -383,7 +469,7 @@ Function un.onInit
     !insertmacro SELECT_UNSECTION SecServer ${UNSecServer}
     !insertmacro SELECT_UNSECTION SecClient ${UNSecClient}
     
-        ; Get the Common Application Data Folder
+    ; Get the Common Application Data Folder
     ; Set the Context to alll, so that we get the All Users folder
     SetShellVarContext all
     StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
@@ -392,9 +478,20 @@ Function un.onInit
 FunctionEnd
 
 # Installer Language Strings
-# TODO Update the Language Strings with the appropriate translations.
-
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
+
+LangString DESC_SECClient ${LANG_ENGLISH} "Installs the MediaPortal TVServer Client Plugin"
+LangString DESC_SECServer ${LANG_ENGLISH} "Installs the MediaPortal TVServer"
+
+LangString DESC_UnSECClient ${LANG_ENGLISH} "Uninstalls the MediaPortal TVServer Client Plugin"
+LangString DESC_UnSECServer ${LANG_ENGLISH} "Uninstalls the MediaPortal TVServer"
+
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SECClient)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SECServer)
+  !insertmacro MUI_DESCRIPTION_TEXT ${UnSecClient} $(DESC_UNSECClient)
+  !insertmacro MUI_DESCRIPTION_TEXT ${UnSecServer} $(DESC_UnSECServer) 
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 # This function is called, before the Directory Page is displayed
 # It checks, if the Server has been selected and only displays the Directory page in this case
@@ -407,10 +504,10 @@ Function dir_pre
          ${EndIf}
 Functionend
 
-# This function is called, before the Startmenu Page is displayed
+# This function is called, before the Uninstall Confirmation Page is displayed
 # It checks, if the Server has been selected and only displays the Directory page in this case
-Function startmenu_pre
-         ${If} ${SectionIsSelected} SecServer
+Function un.dir_pre
+         ${If} ${SectionIsSelected} UNSecServer
             strcpy $0 1
          ${Else}
             strcpy $0 2
