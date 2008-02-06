@@ -113,12 +113,8 @@ STDMETHODIMP CRecorder::SetPmtPid(int pmtPid, int serviceId )
 	CEnterCriticalSection enter(m_section);
 	m_iPmtPid=pmtPid;
   m_iServiceId=serviceId;
-	LogDebug("Recorder:pmt pid:%x",m_iPmtPid);
-  LogDebug("Recorder:serviceId:%x",serviceId);
-  if (m_pPmtParser)
-  {
-    m_pPmtParser->SetPid(pmtPid);
-  }
+	LogDebug("Recorder:pmt pid:%x sid:%x",m_iPmtPid,serviceId);
+	m_pPmtParser->SetFilter(pmtPid,serviceId);
 	return S_OK;
 }
 
