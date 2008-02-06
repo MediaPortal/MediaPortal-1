@@ -189,7 +189,7 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 			return;
 		time_t currentTime=time(NULL);
 		time_t timespan=currentTime-m_scanTimeout;
-		if (timespan>5)
+		if (timespan>8)
 		{
 			m_bScanning=false;
 			m_bScanningDone=true;
