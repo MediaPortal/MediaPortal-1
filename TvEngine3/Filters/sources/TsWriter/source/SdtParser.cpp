@@ -103,9 +103,6 @@ void  CSdtParser::OnNewSection(CSection& sections)
         info.NetworkId=original_network_id;
 				info.TransportId=sections.table_id_extension;
         info.ServiceId=service_id;
-        info.EIT_schedule_flag=EIT_schedule_flag;
-        info.EIT_present_following_flag=EIT_present_following_flag;
-        info.RunningStatus=running_status;
         info.FreeCAMode=free_CA_mode;
 				info.OtherMux = (sections.table_id==0x46);
 				m_bFound=true;

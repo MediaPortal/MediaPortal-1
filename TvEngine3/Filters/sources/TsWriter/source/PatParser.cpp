@@ -48,6 +48,14 @@ CPatParser::~CPatParser(void)
 //*****************************************************************************
 void  CPatParser::CleanUp()
 {
+	itPmtParser it=m_pmtParsers.begin();
+	while (it!=m_pmtParsers.end())
+	{
+		CPmtParser* parser=*it;
+		delete parser;
+		++it;
+	}
+	m_pmtParsers.clear();
   m_mapChannels.clear();
   m_bDumped=false;
 }
@@ -200,9 +208,6 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 			info.NetworkId=sdtInfo.NetworkId;
 			info.TransportId=sdtInfo.TransportId;
 			info.ServiceId=sdtInfo.ServiceId;
-			info.EIT_schedule_flag=sdtInfo.EIT_schedule_flag;
-			info.EIT_present_following_flag=sdtInfo.EIT_present_following_flag;
-			info.RunningStatus=sdtInfo.RunningStatus;
 			info.FreeCAMode=sdtInfo.FreeCAMode;
 			info.ServiceType=sdtInfo.ServiceType;
 			info.OtherMux=sdtInfo.OtherMux;
@@ -236,8 +241,65 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 			}
 		}
 	}
-  return;
-  
+}
+
+void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfo)
+{
+	
+	if (m_vctParser.Count()!=0) return;
+  itChannels it=m_mapChannels.find(serviceId);
+  if (it!=m_mapChannels.end())
+  {
+    CChannelInfo& info=it->second;
+		if (!info.PmtReceived==false) 
+		{
+			int hasVideo; int hasAudio;
+			AnalyzePidInfo(pidInfo,&hasVideo,&hasAudio);
+			info.hasVideo=hasVideo;
+			info.hasAudio=hasAudio;
+			info.PmtReceived=true;
+      m_tickCount = GetTickCount();
+			if (m_pCallback!=NULL)
+			{
+				if (IsReady() )
+        {
+					m_pCallback->OnScannerDone();
+          m_pCallback=NULL;
+        }
+			}
+		}
+	}
+}
+
+void CPatParser::AnalyzePidInfo(vector<PidInfo2> pidInfo,int* hasVideo, int* hasAudio)
+{
+	*hasVideo=0;
+	*hasAudio=0;
+	ivecPidInfo2 it=pidInfo.begin();
+	while (it!=pidInfo.end())
+	{
+		PidInfo2 info=*it;
+		if (info.logicalStreamType==SERVICE_TYPE_VIDEO_MPEG1 || info.logicalStreamType==SERVICE_TYPE_VIDEO_MPEG2 || info.logicalStreamType==SERVICE_TYPE_VIDEO_MPEG4 || info.logicalStreamType==SERVICE_TYPE_VIDEO_H264)
+			*hasVideo=1;
+		if (info.logicalStreamType==SERVICE_TYPE_AUDIO_MPEG1 || info.logicalStreamType==SERVICE_TYPE_AUDIO_MPEG2 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3)
+			*hasAudio=1;
+		++it;
+	}
+}
+
+bool CPatParser::PmtParserExists(int pid,int serviceId)
+{
+	itPmtParser it=m_pmtParsers.begin();
+	while (it!=m_pmtParsers.end())
+	{
+		CPmtParser* parser=*it;
+		int fpid; int sid;
+		parser->GetFilter(fpid,sid);
+		if (pid==fpid && serviceId==sid) 
+			return true;
+		++it;
+	}
+	return false;
 }
 
 //*****************************************************************************
@@ -269,6 +331,13 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 		CSectionDecoder::OnTsPacket(tsPacket);
     return;
   }
+	itPmtParser it=m_pmtParsers.begin();
+	while (it!=m_pmtParsers.end())
+	{
+		CPmtParser* parser=*it;
+		parser->OnTsPacket(tsPacket);
+		++it;
+	}
 	if (m_pCallback!=NULL)
 	{
 		if (IsReady() )
@@ -282,6 +351,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 //*****************************************************************************
 void CPatParser::OnNewSection(CSection& sections)
 {
+	CEnterCriticalSection enter(m_section);
 	if (sections.table_id!=0) return;
 
   byte* section=sections.Data;
@@ -317,10 +387,19 @@ void CPatParser::OnNewSection(CSection& sections)
 				info.TransportId=sections.table_id_extension;
 				info.ServiceId=serviceId;
         info.PidTable.PmtPid=pmtPid;
+				info.PmtReceived=false;
 				m_mapChannels[serviceId]=info;
-        m_tickCount = GetTickCount();
 			//	LogDebug("pat: tsid:%x sid:%x pmt:%x", transport_stream_id,serviceId,pmtPid);
 			}
+			if (!PmtParserExists(pmtPid,serviceId))
+			{
+				CPmtParser* parser=new CPmtParser();
+				parser->SetFilter(pmtPid,serviceId);
+				parser->SetPmtCallBack2(this); 
+				m_pmtParsers.push_back(parser);
+				LogDebug("Added pmt parser for pmt: 0x%x sid: 0x%x",pmtPid,serviceId);
+			}
+			m_tickCount = GetTickCount();
     }
   }
 }
@@ -335,11 +414,9 @@ void CPatParser::Dump()
   while (it!=m_mapChannels.end()) 
   {
     CChannelInfo& info=it->second;
-		LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pcr:%4x pmt:%4x v:%4x a1:%4x a2:%4x a3:%4x ac3:%4x ttx:%4x sub1:%4x sub2:%4x sub3:%4x sub4:%4x othermux:%d freeca:%d",i,
+		LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pmt:%4x othermux:%d freeca:%d hasVideo:%d hasAudio:%d",i,
             info.ProviderName,info.ServiceName,info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,
-						info.ServiceType,info.PidTable.PcrPid,info.PidTable.PmtPid,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,
-            info.PidTable.AudioPid3,info.PidTable.AC3Pid,info.PidTable.TeletextPid,info.PidTable.SubtitlePid1,info.PidTable.SubtitlePid2,
-            info.PidTable.SubtitlePid3,info.PidTable.SubtitlePid4,info.OtherMux,info.FreeCAMode);
+						info.ServiceType,info.PidTable.PmtPid,info.OtherMux,info.FreeCAMode,info.hasVideo,info.hasAudio);
 
     it++;
     i++;

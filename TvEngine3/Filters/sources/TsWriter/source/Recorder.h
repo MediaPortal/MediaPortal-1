@@ -60,7 +60,7 @@ public:
 
 	void OnTsPacket(byte* tsPacket);
 
-	void OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos);
+	void OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfos);
 
 private:
 	void SetPcrPid(int pcrPid);

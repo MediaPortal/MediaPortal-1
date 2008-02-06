@@ -137,7 +137,7 @@ public:
 	void Write(byte* buffer, int len);
 
 private:  
-	void OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos);
+	void OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfos);
 	void SetPcrPid(int pcrPid);
 	bool IsStreamWanted(int stream_type);
 	void AddStream(PidInfo2 pidInfo);

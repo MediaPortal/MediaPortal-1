@@ -245,6 +245,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\DiskRecorder.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\EpgScanner.cpp"
 				>
 			</File>
@@ -431,6 +435,10 @@
 			</File>
 			<File
 				RelativePath=".\source\ChannelScan.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\DiskRecorder.h"
 				>
 			</File>
 			<File

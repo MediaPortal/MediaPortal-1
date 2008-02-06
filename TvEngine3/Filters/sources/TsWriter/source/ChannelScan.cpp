@@ -118,143 +118,48 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 									 int* minorChannel,
 									 int* frequency,
 									 int* lcn,
-									 int* EIT_schedule_flag,
-									 int* EIT_present_following_flag,
-									 int* runningStatus,
 									 int* freeCAMode,
 									 int* serviceType,
 									 int* modulation,
 									 char** providerName,
 									 char** serviceName,
-									 int* pcrPid,
 									 int* pmtPid,
-									 int* videoPid,
-									 int* audio1Pid,
-									 int* audio2Pid,
-									 int* audio3Pid,
-									 int* audio4Pid,
-									 int* audio5Pid,
-									 int* ac3Pid,
-									 char** audioLanguage1,
-									 char** audioLanguage2,
-									 char** audioLanguage3,
-									 char** audioLanguage4,
-									 char** audioLanguage5,
-									 int* teletextPid,
-									 int* subtitlePid1,
-                   int* subtitlePid2,
-                   int* subtitlePid3,
-                   int* subtitlePid4,
-									 char** subLanguage1,
-                   char** subLanguage2,
-                   char** subLanguage3,
-                   char** subLanguage4,
-									 int* videoStreamType)
+									 int* hasVideo,
+									 int* hasAudio)
 {
 	static char sServiceName[128];
 	static char sProviderName[128];
-	static char sAudioLang1[10];
-	static char sAudioLang2[10];
-	static char sAudioLang3[10];
-	static char sAudioLang4[10];
-	static char sAudioLang5[10];
-	static char ssubLanguage1[10];
-  static char ssubLanguage2[10];
-  static char ssubLanguage3[10];
-  static char ssubLanguage4[10];
 	CEnterCriticalSection enter(m_section);
 	try
 	{
 		strcpy(sServiceName,"");
 		strcpy(sProviderName,"");
-		strcpy(sAudioLang1,"");
-		strcpy(sAudioLang2,"");
-		strcpy(sAudioLang3,"");
-		strcpy(sAudioLang4,"");
-		strcpy(sAudioLang5,"");
-    strcpy(ssubLanguage1,"");
-    strcpy(ssubLanguage2,"");
-    strcpy(ssubLanguage3,"");
-    strcpy(ssubLanguage4,"");
 		*networkId=0;
 		*transportId=0;
 		*serviceId=0;
 		*pmtPid=0;
 		*lcn=10000;
-		*videoStreamType=0;
 
 		CChannelInfo info;
 		info.Reset();
 		if ( m_patParser.GetChannel(index, info))
 		{
-			sAudioLang1[0]=info.PidTable.Lang1_1;
-			sAudioLang1[1]=info.PidTable.Lang1_2;
-			sAudioLang1[2]=info.PidTable.Lang1_3;
-			sAudioLang1[3]=0;
-
-			sAudioLang2[0]=info.PidTable.Lang2_1;
-			sAudioLang2[1]=info.PidTable.Lang2_2;
-			sAudioLang2[2]=info.PidTable.Lang2_3;
-			sAudioLang2[3]=0;
-			
-			sAudioLang3[0]=info.PidTable.Lang3_1;
-			sAudioLang3[1]=info.PidTable.Lang3_2;
-			sAudioLang3[2]=info.PidTable.Lang3_3;
-			sAudioLang3[3]=0;
-			
-			sAudioLang4[0]=info.PidTable.Lang4_1;
-			sAudioLang4[1]=info.PidTable.Lang4_2;
-			sAudioLang4[2]=info.PidTable.Lang4_3;
-			sAudioLang4[3]=0;
-
-			sAudioLang5[0]=info.PidTable.Lang5_1;
-			sAudioLang5[1]=info.PidTable.Lang5_2;
-			sAudioLang5[2]=info.PidTable.Lang5_3;
-			sAudioLang5[3]=0;
-
-      ssubLanguage1[0]=info.PidTable.SubLang1_1;
-      ssubLanguage1[1]=info.PidTable.SubLang1_2;
-      ssubLanguage1[2]=info.PidTable.SubLang1_3;
-      ssubLanguage1[3]=0;
 			*lcn=info.LCN;
 			*networkId=info.NetworkId;
 			*transportId=info.TransportId;
 			*serviceId=info.ServiceId;
 			*majorChannel=info.MajorChannel;
 			*minorChannel=info.MinorChannel;
-			*EIT_schedule_flag=info.EIT_schedule_flag;
-			*EIT_present_following_flag=info.EIT_present_following_flag;
-			*runningStatus=info.RunningStatus;
-			*freeCAMode=info.FreeCAMode;
 			*serviceType=info.ServiceType;
 			*modulation=info.Modulation;
 			strcpy(sProviderName,info.ProviderName);
 			strcpy(sServiceName,info.ServiceName);
 			*providerName=sProviderName;
 			*serviceName=sServiceName;
-			*pcrPid=info.PidTable.PcrPid;
 			*pmtPid=info.PidTable.PmtPid;
-			*videoPid=info.PidTable.VideoPid;
-			*audio1Pid=info.PidTable.AudioPid1;
-			*audio2Pid=info.PidTable.AudioPid2;
-			*audio3Pid=info.PidTable.AudioPid3;
-			*audio4Pid=info.PidTable.AudioPid4;
-			*audio5Pid=info.PidTable.AudioPid5;
-			*ac3Pid=info.PidTable.AC3Pid;
-
-			*audioLanguage1=sAudioLang1;
-			*audioLanguage2=sAudioLang2;
-			*audioLanguage3=sAudioLang3;
-			*teletextPid=info.PidTable.TeletextPid;
-			*subtitlePid1=info.PidTable.SubtitlePid1;
-      *subtitlePid2=info.PidTable.SubtitlePid2;
-      *subtitlePid3=info.PidTable.SubtitlePid3;
-      *subtitlePid4=info.PidTable.SubtitlePid4;
-      *subLanguage1=ssubLanguage1;
-      *subLanguage2=ssubLanguage2;
-      *subLanguage3=ssubLanguage3;
-      *subLanguage4=ssubLanguage4;
-			*videoStreamType=info.PidTable.videoServiceType;
+			*freeCAMode=info.FreeCAMode;
+			*hasVideo=info.hasVideo;
+			*hasAudio=info.hasAudio;
 		}
 	}
 	catch(...)

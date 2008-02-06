@@ -112,7 +112,7 @@ namespace TvLibrary.Implementations.DVB
           dvbsChannel.Polarisation = tuningChannels.Polarisation;
           dvbsChannel.SwitchingFrequency = tuningChannels.SwitchingFrequency;
           dvbsChannel.Frequency = tuningChannels.Frequency;
-          dvbsChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+          dvbsChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType==(int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
           dvbsChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
           dvbsChannel.NetworkId = info.networkID;
           dvbsChannel.ServiceId = info.serviceID;
@@ -132,7 +132,7 @@ namespace TvLibrary.Implementations.DVB
           dvbcChannel.SymbolRate = tuningChannelc.SymbolRate;
           dvbcChannel.ModulationType = tuningChannelc.ModulationType;
           dvbcChannel.Frequency = tuningChannelc.Frequency;
-          dvbcChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+          dvbcChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
           dvbcChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
           dvbcChannel.NetworkId = info.networkID;
           dvbcChannel.ServiceId = info.serviceID;
@@ -149,7 +149,7 @@ namespace TvLibrary.Implementations.DVB
           dvbtChannel.Provider = info.service_provider_name;
           dvbtChannel.Frequency = tuningChannelt.Frequency;
           dvbtChannel.BandWidth = tuningChannelt.BandWidth;
-          dvbtChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+          dvbtChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
           dvbtChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
           dvbtChannel.NetworkId = info.networkID;
           dvbtChannel.ServiceId = info.serviceID;
@@ -170,7 +170,7 @@ namespace TvLibrary.Implementations.DVB
           atscChannel.LogicalChannelNumber = tuningChannela.LogicalChannelNumber;
           atscChannel.MajorChannel = tuningChannela.MajorChannel;
           atscChannel.MinorChannel = tuningChannela.MinorChannel;
-          atscChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+          atscChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
           atscChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
           atscChannel.NetworkId = info.networkID;
           atscChannel.ServiceId = info.serviceID;

@@ -83,32 +83,12 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="minorChannel">The minor channel.</param>
     /// <param name="frequency">The frequency.</param>
     /// <param name="lcn">The LCN.</param>
-    /// <param name="EIT_schedule_flag">The EI t_schedule_flag.</param>
-    /// <param name="EIT_present_following_flag">The EI t_present_following_flag.</param>
-    /// <param name="runningStatus">The running status.</param>
     /// <param name="freeCAMode">The free CA mode.</param>
     /// <param name="serviceType">Type of the service.</param>
     /// <param name="modulation">The modulation.</param>
     /// <param name="providerName">Name of the provider.</param>
     /// <param name="serviceName">Name of the service.</param>
-    /// <param name="pcrPid">The PCR pid.</param>
     /// <param name="pmtPid">The PMT pid.</param>
-    /// <param name="videoPid">The video pid.</param>
-    /// <param name="audio1Pid">The audio1 pid.</param>
-    /// <param name="audio2Pid">The audio2 pid.</param>
-    /// <param name="audio3Pid">The audio3 pid.</param>
-    /// <param name="audio4Pid">The audio4 pid.</param>
-    /// <param name="audio5Pid">The audio5 pid.</param>
-    /// <param name="ac3Pid">The ac3 pid.</param>
-    /// <param name="audioLanguage1">The audio language1.</param>
-    /// <param name="audioLanguage2">The audio language2.</param>
-    /// <param name="audioLanguage3">The audio language3.</param>
-    /// <param name="audioLanguage4">The audio language4.</param>
-    /// <param name="audioLanguage5">The audio language5.</param>
-    /// <param name="teletextPid">The teletext pid.</param>
-    /// <param name="subtitlePid">The subtitle pid.</param>
-    /// <param name="subtitleLanguage">The subtitle language.</param>
-    /// <param name="videoStreamType">Type of the video stream.</param>
     /// <returns></returns>
     [PreserveSig]
     int GetChannel(short index,
@@ -119,38 +99,14 @@ namespace TvLibrary.Interfaces.Analyzer
                        out short minorChannel,
                        out short frequency,
                        out short lcn,
-                       out short EIT_schedule_flag,
-                       out short EIT_present_following_flag,
-                       out short runningStatus,
                        out short freeCAMode,
                        out short serviceType,
                        out short modulation,
                        out IntPtr providerName,
                        out IntPtr serviceName,
-                       out short pcrPid,
                        out short pmtPid,
-                       out short videoPid,
-                       out short audio1Pid,
-                       out short audio2Pid,
-                       out short audio3Pid,
-                       out short audio4Pid,
-                       out short audio5Pid,
-                       out short ac3Pid,
-                       out IntPtr audioLanguage1,
-                       out IntPtr audioLanguage2,
-                       out IntPtr audioLanguage3,
-                       out IntPtr audioLanguage4,
-                       out IntPtr audioLanguage5,
-                       out short teletextPid,
-                       out short subtitlePid1,
-                       out short subtitlePid2,
-                       out short subtitlePid3,
-                       out short subtitlePid4,
-                       out IntPtr subtitleLanguage1,
-                       out IntPtr subtitleLanguage2,
-                       out IntPtr subtitleLanguage3,
-                       out IntPtr subtitleLanguage4,
-                       out short videoStreamType);
+                       out short hasVideo,
+                       out short hasAudio);
     
     [PreserveSig]
 	  int SetCallBack(IChannelScanCallback callback);

@@ -28,7 +28,7 @@ void LogDebug(const char *fmt, ...) ;
 
 CPmtParser::CPmtParser()
 {
-	m_pmtCallback=NULL;
+	m_pmtCallback2=NULL;
 	_isFound=false;
   m_pmtVersion = -1;
 	m_serviceId=-1;
@@ -45,9 +45,10 @@ void CPmtParser::SetFilter(int pid,int serviceId)
 	m_serviceId=serviceId;
 }
 
-void CPmtParser::SetPmtCallBack(IPmtCallBack* callback)
+void CPmtParser::GetFilter(int &pid,int &serviceId)
 {
-	m_pmtCallback=callback;
+	pid=GetPid();
+	serviceId=m_serviceId;
 }
 
 void CPmtParser::SetPmtCallBack2(IPmtCallBack2* callback)
@@ -156,10 +157,8 @@ void CPmtParser::OnNewSection(CSection& sections)
 	  }
 		m_pidInfos2.push_back(pidInfo2);
   }
-  if (m_pmtCallback!=NULL)
-    m_pmtCallback->OnPidsReceived(GetPid(),m_serviceId);
 	if (m_pmtCallback2!=NULL)
-		m_pmtCallback2->OnPmtReceived2(pcr_pid,m_pidInfos2);
+		m_pmtCallback2->OnPmtReceived2(GetPid(),m_serviceId,pcr_pid,m_pidInfos2);
 }
 
 int CPmtParser::GetPmtVersion()

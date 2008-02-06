@@ -95,7 +95,7 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.PhysicalChannel = tuningChannel.PhysicalChannel;
       atscChannel.MajorChannel = info.majorChannel;
       atscChannel.MinorChannel = info.minorChannel;
-      atscChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+      atscChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
       atscChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
       atscChannel.NetworkId = info.networkID;
       atscChannel.ServiceId = info.serviceID;

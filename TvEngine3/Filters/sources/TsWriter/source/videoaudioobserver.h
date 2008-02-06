@@ -18,8 +18,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include "TimeShifting.h"
 #pragma once
+
 
 // {08177EB2-65D6-4d0a-A2A8-E7B7280A95A3}
 DEFINE_GUID(IID_IVideoAudioObserver,0x8177eb2, 0x65d6, 0x4d0a, 0xa2, 0xa8, 0xe7, 0xb7, 0x28, 0xa, 0x95, 0xa3);
@@ -27,5 +27,5 @@ DEFINE_GUID(IID_IVideoAudioObserver,0x8177eb2, 0x65d6, 0x4d0a, 0xa2, 0xa8, 0xe7,
 
 DECLARE_INTERFACE_(IVideoAudioObserver, IUnknown)
 {
-	STDMETHOD(OnNotify)(enum PidType pidType)PURE;
+	STDMETHOD(OnNotify)(int pidType)PURE;
 };

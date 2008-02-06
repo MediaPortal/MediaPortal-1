@@ -505,7 +505,7 @@ void CRecorder::WriteFakePMT()
 	Write(pmt,188);
 }
 
-void CRecorder::OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos)
+void CRecorder::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfos)
 {
 	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder: PMT version changed from %d to %d - ServiceId %x", m_pmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId );

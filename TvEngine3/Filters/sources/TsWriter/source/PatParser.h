@@ -43,7 +43,7 @@ DECLARE_INTERFACE_(IChannelScanCallback, IUnknown)
 
 #define PID_PAT 0x0
 
-class CPatParser : public CSectionDecoder, public ISdtCallBack, public IAtscCallback
+class CPatParser : public CSectionDecoder, public ISdtCallBack, public IAtscCallback, public IPmtCallBack2
 {
 public:
   CPatParser(void);
@@ -58,6 +58,7 @@ public:
   bool        GetChannel(int index, CChannelInfo& info);
   void        Dump();
 	void        OnSdtReceived(const CChannelInfo& sdtInfo);
+	void				OnPmtReceived2(int pid,int serviceId, int pcrPid,vector<PidInfo2> pidInfo);
   void        OnChannel(const CChannelInfo& info);
 
 private:
@@ -65,7 +66,13 @@ private:
   CVirtualChannelTableParser m_vctParser;
   CSdtParser                 m_sdtParser;
 	CNITDecoder                m_nitDecoder;
+
   void                       CleanUp();
+	void											 AnalyzePidInfo(vector<PidInfo2> pidInfo,int* hasVideo, int* hasAudio);
+	bool											 PmtParserExists(int pid,int serviceId);
+	
+	vector<CPmtParser*>	m_pmtParsers;
+  typedef vector<CPmtParser*> ::iterator itPmtParser;
 
   map<int,CChannelInfo> m_mapChannels;
   typedef map<int,CChannelInfo> ::iterator itChannels;
