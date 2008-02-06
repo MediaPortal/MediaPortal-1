@@ -260,7 +260,7 @@ namespace TvLibrary.Implementations.DVB
 
                 if (!IsKnownServiceType(info.serviceType))
                 {
-                  if (hasVideo==1 && hasAudio==1)
+                  if (hasVideo==1)
                     info.serviceType = (int)ServiceType.Video;
                   else
                     if (hasAudio==1)

@@ -68,7 +68,7 @@ private:
 	CNITDecoder                m_nitDecoder;
 
   void                       CleanUp();
-	void											 AnalyzePidInfo(vector<PidInfo2> pidInfo,int* hasVideo, int* hasAudio);
+	void											 AnalyzePidInfo(vector<PidInfo2> pidInfo,int &hasVideo, int &hasAudio);
 	bool											 PmtParserExists(int pid,int serviceId);
 	
 	vector<CPmtParser*>	m_pmtParsers;

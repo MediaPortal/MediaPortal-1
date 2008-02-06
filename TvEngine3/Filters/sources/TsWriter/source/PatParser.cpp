@@ -251,12 +251,9 @@ void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2
   if (it!=m_mapChannels.end())
   {
     CChannelInfo& info=it->second;
-		if (!info.PmtReceived==false) 
+		if (!info.PmtReceived) 
 		{
-			int hasVideo; int hasAudio;
-			AnalyzePidInfo(pidInfo,&hasVideo,&hasAudio);
-			info.hasVideo=hasVideo;
-			info.hasAudio=hasAudio;
+			AnalyzePidInfo(pidInfo,info.hasVideo,info.hasAudio);
 			info.PmtReceived=true;
       m_tickCount = GetTickCount();
 			if (m_pCallback!=NULL)
@@ -271,18 +268,18 @@ void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2
 	}
 }
 
-void CPatParser::AnalyzePidInfo(vector<PidInfo2> pidInfo,int* hasVideo, int* hasAudio)
+void CPatParser::AnalyzePidInfo(vector<PidInfo2> pidInfo,int &hasVideo, int &hasAudio)
 {
-	*hasVideo=0;
-	*hasAudio=0;
+	hasVideo=0;
+	hasAudio=0;
 	ivecPidInfo2 it=pidInfo.begin();
 	while (it!=pidInfo.end())
 	{
 		PidInfo2 info=*it;
 		if (info.logicalStreamType==SERVICE_TYPE_VIDEO_MPEG1 || info.logicalStreamType==SERVICE_TYPE_VIDEO_MPEG2 || info.logicalStreamType==SERVICE_TYPE_VIDEO_MPEG4 || info.logicalStreamType==SERVICE_TYPE_VIDEO_H264)
-			*hasVideo=1;
+			hasVideo=1;
 		if (info.logicalStreamType==SERVICE_TYPE_AUDIO_MPEG1 || info.logicalStreamType==SERVICE_TYPE_AUDIO_MPEG2 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3)
-			*hasAudio=1;
+			hasAudio=1;
 		++it;
 	}
 }
@@ -397,7 +394,7 @@ void CPatParser::OnNewSection(CSection& sections)
 				parser->SetFilter(pmtPid,serviceId);
 				parser->SetPmtCallBack2(this); 
 				m_pmtParsers.push_back(parser);
-				LogDebug("Added pmt parser for pmt: 0x%x sid: 0x%x",pmtPid,serviceId);
+				LogDebug("PatParser: Added pmt parser for pmt: 0x%x sid: 0x%x",pmtPid,serviceId);
 			}
 			m_tickCount = GetTickCount();
     }
