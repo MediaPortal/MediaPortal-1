@@ -765,7 +765,9 @@ namespace TvPlugin
 			// when suspending MP while watching fullscreen TV, the player is stopped ok, but it returns to tvhome, which starts timeshifting.
 			// this could lead the tv server timeshifting even though client is asleep.
 			// although we have to make sure that resuming again activates TV, this is done by checking previous window ID.      
-			GUIWaitCursor.Show();
+			
+      // disabled currently as pausing the graph stops GUI repainting
+      //GUIWaitCursor.Show();
 			if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
 			{
 				_playbackStopped = false;
@@ -787,7 +789,7 @@ namespace TvPlugin
 					UpdateProgressPercentageBar();
 					UpdateRecordingIndicator();
 				}
-				GUIWaitCursor.Hide();
+				//GUIWaitCursor.Hide();
 				return;
 			}
 			else
@@ -836,7 +838,7 @@ namespace TvPlugin
 					{
 						RemoteControl.Clear();
 						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
-						GUIWaitCursor.Hide();
+						//GUIWaitCursor.Hide();
 						return;
 					}
 
@@ -845,7 +847,7 @@ namespace TvPlugin
 				{
 					RemoteControl.Clear();
 					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
-					GUIWaitCursor.Hide();
+					//GUIWaitCursor.Hide();
 					return;
 				}
 			}
@@ -973,7 +975,7 @@ namespace TvPlugin
 
 			_onPageLoadDone = true;
 			_resumed = false;
-			GUIWaitCursor.Hide();
+			//GUIWaitCursor.Hide();
 		}
 
 		private void TvDelayThread()
