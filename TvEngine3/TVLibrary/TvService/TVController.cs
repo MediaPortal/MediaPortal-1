@@ -130,8 +130,7 @@ namespace TvService
     /// </returns>
     bool IsLocal(int cardId)
     {
-			if (!_cards.ContainsKey(cardId)) return false;
-			if (cardId < 0) return false;
+      if (ValidateTvControllerParams(cardId)) return false;
       return _cards[cardId].IsLocal;
     }
 
@@ -144,8 +143,7 @@ namespace TvService
     /// </returns>
     bool IsLocal(Card card)
     {
-			if (!_cards.ContainsKey(card.IdCard)) return false;
-			if (card.IdCard < 0) return false;
+      if (ValidateTvControllerParams(card)) return false;
       return _cards[card.IdCard].IsLocal;
     }
 
@@ -194,17 +192,12 @@ namespace TvService
     /// 	<c>true</c> if card is in use; otherwise, <c>false</c>.
     /// </returns>
     public bool IsCardInUse(int cardId, out User user)
-    {			
-			if (!_cards.ContainsKey(cardId))
-			{
-				user = null;
-				return false;
-			}
-			if (cardId < 0)
-			{
-				user = null;
-				return false;
-			}
+    {
+      if (ValidateTvControllerParams(cardId)) 
+      {
+        user = null;
+        return false;
+      }
       return _cards[cardId].Users.IsLocked(out user);
     }
     /// <summary>
@@ -214,11 +207,9 @@ namespace TvService
     /// <returns></returns>
     public User GetUserForCard(int cardId)
     {
-			User user;
+      if (ValidateTvControllerParams(cardId)) return null;
 
-			if (!_cards.ContainsKey(cardId)) return null;
-			if (cardId < 0) return null;
-      
+      User user;
       _cards[cardId].Users.IsLocked(out user);
       return user;
     }
@@ -230,10 +221,10 @@ namespace TvService
     /// <param name="user">The user.</param>
     public void LockCard(int cardId, User user)
     {
-			if (user == null) return;
-			if (!_cards.ContainsKey(cardId)) return;
-			if (cardId < 0) return;
-
+      if (ValidateTvControllerParams(user) || (ValidateTvControllerParams(cardId)) ) 
+      {
+        return;
+      }
       _cards[cardId].Users.Lock(user);
     }
 
@@ -243,13 +234,12 @@ namespace TvService
     /// <param name="user">The user.</param>
     public void UnlockCard(User user)
     {
-			if (user == null) return;
-			if (!_cards.ContainsKey(user.CardId)) return;
-			if (user.CardId < 0) return;
-      
+      if (ValidateTvControllerParams(user) || (ValidateTvControllerParams(user.CardId)))
+      {
+        return;
+      }
       _cards[user.CardId].Users.Unlock(user);
     }
-
 
     /// <summary>
     /// Initalizes the controller.
@@ -280,7 +270,6 @@ namespace TvService
 
         _plugins = new PluginLoader();
         _plugins.Load();
-
 
         //log all local ip adresses, usefull for debugging problems
         Log.Write("Controller: Started at {0}", Dns.GetHostName());
@@ -391,7 +380,6 @@ namespace TvService
 
         localcards = new Dictionary<int, ITVCard>();
 
-
         cardsInDbs = Card.ListAll();
         foreach (Card card in cardsInDbs)
         {
@@ -457,8 +445,6 @@ namespace TvService
           {
             //ignore any errors encountered
           }
-
-
         }
 
         Log.WriteFile("Controller: setup streaming");
@@ -529,10 +515,8 @@ namespace TvService
             heartBeatMonitorThread.Abort();
           }
         }
-
         heartBeatMonitorThread = new Thread(HeartBeatMonitor);
         heartBeatMonitorThread.Start();
-
       }
       catch (Exception ex)
       {
