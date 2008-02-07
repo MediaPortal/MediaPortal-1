@@ -1060,6 +1060,7 @@ namespace MediaPortal.GUI.Pictures
 
     public void Select(string strFile)
     {
+      LoadSettings();
       for (int i = 0; i < _slideList.Count; ++i)
       {
         string strSlide = _slideList[i];
