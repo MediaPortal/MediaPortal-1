@@ -1912,7 +1912,6 @@ namespace TvPlugin
 			return idx;
 		}
 
-
 		static public bool ViewChannelAndCheck(Channel channel)
 		{
       _doingChannelChange = false;
@@ -2001,7 +2000,7 @@ namespace TvPlugin
 					user.CardId = TVHome.Card.Id;
 				}
 
-				GUIWaitCursor.Show();
+				//GUIWaitCursor.Show();
 				bool wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio);
 
 				//Start timeshifting the new tv channel
@@ -2064,7 +2063,7 @@ namespace TvPlugin
                     
 					_playbackStopped = false;
 
-          GUIWaitCursor.Hide();
+          //GUIWaitCursor.Hide();
           _doingChannelChange = false;
 					return true;
 				}
@@ -2079,7 +2078,7 @@ namespace TvPlugin
 					}
 				}
 
-				GUIWaitCursor.Hide();
+				//GUIWaitCursor.Hide();
 								
 				//if (pDlgOK != null && pDlgYesNo != null)
 				
@@ -2172,7 +2171,7 @@ namespace TvPlugin
 						ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
 						Thread showDlgThread = new Thread(pThread);
 						
-						GUIWaitCursor.Hide();						
+						//GUIWaitCursor.Hide();						
 						// show the dialog asynch.
 						// this fixes a hang situation that would happen when resuming TV with showlastactivemodule
             showDlgThread.Start(pDlgYesNo);
@@ -2214,7 +2213,7 @@ namespace TvPlugin
 			catch (Exception ex)
 			{
 				Log.Debug("TvPlugin:ViewChannelandCheck Exception {0}", ex.ToString());
-				GUIWaitCursor.Hide();
+				//GUIWaitCursor.Hide();
         _doingChannelChange = false;
 				return false;
 			}      
