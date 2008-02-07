@@ -597,7 +597,8 @@ namespace TvDatabase
       Gentle.Framework.Broker.Execute("delete from Conflict WHERE idChannel=" + idChannel.ToString());
       Gentle.Framework.Broker.Execute("delete from Program WHERE idChannel=" + idChannel.ToString());
       Gentle.Framework.Broker.Execute("delete from Schedule WHERE idChannel=" + idChannel.ToString());
-      Gentle.Framework.Broker.Execute("delete from Recording WHERE idChannel=" + idChannel.ToString());
+			// recordings should be stay in the DB
+      //Gentle.Framework.Broker.Execute("delete from Recording WHERE idChannel=" + idChannel.ToString());
       Gentle.Framework.Broker.Execute("delete from ChannelMap WHERE idChannel=" + idChannel.ToString());      
       Gentle.Framework.Broker.Execute("delete from TuningDetail WHERE idChannel=" + idChannel.ToString());
       
