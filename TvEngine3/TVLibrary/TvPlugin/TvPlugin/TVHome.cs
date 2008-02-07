@@ -82,7 +82,7 @@ namespace TvPlugin
 		DateTime _updateTimer = DateTime.Now;
 		static bool _autoTurnOnTv = false;
 		//int _lagtolerance = 10; //Added by joboehl
-		static bool _settingsLoaded = false;
+		public static bool settingsLoaded = false;
 		DateTime _dtlastTime = DateTime.Now;
 		TvCropManager _cropManager = new TvCropManager();
 		TvNotifyManager _notifyManager = new TvNotifyManager();
@@ -431,8 +431,8 @@ namespace TvPlugin
 		#region Serialisation
 		static void LoadSettings()
 		{
-			if (_settingsLoaded) return;
-			_settingsLoaded = true;
+			if (settingsLoaded) return;
+			settingsLoaded = true;
 			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
 			{
 				m_navigator.LoadSettings(xmlreader);
