@@ -470,12 +470,6 @@ namespace TvPlugin
 
         if (CurrentChan.VisibleInGuide)
         {
-          NowAndNext prog;
-          if (listNowNext.ContainsKey(CurrentChan.IdChannel) != false)
-            prog = listNowNext[CurrentChan.IdChannel];
-          else
-            prog = new NowAndNext(CurrentChan.IdChannel, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1), DateTime.Now.AddHours(2), DateTime.Now.AddHours(3), GUILocalizeStrings.Get(736), GUILocalizeStrings.Get(736), -1, -1);
-
           StringBuilder sb = new StringBuilder();
           item = new GUIListItem("");
           // store here as it is not needed right now - please beat me later..
@@ -539,21 +533,42 @@ namespace TvPlugin
             }
           }
 
-          item.Label2 = prog.TitleNow;
-          //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
+          string tmpString = GUILocalizeStrings.Get(736);
 
-          item.Label3 = GUILocalizeStrings.Get(789) + prog.TitleNow;
-          
+          if (CurrentChan.CurrentProgram != null)
+          {
+            tmpString = CurrentChan.CurrentProgram.Title;
+          }
+          item.Label2 = tmpString;
+          item.Label3 = GUILocalizeStrings.Get(789) + tmpString;
+
           sb.Append(" - ");
           if (_showChannelNumber == true)
           {
             foreach (TuningDetail detail in _tvChannelList[i].ReferringTuningDetail())
               sb.Append(detail.ChannelNumber + " - ");
           }
-          sb.Append(CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString());
+
+          if (CurrentChan.CurrentProgram != null)
+          {
+            tmpString = CalculateProgress(CurrentChan.CurrentProgram.StartTime, CurrentChan.CurrentProgram.EndTime).ToString();
+          }
+          else
+          {
+            tmpString = CalculateProgress(DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1)).ToString();
+          }
+
+          sb.Append(tmpString);
           sb.Append("%");
+
+          tmpString = GUILocalizeStrings.Get(736);
+          if (CurrentChan.NextProgram != null)
+          {
+            tmpString = CurrentChan.NextProgram.Title;
+          }
+
           item.Label2 = sb.ToString();
-          item.Label = GUILocalizeStrings.Get(790) + prog.TitleNext;
+          item.Label = GUILocalizeStrings.Get(790) + tmpString;
 
           lstChannels.Add(item);
         }
