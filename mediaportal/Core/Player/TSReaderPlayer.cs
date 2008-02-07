@@ -812,7 +812,7 @@ namespace MediaPortal.Player
     {
       if (_subSelector != null)
       {
-        return _subSelector.GetCurrentLanguage();
+        return _subSelector.GetLanguage(iStream);
       }
       else
       {

@@ -377,6 +377,31 @@ namespace MediaPortal.Player.Subtitles
             subRender.SetSubtitleOption(option);
         }
 
+        public string GetLanguage(int option)
+        {
+            List<SubtitleOption> options = CollectOptions();
+            if (options.Count <= option )
+            {
+                return "NA";
+            }
+            else if (options[option] == null)
+            {
+                return "NULL!";
+            }
+            else if (options[option].isAuto)
+            {
+                return "Auto:" + options[option].language;
+            }
+            else if (options[option].type == SubtitleType.Teletext && options[option].entry.language.Trim().Length == 0)
+            {
+                return "p" + options[option].entry.page;
+            }
+            else
+            {
+                return options[option].language;
+            }
+        }
+
         public string GetCurrentLanguage()
         {
             if (currentOption == null)
