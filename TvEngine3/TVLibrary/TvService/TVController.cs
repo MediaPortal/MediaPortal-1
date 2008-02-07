@@ -1213,13 +1213,14 @@ namespace TvService
           _epgGrabber.Stop();
         }
 
-        bool isTimeShifting=true;
+        bool isTimeShifting = true;
         try
         {
           isTimeShifting = _cards[cardId].TimeShifter.IsTimeShifting(ref user);
         }
         catch (Exception ex)
         {
+					isTimeShifting = false;
           Log.Error("KWASI: " + ex.Message);
         }
         TvResult result = _cards[cardId].TimeShifter.Start(ref user, ref fileName);
