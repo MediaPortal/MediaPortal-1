@@ -254,8 +254,12 @@ namespace TvService
           if (context == null) return TvResult.UnknownChannel;
           context.GetUser(ref user);
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-          ((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
-          ((TvDvbChannel)subchannel).audioVideoEvent += new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+
+					if (subchannel is TvDvbChannel)
+					{
+						((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+						((TvDvbChannel)subchannel).audioVideoEvent += new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+					}
 
           if (!_eventsReady)
           {
@@ -354,7 +358,10 @@ namespace TvService
         if (_cardHandler.Recorder.IsRecording(ref user)) return true;
 
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-        ((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+				if (subchannel is TvDvbChannel)
+				{
+					((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+				}
 
         _eventVideo.Close();
         _eventAudio.Close();
