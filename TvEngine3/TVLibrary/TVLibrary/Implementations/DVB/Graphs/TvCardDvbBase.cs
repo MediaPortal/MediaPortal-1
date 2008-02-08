@@ -413,15 +413,6 @@ namespace TvLibrary.Implementations.DVB
     public void StopGraph()
     {
       if (!CheckThreadId()) return;
-      if (_epgGrabbing)
-      {
-        if (_epgGrabberCallback != null && _epgGrabbing)
-        {
-          Log.Log.Epg("dvb:cancel epg->stop graph");
-          _epgGrabberCallback.OnEpgCancelled();
-        }
-        _epgGrabbing = false;
-      }
       _epgGrabbing = false;
       _isScanning = false;
       FreeAllSubChannels();
