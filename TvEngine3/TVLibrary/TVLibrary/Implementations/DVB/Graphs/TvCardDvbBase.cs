@@ -485,9 +485,11 @@ namespace TvLibrary.Implementations.DVB
 
     /// <summary>
     /// Checks if the WinTV USB CI module is installed
-    /// ifso it adds it to the directshow graph
+    /// if so it adds it to the directshow graph
     /// in the following way:
     /// [Network Provider]->[Tuner Filter]->[Capture Filter]->[WinTvCI Filter]->[InfTee]
+    /// alternatively:
+    /// [Network Provider]->[Tuner Filter]->[InfTee]->[WinTvCI Filter]->[InfTee]
     /// </summary>
     /// <param name="captureFilter">The capture filter.</param>
     /// <returns>
@@ -499,12 +501,12 @@ namespace TvLibrary.Implementations.DVB
       DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
       DsDevice usbWinTvDevice = null;
       int hr = 0;
-      Log.Log.WriteFile("AddWinTvCIModule: capDevices {0}", capDevices.Length);
+      //Log.Log.WriteFile("AddWinTvCIModule: capDevices {0}", capDevices.Length);
       for (int capIndex = 0; capIndex < capDevices.Length; capIndex++)
       {
         if (capDevices[capIndex].Name != null)
         {
-          Log.Log.WriteFile("AddWinTvCIModule: {0}", capDevices[capIndex].Name.ToLower());
+          //Log.Log.WriteFile("AddWinTvCIModule: {0}", capDevices[capIndex].Name.ToLower());
           if (capDevices[capIndex].Name.ToLower() == "wintvciusbbda source")
           {
             if (false == DevicesInUse.Instance.IsUsed(capDevices[capIndex]))
@@ -583,6 +585,8 @@ namespace TvLibrary.Implementations.DVB
     /// [NetworkProvider]->[Tuner]->[Inftee]->[Demuxer]
     /// When a wintv ci module is found the graph will look like:
     /// [NetworkProvider]->[Tuner]->[Capture]->[WinTvCiUSB]->[Inftee]->[Demuxer]
+    /// or if no capture filter is present:
+    /// [NetworkProvider]->[Tuner]->[InfTee]->[WinTvCiUSB]->[Inftee]->[Demuxer]
     /// </summary>
     /// <param name="device"></param>
     protected void AddAndConnectBDABoardFilters(DsDevice device)

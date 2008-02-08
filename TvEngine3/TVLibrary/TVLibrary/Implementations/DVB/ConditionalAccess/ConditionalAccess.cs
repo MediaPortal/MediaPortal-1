@@ -65,17 +65,17 @@ namespace TvLibrary.Implementations.DVB
       {
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
-
+        Log.Log.WriteFile("Check for WinTV CI");
         if (winTvUsbCiFilter != null)
         {
-          Log.Log.WriteFile("WinTV Ci Module detected");
+          Log.Log.WriteFile("WinTV CI Module detected");
           _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter, analyzerFilter);
         }
         Log.Log.WriteFile("Check for KNC");
         _knc = new KNC(tunerFilter, analyzerFilter);
         if (_knc.IsKNC)
         {
-          Log.Log.WriteFile("Knc card detected");
+          Log.Log.WriteFile("KNC card detected");
           return;
         }
         _knc = null;
