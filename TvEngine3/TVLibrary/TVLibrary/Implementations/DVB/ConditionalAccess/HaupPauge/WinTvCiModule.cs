@@ -40,8 +40,8 @@ namespace TvLibrary.Implementations.DVB
       _winTvUsbCIFilter = winTvUsbCIFilter;
       _interfaceWinTv = (IWinTvUsbCI)analyzerFilter;
       _interfaceWinTv.SetFilter(winTvUsbCIFilter);
-      Log.Log.Info("WinTvCI : module installed:{0}", IsDeviceInstalled);
-      Log.Log.Info("WinTvCI : cam installed:{0}", IsCAMInstalled);
+      Log.Log.Info("WinTV CI:  Module installed:{0}", IsDeviceInstalled);
+      Log.Log.Info("WinTV CI:  CAM installed:{0}", IsCAMInstalled);
     }
 
     public bool IsDeviceInstalled

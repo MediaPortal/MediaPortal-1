@@ -80,7 +80,7 @@ namespace TvLibrary.Implementations.DVB
         if (_isTwinHanCard)
         {
           _camPresent = IsCamPresent();
-          Log.Log.WriteFile("Cam detected:{0}", _camPresent);
+          Log.Log.WriteFile("Twinhan:  CAM detected:{0}", _camPresent);
         }
       }
       _initialized = true;
@@ -101,7 +101,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (IsCamPresent())
           {
-            Log.Log.WriteFile("twinhan: CAM inserted");
+            Log.Log.WriteFile("Twinhan:  CAM inserted");
           }
         }
         return result;
@@ -150,11 +150,11 @@ namespace TvLibrary.Implementations.DVB
               int bytesReturned = Marshal.ReadInt32(_ptrDwBytesReturned);
               CIState = (uint)Marshal.ReadInt32(_ptrOutBuffer, 0);
               MMIState = (uint)Marshal.ReadInt32(_ptrOutBuffer, 4);
-              Log.Log.WriteFile("twinhan:CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
+              Log.Log.WriteFile("Twinhan:  CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
             }
             else
             {
-              Log.Log.WriteFile("twinhan: unable to get CI State hr:{0:X}", hr);
+              Log.Log.WriteFile("Twinhan:  unable to get CI State hr:{0:X}", hr);
             }
           }
           finally
@@ -200,7 +200,7 @@ namespace TvLibrary.Implementations.DVB
     public bool IsTwinhanCard()
     {
       if (_initialized) return _isTwinHanCard;
-      Log.Log.WriteFile("Twinhan: check for twinhan driver");
+      Log.Log.WriteFile("Twinhan:  Check for twinhan driver");
       bool success = false;
       try
       {
@@ -292,9 +292,9 @@ namespace TvLibrary.Implementations.DVB
           int back = Marshal.ReadInt32(_ptrDwBytesReturned);
           if (hr != 0)
           {
-            Log.Log.WriteFile("GetPmtReply() failed 0x{0:X}", hr);
+            Log.Log.WriteFile("Twinhan:  GetPmtReply() failed 0x{0:X}", hr);
           }
-          Log.Log.WriteFile("GetPmtReply() returned {0} bytes", back);
+          Log.Log.WriteFile("Twinhan:  GetPmtReply() returned {0} bytes", back);
           Marshal.ReleaseComObject(propertySet);
           try
           {
@@ -333,7 +333,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (IsCamPresent() == false) return;
       int camNumber = (int)camType;
-      Log.Log.WriteFile("Twinhan: send PMT cam:{0} len:{1} video:0x{2:X} audio:0x{3:X}", camType, caPMTLen, videoPid, audioPid);
+      Log.Log.WriteFile("Twinhan:  Send PMT cam:{0} len:{1} video:0x{2:X} audio:0x{3:X}", camType, caPMTLen, videoPid, audioPid);
       if (caPMT.Length == 0) return;
       string line = "";
       for (int i = 0; i < caPMTLen; ++i)
@@ -372,10 +372,10 @@ namespace TvLibrary.Implementations.DVB
           int back = Marshal.ReadInt32(_ptrDwBytesReturned);
           if (hr != 0)
           {
-            Log.Log.WriteFile("Twinhan: cam failed 0x{0:X}", hr);
+            Log.Log.WriteFile("Twinhan:  CAM failed 0x{0:X}", hr);
           }
           else
-            Log.Log.WriteFile("Twinhan: cam returned ok 0x{0:X}", hr);
+            Log.Log.WriteFile("Twinhan:  CAM returned ok 0x{0:X}", hr);
           Marshal.ReleaseComObject(propertySet);
         }
         Marshal.ReleaseComObject(pin);
@@ -408,7 +408,7 @@ namespace TvLibrary.Implementations.DVB
 
     void SetLnbData(bool lnbPower, int LNBLOFLowBand, int LNBLOFHighBand, int LNBLOFHiLoSW, int turnon22Khz, int disEqcPort)
     {
-      Log.Log.WriteFile("Twinhan: SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
+      Log.Log.WriteFile("Twinhan:  SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
       int thbdaLen = 0x28;
       int disEqcLen = 20;
       Marshal.WriteByte(_ptrDiseqc, 0, (byte)(lnbPower ? 1 : 0));              // 0: LNB_POWER
@@ -449,10 +449,10 @@ namespace TvLibrary.Implementations.DVB
           int hr = propertySet.Set(propertyGuid, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
           if (hr != 0)
           {
-            Log.Log.WriteFile("TwinHan SetLNB failed 0x{0:X}", hr);
+            Log.Log.WriteFile("Twinhan:  SetLNB failed 0x{0:X}", hr);
           }
           else
-            Log.Log.WriteFile("TwinHan SetLNB ok 0x{0:X}", hr);
+            Log.Log.WriteFile("Twinhan:  SetLNB ok 0x{0:X}", hr);
           Marshal.ReleaseComObject(propertySet);
         }
         Marshal.ReleaseComObject(pin);

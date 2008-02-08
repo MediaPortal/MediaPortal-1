@@ -59,6 +59,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The capture filter.</param>
+    /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter)
     {
       try
@@ -346,6 +347,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_winTvCiModule != null)
         {
+          Log.Log.WriteFile("WinTV CI:  SendPMT: {0}, {1}", PMT, pmtLength);
           return _winTvCiModule.SendPMT(PMT, pmtLength);
         }
         if (_digitalEveryWhere != null)

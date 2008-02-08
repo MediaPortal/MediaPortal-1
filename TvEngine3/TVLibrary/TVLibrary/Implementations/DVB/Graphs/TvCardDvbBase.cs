@@ -101,6 +101,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterMpeg2DemuxTif = null;
     protected IBaseFilter _infTeeMain = null;
     protected IBaseFilter _infTeeSecond = null;
+    protected IBaseFilter _infTeeWinTV = null;
     protected IBaseFilter _filterTuner = null;
     protected IBaseFilter _filterCapture = null;
     protected IBaseFilter _filterTIF = null;
@@ -137,6 +138,7 @@ namespace TvLibrary.Implementations.DVB
     protected ScanParameters _parameters;
     protected Hauppauge _hauppauge;
     private TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
+    protected bool tunerOnly = false;
     #endregion
 
     #region ctor
@@ -488,6 +490,8 @@ namespace TvLibrary.Implementations.DVB
     /// if so it adds it to the directshow graph
     /// in the following way:
     /// [Network Provider]->[Tuner Filter]->[Capture Filter]->[WinTvCI Filter]->[InfTee]
+    /// alternaively like this:
+    /// [Network Provider]->[Tuner Filter]->[InfTee]->[WinTvCI Filter]->[InfTee]
     /// alternatively:
     /// [Network Provider]->[Tuner Filter]->[InfTee]->[WinTvCI Filter]->[InfTee]
     /// </summary>
@@ -517,15 +521,16 @@ namespace TvLibrary.Implementations.DVB
           }
         }
       }
-
       if (usbWinTvDevice == null)
       {
-        Log.Log.Info("dvb:  WinTv CI module not detected. Render [capture]->[inftee]");
+        if (tunerOnly == true)
+          Log.Log.Info("dvb:  WinTv CI module not detected. Render [tuner]->[inftee]");
+        else
+          Log.Log.Info("dvb:  WinTv CI module not detected. Render [capture]->[inftee]");
         //no wintv ci usb module found. Render [Capture]->[InfTee]
         hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
         return (hr == 0);
       }
-
       Log.Log.Info("dvb:  WinTv CI module deteced");
       //wintv ci usb module found
       //add filter to graph
@@ -538,7 +543,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Info("dvb:  failed to add WinTv CI filter to graph");
         //cannot add filter to graph...
-        //Render [Capture]->[InfTee]
+        //Render [Capture]->[InfTee] or [Tuner]->[InfTee]
         hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
         return (hr == 0);
       }
@@ -551,14 +556,40 @@ namespace TvLibrary.Implementations.DVB
           _graphBuilder.RemoveFilter(tmpCiFilter);
           Release.ComObject("WintvUsbCI module", tmpCiFilter);
         }
-        //Render [Capture]->[InfTee]
+        //Render [Capture]->[InfTee] or [Tuner]->[InfTee]
         hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
         return (hr == 0);
       }
-      Log.Log.Info("dvb:  Render [capture]->[WinTvUSB]");
-      //Added WinTv USB CI module to the graph
-      //now render [Capture]->[WinTv USB]
-      hr = _capBuilder.RenderStream(null, null, captureFilter, null, tmpCiFilter);
+      if (tunerOnly == true)
+      {
+        //now render [Tuner]->[InfTee]->[WinTv USB]
+        Log.Log.Info("dvb:  Render [Tuner]->[WinTvUSB]");
+        //Add InfTee first other MPEG-2 Demux is used
+        Log.Log.WriteFile("dvb:  Add InfTee filter for WinTV CI");
+        _infTeeWinTV = (IBaseFilter)new InfTee();
+        hr = _graphBuilder.AddFilter(_infTeeWinTV, "InfTee WinTV");
+        if (hr != 0)
+        {
+          Log.Log.Error("dvb:  Add 2nd InfTee returns:0x{0:X}", hr);
+          throw new TvException("Unable to add  _infTeeSecond");
+        }
+        //Render Tuner to InfTee first
+        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeWinTV);
+        if (hr != 0)
+        {
+          Log.Log.Error("dvb:  Render [Tuner]->[InfTee] returns:0x{0:X}", hr);
+          throw new TvException("Unable to Render Tuner->[InfTee]");
+        }
+        //Now render InfTee to WinTV CI
+        hr = _capBuilder.RenderStream(null, null, _infTeeWinTV, null, tmpCiFilter);
+      }
+      else
+      {
+        Log.Log.Info("dvb:  Render [Capture]->[WinTvUSB]");
+        //Added WinTv USB CI module to the graph
+        //now render [Capture]->[WinTv USB]
+        hr = _capBuilder.RenderStream(null, null, captureFilter, null, tmpCiFilter);
+      }
       if (hr != 0)
       {
         Log.Log.Error("dvb:  Render-> capture->wintv usb failed");
@@ -571,7 +602,7 @@ namespace TvLibrary.Implementations.DVB
       _filterWinTvUsb = tmpCiFilter;
       _deviceWinTvUsb = usbWinTvDevice;
       DevicesInUse.Instance.Add(usbWinTvDevice);
-      //Render [WinTvCi]->[InfTee]
+      //Finally render [WinTvCi]->[InfTee]
       Log.Log.Info("dvb:  Render [WinTvUSB]->[InfTee]");
       hr = _capBuilder.RenderStream(null, null, tmpCiFilter, null, _infTeeMain);
       return (hr == 0);
@@ -658,13 +689,9 @@ namespace TvLibrary.Implementations.DVB
           AMMediaType[] mediaTypes = new AMMediaType[21];
           enumMedia.Next(20, mediaTypes, out fetched);
           if (fetched > 0)
-          {          
+          {
             for (int i = 0; i < fetched; ++i)
             {
-              //Log.Log.Write("{0}", i);
-              //Log.Log.Write(" major :{0} {1}", mediaTypes[i].majorType, (mediaTypes[i].majorType==MediaType.Stream));
-              //Log.Log.Write(" sub   :{0} {1}", mediaTypes[i].subType, (mediaTypes[i].subType == MediaSubType.Mpeg2Transport ) );
-              //Log.Log.Write(" format:{0} {1}", mediaTypes[i].formatType, (mediaTypes[i].formatType != FormatType.None) );
               if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.Mpeg2Transport && mediaTypes[i].formatType != FormatType.None)
               {
                 skipCaptureFilter = false;
@@ -744,24 +771,24 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("dvb:  No available bda receiver found...");
         // render [Tuner]->[Inf Tee]
-        IPin pinIn = DsFindPin.ByDirection(_infTeeMain, PinDirection.Input, 0);
-        //IPin pinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-        pinOut = DsFindPin.ByDirection(_filterTuner, PinDirection.Output, 0);
-        hr = _graphBuilder.Connect(pinOut, pinIn);
-        if (hr == 0)
+        tunerOnly = true;
+        if (AddWinTvCIModule(_filterTuner))
         {
-          Release.ComObject("inftee main pin in", pinIn);
-          Release.ComObject("tuner pin out", pinOut);
-          Log.Log.WriteFile("dvb:  using only tv tuner ifilter...");
-          ConnectMpeg2DemuxToInfTee();
-          AddTsWriterFilterToGraph();
-          _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb);
-          return;
+          _filterCapture = _filterTuner;
+          Log.Log.WriteFile("dvb:  OK");
         }
-        Release.ComObject("tuner pin out", pinOut);
-        Release.ComObject("inftee main pin in", pinIn);
-        Log.Log.Error("dvb:  unable to use single tv tuner filter...");
-        throw new TvException("No Tv Receiver filter found");
+        else
+        {
+          Log.Log.Error("dvb:  Render->main inftee demux failed");
+          hr = _graphBuilder.RemoveFilter(_filterTuner);
+          Release.ComObject("bda receiver", _filterTuner);
+          throw new TvException("No Tv Receiver filter found");
+        }
+        Log.Log.WriteFile("dvb:  using only tv tuner filter...");
+        ConnectMpeg2DemuxToInfTee();
+        AddTsWriterFilterToGraph();
+        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb);
+        return;
       }
       ConnectMpeg2DemuxToInfTee();
       AddTsWriterFilterToGraph();
@@ -1223,6 +1250,10 @@ namespace TvLibrary.Implementations.DVB
       if (_infTeeSecond != null)
       {
         Release.ComObject("_infTeeSecond filter", _infTeeSecond); _infTeeSecond = null;
+      }
+      if (_infTeeWinTV != null)
+      {
+        Release.ComObject("_infTeeWinTV filter", _infTeeWinTV); _infTeeWinTV = null;
       }
       if (_filterMpeg2DemuxTif != null)
       {
