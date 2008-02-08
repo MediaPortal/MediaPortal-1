@@ -33,7 +33,8 @@ BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "MediaPortal\MediaPortal TV Server"
 !define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal TV Server Setup"
-!define MUI_FINISHPAGE_RUN $INSTDIR\SetupTV.exe
+!define MUI_FINISHPAGE_RUN 
+!define MUI_FINISHPAGE_RUN_FUNCTION RunSetup
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
@@ -190,7 +191,8 @@ Section "MediaPortal TV Server" SecServer
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk" "$CommonAppData\log" "" "$CommonAppData\log" 0 "" "" "TV Server Log Files"
     # Change outpath back to the install dir, so that the shortcut to SetupTV gets the correct working directory
     SetOutPath $INSTDIR
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "mp.ico" 0 "" "" "MediaPortal TV Server"
+    
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
@@ -308,6 +310,13 @@ Function .onInit
     StrCpy $LibInstall2 1
     Pop $0 
     
+FunctionEnd
+
+; Start the Setup after the successfull install
+; needed in an extra function to set the working directory
+Function RunSetup
+SetOutPath $INSTDIR
+Exec "$INSTDIR\SetupTV.exe"
 FunctionEnd
 
 # Uninstall TV Server
