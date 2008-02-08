@@ -58,7 +58,7 @@ namespace TvLibrary.Epg
       Description = description;
       Genre = genre;
       StarRating = starRating;
-      Classification = Classification;
+      Classification = classification;
       ParentalRating = parentalRating;
     }
     #endregion
