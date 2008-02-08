@@ -60,6 +60,13 @@ bool CPmtParser::IsReady()
 {
 	return _isFound;
 }
+
+void CPmtParser::OnTsPacket(byte* tsPacket)
+{
+	if (m_pmtCallback2==NULL) return;
+	CSectionDecoder::OnTsPacket(tsPacket);
+}
+
 void CPmtParser::OnNewSection(CSection& sections)
 { 
 	byte* section=sections.Data;
@@ -158,7 +165,10 @@ void CPmtParser::OnNewSection(CSection& sections)
 		m_pidInfos2.push_back(pidInfo2);
   }
 	if (m_pmtCallback2!=NULL)
+	{
 		m_pmtCallback2->OnPmtReceived2(GetPid(),m_serviceId,pcr_pid,m_pidInfos2);
+		m_pmtCallback2=NULL;
+	}
 }
 
 int CPmtParser::GetPmtVersion()

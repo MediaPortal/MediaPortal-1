@@ -670,6 +670,7 @@ namespace TvService
             return;
           }
         }
+        _epg.Clear();
         Log.Epg("Epg: card:{0} Finished updating the database.",_user.CardId);
       }
       catch (Exception ex)

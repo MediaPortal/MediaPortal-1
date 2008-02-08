@@ -60,12 +60,11 @@ typedef struct stLastPtsDtsRecord
 	CPcr dts;
 } LastPtsDtsRecord;
 
-class CDiskRecorder: public CUnknown, public IFileWriter, IPmtCallBack2
+class CDiskRecorder: public IFileWriter, IPmtCallBack2
 {
 public:
-	CDiskRecorder(LPUNKNOWN pUnk, HRESULT *phr);
+	CDiskRecorder(RecordingMode mode);
 	~CDiskRecorder(void);
-  DECLARE_IUNKNOWN
 	
 	void SetFileName(char* pszFileName);
 	bool Start();
@@ -73,11 +72,10 @@ public:
 	void Pause( BYTE onOff) ;
 	void Reset();
 
-	void SetRecordingMode(int mode) ;
 	void GetRecordingMode(int *mode) ;
 	void SetStreamMode(int mode) ;
 	void GetStreamMode(int *mode) ;
-	void SetPmtPid(int pmtPid,int serviceId);
+	void SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLength);
 
 	// Only needed for timeshifting
 	void SetVideoAudioObserver (IVideoAudioObserver* callback);
@@ -98,8 +96,12 @@ public:
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
 
+
 private:  
-	void OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos);
+	void WriteToRecording(byte* buffer, int len);
+	void WriteToTimeshiftFile(byte* buffer, int len);
+	void WriteLog(const char *fmt, ...);
+	void OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfos);
 	void SetPcrPid(int pcrPid);
 	bool IsStreamWanted(int stream_type);
 	void AddStream(PidInfo2 pidInfo);
@@ -116,14 +118,15 @@ private:
   RecordingMode    m_recordingMode;
 	StreamMode			 m_streamMode;
 	CPmtParser*					 m_pPmtParser;
-	bool				         m_bTimeShifting;
+	bool				         m_bRunning;
 	char				         m_szFileName[2048];
 	MultiFileWriter*     m_pTimeShiftFile;
+	HANDLE							 m_hFile;
 	CCriticalSection     m_section;
   int                  m_iPmtPid;
   int                  m_pcrPid;
 	int									 m_iServiceId;
-	vector<PidInfo2>			 m_vecPids;
+	vector<PidInfo2>		 m_vecPids;
 	bool								 m_bSeenAudioStart;
 	bool								 m_bSeenVideoStart;
 	int									 m_iPmtContinuityCounter;
@@ -137,6 +140,7 @@ private:
   int             m_iPacketCounter;
 	int			        m_iPatVersion;
 	int			        m_iPmtVersion;
+	int              m_iPart;
   byte*           m_pWriteBuffer;
   int             m_iWriteBufferPos;
   CTsHeader       m_tsHeader;
@@ -147,7 +151,6 @@ private:
   CPcr            m_pcrDuration;
   bool            m_bPCRRollover;
   bool            m_bIgnoreNextPcrJump;
-  FILE*           m_fDump;
 
   vector<char*>   m_tsQueue;
   bool            m_bClearTsQueue;

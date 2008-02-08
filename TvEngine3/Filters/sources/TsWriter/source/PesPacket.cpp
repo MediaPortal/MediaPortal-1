@@ -113,10 +113,10 @@ int CBuffer::Size()
 void CBuffer::HasPtsDts(bool& pts, bool &dts)
 {
   pts=dts=false;
-  if (m_pts.PcrReferenceBase!=0)
+	if (m_pts.IsValid)
   {
     pts=true;
-    if (m_dts.PcrReferenceBase!=0)
+		if (m_dts.IsValid)
     {
       dts=true;
     }

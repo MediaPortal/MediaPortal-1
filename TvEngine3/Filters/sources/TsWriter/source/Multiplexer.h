@@ -53,7 +53,6 @@ public:
 	int OnNewPesPacket(CPesDecoder* decoder);
 
 private:
-	bool IsStreamWanted(int stream_type);
 	int  WritePackHeader(byte* buf, CPcr& pcr);
   int  WriteSystemHeader(byte* buf);
   int  WritePaddingHeader(byte* buf, int full_padding_size);
@@ -62,7 +61,6 @@ private:
   int  get_packet_payload_size(CPesPacket& packet);
   int  mpeg_mux_write_packet(CPesPacket& packet, int streamId);
   void flush_packet(CPesPacket& packet, int streamId);
-	void PatchPtsDts(byte* pesPacket,CPcr& startPcr);
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
   

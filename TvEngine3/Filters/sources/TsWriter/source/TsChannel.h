@@ -25,8 +25,9 @@
 #include "videoanalyzer.h"
 #include "channelscan.h"
 #include "pmtgrabber.h"
-#include "recorder.h"
-#include "timeshifting.h"
+//#include "recorder.h"
+//#include "timeshifting.h"
+#include "DiskRecorder.h"
 #include "teletextgrabber.h"
 #include "cagrabber.h"
 
@@ -42,8 +43,8 @@ public:
 
 	CVideoAnalyzer* m_pVideoAnalyzer;
 	CPmtGrabber*		m_pPmtGrabber;
-	CRecorder*			m_pRecorder;
-	CTimeShifting*	m_pTimeShifting;
+	CDiskRecorder*	m_pRecorder;
+	CDiskRecorder*	m_pTimeShifting;
 	CTeletextGrabber*	m_pTeletextGrabber;
   CCaGrabber*     m_pCaGrabber;
 	int m_id;

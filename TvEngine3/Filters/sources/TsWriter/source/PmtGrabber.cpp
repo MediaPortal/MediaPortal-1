@@ -86,7 +86,7 @@ void CPmtGrabber::OnNewSection(CSection& section)
 	try
 	{
 		if (section.table_id!=2) return;
-		if (section.version_number == m_iPmtVersion) return;
+		//if (section.version_number == m_iPmtVersion) return;
 		
 	  CEnterCriticalSection enter(m_section);
 

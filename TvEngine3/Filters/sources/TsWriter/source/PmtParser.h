@@ -70,6 +70,7 @@ class CPmtParser: public  CSectionDecoder
 public:
   CPmtParser(void);
   virtual ~CPmtParser(void);
+	void    OnTsPacket(byte* tsPacket);
 	void		OnNewSection(CSection& sections);
 	void    SetPmtCallBack2(IPmtCallBack2* callback);
   bool    IsReady();

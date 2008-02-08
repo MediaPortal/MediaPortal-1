@@ -51,6 +51,9 @@
 #define TRANSPORT_PRIVATE_DATA_FLAG_BIT     0x2     // bitmask for the TRANSPORT_PRIVATE_DATA flag
 #define ADAPTION_FIELD_EXTENSION_FLAG_BIT   0x1     // bitmask for the DAPTION_FIELD_EXTENSION flag
 
+#define ERROR_FILE_TOO_LARGE 223
+#define RECORD_BUFFER_SIZE 256000
+
 int DR_FAKE_NETWORK_ID   = 0x456;                // network id we use in our PAT
 int DR_FAKE_TRANSPORT_ID = 0x4;                  // transport id we use in our PAT
 int DR_FAKE_SERVICE_ID   = 0x89;                 // service id we use in our PAT
@@ -69,9 +72,10 @@ extern void LogDebug(const char *fmt, ...) ;
 //*******************************************************************
 //* ctor
 //*******************************************************************
-CDiskRecorder::CDiskRecorder(LPUNKNOWN pUnk, HRESULT *phr) 
-	:CUnknown( NAME ("MpTsDiscRecorder"), pUnk)
+CDiskRecorder::CDiskRecorder(RecordingMode mode) 
 {
+	m_recordingMode=mode;
+	m_hFile=INVALID_HANDLE_VALUE;
 	m_bPaused=FALSE;
 	m_params.chunkSize=268435424;
 	m_params.maxFiles=20;
@@ -82,9 +86,8 @@ CDiskRecorder::CDiskRecorder(LPUNKNOWN pUnk, HRESULT *phr)
 	m_pcrPid=-1;
 	m_iServiceId=-1;
 	m_streamMode=ProgramStream;
-	m_recordingMode=TimeShift;
 
-	m_bTimeShifting=false;
+	m_bRunning=false;
 	m_pTimeShiftFile=NULL;
 
 	m_bStartPcrFound=false;
@@ -93,15 +96,19 @@ CDiskRecorder::CDiskRecorder(LPUNKNOWN pUnk, HRESULT *phr)
 	m_bDetermineNewStartPcr=false;
 	m_iPatVersion=0;
 	m_iPmtVersion=0;
-	m_pWriteBuffer = new byte[WRITE_BUFFER_SIZE];
+	if (m_recordingMode==RecordingMode::TimeShift)
+		m_pWriteBuffer = new byte[WRITE_BUFFER_SIZE];
+	else
+		m_pWriteBuffer = new byte[RECORD_BUFFER_SIZE];
 	m_iWriteBufferPos=0;
   m_TsPacketCount=0;
-	m_fDump=NULL;
 	m_bIgnoreNextPcrJump=false;
   m_bClearTsQueue=false;
 	rclock=new CPcrRefClock();
 	m_pPmtParser=new CPmtParser();
   m_pPmtParser->SetPmtCallBack2(this);
+	m_multiPlexer.SetFileWriterCallBack(this);
+	m_pVideoAudioObserver=NULL;
 	m_mapLastPtsDts.clear();
 }
 //*******************************************************************
@@ -109,6 +116,12 @@ CDiskRecorder::CDiskRecorder(LPUNKNOWN pUnk, HRESULT *phr)
 //*******************************************************************
 CDiskRecorder::~CDiskRecorder(void)
 {
+	CEnterCriticalSection enter(m_section);
+  if (m_hFile!=INVALID_HANDLE_VALUE)
+  {
+	  CloseHandle(m_hFile);
+	  m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
+  }
 	delete [] m_pWriteBuffer;
   for (int i=0; i < m_tsQueue.size();++i)
   {
@@ -124,7 +137,7 @@ void CDiskRecorder::SetFileName(char* pszFileName)
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		LogDebug("DiskRecorder: set filename:%s",pszFileName);
+		WriteLog("set filename:%s",pszFileName);
 		m_iPacketCounter=0;
 		m_iPmtPid=-1;
 		m_pcrPid=-1;
@@ -133,12 +146,14 @@ void CDiskRecorder::SetFileName(char* pszFileName)
 		m_bStartPcrFound=false;
 		m_highestPcr.Reset();
 		m_bDetermineNewStartPcr=false;
+		m_multiPlexer.Reset();
 		strcpy(m_szFileName,pszFileName);
-		strcat(m_szFileName,".tsbuffer");
+		if (m_recordingMode==RecordingMode::TimeShift)
+			strcat(m_szFileName,".tsbuffer");
 	}
 	catch(...)
 	{
-		LogDebug("DiskRecorder: SetFilename exception");
+		WriteLog("SetFilename exception");
 	}
 }
 
@@ -149,19 +164,43 @@ bool CDiskRecorder::Start()
 	{
 		if (strlen(m_szFileName)==0) return false;
 		::DeleteFile((LPCTSTR) m_szFileName);
-		WCHAR wstrFileName[2048];
-		MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
-
-		m_pTimeShiftFile = new MultiFileWriter(&m_params);
-		if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
+		m_iPart=2;
+		if (m_recordingMode==RecordingMode::TimeShift)
 		{
-			LogDebug("Timeshifter:failed to open filename:%s %d",m_szFileName,GetLastError());
-			m_pTimeShiftFile->CloseFile();
-			delete m_pTimeShiftFile;
-			m_pTimeShiftFile=NULL;
-			return false;
+			WCHAR wstrFileName[2048];
+			MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
+			m_pTimeShiftFile = new MultiFileWriter(&m_params);
+			if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
+			{
+				WriteLog("failed to open filename:%s %d",m_szFileName,GetLastError());
+				m_pTimeShiftFile->CloseFile();
+				delete m_pTimeShiftFile;
+				m_pTimeShiftFile=NULL;
+				return false;
+			}
 		}
-
+		else
+		{
+			if (m_hFile!=INVALID_HANDLE_VALUE)
+			{
+				CloseHandle(m_hFile);
+				m_hFile=INVALID_HANDLE_VALUE;
+			}
+			m_hFile = CreateFile(m_szFileName,      // The filename
+												 (DWORD) GENERIC_WRITE,         // File access
+												 (DWORD) FILE_SHARE_READ,       // Share access
+												  NULL,                  // Security
+												 (DWORD) OPEN_ALWAYS,           // Open flags
+//				  						 (DWORD) FILE_FLAG_RANDOM_ACCESS,
+//											 (DWORD) FILE_FLAG_WRITE_THROUGH,             // More flags
+												 (DWORD) 0,             // More flags
+													NULL);                 // Template
+			if (m_hFile == INVALID_HANDLE_VALUE)
+			{
+				LogDebug("unable to create file:'%s' %d",m_szFileName, GetLastError());
+				return false;
+			}
+		}
 		m_iPmtContinuityCounter=-1;
 		m_iPatContinuityCounter=-1;
 		m_bDetermineNewStartPcr=false;
@@ -171,13 +210,13 @@ bool CDiskRecorder::Start()
 		m_mapLastPtsDts.clear();
 		m_iPacketCounter=0;
 		m_iWriteBufferPos=0;
-		LogDebug("DiskRecorder: Start '%s'",m_szFileName);
-		m_bTimeShifting=true;
+		WriteLog("Start '%s'",m_szFileName);
+		m_bRunning=true;
 		m_bPaused=FALSE;
 	}
 	catch(...)
 	{
-		LogDebug("DiskRecorder: Start exception");
+		WriteLog("Start exception");
 	}
 	return true;
 }
@@ -187,25 +226,33 @@ void CDiskRecorder::Stop()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		LogDebug("DiscRecorder: Stop '%s'",m_szFileName);
-		m_bTimeShifting=false;
+		WriteLog("Stop '%s'",m_szFileName);
+		m_bRunning=false;
 		m_pPmtParser->Reset();
+		m_multiPlexer.Reset();
 		if (m_pTimeShiftFile!=NULL)
 		{
 			m_pTimeShiftFile->CloseFile();
 			delete m_pTimeShiftFile;
 			m_pTimeShiftFile=NULL;
 		}
-		if (m_fDump!=NULL)
+		if (m_hFile!=INVALID_HANDLE_VALUE)
 		{
-			fclose(m_fDump);
-			m_fDump=NULL;
+			if (m_iWriteBufferPos>0)
+			{
+				DWORD written = 0;
+				WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
+				m_iWriteBufferPos=0;
+			}
+			CloseHandle(m_hFile);
+			m_hFile=INVALID_HANDLE_VALUE;
 		}
+		m_iPmtPid=-1;
 		Reset();
 	}
 	catch(...)
 	{
-		LogDebug("DiscRecorder: Stop  exception");
+		WriteLog("Stop  exception");
 	}
 }
 
@@ -223,11 +270,11 @@ void CDiskRecorder::Pause(BYTE onOff)
   }
 	if (m_bPaused)
   {
-		LogDebug("DiskRecorder: paused=yes"); 
+		WriteLog("paused=yes"); 
   }
 	else
 	{
-		LogDebug("DiskRecorder: paused=no"); 
+		WriteLog("paused=no"); 
 		Flush();
 	}
 }
@@ -237,7 +284,7 @@ void CDiskRecorder::Reset()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		LogDebug("DiskRecorder:Reset");
+		WriteLog("Reset");
 		m_iPmtPid=-1;
 		m_pcrPid=-1;
 		m_bDetermineNewStartPcr=false;
@@ -263,17 +310,8 @@ void CDiskRecorder::Reset()
 	}
 	catch(...)
 	{
-		LogDebug("DiskRecorder: Reset exception");
+		WriteLog("Reset exception");
 	}
-}
-
-void CDiskRecorder::SetRecordingMode(int mode) 
-{
-	m_recordingMode=(RecordingMode)mode;
-	if (mode==TimeShift)
-		LogDebug("DiskRecorder: timeshifting mode");
-	else
-		LogDebug("DiskRecorder: recording mode");
 }
 
 void CDiskRecorder::GetRecordingMode(int *mode) 
@@ -285,9 +323,9 @@ void CDiskRecorder::SetStreamMode(int mode)
 {
 	m_streamMode=(StreamMode)mode;
 	if (mode==ProgramStream)
-		LogDebug("DiskRecorder:program stream mode");
+		WriteLog("program stream mode");
 	else
-		LogDebug("DiskRecorder:transport stream mode");
+		WriteLog("transport stream mode");
 }
 
 void CDiskRecorder::GetStreamMode(int *mode) 
@@ -295,26 +333,36 @@ void CDiskRecorder::GetStreamMode(int *mode)
 	*mode=(int)m_streamMode;
 }
 
-void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId)
+void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLength)
 {
 	CEnterCriticalSection enter(m_section);
-	LogDebug("DiscRecorder:pmt pid:0x%x serviceId: 0x%x",pmtPid,serviceId);
+	WriteLog("pmt pid:0x%x serviceId: 0x%x pmtlength:%d",pmtPid,serviceId,pmtLength);
   m_iPmtPid=pmtPid;
 	m_iServiceId=serviceId;
 	m_pPmtParser->Reset();
+	m_pPmtParser->SetPmtCallBack2(this);
 	m_pPmtParser->SetFilter(pmtPid,serviceId);
+	CSection section;
+	section.Data=new byte[MAX_SECTION_LENGTH*5];
+	section.Reset();
+	section.BufferPos=pmtLength;
+	memcpy(section.Data,pmtData,pmtLength);
+	section.DecodeHeader();
+	WriteLog("got pmt - tableid: 0x%x section_length: %d sid: 0x%x",section.table_id,section.section_length,section.table_id_extension);
+	m_pPmtParser->OnNewSection(section);
+	delete section.Data;
 }
 
 void CDiskRecorder::SetVideoAudioObserver (IVideoAudioObserver* callback)
 {
   if(callback)
   {
-    LogDebug("DiscRecorder: SetVideoAudioObserver observer ok");
+    WriteLog("SetVideoAudioObserver observer ok");
     m_pVideoAudioObserver = callback;
   }
   else
   {
-    LogDebug("DiscRecorder: SetVideoAudioObserver observer was null");  
+    WriteLog("SetVideoAudioObserver observer was null");  
 		return;
   }
 }
@@ -388,31 +436,40 @@ void CDiskRecorder::GetFileBufferSize(__int64 *lpllsize)
 
 void CDiskRecorder::OnTsPacket(byte* tsPacket)
 {
-	CTsHeader header(tsPacket);
-	if (header.Pid==m_iPmtPid)
-      m_pPmtParser->OnTsPacket(tsPacket);
 	if (m_bPaused) return;
-	if (m_bTimeShifting)
+	if (m_bRunning)
 	{
+		CEnterCriticalSection enter(m_section);		
+		CTsHeader header(tsPacket);
+		//if (header.Pid==m_iPmtPid)
+   //   m_pPmtParser->OnTsPacket(tsPacket);
 		if (header.Pid==0x1fff) return;
 		if (header.SyncByte!=0x47) return;
 		if (header.TransportError) return;
-		CEnterCriticalSection enter(m_section);
 		WriteTs(tsPacket);
 	}
 }
 
-void CDiskRecorder::Write(byte* buffer, int len)
+void CDiskRecorder::Write(byte* buffer,int len)
 {
-  if (!m_bTimeShifting) return;
-  if (buffer == NULL) return;
-  if (len != 188) return; //sanity check
-  if (m_pWriteBuffer == NULL) return; //sanity check
+	CEnterCriticalSection enter(m_section);
+	if (m_recordingMode==RecordingMode::TimeShift)
+		WriteToTimeshiftFile(buffer,len);
+	else
+		WriteToRecording(buffer,len);
+}
+
+void CDiskRecorder::WriteToRecording(byte* buffer, int len)
+{
+	CEnterCriticalSection enter(m_section);
+	try{
+	if (!m_bRunning) return;
+  if (buffer==NULL) return;
   if (m_bPaused || m_bClearTsQueue) 
   {
      try
      {
-        LogDebug("DiskRecorder: clear TS packet queue"); 
+        WriteLog("clear TS packet queue"); 
         for (int i=0; i < m_tsQueue.size();++i)
         {
           delete[] m_tsQueue[i];
@@ -424,7 +481,111 @@ void CDiskRecorder::Write(byte* buffer, int len)
       }
       catch(...)
       {
-        LogDebug("DiskRecorder: Write exception - 1");
+        WriteLog("Write exception - 1");
+      }
+      return;
+  }
+  if (len <=0) return;
+  if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
+  {
+	  try
+	  {
+      if (m_iWriteBufferPos > 0)
+      {
+		    if (m_hFile != INVALID_HANDLE_VALUE)
+		    {
+	        DWORD written = 0;
+	        if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
+          {
+            //On fat16/fat32 we can only create files of max. 2gb/4gb
+            if (ERROR_FILE_TOO_LARGE == GetLastError())
+            {
+              LogDebug("Recorder:Maximum filesize reached for file:'%s' %d",m_szFileName);
+                //close the file...
+		          CloseHandle(m_hFile);
+              m_hFile=INVALID_HANDLE_VALUE;
+
+              //create a new file
+              char ext[MAX_PATH];
+              char fileName[MAX_PATH];
+              char part[100];
+						  int len=strlen(m_szFileName)-1;
+						  int pos=len-1;
+						  while (pos>0)
+						  {
+							  if (m_szFileName[pos]=='.') break;
+							  pos--;
+						  }
+              strcpy(ext, &m_szFileName[pos]);
+              strncpy(fileName, m_szFileName, pos);
+              fileName[pos]=0;
+              sprintf(part,"_p%d",m_iPart);
+              char newFileName[MAX_PATH];
+              sprintf(newFileName,"%s%s%s",fileName,part,ext);
+
+						  LogDebug("Recorder:Create new  file:'%s' %d",newFileName);
+	            m_hFile = CreateFile(newFileName,      // The filename
+						             (DWORD) GENERIC_WRITE,         // File access
+						             (DWORD) FILE_SHARE_READ,       // Share access
+						             NULL,                  // Security
+						             (DWORD) OPEN_ALWAYS,           // Open flags
+						             (DWORD) 0,             // More flags
+						             NULL);                 // Template
+	            if (m_hFile == INVALID_HANDLE_VALUE)
+	            {
+                LogDebug("Recorder:unable to create file:'%s' %d",newFileName, GetLastError());
+                m_iWriteBufferPos=0;
+		            return ;
+	            }
+              m_iPart++;
+              WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
+            }//of if (ERROR_FILE_TOO_LARGE == GetLastError())
+						else
+						{				 
+							LogDebug("Runable to write file:'%s' %d %d %x",m_szFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
+						}
+          }//of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
+		    }//if (m_hFile!=INVALID_HANDLE_VALUE)
+      }//if (m_iWriteBufferPos>0)
+      m_iWriteBufferPos=0;
+	  }
+	  catch(...)
+	  {
+		  LogDebug("Write exception");
+	  }
+  }// of if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
+
+  if ( (m_iWriteBufferPos+len) < RECORD_BUFFER_SIZE && len > 0)
+  {
+    memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
+    m_iWriteBufferPos+=len;
+  }
+	} catch (...) { WriteLog("Exception in writetorecording");}
+}
+
+void CDiskRecorder::WriteToTimeshiftFile(byte* buffer, int len)
+{
+  if (!m_bRunning) return;
+  if (buffer == NULL) return;
+  if (len != 188) return; //sanity check
+  if (m_pWriteBuffer == NULL) return; //sanity check
+  if (m_bPaused || m_bClearTsQueue) 
+  {
+     try
+     {
+        WriteLog("clear TS packet queue"); 
+        for (int i=0; i < m_tsQueue.size();++i)
+        {
+          delete[] m_tsQueue[i];
+        }
+        m_tsQueue.clear();
+        m_bClearTsQueue = false;
+        ZeroMemory(m_pWriteBuffer, WRITE_BUFFER_SIZE);
+        m_iWriteBufferPos = 0;
+      }
+      catch(...)
+      {
+        WriteLog("Write exception - 1");
       }
       return;
     }
@@ -445,7 +606,7 @@ void CDiskRecorder::Write(byte* buffer, int len)
       }
       catch(...)
       {
-        LogDebug("DiskRecorder: Write exception - 2");
+        WriteLog("Write exception - 2");
         return;
       }
     }
@@ -466,13 +627,13 @@ void CDiskRecorder::Write(byte* buffer, int len)
         }
         else
         {
-           LogDebug("DiskRecorder: Write m_iWriteBufferPos overflow!");
+           WriteLog("Write m_iWriteBufferPos overflow!");
            m_iWriteBufferPos=0;
         }
       }
       catch(...)
       {
-        LogDebug("DiskRecorder: Write exception - 3");
+        WriteLog("Write exception - 3");
         return;
       }
 
@@ -483,11 +644,28 @@ void CDiskRecorder::Write(byte* buffer, int len)
     }  
   }
 
-void CDiskRecorder::OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos)
+void CDiskRecorder::WriteLog(const char* fmt,...)
+{
+	char logbuffer[2000]; 
+	va_list ap;
+	va_start(ap,fmt);
+
+	int tmp;
+	va_start(ap,fmt);
+	tmp=vsprintf(logbuffer, fmt, ap);
+	va_end(ap); 
+
+	if (m_recordingMode==RecordingMode::TimeShift)
+		LogDebug("DiskRecorder[TIMESHIFT] %s",logbuffer);
+	else
+		LogDebug("DiskRecorder[RECORD] %s",logbuffer);
+}
+
+void CDiskRecorder::OnPmtReceived2(int pid, int serviceId,int pcrPid,vector<PidInfo2> pidInfos)
 {
 		CEnterCriticalSection enter(m_section);
 
-    LogDebug("DiskRecorder: PMT version changed from %d to %d - ServiceId %x", m_iPmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId );
+    WriteLog("PMT version changed from %d to %d - ServiceId %x", m_iPmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId );
 		m_iPmtVersion=m_pPmtParser->GetPmtVersion();
 		SetPcrPid(pcrPid);
 		ivecPidInfo2 it=pidInfos.begin();
@@ -502,15 +680,15 @@ void CDiskRecorder::OnPmtReceived2(int pcrPid,vector<PidInfo2> pidInfos)
 void CDiskRecorder::SetPcrPid(int pcrPid)
 {
 		CEnterCriticalSection enter(m_section);
-		LogDebug("DiskRecorder: pcr pid:0x%x",pcrPid); 
-    LogDebug("DiskRecorder: SetPcrPid clear old PIDs");
+		WriteLog("pcr pid:0x%x",pcrPid); 
+    WriteLog("SetPcrPid clear old PIDs");
     m_vecPids.clear();
     m_bClearTsQueue=true;
     m_TsPacketCount=0;
 
-		if (m_bTimeShifting)
+		if (m_bRunning)
 		{
-			LogDebug("DiskRecorder: determine new start pcr"); 
+			WriteLog("determine new start pcr"); 
 			m_bDetermineNewStartPcr=true;
 			m_bIgnoreNextPcrJump=true;
 		}
@@ -530,6 +708,8 @@ void CDiskRecorder::SetPcrPid(int pcrPid)
 		m_iPmtVersion++;
 		if (m_iPmtVersion>15) 
 			m_iPmtVersion=0;
+		if (m_streamMode==StreamMode::ProgramStream)
+			m_multiPlexer.SetPcrPid(pcrPid);
 }
 
 bool CDiskRecorder::IsStreamWanted(int stream_type)
@@ -571,29 +751,46 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 		{
 			pi.fakePid=DR_FAKE_AUDIO_PID;
 			DR_FAKE_AUDIO_PID++;
+			if (m_streamMode==StreamMode::ProgramStream)
+				m_multiPlexer.AddPesStream(pi);
+			m_vecPids.push_back(pi);
+			WriteLog("add audio stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 		}
 		else if (pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_VIDEO_H264)
 		{
 			pi.fakePid=DR_FAKE_VIDEO_PID;
 			DR_FAKE_VIDEO_PID++;
+			if (m_streamMode==StreamMode::ProgramStream)
+				m_multiPlexer.AddPesStream(pi);
+			m_vecPids.push_back(pi);
+			WriteLog("add video stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 		}
-		else if (pidInfo.logicalStreamType==DESCRIPTOR_DVB_TELETEXT)
+		if (m_streamMode==StreamMode::TransportStream)
 		{
-			pi.fakePid=DR_FAKE_TELETEXT_PID;
-			DR_FAKE_TELETEXT_PID++;
+			if (pidInfo.logicalStreamType==DESCRIPTOR_DVB_TELETEXT)
+			{
+				pi.fakePid=DR_FAKE_TELETEXT_PID;
+				DR_FAKE_TELETEXT_PID++;
+				m_vecPids.push_back(pi);
+				WriteLog("add teletext stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
+			}
+			else if (pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES2)
+			{
+				pi.fakePid=DR_FAKE_SUBTITLE_PID;
+				DR_FAKE_SUBTITLE_PID++;
+				m_vecPids.push_back(pi);
+				WriteLog("add subtitle stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
+			}
 		}
-		else if (pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES2)
-		{
-			pi.fakePid=DR_FAKE_SUBTITLE_PID;
-			DR_FAKE_SUBTITLE_PID++;
-		}
+		else
+			if (pidInfo.logicalStreamType==DESCRIPTOR_DVB_TELETEXT || pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || pidInfo.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES2)
+			WriteLog("stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
+
 		if (pi.elementaryPid==m_pcrPid)
 			DR_FAKE_PCR_PID=pi.fakePid;
-		LogDebug("DiskRecorder: add stream pid: 0x%x fake pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pi.fakePid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
-		m_vecPids.push_back(pi);
 	}
 	else
-		LogDebug("DiskRecorder: stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
+		WriteLog("stream rejected - pid: 0x%x stream type: 0x%x logical type: 0x%x descriptor length: %d",pidInfo.elementaryPid,pidInfo.streamType,pidInfo.logicalStreamType,pidInfo.rawDescriptorSize);
 }
 
 void CDiskRecorder::Flush()
@@ -611,13 +808,14 @@ void CDiskRecorder::Flush()
 	}
 	catch(...)
 	{
-		LogDebug("DiskRecorder: Flush exception");
+		WriteLog("Flush exception");
 	}
 }
 
 void CDiskRecorder::WriteTs(byte* tsPacket)
 {	  	  
 	CEnterCriticalSection enter(m_section);
+	try{
 	m_TsPacketCount++;
   if( m_TsPacketCount < IGNORE_AFTER_TUNE ) return;
   if (m_pcrPid<0 || m_vecPids.size()==0 || m_iPmtPid<0) return;
@@ -631,8 +829,11 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 	if (m_iPacketCounter>=100)
 	{
-		WriteFakePAT();
-		WriteFakePMT();
+		if (m_streamMode==StreamMode::TransportStream)
+		{
+			WriteFakePAT();
+			WriteFakePMT();
+		}
 		m_iPacketCounter=0;
 	}
 
@@ -668,12 +869,12 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 					  if (PayLoadUnitStart)
 					  {
 						  info.seenStart=true;
-						  LogDebug("DiskRecorder: start of video detected");
+						  WriteLog("start of video detected");
               if(m_pVideoAudioObserver)
 								m_pVideoAudioObserver->OnNotify(PidType::Video);
 					  }
 				  }
-				  if (!info.seenStart) return;
+					if (!info.seenStart) return;
 				  byte pkt[200];
 				  memcpy(pkt,tsPacket,188);
 				  int pid=info.fakePid;
@@ -685,7 +886,10 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				  {						
 					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
-					  Write(pkt,188);
+						if (m_streamMode==StreamMode::TransportStream)
+							Write(pkt,188);
+						else
+							m_multiPlexer.OnTsPacket(pkt);
 					  m_iPacketCounter++;
 				  }
 				  return;
@@ -699,7 +903,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 					  if (PayLoadUnitStart)
 					  {
 						  info.seenStart=true;
-						  LogDebug("DiskRecorder: start of audio detected");
+						  WriteLog("start of audio detected");
               if(m_pVideoAudioObserver)
 								m_pVideoAudioObserver->OnNotify(PidType::Audio);
 					  }
@@ -716,7 +920,10 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				  {						  
 					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  							
-					  Write(pkt,188);
+						if (m_streamMode==StreamMode::TransportStream)
+							Write(pkt,188);
+						else
+							m_multiPlexer.OnTsPacket(pkt);
 					  m_iPacketCounter++;
 				  }
 				  return;
@@ -778,6 +985,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 		}
 		return;
 	}
+	} catch (...) { WriteLog("Exception in WriteTs");}
 }
 
 void CDiskRecorder::WriteFakePAT()
@@ -897,7 +1105,7 @@ void CDiskRecorder::WriteFakePMT()
 	pmt[offset++]=(byte)((crc>>8)&0xff);
 	pmt[offset++]=(byte)((crc)&0xff);
 
-	if(pmtLength > 188) LogDebug("ERROR: Pmt length : %i ( >188 )!!!!",pmtLength);
+	if(pmtLength > 188) WriteLog("ERROR: Pmt length : %i ( >188 )!!!!",pmtLength);
 
 	Write(pmt,188);
 }
@@ -924,11 +1132,11 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 			duration-=m_startPcr;
 			CPcr newStartPcr=pcrNew;
 			newStartPcr-=duration ;
-			LogDebug("Pcr start    :%s",m_startPcr.ToString());
-			LogDebug("Pcr high     :%s",m_highestPcr.ToString());
-			LogDebug("Pcr duration :%s",duration.ToString());
-			LogDebug("Pcr current  :%s",pcrNew.ToString());
-			LogDebug("Pcr newstart :%s",newStartPcr.ToString());
+			WriteLog("Pcr start    :%s",m_startPcr.ToString());
+			WriteLog("Pcr high     :%s",m_highestPcr.ToString());
+			WriteLog("Pcr duration :%s",duration.ToString());
+			WriteLog("Pcr current  :%s",pcrNew.ToString());
+			WriteLog("Pcr newstart :%s",newStartPcr.ToString());
 
 			m_startPcr  = newStartPcr;
 			m_highestPcr= newStartPcr;
@@ -942,7 +1150,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 		m_bStartPcrFound=true;
 		m_startPcr  = pcrNew;
 		m_highestPcr= pcrNew;
-		LogDebug("Pcr new start pcr :%s - pid:%x", m_startPcr.ToString() , header.Pid);
+		WriteLog("Pcr new start pcr :%s - pid:%x", m_startPcr.ToString() , header.Pid);
 	} 
 
 	CPcr pcrHi=pcrNew;
@@ -964,7 +1172,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 
   if (m_bDetermineNewStartPcr)
   {
-    LogDebug( "not allowed to patch PCRs yet - m_bDetermineNewStartPcr = true" );
+    WriteLog( "not allowed to patch PCRs yet - m_bDetermineNewStartPcr = true" );
   }
 
 	// PCR value has jumped too much in the stream
@@ -973,7 +1181,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
     logNextPcr = true;
     if (m_bIgnoreNextPcrJump)
 		{
-			LogDebug( "Ignoring first PCR jump after channel change" );
+			WriteLog("Ignoring first PCR jump after channel change" );
 			m_bIgnoreNextPcrJump=false;
 		}
 		else
@@ -988,7 +1196,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 				m_startPcr.Reset();
 				m_highestPcr.Reset();
 
-				LogDebug( "PCR rollover detected" );
+				WriteLog( "PCR rollover detected" );
 			}
 			else
 			{      
@@ -1000,13 +1208,13 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 				{
 					m_pcrHole += diff;
 					m_pcrHole -= step;
-					LogDebug( "Jump forward in PCR detected" );
+					WriteLog( "Jump forward in PCR detected" );
 				}
 				else
 				{
 					m_backwardsPcrHole += diff;
 					m_backwardsPcrHole += step;
-          LogDebug( "Jump backward in PCR detected" );
+          WriteLog( "Jump backward in PCR detected" );
 				}
 			}
 		}
@@ -1026,7 +1234,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 
 	if( logNextPcr )
   {
-    LogDebug("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
+    WriteLog("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
   }
 	tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
 	tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));

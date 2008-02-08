@@ -653,37 +653,45 @@ STDMETHODIMP CMpTs::RecordSetRecordingFileName( int handle,char* pszFileName)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->SetRecordingFileName( pszFileName);
+	pChannel->m_pRecorder->SetFileName( pszFileName);
+	return S_OK;
 }
 STDMETHODIMP CMpTs::RecordStartRecord( int handle)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->StartRecord(  );
+	if (pChannel->m_pRecorder->Start())
+		return S_OK;
+	else
+		return S_FALSE;
 }
 STDMETHODIMP CMpTs::RecordStopRecord( int handle)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->StopRecord(  );
+	pChannel->m_pRecorder->Stop(  );
+	return S_OK;
 }
 STDMETHODIMP CMpTs::RecordGetMode( int handle,int *mode) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->GetMode( mode) ;
+	pChannel->m_pRecorder->GetStreamMode( mode) ;
+	return S_OK;
 }
 STDMETHODIMP CMpTs::RecordSetMode( int handle,int mode) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->SetMode(  mode) ;
+	pChannel->m_pRecorder->SetStreamMode(  mode) ;
+	return S_OK;
 }
-STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId )
+STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId,byte* pmtData,int pmtLength )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->SetPmtPid( mtPid, serviceId );
+	pChannel->m_pRecorder->SetPmtPid( mtPid, serviceId,pmtData,pmtLength );
+	return S_OK;
 }
 
 
@@ -707,7 +715,8 @@ STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFile
 	MultiByteToWideChar(CP_ACP,0,fileName.c_str(),-1,wstrFileName,1+fileName.size());
 	m_rawPaketWriter->SetFileName(wstrFileName);
   }
-  return pChannel->m_pTimeShifting->SetTimeShiftingFileName( pszFileName);
+  pChannel->m_pTimeShifting->SetFileName( pszFileName);
+	return S_OK;
 }
 STDMETHODIMP CMpTs:: TimeShiftStart( int handle )
 {
@@ -718,7 +727,10 @@ STDMETHODIMP CMpTs:: TimeShiftStart( int handle )
 	m_rawPaketWriter->OpenFile();
 	LogDebug("Raw paket dump file created. Now dumping raw pakets to dump file");
   }
-  return pChannel->m_pTimeShifting->Start( );
+  if (pChannel->m_pTimeShifting->Start())
+		return S_OK;
+	else
+		return S_FALSE;
 }
 STDMETHODIMP CMpTs:: TimeShiftStop( int handle )
 {
@@ -729,7 +741,8 @@ STDMETHODIMP CMpTs:: TimeShiftStop( int handle )
 	m_rawPaketWriter->CloseFile();
 	LogDebug("Raw paket dump file closed");
   }
-  return pChannel->m_pTimeShifting->Stop( );
+	pChannel->m_pTimeShifting->Stop( );
+	return S_OK;
 }
 STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
 {
@@ -741,37 +754,43 @@ STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
 	m_rawPaketWriter->OpenFile();
 	LogDebug("Raw paket dump file reset");
   }
-	return pChannel->m_pTimeShifting->Reset( );
+	pChannel->m_pTimeShifting->Reset( );
+	return S_OK;
 }
 STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, long * size) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->GetBufferSize( size);
+	pChannel->m_pTimeShifting->GetBufferSize( size);
+	return S_OK;
 }
 STDMETHODIMP CMpTs:: TimeShiftSetMode( int handle, int mode) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->SetMode( mode);
+	pChannel->m_pTimeShifting->SetStreamMode( mode);
+	return S_OK;
 }
 STDMETHODIMP CMpTs:: TimeShiftGetMode( int handle, int *mode) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->GetMode( mode);
+	pChannel->m_pTimeShifting->GetStreamMode( mode);
+	return S_OK;
 }
-STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId) 
+STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->SetPmtPid( pmtPid,serviceId);
+	pChannel->m_pTimeShifting->SetPmtPid( pmtPid,serviceId,pmtData,pmtLength);
+	return S_OK;
 }
 STDMETHODIMP CMpTs:: TimeShiftPause( int handle, BYTE onOff) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->Pause( onOff);
+	pChannel->m_pTimeShifting->Pause( onOff);
+	return S_OK;
 }
 
 STDMETHODIMP CMpTs::TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) 
@@ -789,7 +808,8 @@ STDMETHODIMP CMpTs::SetVideoAudioObserver(int handle, IVideoAudioObserver* callb
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_FALSE;
-  return pChannel->m_pTimeShifting->SetVideoAudioObserver(callback);
+  pChannel->m_pTimeShifting->SetVideoAudioObserver(callback);
+	return S_OK;
 }
 
 STDMETHODIMP CMpTs::TTxStart( int handle)

@@ -172,14 +172,12 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 void CChannelScan::OnTsPacket(byte* tsPacket)
 {
 	CEnterCriticalSection enter(m_section);
+
 	if (m_bIsParsing)
-	{
 		m_patParser.OnTsPacket(tsPacket);
-	}
-  if (m_bIsParsingNIT)
-  {
+
+	if (m_bIsParsingNIT)
     m_nit.OnTsPacket(tsPacket);
-  }
 }
 
 

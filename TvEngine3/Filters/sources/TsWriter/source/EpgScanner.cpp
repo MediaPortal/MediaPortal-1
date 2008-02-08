@@ -294,37 +294,29 @@ bool CEpgScanner::IsEIT_PID(int pid)
 
 void CEpgScanner::OnTsPacket(byte* tsPacket)
 {
-  if (false==m_bGrabbing) return;
+  if (!m_bGrabbing) return;
 	try
 	{
-		if (m_bGrabbing)
+		int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
+		if (!IsEIT_PID(pid)) return;
 		{
-			int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
-			if (!IsEIT_PID(pid)) return;
+			m_header.Decode(tsPacket);
+			CEnterCriticalSection enter(m_section);
+			if (IsEPG_PID(pid))
+				m_epgParser.OnTsPacket(m_header,tsPacket);
+			else
+				m_mhwParser.OnTsPacket(m_header,tsPacket);
+			if (m_epgParser.IsEPGReady() && m_mhwParser.IsEPGReady())
 			{
-				m_header.Decode(tsPacket);
-				CEnterCriticalSection enter(m_section);
-				if (IsEPG_PID(pid))
-					m_epgParser.OnTsPacket(m_header,tsPacket);
-				else
-					m_mhwParser.OnTsPacket(m_header,tsPacket);
-				if (m_epgParser.IsEPGReady() && m_mhwParser.IsEPGReady())
-				{
-					LogDebug("epg: epg received");
-					m_bGrabbing=false;
-				}
-			}
-
-			if (false==m_bGrabbing)
-			{
+				LogDebug("epg: epg received");
 				if (m_pCallBack!=NULL)
 				{
 					LogDebug("epg: do callback");
 					m_pCallBack->OnEpgReceived();
 				}
+				m_bGrabbing=false;
 			}
-
-		}
+  	}
 	}
 	catch(...)
 	{

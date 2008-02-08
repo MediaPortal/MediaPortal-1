@@ -24,8 +24,9 @@
 #include "channelscan.h"
 #include "epgscanner.h"
 #include "pmtgrabber.h"
-#include "recorder.h"
-#include "timeshifting.h"
+//#include "recorder.h"
+//#include "timeshifting.h"
+#include "DiskRecorder.h"
 #include "teletextgrabber.h"
 #include "cagrabber.h"
 #include "technotrend.h"
@@ -72,7 +73,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
   STDMETHOD(RecordStopRecord)(THIS_ int handle)PURE;
 	STDMETHOD(RecordGetMode) (THIS_ int handle,int *mode) PURE;
 	STDMETHOD(RecordSetMode) (THIS_ int handle,int mode) PURE;
-	STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid,int serviceId)PURE;
+	STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength)PURE;
 
 	STDMETHOD(TimeShiftSetTimeShiftingFileName)(THIS_ int handle, char* pszFileName)PURE;
 	STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
@@ -81,7 +82,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(TimeShiftGetBufferSize) (THIS_ int handle, long * size) PURE;
 	STDMETHOD(TimeShiftSetMode) (THIS_ int handle, int mode) PURE;
 	STDMETHOD(TimeShiftGetMode) (THIS_ int handle, int *mode) PURE;
-	STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid,int serviceId) PURE;
+	STDMETHOD(TimeShiftSetPmtPid) (THIS_ int handle, int pmtPid,int serviceId,byte* pmtData,int pmtLength) PURE;
 	STDMETHOD(TimeShiftPause) (THIS_ int handle, BYTE onOff) PURE;
 	STDMETHOD(TimeShiftSetParams) (THIS_ int handle, int minFiles, int maxFiles, ULONG chunkSize) PURE;
 	STDMETHOD(SetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
@@ -190,7 +191,7 @@ public:
 		STDMETHODIMP RecordStopRecord( int handle);
 		STDMETHODIMP RecordGetMode( int handle,int *mode) ;
 		STDMETHODIMP RecordSetMode( int handle,int mode) ;
-		STDMETHODIMP RecordSetPmtPid(int handle,int mtPid,int serviceId );
+		STDMETHODIMP RecordSetPmtPid(int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength );
 
 		STDMETHODIMP TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName);
 		STDMETHODIMP TimeShiftStart( int handle );
@@ -199,7 +200,7 @@ public:
 		STDMETHODIMP TimeShiftGetBufferSize( int handle, long * size) ;
 		STDMETHODIMP TimeShiftSetMode( int handle, int mode) ;
 		STDMETHODIMP TimeShiftGetMode( int handle, int *mode) ;
-		STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId) ;
+		STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) ;
 		STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
 	  STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
 		STDMETHODIMP SetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
