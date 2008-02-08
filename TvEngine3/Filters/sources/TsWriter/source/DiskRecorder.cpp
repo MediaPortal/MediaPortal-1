@@ -276,6 +276,8 @@ void CDiskRecorder::Pause(BYTE onOff)
 	{
 		WriteLog("paused=no"); 
 		Flush();
+		if (m_vecPids.size()==0)
+			WriteLog("PANIC changed status to running but i have not a single stream to record !!!!");
 	}
 }
 
@@ -348,6 +350,8 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 	section.BufferPos=pmtLength;
 	memcpy(section.Data,pmtData,pmtLength);
 	section.DecodeHeader();
+	m_vecPids.clear();
+	WriteLog("Old pids cleared");
 	WriteLog("got pmt - tableid: 0x%x section_length: %d sid: 0x%x",section.table_id,section.section_length,section.table_id_extension);
 	m_pPmtParser->OnNewSection(section);
 	delete section.Data;
@@ -664,10 +668,8 @@ void CDiskRecorder::WriteLog(const char* fmt,...)
 void CDiskRecorder::OnPmtReceived2(int pid, int serviceId,int pcrPid,vector<PidInfo2> pidInfos)
 {
 		CEnterCriticalSection enter(m_section);
-
-    WriteLog("PMT version changed from %d to %d - ServiceId %x", m_iPmtVersion, m_pPmtParser->GetPmtVersion(), m_iServiceId );
-		m_iPmtVersion=m_pPmtParser->GetPmtVersion();
 		SetPcrPid(pcrPid);
+		WriteLog("Got new parsed PMT  - Pid 0x%x ServiceId 0x%x stream count: %d",pid, m_iServiceId,pidInfos.size());
 		ivecPidInfo2 it=pidInfos.begin();
 		while (it!=pidInfos.end())
 		{

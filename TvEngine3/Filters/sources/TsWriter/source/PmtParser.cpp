@@ -30,13 +30,19 @@ CPmtParser::CPmtParser()
 {
 	m_pmtCallback2=NULL;
 	_isFound=false;
-  m_pmtVersion = -1;
 	m_serviceId=-1;
 	EnableCrcCheck(false);
 }
 
 CPmtParser::~CPmtParser(void)
 {
+}
+
+void CPmtParser::Reset()
+{
+	_isFound=false;
+	m_pmtCallback2=NULL;
+	CSectionDecoder::Reset();
 }
 
 void CPmtParser::SetFilter(int pid,int serviceId)
@@ -69,6 +75,8 @@ void CPmtParser::OnTsPacket(byte* tsPacket)
 
 void CPmtParser::OnNewSection(CSection& sections)
 { 
+	if (m_pmtCallback2==NULL) return;
+
 	byte* section=sections.Data;
 	int sectionLen=sections.section_length;
 
@@ -77,11 +85,6 @@ void CPmtParser::OnNewSection(CSection& sections)
 	if (table_id!=2) return;
 	if (m_serviceId!=-1)
 		if (sections.table_id_extension!=m_serviceId) return;
-	if (sections.version_number==m_pmtVersion) 
-	{
-		_isFound=true;
-		return;
-	}
 
 	int section_syntax_indicator = (section[start+1]>>7) & 1;
 	int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
@@ -97,8 +100,6 @@ void CPmtParser::OnNewSection(CSection& sections)
 	int len1 = section_length -( 9 + program_info_length +4);
 	int x;
 	
-	m_pmtVersion=version_number;
-  
 	// loop 1
 	while (len2 > 0)
 	{
@@ -167,12 +168,8 @@ void CPmtParser::OnNewSection(CSection& sections)
 	if (m_pmtCallback2!=NULL)
 	{
 		m_pmtCallback2->OnPmtReceived2(GetPid(),m_serviceId,pcr_pid,m_pidInfos2);
+		_isFound=true;
 		m_pmtCallback2=NULL;
 	}
-}
-
-int CPmtParser::GetPmtVersion()
-{
-  return m_pmtVersion;
 }
 

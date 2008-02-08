@@ -73,14 +73,13 @@ public:
 	void    OnTsPacket(byte* tsPacket);
 	void		OnNewSection(CSection& sections);
 	void    SetPmtCallBack2(IPmtCallBack2* callback);
+	void	  Reset();
   bool    IsReady();
 	void		SetFilter(int pid,int serviceId);
 	void		GetFilter(int &pid,int &serviceId);
-  int GetPmtVersion();
 private:
   int				m_pmtPid;
 	int				m_serviceId;
-  int 				m_pmtVersion;
 	bool			_isFound;
 	IPmtCallBack2* m_pmtCallback2;
   CTsHeader             m_tsHeader;
