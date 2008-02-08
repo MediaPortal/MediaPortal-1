@@ -46,7 +46,14 @@
 #include <dxva2api.h>
 #include "dshowhelper.h"
 #include "evrcustompresenter.h"
+#include <ddraw.h>
 #include <process.h>
+
+static DWORD lastWorkerNotification=0;
+
+//maximum time to run ahead of actual presentation time to avoid vsync-locks
+#define MAX_PRERUN 2
+#define MAX_PRERUN_HNS ((MAX_PRERUN+1)*10000)
 
 #define TIME_LOCK(obj, crit, name)  \
 DWORD then = GetTickCount(); \
@@ -163,6 +170,7 @@ UINT CALLBACK SchedulerThread(void* param)
 			//wait for a maximum of 500 ms!
 			//we try to be 3ms early and let vsync do the rest :) --> TODO better^H^H^H^H^H^H real estimation of next vblank!
 			delay = MIN(hnsSampleTime/10000, MAX_WAIT);
+			delay -= MAX_PRERUN;
 		}
 		else
 		{
@@ -1114,13 +1122,13 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, D
 		LOG_TRACE( "Time to schedule: %I64d", *pNextSampleTime );
 		//if we are ahead only 3 ms, present this sample anyway, as the vsync will be waited for anyway
 		//else sleep for some time
-		if ( *pNextSampleTime > 30000 ) {
+		if ( *pNextSampleTime > MAX_PRERUN_HNS ) {
 			break;
 		}
 		PopSample();
 		samplesProcessed++;
 		//skip only if we have a newer sample available
-		if ( *pNextSampleTime < -600000  ) {
+		if ( *pNextSampleTime < -200000  ) {
 			if (  m_qScheduledSamples.Count() > 0 ) //BREAKS DVD NAVIGATION: || *pNextSampleTime < -1500000 ) 
 			{
 				//skip!
@@ -1157,7 +1165,7 @@ void EVRCustomPresenter::StartWorkers()
 {
 	CAutoLock lock(this);
 	if ( m_bSchedulerRunning ) return;
-	StartThread(&m_hScheduler, &m_schedulerParams, SchedulerThread, &m_uSchedulerThreadId, THREAD_PRIORITY_TIME_CRITICAL);
+	StartThread(&m_hScheduler, &m_schedulerParams, SchedulerThread, &m_uSchedulerThreadId, THREAD_PRIORITY_ABOVE_NORMAL);
 	StartThread(&m_hWorker, &m_workerParams, WorkerThread, &m_uWorkerThreadId, THREAD_PRIORITY_ABOVE_NORMAL);
 	m_bSchedulerRunning = TRUE;
 }
@@ -1225,6 +1233,7 @@ void EVRCustomPresenter::NotifyScheduler()
 void EVRCustomPresenter::NotifyWorker()
 {
 	LOG_TRACE( "NotifyWorker()" );
+	lastWorkerNotification = GetTickCount();
 	NotifyThread(&m_workerParams);
 }
 
@@ -1255,6 +1264,15 @@ void EVRCustomPresenter::ScheduleSample(IMFSample* pSample)
 {
 	CAutoLock lock(&m_lockScheduledSamples);
 	LOG_TRACE( "Scheduling Sample, size: %d", m_qScheduledSamples.Count() );
+	DWORD hr;
+	LONGLONG nextSampleTime;
+	CHECK_HR(hr=GetTimeToSchedule(pSample, &nextSampleTime), "Couldn't get time to schedule!");
+	if ( SUCCEEDED(hr) ) {
+		if ( nextSampleTime < 0 ) {
+			Log("Scheduling sample from the past (%I64d ms, last call to NotifyWorker: %d ms)", 
+				-nextSampleTime/10000, GetTickCount()-lastWorkerNotification);
+		}
+	}
 	m_qScheduledSamples.Put(pSample);
 	if (m_qScheduledSamples.Count() == 1) NotifyScheduler();
 }
