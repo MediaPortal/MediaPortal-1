@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="Dutch" characters="255">
   <Section name="unmapped">
     <String id="0">Programma's</String>
@@ -41,7 +41,7 @@
     <String id="107">Ja</String>
     <String id="108">Diavoorstelling</String>
     <String id="109">Miniaturen maken</String>
-    <String id="110">Mminiatuurweergaven maken</String>
+    <String id="110">Miniatuurweergaven maken</String>
     <String id="111">Snelkoppelingen</String>
     <String id="112">PAUZE</String>
     <String id="113">Bestanden : Bron</String>
@@ -207,7 +207,7 @@
     <String id="274">Positie ondertitels</String>
     <String id="275">Pixel verhouding correctie</String>
     <String id="276">Verplaats de pijl om de overscan aan te passen</String>
-    <String id="277">Verplaats de balk om de ondertitel positie aan te passen</String>
+    <String id="277">Verplaats de balk om de ondertitel-positie aan te passen</String>
     <String id="278">Verander de rechthoek totdat het een perfekt vierkant is</String>
     <String id="279">Instellingen kunnen niet worden ingelezen</String>
     <String id="280">De standaardwaarden worden gebruikt</String>
@@ -263,8 +263,8 @@
     <String id="330">Dit kan enige tijd duren...</String>
     <String id="331">Comprimeren database...</String>
     <String id="332">Fout tijdens comprimeren van database</String>
-    <String id="333">Wil je de Muziekdatabase reorganiseren?</String>
-    <String id="334">Reorganiseer Muziekdatabase</String>
+    <String id="333">Wil je de muziekdatabase reorganiseren?</String>
+    <String id="334">Reorganiseer muziekdatabase</String>
     <String id="335">Begin</String>
     <String id="336">Aanp. framerate</String>
     <String id="337">Audio uitvoer:</String>
@@ -754,7 +754,7 @@
     <String id="996">opnamen wilt comprimeren?</String>
     <String id="997">Gereed</String>
     <String id="998">XviD</String>
-    <String id="999">Met dit plugin kan je opnamen omzetten van</String>
+    <String id="999">Met deze plugin kan je opnamen omzetten van</String>
     <String id="1000">het DVR-MS formaat naar MPEG, XVID of WMV.</String>
     <String id="1001">LET OP: Om naar XVID om te kunnen zetten</String>
     <String id="1002">moet de Elecard MPEG2 video decoder</String>
@@ -764,7 +764,7 @@
     <String id="1006">Laat de opname beginnen</String>
     <String id="1007">Breek de opname af en ga door met TV kijken</String>
     <String id="1008">Klaarzetten</String>
-    <String id="1009">Hoesje downloaden</String>
+    <String id="1009">Cover downloaden</String>
     <String id="1010">Bekeken</String>
     <String id="1011">Biografie</String>
     <String id="1012">Dit programma zal onderbroken worden door</String>
@@ -786,7 +786,7 @@
     <String id="1030">Uitschakelen</String>
     <String id="1031">Herstarten</String>
     <String id="1032">Slapen</String>
-    <String id="1033">Er worden programma'opgenomen</String>
+    <String id="1033">Er worden programma's opgenomen</String>
     <String id="1034">Geen signaal gedetecteerd!</String>
     <String id="1035">Kanaal is gecodeerd</String>
     <String id="1036">Geen video gevonden</String>
@@ -1428,7 +1428,7 @@
     <String id="6005">Timeshift buffer</String>
     <String id="6006">Zet TV automatisch aan</String>
     <String id="6007">Opneem opties</String>
-    <String id="6008">Sorteer kanelen</String>
+    <String id="6008">Sorteer kanalen</String>
     <String id="6009">DVB TV gids</String>
     <String id="6010">XMLTV TV gids</String>
     <String id="6011">DVB TV gids:</String>

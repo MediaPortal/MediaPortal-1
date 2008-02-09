@@ -925,6 +925,11 @@
     <String id="1509">Pas de fréquence pour cette chaîne</String>
     <String id="1510">Connexion au service TV perdue</String>
     <String id="1511">Pas de flux actif</String>
+    <String id="1512">Tune precedent canal ?</String>        
+    <String id="1513">Timeshifting arrété suite à enreg. programmé</String>
+    <String id="1514">Timeshifting arrété par un administrateur</String>
+    <String id="1515">Timeshifting arrété par le serveur télé</String>
+    <String id="1516">Timeshifting arrété pour une raison inconnue</String>
     <String id="1950" prefix="Mon ">Etat</String>
     <String id="1951">Disque dur</String>
     <String id="1952">Ventilateur</String>
