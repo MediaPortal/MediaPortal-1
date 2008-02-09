@@ -346,6 +346,10 @@ namespace MediaPortal.MPInstaller
       {
         if (package.InstallPlugin != null)
           package.InstallPlugin.OnEndInstall(ref package);
+        if (package._intalerStruct.ProiectProperties.ClearSkinCache)
+        {
+          Directory.Delete(Config.GetFolder(Config.Dir.Cache),true);
+        }
       }
       catch (Exception)
       {

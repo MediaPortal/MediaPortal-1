@@ -42,6 +42,7 @@ namespace MediaPortal.MPInstaller
     private string weburl;
     private DateTime creationdate;
     private bool singlegroupselect;
+    private bool clarskincache;
 
     public ProiectPropertiesClass()
     {
@@ -143,6 +144,19 @@ namespace MediaPortal.MPInstaller
       get
       {
         return singlegroupselect;
+      }
+    }
+
+    [Description("If true clear the skin cache ")]
+    public bool ClearSkinCache
+    {
+      get
+      {
+        return clarskincache;
+      }
+      set
+      {
+        clarskincache = value;
       }
     }
     public void Save(XmlWriter writer)
