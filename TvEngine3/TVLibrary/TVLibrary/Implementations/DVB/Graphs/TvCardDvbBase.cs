@@ -111,7 +111,7 @@ namespace TvLibrary.Implementations.DVB
     protected DsDevice _deviceWinTvUsb = null;
     protected bool _epgGrabbing = false;
     protected bool _isScanning = false;
-		protected bool _cardPresent = true;
+    protected bool _cardPresent = true;
     protected GraphState _graphState = GraphState.Idle;
     protected BaseEpgGrabber _epgGrabberCallback = null;
     CamType _camType;
@@ -492,8 +492,6 @@ namespace TvLibrary.Implementations.DVB
     /// [Network Provider]->[Tuner Filter]->[Capture Filter]->[WinTvCI Filter]->[InfTee]
     /// alternaively like this:
     /// [Network Provider]->[Tuner Filter]->[InfTee]->[WinTvCI Filter]->[InfTee]
-    /// alternatively:
-    /// [Network Provider]->[Tuner Filter]->[InfTee]->[WinTvCI Filter]->[InfTee]
     /// </summary>
     /// <param name="captureFilter">The capture filter.</param>
     /// <returns>
@@ -563,17 +561,17 @@ namespace TvLibrary.Implementations.DVB
       if (tunerOnly == true)
       {
         //now render [Tuner]->[InfTee]->[WinTv USB]
-        Log.Log.Info("dvb:  Render [Tuner]->[WinTvUSB]");
-        //Add InfTee first other MPEG-2 Demux is used
-        Log.Log.WriteFile("dvb:  Add InfTee filter for WinTV CI");
+        //Add InfTee first otherwise the MPEG-2 Demux is used between Tuner & WinTV filter
+        Log.Log.Info("dvb:  Add InfTee for WinTV CI filter");
         _infTeeWinTV = (IBaseFilter)new InfTee();
         hr = _graphBuilder.AddFilter(_infTeeWinTV, "InfTee WinTV");
         if (hr != 0)
         {
-          Log.Log.Error("dvb:  Add 2nd InfTee returns:0x{0:X}", hr);
+          Log.Log.Error("dvb:  Add InfTee WinTV returns:0x{0:X}", hr);
           throw new TvException("Unable to add  _infTeeSecond");
         }
         //Render Tuner to InfTee first
+        Log.Log.Info("dvb:  Render [Tuner]->[InfTee]");
         hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeWinTV);
         if (hr != 0)
         {
@@ -581,7 +579,15 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("Unable to Render Tuner->[InfTee]");
         }
         //Now render InfTee to WinTV CI
+        Log.Log.Info("dvb:  Render [InfTee]->[WinTvUSB]");
         hr = _capBuilder.RenderStream(null, null, _infTeeWinTV, null, tmpCiFilter);
+        if (hr != 0)
+        {
+          Log.Log.Error("dvb:  Render [InfTee]->[WinTvUSB] failed");
+          hr = _graphBuilder.RemoveFilter(tmpCiFilter);
+          Release.ComObject("WintvUsbCI module", tmpCiFilter);
+          return (hr == 0);
+        }
       }
       else
       {
@@ -589,22 +595,33 @@ namespace TvLibrary.Implementations.DVB
         //Added WinTv USB CI module to the graph
         //now render [Capture]->[WinTv USB]
         hr = _capBuilder.RenderStream(null, null, captureFilter, null, tmpCiFilter);
-      }
-      if (hr != 0)
-      {
-        Log.Log.Error("dvb:  Render-> capture->wintv usb failed");
-        hr = _graphBuilder.RemoveFilter(tmpCiFilter);
-        Release.ComObject("WintvUsbCI module", tmpCiFilter);
-        //Render [Capture]->[InfTee]
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
-        return (hr == 0);
+        if (hr != 0)
+        {
+          Log.Log.Error("dvb:  Render [Capture]->[WinTvUSB] failed");
+          hr = _graphBuilder.RemoveFilter(tmpCiFilter);
+          Release.ComObject("WintvUsbCI module", tmpCiFilter);
+          //Render [Capture]->[InfTee]
+          Log.Log.Info("dvb:  Render [Capture]->[InfTee-Main]");
+          hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
+          if (hr != 0)
+          {
+            Log.Log.Error("dvb:  Render [Capture]->[InfTee-Main] failed");
+            return (hr != 0);
+          }
+          return (hr == 0);
+        }
       }
       _filterWinTvUsb = tmpCiFilter;
       _deviceWinTvUsb = usbWinTvDevice;
       DevicesInUse.Instance.Add(usbWinTvDevice);
       //Finally render [WinTvCi]->[InfTee]
-      Log.Log.Info("dvb:  Render [WinTvUSB]->[InfTee]");
+      Log.Log.Info("dvb:  Render [WinTvUSB]->[InfTee-Main]");
       hr = _capBuilder.RenderStream(null, null, tmpCiFilter, null, _infTeeMain);
+      if (hr != 0)
+      {
+        Log.Log.Error("dvb:  Render [WinTvUSB]->[InfTee-Main] failed");
+        return (hr != 0);
+      }
       return (hr == 0);
     }
 
@@ -661,7 +678,7 @@ namespace TvLibrary.Implementations.DVB
           _filterTuner = tmp;
           _tunerDevice = devices[i];
           DevicesInUse.Instance.Add(devices[i]);
-          Log.Log.WriteFile("dvb:  OK");
+          Log.Log.WriteFile("dvb:  Render [Network provider]->[Tuner] OK");
           break;
         }
         else
@@ -674,8 +691,8 @@ namespace TvLibrary.Implementations.DVB
       // Assume we found a tuner filter...
       if (_filterTuner == null)
       {
-        Log.Log.Error("dvb:No TvTuner installed");
-        throw new TvException("No TvTuner installed");
+        Log.Log.Error("dvb:  No TVTuner installed");
+        throw new TvException("No TVTuner installed");
       }
       bool skipCaptureFilter = false;
       IPin pinOut = DsFindPin.ByDirection(_filterTuner, PinDirection.Output, 0);
@@ -706,7 +723,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (false == skipCaptureFilter)
       {
-        Log.Log.WriteFile("dvb:find bda receiver");
+        Log.Log.WriteFile("dvb:  Find BDA receiver");
         // Then enumerate BDA Receiver Components category to found a filter connecting 
         // to the tuner and the MPEG2 Demux
         devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
@@ -731,7 +748,7 @@ namespace TvLibrary.Implementations.DVB
           {
             if (tmp != null)
             {
-              Log.Log.Error("dvb: Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
+              Log.Log.Error("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
               _graphBuilder.RemoveFilter(tmp);
               Release.ComObject("bda receiver", tmp);
             }
@@ -741,14 +758,14 @@ namespace TvLibrary.Implementations.DVB
           hr = _capBuilder.RenderStream(null, null, _filterTuner, null, tmp);
           if (hr == 0)
           {
-            Log.Log.WriteFile("dvb: render [Tuner]->[Capture] AOK");
+            Log.Log.WriteFile("dvb:  Render [Tuner]->[Capture] AOK");
             // render [Capture]->[Inf Tee]
             if (AddWinTvCIModule(tmp))
             {
               _filterCapture = tmp;
               _captureDevice = devices[i];
               DevicesInUse.Instance.Add(devices[i]);
-              Log.Log.WriteFile("dvb:OK");
+              Log.Log.WriteFile("dvb:  OK");
               break;
             }
             else
@@ -761,7 +778,7 @@ namespace TvLibrary.Implementations.DVB
           else
           {
             // Try another...
-            Log.Log.WriteFile("dvb: looking for another bda receiver...");
+            Log.Log.WriteFile("dvb:  Looking for another bda receiver...");
             hr = _graphBuilder.RemoveFilter(tmp);
             Release.ComObject("bda receiver", tmp);
           }
@@ -769,12 +786,11 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_filterCapture == null)
       {
-        Log.Log.WriteFile("dvb:  No available bda receiver found...");
+        Log.Log.WriteFile("dvb:  Single BDA filter implementation...");
         // render [Tuner]->[Inf Tee]
         tunerOnly = true;
         if (AddWinTvCIModule(_filterTuner))
         {
-          _filterCapture = _filterTuner;
           Log.Log.WriteFile("dvb:  OK");
         }
         else
@@ -1002,12 +1018,12 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_filterTsWriter == null)
       {
-        Log.Log.WriteFile("dvb:  add Mediaportal TsWriter filter");
+        Log.Log.WriteFile("dvb:  Add Mediaportal TsWriter filter");
         _filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
         int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Analyzer");
         if (hr != 0)
         {
-          Log.Log.Error("dvb:Add main Ts Analyzer returns:0x{0:X}", hr);
+          Log.Log.Error("dvb:  Add main Ts Analyzer returns:0x{0:X}", hr);
           throw new TvException("Unable to add Ts Analyzer filter");
         }
         IBaseFilter tee = _infTeeMain;
@@ -1018,7 +1034,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (hr != 0)
           {
-            Log.Log.Error("dvb:unable to find pin#2 on inftee filter");
+            Log.Log.Error("dvb:  Unable to find pin#2 on inftee filter");
             throw new TvException("unable to find pin#2 on inftee filter");
           }
         }
@@ -1027,7 +1043,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (hr != 0)
           {
-            Log.Log.Error("dvb:unable to find pin on ts analyzer filter");
+            Log.Log.Error("dvb:  Unable to find pin on ts analyzer filter");
             throw new TvException("unable to find pin on ts analyzer filter");
           }
         }
@@ -1036,7 +1052,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("pinTsWriterIn", pin);
         if (hr != 0)
         {
-          Log.Log.Error("dvb:unable to connect inftee to analyzer filter :0x{0:X}", hr);
+          Log.Log.Error("dvb:  Unable to connect inftee to analyzer filter :0x{0:X}", hr);
           throw new TvException("unable to connect inftee to analyzer filter");
         }
         _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
@@ -1052,7 +1068,7 @@ namespace TvLibrary.Implementations.DVB
     protected void AddBdaTransportFiltersToGraph()
     {
       if (!CheckThreadId()) return;
-      Log.Log.WriteFile("dvb:AddTransportStreamFiltersToGraph");
+      Log.Log.WriteFile("dvb:  AddTransportStreamFiltersToGraph");
       int hr = 0;
       DsDevice[] devices;
       // Add two filters needed in a BDA graph
@@ -1813,20 +1829,20 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-		/// <summary>
-		/// returns true if card is currently present
-		/// </summary>
-		public bool CardPresent
-		{
-			get
-			{
-				return _cardPresent;
-			}
-			set
-			{
-				_cardPresent = value;
-			}
-		}
+    /// <summary>
+    /// returns true if card is currently present
+    /// </summary>
+    public bool CardPresent
+    {
+      get
+      {
+        return _cardPresent;
+      }
+      set
+      {
+        _cardPresent = value;
+      }
+    }
 
 
     /// <summary>
