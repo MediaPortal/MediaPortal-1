@@ -369,7 +369,6 @@ namespace TvService
 
         Log.Write("card: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel);
          
-        
         lock (this)
         {
           bool result = false;          					
@@ -411,7 +410,6 @@ namespace TvService
       }
       return false;
     }
-
 
     /// <summary>
     /// Start timeshifting on the card

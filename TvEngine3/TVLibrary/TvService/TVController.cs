@@ -373,7 +373,6 @@ namespace TvService
                   break;
                 }
               }
-
             }
           }
         }
@@ -441,11 +440,9 @@ namespace TvService
               if (delFile) File.Delete(fInfo.FullName);
             }
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             //ignore any errors encountered
-            Log.Error("Controller: failed to clean .ts files!");
-            Log.Write(ex);
           }
         }
 
