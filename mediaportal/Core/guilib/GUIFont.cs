@@ -145,7 +145,11 @@ namespace MediaPortal.GUI.Library
 
     private void LoadSettings()
     {
-      _useRTLLang = System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
+      // Some users have english systems but use RTL text.. System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _useRTLLang = xmlreader.GetValueAsBool("general", "rtllang", false);
+      }          
     }
 
     public int ID
