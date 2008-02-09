@@ -424,10 +424,11 @@ STDMETHODIMP CTechnotrend::IsTechnoTrend( BOOL* yesNo)
 STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
 {
   *yesNo=FALSE;
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG)
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK ||m_slotStatus==CI_SLOT_DBG_MSG)
   {
     *yesNo=TRUE;
   }
+	LogDebug("TechnoTrend: IsCamReady: %d",*yesNo);
   return S_OK;
 }
 
@@ -517,6 +518,18 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
   {
     LogDebug("TechnoTrend: DescrambleMultiple: serviceId:%d", pNrs[i]);
   }
+	
+	// Workaround for first time initialisation of ci slot
+	int iRetryLoop=0;
+	while (m_slotStatus==CI_SLOT_UNKNOWN_STATE && iRetryLoop<=20) {
+		//unknown status
+		LogDebug("TechnoTrend: unknown CI slot status :%d",m_slotStatus);
+		LogDebug("TechnoTrend: Wait for CI slot status, current slot status: %d; try %d; Sleep 100", m_slotStatus, iRetryLoop);
+
+		iRetryLoop++; 
+		Sleep(100);
+	}	// loop
+
   if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
   {
 
@@ -534,8 +547,9 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
         }
         else
         {
-          *succeeded=TRUE;
-          LogDebug("TechnoTrend: services decoded:%x %d",hr,m_ciStatus);
+          //*succeeded=TRUE;
+				  *succeeded=FALSE;
+					LogDebug("TechnoTrend: services not decoded:%x ciStatus: %d",hr,m_ciStatus);
         }
       }
       else
@@ -602,8 +616,8 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
         }
         else
         {
-          *succeeded=TRUE;
-          LogDebug("TechnoTrend: service decoded:%x %d",hr,m_ciStatus);
+          *succeeded=FALSE;
+          LogDebug("TechnoTrend: service not decoded:%x %d",hr,m_ciStatus);
         }
       }
       else

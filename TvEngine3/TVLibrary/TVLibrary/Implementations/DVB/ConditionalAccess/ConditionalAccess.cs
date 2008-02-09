@@ -236,7 +236,9 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          return true;
+		  Log.Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(), _technoTrend.IsCamReady());
+          return _technoTrend.IsCamReady();
+          //return true;
         }
         if (_winTvCiModule != null)
         {
