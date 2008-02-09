@@ -468,6 +468,7 @@ namespace SetupTv.Sections
       textBoxLNBLo.Text = layer.GetSetting("LnbLowFrequency", "0").Value;
       textBoxLNBHi.Text = layer.GetSetting("LnbHighFrequency", "0").Value;
       textBoxLNBSwitch.Text = layer.GetSetting("LnbSwitchFrequency", "0").Value;
+      checkBox2_CheckedChanged(null, null);
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
       if (!checkBoxCreateGroups.Checked)
