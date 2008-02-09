@@ -976,6 +976,7 @@ namespace TvPlugin
       dlgYesNo.SetLine(1, GUILocalizeStrings.Get(200050));//This will delete your recordings from harddisc
       dlgYesNo.SetLine(2, GUILocalizeStrings.Get(506)); // Are you sure?
       dlgYesNo.SetLine(3, String.Empty);
+      dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
       if (!dlgYesNo.IsConfirmed)
         return;
 
