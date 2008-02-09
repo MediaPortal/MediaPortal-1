@@ -44,6 +44,20 @@ namespace MediaPortal.GUI.Library
     unsafe private static extern void FontEngineSetDevice(void* device);
 
     static protected List<GUIFont> _listFonts = new List<GUIFont>();
+    static private Microsoft.DirectX.Direct3D.Sprite _d3dxSprite;
+    static private bool _d3dxSpriteUsed;
+    
+    private struct FontManagerDrawText
+    {
+      public Microsoft.DirectX.Direct3D.Font fnt;
+      public float xpos;
+      public float ypos;
+      public int color;
+      public string text;
+      public float[,] matrix;
+      public Microsoft.DirectX.Direct3D.Viewport viewport;
+    };
+    static private List<FontManagerDrawText> _listDrawText = new List<FontManagerDrawText>();    
 
     // singleton. Dont allow any instance of this class
     private GUIFontManager()
@@ -178,6 +192,36 @@ namespace MediaPortal.GUI.Library
       return GetFont("debug");
     }
 
+    static public void MeasureText(Microsoft.DirectX.Direct3D.Font fnt, string text, ref float textwidth, ref float textheight)
+    {
+      if (text[0] == ' ') // anti-trim
+        text = "_" + text.Substring(1);
+      if (text[text.Length - 1] == ' ')
+        text = text.Substring(0, text.Length - 1) + '_';
+      if (_d3dxSprite == null)
+        _d3dxSprite = new Microsoft.DirectX.Direct3D.Sprite(GUIGraphicsContext.DX9Device);
+      System.Drawing.Rectangle rect = fnt.MeasureString(_d3dxSprite, text, Microsoft.DirectX.Direct3D.DrawTextFormat.NoClip, System.Drawing.Color.Black);
+      textwidth = rect.Width;
+      textheight = rect.Height;
+      return;
+    }
+
+    static public void DrawText(Microsoft.DirectX.Direct3D.Font fnt, float xpos, float ypos, System.Drawing.Color color, string text, int maxWidth)
+    {
+      FontManagerDrawText draw;
+      draw.fnt = fnt;
+      draw.xpos = xpos;
+      draw.ypos = ypos;
+      draw.color = color.ToArgb();
+      draw.text = text;
+      draw.matrix = (float[,])GUIGraphicsContext.GetFinalMatrix().Clone();
+      draw.viewport = GUIGraphicsContext.DX9Device.Viewport;
+      if (maxWidth >= 0)
+        draw.viewport.Width = ((int)xpos) + maxWidth - draw.viewport.X;
+      _listDrawText.Add(draw);
+      _d3dxSpriteUsed = true;
+    }
+
     public static void Present()
     {
 
@@ -187,7 +231,48 @@ namespace MediaPortal.GUI.Library
         GUIFont font = _listFonts[i];
         font.Present();
       }
+
+      if (_d3dxSpriteUsed)
+      {
+        if (_d3dxSprite == null)
+          _d3dxSprite = new Microsoft.DirectX.Direct3D.Sprite(GUIGraphicsContext.DX9Device);
+        _d3dxSprite.Begin(Microsoft.DirectX.Direct3D.SpriteFlags.AlphaBlend | Microsoft.DirectX.Direct3D.SpriteFlags.SortTexture);
+        Microsoft.DirectX.Direct3D.Viewport orgView = GUIGraphicsContext.DX9Device.Viewport;
+        Microsoft.DirectX.Matrix orgProj = GUIGraphicsContext.DX9Device.Transform.View;
+        Microsoft.DirectX.Matrix projm = orgProj;
+        Microsoft.DirectX.Matrix finalm;
+        foreach (FontManagerDrawText draw in _listDrawText)
+        {
+          finalm.M11 = draw.matrix[0, 0]; finalm.M12 = draw.matrix[0, 1]; finalm.M13 = draw.matrix[0, 2]; finalm.M14 = draw.matrix[0, 3];
+          finalm.M21 = draw.matrix[1, 0]; finalm.M22 = draw.matrix[1, 1]; finalm.M23 = draw.matrix[1, 2]; finalm.M24 = draw.matrix[1, 3];
+          finalm.M31 = draw.matrix[2, 0]; finalm.M32 = draw.matrix[2, 1]; finalm.M33 = draw.matrix[2, 2]; finalm.M34 = draw.matrix[2, 3];
+          finalm.M41 = 0; finalm.M42 = 0; finalm.M43 = 0; finalm.M44 = 1.0f;
+          _d3dxSprite.Transform = finalm;
+          GUIGraphicsContext.DX9Device.Viewport = draw.viewport;
+          float wfactor = ((float)orgView.Width) / (float)draw.viewport.Width;
+          float hfactor = ((float)orgView.Height) / (float)draw.viewport.Height;
+          float xoffset = (float)(orgView.X - draw.viewport.X);
+          float yoffset = (float)(orgView.Y - draw.viewport.Y);
+          projm.M11 = (orgProj.M11 + orgProj.M14 * xoffset) * wfactor;
+          projm.M21 = (orgProj.M21 + orgProj.M24 * xoffset) * wfactor;
+          projm.M31 = (orgProj.M31 + orgProj.M34 * xoffset) * wfactor;
+          projm.M41 = (orgProj.M41 + orgProj.M44 * xoffset) * wfactor;
+          projm.M12 = (orgProj.M12 + orgProj.M14 * yoffset) * hfactor;
+          projm.M22 = (orgProj.M22 + orgProj.M24 * yoffset) * hfactor;
+          projm.M32 = (orgProj.M32 + orgProj.M34 * yoffset) * hfactor;
+          projm.M42 = (orgProj.M42 + orgProj.M44 * yoffset) * hfactor;
+          GUIGraphicsContext.DX9Device.Transform.View = projm;
+          draw.fnt.DrawText(_d3dxSprite, draw.text, new System.Drawing.Rectangle((int)draw.xpos, (int)draw.ypos, 0, 0), Microsoft.DirectX.Direct3D.DrawTextFormat.NoClip, draw.color);
+          _d3dxSprite.Flush();
+        }
+        GUIGraphicsContext.DX9Device.Viewport = orgView;
+        GUIGraphicsContext.DX9Device.Transform.View = orgProj;
+        _d3dxSprite.End();
+        _listDrawText = new List<FontManagerDrawText>();
+        _d3dxSpriteUsed = false;
+      }
     }
+    
     /// <summary>
     /// Disposes all GUIFonts.
     /// </summary>
@@ -198,6 +283,14 @@ namespace MediaPortal.GUI.Library
       {
         font.Dispose(null, null);
       }
+
+      if (_d3dxSprite != null)
+      {
+        _d3dxSprite.Dispose();
+        _d3dxSprite = null;
+        _d3dxSpriteUsed = false;
+      }
+
     }
 
     /// <summary>

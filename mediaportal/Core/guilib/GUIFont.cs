@@ -98,6 +98,7 @@ namespace MediaPortal.GUI.Library
     private int _StartCharacter = 32;
     private int _EndCharacter = 255;
     private bool _useRTLLang = false;
+    private Direct3D.Font _d3dxFont;
     #endregion
 
     #region ctors
@@ -690,6 +691,16 @@ namespace MediaPortal.GUI.Library
         text = HandleRTLText(text);
       if (ID >= 0)
       {
+        for (int i = 0; i < text.Length; ++i)
+        {
+          char c = text[i];
+          if (c < _StartCharacter || c >= _EndCharacter)
+          {
+            GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth);
+            return;
+          }
+        }
+
         int intColor = color.ToArgb();
         unsafe
         {
@@ -749,7 +760,17 @@ namespace MediaPortal.GUI.Library
 
       if (null == text || text == string.Empty || _textureCoords == null)
         return;
-
+      
+      for (int i = 0; i < text.Length; ++i)
+      {
+        char c = text[i];
+        if (c < _StartCharacter || c >= _EndCharacter)
+        {
+          GUIFontManager.MeasureText(_d3dxFont, text, ref textwidth, ref textheight);
+          return;
+        }
+      }
+      
       float fRowWidth = 0.0f;
       float fRowHeight = (_textureCoords[0, 3] - _textureCoords[0, 1]) * _textureHeight;
       textheight = fRowHeight;
@@ -785,6 +806,10 @@ namespace MediaPortal.GUI.Library
     {
       if (_systemFont != null)
         _systemFont.Dispose();
+
+      if (_d3dxFont != null)
+          _d3dxFont.Dispose();
+      _d3dxFont = null;
 
       if (_textureFont != null)
       {
@@ -979,6 +1004,7 @@ namespace MediaPortal.GUI.Library
       }
       _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
       SetFontEgine();
+      _d3dxFont = new Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
     }
 
 
