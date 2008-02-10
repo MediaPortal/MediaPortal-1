@@ -121,11 +121,11 @@ CBasePin * CMpTsFilter::GetPin(int n)
 {
   if (n == 0) 
 	{
-      return m_pWriterFilter->m_pPin;
+    return m_pWriterFilter->m_pPin;
   } 
 	else 
 	{
-      return NULL;
+    return NULL;
   }
 }
 
@@ -135,7 +135,7 @@ CBasePin * CMpTsFilter::GetPin(int n)
 //
 int CMpTsFilter::GetPinCount()
 {
-    return 1;
+  return 1;
 }
 
 
@@ -189,7 +189,6 @@ STDMETHODIMP CMpTsFilter::Run(REFERENCE_TIME tStart)
 	LogDebug("CMpTsFilter::Run()");
   CAutoLock cObjectLock(m_pLock);
 
-
   return CBaseFilter::Run(tStart);
 }
 
@@ -218,7 +217,7 @@ CMpTsFilterPin::CMpTsFilterPin(CMpTs *pDump,LPUNKNOWN pUnk,CBaseFilter *pFilter,
 //
 HRESULT CMpTsFilterPin::CheckMediaType(const CMediaType *)
 {
-    return S_OK;
+  return S_OK;
 }
 
 
@@ -229,7 +228,7 @@ HRESULT CMpTsFilterPin::CheckMediaType(const CMediaType *)
 //
 HRESULT CMpTsFilterPin::BreakConnect()
 {
-    return CRenderedInputPin::BreakConnect();
+  return CRenderedInputPin::BreakConnect();
 }
 
 
@@ -240,7 +239,7 @@ HRESULT CMpTsFilterPin::BreakConnect()
 //
 STDMETHODIMP CMpTsFilterPin::ReceiveCanBlock()
 {
-    return S_FALSE;
+  return S_FALSE;
 }
 
 
@@ -298,7 +297,7 @@ STDMETHODIMP CMpTsFilterPin::EndOfStream(void)
     CAutoLock lock(m_pReceiveLock);
     return CRenderedInputPin::EndOfStream();
 
-} // EndOfStream
+}
 
 void CMpTsFilterPin::Reset()
 {
@@ -313,7 +312,7 @@ void CMpTsFilterPin::Reset()
 STDMETHODIMP CMpTsFilterPin::NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate)
 {
     return S_OK;
-} // NewSegment
+}
 
 void CMpTsFilterPin::AssignRawPaketWriter(FileWriter *rawPaketWriter)
 {
@@ -326,43 +325,39 @@ void CMpTsFilterPin::AssignRawPaketWriter(FileWriter *rawPaketWriter)
 CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr) 
 :CUnknown(NAME("CMpTs"), pUnk),m_pFilter(NULL),m_pPin(NULL)
 {
-		m_id=0;
+  m_id=0;
 
-		DeleteFile("TsWriter.log");
-		LogDebug("CMpTs::ctor()");
+  DeleteFile("TsWriter.log");
+  LogDebug("CMpTs::ctor()");
 		
 	b_dumpRawPakets=false;
-    m_pFilter = new CMpTsFilter(this, GetOwner(), &m_Lock, phr);
-    if (m_pFilter == NULL) 
-		{
-        if (phr)
-            *phr = E_OUTOFMEMORY;
-        return;
-    }
+  m_pFilter = new CMpTsFilter(this, GetOwner(), &m_Lock, phr);
+  if (m_pFilter == NULL) 
+  {
+    if (phr)
+      *phr = E_OUTOFMEMORY;
+    return;
+  }
 
-    m_pPin = new CMpTsFilterPin(this,GetOwner(),m_pFilter,&m_Lock,&m_ReceiveLock,phr);
-    if (m_pPin == NULL) 
-		{
-        if (phr)
-            *phr = E_OUTOFMEMORY;
-        return;
-    }
+  m_pPin = new CMpTsFilterPin(this,GetOwner(),m_pFilter,&m_Lock,&m_ReceiveLock,phr);
+  if (m_pPin == NULL) 
+  {
+    if (phr)
+      *phr = E_OUTOFMEMORY;
+    return;
+  }
 
-		m_pChannelScanner= new CChannelScan(GetOwner(),phr,m_pFilter);
-		m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
-    m_pTechnoTrend= new CTechnotrend(GetOwner(),phr);
-		m_pKNC= new CKnc(GetOwner(),phr);
-    m_pWinTvCI = new CWinTvUsbCI(GetOwner(),phr);
-		m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(),phr);
-		m_rawPaketWriter=new FileWriter();
-		m_pPin->AssignRawPaketWriter(m_rawPaketWriter);
+  m_pChannelScanner= new CChannelScan(GetOwner(),phr,m_pFilter);
+  m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
+  m_pTechnoTrend= new CTechnotrend(GetOwner(),phr);
+  m_pKNC= new CKnc(GetOwner(),phr);
+  m_pWinTvCI = new CWinTvUsbCI(GetOwner(),phr);
+  m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(),phr);
+  m_rawPaketWriter=new FileWriter();
+  m_pPin->AssignRawPaketWriter(m_rawPaketWriter);
 }
 
-
-
-
 // Destructor
-
 CMpTs::~CMpTs()
 {
   delete m_pPin;
@@ -382,7 +377,6 @@ CMpTs::~CMpTs()
   m_vecChannels.clear();
 }
 
-
 //
 // CreateInstance
 //
@@ -390,18 +384,17 @@ CMpTs::~CMpTs()
 //
 CUnknown * WINAPI CMpTs::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
-    ASSERT(phr);
-    
-    CMpTs *pNewObject = new CMpTs(punk, phr);
-    if (pNewObject == NULL) 
-		{
-        if (phr)
-            *phr = E_OUTOFMEMORY;
-    }
+  ASSERT(phr);
 
-    return pNewObject;
+  CMpTs *pNewObject = new CMpTs(punk, phr);
+  if (pNewObject == NULL) 
+  {
+    if (phr)
+      *phr = E_OUTOFMEMORY;
+  }
 
-} // CreateInstance
+  return pNewObject;
+}
 
 
 //
@@ -411,10 +404,10 @@ CUnknown * WINAPI CMpTs::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 //
 STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 {
-    CheckPointer(ppv,E_POINTER);
-    CAutoLock lock(&m_Lock);
+  CheckPointer(ppv,E_POINTER);
+  CAutoLock lock(&m_Lock);
 
-    // Do we have this interface
+  // Do we have this interface
 	if (riid == IID_ITSChannelScan)
 	{
 		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITSChannelScan");
@@ -453,12 +446,11 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
   else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist) 
 	{
 		//LogDebug("CMpTs:NonDelegatingQueryInterface other");
-      return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
+    return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
   } 
  
   return CUnknown::NonDelegatingQueryInterface(riid, ppv);
-
-} // NonDelegatingQueryInterface
+}
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -474,20 +466,16 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 //
 STDAPI DllRegisterServer()
 {
-    return AMovieDllRegisterServer2( TRUE );
-
-} // DllRegisterServer
-
+  return AMovieDllRegisterServer2( TRUE );
+}
 
 //
 // DllUnregisterServer
 //
 STDAPI DllUnregisterServer()
 {
-    return AMovieDllRegisterServer2( FALSE );
-
-} // DllUnregisterServer
-
+  return AMovieDllRegisterServer2( FALSE );
+}
 
 //
 // DllEntryPoint
@@ -498,7 +486,6 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD  dwReason, LPVOID lpReserved)
 {
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
-
 
 void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 {
@@ -561,7 +548,6 @@ STDMETHODIMP CMpTs::DeleteChannel( int handle)
 
 CTsChannel* CMpTs::GetTsChannel(int handle)
 {
-	
   CAutoLock lock(&m_Lock);
 	ivecChannels it = m_vecChannels.begin();
 	while (it != m_vecChannels.end())
@@ -587,42 +573,49 @@ STDMETHODIMP CMpTs::DeleteAllChannels()
 	m_id=0;
   return S_OK;
 }
+
 STDMETHODIMP CMpTs::AnalyzerSetVideoPid(int handle, int videoPid)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pVideoAnalyzer->SetVideoPid(  videoPid);
 }
+
 STDMETHODIMP CMpTs::AnalyzerGetVideoPid(int handle,  int* videoPid)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pVideoAnalyzer->GetVideoPid(  videoPid);
 }
+
 STDMETHODIMP CMpTs::AnalyzerSetAudioPid(int handle,  int audioPid)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pVideoAnalyzer->SetAudioPid(  audioPid);
 }
+
 STDMETHODIMP CMpTs::AnalyzerGetAudioPid(int handle,  int* audioPid)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pVideoAnalyzer->GetAudioPid(  audioPid);
 }
+
 STDMETHODIMP CMpTs::AnalyzerIsVideoEncrypted(int handle,  int* yesNo)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pVideoAnalyzer->IsVideoEncrypted(  yesNo);
 }
+
 STDMETHODIMP CMpTs::AnalyzerIsAudioEncrypted(int handle,  int* yesNo)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pVideoAnalyzer->IsAudioEncrypted(  yesNo);
 }
+
 STDMETHODIMP CMpTs::AnalyzerReset(int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -636,12 +629,14 @@ STDMETHODIMP CMpTs::PmtSetPmtPid(int handle,int pmtPid, long serviceId)
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pPmtGrabber->SetPmtPid(pmtPid,serviceId  );
 }
+
 STDMETHODIMP CMpTs::PmtSetCallBack(int handle,IPMTCallback* callback)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pPmtGrabber->SetCallBack(callback);
 }
+
 STDMETHODIMP CMpTs::PmtGetPMTData (int handle,BYTE *pmtData)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -656,6 +651,7 @@ STDMETHODIMP CMpTs::RecordSetRecordingFileName( int handle,char* pszFileName)
 	pChannel->m_pRecorder->SetFileName( pszFileName);
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs::RecordStartRecord( int handle)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -665,6 +661,7 @@ STDMETHODIMP CMpTs::RecordStartRecord( int handle)
 	else
 		return S_FALSE;
 }
+
 STDMETHODIMP CMpTs::RecordStopRecord( int handle)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -672,6 +669,7 @@ STDMETHODIMP CMpTs::RecordStopRecord( int handle)
 	pChannel->m_pRecorder->Stop(  );
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs::RecordGetMode( int handle,int *mode) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -679,6 +677,7 @@ STDMETHODIMP CMpTs::RecordGetMode( int handle,int *mode)
 	pChannel->m_pRecorder->GetStreamMode( mode) ;
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs::RecordSetMode( int handle,int mode) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -686,6 +685,7 @@ STDMETHODIMP CMpTs::RecordSetMode( int handle,int mode)
 	pChannel->m_pRecorder->SetStreamMode(  mode) ;
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId,byte* pmtData,int pmtLength )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -693,7 +693,6 @@ STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId,byte* pm
 	pChannel->m_pRecorder->SetPmtPid( mtPid, serviceId,pmtData,pmtLength );
 	return S_OK;
 }
-
 
 STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName)
 {
@@ -705,58 +704,62 @@ STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFile
   if (hTest!=INVALID_HANDLE_VALUE)
   {
     CloseHandle(hTest);
-	b_dumpRawPakets=true;
-	string fileName=pszFileName;
-	fileName=fileName.substr(0, fileName.rfind("\\"));
-	fileName.append("\\raw_paket_dump.ts");
-	
-	LogDebug("Setting name for raw paket dump file to %s",fileName.c_str());
-	WCHAR wstrFileName[2048];
-	MultiByteToWideChar(CP_ACP,0,fileName.c_str(),-1,wstrFileName,1+fileName.size());
-	m_rawPaketWriter->SetFileName(wstrFileName);
+	  b_dumpRawPakets=true;
+	  string fileName=pszFileName;
+	  fileName=fileName.substr(0, fileName.rfind("\\"));
+	  fileName.append("\\raw_paket_dump.ts");
+  	
+	  LogDebug("Setting name for raw paket dump file to %s",fileName.c_str());
+	  WCHAR wstrFileName[2048];
+	  MultiByteToWideChar(CP_ACP,0,fileName.c_str(),-1,wstrFileName,1+fileName.size());
+	  m_rawPaketWriter->SetFileName(wstrFileName);
   }
   pChannel->m_pTimeShifting->SetFileName( pszFileName);
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs:: TimeShiftStart( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
   if (b_dumpRawPakets)
   {
-	m_rawPaketWriter->OpenFile();
-	LogDebug("Raw paket dump file created. Now dumping raw pakets to dump file");
+	  m_rawPaketWriter->OpenFile();
+	  LogDebug("Raw paket dump file created. Now dumping raw pakets to dump file");
   }
   if (pChannel->m_pTimeShifting->Start())
 		return S_OK;
 	else
 		return S_FALSE;
 }
+
 STDMETHODIMP CMpTs:: TimeShiftStop( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
   if (b_dumpRawPakets)
   {
-	m_rawPaketWriter->CloseFile();
-	LogDebug("Raw paket dump file closed");
+	  m_rawPaketWriter->CloseFile();
+	  LogDebug("Raw paket dump file closed");
   }
 	pChannel->m_pTimeShifting->Stop( );
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
   if (b_dumpRawPakets)
   {
-	m_rawPaketWriter->CloseFile();
-	m_rawPaketWriter->OpenFile();
-	LogDebug("Raw paket dump file reset");
+	  m_rawPaketWriter->CloseFile();
+	  m_rawPaketWriter->OpenFile();
+	  LogDebug("Raw paket dump file reset");
   }
 	pChannel->m_pTimeShifting->Reset( );
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, long * size) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -764,6 +767,7 @@ STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, long * size)
 	pChannel->m_pTimeShifting->GetBufferSize( size);
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs:: TimeShiftSetMode( int handle, int mode) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -771,6 +775,7 @@ STDMETHODIMP CMpTs:: TimeShiftSetMode( int handle, int mode)
 	pChannel->m_pTimeShifting->SetStreamMode( mode);
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs:: TimeShiftGetMode( int handle, int *mode) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -778,6 +783,7 @@ STDMETHODIMP CMpTs:: TimeShiftGetMode( int handle, int *mode)
 	pChannel->m_pTimeShifting->GetStreamMode( mode);
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -785,6 +791,7 @@ STDMETHODIMP CMpTs:: TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,b
 	pChannel->m_pTimeShifting->SetPmtPid( pmtPid,serviceId,pmtData,pmtLength);
 	return S_OK;
 }
+
 STDMETHODIMP CMpTs:: TimeShiftPause( int handle, BYTE onOff) 
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -818,18 +825,21 @@ STDMETHODIMP CMpTs::TTxStart( int handle)
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pTeletextGrabber->Start( );
 }
+
 STDMETHODIMP CMpTs::TTxStop( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pTeletextGrabber->Stop( );
 }
+
 STDMETHODIMP CMpTs::TTxSetTeletextPid( int handle,int teletextPid)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pTeletextGrabber->SetTeletextPid(teletextPid );
 }
+
 STDMETHODIMP CMpTs::TTxSetCallBack( int handle,ITeletextCallBack* callback)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
