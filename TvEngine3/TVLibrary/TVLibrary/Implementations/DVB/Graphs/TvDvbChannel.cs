@@ -570,12 +570,22 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="fileName">filename to which to recording should be saved</param>
     public bool StartRecording(bool transportStream, string fileName)
     {
-
       Log.Log.WriteFile("subch:{0} StartRecord({1})", _subChannelId, fileName);
       _recordTransportStream = transportStream;
       int hr;
       if (_tsFilterInterface != null)
       {
+        if (transportStream)
+        {
+          _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
+          Log.Log.WriteFile("subch:{0} record transport stream mode", _subChannelId);
+        }
+        else
+        {
+          _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.ProgramStream);
+          Log.Log.WriteFile("subch:{0} record program stream mode", _subChannelId);
+        }
+
         hr = _tsFilterInterface.RecordSetRecordingFileName(_subChannelIndex, fileName);
         if (hr != 0)
         {
@@ -601,7 +611,6 @@ namespace TvLibrary.Implementations.DVB
       _recordingFileName = fileName;
       return true;
     }
-
 
     /// <summary>
     /// Stop recording
@@ -1044,7 +1053,6 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("subch:{0} SetMpegPidMapping", _subChannelId);
 
-        
         ArrayList hwPids = new ArrayList();
         hwPids.Add((ushort)0x0);//PAT
         hwPids.Add((ushort)0x1);//CAT
@@ -1188,16 +1196,16 @@ namespace TvLibrary.Implementations.DVB
       if (_recordTransportStream)
       {
         if (dvbChannel.PmtPid > 0)
-          _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId,_pmtData,_pmtLength);
-        _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
-        Log.Log.WriteFile("subch:{0} record transport stream mode", _subChannelId);
+        {
+          _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId, _pmtData, _pmtLength);
+        }
       }
       else
       {
         if (dvbChannel.PmtPid > 0)
-          _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId,_pmtData,_pmtLength);
-        _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.ProgramStream);
-        Log.Log.WriteFile("subch:{0} record program stream mode", _subChannelId);
+        {
+          _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId, _pmtData, _pmtLength);
+        }
       }
       _dateRecordingStarted = DateTime.Now;
     }
