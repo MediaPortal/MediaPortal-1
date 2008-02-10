@@ -34,6 +34,13 @@ namespace TvLibrary.Interfaces.Analyzer
   public interface IMPRecord
   {
     /// <summary>
+    /// Sets the mode of the recording
+    /// </summary>
+    /// <param name="mode"></param>
+    /// <returns></returns>
+    [PreserveSig]
+    int SetRecordingMode(TimeShiftingMode mode);
+    /// <summary>
     /// Sets the name of the recording file.
     /// </summary>
     /// <param name="fileName">Name of the file.</param>
@@ -59,6 +66,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int IsReceiving(out bool yesNo);
+
     /// <summary>
     /// Resets this recorder.
     /// </summary>
@@ -91,8 +99,101 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int PauseTimeShifting(short onOff);
 
-    
+    /// <summary>
+    /// Sets the timeshift parameters
+    /// </summary>
+    /// <param name="minFiles">Number of minimum timeshifting files</param>
+    /// <param name="maxFiles">Number of maximum timeshifting files</param>
+    /// <param name="maxFileSize">Maximum file size for each timeshifting file</param>
+    /// <returns></returns>
     [PreserveSig]
     int SetTimeShiftParams(int minFiles, int maxFiles, UInt32 maxFileSize);
+
+    /// <summary>
+    /// Sets the callback for teletext packets
+    /// </summary>
+    /// <param name="callback">Callback to set</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int TTxSetCallback(IAnalogTeletextCallBack callback);
   }
+
+  /// <summary>
+  /// Interface to the Teletext callback 
+  /// </summary>
+  [ComVisible(true), ComImport,
+  Guid("14639355-4BA4-471c-BA91-8B4AF51F3A0D"),
+  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IAnalogTeletextCallBack {
+    /// <summary>
+    /// Called when teletext has been received.
+    /// </summary>
+    /// <param name="data">The data.</param>
+    /// <param name="packetCount">The packet count.</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int OnTeletextReceived(IntPtr data, short packetCount);
+  };
+
+  /// <summary>
+  /// Interface to the analog channel scan interface
+  /// </summary>
+  [ComVisible(true), ComImport,
+  Guid("D44ABA24-57B2-44de-8D56-7B95CBF8527A"),
+  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IAnalogChanelScan {
+    /// <summary>
+    /// Starts scanning the current transponder.
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
+    int Start();
+
+    /// <summary>
+    /// Stops scanning.
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
+    int Stop();
+
+    /// <summary>
+    /// Determines whether scanner is finished or not.
+    /// </summary>
+    /// <param name="yesNo">true when scanner is finished else false</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int IsReady(out bool yesNo);
+
+    /// <summary>
+    /// Gets the name of a channel.
+    /// </summary>
+    /// <param name="serviceName">Name of the service.</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int GetChannel(out IntPtr serviceName);
+
+    /// <summary>
+    /// Sets the callback, which gets called when the channel scan is completed
+    /// </summary>
+    /// <param name="callback">Callback to set</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int SetCallBack(IAnalogChannelScanCallback callback);
+  };
+
+    /// <summary>
+  /// Interface to the analog channel callback
+  /// </summary>
+  [ComVisible(true), ComImport,
+ Guid("9C9B9E27-A9EA-4ac9-B2FB-FC9FCACECA82"),
+  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IAnalogChannelScanCallback {
+    /// <summary>
+    /// Gets called when the scanning is done
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
+    int OnScannerDone();
+  }
+
 }

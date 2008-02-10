@@ -533,7 +533,7 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId()) return false;
       Log.Log.WriteFile("Analog:StartRecording to {0}", fileName);
 
-      fileName = System.IO.Path.ChangeExtension(fileName, ".mpg");
+      //fileName = System.IO.Path.ChangeExtension(fileName, ".mpg");
       StartRecord(transportStream, fileName);
 
 

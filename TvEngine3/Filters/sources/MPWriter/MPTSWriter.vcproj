@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;C:\DXSDK\Samples\C++\DirectShow\BaseClasses&quot;;C:\DXSDK\Include;../StreamingServer/StreamingServer/BasicUsageEnvironment;../StreamingServer/StreamingServer/groupsock;../StreamingServer/StreamingServer/liveMedia;../StreamingServer/StreamingServer/UsageEnvironment"
+				AdditionalIncludeDirectories="&quot;$(PLATFORMSDK_DIR)\Include&quot;;&quot;$(DS_BASECLASSES)&quot;;&quot;$(DXSDK_DIR)\Include&quot;;../StreamingServer/StreamingServer/BasicUsageEnvironment;../StreamingServer/StreamingServer/groupsock;../StreamingServer/StreamingServer/liveMedia;../StreamingServer/StreamingServer/UsageEnvironment"
 				PreprocessorDefinitions="NDEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -77,7 +77,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbase.lib quartz.lib winmm.lib msvcrt.lib ws2_32.lib"
+				AdditionalDependencies="&quot;$(DS_BASECLASSES)\XP32_RETAIL\strmbase.lib&quot; &quot;$(PLATFORMSDK_DIR)\Lib\quartz.lib&quot; winmm.lib msvcrt.lib ws2_32.lib"
 				OutputFile="Release/MPFileWriter.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -224,27 +224,11 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\source\CriticalSection.cpp"
+				RelativePath=".\source\ChannelScan.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\source\CriticalSection.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\EnterCriticalSection.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\EnterCriticalSection.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\FileReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\FileReader.h"
+				RelativePath=".\source\FileSinkRecorder.cpp"
 				>
 			</File>
 			<File
@@ -252,7 +236,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\FileWriter.h"
+				RelativePath=".\source\Hamming.cpp"
 				>
 			</File>
 			<File
@@ -272,14 +256,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\MultiFileReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\MultiFileReader.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\MultiFileWriter.cpp"
 				>
 			</File>
@@ -292,59 +268,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\PidInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\PidInfo.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\PidParser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\PidParser.h"
-				>
-			</File>
-			<File
 				RelativePath=".\source\ProgramToTransportStream.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\source\SampleBuffer.cpp"
+				RelativePath=".\source\ProgramToTransportStreamRecorder.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\source\samplebuffer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TSBuffer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TSBuffer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TsFileDuration.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TsFileDuration.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TsHeader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TsStreamFileSource.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TsStreamFileSource.hh"
+				RelativePath=".\source\TeletextGrabber.cpp"
 				>
 			</File>
 			<File
@@ -360,6 +292,22 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath=".\source\ChannelScan.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\FileSinkRecorder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\FileWriter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Hamming.h"
+				>
+			</File>
 			<File
 				RelativePath=".\source\MemoryBuffer.h"
 				>
@@ -389,7 +337,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\TsHeader.h"
+				RelativePath=".\source\ProgramToTransportStreamRecorder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TeletextGrabber.h"
 				>
 			</File>
 			<File
@@ -746,10 +698,6 @@
 			</File>
 			<File
 				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG1or2VideoStreamFramer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\StreamingServer\StreamingServer\liveMedia\MPEG2TransportFileServerMediaSubsession.cpp"
 				>
 			</File>
 			<File

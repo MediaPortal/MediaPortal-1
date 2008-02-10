@@ -2843,10 +2843,15 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);
       //int hr;
-      if (_tsFileSink != null)
-      {
-        Log.Log.WriteFile("dvb:SetRecording: uses .mpg");
+      if (_tsFileSink != null) {
         IMPRecord record = _tsFileSink as IMPRecord;
+        if (transportStream) {
+          Log.Log.WriteFile("dvb:SetRecording: uses .ts");
+          record.SetRecordingMode(TimeShiftingMode.TransportStream);
+        } else {
+          Log.Log.WriteFile("dvb:SetRecording: uses .mpg");
+          record.SetRecordingMode(TimeShiftingMode.ProgramStream);
+        }
         record.SetRecordingFileName(fileName);
         record.StartRecord();
       }
