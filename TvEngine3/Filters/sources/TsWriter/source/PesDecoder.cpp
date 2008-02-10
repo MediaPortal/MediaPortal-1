@@ -79,10 +79,23 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket, CPcr& pcr)
 	if (m_pid==-1) return false;
 	m_tsHeader.Decode(tsPacket);
 	if (m_tsHeader.Pid != m_pid) return false;
-	if (m_tsHeader.SyncByte != TS_PACKET_SYNC) return false;
-  if (m_tsHeader.TransportError) return false;
-	if (m_tsHeader.TScrambling!=0) return false;
-	if ( m_tsHeader.AdaptionFieldOnly()) return false;
+	if (m_tsHeader.SyncByte != TS_PACKET_SYNC) 
+	{
+		LogDebug("pesdecoder pid:%x sync error", m_pid);
+		return false;
+	}
+  if (m_tsHeader.TransportError) 
+	{
+		//LogDebug("pesdecoder pid:%x transport error", m_pid);
+		return false;
+	}
+
+	BOOL scrambled= (m_tsHeader.TScrambling!=0);
+	if (scrambled) return false; 
+	if ( m_tsHeader.AdaptionFieldOnly() ) 
+	{
+		return false;
+	}
  
 	int pos = m_tsHeader.PayLoadStart;
 	if (pos >=188)
@@ -98,13 +111,15 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket, CPcr& pcr)
 	}
 	bool result=false;
 	if (m_tsHeader.PayloadUnitStart)
+	{
     m_bStartFound=true;
-
+	}
 
 	if (m_bStartFound==false) return false;
   m_packet.Write( &tsPacket[pos], 188-pos, m_tsHeader.PayloadUnitStart,pcr);
   if (m_packet.InUse() > 10 && m_pCallback!=NULL)
+  {
     m_pCallback->OnNewPesPacket(this);
-
-	return result;
+  }
+  return result;
 }

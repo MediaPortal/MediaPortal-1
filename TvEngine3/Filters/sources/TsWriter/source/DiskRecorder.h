@@ -28,6 +28,7 @@
 #include "..\..\shared\pcr.h"
 #include "PcrRefClock.h"
 #include "videoaudioobserver.h"
+#include "PmtParser.h"
 #include <vector>
 #include <map>
 using namespace std;

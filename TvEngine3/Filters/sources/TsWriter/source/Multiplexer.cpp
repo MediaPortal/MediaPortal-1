@@ -84,16 +84,34 @@ int CMultiplexer::GetPcrPid()
 	return m_pcrPid;
 }
 
-void CMultiplexer::AddPesStream(PidInfo2 pidInfo)
+void CMultiplexer::RemovePesStream(int pid)
+{
+	ivecPesDecoders it;
+	it=m_pesDecoders.begin(); 
+	while (it != m_pesDecoders.end())
+	{
+		CPesDecoder* decoder=*it;
+		if (decoder->GetPid()== pid) 
+		{
+			delete[] decoder;
+			m_pesDecoders.erase(it);
+			return;
+		}
+		++it;
+	}
+  m_system_header_size=get_system_header_size();
+}
+
+void CMultiplexer::AddPesStream(int pid, bool isAc3, bool isAudio, bool isVideo)
 {
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
-		if (decoder->GetPid()== pidInfo.elementaryPid) return;
+		if (decoder->GetPid()== pid) return;
 	}
 	
-	LogDebug("mux: add pes pid:0x%x", pidInfo.elementaryPid);
+//	LogDebug("mux: add pes pid:%x", pid);
 	int audioStreamId=0xc0;
 	int videoStreamId=0xe0;
 	int ac3StreamId=0xbd;
@@ -107,25 +125,30 @@ void CMultiplexer::AddPesStream(PidInfo2 pidInfo)
 	}
 
 	CPesDecoder* decoder = new CPesDecoder(this);
-	decoder->SetPid(pidInfo.elementaryPid);
-	if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3)
+	decoder->SetPid(pid);
+	if (isAc3)
 	{
-		LogDebug("mux pid:%x ac3 audio stream id:%x", pidInfo.elementaryPid,audioStreamId);
+		//LogDebug("mux pid:%x audio stream id:%x", pid,audioStreamId);
 		decoder->SetStreamId(ac3StreamId);
 	}
-	else if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_MPEG2)
+	else if (isAudio)
 	{
-		LogDebug("mux pid:%x audio stream id:%x", pidInfo.elementaryPid,audioStreamId);
+		//LogDebug("mux pid:%x audio stream id:%x", pid,audioStreamId);
 		decoder->SetStreamId(audioStreamId);
 	}
-	else if (pidInfo.logicalStreamType==SERVICE_TYPE_VIDEO_MPEG1 || pidInfo.logicalStreamType==SERVICE_TYPE_VIDEO_MPEG2 || pidInfo.logicalStreamType==SERVICE_TYPE_VIDEO_MPEG4 || pidInfo.logicalStreamType==SERVICE_TYPE_VIDEO_H264)
+	else if (isVideo)
 	{
-		LogDebug("mux pid:%x video stream id:%x", pidInfo.elementaryPid,videoStreamId);
+		//LogDebug("mux pid:%x video stream id:%x", pid,videoStreamId);
 		decoder->SetStreamId(videoStreamId);
+	}
+	else
+	{
+		//LogDebug("mux pid:%x video stream id:-1", pid);
+		decoder->SetStreamId(-1);
 	}
 	m_pesDecoders.push_back(decoder);
 
-	LogDebug("mux streams:%d", m_pesDecoders.size());
+	//LogDebug("mux streams:%d", m_pesDecoders.size());
   m_system_header_size=get_system_header_size();
 }
 
@@ -137,9 +160,11 @@ void CMultiplexer::OnTsPacket(byte* tsPacket)
 	{
 		m_adaptionField.Decode(m_header,tsPacket);
 		if (m_adaptionField.PcrFlag)
+		{
 			m_pcr=m_adaptionField.Pcr;
+		}
 	}
-	if (!m_pcr.IsValid)
+	if (m_pcr.PcrReferenceBase==0)
     return;
 
 	ivecPesDecoders it;
@@ -194,7 +219,7 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
           else
           {
             //audio or private stream
-						if (packet.Pts().IsValid)
+            if (packet.Pts().PcrReferenceBase!=0)
             {
               //packet contains a pts timestamp
               break;
@@ -215,7 +240,7 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
 			CPesPacket& packet=decoder->m_packet;
 			if (packet.IsAvailable(1024)==false) return 0; // no data available for this stream
 			if (packet.IsStart()==false) return 0;  // packet does not contain a start of pes packet
-      if (!packet.Pts().IsValid) return 0;//no pts timestamp
+      if (packet.Pts().PcrReferenceBase==0) return 0;//no pts timestamp
 		}
     
     //next check first video packet contains start of video
@@ -247,6 +272,7 @@ int CMultiplexer::OnNewPesPacket(CPesDecoder* decoder)
   if (streamId==decoder->GetStreamId())
   {
 		CPesPacket& packet=decoder->m_packet;
+		
     mpeg_mux_write_packet(packet,decoder->GetStreamId());
   }
   return 0;
@@ -308,9 +334,9 @@ int CMultiplexer::WritePackHeader(byte* buf, CPcr& pcr)
 {
 	if (m_pcrStart.PcrReferenceBase==0)
 		m_pcrStart=pcr;
-	CPcr correctedpcr=m_pcr;//pcr-m_pcrStart;
-	UINT64 pcrHi=m_pcr.PcrReferenceBase; //correctedpcr.PcrReferenceBase;
-	UINT64 pcrLow=m_pcr.PcrReferenceExtension; //correctedpcr.PcrReferenceExtension;
+	CPcr correctedpcr=pcr-m_pcrStart;
+	UINT64 pcrHi=correctedpcr.PcrReferenceBase;
+	UINT64 pcrLow=correctedpcr.PcrReferenceExtension;
   int muxRate=MUX_RATE;
 	//pack header
 	buf[0] = 0;
@@ -436,7 +462,10 @@ int CMultiplexer::WritePaddingPacket(byte* buf,int packet_bytes)
   size = WritePaddingHeader(buf, packet_bytes);
   packet_bytes -= size;
 
-	memset(&buf[size],0xff,packet_bytes);
+  for(i=0;i<packet_bytes;i++)
+  {
+    buf[i+size]=0xff;
+  }
   return packet_bytes;
 }
 
@@ -516,7 +545,12 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
     {
       pktLen-=padding_bytes;
 			if (padding_bytes>0)
-				memset(buf_ptr,0xff,padding_bytes);
+			{
+				for (int i=0; i <padding_bytes;++i)
+				{
+					buf_ptr[0]=0xff;buf_ptr++;
+				}
+			}
     }
     ptrSize[0]=(byte)((pktLen>>8)&0xff); //4
     ptrSize[1]=(byte)(pktLen&0xff);      //5
@@ -524,16 +558,72 @@ void CMultiplexer::flush_packet(CPesPacket& packet, int streamId)
   }
 
   if (m_pCallback!=NULL)
+  {
+		PatchPtsDts(ptrPesStart,m_pcrStart);
     m_pCallback->Write(buffer,PACK_SIZE);
+  }
 	m_bFirstPacket=false;
 
   packet.packet_number++;
+  //packet.nb_frames = 0;
+  //packet.m_iFrameOffset = 0;
 }
+void CMultiplexer::PatchPtsDts(byte* pesHeader,CPcr& startPcr)
+{
+	CPcr pts;
+	CPcr dts;
+  if (!CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+  {
+		return ;
+	}
+	if (pts.IsValid)
+	{
+    CPcr ptsorg=pts;
+		pts -= startPcr ;
+		// 9       10        11        12      13
+		//76543210 76543210 76543210 76543210 76543210
+		//0011pppM pppppppp pppppppM pppppppp pppppppM 
+//		LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
+		byte marker=0x21;
+		if (dts.PcrReferenceBase!=0) marker=0x31;
+		pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+		pesHeader[12]=(byte)(   (pts.PcrReferenceBase&0xff));				   pts.PcrReferenceBase>>=8;
+		pesHeader[11]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+		pesHeader[10]=(byte)(   (pts.PcrReferenceBase&0xff));					 pts.PcrReferenceBase>>=8;
+		pesHeader[9] =(byte)( (((pts.PcrReferenceBase&7)<<1)+marker)); 
+    
+	
+		if (dts.IsValid)
+		{
+			CPcr dtsorg=dts;
+			dts -= startPcr;
+			// 14       15        16        17      18
+			//76543210 76543210 76543210 76543210 76543210
+			//0001pppM pppppppp pppppppM pppppppp pppppppM 
+	//		LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
+			pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+			pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
+			pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+			pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
+			pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
+		}
+	
+		//pts.Reset();
+		//dts.Reset();
+		//if (CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+		//{
+		//	LogDebug("pts:%s dts:%s", pts.ToString(),dts.ToString());
+		//}
+	}
+}
+
 
 int CMultiplexer::mpeg_mux_write_packet(CPesPacket& packet, int streamId)
 {
   int avail_size = get_packet_payload_size(packet);
   if (packet.IsAvailable(2*avail_size) )
+  {
    flush_packet(packet,streamId);
+  }
   return 0;
 }

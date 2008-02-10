@@ -21,10 +21,9 @@
 #pragma once
 #include "pcrdecoder.h"
 #include "pesdecoder.h"
-#include "..\..\shared\TsHeader.h"
+#include "..\..\shared\tsheader.h"
 #include "..\..\shared\adaptionfield.h"
 #include "..\..\shared\pcr.h"
-#include "PmtParser.h"
 //#include "patparser.h"
 #include <vector>
 #include <map>
@@ -45,7 +44,8 @@ public:
 	virtual ~CMultiplexer(void);
 	void SetPcrPid(int pcrPid);
 	int  GetPcrPid();
-	void AddPesStream(PidInfo2 pidInfo);
+	void AddPesStream(int pid, bool isAc3,bool isAudio, bool isVideo);
+	void RemovePesStream(int pid);
 	void OnTsPacket(byte* tsPacket);
 	void Reset();
 	void ClearStreams();
@@ -61,6 +61,7 @@ private:
   int  get_packet_payload_size(CPesPacket& packet);
   int  mpeg_mux_write_packet(CPesPacket& packet, int streamId);
   void flush_packet(CPesPacket& packet, int streamId);
+	void PatchPtsDts(byte* pesPacket,CPcr& startPcr);
 	vector<CPesDecoder*> m_pesDecoders;
 	typedef vector<CPesDecoder*>::iterator ivecPesDecoders;
   
