@@ -43,12 +43,25 @@ namespace ProcessPlugins.AutoCropper
     private int topEnd = 0;
     private int bottomStart = 0;
     private int bottomEnd = 0;
+    
+    private int leftStart = 0;
+    private int leftEnd = 0;
+    private int rightStart = 0;
+    private int rightEnd = 0;
+
+    private int maxBrightnessTreshold = 40;
+    private int minBrightnessTreshold = 4;
 
     private float topScanStartFraction = 0.35f;
     private float topScanEndFraction = 0.85f;
-
     private float bottomScanEndFraction = 1.0f;
     private float bottomScanStartFraction = 0.0f;
+
+    private float leftScanStartFraction = 0.0f;
+    private float leftScanEndFraction = 1.0f;
+    private float rightScanStartFraction = 0.0f;
+    private float rightScanEndFraction = 1.0f;
+   
     private bool verboseLog = false;
 
     int[] histR = new int[256];
@@ -75,6 +88,8 @@ namespace ProcessPlugins.AutoCropper
         topScanEndFraction = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmTopEndSetting, 80) / 100.0f;
         bottomScanStartFraction = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmBottomStartSetting, 0) / 100.0f;
         bottomScanEndFraction = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmBottomEndSetting, 100) / 100.0f;
+        maxBrightnessTreshold = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmMaxBrightnessTreshold, 40);
+        minBrightnessTreshold = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmMinBrightnessTreshold, 4) + 16; //Add 16 to get level compared to video black level
         if (topScanEndFraction <= topScanStartFraction)
         {
           Log.Warn("AutoCropper: Top settings are wrong, end is lower than start!");
@@ -104,67 +119,137 @@ namespace ProcessPlugins.AutoCropper
 
       int topLine = 0;
       int bottomLine = frame.Height - 1;
+      int leftLine = 0;
+      int rightLine = frame.Width - 1;
 
       bool foundTop = false;
       bool foundBottom = false;
+      bool foundLeft = false;
+      bool foundRight = false;
 
       topStart = (int)(topScanStartFraction * frame.Width);
       topEnd = (int)(topScanEndFraction * frame.Width);
       if (topEnd >= frame.Width) topEnd--;
+      
+      bottomStart = (int)(bottomScanStartFraction * frame.Width);
       bottomEnd = (int)(bottomScanEndFraction * frame.Width);
       if (bottomEnd >= frame.Width) bottomEnd--;
-      bottomStart = (int)(bottomScanStartFraction * frame.Width);
 
-      if (verboseLog) Log.Debug("Scanning top: {0} - {1}, bottom {2} - {3}", topStart, topEnd, bottomStart, bottomEnd);
+      leftStart = (int)(leftScanStartFraction * frame.Height);
+      leftEnd = (int)(leftScanEndFraction * frame.Height);
+      if (leftEnd >= frame.Height) leftEnd--;
 
-      //DrawLine(frame.Height / 2, 0, frame.Width - 1, Color.Red);
+      rightStart = (int)(rightScanStartFraction * frame.Height);
+      rightEnd = (int)(rightScanEndFraction * frame.Height);
+      if (rightEnd >= frame.Height) rightEnd--;
 
-      // top down scan
-      for (int line = 7; line < frame.Height / 2; line++)
+      if (verboseLog) Log.Debug("Scanning top: {0} - {1}, bottom: {2} - {3}, left: {4} - {5}, right: {6} - {7}", topStart, topEnd, bottomStart, bottomEnd, leftStart, leftEnd, rightStart, rightEnd);
+
+      //DrawLine(frame.Height / 2, 0, frame.Width - 1, Color.Red, true);
+
+      //Top black bar binary search scan
+       int mid = 0;
+       int low = 0;
+       int high = frame.Height / 2;
+
+       while (low <= high) 
+       {
+           mid = (low + high) / 2;
+           ScanLine(mid, topStart, topEnd, true);
+           if (IsContent(topStart, topEnd))
+           {
+               high = mid - 1;
+               topLine = mid;
+               foundTop = true;
+               if (verboseLog)
+               {
+                   Log.Debug("Found top line: {0}", topLine);
+                   //DrawLine(topLine, topStart, topEnd, Color.Red, true);
+               }
+           }
+           else
+           {
+               low = mid + 1;
+           }
+       }
+
+       //Bottom black bar binary search scan
+       low = frame.Height / 2;
+       high = frame.Height - 1;
+
+       while (low <= high)
+       {
+           mid = (low + high) / 2;
+           ScanLine(mid, bottomStart, bottomEnd, true);
+           if (IsContent(bottomStart, bottomEnd))
+           {
+               low = mid + 1; 
+               bottomLine = mid;
+               foundBottom = true;
+               if (verboseLog)
+               {
+                   Log.Debug("Found bottom line: {0}", bottomLine);
+                   //DrawLine(topLine, topStart, topEnd, Color.Red, true);
+               }
+           }
+           else
+           {
+               high = mid - 1;
+           }
+       }
+       
+      // vertical scan of left half of screen
+      for (int line = 0; line < frame.Width / 2; line++)
       {
-        ScanLine(line, topStart, topEnd);
-        if (IsContent())
-        {
-          if (line <= 0.01f * frame.Height) line = 0;
-          topLine = line;
-          foundTop = true;
-          if (verboseLog) Log.Debug("Found top line: {0}", topLine);
-          //DrawLine(topLine, topStart, topEnd, Color.Red);
-          break;
-        }
+          ScanLine(line, leftStart, leftEnd, false);
+          if (IsContent(leftStart, leftEnd))
+          {
+              leftLine = line;
+              foundLeft = true;
+              if (verboseLog)
+              {
+                  Log.Debug("Found left line: {0}", leftLine);
+                  //DrawLine(leftLine, leftStart, leftEnd, Color.Red, false);
+              }
+              break;
+          }
       }
 
-      // bottom up scan
-      for (int line = frame.Height - 8; line > frame.Height / 2; line--)
+      // vertical scan of right half of screen
+      for (int line = frame.Width -1; line > frame.Width / 2; line--)
       {
-        ScanLine(line, bottomStart, bottomEnd);
-        if (IsContent())
-        {
-          foundBottom = true;
-          bottomLine = line;
-          if (verboseLog) Log.Debug("Found bottom line: {0}", bottomLine);
-          //DrawLine(bottomLine, bottomStart, bottomEnd, Color.Coral);
-          break;
-        }
+          ScanLine(line, rightStart, rightEnd, false);
+          if (IsContent(rightStart,rightEnd))
+          {
+              rightLine = line;
+              foundRight = true;
+              if (verboseLog)
+              {
+                  Log.Debug("Found right line: {0}", rightLine);
+                  //DrawLine(rightLine, rightStart, rightEnd, Color.Coral, false);
+              }
+              break;
+          }
       }
 
       //frame.Save("C:\\analyzed_frame.bmp", ImageFormat.Bmp); // for debug purposes
 
-      if (!foundTop || !foundBottom || bottomLine - topLine + 1 < frame.Height * 0.25f)
+      if (!foundTop || !foundBottom || !foundLeft || !foundRight || bottomLine - topLine + 1 < frame.Height * 0.25f || rightLine - leftLine + 1 < frame.Width * 0.25f )
       {
         if (verboseLog) Log.Debug("Sanity check failed, analysis failed, returning null to skip frame");
-        //DrawLine(frame.Height / 2, 0, frame.Width - 1, Color.White); // indicate give up
+        //DrawLine(frame.Height / 2, 0, frame.Width - 1, Color.White, true); // indicate give up
         return false;
       }
 
-      DrawLine(topLine, 0, frame.Width - 1, Color.Red);
-      DrawLine(bottomLine, 0, frame.Width - 1, Color.Yellow);
+      //DrawLine(topLine, 0, frame.Width - 1, Color.Red, true);
+      //DrawLine(bottomLine, 0, frame.Width - 1, Color.Yellow, true);
 
       bounds.Y = topLine;
-      bounds.X = 0;
+      bounds.X = leftLine;
       bounds.Height = bottomLine - topLine + 1;
-      bounds.Width = frame.Width;
-       return true;
+      bounds.Width = rightLine - leftLine + 1;
+      
+      return true;
     }
 
     /// <summary>
@@ -173,13 +258,24 @@ namespace ProcessPlugins.AutoCropper
     /// <param name="line"> The line to scan</param>
     /// <param name="start"> How far into the line to start scan (to avoid logos etc)</param>
     /// <param name="end"> How far into the line to stop the scan (to avoid logos etc) </param>
-    private void ScanLine(int line, int start, int end)
+    /// <param name="horizontal"> Decides if this is a horizontal line scan (or vertical) </param>
+    private void ScanLine(int line, int start, int end, bool horizontal)
     {
       //Log.Debug("Scanning line " + line);
       ResetHistograms();
+      Color c = Color.Empty;
+      
       for (int p = start; p <= end; p++)
       {
-        Color c = frame.GetPixel(p, line);
+        if (horizontal) //horizontal line scan
+        {
+          c = frame.GetPixel(p, line);
+        }
+        else //vertical line scan
+        {
+          c = frame.GetPixel(line, p);
+        }
+          
         histG[0xFF & c.G]++;
         histR[0xFF & c.R]++;
         histB[0xFF & c.B]++;
@@ -193,12 +289,20 @@ namespace ProcessPlugins.AutoCropper
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="c"></param>
-    public void DrawLine(int line, int start, int end, Color c)
+    /// <param name="horizontal"></param>
+    public void DrawLine(int line, int start, int end, Color c, bool horizontal)
     {
       if (verboseLog) Log.Debug("DrawLine " + line);
       for (int p = start; p <= end; p++)
       {
-        frame.SetPixel(p, line, c);
+        if (horizontal) //horizontal line scan
+        {
+          frame.SetPixel(p, line, c);
+        }
+        else //vertical line scan
+        {
+          frame.SetPixel(line, p, c);
+        } 
       }
     }
 
@@ -220,23 +324,40 @@ namespace ProcessPlugins.AutoCropper
     /// Determines if the last line scanned was content or not
     /// </summary>
     /// <returns></returns>
-    private bool IsContent()
+    private bool IsContent(int start, int end)
     {
       int maxR = 0;
       int maxG = 0;
       int maxB = 0;
-
+      int sumR = 0;
+      int sumG = 0;
+      int sumB = 0;
+      
+      //Check for brightest pixel value
       for (int i = 0; i < 255; i++)
       {
         if (histR[i] > 0 && i >= maxR) maxR = i;
         if (histG[i] > 0 && i >= maxG) maxG = i;
         if (histB[i] > 0 && i >= maxB) maxB = i;
       }
-     // Log.Debug("Max : {0}, {1}, {2}", maxR, maxG, maxB);
+      //if (verboseLog) Log.Debug("Max : {0}, {1}, {2}", maxR, maxG, maxB);
 
-      // for now, try to just rely on max value
-      if (maxR > 40 || maxG > 40 || maxB > 40) return true;
+      //At least one pixel with brightness level over 40 is found
+      if (maxR > maxBrightnessTreshold || maxG > maxBrightnessTreshold || maxB > maxBrightnessTreshold) return true;
 
+      //Check number of pixels above brightness treshold
+      for (int j = minBrightnessTreshold; j < 255; j++)
+      {
+          sumR = sumR + histR[j];
+          sumG = sumG + histG[j];
+          sumB = sumB + histB[j];
+      }
+      //if (verboseLog) Log.Debug("Number of pixel above treshold : {0}, {1}, {2}", sumR, sumG, sumB);
+      
+      //Over half of the number of pixels are above the brightness treshold
+      if (sumR > ((end - start) / 2) || sumG > ((end - start) / 2) || sumB > ((end - start) / 2)) return true;
+      
+      //No content detected
       return false;
     }
   }

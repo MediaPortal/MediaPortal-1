@@ -49,6 +49,8 @@ namespace ProcessPlugins.AutoCropper
     private static AutoCropper instance;
     private MovingAverage topCropAvg = null;
     private MovingAverage bottomCropAvg = null;
+    private MovingAverage leftCropAvg = null;
+    private MovingAverage rightCropAvg = null;
     private CropSettings lastSettings = null;
     private FrameAnalyzer analyzer = null;
     private bool firstDynamicCrop = true;
@@ -56,6 +58,8 @@ namespace ProcessPlugins.AutoCropper
     private bool manualEnabled = false;
     private int bottomMemLength = 100; // in seconds
     private int topMemLength = 50; // in seconds
+    private int leftMemLength = 50; // in seconds
+    private int rightMemLength = 50; // in seconds
     private bool useForMyVideos = false;
     private bool verboseLog = false;
     private bool stopWorkerThread = false;
@@ -274,10 +278,16 @@ namespace ProcessPlugins.AutoCropper
       lastSettings = new CropSettings(0, 0, 0, 0);
       int topMemLengthInFrames = (int)(topMemLength / (sampleInterval / 1000.0f));
       int bottomMemLengthInFrames = (int)(bottomMemLength / (sampleInterval / 1000.0f));
+      int leftMemLengthInFrames = (int)(leftMemLength / (sampleInterval / 1000.0f));
+      int rightMemLengthInFrames = (int)(rightMemLength / (sampleInterval / 1000.0f));
       Log.Debug("AutoCropper: Top memory is " + topMemLengthInFrames + " sampleinterval " + sampleInterval + " mem length " + topMemLength);
       Log.Debug("AutoCropper: Bottom memory is " + bottomMemLengthInFrames + " sampleinterval " + sampleInterval + " mem length " + bottomMemLength);
+      Log.Debug("AutoCropper: Left memory is " + leftMemLengthInFrames + " sampleinterval " + sampleInterval + " mem length " + leftMemLength);
+      Log.Debug("AutoCropper: Right memory is " + rightMemLengthInFrames + " sampleinterval " + sampleInterval + " mem length " + rightMemLength);
       topCropAvg = new MovingAverage(topMemLengthInFrames, 0);
       bottomCropAvg = new MovingAverage(bottomMemLengthInFrames, 0);
+      leftCropAvg = new MovingAverage(leftMemLengthInFrames, 0);
+      rightCropAvg = new MovingAverage(rightMemLengthInFrames, 0);
 
       // start the thread that will execute the actual cropping
       Thread t = new Thread(new ThreadStart(instance.Worker));
@@ -321,6 +331,8 @@ namespace ProcessPlugins.AutoCropper
       GUIWindowManager.SendMessage(msg);
       lastSettings.Bottom = cropSettings.Bottom;
       lastSettings.Top = cropSettings.Top;
+      lastSettings.Left = cropSettings.Left;
+      lastSettings.Right = cropSettings.Right;
     }
 
 
@@ -352,10 +364,12 @@ namespace ProcessPlugins.AutoCropper
 
       int topCrop = bounds.Top;
       int bottomCrop = frame.Height - bounds.Height - topCrop;
+      int leftCrop = bounds.Left;
+      int rightCrop = frame.Width - bounds.Width - leftCrop;
 
       if (bottomCrop < 0) Log.Error("bottomCrop <0");
       //MinDynamicCrop(topCrop, bottomCrop);
-      AvgDynamicCrop(topCrop, bottomCrop);
+      AvgDynamicCrop(topCrop, bottomCrop, leftCrop, rightCrop);
 
       /*long id = DateTime.Now.Ticks;
 
@@ -374,34 +388,42 @@ namespace ProcessPlugins.AutoCropper
     /// </summary>
     /// <param name="topCrop">Cropping found in current frame</param>
     /// <param name="bottomCrop">Cropping found in current frame</param>
-    private void MinDynamicCrop(int topCrop, int bottomCrop)
+    private void MinDynamicCrop(int topCrop, int bottomCrop, int leftCrop, int rightCrop)
     {
       if (firstDynamicCrop)
       {
-        if (verboseLog) Log.Debug("First dynamic crop, resetting to top {0}, bottom {1}", topCrop, bottomCrop);
+        if (verboseLog) Log.Debug("First dynamic crop, resetting to top {0}, bottom {1}, left {2}, right {3}", topCrop, bottomCrop, leftCrop, rightCrop);
         topCropAvg.Reset(topCrop);
         bottomCropAvg.Reset(bottomCrop);
+        leftCropAvg.Reset(leftCrop);
+        rightCropAvg.Reset(rightCrop);
         firstDynamicCrop = false;
       }
       else
       {
         topCropAvg.Add(topCrop);
         bottomCropAvg.Add(bottomCrop);
+        leftCropAvg.Add(leftCrop);
+        rightCropAvg.Add(rightCrop);
       }
 
       int topMin = (int)topCropAvg.GetMin();
       int bottomMin = (int)bottomCropAvg.GetMin();
+      int leftMin = (int)leftCropAvg.GetMin();
+      int rightMin = (int)rightCropAvg.GetMin();
 
       if (verboseLog)
       {
-        Log.Debug("Current topMin {0}, bottomMin {1}", topMin, bottomMin);
+        Log.Debug("Current topMin {0}, bottomMin {1}, leftMin {2}, rightMin {3}", topMin, bottomMin, leftMin, rightMin);
       }
 
-      if (Math.Abs(topMin - lastSettings.Top) > 2 || Math.Abs(bottomMin - lastSettings.Bottom) > 2)
+      if (Math.Abs(topMin - lastSettings.Top) > 2 || Math.Abs(bottomMin - lastSettings.Bottom) > 2 || Math.Abs(leftMin - lastSettings.Left) > 2 || Math.Abs(rightMin - lastSettings.Right) > 2)
       {
         CropSettings newSettings = new CropSettings();
         newSettings.Top = topMin;
         newSettings.Bottom = bottomMin;
+        newSettings.Left = leftMin;
+        newSettings.Right = rightMin;
         RequestCrop(newSettings);
       }
     }
@@ -412,11 +434,14 @@ namespace ProcessPlugins.AutoCropper
     /// </summary>
     /// <param name="topCrop">Cropping found in current frame</param>
     /// <param name="bottomCrop">Cropping found in current frame</param>
-    private void AvgDynamicCrop(int topCrop, int bottomCrop)
+    private void AvgDynamicCrop(int topCrop, int bottomCrop, int leftCrop, int rightCrop)
     {
       CropSettings newSettings = new CropSettings();
       newSettings.Top = lastSettings.Top;
       newSettings.Bottom = lastSettings.Bottom;
+      newSettings.Left = lastSettings.Left;
+      newSettings.Right = lastSettings.Right;
+
       bool update = false;
 
       // debug
@@ -452,23 +477,59 @@ namespace ProcessPlugins.AutoCropper
       {
         bottomCropAvg.Add(bottomCrop);
       }
-
+      
+      // If the image area has increase immediatly reset to this larger size
+      if (leftCrop < lastSettings.Left || firstDynamicCrop)
+      {
+          if (verboseLog) Log.Debug("Left side of image has increased");
+          leftCropAvg.Reset(leftCrop);
+          newSettings.Left = leftCrop;
+          update = true;
+      }
+      else
+      {
+          leftCropAvg.Add(leftCrop);
+      }
+        
+      // If the image area has increase immediatly reset to this larger size
+      if (rightCrop < lastSettings.Right || firstDynamicCrop)
+      {
+          if (verboseLog) Log.Debug("Right side of image has increased");
+          rightCropAvg.Reset(rightCrop);
+          newSettings.Right = rightCrop;
+          update = true;
+      }
+      else
+      {
+          rightCropAvg.Add(rightCrop);
+      }
+      
       firstDynamicCrop = false;
 
-      if (verboseLog) Log.Debug("This Frame: {0} / {1}, Avg: {4}/{5} Current Crop: {2}/{3}", topCrop, bottomCrop, lastSettings.Top, lastSettings.Bottom, topCropAvg.Average, bottomCropAvg.Average);
+      if (verboseLog) Log.Debug("Current cropping settings (Top/Bottom Left/Right):   This Frames: {0}/{1} {6}/{7}, Avg: {4}/{5} {8}/{9}, Current Crop: {2}/{3} {10}/{11}", topCrop, bottomCrop, lastSettings.Top, lastSettings.Bottom, topCropAvg.Average, bottomCropAvg.Average, leftCrop, rightCrop, leftCropAvg.Average, rightCropAvg.Average, lastSettings.Left, lastSettings.Right);
 
       if (topCropAvg.Average - lastSettings.Top > 4 && Math.Abs(topCropAvg.Average - topCrop) < 2)
       {
         newSettings.Top = (int)topCropAvg.Average;
         update = true;
       }
-      if (topCropAvg.Average - lastSettings.Top > 4 && Math.Abs(topCropAvg.Average - topCrop) < 2)
+      if (bottomCropAvg.Average - lastSettings.Bottom > 4 && Math.Abs(bottomCropAvg.Average - bottomCrop) < 2)
       {
         newSettings.Bottom = (int)bottomCropAvg.Average;
         update = true;
       }
+      if (leftCropAvg.Average - lastSettings.Left > 4 && Math.Abs(leftCropAvg.Average - leftCrop) < 2)
+      {
+          newSettings.Left = (int)leftCropAvg.Average;
+          update = true;
+      }
+      if (rightCropAvg.Average - lastSettings.Right > 4 && Math.Abs(rightCropAvg.Average - rightCrop) < 2)
+      {
+          newSettings.Right = (int)rightCropAvg.Average;
+          update = true;
+      }
 
-      if (update && (newSettings.Top != lastSettings.Top || newSettings.Bottom != lastSettings.Bottom))
+      if (update && (newSettings.Top != lastSettings.Top || newSettings.Bottom != lastSettings.Bottom || newSettings.Left != lastSettings.Left || newSettings.Right != lastSettings.Right))
       {
         RequestCrop(newSettings);
       }
@@ -481,6 +542,8 @@ namespace ProcessPlugins.AutoCropper
     {
       bottomCropAvg.Reset(0);
       topCropAvg.Reset(0);
+      leftCropAvg.Reset(0);
+      rightCropAvg.Reset(0);
       firstDynamicCrop = true;
     }
 
@@ -510,6 +573,8 @@ namespace ProcessPlugins.AutoCropper
       CropSettings cropSettings = new CropSettings();
       cropSettings.Top = bounds.Top;
       cropSettings.Bottom = GUIGraphicsContext.VideoSize.Height - (bounds.Bottom + 1);
+      cropSettings.Left = bounds.Left;
+      cropSettings.Right = GUIGraphicsContext.VideoSize.Width - (bounds.Right + 1);
 
       RequestCrop(cropSettings);
       frame.Dispose();
