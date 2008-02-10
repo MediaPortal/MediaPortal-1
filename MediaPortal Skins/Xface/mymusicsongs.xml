@@ -76,7 +76,7 @@
         <control>
           <description>Play CD</description>
           <type>button</type>
-          <id>9</id>
+          <id>12</id>
           <label>890</label>
           <onleft>9</onleft>
           <onright>50</onright>
