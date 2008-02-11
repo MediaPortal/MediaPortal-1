@@ -66,12 +66,16 @@ namespace TvLibrary.Implementations.DVB
       {
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
-        Log.Log.WriteFile("Check for WinTV CI");
+        /*Log.Log.WriteFile("Check for WinTV CI");
         if (winTvUsbCiFilter != null)
         {
           Log.Log.WriteFile("WinTV CI Module detected");
           _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter, analyzerFilter);
+          return;
         }
+        //Note: this will stop other detetions like DiSEqC etc via ConditionalAccess for other cards.
+        _winTvCiModule = null;*/
+
         Log.Log.WriteFile("Check for KNC");
         _knc = new KNC(tunerFilter, analyzerFilter);
         if (_knc.IsKNC)
@@ -240,10 +244,10 @@ namespace TvLibrary.Implementations.DVB
           return _technoTrend.IsCamReady();
           //return true;
         }
-        if (_winTvCiModule != null)
+        /*if (_winTvCiModule != null)
         {
           return (_winTvCiModule.IsCAMInstalled && _winTvCiModule.IsDeviceInstalled);
-        }
+        }*/
       }
       catch (Exception ex)
       {
@@ -343,26 +347,24 @@ namespace TvLibrary.Implementations.DVB
         context.AudioPid = audioPid;
         context.ServiceId = channel.ServiceId;
 
-        if (_knc != null)
-        {
-          return _knc.SendPMT(PMT, pmtLength);
-        }
-        if (_winTvCiModule != null)
+        /*if (_winTvCiModule != null)
         {
           Log.Log.WriteFile("WinTV CI:  SendPMT: {0}, {1}", PMT, pmtLength);
           return _winTvCiModule.SendPMT(PMT, pmtLength);
+        }*/
+        if (_knc != null)
+        {
+          return _knc.SendPMT(PMT, pmtLength);
         }
         if (_digitalEveryWhere != null)
         {
           return _digitalEveryWhere.SendPMTToFireDTV(_mapSubChannels);
         }
-
         if (_technoTrend != null)
         {
           return _technoTrend.DescrambleMultiple(_mapSubChannels);
           // return _technoTrend.SendPMT(PMT, pmtLength);
         }
-
         if (_twinhan != null)
         {
           ChannelInfo info = new ChannelInfo();

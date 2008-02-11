@@ -40,11 +40,11 @@ namespace TvLibrary.Implementations.DVB
       _winTvUsbCIFilter = winTvUsbCIFilter;
       _interfaceWinTv = (IWinTvUsbCI)analyzerFilter;
       _interfaceWinTv.SetFilter(winTvUsbCIFilter);
-      Log.Log.Info("WinTV CI:  Module installed:{0}", IsDeviceInstalled);
-      Log.Log.Info("WinTV CI:  CAM installed:{0}", IsCAMInstalled);
+      //Log.Log.Info("WinTV CI:  Module installed:{0}", IsDeviceInstalled);
+      //Log.Log.Info("WinTV CI:  CAM installed:{0}", IsCAMInstalled);
     }
 
-    public bool IsDeviceInstalled
+    /*public bool IsDeviceInstalled
     {
       get
       {
@@ -61,14 +61,14 @@ namespace TvLibrary.Implementations.DVB
         _interfaceWinTv.IsCAMInstalled(ref yesNo);
         return yesNo;
       }
-    }
+    }*/
     public bool SendPMT(byte[] PMT, int pmtLength)
     {
-      bool yesNo = false;
+      bool succeeded = false;
       for (int i = 0; i < pmtLength; ++i)
         Marshal.WriteByte(_ptrMem, 0, PMT[i]);
-      _interfaceWinTv.DescrambleService(_ptrMem, (short)pmtLength, ref yesNo);
-      return yesNo;
+      _interfaceWinTv.DescrambleService(_ptrMem, (short)pmtLength, ref succeeded);
+      return succeeded;
     }
   }
 }

@@ -208,6 +208,7 @@ namespace TvLibrary.Implementations.DVB
       _mapSubChannels.Clear();
       _subChannelId = 0;
     }
+
     /// <summary>
     /// Gets the sub channel.
     /// </summary>
@@ -519,6 +520,9 @@ namespace TvLibrary.Implementations.DVB
           }
         }
       }
+      //Added to bypass WinTV CI in the graph for now.
+      usbWinTvDevice = null;
+      // Remove this line and two above to add WinTV filter back into the graph
       if (usbWinTvDevice == null)
       {
         if (tunerOnly == true)
@@ -1240,8 +1244,9 @@ namespace TvLibrary.Implementations.DVB
       _graphRunning = false;
       Log.Log.WriteFile("  stop");
       // Decompose the graph
-      //hr = (_graphBuilder as IMediaControl).StopWhenReady();
-      hr = (_graphBuilder as IMediaControl).Stop();
+      Log.Log.WriteFile("  stop the graph");
+      hr = (_graphBuilder as IMediaControl).StopWhenReady();
+      //hr = (_graphBuilder as IMediaControl).Stop();
       Log.Log.WriteFile("  remove all filters");
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
       Log.Log.WriteFile("  free...");
@@ -1249,31 +1254,38 @@ namespace TvLibrary.Implementations.DVB
       _interfaceEpgGrabber = null;
       if (_mdapiFilter != null)
       {
-        Release.ComObject("MDAPI filter", _mdapiFilter); _mdapiFilter = null;
+        Release.ComObject("MDAPI filter", _mdapiFilter);
+        _mdapiFilter = null;
       }
       if (_filterMpeg2DemuxTif != null)
       {
-        Release.ComObject("_filterMpeg2DemuxTif filter", _filterMpeg2DemuxTif); _filterMpeg2DemuxTif = null;
+        Release.ComObject("_filterMpeg2DemuxTif filter", _filterMpeg2DemuxTif);
+        _filterMpeg2DemuxTif = null;
       }
       if (_filterNetworkProvider != null)
       {
-        Release.ComObject("_filterNetworkProvider filter", _filterNetworkProvider); _filterNetworkProvider = null;
+        Release.ComObject("_filterNetworkProvider filter", _filterNetworkProvider);
+        _filterNetworkProvider = null;
       }
       if (_infTeeMain != null)
       {
-        Release.ComObject("main inftee filter", _infTeeMain); _infTeeMain = null;
+        Release.ComObject("main inftee filter", _infTeeMain);
+        _infTeeMain = null;
       }
       if (_infTeeSecond != null)
       {
-        Release.ComObject("_infTeeSecond filter", _infTeeSecond); _infTeeSecond = null;
+        Release.ComObject("_infTeeSecond filter", _infTeeSecond);
+        _infTeeSecond = null;
       }
       if (_infTeeWinTV != null)
       {
-        Release.ComObject("_infTeeWinTV filter", _infTeeWinTV); _infTeeWinTV = null;
+        Release.ComObject("_infTeeWinTV filter", _infTeeWinTV);
+        _infTeeWinTV = null;
       }
       if (_filterMpeg2DemuxTif != null)
       {
-        Release.ComObject("TIF MPEG2 demux filter", _filterMpeg2DemuxTif); _filterMpeg2DemuxTif = null;
+        Release.ComObject("TIF MPEG2 demux filter", _filterMpeg2DemuxTif);
+        _filterMpeg2DemuxTif = null;
       }
       if (_filterTuner != null)
       {
@@ -1292,7 +1304,8 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_filterTIF != null)
       {
-        Release.ComObject("TIF filter", _filterTIF); _filterTIF = null;
+        Release.ComObject("TIF filter", _filterTIF);
+        _filterTIF = null;
       }
       //if (_filterSectionsAndTables != null)
       //{
@@ -1301,7 +1314,8 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("  free pins...");
       if (_filterTsWriter != null)
       {
-        Release.ComObject("TSWriter filter", _filterTsWriter); _filterTsWriter = null;
+        Release.ComObject("TSWriter filter", _filterTsWriter);
+        _filterTsWriter = null;
       }
       Log.Log.WriteFile("  free graph...");
       if (_rotEntry != null)
@@ -1310,11 +1324,13 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_capBuilder != null)
       {
-        Release.ComObject("capture builder", _capBuilder); _capBuilder = null;
+        Release.ComObject("capture builder", _capBuilder);
+        _capBuilder = null;
       }
       if (_graphBuilder != null)
       {
-        Release.ComObject("graph builder", _graphBuilder); _graphBuilder = null;
+        Release.ComObject("graph builder", _graphBuilder);
+        _graphBuilder = null;
       }
       Log.Log.WriteFile("  free devices...");
       if (_deviceWinTvUsb != null)

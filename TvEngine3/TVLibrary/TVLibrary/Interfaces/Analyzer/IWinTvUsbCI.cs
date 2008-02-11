@@ -31,10 +31,10 @@ namespace TvLibrary.Interfaces.Analyzer
   {
     [PreserveSig]
     int SetFilter(IBaseFilter tunerFilter);
-    [PreserveSig]
-    int IsModuleInstalled(ref bool yesNo);
-    [PreserveSig]
-    int IsCAMInstalled(ref bool yesNo);
+    //[PreserveSig]
+    //int IsModuleInstalled(ref bool yesNo);
+    //[PreserveSig]
+    //int IsCAMInstalled(ref bool yesNo);
     [PreserveSig]
     int DescrambleService(IntPtr pmt, short pmtLen, ref bool succeeded);
   };
