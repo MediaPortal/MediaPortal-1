@@ -351,7 +351,6 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
   m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
   m_pTechnoTrend= new CTechnotrend(GetOwner(),phr);
   m_pKNC= new CKnc(GetOwner(),phr);
-  m_pWinTvCI = new CWinTvUsbCI(GetOwner(),phr);
   m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(),phr);
   m_rawPaketWriter=new FileWriter();
   m_pPin->AssignRawPaketWriter(m_rawPaketWriter);
@@ -366,7 +365,6 @@ CMpTs::~CMpTs()
 	delete m_pEpgScanner;
   delete m_pTechnoTrend;
 	delete m_pKNC;
-  delete m_pWinTvCI;
 	delete m_pChannelLinkageScanner;
 	delete m_rawPaketWriter;
   CAutoLock lock(&m_Lock);
@@ -432,11 +430,6 @@ STDMETHODIMP CMpTs::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 	{
 		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITechnoTrend");
 		return GetInterface((IKNC*)m_pKNC, ppv);
-	}
-	else if (riid == IID_IWinTvUsbCI)
-	{
-		//LogDebug("CMpTs:NonDelegatingQueryInterface IID_ITechnoTrend");
-		return GetInterface((IWinTvUsbCI*)m_pWinTvCI, ppv);
 	}
 	else if (riid == IID_ITsChannelLinkageScanner)
 	{

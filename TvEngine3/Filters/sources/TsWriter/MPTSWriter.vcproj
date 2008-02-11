@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="TsWriter"
 	ProjectGUID="{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
 	RootNamespace="MPTSWriter"
@@ -391,10 +391,6 @@
 					RelativePath=".\source\Technotrend.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\source\WinTvUsbCI\WinTvUsbCI.cpp"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="Helper"
@@ -594,14 +590,6 @@
 				</File>
 				<File
 					RelativePath=".\source\Technotrend.h"
-					>
-				</File>
-				<File
-					RelativePath=".\source\WinTvUsbCI\USB2CIIFace.h"
-					>
-				</File>
-				<File
-					RelativePath=".\source\WinTvUsbCI\WinTvUsbCI.h"
 					>
 				</File>
 			</Filter>
