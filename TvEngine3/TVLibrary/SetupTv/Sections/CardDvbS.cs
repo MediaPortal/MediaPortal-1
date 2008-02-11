@@ -1335,24 +1335,28 @@ namespace SetupTv.Sections
     private void mpLNB1_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder1.Enabled = mpLNB1.Checked;
+      mpBand1.Enabled = mpLNB1.Checked;
       mpDisEqc1.Enabled = mpLNB1.Checked;
     }
 
     private void mpLNB2_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder2.Enabled = mpLNB2.Checked;
+      mpBand2.Enabled = mpLNB2.Checked;
       mpDisEqc2.Enabled = mpLNB2.Checked;
     }
 
     private void mpLNB3_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder3.Enabled = mpLNB3.Checked;
+      mpBand3.Enabled = mpLNB3.Checked;
       mpDisEqc3.Enabled = mpLNB3.Checked;
     }
 
     private void mpLNB4_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder4.Enabled = mpLNB4.Checked;
+      mpBand4.Enabled = mpLNB4.Checked;
       mpDisEqc4.Enabled = mpLNB4.Checked;
     }
 
