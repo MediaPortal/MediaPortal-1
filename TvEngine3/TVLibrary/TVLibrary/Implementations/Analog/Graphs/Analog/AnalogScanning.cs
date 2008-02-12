@@ -22,9 +22,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 using DirectShowLib;
 
 namespace TvLibrary.Implementations.Analog
@@ -33,11 +35,15 @@ namespace TvLibrary.Implementations.Analog
   /// <summary>
   /// Class which implements scanning for tv/radio channels for analog cards
   /// </summary>
-  public class AnalogScanning : ITVScanning
+  public class AnalogScanning : ITVScanning, IAnalogChannelScanCallback
   {
     TvCardAnalog _card;
     long _previousFrequency = 0;
     int _radioSensitivity = 1;
+    ManualResetEvent _event;
+    IAnalogChanelScan _scanner;
+
+
     /// <summary>
     /// Initializes a new instance of the <see cref="T:AnalogScanning"/> class.
     /// </summary>
@@ -100,10 +106,6 @@ namespace TvLibrary.Implementations.Analog
       _card.IsScanning = true;
       AnalogChannel analogChannel = (AnalogChannel)channel;
       _card.Tune(0,channel);
-      if (channel.IsTv)
-      {
-        _card.GrabTeletext = true;
-      }
       if (_card.IsTunerLocked)
       {
         if (channel.IsTv)
@@ -112,24 +114,45 @@ namespace TvLibrary.Implementations.Analog
           _previousFrequency = _card.VideoFrequency;
         }
 
-        if (_card.GrabTeletext && channel.IsTv)
+        if (_card.HasTeletext && channel.IsTv)
         {
-          _card.TeletextDecoder.ClearTeletextChannelName();
-          for (int i = 0; i < 20; ++i)
-          {
-            System.Threading.Thread.Sleep(100);
-            string channelName = _card.TeletextDecoder.GetTeletextChannelName();
-            if (channelName != "")
-            {
-              channel.Name="";
-              for (int x = 0; x < channelName.Length; ++x)
-              {
+          try {
+            _event = new ManualResetEvent(false);
+            _scanner = _card.GetChannelScanner();
+            _scanner.SetCallBack(this);
+            _scanner.Start();
+            _event.WaitOne(settings.TimeOutSDT * 1000, true);
+
+            IntPtr serviceName;
+            _scanner.GetChannel(out serviceName);
+            _scanner.Stop();
+            string channelName = DvbTextConverter.Convert(serviceName, "");
+
+            int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
+            if (pos != -1) {
+              channelName = channelName.Substring(0, pos);
+            }
+            //Some times channel name includes program name after :
+            pos = channelName.LastIndexOf(":");
+            if (pos != -1) {
+              channelName = channelName.Substring(0, pos);
+            }
+            channelName = channelName.TrimEnd(new char[] { '\'', '\"', '´', '`' });
+            channelName = channelName.Trim();
+            if (channelName != "") {
+              channel.Name = "";
+              for (int x = 0; x < channelName.Length; ++x) {
                 char k = channelName[x];
                 if (k < (char)32 || k > (char)127) break;
                 channel.Name += k.ToString();
               }
-              break;
             }
+          } finally {
+            if (_scanner != null) {
+              _scanner.SetCallBack(null);
+              _scanner.Stop();
+            }
+            _event.Close();
           }
         }
         List<IChannel> list = new List<IChannel>();
@@ -145,5 +168,20 @@ namespace TvLibrary.Implementations.Analog
     {
       return new List<IChannel>();
     }
+
+    #region IAnalogChannelScanCallback Members
+
+    /// <summary>
+    /// Called when [scanner done].
+    /// </summary>
+    /// <returns></returns>
+    public int OnScannerDone() {
+      _event.Set();
+      return 0;
+    }
+
+    #endregion
+
+  
   }
 }

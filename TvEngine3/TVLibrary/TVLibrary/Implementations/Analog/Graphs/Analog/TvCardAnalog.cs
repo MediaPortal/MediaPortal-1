@@ -33,7 +33,6 @@ using TvLibrary.Teletext;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Helper;
-using TvLibrary.Interfaces;
 using TvLibrary.ChannelLinkage;
 using TvLibrary.Interfaces.Analyzer;
 
@@ -42,7 +41,7 @@ namespace TvLibrary.Implementations.Analog
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tv cards
   /// </summary>
-  public class TvCardAnalog : TvCardAnalogBase, IDisposable, ITVCard, ISampleGrabberCB, ITvSubChannel
+  public class TvCardAnalog : TvCardAnalogBase, IDisposable, ITVCard, ITvSubChannel
   {
     AnalogChannel _previousChannel;
     protected bool _isHybrid = false;
@@ -357,6 +356,8 @@ namespace TvLibrary.Implementations.Analog
       }
       RunGraph();
 
+      UpdatePinVideo(channel.IsTv);
+
       AnalogChannel analogChannel = channel as AnalogChannel;
       if (analogChannel.IsTv)
       {
@@ -375,12 +376,10 @@ namespace TvLibrary.Implementations.Analog
           {
             Log.Log.WriteFile("analog:  set to FM radio");
             tvTuner.put_Mode(AMTunerModeType.FMRadio);
-            _pinVideo.Disconnect();
           }
           else
           {
             Log.Log.WriteFile("analog:  set to TV");
-            FilterGraphTools.ConnectPin(_graphBuilder, _pinVideo, _filterMpegMuxer, 0);
             tvTuner.put_Mode(AMTunerModeType.TV);
           }
         }
@@ -491,12 +490,7 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("Analog: StartTimeShifting()");
       if (_graphState == GraphState.Created)
       {
-        string extension = System.IO.Path.GetExtension(fileName).ToLower();
-        StopGraph();
-        AddMpegMuxer(_currentChannel.IsTv);
-        AddTsFileSink(_currentChannel.IsTv);
-
-        SetTimeShiftFileName(fileName);
+        SetTimeShiftFileNameAndStartTimeShifting(fileName);
       }
       RunGraph();
       _graphState = GraphState.TimeShifting;
@@ -516,7 +510,6 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("Analog: StopTimeShifting()");
       StopGraph();
 
-      DeleteTimeShifting();
       _graphState = GraphState.Created;
       return true;
     }

@@ -35,13 +35,15 @@ using TvLibrary.Teletext;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Helper;
+using TvDatabase;
+using TvLibrary.Implementations.DVB.Structures;
 
 namespace TvLibrary.Implementations.Analog
 {
   /// <summary>
   /// base class for analog tv cards
   /// </summary>
-  public class TvCardAnalogBase : ISampleGrabberCB
+  public class TvCardAnalogBase : ITeletextCallBack, IAnalogTeletextCallBack
   {
     public struct MPEG2VideoInfo		//  MPEG2VideoInfo
     {
@@ -134,7 +136,7 @@ namespace TvLibrary.Implementations.Analog
     protected IPin _pinAnalogAudio = null;
     protected IPin _pinAnalogVideo = null;
     protected DVBTeletext _teletextDecoder;
-    protected string _recordingFileName="";
+    protected string _recordingFileName = "";
     protected bool _grabTeletext = false;
     protected int _managedThreadId;
     protected DateTime _lastSignalUpdate;
@@ -145,11 +147,15 @@ namespace TvLibrary.Implementations.Analog
     protected object m_context = null;
     protected IChannel _currentChannel;
     protected Hauppauge _haupPauge = null;
-    protected string _timeshiftFileName="";
+    protected string _timeshiftFileName = "";
     protected IVbiCallback _teletextCallback = null;
     private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
     protected ScanParameters _parameters;
-		protected bool _cardPresent = true;
+    protected bool _cardPresent = true;
+    protected TvBusinessLayer _layer;
+    protected TSHelperTools.TSHeader _packetHeader;
+    protected TSHelperTools _tsHelper;
+    protected bool _pinVideoConnected;
     #endregion
 
     #region ctor
@@ -165,23 +171,25 @@ namespace TvLibrary.Implementations.Analog
       _graphState = GraphState.Idle;
       _teletextDecoder = new DVBTeletext();
       _parameters = new ScanParameters();
+      _layer = new TvBusinessLayer();
+      _tsHelper = new TSHelperTools();
     }
     #endregion
 
-		/// <summary>
-		/// returns true if card is currently present
-		/// </summary>
-		public bool CardPresent
-		{
-			get
-			{
-				return _cardPresent;
-			}
-			set
-			{
-				_cardPresent = value;
-			}
-		}
+    /// <summary>
+    /// returns true if card is currently present
+    /// </summary>
+    public bool CardPresent
+    {
+      get
+      {
+        return _cardPresent;
+      }
+      set
+      {
+        _cardPresent = value;
+      }
+    }
 
     public ScanParameters Parameters
     {
@@ -356,7 +364,7 @@ namespace TvLibrary.Implementations.Analog
         //If a hauppauge analog card, set bitrate to default
         //As the graph is stopped, we don't need to pass in the deviceID
         //However, if we wish to change quality for a live graph, the deviceID must be passed in
-        if (_tunerDevice != null && _captureDevice != null) 
+        if (_tunerDevice != null && _captureDevice != null)
         {
           if (_captureDevice.Name.Contains("Hauppauge"))
           {
@@ -373,10 +381,17 @@ namespace TvLibrary.Implementations.Analog
           }
         }
         //FilterGraphTools.SaveGraphFile(_graphBuilder, "hp.grf");
+        if (!AddMpegMuxer())
+        {
+          throw new TvException("Analog: unable to add mpeg muxer");
+        }
+        if (!AddTsFileSink())
+        {
+          throw new TvException("Analog: unable to add mpfilewriter");
+        }
         Log.Log.WriteFile("analog: Graph is built");
         _graphState = GraphState.Created;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
@@ -399,8 +414,7 @@ namespace TvLibrary.Implementations.Analog
       try
       {
         hr = _graphBuilder.AddSourceFilterForMoniker(_tunerDevice.Mon, null, _tunerDevice.Name, out tmp);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: cannot add filter to graph");
         return;
@@ -442,8 +456,7 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSTVAudio);
         devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found");
         Release.ComObject("crossbar audio tuner pinin", pinIn);
@@ -465,8 +478,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add tv audio tuner to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -482,7 +494,7 @@ namespace TvLibrary.Implementations.Analog
           }
           continue;
         }
-       
+
         // try connecting the tv tuner-> tv audio tuner
         if (FilterGraphTools.ConnectFilter(_graphBuilder, _filterTvTuner, tmp, devices[i].Name))
         {
@@ -496,8 +508,7 @@ namespace TvLibrary.Implementations.Analog
             hr = _graphBuilder.RemoveFilter(tmp);
             Release.ComObject("audiotuner pinin", pin);
             Release.ComObject("audiotuner filter", tmp);
-          }
-          else
+          } else
           {
             //succeeded. we're done
             Log.Log.WriteFile("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
@@ -507,8 +518,7 @@ namespace TvLibrary.Implementations.Analog
             DevicesInUse.Instance.Add(_audioDevice);
             break;
           }
-        }
-        else
+        } else
         {
           // cannot connect tv tuner-> tv audio tuner, try next one...
           hr = _graphBuilder.RemoveFilter(tmp);
@@ -578,8 +588,7 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
         devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
         return;
@@ -600,8 +609,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add the crossbar to the graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -640,8 +648,7 @@ namespace TvLibrary.Implementations.Analog
           Release.ComObject("crossbar videotuner pin", pinIn);
           Log.Log.WriteFile("analog: AddCrossBarFilter succeeded");
           break;
-        }
-        else
+        } else
         {
           // cannot connect tv tuner to crossbar, try next crossbar device
           hr = _graphBuilder.RemoveFilter(tmp);
@@ -676,8 +683,7 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
         devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvCaptureFilter no tvcapture devices found");
         return;
@@ -698,8 +704,7 @@ namespace TvLibrary.Implementations.Analog
         {
           // add video capture filter to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -727,8 +732,7 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("analog: AddTvCaptureFilter connected to crossbar successfully");
           //and we're done
           break;
-        }
-        else
+        } else
         {
           // cannot connect crossbar->video capture filter, remove filter from graph
           // cand continue with the next vieo capture filter
@@ -952,15 +956,13 @@ namespace TvLibrary.Implementations.Analog
         //yes then we try to find the capture pin on the multiplexer 
         Log.Log.WriteFile("analog: FindCapturePin on multiplexer filter");
         _filterMultiplexer.EnumPins(out enumPins);
-      }
-      else if (_filterVideoEncoder != null)
+      } else if (_filterVideoEncoder != null)
       {
         // no multiplexer available, but a video encoder filter exists
         // try to find the capture pin on the video encoder 
         Log.Log.WriteFile("analog: FindCapturePin on encoder filter");
         _filterVideoEncoder.EnumPins(out enumPins);
-      }
-      else
+      } else
       {
         // no multiplexer available, and no video encoder filter exists
         // try to find the capture pin on the video capture filter 
@@ -1044,8 +1046,7 @@ namespace TvLibrary.Implementations.Analog
             //Log.Info("VideoCaptureDevice:getStreamConfigSetting() FAILED no format returned");
             //throw new NotSupportedException("This device does not support a recognized format block.");
             return null;
-          }
-          else
+          } else
           {
             //Log.Info("VideoCaptureDevice:getStreamConfigSetting() FAILED unknown fmt:{0} {1} {2}", mediaType.formatType, mediaType.majorType, mediaType.subType);
             //throw new NotSupportedException("This device does not support a recognized format block.");
@@ -1068,13 +1069,11 @@ namespace TvLibrary.Implementations.Analog
           //Log.Info("  VideoCaptureDevice.getStreamConfigSetting() get value");
           returnValue = fieldInfo.GetValue(formatStruct);
           //Log.Info("  VideoCaptureDevice.getStreamConfigSetting() done");	
-        }
-        finally
+        } finally
         {
           Marshal.FreeCoTaskMem(pmt);
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.Info("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
       }
@@ -1114,8 +1113,7 @@ namespace TvLibrary.Implementations.Analog
           {
             Log.Log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED no format returned");
             return null;// throw new NotSupportedException("This device does not support a recognized format block.");
-          }
-          else
+          } else
           {
             Log.Log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED unknown fmt");
             return null;//throw new NotSupportedException("This device does not support a recognized format block.");
@@ -1147,14 +1145,12 @@ namespace TvLibrary.Implementations.Analog
           }
           //else Log.Info("  VideoCaptureDevice.setStreamConfigSetting() set:{0}",fieldName);
           //Log.Info("  VideoCaptureDevice.setStreamConfigSetting() done");
-        }
-        finally
+        } finally
         {
           Marshal.FreeCoTaskMem(pmt);
         }
         return (returnValue);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.Info("  VideoCaptureDevice.:setStreamConfigSetting() FAILED ");
       }
@@ -1174,8 +1170,7 @@ namespace TvLibrary.Implementations.Analog
             bmiHeader = (BitmapInfoHeader)obj;
             return new Size(bmiHeader.Width, bmiHeader.Height);
           }
-        }
-        catch (Exception)
+        } catch (Exception)
         {
         }
       }
@@ -1200,8 +1195,7 @@ namespace TvLibrary.Implementations.Analog
               bmiHeader.Height = FrameSize.Height;
               setStreamConfigSetting(_interfaceStreamConfigVideoCapture, "BmiHeader", bmiHeader);
             }
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Log.Info("VideoCaptureDevice:FAILED:could not set capture  Framesize to {0}x{1}!", FrameSize.Width, FrameSize.Height);
           }
@@ -1222,8 +1216,7 @@ namespace TvLibrary.Implementations.Analog
             long avgTimePerFrame = (long)(10000000d / FrameRate);
             setStreamConfigSetting(_interfaceStreamConfigVideoCapture, "AvgTimePerFrame", avgTimePerFrame);
             Log.Log.Info("VideoCaptureDevice: capture FrameRate done :{0}", FrameRate);
-          }
-          catch (Exception)
+          } catch (Exception)
           {
             Log.Log.Info("VideoCaptureDevice:captureFAILED:could not set FrameRate to {0}!", FrameRate);
           }
@@ -1366,8 +1359,7 @@ namespace TvLibrary.Implementations.Analog
             //Log.Log.WriteFile("analog:  ConnectEncoderFilter to Capture {0} failed", pinName2);
           }
         }
-      }
-      finally
+      } finally
       {
         if (enumPins != null) Release.ComObject("ienumpins", enumPins);
         if (pinInput1 != null) Release.ComObject("encoder pin0", pinInput1);
@@ -1472,22 +1464,19 @@ namespace TvLibrary.Implementations.Analog
               {
                 Log.Log.WriteFile("analog: ConnectMultiplexer step 1 software audio encoder connected and no need for a software video encoder");
                 break;
-              } 
-              else
-              if (pinsConnected == 2)
-              {
-                //if both pins are connected, we're done..
-                Log.Log.WriteFile("analog: ConnectMultiplexer succeeded at step 1");
-                return true;
-              }
-              else
-              {
-                Log.Log.WriteFile("analog: ConnectMultiplexer no succes yet at step 1 only connected:" + pinsConnected + " pins");
-              }
+              } else
+                if (pinsConnected == 2)
+                {
+                  //if both pins are connected, we're done..
+                  Log.Log.WriteFile("analog: ConnectMultiplexer succeeded at step 1");
+                  return true;
+                } else
+                {
+                  Log.Log.WriteFile("analog: ConnectMultiplexer no succes yet at step 1 only connected:" + pinsConnected + " pins");
+                }
             }
             pinsConnectedOnMultiplexer += pinsConnected;
-          }
-          finally
+          } finally
           {
             if (enumPins != null) Release.ComObject("ienumpins", enumPins);
             for (int i = 0; i < pinsAvailable; ++i)
@@ -1564,14 +1553,12 @@ namespace TvLibrary.Implementations.Analog
                 //succeeded and done...
                 Log.Log.WriteFile("analog: ConnectMultiplexer succeeded at step 2");
                 return true;
-              }
-              else
+              } else
               {
                 Log.Log.WriteFile("analog: ConnectMultiplexer no succes yet at step 2 only connected:" + pinsConnected + " pins");
               }
             }
-          }
-          finally
+          } finally
           {
             if (enumPins != null) Release.ComObject("ienumpins", enumPins);
             for (int i = 0; i < pinsAvailable; ++i)
@@ -1617,8 +1604,7 @@ namespace TvLibrary.Implementations.Analog
                   //succeeded
                   Log.Log.WriteFile("analog:  connected pin:{0} {1} to {2}", i, FilterGraphTools.LogPinInfo(pins[i]), FilterGraphTools.LogPinInfo(pinInput1));
                   pinsConnected++;
-                }
-                else
+                } else
                 {
                   Log.Log.WriteFile("Cant connect 0x{0:x}", hr);
                   Log.Log.WriteFile("pin:{0} {1} to {2}", i, FilterGraphTools.LogPinInfo(pins[i]), FilterGraphTools.LogPinInfo(pinInput1));
@@ -1640,8 +1626,7 @@ namespace TvLibrary.Implementations.Analog
                     //succeeded
                     Log.Log.WriteFile("analog:  connected pin:{0} {1} to {2}", i, FilterGraphTools.LogPinInfo(pins[i]), FilterGraphTools.LogPinInfo(pinInput2));
                     pinsConnected++;
-                  }
-                  else
+                  } else
                   {
                     Log.Log.WriteFile("Cant connect 0x{0:x}", hr);
                     Log.Log.WriteFile("pin:{0} {1} to {2}", i, FilterGraphTools.LogPinInfo(pins[i]), FilterGraphTools.LogPinInfo(pinInput2));
@@ -1719,8 +1704,7 @@ namespace TvLibrary.Implementations.Analog
                 }
               }
             }
-          }
-          finally
+          } finally
           {
             if (enumPins != null) Release.ComObject("ienumpins", enumPins);
             for (int i = 0; i < pinsAvailable; ++i)
@@ -1729,8 +1713,7 @@ namespace TvLibrary.Implementations.Analog
             }
           }
         }
-      }
-      finally
+      } finally
       {
         if (pinInput1 != null) Release.ComObject("multiplexer pin0", pinInput1);
         if (pinInput2 != null) Release.ComObject("multiplexer pin1", pinInput2);
@@ -1795,8 +1778,7 @@ namespace TvLibrary.Implementations.Analog
           devices[nr++] = devicesHW[i];
         for (int i = 0; i < devicesSW.Length; ++i)
           devices[nr++] = devicesSW[i];
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("analog: AddTvMultiPlexer no multiplexer devices found (Exception) " + ex.Message);
         return false;
@@ -1817,8 +1799,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add multiplexer to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -1842,8 +1823,7 @@ namespace TvLibrary.Implementations.Analog
           DevicesInUse.Instance.Add(_multiplexerDevice);
           Log.Log.WriteFile("analog: AddTvMultiPlexer succeeded");
           break;
-        }
-        else
+        } else
         {
           // unable to connect it, remove the filter and continue with the next one
           hr = _graphBuilder.RemoveFilter(tmp);
@@ -1904,8 +1884,7 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(AMKSEncoder);
         devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvEncoderFilter no encoder devices found (Exception)");
         return false;
@@ -1936,8 +1915,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add encoder filter to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter {0} to graph", devices[i].Name);
           continue;
@@ -2026,8 +2004,7 @@ namespace TvLibrary.Implementations.Analog
             finished = true;
             tmp = null;
           }
-        }
-        else if (pin1 != null)
+        } else if (pin1 != null)
         {
           //encoder filter only has 1 input pin.
           //First we get the media type of this pin to determine if its audio of video
@@ -2057,8 +2034,7 @@ namespace TvLibrary.Implementations.Analog
                 if (_filterVideoEncoder != null) finished = true;
                 tmp = null;
               }
-            }
-            else
+            } else
             {
               //pin is video
               //then connect the encoder to the video output pin of the capture filter
@@ -2076,8 +2052,7 @@ namespace TvLibrary.Implementations.Analog
               }
             }
             DsUtils.FreeAMMediaType(media[0]);
-          }
-          else
+          } else
           {
             // filter does not report any media type (which is strange)
             // we must do something, so we treat it as a video input pin
@@ -2093,8 +2068,7 @@ namespace TvLibrary.Implementations.Analog
               tmp = null;
             }
           }
-        }
-        else
+        } else
         {
           Log.Log.WriteFile("analog: AddTvEncoderFilter no pin1");
         }
@@ -2130,22 +2104,21 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog: FindVBIPin");
       try
       {
-      IPin pinVBI = DsFindPin.ByCategory(_filterCapture, PinCategory.VideoPortVBI, 0);
-      if (pinVBI != null)
-      {
+        IPin pinVBI = DsFindPin.ByCategory(_filterCapture, PinCategory.VideoPortVBI, 0);
+        if (pinVBI != null)
+        {
           Log.Log.WriteFile("analog: VideoPortVBI");
-        Marshal.ReleaseComObject(pinVBI);
-        return;
-      }
-      pinVBI = DsFindPin.ByCategory(_filterCapture, PinCategory.VBI, 0);
-      if (pinVBI != null)
-      {
+          Marshal.ReleaseComObject(pinVBI);
+          return;
+        }
+        pinVBI = DsFindPin.ByCategory(_filterCapture, PinCategory.VBI, 0);
+        if (pinVBI != null)
+        {
           Log.Log.WriteFile("analog: VBI");
-        _pinVBI = pinVBI;
-        return;
-      }
-      }
-      catch (COMException ex)
+          _pinVBI = pinVBI;
+          return;
+        }
+      } catch (COMException ex)
       {
         if (ex.ErrorCode.Equals(unchecked((Int32)0x80070490)))
         {
@@ -2162,8 +2135,7 @@ namespace TvLibrary.Implementations.Analog
             _pinVBI = pinVBI;
             return;
           };
-        }
-        else
+        } else
           throw ex;
       }
       Log.Log.WriteFile("analog: FindVBIPin no vbi pin found");
@@ -2278,36 +2250,6 @@ namespace TvLibrary.Implementations.Analog
         Marshal.ReleaseComObject(_teeSink);
         _teeSink = _filterWstDecoder = _filterGrabber = null;
         _teeSink = null;
-        return;
-      }
-      //create and add the sample grabber filter to the graph
-      _filterGrabber = (IBaseFilter)new SampleGrabber();
-      ISampleGrabber sampleGrabberInterface = (ISampleGrabber)_filterGrabber;
-      _graphBuilder.AddFilter(_filterGrabber, "Sample Grabber");
-      //setup the sample grabber filter
-      AMMediaType mt = new AMMediaType();
-      mt.majorType = MediaType.VBI;
-      mt.subType = MediaSubType.TELETEXT;
-      sampleGrabberInterface.SetCallback(this, 1);
-      sampleGrabberInterface.SetMediaType(mt);
-      sampleGrabberInterface.SetBufferSamples(true);
-      //connect the wst codec filter->sample grabber filter
-      pinOut = DsFindPin.ByDirection(_filterWstDecoder, PinDirection.Output, 0);
-      pin = DsFindPin.ByDirection(_filterGrabber, PinDirection.Input, 0);
-      hr = _graphBuilder.Connect(pinOut, pin);
-      Marshal.ReleaseComObject(pin);
-      Marshal.ReleaseComObject(pinOut);
-      if (hr != 0)
-      {
-        //failed
-        Log.Log.Error("analog: unable to wst codec->grabber");
-        _graphBuilder.RemoveFilter(_filterGrabber);
-        _graphBuilder.RemoveFilter(_filterWstDecoder);
-        _graphBuilder.RemoveFilter(_teeSink); ;
-        Marshal.ReleaseComObject(_filterGrabber);
-        Marshal.ReleaseComObject(_filterWstDecoder);
-        Marshal.ReleaseComObject(_teeSink);
-        _teeSink = _filterWstDecoder = _filterGrabber = null;
         return;
       }
       //done
@@ -2463,8 +2405,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add compressor filter to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(audioDevices[i].Mon, null, audioDevices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter {0} to graph", audioDevices[i].Name);
           continue;
@@ -2562,8 +2503,7 @@ namespace TvLibrary.Implementations.Analog
         {
           //add compressor filter to graph
           hr = _graphBuilder.AddSourceFilterForMoniker(videoDevices[i].Mon, null, videoDevices[i].Name, out tmp);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter {0} to graph", videoDevices[i].Name);
           continue;
@@ -2665,7 +2605,8 @@ namespace TvLibrary.Implementations.Analog
     }
     #endregion
 
-    #region timeshifting and recording
+    #region demuxer, muxer and mpfilewriter graph building
+
     void AddMpeg2Demultiplexer()
     {
       if (!CheckThreadId()) return;
@@ -2708,12 +2649,111 @@ namespace TvLibrary.Implementations.Analog
       hr = map.MapStreamId(0xBD, MPEG2Program.ElementaryStream, 0xA0, 7);
     }
 
+    /// <summary>
+    /// adds the TsFileSink filter to the graph
+    /// </summary>
+    /// <returns></returns>
+    bool AddTsFileSink()
+    {
+      if (!CheckThreadId()) return false;
+      Log.Log.WriteFile("analog:AddTsFileSink");
+      _tsFileSink = (IBaseFilter)new MpFileWriter();
+      int hr = _graphBuilder.AddFilter((IBaseFilter)_tsFileSink, "TsFileSink");
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("analog:AddTsFileSink returns:0x{0:X}", hr);
+        throw new TvException("Unable to add TsFileSink");
+      }
+
+      Log.Log.WriteFile("analog:connect muxer->tsfilesink");
+      IPin pin = DsFindPin.ByDirection(_filterMpegMuxer, PinDirection.Output, 0);
+      if (!FilterGraphTools.ConnectPin(_graphBuilder, pin, (IBaseFilter)_tsFileSink, 0))
+      {
+        Log.Log.WriteFile("analog:unable to connect muxer->tsfilesink");
+      }
+      Release.ComObject("mpegmux pinin", pin);
+
+      if (_filterWstDecoder != null)
+      {
+        Log.Log.WriteFile("analog:connect wst/vbi codec->tsfilesink");
+        IPin pinWST_VBI = DsFindPin.ByDirection(_filterWstDecoder, PinDirection.Output, 0);
+        if (!FilterGraphTools.ConnectPin(_graphBuilder, pinWST_VBI, (IBaseFilter)_tsFileSink, 1))
+        {
+          Log.Log.WriteFile("analog:unable to connect wst/vbi->tsfilesink");
+        }
+        Release.ComObject("wst/vbi codec pinout", pinWST_VBI);
+        IMPRecord timeshifter = (IMPRecord)_tsFileSink;
+        timeshifter.TTxSetCallback(this);
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Adds the MPEG muxer filter
+    /// </summary>
+    /// <returns></returns>
+    bool AddMpegMuxer()
+    {
+      if (!CheckThreadId()) return false;
+
+      Log.Log.WriteFile("analog:AddMpegMuxer()");
+      try
+      {
+        string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
+        //string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
+        _filterMpegMuxer = Marshal.BindToMoniker(monikerPowerDirectorMuxer) as IBaseFilter;
+        int hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
+        if (hr != 0)
+        {
+          Log.Log.WriteFile("analog:AddMpegMuxer returns:0x{0:X}", hr);
+          throw new TvException("Unable to add Cyberlink MPEG Muxer");
+        }
+        Log.Log.WriteFile("analog:connect pinvideo->mpeg muxer");
+        if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinVideo, _filterMpegMuxer, 0))
+        {
+          Log.Log.WriteFile("analog: unable to connect pinvideo->mpeg muxer");
+        }
+        _pinVideoConnected = true;
+        Log.Log.WriteFile("analog: connected pinvideo->mpeg muxer");
+        //Adaptec devices use the LPCM pin for audio so we check this can connect if applicable.
+        bool isAdaptec = false;
+        if (_captureDevice.Name.Contains("Adaptec USB Capture Device") || _captureDevice.Name.Contains("Adaptec PCI Capture Device"))
+        {
+          Log.Log.WriteFile("analog: AddMpegMuxer, Adaptec device found using LPCM");
+          isAdaptec = true;
+        }
+        if (isAdaptec)
+        {
+          if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinLPCM, _filterMpegMuxer, 1))
+          {
+            Log.Log.WriteFile("analog: AddMpegMuxer, unable to connect pinLPCM->mpeg muxer");
+          }
+          Log.Log.WriteFile("analog: AddMpegMuxer, connected pinLPCM->mpeg muxer");
+        } else
+        {
+          Log.Log.WriteFile("analog:connect pinaudio->mpeg muxer");
+          if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinAudio, _filterMpegMuxer, 1))
+          {
+            Log.Log.WriteFile("analog:AddMpegMuxer, unable to connect pinaudio->mpeg muxer");
+          }
+          Log.Log.WriteFile("analog:AddMpegMuxer, connected pinaudio->mpeg muxer");
+        }
+        return true;
+      } catch (Exception ex)
+      {
+        throw new TvException("Cyberlink MPEG Muxer filter (mpgmux.ax) not installed " + ex.Message);
+      }
+    }
+
+    #endregion
+
+    #region timeshifting and recording
 
     /// <summary>
     /// sets the filename used for timeshifting
     /// </summary>
     /// <param name="fileName">timeshifting filename</param>
-    protected void SetTimeShiftFileName(string fileName)
+    protected void SetTimeShiftFileNameAndStartTimeShifting(string fileName)
     {
       if (!CheckThreadId()) return;
       _timeshiftFileName = fileName;
@@ -2731,99 +2771,19 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
-    /// adds the TsFileSink filter to the graph
+    /// Updates the video pin to guarantee, that for tv both streams are in the mux
     /// </summary>
-    protected void AddTsFileSink(bool isTv)
+    /// <param name="isTv">true, when tv is on; false for radio</param>
+    protected void UpdatePinVideo(bool isTv)
     {
-      if (!CheckThreadId()) return;
-      Log.Log.WriteFile("analog:AddTsFileSink");
-      _tsFileSink = (IBaseFilter)new MpFileWriter();
-      int hr = _graphBuilder.AddFilter((IBaseFilter)_tsFileSink, "TsFileSink");
-      if (hr != 0)
+      if (isTv == _pinVideoConnected) return;
+      _pinVideoConnected = isTv;
+      if (_pinVideoConnected)
       {
-        Log.Log.WriteFile("analog:AddTsFileSink returns:0x{0:X}", hr);
-        throw new TvException("Unable to add TsFileSink");
-      }
-
-      Log.Log.WriteFile("analog:connect muxer->tsfilesink");
-      IPin pin = DsFindPin.ByDirection(_filterMpegMuxer, PinDirection.Output, 0);
-      if (!FilterGraphTools.ConnectPin(_graphBuilder, pin, (IBaseFilter)_tsFileSink, 0))
+        FilterGraphTools.ConnectPin(_graphBuilder, _pinVideo, _filterMpegMuxer, 0);
+      } else
       {
-        Log.Log.WriteFile("analog:unable to connect muxer->tsfilesink");
-      }
-      Release.ComObject("mpegmux pinin", pin);
-    }
-
-    /// <summary>
-    /// Adds the MPEG muxer filter
-    /// </summary>
-    /// <param name="isTv">if set to <c>true</c> [is tv].</param>
-    protected void AddMpegMuxer(bool isTv)
-    {
-      if (!CheckThreadId()) return;
-
-      if (_filterMpegMuxer != null)
-      {
-        if (isTv)
-          FilterGraphTools.ConnectPin(_graphBuilder, _pinVideo, _filterMpegMuxer, 0);
-        else
-          _pinVideo.Disconnect();
-        return;
-      }
-      Log.Log.WriteFile("analog:AddMpegMuxer()");
-      try
-      {
-        string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
-        //string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
-        _filterMpegMuxer = Marshal.BindToMoniker(monikerPowerDirectorMuxer) as IBaseFilter;
-        int hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
-        if (hr != 0)
-        {
-          Log.Log.WriteFile("analog:AddMpegMuxer returns:0x{0:X}", hr);
-          throw new TvException("Unable to add Cyberlink MPEG Muxer");
-        }
-        if (isTv)
-        {
-          Log.Log.WriteFile("analog:connect pinvideo->mpeg muxer");
-          if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinVideo, _filterMpegMuxer, 0))
-          {
-            Log.Log.WriteFile("analog: unable to connect pinvideo->mpeg muxer");
-          }
-          Log.Log.WriteFile("analog: connected pinvideo->mpeg muxer");
-        }
-        else
-        {
-          Log.Log.WriteFile("analog: disconnect for radio pinvideo->mpeg muxer");
-          _pinVideo.Disconnect();
-        }
-        //Adaptec devices use the LPCM pin for audio so we check this can connect if applicable.
-        bool isAdaptec = false;
-        if (_captureDevice.Name.Contains("Adaptec USB Capture Device") || _captureDevice.Name.Contains("Adaptec PCI Capture Device"))
-        {
-          Log.Log.WriteFile("analog: AddMpegMuxer, Adaptec device found using LPCM");
-          isAdaptec = true;
-        }
-        if (isAdaptec)
-        {
-          if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinLPCM, _filterMpegMuxer, 1))
-          {
-            Log.Log.WriteFile("analog: AddMpegMuxer, unable to connect pinLPCM->mpeg muxer");
-          }
-          Log.Log.WriteFile("analog: AddMpegMuxer, connected pinLPCM->mpeg muxer");
-        }
-        else
-        {
-          Log.Log.WriteFile("analog:connect pinaudio->mpeg muxer");
-          if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinAudio, _filterMpegMuxer, 1))
-          {
-            Log.Log.WriteFile("analog:AddMpegMuxer, unable to connect pinaudio->mpeg muxer");
-          }
-          Log.Log.WriteFile("analog:AddMpegMuxer, connected pinaudio->mpeg muxer");
-        }
-      }
-      catch (Exception ex)
-      {
-        throw new TvException("Cyberlink MPEG Muxer filter (mpgmux.ax) not installed " + ex.Message);
+        _pinVideo.Disconnect();
       }
     }
     #endregion
@@ -2834,21 +2794,23 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Starts recording
     /// </summary>
-    /// <param name="recordingType">Recording type (content or reference)</param>
+    /// <param name="transportStream">Recording type (content or reference)</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <param name="startTime">time the recording should start (0=now)</param>
     /// <returns></returns>
     protected void StartRecord(bool transportStream, string fileName)
     {
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);
       //int hr;
-      if (_tsFileSink != null) {
+      if (_tsFileSink != null)
+      {
         IMPRecord record = _tsFileSink as IMPRecord;
-        if (transportStream) {
+        if (transportStream)
+        {
           Log.Log.WriteFile("dvb:SetRecording: uses .ts");
           record.SetRecordingMode(TimeShiftingMode.TransportStream);
-        } else {
+        } else
+        {
           Log.Log.WriteFile("dvb:SetRecording: uses .mpg");
           record.SetRecordingMode(TimeShiftingMode.ProgramStream);
         }
@@ -2922,9 +2884,14 @@ namespace TvLibrary.Implementations.Analog
       _dateRecordingStarted = DateTime.MinValue;
       int hr = 0;
       //hr = (_graphBuilder as IMediaControl).StopWhenReady();
+      if (_tsFileSink != null)
+      {
+        IMPRecord record = _tsFileSink as IMPRecord;
+        record.StopTimeShifting();
+        record.StopRecord();
+      }
       if (state == FilterState.Stopped)
       {
-        DeleteTimeShifting();
         _graphState = GraphState.Created;
         return;
       }
@@ -2934,7 +2901,7 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog: RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to stop graph");
       }
-      DeleteTimeShifting();
+      Log.Log.WriteFile("analog: Graph stopped");
     }
     #endregion
 
@@ -2949,7 +2916,8 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog:Dispose()");
       if (!CheckThreadId()) return;
 
-      if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording) {
+      if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
+      {
         // Stop the graph first. To ensure that the timeshift files are no longer blocked
         StopGraph();
       }
@@ -2959,7 +2927,7 @@ namespace TvLibrary.Implementations.Analog
       int hr = (_graphBuilder as IMediaControl).Stop();
 
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
-
+      Log.Log.WriteFile("analog:All filters removed");
 
       if (_filterTvTuner != null)
       {
@@ -3129,61 +3097,7 @@ namespace TvLibrary.Implementations.Analog
       }
       _timeshiftFileName = "";
       _graphState = GraphState.Idle;
-    }
-
-    #endregion
-
-    #region ISampleGrabberCB Members
-
-    public IVbiCallback TeletextCallback
-    {
-      get
-      {
-        return _teletextCallback;
-      }
-      set
-      {
-        _teletextCallback = value;
-      }
-    }
-
-    /// <summary>
-    /// callback from ISampleGrabber filter
-    /// </summary>
-    /// <param name="SampleTime">media sample timestamp</param>
-    /// <param name="pSample">IMediaSample</param>
-    /// <returns></returns>
-    public int SampleCB(double SampleTime, IMediaSample pSample)
-    {
-      return 0;
-    }
-
-    /// <summary>
-    /// callback from ISampleGrabber filter
-    /// </summary>
-    /// <param name="SampleTime">The sample time.</param>
-    /// <param name="pBuffer">The buffer.</param>
-    /// <param name="BufferLen">The buffer length</param>
-    /// <returns></returns>
-    public int BufferCB(double SampleTime, System.IntPtr pBuffer, int BufferLen)
-    {
-      try
-      {
-        if (false == _grabTeletext || pBuffer == IntPtr.Zero || BufferLen < 43)
-        {
-          return 0;
-        }
-        if (_teletextCallback != null)
-        {
-          _teletextCallback.OnVbiData(pBuffer, BufferLen, true);
-        }
-        _teletextDecoder.SaveAnalogData(pBuffer, BufferLen);
-      }
-      catch (Exception ex)
-      {
-        Log.Log.WriteFile(ex.ToString());
-      }
-      return 0;
+      Log.Log.WriteFile("analog: dispose completed");
     }
 
     #endregion
@@ -3412,32 +3326,6 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     /// <summary>
-    /// Deletes the time shifting filters
-    /// </summary>
-    protected void DeleteTimeShifting()
-    {
-      Log.Log.Info("analog: DeleteTimeShifting");
-      if (_tsFileSink != null)
-      {
-        Log.Log.Info("analog: remove tsfilesink");
-        IMPRecord record = _tsFileSink as IMPRecord;
-        record.StopTimeShifting();
-        _graphBuilder.RemoveFilter((IBaseFilter)_tsFileSink);
-        while (Marshal.ReleaseComObject(_tsFileSink) > 0) ;
-        _tsFileSink = null;
-      }
-      if (_filterMpegMuxer != null)
-      {
-        Log.Log.Info("analog: mpeg muxer");
-        _graphBuilder.RemoveFilter((IBaseFilter)_filterMpegMuxer);
-        while (Marshal.ReleaseComObject(_filterMpegMuxer) > 0) ;
-        _filterMpegMuxer = null;
-      }
-      _timeshiftFileName = "";
-      _graphState = GraphState.Created;
-    }
-
-    /// <summary>
     /// Returns true when unscrambled audio/video is received otherwise false
     /// </summary>
     /// <returns>true of false</returns>
@@ -3475,5 +3363,86 @@ namespace TvLibrary.Implementations.Analog
         m_context = value;
       }
     }
+
+    #region IAnalogTeletextCallBack Member
+
+    public IVbiCallback TeletextCallback
+    {
+      get
+      {
+        return _teletextCallback;
+      }
+      set
+      {
+        _teletextCallback = value;
+      }
+    }
+
+    /// <summary>
+    /// callback from the TsWriter filter when it received a new teletext packets
+    /// </summary>
+    /// <param name="data">teletext data</param>
+    /// <param name="packetCount">number of packets in data</param>
+    /// <returns></returns>
+    public int OnTeletextReceived(IntPtr data, short packetCount)
+    {
+      try
+      {
+        if (_teletextCallback != null)
+        {
+          _teletextCallback.OnVbiData(data, packetCount, false);
+        }
+        for (int i = 0; i < packetCount; ++i)
+        {
+          IntPtr packetPtr = new IntPtr(data.ToInt32() + i * 188);
+          ProcessPacket(packetPtr);
+        }
+      } catch (Exception ex)
+      {
+        Log.Log.WriteFile(ex.ToString());
+      }
+      return 0;
+    }
+    /// <summary>
+    /// processes a single transport packet
+    /// Called from BufferCB
+    /// </summary>
+    /// <param name="ptr">pointer to the transport packet</param>
+    public void ProcessPacket(IntPtr ptr)
+    {
+      if (ptr == IntPtr.Zero) return;
+
+      _packetHeader = _tsHelper.GetHeader((IntPtr)ptr);
+      if (_packetHeader.SyncByte != 0x47)
+      {
+        Log.Log.WriteFile("packet sync error");
+        return;
+      }
+      if (_packetHeader.TransportError == true)
+      {
+        Log.Log.WriteFile("packet transport error");
+        return;
+      }
+      // teletext
+      //if (_grabTeletext)
+      {
+        if (_teletextDecoder != null)
+        {
+          _teletextDecoder.SaveData((IntPtr)ptr);
+        }
+      }
+    }
+
+    #endregion
+
+    public IAnalogChanelScan GetChannelScanner()
+    {
+      IAnalogChanelScan channelScanner = null;
+      if (_tsFileSink != null)
+      {
+        channelScanner = (IAnalogChanelScan)_tsFileSink;
+      }
+      return channelScanner;
+    }
   }
-  }
+}
