@@ -61,7 +61,7 @@ typedef struct stLastPtsDtsRecord
 	CPcr dts;
 } LastPtsDtsRecord;
 
-class CDiskRecorder: public IFileWriter, IPmtCallBack2
+class CDiskRecorder: public IFileWriter
 {
 public:
 	CDiskRecorder(RecordingMode mode);
@@ -102,7 +102,6 @@ private:
 	void WriteToRecording(byte* buffer, int len);
 	void WriteToTimeshiftFile(byte* buffer, int len);
 	void WriteLog(const char *fmt, ...);
-	void OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfos);
 	void SetPcrPid(int pcrPid);
 	bool IsStreamWanted(int stream_type);
 	void AddStream(PidInfo2 pidInfo);

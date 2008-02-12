@@ -106,7 +106,6 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
   m_bClearTsQueue=false;
 	rclock=new CPcrRefClock();
 	m_pPmtParser=new CPmtParser();
-  m_pPmtParser->SetPmtCallBack2(this);
 	m_multiPlexer.SetFileWriterCallBack(this);
 	m_pVideoAudioObserver=NULL;
 	m_mapLastPtsDts.clear();
@@ -338,11 +337,10 @@ void CDiskRecorder::GetStreamMode(int *mode)
 void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLength)
 {
 	CEnterCriticalSection enter(m_section);
-	WriteLog("pmt pid:0x%x serviceId: 0x%x pmtlength:%d",pmtPid,serviceId,pmtLength);
+	WriteLog("Received from TvService: pmt pid:0x%x serviceId: 0x%x pmtlength:%d",pmtPid,serviceId,pmtLength);
   m_iPmtPid=pmtPid;
 	m_iServiceId=serviceId;
 	m_pPmtParser->Reset();
-	m_pPmtParser->SetPmtCallBack2(this);
 	m_pPmtParser->SetFilter(pmtPid,serviceId);
 	CSection section;
 	section.Data=new byte[MAX_SECTION_LENGTH*5];
@@ -353,7 +351,22 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 	m_vecPids.clear();
 	WriteLog("Old pids cleared");
 	WriteLog("got pmt - tableid: 0x%x section_length: %d sid: 0x%x",section.table_id,section.section_length,section.table_id_extension);
-	m_pPmtParser->OnNewSection(section);
+	int pcrPid; vector<PidInfo2> pidInfos;
+	if (!m_pPmtParser->DecodePmt(section,pcrPid,pidInfos))
+	{
+		WriteLog("!!! PANIC - DecodePmt(...) returned FALSE !!!");
+		delete section.Data;
+		return;
+	}
+	WriteLog("PMT parsed  - Pid 0x%x ServiceId 0x%x stream count: %d",pmtPid, m_iServiceId,pidInfos.size());
+	SetPcrPid(pcrPid);
+	ivecPidInfo2 it=pidInfos.begin();
+	while (it!=pidInfos.end())
+	{
+		PidInfo2 info=*it;
+		AddStream(info);
+		++it;
+	}
 	delete section.Data;
 }
 
@@ -445,8 +458,6 @@ void CDiskRecorder::OnTsPacket(byte* tsPacket)
 	{
 		CEnterCriticalSection enter(m_section);		
 		CTsHeader header(tsPacket);
-		//if (header.Pid==m_iPmtPid)
-   //   m_pPmtParser->OnTsPacket(tsPacket);
 		if (header.Pid==0x1fff) return;
 		if (header.SyncByte!=0x47) return;
 		if (header.TransportError) return;
@@ -666,20 +677,6 @@ void CDiskRecorder::WriteLog(const char* fmt,...)
 		LogDebug("DiskRecorder[TIMESHIFT] %s",logbuffer);
 	else
 		LogDebug("DiskRecorder[RECORD] %s",logbuffer);
-}
-
-void CDiskRecorder::OnPmtReceived2(int pid, int serviceId,int pcrPid,vector<PidInfo2> pidInfos)
-{
-		CEnterCriticalSection enter(m_section);
-		SetPcrPid(pcrPid);
-		WriteLog("Got new parsed PMT  - Pid 0x%x ServiceId 0x%x stream count: %d",pid, m_iServiceId,pidInfos.size());
-		ivecPidInfo2 it=pidInfos.begin();
-		while (it!=pidInfos.end())
-		{
-			PidInfo2 info=*it;
-			AddStream(info);
-			++it;
-		}
 }
 
 void CDiskRecorder::SetPcrPid(int pcrPid)

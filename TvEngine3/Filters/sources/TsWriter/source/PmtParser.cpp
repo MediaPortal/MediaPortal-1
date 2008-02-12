@@ -69,22 +69,20 @@ bool CPmtParser::IsReady()
 
 void CPmtParser::OnTsPacket(byte* tsPacket)
 {
-	if (m_pmtCallback2==NULL) return;
+	if (_isFound) return;
 	CSectionDecoder::OnTsPacket(tsPacket);
 }
 
-void CPmtParser::OnNewSection(CSection& sections)
-{ 
-	if (m_pmtCallback2==NULL) return;
-
+bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pidInfos)
+{
 	byte* section=sections.Data;
 	int sectionLen=sections.section_length;
 
 	int start=0;
 	int table_id = sections.table_id;
-	if (table_id!=2) return;
+	if (table_id!=2) return false;
 	if (m_serviceId!=-1)
-		if (sections.table_id_extension!=m_serviceId) return;
+		if (sections.table_id_extension!=m_serviceId) return false;
 
 	int section_syntax_indicator = (section[start+1]>>7) & 1;
 	int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
@@ -93,7 +91,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	int current_next_indicator = section[start+5] & 1;
 	int section_number = section[start+6];
 	int last_section_number = section[start+7];
-	int pcr_pid=((section[start+8]& 0x1F)<<8)+section[start+9];
+	pcr_pid=((section[start+8]& 0x1F)<<8)+section[start+9];
 	int program_info_length = ((section[start+10] & 0xF)<<8)+section[start+11];
 	int len2 = program_info_length;
 	int pointer = 12;
@@ -115,7 +113,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	int audioToSet=0;
 	int subtitleToSet=0;
 
-	m_pidInfos2.clear();
+	pidInfos.clear();
 	while (len1 > 0)
 	{
 		//if (start+pointer+4>=sectionLen+9) return ;
@@ -133,6 +131,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 		else
 			pidInfo2.logicalStreamType=-1;
 		pidInfo2.rawDescriptorSize=ES_info_length;
+
 		memset(pidInfo2.rawDescriptorData,0xFF,ES_info_length);
 		memcpy(pidInfo2.rawDescriptorData,&section[start+pointer+5],ES_info_length);
 
@@ -144,7 +143,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 			if (pointer+1>=sectionLen) 
 			{
 				LogDebug("pmt parser check1");
-				return ;
+				return false;
 			}
 			x = 0;
 			int indicator=section[start+pointer];
@@ -163,8 +162,19 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  len1 -= x;
 		  pointer += x;
 	  }
-		m_pidInfos2.push_back(pidInfo2);
+		pidInfos.push_back(pidInfo2);		
   }
+	return true;
+}
+
+void CPmtParser::OnNewSection(CSection& sections)
+{ 
+	if (_isFound) return;
+
+	int pcr_pid=0;
+
+	if (!DecodePmt(sections,pcr_pid,m_pidInfos2)) return;
+
 	if (m_pmtCallback2!=NULL)
 	{
 		m_pmtCallback2->OnPmtReceived2(GetPid(),m_serviceId,pcr_pid,m_pidInfos2);

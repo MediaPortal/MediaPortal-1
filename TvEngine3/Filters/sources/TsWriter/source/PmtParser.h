@@ -71,6 +71,7 @@ public:
   CPmtParser(void);
   virtual ~CPmtParser(void);
 	void    OnTsPacket(byte* tsPacket);
+	bool		DecodePmt(CSection sections, int& pcr_pid, vector<PidInfo2>& pidInfos);
 	void		OnNewSection(CSection& sections);
 	void    SetPmtCallBack2(IPmtCallBack2* callback);
 	void	  Reset();
