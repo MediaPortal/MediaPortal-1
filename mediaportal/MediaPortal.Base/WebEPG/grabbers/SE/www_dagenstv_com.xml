@@ -158,18 +158,29 @@
     <Site url="http://www.dagenstv.com/se/chart/?dat=[YYYY]-[MM]-[DD]&amp;cha=[ID]" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start="&lt;!-- Program --&gt;" end="&lt;!-- Slut Content-tabell --&gt;">
-        <SectionTemplate tags="DA">
+        <SectionTemplate tags="DS">
           <TemplateText>
-&lt;div&gt;
-&lt;a&gt;&lt;/a&gt;
-&lt;div&gt;
-&lt;#START&gt;(&lt;#END&gt;)
-&lt;/div&gt;
-&lt;div&gt;
-&lt;#TITLE&gt;&lt;div&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;div&gt;
-&lt;div&gt;&lt;/div&gt;&lt;#DESCRIPTION&gt; [&lt;#NOTUSED] 
+            &lt;div&gt;
+        &lt;a&gt;&lt;/a&gt;
+        &lt;div&gt;
+            &lt;#START&gt; 
+        &lt;/div&gt;
+        &lt;div&gt;&lt;#TITLE&gt;&lt;strong&gt; &lt;#NOTUSED1&gt; | &lt;#NOTUSED2&gt; | &lt;#NOTUSED3&gt; &lt;/strong&gt; &lt;z(&gt;&lt;span&gt;[&lt;#REPLAY&gt;]&lt;/span&gt;&lt;/z)?&gt;
+        &lt;/div&gt;
+            &lt;div&gt;
+                &lt;strong&gt; &lt;#NOTUSED4&gt; | &lt;#NOTUSED5&gt; | &lt;#NOTUSED6&gt; &lt;/strong&gt;&lt;#DESCRIPTION&gt; [&lt;#TRASH&gt;] 
+&lt;z(&gt;&lt;form&gt;&lt;div&gt;&lt;div&gt;Betygsätt&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/form&gt;&lt;/z)?&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+                &lt;a&gt;
+                    &lt;img&gt;&lt;/a&gt;
+                &lt;a&gt;&lt;img&gt;&lt;/a&gt;&lt;a&gt;&lt;img&gt;&lt;/a&gt;
+                &lt;a&gt;
+                    &lt;img&gt;&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
