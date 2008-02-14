@@ -50,6 +50,11 @@ namespace SetupTv.Sections
       this.label5 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.groupBox6 = new System.Windows.Forms.GroupBox();
+      this.label46 = new System.Windows.Forms.Label();
+      this.label45 = new System.Windows.Forms.Label();
+      this.label44 = new System.Windows.Forms.Label();
+      this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
       this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -104,23 +109,18 @@ namespace SetupTv.Sections
       this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
       this.textBoxMinfiles = new System.Windows.Forms.TextBox();
       this.label18 = new System.Windows.Forms.Label();
-      this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
-      this.label44 = new System.Windows.Forms.Label();
-      this.groupBox6 = new System.Windows.Forms.GroupBox();
-      this.label45 = new System.Windows.Forms.Label();
-      this.label46 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabPage2.SuspendLayout();
+      this.groupBox6.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).BeginInit();
       this.tabPage3.SuspendLayout();
       this.groupBox5.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.tabPage4.SuspendLayout();
       this.groupBox3.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).BeginInit();
-      this.groupBox6.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -340,6 +340,59 @@ namespace SetupTv.Sections
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Application";
       this.tabPage2.UseVisualStyleBackColor = true;
+      // 
+      // groupBox6
+      // 
+      this.groupBox6.Controls.Add(this.label46);
+      this.groupBox6.Controls.Add(this.label45);
+      this.groupBox6.Controls.Add(this.label44);
+      this.groupBox6.Controls.Add(this.delayDetectUpDown);
+      this.groupBox6.Location = new System.Drawing.Point(9, 58);
+      this.groupBox6.Name = "groupBox6";
+      this.groupBox6.Size = new System.Drawing.Size(439, 107);
+      this.groupBox6.TabIndex = 80;
+      this.groupBox6.TabStop = false;
+      this.groupBox6.Text = "Advanced settings";
+      // 
+      // label46
+      // 
+      this.label46.AutoSize = true;
+      this.label46.Location = new System.Drawing.Point(6, 45);
+      this.label46.Name = "label46";
+      this.label46.Size = new System.Drawing.Size(332, 13);
+      this.label46.TabIndex = 81;
+      this.label46.Text = "Therefore use this option below to force a delay should it be required.";
+      // 
+      // label45
+      // 
+      this.label45.AutoSize = true;
+      this.label45.Location = new System.Drawing.Point(6, 28);
+      this.label45.Name = "label45";
+      this.label45.Size = new System.Drawing.Size(401, 13);
+      this.label45.TabIndex = 80;
+      this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
+          "by.";
+      // 
+      // label44
+      // 
+      this.label44.AutoSize = true;
+      this.label44.Location = new System.Drawing.Point(6, 73);
+      this.label44.Name = "label44";
+      this.label44.Size = new System.Drawing.Size(236, 13);
+      this.label44.TabIndex = 78;
+      this.label44.Text = "Delay in seconds before TVServer detects cards";
+      // 
+      // delayDetectUpDown
+      // 
+      this.delayDetectUpDown.Location = new System.Drawing.Point(257, 71);
+      this.delayDetectUpDown.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.delayDetectUpDown.Name = "delayDetectUpDown";
+      this.delayDetectUpDown.Size = new System.Drawing.Size(47, 20);
+      this.delayDetectUpDown.TabIndex = 79;
       // 
       // mpComboBoxPrio
       // 
@@ -894,59 +947,6 @@ namespace SetupTv.Sections
       this.label18.TabIndex = 15;
       this.label18.Text = "Minimum";
       // 
-      // delayDetectUpDown
-      // 
-      this.delayDetectUpDown.Location = new System.Drawing.Point(248, 71);
-      this.delayDetectUpDown.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
-      this.delayDetectUpDown.Name = "delayDetectUpDown";
-      this.delayDetectUpDown.Size = new System.Drawing.Size(41, 20);
-      this.delayDetectUpDown.TabIndex = 79;
-      // 
-      // label44
-      // 
-      this.label44.AutoSize = true;
-      this.label44.Location = new System.Drawing.Point(6, 73);
-      this.label44.Name = "label44";
-      this.label44.Size = new System.Drawing.Size(236, 13);
-      this.label44.TabIndex = 78;
-      this.label44.Text = "Delay in seconds before TVServer detects cards";
-      // 
-      // groupBox6
-      // 
-      this.groupBox6.Controls.Add(this.label46);
-      this.groupBox6.Controls.Add(this.label45);
-      this.groupBox6.Controls.Add(this.label44);
-      this.groupBox6.Controls.Add(this.delayDetectUpDown);
-      this.groupBox6.Location = new System.Drawing.Point(9, 58);
-      this.groupBox6.Name = "groupBox6";
-      this.groupBox6.Size = new System.Drawing.Size(439, 107);
-      this.groupBox6.TabIndex = 80;
-      this.groupBox6.TabStop = false;
-      this.groupBox6.Text = "Advanced settings";
-      // 
-      // label45
-      // 
-      this.label45.AutoSize = true;
-      this.label45.Location = new System.Drawing.Point(6, 28);
-      this.label45.Name = "label45";
-      this.label45.Size = new System.Drawing.Size(401, 13);
-      this.label45.TabIndex = 80;
-      this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
-          "by.";
-      // 
-      // label46
-      // 
-      this.label46.AutoSize = true;
-      this.label46.Location = new System.Drawing.Point(6, 45);
-      this.label46.Name = "label46";
-      this.label46.Size = new System.Drawing.Size(332, 13);
-      this.label46.TabIndex = 81;
-      this.label46.Text = "Therefore use this option below to force a delay should it be required.";
-      // 
       // ScanSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -962,6 +962,9 @@ namespace SetupTv.Sections
       this.groupBox1.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.tabPage2.PerformLayout();
+      this.groupBox6.ResumeLayout(false);
+      this.groupBox6.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
       this.tabPage3.ResumeLayout(false);
       this.tabPage3.PerformLayout();
       this.groupBox5.ResumeLayout(false);
@@ -971,9 +974,6 @@ namespace SetupTv.Sections
       this.tabPage4.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
-      this.groupBox6.ResumeLayout(false);
-      this.groupBox6.PerformLayout();
       this.ResumeLayout(false);
 
     }
