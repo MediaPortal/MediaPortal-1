@@ -133,7 +133,7 @@ namespace TvLibrary.Channels
           break;
         case BandType.NaBandStackedC:
           lof1 = 5150;
-          lof2 = 0;
+          lof2 = 5750;
           sw = 0;
           break;
         case BandType.NaLegacy:
