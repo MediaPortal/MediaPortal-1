@@ -31,6 +31,7 @@
 #include "DiskRecorder.h"
 #include "pmtparser.h"
 #include "..\..\shared\dvbutil.h"
+#include "..\..\shared\section.h"
 
 #define WRITE_BUFFER_SIZE 32900
 #define IGNORE_AFTER_TUNE 25                        // how many TS packets to ignore after tuning
@@ -1059,7 +1060,7 @@ void CDiskRecorder::WriteFakePMT()
 	m_iPmtContinuityCounter++;
 	if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
 
-	BYTE pmt[256]; 
+	BYTE pmt[MAX_SECTION_LENGTH]; 
 
 	memset(pmt,0xff,sizeof(pmt));
 	pmt[0]=0x47;
@@ -1115,19 +1116,23 @@ void CDiskRecorder::WriteFakePMT()
 	//if(pmtLength > 188) WriteLog("ERROR: Pmt length : %i ( >188 )!!!!",pmtLength);
 
 	Write(pmt,188);
-	if (pmtLength>188)
+	int pointer=pmtLength-184;
+	while (pointer<pmtLength)
 	{
-		int newLength=pmtLength-188;
 		byte packet[188];
 		memset(packet,0xff,188);
 		packet[0]=0x47;
-		packet[1]=(pid>>8) & 0x1f;
+		packet[1]=(pid>>8) & 0x1f; // no payload start !
 		packet[2]=(pid&0xff);
 		m_iPmtContinuityCounter++;
 		if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
 		packet[3]=(AdaptionControl<<4) +m_iPmtContinuityCounter;
-		memcpy(&packet[4],&pmt[188],newLength);
+		int bytesToCopy=pmtLength-pointer;
+		if (bytesToCopy>185)
+			bytesToCopy=185;
+		memcpy(&packet[4],&pmt[pointer],bytesToCopy);
 		Write(packet,188);
+		pointer+=bytesToCopy;
 	}
 }
 
