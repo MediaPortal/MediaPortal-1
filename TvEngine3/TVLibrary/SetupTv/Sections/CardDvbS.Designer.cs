@@ -385,7 +385,9 @@ namespace SetupTv.Sections
             "NA Bandstacked Ku-Hi (DBS)",
             "NA Bandstacked Ku-Lo (FSS)",
             "NA Bandstacked C",
-            "NA Legacy"});
+            "NA Legacy",
+            "NA Custom 1",
+            "NA Custom 2"});
 			this.mpBand4.Location = new System.Drawing.Point(143, 110);
 			this.mpBand4.Name = "mpBand4";
 			this.mpBand4.Size = new System.Drawing.Size(152, 21);
@@ -405,7 +407,9 @@ namespace SetupTv.Sections
             "NA Bandstacked Ku-Hi (DBS)",
             "NA Bandstacked Ku-Lo (FSS)",
             "NA Bandstacked C",
-            "NA Legacy"});
+            "NA Legacy",
+            "NA Custom 1",
+            "NA Custom 2"});
 			this.mpBand3.Location = new System.Drawing.Point(143, 83);
 			this.mpBand3.Name = "mpBand3";
 			this.mpBand3.Size = new System.Drawing.Size(152, 21);
@@ -425,7 +429,9 @@ namespace SetupTv.Sections
             "NA Bandstacked Ku-Hi (DBS)",
             "NA Bandstacked Ku-Lo (FSS)",
             "NA Bandstacked C",
-            "NA Legacy"});
+            "NA Legacy",
+            "NA Custom 1",
+            "NA Custom 2"});
 			this.mpBand2.Location = new System.Drawing.Point(143, 56);
 			this.mpBand2.Name = "mpBand2";
 			this.mpBand2.Size = new System.Drawing.Size(152, 21);
@@ -445,7 +451,9 @@ namespace SetupTv.Sections
             "NA Bandstacked Ku-Hi (DBS)",
             "NA Bandstacked Ku-Lo (FSS)",
             "NA Bandstacked C",
-            "NA Legacy"});
+            "NA Legacy",
+            "NA Custom 1",
+            "NA Custom 2"});
 			this.mpBand1.Location = new System.Drawing.Point(143, 29);
 			this.mpBand1.Name = "mpBand1";
 			this.mpBand1.Size = new System.Drawing.Size(152, 21);

@@ -40,6 +40,8 @@ namespace TvLibrary.Channels
     NaBandStackedKuLo = 6,
     NaBandStackedC = 7,
     NaLegacy = 8,
+    NaCustom1 = 9,
+    NaCustom2 = 10,
   }
   public class BandTypeConverter
   {
@@ -138,6 +140,16 @@ namespace TvLibrary.Channels
           lof1 = 11250;
           lof2 = 0;
           sw = 0;
+          break;
+        case BandType.NaCustom1:
+          lof1 = 11250;
+          lof2 = 11250;
+          sw = 12700;
+          break;
+        case BandType.NaCustom2:
+          lof1 = 11250;
+          lof2 = 11250;
+          sw = 12200;
           break;
       }
     }
