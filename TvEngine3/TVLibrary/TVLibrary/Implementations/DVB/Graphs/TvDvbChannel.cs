@@ -209,7 +209,6 @@ namespace TvLibrary.Implementations.DVB
     IBaseFilter _filterTsWriter;
     IFilterGraph2 _graphBuilder;
     bool _graphRunning;
-    bool _isATSC;
     ScanParameters _parameters;
     #endregion
     #endregion
@@ -220,7 +219,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public TvDvbChannel()
     {
-      _isATSC = false;
       _graphState = GraphState.Created;
       _graphRunning = false;
       _mDPlugTProg82.CA_Country = new byte[5];
@@ -262,7 +260,6 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tsWriter">The ts writer filter.</param>
     public TvDvbChannel(IFilterGraph2 graphBuilder, ref ConditionalAccess ca, IBaseFilter mdapiFilter, IBaseFilter tif, IBaseFilter tsWriter, int subChannelId)
     {
-      _isATSC = false;
       _graphState = GraphState.Created;
       _graphRunning = false;
       _graphBuilder = graphBuilder;
@@ -392,21 +389,17 @@ namespace TvLibrary.Implementations.DVB
           _graphRunning = true;
           //_pmtVersion = -1;
           DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
-          ATSCChannel atscChannel = _currentChannel as ATSCChannel;
           if (channel != null)
           {
             if (SetupPmtGrabber(channel.PmtPid, channel.ServiceId))
             {
-              if (atscChannel == null)
+              dtNow = DateTime.Now;
+              while (_pmtVersion < 0 && channel.PmtPid > 0)
               {
-                dtNow = DateTime.Now;
-                while (_pmtVersion < 0 && channel.PmtPid > 0)
-                {
-                  Log.Log.Write("subch:{0} wait for pmt {1:X}", _subChannelId, channel.PmtPid);
-                  System.Threading.Thread.Sleep(20);
-                  TimeSpan ts = DateTime.Now - dtNow;
-                  if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000)) break;
-                }
+                Log.Log.Write("subch:{0} wait for pmt {1:X}", _subChannelId, channel.PmtPid);
+                System.Threading.Thread.Sleep(20);
+                TimeSpan ts = DateTime.Now - dtNow;
+                if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000)) break;
               }
             }
           }
@@ -432,14 +425,13 @@ namespace TvLibrary.Implementations.DVB
       _graphRunning = true;
       _dateTimeShiftStarted = DateTime.MinValue;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
-      ATSCChannel atscChannel = _currentChannel as ATSCChannel;
       bool result = false;
       if (dvbChannel != null)
       {
         result=SetupPmtGrabber(dvbChannel.PmtPid, dvbChannel.ServiceId);
       }
       _pmtTimer.Enabled = true;
-      if (dvbChannel != null && atscChannel == null && result)
+      if (dvbChannel != null && result)
       {
         if (dvbChannel.PmtPid >= 0)
         {
@@ -1004,41 +996,21 @@ namespace TvLibrary.Implementations.DVB
       if (pmtPid == _pmtPid) return false;
       _pmtVersion = -1;
       _pmtPid = pmtPid;
-      if ((_currentChannel as ATSCChannel) != null)
-      {
-        ATSCChannel atscChannel = (ATSCChannel)_currentChannel;
-        Log.Log.Write("subch:{0} SetAnalyzerMapping for atsc:{1}", _subChannelId, atscChannel);
-        _channelInfo = new ChannelInfo();
-        _channelInfo.network_pmt_PID = atscChannel.PmtPid;
-        _channelInfo.pcr_pid = atscChannel.PcrPid;
-        PidInfo audioInfo = new PidInfo();
-        PidInfo videoInfo = new PidInfo();
-        audioInfo.Ac3Pid(atscChannel.AudioPid, "");
-        videoInfo.VideoPid(atscChannel.VideoPid, 1);
-        _channelInfo.AddPid(audioInfo);
-        _channelInfo.AddPid(videoInfo);
 
-        Log.Log.Write("subch:{0}  video:{1:X} audio:{2:X} pcr:{3:X} pmt:{4:X}", _subChannelId, atscChannel.VideoPid, atscChannel.AudioPid, atscChannel.PcrPid, atscChannel.PmtPid);
-        SetMpegPidMapping(_channelInfo);
-        _pmtVersion = 1;
-      }
-      else
-      {
-        if (_conditionalAccess != null)
-        {
-          _conditionalAccess.OnRunGraph(serviceId);
-        }
-        Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
-        _tsFilterInterface.PmtSetCallBack(_subChannelIndex,this);
-        _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
-        if (_mdapiFilter != null)
-        {
-          Log.Log.Write("subch:{0} set ca grabber ", _subChannelId);
-          _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
-          _tsFilterInterface.CaReset(_subChannelIndex);
+      if (_conditionalAccess != null)
+        _conditionalAccess.OnRunGraph(serviceId);
 
-        }
+      Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
+      _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
+      _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
+      if (_mdapiFilter != null)
+      {
+        Log.Log.Write("subch:{0} set ca grabber ", _subChannelId);
+        _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
+        _tsFilterInterface.CaReset(_subChannelIndex);
+
       }
+
       return true;
     }
 
@@ -1058,10 +1030,7 @@ namespace TvLibrary.Implementations.DVB
         hwPids.Add((ushort)0x1);//CAT
         hwPids.Add((ushort)0x10);//NIT
         hwPids.Add((ushort)0x11);//SDT
-        if (_isATSC)
-        {
-          hwPids.Add((ushort)0x1ffb);//ATSC
-        }
+
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pcr", _subChannelId, info.pcr_pid);
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pmt", _subChannelId, info.network_pmt_PID);
 
@@ -1234,11 +1203,6 @@ namespace TvLibrary.Implementations.DVB
               }
             }
           }
-        }
-        if ((_currentChannel as ATSCChannel) != null)
-        {
-          _pmtVersion = 1;
-          return true;
         }
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         if (channel == null)

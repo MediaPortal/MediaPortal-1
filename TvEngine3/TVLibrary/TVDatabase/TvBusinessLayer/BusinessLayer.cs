@@ -68,6 +68,16 @@ namespace TvDatabase
       }
       return null;
     }
+
+    public IList ListAllEnabledCardsOrderedByPriority()
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Card));
+      sb.AddConstraint("enabled=1");
+      sb.AddOrderByField(false, "priority");
+      SqlStatement stmt = sb.GetStatement(true);
+      IList cards = ObjectFactory.GetCollection(typeof(Card), stmt.Execute());
+      return cards;
+    }
     #endregion
 
     #region channels

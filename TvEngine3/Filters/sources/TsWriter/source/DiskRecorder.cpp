@@ -1116,23 +1116,24 @@ void CDiskRecorder::WriteFakePMT()
 	//if(pmtLength > 188) WriteLog("ERROR: Pmt length : %i ( >188 )!!!!",pmtLength);
 
 	Write(pmt,188);
-	int pointer=pmtLength-184;
-	while (pointer<pmtLength)
+	pmtLength -= 180 ;
+	int pointer = 188 ;
+	while(pmtLength > 0)
 	{
 		byte packet[188];
 		memset(packet,0xff,188);
 		packet[0]=0x47;
-		packet[1]=(pid>>8) & 0x1f; // no payload start !
+		packet[1]=(pid>>8) & 0x1f;
 		packet[2]=(pid&0xff);
 		m_iPmtContinuityCounter++;
 		if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
 		packet[3]=(AdaptionControl<<4) +m_iPmtContinuityCounter;
-		int bytesToCopy=pmtLength-pointer;
-		if (bytesToCopy>185)
-			bytesToCopy=185;
-		memcpy(&packet[4],&pmt[pointer],bytesToCopy);
+		int Length = pmtLength ;
+		if (Length > 184) Length = 184 ;
+		memcpy(&packet[4],&pmt[pointer],Length);
 		Write(packet,188);
-		pointer+=bytesToCopy;
+		pmtLength -= Length ;
+		pointer += Length ;
 	}
 }
 
