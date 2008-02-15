@@ -459,6 +459,7 @@ namespace TvPlugin
           if (showSeries) continue;  // do not show single recordings if showSeries is enabled
           if (rec.IsSerieIsCanceled(rec.StartTime)) continue;
 					item = Schedule2ListItem(rec);
+          item.MusicTag = rec;
 					listSchedules.Add(item);
           total++;
         }
