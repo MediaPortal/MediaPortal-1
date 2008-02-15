@@ -2744,7 +2744,7 @@ namespace TvService
 				StackTrace st = new StackTrace(true);
 				StackFrame sf = new StackFrame();
 				sf = st.GetFrame(0);
-				Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1} CardPresent {2}", cardId, _cards.ContainsKey(cardId), CardPresent(cardId));
+				Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1} CardPresent {2}", cardId, _cards.ContainsKey(cardId), CardPresent(cardId));
 				Log.Error("{0}", st);
 				return true;
 			}
@@ -2766,11 +2766,11 @@ namespace TvService
 
 				if (user != null)
 				{
-					Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2} CardPresent(cardId) {3}", user, user.CardId, _cards.ContainsKey(user.CardId), CardPresent(user.CardId));
+          Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2} CardPresent(cardId) {3}", user, user.CardId, _cards.ContainsKey(user.CardId), CardPresent(user.CardId));
 				}
 				else
 				{
-					Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! user NULL");
+          Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user NULL");
 				}				
 				Log.Error("{0}", st);
 				return true;
@@ -2786,7 +2786,8 @@ namespace TvService
 				StackFrame sf = new StackFrame();
 				sf = st.GetFrame(0);
 
-				Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! card NULL");
+        Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! card NULL");
+        Log.Error("{0}", st);
 				return true;
 			}
 			else
@@ -2803,7 +2804,8 @@ namespace TvService
 				StackFrame sf = new StackFrame();
 				sf = st.GetFrame(0);
 
-				Log.Error("TVController:" + sf.GetMethod() + " - incorrect parameters used! channel NULL");
+        Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! channel NULL");
+        Log.Error("{0}", st);
 				return true;
 			}
 			else
