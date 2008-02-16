@@ -866,17 +866,7 @@ namespace TvPlugin
               string audioLang = g_Player.AudioLanguage(oldIndex);
               oldIndex = g_Player.CurrentAudioStream;
               g_Player.SwitchToNextAudio();
-
-              // hack for recorded TV (multiseat)-->
-              // if we change audio track on a tv rec. the video will get stuck (like pause)
-              // a way to circumvent this is to carry out a small delayed seek.
-              // this is most likely a workaround for a bug in tsreader or in streamingserver.
-              if (g_Player.IsTVRecording && !TVHome.IsSingleSeat())
-              {
-                Thread seekDelayThread = new Thread(SeekDelayThread);
-                seekDelayThread.Start();
-              }                
-
+             
               newIndex = g_Player.CurrentAudioStream;
 
               if (newIndex + 1 > g_Player.AudioStreams)
@@ -1793,27 +1783,9 @@ namespace TvPlugin
       // Set new language			
       if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < nrOfstreams))
       {        
-        g_Player.CurrentAudioStream = dlg.SelectedLabel;
-        
-        // hack for recorded TV (multiseat)-->
-        // if we change audio track on a tv rec. the video will get stuck (like pause)
-        // a way to circumvent this is to carry out a small delayed seek.
-        // this is most likely a workaround for a bug in tsreader or in streamingserver.
-        if (g_Player.IsTVRecording && !TVHome.IsSingleSeat())
-        {                                        
-          Thread seekDelayThread = new Thread(SeekDelayThread);
-          seekDelayThread.Start();               
-        }                
+        g_Player.CurrentAudioStream = dlg.SelectedLabel;               
       }
-    }
-
-
-    private void SeekDelayThread()
-    {
-      //we have to use a small delay before calling seekabs.                                    
-      Thread.Sleep(1200);
-      g_Player.SeekAbsolute(g_Player.CurrentPosition + 1);
-    }
+    }    
 
     void ShowLinkedChannelsMenu(IList linkages)
     {
