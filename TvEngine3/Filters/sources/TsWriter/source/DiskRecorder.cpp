@@ -747,6 +747,7 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 		pi.fakePid=-1;
 		pi.elementaryPid=pidInfo.elementaryPid;
 		pi.streamType=pidInfo.streamType;
+		pi.logicalStreamType=pidInfo.logicalStreamType;
 		pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
 		memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
 		memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
