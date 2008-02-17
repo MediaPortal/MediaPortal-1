@@ -2,27 +2,33 @@
 <Grabber>
   <Info language="no" availableDays="7" timezone="W. Europe Standard Time" version="2.0.1" />
   <Channels>
-    <Channel id="nordic@tv1000.no" siteId="76" />
-    <Channel id="explorer@viasat.no" siteId="66" />
-    <Channel id="nationalgeographic.com" siteId="81" />
-    <Channel id="jetix.no" siteId="82" />
-    <Channel id="action@tv1000.no" siteId="78" />
-    <Channel id="classic@tv1000.no" siteId="79" />
-    <Channel id="family@tv1000.no" siteId="80" /> 
-    <Channel id="toon@disney.no" siteId="85" /> 
-    <Channel id="sport2@canalplus.no" siteId="88" />
-    <Channel id="playhouse@disney.no" siteId="89" />
-    <Channel id="film@tv2.no" siteId="93" />
-    <Channel id="nyhetskanalen@tv2.no" siteId="94" />
-    <Channel id="sport@tv2.no" siteId="95" />
     <Channel id="nrk3@nrk.no" siteId="98" />
-    <Channel id="fem@tvnorge.no" siteId="99" />  
-    <Channel id="viasat4@viasat.no" siteId="100" />
-    <Channel id="dr1@dr.dk" siteId="101" />
-    <Channel id="sport1@canalplus.no" siteId="106" />
-    <Channel id="zebra@tv2.no" siteId="107" />
-    <Channel id="hd@canalplus.no" siteId="108" />
     <Channel id="nrksuper@nrk.no" siteId="112" />
+    <Channel id="fem@tvnorge.no" siteId="99" />
+    <Channel id="film@tv2.no" siteId="93" />
+    <Channel id="viasat4@viasat.no" siteId="100" />
+    <Channel id="action@tv1000.no" siteId="78" />
+    <Channel id="dr1@dr.dk" siteId="101" />
+    <Channel id="classic@tv1000.no" siteId="79" />
+    <Channel id="explorer@viasat.no" siteId="66" />
+    <Channel id="family@tv1000.no" siteId="80" />
+    <Channel id="drama@canalplus.no" siteId="103" />
+    <Channel id="first@canalplus.no" siteId="12" />
+    <Channel id="hits@canalplus.no" siteId="110" />
+    <Channel id="comedy@canalplus.no" siteId="105" />
+    <Channel id="action@canalplus.no" siteId="109" />
+    <Channel id="hd@canalplus.no" siteId="108" />
+    <Channel id="jetix.no" siteId="82" />
+    <Channel id="nationalgeographic.com" siteId="81" />
+    <Channel id="nordic@tv1000.no" siteId="76" />
+    <Channel id="nyhetskanalen@tv2.no" siteId="94" />
+    <Channel id="playhouse@disney.no" siteId="89" />
+    <Channel id="sport@tv2.no" siteId="95" />
+    <Channel id="sport1@canalplus.no" siteId="106" />
+    <Channel id="sport2@canalplus.no" siteId="88" />
+    <Channel id="sporthd@canalplus.no" siteId="111" />
+    <Channel id="toon@disney.no" siteId="85" />
+    <Channel id="zebra@tv2.no" siteId="107" />
   </Channels>
 
   <Listing type="Html">

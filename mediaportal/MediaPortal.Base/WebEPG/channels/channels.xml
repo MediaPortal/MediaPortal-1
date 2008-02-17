@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1367</entry>
+    <entry name="TotalChannels">1370</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -780,8 +780,8 @@
     <entry name="FullName">Canal+</entry>
   </section>
   <section name="194">
-    <entry name="ChannelID">canalplus@canalplus.no</entry>
-    <entry name="FullName">Canal+</entry>
+    <entry name="ChannelID">first@canalplus.no</entry>
+    <entry name="FullName">Canal+ First</entry>
   </section>
   <section name="195">
     <entry name="ChannelID">canalplus@canalplus.se</entry>
@@ -1176,20 +1176,20 @@
     <entry name="FullName">cmc@foxtel.com.au</entry>
   </section>
   <section name="293">
-    <entry name="ChannelID">cmorefilm@canalplus.no</entry>
-    <entry name="FullName">CmoreFilm</entry>
+    <entry name="ChannelID">drama@canalplus.no</entry>
+    <entry name="FullName">Canal+ Drama</entry>
   </section>
   <section name="294">
     <entry name="ChannelID">cmorefilm@canalplus.se</entry>
     <entry name="FullName">cmorefilm@canalplus.se</entry>
   </section>
   <section name="295">
-    <entry name="ChannelID">cmorefilm2@canalplus.no</entry>
-    <entry name="FullName">CmoreFilm2</entry>
+    <entry name="ChannelID">hits@canalplus.no</entry>
+    <entry name="FullName">Canal+ Hits</entry>
   </section>
   <section name="296">
-    <entry name="ChannelID">cmorehd@canalplus.no</entry>
-    <entry name="FullName">CmoreHD</entry>
+    <entry name="ChannelID">hd@canalplus.no</entry>
+    <entry name="FullName">Canal+ HD</entry>
   </section>
   <section name="297">
     <entry name="ChannelID">cnbc.com</entry>
@@ -1792,24 +1792,24 @@
     <entry name="FullName">film@tv4.se</entry>
   </section>
   <section name="447">
-    <entry name="ChannelID">film1@canalplus.no</entry>
-    <entry name="FullName">Canal+ Film1</entry>
+    <entry name="ChannelID">comedy@canalplus.no</entry>
+    <entry name="FullName">Canal+ Comedy</entry>
   </section>
   <section name="448">
     <entry name="ChannelID">film1@canalplus.se</entry>
     <entry name="FullName">film1@canalplus.se</entry>
   </section>
   <section name="449">
-    <entry name="ChannelID">film2@canalplus.no</entry>
-    <entry name="FullName">Canal+ Film2</entry>
+    <entry name="ChannelID">action@canalplus.no</entry>
+    <entry name="FullName">Canal+ Action</entry>
   </section>
   <section name="450">
     <entry name="ChannelID">film2@canalplus.se</entry>
     <entry name="FullName">film2@canalplus.se</entry>
   </section>
   <section name="451">
-    <entry name="ChannelID">film3@canalplus.no</entry>
-    <entry name="FullName">Canal+ Film3</entry>
+    <entry name="ChannelID">sporthd@canalplus.no</entry>
+    <entry name="FullName">Canal+ Sport HD</entry>
   </section>
   <section name="452">
     <entry name="ChannelID">film4@channel4.com</entry>
@@ -3976,8 +3976,8 @@
     <entry name="FullName">Spi.Ka TV</entry>
   </section>
   <section name="993">
-    <entry name="ChannelID">sport@canalplus.no</entry>
-    <entry name="FullName">Canal+ Sport</entry>
+    <entry name="ChannelID">sport1@canalplus.no</entry>
+    <entry name="FullName">Canal+ Sport 1</entry>
   </section>
   <section name="994">
     <entry name="ChannelID">sport@canalplus.se</entry>
@@ -5471,6 +5471,18 @@
     <entry name="ChannelID">playhouse@disney.no</entry>
 	<entry name="FullName">Playhouse Disney</entry>
   </section>
+  <section name="1367">
+    <entry name="ChannelID">sportn@viasat.no</entry>
+	<entry name="FullName">SportN</entry>
+  </section>
+    <section name="1368">
+    <entry name="ChannelID">sport@tv2.no</entry>
+	<entry name="FullName">TV2 Sport</entry>
+  </section>
+    <section name="1369">
+    <entry name="ChannelID">sport2@canalplus.no</entry>
+    <entry name="FullName">Canal+ Sport 2</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -6683,7 +6695,7 @@
     <entry name="66">1251</entry>
   </section>
   <section name="NO">
-    <entry name="TotalChannels">88</entry>
+    <entry name="TotalChannels">91</entry>
     <entry name="0">24</entry>
     <entry name="1">25</entry>
     <entry name="2">60</entry>
@@ -6772,6 +6784,9 @@
     <entry name="85">1364</entry>
     <entry name="86">1365</entry>
     <entry name="87">1366</entry>
+    <entry name="88">1367</entry>
+    <entry name="89">1368</entry>
+    <entry name="90">1369</entry>
   </section>
   <section name="NZ">
     <entry name="TotalChannels">6</entry>
