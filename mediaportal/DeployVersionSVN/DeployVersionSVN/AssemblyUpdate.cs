@@ -49,7 +49,7 @@ namespace DeployVersionSVN
         if (filetext != newtext)
         {
           Console.WriteLine("Updating: " + file.FullName);
-          TextWriter write = new StreamWriter(file.FullName);
+          TextWriter write = new StreamWriter(file.FullName, false, Encoding.UTF8);
           write.Write(newtext);
           write.Close();
         }
