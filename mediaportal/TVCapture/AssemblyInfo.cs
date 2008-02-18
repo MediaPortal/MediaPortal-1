@@ -1,5 +1,7 @@
-﻿/* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+﻿#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -29,11 +34,11 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("Team MediaPortal")]
+[assembly: AssemblyProduct("MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2008 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]		
+[assembly: AssemblyCulture("")]
 
 //
 // Version information for an assembly consists of the following four values:
