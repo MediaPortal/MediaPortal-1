@@ -40,5 +40,5 @@ public:
 	int last_section_number;
 
 	int BufferPos;
-  byte   *Data;
+  byte Data[MAX_SECTION_LENGTH*5];
 };

@@ -22,15 +22,15 @@
 #include "..\shared\Section.h"
 #pragma warning(disable : 4995)
 
+void LogDebug(const char *fmt, ...) ;
+
 CSection::CSection(void)
 {
-	Data=new byte[MAX_SECTION_LENGTH*5];
   Reset();
 }
 
 CSection::~CSection(void)
 {
-	delete[] Data;
 }
 
 void CSection::Reset()
@@ -81,13 +81,11 @@ bool CSection::DecodeHeader()
 	return true;
 }
 
-
-
 bool CSection::SectionComplete()
 {
-	if (!DecodeHeader() && BufferPos-3 > section_length && section_length>0)
+	if (!DecodeHeader() && BufferPos > section_length && section_length>0)
 		return true;
   if (!DecodeHeader())
 		return false;
-  return (BufferPos-3 >= section_length);
+  return (BufferPos >= section_length);
 }

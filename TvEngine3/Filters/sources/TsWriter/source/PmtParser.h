@@ -52,7 +52,7 @@ public:
 	int fakePid;
 	int streamType;
 	int logicalStreamType;
-	byte rawDescriptorData[188];
+	byte rawDescriptorData[400];
 	int rawDescriptorSize;
 	bool seenStart;
 }PidInfo2;

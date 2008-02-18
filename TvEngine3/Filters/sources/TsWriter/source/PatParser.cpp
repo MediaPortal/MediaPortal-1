@@ -53,6 +53,7 @@ void  CPatParser::CleanUp()
 	{
 		CPmtParser* parser=*it;
 		delete parser;
+		parser=NULL;
 		++it;
 	}
 	m_pmtParsers.clear();
@@ -64,6 +65,7 @@ void  CPatParser::CleanUp()
 void  CPatParser::Reset(IChannelScanCallback* callback)
 {
 //	Dump();
+	CEnterCriticalSection enter(m_section);
 	LogDebug("PatParser:Reset(%d)",m_pCallback);
 	CSectionDecoder::Reset();
 	SetPid(PID_PAT);
@@ -142,10 +144,6 @@ BOOL CPatParser::IsReady()
 //*****************************************************************************
 int CPatParser::Count()
 {
-  if (m_vctParser.Count() > 0)
-  {
-    return (int)m_mapChannels.size();
-  }
   return (int)m_mapChannels.size();
 }
 
@@ -245,7 +243,6 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 
 void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfo)
 {
-	
 	if (m_vctParser.Count()!=0) return;
   itChannels it=m_mapChannels.find(serviceId);
   if (it!=m_mapChannels.end())
@@ -256,14 +253,6 @@ void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2
 			AnalyzePidInfo(pidInfo,info.hasVideo,info.hasAudio);
 			info.PmtReceived=true;
       m_tickCount = GetTickCount();
-			if (m_pCallback!=NULL)
-			{
-				if (IsReady() )
-        {
-					m_pCallback->OnScannerDone();
-          m_pCallback=NULL;
-        }
-			}
 		}
 	}
 }
@@ -289,7 +278,7 @@ bool CPatParser::PmtParserExists(int pid,int serviceId)
 	itPmtParser it=m_pmtParsers.begin();
 	while (it!=m_pmtParsers.end())
 	{
-		CPmtParser* parser=*it;
+		CPmtParser *parser=*it;
 		int fpid; int sid;
 		parser->GetFilter(fpid,sid);
 		if (pid==fpid && serviceId==sid) 
@@ -331,7 +320,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 	itPmtParser it=m_pmtParsers.begin();
 	while (it!=m_pmtParsers.end())
 	{
-		CPmtParser* parser=*it;
+		CPmtParser *parser=*it;
 		parser->OnTsPacket(tsPacket);
 		++it;
 	}
@@ -390,7 +379,7 @@ void CPatParser::OnNewSection(CSection& sections)
 			}
 			if (!PmtParserExists(pmtPid,serviceId))
 			{
-				CPmtParser* parser=new CPmtParser();
+				CPmtParser *parser=new CPmtParser();
 				parser->SetFilter(pmtPid,serviceId);
 				parser->SetPmtCallBack2(this); 
 				m_pmtParsers.push_back(parser);

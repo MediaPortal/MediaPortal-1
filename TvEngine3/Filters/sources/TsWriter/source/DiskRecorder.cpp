@@ -344,7 +344,6 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 	m_pPmtParser->Reset();
 	m_pPmtParser->SetFilter(pmtPid,serviceId);
 	CSection section;
-	section.Data=new byte[MAX_SECTION_LENGTH*5];
 	section.Reset();
 	section.BufferPos=pmtLength;
 	memcpy(section.Data,pmtData,pmtLength);
