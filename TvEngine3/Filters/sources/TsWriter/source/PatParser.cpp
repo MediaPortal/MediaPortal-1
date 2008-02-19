@@ -243,7 +243,6 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 
 void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfo)
 {
-	if (m_vctParser.Count()!=0) return;
   itChannels it=m_mapChannels.find(serviceId);
   if (it!=m_mapChannels.end())
   {
