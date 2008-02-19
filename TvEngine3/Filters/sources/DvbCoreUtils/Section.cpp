@@ -83,9 +83,9 @@ bool CSection::DecodeHeader()
 
 bool CSection::SectionComplete()
 {
-	if (!DecodeHeader() && BufferPos > section_length && section_length>0)
+	if (!DecodeHeader() && BufferPos-3 > section_length && section_length>0)
 		return true;
   if (!DecodeHeader())
 		return false;
-  return (BufferPos >= section_length);
+  return (BufferPos-3 >= section_length);
 }
