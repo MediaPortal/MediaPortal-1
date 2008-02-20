@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2008 Team MediaPortal
+﻿#region Copyright
 
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
