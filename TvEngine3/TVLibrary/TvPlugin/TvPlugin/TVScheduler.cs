@@ -242,7 +242,7 @@ namespace TvPlugin
     }
     protected override void OnShowContextMenu()
     {
-      OnShowContextMenu(GetSelectedItemNo());
+      OnShowContextMenu(GetSelectedItemNo(), false);
     }
 
 
@@ -609,7 +609,7 @@ namespace TvPlugin
 
     void OnClick(int iItem)
     {
-      OnShowContextMenu(GetSelectedItemNo());
+      OnShowContextMenu(GetSelectedItemNo(), true);
       /*
       GUIListItem item = GetItem(iItem);
       if (item == null) return;
@@ -619,12 +619,12 @@ namespace TvPlugin
       return;
       */
     }
-    void OnShowContextMenu(int iItem)
+    void OnShowContextMenu(int iItem, bool clicked)
     {
-      m_iSelectedItem = GetSelectedItemNo();
+      m_iSelectedItem = iItem;
       GUIListItem item = GetItem(iItem);
       if (item == null) return;
-			if (item.IsFolder)
+      if (item.IsFolder && clicked)
 			{
 				bool noitems = false;
 				if (item.Label == "..")
@@ -649,6 +649,7 @@ namespace TvPlugin
 				}
 			}
 
+      bool showSeries = btnSeries.Selected;
 
       Schedule rec = item.TVTag as Schedule;
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -657,7 +658,12 @@ namespace TvPlugin
       dlg.Reset();
       dlg.SetHeading(rec.ProgramName);
 
-      if (rec.Series == false)
+      if (showSeries && item.IsFolder)
+      {
+        dlg.AddLocalizedString(618);//Cancel this show
+        dlg.AddLocalizedString(888);//Episodes management
+      }
+      else if (rec.Series == false)
       {
         dlg.AddLocalizedString(618);//delete
       }
