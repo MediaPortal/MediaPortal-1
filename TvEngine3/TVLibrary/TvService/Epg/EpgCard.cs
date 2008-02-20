@@ -305,7 +305,7 @@ namespace TvService
     /// </summary>
     public void Stop()
     {
-      if (_state != EpgState.Idle && _user.CardId >= 0)
+      if (_user.CardId >= 0)
       {
         Log.Epg("Epg: card:{0} stop grab", _user.CardId);
         _tvController.StopGrabbingEpg(_user);
@@ -452,8 +452,10 @@ namespace TvService
               result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
               if (result == TvResult.Succeeded)
               {
-                if (false == _tvController.GrabEpg(this, card.IdCard))
+                if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
                 {
+                  if (!_isRunning)
+                    Log.Epg("Tuning finished but EpgGrabber no longer enabled");
                   _tvController.StopGrabbingEpg(_user);
                   _user.CardId = -1;
                   Log.Epg("Epg: card:{0} could not start atsc epg grabbing", card.IdCard);
@@ -501,8 +503,10 @@ namespace TvService
             result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
             if (result == TvResult.Succeeded)
             {
-              if (false == _tvController.GrabEpg(this, card.IdCard))
+              if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
               {
+                if (!_isRunning)
+                  Log.Epg("Tuning finished but EpgGrabber no longer enabled");
                 _tvController.StopGrabbingEpg(_user);
                 _user.CardId = -1;
                 Log.Epg("Epg: card:{0} could not start dvbc epg grabbing", card.IdCard);
@@ -549,8 +553,10 @@ namespace TvService
             result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
             if (result == TvResult.Succeeded)
             {
-              if (false == _tvController.GrabEpg(this, card.IdCard))
+              if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
               {
+                if (!_isRunning)
+                  Log.Epg("Tuning finished but EpgGrabber no longer enabled");
                 _tvController.StopGrabbingEpg(_user);
                 _user.CardId = -1;
                 Log.Epg("Epg: card:{0} could not start dvbs epg grabbing", card.IdCard);
@@ -597,8 +603,10 @@ namespace TvService
             result = RemoteControl.Instance.Tune(ref _user, tuning, channel.IdChannel);
             if (result == TvResult.Succeeded)
             {
-              if (false == _tvController.GrabEpg(this, card.IdCard))
+              if (!_isRunning || false == _tvController.GrabEpg(this, card.IdCard))
               {
+                if (!_isRunning)
+                  Log.Epg("Tuning finished but EpgGrabber no longer enabled");
                 _tvController.StopGrabbingEpg(_user);
                 _user.CardId = -1;
                 Log.Epg("Epg: card:{0} could not start atsc grabbing", card.IdCard);
