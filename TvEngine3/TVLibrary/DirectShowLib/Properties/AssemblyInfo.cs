@@ -1,6 +1,4 @@
-﻿#region license
-
-/*
+﻿/*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
 Copyright (C) 2007
 http://sourceforge.net/projects/directshownet/
@@ -20,7 +18,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#endregion
+
 
 using System;
 using System.Reflection;
