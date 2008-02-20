@@ -56,7 +56,7 @@ namespace MediaPortal.Playlists
         playlist.Name = Path.GetFileName(playlistFileName);
         basePath = Path.GetDirectoryName(Path.GetFullPath(playlistFileName));
 
-        using (file = new StreamReader(playlistFileName, Encoding.Default))
+        using (file = new StreamReader(playlistFileName, Encoding.Default, true))
         {
           if (file == null)
             return false;
@@ -158,7 +158,7 @@ namespace MediaPortal.Playlists
     {
       try
       {
-        using (StreamWriter writer = new StreamWriter(fileName, false))
+        using (StreamWriter writer = new StreamWriter(fileName, false, Encoding.UTF8))
         {
           writer.WriteLine(M3U_START_MARKER);
 
