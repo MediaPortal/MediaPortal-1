@@ -96,7 +96,7 @@ Section "MediaPortal TV Server" SecServer
     
     ReadRegStr $InstallPath HKLM "${REGKEY}" InstallPath
     ${If} $InstallPath != ""
-        MessageBox MB_OKCANCEL|MB_ICONQUESTION "TV Server is already installed.\r\nPress 'OK' to overwrite the existing installation\r\nPress 'Cancel' to Abort the installation" IDOK lbl_install IDCANCEL 0
+        MessageBox MB_OKCANCEL|MB_ICONQUESTION "TV Server is already installed.$\r$\nPress 'OK' to overwrite the existing installation$\r$\nPress 'Cancel' to Abort the installation" IDOK lbl_install IDCANCEL 0
         DetailPrint "User pressed Cancel. Skipping installation"
         Return
       lbl_install:
