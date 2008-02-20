@@ -50,7 +50,7 @@ namespace DeployVersionSVN
         {
           Console.WriteLine("Updating: " + file.FullName);
           TextWriter write = new StreamWriter(file.FullName, false, Encoding.UTF8);
-          TextWriter write = new StreamWriter(file.FullName);
+          //TextWriter write = new StreamWriter(file.FullName);
           write.Write(newtext);
           write.Close();
         }
