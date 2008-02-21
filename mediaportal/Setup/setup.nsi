@@ -2,7 +2,7 @@
 #
 # For the MediaPortal Installer to work you need:
 # 1. Lastest NSIS version from http://nsis.sourceforge.net/Download
-# 
+#
 # Editing is much more easier, if you install HM NSIS Edit from http://hmne.sourceforge.net
 #
 # ATTENTION: You need to have the vcredist_x86.exe package in the setup folder.
@@ -43,7 +43,7 @@ SetCompressor lzma
 !define MUI_STARTMENUPAGE_REGISTRY_KEY $(^INSTDIR_REG_KEY)
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER MediaPortal
-!define MUI_FINISHPAGE_RUN  
+!define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
 !define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
@@ -124,7 +124,7 @@ LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "If there is no commercial MPEG-2 de
 Function FilterSelection ;Function name defined with Page command
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro INSTALLOPTIONS_DISPLAY "FilterSelect.ini"
-  
+
   ; Get the values selected in the Check Boxes
   !insertmacro INSTALLOPTIONS_READ $DSCALER "FilterSelect.ini" "Field 1" "State"
   !insertmacro INSTALLOPTIONS_READ $GABEST "FilterSelect.ini" "Field 2" "State"
@@ -132,12 +132,12 @@ FunctionEnd
 ;..................................................................................................
 
 # Installer sections
-; 
+;
 ; This is the Main section, which installs all MediaPortal Files
 ;
 ;..................................................................................................
 Section -Main SEC0000
-    SetOverwrite on   
+    SetOverwrite on
 
     ; Doc
     SetOutPath $INSTDIR\Docs
@@ -162,10 +162,10 @@ Section -Main SEC0000
     File /r ..\xbmc\bin\Release\weather
     File /r ..\xbmc\bin\Release\WebEPG
     File /r ..\xbmc\bin\Release\Wizards
-    
+
 
     ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
-        
+
     ;------------  Common Files and Folders for XP & Vista
     ; Files
     File ..\xbmc\bin\Release\AppStart.exe
@@ -263,18 +263,18 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\xAPTransport.dll
     File ..\xbmc\bin\Release\XPBurnComponent.dll
     ;------------  End of Common Files and Folders for XP & Vista
-    
+
     ; In Case of Vista some Folders / Files need to be copied to the Appplication Data Folder
     ; Simply Change the output Directory in Case of Vista
-    ${if} $WindowsVersion == "Vista" 
-        ; We have a special MediaPortalDirs.xml   
+    ${if} $WindowsVersion == "Vista"
+        ; We have a special MediaPortalDirs.xml
         File MediaPortalDirs.xml
-        
+
         ; We need to have the custom Inputmapping dir created
         CreateDirectory "$CommonAppData\InputDeviceMappings\custom"
-        
+
         ;From here on, the Vista specific files should go to the common App Folder
-        SetOutPath $CommonAppData 
+        SetOutPath $CommonAppData
     ${Else}
         File ..\xbmc\bin\Release\MediaPortalDirs.xml
     ${Endif}
@@ -292,24 +292,24 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\yac-area-codes.xml
 
     ; We are not deleting Files and Folders after this point
-    
+
     ; Folders
     File /r ..\xbmc\bin\Release\thumbs
-    File /r ..\xbmc\bin\Release\xmltv   
-    
+    File /r ..\xbmc\bin\Release\xmltv
+
     ; The Following Filters and Dll need to be copied to \windows\system32 for xp
     ; In Vista they stay in the Install Directory
-    ${if} $WindowsVersion == "Vista" 
+    ${if} $WindowsVersion == "Vista"
         SetOutPath $INSTDIR
         StrCpy $FilterDir $InstDir
     ${Else}
         SetOutPath $SYSDIR
         StrCpy $FilterDir $SysDir
     ${Endif}
-  
-  
+
+
     ; NOTE: The Filters and Common DLLs found below will be deleted and unregistered manually and not via the automatic Uninstall Log
-    
+
     ; Filters (Copy and Register)
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $FilterDir\cdxareader.ax $FilterDir
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $FilterDir\CLDump.ax $FilterDir
@@ -323,7 +323,7 @@ Section -Main SEC0000
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $FilterDir\WinTVCapWriter.ax $FilterDir
 
     ; Install and Register only when
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}" Dscaler 0 
+    WriteRegStr HKLM "${INSTDIR_REG_KEY}" Dscaler 0
     ${If} $DSCALER == 1
         WriteRegStr HKLM "${INSTDIR_REG_KEY}" Dscaler 1
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $FilterDir\GenDMOProp.dll $FilterDir
@@ -335,7 +335,7 @@ Section -Main SEC0000
         WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "SPDIF Audio Time Offset" 0
         WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Speaker Config" 1
         WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Use SPDIF for AC3 & DTS" 0
-        
+
         WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "3:2 playback smoothing" 1
         WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Colour space to output" 1
         WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Deinterlace Mode" 2
@@ -347,13 +347,13 @@ Section -Main SEC0000
         WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Use accurate aspect ratios" 1
         WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Video Delay" 0
     ${EndIf}
-  
+
     WriteRegStr HKLM "${INSTDIR_REG_KEY}" Gabest 0
     ${If} $GABEST == 1
         WriteRegStr HKLM "${INSTDIR_REG_KEY}" Gabest 1
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $FilterDir\MpaDecFilter.ax $FilterDir
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $FilterDir\Mpeg2DecFilter.ax $FilterDir
-        
+
         ; Write Default Values for Filter into the registry
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Dynamic Range" 0
@@ -367,7 +367,7 @@ Section -Main SEC0000
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTSDecoder" 0
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Normalize" 0
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Output Format" 0
-        
+
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Brightness" 128
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Contrast" 100
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Deinterlace" 0
@@ -376,21 +376,21 @@ Section -Main SEC0000
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Hue" 180
         WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Saturation" 100
     ${EndIf}
-    
+
     ; Common DLLs
     ; Installing the Common dll
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71.dll $FilterDir\MFC71.dll $FilterDir
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71u.dll $FilterDir\MFC71u.dll $FilterDir
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcp71.dll $FilterDir\msvcp71.dll $FilterDir
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcr71.dll $FilterDir\msvcr71.dll $FilterDir
- 
+
     WriteRegStr HKLM "${INSTDIR_REG_KEY}\Components" Main 1
-    
+
     ; Write the Install / Config Dir into the registry for the Public SVN Installer to recognize the environment
     WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ApplicationDir $INSTDIR
-    
+
     ${if} $WindowsVersion == "Vista"
-       WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $CommonAppData 
+       WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $CommonAppData
     ${Else}
         WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $INSTDIR
     ${Endif}
@@ -402,28 +402,28 @@ Section -post SEC0001
     WriteRegStr HKLM "${INSTDIR_REG_KEY}" Path $INSTDIR
     WriteRegStr HKLM "${INSTDIR_REG_KEY}" PathFilter $FILTERDIR
     WriteRegStr HKLM "${INSTDIR_REG_KEY}" WindowsVersion $WindowsVersion
-  
-    ; Create the Statmenu and the Desktop shortcuts  
-    
+
+    ; Create the Statmenu and the Desktop shortcuts
+
     ; The OutputPath specifies the Working Directory used for the Shortcuts
     SetOutPath $INSTDIR
     WriteUninstaller $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails 
-    CreateDirectory $SMPROGRAMS\$StartMenuGroup 
+    ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
+    CreateDirectory $SMPROGRAMS\$StartMenuGroup
     SetShellVarContext current
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal" 
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk" "$INSTDIR\MPTestTool2.exe" "-auto" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Debug"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration" 
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\License.lnk" "$INSTDIR\Docs\MediaPortal License.rtf" "" "$INSTDIR\Docs\MediaPortal License.rtf" 0 "" "" "License"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPInstaller.lnk" "$INSTDIR\MPInstaller.exe" "" "$INSTDIR\MPInstaller.exe" 0 "" "" "MediaPortal Extension Installer"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPTestTool.lnk" "$INSTDIR\MPTestTool2.exe" "" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Test Tool"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall.exe
-    
-    CreateShortcut "$DESKTOP\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal" 
-    CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration" 
+
+    CreateShortcut "$DESKTOP\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal"
+    CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
     !insertmacro MUI_STARTMENU_WRITE_END
-    
+
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
@@ -432,7 +432,7 @@ Section -post SEC0001
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall.exe
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
-    
+
     ; Associate .mpi files with MPInstaller
     !define Index "Line${__LINE__}"
     ; backup the association, if it already exsists
@@ -440,23 +440,23 @@ Section -post SEC0001
     StrCmp $1 "" "${Index}-NoBackup"
     StrCmp $1 "MediaPortal.Installer" "${Index}-NoBackup"
     WriteRegStr HKCR ".mpi" "backup_val" $1
-    
+
     "${Index}-NoBackup:"
     WriteRegStr HKCR ".mpi" "" "MediaPortal.Installer"
     WriteRegStr HKCR "MediaPortal.Installer" "" "MediaPortal Installer"
     WriteRegStr HKCR "MediaPortal.Installer\shell" "" "open"
     WriteRegStr HKCR "MediaPortal.Installer\DefaultIcon" "" "$INSTDIR\MPInstaller.exe,0"
     WriteRegStr HKCR "MediaPortal.Installer\shell\open\command" "" '$INSTDIR\MPInstaller.exe "%1"'
- 
+
     System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
-    !undef Index   
+    !undef Index
 SectionEnd
 
 ; This section installs the VC++ Redist Library
 Section -Redist SEC0002
     SetOutPath $INSTDIR
     SetOverwrite on
-    
+
     ; Now Copy the VC Redist File, which will be executed as part of the install
     File vcredist_x86.exe
 
@@ -470,16 +470,16 @@ SectionEnd
 # Installer functions
 Function .onInit
     InitPluginsDir
-    
+
     !insertmacro INSTALLOPTIONS_EXTRACT "FilterSelect.ini"
 
     ; Get Windows Version
     Call GetWindowsVersion
     Pop $R0
     StrCpy $WindowsVersion $R0
-    ${if} $WindowsVersion == "95" 
-    ${OrIf} $WindowsVersion == "98" 
-    ${OrIf} $WindowsVersion == "ME"  
+    ${if} $WindowsVersion == "95"
+    ${OrIf} $WindowsVersion == "98"
+    ${OrIf} $WindowsVersion == "ME"
     ${OrIf} $WindowsVersion == "NT 4.0"
         MessageBox MB_OK|MB_ICONSTOP "MediaPortal is not support on Windows $WindowsVersion. Installation aborted"
         Abort
@@ -487,8 +487,8 @@ Function .onInit
     ${If} $WindowsVersion == "2003"
         ; MS Reports also XP 64 as NT 5.2. So we default on XP
         StrCpy $WindowsVersion 'XP'
-    ${EndIf}   
-    
+    ${EndIf}
+
     ; Check if .Net is installed
     Call IsDotNetInstalled
     Pop $0
@@ -496,14 +496,14 @@ Function .onInit
         MessageBox MB_OK|MB_ICONSTOP "Microsoft .Net Framework Runtime is a prerequisite. Please install first."
         Abort
     ${EndIf}
-    
+
     ; Get the Common Application Data Folder to Store Files for Vista
     ; Set the Context to alll, so that we get the All Users folder
     SetShellVarContext all
     StrCpy $CommonAppData "$APPDATA\Team MediaPortal\MediaPortal"
     ; Context back to current user
     SetShellVarContext current
-    
+
     ; Needed for Library Install
     ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
     Push $0
@@ -550,14 +550,14 @@ LangString UNINSTALL_SETTINGS_SUBTITLE ${LANG_ENGLISH} "Attention: This will rem
 Function un.UninstallOpionsSelection ;Function name defined with Page command
   !insertmacro MUI_HEADER_TEXT "$(UNINSTALL_SETTINGS_TITLE)" "$(UNINSTALL_SETTINGS_SUBTITLE)"
   !insertmacro INSTALLOPTIONS_DISPLAY "UnInstallOptions.ini"
-  
+
   ; Get the values selected in the Check Boxes
   !insertmacro INSTALLOPTIONS_READ $UninstAll "UninstallOptions.ini" "Field 1" "State"
 FunctionEnd
 
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
 
-Section /o -un.Main UNSEC0000    
+Section /o -un.Main UNSEC0000
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
     RmDir /r /REBOOTOK $INSTDIR\Cache
@@ -674,12 +674,12 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $INSTDIR\xAPTransport.dll
     Delete /REBOOTOK  $INSTDIR\XPBurnComponent.dll
     ;------------  End of Files in MP Root Directory --------------
-    
+
     ; In Case of Vista the Files to Uninstall are in the Appplication Data Folder
-    ${if} $WindowsVersion == "Vista" 
-        StrCpy $TmpDir $CommonAppData 
+    ${if} $WindowsVersion == "Vista"
+        StrCpy $TmpDir $CommonAppData
     ${Else}
-         StrCpy $TmpDir $INSTDIR 
+         StrCpy $TmpDir $INSTDIR
     ${Endif}
 
     ; Config Files, which are in different location on Vista and XP (XML)
@@ -693,16 +693,16 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $TmpDir\ProgramSettingProfiles.xml
     Delete /REBOOTOK  $TmpDir\wikipedia.xml
     Delete /REBOOTOK  $TmpDir\yac-area-codes.xml
-    
+
     ; Do we need to deinstall everything? Then remove also the CommonAppData and InstDir
     ${If} $UninstAll == 1
         DetailPrint "Removing User Settings"
         RmDir /r /REBOOTOK $CommonAppData
         RmDir /r /REBOOTOK $INSTDIR
     ${EndIf}
-    
+
     ; Uninstall the Common DLLs and Filters
-    ; They will onl be removed, when the UseCount = 0    
+    ; They will onl be removed, when the UseCount = 0
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\cdxareader.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\CLDump.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpgMux.ax
@@ -724,7 +724,7 @@ Section /o -un.Main UNSEC0000
         !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpaDecFilter.ax
         !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\Mpeg2DecFilter.ax
     ${EndIf}
-    
+
     ; Common DLLs will not be removed. Too Dangerous
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71u.dll
@@ -755,7 +755,7 @@ Section -un.post UNSEC0001
     DeleteRegKey /IfEmpty HKLM "${INSTDIR_REG_KEY}\Components"
     DeleteRegKey /IfEmpty HKLM "${INSTDIR_REG_KEY}"
     RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
-    
+
     ; Remove File Association for .mpi files
     !define Index "Line${__LINE__}"
     ReadRegStr $1 HKCR ".mpi" ""
@@ -764,18 +764,18 @@ Section -un.post UNSEC0001
     StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
     DeleteRegKey HKCR ".mpi"
     Goto "${Index}-NoOwn"
-    
+
     "${Index}-Restore:"
     WriteRegStr HKCR ".mpi" "" $1
     DeleteRegValue HKCR ".mpi" "backup_val"
-   
+
     DeleteRegKey HKCR "MediaPortal.Installer" ;Delete key with association settings
- 
+
     System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
-    
+
     "${Index}-NoOwn:"
     !undef Index
-    
+
 SectionEnd
 
 # Uninstaller functions
@@ -787,10 +787,10 @@ Function un.onInit
     ReadRegStr $WindowsVersion HKLM "${INSTDIR_REG_KEY}" WindowsVersion
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
-    
+
     ; Extract the Uninstall Option Custom Page
     !insertmacro INSTALLOPTIONS_EXTRACT "UnInstallOptions.ini"
-    
+
     ; Get the Common Application Data Folder to Store Files for Vista
     ; Set the Context to alll, so that we get the All Users folder
     SetShellVarContext all
@@ -813,7 +813,7 @@ Function IsDotNETInstalled
   Push $2
   Push $3
   Push $4
- 
+
   ReadRegStr $4 HKEY_LOCAL_MACHINE \
     "Software\Microsoft\.NETFramework" "InstallRoot"
   # remove trailing back slash
@@ -823,33 +823,33 @@ Function IsDotNETInstalled
   Pop $4
   # if the root directory doesn't exist .NET is not installed
   IfFileExists $4 0 noDotNET
- 
+
   StrCpy $0 0
- 
+
   EnumStart:
- 
+
     EnumRegKey $2 HKEY_LOCAL_MACHINE \
       "Software\Microsoft\.NETFramework\Policy"  $0
     IntOp $0 $0 + 1
     StrCmp $2 "" noDotNET
- 
+
     StrCpy $1 0
- 
+
     EnumPolicy:
- 
+
       EnumRegValue $3 HKEY_LOCAL_MACHINE \
         "Software\Microsoft\.NETFramework\Policy\$2" $1
       IntOp $1 $1 + 1
        StrCmp $3 "" EnumStart
         IfFileExists "$4\$2.$3" foundDotNET EnumPolicy
- 
+
   noDotNET:
     StrCpy $0 0
     Goto done
- 
+
   foundDotNET:
     StrCpy $0 1
- 
+
   done:
     Pop $4
     Pop $3
@@ -873,82 +873,82 @@ FunctionEnd
 ;   Call GetWindowsVersion
 ;   Pop $R0
 ;   ; at this point $R0 is "NT 4.0" or whatnot
- 
+
 Function GetWindowsVersion
- 
+
   Push $R0
   Push $R1
- 
+
   ClearErrors
- 
+
   ReadRegStr $R0 HKLM \
   "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
- 
+
   IfErrors 0 lbl_winnt
-  
+
   ; we are not NT
   ReadRegStr $R0 HKLM \
   "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
- 
+
   StrCpy $R1 $R0 1
   StrCmp $R1 '4' 0 lbl_error
- 
+
   StrCpy $R1 $R0 3
- 
+
   StrCmp $R1 '4.0' lbl_win32_95
   StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
- 
+
   lbl_win32_95:
     StrCpy $R0 '95'
   Goto lbl_done
- 
+
   lbl_win32_98:
     StrCpy $R0 '98'
   Goto lbl_done
- 
+
   lbl_win32_ME:
     StrCpy $R0 'ME'
   Goto lbl_done
- 
+
   lbl_winnt:
- 
+
   StrCpy $R1 $R0 1
- 
+
   StrCmp $R1 '3' lbl_winnt_x
   StrCmp $R1 '4' lbl_winnt_x
- 
+
   StrCpy $R1 $R0 3
- 
+
   StrCmp $R1 '5.0' lbl_winnt_2000
   StrCmp $R1 '5.1' lbl_winnt_XP
   StrCmp $R1 '5.2' lbl_winnt_2003
   StrCmp $R1 '6.0' lbl_winnt_vista lbl_error
- 
+
   lbl_winnt_x:
     StrCpy $R0 "NT $R0" 6
   Goto lbl_done
- 
+
   lbl_winnt_2000:
     Strcpy $R0 '2000'
   Goto lbl_done
- 
+
   lbl_winnt_XP:
     Strcpy $R0 'XP'
   Goto lbl_done
- 
+
   lbl_winnt_2003:
     Strcpy $R0 '2003'
   Goto lbl_done
- 
+
   lbl_winnt_vista:
     Strcpy $R0 'Vista'
   Goto lbl_done
- 
+
   lbl_error:
     Strcpy $R0 ''
   lbl_done:
- 
+
   Pop $R1
   Exch $R0
- 
+
 FunctionEnd
