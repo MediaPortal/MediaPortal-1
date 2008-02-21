@@ -64,12 +64,30 @@ namespace TvLibrary.Implementations.DVB
     {
       switch (channel.DisEqc)
       {
-        case DisEqcType.Level1AA: SendDiSEqCCommand(0x00); break;
-        case DisEqcType.Level1AB: SendDiSEqCCommand(0x01); break;
-        case DisEqcType.Level1BA: SendDiSEqCCommand(0x0100); break;
-        case DisEqcType.Level1BB: SendDiSEqCCommand(0x0101); break;
-        case DisEqcType.SimpleA: SendDiSEqCCommand(0x00); break;
-        case DisEqcType.SimpleB: SendDiSEqCCommand(0x01); break;
+        case DisEqcType.Level1AA:
+          Log.Log.Info("GenericBDA:  Level1AA - SendDiSEqCCommand(0x00)");
+          SendDiSEqCCommand(0x00);
+          break;
+        case DisEqcType.Level1AB:
+          Log.Log.Info("GenericBDA:  Level1AB - SendDiSEqCCommand(0x01)");
+          SendDiSEqCCommand(0x01);
+          break;
+        case DisEqcType.Level1BA:
+          Log.Log.Info("GenericBDA:  Level1BA - SendDiSEqCCommand(0x0100)");
+          SendDiSEqCCommand(0x0100);
+          break;
+        case DisEqcType.Level1BB:
+          Log.Log.Info("GenericBDA:  Level1BB - SendDiSEqCCommand(0x0101)");
+          SendDiSEqCCommand(0x0101);
+          break;
+        case DisEqcType.SimpleA:
+          Log.Log.Info("GenericBDA:  SimpleA - SendDiSEqCCommand(0x00)");
+          SendDiSEqCCommand(0x00);
+          break;
+        case DisEqcType.SimpleB:
+          Log.Log.Info("GenericBDA:  SimpleB - SendDiSEqCCommand(0x01)");
+          SendDiSEqCCommand(0x01);
+          break;
         default:
           return;
       }
@@ -82,8 +100,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded, otherwise false</returns>
     protected bool SendDiSEqCCommand(ulong ulRange)
     {
+      Log.Log.Info("GenericBDA:  SendDiSEqC Command {0}", ulRange);
       int hr = 0;
-
       // get ControlNode of tuner control node
       object ControlNode = null;
       hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
@@ -110,7 +128,10 @@ namespace TvLibrary.Implementations.DVB
                   {
                     hr = DecviceControl.CommitChanges();
                     if (hr == 0)
+                    {
+                      Log.Log.Info("GenericBDA:  CommitChanges() Succeeded");
                       return true;
+                    }
                     else
                     {
                       // reset configuration 
