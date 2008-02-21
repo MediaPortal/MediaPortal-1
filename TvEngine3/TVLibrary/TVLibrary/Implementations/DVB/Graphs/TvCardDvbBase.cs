@@ -139,6 +139,7 @@ namespace TvLibrary.Implementations.DVB
     protected Hauppauge _hauppauge;
     private TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
     protected bool tunerOnly = false;
+    WinTvCiModule winTvCiHandler = null;
     #endregion
 
     #region ctor
@@ -394,11 +395,11 @@ namespace TvLibrary.Implementations.DVB
       (_graphBuilder as IMediaControl).GetState(10, out state);
       if (state == FilterState.Running) return;
 
-      Log.Log.Info("dvb:rungraph");
+      Log.Log.Info("dvb:  RunGraph");
       int hr = (_graphBuilder as IMediaControl).Run();
       if (hr < 0 || hr > 1)
       {
-        Log.Log.WriteFile("dvb:RunGraph returns:0x{0:X}", hr);
+        Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
       //GetTunerSignalStatistics();
@@ -520,21 +521,19 @@ namespace TvLibrary.Implementations.DVB
           }
         }
       }
-      //Added to bypass WinTV CI in the graph for now.
-      usbWinTvDevice = null;
-      // Remove this line and two above to add WinTV filter back into the graph
       if (usbWinTvDevice == null)
       {
+        Log.Log.Info("dvb:  WinTv CI module not detected.");
         if (tunerOnly == true)
-          Log.Log.Info("dvb:  WinTv CI module not detected. Render [tuner]->[inftee]");
+          Log.Log.Info("dvb:  Render [tuner]->[inftee]");
         else
-          Log.Log.Info("dvb:  WinTv CI module not detected. Render [capture]->[inftee]");
+          Log.Log.Info("dvb:  Render [capture]->[inftee]");
         //no wintv ci usb module found. Render [Capture]->[InfTee]
         hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
         return (hr == 0);
       }
-      Log.Log.Info("dvb:  WinTv CI module deteced");
       //wintv ci usb module found
+      Log.Log.Info("dvb:  WinTv CI module deteced");
       //add filter to graph
       IBaseFilter tmpCiFilter;
       try
@@ -555,6 +554,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("dvb:  failed to add WinTv CI filter to graph");
         if (tmpCiFilter != null)
         {
+          winTvCiHandler.Shutdown();
           _graphBuilder.RemoveFilter(tmpCiFilter);
           Release.ComObject("WintvUsbCI module", tmpCiFilter);
         }
@@ -562,17 +562,36 @@ namespace TvLibrary.Implementations.DVB
         hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
         return (hr == 0);
       }
+      //Check if WinTV CI is plugged in to USB port if not remove it from graph.
+      winTvCiHandler = new WinTvCiModule(tmpCiFilter);
+      int winTVCIStatus = winTvCiHandler.Init();
+      //Log.Log.Info("WinTVCI: Init() returned: {0}", winTVCIStatus);
+      if (winTVCIStatus != (int)HResult.Serverity.Success)
+      {
+        //remove WinTV CI filter & render graph without it.
+        winTvCiHandler.Shutdown();
+        _graphBuilder.RemoveFilter(tmpCiFilter);
+        Release.ComObject("WintvUsbCI module", tmpCiFilter);
+        Log.Log.Info("dvb:  WinTv CI not plugged in or driver not installed correctly!");
+        //Render [Capture]->[InfTee] or [Tuner]->[InfTee]
+        if (tunerOnly == true)
+          Log.Log.Info("dvb:  Render [Tuner]->[InfTee]");
+        else
+          Log.Log.Info("dvb:  Render [Capture]->[InfTee]");
+        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
+        return (hr == 0);
+      }
       if (tunerOnly == true)
       {
         //now render [Tuner]->[InfTee]->[WinTv USB]
-        //Add InfTee first otherwise the MPEG-2 Demux is used between Tuner & WinTV filter
+        //Add InfTee first otherwise the MPEG-2 Demux is used between Tuner & WinTV filter on some cards
         Log.Log.Info("dvb:  Add InfTee for WinTV CI filter");
         _infTeeWinTV = (IBaseFilter)new InfTee();
         hr = _graphBuilder.AddFilter(_infTeeWinTV, "InfTee WinTV");
         if (hr != 0)
         {
           Log.Log.Error("dvb:  Add InfTee WinTV returns:0x{0:X}", hr);
-          throw new TvException("Unable to add  _infTeeSecond");
+          throw new TvException("Unable to add  _infTeeWinTV");
         }
         //Render Tuner to InfTee first
         Log.Log.Info("dvb:  Render [Tuner]->[InfTee]");
@@ -588,8 +607,16 @@ namespace TvLibrary.Implementations.DVB
         if (hr != 0)
         {
           Log.Log.Error("dvb:  Render [InfTee]->[WinTvUSB] failed");
+          winTvCiHandler.Shutdown();
           hr = _graphBuilder.RemoveFilter(tmpCiFilter);
           Release.ComObject("WintvUsbCI module", tmpCiFilter);
+          Log.Log.Info("dvb:  Render [Tuner]->[InfTee]");
+          hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
+          if (hr != 0)
+          {
+            Log.Log.Error("dvb:  Render [Tuner]->[InfTee] failed");
+            return false;
+          }
           return (hr == 0);
         }
       }
@@ -602,6 +629,7 @@ namespace TvLibrary.Implementations.DVB
         if (hr != 0)
         {
           Log.Log.Error("dvb:  Render [Capture]->[WinTvUSB] failed");
+          winTvCiHandler.Shutdown();
           hr = _graphBuilder.RemoveFilter(tmpCiFilter);
           Release.ComObject("WintvUsbCI module", tmpCiFilter);
           //Render [Capture]->[InfTee]
@@ -610,22 +638,37 @@ namespace TvLibrary.Implementations.DVB
           if (hr != 0)
           {
             Log.Log.Error("dvb:  Render [Capture]->[InfTee-Main] failed");
-            return (hr != 0);
+            return false;
           }
           return (hr == 0);
         }
       }
-      _filterWinTvUsb = tmpCiFilter;
-      _deviceWinTvUsb = usbWinTvDevice;
-      DevicesInUse.Instance.Add(usbWinTvDevice);
       //Finally render [WinTvCi]->[InfTee]
       Log.Log.Info("dvb:  Render [WinTvUSB]->[InfTee-Main]");
       hr = _capBuilder.RenderStream(null, null, tmpCiFilter, null, _infTeeMain);
       if (hr != 0)
       {
         Log.Log.Error("dvb:  Render [WinTvUSB]->[InfTee-Main] failed");
-        return (hr != 0);
+        winTvCiHandler.Shutdown();
+        hr = _graphBuilder.RemoveFilter(tmpCiFilter);
+        Release.ComObject("WintvUsbCI module", tmpCiFilter);
+        if (tunerOnly == true)
+          Log.Log.Info("dvb:  Render [Tuner]->[InfTee]");
+        else
+          Log.Log.Info("dvb:  Render [Capture]->[InfTee]");
+        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
+        if (hr != 0)
+        {
+          if (tunerOnly == true)
+            Log.Log.Error("dvb:  Render [Tuner]->[InfTee] failed");
+          else
+            Log.Log.Error("dvb:  Render [Capture]->[InfTee] failed");
+          return false;
+        }
       }
+      _filterWinTvUsb = tmpCiFilter;
+      _deviceWinTvUsb = usbWinTvDevice;
+      DevicesInUse.Instance.Add(usbWinTvDevice);
       return (hr == 0);
     }
 
@@ -1244,7 +1287,6 @@ namespace TvLibrary.Implementations.DVB
       _graphRunning = false;
       Log.Log.WriteFile("  stop");
       // Decompose the graph
-      Log.Log.WriteFile("  stop the graph");
       hr = (_graphBuilder as IMediaControl).StopWhenReady();
       //hr = (_graphBuilder as IMediaControl).Stop();
       Log.Log.WriteFile("  remove all filters");
@@ -2667,5 +2709,11 @@ namespace TvLibrary.Implementations.DVB
       }
     }
     #endregion
+
+    Int32 OnWinTvCiCamInfo(IntPtr Context, byte appType, ushort appManuf, ushort manufCode, StringBuilder Info)
+    {
+      Log.Log.Info("OnWinTvCiCamInfo: appType={0} appManuf={1} manufCode={2} info={3}", appType, appManuf, manufCode, Info.ToString());
+      return 0;
+    }
   }
 }

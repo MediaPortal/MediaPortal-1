@@ -35,7 +35,6 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class DVBSkyStar2Helper
   {
-
     #region technisat guids
     public static Guid IID_IB2C2AVCTRL2 = new Guid(0x9c0563ce, 0x2ef7, 0x4568, 0xa2, 0x97, 0x88, 0xc7, 0xbb, 0x82, 0x40, 0x75);
     public static Guid CLSID_B2C2Adapter = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x0, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);
@@ -46,7 +45,6 @@ namespace TvLibrary.Implementations.DVB
     public static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid(0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
     public static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid(0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5, 0xd9, 0x95);
     #endregion
-
     // interfaces
     #region AVControl
     [ComVisible(true), ComImport,
@@ -64,6 +62,7 @@ namespace TvLibrary.Implementations.DVB
         );
     };
     #endregion
+    
     #region AVControl2
     // setup interfaces
 
@@ -172,6 +171,7 @@ namespace TvLibrary.Implementations.DVB
 
     };
     #endregion // do NOT use data control interface !!!
+    
     #region DataControl2
     [ComVisible(true), ComImport,
       Guid("B0666B7C-8C7D-4c20-BB9B-4A7FE0F313A8"),
@@ -193,6 +193,7 @@ namespace TvLibrary.Implementations.DVB
         );
     };
     #endregion// do NOT use data control interface !!!
+    
     #region DataControl3
     [ComVisible(true), ComImport,
       Guid("E2857B5B-84E7-48b7-B842-4EF5E175F315"),
@@ -450,7 +451,6 @@ namespace TvLibrary.Implementations.DVB
         );
     };
     #endregion
-
 
     #region TunerControl3
     [ComVisible(true), ComImport,

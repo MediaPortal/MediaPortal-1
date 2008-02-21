@@ -75,10 +75,10 @@ namespace TvLibrary.Implementations.DVB
         {
           KSPropertySupport supported;
           _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-          Log.Log.Info("GenericATSC: QuerySupported: {0}", supported);
+          //Log.Log.Info("GenericATSC: QuerySupported: {0}", supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Info("GenericATSC: QAM capable card found!");
+            //Log.Log.Info("GenericATSC: QAM capable card found!");
             _isGenericATSC = true;
           }
         }

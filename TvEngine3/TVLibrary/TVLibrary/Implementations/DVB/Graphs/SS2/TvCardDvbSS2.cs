@@ -186,7 +186,7 @@ namespace TvLibrary.Implementations.DVB
         if (setting.Value == "yes")
           _useDISEqCMotor = true;
       }
-      _conditionalAccess = new ConditionalAccess(null, null,null);
+      _conditionalAccess = new ConditionalAccess(null, null, null);
       _tunerDevice = device;
       _name = _tunerDevice.Name;
       _ptrDisEqc = Marshal.AllocCoTaskMem(20);
@@ -667,8 +667,8 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("ss2: build graph");
       if (_graphState != GraphState.Idle)
       {
-        Log.Log.Error("ss2: Graph already build");
-        throw new TvException("Graph already build");
+        Log.Log.Error("ss2: Graph already built");
+        throw new TvException("Graph already built");
       }
       DevicesInUse.Instance.Add(_tunerDevice);
       _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;

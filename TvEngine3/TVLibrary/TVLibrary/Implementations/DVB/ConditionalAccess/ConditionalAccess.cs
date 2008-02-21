@@ -66,15 +66,14 @@ namespace TvLibrary.Implementations.DVB
       {
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
-        /*Log.Log.WriteFile("Check for WinTV CI");
+        Log.Log.WriteFile("Check for WinTV CI");
         if (winTvUsbCiFilter != null)
         {
-          Log.Log.WriteFile("WinTV CI Module detected");
-          _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter, analyzerFilter);
+          Log.Log.WriteFile("WinTV CI detected");
+          _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
           return;
         }
-        //Note: this will stop other detetions like DiSEqC etc via ConditionalAccess for other cards.
-        _winTvCiModule = null;*/
+        _winTvCiModule = null;
 
         Log.Log.WriteFile("Check for KNC");
         _knc = new KNC(tunerFilter, analyzerFilter);
@@ -240,14 +239,18 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-		  Log.Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(), _technoTrend.IsCamReady());
+          Log.Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(), _technoTrend.IsCamReady());
           return _technoTrend.IsCamReady();
-          //return true;
         }
-        /*if (_winTvCiModule != null)
+        if (_winTvCiModule != null)
         {
-          return (_winTvCiModule.IsCAMInstalled && _winTvCiModule.IsDeviceInstalled);
-        }*/
+          //How do we check this???
+          int hr = _winTvCiModule.CAMReady();
+          if (hr != 0)
+            return false;
+          Log.Log.Info("WinTVCI:  CAM is ready");
+          return true;
+        }
       }
       catch (Exception ex)
       {
@@ -278,11 +281,17 @@ namespace TvLibrary.Implementations.DVB
     {
       return true;
     }
+
     public void OnStopGraph()
     {
       if (_digitalEveryWhere != null)
       {
         _digitalEveryWhere.OnStopGraph();
+      }
+      if (_winTvCiModule != null)
+      {
+        Log.Log.Info("dvb:  Stopping WinTVCI module");
+        _winTvCiModule.Shutdown();
       }
     }
     /// <summary>
@@ -347,11 +356,17 @@ namespace TvLibrary.Implementations.DVB
         context.AudioPid = audioPid;
         context.ServiceId = channel.ServiceId;
 
-        /*if (_winTvCiModule != null)
+        if (_winTvCiModule != null)
         {
-          Log.Log.WriteFile("WinTV CI:  SendPMT: {0}, {1}", PMT, pmtLength);
-          return _winTvCiModule.SendPMT(PMT, pmtLength);
-        }*/
+          int hr = _winTvCiModule.SendPMT(PMT, pmtLength);
+          if (hr != 0)
+          {
+            Log.Log.Info("Conditional Access:  sendPMT to WinTVCI failed");
+            return false;
+          }
+          Log.Log.Info("Conditional Access:  sendPMT to WinTVCI succeeded");
+          return true;
+        }
         if (_knc != null)
         {
           return _knc.SendPMT(PMT, pmtLength);
@@ -466,8 +481,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel.</param>
     public DVBSChannel SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
     {
-      
-      Log.Log.WriteFile("Trying to set DVB-S2 modulation...");
+      //Log.Log.WriteFile("Trying to set DVB-S2 modulation...");
       try
       {
         if (_twinhan != null)

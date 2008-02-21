@@ -26,16 +26,33 @@ using DirectShowLib;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
-  [ComVisible(true), ComImport, Guid("3B687F98-41DD-4b40-A7A3-FD6A08799D5B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IWinTvUsbCI
+  public class WinTv_CI_Wrapper
   {
-    [PreserveSig]
-    int SetFilter(IBaseFilter tunerFilter);
-    //[PreserveSig]
-    //int IsModuleInstalled(ref bool yesNo);
-    //[PreserveSig]
-    //int IsCAMInstalled(ref bool yesNo);
-    [PreserveSig]
-    int DescrambleService(IntPtr pmt, short pmtLen, ref bool succeeded);
-  };
+    #region Callback definitions
+    public delegate Int32 APDU_Callback([Out] IBaseFilter pUSBCIFilter,[Out, MarshalAs(UnmanagedType.LPArray)] byte[] APDU,[Out] Int32 SizeOfAPDU);
+    public delegate Int32 Status_Callback([Out] IBaseFilter pUSBCIFilter, [Out] Int32 Status);
+    public delegate Int32 CamInfo_Callback([Out] IntPtr Context,[Out] byte appType,[Out] ushort appManuf,[Out] ushort manufCode, [Out, MarshalAs(UnmanagedType.LPStr)] StringBuilder Info);
+    public delegate Int32 CloseMMI_Callback([Out] IBaseFilter pUSBCIFilter);
+    #endregion
+
+    #region Public functions
+    [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 WinTVCI_Init(IBaseFilter pUSBCIFilter, Status_Callback onStatus,CamInfo_Callback onCamInfo,APDU_Callback onAPDU,CloseMMI_Callback onCloseMMI);
+
+    [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 WinTVCI_SendPMT(IBaseFilter pUSBCIFilter, [In, MarshalAs(UnmanagedType.LPArray)]  byte[] pPMT, int lLength);
+
+    [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 WinTVCI_SendAPDU(IBaseFilter pUSBCIFilter, [In, MarshalAs(UnmanagedType.LPArray)]  byte[] pAPDU, int lLength);
+
+    [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 WinTVCI_OpenMMI(IBaseFilter pUSBCIFilter);
+
+    [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 WinTVCI_EnableTrayIcon(IBaseFilter pUSBCIFilter);
+
+    [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 WinTVCI_Shutdown(IBaseFilter pUSBCIFilter);
+    #endregion
+  }
 }

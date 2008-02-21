@@ -30,45 +30,88 @@ using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
-  public class WinTvCiModule
+  public class WinTvCiModule: WinTv_CI_Wrapper
   {
     IBaseFilter _winTvUsbCIFilter;
-    IWinTvUsbCI _interfaceWinTv;
     IntPtr _ptrMem = Marshal.AllocCoTaskMem(8192);
-    public WinTvCiModule(IBaseFilter winTvUsbCIFilter, IBaseFilter analyzerFilter)
+
+    APDU_Callback cbOnAPDU;
+    Status_Callback cbOnStatus;
+    CamInfo_Callback cbOnCamInfo;
+    CloseMMI_Callback cbOnCloseMMI;
+    
+    #region Constructor
+    public WinTvCiModule(IBaseFilter winTvUsbCIFilter)
     {
       _winTvUsbCIFilter = winTvUsbCIFilter;
-      _interfaceWinTv = (IWinTvUsbCI)analyzerFilter;
-      _interfaceWinTv.SetFilter(winTvUsbCIFilter);
-      //Log.Log.Info("WinTV CI:  Module installed:{0}", IsDeviceInstalled);
-      //Log.Log.Info("WinTV CI:  CAM installed:{0}", IsCAMInstalled);
+      cbOnAPDU = new APDU_Callback(OnAPDU);
+      cbOnStatus = new Status_Callback(OnStatus);
+      cbOnCamInfo = new CamInfo_Callback(OnCamInfo);
+      cbOnCloseMMI = new CloseMMI_Callback(OnMMIClosed);
+    }
+    #endregion
+
+    #region Callbacks
+    public static Int32 OnAPDU(IBaseFilter pUSBCIFilter, byte[] APDU, Int32 SizeOfAPDU)
+    {
+      Log.Log.Info("WinTvCi OnAPDU: SizeOfAPDU={0}", SizeOfAPDU);
+      return 0;
+    }
+    public static Int32 OnStatus(IBaseFilter pUSBCIFilter, Int32 Status)
+    {
+      //Log.Log.Info("WinTvCI OnStatus: Status={0}", Status);
+      if (Status == 1) Log.Log.Info("WinTvCI: Module installed but no CAM inserted?");
+      if (Status == 2) Log.Log.Info("WinTvCI: Module installed & CAM inserted");
+      return 0;
+    }
+    public static Int32 OnCamInfo(IntPtr Context, byte appType, ushort appManuf, ushort manufCode, StringBuilder Info)
+    {
+      Log.Log.Info("WinTvCi OnCamInfo: appType={0} appManuf={1} manufCode={2} info={3}", appType, appManuf, manufCode, Info.ToString());
+      return 0;
+    }
+    public static Int32 OnMMIClosed(IBaseFilter pUSBCIFilter)
+    {
+      Log.Log.Info("WinTvCi OnMMIClosed");
+      return 0;
+    }
+    #endregion
+
+    #region Public functions
+    public Int32 Init()
+    {
+      return WinTVCI_Init(_winTvUsbCIFilter, cbOnStatus, cbOnCamInfo, cbOnAPDU, cbOnCloseMMI);
     }
 
-    /*public bool IsDeviceInstalled
+    public Int32 SendPMT(byte[] PMT, int pmtLength)
     {
-      get
-      {
-        bool yesNo = false;
-        _interfaceWinTv.IsModuleInstalled(ref yesNo);
-        return yesNo;
-      }
+      return WinTVCI_SendPMT(_winTvUsbCIFilter, PMT, pmtLength);
     }
-    public bool IsCAMInstalled
+
+    public Int32 SendAPDU(byte[] APDU, int apduLength)
     {
-      get
-      {
-        bool yesNo = false;
-        _interfaceWinTv.IsCAMInstalled(ref yesNo);
-        return yesNo;
-      }
-    }*/
-    public bool SendPMT(byte[] PMT, int pmtLength)
-    {
-      bool succeeded = false;
-      for (int i = 0; i < pmtLength; ++i)
-        Marshal.WriteByte(_ptrMem, 0, PMT[i]);
-      _interfaceWinTv.DescrambleService(_ptrMem, (short)pmtLength, ref succeeded);
-      return succeeded;
+      return WinTVCI_SendPMT(_winTvUsbCIFilter, APDU, apduLength);
     }
+
+    public Int32 OpenMMI()
+    {
+      return WinTVCI_OpenMMI(_winTvUsbCIFilter);
+    }
+
+    public Int32 EnableTrayIcon()
+    {
+      return WinTVCI_EnableTrayIcon(_winTvUsbCIFilter);
+    }
+
+    public Int32 Shutdown()
+    {
+      return WinTVCI_Shutdown(_winTvUsbCIFilter);
+    }
+
+    public Int32 CAMReady()
+    {
+      return WinTVCI_Init(_winTvUsbCIFilter, null, cbOnCamInfo, null, null);
+    }
+
+    #endregion
   }
 }
