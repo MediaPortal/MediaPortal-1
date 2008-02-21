@@ -2,7 +2,7 @@
 #
 # For the MediaPortal Installer to work you need:
 # 1. Lastest NSIS version from http://nsis.sourceforge.net/Download
-# 
+#
 # Editing is much more easier, if you install HM NSIS Edit from http://hmne.sourceforge.net
 #
 # ATTENTION: You need to have the vcredist_x86.exe package in the setup folder.
@@ -33,7 +33,7 @@ BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "MediaPortal\MediaPortal TV Server"
 !define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal TV Server Setup"
-!define MUI_FINISHPAGE_RUN 
+!define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_FUNCTION RunSetup
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
@@ -100,11 +100,11 @@ Section "MediaPortal TV Server" SecServer
         DetailPrint "User pressed Cancel. Skipping installation"
         Return
       lbl_install:
-        # Uninstall / Stop the TV Service before proceeding with the installation 
+        # Uninstall / Stop the TV Service before proceeding with the installation
         DetailPrint "DeInstalling TVService"
         ExecWait '"$InstallPath\TVService.exe" /uninstall'
         DetailPrint "Finished DeInstalling TVService"
-    ${EndIf}    
+    ${EndIf}
     
     Pop $0
     
@@ -150,7 +150,7 @@ Section "MediaPortal TV Server" SecServer
     File ..\TvService\bin\Release\TvService.exe
     File ..\TvService\bin\Release\TvService.exe.config
     File ..\SetupControls\bin\Release\SetupControls.dll
-        
+    
     # Filters
     File ..\..\Filters\bin\dxerr9.dll
     File ..\..\Filters\bin\hauppauge.dll
@@ -204,13 +204,13 @@ Section "MediaPortal TV Plugin/Client" SecClient
     DetailPrint "Installing MediaPortal TVPlugin"
     
     ${If} $MPBaseDir == ""
-        MessageBox MB_OK|MB_ICONEXCLAMATION "Couldn't find an existing MediaPortal Installation.\r\nAborting the TV Plugin installation"       
+        MessageBox MB_OK|MB_ICONEXCLAMATION "Couldn't find an existing MediaPortal Installation.\r\nAborting the TV Plugin installation"
         DetailPrint "No MediaPortal Installation found. Skipping installation"
         Return
     ${EndIf}
     
     DetailPrint "MediaPortal Installed at: $MpBaseDir"
-        
+    
     #---------------------------- File Copy ----------------------
     # The Plugins
     SetOutPath $MPBaseDir\Plugins\Process
@@ -233,7 +233,7 @@ Section "MediaPortal TV Plugin/Client" SecClient
     File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
     File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
     File ..\TvPlugin\TvPlugin\Gentle.config
-        
+    
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
@@ -250,7 +250,7 @@ Section -Redist SecRedist
     
     # Now Copy the VC Redist File, which will be executed as part of the install
     File vcredist_x86.exe
-
+    
     # Installing VC++ Redist Package
     DetailPrint "Installing VC++ Redist Package"
     ExecWait '"$INSTDIR\vcredist_x86.exe" /q:a /c:"VCREDI~3.EXE /q:a /c:""msiexec /i vcredist.msi /qb!"" "'
@@ -259,7 +259,7 @@ Section -Redist SecRedist
 SectionEnd
 
 # This section is executed at the end to do some house keeping
-Section -post 
+Section -post
     # Write the Uninstaller
     SetOutPath $INSTDIR
     WriteUninstaller $INSTDIR\uninstall-tve3.exe
@@ -300,7 +300,7 @@ Function .onInit
     StrCmp $0 "" +2
     StrCpy $LibInstall 1
     Pop $0
-
+    
     ; Needed for Library Install
     ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
     Push $0
@@ -308,7 +308,7 @@ Function .onInit
     ClearErrors
     StrCmp $0 "" +2
     StrCpy $LibInstall2 1
-    Pop $0 
+    Pop $0
     
 FunctionEnd
 
@@ -321,12 +321,12 @@ FunctionEnd
 
 # Uninstall TV Server
 Section /o "un.MediaPortal TV Server" UNSecServer
-     
+    
     # De-instell the service
     DetailPrint "DeInstalling TVService"
     ExecWait '"$INSTDIR\TVService.exe" /uninstall'
     DetailPrint "Finished DeInstalling TVService"
-       
+    
     # Unregister the Filters
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\mpFileWriter.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\MpgMux.ax
@@ -395,9 +395,9 @@ Section /o "un.MediaPortal TV Server" UNSecServer
         Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
         Delete /REBOOTOK $INSTDIR\uninstall-tve3.exe
         DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
-        RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup       
+        RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
         DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
-        DeleteRegKey /IfEmpty HKLM "${REGKEY}"           
+        DeleteRegKey /IfEmpty HKLM "${REGKEY}"
     ${EndIf}
     Pop $R0
 SectionEnd
@@ -428,26 +428,26 @@ Section /o "un.MediaPortal TV Plugin/Client" UNSecClient
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
-   
+    
     Delete /REBOOTOK  $MPBaseDir\DVBSub2.ax
     Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
     Delete /REBOOTOK  $MPBaseDir\TSFileSource.ax
     Delete /REBOOTOK  $MPBaseDir\TsReader.ax
-   
+    
     DeleteRegValue HKLM "${REGKEY}\Components" SecClient
     
     # Check, if we have a TV Server installed. If Not, we can cleanup the registry and start menu
     Push $R0
     Push $R1
     ReadRegStr $R0 HKLM "${REGKEY}\Components" SecServer
-    ${If} $R0 == ""    
+    ${If} $R0 == ""
         # Get the uninstall string, so that we can delete the exe
-        ReadRegStr $R1 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString       
+        ReadRegStr $R1 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString
         Delete /REBOOTOK $R1
         Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
         DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
         DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
-        RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup           
+        RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
         DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
         DeleteRegKey /IfEmpty HKLM "${REGKEY}"
     ${EndIf}
@@ -499,7 +499,7 @@ LangString DESC_UnSECServer ${LANG_ENGLISH} "Uninstalls the MediaPortal TVServer
   !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SECClient)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SECServer)
   !insertmacro MUI_DESCRIPTION_TEXT ${UnSecClient} $(DESC_UNSECClient)
-  !insertmacro MUI_DESCRIPTION_TEXT ${UnSecServer} $(DESC_UnSECServer) 
+  !insertmacro MUI_DESCRIPTION_TEXT ${UnSecServer} $(DESC_UnSECServer)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 # This function is called, before the Directory Page is displayed
@@ -509,7 +509,7 @@ Function dir_pre
             strcpy $0 1
          ${Else}
             strcpy $0 2
-            abort            
+            abort
          ${EndIf}
 Functionend
 
@@ -520,7 +520,7 @@ Function un.dir_pre
             strcpy $0 1
          ${Else}
             strcpy $0 2
-            abort            
+            abort
          ${EndIf}
 Functionend
 
@@ -531,6 +531,6 @@ Function finish_pre
             strcpy $0 1
          ${Else}
              strcpy $0 2
-             abort       
+             abort
          ${EndIf}
 Functionend
