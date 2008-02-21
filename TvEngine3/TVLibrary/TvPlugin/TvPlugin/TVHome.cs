@@ -1536,8 +1536,13 @@ namespace TvPlugin
 			if (ts.TotalMilliseconds < 1000) return;
 			_updateProgressTimer = DateTime.Now;
 
-			if (!TVHome.Connected)
+      if (!TVHome.Connected || (!g_Player.IsTVRecording && !g_Player.IsTV))
 			{
+        GUIPropertyManager.SetProperty("#TV.View.channel", "");
+        GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
 				return;
 			}
 
@@ -1594,7 +1599,7 @@ namespace TvPlugin
 						GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(current.EndTime - current.StartTime));
 						GUIPropertyManager.SetProperty("#TV.View.genre", current.Genre);
 						GUIPropertyManager.SetProperty("#TV.View.title", current.Title);
-						GUIPropertyManager.SetProperty("#TV.View.description", current.Description);
+						GUIPropertyManager.SetProperty("#TV.View.description", current.Description); 
 					}
 					else
 					{
@@ -3226,7 +3231,7 @@ namespace TvPlugin
 		#region Serialization
 
 		public void LoadSettings(MediaPortal.Profile.Settings xmlreader)
-		{
+		{      
 			MediaPortal.GUI.Library.Log.Info("ChannelNavigator::LoadSettings()");
 			string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
 			m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
@@ -3301,30 +3306,72 @@ namespace TvPlugin
 
 		public void SaveSettings(MediaPortal.Profile.Settings xmlwriter)
 		{
-			if (m_currentChannel != null)
+      string groupName = "";
+			if (CurrentGroup != null)
 			{
+        groupName = CurrentGroup.GroupName.Trim();
 				try
 				{
-          if (m_currentChannel.IsTv)
-          {
-            xmlwriter.SetValue("mytv", "channel", m_currentChannel.DisplayName);
+          if (groupName != String.Empty)
+          {            
+            if (m_currentgroup > -1)
+            {
+              groupName = ((ChannelGroup)m_groups[m_currentgroup]).GroupName;              
+            }
+            else if (m_currentChannel != null)
+            {
+              groupName = m_currentChannel.CurrentGroup.GroupName;
+            }
+
+            if (groupName.Length > 0)
+            {
+              xmlwriter.SetValue("mytv", "group", groupName);
+            }          
           }
 				}
 				catch (Exception)
 				{
 				}
 			}
-			if (CurrentGroup != null)
-			{
-				try
-				{
-					if (CurrentGroup.GroupName.Trim() != String.Empty)
-						xmlwriter.SetValue("mytv", "group", m_currentChannel.CurrentGroup.GroupName);
-				}
-				catch (Exception)
-				{
-				}
-			}
+
+      if (m_currentChannel != null)
+      {
+        try
+        {
+          if (m_currentChannel.IsTv)
+          {
+            bool foundMatchingGroupName = false;
+                        
+            foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
+            {
+              if (groupMap.ReferencedChannelGroup().GroupName == groupName)
+              {
+                foundMatchingGroupName = true;
+                break;
+              }
+            }
+            if (foundMatchingGroupName)
+            {
+              xmlwriter.SetValue("mytv", "channel", m_currentChannel.DisplayName);
+            }
+            else //the channel did not belong to the group, then pick the first channel avail in the group and set this as the last channel.
+            {   
+              if (m_currentgroup > -1)           
+              {
+                ChannelGroup cg = (ChannelGroup)m_groups[m_currentgroup];
+                if (cg.ReferringGroupMap().Count > 0)
+                {
+                  GroupMap gm = (GroupMap) cg.ReferringGroupMap()[0];                  
+                  xmlwriter.SetValue("mytv", "channel", gm.ReferencedChannel().DisplayName);
+                }
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+        }
+      }
 		}
 
 		#endregion
