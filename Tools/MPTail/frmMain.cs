@@ -8,6 +8,7 @@ using System.Drawing.Text;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Collections.Specialized;
 
 namespace MPTail
 {
@@ -15,6 +16,7 @@ namespace MPTail
   {
     private string mpLogPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)+@"\Team Mediaportal\Mediaportal\Log\";
     private string tveLogPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\MediaPortal TV Server\log\";
+    private List<string> customFiles;
     private List<TailedRichTextBox> loggerCollection;
 
     public frmMain()
@@ -23,6 +25,7 @@ namespace MPTail
       if (!Directory.Exists(mpLogPath))
         mpLogPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\MediaPortal\Log\";
       loggerCollection = new List<TailedRichTextBox>();
+      customFiles = new List<string>();
       LoadSettings();
       AddAllLoggers();
     }
@@ -41,6 +44,15 @@ namespace MPTail
         font_family = node.Attributes["font-family"].Value;
         font_size = float.Parse(node.Attributes["font-size"].Value);
         cbClearOnCreate.Checked = (node.Attributes["clear_log_on_create"].Value == "1");
+
+      }
+      if (File.Exists("MPTail_CustomFiles.xml"))
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load("MPTail_CustomFiles.xml");
+        XmlNodeList customNodes = doc.SelectNodes("/custom/logfile");
+        foreach (XmlNode cnode in customNodes)
+          customFiles.Add(cnode.Attributes["filename"].Value);
       }
       this.Font = new Font(new FontFamily(font_family), font_size);
     }
@@ -73,7 +85,12 @@ namespace MPTail
     private void AddLogger(string filename, TabControl ctrl)
     {
       TabPage tab = new TabPage(Path.GetFileNameWithoutExtension(filename));
-      TailedRichTextBox tr = new TailedRichTextBox(filename,tab);
+      LoggerCategory cat = LoggerCategory.MediaPortal;
+      if (ctrl == TVETabCtrl)
+        cat = LoggerCategory.TvEngine;
+      else if (ctrl == CustomTabCtrl)
+        cat = LoggerCategory.Custom;
+      TailedRichTextBox tr = new TailedRichTextBox(filename,cat,tab);
       tr.OnSaveSettings += new TailedRichTextBox.SaveSettingsHandler(Logger_OnSaveSettings);
       tr.WordWrap = false;
       tab.Controls.Add(tr);
@@ -97,6 +114,9 @@ namespace MPTail
       AddLogger(tveLogPath + "EPG.log", TVETabCtrl);
       AddLogger(tveLogPath + "Player.log", TVETabCtrl);
       AddLogger(tveLogPath + "Streaming Server.log", TVETabCtrl);
+
+      foreach (string logfile in customFiles)
+        AddLogger(logfile, CustomTabCtrl);
     }
     private string FormatFileSize(long fs)
     {
@@ -110,15 +130,50 @@ namespace MPTail
       long mb = (fs / 1024) / 1024;
       return " (" + mb.ToString() + " MB)";
     }
+    private string FormatCombinedLogLine(string logger, DateTime dt, string line)
+    {
+      string s = dt.ToShortDateString() + " " + dt.ToShortTimeString()+".";
+      string milli = dt.Millisecond.ToString();
+      while (milli.Length < 3)
+        milli += "0";
+      s += milli;
+      while (logger.Length < 16)
+        logger = " "+logger;
+      s += " [" + logger + "] " + line;
+      return s;
+    }
     private void ProcessAllLoggers()
     {
+      SortedDictionary<MyDateTime, string> combinedLines = new SortedDictionary<MyDateTime, string>();
       foreach (TailedRichTextBox tr in loggerCollection)
       {
         string currentCaption = tr.ParentTab.Text;
-        string newCaption = Path.GetFileNameWithoutExtension(tr.Filename) + FormatFileSize(tr.Process());
-        if (currentCaption != newCaption)
-          tr.ParentTab.Text = newCaption;
+        string newText;
+        string newCaption = Path.GetFileNameWithoutExtension(tr.Filename) + FormatFileSize(tr.Process(out newText));
+        if (currentCaption == newCaption) continue;
+
+        tr.ParentTab.Text = newCaption;
+
+        if (tr.Category == LoggerCategory.TvEngine)
+        {
+          string[] lines = newText.Split(new char[] { '\n' });
+          foreach (string line in lines)
+          {
+            if (line == "") continue;
+            if (line.Length < 13) continue;
+            int idx = line.IndexOf(' ', 13);
+            if (idx == -1) continue;
+            string dtStr = line.Substring(0, line.IndexOf(' ', 13));
+            string nline = line.Remove(0, line.IndexOf(' ', 13) + 1);
+            DateTime dt;
+            if (!DateTime.TryParse(dtStr,out dt)) continue;
+            combinedLines.Add(new MyDateTime(combinedLines.Count+1,dt),FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename),dt,nline)); 
+          }
+        }
       }
+      foreach (string cline in combinedLines.Values)
+        richTextBoxTvEngine.AppendText(cline);
+      richTextBoxTvEngine.Focus();
     }
 
     private void Form1_Shown(object sender, EventArgs e)
@@ -173,13 +228,12 @@ namespace MPTail
       else
         ScrollInView(TVETabCtrl.TabPages[MPTabCtrl.SelectedIndex]);
     }
-    #endregion
-
     private void timer1_Tick(object sender, EventArgs e)
     {
       timer1.Enabled = false;
       ProcessAllLoggers();
       timer1.Enabled = true;
     }
+    #endregion
   }
 }

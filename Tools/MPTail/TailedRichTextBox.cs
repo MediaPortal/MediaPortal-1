@@ -7,11 +7,43 @@ using System.Xml;
 
 namespace MPTail
 {
+  public class MyDateTime: IComparable
+  {
+    DateTime dt;
+    int counter;
+
+    public MyDateTime(int instanceId,DateTime dateTime)
+    {
+      counter = instanceId;
+      dt=dateTime;
+    }
+    public MyDateTime(int instanceId,string dateTimeStr)
+    {
+      counter = instanceId;
+      dt = DateTime.Parse(dateTimeStr);
+    }
+
+    public int CompareTo(object obj)
+    {
+      MyDateTime mdt = (MyDateTime)obj;
+      int ret=DateTime.Compare(dt, mdt.dt);
+      if (ret == 0)
+        ret = 1;
+      return ret;
+    }
+  }
   public class SearchParameters
   {
     public string searchStr = "";
     public bool caseSensitive = false;
     public System.Drawing.Color highlightColor = System.Drawing.Color.Yellow;
+  }
+
+  public enum LoggerCategory
+  {
+    MediaPortal,
+    TvEngine,
+    Custom
   }
 
   public class TailedRichTextBox: RichTextBox
@@ -26,15 +58,18 @@ namespace MPTail
     private TabPage parentTab;
     private ContextMenuStrip ctxMenu;
     private SearchParameters searchParams;
+
+    public LoggerCategory Category;
     #endregion
 
     public delegate void SaveSettingsHandler();
     public event SaveSettingsHandler OnSaveSettings;
 
     #region constructor
-    public TailedRichTextBox(string filename,TabPage parentTabPage)
+    public TailedRichTextBox(string filename,LoggerCategory loggerCategory,TabPage parentTabPage)
     {
       this.filename = filename;
+      Category = loggerCategory;
       parentTab = parentTabPage;
       previousSeekPosition=0;
       previousFileSize = 0;
@@ -52,7 +87,8 @@ namespace MPTail
       if (dlg.ShowDialog() == DialogResult.OK)
       {
         dlg.GetConfig(searchParams);
-        OnSaveSettings();
+        if (Category != LoggerCategory.Custom) 
+          OnSaveSettings();
         SelectAll();
         SelectionBackColor = System.Drawing.Color.White;
         SelectionFont = new System.Drawing.Font(this.Font, System.Drawing.FontStyle.Regular);
@@ -90,6 +126,7 @@ namespace MPTail
     #region Persistance
     private void LoadSettings()
     {
+      if (Category == LoggerCategory.Custom) return;
       if (File.Exists("MPTailConfig.xml"))
       {
         XmlDocument doc = new XmlDocument();
@@ -105,6 +142,7 @@ namespace MPTail
     }
     public void SaveSettings(XmlDocument doc,XmlNode n_root)
     {
+      if (Category == LoggerCategory.Custom) return;
       XmlNode n_logger = doc.CreateElement("loggers");
       string name = Path.GetFileNameWithoutExtension(filename);
       XmlNode n_name = doc.CreateElement(name.Replace(' ','_'));
@@ -132,8 +170,9 @@ namespace MPTail
     #endregion
 
     #region public members
-    public long Process()
+    public long Process(out string newText)
     {
+      newText = "";
       if (!File.Exists(filename))
       {
         previousSeekPosition = 0;
@@ -168,6 +207,7 @@ namespace MPTail
         sb.Append((char)bytesRead[i]);
       long lastPos = this.TextLength;
       this.AppendText(sb.ToString());
+      newText = sb.ToString();
       HighlightSearchTerms(lastPos);
       if (followMe)
         this.Focus();
