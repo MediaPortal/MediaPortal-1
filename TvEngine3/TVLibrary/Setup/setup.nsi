@@ -26,6 +26,7 @@ BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
 !define MUI_HEADERIMAGE_BITMAP "images\header.bmp"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
+!define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM
 !define MUI_STARTMENUPAGE_NODISABLE
@@ -96,7 +97,7 @@ Section "MediaPortal TV Server" SecServer
     
     ReadRegStr $InstallPath HKLM "${REGKEY}" InstallPath
     ${If} $InstallPath != ""
-        MessageBox MB_OKCANCEL|MB_ICONQUESTION "TV Server is already installed.$\r$\nPress 'OK' to overwrite the existing installation$\r$\nPress 'Cancel' to Abort the installation" IDOK lbl_install IDCANCEL 0
+        MessageBox MB_OKCANCEL|MB_ICONQUESTION "TV Server is already installed.$\r$\nPress 'OK' to overwrite the existing installation$\r$\nPress 'Cancel' to Abort the installation" /SD IDOK IDOK lbl_install IDCANCEL 0
         DetailPrint "User pressed Cancel. Skipping installation"
         Return
       lbl_install:
@@ -191,7 +192,7 @@ Section "MediaPortal TV Server" SecServer
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk" "$CommonAppData\log" "" "$CommonAppData\log" 0 "" "" "TV Server Log Files"
     # Change outpath back to the install dir, so that the shortcut to SetupTV gets the correct working directory
     SetOutPath $INSTDIR
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "mp.ico" 0 "" "" "MediaPortal TV Server"
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
     
     !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -204,7 +205,7 @@ Section "MediaPortal TV Plugin/Client" SecClient
     DetailPrint "Installing MediaPortal TVPlugin"
     
     ${If} $MPBaseDir == ""
-        MessageBox MB_OK|MB_ICONEXCLAMATION "Couldn't find an existing MediaPortal Installation.\r\nAborting the TV Plugin installation"
+        MessageBox MB_OK|MB_ICONEXCLAMATION "Couldn't find an existing MediaPortal Installation.$\r$\nAborting the TV Plugin installation"
         DetailPrint "No MediaPortal Installation found. Skipping installation"
         Return
     ${EndIf}
@@ -275,7 +276,7 @@ Section -post
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" URLInfoAbout "${URL}"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $INSTDIR\uninstall-tve3.exe
+    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon "$INSTDIR\mp.ico,0"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall-tve3.exe
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
     WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
