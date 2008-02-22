@@ -1,0 +1,383 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
+    <value>Advanced Installation</value>
+  </data>
+  <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
+    <value>The advanced installation allows you to install Server/Client setups and to specify installation locations and other settings</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
+    <value>One Click Installation</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
+    <value>All required applications will be installed into their default locations and with the default settings. The database password is "MediaPortal".</value>
+  </data>
+  <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
+    <value>Perform an advanced installation</value>
+  </data>
+  <data name="BaseInstallation_rbOneClick" xml:space="preserve">
+    <value>Perform a One Click Installation</value>
+  </data>
+  <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
+    <value>Please choose which setup you want to install:</value>
+  </data>
+  <data name="CustomInstallation_rbClient" xml:space="preserve">
+    <value>MediaPortal Client (connects to a TV-Server)</value>
+  </data>
+  <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
+    <value>MediaPortal Singleseat installation (stand alone)</value>
+  </data>
+  <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
+    <value>MediaPortal dedicated TV-Server (master server with SQL Server)</value>
+  </data>
+  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
+    <value>MediaPortal dedicated TV-Server (without SQL Server)</value>
+  </data>
+  <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Configure Windows Firewall to allow external access to database server</value>
+  </data>
+  <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
+    <value>You have to supply a valid installation path for the SQL-Server.</value>
+  </data>
+  <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
+    <value>You have to supply a password for the sa SQL-Server user.</value>
+  </data>
+  <data name="DBMSSettings_labelHeading" xml:space="preserve">
+    <value>Please set the needed options for the SQL-Server installation:</value>
+  </data>
+  <data name="DBMSSettings_labelInstDir" xml:space="preserve">
+    <value>Installation directory</value>
+  </data>
+  <data name="DBMSSettings_labelPassword" xml:space="preserve">
+    <value>Password for "sa" user of the SQL Server</value>
+  </data>
+  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
+    <value>(The password for the admin-user of the SQL-Server. Default is "MediaPortal")</value>
+  </data>
+  <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
+    <value>Select the installation folder for the SQL-Server</value>
+  </data>
+  <data name="DBMSType_labelHeading" xml:space="preserve">
+    <value>Please select the SQL-Server you want to use:</value>
+  </data>
+  <data name="DBMSType_rbMSSQL" xml:space="preserve">
+    <value>Microsoft SQL-Server Express</value>
+  </data>
+  <data name="DBMSType_rbMySQL" xml:space="preserve">
+    <value>MySQL 5</value>
+  </data>
+  <data name="Finished_labelHeading1" xml:space="preserve">
+    <value>Congratulations !</value>
+  </data>
+  <data name="Finished_labelHeading2" xml:space="preserve">
+    <value>You successfully completed your setup of MediaPortal</value>
+  </data>
+  <data name="Finished_labelHeading3" xml:space="preserve">
+    <value>Below you may find some useful links that help you getting started with MediaPortal</value>
+  </data>
+  <data name="Finished_linkForum" xml:space="preserve">
+    <value>MediaPortal Forum</value>
+  </data>
+  <data name="Finished_linkHomepage" xml:space="preserve">
+    <value>MediaPortal Homepage</value>
+  </data>
+  <data name="Finished_linkWiki" xml:space="preserve">
+    <value>MediaPortal Wiki</value>
+  </data>
+  <data name="HTTPDownload_buttonCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="HTTPDownload_errDownloadFailed" xml:space="preserve">
+    <value>There was an error downloading the requested file</value>
+  </data>
+  <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
+    <value>Download URL:</value>
+  </data>
+  <data name="HTTPDownload_labelTargetFile" xml:space="preserve">
+    <value>Target:</value>
+  </data>
+  <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
+    <value>Download canceled by user</value>
+  </data>
+  <data name="HTTPDownload_Title" xml:space="preserve">
+    <value>Downloading file...</value>
+  </data>
+  <data name="Install_actionDownloadInstall" xml:space="preserve">
+    <value>Download-&gt;install</value>
+  </data>
+  <data name="Install_actionDownloadUpdate" xml:space="preserve">
+    <value>Download recent snapshot-&gt;Update with recent snapshot</value>
+  </data>
+  <data name="Install_actionInstall" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="Install_actionNothing" xml:space="preserve">
+    <value>&lt;no action&gt;</value>
+  </data>
+  <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
+    <value>Uninstall previous-&gt;download-&gt;install</value>
+  </data>
+  <data name="Install_actionUninstallInstall" xml:space="preserve">
+    <value>Uninstall previous-&gt;Install</value>
+  </data>
+  <data name="Install_buttonInstall" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="Install_colAction" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="Install_colApplication" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="Install_colState" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="Install_errAppsMissing" xml:space="preserve">
+    <value>Not all required applications are installed.</value>
+  </data>
+  <data name="Install_errDownloadFailed" xml:space="preserve">
+    <value>Failed to download application [{0}]</value>
+  </data>
+  <data name="Install_errInstallFailed" xml:space="preserve">
+    <value>Failed to install application [{0}]</value>
+  </data>
+  <data name="Install_errUninstallFailed" xml:space="preserve">
+    <value>Failed to uninstall application [{0}]</value>
+  </data>
+  <data name="Install_labelHeading" xml:space="preserve">
+    <value>Press the "install" button to perform all necessary actions to install your setup</value>
+  </data>
+  <data name="Install_msgDownloading" xml:space="preserve">
+    <value>Downloading...</value>
+  </data>
+  <data name="Install_msgInstalling" xml:space="preserve">
+    <value>Installing...</value>
+  </data>
+  <data name="Install_msgUninstalling" xml:space="preserve">
+    <value>Uninstalling...</value>
+  </data>
+  <data name="Install_stateInstalled" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="Install_stateNotInstalled" xml:space="preserve">
+    <value>Not installed</value>
+  </data>
+  <data name="Install_stateVersionMismatch" xml:space="preserve">
+    <value>Another version is already installed</value>
+  </data>
+  <data name="InstallDlg_VersionLookupFailed" xml:space="preserve">
+    <value>Failed to lookup the most recent svn revision on the MediaPortal homepage</value>
+  </data>
+  <data name="MainWindow_AppName" xml:space="preserve">
+    <value>MediaPortal Deploy Tool</value>
+    <comment>Name for the title bar of the app</comment>
+  </data>
+  <data name="MainWindow_AppName_SVN" xml:space="preserve">
+    <value>MediaPortal Deploy Tool -- SVN Mode</value>
+  </data>
+  <data name="MainWindow_backButton" xml:space="preserve">
+    <value>back</value>
+  </data>
+  <data name="MainWindow_buttonClose" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="MainWindow_labelAppHeading" xml:space="preserve">
+    <value>This application will guide you through the installation of MediaPortal and all the requiered.</value>
+    <comment>Heading directly under MP image</comment>
+  </data>
+  <data name="MainWindow_nextButton" xml:space="preserve">
+    <value>next</value>
+  </data>
+  <data name="ManualDownload_buttonContinue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="ManualDownload_errFileNotFound" xml:space="preserve">
+    <value>The requested file still does not exist</value>
+  </data>
+  <data name="ManualDownload_labelDesc" xml:space="preserve">
+    <value>Hit "continue", when you finished downloading the requested file</value>
+  </data>
+  <data name="ManualDownload_labelDir" xml:space="preserve">
+    <value>Target directory:</value>
+  </data>
+  <data name="ManualDownload_labelFile" xml:space="preserve">
+    <value>Filename:</value>
+  </data>
+  <data name="ManualDownload_labelHeading" xml:space="preserve">
+    <value>You have to manually download the following file</value>
+  </data>
+  <data name="ManualDownload_linkDir" xml:space="preserve">
+    <value>Open directory</value>
+  </data>
+  <data name="ManualDownload_linkURL" xml:space="preserve">
+    <value>link</value>
+  </data>
+  <data name="ManualDownload_Title" xml:space="preserve">
+    <value>Manual download</value>
+  </data>
+  <data name="MPSettings_buttonBrowse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="MPSettings_errInvalidPath" xml:space="preserve">
+    <value>You have to supply a valid installation path for MediaPortal.</value>
+  </data>
+  <data name="MPSettings_labelHeading" xml:space="preserve">
+    <value>Please set the needed options for the MediaPortal installation:</value>
+  </data>
+  <data name="MPSettings_labelInstDir" xml:space="preserve">
+    <value>MediaPortal install dir:</value>
+  </data>
+  <data name="MPSettings_msgSelectDir" xml:space="preserve">
+    <value>Select the installation folder for MediaPortal</value>
+  </data>
+  <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Configure Windows Firewall to allow external access to TvServer</value>
+  </data>
+  <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
+    <value>You have to supply a valid installation path for the TV-Server.</value>
+  </data>
+  <data name="TvServerSettings_labelHeading" xml:space="preserve">
+    <value>Please set the needed options for the TV-Server installation:</value>
+  </data>
+  <data name="TvServerSettings_labelInstDir" xml:space="preserve">
+    <value>TV-Server install dir:</value>
+  </data>
+  <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
+    <value>Select the installation folder for the TV-Server</value>
+  </data>
+  <data name="Welcome_labelHeading1" xml:space="preserve">
+    <value>Thank you for choosing MediaPortal!</value>
+  </data>
+  <data name="Welcome_labelHeading2" xml:space="preserve">
+    <value>This deployment tool will guide you through the installation process</value>
+  </data>
+  <data name="Welcome_labelHeading2_SVN" xml:space="preserve">
+    <value>This deployment tool will update all installed applications to the current svn revision</value>
+  </data>
+  <data name="Welcome_labelHeading3" xml:space="preserve">
+    <value>Please select your language before you continue</value>
+  </data>
+</root>
