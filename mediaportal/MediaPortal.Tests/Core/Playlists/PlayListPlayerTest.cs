@@ -96,6 +96,12 @@ namespace MediaPortal.Tests.Core.Playlists
       hasPlayBeenCalled = true;
       return true;
     }
+    
+    public bool Play(string strFile, int beginPositionMS, int startPositionMS, int endPositionMS)
+    {
+      hasPlayBeenCalled = true;
+      return true;
+    }
 
     public void Stop()
     {

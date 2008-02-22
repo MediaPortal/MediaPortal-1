@@ -53,10 +53,14 @@ namespace MediaPortal.GUI.Library
     protected GUIImage _imageIcon = null;					// pointer to CImage containing the icon
     protected GUIImage _imageBigPinIcon = null;				// pointer to CImage containing the icon
     protected bool _isSelected = false;					// item is selected or not
+    protected bool _isVirtual = false;          // indicates if the item is a true filesystem item or a virtual one
     protected bool _isFolder = false;						// indicated if the item is a folder or a path
     protected string _folder = string.Empty;								// path + filename of the item
+    protected string _playedFileName = string.Empty;              // path + filename of the data file used to play the item
     protected string _dvdLabel = string.Empty;						// indicates the disc number of movie
     protected int _duration = 0;							// duration (in seconds) of the movie or song
+    protected int _startPlayPositionMS = 0;               // start position (in ms) of the movie or song 
+    protected int _endPlayPositionMS = 0;               // end position (in ms) of the movie or song 
     FileInformation _fileInfo = null;								// file info (size, date/time etc.) of the file
     bool _shaded = false;						// indicates if the item needs to be rendered shaded
     float _rating = 0;								// rating of a movie
@@ -96,6 +100,10 @@ namespace MediaPortal.GUI.Library
       _bigIconName = item._bigIconName;
       _pinIconName = item._pinIconName;
       _isSelected = item._isSelected;
+      _isVirtual = item._isVirtual;
+      _startPlayPositionMS = item._startPlayPositionMS;
+      _endPlayPositionMS = item._endPlayPositionMS;
+      _playedFileName = item._playedFileName;
       _isFolder = item._isFolder;
       _folder = item._folder;
       _dvdLabel = item._dvdLabel;
@@ -349,6 +357,15 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set if the item is virtual.
+    /// </summary>
+    public bool IsVirtual
+    {
+      get { return _isVirtual; }
+      set { _isVirtual = value; }
+    }
+
+    /// <summary>
     /// Get/set if the item is a folder.
     /// </summary>
     public bool IsFolder
@@ -368,6 +385,29 @@ namespace MediaPortal.GUI.Library
         if (value == null)
           return;
         _folder = value;
+        if (!IsVirtual || IsFolder)
+          _playedFileName = value;
+      }
+    }
+
+    /// <summary>
+    /// Get the path + filename of the played file associated to the item.
+    /// </summary>
+    public string PlayedFileName
+    {
+      get
+      {
+        if (IsVirtual && !IsFolder)
+          return _playedFileName;
+        else
+          return _folder;
+      }
+      set
+      {
+        if (value == null)
+          return;
+        if (IsVirtual && !IsFolder)
+          _playedFileName = value;
       }
     }
 
@@ -413,6 +453,24 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception) { }
       }
+    }
+
+    /// <summary>
+    /// Get/set the start pos (in ms) of the movie or song.
+    /// </summary>
+    public int StartPlayPositionMS
+    {
+      get { return _startPlayPositionMS; }
+      set { _startPlayPositionMS = value; }
+    }
+
+    /// <summary>
+    /// Get/set the end pos (in ms) of the movie or song.
+    /// </summary>
+    public int EndPlayPositionMS
+    {
+      get { return _endPlayPositionMS; }
+      set { _endPlayPositionMS = value; }
     }
 
     /// <summary>

@@ -42,6 +42,7 @@ namespace MediaPortal.Playlists
       bool Playing { get; }
       void Release();
       bool Play(string strFile);
+      bool Play(string strFile, int beginPositionMS, int startPositionMS, int endPositionMS);
       bool PlayVideoStream(string strURL, string streamName);
       bool PlayAudioStream(string strURL);
       void Stop();
@@ -68,6 +69,11 @@ namespace MediaPortal.Playlists
       bool IPlayer.Play(string strFile)
       {
         return MediaPortal.Player.g_Player.Play(strFile);
+      }
+
+      bool IPlayer.Play(string strFile, int beginPositionMS, int startPositionMS, int endPositionMS)
+      {
+        return MediaPortal.Player.g_Player.Play(strFile, beginPositionMS, startPositionMS, endPositionMS);
       }
 
       bool IPlayer.PlayVideoStream(string strURL, string streamName)
@@ -445,7 +451,9 @@ namespace MediaPortal.Playlists
         else if (item.Type == PlayListItem.PlayListItemType.AudioStream)  // Internet Radio
           playResult = g_Player.PlayAudioStream(item.FileName);
         else
-          playResult = g_Player.Play(item.FileName);
+        {
+          playResult = g_Player.Play(item.PlayedFileName, item.StartPlayPositionMS, 0, item.EndPlayPositionMS);
+        }
         if (!playResult)
         {
           //	Count entries in current playlist
