@@ -524,31 +524,28 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="fileName">timeshifting filename</param>
     public void SetTimeShiftFileName(string fileName)
     {
+      if (_channelInfo.pids.Count == 0)
+      {
+        Log.Log.WriteFile("subch:{0} SetTimeShiftFileName no pmt received. Timeshifting failed", _subChannelId);
+        return;
+      }
       _timeshiftFileName = fileName;
       Log.Log.WriteFile("subch:{0} SetTimeShiftFileName:{1}", _subChannelId, fileName);
       //int hr;
       if (_tsFilterInterface != null)
       {
-        _tsFilterInterface.TimeShiftSetParams(_subChannelIndex,_parameters.MinimumFiles, _parameters.MaximumFiles, _parameters.MaximumFileSize);
+        _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles, _parameters.MaximumFileSize);
         _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelIndex, fileName);
         _tsFilterInterface.TimeShiftSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
-        if (_channelInfo.pids.Count == 0)
-        {
-          Log.Log.WriteFile("subch:{0} SetTimeShiftFileName no pmt received yet", _subChannelId);
-          _startTimeShifting = true;
-        }
-        else
-        {
-          Log.Log.WriteFile("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
-          _startTimeShifting = false;
-          SetTimeShiftPids();
-          _tsFilterInterface.TimeShiftStart(_subChannelIndex);
+        Log.Log.WriteFile("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
+        _startTimeShifting = false;
+        SetTimeShiftPids();
+        _tsFilterInterface.TimeShiftStart(_subChannelIndex);
 
-          Log.Log.WriteFile("Set video / audio observer");
-          _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
+        Log.Log.WriteFile("Set video / audio observer");
+        _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
 
-          _graphState = GraphState.TimeShifting;
-        }
+        _graphState = GraphState.TimeShifting;
       }
     }
     #endregion
@@ -638,7 +635,7 @@ namespace TvLibrary.Implementations.DVB
     public bool StartTimeShifting(string fileName)
     {
       SetTimeShiftFileName(fileName);
-      return true;
+      return (_channelInfo.pids.Count != 0);
     }
     /// <summary>
     /// Stop recording
