@@ -32,7 +32,7 @@ using System.Xml;
 
 namespace MPTail
 {
-  public class TailedRichTextBox: RichTextBox
+  public class TailedRichTextBox: RingBufferedRichTextBox
   {
     #region Variables
     private bool followMe = true;
@@ -58,13 +58,29 @@ namespace MPTail
       previousFileSize = 0;
       ctxMenu = new ContextMenuStrip();
       this.ContextMenuStrip = ctxMenu;
-      ToolStripItem item=ctxMenu.Items.Add("Configure search parameters");
-      item.Click+=new EventHandler(item_Click);
+      if (Category != LoggerCategory.Custom)
+      {
+        ToolStripItem relocateItem = ctxMenu.Items.Add("Correct logfile location");
+        relocateItem.Click += new EventHandler(relocateItem_Click);
+      }
+      ToolStripItem cfgItem = ctxMenu.Items.Add("Configure search parameters");
+      cfgItem.Click += new EventHandler(Config_Click);
       searchParams = new SearchParameters();
       LoadSettings();
     }
 
-    void item_Click(object sender, EventArgs e)
+    void relocateItem_Click(object sender, EventArgs e)
+    {
+      OpenFileDialog dlg = new OpenFileDialog();
+      dlg.CheckFileExists = true;
+      dlg.CheckPathExists = true;
+      dlg.Multiselect = false;
+      dlg.Filter = Path.GetFileName(filename) + "|" + Path.GetFileName(filename);
+      if (dlg.ShowDialog() == DialogResult.OK)
+        filename = dlg.FileName;
+    }
+
+    void Config_Click(object sender, EventArgs e)
     {
       frmSearchParams dlg = new frmSearchParams("Hightlight settings for [" + Path.GetFileName(filename) + "]",searchParams);
       if (dlg.ShowDialog() == DialogResult.OK)
@@ -112,7 +128,12 @@ namespace MPTail
         XmlDocument doc = new XmlDocument();
         doc.Load("MPTailConfig.xml");
         string name = Path.GetFileNameWithoutExtension(filename);
-        XmlNode node = doc.SelectSingleNode("/mptail/loggers/"+Category.ToString()+"/"+name.Replace(' ','_')+"/config");
+        XmlNode node = null;
+        try
+        {
+          node = doc.SelectSingleNode("/mptail/loggers/" + Category.ToString() + "/" + name.Replace(' ', '_') + "/config");
+        }
+        catch (Exception) { return; }
         if (node == null) return;
         string fname = node.Attributes["filename"].Value;
         if (filename != fname)

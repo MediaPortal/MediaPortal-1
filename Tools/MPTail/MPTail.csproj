@@ -76,6 +76,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="RingBufferedRichTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="TailedRichTextBox.cs">
       <SubType>Component</SubType>
     </Compile>

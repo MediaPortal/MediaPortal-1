@@ -66,12 +66,13 @@ namespace MPTail
       this.tabPage3 = new System.Windows.Forms.TabPage();
       this.CustomTabCtrl = new System.Windows.Forms.TabControl();
       this.panel1 = new System.Windows.Forms.Panel();
+      this.btnRemoveLog = new System.Windows.Forms.Button();
       this.btnAddLogfile = new System.Windows.Forms.Button();
       this.cbClearOnCreate = new System.Windows.Forms.CheckBox();
       this.btnChooseFont = new System.Windows.Forms.Button();
       this.cbFollowTail = new System.Windows.Forms.CheckBox();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.btnRemoveLog = new System.Windows.Forms.Button();
+      this.btnSideBySide = new System.Windows.Forms.Button();
       this.PageCtrlCategory.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.MPTabCtrl.SuspendLayout();
@@ -92,10 +93,10 @@ namespace MPTail
       this.PageCtrlCategory.Controls.Add(this.tabPage1);
       this.PageCtrlCategory.Controls.Add(this.tabPage2);
       this.PageCtrlCategory.Controls.Add(this.tabPage3);
-      this.PageCtrlCategory.Location = new System.Drawing.Point(14, 44);
+      this.PageCtrlCategory.Location = new System.Drawing.Point(2, 70);
       this.PageCtrlCategory.Name = "PageCtrlCategory";
       this.PageCtrlCategory.SelectedIndex = 0;
-      this.PageCtrlCategory.Size = new System.Drawing.Size(759, 350);
+      this.PageCtrlCategory.Size = new System.Drawing.Size(772, 324);
       this.PageCtrlCategory.TabIndex = 0;
       this.PageCtrlCategory.Selected += new System.Windows.Forms.TabControlEventHandler(this.PageCtrlCategory_Selected);
       // 
@@ -105,7 +106,7 @@ namespace MPTail
       this.tabPage1.Location = new System.Drawing.Point(4, 27);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(751, 319);
+      this.tabPage1.Size = new System.Drawing.Size(764, 293);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "MediaPortal";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -117,7 +118,7 @@ namespace MPTail
       this.MPTabCtrl.Location = new System.Drawing.Point(3, 3);
       this.MPTabCtrl.Name = "MPTabCtrl";
       this.MPTabCtrl.SelectedIndex = 0;
-      this.MPTabCtrl.Size = new System.Drawing.Size(745, 313);
+      this.MPTabCtrl.Size = new System.Drawing.Size(758, 287);
       this.MPTabCtrl.TabIndex = 0;
       this.MPTabCtrl.Selected += new System.Windows.Forms.TabControlEventHandler(this.MPTabCtrl_Selected);
       // 
@@ -126,7 +127,7 @@ namespace MPTail
       this.tabPage4.Controls.Add(this.richTextBoxMP);
       this.tabPage4.Location = new System.Drawing.Point(4, 24);
       this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Size = new System.Drawing.Size(737, 285);
+      this.tabPage4.Size = new System.Drawing.Size(750, 259);
       this.tabPage4.TabIndex = 0;
       this.tabPage4.Text = "Combined view";
       this.tabPage4.UseVisualStyleBackColor = true;
@@ -136,7 +137,7 @@ namespace MPTail
       this.richTextBoxMP.Dock = System.Windows.Forms.DockStyle.Fill;
       this.richTextBoxMP.Location = new System.Drawing.Point(0, 0);
       this.richTextBoxMP.Name = "richTextBoxMP";
-      this.richTextBoxMP.Size = new System.Drawing.Size(737, 285);
+      this.richTextBoxMP.Size = new System.Drawing.Size(750, 259);
       this.richTextBoxMP.TabIndex = 0;
       this.richTextBoxMP.Text = "";
       this.richTextBoxMP.WordWrap = false;
@@ -147,7 +148,7 @@ namespace MPTail
       this.tabPage2.Location = new System.Drawing.Point(4, 27);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(996, 502);
+      this.tabPage2.Size = new System.Drawing.Size(751, 319);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "TvServer";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -159,7 +160,7 @@ namespace MPTail
       this.TVETabCtrl.Location = new System.Drawing.Point(3, 3);
       this.TVETabCtrl.Name = "TVETabCtrl";
       this.TVETabCtrl.SelectedIndex = 0;
-      this.TVETabCtrl.Size = new System.Drawing.Size(990, 496);
+      this.TVETabCtrl.Size = new System.Drawing.Size(745, 313);
       this.TVETabCtrl.TabIndex = 1;
       this.TVETabCtrl.Selected += new System.Windows.Forms.TabControlEventHandler(this.MPTabCtrl_Selected);
       // 
@@ -190,7 +191,7 @@ namespace MPTail
       this.tabPage3.Location = new System.Drawing.Point(4, 27);
       this.tabPage3.Name = "tabPage3";
       this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage3.Size = new System.Drawing.Size(996, 502);
+      this.tabPage3.Size = new System.Drawing.Size(751, 319);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "Custom";
       this.tabPage3.UseVisualStyleBackColor = true;
@@ -201,11 +202,12 @@ namespace MPTail
       this.CustomTabCtrl.Location = new System.Drawing.Point(3, 3);
       this.CustomTabCtrl.Name = "CustomTabCtrl";
       this.CustomTabCtrl.SelectedIndex = 0;
-      this.CustomTabCtrl.Size = new System.Drawing.Size(990, 496);
+      this.CustomTabCtrl.Size = new System.Drawing.Size(745, 313);
       this.CustomTabCtrl.TabIndex = 0;
       // 
       // panel1
       // 
+      this.panel1.Controls.Add(this.btnSideBySide);
       this.panel1.Controls.Add(this.btnRemoveLog);
       this.panel1.Controls.Add(this.btnAddLogfile);
       this.panel1.Controls.Add(this.cbClearOnCreate);
@@ -214,14 +216,27 @@ namespace MPTail
       this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
       this.panel1.Location = new System.Drawing.Point(0, 0);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(773, 37);
+      this.panel1.Size = new System.Drawing.Size(773, 68);
       this.panel1.TabIndex = 1;
+      // 
+      // btnRemoveLog
+      // 
+      this.btnRemoveLog.AutoSize = true;
+      this.btnRemoveLog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btnRemoveLog.Location = new System.Drawing.Point(380, 33);
+      this.btnRemoveLog.Name = "btnRemoveLog";
+      this.btnRemoveLog.Size = new System.Drawing.Size(117, 27);
+      this.btnRemoveLog.TabIndex = 4;
+      this.btnRemoveLog.Text = "Remove logfile";
+      this.btnRemoveLog.UseVisualStyleBackColor = true;
+      this.btnRemoveLog.Visible = false;
+      this.btnRemoveLog.Click += new System.EventHandler(this.btnRemoveLog_Click);
       // 
       // btnAddLogfile
       // 
       this.btnAddLogfile.AutoSize = true;
       this.btnAddLogfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.btnAddLogfile.Location = new System.Drawing.Point(514, 6);
+      this.btnAddLogfile.Location = new System.Drawing.Point(257, 33);
       this.btnAddLogfile.Name = "btnAddLogfile";
       this.btnAddLogfile.Size = new System.Drawing.Size(96, 27);
       this.btnAddLogfile.TabIndex = 1;
@@ -235,7 +250,7 @@ namespace MPTail
       this.cbClearOnCreate.AutoSize = true;
       this.cbClearOnCreate.Checked = true;
       this.cbClearOnCreate.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbClearOnCreate.Location = new System.Drawing.Point(134, 9);
+      this.cbClearOnCreate.Location = new System.Drawing.Point(8, 36);
       this.cbClearOnCreate.Name = "cbClearOnCreate";
       this.cbClearOnCreate.Size = new System.Drawing.Size(243, 19);
       this.cbClearOnCreate.TabIndex = 3;
@@ -246,7 +261,7 @@ namespace MPTail
       // btnChooseFont
       // 
       this.btnChooseFont.AutoSize = true;
-      this.btnChooseFont.Location = new System.Drawing.Point(400, 4);
+      this.btnChooseFont.Location = new System.Drawing.Point(257, 4);
       this.btnChooseFont.Name = "btnChooseFont";
       this.btnChooseFont.Size = new System.Drawing.Size(94, 27);
       this.btnChooseFont.TabIndex = 2;
@@ -272,18 +287,15 @@ namespace MPTail
       this.timer1.Interval = 250;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
-      // btnRemoveLog
+      // btnSideBySide
       // 
-      this.btnRemoveLog.AutoSize = true;
-      this.btnRemoveLog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.btnRemoveLog.Location = new System.Drawing.Point(638, 6);
-      this.btnRemoveLog.Name = "btnRemoveLog";
-      this.btnRemoveLog.Size = new System.Drawing.Size(117, 27);
-      this.btnRemoveLog.TabIndex = 4;
-      this.btnRemoveLog.Text = "Remove logfile";
-      this.btnRemoveLog.UseVisualStyleBackColor = true;
-      this.btnRemoveLog.Visible = false;
-      this.btnRemoveLog.Click += new System.EventHandler(this.btnRemoveLog_Click);
+      this.btnSideBySide.AutoSize = true;
+      this.btnSideBySide.Location = new System.Drawing.Point(380, 4);
+      this.btnSideBySide.Name = "btnSideBySide";
+      this.btnSideBySide.Size = new System.Drawing.Size(185, 25);
+      this.btnSideBySide.TabIndex = 5;
+      this.btnSideBySide.Text = "Create side-by-side view";
+      this.btnSideBySide.UseVisualStyleBackColor = true;
       // 
       // frmMain
       // 
@@ -331,6 +343,7 @@ namespace MPTail
     private System.Windows.Forms.RichTextBox richTextBoxMP;
     private System.Windows.Forms.Button btnAddLogfile;
     private System.Windows.Forms.Button btnRemoveLog;
+    private System.Windows.Forms.Button btnSideBySide;
   }
 }
 
