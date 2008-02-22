@@ -41,51 +41,86 @@ namespace TvLibrary.Implementations.DVB
 
   class GenericBDAS
   {
+    #region enums
+    enum BdaDigitalModulator
+    {
+      MODULATION_TYPE = 0,
+      INNER_FEC_TYPE,
+      INNER_FEC_RATE,
+      OUTER_FEC_TYPE,
+      OUTER_FEC_RATE,
+      SYMBOL_RATE,
+      SPECTRAL_INVERSION,
+      GUARD_INTERVAL,
+      TRANSMISSION_MODE
+    };
+    #endregion
+
+    #region variables
+    IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
+    IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
+    DirectShowLib.IKsPropertySet _propertySet = null;
     protected IBDA_Topology _TunerDevice;
     protected bool _isGenericBDAS = false;
+    #endregion
 
+    #region constants
+    Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
+    #endregion
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GenericBDAS"/> class.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter.</param>
+    /// <param name="analyzerFilter">The analyzer filter.</param>
     public GenericBDAS(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     {
       _TunerDevice = (IBDA_Topology)tunerFilter;
-      _isGenericBDAS = true;
-      /*
-       * It should probaly be implemented a function which handle a list of BDA devices
-       * that is compatible with "put_Range" function.
-       * I have only tested this with Terratec Cinergy DVB-S 1200.
-       * However, it should work with other Philips SAA-7146 based cards as well.
-       * Use this at your own risk!!
-       * /Digi
-       */
+      //check if the BDA driver supports DiSEqC
+      IPin pin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
+      if (pin != null)
+      {
+        _propertySet = pin as DirectShowLib.IKsPropertySet;
+        if (_propertySet != null)
+        {
+          KSPropertySupport supported;
+          _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+          //Log.Log.Info("GenericBDAS: QuerySupported: {0}", supported);
+          if ((supported & KSPropertySupport.Set) != 0)
+          {
+            //Log.Log.Info("GenericBDAS: DiSEqC capable card found!");
+            _isGenericBDAS = true;
+          }
+        }
+      }
     }
-
-
 
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       switch (channel.DisEqc)
       {
         case DisEqcType.Level1AA:
-          Log.Log.Info("GenericBDA:  Level1AA - SendDiSEqCCommand(0x00)");
+          Log.Log.Info("GenericBDAS:  Level1AA - SendDiSEqCCommand(0x00)");
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.Level1AB:
-          Log.Log.Info("GenericBDA:  Level1AB - SendDiSEqCCommand(0x01)");
+          Log.Log.Info("GenericBDAS:  Level1AB - SendDiSEqCCommand(0x01)");
           SendDiSEqCCommand(0x01);
           break;
         case DisEqcType.Level1BA:
-          Log.Log.Info("GenericBDA:  Level1BA - SendDiSEqCCommand(0x0100)");
+          Log.Log.Info("GenericBDAS:  Level1BA - SendDiSEqCCommand(0x0100)");
           SendDiSEqCCommand(0x0100);
           break;
         case DisEqcType.Level1BB:
-          Log.Log.Info("GenericBDA:  Level1BB - SendDiSEqCCommand(0x0101)");
+          Log.Log.Info("GenericBDAS:  Level1BB - SendDiSEqCCommand(0x0101)");
           SendDiSEqCCommand(0x0101);
           break;
         case DisEqcType.SimpleA:
-          Log.Log.Info("GenericBDA:  SimpleA - SendDiSEqCCommand(0x00)");
+          Log.Log.Info("GenericBDAS:  SimpleA - SendDiSEqCCommand(0x00)");
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.SimpleB:
-          Log.Log.Info("GenericBDA:  SimpleB - SendDiSEqCCommand(0x01)");
+          Log.Log.Info("GenericBDAS:  SimpleB - SendDiSEqCCommand(0x01)");
           SendDiSEqCCommand(0x01);
           break;
         default:
@@ -100,7 +135,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded, otherwise false</returns>
     protected bool SendDiSEqCCommand(ulong ulRange)
     {
-      Log.Log.Info("GenericBDA:  SendDiSEqC Command {0}", ulRange);
+      Log.Log.Info("GenericBDAS:  SendDiSEqC Command {0}", ulRange);
       int hr = 0;
       // get ControlNode of tuner control node
       object ControlNode = null;
@@ -129,7 +164,7 @@ namespace TvLibrary.Implementations.DVB
                     hr = DecviceControl.CommitChanges();
                     if (hr == 0)
                     {
-                      Log.Log.Info("GenericBDA:  CommitChanges() Succeeded");
+                      Log.Log.Info("GenericBDAS:  CommitChanges() Succeeded");
                       return true;
                     }
                     else

@@ -29,7 +29,6 @@ using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Interfaces;
 using DirectShowLib.BDA;
 
-
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
@@ -66,15 +65,6 @@ namespace TvLibrary.Implementations.DVB
       {
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
-        Log.Log.WriteFile("Check for WinTV CI");
-        if (winTvUsbCiFilter != null)
-        {
-          Log.Log.WriteFile("WinTV CI detected");
-          _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
-          return;
-        }
-        _winTvCiModule = null;
-
         Log.Log.WriteFile("Check for KNC");
         _knc = new KNC(tunerFilter, analyzerFilter);
         if (_knc.IsKNC)
@@ -124,6 +114,7 @@ namespace TvLibrary.Implementations.DVB
         }
         _hauppauge = null;
 
+        //check for ATSC
         Log.Log.WriteFile("Check for ViXS ATSC QAM card");
         _isvixsatsc = new ViXSATSC(tunerFilter, analyzerFilter);
         if (_isvixsatsc.IsViXSATSC)
@@ -147,9 +138,18 @@ namespace TvLibrary.Implementations.DVB
         if (_isgenericatsc.IsGenericATSC)
         {
           Log.Log.WriteFile("Generic ATSC QAM card detected");
-          return;
+          //return;
         }
-        _isgenericatsc = null;
+        //_isgenericatsc = null;
+
+        Log.Log.WriteFile("Check for WinTV CI");
+        if (winTvUsbCiFilter != null)
+        {
+          Log.Log.WriteFile("WinTV CI detected");
+          _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+          //return;
+        }
+        //_winTvCiModule = null;
 
         Log.Log.WriteFile("Check for Generic DVB-S card");
         _genericbdas = new GenericBDAS(tunerFilter, analyzerFilter);
@@ -177,6 +177,7 @@ namespace TvLibrary.Implementations.DVB
         _mapSubChannels[id] = new ConditionalAccessContext();
       }
     }
+
     /// <summary>
     /// Frees the sub channel.
     /// </summary>

@@ -54,7 +54,6 @@ namespace TvLibrary.Implementations.Hybrid
     }
     #endregion
 
-
     #region methods
     /// <summary>
     /// Adds the specified id card.
@@ -104,7 +103,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// <returns> 
     ///   <c>true</c> if card with the given id is active; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsCardIdActive(int idCard) {
+    public bool IsCardIdActive(int idCard)
+    {
       return _idCards[_currentCardIndex] == idCard;
     }
     #endregion
@@ -181,6 +181,7 @@ namespace TvLibrary.Implementations.Hybrid
       }
     }
     #endregion
+
     #region ITVCard Members
 
     /// <summary>

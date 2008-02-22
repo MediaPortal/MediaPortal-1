@@ -178,7 +178,6 @@ namespace TvLibrary.Interfaces
 
     #endregion
 
-
     #region tuning & recording
 
     /// <summary>
