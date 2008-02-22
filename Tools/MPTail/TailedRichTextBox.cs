@@ -114,6 +114,9 @@ namespace MPTail
         string name = Path.GetFileNameWithoutExtension(filename);
         XmlNode node = doc.SelectSingleNode("/mptail/loggers/"+Category.ToString()+"/"+name.Replace(' ','_')+"/config");
         if (node == null) return;
+        string fname = node.Attributes["filename"].Value;
+        if (filename != fname)
+          filename = fname;
         searchParams.searchStr = node.Attributes["search-string"].Value;
         string color = node.Attributes["search-highlight-color"].Value;
         searchParams.highlightColor = System.Drawing.Color.FromArgb(Int32.Parse(color));
