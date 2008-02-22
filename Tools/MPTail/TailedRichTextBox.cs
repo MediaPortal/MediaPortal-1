@@ -7,45 +7,6 @@ using System.Xml;
 
 namespace MPTail
 {
-  public class MyDateTime: IComparable
-  {
-    DateTime dt;
-    int counter;
-
-    public MyDateTime(int instanceId,DateTime dateTime)
-    {
-      counter = instanceId;
-      dt=dateTime;
-    }
-    public MyDateTime(int instanceId,string dateTimeStr)
-    {
-      counter = instanceId;
-      dt = DateTime.Parse(dateTimeStr);
-    }
-
-    public int CompareTo(object obj)
-    {
-      MyDateTime mdt = (MyDateTime)obj;
-      int ret=DateTime.Compare(dt, mdt.dt);
-      if (ret == 0)
-        ret = 1;
-      return ret;
-    }
-  }
-  public class SearchParameters
-  {
-    public string searchStr = "";
-    public bool caseSensitive = false;
-    public System.Drawing.Color highlightColor = System.Drawing.Color.Yellow;
-  }
-
-  public enum LoggerCategory
-  {
-    MediaPortal,
-    TvEngine,
-    Custom
-  }
-
   public class TailedRichTextBox: RichTextBox
   {
     #region Variables
@@ -61,9 +22,6 @@ namespace MPTail
 
     public LoggerCategory Category;
     #endregion
-
-    public delegate void SaveSettingsHandler();
-    public event SaveSettingsHandler OnSaveSettings;
 
     #region constructor
     public TailedRichTextBox(string filename,LoggerCategory loggerCategory,TabPage parentTabPage)
@@ -87,8 +45,6 @@ namespace MPTail
       if (dlg.ShowDialog() == DialogResult.OK)
       {
         dlg.GetConfig(searchParams);
-        if (Category != LoggerCategory.Custom) 
-          OnSaveSettings();
         SelectAll();
         SelectionBackColor = System.Drawing.Color.White;
         SelectionFont = new System.Drawing.Font(this.Font, System.Drawing.FontStyle.Regular);
@@ -126,13 +82,12 @@ namespace MPTail
     #region Persistance
     private void LoadSettings()
     {
-      if (Category == LoggerCategory.Custom) return;
       if (File.Exists("MPTailConfig.xml"))
       {
         XmlDocument doc = new XmlDocument();
         doc.Load("MPTailConfig.xml");
         string name = Path.GetFileNameWithoutExtension(filename);
-        XmlNode node = doc.SelectSingleNode("/mptail/loggers/"+name.Replace(' ','_')+"/config");
+        XmlNode node = doc.SelectSingleNode("/mptail/loggers/"+Category.ToString()+"/"+name.Replace(' ','_')+"/config");
         if (node == null) return;
         searchParams.searchStr = node.Attributes["search-string"].Value;
         string color = node.Attributes["search-highlight-color"].Value;
@@ -142,29 +97,20 @@ namespace MPTail
     }
     public void SaveSettings(XmlDocument doc,XmlNode n_root)
     {
-      if (Category == LoggerCategory.Custom) return;
       XmlNode n_logger = doc.CreateElement("loggers");
+      XmlNode n_category = doc.CreateElement(Category.ToString());
       string name = Path.GetFileNameWithoutExtension(filename);
       XmlNode n_name = doc.CreateElement(name.Replace(' ','_'));
       XmlNode n_config = doc.CreateElement("config");
 
-      XmlAttribute searchString = n_config.OwnerDocument.CreateAttribute("search-string");
-      searchString.InnerText = searchParams.searchStr;
-      n_config.Attributes.Append(searchString);
-
-      XmlAttribute hcolor = n_config.OwnerDocument.CreateAttribute("search-highlight-color");
-      hcolor.InnerText = searchParams.highlightColor.ToArgb().ToString();
-      n_config.Attributes.Append(hcolor);
-
-      XmlAttribute csensitive = n_config.OwnerDocument.CreateAttribute("search-casesensitive");
-      if (searchParams.caseSensitive)
-        csensitive.InnerText = "1";
-      else
-        csensitive.InnerText = "0";
-      n_config.Attributes.Append(csensitive);
+      XmlUtils.NewAttribute(n_config, "filename", filename);
+      XmlUtils.NewAttribute(n_config, "search-string", searchParams.searchStr);
+      XmlUtils.NewAttribute(n_config, "search-highlight-color", searchParams.highlightColor);
+      XmlUtils.NewAttribute(n_config, "search-casesensitive", searchParams.caseSensitive);
 
       n_name.AppendChild(n_config);
-      n_logger.AppendChild(n_name);
+      n_category.AppendChild(n_name);
+      n_logger.AppendChild(n_category);
       n_root.AppendChild(n_logger);
     }
     #endregion
