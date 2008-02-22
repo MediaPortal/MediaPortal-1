@@ -72,7 +72,6 @@ namespace MPTail
       this.btnChooseFont = new System.Windows.Forms.Button();
       this.cbFollowTail = new System.Windows.Forms.CheckBox();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.btnSideBySide = new System.Windows.Forms.Button();
       this.PageCtrlCategory.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.MPTabCtrl.SuspendLayout();
@@ -207,7 +206,6 @@ namespace MPTail
       // 
       // panel1
       // 
-      this.panel1.Controls.Add(this.btnSideBySide);
       this.panel1.Controls.Add(this.btnRemoveLog);
       this.panel1.Controls.Add(this.btnAddLogfile);
       this.panel1.Controls.Add(this.cbClearOnCreate);
@@ -287,16 +285,6 @@ namespace MPTail
       this.timer1.Interval = 250;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
-      // btnSideBySide
-      // 
-      this.btnSideBySide.AutoSize = true;
-      this.btnSideBySide.Location = new System.Drawing.Point(380, 4);
-      this.btnSideBySide.Name = "btnSideBySide";
-      this.btnSideBySide.Size = new System.Drawing.Size(185, 25);
-      this.btnSideBySide.TabIndex = 5;
-      this.btnSideBySide.Text = "Create side-by-side view";
-      this.btnSideBySide.UseVisualStyleBackColor = true;
-      // 
       // frmMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -343,7 +331,6 @@ namespace MPTail
     private System.Windows.Forms.RichTextBox richTextBoxMP;
     private System.Windows.Forms.Button btnAddLogfile;
     private System.Windows.Forms.Button btnRemoveLog;
-    private System.Windows.Forms.Button btnSideBySide;
   }
 }
 
