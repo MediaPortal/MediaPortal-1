@@ -169,18 +169,22 @@ namespace TvLibrary.Implementations.DVB
                     }
                     else
                     {
-                      // reset configuration 
+                      // reset configuration
+                      Log.Log.Info("GenericBDAS:  CommitChanges() Failed!");
                       DecviceControl.StartChanges();
                       DecviceControl.CommitChanges();
                       return false;
                     }
                   }
+                  Log.Log.Info("GenericBDAS:  CheckChanges() Failed!");
                 }
+                Log.Log.Info("GenericBDAS:  put_Range Failed!");
               }
             }
           }
         }
       }
+      Log.Log.Info("GenericBDAS:  GetControlNode Failed!");
       return false;
     } //end SendDiSEqCCommand
 

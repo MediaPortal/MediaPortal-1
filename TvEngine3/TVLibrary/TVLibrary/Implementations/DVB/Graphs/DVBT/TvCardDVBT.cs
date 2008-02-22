@@ -237,7 +237,8 @@ namespace TvLibrary.Implementations.DVB
         hr = _tuneRequest.put_TSID(dvbtChannel.TransportId);
         Log.Log.Info("dvbt: tune: Carrier frequency {0}", (int)dvbtChannel.Frequency);
         hr = locator.put_CarrierFrequency((int)dvbtChannel.Frequency);
-        Log.Log.Info("dvbt: tune: put_Locator {0}", locator.ToString());
+        //Log.Log.Info("dvbt: tune: put_Locator {0}", locator.ToString());
+        Log.Log.Info("dvbt: tune: put_Locator");
         _tuneRequest.put_Locator(locator);
 
         Log.Log.Info("dvbt: tune: Submitting tune request: SubId {0}, channel {1}", subChannelId, channel.ToString());
