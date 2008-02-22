@@ -332,18 +332,18 @@ namespace MediaPortal.Player
 
 
       if (m_TVTuner != null)
-        Marshal.ReleaseComObject(m_TVTuner); m_TVTuner = null;
+        DirectShowUtil.ReleaseComObject(m_TVTuner); m_TVTuner = null;
 
       if (m_audioFilter!= null)
-        Marshal.ReleaseComObject(m_audioFilter); m_audioFilter= null;
+        DirectShowUtil.ReleaseComObject(m_audioFilter); m_audioFilter= null;
 
       m_mediaControl = null;
       
       if (m_filterCaptureVideo != null)
-        Marshal.ReleaseComObject(m_filterCaptureVideo); m_filterCaptureVideo = null;
+        DirectShowUtil.ReleaseComObject(m_filterCaptureVideo); m_filterCaptureVideo = null;
 
       if (m_filterCaptureAudio != null)
-        Marshal.ReleaseComObject(m_filterCaptureAudio ); m_filterCaptureAudio = null;
+        DirectShowUtil.ReleaseComObject(m_filterCaptureAudio ); m_filterCaptureAudio = null;
       
       if (m_graphBuilder!=null)
         DirectShowUtil.RemoveFilters(m_graphBuilder);
@@ -355,10 +355,10 @@ namespace MediaPortal.Player
       _rotEntry = null;
 
       if (m_captureGraphBuilder != null)
-        Marshal.ReleaseComObject(m_captureGraphBuilder); m_captureGraphBuilder = null;
+        DirectShowUtil.ReleaseComObject(m_captureGraphBuilder); m_captureGraphBuilder = null;
 	
       if (m_graphBuilder != null)
-        Marshal.ReleaseComObject(m_graphBuilder); m_graphBuilder = null;
+        DirectShowUtil.ReleaseComObject(m_graphBuilder); m_graphBuilder = null;
 
       m_graphState = State.None;
       return;

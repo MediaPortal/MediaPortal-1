@@ -449,16 +449,16 @@ namespace MediaPortal.Core.Transcoding
 			
 			
 			if ( Mpeg2AudioCodec != null )
-				Marshal.ReleaseComObject( Mpeg2AudioCodec );
+				DirectShowUtil.ReleaseComObject( Mpeg2AudioCodec );
 			Mpeg2AudioCodec=null;
 			
 			if ( Mpeg2VideoCodec != null )
-				Marshal.ReleaseComObject( Mpeg2VideoCodec );
+				DirectShowUtil.ReleaseComObject( Mpeg2VideoCodec );
 			Mpeg2VideoCodec=null;
 
 
 			if ( bufferSource != null )
-				Marshal.ReleaseComObject( bufferSource );
+				DirectShowUtil.ReleaseComObject( bufferSource );
 			bufferSource = null;
 
 			DirectShowUtil.RemoveFilters(graphBuilder);
@@ -469,7 +469,7 @@ namespace MediaPortal.Core.Transcoding
       _rotEntry = null;
 
 			if( graphBuilder != null )
-				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+				DirectShowUtil.ReleaseComObject( graphBuilder ); graphBuilder = null;
 			GC.Collect();
 			GC.Collect();
 			GC.Collect();

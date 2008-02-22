@@ -1018,29 +1018,29 @@ namespace DShowNET.Helper
       _filterVideoAnalyzer = null;
       if (_pinVideoAnalyzerInput != null)
       {
-        hr = Marshal.ReleaseComObject(_pinVideoAnalyzerInput);
+        hr = DirectShowUtil.ReleaseComObject(_pinVideoAnalyzerInput);
         _pinVideoAnalyzerInput = null;
       }
       if (_pinVideoAnalyzerOutput != null)
       {
-        hr = Marshal.ReleaseComObject(_pinVideoAnalyzerOutput);
+        hr = DirectShowUtil.ReleaseComObject(_pinVideoAnalyzerOutput);
         _pinVideoAnalyzerOutput = null;
       }
       if (_pinStreamBufferIn0 != null)
       {
-        hr = Marshal.ReleaseComObject(_pinStreamBufferIn0);
+        hr = DirectShowUtil.ReleaseComObject(_pinStreamBufferIn0);
         _pinStreamBufferIn0 = null;
       }
       if (_pinStreamBufferIn1 != null)
       {
-        hr = Marshal.ReleaseComObject(_pinStreamBufferIn1);
+        hr = DirectShowUtil.ReleaseComObject(_pinStreamBufferIn1);
         _pinStreamBufferIn1 = null;
       }
 
       if (_filterStreamBuffer != null)
       {
         _filterStreamBuffer.Stop();
-        while ((hr = Marshal.ReleaseComObject(_filterStreamBuffer)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterStreamBuffer)) > 0) ;
         _filterStreamBuffer = null;
         if (hr != 0)
           Log.Info("Sinkgraph:ReleaseComobject(_filterStreamBuffer):{0}", hr);
@@ -1049,7 +1049,7 @@ namespace DShowNET.Helper
 
       if (m_VideoAnalyzer != null)
       {
-        while ((hr = Marshal.ReleaseComObject(m_VideoAnalyzer)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(m_VideoAnalyzer)) > 0) ;
         if (hr != 0)
           Log.Info("Sinkgraph:ReleaseComobject(m_VideoAnalyzer):{0}", hr);
         m_VideoAnalyzer = null;
@@ -1058,7 +1058,7 @@ namespace DShowNET.Helper
 
       if (m_StreamBufferConfig != null)
       {
-        while ((hr = Marshal.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
         if (hr != 0)
           Log.Info("Sinkgraph:ReleaseComobject(m_StreamBufferConfig):{0}", hr);
         m_StreamBufferConfig = null;
@@ -1152,49 +1152,49 @@ namespace DShowNET.Helper
 
       if (_pinAudioOut != null)
       {
-        hr = Marshal.ReleaseComObject(_pinAudioOut);
+        hr = DirectShowUtil.ReleaseComObject(_pinAudioOut);
         _pinAudioOut = null;
       }
       if (_pinLPCMOut != null)
       {
-        hr = Marshal.ReleaseComObject(_pinLPCMOut);
+        hr = DirectShowUtil.ReleaseComObject(_pinLPCMOut);
         _pinLPCMOut = null;
       }
       if (_pinVideoout != null)
       {
-        hr = Marshal.ReleaseComObject(_pinVideoout);
+        hr = DirectShowUtil.ReleaseComObject(_pinVideoout);
         _pinVideoout = null;
       }
       if (_pinDemuxerInput != null)
       {
-        hr = Marshal.ReleaseComObject(_pinDemuxerInput);
+        hr = DirectShowUtil.ReleaseComObject(_pinDemuxerInput);
         _pinDemuxerInput = null;
       }
       if (_pinVideoAnalyzerInput != null)
       {
-        hr = Marshal.ReleaseComObject(_pinVideoAnalyzerInput);
+        hr = DirectShowUtil.ReleaseComObject(_pinVideoAnalyzerInput);
         _pinVideoAnalyzerInput = null;
       }
       if (_pinVideoAnalyzerOutput != null)
       {
-        hr = Marshal.ReleaseComObject(_pinVideoAnalyzerOutput);
+        hr = DirectShowUtil.ReleaseComObject(_pinVideoAnalyzerOutput);
         _pinVideoAnalyzerOutput = null;
       }
       if (_pinStreamBufferIn0 != null)
       {
-        hr = Marshal.ReleaseComObject(_pinStreamBufferIn0);
+        hr = DirectShowUtil.ReleaseComObject(_pinStreamBufferIn0);
         _pinStreamBufferIn0 = null;
       }
       if (_pinStreamBufferIn1 != null)
       {
-        hr = Marshal.ReleaseComObject(_pinStreamBufferIn1);
+        hr = DirectShowUtil.ReleaseComObject(_pinStreamBufferIn1);
         _pinStreamBufferIn1 = null;
       }
 
       if (_filterStreamBuffer != null)
       {
         _filterStreamBuffer.Stop();
-        while ((hr = Marshal.ReleaseComObject(_filterStreamBuffer)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterStreamBuffer)) > 0) ;
         _filterStreamBuffer = null;
         if (hr != 0)
           Log.Info("Sinkgraph:ReleaseComobject(_filterStreamBuffer):{0}", hr);
@@ -1203,7 +1203,7 @@ namespace DShowNET.Helper
 
       if (m_VideoAnalyzer != null)
       {
-        while ((hr = Marshal.ReleaseComObject(m_VideoAnalyzer)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(m_VideoAnalyzer)) > 0) ;
         if (hr != 0)
           Log.Info("Sinkgraph:ReleaseComobject(m_VideoAnalyzer):{0}", hr);
         m_VideoAnalyzer = null;
@@ -1212,7 +1212,7 @@ namespace DShowNET.Helper
 
       if (m_StreamBufferConfig != null)
       {
-        while ((hr = Marshal.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
         if (hr != 0)
           Log.Info("Sinkgraph:ReleaseComobject(m_StreamBufferConfig):{0}", hr);
         m_StreamBufferConfig = null;
@@ -1220,7 +1220,7 @@ namespace DShowNET.Helper
 
       if (_filterMpeg2Demultiplexer != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
         if (hr != 0) Log.Info("Sinkgraph:ReleaseComobject(_filterMpeg2Demultiplexer):{0}", hr);
         _filterMpeg2Demultiplexer = null;
       }

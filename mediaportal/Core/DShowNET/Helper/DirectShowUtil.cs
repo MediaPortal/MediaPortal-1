@@ -159,7 +159,7 @@ namespace DShowNET.Helper
                 continue;
               }
               NewFilter.GetClassID(out classId2);
-              Marshal.ReleaseComObject(NewFilter);
+              ReleaseComObject(NewFilter);
               NewFilter = null;
 
               if (classId1.Equals(classId2))
@@ -173,7 +173,7 @@ namespace DShowNET.Helper
                     hr.Set((graphBuilder as IMediaFilter).SetSyncSource(pBasefilter[0] as IReferenceClock));
                     Log.Info("setAsReferenceClock sync source " + hr.ToDXString());
                   }
-                  Marshal.ReleaseComObject(pBasefilter[0]);
+                  ReleaseComObject(pBasefilter[0]);
                   pBasefilter[0] = null;
                   bNeedAdd = false;
                   break;
@@ -189,9 +189,9 @@ namespace DShowNET.Helper
               }//if (classId1.Equals(classId2))
             }//foreach (Filter filter in filters.AudioRenderers)
             if (pBasefilter[0] != null)
-              Marshal.ReleaseComObject(pBasefilter[0]);
+              ReleaseComObject(pBasefilter[0]);
           }//while(!bAllRemoved)
-          Marshal.ReleaseComObject(enumFilters);
+          ReleaseComObject(enumFilters);
         }//if (hr>=0 && enumFilters!=null)
         Log.Info("DirectShowUtils: Passed removing audio renderer");
         if (!bNeedAdd) return null;
@@ -265,15 +265,15 @@ namespace DShowNET.Helper
               hr = pins[0].ConnectedTo(out pSourcePin);
               if (hr >= 0)
               {
-                Marshal.ReleaseComObject(pinEnum);
+                ReleaseComObject(pinEnum);
                 return pSourcePin;
               }
             }
-            Marshal.ReleaseComObject(pins[0]);
+            ReleaseComObject(pins[0]);
           }
         }
         while (hr == 0);
-        Marshal.ReleaseComObject(pinEnum);
+        ReleaseComObject(pinEnum);
       }
       return null;
     }
@@ -292,7 +292,7 @@ namespace DShowNET.Helper
         Log.Info("Has output type: {0}, {1}", mediaTypes[0].majorType,
           mediaTypes[0].subType);
       }
-      Marshal.ReleaseComObject(types);
+      ReleaseComObject(types);
       Log.Info("-----EndofTypes");
     }
 
@@ -318,7 +318,7 @@ namespace DShowNET.Helper
           break;
         }
       }
-      Marshal.ReleaseComObject(types);
+      ReleaseComObject(types);
       //Log.Info("-----EndofTypes");
       return ret;
     }
@@ -345,7 +345,7 @@ namespace DShowNET.Helper
           FilterInfo info;
           filters[0].QueryFilterInfo(out info);
           string filtername = info.achName;
-          Marshal.ReleaseComObject(filters[0]);
+          ReleaseComObject(filters[0]);
           if (filtername.Equals(name))
           {
             ret = true;
@@ -358,7 +358,7 @@ namespace DShowNET.Helper
         }
           
       } while (true);
-      Marshal.ReleaseComObject(enumFilters);
+      ReleaseComObject(enumFilters);
       return ret;
     }
 
@@ -372,7 +372,7 @@ namespace DShowNET.Helper
       }
       else
       {
-        Marshal.ReleaseComObject(pinInConnected);
+        ReleaseComObject(pinInConnected);
         return true;
       }
     }
@@ -415,7 +415,7 @@ namespace DShowNET.Helper
                 Log.Info("Successfully rendered pin {0}:{1} to {2}:{3}.", 
                   filtername, outputInfo.name, info.achName, pinInfo.name);
                 ret = true;
-                Marshal.ReleaseComObject(pins[0]);
+                ReleaseComObject(pins[0]);
                 break;
               }
               else
@@ -430,9 +430,9 @@ namespace DShowNET.Helper
               Log.Info("Connection failed: {0:x}", hr);
             }
         }
-        Marshal.ReleaseComObject(pins[0]);
+        ReleaseComObject(pins[0]);
       } while (true);
-      Marshal.ReleaseComObject(enumPins);
+      ReleaseComObject(enumPins);
       if (!ret)
       {
         Log.Info("Dead end. Could not successfully connect pin {0} to filter {1}!", outputInfo.name, info.achName);
@@ -458,7 +458,7 @@ namespace DShowNET.Helper
           break;
         }
       }
-      Marshal.ReleaseComObject(enumFilters);
+      ReleaseComObject(enumFilters);
       return ret;
     }
 
@@ -466,7 +466,7 @@ namespace DShowNET.Helper
     {
       foreach (IBaseFilter filter in filters)
       {
-        Marshal.ReleaseComObject(filter);
+        ReleaseComObject(filter);
       }
     }
 
@@ -511,7 +511,7 @@ namespace DShowNET.Helper
           major.Add(mediaTypes[0].majorType);
           sub.Add(mediaTypes[0].subType);
         }
-        Marshal.ReleaseComObject(enumTypes);
+        ReleaseComObject(enumTypes);
         Log.Info("Found {0} media types", major.Count);
         Guid[] majorTypes = (Guid[])major.ToArray(typeof(Guid));
         Guid[] subTypes = (Guid[])sub.ToArray(typeof(Guid));
@@ -528,13 +528,13 @@ namespace DShowNET.Helper
             {
               if (TryConnect(graphBuilder, filtername, outputPin, f))
               {
-                Marshal.ReleaseComObject(f);
+                ReleaseComObject(f);
                 return true;
               }
               else
               {
                 graphBuilder.RemoveFilter(f);
-                Marshal.ReleaseComObject(f);
+                ReleaseComObject(f);
               }
             }
           }
@@ -582,7 +582,7 @@ namespace DShowNET.Helper
               if (hr == 0)
               {
                 Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
-                Marshal.ReleaseComObject(pinInfo.filter);
+                ReleaseComObject(pinInfo.filter);
               }
               else
               {
@@ -610,11 +610,11 @@ namespace DShowNET.Helper
                   pinsRendered++;
                 }
                 if (pConnectPin != null)
-                  Marshal.ReleaseComObject(pConnectPin);
+                  ReleaseComObject(pConnectPin);
                 pConnectPin = null;
                 //else Log.Info("pin is already connected");
               }
-              Marshal.ReleaseComObject(pins[0]);
+              ReleaseComObject(pins[0]);
             }
             else
             {
@@ -625,7 +625,7 @@ namespace DShowNET.Helper
           }
           else iFetched = 0;
         } while (iFetched == 1 && pinsRendered < maxPinsToRender && bAllConnected);
-        Marshal.ReleaseComObject(pinEnum);
+        ReleaseComObject(pinEnum);
       }
       return bAllConnected;
     }
@@ -656,7 +656,7 @@ namespace DShowNET.Helper
               hr = pins[0].QueryPinInfo(out pinInfo);
               if (hr >= 0)
               {
-                //Marshal.ReleaseComObject(pinInfo.filter);
+                //ReleaseComObject(pinInfo.filter);
                 Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
               }
               else
@@ -677,12 +677,12 @@ namespace DShowNET.Helper
                   {
                     Log.Error("  disconnected failed ({0:x})", hr);
                   }
-                  Marshal.ReleaseComObject(pConnectPin);
+                  ReleaseComObject(pConnectPin);
                   pConnectPin = null;
                 }
                 //else Log.Info("pin is already connected");
               }
-              Marshal.ReleaseComObject(pins[0]);
+              ReleaseComObject(pins[0]);
             }
             else
             {
@@ -693,7 +693,7 @@ namespace DShowNET.Helper
           }
           else iFetched = 0;
         } while (iFetched == 1);
-        Marshal.ReleaseComObject(pinEnum);
+        ReleaseComObject(pinEnum);
       }
     }
 
@@ -719,9 +719,9 @@ namespace DShowNET.Helper
           if (!DisconnectPin(graphBuilder, pins[0]))
             allDisconnected = false;
         }
-        Marshal.ReleaseComObject(pins[0]);
+        ReleaseComObject(pins[0]);
       }
-      Marshal.ReleaseComObject(pinEnum);
+      ReleaseComObject(pinEnum);
       return allDisconnected;
     }
 
@@ -750,7 +750,7 @@ namespace DShowNET.Helper
           allDisconnected = false;
           Log.Error("Error disconnecting other: {0:x}", hr);
         }
-        Marshal.ReleaseComObject(other);
+        ReleaseComObject(other);
       }
       else
       {
@@ -816,7 +816,7 @@ namespace DShowNET.Helper
               if (hr == 0)
               {
                 Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
-                Marshal.ReleaseComObject(pinInfo.filter);
+                ReleaseComObject(pinInfo.filter);
               }
               else
               {
@@ -843,7 +843,7 @@ namespace DShowNET.Helper
                 }
                 //else Log.Info("pin is already connected");
               }
-              Marshal.ReleaseComObject(pins[0]);
+              ReleaseComObject(pins[0]);
             }
             else
             {
@@ -854,7 +854,7 @@ namespace DShowNET.Helper
           }
           else iFetched = 0;
         } while (iFetched == 1);
-        Marshal.ReleaseComObject(pinEnum);
+        ReleaseComObject(pinEnum);
       }
       return bAllConnected;
     }
@@ -888,7 +888,7 @@ namespace DShowNET.Helper
               if (hr == 0)
               {
                 Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
-                Marshal.ReleaseComObject(pinInfo.filter);
+                ReleaseComObject(pinInfo.filter);
               }
               else
               {
@@ -910,7 +910,7 @@ namespace DShowNET.Helper
                   }
                 }
               }
-              Marshal.ReleaseComObject(pins[0]);
+              ReleaseComObject(pins[0]);
             }
             else
             {
@@ -921,7 +921,7 @@ namespace DShowNET.Helper
           }
           else iFetched = 0;
         } while (iFetched == 1);
-        Marshal.ReleaseComObject(pinEnum);
+        ReleaseComObject(pinEnum);
       }
       return bAllConnected;
     }
@@ -949,11 +949,11 @@ namespace DShowNET.Helper
             AspectRatioMode mode;
             hr = pMC.SetAspectRatioMode(ARRatioMode);
             hr = pMC.GetAspectRatioMode(out mode);
-            //Marshal.ReleaseComObject(pMC);
+            //ReleaseComObject(pMC);
           }
-          Marshal.ReleaseComObject(iPin);
+          ReleaseComObject(iPin);
         }
-        Marshal.ReleaseComObject(overlay);
+        ReleaseComObject(overlay);
       }
 
 
@@ -1000,15 +1000,15 @@ namespace DShowNET.Helper
                   {
                     pMC.SetAspectRatioMode(ARRatioMode);
                   }
-                  Marshal.ReleaseComObject(pins[0]);
+                  ReleaseComObject(pins[0]);
                 }
               } while (f == 1);
-              Marshal.ReleaseComObject(pinEnum);
+              ReleaseComObject(pinEnum);
             }
-            Marshal.ReleaseComObject(pBasefilter[0]);
+            ReleaseComObject(pBasefilter[0]);
           }
         } while (iFetched == 1 && pBasefilter[0] != null);
-        Marshal.ReleaseComObject(enumFilters);
+        ReleaseComObject(enumFilters);
       }
     }
 
@@ -1122,14 +1122,14 @@ namespace DShowNET.Helper
 
               if (filter_infos.achName.LastIndexOf(name) != -1)
               {
-                Marshal.ReleaseComObject(ienumFilt); ienumFilt = null;
+                ReleaseComObject(ienumFilt); ienumFilt = null;
                 return foundfilter[0];
               }
-              Marshal.ReleaseComObject(foundfilter[0]);
+              ReleaseComObject(foundfilter[0]);
             }
           } while (iFetched == 1 && hr == 0);
           if (ienumFilt != null)
-            Marshal.ReleaseComObject(ienumFilt);
+            ReleaseComObject(ienumFilt);
           ienumFilt = null;
         }
       }
@@ -1139,7 +1139,7 @@ namespace DShowNET.Helper
       finally
       {
         if (ienumFilt != null)
-          Marshal.ReleaseComObject(ienumFilt);
+          ReleaseComObject(ienumFilt);
       }
       return null;
     }
@@ -1166,13 +1166,13 @@ namespace DShowNET.Helper
               if (hr == 0 && iFetched == 1)
               {
                 m_graphBuilder.RemoveFilter(filter[0]);
-                int hres = Marshal.ReleaseComObject(filter[0]);
+                int hres = ReleaseComObject(filter[0]);
                 filter[0] = null;
                 bFound = true;
               }
             } while (iFetched == 1 && hr == 0);
             if (ienumFilt != null)
-              Marshal.ReleaseComObject(ienumFilt);
+              ReleaseComObject(ienumFilt);
             ienumFilt = null;
 
           }
@@ -1185,7 +1185,7 @@ namespace DShowNET.Helper
         finally
         {
           if (ienumFilt != null)
-            hr = Marshal.ReleaseComObject(ienumFilt);
+            hr = ReleaseComObject(ienumFilt);
         }
       }
     }
@@ -1228,12 +1228,12 @@ namespace DShowNET.Helper
                 filterFound = filter[0];
                 return;
               }
-              Marshal.ReleaseComObject(filter[0]);
+              ReleaseComObject(filter[0]);
               filter[0] = null;
             }
           } while (iFetched == 1 && hr == 0);
           if (ienumFilt != null)
-            Marshal.ReleaseComObject(ienumFilt);
+            ReleaseComObject(ienumFilt);
           ienumFilt = null;
         }
       }
@@ -1243,7 +1243,7 @@ namespace DShowNET.Helper
       finally
       {
         if (ienumFilt != null)
-          Marshal.ReleaseComObject(ienumFilt);
+          ReleaseComObject(ienumFilt);
       }
       return;
     }
@@ -1275,7 +1275,7 @@ namespace DShowNET.Helper
       {
         bag = null;
         if (bagObj != null)
-          Marshal.ReleaseComObject(bagObj); bagObj = null;
+          ReleaseComObject(bagObj); bagObj = null;
       }
     }
     public static IPin FindPin(IBaseFilter filter, PinDirection dir, string strPinName)
@@ -1301,18 +1301,18 @@ namespace DShowNET.Helper
             {
               PinInfo info;
               pins[0].QueryPinInfo(out info);
-              //Marshal.ReleaseComObject(info.filter);
+              //ReleaseComObject(info.filter);
               if (String.Compare(info.name, strPinName) == 0)
               {
-                Marshal.ReleaseComObject(pinEnum);
+                ReleaseComObject(pinEnum);
                 return pins[0];
               }
             }
-            Marshal.ReleaseComObject(pins[0]);
+            ReleaseComObject(pins[0]);
           }
         }
         while (hr == 0);
-        Marshal.ReleaseComObject(pinEnum);
+        ReleaseComObject(pinEnum);
       }
       return null;
     }
@@ -1330,14 +1330,14 @@ namespace DShowNET.Helper
         pins[0].QueryDirection(out dir);
         if (dir != PinDirection.Output)
         {
-          Marshal.ReleaseComObject(pins[0]);
+          ReleaseComObject(pins[0]);
           continue;
         }
         IPin pinConnected;
         pins[0].ConnectedTo(out pinConnected);
         if (pinConnected == null)
         {
-          Marshal.ReleaseComObject(pins[0]);
+          ReleaseComObject(pins[0]);
           continue;
         }
         PinInfo info;
@@ -1346,11 +1346,11 @@ namespace DShowNET.Helper
         {
           RemoveDownStreamFilters(graphBuilder, info.filter, true);
         }
-        Marshal.ReleaseComObject(pins[0]);
+        ReleaseComObject(pins[0]);
       }
       if (remove)
         graphBuilder.RemoveFilter(fromFilter);
-      Marshal.ReleaseComObject(enumPins);
+      ReleaseComObject(enumPins);
     }
     public static void RemoveDownStreamFilters(IGraphBuilder graphBuilder, IPin pin)
     {
@@ -1366,6 +1366,19 @@ namespace DShowNET.Helper
       {
         RemoveDownStreamFilters(graphBuilder, info.filter, true);
       }
+    }
+
+    public static int ReleaseComObject(object obj)
+    {
+      if (obj != null)
+      {
+        return Marshal.ReleaseComObject(obj);
+      }
+
+      System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(true);
+      Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
+
+      return 0;
     }
   }
 }

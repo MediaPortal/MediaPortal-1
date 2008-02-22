@@ -423,13 +423,13 @@ namespace MediaPortal.Player
             pins[0].QueryDirection(out direction);
             if (direction == PinDirection.Input)
             {
-              ReleaseComObject(pins[0]);              
+              DirectShowUtil.ReleaseComObject(pins[0]);              
               continue;
             }
             _graphBuilder.Render(pins[0]);
-            ReleaseComObject(pins[0]);                          
+            DirectShowUtil.ReleaseComObject(pins[0]);                          
           }
-          ReleaseComObject(enumPins);                                    
+          DirectShowUtil.ReleaseComObject(enumPins);                                    
         }
         #endregion
 
@@ -623,46 +623,46 @@ namespace MediaPortal.Player
         if (_fileSource != null)
         {
 
-          while ((hr = ReleaseComObject(_fileSource)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0) ;
           _fileSource = null;
         }
         if (_pinAudio != null)
         {
-          ReleaseComObject(_pinAudio);          
+          DirectShowUtil.ReleaseComObject(_pinAudio);          
           _pinAudio = null;
         }
         if (_pinVideo != null)
         {
-          ReleaseComObject(_pinVideo);          
+          DirectShowUtil.ReleaseComObject(_pinVideo);          
           _pinVideo = null;
         }
         if (_videoCodecFilter != null)
         {
-          while ((hr = ReleaseComObject(_videoCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0) ;
           _videoCodecFilter = null;
         }
         if (_h264videoCodecFilter != null)
         {
-          while ((hr = ReleaseComObject(_h264videoCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0) ;
           _h264videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = ReleaseComObject(_audioCodecFilter)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
             ;
           _audioCodecFilter = null;
         }
 
         if (_audioRendererFilter != null)
         {
-          while ((hr = ReleaseComObject(_audioRendererFilter)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
             ;
           _audioRendererFilter = null;
         }
 
         if (_subtitleFilter != null)
         {
-          while ((hr = ReleaseComObject(_subtitleFilter)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0)
             ;
           _subtitleFilter = null;
           if (this._dvbSubRenderer != null) this._dvbSubRenderer.SetPlayer(null);
@@ -676,14 +676,14 @@ namespace MediaPortal.Player
           {
             if (customFilters[i] != null)
             {
-              while ((hr = ReleaseComObject(customFilters[i])) > 0) ;
+              while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
             }
             customFilters[i] = null;
           }
         }
         if (_mpegDemux != null)
         {
-          while ((hr = ReleaseComObject(_mpegDemux)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_mpegDemux)) > 0)
             ;
           _mpegDemux = null;
         }
@@ -697,7 +697,7 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if (_graphBuilder != null)
         {
-          while ((hr = ReleaseComObject(_graphBuilder)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
             ;
           _graphBuilder = null;
         }
@@ -912,21 +912,7 @@ namespace MediaPortal.Player
       return mediaSubtitle;
     }
 
-    #region private methods
-
-    private int ReleaseComObject(object obj)
-    {
-      if (obj != null)
-      {
-        return Marshal.ReleaseComObject(obj);
-      }
-
-      StackTrace st = new StackTrace(true);
-      Log.Error("TSReaderPlayer: Exception while releasing COM object (NULL) - stacktrace: {0}", st);      
-
-      return 0;
-    }
-
+    #region private methods   
     #endregion
   }
 }

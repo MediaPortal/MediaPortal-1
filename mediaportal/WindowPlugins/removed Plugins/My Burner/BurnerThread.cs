@@ -378,21 +378,21 @@ namespace MediaPortal.GUI.GUIBurner
 			}
 
 			if ( powerDvdMuxer != null )
-				Marshal.ReleaseComObject( powerDvdMuxer );
+				DirectShowUtil.ReleaseComObject( powerDvdMuxer );
 			powerDvdMuxer=null;
 
 			if ( fileWriterFilter != null )
-				Marshal.ReleaseComObject( fileWriterFilter );
+				DirectShowUtil.ReleaseComObject( fileWriterFilter );
 			fileWriterFilter=null;
 
 			if ( bufferSource != null )
-				Marshal.ReleaseComObject( bufferSource );
+				DirectShowUtil.ReleaseComObject( bufferSource );
 			bufferSource = null;
 
 			DirectShowUtil.RemoveFilters(graphBuilder);
 
 			if( graphBuilder != null )
-				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+				DirectShowUtil.ReleaseComObject( graphBuilder ); graphBuilder = null;
 		}
 
 		private SQLiteClient m_db;

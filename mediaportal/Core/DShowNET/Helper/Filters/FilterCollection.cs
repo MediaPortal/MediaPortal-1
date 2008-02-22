@@ -93,7 +93,7 @@ namespace DShowNET.Helper
 					InnerList.Add( filter );
 
 					// Release resources
-					Marshal.ReleaseComObject( mon[0] );
+					DirectShowUtil.ReleaseComObject( mon[0] );
 					mon[0] = null;
 				}
 				while(true);
@@ -105,11 +105,11 @@ namespace DShowNET.Helper
 			{
 				enumDev = null;
 				if( mon[0] != null )
-					Marshal.ReleaseComObject( mon[0] ); mon[0] = null;
+					DirectShowUtil.ReleaseComObject( mon[0] ); mon[0] = null;
 				if( enumMon != null )
-					Marshal.ReleaseComObject( enumMon ); enumMon = null;
+					DirectShowUtil.ReleaseComObject( enumMon ); enumMon = null;
 				if( comObj != null )
-					Marshal.ReleaseComObject( comObj ); comObj = null;
+					DirectShowUtil.ReleaseComObject( comObj ); comObj = null;
 			}
 		}
 

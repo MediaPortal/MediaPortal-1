@@ -642,7 +642,7 @@ namespace MediaPortal.Player
       finally
       {
         if( comobj != null )
-          Marshal.ReleaseComObject( comobj ); comobj = null;
+          DirectShowUtil.ReleaseComObject( comobj ); comobj = null;
       }
     }
 
@@ -704,7 +704,7 @@ namespace MediaPortal.Player
         basicAudio	= null;
 
         if( graphBuilder != null )
-          Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+          DirectShowUtil.ReleaseComObject( graphBuilder ); graphBuilder = null;
         GUIGraphicsContext.form.Invalidate(true);
 
         m_state = PlayState.Init;

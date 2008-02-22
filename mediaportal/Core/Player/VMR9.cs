@@ -251,7 +251,7 @@ namespace MediaPortal.Player
           return null;
         }
         pinIn.ConnectedTo(out pinConnected);
-        Marshal.ReleaseComObject(pinIn);
+        DirectShowUtil.ReleaseComObject(pinIn);
         return pinConnected;
       }
     }
@@ -296,15 +296,15 @@ namespace MediaPortal.Player
           {
             //Log.Info("vmr9: pin:{0} is connected",i);
             if (pinIn != null)
-              hr = Marshal.ReleaseComObject(pinIn);
+              hr = DirectShowUtil.ReleaseComObject(pinIn);
             if (pinConnected != null)
-              hr = Marshal.ReleaseComObject(pinConnected);
+              hr = DirectShowUtil.ReleaseComObject(pinConnected);
             return true;
           }
           if (pinIn != null)
-            hr = Marshal.ReleaseComObject(pinIn);
+            hr = DirectShowUtil.ReleaseComObject(pinIn);
           if (pinConnected != null)
-            hr = Marshal.ReleaseComObject(pinConnected);
+            hr = DirectShowUtil.ReleaseComObject(pinConnected);
         }
         return false;
       }//get {
@@ -387,7 +387,7 @@ namespace MediaPortal.Player
         _scene.Deinit();
         _scene = null;
 
-        Marshal.ReleaseComObject(_vmr9Filter);
+        DirectShowUtil.ReleaseComObject(_vmr9Filter);
         _vmr9Filter = null;
         Error.SetError("Unable to play movie", "Unable to initialize Renderer");
         Log.Error("VMR9: Failed to add Renderer to filter graph");
@@ -790,13 +790,13 @@ namespace MediaPortal.Player
       int result;
 
       //if (_vmr9MixerBitmapInterface!= null)
-      //	while ( (result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface))>0); 
-      //result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface);
+      //	while ( (result=DirectShowUtil.ReleaseComObject(_vmr9MixerBitmapInterface))>0); 
+      //result=DirectShowUtil.ReleaseComObject(_vmr9MixerBitmapInterface);
       _vmr9MixerBitmapInterface = null;
 
       //				if (_qualityInterface != null)
-      //					while ( (result=Marshal.ReleaseComObject(_qualityInterface))>0); 
-      //Marshal.ReleaseComObject(_qualityInterface);
+      //					while ( (result=DirectShowUtil.ReleaseComObject(_qualityInterface))>0); 
+      //DirectShowUtil.ReleaseComObject(_qualityInterface);
       _qualityInterface = null;
 
       try
@@ -813,7 +813,7 @@ namespace MediaPortal.Player
       {
         do
         {
-          result = Marshal.ReleaseComObject(_vmr9Filter);
+          result = DirectShowUtil.ReleaseComObject(_vmr9Filter);
           Log.Info("VMR9: ReleaseComObject(): {0}", result);
         }
         while (result > 0);

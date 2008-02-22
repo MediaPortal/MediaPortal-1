@@ -298,7 +298,7 @@ namespace MediaPortal.Player
 				GUIGraphicsContext.Vmr9FPS=0;
 				frameCounter=0;
         if (allocNotify !=null)
-          Marshal.ReleaseComObject( allocNotify );
+          DirectShowUtil.ReleaseComObject( allocNotify );
 				allocNotify = null;
 				if (m_surface1 !=IntPtr.Zero)
 				{

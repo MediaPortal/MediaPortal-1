@@ -36,6 +36,7 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using DirectDraw = Microsoft.DirectX.DirectDraw;
+using DShowNET.Helper;
 
 namespace MediaPortal.Player
 {
@@ -101,7 +102,7 @@ namespace MediaPortal.Player
 				if (hr != 0)
 				{
 					Log.Error("VMR7Helper:Failed to set number of streams:0x{0:X}",hr);
-					Marshal.ReleaseComObject(VMR7Filter);
+					DirectShowUtil.ReleaseComObject(VMR7Filter);
 					VMR7Filter=null;
 					return;
 				}
@@ -112,7 +113,7 @@ namespace MediaPortal.Player
 			{
 				Error.SetError("Unable to play movie", "Unable to initialize VMR7");
 				Log.Error("VMR7Helper:Failed to add VMR7 to filtergraph");
-				Marshal.ReleaseComObject(VMR7Filter);
+				DirectShowUtil.ReleaseComObject(VMR7Filter);
 				VMR7Filter=null;
 				return;
 			}
@@ -133,23 +134,23 @@ namespace MediaPortal.Player
 				int result;
 				Log.Info("VMR7Helper:RemoveVMR7");
 				//if (m_mixerBitmap != null)
-				//	while ((result=Marshal.ReleaseComObject(m_mixerBitmap))>0);
+				//	while ((result=DirectShowUtil.ReleaseComObject(m_mixerBitmap))>0);
 				m_mixerBitmap = null;
 
 //				if (quality != null)
-//					while ((result=Marshal.ReleaseComObject(quality))>0);
+//					while ((result=DirectShowUtil.ReleaseComObject(quality))>0);
 				quality = null;
 	
 				if (VMR7Filter != null)
 				{
-					//while ((result=Marshal.ReleaseComObject(VMR7Filter))>0); 
+					//while ((result=DirectShowUtil.ReleaseComObject(VMR7Filter))>0); 
 					try
 					{
 						result=m_graphBuilder.RemoveFilter(VMR7Filter);
 						if (result!=0) Log.Info("VMR7Helper:RemoveFilter():{0}",result);
 					}
 					catch(Exception){}
-					while ( (result=Marshal.ReleaseComObject(VMR7Filter))>0); 
+					while ( (result=DirectShowUtil.ReleaseComObject(VMR7Filter))>0); 
 					if (result!=0) Log.Info("VMR7Helper:ReleaseComObject():{0}",result);
 					m_graphBuilder=null;
 				}
@@ -215,11 +216,11 @@ namespace MediaPortal.Player
 				if (pinConnected == null)
 				{
 					//no pin is not connected so VMR7 is not possible
-					Marshal.ReleaseComObject(pinIn);
+					DirectShowUtil.ReleaseComObject(pinIn);
 					return false;
 				}
-				Marshal.ReleaseComObject(pinIn);
-				Marshal.ReleaseComObject(pinConnected);
+				DirectShowUtil.ReleaseComObject(pinIn);
+				DirectShowUtil.ReleaseComObject(pinConnected);
 				//all is ok, VMR7 is working
 				return true;
 			}//get {

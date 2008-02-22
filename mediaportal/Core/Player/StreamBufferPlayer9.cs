@@ -313,13 +313,13 @@ namespace MediaPortal.Player
 
         if ( _pinVmr9ConnectedTo != null )
         {
-          Marshal.ReleaseComObject(_pinVmr9ConnectedTo);
+          DirectShowUtil.ReleaseComObject(_pinVmr9ConnectedTo);
           _pinVmr9ConnectedTo = null;
         }
 
         if ( streamConfig2 != null )
         {
-          while ( ( hr = Marshal.ReleaseComObject(streamConfig2) ) > 0 )
+          while ( ( hr = DirectShowUtil.ReleaseComObject(streamConfig2) ) > 0 )
             ;
           streamConfig2 = null;
         }
@@ -334,20 +334,20 @@ namespace MediaPortal.Player
         }
         if ( _videoCodecFilter != null )
         {
-          while ( ( hr = Marshal.ReleaseComObject(_videoCodecFilter) ) > 0 )
+          while ( ( hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter) ) > 0 )
             ;
           _videoCodecFilter = null;
         }
         if ( _audioCodecFilter != null )
         {
-          while ( ( hr = Marshal.ReleaseComObject(_audioCodecFilter) ) > 0 )
+          while ( ( hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter) ) > 0 )
             ;
           _audioCodecFilter = null;
         }
 
         if ( _audioRendererFilter != null )
         {
-          while ( ( hr = Marshal.ReleaseComObject(_audioRendererFilter) ) > 0 )
+          while ( ( hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter) ) > 0 )
             ;
           _audioRendererFilter = null;
         }
@@ -357,7 +357,7 @@ namespace MediaPortal.Player
         {
             if (customFilters[i] != null)
             {
-                while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0);
+                while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0);
             }
             customFilters[i] = null;
         }
@@ -370,7 +370,7 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if ( _graphBuilder != null )
         {
-          while ( ( hr = Marshal.ReleaseComObject(_graphBuilder) ) > 0 )
+          while ( ( hr = DirectShowUtil.ReleaseComObject(_graphBuilder) ) > 0 )
             ;
           _graphBuilder = null;
         }

@@ -119,7 +119,7 @@ namespace DShowNET.Helper
 			{
 				bag = null;
 				if (bagObj != null)
-					Marshal.ReleaseComObject(bagObj); bagObj = null;
+					DirectShowUtil.ReleaseComObject(bagObj); bagObj = null;
 
 				_nameResolved = true;
 			}
@@ -140,7 +140,7 @@ namespace DShowNET.Helper
 			finally
 			{
 				if (moniker != null)
-					Marshal.ReleaseComObject(moniker); moniker = null;
+					DirectShowUtil.ReleaseComObject(moniker); moniker = null;
 				_nameResolved = true;
 			}
 		}
@@ -195,9 +195,9 @@ namespace DShowNET.Helper
 			{
 				enumDev = null;
 				if (enumMon != null)
-					Marshal.ReleaseComObject(enumMon); enumMon = null;
+					DirectShowUtil.ReleaseComObject(enumMon); enumMon = null;
 				if (comObj != null)
-					Marshal.ReleaseComObject(comObj); comObj = null;
+					DirectShowUtil.ReleaseComObject(comObj); comObj = null;
 			}
 		}
 

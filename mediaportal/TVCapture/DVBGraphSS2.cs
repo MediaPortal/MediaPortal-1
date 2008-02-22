@@ -1007,7 +1007,7 @@ namespace MediaPortal.TV.Recording
       if (_filterDvbAnalyzer != null)
       {
         Log.Write("free dvbanalyzer");
-        while ((hr = Marshal.ReleaseComObject(_filterDvbAnalyzer)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterDvbAnalyzer)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
         _filterDvbAnalyzer = null;
       }
@@ -1015,14 +1015,14 @@ namespace MediaPortal.TV.Recording
 			if (_filterTsWriter!=null)
 			{
 				Log.Write("free MPTSWriter");
-				hr=Marshal.ReleaseComObject(_filterTsWriter);
+				hr=DirectShowUtil.ReleaseComObject(_filterTsWriter);
 				if (hr!=0) Log.Write("ReleaseComObject(_filterTsWriter):{0}",hr);
 				_filterTsWriter=null;
 			}
 
 			if (_filterKernelTee != null)
 			{
-				while ((hr=Marshal.ReleaseComObject(_filterKernelTee))>0); 
+				while ((hr=DirectShowUtil.ReleaseComObject(_filterKernelTee))>0); 
 				if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(_filterKernelTee):{0}",hr);
 				_filterKernelTee = null;
 			}
@@ -1037,7 +1037,7 @@ namespace MediaPortal.TV.Recording
       if (_streamBufferConfig != null)
       {
         Log.Write("free streambufferConfig");
-        while ((hr = Marshal.ReleaseComObject(_streamBufferConfig)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_streamBufferConfig)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_streamBufferConfig):{0}", hr);
         _streamBufferConfig = null;
       }
@@ -1045,14 +1045,14 @@ namespace MediaPortal.TV.Recording
       if (_filterSampleGrabber != null)
       {
         Log.Write("free sample grabber");
-        while ((hr = Marshal.ReleaseComObject(_filterSampleGrabber)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterSampleGrabber)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterSampleGrabber):{0}", hr);
         _filterSampleGrabber = null;
       }
       if (_filterMpeg2Demuxer != null)
       {
         Log.Write("free mpeg2 demultiplexer");
-        while ((hr = Marshal.ReleaseComObject(_filterMpeg2Demuxer)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Demuxer)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterMpeg2Demuxer):{0}", hr);
         _filterMpeg2Demuxer = null;
       }
@@ -1060,7 +1060,7 @@ namespace MediaPortal.TV.Recording
       if (_filterMpeg2Analyzer != null)
       {
         Log.Write("free mpeg2 analyzer");
-        while ((hr = Marshal.ReleaseComObject(_filterMpeg2Analyzer)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Analyzer)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterMpeg2Analyzer):{0}", hr);
         _filterMpeg2Analyzer = null;
       }
@@ -1068,7 +1068,7 @@ namespace MediaPortal.TV.Recording
       if (_filterStreamBuffer != null)
       {
         Log.Write("free streambuffer filter");
-        while ((hr = Marshal.ReleaseComObject(_filterStreamBuffer)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterStreamBuffer)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterStreamBuffer):{0}", hr);
         _filterStreamBuffer = null;
       }
@@ -1077,21 +1077,21 @@ namespace MediaPortal.TV.Recording
       if (_interfaceB2C2TunerCtrl != null)
       {
         Log.Write("free B2C2TunerCtrl ");
-        while ((hr = Marshal.ReleaseComObject(_interfaceB2C2TunerCtrl)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_interfaceB2C2TunerCtrl)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_interfaceB2C2TunerCtrl):{0}", hr);
         _interfaceB2C2TunerCtrl = null;
       }
       if (_interfaceB2C2AvcCtrl != null)
       {
         Log.Write("free B2C2AvcCtrl ");
-        while ((hr = Marshal.ReleaseComObject(_interfaceB2C2AvcCtrl)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_interfaceB2C2AvcCtrl)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_interfaceB2C2AvcCtrl):{0}", hr);
         _interfaceB2C2AvcCtrl = null;
       }
       if (_interfaceB2C2DataCtrl != null)
       {
         Log.Write("free B2C2DataCtrl ");
-        while ((hr = Marshal.ReleaseComObject(_interfaceB2C2DataCtrl)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_interfaceB2C2DataCtrl)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_interfaceB2C2DataCtrl):{0}", hr);
         _interfaceB2C2DataCtrl = null;
       }
@@ -1101,7 +1101,7 @@ namespace MediaPortal.TV.Recording
       if (_filterB2C2Adapter != null)
       {
         Log.Write("free B2C2Adapter ");
-        while ((hr = Marshal.ReleaseComObject(_filterB2C2Adapter)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterB2C2Adapter)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterB2C2Adapter):{0}", hr);
         _filterB2C2Adapter = null;
       }
@@ -1114,7 +1114,7 @@ namespace MediaPortal.TV.Recording
       _rotEntry = null;
       if (_graphBuilder != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_graphBuilder):{0}", hr);
         _graphBuilder = null;
       }
@@ -1225,11 +1225,11 @@ namespace MediaPortal.TV.Recording
 			int hr=_graphBuilder.Connect(_pinData0,grabberIn);
 			if (hr!=0)
 			{
-				Marshal.ReleaseComObject(grabberIn);
+				DirectShowUtil.ReleaseComObject(grabberIn);
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect capture->sample grabber");
 				return false;
 			}
-			Marshal.ReleaseComObject(grabberIn);
+			DirectShowUtil.ReleaseComObject(grabberIn);
 			grabberIn=null;
 
 			//connect sample grabber->inf tee
@@ -1248,7 +1248,7 @@ namespace MediaPortal.TV.Recording
 			}
 			if (smartTeeIn==null)
 			{
-				Marshal.ReleaseComObject(grabberOut);
+				DirectShowUtil.ReleaseComObject(grabberOut);
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find input pin of inftee");
 				return false;
 			}
@@ -1256,13 +1256,13 @@ namespace MediaPortal.TV.Recording
 			hr=_graphBuilder.Connect(grabberOut,smartTeeIn);
 			if (hr!=0)
 			{
-				Marshal.ReleaseComObject(grabberOut);
-				Marshal.ReleaseComObject(smartTeeIn);
+				DirectShowUtil.ReleaseComObject(grabberOut);
+				DirectShowUtil.ReleaseComObject(smartTeeIn);
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot grabber->inftee :0x{0:X}",hr);
 				return false;
 			}
-			Marshal.ReleaseComObject(grabberOut);
-			Marshal.ReleaseComObject(smartTeeIn);
+			DirectShowUtil.ReleaseComObject(grabberOut);
+			DirectShowUtil.ReleaseComObject(smartTeeIn);
 
 			//connect inftee->demuxer
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect inftee->demuxer");
@@ -1276,7 +1276,7 @@ namespace MediaPortal.TV.Recording
 			}
 			if (demuxerIn==null)
 			{
-				Marshal.ReleaseComObject(smartTeeOut);
+				DirectShowUtil.ReleaseComObject(smartTeeOut);
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find input pin of demuxer");
 				return false;
 			}
@@ -1284,13 +1284,13 @@ namespace MediaPortal.TV.Recording
 			hr=_graphBuilder.Connect(smartTeeOut,demuxerIn);
 			if (hr!=0)
 			{
-				Marshal.ReleaseComObject(demuxerIn);
-				Marshal.ReleaseComObject(smartTeeOut);
+				DirectShowUtil.ReleaseComObject(demuxerIn);
+				DirectShowUtil.ReleaseComObject(smartTeeOut);
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot inftee->demuxer :0x{0:X}",hr);
 				return false;
 			}
-			Marshal.ReleaseComObject(demuxerIn);
-			Marshal.ReleaseComObject(smartTeeOut);
+			DirectShowUtil.ReleaseComObject(demuxerIn);
+			DirectShowUtil.ReleaseComObject(smartTeeOut);
 
 			//add mpts writer
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:add MPTSWriter");
@@ -1331,7 +1331,7 @@ namespace MediaPortal.TV.Recording
 			}
 			if (tsWriterIn==null)
 			{
-				Marshal.ReleaseComObject(smartTeeOut);
+				DirectShowUtil.ReleaseComObject(smartTeeOut);
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find input pin of tswriter");
 				return false;
 			}
@@ -1339,13 +1339,13 @@ namespace MediaPortal.TV.Recording
 			hr=_graphBuilder.Connect(smartTeeOut,tsWriterIn);
 			if (hr!=0)
 			{
-				Marshal.ReleaseComObject(smartTeeOut);
-				Marshal.ReleaseComObject(tsWriterIn);
+				DirectShowUtil.ReleaseComObject(smartTeeOut);
+				DirectShowUtil.ReleaseComObject(tsWriterIn);
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot inftee->tswriter :0x{0:X}",hr);
 				return false;
 			}
-			Marshal.ReleaseComObject(smartTeeOut);
-			Marshal.ReleaseComObject(tsWriterIn);
+			DirectShowUtil.ReleaseComObject(smartTeeOut);
+			DirectShowUtil.ReleaseComObject(tsWriterIn);
 			SetupMTSDemuxerPin();
 			return true;
 		}
@@ -1452,13 +1452,13 @@ namespace MediaPortal.TV.Recording
               return false;
           }
           if (demuxInPin != null)
-            Marshal.ReleaseComObject(demuxInPin);
+            DirectShowUtil.ReleaseComObject(demuxInPin);
           if (samplePin != null)
-            Marshal.ReleaseComObject(samplePin);
+            DirectShowUtil.ReleaseComObject(samplePin);
           if (pinObj1 != null)
-            Marshal.ReleaseComObject(pinObj1);
+            DirectShowUtil.ReleaseComObject(pinObj1);
           if (pinObj0 != null)
-            Marshal.ReleaseComObject(pinObj0);
+            DirectShowUtil.ReleaseComObject(pinObj0);
 
           demuxInPin = null;
           samplePin = null;
@@ -1508,11 +1508,11 @@ namespace MediaPortal.TV.Recording
         return false;
 
       if (pinObj0 != null)
-        Marshal.ReleaseComObject(pinObj0);
+        DirectShowUtil.ReleaseComObject(pinObj0);
       if (pinObj1 != null)
-        Marshal.ReleaseComObject(pinObj1);
+        DirectShowUtil.ReleaseComObject(pinObj1);
       if (outPin != null)
-        Marshal.ReleaseComObject(outPin);
+        DirectShowUtil.ReleaseComObject(outPin);
 
       return true;
     }
@@ -2140,9 +2140,9 @@ namespace MediaPortal.TV.Recording
 
       //
       if (demuxInPin != null)
-        Marshal.ReleaseComObject(demuxInPin);
+        DirectShowUtil.ReleaseComObject(demuxInPin);
       if (samplePin != null)
-        Marshal.ReleaseComObject(samplePin);
+        DirectShowUtil.ReleaseComObject(samplePin);
 
       //
 
@@ -3318,9 +3318,9 @@ namespace MediaPortal.TV.Recording
         }
         //
         if (demuxInPin != null)
-          Marshal.ReleaseComObject(demuxInPin);
+          DirectShowUtil.ReleaseComObject(demuxInPin);
         if (samplePin != null)
-          Marshal.ReleaseComObject(samplePin);
+          DirectShowUtil.ReleaseComObject(samplePin);
 
         //
 
@@ -3538,9 +3538,9 @@ namespace MediaPortal.TV.Recording
       }
 
       if (demuxInPin != null)
-        Marshal.ReleaseComObject(demuxInPin);
+        DirectShowUtil.ReleaseComObject(demuxInPin);
       if (samplePin != null)
-        Marshal.ReleaseComObject(samplePin);
+        DirectShowUtil.ReleaseComObject(samplePin);
 
       //now start the graph
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: start graph");

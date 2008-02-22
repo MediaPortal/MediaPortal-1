@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using DShowNET.Helper;
 
 namespace MediaPortal.Visualization
 {
@@ -77,7 +78,7 @@ namespace MediaPortal.Visualization
 
             if (!isValidVizObject || oCom == null)
             {
-                Marshal.ReleaseComObject(oCom);
+                DirectShowUtil.ReleaseComObject(oCom);
                 iWmpEffects = null;
                 throw new Exception("Object is not a IWMPEffects interface!");
             }
@@ -92,7 +93,7 @@ namespace MediaPortal.Visualization
         {
             if (iWmpEffects != null)
             {
-                Marshal.ReleaseComObject(iWmpEffects);
+                DirectShowUtil.ReleaseComObject(iWmpEffects);
                 iWmpEffects = null;
             }
         }

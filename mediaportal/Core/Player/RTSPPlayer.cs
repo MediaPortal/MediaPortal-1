@@ -290,8 +290,8 @@ namespace MediaPortal.Player
           Log.Info("RTSPPlayer:failed to connect rtspsource->mpeg2 demux:{0:X}", hr);
           return false;
         }
-        Marshal.ReleaseComObject(pinTsOut);
-        Marshal.ReleaseComObject(pinDemuxIn);
+        DirectShowUtil.ReleaseComObject(pinTsOut);
+        DirectShowUtil.ReleaseComObject(pinDemuxIn);
 
         #endregion
 
@@ -506,39 +506,39 @@ namespace MediaPortal.Player
         if (_mpegDemux != null)
         {
           Log.Info("cleanup mpegdemux");
-          while ((hr = Marshal.ReleaseComObject(_mpegDemux)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_mpegDemux)) > 0)
             ;
           _mpegDemux = null;
         }
         if (_rtspSource != null)
         {
           Log.Info("cleanup _rtspSource");
-          while ((hr = Marshal.ReleaseComObject(_rtspSource)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_rtspSource)) > 0)
             ;
           _rtspSource = null;
         }
         if (videoCodecFilter != null)
         {
           Log.Info("cleanup videoCodecFilter");
-          while (Marshal.ReleaseComObject(videoCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(videoCodecFilter) > 0) ;
           videoCodecFilter = null;
         }
         if (audioCodecFilter != null)
         {
           Log.Info("cleanup audioCodecFilter");
-          while (Marshal.ReleaseComObject(audioCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(audioCodecFilter) > 0) ;
           audioCodecFilter = null;
         }
         if (audioRendererFilter != null)
         {
           Log.Info("cleanup audioRendererFilter");
-          while (Marshal.ReleaseComObject(audioRendererFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(audioRendererFilter) > 0) ;
           audioRendererFilter = null;
         }
 
         if (_subtitleFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_subtitleFilter)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0)
             ;
           _subtitleFilter = null;
           if(this.dvbSubRenderer != null) this.dvbSubRenderer.SetPlayer(null);
@@ -551,7 +551,7 @@ namespace MediaPortal.Player
           Log.Info("cleanup custom filters");
           if (customFilters[i] != null)
           {
-            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
           }
           customFilters[i] = null;
         }
@@ -559,7 +559,7 @@ namespace MediaPortal.Player
         if (vobSub != null)
         {
           Log.Info("cleanup vobSub");
-          while ((hr = Marshal.ReleaseComObject(vobSub)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0) ;
           vobSub = null;
         }
         //	DsUtils.RemoveFilters(graphBuilder);
@@ -573,7 +573,7 @@ namespace MediaPortal.Player
         if (graphBuilder != null)
         {
           Log.Info("cleanup graphBuilder");
-          while ((hr = Marshal.ReleaseComObject(graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0) ;
           graphBuilder = null;
         }
 

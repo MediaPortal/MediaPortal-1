@@ -30,6 +30,7 @@ using DirectShowLib.SBE;
 using DirectShowLib;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using DShowNET.Helper;
 
 namespace WindowPlugins.VideoEditor
 {
@@ -134,7 +135,7 @@ namespace WindowPlugins.VideoEditor
       }
       finally
       {
-        Marshal.ReleaseComObject((object)recCompcut);
+        DirectShowUtil.ReleaseComObject((object)recCompcut);
         recCompcut = null;
         cutPoints = null;
         percent = 0;
@@ -188,7 +189,7 @@ namespace WindowPlugins.VideoEditor
 			}
 			finally
 			{
-				Marshal.ReleaseComObject((object)recCompcut);
+				DirectShowUtil.ReleaseComObject((object)recCompcut);
 				recCompcut = null;
 				cutPoints = null;
 				percent = 0;
@@ -249,7 +250,7 @@ namespace WindowPlugins.VideoEditor
 			}
 			finally
 			{
-				Marshal.ReleaseComObject((object)recCompcut);
+				DirectShowUtil.ReleaseComObject((object)recCompcut);
 				recCompcut = null;
 				cutPoints = null;
 				percent = 0;

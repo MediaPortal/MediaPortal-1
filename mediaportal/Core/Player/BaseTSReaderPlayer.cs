@@ -490,7 +490,7 @@ namespace MediaPortal.Player
       
       // update the curaudiostream from the current audio stream running in tsreader.
       // tvplugin might set the initial track to some other index
-      _curAudioStream = _audioSelector.GetAudioStream();
+      //_curAudioStream = _audioSelector.GetAudioStream();
 
       return true;
     }
@@ -1404,16 +1404,16 @@ namespace MediaPortal.Player
             }
             finally
             {
-              Marshal.ReleaseComObject(other);
+              DirectShowUtil.ReleaseComObject(other);
             }
           }
         }
         finally
         {
-          Marshal.ReleaseComObject(pins[0]);
+          DirectShowUtil.ReleaseComObject(pins[0]);
         }
       }
-      Marshal.ReleaseComObject(pinEnum);
+      DirectShowUtil.ReleaseComObject(pinEnum);
       Log.Info("Graph doesn't need a rebuild");
       return false;
     }
@@ -1582,7 +1582,7 @@ namespace MediaPortal.Player
       finally
       {
         if (comobj != null)
-          Marshal.ReleaseComObject(comobj);
+          DirectShowUtil.ReleaseComObject(comobj);
         comobj = null;
       }
     }
@@ -1619,20 +1619,20 @@ namespace MediaPortal.Player
 
         if (_videoCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
             ;
           _videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_audioCodecFilter)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
             ;
           _audioCodecFilter = null;
         }
 
         if (_audioRendererFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_audioRendererFilter)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
             ;
           _audioRendererFilter = null;
         }
@@ -1642,13 +1642,13 @@ namespace MediaPortal.Player
         {
           if (customFilters[i] != null)
           {
-            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
           }
           customFilters[i] = null;
         }
         if (_fileSource != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_fileSource)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0)
             ;
           _fileSource = null;
         }
@@ -1667,7 +1667,7 @@ namespace MediaPortal.Player
 
         if (_graphBuilder != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
             ;
         }
         _graphBuilder = null;

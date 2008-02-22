@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using System.Windows.Forms;
+using DShowNET.Helper;
 
 namespace DShowNET
 {
@@ -228,7 +229,7 @@ namespace DShowNET
       KSMULTIPLE_ITEM pmi;
       IntPtr pDataReturned;
       int hr = iKsPin.KsQueryMediums(out pDataReturned);
-      Marshal.ReleaseComObject(outputPin);
+      DirectShowUtil.ReleaseComObject(outputPin);
       if (hr != 0)
       {
         Log.Info("TechnoTrend: Pin does not support Mediums");

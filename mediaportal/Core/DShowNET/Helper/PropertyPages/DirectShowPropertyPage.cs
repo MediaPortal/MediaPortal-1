@@ -120,7 +120,7 @@ namespace DShowNET.Helper
         public new void Dispose()
         {
             if (specifyPropertyPages != null)
-                Marshal.ReleaseComObject(specifyPropertyPages); specifyPropertyPages = null;
+                DirectShowUtil.ReleaseComObject(specifyPropertyPages); specifyPropertyPages = null;
         }
 
 

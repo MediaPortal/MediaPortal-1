@@ -150,7 +150,7 @@ namespace MediaPortal.Player
           {
             Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
           }
-          Marshal.ReleaseComObject(baseFilter);
+          DirectShowUtil.ReleaseComObject(baseFilter);
         }
         hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
         if (hr != 0)
@@ -175,7 +175,7 @@ namespace MediaPortal.Player
         Guid classID = new Guid(0x9852a670, b, 0x491b, 0x9b, 0xe6, 0xeb, 0xd8, 0x41, 0xb8, 0xa6, 0x13);
         if (vob != null)
         {
-          Marshal.ReleaseComObject(vob);
+          DirectShowUtil.ReleaseComObject(vob);
           vob = null;
         }
         DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
@@ -287,22 +287,22 @@ namespace MediaPortal.Player
         videoWin = null;
         if (videoCodecFilter != null)
         {
-          while (Marshal.ReleaseComObject(videoCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(videoCodecFilter) > 0) ;
           videoCodecFilter = null;
         }
         if (h264videoCodecFilter != null)
         {
-          while (Marshal.ReleaseComObject(videoCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(videoCodecFilter) > 0) ;
           h264videoCodecFilter = null;
         }
         if (audioCodecFilter != null)
         {
-          while (Marshal.ReleaseComObject(audioCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(audioCodecFilter) > 0) ;
           audioCodecFilter = null;
         }
         if (audioRendererFilter != null)
         {
-          while (Marshal.ReleaseComObject(audioRendererFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(audioRendererFilter) > 0) ;
           audioRendererFilter = null;
         }
         // FlipGer: release custom filters
@@ -310,16 +310,16 @@ namespace MediaPortal.Player
         {
           if (customFilters[i] != null)
           {
-            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
           }
           customFilters[i] = null;
         }
         if (vobSub != null)
         {
-          while ((hr = Marshal.ReleaseComObject(vobSub)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0) ;
           vobSub = null;
         }
-        if (vob != null) Marshal.ReleaseComObject(vob); vob = null;
+        if (vob != null) DirectShowUtil.ReleaseComObject(vob); vob = null;
         //	DsUtils.RemoveFilters(graphBuilder);
         if (_rotEntry != null)
         {
@@ -328,7 +328,7 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if (graphBuilder != null)
         {
-          while ((hr = Marshal.ReleaseComObject(graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0) ;
           graphBuilder = null;
         }
         GUIGraphicsContext.form.Invalidate(true);

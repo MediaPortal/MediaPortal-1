@@ -453,7 +453,7 @@ namespace MediaPortal.Player
         basicAudio = null;
 
         if (graphBuilder != null)
-          Marshal.ReleaseComObject(graphBuilder); graphBuilder = null;
+          DirectShowUtil.ReleaseComObject(graphBuilder); graphBuilder = null;
 
         m_state = PlayState.Init;
       }

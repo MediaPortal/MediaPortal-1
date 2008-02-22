@@ -172,7 +172,7 @@ namespace DShowNET.Helper
 		public override void Dispose()
 		{
 			if ( Crossbar != null )
-				Marshal.ReleaseComObject( Crossbar );
+				DirectShowUtil.ReleaseComObject( Crossbar );
 			Crossbar = null;
 			base.Dispose();
 		}	

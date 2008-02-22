@@ -291,7 +291,7 @@ namespace MediaPortal.TV.Recording
             if (conPin != null)
             {
               Log.Info("SinkGraphEx:   (Pin was already connected...)");
-              Marshal.ReleaseComObject(conPin as Object);
+              DirectShowUtil.ReleaseComObject(conPin as Object);
               conPin = null;
               hr = 0;
             }
@@ -305,13 +305,13 @@ namespace MediaPortal.TV.Recording
               Log.Info("SinkGraphEx:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
             }
 
-            if (sourcePin != null) Marshal.ReleaseComObject(sourcePin); sourcePin = null;
-            if (sinkPin != null) Marshal.ReleaseComObject(sinkPin); sinkPin = null;
+            if (sourcePin != null) DirectShowUtil.ReleaseComObject(sourcePin); sourcePin = null;
+            if (sinkPin != null) DirectShowUtil.ReleaseComObject(sinkPin); sinkPin = null;
             if (sourceFilter.DSFilter != null)
             {
               Log.Info("SinkGraphEx: remove {0}", sourceFilter.FriendlyName);
               _graphBuilderInterface.RemoveFilter(sourceFilter.DSFilter);
-              Marshal.ReleaseComObject(sourceFilter.DSFilter); sourceFilter.DSFilter = null;
+              DirectShowUtil.ReleaseComObject(sourceFilter.DSFilter); sourceFilter.DSFilter = null;
             }
             RetryOtherInstances(i);
             Log.Info("SinkGraphEx: RetryOtherInstances done");
@@ -319,10 +319,10 @@ namespace MediaPortal.TV.Recording
         }//for (int i = 0; i < _card.TvConnectionDefinitions.Count; i++)
 
         if (sinkPin != null)
-          Marshal.ReleaseComObject(sinkPin);
+          DirectShowUtil.ReleaseComObject(sinkPin);
         sinkPin = null;
         if (sourcePin != null)
-          Marshal.ReleaseComObject(sourcePin);
+          DirectShowUtil.ReleaseComObject(sourcePin);
         sourcePin = null;
         Log.Info("SinkGraphEx: Adding configured pin connections...DONE");
 
@@ -470,7 +470,7 @@ namespace MediaPortal.TV.Recording
         if (wstCodec == null)
         {
           _graphBuilderInterface.RemoveFilter(teesink);
-          Marshal.ReleaseComObject(teesink);
+          DirectShowUtil.ReleaseComObject(teesink);
           Log.Error("SinkGraphEx.SetupTeletext(): Failed to find VBI or WST Codec");
           return;
         }
@@ -480,8 +480,8 @@ namespace MediaPortal.TV.Recording
       {
         _graphBuilderInterface.RemoveFilter(teesink);
         _graphBuilderInterface.RemoveFilter(wstCodec);
-        Marshal.ReleaseComObject(teesink);
-        Marshal.ReleaseComObject(wstCodec);
+        DirectShowUtil.ReleaseComObject(teesink);
+        DirectShowUtil.ReleaseComObject(wstCodec);
         Log.Error("SinkGraphEx.SetupTeletext(): Failed to find VBI pin");
         Log.Info("Teletext not available on {0}", _cardName);
         return;
@@ -501,14 +501,14 @@ namespace MediaPortal.TV.Recording
         _graphBuilderInterface.RemoveFilter(teesink);
         _graphBuilderInterface.RemoveFilter(wstCodec);
         _graphBuilderInterface.RemoveFilter(_filterSampleGrabber);
-        Marshal.ReleaseComObject(teesink);
-        Marshal.ReleaseComObject(wstCodec);
-        Marshal.ReleaseComObject(_filterSampleGrabber);
+        DirectShowUtil.ReleaseComObject(teesink);
+        DirectShowUtil.ReleaseComObject(wstCodec);
+        DirectShowUtil.ReleaseComObject(_filterSampleGrabber);
         Log.Error("SinkGraphEx.SetupTeletext(): Failed to find Teletext info");
         return;
       }
-      Marshal.ReleaseComObject(teesink);
-      Marshal.ReleaseComObject(wstCodec);
+      DirectShowUtil.ReleaseComObject(teesink);
+      DirectShowUtil.ReleaseComObject(wstCodec);
       _hasTeletext = true;
     }
 
@@ -596,7 +596,7 @@ namespace MediaPortal.TV.Recording
               if (conPin != null)
               {
                 Log.Info("SinkGraphEx:   (Pin was already connected...)");
-                Marshal.ReleaseComObject(conPin as Object);
+                DirectShowUtil.ReleaseComObject(conPin as Object);
                 conPin = null;
                 hr = 0;
               }
@@ -606,23 +606,23 @@ namespace MediaPortal.TV.Recording
             {
               Log.Info("SinkGraphEx:  Error: Unable to connect Pins 0x{0:X}", hr);
 
-              if (sourcePin != null) Marshal.ReleaseComObject(sourcePin); sourcePin = null;
-              if (sinkPin != null) Marshal.ReleaseComObject(sinkPin); sinkPin = null;
+              if (sourcePin != null) DirectShowUtil.ReleaseComObject(sourcePin); sourcePin = null;
+              if (sinkPin != null) DirectShowUtil.ReleaseComObject(sinkPin); sinkPin = null;
               if (sourceFilter.DSFilter != null)
               {
                 _graphBuilderInterface.RemoveFilter(sourceFilter.DSFilter);
-                Marshal.ReleaseComObject(sourceFilter.DSFilter);
+                DirectShowUtil.ReleaseComObject(sourceFilter.DSFilter);
                 sourceFilter.DSFilter = null;
               }
             }//if (hr != 0)
             else
             {
               if (sinkPin != null)
-                Marshal.ReleaseComObject(sinkPin);
+                DirectShowUtil.ReleaseComObject(sinkPin);
               sinkPin = null;
 
               if (sourcePin != null)
-                Marshal.ReleaseComObject(sourcePin);
+                DirectShowUtil.ReleaseComObject(sourcePin);
               sourcePin = null;
               return;
             }
@@ -666,12 +666,12 @@ namespace MediaPortal.TV.Recording
       }
 
       //      if (_tvTunerInterface != null)
-      //        Marshal.ReleaseComObject(_tvTunerInterface); _tvTunerInterface = null;
+      //        DirectShowUtil.ReleaseComObject(_tvTunerInterface); _tvTunerInterface = null;
 
       _sampleGrabberInterface = null;
       if (_filterSampleGrabber != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_filterSampleGrabber)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_filterSampleGrabber)) > 0) ;
         _filterSampleGrabber = null;
       }
 
@@ -683,7 +683,7 @@ namespace MediaPortal.TV.Recording
 
       //if (_filterCapture != null)
       //{
-      //  Marshal.ReleaseComObject(_filterCapture); _filterCapture = null;
+      //  DirectShowUtil.ReleaseComObject(_filterCapture); _filterCapture = null;
       //}
 
       if (_rotEntry != null)
@@ -698,20 +698,20 @@ namespace MediaPortal.TV.Recording
         {
           if (dsFilter.DSFilter != null)
           {
-            while ((hr = Marshal.ReleaseComObject(dsFilter.DSFilter)) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(dsFilter.DSFilter)) > 0) ;
           }
           dsFilter.DSFilter = null;
         }
       }
       if (_captureGraphBuilderInterface != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
         _captureGraphBuilderInterface = null;
       }
 
       if (_graphBuilderInterface != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_graphBuilderInterface)) > 0) ;
+        while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilderInterface)) > 0) ;
         _graphBuilderInterface = null;
       }
       _hasTeletext = false;
@@ -1045,7 +1045,7 @@ namespace MediaPortal.TV.Recording
       if (o != null)
       {
         crossbar = null;
-        Marshal.ReleaseComObject(o);
+        DirectShowUtil.ReleaseComObject(o);
         o = null;
       }
     }

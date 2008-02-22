@@ -178,7 +178,7 @@ namespace MediaPortal.Player
               _freeNavigator = false;
             }
 
-            //Marshal.ReleaseComObject( _dvdbasefilter); _dvdbasefilter = null;              
+            //DirectShowUtil.ReleaseComObject( _dvdbasefilter); _dvdbasefilter = null;              
           }
         }
         catch (Exception ex)
@@ -339,18 +339,18 @@ namespace MediaPortal.Player
         
         if (_videoCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0) ;
           _videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_audioCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0) ;
           _audioCodecFilter = null;
         }
 
         if (_audioRendererFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_audioRendererFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0) ;
           _audioRendererFilter = null;
         }
 
@@ -359,30 +359,30 @@ namespace MediaPortal.Player
         {
             if (customFilters[i] != null)
             {
-                while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+                while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
             }
             customFilters[i] = null;
         }
 
         if (_cmdOption != null)
-          Marshal.ReleaseComObject(_cmdOption);
+          DirectShowUtil.ReleaseComObject(_cmdOption);
         _cmdOption = null;
         _pendingCmd = false;
 
         if (_dvdbasefilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_dvdbasefilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_dvdbasefilter)) > 0) ;
           _dvdbasefilter = null;
         }
 
         if (_dvdGraph != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_dvdGraph)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_dvdGraph)) > 0) ;
           _dvdGraph = null;
         }
         if (_line21Decoder != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_line21Decoder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
           _line21Decoder = null;
         }
 
@@ -396,7 +396,7 @@ namespace MediaPortal.Player
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
-          while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
           _graphBuilder = null;
         }
 

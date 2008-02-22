@@ -513,10 +513,10 @@ namespace MediaPortal.TV.Recording
           }
           //Log.Info("DVBGraphTTPremium:Demuxer is setup");
 
-          if (pinMHW1In != null) Marshal.ReleaseComObject(pinMHW1In); pinMHW1In = null;
-          if (pinMHW2In != null) Marshal.ReleaseComObject(pinMHW2In); pinMHW2In = null;
-          if (pinEPGIn != null) Marshal.ReleaseComObject(pinEPGIn); pinEPGIn = null;
-          if (pinAnalyzerIn != null) Marshal.ReleaseComObject(pinAnalyzerIn); pinAnalyzerIn = null;
+          if (pinMHW1In != null) DirectShowUtil.ReleaseComObject(pinMHW1In); pinMHW1In = null;
+          if (pinMHW2In != null) DirectShowUtil.ReleaseComObject(pinMHW2In); pinMHW2In = null;
+          if (pinEPGIn != null) DirectShowUtil.ReleaseComObject(pinEPGIn); pinEPGIn = null;
+          if (pinAnalyzerIn != null) DirectShowUtil.ReleaseComObject(pinAnalyzerIn); pinAnalyzerIn = null;
 
           //setup teletext grabbing....
           if (GUIGraphicsContext.DX9Device != null)
@@ -661,31 +661,31 @@ namespace MediaPortal.TV.Recording
 
         if (_pinDemuxerSections != null)
         {
-          Marshal.ReleaseComObject(_pinDemuxerSections);
+          DirectShowUtil.ReleaseComObject(_pinDemuxerSections);
           _pinDemuxerSections = null;
         }
 
         if (_pinAC3Out != null)
         {
-          Marshal.ReleaseComObject(_pinAC3Out);
+          DirectShowUtil.ReleaseComObject(_pinAC3Out);
           _pinAC3Out = null;
         }
 
         if (_pinMPG1Out != null)
         {
-          Marshal.ReleaseComObject(_pinMPG1Out);
+          DirectShowUtil.ReleaseComObject(_pinMPG1Out);
           _pinMPG1Out = null;
         }
 
         if (_pinDemuxerVideo != null)
         {
-          Marshal.ReleaseComObject(_pinDemuxerVideo);
+          DirectShowUtil.ReleaseComObject(_pinDemuxerVideo);
           _pinDemuxerVideo = null;
         }
 
         if (_pinDemuxerAudio != null)
         {
-          Marshal.ReleaseComObject(_pinDemuxerAudio);
+          DirectShowUtil.ReleaseComObject(_pinDemuxerAudio);
           _pinDemuxerAudio = null;
         }
 
@@ -693,14 +693,14 @@ namespace MediaPortal.TV.Recording
         if (_interfaceTTPremium != null)
         {
           hr = _interfaceTTPremium.Close();
-          while ((hr = Marshal.ReleaseComObject(_interfaceTTPremium)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_interfaceTTPremium)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_interfaceTTPremium):{0}", hr);
           _interfaceTTPremium = null;
         }
 
         if (_filterTTPremium != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_filterTTPremium)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterTTPremium)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterTTPremium):{0}", hr);
           _filterTTPremium = null;
         }
@@ -708,7 +708,7 @@ namespace MediaPortal.TV.Recording
         if (_filterDvbAnalyzer != null)
         {
           //Log.Info("free dvbanalyzer");
-          while ((hr = Marshal.ReleaseComObject(_filterDvbAnalyzer)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterDvbAnalyzer)) > 0) ;
           if (hr != 0) Log.Info("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
           _filterDvbAnalyzer = null;
         }
@@ -716,14 +716,14 @@ namespace MediaPortal.TV.Recording
 				if (_filterTsWriter!=null)
 				{
 					Log.Info("free MPTSWriter");
-					hr=Marshal.ReleaseComObject(_filterTsWriter);
+					hr=DirectShowUtil.ReleaseComObject(_filterTsWriter);
 					if (hr!=0) Log.Info("ReleaseComObject(_filterTsWriter):{0}",hr);
 					_filterTsWriter=null;
 				}
 #endif
         if (_filterSmartTee != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_filterSmartTee)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterSmartTee)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterSmartTee):{0}", hr);
           _filterSmartTee = null;
         }
@@ -742,7 +742,7 @@ namespace MediaPortal.TV.Recording
         if (_filterSampleGrabber != null)
         {
           //Log.Info("DVBGraphTTPremium:free samplegrabber");
-          while ((hr = Marshal.ReleaseComObject(_filterSampleGrabber)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterSampleGrabber)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterSampleGrabber):{0}", hr);
           _filterSampleGrabber = null;
         }
@@ -750,14 +750,14 @@ namespace MediaPortal.TV.Recording
 
         if (m_IStreamBufferConfig != null)
         {
-          while ((hr = Marshal.ReleaseComObject(m_IStreamBufferConfig)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferConfig)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(m_IStreamBufferConfig):{0}", hr);
           m_IStreamBufferConfig = null;
         }
 
         if (m_IStreamBufferSink != null)
         {
-          while ((hr = Marshal.ReleaseComObject(m_IStreamBufferSink)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferSink)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(m_IStreamBufferSink):{0}", hr);
           m_IStreamBufferSink = null;
         }
@@ -765,7 +765,7 @@ namespace MediaPortal.TV.Recording
         if (m_StreamBufferSink != null)
         {
           //Log.Info("DVBGraphTTPremium:free streambuffersink");
-          while ((hr = Marshal.ReleaseComObject(m_StreamBufferSink)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferSink)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(m_StreamBufferSink):{0}", hr);
           m_StreamBufferSink = null;
         }
@@ -774,7 +774,7 @@ namespace MediaPortal.TV.Recording
         if (m_StreamBufferConfig != null)
         {
           //Log.Info("DVBGraphTTPremium:free streambufferconfig");
-          while ((hr = Marshal.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(m_StreamBufferConfig):{0}", hr);
           m_StreamBufferConfig = null;
         }
@@ -782,7 +782,7 @@ namespace MediaPortal.TV.Recording
         if (_filterMpeg2Demultiplexer != null)
         {
           //Log.Info("DVBGraphTTPremium:free demux");
-          while ((hr = Marshal.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterMpeg2Demultiplexer):{0}", hr);
           _filterMpeg2Demultiplexer = null;
         }
@@ -805,7 +805,7 @@ namespace MediaPortal.TV.Recording
         if (_captureGraphBuilderInterface != null)
         {
           //Log.Info("DVBGraphTTPremium:free remove capturegraphbuilder");
-          while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
           _captureGraphBuilderInterface = null;
         }
@@ -813,7 +813,7 @@ namespace MediaPortal.TV.Recording
         if (_graphBuilder != null)
         {
           //Log.Info("DVBGraphTTPremium:free graphbuilder");
-          while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_graphBuilder):{0}", hr);
           _graphBuilder = null;
         }
@@ -1089,14 +1089,14 @@ namespace MediaPortal.TV.Recording
           if (_interfaceTTPremium != null)
           {
             hr = _interfaceTTPremium.Close();
-            while ((hr = Marshal.ReleaseComObject(_interfaceTTPremium)) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(_interfaceTTPremium)) > 0) ;
             if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_interfaceTTPremium):{0}", hr);
             _interfaceTTPremium = null;
           }
 
           if (_filterTTPremium != null)
           {
-            while ((hr = Marshal.ReleaseComObject(_filterTTPremium)) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(_filterTTPremium)) > 0) ;
             if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterTTPremium):{0}", hr);
             _filterTTPremium = null;
           }
@@ -1105,7 +1105,7 @@ namespace MediaPortal.TV.Recording
           if (_captureGraphBuilderInterface != null)
           {
             //Log.Info("DVBGraphTTPremium:free remove capturegraphbuilder");
-            while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
             if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
             _captureGraphBuilderInterface = null;
           }
@@ -1113,7 +1113,7 @@ namespace MediaPortal.TV.Recording
           if (_graphBuilder != null)
           {
             //Log.Info("DVBGraphTTPremium:free graphbuilder");
-            while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
             if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_graphBuilder):{0}", hr);
             _graphBuilder = null;
           }

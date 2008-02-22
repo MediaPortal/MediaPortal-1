@@ -312,7 +312,7 @@ namespace DShowNET.Helper
 					}
 					while( hr == 0 );
 
-					Marshal.ReleaseComObject( pinEnum ); pinEnum = null;
+					DirectShowUtil.ReleaseComObject( pinEnum ); pinEnum = null;
 				}
 			}
 

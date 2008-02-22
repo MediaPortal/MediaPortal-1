@@ -961,7 +961,7 @@ namespace MediaPortal.Player
 
         if (vob != null)
         {
-          Marshal.ReleaseComObject(vob);
+          DirectShowUtil.ReleaseComObject(vob);
           vob = null;
         }
         DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
@@ -1050,29 +1050,29 @@ namespace MediaPortal.Player
         basicVideo = null;
         basicAudio = null;
 
-        if (videoCodecFilter != null) Marshal.ReleaseComObject(videoCodecFilter); videoCodecFilter = null;
-        if (h264videoCodecFilter != null) Marshal.ReleaseComObject(h264videoCodecFilter); h264videoCodecFilter = null;
-        if (audioCodecFilter != null) Marshal.ReleaseComObject(audioCodecFilter); audioCodecFilter = null;
-        if (audioRendererFilter != null) Marshal.ReleaseComObject(audioRendererFilter); audioRendererFilter = null;
+        if (videoCodecFilter != null) DirectShowUtil.ReleaseComObject(videoCodecFilter); videoCodecFilter = null;
+        if (h264videoCodecFilter != null) DirectShowUtil.ReleaseComObject(h264videoCodecFilter); h264videoCodecFilter = null;
+        if (audioCodecFilter != null) DirectShowUtil.ReleaseComObject(audioCodecFilter); audioCodecFilter = null;
+        if (audioRendererFilter != null) DirectShowUtil.ReleaseComObject(audioRendererFilter); audioRendererFilter = null;
         
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
           if (customFilters[i] != null)
           {
-            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
           }
           customFilters[i] = null;
         }
         if (vobSub != null)
         {
-          while ((hr = Marshal.ReleaseComObject(vobSub)) > 0)
+          while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0)
           {
             Log.Info("VobSub test release");
           }
           vobSub = null;
         }
-        if (vob != null) Marshal.ReleaseComObject(vob); vob = null;
+        if (vob != null) DirectShowUtil.ReleaseComObject(vob); vob = null;
         DirectShowUtil.RemoveFilters(graphBuilder);
 
         if (_rotEntry != null)
@@ -1083,7 +1083,7 @@ namespace MediaPortal.Player
 
         if (graphBuilder != null)
         {
-          while ((hr = Marshal.ReleaseComObject(graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0) ;
           graphBuilder = null;
         }
 
@@ -1493,10 +1493,10 @@ namespace MediaPortal.Player
                   }
                 }
               }
-              Marshal.ReleaseComObject(foundfilter[0]);
+              DirectShowUtil.ReleaseComObject(foundfilter[0]);
             }
           }
-          Marshal.ReleaseComObject(enumFilters);
+          DirectShowUtil.ReleaseComObject(enumFilters);
         }
       }
       catch
@@ -1515,7 +1515,7 @@ namespace MediaPortal.Player
           if (pStrm != null)
             pStrm.Enable(Id, dwFlags);
           pStrm = null;
-          Marshal.ReleaseComObject(foundfilter);
+          DirectShowUtil.ReleaseComObject(foundfilter);
         }
       }
       catch

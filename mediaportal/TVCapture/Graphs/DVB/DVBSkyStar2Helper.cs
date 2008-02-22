@@ -576,37 +576,37 @@ namespace MediaPortal.TV.Recording
 
       if (m_demux != null)
       {
-        Marshal.ReleaseComObject(m_demux);
+        DirectShowUtil.ReleaseComObject(m_demux);
         m_demux = null;
       }
       if (m_demuxInterface != null)
       {
-        Marshal.ReleaseComObject(m_demuxInterface);
+        DirectShowUtil.ReleaseComObject(m_demuxInterface);
         m_demuxInterface = null;
       }
       if (m_mpeg2Data != null)
       {
-        Marshal.ReleaseComObject(m_mpeg2Data);
+        DirectShowUtil.ReleaseComObject(m_mpeg2Data);
         m_mpeg2Data = null;
       }
       if (m_dataCtrl != null)
       {
-        Marshal.ReleaseComObject(m_dataCtrl);
+        DirectShowUtil.ReleaseComObject(m_dataCtrl);
         m_dataCtrl = null;
       }
       if (m_avCtrl != null)
       {
-        Marshal.ReleaseComObject(m_avCtrl);
+        DirectShowUtil.ReleaseComObject(m_avCtrl);
         m_avCtrl = null;
       }
       if (m_tunerCtrl != null)
       {
-        Marshal.ReleaseComObject(m_tunerCtrl);
+        DirectShowUtil.ReleaseComObject(m_tunerCtrl);
         m_tunerCtrl = null;
       }
       if (m_b2c2Adapter != null)
       {
-        Marshal.ReleaseComObject(m_b2c2Adapter);
+        DirectShowUtil.ReleaseComObject(m_b2c2Adapter);
         m_b2c2Adapter = null;
       }
 
@@ -647,13 +647,13 @@ namespace MediaPortal.TV.Recording
         return false;
 
       if (demuxIn != null)
-        Marshal.ReleaseComObject(demuxIn);
+        DirectShowUtil.ReleaseComObject(demuxIn);
       if (demuxOut != null)
-        Marshal.ReleaseComObject(demuxOut);
+        DirectShowUtil.ReleaseComObject(demuxOut);
       if (dataPin0Out != null)
-        Marshal.ReleaseComObject(dataPin0Out);
+        DirectShowUtil.ReleaseComObject(dataPin0Out);
       if (mpeg2DataIn != null)
-        Marshal.ReleaseComObject(mpeg2DataIn);
+        DirectShowUtil.ReleaseComObject(mpeg2DataIn);
 
       return true;
 

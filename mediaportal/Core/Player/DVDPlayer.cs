@@ -430,18 +430,18 @@ namespace MediaPortal.Player
 
         if (_videoCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0) ;
           _videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_audioCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0) ;
           _audioCodecFilter = null;
         }
 
         if (_audioRendererFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_audioRendererFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0) ;
           _audioRendererFilter = null;
         }
 
@@ -450,24 +450,24 @@ namespace MediaPortal.Player
         {
             if (customFilters[i] != null)
             {
-                while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0) ;
+                while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
             }
             customFilters[i] = null;
         }
 
         if (_dvdbasefilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_dvdbasefilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_dvdbasefilter)) > 0) ;
           _dvdbasefilter = null;
         }
 
         if (_cmdOption != null)
-          Marshal.ReleaseComObject(_cmdOption);
+          DirectShowUtil.ReleaseComObject(_cmdOption);
         _cmdOption = null;
         _pendingCmd = false;
         if (_line21Decoder != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_line21Decoder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
           _line21Decoder = null;
         }
 
@@ -480,13 +480,13 @@ namespace MediaPortal.Player
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
-          while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
           _graphBuilder = null;
         }
 
         if (_dvdGraph != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_dvdGraph)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_dvdGraph)) > 0) ;
           _dvdGraph = null;
         }
         _state = PlayState.Init;
@@ -566,7 +566,7 @@ namespace MediaPortal.Player
               _freeNavigator = false;
             }
 
-            //Marshal.ReleaseComObject( _dvdbasefilter); _dvdbasefilter = null;              
+            //DirectShowUtil.ReleaseComObject( _dvdbasefilter); _dvdbasefilter = null;              
           }
         }
         catch (Exception ex)
@@ -672,7 +672,7 @@ namespace MediaPortal.Player
       finally
       {
         if (comobj != null)
-          Marshal.ReleaseComObject(comobj); comobj = null;
+          DirectShowUtil.ReleaseComObject(comobj); comobj = null;
       }
     }
         
@@ -908,12 +908,12 @@ namespace MediaPortal.Player
         if (cmd != _cmdOption)
         {
           Log.Error("DVDPlayer:DVD OnCmdComplete UNKNOWN CMD!!!");
-          Marshal.ReleaseComObject(cmd); cmd = null;
+          DirectShowUtil.ReleaseComObject(cmd); cmd = null;
           return;
         }
 
-        Marshal.ReleaseComObject(cmd); cmd = null;
-        Marshal.ReleaseComObject(_cmdOption); _cmdOption = null;
+        DirectShowUtil.ReleaseComObject(cmd); cmd = null;
+        DirectShowUtil.ReleaseComObject(_cmdOption); _cmdOption = null;
         _pendingCmd = false;
         //				Log.Info( "DVD OnCmdComplete OK." );
         UpdateMenu();
@@ -1293,7 +1293,7 @@ namespace MediaPortal.Player
         if (dvdStatePersistMemory == null)
         {
           Log.Info("DVDPlayer::GetResumeState() could not get IPersistMemory");
-          Marshal.ReleaseComObject(dvdState);
+          DirectShowUtil.ReleaseComObject(dvdState);
           return false;
         }
         uint resumeSize = 0;
@@ -1301,8 +1301,8 @@ namespace MediaPortal.Player
         if (resumeSize <= 0)
         {
           Log.Info("DVDPlayer::GetResumeState() failed resumeSize={0}", resumeSize);
-          Marshal.ReleaseComObject(dvdStatePersistMemory);
-          Marshal.ReleaseComObject(dvdState);
+          DirectShowUtil.ReleaseComObject(dvdStatePersistMemory);
+          DirectShowUtil.ReleaseComObject(dvdState);
           return false;
         }
         IntPtr stateData = Marshal.AllocCoTaskMem((int)resumeSize);
@@ -1319,8 +1319,8 @@ namespace MediaPortal.Player
         }
 
         Marshal.FreeCoTaskMem(stateData);
-        Marshal.ReleaseComObject(dvdStatePersistMemory);
-        Marshal.ReleaseComObject(dvdState);
+        DirectShowUtil.ReleaseComObject(dvdStatePersistMemory);
+        DirectShowUtil.ReleaseComObject(dvdState);
       }
       catch (Exception)
       {
@@ -1367,7 +1367,7 @@ namespace MediaPortal.Player
           return true;
         }
 
-        Marshal.ReleaseComObject(dvdState);
+        DirectShowUtil.ReleaseComObject(dvdState);
       }
 
       Log.Info("DVDPlayer::SetResumeState() end false");

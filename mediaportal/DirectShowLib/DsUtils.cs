@@ -1057,9 +1057,22 @@ namespace DirectShowLib
     {
       if (pinInfo.filter != null)
       {
-        Marshal.ReleaseComObject(pinInfo.filter);
+        ReleaseComObject(pinInfo.filter);
         pinInfo.filter = null;
       }
+    }
+
+    public static int ReleaseComObject(object obj)
+    {
+      if (obj != null)
+      {
+        return Marshal.ReleaseComObject(obj);
+      }
+
+      System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(true);
+      //Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
+
+      return 0;
     }
 
   }
@@ -1128,12 +1141,12 @@ namespace DirectShowLib
       {
         if (mk != null)
         {
-          Marshal.ReleaseComObject(mk);
+          DsUtils.ReleaseComObject(mk);
           mk = null;
         }
         if (rot != null)
         {
-          Marshal.ReleaseComObject(rot);
+          DsUtils.ReleaseComObject(rot);
           rot = null;
         }
       }
@@ -1167,7 +1180,7 @@ namespace DirectShowLib
         }
         finally
         {
-          Marshal.ReleaseComObject(rot);
+          DsUtils.ReleaseComObject(rot);
           rot = null;
         }
       }
@@ -1289,14 +1302,14 @@ namespace DirectShowLib
               }
               catch
               {
-                Marshal.ReleaseComObject(mon[0]);
+                DsUtils.ReleaseComObject(mon[0]);
                 throw;
               }
             }
           }
           finally
           {
-            Marshal.ReleaseComObject(enumMon);
+            DsUtils.ReleaseComObject(enumMon);
           }
 
           // Copy the ArrayList to the DsDevice[]
@@ -1352,7 +1365,7 @@ namespace DirectShowLib
         bag = null;
         if (bagObj != null)
         {
-          Marshal.ReleaseComObject(bagObj);
+          DsUtils.ReleaseComObject(bagObj);
           bagObj = null;
         }
       }
@@ -1364,7 +1377,7 @@ namespace DirectShowLib
     {
       if (Mon != null)
       {
-        Marshal.ReleaseComObject(Mon);
+        DsUtils.ReleaseComObject(Mon);
         m_Mon = null;
         GC.SuppressFinalize(this);
       }
@@ -1425,12 +1438,12 @@ namespace DirectShowLib
             }
             iIndex--;
           }
-          Marshal.ReleaseComObject(pPins[0]);
+          DsUtils.ReleaseComObject(pPins[0]);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(ppEnum);
+        DsUtils.ReleaseComObject(ppEnum);
       }
 
       return pRet;
@@ -1476,13 +1489,13 @@ namespace DirectShowLib
             pRet = pPins[0];
             break;
           }
-          Marshal.ReleaseComObject(pPins[0]);
+          DsUtils.ReleaseComObject(pPins[0]);
           DsUtils.FreePinInfo(ppinfo);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(ppEnum);
+        DsUtils.ReleaseComObject(ppEnum);
       }
 
       return pRet;
@@ -1528,12 +1541,12 @@ namespace DirectShowLib
             }
             iIndex--;
           }
-          Marshal.ReleaseComObject(pPins[0]);
+          DsUtils.ReleaseComObject(pPins[0]);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(ppEnum);
+        DsUtils.ReleaseComObject(ppEnum);
       }
 
       return pRet;
@@ -1577,7 +1590,7 @@ namespace DirectShowLib
             DsError.ThrowExceptionForHR(hr);
 
             // The ConnectedTo call succeeded, release the interface
-            Marshal.ReleaseComObject(pOutPin);
+            DsUtils.ReleaseComObject(pOutPin);
           }
 
           // Is it the right status?
@@ -1594,12 +1607,12 @@ namespace DirectShowLib
             }
             iIndex--;
           }
-          Marshal.ReleaseComObject(pPins[0]);
+          DsUtils.ReleaseComObject(pPins[0]);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(ppEnum);
+        DsUtils.ReleaseComObject(ppEnum);
       }
 
       return pRet;

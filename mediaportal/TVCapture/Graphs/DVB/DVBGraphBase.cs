@@ -1005,7 +1005,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          Marshal.ReleaseComObject(pin);
+          DirectShowUtil.ReleaseComObject(pin);
         }
       }
       else
@@ -1031,7 +1031,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          Marshal.ReleaseComObject(pin);
+          DirectShowUtil.ReleaseComObject(pin);
         }
       }
       _currentTuningObject.AudioPid = audioPid;
@@ -1477,17 +1477,17 @@ namespace MediaPortal.TV.Recording
       finally
       {
         if (pinObj0 != null)
-          Marshal.ReleaseComObject(pinObj0);
+          DirectShowUtil.ReleaseComObject(pinObj0);
         if (pinObj1 != null)
-          Marshal.ReleaseComObject(pinObj1);
+          DirectShowUtil.ReleaseComObject(pinObj1);
         if (pinObj2 != null)
-          Marshal.ReleaseComObject(pinObj2);
+          DirectShowUtil.ReleaseComObject(pinObj2);
         if (pinObj3 != null)
-          Marshal.ReleaseComObject(pinObj3);
+          DirectShowUtil.ReleaseComObject(pinObj3);
         if (outPin != null)
-          Marshal.ReleaseComObject(outPin);
+          DirectShowUtil.ReleaseComObject(outPin);
         //if ( streamBufferInitialize !=null)
-        //Marshal.ReleaseComObject(streamBufferInitialize );
+        //DirectShowUtil.ReleaseComObject(streamBufferInitialize );
       }
       //			(_graphBuilder as IMediaFilter).SetSyncSource(_filterMpeg2Demultiplexer as IReferenceClock);
       return true;
@@ -1548,19 +1548,19 @@ namespace MediaPortal.TV.Recording
                   hr = _graphBuilder.Connect(outPin[0], dsPin[0]);
                   if (hr == 0)
                   {
-                    Marshal.ReleaseComObject(dsPin[0]);
-                    Marshal.ReleaseComObject(outPin[0]);
-                    Marshal.ReleaseComObject(pinEnum);
-                    Marshal.ReleaseComObject(downstreamPins);
+                    DirectShowUtil.ReleaseComObject(dsPin[0]);
+                    DirectShowUtil.ReleaseComObject(outPin[0]);
+                    DirectShowUtil.ReleaseComObject(pinEnum);
+                    DirectShowUtil.ReleaseComObject(downstreamPins);
                     return true;
                   }
-                  Marshal.ReleaseComObject(dsPin[0]);
+                  DirectShowUtil.ReleaseComObject(dsPin[0]);
                 }
               }//while(downstreamPins.Next(1, dsPin, out ulFetched) == 0)
-              Marshal.ReleaseComObject(downstreamPins);
+              DirectShowUtil.ReleaseComObject(downstreamPins);
             }//if (outputPinCounter == preferredOutputPin)
           }//if (pinDir == PinDirection.Output)
-          Marshal.ReleaseComObject(outPin[0]);
+          DirectShowUtil.ReleaseComObject(outPin[0]);
         }//while(pinEnum.Next(1, outPin, out ulFetched) == 0)
         pinEnum.Reset();        // Move back to start of enumerator
       }//if (preferredOutputPin > 0)
@@ -1585,20 +1585,20 @@ namespace MediaPortal.TV.Recording
               hr = _graphBuilder.Connect(testPin[0], dsPin[0]);
               if (hr == 0)
               {
-                Marshal.ReleaseComObject(dsPin[0]);
-                Marshal.ReleaseComObject(downstreamPins);
-                Marshal.ReleaseComObject(testPin[0]);
-                Marshal.ReleaseComObject(pinEnum);
+                DirectShowUtil.ReleaseComObject(dsPin[0]);
+                DirectShowUtil.ReleaseComObject(downstreamPins);
+                DirectShowUtil.ReleaseComObject(testPin[0]);
+                DirectShowUtil.ReleaseComObject(pinEnum);
                 return true;
               }
             }//if (dsPinDir == PinDirection.Input)
-            Marshal.ReleaseComObject(dsPin[0]);
+            DirectShowUtil.ReleaseComObject(dsPin[0]);
           }//while(downstreamPins.Next(1, dsPin, out ulFetched) == 0)
-          Marshal.ReleaseComObject(downstreamPins);
+          DirectShowUtil.ReleaseComObject(downstreamPins);
         }//if(pinDir == PinDirection.Output) // Go and find the input pin.
-        Marshal.ReleaseComObject(testPin[0]);
+        DirectShowUtil.ReleaseComObject(testPin[0]);
       }//while(pinEnum.Next(1, testPin, out ulFetched) == 0)
-      Marshal.ReleaseComObject(pinEnum);
+      DirectShowUtil.ReleaseComObject(pinEnum);
       return false;
     }//private bool ConnectFilters(ref IBaseFilter UpstreamFilter, ref IBaseFilter DownstreamFilter, int preferredOutputPin)
 
@@ -1633,7 +1633,7 @@ namespace MediaPortal.TV.Recording
         propBag.Read("FriendlyName", out val, null);
         string Name = val as string;
         val = "";
-        Marshal.ReleaseComObject(propBag);
+        DirectShowUtil.ReleaseComObject(propBag);
         if (String.Compare(Name, FriendlyName, true) == 0) // If found
         {
           object filterObj = null;
@@ -1643,14 +1643,14 @@ namespace MediaPortal.TV.Recording
           filterObj = null;
           if (device != null)
           {
-            Marshal.ReleaseComObject(deviceMoniker[0]);
-            Marshal.ReleaseComObject(enumMoniker);
+            DirectShowUtil.ReleaseComObject(deviceMoniker[0]);
+            DirectShowUtil.ReleaseComObject(enumMoniker);
             return true;
           }
         }//if(String.Compare(Name.ToLower(), FriendlyName.ToLower()) == 0) // If found
-        Marshal.ReleaseComObject(deviceMoniker[0]);
+        DirectShowUtil.ReleaseComObject(deviceMoniker[0]);
       }//while(enumMoniker.Next(1, deviceMoniker, out ulFetched) == 0) // while == S_OK
-      Marshal.ReleaseComObject(enumMoniker);
+      DirectShowUtil.ReleaseComObject(enumMoniker);
       device = null;
       return false;
     }//private bool findNamedFilter(System.Guid ClassID, string FriendlyName, out object device)

@@ -1254,7 +1254,7 @@ namespace MediaPortal.Player
       finally
       {
         if (comobj != null)
-          Marshal.ReleaseComObject(comobj);
+          DirectShowUtil.ReleaseComObject(comobj);
         comobj = null;
       }
     }
@@ -1286,22 +1286,22 @@ namespace MediaPortal.Player
         _basicVideo = null;
         if (_videoCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0);
           _videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_audioCodecFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0);
           _audioCodecFilter = null;
         }
         if (_audioRendererFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_audioRendererFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0);
           _audioRendererFilter = null;
         }
         if (_h264videoCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_h264videoCodecFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0);
           _h264videoCodecFilter = null;
         }
         // FlipGer: release custom filters
@@ -1309,13 +1309,13 @@ namespace MediaPortal.Player
         {
           if (customFilters[i] != null)
           {
-            while ((hr = Marshal.ReleaseComObject(customFilters[i])) > 0);
+            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0);
           }
           customFilters[i] = null;
         }
         if (_fileSource != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_fileSource)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0);
           _fileSource = null;
         }
         if (_vmr7 != null)
@@ -1329,7 +1329,7 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if (_graphBuilder != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0);
         }
         _graphBuilder = null;
         _state = PlayState.Init;

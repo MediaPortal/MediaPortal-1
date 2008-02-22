@@ -352,34 +352,34 @@ namespace MediaPortal.Core.Transcoding
 			mediaControl = null;
 
 			if (divxCodec != null)
-				Marshal.ReleaseComObject(divxCodec);
+				DirectShowUtil.ReleaseComObject(divxCodec);
 			divxCodec = null;
 
 			if (mp3Codec != null)
-				Marshal.ReleaseComObject(mp3Codec);
+				DirectShowUtil.ReleaseComObject(mp3Codec);
 			mp3Codec = null;
 
 			if (aviMuxer != null)
-				Marshal.ReleaseComObject(aviMuxer);
+				DirectShowUtil.ReleaseComObject(aviMuxer);
 			aviMuxer = null;
 
 			if (Mpeg2AudioCodec != null)
-				Marshal.ReleaseComObject(Mpeg2AudioCodec);
+				DirectShowUtil.ReleaseComObject(Mpeg2AudioCodec);
 			Mpeg2AudioCodec = null;
 
 			if (Mpeg2VideoCodec != null)
-				Marshal.ReleaseComObject(Mpeg2VideoCodec);
+				DirectShowUtil.ReleaseComObject(Mpeg2VideoCodec);
 			Mpeg2VideoCodec = null;
 
 
 			if (bufferSource != null)
-				Marshal.ReleaseComObject(bufferSource);
+				DirectShowUtil.ReleaseComObject(bufferSource);
 			bufferSource = null;
 
 			DirectShowUtil.RemoveFilters(graphBuilder);
 
 			if (graphBuilder != null)
-				Marshal.ReleaseComObject(graphBuilder); graphBuilder = null;
+				DirectShowUtil.ReleaseComObject(graphBuilder); graphBuilder = null;
 			GC.Collect();
 			GC.Collect();
 			GC.Collect();

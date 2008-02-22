@@ -25,6 +25,7 @@ using System;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
+using DShowNET.Helper;
 
 namespace DShowNET
 {
@@ -152,7 +153,7 @@ namespace DShowNET
             Marshal.FreeCoTaskMem(ptrOutBuffer);
           }
         }
-        //Marshal.ReleaseComObject(pin);
+        //DirectShowUtil.ReleaseComObject(pin);
       }
     }
 
@@ -216,9 +217,9 @@ namespace DShowNET
                 Log.Info("Twinhan card detected");
                 success = true;
               }
-              //Marshal.ReleaseComObject(propertySet);
+              //DirectShowUtil.ReleaseComObject(propertySet);
             }
-            //Marshal.ReleaseComObject(pin);
+            //DirectShowUtil.ReleaseComObject(pin);
           }
         }
         finally
@@ -313,9 +314,9 @@ namespace DShowNET
           }
           else
             Log.Info("Twinhan: SetStructure() returned ok 0x{0:X}", hr);
-          Marshal.ReleaseComObject(propertySet);
+          DirectShowUtil.ReleaseComObject(propertySet);
         }
-        Marshal.ReleaseComObject(pin);
+        DirectShowUtil.ReleaseComObject(pin);
       }
       Marshal.FreeCoTaskMem(thbdaBuf);
       Marshal.FreeCoTaskMem(ptrDwBytesReturned);
@@ -452,9 +453,9 @@ namespace DShowNET
           }
           else
             Log.Info("TwinHan SetLNB ok 0x{0:X}", hr);
-          Marshal.ReleaseComObject(propertySet);
+          DirectShowUtil.ReleaseComObject(propertySet);
         }
-        Marshal.ReleaseComObject(pin);
+        DirectShowUtil.ReleaseComObject(pin);
       }
     }
 
@@ -546,9 +547,9 @@ namespace DShowNET
             Log.Info("TwinHan DiSEqC cmd:{0} succeeded", line);
             success = true;
           }
-          Marshal.ReleaseComObject(propertySet);
+          DirectShowUtil.ReleaseComObject(propertySet);
         }
-        Marshal.ReleaseComObject(pin);
+        DirectShowUtil.ReleaseComObject(pin);
       }
       return success;
     }

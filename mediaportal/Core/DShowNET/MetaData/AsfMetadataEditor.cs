@@ -32,6 +32,7 @@ using System.Data;
 using System.Text;
 using System.Collections;
 using System.Runtime.InteropServices;
+using DShowNET.Helper;
 
 namespace Toub.MediaCenter.Dvrms.Metadata
 {
@@ -76,12 +77,12 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 				{
 					try { _editor.Flush(); } 
 					catch(COMException){}
-					while(Marshal.ReleaseComObject(_editor) > 0);
+					while(DirectShowUtil.ReleaseComObject(_editor) > 0);
 					_editor = null;
 				}
 				if (_headerInfo != null)
 				{
-					while(Marshal.ReleaseComObject(_headerInfo) > 0);
+					while(DirectShowUtil.ReleaseComObject(_headerInfo) > 0);
 					_headerInfo = null;
 				}
 			}

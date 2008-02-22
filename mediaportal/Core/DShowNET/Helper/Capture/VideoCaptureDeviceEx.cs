@@ -211,26 +211,26 @@ namespace DShowNET.Helper
       int hr = 0;
       if (_pinCapture != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_pinCapture))>0);
+        while ((hr = DirectShowUtil.ReleaseComObject(_pinCapture))>0);
         _pinCapture = null;
         if (hr != 0) Log.Info("Sinkgraph:ReleaseComobject(_pinCapture):{0}", hr);
       }
 
       if (_pinAudioPreview != null)
       {
-        while ((hr =  Marshal.ReleaseComObject(_pinAudioPreview))>0)
+        while ((hr =  DirectShowUtil.ReleaseComObject(_pinAudioPreview))>0)
         _pinAudioPreview = null;
         if (hr != 0) Log.Info("Sinkgraph:ReleaseComobject(_pinAudioPreview):{0}", hr);
       }
       if (_pinVideoPreview != null)
       {
-        while ((hr =  Marshal.ReleaseComObject(_pinVideoPreview))>0)
+        while ((hr =  DirectShowUtil.ReleaseComObject(_pinVideoPreview))>0)
         _pinVideoPreview = null;
         if (hr != 0) Log.Info("Sinkgraph:ReleaseComobject(_pinVideoPreview):{0}", hr);
       }
       if (_pinVideoPort != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_pinVideoPort)) > 0)
+        while ((hr = DirectShowUtil.ReleaseComObject(_pinVideoPort)) > 0)
         _pinVideoPort = null;
         if (hr != 0) Log.Info("Sinkgraph:ReleaseComobject(_pinVideoPort):{0}", hr);
       }

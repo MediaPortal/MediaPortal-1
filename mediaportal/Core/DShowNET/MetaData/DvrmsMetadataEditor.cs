@@ -272,7 +272,7 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 			if (disposing)
 			{
 				if (sourceFilter != null)
-					Marshal.ReleaseComObject(sourceFilter);
+					DirectShowUtil.ReleaseComObject(sourceFilter);
 				_editor = null;
 				sourceFilter=null;
 			}

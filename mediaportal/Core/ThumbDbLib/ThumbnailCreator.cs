@@ -27,6 +27,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using DShowNET.Helper;
 
 namespace ThumbDBLib
 {
@@ -405,7 +406,7 @@ namespace ThumbDBLib
 				}
 				catch (Exception ex)
 				{
-					Marshal.ReleaseComObject(folder);
+					DirectShowUtil.ReleaseComObject(folder);
 					throw ex;
 				}
 
@@ -421,7 +422,7 @@ namespace ThumbDBLib
 					}
 					catch (Exception ex)
 					{
-						Marshal.ReleaseComObject(folder);
+						DirectShowUtil.ReleaseComObject(folder);
 						Allocator.Free(pidlMain);
 						throw ex;
 					}
@@ -439,7 +440,7 @@ namespace ThumbDBLib
 						}
 						catch (Exception ex)
 						{
-							Marshal.ReleaseComObject(folder);
+							DirectShowUtil.ReleaseComObject(folder);
 							Allocator.Free(pidlMain);
 							throw ex;
 						}
@@ -472,17 +473,17 @@ namespace ThumbDBLib
 								}
 							}
 
-							Marshal.ReleaseComObject(idEnum);
+							DirectShowUtil.ReleaseComObject(idEnum);
 						}
 
 
-						Marshal.ReleaseComObject(item);
+						DirectShowUtil.ReleaseComObject(item);
 					}
 
 					Allocator.Free(pidlMain);
 				}
 
-				Marshal.ReleaseComObject(folder);
+				DirectShowUtil.ReleaseComObject(folder);
 			}
 			return thumbNail;
 		}
@@ -542,7 +543,7 @@ namespace ThumbDBLib
 							// is thumbNail owned by the Bitmap?
 						}
 
-						Marshal.ReleaseComObject(extractImage);
+						DirectShowUtil.ReleaseComObject(extractImage);
 						extractImage = null;
 					}
 					return true;
@@ -560,7 +561,7 @@ namespace ThumbDBLib
 				}
 				if (extractImage != null)
 				{
-					Marshal.ReleaseComObject(extractImage);
+					DirectShowUtil.ReleaseComObject(extractImage);
 				}
 				throw ex;
 			}
@@ -604,7 +605,7 @@ namespace ThumbDBLib
 			{
 				if (alloc != null)
 				{
-					Marshal.ReleaseComObject(alloc);
+					DirectShowUtil.ReleaseComObject(alloc);
 				}
 				alloc = null;
 

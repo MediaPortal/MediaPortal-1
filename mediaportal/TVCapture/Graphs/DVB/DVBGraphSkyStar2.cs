@@ -511,22 +511,22 @@ namespace MediaPortal.TV.Recording
                   }
                   if (pinConnectedTo != null)
                   {
-                    Marshal.ReleaseComObject(pinConnectedTo);
+                    DirectShowUtil.ReleaseComObject(pinConnectedTo);
                     pinConnectedTo = null;
                   }
                 }
               }
             }
             if (enumMedia != null)
-              Marshal.ReleaseComObject(enumMedia);
+              DirectShowUtil.ReleaseComObject(enumMedia);
             enumMedia = null;
             if (pin[0] != null)
-              Marshal.ReleaseComObject(pin[0]);
+              DirectShowUtil.ReleaseComObject(pin[0]);
             pin[0] = null;
           }
         }
-        Marshal.ReleaseComObject(pinEnum); pinEnum = null;
-        if (pinAnalyzerIn != null) Marshal.ReleaseComObject(pinAnalyzerIn); pinAnalyzerIn = null;
+        DirectShowUtil.ReleaseComObject(pinEnum); pinEnum = null;
+        if (pinAnalyzerIn != null) DirectShowUtil.ReleaseComObject(pinAnalyzerIn); pinAnalyzerIn = null;
         //get the video/audio output pins of the mpeg2 demultiplexer
         if (_pinDemuxerVideo == null)
         {
@@ -657,9 +657,9 @@ namespace MediaPortal.TV.Recording
           }
           //Log.Info("DVBGraphSkyStar2:Demuxer is setup");
 
-          if (pinMHW1In != null) Marshal.ReleaseComObject(pinMHW1In); pinMHW1In = null;
-          if (pinMHW2In != null) Marshal.ReleaseComObject(pinMHW2In); pinMHW2In = null;
-          if (pinEPGIn != null) Marshal.ReleaseComObject(pinEPGIn); pinEPGIn = null;
+          if (pinMHW1In != null) DirectShowUtil.ReleaseComObject(pinMHW1In); pinMHW1In = null;
+          if (pinMHW2In != null) DirectShowUtil.ReleaseComObject(pinMHW2In); pinMHW2In = null;
+          if (pinEPGIn != null) DirectShowUtil.ReleaseComObject(pinEPGIn); pinEPGIn = null;
 
           //setup teletext grabbing....
           if (GUIGraphicsContext.DX9Device != null)
@@ -794,29 +794,29 @@ namespace MediaPortal.TV.Recording
         //Log.Info("free pins");
 
         if (_pinDemuxerSections != null)
-          Marshal.ReleaseComObject(_pinDemuxerSections);
+          DirectShowUtil.ReleaseComObject(_pinDemuxerSections);
         _pinDemuxerSections = null;
 
         if (_pinAC3Out != null)
-          Marshal.ReleaseComObject(_pinAC3Out);
+          DirectShowUtil.ReleaseComObject(_pinAC3Out);
         _pinAC3Out = null;
 
         if (_pinMPG1Out != null)
-          Marshal.ReleaseComObject(_pinMPG1Out);
+          DirectShowUtil.ReleaseComObject(_pinMPG1Out);
         _pinMPG1Out = null;
 
         if (_pinDemuxerVideo != null)
-          Marshal.ReleaseComObject(_pinDemuxerVideo);
+          DirectShowUtil.ReleaseComObject(_pinDemuxerVideo);
         _pinDemuxerVideo = null;
 
         if (_pinDemuxerAudio != null)
-          Marshal.ReleaseComObject(_pinDemuxerAudio);
+          DirectShowUtil.ReleaseComObject(_pinDemuxerAudio);
         _pinDemuxerAudio = null;
 
 
         if (_filterB2C2Adapter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_filterB2C2Adapter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterB2C2Adapter)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterB2C2Adapter):{0}", hr);
           _filterB2C2Adapter = null;
         }
@@ -824,7 +824,7 @@ namespace MediaPortal.TV.Recording
         if (_filterDvbAnalyzer != null)
         {
           //Log.Info("free dvbanalyzer");
-          while ((hr = Marshal.ReleaseComObject(_filterDvbAnalyzer)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterDvbAnalyzer)) > 0) ;
           if (hr != 0) Log.Info("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
           _filterDvbAnalyzer = null;
         }
@@ -832,14 +832,14 @@ namespace MediaPortal.TV.Recording
 				if (_filterTsWriter!=null)
 				{
 					Log.Info("free MPTSWriter");
-					hr=Marshal.ReleaseComObject(_filterTsWriter);
+					hr=DirectShowUtil.ReleaseComObject(_filterTsWriter);
 					if (hr!=0) Log.Info("ReleaseComObject(_filterTsWriter):{0}",hr);
 					_filterTsWriter=null;
 				}
 #endif
         if (_filterSmartTee != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_filterSmartTee)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterSmartTee)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterSmartTee):{0}", hr);
           _filterSmartTee = null;
         }
@@ -858,7 +858,7 @@ namespace MediaPortal.TV.Recording
         if (_filterSampleGrabber != null)
         {
           //Log.Info("DVBGraphSkyStar2:free samplegrabber");
-          while ((hr = Marshal.ReleaseComObject(_filterSampleGrabber)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterSampleGrabber)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterSampleGrabber):{0}", hr);
           _filterSampleGrabber = null;
         }
@@ -866,14 +866,14 @@ namespace MediaPortal.TV.Recording
 
         if (m_IStreamBufferConfig != null)
         {
-          while ((hr = Marshal.ReleaseComObject(m_IStreamBufferConfig)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferConfig)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_IStreamBufferConfig):{0}", hr);
           m_IStreamBufferConfig = null;
         }
 
         if (m_IStreamBufferSink != null)
         {
-          while ((hr = Marshal.ReleaseComObject(m_IStreamBufferSink)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferSink)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_IStreamBufferSink):{0}", hr);
           m_IStreamBufferSink = null;
         }
@@ -881,7 +881,7 @@ namespace MediaPortal.TV.Recording
         if (m_StreamBufferSink != null)
         {
           //Log.Info("DVBGraphSkyStar2:free streambuffersink");
-          while ((hr = Marshal.ReleaseComObject(m_StreamBufferSink)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferSink)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_StreamBufferSink):{0}", hr);
           m_StreamBufferSink = null;
         }
@@ -890,7 +890,7 @@ namespace MediaPortal.TV.Recording
         if (m_StreamBufferConfig != null)
         {
           //Log.Info("DVBGraphSkyStar2:free streambufferconfig");
-          while ((hr = Marshal.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_StreamBufferConfig):{0}", hr);
           m_StreamBufferConfig = null;
         }
@@ -898,7 +898,7 @@ namespace MediaPortal.TV.Recording
         if (_filterMpeg2Demultiplexer != null)
         {
           //Log.Info("DVBGraphSkyStar2:free demux");
-          while ((hr = Marshal.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterMpeg2Demultiplexer):{0}", hr);
           _filterMpeg2Demultiplexer = null;
         }
@@ -919,7 +919,7 @@ namespace MediaPortal.TV.Recording
         if (_captureGraphBuilderInterface != null)
         {
           //Log.Info("DVBGraphSkyStar2:free remove capturegraphbuilder");
-          while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
           _captureGraphBuilderInterface = null;
         }
@@ -927,7 +927,7 @@ namespace MediaPortal.TV.Recording
         if (_graphBuilder != null)
         {
           //Log.Info("DVBGraphSkyStar2:free graphbuilder");
-          while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_graphBuilder):{0}", hr);
           _graphBuilder = null;
         }
@@ -1544,7 +1544,7 @@ namespace MediaPortal.TV.Recording
 
         if (_filterB2C2Adapter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_filterB2C2Adapter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterB2C2Adapter)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterB2C2Adapter):{0}", hr);
           _filterB2C2Adapter = null;
         }
@@ -1562,14 +1562,14 @@ namespace MediaPortal.TV.Recording
         if (_captureGraphBuilderInterface != null)
         {
           //Log.Info("DVBGraphSkyStar2:free remove capturegraphbuilder");
-          while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
           _captureGraphBuilderInterface = null;
         }
         if (_graphBuilder != null)
         {
           //Log.Info("DVBGraphSkyStar2:free graphbuilder");
-          while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
           if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_graphBuilder):{0}", hr);
           _graphBuilder = null;
         }

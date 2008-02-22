@@ -102,7 +102,7 @@ namespace DShowNET.Helper
 			// The pininfo structure contains a reference to an IBaseFilter,
 			// so you must release its reference to prevent resource a leak.
 			if ( pinInfo.filter != null )
-				Marshal.ReleaseComObject( pinInfo.filter  );  pinInfo.filter  = null;
+				DirectShowUtil.ReleaseComObject( pinInfo.filter  );  pinInfo.filter  = null;
 
 			return( s );
 		}
@@ -113,7 +113,7 @@ namespace DShowNET.Helper
 		public override void Dispose()
 		{
 			if ( Pin != null )
-				Marshal.ReleaseComObject( Pin );
+				DirectShowUtil.ReleaseComObject( Pin );
 			Pin = null;
 			base.Dispose();
 		}	

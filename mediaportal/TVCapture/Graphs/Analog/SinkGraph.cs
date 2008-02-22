@@ -316,11 +316,11 @@ namespace MediaPortal.TV.Recording
       if ( hr != 0 )
       {
         Log.Error("SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}", hr);
-        Marshal.ReleaseComObject(pinIn);
+        DirectShowUtil.ReleaseComObject(pinIn);
         return false;
       }
 
-      Marshal.ReleaseComObject(pinIn);
+      DirectShowUtil.ReleaseComObject(pinIn);
       pinIn = null;
       return true;
     }

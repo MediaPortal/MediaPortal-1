@@ -467,11 +467,11 @@ namespace MediaPortal.Player
         DirectShowUtil.EnableDeInterlace(graphBuilder);
 
         if( FilterConfig9 != null )
-          Marshal.ReleaseComObject( FilterConfig9 ); FilterConfig9 = null;
+          DirectShowUtil.ReleaseComObject( FilterConfig9 ); FilterConfig9 = null;
 
         
         if( VMR9Filter != null )
-          Marshal.ReleaseComObject( VMR9Filter ); VMR9Filter = null;
+          DirectShowUtil.ReleaseComObject( VMR9Filter ); VMR9Filter = null;
 
         return true;
       }
@@ -483,7 +483,7 @@ namespace MediaPortal.Player
       finally
       {
         if( comobj != null )
-          Marshal.ReleaseComObject( comobj ); comobj = null;
+          DirectShowUtil.ReleaseComObject( comobj ); comobj = null;
       }
     }
 
@@ -570,7 +570,7 @@ namespace MediaPortal.Player
             DsROT.RemoveGraphFromRot( ref rotCookie );
 
           if( graphBuilder != null )
-            Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+            DirectShowUtil.ReleaseComObject( graphBuilder ); graphBuilder = null;
 
 
 
