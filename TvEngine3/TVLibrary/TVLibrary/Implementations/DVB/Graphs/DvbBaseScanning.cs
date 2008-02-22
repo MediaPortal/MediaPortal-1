@@ -82,6 +82,7 @@ namespace TvLibrary.Implementations.DVB
     ITVCard _card;
     List<ushort> _scanPidList = new List<ushort>();
     ManualResetEvent _event;
+    protected bool _enableWaitForVCT = false;
     #endregion
 
     #region ctor
@@ -190,7 +191,7 @@ namespace TvLibrary.Implementations.DVB
           {
             _event = new ManualResetEvent(false);
             _analyzer.SetCallBack(this);
-            _analyzer.Start();
+            _analyzer.Start(_enableWaitForVCT);
             startTime = DateTime.Now;
             _event.WaitOne(settings.TimeOutSDT * 1000, true);
 

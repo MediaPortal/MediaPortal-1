@@ -50,7 +50,7 @@ public:
   virtual ~CPatParser(void);
 
 	void	OnTsPacket(byte* tsPacket);
-  void  Reset(IChannelScanCallback* callback);
+  void  Reset(IChannelScanCallback* callback,bool waitForVCT);
 	void  OnNewSection(CSection& section);
 
   BOOL        IsReady();
@@ -81,4 +81,5 @@ private:
   DWORD                 m_tickCount;
   CTsHeader             m_tsHeader;
 	bool									m_finished;
+	bool									m_waitForVCT;
 };

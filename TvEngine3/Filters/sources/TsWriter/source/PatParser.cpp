@@ -35,7 +35,8 @@ void LogDebug(const char *fmt, ...) ;
 CPatParser::CPatParser(void)
 {
 	m_finished=false;
-  Reset(NULL);
+	m_waitForVCT=false;
+  Reset(NULL,false);
   SetPid(PID_PAT);
 }
 
@@ -62,10 +63,11 @@ void  CPatParser::CleanUp()
 }
 
 //*****************************************************************************
-void  CPatParser::Reset(IChannelScanCallback* callback)
+void  CPatParser::Reset(IChannelScanCallback* callback, bool waitForVCT)
 {
 //	Dump();
 	CEnterCriticalSection enter(m_section);
+	m_waitForVCT=waitForVCT;
 	LogDebug("PatParser:Reset(%d)",m_pCallback);
 	CSectionDecoder::Reset();
 	SetPid(PID_PAT);
@@ -107,11 +109,11 @@ BOOL CPatParser::IsReady()
 		m_tickCount=GetTickCount();
 		return FALSE;
 	}
+	bool vctReady=false;
 
   if (m_vctParser.Count() > 0)
   {
-		m_finished=true;
-    return TRUE;
+		vctReady=true;
   }
 	if (m_nitDecoder.Ready()==false) 
 	{
@@ -137,6 +139,8 @@ BOOL CPatParser::IsReady()
 		}
 		x++;
 	}
+	if (m_waitForVCT && !vctReady)
+		return FALSE;
 	m_finished=true;
   return TRUE;
 }
@@ -194,8 +198,6 @@ void CPatParser::OnChannel(const CChannelInfo& info)
 //*****************************************************************************
 void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 {
-  if (m_vctParser.Count()!=0) return;
-  
 	itChannels it=m_mapChannels.find(sdtInfo.ServiceId);
   if (it!=m_mapChannels.end())
   {
@@ -229,14 +231,6 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 			  strcpy(info.ServiceName,sdtInfo.ServiceName);
       else
         sprintf(info.ServiceName,"%s (%d)", sdtInfo.ServiceName,number);
-			if (m_pCallback!=NULL)
-			{
-				if (IsReady() )
-        {
-					m_pCallback->OnScannerDone();
-          m_pCallback=NULL;
-        }
-			}
 		}
 	}
 }

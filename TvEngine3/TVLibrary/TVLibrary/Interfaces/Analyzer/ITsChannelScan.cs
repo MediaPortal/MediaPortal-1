@@ -45,9 +45,10 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <summary>
     /// Starts scanning the current transponder.
     /// </summary>
+    /// <param name="waitForVCT">Tells the analyzer to wait for a vct section in addition to just the pmt</param>
     /// <returns></returns>
     [PreserveSig]
-    int Start();
+    int Start(bool waitForVCT);
 
     /// <summary>
     /// Stops scanning.

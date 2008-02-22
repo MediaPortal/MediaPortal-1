@@ -47,6 +47,7 @@ namespace TvLibrary.Implementations.DVB
       : base(card)
     {
       _card = card;
+      _enableWaitForVCT = true;
     }
 
     /// <summary>

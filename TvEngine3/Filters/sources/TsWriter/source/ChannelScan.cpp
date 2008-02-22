@@ -49,12 +49,12 @@ STDMETHODIMP CChannelScan::SetCallBack(IChannelScanCallback* callback)
 	m_pCallback=callback;
 	return S_OK;
 }
-STDMETHODIMP CChannelScan::Start()
+STDMETHODIMP CChannelScan::Start(BOOL waitForVCT)
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		m_patParser.Reset(m_pCallback);
+		m_patParser.Reset(m_pCallback,waitForVCT);
 		m_bIsParsing=true;
 	}
 	catch(...)
@@ -70,7 +70,7 @@ STDMETHODIMP CChannelScan::Stop()
 	try
 	{
 		m_pCallback=NULL;
-		m_patParser.Reset(NULL);
+		m_patParser.Reset(NULL,false);
 	}
 	catch(...)
 	{
