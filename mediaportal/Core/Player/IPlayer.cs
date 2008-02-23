@@ -72,11 +72,6 @@ namespace MediaPortal.Player
       return false;
     }
 
-    public virtual bool Play(string strFile, int beginPositionMS, int startPositionMS, int endPositionMS)
-    {
-      return false;
-    }
-
     /// <summary>
     /// Nearly the same as Play(), but usefull for web streams to give the real name of the stream and not url
     /// </summary>
@@ -265,22 +260,6 @@ namespace MediaPortal.Player
     public virtual double CurrentPosition
     {
       get { return 0; }
-    }
-
-    /// <summary>
-    /// Property to get the start position in the currently playing file (in ms)
-    /// </summary>
-    public virtual int StartPositionMS
-    {
-      get { return 0; }
-    }
-
-    /// <summary>
-    /// Property to get the end position in the currently playing file (in ms)
-    /// </summary>
-    public int EndPositionMS
-    {
-      get { return StartPositionMS + (int)(Duration*1000); }
     }
 
     /// <summary>

@@ -981,11 +981,6 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile)
     {
-      return Play(strFile, -1, 0, -1);
-    }
-    
-    public static bool Play(string strFile, int beginPositionMS, int startPositionMS, int endPositionMS)
-    {
       try
       {
         // when we are watching TV and suddenly decides to watch a video, we want to make sure that the TV is stopped.
@@ -1068,7 +1063,7 @@ namespace MediaPortal.Player
             }
             _player = new DVDPlayer9();
             _player = CachePreviousPlayer(_player);
-            bool _isPlaybackPossible = _player.Play(strFile, beginPositionMS, startPositionMS, endPositionMS);
+            bool _isPlaybackPossible = _player.Play(strFile);
             if (!_isPlaybackPossible)
             {
               Log.Info("player:ended");
@@ -1094,7 +1089,7 @@ namespace MediaPortal.Player
         {
           LoadChapters(strFile);
           _player = CachePreviousPlayer(_player);
-          bool bResult = _player.Play(strFile, beginPositionMS, startPositionMS, endPositionMS);
+          bool bResult = _player.Play(strFile);
           if (!bResult)
           {
             Log.Info("player:ended");
