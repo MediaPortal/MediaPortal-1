@@ -293,6 +293,10 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
+				RelativePath=".\source\AnalogVideoAudioObserver.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\ChannelScan.h"
 				>
 			</File>

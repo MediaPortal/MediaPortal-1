@@ -17,4 +17,12 @@ namespace TvLibrary.Interfaces.Analyzer
   {
     [PreserveSig] int OnNotify(PidType pidType);
   }
+
+  [ComVisible(true), ComImport, Guid("F94D89B5-C888-4da1-9782-15C1C0CBFE4D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IAnalogVideoAudioObserver
+  {
+    [PreserveSig]
+    int OnNotify(PidType pidType);
+  }
+
 }

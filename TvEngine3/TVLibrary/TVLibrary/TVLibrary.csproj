@@ -73,7 +73,9 @@
   <ItemGroup>
     <Compile Include="DeviceSorter.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\Cards\hauppauge.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalogBase.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\AnalogSubChannel.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
+    <Compile Include="Implementations\AVObserverSubChannel.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\GenericBDAS.cs" />
@@ -93,7 +95,6 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\TechnoTrend\TechnoTrend.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\TwinHan\Twinhan.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\AnalogScanning.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
     <Compile Include="Implementations\DVB\Graphs\ATSC\ATSCScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\ATSC\TvCardATSC.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBC\DVBCScanning.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Implementations\DVB\Structures\TSHelperTools.cs" />
     <Compile Include="Implementations\Helper\FileAccess.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
+    <Compile Include="Implementations\Helper\GraphState.cs" />
     <Compile Include="Implementations\Helper\HResult.cs" />
     <Compile Include="Implementations\Helper\Release.cs" />
     <Compile Include="Implementations\Helper\SidHelper.cs" />

@@ -43,7 +43,7 @@ DECLARE_INTERFACE_(IAnalogChanelScan, IUnknown)
 	STDMETHOD(IsReady)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(GetChannel)(THIS_ char** serviceName)PURE;
 	STDMETHOD(SetCallBack)(THIS_ IAnalogChannelScanCallback* callback)PURE;
-
+	STDMETHOD(IsScanningPossible)(THIS_ BOOL* yesNo)PURE;
 
 };
 
@@ -61,7 +61,9 @@ public:
 	STDMETHODIMP IsReady( BOOL* yesNo);
 	STDMETHODIMP GetChannel(char** serviceName);
 	STDMETHODIMP SetCallBack(IAnalogChannelScanCallback* callback);
+	STDMETHODIMP IsScanningPossible(BOOL* yesNo);
 
+	void ResetScanningPossible();
 	void OnTeletextData(byte* sampleData, int sampleLen);
 private:
 	byte*						m_pBuffer;
@@ -69,6 +71,7 @@ private:
 	int							m_iBufferPos;
 	bool						m_bIsScanning;
 	BOOL						m_bChannelFound;
+	BOOL						m_bScanningPossible;
 	char						m_sServiceName[128];
 	IAnalogChannelScanCallback*	m_pCallback;
 };

@@ -1706,82 +1706,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Turn on/off teletext grabbing
-    /// </summary>
-    public bool GrabTeletext
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].GrabTeletext;
-        }
-        return false;
-      }
-      set
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-
-          _mapSubChannels[firstSubchannel].GrabTeletext = value;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Property which returns true when the current channel contains teletext
-    /// </summary>
-    public bool HasTeletext
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].HasTeletext;
-        }
-        return false;
-      }
-    }
-    /// <summary>
-    /// returns the ITeletext interface which can be used for
-    /// getting teletext pages
-    /// </summary>
-    public ITeletext TeletextDecoder
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].TeletextDecoder;
-        }
-        return null;
-      }
-    }
-
-    /// <summary>
-    /// Gets or sets the teletext callback.
-    /// </summary>
-    /// <value>The teletext callback.</value>
-    public IVbiCallback TeletextCallback
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].TeletextCallback;
-        }
-        return null;
-      }
-      set
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          _mapSubChannels[firstSubchannel].TeletextCallback = value;
-        }
-      }
-    }
-
-    /// <summary>
     /// boolean indicating if tuner is locked to a signal
     /// </summary>
     public bool IsTunerLocked
@@ -1853,21 +1777,6 @@ namespace TvLibrary.Implementations.DVB
       get
       {
         return _devicePath;
-      }
-    }
-
-    /// <summary>
-    /// gets the current filename used for timeshifting
-    /// </summary>
-    public string TimeShiftFileName
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].TimeShiftFileName;
-        }
-        return "";
       }
     }
 
@@ -1945,68 +1854,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// returns the date/time when timeshifting has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    public DateTime StartOfTimeShift
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].StartOfTimeShift;
-        }
-        return DateTime.MinValue;
-      }
-    }
-
-    /// <summary>
-    /// returns the date/time when recording has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when recording was started</returns>
-    public DateTime RecordingStarted
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].RecordingStarted;
-        }
-        return DateTime.MinValue;
-      }
-    }
-
-    /// <summary>
-    /// returns true if we timeshift in transport stream mode
-    /// false we timeshift in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsTimeshiftingTransportStream
-    {
-      get
-      {
-        return true;
-      }
-    }
-
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsRecordingTransportStream
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].IsRecordingTransportStream;
-        }
-        return false;
-      }
-    }
-
-    /// <summary>
     /// Gets or sets the type of the cam.
     /// </summary>
     /// <value>The type of the cam.</value>
@@ -2032,22 +1879,6 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_conditionalAccess == null) return null;
         return _conditionalAccess.DiSEqCMotor;
-      }
-    }
-
-    /// <summary>
-    /// Returns true when unscrambled audio/video is received otherwise false
-    /// </summary>
-    /// <returns>true of false</returns>
-    public bool IsReceivingAudioVideo
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].IsReceivingAudioVideo;
-        }
-        return false;
       }
     }
 
@@ -2118,159 +1949,6 @@ namespace TvLibrary.Implementations.DVB
       set
       {
         _name = value;
-      }
-    }
-    #endregion
-
-    #region recording and timeshifting
-    /// <summary>
-    /// Starts timeshifting. Note card has to be tuned first
-    /// </summary>
-    /// <param name="fileName">filename used for the timeshiftbuffer</param>
-    /// <returns></returns>
-    public bool StartTimeShifting(string fileName)
-    {
-      try
-      {
-        Log.Log.WriteFile("dvbc:StartTimeShifting()");
-        if (!CheckThreadId()) return false;
-        if (_graphState == GraphState.TimeShifting)
-        {
-          return true;
-        }
-        if (_graphState == GraphState.Idle)
-        {
-          BuildGraph();
-        }
-        if (CurrentChannel == null)
-        {
-          Log.Log.Error("dvbc:StartTimeShifting not tuned to a channel");
-          throw new TvException("StartTimeShifting not tuned to a channel");
-        }
-        DVBBaseChannel channel = (DVBBaseChannel)CurrentChannel;
-        if (channel.NetworkId == -1 || channel.TransportId == -1 || channel.ServiceId == -1)
-        {
-          Log.Log.Error("dvbc:StartTimeShifting not tuned to a channel but to a transponder");
-          throw new TvException("StartTimeShifting not tuned to a channel but to a transponder");
-        }
-        if (_graphState == GraphState.Created)
-        {
-          if (_mapSubChannels.Count > 0)
-          {
-            _mapSubChannels[firstSubchannel].SetTimeShiftFileName(fileName); ;
-          }
-        }
-        _graphState = GraphState.TimeShifting;
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        throw ex;
-      }
-      //Log.Log.WriteFile("dvbc:StartTimeShifting() done");
-    }
-
-    /// <summary>
-    /// Stops timeshifting
-    /// </summary>
-    /// <returns></returns>
-    public bool StopTimeShifting()
-    {
-      try
-      {
-        if (!CheckThreadId()) return false;
-        Log.Log.WriteFile("dvbc:StopTimeShifting()");
-        if (_graphState != GraphState.TimeShifting)
-        {
-          return true;
-        }
-        StopGraph();
-        _graphState = GraphState.Created;
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        throw ex;
-      }
-      return true;
-    }
-
-    /// <summary>
-    /// Starts recording
-    /// </summary>
-    /// <param name="transportStream">if set to <c>true</c> then record as .ts file otherwise as .mpg.</param>
-    /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <returns></returns>
-    public bool StartRecording(bool transportStream, string fileName)
-    {
-      try
-      {
-        if (!CheckThreadId()) return false;
-        Log.Log.WriteFile("dvbc:StartRecording to {0}", fileName);
-
-        if (_graphState == GraphState.Recording) return false;
-
-        if (_graphState != GraphState.TimeShifting)
-        {
-          throw new TvException("Card must be timeshifting before starting recording");
-        }
-        _graphState = GraphState.Recording;
-        StartRecord(transportStream, fileName);
-        Log.Log.WriteFile("dvbc:Started recording");
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        throw ex;
-      }
-    }
-
-    /// <summary>
-    /// Stop recording
-    /// </summary>
-    /// <returns></returns>
-    public bool StopRecording()
-    {
-      try
-      {
-        if (!CheckThreadId()) return false;
-        if (_graphState != GraphState.Recording) return false;
-        Log.Log.WriteFile("dvbc:StopRecording");
-        _graphState = GraphState.TimeShifting;
-        StopRecord();
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        throw ex;
-      }
-    }
-
-    /// <summary>
-    /// Starts recording
-    /// </summary>
-    /// <param name="transportStream">if set to <c>true</c> then record as transport stream.</param>
-    /// <param name="fileName">filename to which to recording should be saved</param>
-    protected void StartRecord(bool transportStream, string fileName)
-    {
-      if (_mapSubChannels.Count > 0)
-      {
-        _mapSubChannels[firstSubchannel].StartRecording(transportStream, fileName);
-      }
-    }
-
-    /// <summary>
-    /// Stop recording
-    /// </summary>
-    /// <returns></returns>
-    protected void StopRecord()
-    {
-      if (_mapSubChannels.Count > 0)
-      {
-        _mapSubChannels[firstSubchannel].StopRecording();
       }
     }
     #endregion
@@ -2671,44 +2349,6 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
-    #region audio streams
-    /// <summary>
-    /// returns the list of available audio streams
-    /// </summary>
-    public List<IAudioStream> AvailableAudioStreams
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].AvailableAudioStreams;
-        }
-        return new List<IAudioStream>();
-      }
-    }
-
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
-    public IAudioStream CurrentAudioStream
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].CurrentAudioStream;
-        }
-        return null;
-      }
-      set
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          _mapSubChannels[firstSubchannel].CurrentAudioStream = value;
-        }
-      }
-    }
-    #endregion
 
     Int32 OnWinTvCiCamInfo(IntPtr Context, byte appType, ushort appManuf, ushort manufCode, StringBuilder Info)
     {

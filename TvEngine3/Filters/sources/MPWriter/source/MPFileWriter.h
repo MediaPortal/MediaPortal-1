@@ -23,6 +23,7 @@
 #include "ProgramToTransportStream.h"
 #include "ProgramToTransportStreamRecorder.h"
 #include "TeletextGrabber.h"
+#include "AnalogVideoAudioObserver.h"
 #include "ChannelScan.h"
 using namespace std;
 
@@ -58,6 +59,7 @@ DECLARE_INTERFACE_(IMPFileRecord, IUnknown)
 	STDMETHOD(PauseTimeShifting)(THIS_ int onOff)PURE;
 	STDMETHOD(SetTimeShiftParams)(THIS_ int minFiles, int maxFiles, ULONG maxFileSize)PURE;
 	STDMETHOD(TTxSetCallBack)(THIS_ IAnalogTeletextCallBack* callback)PURE;
+	STDMETHOD(SetVideoAudioObserver)(THIS_ IAnalogVideoAudioObserver* callback)PURE;
 };
 // Main filter object
 
@@ -159,6 +161,7 @@ public:
 	STDMETHODIMP PauseTimeShifting(int onOff);
 	STDMETHODIMP SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize);
 	STDMETHODIMP TTxSetCallBack(IAnalogTeletextCallBack* callback);
+	STDMETHODIMP SetVideoAudioObserver(IAnalogVideoAudioObserver* callback);
 private:
 
 	// Overriden to say what interfaces we support where

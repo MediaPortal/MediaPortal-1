@@ -6,6 +6,8 @@
 #include "TSThread.h"
 #include "MultiWriterFileSink.h"
 #include "MemoryStreamSource.h" 
+#include "AnalogVideoAudioObserver.h"
+
 class CProgramToTransportStream: public TSThread
 {
 public:
@@ -22,6 +24,7 @@ public:
   void Flush();
 	virtual void ThreadProc();
   bool m_BufferThreadActive;
+  void SetVideoAudioObserver(IAnalogVideoAudioObserver* callback);
   
 private:
   UsageEnvironment* m_env;
@@ -32,8 +35,10 @@ private:
   bool m_bRunning;
   bool m_bStarting;
   int  m_iPacketsToSkip;
+  bool m_bSendVideoAudioObserverEvents;
   
   int m_minFiles;
   int m_maxFiles;
   ULONG m_maxFileSize;
+  IAnalogVideoAudioObserver* m_pCallback;
 };

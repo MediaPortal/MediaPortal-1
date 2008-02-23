@@ -116,6 +116,14 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int TTxSetCallback(IAnalogTeletextCallBack callback);
+
+    /// <summary>
+    /// Sets the callback for the video/audio observer
+    /// </summary>
+    /// <param name="observer">Video/audio observer</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int SetVideoAudioObserver(IAnalogVideoAudioObserver observer);
   }
 
   /// <summary>
@@ -159,7 +167,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <summary>
     /// Determines whether scanner is finished or not.
     /// </summary>
-    /// <param name="yesNo">true when scanner is finished else false</param>
+    /// <param name="yesNo">true when scanner is finished otherwise false</param>
     /// <returns></returns>
     [PreserveSig]
     int IsReady(out bool yesNo);
@@ -179,6 +187,15 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int SetCallBack(IAnalogChannelScanCallback callback);
+
+    /// <summary>
+    /// Indicates if scanning possible = Scanner is receiving teletext
+    /// </summary>
+    /// <param name="yesNo">true, if receiving teletext; false otherwise</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int IsScanningPossible(out bool yesNo);
+
   };
 
     /// <summary>

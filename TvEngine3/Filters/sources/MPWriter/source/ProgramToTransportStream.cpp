@@ -12,6 +12,7 @@ CProgramToTransportStream::CProgramToTransportStream(void)
   m_outputSink=NULL;
   m_inputSource=NULL;
   m_tsFrames=NULL;
+  m_bSendVideoAudioObserverEvents = true;
 }
 
 CProgramToTransportStream::~CProgramToTransportStream(void)
@@ -56,14 +57,16 @@ void CProgramToTransportStream::Initialize(char* fileNameOut)
   m_buffer.Clear();
   m_iPacketsToSkip=100;
   //StartBufferThread();
+  m_bSendVideoAudioObserverEvents = true;
   m_bStarting=true;
   m_bRunning=true;
 }
 void CProgramToTransportStream::Flush()
 {
- // LogDebug("CProgramToTransportStream::Flush()");
- // m_iPacketsToSkip=0;
- // m_buffer.Clear();
+ LogDebug("CProgramToTransportStream::Flush()");
+ m_bSendVideoAudioObserverEvents = true;
+ m_iPacketsToSkip=10;
+ m_buffer.Clear();
 }
 void CProgramToTransportStream::SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize)
 {
@@ -90,7 +93,7 @@ void CProgramToTransportStream::Write(byte* data, int len)
     if (m_bStarting && m_buffer.Size()>300000)
     {
       m_bStarting=false;
-		  m_BufferThreadActive = true;
+	  m_BufferThreadActive = true;
       if (m_outputSink->startPlaying(*m_tsFrames, afterPlaying, m_tsFrames)==True)
       {
         LogDebug("CProgramToTransportStream::Thread playing()");
@@ -102,7 +105,12 @@ void CProgramToTransportStream::Write(byte* data, int len)
     }
     while (m_buffer.Size()>300000)
     {
-		    m_env->taskScheduler().doEventLoop(); 
+		if(m_bSendVideoAudioObserverEvents && m_pCallback != NULL){
+			m_bSendVideoAudioObserverEvents = false;
+			m_pCallback->OnNotify(PidType::Audio);
+			m_pCallback->OnNotify(PidType::Video);
+		}
+	    m_env->taskScheduler().doEventLoop(); 
     }
   }
 }
@@ -194,3 +202,9 @@ void CProgramToTransportStream::ThreadProc()
 	m_BufferThreadActive = false;
 	return;
 }
+
+void CProgramToTransportStream::SetVideoAudioObserver(IAnalogVideoAudioObserver* callback){
+	LogDebug("CProgramToTransportStream::SetVideoAudioObserver - %x", callback);
+	m_pCallback = callback;
+}
+

@@ -114,37 +114,46 @@ namespace TvLibrary.Implementations.Analog
           _previousFrequency = _card.VideoFrequency;
         }
 
-        if (_card.HasTeletext && channel.IsTv)
+        if (channel.IsTv)
         {
           try {
-            _event = new ManualResetEvent(false);
             _scanner = _card.GetChannelScanner();
-            _scanner.SetCallBack(this);
-            _scanner.Start();
-            _event.WaitOne(settings.TimeOutSDT * 1000, true);
+            bool possible;
+            _scanner.IsScanningPossible(out possible);
+            if (possible)
+            {
+              _event = new ManualResetEvent(false);
+              _scanner.SetCallBack(this);
+              _scanner.Start();
+              _event.WaitOne(settings.TimeOutSDT * 1000, true);
 
-            IntPtr serviceName;
-            _scanner.GetChannel(out serviceName);
-            _scanner.Stop();
-            string channelName = DvbTextConverter.Convert(serviceName, "");
+              IntPtr serviceName;
+              _scanner.GetChannel(out serviceName);
+              _scanner.Stop();
+              string channelName = DvbTextConverter.Convert(serviceName, "");
 
-            int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
-            if (pos != -1) {
-              channelName = channelName.Substring(0, pos);
-            }
-            //Some times channel name includes program name after :
-            pos = channelName.LastIndexOf(":");
-            if (pos != -1) {
-              channelName = channelName.Substring(0, pos);
-            }
-            channelName = channelName.TrimEnd(new char[] { '\'', '\"', '´', '`' });
-            channelName = channelName.Trim();
-            if (channelName != "") {
-              channel.Name = "";
-              for (int x = 0; x < channelName.Length; ++x) {
-                char k = channelName[x];
-                if (k < (char)32 || k > (char)127) break;
-                channel.Name += k.ToString();
+              int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
+              if (pos != -1)
+              {
+                channelName = channelName.Substring(0, pos);
+              }
+              //Some times channel name includes program name after :
+              pos = channelName.LastIndexOf(":");
+              if (pos != -1)
+              {
+                channelName = channelName.Substring(0, pos);
+              }
+              channelName = channelName.TrimEnd(new char[] { '\'', '\"', '´', '`' });
+              channelName = channelName.Trim();
+              if (channelName != "")
+              {
+                channel.Name = "";
+                for (int x = 0; x < channelName.Length; ++x)
+                {
+                  char k = channelName[x];
+                  if (k < (char)32 || k > (char)127) break;
+                  channel.Name += k.ToString();
+                }
               }
             }
           } finally {
@@ -160,7 +169,6 @@ namespace TvLibrary.Implementations.Analog
         _card.IsScanning = false;
         return list;
       }
-      _card.GrabTeletext = false;
       _card.IsScanning = false;
       return null;
     }

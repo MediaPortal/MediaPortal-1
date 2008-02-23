@@ -43,11 +43,8 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
 {
-  public class TvDvbChannel : ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel, IVideoAudioObserver
+  public class TvDvbChannel : AVObserverSubChannel, ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel, IVideoAudioObserver
   {
-    public delegate void AudioVideoObserverEvent(PidType pidType);
-    public event AudioVideoObserverEvent audioVideoEvent;
-
     #region enums
     /// <summary>
     /// Different states of the card
@@ -1474,10 +1471,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         Log.Log.WriteFile("PID seen - type = {0}", pidType);
-        if (audioVideoEvent != null)
-        {
-          audioVideoEvent(pidType);
-        }
+        OnAudioVideoEvent(pidType);
       }
       catch (Exception ex)
       {

@@ -444,7 +444,7 @@ CMPFileWriter::~CMPFileWriter()
 
 	delete m_pMPEG2InputPin;
 	m_pMPEG2InputPin = NULL;
-	
+
 	LogDebug("CMPFileWriterMPEG2InputPin::dtor() completed");
 
 	delete m_pTeletextInputPin;
@@ -612,11 +612,18 @@ STDMETHODIMP CMPFileWriter::PauseTimeShifting(int onOff)
 
 	LogDebug("Pause TimeShifting:%d",onOff);
 	m_bPaused=(onOff!=0);
-	m_tsWriter.Flush();
 	if(m_bPaused){
-		m_pTeletextGrabber->Stop();
+		m_tsWriter.Flush();
+		if(m_pChannelScan!=NULL){
+			m_pChannelScan->ResetScanningPossible();
+		}
+		if(m_pTeletextGrabber!=NULL){
+			m_pTeletextGrabber->Stop();
+		}
 	}else{
-		m_pTeletextGrabber->Start();
+		if(m_pTeletextGrabber!=NULL){
+			m_pTeletextGrabber->Start();
+		}
 	}
 	return S_OK;
 }
@@ -721,10 +728,6 @@ HRESULT CMPFileWriter::Write(PBYTE pbData, LONG lDataLength)
 		{
 			m_tsWriter.Write(pbData,lDataLength);
 		}
-		else
-		{
-			m_tsWriter.Flush();
-		}
 	}
 	return S_OK;
 }
@@ -761,6 +764,11 @@ STDMETHODIMP  CMPFileWriter::IsReceiving(BOOL* yesNo)
 STDMETHODIMP CMPFileWriter::TTxSetCallBack(IAnalogTeletextCallBack* callback){
 	LogDebug("Set teletext callback");
 	m_pTeletextGrabber->SetCallBack(callback);
+	return S_OK;
+}
+
+STDMETHODIMP CMPFileWriter::SetVideoAudioObserver(IAnalogVideoAudioObserver* callback){
+	m_tsWriter.SetVideoAudioObserver(callback);
 	return S_OK;
 }
 

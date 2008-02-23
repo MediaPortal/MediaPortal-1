@@ -255,10 +255,10 @@ namespace TvService
           context.GetUser(ref user);
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
 
-					if (subchannel is TvDvbChannel)
+					if (subchannel is AVObserverSubChannel)
 					{
-						((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
-						((TvDvbChannel)subchannel).audioVideoEvent += new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+            ((AVObserverSubChannel)subchannel).AudioVideoEvent -= new AVObserverSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+            ((AVObserverSubChannel)subchannel).AudioVideoEvent += new AVObserverSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
 					}
 
           if (!_eventsReady)
@@ -358,9 +358,9 @@ namespace TvService
         if (_cardHandler.Recorder.IsRecording(ref user)) return true;
 
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-				if (subchannel is TvDvbChannel)
+				if (subchannel is AVObserverSubChannel)
 				{
-					((TvDvbChannel)subchannel).audioVideoEvent -= new TvDvbChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+          ((AVObserverSubChannel)subchannel).AudioVideoEvent -= new AVObserverSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
 				}
 
         _eventVideo.Close();
@@ -508,7 +508,9 @@ namespace TvService
       Log.Write("card: WaitForTimeShiftFile");
       if (!WaitForUnScrambledSignal(ref user)) return false;
       int wait = _waitForTimeshifting * 1000; // in ms
-      int waitForEvent = wait / 5;
+      int waitForFile = wait / 2;
+      int waitForEvent = waitForFile;
+
 
       DateTime timeStart = DateTime.Now;
       ulong fileSize = 0;
@@ -518,45 +520,46 @@ namespace TvService
       bool isRadio = channel.IsRadio;
       ulong minTimeShiftFile = 100 * 1024;//500Kb
       if (isRadio)
-        minTimeShiftFile = 100 * 1024;//100Kb
-
-      // TODO: add support for analog side
-      if (_cardHandler.Type != CardType.Analog)
       {
-        if (isRadio)
-        {
-          Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio");
+        minTimeShiftFile = 100 * 1024;//100Kb
+      } else
+      {
+        waitForEvent = waitForEvent / 2;
+      }
 
-          // wait for audio PID to be seen
-          if (_eventAudio.WaitOne(waitForEvent, true))
+      if (isRadio)
+      {
+        Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio");
+
+        // wait for audio PID to be seen
+        if (_eventAudio.WaitOne(waitForEvent, true))
+        {
+          // start of the video & audio is seen
+          Log.Write("card: WaitForTimeShiftFile - start of audio is seen");
+          _eventVideo.Reset();
+          _eventAudio.Reset();
+          return true;
+        }
+      }
+      else
+      {
+        Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio & _eventVideo");
+
+        // block until video & audio PIDs are seen or the timeout is reached
+        if (_eventAudio.WaitOne(waitForEvent, true))
+        {
+          _eventAudio.Reset();
+          if (_eventVideo.WaitOne(waitForEvent, true))
           {
             // start of the video & audio is seen
-            Log.Write("card: WaitForTimeShiftFile - start of audio is seen");
+            Log.Write("card: WaitForTimeShiftFile - start of the video & audio is seen");
             _eventVideo.Reset();
-            _eventAudio.Reset();
             return true;
           }
         }
-        else
-        {
-          Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio & _eventVideo");
-
-          // block until video & audio PIDs are seen or the timeout is reached
-          if (_eventAudio.WaitOne(waitForEvent, true))
-          {
-            _eventAudio.Reset();
-            if (_eventVideo.WaitOne(waitForEvent, true))
-            {
-              // start of the video & audio is seen
-              Log.Write("card: WaitForTimeShiftFile - start of the video & audio is seen");
-              _eventVideo.Reset();
-              return true;
-            }
-          }
-        }
-
-        Log.Write("card: WaitForTimeShiftFile - new observer based method didn't work, using the old one as fall back!");
       }
+
+      Log.Write("card: WaitForTimeShiftFile - new observer based method didn't work, using the old one as fall back!");
 
       timeStart = DateTime.Now;
       
@@ -626,7 +629,7 @@ namespace TvService
 
           System.Threading.Thread.Sleep(100);
           TimeSpan timeOut = DateTime.Now - timeStart;
-					if (timeOut.TotalMilliseconds >= (_waitForTimeshifting * 1000))
+          if (timeOut.TotalMilliseconds >= waitForFile)
           {						
             Log.Write("card: timeshifting fileSize:{0} TIMEOUT", fileSize);
             return false;

@@ -33,6 +33,7 @@ CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr )
 	m_pBuffer = new byte[20000];
 	m_pBufferTemp = new byte[20000];
 	m_bIsScanning = false;
+	m_bScanningPossible = false;
 }
 CChannelScan::~CChannelScan(void)
 {
@@ -80,9 +81,25 @@ STDMETHODIMP CChannelScan::GetChannel(char** serviceName)
 	return S_OK;
 }
 
+STDMETHODIMP CChannelScan::IsScanningPossible(BOOL *yesNo)
+{
+	if(m_bScanningPossible){
+		LogDebug("CChannelScan::IsScanningPossible() - true");
+	}else{
+		LogDebug("CChannelScan::IsScanningPossible() - false");
+	}
+	*yesNo = m_bScanningPossible;
+	return S_OK;
+}
+
+void CChannelScan::ResetScanningPossible()
+{
+	m_bScanningPossible = false;
+}
 void CChannelScan::OnTeletextData(byte* sampleData, int sampleLen)
 {
 	try{
+		m_bScanningPossible = true;
 		if(m_bIsScanning){
 			byte magazine_and_packet_address;
 			byte magazine_and_packet_address1;
@@ -131,5 +148,4 @@ void CChannelScan::OnTeletextData(byte* sampleData, int sampleLen)
 	}catch (...) {
 		LogDebug("CCHANNELSCAN: ERROR");
 	}
-
 }
