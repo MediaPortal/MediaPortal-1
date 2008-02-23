@@ -21,14 +21,16 @@ BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
 # Defines
 !define REGKEY "SOFTWARE\Team MediaPortal\$(^Name)"
 !define REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
-!define VERSION "1.0 test release"
+!define VERSION "1.0 build ${VER_BUILD}"
 !define COMPANY "Team MediaPortal"
 !define URL www.team-mediaportal.com
 
 !define VER_MAJOR 1
 !define VER_MINOR 0
 !define VER_REVISION 0
-!define VER_BUILD 17002
+!ifndef VER_BUILD
+    !define VER_BUILD 0
+!endif
 
 # MUI defines
 !define MUI_ICON "images\install.ico"

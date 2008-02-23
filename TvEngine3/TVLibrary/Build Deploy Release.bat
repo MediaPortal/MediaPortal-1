@@ -12,3 +12,5 @@ DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD%
 "%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release TvPlugin\TvPlugin.sln
 
 DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /revert
+
+rem "%ProgramFiles%\NSIS\makensis.exe" /DVER_BUILD=17500 Setup\setup.nsi
