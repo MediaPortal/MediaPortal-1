@@ -751,7 +751,7 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 		pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
 		memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
 		memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
-		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2 || SERVICE_TYPE_AUDIO_AAC)
+		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2 || pidInfo.streamType==SERVICE_TYPE_AUDIO_AAC)
 		{
 			if (m_streamMode==StreamMode::TransportStream)
 			{
