@@ -59,106 +59,117 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The capture filter.</param>
     /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter)
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter, TvCardDvbBase card)
     {
       try
       {
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
-        Log.Log.WriteFile("Check for KNC");
-        _knc = new KNC(tunerFilter, analyzerFilter);
-        if (_knc.IsKNC)
+        //DVB checks. Conditional Access & DiSEqC etc.
+        bool isDVBS = (card is TvCardDVBS);
+        bool isDVBT = (card is TvCardDVBT);
+        bool isDVBC = (card is TvCardDVBC);
+        if (isDVBC || isDVBS || isDVBT == true)
         {
-          Log.Log.WriteFile("KNC card detected");
-          return;
-        }
-        _knc = null;
+          Log.Log.WriteFile("Check for KNC");
+          _knc = new KNC(tunerFilter, analyzerFilter);
+          if (_knc.IsKNC)
+          {
+            Log.Log.WriteFile("KNC card detected");
+            return;
+          }
+          _knc = null;
 
-        Log.Log.WriteFile("Check for Digital Everywhere");
-        _digitalEveryWhere = new DigitalEverywhere(tunerFilter, analyzerFilter);
-        if (_digitalEveryWhere.IsDigitalEverywhere)
-        {
-          Log.Log.WriteFile("Digital Everywhere card detected");
-          _diSEqCMotor = new DiSEqCMotor(_digitalEveryWhere);
-          //_digitalEveryWhere.ResetCAM();
-          return;
-        }
-        _digitalEveryWhere = null;
+          Log.Log.WriteFile("Check for Digital Everywhere");
+          _digitalEveryWhere = new DigitalEverywhere(tunerFilter, analyzerFilter);
+          if (_digitalEveryWhere.IsDigitalEverywhere)
+          {
+            Log.Log.WriteFile("Digital Everywhere card detected");
+            _diSEqCMotor = new DiSEqCMotor(_digitalEveryWhere);
+            //_digitalEveryWhere.ResetCAM();
+            return;
+          }
+          _digitalEveryWhere = null;
 
-        Log.Log.WriteFile("Check for Twinhan");
-        _twinhan = new Twinhan(tunerFilter, analyzerFilter);
-        if (_twinhan.IsTwinhan)
-        {
-          Log.Log.WriteFile("Twinhan card detected");
-          _diSEqCMotor = new DiSEqCMotor(_twinhan);
-          return;
-        }
-        _twinhan = null;
+          Log.Log.WriteFile("Check for Twinhan");
+          _twinhan = new Twinhan(tunerFilter, analyzerFilter);
+          if (_twinhan.IsTwinhan)
+          {
+            Log.Log.WriteFile("Twinhan card detected");
+            _diSEqCMotor = new DiSEqCMotor(_twinhan);
+            return;
+          }
+          _twinhan = null;
 
-        Log.Log.WriteFile("Check for TechnoTrend");
-        _technoTrend = new TechnoTrend(tunerFilter, analyzerFilter);
-        if (_technoTrend.IsTechnoTrend)
-        {
-          Log.Log.WriteFile("TechnoTrend card detected");
-          return;
-        }
-        _technoTrend = null;
+          Log.Log.WriteFile("Check for TechnoTrend");
+          _technoTrend = new TechnoTrend(tunerFilter, analyzerFilter);
+          if (_technoTrend.IsTechnoTrend)
+          {
+            Log.Log.WriteFile("TechnoTrend card detected");
+            return;
+          }
+          _technoTrend = null;
 
-        Log.Log.WriteFile("Check for Hauppauge");
-        _hauppauge = new Hauppauge(tunerFilter, analyzerFilter);
-        if (_hauppauge.IsHauppauge)
-        {
-          Log.Log.WriteFile("Hauppauge card detected");
-          _diSEqCMotor = new DiSEqCMotor(_hauppauge);
-          return;
-        }
-        _hauppauge = null;
+          Log.Log.WriteFile("Check for WinTV CI");
+          if (winTvUsbCiFilter != null)
+          {
+            Log.Log.WriteFile("WinTV CI detected");
+            _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+            //return;
+          }
+          //_winTvCiModule = null;
 
-        //check for ATSC
-        Log.Log.WriteFile("Check for ViXS ATSC QAM card");
-        _isvixsatsc = new ViXSATSC(tunerFilter, analyzerFilter);
-        if (_isvixsatsc.IsViXSATSC)
-        {
-          Log.Log.WriteFile("ViXS ATSC QAM card detected");
-          return;
-        }
-        _isvixsatsc = null;
+          Log.Log.WriteFile("Check for Hauppauge");
+          _hauppauge = new Hauppauge(tunerFilter, analyzerFilter);
+          if (_hauppauge.IsHauppauge)
+          {
+            Log.Log.WriteFile("Hauppauge card detected");
+            _diSEqCMotor = new DiSEqCMotor(_hauppauge);
+            return;
+          }
+          _hauppauge = null;
 
-        Log.Log.WriteFile("Check for OnAir ATSC QAM card");
-        _isonairatsc = new OnAirATSC(tunerFilter, analyzerFilter);
-        if (_isonairatsc.IsOnAirATSC)
-        {
-          Log.Log.WriteFile("OnAir ATSC QAM card detected");
-          return;
+          Log.Log.WriteFile("Check for Generic DVB-S card");
+          _genericbdas = new GenericBDAS(tunerFilter, analyzerFilter);
+          if (_genericbdas.IsGenericBDAS)
+          {
+            Log.Log.WriteFile("Generic BDA card detected");
+            return;
+          }
+          _genericbdas = null;
         }
-        _isonairatsc = null;
 
-        Log.Log.WriteFile("Check for Generic ATSC QAM card");
-        _isgenericatsc = new GenericATSC(tunerFilter, analyzerFilter);
-        if (_isgenericatsc.IsGenericATSC)
+        //ATSC checks
+        bool isATSC = (card is TvCardATSC);
+        if (isATSC == true)
         {
-          Log.Log.WriteFile("Generic ATSC QAM card detected");
-          //return;
-        }
-        //_isgenericatsc = null;
+          Log.Log.WriteFile("Check for ViXS ATSC QAM card");
+          _isvixsatsc = new ViXSATSC(tunerFilter, analyzerFilter);
+          if (_isvixsatsc.IsViXSATSC)
+          {
+            Log.Log.WriteFile("ViXS ATSC QAM card detected");
+            return;
+          }
+          _isvixsatsc = null;
 
-        Log.Log.WriteFile("Check for WinTV CI");
-        if (winTvUsbCiFilter != null)
-        {
-          Log.Log.WriteFile("WinTV CI detected");
-          _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
-          //return;
-        }
-        //_winTvCiModule = null;
+          Log.Log.WriteFile("Check for OnAir ATSC QAM card");
+          _isonairatsc = new OnAirATSC(tunerFilter, analyzerFilter);
+          if (_isonairatsc.IsOnAirATSC)
+          {
+            Log.Log.WriteFile("OnAir ATSC QAM card detected");
+            return;
+          }
+          _isonairatsc = null;
 
-        Log.Log.WriteFile("Check for Generic DVB-S card");
-        _genericbdas = new GenericBDAS(tunerFilter, analyzerFilter);
-        if (_genericbdas.IsGenericBDAS)
-        {
-          Log.Log.WriteFile("Generic BDA card detected");
-          return;
+          Log.Log.WriteFile("Check for Generic ATSC QAM card");
+          _isgenericatsc = new GenericATSC(tunerFilter, analyzerFilter);
+          if (_isgenericatsc.IsGenericATSC)
+          {
+            Log.Log.WriteFile("Generic ATSC QAM card detected");
+            return;
+          }
+          _isgenericatsc = null;
         }
-        _genericbdas = null;
       }
       catch (Exception ex)
       {

@@ -154,7 +154,10 @@ namespace TvLibrary.Implementations.DVB
             {
               if (FrequencyFilter != null)
               {
+                hr = FrequencyFilter.get_Range(out ulRange);
+                Log.Log.Info("GenericBDAS:  get_Range:{0} success:{1}", ulRange, hr);
                 hr = FrequencyFilter.put_Range(ulRange);
+                Log.Log.Info("GenericBDAS:  put_Range:{0} success:{1}", ulRange, hr);
                 if (hr == 0)
                 {
                   // did it accept the changes? 

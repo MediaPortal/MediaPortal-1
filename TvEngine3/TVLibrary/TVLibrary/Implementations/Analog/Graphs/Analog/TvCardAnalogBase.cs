@@ -330,7 +330,7 @@ namespace TvLibrary.Implementations.Analog
           }
           if (!AddAudioCompressor())
           {
-            Log.Log.WriteFile("analog:   failed to add audio compressor");
+            Log.Log.WriteFile("analog:   failed to add audio compressor. you must install a supported audio encoder!");
             throw new Exception("No audio compressor filter found");
           }
           if (!AddVideoCompressor())

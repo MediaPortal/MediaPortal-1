@@ -850,12 +850,12 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:  using only tv tuner filter...");
         ConnectMpeg2DemuxToInfTee();
         AddTsWriterFilterToGraph();
-        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb);
+        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
         return;
       }
       ConnectMpeg2DemuxToInfTee();
       AddTsWriterFilterToGraph();
-      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb);
+      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
     }
 
     /// <summary>
