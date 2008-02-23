@@ -221,7 +221,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       get
       {
-        return (isAudio && stream_type == 0x0f);
+        return (isAudio && stream_type == 0x11);
       }
     }
     /// <summary>
