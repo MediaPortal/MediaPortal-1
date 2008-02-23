@@ -226,6 +226,16 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
       break;
+    case SERVICE_TYPE_AUDIO_AAC:
+	    pmt.InitMediaType();
+	    pmt.SetType      (& MEDIATYPE_Audio);
+	    pmt.SetSubtype   (& MEDIASUBTYPE_AAC);
+	    pmt.SetSampleSize(1);
+	    pmt.SetTemporalCompression(FALSE);
+	    pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      pmt.SetFormat(AACAudioFormat,sizeof(AACAudioFormat));
+      break;
     case SERVICE_TYPE_AUDIO_AC3:
 	    pmt.InitMediaType();
 	    pmt.SetType      (& MEDIATYPE_Audio);
