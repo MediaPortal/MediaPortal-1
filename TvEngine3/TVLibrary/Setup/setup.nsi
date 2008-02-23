@@ -16,12 +16,10 @@ Name "MediaPortal TV Server / Client"
 
 SetCompressor /SOLID lzma
 RequestExecutionLevel admin
-BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
 
 # Defines
 !define REGKEY "SOFTWARE\Team MediaPortal\$(^Name)"
 !define REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
-!define VERSION "1.0 build ${VER_BUILD}"
 !define COMPANY "Team MediaPortal"
 !define URL www.team-mediaportal.com
 
@@ -31,6 +29,10 @@ BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
 !ifndef VER_BUILD
     !define VER_BUILD 0
 !endif
+
+!define VERSION "pre-release build ${VER_BUILD}"
+#BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
+BrandingText "${VERSION}"
 
 # MUI defines
 !define MUI_ICON "images\install.ico"
