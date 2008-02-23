@@ -25,8 +25,8 @@ BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
 !define COMPANY "Team MediaPortal"
 !define URL www.team-mediaportal.com
 
-!define VER_MAJOR 1
-!define VER_MINOR 0
+!define VER_MAJOR 0
+!define VER_MINOR 9
 !define VER_REVISION 0
 !ifndef VER_BUILD
     !define VER_BUILD 0
