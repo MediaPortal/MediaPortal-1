@@ -1882,9 +1882,10 @@
 	<country name="New Zealand - Auckland (trials)">
 		<carrier frequency="698000" bandwidth="8"></carrier>
 	</country>
-	<country name="Norway - Oslo (trials)" offset="0">
+	<country name="Norway - Oslo" offset="0">
 		<carrier frequency="722000" bandwidth="8"></carrier>
 		<carrier frequency="770000" bandwidth="8"></carrier>
+		<carrier frequency="794000" bandwidth="8"></carrier>
 	</country>
 	<country name="Singapore">
 		<carrier frequency="538000" bandwidth="8"></carrier>
