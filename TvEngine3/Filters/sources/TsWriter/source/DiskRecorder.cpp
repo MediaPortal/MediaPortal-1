@@ -724,7 +724,8 @@ bool CDiskRecorder::IsStreamWanted(int stream_type)
 					stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
 					stream_type==SERVICE_TYPE_AUDIO_AC3 ||
 					stream_type==SERVICE_TYPE_DVB_SUBTITLES2 ||
-					stream_type==DESCRIPTOR_DVB_TELETEXT
+					stream_type==DESCRIPTOR_DVB_TELETEXT ||
+          stream_type==SERVICE_TYPE_AUDIO_AAC
 					);
 }
 
@@ -750,7 +751,7 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 		pi.rawDescriptorSize=pidInfo.rawDescriptorSize;
 		memset(pi.rawDescriptorData,0xFF,pi.rawDescriptorSize);
 		memcpy(pi.rawDescriptorData,pidInfo.rawDescriptorData,pi.rawDescriptorSize);
-		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2)
+		if (pidInfo.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG1 || pidInfo.streamType==SERVICE_TYPE_AUDIO_MPEG2 || SERVICE_TYPE_AUDIO_AAC)
 		{
 			if (m_streamMode==StreamMode::TransportStream)
 			{
@@ -906,7 +907,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 				  return;
 			  }
 
-			  if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2|| info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3)
+			  if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2|| info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AAC)
 			  {
 				  //audio
 				  if (!info.seenStart)
