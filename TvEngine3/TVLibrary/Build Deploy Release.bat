@@ -13,4 +13,13 @@ DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD%
 
 DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /revert
 
-rem "%ProgramFiles%\NSIS\makensis.exe" /DVER_BUILD=17500 Setup\setup.nsi
+EXIT
+rem these commands are necessary to get the svn revision, to enable them just remove the EXIT one line above
+DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /GetVersion
+IF NOT EXIST version.txt GOTO ERROR
+SET /p version=<version.txt
+DEL version.txt
+"%ProgramFiles%\NSIS\makensis.exe" /DVER_BUILD=%version% Setup\setup.nsi
+EXIT
+
+:ERROR

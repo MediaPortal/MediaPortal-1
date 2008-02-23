@@ -9,7 +9,8 @@ namespace ProjectInfinity
     public enum Option
     {
       svn,
-      revert
+      revert,
+      GetVersion
     }
 
     private Dictionary<Option, string> _options;
@@ -29,6 +30,7 @@ namespace ProjectInfinity
       Console.WriteLine("Vaid Command Line options:");
       Console.WriteLine("/svn=<directory>  svn directory");
       Console.WriteLine("/revert           revert to build 0");
+      Console.WriteLine("/GetVersion       writes the svn revision in textfile version.txt");
     }
 
     public bool IsOption(Option option)
