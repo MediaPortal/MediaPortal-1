@@ -42,6 +42,10 @@ namespace TvLibrary.Interfaces
     /// </summary>
     AC3,
     /// <summary>
+    /// aac audio
+    /// </summary>
+    AAC,
+    /// <summary>
     /// unknown audio
     /// </summary>
     Unknown,

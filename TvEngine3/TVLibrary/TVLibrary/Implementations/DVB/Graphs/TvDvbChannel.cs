@@ -685,8 +685,10 @@ namespace TvLibrary.Implementations.DVB
             stream.Pid = info.pid;
             if (info.IsMpeg1Audio)
               stream.StreamType = AudioStreamType.Mpeg1;
-            else
+            if (info.IsMpeg2Audio)
               stream.StreamType = AudioStreamType.Mpeg2;
+            else
+            stream.StreamType = AudioStreamType.AAC;
             streams.Add(stream);
           }
         }
@@ -1060,6 +1062,8 @@ namespace TvLibrary.Implementations.DVB
                   _currentAudioStream.StreamType = AudioStreamType.Mpeg2;
                 if (pidInfo.isAC3Audio)
                   _currentAudioStream.StreamType = AudioStreamType.AC3;
+                if (pidInfo.IsAACAudio)
+                  _currentAudioStream.StreamType = AudioStreamType.AAC;
               }
 
               if (_currentAudioStream.Pid == pidInfo.pid)
