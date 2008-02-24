@@ -24,6 +24,7 @@ using System.Text;
 using System.ServiceProcess;
 using Microsoft.Win32;
 using System.Management;
+using TvLibrary.Log;
 
 namespace SetupTv
 {
@@ -192,14 +193,15 @@ namespace SetupTv
           if (rKey != null)
           {
             rKey.SetValue("DependOnService", new string[] { dependsOnService, "Netman" }, RegistryValueKind.MultiString);
+            rKey.SetValue("Start", (int)2, RegistryValueKind.DWord); // Set TVService to autostart
           }
         }
 
         return true;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        // Log?
+        Log.Error("ServiceHelper: Failed to access registry {0}", ex.Message);
         return false;
       }
     }
