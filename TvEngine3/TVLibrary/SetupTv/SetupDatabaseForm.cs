@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Net;
 using TvLibrary.Log;
+using System.Diagnostics;
 
 namespace SetupTv
 {
@@ -42,13 +43,15 @@ namespace SetupTv
       SqlServer,
       MySql
     }
+
     ProviderType _provider = ProviderType.SqlServer;
+
     public SetupDatabaseForm()
     {
       InitializeComponent();
     }
 
-    void LoadConnectionDetailsFromConfig(bool lookupMachineName)
+    private void LoadConnectionDetailsFromConfig(bool lookupMachineName)
     {
       //<DefaultProvider name="SQLServer" connectionString="Password=sa;Persist Security Info=True;User ID=sa;Initial Catalog=TvLibrary;Data Source=pcebeckers;" />
       //<DefaultProvider name="MySQL" connectionString="Server=10.0.0.2;Database=test;User ID=xxx;Password=xxx" />
@@ -65,26 +68,26 @@ namespace SetupTv
         if (serverType == "mysql")
         {
           _provider = ProviderType.MySql;
-          radioButton2.Checked = true;
+          rbMySQL.Checked = true;
         }
         else
         {
           _provider = ProviderType.SqlServer;
-          radioButton1.Checked = true;
+          rbSQLServer.Checked = true;
         }
 
         string[] parts = connectionString.Split(';');
-        for (int i = 0; i < parts.Length; ++i)
+        for (int i = 0 ; i < parts.Length ; ++i)
         {
           string part = parts[i];
           string[] keyValue = part.Split('=');
           if (keyValue[0].ToLower() == "password")
           {
-            mpTextBoxPassword.Text = keyValue[1];
+            tbPassword.Text = keyValue[1];
           }
           if (keyValue[0].ToLower() == "user id")
           {
-            mpTextBoxUserId.Text = keyValue[1];
+            tbUserID.Text = keyValue[1];
           }
           if (keyValue[0].ToLower() == "data source" || keyValue[0].ToLower() == "server")
           {
@@ -95,23 +98,23 @@ namespace SetupTv
                 keyValue[1] = Dns.GetHostName() + @"\SQLEXPRESS";
               }
             }
-            mpTextBoxServer.Text = keyValue[1];
+            tbServerHostName.Text = keyValue[1];
           }
         }
       }
       catch (Exception ex)
       {
-        MessageBox.Show(this, "gentle.config file not found!");
+        MessageBox.Show(this, string.Format("gentle.config file not found! ({0})", ex.Message));
       }
     }
 
-    string ComposeConnectionString(string server, string userid, string password, string database, bool pooling)
+    private string ComposeConnectionString(string server, string userid, string password, string database, bool pooling)
     {
       switch (_provider)
       {
         case ProviderType.SqlServer:
           if (database == "") database = "master";
-          if (pooling==false)
+          if (pooling == false)
             return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;", password, userid, server, database);
           return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};", password, userid, server, database);
 
@@ -129,11 +132,10 @@ namespace SetupTv
 
     public bool TestConnection()
     {
-
       LoadConnectionDetailsFromConfig(true);
       try
       {
-        string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "",false);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false);
 
         switch (_provider)
         {
@@ -156,17 +158,12 @@ namespace SetupTv
       catch (Exception)
       {
         GC.Collect();
-        GC.Collect();
-        GC.Collect();
-        GC.Collect();
         return false;
-      }
-      GC.Collect();
-      GC.Collect();
-      GC.Collect();
-      GC.Collect();
+      }     
+
       SqlConnection.ClearAllPools();
 
+      GC.Collect();
       //database server is found
       return true;
     }
@@ -178,14 +175,14 @@ namespace SetupTv
       {
         Assembly assm = Assembly.GetExecutingAssembly();
         string[] names = assm.GetManifestResourceNames();
-        Stream stream=null;
+        Stream stream = null;
         switch (_provider)
         {
           case ProviderType.SqlServer:
-            stream = assm.GetManifestResourceStream("SetupTv."+prefix+"_sqlserver_database.sql");
+            stream = assm.GetManifestResourceStream("SetupTv." + prefix + "_sqlserver_database.sql");
             break;
           case ProviderType.MySql:
-            stream = assm.GetManifestResourceStream("SetupTv."+prefix+"_mysql_database.sql");
+            stream = assm.GetManifestResourceStream("SetupTv." + prefix + "_mysql_database.sql");
             break;
         }
         StreamReader reader = new StreamReader(stream);
@@ -208,7 +205,7 @@ namespace SetupTv
             sql = sql.Replace("\t", " ");
             string[] lines = sql.Split('\r');
             sql = "";
-            for (int i = 0; i < lines.Length; ++i)
+            for (int i = 0 ; i < lines.Length ; ++i)
             {
               string line = lines[i].Trim();
               if (line.StartsWith("/*")) continue;
@@ -221,14 +218,14 @@ namespace SetupTv
             break;
         }
 
-        string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "",true);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", true);
         switch (_provider)
         {
           case ProviderType.SqlServer:
             using (SqlConnection connect = new SqlConnection(connectionString))
             {
               connect.Open();
-              for (int i = 0; i < cmds.Length; ++i)
+              for (int i = 0 ; i < cmds.Length ; ++i)
               {
                 cmds[i] = cmds[i].Trim();
                 if (cmds[i].Length > 0)
@@ -244,7 +241,7 @@ namespace SetupTv
                   catch (Exception ex)
                   {
                     TvLibrary.Log.Log.Error("failed:sql:{0}", cmds[i]);
-                    TvLibrary.Log.Log.Error("reason:{0}",ex.ToString());
+                    TvLibrary.Log.Log.Error("reason:{0}", ex.ToString());
                     succeeded = false;
                   }
                 }
@@ -255,7 +252,7 @@ namespace SetupTv
             using (MySqlConnection connect = new MySqlConnection(connectionString))
             {
               connect.Open();
-              for (int i = 0; i < cmds.Length; ++i)
+              for (int i = 0 ; i < cmds.Length ; ++i)
               {
                 cmds[i] = cmds[i].Trim();
                 if (cmds[i].Length > 0)
@@ -285,7 +282,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show(this, "Unable to "+prefix+" database:" + ex.Message);
+        MessageBox.Show(this, "Unable to " + prefix + " database:" + ex.Message);
         succeeded = false;
       }
       SqlConnection.ClearAllPools();
@@ -296,12 +293,12 @@ namespace SetupTv
     {
       CheckServiceName();
 
-      if (radioButton1.Checked)
+      if (rbSQLServer.Checked)
       {
         _provider = ProviderType.SqlServer;
         try
         {
-          string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "",false);
+          string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false);
           using (SqlConnection connect = new SqlConnection(connectionString))
           {
             connect.Open();
@@ -320,7 +317,7 @@ namespace SetupTv
         _provider = ProviderType.MySql;
         try
         {
-          string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text,"",false);
+          string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false);
           using (MySqlConnection connect = new MySqlConnection(connectionString))
           {
             connect.Open();
@@ -342,7 +339,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="ServerConfigText">The server config value from the connection string</param>
     /// <returns>Hostname of Server</returns>
-    public string ParseServerHostName(string ServerConfigText)
+    private string ParseServerHostName(string ServerConfigText)
     {
       string ServerName = string.Empty;
 
@@ -355,23 +352,23 @@ namespace SetupTv
       return ServerName;
     }
 
-    void Save()
+    private void Save()
     {
       string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
-      string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "TvLibrary", true);
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", true);
       XmlDocument doc = new XmlDocument();
       doc.Load(fname);
       XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
       XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
       XmlNode nodeName = nodeKey.Attributes.GetNamedItem("name"); ;
-      if (radioButton1.Checked)
+      if (rbSQLServer.Checked)
         nodeName.InnerText = "SQLServer";
       else
         nodeName.InnerText = "MySQL";
       node.InnerText = connectionString;
 
-      string ServerName = ParseServerHostName(mpTextBoxServer.Text);
+      string ServerName = ParseServerHostName(tbServerHostName.Text);
       bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
       TvLibrary.Log.Log.Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
       CheckServiceName();
@@ -381,12 +378,12 @@ namespace SetupTv
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
-      if (mpTextBoxServer.Text.ToLower().IndexOf("localhost") >= 0)
+      if (tbServerHostName.Text.ToLower().IndexOf("localhost") >= 0)
       {
         MessageBox.Show(this, "Please specify the hostname or ip-address for the server. Not Localhost!");
         return;
       }
-      if (mpTextBoxServer.Text.ToLower().IndexOf("127.0.0.1") >= 0)
+      if (tbServerHostName.Text.ToLower().IndexOf("127.0.0.1") >= 0)
       {
         MessageBox.Show(this, "Please specify the hostname or ip-address for the server. Not 127.0.0.1!");
         return;
@@ -405,7 +402,7 @@ namespace SetupTv
       LoadConnectionDetailsFromConfig(false);
       try
       {
-        string connectionString=ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "TvLibrary",false);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", false);
         switch (_provider)
         {
           case ProviderType.SqlServer:
@@ -430,7 +427,7 @@ namespace SetupTv
               }
             }
             break;
-          
+
           case ProviderType.MySql:
             {
               using (MySqlConnection connect = new MySqlConnection(connectionString))
@@ -464,9 +461,6 @@ namespace SetupTv
       {
         SqlConnection.ClearAllPools();
         GC.Collect();
-        GC.Collect();
-        GC.Collect();
-        GC.Collect();
       }
     }
 
@@ -489,7 +483,7 @@ namespace SetupTv
       Assembly assm = Assembly.GetExecutingAssembly();
       string[] names = assm.GetManifestResourceNames();
       Stream stream = null;
-      for (int version = currentSchemaVersion + 1; version < 100; version++)
+      for (int version = currentSchemaVersion + 1 ; version < 100 ; version++)
       {
         if (ResourceExists(names, "SetupTv." + version.ToString() + "_upgrade_sqlserver_database.sql"))
         {
@@ -516,45 +510,45 @@ namespace SetupTv
     private void CheckServiceName()
     {
       // only query service names of local machine
-      if (!IsDatabaseOnLocalMachine(ParseServerHostName(mpTextBoxServer.Text)))
+      if (!IsDatabaseOnLocalMachine(ParseServerHostName(tbServerHostName.Text)))
       {
-        textBoxServiceName.Enabled = false;
+        tbServiceDependency.Enabled = false;
         return;
       }
       else
       {
-        textBoxServiceName.Enabled = true;
+        tbServiceDependency.Enabled = true;
 
         // first try the quick method and assume the user is right or using defaults
-        string ConfiguredServiceName = textBoxServiceName.Text;
+        string ConfiguredServiceName = tbServiceDependency.Text;
         string DBSearchPattern = @"MySQL";
         Color clAllOkay = Color.GreenYellow;
 
         if (ServiceHelper.IsInstalled(ConfiguredServiceName))
         {
-          textBoxServiceName.BackColor = clAllOkay;
+          tbServiceDependency.BackColor = clAllOkay;
           DBSearchPattern = ConfiguredServiceName;
         }
         else
-        {          
+        {
           // MSSQL
-          if (radioButton1.Checked)
-            DBSearchPattern = @"MSSQL$";
+          if (rbSQLServer.Checked)
+            DBSearchPattern = @"SQLBrowser";
 
           if (ServiceHelper.GetDBServiceName(ref DBSearchPattern))
           {
-            textBoxServiceName.Text = DBSearchPattern;
-            textBoxServiceName.BackColor = clAllOkay;            
+            tbServiceDependency.Text = DBSearchPattern;
+            tbServiceDependency.BackColor = clAllOkay;
           }
           else
           {
             TvLibrary.Log.Log.Info("SetupDatabaseForm: DB service name not recognized - using defaults");
-            textBoxServiceName.BackColor = Color.Red;
+            tbServiceDependency.BackColor = Color.Red;
           }
         }
 
         // if a matching service name is available - add it now
-        if (textBoxServiceName.BackColor == clAllOkay && textBoxServiceName.Enabled)
+        if (tbServiceDependency.BackColor == clAllOkay && tbServiceDependency.Enabled)
         {
           if (ServiceHelper.AddDependencyByName(DBSearchPattern))
             TvLibrary.Log.Log.Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
@@ -562,36 +556,54 @@ namespace SetupTv
             TvLibrary.Log.Log.Info("SetupDatabaseForm: Could not add dependency for TvService - {0}", DBSearchPattern);
         }
       }
-    }  
+    }
+
+    private void OnDBTypeSelected()
+    {
+      gbServerLocation.Enabled = true;
+      gbDbLogon.Enabled = true;
+      tbPassword.Focus();
+    }
 
     private void radioButton2_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButton2.Checked)
-      {
-        if (mpTextBoxUserId.Text == "sa")
+      if (rbMySQL.Checked)
+      {        
+        if (tbUserID.Text == "sa" || string.IsNullOrEmpty(tbUserID.Text))
         {
-          mpTextBoxUserId.Text = "root";
-          mpTextBoxServer.Text = Dns.GetHostName();
-          textBoxServiceName.Enabled = true;
-          textBoxServiceName.BackColor = mpTextBoxServer.BackColor;
-          textBoxServiceName.Text = @"MySQL5";          
+          OnDBTypeSelected();
+          tbUserID.Text = "root";
+          tbServerHostName.Text = Dns.GetHostName();
+          tbServiceDependency.Enabled = true;
+          tbServiceDependency.BackColor = tbServerHostName.BackColor;
+          tbServiceDependency.Text = @"MySQL5";
         }
       }
     }
 
     private void radioButton1_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButton1.Checked)
+      if (rbSQLServer.Checked)
       {
-        if (mpTextBoxUserId.Text == "root")
+        if (tbUserID.Text == "root" || string.IsNullOrEmpty(tbUserID.Text))
         {
-          mpTextBoxUserId.Text = "sa";
-          mpTextBoxServer.Text = Dns.GetHostName() + @"\SQLEXPRESS";
-          textBoxServiceName.Enabled = true;
-          textBoxServiceName.BackColor = mpTextBoxServer.BackColor;
-          textBoxServiceName.Text = @"MSSQL$SQLEXPRESS";
+          OnDBTypeSelected();
+          tbUserID.Text = "sa";
+          tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
+          tbServiceDependency.Enabled = true;
+          tbServiceDependency.BackColor = tbServerHostName.BackColor;
+          tbServiceDependency.Text = @"SQLBrowser";
         }
       }
+    }
+
+    private void lblDBChoice_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      try
+      {
+        Process.Start("http://wiki.team-mediaportal.com/TV-Engine_0.3");
+      }
+      catch (Exception) {}
     }
   }
 }

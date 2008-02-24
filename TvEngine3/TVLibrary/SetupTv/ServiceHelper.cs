@@ -29,7 +29,7 @@ namespace SetupTv
   public class ServiceHelper
   {
 
-    static public bool IsInstalled(string serviceToFind)
+    public static bool IsInstalled(string serviceToFind)
     {
       ServiceController[] services = ServiceController.GetServices();
       foreach (ServiceController service in services)
@@ -42,7 +42,7 @@ namespace SetupTv
       return false;
     }
 
-    static public bool IsRunning
+    public static bool IsRunning
     {
       get
       {
@@ -59,7 +59,7 @@ namespace SetupTv
       }
     }
 
-    static public bool IsStopped
+    public static bool IsStopped
     {
       get
       {
@@ -76,7 +76,7 @@ namespace SetupTv
       }
     }
 
-    static public bool Stop()
+    public static bool Stop()
     {
       ServiceController[] services = ServiceController.GetServices();
       foreach (ServiceController service in services)
@@ -92,8 +92,8 @@ namespace SetupTv
       }
       return false;
     }
-    
-    static public bool Start()
+
+    public static bool Start()
     {
       ServiceController[] services = ServiceController.GetServices();
       foreach (ServiceController service in services)
@@ -110,7 +110,7 @@ namespace SetupTv
       return false;
     }
 
-    static public bool Restart()
+    public static bool Restart()
     {
       if (!IsInstalled(@"TvService")) return false;
 
@@ -133,7 +133,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="partOfSvcNameToComplete">Supply a (possibly unique) search term to indentify the service</param>
     /// <returns>true when search was successfull - modifies the search pattern to return the correct full name</returns>
-    static public bool GetDBServiceName(ref string partOfSvcNameToComplete)
+    public static bool GetDBServiceName(ref string partOfSvcNameToComplete)
     {
       ServiceController[] services = ServiceController.GetServices();
       foreach (ServiceController service in services)
@@ -152,7 +152,7 @@ namespace SetupTv
     /// </summary>
     /// <param name="dependsOnService">the database service that needs to be started</param>
     /// <returns>true if dependency was added successfully</returns>
-    static public bool AddDependencyByName(string dependsOnService)
+    public static bool AddDependencyByName(string dependsOnService)
     {
       try
       {
@@ -160,13 +160,8 @@ namespace SetupTv
         {
           if (rKey != null)
           {
-            //dependencyKey = rKey.CreateSubKey()
             rKey.SetValue("DependOnService", new string[] { dependsOnService, "Netman" }, RegistryValueKind.MultiString);
           }
-          //else
-          //{
-          //  MessageBox.Show("TvService is not installed on your system!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          //}
         }
 
         return true;
