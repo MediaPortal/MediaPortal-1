@@ -117,7 +117,7 @@ namespace TsPacketChecker
           return "H.264/AVC high definition video, >16:9 aspect ratio, 30 Hz";
         #endregion
 
-        #region HE-ACC audio (0x601-0x642)
+        #region HE-AAC audio (0x601-0x642)
         case 0x601:
           return "HE-AAC audio, single mono channel";
         case 0x603:
@@ -287,8 +287,42 @@ namespace TsPacketChecker
           return "ISO/IEC 13818-6 type D";
         case 0x0E:
           return "ISO/IEC 13818-1 auxiliary";
+        case 0x0F:
+          return "ISO/IEC 13818-7 Audio with ADTS transport syntax";
+        case 0x10:
+          return "ISO/IEC 14496-2 Visual";
+        case 0x11:
+          return "ISO/IEC 14496-3 Audio with the LATM transport syntax as defined in ISO/IEC 14496-3 / AMD 1";
+        case 0x12:
+          return "ISO/IEC 14496-1 SL-packetized stream or FlexMux stream carried in PES packets";
+        case 0x13:
+          return "ISO/IEC 14496-1 SL-packetized stream or FlexMux stream carried in ISO/IEC14496_sections.";
+        case 0x14:
+          return "ISO/IEC 13818-6 Synchronized Download Protocol"; 
+        case 0x15:
+          return "Metadata carried in PES packets";
+        case 0x16:
+          return "Metadata carried in metadata_sections"; 
+        case 0x17:
+          return "Metadata carried in ISO/IEC 13818-6 Data Carousel"; 
+        case 0x18:
+          return "Metadata carried in ISO/IEC 13818-6 Object Carousel"; 
+        case 0x19:
+          return "Metadata carried in ISO/IEC 13818-6 Synchronized Download Protocol";
+        case 0x1A:
+          return "IPMP stream (defined in ISO/IEC 13818-11, MPEG-2 IPMP)";
+        case 0x1B:
+          return "AVC video stream as defined in ITU-T Rec. H.264 | ISO/IEC 14496-10 Video";
+        case 0x1C:
+          return "ISO/IEC 14496-3 Audio, without using any additional transport syntax";
+        case 0x1D:
+          return "ISO/IEC 14496-17 Text";
+        case 0x1E:
+          return "Auxiliary video data stream as defined in ISO/IEC 23002-3";
+        case 0x7F:
+          return "IPMP stream";
       }
-      if (streamType >= 0x0F && streamType <= 0x7F)
+      if (streamType >= 0x1F && streamType <= 0x7E)
         return "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved";
       if (streamType > 0x80)
         return "User private";
