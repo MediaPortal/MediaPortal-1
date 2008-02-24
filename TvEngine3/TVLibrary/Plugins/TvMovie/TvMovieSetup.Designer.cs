@@ -56,7 +56,9 @@ namespace SetupTv.Sections
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.tabControlTvMovie = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
+      this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
       this.groupBoxDescriptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxLimitActors = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowRatings = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAdditionalInfo = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -86,8 +88,6 @@ namespace SetupTv.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.listView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
-      this.checkBoxLimitActors = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlTvMovie.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
       this.groupBoxDescriptions.SuspendLayout();
@@ -132,6 +132,19 @@ namespace SetupTv.Sections
       this.tabPageSettings.Text = "Settings";
       this.tabPageSettings.UseVisualStyleBackColor = true;
       // 
+      // linkLabelInfo
+      // 
+      this.linkLabelInfo.AutoSize = true;
+      this.linkLabelInfo.LinkArea = new System.Windows.Forms.LinkArea(0, 20);
+      this.linkLabelInfo.Location = new System.Drawing.Point(32, 328);
+      this.linkLabelInfo.Name = "linkLabelInfo";
+      this.linkLabelInfo.Size = new System.Drawing.Size(352, 17);
+      this.linkLabelInfo.TabIndex = 5;
+      this.linkLabelInfo.TabStop = true;
+      this.linkLabelInfo.Text = "TV Movie ClickFinder is an EPG application for German TV channels.";
+      this.linkLabelInfo.UseCompatibleTextRendering = true;
+      this.linkLabelInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelInfo_LinkClicked);
+      // 
       // groupBoxDescriptions
       // 
       this.groupBoxDescriptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -149,6 +162,19 @@ namespace SetupTv.Sections
       this.groupBoxDescriptions.TabIndex = 4;
       this.groupBoxDescriptions.TabStop = false;
       this.groupBoxDescriptions.Text = "Descriptions";
+      // 
+      // checkBoxLimitActors
+      // 
+      this.checkBoxLimitActors.AutoSize = true;
+      this.checkBoxLimitActors.Checked = true;
+      this.checkBoxLimitActors.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxLimitActors.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxLimitActors.Location = new System.Drawing.Point(31, 63);
+      this.checkBoxLimitActors.Name = "checkBoxLimitActors";
+      this.checkBoxLimitActors.Size = new System.Drawing.Size(187, 17);
+      this.checkBoxLimitActors.TabIndex = 4;
+      this.checkBoxLimitActors.Text = "Limit actors - show a maximum of 5";
+      this.checkBoxLimitActors.UseVisualStyleBackColor = true;
       // 
       // checkBoxShowRatings
       // 
@@ -498,31 +524,6 @@ namespace SetupTv.Sections
       // 
       this.columnHeader2.Text = "TV Movie Stations";
       this.columnHeader2.Width = 179;
-      // 
-      // linkLabelInfo
-      // 
-      this.linkLabelInfo.AutoSize = true;
-      this.linkLabelInfo.LinkArea = new System.Windows.Forms.LinkArea(0, 20);
-      this.linkLabelInfo.Location = new System.Drawing.Point(32, 328);
-      this.linkLabelInfo.Name = "linkLabelInfo";
-      this.linkLabelInfo.Size = new System.Drawing.Size(352, 17);
-      this.linkLabelInfo.TabIndex = 5;
-      this.linkLabelInfo.TabStop = true;
-      this.linkLabelInfo.Text = "TV Movie ClickFinder is an EPG application for German TV channels.";
-      this.linkLabelInfo.UseCompatibleTextRendering = true;
-      // 
-      // checkBoxLimitActors
-      // 
-      this.checkBoxLimitActors.AutoSize = true;
-      this.checkBoxLimitActors.Checked = true;
-      this.checkBoxLimitActors.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxLimitActors.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxLimitActors.Location = new System.Drawing.Point(31, 63);
-      this.checkBoxLimitActors.Name = "checkBoxLimitActors";
-      this.checkBoxLimitActors.Size = new System.Drawing.Size(187, 17);
-      this.checkBoxLimitActors.TabIndex = 4;
-      this.checkBoxLimitActors.Text = "Limit actors - show a maximum of 5";
-      this.checkBoxLimitActors.UseVisualStyleBackColor = true;
       // 
       // TvMovieSetup
       // 
