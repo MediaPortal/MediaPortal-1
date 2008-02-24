@@ -44,7 +44,7 @@ namespace TvService
       this.serviceInstaller1.ServiceName = "TVService";
       this.serviceInstaller1.ServicesDependedOn = new string[] {
         "RpcLocator"}; // Remote Procedure Call (RPC) Locator
-      this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+      this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Manual;
       // 
       // ProjectInstaller
       // 
