@@ -421,7 +421,11 @@ namespace TvLibrary.Implementations.DVB.Structures
             pidInfo.isAudio = false;
             pidInfo.isAC3Audio = true;
             break;
-          case 0x11://AAC AUDIO
+          case 0x0f://AAC AUDIO
+            pidInfo.isAudio = true;
+            pidInfo.isAC3Audio = false;
+            break;
+          case 0x11://LATM AAC AUDIO
             pidInfo.isAudio = true;
             pidInfo.isAC3Audio = false;
             break;

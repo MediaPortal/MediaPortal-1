@@ -1225,6 +1225,25 @@ namespace TvLibrary.Implementations.DVB {
       return mediaAac;
     }
     /// <summary>
+    /// Gets the audio LATM AAC media type
+    /// </summary>
+    /// <returns></returns>
+    static public AMMediaType GetAudioLATMAAC()
+    {
+      AMMediaType mediaLATMAAC = new AMMediaType();
+      mediaLATMAAC.majorType = MediaType.Audio;
+      mediaLATMAAC.subType = MediaSubType.LATMAAC;
+      mediaLATMAAC.formatType = FormatType.WaveEx;
+      mediaLATMAAC.unkPtr = IntPtr.Zero;
+      mediaLATMAAC.sampleSize = 1;
+      mediaLATMAAC.temporalCompression = false;
+      mediaLATMAAC.fixedSizeSamples = true;
+      mediaLATMAAC.formatSize = AACAudioFormat.GetLength(0);
+      mediaLATMAAC.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaLATMAAC.formatSize);
+      System.Runtime.InteropServices.Marshal.Copy(AACAudioFormat, 0, mediaLATMAAC.formatPtr, mediaLATMAAC.formatSize);
+      return mediaLATMAAC;
+    }
+    /// <summary>
     /// Gets the audio LPCM media type
     /// </summary>
     /// <returns></returns>

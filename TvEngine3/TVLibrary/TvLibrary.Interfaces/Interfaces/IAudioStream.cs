@@ -46,6 +46,10 @@ namespace TvLibrary.Interfaces
     /// </summary>
     AAC,
     /// <summary>
+    /// latm aac audio
+    /// </summary>
+    LATMAAC,
+    /// <summary>
     /// unknown audio
     /// </summary>
     Unknown,

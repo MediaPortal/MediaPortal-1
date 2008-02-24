@@ -221,6 +221,13 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       get
       {
+        return (isAudio && stream_type == 0x0f);
+      }
+    }
+    public bool IsLATMAACAudio
+    {
+      get
+      {
         return (isAudio && stream_type == 0x11);
       }
     }
@@ -242,6 +249,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       if (isTeletext) return String.Format("pid:{0:X} teletext type:{1:X}", pid, stream_type);
       if (isDVBSubtitle) return String.Format("pid:{0:X} subtitle type:{1:X}", pid, stream_type);
       if (IsAACAudio) return String.Format("pid:{0:X} audio lang:{1} type:AAC", pid, language);
+      if (IsLATMAACAudio) return String.Format("pid:{0:X} audio lang:{1} type:LATM AAC", pid, language);
       return string.Format("pid:{0:X} type:{1:X}", pid, stream_type);
     }
   }
