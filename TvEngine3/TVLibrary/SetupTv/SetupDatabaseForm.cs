@@ -551,7 +551,22 @@ namespace SetupTv
         if (tbServiceDependency.BackColor == clAllOkay && tbServiceDependency.Enabled)
         {
           if (ServiceHelper.AddDependencyByName(DBSearchPattern))
+          {
             TvLibrary.Log.Log.Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
+            if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, false))
+            {
+              if (MessageBox.Show(this,
+                                  string.Format("The tv service depends on {0} but this service does not autostart - enable now?", DBSearchPattern),
+                                  "Dependency avoids autostart",
+                                  MessageBoxButtons.YesNo,
+                                  MessageBoxIcon.Warning,
+                                  MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+              {
+                if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, true))
+                  MessageBox.Show("Failed to change the startup behaviour", "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              }
+            }
+          }
           else
             TvLibrary.Log.Log.Info("SetupDatabaseForm: Could not add dependency for TvService - {0}", DBSearchPattern);
         }

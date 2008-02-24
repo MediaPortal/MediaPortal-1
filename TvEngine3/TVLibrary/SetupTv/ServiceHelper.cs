@@ -23,12 +23,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.ServiceProcess;
 using Microsoft.Win32;
+using System.Management;
 
 namespace SetupTv
 {
   public class ServiceHelper
   {
-
     public static bool IsInstalled(string serviceToFind)
     {
       ServiceController[] services = ServiceController.GetServices();
@@ -145,6 +145,37 @@ namespace SetupTv
         }
       }
       return false;
+    }
+
+    public static bool IsServiceEnabled(string aServiceName, bool aSetEnabled)
+    {
+      try
+      {
+        using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\" + aServiceName, true))
+        {
+          int startMode = 3; // manual
+          if (rKey != null)
+          {
+            startMode = (int)rKey.GetValue("Start", (int)3);
+            if (startMode == 2) // autostart
+              return true;
+            else
+            {
+              if (aSetEnabled)
+              {
+                rKey.SetValue("Start", (int)2, RegistryValueKind.DWord);
+                return true;
+              }
+              return false;
+            }
+          }
+          return false; // probably wrong service name
+        }
+      }
+      catch (Exception)
+      {
+        return false;
+      }
     }
 
     /// <summary>
