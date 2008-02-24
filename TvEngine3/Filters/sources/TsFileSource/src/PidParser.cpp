@@ -3285,6 +3285,12 @@ HRESULT ParserFunctions::ParsePMT(PidParser *pPidParser, PBYTE pData, ULONG ulDa
 					pPidParser->pids.aac = pid;
 				else
 					pPidParser->pids.aac2 = pid;
+
+      if (StreamType == 0x11) // AAC
+				if (pPidParser->pids.aac == 0)
+					pPidParser->pids.aac = pid;
+				else
+					pPidParser->pids.aac2 = pid;
 /*
 			if (StreamType >= 0x88 && StreamType <= 0x8a) // DTS
 				if (pPidParser->pids.dts == 0)

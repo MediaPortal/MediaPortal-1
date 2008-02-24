@@ -325,7 +325,8 @@ void CVirtualChannelTableParser::DecodeServiceLocationDescriptor( byte* buf,int 
 				break;
 			case 0x3: // audio
 			case 0x4: // audio
-      case 0x11: //AAC audio
+      case 0x0f: // AAC audio
+      case 0x11: // LATM AAC audio
 				if (audioSet==0)
 				{
 					channelInfo.PidTable.AudioPid1=elementary_pid;

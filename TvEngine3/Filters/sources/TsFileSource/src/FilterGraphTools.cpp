@@ -1281,7 +1281,7 @@ HRESULT FilterGraphTools::AddDemuxPins(DVBTChannels_Service* pService, CComPtr<I
 				return hr;
 		}
 
-		// render aac audio if no ac3 or mp1/2 or ac3 was rendered
+		// render dts audio if no ac3 or mp1/2 or aac was rendered
 		if (audioStreamsRendered == 0)
 		{
 			hr = AddDemuxPinsDTS(pService, &audioStreamsRendered);

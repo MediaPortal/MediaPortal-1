@@ -114,7 +114,7 @@ void CPmtParser::OnNewSection(CSection& section)
 				m_pidInfo.videoServiceType=stream_type;
 			}
 		}
-		if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || stream_type==SERVICE_TYPE_AUDIO_MPEG2 || stream_type==SERVICE_TYPE_AUDIO_AC3 || stream_type==SERVICE_TYPE_AUDIO_AAC)
+		if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || stream_type==SERVICE_TYPE_AUDIO_MPEG2 || stream_type==SERVICE_TYPE_AUDIO_AC3 || stream_type==SERVICE_TYPE_AUDIO_AAC || stream_type==SERVICE_TYPE_AUDIO_LATM_AAC)
 		{				  
 			audioToSet++;
 			curAudio=audioToSet;
