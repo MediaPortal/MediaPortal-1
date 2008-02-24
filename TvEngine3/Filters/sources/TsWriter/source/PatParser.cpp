@@ -192,7 +192,9 @@ void CPatParser::OnChannel(const CChannelInfo& info)
 {
   LogDebug("onch: %s %x %x", info.ServiceName,info.PidTable.VideoPid,info.PidTable.AC3Pid);
   CChannelInfo i=info;
-  m_mapChannels[info.ServiceId]=i;
+	// The minor channel number in a VCT seems to be equal to what the SID is in a PMT
+	// so we have to do the mapping this way - gemx
+	m_mapChannels[info.MinorChannel]=i;
 }
 
 //*****************************************************************************
@@ -245,6 +247,8 @@ void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2
 		{
 			AnalyzePidInfo(pidInfo,info.hasVideo,info.hasAudio);
 			info.PmtReceived=true;
+			// overwrite the pmt just in case a vct parser has overriden it
+			info.PidTable.PmtPid=pid;
       m_tickCount = GetTickCount();
 		}
 	}
