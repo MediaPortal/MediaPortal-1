@@ -11,6 +11,8 @@
 #
 #
 #**********************************************************************************************************#
+!addplugindir ".\nsis-plugins\SimpleSC\"
+
 
 Name "MediaPortal TV Server / Client"
 
@@ -177,6 +179,21 @@ Var AR_RegFlags
 !macroend
 #####    End of Add/Remove macros
 
+#####    service macros
+!macro InstallService
+    ;SimpleSC::InstallService [name_of_service] [display_name] [service_type] [start_type] [service_commandline] [dependencies] [account] [password]
+    SimpleSC::InstallService "TVService" "TVService" "16" "3" "$INSTDIR\TVService.exe" "RpcLocator" "" ""
+
+    ;SimpleSC::SetServiceDescription [name_of_service] [service_description]
+    SimpleSC::SetServiceDescription "TVService" "Mediaportal Tv Service. Handles all tv related tasks."
+
+    Pop $0 ; returns an errorcode (<>0) otherwise success (0)
+    ${If} $0 != 0
+        MessageBox MB_OK|MB_ICONEXCLAMATION "An error occured while trying to install and configure TVService!" IDYES 0 IDNO 0
+    ${EndIf}
+!macroend
+#####    End of service macros
+
 #####    Sections and macros
 Section "MediaPortal TV Server" SecServer
     SetOverwrite on
@@ -266,7 +283,8 @@ Section "MediaPortal TV Server" SecServer
     
     # Installing the TVService 
     DetailPrint "Installing TVService"
-    ExecWait '"$INSTDIR\TVService.exe" /install'
+    #ExecWait '"$INSTDIR\TVService.exe" /install'
+    !insertmacro InstallService
     DetailPrint "Finished Installing TVService"
     
     #---------------------------- Post Installation Tasks ----------------------
