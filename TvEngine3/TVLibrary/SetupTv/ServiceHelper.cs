@@ -1,3 +1,4 @@
+#region Copyright (C) 2006-2008 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +19,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,8 +31,16 @@ using TvLibrary.Log;
 
 namespace SetupTv
 {
+  /// <summary>
+  /// Offers basic control functions for services
+  /// </summary>
   public class ServiceHelper
   {
+    /// <summary>
+    /// Does a given service exist
+    /// </summary>
+    /// <param name="serviceToFind"></param>
+    /// <returns></returns>
     public static bool IsInstalled(string serviceToFind)
     {
       ServiceController[] services = ServiceController.GetServices();
@@ -43,6 +54,9 @@ namespace SetupTv
       return false;
     }
 
+    /// <summary>
+    /// Is the status of TvService == Running
+    /// </summary>
     public static bool IsRunning
     {
       get
@@ -60,6 +74,9 @@ namespace SetupTv
       }
     }
 
+    /// <summary>
+    /// Is the status of TvService == Stopped
+    /// </summary>
     public static bool IsStopped
     {
       get
@@ -77,6 +94,10 @@ namespace SetupTv
       }
     }
 
+    /// <summary>
+    /// Stop the TvService
+    /// </summary>
+    /// <returns></returns>
     public static bool Stop()
     {
       ServiceController[] services = ServiceController.GetServices();
@@ -94,6 +115,10 @@ namespace SetupTv
       return false;
     }
 
+    /// <summary>
+    /// Starts the TvService
+    /// </summary>
+    /// <returns></returns>
     public static bool Start()
     {
       ServiceController[] services = ServiceController.GetServices();
@@ -111,21 +136,24 @@ namespace SetupTv
       return false;
     }
 
+    /// <summary>
+    /// Start/Stop cycles TvService
+    /// </summary>
+    /// <returns>Always true</returns>
     public static bool Restart()
     {
       if (!IsInstalled(@"TvService")) return false;
 
       Stop();
-      while (!IsStopped)
-      {
-        System.Threading.Thread.Sleep(300);
-      }
-      System.Threading.Thread.Sleep(2000);
+      while (!IsStopped)      
+        System.Threading.Thread.Sleep(100);
+      
+      System.Threading.Thread.Sleep(1000);
+
       Start();
       while (!IsRunning)
-      {
-        System.Threading.Thread.Sleep(300);
-      }
+        System.Threading.Thread.Sleep(100);
+
       return true;
     }
 
@@ -148,6 +176,12 @@ namespace SetupTv
       return false;
     }
 
+    /// <summary>
+    /// Checks via registry whether a given service is set to autostart on boot
+    /// </summary>
+    /// <param name="aServiceName">The short name of the service</param>
+    /// <param name="aSetEnabled">Enable autostart if needed</param>
+    /// <returns>true if the service will start at boot</returns>
     public static bool IsServiceEnabled(string aServiceName, bool aSetEnabled)
     {
       try
