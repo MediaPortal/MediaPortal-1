@@ -1105,7 +1105,7 @@ namespace TvLibrary.Implementations.Analog
     private void AddTvAudioFilter()
     {
       if (!CheckThreadId()) return;
-      Log.Log.WriteFile("analog: AddTvAudioFilter");
+      //Log.Log.WriteFile("analog: AddTvAudioFilter");
       //find crossbar audio tuner input
       IPin pinIn = FindCrossBarPin(_filterCrossBar, PhysicalConnectorType.Audio_Tuner, PinDirection.Input);
       if (pinIn == null)
@@ -1135,7 +1135,7 @@ namespace TvLibrary.Implementations.Analog
       // try each tv audio tuner
       for (int i = 0; i < devices.Length; i++)
       {
-        Log.Log.WriteFile("analog: AddTvAudioFilter try:{0} {1}", devices[i].Name, i);
+        //Log.Log.WriteFile("analog: AddTvAudioFilter try:{0} {1}", devices[i].Name, i);
         //if tv audio tuner is currently in use we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         int hr;
@@ -1176,7 +1176,7 @@ namespace TvLibrary.Implementations.Analog
           } else
           {
             //succeeded. we're done
-            Log.Log.WriteFile("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
+            //Log.Log.WriteFile("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
             Release.ComObject("audiotuner pinin", pin);
             _filterTvAudioTuner = tmp;
             _audioDevice = devices[i];
@@ -1211,12 +1211,12 @@ namespace TvLibrary.Implementations.Analog
     private IPin FindCrossBarPin(IBaseFilter crossbarFilter, PhysicalConnectorType connectorType, PinDirection direction)
     {
       if (!CheckThreadId()) return null;
-      Log.Log.WriteFile("analog: FindCrossBarPin type:{0} direction:{1}", connectorType, direction);
+      //Log.Log.WriteFile("analog: FindCrossBarPin type:{0} direction:{1}", connectorType, direction);
       IAMCrossbar crossbar = crossbarFilter as IAMCrossbar;
       int inputs = 0;
       int outputs = 0;
       crossbar.get_PinCounts(out outputs, out inputs);
-      Log.Log.WriteFile("analog: FindCrossBarPin inputs:{0} outputs:{1}", inputs, outputs);
+      //Log.Log.WriteFile("analog: FindCrossBarPin inputs:{0} outputs:{1}", inputs, outputs);
       int maxPins = inputs;
       if (direction == PinDirection.Output) maxPins = outputs;
       for (int i = 0; i < maxPins; ++i)
@@ -1224,11 +1224,11 @@ namespace TvLibrary.Implementations.Analog
         int relatedPinIndex;
         PhysicalConnectorType physicalType;
         crossbar.get_CrossbarPinInfo((direction == PinDirection.Input), i, out relatedPinIndex, out physicalType);
-        Log.Log.WriteFile("analog: pin {0} type:{1} ", i, physicalType);
+        //Log.Log.WriteFile("analog: pin {0} type:{1} ", i, physicalType);
         if (physicalType == connectorType)
         {
           IPin pin = DsFindPin.ByDirection(crossbarFilter, direction, i);
-          Log.Log.WriteFile("analog: FindCrossBarPin found pin at index:{0}", i);
+          //Log.Log.WriteFile("analog: FindCrossBarPin found pin at index:{0}", i);
 
           return pin;
         }
@@ -1266,7 +1266,7 @@ namespace TvLibrary.Implementations.Analog
       //try each crossbar
       for (int i = 0; i < devices.Length; i++)
       {
-        Log.Log.WriteFile("analog: AddCrossBarFilter try:{0} {1}", devices[i].Name, i);
+        //Log.Log.WriteFile("analog: AddCrossBarFilter try:{0} {1}", devices[i].Name, i);
         //if crossbar is already in use then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         int hr;
@@ -1340,7 +1340,7 @@ namespace TvLibrary.Implementations.Analog
     private void AddTvCaptureFilter()
     {
       if (!CheckThreadId()) return;
-      Log.Log.WriteFile("analog: AddTvCaptureFilter");
+      //Log.Log.WriteFile("analog: AddTvCaptureFilter");
       DsDevice[] devices = null;
       IBaseFilter tmp;
       //get a list of all video capture devices
@@ -1361,12 +1361,17 @@ namespace TvLibrary.Implementations.Analog
       //try each video capture filter
       for (int i = 0; i < devices.Length; i++)
       {
-        if (devices[i].Name == "NVIDIA DualTV YUV Capture")
+        if (devices[i].Name = "NVIDIA DualTV YUV Capture")
         {
-          Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
+          //Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
           continue;
         }
-        Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
+        if (devices[i].Name == "NVIDIA DualTV YUV Capture 2")
+        {
+          //Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
+          continue;
+        }
+        //Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         int hr;
@@ -1666,8 +1671,8 @@ namespace TvLibrary.Implementations.Analog
             {
               //it does... we're done
               _pinCapture = pins[0];
-              Log.Log.WriteFile("analog: FindCapturePin pin:{0}", FilterGraphTools.LogPinInfo(pins[0]));
-              Log.Log.WriteFile("analog: FindCapturePin   major:{0} sub:{1}", media[0].majorType, media[0].subType);
+              //Log.Log.WriteFile("analog: FindCapturePin pin:{0}", FilterGraphTools.LogPinInfo(pins[0]));
+              //Log.Log.WriteFile("analog: FindCapturePin   major:{0} sub:{1}", media[0].majorType, media[0].subType);
               Log.Log.WriteFile("analog: FindCapturePin succeeded");
               DsUtils.FreeAMMediaType(media[0]);
               return;
