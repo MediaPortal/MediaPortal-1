@@ -1361,7 +1361,7 @@ namespace TvLibrary.Implementations.Analog
       //try each video capture filter
       for (int i = 0; i < devices.Length; i++)
       {
-        if (devices[i].Name = "NVIDIA DualTV YUV Capture")
+        if (devices[i].Name == "NVIDIA DualTV YUV Capture")
         {
           //Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
           continue;
