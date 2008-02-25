@@ -11,7 +11,6 @@
 #
 #
 #**********************************************************************************************************#
-!addplugindir ".\nsis-plugins\SimpleSC\"
 
 
 Name "MediaPortal TV Server / Client"
@@ -123,51 +122,48 @@ Var AR_SecFlags
 Var AR_RegFlags
 
 !macro InitSection SecName
-  ;  This macro reads component installed flag from the registry and
-  ;changes checked state of the section on the components page.
-  ;Input: section index constant name specified in Section command.
- 
-  ClearErrors
-  ;Reading component status from registry
-  ReadRegDWORD $AR_RegFlags HKLM \
-    "${REG_UNINSTALL}\Components\${SecName}" "Installed"
-  IfErrors "default_${SecName}"
+    ;  This macro reads component installed flag from the registry and
+    ;changes checked state of the section on the components page.
+    ;Input: section index constant name specified in Section command.
+
+    ClearErrors
+    ;Reading component status from registry
+    ReadRegDWORD $AR_RegFlags HKLM "${REG_UNINSTALL}\Components\${SecName}" "Installed"
+    IfErrors "default_${SecName}"
     ;Status will stay default if registry value not found
     ;(component was never installed)
-  IntOp $AR_RegFlags $AR_RegFlags & 0x0001  ;Turn off all other bits
-  SectionGetFlags ${${SecName}} $AR_SecFlags  ;Reading default section flags
-  IntOp $AR_SecFlags $AR_SecFlags & 0xFFFE  ;Turn lowest (enabled) bit off
-  IntOp $AR_SecFlags $AR_RegFlags | $AR_SecFlags      ;Change lowest bit
- 
-  ;Writing modified flags
-  SectionSetFlags ${${SecName}} $AR_SecFlags
- 
- "default_${SecName}:"
+    IntOp $AR_RegFlags $AR_RegFlags & 0x0001  ;Turn off all other bits
+    SectionGetFlags ${${SecName}} $AR_SecFlags  ;Reading default section flags
+    IntOp $AR_SecFlags $AR_SecFlags & 0xFFFE  ;Turn lowest (enabled) bit off
+    IntOp $AR_SecFlags $AR_RegFlags | $AR_SecFlags      ;Change lowest bit
+
+    ;Writing modified flags
+    SectionSetFlags ${${SecName}} $AR_SecFlags
+
+    "default_${SecName}:"
 !macroend
  
 !macro FinishSection SecName
-  ;  This macro reads section flag set by user and removes the section
-  ;if it is not selected.
-  ;Then it writes component installed flag to registry
-  ;Input: section index constant name specified in Section command.
- 
-  SectionGetFlags ${${SecName}} $AR_SecFlags  ;Reading section flags
-  ;Checking lowest bit:
-  IntOp $AR_SecFlags $AR_SecFlags & 0x0001
-  IntCmp $AR_SecFlags 1 "leave_${SecName}"
+    ;  This macro reads section flag set by user and removes the section
+    ;if it is not selected.
+    ;Then it writes component installed flag to registry
+    ;Input: section index constant name specified in Section command.
+
+    SectionGetFlags ${${SecName}} $AR_SecFlags  ;Reading section flags
+    ;Checking lowest bit:
+    IntOp $AR_SecFlags $AR_SecFlags & 0x0001
+    IntCmp $AR_SecFlags 1 "leave_${SecName}"
     ;Section is not selected:
     ;Calling Section uninstall macro and writing zero installed flag
     !insertmacro "Remove_${${SecName}}"
-    WriteRegDWORD HKLM "${REG_UNINSTALL}\Components\${SecName}" \
-  "Installed" 0
+    WriteRegDWORD HKLM "${REG_UNINSTALL}\Components\${SecName}" "Installed" 0
     Goto "exit_${SecName}"
- 
- "leave_${SecName}:"
+
+    "leave_${SecName}:"
     ;Section is selected:
-    WriteRegDWORD HKLM "${REG_UNINSTALL}\Components\${SecName}" \
-  "Installed" 1
- 
- "exit_${SecName}:"
+    WriteRegDWORD HKLM "${REG_UNINSTALL}\Components\${SecName}" "Installed" 1
+
+    "exit_${SecName}:"
 !macroend
  
 !macro RemoveSection SecName
@@ -178,21 +174,6 @@ Var AR_RegFlags
   !insertmacro "Remove_${${SecName}}"
 !macroend
 #####    End of Add/Remove macros
-
-#####    service macros
-!macro InstallService
-    ;SimpleSC::InstallService [name_of_service] [display_name] [service_type] [start_type] [service_commandline] [dependencies] [account] [password]
-    SimpleSC::InstallService "TVService" "TVService" "16" "3" "$INSTDIR\TVService.exe" "RpcLocator" "" ""
-
-    ;SimpleSC::SetServiceDescription [name_of_service] [service_description]
-    SimpleSC::SetServiceDescription "TVService" "Mediaportal Tv Service. Handles all tv related tasks."
-
-    Pop $0 ; returns an errorcode (<>0) otherwise success (0)
-    ${If} $0 != 0
-        MessageBox MB_OK|MB_ICONEXCLAMATION "An error occured while trying to install and configure TVService!" IDYES 0 IDNO 0
-    ${EndIf}
-!macroend
-#####    End of service macros
 
 #####    Sections and macros
 Section "MediaPortal TV Server" SecServer
@@ -283,12 +264,11 @@ Section "MediaPortal TV Server" SecServer
     
     # Installing the TVService 
     DetailPrint "Installing TVService"
-    #ExecWait '"$INSTDIR\TVService.exe" /install'
-    !insertmacro InstallService
+    ExecWait '"$INSTDIR\TVService.exe" /install'
+    #!insertmacro InstallService
     DetailPrint "Finished Installing TVService"
     
     #---------------------------- Post Installation Tasks ----------------------
-    #WriteRegStr HKLM "${REGKEY}\Components" SecServer 1
     WriteRegStr HKLM "${REGKEY}" InstallPath $INSTDIR
     
     # Create Short Cuts
@@ -372,22 +352,6 @@ SectionEnd
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk"
-    
-    /* should be done in global uninstall
-    # Check, if we have a Client installed. If Not, we can cleanup the registry and start menu
-    Push $R0
-    ReadRegStr $R0 HKLM "${REGKEY}\Components" SecClient
-    ${If} $R0 == ""
-        DeleteRegKey HKLM "${REG_UNINSTALL}"
-        Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
-        Delete /REBOOTOK $INSTDIR\uninstall-tve3.exe
-        DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
-        RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
-        DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
-        DeleteRegKey /IfEmpty HKLM "${REGKEY}"
-    ${EndIf}
-    Pop $R0
-    */
 !macroend
  
 Section "MediaPortal TV Plugin/Client" SecClient
@@ -396,15 +360,6 @@ Section "MediaPortal TV Plugin/Client" SecClient
     ReadRegSTR $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
     
     DetailPrint "Installing MediaPortal TVPlugin"
-    
-    /* should be obsolete, because this is checked when opening the components page
-    ${If} $MPBaseDir == ""
-        MessageBox MB_OK|MB_ICONEXCLAMATION "Couldn't find an existing MediaPortal Installation.$\r$\nAborting the TV Plugin installation"
-        DetailPrint "No MediaPortal Installation found. Skipping installation"
-        Return
-    ${EndIf}
-    */
-    
     DetailPrint "MediaPortal Installed at: $MpBaseDir"
     
     #---------------------------- File Copy ----------------------
@@ -434,8 +389,6 @@ Section "MediaPortal TV Plugin/Client" SecClient
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
-    
-    #WriteRegStr HKLM "${REGKEY}\Components" SecClient 1
 SectionEnd
 !macro Remove_${SecClient}
     # The Plugins
@@ -466,27 +419,6 @@ SectionEnd
     Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
     Delete /REBOOTOK  $MPBaseDir\TSFileSource.ax
     Delete /REBOOTOK  $MPBaseDir\TsReader.ax
-    
-    #DeleteRegValue HKLM "${REGKEY}\Components" SecClient
-    
-    /* should be done in global uninstall
-    # Check, if we have a TV Server installed. If Not, we can cleanup the registry and start menu
-    Push $R0
-    Push $R1
-    ReadRegStr $R0 HKLM "${REGKEY}\Components" SecServer
-    ${If} $R0 == ""
-        # Get the uninstall string, so that we can delete the exe
-        ReadRegStr $R1 HKLM "${REG_UNINSTALL}" UninstallString
-        Delete /REBOOTOK $R1
-        Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
-        DeleteRegKey HKLM "${REG_UNINSTALL}"
-        DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
-        RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
-        DeleteRegKey /IfEmpty HKLM "${REGKEY}\Components"
-        DeleteRegKey /IfEmpty HKLM "${REGKEY}"
-    ${EndIf}
-    Pop $R0
-    Pop $R1*/
 !macroend
 #####    End of Sections and macros
 
