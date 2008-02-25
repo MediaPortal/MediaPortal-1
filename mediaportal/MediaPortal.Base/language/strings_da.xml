@@ -811,8 +811,8 @@
         <String id="978">der kan vise denne kanal</String>
         <String id="979">Afspil optagelsen fra starten</String>
         <String id="980">Afspil optagelse fra "live" punktet</String>
-        <String id="981">Afbryd dette program</String>
-        <String id="982">Slet hele denne optagelse</String>
+        <String id="981">Afbryd denne udsendelse</String>
+        <String id="982">Slet hele dette afsnit</String>
         <String id="983" prefix="Mine ">Playlister</String>
         <String id="984">Henter filmliste</String>
         <String id="985">Henter filminformation</String>
@@ -1697,5 +1697,6 @@
         <String id="200048">Genskab alle miniaturer</String>
         <String id="200049">Kun sete optagelser for denne udsendelse</String>
         <String id="200050">Dette vil slette dine optagelser fra harddisken</String>		
+        <String id="200051">Slet dette program?</String>
     </Section>
 </Language>
