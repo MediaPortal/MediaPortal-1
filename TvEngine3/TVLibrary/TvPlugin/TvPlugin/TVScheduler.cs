@@ -652,15 +652,16 @@ namespace TvPlugin
       bool showSeries = btnSeries.Selected;
 
       Schedule rec = item.TVTag as Schedule;
+      if (rec == null) return;
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      if (dlg == null) return;      
 
       dlg.Reset();
       dlg.SetHeading(rec.ProgramName);
 
       if (showSeries && item.IsFolder)
       {
-        dlg.AddLocalizedString(618);//Cancel this show
+        dlg.AddLocalizedString(982);//Cancel this show (618=delete)
         dlg.AddLocalizedString(888);//Episodes management
       }
       else if (rec.Series == false)
@@ -714,24 +715,14 @@ namespace TvPlugin
           {
             if (server.IsRecordingSchedule(rec.IdSchedule, out card))
             {
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-              if (null != dlgYesNo)
+              if (PromptDeleteRecordingInProgress(true))
               {
-                dlgYesNo.SetDefaultToYes(false);
-                dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
-                dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
-                dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
-                dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
-                dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-
-                if (dlgYesNo.IsConfirmed)
-                {
-                  server.StopRecordingSchedule(rec.IdSchedule);
-                  CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
-                  schedule.Persist();
-                  server.OnNewSchedule();
-                }
-              }
+                server.StopRecordingSchedule(rec.IdSchedule);
+                CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
+                schedule.Persist();
+                server.OnNewSchedule();
+                LoadDirectory();
+              }                            
             }
             else
             {
@@ -739,8 +730,8 @@ namespace TvPlugin
               CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
               schedule.Persist();
               server.OnNewSchedule();
-            }
-            LoadDirectory();
+              LoadDirectory();
+            }            
           }
           break;
 
@@ -751,30 +742,28 @@ namespace TvPlugin
           {
             if (server.IsRecordingSchedule(rec.IdSchedule, out card))
             {
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-              if (null != dlgYesNo)
+              if (PromptDeleteRecordingInProgress(false))
               {
-                dlgYesNo.SetDefaultToYes(false);
-                dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
-                dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
-                dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
-                dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
-                dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-
-                if (dlgYesNo.IsConfirmed)
-                {
-                  server.StopRecordingSchedule(rec.IdSchedule);
-                }
-              }
+                server.StopRecordingSchedule(rec.IdSchedule);
+                LoadDirectory();
+              }                                                            
             }
-            else
+            else if (PromptDeleteEpisode(rec.ProgramName))
             {
               rec = Schedule.Retrieve(rec.IdSchedule);
               rec.Delete();
-              server.OnNewSchedule();
+              server.OnNewSchedule();              
 
-            }
-            LoadDirectory();
+              if (showSeries && !item.IsFolder)
+              {
+                OnShowContextMenu(0, true);
+                return;
+              }
+              else
+              {
+                LoadDirectory();
+              }
+            }            
           }
           break;
 
@@ -843,6 +832,42 @@ namespace TvPlugin
       }
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listSchedules.GetID, m_iSelectedItem);
+    }
+
+    private bool PromptDeleteRecordingInProgress(bool episode)
+    {
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      if (null == dlgYesNo) return false;
+
+      dlgYesNo.SetDefaultToYes(false);
+      if (episode)
+      {
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(200051));//Delete this episode?
+      }
+      else
+      {
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
+      }
+      dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
+      dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
+      dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
+      dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+      return dlgYesNo.IsConfirmed;
+    }    
+
+    private bool PromptDeleteEpisode(string episodeName)
+    {
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      if (null == dlgYesNo) return false;
+
+      dlgYesNo.SetHeading(GUILocalizeStrings.Get(200051));//Delete this episode?
+      dlgYesNo.SetLine(1, episodeName);//name of the episode
+      dlgYesNo.SetLine(2, GUILocalizeStrings.Get(506)); // Are you sure?
+      dlgYesNo.SetLine(3, String.Empty);
+      dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+      return dlgYesNo.IsConfirmed;
     }
 
     void ChangeType(Schedule rec)
