@@ -65,7 +65,7 @@ namespace TvPlugin
     protected GUIToggleButtonControl btnSeries = null;
 
     SortMethod currentSortMethod = SortMethod.Date;
-    bool m_bSortAscending = true;
+    bool m_bSortAscending = true;    
     int m_iSelectedItem = 0;
     bool needUpdate = false;
   	private Schedule selectedItem = null;
@@ -111,6 +111,7 @@ namespace TvPlugin
           else if (strTmp == "name") currentSortMethod = SortMethod.Name;
         }
         m_bSortAscending = xmlreader.GetValueAsBool("tvscheduler", "sortascending", true);
+        btnSeries.Selected = xmlreader.GetValueAsBool("tvscheduler", "series", false);
       }
     }
 
@@ -131,6 +132,7 @@ namespace TvPlugin
             break;
         }
         xmlwriter.SetValueAsBool("tvscheduler", "sortascending", m_bSortAscending);
+        xmlwriter.SetValueAsBool("tvscheduler", "series", btnSeries.Selected);        
       }
     }
     #endregion
@@ -492,7 +494,7 @@ namespace TvPlugin
       }
 
       GUIControl.SetControlLabel(GetID, btnSortBy.GetID, strLine);
-      btnSortBy.IsAscending = m_bSortAscending;
+      btnSortBy.IsAscending = m_bSortAscending;      
     }
 
     string GetDate(Schedule schedule)

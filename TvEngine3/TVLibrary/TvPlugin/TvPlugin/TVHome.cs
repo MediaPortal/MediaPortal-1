@@ -1536,7 +1536,7 @@ namespace TvPlugin
       if (ts.TotalMilliseconds < 1000) return;
       _updateProgressTimer = DateTime.Now;
 
-      if (!TVHome.Connected || (!g_Player.IsTVRecording && !g_Player.IsTV))
+      /*if (!TVHome.Connected || (!g_Player.IsTVRecording && !g_Player.IsTV))
       {
         GUIPropertyManager.SetProperty("#TV.View.channel", "");
         GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
@@ -1544,7 +1544,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
         GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
         return;
-      }
+      }*/
 
       if (g_Player.Playing && g_Player.IsTimeShifting)
       {
