@@ -239,7 +239,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
     case SERVICE_TYPE_AUDIO_LATM_AAC:
 	    pmt.InitMediaType();
 	    pmt.SetType      (& MEDIATYPE_Audio);
-	    pmt.SetSubtype   (& MEDIASUBTYPE_AAC);
+	    pmt.SetSubtype   (& MEDIASUBTYPE_LATM_AAC);
 	    pmt.SetSampleSize(1);
 	    pmt.SetTemporalCompression(FALSE);
 	    pmt.SetVariableSize();
