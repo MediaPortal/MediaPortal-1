@@ -286,7 +286,7 @@ namespace TvEngine
 
       _databaseConnection = new OleDbConnection(dataProviderString);
 
-      string sqlSelect = "SELECT ID, SenderKennung, Bezeichnung, Webseite, SortNrTVMovie FROM Sender ORDER BY Bezeichnung ASC;";
+      string sqlSelect = "SELECT ID, SenderKennung, Bezeichnung, Webseite, SortNrTVMovie FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
 
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
       OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
@@ -432,7 +432,7 @@ namespace TvEngine
           Log.Error("TVMovie: Error updating the database with last import date");
         }
       }
-      GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
+      GC.Collect();
     }
 
     public bool NeedsImport
@@ -638,7 +638,7 @@ namespace TvEngine
               {
                 OnAirDate = DateTime.Parse(String.Format("01.01.{0} 00:00:00", date));
               }
-              catch (Exception ex3)
+              catch (Exception)
               {
                 Log.Info("TVMovie: Invalid year for OnAirDate - {0}", date);
               }
@@ -719,8 +719,6 @@ namespace TvEngine
           }
         }
       }
-
-      //Log.Debug("TVMovie: Importing data for station done");
 
       if (OnProgramsChanged != null)
         OnProgramsChanged(programsCount + 1, programsCount + 1, string.Empty);
@@ -818,6 +816,11 @@ namespace TvEngine
       return audioFormat;
     }
 
+    /// <summary>
+    /// Translates the numeric db values for rating into readable text
+    /// </summary>
+    /// <param name="dbRating"></param>
+    /// <returns>One word indicating the rating</returns>
     private string BuildRatingDescription(int dbRating)
     {
       string TVMovieRating = String.Empty;
@@ -853,6 +856,11 @@ namespace TvEngine
       return TVMovieRating + "\n";
     }
 
+    /// <summary>
+    /// Formats the db rating into nice text
+    /// </summary>
+    /// <param name="dbDetailedRating"></param>
+    /// <returns></returns>
     private string BuildDetailedRatingDescription(string dbDetailedRating)
     {
       // "Spaﬂ=1;Action=3;Erotik=1;Spannung=3;Anspruch=0"
@@ -922,6 +930,11 @@ namespace TvEngine
       return detailedRating;
     }
 
+    /// <summary>
+    /// Formats the actors text into a string suitable for the description field
+    /// </summary>
+    /// <param name="dbActors"></param>
+    /// <returns></returns>
     private string BuildActorsDescription(string dbActors)
     {
       StringBuilder strb = new StringBuilder();
