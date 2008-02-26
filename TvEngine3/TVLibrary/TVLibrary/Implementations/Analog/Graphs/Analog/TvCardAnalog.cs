@@ -1245,7 +1245,7 @@ namespace TvLibrary.Implementations.Analog
     private void AddCrossBarFilter()
     {
       if (!CheckThreadId()) return;
-      Log.Log.WriteFile("analog: AddCrossBarFilter");
+      //Log.Log.WriteFile("analog: AddCrossBarFilter");
       DsDevice[] devices = null;
       IBaseFilter tmp;
       //get list of all crossbar devices installed on this system
@@ -1266,7 +1266,7 @@ namespace TvLibrary.Implementations.Analog
       //try each crossbar
       for (int i = 0; i < devices.Length; i++)
       {
-        //Log.Log.WriteFile("analog: AddCrossBarFilter try:{0} {1}", devices[i].Name, i);
+        Log.Log.WriteFile("analog: AddCrossBarFilter try:{0} {1}", devices[i].Name, i);
         //if crossbar is already in use then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         int hr;
@@ -1348,7 +1348,8 @@ namespace TvLibrary.Implementations.Analog
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
         devices = DeviceSorter.Sort(devices, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvCaptureFilter no tvcapture devices found");
         return;
@@ -1359,19 +1360,21 @@ namespace TvLibrary.Implementations.Analog
         return;
       }
       //try each video capture filter
+      Log.Log.Info("analog: Found {0} capture devices", devices.Length);
       for (int i = 0; i < devices.Length; i++)
       {
+        //Don't add NVIDIA DualTV YUV Capture & NVIDIA DualTV YUV Capture 2 filters to graph.
         if (devices[i].Name == "NVIDIA DualTV YUV Capture")
         {
-          //Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
+          Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
           continue;
         }
         if (devices[i].Name == "NVIDIA DualTV YUV Capture 2")
         {
-          //Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
+          Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
           continue;
         }
-        //Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
+        Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         int hr;
@@ -1631,13 +1634,15 @@ namespace TvLibrary.Implementations.Analog
         //yes then we try to find the capture pin on the multiplexer 
         Log.Log.WriteFile("analog: FindCapturePin on multiplexer filter");
         _filterMultiplexer.EnumPins(out enumPins);
-      } else if (_filterVideoEncoder != null)
+      }
+      else if (_filterVideoEncoder != null)
       {
         // no multiplexer available, but a video encoder filter exists
         // try to find the capture pin on the video encoder 
         Log.Log.WriteFile("analog: FindCapturePin on encoder filter");
         _filterVideoEncoder.EnumPins(out enumPins);
-      } else
+      }
+      else
       {
         // no multiplexer available, and no video encoder filter exists
         // try to find the capture pin on the video capture filter 

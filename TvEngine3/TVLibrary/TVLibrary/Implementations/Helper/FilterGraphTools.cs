@@ -934,7 +934,7 @@ namespace TvLibrary.Implementations.DVB {
     /// <param name="pinDestination">The pin destination.</param>
     /// <returns></returns>
     static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination) {
-      Log.Log.WriteFile("analog: ConnectFilter()");
+      //Log.Log.WriteFile("analog: ConnectFilter()");
       Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinDestination));
       for (int i = 0; i <= 10; ++i) {
         IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
@@ -959,7 +959,7 @@ namespace TvLibrary.Implementations.DVB {
     /// <param name="destinationFilter">The destination filter.</param>
     /// <returns></returns>
     static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter) {
-      Log.Log.WriteFile("analog: ConnectFilter()");
+      //Log.Log.WriteFile("analog: ConnectFilter()");
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
       Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinIn));
       for (int i = 0; i <= 10; ++i) {
@@ -979,7 +979,7 @@ namespace TvLibrary.Implementations.DVB {
     }
 
     static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter, string deviceName) {
-      Log.Log.WriteFile("analog: ConnectFilter()");
+      //Log.Log.WriteFile("analog: ConnectFilter()");
       IPin testPin;
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
       Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinIn));
