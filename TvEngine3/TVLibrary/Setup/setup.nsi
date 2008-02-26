@@ -74,6 +74,15 @@ RequestExecutionLevel admin
 !include Library.nsh
 
 !include WordFunc.nsh
+!include FileFunc.nsh
+
+!include setup-addremove.nsh
+
+!insertmacro GetParameters
+!insertmacro GetOptions
+!insertmacro un.GetParameters
+!insertmacro un.GetOptions
+
 
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
     !insertmacro VersionCompare
@@ -86,6 +95,12 @@ Var LibInstall2
 Var CommonAppData
 Var MPBaseDir
 Var InstallPath
+#variables for commandline parameters for Installer
+Var noClient
+Var noServer
+Var noDesktopSC
+Var noStartMenuSC
+#variables for commandline parameters for UnInstaller
 Var CompleteCleanup
 
 # Installer pages
@@ -130,65 +145,6 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright ""
 ShowUninstDetails show
-
-#####    Add/Remove macros
-; (You may place them to include file)
-Var AR_SecFlags
-Var AR_RegFlags
-
-!macro InitSection SecName
-    ;  This macro reads component installed flag from the registry and
-    ;changes checked state of the section on the components page.
-    ;Input: section index constant name specified in Section command.
-
-    ClearErrors
-    ;Reading component status from registry
-    ReadRegDWORD $AR_RegFlags HKLM "${REG_UNINSTALL}\Components\${SecName}" "Installed"
-    IfErrors "default_${SecName}"
-    ;Status will stay default if registry value not found
-    ;(component was never installed)
-    IntOp $AR_RegFlags $AR_RegFlags & 0x0001  ;Turn off all other bits
-    SectionGetFlags ${${SecName}} $AR_SecFlags  ;Reading default section flags
-    IntOp $AR_SecFlags $AR_SecFlags & 0xFFFE  ;Turn lowest (enabled) bit off
-    IntOp $AR_SecFlags $AR_RegFlags | $AR_SecFlags      ;Change lowest bit
-
-    ;Writing modified flags
-    SectionSetFlags ${${SecName}} $AR_SecFlags
-
-    "default_${SecName}:"
-!macroend
- 
-!macro FinishSection SecName
-    ;  This macro reads section flag set by user and removes the section
-    ;if it is not selected.
-    ;Then it writes component installed flag to registry
-    ;Input: section index constant name specified in Section command.
-
-    SectionGetFlags ${${SecName}} $AR_SecFlags  ;Reading section flags
-    ;Checking lowest bit:
-    IntOp $AR_SecFlags $AR_SecFlags & 0x0001
-    IntCmp $AR_SecFlags 1 "leave_${SecName}"
-    ;Section is not selected:
-    ;Calling Section uninstall macro and writing zero installed flag
-    !insertmacro "Remove_${${SecName}}"
-    WriteRegDWORD HKLM "${REG_UNINSTALL}\Components\${SecName}" "Installed" 0
-    Goto "exit_${SecName}"
-
-    "leave_${SecName}:"
-    ;Section is selected:
-    WriteRegDWORD HKLM "${REG_UNINSTALL}\Components\${SecName}" "Installed" 1
-
-    "exit_${SecName}:"
-!macroend
- 
-!macro RemoveSection SecName
-  ;  This macro is used to call section's Remove_... macro
-  ;from the uninstaller.
-  ;Input: section index constant name specified in Section command.
- 
-  !insertmacro "Remove_${${SecName}}"
-!macroend
-#####    End of Add/Remove macros
 
 #####    Sections and macros
 Section "MediaPortal TV Server" SecServer
@@ -272,9 +228,11 @@ Section "MediaPortal TV Server" SecServer
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $InstDir\TsWriter.ax $InstDir
     
     # Common App Data Files
+    SetOverwrite off
     SetOutPath "$CommonAppData"
     CreateDirectory "$CommonAppData\log"
     File ..\TvService\Gentle.config
+    SetOverwrite on
     #---------------------------- End Of File Copy ----------------------  
     
     # Installing the TVService 
@@ -315,7 +273,6 @@ SectionEnd
     # Remove Folders
     RmDir /r /REBOOTOK $INSTDIR\Plugins
     RmDir /r /REBOOTOK $INSTDIR\TuningParameters
-    RmDir /r /REBOOTOK $INSTDIR\!version${VER_BUILD}
     
     # And finally remove all the files installed
     # Leave the directory in place, as it might contain user modified files
@@ -457,6 +414,70 @@ SectionEnd
   !insertmacro "${MacroName}" "SecClient"
 !macroend
  
+Section -FinishComponents
+  ;Removes unselected components and writes component status to registry
+  !insertmacro SectionList "FinishSection"
+SectionEnd
+ 
+Section -Post
+    # Write the Uninstaller
+    SetOverwrite on
+    SetOutPath $INSTDIR
+    
+    # Create Uninstaller Short Cut
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    SetOutPath $SMPROGRAMS\$StartMenuGroup
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall-tve3.exe
+    !insertmacro MUI_STARTMENU_WRITE_END
+    
+    !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+        WriteRegDword HKLM "${REGKEY}" "VersionMajor" "${VER_MAJOR}"
+        WriteRegDword HKLM "${REGKEY}" "VersionMinor" "${VER_MINOR}"
+        WriteRegDword HKLM "${REGKEY}" "VersionRevision" "${VER_REVISION}"
+        WriteRegDword HKLM "${REGKEY}" "VersionBuild" "${VER_BUILD}"
+    !endif
+
+    # Write Uninstall Information
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName "$(^Name)"
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion "${VERSION}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" Publisher "${COMPANY}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout "${URL}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon "$INSTDIR\mp.ico,0"
+    WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString "$INSTDIR\uninstall-tve3.exe"
+    WriteRegStr HKLM "${REG_UNINSTALL}" ModifyPath "$INSTDIR\add-remove-tve3.exe"
+    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 0
+    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 0
+ 
+    CopyFiles "$EXEPATH" "$INSTDIR\add-remove-tve3.exe"
+    WriteUninstaller $INSTDIR\uninstall-tve3.exe
+SectionEnd
+#####    End of Add/Remove callback functions
+
+#####    Uninstaller sections
+Section Uninstall
+    ;First removes all optional components
+    !insertmacro SectionList "RemoveSection"
+
+    ;Removes directory and registry key:
+    Delete /REBOOTOK "$INSTDIR\add-remove-tve3.exe"
+
+    # Get the uninstall string, so that we can delete the exe
+    ReadRegStr $R1 HKLM "${REG_UNINSTALL}" UninstallString
+    Delete /REBOOTOK $R1
+    DeleteRegKey HKLM "${REG_UNINSTALL}"
+
+    #startmenu
+    Delete "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
+    RmDir "$SMPROGRAMS\$StartMenuGroup"
+    DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
+    DeleteRegKey /IfEmpty HKLM "${REGKEY}"
+
+    ${If} $CompleteCleanup == 1
+        !insertmacro CompleteCleanup
+    ${EndIf}
+SectionEnd
+#####    End of Uninstaller sections
+ 
 Function .onInit
     ;Reads components status for registry
     !insertmacro SectionList "InitSection"
@@ -500,48 +521,59 @@ Function .onInit
     StrCmp $0 "" +2
     StrCpy $LibInstall2 1
     Pop $0
+    
+
+    #### check and parse cmdline parameter
+    ; set default values for parameters ........
+    strcpy $noClient 0
+    strcpy $noServer 0
+    strcpy $noDesktopSC 0
+    strcpy $noStartMenuSC 0
+
+    ; gets comandline parameter
+    ${GetParameters} $R0
+
+    ; check for special parameter and set the their variables
+    ${GetOptions} $R0 "/noClient" $R1
+    IfErrors +2
+    strcpy $noClient 1
+    ${GetOptions} $R0 "/noServer" $R1
+    IfErrors +2
+    strcpy $noServer 1
+    ${GetOptions} $R0 "/noDesktopSC" $R1
+    IfErrors +2
+    strcpy $noDesktopSC 1
+    ${GetOptions} $R0 "/noStartMenuSC" $R1
+    IfErrors +2
+    strcpy $noStartMenuSC 1
+    #### END of check and parse cmdline parameter
 FunctionEnd
- 
-Section -FinishComponents
-  ;Removes unselected components and writes component status to registry
-  !insertmacro SectionList "FinishSection"
-SectionEnd
- 
-Section -Post
-    # Write the Uninstaller
-    SetOverwrite on
-    SetOutPath $INSTDIR
-    
-    # Create Uninstaller Short Cut
-    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    SetOutPath $SMPROGRAMS\$StartMenuGroup
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall-tve3.exe
-    !insertmacro MUI_STARTMENU_WRITE_END
-    
-    !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-        WriteRegDword HKLM "${REGKEY}" "VersionMajor" "${VER_MAJOR}"
-        WriteRegDword HKLM "${REGKEY}" "VersionMinor" "${VER_MINOR}"
-        WriteRegDword HKLM "${REGKEY}" "VersionRevision" "${VER_REVISION}"
-        WriteRegDword HKLM "${REGKEY}" "VersionBuild" "${VER_BUILD}"
-    !endif
 
-    # Write Uninstall Information
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName "$(^Name)"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion "${VERSION}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" Publisher "${COMPANY}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout "${URL}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon "$INSTDIR\mp.ico,0"
-    WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString "$INSTDIR\uninstall-tve3.exe"
-    WriteRegStr HKLM "${REG_UNINSTALL}" ModifyPath "$INSTDIR\add-remove-tve3.exe"
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 0
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 0
- 
-    CopyFiles "$EXEPATH" "$INSTDIR\add-remove-tve3.exe"
-    WriteUninstaller $INSTDIR\uninstall-tve3.exe
-SectionEnd
-#####    End of Add/Remove callback functions
+Function un.onInit
+    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+    ReadRegStr $INSTDIR HKLM "${REGKEY}" InstallPath
+    !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
+    ; Get the Common Application Data Folder
+    ; Set the Context to alll, so that we get the All Users folder
+    SetShellVarContext all
+    StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
+    ; Context back to current user
+    SetShellVarContext current
 
+    #### check and parse cmdline parameter
+    ; set default values for parameters ........
+    strcpy $CompleteCleanup 0
+
+    ; gets comandline parameter
+    ${un.GetParameters} $R0
+
+    ; check for special parameter and set the their variables
+    ${un.GetOptions} $R0 "/CompleteCleanup" $R1
+    IfErrors +2
+    strcpy $CompleteCleanup 1
+    #### END of check and parse cmdline parameter
+FunctionEnd
 
 #####    Add/Remove/Reinstall page
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
@@ -653,44 +685,6 @@ FunctionEnd
 !endif # VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
 #####    End of Add/Remove/Reinstall page
 
-#####    Uninstaller
-Section Uninstall
-    ;First removes all optional components
-    !insertmacro SectionList "RemoveSection"
-
-    ;Removes directory and registry key:
-    Delete /REBOOTOK "$INSTDIR\add-remove-tve3.exe"
-
-    # Get the uninstall string, so that we can delete the exe
-    ReadRegStr $R1 HKLM "${REG_UNINSTALL}" UninstallString
-    Delete /REBOOTOK $R1
-    DeleteRegKey HKLM "${REG_UNINSTALL}"
-
-    #startmenu
-    Delete "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
-    RmDir "$SMPROGRAMS\$StartMenuGroup"
-    DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
-    DeleteRegKey /IfEmpty HKLM "${REGKEY}"
-
-    ${If} $CompleteCleanup == 1
-        !insertmacro CompleteCleanup
-    ${EndIf}
-SectionEnd
-
-Function un.onInit
-    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-    ReadRegStr $INSTDIR HKLM "${REGKEY}" InstallPath
-    !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
-    
-    ; Get the Common Application Data Folder
-    ; Set the Context to alll, so that we get the All Users folder
-    SetShellVarContext all
-    StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
-    ; Context back to current user
-    SetShellVarContext current
-FunctionEnd
-#####    End of Uninstaller
-
 #####    other functions
 ; Start the Setup after the successfull install
 ; needed in an extra function to set the working directory
@@ -763,8 +757,6 @@ FunctionEnd
 # This function is called, before the uninstallation process is startet
 # It asks the user, if he wants to do a complete cleanup
 Function un.completeClenupQuestion
-    strcpy $CompleteCleanup 0
-    
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "Do you want to make a complete cleanup? Remove all settings, files and folders?" IDYES 0 IDNO end
     strcpy $CompleteCleanup 1
     
