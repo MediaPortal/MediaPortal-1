@@ -12,7 +12,6 @@
 #
 #**********************************************************************************************************#
 
-
 Name "MediaPortal TV Server / Client"
 
 SetCompressor /SOLID lzma
@@ -31,16 +30,28 @@ RequestExecutionLevel admin
     !define VER_BUILD 0
 !endif
 
-!define VERSION "pre-release build ${VER_BUILD}"
-#BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
-BrandingText "${VERSION}"
 
 # MUI defines
 !define MUI_ICON "images\install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
-!define MUI_HEADERIMAGE_BITMAP "images\header.bmp"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
+
+!define MUI_HEADERIMAGE
+!if ${VER_BUILD} == 0       # it's a stable release
+    !define MUI_HEADERIMAGE_BITMAP "images\header.bmp"
+    !define MUI_WELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
+    !define MUI_UNWELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
+
+    !define VERSION "1.0"
+    BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
+!else                       # it's an svn reöease
+    !define MUI_HEADERIMAGE_BITMAP "images\header-svn.bmp"
+    !define MUI_WELCOMEFINISHPAGE_BITMAP "images\wizard-svn.bmp"
+    !define MUI_UNWELCOMEFINISHPAGE_BITMAP "images\wizard-svn.bmp"
+    
+    !define VERSION "pre-release build ${VER_BUILD}"
+    BrandingText "${VERSION}"
+!endif
+!define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "MediaPortal\MediaPortal TV Server"
@@ -55,13 +66,13 @@ BrandingText "${VERSION}"
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
+
 # Included files
 !include MUI2.nsh
 !include Sections.nsh
 !include LogicLib.nsh
 !include Library.nsh
 
-!include Memento.nsh
 !include WordFunc.nsh
 
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
@@ -75,6 +86,7 @@ Var LibInstall2
 Var CommonAppData
 Var MPBaseDir
 Var InstallPath
+Var CompleteCleanup
 
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
@@ -93,8 +105,11 @@ Var InstallPath
 # Uninstall Pages
 #!insertmacro MUI_UNPAGE_COMPONENTS
 #!define MUI_PAGE_CUSTOMFUNCTION_PRE un.dir_pre        # Check, if the Server Component has been selected. Only display the directory page in this vase
+!insertmacro MUI_UNPAGE_WELCOME
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.completeClenupQuestion       # ask the user if he wants to do a complete cleanup
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
 
 # Installer languages
 !insertmacro MUI_LANGUAGE English
@@ -210,7 +225,7 @@ Section "MediaPortal TV Server" SecServer
     # Tuning Parameter Directory
     SetOutPath $INSTDIR
     File /r /x .svn ..\TvService\bin\Release\TuningParameters
-    CreateDirectory ".\!version${VER_BUILD}"
+
     # Rest of Files
     File ..\DirectShowLib\bin\Release\DirectShowLib.dll
     File ..\dvblib.dll
@@ -420,6 +435,17 @@ SectionEnd
     Delete /REBOOTOK  $MPBaseDir\TSFileSource.ax
     Delete /REBOOTOK  $MPBaseDir\TsReader.ax
 !macroend
+
+!macro CompleteCleanup
+    ;Place all commands in here to do a real cleanup and delete all files / data of tvserver
+
+    #doing this is a high risk, imagine the user installs the application to Program Files, the uninstaller would try to remove the complete folder
+    #RmDir /r /REBOOTOK $INSTDIR
+    RmDir /r /REBOOTOK $CommonAppData
+
+    DeleteRegKey HKLM "${REGKEY}"
+    DeleteRegKey HKLM "${REG_UNINSTALL}"
+!macroend
 #####    End of Sections and macros
 
 #####    Add/Remove callback functions
@@ -480,23 +506,6 @@ Section -FinishComponents
   ;Removes unselected components and writes component status to registry
   !insertmacro SectionList "FinishSection"
 SectionEnd
-
-/*
-# This section installs the VC++ Redist Library
-Section -Redist SecRedist
-    SetOutPath $INSTDIR
-    SetOverwrite on
-    
-    # Now Copy the VC Redist File, which will be executed as part of the install
-    File vcredist_x86.exe
-    
-    # Installing VC++ Redist Package
-    DetailPrint "Installing VC++ Redist Package"
-    ExecWait '"$INSTDIR\vcredist_x86.exe" /q:a /c:"VCREDI~3.EXE /q:a /c:""msiexec /i vcredist.msi /qb!"" "'
-    DetailPrint "Finished Installing VC++ Redist Package"
-    Delete /REBOOTOK  $INSTDIR\vcredist_x86.exe
-SectionEnd
-*/
  
 Section -Post
     # Write the Uninstaller
@@ -650,16 +659,22 @@ Section Uninstall
     !insertmacro SectionList "RemoveSection"
 
     ;Removes directory and registry key:
+    Delete /REBOOTOK "$INSTDIR\add-remove-tve3.exe"
+
     # Get the uninstall string, so that we can delete the exe
     ReadRegStr $R1 HKLM "${REG_UNINSTALL}" UninstallString
     Delete /REBOOTOK $R1
     DeleteRegKey HKLM "${REG_UNINSTALL}"
 
     #startmenu
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
-    RmDir /REBOOTOK "$SMPROGRAMS\$StartMenuGroup"
+    Delete "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
+    RmDir "$SMPROGRAMS\$StartMenuGroup"
     DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
     DeleteRegKey /IfEmpty HKLM "${REGKEY}"
+
+    ${If} $CompleteCleanup == 1
+        !insertmacro CompleteCleanup
+    ${EndIf}
 SectionEnd
 
 Function un.onInit
@@ -740,9 +755,20 @@ Function finish_pre
          ${If} ${SectionIsSelected} SecServer
             strcpy $0 1
          ${Else}
-             strcpy $0 2
-             abort
+            strcpy $0 2
+            abort
          ${EndIf}
+FunctionEnd
+
+# This function is called, before the uninstallation process is startet
+# It asks the user, if he wants to do a complete cleanup
+Function un.completeClenupQuestion
+    strcpy $CompleteCleanup 0
+    
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "Do you want to make a complete cleanup? Remove all settings, files and folders?" IDYES 0 IDNO end
+    strcpy $CompleteCleanup 1
+    
+    end:
 FunctionEnd
 #####    End of other functions
 
