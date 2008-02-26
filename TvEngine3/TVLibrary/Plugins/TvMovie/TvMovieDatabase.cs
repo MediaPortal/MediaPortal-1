@@ -44,12 +44,55 @@ using Gentle.Framework;
 
 namespace TvEngine
 {
+  public struct TVMChannel
+  {
+    private string fID;
+    private string fSenderKennung;
+    private string fBezeichnung;
+    private string fWebseite;
+    private string fSortNrTVMovie;
+
+    public TVMChannel(string aID, string aSenderKennung, string aBezeichnung, string aWebseite, string aSortNrTVMovie)
+    {
+      fID = aID;
+      fSenderKennung = aSenderKennung;
+      fBezeichnung = aBezeichnung;
+      fWebseite = aWebseite;
+      fSortNrTVMovie = aSortNrTVMovie;
+    }
+
+    public string TvmId
+    {
+      get { return fID; }
+    }
+
+    public string TvmEpgChannel
+    {
+      get { return fSenderKennung; }
+    }
+
+    public string TvmEpgDescription
+    {
+      get { return fBezeichnung; }
+    }
+
+    public string TvmWebLink
+    {
+      get { return fWebseite; }
+    }
+
+    public string TvmSortId
+    {
+      get { return fSortNrTVMovie; }
+    }
+  }
+
   class TvMovieDatabase
   {
     #region Members
     private OleDbConnection _databaseConnection = null;
-    private bool _canceled = false;
-    private ArrayList _tvmEpgChannels = null;
+    private bool _canceled = false;    
+    private List<TVMChannel> _tvmEpgChannels;
     private ArrayList _channelList = null;
     private int _programsCounter = 0;
     private bool _useShortProgramDesc = false;
@@ -69,6 +112,8 @@ namespace TvEngine
     public event StationsChanged OnStationsChanged;
     #endregion
 
+
+    #region Mapping struct
     private struct Mapping
     {
       private string _mpChannel;
@@ -84,7 +129,7 @@ namespace TvEngine
         _end = CleanInput(end);
       }
 
-      #region struct getter & setters
+      #region struct properties
       public string Channel
       {
         get { return _mpChannel; }
@@ -126,9 +171,10 @@ namespace TvEngine
       }
       #endregion
     }
+    #endregion
 
     #region class get && set functions
-    public ArrayList Stations
+    public List<TVMChannel> Stations
     {
       get { return _tvmEpgChannels; }
     }
@@ -230,8 +276,8 @@ namespace TvEngine
     {
       LoadMemberSettings();
 
-      string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
-      
+      string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Mode=Share Deny None;Jet OLEDB:Engine Type=5;Jet OLEDB:Database Locking Mode=1;";
+      // Provider=Microsoft.ACE.OLEDB.12.0;
       if (DatabasePath != string.Empty)
         dataProviderString = string.Format(dataProviderString, DatabasePath);
       else
@@ -239,7 +285,7 @@ namespace TvEngine
 
       _databaseConnection = new OleDbConnection(dataProviderString);
 
-      string sqlSelect = "SELECT Sender.SenderKennung FROM Sender WHERE (((Sender.Favorit)=-1)) ORDER BY Sender.SenderKennung DESC;";
+      string sqlSelect = "SELECT ID, SenderKennung, Bezeichnung, Webseite, SortNrTVMovie FROM Sender ORDER BY Bezeichnung ASC;";
 
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
       OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
@@ -262,10 +308,17 @@ namespace TvEngine
         _databaseConnection.Close();
       }
 
-      _tvmEpgChannels = new ArrayList();
+      _tvmEpgChannels = new List<TVMChannel>();
       foreach (DataRow sender in tvMovieTable.Tables["Sender"].Rows)
-        _tvmEpgChannels.Add(sender["Senderkennung"]);
-
+      {
+        TVMChannel current = new TVMChannel(sender["ID"].ToString(),
+                                            sender["SenderKennung"].ToString(),
+                                            sender["Bezeichnung"].ToString(),
+                                            sender["Webseite"].ToString(),
+                                            sender["SortNrTVMovie"].ToString()
+                                            );
+        _tvmEpgChannels.Add(current);
+      }
       _channelList = GetChannels();
     }
 
@@ -293,9 +346,9 @@ namespace TvEngine
       int maximum = 0;
 
       //Log.Debug("TVMovie: Calculating stations");
-      foreach (string tvmChan in _tvmEpgChannels)
+      foreach (TVMChannel tvmChan in _tvmEpgChannels)
         foreach (Mapping mapping in mappingList)
-          if (mapping.TvmEpgChannel == tvmChan)
+          if (mapping.TvmEpgChannel == tvmChan.TvmEpgChannel)
           {
             maximum++;
             break;
@@ -324,7 +377,7 @@ namespace TvEngine
 
       int counter = 0;
 
-      foreach (string station in _tvmEpgChannels)
+      foreach (TVMChannel station in _tvmEpgChannels)
       {
         if (_canceled)
           return;
@@ -335,11 +388,11 @@ namespace TvEngine
         IList allChannels = Channel.ListAll();
 
         foreach (Mapping mapping in mappingList)
-          if (mapping.TvmEpgChannel == station)
+          if (mapping.TvmEpgChannel == station.TvmEpgChannel)
             channelNames.Add(mapping);
 
         if (channelNames.Count > 0)
-        {          
+        {
           try
           {
             string display = string.Empty;
@@ -351,7 +404,7 @@ namespace TvEngine
               OnStationsChanged(counter, maximum, display);
             counter++;
             Log.Info("TVMovie: Retrieving data for station [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(maximum), display);
-            _programsCounter += ImportStation(station, channelNames, allChannels);
+            _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
           }
           catch (Exception ex)
           {
@@ -376,7 +429,7 @@ namespace TvEngine
         catch (Exception)
         {
           Log.Error("TVMovie: Error updating the database with last import date");
-        }                
+        }
       }
       GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
     }
@@ -386,14 +439,14 @@ namespace TvEngine
       get
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        
+
         try
         {
-          TimeSpan restTime = new TimeSpan(Convert.ToInt32(layer.GetSetting("TvMovieRestPeriod", "24").Value), 0, 0);          
+          TimeSpan restTime = new TimeSpan(Convert.ToInt32(layer.GetSetting("TvMovieRestPeriod", "24").Value), 0, 0);
           DateTime lastUpdated = Convert.ToDateTime(layer.GetSetting("TvMovieLastUpdate", "0").Value);
           //        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
           if (lastUpdated >= (DateTime.Now - restTime))
-          {            
+          {
             return false;
           }
           else
@@ -409,7 +462,7 @@ namespace TvEngine
           return true;
         }
       }
-    }    
+    }
     #endregion
 
     #region private functions
@@ -428,7 +481,7 @@ namespace TvEngine
     }
 
     private int ImportStation(string stationName, List<Mapping> channelNames, IList allChannels)
-    {      
+    {
       string sqlSelect = string.Empty;
       string audioFormat = String.Empty;
       StringBuilder sqlb = new StringBuilder();
@@ -451,7 +504,7 @@ namespace TvEngine
       sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;");
 
       sqlSelect = string.Format(sqlb.ToString(), stationName);
- 
+
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
       OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
 
@@ -461,7 +514,7 @@ namespace TvEngine
         if (map.TvmEpgChannel == stationName)
         {
           ClearPrograms(map.Channel);
-          Log.Debug("TVMovie: Purged old programs for channel {0}", map.Channel);          
+          Log.Debug("TVMovie: Purged old programs for channel {0}", map.Channel);
         }
 
       try
@@ -478,7 +531,7 @@ namespace TvEngine
       finally
       {
         _databaseConnection.Close();
-      }      
+      }
 
       int programsCount = tvMovieTable.Tables["TVDaten"].Rows.Count;
 
@@ -515,7 +568,7 @@ namespace TvEngine
         string title = guideEntry["Sendung"].ToString();
         string shortDescription = guideEntry["KurzBeschreibung"].ToString();
         string description;
-        if (_useShortProgramDesc)  
+        if (_useShortProgramDesc)
           description = shortDescription;
         else
         {
@@ -523,7 +576,7 @@ namespace TvEngine
           if (description.Length < shortDescription.Length)
             description = shortDescription;
         }
-        
+
         string genre = guideEntry["Genre"].ToString();
         string shortCritic = guideEntry["Kurzkritik"].ToString();
 
@@ -541,7 +594,7 @@ namespace TvEngine
         {
           starRating = Convert.ToInt16(guideEntry["Interessant"]) - 1;
           detailedRating = guideEntry["Bewertungen"].ToString();
-        }    
+        }
 
         if (_showAudioFormat)
         {
@@ -612,7 +665,7 @@ namespace TvEngine
                 EPGStarRating = -1; break;
             }
 
-            Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification,0);
+            Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
 
             if (audioFormat == String.Empty)
               prog.Description = description.Replace("<br>", "\n");
@@ -658,7 +711,7 @@ namespace TvEngine
                 if (shortCritic.Length > 1)
                   prog.Description = shortCritic + "\n" + description;
             }
-            
+
             prog.Persist();
             if (_slowImport)
               Thread.Sleep(50);
@@ -704,8 +757,8 @@ namespace TvEngine
     private bool CheckStation(string stationName)
     {
       if (_tvmEpgChannels != null)
-        foreach (string station in _tvmEpgChannels)
-          if (station == stationName)
+        foreach (TVMChannel station in _tvmEpgChannels)
+          if (station.TvmEpgChannel == stationName)
             return true;
 
       return false;
@@ -883,7 +936,7 @@ namespace TvEngine
         string[] splitActors = dbActors.Split(';');
         if (splitActors != null && splitActors.Length > 0)
         {
-          for (int i = 0 ; i < splitActors.Length ; i++)
+          for (int i = 0; i < splitActors.Length; i++)
           {
             if (i < _actorCount)
             {

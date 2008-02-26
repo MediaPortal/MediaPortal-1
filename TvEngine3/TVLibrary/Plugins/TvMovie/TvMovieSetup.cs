@@ -75,7 +75,10 @@ namespace SetupTv.Sections
     #region Form Methods
     private void treeViewStations_DoubleClick(object sender, EventArgs e)
     {
+      if (treeViewStations.SelectedNode != null)
+        treeViewStations.SelectedNode.Collapse();
       MapStation();
+      
     }
     
     private void treeViewChannels_DoubleClick(object sender, EventArgs e)
@@ -198,11 +201,12 @@ namespace SetupTv.Sections
       treeViewStations.BeginUpdate();
       treeViewStations.Nodes.Clear();
 
-      foreach (string station in database.Stations)
+      foreach (TVMChannel station in database.Stations)
       {
-        TreeNode stationNode = new TreeNode(station);
+        TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmWebLink), new TreeNode(station.TvmEpgDescription) }; // new TreeNode(station.TvmSortId), 
+        TreeNode stationNode = new TreeNode(station.TvmEpgChannel, subItems);
         ChannelInfo channelInfo = new ChannelInfo();
-        channelInfo.Name = station;
+        channelInfo.Name = station.TvmEpgChannel;
         stationNode.Tag = channelInfo;
         treeViewStations.Nodes.Add(stationNode);
       }

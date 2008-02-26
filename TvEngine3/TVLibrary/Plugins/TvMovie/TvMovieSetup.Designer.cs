@@ -479,8 +479,6 @@ namespace SetupTv.Sections
       this.treeViewStations.Location = new System.Drawing.Point(240, 48);
       this.treeViewStations.Name = "treeViewStations";
       this.treeViewStations.ShowNodeToolTips = true;
-      this.treeViewStations.ShowPlusMinus = false;
-      this.treeViewStations.ShowRootLines = false;
       this.treeViewStations.Size = new System.Drawing.Size(168, 248);
       this.treeViewStations.Sorted = true;
       this.treeViewStations.TabIndex = 3;
@@ -502,7 +500,7 @@ namespace SetupTv.Sections
       // 
       // columnHeader1
       // 
-      this.columnHeader1.Text = "MediaPortal Channels";
+      this.columnHeader1.Text = "TVService channels";
       this.columnHeader1.Width = 262;
       // 
       // listView2
@@ -522,7 +520,7 @@ namespace SetupTv.Sections
       // 
       // columnHeader2
       // 
-      this.columnHeader2.Text = "TV Movie Stations";
+      this.columnHeader2.Text = "TV Movie stations";
       this.columnHeader2.Width = 179;
       // 
       // TvMovieSetup
