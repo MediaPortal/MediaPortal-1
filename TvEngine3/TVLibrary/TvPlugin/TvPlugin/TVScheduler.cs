@@ -111,7 +111,10 @@ namespace TvPlugin
           else if (strTmp == "name") currentSortMethod = SortMethod.Name;
         }
         m_bSortAscending = xmlreader.GetValueAsBool("tvscheduler", "sortascending", true);
-        btnSeries.Selected = xmlreader.GetValueAsBool("tvscheduler", "series", false);
+        if (btnSeries != null)
+        {
+          btnSeries.Selected = xmlreader.GetValueAsBool("tvscheduler", "series", false);
+        }
       }
     }
 

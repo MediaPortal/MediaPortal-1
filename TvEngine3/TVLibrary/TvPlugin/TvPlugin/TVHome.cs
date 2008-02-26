@@ -1536,6 +1536,10 @@ namespace TvPlugin
       if (ts.TotalMilliseconds < 1000) return;
       _updateProgressTimer = DateTime.Now;
 
+      if (!TVHome.Connected)
+      {
+        return;
+      }
       /*if (!TVHome.Connected || (!g_Player.IsTVRecording && !g_Player.IsTV))
       {
         GUIPropertyManager.SetProperty("#TV.View.channel", "");
@@ -2931,6 +2935,7 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannel(Channel channel, bool useZapDelay)
     {
+      Log.Debug("ChannelNavigator.ZapToChannel {0} - zapdelay {1}", channel.DisplayName, useZapDelay);
       TVHome.UserChannelChanged = true;
       m_zapchannel = channel;
 
