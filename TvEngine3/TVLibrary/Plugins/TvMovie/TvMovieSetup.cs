@@ -41,6 +41,7 @@ namespace SetupTv.Sections
 {
   public partial class TvMovieSetup : SectionSettings
   {
+    #region ChannelInfo class
     class ChannelInfo
     {
       string _start = "00:00";
@@ -71,6 +72,7 @@ namespace SetupTv.Sections
         _end = "00:00";
       }
     }
+    #endregion
 
     #region Form Methods
     private void treeViewStations_DoubleClick(object sender, EventArgs e)
@@ -92,6 +94,7 @@ namespace SetupTv.Sections
     }
     #endregion
 
+    #region Constructor
     public TvMovieSetup()
       : this("TV Movie Clickfinder EPG import")
     {
@@ -102,6 +105,7 @@ namespace SetupTv.Sections
     {
       InitializeComponent();
     }
+    #endregion
 
     public override void OnSectionDeActivated()
     {
@@ -203,7 +207,7 @@ namespace SetupTv.Sections
 
       foreach (TVMChannel station in database.Stations)
       {
-        TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmWebLink), new TreeNode(station.TvmEpgDescription) }; // new TreeNode(station.TvmSortId), 
+        TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmEpgDescription), new TreeNode(station.TvmWebLink) }; // new TreeNode(station.TvmSortId), 
         TreeNode stationNode = new TreeNode(station.TvmEpgChannel, subItems);
         ChannelInfo channelInfo = new ChannelInfo();
         channelInfo.Name = station.TvmEpgChannel;
@@ -256,7 +260,6 @@ namespace SetupTv.Sections
       selectedChannel.Expand();
     }
 
-
     /// <summary>
     /// Remove TVMovie station mapping from selected MP channel
     /// </summary>
@@ -277,7 +280,6 @@ namespace SetupTv.Sections
       else
         selectedChannel.Nodes.Clear();
     }
-
 
     /// <summary>
     /// Save station-channel mapping to database
@@ -326,7 +328,6 @@ namespace SetupTv.Sections
         }
       }
     }
-
 
     /// <summary>
     /// Load station-channel mapping from database
@@ -399,8 +400,7 @@ namespace SetupTv.Sections
       ColorTree();
       treeViewChannels.EndUpdate();
     }
-
-
+    
     private TreeNode FindChannel(string channelName)
     {
       foreach (TreeNode channel in treeViewChannels.Nodes)
@@ -409,7 +409,6 @@ namespace SetupTv.Sections
 
       return null;
     }
-
 
     private TreeNode FindStation(string stationName)
     {
@@ -420,7 +419,6 @@ namespace SetupTv.Sections
 
       return null;
     }
-
 
     private void ColorTree()
     {
@@ -434,7 +432,6 @@ namespace SetupTv.Sections
         }
     }
 
-
     private void ColorNode(TreeNode channelNode, Color color)
     {
       foreach (TreeNode stationNode in channelNode.Nodes)
@@ -442,7 +439,6 @@ namespace SetupTv.Sections
         stationNode.ForeColor = color;
       }
     }
-
 
     private void treeViewChannels_AfterSelect(object sender, TreeViewEventArgs e)
     {
@@ -456,8 +452,7 @@ namespace SetupTv.Sections
       maskedTextBoxTimeStart.Text = channelInfo.Start;
       maskedTextBoxTimeEnd.Text = channelInfo.End;
     }
-
-
+    
     string CleanInput(string input)
     {
       int hours = 0;
@@ -478,7 +473,6 @@ namespace SetupTv.Sections
       return string.Format("{0:00}:{1:00}", hours, minutes);
     }
 
-
     private void maskedTextBoxTimeStart_Validated(object sender, EventArgs e)
     {
       ChannelInfo channelInfo = (ChannelInfo)treeViewChannels.SelectedNode.Tag;
@@ -490,7 +484,6 @@ namespace SetupTv.Sections
       else
         treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
     }
-
 
     private void maskedTextBoxTimeEnd_Validated(object sender, EventArgs e)
     {
@@ -575,17 +568,6 @@ namespace SetupTv.Sections
           return;
         }
 
-        //try
-        //{
-        //  TvMovieSql.CheckDatabase();
-        //}
-        //catch (Exception)
-        //{
-        //  MessageBox.Show(this, "Please make sure TV Movie Clickfinder has been installed and licensed locally.", "Error loading TV Movie database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //  checkBoxEnableImport.Checked = false;
-        //  return;
-        //}
-
         try
         {
           LoadMapping();
@@ -602,6 +584,11 @@ namespace SetupTv.Sections
         SaveMapping();
     }
 
+    /// <summary>
+    /// Inmediately updates and imports EPG data
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void buttonImportNow_Click(object sender, EventArgs e)
     {
       buttonImportNow.Enabled = false;

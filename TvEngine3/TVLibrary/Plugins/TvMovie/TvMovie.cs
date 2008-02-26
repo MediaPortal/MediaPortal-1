@@ -67,8 +67,10 @@ namespace TvEngine
           if (_database.NeedsImport)
           {
             SetStandbyAllowed(false);
-            _database.LaunchTVMUpdater();
-            _database.Import();
+            if (_database.LaunchTVMUpdater() > 15)
+              _database.Import();
+            else
+              Log.Info("TVMovie: Import skipped because there was no new data.");
           }
         }
         catch (Exception ex)

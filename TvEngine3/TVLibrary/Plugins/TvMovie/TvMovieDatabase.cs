@@ -44,6 +44,7 @@ using Gentle.Framework;
 
 namespace TvEngine
 {
+  #region TVMChannel struct
   public struct TVMChannel
   {
     private string fID;
@@ -86,6 +87,7 @@ namespace TvEngine
       get { return fSortNrTVMovie; }
     }
   }
+  #endregion
 
   class TvMovieDatabase
   {
@@ -111,7 +113,6 @@ namespace TvEngine
     public delegate void StationsChanged(int value, int maximum, string text);
     public event StationsChanged OnStationsChanged;
     #endregion
-
 
     #region Mapping struct
     private struct Mapping
@@ -173,7 +174,7 @@ namespace TvEngine
     }
     #endregion
 
-    #region class get && set functions
+    #region Properties
     public List<TVMChannel> Stations
     {
       get { return _tvmEpgChannels; }
@@ -259,7 +260,7 @@ namespace TvEngine
     }
     #endregion
 
-    #region public functions
+    #region Public functions
     public ArrayList GetChannels()
     {
       ArrayList tvChannels = new ArrayList();
@@ -465,7 +466,7 @@ namespace TvEngine
     }
     #endregion
 
-    #region private functions
+    #region Private functions
     private void LoadMemberSettings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -996,8 +997,13 @@ namespace TvEngine
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
 
-    public void LaunchTVMUpdater()
+    /// <summary>
+    /// Launches TV Movie's own internet update tool
+    /// </summary>
+    /// <returns>Number of seconds needed for the update</returns>
+    public long LaunchTVMUpdater()
     {
+      long UpdateDuration = 0;
       string UpdaterPath = Path.Combine(TVMovieProgramPath, @"tvuptodate.exe");
       if (File.Exists(UpdaterPath))
       {
@@ -1013,8 +1019,9 @@ namespace TvEngine
           {
             processes[0].WaitForExit(600000);
             BenchClock.Stop();
-            Log.Info("TVMovie: tvuptodate was already running - waited {0} seconds for internet update to finish", Convert.ToString((BenchClock.ElapsedMilliseconds / 1000)));
-            return;
+            UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
+            Log.Info("TVMovie: tvuptodate was already running - waited {0} seconds for internet update to finish", Convert.ToString(UpdateDuration));
+            return UpdateDuration;
           }
 
           ProcessStartInfo startInfo = new ProcessStartInfo("tvuptodate.exe");
@@ -1029,16 +1036,20 @@ namespace TvEngine
           UpdateProcess.WaitForExit(600000); // do not wait longer than 10 minutes for the internet update
 
           BenchClock.Stop();
-          Log.Info("TVMovie: tvuptodate finished internet update in {0} seconds", Convert.ToString((BenchClock.ElapsedMilliseconds / 1000)));
+          UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
+          Log.Info("TVMovie: tvuptodate finished internet update in {0} seconds", Convert.ToString(UpdateDuration));
         }
         catch (Exception ex)
         {
           BenchClock.Stop();
+          UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
           Log.Error("TVMovie: LaunchTVMUpdater failed: {0}", ex.Message);
         }
       }
       else
         Log.Info("TVMovie: tvuptodate.exe not found in default location: {0}", UpdaterPath);
+
+      return UpdateDuration;
     }
     #endregion
 
