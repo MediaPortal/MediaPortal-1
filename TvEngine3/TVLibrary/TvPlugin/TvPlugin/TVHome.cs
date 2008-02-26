@@ -2818,7 +2818,7 @@ namespace TvPlugin
           {
             // Change current group and zap to the first channel of the group
             m_currentgroup = m_zapgroup;
-            if (CurrentGroup.ReferringGroupMap().Count > 0)
+            if (CurrentGroup!= null && CurrentGroup.ReferringGroupMap().Count > 0)
             {
               GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[0];
               Channel chan = (Channel)gm.ReferencedChannel();
