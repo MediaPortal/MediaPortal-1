@@ -11,27 +11,66 @@
 #
 #
 #**********************************************************************************************************#
-
 Name "MediaPortal TV Server / Client"
-
 SetCompressor /SOLID lzma
 RequestExecutionLevel admin
 
-# Defines
-!define REGKEY "SOFTWARE\Team MediaPortal\$(^Name)"
-!define REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
-!define COMPANY "Team MediaPortal"
-!define URL www.team-mediaportal.com
+#---------------------------------------------------------------------------
+# VARIABLES
+#---------------------------------------------------------------------------
+Var StartMenuGroup
+Var LibInstall
+Var LibInstall2
+Var CommonAppData
+Var MPBaseDir
+Var InstallPath
+;   variables for commandline parameters for Installer
+Var noClient
+Var noServer
+Var noDesktopSC
+Var noStartMenuSC
+;   variables for commandline parameters for UnInstaller
+Var CompleteCleanup
 
-!define VER_MAJOR 0
-!define VER_MINOR 9
-!define VER_REVISION 0
+#---------------------------------------------------------------------------
+# DEFINES
+#---------------------------------------------------------------------------
+!define COMPANY "Team MediaPortal"
+!define URL     "www.team-mediaportal.com"
+
+!define REGKEY          "SOFTWARE\Team MediaPortal\MediaPortal TV Server / Client"
+!define REG_UNINSTALL   "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server / Client"
+
+!define VER_MAJOR       0
+!define VER_MINOR       9
+!define VER_REVISION    0
 !ifndef VER_BUILD
-    !define VER_BUILD 0
+    !define VER_BUILD   0
 !endif
 
+#---------------------------------------------------------------------------
+# INCLUDE FILES
+#---------------------------------------------------------------------------
+!include MUI2.nsh
+!include Sections.nsh
+!include LogicLib.nsh
+!include Library.nsh
+!include WordFunc.nsh
+!include FileFunc.nsh
 
-# MUI defines
+!include setup-addremove.nsh
+
+!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+    !insertmacro VersionCompare
+!endif
+!insertmacro GetParameters
+!insertmacro GetOptions
+!insertmacro un.GetParameters
+!insertmacro un.GetOptions
+
+#---------------------------------------------------------------------------
+# INSTALLER INTERFACE settings
+#---------------------------------------------------------------------------
 !define MUI_ICON "images\install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
@@ -66,70 +105,38 @@ RequestExecutionLevel admin
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
-
-# Included files
-!include MUI2.nsh
-!include Sections.nsh
-!include LogicLib.nsh
-!include Library.nsh
-
-!include WordFunc.nsh
-!include FileFunc.nsh
-
-!include setup-addremove.nsh
-
-!insertmacro GetParameters
-!insertmacro GetOptions
-!insertmacro un.GetParameters
-!insertmacro un.GetOptions
-
-
-!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-    !insertmacro VersionCompare
-!endif
-
-# Variables
-Var StartMenuGroup
-Var LibInstall
-Var LibInstall2
-Var CommonAppData
-Var MPBaseDir
-Var InstallPath
-#variables for commandline parameters for Installer
-Var noClient
-Var noServer
-Var noDesktopSC
-Var noStartMenuSC
-#variables for commandline parameters for UnInstaller
-Var CompleteCleanup
-
-# Installer pages
+#---------------------------------------------------------------------------
+# INSTALLER INTERFACE
+#---------------------------------------------------------------------------
 !insertmacro MUI_PAGE_WELCOME
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
     Page custom PageReinstall PageLeaveReinstall
 !endif
-!define MUI_PAGE_CUSTOMFUNCTION_PRE DisableClientIfNoMP   #check, if MediaPortal is installed, if not uncheck and disable the ClientPluginSection
+!define MUI_PAGE_CUSTOMFUNCTION_PRE DisableClientIfNoMP #check, if MediaPortal is installed, if not uncheck and disable the ClientPluginSection
 !insertmacro MUI_PAGE_COMPONENTS
-!define MUI_PAGE_CUSTOMFUNCTION_PRE dir_pre          # Check, if the Server Component has been selected. Only display the directory page in this vase
+!define MUI_PAGE_CUSTOMFUNCTION_PRE dir_pre             # Check, if the Server Component has been selected. Only display the directory page in this vase
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_INSTFILES
-!define MUI_PAGE_CUSTOMFUNCTION_PRE finish_pre       # Check, if the Server Component has been selected. Only display the Startmenu page in this vase
+!define MUI_PAGE_CUSTOMFUNCTION_PRE finish_pre          # Check, if the Server Component has been selected. Only display the Startmenu page in this vase
 !insertmacro MUI_PAGE_FINISH
-
-# Uninstall Pages
-#!insertmacro MUI_UNPAGE_COMPONENTS
-#!define MUI_PAGE_CUSTOMFUNCTION_PRE un.dir_pre        # Check, if the Server Component has been selected. Only display the directory page in this vase
+; UnInstaller Interface
+;[OBSOLETE]         !insertmacro MUI_UNPAGE_COMPONENTS
+;[OBSOLETE]         !define MUI_PAGE_CUSTOMFUNCTION_PRE un.dir_pre        # Check, if the Server Component has been selected. Only display the directory page in this vase
 !insertmacro MUI_UNPAGE_WELCOME
 !define MUI_PAGE_CUSTOMFUNCTION_PRE un.completeClenupQuestion       # ask the user if he wants to do a complete cleanup
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
 
-# Installer languages
+#---------------------------------------------------------------------------
+# INSTALLER LANGUAGES
+#---------------------------------------------------------------------------
 !insertmacro MUI_LANGUAGE English
 
-# Installer attributes
+#---------------------------------------------------------------------------
+# INSTALLER ATTRIBUTES
+#---------------------------------------------------------------------------
 OutFile Release\setup-tve3.exe
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
 InstallDirRegKey HKLM "${REGKEY}" InstallPath
@@ -146,7 +153,9 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright ""
 ShowUninstDetails show
 
-#####    Sections and macros
+#---------------------------------------------------------------------------
+# SECTIONS and MACROS
+#---------------------------------------------------------------------------
 Section "MediaPortal TV Server" SecServer
     SetOverwrite on
     DetailPrint "Installing MediaPortal TV Server"
@@ -243,16 +252,19 @@ Section "MediaPortal TV Server" SecServer
     
     #---------------------------- Post Installation Tasks ----------------------
     WriteRegStr HKLM "${REGKEY}" InstallPath $INSTDIR
-    
-    # Create Short Cuts
-    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    SetOutPath $SMPROGRAMS\$StartMenuGroup
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk" "$CommonAppData\log" "" "$CommonAppData\log" 0 "" "" "TV Server Log Files"
-    # Change outpath back to the install dir, so that the shortcut to SetupTV gets the correct working directory
+
     SetOutPath $INSTDIR
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
-    !insertmacro MUI_STARTMENU_WRITE_END
+
+    ${If} $noDesktopSC != 1
+        CreateShortcut "$DESKTOP\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+    ${EndIf}
+    ${If} $noStartMenuSC != 1
+        !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk" "$CommonAppData\log" "" "$CommonAppData\log" 0 "" "" "TV Server Log Files"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
+        !insertmacro MUI_STARTMENU_WRITE_END
+    ${EndIf}
 SectionEnd
 !macro Remove_${SecServer}
     # De-instell the service
@@ -420,16 +432,15 @@ Section -FinishComponents
 SectionEnd
  
 Section -Post
-    # Write the Uninstaller
     SetOverwrite on
     SetOutPath $INSTDIR
     
-    # Create Uninstaller Short Cut
-    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    SetOutPath $SMPROGRAMS\$StartMenuGroup
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall-tve3.exe
-    !insertmacro MUI_STARTMENU_WRITE_END
-    
+    ${If} $noStartMenuSC != 1
+        !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall-tve3.exe
+        !insertmacro MUI_STARTMENU_WRITE_END
+    ${EndIf}
+
     !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
         WriteRegDword HKLM "${REGKEY}" "VersionMajor" "${VER_MAJOR}"
         WriteRegDword HKLM "${REGKEY}" "VersionMinor" "${VER_MINOR}"
