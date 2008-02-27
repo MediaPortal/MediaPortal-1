@@ -387,8 +387,8 @@ namespace TvEngine
             break;
           }
 
-      if (OnStationsChanged != null)
-        OnStationsChanged(1, maximum, string.Empty);
+      //if (OnStationsChanged != null)
+      //  OnStationsChanged(1, maximum, string.Empty);
       Log.Debug("TVMovie: Calculating stations done");
 
       // setting update time of epg import to avoid that the background thread triggers another import
@@ -428,8 +428,9 @@ namespace TvEngine
             if (OnStationsChanged != null)
               OnStationsChanged(counter, maximum, display);
             counter++;
-            Log.Info("TVMovie: Importing {3} time frame(s) for station [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
+            Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
             _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
+            Log.Debug("TVMovie: Imports complete");
           }
           catch (Exception ex)
           {
@@ -485,7 +486,7 @@ namespace TvEngine
         return 0;
 
       // UNUSED: F16zu9 , live , untertitel , Dauer , Wiederholung
-      sqlb.Append("SELECT TVDaten.Beginn, TVDaten.Ende, TVDaten.Sendung, TVDaten.Genre, TVDaten.Kurzkritik, TVDaten.KurzBeschreibung, TVDaten.Beschreibung");
+      sqlb.Append("SELECT TVDaten.SenderKennung, TVDaten.Beginn, TVDaten.Ende, TVDaten.Sendung, TVDaten.Genre, TVDaten.Kurzkritik, TVDaten.KurzBeschreibung, TVDaten.Beschreibung");
       sqlb.Append(", TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton");
       sqlb.Append(", TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Originaltitel, TVDaten.Regie, TVDaten.Darsteller");
       sqlb.Append(", TVDaten.Interessant, TVDaten.Bewertungen");
@@ -503,37 +504,44 @@ namespace TvEngine
         {
           Log.Debug("TVMovie: Purging old programs for channel {0}", map.Channel);
           ClearPrograms(map.Channel);
-          Log.Debug("TVMovie: Purged complete");
+          Log.Debug("TVMovie: Purge complete");
         }
 
       try
       {
         int programsCount = 0; //tvMovieTable.Tables["TVDaten"].Rows.Count;
-        if (OnProgramsChanged != null)
-          OnProgramsChanged(0, programsCount + 1, string.Empty);        
+        //if (OnProgramsChanged != null)
+        //  OnProgramsChanged(0, programsCount + 1, string.Empty);        
 
         _databaseConnection.Open();
         OleDbDataReader reader = databaseCommand.ExecuteReader();
 
-        while (reader.Read() && !_canceled)
+        while (reader.Read())
         {
-          ImportSingleChannelData(stationName, channelNames, allChannels, programsCount, ref counter,
+          ImportSingleChannelData(channelNames, allChannels,
                                   reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(),
                                   reader[8].ToString(), reader[9].ToString(), reader[10].ToString(), reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
                                   reader[14].ToString(), reader[15].ToString(), reader[16].ToString(), reader[17].ToString(), reader[18].ToString(), reader[19].ToString(), reader[20].ToString()
-                                 );          
+                                 );
+          programsCount++;
+          counter++;
         }
         reader.Close();
 
-        if (OnProgramsChanged != null)
-          OnProgramsChanged(programsCount + 1, programsCount + 1, string.Empty);
-        
+        //if (OnProgramsChanged != null)
+        //  OnProgramsChanged(programsCount + 1, programsCount + 1, string.Empty);
+
         //databaseAdapter.Fill(tvMovieTable, "TVDaten");
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
         Log.Error("TVMovie: Error accessing TV Movie Clickfinder database - Current import canceled, waiting for next schedule");
         Log.Error("TVMovie: Exception: {0}", ex);
+        return 0;
+      }
+      catch (Exception ex1)
+      {
+        Log.Error("TVMovie: Exception: {0}", ex1);
         return 0;
       }
       finally
@@ -547,12 +555,14 @@ namespace TvEngine
     /// <summary>
     /// Takes a DataRow worth of EPG Details to persist them in MP's program table
     /// </summary>
-    private void ImportSingleChannelData(string stationName, List<Mapping> channelNames, IList allChannels, int programsCount, ref int counter,
+    private void ImportSingleChannelData(List<Mapping> channelNames, IList allChannels,
                                          string SenderKennung, string Beginn, string Ende, string Sendung, string Genre, string Kurzkritik, string KurzBeschreibung, string Beschreibung,
                                          string Audiodescription, string DolbySuround, string Stereo, string DolbyDigital, string Dolby, string Zweikanalton,
                                          string FSK, string Herstellungsjahr, string Originaltitel, string Regie, string Darsteller, string Interessant, string Bewertungen)
     {
-      string channel = stationName;
+      // Log.Info("TVMovie: Import program: {0} - {1}", Beginn, Sendung);
+
+      string channel = SenderKennung;
       DateTime end = DateTime.MinValue;
       DateTime start = DateTime.MinValue;
       string classification = string.Empty;
@@ -615,10 +625,10 @@ namespace TvEngine
         audioFormat = BuildAudioDescription(audioDesc, dolbyDigital, dolbySuround, dolby, stereo, dualAudio);
       }
 
-      if (OnProgramsChanged != null)
-        OnProgramsChanged(counter, programsCount + 1, title);
+      //if (OnProgramsChanged != null)
+      //  OnProgramsChanged(counter, programsCount + 1, title);
 
-      counter++;
+      //counter++;
 
       foreach (Mapping channelName in channelNames)
       {
@@ -718,9 +728,10 @@ namespace TvEngine
             if (_showRatings)
               if (shortCritic.Length > 1)
                 prog.Description = shortCritic + "\n" + description;
-          }
+          }          
 
           prog.Persist();
+          //Log.Info("TVMovie: Saved program: {0} - {1}", start.ToShortDateString(), title);
           if (_slowImport)
             Thread.Sleep(50);
         }

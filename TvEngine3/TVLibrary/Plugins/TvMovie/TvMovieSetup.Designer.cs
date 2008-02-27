@@ -243,16 +243,17 @@ namespace SetupTv.Sections
       // 
       // progressBarImportItem
       // 
-      this.progressBarImportItem.Location = new System.Drawing.Point(114, 139);
+      this.progressBarImportItem.Location = new System.Drawing.Point(100, 139);
       this.progressBarImportItem.Name = "progressBarImportItem";
       this.progressBarImportItem.Size = new System.Drawing.Size(293, 10);
       this.progressBarImportItem.TabIndex = 60;
+      this.progressBarImportItem.Visible = false;
       // 
       // progressBarImportTotal
       // 
       this.progressBarImportTotal.Location = new System.Drawing.Point(114, 123);
       this.progressBarImportTotal.Name = "progressBarImportTotal";
-      this.progressBarImportTotal.Size = new System.Drawing.Size(293, 10);
+      this.progressBarImportTotal.Size = new System.Drawing.Size(293, 26);
       this.progressBarImportTotal.TabIndex = 59;
       // 
       // buttonImportNow
