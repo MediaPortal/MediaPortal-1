@@ -614,6 +614,27 @@ namespace TvEngine
         detailedRating = Bewertungen;
       }
 
+      short EPGStarRating = -1;
+      switch (starRating)
+      {
+        case 0:
+          EPGStarRating = 2; break;
+        case 1:
+          EPGStarRating = 4; break;
+        case 2:
+          EPGStarRating = 6; break;
+        case 3:
+          EPGStarRating = 8; break;
+        case 4:
+          EPGStarRating = 10; break;
+        case 5:
+          EPGStarRating = 8; break;
+        case 6:
+          EPGStarRating = 10; break;
+        default:
+          EPGStarRating = -1; break;
+      }
+
       if (_showAudioFormat)
       {
         bool audioDesc = Convert.ToBoolean(Audiodescription);
@@ -625,11 +646,6 @@ namespace TvEngine
         audioFormat = BuildAudioDescription(audioDesc, dolbyDigital, dolbySuround, dolby, stereo, dualAudio);
       }
 
-      //if (OnProgramsChanged != null)
-      //  OnProgramsChanged(counter, programsCount + 1, title);
-
-      //counter++;
-
       foreach (Mapping channelName in channelNames)
       {
         DateTime newStartDate = start;
@@ -638,7 +654,6 @@ namespace TvEngine
         if (!CheckEntry(ref newStartDate, ref newEndDate, channelName.Start, channelName.End))
         {
           Channel progChannel = null;
-
           foreach (Channel ch in allChannels)
           {
             if (ch.Name == channelName.Channel)
@@ -648,7 +663,6 @@ namespace TvEngine
             }
           }
           DateTime OnAirDate = DateTime.MinValue;
-
           if (date.Length > 0 && date != @"-")
           {
             try
@@ -661,39 +675,14 @@ namespace TvEngine
             }
           }
 
-          short EPGStarRating = -1;
-
-          switch (starRating)
-          {
-            case 0:
-              EPGStarRating = 2; break;
-            case 1:
-              EPGStarRating = 4; break;
-            case 2:
-              EPGStarRating = 6; break;
-            case 3:
-              EPGStarRating = 8; break;
-            case 4:
-              EPGStarRating = 10; break;
-            case 5:
-              EPGStarRating = 8; break;
-            case 6:
-              EPGStarRating = 10; break;
-            default:
-              EPGStarRating = -1; break;
-          }
-
-          Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
-
           if (audioFormat == String.Empty)
-            prog.Description = description.Replace("<br>", "\n");
+            description = description.Replace("<br>", "\n");
           else
-            prog.Description = "Ton: " + audioFormat + "\n" + description.Replace("<br>", "\n");
+            description = "Ton: " + audioFormat + "\n" + description.Replace("<br>", "\n");
 
           if (_extendDescription)
           {
             StringBuilder sb = new StringBuilder();
-
             if (episode != String.Empty)
               sb.Append("Folge: " + episode + "\n");
 
@@ -701,16 +690,16 @@ namespace TvEngine
             {
               //sb.Append("Wertung: " + string.Format("{0}/5", starRating) + "\n");
               sb.Append("Wertung: ");
-              if (shortCritic.Length > 1)
-              {
+              if (shortCritic.Length > 1)              
                 sb.Append(shortCritic + " - ");
-              }
+              
               sb.Append(BuildRatingDescription(starRating));
               if (detailedRating.Length > 0)
                 sb.Append(BuildDetailedRatingDescription(detailedRating));
             }
 
-            sb.Append(prog.Description + "\n");
+            if (!string.IsNullOrEmpty(description))
+              sb.Append(description + "\n");
 
             if (director.Length > 0)
               sb.Append("Regie: " + director + "\n");
@@ -721,17 +710,18 @@ namespace TvEngine
             if (date != String.Empty)
               sb.Append("Jahr: " + date + "\n");
 
-            prog.Description = sb.ToString();
+            description = sb.ToString();
           }
           else
           {
             if (_showRatings)
               if (shortCritic.Length > 1)
-                prog.Description = shortCritic + "\n" + description;
-          }          
+                description = shortCritic + "\n" + description;
+          }
 
+          Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
           prog.Persist();
-          //Log.Info("TVMovie: Saved program: {0} - {1}", start.ToShortDateString(), title);
+          
           if (_slowImport)
             Thread.Sleep(50);
         }

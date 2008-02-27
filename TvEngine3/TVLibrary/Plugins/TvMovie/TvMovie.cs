@@ -67,10 +67,18 @@ namespace TvEngine
           if (_database.NeedsImport)
           {
             SetStandbyAllowed(false);
-            if (_database.LaunchTVMUpdater() > 15)
-              _database.Import();
+
+            long updateDuration = _database.LaunchTVMUpdater();
+            if (updateDuration < 60000)
+            {
+              // Updating a least a few programs would take more than 15 seconds
+              if (updateDuration > 15)
+                _database.Import();
+              else
+                Log.Error("TVMovie: Import skipped because there was no new data.");
+            }
             else
-              Log.Info("TVMovie: Import skipped because there was no new data.");
+              Log.Error("TVMovie: Import skipped because the update process timed out / has been aborted.");
           }
         }
         catch (Exception ex)
