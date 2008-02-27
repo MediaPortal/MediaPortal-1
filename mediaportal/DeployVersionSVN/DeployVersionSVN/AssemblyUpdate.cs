@@ -40,7 +40,8 @@ namespace DeployVersionSVN
     {
       foreach (FileInfo file in directory.GetFiles("AssemblyInfo.cs"))
       {
-        TextReader read = new StreamReader(file.FullName);
+        StreamReader read = new StreamReader(file.FullName, true);
+        Encoding encoding = read.CurrentEncoding;
         string filetext = read.ReadToEnd();
         read.Close();
 
@@ -49,7 +50,8 @@ namespace DeployVersionSVN
         if (filetext != newtext)
         {
           Console.WriteLine("Updating: " + file.FullName);
-          TextWriter write = new StreamWriter(file.FullName, false, Encoding.UTF8);
+          TextWriter write = new StreamWriter(file.FullName, false, encoding);
+          //TextWriter write = new StreamWriter(file.FullName);
           write.Write(newtext);
           write.Close();
         }

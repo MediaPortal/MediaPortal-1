@@ -34,6 +34,24 @@ namespace DeployVersionSVN
       string directory = options.GetOption(CommandLineOptions.Option.svn);
 
       string version;
+      if (options.IsOption(CommandLineOptions.Option.GetVersion))
+      {
+        VersionSVN svn = new VersionSVN();
+        version = svn.GetVerion(directory);
+
+        if (File.Exists("version.txt")) File.Delete("version.txt");
+        if (version == string.Empty)
+        {
+          Console.WriteLine("Local SVN not up to date");
+          return;
+        }
+
+        TextWriter write = new StreamWriter("version.txt");
+        write.Write(version);
+        write.Close();
+        return;
+      }
+
       if (options.IsOption(CommandLineOptions.Option.revert))
       {
         version = "0";
