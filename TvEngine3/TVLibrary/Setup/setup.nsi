@@ -490,8 +490,48 @@ SectionEnd
 #####    End of Uninstaller sections
  
 Function .onInit
+    #### check and parse cmdline parameter
+    ; set default values for parameters ........
+    strcpy $noClient 0
+    strcpy $noServer 0
+    strcpy $noDesktopSC 0
+    strcpy $noStartMenuSC 0
+
+    ; gets comandline parameter
+    ${GetParameters} $R0
+
+    ; check for special parameter and set the their variables
+    ${GetOptions} $R0 "/noClient" $R1
+    IfErrors +2
+    strcpy $noClient 1
+    ${GetOptions} $R0 "/noServer" $R1
+    IfErrors +2
+    strcpy $noServer 1
+    ${GetOptions} $R0 "/noDesktopSC" $R1
+    IfErrors +2
+    strcpy $noDesktopSC 1
+    ${GetOptions} $R0 "/noStartMenuSC" $R1
+    IfErrors +2
+    strcpy $noStartMenuSC 1
+    #### END of check and parse cmdline parameter
+
     ;Reads components status for registry
     !insertmacro SectionList "InitSection"
+    
+    ;update the component status with infos from commandline parameters
+    ${If} $noClient = 1
+    ${AndIf} $noServer = 1
+        MessageBox MB_OK|MB_ICONEXCLAMATION "You have done something wrong!$\r$\nIt is not allowed to use 'noClient' & 'noServer' at the same time." IDOK 0
+        Quit
+    ${ElseIf} $noClient = 1
+        #MessageBox MB_OK|MB_ICONEXCLAMATION "SecClient IDOK 0"
+        !insertmacro SelectSection ${SecServer}
+        !insertmacro UnselectSection ${SecClient}
+    ${ElseIf} $noServer = 1
+        #MessageBox MB_OK|MB_ICONEXCLAMATION "SecServer IDOK 0"
+        !insertmacro SelectSection ${SecClient}
+        !insertmacro UnselectSection ${SecServer}
+    ${EndIf}
 
     ; if silent and tve3 is already installed, remove it first, the continue with installation
     IfSilent 0 noSilent
@@ -532,46 +572,9 @@ Function .onInit
     StrCmp $0 "" +2
     StrCpy $LibInstall2 1
     Pop $0
-    
-
-    #### check and parse cmdline parameter
-    ; set default values for parameters ........
-    strcpy $noClient 0
-    strcpy $noServer 0
-    strcpy $noDesktopSC 0
-    strcpy $noStartMenuSC 0
-
-    ; gets comandline parameter
-    ${GetParameters} $R0
-
-    ; check for special parameter and set the their variables
-    ${GetOptions} $R0 "/noClient" $R1
-    IfErrors +2
-    strcpy $noClient 1
-    ${GetOptions} $R0 "/noServer" $R1
-    IfErrors +2
-    strcpy $noServer 1
-    ${GetOptions} $R0 "/noDesktopSC" $R1
-    IfErrors +2
-    strcpy $noDesktopSC 1
-    ${GetOptions} $R0 "/noStartMenuSC" $R1
-    IfErrors +2
-    strcpy $noStartMenuSC 1
-    #### END of check and parse cmdline parameter
 FunctionEnd
 
 Function un.onInit
-    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-    ReadRegStr $INSTDIR HKLM "${REGKEY}" InstallPath
-    !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
-
-    ; Get the Common Application Data Folder
-    ; Set the Context to alll, so that we get the All Users folder
-    SetShellVarContext all
-    StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
-    ; Context back to current user
-    SetShellVarContext current
-
     #### check and parse cmdline parameter
     ; set default values for parameters ........
     strcpy $CompleteCleanup 0
@@ -584,6 +587,18 @@ Function un.onInit
     IfErrors +2
     strcpy $CompleteCleanup 1
     #### END of check and parse cmdline parameter
+
+
+    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+    ReadRegStr $INSTDIR HKLM "${REGKEY}" InstallPath
+    !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
+
+    ; Get the Common Application Data Folder
+    ; Set the Context to alll, so that we get the All Users folder
+    SetShellVarContext all
+    StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
+    ; Context back to current user
+    SetShellVarContext current
 FunctionEnd
 
 #####    Add/Remove/Reinstall page
