@@ -242,9 +242,8 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 		  len += (descriptor_len+2);
 	  }
 		start += descriptors_length;
-    info.ServiceId=m_vecChannels.size()+1;
-		LogDebug("VCT:  #%d major:%d minor:%d freq:%d tsid:%x sid:%x servicetype:%x name:%s video:%x audio:%x audio:%x audio:%x ac3:%x", 
-				m_vecChannels.size(),
+		LogDebug("VCT:  #%d major:%d minor:%d freq:%d sid:%x tsid:%x servicetype:%x name:%s video:%x audio:%x audio:%x audio:%x ac3:%x", 
+				i,
 				info.MajorChannel,info.MinorChannel,info.Frequency,
 				info.ServiceId,info.TransportId,info.ServiceType,
 				info.ServiceName,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid);

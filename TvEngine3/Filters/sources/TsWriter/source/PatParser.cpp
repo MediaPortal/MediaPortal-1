@@ -194,15 +194,15 @@ void CPatParser::OnChannel(const CChannelInfo& info)
   CChannelInfo i=info;
 	// The minor channel number in a VCT seems to be equal to what the SID is in a PMT
 	// so we have to do the mapping this way - gemx
-	m_mapChannels[info.MinorChannel].Frequency=info.Frequency;
-	m_mapChannels[info.MinorChannel].MajorChannel=info.MajorChannel;
-	m_mapChannels[info.MinorChannel].MinorChannel=info.MinorChannel;
-	strcpy(m_mapChannels[info.MinorChannel].ProviderName,info.ProviderName);
-	strcpy(m_mapChannels[info.MinorChannel].ServiceName,info.ServiceName);
-	m_mapChannels[info.MinorChannel].FreeCAMode=info.FreeCAMode;
-	m_mapChannels[info.MinorChannel].Modulation=info.Modulation;
-	m_mapChannels[info.MinorChannel].ServiceType=info.ServiceType;
-	m_mapChannels[info.MinorChannel].OtherMux=info.OtherMux;
+	m_mapChannels[info.ServiceId].Frequency=info.Frequency;
+	m_mapChannels[info.ServiceId].MajorChannel=info.MajorChannel;
+	m_mapChannels[info.ServiceId].MinorChannel=info.MinorChannel;
+	strcpy(m_mapChannels[info.ServiceId].ProviderName,info.ProviderName);
+	strcpy(m_mapChannels[info.ServiceId].ServiceName,info.ServiceName);
+	m_mapChannels[info.ServiceId].FreeCAMode=info.FreeCAMode;
+	m_mapChannels[info.ServiceId].Modulation=info.Modulation;
+	m_mapChannels[info.ServiceId].ServiceType=info.ServiceType;
+	m_mapChannels[info.ServiceId].OtherMux=info.OtherMux;
 }
 
 //*****************************************************************************
@@ -255,8 +255,6 @@ void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2
 		{
 			AnalyzePidInfo(pidInfo,info.hasVideo,info.hasAudio);
 			info.PmtReceived=true;
-			// overwrite the pmt just in case a vct parser has overriden it
-			info.PidTable.PmtPid=pid;
       m_tickCount = GetTickCount();
 		}
 	}
