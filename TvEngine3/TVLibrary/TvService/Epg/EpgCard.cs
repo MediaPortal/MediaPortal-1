@@ -660,6 +660,7 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
       Log.Epg("Epg: card:{0} Updating database with new programs", _user.CardId);
       bool timeOut = false;
+      _dbUpdater.ReloadConfig();
       try
       {
         foreach (EpgChannel epgChannel in _epg)

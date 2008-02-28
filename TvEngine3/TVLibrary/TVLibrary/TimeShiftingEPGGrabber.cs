@@ -46,14 +46,17 @@ namespace TvLibrary
     public TimeShiftingEPGGrabber(ITVCard card)
     {
       _card = card;
+      _dbUpdater = new EpgDBUpdater("TimeshiftingEpgGrabber", false);
+      _updateThreadRunning = false;
+      _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
+    }
+    private void LoadSettings()
+    {
       TvBusinessLayer layer = new TvBusinessLayer();
       double timeout;
       if (!double.TryParse(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value, out timeout))
         timeout = 2;
-      _epgTimer.Interval = timeout*60000;
-      _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
-      _updateThreadRunning = false;
-      _dbUpdater = new EpgDBUpdater("TimeshiftingEpgGrabber", false);
+      _epgTimer.Interval = timeout * 60000;
     }
     public bool StartGrab()
     {
@@ -64,6 +67,7 @@ namespace TvLibrary
       }
       else
       {
+        LoadSettings();
         Log.Log.Info("Timeshifting epg grabber started.");
         _epgTimer.Enabled = true;
         return true;
@@ -135,6 +139,7 @@ namespace TvLibrary
 
       _updateThreadRunning = true;
       System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+      _dbUpdater.ReloadConfig();
       TvBusinessLayer layer = new TvBusinessLayer();
       foreach (EpgChannel epgChannel in _epg)
         _dbUpdater.UpdateEpgForChannel(epgChannel);

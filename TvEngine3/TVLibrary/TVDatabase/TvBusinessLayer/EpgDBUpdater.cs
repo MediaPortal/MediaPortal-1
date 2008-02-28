@@ -77,6 +77,13 @@ namespace TvDatabase
     {
       _grabberName = grabberName;
       _checkForLastUpdate = checkForLastUpdate;
+      ReloadConfig();
+    }
+    #endregion
+
+    #region Public members
+    public void ReloadConfig()
+    {
       _layer = new TvBusinessLayer();
       _titleTemplate = _layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
       _descriptionTemplate = _layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
@@ -90,9 +97,6 @@ namespace TvDatabase
       }
       _alwaysFillHoles = (_layer.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
     }
-    #endregion
-
-    #region Public members
     public void UpdateEpgForChannel(EpgChannel epgChannel)
     {
       int iInserted = 0;
