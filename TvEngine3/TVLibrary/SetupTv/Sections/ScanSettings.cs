@@ -63,7 +63,7 @@ namespace SetupTv.Sections
       delayDetectUpDown.Value = Convert.ToDecimal(setting.Value);
 
       checkBoxAlwaysFillHoles.Checked = (layer.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
-      checkBoxAlwaysUpdate.Checked = (_layer.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
+      checkBoxAlwaysUpdate.Checked = (layer.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
 
       checkBoxEnableEPGWhileIdle.Checked=(layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
       textBoxEpgTimeOut.Text = layer.GetSetting("timeoutEPG", "10").Value;
