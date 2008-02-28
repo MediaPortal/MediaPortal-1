@@ -136,8 +136,8 @@ namespace MediaPortal.Player.Subtitles
 
   public class SubtitleRenderer
   {
-    private bool useBitmap = true; // if false use teletext
-    private int activeSubPage; // if use teletext, what page
+    private bool useBitmap = false; // if false use teletext
+    private int activeSubPage =-1; // if use teletext, what page
     private static SubtitleRenderer instance = null;
     private IDVBSubtitleSource subFilter = null;
     private long subCounter = 0;
@@ -194,8 +194,6 @@ namespace MediaPortal.Player.Subtitles
         renderSubtitles = value;
         if (value == false)
         {
-            activeSubPage = -1;
-            useBitmap = false;
           clearOnNextRender = true;
         }
       }
@@ -342,7 +340,7 @@ namespace MediaPortal.Player.Subtitles
     /// <returns></returns>
     public int OnSubtitle(ref NATIVE_SUBTITLE sub)
     {
-      if (!useBitmap) return 0; // TODO: Might be good to let this cache and then check in Render method because bitmap subs arrive a while before display
+      if (!useBitmap || !renderSubtitles) return 0; // TODO: Might be good to let this cache and then check in Render method because bitmap subs arrive a while before display
       Log.Debug("OnSubtitle - stream position " + player.StreamPosition);
       lock (alert)
       {
