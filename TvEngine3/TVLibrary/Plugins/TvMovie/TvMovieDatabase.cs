@@ -434,9 +434,9 @@ namespace TvEngine
             
             _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
 
-            ThreadPriority importPrio = _slowImport ? ThreadPriority.Lowest : ThreadPriority.Normal;
+            ThreadPriority importPrio = _slowImport ? ThreadPriority.Lowest : ThreadPriority.AboveNormal;
             if (_slowImport)
-              Thread.Sleep(75);
+              Thread.Sleep(30);
 
             int debugCount = TvBLayer.InsertPrograms(_tvmEpgProgs, importPrio);
             Log.Info("TVMovie: Inserted {0} programs", debugCount);
@@ -506,6 +506,8 @@ namespace TvEngine
         {
           Log.Debug("TVMovie: Purging old programs for channel {0}", map.Channel);
           ClearPrograms(map.Channel);
+          if (_slowImport)
+            Thread.Sleep(75);
         }
 
       try
@@ -722,13 +724,12 @@ namespace TvEngine
           }
 
           Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
-          if (useGentlePersist)
-          {
+          if (useGentlePersist)          
             prog.Persist();
-            if (_slowImport)
-              Thread.Sleep(50);
-          }
+          
           _tvmEpgProgs.Add(prog);
+          if (_slowImport)
+            Thread.Sleep(10);
         }
       }
     }
@@ -997,14 +998,7 @@ namespace TvEngine
             break;
           }
         }
-
         TvBLayer.RemoveAllPrograms(progChannel.IdChannel);
-
-        //SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
-        //sb.AddConstraint(String.Format("idChannel = '{0}'", progChannel.IdChannel));
-        //SqlStatement stmt = sb.GetStatement(true);
-        //ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-
       }
       catch (Exception ex)
       {

@@ -23,6 +23,10 @@ namespace TvDatabase
 {
   public class TvBusinessLayer
   {
+    #region vars
+    object SingleInsert = new object();
+    #endregion
+
     #region cards
     public Card AddCard(string name, string devicePath, Server server)
     {
@@ -45,6 +49,7 @@ namespace TvDatabase
         return Card.ListAll();
       }
     }
+
     public void DeleteCard(Card card)
     {
       card.Remove();
@@ -88,6 +93,7 @@ namespace TvDatabase
       Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true, "", true, name);
       return newChannel;
     }
+
     public Channel AddChannel(string provider, string name)
     {
       Channel channel = GetChannelByName(provider, name);
@@ -132,6 +138,7 @@ namespace TvDatabase
         map.Persist();
       }
     }
+
     public void AddChannelToRadioGroup(Channel channel, RadioChannelGroup group)
     {
       bool found = false;
@@ -199,8 +206,6 @@ namespace TvDatabase
       if (channels.Count == 0) return null;
       return (TuningDetail)channels[0];
     }
-
-
 
     public Channel GetChannel(int idChannel)
     {
@@ -855,6 +860,7 @@ namespace TvDatabase
       detail.Persist();
       return detail;
     }
+
     public TuningDetail AddWebStreamTuningDetails(Channel channel, string url, int bitrate)
     {
       string channelName = channel.Name;
@@ -898,6 +904,7 @@ namespace TvDatabase
       detail.Persist();
       return detail;
     }
+
     public TuningDetail AddFMRadioTuningDetails(Channel channel, int frequency)
     {
       string channelName = channel.Name;
@@ -1466,31 +1473,52 @@ namespace TvDatabase
       //}      
     }
 
-
     #region EPG Insert
 
     private class ImportParams
     {
       public List<Program> ProgramList;
       public string ConnectString;
+      public int SleepTime;
     };
 
     /// <summary>
     /// Batch inserts programs - intended for faster EPG import
     /// </summary>
     /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
-    /// <returns>The inserted record count</returns>
+    /// <param name="aThreadPriority">Use "Lowest" for Background imports allowing LiveTV, AboveNormal for full speed</param>
+    /// <returns>The record count of programs if successful, 0 on errors</returns>
     public int InsertPrograms(List<Program> aProgramList, ThreadPriority aThreadPriority)
     {
       try
       {
-        Gentle.Framework.IGentleProvider prov = Gentle.Framework.ProviderFactory.GetDefaultProvider();
+        IGentleProvider prov = Gentle.Framework.ProviderFactory.GetDefaultProvider();
         string provider = prov.Name.ToLower();
         string defaultConnectString = prov.ConnectionString; // Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+        int sleepTime = 15;
+
+        switch (aThreadPriority)
+        {
+          case ThreadPriority.Highest:
+          case ThreadPriority.AboveNormal:
+            aThreadPriority = ThreadPriority.Normal;
+            sleepTime = 0;
+            break;
+          case ThreadPriority.Normal:
+            sleepTime = 15;
+            break;
+          case ThreadPriority.BelowNormal:
+            sleepTime = 50;
+            break;
+          case ThreadPriority.Lowest:
+            sleepTime = 100;
+            break;
+        }
 
         ImportParams param = new ImportParams();
         param.ProgramList = aProgramList;
         param.ConnectString = defaultConnectString;
+        param.SleepTime = sleepTime;
         Thread importThread;
 
         // TODO: /!\ Temporarily turn of index rebuilding and other stuff that would speed up bulk inserts
@@ -1500,16 +1528,16 @@ namespace TvDatabase
             importThread = new Thread(new ParameterizedThreadStart(ExecuteMySqlCommand));
             importThread.Priority = aThreadPriority;
             importThread.Start(param);
-            break;          
+            break;
           case "sqlserver":
             importThread = new Thread(new ParameterizedThreadStart(ExecuteSqlServerCommand));
             importThread.Priority = aThreadPriority;
             importThread.Start(param);
-            break;          
+            break;
           default:
             Log.Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
-            break;            
-        }       
+            break;
+        }
 
         return aProgramList.Count;
       }
@@ -1586,10 +1614,10 @@ namespace TvDatabase
 
     private void ExecuteMySqlCommand(object aImportParam)
     {
-      MySqlCommand sqlInsert = new MySqlCommand();
-      lock (sqlInsert)
+      lock (SingleInsert)
       {
         ImportParams MyParams = (ImportParams)aImportParam;
+        MySqlCommand sqlInsert = new MySqlCommand();
         List<Program> currentInserts = new List<Program>(MyParams.ProgramList);
 
         sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
@@ -1625,19 +1653,21 @@ namespace TvDatabase
             sqlInsert.Parameters["?starRating"].Value = prog.StarRating;
             sqlInsert.Parameters["?notify"].Value = prog.Notify;
             sqlInsert.Parameters["?parentalRating"].Value = prog.ParentalRating;
-
+            
             InsertMySql(MyParams.ConnectString, sqlInsert);
+            Thread.Sleep(MyParams.SleepTime / 2);
           }
         }
+        Thread.Sleep(MyParams.SleepTime);
       }
     }
 
     private void ExecuteSqlServerCommand(object aImportParam)
     {
-      SqlCommand sqlInsert = new SqlCommand();
-      lock (sqlInsert)
+      lock (SingleInsert)
       {
         ImportParams MyParams = (ImportParams)aImportParam;
+        SqlCommand sqlInsert = new SqlCommand();
         List<Program> currentInserts = new List<Program>(MyParams.ProgramList);
 
         sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating)";
@@ -1675,16 +1705,18 @@ namespace TvDatabase
             sqlInsert.Parameters["parentalRating"].Value = prog.ParentalRating;
 
             InsertSqlServer(MyParams.ConnectString, sqlInsert);
+            Thread.Sleep(MyParams.SleepTime / 2);
           }
         }
+        Thread.Sleep(MyParams.SleepTime);
       }
     }
 
-    #endregion
+    #endregion // SQL builder
 
-    #endregion
+    #endregion // EPG Insert
 
-    #endregion
+    #endregion // programs
 
     #region schedules
     public List<Schedule> GetConflictingSchedules(Schedule rec)
