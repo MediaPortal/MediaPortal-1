@@ -974,6 +974,11 @@ namespace TvLibrary.Implementations.Analog
               //if that fails, we try any multiplexer filter
               AddTvMultiPlexer(false);
             }
+            if (_captureDevice.Name.Contains("Plextor ConvertX TV402U A/V Capture"))
+            {
+              Log.Log.Info("analog: Plextor ConvertX TV402U detected");
+              AddTvMultiPlexer(false);
+            }
           }
         }
 
