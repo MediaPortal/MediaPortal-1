@@ -100,32 +100,26 @@ namespace TvLibrary.Implementations.DVB
       switch (channel.DisEqc)
       {
         case DisEqcType.Level1AA:
-          ReadDiSEqCCommand();
           Log.Log.Info("GenericBDAS:  Level1AA - SendDiSEqCCommand(0x00)");
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.Level1AB:
-          ReadDiSEqCCommand();
           Log.Log.Info("GenericBDAS:  Level1AB - SendDiSEqCCommand(0x01)");
           SendDiSEqCCommand(0x01);
           break;
         case DisEqcType.Level1BA:
-          ReadDiSEqCCommand();
           Log.Log.Info("GenericBDAS:  Level1BA - SendDiSEqCCommand(0x0100)");
           SendDiSEqCCommand(0x0100);
           break;
         case DisEqcType.Level1BB:
-          ReadDiSEqCCommand();
           Log.Log.Info("GenericBDAS:  Level1BB - SendDiSEqCCommand(0x0101)");
           SendDiSEqCCommand(0x0101);
           break;
         case DisEqcType.SimpleA:
-          ReadDiSEqCCommand();
           Log.Log.Info("GenericBDAS:  SimpleA - SendDiSEqCCommand(0x00)");
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.SimpleB:
-          ReadDiSEqCCommand();
           Log.Log.Info("GenericBDAS:  SimpleB - SendDiSEqCCommand(0x01)");
           SendDiSEqCCommand(0x01);
           break;
@@ -184,8 +178,10 @@ namespace TvLibrary.Implementations.DVB
                     }
                   }
                   Log.Log.Info("GenericBDAS:  CheckChanges() Failed!");
+                  return false;
                 }
                 Log.Log.Info("GenericBDAS:  put_Range Failed!");
+                return false;
               }
             }
           }
@@ -200,11 +196,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="ulRange">The DisEqCPort Port.</param>
     /// <returns>true if succeeded, otherwise false</returns>
-    //protected bool ReadDiSEqCCommand(out ulong ulRange)
-    protected bool ReadDiSEqCCommand()
+    protected bool ReadDiSEqCCommand(out ulong pulRange)
     {
       int hr = 0;
-      ulong ulRange = 0;
       // get ControlNode of tuner control node
       object ControlNode = null;
       hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
@@ -217,22 +211,28 @@ namespace TvLibrary.Implementations.DVB
           if (ControlNode != null)
           {
             IBDA_FrequencyFilter FrequencyFilter = (IBDA_FrequencyFilter)ControlNode;
-            if (FrequencyFilter != null)
+            hr = DecviceControl.StartChanges();
+            if (hr == 0)
             {
-              hr = FrequencyFilter.get_Range(out ulRange);
-              Log.Log.Info("GenericBDAS:  get_Range:{0} success:{1}", ulRange, hr);
-              if (hr == 0)
+              if (FrequencyFilter != null)
               {
-                return true;
+                hr = FrequencyFilter.get_Range(out pulRange);
+                Log.Log.Info("GenericBDAS:  get_Range:{0} success:{1}", pulRange, hr);
+                if (hr == 0)
+                {
+                  return true;
+                }
+                Log.Log.Info("GenericBDAS:  get_Range Failed!");
+                return false;
               }
-              Log.Log.Info("GenericBDAS:  get_Range Failed!");
             }
           }
         }
       }
       Log.Log.Info("GenericBDAS:  GetControlNode Failed!");
+      pulRange = 0;
       return false;
-    } //end ReadDiSEqCCommand
+      }//end ReadDiSEqCCommand
 
     /// <summary>
     /// Determines whether [is cam present].

@@ -77,6 +77,7 @@
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
     <Compile Include="Implementations\AVObserverSubChannel.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\ConexantBDA.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\GenericBDAS.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />

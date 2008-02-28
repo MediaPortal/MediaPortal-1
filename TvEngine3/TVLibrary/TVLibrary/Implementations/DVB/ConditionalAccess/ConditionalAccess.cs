@@ -50,6 +50,7 @@ namespace TvLibrary.Implementations.DVB
     GenericATSC _isgenericatsc = null;
     OnAirATSC _isonairatsc = null;
     ViXSATSC _isvixsatsc = null;
+    ConexantBDA _conexant = null;
     #endregion
 
     //ctor
@@ -128,6 +129,15 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           _hauppauge = null;
+
+          Log.Log.WriteFile("Check for Conexant based card");
+          _conexant = new ConexantBDA(tunerFilter, analyzerFilter);
+          if (_conexant.IsConexant)
+          {
+            Log.Log.WriteFile("Conexant BDA card detected");
+            return;
+          }
+          _conexant = null;
 
           Log.Log.WriteFile("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter, analyzerFilter);
@@ -453,6 +463,11 @@ namespace TvLibrary.Implementations.DVB
         if (_genericbdas != null)
         {
           _genericbdas.SendDiseqCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+        if (_conexant != null)
+        {
+          _conexant.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
       }
