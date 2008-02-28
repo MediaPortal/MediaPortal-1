@@ -200,6 +200,7 @@ void CPatParser::OnChannel(const CChannelInfo& info)
 	strcpy(m_mapChannels[info.MinorChannel].ProviderName,info.ProviderName);
 	strcpy(m_mapChannels[info.MinorChannel].ServiceName,info.ServiceName);
 	m_mapChannels[info.MinorChannel].FreeCAMode=info.FreeCAMode;
+	m_mapChannels[info.MinorChannel].Modulation=info.Modulation;
 	m_mapChannels[info.MinorChannel].ServiceType=info.ServiceType;
 	m_mapChannels[info.MinorChannel].OtherMux=info.OtherMux;
 }

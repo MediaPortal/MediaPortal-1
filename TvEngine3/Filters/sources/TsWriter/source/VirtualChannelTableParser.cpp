@@ -156,11 +156,10 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 	  int channel_TSID			 = ((buf[start+8])<<8) + buf[start+9];
 	  int program_number			 = ((buf[start+10])<<8) + buf[start+11];
 	  int ETM_location			 = ((buf[start+12]>>6)&0x3);
-	  int access_controlled		 = ((buf[start+12]>>4)&0x1);
-	  int hidden          		 = ((buf[start+12]>>3)&0x1);
-	  int path_select     		 = ((buf[start+12]>>2)&0x1);
-	  int out_of_band     		 = ((buf[start+12]>>1)&0x1);
-	  int hide_guide     		     = ((buf[start+12]   )&0x1);
+	  int access_controlled		 = ((buf[start+12])&0x20);
+	  int hidden          		 = ((buf[start+12]>>3)&0x10);
+	  int hide_guide      		 = ((buf[start+12]>>2)&0x2);
+
 	  int service_type             = ((buf[start+13]   )&0x3f);
 	  int source_id				 = ((buf[start+14])<<8) + buf[start+15];
 	  int descriptors_length		 = ((buf[start+16]&0x3)<<8) + buf[start+17];
