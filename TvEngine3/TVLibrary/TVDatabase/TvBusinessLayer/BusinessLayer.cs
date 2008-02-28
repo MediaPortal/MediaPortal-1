@@ -1498,40 +1498,32 @@ namespace TvDatabase
         {
           case "mysql":
             importThread = new Thread(new ParameterizedThreadStart(ExecuteMySqlCommand));
-            break;
-            // return ExecuteMySqlCommand(aProgramList, connectString);
+            break;          
           case "sqlserver":
             importThread = new Thread(new ParameterizedThreadStart(ExecuteSqlServerCommand));
-            break;
-            // return ExecuteSqlServerCommand(aProgramList, connectString);
+            break;          
           default:
-            Log.Info("TvMovieDatabase: InsertPrograms unknown provider - {0}", provider);
+            Log.Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
             break;
-
-              importThread.Priority = ThreadPriority.BelowNormal;
-              importThread.Start(param);
+            importThread.Priority = ThreadPriority.BelowNormal;
+            importThread.Start(param);
         }
-
         return aProgramList.Count;
       }
       catch (Exception ex)
       {
-        Log.Error("TvMovieDatabase: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Error("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
         return 0;
       }
     }
 
     #region SQL methods
 
-    private int InsertMySql(string aConnectString, MySqlCommand aSqlCommand)
+    private void InsertMySql(string aConnectString, MySqlCommand aSqlCommand)
     {
       if (aSqlCommand == null || string.IsNullOrEmpty(aConnectString))
-      {
-        Log.Error("TvMovieDatabase: InsertMySql unsufficent params - {0}", aConnectString);
-        return 0;
-      }
+        return;
 
-      int recordCount = 0;
       MySqlTransaction transact = null;
       try
       {
@@ -1541,7 +1533,7 @@ namespace TvDatabase
           transact = connection.BeginTransaction();
           aSqlCommand.Connection = connection;
           aSqlCommand.Transaction = transact;
-          recordCount = aSqlCommand.ExecuteNonQuery();
+          aSqlCommand.ExecuteNonQuery();
           transact.Commit();
         }
       }
@@ -1552,17 +1544,15 @@ namespace TvDatabase
           transact.Rollback();
         }
         catch (Exception) { }
-        Log.Error("TvMovieDatabase: InsertMySql error - {0}", ex.Message);
+        Log.Error("BusinessLayer: InsertMySql error - {0}", ex.Message);
       }
-      return recordCount;
     }
 
-    private int InsertSqlServer(string aConnectString, SqlCommand aSqlCommand)
+    private void InsertSqlServer(string aConnectString, SqlCommand aSqlCommand)
     {
       if (aSqlCommand == null || string.IsNullOrEmpty(aConnectString))
-        return 0;
+        return;
 
-      int recordCount = 0;
       SqlTransaction transact = null;
       try
       {
@@ -1572,7 +1562,7 @@ namespace TvDatabase
           transact = connection.BeginTransaction();
           aSqlCommand.Connection = connection;
           aSqlCommand.Transaction = transact;
-          recordCount = aSqlCommand.ExecuteNonQuery();
+          aSqlCommand.ExecuteNonQuery();
           transact.Commit();
         }
       }
@@ -1583,10 +1573,8 @@ namespace TvDatabase
           transact.Rollback();
         }
         catch (Exception) { }
-
-        Log.Error("TvMovieDatabase: InsertSqlServer error - {0}", ex.Message);
+        Log.Error("BusinessLayer: InsertSqlServer error - {0}", ex.Message);
       }
-      return recordCount;
     }
 
     #endregion
@@ -1595,9 +1583,7 @@ namespace TvDatabase
 
     private void ExecuteMySqlCommand(object aImportParam)
     {
-      ImportParams inserts = (ImportParams)aImportParam;
-      
-      int rowCount = 0;
+      ImportParams MyParams = (ImportParams)aImportParam;
       MySqlCommand sqlInsert = new MySqlCommand();
       sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
 
@@ -1615,9 +1601,9 @@ namespace TvDatabase
       sqlInsert.Parameters.Add("?notify", MySqlDbType.Bit);
       sqlInsert.Parameters.Add("?parentalRating", MySqlDbType.Int32);
 
-      if (inserts.ProgramList.Count > 0)
+      if (MyParams.ProgramList.Count > 0)
       {
-        foreach (Program prog in inserts.ProgramList)
+        foreach (Program prog in MyParams.ProgramList)
         {
           sqlInsert.Parameters["idChannel"].Value = prog.IdChannel;
           sqlInsert.Parameters["startTime"].Value = prog.StartTime;
@@ -1633,17 +1619,14 @@ namespace TvDatabase
           sqlInsert.Parameters["notify"].Value = prog.Notify;
           sqlInsert.Parameters["parentalRating"].Value = prog.ParentalRating;
 
-          rowCount += InsertMySql(inserts.ConnectString, sqlInsert);
+          InsertMySql(MyParams.ConnectString, sqlInsert);
         }
       }
-      return;
     }
 
     private void ExecuteSqlServerCommand(object aImportParam)
     {
-      ImportParams inserts = (ImportParams)aImportParam;
-
-      int rowCount = 0;
+      ImportParams MyParams = (ImportParams)aImportParam;
       SqlCommand sqlInsert = new SqlCommand();
       sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating)";
 
@@ -1661,9 +1644,9 @@ namespace TvDatabase
       sqlInsert.Parameters.Add("notify", SqlDbType.Bit);
       sqlInsert.Parameters.Add("parentalRating", SqlDbType.Int);
 
-      if (inserts.ProgramList.Count > 0)
+      if (MyParams.ProgramList.Count > 0)
       {
-        foreach (Program prog in inserts.ProgramList)
+        foreach (Program prog in MyParams.ProgramList)
         {
           sqlInsert.Parameters["idChannel"].Value = prog.IdChannel;
           sqlInsert.Parameters["startTime"].Value = prog.StartTime;
@@ -1679,10 +1662,9 @@ namespace TvDatabase
           sqlInsert.Parameters["notify"].Value = prog.Notify;
           sqlInsert.Parameters["parentalRating"].Value = prog.ParentalRating;
 
-          rowCount += InsertSqlServer(inserts.ConnectString, sqlInsert);
+          InsertSqlServer(MyParams.ConnectString, sqlInsert);
         }
       }
-      return;
     }
 
     #endregion
