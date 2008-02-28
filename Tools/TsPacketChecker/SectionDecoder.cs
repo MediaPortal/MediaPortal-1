@@ -117,7 +117,7 @@ namespace TsPacketChecker
     public virtual void OnTsPacket(byte[] tsPacket)
     {
       TsHeader header = new TsHeader(tsPacket);
-      if (m_pid >= 0x1fff || m_tableId == -1) return;
+      if (m_pid >= 0x1fff) return;
       if (header.Pid != m_pid) return;
       if (!header.HasPayload) return;
 
