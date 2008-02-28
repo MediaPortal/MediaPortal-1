@@ -91,7 +91,7 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region variables
-    protected bool _isConexant = false;
+    bool _isConexant = false;
     IntPtr _ptrDiseqc = IntPtr.Zero;
     IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
     IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
@@ -175,13 +175,15 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_ptrDiseqc, 160, (Int32)4);//send_message_length
       Marshal.WriteInt32(_ptrDiseqc, 164, (Int32)0);//receive_message_length
       Marshal.WriteInt32(_ptrDiseqc, 168, (Int32)3);//amplitude_attenuation
-      Marshal.WriteByte(_ptrDiseqc, 172, 1);//tone_burst_modulated
-      Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);
-      Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);
-      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
+      Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED);//default to tone_burst_modulated
+      Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);//default
+      Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);//default
+      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message TRUE
 
       string txt = "";
-      for (int i = 0; i < 10; ++i)
+      for (int i = 0; i < 4; ++i)
+        txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
+      for (int i = 160; i < 185; i = (i + 4))
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       Log.Log.WriteFile("Conexant: SendDiseq: {0}", txt);
 
@@ -204,10 +206,10 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_ptrDiseqc, 160, (Int32)diSEqC.Length);//send_message_length
       Marshal.WriteInt32(_ptrDiseqc, 164, (Int32)0);//receive_message_length
       Marshal.WriteInt32(_ptrDiseqc, 168, (Int32)3);//amplitude_attenuation
-      Marshal.WriteByte(_ptrDiseqc, 172, 1);//tone_burst_modulated
+      Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED);//tone_burst_modulated
       Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);
       Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);
-      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
+      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message TRUE
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
       Log.Log.Info("conexant: setdiseqc returned:{0:X}", hr);
