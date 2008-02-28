@@ -193,7 +193,6 @@ namespace SetupTv.Sections
       base.OnSectionActivated();
     }
 
-
     /// <summary>
     /// Load stations from databases and fill controls with that data
     /// </summary>

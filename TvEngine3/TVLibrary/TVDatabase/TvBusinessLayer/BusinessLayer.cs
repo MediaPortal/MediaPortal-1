@@ -997,6 +997,15 @@ namespace TvDatabase
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
 
+    public void RemoveAllPrograms(int idChannel)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+      SqlStatement stmt = sb.GetStatement(true);
+      ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+    }
+
     public IList GetOnairNow()
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
@@ -1455,6 +1464,212 @@ namespace TvDatabase
       //  }
       //}      
     }
+
+
+    #region EPG Insert
+
+    /// <summary>
+    /// Batch inserts programs - intended for faster EPG import
+    /// </summary>
+    /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
+    /// <returns>The inserted record count</returns>
+    public int InsertPrograms(List<Program> aProgramList)
+    {
+      try
+      {
+        string provider;
+        Gentle.Framework.IGentleProvider prov = Gentle.Framework.ProviderFactory.GetDefaultProvider();
+        if (prov != null)
+          provider = prov.Name.ToLower();
+        else
+          provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
+
+        string connectString = prov.ConnectionString; // Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+
+        // TODO: /!\ Temporarily turn of index rebuilding and other stuff that would speed up bulk inserts
+        switch (provider)
+        {
+          case "mysql":
+            return ExecuteMySqlCommand(aProgramList, connectString);
+          case "sqlserver":
+            return ExecuteSqlServerCommand(aProgramList, connectString);
+          default:
+            Log.Info("TvMovieDatabase: InsertPrograms unknown provider - {0}", provider);
+            break;
+        }
+
+        return 0;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TvMovieDatabase: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
+        return 0;
+      }
+    }
+
+    #region SQL methods
+
+    private int InsertMySql(string aConnectString, MySqlCommand aSqlCommand)
+    {
+      if (aSqlCommand == null || string.IsNullOrEmpty(aConnectString))
+      {
+        Log.Error("TvMovieDatabase: InsertMySql unsufficent params - {0}", aConnectString);
+        return 0;
+      }
+
+      int recordCount = 0;
+      MySqlTransaction transact = null;
+      try
+      {
+        using (MySqlConnection connection = new MySqlConnection(aConnectString))
+        {
+          connection.Open();
+          transact = connection.BeginTransaction();
+          aSqlCommand.Connection = connection;
+          aSqlCommand.Transaction = transact;
+          recordCount = aSqlCommand.ExecuteNonQuery();
+          transact.Commit();
+        }
+      }
+      catch (Exception ex)
+      {
+        try
+        {
+          transact.Rollback();
+        }
+        catch (Exception) { }
+        Log.Error("TvMovieDatabase: InsertMySql error - {0}", ex.Message);
+      }
+      return recordCount;
+    }
+
+    private int InsertSqlServer(string aConnectString, SqlCommand aSqlCommand)
+    {
+      if (aSqlCommand == null || string.IsNullOrEmpty(aConnectString))
+        return 0;
+
+      int recordCount = 0;
+      SqlTransaction transact = null;
+      try
+      {
+        using (SqlConnection connection = new SqlConnection(aConnectString))
+        {
+          connection.Open();
+          transact = connection.BeginTransaction();
+          aSqlCommand.Connection = connection;
+          aSqlCommand.Transaction = transact;
+          recordCount = aSqlCommand.ExecuteNonQuery();
+          transact.Commit();
+        }
+      }
+      catch (Exception ex)
+      {
+        try
+        {
+          transact.Rollback();
+        }
+        catch (Exception) { }
+
+        Log.Error("TvMovieDatabase: InsertSqlServer error - {0}", ex.Message);
+      }
+      return recordCount;
+    }
+
+    #endregion
+
+    #region SQL Builder
+
+    private int ExecuteMySqlCommand(List<Program> aProgramList, string connectString)
+    {
+      int rowCount = 0;
+      MySqlCommand sqlInsert = new MySqlCommand();
+      sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
+
+      sqlInsert.Parameters.Add("?idChannel", MySqlDbType.Int32);
+      sqlInsert.Parameters.Add("?startTime", MySqlDbType.Datetime);
+      sqlInsert.Parameters.Add("?endTime", MySqlDbType.Datetime);
+      sqlInsert.Parameters.Add("?title", MySqlDbType.VarChar);
+      sqlInsert.Parameters.Add("?description", MySqlDbType.VarChar);
+      sqlInsert.Parameters.Add("?seriesNum", MySqlDbType.VarChar);
+      sqlInsert.Parameters.Add("?episodeNum", MySqlDbType.VarChar);
+      sqlInsert.Parameters.Add("?genre", MySqlDbType.VarChar);
+      sqlInsert.Parameters.Add("?originalAirDate", MySqlDbType.Datetime);
+      sqlInsert.Parameters.Add("?classification", MySqlDbType.VarChar);
+      sqlInsert.Parameters.Add("?starRating", MySqlDbType.Int32);
+      sqlInsert.Parameters.Add("?notify", MySqlDbType.Bit);
+      sqlInsert.Parameters.Add("?parentalRating", MySqlDbType.Int32);
+
+      if (aProgramList.Count > 0)
+      {
+        foreach (Program prog in aProgramList)
+        {
+          sqlInsert.Parameters["idChannel"].Value = prog.IdChannel;
+          sqlInsert.Parameters["startTime"].Value = prog.StartTime;
+          sqlInsert.Parameters["endTime"].Value = prog.EndTime;
+          sqlInsert.Parameters["title"].Value = prog.Title;
+          sqlInsert.Parameters["description"].Value = prog.Description;
+          sqlInsert.Parameters["seriesNum"].Value = prog.SeriesNum;
+          sqlInsert.Parameters["episodeNum"].Value = prog.EpisodeNum;
+          sqlInsert.Parameters["genre"].Value = prog.Genre;
+          sqlInsert.Parameters["originalAirDate"].Value = prog.OriginalAirDate;
+          sqlInsert.Parameters["classification"].Value = prog.Classification;
+          sqlInsert.Parameters["starRating"].Value = prog.StarRating;
+          sqlInsert.Parameters["notify"].Value = prog.Notify;
+          sqlInsert.Parameters["parentalRating"].Value = prog.ParentalRating;
+
+          rowCount += InsertMySql(connectString, sqlInsert);
+        }
+      }
+      return rowCount;
+    }
+
+    private int ExecuteSqlServerCommand(List<Program> aProgramList, string connectString)
+    {
+      int rowCount = 0;
+      SqlCommand sqlInsert = new SqlCommand();
+      sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating)";
+
+      sqlInsert.Parameters.Add("idChannel", SqlDbType.Int);
+      sqlInsert.Parameters.Add("startTime", SqlDbType.DateTime);
+      sqlInsert.Parameters.Add("endTime", SqlDbType.DateTime);
+      sqlInsert.Parameters.Add("title", SqlDbType.VarChar);
+      sqlInsert.Parameters.Add("description", SqlDbType.VarChar);
+      sqlInsert.Parameters.Add("seriesNum", SqlDbType.VarChar);
+      sqlInsert.Parameters.Add("episodeNum", SqlDbType.VarChar);
+      sqlInsert.Parameters.Add("genre", SqlDbType.VarChar);
+      sqlInsert.Parameters.Add("originalAirDate", SqlDbType.DateTime);
+      sqlInsert.Parameters.Add("classification", SqlDbType.VarChar);
+      sqlInsert.Parameters.Add("starRating", SqlDbType.Int);
+      sqlInsert.Parameters.Add("notify", SqlDbType.Bit);
+      sqlInsert.Parameters.Add("parentalRating", SqlDbType.Int);
+
+      if (aProgramList.Count > 0)
+      {
+        foreach (Program prog in aProgramList)
+        {
+          sqlInsert.Parameters["idChannel"].Value = prog.IdChannel;
+          sqlInsert.Parameters["startTime"].Value = prog.StartTime;
+          sqlInsert.Parameters["endTime"].Value = prog.EndTime;
+          sqlInsert.Parameters["title"].Value = prog.Title;
+          sqlInsert.Parameters["description"].Value = prog.Description;
+          sqlInsert.Parameters["seriesNum"].Value = prog.SeriesNum;
+          sqlInsert.Parameters["episodeNum"].Value = prog.EpisodeNum;
+          sqlInsert.Parameters["genre"].Value = prog.Genre;
+          sqlInsert.Parameters["originalAirDate"].Value = prog.OriginalAirDate;
+          sqlInsert.Parameters["classification"].Value = prog.Classification;
+          sqlInsert.Parameters["starRating"].Value = prog.StarRating;
+          sqlInsert.Parameters["notify"].Value = prog.Notify;
+          sqlInsert.Parameters["parentalRating"].Value = prog.ParentalRating;
+
+          rowCount += InsertSqlServer(connectString, sqlInsert);
+        }
+      }
+      return rowCount;
+    }
+
+    #endregion
+
+    #endregion
 
     #endregion
 
