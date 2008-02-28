@@ -109,6 +109,9 @@ namespace SetupTv.Sections
       this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
       this.textBoxMinfiles = new System.Windows.Forms.TextBox();
       this.label18 = new System.Windows.Forms.Label();
+      this.groupBox7 = new System.Windows.Forms.GroupBox();
+      this.checkBoxAlwaysFillHoles = new System.Windows.Forms.CheckBox();
+      this.label47 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox4.SuspendLayout();
@@ -121,6 +124,7 @@ namespace SetupTv.Sections
       this.groupBox2.SuspendLayout();
       this.tabPage4.SuspendLayout();
       this.groupBox3.SuspendLayout();
+      this.groupBox7.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -450,6 +454,7 @@ namespace SetupTv.Sections
       // 
       // tabPage3
       // 
+      this.tabPage3.Controls.Add(this.groupBox7);
       this.tabPage3.Controls.Add(this.label39);
       this.tabPage3.Controls.Add(this.label38);
       this.tabPage3.Controls.Add(this.label37);
@@ -481,7 +486,7 @@ namespace SetupTv.Sections
       // label39
       // 
       this.label39.AutoSize = true;
-      this.label39.Location = new System.Drawing.Point(344, 391);
+      this.label39.Location = new System.Drawing.Point(344, 364);
       this.label39.Name = "label39";
       this.label39.Size = new System.Drawing.Size(73, 13);
       this.label39.TabIndex = 36;
@@ -490,7 +495,7 @@ namespace SetupTv.Sections
       // label38
       // 
       this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label38.Location = new System.Drawing.Point(344, 227);
+      this.label38.Location = new System.Drawing.Point(344, 200);
       this.label38.Name = "label38";
       this.label38.Size = new System.Drawing.Size(120, 58);
       this.label38.TabIndex = 35;
@@ -499,7 +504,7 @@ namespace SetupTv.Sections
       // label37
       // 
       this.label37.AutoSize = true;
-      this.label37.Location = new System.Drawing.Point(343, 315);
+      this.label37.Location = new System.Drawing.Point(343, 288);
       this.label37.Name = "label37";
       this.label37.Size = new System.Drawing.Size(61, 13);
       this.label37.TabIndex = 34;
@@ -508,7 +513,7 @@ namespace SetupTv.Sections
       // label36
       // 
       this.label36.AutoSize = true;
-      this.label36.Location = new System.Drawing.Point(343, 345);
+      this.label36.Location = new System.Drawing.Point(343, 318);
       this.label36.Name = "label36";
       this.label36.Size = new System.Drawing.Size(121, 13);
       this.label36.TabIndex = 33;
@@ -517,7 +522,7 @@ namespace SetupTv.Sections
       // label35
       // 
       this.label35.AutoSize = true;
-      this.label35.Location = new System.Drawing.Point(343, 375);
+      this.label35.Location = new System.Drawing.Point(343, 348);
       this.label35.Name = "label35";
       this.label35.Size = new System.Drawing.Size(121, 13);
       this.label35.TabIndex = 32;
@@ -526,7 +531,7 @@ namespace SetupTv.Sections
       // label34
       // 
       this.label34.AutoSize = true;
-      this.label34.Location = new System.Drawing.Point(343, 360);
+      this.label34.Location = new System.Drawing.Point(343, 333);
       this.label34.Name = "label34";
       this.label34.Size = new System.Drawing.Size(109, 13);
       this.label34.TabIndex = 31;
@@ -535,7 +540,7 @@ namespace SetupTv.Sections
       // label33
       // 
       this.label33.AutoSize = true;
-      this.label33.Location = new System.Drawing.Point(343, 330);
+      this.label33.Location = new System.Drawing.Point(343, 303);
       this.label33.Name = "label33";
       this.label33.Size = new System.Drawing.Size(93, 13);
       this.label33.TabIndex = 30;
@@ -544,7 +549,7 @@ namespace SetupTv.Sections
       // label32
       // 
       this.label32.AutoSize = true;
-      this.label32.Location = new System.Drawing.Point(343, 300);
+      this.label32.Location = new System.Drawing.Point(343, 273);
       this.label32.Name = "label32";
       this.label32.Size = new System.Drawing.Size(96, 13);
       this.label32.TabIndex = 29;
@@ -553,7 +558,7 @@ namespace SetupTv.Sections
       // label31
       // 
       this.label31.AutoSize = true;
-      this.label31.Location = new System.Drawing.Point(343, 285);
+      this.label31.Location = new System.Drawing.Point(343, 258);
       this.label31.Name = "label31";
       this.label31.Size = new System.Drawing.Size(53, 13);
       this.label31.TabIndex = 28;
@@ -561,7 +566,7 @@ namespace SetupTv.Sections
       // 
       // btnTest
       // 
-      this.btnTest.Location = new System.Drawing.Point(262, 276);
+      this.btnTest.Location = new System.Drawing.Point(262, 249);
       this.btnTest.Name = "btnTest";
       this.btnTest.Size = new System.Drawing.Size(75, 23);
       this.btnTest.TabIndex = 27;
@@ -571,7 +576,7 @@ namespace SetupTv.Sections
       // 
       // edDescriptionTest
       // 
-      this.edDescriptionTest.Location = new System.Drawing.Point(76, 328);
+      this.edDescriptionTest.Location = new System.Drawing.Point(76, 301);
       this.edDescriptionTest.Multiline = true;
       this.edDescriptionTest.Name = "edDescriptionTest";
       this.edDescriptionTest.ReadOnly = true;
@@ -581,7 +586,7 @@ namespace SetupTv.Sections
       // label29
       // 
       this.label29.AutoSize = true;
-      this.label29.Location = new System.Drawing.Point(11, 331);
+      this.label29.Location = new System.Drawing.Point(11, 304);
       this.label29.Name = "label29";
       this.label29.Size = new System.Drawing.Size(63, 13);
       this.label29.TabIndex = 25;
@@ -589,7 +594,7 @@ namespace SetupTv.Sections
       // 
       // edTitleTest
       // 
-      this.edTitleTest.Location = new System.Drawing.Point(76, 302);
+      this.edTitleTest.Location = new System.Drawing.Point(76, 275);
       this.edTitleTest.Name = "edTitleTest";
       this.edTitleTest.ReadOnly = true;
       this.edTitleTest.Size = new System.Drawing.Size(261, 20);
@@ -598,7 +603,7 @@ namespace SetupTv.Sections
       // label30
       // 
       this.label30.AutoSize = true;
-      this.label30.Location = new System.Drawing.Point(11, 305);
+      this.label30.Location = new System.Drawing.Point(11, 278);
       this.label30.Name = "label30";
       this.label30.Size = new System.Drawing.Size(30, 13);
       this.label30.TabIndex = 23;
@@ -606,7 +611,7 @@ namespace SetupTv.Sections
       // 
       // edDescriptionTemplate
       // 
-      this.edDescriptionTemplate.Location = new System.Drawing.Point(76, 253);
+      this.edDescriptionTemplate.Location = new System.Drawing.Point(76, 226);
       this.edDescriptionTemplate.Name = "edDescriptionTemplate";
       this.edDescriptionTemplate.Size = new System.Drawing.Size(261, 20);
       this.edDescriptionTemplate.TabIndex = 22;
@@ -614,7 +619,7 @@ namespace SetupTv.Sections
       // label28
       // 
       this.label28.AutoSize = true;
-      this.label28.Location = new System.Drawing.Point(11, 256);
+      this.label28.Location = new System.Drawing.Point(11, 229);
       this.label28.Name = "label28";
       this.label28.Size = new System.Drawing.Size(63, 13);
       this.label28.TabIndex = 21;
@@ -622,7 +627,7 @@ namespace SetupTv.Sections
       // 
       // edTitleTemplate
       // 
-      this.edTitleTemplate.Location = new System.Drawing.Point(76, 227);
+      this.edTitleTemplate.Location = new System.Drawing.Point(76, 200);
       this.edTitleTemplate.Name = "edTitleTemplate";
       this.edTitleTemplate.Size = new System.Drawing.Size(261, 20);
       this.edTitleTemplate.TabIndex = 20;
@@ -630,7 +635,7 @@ namespace SetupTv.Sections
       // label27
       // 
       this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(11, 230);
+      this.label27.Location = new System.Drawing.Point(11, 203);
       this.label27.Name = "label27";
       this.label27.Size = new System.Drawing.Size(30, 13);
       this.label27.TabIndex = 19;
@@ -640,7 +645,7 @@ namespace SetupTv.Sections
       // 
       this.label26.AutoSize = true;
       this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label26.Location = new System.Drawing.Point(9, 201);
+      this.label26.Location = new System.Drawing.Point(9, 174);
       this.label26.Name = "label26";
       this.label26.Size = new System.Drawing.Size(397, 13);
       this.label26.TabIndex = 18;
@@ -653,9 +658,9 @@ namespace SetupTv.Sections
       this.groupBox5.Controls.Add(this.label22);
       this.groupBox5.Controls.Add(this.textBoxTSEpgTimeout);
       this.groupBox5.Controls.Add(this.label23);
-      this.groupBox5.Location = new System.Drawing.Point(12, 121);
+      this.groupBox5.Location = new System.Drawing.Point(14, 70);
       this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(325, 77);
+      this.groupBox5.Size = new System.Drawing.Size(224, 77);
       this.groupBox5.TabIndex = 17;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "EPG grabbing while timeshifting/recording";
@@ -713,9 +718,9 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
       this.groupBox2.Controls.Add(this.textBoxEpgTimeOut);
-      this.groupBox2.Location = new System.Drawing.Point(12, 16);
+      this.groupBox2.Location = new System.Drawing.Point(240, 70);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(325, 99);
+      this.groupBox2.Size = new System.Drawing.Size(224, 99);
       this.groupBox2.TabIndex = 16;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "EPG grabbing while idle";
@@ -947,6 +952,35 @@ namespace SetupTv.Sections
       this.label18.TabIndex = 15;
       this.label18.Text = "Minimum";
       // 
+      // groupBox7
+      // 
+      this.groupBox7.Controls.Add(this.checkBoxAlwaysFillHoles);
+      this.groupBox7.Controls.Add(this.label47);
+      this.groupBox7.Location = new System.Drawing.Point(14, 16);
+      this.groupBox7.Name = "groupBox7";
+      this.groupBox7.Size = new System.Drawing.Size(449, 50);
+      this.groupBox7.TabIndex = 37;
+      this.groupBox7.TabStop = false;
+      this.groupBox7.Text = "General";
+      // 
+      // checkBoxAlwaysFillHoles
+      // 
+      this.checkBoxAlwaysFillHoles.AutoSize = true;
+      this.checkBoxAlwaysFillHoles.Location = new System.Drawing.Point(126, 23);
+      this.checkBoxAlwaysFillHoles.Name = "checkBoxAlwaysFillHoles";
+      this.checkBoxAlwaysFillHoles.Size = new System.Drawing.Size(15, 14);
+      this.checkBoxAlwaysFillHoles.TabIndex = 9;
+      this.checkBoxAlwaysFillHoles.UseVisualStyleBackColor = true;
+      // 
+      // label47
+      // 
+      this.label47.AutoSize = true;
+      this.label47.Location = new System.Drawing.Point(14, 23);
+      this.label47.Name = "label47";
+      this.label47.Size = new System.Drawing.Size(106, 13);
+      this.label47.TabIndex = 8;
+      this.label47.Text = "Always try to fill holes";
+      // 
       // ScanSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -974,6 +1008,8 @@ namespace SetupTv.Sections
       this.tabPage4.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
+      this.groupBox7.ResumeLayout(false);
+      this.groupBox7.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1061,6 +1097,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.GroupBox groupBox6;
     private System.Windows.Forms.Label label45;
     private System.Windows.Forms.Label label46;
+    private System.Windows.Forms.GroupBox groupBox7;
+    private System.Windows.Forms.CheckBox checkBoxAlwaysFillHoles;
+    private System.Windows.Forms.Label label47;
 
   }
 }

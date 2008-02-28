@@ -68,6 +68,7 @@ namespace TvDatabase
     bool _storeOnlySelectedChannels;
     bool _checkForLastUpdate;
     int _epgReGrabAfter = 240;//4 hours
+    bool _alwaysFillHoles;
     TvBusinessLayer _layer;
     #endregion
 
@@ -87,6 +88,7 @@ namespace TvDatabase
       {
         _epgReGrabAfter = 240;
       }
+      _alwaysFillHoles = (_layer.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
     }
     #endregion
 
@@ -102,7 +104,7 @@ namespace TvDatabase
       _layer.RemoveOldPrograms(dbChannel.IdChannel);
 
       EpgHoleCollection holes = new EpgHoleCollection();
-      if (dbChannel.EpgHasGaps)
+      if (dbChannel.EpgHasGaps || _alwaysFillHoles)
       {
         Log.Epg("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
         IList infos = _layer.GetPrograms(dbChannel, DateTime.Now);

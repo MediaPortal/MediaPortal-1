@@ -62,6 +62,8 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("delayCardDetect", "0");
       delayDetectUpDown.Value = Convert.ToDecimal(setting.Value);
 
+      checkBoxAlwaysFillHoles.Checked = (layer.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
+
       checkBoxEnableEPGWhileIdle.Checked=(layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
       textBoxEpgTimeOut.Text = layer.GetSetting("timeoutEPG", "10").Value;
       textBoxEPGRefresh.Text = layer.GetSetting("timeoutEPGRefresh", "240").Value;
@@ -121,6 +123,13 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("timeoutSDT", "20");
       s.Value = textBoxSDT.Text;
+      s.Persist();
+
+      s = layer.GetSetting("generalEPGAlwaysFillHoles", "no");
+      if (checkBoxAlwaysFillHoles.Checked)
+        s.Value = "yes";
+      else
+        s.Value = "no";
       s.Persist();
 
       s = layer.GetSetting("idleEPGGrabberEnabled", "yes");
