@@ -968,12 +968,173 @@ namespace TvDatabase
     #endregion
 
     #region programs
+
+    #region EPG Insert
+
+    /// <summary>
+    /// Batch inserts programs - intended for faster EPG import
+    /// </summary>
+    /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
+    /// <returns>The inserted record count</returns>
+    public int InsertPrograms(List<Program> aProgramList)
+    {
+      string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
+      string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+      string sqlStatement = BuildInsertCommand(aProgramList);
+      if (!string.IsNullOrEmpty(sqlStatement))
+      {
+        switch (provider)
+        {
+          // TODO: /!\ Temporarily turn of index rebuilding and other stuff that would speed up bulk inserts
+          case "mysql":
+            return InsertMySql(connectString, sqlStatement);
+          case "sqlserver":
+            return InsertSqlServer(connectString, sqlStatement);
+        }
+      }
+      return 0;
+    }
+
+    #region SQL methods - move to factory
+
+    private int InsertMySql(string aConnectString, string aQueryString)
+    {
+      if (string.IsNullOrEmpty(aQueryString) || string.IsNullOrEmpty(aConnectString))
+      {
+        Log.Error("EpgDbInsert: InsertMySql unsufficent params - {0}, {1}", aConnectString, aQueryString);
+        return 0;
+      }
+
+      int recordCount = 0;
+      MySqlTransaction transact = null;
+      try
+      {
+        using (MySqlConnection connection = new MySqlConnection(aConnectString))
+        {
+          connection.Open();
+          transact = connection.BeginTransaction(IsolationLevel.ReadUncommitted);
+          MySqlCommand command = new MySqlCommand(aQueryString, connection, transact);
+          recordCount = command.ExecuteNonQuery();
+          transact.Commit();
+          Log.Info("EpgDbInsert: InsertMySql - Query: {0}, Connection: {1}, Count: {2}", aQueryString, aConnectString, recordCount.ToString());
+        }
+      }
+      catch (Exception ex)
+      {
+        transact.Rollback();
+        Log.Error("EpgDbInsert: InsertMySql error - {0}", ex.Message);
+      }
+      return recordCount;
+    }
+
+    // TODO: /!\ switch to sql connection (cannot test myself)
+    private int InsertSqlServer(string aConnectString, string aQueryString)
+    {
+      if (string.IsNullOrEmpty(aQueryString) || string.IsNullOrEmpty(aConnectString))
+        return 0;
+
+      int recordCount = 0;
+      OleDbTransaction transact = null;
+      try
+      {
+        using (OleDbConnection connection = new OleDbConnection(aConnectString))
+        {
+          connection.Open();
+          transact = connection.BeginTransaction(IsolationLevel.ReadUncommitted);
+          OleDbCommand command = new OleDbCommand(aQueryString, connection, transact);
+          recordCount = command.ExecuteNonQuery();
+          transact.Commit();
+        }
+      }
+      catch (Exception ex)
+      {
+        transact.Rollback();
+        Log.Error("EpgDbInsert: InsertSqlServer error - {0}", ex.Message);
+      }
+      return recordCount;
+    }
+
+    #endregion
+
+    #region SQL Builder
+
+    private string BuildInsertCommand(List<Program> aProgramList)
+    {
+      if (aProgramList.Count > 0)
+      {
+        StringBuilder sbsql = new StringBuilder();
+        sbsql.Append("INSERT INTO Program ");
+        sbsql.Append("(idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, ");
+        sbsql.Append("originalAirDate, classification, starRating, notify, parentalRating) ");
+        sbsql.Append("@VALUES ");
+
+        StringBuilder insertValues = new StringBuilder();
+        foreach (Program prog in aProgramList)
+        {
+          try
+          {
+            // If a prog fails due to invalid date it will just continue
+            StringBuilder sb = new StringBuilder();
+            sb.Append("(");
+            sb.Append(prog.IdChannel);
+            sb.Append(",");
+            sb.Append(prog.StartTime);
+            sb.Append(",");
+            sb.Append(prog.EndTime);
+            sb.Append(",");
+            sb.Append(prog.Title);
+            sb.Append(",");
+            sb.Append(prog.Description);
+            sb.Append(",");
+            sb.Append(prog.SeriesNum);
+            sb.Append(",");
+            sb.Append(prog.EpisodeNum);
+            sb.Append(",");
+            sb.Append(prog.Genre);
+            sb.Append(",");
+            sb.Append(prog.OriginalAirDate);
+            sb.Append(",");
+            sb.Append(prog.Classification);
+            sb.Append(",");
+            sb.Append(prog.StarRating);
+            sb.Append(",");
+            sb.Append(prog.Notify);
+            sb.Append(",");
+            sb.Append(prog.ParentalRating);
+            sb.Append("),");
+
+            insertValues.Append(sb.ToString());
+          }
+          catch (Exception ex)
+          {
+            Log.Error("EpgDbInsert: BuildInsertCommand error - {0}, {1}", ex.Message, prog.ToString());
+            continue;
+          }
+        }
+        // remove trailing ","
+        string finalValues = insertValues.ToString();
+        finalValues = finalValues.Remove(finalValues.Length - 1);
+
+        sbsql.Append(finalValues);
+        sbsql.Append("; ");
+
+        return sbsql.ToString();
+      }
+      else
+        return string.Empty;
+    }
+
+    #endregion
+
+    #endregion
+
     public string GetDateTimeString()
     {
       string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
       if (provider == "mysql") return "yyyy-MM-dd HH:mm:ss";
       return "yyyyMMdd HH:mm:ss";
     }
+
     public void RemoveOldPrograms()
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
@@ -983,6 +1144,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
+
     public void RemoveOldPrograms(int idChannel)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
@@ -993,6 +1155,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
+
     public IList GetOnairNow()
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
@@ -1019,6 +1182,7 @@ namespace TvDatabase
       IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
       return progs;
     }
+
     public IList GetPrograms(Channel channel, DateTime startTime, DateTime endTime)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
@@ -1080,6 +1244,7 @@ namespace TvDatabase
       }
       return maps;
     }
+
     public IList GetPrograms(DateTime startTime, DateTime endTime)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
@@ -1095,6 +1260,7 @@ namespace TvDatabase
       IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
       return progs;
     }
+
     public DateTime GetNewestProgramForChannel(int idChannel)
     {
       DateTime dtNewestEntry = DateTime.MinValue;
@@ -1109,7 +1275,6 @@ namespace TvDatabase
       else
         return DateTime.MinValue;
     }
-
 
     public IList GetProgramsByTitle(Channel channel, DateTime startTime, DateTime endTime, string title)
     {
@@ -1129,6 +1294,7 @@ namespace TvDatabase
       IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
       return progs;
     }
+
     public IList GetProgramsByTitle(DateTime startTime, DateTime endTime, string title)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
@@ -1257,6 +1423,7 @@ namespace TvDatabase
       return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
 
     }
+
     public IList SearchProgramsByDescription(string searchCriteria)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
@@ -1431,6 +1598,7 @@ namespace TvDatabase
       //  }
       //}      
     }
+
     #endregion
 
     #region schedules
@@ -1739,7 +1907,7 @@ namespace TvDatabase
     }
     #endregion
 
-    #region Channelgroups
+    #region channelgroups
     
     public RadioChannelGroup GetRadioChannelGroupByName(string name)
     {

@@ -92,9 +92,10 @@ namespace TvEngine
   class TvMovieDatabase
   {
     #region Members
-    private OleDbConnection _databaseConnection = null;
+    private OleDbConnection _databaseConnection = null;    
     private bool _canceled = false;
     private List<TVMChannel> _tvmEpgChannels;
+    private List<Program> _tvmEpgProgs = new List<Program>(200);
     private ArrayList _channelList = null;
     private int _programsCounter = 0;
     private bool _useShortProgramDesc = false;
@@ -104,7 +105,8 @@ namespace TvEngine
     private bool _slowImport = false;
     private int _actorCount = 5;
 
-    static string _xmlFile;
+    private static string _xmlFile;
+    private static TvBusinessLayer _tvbLayer;
     #endregion
 
     #region Events
@@ -191,6 +193,16 @@ namespace TvEngine
       get { return _programsCounter; }
     }
 
+    public static TvBusinessLayer TvBLayer
+    {
+      get
+      {
+        if (_tvbLayer == null)
+          _tvbLayer = new TvBusinessLayer();
+        return _tvbLayer;
+      }
+    }
+
     public static string TVMovieProgramPath
     {
       get
@@ -202,8 +214,7 @@ namespace TvEngine
           if (rkey != null)
             path = string.Format("{0}", rkey.GetValue("ProgrammPath"));
 
-        TvBusinessLayer layer = new TvBusinessLayer();
-        mpPath = layer.GetSetting("TvMovieInstallPath", path).Value;
+        mpPath = TvBLayer.GetSetting("TvMovieInstallPath", path).Value;
 
         if (File.Exists(mpPath))
           return mpPath;
@@ -223,8 +234,7 @@ namespace TvEngine
           if (rkey != null)
             path = string.Format("{0}", rkey.GetValue("DBDatei"));
 
-        TvBusinessLayer layer = new TvBusinessLayer();
-        mpPath = layer.GetSetting("TvMoviedatabasepath", path).Value;
+        mpPath = TvBLayer.GetSetting("TvMoviedatabasepath", path).Value;
 
         if (File.Exists(mpPath))
           return mpPath;
@@ -244,11 +254,8 @@ namespace TvEngine
         if (!File.Exists(newPath))
           newPath = path;
 
-        string mpPath = string.Empty;
-        TvBusinessLayer layer = new TvBusinessLayer();
-
-        mpPath = layer.GetSetting("TvMoviedatabasepath", string.Empty).Value;
-        Setting setting = layer.GetSetting("TvMovieEnabled");
+        string mpPath = TvBLayer.GetSetting("TvMoviedatabasepath", string.Empty).Value;
+        Setting setting = TvBLayer.GetSetting("TvMovieEnabled");
 
         if (newPath == path)
           setting.Value = string.Empty;
@@ -326,13 +333,11 @@ namespace TvEngine
     {
       get
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-
         try
         {
-          TimeSpan restTime = new TimeSpan(Convert.ToInt32(layer.GetSetting("TvMovieRestPeriod", "24").Value), 0, 0);
-          DateTime lastUpdated = Convert.ToDateTime(layer.GetSetting("TvMovieLastUpdate", "0").Value);
-          //        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
+          TimeSpan restTime = new TimeSpan(Convert.ToInt32(TvBLayer.GetSetting("TvMovieRestPeriod", "24").Value), 0, 0);
+          DateTime lastUpdated = Convert.ToDateTime(TvBLayer.GetSetting("TvMovieLastUpdate", "0").Value);
+          //        if (Convert.ToInt64(TvBLayer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
           if (lastUpdated >= (DateTime.Now - restTime))
           {
             return false;
@@ -371,8 +376,6 @@ namespace TvEngine
       DateTime ImportStartTime = DateTime.Now;
       Log.Debug("TVMovie: Importing database");
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-
       if (_canceled)
         return;
 
@@ -393,12 +396,14 @@ namespace TvEngine
 
       // setting update time of epg import to avoid that the background thread triggers another import
       // if the process lasts longer than the timer's update check interval
-      Setting setting = layer.GetSetting("TvMovieLastUpdate");
+      Setting setting = TvBLayer.GetSetting("TvMovieLastUpdate");
       setting.Value = DateTime.Now.ToString();
       setting.Persist();
 
       Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
       int counter = 0;
+
+      _tvmEpgProgs.Clear();
 
       foreach (TVMChannel station in _tvmEpgChannels)
       {
@@ -429,8 +434,16 @@ namespace TvEngine
               OnStationsChanged(counter, maximum, display);
             counter++;
             Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
+            _tvmEpgProgs.Clear();
             _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
-            Log.Debug("TVMovie: Imports complete");
+            
+            //if (_slowImport)
+            //  Thread.Sleep(50);
+            //Log.Error("TVMovie: Inserting {0} programs", _tvmEpgProgs.Count.ToString());
+            //int debugCount = TvBLayer.InsertPrograms(_tvmEpgProgs);
+            //if (_slowImport)
+            //  Thread.Sleep(50);
+            // Log.Info("TVMovie: Imports ({0}) completed", debugCount.ToString());
           }
           catch (Exception ex)
           {
@@ -445,7 +458,7 @@ namespace TvEngine
       {
         try
         {
-          setting = layer.GetSetting("TvMovieLastUpdate");
+          setting = TvBLayer.GetSetting("TvMovieLastUpdate");
           setting.Value = DateTime.Now.ToString();
           setting.Persist();
 
@@ -464,14 +477,12 @@ namespace TvEngine
     #region Private functions
     private void LoadMemberSettings()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-
-      _useShortProgramDesc = layer.GetSetting("TvMovieShortProgramDesc", "true").Value == "true";
-      _extendDescription = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
-      _showRatings = layer.GetSetting("TvMovieShowRatings", "false").Value == "true";
-      _showAudioFormat = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
-      _slowImport = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
-      _actorCount = Convert.ToInt32(layer.GetSetting("TvMovieLimitActors", "5").Value);
+      _useShortProgramDesc = TvBLayer.GetSetting("TvMovieShortProgramDesc", "true").Value == "true";
+      _extendDescription = TvBLayer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
+      _showRatings = TvBLayer.GetSetting("TvMovieShowRatings", "false").Value == "true";
+      _showAudioFormat = TvBLayer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
+      _slowImport = TvBLayer.GetSetting("TvMovieSlowImport", "false").Value == "true";
+      _actorCount = Convert.ToInt32(TvBLayer.GetSetting("TvMovieLimitActors", "5").Value);
 
       _xmlFile = String.Format(@"{0}\MediaPortal TV Server\TVMovieMapping.xml", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     }
@@ -479,6 +490,7 @@ namespace TvEngine
     private int ImportStation(string stationName, List<Mapping> channelNames, IList allChannels)
     {
       int counter = 0;
+      bool useGentle = true;
       string sqlSelect = string.Empty;
       StringBuilder sqlb = new StringBuilder();
 
@@ -493,11 +505,8 @@ namespace TvEngine
       sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;");
 
       sqlSelect = string.Format(sqlb.ToString(), stationName);
-
+      OleDbTransaction databaseTransaction = null;
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
-      OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
-
-      //DataSet tvMovieTable = new DataSet();
 
       foreach (Mapping map in channelNames)
         if (map.TvmEpgChannel == stationName)
@@ -509,38 +518,39 @@ namespace TvEngine
 
       try
       {
-        int programsCount = 0; //tvMovieTable.Tables["TVDaten"].Rows.Count;
-        //if (OnProgramsChanged != null)
-        //  OnProgramsChanged(0, programsCount + 1, string.Empty);        
-
+        int programsCount = 0;
         _databaseConnection.Open();
-        OleDbDataReader reader = databaseCommand.ExecuteReader();
+        // The main app might change epg details while importing
+        databaseTransaction = _databaseConnection.BeginTransaction(IsolationLevel.ReadCommitted);
+        databaseCommand.Transaction = databaseTransaction;
+        OleDbDataReader reader = databaseCommand.ExecuteReader(CommandBehavior.SequentialAccess);
 
         while (reader.Read())
         {
-          ImportSingleChannelData(channelNames, allChannels,
-                                  reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(),
-                                  reader[8].ToString(), reader[9].ToString(), reader[10].ToString(), reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
-                                  reader[14].ToString(), reader[15].ToString(), reader[16].ToString(), reader[17].ToString(), reader[18].ToString(), reader[19].ToString(), reader[20].ToString()
-                                 );
+          ImportSingleChannelData(channelNames, allChannels, useGentle,
+                                    reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(),
+                                    reader[8].ToString(), reader[9].ToString(), reader[10].ToString(), reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
+                                    reader[14].ToString(), reader[15].ToString(), reader[16].ToString(), reader[17].ToString(), reader[18].ToString(), reader[19].ToString(), reader[20].ToString()
+                                  );
           programsCount++;
           counter++;
         }
+        databaseTransaction.Commit();
         reader.Close();
 
         //if (OnProgramsChanged != null)
         //  OnProgramsChanged(programsCount + 1, programsCount + 1, string.Empty);
-
-        //databaseAdapter.Fill(tvMovieTable, "TVDaten");
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
-        Log.Error("TVMovie: Error accessing TV Movie Clickfinder database - Current import canceled, waiting for next schedule");
+        databaseTransaction.Rollback();
+        Log.Error("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
         Log.Error("TVMovie: Exception: {0}", ex);
         return 0;
       }
       catch (Exception ex1)
       {
+        databaseTransaction.Rollback();
         Log.Error("TVMovie: Exception: {0}", ex1);
         return 0;
       }
@@ -555,7 +565,7 @@ namespace TvEngine
     /// <summary>
     /// Takes a DataRow worth of EPG Details to persist them in MP's program table
     /// </summary>
-    private void ImportSingleChannelData(List<Mapping> channelNames, IList allChannels,
+    private void ImportSingleChannelData(List<Mapping> channelNames, IList allChannels, bool useGentlePersist, 
                                          string SenderKennung, string Beginn, string Ende, string Sendung, string Genre, string Kurzkritik, string KurzBeschreibung, string Beschreibung,
                                          string Audiodescription, string DolbySuround, string Stereo, string DolbyDigital, string Dolby, string Zweikanalton,
                                          string FSK, string Herstellungsjahr, string Originaltitel, string Regie, string Darsteller, string Interessant, string Bewertungen)
@@ -580,7 +590,7 @@ namespace TvEngine
       }
       catch (Exception ex2)
       {
-        Log.Error("TVMovie: Error parsing EPG data - {0},{1}", ex2.Message, ex2.StackTrace);
+        Log.Error("TVMovie: Error parsing EPG time data - {0},{1}", ex2.Message, ex2.StackTrace);
       }
 
       string title = Sendung;
@@ -720,10 +730,13 @@ namespace TvEngine
           }
 
           Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
-          prog.Persist();
-          
-          if (_slowImport)
-            Thread.Sleep(50);
+          if (useGentlePersist)
+          {
+            prog.Persist();
+            if (_slowImport)
+              Thread.Sleep(50);
+          }
+          _tvmEpgProgs.Add(prog);
         }
       }
     }
@@ -746,25 +759,25 @@ namespace TvEngine
       return mappingList;
     }
 
-    private bool CheckChannel(string channelName)
-    {
-      if (_channelList != null)
-        foreach (Channel channel in _channelList)
-          if (channel.Name == channelName)
-            return true;
+    //private bool CheckChannel(string channelName)
+    //{
+    //  if (_channelList != null)
+    //    foreach (Channel channel in _channelList)
+    //      if (channel.Name == channelName)
+    //        return true;
 
-      return false;
-    }
+    //  return false;
+    //}
 
-    private bool CheckStation(string stationName)
-    {
-      if (_tvmEpgChannels != null)
-        foreach (TVMChannel station in _tvmEpgChannels)
-          if (station.TvmEpgChannel == stationName)
-            return true;
+    //private bool CheckStation(string stationName)
+    //{
+    //  if (_tvmEpgChannels != null)
+    //    foreach (TVMChannel station in _tvmEpgChannels)
+    //      if (station.TvmEpgChannel == stationName)
+    //        return true;
 
-      return false;
-    }
+    //  return false;
+    //}
 
     private bool CheckEntry(ref DateTime progStart, ref DateTime progEnd, TimeSpan timeSharingStart, TimeSpan timeSharingEnd)
     {
