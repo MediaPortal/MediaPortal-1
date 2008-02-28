@@ -431,11 +431,9 @@ namespace TvEngine
             _tvmEpgProgs.Clear();
             _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
             if (_slowImport)
-              Thread.Sleep(100);
+              Thread.Sleep(75);
             int debugCount = TvBLayer.InsertPrograms(_tvmEpgProgs);
             Log.Info("TVMovie: Inserted {0} programs", debugCount);
-            if (_slowImport)
-              Thread.Sleep(100);
           }
           catch (Exception ex)
           {
@@ -721,11 +719,10 @@ namespace TvEngine
           if (useGentlePersist)
           {
             prog.Persist();
+            if (_slowImport)
+              Thread.Sleep(50);
           }
           _tvmEpgProgs.Add(prog);
-
-          if (_slowImport)
-            Thread.Sleep(50);
         }
       }
     }
@@ -1043,8 +1040,7 @@ namespace TvEngine
           startInfo.WorkingDirectory = Path.GetDirectoryName(UpdaterPath);
 
           Process UpdateProcess = Process.Start(startInfo);
-          //UpdateProcess.PriorityBoostEnabled = true;
-
+          UpdateProcess.PriorityClass = ProcessPriorityClass.BelowNormal;
           UpdateProcess.WaitForExit(600000); // do not wait longer than 10 minutes for the internet update
 
           BenchClock.Stop();
