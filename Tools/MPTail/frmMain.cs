@@ -334,5 +334,19 @@ namespace MPTail
       SaveSettings();
     }
     #endregion
+
+    private void saveToFileToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      RichTextBox rtb = richTextBoxMP;
+      if (richTextBoxTvEngine.Focused)
+        rtb = richTextBoxTvEngine;
+      SaveFileDialog dlg = new SaveFileDialog();
+      dlg.CheckPathExists = true;
+      dlg.Filter = "All files (*.*)|*.*";
+      dlg.OverwritePrompt = true;
+      dlg.RestoreDirectory = true;
+      if (dlg.ShowDialog() == DialogResult.OK)
+        rtb.SaveFile(dlg.FileName);
+    }
   }
 }

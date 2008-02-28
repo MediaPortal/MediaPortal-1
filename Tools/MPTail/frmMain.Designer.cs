@@ -72,6 +72,8 @@ namespace MPTail
       this.btnChooseFont = new System.Windows.Forms.Button();
       this.cbFollowTail = new System.Windows.Forms.CheckBox();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
+      this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.saveToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.PageCtrlCategory.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.MPTabCtrl.SuspendLayout();
@@ -81,6 +83,7 @@ namespace MPTail
       this.tabPageTvEngine.SuspendLayout();
       this.tabPage3.SuspendLayout();
       this.panel1.SuspendLayout();
+      this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // PageCtrlCategory
@@ -133,6 +136,7 @@ namespace MPTail
       // 
       // richTextBoxMP
       // 
+      this.richTextBoxMP.ContextMenuStrip = this.contextMenuStrip1;
       this.richTextBoxMP.Dock = System.Windows.Forms.DockStyle.Fill;
       this.richTextBoxMP.Location = new System.Drawing.Point(0, 0);
       this.richTextBoxMP.Name = "richTextBoxMP";
@@ -147,7 +151,7 @@ namespace MPTail
       this.tabPage2.Location = new System.Drawing.Point(4, 27);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(751, 319);
+      this.tabPage2.Size = new System.Drawing.Size(764, 293);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "TvServer";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -159,7 +163,7 @@ namespace MPTail
       this.TVETabCtrl.Location = new System.Drawing.Point(3, 3);
       this.TVETabCtrl.Name = "TVETabCtrl";
       this.TVETabCtrl.SelectedIndex = 0;
-      this.TVETabCtrl.Size = new System.Drawing.Size(745, 313);
+      this.TVETabCtrl.Size = new System.Drawing.Size(758, 287);
       this.TVETabCtrl.TabIndex = 1;
       this.TVETabCtrl.Selected += new System.Windows.Forms.TabControlEventHandler(this.MPTabCtrl_Selected);
       // 
@@ -169,17 +173,18 @@ namespace MPTail
       this.tabPageTvEngine.Location = new System.Drawing.Point(4, 24);
       this.tabPageTvEngine.Name = "tabPageTvEngine";
       this.tabPageTvEngine.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageTvEngine.Size = new System.Drawing.Size(982, 468);
+      this.tabPageTvEngine.Size = new System.Drawing.Size(750, 259);
       this.tabPageTvEngine.TabIndex = 0;
       this.tabPageTvEngine.Text = "Combined view";
       this.tabPageTvEngine.UseVisualStyleBackColor = true;
       // 
       // richTextBoxTvEngine
       // 
+      this.richTextBoxTvEngine.ContextMenuStrip = this.contextMenuStrip1;
       this.richTextBoxTvEngine.Dock = System.Windows.Forms.DockStyle.Fill;
       this.richTextBoxTvEngine.Location = new System.Drawing.Point(3, 3);
       this.richTextBoxTvEngine.Name = "richTextBoxTvEngine";
-      this.richTextBoxTvEngine.Size = new System.Drawing.Size(976, 462);
+      this.richTextBoxTvEngine.Size = new System.Drawing.Size(744, 253);
       this.richTextBoxTvEngine.TabIndex = 0;
       this.richTextBoxTvEngine.Text = "";
       this.richTextBoxTvEngine.WordWrap = false;
@@ -190,7 +195,7 @@ namespace MPTail
       this.tabPage3.Location = new System.Drawing.Point(4, 27);
       this.tabPage3.Name = "tabPage3";
       this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage3.Size = new System.Drawing.Size(751, 319);
+      this.tabPage3.Size = new System.Drawing.Size(764, 293);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "Custom";
       this.tabPage3.UseVisualStyleBackColor = true;
@@ -201,7 +206,7 @@ namespace MPTail
       this.CustomTabCtrl.Location = new System.Drawing.Point(3, 3);
       this.CustomTabCtrl.Name = "CustomTabCtrl";
       this.CustomTabCtrl.SelectedIndex = 0;
-      this.CustomTabCtrl.Size = new System.Drawing.Size(745, 313);
+      this.CustomTabCtrl.Size = new System.Drawing.Size(758, 287);
       this.CustomTabCtrl.TabIndex = 0;
       // 
       // panel1
@@ -285,6 +290,20 @@ namespace MPTail
       this.timer1.Interval = 250;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
+      // contextMenuStrip1
+      // 
+      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveToFileToolStripMenuItem});
+      this.contextMenuStrip1.Name = "contextMenuStrip1";
+      this.contextMenuStrip1.Size = new System.Drawing.Size(153, 48);
+      // 
+      // saveToFileToolStripMenuItem
+      // 
+      this.saveToFileToolStripMenuItem.Name = "saveToFileToolStripMenuItem";
+      this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.saveToFileToolStripMenuItem.Text = "Save to file";
+      this.saveToFileToolStripMenuItem.Click += new System.EventHandler(this.saveToFileToolStripMenuItem_Click);
+      // 
       // frmMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -307,6 +326,7 @@ namespace MPTail
       this.tabPage3.ResumeLayout(false);
       this.panel1.ResumeLayout(false);
       this.panel1.PerformLayout();
+      this.contextMenuStrip1.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -331,6 +351,8 @@ namespace MPTail
     private System.Windows.Forms.RichTextBox richTextBoxMP;
     private System.Windows.Forms.Button btnAddLogfile;
     private System.Windows.Forms.Button btnRemoveLog;
+    private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+    private System.Windows.Forms.ToolStripMenuItem saveToFileToolStripMenuItem;
   }
 }
 
