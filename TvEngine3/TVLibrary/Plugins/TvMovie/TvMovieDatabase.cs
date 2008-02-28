@@ -427,12 +427,18 @@ namespace TvEngine
             if (OnStationsChanged != null)
               OnStationsChanged(counter, maximum, display);
             counter++;
+            
             Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
+            
             _tvmEpgProgs.Clear();
+            
             _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
+
+            ThreadPriority importPrio = _slowImport ? ThreadPriority.Lowest : ThreadPriority.Normal;
             if (_slowImport)
               Thread.Sleep(75);
-            int debugCount = TvBLayer.InsertPrograms(_tvmEpgProgs);
+
+            int debugCount = TvBLayer.InsertPrograms(_tvmEpgProgs, importPrio);
             Log.Info("TVMovie: Inserted {0} programs", debugCount);
           }
           catch (Exception ex)

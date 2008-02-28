@@ -1480,7 +1480,7 @@ namespace TvDatabase
     /// </summary>
     /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
     /// <returns>The inserted record count</returns>
-    public int InsertPrograms(List<Program> aProgramList)
+    public int InsertPrograms(List<Program> aProgramList, ThreadPriority aThreadPriority)
     {
       try
       {
@@ -1498,16 +1498,19 @@ namespace TvDatabase
         {
           case "mysql":
             importThread = new Thread(new ParameterizedThreadStart(ExecuteMySqlCommand));
+            importThread.Priority = aThreadPriority;
+            importThread.Start(param);
             break;          
           case "sqlserver":
             importThread = new Thread(new ParameterizedThreadStart(ExecuteSqlServerCommand));
+            importThread.Priority = aThreadPriority;
+            importThread.Start(param);
             break;          
           default:
             Log.Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
-            break;
-            importThread.Priority = ThreadPriority.BelowNormal;
-            importThread.Start(param);
-        }
+            break;            
+        }       
+
         return aProgramList.Count;
       }
       catch (Exception ex)
@@ -1539,12 +1542,12 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
+        Log.Info("BusinessLayer: InsertMySql error - {0}", ex.Message);
         try
         {
           transact.Rollback();
         }
-        catch (Exception) { }
-        Log.Error("BusinessLayer: InsertMySql error - {0}", ex.Message);
+        catch (Exception) { }        
       }
     }
 
@@ -1573,7 +1576,7 @@ namespace TvDatabase
           transact.Rollback();
         }
         catch (Exception) { }
-        Log.Error("BusinessLayer: InsertSqlServer error - {0}", ex.Message);
+        Log.Info("BusinessLayer: InsertSqlServer error - {0}", ex.Message);
       }
     }
 
@@ -1583,86 +1586,96 @@ namespace TvDatabase
 
     private void ExecuteMySqlCommand(object aImportParam)
     {
-      ImportParams MyParams = (ImportParams)aImportParam;
       MySqlCommand sqlInsert = new MySqlCommand();
-      sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
-
-      sqlInsert.Parameters.Add("?idChannel", MySqlDbType.Int32);
-      sqlInsert.Parameters.Add("?startTime", MySqlDbType.Datetime);
-      sqlInsert.Parameters.Add("?endTime", MySqlDbType.Datetime);
-      sqlInsert.Parameters.Add("?title", MySqlDbType.VarChar);
-      sqlInsert.Parameters.Add("?description", MySqlDbType.VarChar);
-      sqlInsert.Parameters.Add("?seriesNum", MySqlDbType.VarChar);
-      sqlInsert.Parameters.Add("?episodeNum", MySqlDbType.VarChar);
-      sqlInsert.Parameters.Add("?genre", MySqlDbType.VarChar);
-      sqlInsert.Parameters.Add("?originalAirDate", MySqlDbType.Datetime);
-      sqlInsert.Parameters.Add("?classification", MySqlDbType.VarChar);
-      sqlInsert.Parameters.Add("?starRating", MySqlDbType.Int32);
-      sqlInsert.Parameters.Add("?notify", MySqlDbType.Bit);
-      sqlInsert.Parameters.Add("?parentalRating", MySqlDbType.Int32);
-
-      if (MyParams.ProgramList.Count > 0)
+      lock (sqlInsert)
       {
-        foreach (Program prog in MyParams.ProgramList)
-        {
-          sqlInsert.Parameters["idChannel"].Value = prog.IdChannel;
-          sqlInsert.Parameters["startTime"].Value = prog.StartTime;
-          sqlInsert.Parameters["endTime"].Value = prog.EndTime;
-          sqlInsert.Parameters["title"].Value = prog.Title;
-          sqlInsert.Parameters["description"].Value = prog.Description;
-          sqlInsert.Parameters["seriesNum"].Value = prog.SeriesNum;
-          sqlInsert.Parameters["episodeNum"].Value = prog.EpisodeNum;
-          sqlInsert.Parameters["genre"].Value = prog.Genre;
-          sqlInsert.Parameters["originalAirDate"].Value = prog.OriginalAirDate;
-          sqlInsert.Parameters["classification"].Value = prog.Classification;
-          sqlInsert.Parameters["starRating"].Value = prog.StarRating;
-          sqlInsert.Parameters["notify"].Value = prog.Notify;
-          sqlInsert.Parameters["parentalRating"].Value = prog.ParentalRating;
+        ImportParams MyParams = (ImportParams)aImportParam;
+        List<Program> currentInserts = new List<Program>(MyParams.ProgramList);
 
-          InsertMySql(MyParams.ConnectString, sqlInsert);
+        sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
+
+        sqlInsert.Parameters.Add("?idChannel", MySqlDbType.Int32);
+        sqlInsert.Parameters.Add("?startTime", MySqlDbType.Datetime);
+        sqlInsert.Parameters.Add("?endTime", MySqlDbType.Datetime);
+        sqlInsert.Parameters.Add("?title", MySqlDbType.VarChar);
+        sqlInsert.Parameters.Add("?description", MySqlDbType.VarChar);
+        sqlInsert.Parameters.Add("?seriesNum", MySqlDbType.VarChar);
+        sqlInsert.Parameters.Add("?episodeNum", MySqlDbType.VarChar);
+        sqlInsert.Parameters.Add("?genre", MySqlDbType.VarChar);
+        sqlInsert.Parameters.Add("?originalAirDate", MySqlDbType.Datetime);
+        sqlInsert.Parameters.Add("?classification", MySqlDbType.VarChar);
+        sqlInsert.Parameters.Add("?starRating", MySqlDbType.Int32);
+        sqlInsert.Parameters.Add("?notify", MySqlDbType.Bit);
+        sqlInsert.Parameters.Add("?parentalRating", MySqlDbType.Int32);
+
+        if (currentInserts.Count > 0)
+        {
+          foreach (Program prog in currentInserts)
+          {
+            sqlInsert.Parameters["?idChannel"].Value = prog.IdChannel;
+            sqlInsert.Parameters["?startTime"].Value = prog.StartTime;
+            sqlInsert.Parameters["?endTime"].Value = prog.EndTime;
+            sqlInsert.Parameters["?title"].Value = prog.Title;
+            sqlInsert.Parameters["?description"].Value = prog.Description;
+            sqlInsert.Parameters["?seriesNum"].Value = prog.SeriesNum;
+            sqlInsert.Parameters["?episodeNum"].Value = prog.EpisodeNum;
+            sqlInsert.Parameters["?genre"].Value = prog.Genre;
+            sqlInsert.Parameters["?originalAirDate"].Value = prog.OriginalAirDate;
+            sqlInsert.Parameters["?classification"].Value = prog.Classification;
+            sqlInsert.Parameters["?starRating"].Value = prog.StarRating;
+            sqlInsert.Parameters["?notify"].Value = prog.Notify;
+            sqlInsert.Parameters["?parentalRating"].Value = prog.ParentalRating;
+
+            InsertMySql(MyParams.ConnectString, sqlInsert);
+          }
         }
       }
     }
 
     private void ExecuteSqlServerCommand(object aImportParam)
     {
-      ImportParams MyParams = (ImportParams)aImportParam;
       SqlCommand sqlInsert = new SqlCommand();
-      sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating)";
-
-      sqlInsert.Parameters.Add("idChannel", SqlDbType.Int);
-      sqlInsert.Parameters.Add("startTime", SqlDbType.DateTime);
-      sqlInsert.Parameters.Add("endTime", SqlDbType.DateTime);
-      sqlInsert.Parameters.Add("title", SqlDbType.VarChar);
-      sqlInsert.Parameters.Add("description", SqlDbType.VarChar);
-      sqlInsert.Parameters.Add("seriesNum", SqlDbType.VarChar);
-      sqlInsert.Parameters.Add("episodeNum", SqlDbType.VarChar);
-      sqlInsert.Parameters.Add("genre", SqlDbType.VarChar);
-      sqlInsert.Parameters.Add("originalAirDate", SqlDbType.DateTime);
-      sqlInsert.Parameters.Add("classification", SqlDbType.VarChar);
-      sqlInsert.Parameters.Add("starRating", SqlDbType.Int);
-      sqlInsert.Parameters.Add("notify", SqlDbType.Bit);
-      sqlInsert.Parameters.Add("parentalRating", SqlDbType.Int);
-
-      if (MyParams.ProgramList.Count > 0)
+      lock (sqlInsert)
       {
-        foreach (Program prog in MyParams.ProgramList)
-        {
-          sqlInsert.Parameters["idChannel"].Value = prog.IdChannel;
-          sqlInsert.Parameters["startTime"].Value = prog.StartTime;
-          sqlInsert.Parameters["endTime"].Value = prog.EndTime;
-          sqlInsert.Parameters["title"].Value = prog.Title;
-          sqlInsert.Parameters["description"].Value = prog.Description;
-          sqlInsert.Parameters["seriesNum"].Value = prog.SeriesNum;
-          sqlInsert.Parameters["episodeNum"].Value = prog.EpisodeNum;
-          sqlInsert.Parameters["genre"].Value = prog.Genre;
-          sqlInsert.Parameters["originalAirDate"].Value = prog.OriginalAirDate;
-          sqlInsert.Parameters["classification"].Value = prog.Classification;
-          sqlInsert.Parameters["starRating"].Value = prog.StarRating;
-          sqlInsert.Parameters["notify"].Value = prog.Notify;
-          sqlInsert.Parameters["parentalRating"].Value = prog.ParentalRating;
+        ImportParams MyParams = (ImportParams)aImportParam;
+        List<Program> currentInserts = new List<Program>(MyParams.ProgramList);
 
-          InsertSqlServer(MyParams.ConnectString, sqlInsert);
+        sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating)";
+
+        sqlInsert.Parameters.Add("idChannel", SqlDbType.Int);
+        sqlInsert.Parameters.Add("startTime", SqlDbType.DateTime);
+        sqlInsert.Parameters.Add("endTime", SqlDbType.DateTime);
+        sqlInsert.Parameters.Add("title", SqlDbType.VarChar);
+        sqlInsert.Parameters.Add("description", SqlDbType.VarChar);
+        sqlInsert.Parameters.Add("seriesNum", SqlDbType.VarChar);
+        sqlInsert.Parameters.Add("episodeNum", SqlDbType.VarChar);
+        sqlInsert.Parameters.Add("genre", SqlDbType.VarChar);
+        sqlInsert.Parameters.Add("originalAirDate", SqlDbType.DateTime);
+        sqlInsert.Parameters.Add("classification", SqlDbType.VarChar);
+        sqlInsert.Parameters.Add("starRating", SqlDbType.Int);
+        sqlInsert.Parameters.Add("notify", SqlDbType.Bit);
+        sqlInsert.Parameters.Add("parentalRating", SqlDbType.Int);
+
+        if (currentInserts.Count > 0)
+        {
+          foreach (Program prog in currentInserts)
+          {
+            sqlInsert.Parameters["idChannel"].Value = prog.IdChannel;
+            sqlInsert.Parameters["startTime"].Value = prog.StartTime;
+            sqlInsert.Parameters["endTime"].Value = prog.EndTime;
+            sqlInsert.Parameters["title"].Value = prog.Title;
+            sqlInsert.Parameters["description"].Value = prog.Description;
+            sqlInsert.Parameters["seriesNum"].Value = prog.SeriesNum;
+            sqlInsert.Parameters["episodeNum"].Value = prog.EpisodeNum;
+            sqlInsert.Parameters["genre"].Value = prog.Genre;
+            sqlInsert.Parameters["originalAirDate"].Value = prog.OriginalAirDate;
+            sqlInsert.Parameters["classification"].Value = prog.Classification;
+            sqlInsert.Parameters["starRating"].Value = prog.StarRating;
+            sqlInsert.Parameters["notify"].Value = prog.Notify;
+            sqlInsert.Parameters["parentalRating"].Value = prog.ParentalRating;
+
+            InsertSqlServer(MyParams.ConnectString, sqlInsert);
+          }
         }
       }
     }
