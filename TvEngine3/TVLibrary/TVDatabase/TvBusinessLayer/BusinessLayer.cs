@@ -1042,6 +1042,22 @@ namespace TvDatabase
       return progs;
     }
 
+    public IList GetProgramExists(Channel channel, DateTime startTime, DateTime endTime)
+    {
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+
+      string sub = String.Format("(StartTime = '{0}' and EndTime = '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+
+      sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
+      sb.AddConstraint(string.Format("({0}) ", sub));
+      sb.AddOrderByField(true, "starttime");
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return progs;
+    }
+
     public Dictionary<int, List<Program>> GetProgramsForAllChannels(DateTime startTime, DateTime endTime, List<Channel> channelList)
     {
       Dictionary<int, List<Program>> maps = new Dictionary<int, List<Program>>();

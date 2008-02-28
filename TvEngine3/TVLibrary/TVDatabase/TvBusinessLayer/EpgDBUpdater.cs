@@ -69,6 +69,7 @@ namespace TvDatabase
     bool _checkForLastUpdate;
     int _epgReGrabAfter = 240;//4 hours
     bool _alwaysFillHoles;
+    bool _alwaysReplace;
     TvBusinessLayer _layer;
     #endregion
 
@@ -96,6 +97,7 @@ namespace TvDatabase
         _epgReGrabAfter = 240;
       }
       _alwaysFillHoles = (_layer.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
+      _alwaysReplace = (_layer.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
     }
     public void UpdateEpgForChannel(EpgChannel epgChannel)
     {
@@ -108,7 +110,7 @@ namespace TvDatabase
       _layer.RemoveOldPrograms(dbChannel.IdChannel);
 
       EpgHoleCollection holes = new EpgHoleCollection();
-      if (dbChannel.EpgHasGaps || _alwaysFillHoles)
+      if ((dbChannel.EpgHasGaps || _alwaysFillHoles) && !_alwaysReplace)
       {
         Log.Epg("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
         IList infos = _layer.GetPrograms(dbChannel, DateTime.Now);
@@ -139,13 +141,20 @@ namespace TvDatabase
           if (diff.Minutes > 5)
             hasGaps = true;
         }
-        if (epgProgram.StartTime <= dbLastProgram)
+        if (epgProgram.StartTime <= dbLastProgram && !_alwaysReplace)
         {
           if (epgProgram.StartTime < DateTime.Now) continue;
           if (!holes.FitsInAnyHole(epgProgram.StartTime, epgProgram.EndTime)) continue;
           Log.Epg("{0}: Great we stuffed an epg hole {1}-{2} :-)", _grabberName, epgProgram.StartTime.ToShortDateString()+" "+epgProgram.StartTime.ToShortTimeString(), epgProgram.EndTime.ToShortDateString()+" "+epgProgram.EndTime.ToShortTimeString());
         }
-        AddProgramAndApplyTemplates(dbChannel, epgProgram);
+        TvDatabase.Program prog = null;
+        if (_alwaysReplace)
+        {
+          IList epgs = _layer.GetProgramExists(dbChannel, epgProgram.StartTime, epgProgram.EndTime);
+          if (epgs.Count > 0)
+            prog = (TvDatabase.Program)epgs[0];
+        }
+        AddProgramAndApplyTemplates(dbChannel, epgProgram, prog);
         iInserted++;
         lastProgram = epgProgram;
       }
@@ -293,7 +302,7 @@ namespace TvDatabase
       if (genre == null) genre = "";
       if (classification == null) classification = "";
     }
-    private void AddProgramAndApplyTemplates(Channel dbChannel, EpgProgram ep)
+    private void AddProgramAndApplyTemplates(Channel dbChannel, EpgProgram ep,TvDatabase.Program dbProg)
     {
       string title; string description; string genre; int starRating; string classification; int parentRating;
       GetEPGLanguage(ep.Text, out title, out description, out genre, out starRating, out classification, out parentRating);
@@ -306,8 +315,20 @@ namespace TvDatabase
       values.Add("%CLASSIFICATION%", classification);
       values.Add("%PARENTALRATING%", parentRating.ToString());
       values.Add("%NEWLINE%", Environment.NewLine);
-      TvDatabase.Program prog = new TvDatabase.Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, EvalTemplate(_titleTemplate, values), EvalTemplate(_descriptionTemplate, values), genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification, parentRating);
-      prog.Persist();
+      title=EvalTemplate(_titleTemplate, values);
+      description=EvalTemplate(_descriptionTemplate, values);
+      if (dbProg==null)
+        dbProg = new TvDatabase.Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification, parentRating);
+      else
+      {
+        dbProg.Title=title;
+        dbProg.Description=description;
+        dbProg.Genre=genre;
+        dbProg.StarRating=starRating;
+        dbProg.Classification=classification;
+        dbProg.ParentalRating=parentRating;
+      }
+      dbProg.Persist();
     }
     #endregion
     #endregion
