@@ -498,9 +498,9 @@ namespace TvEngine
       sqlb.Append(", TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton");
       sqlb.Append(", TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Originaltitel, TVDaten.Regie, TVDaten.Darsteller");
       sqlb.Append(", TVDaten.Interessant, TVDaten.Bewertungen");
-      sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;");
+      sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=\"{1}\")) ORDER BY TVDaten.Beginn;");
 
-      sqlSelect = string.Format(sqlb.ToString(), stationName);
+      sqlSelect = string.Format(sqlb.ToString(), stationName, Convert.ToString((DateTime.Now.Subtract(TimeSpan.FromHours(4)))));
       OleDbTransaction databaseTransaction = null;
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
 
@@ -534,11 +534,8 @@ namespace TvEngine
         }
         databaseTransaction.Commit();
         reader.Close();
-
-        //if (OnProgramsChanged != null)
-        //  OnProgramsChanged(programsCount + 1, programsCount + 1, string.Empty);
       }
-      catch (System.Data.OleDb.OleDbException ex)
+      catch (OleDbException ex)
       {
         databaseTransaction.Rollback();
         Log.Error("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
@@ -567,8 +564,6 @@ namespace TvEngine
                                          string Audiodescription, string DolbySuround, string Stereo, string DolbyDigital, string Dolby, string Zweikanalton,
                                          string FSK, string Herstellungsjahr, string Originaltitel, string Regie, string Darsteller, string Interessant, string Bewertungen)
     {
-      // Log.Info("TVMovie: Import program: {0} - {1}", Beginn, Sendung);
-
       string channel = SenderKennung;
       DateTime end = DateTime.MinValue;
       DateTime start = DateTime.MinValue;
