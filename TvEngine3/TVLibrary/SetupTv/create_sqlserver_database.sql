@@ -357,10 +357,10 @@ CREATE UNIQUE CLUSTERED INDEX IX_Program ON Program
 )
 GO
 
-CREATE INDEX _dta_index_Program_EPG_Lookup ON Program 
+CREATE INDEX IX_Program_EPG_Lookup ON Program 
 (
-    idChannel ASC
-	startTime ASC
+    idChannel ASC,
+	startTime ASC,
     endTime ASC
 )
 INCLUDE ( title,
@@ -373,7 +373,6 @@ classification,
 starRating,
 notify,
 parentalRating) 
-WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) 
 GO
 
 CREATE STATISTICS _dta_stat_565577053_9 ON Channel(sortOrder)

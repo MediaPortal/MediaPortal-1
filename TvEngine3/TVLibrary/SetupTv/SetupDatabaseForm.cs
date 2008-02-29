@@ -72,8 +72,13 @@ namespace SetupTv
         }
         else
         {
-          _provider = ProviderType.SqlServer;
-          rbSQLServer.Checked = true;
+          if (serverType == "sqlserver")
+          {
+            _provider = ProviderType.SqlServer;
+            rbSQLServer.Checked = true;
+          }
+          else
+            return;
         }
 
         string[] parts = connectionString.Split(';');
@@ -304,12 +309,42 @@ namespace SetupTv
             connect.Open();
           }
         }
+        catch (SqlException sqlex)
+        {
+          if (sqlex.Class > 10)
+          {
+            if (sqlex.Class < 20 || sqlex.Number == 233)
+            {
+              if (sqlex.Number == 18456 || sqlex.Number == 233)
+              {
+                tbServerHostName.BackColor = Color.GreenYellow;
+                tbUserID.BackColor = Color.Red;
+                tbPassword.BackColor = Color.Red;
+              }
+              else
+              {
+                tbServerHostName.BackColor = Color.Yellow;
+                MessageBox.Show(string.Format("Test failed: {0}", sqlex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+              }
+            }
+            else
+            {
+              tbServerHostName.BackColor = Color.Red;
+              MessageBox.Show(string.Format("Connection error: {0}", sqlex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+          }
+          return;
+        }
         catch (Exception ex)
         {
+          tbServerHostName.BackColor = Color.Red;
           MessageBox.Show(this, "Connection failed!" + ex.Message);
           return;
         }
         SqlConnection.ClearAllPools();
+        tbServerHostName.BackColor = Color.GreenYellow;
+        tbUserID.BackColor = Color.GreenYellow;
+        tbPassword.BackColor = Color.GreenYellow;
         MessageBox.Show(this, "Connection succeeded!");
       }
       else
@@ -326,10 +361,11 @@ namespace SetupTv
         }
         catch (Exception ex)
         {
+          tbServerHostName.BackColor = Color.Red;
           MessageBox.Show(this, "Connection failed!" + ex.Message);
           return;
         }
-
+        tbServerHostName.BackColor = Color.GreenYellow;
         MessageBox.Show(this, "Connection succeeded!");
       }
     }
@@ -619,6 +655,22 @@ namespace SetupTv
         Process.Start("http://wiki.team-mediaportal.com/TV-Engine_0.3");
       }
       catch (Exception) {}
+    }
+
+    private void tbPassword_KeyUp(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter)
+        mpButtonTest_Click(sender, null);
+    }
+
+    private void pbSQLServer_Click(object sender, EventArgs e)
+    {
+      rbSQLServer.Checked = true;
+    }
+
+    private void pbMySQL_Click(object sender, EventArgs e)
+    {
+      rbMySQL.Checked = true;
     }
   }
 }
