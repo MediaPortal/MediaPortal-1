@@ -107,7 +107,7 @@ namespace SetupTv.Sections
       GroupNameForm dlg = new GroupNameForm();
       dlg.ShowDialog(this);
       if (dlg.GroupName.Length == 0) return;
-      ChannelGroup newGroup = new ChannelGroup(dlg.GroupName,9999);
+      ChannelGroup newGroup = new ChannelGroup(dlg.GroupName, 9999);
       newGroup.Persist();
       Init();
     }
@@ -150,7 +150,7 @@ namespace SetupTv.Sections
 
       mpListViewChannels.Items.Clear();
       mpListViewMapped.Items.Clear();
-      
+
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddConstraint(Operator.Equals, "isTv", 1);
       sb.AddOrderByField(true, "sortOrder");
@@ -168,7 +168,7 @@ namespace SetupTv.Sections
 
       foreach (GroupMap map in maps)
       {
-        Channel channel=map.ReferencedChannel();
+        Channel channel = map.ReferencedChannel();
         if (channel.IsTv == false) continue;
         int imageIndex = 1;
         if (channel.FreeToAir == false)
@@ -177,9 +177,9 @@ namespace SetupTv.Sections
 
         foreach (TuningDetail detail in channel.ReferringTuningDetail())
         {
-            mappedItem.SubItems.Add(Convert.ToString(detail.ChannelNumber).PadLeft(5,'0'));
+          mappedItem.SubItems.Add(Convert.ToString(detail.ChannelNumber).PadLeft(5, '0'));
         }
-        
+
         mappedItem.Tag = map;
         channelsMapped[channel.IdChannel] = true;
       }
@@ -265,7 +265,7 @@ namespace SetupTv.Sections
 
     private void mpListViewGroups_ColumnClick(object sender, ColumnClickEventArgs e)
     {
-        // Real sorting is now done via the up/down buttons
+      // Real sorting is now done via the up/down buttons
       /*if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
@@ -291,7 +291,7 @@ namespace SetupTv.Sections
 
     private void mpListViewMapped_DragDrop(object sender, DragEventArgs e)
     {
-      
+
     }
 
     private void mpListViewMapped_DragEnter(object sender, DragEventArgs e)
@@ -307,59 +307,59 @@ namespace SetupTv.Sections
     {
       for (int i = 0; i < mpListViewMapped.Items.Count; ++i)
       {
-        GroupMap map =(GroupMap) mpListViewMapped.Items[i].Tag;
+        GroupMap map = (GroupMap)mpListViewMapped.Items[i].Tag;
         map.SortOrder = i;
         map.Persist();
       }
     }
     void ReOrderGroups()
     {
-        for (int i = 0; i < mpListViewGroups.Items.Count; ++i)
-        {
-            ChannelGroup group = (ChannelGroup)mpListViewGroups.Items[i].Tag;
+      for (int i = 0; i < mpListViewGroups.Items.Count; ++i)
+      {
+        ChannelGroup group = (ChannelGroup)mpListViewGroups.Items[i].Tag;
 
-            group.SortOrder = i;
-            group.Persist();
-        }
+        group.SortOrder = i;
+        group.Persist();
+      }
     }
 
-      private void buttonUtp_Click(object sender, EventArgs e)
+    private void buttonUtp_Click(object sender, EventArgs e)
+    {
+      mpListViewGroups.BeginUpdate();
+      ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
+      if (indexes.Count == 0) return;
+      for (int i = 0; i < indexes.Count; ++i)
       {
-        mpListViewGroups.BeginUpdate();
-        ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
-        if (indexes.Count == 0) return;
-        for (int i = 0; i < indexes.Count; ++i)
+        int index = indexes[i];
+        if (index > 0)
         {
-            int index = indexes[i];
-            if (index > 0)
-            {
-                ListViewItem item = mpListViewGroups.Items[index];
-                mpListViewGroups.Items.RemoveAt(index);
-                mpListViewGroups.Items.Insert(index - 1, item);
-            }
-        }
-        ReOrderGroups();
-        mpListViewGroups.EndUpdate();
-      }
-
-      private void buttonDown_Click(object sender, EventArgs e)
-      {
-        mpListViewGroups.BeginUpdate();
-        ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
-        if (indexes.Count == 0) return;
-        if (mpListViewGroups.Items.Count < 2) return;
-        for (int i = indexes.Count - 1; i >= 0; i--)
-        {
-          int index = indexes[i];
           ListViewItem item = mpListViewGroups.Items[index];
           mpListViewGroups.Items.RemoveAt(index);
-          if (index + 1 < mpListViewGroups.Items.Count)
-            mpListViewGroups.Items.Insert(index + 1, item);
-          else
-            mpListViewGroups.Items.Add(item);
+          mpListViewGroups.Items.Insert(index - 1, item);
         }
-        ReOrderGroups();
-        mpListViewGroups.EndUpdate();
+      }
+      ReOrderGroups();
+      mpListViewGroups.EndUpdate();
+    }
+
+    private void buttonDown_Click(object sender, EventArgs e)
+    {
+      mpListViewGroups.BeginUpdate();
+      ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
+      if (indexes.Count == 0) return;
+      if (mpListViewGroups.Items.Count < 2) return;
+      for (int i = indexes.Count - 1; i >= 0; i--)
+      {
+        int index = indexes[i];
+        ListViewItem item = mpListViewGroups.Items[index];
+        mpListViewGroups.Items.RemoveAt(index);
+        if (index + 1 < mpListViewGroups.Items.Count)
+          mpListViewGroups.Items.Insert(index + 1, item);
+        else
+          mpListViewGroups.Items.Add(item);
+      }
+      ReOrderGroups();
+      mpListViewGroups.EndUpdate();
     }
     private void RenameGroup()
     {
@@ -411,7 +411,7 @@ namespace SetupTv.Sections
 
     private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
     {
-        mpListViewMapped.BeginUpdate();
+      mpListViewMapped.BeginUpdate();
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
         // Reverse the current sort direction for this column.
