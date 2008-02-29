@@ -58,6 +58,12 @@ namespace SetupTv.Sections
       Close();
     }
 
+    private void mpButton2_Click(object sender, EventArgs e)
+    {
+      DialogResult = DialogResult.Cancel;
+      Close();
+    }
+
     public string GroupName
     {
       get
@@ -72,12 +78,13 @@ namespace SetupTv.Sections
 
     private void mpTextBox1_KeyUp(object sender, KeyEventArgs e)
     {
-      if (e.KeyCode == Keys.Enter)
-      {
-        DialogResult = DialogResult.OK;
-        _groupName = mpTextBox1.Text;
-        Close();
-      }
+      // is done with form property: AcceptButton = mpbutton1
+      //if (e.KeyCode == Keys.Enter)
+      //{
+      //  DialogResult = DialogResult.OK;
+      //  _groupName = mpTextBox1.Text;
+      //  Close();
+      //}
     }
   }
 }

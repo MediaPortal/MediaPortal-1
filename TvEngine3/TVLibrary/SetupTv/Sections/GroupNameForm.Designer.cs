@@ -30,13 +30,14 @@ namespace SetupTv.Sections
     {
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpTextBox1 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(23, 13);
+      this.mpLabel1.Location = new System.Drawing.Point(12, 9);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(199, 13);
       this.mpLabel1.TabIndex = 0;
@@ -44,31 +45,48 @@ namespace SetupTv.Sections
       // 
       // mpTextBox1
       // 
-      this.mpTextBox1.Location = new System.Drawing.Point(26, 48);
+      this.mpTextBox1.Location = new System.Drawing.Point(15, 25);
       this.mpTextBox1.Name = "mpTextBox1";
-      this.mpTextBox1.Size = new System.Drawing.Size(238, 20);
+      this.mpTextBox1.Size = new System.Drawing.Size(242, 20);
       this.mpTextBox1.TabIndex = 0;
       this.mpTextBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.mpTextBox1_KeyUp);
       // 
-      // mpButton1
+      // mpButtonSave
       // 
-      this.mpButton1.Location = new System.Drawing.Point(189, 92);
-      this.mpButton1.Name = "mpButton1";
-      this.mpButton1.Size = new System.Drawing.Size(75, 23);
-      this.mpButton1.TabIndex = 1;
-      this.mpButton1.Text = "Save";
-      this.mpButton1.UseVisualStyleBackColor = true;
-      this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
+      this.mpButtonSave.Location = new System.Drawing.Point(15, 61);
+      this.mpButtonSave.Name = "mpButtonSave";
+      this.mpButtonSave.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonSave.TabIndex = 1;
+      this.mpButtonSave.Text = "Save";
+      this.mpButtonSave.UseVisualStyleBackColor = true;
+      this.mpButtonSave.Click += new System.EventHandler(this.mpButton1_Click);
+      // 
+      // mpButtonCancel
+      // 
+      this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.mpButtonCancel.Location = new System.Drawing.Point(182, 61);
+      this.mpButtonCancel.Name = "mpButtonCancel";
+      this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonCancel.TabIndex = 2;
+      this.mpButtonCancel.Text = "Cancel";
+      this.mpButtonCancel.UseVisualStyleBackColor = true;
+      this.mpButtonCancel.Click += new System.EventHandler(this.mpButton2_Click);
       // 
       // GroupNameForm
       // 
+      this.AcceptButton = this.mpButtonSave;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(282, 138);
-      this.Controls.Add(this.mpButton1);
+      this.CancelButton = this.mpButtonCancel;
+      this.ClientSize = new System.Drawing.Size(269, 96);
+      this.Controls.Add(this.mpButtonCancel);
+      this.Controls.Add(this.mpButtonSave);
       this.Controls.Add(this.mpTextBox1);
       this.Controls.Add(this.mpLabel1);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
       this.Name = "GroupNameForm";
+      this.ShowInTaskbar = false;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Enter name for new group";
       this.Load += new System.EventHandler(this.GroupName_Load);
       this.ResumeLayout(false);
@@ -80,6 +98,7 @@ namespace SetupTv.Sections
 
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPTextBox mpTextBox1;
-    private MediaPortal.UserInterface.Controls.MPButton mpButton1;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonSave;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
   }
 }
