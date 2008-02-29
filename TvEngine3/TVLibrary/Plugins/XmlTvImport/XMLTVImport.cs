@@ -770,7 +770,7 @@ namespace TvEngine
                     programs.Add(programsInDbs[i]);
                 }
 
-                //Thread.Sleep(_backgroundDelay);
+                List<Program> importProgs = new List<Program>(progChan.programs.Count);
 
                 for (int i = 0; i < progChan.programs.Count; ++i)
                 {
@@ -796,24 +796,29 @@ namespace TvEngine
 
                     if (!overlaps)
                     {
-                      try
-                      {
-                        prog.Persist();
-                      }
-                      catch (Exception e)
-                      {
-                        Log.Error("Error while saving {0}", prog.IdChannel + ":" + prog.Title + ":" + prog.Description);
-                        throw e;
-                      }
+                      importProgs.Add(prog);
+
+                      //try
+                      //{
+                      //  prog.Persist();
+                      //}
+                      //catch (Exception e)
+                      //{
+                      //  Log.Error("Error while saving {0}", prog.IdChannel + ":" + prog.Title + ":" + prog.Description);
+                      //  throw e;
+                      //}
                       //Thread.Sleep(_backgroundDelay);
                     }
 
-                    if (prog.StartTime < _status.StartTime) _status.StartTime = prog.StartTime;
-                    if (prog.EndTime > _status.EndTime) _status.EndTime = prog.EndTime;
+                    if (prog.StartTime < _status.StartTime)
+                      _status.StartTime = prog.StartTime;
+                    if (prog.EndTime > _status.EndTime)
+                      _status.EndTime = prog.EndTime;
                     _status.Programs++;
                     if (showProgress && ShowProgress != null && (_status.Programs % 100) == 0) ShowProgress(_status);
                   }
                 }
+                layer.InsertPrograms(importProgs, ThreadPriority.AboveNormal);
               }
             }
               #endregion

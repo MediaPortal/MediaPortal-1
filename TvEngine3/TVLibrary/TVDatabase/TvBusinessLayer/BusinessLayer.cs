@@ -1446,7 +1446,10 @@ namespace TvDatabase
     };
 
     /// <summary>
-    /// Batch inserts programs - intended for faster EPG import
+    /// Batch inserts programs - intended for faster EPG import. You must make sure before that there are no duplicates 
+    /// (e.g. delete all program data of the current channel).
+    /// Also you MUST provide a true copy of "aProgramList". If you update it's reference in your own code the values will get overwritten
+    /// (possibly before they are written to disk)!
     /// </summary>
     /// <param name="aProgramList">A list of persistable gentle.NET Program objects mapping to the Programs table</param>
     /// <param name="aThreadPriority">Use "Lowest" for Background imports allowing LiveTV, AboveNormal for full speed</param>
