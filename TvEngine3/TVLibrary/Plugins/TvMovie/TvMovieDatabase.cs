@@ -434,11 +434,13 @@ namespace TvEngine
             
             _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
 
-            ThreadPriority importPrio = _slowImport ? ThreadPriority.Lowest : ThreadPriority.AboveNormal;
+            ThreadPriority importPrio = _slowImport ? ThreadPriority.BelowNormal : ThreadPriority.AboveNormal;
             if (_slowImport)
               Thread.Sleep(30);
 
-            int debugCount = TvBLayer.InsertPrograms(_tvmEpgProgs, importPrio);
+            // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
+            List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
+            int debugCount = TvBLayer.InsertPrograms(InsertCopy, importPrio);
             Log.Info("TVMovie: Inserted {0} programs", debugCount);
           }
           catch (Exception ex)

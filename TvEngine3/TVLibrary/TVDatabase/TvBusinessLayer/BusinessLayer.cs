@@ -1505,13 +1505,13 @@ namespace TvDatabase
             sleepTime = 0;
             break;
           case ThreadPriority.Normal:      // this is almost enough on dualcore systems for one cpu to gather epg and the other to insert it
-            sleepTime = 10;
+            sleepTime = 16;
             break;
           case ThreadPriority.BelowNormal: // on faster systems this might be enough for background importing
-            sleepTime = 30;
+            sleepTime = 32;
             break;
           case ThreadPriority.Lowest:      // even a single core system is enough to use MP while importing.
-            sleepTime = 75;
+            sleepTime = 64;
             break;
         }
 
