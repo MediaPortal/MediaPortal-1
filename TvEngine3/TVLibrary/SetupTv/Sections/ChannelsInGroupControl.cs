@@ -224,7 +224,7 @@ namespace SetupTv.Sections
     {
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0) return;
-      GroupMap map=(GroupMap)listView1.Items[indexes[0]].Tag;
+      GroupMap map = (GroupMap)listView1.Items[indexes[0]].Tag;
       FormPreview previewWindow = new FormPreview();
       previewWindow.Channel = map.ReferencedChannel();
       previewWindow.ShowDialog(this);
