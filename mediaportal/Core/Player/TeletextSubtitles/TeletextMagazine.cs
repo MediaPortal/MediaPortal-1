@@ -153,9 +153,9 @@ namespace MediaPortal.Player.Subtitles
 		        Log.Debug("(BLANK PAGE)");
 	        }*/
             
-            byte[] text = new byte[TELETEXT_WIDTH * TELETEXT_LINES];
-            Array.Copy(pageContent, text, TELETEXT_LINES * TELETEXT_WIDTH);
-            TextConversion.Convert(language, text);
+            byte[] byte_text = new byte[TELETEXT_WIDTH * TELETEXT_LINES];
+            Array.Copy(pageContent, byte_text, TELETEXT_LINES * TELETEXT_WIDTH);
+            char[] text = TextConversion.Convert(language, byte_text);
 
             LineContent[] lc = new LineContent[TELETEXT_LINES];
 
