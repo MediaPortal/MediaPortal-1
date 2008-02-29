@@ -57,6 +57,7 @@ namespace SetupTv.Sections
             this.columnHeader1});
       this.listView1.ContextMenuStrip = this.contextMenuStrip1;
       this.listView1.FullRowSelect = true;
+      this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.listView1.HideSelection = false;
       this.listView1.LabelEdit = true;
       this.listView1.LargeImageList = this.imageList1;
@@ -68,14 +69,14 @@ namespace SetupTv.Sections
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
       this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
-      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
       this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
+      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
       this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
       // 
       // columnHeader1
       // 
       this.columnHeader1.Text = "Name";
-      this.columnHeader1.Width = 120;
+      this.columnHeader1.Width = 321;
       // 
       // contextMenuStrip1
       // 
@@ -172,6 +173,7 @@ namespace SetupTv.Sections
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.BackColor = System.Drawing.Color.Transparent;
       this.Controls.Add(this.mpButtonPreview);
       this.Controls.Add(this.mpButtonDel);
       this.Controls.Add(this.buttonDown);
