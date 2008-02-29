@@ -361,6 +361,7 @@ namespace SetupTv.Sections
       ReOrderGroups();
       mpListViewGroups.EndUpdate();
     }
+
     private void RenameGroup()
     {
       ListView.SelectedListViewItemCollection items = mpListViewGroups.SelectedItems;
@@ -411,6 +412,8 @@ namespace SetupTv.Sections
 
     private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
     {
+      // Real sorting is now done via the up/down buttons
+      /*
       mpListViewMapped.BeginUpdate();
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
@@ -435,6 +438,7 @@ namespace SetupTv.Sections
       this.mpListViewMapped.Sort();
       ReOrderMap();
       mpListViewMapped.EndUpdate();
+       */
     }
 
     private void btnUp_Click(object sender, EventArgs e)
