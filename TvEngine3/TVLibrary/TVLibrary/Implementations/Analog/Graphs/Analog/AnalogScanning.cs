@@ -24,14 +24,12 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using DirectShowLib;
 
 namespace TvLibrary.Implementations.Analog
 {
-  
   /// <summary>
   /// Class which implements scanning for tv/radio channels for analog cards
   /// </summary>
@@ -42,7 +40,6 @@ namespace TvLibrary.Implementations.Analog
     int _radioSensitivity = 1;
     ManualResetEvent _event;
     IAnalogChanelScan _scanner;
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="T:AnalogScanning"/> class.
@@ -116,7 +113,8 @@ namespace TvLibrary.Implementations.Analog
 
         if (channel.IsTv)
         {
-          try {
+          try
+          {
             _scanner = _card.GetChannelScanner();
             bool possible;
             _scanner.IsScanningPossible(out possible);
@@ -156,12 +154,18 @@ namespace TvLibrary.Implementations.Analog
                 }
               }
             }
-          } finally {
-            if (_scanner != null) {
+          }
+          finally
+          {
+            if (_scanner != null)
+            {
               _scanner.SetCallBack(null);
               _scanner.Stop();
             }
-            _event.Close();
+            if (_event != null)
+            {
+              _event.Close();
+            }
           }
         }
         List<IChannel> list = new List<IChannel>();
@@ -178,18 +182,15 @@ namespace TvLibrary.Implementations.Analog
     }
 
     #region IAnalogChannelScanCallback Members
-
     /// <summary>
     /// Called when [scanner done].
     /// </summary>
     /// <returns></returns>
-    public int OnScannerDone() {
+    public int OnScannerDone()
+    {
       _event.Set();
       return 0;
     }
-
     #endregion
-
-  
   }
 }
