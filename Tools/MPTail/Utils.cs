@@ -40,19 +40,18 @@ namespace MPTail
     public int categoryIndex;
     public int tabIndex;
   }
+  // This is just a helper class to allow to insert duplicate keys in a SortedDictionary
+  // If a timestamp is equal to an existing one we just return 1 instead of 0
   public class MyDateTime : IComparable
   {
     DateTime dt;
-    int counter;
 
-    public MyDateTime(int instanceId, DateTime dateTime)
+    public MyDateTime(DateTime dateTime)
     {
-      counter = instanceId;
       dt = dateTime;
     }
-    public MyDateTime(int instanceId, string dateTimeStr)
+    public MyDateTime(string dateTimeStr)
     {
-      counter = instanceId;
       dt = DateTime.Parse(dateTimeStr);
     }
 

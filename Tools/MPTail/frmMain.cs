@@ -177,7 +177,7 @@ namespace MPTail
     }
     private string FormatCombinedLogLine(string logger, DateTime dt, string line,int maxLoggerSize)
     {
-      string s = dt.ToShortDateString() + " " + dt.ToShortTimeString()+".";
+      string s = dt.ToShortDateString() + " " + dt.ToLongTimeString()+".";
       string milli = dt.Millisecond.ToString();
       while (milli.Length < 3)
         milli += "0";
@@ -214,18 +214,20 @@ namespace MPTail
           if (!DateTime.TryParse(dtStr, out dt)) 
             continue;
           if (tr.Category==LoggerCategory.TvEngine)
-            tveCombined.Add(new MyDateTime(tveCombined.Count + 1, dt), FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename), dt, nline,16));
+            tveCombined.Add(new MyDateTime(dt), FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename), dt, nline,16));
           else
-            mpCombined.Add(new MyDateTime(tveCombined.Count + 1, dt), FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename), dt, nline,13));
+            mpCombined.Add(new MyDateTime(dt), FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename), dt, nline,13));
         }
 
       }
       foreach (string cline in tveCombined.Values)
         richTextBoxTvEngine.AppendText(cline);
-      richTextBoxTvEngine.Focus();
+      if (cbFollowTail.Checked)
+        richTextBoxTvEngine.Focus();
       foreach (string cline in mpCombined.Values)
         richTextBoxMP.AppendText(cline);
-      richTextBoxMP.Focus();
+      if (cbFollowTail.Checked)
+        richTextBoxMP.Focus();
     }
 
     private void Form1_Shown(object sender, EventArgs e)
@@ -330,12 +332,6 @@ namespace MPTail
         CustomTabCtrl.TabPages.Remove(tab);
       }
     }
-    private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
-    {
-      SaveSettings();
-    }
-    #endregion
-
     private void saveToFileToolStripMenuItem_Click(object sender, EventArgs e)
     {
       RichTextBox rtb = richTextBoxMP;
@@ -349,5 +345,10 @@ namespace MPTail
       if (dlg.ShowDialog() == DialogResult.OK)
         rtb.SaveFile(dlg.FileName);
     }
+    private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+    {
+      SaveSettings();
+    }
+    #endregion
   }
 }
