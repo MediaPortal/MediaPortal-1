@@ -221,7 +221,7 @@ CREATE TABLE Program(
 	starRating int NOT NULL,
 	notify bit NOT NULL,
 	parentalRating int NOT NULL,
- CONSTRAINT PK_Programs PRIMARY KEY
+ CONSTRAINT PK_Programs PRIMARY KEY NONCLUSTERED
 (
 	idProgram ASC
 )
@@ -349,7 +349,7 @@ GO
 
 ---- create indexes -----
 
-CREATE UNIQUE NONCLUSTERED INDEX IX_Program ON Program 
+CREATE UNIQUE CLUSTERED INDEX IX_Program ON Program 
 (
 	idChannel ASC,
 	startTime ASC,
