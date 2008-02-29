@@ -75,10 +75,8 @@ namespace TvLibrary.Implementations.DVB
         {
           KSPropertySupport supported;
           _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-          //Log.Log.Info("GenericATSC: QuerySupported: {0}", supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            //Log.Log.Info("ViXS ATSC: QAM capable card found!");
             _isViXSATSC = true;
           }
         }
@@ -86,28 +84,15 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// sets the QAM modulation for ATSC cards under XP
+    /// sets the QAM modulation for ViXS ATSC cards under XP
     /// </summary>
     public void SetViXSQam(ATSCChannel channel)
     {
       int hr;
       KSPropertySupport supported;
       _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-      //below is for info only - uncomment if debugging
-      // /*
-      int length;
-      if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
-      {
-        Log.Log.Info("ViXS ATSC: Get ModulationType");
-        Marshal.WriteInt32(_tempValue, (Int32)0);
-        hr = _propertySet.Get(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
-        Log.Log.Info("ViXS ATSC: Get returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
-      }
-      // */
-      //Log.Log.Info("GenericATSC: BdaQAMTunerExtention supported: {0}", supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("ViXS ATSC: Set ModulationType: {0}", channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
         hr = _propertySet.Set(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
         if (hr != 0)
@@ -116,15 +101,37 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       //below is for info only - uncomment if debugging
-      // /*
+      /*
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
-        Log.Log.Info("ViXS ATSC: Get ModulationType");
+        int length;
+        //Log.Log.Info("ViXS ATSC: Get ModulationType");
         Marshal.WriteInt32(_tempValue, (Int32)0);
         hr = _propertySet.Get(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
         Log.Log.Info("ViXS ATSC: Get returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
       }
-      // */
+      */
+    }
+
+    /// <summary>
+    /// gets the QAM modulation for ViXS ATSC cards under XP
+    /// </summary>
+    public void GetViXSQam(ATSCChannel channel)
+    {
+      int hr;
+      KSPropertySupport supported;
+      _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+      int length;
+      if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
+      {
+        Marshal.WriteInt32(_tempValue, (Int32)0);
+        hr = _propertySet.Get(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
+        if (hr != 0)
+        {
+          Log.Log.Info("ViXS ATSC: Set returned:{0:X}", hr);
+        }
+        Log.Log.Info("ViXS ATSC: Get ModulationType returned value: {0}", Marshal.ReadInt32(_tempValue));
+      }
     }
 
     /// <summary>

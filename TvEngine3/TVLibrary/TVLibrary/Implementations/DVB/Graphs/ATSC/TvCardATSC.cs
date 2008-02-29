@@ -221,8 +221,13 @@ namespace TvLibrary.Implementations.DVB
         hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
         hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);
         _tuneRequest.put_Locator(locator);
+        //ViXS ATSC QAM check
+        _conditionalAccess.CheckVIXSQAM(atscChannel);
+        //QAM set paramters...
         _conditionalAccess.CheckATSCQAM(atscChannel);
         ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
+        //ViXS QAM set is done here...
+        _conditionalAccess.CheckViXSATSCQAM(atscChannel);
         RunGraph(ch.SubChannelId);
         return ch;
       }

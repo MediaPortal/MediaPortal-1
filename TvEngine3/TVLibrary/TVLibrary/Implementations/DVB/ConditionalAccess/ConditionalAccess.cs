@@ -682,6 +682,10 @@ namespace TvLibrary.Implementations.DVB
       return channel;
     }
 
+    /// <summary>
+    /// check if the card are ATSC QAM capable cards.
+    /// If so sets the QAM modulation for those specific ATSC cards.
+    /// </summary>
     public ATSCChannel CheckATSCQAM(ATSCChannel channel)
     {
       try
@@ -698,11 +702,48 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Info("Setting OnAir ATSC modulation to {0}", channel.ModulationType);
             _isonairatsc.SetOnAirQam(channel);
           }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+      return channel;
+    }
+
+    /// <summary>
+    /// sets the QAM modulation for ViXS specific ATSC cards.
+    /// </summary>
+    public ATSCChannel CheckViXSATSCQAM(ATSCChannel channel)
+    {
+      try
+      {
+        if (channel.ModulationType == ModulationType.Mod64Qam || channel.ModulationType == ModulationType.Mod256Qam)
+        {
           if (_isvixsatsc != null)
           {
             Log.Log.Info("Setting ViXS ATSC BDA modulation to {0}", channel.ModulationType);
             _isvixsatsc.SetViXSQam(channel);
           }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+      return channel;
+    }
+
+    /// <summary>
+    /// gets the QAM modulation for ViXS ATSC cards under XP
+    /// </summary>
+    public ATSCChannel CheckVIXSQAM(ATSCChannel channel)
+    {
+      try
+      {
+        if (_isvixsatsc != null)
+        {
+          _isvixsatsc.GetViXSQam(channel);
         }
       }
       catch (Exception ex)
