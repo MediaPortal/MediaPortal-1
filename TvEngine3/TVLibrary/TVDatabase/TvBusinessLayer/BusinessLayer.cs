@@ -1365,7 +1365,7 @@ namespace TvDatabase
             return nowNextList;
         }
 
-        using (System.Data.DataSet dataSet = new DataSet("Program"))
+        using (DataSet dataSet = new DataSet("Program"))
         {
           // ToDo: check if column fetching wastes performance
           if (provider == "sqlserver")
@@ -1409,6 +1409,10 @@ namespace TvDatabase
           }
         }
 
+      }
+      catch (Exception ex)
+      {
+        Log.Info("BusinessLayer: GetNowNext failed {0}", ex.Message);
       }
       finally
       {
