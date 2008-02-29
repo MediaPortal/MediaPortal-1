@@ -212,7 +212,7 @@ CREATE TABLE Program(
 	startTime datetime NOT NULL,
 	endTime datetime NOT NULL,
 	title varchar(2000) NOT NULL,
-	description varchar(4000) NOT NULL,
+	description varchar(8000) NOT NULL,
 	seriesNum varchar(200) NOT NULL,
 	episodeNum varchar(200) NOT NULL,
 	genre varchar(200) NOT NULL,
@@ -221,7 +221,7 @@ CREATE TABLE Program(
 	starRating int NOT NULL,
 	notify bit NOT NULL,
 	parentalRating int NOT NULL,
- CONSTRAINT PK_Programs PRIMARY KEY  
+ CONSTRAINT PK_Programs PRIMARY KEY
 (
 	idProgram ASC
 )
@@ -348,23 +348,38 @@ GO
 
 
 ---- create indexes -----
-GO
-CREATE STATISTICS _dta_stat_645577338_4_3 ON Program(endTime, startTime)
-GO
-CREATE STATISTICS _dta_stat_645577338_2_3 ON Program(idChannel, startTime)
+
+CREATE UNIQUE NONCLUSTERED INDEX IX_Program ON Program 
+(
+	idChannel ASC,
+	startTime ASC,
+	endTime ASC
+)
 GO
 
-CREATE INDEX _dta_index_Program_7_645577338__K3_1_2_4_5_6_7_8 ON Program 
+-- this index will waste some space but maps 1:1 the gentle requests to show the EPG
+CREATE INDEX _dta_index_Program_EPG_Lookup ON Program 
 (
+    idChannel ASC
 	startTime ASC
+    endTime ASC
 )
-INCLUDE ( idProgram,
-idChannel,
-endTime,
-title,
-description,
-genre,
-notify)
+INCLUDE ( 
+idProgram, 
+idChannel, 
+startTime, 
+endTime, 
+title, 
+description, 
+seriesNum, 
+episodeNum, 
+genre, 
+originalAirDate, 
+classification, 
+starRating, 
+notify, 
+parentalRating 
+)
 GO
 
 CREATE STATISTICS _dta_stat_565577053_9 ON Channel(sortOrder)
@@ -383,36 +398,6 @@ totalTimeWatched,
 grabEpg,
 lastGrabTime,
 visibleInGuide)
-GO
-
-CREATE INDEX _dta_index_Program_7_645577338__K2_1_3_4_5_6_7_8 ON Program 
-(
-	idChannel ASC
-)
-INCLUDE ( idProgram,
-startTime,
-endTime,
-title,
-description,
-genre,
-notify)
-
-GO
-
-CREATE STATISTICS _dta_stat_645577338_4_2_3 ON Program(endTime, idChannel, startTime)
-GO
-
-CREATE INDEX _dta_index_Program_7_645577338__K2_K3_K4_1_5_6_7_8 ON Program 
-(
-	idChannel ASC,
-	startTime ASC,
-	endTime ASC
-)
-INCLUDE ( idProgram,
-title,
-description,
-genre,
-notify)
 GO
 
 CREATE INDEX _dta_index_TuningDetail_7_709577566__K2_1_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20_21_22_23_24_25_26 ON TuningDetail 
