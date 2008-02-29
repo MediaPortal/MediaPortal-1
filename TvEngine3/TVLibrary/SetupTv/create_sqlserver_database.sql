@@ -363,8 +363,7 @@ CREATE INDEX _dta_index_Program_EPG_Lookup ON Program
 	startTime ASC
     endTime ASC
 )
-INCLUDE ( idProgram,
-title,
+INCLUDE ( title,
 description,
 seriesNum,
 episodeNum,
