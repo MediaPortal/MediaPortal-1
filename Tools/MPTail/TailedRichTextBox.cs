@@ -65,10 +65,26 @@ namespace MPTail
       }
       ToolStripItem cfgItem = ctxMenu.Items.Add("Configure search parameters");
       cfgItem.Click += new EventHandler(Config_Click);
+      ctxMenu.Items.Add("-");
+      ToolStripItem clearWindowItem = ctxMenu.Items.Add("Clear window");
+      clearWindowItem.Click += new EventHandler(clearWindowItem_Click);
+      ToolStripItem clearFileItem = ctxMenu.Items.Add("Delete file");
+      clearFileItem.Click += new EventHandler(clearFileItem_Click);
       searchParams = new SearchParameters();
       LoadSettings();
     }
+    #endregion
 
+    #region Contextmenu handlers
+    void clearFileItem_Click(object sender, EventArgs e)
+    {
+      if (MessageBox.Show("Do you really want to delete this file?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        File.Delete(filename);
+    }
+    void clearWindowItem_Click(object sender, EventArgs e)
+    {
+      this.Text = "";
+    }
     void relocateItem_Click(object sender, EventArgs e)
     {
       OpenFileDialog dlg = new OpenFileDialog();

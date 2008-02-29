@@ -211,7 +211,8 @@ namespace MPTail
           string dtStr = line.Substring(0, line.IndexOf(' ', 13));
           string nline = line.Remove(0, line.IndexOf(' ', 13) + 1);
           DateTime dt;
-          if (!DateTime.TryParse(dtStr, out dt)) continue;
+          if (!DateTime.TryParse(dtStr, out dt)) 
+            continue;
           if (tr.Category==LoggerCategory.TvEngine)
             tveCombined.Add(new MyDateTime(tveCombined.Count + 1, dt), FormatCombinedLogLine(Path.GetFileNameWithoutExtension(tr.Filename), dt, nline,16));
           else
