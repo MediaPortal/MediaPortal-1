@@ -247,13 +247,13 @@ CREATE TABLE `RadioGroupMap` (
 --
 
 DROP TABLE IF EXISTS `Program`;
-CREATE TABLE `Program` (
+CREATE TABLE  `Program` (
   `idProgram` int(11) NOT NULL auto_increment,
   `idChannel` int(11) NOT NULL,
   `startTime` datetime NOT NULL,
   `endTime` datetime NOT NULL,
   `title` varchar(2000) NOT NULL,
-  `description` varchar(4000) NOT NULL,
+  `description` varchar(8000) NOT NULL,
   `seriesNum` varchar(200) NOT NULL,
   `episodeNum` varchar(200) NOT NULL,
   `genre` varchar(200) NOT NULL,
@@ -263,10 +263,8 @@ CREATE TABLE `Program` (
   `notify` bit(1) NOT NULL,
   `parentalRating` int(11) NOT NULL,
   PRIMARY KEY  (`idProgram`),
-  KEY `IDX_StartTime` (`startTime`),
-  KEY `IDX_Program1` (`idChannel`),
-  KEY `IDX_Program2` (`idChannel`,`startTime`,`endTime`)
-) ENGINE=MyISAM AUTO_INCREMENT=26096 DEFAULT CHARSET=latin1;
+  UNIQUE KEY `idProgramBeginEnd` (`idChannel`,`startTime`,`endTime`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 #
 
 --
@@ -540,8 +538,4 @@ INSERT INTO `Version` VALUES  (1,33);
 CREATE INDEX idProgramStart ON Program (startTime);
 #
 CREATE INDEX idxChannel ON Channel (isTv,sortOrder);
-#
-CREATE INDEX idProgramChannel ON Program (idChannel);
-#
-CREATE INDEX idProgramBeginEnd ON Program (idChannel,startTime,endTime);
 #
