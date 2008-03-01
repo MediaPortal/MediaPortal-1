@@ -214,10 +214,6 @@ namespace WindowPlugins.GUISettings.TV
         strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
       }
       ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
-      if (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
-      {
-        availableAudioFilters.Remove("CyberLink MPEG Muxer");
-      }
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
