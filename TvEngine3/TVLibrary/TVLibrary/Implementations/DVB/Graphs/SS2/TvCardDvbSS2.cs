@@ -33,6 +33,7 @@ using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Epg;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Implementations.Helper;
 using TvLibrary.Teletext;
 using TvLibrary.Helper;
 using TvDatabase;

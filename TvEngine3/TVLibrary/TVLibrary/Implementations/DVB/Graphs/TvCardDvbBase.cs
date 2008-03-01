@@ -36,6 +36,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Implementations.Helper;
 using TvLibrary.Epg;
 using TvLibrary.Teletext;
 using TvLibrary.Log;
@@ -50,31 +51,6 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class TvCardDvbBase : IDisposable
   {
-    #region enums
-    /// <summary>
-    /// Different states of the card
-    /// </summary>
-    protected enum GraphState
-    {
-      /// <summary>
-      /// Card is idle
-      /// </summary>
-      Idle,
-      /// <summary>
-      /// Card is idle, but graph is created
-      /// </summary>
-      Created,
-      /// <summary>
-      /// Card is timeshifting
-      /// </summary>
-      TimeShifting,
-      /// <summary>
-      /// Card is recording
-      /// </summary>
-      Recording
-    }
-    #endregion
-
     #region constants
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
     class MpTsAnalyzer { }

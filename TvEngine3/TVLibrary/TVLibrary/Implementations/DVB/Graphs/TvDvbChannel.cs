@@ -36,6 +36,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Implementations.Helper;
 using TvLibrary.Epg;
 using TvLibrary.Teletext;
 using TvLibrary.Log;
@@ -45,31 +46,6 @@ namespace TvLibrary.Implementations.DVB
 {
   public class TvDvbChannel : AVObserverSubChannel, ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel, IVideoAudioObserver
   {
-    #region enums
-    /// <summary>
-    /// Different states of the card
-    /// </summary>
-    protected enum GraphState
-    {
-      /// <summary>
-      /// Card is idle
-      /// </summary>
-      Idle,
-      /// <summary>
-      /// Card is idle, but graph is created
-      /// </summary>
-      Created,
-      /// <summary>
-      /// Card is timeshifting
-      /// </summary>
-      TimeShifting,
-      /// <summary>
-      /// Card is recording
-      /// </summary>
-      Recording
-    }
-    #endregion
-
     #region MDAPI structs
 
     #region Struct MDPlug

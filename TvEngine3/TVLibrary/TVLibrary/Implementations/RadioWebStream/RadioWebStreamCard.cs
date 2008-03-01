@@ -34,6 +34,7 @@ using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Teletext;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
+using TvLibrary.Implementations.Helper;
 using TvLibrary.Helper;
 using TvLibrary.ChannelLinkage;
 
@@ -46,31 +47,6 @@ namespace TvLibrary.Implementations.RadioWebStream
   /// </summary>
   public class RadioWebStreamCard : ITVCard
   {
-    #region enums
-    /// <summary>
-    /// Different states of the card
-    /// </summary>
-    protected enum GraphState
-    {
-      /// <summary>
-      /// Card is idle
-      /// </summary>
-      Idle,
-      /// <summary>
-      /// Card is idle, but graph is created
-      /// </summary>
-      Created,
-      /// <summary>
-      /// Card is timeshifting
-      /// </summary>
-      TimeShifting,
-      /// <summary>
-      /// Card is recording
-      /// </summary>
-      Recording
-    }
-    #endregion
-
     #region variables
     protected string _name;
     protected string _recordingFileName = "";

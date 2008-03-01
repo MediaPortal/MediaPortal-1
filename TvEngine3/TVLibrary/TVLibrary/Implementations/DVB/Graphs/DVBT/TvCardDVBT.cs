@@ -31,6 +31,7 @@ using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Implementations.Helper;
 using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
