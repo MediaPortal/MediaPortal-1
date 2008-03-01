@@ -42,12 +42,10 @@ using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.Configuration;
-
 using TvDatabase;
 using TvControl;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
-
 using Gentle.Common;
 using Gentle.Framework;
 namespace TvPlugin
