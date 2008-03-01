@@ -378,7 +378,7 @@ namespace TvEngine
       DateTime ImportStartTime = DateTime.Now;
       Log.Debug("TVMovie: Importing database");
       int maximum = 0;
-      bool useGentle = true;
+      bool useGentle = false;
 
       foreach (TVMChannel tvmChan in _tvmEpgChannels)
         foreach (Mapping mapping in mappingList)
