@@ -63,7 +63,7 @@ namespace SetupTv.Sections
       this.listView1.LargeImageList = this.imageList1;
       this.listView1.Location = new System.Drawing.Point(0, 0);
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(454, 313);
+      this.listView1.Size = new System.Drawing.Size(457, 313);
       this.listView1.SmallImageList = this.imageList1;
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
@@ -76,7 +76,7 @@ namespace SetupTv.Sections
       // columnHeader1
       // 
       this.columnHeader1.Text = "Name";
-      this.columnHeader1.Width = 321;
+      this.columnHeader1.Width = 300;
       // 
       // contextMenuStrip1
       // 
@@ -171,8 +171,7 @@ namespace SetupTv.Sections
       // 
       // ChannelsInGroupControl
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
       this.BackColor = System.Drawing.Color.Transparent;
       this.Controls.Add(this.mpButtonPreview);
       this.Controls.Add(this.mpButtonDel);
