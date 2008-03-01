@@ -538,6 +538,9 @@ namespace TvService
           Log.Write("card: WaitForTimeShiftFile - start of audio is seen");
           _eventVideo.Reset();
           _eventAudio.Reset();
+
+          // give some breathing room for TsReader
+          Thread.Sleep(200);
           return true;
         }
       }
@@ -554,6 +557,9 @@ namespace TvService
             // start of the video & audio is seen
             Log.Write("card: WaitForTimeShiftFile - start of the video & audio is seen");
             _eventVideo.Reset();
+
+            // give some breathing room for TsReader
+            Thread.Sleep(200);
             return true;
           }
         }
