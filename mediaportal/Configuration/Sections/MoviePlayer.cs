@@ -87,15 +87,15 @@ namespace MediaPortal.Configuration.Sections
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
         //Remove Cyberlink Muxer from the list to avoid newbie user confusion.
-        if (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
-        {
-          availableVideoFilters.Remove("CyberLink MPEG Muxer");
-        }
+        while (availableVideoFilters.Contains("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
+        while (availableVideoFilters.Contains("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
+        while (availableVideoFilters.Contains("PDR MPEG Muxer")) availableVideoFilters.Remove("PDR MPEG Muxer");
+        availableVideoFilters.Sort();
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
-        if (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
-        {
-          availableAudioFilters.Remove("CyberLink MPEG Muxer");
-        }
+        while (availableAudioFilters.Contains("CyberLink MPEG Muxer")) availableAudioFilters.Remove("CyberLink MPEG Muxer");
+        while (availableAudioFilters.Contains("Ulead MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
+        while (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("PDR MPEG Muxer");
+        availableAudioFilters.Sort();
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());

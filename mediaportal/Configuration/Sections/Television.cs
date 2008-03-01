@@ -101,19 +101,17 @@ namespace MediaPortal.Configuration.Sections
         //
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         //Remove Muxer's from the Video decoder list to avoid confusion.
-        if (availableVideoFilters.Equals("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
-        if (availableVideoFilters.Equals("Cyberlink MPEG Muxer")) availableVideoFilters.Remove("Cyberlink MPEG Muxer");
-        if (availableVideoFilters.Equals("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
-        if (availableVideoFilters.Equals("PDR MPEG Muxer")) availableVideoFilters.Remove("PDR MPEG Muxer");
+        while (availableVideoFilters.Contains("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
+        while (availableVideoFilters.Contains("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
+        while (availableVideoFilters.Contains("PDR MPEG Muxer")) availableVideoFilters.Remove("PDR MPEG Muxer");
         availableVideoFilters.Sort();
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
         availableH264VideoFilters.Sort();
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         //Remove Muxer's from Audio decoder list to avoid confusion.
-        if (availableAudioFilters.Contains("CyberLink MPEG Muxer")) availableAudioFilters.Remove("CyberLink MPEG Muxer");
-        if (availableAudioFilters.Contains("Cyberlink MPEG Muxer")) availableAudioFilters.Remove("Cyberlink MPEG Muxer");
-        if (availableAudioFilters.Contains("Ulead MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
-        if (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
+        while (availableAudioFilters.Contains("CyberLink MPEG Muxer")) availableAudioFilters.Remove("CyberLink MPEG Muxer");
+        while (availableAudioFilters.Contains("Ulead MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
+        while (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("PDR MPEG Muxer");
         availableAudioFilters.Sort();
         ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
         availableAACAudioFilters.Sort();
