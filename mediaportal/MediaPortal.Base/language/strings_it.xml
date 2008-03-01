@@ -596,7 +596,7 @@
         <String id="705">Acquisizione feed RSS per</String>
         <String id="706">Seleziona feed</String>
         <String id="707">TV Attiva</String>
-        <String id="708">Pausa TV</String>
+        <String id="708">Buffer TV</String>
         <String id="709">Autoaggiornamento</String>
         <String id="710">Una nuova versione è disponibile</String>
         <String id="711">Aggiorna da v#old -&gt;v#new ?</String>
@@ -646,9 +646,9 @@
         <String id="756">Nessun tuner abilitato alla ricezione: {0}</String>
         <String id="757">Tutte le schede TV sono impegnate</String>
         <String id="758">La scheda TV non sta registrando</String>
-        <String id="759">Impossibile attivare la Pausa TV</String>
-        <String id="760">Nessuna scheda disponibile per la Pausa TV</String>
-        <String id="761">Impossibile disattivare la Pausa TV</String>
+        <String id="759">Impossibile attivare il Buffer TV</String>
+        <String id="760">Nessuna scheda disponibile per il Buffer TV</String>
+        <String id="761">Impossibile disattivare la Buffer TV</String>
         <String id="762">Impossibile avviare la TV</String>
         <String id="763">Il Registratore è occupato</String>
         <String id="764">Il Registratore è in pausa</String>
@@ -664,9 +664,9 @@
         <String id="774">FINE</String>
         <String id="775">Avvia TV in automatico in sezione Mia TV</String>
         <String id="776">Non avviare / selezionare la TV automaticamente</String>
-        <String id="777">Modo d'uso Pausa TV</String>
-        <String id="778">Inizia con Pausa TV abilitata automaticamente</String>
-        <String id="779">Pausa TV deve essere abilitata manualmente</String>
+        <String id="777">Modo d'uso Buffer TV</String>
+        <String id="778">Inizia con Buffer TV abilitata automaticamente</String>
+        <String id="779">Buffer TV deve essere abilitata manualmente</String>
         <String id="780">Seleziona metodo programmazione</String>
         <String id="781">Registrazione veloce</String>
         <String id="782">Registrazione avanzata</String>
@@ -913,7 +913,7 @@
         <String id="1448">Seleziona nessuno</String>
         <String id="1449">Ferma la registrazione</String>
         <String id="1450">Sei sicuro di voler fermare la registrazione?</String>
-        <String id="1500">Impossibile attivare la Pausa TV</String>
+        <String id="1500">Impossibile attivare il Buffer TV</String>
         <String id="1501">Scheda disabilitata</String>
         <String id="1502">Nessuna scheda disponibile</String>
         <String id="1503">Il canale è criptato</String>
@@ -926,6 +926,10 @@
         <String id="1510">Connessione al Server TV persa</String>
         <String id="1511">Nessun flusso attivo</String>
         <String id="1512">Tornare al canale precedente?</String>
+        <String id="1513">Buffer TV fermato a causa di una registrazione\rpianificata</String>
+        <String id="1514">Buffer TV fermato da un\ramministratore</String>
+        <String id="1515">Buffer TV fermato dal\rServer TV</String>
+        <String id="1516">Buffer TV fermato per una\rragione sconosciuta</String>
         <String id="1950" prefix="Il Mio ">Stato</String>
         <String id="1951">Hard Disk</String>
         <String id="1952">Ventola</String>
@@ -1249,7 +1253,7 @@
         <String id="6002">Renderer audio</String>
         <String id="6003">Deinterlacciamento</String>
         <String id="6004">Aspetto</String>
-        <String id="6005">Buffer Pausa TV</String>
+        <String id="6005">Buffer TV</String>
         <String id="6006">Accendi automaticamente TV</String>
         <String id="6007">Opzioni registrazione</String>
         <String id="6008">Ordinamento canali</String>
@@ -1692,6 +1696,7 @@
         <String id="200047">Crea miniature (incluse sottocartelle)</String>
         <String id="200048">Ri-crea tutte le miniature</String>
         <String id="200049">Solo le registrazioni viste per questo spettacolo</String>
-        <String id="200050">Questo cancellerà le tue registrazioni dall'Hard Disk</String>	
+        <String id="200050">Questo cancellerà le tue registrazioni dall'Hard Disk</String>
+        <String id="200051">Cancellare questo episodio?</String>
     </Section>
 </Language>
