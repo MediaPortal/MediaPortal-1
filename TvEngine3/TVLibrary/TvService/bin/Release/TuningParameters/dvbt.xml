@@ -1882,12 +1882,293 @@
 	<country name="New Zealand - Auckland (trials)">
 		<carrier frequency="698000" bandwidth="8"></carrier>
 	</country>
-	<country name="Norway - Oslo" offset="0">
+	<country name="Norway - Oslo-Akershus - Tryvasshøgda" offset="0">
+		<carrier frequency="674000" bandwidth="8"></carrier>
 		<carrier frequency="722000" bandwidth="8"></carrier>
 		<carrier frequency="770000" bandwidth="8"></carrier>
 		<carrier frequency="794000" bandwidth="8"></carrier>
 	</country>
-	<country name="Singapore">
+		<country name="Norway - Aust-Agder - Fennefossknipen" offset="0">
+		<carrier frequency="514000" bandwidth="8"></carrier>
+		<carrier frequency="554000" bandwidth="8"></carrier>
+		<carrier frequency="618000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Aust-Agder - Valle" offset="0">
+		<carrier frequency="602000" bandwidth="8"></carrier>
+		<carrier frequency="658000" bandwidth="8"></carrier>
+		<carrier frequency="762000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Aust-Agder - Hovdefjell" offset="0">
+		<carrier frequency="634000" bandwidth="8"></carrier>
+		<carrier frequency="690000" bandwidth="8"></carrier>
+		<carrier frequency="722000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Buskerud - Gol 1" offset="0">
+		<carrier frequency="682000" bandwidth="8"></carrier>
+		<carrier frequency="722000" bandwidth="8"></carrier>
+		<carrier frequency="746000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Buskerud - Ringerike" offset="0">
+		<carrier frequency="554000" bandwidth="8"></carrier>
+		<carrier frequency="570000" bandwidth="8"></carrier>
+		<carrier frequency="698000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Buskerud - Kongsberg" offset="0">
+		<carrier frequency="714000" bandwidth="8"></carrier>
+		<carrier frequency="786000" bandwidth="8"></carrier>
+		<carrier frequency="834000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Finnmark - Alta" offset="0">
+		<carrier frequency="594000" bandwidth="8"></carrier>
+		<carrier frequency="714000" bandwidth="8"></carrier>
+		<carrier frequency="738000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Finnmark - Alta 2" offset="0">
+		<carrier frequency="554000" bandwidth="8"></carrier>
+		<carrier frequency="666000" bandwidth="8"></carrier>
+		<carrier frequency="722000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Finnmark - Hammerfest" offset="0">
+		<carrier frequency="570000" bandwidth="8"></carrier>
+		<carrier frequency="602000" bandwidth="8"></carrier>
+		<carrier frequency="690000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Finnmark - Kautokeino 2" offset="0">
+		<carrier frequency="674000" bandwidth="8"></carrier>
+		<carrier frequency="754000" bandwidth="8"></carrier>
+		<carrier frequency="778000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Finnmark - Karasjok" offset="0">
+		<carrier frequency="474000" bandwidth="8"></carrier>
+		<carrier frequency="634000" bandwidth="8"></carrier>
+		<carrier frequency="738000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Finnmark - Nordkapp" offset="0">
+		<carrier frequency="546000" bandwidth="8"></carrier>
+		<carrier frequency="626000" bandwidth="8"></carrier>
+		<carrier frequency="650000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Finnmark - Store Jekkir" offset="0">
+		<carrier frequency="482000" bandwidth="8"></carrier>
+		<carrier frequency="498000" bandwidth="8"></carrier>
+		<carrier frequency="642000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Finnmark - Varanger" offset="0">
+		<carrier frequency="530000" bandwidth="8"></carrier>
+		<carrier frequency="570000" bandwidth="8"></carrier>
+		<carrier frequency="706000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Hedmark - Kongsvinger" offset="0">
+		<carrier frequency="498000" bandwidth="8"></carrier>
+		<carrier frequency="690000" bandwidth="8"></carrier>
+		<carrier frequency="746000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Hedmark - Bangsberget" offset="0">
+		<carrier frequency="490000" bandwidth="8"></carrier>
+		<carrier frequency="650000" bandwidth="8"></carrier>
+		<carrier frequency="754000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Hedmark - Nordhue" offset="0">
+		<carrier frequency="570000" bandwidth="8"></carrier>
+		<carrier frequency="650000" bandwidth="8"></carrier>
+		<carrier frequency="754000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Hedmark - Tron" offset="0">
+		<carrier frequency="514000" bandwidth="8"></carrier>
+		<carrier frequency="578000" bandwidth="8"></carrier>
+		<carrier frequency="698000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Hordaland - Stord" offset="0">
+		<carrier frequency="746000" bandwidth="8"></carrier>
+		<carrier frequency="770000" bandwidth="8"></carrier>
+		<carrier frequency="786000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Hordaland - Bergen" offset="0">
+		<carrier frequency="570000" bandwidth="8"></carrier>
+		<carrier frequency="618000" bandwidth="8"></carrier>
+		<carrier frequency="698000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Hordaland - Grimo" offset="0">
+		<carrier frequency="618000" bandwidth="8"></carrier>
+		<carrier frequency="690000" bandwidth="8"></carrier>
+		<carrier frequency="722000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Hordaland - Lønahorgi" offset="0">
+		<carrier frequency="554000" bandwidth="8"></carrier>
+		<carrier frequency="634000" bandwidth="8"></carrier>
+		<carrier frequency="658000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Møre og Roms - Gamlemsveten" offset="0">
+		<carrier frequency="602000" bandwidth="8"></carrier>
+		<carrier frequency="610000" bandwidth="8"></carrier>
+		<carrier frequency="738000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Møre og Roms - Reinsfjell" offset="0">
+		<carrier frequency="618000" bandwidth="8"></carrier>
+		<carrier frequency="642000" bandwidth="8"></carrier>
+		<carrier frequency="586000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Nordland - Vega" offset="0">
+		<carrier frequency="506000" bandwidth="8"></carrier>
+		<carrier frequency="562000" bandwidth="8"></carrier>
+		<carrier frequency="602000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Nordland - Hemnes" offset="0">
+		<carrier frequency="642000" bandwidth="8"></carrier>
+		<carrier frequency="666000" bandwidth="8"></carrier>
+		<carrier frequency="690000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Nordland - Salten" offset="0">
+		<carrier frequency="706000" bandwidth="8"></carrier>
+		<carrier frequency="650000" bandwidth="8"></carrier>
+		<carrier frequency="786000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Nordland - Steigen" offset="0">
+		<carrier frequency="554000" bandwidth="8"></carrier>
+		<carrier frequency="634000" bandwidth="8"></carrier>
+		<carrier frequency="658000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Nordland - Hadsel" offset="0">
+		<carrier frequency="666000" bandwidth="8"></carrier>
+		<carrier frequency="690000" bandwidth="8"></carrier>
+		<carrier frequency="770000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Nordland - Andenes" offset="0">
+		<carrier frequency="730000" bandwidth="8"></carrier>
+		<carrier frequency="754000" bandwidth="8"></carrier>
+		<carrier frequency="778000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Nordland - Narvik" offset="0">
+		<carrier frequency="474000" bandwidth="8"></carrier>
+		<carrier frequency="522000" bandwidth="8"></carrier>
+		<carrier frequency="602000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Nord-Trøndelag - Mosvik" offset="0">
+		<carrier frequency="658000" bandwidth="8"></carrier>
+		<carrier frequency="682000" bandwidth="8"></carrier>
+		<carrier frequency="674000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Nord-Trøndelag - Grong" offset="0">
+		<carrier frequency="474000" bandwidth="8"></carrier>
+		<carrier frequency="554000" bandwidth="8"></carrier>
+		<carrier frequency="586000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Oppland - Bagn" offset="0">
+		<carrier frequency="562000" bandwidth="8"></carrier>
+		<carrier frequency="618000" bandwidth="8"></carrier>
+		<carrier frequency="642000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Oppland - Jetta" offset="0">
+		<carrier frequency="666000" bandwidth="8"></carrier>
+		<carrier frequency="690000" bandwidth="8"></carrier>
+		<carrier frequency="770000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Oppland - Gran" offset="0">
+		<carrier frequency="610000" bandwidth="8"></carrier>
+		<carrier frequency="762000" bandwidth="8"></carrier>
+		<carrier frequency="746000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Rogaland - Bjerkreim" offset="0">
+		<carrier frequency="490000" bandwidth="8"></carrier>
+		<carrier frequency="514000" bandwidth="8"></carrier>
+		<carrier frequency="546000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Rogaland - Bokn" offset="0">
+		<carrier frequency="594000" bandwidth="8"></carrier>
+		<carrier frequency="738000" bandwidth="8"></carrier>
+		<carrier frequency="762000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Sogn og Fjordane - Gulen" offset="0">
+		<carrier frequency="602000" bandwidth="8"></carrier>
+		<carrier frequency="642000" bandwidth="8"></carrier>
+		<carrier frequency="514000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Sogn og Fjordane - Bremanger" offset="0">
+		<carrier frequency="506000" bandwidth="8"></carrier>
+		<carrier frequency="530000" bandwidth="8"></carrier>
+		<carrier frequency="554000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Sogn og Fjordane - Nordfjordeid" offset="0">
+		<carrier frequency="626000" bandwidth="8"></carrier>
+		<carrier frequency="658000" bandwidth="8"></carrier>
+		<carrier frequency="570000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Sogn og Fjordane - Førde" offset="0">
+		<carrier frequency="586000" bandwidth="8"></carrier>
+		<carrier frequency="666000" bandwidth="8"></carrier>
+		<carrier frequency="690000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Sogn og Fjordane - Sogndal" offset="0">
+		<carrier frequency="474000" bandwidth="8"></carrier>
+		<carrier frequency="498000" bandwidth="8"></carrier>
+		<carrier frequency="578000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Sør-Trøndelag - Kopparen" offset="0">
+		<carrier frequency="514000" bandwidth="8"></carrier>
+		<carrier frequency="626000" bandwidth="8"></carrier>
+		<carrier frequency="666000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Sør-Trøndelag - Ålmenberget" offset="0">
+		<carrier frequency="554000" bandwidth="8"></carrier>
+		<carrier frequency="562000" bandwidth="8"></carrier>
+		<carrier frequency="778000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Sør-Trøndelag - Melhus" offset="0">
+		<carrier frequency="746000" bandwidth="8"></carrier>
+		<carrier frequency="530000" bandwidth="8"></carrier>
+		<carrier frequency="506000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Telemark - Skien" offset="0">
+		<carrier frequency="786000" bandwidth="8"></carrier>
+		<carrier frequency="834000" bandwidth="8"></carrier>
+		<carrier frequency="738000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Telemark - Gausta" offset="0">
+		<carrier frequency="506000" bandwidth="8"></carrier>
+		<carrier frequency="522000" bandwidth="8"></carrier>
+		<carrier frequency="586000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Troms - Harstad 1" offset="0">
+		<carrier frequency="514000" bandwidth="8"></carrier>
+		<carrier frequency="674000" bandwidth="8"></carrier>
+		<carrier frequency="714000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Troms - Kistefjell" offset="0">
+		<carrier frequency="514000" bandwidth="8"></carrier>
+		<carrier frequency="674000" bandwidth="8"></carrier>
+		<carrier frequency="650000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Troms - Trolltind" offset="0">
+		<carrier frequency="522000" bandwidth="8"></carrier>
+		<carrier frequency="618000" bandwidth="8"></carrier>
+		<carrier frequency="642000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Troms - Tromsø 2" offset="0">
+		<carrier frequency="682000" bandwidth="8"></carrier>
+		<carrier frequency="706000" bandwidth="8"></carrier>
+		<carrier frequency="746000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Vest-Agder - Greipstad" offset="0">
+		<carrier frequency="714000" bandwidth="8"></carrier>
+		<carrier frequency="738000" bandwidth="8"></carrier>
+		<carrier frequency="682000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Vest-Agder - Lyngdal" offset="0">
+		<carrier frequency="506000" bandwidth="8"></carrier>
+		<carrier frequency="730000" bandwidth="8"></carrier>
+		<carrier frequency="682000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Vestfold - Hvitingen" offset="0">
+		<carrier frequency="786000" bandwidth="8"></carrier>
+		<carrier frequency="834000" bandwidth="8"></carrier>
+		<carrier frequency="810000" bandwidth="8"></carrier>
+	</country>
+		<country name="Norway - Østfold - Halden" offset="0">
+		<carrier frequency="610000" bandwidth="8"></carrier>
+		<carrier frequency="642000" bandwidth="8"></carrier>
+		<carrier frequency="802000" bandwidth="8"></carrier>
+	</country>
+		<country name="Singapore">
 		<carrier frequency="538000" bandwidth="8"></carrier>
 		<carrier frequency="602000" bandwidth="8"></carrier>
 		<carrier frequency="610000" bandwidth="8"></carrier>
