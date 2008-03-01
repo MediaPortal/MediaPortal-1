@@ -95,7 +95,11 @@ namespace WindowPlugins.GUISettings.TV
 				strVideoCodec=xmlreader.GetValueAsString("dvdplayer","videocodec","");
 			}
 			ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-
+      //Remove Muxer's from the list to avoid confusion.
+      while (availableVideoFilters.Contains("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
+      while (availableVideoFilters.Contains("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
+      while (availableVideoFilters.Contains("PDR MPEG Muxer")) availableVideoFilters.Remove("PDR MPEG Muxer");
+      availableVideoFilters.Sort();
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg!=null)
 			{
@@ -128,7 +132,11 @@ namespace WindowPlugins.GUISettings.TV
 				strAudioCodec=xmlreader.GetValueAsString("dvdplayer","audiocodec","");
 			}
 			ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-
+      //Remove Muxer's from Audio decoder list to avoid confusion.
+      while (availableAudioFilters.Contains("CyberLink MPEG Muxer")) availableAudioFilters.Remove("CyberLink MPEG Muxer");
+      while (availableAudioFilters.Contains("Ulead MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
+      while (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("PDR MPEG Muxer");
+      availableAudioFilters.Sort();
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg!=null)
 			{
