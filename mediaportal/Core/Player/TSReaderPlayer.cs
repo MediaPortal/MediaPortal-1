@@ -258,6 +258,7 @@ namespace MediaPortal.Player
         // add preferred video & audio codecs
         string strVideoCodec = "";
         string strAudioCodec = "";
+        string strAACAudioCodec = "";
         string strAudioRenderer = "";
         string strH264VideoCodec = "";
         int intFilters = 0; // FlipGer: count custom filters
@@ -277,6 +278,7 @@ namespace MediaPortal.Player
           }
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+          strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
           strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
           strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
           enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
@@ -307,6 +309,8 @@ namespace MediaPortal.Player
         }
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
+        if (strAACAudioCodec.Length > 0)
+          _aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
         if (strAudioRenderer.Length > 0)
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
 
@@ -652,7 +656,12 @@ namespace MediaPortal.Player
             ;
           _audioCodecFilter = null;
         }
-
+        if (_aacaudioCodecFilter != null)
+        {
+          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0)
+            ;
+          _aacaudioCodecFilter = null;
+        }
         if (_audioRendererFilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)

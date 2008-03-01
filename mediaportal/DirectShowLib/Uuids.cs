@@ -1554,11 +1554,11 @@ namespace DirectShowLib
 
         /// <summary> MEDIASUBTYPE_None </summary>
         public static readonly Guid None = new Guid(0xe436eb8e, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
-
+        
+        /// <summary> MEDIASUBTYPE_BDA_MPEG2_TRANSPORT </summary>
         public static readonly Guid BdaMpeg2Transport = new Guid(0xF4AEB342, 0x0329, 0x4fdd, 0xA8, 0xFD, 0x4A, 0xFF, 0x49, 0x26, 0xC9, 0x78);
 
         /// <summary> MEDIASUBTYPE_H264 </summary>
-
         public static readonly Guid H264 = new Guid(0x34363248, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
 
         /// <summary> MEDIASUBTYPE_NV24 </summary>
@@ -1569,6 +1569,9 @@ namespace DirectShowLib
 
         /// <summary> MEDIASUBTYPE_DtvCcData </summary>
         public static readonly Guid DtvCcData = new Guid(0xF52ADDAA, 0x36F0, 0x43F5, 0x95, 0xEA, 0x6D, 0x86, 0x64, 0x84, 0x26, 0x2A);
+
+        /// <summary> MEDIASUBTYPE_LATM_AAC </summary>
+        public static readonly Guid LATMAAC = new Guid(0x00001FF, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
     }
 
     sealed public class FormatType

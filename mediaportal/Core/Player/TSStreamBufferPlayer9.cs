@@ -224,6 +224,7 @@ namespace MediaPortal.Player
         string strVideoCodec = "";
         string strH264VideoCodec = "";
         string strAudioCodec = "";
+        string strAACAudioCodec = "";
         string strAudioRenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
@@ -243,6 +244,7 @@ namespace MediaPortal.Player
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+          strAACAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
           strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
           enableDvbSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbsubtitles", false);
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
@@ -270,6 +272,8 @@ namespace MediaPortal.Player
           _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
+        if (strAACAudioCodec.Length > 0)
+          _aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
         if (strAudioRenderer.Length > 0)
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
         if (enableDvbSubtitles == true)
@@ -711,6 +715,11 @@ namespace MediaPortal.Player
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0) ;
           _audioCodecFilter = null;
+        }
+        if (_aacaudioCodecFilter != null)
+        {
+          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0) ;
+          _aacaudioCodecFilter = null;
         }
         if (_audioRendererFilter != null)
         {

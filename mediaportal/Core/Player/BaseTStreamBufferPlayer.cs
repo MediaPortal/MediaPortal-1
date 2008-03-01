@@ -99,6 +99,7 @@ namespace MediaPortal.Player
     protected IBaseFilter _videoCodecFilter = null;
     protected IBaseFilter _h264videoCodecFilter = null;
     protected IBaseFilter _audioCodecFilter = null;
+    protected IBaseFilter _aacaudioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
     protected IBaseFilter _subtitleFilter = null;
     protected SubtitleRenderer dvbSubRenderer = null;
@@ -1170,6 +1171,7 @@ namespace MediaPortal.Player
         string strVideoCodec = "";
         string strH264VideoCodec = "";
         string strAudioCodec = "";
+        string strAACAudioCodec = "";
         string strAudiorenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
@@ -1189,6 +1191,7 @@ namespace MediaPortal.Player
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+          strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
           strAudiorenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
           if (strValue.Equals("zoom"))
@@ -1214,6 +1217,8 @@ namespace MediaPortal.Player
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudiorenderer, false);
         if (strH264VideoCodec.Length > 0)
           _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
+        if (strAACAudioCodec.Length > 0)
+          _aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
@@ -1303,6 +1308,11 @@ namespace MediaPortal.Player
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0);
           _h264videoCodecFilter = null;
+        }
+        if (_aacaudioCodecFilter != null)
+        {
+          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0) ;
+          _aacaudioCodecFilter = null;
         }
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)

@@ -38,6 +38,12 @@
         <label>6001</label>
       </control>
       <control>
+        <description>LATM AAC Audio Codecs</description>
+        <type>button</type>
+        <id>36</id>
+        <label>6039</label>
+      </control>
+      <control>
         <description>Audio Renderer</description>
         <type>button</type>
         <id>33</id>
@@ -101,7 +107,7 @@
       <control>
         <description>XMLTV EPG Grabber</description>
         <type>button</type>
-        <id>36</id>
+        <id>37</id>
         <label>6010</label>
         <hyperlink>707</hyperlink>
         <ondown>24</ondown>

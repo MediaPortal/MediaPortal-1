@@ -18,7 +18,7 @@
         <id>24</id>
         <label>6000</label>
         <onup>17</onup>
-        <onleft>36</onleft>
+        <onleft>37</onleft>
       </control>
       <control>
         <description>H.264 Video Codecs</description>
@@ -31,6 +31,12 @@
         <description>Audio Codecs</description>
         <id>25</id>
         <label>6001</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>LATM AAC Audio Codecs</description>
+        <id>36</id>
+        <label>6039</label>
       </control>
       <control>
         <description>Audio Renderer</description>
@@ -95,7 +101,7 @@
       <control>
         <description>XMLTV EPG Grabber</description>
         <type>button</type>
-        <id>36</id>
+        <id>37</id>
         <label>6010</label>
         <hyperlink>707</hyperlink>
         <onup>17</onup>

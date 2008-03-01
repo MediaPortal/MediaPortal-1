@@ -132,6 +132,7 @@ namespace MediaPortal.Player
     protected IBaseFilter _videoCodecFilter = null;
     protected IBaseFilter _h264videoCodecFilter = null;
     protected IBaseFilter _audioCodecFilter = null;
+    protected IBaseFilter _aacaudioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
     protected IBaseFilter _subtitleFilter = null;
     protected SubtitleSelector _subSelector = null;    
