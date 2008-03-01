@@ -324,7 +324,7 @@ namespace TvDatabase
     {
       CountryCollection collection = new CountryCollection();
       IList tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0; i < tuningDetails.Count; ++i)
+      for (int i = 0 ; i < tuningDetails.Count ; ++i)
       {
         TuningDetail detail = (TuningDetail)tuningDetails[i];
         if (detail.ChannelType != channelType) continue;
@@ -433,7 +433,7 @@ namespace TvDatabase
       List<IChannel> tvChannels = new List<IChannel>();
       CountryCollection collection = new CountryCollection();
       IList tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0; i < tuningDetails.Count; ++i)
+      for (int i = 0 ; i < tuningDetails.Count ; ++i)
       {
         TuningDetail detail = (TuningDetail)tuningDetails[i];
         switch (detail.ChannelType)
@@ -544,7 +544,7 @@ namespace TvDatabase
     public ChannelMap MapChannelToCard(Card card, Channel channel)
     {
       IList channelMaps = card.ReferringChannelMap();
-      for (int i = 0; i < channelMaps.Count; ++i)
+      for (int i = 0 ; i < channelMaps.Count ; ++i)
       {
         ChannelMap map = (ChannelMap)channelMaps[i];
         if (map.IdChannel == channel.IdChannel && map.IdCard == card.IdCard) return map;
@@ -1378,7 +1378,7 @@ namespace TvDatabase
           List<int> lastChannelIDs = new List<int>();
 
           // for-loops are faster than foreach-loops
-          for (int j = 0; j < resultCount; j++)
+          for (int j = 0 ; j < resultCount ; j++)
           {
             int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
             // Only get the Now-Next-Data _once_ per channel
@@ -1536,7 +1536,19 @@ namespace TvDatabase
       }
       catch (MySqlException myex)
       {
-        Log.Info("BusinessLayer: InsertMySql caused a MySqlException - {0}, {1}, {2}", myex.Message, myex.Number, myex.HelpLink);
+        string errorRow = aSqlCommand.Parameters["?idChannel"].Value + ", " + aSqlCommand.Parameters["?title"].Value + " : " + aSqlCommand.Parameters["?startTime"].Value + "-" + aSqlCommand.Parameters["?endTime"].Value;
+        switch (myex.Number)
+        {
+          case 1062:
+            Log.Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
+            break;
+          case 1406:
+            Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, myex.Message);
+            break;
+          default:
+            Log.Info("BusinessLayer: InsertMySql caused a MySqlException - {0}, {1}, {2}", myex.Message, myex.Number, myex.HelpLink);
+            break;
+        }
         try
         {
           transact.Rollback();
@@ -1569,7 +1581,17 @@ namespace TvDatabase
       }
       catch (SqlException msex)
       {
-        Log.Info("BusinessLayer: InsertSqlServer caused a SqlException - {0}, {1}, {2}", msex.Message, msex.Number, msex.HelpLink);
+        string errorRow = aSqlCommand.Parameters["idChannel"].Value + ", " + aSqlCommand.Parameters["title"].Value + " : " + aSqlCommand.Parameters["startTime"].Value + "-" + aSqlCommand.Parameters["endTime"].Value;
+        switch (msex.Number)
+        {
+          //case 1062:
+          //  Log.Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
+          //case 1406:
+          //  Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, msex.Message);
+          default:
+            Log.Info("BusinessLayer: InsertSqlServer caused a SqlException - {0}, {1}, {2}", msex.Message, msex.Number, msex.HelpLink);
+            break;
+        }
         try
         {
           transact.Rollback();
@@ -1627,7 +1649,7 @@ namespace TvDatabase
             sqlInsert.Parameters["?starRating"].Value = prog.StarRating;
             sqlInsert.Parameters["?notify"].Value = prog.Notify;
             sqlInsert.Parameters["?parentalRating"].Value = prog.ParentalRating;
-            
+
             InsertMySql(MyParams.ConnectString, sqlInsert);
             Thread.Sleep(MyParams.SleepTime / 2);
           }
@@ -1703,7 +1725,7 @@ namespace TvDatabase
       Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
 
       List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
-      for (int i = 0; i < cards.Count; i++) cardSchedules[i] = new List<Schedule>();
+      for (int i = 0 ; i < cards.Count ; i++) cardSchedules[i] = new List<Schedule>();
 
       // GEMX: Assign all already scheduled timers to cards. Assume that even possibly overlapping schedulues are ok to the user,
       // as he decided to keep them before. That's why they are in the db
@@ -1822,7 +1844,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
       {
-        for (int i = 0; i < days; ++i)
+        for (int i = 0 ; i < days ; ++i)
         {
           Schedule recNew = rec.Clone();
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
@@ -1846,7 +1868,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
       {
-        for (int i = 0; i < days; ++i)
+        for (int i = 0 ; i < days ; ++i)
         {
           if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
           {
@@ -1897,7 +1919,7 @@ namespace TvDatabase
       }
       if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
       {
-        for (int i = 0; i < days; ++i)
+        for (int i = 0 ; i < days ; ++i)
         {
           if ((dtDay.DayOfWeek == rec.StartTime.DayOfWeek) && (dtDay.Date >= rec.StartTime.Date))
           {
