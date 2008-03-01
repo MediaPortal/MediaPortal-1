@@ -253,7 +253,7 @@ void CEpgDecoder::DecodeCombinedStarRating_MPAARatingDescriptor(byte* data,EPGEv
 	switch (bPRating)
 	{
 		case 0:
-			epgEvent.classification="NR";
+			epgEvent.classification="NR/AO";
 			break;
 		case 1:
 			epgEvent.classification="G";
@@ -268,10 +268,10 @@ void CEpgDecoder::DecodeCombinedStarRating_MPAARatingDescriptor(byte* data,EPGEv
 			epgEvent.classification="R";
 			break;
 		case 5:
-			epgEvent.classification="AO";
+			epgEvent.classification="NR/AO";
 			break;
 		case 6:
-			epgEvent.classification="R";
+			epgEvent.classification="";
 			break;
 		case 7:
 			epgEvent.classification="NC-17";
@@ -962,6 +962,8 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 				epgEvent.genre=genreText;
 		}
 	}
+
+	
 	catch(...)
 	{
 		LogDebug("mpsaa: unhandled exception in Sections::DecodeContentDescription()");

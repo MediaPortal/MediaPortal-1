@@ -218,6 +218,17 @@ namespace SetupTv.Sections
       mpListView1.EndUpdate();
     }
 
+    private void mpButtonAllGrouped_Click(object sender, EventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      for (int i = 0; i < mpListView1.Items.Count; ++i)
+      {
+        Channel ch = (Channel)mpListView1.Items[i].Tag;
+        mpListView1.Items[i].Checked = (ch.ReferringRadioGroupMap().Count > 1); // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
+      }
+      mpListView1.EndUpdate();
+    }
+
     private void mpButtonNone_Click(object sender, EventArgs e)
     {
 
@@ -319,6 +330,5 @@ namespace SetupTv.Sections
       // Perform the sort with these new sort options.
       this.mpListView1.Sort();
     }
-
   }
 }
