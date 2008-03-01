@@ -112,16 +112,16 @@ namespace TvEngine
       // format = 5.2/10
       // check if the epgRating is within a xml tag			
       epgRating = epgRating.Trim();
-			if (epgRating.Length == 0)
-			{
-				return -1;
-			}
+      if (epgRating.Length == 0)
+      {
+        return -1;
+      }
 
       if (epgRating.StartsWith("<"))
       {
         int endStartTagIdx = epgRating.IndexOf(">") + 1;
         int length = epgRating.IndexOf("</", endStartTagIdx) - endStartTagIdx;
-        epgRating = epgRating.Substring(endStartTagIdx,length);
+        epgRating = epgRating.Substring(endStartTagIdx, length);
       }
       string strRating = epgRating.Remove(epgRating.IndexOf(@"/"));
       int Rating = -1;
@@ -139,7 +139,7 @@ namespace TvEngine
 
     public bool Import(string fileName, bool showProgress)
     {
-			//System.Diagnostics.Debugger.Launch();
+      //System.Diagnostics.Debugger.Launch();
       _errorMessage = "";
       if (_isImporting == true)
       {
@@ -151,7 +151,7 @@ namespace TvEngine
       TvBusinessLayer layer = new TvBusinessLayer();
 
       bool result = false;
-			XmlTextReader xmlReader = null;
+      XmlTextReader xmlReader = null;
 
 
       // remove old programs
@@ -195,7 +195,7 @@ namespace TvEngine
       timeZoneCorrection = hours * 60 + mins;
 
       ArrayList Programs = new ArrayList();
-      Dictionary<int,ChannelPrograms> dChannelPrograms = new Dictionary<int,ChannelPrograms>();
+      Dictionary<int, ChannelPrograms> dChannelPrograms = new Dictionary<int, ChannelPrograms>();
 
       try
       {
@@ -219,7 +219,7 @@ namespace TvEngine
 
           int iChannel = 0;
 
-          xmlReader = new XmlTextReader(fileName);					
+          xmlReader = new XmlTextReader(fileName);
 
           #region import non-mapped channels by their display-name
           if (xmlReader.ReadToDescendant("tv"))
@@ -261,12 +261,12 @@ namespace TvEngine
                     else
                       xmlChannel.Read();
                   }
-									if (xmlChannel != null)
-									{
-										xmlChannel.Close();
-										xmlChannel = null;
+                  if (xmlChannel != null)
+                  {
+                    xmlChannel.Close();
+                    xmlChannel = null;
 
-									}									
+                  }
 
                   if (displayName == null || displayName.Length == 0)
                   {
@@ -274,7 +274,7 @@ namespace TvEngine
                   }
                   else
                   {
-                   Channel chan = null;
+                    Channel chan = null;
 
                     // a guide channel can be mapped to multiple tvchannels
                     foreach (Channel ch in allChannels)
@@ -322,21 +322,21 @@ namespace TvEngine
           sb.AddOrderByField(true, "externalId");
           sb.AddConstraint("externalId IS NOT null");
           sb.AddConstraint(Operator.NotEquals, "externalId", "");
-          
+
           SqlStatement stmt = sb.GetStatement(true);
           allChannels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
           if (allChannels.Count == 0)
           {
             _isImporting = false;
-						if (xmlReader != null)
-						{
-							xmlReader.Close();
-							xmlReader = null;
-						}
+            if (xmlReader != null)
+            {
+              xmlReader.Close();
+              xmlReader = null;
+            }
 
             return true;
           }
-          
+
           ///////////////////////////////////////////////////////////////////////////
           /*  design:
            * 1. create a Dictionary<string,Channel> using the externalid as the key,
@@ -346,13 +346,13 @@ namespace TvEngine
            * 3. Create a program for each mapped channel
            */
           ///////////////////////////////////////////////////////////////////////////
-         Dictionary<string, List<Channel>> allChannelMappingsByExternalId = new Dictionary<string, List<Channel>>();
+          Dictionary<string, List<Channel>> allChannelMappingsByExternalId = new Dictionary<string, List<Channel>>();
 
-         string previousExternalId = null;
+          string previousExternalId = null;
           // one-to-many so we need a collection of channels for each externalId
-         List<Channel> eidMappedChannels = new List<Channel>();
+          List<Channel> eidMappedChannels = new List<Channel>();
 
-          for(int i = 0; i < allChannels.Count; i++)
+          for (int i = 0 ; i < allChannels.Count ; i++)
           {
             Channel ch = (Channel)allChannels[i];
 
@@ -374,30 +374,30 @@ namespace TvEngine
               eidMappedChannels.Add(ch);
               previousExternalId = ch.ExternalId;
             }
-            
+
             if (i == allChannels.Count - 1)
             {
               allChannelMappingsByExternalId.Add(previousExternalId, eidMappedChannels);
             }
           }
-          
+
           int programIndex = 0;
           _status.Status = "Loading TV programs";
           if (showProgress && ShowProgress != null) ShowProgress(_status);
 
           Log.Debug("xmltvimport: Reading TV programs");
-					if (xmlReader != null)
-					{
-						xmlReader.Close();
-						xmlReader = null;
-					}
+          if (xmlReader != null)
+          {
+            xmlReader.Close();
+            xmlReader = null;
+          }
           xmlReader = new XmlTextReader(fileName);
           if (xmlReader.ReadToDescendant("tv"))
           {
             // get the first programme
             if (xmlReader.ReadToDescendant("programme"))
             {
-           
+
               #region read programme node
               do
               {
@@ -428,21 +428,21 @@ namespace TvEngine
                     switch (xmlProg.Name)
                     {
                       case "title": if (nodeTitle == null) nodeTitle = xmlProg.ReadString(); else xmlProg.Skip(); break;
-											case "category": if (nodeCategory == null) nodeCategory = xmlProg.ReadString(); else xmlProg.Skip(); break;
-											case "desc": if (nodeDescription == null) nodeDescription = xmlProg.ReadString(); else xmlProg.Skip(); break;
-											case "sub-title": if (nodeEpisode == null) nodeEpisode = xmlProg.ReadString(); else xmlProg.Skip(); break;
-											case "previously-shown": if (nodeRepeat == null) nodeRepeat = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "category": if (nodeCategory == null) nodeCategory = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "desc": if (nodeDescription == null) nodeDescription = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "sub-title": if (nodeEpisode == null) nodeEpisode = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "previously-shown": if (nodeRepeat == null) nodeRepeat = xmlProg.ReadString(); else xmlProg.Skip(); break;
                       case "episode-num":
                         if (nodeEpisodeNum == null)
                         {
                           nodeEpisodeNumSystem = xmlProg.GetAttribute("system");
-													nodeEpisodeNum = xmlProg.ReadString();
+                          nodeEpisodeNum = xmlProg.ReadString();
                         }
                         else xmlProg.Skip();
                         break;
-											case "date": if (nodeDate == null) nodeDate = xmlProg.ReadString(); else xmlProg.Skip(); break;
-											case "star-rating": if (nodeStarRating == null) nodeStarRating = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
-											case "rating": if (nodeClassification == null) nodeClassification = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+                      case "date": if (nodeDate == null) nodeDate = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "star-rating": if (nodeStarRating == null) nodeStarRating = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+                      case "rating": if (nodeClassification == null) nodeClassification = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
                       default:
                         // unknown, skip entire node
                         xmlProg.Skip();
@@ -452,11 +452,11 @@ namespace TvEngine
                   else
                     xmlProg.Read();
                 }
-								if (xmlProg != null)
-								{
-									xmlProg.Close();
-									xmlProg = null;
-								}
+                if (xmlProg != null)
+                {
+                  xmlProg.Close();
+                  xmlProg = null;
+                }
               #endregion
 
                 #region verify/convert values (programme)
@@ -687,13 +687,13 @@ namespace TvEngine
                       {
                         // get the channel program
                         channelPrograms = dChannelPrograms[chan.IdChannel];
-                      
+
                         if (chan.IdChannel < 0)
                         {
                           continue;
                         }
 
-                        Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, DateTime.MinValue, seriesNum, episodeNum, starRating, classification,-1);
+                        Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, System.Data.SqlTypes.SqlDateTime.MinValue, seriesNum, episodeNum, starRating, classification, -1);
                         channelPrograms.programs.Add(prog);
                         programIndex++;
                         //prog.Description = ConvertHTMLToAnsi(strDescription);
@@ -716,8 +716,8 @@ namespace TvEngine
                   }
                 }
                 // get the next programme
-              } while (xmlReader.ReadToNextSibling("programme"));							
-							//if (xmlReader != null) xmlReader.Close();
+              } while (xmlReader.ReadToNextSibling("programme"));
+              //if (xmlReader != null) xmlReader.Close();
 
                   #endregion
 
@@ -730,14 +730,14 @@ namespace TvEngine
               DateTime dtStartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0, 0);
               //dtStartDate=dtStartDate.AddDays(-4);
 
-             
+
               foreach (ChannelPrograms progChan in Programs)
               {
                 // empty, skip it
                 if (progChan.programs.Count == 0) continue;
 
                 progChan.programs.Sort(this);
-                for (int i = 0; i < progChan.programs.Count; ++i)
+                for (int i = 0 ; i < progChan.programs.Count ; ++i)
                 {
                   Program prog = (Program)progChan.programs[i];
                   if (prog.StartTime == prog.EndTime)
@@ -766,13 +766,13 @@ namespace TvEngine
 
                   int count = programsInDbs.Count;
                   programs.Capacity = count;
-                  for (int i = 0; i < count; i++)
+                  for (int i = 0 ; i < count ; i++)
                     programs.Add(programsInDbs[i]);
                 }
 
                 List<Program> importProgs = new List<Program>(progChan.programs.Count);
 
-                for (int i = 0; i < progChan.programs.Count; ++i)
+                for (int i = 0 ; i < progChan.programs.Count ; ++i)
                 {
                   Program prog = (Program)progChan.programs[i];
                   // don't import programs which have already ended...
@@ -780,11 +780,21 @@ namespace TvEngine
                   {
                     DateTime start = prog.StartTime;
                     DateTime end = prog.EndTime;
+                    DateTime airDate = System.Data.SqlTypes.SqlDateTime.MinValue;
+                    try
+                    {
+                      airDate = DateTime.Parse(prog.OriginalAirDate);
+                      if (airDate > System.Data.SqlTypes.SqlDateTime.MinValue && airDate < System.Data.SqlTypes.SqlDateTime.MaxValue)
+                        prog.OriginalAirDate = airDate;
+                    }
+                    catch (Exception)
+                    {
+                      Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);                      
+                    }
 
                     bool overlaps = false;
-
                     // check whether there exists a program that overlaps with prog
-                    for (int j = 0; j < programs.Count; j++)
+                    for (int j = 0 ; j < programs.Count ; j++)
                     {
                       Program proggi = (Program)programs[j];
                       if (proggi.RunningAt(start, end))
@@ -855,11 +865,11 @@ namespace TvEngine
       Programs = null;
       _isImporting = false;
       //      TVDatabase.SupressEvents = false;
-			if (xmlReader != null)
-			{
-				xmlReader.Close();
-				xmlReader = null;
-			}
+      if (xmlReader != null)
+      {
+        xmlReader.Close();
+        xmlReader = null;
+      }
       return result;
     }
 
@@ -932,7 +942,7 @@ namespace TvEngine
         if (Programs.Count == 0) return;
         Programs.Sort(this);
         Program prevProg = (Program)Programs[0];
-        for (int i = 1; i < Programs.Count; i++)
+        for (int i = 1 ; i < Programs.Count ; i++)
         {
           Program newProg = (Program)Programs[i];
           if (newProg.StartTime < prevProg.EndTime)   // we have an overlap here
@@ -951,7 +961,7 @@ namespace TvEngine
             newList.Add(newProg);
             Program syncPrev = prevProg;
             Program syncProg = newProg;
-            for (int j = i + 1; j < Programs.Count; j++)
+            for (int j = i + 1 ; j < Programs.Count ; j++)
             {
               Program syncNew = (Program)Programs[j];
               if (syncPrev.EndTime == syncNew.StartTime)
@@ -1007,7 +1017,7 @@ namespace TvEngine
       Programs.Sort(this);
       dbEPG.Sort(this);
       Program prevProg = (Program)Programs[0];
-      for (int i = 1; i < Programs.Count; i++)
+      for (int i = 1 ; i < Programs.Count ; i++)
       {
         Program newProg = (Program)Programs[i];
         if (newProg.StartTime > prevProg.EndTime)   // we have a gab here
@@ -1027,8 +1037,6 @@ namespace TvEngine
         prevProg = newProg;
       }
     }
-
-
 
     public long datetolong(DateTime dt)
     {
@@ -1054,6 +1062,7 @@ namespace TvEngine
       }
       return 0;
     }
+
     public DateTime longtodate(long ldate)
     {
       try
@@ -1081,6 +1090,7 @@ namespace TvEngine
       ConvertHTMLToAnsi(html, out strippedHtml);
       return strippedHtml;
     }
+
     public void ConvertHTMLToAnsi(string html, out string strippedHtml)
     {
       strippedHtml = "";
@@ -1110,7 +1120,7 @@ namespace TvEngine
       Program item2 = (Program)y;
       if (item1 == null) return -1;
       if (item2 == null) return -1;
-      
+
       if (item1.IdChannel != item2.IdChannel)
       {
         return String.Compare(item1.ReferencedChannel().Name, item2.ReferencedChannel().Name, true);
