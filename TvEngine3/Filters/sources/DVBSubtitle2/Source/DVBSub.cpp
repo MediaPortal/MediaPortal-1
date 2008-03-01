@@ -325,15 +325,15 @@ void CDVBSub::NotifySubtitle()
     // PTS to milliseconds ( 90khz )
     LONGLONG pts( 0 ); 
    
-    pts = ( pSubtitle->PTS() - m_basePCR - m_currentTimeCompensation /* + m_CurrentSeekPosition*/ ) / 90;
+    pts = ( pSubtitle->PTS() - /*m_basePCR*/ - m_currentTimeCompensation /* + m_CurrentSeekPosition*/ ) / 90;
 
     LogDebugPTS( "subtitlePTS               ", pSubtitle->PTS() ); 
-    LogDebugPTS( "m_basePCR                 ", m_basePCR ); 
+    LogDebugPTS( "m_basePCR (not used)      ", m_basePCR ); 
     LogDebugPTS( "timestamp                 ", pts * 90 ); 
     LogDebugPTS( "m_CurrentSeekPosition     ", m_CurrentSeekPosition ); 
     LogDebugPTS( "m_currentTimeCompensation ", m_currentTimeCompensation ); 
 
-    LogDebugPTS( "subtitlePTS - m_basePCR - comp ", pSubtitle->PTS() - m_basePCR - m_currentTimeCompensation ); 
+    LogDebugPTS( "subtitlePTS - /*m_basePCR -*/ comp ", pSubtitle->PTS() - /*m_basePCR -*/ m_currentTimeCompensation ); 
 
     pSubtitle->SetTimestamp( pts );
     m_prevSubtitleTimestamp = pts;
@@ -388,7 +388,7 @@ void CDVBSub::UpdateSubtitleTimeout( uint64_t pTimeout )
     LogDebug("Calling update timeout observer" );
 
     __int64 timeOut( 0 ); 
-    timeOut = ( pTimeout - m_basePCR - m_currentTimeCompensation ) / 90;
+    timeOut = ( pTimeout - /*m_basePCR -*/ m_currentTimeCompensation ) / 90;
     timeOut -= m_prevSubtitleTimestamp;
 
 	(*m_pUpdateTimeoutObserver)( &timeOut );
