@@ -79,7 +79,10 @@ namespace MPTail
     void clearFileItem_Click(object sender, EventArgs e)
     {
       if (MessageBox.Show("Do you really want to delete this file?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+      {
         File.Delete(filename);
+        this.Text = "";
+      }
     }
     void clearWindowItem_Click(object sender, EventArgs e)
     {
