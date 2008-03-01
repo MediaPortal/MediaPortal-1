@@ -366,6 +366,8 @@ namespace SetupTv
           return;
         }
         tbServerHostName.BackColor = Color.GreenYellow;
+        tbUserID.BackColor = Color.GreenYellow;
+        tbPassword.BackColor = Color.GreenYellow;
         MessageBox.Show(this, "Connection succeeded!");
       }
     }

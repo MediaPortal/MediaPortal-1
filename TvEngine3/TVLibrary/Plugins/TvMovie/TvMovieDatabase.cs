@@ -498,9 +498,10 @@ namespace TvEngine
       sqlb.Append(", TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton");
       sqlb.Append(", TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Originaltitel, TVDaten.Regie, TVDaten.Darsteller");
       sqlb.Append(", TVDaten.Interessant, TVDaten.Bewertungen");
-      sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=\"{1}\")) ORDER BY TVDaten.Beginn;");
+      sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ((TVDaten.Ende)>= #{1}#)) ORDER BY TVDaten.Beginn;");
 
-      sqlSelect = string.Format(sqlb.ToString(), stationName, Convert.ToString((DateTime.Now.Subtract(TimeSpan.FromHours(4)))));
+      DateTime importTime = DateTime.Now.Subtract(TimeSpan.FromHours(4));
+      sqlSelect = string.Format(sqlb.ToString(), stationName, importTime.ToString("dd-MMM-yyyy HH:mm:ss"));      
       OleDbTransaction databaseTransaction = null;
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
 
