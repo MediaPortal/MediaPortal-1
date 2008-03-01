@@ -100,21 +100,27 @@ namespace MediaPortal.Configuration.Sections
         // Populate video and audio codecs
         //
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+        //Remove Muxer's from the Video decoder list to avoid confusion.
+        if (availableVideoFilters.Equals("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
+        if (availableVideoFilters.Equals("Cyberlink MPEG Muxer")) availableVideoFilters.Remove("Cyberlink MPEG Muxer");
+        if (availableVideoFilters.Equals("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
+        if (availableVideoFilters.Equals("PDR MPEG Muxer")) availableVideoFilters.Remove("PDR MPEG Muxer");
+        availableVideoFilters.Sort();
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
+        availableH264VideoFilters.Sort();
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+        //Remove Muxer's from Audio decoder list to avoid confusion.
+        if (availableAudioFilters.Contains("CyberLink MPEG Muxer")) availableAudioFilters.Remove("CyberLink MPEG Muxer");
+        if (availableAudioFilters.Contains("Cyberlink MPEG Muxer")) availableAudioFilters.Remove("Cyberlink MPEG Muxer");
+        if (availableAudioFilters.Contains("Ulead MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
+        if (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
+        availableAudioFilters.Sort();
         ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
+        availableAACAudioFilters.Sort();
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
-        //Remove Cyberlink Muxer from the list to avoid confusion.
-        if (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
-        {
-          availableVideoFilters.Remove("CyberLink MPEG Muxer");
-        }
+        availableAudioRenderers.Sort();
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
-        if (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
-        {
-          availableAudioFilters.Remove("CyberLink MPEG Muxer");
-        }
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
         aacAudioCodecComboBox.Items.AddRange(availableAACAudioFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
@@ -146,6 +152,8 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelAACDecoder = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.aacAudioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelH264Decoder = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbDeinterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -179,8 +187,6 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowLetterbox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowPanScan = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.labelAACDecoder = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.aacAudioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -214,6 +220,25 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // labelAACDecoder
+      // 
+      this.labelAACDecoder.Location = new System.Drawing.Point(16, 90);
+      this.labelAACDecoder.Name = "labelAACDecoder";
+      this.labelAACDecoder.Size = new System.Drawing.Size(146, 17);
+      this.labelAACDecoder.TabIndex = 12;
+      this.labelAACDecoder.Text = "LATM AAC audio decoder";
+      // 
+      // aacAudioCodecComboBox
+      // 
+      this.aacAudioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.aacAudioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.aacAudioCodecComboBox.Location = new System.Drawing.Point(168, 87);
+      this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
+      this.aacAudioCodecComboBox.Size = new System.Drawing.Size(288, 21);
+      this.aacAudioCodecComboBox.TabIndex = 13;
       // 
       // h264videoCodecComboBox
       // 
@@ -410,7 +435,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(192, 268);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(280, 100);
+      this.groupBox3.Size = new System.Drawing.Size(280, 94);
       this.groupBox3.TabIndex = 3;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Channel Numbers";
@@ -476,7 +501,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Controls.Add(this.cbAutoFullscreen);
       this.groupBox5.Controls.Add(this.cbTurnOnTv);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox5.Location = new System.Drawing.Point(192, 370);
+      this.groupBox5.Location = new System.Drawing.Point(192, 368);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(277, 44);
       this.groupBox5.TabIndex = 4;
@@ -599,25 +624,6 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowPanScan.TabIndex = 5;
       this.cbAllowPanScan.Text = "4:3 Pan and Scan";
       this.cbAllowPanScan.UseVisualStyleBackColor = true;
-      // 
-      // labelAACDecoder
-      // 
-      this.labelAACDecoder.Location = new System.Drawing.Point(16, 90);
-      this.labelAACDecoder.Name = "labelAACDecoder";
-      this.labelAACDecoder.Size = new System.Drawing.Size(132, 17);
-      this.labelAACDecoder.TabIndex = 12;
-      this.labelAACDecoder.Text = "LATM AAC audio decoder";
-      // 
-      // aacAudioCodecComboBox
-      // 
-      this.aacAudioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.aacAudioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.aacAudioCodecComboBox.Location = new System.Drawing.Point(168, 87);
-      this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
-      this.aacAudioCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.aacAudioCodecComboBox.TabIndex = 13;
       // 
       // Television
       // 
