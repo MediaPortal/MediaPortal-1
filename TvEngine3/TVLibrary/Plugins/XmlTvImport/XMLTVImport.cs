@@ -730,7 +730,6 @@ namespace TvEngine
               DateTime dtStartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0, 0);
               //dtStartDate=dtStartDate.AddDays(-4);
 
-
               foreach (ChannelPrograms progChan in Programs)
               {
                 // empty, skip it
@@ -771,7 +770,6 @@ namespace TvEngine
                 }
 
                 List<Program> importProgs = new List<Program>(progChan.programs.Count);
-
                 for (int i = 0 ; i < progChan.programs.Count ; ++i)
                 {
                   Program prog = (Program)progChan.programs[i];
@@ -803,11 +801,9 @@ namespace TvEngine
                         break;
                       }
                     }
-
                     if (!overlaps)
                     {
                       importProgs.Add(prog);
-
                       //try
                       //{
                       //  prog.Persist();
@@ -819,7 +815,6 @@ namespace TvEngine
                       //}
                       //Thread.Sleep(_backgroundDelay);
                     }
-
                     if (prog.StartTime < _status.StartTime)
                       _status.StartTime = prog.StartTime;
                     if (prog.EndTime > _status.EndTime)
@@ -828,7 +823,8 @@ namespace TvEngine
                     if (showProgress && ShowProgress != null && (_status.Programs % 100) == 0) ShowProgress(_status);
                   }
                 }
-                layer.InsertPrograms(importProgs, ThreadPriority.AboveNormal);
+                Log.Info("XMLTVImport: Inserting {0} programs for {1}", importProgs.Count.ToString(), progChan.Name);
+                layer.InsertPrograms(importProgs, ThreadPriority.BelowNormal);
               }
             }
               #endregion

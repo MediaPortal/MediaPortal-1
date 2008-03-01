@@ -122,7 +122,7 @@ namespace SetupTv.Sections
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "true").Value == "true";
       cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
       cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "true").Value == "true";
-      checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "false").Value == "true";
+      checkBoxDeleteBeforeImport.Checked = true; // avoid duplicates. layer.GetSetting("xmlTvDeleteBeforeImport", "false").Value == "true";
 
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
       textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
