@@ -1534,14 +1534,18 @@ namespace TvDatabase
           transact.Commit();
         }
       }
-      catch (Exception ex)
+      catch (MySqlException myex)
       {
-        Log.Info("BusinessLayer: InsertMySql error - {0}", ex.Message);
+        Log.Info("BusinessLayer: InsertMySql caused a MySqlException - {0}, {1}, {2}", myex.Message, myex.Number, myex.HelpLink);
         try
         {
           transact.Rollback();
         }
-        catch (Exception) { }        
+        catch (Exception) { }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -1563,14 +1567,18 @@ namespace TvDatabase
           transact.Commit();
         }
       }
-      catch (Exception ex)
+      catch (SqlException msex)
       {
+        Log.Info("BusinessLayer: InsertSqlServer caused a SqlException - {0}, {1}, {2}", msex.Message, msex.Number, msex.HelpLink);
         try
         {
           transact.Rollback();
         }
         catch (Exception) { }
-        Log.Info("BusinessLayer: InsertSqlServer error - {0}", ex.Message);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BusinessLayer: InsertSqlServer error - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 
