@@ -373,6 +373,7 @@ Section "MediaPortal TV Plugin/Client" SecClient
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
+    !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
 SectionEnd
 !macro Remove_${SecClient}
     # The Plugins
@@ -398,11 +399,13 @@ SectionEnd
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
     
     Delete /REBOOTOK  $MPBaseDir\DVBSub2.ax
     Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
     Delete /REBOOTOK  $MPBaseDir\TSFileSource.ax
     Delete /REBOOTOK  $MPBaseDir\TsReader.ax
+    Delete /REBOOTOK  $MPBaseDir\mmaacd.ax
 !macroend
 
 !macro CompleteCleanup
