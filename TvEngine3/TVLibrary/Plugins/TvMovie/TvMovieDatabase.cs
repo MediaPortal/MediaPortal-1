@@ -566,8 +566,8 @@ namespace TvEngine
                                          string FSK, string Herstellungsjahr, string Originaltitel, string Regie, string Darsteller, string Interessant, string Bewertungen)
     {
       string channel = SenderKennung;
-      DateTime end = System.Data.SqlTypes.SqlDateTime.MinValue;
-      DateTime start = System.Data.SqlTypes.SqlDateTime.MinValue;
+      DateTime end = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
+      DateTime start = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
       string classification = string.Empty;
       string date = string.Empty;
       string episode = string.Empty;
@@ -665,7 +665,7 @@ namespace TvEngine
               break;
             }
           }
-          DateTime OnAirDate = System.Data.SqlTypes.SqlDateTime.MinValue;
+          DateTime OnAirDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
           if (date.Length > 0 && date != @"-")
           {
             try

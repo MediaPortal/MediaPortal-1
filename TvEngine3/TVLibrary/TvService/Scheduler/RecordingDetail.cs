@@ -99,7 +99,7 @@ namespace TvService
       //no program? then treat this as a manual recording
       if (_program == null)
       {
-        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "", false, System.Data.SqlTypes.SqlDateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, 0);
+        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "", false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, -1, string.Empty, 0);
       }
     }
     #endregion

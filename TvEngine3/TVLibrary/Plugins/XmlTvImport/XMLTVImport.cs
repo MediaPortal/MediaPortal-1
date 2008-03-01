@@ -693,7 +693,7 @@ namespace TvEngine
                           continue;
                         }
 
-                        Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, System.Data.SqlTypes.SqlDateTime.MinValue, seriesNum, episodeNum, starRating, classification, -1);
+                        Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, seriesNum, episodeNum, starRating, classification, -1);
                         channelPrograms.programs.Add(prog);
                         programIndex++;
                         //prog.Description = ConvertHTMLToAnsi(strDescription);
@@ -780,11 +780,11 @@ namespace TvEngine
                   {
                     DateTime start = prog.StartTime;
                     DateTime end = prog.EndTime;
-                    DateTime airDate = System.Data.SqlTypes.SqlDateTime.MinValue;
+                    DateTime airDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
                     try
                     {
-                      airDate = DateTime.Parse(prog.OriginalAirDate);
-                      if (airDate > System.Data.SqlTypes.SqlDateTime.MinValue && airDate < System.Data.SqlTypes.SqlDateTime.MaxValue)
+                      airDate = prog.OriginalAirDate;
+                      if (airDate > System.Data.SqlTypes.SqlDateTime.MinValue.Value && airDate < System.Data.SqlTypes.SqlDateTime.MaxValue.Value)
                         prog.OriginalAirDate = airDate;
                     }
                     catch (Exception)
