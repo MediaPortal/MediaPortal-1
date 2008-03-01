@@ -91,6 +91,12 @@
     <Compile Include="CardGroup.cs" />
     <Compile Include="CardGroupMap.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

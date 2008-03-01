@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using Gentle.Common;
 using Gentle.Framework;
+using TvLibrary.Log;
 
 namespace TvDatabase
 {
@@ -539,7 +540,15 @@ namespace TvDatabase
     {
       if (IsChanged || !IsPersisted)
       {
-        base.Persist();
+        try
+        {
+          base.Persist();
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Exception in TuningDetail.Persist() with Message {0}", ex.Message);
+          return;
+        }
         isChanged = false;
       }
     }

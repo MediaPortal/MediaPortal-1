@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Gentle.Common;
 using Gentle.Framework;
+using TvLibrary.Log;
 
 namespace TvDatabase
 {
@@ -151,7 +152,15 @@ namespace TvDatabase
     {
       if (IsChanged || !IsPersisted)
       {
-        base.Persist();
+        try
+        {
+          base.Persist();
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Exception in Timespan.Persist() with Message {0}", ex.Message);
+          return;
+        }
         isChanged = false;
       }
     }
