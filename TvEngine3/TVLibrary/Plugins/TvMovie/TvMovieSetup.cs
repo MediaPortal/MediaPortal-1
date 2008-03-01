@@ -112,6 +112,13 @@ namespace SetupTv.Sections
       if (tabControlTvMovie.SelectedIndex == 1)
         SaveMapping();
 
+      SaveDbSettings();
+
+      base.OnSectionDeActivated();
+    }
+
+    private void SaveDbSettings()
+    {
       TvBusinessLayer layer = new TvBusinessLayer();
 
       Setting setting = layer.GetSetting("TvMovieEnabled", "false");
@@ -119,13 +126,6 @@ namespace SetupTv.Sections
         setting.Value = "true";
       else
         setting.Value = "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieUseDatabaseDate", "true");
-//      if (checkBoxUseDatabaseDate.Checked)
-        setting.Value = "true";
-      //else
-      //  setting.Value = "false";
       setting.Persist();
 
       setting = layer.GetSetting("TvMovieShortProgramDesc", "false");
@@ -173,24 +173,26 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("TvMovieRestPeriod", "24");
       setting.Value = GetRestPeriod();
       setting.Persist();
-
-      base.OnSectionDeActivated();
     }
 
     public override void OnSectionActivated()
     {
+      LoadDbSettings();   
+
+      base.OnSectionActivated();
+    }
+
+    private void LoadDbSettings()
+    {
       TvBusinessLayer layer = new TvBusinessLayer();
-      checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";
-      //checkBoxUseDatabaseDate.Checked = layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true";
+      checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";      
       checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "true").Value == "true";
       checkBoxAdditionalInfo.Checked = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
       checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "false").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
       checkBoxLimitActors.Checked = Convert.ToInt32(layer.GetSetting("TvMovieLimitActors", "5").Value) > 0;
-      SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);    
-
-      base.OnSectionActivated();
+      SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);
     }
 
     /// <summary>
@@ -591,6 +593,7 @@ namespace SetupTv.Sections
     private void buttonImportNow_Click(object sender, EventArgs e)
     {
       buttonImportNow.Enabled = false;
+      SaveDbSettings();
       try
       {
         Thread manualThread = new Thread(new ThreadStart(ManualImportThread));

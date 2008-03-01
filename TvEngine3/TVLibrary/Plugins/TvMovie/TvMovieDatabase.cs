@@ -308,7 +308,7 @@ namespace TvEngine
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
-        Log.Error("TVMovie: Error accessing TV Movie Clickfinder database while reading stations");
+        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations");
         Log.Error("TVMovie: Exception: {0}", ex);
         _canceled = true;
         return;
@@ -353,7 +353,7 @@ namespace TvEngine
         }
         catch (Exception ex)
         {
-          Log.Error("TVMovie: An error occured checking the last import time {0}", ex.Message);
+          Log.Info("TVMovie: An error occured checking the last import time {0}", ex.Message);
           Log.Write(ex);
           return true;
         }
@@ -371,13 +371,14 @@ namespace TvEngine
       ArrayList mappingList = GetMappingList();
       if (mappingList == null)
       {
-        Log.Error("TVMovie: Cannot import from TV Movie database");
+        Log.Info("TVMovie: Cannot import from TV Movie database");
         return;
       }
 
       DateTime ImportStartTime = DateTime.Now;
       Log.Debug("TVMovie: Importing database");
       int maximum = 0;
+      bool useGentle = true;
 
       foreach (TVMChannel tvmChan in _tvmEpgChannels)
         foreach (Mapping mapping in mappingList)
@@ -428,21 +429,24 @@ namespace TvEngine
             if (OnStationsChanged != null)
               OnStationsChanged(counter, maximum, display);
             counter++;
-            
+
             Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter), Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
-            
+
             _tvmEpgProgs.Clear();
-            
-            _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
+
+            _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels, useGentle);
 
             ThreadPriority importPrio = _slowImport ? ThreadPriority.BelowNormal : ThreadPriority.AboveNormal;
             if (_slowImport)
               Thread.Sleep(30);
 
-            // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
-            List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
-            int debugCount = TvBLayer.InsertPrograms(InsertCopy, importPrio);
-            Log.Info("TVMovie: Inserted {0} programs", debugCount);
+            if (!useGentle)
+            {
+              // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
+              List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
+              int debugCount = TvBLayer.InsertPrograms(InsertCopy, importPrio);
+              Log.Info("TVMovie: Inserted {0} programs", debugCount);
+            }
           }
           catch (Exception ex)
           {
@@ -466,7 +470,7 @@ namespace TvEngine
         }
         catch (Exception)
         {
-          Log.Error("TVMovie: Error updating the database with last import date");
+          Log.Info("TVMovie: Error updating the database with last import date");
         }
       }
       GC.Collect();
@@ -486,11 +490,10 @@ namespace TvEngine
       _xmlFile = String.Format(@"{0}\MediaPortal TV Server\TVMovieMapping.xml", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     }
 
-    private int ImportStation(string stationName, List<Mapping> channelNames, IList allChannels)
+    private int ImportStation(string stationName, List<Mapping> channelNames, IList allChannels, bool useGentle)
     {
       int counter = 0;
-      bool useGentle = false;
-      string sqlSelect = string.Empty;
+      string sqlSelect = string.Empty;      
       StringBuilder sqlb = new StringBuilder();
 
       // UNUSED: F16zu9 , live , untertitel , Dauer , Wiederholung
@@ -501,7 +504,7 @@ namespace TvEngine
       sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ((TVDaten.Ende)>= #{1}#)) ORDER BY TVDaten.Beginn;");
 
       DateTime importTime = DateTime.Now.Subtract(TimeSpan.FromHours(4));
-      sqlSelect = string.Format(sqlb.ToString(), stationName, importTime.ToString("dd-MMM-yyyy HH:mm:ss"));      
+      sqlSelect = string.Format(sqlb.ToString(), stationName, importTime.ToString("dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture));
       OleDbTransaction databaseTransaction = null;
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
 
@@ -539,14 +542,14 @@ namespace TvEngine
       catch (OleDbException ex)
       {
         databaseTransaction.Rollback();
-        Log.Error("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
+        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
         Log.Error("TVMovie: Exception: {0}", ex);
         return 0;
       }
       catch (Exception ex1)
       {
         databaseTransaction.Rollback();
-        Log.Error("TVMovie: Exception: {0}", ex1);
+        Log.Info("TVMovie: Exception: {0}", ex1);
         return 0;
       }
       finally
@@ -583,7 +586,7 @@ namespace TvEngine
       }
       catch (Exception ex2)
       {
-        Log.Error("TVMovie: Error parsing EPG time data - {0},{1}", ex2.Message, ex2.StackTrace);
+        Log.Info("TVMovie: Error parsing EPG time data - {0},{1}", ex2.Message, ex2.StackTrace);
       }
 
       string title = Sendung;
@@ -723,9 +726,9 @@ namespace TvEngine
           }
 
           Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
-          if (useGentlePersist)          
+          if (useGentlePersist)
             prog.Persist();
-          
+
           _tvmEpgProgs.Add(prog);
           if (_slowImport)
             Thread.Sleep(10);
@@ -938,7 +941,7 @@ namespace TvEngine
         string[] splitActors = dbActors.Split(';');
         if (splitActors != null && splitActors.Length > 0)
         {
-          for (int i = 0; i < splitActors.Length; i++)
+          for (int i = 0 ; i < splitActors.Length ; i++)
           {
             if (i < _actorCount)
             {
@@ -1001,7 +1004,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Error("TvMovieDatabase: ClearPrograms failed - {0}", ex.Message);
+        Log.Info("TvMovieDatabase: ClearPrograms failed - {0}", ex.Message);
       }
     }
 
@@ -1050,7 +1053,7 @@ namespace TvEngine
         {
           BenchClock.Stop();
           UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
-          Log.Error("TVMovie: LaunchTVMUpdater failed: {0}", ex.Message);
+          Log.Info("TVMovie: LaunchTVMUpdater failed: {0}", ex.Message);
         }
       }
       else
