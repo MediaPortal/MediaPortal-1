@@ -1703,7 +1703,7 @@ namespace TvDatabase
         sqlCmd.Connection = aConnection;
         sqlCmd.Transaction = aTransaction;
         // Prepare the command since we will reuse it quite often
-        sqlCmd.Prepare();
+        // sqlCmd.Prepare(); <-- this would need exact param field length definitions
       }
       catch (Exception ex)
       {
@@ -1739,10 +1739,12 @@ namespace TvDatabase
           string errorRow = sqlCmd.Parameters["idChannel"].Value + ", " + sqlCmd.Parameters["title"].Value + " : " + sqlCmd.Parameters["startTime"].Value + "-" + sqlCmd.Parameters["endTime"].Value;
           switch (msex.Number)
           {
-            //case 1062:
-            //  Log.Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
-            //case 1406:
-            //  Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, msex.Message);
+            case 2601:
+              Log.Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
+              break;
+            case 8152:
+              Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, msex.Message);
+              break;
             default:
               Log.Info("BusinessLayer: InsertSqlServer caused a SqlException - {0}, {1} {2}", msex.Message, msex.Number, msex.HelpLink);
               break;
