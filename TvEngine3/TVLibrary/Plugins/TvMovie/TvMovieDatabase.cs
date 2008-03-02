@@ -729,8 +729,8 @@ namespace TvEngine
           
           _tvmEpgProgs.Add(prog);
 
-          if (_slowImport && aCounter % 2 == 0)
-            Thread.Sleep(10);
+          if (_slowImport && aCounter % 3 == 0)
+            Thread.Sleep(30);
         }
       }
     }
