@@ -3140,6 +3140,11 @@
 		<carrier frequency="634000" bandwidth="8"></carrier>
 		<carrier frequency="650000" bandwidth="8"></carrier>
 	</country>
+ 	<country name="Sweden - Malmo Jagersro 2" offset="125">
+  		<carrier frequency="177500" bandwidth="8"></carrier>
+  		<carrier frequency="570000" bandwidth="8"></carrier>
+  		<carrier frequency="650000" bandwidth="8"></carrier>
+ 	</country>
 	<country name="Sweden - Mora Eldris" offset="125">
 		<carrier frequency="482000" bandwidth="8"></carrier>
 		<carrier frequency="506000" bandwidth="8"></carrier>
