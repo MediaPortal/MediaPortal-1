@@ -438,7 +438,7 @@ namespace TvEngine
 
             ThreadPriority importPrio = _slowImport ? ThreadPriority.BelowNormal : ThreadPriority.AboveNormal;
             if (_slowImport)
-              Thread.Sleep(30);
+              Thread.Sleep(32);
 
             if (!useGentle)
             {
@@ -514,12 +514,11 @@ namespace TvEngine
           Log.Debug("TVMovie: Purging old programs for channel {0}", map.Channel);
           ClearPrograms(map.Channel);
           if (_slowImport)
-            Thread.Sleep(75);
+            Thread.Sleep(32);
         }
 
       try
       {
-        int programsCount = 0;
         _databaseConnection.Open();
         // The main app might change epg details while importing
         databaseTransaction = _databaseConnection.BeginTransaction(IsolationLevel.ReadCommitted);
@@ -532,8 +531,7 @@ namespace TvEngine
                                     reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(),
                                     reader[8].ToString(), reader[9].ToString(), reader[10].ToString(), reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
                                     reader[14].ToString(), reader[15].ToString(), reader[16].ToString(), reader[17].ToString(), reader[18].ToString(), reader[19].ToString(), reader[20].ToString()
-                                  );
-          programsCount++;
+                                  );          
           counter++;
         }
         databaseTransaction.Commit();
@@ -727,11 +725,12 @@ namespace TvEngine
 
           Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
           if (useGentlePersist)
+          {
             prog.Persist();
-
-          _tvmEpgProgs.Add(prog);
-          if (_slowImport)
-            Thread.Sleep(10);
+            if (_slowImport)
+              Thread.Sleep(10);
+          }
+          _tvmEpgProgs.Add(prog);          
         }
       }
     }

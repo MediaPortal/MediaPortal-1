@@ -18,6 +18,7 @@ using TvLibrary;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using System.Threading;
+using System.Diagnostics;
 
 namespace TvDatabase
 {
@@ -1077,6 +1078,8 @@ namespace TvDatabase
 
     public Dictionary<int, List<Program>> GetProgramsForAllChannels(DateTime startTime, DateTime endTime, List<Channel> channelList)
     {
+      //Stopwatch bench = new Stopwatch();
+      //bench.Start();
       Dictionary<int, List<Program>> maps = new Dictionary<int, List<Program>>();
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
@@ -1116,6 +1119,8 @@ namespace TvDatabase
         }
         maps[idChannel].Add(p);
       }
+      //bench.Stop();
+      //Log.Info("BL: GetProgsForAllChans: Start: {0}, End: {1}, Channels: {2}, Results: {3}, Time: {4} ms", startTime.ToString(), endTime.ToString(), channelList.Count.ToString(), maps.Count.ToString(), bench.ElapsedMilliseconds.ToString());
       return maps;
     }
 
@@ -1461,7 +1466,7 @@ namespace TvDatabase
         IGentleProvider prov = Gentle.Framework.ProviderFactory.GetDefaultProvider();
         string provider = prov.Name.ToLower();
         string defaultConnectString = prov.ConnectionString; // Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
-        int sleepTime = 15;
+        int sleepTime = 8;
 
         switch (aThreadPriority)
         {
@@ -1471,7 +1476,7 @@ namespace TvDatabase
             sleepTime = 0;
             break;
           case ThreadPriority.Normal:      // this is almost enough on dualcore systems for one cpu to gather epg and the other to insert it
-            sleepTime = 16;
+            sleepTime = 8;
             break;
           case ThreadPriority.BelowNormal: // on faster systems this might be enough for background importing
             sleepTime = 32;
@@ -1514,51 +1519,41 @@ namespace TvDatabase
       }
     }
 
+    private void ExecuteMySqlCommand(object aImportParam)
+    {
+      lock (SingleInsert)
+      {
+        ImportParams MyParams = (ImportParams)aImportParam;
+        InsertMySql(MyParams);
+      }
+    }
+
     #region SQL methods
 
-    private void InsertMySql(string aConnectString, MySqlCommand aSqlCommand)
+    private void InsertMySql(ImportParams aImportParam)
     {
-      if (aSqlCommand == null || string.IsNullOrEmpty(aConnectString))
-        return;
-
       MySqlTransaction transact = null;
       try
       {
-        using (MySqlConnection connection = new MySqlConnection(aConnectString))
+        using (MySqlConnection connection = new MySqlConnection(aImportParam.ConnectString))
         {
           connection.Open();
           transact = connection.BeginTransaction();
-          aSqlCommand.Connection = connection;
-          aSqlCommand.Transaction = transact;
-          aSqlCommand.ExecuteNonQuery();
+          ExecuteMySqlCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
           transact.Commit();
         }
       }
-      catch (MySqlException myex)
+      catch (Exception ex)
       {
-        string errorRow = aSqlCommand.Parameters["?idChannel"].Value + ", " + aSqlCommand.Parameters["?title"].Value + " : " + aSqlCommand.Parameters["?startTime"].Value + "-" + aSqlCommand.Parameters["?endTime"].Value;
-        switch (myex.Number)
-        {
-          case 1062:
-            Log.Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
-            break;
-          case 1406:
-            Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, myex.Message);
-            break;
-          default:
-            Log.Info("BusinessLayer: InsertMySql caused a MySqlException - {0}, {1}, {2}", myex.Message, myex.Number, myex.HelpLink);
-            break;
-        }
         try
         {
           transact.Rollback();
         }
         catch (Exception) { }
+        Log.Info("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
-      catch (Exception ex)
-      {
-        Log.Error("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
-      }
+      transact = null;
+      GC.Collect();
     }
 
     private void InsertSqlServer(string aConnectString, SqlCommand aSqlCommand)
@@ -1608,53 +1603,81 @@ namespace TvDatabase
 
     #region SQL Builder
 
-    private void ExecuteMySqlCommand(object aImportParam)
+    private void ExecuteMySqlCommand(List<Program> aProgramList, MySqlConnection aConnection, MySqlTransaction aTransaction, int aDelay)
     {
-      lock (SingleInsert)
+      MySqlCommand sqlcmd = new MySqlCommand();
+      List<Program> currentInserts = new List<Program>(aProgramList);
+
+      sqlcmd.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
+
+      sqlcmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
+      sqlcmd.Parameters.Add("?startTime", MySqlDbType.Datetime);
+      sqlcmd.Parameters.Add("?endTime", MySqlDbType.Datetime);
+      sqlcmd.Parameters.Add("?title", MySqlDbType.VarChar);
+      sqlcmd.Parameters.Add("?description", MySqlDbType.VarChar);
+      sqlcmd.Parameters.Add("?seriesNum", MySqlDbType.VarChar);
+      sqlcmd.Parameters.Add("?episodeNum", MySqlDbType.VarChar);
+      sqlcmd.Parameters.Add("?genre", MySqlDbType.VarChar);
+      sqlcmd.Parameters.Add("?originalAirDate", MySqlDbType.Datetime);
+      sqlcmd.Parameters.Add("?classification", MySqlDbType.VarChar);
+      sqlcmd.Parameters.Add("?starRating", MySqlDbType.Int32);
+      sqlcmd.Parameters.Add("?notify", MySqlDbType.Bit);
+      sqlcmd.Parameters.Add("?parentalRating", MySqlDbType.Int32);
+
+      try
       {
-        ImportParams MyParams = (ImportParams)aImportParam;
-        MySqlCommand sqlInsert = new MySqlCommand();
-        List<Program> currentInserts = new List<Program>(MyParams.ProgramList);
+        sqlcmd.Connection = aConnection;
+        sqlcmd.Transaction = aTransaction;
+        // Prepare the command since we will reuse it quite often
+        sqlcmd.Prepare();
+      }
+      catch (Exception ex)
+      {
+        Log.Info("BusinessLayer: ExecuteMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
+      }
 
-        sqlInsert.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
-
-        sqlInsert.Parameters.Add("?idChannel", MySqlDbType.Int32);
-        sqlInsert.Parameters.Add("?startTime", MySqlDbType.Datetime);
-        sqlInsert.Parameters.Add("?endTime", MySqlDbType.Datetime);
-        sqlInsert.Parameters.Add("?title", MySqlDbType.VarChar);
-        sqlInsert.Parameters.Add("?description", MySqlDbType.VarChar);
-        sqlInsert.Parameters.Add("?seriesNum", MySqlDbType.VarChar);
-        sqlInsert.Parameters.Add("?episodeNum", MySqlDbType.VarChar);
-        sqlInsert.Parameters.Add("?genre", MySqlDbType.VarChar);
-        sqlInsert.Parameters.Add("?originalAirDate", MySqlDbType.Datetime);
-        sqlInsert.Parameters.Add("?classification", MySqlDbType.VarChar);
-        sqlInsert.Parameters.Add("?starRating", MySqlDbType.Int32);
-        sqlInsert.Parameters.Add("?notify", MySqlDbType.Bit);
-        sqlInsert.Parameters.Add("?parentalRating", MySqlDbType.Int32);
-
-        if (currentInserts.Count > 0)
+      foreach (Program prog in currentInserts)
+      {
+        sqlcmd.Parameters["?idChannel"].Value = prog.IdChannel;
+        sqlcmd.Parameters["?startTime"].Value = prog.StartTime;
+        sqlcmd.Parameters["?endTime"].Value = prog.EndTime;
+        sqlcmd.Parameters["?title"].Value = prog.Title;
+        sqlcmd.Parameters["?description"].Value = prog.Description;
+        sqlcmd.Parameters["?seriesNum"].Value = prog.SeriesNum;
+        sqlcmd.Parameters["?episodeNum"].Value = prog.EpisodeNum;
+        sqlcmd.Parameters["?genre"].Value = prog.Genre;
+        sqlcmd.Parameters["?originalAirDate"].Value = prog.OriginalAirDate;
+        sqlcmd.Parameters["?classification"].Value = prog.Classification;
+        sqlcmd.Parameters["?starRating"].Value = prog.StarRating;
+        sqlcmd.Parameters["?notify"].Value = prog.Notify;
+        sqlcmd.Parameters["?parentalRating"].Value = prog.ParentalRating;
+        try
         {
-          foreach (Program prog in currentInserts)
+          // Finally insert all our data
+          sqlcmd.ExecuteNonQuery();
+          // Avoid I/O starving
+          Thread.Sleep(aDelay / 4);
+        }
+        catch (MySqlException myex)
+        {
+          string errorRow = sqlcmd.Parameters["?idChannel"].Value + ", " + sqlcmd.Parameters["?title"].Value + " : " + sqlcmd.Parameters["?startTime"].Value + "-" + sqlcmd.Parameters["?endTime"].Value;
+          switch (myex.Number)
           {
-            sqlInsert.Parameters["?idChannel"].Value = prog.IdChannel;
-            sqlInsert.Parameters["?startTime"].Value = prog.StartTime;
-            sqlInsert.Parameters["?endTime"].Value = prog.EndTime;
-            sqlInsert.Parameters["?title"].Value = prog.Title;
-            sqlInsert.Parameters["?description"].Value = prog.Description;
-            sqlInsert.Parameters["?seriesNum"].Value = prog.SeriesNum;
-            sqlInsert.Parameters["?episodeNum"].Value = prog.EpisodeNum;
-            sqlInsert.Parameters["?genre"].Value = prog.Genre;
-            sqlInsert.Parameters["?originalAirDate"].Value = prog.OriginalAirDate;
-            sqlInsert.Parameters["?classification"].Value = prog.Classification;
-            sqlInsert.Parameters["?starRating"].Value = prog.StarRating;
-            sqlInsert.Parameters["?notify"].Value = prog.Notify;
-            sqlInsert.Parameters["?parentalRating"].Value = prog.ParentalRating;
-
-            InsertMySql(MyParams.ConnectString, sqlInsert);
-            Thread.Sleep(MyParams.SleepTime / 2);
+            case 1062:
+              Log.Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
+              break;
+            case 1406:
+              Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, myex.Message);
+              break;
+            default:
+              Log.Info("BusinessLayer: ExecuteMySqlCommand caused a MySqlException - {0}, {1}, {2}", myex.Message, myex.Number, myex.HelpLink);
+              break;
           }
         }
-        Thread.Sleep(MyParams.SleepTime);
+        catch (Exception ex)
+        {
+          Log.Info("BusinessLayer: ExecuteMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+        }
       }
     }
 
