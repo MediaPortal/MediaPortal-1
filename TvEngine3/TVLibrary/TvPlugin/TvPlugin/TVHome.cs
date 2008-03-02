@@ -1203,12 +1203,17 @@ namespace TvPlugin
     public override void Process()
     {
       TimeSpan ts = DateTime.Now - _updateTimer;
+      if (ts.TotalMilliseconds < 1000) return;
+
+      // BAV, 02.03.08: a channel change should not be delayed by rendering.
+      //                by moving thisthe 1 min delays in zapping should be fixed
+      // Let the navigator zap channel if needed
+      Navigator.CheckChannelChange();
 
       //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
 
       if (GUIGraphicsContext.InVmr9Render) return;
-      if (ts.TotalMilliseconds < 1000) return;
-
+      
       UpdateRecordingIndicator();
       if (btnChannel.Disabled != false)
         btnChannel.Disabled = false;
@@ -1246,8 +1251,9 @@ namespace TvPlugin
       {
         btnTeletext.IsVisible = hasTeletext;
       }
-      // Let the navigator zap channel if needed
-      Navigator.CheckChannelChange();
+      // BAV, 02.03.08
+      //Navigator.CheckChannelChange();
+
       // Update navigator with information from the Recorder
       // TODO: This should ideally be handled using events. Recorder should fire an event
       // when the current channel changes. This is a temporary workaround //Vic
@@ -2801,7 +2807,9 @@ namespace TvPlugin
     public bool CheckChannelChange()
     {
       if (reentrant) return false;
-      if (GUIGraphicsContext.InVmr9Render) return false;
+      // BAV, 02.03.08: a channel change should not be delayed by rendering.
+      //                by scipping this => 1 min delays in zapping should be avoided 
+      //if (GUIGraphicsContext.InVmr9Render) return false;
       reentrant = true;
       UpdateCurrentChannel();
 
