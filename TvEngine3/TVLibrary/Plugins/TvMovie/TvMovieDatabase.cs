@@ -527,7 +527,7 @@ namespace TvEngine
 
         while (reader.Read())
         {
-          ImportSingleChannelData(channelNames, allChannels, useGentle,
+          ImportSingleChannelData(channelNames, allChannels, useGentle, counter, 
                                     reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(),
                                     reader[8].ToString(), reader[9].ToString(), reader[10].ToString(), reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
                                     reader[14].ToString(), reader[15].ToString(), reader[16].ToString(), reader[17].ToString(), reader[18].ToString(), reader[19].ToString(), reader[20].ToString()
@@ -561,7 +561,7 @@ namespace TvEngine
     /// <summary>
     /// Takes a DataRow worth of EPG Details to persist them in MP's program table
     /// </summary>
-    private void ImportSingleChannelData(List<Mapping> channelNames, IList allChannels, bool useGentlePersist,
+    private void ImportSingleChannelData(List<Mapping> channelNames, IList allChannels, bool useGentlePersist, int aCounter, 
                                          string SenderKennung, string Beginn, string Ende, string Sendung, string Genre, string Kurzkritik, string KurzBeschreibung, string Beschreibung,
                                          string Audiodescription, string DolbySuround, string Stereo, string DolbyDigital, string Dolby, string Zweikanalton,
                                          string FSK, string Herstellungsjahr, string Originaltitel, string Regie, string Darsteller, string Interessant, string Bewertungen)
@@ -725,12 +725,12 @@ namespace TvEngine
 
           Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
           if (useGentlePersist)
-          {
             prog.Persist();
-            if (_slowImport)
-              Thread.Sleep(10);
-          }
-          _tvmEpgProgs.Add(prog);          
+          
+          _tvmEpgProgs.Add(prog);
+
+          if (_slowImport && aCounter % 2 == 0)
+            Thread.Sleep(10);
         }
       }
     }

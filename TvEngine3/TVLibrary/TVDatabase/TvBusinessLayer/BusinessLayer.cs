@@ -1605,6 +1605,7 @@ namespace TvDatabase
 
     private void ExecuteMySqlCommand(List<Program> aProgramList, MySqlConnection aConnection, MySqlTransaction aTransaction, int aDelay)
     {
+      int aCounter = 0;
       MySqlCommand sqlcmd = new MySqlCommand();
       List<Program> currentInserts = new List<Program>(aProgramList);
 
@@ -1655,8 +1656,10 @@ namespace TvDatabase
         {
           // Finally insert all our data
           sqlcmd.ExecuteNonQuery();
+          aCounter++;
           // Avoid I/O starving
-          Thread.Sleep(aDelay / 4);
+          if (aCounter % 10 == 0)
+            Thread.Sleep(aDelay / 2);
         }
         catch (MySqlException myex)
         {
