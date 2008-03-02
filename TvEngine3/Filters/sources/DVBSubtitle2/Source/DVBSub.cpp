@@ -45,7 +45,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 {
   ::DeleteFile("c:\\DVBsub.log");
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 14 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 15 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -325,7 +325,7 @@ void CDVBSub::NotifySubtitle()
     // PTS to milliseconds ( 90khz )
     LONGLONG pts( 0 ); 
    
-    pts = ( pSubtitle->PTS() - /*m_basePCR*/ - m_currentTimeCompensation /* + m_CurrentSeekPosition*/ ) / 90;
+    pts = ( pSubtitle->PTS() - m_currentTimeCompensation ) / 90;
 
     LogDebugPTS( "subtitlePTS               ", pSubtitle->PTS() ); 
     LogDebugPTS( "m_basePCR (not used)      ", m_basePCR ); 
@@ -333,10 +333,8 @@ void CDVBSub::NotifySubtitle()
     LogDebugPTS( "m_CurrentSeekPosition     ", m_CurrentSeekPosition ); 
     LogDebugPTS( "m_currentTimeCompensation ", m_currentTimeCompensation ); 
 
-    LogDebugPTS( "subtitlePTS - /*m_basePCR -*/ comp ", pSubtitle->PTS() - /*m_basePCR -*/ m_currentTimeCompensation ); 
-
     pSubtitle->SetTimestamp( pts );
-    m_prevSubtitleTimestamp = pts;
+    m_prevSubtitleTimestamp = pSubtitle->PTS();
 
     LONGLONG pos( 0 );
     if( m_pIMediaSeeking )
@@ -357,7 +355,7 @@ void CDVBSub::NotifySubtitle()
 
     if( pts <= pos )
     {
-      LogDebug( "Too old timestamp! - diff was %lld ms", pos - pts );
+      LogDebugPTS( "Too old timestamp! - diff = ", pos - pts );
     }
   }
   if( m_pSubtitleObserver )
@@ -384,14 +382,14 @@ void CDVBSub::UpdateSubtitleTimeout( uint64_t pTimeout )
 {
   if( m_pUpdateTimeoutObserver )
   {
-    // Stop displaying the current subtitle
-    LogDebug("Calling update timeout observer" );
-
+    // Calculate the timeout
     __int64 timeOut( 0 ); 
-    timeOut = ( pTimeout - /*m_basePCR -*/ m_currentTimeCompensation ) / 90;
-    timeOut -= m_prevSubtitleTimestamp;
+    timeOut = pTimeout + m_currentTimeCompensation - m_prevSubtitleTimestamp;
+    timeOut = timeOut/90;
 
-	(*m_pUpdateTimeoutObserver)( &timeOut );
+    LogDebug("Calling update timeout observer - timeout = %lld ms", timeOut );
+
+	  (*m_pUpdateTimeoutObserver)( &timeOut );
   }
   else
   {
