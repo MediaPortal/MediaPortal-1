@@ -608,13 +608,17 @@ namespace MediaPortal.GUI.TV
 
     public override void Process()
     {
+      // BAV, 02.03.08: a channel change should not be delayed by rendering.
+      //                by moving thisthe 1 min delays in zapping should be fixed
+      // Let the navigator zap channel if needed
+      Navigator.CheckChannelChange();
+
       TimeSpan ts = DateTime.Now - _updateTimer;
 
       if (GUIGraphicsContext.InVmr9Render)
         return;
       if (ts.TotalMilliseconds < 100)
         return;
-      _updateTimer = DateTime.Now;
 
       // Don't update if recorder is stopped!
       if (Recorder.Running == false)
@@ -624,9 +628,10 @@ namespace MediaPortal.GUI.TV
       // Don't update while busy - Will make it look bad!
       if (Recorder.CommandProcessor.IsBusy)
         return;
+      _updateTimer = DateTime.Now;
 
-      // Let the navigator zap channel if needed
-      Navigator.CheckChannelChange();
+      // BAV, 02.03.08
+      //Navigator.CheckChannelChange();
 
       // Update navigator with information from the Recorder
       // TODO: This should ideally be handled using events. Recorder should fire an event
@@ -1190,8 +1195,10 @@ namespace MediaPortal.GUI.TV
     {
       if (reentrant)
         return false;
-      if (GUIGraphicsContext.InVmr9Render)
-        return false;
+      // BAV, 02.03.08: a channel change should not be delayed by rendering.
+      //                by scipping this => 1 min delays in zapping should be avoided 
+      //if (GUIGraphicsContext.InVmr9Render)
+      //  return false;
       reentrant = true;
       UpdateCurrentChannel();
 

@@ -1383,7 +1383,9 @@ namespace MediaPortal.Player
     {
       if (!Playing) return;
       if (!_started) return;
-      if (GUIGraphicsContext.InVmr9Render) return;
+      // BAV, 02.03.08: checking GUIGraphicsContext.InVmr9Render makes no sense here, there are no changes in render items
+      //                removing this should solve 1 min delays in skip steps
+      //if (GUIGraphicsContext.InVmr9Render) return;
       HandleMouseMessages();
       OnProcess();
     }
