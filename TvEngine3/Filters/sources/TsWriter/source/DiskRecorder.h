@@ -26,7 +26,6 @@
 #include "..\..\shared\TsHeader.h"
 #include "..\..\shared\adaptionfield.h"
 #include "..\..\shared\pcr.h"
-#include "PcrRefClock.h"
 #include "videoaudioobserver.h"
 #include "PmtParser.h"
 #include <vector>
@@ -155,7 +154,6 @@ private:
   vector<char*>   m_tsQueue;
   bool            m_bClearTsQueue;
   unsigned long   m_TsPacketCount;
-  CPcrRefClock*	  rclock;
   map<unsigned short,LastPtsDtsRecord> m_mapLastPtsDts;
   typedef map<unsigned short,LastPtsDtsRecord>::iterator imapLastPtsDts;
 	IVideoAudioObserver *m_pVideoAudioObserver;

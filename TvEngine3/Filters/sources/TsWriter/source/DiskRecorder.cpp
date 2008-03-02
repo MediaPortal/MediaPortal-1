@@ -105,7 +105,6 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
   m_TsPacketCount=0;
 	m_bIgnoreNextPcrJump=false;
   m_bClearTsQueue=false;
-	rclock=new CPcrRefClock();
 	m_pPmtParser=new CPmtParser();
 	m_multiPlexer.SetFileWriterCallBack(this);
 	m_pVideoAudioObserver=NULL;
@@ -1142,7 +1141,6 @@ void CDiskRecorder::WriteFakePMT()
 
 void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 {
-	CPcr myPcr=rclock->GetAsPCR();
 	//LogDebug("pcr pid:%x  head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x",header.Pid, tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5]);
 	if (header.PayLoadOnly()) return;
 	//LogDebug(" pcrflag:%x", (tsPacket[5]&0x10));
@@ -1273,7 +1271,6 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 	tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
 
 	m_prevPcr = pcrNew;
-	CPcr tmpPcr=m_startPcr+myPcr;
 	//LogDebug("myPcr: %s tsPCR: %s",tmpPcr.ToString(),m_prevPcr.ToString());
 }
 
