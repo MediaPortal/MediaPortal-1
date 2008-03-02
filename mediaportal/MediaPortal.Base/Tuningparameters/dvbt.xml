@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!-- contains:   -->
 <!--   - Australia   -->
 <!--   - Austria   -->
@@ -1879,8 +1879,12 @@
 		<carrier frequency="850000"></carrier>
 		<carrier frequency="858000"></carrier>
 	</country>
-	<country name="New Zealand - Auckland (trials)">
-		<carrier frequency="698000" bandwidth="8"></carrier>
+	<country name="New Zealand - Auckland (trials)" offset="0">
+		<carrier frequency="538000" bandwidth="8"></carrier>
+		<carrier frequency="570000" bandwidth="8"></carrier>
+		<carrier frequency="666000" bandwidth="8"></carrier>
+		<carrier frequency="674000" bandwidth="8"></carrier>
+		<carrier frequency="690000" bandwidth="8"></carrier>
 	</country>
 	<country name="Norway - Oslo-Akershus - Tryvasshøgda" offset="0">
 		<carrier frequency="674000" bandwidth="8"></carrier>
@@ -3136,6 +3140,11 @@
 		<carrier frequency="634000" bandwidth="8"></carrier>
 		<carrier frequency="650000" bandwidth="8"></carrier>
 	</country>
+ 	<country name="Sweden - Malmo Jagersro 2" offset="125">
+  		<carrier frequency="177500" bandwidth="8"></carrier>
+  		<carrier frequency="570000" bandwidth="8"></carrier>
+  		<carrier frequency="650000" bandwidth="8"></carrier>
+ 	</country>
 	<country name="Sweden - Mora Eldris" offset="125">
 		<carrier frequency="482000" bandwidth="8"></carrier>
 		<carrier frequency="506000" bandwidth="8"></carrier>
