@@ -57,23 +57,17 @@ namespace SetupTv.Sections
 
     private void FormEditCard_Load(object sender, EventArgs e)
     {
-      textBoxDecryptLimit.Text = _card.DecryptLimit.ToString();
+      numericUpDownDecryptLimit.Value = _card.DecryptLimit;
     }
 
-    private void textBox1_TextChanged(object sender, EventArgs e)
+    private void mpButtonSave_Click(object sender, EventArgs e)
     {
+      _card.DecryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
+      this.Close();
     }
 
-    private void buttonSave_Click(object sender, EventArgs e)
+    private void mpButtonCancel_Click(object sender, EventArgs e)
     {
-      try
-      {
-        _card.DecryptLimit = Int32.Parse(textBoxDecryptLimit.Text);
-      }
-      catch (Exception)
-      {
-        _card.DecryptLimit = 1;
-      }
       this.Close();
     }
   }

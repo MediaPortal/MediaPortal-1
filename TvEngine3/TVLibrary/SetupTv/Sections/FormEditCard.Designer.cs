@@ -28,82 +28,97 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.textBoxDecryptLimit = new System.Windows.Forms.TextBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.buttonSave = new System.Windows.Forms.Button();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpButtonSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.numericUpDownDecryptLimit = new System.Windows.Forms.NumericUpDown();
+      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
       this.SuspendLayout();
       // 
       // label1
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(24, 22);
+      this.label1.Location = new System.Drawing.Point(12, 9);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(326, 13);
+      this.label1.Size = new System.Drawing.Size(326, 31);
       this.label1.TabIndex = 0;
-      this.label1.Text = "If your card has a CAM module then specify the number of channels";
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(24, 44);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(171, 13);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "this cam can decode simultanously";
+      this.label1.Text = "If your card has a CAM module then specify the number of channels this cam can de" +
+          "code simultanously";
       // 
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(24, 88);
+      this.label3.Location = new System.Drawing.Point(12, 49);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(111, 13);
       this.label3.TabIndex = 2;
       this.label3.Text = "This card can decode";
       // 
-      // textBoxDecryptLimit
-      // 
-      this.textBoxDecryptLimit.Location = new System.Drawing.Point(141, 85);
-      this.textBoxDecryptLimit.Name = "textBoxDecryptLimit";
-      this.textBoxDecryptLimit.Size = new System.Drawing.Size(44, 20);
-      this.textBoxDecryptLimit.TabIndex = 0;
-      this.textBoxDecryptLimit.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-      // 
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(191, 88);
+      this.label4.Location = new System.Drawing.Point(201, 49);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(121, 13);
       this.label4.TabIndex = 4;
       this.label4.Text = "channels simultaneously";
       // 
-      // buttonSave
+      // mpButtonSave
       // 
-      this.buttonSave.Location = new System.Drawing.Point(271, 131);
-      this.buttonSave.Name = "buttonSave";
-      this.buttonSave.Size = new System.Drawing.Size(75, 23);
-      this.buttonSave.TabIndex = 1;
-      this.buttonSave.Text = "Save";
-      this.buttonSave.UseVisualStyleBackColor = true;
-      this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+      this.mpButtonSave.Location = new System.Drawing.Point(182, 81);
+      this.mpButtonSave.Name = "mpButtonSave";
+      this.mpButtonSave.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonSave.TabIndex = 1;
+      this.mpButtonSave.Text = "Save";
+      this.mpButtonSave.UseVisualStyleBackColor = true;
+      this.mpButtonSave.Click += new System.EventHandler(this.mpButtonSave_Click);
+      // 
+      // numericUpDownDecryptLimit
+      // 
+      this.numericUpDownDecryptLimit.Location = new System.Drawing.Point(129, 47);
+      this.numericUpDownDecryptLimit.Name = "numericUpDownDecryptLimit";
+      this.numericUpDownDecryptLimit.Size = new System.Drawing.Size(66, 20);
+      this.numericUpDownDecryptLimit.TabIndex = 5;
+      this.numericUpDownDecryptLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownDecryptLimit.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // mpButtonCancel
+      // 
+      this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.mpButtonCancel.Location = new System.Drawing.Point(263, 81);
+      this.mpButtonCancel.Name = "mpButtonCancel";
+      this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonCancel.TabIndex = 6;
+      this.mpButtonCancel.Text = "Cancel";
+      this.mpButtonCancel.UseVisualStyleBackColor = true;
+      this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
       // 
       // FormEditCard
       // 
+      this.AcceptButton = this.mpButtonSave;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(358, 166);
-      this.Controls.Add(this.buttonSave);
+      this.CancelButton = this.mpButtonCancel;
+      this.ClientSize = new System.Drawing.Size(350, 116);
+      this.Controls.Add(this.mpButtonCancel);
+      this.Controls.Add(this.numericUpDownDecryptLimit);
+      this.Controls.Add(this.mpButtonSave);
       this.Controls.Add(this.label4);
-      this.Controls.Add(this.textBoxDecryptLimit);
       this.Controls.Add(this.label3);
-      this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
       this.Name = "FormEditCard";
+      this.ShowIcon = false;
+      this.ShowInTaskbar = false;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Edit card properties";
       this.Load += new System.EventHandler(this.FormEditCard_Load);
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -111,11 +126,11 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.TextBox textBoxDecryptLimit;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Button buttonSave;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonSave;
+    private System.Windows.Forms.NumericUpDown numericUpDownDecryptLimit;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
   }
 }
