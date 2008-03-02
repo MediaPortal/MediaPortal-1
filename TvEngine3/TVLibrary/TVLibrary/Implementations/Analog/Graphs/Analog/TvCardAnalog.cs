@@ -943,6 +943,18 @@ namespace TvLibrary.Implementations.Analog
 
         //situation 1. we look if the video capture device has an mpeg-2 output pin (media type:stream)
         FindCapturePin(MediaType.Stream, MediaSubType.Null);
+        if (FilterGraphTools.GetFilterName(_filterTvTuner).Contains("Plextor ConvertX"))
+        {
+          Log.Log.Info("analog: Plextor ConvertX TV402U detected");
+          //fake the capture pin to the Plextor media type & subtype
+          FindCapturePin(MediaType.Video, MediaSubType.PLEXTOR);
+          //Find the audio pin
+          FindAudioVideoPins();
+          //Add the audio encoder
+          AddAudioCompressor();
+          //Add the Plextor specific InterVideo mux & get the new capture pin.
+          AddPlextorMuxer();
+        }
         if (_pinCapture == null)
         {
           // no it does not. So we have situation 2, 3 or 4 and first need to add 1 or more encoder filters
@@ -972,11 +984,6 @@ namespace TvLibrary.Implementations.Analog
             if (FilterGraphTools.GetFilterName(_filterTvTuner).Contains("NVTV") || !AddTvMultiPlexer(true))
             {
               //if that fails, we try any multiplexer filter
-              AddTvMultiPlexer(false);
-            }
-            if (_captureDevice.Name.Contains("Plextor ConvertX TV402U A/V Capture"))
-            {
-              Log.Log.Info("analog: Plextor ConvertX TV402U detected");
               AddTvMultiPlexer(false);
             }
           }
@@ -1187,7 +1194,7 @@ namespace TvLibrary.Implementations.Analog
           else
           {
             //succeeded. we're done
-            //Log.Log.WriteFile("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
+            Log.Log.WriteFile("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
             Release.ComObject("audiotuner pinin", pin);
             _filterTvAudioTuner = tmp;
             _audioDevice = devices[i];
@@ -3303,6 +3310,7 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog:unable to connect audio compressor->muxer returns:0x{0:X}", hr);
         throw new TvException("Unable to add unable to connect audio compressor->muxer");
       }
+      Log.Log.WriteFile("analog:  connected audio -> muxer");
       // next connect video compressor->muxer
       pinOut = DsFindPin.ByDirection(_filterVideoCompressor, PinDirection.Output, 0);
       pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 0);
@@ -3323,6 +3331,72 @@ namespace TvLibrary.Implementations.Analog
         throw new TvException("Unable to add unable to connect video compressor->muxer");
       }
       //and finally we have a capture pin...
+      Log.Log.WriteFile("analog:  connected video -> muxer");
+      _pinCapture = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Output, 0);
+      if (_pinCapture == null)
+      {
+        Log.Log.WriteFile("analog:unable find capture pin");
+        throw new TvException("unable find capture pin");
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Adds the Plextor supplied InterVideo mpeg muxer
+    /// </summary>
+    /// <returns></returns>
+    private bool AddPlextorMuxer()
+    {
+      Log.Log.Info("analog:  AddPlextorMuxer");
+      string monikerInterVideoMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{317DDB63-870E-11D3-9C32-00104B3801F7}";
+      _filterAnalogMpegMuxer = Marshal.BindToMoniker(monikerInterVideoMuxer) as IBaseFilter;
+      int hr = _graphBuilder.AddFilter(_filterAnalogMpegMuxer, "InterVideo MPEG Muxer");
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("analog:  AddPlextorMuxer returns:0x{0:X}", hr);
+        throw new TvException("Unable to add AddPlextorMuxer");
+      }
+      // next connect audio compressor->muxer
+      IPin pinOut = DsFindPin.ByDirection(_filterAudioCompressor, PinDirection.Output, 0);
+      IPin pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 1);
+      if (pinOut == null)
+      {
+        Log.Log.Info("analog:  no output pin found on audio compressor");
+        throw new TvException("no output pin found on audio compressor");
+      }
+      if (pinIn == null)
+      {
+        Log.Log.Info("analog:  no input pin found on intervideo muxer");
+        throw new TvException("no input pin found on intervideo muxer");
+      }
+      hr = _graphBuilder.Connect(pinOut, pinIn);
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("analog:  unable to connect audio compressor->muxer returns:0x{0:X}", hr);
+        throw new TvException("Unable to add unable to connect audio compressor->muxer");
+      }
+      Log.Log.WriteFile("analog:  connected audio -> intervideo muxer");
+      //no video compressor needed with the Plextor device so we use the first capture pin
+      pinOut = DsFindPin.ByDirection(_filterCapture, PinDirection.Output, 0);
+      pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 0);
+      if (pinOut == null)
+      {
+        Log.Log.Info("analog:  no output pin found on Plextor capture filter");
+        throw new TvException("no output pin found on Plextor capture filter");
+      }
+      if (pinIn == null)
+      {
+        Log.Log.Info("analog:  no input pin found on intervideo muxer");
+        throw new TvException("no input pin found on intervideo muxer");
+      }
+      hr = _graphBuilder.Connect(pinOut, pinIn);
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("analog:  unable to connect Plextor capture filter->muxer returns:0x{0:X}", hr);
+        throw new TvException("Unable to connect Plextor capture filter->muxer");
+      }
+      Log.Log.WriteFile("analog:  connected video -> intervideo muxer");
+      //now we have the real capture pin
       _pinCapture = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Output, 0);
       if (_pinCapture == null)
       {
@@ -3425,16 +3499,22 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog:AddMpegMuxer()");
       try
       {
-        string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
-        //string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
+        //string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
+        string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
+        string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{370E9701-9DC5-42C8-BE29-4E75F0629EED}";
         _filterMpegMuxer = Marshal.BindToMoniker(monikerPowerDirectorMuxer) as IBaseFilter;
         int hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
         if (hr != 0)
         {
-          Log.Log.WriteFile("analog:AddMpegMuxer returns:0x{0:X}", hr);
-          throw new TvException("Unable to add Cyberlink MPEG Muxer");
+          _filterMpegMuxer = Marshal.BindToMoniker(monikerPowerDvdMuxer) as IBaseFilter;
+          hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
+          if (hr != 0)
+          {
+            Log.Log.WriteFile("analog:AddMpegMuxer returns:0x{0:X}", hr);
+            //throw new TvException("Unable to add Cyberlink MPEG Muxer");
+          }
         }
-        Log.Log.WriteFile("analog:connect pinvideo->mpeg muxer");
+        Log.Log.WriteFile("analog:connect pinvideo {0} ->mpeg muxer", FilterGraphTools.LogPinInfo(_pinVideo));
         if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinVideo, _filterMpegMuxer, 0))
         {
           Log.Log.WriteFile("analog: unable to connect pinvideo->mpeg muxer");
@@ -3458,7 +3538,7 @@ namespace TvLibrary.Implementations.Analog
         }
         else
         {
-          Log.Log.WriteFile("analog:connect pinaudio->mpeg muxer");
+          Log.Log.WriteFile("analog:connect pinaudio {0} ->mpeg muxer", FilterGraphTools.LogPinInfo(_pinAudio));
           if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinAudio, _filterMpegMuxer, 1))
           {
             Log.Log.WriteFile("analog:AddMpegMuxer, unable to connect pinaudio->mpeg muxer");
