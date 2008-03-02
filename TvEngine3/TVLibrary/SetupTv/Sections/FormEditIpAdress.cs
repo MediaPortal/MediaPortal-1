@@ -20,19 +20,19 @@ namespace SetupTv.Sections
     private void FormEditIpAdress_Load(object sender, EventArgs e)
     {
       List<string> ipAdresses = RemoteControl.Instance.ServerIpAdresses;
-      comboBox1.Items.Clear();
+      mpComboBox1.Items.Clear();
       int selected = 0;
       int counter = 0;
       foreach (string ipAdress in ipAdresses)
       {
-        comboBox1.Items.Add(ipAdress);
+        mpComboBox1.Items.Add(ipAdress);
         if (String.Compare(ipAdress, HostName, true) == 0)
         {
           selected = counter;
         }
         counter++;
       }
-      comboBox1.SelectedIndex = selected;
+      mpComboBox1.SelectedIndex = selected;
 
     }
 
@@ -44,9 +44,9 @@ namespace SetupTv.Sections
 
     private void button1_Click(object sender, EventArgs e)
     {
-      if (comboBox1.SelectedIndex >= 0)
+      if (mpComboBox1.SelectedIndex >= 0)
       {
-        HostName = comboBox1.SelectedItem.ToString();
+        HostName = mpComboBox1.SelectedItem.ToString();
       }
       this.DialogResult = DialogResult.OK;
       this.Close();

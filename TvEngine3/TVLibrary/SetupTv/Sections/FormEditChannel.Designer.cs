@@ -28,7 +28,7 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.buttonOk = new System.Windows.Forms.Button();
+      this.mpButtonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.checkBoxVisibleInTvGuide = new System.Windows.Forms.CheckBox();
@@ -59,6 +59,10 @@ namespace SetupTv.Sections
       this.label7 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
       this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.textBoxDVBSVideo = new System.Windows.Forms.TextBox();
+      this.label48 = new System.Windows.Forms.Label();
+      this.textBoxDVBSAudio = new System.Windows.Forms.TextBox();
+      this.label49 = new System.Windows.Forms.Label();
       this.textBoxDVBSChannel = new System.Windows.Forms.TextBox();
       this.label47 = new System.Windows.Forms.Label();
       this.comboBoxRollOff = new System.Windows.Forms.ComboBox();
@@ -132,10 +136,7 @@ namespace SetupTv.Sections
       this.tabFMRadio = new System.Windows.Forms.TabPage();
       this.edFMFreq = new System.Windows.Forms.TextBox();
       this.label42 = new System.Windows.Forms.Label();
-      this.textBoxDVBSVideo = new System.Windows.Forms.TextBox();
-      this.label48 = new System.Windows.Forms.Label();
-      this.textBoxDVBSAudio = new System.Windows.Forms.TextBox();
-      this.label49 = new System.Windows.Forms.Label();
+      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -148,15 +149,15 @@ namespace SetupTv.Sections
       this.tabFMRadio.SuspendLayout();
       this.SuspendLayout();
       // 
-      // buttonOk
+      // mpButtonOk
       // 
-      this.buttonOk.Location = new System.Drawing.Point(377, 343);
-      this.buttonOk.Name = "buttonOk";
-      this.buttonOk.Size = new System.Drawing.Size(75, 23);
-      this.buttonOk.TabIndex = 49;
-      this.buttonOk.Text = "Ok";
-      this.buttonOk.UseVisualStyleBackColor = true;
-      this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
+      this.mpButtonOk.Location = new System.Drawing.Point(276, 343);
+      this.mpButtonOk.Name = "mpButtonOk";
+      this.mpButtonOk.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonOk.TabIndex = 49;
+      this.mpButtonOk.Text = "OK";
+      this.mpButtonOk.UseVisualStyleBackColor = true;
+      this.mpButtonOk.Click += new System.EventHandler(this.buttonOk_Click);
       // 
       // tabControl1
       // 
@@ -502,6 +503,40 @@ namespace SetupTv.Sections
       this.tabPage4.TabIndex = 3;
       this.tabPage4.Text = "DVB-S";
       this.tabPage4.UseVisualStyleBackColor = true;
+      // 
+      // textBoxDVBSVideo
+      // 
+      this.textBoxDVBSVideo.Location = new System.Drawing.Point(276, 60);
+      this.textBoxDVBSVideo.Name = "textBoxDVBSVideo";
+      this.textBoxDVBSVideo.Size = new System.Drawing.Size(114, 20);
+      this.textBoxDVBSVideo.TabIndex = 69;
+      this.textBoxDVBSVideo.Text = "-1";
+      // 
+      // label48
+      // 
+      this.label48.AutoSize = true;
+      this.label48.Location = new System.Drawing.Point(220, 64);
+      this.label48.Name = "label48";
+      this.label48.Size = new System.Drawing.Size(52, 13);
+      this.label48.TabIndex = 71;
+      this.label48.Text = "VideoPid:";
+      // 
+      // textBoxDVBSAudio
+      // 
+      this.textBoxDVBSAudio.Location = new System.Drawing.Point(276, 84);
+      this.textBoxDVBSAudio.Name = "textBoxDVBSAudio";
+      this.textBoxDVBSAudio.Size = new System.Drawing.Size(114, 20);
+      this.textBoxDVBSAudio.TabIndex = 68;
+      this.textBoxDVBSAudio.Text = "-1";
+      // 
+      // label49
+      // 
+      this.label49.AutoSize = true;
+      this.label49.Location = new System.Drawing.Point(220, 87);
+      this.label49.Name = "label49";
+      this.label49.Size = new System.Drawing.Size(52, 13);
+      this.label49.TabIndex = 70;
+      this.label49.Text = "AudioPid:";
       // 
       // textBoxDVBSChannel
       // 
@@ -1265,48 +1300,32 @@ namespace SetupTv.Sections
       this.label42.TabIndex = 8;
       this.label42.Text = "Frequency:";
       // 
-      // textBoxDVBSVideo
+      // mpButtonCancel
       // 
-      this.textBoxDVBSVideo.Location = new System.Drawing.Point(276, 60);
-      this.textBoxDVBSVideo.Name = "textBoxDVBSVideo";
-      this.textBoxDVBSVideo.Size = new System.Drawing.Size(114, 20);
-      this.textBoxDVBSVideo.TabIndex = 69;
-      this.textBoxDVBSVideo.Text = "-1";
-      // 
-      // label48
-      // 
-      this.label48.AutoSize = true;
-      this.label48.Location = new System.Drawing.Point(220, 64);
-      this.label48.Name = "label48";
-      this.label48.Size = new System.Drawing.Size(52, 13);
-      this.label48.TabIndex = 71;
-      this.label48.Text = "VideoPid:";
-      // 
-      // textBoxDVBSAudio
-      // 
-      this.textBoxDVBSAudio.Location = new System.Drawing.Point(276, 84);
-      this.textBoxDVBSAudio.Name = "textBoxDVBSAudio";
-      this.textBoxDVBSAudio.Size = new System.Drawing.Size(114, 20);
-      this.textBoxDVBSAudio.TabIndex = 68;
-      this.textBoxDVBSAudio.Text = "-1";
-      // 
-      // label49
-      // 
-      this.label49.AutoSize = true;
-      this.label49.Location = new System.Drawing.Point(220, 87);
-      this.label49.Name = "label49";
-      this.label49.Size = new System.Drawing.Size(52, 13);
-      this.label49.TabIndex = 70;
-      this.label49.Text = "AudioPid:";
+      this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.mpButtonCancel.Location = new System.Drawing.Point(377, 343);
+      this.mpButtonCancel.Name = "mpButtonCancel";
+      this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonCancel.TabIndex = 50;
+      this.mpButtonCancel.Text = "Cancel";
+      this.mpButtonCancel.UseVisualStyleBackColor = true;
+      this.mpButtonCancel.Click += new System.EventHandler(this.mpButtonCancel_Click);
       // 
       // FormEditChannel
       // 
+      this.AcceptButton = this.mpButtonOk;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = this.mpButtonCancel;
       this.ClientSize = new System.Drawing.Size(464, 378);
+      this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.tabControl1);
-      this.Controls.Add(this.buttonOk);
+      this.Controls.Add(this.mpButtonOk);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
       this.Name = "FormEditChannel";
+      this.ShowIcon = false;
+      this.ShowInTaskbar = false;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Edit Channel";
       this.Shown += new System.EventHandler(this.FormEditChannel_Load);
       this.tabControl1.ResumeLayout(false);
@@ -1333,7 +1352,7 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private System.Windows.Forms.Button buttonOk;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonOk;
     private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabPage tabPage2;
@@ -1441,5 +1460,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label48;
     private System.Windows.Forms.TextBox textBoxDVBSAudio;
     private System.Windows.Forms.Label label49;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
   }
 }

@@ -828,5 +828,11 @@ namespace SetupTv.Sections
         e.Handled = true;
       }
     }
+
+    private void mpButtonCancel_Click(object sender, EventArgs e)
+    {
+      this.DialogResult = DialogResult.Cancel;
+      this.Close();
+    }
   }
 }
