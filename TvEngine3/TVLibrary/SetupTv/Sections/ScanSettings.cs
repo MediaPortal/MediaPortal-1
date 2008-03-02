@@ -52,30 +52,29 @@ namespace SetupTv.Sections
     {
       base.OnSectionActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
-      textBoxTune.Text = layer.GetSetting("timeoutTune", "2").Value;
-      textBoxPAT.Text = layer.GetSetting("timeoutPAT", "5").Value;
-      textBoxCAT.Text = layer.GetSetting("timeoutCAT", "5").Value;
-      textBoxPMT.Text = layer.GetSetting("timeoutPMT", "10").Value;
-      textBoxSDT.Text = layer.GetSetting("timeoutSDT", "20").Value;
 
-      Setting setting;
-      setting = layer.GetSetting("delayCardDetect", "0");
-      delayDetectUpDown.Value = Convert.ToDecimal(setting.Value);
+      numericUpDownTune.Value = Convert.ToDecimal(layer.GetSetting("timeoutTune", "2").Value);
+      numericUpDownPAT.Value = Convert.ToDecimal(layer.GetSetting("timeoutPAT", "5").Value);
+      numericUpDownCAT.Value = Convert.ToDecimal(layer.GetSetting("timeoutCAT", "5").Value);
+      numericUpDownPMT.Value = Convert.ToDecimal(layer.GetSetting("timeoutPMT", "10").Value);
+      numericUpDownSDT.Value = Convert.ToDecimal(layer.GetSetting("timeoutSDT", "20").Value);
+
+      delayDetectUpDown.Value = Convert.ToDecimal(layer.GetSetting("delayCardDetect", "0").Value);
 
       checkBoxAlwaysFillHoles.Checked = (layer.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
       checkBoxAlwaysUpdate.Checked = (layer.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
 
-      checkBoxEnableEPGWhileIdle.Checked=(layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
-      textBoxEpgTimeOut.Text = layer.GetSetting("timeoutEPG", "10").Value;
-      textBoxEPGRefresh.Text = layer.GetSetting("timeoutEPGRefresh", "240").Value;
+      checkBoxEnableEPGWhileIdle.Checked = (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
+      numericUpDownEpgTimeOut.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPG", "10").Value);
+      numericUpDownEpgRefresh.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPGRefresh", "240").Value);
       checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
-      textBoxTSEpgTimeout.Text = layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value;
+      numericUpDownTSEpgTimeout.Value = Convert.ToDecimal(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value);
 
-      textBoxMinfiles.Text = layer.GetSetting("timeshiftMinFiles", "6").Value;
-      textBoxMaxFiles.Text = layer.GetSetting("timeshiftMaxFiles", "20").Value;
-      textBoxMaxFileSize.Text = layer.GetSetting("timeshiftMaxFileSize", "256").Value;
+      numericUpDownMinFiles.Value = Convert.ToDecimal(layer.GetSetting("timeshiftMinFiles", "6").Value);
+      numericUpDownMaxFiles.Value = Convert.ToDecimal(layer.GetSetting("timeshiftMaxFiles", "20").Value);
+      numericUpDownMaxFileSize.Value = Convert.ToDecimal(layer.GetSetting("timeshiftMaxFileSize", "256").Value);
 
-      checkBoxEnableLinkageScanner.Checked=(layer.GetSetting("linkageScannerEnabled","no").Value=="yes");
+      checkBoxEnableLinkageScanner.Checked = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
 
       mpComboBoxPrio.Items.Clear();
       mpComboBoxPrio.Items.Add("Realtime");
@@ -83,47 +82,45 @@ namespace SetupTv.Sections
       mpComboBoxPrio.Items.Add("Above Normal");
       mpComboBoxPrio.Items.Add("Normal");
       mpComboBoxPrio.Items.Add("Below Normal");
-      mpComboBoxPrio.Items.Add("Idle");      
+      mpComboBoxPrio.Items.Add("Idle");
 
       try
-      {        
+      {
         mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value); //default is normal=3       
       }
       catch (Exception e)
-      {        
+      {
         mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
       }
 
       edTitleTemplate.Text = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
       edDescriptionTemplate.Text = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
 
-			textBoxWaitTimeshifting.Text = layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value;
-			textBoxWaitUnscrambled.Text = layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value;
-
-      
+      numericUpDownWaitTimeshifting.Value = Convert.ToDecimal(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
+      numericUpDownWaitUnscrambled.Value = Convert.ToDecimal(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value);
     }
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting s = layer.GetSetting("timeoutTune", "2");
-      s.Value = textBoxTune.Text;
+      s.Value = numericUpDownTune.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeoutPAT", "5");
-      s.Value = textBoxPAT.Text;
+      s.Value = numericUpDownPAT.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeoutCAT", "5");
-      s.Value = textBoxCAT.Text;
+      s.Value = numericUpDownCAT.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeoutPMT", "10");
-      s.Value = textBoxPMT.Text;
+      s.Value = numericUpDownPMT.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeoutSDT", "20");
-      s.Value = textBoxSDT.Text;
+      s.Value = numericUpDownSDT.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("generalEPGAlwaysFillHoles", "no");
@@ -148,11 +145,11 @@ namespace SetupTv.Sections
       s.Persist();
 
       s = layer.GetSetting("timeoutEPG", "10");
-      s.Value = textBoxEpgTimeOut.Text;
+      s.Value = numericUpDownEpgTimeOut.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeoutEPGRefresh", "240");
-      s.Value = textBoxEPGRefresh.Text;
+      s.Value = numericUpDownEpgRefresh.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeshiftingEpgGrabberEnabled", "no");
@@ -163,19 +160,19 @@ namespace SetupTv.Sections
       s.Persist();
 
       s = layer.GetSetting("timeshiftingEpgGrabberTimeout", "2");
-      s.Value = textBoxTSEpgTimeout.Text;
+      s.Value = numericUpDownTSEpgTimeout.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeshiftMinFiles", "6");
-      s.Value = textBoxMinfiles.Text;
+      s.Value = numericUpDownMinFiles.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeshiftMaxFiles", "20");
-      s.Value = textBoxMaxFiles.Text;
+      s.Value = numericUpDownMaxFiles.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeshiftMaxFileSize", "256");
-      s.Value = textBoxMaxFileSize.Text;
+      s.Value = numericUpDownMaxFileSize.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("linkageScannerEnabled", "no");
@@ -197,13 +194,13 @@ namespace SetupTv.Sections
       s.Value = edDescriptionTemplate.Text;
       s.Persist();
 
-			s = layer.GetSetting("timeshiftWaitForTimeshifting", "15");
-			s.Value = textBoxWaitTimeshifting.Text;
-			s.Persist();
+      s = layer.GetSetting("timeshiftWaitForTimeshifting", "15");
+      s.Value = numericUpDownWaitTimeshifting.Value.ToString();
+      s.Persist();
 
-			s = layer.GetSetting("timeshiftWaitForUnscrambled", "5");
-			s.Value = textBoxWaitUnscrambled.Text;
-			s.Persist();
+      s = layer.GetSetting("timeshiftWaitForUnscrambled", "5");
+      s.Value = numericUpDownWaitUnscrambled.Value.ToString();
+      s.Persist();
 
       s = layer.GetSetting("delayCardDetect", "0");
       s.Value = delayDetectUpDown.Value.ToString();
@@ -211,7 +208,7 @@ namespace SetupTv.Sections
     }
 
     private void mpComboBoxPrio_SelectedIndexChanged(object sender, EventArgs e)
-    {      
+    {
       System.Diagnostics.Process process = null;
       try
       {
@@ -221,7 +218,7 @@ namespace SetupTv.Sections
       {
         Log.Write("could not set priority on tvservice - the process might be terminated : " + ex.Message);
         return;
-      }      
+      }
 
       switch (mpComboBoxPrio.SelectedIndex)
       {
@@ -247,7 +244,7 @@ namespace SetupTv.Sections
           process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
           break;
       }
-      
+
     }
 
     private string GetStarRatingStr(int starRating)
@@ -289,17 +286,17 @@ namespace SetupTv.Sections
 
     private void btnTest_Click(object sender, EventArgs e)
     {
-      NameValueCollection defaults=new NameValueCollection();
-      defaults.Add("%TITLE%","Over the hedge");
-      defaults.Add("%DESCRIPTION%","A scheming raccoon fools a mismatched family of forest creatures into helping him repay a debt of food, by invading the new suburban sprawl that popped up while they were hibernating...and learns a lesson about family himself.");
-      defaults.Add("%GENRE%","movie/drama (general)");
-      defaults.Add("%STARRATING%","6");
-      defaults.Add("%STARRATING_STR%","***+");
-      defaults.Add("%CLASSIFICATION%","PG");
-      defaults.Add("%PARENTALRATING%","8");
+      NameValueCollection defaults = new NameValueCollection();
+      defaults.Add("%TITLE%", "Over the hedge");
+      defaults.Add("%DESCRIPTION%", "A scheming raccoon fools a mismatched family of forest creatures into helping him repay a debt of food, by invading the new suburban sprawl that popped up while they were hibernating...and learns a lesson about family himself.");
+      defaults.Add("%GENRE%", "movie/drama (general)");
+      defaults.Add("%STARRATING%", "6");
+      defaults.Add("%STARRATING_STR%", "***+");
+      defaults.Add("%CLASSIFICATION%", "PG");
+      defaults.Add("%PARENTALRATING%", "8");
       defaults.Add("%NEWLINE%", Environment.NewLine);
       edTitleTest.Text = EvalTemplate(edTitleTemplate.Text, defaults);
       edDescriptionTest.Text = EvalTemplate(edDescriptionTemplate.Text, defaults);
-     }
+    }
   }
 }
