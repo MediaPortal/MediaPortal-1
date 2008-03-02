@@ -21633,5 +21633,59 @@
         <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
       </connections>
     </tv>
-  </capturecard>  
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge HVR-1200 (DVB-T)" capturename="Hauppauge WinTV 885 TS Capture" devid="ven_14f1&amp;dev_8852&amp;subsys_71d30070&amp;rev_02">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
+        <filter cat="tunerdevice" name="Hauppauge WinTV 885 DVB-T Tuner/Demod" checkdevice="true"></filter>
+        <filter cat="capture" name="Hauppauge WinTV 885 TS Capture" checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge HVR-1200 (Analog)" capturename="Hauppauge WinTV 885 Video Capture" devid="ven_14f1&amp;dev_8852&amp;subsys_71d30070&amp;rev_02">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner" name="Hauppauge WinTV 885 Tuner" checkdevice="true"></filter>
+        <filter cat="tvaudio" name="Hauppauge WinTV 885 TvAudio" checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV 885 Crossbar" checkdevice="true"></filter>
+        <filter cat="capture" name="Hauppauge WinTV 885 Video Capture" checkdevice="true"></filter>
+        <filter cat="mux" name="MainConcept (MCE) MPEG Encoder" checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner" sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner" sourcepin="1" sinkfilter="tvaudio" sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio" sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"></connection>
+        <connection sourcefilter="capture" sourcepin="0" sinkfilter="mux" sinkpin="0"></connection>
+        <connection sourcefilter="capture" sourcepin="1" sinkfilter="mux" sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Super Mini DVB-T USB 2.0 Digital TV Tuner" capturename="EC168 BDA Digital Capture" devid="vid_18b4&amp;pid_fffb&amp;mi_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
+        <filter cat="tunerdevice" name="EC168 BDA Digital Tuner" checkdevice="false"></filter>
+        <filter cat="capture" name="EC168 BDA Digital Capture" checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
