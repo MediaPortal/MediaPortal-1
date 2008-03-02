@@ -1479,10 +1479,10 @@ namespace TvDatabase
             sleepTime = 10;
             break;
           case ThreadPriority.BelowNormal: // on faster systems this might be enough for background importing
-            sleepTime = 30;
+            sleepTime = 20;
             break;
           case ThreadPriority.Lowest:      // even a single core system is enough to use MP while importing.
-            sleepTime = 60;
+            sleepTime = 40;
             break;
         }
 
@@ -1650,7 +1650,7 @@ namespace TvDatabase
           sqlCmd.ExecuteNonQuery();
           aCounter++;
           // Avoid I/O starving
-          if (aCounter % 5 == 0)
+          if (aCounter % 3 == 0)
             Thread.Sleep(aDelay);
         }
         catch (MySqlException myex)
@@ -1731,7 +1731,7 @@ namespace TvDatabase
           sqlCmd.ExecuteNonQuery();
           aCounter++;
           // Avoid I/O starving
-          if (aCounter % 5 == 0)
+          if (aCounter % 2 == 0)
             Thread.Sleep(aDelay);
         }
         catch (SqlException msex)
