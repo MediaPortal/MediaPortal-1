@@ -294,6 +294,14 @@ namespace MediaPortal.Player
         {
           return "Mpeg2";
         }
+        if (sType.subType == MediaSubType.LATMAAC)
+        {
+          return "LATMAAC";
+        }
+        if (sType.subType == MediaSubType.AAC)
+        {
+          return "AAC";
+        }
         return Strings.Unknown;       
       }
       else
