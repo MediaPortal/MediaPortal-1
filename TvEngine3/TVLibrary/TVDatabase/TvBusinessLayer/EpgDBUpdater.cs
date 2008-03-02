@@ -318,7 +318,7 @@ namespace TvDatabase
       title=EvalTemplate(_titleTemplate, values);
       description=EvalTemplate(_descriptionTemplate, values);
       if (dbProg==null)
-        dbProg = new TvDatabase.Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, false, Convert.ToDateTime(System.Data.SqlTypes.SqlDateTime.MinValue) , string.Empty, string.Empty, starRating, classification, parentRating);
+        dbProg = new TvDatabase.Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification, parentRating);
       else
       {
         dbProg.Title=title;
