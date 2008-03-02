@@ -45,7 +45,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </summary>
     public bool isAC3Audio;
     /// <summary>
-    /// true if pid contains mpeg1/2 audio
+    /// true if pid contains mpeg1/2 or aac audio
     /// </summary>
     public bool isAudio;
     /// <summary>

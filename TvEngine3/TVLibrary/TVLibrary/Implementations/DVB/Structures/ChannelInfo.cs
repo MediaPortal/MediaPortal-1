@@ -522,6 +522,22 @@ namespace TvLibrary.Implementations.DVB.Structures
                       pidInfo.language = DVB_SubtitleDescriptior(data);
                     }
                     break;
+                  case 0x11: // LATM AAC
+                    pidInfo.isAudio = true;										
+										pidInfo.isVideo = false;
+										pidInfo.isTeletext = false;
+										pidInfo.isDVBSubtitle = false;
+										pidInfo.isAC3Audio = false;
+										pidInfo.stream_type = 0x11;
+                    break;
+                  case 0x0f: // AAC
+                    pidInfo.isAudio = true;
+                    pidInfo.isVideo = false;
+                    pidInfo.isTeletext = false;
+                    pidInfo.isDVBSubtitle = false;
+                    pidInfo.isAC3Audio = false;
+                    pidInfo.stream_type = 0x0f;
+                    break;
                   default:
                     pidInfo.language = "";
                     break;

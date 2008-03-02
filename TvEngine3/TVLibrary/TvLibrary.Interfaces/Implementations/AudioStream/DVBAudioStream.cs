@@ -37,7 +37,6 @@ namespace TvLibrary.Implementations.DVB
     int _pid;
     #endregion
 
-    
     #region ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="T:DVBAudioStream"/> class.
