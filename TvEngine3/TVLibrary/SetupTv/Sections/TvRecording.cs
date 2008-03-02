@@ -305,8 +305,8 @@ namespace SetupTv.Sections
 
     public override void LoadSettings()
     {
-      textBoxPreInterval.Text = "5";
-      textBoxPostInterval.Text = "5";
+      numericUpDownPreRec.Value = 5;
+      numericUpDownPostRec.Value = 5;
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
       checkBoxCreateTagInfoXML.Checked = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
@@ -314,8 +314,8 @@ namespace SetupTv.Sections
       formatString[0] = "";
       formatString[1] = "";
 
-      textBoxPreInterval.Text = layer.GetSetting("preRecordInterval", "5").Value;
-      textBoxPostInterval.Text = layer.GetSetting("postRecordInterval", "5").Value;
+      numericUpDownPreRec.Value = int.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+      numericUpDownPostRec.Value = int.Parse(layer.GetSetting("postRecordInterval", "5").Value);
       formatString[0] = layer.GetSetting("moviesformat", @"%title%-%channel%\%title%-%date%-%start%").Value;
       formatString[1] = layer.GetSetting("seriesformat", @"%title%-%channel%\%title%-[%episode%-]%date%-%start%").Value;
 
@@ -350,10 +350,10 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting;
       setting = layer.GetSetting("preRecordInterval", "5");
-      setting.Value = textBoxPreInterval.Text;
+      setting.Value = numericUpDownPreRec.Value.ToString();
       setting.Persist();
       setting = layer.GetSetting("postRecordInterval", "5");
-      setting.Value = textBoxPostInterval.Text;
+      setting.Value = numericUpDownPostRec.Value.ToString();
       setting.Persist();
       setting = layer.GetSetting("moviesformat", "");
       setting.Value = formatString[0];
