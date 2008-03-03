@@ -195,7 +195,7 @@ Function PageLeaveReinstall
     IfErrors onError uninstallDone
     
     onError:
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_ERROR_ON_UNINSTALL)" /SD IDNO IDYES finish IDNO 0
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES finish IDNO 0
     Quit
 
     uninstallDone:

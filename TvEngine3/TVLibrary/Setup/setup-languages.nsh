@@ -28,10 +28,12 @@
 # This header contains multilanguage strings for the setup routine
 #
 #**********************************************************************************************************#
+!define TITLE_SECServer "MediaPortal TV Server"
+!define TITLE_SECClient "MediaPortal TV Plugin/Client"
 
 # ENGLISH
-LangString DESC_SECClient                   ${LANG_ENGLISH} "Installs the MediaPortal TVServer Client Plugin"
-LangString DESC_SECServer                   ${LANG_ENGLISH} "Installs the MediaPortal TVServer"
+LangString DESC_SECServer                   ${LANG_ENGLISH} "Installs the ${TITLE_SECServer}"
+LangString DESC_SECClient                   ${LANG_ENGLISH} "Installs the ${TITLE_SECClient}"
 LangString ^UninstallLink                   ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 #!ifdef MUI_ADDREMOVEPAGE
@@ -47,6 +49,7 @@ LangString ^UninstallLink                   ${LANG_ENGLISH} "Uninstall $(^Name)"
     LangString TEXT_ADDREMOVE_UPDOWN_OPT2       ${LANG_ENGLISH} "Do not uninstall"
 #!endif
 
-LangString TEXT_ERROR_ON_UNINSTALL  ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
-LangString TEXT_MP_NOT_INSTALLED    ${LANG_ENGLISH} "MediaPortal not installed"
-LangString TEXT_COMPLETE_CLEANUP    ${LANG_ENGLISH} "Do you want to make a complete cleanup?$\r$\nRemove all settings, files and folders?"
+LangString TEXT_MP_NOT_INSTALLED            ${LANG_ENGLISH} "MediaPortal not installed"
+LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL   ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
+LangString TEXT_MSGBOX_PARAMETER_ERROR      ${LANG_ENGLISH} "You have done something wrong!$\r$\nIt is not allowed to use 'noClient' & 'noServer' at the same time."
+LangString TEXT_MSGBOX_COMPLETE_CLEANUP     ${LANG_ENGLISH} "Do you want to make a complete cleanup?$\r$\nRemove all settings, files and folders?"

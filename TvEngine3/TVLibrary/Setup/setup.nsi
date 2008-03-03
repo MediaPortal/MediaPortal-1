@@ -179,9 +179,9 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and MACROS
 #---------------------------------------------------------------------------
-Section "MediaPortal TV Server" SecServer
+Section "${TITLE_SECServer}" SecServer
     SetOverwrite on
-    DetailPrint "Installing MediaPortal TV Server..."
+    DetailPrint "Installing ${TITLE_SECServer}..."
 
     ReadRegStr $InstallPath HKLM "${REGKEY}" InstallPath
     ${If} $InstallPath != ""
@@ -297,7 +297,7 @@ Section "MediaPortal TV Server" SecServer
     ${EndIf}
 SectionEnd
 !macro Remove_${SecServer}
-    DetailPrint "Uninstalling MediaPortal TV Server..."
+    DetailPrint "Uninstalling ${TITLE_SECServer}..."
     #---------------------------------------------------------------------------
     # SERVICE UNINSTALLATION
     #---------------------------------------------------------------------------
@@ -387,10 +387,10 @@ SectionEnd
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk"
 !macroend
- 
-Section "MediaPortal TV Plugin/Client" SecClient
+
+Section "${TITLE_SECClient}" SecClient
     SetOverwrite on
-    DetailPrint "Installing MediaPortal TV Plugin/Client..."
+    DetailPrint "Installing ${TITLE_SECClient}..."
 
     ReadRegSTR $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
     DetailPrint "MediaPortal Installed at: $MpBaseDir"
@@ -428,7 +428,7 @@ Section "MediaPortal TV Plugin/Client" SecClient
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
 SectionEnd
 !macro Remove_${SecClient}
-    DetailPrint "Uninstalling MediaPortal TV Plugin/Client..."
+    DetailPrint "Uninstalling ${TITLE_SECClient}..."
     #---------------------------------------------------------------------------
     # FILTER UNREGISTRATION     for TVClient
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
@@ -581,7 +581,7 @@ Function .onInit
     ;update the component status with infos from commandline parameters
     ${If} $noClient = 1
     ${AndIf} $noServer = 1
-        MessageBox MB_OK|MB_ICONEXCLAMATION "You have done something wrong!$\r$\nIt is not allowed to use 'noClient' & 'noServer' at the same time." IDOK 0
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_PARAMETER_ERROR)" IDOK 0
         Quit
     ${ElseIf} $noClient = 1
         #MessageBox MB_OK|MB_ICONEXCLAMATION "SecClient IDOK 0"
@@ -733,7 +733,7 @@ FunctionEnd
 # This function is called, before the uninstallation process is startet
 # It asks the user, if he wants to do a complete cleanup
 Function un.completeClenupQuestion
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_COMPLETE_CLEANUP)" IDYES 0 IDNO end
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_COMPLETE_CLEANUP)" IDYES 0 IDNO end
     strcpy $CompleteCleanup 1
     
     end:
