@@ -181,8 +181,8 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 Section "MediaPortal TV Server" SecServer
     SetOverwrite on
-    DetailPrint "Installing MediaPortal TV Server"
-    
+    DetailPrint "Installing MediaPortal TV Server..."
+
     ReadRegStr $InstallPath HKLM "${REGKEY}" InstallPath
     ${If} $InstallPath != ""
         #MessageBox MB_OKCANCEL|MB_ICONQUESTION "TV Server is already installed.$\r$\nPress 'OK' to overwrite the existing installation$\r$\nPress 'Cancel' to Abort the installation" /SD IDOK IDOK lbl_install IDCANCEL 0
@@ -194,10 +194,14 @@ Section "MediaPortal TV Server" SecServer
         ExecWait '"$InstallPath\TVService.exe" /uninstall'
         DetailPrint "Finished DeInstalling TVService"
     ${EndIf}
-    
+
     Pop $0
-    
+
     #---------------------------- File Copy ----------------------
+    # Tuning Parameter Directory
+    SetOutPath $INSTDIR\TuningParameters
+    File /r /x .svn ..\TvService\bin\Release\TuningParameters\*
+
     # The Plugin Directory
     SetOutPath $INSTDIR\Plugins
     File ..\Plugins\ComSkipLauncher\bin\Release\ComSkipLauncher.dll
@@ -209,12 +213,9 @@ Section "MediaPortal TV Server" SecServer
     File ..\Plugins\ServerBlaster\ServerBlaster\bin\Release\ServerBlaster.dll
     File ..\Plugins\TvMovie\bin\Release\TvMovie.dll
     File ..\Plugins\XmlTvImport\bin\Release\XmlTvImport.dll
-    
-    # Tuning Parameter Directory
-    SetOutPath $INSTDIR
-    File /r /x .svn ..\TvService\bin\Release\TuningParameters
 
     # Rest of Files
+    SetOutPath $INSTDIR
     File ..\DirectShowLib\bin\Release\DirectShowLib.dll
     File ..\dvblib.dll
     File ..\Plugins\PluginBase\bin\Release\PluginBase.dll
@@ -239,8 +240,8 @@ Section "MediaPortal TV Server" SecServer
     File ..\TvService\bin\Release\TvService.exe
     File ..\TvService\bin\Release\TvService.exe.config
     File ..\SetupControls\bin\Release\SetupControls.dll
-    
-    # Filters
+
+    # 3rd party assemblys
     File ..\..\Filters\bin\dxerr9.dll
     File ..\..\Filters\bin\hauppauge.dll
     File ..\..\Filters\bin\hcwWinTVCI.dll
@@ -249,28 +250,34 @@ Section "MediaPortal TV Server" SecServer
     File ..\..\Filters\bin\ttdvbacc.dll
     File ..\..\Filters\sources\StreamingServer\release\StreamingServer.dll
 
-    # Following Filters are registered
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\mpFileWriter.ax $InstDir\mpFileWriter.ax $InstDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\MpgMux.ax $InstDir\MpgMux.ax $InstDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\PDMpgMux.ax $InstDir\PDMpgMux.ax $InstDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RTPSource.ax $InstDir\RTPSource.ax $InstDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $InstDir\RtspSource.ax $InstDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $InstDir\TSFileSource.ax $InstDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $InstDir\TsReader.ax $InstDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $InstDir\TsWriter.ax $InstDir
-    
     # Common App Data Files
     SetOverwrite off
     SetOutPath "$CommonAppData"
     CreateDirectory "$CommonAppData\log"
     File ..\TvService\Gentle.config
     SetOverwrite on
-    #---------------------------- End Of File Copy ----------------------  
-    
-    # Installing the TVService 
+
+
+    #---------------------------------------------------------------------------
+    # FILTER REGISTRATION   for TVServer
+    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+    #---------------------------------------------------------------------------
+    ;!insertmacro InstallLib <libtype> <shared> <install> <localfile> <destfile> <tempbasedir>
+    DetailPrint "filter registration..."
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\mpFileWriter.ax $INSTDIR\mpFileWriter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\PDMpgMux.ax $INSTDIR\PDMpgMux.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RTPSource.ax $INSTDIR\RTPSource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $INSTDIR\RtspSource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
+
+    #---------------------------------------------------------------------------
+    # SERVICE INSTALLATION
+    #---------------------------------------------------------------------------
     DetailPrint "Installing TVService"
     ExecWait '"$INSTDIR\TVService.exe" /install'
-    #!insertmacro InstallService
     DetailPrint "Finished Installing TVService"
     
     #---------------------------- Post Installation Tasks ----------------------
@@ -290,24 +297,52 @@ Section "MediaPortal TV Server" SecServer
     ${EndIf}
 SectionEnd
 !macro Remove_${SecServer}
-    # De-instell the service
+    DetailPrint "Uninstalling MediaPortal TV Server..."
+    #---------------------------------------------------------------------------
+    # SERVICE UNINSTALLATION
+    #---------------------------------------------------------------------------
     DetailPrint "DeInstalling TVService"
     ExecWait '"$INSTDIR\TVService.exe" /uninstall'
     DetailPrint "Finished DeInstalling TVService"
-    
-    # Unregister the Filters
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\mpFileWriter.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\MpgMux.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\PDMpgMux.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\RTPSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\RtspSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\TSFileSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\TsReader.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $InstDir\TsWriter.ax
-    
-    # Remove Folders
-    RmDir /r /REBOOTOK $INSTDIR\Plugins
+
+    #---------------------------------------------------------------------------
+    # FILTER UNREGISTRATION     for TVServer
+    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+    #---------------------------------------------------------------------------
+    ;!insertmacro UnInstallLib <libtype> <shared> <uninstall> <file>
+    DetailPrint "Unreg and remove filters..."
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\mpFileWriter.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\PDMpgMux.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RTPSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RtspSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
+
+    Delete /REBOOTOK $INSTDIR\mpFileWriter.ax
+    Delete /REBOOTOK $INSTDIR\MpgMux.ax
+    Delete /REBOOTOK $INSTDIR\PDMpgMux.ax
+    Delete /REBOOTOK $INSTDIR\RTPSource.ax
+    Delete /REBOOTOK $INSTDIR\RtspSource.ax
+    Delete /REBOOTOK $INSTDIR\TSFileSource.ax
+    Delete /REBOOTOK $INSTDIR\TsReader.ax
+    Delete /REBOOTOK $INSTDIR\TsWriter.ax
+
+    DetailPrint "remove files..."
+    # Remove TuningParameters
     RmDir /r /REBOOTOK $INSTDIR\TuningParameters
+
+    # Remove Plugins
+    Delete /REBOOTOK $INSTDIR\Plugins\ComSkipLauncher.dll
+    Delete /REBOOTOK $INSTDIR\Plugins\ConflictsManager.dll
+    Delete /REBOOTOK $INSTDIR\Plugins\PersonalTVGuide.dll
+    Delete /REBOOTOK $INSTDIR\Plugins\PluginBase.dll
+    Delete /REBOOTOK $INSTDIR\Plugins\PowerScheduler.dll
+    Delete /REBOOTOK $INSTDIR\Plugins\PowerScheduler.Interfaces.dll
+    Delete /REBOOTOK $INSTDIR\Plugins\ServerBlaster.dll
+    Delete /REBOOTOK $INSTDIR\Plugins\TvMovie.dll
+    Delete /REBOOTOK $INSTDIR\Plugins\XmlTvImport.dll
     
     # And finally remove all the files installed
     # Leave the directory in place, as it might contain user modified files
@@ -343,14 +378,6 @@ SectionEnd
     Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
     Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
     Delete /REBOOTOK $INSTDIR\StreamingServer.dll
-    Delete /REBOOTOK $INSTDIR\mpFileWriter.ax
-    Delete /REBOOTOK $INSTDIR\MpgMux.ax
-    Delete /REBOOTOK $INSTDIR\PDMpgMux.ax
-    Delete /REBOOTOK $INSTDIR\RTPSource.ax
-    Delete /REBOOTOK $INSTDIR\RtspSource.ax
-    Delete /REBOOTOK $INSTDIR\TSFileSource.ax
-    Delete /REBOOTOK $INSTDIR\TsReader.ax
-    Delete /REBOOTOK $INSTDIR\TsWriter.ax
     
     # Remove Registry Keys and Start Menu
     #DeleteRegValue HKLM "${REGKEY}\Components" SecServer
@@ -363,20 +390,12 @@ SectionEnd
  
 Section "MediaPortal TV Plugin/Client" SecClient
     SetOverwrite on
-    
+    DetailPrint "Installing MediaPortal TV Plugin/Client..."
+
     ReadRegSTR $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-    
-    DetailPrint "Installing MediaPortal TVPlugin"
     DetailPrint "MediaPortal Installed at: $MpBaseDir"
-    
+
     #---------------------------- File Copy ----------------------
-    # The Plugins
-    SetOutPath $MPBaseDir\Plugins\Process
-    File ..\Plugins\PowerScheduler\ClientPlugin\bin\Release\PowerSchedulerClientPlugin.dll
-    
-    SetOutPath $MPBaseDir\Plugins\Windows
-    File ..\TvPlugin\TvPlugin\bin\Release\TvPlugin.dll
-    
     # Common Files
     SetOutPath $MPBaseDir
     File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.Interfaces.dll
@@ -391,7 +410,17 @@ Section "MediaPortal TV Plugin/Client" SecClient
     File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
     File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
     File ..\TvPlugin\TvPlugin\Gentle.config
-    
+    # The Plugins
+    SetOutPath $MPBaseDir\Plugins\Process
+    File ..\Plugins\PowerScheduler\ClientPlugin\bin\Release\PowerSchedulerClientPlugin.dll
+    SetOutPath $MPBaseDir\Plugins\Windows
+    File ..\TvPlugin\TvPlugin\bin\Release\TvPlugin.dll
+
+    #---------------------------------------------------------------------------
+    # FILTER REGISTRATION       for TVClient
+    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+    #---------------------------------------------------------------------------
+    ;!insertmacro InstallLib <libtype> <shared> <install> <localfile> <destfile> <tempbasedir>
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
@@ -399,6 +428,18 @@ Section "MediaPortal TV Plugin/Client" SecClient
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
 SectionEnd
 !macro Remove_${SecClient}
+    DetailPrint "Uninstalling MediaPortal TV Plugin/Client..."
+    #---------------------------------------------------------------------------
+    # FILTER UNREGISTRATION     for TVClient
+    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+    #---------------------------------------------------------------------------
+    ;!insertmacro UnInstallLib <libtype> <shared> <uninstall> <file>
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
+    
     # The Plugins
     Delete /REBOOTOK  $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
     Delete /REBOOTOK  $MPBaseDir\Plugins\Windows\TvPlugin.dll
@@ -416,13 +457,6 @@ SectionEnd
     Delete /REBOOTOK  $MPBaseDir\TvBusinessLayer.dll
     Delete /REBOOTOK  $MPBaseDir\TvLibrary.Interfaces.dll
     Delete /REBOOTOK  $MPBaseDir\Gentle.config
-    
-    #Unregister the Filters
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
     
     Delete /REBOOTOK  $MPBaseDir\DVBSub2.ax
     Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
@@ -445,11 +479,11 @@ SectionEnd
 
 #####    Add/Remove callback functions
 !macro SectionList MacroName
-  ;This macro used to perform operation on multiple sections.
-  ;List all of your components in following manner here.
- 
-  !insertmacro "${MacroName}" "SecServer"
-  !insertmacro "${MacroName}" "SecClient"
+    ;This macro used to perform operation on multiple sections.
+    ;List all of your components in following manner here.
+
+    !insertmacro "${MacroName}" "SecServer"
+    !insertmacro "${MacroName}" "SecClient"
 !macroend
  
 Section -FinishComponents
