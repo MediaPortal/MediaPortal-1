@@ -139,6 +139,12 @@ namespace MediaPortal.Player
         return false;
       }
     }
+
+    public override bool Play(string strFile, int beginPositionMS, int startPositionMS, int endPositionMS)
+    {
+      return Play(strFile);
+    }
+
     public override bool Play( string strFile )
     {
       Log.Info("Streambufferplayer play:{0}", strFile);

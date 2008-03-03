@@ -34,6 +34,8 @@ using MediaPortal.Configuration;
 
 using EnterpriseDT.Net.Ftp;
 
+using CueSharp;
+
 namespace MediaPortal.Util
 {
   /// <summary>
@@ -541,6 +543,19 @@ namespace MediaPortal.Util
     public static bool IsImageFile(string extension)
     {
       return DaemonTools.IsImageFile(extension);
+    }
+
+    /// <summary>
+    /// This method check is the given extension is a cuesheet file
+    /// </summary>
+    /// <param name="extension">file extension</param>
+    /// <returns>
+    /// true: if file is a cuesheet file (.cue, ...)
+    /// false: if the file is not a cuesheet file
+    /// </returns>
+    public static bool IsCuesheetFile(string extension)
+    {
+      return extension.Equals(".cue");
     }
 
     public bool IsRemote(string folder)
@@ -1700,6 +1715,7 @@ namespace MediaPortal.Util
           { }
         }
 
+        bool isVirtualFolder = false;
         if (!doesContainRedBookData)
           try
           {
@@ -1707,7 +1723,48 @@ namespace MediaPortal.Util
             strFiles = System.IO.Directory.GetFiles(strDir + @"\");
           }
           catch (Exception)
-          { }
+          {
+            // If this is really a directory, GetFiles will not generate exceptions
+            isVirtualFolder = true;
+          }
+
+        /*
+         * If the current directory is a cuesheet file, it is seen as a virtual folder
+         * provide list of tracks.
+         * The extension of a track file is the extension of the associated data file
+         * to simplify later extension decoding.
+         */
+        if (isVirtualFolder)
+        {
+          string dir_extension = System.IO.Path.GetExtension(strDir);
+          if (IsCuesheetFile(dir_extension))
+          {
+            CueSharp.CueSheet cuesheet = new CueSharp.CueSheet(strDir);
+
+            // Count number of audio tracks
+            int nb_audio_tracks = 0;
+            foreach (CueSharp.Track t in cuesheet.Tracks)
+            {
+              if (t.TrackDataType == CueSharp.DataType.AUDIO)
+                nb_audio_tracks++;
+            }
+
+            // Record audio tracks
+            strFiles = new string[nb_audio_tracks];
+            string dataFileExtension = string.Empty;
+            int i = 0;
+            foreach (CueSharp.Track t in cuesheet.Tracks)
+            {
+              if (t.TrackDataType == CueSharp.DataType.AUDIO)
+              {
+                string data_filename = t.UsedDataFile.Filename;
+                if (data_filename != null)
+                  dataFileExtension = System.IO.Path.GetExtension(data_filename);
+                strFiles[i++] = string.Format("{0}\\Track{1:00}{2}", strDir, t.Rank, dataFileExtension);
+              }
+            }
+          }
+        }
 
         if (strDirs != null)
         {
@@ -1739,6 +1796,54 @@ namespace MediaPortal.Util
 
         if (strFiles != null)
         {
+          {
+            /*
+             * For each cuesheet, get used data files and remove then from selectable list so that only the cuesheet will remain
+             * Limitation(s):
+             *   - the data file is expected to located in the same dir than the cuesheet
+             */
+            List<string> strCueDataFiles = new List<string>();
+            for (int i = 0; i < strFiles.Length; ++i)
+            {
+              //<OKAY_AWRIGHT-310506>
+              string extension;
+              if (!doesContainRedBookData)
+                extension = System.IO.Path.GetExtension(strFiles[i]);
+              else
+                extension = ".cda";
+              //</OKAY_AWRIGHT-310506>
+
+              if (IsCuesheetFile(extension))
+              {
+                CueSharp.CueSheet cuesheet = new CueSharp.CueSheet(strFiles[i]);
+                strCueDataFiles.AddRange(cuesheet.DataFiles);
+              }
+            }
+
+            int deleted_entries = 0;
+            foreach (string strCueDataFile in strCueDataFiles)
+            {
+              for (int i = 0; i < strFiles.Length; ++i)
+              {
+                if (strFiles[i].EndsWith("\\" + strCueDataFile))
+                {
+                  strFiles[i] = string.Empty;
+                  deleted_entries++;
+                }
+              }
+            }
+            if (deleted_entries > 0)
+            {
+              string[] strFilesTmp = new string[strFiles.Length - deleted_entries];
+              for (int i = 0, j = 0; i < strFiles.Length; ++i)
+              {
+                if (!strFiles[i].Equals(string.Empty))
+                  strFilesTmp[j++] = strFiles[i];
+              }
+              strFiles = strFilesTmp;
+            }
+          }
+
           for (int i = 0; i < strFiles.Length; ++i)
           {
             //<OKAY_AWRIGHT-310506>
@@ -1777,21 +1882,35 @@ namespace MediaPortal.Util
 
               // Skip hidden files
               //<OKAY_AWRIGHT-310506>
-              if (!doesContainRedBookData && (File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+              if (!doesContainRedBookData && !isVirtualFolder && (File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
               //</OKAY_AWRIGHT-310506>
               {
                 continue;
               }
 
               item = new GUIListItem();
-              item.IsFolder = false;
-              item.Label = Utils.GetFilename(strFiles[i]);
-              item.Label2 = "";
-              item.Path = strFiles[i];
+              /*
+               * A cuesheet is seen as a folder
+               */
+              if (IsCuesheetFile(extension))
+              {
+                item.IsVirtual = true;
+                item.IsFolder  = true;
+              }
+              else
+              {
+                item.IsVirtual = isVirtualFolder; // File is virtual if from virtual directory
+                item.IsFolder  = false;
+              }
+              item.Label    = Utils.GetFilename(strFiles[i]);
+              item.Label2   = "";
+              item.Path     = strFiles[i];
 
               //<OKAY_AWRIGHT-310506>
-              if (!doesContainRedBookData)
-                item.FileInfo = new FileInformation(strFiles[i], item.IsFolder);
+              if (!doesContainRedBookData && !isVirtualFolder)
+              {
+                item.FileInfo = new FileInformation(strFiles[i], item.IsFolder && !isVirtualFolder);
+              }
               else
               {
                 item.FileInfo = new FileInformation();
