@@ -1118,8 +1118,8 @@ namespace TvDatabase
             MySQLAdapter.TableMappings.Add("Table", "Program");
             MySQLConnect.Open();
             MySQLCmd = new MySqlCommand(BuildEpgSelect(channelList, provider), MySQLConnect);
-            MySQLCmd.Parameters.Add("startTime", MySqlDbType.Datetime).Value = startTime; ;
-            MySQLCmd.Parameters.Add("endTime", MySqlDbType.Datetime).Value = endTime;
+            MySQLCmd.Parameters.Add("?startTime", MySqlDbType.Datetime).Value = startTime; ;
+            MySQLCmd.Parameters.Add("?endTime", MySqlDbType.Datetime).Value = endTime;
             MySQLAdapter.SelectCommand = MySQLCmd;
             break;
           default:
@@ -1222,19 +1222,20 @@ namespace TvDatabase
       {
         DataRow prog = dataSet.Tables[0].Rows[i];
 
-        Program p = new Program((int)prog["idChannel"],
-                                (DateTime)prog["startTime"],
-                                (DateTime)prog["endTime"],
-                                (string)prog["title"],
-                                (string)prog["description"],
-                                (string)prog["genre"],
-                                (bool)prog["notify"],
-                                (DateTime)prog["originalAirDate"],
-                                (string)prog["seriesNum"],
-                                (string)prog["episodeNum"],
-                                (int)prog["starRating"],
-                                (string)prog["classification"],
-                                (int)prog["parentalRating"]);
+        Program p = new Program(Convert.ToInt32(prog["idChannel"]),
+                                Convert.ToDateTime(prog["startTime"]),
+                                Convert.ToDateTime(prog["endTime"]),
+                                Convert.ToString(prog["title"]),
+                                Convert.ToString(prog["description"]),
+                                Convert.ToString(prog["genre"]),
+                                Convert.ToBoolean(prog["notify"]),
+                                Convert.ToDateTime(prog["originalAirDate"]),
+                                Convert.ToString(prog["seriesNum"]),
+                                Convert.ToString(prog["episodeNum"]),
+                                Convert.ToInt32(prog["starRating"]),
+                                Convert.ToString(prog["classification"]),
+                                Convert.ToInt32(prog["parentalRating"])
+                                );
 
         int idChannel = p.IdChannel;
         if (!maps.ContainsKey(idChannel))
