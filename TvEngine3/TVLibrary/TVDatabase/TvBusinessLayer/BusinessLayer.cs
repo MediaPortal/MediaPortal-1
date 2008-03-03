@@ -325,7 +325,7 @@ namespace TvDatabase
     {
       CountryCollection collection = new CountryCollection();
       IList tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0 ; i < tuningDetails.Count ; ++i)
+      for (int i = 0; i < tuningDetails.Count; ++i)
       {
         TuningDetail detail = (TuningDetail)tuningDetails[i];
         if (detail.ChannelType != channelType) continue;
@@ -434,7 +434,7 @@ namespace TvDatabase
       List<IChannel> tvChannels = new List<IChannel>();
       CountryCollection collection = new CountryCollection();
       IList tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0 ; i < tuningDetails.Count ; ++i)
+      for (int i = 0; i < tuningDetails.Count; ++i)
       {
         TuningDetail detail = (TuningDetail)tuningDetails[i];
         switch (detail.ChannelType)
@@ -545,7 +545,7 @@ namespace TvDatabase
     public ChannelMap MapChannelToCard(Card card, Channel channel)
     {
       IList channelMaps = card.ReferringChannelMap();
-      for (int i = 0 ; i < channelMaps.Count ; ++i)
+      for (int i = 0; i < channelMaps.Count; ++i)
       {
         ChannelMap map = (ChannelMap)channelMaps[i];
         if (map.IdChannel == channel.IdChannel && map.IdCard == card.IdCard) return map;
@@ -1076,53 +1076,175 @@ namespace TvDatabase
       return progs;
     }
 
+    #region TV-Guide
     public Dictionary<int, List<Program>> GetProgramsForAllChannels(DateTime startTime, DateTime endTime, List<Channel> channelList)
     {
-      //Stopwatch bench = new Stopwatch();
-      //bench.Start();
-      Dictionary<int, List<Program>> maps = new Dictionary<int, List<Program>>();
-      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      MySqlConnection MySQLConnect = null;
+      MySqlDataAdapter MySQLAdapter = null;
+      MySqlCommand MySQLCmd = null;
 
-      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      SqlDataAdapter MsSqlAdapter = null;
+      SqlConnection MsSqlConnect = null;
+      SqlCommand MsSqlCmd = null;
+      string provider = "";
+      string connectString = "";
+      try
+      {
+        try
+        {
+          provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
+          connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+        }
+        catch (Exception cex)
+        {
+          Log.Info("BusinessLayer: GetProgramsForAllChannels could not retrieve connection details - {0}", cex.Message);
+          return new Dictionary<int, List<Program>>();
+        }
+        switch (provider)
+        {
+          case "sqlserver":
+            MsSqlConnect = new SqlConnection(connectString);
+            MsSqlAdapter = new SqlDataAdapter();
+            MsSqlAdapter.TableMappings.Add("Table", "Program");
+            MsSqlConnect.Open();
+            MsSqlCmd = new SqlCommand(BuildEpgSelect(channelList, provider), MsSqlConnect);            
+            MsSqlCmd.Parameters.Add("startTime", SqlDbType.DateTime).Value = startTime; ;
+            MsSqlCmd.Parameters.Add("endTime", SqlDbType.DateTime).Value = endTime;
+            MsSqlAdapter.SelectCommand = MsSqlCmd;
+            break;
+          case "mysql":
+            MySQLConnect = new MySqlConnection(connectString);
+            MySQLAdapter = new MySqlDataAdapter(MySQLCmd);
+            MySQLAdapter.TableMappings.Add("Table", "Program");
+            MySQLConnect.Open();
+            MySQLCmd = new MySqlCommand(BuildEpgSelect(channelList, provider), MySQLConnect);
+            MySQLCmd.Parameters.Add("startTime", MySqlDbType.Datetime).Value = startTime; ;
+            MySQLCmd.Parameters.Add("endTime", MySqlDbType.Datetime).Value = endTime;
+            MySQLAdapter.SelectCommand = MySQLCmd;
+            break;
+          default:
+            return new Dictionary<int, List<Program>>();
+        }
 
-      sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
+        using (DataSet dataSet = new DataSet("Program"))
+        {
+          switch (provider)
+          {
+            case "sqlserver":
+              MsSqlAdapter.Fill(dataSet);
+              break;
+            case "mysql":
+              MySQLAdapter.Fill(dataSet);
+              break;
+          }
+          return FillProgramMapFromDataSet(dataSet);
+        }
+
+      }
+      catch (Exception ex)
+      {
+        Log.Info("BusinessLayer: GetProgramsForAllChannels caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+        return new Dictionary<int, List<Program>>();
+      }
+      finally
+      {
+        try
+        {
+          switch (provider)
+          {
+            case "mysql":
+              MySQLConnect.Close();
+              MySQLAdapter.Dispose();
+              MySQLCmd.Dispose();
+              MySQLConnect.Dispose();
+              break;
+            case "sqlserver":
+              MsSqlConnect.Close();
+              MsSqlAdapter.Dispose();
+              MsSqlCmd.Dispose();
+              MsSqlConnect.Dispose();
+              break;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Info("BusinessLayer: GetProgramsForAllChannels Exception in finally - {0}, {1}", ex.Message, ex.StackTrace);
+        }
+      }
+    }
+
+    private string BuildEpgSelect(List<Channel> channelList, string aProvider)
+    {
+      StringBuilder sbSelect = new StringBuilder("SELECT * FROM Program WHERE ");
+
+      if (aProvider == "mysql")
+      {
+        sbSelect.Append("((EndTime > ?startTime and EndTime < ?endTime)");
+        sbSelect.Append(" OR ");
+        sbSelect.Append("(StartTime >= ?startTime and StartTime <= ?endTime)");
+        sbSelect.Append(" OR ");
+        sbSelect.Append("(StartTime <= ?startTime and EndTime >= ?endTime))");
+        sbSelect.Append(" AND ");
+      }
+      else
+      {
+        sbSelect.Append("((EndTime > @startTime and EndTime < @endTime)");
+        sbSelect.Append(" OR ");
+        sbSelect.Append("(StartTime >= @startTime and StartTime <= @endTime)");
+        sbSelect.Append(" OR ");
+        sbSelect.Append("(StartTime <= @startTime and EndTime >= @endTime))");
+        sbSelect.Append(" AND ");
+      }
+
       string channelConstraint = "";
       foreach (Channel ch in channelList)
       {
-        if (channelConstraint == "")
-        {
-          channelConstraint = String.Format("(idChannel={0}", ch.IdChannel);
-        }
+        if (string.IsNullOrEmpty(channelConstraint))
+          channelConstraint = string.Format("(idChannel={0}", ch.IdChannel);
         else
-        {
-          channelConstraint += String.Format(" or idChannel={0}", ch.IdChannel);
-        }
+          channelConstraint += string.Format(" or idChannel={0}", ch.IdChannel);
       }
       if (channelConstraint.Length > 0)
       {
-        channelConstraint += ")";
-        sb.AddConstraint(channelConstraint);
+        channelConstraint += ") ";
+        sbSelect.Append(channelConstraint);
       }
-      sb.AddOrderByField(true, "starttime");
 
-      SqlStatement stmt = sb.GetStatement(true);
-      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-      foreach (Program p in progs)
+      sbSelect.Append(" ORDER BY startTime ");
+      return sbSelect.ToString();
+    }
+
+    private Dictionary<int, List<Program>> FillProgramMapFromDataSet(DataSet dataSet)
+    {
+      Dictionary<int, List<Program>> maps = new Dictionary<int, List<Program>>();
+      int resultCount = dataSet.Tables[0].Rows.Count;
+      for (int i = 0; i < resultCount; i++)
       {
+        DataRow prog = dataSet.Tables[0].Rows[i];
+
+        Program p = new Program((int)prog["idChannel"],
+                                (DateTime)prog["startTime"],
+                                (DateTime)prog["endTime"],
+                                (string)prog["title"],
+                                (string)prog["description"],
+                                (string)prog["genre"],
+                                (bool)prog["notify"],
+                                (DateTime)prog["originalAirDate"],
+                                (string)prog["seriesNum"],
+                                (string)prog["episodeNum"],
+                                (int)prog["starRating"],
+                                (string)prog["classification"],
+                                (int)prog["parentalRating"]);
+
         int idChannel = p.IdChannel;
         if (!maps.ContainsKey(idChannel))
-        {
           maps[idChannel] = new List<Program>();
-        }
+
         maps[idChannel].Add(p);
       }
-      //bench.Stop();
-      //Log.Info("BL: GetProgsForAllChans: Start: {0}, End: {1}, Channels: {2}, Results: {3}, Time: {4} ms", startTime.ToString(), endTime.ToString(), channelList.Count.ToString(), maps.Count.ToString(), bench.ElapsedMilliseconds.ToString());
       return maps;
     }
+    #endregion
 
     public IList GetPrograms(DateTime startTime, DateTime endTime)
     {
@@ -1383,7 +1505,7 @@ namespace TvDatabase
           List<int> lastChannelIDs = new List<int>();
 
           // for-loops are faster than foreach-loops
-          for (int j = 0 ; j < resultCount ; j++)
+          for (int j = 0; j < resultCount; j++)
           {
             int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
             // Only get the Now-Next-Data _once_ per channel
@@ -1595,7 +1717,7 @@ namespace TvDatabase
 
     #region SQL Builder
 
-    private void ExecuteMySqlCommand(List<Program> aProgramList, MySqlConnection aConnection, MySqlTransaction aTransaction, int aDelay)
+    private int ExecuteMySqlCommand(List<Program> aProgramList, MySqlConnection aConnection, MySqlTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
       MySqlCommand sqlCmd = new MySqlCommand();
@@ -1674,9 +1796,10 @@ namespace TvDatabase
           Log.Info("BusinessLayer: ExecuteMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
+      return aCounter;
     }
 
-    private void ExecuteSqlServerCommand(List<Program> aProgramList, SqlConnection aConnection, SqlTransaction aTransaction, int aDelay)
+    private int ExecuteSqlServerCommand(List<Program> aProgramList, SqlConnection aConnection, SqlTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
       SqlCommand sqlCmd = new SqlCommand();
@@ -1755,6 +1878,7 @@ namespace TvDatabase
           Log.Error("BusinessLayer: InsertSqlServer error - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
+      return aCounter;
     }
 
     #endregion // SQL builder
@@ -1774,7 +1898,7 @@ namespace TvDatabase
       Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
 
       List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
-      for (int i = 0 ; i < cards.Count ; i++) cardSchedules[i] = new List<Schedule>();
+      for (int i = 0; i < cards.Count; i++) cardSchedules[i] = new List<Schedule>();
 
       // GEMX: Assign all already scheduled timers to cards. Assume that even possibly overlapping schedulues are ok to the user,
       // as he decided to keep them before. That's why they are in the db
@@ -1893,7 +2017,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
       {
-        for (int i = 0 ; i < days ; ++i)
+        for (int i = 0; i < days; ++i)
         {
           Schedule recNew = rec.Clone();
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
@@ -1917,7 +2041,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
       {
-        for (int i = 0 ; i < days ; ++i)
+        for (int i = 0; i < days; ++i)
         {
           if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
           {
@@ -1968,7 +2092,7 @@ namespace TvDatabase
       }
       if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
       {
-        for (int i = 0 ; i < days ; ++i)
+        for (int i = 0; i < days; ++i)
         {
           if ((dtDay.DayOfWeek == rec.StartTime.DayOfWeek) && (dtDay.Date >= rec.StartTime.Date))
           {
