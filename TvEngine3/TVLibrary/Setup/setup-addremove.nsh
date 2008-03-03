@@ -88,3 +88,119 @@ Var AR_RegFlags
  
   !insertmacro "Remove_${${SecName}}"
 !macroend
+
+
+!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+    !insertmacro VersionCompare
+!endif
+
+
+#####    Add/Remove/Reinstall page
+!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+
+Var ReinstallPageCheck
+
+Function PageReinstall
+    ReadRegStr $R0 HKLM "${REGKEY}" "InstallPath"
+
+    ${If} $R0 == ""
+        Abort
+    ${EndIf}
+
+    ReadRegDWORD $R0 HKLM "${REGKEY}" "VersionMajor"
+    ReadRegDWORD $R1 HKLM "${REGKEY}" "VersionMinor"
+    ReadRegDWORD $R2 HKLM "${REGKEY}" "VersionRevision"
+    ReadRegDWORD $R3 HKLM "${REGKEY}" "VersionBuild"
+    StrCpy $R0 $R0.$R1.$R2.$R3
+
+    ${VersionCompare} ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD} $R0 $R0
+    ${If} $R0 == 0
+        StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_REPAIR)"
+        StrCpy $R2 "$(TEXT_ADDREMOVE_REPAIR_OPT1)"
+        StrCpy $R3 "$(TEXT_ADDREMOVE_REPAIR_OPT2)"
+        !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_REPAIR)"
+        StrCpy $R0 "2"
+    ${ElseIf} $R0 == 1
+        StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_UPGRADE)"
+        StrCpy $R2 "$(TEXT_ADDREMOVE_UPDOWN_OPT1)"
+        StrCpy $R3 "$(TEXT_ADDREMOVE_UPDOWN_OPT2)"
+        !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_UPDOWN)"
+        StrCpy $R0 "1"
+    ${ElseIf} $R0 == 2
+        StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_DOWNGRADE)"
+        StrCpy $R2 "$(TEXT_ADDREMOVE_UPDOWN_OPT1)"
+        StrCpy $R3 "$(TEXT_ADDREMOVE_UPDOWN_OPT2)"
+        !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_UPDOWN)"
+        StrCpy $R0 "1"
+    ${Else}
+        Abort
+    ${EndIf}
+
+    nsDialogs::Create /NOUNLOAD 1018
+
+    ${NSD_CreateLabel} 0 0 100% 24u $R1
+    Pop $R1
+
+    ${NSD_CreateRadioButton} 30u 50u -30u 8u $R2
+    Pop $R2
+    ${NSD_OnClick} $R2 PageReinstallUpdateSelection
+
+    ${NSD_CreateRadioButton} 30u 70u -30u 8u $R3
+    Pop $R3
+    ${NSD_OnClick} $R3 PageReinstallUpdateSelection
+
+    ${If} $ReinstallPageCheck != 2
+        SendMessage $R2 ${BM_SETCHECK} ${BST_CHECKED} 0
+    ${Else}
+        SendMessage $R3 ${BM_SETCHECK} ${BST_CHECKED} 0
+    ${EndIf}
+
+    nsDialogs::Show
+FunctionEnd
+
+Function PageReinstallUpdateSelection
+    Pop $R1
+
+    ${NSD_GetState} $R2 $R1
+    
+    ${If} $R1 == ${BST_CHECKED}
+        StrCpy $ReinstallPageCheck 1
+    ${Else}
+        StrCpy $ReinstallPageCheck 2
+    ${EndIf}
+
+FunctionEnd
+
+Function PageLeaveReinstall
+    ${NSD_GetState} $R2 $R1
+
+    StrCmp $R0 "1" 0 +2
+        StrCmp $R1 "1" doUninstall finish
+    StrCmp $R0 "2" 0 +3
+        StrCmp $R1 "1" finish doUninstall
+
+    doUninstall:
+    ReadRegStr $R1 HKLM "${REG_UNINSTALL}" "UninstallString"
+    IfFileExists '$R1' 0 onError
+
+    ;Run uninstaller
+    HideWindow
+    ClearErrors
+    ExecWait '$R1 _?=$INSTDIR'
+    BringToFront
+    
+    IfErrors onError uninstallDone
+    
+    onError:
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_ERROR_ON_UNINSTALL)" /SD IDNO IDYES finish IDNO 0
+    Quit
+
+    uninstallDone:
+    IfFileExists '$R1' 0 +2
+    Delete $R1
+    
+    finish:
+FunctionEnd
+
+!endif # VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+#####    End of Add/Remove/Reinstall page
