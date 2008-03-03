@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 #**********************************************************************************************************#
 #
 # For the MediaPortal Installer to work you need:
@@ -59,6 +84,7 @@ Var CompleteCleanup
 !include FileFunc.nsh
 
 !include setup-addremove.nsh
+!include setup-languages.nsh
 
 !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
     !insertmacro VersionCompare
@@ -624,22 +650,22 @@ Function PageReinstall
 
     ${VersionCompare} ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD} $R0 $R0
     ${If} $R0 == 0
-        StrCpy $R1 "$(^Name) ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
-        StrCpy $R2 "Add/Remove/Reinstall components"
-        StrCpy $R3 "Uninstall $(^Name)"
-        !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
+        StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_REPAIR)"
+        StrCpy $R2 "$(TEXT_ADDREMOVE_REPAIR_OPT1)"
+        StrCpy $R3 "$(TEXT_ADDREMOVE_REPAIR_OPT2)"
+        !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_REPAIR)"
         StrCpy $R0 "2"
     ${ElseIf} $R0 == 1
-        StrCpy $R1 "An older version of $(^Name) is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
-        StrCpy $R2 "Uninstall before installing"
-        StrCpy $R3 "Do not uninstall"
-        !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install $(^Name)."
+        StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_UPGRADE)"
+        StrCpy $R2 "$(TEXT_ADDREMOVE_UPDOWN_OPT1)"
+        StrCpy $R3 "$(TEXT_ADDREMOVE_UPDOWN_OPT2)"
+        !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_UPDOWN)"
         StrCpy $R0 "1"
     ${ElseIf} $R0 == 2
-        StrCpy $R1 "A newer version of $(^Name) is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
-        StrCpy $R2 "Uninstall before installing"
-        StrCpy $R3 "Do not uninstall"
-        !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install $(^Name)."
+        StrCpy $R1 "$(TEXT_ADDREMOVE_INFO_DOWNGRADE)"
+        StrCpy $R2 "$(TEXT_ADDREMOVE_UPDOWN_OPT1)"
+        StrCpy $R3 "$(TEXT_ADDREMOVE_UPDOWN_OPT2)"
+        !insertmacro MUI_HEADER_TEXT "$(TEXT_ADDREMOVE_HEADER)" "$(TEXT_ADDREMOVE_HEADER2_UPDOWN)"
         StrCpy $R0 "1"
     ${Else}
         Abort
@@ -701,7 +727,7 @@ Function PageLeaveReinstall
     IfErrors onError uninstallDone
     
     onError:
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?" /SD IDNO IDYES finish IDNO 0
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_ERROR_ON_UNINSTALL)" /SD IDNO IDYES finish IDNO 0
     Quit
 
     uninstallDone:
@@ -745,7 +771,7 @@ Function DisableClientIfNoMP
         # Make the unselected section read only
         !insertmacro SetSectionFlag "${SecClient}" 16
         SectionGetText ${SecClient} $0
-        StrCpy $0 "$0 ($(MP_NOT_INSTALLED))"
+        StrCpy $0 "$0 ($(TEXT_MP_NOT_INSTALLED))"
         SectionSetText ${SecClient} $0
     ${EndIf}
 FunctionEnd
@@ -786,7 +812,7 @@ FunctionEnd
 # This function is called, before the uninstallation process is startet
 # It asks the user, if he wants to do a complete cleanup
 Function un.completeClenupQuestion
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "Do you want to make a complete cleanup? Remove all settings, files and folders?" IDYES 0 IDNO end
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_COMPLETE_CLEANUP)" IDYES 0 IDNO end
     strcpy $CompleteCleanup 1
     
     end:
@@ -794,20 +820,7 @@ FunctionEnd
 #####    End of other functions
 
 #####    Installer Language Strings
-LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
-
-LangString MP_NOT_INSTALLED ${LANG_ENGLISH} "MediaPortal not installed"
-
-LangString DESC_SECClient ${LANG_ENGLISH} "Installs the MediaPortal TVServer Client Plugin"
-LangString DESC_SECServer ${LANG_ENGLISH} "Installs the MediaPortal TVServer"
-
-LangString DESC_UnSECClient ${LANG_ENGLISH} "Uninstalls the MediaPortal TVServer Client Plugin"
-LangString DESC_UnSECServer ${LANG_ENGLISH} "Uninstalls the MediaPortal TVServer"
-
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SECClient)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SECServer)
-  #!insertmacro MUI_DESCRIPTION_TEXT ${UnSecClient} $(DESC_UNSECClient)
-  #!insertmacro MUI_DESCRIPTION_TEXT ${UnSecServer} $(DESC_UnSECServer)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SECClient)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SECServer)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
-#####    End of Installer Language Strings
