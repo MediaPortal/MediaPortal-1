@@ -166,6 +166,12 @@
         "Entry"
         {
         "MsmKey" = "8:_5767083D4745F8362E4C817E38B1DF3F"
+        "OwnerKey" = "8:_F8A1580A599E41CC95CA274BD8109061"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5767083D4745F8362E4C817E38B1DF3F"
         "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -173,6 +179,12 @@
         {
         "MsmKey" = "8:_5767083D4745F8362E4C817E38B1DF3F"
         "OwnerKey" = "8:_748416AF78E8F921848AA75316779E9F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5767083D4745F8362E4C817E38B1DF3F"
+        "OwnerKey" = "8:_B51EC50AF1645D3671372BAA18082F79"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -221,12 +233,6 @@
         {
         "MsmKey" = "8:_6346993F5D3EF911C38E3E01C0F0A3F4"
         "OwnerKey" = "8:_8E2FB598DAD6CAB02719180EDACFD3D6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_69310D7D42EB4A0B9D50719414414189"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1321,26 +1327,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_69310D7D42EB4A0B9D50719414414189"
-            {
-            "SourcePath" = "8:..\\..\\..\\Filters\\bin\\TSFileSource.ax"
-            "TargetName" = "8:TSFileSource.ax"
-            "Tag" = "8:"
-            "Folder" = "8:_C2F0F37686774BEB8C7DCDEAD47B6909"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:4"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6A4790F9AEAC4C599EDE4BF51E53B20F"
             {
             "SourcePath" = "8:..\\..\\..\\Filters\\bin\\Microsoft.VC80.CRT.manifest"
@@ -1912,7 +1898,7 @@
             "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
-            "Register" = "3:4"
+            "Register" = "3:1"
             "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
@@ -1963,7 +1949,7 @@
             "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
-            "Register" = "3:4"
+            "Register" = "3:1"
             "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
@@ -2322,8 +2308,8 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Mediaportal TV Client Plugin"
-        "ProductCode" = "8:{F7444E89-5BC0-497E-9650-E50539860DE0}"
-        "PackageCode" = "8:{AC684A22-BBD6-4BB8-9AD4-EF4AA9E32AF7}"
+        "ProductCode" = "8:{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}"
+        "PackageCode" = "8:{7230DD49-F21E-44FE-8E00-88F76B216409}"
         "UpgradeCode" = "8:{93E7284D-C9D1-4386-9A08-1A85408D3CCA}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
