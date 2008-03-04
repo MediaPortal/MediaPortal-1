@@ -504,7 +504,7 @@ namespace TvEngine
       sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ((TVDaten.Ende)>= #{1}#)) ORDER BY TVDaten.Beginn;");
 
       DateTime importTime = DateTime.Now.Subtract(TimeSpan.FromHours(4));
-      sqlSelect = string.Format(sqlb.ToString(), stationName, importTime.ToString("dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture));
+      sqlSelect = string.Format(sqlb.ToString(), stationName, importTime.ToString("yyyy-MM-dd HH:mm:ss")); //("dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture));
       OleDbTransaction databaseTransaction = null;
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
 
