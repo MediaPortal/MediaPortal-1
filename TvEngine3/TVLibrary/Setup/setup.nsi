@@ -291,6 +291,7 @@ Section "${TITLE_SECServer}" SecServer
 
     ${If} $noStartMenuSC != 1
         !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+        CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk" "$CommonAppData\log" "" "$CommonAppData\log" 0 "" "" "TV Server Log Files"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
@@ -344,6 +345,7 @@ SectionEnd
     Delete /REBOOTOK $INSTDIR\Plugins\ServerBlaster.dll
     Delete /REBOOTOK $INSTDIR\Plugins\TvMovie.dll
     Delete /REBOOTOK $INSTDIR\Plugins\XmlTvImport.dll
+    RmDir "$INSTDIR\Plugins"
     
     # And finally remove all the files installed
     # Leave the directory in place, as it might contain user modified files
@@ -498,7 +500,8 @@ Section -Post
     
     ${If} $noStartMenuSC != 1
         !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall-tve3.exe
+        CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" "$INSTDIR\uninstall-tve3.exe"
         !insertmacro MUI_STARTMENU_WRITE_END
     ${EndIf}
 
@@ -530,12 +533,14 @@ Section Uninstall
     ;First removes all optional components
     !insertmacro SectionList "RemoveSection"
 
-    ;Removes directory and registry key:
+    ;Removes last files and instdir
     Delete /REBOOTOK "$INSTDIR\add-remove-tve3.exe"
+    Delete /REBOOTOK "$INSTDIR\uninstall-tve3.exe"
+    RmDir "$INSTDIR"
 
     # Get the uninstall string, so that we can delete the exe
-    ReadRegStr $R1 HKLM "${REG_UNINSTALL}" UninstallString
-    Delete /REBOOTOK $R1
+    #ReadRegStr $R1 HKLM "${REG_UNINSTALL}" UninstallString
+    #Delete /REBOOTOK $R1
     DeleteRegKey HKLM "${REG_UNINSTALL}"
 
     #startmenu
@@ -603,7 +608,9 @@ Function .onInit
 
         ClearErrors
         #MessageBox MB_YESNO|MB_ICONEXCLAMATION "xxxxx" IDYES 0 IDNO 0
-        ExecWait '$R1 /S _?=$INSTDIR'
+        CopyFiles $INSTDIR\uninstall-tve3.exe $TEMP
+        ExecWait '"$TEMP\uninstall-tve3.exe" _?=$INSTDIR'
+        #ExecWait '$R1 /S _?=$INSTDIR'
 
     noSilent:
 

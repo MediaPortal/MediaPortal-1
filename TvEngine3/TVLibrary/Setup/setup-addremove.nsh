@@ -189,7 +189,9 @@ Function PageLeaveReinstall
     ;Run uninstaller
     HideWindow
     ClearErrors
-    ExecWait '$R1 _?=$INSTDIR'
+    CopyFiles $INSTDIR\uninstall-tve3.exe $TEMP
+    ExecWait '"$TEMP\uninstall-tve3.exe" _?=$INSTDIR'
+    #ExecWait '$R1 _?=$INSTDIR'
     BringToFront
     
     IfErrors onError uninstallDone
