@@ -167,13 +167,13 @@ CRCCheck on
 XPStyle on
 ShowInstDetails show
 VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "MediaPortal TV Server"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "${COMPANY}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite "${URL}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription ""
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright ""
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "MediaPortal TV Server"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion    "${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${COMPANY}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${URL}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   ""
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    ""
 ShowUninstDetails show
 
 #---------------------------------------------------------------------------
@@ -288,6 +288,7 @@ Section "${TITLE_SECServer}" SecServer
     ${If} $noDesktopSC != 1
         CreateShortcut "$DESKTOP\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
     ${EndIf}
+
     ${If} $noStartMenuSC != 1
         !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk" "$CommonAppData\log" "" "$CommonAppData\log" 0 "" "" "TV Server Log Files"
@@ -520,7 +521,7 @@ Section -Post
     WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 0
  
     CopyFiles "$EXEPATH" "$INSTDIR\add-remove-tve3.exe"
-    WriteUninstaller $INSTDIR\uninstall-tve3.exe
+    WriteUninstaller "$INSTDIR\uninstall-tve3.exe"
 SectionEnd
 #####    End of Add/Remove callback functions
 
