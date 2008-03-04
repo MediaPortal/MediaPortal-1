@@ -739,6 +739,9 @@ namespace MediaPortal.GUI.Library
         else
           return true;
       }
+      else if (_CurrentActiveButton == ActiveButton.Up)
+        return true;
+
 
       return false;
     }
