@@ -28,6 +28,7 @@
 #include <time.h>
 #include <streams.h>
 #include <initguid.h>
+#include <shlobj.h>
 #include "tsreader.h"
 #include "audiopin.h"
 #include "videopin.h"
@@ -51,12 +52,11 @@ void LogDebug(const char *fmt, ...)
 	GetLocalTime(&systemTime);
 
 //#ifdef DONTLOG
-	char moduleFileName[1024];
-	GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
-	string logFile=moduleFileName;
-	logFile=logFile.substr(0, logFile.rfind("\\"));
-	logFile.append("\\log\\TsReader.log");
-	FILE* fp = fopen(logFile.c_str(),"a+");
+  TCHAR folder[MAX_PATH];
+  TCHAR fileName[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader.log",folder);
+	FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
 	{
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
@@ -140,17 +140,13 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 {
  // use the following line if u r having trouble setting breakpoints
  // #pragma comment( lib, "strmbasd" )
+  TCHAR folder[MAX_PATH];
+  TCHAR fileName[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader.log",folder);
+  ::DeleteFile(fileName);
 
-  char moduleFileName[1024];
-	GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
-	string logFile=moduleFileName;
-	char logFileName[1024];
-  logFile=logFile.substr(0, logFile.rfind("\\"));
-	logFile.append("\\log\\TsReader.log");
-  strcpy(logFileName, logFile.c_str() );
-  ::DeleteFile(logFileName);
-
-  LogDebug("-------------- v1.0.2 ----------------");
+  LogDebug("-------------- v1.0.3 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;

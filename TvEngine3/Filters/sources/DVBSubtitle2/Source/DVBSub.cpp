@@ -22,6 +22,7 @@
 #pragma warning( disable: 4995 4996 )
 
 #include <bdaiface.h>
+#include <shlobj.h>
 #include "DVBSub.h"
 #include "SubtitleInputPin.h"
 extern void LogDebug( const char *fmt, ... );
@@ -43,7 +44,11 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_CurrentSeekPosition( 0 ),
   m_prevSubtitleTimestamp( 0 )
 {
-  ::DeleteFile("c:\\DVBsub.log");
+  TCHAR folder[MAX_PATH];
+  TCHAR fileName[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\DVBsub.log",folder);
+  ::DeleteFile(fileName);
 
   LogDebug("-------------- MediaPortal DVBSub2.ax version 15 ----------------");
   
