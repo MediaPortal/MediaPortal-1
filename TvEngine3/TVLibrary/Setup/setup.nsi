@@ -180,8 +180,9 @@ ShowUninstDetails show
 # SECTIONS and MACROS
 #---------------------------------------------------------------------------
 Section "${TITLE_SECServer}" SecServer
-    SetOverwrite on
     DetailPrint "Installing ${TITLE_SECServer}..."
+    
+    SetOverwrite on
 
     ReadRegStr $InstallPath HKLM "${REGKEY}" InstallPath
     ${If} $InstallPath != ""
@@ -262,7 +263,6 @@ Section "${TITLE_SECServer}" SecServer
     # FILTER REGISTRATION   for TVServer
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
-    ;!insertmacro InstallLib <libtype> <shared> <install> <localfile> <destfile> <tempbasedir>
     DetailPrint "filter registration..."
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\mpFileWriter.ax $INSTDIR\mpFileWriter.ax $INSTDIR
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
@@ -300,6 +300,7 @@ Section "${TITLE_SECServer}" SecServer
 SectionEnd
 !macro Remove_${SecServer}
     DetailPrint "Uninstalling ${TITLE_SECServer}..."
+    
     #---------------------------------------------------------------------------
     # SERVICE UNINSTALLATION
     #---------------------------------------------------------------------------
@@ -311,7 +312,6 @@ SectionEnd
     # FILTER UNREGISTRATION     for TVServer
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
-    ;!insertmacro UnInstallLib <libtype> <shared> <uninstall> <file>
     DetailPrint "Unreg and remove filters..."
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\mpFileWriter.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
@@ -392,8 +392,9 @@ SectionEnd
 !macroend
 
 Section "${TITLE_SECClient}" SecClient
-    SetOverwrite on
     DetailPrint "Installing ${TITLE_SECClient}..."
+
+    SetOverwrite on
 
     ReadRegSTR $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
     DetailPrint "MediaPortal Installed at: $MpBaseDir"
@@ -423,7 +424,6 @@ Section "${TITLE_SECClient}" SecClient
     # FILTER REGISTRATION       for TVClient
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
-    ;!insertmacro InstallLib <libtype> <shared> <install> <localfile> <destfile> <tempbasedir>
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
     #!insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir        ; not needed (because dman removed it from msi installer -> rev 17727)  --- chef
@@ -432,11 +432,11 @@ Section "${TITLE_SECClient}" SecClient
 SectionEnd
 !macro Remove_${SecClient}
     DetailPrint "Uninstalling ${TITLE_SECClient}..."
+    
     #---------------------------------------------------------------------------
     # FILTER UNREGISTRATION     for TVClient
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
-    ;!insertmacro UnInstallLib <libtype> <shared> <uninstall> <file>
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
     #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax        ; not needed (because dman removed it from msi installer -> rev 17727)  --- chef
