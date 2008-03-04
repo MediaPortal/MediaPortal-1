@@ -47,7 +47,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
   ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\DVBsub.log",folder);
+  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\DVBsubs.log",folder);
   ::DeleteFile(fileName);
 
   LogDebug("-------------- MediaPortal DVBSub2.ax version 15 ----------------");

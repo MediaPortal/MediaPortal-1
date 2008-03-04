@@ -113,7 +113,7 @@ void LogDebug( const char *fmt, ... )
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
   ::SHGetSpecialFolderPath( NULL,folder,CSIDL_COMMON_APPDATA,FALSE );
-  sprintf( fileName, "%s\\MediaPortal\\log\\DVBSubs.Log", folder );
+  sprintf( fileName, "%s\\Team Mediaportal\\MediaPortal\\Log\\DVBSubs.Log", folder );
   FILE* fp = fopen( fileName,"a+" );
 	if( fp != NULL )
 	{
