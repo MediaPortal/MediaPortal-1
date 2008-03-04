@@ -28,7 +28,6 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.analyzeMode = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
@@ -38,43 +37,36 @@
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label1.Location = new System.Drawing.Point(16, 9);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(185, 13);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Conflicts Manager Plugin Setup";
-      // 
       // groupBox1
       // 
       this.groupBox1.Controls.Add(this.analyzeMode);
       this.groupBox1.Controls.Add(this.label2);
-      this.groupBox1.Location = new System.Drawing.Point(19, 34);
+      this.groupBox1.Location = new System.Drawing.Point(3, 3);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(421, 152);
+      this.groupBox1.Size = new System.Drawing.Size(240, 52);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Analyzer settings";
       // 
       // analyzeMode
       // 
+      this.analyzeMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.analyzeMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.analyzeMode.FormattingEnabled = true;
       this.analyzeMode.Items.AddRange(new object[] {
             "Fast",
             "Normal",
             "Resolve"});
-      this.analyzeMode.Location = new System.Drawing.Point(9, 43);
+      this.analyzeMode.Location = new System.Drawing.Point(100, 19);
       this.analyzeMode.Name = "analyzeMode";
-      this.analyzeMode.Size = new System.Drawing.Size(121, 21);
+      this.analyzeMode.Size = new System.Drawing.Size(134, 21);
       this.analyzeMode.TabIndex = 1;
       // 
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(6, 27);
+      this.label2.Location = new System.Drawing.Point(6, 22);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(73, 13);
       this.label2.TabIndex = 0;
@@ -83,9 +75,9 @@
       // groupBox2
       // 
       this.groupBox2.Controls.Add(this.debug);
-      this.groupBox2.Location = new System.Drawing.Point(19, 204);
+      this.groupBox2.Location = new System.Drawing.Point(3, 61);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(421, 149);
+      this.groupBox2.Size = new System.Drawing.Size(240, 47);
       this.groupBox2.TabIndex = 2;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Debug section";
@@ -93,7 +85,7 @@
       // debug
       // 
       this.debug.AutoSize = true;
-      this.debug.Location = new System.Drawing.Point(9, 19);
+      this.debug.Location = new System.Drawing.Point(6, 19);
       this.debug.Name = "debug";
       this.debug.Size = new System.Drawing.Size(143, 17);
       this.debug.TabIndex = 0;
@@ -106,7 +98,6 @@
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
-      this.Controls.Add(this.label1);
       this.Name = "CMSetup";
       this.Size = new System.Drawing.Size(460, 380);
       this.groupBox1.ResumeLayout(false);
@@ -114,13 +105,11 @@
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
 
     #endregion
 
-    private System.Windows.Forms.Label label1;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.ComboBox analyzeMode;
     private System.Windows.Forms.Label label2;

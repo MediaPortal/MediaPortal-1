@@ -49,35 +49,29 @@ namespace SetupTv.Sections
       this.label5 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.groupBox8 = new System.Windows.Forms.GroupBox();
+      this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox6 = new System.Windows.Forms.GroupBox();
-      this.label46 = new System.Windows.Forms.Label();
       this.label45 = new System.Windows.Forms.Label();
       this.label44 = new System.Windows.Forms.Label();
       this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
-      this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.groupBox9 = new System.Windows.Forms.GroupBox();
+      this.textBox1 = new System.Windows.Forms.TextBox();
+      this.edTitleTemplate = new System.Windows.Forms.TextBox();
+      this.label27 = new System.Windows.Forms.Label();
+      this.label28 = new System.Windows.Forms.Label();
+      this.label38 = new System.Windows.Forms.Label();
+      this.edDescriptionTemplate = new System.Windows.Forms.TextBox();
+      this.label30 = new System.Windows.Forms.Label();
+      this.edTitleTest = new System.Windows.Forms.TextBox();
+      this.label29 = new System.Windows.Forms.Label();
+      this.edDescriptionTest = new System.Windows.Forms.TextBox();
+      this.btnTest = new System.Windows.Forms.Button();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
       this.checkBoxAlwaysUpdate = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAlwaysFillHoles = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label39 = new System.Windows.Forms.Label();
-      this.label38 = new System.Windows.Forms.Label();
-      this.label37 = new System.Windows.Forms.Label();
-      this.label36 = new System.Windows.Forms.Label();
-      this.label35 = new System.Windows.Forms.Label();
-      this.label34 = new System.Windows.Forms.Label();
-      this.label33 = new System.Windows.Forms.Label();
-      this.label32 = new System.Windows.Forms.Label();
-      this.label31 = new System.Windows.Forms.Label();
-      this.btnTest = new System.Windows.Forms.Button();
-      this.edDescriptionTest = new System.Windows.Forms.TextBox();
-      this.label29 = new System.Windows.Forms.Label();
-      this.edTitleTest = new System.Windows.Forms.TextBox();
-      this.label30 = new System.Windows.Forms.Label();
-      this.edDescriptionTemplate = new System.Windows.Forms.TextBox();
-      this.label28 = new System.Windows.Forms.Label();
-      this.edTitleTemplate = new System.Windows.Forms.TextBox();
-      this.label27 = new System.Windows.Forms.Label();
       this.groupBox5 = new System.Windows.Forms.GroupBox();
       this.numericUpDownTSEpgTimeout = new System.Windows.Forms.NumericUpDown();
       this.checkBoxEnableEpgWhileTimeshifting = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -118,9 +112,11 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPAT)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).BeginInit();
       this.tabPage2.SuspendLayout();
+      this.groupBox8.SuspendLayout();
       this.groupBox6.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).BeginInit();
       this.tabPage3.SuspendLayout();
+      this.groupBox9.SuspendLayout();
       this.groupBox7.SuspendLayout();
       this.groupBox5.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTSEpgTimeout)).BeginInit();
@@ -148,7 +144,7 @@ namespace SetupTv.Sections
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(481, 451);
+      this.tabControl1.Size = new System.Drawing.Size(484, 454);
       this.tabControl1.TabIndex = 15;
       // 
       // tabPage1
@@ -158,7 +154,7 @@ namespace SetupTv.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(473, 425);
+      this.tabPage1.Size = new System.Drawing.Size(476, 428);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scan";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -166,9 +162,9 @@ namespace SetupTv.Sections
       // groupBox4
       // 
       this.groupBox4.Controls.Add(this.checkBoxEnableLinkageScanner);
-      this.groupBox4.Location = new System.Drawing.Point(8, 165);
+      this.groupBox4.Location = new System.Drawing.Point(6, 165);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(325, 46);
+      this.groupBox4.Size = new System.Drawing.Size(221, 46);
       this.groupBox4.TabIndex = 18;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Linkage Scanner";
@@ -202,9 +198,9 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.label5);
       this.groupBox1.Controls.Add(this.label6);
-      this.groupBox1.Location = new System.Drawing.Point(8, 6);
+      this.groupBox1.Location = new System.Drawing.Point(6, 6);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(325, 153);
+      this.groupBox1.Size = new System.Drawing.Size(221, 153);
       this.groupBox1.TabIndex = 15;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Scanning";
@@ -391,69 +387,37 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.groupBox8);
       this.tabPage2.Controls.Add(this.groupBox6);
-      this.tabPage2.Controls.Add(this.mpComboBoxPrio);
-      this.tabPage2.Controls.Add(this.lblPriority);
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(473, 425);
+      this.tabPage2.Size = new System.Drawing.Size(476, 428);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Application";
       this.tabPage2.UseVisualStyleBackColor = true;
       // 
-      // groupBox6
+      // groupBox8
       // 
-      this.groupBox6.Controls.Add(this.label46);
-      this.groupBox6.Controls.Add(this.label45);
-      this.groupBox6.Controls.Add(this.label44);
-      this.groupBox6.Controls.Add(this.delayDetectUpDown);
-      this.groupBox6.Location = new System.Drawing.Point(9, 58);
-      this.groupBox6.Name = "groupBox6";
-      this.groupBox6.Size = new System.Drawing.Size(439, 107);
-      this.groupBox6.TabIndex = 80;
-      this.groupBox6.TabStop = false;
-      this.groupBox6.Text = "Advanced settings";
+      this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox8.Controls.Add(this.lblPriority);
+      this.groupBox8.Controls.Add(this.mpComboBoxPrio);
+      this.groupBox8.Location = new System.Drawing.Point(6, 6);
+      this.groupBox8.Name = "groupBox8";
+      this.groupBox8.Size = new System.Drawing.Size(464, 50);
+      this.groupBox8.TabIndex = 81;
+      this.groupBox8.TabStop = false;
+      this.groupBox8.Text = "TVService";
       // 
-      // label46
+      // lblPriority
       // 
-      this.label46.AutoSize = true;
-      this.label46.Location = new System.Drawing.Point(6, 45);
-      this.label46.Name = "label46";
-      this.label46.Size = new System.Drawing.Size(332, 13);
-      this.label46.TabIndex = 81;
-      this.label46.Text = "Therefore use this option below to force a delay should it be required.";
-      // 
-      // label45
-      // 
-      this.label45.AutoSize = true;
-      this.label45.Location = new System.Drawing.Point(6, 28);
-      this.label45.Name = "label45";
-      this.label45.Size = new System.Drawing.Size(401, 13);
-      this.label45.TabIndex = 80;
-      this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
-          "by.";
-      // 
-      // label44
-      // 
-      this.label44.AutoSize = true;
-      this.label44.Location = new System.Drawing.Point(6, 73);
-      this.label44.Name = "label44";
-      this.label44.Size = new System.Drawing.Size(236, 13);
-      this.label44.TabIndex = 78;
-      this.label44.Text = "Delay in seconds before TVServer detects cards";
-      // 
-      // delayDetectUpDown
-      // 
-      this.delayDetectUpDown.Location = new System.Drawing.Point(257, 71);
-      this.delayDetectUpDown.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
-      this.delayDetectUpDown.Name = "delayDetectUpDown";
-      this.delayDetectUpDown.Size = new System.Drawing.Size(47, 20);
-      this.delayDetectUpDown.TabIndex = 79;
+      this.lblPriority.AutoSize = true;
+      this.lblPriority.Location = new System.Drawing.Point(6, 22);
+      this.lblPriority.Name = "lblPriority";
+      this.lblPriority.Size = new System.Drawing.Size(94, 13);
+      this.lblPriority.TabIndex = 76;
+      this.lblPriority.Text = "TVService Priority:";
       // 
       // mpComboBoxPrio
       // 
@@ -494,58 +458,215 @@ namespace SetupTv.Sections
             "Qpsk2 ",
             "8psk2 ",
             "DirectTV  "});
-      this.mpComboBoxPrio.Location = new System.Drawing.Point(106, 18);
+      this.mpComboBoxPrio.Location = new System.Drawing.Point(125, 19);
       this.mpComboBoxPrio.Name = "mpComboBoxPrio";
-      this.mpComboBoxPrio.Size = new System.Drawing.Size(158, 21);
+      this.mpComboBoxPrio.Size = new System.Drawing.Size(179, 21);
       this.mpComboBoxPrio.TabIndex = 77;
       this.mpComboBoxPrio.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxPrio_SelectedIndexChanged);
       // 
-      // lblPriority
+      // groupBox6
       // 
-      this.lblPriority.AutoSize = true;
-      this.lblPriority.Location = new System.Drawing.Point(6, 21);
-      this.lblPriority.Name = "lblPriority";
-      this.lblPriority.Size = new System.Drawing.Size(94, 13);
-      this.lblPriority.TabIndex = 76;
-      this.lblPriority.Text = "TVService Priority:";
+      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox6.Controls.Add(this.label45);
+      this.groupBox6.Controls.Add(this.label44);
+      this.groupBox6.Controls.Add(this.delayDetectUpDown);
+      this.groupBox6.Location = new System.Drawing.Point(6, 62);
+      this.groupBox6.Name = "groupBox6";
+      this.groupBox6.Size = new System.Drawing.Size(464, 107);
+      this.groupBox6.TabIndex = 80;
+      this.groupBox6.TabStop = false;
+      this.groupBox6.Text = "Advanced settings";
+      // 
+      // label45
+      // 
+      this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label45.Location = new System.Drawing.Point(6, 16);
+      this.label45.Name = "label45";
+      this.label45.Size = new System.Drawing.Size(452, 46);
+      this.label45.TabIndex = 80;
+      this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
+          "by. Therefore use this option below to force a delay should it be required.";
+      // 
+      // label44
+      // 
+      this.label44.AutoSize = true;
+      this.label44.Location = new System.Drawing.Point(6, 67);
+      this.label44.Name = "label44";
+      this.label44.Size = new System.Drawing.Size(236, 13);
+      this.label44.TabIndex = 78;
+      this.label44.Text = "Delay in seconds before TVServer detects cards";
+      // 
+      // delayDetectUpDown
+      // 
+      this.delayDetectUpDown.Location = new System.Drawing.Point(257, 65);
+      this.delayDetectUpDown.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.delayDetectUpDown.Name = "delayDetectUpDown";
+      this.delayDetectUpDown.Size = new System.Drawing.Size(47, 20);
+      this.delayDetectUpDown.TabIndex = 79;
       // 
       // tabPage3
       // 
+      this.tabPage3.Controls.Add(this.groupBox9);
       this.tabPage3.Controls.Add(this.groupBox7);
-      this.tabPage3.Controls.Add(this.label39);
-      this.tabPage3.Controls.Add(this.label38);
-      this.tabPage3.Controls.Add(this.label37);
-      this.tabPage3.Controls.Add(this.label36);
-      this.tabPage3.Controls.Add(this.label35);
-      this.tabPage3.Controls.Add(this.label34);
-      this.tabPage3.Controls.Add(this.label33);
-      this.tabPage3.Controls.Add(this.label32);
-      this.tabPage3.Controls.Add(this.label31);
-      this.tabPage3.Controls.Add(this.btnTest);
-      this.tabPage3.Controls.Add(this.edDescriptionTest);
-      this.tabPage3.Controls.Add(this.label29);
-      this.tabPage3.Controls.Add(this.edTitleTest);
-      this.tabPage3.Controls.Add(this.label30);
-      this.tabPage3.Controls.Add(this.edDescriptionTemplate);
-      this.tabPage3.Controls.Add(this.label28);
-      this.tabPage3.Controls.Add(this.edTitleTemplate);
-      this.tabPage3.Controls.Add(this.label27);
       this.tabPage3.Controls.Add(this.groupBox5);
       this.tabPage3.Controls.Add(this.groupBox2);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(473, 425);
+      this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage3.Size = new System.Drawing.Size(476, 428);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "EPG";
       this.tabPage3.UseVisualStyleBackColor = true;
       // 
+      // groupBox9
+      // 
+      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox9.Controls.Add(this.textBox1);
+      this.groupBox9.Controls.Add(this.edTitleTemplate);
+      this.groupBox9.Controls.Add(this.label27);
+      this.groupBox9.Controls.Add(this.label28);
+      this.groupBox9.Controls.Add(this.label38);
+      this.groupBox9.Controls.Add(this.edDescriptionTemplate);
+      this.groupBox9.Controls.Add(this.label30);
+      this.groupBox9.Controls.Add(this.edTitleTest);
+      this.groupBox9.Controls.Add(this.label29);
+      this.groupBox9.Controls.Add(this.edDescriptionTest);
+      this.groupBox9.Controls.Add(this.btnTest);
+      this.groupBox9.Location = new System.Drawing.Point(6, 164);
+      this.groupBox9.Name = "groupBox9";
+      this.groupBox9.Size = new System.Drawing.Size(464, 234);
+      this.groupBox9.TabIndex = 38;
+      this.groupBox9.TabStop = false;
+      this.groupBox9.Text = "Disyplay options";
+      // 
+      // textBox1
+      // 
+      this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.textBox1.Location = new System.Drawing.Point(333, 80);
+      this.textBox1.Multiline = true;
+      this.textBox1.Name = "textBox1";
+      this.textBox1.ReadOnly = true;
+      this.textBox1.Size = new System.Drawing.Size(125, 148);
+      this.textBox1.TabIndex = 37;
+      this.textBox1.Text = "%TITLE%\r\n%DESCRIPTION%\r\n%GENRE%\r\n%STARRATING%\r\n%STARRATING_STR%\r\n%CLASSIFICATION%" +
+          "\r\n%PARENTALRATING%\r\n%NEWLINE%";
+      this.textBox1.WordWrap = false;
+      // 
+      // edTitleTemplate
+      // 
+      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTemplate.Location = new System.Drawing.Point(75, 19);
+      this.edTitleTemplate.Name = "edTitleTemplate";
+      this.edTitleTemplate.Size = new System.Drawing.Size(252, 20);
+      this.edTitleTemplate.TabIndex = 20;
+      // 
+      // label27
+      // 
+      this.label27.AutoSize = true;
+      this.label27.Location = new System.Drawing.Point(6, 22);
+      this.label27.Name = "label27";
+      this.label27.Size = new System.Drawing.Size(30, 13);
+      this.label27.TabIndex = 19;
+      this.label27.Text = "Title:";
+      // 
+      // label28
+      // 
+      this.label28.AutoSize = true;
+      this.label28.Location = new System.Drawing.Point(6, 48);
+      this.label28.Name = "label28";
+      this.label28.Size = new System.Drawing.Size(63, 13);
+      this.label28.TabIndex = 21;
+      this.label28.Text = "Description:";
+      // 
+      // label38
+      // 
+      this.label38.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label38.Location = new System.Drawing.Point(333, 16);
+      this.label38.Name = "label38";
+      this.label38.Size = new System.Drawing.Size(125, 61);
+      this.label38.TabIndex = 35;
+      this.label38.Text = "You can use a combination of any of the below placeholders";
+      // 
+      // edDescriptionTemplate
+      // 
+      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTemplate.Location = new System.Drawing.Point(75, 45);
+      this.edDescriptionTemplate.Name = "edDescriptionTemplate";
+      this.edDescriptionTemplate.Size = new System.Drawing.Size(252, 20);
+      this.edDescriptionTemplate.TabIndex = 22;
+      // 
+      // label30
+      // 
+      this.label30.AutoSize = true;
+      this.label30.Location = new System.Drawing.Point(6, 103);
+      this.label30.Name = "label30";
+      this.label30.Size = new System.Drawing.Size(30, 13);
+      this.label30.TabIndex = 23;
+      this.label30.Text = "Title:";
+      // 
+      // edTitleTest
+      // 
+      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTest.Location = new System.Drawing.Point(75, 100);
+      this.edTitleTest.Name = "edTitleTest";
+      this.edTitleTest.ReadOnly = true;
+      this.edTitleTest.Size = new System.Drawing.Size(252, 20);
+      this.edTitleTest.TabIndex = 24;
+      // 
+      // label29
+      // 
+      this.label29.AutoSize = true;
+      this.label29.Location = new System.Drawing.Point(6, 129);
+      this.label29.Name = "label29";
+      this.label29.Size = new System.Drawing.Size(63, 13);
+      this.label29.TabIndex = 25;
+      this.label29.Text = "Description:";
+      // 
+      // edDescriptionTest
+      // 
+      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTest.Location = new System.Drawing.Point(75, 126);
+      this.edDescriptionTest.Multiline = true;
+      this.edDescriptionTest.Name = "edDescriptionTest";
+      this.edDescriptionTest.ReadOnly = true;
+      this.edDescriptionTest.Size = new System.Drawing.Size(252, 102);
+      this.edDescriptionTest.TabIndex = 26;
+      // 
+      // btnTest
+      // 
+      this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnTest.Location = new System.Drawing.Point(252, 71);
+      this.btnTest.Name = "btnTest";
+      this.btnTest.Size = new System.Drawing.Size(75, 23);
+      this.btnTest.TabIndex = 27;
+      this.btnTest.Text = "Test";
+      this.btnTest.UseVisualStyleBackColor = true;
+      this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+      // 
       // groupBox7
       // 
+      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox7.Controls.Add(this.checkBoxAlwaysUpdate);
       this.groupBox7.Controls.Add(this.checkBoxAlwaysFillHoles);
-      this.groupBox7.Location = new System.Drawing.Point(14, 16);
+      this.groupBox7.Location = new System.Drawing.Point(6, 6);
       this.groupBox7.Name = "groupBox7";
-      this.groupBox7.Size = new System.Drawing.Size(449, 50);
+      this.groupBox7.Size = new System.Drawing.Size(464, 48);
       this.groupBox7.TabIndex = 37;
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "General";
@@ -553,9 +674,8 @@ namespace SetupTv.Sections
       // checkBoxAlwaysUpdate
       // 
       this.checkBoxAlwaysUpdate.AutoSize = true;
-      this.checkBoxAlwaysUpdate.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxAlwaysUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAlwaysUpdate.Location = new System.Drawing.Point(226, 19);
+      this.checkBoxAlwaysUpdate.Location = new System.Drawing.Point(244, 19);
       this.checkBoxAlwaysUpdate.Name = "checkBoxAlwaysUpdate";
       this.checkBoxAlwaysUpdate.Size = new System.Drawing.Size(191, 17);
       this.checkBoxAlwaysUpdate.TabIndex = 11;
@@ -565,172 +685,13 @@ namespace SetupTv.Sections
       // checkBoxAlwaysFillHoles
       // 
       this.checkBoxAlwaysFillHoles.AutoSize = true;
-      this.checkBoxAlwaysFillHoles.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxAlwaysFillHoles.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAlwaysFillHoles.Location = new System.Drawing.Point(6, 19);
+      this.checkBoxAlwaysFillHoles.Location = new System.Drawing.Point(11, 19);
       this.checkBoxAlwaysFillHoles.Name = "checkBoxAlwaysFillHoles";
       this.checkBoxAlwaysFillHoles.Size = new System.Drawing.Size(123, 17);
       this.checkBoxAlwaysFillHoles.TabIndex = 9;
       this.checkBoxAlwaysFillHoles.Text = "Always try to fill holes";
       this.checkBoxAlwaysFillHoles.UseVisualStyleBackColor = true;
-      // 
-      // label39
-      // 
-      this.label39.AutoSize = true;
-      this.label39.Location = new System.Drawing.Point(344, 356);
-      this.label39.Name = "label39";
-      this.label39.Size = new System.Drawing.Size(73, 13);
-      this.label39.TabIndex = 36;
-      this.label39.Text = "%NEWLINE%";
-      // 
-      // label38
-      // 
-      this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label38.Location = new System.Drawing.Point(344, 192);
-      this.label38.Name = "label38";
-      this.label38.Size = new System.Drawing.Size(120, 58);
-      this.label38.TabIndex = 35;
-      this.label38.Text = "You can use a combination of any of the below placeholders";
-      // 
-      // label37
-      // 
-      this.label37.AutoSize = true;
-      this.label37.Location = new System.Drawing.Point(343, 280);
-      this.label37.Name = "label37";
-      this.label37.Size = new System.Drawing.Size(61, 13);
-      this.label37.TabIndex = 34;
-      this.label37.Text = "%GENRE%";
-      // 
-      // label36
-      // 
-      this.label36.AutoSize = true;
-      this.label36.Location = new System.Drawing.Point(343, 310);
-      this.label36.Name = "label36";
-      this.label36.Size = new System.Drawing.Size(121, 13);
-      this.label36.TabIndex = 33;
-      this.label36.Text = "%STARRATING_STR%";
-      // 
-      // label35
-      // 
-      this.label35.AutoSize = true;
-      this.label35.Location = new System.Drawing.Point(343, 340);
-      this.label35.Name = "label35";
-      this.label35.Size = new System.Drawing.Size(121, 13);
-      this.label35.TabIndex = 32;
-      this.label35.Text = "%PARENTALRATING%";
-      // 
-      // label34
-      // 
-      this.label34.AutoSize = true;
-      this.label34.Location = new System.Drawing.Point(343, 325);
-      this.label34.Name = "label34";
-      this.label34.Size = new System.Drawing.Size(109, 13);
-      this.label34.TabIndex = 31;
-      this.label34.Text = "%CLASSIFICATION%";
-      // 
-      // label33
-      // 
-      this.label33.AutoSize = true;
-      this.label33.Location = new System.Drawing.Point(343, 295);
-      this.label33.Name = "label33";
-      this.label33.Size = new System.Drawing.Size(93, 13);
-      this.label33.TabIndex = 30;
-      this.label33.Text = "%STARRATING%";
-      // 
-      // label32
-      // 
-      this.label32.AutoSize = true;
-      this.label32.Location = new System.Drawing.Point(343, 265);
-      this.label32.Name = "label32";
-      this.label32.Size = new System.Drawing.Size(96, 13);
-      this.label32.TabIndex = 29;
-      this.label32.Text = "%DESCRIPTION%";
-      // 
-      // label31
-      // 
-      this.label31.AutoSize = true;
-      this.label31.Location = new System.Drawing.Point(343, 250);
-      this.label31.Name = "label31";
-      this.label31.Size = new System.Drawing.Size(53, 13);
-      this.label31.TabIndex = 28;
-      this.label31.Text = "%TITLE%";
-      // 
-      // btnTest
-      // 
-      this.btnTest.Location = new System.Drawing.Point(262, 241);
-      this.btnTest.Name = "btnTest";
-      this.btnTest.Size = new System.Drawing.Size(75, 23);
-      this.btnTest.TabIndex = 27;
-      this.btnTest.Text = "Test";
-      this.btnTest.UseVisualStyleBackColor = true;
-      this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
-      // 
-      // edDescriptionTest
-      // 
-      this.edDescriptionTest.Location = new System.Drawing.Point(76, 293);
-      this.edDescriptionTest.Multiline = true;
-      this.edDescriptionTest.Name = "edDescriptionTest";
-      this.edDescriptionTest.ReadOnly = true;
-      this.edDescriptionTest.Size = new System.Drawing.Size(261, 83);
-      this.edDescriptionTest.TabIndex = 26;
-      // 
-      // label29
-      // 
-      this.label29.AutoSize = true;
-      this.label29.Location = new System.Drawing.Point(11, 296);
-      this.label29.Name = "label29";
-      this.label29.Size = new System.Drawing.Size(63, 13);
-      this.label29.TabIndex = 25;
-      this.label29.Text = "Description:";
-      // 
-      // edTitleTest
-      // 
-      this.edTitleTest.Location = new System.Drawing.Point(76, 267);
-      this.edTitleTest.Name = "edTitleTest";
-      this.edTitleTest.ReadOnly = true;
-      this.edTitleTest.Size = new System.Drawing.Size(261, 20);
-      this.edTitleTest.TabIndex = 24;
-      // 
-      // label30
-      // 
-      this.label30.AutoSize = true;
-      this.label30.Location = new System.Drawing.Point(11, 270);
-      this.label30.Name = "label30";
-      this.label30.Size = new System.Drawing.Size(30, 13);
-      this.label30.TabIndex = 23;
-      this.label30.Text = "Title:";
-      // 
-      // edDescriptionTemplate
-      // 
-      this.edDescriptionTemplate.Location = new System.Drawing.Point(76, 218);
-      this.edDescriptionTemplate.Name = "edDescriptionTemplate";
-      this.edDescriptionTemplate.Size = new System.Drawing.Size(261, 20);
-      this.edDescriptionTemplate.TabIndex = 22;
-      // 
-      // label28
-      // 
-      this.label28.AutoSize = true;
-      this.label28.Location = new System.Drawing.Point(11, 221);
-      this.label28.Name = "label28";
-      this.label28.Size = new System.Drawing.Size(63, 13);
-      this.label28.TabIndex = 21;
-      this.label28.Text = "Description:";
-      // 
-      // edTitleTemplate
-      // 
-      this.edTitleTemplate.Location = new System.Drawing.Point(76, 192);
-      this.edTitleTemplate.Name = "edTitleTemplate";
-      this.edTitleTemplate.Size = new System.Drawing.Size(261, 20);
-      this.edTitleTemplate.TabIndex = 20;
-      // 
-      // label27
-      // 
-      this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(11, 195);
-      this.label27.Name = "label27";
-      this.label27.Size = new System.Drawing.Size(30, 13);
-      this.label27.TabIndex = 19;
-      this.label27.Text = "Title:";
       // 
       // groupBox5
       // 
@@ -738,23 +699,25 @@ namespace SetupTv.Sections
       this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
       this.groupBox5.Controls.Add(this.label22);
       this.groupBox5.Controls.Add(this.label23);
-      this.groupBox5.Location = new System.Drawing.Point(14, 84);
+      this.groupBox5.Location = new System.Drawing.Point(6, 60);
       this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(224, 99);
+      this.groupBox5.Size = new System.Drawing.Size(228, 98);
       this.groupBox5.TabIndex = 17;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "EPG grabbing while timeshifting/recording";
       // 
       // numericUpDownTSEpgTimeout
       // 
-      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(95, 40);
+      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(70, 42);
       this.numericUpDownTSEpgTimeout.Maximum = new decimal(new int[] {
             3600,
             0,
             0,
             0});
       this.numericUpDownTSEpgTimeout.Name = "numericUpDownTSEpgTimeout";
-      this.numericUpDownTSEpgTimeout.Size = new System.Drawing.Size(83, 20);
+      this.numericUpDownTSEpgTimeout.Size = new System.Drawing.Size(118, 20);
       this.numericUpDownTSEpgTimeout.TabIndex = 10;
       this.numericUpDownTSEpgTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownTSEpgTimeout.Value = new decimal(new int[] {
@@ -766,19 +729,19 @@ namespace SetupTv.Sections
       // checkBoxEnableEpgWhileTimeshifting
       // 
       this.checkBoxEnableEpgWhileTimeshifting.AutoSize = true;
-      this.checkBoxEnableEpgWhileTimeshifting.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxEnableEpgWhileTimeshifting.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(6, 19);
+      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(11, 19);
       this.checkBoxEnableEpgWhileTimeshifting.Name = "checkBoxEnableEpgWhileTimeshifting";
-      this.checkBoxEnableEpgWhileTimeshifting.Size = new System.Drawing.Size(69, 17);
+      this.checkBoxEnableEpgWhileTimeshifting.Size = new System.Drawing.Size(63, 17);
       this.checkBoxEnableEpgWhileTimeshifting.TabIndex = 9;
-      this.checkBoxEnableEpgWhileTimeshifting.Text = "Enabled?";
+      this.checkBoxEnableEpgWhileTimeshifting.Text = "Enabled";
       this.checkBoxEnableEpgWhileTimeshifting.UseVisualStyleBackColor = true;
       // 
       // label22
       // 
+      this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(184, 42);
+      this.label22.Location = new System.Drawing.Point(194, 44);
       this.label22.Name = "label22";
       this.label22.Size = new System.Drawing.Size(28, 13);
       this.label22.TabIndex = 7;
@@ -787,7 +750,7 @@ namespace SetupTv.Sections
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(6, 42);
+      this.label23.Location = new System.Drawing.Point(6, 44);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(48, 13);
       this.label23.TabIndex = 5;
@@ -802,23 +765,23 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.label14);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
-      this.groupBox2.Location = new System.Drawing.Point(240, 84);
+      this.groupBox2.Location = new System.Drawing.Point(240, 60);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(224, 99);
+      this.groupBox2.Size = new System.Drawing.Size(230, 98);
       this.groupBox2.TabIndex = 16;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "EPG grabbing while idle";
       // 
       // numericUpDownEpgRefresh
       // 
-      this.numericUpDownEpgRefresh.Location = new System.Drawing.Point(101, 66);
+      this.numericUpDownEpgRefresh.Location = new System.Drawing.Point(86, 68);
       this.numericUpDownEpgRefresh.Maximum = new decimal(new int[] {
             3600,
             0,
             0,
             0});
       this.numericUpDownEpgRefresh.Name = "numericUpDownEpgRefresh";
-      this.numericUpDownEpgRefresh.Size = new System.Drawing.Size(83, 20);
+      this.numericUpDownEpgRefresh.Size = new System.Drawing.Size(105, 20);
       this.numericUpDownEpgRefresh.TabIndex = 10;
       this.numericUpDownEpgRefresh.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownEpgRefresh.Value = new decimal(new int[] {
@@ -829,14 +792,14 @@ namespace SetupTv.Sections
       // 
       // numericUpDownEpgTimeOut
       // 
-      this.numericUpDownEpgTimeOut.Location = new System.Drawing.Point(101, 40);
+      this.numericUpDownEpgTimeOut.Location = new System.Drawing.Point(86, 42);
       this.numericUpDownEpgTimeOut.Maximum = new decimal(new int[] {
             3600,
             0,
             0,
             0});
       this.numericUpDownEpgTimeOut.Name = "numericUpDownEpgTimeOut";
-      this.numericUpDownEpgTimeOut.Size = new System.Drawing.Size(83, 20);
+      this.numericUpDownEpgTimeOut.Size = new System.Drawing.Size(105, 20);
       this.numericUpDownEpgTimeOut.TabIndex = 10;
       this.numericUpDownEpgTimeOut.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownEpgTimeOut.Value = new decimal(new int[] {
@@ -848,19 +811,18 @@ namespace SetupTv.Sections
       // checkBoxEnableEPGWhileIdle
       // 
       this.checkBoxEnableEPGWhileIdle.AutoSize = true;
-      this.checkBoxEnableEPGWhileIdle.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxEnableEPGWhileIdle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableEPGWhileIdle.Location = new System.Drawing.Point(6, 19);
+      this.checkBoxEnableEPGWhileIdle.Location = new System.Drawing.Point(10, 19);
       this.checkBoxEnableEPGWhileIdle.Name = "checkBoxEnableEPGWhileIdle";
-      this.checkBoxEnableEPGWhileIdle.Size = new System.Drawing.Size(69, 17);
+      this.checkBoxEnableEPGWhileIdle.Size = new System.Drawing.Size(63, 17);
       this.checkBoxEnableEPGWhileIdle.TabIndex = 11;
-      this.checkBoxEnableEPGWhileIdle.Text = "Enabled?";
+      this.checkBoxEnableEPGWhileIdle.Text = "Enabled";
       this.checkBoxEnableEPGWhileIdle.UseVisualStyleBackColor = true;
       // 
       // label15
       // 
       this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(190, 68);
+      this.label15.Location = new System.Drawing.Point(197, 70);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(28, 13);
       this.label15.TabIndex = 7;
@@ -869,7 +831,7 @@ namespace SetupTv.Sections
       // label14
       // 
       this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(6, 68);
+      this.label14.Location = new System.Drawing.Point(7, 70);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(73, 13);
       this.label14.TabIndex = 5;
@@ -878,7 +840,7 @@ namespace SetupTv.Sections
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(190, 42);
+      this.label8.Location = new System.Drawing.Point(197, 44);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(28, 13);
       this.label8.TabIndex = 4;
@@ -887,7 +849,7 @@ namespace SetupTv.Sections
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(6, 42);
+      this.label7.Location = new System.Drawing.Point(7, 44);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(48, 13);
       this.label7.TabIndex = 2;
@@ -898,7 +860,8 @@ namespace SetupTv.Sections
       this.tabPage4.Controls.Add(this.groupBox3);
       this.tabPage4.Location = new System.Drawing.Point(4, 22);
       this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Size = new System.Drawing.Size(473, 425);
+      this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage4.Size = new System.Drawing.Size(476, 428);
       this.tabPage4.TabIndex = 3;
       this.tabPage4.Text = "Timeshifting";
       this.tabPage4.UseVisualStyleBackColor = true;
@@ -920,25 +883,23 @@ namespace SetupTv.Sections
       this.groupBox3.Controls.Add(this.label17);
       this.groupBox3.Controls.Add(this.label19);
       this.groupBox3.Controls.Add(this.label18);
-      this.groupBox3.Location = new System.Drawing.Point(13, 14);
+      this.groupBox3.Location = new System.Drawing.Point(6, 6);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(442, 152);
+      this.groupBox3.Size = new System.Drawing.Size(304, 152);
       this.groupBox3.TabIndex = 17;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Timeshifting";
       // 
       // numericUpDownWaitTimeshifting
       // 
-      this.numericUpDownWaitTimeshifting.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownWaitTimeshifting.Location = new System.Drawing.Point(181, 123);
+      this.numericUpDownWaitTimeshifting.Location = new System.Drawing.Point(153, 123);
       this.numericUpDownWaitTimeshifting.Maximum = new decimal(new int[] {
             3600,
             0,
             0,
             0});
       this.numericUpDownWaitTimeshifting.Name = "numericUpDownWaitTimeshifting";
-      this.numericUpDownWaitTimeshifting.Size = new System.Drawing.Size(130, 20);
+      this.numericUpDownWaitTimeshifting.Size = new System.Drawing.Size(87, 20);
       this.numericUpDownWaitTimeshifting.TabIndex = 34;
       this.numericUpDownWaitTimeshifting.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownWaitTimeshifting.Value = new decimal(new int[] {
@@ -949,16 +910,14 @@ namespace SetupTv.Sections
       // 
       // numericUpDownWaitUnscrambled
       // 
-      this.numericUpDownWaitUnscrambled.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownWaitUnscrambled.Location = new System.Drawing.Point(181, 97);
+      this.numericUpDownWaitUnscrambled.Location = new System.Drawing.Point(153, 97);
       this.numericUpDownWaitUnscrambled.Maximum = new decimal(new int[] {
             3600,
             0,
             0,
             0});
       this.numericUpDownWaitUnscrambled.Name = "numericUpDownWaitUnscrambled";
-      this.numericUpDownWaitUnscrambled.Size = new System.Drawing.Size(130, 20);
+      this.numericUpDownWaitUnscrambled.Size = new System.Drawing.Size(87, 20);
       this.numericUpDownWaitUnscrambled.TabIndex = 33;
       this.numericUpDownWaitUnscrambled.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownWaitUnscrambled.Value = new decimal(new int[] {
@@ -969,16 +928,14 @@ namespace SetupTv.Sections
       // 
       // numericUpDownMaxFileSize
       // 
-      this.numericUpDownMaxFileSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownMaxFileSize.Location = new System.Drawing.Point(181, 71);
+      this.numericUpDownMaxFileSize.Location = new System.Drawing.Point(153, 71);
       this.numericUpDownMaxFileSize.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
       this.numericUpDownMaxFileSize.Name = "numericUpDownMaxFileSize";
-      this.numericUpDownMaxFileSize.Size = new System.Drawing.Size(130, 20);
+      this.numericUpDownMaxFileSize.Size = new System.Drawing.Size(87, 20);
       this.numericUpDownMaxFileSize.TabIndex = 32;
       this.numericUpDownMaxFileSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownMaxFileSize.Value = new decimal(new int[] {
@@ -989,11 +946,9 @@ namespace SetupTv.Sections
       // 
       // numericUpDownMaxFiles
       // 
-      this.numericUpDownMaxFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownMaxFiles.Location = new System.Drawing.Point(181, 45);
+      this.numericUpDownMaxFiles.Location = new System.Drawing.Point(153, 45);
       this.numericUpDownMaxFiles.Name = "numericUpDownMaxFiles";
-      this.numericUpDownMaxFiles.Size = new System.Drawing.Size(130, 20);
+      this.numericUpDownMaxFiles.Size = new System.Drawing.Size(87, 20);
       this.numericUpDownMaxFiles.TabIndex = 31;
       this.numericUpDownMaxFiles.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownMaxFiles.Value = new decimal(new int[] {
@@ -1004,11 +959,9 @@ namespace SetupTv.Sections
       // 
       // numericUpDownMinFiles
       // 
-      this.numericUpDownMinFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.numericUpDownMinFiles.Location = new System.Drawing.Point(181, 19);
+      this.numericUpDownMinFiles.Location = new System.Drawing.Point(153, 19);
       this.numericUpDownMinFiles.Name = "numericUpDownMinFiles";
-      this.numericUpDownMinFiles.Size = new System.Drawing.Size(130, 20);
+      this.numericUpDownMinFiles.Size = new System.Drawing.Size(87, 20);
       this.numericUpDownMinFiles.TabIndex = 30;
       this.numericUpDownMinFiles.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownMinFiles.Value = new decimal(new int[] {
@@ -1020,7 +973,7 @@ namespace SetupTv.Sections
       // label43
       // 
       this.label43.AutoSize = true;
-      this.label43.Location = new System.Drawing.Point(340, 125);
+      this.label43.Location = new System.Drawing.Point(246, 125);
       this.label43.Name = "label43";
       this.label43.Size = new System.Drawing.Size(24, 13);
       this.label43.TabIndex = 29;
@@ -1029,7 +982,7 @@ namespace SetupTv.Sections
       // label42
       // 
       this.label42.AutoSize = true;
-      this.label42.Location = new System.Drawing.Point(340, 99);
+      this.label42.Location = new System.Drawing.Point(246, 99);
       this.label42.Name = "label42";
       this.label42.Size = new System.Drawing.Size(24, 13);
       this.label42.TabIndex = 28;
@@ -1056,7 +1009,7 @@ namespace SetupTv.Sections
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(339, 73);
+      this.label2.Location = new System.Drawing.Point(246, 73);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(55, 13);
       this.label2.TabIndex = 23;
@@ -1065,7 +1018,7 @@ namespace SetupTv.Sections
       // label16
       // 
       this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(339, 47);
+      this.label16.Location = new System.Drawing.Point(246, 47);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(25, 13);
       this.label16.TabIndex = 22;
@@ -1083,7 +1036,7 @@ namespace SetupTv.Sections
       // label17
       // 
       this.label17.AutoSize = true;
-      this.label17.Location = new System.Drawing.Point(338, 21);
+      this.label17.Location = new System.Drawing.Point(246, 21);
       this.label17.Name = "label17";
       this.label17.Size = new System.Drawing.Size(25, 13);
       this.label17.TabIndex = 21;
@@ -1126,12 +1079,14 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPAT)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).EndInit();
       this.tabPage2.ResumeLayout(false);
-      this.tabPage2.PerformLayout();
+      this.groupBox8.ResumeLayout(false);
+      this.groupBox8.PerformLayout();
       this.groupBox6.ResumeLayout(false);
       this.groupBox6.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
       this.tabPage3.ResumeLayout(false);
-      this.tabPage3.PerformLayout();
+      this.groupBox9.ResumeLayout(false);
+      this.groupBox9.PerformLayout();
       this.groupBox7.ResumeLayout(false);
       this.groupBox7.PerformLayout();
       this.groupBox5.ResumeLayout(false);
@@ -1201,15 +1156,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label28;
     private System.Windows.Forms.TextBox edTitleTemplate;
     private System.Windows.Forms.Label label27;
-    private System.Windows.Forms.Label label35;
-    private System.Windows.Forms.Label label34;
-    private System.Windows.Forms.Label label33;
-    private System.Windows.Forms.Label label32;
-    private System.Windows.Forms.Label label31;
-    private System.Windows.Forms.Label label37;
-    private System.Windows.Forms.Label label36;
     private System.Windows.Forms.Label label38;
-    private System.Windows.Forms.Label label39;
 		private System.Windows.Forms.Label label42;
     private System.Windows.Forms.Label label41;
     private System.Windows.Forms.Label label40;
@@ -1218,7 +1165,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label44;
     private System.Windows.Forms.GroupBox groupBox6;
     private System.Windows.Forms.Label label45;
-    private System.Windows.Forms.Label label46;
     private System.Windows.Forms.GroupBox groupBox7;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAlwaysFillHoles;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAlwaysUpdate;
@@ -1235,6 +1181,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.NumericUpDown numericUpDownCAT;
     private System.Windows.Forms.NumericUpDown numericUpDownPAT;
     private System.Windows.Forms.NumericUpDown numericUpDownTune;
+    private System.Windows.Forms.GroupBox groupBox8;
+    private System.Windows.Forms.GroupBox groupBox9;
+    private System.Windows.Forms.TextBox textBox1;
 
   }
 }

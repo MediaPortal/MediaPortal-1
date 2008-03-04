@@ -89,6 +89,9 @@ namespace TvEngine.PowerScheduler
       this.checkBox3 = new System.Windows.Forms.CheckBox();
       this.tabPage3 = new System.Windows.Forms.TabPage();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.button3 = new System.Windows.Forms.Button();
+      this.tbEpgCmd = new System.Windows.Forms.TextBox();
+      this.label7 = new System.Windows.Forms.Label();
       this.panel1 = new System.Windows.Forms.Panel();
       this.checkBox14 = new System.Windows.Forms.CheckBox();
       this.checkBox13 = new System.Windows.Forms.CheckBox();
@@ -106,9 +109,6 @@ namespace TvEngine.PowerScheduler
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.button3 = new System.Windows.Forms.Button();
-      this.tbEpgCmd = new System.Windows.Forms.TextBox();
-      this.label7 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -130,16 +130,19 @@ namespace TvEngine.PowerScheduler
       // 
       // tabControl1
       // 
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage2);
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Controls.Add(this.tabPage4);
-      this.tabControl1.Location = new System.Drawing.Point(7, 7);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.ShowToolTips = true;
-      this.tabControl1.Size = new System.Drawing.Size(460, 381);
+      this.tabControl1.Size = new System.Drawing.Size(467, 388);
       this.tabControl1.TabIndex = 0;
       // 
       // tabPage1
@@ -148,22 +151,24 @@ namespace TvEngine.PowerScheduler
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(452, 355);
+      this.tabPage1.Size = new System.Drawing.Size(459, 362);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "General";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // groupBox1
       // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.comboBox1);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.numericUpDown1);
       this.groupBox1.Controls.Add(this.checkBox2);
       this.groupBox1.Controls.Add(this.checkBox1);
-      this.groupBox1.Location = new System.Drawing.Point(7, 7);
+      this.groupBox1.Location = new System.Drawing.Point(6, 6);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(439, 138);
+      this.groupBox1.Size = new System.Drawing.Size(391, 139);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Standby / Wakeup settings";
@@ -179,6 +184,7 @@ namespace TvEngine.PowerScheduler
       // 
       // comboBox1
       // 
+      this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBox1.FormattingEnabled = true;
       this.comboBox1.Items.AddRange(new object[] {
             "Suspend",
@@ -246,13 +252,15 @@ namespace TvEngine.PowerScheduler
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(452, 355);
+      this.tabPage2.Size = new System.Drawing.Size(459, 362);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Advanced";
       this.tabPage2.UseVisualStyleBackColor = true;
       // 
       // groupBox2
       // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.button2);
       this.groupBox2.Controls.Add(this.textBox2);
       this.groupBox2.Controls.Add(this.label5);
@@ -260,9 +268,9 @@ namespace TvEngine.PowerScheduler
       this.groupBox2.Controls.Add(this.splitContainer1);
       this.groupBox2.Controls.Add(this.checkBox4);
       this.groupBox2.Controls.Add(this.checkBox3);
-      this.groupBox2.Location = new System.Drawing.Point(7, 7);
+      this.groupBox2.Location = new System.Drawing.Point(6, 6);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(439, 248);
+      this.groupBox2.Size = new System.Drawing.Size(440, 249);
       this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Advanced settings";
@@ -415,13 +423,16 @@ namespace TvEngine.PowerScheduler
       this.tabPage3.Controls.Add(this.groupBox3);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(452, 355);
+      this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage3.Size = new System.Drawing.Size(459, 362);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "EPG";
       this.tabPage3.UseVisualStyleBackColor = true;
       // 
       // groupBox3
       // 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.button3);
       this.groupBox3.Controls.Add(this.tbEpgCmd);
       this.groupBox3.Controls.Add(this.label7);
@@ -429,14 +440,41 @@ namespace TvEngine.PowerScheduler
       this.groupBox3.Controls.Add(this.maskedTextBox1);
       this.groupBox3.Controls.Add(this.checkBox7);
       this.groupBox3.Controls.Add(this.checkBox6);
-      this.groupBox3.Location = new System.Drawing.Point(7, 7);
+      this.groupBox3.Location = new System.Drawing.Point(6, 6);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(439, 311);
+      this.groupBox3.Size = new System.Drawing.Size(428, 228);
       this.groupBox3.TabIndex = 0;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "EPG standby/wakeup settings";
       this.toolTip1.SetToolTip(this.groupBox3, "Power management settings for the DVB EPG grabber and other EPG plugins supportin" +
               "g PowerScheduler");
+      // 
+      // button3
+      // 
+      this.button3.Location = new System.Drawing.Point(379, 179);
+      this.button3.Name = "button3";
+      this.button3.Size = new System.Drawing.Size(25, 23);
+      this.button3.TabIndex = 9;
+      this.button3.Text = "...";
+      this.button3.UseVisualStyleBackColor = true;
+      this.button3.Click += new System.EventHandler(this.button3_Click);
+      // 
+      // tbEpgCmd
+      // 
+      this.tbEpgCmd.Location = new System.Drawing.Point(41, 196);
+      this.tbEpgCmd.Name = "tbEpgCmd";
+      this.tbEpgCmd.Size = new System.Drawing.Size(329, 20);
+      this.tbEpgCmd.TabIndex = 8;
+      this.toolTip1.SetToolTip(this.tbEpgCmd, "Command will have \"epg\" as argument for the appropriate action");
+      // 
+      // label7
+      // 
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(38, 180);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(254, 13);
+      this.label7.TabIndex = 7;
+      this.label7.Text = "Run command before internal handlers are triggered:";
       // 
       // panel1
       // 
@@ -557,18 +595,21 @@ namespace TvEngine.PowerScheduler
       this.tabPage4.Controls.Add(this.groupBox4);
       this.tabPage4.Location = new System.Drawing.Point(4, 22);
       this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Size = new System.Drawing.Size(452, 355);
+      this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage4.Size = new System.Drawing.Size(459, 362);
       this.tabPage4.TabIndex = 3;
       this.tabPage4.Text = "Processes";
       this.tabPage4.UseVisualStyleBackColor = true;
       // 
       // groupBox4
       // 
+      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox4.Controls.Add(this.button1);
       this.groupBox4.Controls.Add(this.textBox1);
-      this.groupBox4.Location = new System.Drawing.Point(7, 7);
+      this.groupBox4.Location = new System.Drawing.Point(6, 6);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(439, 86);
+      this.groupBox4.Size = new System.Drawing.Size(447, 80);
       this.groupBox4.TabIndex = 0;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Processes which can prevent standby";
@@ -601,33 +642,6 @@ namespace TvEngine.PowerScheduler
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       this.openFileDialog1.Title = "Choose command";
-      // 
-      // button3
-      // 
-      this.button3.Location = new System.Drawing.Point(379, 179);
-      this.button3.Name = "button3";
-      this.button3.Size = new System.Drawing.Size(25, 23);
-      this.button3.TabIndex = 9;
-      this.button3.Text = "...";
-      this.button3.UseVisualStyleBackColor = true;
-      this.button3.Click += new System.EventHandler(this.button3_Click);
-      // 
-      // tbEpgCmd
-      // 
-      this.tbEpgCmd.Location = new System.Drawing.Point(41, 196);
-      this.tbEpgCmd.Name = "tbEpgCmd";
-      this.tbEpgCmd.Size = new System.Drawing.Size(329, 20);
-      this.tbEpgCmd.TabIndex = 8;
-      this.toolTip1.SetToolTip(this.tbEpgCmd, "Command will have \"epg\" as argument for the appropriate action");
-      // 
-      // label7
-      // 
-      this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(38, 180);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(254, 13);
-      this.label7.TabIndex = 7;
-      this.label7.Text = "Run command before internal handlers are triggered:";
       // 
       // PowerSchedulerMasterSetup
       // 

@@ -30,6 +30,7 @@ namespace SetupTv.Sections
         {
           this.tabControl1 = new System.Windows.Forms.TabControl();
           this.tabPage1 = new System.Windows.Forms.TabPage();
+          this.checkSendSelect = new System.Windows.Forms.CheckBox();
           this.checkBox1 = new System.Windows.Forms.CheckBox();
           this.comboBox4 = new System.Windows.Forms.ComboBox();
           this.comboBox3 = new System.Windows.Forms.ComboBox();
@@ -39,7 +40,6 @@ namespace SetupTv.Sections
           this.label2 = new System.Windows.Forms.Label();
           this.label1 = new System.Windows.Forms.Label();
           this.comboBox1 = new System.Windows.Forms.ComboBox();
-          this.checkSendSelect = new System.Windows.Forms.CheckBox();
           this.tabControl1.SuspendLayout();
           this.tabPage1.SuspendLayout();
           this.SuspendLayout();
@@ -74,6 +74,16 @@ namespace SetupTv.Sections
           this.tabPage1.Text = "General Setup";
           this.tabPage1.UseVisualStyleBackColor = true;
           // 
+          // checkSendSelect
+          // 
+          this.checkSendSelect.AutoSize = true;
+          this.checkSendSelect.Location = new System.Drawing.Point(20, 195);
+          this.checkSendSelect.Name = "checkSendSelect";
+          this.checkSendSelect.Size = new System.Drawing.Size(203, 17);
+          this.checkSendSelect.TabIndex = 19;
+          this.checkSendSelect.Text = "Send SELECT after channel numbers";
+          this.checkSendSelect.UseVisualStyleBackColor = true;
+          // 
           // checkBox1
           // 
           this.checkBox1.AutoSize = true;
@@ -86,6 +96,7 @@ namespace SetupTv.Sections
           // 
           // comboBox4
           // 
+          this.comboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
           this.comboBox4.FormattingEnabled = true;
           this.comboBox4.Location = new System.Drawing.Point(133, 134);
           this.comboBox4.Name = "comboBox4";
@@ -94,6 +105,7 @@ namespace SetupTv.Sections
           // 
           // comboBox3
           // 
+          this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
           this.comboBox3.FormattingEnabled = true;
           this.comboBox3.Location = new System.Drawing.Point(133, 107);
           this.comboBox3.Name = "comboBox3";
@@ -102,6 +114,7 @@ namespace SetupTv.Sections
           // 
           // comboBox2
           // 
+          this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
           this.comboBox2.FormattingEnabled = true;
           this.comboBox2.Items.AddRange(new object[] {
             "Fast",
@@ -150,6 +163,7 @@ namespace SetupTv.Sections
           // 
           // comboBox1
           // 
+          this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
           this.comboBox1.FormattingEnabled = true;
           this.comboBox1.Items.AddRange(new object[] {
             "Microsoft ",
@@ -158,16 +172,6 @@ namespace SetupTv.Sections
           this.comboBox1.Name = "comboBox1";
           this.comboBox1.Size = new System.Drawing.Size(236, 21);
           this.comboBox1.TabIndex = 8;
-          // 
-          // checkSendSelect
-          // 
-          this.checkSendSelect.AutoSize = true;
-          this.checkSendSelect.Location = new System.Drawing.Point(20, 195);
-          this.checkSendSelect.Name = "checkSendSelect";
-          this.checkSendSelect.Size = new System.Drawing.Size(203, 17);
-          this.checkSendSelect.TabIndex = 19;
-          this.checkSendSelect.Text = "Send SELECT after channel numbers";
-          this.checkSendSelect.UseVisualStyleBackColor = true;
           // 
           // BlasterSetup
           // 
