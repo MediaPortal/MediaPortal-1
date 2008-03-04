@@ -38,6 +38,7 @@ using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.Music.Database;
 
+using CueSharp;
 
 namespace MediaPortal.GUI.Music
 {
@@ -808,6 +809,9 @@ namespace MediaPortal.GUI.Music
           PlayListItem playlistItem = new Playlists.PlayListItem();
           playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = queueItem.Path;
+          playlistItem.PlayedFileName = queueItem.PlayedFileName;
+          playlistItem.StartPlayPositionMS = queueItem.StartPlayPositionMS;
+          playlistItem.EndPlayPositionMS = queueItem.EndPlayPositionMS;
           playlistItem.Description = queueItem.Label;
           playlistItem.Duration = queueItem.Duration;
           playlistItem.MusicTag = queueItem.MusicTag;
@@ -1195,6 +1199,9 @@ namespace MediaPortal.GUI.Music
           PlayListItem playlistItem = new PlayListItem();
           playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = pItem.Path;
+          playlistItem.PlayedFileName = pItem.PlayedFileName;
+          playlistItem.StartPlayPositionMS = pItem.StartPlayPositionMS;
+          playlistItem.EndPlayPositionMS = pItem.EndPlayPositionMS;
           playlistItem.Description = pItem.Label;
           playlistItem.Duration = pItem.Duration;
           playlistItem.MusicTag = pItem.MusicTag;
@@ -1276,6 +1283,31 @@ namespace MediaPortal.GUI.Music
     {
       string strTrack = string.Empty;
       int pos = strFile.IndexOf(".cda");
+      if (pos >= 0)
+      {
+        pos--;
+        while (Char.IsDigit(strFile[pos]) && pos > 0)
+        {
+          strTrack = strFile[pos] + strTrack;
+          pos--;
+        }
+      }
+
+      try
+      {
+        int iTrack = Convert.ToInt32(strTrack);
+        return iTrack;
+      }
+      catch (Exception)
+      {
+      }
+      return 1;
+    }
+
+    int GetVirtualFileTrackNumber(string strFile)
+    {
+      string strTrack = string.Empty;
+      int pos = strFile.LastIndexOf('.');
       if (pos >= 0)
       {
         pos--;
@@ -1485,6 +1517,84 @@ namespace MediaPortal.GUI.Music
 
               if (!bFound)
               {
+                if (pItem.IsVirtual)
+                {
+                  /*
+                   * If the file is virtual, read infos from the cuesheet
+                   */
+
+                  // Get the path of the virtual folder that contains this virtual file
+                  string virtualFolderPath   = string.Empty;
+                  string virtualFolderParent = string.Empty;
+                  {
+                    int ipos = pItem.Path.LastIndexOf(@"\");
+                    if (ipos > 0)
+                    {
+                      virtualFolderPath = pItem.Path.Substring(0, ipos);
+                      ipos = virtualFolderPath.LastIndexOf(@"\");
+                      if (ipos > 0)
+                        virtualFolderParent = virtualFolderPath.Substring(0, ipos);
+                    }
+                  }
+
+                  // The virtual folder path is in fact the path of cuesheet that describes it so get cuesheet infos
+                  CueSharp.CueSheet cuesheet = new CueSharp.CueSheet(virtualFolderPath);
+
+                  // Get the index of the track
+                  int track_rank = GetVirtualFileTrackNumber(pItem.Path);
+
+                  // Get the data file associated to this track and also the track descriptor
+                  CueSharp.Track track = cuesheet.Tracks[track_rank];
+                  
+                  // Get tags
+                  tag = new MusicTag();
+                  // Fill infos from album
+                  tag.Album       = cuesheet.Title;
+                  tag.AlbumArtist = cuesheet.Performer;
+                  tag.Artist      = tag.AlbumArtist;
+                  tag.Comment     = cuesheet.CommentTag; // By default track comment is album one
+                  tag.DiscID      = cuesheet.DiscIDTag;
+                  tag.TrackTotal  = cuesheet.Tracks.Length;
+                  tag.Genre       = cuesheet.GenreTag;   // By default track genre is album one
+                  pItem.Label     = pItem.Path;          // By default item label is the file path
+
+                  if (track != null)
+                  {
+                    pItem.PlayedFileName = virtualFolderParent + "\\" + track.UsedDataFile.Filename;
+                    pItem.StartPlayPositionMS = track.DataFileRelativeStartFramePosition.InMiliSeconds;
+                    pItem.EndPlayPositionMS   = track.DataFileRelativeEndFramePosition.InMiliSeconds;
+  
+                    tag.Duration = (int)track.Duration.InSeconds;
+
+                    // Fill track specific infos
+                    if (track.Performer.Trim() != string.Empty)
+                      tag.Artist  = track.Performer;
+                    if (track.GenreTag.Trim() != string.Empty)
+                      tag.Genre   = track.GenreTag;
+                    if (track.CommentTag.Trim() != string.Empty)
+                      tag.Comment = track.CommentTag;
+                    
+                    if (track_rank+1 != track.TrackNumber)
+                    {
+                      // Hidden Track
+                      tag.Track    = -1;
+                      tag.Title    = string.Empty;
+                    }
+                    else
+                    {
+                      // Visible Track
+                      tag.Track   = track.TrackNumber;
+                      tag.Title   = track.Title;
+                    }
+
+                    if (tag.Title.Trim() != string.Empty)
+                      pItem.Label = tag.Title;
+                  }
+
+                  bNewFile = true;
+                  pItem.MusicTag = tag;
+                }
+                else
                 // if id3 tag scanning is turned on AND we're scanning the directory
                 // then parse id3tag from file
                 if (UseID3 && m_bScan)
