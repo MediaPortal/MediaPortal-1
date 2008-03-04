@@ -112,12 +112,12 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_NEXT_ITEM:
         case Action.ActionType.ACTION_PAUSE:
         case Action.ActionType.ACTION_PREV_ITEM:
-          if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_VIDEO)
+          if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_VIDEO)
           {
-            playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_VIDEO;
+            playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
             if (g_Player.CurrentFile == "")
             {
-              PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
+              PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
               if (playList != null && playList.Count > 0)
               {
                 playlistPlayer.Play(0);
@@ -607,9 +607,9 @@ namespace MediaPortal.GUI.Video
     private void MovePlayListItemUp()
     {
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
-        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_VIDEO;
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
 
-      if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_VIDEO
+      if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_VIDEO
           || facadeView.View != GUIFacadeControl.ViewMode.Playlist
           || facadeView.PlayListView == null)
       {
@@ -620,7 +620,7 @@ namespace MediaPortal.GUI.Video
 
       // Prevent moving backwards past the top song in the list
 
-      PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
+      PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
       playList.MovePlayListItemUp(iItem);
       int selectedIndex = facadeView.MoveItemUp(iItem, true);
 
@@ -635,9 +635,9 @@ namespace MediaPortal.GUI.Video
     private void MovePlayListItemDown()
     {
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
-        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_VIDEO;
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
 
-      if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_VIDEO
+      if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_VIDEO
           || facadeView.View != GUIFacadeControl.ViewMode.Playlist
           || facadeView.PlayListView == null)
       {
@@ -645,7 +645,7 @@ namespace MediaPortal.GUI.Video
       }
 
       int iItem = facadeView.SelectedListItemIndex;
-      PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
+      PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
 
       // Prevent moving fowards past the last song in the list
       // as this would cause the currently playing song to scroll
@@ -666,9 +666,9 @@ namespace MediaPortal.GUI.Video
     private void DeletePlayListItem()
     {
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
-        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_VIDEO;
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
 
-      if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_VIDEO
+      if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_VIDEO
           || facadeView.View != GUIFacadeControl.ViewMode.Playlist
           || facadeView.PlayListView == null)
       {
@@ -679,7 +679,7 @@ namespace MediaPortal.GUI.Video
 
       string currentFile = g_Player.CurrentFile;
       GUIListItem item = facadeView[iItem];
-      PlayList loPlayList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
+      PlayList loPlayList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
       string strFileName = string.Empty;
       MVPlayListItem loItemToDelete = null;
       foreach (MVPlayListItem loItem in loPlayList)
