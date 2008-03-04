@@ -24,7 +24,7 @@ REM Core
 xcopy /y %1\core\bin\%2\DirectShowLib.* .
 xcopy /y %1\core\bin\%2\Core.* .
 xcopy /y %1\core\directshowhelper\directshowhelper\Release\dshowhelper.dll .
-xcopy /y %1\core\DXUtil\%2\DXUtil.dll .
+xcopy /y %1\core\DXUtil\Release\DXUtil.dll .
 xcopy /y %1\core\fontengine\fontengine\%2\fontengine.* .
 
 REM TvCapture
