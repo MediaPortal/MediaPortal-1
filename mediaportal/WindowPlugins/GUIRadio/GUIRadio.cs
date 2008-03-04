@@ -470,6 +470,13 @@ namespace MediaPortal.GUI.Radio
           item.ThumbnailImage = string.Empty;
           item.IconImageBig = "DefaultMyradioStreamBig.png";
           item.IconImage = "DefaultMyradioStream.png";
+          string thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, item.Label);
+          if (System.IO.File.Exists(thumbnail))
+          {
+            item.IconImageBig = thumbnail;
+            item.IconImage = thumbnail;
+            item.ThumbnailImage = thumbnail;
+          }
 
           listView.Add(item);
           thumbnailView.Add(item);
