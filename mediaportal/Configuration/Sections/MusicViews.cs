@@ -56,7 +56,8 @@ namespace MediaPortal.Configuration.Sections
         "track",
         "timesplayed",
         "rating",
-        "favorites"
+        "favorites",
+        "recently added"
       };
 
     private string[] _sqloperators = new string[]

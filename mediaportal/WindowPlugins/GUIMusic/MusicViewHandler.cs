@@ -260,11 +260,25 @@ namespace MediaPortal.GUI.Music
               }
               return songs;
             }
+            else if (defRoot.Where == "recently added")
+            {
+              try
+              {
+                whereClause = "";
+                TimeSpan ts = new TimeSpan(Convert.ToInt32(defRoot.Restriction), 0, 0, 0);
+                DateTime searchDate = DateTime.Today - ts;
+
+                whereClause = String.Format("where {0} > '{1}'", searchField, searchDate.ToString("yyyy-MM-dd hh:mm:ss"));
+                sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);
+              }
+              catch (Exception)
+              { }
+            }
             else
             {
               whereClause = "";
               BuildRestriction(defRoot, ref whereClause);
-              if (whereClause != string.Empty) whereClause = String.Format("where {0}",whereClause);
+              if (whereClause != string.Empty) whereClause = String.Format("where {0}", whereClause);
               sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);
             }
             break;
@@ -467,6 +481,7 @@ namespace MediaPortal.GUI.Music
       if (where == "timesplayed") return "tracks";
       if (where == "rating") return "tracks";
       if (where == "favorites") return "tracks";
+      if (where == "recently added") return "tracks";
       return null;
     }
 
@@ -482,6 +497,7 @@ namespace MediaPortal.GUI.Music
       if (where == "timesplayed") return "iTimesPlayed";
       if (where == "rating") return "iRating";
       if (where == "favorites") return "iFavorite";
+      if (where == "recently added") return "dateAdded";
       return null;
     }
 
@@ -501,6 +517,7 @@ namespace MediaPortal.GUI.Music
         if (song.Favorite) return "1";
         return "0";
       }
+      if (where == "recently added") return song.DateTimeModified.ToShortDateString();
       return "";
     }
 
