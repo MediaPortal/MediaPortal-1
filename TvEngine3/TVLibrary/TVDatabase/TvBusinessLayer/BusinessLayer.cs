@@ -1107,7 +1107,7 @@ namespace TvDatabase
             MsSqlAdapter = new SqlDataAdapter();
             MsSqlAdapter.TableMappings.Add("Table", "Program");
             MsSqlConnect.Open();
-            MsSqlCmd = new SqlCommand(BuildEpgSelect(channelList, provider), MsSqlConnect);            
+            MsSqlCmd = new SqlCommand(BuildEpgSelect(channelList, provider), MsSqlConnect);
             MsSqlCmd.Parameters.Add("startTime", SqlDbType.DateTime).Value = startTime; ;
             MsSqlCmd.Parameters.Add("endTime", SqlDbType.DateTime).Value = endTime;
             MsSqlAdapter.SelectCommand = MsSqlCmd;
@@ -1448,117 +1448,86 @@ namespace TvDatabase
       return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
 
+    /// <summary>
+    /// Fetches the current and next program for all channels.
+    /// </summary>
+    /// <returns></returns>
     public Dictionary<int, NowAndNext> GetNowAndNext()
     {
       Dictionary<int, NowAndNext> nowNextList = new Dictionary<int, NowAndNext>();
       string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
       string connectString = Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
-      MySqlConnection MySQLConnect = null;
-      MySqlDataAdapter MySQLAdapter = null;
-      MySqlCommand MySQLCmd = null;
+      string selectCommand = "";
 
-      SqlDataAdapter MsSqlAdapter = null;
-      SqlConnection MsSqlConnect = null;
-      SqlCommand MsSqlCmd = null;
+      if (provider == "sqlserver")
+      {
+        connectString = string.Format("Provider=SQLOLEDB;{0}", connectString);
+        selectCommand = "SELECT idChannel,idProgram,starttime,endtime,title FROM Program WHERE Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()) ORDER BY idchannel,starttime";
+      }
+      else
+        if (provider == "mysql")
+        {
+          connectString = string.Format("Provider=MySQLProv;{0}", connectString);
+          selectCommand = "SELECT idChannel,idProgram,starttime,endtime,title FROM Program WHERE Program.endtime >= NOW() AND Program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR) ORDER BY idchannel,starttime";
+        }
+        else return nowNextList;
 
       try
       {
-        switch (provider)
+        using (OleDbConnection DbConnection = new OleDbConnection(connectString))
         {
-          case "mysql":
-            MySQLConnect = new MySqlConnection(connectString);
-            MySQLAdapter = new MySqlDataAdapter();
-            MySQLAdapter.TableMappings.Add("Table", "Program");
-            MySQLConnect.Open();
-            MySQLCmd = MySQLConnect.CreateCommand();
-            MySQLCmd.CommandType = CommandType.Text;
-            MySQLCmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM Program WHERE Program.endtime >= NOW() AND Program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR) ORDER BY idchannel,starttime";
-            MySQLAdapter.SelectCommand = MySQLCmd;
-            break;
-          case "sqlserver":
-            //MSSQLConnect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString);
-            MsSqlConnect = new SqlConnection(connectString);
-            MsSqlAdapter = new SqlDataAdapter();
-            MsSqlAdapter.TableMappings.Add("Table", "Program");
-            MsSqlConnect.Open();
-            MsSqlCmd = MsSqlConnect.CreateCommand();
-            MsSqlCmd.CommandType = CommandType.Text;
-            // "select idChannel,idProgram,starttime,endtime,title from Program where Program.endtime >= now() and Program.idProgram in (select idProgram from Program as p3 where p3.idchannel=Program.idchannel and p3.endtime >= now() order by starttime) order by idchannel,starttime desc";
-            MsSqlCmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM Program WHERE Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()) ORDER BY idchannel,starttime";
-            MsSqlAdapter.SelectCommand = MsSqlCmd;
-            break;
-          default:
-            //MSSQLConnect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString);
-            Log.Info("BusinessLayer: No connect info for provider {0} - aborting", provider);
-            return nowNextList;
-        }
-
-        using (DataSet dataSet = new DataSet("Program"))
-        {
-          // ToDo: check if column fetching wastes performance
-          if (provider == "sqlserver")
-            MsSqlAdapter.Fill(dataSet);
-          else
-            if (provider == "mysql")
-              MySQLAdapter.Fill(dataSet);
-
-          int resultCount = dataSet.Tables[0].Rows.Count;
-          List<int> lastChannelIDs = new List<int>();
-
-          // for-loops are faster than foreach-loops
-          for (int j = 0; j < resultCount; j++)
+          using (OleDbDataAdapter DbAdapter = new OleDbDataAdapter())
           {
-            int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
-            // Only get the Now-Next-Data _once_ per channel
-            if (!lastChannelIDs.Contains(idChannel))
+            DbAdapter.TableMappings.Add("Table", "Program");
+            DbConnection.Open();
+            using (OleDbCommand DbCommand = new OleDbCommand(selectCommand, DbConnection))
             {
-              lastChannelIDs.Add(idChannel);
-
-              int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
-              DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
-              DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
-              string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
-
-              if (j < resultCount - 1)
+              DbAdapter.SelectCommand = DbCommand;
+              using (DataSet dataSet = new DataSet("Program"))
               {
-                // get the the "Next" info if it belongs to the same channel.
-                if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
+                DbAdapter.Fill(dataSet);
+                int resultCount = dataSet.Tables[0].Rows.Count;
+                List<int> lastChannelIDs = new List<int>();
+
+                for (int j = 0; j < resultCount; j++)
                 {
-                  int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
-                  DateTime nextStart = (DateTime)dataSet.Tables[0].Rows[j + 1]["startTime"];
-                  DateTime nextEnd = (DateTime)dataSet.Tables[0].Rows[j + 1]["endTime"];
-                  string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
+                  int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
+                  // Only get the Now-Next-Data _once_ per channel
+                  if (!lastChannelIDs.Contains(idChannel))
+                  {
+                    lastChannelIDs.Add(idChannel);
 
-                  NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
-                  nowNextList[idChannel] = p;
+                    int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
+                    DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
+                    DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
+                    string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
+
+                    if (j < resultCount - 1)
+                    {
+                      // get the the "Next" info if it belongs to the same channel.
+                      if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
+                      {
+                        int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
+                        DateTime nextStart = (DateTime)dataSet.Tables[0].Rows[j + 1]["startTime"];
+                        DateTime nextEnd = (DateTime)dataSet.Tables[0].Rows[j + 1]["endTime"];
+                        string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
+
+                        NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
+                        nowNextList[idChannel] = p;
+                      }
+                    }
+                  }
                 }
-              }
-            }
-          }
-        }
+              } // dataSet
 
+            } // DbCommand
+
+          } // DbAdapter
+        } // DbConnection
       }
       catch (Exception ex)
       {
-        Log.Info("BusinessLayer: GetNowNext failed {0}", ex.Message);
-      }
-      finally
-      {
-        switch (provider)
-        {
-          case "mysql":
-            MySQLConnect.Close();
-            MySQLAdapter.Dispose();
-            MySQLCmd.Dispose();
-            MySQLConnect.Dispose();
-            break;
-          case "sqlserver":
-            MsSqlConnect.Close();
-            MsSqlAdapter.Dispose();
-            MsSqlCmd.Dispose();
-            MsSqlConnect.Dispose();
-            break;
-        }
+        Log.Info("BusinessLayer: GetNowNext failed - {0}", ex.Message);
       }
 
       return nowNextList;
