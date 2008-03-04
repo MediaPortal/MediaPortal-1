@@ -150,6 +150,7 @@ namespace TvDatabase
     /// </summary>
     public IList ReferringGroupMap()
     {
+
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
 

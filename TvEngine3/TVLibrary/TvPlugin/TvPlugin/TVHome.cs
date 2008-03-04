@@ -1036,13 +1036,13 @@ namespace TvPlugin
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
       GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);
 
-      if (Navigator.CurrentGroup != null)
-      {
-        if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
-        {
-          GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
-        }
-      }
+      //if (Navigator.CurrentGroup != null)
+      //{
+      //  if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
+      //  {
+      //    GroupMap gm = (GroupMap)Navigator.CurrentGroup.ReferringGroupMap()[0];
+      //  }
+      //}
     }
 
     void OnSelectChannel()

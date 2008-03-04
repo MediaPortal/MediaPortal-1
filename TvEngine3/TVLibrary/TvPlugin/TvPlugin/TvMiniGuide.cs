@@ -190,10 +190,9 @@ namespace TvPlugin
 
     private void GetChannels(bool refresh)
     {
-      if (refresh)
+      if (refresh || _channelList == null)
         _channelList = new List<Channel>();
-      if (_channelList == null)
-        _channelList = new List<Channel>();
+
       if (_channelList.Count == 0)
       {
         try
