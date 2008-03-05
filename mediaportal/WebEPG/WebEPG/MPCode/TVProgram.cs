@@ -26,6 +26,7 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+using System.Data.SqlTypes;
 
 namespace MediaPortal.Webepg.TV.Database
 {
@@ -94,7 +95,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// <returns>DateTime object containing the date/time</returns>
     DateTime longtodate(long ldate)
     {
-      if (ldate<=0) return DateTime.MinValue;
+      if (ldate <= 0)
+        return SqlDateTime.MinValue.Value;
       int year,month,day,hour,minute,sec;
       sec=(int)(ldate%100L); ldate /=100L;
       minute=(int)(ldate%100L); ldate /=100L;
@@ -102,12 +104,18 @@ namespace MediaPortal.Webepg.TV.Database
       day=(int)(ldate%100L); ldate /=100L;
       month=(int)(ldate%100L); ldate /=100L;
       year=(int)ldate;
-      if (day < 0 || day > 31) return DateTime.MinValue;
-      if (month < 0 || month > 12) return DateTime.MinValue;
-      if (year < 1900 || year > 2100) return DateTime.MinValue;
-      if (sec<0 || sec>59) return DateTime.MinValue;
-      if (minute<0 || minute>59) return DateTime.MinValue;
-      if (hour<0 || hour>23) return DateTime.MinValue;
+      if (day < 0 || day > 31)
+        return SqlDateTime.MinValue.Value;
+      if (month < 0 || month > 12)
+        return SqlDateTime.MinValue.Value;
+      if (year < 1900 || year > 2100)
+        return SqlDateTime.MinValue.Value;
+      if (sec<0 || sec>59)
+        return SqlDateTime.MinValue.Value;
+      if (minute<0 || minute>59)
+        return SqlDateTime.MinValue.Value;
+      if (hour<0 || hour>23)
+        return SqlDateTime.MinValue.Value;
       try
       {
         DateTime dt=new DateTime(year,month,day,hour,minute,0,0);
@@ -116,7 +124,7 @@ namespace MediaPortal.Webepg.TV.Database
       catch(Exception)
       {
       }
-      return DateTime.MinValue;
+      return SqlDateTime.MinValue.Value;
     }
 
     /// <summary>
