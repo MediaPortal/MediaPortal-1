@@ -3356,29 +3356,10 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog:  AddPlextorMuxer returns:0x{0:X}", hr);
         throw new TvException("Unable to add AddPlextorMuxer");
       }
-      // next connect audio compressor->muxer
-      IPin pinOut = DsFindPin.ByDirection(_filterAudioCompressor, PinDirection.Output, 0);
-      IPin pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 1);
-      if (pinOut == null)
-      {
-        Log.Log.Info("analog:  no output pin found on audio compressor");
-        throw new TvException("no output pin found on audio compressor");
-      }
-      if (pinIn == null)
-      {
-        Log.Log.Info("analog:  no input pin found on intervideo muxer");
-        throw new TvException("no input pin found on intervideo muxer");
-      }
-      hr = _graphBuilder.Connect(pinOut, pinIn);
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("analog:  unable to connect audio compressor->muxer returns:0x{0:X}", hr);
-        throw new TvException("Unable to add unable to connect audio compressor->muxer");
-      }
-      Log.Log.WriteFile("analog:  connected audio -> intervideo muxer");
+      
       //no video compressor needed with the Plextor device so we use the first capture pin
-      pinOut = DsFindPin.ByDirection(_filterCapture, PinDirection.Output, 0);
-      pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 0);
+      IPin pinOut = DsFindPin.ByDirection(_filterCapture, PinDirection.Output, 0);
+      IPin pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 0);
       if (pinOut == null)
       {
         Log.Log.Info("analog:  no output pin found on Plextor capture filter");
@@ -3396,6 +3377,26 @@ namespace TvLibrary.Implementations.Analog
         throw new TvException("Unable to connect Plextor capture filter->muxer");
       }
       Log.Log.WriteFile("analog:  connected video -> intervideo muxer");
+      // next connect audio compressor->muxer
+      pinOut = DsFindPin.ByDirection(_filterAudioCompressor, PinDirection.Output, 0);
+      pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 1);
+      if (pinOut == null)
+      {
+          Log.Log.Info("analog:  no output pin found on audio compressor");
+          throw new TvException("no output pin found on audio compressor");
+      }
+      if (pinIn == null)
+      {
+          Log.Log.Info("analog:  no input pin found on intervideo muxer");
+          throw new TvException("no input pin found on intervideo muxer");
+      }
+      hr = _graphBuilder.Connect(pinOut, pinIn);
+      if (hr != 0)
+      {
+          Log.Log.WriteFile("analog:  unable to connect audio compressor->muxer returns:0x{0:X}", hr);
+          throw new TvException("Unable to add unable to connect audio compressor->muxer");
+      }
+      Log.Log.WriteFile("analog:  connected audio -> intervideo muxer");
       //now we have the real capture pin
       _pinCapture = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Output, 0);
       if (_pinCapture == null)
