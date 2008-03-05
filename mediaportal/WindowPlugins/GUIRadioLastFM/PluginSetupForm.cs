@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         checkBoxUseTrayIcon.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", true);
         checkBoxShowBallonTips.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
         checkBoxSubmitToProfile.Checked = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
-        checkBoxDirectSkip.Checked = xmlreader.GetValueAsBool("audioscrobbler", "directskip", false);
+        checkBoxDirectSkip.Checked = xmlreader.GetValueAsBool("audioscrobbler", "directskip", true);
         numericUpDownListEntries.Value = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 12);
         comboBoxStreamPlayerType.SelectedIndex = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
       }

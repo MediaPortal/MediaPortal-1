@@ -57,6 +57,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.panelBannerAlign = new System.Windows.Forms.Panel();
       this.pictureBoxBanner = new System.Windows.Forms.PictureBox();
       this.groupBoxSettings = new System.Windows.Forms.GroupBox();
+      this.checkBoxDirectSkip = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelEngine = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxStreamPlayerType = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelListEntries = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -66,7 +67,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.checkBoxUseTrayIcon = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonCancel = new System.Windows.Forms.Button();
       this.buttonSave = new System.Windows.Forms.Button();
-      this.checkBoxDirectSkip = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelBannerAlign.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBanner)).BeginInit();
       this.groupBoxSettings.SuspendLayout();
@@ -107,6 +107,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.groupBoxSettings.TabIndex = 1;
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
+      // 
+      // checkBoxDirectSkip
+      // 
+      this.checkBoxDirectSkip.AutoSize = true;
+      this.checkBoxDirectSkip.Checked = true;
+      this.checkBoxDirectSkip.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxDirectSkip.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDirectSkip.Location = new System.Drawing.Point(15, 50);
+      this.checkBoxDirectSkip.Name = "checkBoxDirectSkip";
+      this.checkBoxDirectSkip.Size = new System.Drawing.Size(273, 17);
+      this.checkBoxDirectSkip.TabIndex = 7;
+      this.checkBoxDirectSkip.Text = "Skip directly to the next track (do not show selection)";
+      this.checkBoxDirectSkip.UseVisualStyleBackColor = true;
       // 
       // labelEngine
       // 
@@ -215,17 +228,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.buttonSave.Text = "&Save";
       this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
-      // 
-      // checkBoxDirectSkip
-      // 
-      this.checkBoxDirectSkip.AutoSize = true;
-      this.checkBoxDirectSkip.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDirectSkip.Location = new System.Drawing.Point(15, 50);
-      this.checkBoxDirectSkip.Name = "checkBoxDirectSkip";
-      this.checkBoxDirectSkip.Size = new System.Drawing.Size(273, 17);
-      this.checkBoxDirectSkip.TabIndex = 7;
-      this.checkBoxDirectSkip.Text = "Skip directly to the next track (do not show selection)";
-      this.checkBoxDirectSkip.UseVisualStyleBackColor = true;
       // 
       // PluginSetupForm
       // 
