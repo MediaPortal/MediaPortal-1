@@ -611,8 +611,9 @@ namespace MediaPortal.Player
     {
       if (!Playing)
         return;
-      if (GUIGraphicsContext.InVmr9Render)
-        return;
+      
+      // with EVR this causes huge (up to one minute) delays to seeking - tourettes
+      //if (GUIGraphicsContext.InVmr9Render) return;
 
       if (_bMediaTypeChanged)
       {
@@ -680,7 +681,7 @@ namespace MediaPortal.Player
         }
         if (Speed < 0 && CurrentPosition < 5d)
         {
-          Log.Info("RSReaderPlayer: stop RWD since begin of timeshiftbuffer reached");
+          Log.Info("TSReaderPlayer: stop RWD since begin of timeshiftbuffer reached");
           Speed = 1;
           SeekAbsolute(0d);
         }/*
@@ -704,14 +705,14 @@ namespace MediaPortal.Player
       if (_isWindowVisible && !_isVisible)
       {
         _isWindowVisible = false;
-        //Log.Info("TSStreamBufferPlayer:hide window");
+        //Log.Info("TSReaderPlayer:hide window");
         if (_videoWin != null)
           _videoWin.put_Visible(OABool.False);
       }
       else if (!_isWindowVisible && _isVisible)
       {
         _isWindowVisible = true;
-        //Log.Info("TSStreamBufferPlayer:show window");
+        //Log.Info("TSReaderPlayer:show window");
         if (_videoWin != null)
           _videoWin.put_Visible(OABool.True);
       }

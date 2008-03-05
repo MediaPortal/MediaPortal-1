@@ -1623,8 +1623,7 @@ namespace MediaPortal.Player
 
     public static void Process()
     {
-      if (GUIGraphicsContext.InVmr9Render) return;
-      if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
+      if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null && !GUIGraphicsContext.InVmr9Render)
       {
         VMR9Util.g_vmr9.Process();
         VMR9Util.g_vmr9.Repaint();
@@ -1669,7 +1668,6 @@ namespace MediaPortal.Player
             }
           }
         }
-
       }
     }
 
