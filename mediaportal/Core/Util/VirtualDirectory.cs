@@ -50,7 +50,7 @@ namespace MediaPortal.Util
     const int LocalDisk = 3;
     const int Network = 4;
     const int CD = 5;
-    const int MaximumShares = 20;
+    const int MaximumShares = 128;
 
     List<Share> m_shares = new List<Share>();
     List<string> m_extensions = null;
@@ -73,7 +73,7 @@ namespace MediaPortal.Util
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strDefault = xmlreader.GetValueAsString(section, "default", string.Empty);
-        for (int i = 0; i < 20; i++)
+        for (int i = 0 ; i < MaximumShares ; i++)
         {
           string strShareName = String.Format("sharename{0}", i);
           string strSharePath = String.Format("sharepath{0}", i);

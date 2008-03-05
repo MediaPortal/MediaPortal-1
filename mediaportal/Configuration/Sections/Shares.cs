@@ -68,7 +68,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    protected const int MaximumShares = 20;
+    protected const int MaximumShares = 128;
 
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
