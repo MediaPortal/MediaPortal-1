@@ -298,12 +298,6 @@
     <Compile Include="Sections\CDSpeed.Designer.cs">
       <DependentUpon>CDSpeed.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\EVRConfig.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\EVRConfig.Designer.cs">
-      <DependentUpon>EVRConfig.cs</DependentUpon>
-    </Compile>
     <Compile Include="Sections\GeneralThumbs.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -385,11 +379,11 @@
     <Compile Include="Sections\PureVideoDecoderFilters.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\VMR9Config.cs">
+    <Compile Include="Sections\VideoRendererConfig.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\VMR9Config.Designer.cs">
-      <DependentUpon>VMR9Config.cs</DependentUpon>
+    <Compile Include="Sections\VideoRendererConfig.Designer.cs">
+      <DependentUpon>VideoRendererConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\WinDVD7DecoderFilters.cs">
       <SubType>UserControl</SubType>
@@ -660,10 +654,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>CDSpeed.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\EVRConfig.resx">
-      <DependentUpon>EVRConfig.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralThumbs.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GeneralThumbs.cs</DependentUpon>
@@ -748,9 +738,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>PureVideoDecoderFilters.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\VMR9Config.resx">
+    <EmbeddedResource Include="Sections\VideoRendererConfig.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>VMR9Config.cs</DependentUpon>
+      <DependentUpon>VideoRendererConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\WinDVD7DecoderFilters.resx">
       <DependentUpon>WinDVD7DecoderFilters.cs</DependentUpon>
