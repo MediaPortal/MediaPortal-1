@@ -21,10 +21,13 @@
 
 #pragma warning( disable: 4995 4996 )
 
+#include <string>
 #include <shlobj.h>
 #include "DVBSub.h"
 
 static bool folderOk = false;
+
+using std::string;
 
 // Setup data
 const AMOVIESETUP_MEDIATYPE sudPinTypesSubtitle =
@@ -99,32 +102,66 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 // Logging 
 //#ifdef DEBUG
 char *logbuffer=NULL; 
-void LogDebug( const char *fmt, ... ) 
+void GetLogFile(char *pLog)
 {
-  va_list ap;
-	va_start( ap, fmt );
+  OSVERSIONINFO osvi;
+  osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+  GetVersionEx (&osvi);
+  
+  // Vista
+  if(osvi.dwMajorVersion >= 6) 
+  {
+    TCHAR folder[MAX_PATH];
+    ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    sprintf(pLog,"%s\\Team MediaPortal\\MediaPortal\\Log\DVBSubs.log",folder);
+  }
+  else // XP or earlier
+  {
+  	char moduleFileName[1024];
+	  GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
+	  string logFile=moduleFileName;
+	  logFile=logFile.substr(0, logFile.rfind("\\"));
+	  logFile.append("\\log\\DVBSubs.log");
+    strncpy(pLog, logFile.c_str(), 1024);
+  }
+}
+
+
+void LogDebug(const char *fmt, ...) 
+{
+	va_list ap;
+	va_start(ap,fmt);
 
 	char buffer[1000]; 
 	int tmp;
-	va_start( ap, fmt );
-	tmp = vsprintf( buffer, fmt, ap );
-	va_end( ap ); 
+	va_start(ap,fmt);
+	tmp=vsprintf(buffer, fmt, ap);
+	va_end(ap); 
+	SYSTEMTIME systemTime;
+	GetLocalTime(&systemTime);
 
-  TCHAR folder[MAX_PATH];
-  TCHAR fileName[MAX_PATH];
-  ::SHGetSpecialFolderPath( NULL,folder,CSIDL_COMMON_APPDATA,FALSE );
-  sprintf( fileName, "%s\\Team Mediaportal\\MediaPortal\\Log\\DVBSubs.Log", folder );
-  FILE* fp = fopen( fileName,"a+" );
-	if( fp != NULL )
+//#ifdef DONTLOG
+  TCHAR filename[1024];
+  GetLogFile(filename);
+  FILE* fp = fopen(filename,"a+");
+
+	if (fp!=NULL)
 	{
-		SYSTEMTIME systemTime;
-		GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			systemTime.wMilliseconds,
+			GetCurrentThreadId(),
 			buffer);
 		fclose(fp);
-	}
+  }
+//#endif
+	char buf[1000];
+	sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+		systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+		systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+		buffer);
+	::OutputDebugString(buf);
 };
 
 //#else

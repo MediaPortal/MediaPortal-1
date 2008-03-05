@@ -46,30 +46,30 @@ DEFINE_GUID(IID_ITSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0
 
 DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
 {
-	STDMETHOD(OnMediaTypeChanged)  (THIS_)PURE;	
+	STDMETHOD(OnMediaTypeChanged) (THIS_)PURE;	
 };
 
 DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
 {	
-	STDMETHOD(OnRequestAudioChange)  (THIS_)PURE;
+	STDMETHOD(OnRequestAudioChange) (THIS_)PURE;
 };
 
-    MIDL_INTERFACE("b9559486-e1bb-45d3-a2a2-9a7afe49b24f")
-    ITSReader : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE SetGraphCallback( 
-			/* [in] */ ITSReaderCallback* pCallback
-			) = 0;		        
-		virtual HRESULT STDMETHODCALLTYPE SetRequestAudioChangeCallback( 
-			ITSReaderAudioChange* pCallback
-			) = 0;
-    };
+  MIDL_INTERFACE("b9559486-e1bb-45d3-a2a2-9a7afe49b24f")
+  ITSReader : public IUnknown
+  {
+  public:
+      virtual HRESULT STDMETHODCALLTYPE SetGraphCallback( 
+		/* [in] */ ITSReaderCallback* pCallback
+		) = 0;		        
+	virtual HRESULT STDMETHODCALLTYPE SetRequestAudioChangeCallback( 
+		ITSReaderAudioChange* pCallback
+		) = 0;
+  };
 
 class CTsReaderFilter : public CSource, 
 						public TSThread, 
 						public IFileSourceFilter, 
-                        public IAMFilterMiscFlags, 
+            public IAMFilterMiscFlags, 
 						public IAMStreamSelect, 
 						public ISubtitleStream, 
 						public ITeletextSource,						
@@ -77,42 +77,42 @@ class CTsReaderFilter : public CSource,
 						public ITSReader
 {
 public:
-		DECLARE_IUNKNOWN
-		static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
+  DECLARE_IUNKNOWN
+  static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
 
 private:
-		CTsReaderFilter(IUnknown *pUnk, HRESULT *phr);
-		~CTsReaderFilter();
-		STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
+  CTsReaderFilter(IUnknown *pUnk, HRESULT *phr);
+  ~CTsReaderFilter();
+  STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 
-    // Pin enumeration
-    CBasePin * GetPin(int n);
-    int GetPinCount();
+  // Pin enumeration
+  CBasePin * GetPin(int n);
+  int GetPinCount();
 
-    // Open and close the file as necessary
+  // Open and close the file as necessary
 public:
-    STDMETHODIMP Run(REFERENCE_TIME tStart);
-    STDMETHODIMP Pause();
-    STDMETHODIMP Stop();
+  STDMETHODIMP Run(REFERENCE_TIME tStart);
+  STDMETHODIMP Pause();
+  STDMETHODIMP Stop();
 private:
 	// IAMFilterMiscFlags
-		virtual ULONG STDMETHODCALLTYPE		GetMiscFlags();
+  virtual ULONG STDMETHODCALLTYPE		GetMiscFlags();
 
-    //IAMStreamSelect
-    STDMETHODIMP Count(DWORD* streamCount);
-    STDMETHODIMP Enable(long index, DWORD flags);
-    STDMETHODIMP Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwFlags, LCID *plcid, DWORD *pdwGroup, WCHAR **ppszName, IUnknown **ppObject, IUnknown **ppUnk);	
+  //IAMStreamSelect
+  STDMETHODIMP Count(DWORD* streamCount);
+  STDMETHODIMP Enable(long index, DWORD flags);
+  STDMETHODIMP Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwFlags, LCID *plcid, DWORD *pdwGroup, WCHAR **ppszName, IUnknown **ppObject, IUnknown **ppUnk);	
 
 	//IAudioStream
 	//STDMETHODIMP SetAudioStream(__int32 stream);	
 	STDMETHODIMP GetAudioStream(__int32 &stream);
 
-    //ISubtitleStream
-    STDMETHODIMP SetSubtitleStream(__int32 stream);
-    STDMETHODIMP GetSubtitleStreamType(__int32 stream, int &type);
-    STDMETHODIMP GetSubtitleStreamCount(__int32 &count);
-    STDMETHODIMP GetCurrentSubtitleStream(__int32 &stream);
-    STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
+  //ISubtitleStream
+  STDMETHODIMP SetSubtitleStream(__int32 stream);
+  STDMETHODIMP GetSubtitleStreamType(__int32 stream, int &type);
+  STDMETHODIMP GetSubtitleStreamCount(__int32 &count);
+  STDMETHODIMP GetCurrentSubtitleStream(__int32 &stream);
+  STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
 	STDMETHODIMP SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int count, void* opts, int* select)); 
 
 	//ITeletextSource
@@ -120,12 +120,10 @@ private:
 	STDMETHODIMP SetTeletextEventCallback (int (CALLBACK *EventCallback)(int,DWORD64) ); 
 	STDMETHODIMP SetTeletextServiceInfoCallback (int (CALLBACK *pServiceInfoCallback)(int,byte,byte,byte,byte) ); 
 
-	
-
 public:
 	// ITSReader
-	STDMETHODIMP	SetGraphCallback(ITSReaderCallback* pCallback);
-	STDMETHODIMP	SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
+	STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
+	STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
@@ -146,9 +144,9 @@ public:
   CTsDuration&    GetDuration();
   FILTER_STATE    State() {return m_State;};
   CRefTime        Compensation;
-  void				OnMediaTypeChanged();
-  void				OnRequestAudioChange();
-  bool			  IsStreaming();
+  void				    OnMediaTypeChanged();
+  void				    OnRequestAudioChange();
+  bool			      IsStreaming();
 protected:
   void ThreadProc();
 private:
@@ -158,7 +156,7 @@ private:
   void    RemoveGraphFromRot();
 	CAudioPin*	    m_pAudioPin;
 	CVideoPin*	    m_pVideoPin;
-	CSubtitlePin*	m_pSubtitlePin;
+	CSubtitlePin*	  m_pSubtitlePin;
 	WCHAR           m_fileName[1024];
 	CCritSec        m_section;
 	CCritSec        m_CritSecDuration;

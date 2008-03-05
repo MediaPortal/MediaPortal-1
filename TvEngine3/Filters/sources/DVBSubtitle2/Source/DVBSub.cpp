@@ -27,6 +27,7 @@
 #include "SubtitleInputPin.h"
 extern void LogDebug( const char *fmt, ... );
 extern void LogDebugPTS( const char *fmt, uint64_t pts );
+extern void GetLogFile(char *pLog);
 
 //
 // Constructor
@@ -44,11 +45,9 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_CurrentSeekPosition( 0 ),
   m_prevSubtitleTimestamp( 0 )
 {
-  TCHAR folder[MAX_PATH];
-  TCHAR fileName[MAX_PATH];
-  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\DVBsubs.log",folder);
-  ::DeleteFile(fileName);
+  TCHAR filename[1024];
+  GetLogFile(filename);
+  ::DeleteFile(filename);
 
   LogDebug("-------------- MediaPortal DVBSub2.ax version 15 ----------------");
   

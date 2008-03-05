@@ -38,6 +38,32 @@
 #include "memoryreader.h"
 #include <cassert>
 
+
+void GetLogFile(char *pLog)
+{
+  OSVERSIONINFO osvi;
+  osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+  GetVersionEx (&osvi);
+  
+  // Vista
+  if(osvi.dwMajorVersion >= 6) 
+  {
+    TCHAR folder[MAX_PATH];
+    ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    sprintf(pLog,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader.log",folder);
+  }
+  else // XP or earlier
+  {
+  	char moduleFileName[1024];
+	  GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
+	  string logFile=moduleFileName;
+	  logFile=logFile.substr(0, logFile.rfind("\\"));
+	  logFile.append("\\log\\TsReader.log");
+    strncpy(pLog, logFile.c_str(), 1024);
+  }
+}
+
+
 void LogDebug(const char *fmt, ...) 
 {
 	va_list ap;
@@ -52,11 +78,10 @@ void LogDebug(const char *fmt, ...)
 	GetLocalTime(&systemTime);
 
 //#ifdef DONTLOG
-  TCHAR folder[MAX_PATH];
-  TCHAR fileName[MAX_PATH];
-  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader.log",folder);
-	FILE* fp = fopen(fileName,"a+");
+  TCHAR filename[1024];
+  GetLogFile(filename);
+  FILE* fp = fopen(filename,"a+");
+
 	if (fp!=NULL)
 	{
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
@@ -140,12 +165,9 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 {
  // use the following line if u r having trouble setting breakpoints
  // #pragma comment( lib, "strmbasd" )
-  TCHAR folder[MAX_PATH];
-  TCHAR fileName[MAX_PATH];
-  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader.log",folder);
-  ::DeleteFile(fileName);
-
+  TCHAR filename[1024];
+  GetLogFile(filename);
+  ::DeleteFile(filename);
   LogDebug("-------------- v1.0.3 ----------------");
 
   m_fileReader=NULL;
