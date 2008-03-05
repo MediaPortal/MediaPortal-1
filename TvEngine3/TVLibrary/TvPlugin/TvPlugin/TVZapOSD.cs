@@ -67,6 +67,7 @@ namespace TvPlugin
     bool m_bNeedRefresh = false;
     DateTime m_dateTime = DateTime.Now;
     private string channelName = "";
+    private int idChannel;
 
     IList tvChannelList;
 
@@ -172,6 +173,7 @@ namespace TvPlugin
       m_bNeedRefresh = false;
       m_dateTime = DateTime.Now;
       channelName = GetChannelName();
+      idChannel = GetIdChannel();
       SetCurrentChannelLogo();      
       base.OnPageLoad();      
 
@@ -182,7 +184,7 @@ namespace TvPlugin
     void Get_TimeInfo()
     {
       string strTime = channelName;
-      Program prog = TVHome.Navigator.GetChannel(channelName).CurrentProgram;
+      Program prog = TVHome.Navigator.GetChannel(idChannel).CurrentProgram;      
       if (prog != null)
       {
         strTime = String.Format("{0}-{1}",
@@ -257,6 +259,7 @@ namespace TvPlugin
       if (!TVHome.Card.IsTimeShifting) return;
       TVHome.Navigator.ZapToPreviousChannel(true);
       channelName = GetChannelName();
+        idChannel = GetIdChannel();
       SetCurrentChannelLogo();      
       m_dateTime = DateTime.Now;
     }
@@ -267,6 +270,7 @@ namespace TvPlugin
       if (!TVHome.Card.IsTimeShifting) return;      
       TVHome.Navigator.ZapToNextChannel(true);
       channelName = GetChannelName();
+      idChannel = GetIdChannel();
       SetCurrentChannelLogo();
       
       m_dateTime = DateTime.Now;
@@ -275,6 +279,7 @@ namespace TvPlugin
     public void UpdateChannelInfo()
     {
       channelName = GetChannelName();
+      idChannel = GetIdChannel();
       SetCurrentChannelLogo();
     }
 
@@ -306,6 +311,10 @@ namespace TvPlugin
     {
       return TVHome.Navigator.ZapChannel.DisplayName;
     }
+    int GetIdChannel()
+    {
+        return TVHome.Navigator.ZapChannel.IdChannel;
+    }
     void ShowPrograms()
     {
       if (lblOnTvNow != null)
@@ -331,8 +340,7 @@ namespace TvPlugin
       {
         lblCurrentChannel.Label = channelName;
       }
-
-      Program prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(m_dateTime);
+      Program prog = TVHome.Navigator.GetChannel(idChannel).GetProgramAt(m_dateTime);      
       if (prog != null)
       {
         string strTime = String.Format("{0}-{1}",
@@ -360,7 +368,8 @@ namespace TvPlugin
         }
 
         // next program
-        prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(prog.EndTime.AddMinutes(1));
+          prog = TVHome.Navigator.GetChannel(idChannel).GetProgramAt(prog.EndTime.AddMinutes(1));
+        //prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(prog.EndTime.AddMinutes(1));
         if (prog != null)
         {
           if (lblOnTvNext != null)
@@ -393,7 +402,7 @@ namespace TvPlugin
     void UpdateProgressBar()
     {      
       double fPercent;
-      Program prog = TVHome.Navigator.GetChannel(channelName).CurrentProgram;
+      Program prog = TVHome.Navigator.GetChannel(idChannel).CurrentProgram;      
       if (prog == null)
       {        
         return;
