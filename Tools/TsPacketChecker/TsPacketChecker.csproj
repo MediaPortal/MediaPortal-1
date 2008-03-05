@@ -80,7 +80,6 @@
     <Compile Include="SectionDecoder.cs" />
     <Compile Include="StringUtils.cs" />
     <Compile Include="TsHeader.cs" />
-    <Compile Include="VCTParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

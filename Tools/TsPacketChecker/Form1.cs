@@ -191,7 +191,6 @@ namespace TsPacketChecker
       SdtParser sdtParser = new SdtParser(sdtNode);
       TreeNode nitNode = new TreeNode("NIT");
       NITParser nitParser = new NITParser(nitNode);
-      VCTParser vctParser = new VCTParser(null);
       PacketChecker checker = new PacketChecker(double.Parse(edPcrDiff.Text));
 
       int maxPATPidsCount = 0;
@@ -235,7 +234,6 @@ namespace TsPacketChecker
           }
         }
         nitParser.OnTsPacket(tsPacket);
-        vctParser.OnTsPacket(tsPacket);
         linkageParser.OnTsPacket(tsPacket);
         sdtParser.OnTsPacket(tsPacket);
         PrBar.Value = reader.GetPositionInPercent();
