@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
@@ -27,6 +27,7 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -1097,9 +1098,13 @@ namespace MediaPortal.Player
         GC.Collect(); GC.Collect(); GC.Collect();
 
         // switch back to directx windowed mode
-        Log.Info("VideoPlayerVMR7: Disabling DX9 exclusive mode");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msg);
+        if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
+        {
+          Log.Info("VideoPlayerVMR7: Disabling DX9 exclusive mode");
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
+        }
+
       }
       catch (Exception ex)
       {
@@ -1241,9 +1246,24 @@ namespace MediaPortal.Player
       string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
 
       // remove prefix, which is added by Haali Media Splitter
-      if (streamName.StartsWith("A: "))
-        streamName = streamName.Replace("A: ", string.Empty);
-      streamName = streamName.Trim('[', ']');
+      streamName = Regex.Replace(streamName, @"^A: ", "");
+
+      // Check if returned string contains both language and trackname info
+      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
+      Regex regex = new Regex(@"\[.+\]");
+      Match result = regex.Match(streamName);
+      if (result.Success)
+      {
+        //Cut off and translate the language part
+        string language = MediaPortal.Util.Utils.TranslateLanguageString(streamName.Substring(result.Index + 1, result.Length - 2));
+
+        //Get the trackname part by removing the language part from the string.
+        streamName = regex.Replace(streamName, "").Trim();
+
+        //Put things back together
+        streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
+      }
 
       return streamName;
     }
@@ -1327,9 +1347,24 @@ namespace MediaPortal.Player
         string streamName = FStreams.GetStreamInfos(StreamType.Subtitle, iStream).Name;
 
         // remove prefix, which is added by Haali Media Splitter
-        if (streamName.StartsWith("S: "))
-          streamName = streamName.Replace("S: ", string.Empty);
-        streamName = streamName.Trim('[', ']');
+        streamName = Regex.Replace(streamName, @"^S: ", "");
+
+        // Check if returned string contains both language and trackname info
+        // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+        // where "trackname" is stream's "trackname" property muxed in the mkv.
+        Regex regex = new Regex(@"\[.+\]");
+        Match result = regex.Match(streamName);
+        if (result.Success)
+        {
+          //Cut off and translate the language part
+          string language = MediaPortal.Util.Utils.TranslateLanguageString(streamName.Substring(result.Index + 1, result.Length - 2));
+
+          //Get the trackname part by removing the language part from the string.
+          streamName = regex.Replace(streamName, "").Trim();
+
+          //Put things back together
+          streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
+        }
 
         return streamName;
       }
@@ -1462,8 +1497,12 @@ namespace MediaPortal.Player
                   FSInfos.Id = istream;
                   FSInfos.Type = StreamType.Unknown;
 
+
+                  //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams.
+                  if ((FSInfos.Filter == "ffdshow Video Decoder" || FSInfos.Filter == "ffdshow raw video filter") && ((sPDWGroup == 1) || (sPDWGroup == 2)))
+                    FSInfos.Type = StreamType.Unknown;
                   //VIDEO
-                  if (sPDWGroup == 0)
+                  else if (sPDWGroup == 0)
                     FSInfos.Type = StreamType.Video;
                   //AUDIO
                   else if (sPDWGroup == 1)
@@ -1477,6 +1516,8 @@ namespace MediaPortal.Player
                   //DirectVobSub SHOW SUBTITLE TAG
                   else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
                     FSInfos.Type = StreamType.Subtitle_shown;
+
+                  Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}", FSInfos.Type.ToString(), FSInfos.Name, FSInfos.Filter, FSInfos.Id.ToString(), sPDWGroup.ToString());
 
                   switch (FSInfos.Type)
                   {
