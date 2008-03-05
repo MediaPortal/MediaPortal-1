@@ -42,9 +42,8 @@ namespace MPTail
     private long previousSeekPosition;
     private long previousFileSize;
     private TabPage parentTab;
-    private ContextMenuStrip ctxMenu;
     private SearchParameters searchParams;
-
+    private ContextMenuStrip ctxMenu;
     public LoggerCategory Category;
     #endregion
 
@@ -52,6 +51,7 @@ namespace MPTail
     public TailedRichTextBox(string filename,LoggerCategory loggerCategory,TabPage parentTabPage)
     {
       this.filename = filename;
+      this.ShortcutsEnabled = true;
       Category = loggerCategory;
       parentTab = parentTabPage;
       previousSeekPosition=0;
@@ -63,6 +63,11 @@ namespace MPTail
         ToolStripItem relocateItem = ctxMenu.Items.Add("Correct logfile location");
         relocateItem.Click += new EventHandler(relocateItem_Click);
       }
+      ctxMenu.Items.Add("-");
+      ToolStripItem searchItem = ctxMenu.Items.Add("Find");
+      searchItem.Click += new EventHandler(searchItem_Click);
+      ctxMenu.Items.Add("-");
+      
       ToolStripItem cfgItem = ctxMenu.Items.Add("Configure search parameters");
       cfgItem.Click += new EventHandler(Config_Click);
       ctxMenu.Items.Add("-");
@@ -73,9 +78,17 @@ namespace MPTail
       searchParams = new SearchParameters();
       LoadSettings();
     }
+
     #endregion
 
     #region Contextmenu handlers
+    void searchItem_Click(object sender, EventArgs e)
+    {
+      frmFindSettings dlg = new frmFindSettings();
+      if (dlg.ShowDialog() != DialogResult.OK)
+        return;
+      this.Find(dlg.SearchString, dlg.Options);
+    }
     void clearFileItem_Click(object sender, EventArgs e)
     {
       if (MessageBox.Show("Do you really want to delete this file?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)

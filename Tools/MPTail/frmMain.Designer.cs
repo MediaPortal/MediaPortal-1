@@ -58,11 +58,15 @@ namespace MPTail
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.MPTabCtrl = new System.Windows.Forms.TabControl();
       this.tabPage4 = new System.Windows.Forms.TabPage();
-      this.richTextBoxMP = new System.Windows.Forms.RichTextBox();
+      this.richTextBoxMP = new MPTail.RingBufferedRichTextBox();
+      this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+      this.saveToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.TVETabCtrl = new System.Windows.Forms.TabControl();
       this.tabPageTvEngine = new System.Windows.Forms.TabPage();
-      this.richTextBoxTvEngine = new System.Windows.Forms.RichTextBox();
+      this.richTextBoxTvEngine = new MPTail.RingBufferedRichTextBox();
       this.tabPage3 = new System.Windows.Forms.TabPage();
       this.CustomTabCtrl = new System.Windows.Forms.TabControl();
       this.panel1 = new System.Windows.Forms.Panel();
@@ -72,18 +76,16 @@ namespace MPTail
       this.btnChooseFont = new System.Windows.Forms.Button();
       this.cbFollowTail = new System.Windows.Forms.CheckBox();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-      this.saveToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.PageCtrlCategory.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.MPTabCtrl.SuspendLayout();
       this.tabPage4.SuspendLayout();
+      this.contextMenuStrip1.SuspendLayout();
       this.tabPage2.SuspendLayout();
       this.TVETabCtrl.SuspendLayout();
       this.tabPageTvEngine.SuspendLayout();
       this.tabPage3.SuspendLayout();
       this.panel1.SuspendLayout();
-      this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // PageCtrlCategory
@@ -140,10 +142,45 @@ namespace MPTail
       this.richTextBoxMP.Dock = System.Windows.Forms.DockStyle.Fill;
       this.richTextBoxMP.Location = new System.Drawing.Point(0, 0);
       this.richTextBoxMP.Name = "richTextBoxMP";
+      this.richTextBoxMP.RingBufferSizeInMB = ((long)(3));
       this.richTextBoxMP.Size = new System.Drawing.Size(750, 259);
       this.richTextBoxMP.TabIndex = 0;
       this.richTextBoxMP.Text = "";
       this.richTextBoxMP.WordWrap = false;
+      // 
+      // contextMenuStrip1
+      // 
+      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.searchToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.saveToFileToolStripMenuItem});
+      this.contextMenuStrip1.Name = "contextMenuStrip1";
+      this.contextMenuStrip1.Size = new System.Drawing.Size(122, 54);
+      // 
+      // searchToolStripMenuItem
+      // 
+      this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
+      this.searchToolStripMenuItem.ShortcutKeyDisplayString = "CTRL+F";
+      this.searchToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+      this.searchToolStripMenuItem.ShowShortcutKeys = false;
+      this.searchToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+      this.searchToolStripMenuItem.Text = "Find";
+      this.searchToolStripMenuItem.Click += new System.EventHandler(this.searchToolStripMenuItem_Click);
+      // 
+      // toolStripMenuItem1
+      // 
+      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(182, 6);
+      // 
+      // saveToFileToolStripMenuItem
+      // 
+      this.saveToFileToolStripMenuItem.Name = "saveToFileToolStripMenuItem";
+      this.saveToFileToolStripMenuItem.ShortcutKeyDisplayString = "CTRL+S";
+      this.saveToFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+      this.saveToFileToolStripMenuItem.ShowShortcutKeys = false;
+      this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+      this.saveToFileToolStripMenuItem.Text = "Save to file";
+      this.saveToFileToolStripMenuItem.Click += new System.EventHandler(this.saveToFileToolStripMenuItem_Click);
       // 
       // tabPage2
       // 
@@ -184,6 +221,7 @@ namespace MPTail
       this.richTextBoxTvEngine.Dock = System.Windows.Forms.DockStyle.Fill;
       this.richTextBoxTvEngine.Location = new System.Drawing.Point(3, 3);
       this.richTextBoxTvEngine.Name = "richTextBoxTvEngine";
+      this.richTextBoxTvEngine.RingBufferSizeInMB = ((long)(3));
       this.richTextBoxTvEngine.Size = new System.Drawing.Size(744, 253);
       this.richTextBoxTvEngine.TabIndex = 0;
       this.richTextBoxTvEngine.Text = "";
@@ -290,20 +328,6 @@ namespace MPTail
       this.timer1.Interval = 250;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
-      // contextMenuStrip1
-      // 
-      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveToFileToolStripMenuItem});
-      this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(153, 48);
-      // 
-      // saveToFileToolStripMenuItem
-      // 
-      this.saveToFileToolStripMenuItem.Name = "saveToFileToolStripMenuItem";
-      this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-      this.saveToFileToolStripMenuItem.Text = "Save to file";
-      this.saveToFileToolStripMenuItem.Click += new System.EventHandler(this.saveToFileToolStripMenuItem_Click);
-      // 
       // frmMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -320,13 +344,13 @@ namespace MPTail
       this.tabPage1.ResumeLayout(false);
       this.MPTabCtrl.ResumeLayout(false);
       this.tabPage4.ResumeLayout(false);
+      this.contextMenuStrip1.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
       this.TVETabCtrl.ResumeLayout(false);
       this.tabPageTvEngine.ResumeLayout(false);
       this.tabPage3.ResumeLayout(false);
       this.panel1.ResumeLayout(false);
       this.panel1.PerformLayout();
-      this.contextMenuStrip1.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -344,15 +368,17 @@ namespace MPTail
     private System.Windows.Forms.CheckBox cbClearOnCreate;
     private System.Windows.Forms.Timer timer1;
     private System.Windows.Forms.TabPage tabPageTvEngine;
-    private System.Windows.Forms.RichTextBox richTextBoxTvEngine;
+    private RingBufferedRichTextBox richTextBoxTvEngine;
     private System.Windows.Forms.TabPage tabPage3;
     private System.Windows.Forms.TabControl CustomTabCtrl;
     private System.Windows.Forms.TabPage tabPage4;
-    private System.Windows.Forms.RichTextBox richTextBoxMP;
+    private RingBufferedRichTextBox richTextBoxMP;
     private System.Windows.Forms.Button btnAddLogfile;
     private System.Windows.Forms.Button btnRemoveLog;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     private System.Windows.Forms.ToolStripMenuItem saveToFileToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
   }
 }
 

@@ -62,6 +62,7 @@ namespace MPTail
 
       LoadSettings();
       AddAllLoggers();
+
     }
 
     #region Persistance
@@ -79,10 +80,28 @@ namespace MPTail
         font_size = float.Parse(node.Attributes["font-size"].Value);
         cbClearOnCreate.Checked = (node.Attributes["clear-log-on-create"].Value == "1");
 
-        lastSettings.left = Int32.Parse(node.Attributes["WindowPosX"].Value);
-        lastSettings.top = Int32.Parse(node.Attributes["WindowPosY"].Value);
-        lastSettings.height = Int32.Parse(node.Attributes["WindowHeight"].Value);
-        lastSettings.width = Int32.Parse(node.Attributes["WindowWidth"].Value);
+        string windowStateStr = node.Attributes["WindowState"].Value;
+        switch (windowStateStr)
+        {
+          case "Normal":
+            lastSettings.windowState = FormWindowState.Normal;
+            break;
+          case "Maximized":
+            lastSettings.windowState = FormWindowState.Maximized;
+            break;
+          case "Minimized":
+            lastSettings.windowState = FormWindowState.Minimized;
+            break;
+        }
+        if (lastSettings.windowState == FormWindowState.Normal)
+        {
+          lastSettings.left = Int32.Parse(node.Attributes["WindowPosX"].Value);
+          lastSettings.top = Int32.Parse(node.Attributes["WindowPosY"].Value);
+          lastSettings.height = Int32.Parse(node.Attributes["WindowHeight"].Value);
+          lastSettings.width = Int32.Parse(node.Attributes["WindowWidth"].Value);
+        }
+        else
+          this.WindowState = lastSettings.windowState;
         lastSettings.categoryIndex = Int32.Parse(node.Attributes["CategoryTabIndex"].Value);
         lastSettings.tabIndex = Int32.Parse(node.Attributes["LoggerIndex"].Value);
 
@@ -102,10 +121,16 @@ namespace MPTail
       XmlUtils.NewAttribute(config,"font-size",this.Font.Size);
       XmlUtils.NewAttribute(config,"clear-log-on-create",cbClearOnCreate.Checked);
 
-      XmlUtils.NewAttribute(config, "WindowPosX", this.Left);
-      XmlUtils.NewAttribute(config, "WindowPosY", this.Top);
-      XmlUtils.NewAttribute(config, "WindowHeight", this.Height);
-      XmlUtils.NewAttribute(config, "WindowWidth", this.Width);
+      if (this.WindowState == FormWindowState.Normal)
+      {
+        XmlUtils.NewAttribute(config, "WindowPosX", this.Left);
+        XmlUtils.NewAttribute(config, "WindowPosY", this.Top);
+        XmlUtils.NewAttribute(config, "WindowHeight", this.Height);
+        XmlUtils.NewAttribute(config, "WindowWidth", this.Width);
+      }
+      else
+        XmlUtils.NewAttribute(config, "WindowState", this.WindowState.ToString());
+
       XmlUtils.NewAttribute(config, "CategoryTabIndex", PageCtrlCategory.SelectedIndex);
       switch (PageCtrlCategory.SelectedIndex)
       {
@@ -350,5 +375,16 @@ namespace MPTail
       SaveSettings();
     }
     #endregion
+
+    private void searchToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      frmFindSettings dlg = new frmFindSettings();
+      if (dlg.ShowDialog() != DialogResult.OK)
+        return;
+      RingBufferedRichTextBox rb = richTextBoxMP;
+      if (richTextBoxTvEngine.Focused)
+        rb = richTextBoxTvEngine;
+      rb.Find(dlg.SearchString, dlg.Options);
+    }
   }
 }

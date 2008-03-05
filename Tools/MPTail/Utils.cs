@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Xml;
+using System.Windows.Forms;
 
 namespace MPTail
 {
@@ -39,6 +40,7 @@ namespace MPTail
     public int height;
     public int categoryIndex;
     public int tabIndex;
+    public FormWindowState windowState;
   }
   // This is just a helper class to allow to insert duplicate keys in a SortedDictionary
   // If a timestamp is equal to an existing one we just return 1 instead of 0

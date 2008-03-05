@@ -9,10 +9,12 @@ namespace MPTail
   {
     private long ringBufferSize=1024*1024*3; // we init with 3 mb
 
+    #region constructor
     public RingBufferedRichTextBox()
     {
       this.TextChanged+=new EventHandler(RingBufferedRichTextBox_TextChanged);
     }
+    #endregion
 
     void  RingBufferedRichTextBox_TextChanged(object sender, EventArgs e)
     {
