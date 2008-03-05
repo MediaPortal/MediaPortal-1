@@ -341,6 +341,7 @@ HRESULT MultiFileWriter::ReuseTSFile()
 {
 	USES_CONVERSION;
 	HRESULT hr;
+  DWORD Tmo=5 ;
 
 	LPWSTR pFilename = m_tsFileNames.at(0);
 
@@ -351,12 +352,18 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	}
 
 	// Check if file is being read by something.
-	if (IsFileLocked(pFilename) != TRUE)
-	{
+  while(IsFileLocked(pFilename) && Tmo) { Sleep(50) ; Tmo-- ;}
+  if (Tmo)
+  {
+    // Warning : the file can be eventually locked now before deleting !!
 		TCHAR sz[MAX_PATH];
 		sprintf(sz, "%S", pFilename);
 		DeleteFile(sz);
-	}
+    if (Tmo!=5) 
+  	  LogDebug("File : %ws has waited %d times for unlocking...", pFilename, 5-Tmo);
+  }
+  else
+    LogDebug("File : %ws locked.", pFilename);
 
 	if FAILED(hr = m_pCurrentTSFile->OpenFile())
 	{
@@ -413,6 +420,10 @@ HRESULT MultiFileWriter::WriteTSBufferFile()
 	// Finish up with a unicode null character in case we want to put stuff after this in the future.
 	wchar_t temp = 0;
 	WriteFile(m_hTSBufferFile, &temp, sizeof(temp), &written, NULL);
+
+	// Write again filesAdded and filesRemoved values for integrity check.
+	WriteFile(m_hTSBufferFile, &m_filesAdded, sizeof(m_filesAdded), &written, NULL);
+	WriteFile(m_hTSBufferFile, &m_filesRemoved, sizeof(m_filesRemoved), &written, NULL);
 
 	//randomly park the file pointer to help minimise HDD clogging
 //	if(m_pCurrentTSFile && m_pCurrentTSFile->GetFilePointer()&1)

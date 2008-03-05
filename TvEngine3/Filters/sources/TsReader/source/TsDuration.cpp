@@ -66,60 +66,83 @@ int CTsDuration::GetPid()
 // 
 void CTsDuration::UpdateDuration()
 {
-  m_bSearchStart=true;
-  m_bSearchEnd=false;
-  m_bSearchMax=false;
-  m_startPcr.Reset();
-  m_maxPcr.Reset();
-  m_reader->SetFilePointer(0,FILE_BEGIN);
+
   byte buffer[32712];
   DWORD dwBytesRead;
+  int Loop=5 ;
 
-  //find the first pcr in the file
-  while (!m_startPcr.IsValid)
+  do
   {
-    if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
+    m_bSearchStart=true;
+    m_bSearchEnd=false;
+    m_bSearchMax=false;
+    m_startPcr.Reset();
+    m_maxPcr.Reset();
+    m_reader->SetFilePointer(0,FILE_BEGIN);
+
+    //find the first pcr in the file
+    while (!m_startPcr.IsValid)
     {
-      //park filepointer at end of file
-      m_reader->SetFilePointer(-1,FILE_END);
-      m_reader->Read(buffer,1,&dwBytesRead);
-      return;
-    }
-    if (dwBytesRead==0) 
-    {
-      //park filepointer at end of file
-      m_reader->SetFilePointer(-1,FILE_END);
-      m_reader->Read(buffer,1,&dwBytesRead);
-      return;
-    }
+      if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
+      {
+        //park filepointer at end of file
+        m_reader->SetFilePointer(-1,FILE_END);
+        m_reader->Read(buffer,1,&dwBytesRead);
+        return;
+      }
+      if (dwBytesRead==0) 
+      {
+        //park filepointer at end of file
+        m_reader->SetFilePointer(-1,FILE_END);
+        m_reader->Read(buffer,1,&dwBytesRead);
+        return;
+      }
     OnRawData(buffer,dwBytesRead);
+    }
+
+    //find the last pcr in the file
+    m_bSearchEnd=true;
+    m_bSearchStart=false;
+    m_endPcr.Reset();
+    __int64 offset=sizeof(buffer);
+    __int64 fileSize=m_reader->GetFileSize();
+  
+    while (!m_endPcr.IsValid)
+    {
+      DWORD dwBytesRead;
+      m_reader->SetFilePointer(-offset,FILE_END);
+      if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
+      {
+        break;
+      }
+      if (dwBytesRead==0) 
+      {
+        break;
+      }
+      OnRawData(buffer,dwBytesRead);
+      offset+=sizeof(buffer);
+    }
+
+    Loop-- ;
+    if(m_endPcr.PcrReferenceBase < m_startPcr.PcrReferenceBase)
+      LogDebug("Abnormal start PCR, endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
+  }
+  while ((m_endPcr.PcrReferenceBase < m_startPcr.PcrReferenceBase) && Loop) ;
+    // When startPcr > endPcr, it could be a result of wrong file used to find "startPcr".
+    // If this file is just reused by TsWriter, and list buffer not updated yet, the search will operate
+    // in the latest ts packets received causing the start higher the end ( readed in the previous buffer )
+    // The only thing to do to discriminate an error and a real rollover is to re-search startPcr. 
+    // Entering the following code with erroneous startPcr > endPcr makes an endless loop !!
+    // The startPcr read can also failed when it occurs between deleting and reusing the ts buffer.
+    // This abort the method. Duration will be updated on next call.
+  if (Loop==0)
+    LogDebug("PCR rollover normally found ! endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
+  else
+  {
+    if(Loop<4)
+      LogDebug("Recovered wrong start PCR, seek to 'begin' on reused file ! ( Retried %d times )",4-Loop) ;
   }
 
-  //find the last pcr in the file
-  m_bSearchEnd=true;
-  m_bSearchStart=false;
-  m_endPcr.Reset();
-  __int64 offset=sizeof(buffer);
-  __int64 fileSize=m_reader->GetFileSize();
-  
-  while (!m_endPcr.IsValid)
-  {
-   // LogDebug("fileSize:%x off:%x",(DWORD)fileSize, (DWORD)fileSize-offset);
-    DWORD dwBytesRead;
-    m_reader->SetFilePointer(-offset,FILE_END);
-    if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
-    {
-      break;
-    }
-    if (dwBytesRead==0) 
-    {
-      break;
-    }
-    OnRawData(buffer,dwBytesRead);
-    offset+=sizeof(buffer);
-  }
-
-  
   //When the last pcr < first pcr then a pcr roll over occured
   //find where in the file this rollover happened
   //and fill maxPcr
@@ -128,7 +151,7 @@ void CTsDuration::UpdateDuration()
     //PCR rollover
     m_bSearchMax=true;
     m_bSearchEnd=false;
-    offset=sizeof(buffer);
+    __int64 offset=sizeof(buffer);
     while (!m_maxPcr.IsValid)
     {
       DWORD dwBytesRead;

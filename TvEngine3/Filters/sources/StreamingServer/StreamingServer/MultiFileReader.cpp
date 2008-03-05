@@ -263,33 +263,84 @@ int MultiFileReader::RefreshTSBufferFile()
 		return S_FALSE;
   }
 	ULONG bytesRead;
-	MultiFileReaderFile *file;
+	MultiFileReaderFile *file; 
 
-	m_TSBufferFile.SetFilePointer(0, FILE_END);
-	__int64 fileLength = m_TSBufferFile.GetFilePointer();
-	if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t)))
-  {
-    //printf("MultiFileReader::RefreshTSBufferFile filelength is %d instead of %d",
-    //      fileLength,(sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t)) );
-		return S_FALSE;
-  }
-	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
-	
-  //LAYOUT:
-  // 64bit    : current position
-  // long     : files added
-  // long     : files removed
+   HRESULT result;
 	__int64 currentPosition;
-	m_TSBufferFile.Read((BYTE*)&currentPosition, sizeof(currentPosition), &bytesRead);
-  if (bytesRead!=sizeof(currentPosition)) return FALSE;
+  long filesAdded, filesRemoved;
+  long filesAdded2, filesRemoved2;
+  long Error;
+  long Loop=10 ;           
 
-	long filesAdded, filesRemoved;
-	m_TSBufferFile.Read((BYTE*)&filesAdded, sizeof(filesAdded), &bytesRead);
-  if (bytesRead!=sizeof(filesAdded)) return FALSE;
+  __int64 remainingLength ;
+  char *pBuffer ;
+  	
+  do
+  {
+    Error=0  ;
+  	m_TSBufferFile.SetFilePointer(0, FILE_END);
+	  __int64 fileLength = m_TSBufferFile.GetFilePointer();
+	  if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long))) Error|=0x01;
 
-	m_TSBufferFile.Read((BYTE*)&filesRemoved, sizeof(filesRemoved), &bytesRead);
-  if (bytesRead!=sizeof(filesRemoved)) return FALSE;
+	  m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
+	
+    //LAYOUT:
+    // 64bit    : current position
+    // long     : files added
+    // long     : files removed 
+    // ... File list
+    // long     : files added
+    // long     : files removed 
 
+	  result=m_TSBufferFile.Read((BYTE*)&currentPosition, sizeof(currentPosition), &bytesRead);
+    if (!SUCCEEDED(result)|| bytesRead!=sizeof(currentPosition)) Error|=0x02;
+
+	  result=m_TSBufferFile.Read((BYTE*)&filesAdded, sizeof(filesAdded), &bytesRead);
+    if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesAdded)) Error=0x04;
+
+	  result=m_TSBufferFile.Read((BYTE*)&filesRemoved, sizeof(filesRemoved), &bytesRead);
+    if (!SUCCEEDED(result)||  bytesRead!=sizeof(filesRemoved)) Error=0x08;
+
+    // If no files added or removed, break the loop !
+    if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) break ;
+
+    remainingLength = fileLength - sizeof(__int64) - sizeof(long) - sizeof(long) - sizeof(long) - sizeof(long) ;
+
+    // Above 100kb or below 0 seems stupid and figure out a problem !!!
+		if ((remainingLength > 100000) || (remainingLength < 0)) Error=0x10;;
+
+    pBuffer = (char*)new BYTE[remainingLength+1];
+		
+		result=m_TSBufferFile.Read((BYTE*)pBuffer, (ULONG)remainingLength, &bytesRead);
+    if (!SUCCEEDED(result)||  bytesRead != remainingLength) Error=0x20 ;
+
+   	result=m_TSBufferFile.Read((BYTE*)&filesAdded2, sizeof(filesAdded2), &bytesRead);
+    if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesAdded2)) Error=0x40 ;
+
+   	result=m_TSBufferFile.Read((BYTE*)&filesRemoved2, sizeof(filesRemoved2), &bytesRead);
+    if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesRemoved2)) Error=0x40 ;
+
+    if ((filesAdded2!=filesAdded) || (filesRemoved2!=filesRemoved))
+    {
+      Sleep(10) ;
+      Error=0x80 ;
+    }
+
+    if (Error) delete[] pBuffer;
+
+    Loop-- ;
+  } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
+ 
+  if (Loop < 9)
+  {
+    Log("MultiFileReader has waited %d times for TSbuffer integrity.", 10-Loop) ;
+
+    if(Error)
+    {
+      Log("MultiFileReader has failed for TSbuffer integrity. Error : %x", Error) ;
+      return E_FAIL ;
+    }
+  }
   
   //printf("MultiFileReader::RefreshTSBufferFile files added:%d removed:%d", filesAdded,filesRemoved);
 	if ((m_filesAdded != filesAdded) || (m_filesRemoved != filesRemoved))
@@ -325,10 +376,6 @@ int MultiFileReader::RefreshTSBufferFile()
 		}
 
 
-		if (filesToAdd > 0)
-		{
-      int x=123;
-    }
 		// Figure out what the start position of the next new file will be
 		if (m_tsFiles.size() > 0)
 		{
@@ -346,22 +393,7 @@ int MultiFileReader::RefreshTSBufferFile()
 
 			nextStartPosition = file->startPosition + file->length;
 		}
-		__int64 remainingLength = fileLength - sizeof(__int64) - sizeof(long) - sizeof(long);
 
-///////////////////////////////////////
-//Bug Report: Possible issue, seems to get a large value of fileLength greater than the BYTE Array can produce.
-		if (remainingLength > 4000000)
-			return S_FALSE; //exit false until fixed
-//////////////////////////////////////
-
-		char* pBuffer = (char*)new BYTE[remainingLength+1];
-		m_TSBufferFile.Read((BYTE*)pBuffer, remainingLength, &bytesRead);
-		if (bytesRead < remainingLength)
-		{
-			delete[] pBuffer;
-      Log("What's going on?");
-			return E_FAIL;
-		}
     int len=remainingLength;
     //printf("buf len:%d",len);
     for (int i=0; i < len/2;i++)
@@ -411,8 +443,6 @@ int MultiFileReader::RefreshTSBufferFile()
 			pCurr += (length + 1);
 			length = strlen(pCurr);
 		}
-
-		delete[] pBuffer;
 
 		// Go through files
 		std::vector<MultiFileReaderFile *>::iterator itFiles = m_tsFiles.begin();
@@ -467,6 +497,8 @@ int MultiFileReader::RefreshTSBufferFile()
 
 		m_filesAdded = filesAdded;
 		m_filesRemoved = filesRemoved;
+
+    delete[] pBuffer;
 	}
 
 	if (m_tsFiles.size() > 0)

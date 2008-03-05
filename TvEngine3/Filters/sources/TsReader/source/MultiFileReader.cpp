@@ -281,24 +281,79 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 	ULONG bytesRead;
 	MultiFileReaderFile *file;
 
-	m_TSBufferFile.SetFilePointer(0, FILE_END);
-	__int64 fileLength = m_TSBufferFile.GetFilePointer();
-	if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t)))
-		return S_FALSE;
-
-	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
-	
   HRESULT result;
 	__int64 currentPosition;
-	result=m_TSBufferFile.Read((LPBYTE)&currentPosition, sizeof(currentPosition), &bytesRead);
-  if (!SUCCEEDED(result)|| bytesRead!=sizeof(currentPosition)) return S_FALSE;
+  long filesAdded, filesRemoved;
+  long filesAdded2, filesRemoved2;
+  long Error;
+  long Loop=10 ;
 
-	long filesAdded, filesRemoved;
-	result=m_TSBufferFile.Read((LPBYTE)&filesAdded, sizeof(filesAdded), &bytesRead);
-  if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesAdded)) return S_FALSE;
+  LPWSTR pBuffer ;
+  	
+  do
+  {
+    Error=0  ;
+  	m_TSBufferFile.SetFilePointer(0, FILE_END);
+	  __int64 fileLength = m_TSBufferFile.GetFilePointer();
+	  if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long))) Error|=0x01;
 
-	result=m_TSBufferFile.Read((LPBYTE)&filesRemoved, sizeof(filesRemoved), &bytesRead);
-  if (!SUCCEEDED(result)||  bytesRead!=sizeof(filesRemoved)) return S_FALSE;
+	  m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
+	
+	  result=m_TSBufferFile.Read((LPBYTE)&currentPosition, sizeof(currentPosition), &bytesRead);
+    if (!SUCCEEDED(result)|| bytesRead!=sizeof(currentPosition)) Error|=0x02;
+
+	  result=m_TSBufferFile.Read((LPBYTE)&filesAdded, sizeof(filesAdded), &bytesRead);
+    if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesAdded)) Error=0x04;
+
+	  result=m_TSBufferFile.Read((LPBYTE)&filesRemoved, sizeof(filesRemoved), &bytesRead);
+    if (!SUCCEEDED(result)||  bytesRead!=sizeof(filesRemoved)) Error=0x08;
+
+    // If no files added or removed, break the loop !
+    if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) break ;
+
+    __int64 remainingLength = fileLength - sizeof(__int64) - sizeof(long) - sizeof(long) - sizeof(long) - sizeof(long) ;
+
+    // Above 100kb or below 0 seems stupid and figure out a problem !!!
+		if ((remainingLength > 100000) || (remainingLength < 0)) Error=0x10;;
+  
+    pBuffer = (LPWSTR)new BYTE[(UINT)remainingLength];
+
+		result=m_TSBufferFile.Read((LPBYTE)pBuffer, (ULONG)remainingLength, &bytesRead);
+    if (!SUCCEEDED(result)||  bytesRead != remainingLength) Error=0x20 ;
+
+   	result=m_TSBufferFile.Read((LPBYTE)&filesAdded2, sizeof(filesAdded2), &bytesRead);
+    if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesAdded2)) Error=0x40 ;
+
+   	result=m_TSBufferFile.Read((LPBYTE)&filesRemoved2, sizeof(filesRemoved2), &bytesRead);
+    if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesRemoved2)) Error=0x40 ;
+
+    if ((filesAdded2!=filesAdded) || (filesRemoved2!=filesRemoved))
+    {
+      Sleep(10) ;
+      Error=0x80 ;
+    }
+
+    if (Error) delete[] pBuffer;
+
+    Loop-- ;
+  } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
+ 
+  if (Loop < 9)
+  {
+    LogDebug("MultiFileReader has waited %d times for TSbuffer integrity.", 10-Loop) ;
+
+    if(Error)
+    {
+      LogDebug("MultiFileReader has failed for TSbuffer integrity. Error : %x", Error) ;
+      return E_FAIL ;
+    }
+  }
+
+	//randomly park the file pointer to help minimise HDD clogging
+	if(currentPosition&1)
+		m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
+	else
+		m_TSBufferFile.SetFilePointer(0, FILE_END);
 
 	if ((m_filesAdded != filesAdded) || (m_filesRemoved != filesRemoved))
 	{
@@ -351,28 +406,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
 			nextStartPosition = file->startPosition + file->length;
 		}
-		__int64 remainingLength = fileLength - sizeof(__int64) - sizeof(long) - sizeof(long);
 
-///////////////////////////////////////
-//Bug Report: Possible issue, seems to get a large value of fileLength greater than the BYTE Array can produce.
-		if (remainingLength > 4000000)
-			return S_FALSE; //exit false until fixed
-//////////////////////////////////////
-
-		LPWSTR pBuffer = (LPWSTR)new BYTE[(UINT)remainingLength];
-		m_TSBufferFile.Read((LPBYTE)pBuffer, (ULONG)remainingLength, &bytesRead);
-		if (bytesRead < remainingLength)
-		{
-			delete[] pBuffer;
-			::OutputDebugString(TEXT("What's going on?\n"));
-			return E_FAIL;
-		}
-
-		//randomly park the file pointer to help minimise HDD clogging
-		if(currentPosition&1)
-			m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
-		else
-			m_TSBufferFile.SetFilePointer(0, FILE_END);
 
 		//Get the real path of the buffer file
 		LPWSTR wfilename;
@@ -421,8 +455,6 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 		if (path)
 			delete[] path;
 
-		delete[] pBuffer;
-
 		// Go through files
 		std::vector<MultiFileReaderFile *>::iterator itFiles = m_tsFiles.begin();
 		std::vector<LPWSTR>::iterator itFilenames = filenames.begin();
@@ -436,7 +468,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
 			if (itFilenames < filenames.end())
 			{
-				// TODO: Check that the filenames match
+				// TODO: Check that the filenames match. ( Ambass : With buffer integrity check, probably no need to do this !)
 				itFilenames++;
 			}
 			else
@@ -476,6 +508,8 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
 		m_filesAdded = filesAdded;
 		m_filesRemoved = filesRemoved;
+
+    delete[] pBuffer;
 	}
 
 	if (m_tsFiles.size() > 0)
