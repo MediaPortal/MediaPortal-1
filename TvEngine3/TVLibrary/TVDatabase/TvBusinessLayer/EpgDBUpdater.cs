@@ -152,7 +152,12 @@ namespace TvDatabase
         {
           IList epgs = _layer.GetProgramExists(dbChannel, epgProgram.StartTime, epgProgram.EndTime);
           if (epgs.Count > 0)
+          {
             prog = (TvDatabase.Program)epgs[0];
+            for (int idx = 0; idx < epgs.Count - 1;idx++)
+              ((TvDatabase.Program)epgs[1]).Delete();
+          }
+            
         }
         AddProgramAndApplyTemplates(dbChannel, epgProgram, prog);
         iInserted++;
