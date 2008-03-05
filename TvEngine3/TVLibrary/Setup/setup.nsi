@@ -252,12 +252,9 @@ Section "${TITLE_SECServer}" SecServer
     File ..\..\Filters\sources\StreamingServer\release\StreamingServer.dll
 
     # Common App Data Files
-    SetOverwrite off
     SetOutPath "$CommonAppData"
     CreateDirectory "$CommonAppData\log"
     File ..\TvService\Gentle.config
-    SetOverwrite on
-
 
     #---------------------------------------------------------------------------
     # FILTER REGISTRATION   for TVServer
