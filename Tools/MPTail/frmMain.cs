@@ -128,8 +128,7 @@ namespace MPTail
         XmlUtils.NewAttribute(config, "WindowHeight", this.Height);
         XmlUtils.NewAttribute(config, "WindowWidth", this.Width);
       }
-      else
-        XmlUtils.NewAttribute(config, "WindowState", this.WindowState.ToString());
+      XmlUtils.NewAttribute(config, "WindowState", this.WindowState.ToString());
 
       XmlUtils.NewAttribute(config, "CategoryTabIndex", PageCtrlCategory.SelectedIndex);
       switch (PageCtrlCategory.SelectedIndex)
