@@ -113,7 +113,7 @@ void GetLogFile(char *pLog)
   {
     TCHAR folder[MAX_PATH];
     ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    sprintf(pLog,"%s\\Team MediaPortal\\MediaPortal\\Log\DVBSubs.log",folder);
+    sprintf(pLog,"%s\\Team MediaPortal\\MediaPortal\\Log\\DVBSubs.log",folder);
   }
   else // XP or earlier
   {
