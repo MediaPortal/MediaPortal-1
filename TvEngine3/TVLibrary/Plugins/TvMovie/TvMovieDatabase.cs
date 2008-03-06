@@ -212,12 +212,18 @@ namespace TvEngine
       {
         string path = string.Empty;
         string mpPath = string.Empty;
+        try
+        {
+          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+            if (rkey != null)
+              path = string.Format("{0}", rkey.GetValue("ProgrammPath"));
 
-        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
-          if (rkey != null)
-            path = string.Format("{0}", rkey.GetValue("ProgrammPath"));
-
-        mpPath = TvBLayer.GetSetting("TvMovieInstallPath", path).Value;
+          mpPath = TvBLayer.GetSetting("TvMovieInstallPath", path).Value;
+        }
+        catch (Exception ex)
+        {
+          Log.Info("TVMovie: Error getting TV Movie install dir (ProgrammPath) from registry {0}", ex.Message);
+        }
 
         if (File.Exists(mpPath))
           return mpPath;
@@ -233,12 +239,18 @@ namespace TvEngine
         string path = string.Empty;
         string mpPath = string.Empty;
 
-        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
-          if (rkey != null)
-            path = string.Format("{0}", rkey.GetValue("DBDatei"));
+        try
+        {
+          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+            if (rkey != null)
+              path = string.Format("{0}", rkey.GetValue("DBDatei"));
 
-        mpPath = TvBLayer.GetSetting("TvMoviedatabasepath", path).Value;
-
+          mpPath = TvBLayer.GetSetting("TvMoviedatabasepath", path).Value;
+        }
+        catch (Exception ex)
+        {
+          Log.Info("TVMovie: Error getting TV Movie DB dir (DBDatei) from registry {0}", ex.Message);
+        }
         if (File.Exists(mpPath))
           return mpPath;
 
@@ -247,25 +259,31 @@ namespace TvEngine
       set
       {
         string path = string.Empty;
-
         string newPath = value;
 
-        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
-          if (rkey != null)
-            path = string.Format("{0}", rkey.GetValue("DBDatei"));
+        try
+        {
+          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+            if (rkey != null)
+              path = string.Format("{0}", rkey.GetValue("DBDatei"));
 
-        if (!File.Exists(newPath))
-          newPath = path;
+          if (!File.Exists(newPath))
+            newPath = path;
 
-        string mpPath = TvBLayer.GetSetting("TvMoviedatabasepath", string.Empty).Value;
-        Setting setting = TvBLayer.GetSetting("TvMovieEnabled");
+          string mpPath = TvBLayer.GetSetting("TvMoviedatabasepath", string.Empty).Value;
+          Setting setting = TvBLayer.GetSetting("TvMovieEnabled");
 
-        if (newPath == path)
-          setting.Value = string.Empty;
-        else
-          setting.Value = newPath;
+          if (newPath == path)
+            setting.Value = string.Empty;
+          else
+            setting.Value = newPath;
 
-        setting.Persist();
+          setting.Persist();
+        }
+        catch (Exception ex)
+        {
+          Log.Info("TVMovie: Error setting TV Movie DB dir (DBDatei) in registry {0}", ex.Message);
+        }
       }
     }
     #endregion
@@ -283,7 +301,7 @@ namespace TvEngine
       return tvChannels;
     }
 
-    public void Connect()
+    public bool Connect()
     {
       LoadMemberSettings();
 
@@ -291,27 +309,53 @@ namespace TvEngine
       if (DatabasePath != string.Empty)
         dataProviderString = string.Format(dataProviderString, DatabasePath);
       else
-        return;
-
-      _databaseConnection = new OleDbConnection(dataProviderString);
-
-      string sqlSelect = "SELECT ID, SenderKennung, Bezeichnung, Webseite, SortNrTVMovie FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
-
-      OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
-      OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
-      DataSet tvMovieTable = new DataSet();
+        return false;
 
       try
       {
+        _databaseConnection = new OleDbConnection(dataProviderString);
+      }
+      catch (Exception connex)
+      {
+        Log.Info("TVMovie: Exception creating OleDbConnection: {0}", connex.Message);
+        return false;
+      }      
+
+      string sqlSelect = "SELECT ID, SenderKennung, Bezeichnung, Webseite, SortNrTVMovie FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
+
+      DataSet tvMovieTable = new DataSet();
+      try
+      {
         _databaseConnection.Open();
-        databaseAdapter.Fill(tvMovieTable, "Sender");
+        using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
+        {
+          using (OleDbDataAdapter databaseAdapter = new OleDbDataAdapter())
+          {
+            try
+            {
+              databaseAdapter.SelectCommand = databaseCommand;
+              databaseAdapter.Fill(tvMovieTable, "Sender");
+            }
+            catch (Exception dsex)
+            {
+              Log.Info("TVMovie: Exception filling Sender DataSet - {0}", dsex.Message);
+              return false;
+            }
+          }
+        }
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
-        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations");
-        Log.Error("TVMovie: Exception: {0}", ex);
+        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations: {0}", ex.Message);
+        Log.Info("TVMovie: Exception: {0}", ex.StackTrace);
         _canceled = true;
-        return;
+        return false;
+      }
+      catch (Exception ex2)
+      {
+        Log.Info("TVMovie: Exception: {0}, {1}", ex2.Message, ex2.StackTrace);
+        _canceled = true;
+        return false;
       }
       finally
       {
@@ -330,6 +374,7 @@ namespace TvEngine
         _tvmEpgChannels.Add(current);
       }
       _channelList = GetChannels();
+      return true;
     }
 
     public bool NeedsImport
@@ -493,7 +538,7 @@ namespace TvEngine
     private int ImportStation(string stationName, List<Mapping> channelNames, IList allChannels, bool useGentle)
     {
       int counter = 0;
-      string sqlSelect = string.Empty;      
+      string sqlSelect = string.Empty;
       StringBuilder sqlb = new StringBuilder();
 
       // UNUSED: F16zu9 , live , untertitel , Dauer , Wiederholung
@@ -527,11 +572,11 @@ namespace TvEngine
 
         while (reader.Read())
         {
-          ImportSingleChannelData(channelNames, allChannels, useGentle, counter, 
+          ImportSingleChannelData(channelNames, allChannels, useGentle, counter,
                                     reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(),
                                     reader[8].ToString(), reader[9].ToString(), reader[10].ToString(), reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
                                     reader[14].ToString(), reader[15].ToString(), reader[16].ToString(), reader[17].ToString(), reader[18].ToString(), reader[19].ToString(), reader[20].ToString()
-                                  );          
+                                  );
           counter++;
         }
         databaseTransaction.Commit();
@@ -561,7 +606,7 @@ namespace TvEngine
     /// <summary>
     /// Takes a DataRow worth of EPG Details to persist them in MP's program table
     /// </summary>
-    private void ImportSingleChannelData(List<Mapping> channelNames, IList allChannels, bool useGentlePersist, int aCounter, 
+    private void ImportSingleChannelData(List<Mapping> channelNames, IList allChannels, bool useGentlePersist, int aCounter,
                                          string SenderKennung, string Beginn, string Ende, string Sendung, string Genre, string Kurzkritik, string KurzBeschreibung, string Beschreibung,
                                          string Audiodescription, string DolbySuround, string Stereo, string DolbyDigital, string Dolby, string Zweikanalton,
                                          string FSK, string Herstellungsjahr, string Originaltitel, string Regie, string Darsteller, string Interessant, string Bewertungen)
@@ -726,7 +771,7 @@ namespace TvEngine
           Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification, 0);
           if (useGentlePersist)
             prog.Persist();
-          
+
           _tvmEpgProgs.Add(prog);
 
           if (_slowImport && aCounter % 2 == 0)
@@ -940,7 +985,7 @@ namespace TvEngine
         string[] splitActors = dbActors.Split(';');
         if (splitActors != null && splitActors.Length > 0)
         {
-          for (int i = 0 ; i < splitActors.Length ; i++)
+          for (int i = 0; i < splitActors.Length; i++)
           {
             if (i < _actorCount)
             {

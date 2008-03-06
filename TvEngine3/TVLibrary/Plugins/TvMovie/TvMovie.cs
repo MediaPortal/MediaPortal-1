@@ -75,15 +75,15 @@ namespace TvEngine
               if (updateDuration > 15)
                 _database.Import();
               else
-                Log.Error("TVMovie: Import skipped because there was no new data.");
+                Log.Info("TVMovie: Import skipped because there was no new data.");
             }
             else
-              Log.Error("TVMovie: Import skipped because the update process timed out / has been aborted.");
+              Log.Info("TVMovie: Import skipped because the update process timed out / has been aborted.");
           }
         }
         catch (Exception ex)
         {
-          Log.Error("TvMovie plugin error:");
+          Log.Info("TvMovie plugin error:");
           Log.Write(ex);
         }
       }
@@ -126,8 +126,9 @@ namespace TvEngine
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
-        Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
+        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 1800);
+        if (!allowed)
+          Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is 30 minutes", allowed);
       }
     }
 
@@ -192,12 +193,12 @@ namespace TvEngine
 
     public string Version
     {
-      get { return "0.2.3.0"; }
+      get { return "0.9.0.0"; }
     }
 
     public string Author
     {
-      get { return "mPod / rtv"; }
+      get { return "rtv"; }
     }
 
     public bool MasterOnly

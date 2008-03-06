@@ -201,35 +201,37 @@ namespace SetupTv.Sections
     private void LoadStations()
     {
       TvMovieDatabase database = new TvMovieDatabase();
-      database.Connect();
-
-      treeViewStations.BeginUpdate();
-      treeViewStations.Nodes.Clear();
-
-      foreach (TVMChannel station in database.Stations)
+      if (database.Connect())
       {
-        TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmEpgDescription), new TreeNode(station.TvmWebLink) }; // new TreeNode(station.TvmSortId), 
-        TreeNode stationNode = new TreeNode(station.TvmEpgChannel, subItems);
-        ChannelInfo channelInfo = new ChannelInfo();
-        channelInfo.Name = station.TvmEpgChannel;
-        stationNode.Tag = channelInfo;
-        treeViewStations.Nodes.Add(stationNode);
+
+        treeViewStations.BeginUpdate();
+        treeViewStations.Nodes.Clear();
+
+        foreach (TVMChannel station in database.Stations)
+        {
+          TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmEpgDescription), new TreeNode(station.TvmWebLink) }; // new TreeNode(station.TvmSortId), 
+          TreeNode stationNode = new TreeNode(station.TvmEpgChannel, subItems);
+          ChannelInfo channelInfo = new ChannelInfo();
+          channelInfo.Name = station.TvmEpgChannel;
+          stationNode.Tag = channelInfo;
+          treeViewStations.Nodes.Add(stationNode);
+        }
+
+        treeViewStations.EndUpdate();
+
+        treeViewChannels.BeginUpdate();
+        treeViewChannels.Nodes.Clear();
+
+        ArrayList mpChannelList = database.GetChannels();
+
+        foreach (Channel channel in mpChannelList)
+        {
+          TreeNode stationNode = new TreeNode(channel.Name);
+          treeViewChannels.Nodes.Add(stationNode);
+        }
+
+        treeViewChannels.EndUpdate();
       }
-
-      treeViewStations.EndUpdate();
-
-      treeViewChannels.BeginUpdate();
-      treeViewChannels.Nodes.Clear();
-
-      ArrayList mpChannelList = database.GetChannels();
-
-      foreach (Channel channel in mpChannelList)
-      {
-        TreeNode stationNode = new TreeNode(channel.Name);
-        treeViewChannels.Nodes.Add(stationNode);
-      }
-
-      treeViewChannels.EndUpdate();
     }
 
     /// <summary>
@@ -616,13 +618,13 @@ namespace SetupTv.Sections
         _database.LaunchTVMUpdater();
         _database.OnProgramsChanged += new TvMovieDatabase.ProgramsChanged(_database_OnProgramsChanged);
         _database.OnStationsChanged += new TvMovieDatabase.StationsChanged(_database_OnStationsChanged);
-        _database.Connect();
-        _database.Import();
+        if (_database.Connect())
+          _database.Import();
         buttonImportNow.Enabled = true;
       }
       catch (Exception ex)
       {
-        Log.Error("TvMovie plugin error:");
+        Log.Info("TvMovie plugin error:");
         Log.Write(ex);
         buttonImportNow.Enabled = true;
       }
