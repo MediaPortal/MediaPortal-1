@@ -1800,7 +1800,6 @@ namespace MediaPortal.Util
             /*
              * For each cuesheet, get used data files and remove then from selectable list so that only the cuesheet will remain
              * Limitation(s):
-             *   - the data file is expected to located in the same dir than the cuesheet
              */
             List<string> strCueDataFiles = new List<string>();
             for (int i = 0; i < strFiles.Length; ++i)
@@ -1816,7 +1815,19 @@ namespace MediaPortal.Util
               if (IsCuesheetFile(extension))
               {
                 CueSharp.CueSheet cuesheet = new CueSharp.CueSheet(strFiles[i]);
-                strCueDataFiles.AddRange(cuesheet.DataFiles);
+                foreach (string strCueDataFile in cuesheet.DataFiles)
+                {
+                  string strCueDataFilePath;
+                  if (Path.IsPathRooted(strCueDataFile))
+                  {
+                    strCueDataFilePath = strCueDataFile;
+                  }
+                  else
+                  {
+                    strCueDataFilePath = Path.Combine(strDir, strCueDataFile);
+                  }
+                  strCueDataFiles.Add(strCueDataFilePath);
+                }
               }
             }
 
@@ -1825,7 +1836,7 @@ namespace MediaPortal.Util
             {
               for (int i = 0; i < strFiles.Length; ++i)
               {
-                if (strFiles[i].EndsWith("\\" + strCueDataFile))
+                if (strFiles[i] == strCueDataFile)
                 {
                   strFiles[i] = string.Empty;
                   deleted_entries++;

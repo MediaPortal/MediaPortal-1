@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using System.IO;
 
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -1524,18 +1525,8 @@ namespace MediaPortal.GUI.Music
                    */
 
                   // Get the path of the virtual folder that contains this virtual file
-                  string virtualFolderPath   = string.Empty;
-                  string virtualFolderParent = string.Empty;
-                  {
-                    int ipos = pItem.Path.LastIndexOf(@"\");
-                    if (ipos > 0)
-                    {
-                      virtualFolderPath = pItem.Path.Substring(0, ipos);
-                      ipos = virtualFolderPath.LastIndexOf(@"\");
-                      if (ipos > 0)
-                        virtualFolderParent = virtualFolderPath.Substring(0, ipos);
-                    }
-                  }
+                  string virtualFolderPath   = Path.GetDirectoryName(pItem.Path);
+                  string virtualFolderParent = Path.GetDirectoryName(virtualFolderPath);
 
                   // The virtual folder path is in fact the path of cuesheet that describes it so get cuesheet infos
                   CueSharp.CueSheet cuesheet = new CueSharp.CueSheet(virtualFolderPath);
@@ -1560,7 +1551,15 @@ namespace MediaPortal.GUI.Music
 
                   if (track != null)
                   {
-                    pItem.PlayedFileName = virtualFolderParent + "\\" + track.UsedDataFile.Filename;
+                    string strCueDataFile = track.UsedDataFile.Filename;
+                    if (Path.IsPathRooted(strCueDataFile))
+                    {
+                      pItem.PlayedFileName = strCueDataFile;
+                    }
+                    else
+                    {
+                      pItem.PlayedFileName = Path.Combine(virtualFolderParent, strCueDataFile);
+                    }
                     pItem.StartPlayPositionMS = track.DataFileRelativeStartFramePosition.InMiliSeconds;
                     pItem.EndPlayPositionMS   = track.DataFileRelativeEndFramePosition.InMiliSeconds;
   

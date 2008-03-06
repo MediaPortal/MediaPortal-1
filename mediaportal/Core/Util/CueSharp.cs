@@ -9,6 +9,7 @@ Website:  wyday.com/cuesharp
 using System;
 using System.Text;
 using System.IO;
+using TagLib;
 
 namespace CueSharp
 {
@@ -20,6 +21,7 @@ namespace CueSharp
     #region Private Variables
     string[] cueLines;
 
+    private string m_FilePath = "";
     private string m_Catalog = "";
     private string m_CDTextFile = "";
     private string[] m_Comments = new string[0];
@@ -43,6 +45,15 @@ namespace CueSharp
     {
       get { return m_Tracks[tracknumber]; }
       set { m_Tracks[tracknumber] = value; }
+    }
+
+    /// <summary>
+    /// The full path to the cuesheet.
+    /// </summary>
+    public string FilePath
+    {
+      get { return m_FilePath; }
+      set { m_FilePath = value; }
     }
 
     /// <summary>
@@ -240,6 +251,7 @@ namespace CueSharp
 
     private void ReadCueSheet(string filename, Encoding encoding)
     {
+      FilePath = filename;
       // array of delimiters to split the sentence with
       char[] delimiters = new char[] { '\n' };
 
@@ -1357,10 +1369,35 @@ namespace CueSharp
     {
       get
       {
+        string dataFilename = UsedDataFile.Filename;
         // The end of the track is the beginning of the next one
-        if (   (NextTrack == null)                                         // If last track, we are at the end of the data file used by this track
-            || (NextTrack.UsedDataFile.Filename != UsedDataFile.Filename)) // If next track has not the same data file, ditto
-          return UsedDataFile.Duration;
+        if (   (NextTrack == null)                                // If last track, we are at the end of the data file used by this track
+            || (NextTrack.UsedDataFile.Filename != dataFilename)) // If next track has not the same data file, ditto
+        {
+          FramePosition pos = new FramePosition();
+
+          try
+          {
+            // Get data file full path
+            string dataFilePath;
+            if (Path.IsPathRooted(dataFilename))
+              dataFilePath = dataFilename;
+            else
+              dataFilePath = Path.Combine(Path.GetDirectoryName(Sheet.FilePath), dataFilename);
+
+            // Gets informations about the data file
+            TagLib.ByteVector.UseBrokenLatin1Behavior = true;
+            TagLib.File tag = TagLib.File.Create(dataFilePath);
+
+            // Convert the nb of ms into a frame position
+            pos.InFrames = (int)((tag.Properties.Duration.TotalMilliseconds/1000)*FramePosition.FRAMES_PER_SECOND);
+          }
+          catch (Exception ex)
+          {
+          }
+
+          return pos;
+        }
         else                                                               // Next track exits and is using the same data file
           return NextTrack.DataFileRelativeStartFramePosition;
       }
@@ -1695,11 +1732,6 @@ namespace CueSharp
     {
       get { return m_Filetype; }
       set { m_Filetype = value; }
-    }
-
-    public FramePosition Duration
-    {
-      get { return new FramePosition(); }
     }
     #endregion
 
