@@ -53,6 +53,7 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.tabControlTvMovie = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
@@ -84,6 +85,7 @@ namespace SetupTv.Sections
       this.maskedTextBoxTimeEnd = new System.Windows.Forms.MaskedTextBox();
       this.treeViewChannels = new System.Windows.Forms.TreeView();
       this.treeViewStations = new System.Windows.Forms.TreeView();
+      this.imageListTvmStations = new System.Windows.Forms.ImageList(this.components);
       this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.listView2 = new MediaPortal.UserInterface.Controls.MPListView();
@@ -461,7 +463,7 @@ namespace SetupTv.Sections
       this.treeViewChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)));
       this.treeViewChannels.HideSelection = false;
-      this.treeViewChannels.Location = new System.Drawing.Point(16, 48);
+      this.treeViewChannels.Location = new System.Drawing.Point(12, 48);
       this.treeViewChannels.Name = "treeViewChannels";
       this.treeViewChannels.ShowNodeToolTips = true;
       this.treeViewChannels.ShowPlusMinus = false;
@@ -477,13 +479,26 @@ namespace SetupTv.Sections
       this.treeViewStations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.treeViewStations.HideSelection = false;
-      this.treeViewStations.Location = new System.Drawing.Point(240, 48);
+      this.treeViewStations.ImageIndex = 0;
+      this.treeViewStations.ImageList = this.imageListTvmStations;
+      this.treeViewStations.Indent = 35;
+      this.treeViewStations.ItemHeight = 24;
+      this.treeViewStations.Location = new System.Drawing.Point(236, 48);
       this.treeViewStations.Name = "treeViewStations";
+      this.treeViewStations.SelectedImageIndex = 0;
       this.treeViewStations.ShowNodeToolTips = true;
-      this.treeViewStations.Size = new System.Drawing.Size(168, 248);
+      this.treeViewStations.ShowPlusMinus = false;
+      this.treeViewStations.ShowRootLines = false;
+      this.treeViewStations.Size = new System.Drawing.Size(172, 251);
       this.treeViewStations.Sorted = true;
       this.treeViewStations.TabIndex = 3;
       this.treeViewStations.DoubleClick += new System.EventHandler(this.treeViewStations_DoubleClick);
+      // 
+      // imageListTvmStations
+      // 
+      this.imageListTvmStations.ColorDepth = System.Windows.Forms.ColorDepth.Depth24Bit;
+      this.imageListTvmStations.ImageSize = new System.Drawing.Size(32, 22);
+      this.imageListTvmStations.TransparentColor = System.Drawing.Color.Transparent;
       // 
       // listView1
       // 
@@ -491,7 +506,7 @@ namespace SetupTv.Sections
       this.listView1.AllowRowReorder = true;
       this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-      this.listView1.Location = new System.Drawing.Point(16, 27);
+      this.listView1.Location = new System.Drawing.Point(12, 27);
       this.listView1.Name = "listView1";
       this.listView1.Scrollable = false;
       this.listView1.Size = new System.Drawing.Size(216, 24);
@@ -511,10 +526,10 @@ namespace SetupTv.Sections
       this.listView2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.listView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
-      this.listView2.Location = new System.Drawing.Point(240, 27);
+      this.listView2.Location = new System.Drawing.Point(236, 27);
       this.listView2.Name = "listView2";
       this.listView2.Scrollable = false;
-      this.listView2.Size = new System.Drawing.Size(168, 24);
+      this.listView2.Size = new System.Drawing.Size(172, 24);
       this.listView2.TabIndex = 2;
       this.listView2.UseCompatibleStateImageBehavior = false;
       this.listView2.View = System.Windows.Forms.View.Details;
@@ -587,5 +602,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowRatings;
     private System.Windows.Forms.LinkLabel linkLabelInfo;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxLimitActors;
+    private System.Windows.Forms.ImageList imageListTvmStations;
   }
 }

@@ -80,9 +80,9 @@ namespace SetupTv.Sections
       if (treeViewStations.SelectedNode != null)
         treeViewStations.SelectedNode.Collapse();
       MapStation();
-      
+
     }
-    
+
     private void treeViewChannels_DoubleClick(object sender, EventArgs e)
     {
       UnmapStation();
@@ -177,7 +177,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      LoadDbSettings();   
+      LoadDbSettings();
 
       base.OnSectionActivated();
     }
@@ -185,7 +185,7 @@ namespace SetupTv.Sections
     private void LoadDbSettings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";      
+      checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";
       checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "true").Value == "true";
       checkBoxAdditionalInfo.Checked = layer.GetSetting("TvMovieExtendDescription", "false").Value == "true";
       checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "false").Value == "true";
@@ -206,11 +206,26 @@ namespace SetupTv.Sections
 
         treeViewStations.BeginUpdate();
         treeViewStations.Nodes.Clear();
+        imageListTvmStations.Images.Clear();
 
-        foreach (TVMChannel station in database.Stations)
+        string GifBasePath = TvMovieDatabase.TVMovieProgramPath + @"Gifs\";
+
+        for (int i = 0; i < database.Stations.Count; i++)
         {
-          TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmEpgDescription), new TreeNode(station.TvmWebLink) }; // new TreeNode(station.TvmSortId), 
-          TreeNode stationNode = new TreeNode(station.TvmEpgChannel, subItems);
+          TVMChannel station = database.Stations[i];
+
+          string channelLogo = GifBasePath + station.TvmZeichen;
+          if (!File.Exists(channelLogo))
+            channelLogo = GifBasePath + @"tvmovie_senderlogoplatzhalter.gif";
+
+          // convert gif to ico
+          Bitmap tvmLogo = new Bitmap(channelLogo);
+          IntPtr iconHandle = tvmLogo.GetHicon();
+          Icon stationThumb = Icon.FromHandle(iconHandle);
+          imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
+
+          //TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmEpgDescription), new TreeNode(station.TvmWebLink) }; // new TreeNode(station.TvmSortId), 
+          TreeNode stationNode = new TreeNode(station.TvmEpgChannel, i, i);//, subItems);
           ChannelInfo channelInfo = new ChannelInfo();
           channelInfo.Name = station.TvmEpgChannel;
           stationNode.Tag = channelInfo;
@@ -305,7 +320,7 @@ namespace SetupTv.Sections
       {
         //Log.Debug("TvMovieSetup: Processing channel {0}", channel.Text);
         foreach (TreeNode station in channel.Nodes)
-        {          
+        {
           ChannelInfo channelInfo = (ChannelInfo)station.Tag;
           //Log.Debug("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
           TvMovieMapping mapping = null;
@@ -403,7 +418,7 @@ namespace SetupTv.Sections
       ColorTree();
       treeViewChannels.EndUpdate();
     }
-    
+
     private TreeNode FindChannel(string channelName)
     {
       foreach (TreeNode channel in treeViewChannels.Nodes)
@@ -455,7 +470,7 @@ namespace SetupTv.Sections
       maskedTextBoxTimeStart.Text = channelInfo.Start;
       maskedTextBoxTimeEnd.Text = channelInfo.End;
     }
-    
+
     string CleanInput(string input)
     {
       int hours = 0;
@@ -520,14 +535,14 @@ namespace SetupTv.Sections
     {
       if (radioButton6h.Checked)
         return "6"; else
-      if (radioButton12h.Checked)
+        if (radioButton12h.Checked)
         return "12"; else
-      if (radioButton24h.Checked)
+          if (radioButton24h.Checked)
         return "24"; else
-      if (radioButton2d.Checked)
+            if (radioButton2d.Checked)
         return "48"; else
-      if (radioButton7d.Checked)
-        return "168";
+              if (radioButton7d.Checked)
+                return "168";
 
       return "24";
     }
@@ -536,12 +551,12 @@ namespace SetupTv.Sections
     {
       switch (RadioButtonSetting)
       {
-        case "6":  radioButton6h.Checked = true;  break;
+        case "6": radioButton6h.Checked = true; break;
         case "12": radioButton12h.Checked = true; break;
         case "24": radioButton24h.Checked = true; break;
-        case "48": radioButton2d.Checked = true;  break;
-        case "168":radioButton7d.Checked = true;  break;
-        default:   radioButton24h.Checked = true; break;
+        case "48": radioButton2d.Checked = true; break;
+        case "168": radioButton7d.Checked = true; break;
+        default: radioButton24h.Checked = true; break;
       }
     }
 
@@ -611,7 +626,7 @@ namespace SetupTv.Sections
     }
 
     private void ManualImportThread()
-    {      
+    {
       TvMovieDatabase _database = new TvMovieDatabase();
       try
       {
@@ -634,7 +649,7 @@ namespace SetupTv.Sections
     {
       progressBarImportTotal.Maximum = maximum;
       if (value <= maximum && value >= 0)
-        progressBarImportTotal.Value = value;      
+        progressBarImportTotal.Value = value;
     }
 
     void _database_OnProgramsChanged(int value, int maximum, string text)

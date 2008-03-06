@@ -55,14 +55,16 @@ namespace TvEngine
     private string fBezeichnung;
     private string fWebseite;
     private string fSortNrTVMovie;
+    private string fZeichen;
 
-    public TVMChannel(string aID, string aSenderKennung, string aBezeichnung, string aWebseite, string aSortNrTVMovie)
+    public TVMChannel(string aID, string aSenderKennung, string aBezeichnung, string aWebseite, string aSortNrTVMovie, string aZeichen)
     {
       fID = aID;
       fSenderKennung = aSenderKennung;
       fBezeichnung = aBezeichnung;
       fWebseite = aWebseite;
       fSortNrTVMovie = aSortNrTVMovie;
+      fZeichen = aZeichen;
     }
 
     public string TvmId
@@ -88,6 +90,11 @@ namespace TvEngine
     public string TvmSortId
     {
       get { return fSortNrTVMovie; }
+    }
+
+    public string TvmZeichen
+    {
+      get { return fZeichen; }
     }
   }
   #endregion
@@ -321,7 +328,7 @@ namespace TvEngine
         return false;
       }      
 
-      string sqlSelect = "SELECT ID, SenderKennung, Bezeichnung, Webseite, SortNrTVMovie FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
+      string sqlSelect = "SELECT ID, SenderKennung, Bezeichnung, Webseite, SortNrTVMovie, Zeichen FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
 
       DataSet tvMovieTable = new DataSet();
       try
@@ -369,7 +376,8 @@ namespace TvEngine
                                             sender["SenderKennung"].ToString(),
                                             sender["Bezeichnung"].ToString(),
                                             sender["Webseite"].ToString(),
-                                            sender["SortNrTVMovie"].ToString()
+                                            sender["SortNrTVMovie"].ToString(),
+                                            sender["Zeichen"].ToString()
                                             );
         _tvmEpgChannels.Add(current);
       }
@@ -591,7 +599,13 @@ namespace TvEngine
       }
       catch (Exception ex1)
       {
-        databaseTransaction.Rollback();
+        try
+        {
+          databaseTransaction.Rollback();
+        }
+        catch (Exception)
+        {
+        }        
         Log.Info("TVMovie: Exception: {0}", ex1);
         return 0;
       }
