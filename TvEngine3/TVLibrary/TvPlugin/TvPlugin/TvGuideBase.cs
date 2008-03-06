@@ -247,8 +247,13 @@ namespace TvPlugin
       {
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           {
-            GUIWindowManager.ShowPreviousWindow();
-            return;
+            if (_singleChannelView)
+              OnSwitchMode();
+            else
+            {
+              GUIWindowManager.ShowPreviousWindow();
+              return;
+            }
           }
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
