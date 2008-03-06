@@ -51,7 +51,7 @@ namespace FullscreenMsg
 
     private void timerFullscreen_Tick(object sender, EventArgs e)
     {
-      if (ForceForeground)
+      if (this.Visible && ForceForeground)
       {
         this.Activate();
         WindowManagement.SetForegroundWindow(this.Handle); // && WindowManagement.GetForegroundWindow() != this.Handle
@@ -64,10 +64,6 @@ namespace FullscreenMsg
       if (_CloseOnForegroundWindowName != string.Empty) CloseOnForegroundWindowExistence();
 
       Application.DoEvents();
-    }
-
-    public void UseMpBackground()
-    {
     }
 
     public static int EnumChildGetValue(int hWnd, int lParam)

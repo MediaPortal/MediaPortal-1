@@ -129,7 +129,7 @@ namespace FullscreenMsg
 
           Cursor.Position = new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
-          FullScreenForm.Show();
+          //FullScreenForm.Show();
           _bFullScreenMode = true;
         }
 
@@ -140,8 +140,8 @@ namespace FullscreenMsg
         if (tmpArgs.ArgExists("TextSize")) FullScreenForm.lblMainLable.Font = new Font(FullScreenForm.lblMainLable.Font.FontFamily, float.Parse(tmpArgs.Values[tmpArgs.FindArgPos("TextSize")]), FullScreenForm.lblMainLable.Font.Style);
         if (tmpArgs.ArgExists("BgImage"))
         {
-          if (tmpArgs.Values[tmpArgs.FindArgPos("BgImage")] == "MpBackground") FullScreenForm.UseMpBackground();
-          else FullScreenForm.pbBackground.Image = new Bitmap(tmpArgs.Values[tmpArgs.FindArgPos("BgImage")]);
+          FullScreenForm.pbBackground.Image = new Bitmap(tmpArgs.Values[tmpArgs.FindArgPos("BgImage")]);
+          if (!FullScreenForm.Visible) FullScreenForm.Show();
         }
 
         if (tmpArgs.ArgExists("ObservateMpStartup")) bool.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("ObservateMpStartup")], out FullScreenForm.OberservateMPStartup);
