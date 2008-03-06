@@ -1288,6 +1288,7 @@
         <String id="6036">H.264 Video Codec</String>
         <String id="6037">Mehrteiliger Film</String>
         <String id="6038">Bitte eine Disk auswählen.</String>
+        <String id="6039">LATM AAC Audio-Dekoder</String>
         <String id="8000" prefix="Meine ">E-Mails</String>
         <String id="8001">E-Mails abrufen</String>
         <String id="8002">Autocheck aus</String>
