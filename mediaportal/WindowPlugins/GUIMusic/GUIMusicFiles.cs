@@ -169,8 +169,7 @@ namespace MediaPortal.GUI.Music
     // the player is not playing)...
     void GUIWindowManager_OnNewAction(Action action)
     {
-      if ((action.wID == Action.ActionType.ACTION_PLAY
-          || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
+      if ((action.wID == Action.ActionType.ACTION_PLAY || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
           && GUIWindowManager.ActiveWindow == GetID)
       {
         GUIListItem item = facadeView.SelectedListItem;

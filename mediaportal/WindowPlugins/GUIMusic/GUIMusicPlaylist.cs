@@ -193,11 +193,15 @@ namespace MediaPortal.GUI.Music
       //      ScrobbleLock = new object();
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
+      GUIWindowManager.OnNewAction += new OnActionHandler(this.OnNewAction);
       return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
     }
 
     public override void DeInit()
     {
+      GUIWindowManager.Receivers -= new SendMessageHandler(this.OnThreadMessage);
+      GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnNewAction);
+
       if (_lastRequest != null)
         ascrobbler.RemoveRequest(_lastRequest);
 
@@ -223,8 +227,28 @@ namespace MediaPortal.GUI.Music
       return true;
     }
 
+    // Fires every time - especially ACTION_MUSIC_PLAY even if we're already playing stuff
+    private void OnNewAction(Action action)
+    {
+      if ((action.wID == Action.ActionType.ACTION_MUSIC_PLAY || action.wID == Action.ActionType.ACTION_PLAY) && GUIWindowManager.ActiveWindow == GetID)
+        try
+        {
+          if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
+            playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+
+          playlistPlayer.Play(facadeView.SelectedListItemIndex);
+          bool didJump = DoPlayNowJumpTo(facadeView.Count);
+          Log.Debug("GUIMusicPlaylist: Doing play now jump to: {0} ({1})", PlayNowJumpTo, didJump);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("GUIMusicPlaylist: Error in ACTION_PLAY: {0}", ex.Message);
+        }
+    }
+
     public override void OnAction(Action action)
     {
+      Log.Debug("DEBUG - {0}", action.wID.ToString());
       if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
       {
         GUIWindowManager.ShowPreviousWindow();
@@ -252,7 +276,7 @@ namespace MediaPortal.GUI.Music
         {
           playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
 
-          if (g_Player.CurrentFile == "")
+          if (string.IsNullOrEmpty(g_Player.CurrentFile))
           {
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
