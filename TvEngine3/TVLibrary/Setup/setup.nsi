@@ -30,11 +30,6 @@
 #
 # Editing is much more easier, if you install HM NSIS Edit from http://hmne.sourceforge.net
 #
-# Used code for Add/Remove page from official NSIS installation file.
-#
-#
-#
-#
 #**********************************************************************************************************#
 Name "MediaPortal TV Server / Client"
 SetCompressor /SOLID lzma
@@ -63,14 +58,20 @@ Var CompleteCleanup
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 
-!define REGKEY          "SOFTWARE\Team MediaPortal\MediaPortal TV Server / Client"
-!define REG_UNINSTALL   "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server / Client"
+!define REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
 !define VER_REVISION    0
 !ifndef VER_BUILD
     !define VER_BUILD   0
+!endif
+!if ${VER_BUILD} == 0       # it's a stable release
+    !define VERSION "1.0"
+    BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
+!else                       # it's an svn reöease
+    !define VERSION "pre-release build ${VER_BUILD}"
+    BrandingText "${VERSION}"
 !endif
 
 #---------------------------------------------------------------------------
@@ -94,36 +95,30 @@ Var CompleteCleanup
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
 #---------------------------------------------------------------------------
-!define MUI_ICON "images\install.ico"
-!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
+!define MUI_ICON    "images\install.ico"
+!define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
 !define MUI_HEADERIMAGE
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define MUI_HEADERIMAGE_BITMAP "images\header.bmp"
-    !define MUI_WELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
-    !define MUI_UNWELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
-
-    !define VERSION "1.0"
-    BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
+    !define MUI_HEADERIMAGE_BITMAP          "images\header.bmp"
+    !define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard.bmp"
+    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard.bmp"
 !else                       # it's an svn reöease
-    !define MUI_HEADERIMAGE_BITMAP "images\header-svn.bmp"
-    !define MUI_WELCOMEFINISHPAGE_BITMAP "images\wizard-svn.bmp"
-    !define MUI_UNWELCOMEFINISHPAGE_BITMAP "images\wizard-svn.bmp"
-    
-    !define VERSION "pre-release build ${VER_BUILD}"
-    BrandingText "${VERSION}"
+    !define MUI_HEADERIMAGE_BITMAP          "images\header-svn.bmp"
+    !define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard-svn.bmp"
+    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard-svn.bmp"
 !endif
 !define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER "MediaPortal\MediaPortal TV Server"
 !define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "${REGKEY}"
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "MediaPortal\MediaPortal TV Server"
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT         HKLM
+!define MUI_STARTMENUPAGE_REGISTRY_KEY          "${REG_UNINSTALL}"
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME    StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN
-!define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal TV Server Setup"
+!define MUI_FINISHPAGE_RUN_TEXT     "Run MediaPortal TV Server Setup"
 !define MUI_FINISHPAGE_RUN_FUNCTION RunSetup
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
@@ -162,7 +157,7 @@ Var CompleteCleanup
 #---------------------------------------------------------------------------
 OutFile Release\setup-tve3.exe
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
-InstallDirRegKey HKLM "${REGKEY}" InstallPath
+InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
 CRCCheck on
 XPStyle on
 ShowInstDetails show
@@ -184,7 +179,7 @@ Section "${TITLE_SECServer}" SecServer
     
     SetOverwrite on
 
-    ReadRegStr $InstallPath HKLM "${REGKEY}" InstallPath
+    ReadRegStr $InstallPath HKLM "${REG_UNINSTALL}" InstallPath
     ${If} $InstallPath != ""
         #MessageBox MB_OKCANCEL|MB_ICONQUESTION "TV Server is already installed.$\r$\nPress 'OK' to overwrite the existing installation$\r$\nPress 'Cancel' to Abort the installation" /SD IDOK IDOK lbl_install IDCANCEL 0
         #DetailPrint "User pressed Cancel. Skipping installation"
@@ -278,7 +273,7 @@ Section "${TITLE_SECServer}" SecServer
     DetailPrint "Finished Installing TVService"
     
     #---------------------------- Post Installation Tasks ----------------------
-    WriteRegStr HKLM "${REGKEY}" InstallPath $INSTDIR
+    WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath $INSTDIR
 
     SetOutPath $INSTDIR
 
@@ -380,8 +375,8 @@ SectionEnd
     Delete /REBOOTOK $INSTDIR\StreamingServer.dll
     
     # Remove Registry Keys and Start Menu
-    #DeleteRegValue HKLM "${REGKEY}\Components" SecServer
-    DeleteRegValue HKLM "${REGKEY}" InstallPath
+    #DeleteRegValue HKLM "${REG_UNINSTALL}\Components" SecServer
+    DeleteRegValue HKLM "${REG_UNINSTALL}" InstallPath
     
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk"
@@ -472,7 +467,6 @@ SectionEnd
     #RmDir /r /REBOOTOK $INSTDIR
     RmDir /r /REBOOTOK $CommonAppData
 
-    DeleteRegKey HKLM "${REGKEY}"
     DeleteRegKey HKLM "${REG_UNINSTALL}"
 !macroend
 #####    End of Sections and macros
@@ -503,20 +497,20 @@ Section -Post
     ${EndIf}
 
     !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-        WriteRegDword HKLM "${REGKEY}" "VersionMajor" "${VER_MAJOR}"
-        WriteRegDword HKLM "${REGKEY}" "VersionMinor" "${VER_MINOR}"
-        WriteRegDword HKLM "${REGKEY}" "VersionRevision" "${VER_REVISION}"
-        WriteRegDword HKLM "${REGKEY}" "VersionBuild" "${VER_BUILD}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
     !endif
 
     # Write Uninstall Information
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName "$(^Name)"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion "${VERSION}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" Publisher "${COMPANY}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout "${URL}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon "$INSTDIR\mp.ico,0"
-    WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString "$INSTDIR\uninstall-tve3.exe"
-    WriteRegStr HKLM "${REG_UNINSTALL}" ModifyPath "$INSTDIR\add-remove-tve3.exe"
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\mp.ico,0"
+    WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-tve3.exe"
+    WriteRegStr HKLM "${REG_UNINSTALL}" ModifyPath         "$INSTDIR\add-remove-tve3.exe"
     WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 0
     WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 0
  
@@ -543,8 +537,8 @@ Section Uninstall
     #startmenu
     Delete "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
     RmDir "$SMPROGRAMS\$StartMenuGroup"
-    DeleteRegValue HKLM "${REGKEY}" StartMenuGroup
-    DeleteRegKey /IfEmpty HKLM "${REGKEY}"
+    DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
+    DeleteRegKey /IfEmpty HKLM "${REG_UNINSTALL}"
 
     ${If} $CompleteCleanup == 1
         !insertmacro CompleteCleanup
@@ -623,7 +617,7 @@ Function .onInit
     ; Needed for Library Install
     ; Look if we already have a registry entry for TV Server. if this is the case we don't need to install anymore the Shared Libraraies
     Push $0
-    ReadRegStr $0 HKLM "${REGKEY}" InstallPath
+    ReadRegStr $0 HKLM "${REG_UNINSTALL}" InstallPath
     ClearErrors
     StrCmp $0 "" +2
     StrCpy $LibInstall 1
@@ -655,7 +649,7 @@ Function un.onInit
 
 
     ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-    ReadRegStr $INSTDIR HKLM "${REGKEY}" InstallPath
+    ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" InstallPath
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
     ; Get the Common Application Data Folder
