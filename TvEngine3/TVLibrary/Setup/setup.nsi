@@ -50,7 +50,7 @@ Var noServer
 Var noDesktopSC
 Var noStartMenuSC
 ;   variables for commandline parameters for UnInstaller
-Var CompleteCleanup
+Var RemoveAll
 
 #---------------------------------------------------------------------------
 # DEFINES
@@ -142,7 +142,7 @@ Var CompleteCleanup
 ;[OBSOLETE]         !insertmacro MUI_UNPAGE_COMPONENTS
 ;[OBSOLETE]         !define MUI_PAGE_CUSTOMFUNCTION_PRE un.dir_pre        # Check, if the Server Component has been selected. Only display the directory page in this vase
 !insertmacro MUI_UNPAGE_WELCOME
-!define MUI_PAGE_CUSTOMFUNCTION_PRE un.completeClenupQuestion       # ask the user if he wants to do a complete cleanup
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.RemoveAllQuestion       # ask the user if he wants to do a complete cleanup
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
@@ -460,16 +460,6 @@ SectionEnd
     Delete /REBOOTOK  $MPBaseDir\mmaacd.ax
 !macroend
 
-!macro CompleteCleanup
-    ;Place all commands in here to do a real cleanup and delete all files / data of tvserver
-
-    #doing this is a high risk, imagine the user installs the application to Program Files, the uninstaller would try to remove the complete folder
-    #RmDir /r /REBOOTOK $INSTDIR
-    RmDir /r /REBOOTOK $CommonAppData
-
-    DeleteRegKey HKLM "${REG_UNINSTALL}"
-!macroend
-
 #---------------------------------------------------------------------------
 # This macro used to perform operation on multiple sections.
 # List all of your components in following manner here.
@@ -538,8 +528,14 @@ Section Uninstall
     DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
     DeleteRegKey /IfEmpty HKLM "${REG_UNINSTALL}"
 
-    ${If} $CompleteCleanup == 1
-        !insertmacro CompleteCleanup
+    ${If} $RemoveAll == 1
+        ;Place all commands in here to do a real cleanup and delete all files / data of tvserver
+
+        #doing this is a high risk, imagine the user installs the application to Program Files, the uninstaller would try to remove the complete folder
+        #RmDir /r /REBOOTOK $INSTDIR
+        RmDir /r /REBOOTOK $CommonAppData
+
+        DeleteRegKey HKLM "${REG_UNINSTALL}"
     ${EndIf}
 SectionEnd
 
@@ -636,15 +632,15 @@ FunctionEnd
 Function un.onInit
     #### check and parse cmdline parameter
     ; set default values for parameters ........
-    strcpy $CompleteCleanup 0
+    strcpy $RemoveAll 0
 
     ; gets comandline parameter
     ${un.GetParameters} $R0
 
     ; check for special parameter and set the their variables
-    ${un.GetOptions} $R0 "/CompleteCleanup" $R1
+    ${un.GetOptions} $R0 "/RemoveAll" $R1
     IfErrors +2
-    strcpy $CompleteCleanup 1
+    strcpy $RemoveAll 1
     #### END of check and parse cmdline parameter
 
 
@@ -731,9 +727,9 @@ FunctionEnd
 
 # This function is called, before the uninstallation process is startet
 # It asks the user, if he wants to do a complete cleanup
-Function un.completeClenupQuestion
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_COMPLETE_CLEANUP)" IDYES 0 IDNO end
-    strcpy $CompleteCleanup 1
+Function un.RemoveAllQuestion
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO end
+    strcpy $RemoveAll 1
     
     end:
 FunctionEnd
