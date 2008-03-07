@@ -83,18 +83,29 @@ SetCompressor lzma
 !define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
-;..................................................................................................
 
-# Included files
-;..................................................................................................
-!include Sections.nsh
+#---------------------------------------------------------------------------
+# INCLUDE FILES
+#---------------------------------------------------------------------------
 !include MUI2.nsh
+!include Sections.nsh
 !include LogicLib.nsh
-!include InstallOptions.nsh
 !include Library.nsh
+!include FileFunc.nsh
+
+#!include setup-RememberSections.nsh
+!include setup-languages.nsh
 
 !include setup-dotnet.nsh
 !include setup-winversion.nsh
+
+!insertmacro GetParameters
+!insertmacro GetOptions
+!insertmacro un.GetParameters
+!insertmacro un.GetOptions
+
+!include InstallOptions.nsh
+
 ;..................................................................................................
 
 # Variables used within the Script
@@ -108,11 +119,10 @@ Var FilterDir       ; The Directory, where the filters have been installed
 Var LibInstall      ; Needed for Library Installation
 Var TmpDir          ; Needed for the Uninstaller
 Var RemoveAll       ; Set, when the user decided to uninstall everything
-;..................................................................................................
 
-# Installer pages
-; These instructions define the sequence of the pages shown by the installer
-;..................................................................................................
+#---------------------------------------------------------------------------
+# INSTALLER INTERFACE
+#---------------------------------------------------------------------------
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
@@ -123,24 +133,21 @@ Page custom FilterSelection
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
-
-
+; UnInstaller Interface
 !insertmacro MUI_UNPAGE_WELCOME
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.RemoveAllQuestion       # ask the user if he wants to remove all files
 !insertmacro MUI_UNPAGE_CONFIRM
-UnInstPage custom un.UninstallOpionsSelection
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
-;..................................................................................................
 
-# Installer languages
-; We might include other languages
-;..................................................................................................
+#---------------------------------------------------------------------------
+# INSTALLER LANGUAGES
+#---------------------------------------------------------------------------
 !insertmacro MUI_LANGUAGE English
-;..................................................................................................
 
-# Installer attributes
-; Set the output file name
-;..................................................................................................
+#---------------------------------------------------------------------------
+# INSTALLER ATTRIBUTES
+#---------------------------------------------------------------------------
 OutFile "Release\${APP_NAME}_setup.exe"
 BrandingText "MediaPortal Installer by Team MediaPortal"
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
@@ -804,21 +811,25 @@ done${UNSECTION_ID}:
 # Custom Page for Uninstall User settings
 ; This shows the Uninstall User Serrings Page
 ;..................................................................................................
-LangString UNINSTALL_SETTINGS_TITLE ${LANG_ENGLISH} "Uninstall User settings"
-LangString UNINSTALL_SETTINGS_SUBTITLE ${LANG_ENGLISH} "Attention: This will remove all your customised settings including Skins and Databases."
-
-Function un.UninstallOpionsSelection ;Function name defined with Page command
-  !insertmacro MUI_HEADER_TEXT "$(UNINSTALL_SETTINGS_TITLE)" "$(UNINSTALL_SETTINGS_SUBTITLE)"
-  !insertmacro INSTALLOPTIONS_DISPLAY "UnInstallOptions.ini"
-
-  ; Get the values selected in the Check Boxes
-  !insertmacro INSTALLOPTIONS_READ $RemoveAll "UninstallOptions.ini" "Field 1" "State"
-FunctionEnd
 
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 # Uninstaller functions
 Function un.onInit
+    #### check and parse cmdline parameter
+    ; set default values for parameters ........
+    strcpy $RemoveAll 0
+
+    ; gets comandline parameter
+    ${un.GetParameters} $R0
+
+    ; check for special parameter and set the their variables
+    ${un.GetOptions} $R0 "/RemoveAll" $R1
+    IfErrors +2
+    strcpy $RemoveAll 1
+    #### END of check and parse cmdline parameter
+    
+    
     ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" Path
     ReadRegStr $FILTERDIR HKLM "${REG_UNINSTALL}" PathFilter
     ReadRegStr $GABEST HKLM "${REG_UNINSTALL}" Gabest
@@ -827,13 +838,19 @@ Function un.onInit
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
 
-    ; Extract the Uninstall Option Custom Page
-    !insertmacro INSTALLOPTIONS_EXTRACT "UnInstallOptions.ini"
-
     ; Get the Common Application Data Folder to Store Files for Vista
     ; Set the Context to alll, so that we get the All Users folder
     SetShellVarContext all
     StrCpy $CommonAppData "$APPDATA\Team MediaPortal\MediaPortal"
     ; Context back to current user
     SetShellVarContext current
+FunctionEnd
+
+# This function is called, before the uninstallation process is startet
+# It asks the user, if he wants to remove all files and settings
+Function un.RemoveAllQuestion
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO end
+    strcpy $RemoveAll 1
+    
+    end:
 FunctionEnd
