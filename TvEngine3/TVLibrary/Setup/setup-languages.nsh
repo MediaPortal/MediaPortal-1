@@ -30,8 +30,8 @@
 #**********************************************************************************************************#
 
 # ENGLISH
-LangString DESC_SECServer                   ${LANG_ENGLISH} "Installs the MediaPortal TV Server"
-LangString DESC_SECClient                   ${LANG_ENGLISH} "Installs the MediaPortal TV Client plugin"
+LangString DESC_SecServer                   ${LANG_ENGLISH} "Installs the MediaPortal TV Server"
+LangString DESC_SecClient                   ${LANG_ENGLISH} "Installs the MediaPortal TV Client plugin"
 LangString ^UninstallLink                   ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 LangString TEXT_MP_NOT_INSTALLED            ${LANG_ENGLISH} "MediaPortal not installed"

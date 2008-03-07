@@ -38,19 +38,19 @@ RequestExecutionLevel admin
 #---------------------------------------------------------------------------
 # VARIABLES
 #---------------------------------------------------------------------------
-Var StartMenuGroup
+Var StartMenuGroup  ; Holds the Startmenu\Programs folder
 Var LibInstall
 Var LibInstall2
 Var CommonAppData
 Var MPBaseDir
 Var InstallPath
-;   variables for commandline parameters for Installer
+# variables for commandline parameters for Installer
 Var noClient
 Var noServer
 Var noDesktopSC
 Var noStartMenuSC
-;   variables for commandline parameters for UnInstaller
-Var RemoveAll
+# variables for commandline parameters for UnInstaller
+Var RemoveAll       ; Set, when the user decided to uninstall everything
 
 #---------------------------------------------------------------------------
 # DEFINES
@@ -59,20 +59,20 @@ Var RemoveAll
 !define URL     "www.team-mediaportal.com"
 
 !define REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+!define MP_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
-!define VER_REVISION    0
+!define VER_REVISION    1
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define VERSION "1.0"
-    BrandingText "MediaPortal TVE3 Installer by Team MediaPortal"
+    !define VERSION "1.0 RC1 internal"
 !else                       # it's an svn reöease
     !define VERSION "pre-release build ${VER_BUILD}"
-    BrandingText "${VERSION}"
 !endif
+BrandingText "TV Server ${VERSION} by Team MediaPortal"
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -112,14 +112,14 @@ Var RemoveAll
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "MediaPortal\MediaPortal TV Server"
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "Team MediaPortal\TV Server"
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT         HKLM
 !define MUI_STARTMENUPAGE_REGISTRY_KEY          "${REG_UNINSTALL}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME    StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN
-!define MUI_FINISHPAGE_RUN_TEXT     "Run MediaPortal TV Server Setup"
-!define MUI_FINISHPAGE_RUN_FUNCTION RunSetup
+!define MUI_FINISHPAGE_RUN_TEXT     "Run TV-Server Configuration"
+!define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
@@ -139,10 +139,8 @@ Var RemoveAll
 !define MUI_PAGE_CUSTOMFUNCTION_PRE finish_pre          # Check, if the Server Component has been selected. Only display the Startmenu page in this vase
 !insertmacro MUI_PAGE_FINISH
 ; UnInstaller Interface
-;[OBSOLETE]         !insertmacro MUI_UNPAGE_COMPONENTS
-;[OBSOLETE]         !define MUI_PAGE_CUSTOMFUNCTION_PRE un.dir_pre        # Check, if the Server Component has been selected. Only display the directory page in this vase
 !insertmacro MUI_UNPAGE_WELCOME
-!define MUI_PAGE_CUSTOMFUNCTION_PRE un.RemoveAllQuestion       # ask the user if he wants to do a complete cleanup
+!define MUI_PAGE_CUSTOMFUNCTION_PRE un.RemoveAllQuestion       # ask the user if he wants to remove all files
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
@@ -155,7 +153,7 @@ Var RemoveAll
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
-OutFile Release\setup-tve3.exe
+OutFile "Release\setup-tve3.exe"
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
 CRCCheck on
@@ -170,6 +168,19 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    ""
 ShowUninstDetails show
+
+#---------------------------------------------------------------------------
+# USEFUL MACROS
+#---------------------------------------------------------------------------
+!macro SetCommonAppData
+
+    ; Get the Common Application Data Folder
+    ; Set the Context to alll, so that we get the All Users folder
+    SetShellVarContext all
+    StrCpy $CommonAppData "$APPDATA\Team MediaPortal\TV Server"
+    ; Context back to current user
+    SetShellVarContext current
+!macroend
 
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
@@ -271,22 +282,20 @@ Section "MediaPortal TV Server" SecServer
     DetailPrint "Installing TVService"
     ExecWait '"$INSTDIR\TVService.exe" /install'
     DetailPrint "Finished Installing TVService"
-    
-    #---------------------------- Post Installation Tasks ----------------------
-    WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath $INSTDIR
+
 
     SetOutPath $INSTDIR
-
     ${If} $noDesktopSC != 1
-        CreateShortcut "$DESKTOP\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+        CreateShortcut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
     ${EndIf}
 
     ${If} $noStartMenuSC != 1
         !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+        # We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
         CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk" "$CommonAppData\log" "" "$CommonAppData\log" 0 "" "" "TV Server Log Files"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "TV-Server Configuration"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "$CommonAppData\log"   "" "$CommonAppData\log"   0 "" "" "TV-Server Log-Files"
+        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
         !insertmacro MUI_STARTMENU_WRITE_END
     ${EndIf}
 SectionEnd
@@ -374,13 +383,12 @@ SectionEnd
     Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
     Delete /REBOOTOK $INSTDIR\StreamingServer.dll
     
-    # Remove Registry Keys and Start Menu
-    #DeleteRegValue HKLM "${REG_UNINSTALL}\Components" SecServer
-    DeleteRegValue HKLM "${REG_UNINSTALL}" InstallPath
-    
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk"
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server.lnk"
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk"
+    # remove Start Menu shortcuts
+    Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk"
+    Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"
+    ;Delete "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk"
+    # remove Desktop shortcuts
+    Delete "$DESKTOP\TV-Server Configuration.lnk"
 !macroend
 
 Section "MediaPortal TV Client plugin" SecClient
@@ -473,14 +481,16 @@ SectionEnd
 Section -Post
     ;Removes unselected components and writes component status to registry
     !insertmacro SectionList "FinishSection"
-  
+
     SetOverwrite on
     SetOutPath $INSTDIR
-    
+
     ${If} $noStartMenuSC != 1
         !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+        # We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
         CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" "$INSTDIR\uninstall-tve3.exe"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe"
+        WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url" "InternetShortcut" "URL" "${URL}"
         !insertmacro MUI_STARTMENU_WRITE_END
     ${EndIf}
 
@@ -491,6 +501,7 @@ Section -Post
         WriteRegDword HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
     !endif
 
+    WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath $INSTDIR
     # Write Uninstall Information
     WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
     WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
@@ -512,30 +523,23 @@ Section Uninstall
     ;First removes all optional components
     !insertmacro SectionList "RemoveSection"
 
-    ;Removes last files and instdir
+    # remove registry key
+    DeleteRegKey HKLM "${REG_UNINSTALL}"
+
+    # remove Start Menu shortcuts
+    Delete "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk"
+    Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
+    RmDir "$SMPROGRAMS\$StartMenuGroup"
+
+    # remove last files and instdir
     Delete /REBOOTOK "$INSTDIR\add-remove-tve3.exe"
     Delete /REBOOTOK "$INSTDIR\uninstall-tve3.exe"
     RmDir "$INSTDIR"
 
-    # Get the uninstall string, so that we can delete the exe
-    #ReadRegStr $R1 HKLM "${REG_UNINSTALL}" UninstallString
-    #Delete /REBOOTOK $R1
-    DeleteRegKey HKLM "${REG_UNINSTALL}"
-
-    #startmenu
-    Delete "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
-    RmDir "$SMPROGRAMS\$StartMenuGroup"
-    DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
-    DeleteRegKey /IfEmpty HKLM "${REG_UNINSTALL}"
-
     ${If} $RemoveAll == 1
-        ;Place all commands in here to do a real cleanup and delete all files / data of tvserver
-
-        #doing this is a high risk, imagine the user installs the application to Program Files, the uninstaller would try to remove the complete folder
-        #RmDir /r /REBOOTOK $INSTDIR
+        DetailPrint "Removing User Settings"
         RmDir /r /REBOOTOK $CommonAppData
-
-        DeleteRegKey HKLM "${REG_UNINSTALL}"
+        RmDir /r /REBOOTOK $INSTDIR
     ${EndIf}
 SectionEnd
 
@@ -545,10 +549,10 @@ SectionEnd
 Function .onInit
     #### check and parse cmdline parameter
     ; set default values for parameters ........
-    strcpy $noClient 0
-    strcpy $noServer 0
-    strcpy $noDesktopSC 0
-    strcpy $noStartMenuSC 0
+    StrCpy $noClient 0
+    StrCpy $noServer 0
+    StrCpy $noDesktopSC 0
+    StrCpy $noStartMenuSC 0
 
     ; gets comandline parameter
     ${GetParameters} $R0
@@ -556,22 +560,22 @@ Function .onInit
     ; check for special parameter and set the their variables
     ${GetOptions} $R0 "/noClient" $R1
     IfErrors +2
-    strcpy $noClient 1
+    StrCpy $noClient 1
     ${GetOptions} $R0 "/noServer" $R1
     IfErrors +2
-    strcpy $noServer 1
+    StrCpy $noServer 1
     ${GetOptions} $R0 "/noDesktopSC" $R1
     IfErrors +2
-    strcpy $noDesktopSC 1
+    StrCpy $noDesktopSC 1
     ${GetOptions} $R0 "/noStartMenuSC" $R1
     IfErrors +2
-    strcpy $noStartMenuSC 1
+    StrCpy $noStartMenuSC 1
     #### END of check and parse cmdline parameter
 
-    ;Reads components status for registry
+    # Reads components status for registry
     !insertmacro SectionList "InitSection"
-    
-    ;update the component status with infos from commandline parameters
+
+    # update the component status -> commandline parameters have higher priority than registry values
     ${If} $noClient = 1
     ${AndIf} $noServer = 1
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_PARAMETER_ERROR)" IDOK 0
@@ -600,15 +604,8 @@ Function .onInit
         #ExecWait '$R1 /S _?=$INSTDIR'
 
     noSilent:
-
-    InitPluginsDir
-
-    ; Get the Common Application Data Folder
-    ; Set the Context to alll, so that we get the All Users folder
-    SetShellVarContext all
-    StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
-    ; Context back to current user
-    SetShellVarContext current
+    
+    !insertmacro SetCommonAppData
 
     ; Needed for Library Install
     ; Look if we already have a registry entry for TV Server. if this is the case we don't need to install anymore the Shared Libraraies
@@ -643,26 +640,14 @@ Function un.onInit
     strcpy $RemoveAll 1
     #### END of check and parse cmdline parameter
 
-
-    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-    ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" InstallPath
+    ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
+    ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
-
-    ; Get the Common Application Data Folder
-    ; Set the Context to alll, so that we get the All Users folder
-    SetShellVarContext all
-    StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
-    ; Context back to current user
-    SetShellVarContext current
+    
+    !insertmacro SetCommonAppData
 FunctionEnd
 
 #####    other functions
-; Start the Setup after the successfull install
-; needed in an extra function to set the working directory
-Function RunSetup
-SetOutPath $INSTDIR
-Exec "$INSTDIR\SetupTV.exe"
-FunctionEnd
 
 Function .onSelChange
     ; disable the next button if nothing is selected
@@ -680,7 +665,7 @@ Function .onSelChange
 FunctionEnd
 
 Function DisableClientIfNoMP
-    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+    ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
     
     ${If} $MPBaseDir == ""
         !insertmacro UnselectSection "${SecClient}"
@@ -725,18 +710,26 @@ Function finish_pre
          ${EndIf}
 FunctionEnd
 
+# Start the Setup after the successfull install
+# needed in an extra function to set the working directory
+Function RunConfig
+    SetOutPath $INSTDIR
+    Exec "$INSTDIR\SetupTV.exe"
+FunctionEnd
+
 # This function is called, before the uninstallation process is startet
-# It asks the user, if he wants to do a complete cleanup
+# It asks the user, if he wants to remove all files and settings
 Function un.RemoveAllQuestion
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO end
     strcpy $RemoveAll 1
     
     end:
 FunctionEnd
-#####    End of other functions
 
-#####    Installer Language Strings
+#---------------------------------------------------------------------------
+# SECTION DECRIPTIONS     must be at the end
+#---------------------------------------------------------------------------
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SECClient)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SECServer)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SecClient)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SecServer)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
