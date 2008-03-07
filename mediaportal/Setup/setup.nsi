@@ -37,12 +37,26 @@ Name "${APP_NAME}"
 SetCompressor lzma
 #SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
 
+#---------------------------------------------------------------------------
+# VARIABLES
+#---------------------------------------------------------------------------
+Var StartMenuGroup  ; Holds the Startmenu\Programs folder
+Var WindowsVersion  ; The Windows Version
+Var CommonAppData   ; The Common Application Folder
+Var DSCALER         ; Should we install Dscaler Filter
+Var GABEST          ; Should we install Gabest Filter
+Var FilterDir       ; The Directory, where the filters have been installed
+Var LibInstall      ; Needed for Library Installation
+Var TmpDir          ; Needed for the Uninstaller
+;   variables for commandline parameters for Installer
+;   variables for commandline parameters for UnInstaller
+Var RemoveAll       ; Set, when the user decided to uninstall everything
 
-;..................................................................................................
-;Following two definitions required. Uninstall log will use these definitions.
-;You may use these definitions also, when you want to set up the InstallDirRagKey,
-;store the language selection, store Start Menu folder etc.
-;Enter the windows uninstall reg sub key to add uninstall information to Add/Remove Programs also.
+#---------------------------------------------------------------------------
+# DEFINES
+#---------------------------------------------------------------------------
+!define COMPANY "Team MediaPortal"
+!define URL     "www.team-mediaportal.com"
 
 !define REG_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
 
@@ -52,37 +66,8 @@ SetCompressor lzma
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
-;..................................................................................................
 
-# Defines
 !define VERSION 0.2.3.0
-!define COMPANY "Team MediaPortal"
-!define URL     "www.team-mediaportal.com"
-
-
-# General Definitions for the Interface
-;..................................................................................................
-!define MUI_ICON    "images\install.ico"
-!define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
-
-!define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP          "images\header.bmp"
-!define MUI_HEADERIMAGE_RIGHT
-!define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard.bmp"
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard.bmp"
-
-!define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "MediaPortal"
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT         HKLM
-!define MUI_STARTMENUPAGE_REGISTRY_KEY          "${REG_UNINSTALL}"
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME    StartMenuGroup
-!define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_FINISHPAGE_RUN
-!define MUI_FINISHPAGE_RUN_TEXT     "Run MediaPortal Configuration"
-!define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
-
-!define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -106,19 +91,30 @@ SetCompressor lzma
 
 !include InstallOptions.nsh
 
-;..................................................................................................
+#---------------------------------------------------------------------------
+# INSTALLER INTERFACE settings
+#---------------------------------------------------------------------------
+!define MUI_ICON    "images\install.ico"
+!define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
-# Variables used within the Script
-;..................................................................................................
-Var StartMenuGroup  ; Holds the Startup Group
-Var WindowsVersion  ; The Windows Version
-Var CommonAppData   ; The Common Application Folder
-Var DSCALER         ; Should we install Dscaler Filter
-Var GABEST          ; Should we install Gabest Filter
-Var FilterDir       ; The Directory, where the filters have been installed
-Var LibInstall      ; Needed for Library Installation
-Var TmpDir          ; Needed for the Uninstaller
-Var RemoveAll       ; Set, when the user decided to uninstall everything
+!define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE_BITMAP          "images\header.bmp"
+!define MUI_HEADERIMAGE_RIGHT
+!define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard.bmp"
+
+!define MUI_COMPONENTSPAGE_SMALLDESC
+!define MUI_STARTMENUPAGE_NODISABLE
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "MediaPortal"
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT         HKLM
+!define MUI_STARTMENUPAGE_REGISTRY_KEY          "${REG_UNINSTALL}"
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME    StartMenuGroup
+!define MUI_FINISHPAGE_NOAUTOCLOSE
+!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_TEXT     "Run MediaPortal Configuration"
+!define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
+
+!define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE
@@ -179,13 +175,10 @@ Function FilterSelection ;Function name defined with Page command
   !insertmacro INSTALLOPTIONS_READ $DSCALER "FilterSelect.ini" "Field 1" "State"
   !insertmacro INSTALLOPTIONS_READ $GABEST "FilterSelect.ini" "Field 2" "State"
 FunctionEnd
-;..................................................................................................
 
-# Installer sections
-;
-; This is the Main section, which installs all MediaPortal Files
-;
-;..................................................................................................
+#---------------------------------------------------------------------------
+# SECTIONS and REMOVEMACROS
+#---------------------------------------------------------------------------
 Section "MediaPortal" SecMediaPortal
     SectionIn RO
     DetailPrint "Installing MediaPortal..."
