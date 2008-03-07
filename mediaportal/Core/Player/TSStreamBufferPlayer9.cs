@@ -424,7 +424,6 @@ namespace MediaPortal.Player
         }
         #endregion
 
-
         #region load file in tsfilesource
         //call the load() on tsfilesource. This is needed so tsfilesource will configure itself
         //to mpeg-2 program stream mode instead of mpeg-2 transport stream mode.
@@ -463,8 +462,6 @@ namespace MediaPortal.Player
         }
         
         #endregion
-
-
 
         #region connect tsfilesource->demux
         Log.Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");

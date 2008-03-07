@@ -28,7 +28,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.InteropServices;
-//using DirectX.Capture;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -48,21 +47,20 @@ namespace MediaPortal.Player
   public interface ITSReaderCallback
   {
     [PreserveSig]
-    int OnMediaTypeChanged();    
+    int OnMediaTypeChanged();
   }
 
   [ComVisible(true), ComImport,
   Guid("324FAA1F-4DA6-47B8-832B-3993D8FF4152"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITSReaderCallbackAudioChange
-  {    
+  {
     [PreserveSig]
     int OnRequestAudioChange();
   }
 
   class BaseTSReaderPlayer : IPlayer, ITSReaderCallback, ITSReaderCallbackAudioChange
   {
-
     [Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B24F"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     protected interface ITSReader
@@ -72,9 +70,9 @@ namespace MediaPortal.Player
       [PreserveSig]
       int SetRequestAudioChangeCallback(ITSReaderCallbackAudioChange callback);
     }
-    
+
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
-    protected class TsReader 
+    protected class TsReader
     {
     }
 
@@ -100,8 +98,7 @@ namespace MediaPortal.Player
     #region variables
     protected int iSpeed = 1;
     protected IBaseFilter _fileSource = null;
-
-    protected int _curAudioStream = 0;    
+    protected int _curAudioStream = 0;
     protected int _positionX = 0;
     protected int _positionY = 0;
     protected int _width = 200;
@@ -135,28 +132,23 @@ namespace MediaPortal.Player
     protected IBaseFilter _aacaudioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
     protected IBaseFilter _subtitleFilter = null;
-    protected SubtitleSelector _subSelector = null;    
+    protected SubtitleSelector _subSelector = null;
     protected SubtitleRenderer _dvbSubRenderer = null;
-    protected AudioSelector _audioSelector = null;    
+    protected AudioSelector _audioSelector = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
-
     /// <summary> graph event interface. </summary>
     protected IMediaEventEx _mediaEvt = null;
-
     /// <summary> video preview window interface. </summary>
     protected IVideoWindow _videoWin = null;
-
     /// <summary> interface to get information and control video. </summary>
     protected IBasicVideo2 _basicVideo = null;
-
     /// <summary> audio interface used to control volume. </summary>
     protected IBasicAudio _basicAudio = null;
     protected IBaseFilter _mpegDemux;
     VMR7Util _vmr7 = null;
     DateTime _elapsedTimer = DateTime.Now;
-
     protected const int WM_GRAPHNOTIFY = 0x00008001;	// message from graph
     protected const int WS_CHILD = 0x40000000;	// attributes for video window
     protected const int WS_CLIPCHILDREN = 0x02000000;
@@ -164,7 +156,6 @@ namespace MediaPortal.Player
     protected DateTime _updateTimer = DateTime.Now;
     protected MediaPortal.GUI.Library.Geometry.Type _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
     protected bool _endOfFileDetected = false;
-
     protected bool _startingUp;
     protected bool _isRadio = false;
     protected g_Player.MediaType _mediaType;
@@ -187,7 +178,6 @@ namespace MediaPortal.Player
     #endregion
 
     #region public members
-
     /// <summary>
     /// Implements the AudioStreams member which interfaces the TsReader filter to get the IAMStreamSelect interface for enumeration of available streams
     /// </summary>
@@ -218,7 +208,7 @@ namespace MediaPortal.Player
     public override int CurrentAudioStream
     {
       get
-      {       
+      {
         return _curAudioStream;
       }
       set
@@ -229,13 +219,11 @@ namespace MediaPortal.Player
           Log.Info("TSReaderPlayer: Unable to set CurrentAudioStream -> value does not exist");
           return;
         }
-
         if (_interfaceTSReader == null)
         {
           Log.Info("TSReaderPlayer: Unable to set CurrentAudioStream -> TSReader not initialized");
           return;
         }
-
         IAMStreamSelect pStrm = _interfaceTSReader as IAMStreamSelect;
         if (pStrm != null)
         {
@@ -244,11 +232,10 @@ namespace MediaPortal.Player
         }
         else
           Log.Info("TSReaderPlayer: Unable to set CurrentAudioStream -> IAMStreamSelect == null");
-
         return;
       }
     }
-    
+
     /// <summary>
     /// Property to get the type of an audio stream
     /// </summary>
@@ -262,14 +249,12 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer: Unable to get AudioType -> TSReader not initialized");
         return Strings.Unknown;
       }
-
       IAMStreamSelect pStrm = _interfaceTSReader as IAMStreamSelect;
       if (pStrm != null)
       {
         AMMediaType sType; AMStreamSelectInfoFlags sFlag;
         int sPDWGroup, sPLCid; string sName;
         object pppunk, ppobject;
-
         pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
         /*
         if (IsTimeShifting)
@@ -294,15 +279,15 @@ namespace MediaPortal.Player
         {
           return "Mpeg2";
         }
-        if (sType.subType == MediaSubType.LATMAAC)
+        if (sType.subType == MEDIASUBTYPE_LATM_AAC_AUDIO) //MediaSubType.LATMAAC)
         {
           return "LATMAAC";
         }
-        if (sType.subType == MediaSubType.AAC)
+        if (sType.subType == MEDIASUBTYPE_AAC_AUDIO) //MediaSubType.AAC)
         {
           return "AAC";
         }
-        return Strings.Unknown;       
+        return Strings.Unknown;
       }
       else
         return Strings.Unknown;
@@ -315,7 +300,7 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public override string AudioLanguage(int iStream)
     {
-      if ((iStream+1) > AudioStreams)
+      if ((iStream + 1) > AudioStreams)
         return Strings.Unknown;
 
       if (_interfaceTSReader == null)
@@ -436,8 +421,8 @@ namespace MediaPortal.Player
         _videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
         _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
         _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-
       }
+
       if (_basicVideo != null)
       {
         hr = _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
@@ -471,16 +456,12 @@ namespace MediaPortal.Player
       _geometry = GUIGraphicsContext.ARType;
       _updateNeeded = true;
       SetVideoWindow();
-
       _interfaceTSReader = _fileSource;
-
       _startingUp = _isLive;
-
       DirectShowUtil.EnableDeInterlace(_graphBuilder);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
       GUIWindowManager.SendThreadMessage(msg);
-
       long dur = 0;
       _state = PlayState.Playing;
       if (strFile.ToLower().IndexOf("rtsp:") >= 0)
@@ -501,11 +482,10 @@ namespace MediaPortal.Player
         OnInitialized();
         Log.Info("TSReaderPlayer:running pos:{0} duration:{1} {2}", Duration, CurrentPosition, dur);
       }
-      
+
       // update the curaudiostream from the current audio stream running in tsreader.
       // tvplugin might set the initial track to some other index
       //_curAudioStream = _audioSelector.GetAudioStream();
-
       return true;
     }
 
@@ -519,12 +499,10 @@ namespace MediaPortal.Player
 
       if (!_updateNeeded)
         return;
-
       _updateNeeded = false;
       _isStarted = true;
       float x = _positionX;
       float y = _positionY;
-
       int nw = _width;
       int nh = _height;
       if (nw > GUIGraphicsContext.OverScanWidth)
@@ -548,8 +526,6 @@ namespace MediaPortal.Player
         return;
       if (x < 0 || y < 0)
         return;
-
-
       int aspectX, aspectY;
       if (_basicVideo != null)
       {
@@ -573,10 +549,8 @@ namespace MediaPortal.Player
       m_geometry.ARType = GUIGraphicsContext.ARType;
       m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
       m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
-
       rDest.X += (int)x;
       rDest.Y += (int)y;
-
       Log.Info("overlay: video WxH  : {0}x{1}", _videoWidth, _videoHeight);
       Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
       Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
@@ -586,11 +560,9 @@ namespace MediaPortal.Player
         rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
       Log.Info("overlay: dst        : ({0},{1})-({2},{3})",
         rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
-
       Log.Info("TSStreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})",
         rSource.X, rSource.Y, rSource.Right, rSource.Bottom,
         rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
-
       if (rSource.Y == 0)
       {
         rSource.Y += 5;
@@ -611,10 +583,8 @@ namespace MediaPortal.Player
     {
       if (!Playing)
         return;
-      
       // with EVR this causes huge (up to one minute) delays to seeking - tourettes
       //if (GUIGraphicsContext.InVmr9Render) return;
-
       if (_bMediaTypeChanged)
       {
         DoGraphRebuild();
@@ -666,7 +636,6 @@ namespace MediaPortal.Player
       {
         UpdateCurrentPosition();
         UpdateDuration();
-
         _updateTimer = DateTime.Now;
       }
 
@@ -692,8 +661,6 @@ namespace MediaPortal.Player
 				}*/
       }
       _lastPosition = CurrentPosition;
-
-
       if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
       {
         _isVisible = false;
@@ -716,7 +683,6 @@ namespace MediaPortal.Player
         if (_videoWin != null)
           _videoWin.put_Visible(OABool.True);
       }
-
       OnProcess();
       CheckVideoResolutionChanges();
       if (_speedRate != 10000)
@@ -732,6 +698,7 @@ namespace MediaPortal.Player
         SeekAbsolute(pos);
       }
     }
+
     public override bool IsTV
     {
       get
@@ -739,6 +706,7 @@ namespace MediaPortal.Player
         return (_mediaType == g_Player.MediaType.TV || _mediaType == g_Player.MediaType.Recording);
       }
     }
+
     public override bool IsTimeShifting
     {
       get
@@ -783,7 +751,6 @@ namespace MediaPortal.Player
             return -16;
           case -75000:
             return -32;
-
           case 10000:
             return 1;
           case 15000:
@@ -1099,7 +1066,7 @@ namespace MediaPortal.Player
         }
       }
     }
-    
+
     public override int Volume
     {
       get { return _volume; }
@@ -1186,7 +1153,6 @@ namespace MediaPortal.Player
             if (VMR9Util.g_vmr9 != null)
               VMR9Util.g_vmr9.FrameCounter = 123;
             int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-
             if (VMR9Util.g_vmr9 != null)
               VMR9Util.g_vmr9.FrameCounter = 123;
             Log.Info("set positions done");
@@ -1211,7 +1177,6 @@ namespace MediaPortal.Player
         {
           double dCurrentPos = this.CurrentPosition;
           double dDuration = Duration;
-
           double fCurPercent = (dCurrentPos / Duration) * 100.0d;
           double fOnePercent = Duration / 100.0d;
           fCurPercent = fCurPercent + (double)iPercentage;
@@ -1234,7 +1199,6 @@ namespace MediaPortal.Player
       {
         if (_mediaCtrl != null && _mediaSeeking != null)
         {
-
           if (iPercentage < 0)
           {
             iPercentage = 0;
@@ -1257,15 +1221,14 @@ namespace MediaPortal.Player
         return _isRadio;
       }
     }
+
     public override bool HasVideo
     {
       get { return (_isRadio == false); }
     }
-
     #endregion
 
     #region private/protected members
-
     protected virtual void SetVideoPosition(System.Drawing.Rectangle rDest)
     {
       if (_videoWin != null)
@@ -1356,7 +1319,6 @@ namespace MediaPortal.Player
         fCurrentPos = lStreamPos;
         fCurrentPos /= 10000000d;
         _streamPos = fCurrentPos; // save the stream position 
-
         long lContentStart, lContentEnd;
         double fContentStart, fContentEnd;
         _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
@@ -1365,7 +1327,6 @@ namespace MediaPortal.Player
         fContentStart /= 10000000d;
         fContentEnd /= 10000000d;
         // Log.Info("pos:{0} start:{1} end:{2}  pos:{3} dur:{4}", fCurrentPos, fContentStart, fContentEnd, (fCurrentPos - fContentStart), (fContentEnd - fContentStart));
-
         fContentEnd -= fContentStart;
         fCurrentPos -= fContentStart;
         _duration = fContentEnd;
@@ -1491,23 +1452,21 @@ namespace MediaPortal.Player
       try
       {
         _graphBuilder = (IGraphBuilder)new FilterGraph();
-
         _vmr7 = new VMR7Util();
         _vmr7.AddVMR7(_graphBuilder);
-
         TsReader reader = new TsReader();
         _fileSource = (IBaseFilter)reader;
         ((ITSReader)reader).SetTsReaderCallback(this);
         ((ITSReader)reader).SetRequestAudioChangeCallback(this);
         IBaseFilter filter = (IBaseFilter)_fileSource;
         _graphBuilder.AddFilter(filter, "TsReader");
-
         IFileSourceFilter interFaceFile = (IFileSourceFilter)_fileSource;
         interFaceFile.Load(filename, null);
-
         // add preferred video & audio codecs
         string strVideoCodec = "";
+        string strH264VideoCodec = "";
         string strAudioCodec = "";
+        string strAACAudioCodec = "";
         string strAudiorenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
@@ -1525,7 +1484,9 @@ namespace MediaPortal.Player
             intCount++;
           }
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
+          strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+          strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
           strAudiorenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
           if (strValue.Equals("zoom"))
@@ -1545,8 +1506,12 @@ namespace MediaPortal.Player
         }
         if (strVideoCodec.Length > 0)
           _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+        if (strH264VideoCodec.Length > 0)
+          _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
+        if (strAACAudioCodec.Length > 0)
+          _aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
         if (strAudiorenderer.Length > 0)
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudiorenderer, false);
         // FlipGer: add custom filters to graph
@@ -1556,12 +1521,9 @@ namespace MediaPortal.Player
         {
           customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
-
         if (strVideoCodec.ToLower().IndexOf("nvidia") >= 0)
           _isUsingNvidiaCodec = true;
-
         DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
-
         _mediaCtrl = (IMediaControl)_graphBuilder;
         _videoWin = _graphBuilder as IVideoWindow;
         _mediaEvt = (IMediaEventEx)_graphBuilder;
@@ -1579,13 +1541,10 @@ namespace MediaPortal.Player
         }
         _basicVideo = _graphBuilder as IBasicVideo2;
         _basicAudio = _graphBuilder as IBasicAudio;
-
         //Log.Info("TSReaderPlayer:SetARMode");
         DirectShowUtil.SetARMode(_graphBuilder, AspectRatioMode.Stretched);
-
         _graphBuilder.SetDefaultSyncSource();
         //Log.Info("TSReaderPlayer: set Deinterlace");
-
         //Log.Info("TSReaderPlayer: done");
         return true;
       }
@@ -1611,7 +1570,6 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer:grapbuilder=null");
         return;
       }
-
       Log.Info("TSReaderPlayer:cleanup DShow graph");
       try
       {
@@ -1621,9 +1579,7 @@ namespace MediaPortal.Player
 
           _mediaCtrl = null;
         }
-
         _state = PlayState.Init;
-
         _mediaEvt = null;
         _isWindowVisible = false;
         _isVisible = false;
@@ -1631,12 +1587,17 @@ namespace MediaPortal.Player
         _mediaSeeking = null;
         _basicAudio = null;
         _basicVideo = null;
-
         if (_videoCodecFilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
             ;
           _videoCodecFilter = null;
+        }
+        if (_h264videoCodecFilter != null)
+        {
+          while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0)
+            ;
+          _h264videoCodecFilterr = null;
         }
         if (_audioCodecFilter != null)
         {
@@ -1644,14 +1605,18 @@ namespace MediaPortal.Player
             ;
           _audioCodecFilter = null;
         }
-
+        if (_aacaudioCodecFilter != null)
+        {
+          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0)
+            ;
+          _aacaudioCodecFilter = null;
+        }
         if (_audioRendererFilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
             ;
           _audioRendererFilter = null;
         }
-
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
@@ -1667,26 +1632,21 @@ namespace MediaPortal.Player
             ;
           _fileSource = null;
         }
-
         if (_vmr7 != null)
           _vmr7.RemoveVMR7();
         _vmr7 = null;
-
         DirectShowUtil.RemoveFilters(_graphBuilder);
-
         if (_rotEntry != null)
         {
           _rotEntry.Dispose();
         }
         _rotEntry = null;
-
         if (_graphBuilder != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
             ;
         }
         _graphBuilder = null;
-
         _state = PlayState.Init;
         GUIGraphicsContext.form.Invalidate(true);
         GC.Collect();
@@ -1730,18 +1690,17 @@ namespace MediaPortal.Player
     }
 
     protected virtual void ExclusiveMode(bool onOff)
-    { 
+    {
     }
 
     protected virtual void OnInitialized()
     {
     }
-    
+
     protected void DoFFRW()
     {
       if (!Playing)
         return;
-
       if ((_speedRate == 10000) || (_mediaSeeking == null))
         return;
       TimeSpan ts = DateTime.Now - _elapsedTimer;
@@ -1764,10 +1723,8 @@ namespace MediaPortal.Player
           lTimerInterval = 300;
         lTimerInterval = 300;
         rewind = (long)(current + (2 * (long)(lTimerInterval) * _speedRate));
-
         int hr;
         pStop = 0;
-
         // if we end up before the first moment of time then just
         // start @ the beginning
         if ((rewind < earliest) && (_speedRate < 0))
@@ -1790,21 +1747,17 @@ namespace MediaPortal.Player
           _mediaCtrl.Run();
           return;
         }
-
         //seek to new moment in time
         //Log.Info(" seek :{0}",rewind/10000000);
         hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         //according to ms documentation, this is the prefered way to do seeking
         _mediaCtrl.StopWhenReady();
-
         _elapsedTimer = DateTime.Now;
       }
     }
-
     #endregion
 
     #region IDisposable Members
-
     public override void Release()
     {
       CloseInterfaces();
@@ -1815,6 +1768,8 @@ namespace MediaPortal.Player
     private static Guid MEDIASUBTYPE_AC3_AUDIO { get { return new Guid("e06d802c-db46-11cf-b4d1-00805f6cbbea"); } }
     private static Guid MEDIASUBTYPE_MPEG2_AUDIO { get { return new Guid("e06d802b-db46-11cf-b4d1-00805f6cbbea"); } }
     private static Guid MEDIASUBTYPE_MPEG1_AUDIO { get { return new Guid("e436eb87-524f-11ce-9f53-0020af0ba770"); } }
+    private static Guid MEDIASUBTYPE_LATM_AAC_AUDIO { get { return new Guid("00001ff-0000-0010-8000-00aa00389b71"); } }
+    private static Guid MEDIASUBTYPE_AAC_AUDIO { get { return new Guid("00000ff-0000-0010-8000-00aa00389b71"); } }
     #endregion
   }
 }

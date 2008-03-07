@@ -233,15 +233,13 @@ namespace MediaPortal.Player
       //create the pins on the demux then connect the demux then mapp the pids.
       Speed = 1;
       Log.Info("TSReaderPlayer: GetInterfaces()");
-
       //Log.Info("TSReaderPlayer: build graph");
-
       try
       {
 				Cleanup(); //before adding vmr9 - make sure that cleanup is done, otherwise MP could hang in (_vmr9.AddVMR9)
         _graphBuilder = (IGraphBuilder)new FilterGraph();
-
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+
         #region add vmr9
         if (_isRadio == false)
         {          
@@ -253,7 +251,6 @@ namespace MediaPortal.Player
         #endregion
 
         #region add codecs
-
         Log.Info("TSReaderPlayer: add codecs");
         // add preferred video & audio codecs
         string strVideoCodec = "";
@@ -364,7 +361,6 @@ namespace MediaPortal.Player
           return false;
         }
         //Log.Info("TSReaderPlayer: open file:{0}",filename);
-
         Log.Info("TSReaderPlayer: open file with mediatype:{0}", filename);
         AMMediaType mpeg2ProgramStream = new AMMediaType();
         mpeg2ProgramStream.majorType = MediaType.Stream;
@@ -377,7 +373,6 @@ namespace MediaPortal.Player
         mpeg2ProgramStream.formatSize = 0;
         mpeg2ProgramStream.formatPtr = IntPtr.Zero;
         hr = interfaceFile.Load(filename, mpeg2ProgramStream);
-
         if (hr != 0)
         {
           Log.Error("TSReaderPlayer:Failed to open file:{0} :0x{1:x}", filename, hr);
