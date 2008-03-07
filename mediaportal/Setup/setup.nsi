@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 #**********************************************************************************************************#
 #
 # For the MediaPortal Installer to work you need:
@@ -5,15 +30,12 @@
 #
 # Editing is much more easier, if you install HM NSIS Edit from http://hmne.sourceforge.net
 #
-# ATTENTION: You need to have the vcredist_x86.exe package in the setup folder.
-#            Haven't uploaded it, to save 2.5 MB in SVN
 #**********************************************************************************************************#
-
 !define APP_NAME "MediaPortal 0.2.3.0"
 
 Name "${APP_NAME}"
 
-SetCompressor lzma
+SetCompressor /SOLID lzma
 
 ;..................................................................................................
 ;Following two definitions required. Uninstall log will use these definitions.
@@ -21,32 +43,44 @@ SetCompressor lzma
 ;store the language selection, store Start Menu folder etc.
 ;Enter the windows uninstall reg sub key to add uninstall information to Add/Remove Programs also.
 
-!define INSTDIR_REG_ROOT "HKLM"
-!define INSTDIR_REG_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
+!define REG_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
+
+!define VER_MAJOR       0
+!define VER_MINOR       2
+!define VER_REVISION    3
+!ifndef VER_BUILD
+    !define VER_BUILD   0
+!endif
 ;..................................................................................................
 
 # Defines
 !define VERSION 0.2.3.0
 !define COMPANY "Team MediaPortal"
-!define URL www.team-mediaportal.com
+!define URL     "www.team-mediaportal.com"
 
 
 # General Definitions for the Interface
 ;..................................................................................................
-!define MUI_ICON "images\install.ico"
-!define MUI_HEADERIMAGE_BITMAP "images\header.bmp"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
-!define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM
+!define MUI_ICON    "images\install.ico"
+!define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
+
+!define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE_BITMAP          "images\header.bmp"
+!define MUI_HEADERIMAGE_RIGHT
+!define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard.bmp"
+
+!define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_REGISTRY_KEY $(^INSTDIR_REG_KEY)
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER MediaPortal
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "MediaPortal"
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT         HKLM
+!define MUI_STARTMENUPAGE_REGISTRY_KEY          "${REG_UNINSTALL}"
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME    StartMenuGroup
+!define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_TEXT     "Run MediaPortal Configuration"
 !define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
-!define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
-!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
+
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 ;..................................................................................................
 
@@ -76,7 +110,8 @@ Var UninstAll       ; Set, when the user decided to uninstall everything
 ; These instructions define the sequence of the pages shown by the installer
 ;..................................................................................................
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE ..\Docs\LICENSE.rtf
+!insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
+!insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
 Page custom FilterSelection
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
@@ -101,18 +136,18 @@ UnInstPage custom un.UninstallOpionsSelection
 OutFile "Release\${APP_NAME}_setup.exe"
 BrandingText "MediaPortal Installer by Team MediaPortal"
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
+InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 0.2.3.0
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "${NAME}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "${COMPANY}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite "${URL}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription ""
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright ""
-InstallDirRegKey HKLM "${INSTDIR_REG_KEY}" Path
+VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "${NAME}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion    "${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${COMPANY}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${URL}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   ""
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    ""
 ShowUninstDetails show
 
 # Custom Page for Filter Selection
@@ -323,9 +358,9 @@ Section -Main SEC0000
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $FilterDir\WinTVCapWriter.ax $FilterDir
 
     ; Install and Register only when
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}" Dscaler 0
+    WriteRegStr HKLM "${REG_UNINSTALL}" Dscaler 0
     ${If} $DSCALER == 1
-        WriteRegStr HKLM "${INSTDIR_REG_KEY}" Dscaler 1
+        WriteRegStr HKLM "${REG_UNINSTALL}" Dscaler 1
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $FilterDir\GenDMOProp.dll $FilterDir
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegAudio.dll $FilterDir\MpegAudio.dll $FilterDir
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegVideo.dll $FilterDir\MpegVideo.dll $FilterDir
@@ -348,9 +383,9 @@ Section -Main SEC0000
         WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Video Delay" 0
     ${EndIf}
 
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}" Gabest 0
+    WriteRegStr HKLM "${REG_UNINSTALL}" Gabest 0
     ${If} $GABEST == 1
-        WriteRegStr HKLM "${INSTDIR_REG_KEY}" Gabest 1
+        WriteRegStr HKLM "${REG_UNINSTALL}" Gabest 1
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $FilterDir\MpaDecFilter.ax $FilterDir
         !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $FilterDir\Mpeg2DecFilter.ax $FilterDir
 
@@ -384,7 +419,7 @@ Section -Main SEC0000
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcp71.dll $FilterDir\msvcp71.dll $FilterDir
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcr71.dll $FilterDir\msvcr71.dll $FilterDir
 
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}\Components" Main 1
+    WriteRegStr HKLM "${REG_UNINSTALL}\Components" Main 1
 
     ; Write the Install / Config Dir into the registry for the Public SVN Installer to recognize the environment
     WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ApplicationDir $INSTDIR
@@ -399,9 +434,9 @@ SectionEnd
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 ;..................................................................................................
 Section -post SEC0001
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}" Path $INSTDIR
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}" PathFilter $FILTERDIR
-    WriteRegStr HKLM "${INSTDIR_REG_KEY}" WindowsVersion $WindowsVersion
+    WriteRegStr HKLM "${REG_UNINSTALL}" Path $INSTDIR
+    WriteRegStr HKLM "${REG_UNINSTALL}" PathFilter $FILTERDIR
+    WriteRegStr HKLM "${REG_UNINSTALL}" WindowsVersion $WindowsVersion
 
     ; Create the Statmenu and the Desktop shortcuts
 
@@ -424,14 +459,23 @@ Section -post SEC0001
     CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
     !insertmacro MUI_STARTMENU_WRITE_END
 
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" Publisher "${COMPANY}"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" URLInfoAbout "${URL}"
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayIcon $INSTDIR\uninstall.exe
-    WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" UninstallString $INSTDIR\uninstall.exe
-    WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
-    WriteRegDWORD HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
+    !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
+    !endif
+
+    # Write Uninstall Information
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\MediaPortal.exe,0"
+    WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall.exe"
+    #WriteRegStr HKLM "${REG_UNINSTALL}" ModifyPath         "$INSTDIR\add-remove-mp.exe"
+    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
+    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
 
     ; Associate .mpi files with MPInstaller
     !define Index "Line${__LINE__}"
@@ -507,7 +551,7 @@ Function .onInit
     ; Needed for Library Install
     ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
     Push $0
-    ReadRegStr $0 HKLM "${INSTDIR_REG_KEY}" Path
+    ReadRegStr $0 HKLM "${REG_UNINSTALL}" Path
     ClearErrors
     StrCmp $0 "" +2
     StrCpy $LibInstall 1
@@ -529,7 +573,7 @@ FunctionEnd
 # Macro for selecting uninstaller sections
 !macro SELECT_UNSECTION SECTION_NAME UNSECTION_ID
     Push $R0
-    ReadRegStr $R0 HKLM "${INSTDIR_REG_KEY}\Components" "${SECTION_NAME}"
+    ReadRegStr $R0 HKLM "${REG_UNINSTALL}\Components" "${SECTION_NAME}"
     StrCmp $R0 1 0 next${UNSECTION_ID}
     !insertmacro SelectSection "${UNSECTION_ID}"
     GoTo done${UNSECTION_ID}
@@ -742,18 +786,18 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"
     Delete /REBOOTOK "$DESKTOP\MediaPortal Configuration.lnk"
     Delete /REBOOTOK $DESKTOP\MediaPortal.lnk
-    DeleteRegValue HKLM "${INSTDIR_REG_KEY}\Components" Main
+    DeleteRegValue HKLM "${REG_UNINSTALL}\Components" Main
 SectionEnd
 
 Section -un.post UNSEC0001
     DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
     Delete /REBOOTOK $INSTDIR\uninstall.exe
-    DeleteRegValue HKLM "${INSTDIR_REG_KEY}" StartMenuGroup
-    DeleteRegValue HKLM "${INSTDIR_REG_KEY}" Path
-    DeleteRegValue HKLM "${INSTDIR_REG_KEY}" PathFilter
-    DeleteRegKey /IfEmpty HKLM "${INSTDIR_REG_KEY}\Components"
-    DeleteRegKey /IfEmpty HKLM "${INSTDIR_REG_KEY}"
+    DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
+    DeleteRegValue HKLM "${REG_UNINSTALL}" Path
+    DeleteRegValue HKLM "${REG_UNINSTALL}" PathFilter
+    DeleteRegKey /IfEmpty HKLM "${REG_UNINSTALL}\Components"
+    DeleteRegKey /IfEmpty HKLM "${REG_UNINSTALL}"
     RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
 
     ; Remove File Association for .mpi files
@@ -780,11 +824,11 @@ SectionEnd
 
 # Uninstaller functions
 Function un.onInit
-    ReadRegStr $INSTDIR HKLM "${INSTDIR_REG_KEY}" Path
-    ReadRegStr $FILTERDIR HKLM "${INSTDIR_REG_KEY}" PathFilter
-    ReadRegStr $GABEST HKLM "${INSTDIR_REG_KEY}" Gabest
-    ReadRegStr $DSCALER HKLM "${INSTDIR_REG_KEY}" Dscaler
-    ReadRegStr $WindowsVersion HKLM "${INSTDIR_REG_KEY}" WindowsVersion
+    ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" Path
+    ReadRegStr $FILTERDIR HKLM "${REG_UNINSTALL}" PathFilter
+    ReadRegStr $GABEST HKLM "${REG_UNINSTALL}" Gabest
+    ReadRegStr $DSCALER HKLM "${REG_UNINSTALL}" Dscaler
+    ReadRegStr $WindowsVersion HKLM "${REG_UNINSTALL}" WindowsVersion
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
 
