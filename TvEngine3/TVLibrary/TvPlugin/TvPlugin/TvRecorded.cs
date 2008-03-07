@@ -399,13 +399,14 @@ namespace TvPlugin
       LoadSettings();
       LoadDirectory();
 
+      /*
       if (!g_Player.IsTVRecording && !g_Player.Playing)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
         msg.SendToTargetWindow = true;
         GUIWindowManager.SendThreadMessage(msg);
       }
-
+      */
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
@@ -1280,12 +1281,14 @@ namespace TvPlugin
         rec.StopTime = stoptime;
         rec.Persist();
       }
+      /*
       if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
         msg.SendToTargetWindow = true;
         GUIWindowManager.SendThreadMessage(msg);
       }
+      */
     }
 
     private void OnPlayRecordingBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)

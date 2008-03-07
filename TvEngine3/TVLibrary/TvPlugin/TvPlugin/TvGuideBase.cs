@@ -669,6 +669,7 @@ namespace TvPlugin
               }
               UpdateCurrentProgram();
 
+              /*
               if (!g_Player.Playing)
               {
                 Log.Debug("turn tv on");
@@ -676,7 +677,7 @@ namespace TvPlugin
                 msg.SendToTargetWindow = true;
                 GUIWindowManager.SendThreadMessage(msg);
               }
-
+              */
               return true;
             }
           //break;

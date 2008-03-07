@@ -906,7 +906,7 @@ namespace TvPlugin
         }
         */
         MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channel.DisplayName);
-        if (_autoTurnOnTv && !_playbackStopped)
+        if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
         {
           if (!wasPrevWinTVplugin())
           {
@@ -1171,7 +1171,7 @@ namespace TvPlugin
       {
         case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
           {
-            if (_autoTurnOnTv)
+            if (_autoTurnOnTv && !wasPrevWinTVplugin()) // we only want to resume TV if previous window is NOT a tvplugin based one. (ex. tvguide.)
             {
               //restart viewing...  
               MediaPortal.GUI.Library.Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
