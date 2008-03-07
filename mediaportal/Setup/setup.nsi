@@ -507,95 +507,6 @@ SectionEnd
     !undef Index
 SectionEnd
 
-# Installer functions
-Function .onInit
-    InitPluginsDir
-
-    !insertmacro INSTALLOPTIONS_EXTRACT "FilterSelect.ini"
-
-    ; Get Windows Version
-    Call GetWindowsVersion
-    Pop $R0
-    StrCpy $WindowsVersion $R0
-    ${if} $WindowsVersion == "95"
-    ${OrIf} $WindowsVersion == "98"
-    ${OrIf} $WindowsVersion == "ME"
-    ${OrIf} $WindowsVersion == "NT 4.0"
-        MessageBox MB_OK|MB_ICONSTOP "MediaPortal is not support on Windows $WindowsVersion. Installation aborted"
-        Abort
-    ${EndIf}
-    ${If} $WindowsVersion == "2003"
-        ; MS Reports also XP 64 as NT 5.2. So we default on XP
-        StrCpy $WindowsVersion 'XP'
-    ${EndIf}
-
-    ; Check if .Net is installed
-    Call IsDotNetInstalled
-    Pop $0
-    ${If} $0 == 0
-        MessageBox MB_OK|MB_ICONSTOP "Microsoft .Net Framework Runtime is a prerequisite. Please install first."
-        Abort
-    ${EndIf}
-
-    ; Get the Common Application Data Folder to Store Files for Vista
-    ; Set the Context to alll, so that we get the All Users folder
-    SetShellVarContext all
-    StrCpy $CommonAppData "$APPDATA\Team MediaPortal\MediaPortal"
-    ; Context back to current user
-    SetShellVarContext current
-
-    ; Needed for Library Install
-    ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
-    Push $0
-    ReadRegStr $0 HKLM "${REG_UNINSTALL}" Path
-    ClearErrors
-    StrCmp $0 "" +2
-    StrCpy $LibInstall 1
-    Pop $0
-FunctionEnd
-
-Function .onInstSuccess
-
-FunctionEnd
-
-; Start the Configuration after the successfull install
-; needed in an extra function to set the working directory
-Function RunConfig
-SetOutPath $INSTDIR
-Exec "$INSTDIR\Configuration.exe"
-FunctionEnd
-
-# Macro for selecting uninstaller sections
-!macro SELECT_UNSECTION SECTION_NAME UNSECTION_ID
-    Push $R0
-    ReadRegStr $R0 HKLM "${REG_UNINSTALL}\Components" "${SECTION_NAME}"
-    StrCmp $R0 1 0 next${UNSECTION_ID}
-    !insertmacro SelectSection "${UNSECTION_ID}"
-    GoTo done${UNSECTION_ID}
-next${UNSECTION_ID}:
-    !insertmacro UnselectSection "${UNSECTION_ID}"
-done${UNSECTION_ID}:
-    Pop $R0
-!macroend
-
-# Uninstaller sections
-
-# Custom Page for Uninstall User settings
-; This shows the Uninstall User Serrings Page
-;..................................................................................................
-LangString UNINSTALL_SETTINGS_TITLE ${LANG_ENGLISH} "Uninstall User settings"
-LangString UNINSTALL_SETTINGS_SUBTITLE ${LANG_ENGLISH} "Attention: This will remove all your customised settings including Skins and Databases."
-
-Function un.UninstallOpionsSelection ;Function name defined with Page command
-  !insertmacro MUI_HEADER_TEXT "$(UNINSTALL_SETTINGS_TITLE)" "$(UNINSTALL_SETTINGS_SUBTITLE)"
-  !insertmacro INSTALLOPTIONS_DISPLAY "UnInstallOptions.ini"
-
-  ; Get the values selected in the Check Boxes
-  !insertmacro INSTALLOPTIONS_READ $UninstAll "UninstallOptions.ini" "Field 1" "State"
-FunctionEnd
-
-LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
-
 Section /o -un.Main UNSEC0000
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
@@ -816,6 +727,95 @@ Section -un.post UNSEC0001
     !undef Index
 
 SectionEnd
+
+# Installer functions
+Function .onInit
+    InitPluginsDir
+
+    !insertmacro INSTALLOPTIONS_EXTRACT "FilterSelect.ini"
+
+    ; Get Windows Version
+    Call GetWindowsVersion
+    Pop $R0
+    StrCpy $WindowsVersion $R0
+    ${if} $WindowsVersion == "95"
+    ${OrIf} $WindowsVersion == "98"
+    ${OrIf} $WindowsVersion == "ME"
+    ${OrIf} $WindowsVersion == "NT 4.0"
+        MessageBox MB_OK|MB_ICONSTOP "MediaPortal is not support on Windows $WindowsVersion. Installation aborted"
+        Abort
+    ${EndIf}
+    ${If} $WindowsVersion == "2003"
+        ; MS Reports also XP 64 as NT 5.2. So we default on XP
+        StrCpy $WindowsVersion 'XP'
+    ${EndIf}
+
+    ; Check if .Net is installed
+    Call IsDotNetInstalled
+    Pop $0
+    ${If} $0 == 0
+        MessageBox MB_OK|MB_ICONSTOP "Microsoft .Net Framework Runtime is a prerequisite. Please install first."
+        Abort
+    ${EndIf}
+
+    ; Get the Common Application Data Folder to Store Files for Vista
+    ; Set the Context to alll, so that we get the All Users folder
+    SetShellVarContext all
+    StrCpy $CommonAppData "$APPDATA\Team MediaPortal\MediaPortal"
+    ; Context back to current user
+    SetShellVarContext current
+
+    ; Needed for Library Install
+    ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
+    Push $0
+    ReadRegStr $0 HKLM "${REG_UNINSTALL}" Path
+    ClearErrors
+    StrCmp $0 "" +2
+    StrCpy $LibInstall 1
+    Pop $0
+FunctionEnd
+
+Function .onInstSuccess
+
+FunctionEnd
+
+; Start the Configuration after the successfull install
+; needed in an extra function to set the working directory
+Function RunConfig
+SetOutPath $INSTDIR
+Exec "$INSTDIR\Configuration.exe"
+FunctionEnd
+
+# Macro for selecting uninstaller sections
+!macro SELECT_UNSECTION SECTION_NAME UNSECTION_ID
+    Push $R0
+    ReadRegStr $R0 HKLM "${REG_UNINSTALL}\Components" "${SECTION_NAME}"
+    StrCmp $R0 1 0 next${UNSECTION_ID}
+    !insertmacro SelectSection "${UNSECTION_ID}"
+    GoTo done${UNSECTION_ID}
+next${UNSECTION_ID}:
+    !insertmacro UnselectSection "${UNSECTION_ID}"
+done${UNSECTION_ID}:
+    Pop $R0
+!macroend
+
+# Uninstaller sections
+
+# Custom Page for Uninstall User settings
+; This shows the Uninstall User Serrings Page
+;..................................................................................................
+LangString UNINSTALL_SETTINGS_TITLE ${LANG_ENGLISH} "Uninstall User settings"
+LangString UNINSTALL_SETTINGS_SUBTITLE ${LANG_ENGLISH} "Attention: This will remove all your customised settings including Skins and Databases."
+
+Function un.UninstallOpionsSelection ;Function name defined with Page command
+  !insertmacro MUI_HEADER_TEXT "$(UNINSTALL_SETTINGS_TITLE)" "$(UNINSTALL_SETTINGS_SUBTITLE)"
+  !insertmacro INSTALLOPTIONS_DISPLAY "UnInstallOptions.ini"
+
+  ; Get the values selected in the Check Boxes
+  !insertmacro INSTALLOPTIONS_READ $UninstAll "UninstallOptions.ini" "Field 1" "State"
+FunctionEnd
+
+LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 # Uninstaller functions
 Function un.onInit
