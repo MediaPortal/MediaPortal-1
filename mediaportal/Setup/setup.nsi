@@ -107,7 +107,7 @@ Var GABEST          ; Should we install Gabest Filter
 Var FilterDir       ; The Directory, where the filters have been installed
 Var LibInstall      ; Needed for Library Installation
 Var TmpDir          ; Needed for the Uninstaller
-Var UninstAll       ; Set, when the user decided to uninstall everything
+Var RemoveAll       ; Set, when the user decided to uninstall everything
 ;..................................................................................................
 
 # Installer pages
@@ -645,7 +645,7 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $TmpDir\yac-area-codes.xml
 
     ; Do we need to deinstall everything? Then remove also the CommonAppData and InstDir
-    ${If} $UninstAll == 1
+    ${If} $RemoveAll == 1
         DetailPrint "Removing User Settings"
         RmDir /r /REBOOTOK $CommonAppData
         RmDir /r /REBOOTOK $INSTDIR
@@ -812,7 +812,7 @@ Function un.UninstallOpionsSelection ;Function name defined with Page command
   !insertmacro INSTALLOPTIONS_DISPLAY "UnInstallOptions.ini"
 
   ; Get the values selected in the Check Boxes
-  !insertmacro INSTALLOPTIONS_READ $UninstAll "UninstallOptions.ini" "Field 1" "State"
+  !insertmacro INSTALLOPTIONS_READ $RemoveAll "UninstallOptions.ini" "Field 1" "State"
 FunctionEnd
 
 LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
