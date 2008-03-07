@@ -81,10 +81,10 @@ Var CompleteCleanup
 !include Sections.nsh
 !include LogicLib.nsh
 !include Library.nsh
-!include WordFunc.nsh
 !include FileFunc.nsh
 
-!include setup-addremove.nsh
+!include setup-RememberSections.nsh
+!include setup-AddRemovePage.nsh
 !include setup-languages.nsh
 
 !insertmacro GetParameters
