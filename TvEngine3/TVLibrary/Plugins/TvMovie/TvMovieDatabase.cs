@@ -328,24 +328,24 @@ namespace TvEngine
         return false;
       }      
 
-      string sqlSelect = "SELECT ID, SenderKennung, Bezeichnung, Webseite, SortNrTVMovie, Zeichen FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
+      string sqlSelect = "SELECT * FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
 
-      DataSet tvMovieTable = new DataSet();
+      DataSet tvMovieTable = new DataSet("Sender");
       try
       {
         _databaseConnection.Open();
         using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
         {
-          using (OleDbDataAdapter databaseAdapter = new OleDbDataAdapter())
+          using (OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand))
           {
             try
             {
-              databaseAdapter.SelectCommand = databaseCommand;
-              databaseAdapter.Fill(tvMovieTable, "Sender");
+              databaseAdapter.FillSchema(tvMovieTable, SchemaType.Source, "Sender");
+              databaseAdapter.Fill(tvMovieTable);
             }
             catch (Exception dsex)
             {
-              Log.Info("TVMovie: Exception filling Sender DataSet - {0}", dsex.Message);
+              Log.Info("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
               return false;
             }
           }
@@ -370,7 +370,7 @@ namespace TvEngine
       }
 
       _tvmEpgChannels = new List<TVMChannel>();
-      foreach (DataRow sender in tvMovieTable.Tables["Sender"].Rows)
+      foreach (DataRow sender in tvMovieTable.Tables["Table"].Rows)
       {
         TVMChannel current = new TVMChannel(sender["ID"].ToString(),
                                             sender["SenderKennung"].ToString(),
@@ -550,6 +550,7 @@ namespace TvEngine
       StringBuilder sqlb = new StringBuilder();
 
       // UNUSED: F16zu9 , live , untertitel , Dauer , Wiederholung
+      //sqlb.Append("SELECT * "); // need for saver schema filling
       sqlb.Append("SELECT TVDaten.SenderKennung, TVDaten.Beginn, TVDaten.Ende, TVDaten.Sendung, TVDaten.Genre, TVDaten.Kurzkritik, TVDaten.KurzBeschreibung, TVDaten.Beschreibung");
       sqlb.Append(", TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton");
       sqlb.Append(", TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Originaltitel, TVDaten.Regie, TVDaten.Darsteller");
@@ -559,59 +560,61 @@ namespace TvEngine
       DateTime importTime = DateTime.Now.Subtract(TimeSpan.FromHours(4));
       sqlSelect = string.Format(sqlb.ToString(), stationName, importTime.ToString("yyyy-MM-dd HH:mm:ss")); //("dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture));
       OleDbTransaction databaseTransaction = null;
-      OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
-
-      foreach (Mapping map in channelNames)
-        if (map.TvmEpgChannel == stationName)
-        {
-          Log.Debug("TVMovie: Purging old programs for channel {0}", map.Channel);
-          ClearPrograms(map.Channel);
-          if (_slowImport)
-            Thread.Sleep(32);
-        }
-
-      try
+      using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
       {
-        _databaseConnection.Open();
-        // The main app might change epg details while importing
-        databaseTransaction = _databaseConnection.BeginTransaction(IsolationLevel.ReadCommitted);
-        databaseCommand.Transaction = databaseTransaction;
-        OleDbDataReader reader = databaseCommand.ExecuteReader(CommandBehavior.SequentialAccess);
+        foreach (Mapping map in channelNames)
+          if (map.TvmEpgChannel == stationName)
+          {
+            Log.Debug("TVMovie: Purging old programs for channel {0}", map.Channel);
+            ClearPrograms(map.Channel);
+            if (_slowImport)
+              Thread.Sleep(32);
+          }
 
-        while (reader.Read())
-        {
-          ImportSingleChannelData(channelNames, allChannels, useGentle, counter,
-                                    reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(),
-                                    reader[8].ToString(), reader[9].ToString(), reader[10].ToString(), reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
-                                    reader[14].ToString(), reader[15].ToString(), reader[16].ToString(), reader[17].ToString(), reader[18].ToString(), reader[19].ToString(), reader[20].ToString()
-                                  );
-          counter++;
-        }
-        databaseTransaction.Commit();
-        reader.Close();
-      }
-      catch (OleDbException ex)
-      {
-        databaseTransaction.Rollback();
-        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
-        Log.Error("TVMovie: Exception: {0}", ex);
-        return 0;
-      }
-      catch (Exception ex1)
-      {
         try
         {
-          databaseTransaction.Rollback();
+          _databaseConnection.Open();
+          // The main app might change epg details while importing
+          databaseTransaction = _databaseConnection.BeginTransaction(IsolationLevel.ReadCommitted);
+          databaseCommand.Transaction = databaseTransaction;
+          using (OleDbDataReader reader = databaseCommand.ExecuteReader(CommandBehavior.SequentialAccess))
+          {
+            while (reader.Read())
+            {
+              ImportSingleChannelData(channelNames, allChannels, useGentle, counter,
+                                        reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(),
+                                        reader[8].ToString(), reader[9].ToString(), reader[10].ToString(), reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
+                                        reader[14].ToString(), reader[15].ToString(), reader[16].ToString(), reader[17].ToString(), reader[18].ToString(), reader[19].ToString(), reader[20].ToString()
+                                      );
+              counter++;
+            }
+            databaseTransaction.Commit();
+            reader.Close();
+          }
         }
-        catch (Exception)
+        catch (OleDbException ex)
         {
-        }        
-        Log.Info("TVMovie: Exception: {0}", ex1);
-        return 0;
-      }
-      finally
-      {
-        _databaseConnection.Close();
+          databaseTransaction.Rollback();
+          Log.Info("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
+          Log.Error("TVMovie: Exception: {0}", ex);
+          return 0;
+        }
+        catch (Exception ex1)
+        {
+          try
+          {
+            databaseTransaction.Rollback();
+          }
+          catch (Exception)
+          {
+          }
+          Log.Info("TVMovie: Exception: {0}", ex1);
+          return 0;
+        }
+        finally
+        {
+          _databaseConnection.Close();
+        }
       }
 
       return counter;
