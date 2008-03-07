@@ -373,11 +373,8 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer: live tv");
         _isLive = true;
       }
-
       ExclusiveMode(true);
-
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-
       _isVisible = false;
       _isWindowVisible = false;
       _volume = 100;
@@ -385,7 +382,6 @@ namespace MediaPortal.Player
       _currentFile = strFile;
       _isFullscreen = false;
       _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
-
       _updateNeeded = true;
       //if (_fileSource != null)
       //{
@@ -406,7 +402,6 @@ namespace MediaPortal.Player
         return false;
       }
       _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
-
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
       {
@@ -422,7 +417,6 @@ namespace MediaPortal.Player
         _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
         _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
       }
-
       if (_basicVideo != null)
       {
         hr = _basicVideo.GetVideoSize(out _videoWidth, out _videoHeight);
@@ -437,7 +431,6 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
       }
       GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
-
       if (_mediaCtrl == null)
       {
         Log.Error("TSReaderPlayer:_mediaCtrl==null");
@@ -446,7 +439,6 @@ namespace MediaPortal.Player
         ExclusiveMode(false);
         return false;
       }
-
       //DsUtils.DumpFilters(_graphBuilder);
 
       _positionX = GUIGraphicsContext.VideoWindow.X;

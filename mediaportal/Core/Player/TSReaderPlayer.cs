@@ -310,19 +310,17 @@ namespace MediaPortal.Player
           _aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
         if (strAudioRenderer.Length > 0)
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
-
-      if (enableDVBBitmapSubtitles)
-      {
+        if (enableDVBBitmapSubtitles)
+        {
           try
           {
-              _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
+            _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
           }
           catch (Exception e)
           {
-              Log.Error(e);
+            Log.Error(e);
           }
-      }
-
+        }
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
@@ -330,16 +328,13 @@ namespace MediaPortal.Player
         {
           customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
-
         #endregion
 
         #region add TsReader
-
         TsReader reader = new TsReader();
         _fileSource = (IBaseFilter)reader;
         ITSReader ireader = (ITSReader)reader;
         ireader.SetTsReaderCallback(this);
-
         ireader.SetRequestAudioChangeCallback(this);
         Log.Info("TSReaderPlayer:add TsReader to graph");
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsReader");
@@ -372,7 +367,8 @@ namespace MediaPortal.Player
         mpeg2ProgramStream.formatType = FormatType.None;
         mpeg2ProgramStream.formatSize = 0;
         mpeg2ProgramStream.formatPtr = IntPtr.Zero;
-        hr = interfaceFile.Load(filename, mpeg2ProgramStream);
+        //hr = interfaceFile.Load(filename, mpeg2ProgramStream);
+        hr = interfaceFile.Load(filename, null);
         if (hr != 0)
         {
           Log.Error("TSReaderPlayer:Failed to open file:{0} :0x{1:x}", filename, hr);
@@ -439,15 +435,12 @@ namespace MediaPortal.Player
         {
           Log.Error("Unable to get IMediaSeeking interface#1");
         }
-
         _audioStream = _fileSource as IAudioStream;
         if (_audioStream == null)
         {
           Log.Error("Unable to get IAudioStream interface");
         }
-
         _audioSelector = new AudioSelector(_audioStream);
-
         if (enableDVBTtxtSubtitles || enableDVBBitmapSubtitles) 
         {
           try
@@ -460,7 +453,6 @@ namespace MediaPortal.Player
             Log.Error(e);
           }
         }
-
         if (enableDVBBitmapSubtitles)
         {
           _subtitleStream = _fileSource as ISubtitleStream;
@@ -469,17 +461,14 @@ namespace MediaPortal.Player
             Log.Error("Unable to get ISubtitleStream interface");
           }
         }
-
         if( enableDVBTtxtSubtitles )
         {
           //Log.Debug("TSReaderPlayer: Obtaining TeletextSource");
           _teletextSource = _fileSource as ITeletextSource;
-
           if (_teletextSource == null)
           {
             Log.Error("Unable to get ITeletextSource interface");
           }
-
           Log.Debug("TSReaderPlayer: Creating Teletext Receiver");
           TeletextSubtitleDecoder ttxtDecoder = new TeletextSubtitleDecoder(_dvbSubRenderer);
           _ttxtReceiver = new TeletextReceiver(_teletextSource, ttxtDecoder);
@@ -493,7 +482,6 @@ namespace MediaPortal.Player
           // if only dvb subs are enabled, pass null for ttxtDecoder
           _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
         }
-            
         if (_audioRendererFilter != null)
         {
           //Log.Info("TSReaderPlayer:set reference clock");
@@ -505,7 +493,6 @@ namespace MediaPortal.Player
           _basicAudio = (IBasicAudio)_graphBuilder;
           //_mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
         }
-
         if (_isRadio == false)
         {
           if (!_vmr9.IsVMR9Connected)
@@ -526,7 +513,6 @@ namespace MediaPortal.Player
               System.Threading.Thread.Sleep(100);
             }
           }
-
           _vmr9.SetDeinterlaceMode();
         }
         return true;
@@ -618,10 +604,8 @@ namespace MediaPortal.Player
           _vmr9.Dispose();
           _vmr9 = null;
         }
-
         if (_fileSource != null)
         {
-
           while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0) ;
           _fileSource = null;
         }
@@ -663,7 +647,6 @@ namespace MediaPortal.Player
             ;
           _audioRendererFilter = null;
         }
-
         if (_subtitleFilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0)
@@ -672,7 +655,6 @@ namespace MediaPortal.Player
           if (this._dvbSubRenderer != null) this._dvbSubRenderer.SetPlayer(null);
           this._dvbSubRenderer = null;
         }
-
         // FlipGer: release custom filters
         if (customFilters != null)
         {
@@ -691,9 +673,7 @@ namespace MediaPortal.Player
             ;
           _mpegDemux = null;
         }
-
         //	DsUtils.RemoveFilters(graphBuilder);
-
         if (_rotEntry != null)
         {
           _rotEntry.Dispose();
@@ -705,10 +685,8 @@ namespace MediaPortal.Player
             ;
           _graphBuilder = null;
         }
-
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
-
         GC.Collect();
       }
       catch (Exception ex)
@@ -763,7 +741,6 @@ namespace MediaPortal.Player
         UpdateCurrentPosition();
         if (_dvbSubRenderer != null) _dvbSubRenderer.OnSeek(CurrentPosition);
         _state = PlayState.Playing;
-
         Log.Info("TSReaderPlayer: current pos:{0} dur:{1}", CurrentPosition, Duration);
       }
     }    
