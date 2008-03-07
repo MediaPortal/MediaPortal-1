@@ -172,7 +172,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    ""
 ShowUninstDetails show
 
 #---------------------------------------------------------------------------
-# SECTIONS and MACROS
+# SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
 Section "MediaPortal TV Server" SecServer
     DetailPrint "Installing MediaPortal TV Server..."
@@ -469,23 +469,21 @@ SectionEnd
 
     DeleteRegKey HKLM "${REG_UNINSTALL}"
 !macroend
-#####    End of Sections and macros
 
-#####    Add/Remove callback functions
+#---------------------------------------------------------------------------
+# This macro used to perform operation on multiple sections.
+# List all of your components in following manner here.
 !macro SectionList MacroName
-    ;This macro used to perform operation on multiple sections.
-    ;List all of your components in following manner here.
-
     !insertmacro "${MacroName}" "SecServer"
     !insertmacro "${MacroName}" "SecClient"
 !macroend
- 
-Section -FinishComponents
-  ;Removes unselected components and writes component status to registry
-  !insertmacro SectionList "FinishSection"
-SectionEnd
- 
+
+#---------------------------------------------------------------------------
+# This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
+    ;Removes unselected components and writes component status to registry
+    !insertmacro SectionList "FinishSection"
+  
     SetOverwrite on
     SetOutPath $INSTDIR
     
@@ -517,9 +515,9 @@ Section -Post
     CopyFiles "$EXEPATH" "$INSTDIR\add-remove-tve3.exe"
     WriteUninstaller "$INSTDIR\uninstall-tve3.exe"
 SectionEnd
-#####    End of Add/Remove callback functions
 
-#####    Uninstaller sections
+#---------------------------------------------------------------------------
+# This section is called on uninstall and removes all components
 Section Uninstall
     ;First removes all optional components
     !insertmacro SectionList "RemoveSection"
@@ -544,8 +542,10 @@ Section Uninstall
         !insertmacro CompleteCleanup
     ${EndIf}
 SectionEnd
-#####    End of Uninstaller sections
- 
+
+#---------------------------------------------------------------------------
+# FUNCTIONS
+#---------------------------------------------------------------------------
 Function .onInit
     #### check and parse cmdline parameter
     ; set default values for parameters ........
