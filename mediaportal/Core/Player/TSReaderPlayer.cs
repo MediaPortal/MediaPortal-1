@@ -139,7 +139,7 @@ namespace MediaPortal.Player
 	      0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
       };
     #endregion
-    
+
     #region variables
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
@@ -168,10 +168,10 @@ namespace MediaPortal.Player
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ISubtitleStream
     {
-      void SetSubtitleStream( Int32 stream );
-      void GetSubtitleStreamType( Int32 stream, ref Int32 type );
-      void GetSubtitleStreamCount( ref Int32 count );
-      void GetCurrentSubtitleStream( ref Int32 stream );
+      void SetSubtitleStream(Int32 stream);
+      void GetSubtitleStreamType(Int32 stream, ref Int32 type);
+      void GetSubtitleStreamCount(ref Int32 count);
+      void GetCurrentSubtitleStream(ref Int32 stream);
       void GetSubtitleStreamLanguage(Int32 stream, ref SUBTITLE_LANGUAGE szLanguage);
       void SetSubtitleResetCallback(IntPtr callBack);
     }
@@ -201,7 +201,6 @@ namespace MediaPortal.Player
     protected override void OnInitialized()
     {
       Log.Info("TSReaderPlayer: OnInitialized");
-
       if (_vmr9 != null)
       {
         _vmr9.Enable(true);
@@ -209,7 +208,7 @@ namespace MediaPortal.Player
         SetVideoWindow();
       }
     }
-    
+
     public override void SetVideoWindow()
     {
       if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
@@ -217,12 +216,10 @@ namespace MediaPortal.Player
         _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
         _updateNeeded = true;
       }
-
       if (!_updateNeeded)
       {
         return;
       }
-
       _updateNeeded = false;
       _isStarted = true;
     }
@@ -236,13 +233,13 @@ namespace MediaPortal.Player
       //Log.Info("TSReaderPlayer: build graph");
       try
       {
-				Cleanup(); //before adding vmr9 - make sure that cleanup is done, otherwise MP could hang in (_vmr9.AddVMR9)
+        Cleanup(); //before adding vmr9 - make sure that cleanup is done, otherwise MP could hang in (_vmr9.AddVMR9)
         _graphBuilder = (IGraphBuilder)new FilterGraph();
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
         #region add vmr9
         if (_isRadio == false)
-        {          
+        {
           Log.Info("TSReaderPlayer: add _vmr9");
           _vmr9 = new VMR9Util();
           _vmr9.AddVMR9(_graphBuilder);
@@ -300,7 +297,6 @@ namespace MediaPortal.Player
         {
           if (strVideoCodec.Length > 0)
             _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
-
           if (strH264VideoCodec.Length > 0)
             _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
         }
@@ -346,28 +342,13 @@ namespace MediaPortal.Player
         #endregion
 
         #region load file in TsReader
-        //call the load() on tsfilesource. This is needed so tsfilesource will configure itself
-        //to mpeg-2 program stream mode instead of mpeg-2 transport stream mode.
-        //when its in program stream mode we can connect it to the demuxer
         IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
         if (interfaceFile == null)
         {
           Log.Error("TSReaderPlayer:Failed to get IFileSourceFilter");
           return false;
         }
-        //Log.Info("TSReaderPlayer: open file:{0}",filename);
-        Log.Info("TSReaderPlayer: open file with mediatype:{0}", filename);
-        AMMediaType mpeg2ProgramStream = new AMMediaType();
-        mpeg2ProgramStream.majorType = MediaType.Stream;
-        mpeg2ProgramStream.subType = MediaSubType.Mpeg2Program;
-        mpeg2ProgramStream.unkPtr = IntPtr.Zero;
-        mpeg2ProgramStream.sampleSize = 0;
-        mpeg2ProgramStream.temporalCompression = false;
-        mpeg2ProgramStream.fixedSizeSamples = true;
-        mpeg2ProgramStream.formatType = FormatType.None;
-        mpeg2ProgramStream.formatSize = 0;
-        mpeg2ProgramStream.formatPtr = IntPtr.Zero;
-        //hr = interfaceFile.Load(filename, mpeg2ProgramStream);
+        Log.Info("TSReaderPlayer: open file: {0}", filename);
         hr = interfaceFile.Load(filename, null);
         if (hr != 0)
         {
@@ -418,13 +399,13 @@ namespace MediaPortal.Player
             pins[0].QueryDirection(out direction);
             if (direction == PinDirection.Input)
             {
-              DirectShowUtil.ReleaseComObject(pins[0]);              
+              DirectShowUtil.ReleaseComObject(pins[0]);
               continue;
             }
             _graphBuilder.Render(pins[0]);
-            DirectShowUtil.ReleaseComObject(pins[0]);                          
+            DirectShowUtil.ReleaseComObject(pins[0]);
           }
-          DirectShowUtil.ReleaseComObject(enumPins);                                    
+          DirectShowUtil.ReleaseComObject(enumPins);
         }
         #endregion
 
@@ -441,7 +422,7 @@ namespace MediaPortal.Player
           Log.Error("Unable to get IAudioStream interface");
         }
         _audioSelector = new AudioSelector(_audioStream);
-        if (enableDVBTtxtSubtitles || enableDVBBitmapSubtitles) 
+        if (enableDVBTtxtSubtitles || enableDVBBitmapSubtitles)
         {
           try
           {
@@ -461,7 +442,7 @@ namespace MediaPortal.Player
             Log.Error("Unable to get ISubtitleStream interface");
           }
         }
-        if( enableDVBTtxtSubtitles )
+        if (enableDVBTtxtSubtitles)
         {
           //Log.Debug("TSReaderPlayer: Obtaining TeletextSource");
           _teletextSource = _fileSource as ITeletextSource;
@@ -472,12 +453,11 @@ namespace MediaPortal.Player
           Log.Debug("TSReaderPlayer: Creating Teletext Receiver");
           TeletextSubtitleDecoder ttxtDecoder = new TeletextSubtitleDecoder(_dvbSubRenderer);
           _ttxtReceiver = new TeletextReceiver(_teletextSource, ttxtDecoder);
-
           // regardless of whether dvb subs are enabled, the following call is okay
           // if _subtitleStream is null the subtitle will just not setup for bitmap subs 
           _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, ttxtDecoder);
         }
-        else if (enableDVBBitmapSubtitles) 
+        else if (enableDVBBitmapSubtitles)
         {
           // if only dvb subs are enabled, pass null for ttxtDecoder
           _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
@@ -500,9 +480,9 @@ namespace MediaPortal.Player
             int count = 0;
             while (true)
             {
-							Log.Debug("TSReaderPlayer: waiting for vmr9 connection");
+              Log.Debug("TSReaderPlayer: waiting for vmr9 connection");
               Application.DoEvents();
-              if( count > 20 )
+              if (count > 20)
               {
                 Log.Debug("TSReaderPlayer: no vmr9 connection, stopping");
                 g_Player.Stop();
@@ -544,21 +524,13 @@ namespace MediaPortal.Player
       else
       {
         Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode");
-		msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
       }
       GUIWindowManager.SendMessage(msg);
     }
 
     void Cleanup()
     {
-      /*
-      if (_graphBuilder == null)
-      {
-        Log.Info("TSReaderPlayer:grapbuilder=null");
-        return;
-      }
-      */
-
       int hr;
       Log.Info("TSReaderPlayer:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
@@ -611,46 +583,42 @@ namespace MediaPortal.Player
         }
         if (_pinAudio != null)
         {
-          DirectShowUtil.ReleaseComObject(_pinAudio);          
+          DirectShowUtil.ReleaseComObject(_pinAudio);
           _pinAudio = null;
         }
         if (_pinVideo != null)
         {
-          DirectShowUtil.ReleaseComObject(_pinVideo);          
+          DirectShowUtil.ReleaseComObject(_pinVideo);
           _pinVideo = null;
         }
         if (_videoCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0);
           _videoCodecFilter = null;
         }
         if (_h264videoCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0);
           _h264videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
-            ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0);
           _audioCodecFilter = null;
         }
         if (_aacaudioCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0)
-            ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0);
           _aacaudioCodecFilter = null;
         }
         if (_audioRendererFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
-            ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0);
           _audioRendererFilter = null;
         }
         if (_subtitleFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0)
-            ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0);
           _subtitleFilter = null;
           if (this._dvbSubRenderer != null) this._dvbSubRenderer.SetPlayer(null);
           this._dvbSubRenderer = null;
@@ -662,15 +630,14 @@ namespace MediaPortal.Player
           {
             if (customFilters[i] != null)
             {
-              while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
+              while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0);
             }
             customFilters[i] = null;
           }
         }
         if (_mpegDemux != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_mpegDemux)) > 0)
-            ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_mpegDemux)) > 0);
           _mpegDemux = null;
         }
         //	DsUtils.RemoveFilters(graphBuilder);
@@ -681,8 +648,7 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if (_graphBuilder != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
-            ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0);
           _graphBuilder = null;
         }
         GUIGraphicsContext.form.Invalidate(true);
@@ -728,7 +694,7 @@ namespace MediaPortal.Player
               System.Threading.Thread.Sleep(500);
               _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
               lTime = lContentEnd;
-            }*/            
+            }*/
             int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
             Log.Info("TsReaderPlayer seek done:{0:X}", hr);
             if (VMR9Util.g_vmr9 != null)
@@ -743,14 +709,14 @@ namespace MediaPortal.Player
         _state = PlayState.Playing;
         Log.Info("TSReaderPlayer: current pos:{0} dur:{1}", CurrentPosition, Duration);
       }
-    }    
+    }
 
     /// <summary>
     /// Property to get the total number of subtitle streams
     /// </summary>
     public override int SubtitleStreams
     {
-      get 
+      get
       {
         if (_subSelector != null)
         {
@@ -768,7 +734,7 @@ namespace MediaPortal.Player
     /// </summary>
     public override int CurrentSubtitleStream
     {
-      get 
+      get
       {
         if (_subSelector != null)
         {
@@ -779,12 +745,12 @@ namespace MediaPortal.Player
           return 0;
         }
       }
-      set 
+      set
       {
         if (_subSelector != null)
         {
           _subSelector.SetOption(value);
-        } 
+        }
       }
     }
 
@@ -827,73 +793,5 @@ namespace MediaPortal.Player
         }
       }
     }
-
-    AMMediaType GetAudioMpg2Media()
-    {
-      AMMediaType mediaAudio = new AMMediaType();
-      mediaAudio.majorType = MediaType.Audio;
-      mediaAudio.subType = MediaSubType.Mpeg2Audio;
-      mediaAudio.formatType = FormatType.WaveEx;
-      mediaAudio.formatPtr = IntPtr.Zero;
-      mediaAudio.sampleSize = 1;
-      mediaAudio.temporalCompression = false;
-      mediaAudio.fixedSizeSamples = true;
-      mediaAudio.unkPtr = IntPtr.Zero;
-      mediaAudio.formatType = FormatType.WaveEx;
-      mediaAudio.formatSize = MPEG2AudioFormat.GetLength(0);
-      mediaAudio.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAudio.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(MPEG2AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
-      return mediaAudio;
-    }
-    AMMediaType GetVideoMpg2Media()
-    {
-      AMMediaType mediaVideo = new AMMediaType();
-      mediaVideo.majorType = MediaType.Video;
-      mediaVideo.subType = MediaSubType.Mpeg2Video;
-      mediaVideo.formatType = FormatType.Mpeg2Video;
-      mediaVideo.unkPtr = IntPtr.Zero;
-      mediaVideo.sampleSize = 1;
-      mediaVideo.temporalCompression = false;
-      mediaVideo.fixedSizeSamples = true;
-      mediaVideo.formatSize = Mpeg2ProgramVideo.GetLength(0);
-      mediaVideo.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaVideo.formatSize);
-      System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mediaVideo.formatPtr, mediaVideo.formatSize);
-      return mediaVideo;
-    }
-    AMMediaType GetTSMedia()
-    {
-      AMMediaType mediaAudioTS = new AMMediaType();
-      mediaAudioTS.majorType = MediaType.Stream;
-      mediaAudioTS.subType = MediaSubType.Mpeg2Transport;
-      mediaAudioTS.formatType = FormatType.Null;
-      mediaAudioTS.formatPtr = IntPtr.Zero;
-      mediaAudioTS.sampleSize = 1;
-      mediaAudioTS.temporalCompression = false;
-      mediaAudioTS.fixedSizeSamples = true;
-      mediaAudioTS.unkPtr = IntPtr.Zero;
-      mediaAudioTS.formatType = FormatType.None;
-      mediaAudioTS.formatSize = 0;
-      mediaAudioTS.formatPtr = IntPtr.Zero;
-      return mediaAudioTS;
-    }
-    AMMediaType GetSubtitleMedia()
-    {
-      AMMediaType mediaSubtitle = new AMMediaType();
-      mediaSubtitle.majorType = MediaType.Null;
-      mediaSubtitle.subType = MediaSubType.Null;
-      mediaSubtitle.formatType = FormatType.Null;
-      mediaSubtitle.formatPtr = IntPtr.Zero;
-      mediaSubtitle.sampleSize = 1;
-      mediaSubtitle.temporalCompression = false;
-      mediaSubtitle.fixedSizeSamples = true;
-      mediaSubtitle.unkPtr = IntPtr.Zero;
-      mediaSubtitle.formatType = FormatType.None;
-      mediaSubtitle.formatSize = 0;
-      mediaSubtitle.formatPtr = IntPtr.Zero;
-      return mediaSubtitle;
-    }
-
-    #region private methods   
-    #endregion
   }
 }
