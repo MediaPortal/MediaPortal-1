@@ -35,3 +35,8 @@ LangString DESC_SecGabest                   ${LANG_ENGLISH} "Installs the Gabest
 LangString ^UninstallLink                   ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 LangString TEXT_MSGBOX_REMOVE_ALL           ${LANG_ENGLISH} "Do you want to remove your User settings?$\r$\nAttention: This will remove all your customised settings including Skins and Databases."
+
+
+
+#LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install MPEG-2 decoder filters"
+#LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "If there is no commercial MPEG-2 decoder installed on your system, you can install the decoders bundled with MediaPortal. They allow you to watch DVDs, TV and MPEG-2 videos without purchasing a third-party decoder. Furthermore those below decoders are required for DVR-MS conversion. It is recommended to leave these options enabled."

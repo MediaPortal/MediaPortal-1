@@ -31,9 +31,7 @@
 # Editing is much more easier, if you install HM NSIS Edit from http://hmne.sourceforge.net
 #
 #**********************************************************************************************************#
-!define APP_NAME "MediaPortal 0.2.3.0"
-
-Name "${APP_NAME}"
+Name "MediaPortal"
 SetCompressor lzma
 #SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
 
@@ -45,11 +43,15 @@ Var WindowsVersion  ; The Windows Version
 Var CommonAppData   ; The Common Application Folder
 Var DSCALER         ; Should we install Dscaler Filter
 Var GABEST          ; Should we install Gabest Filter
-Var FilterDir       ; The Directory, where the filters have been installed
+Var FilterDir       ; The Directory, where the filters have been installed  
 Var LibInstall      ; Needed for Library Installation
-Var TmpDir          ; Needed for the Uninstaller
-;   variables for commandline parameters for Installer
-;   variables for commandline parameters for UnInstaller
+;[OBSOLETE]Var TmpDir          ; Needed for the Uninstaller
+# variables for commandline parameters for Installer
+Var noDscaler
+Var noGabest
+Var noDesktopSC
+Var noStartMenuSC
+# variables for commandline parameters for UnInstaller
 Var RemoveAll       ; Set, when the user decided to uninstall everything
 
 #---------------------------------------------------------------------------
@@ -58,16 +60,20 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 
-!define REG_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
+!define REG_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 
 !define VER_MAJOR       0
-!define VER_MINOR       2
-!define VER_REVISION    3
+!define VER_MINOR       9
+!define VER_REVISION    1
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
-
-!define VERSION 0.2.3.0
+!if ${VER_BUILD} == 0       # it's a stable release
+    !define VERSION "1.0 RC1 internal"
+!else                       # it's an svn reöease
+    !define VERSION "pre-release build ${VER_BUILD}"
+!endif
+BrandingText "TV Server ${VERSION} by Team MediaPortal"
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -77,19 +83,18 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !include LogicLib.nsh
 !include Library.nsh
 !include FileFunc.nsh
+!include WinVer.nsh
 
-#!include setup-RememberSections.nsh
+!include setup-RememberSections.nsh
 !include setup-languages.nsh
 
 !include setup-dotnet.nsh
-!include setup-winversion.nsh
 
 !insertmacro GetParameters
 !insertmacro GetOptions
 !insertmacro un.GetParameters
 !insertmacro un.GetOptions
 
-!include InstallOptions.nsh
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -105,7 +110,7 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "MediaPortal"
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "Team MediaPortal\MediaPortal"
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT         HKLM
 !define MUI_STARTMENUPAGE_REGISTRY_KEY          "${REG_UNINSTALL}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME    StartMenuGroup
@@ -122,9 +127,7 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
-Page custom FilterSelection
 !insertmacro MUI_PAGE_COMPONENTS
-
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_INSTFILES
@@ -144,7 +147,7 @@ Page custom FilterSelection
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
-OutFile "Release\${APP_NAME}_setup.exe"
+OutFile "Release\setup-mediaportal.exe"
 BrandingText "MediaPortal Installer by Team MediaPortal"
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
@@ -161,29 +164,65 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    ""
 ShowUninstDetails show
 
-# Custom Page for Filter Selection
-; This shows the Filter selection page
-;..................................................................................................
-LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install MPEG-2 decoder filters"
-LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "If there is no commercial MPEG-2 decoder installed on your system, you can install the decoders bundled with MediaPortal. They allow you to watch DVDs, TV and MPEG-2 videos without purchasing a third-party decoder. Furthermore those below decoders are required for DVR-MS conversion. It is recommended to leave these options enabled."
+#---------------------------------------------------------------------------
+# USEFUL MACROS
+#---------------------------------------------------------------------------
+!macro SetCommonAppData
 
-Function FilterSelection ;Function name defined with Page command
-  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
-  !insertmacro INSTALLOPTIONS_DISPLAY "FilterSelect.ini"
+    ; Get the Common Application Data Folder
+    ; Set the Context to alll, so that we get the All Users folder
+    SetShellVarContext all
+    StrCpy $CommonAppData "$APPDATA\Team MediaPortal\MediaPortal"
+    ; Context back to current user
+    SetShellVarContext current
+!macroend
 
-  ; Get the values selected in the Check Boxes
-  !insertmacro INSTALLOPTIONS_READ $DSCALER "FilterSelect.ini" "Field 1" "State"
-  !insertmacro INSTALLOPTIONS_READ $GABEST "FilterSelect.ini" "Field 2" "State"
-FunctionEnd
+!macro SetFilterDir
+    ; The Following Filters and Dll need to be copied to \windows\system32 for xp
+    ; In Vista they stay in the Install Directory
+    ${if} $WindowsVersion == "Vista"
+        SetOutPath $INSTDIR
+        StrCpy $FilterDir $InstDir
+    ${Else}
+        SetOutPath $SYSDIR
+        StrCpy $FilterDir $SysDir
+    ${Endif}
+!macroend
+
+!macro CheckForOldDirectory
+    IfFileExists "$INSTDIR\*.*" 0 noRename
+
+    ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
+    ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
+
+    ${If} $R0 < ${VER_MAJOR}
+        Goto rename
+    ${Else}
+        ${If} $R1 < ${VER_MINOR}
+            Goto rename
+        ${Else}
+            Goto noRename
+        ${EndIf}
+    ${EndIf}
+
+    rename:
+        #${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+        #Rename "$INSTDIR" "$INSTDIR_BACKUP_$4$5"
+        Rename "$INSTDIR" "$INSTDIR_BACKUP"
+
+    noRename:
+!macroend
 
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
-Section "MediaPortal" SecMediaPortal
+Section "MediaPortal core files (required)" SecCore
     SectionIn RO
-    DetailPrint "Installing MediaPortal..."
+    DetailPrint "Installing MediaPortal core files..."
     
     SetOverwrite on
+
+    !insertmacro CheckForOldDirectory
 
     ; Doc
     SetOutPath $INSTDIR\Docs
@@ -310,6 +349,7 @@ Section "MediaPortal" SecMediaPortal
     File ..\xbmc\bin\Release\XPBurnComponent.dll
     ;------------  End of Common Files and Folders for XP & Vista
 
+    /******************************************************                change for 1.0 :::::::  USE       AppData    folder
     ; In Case of Vista some Folders / Files need to be copied to the Appplication Data Folder
     ; Simply Change the output Directory in Case of Vista
     ${if} $WindowsVersion == "Vista"
@@ -324,6 +364,13 @@ Section "MediaPortal" SecMediaPortal
     ${Else}
         File ..\xbmc\bin\Release\MediaPortalDirs.xml
     ${Endif}
+    */
+
+    File MediaPortalDirs.xml
+    CreateDirectory "$CommonAppData\InputDeviceMappings\custom"
+    SetOutPath $CommonAppData
+
+    ; ************************************************************************
 
     ; Config Files (XML)
     File ..\xbmc\bin\Release\CaptureCardDefinitions.xml
@@ -345,17 +392,8 @@ Section "MediaPortal" SecMediaPortal
 
     ; The Following Filters and Dll need to be copied to \windows\system32 for xp
     ; In Vista they stay in the Install Directory
-    ${if} $WindowsVersion == "Vista"
-        SetOutPath $INSTDIR
-        StrCpy $FilterDir $InstDir
-    ${Else}
-        SetOutPath $SYSDIR
-        StrCpy $FilterDir $SysDir
-    ${Endif}
-
-
+    !insertmacro SetFilterDir
     ; NOTE: The Filters and Common DLLs found below will be deleted and unregistered manually and not via the automatic Uninstall Log
-
     ; Filters (Copy and Register)
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $FilterDir\cdxareader.ax $FilterDir
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $FilterDir\CLDump.ax $FilterDir
@@ -368,61 +406,6 @@ Section "MediaPortal" SecMediaPortal
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\TSFileSource.ax $FilterDir\TSFileSource.ax $FilterDir
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $FilterDir\WinTVCapWriter.ax $FilterDir
 
-    ; Install and Register only when
-    WriteRegStr HKLM "${REG_UNINSTALL}" Dscaler 0
-    ${If} $DSCALER == 1
-        WriteRegStr HKLM "${REG_UNINSTALL}" Dscaler 1
-        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $FilterDir\GenDMOProp.dll $FilterDir
-        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegAudio.dll $FilterDir\MpegAudio.dll $FilterDir
-        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegVideo.dll $FilterDir\MpegVideo.dll $FilterDir
-        ; Write Default Values for Filter into the registry
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "MPEG Audio over SPDIF" 0
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "SPDIF Audio Time Offset" 0
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Speaker Config" 1
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Use SPDIF for AC3 & DTS" 0
-
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "3:2 playback smoothing" 1
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Colour space to output" 1
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Deinterlace Mode" 2
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Display Forced Subtitles" 1
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Do Analog Blanking" 1
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "DVB Aspect Preferences" 0
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Hardcode for PAL with ffdshow" 0
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "IDCT to Use" 2
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Use accurate aspect ratios" 1
-        WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Video Delay" 0
-    ${EndIf}
-
-    WriteRegStr HKLM "${REG_UNINSTALL}" Gabest 0
-    ${If} $GABEST == 1
-        WriteRegStr HKLM "${REG_UNINSTALL}" Gabest 1
-        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $FilterDir\MpaDecFilter.ax $FilterDir
-        !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $FilterDir\Mpeg2DecFilter.ax $FilterDir
-
-        ; Write Default Values for Filter into the registry
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Dynamic Range" 0
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 LFE" 0
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Speaker Config" 2
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3Decoder" 0
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Boost" 0
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Dynamic Range" 0
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS LFE" 0
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Speaker Config" 2
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTSDecoder" 0
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Normalize" 0
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Output Format" 0
-
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Brightness" 128
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Contrast" 100
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Deinterlace" 0
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Enable Planar YUV Modes" 1
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Forced Subtitles" 1
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Hue" 180
-        WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Saturation" 100
-    ${EndIf}
-
     ; Common DLLs
     ; Installing the Common dll
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71.dll $FilterDir\MFC71.dll $FilterDir
@@ -430,84 +413,21 @@ Section "MediaPortal" SecMediaPortal
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcp71.dll $FilterDir\msvcp71.dll $FilterDir
     !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcr71.dll $FilterDir\msvcr71.dll $FilterDir
 
-    WriteRegStr HKLM "${REG_UNINSTALL}\Components" Main 1
-
     ; Write the Install / Config Dir into the registry for the Public SVN Installer to recognize the environment
     WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ApplicationDir $INSTDIR
 
+    
+        /******************************************************                change for 1.0 :::::::  USE       AppData    folder
     ${if} $WindowsVersion == "Vista"
-       WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $CommonAppData
+        WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $CommonAppData
     ${Else}
         WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $INSTDIR
     ${Endif}
+    */
 SectionEnd
+!macro Remove_${SecCore}
+    DetailPrint "Uninstalling MediaPortal core files..."
 
-# This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
-;..................................................................................................
- Section -Post
-    WriteRegStr HKLM "${REG_UNINSTALL}" Path $INSTDIR
-    WriteRegStr HKLM "${REG_UNINSTALL}" PathFilter $FILTERDIR
-    WriteRegStr HKLM "${REG_UNINSTALL}" WindowsVersion $WindowsVersion
-
-    ; Create the Statmenu and the Desktop shortcuts
-
-    ; The OutputPath specifies the Working Directory used for the Shortcuts
-    SetOutPath $INSTDIR
-    WriteUninstaller $INSTDIR\uninstall.exe
-    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
-    CreateDirectory $SMPROGRAMS\$StartMenuGroup
-    SetShellVarContext current
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk" "$INSTDIR\MPTestTool2.exe" "-auto" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Debug"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\License.lnk" "$INSTDIR\Docs\MediaPortal License.rtf" "" "$INSTDIR\Docs\MediaPortal License.rtf" 0 "" "" "License"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPInstaller.lnk" "$INSTDIR\MPInstaller.exe" "" "$INSTDIR\MPInstaller.exe" 0 "" "" "MediaPortal Extension Installer"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPTestTool.lnk" "$INSTDIR\MPTestTool2.exe" "" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Test Tool"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk" $INSTDIR\uninstall.exe
-
-    CreateShortcut "$DESKTOP\MediaPortal.lnk" "$INSTDIR\MediaPortal.exe" "" "$INSTDIR\MediaPortal.exe" 0 "" "" "MediaPortal"
-    CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe" "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
-    !insertmacro MUI_STARTMENU_WRITE_END
-
-    !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
-        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
-        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
-        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
-    !endif
-
-    # Write Uninstall Information
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\MediaPortal.exe,0"
-    WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall.exe"
-    #WriteRegStr HKLM "${REG_UNINSTALL}" ModifyPath         "$INSTDIR\add-remove-mp.exe"
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
-
-    ; Associate .mpi files with MPInstaller
-    !define Index "Line${__LINE__}"
-    ; backup the association, if it already exsists
-    ReadRegStr $1 HKCR ".mpi" ""
-    StrCmp $1 "" "${Index}-NoBackup"
-    StrCmp $1 "MediaPortal.Installer" "${Index}-NoBackup"
-    WriteRegStr HKCR ".mpi" "backup_val" $1
-
-    "${Index}-NoBackup:"
-    WriteRegStr HKCR ".mpi" "" "MediaPortal.Installer"
-    WriteRegStr HKCR "MediaPortal.Installer" "" "MediaPortal Installer"
-    WriteRegStr HKCR "MediaPortal.Installer\shell" "" "open"
-    WriteRegStr HKCR "MediaPortal.Installer\DefaultIcon" "" "$INSTDIR\MPInstaller.exe,0"
-    WriteRegStr HKCR "MediaPortal.Installer\shell\open\command" "" '$INSTDIR\MPInstaller.exe "%1"'
-
-    System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
-    !undef Index
-SectionEnd
-
-Section /o -un.Main UNSEC0000
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
     RmDir /r /REBOOTOK $INSTDIR\Cache
@@ -623,8 +543,208 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $INSTDIR\xAPMessage.dll
     Delete /REBOOTOK  $INSTDIR\xAPTransport.dll
     Delete /REBOOTOK  $INSTDIR\XPBurnComponent.dll
-    ;------------  End of Files in MP Root Directory --------------
 
+    ; Uninstall the Common DLLs and Filters
+    ; They will onl be removed, when the UseCount = 0
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\cdxareader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\CLDump.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPSA.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPTS.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPTSWriter.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\shoutcastsource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\TSFileSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\WinTVCapWriter.ax
+
+    ; Common DLLs will not be removed. Too Dangerous
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71u.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcp71.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcr71.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC80.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC80u.dll
+!macroend
+
+Section "DScaler Decoder" SecDscaler
+    DetailPrint "Installing DScaler Decoder..."
+
+    ; The Following Filters and Dll need to be copied to \windows\system32 for xp
+    ; In Vista they stay in the Install Directory
+    !insertmacro SetFilterDir
+    
+    WriteRegStr HKLM "${REG_UNINSTALL}" Dscaler 1
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $FilterDir\GenDMOProp.dll $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegAudio.dll $FilterDir\MpegAudio.dll $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegVideo.dll $FilterDir\MpegVideo.dll $FilterDir
+    ; Write Default Values for Filter into the registry
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "MPEG Audio over SPDIF" 0
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "SPDIF Audio Time Offset" 0
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Speaker Config" 1
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Use SPDIF for AC3 & DTS" 0
+
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "3:2 playback smoothing" 1
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Colour space to output" 1
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Deinterlace Mode" 2
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Display Forced Subtitles" 1
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Do Analog Blanking" 1
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "DVB Aspect Preferences" 0
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Hardcode for PAL with ffdshow" 0
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "IDCT to Use" 2
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Use accurate aspect ratios" 1
+    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Video Delay" 0
+SectionEnd
+!macro Remove_${SecDscaler}
+    DetailPrint "Uninstalling DScaler Decoder..."
+
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\GenDMOProp.dll
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpegAudio.dll
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpegVideo.dll
+!macroend
+
+Section "Gabest MPA/MPV decoder" SecGabest
+    DetailPrint "Installing Gabest MPA/MPV decoder..."
+
+    ; The Following Filters and Dll need to be copied to \windows\system32 for xp
+    ; In Vista they stay in the Install Directory
+    !insertmacro SetFilterDir
+    
+    WriteRegStr HKLM "${REG_UNINSTALL}" Gabest 1
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $FilterDir\MpaDecFilter.ax $FilterDir
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $FilterDir\Mpeg2DecFilter.ax $FilterDir
+
+    ; Write Default Values for Filter into the registry
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Dynamic Range" 0
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 LFE" 0
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Speaker Config" 2
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3Decoder" 0
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Boost" 0
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Dynamic Range" 0
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS LFE" 0
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Speaker Config" 2
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTSDecoder" 0
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Normalize" 0
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Output Format" 0
+
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Brightness" 128
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Contrast" 100
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Deinterlace" 0
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Enable Planar YUV Modes" 1
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Forced Subtitles" 1
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Hue" 180
+    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Saturation" 100
+SectionEnd
+!macro Remove_${SecGabest}
+    DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
+
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpaDecFilter.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\Mpeg2DecFilter.ax
+!macroend
+
+#---------------------------------------------------------------------------
+# This macro used to perform operation on multiple sections.
+# List all of your components in following manner here.
+!macro SectionList MacroName
+    ;This macro used to perform operation on multiple sections.
+    ;List all of your components in following manner here.
+
+    !insertmacro "${MacroName}" "SecDscaler"
+    !insertmacro "${MacroName}" "SecGabest"
+!macroend
+
+#---------------------------------------------------------------------------
+# This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
+Section -Post
+    ;Removes unselected components and writes component status to registry
+    !insertmacro SectionList "FinishSection"
+
+    SetOverwrite on
+    SetOutPath $INSTDIR
+
+    ${If} $noDesktopSC != 1
+        CreateShortcut "$DESKTOP\MediaPortal.lnk"               "$INSTDIR\MediaPortal.exe"      "" "$INSTDIR\MediaPortal.exe"   0 "" "" "MediaPortal"
+        CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe"    "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+    ${EndIf}
+
+    ${If} $noStartMenuSC != 1
+        !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+        # We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
+        CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"                            "$INSTDIR\MediaPortal.exe"      ""      "$INSTDIR\MediaPortal.exe"   0 "" "" "MediaPortal"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"              "$INSTDIR\Configuration.exe"    ""      "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"                 "$INSTDIR\MPTestTool2.exe"      "-auto" "$INSTDIR\MPTestTool2.exe"   0 "" "" "MediaPortal Debug-Mode"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"                  "$CommonAppData\log"            ""      "$CommonAppData\log"         0 "" "" "MediaPortal Log-Files"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"    "$INSTDIR\MPInstaller.exe"      ""      "$INSTDIR\MPInstaller.exe"   0 "" "" "MediaPortal Plugins-Skins Installer"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$INSTDIR\uninstall-mp.exe"
+        WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url" "InternetShortcut" "URL" "${URL}"
+
+        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\link to homepage.lnk" "$INSTDIR\MPInstaller.exe" "" "$INSTDIR\MPInstaller.exe" 0 "" "" "MediaPortal Extension Installer"
+        
+        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk" "$INSTDIR\MPTestTool2.exe" "-auto" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Debug"
+        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\License.lnk" "$INSTDIR\Docs\MediaPortal License.rtf" "" "$INSTDIR\Docs\MediaPortal License.rtf" 0 "" "" "License"
+        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPTestTool.lnk" "$INSTDIR\MPTestTool2.exe" "" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Test Tool"
+        !insertmacro MUI_STARTMENU_WRITE_END
+    ${EndIf}
+
+    !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
+        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
+    !endif
+
+
+    WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath $INSTDIR
+    # Write Uninstall Information
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
+    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\MediaPortal.exe,0"
+    WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-mp.exe"
+    #WriteRegStr HKLM "${REG_UNINSTALL}" ModifyPath         "$INSTDIR\add-remove-mp.exe"
+    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
+    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
+ 
+    #CopyFiles "$EXEPATH" "$INSTDIR\add-remove-mp.exe"
+    WriteUninstaller "$INSTDIR\uninstall-mp.exe"
+    
+    
+    ; should be obsolete sooner or later
+    WriteRegStr HKLM "${REG_UNINSTALL}" Path $INSTDIR
+    WriteRegStr HKLM "${REG_UNINSTALL}" PathFilter $FILTERDIR
+    WriteRegStr HKLM "${REG_UNINSTALL}" WindowsVersion $WindowsVersion
+
+    
+    ; Associate .mpi files with MPInstaller
+    !define Index "Line${__LINE__}"
+    ; backup the association, if it already exsists
+    ReadRegStr $1 HKCR ".mpi" ""
+    StrCmp $1 "" "${Index}-NoBackup"
+    StrCmp $1 "MediaPortal.Installer" "${Index}-NoBackup"
+    WriteRegStr HKCR ".mpi" "backup_val" $1
+
+    "${Index}-NoBackup:"
+    WriteRegStr HKCR ".mpi" "" "MediaPortal.Installer"
+    WriteRegStr HKCR "MediaPortal.Installer" "" "MediaPortal Installer"
+    WriteRegStr HKCR "MediaPortal.Installer\shell" "" "open"
+    WriteRegStr HKCR "MediaPortal.Installer\DefaultIcon" "" "$INSTDIR\MPInstaller.exe,0"
+    WriteRegStr HKCR "MediaPortal.Installer\shell\open\command" "" '$INSTDIR\MPInstaller.exe "%1"'
+
+    System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+    !undef Index
+SectionEnd
+
+#---------------------------------------------------------------------------
+# This section is called on uninstall and removes all components
+Section Uninstall
+    ;First removes all optional components
+    !insertmacro SectionList "RemoveSection"
+    !insertmacro Remove_${SecCore}
+
+    /*    [OBSOLETE]
     ; In Case of Vista the Files to Uninstall are in the Appplication Data Folder
     ${if} $WindowsVersion == "Vista"
         StrCpy $TmpDir $CommonAppData
@@ -643,6 +763,30 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK  $TmpDir\ProgramSettingProfiles.xml
     Delete /REBOOTOK  $TmpDir\wikipedia.xml
     Delete /REBOOTOK  $TmpDir\yac-area-codes.xml
+    */
+    
+    # remove registry key
+    DeleteRegKey HKLM "${REG_UNINSTALL}"
+
+    # remove Start Menu shortcuts
+    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"
+    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"
+    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"
+    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"
+    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"
+    ;Delete "$SMPROGRAMS\$StartMenuGroup\link to homepage"
+    Delete "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"
+    Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
+    RmDir "$SMPROGRAMS\$StartMenuGroup"
+
+    # remove Desktop shortcuts
+    Delete "$DESKTOP\MediaPortal.lnk"
+    Delete "$DESKTOP\MediaPortal Configuration.lnk"
+
+    # remove last files and instdir
+    ;Delete /REBOOTOK "$INSTDIR\add-remove-mp.exe"
+    Delete /REBOOTOK "$INSTDIR\uninstall-mp.exe"
+    RmDir "$INSTDIR"
 
     ; Do we need to deinstall everything? Then remove also the CommonAppData and InstDir
     ${If} $RemoveAll == 1
@@ -650,61 +794,12 @@ Section /o -un.Main UNSEC0000
         RmDir /r /REBOOTOK $CommonAppData
         RmDir /r /REBOOTOK $INSTDIR
     ${EndIf}
-
-    ; Uninstall the Common DLLs and Filters
-    ; They will onl be removed, when the UseCount = 0
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\cdxareader.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\CLDump.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpgMux.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPReader.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPSA.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPTS.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPTSWriter.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\shoutcastsource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\TSFileSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\WinTVCapWriter.ax
-
-    ${If} $DSCALER == 1
-        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\GenDMOProp.dll
-        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpegAudio.dll
-        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpegVideo.dll
-    ${EndIf}
-
-    ${If} $GABEST == 1
-        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpaDecFilter.ax
-        !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\Mpeg2DecFilter.ax
-    ${EndIf}
-
-    ; Common DLLs will not be removed. Too Dangerous
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71u.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcp71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcr71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC80.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC80u.dll
-
-    ; Delete StartMenu- , Desktop ShortCuts and Registry Entry
-    Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk"
-    Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\License.lnk
-    Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\MPInstaller.lnk
-    Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\MPTestTool.lnk
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"
-    Delete /REBOOTOK "$DESKTOP\MediaPortal Configuration.lnk"
-    Delete /REBOOTOK $DESKTOP\MediaPortal.lnk
-    DeleteRegValue HKLM "${REG_UNINSTALL}\Components" Main
-SectionEnd
-
-Section -un.post UNSEC0001
-    DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\$(^UninstallLink).lnk"
-    Delete /REBOOTOK $INSTDIR\uninstall.exe
+    
+    
+    
     DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
     DeleteRegValue HKLM "${REG_UNINSTALL}" Path
     DeleteRegValue HKLM "${REG_UNINSTALL}" PathFilter
-    DeleteRegKey /IfEmpty HKLM "${REG_UNINSTALL}\Components"
-    DeleteRegKey /IfEmpty HKLM "${REG_UNINSTALL}"
-    RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
 
     ; Remove File Association for .mpi files
     !define Index "Line${__LINE__}"
@@ -725,15 +820,53 @@ Section -un.post UNSEC0001
 
     "${Index}-NoOwn:"
     !undef Index
-
 SectionEnd
 
-# Installer functions
+#---------------------------------------------------------------------------
+# FUNCTIONS
+#---------------------------------------------------------------------------
 Function .onInit
-    InitPluginsDir
+    #### check and parse cmdline parameter
+    ; set default values for parameters ........
+    StrCpy $noDscaler 0
+    StrCpy $noGabest 0
+    StrCpy $noDesktopSC 0
+    StrCpy $noStartMenuSC 0
 
-    !insertmacro INSTALLOPTIONS_EXTRACT "FilterSelect.ini"
+    ; gets comandline parameter
+    ${GetParameters} $R0
 
+    ; check for special parameter and set the their variables
+    ${GetOptions} $R0 "/noDscaler" $R1
+    IfErrors +2
+    StrCpy $noDscaler 1
+    ${GetOptions} $R0 "/noGabest" $R1
+    IfErrors +2
+    StrCpy $noGabest 1
+    ${GetOptions} $R0 "/noDesktopSC" $R1
+    IfErrors +2
+    StrCpy $noDesktopSC 1
+    ${GetOptions} $R0 "/noStartMenuSC" $R1
+    IfErrors +2
+    StrCpy $noStartMenuSC 1
+    #### END of check and parse cmdline parameter
+
+    # Reads components status for registry
+    !insertmacro SectionList "InitSection"
+
+    # update the component status -> commandline parameters have higher priority than registry values
+    ${If} $noDscaler = 1
+        !insertmacro UnselectSection ${SecDscaler}
+    ${Else}
+        !insertmacro SelectSection ${SecDscaler}
+    ${EndIf}
+    ${If} $noGabest = 1
+        !insertmacro UnselectSection ${SecGabest}
+    ${Else}
+        !insertmacro SelectSection ${SecGabest}
+    ${EndIf}
+
+    /*
     ; Get Windows Version
     Call GetWindowsVersion
     Pop $R0
@@ -749,6 +882,18 @@ Function .onInit
         ; MS Reports also XP 64 as NT 5.2. So we default on XP
         StrCpy $WindowsVersion 'XP'
     ${EndIf}
+    */;   
+    ; check if minimum Windows version is 2000
+    ${If} ${AtMostWinNT4}
+        MessageBox MB_OK|MB_ICONSTOP "MediaPortal requires at least Windows 2000. Your Windows is not supported. Installation aborted"
+        Abort
+    ${EndIf}
+    
+    ${If} ${IsWinVista}
+        StrCpy $WindowsVersion "Vista"
+    ${Else}
+        StrCpy $WindowsVersion "XP"
+    ${EndIf}
 
     ; Check if .Net is installed
     Call IsDotNetInstalled
@@ -757,13 +902,8 @@ Function .onInit
         MessageBox MB_OK|MB_ICONSTOP "Microsoft .Net Framework Runtime is a prerequisite. Please install first."
         Abort
     ${EndIf}
-
-    ; Get the Common Application Data Folder to Store Files for Vista
-    ; Set the Context to alll, so that we get the All Users folder
-    SetShellVarContext all
-    StrCpy $CommonAppData "$APPDATA\Team MediaPortal\MediaPortal"
-    ; Context back to current user
-    SetShellVarContext current
+    
+    !insertmacro SetCommonAppData
 
     ; Needed for Library Install
     ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
@@ -779,35 +919,6 @@ Function .onInstSuccess
 
 FunctionEnd
 
-; Start the Configuration after the successfull install
-; needed in an extra function to set the working directory
-Function RunConfig
-SetOutPath $INSTDIR
-Exec "$INSTDIR\Configuration.exe"
-FunctionEnd
-
-# Macro for selecting uninstaller sections
-!macro SELECT_UNSECTION SECTION_NAME UNSECTION_ID
-    Push $R0
-    ReadRegStr $R0 HKLM "${REG_UNINSTALL}\Components" "${SECTION_NAME}"
-    StrCmp $R0 1 0 next${UNSECTION_ID}
-    !insertmacro SelectSection "${UNSECTION_ID}"
-    GoTo done${UNSECTION_ID}
-next${UNSECTION_ID}:
-    !insertmacro UnselectSection "${UNSECTION_ID}"
-done${UNSECTION_ID}:
-    Pop $R0
-!macroend
-
-# Uninstaller sections
-
-# Custom Page for Uninstall User settings
-; This shows the Uninstall User Serrings Page
-;..................................................................................................
-
-LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
-
-# Uninstaller functions
 Function un.onInit
     #### check and parse cmdline parameter
     ; set default values for parameters ........
@@ -823,20 +934,25 @@ Function un.onInit
     #### END of check and parse cmdline parameter
     
     
-    ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" Path
+    # SHOULD BE OBSOLETE SOONER or LATER
     ReadRegStr $FILTERDIR HKLM "${REG_UNINSTALL}" PathFilter
     ReadRegStr $GABEST HKLM "${REG_UNINSTALL}" Gabest
     ReadRegStr $DSCALER HKLM "${REG_UNINSTALL}" Dscaler
     ReadRegStr $WindowsVersion HKLM "${REG_UNINSTALL}" WindowsVersion
-    !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
-    !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
+    #!insertmacro SELECT_UNSECTION Main ${UNSEC0000}
+    # SHOULD BE OBSOLETE SOONER or LATER
 
-    ; Get the Common Application Data Folder to Store Files for Vista
-    ; Set the Context to alll, so that we get the All Users folder
-    SetShellVarContext all
-    StrCpy $CommonAppData "$APPDATA\Team MediaPortal\MediaPortal"
-    ; Context back to current user
-    SetShellVarContext current
+    ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
+    !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
+
+    !insertmacro SetCommonAppData
+FunctionEnd
+
+# Start the Configuration after the successfull install
+# needed in an extra function to set the working directory
+Function RunConfig
+    SetOutPath $INSTDIR
+    Exec "$INSTDIR\Configuration.exe"
 FunctionEnd
 
 # This function is called, before the uninstallation process is startet
@@ -847,3 +963,11 @@ Function un.RemoveAllQuestion
     
     end:
 FunctionEnd
+
+#---------------------------------------------------------------------------
+# SECTION DECRIPTIONS     must be at the end
+#---------------------------------------------------------------------------
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecDscaler} $(DESC_SecDscaler)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecGabest}  $(DESC_SecGabest)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
