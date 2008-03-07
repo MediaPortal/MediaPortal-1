@@ -199,7 +199,7 @@ namespace TvPlugin
     public override int GetFocusControlId()
     {
       if (_cursorX >= 0) return 1;
-      GUIControl c = GetControl((int)Controls.SPINCONTROL_DAY);  
+      GUIControl c = GetControl((int)Controls.SPINCONTROL_DAY);
       if (c != null && c.Focus == true) return (int)Controls.SPINCONTROL_DAY;
       c = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL);
       if (c != null && c.Focus == true) return (int)Controls.SPINCONTROL_TIME_INTERVAL;
@@ -246,17 +246,17 @@ namespace TvPlugin
       switch (action.wID)
       {
         case Action.ActionType.ACTION_PREVIOUS_MENU:
+          if (_singleChannelView)
           {
-            if (_singleChannelView)
-              OnSwitchMode();
-            else
-            {
-              GUIWindowManager.ShowPreviousWindow();
-              return;
-            }
+            OnSwitchMode();
+            return; // base.OnAction would close the EPG as well
           }
-          break;
-          
+          else
+          {
+            GUIWindowManager.ShowPreviousWindow();
+            return;
+          }
+
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
             OnKeyCode((char)action.m_key.KeyChar);
@@ -1052,7 +1052,7 @@ namespace TvPlugin
           TvBusinessLayer layer = new TvBusinessLayer();
 
           List<Channel> visibleChannels = new List<Channel>();
-          
+
           int chan = _channelOffset;
           for (int iChannel = 0; iChannel < _channelCount; iChannel++)
           {
@@ -1129,7 +1129,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Guide.Duration", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.thumb", strLogo);
-        
+
         _currentStartTime = 0;
         _currentEndTime = 0;
         _currentTitle = String.Empty;
@@ -1330,7 +1330,7 @@ namespace TvPlugin
           program = (Program)programs[offset + ichan];
         else
         {
-          program = new Program(channel.IdChannel, DateTime.Now, DateTime.Now, "-", "-", "-", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty,-1);
+          program = new Program(channel.IdChannel, DateTime.Now, DateTime.Now, "-", "-", "-", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
         }
 
         int ypos = GetControl(ichan + (int)Controls.IMG_CHAN1).YPosition;
@@ -1477,7 +1477,7 @@ namespace TvPlugin
       }
     }//void RenderSingleChannel(Channel channel)
 
-    void RenderChannel(ref Dictionary<int, List<Program>> mapPrograms,int iChannel, Channel channel, long iStart, long iEnd, bool selectCurrentShow)
+    void RenderChannel(ref Dictionary<int, List<Program>> mapPrograms, int iChannel, Channel channel, long iStart, long iEnd, bool selectCurrentShow)
     {
       int channelNum = 0;
       foreach (TuningDetail detail in channel.ReferringTuningDetail())
@@ -1493,7 +1493,7 @@ namespace TvPlugin
             img.TexutureIcon = strLogo;
           if (channelNum > 0 && _showChannelNumber)
             img.Label1 = channelNum + " " + channel.DisplayName;
-          else 
+          else
             img.Label1 = channel.DisplayName;
           img.IsVisible = true;
         }
@@ -2422,7 +2422,7 @@ namespace TvPlugin
             //dlg.DoModal(GetID);
             //if (dlg.SelectedLabel == -1) return;
             //TVHome.Navigator.SetCurrentGroup(dlg.SelectedLabelText);
-            
+
             GetChannels(true);
             Update(false);
             SetFocus();
@@ -2818,7 +2818,7 @@ namespace TvPlugin
 
       Channel chan;
       int channelDistance = 99999;
-      
+
       if (_byIndex == false)
       {
         while (iCounter < _channelList.Count && found == false)
@@ -2867,12 +2867,12 @@ namespace TvPlugin
       }
     }
 
-    void LoadSchedules (bool refresh)
+    void LoadSchedules(bool refresh)
     {
       if (refresh)
       {
         _recordingList = Schedule.ListAll();
-         return;
+        return;
       }
     }
 
@@ -2882,7 +2882,7 @@ namespace TvPlugin
       {
         _channelList = new List<Channel>();
       }
-      if (_channelList==null)
+      if (_channelList == null)
         _channelList = new List<Channel>();
       if (_channelList.Count == 0)
       {
