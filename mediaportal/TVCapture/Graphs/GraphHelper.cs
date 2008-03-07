@@ -386,8 +386,21 @@ namespace MediaPortal.TV.Recording
           string locInfo = (string)subkey.GetValue("LocationInformation");
           if (locInfo == null) locInfo = string.Empty;
           //Log.Info("        LocationInformation:{0}", locInfo);
-          int fPos = locInfo.LastIndexOf(",");
-          locInfo = locInfo.Substring(0, fPos);
+
+          int busPos, busEnd, devPos, devEnd = locInfo.Length;
+          // PCI function
+          while (!char.IsNumber(locInfo[--devEnd])) if (devEnd == 0) return string.Empty;
+          while (char.IsNumber(locInfo[--devEnd])) if (devEnd == 0) return string.Empty;
+          // PCI device
+          while (!char.IsNumber(locInfo[--devEnd])) if (devEnd == 0) return string.Empty;
+          devPos = devEnd;
+          while (char.IsNumber(locInfo[--devPos])) if (devPos == 0) return string.Empty;
+          // PCI bus
+          busEnd = devPos;
+          while (!char.IsNumber(locInfo[--busEnd])) if (busEnd == 0) return string.Empty;
+          busPos = busEnd;
+          while (char.IsNumber(locInfo[--busPos])) if (busPos == 0) return string.Empty;
+          locInfo = "PCI bus " + locInfo.Substring(busPos + 1, busEnd - busPos) + ", device " + locInfo.Substring(devPos + 1, devEnd - devPos);
           return locInfo;
         }
       return string.Empty;
