@@ -34,8 +34,9 @@
 !define APP_NAME "MediaPortal 0.2.3.0"
 
 Name "${APP_NAME}"
+SetCompressor lzma
+#SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
 
-SetCompressor /SOLID lzma
 
 ;..................................................................................................
 ;Following two definitions required. Uninstall log will use these definitions.
@@ -116,15 +117,19 @@ Var UninstAll       ; Set, when the user decided to uninstall everything
 !insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
 Page custom FilterSelection
+!insertmacro MUI_PAGE_COMPONENTS
+
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
 
+!insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
 UnInstPage custom un.UninstallOpionsSelection
 !insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
 ;..................................................................................................
 
 # Installer languages
@@ -174,7 +179,10 @@ FunctionEnd
 ; This is the Main section, which installs all MediaPortal Files
 ;
 ;..................................................................................................
-Section -Main SEC0000
+Section "MediaPortal" SecMediaPortal
+    SectionIn RO
+    DetailPrint "Installing MediaPortal..."
+    
     SetOverwrite on
 
     ; Doc
@@ -436,7 +444,7 @@ SectionEnd
 
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 ;..................................................................................................
-Section -post SEC0001
+ Section -Post
     WriteRegStr HKLM "${REG_UNINSTALL}" Path $INSTDIR
     WriteRegStr HKLM "${REG_UNINSTALL}" PathFilter $FILTERDIR
     WriteRegStr HKLM "${REG_UNINSTALL}" WindowsVersion $WindowsVersion
@@ -499,21 +507,6 @@ Section -post SEC0001
     !undef Index
 SectionEnd
 
-; This section installs the VC++ Redist Library
-Section -Redist SEC0002
-    SetOutPath $INSTDIR
-    SetOverwrite on
-
-    ; Now Copy the VC Redist File, which will be executed as part of the install
-    File vcredist_x86.exe
-
-    ; Installing VC++ Redist Package
-    DetailPrint "Installing VC++ Redist Package"
-    ExecWait '"$INSTDIR\vcredist_x86.exe" /q:a /c:"VCREDI~3.EXE /q:a /c:""msiexec /i vcredist.msi /qb!"" "'
-    DetailPrint "Finished Installing VC++ Redist Package"
-    Delete /REBOOTOK  $INSTDIR\vcredist_x86.exe
-SectionEnd
-
 # Installer functions
 Function .onInit
     InitPluginsDir
@@ -571,7 +564,6 @@ Function RunConfig
 SetOutPath $INSTDIR
 Exec "$INSTDIR\Configuration.exe"
 FunctionEnd
-
 
 # Macro for selecting uninstaller sections
 !macro SELECT_UNSECTION SECTION_NAME UNSECTION_ID
