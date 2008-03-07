@@ -174,8 +174,8 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and MACROS
 #---------------------------------------------------------------------------
-Section "${TITLE_SECServer}" SecServer
-    DetailPrint "Installing ${TITLE_SECServer}..."
+Section "MediaPortal TV Server" SecServer
+    DetailPrint "Installing MediaPortal TV Server..."
     
     SetOverwrite on
 
@@ -291,7 +291,7 @@ Section "${TITLE_SECServer}" SecServer
     ${EndIf}
 SectionEnd
 !macro Remove_${SecServer}
-    DetailPrint "Uninstalling ${TITLE_SECServer}..."
+    DetailPrint "Uninstalling MediaPortal TV Server..."
     
     #---------------------------------------------------------------------------
     # SERVICE UNINSTALLATION
@@ -383,8 +383,8 @@ SectionEnd
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal TV Server Logs.lnk"
 !macroend
 
-Section "${TITLE_SECClient}" SecClient
-    DetailPrint "Installing ${TITLE_SECClient}..."
+Section "MediaPortal TV Client plugin" SecClient
+    DetailPrint "Installing MediaPortal TV Client plugin..."
 
     SetOverwrite on
 
@@ -423,7 +423,7 @@ Section "${TITLE_SECClient}" SecClient
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
 SectionEnd
 !macro Remove_${SecClient}
-    DetailPrint "Uninstalling ${TITLE_SECClient}..."
+    DetailPrint "Uninstalling MediaPortal TV Client plugin..."
     
     #---------------------------------------------------------------------------
     # FILTER UNREGISTRATION     for TVClient

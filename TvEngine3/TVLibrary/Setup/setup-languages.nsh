@@ -28,12 +28,10 @@
 # This header contains multilanguage strings for the setup routine
 #
 #**********************************************************************************************************#
-!define TITLE_SECServer "MediaPortal TV Server"
-!define TITLE_SECClient "MediaPortal TV Plugin/Client"
 
 # ENGLISH
-LangString DESC_SECServer                   ${LANG_ENGLISH} "Installs the ${TITLE_SECServer}"
-LangString DESC_SECClient                   ${LANG_ENGLISH} "Installs the ${TITLE_SECClient}"
+LangString DESC_SECServer                   ${LANG_ENGLISH} "Installs the MediaPortal TV Server"
+LangString DESC_SECClient                   ${LANG_ENGLISH} "Installs the MediaPortal TV Client plugin"
 LangString ^UninstallLink                   ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 #!ifdef MUI_ADDREMOVEPAGE
