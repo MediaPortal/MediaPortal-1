@@ -104,16 +104,16 @@ Var AR_RegFlags
 Var ReinstallPageCheck
 
 Function PageReinstall
-    ReadRegStr $R0 HKLM "${REGKEY}" "InstallPath"
+    ReadRegStr $R0 HKLM "${REG_UNINSTALL}" "InstallPath"
 
     ${If} $R0 == ""
         Abort
     ${EndIf}
 
-    ReadRegDWORD $R0 HKLM "${REGKEY}" "VersionMajor"
-    ReadRegDWORD $R1 HKLM "${REGKEY}" "VersionMinor"
-    ReadRegDWORD $R2 HKLM "${REGKEY}" "VersionRevision"
-    ReadRegDWORD $R3 HKLM "${REGKEY}" "VersionBuild"
+    ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
+    ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
+    ReadRegDWORD $R2 HKLM "${REG_UNINSTALL}" "VersionRevision"
+    ReadRegDWORD $R3 HKLM "${REG_UNINSTALL}" "VersionBuild"
     StrCpy $R0 $R0.$R1.$R2.$R3
 
     ${VersionCompare} ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD} $R0 $R0
