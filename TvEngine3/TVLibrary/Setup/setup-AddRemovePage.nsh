@@ -149,3 +149,16 @@ FunctionEnd
 
 !endif # VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
 #####    End of Add/Remove/Reinstall page
+
+
+
+LangString TEXT_ADDREMOVE_HEADER            ${LANG_ENGLISH} "Already Installed"
+LangString TEXT_ADDREMOVE_HEADER2_REPAIR    ${LANG_ENGLISH} "Choose the maintenance option to perform."
+LangString TEXT_ADDREMOVE_HEADER2_UPDOWN    ${LANG_ENGLISH} "Choose how you want to install $(^Name)."
+LangString TEXT_ADDREMOVE_INFO_REPAIR       ${LANG_ENGLISH} "$(^Name) ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
+LangString TEXT_ADDREMOVE_INFO_UPGRADE      ${LANG_ENGLISH} "An older version of $(^Name) is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
+LangString TEXT_ADDREMOVE_INFO_DOWNGRADE    ${LANG_ENGLISH} "A newer version of $(^Name) is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
+LangString TEXT_ADDREMOVE_REPAIR_OPT1       ${LANG_ENGLISH} "Add/Remove/Reinstall components"
+LangString TEXT_ADDREMOVE_REPAIR_OPT2       ${LANG_ENGLISH} "Uninstall $(^Name)"
+LangString TEXT_ADDREMOVE_UPDOWN_OPT1       ${LANG_ENGLISH} "Uninstall before installing"
+LangString TEXT_ADDREMOVE_UPDOWN_OPT2       ${LANG_ENGLISH} "Do not uninstall"
