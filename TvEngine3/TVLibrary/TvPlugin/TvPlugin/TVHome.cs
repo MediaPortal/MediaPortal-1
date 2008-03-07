@@ -1958,7 +1958,7 @@ namespace TvPlugin
           }
           else
           {
-            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)// || g_Player.IsRadio)
+            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic || g_Player.IsCDA)// || g_Player.IsRadio)
             {
               g_Player.Stop(true); // tell that we are zapping so exclusive mode is not going to be disabled
             }
@@ -1969,7 +1969,7 @@ namespace TvPlugin
           _userChannelChanged = false;
           g_Player.Stop(true);
         }
-        else if ((channel.IsTv && g_Player.IsRadio) || (channel.IsRadio && g_Player.IsTV))
+        else if ((channel.IsTv && g_Player.IsRadio) || (channel.IsRadio && g_Player.IsTV) || g_Player.IsCDA || g_Player.IsMusic || g_Player.IsVideo)
         {
           g_Player.Stop(true);
         }
