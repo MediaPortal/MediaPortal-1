@@ -33,6 +33,8 @@ using DShowNET.Helper;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using System.Collections;
+using Microsoft.Win32;
+using System.Collections.Generic;
 
 #pragma warning disable 618
 namespace DShowNET.Helper
@@ -402,7 +404,7 @@ namespace DShowNET.Helper
         {
             PinInfo pinInfo;
             pins[0].QueryPinInfo(out pinInfo);
-            Log.Info("Trying to connect to {0}",
+            Log.Info("Testing compatibility to {0}",
               pinInfo.name);
             //ListMediaTypes(pins[0]);
             //hr =  outputPin.Connect(pins[0], null);
@@ -427,7 +429,7 @@ namespace DShowNET.Helper
             }
             else
             {
-              Log.Info("Connection failed: {0:x}", hr);
+              Log.Debug("Could not connect, filters are not compatible: {0:x}", hr);
             }
         }
         ReleaseComObject(pins[0]);
@@ -440,9 +442,130 @@ namespace DShowNET.Helper
       return ret;
     }
 
+    static uint ReverseByteArrayToDWORD(Byte[] ba)
+    {
+      //Log.Info("Reversing: {0:x}{1:x}{2:x}{3:x}", ba[0], ba[1], ba[2], ba[3]);
+      return (uint)(((uint)ba[3] << 24) | ((uint)ba[2] << 16) | ((uint)ba[1] << 8) | ba[0]);
+    }
+      /// <summary>
+      /// checks if the filter has any output pins. if so, returns false, otherwise true
+      /// </summary>
+      /// <param name="filter"></param>
+      /// <returns>true, if the given filter is a render filter, false otherwise</returns>
+      static bool IsRenderer(IBaseFilter filter)
+      {
+          IEnumPins pinEnum;
+          int hr = filter.EnumPins(out pinEnum);
+          if ((hr == 0) && (pinEnum != null))
+          {
+              try
+              {
+                  //Log.Info("got pins");
+                  pinEnum.Reset();
+                  IPin[] pins = new IPin[1];
+                  int iFetched;
+                  int iPinNo = 0;
+                  do
+                  {
+                      // Get the next pin
+                      //Log.Info("  get pin:{0}",iPinNo);
+                      iPinNo++;
+                      hr = pinEnum.Next(1, pins, out iFetched);
+                      if (hr == 0 && iFetched == 1)
+                      {
+                          //Log.Info("  find pin info");
+                          PinDirection pinDir;
+                          pins[0].QueryDirection(out pinDir);
+                          if (pinDir == PinDirection.Output)
+                          {
+                              ReleaseComObject(pins[0]);
+                              //we got at least one output pin, this is not a render filter
+                              return false;
+                          }
+                          ReleaseComObject(pins[0]);
+                      }
+                      else
+                      {
+                          return true;
+                      }
+
+                  } while (true);
+              }
+              finally
+              {
+                  ReleaseComObject(pinEnum);
+              }
+          }
+          //No output pins found, this is a renderer
+          return true;
+      }
+
+    static Dictionary<Guid, Merit> _meritCache = new Dictionary<Guid, Merit>();
+    static Merit GetMerit(IBaseFilter filter)
+    {
+      Guid clsid;
+      int hr;
+      hr = filter.GetClassID(out clsid);
+      if (hr != 0) return Merit.DoNotUse;
+      //check cache
+      if (_meritCache.ContainsKey(clsid))
+      {
+          return _meritCache[clsid];
+      }
+      //figure new value
+      try
+      {
+        RegistryKey filterKey = Registry.ClassesRoot.OpenSubKey(@"CLSID\{083863F1-70DE-11d0-BD40-00A0C911CE86}\Instance\{" + clsid.ToString() + @"}" );
+        if (filterKey == null)
+        {
+          Log.Warn("Could not get merit value for clsid {0}, key not found!", clsid);
+          _meritCache[clsid] = Merit.DoNotUse;
+          return Merit.DoNotUse;
+        }
+        Byte[] filterData = (Byte[])filterKey.GetValue("FilterData", 0x0);
+        if (filterData == null || filterData.Length < 8) return Merit.DoNotUse;
+        Byte[] merit = new Byte[4];
+        //merit is 2nd DWORD, reverse byte order
+        Array.Copy(filterData, 4, merit, 0, 4);
+        uint dwMerit = ReverseByteArrayToDWORD(merit);
+        _meritCache[clsid] = (Merit)dwMerit;
+        return (Merit)dwMerit;
+      }
+      catch (Exception e)
+      {
+        Log.Warn("Could not get merit value for clsid {0}. Error: {1}", clsid, e.Message);
+        return Merit.DoNotUse;
+      }
+    }
+
+
+    static void LogFilters(ArrayList filters)
+    {
+        int nr = 1;
+        foreach (IBaseFilter filter in filters)
+        {
+            FilterInfo i;
+            filter.QueryFilterInfo(out i);
+            Log.Debug("FILTER: {0}: {1}", nr++, i.achName);
+            ReleaseComObject(i.pGraph);
+        }
+    }
+
+      /// <summary>
+      /// Try to sort the Filters that are currently loaded by Intermediate -> Renderer
+      /// and then by Merit, desc.
+      /// 
+      /// </summary>
+      /// <param name="graphBuilder"></param>
+      /// <returns></returns>
     static ArrayList GetFilters(IGraphBuilder graphBuilder)
     {
-      ArrayList ret = new ArrayList();
+        //Sources+Intermediates
+      ArrayList allMerits = new ArrayList();
+      ArrayList allFilters = new ArrayList();
+        //Renderers
+      ArrayList allMeritsR = new ArrayList();
+      ArrayList allFiltersR = new ArrayList();
       IEnumFilters enumFilters;
       graphBuilder.EnumFilters(out enumFilters);
       for (;;) {
@@ -451,7 +574,18 @@ namespace DShowNET.Helper
         int hr = enumFilters.Next(1, filters, out ffetched);
         if (hr == 0 && ffetched > 0)
         {
-          ret.Add(filters[0]);
+          uint m = (uint)GetMerit(filters[0]);
+          //substract merit from uint.maxvalue to get reverse ordering from highest merit to lowest merit
+          if (IsRenderer(filters[0]))
+          {
+              allMeritsR.Add(uint.MaxValue - m);
+              allFiltersR.Add(filters[0]);
+          }
+          else
+          {
+              allMerits.Add(uint.MaxValue - m);
+              allFilters.Add(filters[0]);
+          }
         }
         else
         {
@@ -459,6 +593,19 @@ namespace DShowNET.Helper
         }
       }
       ReleaseComObject(enumFilters);
+      //if someone has a better way to sort the filters by their merits, PLEASE change the following
+      //(i know there must be something more elegant)
+      Array aM = allMerits.ToArray(typeof(uint));
+      Array aF = allFilters.ToArray(typeof(IBaseFilter));
+      Array aMR = allMeritsR.ToArray(typeof(uint));
+      Array aFR = allFiltersR.ToArray(typeof(IBaseFilter));
+      Array.Sort(aM, aF);
+      Array.Sort(aMR, aFR);
+      ArrayList ret = new ArrayList();
+        //add all itermediate+sources first, then add renderers
+      ret.AddRange(aF);
+      ret.AddRange(aFR);
+      LogFilters(ret);
       return ret;
     }
 
@@ -495,7 +642,7 @@ namespace DShowNET.Helper
       {
         Log.Info("Failed: {0:x}", hr);
         return false;
-      }
+      } 
       Log.Info("Got enum");
       ArrayList major = new ArrayList();
       ArrayList sub = new ArrayList();
