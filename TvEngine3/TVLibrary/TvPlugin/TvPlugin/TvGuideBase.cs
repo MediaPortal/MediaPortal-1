@@ -255,6 +255,8 @@ namespace TvPlugin
               return;
             }
           }
+          break;
+          
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
             OnKeyCode((char)action.m_key.KeyChar);
