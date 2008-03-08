@@ -35,6 +35,9 @@ namespace TvDatabase
     public string channelName;
   }
 
+  /// <summary>
+  /// Contains basic read and write methods to handle Matroska tags for recordings
+  /// </summary>
   public class MatroskaTagHandler
   {
     #region Private members
@@ -53,10 +56,14 @@ namespace TvDatabase
 
     #region Public members
 
+    /// <summary>
+    /// Searches a given path and its subdirectories for XML files and loads them into corresponding Matroska tags
+    /// </summary>
+    /// <param name="aDirectory">The parent folder (of recordings)</param>
+    /// <returns>A dictionary which Key is the full filename of the XML file</returns>
     public static Dictionary<string, MatroskaTagInfo> GetAllMatroskaTags(string aDirectory)
     {
       Dictionary<string, MatroskaTagInfo> fileRecordings = new Dictionary<string, MatroskaTagInfo>();
-
       try
       {
         string[] importFiles = Directory.GetFiles(aDirectory, "*.xml", SearchOption.AllDirectories);
@@ -79,6 +86,11 @@ namespace TvDatabase
       return fileRecordings;
     }
 
+    /// <summary>
+    /// Reads Matroska tag files
+    /// </summary>
+    /// <param name="filename">Path to an XML file containing recording infos</param>
+    /// <returns>The Matroska tag object</returns>
     public static MatroskaTagInfo ReadTag(string filename)
     {
       if (!File.Exists(filename))
@@ -109,7 +121,12 @@ namespace TvDatabase
       return info;
     }
 
-    public static void Persist(string filename, MatroskaTagInfo taginfo)
+    /// <summary>
+    /// Saves the given MatroskaTagInfo into an XML file
+    /// </summary>
+    /// <param name="filename">Filename of the XML file</param>
+    /// <param name="taginfo">the recording information the xml file should contain</param>
+    public static void WriteTag(string filename, MatroskaTagInfo taginfo)
     {
       if (!Directory.Exists(Path.GetDirectoryName(filename)))
         Directory.CreateDirectory(Path.GetDirectoryName(filename));

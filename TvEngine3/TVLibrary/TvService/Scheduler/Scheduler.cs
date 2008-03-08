@@ -608,7 +608,7 @@ namespace TvService
           info.description = recording.Program.Description;
           info.genre = recording.Program.Genre;
           info.channelName = recording.Program.ReferencedChannel().DisplayName;
-          MatroskaTagHandler.Persist(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
+          MatroskaTagHandler.WriteTag(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
         }
         Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
       }
