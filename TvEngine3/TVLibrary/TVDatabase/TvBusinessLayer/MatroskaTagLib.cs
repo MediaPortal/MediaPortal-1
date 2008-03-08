@@ -52,7 +52,34 @@ namespace TvDatabase
     #endregion
 
     #region Public members
-    public static MatroskaTagInfo Fetch(string filename)
+
+    public static Dictionary<string, MatroskaTagInfo> GetAllMatroskaTags(string aDirectory)
+    {
+      Dictionary<string, MatroskaTagInfo> fileRecordings = new Dictionary<string, MatroskaTagInfo>();
+
+      try
+      {
+        string[] importFiles = Directory.GetFiles(aDirectory, "*.xml", SearchOption.AllDirectories);
+
+        foreach (string recordingXml in importFiles)
+        {
+          try
+          {
+            MatroskaTagInfo importTag = MatroskaTagHandler.ReadTag(recordingXml);
+            fileRecordings[recordingXml] = importTag;
+          }
+          catch (Exception)
+          {
+          }
+        }
+      }
+      catch (Exception)
+      {
+      }
+      return fileRecordings;
+    }
+
+    public static MatroskaTagInfo ReadTag(string filename)
     {
       if (!File.Exists(filename))
         return null;
