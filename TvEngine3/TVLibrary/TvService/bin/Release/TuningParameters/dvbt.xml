@@ -1774,6 +1774,15 @@
 		<carrier frequency="858000" bandwidth="8"></carrier>
     <carrier frequency="866000" bandwidth="8"></carrier>
 	</country>
+	<country name="Italy - Padova" offset="125">
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+	</country>
 	<country name="Italy - Verona" offset="125">
 		<carrier frequency="186000" bandwidth="7"></carrier>
 		<carrier frequency="554000" bandwidth="8"></carrier>
