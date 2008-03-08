@@ -668,10 +668,8 @@ namespace TvService
 
     public static string ReplaceTag(string line, string tag, string value, string empty)
     {
-      if (line == null) return String.Empty;
-      if (line.Length == 0) return String.Empty;
-      if (tag == null) return line;
-      if (tag.Length == 0) return line;
+      if (string.IsNullOrEmpty(line) || string.IsNullOrEmpty(tag))
+        return "unknown";
 
       Regex r = new Regex(String.Format(@"\[[^%]*{0}[^\]]*[\]]", tag));
       if (value == empty)
