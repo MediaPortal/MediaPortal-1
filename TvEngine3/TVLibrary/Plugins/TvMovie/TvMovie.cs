@@ -69,7 +69,7 @@ namespace TvEngine
             SetStandbyAllowed(false);
 
             long updateDuration = _database.LaunchTVMUpdater();
-            if (updateDuration < 60000)
+            if (updateDuration < 600)
             {
               // Updating a least a few programs would take more than 15 seconds
               if (updateDuration > 15)
