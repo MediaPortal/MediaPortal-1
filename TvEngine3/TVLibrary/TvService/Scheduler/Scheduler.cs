@@ -610,7 +610,7 @@ namespace TvService
           info.channelName = recording.Program.ReferencedChannel().DisplayName;
           MatroskaTagHandler.Persist(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
         }
-        Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
+        Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
       }
       catch (Exception ex)
       {
@@ -630,7 +630,7 @@ namespace TvService
         _user.CardId = recording.CardInfo.Id;
         _user.Name = string.Format("scheduler{0}", recording.Schedule.IdSchedule);
         _user.IsAdmin = true;
-        Log.Write("Scheduler : stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
+        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
         _controller.StopRecording(ref _user);
 
         if (_controller.SupportsSubChannels(recording.CardInfo.Id) == false)
@@ -642,8 +642,7 @@ namespace TvService
         recording.Recording.EndTime = DateTime.Now;
         recording.Recording.Persist();
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
-
-
+        
         //DatabaseManager.Instance.SaveChanges();
 
         if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)

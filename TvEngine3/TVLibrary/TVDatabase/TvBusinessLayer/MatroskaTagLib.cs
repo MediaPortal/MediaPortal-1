@@ -25,16 +25,17 @@ using System.Text;
 using System.Xml;
 using System.IO;
 
-namespace TvService
+namespace TvDatabase
 {
-  class MatroskaTagInfo
+  public class MatroskaTagInfo
   {
     public string title;
     public string description;
     public string genre;
     public string channelName;
   }
-  class MatroskaTagHandler
+
+  public class MatroskaTagHandler
   {
     #region Private members
     private static XmlNode AddSimpleTag(string tagName, string value, XmlDocument doc)
@@ -80,6 +81,7 @@ namespace TvService
       }
       return info;
     }
+
     public static void Persist(string filename, MatroskaTagInfo taginfo)
     {
       if (!Directory.Exists(Path.GetDirectoryName(filename)))
