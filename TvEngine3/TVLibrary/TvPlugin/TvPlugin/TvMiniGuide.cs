@@ -423,11 +423,19 @@ namespace TvPlugin
       List<int> TSChannels = null;
       int SelectedID = 0;
       int CurrentChanState = 0;
+      int CurrentId = 0;
       bool CheckChannelState = true;
       bool DisplayStatusInfo = true;
       string PathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
       string PathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
-      string PathIconRecord = GUIGraphicsContext.Skin + @"\Media\remote_red.png";      
+      string PathIconRecord = GUIGraphicsContext.Skin + @"\Media\remote_red.png";
+      // fetch localized ID's only once from XML file
+      string local736 = GUILocalizeStrings.Get(736); // No data available
+      string local789 = GUILocalizeStrings.Get(789); // Now:
+      string local790 = GUILocalizeStrings.Get(790); // Next:
+      string local1054 = GUILocalizeStrings.Get(1054); // (recording)
+      string local1055 = GUILocalizeStrings.Get(1054); // (timeshifting)
+      string local1056 = GUILocalizeStrings.Get(1054); // (unavailable)
       
       if (!CheckChannelState)
         Log.Debug("miniguide: not checking channel state");
@@ -462,8 +470,9 @@ namespace TvPlugin
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
         CurrentChan = _tvChannelList[i];
+        CurrentId = CurrentChan.IdChannel;
         if (CheckChannelState)
-          CurrentChanState = (int)TVHome.TvServer.GetChannelState(CurrentChan.IdChannel, TVHome.Card.User);
+          CurrentChanState = (int)TVHome.TvServer.GetChannelState(CurrentId, TVHome.Card.User);
         else
           CurrentChanState = (int)ChannelState.tunable;
 
@@ -479,7 +488,7 @@ namespace TvPlugin
           ChannelLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.DisplayName);
 
           // if we are watching this channel mark it
-          if (TVHome.Navigator.Channel.IdChannel == CurrentChan.IdChannel)
+          if (TVHome.Navigator.Channel.IdChannel == CurrentId)
           {
             item.IsRemote = true;
             SelectedID = lstChannels.Count;
@@ -498,33 +507,26 @@ namespace TvPlugin
 
           if (DisplayStatusInfo)
           {
-            if (RecChannels.Contains(CurrentChan.IdChannel))
+            if (RecChannels.Contains(CurrentId))
               CurrentChanState = (int)ChannelState.recording;
             else
-              if (TSChannels.Contains(CurrentChan.IdChannel))
+              if (TSChannels.Contains(CurrentId))
                 CurrentChanState = (int)ChannelState.timeshifting;
 
-            // Log.Debug("miniguide: state of {0} is {1}", CurrentChan.Name, Convert.ToString(CurrentChanState));
             switch (CurrentChanState)
             {
               case 0:
-                //item.IconImageBig = PathIconNoTune;
-                //item.IconImage = PathIconNoTune;
                 sb.Append(" ");
-                sb.Append(GUILocalizeStrings.Get(1056));
+                sb.Append(local1056);
                 item.IsPlayed = true;
                 break;
               case 2:
-                //item.IconImageBig = PathIconTimeshift;
-                //item.IconImage = PathIconTimeshift;
                 sb.Append(" ");
-                sb.Append(GUILocalizeStrings.Get(1055));
+                sb.Append(local1055);
                 break;
               case 3:
-                //item.IconImageBig = PathIconRecord;
-                //item.IconImage = PathIconRecord;
                 sb.Append(" ");
-                sb.Append(GUILocalizeStrings.Get(1054));
+                sb.Append(local1054);
                 break;
               default:
                 item.IsPlayed = false;
@@ -532,14 +534,15 @@ namespace TvPlugin
             }
           }
 
-          string tmpString = GUILocalizeStrings.Get(736);
+          string tmpString = local736;
 
-          if (CurrentChan.CurrentProgram != null)
+          if (listNowNext.ContainsKey(CurrentId))
           {
-            tmpString = CurrentChan.CurrentProgram.Title;
+            //tmpString = CurrentChan.CurrentProgram.Title; <-- this would be SLOW
+            tmpString = listNowNext[CurrentId].TitleNow;
           }
           item.Label2 = tmpString;
-          item.Label3 = GUILocalizeStrings.Get(789) + tmpString;
+          item.Label3 = local789 + tmpString;
 
           sb.Append(" - ");
           if (_showChannelNumber == true)
@@ -548,26 +551,20 @@ namespace TvPlugin
               sb.Append(detail.ChannelNumber + " - ");
           }
 
-          if (CurrentChan.CurrentProgram != null)
-          {
-            tmpString = CalculateProgress(CurrentChan.CurrentProgram.StartTime, CurrentChan.CurrentProgram.EndTime).ToString();
-          }
-          else
-          {
-            tmpString = CalculateProgress(DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1)).ToString();
-          }
+          if (listNowNext.ContainsKey(CurrentId))
+            tmpString = CalculateProgress(listNowNext[CurrentId].NowStartTime, listNowNext[CurrentId].NowEndTime).ToString();          
+          else          
+            tmpString = CalculateProgress(DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1)).ToString();          
 
           sb.Append(tmpString);
           sb.Append("%");
 
-          tmpString = GUILocalizeStrings.Get(736);
-          if (CurrentChan.NextProgram != null)
-          {
-            tmpString = CurrentChan.NextProgram.Title;
-          }
+          tmpString = local736;
+          if (listNowNext.ContainsKey(CurrentId))          
+            tmpString = listNowNext[CurrentId].TitleNext;          
 
           item.Label2 = sb.ToString();
-          item.Label = GUILocalizeStrings.Get(790) + tmpString;
+          item.Label = local790 + tmpString;
 
           lstChannels.Add(item);
         }
