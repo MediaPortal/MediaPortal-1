@@ -65,7 +65,6 @@ namespace SetupTv.Sections
       this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxEnableTvMovie = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.progressBarImportItem = new System.Windows.Forms.ProgressBar();
       this.progressBarImportTotal = new System.Windows.Forms.ProgressBar();
       this.buttonImportNow = new System.Windows.Forms.Button();
       this.groupBoxImportTime = new System.Windows.Forms.GroupBox();
@@ -83,8 +82,8 @@ namespace SetupTv.Sections
       this.maskedTextBoxTimeStart = new System.Windows.Forms.MaskedTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.maskedTextBoxTimeEnd = new System.Windows.Forms.MaskedTextBox();
-      this.treeViewChannels = new System.Windows.Forms.TreeView();
-      this.treeViewStations = new System.Windows.Forms.TreeView();
+      this.treeViewMpChannels = new System.Windows.Forms.TreeView();
+      this.treeViewTvMStations = new System.Windows.Forms.TreeView();
       this.imageListTvmStations = new System.Windows.Forms.ImageList(this.components);
       this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -230,7 +229,6 @@ namespace SetupTv.Sections
       // 
       this.groupBoxEnableTvMovie.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxEnableTvMovie.Controls.Add(this.progressBarImportItem);
       this.groupBoxEnableTvMovie.Controls.Add(this.progressBarImportTotal);
       this.groupBoxEnableTvMovie.Controls.Add(this.buttonImportNow);
       this.groupBoxEnableTvMovie.Controls.Add(this.groupBoxImportTime);
@@ -242,14 +240,6 @@ namespace SetupTv.Sections
       this.groupBoxEnableTvMovie.TabIndex = 0;
       this.groupBoxEnableTvMovie.TabStop = false;
       this.groupBoxEnableTvMovie.Text = "TV Movie ClickFinder EPG importer";
-      // 
-      // progressBarImportItem
-      // 
-      this.progressBarImportItem.Location = new System.Drawing.Point(100, 139);
-      this.progressBarImportItem.Name = "progressBarImportItem";
-      this.progressBarImportItem.Size = new System.Drawing.Size(293, 10);
-      this.progressBarImportItem.TabIndex = 60;
-      this.progressBarImportItem.Visible = false;
       // 
       // progressBarImportTotal
       // 
@@ -391,8 +381,8 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxMapping.Controls.Add(this.panelTimeSpan);
-      this.groupBoxMapping.Controls.Add(this.treeViewChannels);
-      this.groupBoxMapping.Controls.Add(this.treeViewStations);
+      this.groupBoxMapping.Controls.Add(this.treeViewMpChannels);
+      this.groupBoxMapping.Controls.Add(this.treeViewTvMStations);
       this.groupBoxMapping.Controls.Add(this.listView1);
       this.groupBoxMapping.Controls.Add(this.listView2);
       this.groupBoxMapping.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -458,41 +448,39 @@ namespace SetupTv.Sections
       this.maskedTextBoxTimeEnd.ValidatingType = typeof(System.DateTime);
       this.maskedTextBoxTimeEnd.Validated += new System.EventHandler(this.maskedTextBoxTimeEnd_Validated);
       // 
-      // treeViewChannels
+      // treeViewMpChannels
       // 
-      this.treeViewChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.treeViewMpChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)));
-      this.treeViewChannels.HideSelection = false;
-      this.treeViewChannels.Location = new System.Drawing.Point(12, 48);
-      this.treeViewChannels.Name = "treeViewChannels";
-      this.treeViewChannels.ShowNodeToolTips = true;
-      this.treeViewChannels.ShowPlusMinus = false;
-      this.treeViewChannels.ShowRootLines = false;
-      this.treeViewChannels.Size = new System.Drawing.Size(216, 225);
-      this.treeViewChannels.Sorted = true;
-      this.treeViewChannels.TabIndex = 1;
-      this.treeViewChannels.DoubleClick += new System.EventHandler(this.treeViewChannels_DoubleClick);
-      this.treeViewChannels.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewChannels_AfterSelect);
+      this.treeViewMpChannels.HideSelection = false;
+      this.treeViewMpChannels.Location = new System.Drawing.Point(12, 48);
+      this.treeViewMpChannels.Name = "treeViewMpChannels";
+      this.treeViewMpChannels.ShowNodeToolTips = true;
+      this.treeViewMpChannels.Size = new System.Drawing.Size(216, 225);
+      this.treeViewMpChannels.Sorted = true;
+      this.treeViewMpChannels.TabIndex = 1;
+      this.treeViewMpChannels.DoubleClick += new System.EventHandler(this.treeViewChannels_DoubleClick);
+      this.treeViewMpChannels.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewChannels_AfterSelect);
       // 
-      // treeViewStations
+      // treeViewTvMStations
       // 
-      this.treeViewStations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.treeViewTvMStations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.treeViewStations.HideSelection = false;
-      this.treeViewStations.ImageIndex = 0;
-      this.treeViewStations.ImageList = this.imageListTvmStations;
-      this.treeViewStations.Indent = 35;
-      this.treeViewStations.ItemHeight = 24;
-      this.treeViewStations.Location = new System.Drawing.Point(236, 48);
-      this.treeViewStations.Name = "treeViewStations";
-      this.treeViewStations.SelectedImageIndex = 0;
-      this.treeViewStations.ShowNodeToolTips = true;
-      this.treeViewStations.ShowPlusMinus = false;
-      this.treeViewStations.ShowRootLines = false;
-      this.treeViewStations.Size = new System.Drawing.Size(172, 251);
-      this.treeViewStations.Sorted = true;
-      this.treeViewStations.TabIndex = 3;
-      this.treeViewStations.DoubleClick += new System.EventHandler(this.treeViewStations_DoubleClick);
+      this.treeViewTvMStations.HideSelection = false;
+      this.treeViewTvMStations.ImageIndex = 0;
+      this.treeViewTvMStations.ImageList = this.imageListTvmStations;
+      this.treeViewTvMStations.Indent = 35;
+      this.treeViewTvMStations.ItemHeight = 24;
+      this.treeViewTvMStations.Location = new System.Drawing.Point(236, 48);
+      this.treeViewTvMStations.Name = "treeViewTvMStations";
+      this.treeViewTvMStations.SelectedImageIndex = 0;
+      this.treeViewTvMStations.ShowNodeToolTips = true;
+      this.treeViewTvMStations.ShowPlusMinus = false;
+      this.treeViewTvMStations.ShowRootLines = false;
+      this.treeViewTvMStations.Size = new System.Drawing.Size(172, 251);
+      this.treeViewTvMStations.Sorted = true;
+      this.treeViewTvMStations.TabIndex = 3;
+      this.treeViewTvMStations.DoubleClick += new System.EventHandler(this.treeViewStations_DoubleClick);
       // 
       // imageListTvmStations
       // 
@@ -516,7 +504,7 @@ namespace SetupTv.Sections
       // 
       // columnHeader1
       // 
-      this.columnHeader1.Text = "TVService channels";
+      this.columnHeader1.Text = "TV Service channels";
       this.columnHeader1.Width = 262;
       // 
       // listView2
@@ -576,8 +564,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.MaskedTextBox maskedTextBoxTimeStart;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private System.Windows.Forms.MaskedTextBox maskedTextBoxTimeEnd;
-    private System.Windows.Forms.TreeView treeViewChannels;
-    private System.Windows.Forms.TreeView treeViewStations;
+    private System.Windows.Forms.TreeView treeViewMpChannels;
+    private System.Windows.Forms.TreeView treeViewTvMStations;
     private MediaPortal.UserInterface.Controls.MPListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private MediaPortal.UserInterface.Controls.MPListView listView2;
@@ -596,7 +584,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.RadioButton radioButton7d;
     private System.Windows.Forms.RadioButton radioButton2d;
     private System.Windows.Forms.Button buttonImportNow;
-    private System.Windows.Forms.ProgressBar progressBarImportItem;
     private System.Windows.Forms.ProgressBar progressBarImportTotal;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowRatings;

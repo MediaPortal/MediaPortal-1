@@ -105,7 +105,7 @@ namespace TvEngine
     private OleDbConnection _databaseConnection = null;
     private bool _canceled = false;
     private List<TVMChannel> _tvmEpgChannels;
-    private List<Program> _tvmEpgProgs = new List<Program>(200);
+    private List<Program> _tvmEpgProgs = new List<Program>(500);
     private ArrayList _channelList = null;
     private int _programsCounter = 0;
     private bool _useShortProgramDesc = false;
@@ -299,11 +299,18 @@ namespace TvEngine
     public ArrayList GetChannels()
     {
       ArrayList tvChannels = new ArrayList();
-      IList allChannels = Channel.ListAll();
-      foreach (Channel channel in allChannels)
+      try
       {
-        if (channel.IsTv && channel.VisibleInGuide)
-          tvChannels.Add(channel);
+        IList allChannels = Channel.ListAll();
+        foreach (Channel channel in allChannels)
+        {
+          if (channel.IsTv && channel.VisibleInGuide)
+            tvChannels.Add(channel);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Info("TVMovie: Exception in GetChannels: {0}\n{1}", ex.Message, ex.StackTrace);
       }
       return tvChannels;
     }
@@ -326,7 +333,7 @@ namespace TvEngine
       {
         Log.Info("TVMovie: Exception creating OleDbConnection: {0}", connex.Message);
         return false;
-      }      
+      }
 
       string sqlSelect = "SELECT * FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
 
@@ -422,9 +429,9 @@ namespace TvEngine
         return;
 
       ArrayList mappingList = GetMappingList();
-      if (mappingList == null)
+      if (mappingList == null || mappingList.Count < 1)
       {
-        Log.Info("TVMovie: Cannot import from TV Movie database");
+        Log.Info("TVMovie: Cannot import from TV Movie database - no mappings found");
         return;
       }
 
@@ -454,17 +461,17 @@ namespace TvEngine
 
       _tvmEpgProgs.Clear();
 
+      // get all tv channels from MP DB via gentle.net
+      IList allChannels = Channel.ListAll();
+
       foreach (TVMChannel station in _tvmEpgChannels)
       {
         if (_canceled)
           return;
 
         Log.Info("TVMovie: Searching time share mappings for station: {0}", station.TvmEpgDescription);
-
         // get all tv movie channels
         List<Mapping> channelNames = new List<Mapping>();
-        // get all tv channels
-        IList allChannels = Channel.ListAll();
 
         foreach (Mapping mapping in mappingList)
           if (mapping.TvmEpgChannel == station.TvmEpgChannel)
@@ -712,19 +719,19 @@ namespace TvEngine
         audioFormat = BuildAudioDescription(audioDesc, dolbyDigital, dolbySuround, dolby, stereo, dualAudio);
       }
 
-      foreach (Mapping channelName in channelNames)
+      foreach (Mapping channelMap in channelNames)
       {
         DateTime newStartDate = start;
         DateTime newEndDate = end;
 
-        if (!CheckEntry(ref newStartDate, ref newEndDate, channelName.Start, channelName.End))
+        if (!CheckEntry(ref newStartDate, ref newEndDate, channelMap.Start, channelMap.End))
         {
           Channel progChannel = null;
-          foreach (Channel ch in allChannels)
+          foreach (Channel MpChannel in allChannels)
           {
-            if (ch.Name == channelName.Channel)
+            if (MpChannel.Name == channelMap.Channel)
             {
-              progChannel = ch;
+              progChannel = MpChannel;
               break;
             }
           }
@@ -741,7 +748,7 @@ namespace TvEngine
             }
           }
 
-          if (audioFormat == String.Empty)
+          if (string.IsNullOrEmpty(audioFormat))
             description = description.Replace("<br>", "\n");
           else
             description = "Ton: " + audioFormat + "\n" + description.Replace("<br>", "\n");
@@ -750,31 +757,34 @@ namespace TvEngine
           {
             StringBuilder sb = new StringBuilder();
             if (episode != String.Empty)
-              sb.Append("Folge: " + episode + "\n");
+              sb.AppendFormat("Folge: {0}\n", episode);
 
             if (starRating != -1 && _showRatings)
             {
               //sb.Append("Wertung: " + string.Format("{0}/5", starRating) + "\n");
               sb.Append("Wertung: ");
               if (shortCritic.Length > 1)
-                sb.Append(shortCritic + " - ");
-
+              {
+                sb.Append(shortCritic);
+                sb.Append(" - ");
+              }
               sb.Append(BuildRatingDescription(starRating));
               if (detailedRating.Length > 0)
                 sb.Append(BuildDetailedRatingDescription(detailedRating));
             }
-
             if (!string.IsNullOrEmpty(description))
-              sb.Append(description + "\n");
-
+            {
+              sb.Append(description);
+              sb.Append("\n");
+            }
             if (director.Length > 0)
-              sb.Append("Regie: " + director + "\n");
+              sb.AppendFormat("Regie: {0}\n", director);
             if (actors.Length > 0)
               sb.Append(BuildActorsDescription(actors));
-            if (classification != String.Empty && classification != "0")
-              sb.Append("FSK: " + classification + "\n");
-            if (date != String.Empty)
-              sb.Append("Jahr: " + date + "\n");
+            if (!string.IsNullOrEmpty(classification) && classification != "0")
+              sb.AppendFormat("FSK: {0}\n", classification);
+            if (!string.IsNullOrEmpty(date))
+              sb.AppendFormat("Jahr: {0}\n", date);
 
             description = sb.ToString();
           }
@@ -797,21 +807,37 @@ namespace TvEngine
       }
     }
 
+    /// <summary>
+    /// Retrieve all channel-mappings from TvMovieMapping table
+    /// </summary>
+    /// <returns></returns>
     private ArrayList GetMappingList()
     {
-      IList mappingDb = TvMovieMapping.ListAll();
       ArrayList mappingList = new ArrayList();
-
-      foreach (TvMovieMapping mapping in mappingDb)
+      try
       {
-        string newStart = mapping.TimeSharingStart;
-        string newEnd = mapping.TimeSharingEnd;
-        string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
-        string newStation = mapping.StationName;
+        IList mappingDb = TvMovieMapping.ListAll();
+        foreach (TvMovieMapping mapping in mappingDb)
+        {
+          try
+          {
+            string newStart = mapping.TimeSharingStart;
+            string newEnd = mapping.TimeSharingEnd;
+            string newStation = mapping.StationName;
+            string newChannel = Channel.Retrieve(mapping.IdChannel).Name;            
 
-        mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
+            mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
+          }
+          catch (Exception)
+          {
+            Log.Info("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!", mapping.StationName, mapping.IdChannel);
+          }
+        }
       }
-
+      catch (Exception ex)
+      {
+        Log.Info("TVMovie: Error in GetMappingList - {0}\n{1}", ex.Message, ex.StackTrace);
+      }
       return mappingList;
     }
 
@@ -1002,7 +1028,7 @@ namespace TvEngine
         string[] splitActors = dbActors.Split(';');
         if (splitActors != null && splitActors.Length > 0)
         {
-          for (int i = 0; i < splitActors.Length; i++)
+          for (int i = 0 ; i < splitActors.Length ; i++)
           {
             if (i < _actorCount)
             {

@@ -77,10 +77,9 @@ namespace SetupTv.Sections
     #region Form Methods
     private void treeViewStations_DoubleClick(object sender, EventArgs e)
     {
-      if (treeViewStations.SelectedNode != null)
-        treeViewStations.SelectedNode.Collapse();
+      if (treeViewTvMStations.SelectedNode != null)
+        treeViewTvMStations.SelectedNode.Collapse();
       MapStation();
-
     }
 
     private void treeViewChannels_DoubleClick(object sender, EventArgs e)
@@ -203,9 +202,8 @@ namespace SetupTv.Sections
       TvMovieDatabase database = new TvMovieDatabase();
       if (database.Connect())
       {
-
-        treeViewStations.BeginUpdate();
-        treeViewStations.Nodes.Clear();
+        treeViewTvMStations.BeginUpdate();
+        treeViewTvMStations.Nodes.Clear();
         imageListTvmStations.Images.Clear();
 
         string GifBasePath = TvMovieDatabase.TVMovieProgramPath + @"Gifs\";
@@ -229,23 +227,25 @@ namespace SetupTv.Sections
           ChannelInfo channelInfo = new ChannelInfo();
           channelInfo.Name = station.TvmEpgChannel;
           stationNode.Tag = channelInfo;
-          treeViewStations.Nodes.Add(stationNode);
+          treeViewTvMStations.Nodes.Add(stationNode);
         }
 
-        treeViewStations.EndUpdate();
+        treeViewTvMStations.EndUpdate();
 
-        treeViewChannels.BeginUpdate();
-        treeViewChannels.Nodes.Clear();
+        treeViewMpChannels.BeginUpdate();
+        treeViewMpChannels.Nodes.Clear();
 
         ArrayList mpChannelList = database.GetChannels();
 
         foreach (Channel channel in mpChannelList)
         {
-          TreeNode stationNode = new TreeNode(channel.Name);
-          treeViewChannels.Nodes.Add(stationNode);
+          //TreeNode[] subItems = new TreeNode[] { new TreeNode(channel.IdChannel.ToString()), new TreeNode(channel.DisplayName) };
+          TreeNode stationNode = new TreeNode(channel.Name);//, subItems);
+          stationNode.Tag = channel;
+          treeViewMpChannels.Nodes.Add(stationNode);
         }
 
-        treeViewChannels.EndUpdate();
+        treeViewMpChannels.EndUpdate();
       }
     }
 
@@ -254,13 +254,13 @@ namespace SetupTv.Sections
     /// </summary>
     private void MapStation()
     {
-      TreeNode selectedChannel = treeViewChannels.SelectedNode;
+      TreeNode selectedChannel = treeViewMpChannels.SelectedNode;
       if (selectedChannel == null)
         return;
       while (selectedChannel.Parent != null)
         selectedChannel = selectedChannel.Parent;
 
-      TreeNode selectedStation = (TreeNode)treeViewStations.SelectedNode.Clone();
+      TreeNode selectedStation = (TreeNode)treeViewTvMStations.SelectedNode.Clone();
 
       foreach (TreeNode stationNode in selectedChannel.Nodes)
         if (stationNode.Text == selectedStation.Text)
@@ -283,7 +283,7 @@ namespace SetupTv.Sections
     /// </summary>
     private void UnmapStation()
     {
-      TreeNode selectedChannel = treeViewChannels.SelectedNode;
+      TreeNode selectedChannel = treeViewMpChannels.SelectedNode;
       if (selectedChannel == null)
         return;
       if (selectedChannel.Parent != null)
@@ -316,7 +316,7 @@ namespace SetupTv.Sections
 
       TvBusinessLayer layer = new TvBusinessLayer();
 
-      foreach (TreeNode channel in treeViewChannels.Nodes)
+      foreach (TreeNode channel in treeViewMpChannels.Nodes)
       {
         //Log.Debug("TvMovieSetup: Processing channel {0}", channel.Text);
         foreach (TreeNode station in channel.Nodes)
@@ -352,8 +352,8 @@ namespace SetupTv.Sections
     /// </summary>
     private void LoadMapping()
     {
-      treeViewChannels.BeginUpdate();
-      foreach (TreeNode treeNode in treeViewChannels.Nodes)
+      treeViewMpChannels.BeginUpdate();
+      foreach (TreeNode treeNode in treeViewMpChannels.Nodes)
       {
         foreach (TreeNode childNode in treeNode.Nodes)
           childNode.Remove();
@@ -366,11 +366,11 @@ namespace SetupTv.Sections
         {
           foreach (TvMovieMapping mapping in mappingDb)
           {
-            string channelName = string.Empty;
+            string MpChannelName = string.Empty;
             try
             {
-              channelName = Channel.Retrieve(mapping.IdChannel).Name;
-              TreeNode channelNode = FindChannel(channelName);
+              MpChannelName = Channel.Retrieve(mapping.IdChannel).Name;
+              TreeNode channelNode = FindChannel(MpChannelName);
               if (channelNode != null)
               {
                 string stationName = mapping.StationName;
@@ -404,7 +404,7 @@ namespace SetupTv.Sections
             }
             catch (Exception exInner)
             {
-              Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})", channelName, exInner.Message);
+              Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})", MpChannelName, exInner.Message);
             }
           }
         }
@@ -416,31 +416,31 @@ namespace SetupTv.Sections
         Log.Debug("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
       }
       ColorTree();
-      treeViewChannels.EndUpdate();
+      treeViewMpChannels.EndUpdate();
     }
 
-    private TreeNode FindChannel(string channelName)
+    private TreeNode FindChannel(string aMpChannelName)
     {
-      foreach (TreeNode channel in treeViewChannels.Nodes)
-        if (channel.Text == channelName)
-          return channel;
+      foreach (TreeNode MpNode in treeViewMpChannels.Nodes)
+        if (MpNode.Text.Equals(aMpChannelName, StringComparison.CurrentCulture))
+          return MpNode;
 
       return null;
     }
 
-    private TreeNode FindStation(string stationName)
+    private TreeNode FindStation(string aTvMStationName)
     {
-      foreach (TreeNode station in treeViewStations.Nodes)
-        if (station.Tag != null)
-          if (((ChannelInfo)station.Tag).Name == stationName)
-            return station;
+      foreach (TreeNode TvMNode in treeViewTvMStations.Nodes)
+        if (TvMNode.Tag != null)
+          if (((ChannelInfo)TvMNode.Tag).Name == aTvMStationName)
+            return TvMNode;
 
       return null;
     }
 
     private void ColorTree()
     {
-      foreach (TreeNode parentNode in treeViewChannels.Nodes)
+      foreach (TreeNode parentNode in treeViewMpChannels.Nodes)
         foreach (TreeNode subNode in parentNode.Nodes)
         {
           if (parentNode.Nodes.Count > 1)
@@ -471,7 +471,7 @@ namespace SetupTv.Sections
       maskedTextBoxTimeEnd.Text = channelInfo.End;
     }
 
-    string CleanInput(string input)
+    private string CleanInput(string input)
     {
       int hours = 0;
       int minutes = 0;
@@ -493,26 +493,26 @@ namespace SetupTv.Sections
 
     private void maskedTextBoxTimeStart_Validated(object sender, EventArgs e)
     {
-      ChannelInfo channelInfo = (ChannelInfo)treeViewChannels.SelectedNode.Tag;
+      ChannelInfo channelInfo = (ChannelInfo)treeViewMpChannels.SelectedNode.Tag;
       channelInfo.Start = CleanInput(maskedTextBoxTimeStart.Text);
       maskedTextBoxTimeStart.Text = CleanInput(maskedTextBoxTimeStart.Text);
-      treeViewChannels.SelectedNode.Tag = channelInfo;
+      treeViewMpChannels.SelectedNode.Tag = channelInfo;
       if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
-        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
+        treeViewMpChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
       else
-        treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
+        treeViewMpChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
     }
 
     private void maskedTextBoxTimeEnd_Validated(object sender, EventArgs e)
     {
-      ChannelInfo channelInfo = (ChannelInfo)treeViewChannels.SelectedNode.Tag;
+      ChannelInfo channelInfo = (ChannelInfo)treeViewMpChannels.SelectedNode.Tag;
       channelInfo.End = CleanInput(maskedTextBoxTimeEnd.Text);
       maskedTextBoxTimeEnd.Text = CleanInput(maskedTextBoxTimeEnd.Text);
-      treeViewChannels.SelectedNode.Tag = channelInfo;
+      treeViewMpChannels.SelectedNode.Tag = channelInfo;
       if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
-        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
+        treeViewMpChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
       else
-        treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
+        treeViewMpChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
     }
 
     private void checkBoxUseShortDesc_CheckedChanged(object sender, EventArgs e)
@@ -582,7 +582,7 @@ namespace SetupTv.Sections
         {
           MessageBox.Show(this, "Please make sure a supported TV Movie Clickfinder release has been successfully installed.", "Error loading TV Movie stations", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          Log.Debug("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message, ex1.StackTrace);
+          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message, ex1.StackTrace);
           return;
         }
 
@@ -594,7 +594,7 @@ namespace SetupTv.Sections
         {
           MessageBox.Show(this, "Please make sure your using a valid channel mapping.", "Error loading TVM <-> MP channel mapping", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          Log.Debug("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message, ex2.StackTrace);
+          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message, ex2.StackTrace);
           return;
         }
       }
@@ -631,7 +631,6 @@ namespace SetupTv.Sections
       try
       {
         _database.LaunchTVMUpdater();
-        _database.OnProgramsChanged += new TvMovieDatabase.ProgramsChanged(_database_OnProgramsChanged);
         _database.OnStationsChanged += new TvMovieDatabase.StationsChanged(_database_OnStationsChanged);
         if (_database.Connect())
           _database.Import();
@@ -650,13 +649,6 @@ namespace SetupTv.Sections
       progressBarImportTotal.Maximum = maximum;
       if (value <= maximum && value >= 0)
         progressBarImportTotal.Value = value;
-    }
-
-    void _database_OnProgramsChanged(int value, int maximum, string text)
-    {
-      progressBarImportItem.Maximum = maximum;
-      if (value <= maximum && value >= 0)
-        progressBarImportItem.Value = value;
     }
   }
 }
