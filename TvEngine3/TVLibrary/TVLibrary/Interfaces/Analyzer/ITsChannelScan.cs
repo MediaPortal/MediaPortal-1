@@ -90,6 +90,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="providerName">Name of the provider.</param>
     /// <param name="serviceName">Name of the service.</param>
     /// <param name="pmtPid">The PMT pid.</param>
+    /// <param name="hasVideo">Whether the channel has Video.</param>
+    /// <param name="hasAudio">Whether the channel has Audio.</param>
     /// <returns></returns>
     [PreserveSig]
     int GetChannel(short index,

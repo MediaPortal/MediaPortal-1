@@ -159,7 +159,7 @@ namespace TvService
       if (hostName == "127.0.0.1") return true;
       string localHostName = Dns.GetHostName();
       if (String.Compare(hostName, localHostName, true) == 0) return true;
-      IPHostEntry local = Dns.GetHostByName(localHostName);
+      IPHostEntry local = Dns.GetHostEntry(localHostName);
       foreach (IPAddress ipaddress in local.AddressList)
       {
         if (String.Compare(hostName, ipaddress.ToString(), true) == 0) return true;
@@ -270,10 +270,10 @@ namespace TvService
 
         _plugins = new PluginLoader();
         _plugins.Load();
-
+        
         //log all local ip adresses, usefull for debugging problems
         Log.Write("Controller: Started at {0}", Dns.GetHostName());
-        IPHostEntry local = Dns.GetHostByName(Dns.GetHostName());
+        IPHostEntry local = Dns.GetHostEntry(Dns.GetHostName()); 
         foreach (IPAddress ipaddress in local.AddressList)
         {
           Log.Write("Controller: local ip adress:{0}", ipaddress.ToString());
@@ -1724,7 +1724,6 @@ namespace TvService
     {
 			if (user == null) return -1;
 
-      CardDetail cardDetail;
       Channel channel = Channel.Retrieve(idChannel);
       Log.Write("Controller: TimeShiftingWouldUseCard {0} {1}", channel.DisplayName, channel.IdChannel);
       TvResult result;
@@ -2250,7 +2249,7 @@ namespace TvService
       {
         List<string> ipadresses = new List<string>();
         string localHostName = Dns.GetHostName();
-        IPHostEntry local = Dns.GetHostByName(localHostName);
+        IPHostEntry local = Dns.GetHostEntry(localHostName);
         foreach (IPAddress ipaddress in local.AddressList)
         {
           ipadresses.Add(ipaddress.ToString());

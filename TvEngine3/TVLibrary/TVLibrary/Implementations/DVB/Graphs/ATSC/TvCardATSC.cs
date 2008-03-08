@@ -237,7 +237,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
         throw ex;
       }
-      return null;
+      //unreachable return null;
     }
     #endregion
 

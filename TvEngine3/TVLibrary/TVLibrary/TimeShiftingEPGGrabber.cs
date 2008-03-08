@@ -69,6 +69,7 @@ namespace TvLibrary
       {
         LoadSettings();
         Log.Log.Info("Timeshifting epg grabber started.");
+        _grabStartTime = DateTime.Now;
         _epgTimer.Enabled = true;
         return true;
       }

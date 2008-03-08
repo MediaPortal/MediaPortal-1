@@ -524,7 +524,7 @@ namespace TvControl
     /// <summary>
     /// Returns if the card is currently timeshifting or not
     /// </summary>
-    /// <param name="cardId">id of the card.</param>
+    /// <param name="user">The user.</param>
     /// <returns>true when card is timeshifting otherwise false</returns>
     bool IsTimeShifting(ref User user);
 
@@ -642,7 +642,7 @@ namespace TvControl
     /// <summary>
     /// returns the list of available audio streams for the card specified
     /// </summary>
-    /// <param name="cardId">card id</param>
+    /// <param name="user">The user.</param>
     /// <returns>List containing all audio streams</returns>
     IAudioStream[] AvailableAudioStreams(User user);
 
@@ -650,7 +650,7 @@ namespace TvControl
     /// <summary>
     /// returns the current selected audio stream for the card specified
     /// </summary>
-    /// <param name="cardId">card id</param>
+    /// <param name="user">The user.</param>
     /// <returns>current audio stream</returns>
     IAudioStream GetCurrentAudioStream(User user);
 
@@ -658,7 +658,7 @@ namespace TvControl
     /// <summary>
     /// Sets the current audio stream for the card specified
     /// </summary>
-    /// <param name="cardId">card id</param>
+    /// <param name="user">The user.</param>
     /// <param name="stream">audio stream</param>
     void SetCurrentAudioStream(User user, IAudioStream stream);
     #endregion
@@ -666,7 +666,7 @@ namespace TvControl
         /// <summary>
     /// returns the current video stream on the virtual card. 
     /// </summary>
-    /// <param name="cardId">card id</param>
+    /// <param name="user">The user.</param>
     /// <returns>List containing all audio streams</returns>
     int GetCurrentVideoStream(User user);
 
@@ -721,7 +721,7 @@ namespace TvControl
 		/// <summary>
 		/// Gets the reason why timeshifting stopped.
 		/// </summary>
-		/// <param name="User">The user.</param>		
+        /// <param name="user">The user.</param>		
 		/// <returns>TvStoppedReason</returns>
 		TvStoppedReason GetTvStoppedReason(User user);
 

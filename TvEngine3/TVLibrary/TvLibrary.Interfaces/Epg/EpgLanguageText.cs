@@ -141,7 +141,6 @@ namespace TvLibrary.Epg
       set
       {
         _starRating = value;
-        if (_starRating == null) _starRating = 0;
       }
     }
     /// <summary>
@@ -173,7 +172,6 @@ namespace TvLibrary.Epg
       set
       {
         _parentalRating = value;
-        if (_parentalRating == null) _parentalRating = -1;
       }
     }
     #endregion

@@ -58,9 +58,9 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <summary>
     /// Gets the channel details.
     /// </summary>
-    /// <param name="channel">The channel.</param>
-    /// <param name="networkId">The network id.</param>
-    /// <param name="transportid">The transportid.</param>
+    /// <param name="channelIndex">The channel.</param>
+    /// <param name="network_id">The network id.</param>
+    /// <param name="transport_id">The transportid.</param>
     /// <param name="service_id">The service_id.</param>
     /// <returns></returns>
     [PreserveSig]
@@ -69,8 +69,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <summary>
     /// Gets the number of linked channels for a channel
     /// </summary>
-    /// <param name="channel">The channel.</param>
-    /// <param name="eventCount">The link count.</param>
+    /// <param name="channelIndex">The channel.</param>
+    /// <param name="linkedChannelsCount">The link count.</param>
     /// <returns></returns>
     [PreserveSig]
     int GetLinkedChannelsCount([In] uint channelIndex, [Out] out uint linkedChannelsCount);
@@ -78,10 +78,10 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <summary>
     /// Gets the linked channel details.
     /// </summary>
-    /// <param name="channel">The channel.</param>
-    /// <param name="eventid">The linked channel id.</param>
-    /// <param name="networkId">The network id.</param>
-    /// <param name="transportid">The transportid.</param>
+    /// <param name="channelIndex">The channel.</param>
+    /// <param name="linkIndex">The linked channel id.</param>
+    /// <param name="network_id">The network id.</param>
+    /// <param name="transport_id">The transportid.</param>
     /// <param name="service_id">The service_id.</param>
     /// <returns></returns>
     [PreserveSig]

@@ -61,7 +61,6 @@ namespace TvLibrary.Streaming
     #region variables
     bool _running = false;
     bool _initialized = false;
-    long _streamIndex = 0;
     Dictionary<string, RtspStream> _streams;
     #endregion
 
@@ -153,7 +152,6 @@ namespace TvLibrary.Streaming
     {
       if (_initialized == false) return;
       if (_running) return;
-      _streamIndex = 100;
       Log.Log.WriteFile("RTSP: start streamer");
       _running = true;
       Thread thread = new Thread(new ThreadStart(workerThread));
@@ -178,7 +176,7 @@ namespace TvLibrary.Streaming
     /// Creates a new RTSP stream
     /// </summary>
     /// <param name="streamName">Name of the stream.</param>
-    /// <param name="fileName">Name of the timeshift file.</param
+    /// <param name="fileName">Name of the timeshift file.</param>
     /// <param name="isProgramStream">true if file is a mpeg-2 program stream, false if file is a mpeg-2 transport stream.</param>
     public void AddStream(RtspStream stream)
     {

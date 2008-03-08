@@ -39,7 +39,7 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="KNC"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    /// <param name="captureFilter">The capture filter.</param>
+    /// <param name="analyzerFilter">The analyzer filter.</param>
     public KNC(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     {
       _KNCInterface = analyzerFilter as IKNC;
@@ -146,6 +146,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the diseq command.
     /// </summary>
     /// <param name="channel">The channel.</param>
+    /// <param name="parameters">The scanparameters.</param>
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_KNCInterface == null) return;

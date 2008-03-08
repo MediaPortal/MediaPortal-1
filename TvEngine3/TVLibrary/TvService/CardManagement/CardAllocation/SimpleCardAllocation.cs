@@ -81,7 +81,6 @@ namespace TvService
           while (enumerator.MoveNext())
           {
             KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-            bool check = true;
 
             int cardId = keyPair.Value.DataBaseCard.IdCard;
             ITvCardHandler tvcard = cards[cardId];
@@ -138,7 +137,6 @@ namespace TvService
             //ok card could be used to tune to this channel
             //now we check if its free...
             cardsFound++;
-            bool sameTransponder = false;
 						
 						if (tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))						
             {
@@ -186,7 +184,6 @@ namespace TvService
                 //it is.. we can really use this card
                 Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
                     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-                sameTransponder = true;
               }
               else
               {

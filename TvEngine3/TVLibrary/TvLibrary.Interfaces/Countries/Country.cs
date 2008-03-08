@@ -47,6 +47,7 @@ namespace TvLibrary
     /// <param name="id">The id.</param>
     /// <param name="country">The country.</param>
     /// <param name="code">The code.</param>
+    /// <param name="standard">The AnalogVideoStandard.</param>
     public Country(int id, string country, string code, AnalogVideoStandard standard)
     {
       _id = id;

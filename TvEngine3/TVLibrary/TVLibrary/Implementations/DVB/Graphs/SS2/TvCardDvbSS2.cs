@@ -128,6 +128,7 @@ namespace TvLibrary.Implementations.DVB
     //
     //	Structure completedy by GetTunerCapabilities() to return tuner capabilities
     //
+    #pragma warning disable 0649 // All fields are used by the Marshal.PtrToStructure function
     private struct tTunerCapabilities
     {
       public TunerType eModulation;
@@ -144,7 +145,8 @@ namespace TvLibrary.Implementations.DVB
       public int dwLockTimeInMilliSecond;		// lock time in millisecond
       public int dwKernelLockTimeInMilliSecond;	// lock time for kernel
       public int dwAcquisitionCapabilities;
-    }
+    } 
+    #pragma warning restore 0649
     #endregion
 
     #region variables
@@ -768,7 +770,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Error("ss2:DeleteAllPIDs() failed pid:0x2000");
       }
-      if (pids.Count == 0 || true)
+      /*if (pids.Count == 0 || true)*/
       {
         Log.Log.WriteFile("ss2:hw pids:all");
         int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, PID_CAPTURE_ALL_INCLUDING_NULLS);
@@ -776,7 +778,7 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.Error("ss2:SetPidToPin() failed pid:0x2000");
         }
-      }
+      }/* unreachable
       else
       {
         int maxPids;
@@ -788,6 +790,7 @@ namespace TvLibrary.Implementations.DVB
           SetPidToPin(_interfaceB2C2DataCtrl, 0, pid);
         }
       }
+      */ 
     }
     /// <summary>
     /// updates the signal quality/level and tuner locked statusses

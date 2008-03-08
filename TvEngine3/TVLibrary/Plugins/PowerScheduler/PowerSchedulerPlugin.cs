@@ -97,11 +97,13 @@ namespace TvEngine.PowerScheduler
       get
       {
         return new PowerSchedulerMasterSetup();
+        /*unreachable 
         if (_controller.IsMaster)
           return new PowerSchedulerMasterSetup();
         else
           // return new PowerSchedulerSlaveSetup();
           return new PowerSchedulerMasterSetup();
+        */ 
       }
     }
     /// <summary>

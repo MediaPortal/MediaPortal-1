@@ -33,6 +33,10 @@ namespace TvLibrary.Interfaces.Analyzer
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsRecorder
   {
+    /// <summary>
+    /// Sets the filename to record the stream to.
+    /// </summary>
+    /// <returns></returns>
     [PreserveSig]
     int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     /// <summary>

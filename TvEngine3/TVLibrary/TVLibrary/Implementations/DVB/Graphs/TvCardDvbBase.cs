@@ -1978,7 +1978,6 @@ namespace TvLibrary.Implementations.DVB
       {
         try
         {
-          uint titleCount;
           uint channelCount;
           List<PortalChannel> portalChannels = new List<PortalChannel>();
           _interfaceChannelLinkageScanner.GetChannelCount(out channelCount);
@@ -2142,10 +2141,6 @@ namespace TvLibrary.Implementations.DVB
               programName = programName.Trim();
               summary = summary.Trim();
               theme = theme.Trim();
-              if (channelName.Length == 0)
-              {
-                int x = 1;
-              }
               EpgChannel epgChannel = null;
               foreach (EpgChannel chan in epgChannels)
               {

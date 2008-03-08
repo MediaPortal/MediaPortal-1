@@ -43,6 +43,7 @@ namespace TvLibrary.Interfaces
     /// Tunes to the channel specified and will start scanning for any channel
     /// </summary>
     /// <param name="channel">channel to tune to</param>
+    /// <param name="settings">ScanParameters to use while tuning</param>
     /// <returns>list of channels found</returns>
     List<IChannel> Scan(IChannel channel, ScanParameters settings);
     List<IChannel> ScanNIT(IChannel channel, ScanParameters settings);

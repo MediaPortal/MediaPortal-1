@@ -287,6 +287,10 @@ namespace TvDatabase
       return detail.ReferencedChannel();
     }
 
+    /// <summary>
+    /// gets a value from the database table "Setting"
+    /// </summary>
+    /// <returns>A Setting object with the stored value, if it doesnt exist the given default string will be the value</returns>
     public Setting GetSetting(string tagName, string defaultValue)
     {
       if (defaultValue == null) return null;
@@ -306,6 +310,10 @@ namespace TvDatabase
       return (Setting)settingsFound[0];
     }
 
+    /// <summary>
+    /// gets a value from the database table "Setting"
+    /// </summary>
+    /// <returns>A Setting object with the stored value, if it doesnt exist a empty string will be the value</returns>
     public Setting GetSetting(string tagName)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
@@ -2204,9 +2212,9 @@ namespace TvDatabase
     #endregion
 
     #region EPG Updating
-    string _titleTemplate;
-    string _descriptionTemplate;
-    string _epgLanguages;
+    //string _titleTemplate;
+    //string _descriptionTemplate;
+    //string _epgLanguages;
     #endregion
   }
 }

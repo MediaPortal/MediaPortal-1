@@ -218,7 +218,7 @@ namespace TvLibrary.Teletext
     /// Sets a page header into the given data stream
     /// </summary>
     /// <param name="offset">Offset in the data stream</param>
-    /// <param name="rowData">Teletext data</param>
+    /// <param name="byData">Teletext data</param>
     /// <param name="pagenr">PageNumber</param>
     /// <param name="subnr">SubPageNumber</param>
     static public void SetHeader(int offset, ref byte[] byData, int pagenr, int subnr)
@@ -264,8 +264,8 @@ namespace TvLibrary.Teletext
     /// Sets a packet number in teletext header into the given data stream
     /// </summary>
     /// <param name="offset">Offset in the data stream</param>
-    /// <param name="rowData">Teletext data</param>
-    /// <param name="pagenr">PageNumber (needed for magazin number)</param>
+    /// <param name="byData">Teletext data</param>
+    /// <param name="pageNumber">PageNumber (needed for magazin number)</param>
     /// <param name="packetNumber">PacketNumber</param>
     static public void SetPacketNumber(int offset, ref byte[] byData, int pageNumber, int packetNumber)
     {

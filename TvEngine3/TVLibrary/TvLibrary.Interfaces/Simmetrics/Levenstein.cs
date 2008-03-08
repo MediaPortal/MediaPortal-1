@@ -96,7 +96,7 @@ namespace similaritymetrics
 		}
 		
 		//UPGRADE_NOTE: Final was removed from the declaration of 'ESTIMATEDTIMINGCONST '. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1003"'
-		private float ESTIMATEDTIMINGCONST = 0.00018F;
+		//private float ESTIMATEDTIMINGCONST = 0.00018F;
 		//UPGRADE_NOTE: Final was removed from the declaration of 'dCostFunc '. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1003"'
 		//UPGRADE_NOTE: The initialization of  'dCostFunc' was moved to method 'InitBlock'. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1005"'
 		private AbstractSubstitutionCost dCostFunc;

@@ -51,6 +51,7 @@ namespace TvLibrary.Implementations.Analog
   public class TvCardAnalog : ITVCard
   {
     #region struct
+    #pragma warning disable 0649 // All fields are used by the Marshal.PtrToStructure function
     private struct MPEG2VideoInfo		//  MPEG2VideoInfo
     {
       public VideoInfoHeader2 hdr;
@@ -61,6 +62,7 @@ namespace TvLibrary.Implementations.Analog
       public UInt32 dwFlags;
       public UInt32 dwSequenceHeader;
     }
+    #pragma warning restore 0649
     #endregion
 
     #region constants
@@ -118,21 +120,16 @@ namespace TvLibrary.Implementations.Analog
     private IPin _pinVBI = null;
     private IPin _pinAnalogAudio = null;
     private IPin _pinAnalogVideo = null;
-    private string _recordingFileName = "";
-    private bool _grabTeletext = false;
     private int _managedThreadId;
     private DateTime _lastSignalUpdate;
     private bool _tunerLocked;
     private bool _isScanning = false;
     private object m_context = null;
     private Hauppauge _haupPauge = null;
-    private string _timeshiftFileName = "";
-    private IVbiCallback _teletextCallback = null;
     private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
     private ScanParameters _parameters;
     private bool _cardPresent = true;
     private TvBusinessLayer _layer;
-    private TSHelperTools.TSHeader _packetHeader;
     private TSHelperTools _tsHelper;
     private bool _pinVideoConnected;
     private AnalogChannel _previousChannel;
@@ -262,8 +259,6 @@ namespace TvLibrary.Implementations.Analog
 
         Log.Log.WriteFile("analog: StopGraph state:{0}", state);
         _isScanning = false;
-        _recordingFileName = "";
-        _timeshiftFileName = "";
         int hr = 0;
         if (_tsFileSink != null)
         {
@@ -787,7 +782,6 @@ namespace TvLibrary.Implementations.Analog
         DevicesInUse.Instance.Remove(_multiplexerDevice);
         _multiplexerDevice = null;
       }
-      _timeshiftFileName = "";
       _graphState = GraphState.Idle;
       Log.Log.WriteFile("analog: dispose completed");
     }
@@ -2402,32 +2396,32 @@ namespace TvLibrary.Implementations.Analog
 
     /// <summary>
     /// Adds the multiplexer filter to the graph.
-    // several posibilities
-    //  1. no tv multiplexer needed
-    //  2. tv multiplexer filter which is connected to a single encoder filter
-    //  3. tv multiplexer filter which is connected to two encoder filter (audio/video)
-    //  4. tv multiplexer filter which is connected to the capture filter
-    // at the end this method the graph looks like this:
-
-    //  option 2: single encoder filter
-    //    [                ]----->[                ]      [             ]
-    //    [ capture filter ]      [ encoder filter ]----->[ multiplexer ]
-    //    [                ]----->[                ]      [             ]
-    //
-    //
-    //  option 3: dual encoder filters
-    //    [                ]----->[   video        ]    
-    //    [ capture filter ]      [ encoder filter ]------>[             ]
-    //    [                ]      [                ]       [             ]
-    //    [                ]                               [ multiplexer ]
-    //    [                ]----->[   audio        ]------>[             ]
-    //                            [ encoder filter ]      
-    //                            [                ]
-    //
-    //  option 4: no encoder filter
-    //    [                ]----->[             ]
-    //    [ capture filter ]      [ multiplexer ]
-    //    [                ]----->[             ]
+    /// several posibilities
+    ///  1. no tv multiplexer needed
+    ///  2. tv multiplexer filter which is connected to a single encoder filter
+    ///  3. tv multiplexer filter which is connected to two encoder filter (audio/video)
+    ///  4. tv multiplexer filter which is connected to the capture filter
+    /// at the end this method the graph looks like this:
+    /// 
+    ///  option 2: single encoder filter
+    ///    [                ]----->[                ]      [             ]
+    ///    [ capture filter ]      [ encoder filter ]----->[ multiplexer ]
+    ///    [                ]----->[                ]      [             ]
+    ///
+    ///
+    ///  option 3: dual encoder filters
+    ///    [                ]----->[   video        ]    
+    ///    [ capture filter ]      [ encoder filter ]------>[             ]
+    ///    [                ]      [                ]       [             ]
+    ///    [                ]                               [ multiplexer ]
+    ///    [                ]----->[   audio        ]------>[             ]
+    ///                            [ encoder filter ]      
+    ///                            [                ]
+    ///
+    ///  option 4: no encoder filter
+    ///    [                ]----->[             ]
+    ///    [ capture filter ]      [ multiplexer ]
+    ///    [                ]----->[             ]
     /// </summary>
     /// <param name="matchPinNames">if set to <c>true</c> the pin names of the multiplexer filter should match the pin names of the encoder filter.</param>
     /// <returns>true if encoder filters are added, otherwise false</returns>
@@ -2521,35 +2515,35 @@ namespace TvLibrary.Implementations.Analog
 
     /// <summary>
     /// Adds one or 2 encoder filters to the graph
-    //  several posibilities
-    //  1. no encoder filter needed
-    //  2. single encoder filter with seperate audio/video inputs and 1 (mpeg-2) output
-    //  3. single encoder filter with a mpeg2 program stream input (I2S)
-    //  4. two encoder filters. one for audio and one for video
-    //
-    //  At the end of this method the graph looks like:
-    //
-    //  option 2: one encoder filter, with 2 inputs
-    //    [                ]----->[                ]
-    //    [ capture filter ]      [ encoder filter ]
-    //    [                ]----->[                ]
-    //
-    //
-    //  option 3: one encoder filter, with 1 input
-    //    [                ]      [                ]
-    //    [ capture filter ]----->[ encoder filter ]
-    //    [                ]      [                ]
-    //
-    //
-    //  option 4: 2 encoder filters one for audio and one for video
-    //    [                ]----->[   video        ]
-    //    [ capture filter ]      [ encoder filter ]
-    //    [                ]      [                ]
-    //    [                ]   
-    //    [                ]----->[   audio        ]
-    //                            [ encoder filter ]
-    //                            [                ]
-    //
+    ///  several posibilities
+    ///  1. no encoder filter needed
+    ///  2. single encoder filter with seperate audio/video inputs and 1 (mpeg-2) output
+    ///  3. single encoder filter with a mpeg2 program stream input (I2S)
+    ///  4. two encoder filters. one for audio and one for video
+    ///
+    ///  At the end of this method the graph looks like:
+    ///
+    ///  option 2: one encoder filter, with 2 inputs
+    ///    [                ]----->[                ]
+    ///    [ capture filter ]      [ encoder filter ]
+    ///    [                ]----->[                ]
+    ///
+    ///
+    ///  option 3: one encoder filter, with 1 input
+    ///    [                ]      [                ]
+    ///    [ capture filter ]----->[ encoder filter ]
+    ///    [                ]      [                ]
+    ///
+    ///
+    ///  option 4: 2 encoder filters one for audio and one for video
+    ///    [                ]----->[   video        ]
+    ///    [ capture filter ]      [ encoder filter ]
+    ///    [                ]      [                ]
+    ///    [                ]   
+    ///    [                ]----->[   audio        ]
+    ///                            [ encoder filter ]
+    ///                            [                ]
+    ///
     /// </summary>
     /// <param name="matchPinNames">if set to <c>true</c> the pin names of the encoder filter should match the pin names of the capture filter.</param>
     /// <returns>true if encoder filters are added, otherwise false</returns>
@@ -2833,10 +2827,10 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Adds 3 filters to the graph so we can grab teletext
     /// On return the graph looks like this:
-    //
-    //	[							 ]		 [  tee/sink	]			 [	wst or	]			[ MPFile	]
-    //	[	capture			 ]		 [		to			]----->[	vbi 		]---->[ Writer  ]
-    //	[						vbi]---->[	sink			]			 [	codec		]			[					]
+    ///
+    ///	[							 ]		 [  tee/sink	]			 [	wst or	]			[ MPFile	]
+    ///	[	capture			 ]		 [		to			]----->[	vbi 		]---->[ Writer  ]
+    ///	[						vbi]---->[	sink			]			 [	codec		]			[					]
     /// </summary>
     private void SetupTeletext()
     {
@@ -2953,7 +2947,7 @@ namespace TvLibrary.Implementations.Analog
     /// which can supplies the mediatype and mediasubtype specified
     /// if found the pin is returned
     /// </summary>
-    /// <param name="filter">Type of the filter used to find correct pin.</param>
+    /// <param name="filter">The filter to find the pin on.</param>
     /// <param name="mediaType">Type of the media.</param>
     /// <param name="mediaSubtype">The media subtype.</param>
     private IPin FindMediaPin(IBaseFilter filter, Guid mediaType, Guid mediaSubtype)

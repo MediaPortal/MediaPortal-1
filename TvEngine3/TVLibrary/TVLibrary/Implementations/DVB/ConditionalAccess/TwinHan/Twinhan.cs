@@ -61,7 +61,7 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="Twinhan"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    /// <param name="captureFilter">The capture filter.</param>
+    /// <param name="analyzerFilter">The analyzer filter.</param>
     public Twinhan(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
     {
       _ptrPmt = Marshal.AllocCoTaskMem(8192);

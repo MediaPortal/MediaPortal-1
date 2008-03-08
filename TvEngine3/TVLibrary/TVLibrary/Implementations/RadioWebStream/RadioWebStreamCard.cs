@@ -105,12 +105,14 @@ namespace TvLibrary.Implementations.RadioWebStream
     protected bool CheckThreadId()
     {
       return true;
+      /* unreachable 
       if (_managedThreadId != System.Threading.Thread.CurrentThread.ManagedThreadId)
       {
         Log.Log.WriteFile("RadioWebStream:Invalid thread id!!!");
         return false;
       }
       return true;
+      */ 
     }
 
     #region recording
@@ -119,7 +121,6 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     /// <param name="recordingType">Recording type (content or reference)</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <param name="startTime">time the recording should start (0=now)</param>
     /// <returns></returns>
     protected void StartRecord(bool transportStream, string fileName)
     {

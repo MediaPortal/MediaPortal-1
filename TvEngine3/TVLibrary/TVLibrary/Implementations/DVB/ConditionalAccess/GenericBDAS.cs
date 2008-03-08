@@ -194,7 +194,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// gets the diseqc reply
     /// </summary>
-    /// <param name="ulRange">The DisEqCPort Port.</param>
+    /// <param name="pulRange">The DisEqCPort Port.</param>
     /// <returns>true if succeeded, otherwise false</returns>
     protected bool ReadDiSEqCCommand(out ulong pulRange)
     {

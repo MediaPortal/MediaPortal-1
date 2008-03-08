@@ -143,10 +143,11 @@ namespace TvLibrary.Channels
         _symbolRate = value;
       }
     }
+    /*
     /// <summary>
     /// gets/sets the AudioPid
     /// </summary>
-    /*public int AudioPid
+    public int AudioPid
     {
       get
       {

@@ -527,7 +527,7 @@ namespace TvService
             Log.Write(ex);
             throw ex;
           }
-          return false;
+          //unreachable return false;
         }
         else
         {
@@ -577,7 +577,7 @@ namespace TvService
             Log.Write(ex);
             throw ex;
           }
-          return false;
+          //unreachable return false;
         }
         else
         {
@@ -627,7 +627,7 @@ namespace TvService
             Log.Write(ex);
             throw ex;
           }
-          return false;
+          //unreachable return false;
         }
         else
         {

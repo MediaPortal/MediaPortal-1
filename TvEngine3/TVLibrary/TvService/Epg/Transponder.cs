@@ -174,6 +174,14 @@ namespace TvService
       }
 
       /// <summary>
+      /// Calculates a hashcode for comparing Transponder objects
+      /// </summary>
+      public override int GetHashCode()
+      {
+        return TuningDetail.Frequency + TuningDetail.ChannelType;
+      }
+
+      /// <summary>
       /// Logs the transponder info to the log file.
       /// </summary>
       public void Dump()

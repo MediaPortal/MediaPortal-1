@@ -64,8 +64,6 @@ namespace TvLibrary.Implementations.Analog
     private int _subChannelId;
     private IBaseFilter _mpFileWriter;
     private IMPRecord _mpRecord;
-    private GraphState _graphState;
-    private bool _graphRunning;
     #endregion
 
     #region ctor
@@ -86,8 +84,6 @@ namespace TvLibrary.Implementations.Analog
       _recordingFileName = String.Empty;
       _dateRecordingStarted = DateTime.MinValue;
       _dateTimeShiftStarted = DateTime.MinValue;
-      _graphRunning = false;
-      _graphState = GraphState.Created;
       _subChannelId = 0;
       _tsHelper = new TSHelperTools();
     }
@@ -315,7 +311,6 @@ namespace TvLibrary.Implementations.Analog
       _mpRecord.SetVideoAudioObserver(null);
       _mpRecord.StopTimeShifting();
       _dateTimeShiftStarted = DateTime.MinValue;
-      _graphState = GraphState.Created;
       return true;
     }
 
@@ -324,7 +319,6 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     /// <param name="recordingType">Recording type (content or reference)</param>
     /// <param name="fileName">filename to which to recording should be saved</param>
-    /// <param name="startTime">time the recording should start (0=now)</param>
     /// <returns></returns>
     public bool StartRecording(bool transportStream, string fileName)
     {
@@ -337,7 +331,6 @@ namespace TvLibrary.Implementations.Analog
 
       _recordingFileName = fileName;
       Log.Log.WriteFile("Analog:Started recording");
-      _graphState = GraphState.Recording;
       return true;
     }
 
@@ -350,13 +343,6 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId()) return false;
       Log.Log.WriteFile("Analog:StopRecording");
       StopRecord();
-      if (_timeshiftFileName != "")
-      {
-        _graphState = GraphState.TimeShifting;
-      } else
-      {
-        _graphState = GraphState.Created;
-      }
       _recordingFileName = "";
       return true;
     }
@@ -556,8 +542,6 @@ namespace TvLibrary.Implementations.Analog
       {
         _teletextDecoder.ClearBuffer();
       }
-      _graphState = GraphState.Created;
-      _graphRunning = false;
     }
 
     /// <summary>
@@ -608,7 +592,6 @@ namespace TvLibrary.Implementations.Analog
     public void OnGraphStarted()
     {
       Log.Log.WriteFile("analog subch:{0} OnGraphStarted", _subChannelId);
-      _graphRunning = true;
       _dateTimeShiftStarted = DateTime.MinValue;
     }
 

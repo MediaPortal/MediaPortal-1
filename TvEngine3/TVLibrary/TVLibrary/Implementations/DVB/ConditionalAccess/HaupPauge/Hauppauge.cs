@@ -139,6 +139,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the diseq command.
     /// </summary>
     /// <param name="channel">The channel.</param>
+    /// <param name="parameters">The scanparameters.</param>
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_isHauppauge == false) return;

@@ -4,8 +4,10 @@ using System.Text;
 
 namespace TvLibrary.Streaming
 {
-  [Serializable]
+  /// <summary>
   ///class holding the details about a single rtsp streaming client
+  /// </summary>
+  [Serializable]
   public class RtspClient
   {
     #region variables
