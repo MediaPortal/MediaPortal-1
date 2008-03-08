@@ -45,6 +45,9 @@ using TvLibrary.Teletext;
 
 namespace TvLibrary.Implementations.Analog
 {
+  /// <summary>
+  /// Class for handling various types of Analog TV Cards
+  /// </summary>
   public class TvCardAnalog : ITVCard
   {
     #region struct
@@ -69,6 +72,7 @@ namespace TvLibrary.Implementations.Analog
     private static readonly Guid VideoCompressorCategory = new Guid(0x33d9a760, 0x90c8, 0x11d0, 0xbd, 0x43, 0x0, 0xa0, 0xc9, 0x11, 0xce, 0x86);
     private static readonly Guid LegacyAmFilterCategory = new Guid(0x083863F1, 0x70DE, 0x11d0, 0xBD, 0x40, 0x00, 0xA0, 0xC9, 0x11, 0xCE, 0x86);
     private static readonly Guid AMKSMultiplexerSW = new Guid("236C9559-ADCE-4736-BF72-BAB34E392196");
+    public static readonly Guid MediaSubtype_Plextor = new Guid(0x30355844, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
     #endregion
 
     #region imports
@@ -134,7 +138,7 @@ namespace TvLibrary.Implementations.Analog
     private AnalogChannel _previousChannel;
     private bool _isHybrid = false;
     protected Dictionary<int, AnalogSubChannel> _mapSubChannels;
-
+    private bool _isPlextorConvertX = false;
     #endregion
 
     #region ctor
@@ -152,7 +156,6 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region properties
-
     /// <summary>
     /// Gets a value indicating whether card supports subchannels
     /// </summary>
@@ -196,6 +199,9 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
+    /// <summary>
+    /// Checks if the card is present
+    /// </summary>
     public bool CardPresent
     {
       get
@@ -259,7 +265,6 @@ namespace TvLibrary.Implementations.Analog
         _recordingFileName = "";
         _timeshiftFileName = "";
         int hr = 0;
-        //hr = (_graphBuilder as IMediaControl).StopWhenReady();
         if (_tsFileSink != null)
         {
           IMPRecord record = _tsFileSink as IMPRecord;
@@ -363,7 +368,6 @@ namespace TvLibrary.Implementations.Analog
         return 0;
       }
     }
-
     #endregion
 
     #region Channel linkage handling
@@ -436,11 +440,9 @@ namespace TvLibrary.Implementations.Analog
         return new AnalogScanning(this);
       }
     }
-
     #endregion
 
     #region tuning & recording
-
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
@@ -455,7 +457,6 @@ namespace TvLibrary.Implementations.Analog
         BuildGraph();
       }
       RunGraph();
-
       AnalogSubChannel subChannel;
       if (_mapSubChannels.ContainsKey(0))
       {
@@ -472,7 +473,6 @@ namespace TvLibrary.Implementations.Analog
       subChannel.OnAfterTune();
       return subChannel;
     }
-
     #endregion
 
     #region quality control
@@ -527,11 +527,7 @@ namespace TvLibrary.Implementations.Analog
       get
       {
         if (_graphState == GraphState.Idle) return false;
-
         if (!CheckThreadId()) return false;
-        //TimeSpan ts = DateTime.Now - _lastSignalUpdate;
-        //if (ts.TotalMilliseconds < 1000) return _tunerLocked;
-        //_lastSignalUpdate = DateTime.Now;
         IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
         AMTunerSignalStrength signalStrength;
         tvTuner.SignalPresent(out signalStrength);
@@ -642,14 +638,10 @@ namespace TvLibrary.Implementations.Analog
         // Stop the graph first. To ensure that the timeshift files are no longer blocked
         StopGraph();
       }
-
       // Decompose the graph
-      //int hr = (_graphBuilder as IMediaControl).StopWhenReady();
       int hr = (_graphBuilder as IMediaControl).Stop();
-
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
       Log.Log.WriteFile("analog:All filters removed");
-
       if (_filterTvTuner != null)
       {
         while (Marshal.ReleaseComObject(_filterTvTuner) > 0) ;
@@ -658,25 +650,21 @@ namespace TvLibrary.Implementations.Analog
       if (_filterTvAudioTuner != null)
       {
         while (Marshal.ReleaseComObject(_filterTvAudioTuner) > 0) ;
-        //Release.ComObject("audiotvtuner filter", _filterTvAudioTuner);
         _filterTvAudioTuner = null;
       }
       if (_filterCapture != null)
       {
         while (Marshal.ReleaseComObject(_filterCapture) > 0) ;
-        //Release.ComObject("capture filter", _filterCapture);
         _filterCapture = null;
       }
       if (_filterVideoEncoder != null)
       {
         while (Marshal.ReleaseComObject(_filterVideoEncoder) > 0) ;
-        //Release.ComObject("video encoder filter", _filterVideoEncoder);
         _filterVideoEncoder = null;
       }
       if (_filterAudioEncoder != null)
       {
         while (Marshal.ReleaseComObject(_filterAudioEncoder) > 0) ;
-        //Release.ComObject("audio encoder filter", _filterAudioEncoder);
         _filterAudioEncoder = null;
       }
       if (_filterMpeg2Demux != null)
@@ -699,16 +687,6 @@ namespace TvLibrary.Implementations.Analog
         Release.ComObject("teesink filter", _teeSink);
         _teeSink = null;
       }
-
-      //if (_filterDump1 != null)
-      //{
-      //  Release.ComObject("Dump1 filter", _filterDump1); _filterDump1 = null;
-      //}
-      //if (_infTee != null)
-      //{
-      //  Release.ComObject("InfTee filter", _infTee); _infTee = null;
-      //}
-
       if (_filterAnalogMpegMuxer != null)
       {
         Release.ComObject("MPEG2 analog mux filter", _filterAnalogMpegMuxer); _filterAnalogMpegMuxer = null;
@@ -726,13 +704,11 @@ namespace TvLibrary.Implementations.Analog
         Release.ComObject("crossbar filter", _filterCrossBar);
         _filterCrossBar = null;
       }
-
       if (_filterMultiplexer != null)
       {
         Release.ComObject("multiplexer filter", _filterMultiplexer);
         _filterMultiplexer = null;
       }
-
       if (_filterAudioCompressor != null)
       {
         Release.ComObject("_filterAudioCompressor", _filterAudioCompressor);
@@ -743,7 +719,6 @@ namespace TvLibrary.Implementations.Analog
         Release.ComObject("_filterVideoCompressor", _filterVideoCompressor);
         _filterVideoCompressor = null;
       }
-
       if (_pinAnalogAudio != null)
       {
         Release.ComObject("_pinAnalogAudio", _pinAnalogAudio);
@@ -774,7 +749,6 @@ namespace TvLibrary.Implementations.Analog
         Release.ComObject("lpcmpin filter", _pinLPCM);
         _pinLPCM = null;
       }
-
       if (_pinVBI != null)
       {
         Release.ComObject("vbipin filter", _pinVBI);
@@ -782,8 +756,6 @@ namespace TvLibrary.Implementations.Analog
       }
       _rotEntry.Dispose();
       Release.ComObject("Graphbuilder", _graphBuilder); _graphBuilder = null;
-
-
       DevicesInUse.Instance.Remove(_tunerDevice);
       if (_audioDevice != null)
       {
@@ -810,7 +782,6 @@ namespace TvLibrary.Implementations.Analog
         DevicesInUse.Instance.Remove(_audioEncoderDevice);
         _audioEncoderDevice = null;
       }
-
       if (_multiplexerDevice != null)
       {
         DevicesInUse.Instance.Remove(_multiplexerDevice);
@@ -882,7 +853,6 @@ namespace TvLibrary.Implementations.Analog
       }
       _mapSubChannels.Clear();
     }
-
     #endregion
 
     #region graph handling
@@ -943,17 +913,19 @@ namespace TvLibrary.Implementations.Analog
 
         //situation 1. we look if the video capture device has an mpeg-2 output pin (media type:stream)
         FindCapturePin(MediaType.Stream, MediaSubType.Null);
+        //specific workaround for the Plextor COnvertX devices
         if (FilterGraphTools.GetFilterName(_filterTvTuner).Contains("Plextor ConvertX"))
         {
           Log.Log.Info("analog: Plextor ConvertX TV402U detected");
+          _isPlextorConvertX = true;
           //fake the capture pin to the Plextor media type & subtype
-          FindCapturePin(MediaType.Video, MediaSubType.PLEXTOR);
+          FindCapturePin(MediaType.Video, MediaSubtype_Plextor);
           //Find the audio pin
           FindAudioVideoPins();
           //Add the audio encoder
           AddAudioCompressor();
-          //Add the Plextor specific InterVideo mux & get the new capture pin.
-          AddPlextorMuxer();
+          //Add the Plextor specific InterVideo mux & gets the new capture pin.
+          AddInterVideoMuxer();
         }
         if (_pinCapture == null)
         {
@@ -965,15 +937,12 @@ namespace TvLibrary.Implementations.Analog
             //if that fails, we try any encoder filter
             AddTvEncoderFilter(false);
           }
-
           // 1 or 2 encoder filters have been added. 
           // check if the encoder filters supply a mpeg-2 output pin
           FindCapturePin(MediaType.Stream, MediaSubType.Null);
-
           // not as a stream, but perhaps its supplied with another media type
           if (_pinCapture == null)
             FindCapturePin(MediaType.Video, MediaSubType.Mpeg2Program);
-
           if (_pinCapture == null)
           {
             //still no mpeg output found, we move on to situation 3. We need to add a multiplexer
@@ -988,7 +957,6 @@ namespace TvLibrary.Implementations.Analog
             }
           }
         }
-
         // multiplexer filter now has been added.
         // check if the encoder multiplexer supply a mpeg-2 output pin
         if (_pinCapture == null)
@@ -1016,10 +984,21 @@ namespace TvLibrary.Implementations.Analog
             Log.Log.WriteFile("analog:   failed to add video compressor");
             throw new Exception("No video compressor filter found");
           }
-          if (!AddAnalogMuxer())
+          if (FilterGraphTools.GetFilterName(_filterAudioCompressor).Contains("InterVideo Audio Encoder"))
           {
+          	if (!AddInterVideoMuxer())
+          	{
+            	Log.Log.WriteFile("analog:   failed to add intervideo muxer");
+            	throw new Exception("No intervideo muxer filter found");
+          	}
+          }
+          else
+          {
+          	if (!AddAnalogMuxer())
+          	{
             Log.Log.WriteFile("analog:   failed to add analog muxer");
             throw new Exception("No analog muxer filter found");
+          	}
           }
         }
         //Certain ATI cards have pin names which don't match etc.
@@ -1128,7 +1107,6 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog: AddTvAudioFilter audio tuner input pin on crossbar not found");
         return;
       }
-
       //get all tv audio tuner devices on this system
       DsDevice[] devices = null;
       IBaseFilter tmp;
@@ -1165,7 +1143,6 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
         }
-
         if (hr != 0)
         {
           //failed to add tv audio tuner to graph, continue with the next one
@@ -1176,7 +1153,6 @@ namespace TvLibrary.Implementations.Analog
           }
           continue;
         }
-
         // try connecting the tv tuner-> tv audio tuner
         if (FilterGraphTools.ConnectFilter(_graphBuilder, _filterTvTuner, tmp, devices[i].Name))
         {
@@ -1248,7 +1224,6 @@ namespace TvLibrary.Implementations.Analog
         {
           IPin pin = DsFindPin.ByDirection(crossbarFilter, direction, i);
           //Log.Log.WriteFile("analog: FindCrossBarPin found pin at index:{0}", i);
-
           return pin;
         }
       }
@@ -1300,7 +1275,6 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
         }
-
         if (hr != 0)
         {
           //failed. try next crossbar
@@ -1938,8 +1912,6 @@ namespace TvLibrary.Implementations.Analog
     private void SetupCaptureFormat()
     {
       if (_pinCapture == null) return;
-      //if (_pinAnalogAudio == null) return;
-      //if (_pinAnalogVideo == null) return;
       Log.Log.Info("VideoCaptureDevice:get Video stream control interface (IAMStreamConfig)");
       DsGuid cat = new DsGuid(PinCategory.Capture);
       Guid iid = typeof(IAMStreamConfig).GUID;
@@ -1960,21 +1932,6 @@ namespace TvLibrary.Implementations.Analog
         }
       }
       return;
-      /*
-      IVideoEncoder encoder = null;
-      if (_filterMultiplexer != null)
-        encoder = _filterMultiplexer as IVideoEncoder;
-       
-      if (encoder == null && _filterVideoEncoder != null)
-        encoder = _filterVideoEncoder as IVideoEncoder;
-
-      if (encoder == null && _filterCapture != null)
-        encoder = _filterCapture as IVideoEncoder;
-      if (encoder == null) return;
-      int hr = encoder.IsSupported(PropSetID.ENCAPIPARAM_BitRate);
-      hr = encoder.IsSupported(PropSetID.ENCAPIPARAM_BitRateMode);
-      hr = encoder.IsSupported(PropSetID.ENCAPIPARAM_PeakBitRate);
-      */
     }
     #endregion
 
@@ -2996,6 +2953,7 @@ namespace TvLibrary.Implementations.Analog
     /// which can supplies the mediatype and mediasubtype specified
     /// if found the pin is returned
     /// </summary>
+    /// <param name="filter">Type of the filter used to find correct pin.</param>
     /// <param name="mediaType">Type of the media.</param>
     /// <param name="mediaSubtype">The media subtype.</param>
     private IPin FindMediaPin(IBaseFilter filter, Guid mediaType, Guid mediaSubtype)
@@ -3342,28 +3300,42 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
-    /// Adds the Plextor supplied InterVideo mpeg muxer
+    /// Adds the InterVideo muxer and connects the compressor to it.
+    /// This is the preferred muxer for Plextor cards and others.
+    /// It will be used if the InterVideo Audio Encoder is used also.
     /// </summary>
     /// <returns></returns>
-    private bool AddPlextorMuxer()
+    private bool AddInterVideoMuxer()
     {
-      Log.Log.Info("analog:  AddPlextorMuxer");
+      IPin pinOut;
+      IPin pinIn;
+      Log.Log.Info("analog:  using intervideo muxer");
+      string muxVideoIn = "video compressor";
       string monikerInterVideoMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{317DDB63-870E-11D3-9C32-00104B3801F7}";
       _filterAnalogMpegMuxer = Marshal.BindToMoniker(monikerInterVideoMuxer) as IBaseFilter;
       int hr = _graphBuilder.AddFilter(_filterAnalogMpegMuxer, "InterVideo MPEG Muxer");
       if (hr != 0)
       {
-        Log.Log.WriteFile("analog:  AddPlextorMuxer returns:0x{0:X}", hr);
-        throw new TvException("Unable to add AddPlextorMuxer");
+        Log.Log.WriteFile("analog:  add intervideo muxer returns:0x{0:X}", hr);
+        throw new TvException("Unable to add InterVideo Muxer");
       }
-      
-      //no video compressor needed with the Plextor device so we use the first capture pin
-      IPin pinOut = DsFindPin.ByDirection(_filterCapture, PinDirection.Output, 0);
-      IPin pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 0);
+      Log.Log.Info("analog:  add intervideo muxer successful");
+      // next connect video compressor->muxer
+      if (_isPlextorConvertX == true)
+      {
+        muxVideoIn = "Plextor ConvertX";
+        //no video compressor needed with the Plextor device so we use the first capture pin
+        pinOut = DsFindPin.ByDirection(_filterCapture, PinDirection.Output, 0);
+      }
+      else
+      {
+        pinOut = DsFindPin.ByDirection(_filterVideoCompressor, PinDirection.Output, 0);
+      }
+      pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 0);
       if (pinOut == null)
       {
-        Log.Log.Info("analog:  no output pin found on Plextor capture filter");
-        throw new TvException("no output pin found on Plextor capture filter");
+        Log.Log.Info("analog:  no output pin found on {0}", muxVideoIn);
+        throw new TvException("no output pin found on video out");
       }
       if (pinIn == null)
       {
@@ -3373,8 +3345,8 @@ namespace TvLibrary.Implementations.Analog
       hr = _graphBuilder.Connect(pinOut, pinIn);
       if (hr != 0)
       {
-        Log.Log.WriteFile("analog:  unable to connect Plextor capture filter->muxer returns:0x{0:X}", hr);
-        throw new TvException("Unable to connect Plextor capture filter->muxer");
+        Log.Log.WriteFile("analog:  unable to connect {0}-> intervideo muxer returns:0x{1:X}", muxVideoIn, hr);
+        throw new TvException("Unable to add unable to connect to video in on intervideo muxer");
       }
       Log.Log.WriteFile("analog:  connected video -> intervideo muxer");
       // next connect audio compressor->muxer
@@ -3382,8 +3354,8 @@ namespace TvLibrary.Implementations.Analog
       pinIn = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Input, 1);
       if (pinOut == null)
       {
-          Log.Log.Info("analog:  no output pin found on audio compressor");
-          throw new TvException("no output pin found on audio compressor");
+        Log.Log.Info("analog:  no output pin found on audio compressor");
+        throw new TvException("no output pin found on audio compressor");
       }
       if (pinIn == null)
       {
@@ -3393,11 +3365,11 @@ namespace TvLibrary.Implementations.Analog
       hr = _graphBuilder.Connect(pinOut, pinIn);
       if (hr != 0)
       {
-          Log.Log.WriteFile("analog:  unable to connect audio compressor->muxer returns:0x{0:X}", hr);
-          throw new TvException("Unable to add unable to connect audio compressor->muxer");
+        Log.Log.WriteFile("analog:unable to connect audio compressor->intervideo muxer returns:0x{0:X}", hr);
+        throw new TvException("Unable to add unable to connect audio compressor->intervideo muxer");
       }
       Log.Log.WriteFile("analog:  connected audio -> intervideo muxer");
-      //now we have the real capture pin
+      //and finally we have a capture pin...
       _pinCapture = DsFindPin.ByDirection(_filterAnalogMpegMuxer, PinDirection.Output, 0);
       if (_pinCapture == null)
       {
@@ -3417,16 +3389,13 @@ namespace TvLibrary.Implementations.Analog
       if (_filterMpeg2Demux != null) return;
       if (_pinCapture == null) return;
       int hr = 0;
-
       _filterMpeg2Demux = (IBaseFilter)new MPEG2Demultiplexer();
-
       hr = _graphBuilder.AddFilter(_filterMpeg2Demux, "MPEG2 Demultiplexer");
       if (hr != 0)
       {
         Log.Log.WriteFile("analog: AddMPEG2DemuxFilter returns:0x{0:X}", hr);
         throw new TvException("Unable to add MPEG2 demultiplexer");
       }
-
       Log.Log.WriteFile("analog: connect capture->mpeg2 demux");
       IPin pin = DsFindPin.ByDirection(_filterMpeg2Demux, PinDirection.Input, 0);
       hr = _graphBuilder.Connect(_pinCapture, pin);
@@ -3435,19 +3404,14 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog: ConnectFilters returns:0x{0:X}", hr);
         throw new TvException("Unable to connect capture-> MPEG2 demultiplexer");
       }
-
       IMpeg2Demultiplexer demuxer = (IMpeg2Demultiplexer)_filterMpeg2Demux;
-
       hr = demuxer.CreateOutputPin(FilterGraphTools.GetVideoMpg2Media(), "Video", out _pinVideo);
       hr = demuxer.CreateOutputPin(FilterGraphTools.GetAudioMpg2Media(), "Audio", out _pinAudio);
       hr = demuxer.CreateOutputPin(FilterGraphTools.GetAudioLPCMMedia(), "LPCM", out _pinLPCM);
-
       IMPEG2StreamIdMap map = (IMPEG2StreamIdMap)_pinVideo;
       hr = map.MapStreamId(224, MPEG2Program.ElementaryStream, 0, 0);
-
       map = (IMPEG2StreamIdMap)_pinAudio;
       hr = map.MapStreamId(0xC0, MPEG2Program.ElementaryStream, 0, 0);
-
       map = (IMPEG2StreamIdMap)_pinLPCM;
       hr = map.MapStreamId(0xBD, MPEG2Program.ElementaryStream, 0xA0, 7);
     }
@@ -3467,7 +3431,6 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog:AddTsFileSink returns:0x{0:X}", hr);
         throw new TvException("Unable to add TsFileSink");
       }
-
       Log.Log.WriteFile("analog:connect muxer->tsfilesink");
       IPin pin = DsFindPin.ByDirection(_filterMpegMuxer, PinDirection.Output, 0);
       if (!FilterGraphTools.ConnectPin(_graphBuilder, pin, (IBaseFilter)_tsFileSink, 0))
@@ -3475,7 +3438,6 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog:unable to connect muxer->tsfilesink");
       }
       Release.ComObject("mpegmux pinin", pin);
-
       if (_filterWstDecoder != null)
       {
         Log.Log.WriteFile("analog:connect wst/vbi codec->tsfilesink");
