@@ -434,8 +434,8 @@ namespace TvPlugin
       string local789 = GUILocalizeStrings.Get(789); // Now:
       string local790 = GUILocalizeStrings.Get(790); // Next:
       string local1054 = GUILocalizeStrings.Get(1054); // (recording)
-      string local1055 = GUILocalizeStrings.Get(1054); // (timeshifting)
-      string local1056 = GUILocalizeStrings.Get(1054); // (unavailable)
+      string local1055 = GUILocalizeStrings.Get(1055); // (timeshifting)
+      string local1056 = GUILocalizeStrings.Get(1056); // (unavailable)
       
       if (!CheckChannelState)
         Log.Debug("miniguide: not checking channel state");
