@@ -72,9 +72,20 @@ namespace MediaPortal.Player
       return false;
     }
 
+    /// <summary>
+    /// This method is used to start playing a file and start at specific position and end at a specific position
+    /// </summary>
+    /// <param name="strFile">file to play</param>
+    /// <param name="beginPositionMS">the start position in the currently playing file (in ms)</param>
+    /// <param name="startPositionMS">the start position in the currently playing file (in ms)</param>
+    /// <param name="endPositionMS">the end position in the currently playing file (in ms)</param>
+    /// <returns>
+    /// true: file is playing
+    /// false: unable to play file
+    /// </returns>
     public virtual bool Play(string strFile, int beginPositionMS, int startPositionMS, int endPositionMS)
     {
-      return false;
+      return Play(strFile);
     }
 
     /// <summary>
@@ -86,9 +97,9 @@ namespace MediaPortal.Player
     /// true: file is playing
     /// false: unable to play file
     /// </returns>
-    public virtual bool PlayStream(string strFile,string streamName)
+    public virtual bool PlayStream(string strFile, string streamName)
     {
-        return false;
+      return Play(strFile);
     }
 
     public virtual bool SupportsReplay
@@ -280,7 +291,7 @@ namespace MediaPortal.Player
     /// </summary>
     public int EndPositionMS
     {
-      get { return StartPositionMS + (int)(Duration*1000); }
+      get { return StartPositionMS + (int)(Duration * 1000); }
     }
 
     /// <summary>
@@ -367,7 +378,7 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool Initializing
     {
-        get { return false; }
+      get { return false; }
     }
 
     /// <summary>
@@ -481,13 +492,13 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
-        /// <summary>
+    /// <summary>
     /// Property to get the type of an audio stream
     /// </summary>
     public virtual string AudioType(int iStream)
     {
       return Strings.Unknown;
-    }    
+    }
 
     /// <summary>
     /// Property to get the total number of subtitle streams

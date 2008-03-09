@@ -618,11 +618,6 @@ namespace MediaPortal.Player
       }
     }
 
-    public override bool Play(string strFile, int beginPositionMS, int startPositionMS, int endPositionMS)
-    {
-      return Play(strFile);
-    }
-
     public override bool Play(string strFile)
     {
       updateTimer = DateTime.Now;
