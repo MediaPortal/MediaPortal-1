@@ -830,7 +830,8 @@ Section Uninstall
 
     DeleteRegKey HKCR "MediaPortal.Installer" ;Delete key with association settings
 
-    System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+    ${RefreshShellIcons}
+    #System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
 
     "${Index}-NoOwn:"
     !undef Index
