@@ -1460,41 +1460,50 @@ namespace TvDatabase
     {
       StringBuilder sbSelect = new StringBuilder();
       string completeStatement = string.Empty;
-      if (aProvider == "mysql")
-      {
-        if (aEpgChannelList.Count < 1)
-          completeStatement = "select * from program where 0=1"; // no channel = no EPG but we need a valid command text
-        else
-        {
-          foreach (Channel ch in aEpgChannelList)
-            sbSelect.AppendFormat("(select idChannel,idProgram,starttime,endtime,title from program where idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ", ch.IdChannel);
 
-          completeStatement = sbSelect.ToString();
-          completeStatement = completeStatement.Remove(completeStatement.Length - 8);
-        }
-      }
+      // no channel = no EPG but we need a valid command text
+      if (aEpgChannelList.Count < 1)
+        completeStatement = "SELECT * FROM program WHERE 0=1";
       else
       {
-        sbSelect = new StringBuilder("SELECT idChannel,idProgram,starttime,endtime,title FROM Program ");
         if (aProvider == "mysql")
-          sbSelect.Append("WHERE (Program.endtime >= NOW() AND Program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR))");
-        else
-          sbSelect.Append("WHERE (Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()))");
-
-        if (aEpgChannelList.Count > 0)
         {
-          StringBuilder whereChannel = new StringBuilder(" AND (");
           foreach (Channel ch in aEpgChannelList)
-            whereChannel.AppendFormat("idChannel={0} OR ", ch.IdChannel);
+            sbSelect.AppendFormat("(SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ", ch.IdChannel);
 
-          string channelClause = whereChannel.ToString();
-          // remove trailing "OR "
-          channelClause = channelClause.Remove(channelClause.Length - 3);
-          sbSelect.Append(channelClause);
-          sbSelect.Append(")");
+          completeStatement = sbSelect.ToString();
+          completeStatement = completeStatement.Remove(completeStatement.Length - 8); // Remove trailing UNION
         }
-        sbSelect.Append(" ORDER BY idchannel,starttime");
-        completeStatement = sbSelect.ToString();
+        else
+        {
+          foreach (Channel ch in aEpgChannelList)
+            sbSelect.AppendFormat("(SELECT TOP 2 idChannel,idProgram,starttime,endtime,title FROM program WHERE idChannel={0} AND (Program.endtime >= getdate()))  UNION ALL  ", ch.IdChannel);
+
+          completeStatement = sbSelect.ToString();
+          completeStatement = completeStatement.Remove(completeStatement.Length - 12); // Remove trailing UNION ALL
+          completeStatement = completeStatement + " ORDER BY idChannel, startTime";   // MSSQL does not support order by in single UNION selects
+          
+          //sbSelect = new StringBuilder("SELECT idChannel,idProgram,starttime,endtime,title FROM Program ");
+          //if (aProvider == "mysql")
+          //  sbSelect.Append("WHERE (Program.endtime >= NOW() AND Program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR))");
+          //else
+          //  sbSelect.Append("WHERE (Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()))");
+
+          //if (aEpgChannelList.Count > 0)
+          //{
+          //  StringBuilder whereChannel = new StringBuilder(" AND (");
+          //  foreach (Channel ch in aEpgChannelList)
+          //    whereChannel.AppendFormat("idChannel={0} OR ", ch.IdChannel);
+
+          //  string channelClause = whereChannel.ToString();
+          //  // remove trailing "OR "
+          //  channelClause = channelClause.Remove(channelClause.Length - 3);
+          //  sbSelect.Append(channelClause);
+          //  sbSelect.Append(")");
+          //}
+          //sbSelect.Append(" ORDER BY idchannel,starttime");
+          //completeStatement = sbSelect.ToString();
+        }
       }
 
       // Log.Info("BusinessLayer: mini-guide command: {0}", completeStatement);
