@@ -202,7 +202,7 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
       {
         iImage = strImgBody.IndexOf("src=\"", iImage);
       }
-      int iRating = strBody.IndexOf("title=\"Valutazione ");
+      int iRating = strBody.IndexOf("Giudizio medio");
       int iCred = strBody.IndexOf("Con ");
       ///int iTop = strBody.IndexOf("Top 250:");
 	  int iTop = -1;
@@ -210,8 +210,13 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
       if (iYear >= 0)
       {
 		iYear += "http://www.mymovies.it/film/?anno=".Length;
-        string strYear = strBody.Substring(iYear, 4);
-        movieDetails.Year = System.Int32.Parse(strYear);
+		iYear = strBody.IndexOf("http://www.mymovies.it/film/?anno=",iYear);
+		if (iYear >= 0)
+		{	
+			iYear += "http://www.mymovies.it/film/?anno=".Length;
+			string strYear = strBody.Substring(iYear, 4);
+			movieDetails.Year = System.Int32.Parse(strYear);
+		}
       }
 
       if (iDirectedBy >= 0)
@@ -227,14 +232,15 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
 	  }
       if (iRating >= 0) // and votes
       {
-        iRating += "title=\"Valutazione ".Length;
-        iStart = iRating;
+        iRating += "Giudizio medio<br />".Length;
+        iStart = strBody.IndexOf("<br />", iRating);
         if (iStart >= 0)
         {
           ///iStart += "alt=\"".Length;
-          iEnd = strBody.IndexOf(" stelle", iStart);
+          iEnd = strBody.IndexOf("<br /></b>", iStart);
+		  iStart += "<br /> ".Length;
           // set rating
-          string strRating = strBody.Substring(iStart, iEnd - iStart);
+          string strRating = strBody.Substring(iStart, iEnd - iStart - 2);
           if (strRating != String.Empty)
             strRating = strRating.Replace('.', ',');
           try
