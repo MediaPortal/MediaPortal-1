@@ -148,7 +148,6 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
 OutFile "Release\setup-mediaportal.exe"
-BrandingText "MediaPortal Installer by Team MediaPortal"
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
 CRCCheck on
