@@ -177,7 +177,9 @@ ShowUninstDetails show
     ; Get the Common Application Data Folder
     ; Set the Context to alll, so that we get the All Users folder
     SetShellVarContext all
-    StrCpy $CommonAppData "$APPDATA\Team MediaPortal\TV Server"
+    # NOT SURE WHICH DIR STRUCTURE WE WANT TO USE IN FUTURE
+    #StrCpy $CommonAppData "$APPDATA\Team MediaPortal\TV Server"
+    StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
     ; Context back to current user
     SetShellVarContext current
 !macroend
@@ -259,7 +261,6 @@ Section "MediaPortal TV Server" SecServer
 
     # Common App Data Files
     SetOutPath "$CommonAppData"
-    CreateDirectory "$CommonAppData\log"
     File ..\TvService\Gentle.config
 
     #---------------------------------------------------------------------------
@@ -294,6 +295,7 @@ Section "MediaPortal TV Server" SecServer
         # We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
         CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "TV-Server Configuration"
+        CreateDirectory "$CommonAppData\log"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "$CommonAppData\log"   "" "$CommonAppData\log"   0 "" "" "TV-Server Log-Files"
         ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
         !insertmacro MUI_STARTMENU_WRITE_END
