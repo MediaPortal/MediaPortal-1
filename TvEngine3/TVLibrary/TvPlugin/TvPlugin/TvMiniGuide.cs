@@ -413,7 +413,7 @@ namespace TvPlugin
       string BenchGroupChannels = benchClock.ElapsedMilliseconds.ToString();      
       benchClock.Reset();
       benchClock.Start();
-      Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
+      Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext(_tvChannelList);
       benchClock.Stop();
       string BenchNowNext = benchClock.ElapsedMilliseconds.ToString();
       Channel CurrentChan = null;

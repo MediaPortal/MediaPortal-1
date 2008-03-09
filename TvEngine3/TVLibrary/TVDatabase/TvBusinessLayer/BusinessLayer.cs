@@ -333,7 +333,7 @@ namespace TvDatabase
     {
       CountryCollection collection = new CountryCollection();
       IList tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0; i < tuningDetails.Count; ++i)
+      for (int i = 0 ; i < tuningDetails.Count ; ++i)
       {
         TuningDetail detail = (TuningDetail)tuningDetails[i];
         if (detail.ChannelType != channelType) continue;
@@ -442,7 +442,7 @@ namespace TvDatabase
       List<IChannel> tvChannels = new List<IChannel>();
       CountryCollection collection = new CountryCollection();
       IList tuningDetails = channel.ReferringTuningDetail();
-      for (int i = 0; i < tuningDetails.Count; ++i)
+      for (int i = 0 ; i < tuningDetails.Count ; ++i)
       {
         TuningDetail detail = (TuningDetail)tuningDetails[i];
         switch (detail.ChannelType)
@@ -553,7 +553,7 @@ namespace TvDatabase
     public ChannelMap MapChannelToCard(Card card, Channel channel)
     {
       IList channelMaps = card.ReferringChannelMap();
-      for (int i = 0; i < channelMaps.Count; ++i)
+      for (int i = 0 ; i < channelMaps.Count ; ++i)
       {
         ChannelMap map = (ChannelMap)channelMaps[i];
         if (map.IdChannel == channel.IdChannel && map.IdCard == card.IdCard) return map;
@@ -1115,7 +1115,7 @@ namespace TvDatabase
             MsSqlAdapter = new SqlDataAdapter();
             MsSqlAdapter.TableMappings.Add("Table", "Program");
             MsSqlConnect.Open();
-            MsSqlCmd = new SqlCommand(BuildEpgSelect(channelList, provider), MsSqlConnect);            
+            MsSqlCmd = new SqlCommand(BuildEpgSelect(channelList, provider), MsSqlConnect);
             MsSqlCmd.Parameters.Add("startTime", SqlDbType.DateTime).Value = startTime; ;
             MsSqlCmd.Parameters.Add("endTime", SqlDbType.DateTime).Value = endTime;
             MsSqlAdapter.SelectCommand = MsSqlCmd;
@@ -1226,7 +1226,7 @@ namespace TvDatabase
     {
       Dictionary<int, List<Program>> maps = new Dictionary<int, List<Program>>();
       int resultCount = dataSet.Tables[0].Rows.Count;
-      for (int i = 0; i < resultCount; i++)
+      for (int i = 0 ; i < resultCount ; i++)
       {
         DataRow prog = dataSet.Tables[0].Rows[i];
 
@@ -1456,7 +1456,52 @@ namespace TvDatabase
       return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
 
-    public Dictionary<int, NowAndNext> GetNowAndNext()
+    private string BuildCommandTextMiniGuide(string aProvider, List<Channel> aEpgChannelList)
+    {
+      StringBuilder sbSelect = new StringBuilder();
+      string completeStatement = string.Empty;
+      if (aProvider == "mysql")
+      {
+        if (aEpgChannelList.Count < 1)
+          completeStatement = "select * from program where 0=1"; // no channel = no EPG but we need a valid command text
+        else
+        {
+          foreach (Channel ch in aEpgChannelList)
+            sbSelect.AppendFormat("(select idChannel,idProgram,starttime,endtime,title from program where idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ", ch.IdChannel);
+
+          completeStatement = sbSelect.ToString();
+          completeStatement = completeStatement.Remove(completeStatement.Length - 8);
+        }
+      }
+      else
+      {
+        sbSelect = new StringBuilder("SELECT idChannel,idProgram,starttime,endtime,title FROM Program ");
+        if (aProvider == "mysql")
+          sbSelect.Append("WHERE (Program.endtime >= NOW() AND Program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR))");
+        else
+          sbSelect.Append("WHERE (Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()))");
+
+        if (aEpgChannelList.Count > 0)
+        {
+          StringBuilder whereChannel = new StringBuilder(" AND (");
+          foreach (Channel ch in aEpgChannelList)
+            whereChannel.AppendFormat("idChannel={0} OR ", ch.IdChannel);
+
+          string channelClause = whereChannel.ToString();
+          // remove trailing "OR "
+          channelClause = channelClause.Remove(channelClause.Length - 3);
+          sbSelect.Append(channelClause);
+          sbSelect.Append(")");
+        }
+        sbSelect.Append(" ORDER BY idchannel,starttime");
+        completeStatement = sbSelect.ToString();
+      }
+
+      // Log.Info("BusinessLayer: mini-guide command: {0}", completeStatement);
+      return completeStatement;
+    }
+
+    public Dictionary<int, NowAndNext> GetNowAndNext(List<Channel> aEpgChannelList)
     {
       Dictionary<int, NowAndNext> nowNextList = new Dictionary<int, NowAndNext>();
       string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
@@ -1478,7 +1523,7 @@ namespace TvDatabase
             MySQLAdapter = new MySqlDataAdapter();
             MySQLAdapter.TableMappings.Add("Table", "Program");
             MySQLConnect.Open();
-            MySQLCmd = new MySqlCommand("SELECT idChannel,idProgram,starttime,endtime,title FROM Program WHERE Program.endtime >= NOW() AND Program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR) ORDER BY idchannel,starttime", MySQLConnect);
+            MySQLCmd = new MySqlCommand(BuildCommandTextMiniGuide(provider, aEpgChannelList), MySQLConnect);
             MySQLAdapter.SelectCommand = MySQLCmd;
             break;
           case "sqlserver":
@@ -1487,7 +1532,7 @@ namespace TvDatabase
             MsSqlAdapter = new SqlDataAdapter();
             MsSqlAdapter.TableMappings.Add("Table", "Program");
             MsSqlConnect.Open();
-            MsSqlCmd = new SqlCommand("SELECT idChannel,idProgram,starttime,endtime,title FROM Program WHERE Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()) ORDER BY idchannel,starttime", MsSqlConnect);
+            MsSqlCmd = new SqlCommand(BuildCommandTextMiniGuide(provider, aEpgChannelList), MsSqlConnect);
             MsSqlAdapter.SelectCommand = MsSqlCmd;
             break;
           default:
@@ -1509,7 +1554,7 @@ namespace TvDatabase
           List<int> lastChannelIDs = new List<int>();
 
           // for-loops are faster than foreach-loops
-          for (int j = 0; j < resultCount; j++)
+          for (int j = 0 ; j < resultCount ; j++)
           {
             int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
             // Only get the Now-Next-Data _once_ per channel
@@ -1902,7 +1947,7 @@ namespace TvDatabase
       Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
 
       List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
-      for (int i = 0; i < cards.Count; i++) cardSchedules[i] = new List<Schedule>();
+      for (int i = 0 ; i < cards.Count ; i++) cardSchedules[i] = new List<Schedule>();
 
       // GEMX: Assign all already scheduled timers to cards. Assume that even possibly overlapping schedulues are ok to the user,
       // as he decided to keep them before. That's why they are in the db
@@ -2021,7 +2066,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
       {
-        for (int i = 0; i < days; ++i)
+        for (int i = 0 ; i < days ; ++i)
         {
           Schedule recNew = rec.Clone();
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
@@ -2045,7 +2090,7 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
       {
-        for (int i = 0; i < days; ++i)
+        for (int i = 0 ; i < days ; ++i)
         {
           if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
           {
@@ -2096,7 +2141,7 @@ namespace TvDatabase
       }
       if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
       {
-        for (int i = 0; i < days; ++i)
+        for (int i = 0 ; i < days ; ++i)
         {
           if ((dtDay.DayOfWeek == rec.StartTime.DayOfWeek) && (dtDay.Date >= rec.StartTime.Date))
           {
