@@ -40,7 +40,15 @@ namespace TvDatabase
   /// </summary>
   public class MatroskaTagHandler
   {
+    #region Event delegates
+
+    public delegate void TagLookupSuccessful(Dictionary<string, MatroskaTagInfo> FoundTags);
+    public static event TagLookupSuccessful OnTagLookupCompleted;
+
+    #endregion
+
     #region Private members
+
     private static XmlNode AddSimpleTag(string tagName, string value, XmlDocument doc)
     {
       XmlNode rootNode = doc.CreateElement("SimpleTag");
@@ -52,6 +60,7 @@ namespace TvDatabase
       rootNode.AppendChild(valueNode);
       return rootNode;
     }
+
     #endregion
 
     #region Public members
@@ -60,30 +69,46 @@ namespace TvDatabase
     /// Searches a given path and its subdirectories for XML files and loads them into corresponding Matroska tags
     /// </summary>
     /// <param name="aDirectory">The parent folder (of recordings)</param>
-    /// <returns>A dictionary which Key is the full filename of the XML file</returns>
-    public static Dictionary<string, MatroskaTagInfo> GetAllMatroskaTags(string aDirectory)
+    public static void GetAllMatroskaTags(object aLookupDirString)
     {
       Dictionary<string, MatroskaTagInfo> fileRecordings = new Dictionary<string, MatroskaTagInfo>();
+      string aDirectory = aLookupDirString.ToString();
       try
       {
-        string[] importFiles = Directory.GetFiles(aDirectory, "*.xml", SearchOption.AllDirectories);
-
-        foreach (string recordingXml in importFiles)
+        string[] importDirs = null;
+        // get all subdirectories
+        try
+        {
+          importDirs = Directory.GetDirectories(aDirectory, "*", SearchOption.TopDirectoryOnly);
+        }
+        catch (Exception)
+        {
+          importDirs = new string[] { aDirectory };
+        }
+        foreach (string subDir in importDirs)
         {
           try
           {
-            MatroskaTagInfo importTag = MatroskaTagHandler.ReadTag(recordingXml);
-            fileRecordings[recordingXml] = importTag;
+            // we do not have insufficient access rights for this
+            if (subDir.Contains(@"System Volume Information"))
+              continue;
+            string[] importFiles = Directory.GetFiles(subDir, "*.xml", SearchOption.AllDirectories);
+            foreach (string recordingXml in importFiles)
+            {
+              try
+              {
+                MatroskaTagInfo importTag = MatroskaTagHandler.ReadTag(recordingXml);
+                fileRecordings[recordingXml] = importTag;
+              }
+              catch (Exception) {}
+            }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
-      catch (Exception)
-      {
-      }
-      return fileRecordings;
+      catch (Exception) {}
+      if (OnTagLookupCompleted != null)
+        OnTagLookupCompleted(fileRecordings);
     }
 
     /// <summary>
