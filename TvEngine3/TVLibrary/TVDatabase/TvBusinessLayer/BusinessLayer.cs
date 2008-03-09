@@ -1458,7 +1458,6 @@ namespace TvDatabase
 
     private string BuildCommandTextMiniGuide(string aProvider, List<Channel> aEpgChannelList)
     {
-      StringBuilder sbSelect = new StringBuilder();
       string completeStatement = string.Empty;
 
       // no channel = no EPG but we need a valid command text
@@ -1466,6 +1465,7 @@ namespace TvDatabase
         completeStatement = "SELECT * FROM program WHERE 0=1";
       else
       {
+        StringBuilder sbSelect = new StringBuilder();
         if (aProvider == "mysql")
         {
           foreach (Channel ch in aEpgChannelList)
@@ -1476,33 +1476,28 @@ namespace TvDatabase
         }
         else
         {
-          foreach (Channel ch in aEpgChannelList)
-            sbSelect.AppendFormat("(SELECT TOP 2 idChannel,idProgram,starttime,endtime,title FROM program WHERE idChannel={0} AND (Program.endtime >= getdate()))  UNION ALL  ", ch.IdChannel);
+          //foreach (Channel ch in aEpgChannelList)
+          //  sbSelect.AppendFormat("(SELECT TOP 2 idChannel,idProgram,starttime,endtime,title FROM program WHERE idChannel={0} AND (Program.endtime >= getdate()))  UNION ALL  ", ch.IdChannel);
 
-          completeStatement = sbSelect.ToString();
-          completeStatement = completeStatement.Remove(completeStatement.Length - 12); // Remove trailing UNION ALL
-          completeStatement = completeStatement + " ORDER BY idChannel, startTime";   // MSSQL does not support order by in single UNION selects
-          
-          //sbSelect = new StringBuilder("SELECT idChannel,idProgram,starttime,endtime,title FROM Program ");
-          //if (aProvider == "mysql")
-          //  sbSelect.Append("WHERE (Program.endtime >= NOW() AND Program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR))");
-          //else
-          //  sbSelect.Append("WHERE (Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()))");
-
-          //if (aEpgChannelList.Count > 0)
-          //{
-          //  StringBuilder whereChannel = new StringBuilder(" AND (");
-          //  foreach (Channel ch in aEpgChannelList)
-          //    whereChannel.AppendFormat("idChannel={0} OR ", ch.IdChannel);
-
-          //  string channelClause = whereChannel.ToString();
-          //  // remove trailing "OR "
-          //  channelClause = channelClause.Remove(channelClause.Length - 3);
-          //  sbSelect.Append(channelClause);
-          //  sbSelect.Append(")");
-          //}
-          //sbSelect.Append(" ORDER BY idchannel,starttime");
           //completeStatement = sbSelect.ToString();
+          //completeStatement = completeStatement.Remove(completeStatement.Length - 12); // Remove trailing UNION ALL
+          //completeStatement = completeStatement + " ORDER BY idChannel, startTime";   // MSSQL does not support order by in single UNION selects
+
+          sbSelect.Append("SELECT idChannel,idProgram,starttime,endtime,title FROM Program ");
+          sbSelect.Append("WHERE (Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()))");
+
+          StringBuilder whereChannel = new StringBuilder(" AND (");
+          foreach (Channel ch in aEpgChannelList)
+            whereChannel.AppendFormat("idChannel={0} OR ", ch.IdChannel);
+
+          string channelClause = whereChannel.ToString();
+          // remove trailing "OR "
+          channelClause = channelClause.Remove(channelClause.Length - 3);
+          sbSelect.Append(channelClause);
+          sbSelect.Append(")");
+
+          sbSelect.Append(" ORDER BY idchannel,starttime");
+          completeStatement = sbSelect.ToString();
         }
       }
 
