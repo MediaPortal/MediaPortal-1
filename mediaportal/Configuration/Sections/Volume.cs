@@ -64,13 +64,13 @@ namespace MediaPortal.Configuration.Sections
 
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        int volumeStyle = reader.GetValueAsInt("volume", "handler", 0);
+        int volumeStyle = reader.GetValueAsInt("volume", "handler", 3); // custom values are known to work for vista
 
         _useClassicHandler.Checked = volumeStyle == 0;
         _useWindowsHandler.Checked = volumeStyle == 1;
         _useLogarithmicHandler.Checked = volumeStyle == 2;
         _useCustomHandler.Checked = volumeStyle == 3;
-        _customText = reader.GetValueAsString("volume", "table", string.Empty);
+        _customText = reader.GetValueAsString("volume", "table", "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535");
 
         int startupStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
 
@@ -86,9 +86,6 @@ namespace MediaPortal.Configuration.Sections
         bool defaultVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
         _useVolumeOSD.Checked = defaultVolumeOSD;
       }
-
-      if (_customText == string.Empty)
-        _customText = "0, 1039, 1234, 1467, 1744, 2072, 2463,  2927,  3479,  4135,  4914,  5841, 6942,  8250,  9806, 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535";
 
       _customTextbox.Enabled = _useCustomHandler.Checked;
       _customTextbox.Text = _customTextbox.Enabled ? _customText : string.Empty;
