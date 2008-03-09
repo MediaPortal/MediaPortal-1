@@ -609,7 +609,7 @@ Function .onInit
         ClearErrors
         #MessageBox MB_YESNO|MB_ICONEXCLAMATION "xxxxx" IDYES 0 IDNO 0
         CopyFiles $INSTDIR\uninstall-tve3.exe $TEMP
-        ExecWait '"$TEMP\uninstall-tve3.exe" _?=$INSTDIR'
+        ExecWait '"$TEMP\uninstall-tve3.exe" /S _?=$INSTDIR'
         #ExecWait '$R1 /S _?=$INSTDIR'
 
     noSilent:
