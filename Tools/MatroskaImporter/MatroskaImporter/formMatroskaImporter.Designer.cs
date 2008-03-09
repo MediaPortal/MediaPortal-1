@@ -66,7 +66,8 @@ namespace MatroskaImporter
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(12, 496);
       this.label1.Name = "label1";
@@ -76,8 +77,7 @@ namespace MatroskaImporter
       // 
       // tvDbRecs
       // 
-      this.tvDbRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
+      this.tvDbRecs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tvDbRecs.Location = new System.Drawing.Point(367, 30);
       this.tvDbRecs.Name = "tvDbRecs";
@@ -131,6 +131,7 @@ namespace MatroskaImporter
       // 
       // lblDbRecs
       // 
+      this.lblDbRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.lblDbRecs.AutoSize = true;
       this.lblDbRecs.Location = new System.Drawing.Point(364, 14);
       this.lblDbRecs.Name = "lblDbRecs";
@@ -140,6 +141,7 @@ namespace MatroskaImporter
       // 
       // cbConfirmImport
       // 
+      this.cbConfirmImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cbConfirmImport.AutoSize = true;
       this.cbConfirmImport.Checked = true;
       this.cbConfirmImport.CheckState = System.Windows.Forms.CheckState.Checked;
