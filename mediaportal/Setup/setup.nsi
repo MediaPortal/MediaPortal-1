@@ -73,7 +73,7 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !else                       # it's an svn reöease
     !define VERSION "pre-release build ${VER_BUILD}"
 !endif
-BrandingText "TV Server ${VERSION} by Team MediaPortal"
+BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -90,11 +90,13 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 
 !include setup-dotnet.nsh
 
+# FileFunc macros
 !insertmacro GetParameters
 !insertmacro GetOptions
 !insertmacro un.GetParameters
 !insertmacro un.GetOptions
-
+!insertmacro GetTime
+!insertmacro RefreshShellIcons
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -196,8 +198,17 @@ ShowUninstDetails show
 Section "MediaPortal core files (required)" SecCore
     SectionIn RO
     DetailPrint "Installing MediaPortal core files..."
-    
+
     SetOverwrite on
+
+    ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+    ; $0="01"      day
+    ; $1="04"      month
+    ; $2="2005"    year
+    ; $3="Friday"  day of week name
+    ; $4="16"      hour
+    ; $5="05"      minute
+    ; $6="50"      seconds
 
     # CHECK FOR OLD FILES and DIRECTORY
     IfFileExists "$INSTDIR\*.*" 0 noInstDirRename
@@ -217,14 +228,13 @@ Section "MediaPortal core files (required)" SecCore
     ${EndIf}*/
 
     instDirRename:
-        #${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-        #Rename "$INSTDIR" "$INSTDIR_BACKUP_$4$5"
-        Rename "$INSTDIR" "$INSTDIR_BACKUP"
+        Rename "$INSTDIR" "$INSTDIR_BACKUP_$1$0-$4$5"
+        #Rename "$INSTDIR" "$INSTDIR_BACKUP"
 
     noInstDirRename:
 
     IfFileExists "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" 0 +2
-        Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml.old"
+        Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_BACKUP_$1$0-$4$5"
 
 
     ; Doc
@@ -757,7 +767,8 @@ Section -Post
     WriteRegStr HKCR "MediaPortal.Installer\DefaultIcon" "" "$INSTDIR\MPInstaller.exe,0"
     WriteRegStr HKCR "MediaPortal.Installer\shell\open\command" "" '$INSTDIR\MPInstaller.exe "%1"'
 
-    System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+    ${RefreshShellIcons}
+    #System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
     !undef Index
 SectionEnd
 
