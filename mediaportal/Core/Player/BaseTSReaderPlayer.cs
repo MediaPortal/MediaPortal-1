@@ -1753,8 +1753,8 @@ namespace MediaPortal.Player
     private static Guid MEDIASUBTYPE_AC3_AUDIO { get { return new Guid("e06d802c-db46-11cf-b4d1-00805f6cbbea"); } }
     private static Guid MEDIASUBTYPE_MPEG2_AUDIO { get { return new Guid("e06d802b-db46-11cf-b4d1-00805f6cbbea"); } }
     private static Guid MEDIASUBTYPE_MPEG1_AUDIO { get { return new Guid("e436eb87-524f-11ce-9f53-0020af0ba770"); } }
-    private static Guid MEDIASUBTYPE_LATM_AAC_AUDIO { get { return new Guid("00001ff-0000-0010-8000-00aa00389b71"); } }
-    private static Guid MEDIASUBTYPE_AAC_AUDIO { get { return new Guid("00000ff-0000-0010-8000-00aa00389b71"); } }
+    private static Guid MEDIASUBTYPE_LATM_AAC_AUDIO { get { return new Guid("000001ff-0000-0010-8000-00aa00389b71"); } }
+    private static Guid MEDIASUBTYPE_AAC_AUDIO { get { return new Guid("000000ff-0000-0010-8000-00aa00389b71"); } }
     #endregion
   }
 }
