@@ -20,10 +20,9 @@ namespace MatroskaImporter
 {
   public partial class MatroskaImporter : Form
   {
-    #region Event delegates
+    #region Delegates
 
-    public delegate void TagLookupSuccessful(Dictionary<string, MatroskaTagInfo> FoundTags);
-    public event TagLookupSuccessful OnTagLookupCompleted;
+    protected delegate void MethodTreeViewTags(Dictionary<string, MatroskaTagInfo> FoundTags);
 
     #endregion
 
@@ -35,14 +34,28 @@ namespace MatroskaImporter
 
       try
       {
-        LoadSettings();        
+        LoadSettings();
       }
       catch (Exception ex)
       {
         MessageBox.Show(string.Format("Loading of settings failed. Make sure you're running this tool from your TVE3 installation dir and gentle.NET is able to contact to your TvLibrary! \n\n{0}", ex.Message));
         this.Close();
       }
-      this.OnTagLookupCompleted += new TagLookupSuccessful(OnLookupCompleted);
+      MatroskaTagHandler.OnTagLookupCompleted += new MatroskaTagHandler.TagLookupSuccessful(OnLookupCompleted);
+    }
+
+    #endregion
+
+    #region Fields
+
+    private string fCurrentImportPath;
+    public string CurrentImportPath
+    {
+      get { return fCurrentImportPath; }
+      set
+      {
+        fCurrentImportPath = value;
+      }
     }
 
     #endregion
@@ -62,29 +75,36 @@ namespace MatroskaImporter
         if (cbRecPaths.Items.Count > 0)
           cbRecPaths.SelectedIndex = 0;
       }
-      catch (Exception) {}
+      catch (Exception ex) 
+      {
+        MessageBox.Show(string.Format("Error gathering recording folders of all tv cards: \n{0}", ex.Message));
+      }
     }
 
     #endregion
-    
+
     #region User input events
 
     private void btnLookup_Click(object sender, EventArgs e)
     {
       btnLookup.Enabled = false;
+      btnImport.Enabled = false;
+      try
+      {
+        GetTagFiles();
+      }
+      catch (Exception ex2)
+      {
+        MessageBox.Show(string.Format("Error gathering matroska tags: \n{0}", ex2.Message));
+      }
       try
       {
         GetRecordings();
-
-        GetTagFiles();
-
-        btnImport.Enabled = (tvTagRecs.Nodes.Count > 0);
       }
       catch (Exception ex)
       {
         MessageBox.Show(string.Format("Error gathering recording informations: \n{0}", ex.Message));
-      }
-      btnLookup.Enabled = true;
+      }      
     }
 
     private void btnImport_Click(object sender, EventArgs e)
@@ -95,6 +115,7 @@ namespace MatroskaImporter
         if (currentTagRec != null)
         {
           bool RecFileFound = false;
+          bool AskForImport = cbConfirmImport.Checked;
           foreach (TreeNode dbRec in tvDbRecs.Nodes)
           {
             Recording currentDbRec = dbRec.Tag as Recording;
@@ -106,7 +127,7 @@ namespace MatroskaImporter
           }
           if (!RecFileFound)
           {
-            if (MessageBox.Show(this, string.Format("Import {0} now? \n{1}", currentTagRec.Title, currentTagRec.FileName), "Recording not found in DB", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            if (!AskForImport || MessageBox.Show(this, string.Format("Import {0} now? \n{1}", currentTagRec.Title, currentTagRec.FileName), "Recording not found in DB", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
               try
               {
@@ -130,11 +151,15 @@ namespace MatroskaImporter
 
     private void cbRecPaths_TextUpdate(object sender, EventArgs e)
     {
-      btnLookup.Enabled = Directory.Exists(cbRecPaths.Text);
+      CurrentImportPath = cbRecPaths.Text;
+      if (fCurrentImportPath[fCurrentImportPath.Length - 1] != '\\' && fCurrentImportPath[fCurrentImportPath.Length - 1] != '/')
+        CurrentImportPath += @"\";
+
+      btnLookup.Enabled = Directory.Exists(CurrentImportPath);
     }
 
     #endregion
-    
+
     #region Tag retrieval
 
     private void GetTagFiles()
@@ -142,30 +167,47 @@ namespace MatroskaImporter
       Dictionary<string, MatroskaTagInfo> importTags = new Dictionary<string, MatroskaTagInfo>();
       try
       {
-        importTags = MatroskaTagHandler.GetAllMatroskaTags(cbRecPaths.Text);
+        Thread lookupThread = new Thread(new ParameterizedThreadStart(MatroskaTagHandler.GetAllMatroskaTags));
+        lookupThread.Start((object)CurrentImportPath);
+        lookupThread.IsBackground = true;
       }
       catch (Exception ex)
       {
         MessageBox.Show(ex.Message);
       }
-
-      if (OnTagLookupCompleted != null)
-        OnTagLookupCompleted(importTags);
     }
 
     private void OnLookupCompleted(Dictionary<string, MatroskaTagInfo> FoundTags)
+    {
+      Invoke(new MethodTreeViewTags(AddTagFiles), new object[] { FoundTags });
+    }
+    
+    /// <summary>
+    /// Invoke method from MethodTreeViewTags delegate!!!
+    /// </summary>
+    /// <param name="FoundTags"></param>
+    private void AddTagFiles(Dictionary<string, MatroskaTagInfo> FoundTags)
     {
       tvTagRecs.Nodes.Clear();
       tvTagRecs.BeginUpdate();
       foreach (KeyValuePair<string, MatroskaTagInfo> kvp in FoundTags)
       {
-        tvTagRecs.Nodes.Add(BuildNodeFromRecording(BuildRecordingFromTag(kvp.Key, kvp.Value)));
+        Recording TagRec = BuildRecordingFromTag(kvp.Key, kvp.Value);
+        if (TagRec != null)
+        {
+          TreeNode TagNode = BuildNodeFromRecording(TagRec);
+          if (TagNode != null)
+            tvTagRecs.Nodes.Add(TagNode);
+        }
       }
+      tvTagRecs.Sort();
       tvTagRecs.EndUpdate();
+      btnLookup.Enabled = true;
+      btnImport.Enabled = (tvTagRecs.Nodes.Count > 0);
     }
 
     #endregion
-    
+
     #region Recording retrieval
 
     private void GetRecordings()
@@ -175,8 +217,11 @@ namespace MatroskaImporter
       IList recordings = Recording.ListAll();
       foreach (Recording rec in recordings)
       {
-        tvDbRecs.Nodes.Add(BuildNodeFromRecording(rec));
+        TreeNode RecNode = BuildNodeFromRecording(rec);
+        if (RecNode != null)
+          tvDbRecs.Nodes.Add(RecNode);
       }
+      tvDbRecs.Sort();
       tvDbRecs.EndUpdate();
     }
 
@@ -186,11 +231,27 @@ namespace MatroskaImporter
 
     private TreeNode BuildNodeFromRecording(Recording aRec)
     {
-      TreeNode[] subitems = new TreeNode[] { new TreeNode(((Channel)aRec.ReferencedChannel()).DisplayName), new TreeNode("ChannelID: " + aRec.IdChannel.ToString()), new TreeNode(aRec.Genre), new TreeNode(aRec.Description), new TreeNode("ServerID: " + aRec.IdServer) };
-      TreeNode recItem = new TreeNode(aRec.Title, subitems);
-      recItem.Tag = aRec;
+      try
+      {
+        TreeNode[] subitems = new TreeNode[] { 
+                                               new TreeNode("Channel name: " + ((Channel)aRec.ReferencedChannel()).DisplayName), 
+                                               new TreeNode("Channel ID: " + aRec.IdChannel.ToString()), 
+                                               new TreeNode("Genre: " + aRec.Genre), 
+                                               new TreeNode("Description: " + aRec.Description), 
+                                               new TreeNode("Start time: " + aRec.StartTime), 
+                                               new TreeNode("End time: " + aRec.EndTime), 
+                                               new TreeNode("Server ID: " + aRec.IdServer)
+                                             };
 
-      return recItem;
+        TreeNode recItem = new TreeNode(aRec.Title, subitems);
+        recItem.Tag = aRec;
+        return recItem;
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Could not build TreeNode from recording: {0}\n{1}", aRec.Title, ex.Message));
+        return null;
+      }      
     }
 
     #endregion
@@ -199,20 +260,27 @@ namespace MatroskaImporter
 
     private Recording BuildRecordingFromTag(string aFileName, MatroskaTagInfo aTag)
     {
-      string physicalFile = GetRecordingFilename(aFileName);
-      Recording tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
-                                       GetRecordingStartTime(physicalFile),
-                                       GetRecordingStartTime(physicalFile),
-                                       aTag.title,
-                                       aTag.description,
-                                       aTag.genre,
-                                       physicalFile,
-                                       0,
-                                       SqlDateTime.MaxValue.Value,
-                                       0,
-                                       GetServerId()
-                                       );
-
+      Recording tagRec = null;
+      try
+      {
+        string physicalFile = GetRecordingFilename(aFileName);
+        tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
+                                         GetRecordingStartTime(physicalFile),
+                                         GetRecordingEndTime(physicalFile),
+                                         aTag.title,
+                                         aTag.description,
+                                         aTag.genre,
+                                         physicalFile,
+                                         0,
+                                         SqlDateTime.MaxValue.Value,
+                                         0,
+                                         GetServerId()
+                                         );
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Could not build recording from tag: {0}\n{1}", aFileName, ex.Message));
+      }
       return tagRec;
     }
 
@@ -225,6 +293,17 @@ namespace MatroskaImporter
         startTime = fi.CreationTime;
       }
       return startTime;
+    }
+
+    private DateTime GetRecordingEndTime(string aFileName)
+    {
+      DateTime endTime = SqlDateTime.MinValue.Value;
+      if (File.Exists(aFileName))
+      {
+        FileInfo fi = new FileInfo(aFileName);
+        endTime = fi.LastWriteTime;
+      }
+      return endTime;
     }
 
     private string GetRecordingFilename(string aTagFilename)
@@ -264,7 +343,7 @@ namespace MatroskaImporter
       }
       catch (Exception ex)
       {
-        MessageBox.Show(ex.Message);
+        MessageBox.Show(string.Format("Could not get ServerID for recording!\n{0}", ex.Message));
       }
       return serverId;
     }
@@ -272,14 +351,20 @@ namespace MatroskaImporter
     private int GetChannelIdByDisplayName(string aChannelName)
     {
       int channelId = -1;
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
-      sb.AddConstraint(Operator.Equals, "displayName", aChannelName);
-      sb.SetRowLimit(1);
-      SqlStatement stmt = sb.GetStatement(true);
-      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-      if (channels.Count == 1)
-        channelId = ((Channel)channels[0]).IdChannel;
-
+      try
+      {
+        SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+        sb.AddConstraint(Operator.Equals, "displayName", aChannelName);
+        sb.SetRowLimit(1);
+        SqlStatement stmt = sb.GetStatement(true);
+        IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+        if (channels.Count == 1)
+          channelId = ((Channel)channels[0]).IdChannel;
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Could not get ChannelID for DisplayName: {0}\n{1}", aChannelName, ex.Message));
+      }
       return channelId;
     }
 
