@@ -39,11 +39,11 @@ SetCompressor lzma
 # VARIABLES
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
-Var WindowsVersion  ; The Windows Version
+; [OBSOLETE]  Var WindowsVersion  ; The Windows Version
 Var CommonAppData   ; The Common Application Folder
-Var DSCALER         ; Should we install Dscaler Filter
-Var GABEST          ; Should we install Gabest Filter
-Var FilterDir       ; The Directory, where the filters have been installed  
+; [OBSOLETE]  Var DSCALER         ; Should we install Dscaler Filter
+; [OBSOLETE]  Var GABEST          ; Should we install Gabest Filter
+; [OBSOLETE]  Var FilterDir       ; The Directory, where the filters have been installed  
 Var LibInstall      ; Needed for Library Installation
 ;[OBSOLETE]Var TmpDir          ; Needed for the Uninstaller
 # variables for commandline parameters for Installer
@@ -177,6 +177,7 @@ ShowUninstDetails show
     SetShellVarContext current
 !macroend
 
+/*; [OBSOLETE]  
 !macro SetFilterDir
     ; The Following Filters and Dll need to be copied to \windows\system32 for xp
     ; In Vista they stay in the Install Directory
@@ -188,30 +189,7 @@ ShowUninstDetails show
         StrCpy $FilterDir $SysDir
     ${Endif}
 !macroend
-
-!macro CheckForOldDirectory
-    IfFileExists "$INSTDIR\*.*" 0 noRename
-
-    ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
-    ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
-
-    ${If} $R0 < ${VER_MAJOR}
-        Goto rename
-    ${Else}
-        ${If} $R1 < ${VER_MINOR}
-            Goto rename
-        ${Else}
-            Goto noRename
-        ${EndIf}
-    ${EndIf}
-
-    rename:
-        #${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-        #Rename "$INSTDIR" "$INSTDIR_BACKUP_$4$5"
-        Rename "$INSTDIR" "$INSTDIR_BACKUP"
-
-    noRename:
-!macroend
+*/
 
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
@@ -222,7 +200,33 @@ Section "MediaPortal core files (required)" SecCore
     
     SetOverwrite on
 
-    !insertmacro CheckForOldDirectory
+    # CHECK FOR OLD FILES and DIRECTORY
+    IfFileExists "$INSTDIR\*.*" 0 noInstDirRename
+
+    /*  MAYBE WE should always rename the instdir if it exists
+    ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
+    ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
+
+    ${If} $R0 < ${VER_MAJOR}
+        Goto instDirRename
+    ${Else}
+        ${If} $R1 < ${VER_MINOR}
+            Goto instDirRename
+        ${Else}
+            Goto noInstDirRename
+        ${EndIf}
+    ${EndIf}*/
+
+    instDirRename:
+        #${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+        #Rename "$INSTDIR" "$INSTDIR_BACKUP_$4$5"
+        Rename "$INSTDIR" "$INSTDIR_BACKUP"
+
+    noInstDirRename:
+
+    IfFileExists "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" 0 +2
+        Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml.old"
+
 
     ; Doc
     SetOutPath $INSTDIR\Docs
@@ -247,10 +251,9 @@ Section "MediaPortal core files (required)" SecCore
     File /r ..\xbmc\bin\Release\weather
     File /r ..\xbmc\bin\Release\WebEPG
     File /r ..\xbmc\bin\Release\Wizards
-
+    File /r ..\xbmc\bin\Release\xmltv
 
     ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
-
     ;------------  Common Files and Folders for XP & Vista
     ; Files
     File ..\xbmc\bin\Release\AppStart.exe
@@ -349,7 +352,8 @@ Section "MediaPortal core files (required)" SecCore
     File ..\xbmc\bin\Release\XPBurnComponent.dll
     ;------------  End of Common Files and Folders for XP & Vista
 
-    /******************************************************                change for 1.0 :::::::  USE       AppData    folder
+    
+    /*; [OBSOLETE]  
     ; In Case of Vista some Folders / Files need to be copied to the Appplication Data Folder
     ; Simply Change the output Directory in Case of Vista
     ${if} $WindowsVersion == "Vista"
@@ -388,45 +392,75 @@ Section "MediaPortal core files (required)" SecCore
 
     ; Folders
     File /r ..\xbmc\bin\Release\thumbs
-    File /r ..\xbmc\bin\Release\xmltv
 
+    /* OBSOLETE    if we decide to install all filters to INSTDIR
     ; The Following Filters and Dll need to be copied to \windows\system32 for xp
     ; In Vista they stay in the Install Directory
     !insertmacro SetFilterDir
     ; NOTE: The Filters and Common DLLs found below will be deleted and unregistered manually and not via the automatic Uninstall Log
-    ; Filters (Copy and Register)
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $FilterDir\cdxareader.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $FilterDir\CLDump.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpgMux.ax $FilterDir\MpgMux.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPReader.ax $FilterDir\MPReader.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPSA.ax $FilterDir\MPSA.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTS.ax $FilterDir\MPTS.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTSWriter.ax $FilterDir\MPTSWriter.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\shoutcastsource.ax $FilterDir\shoutcastsource.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\TSFileSource.ax $FilterDir\TSFileSource.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $FilterDir\WinTVCapWriter.ax $FilterDir
+    ; Filters (Copy and Register)*/
+
+    #---------------------------------------------------------------------------
+    # FILTER REGISTRATION
+    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+    #---------------------------------------------------------------------------
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
 
     ; Common DLLs
     ; Installing the Common dll
-    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71.dll $FilterDir\MFC71.dll $FilterDir
-    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71u.dll $FilterDir\MFC71u.dll $FilterDir
-    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcp71.dll $FilterDir\msvcp71.dll $FilterDir
-    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcr71.dll $FilterDir\msvcr71.dll $FilterDir
-
-    ; Write the Install / Config Dir into the registry for the Public SVN Installer to recognize the environment
-    WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ApplicationDir $INSTDIR
-
-    
-        /******************************************************                change for 1.0 :::::::  USE       AppData    folder
-    ${if} $WindowsVersion == "Vista"
-        WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $CommonAppData
-    ${Else}
-        WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $INSTDIR
-    ${Endif}
-    */
+    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
+    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
+    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
+    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
 SectionEnd
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
+    
+    #---------------------------------------------------------------------------
+    # FILTER UNREGISTRATION     for TVClient
+    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+    #---------------------------------------------------------------------------
+    ; Uninstall the Common DLLs and Filters
+    ; They will onl be removed, when the UseCount = 0
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\cdxareader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\CLDump.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MPReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MPSA.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MPTS.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MPTSWriter.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\shoutcastsource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\WinTVCapWriter.ax
+
+    ; Common DLLs will not be removed. Too Dangerous
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC71.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC71u.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\msvcp71.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\msvcr71.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC80.dll
+    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC80u.dll
+
+    ; Config Files
+    Delete /REBOOTOK  $CommonAppData\CaptureCardDefinitions.xml
+    Delete /REBOOTOK  "$CommonAppData\eHome Infrared Transceiver List XP.xml"
+    Delete /REBOOTOK  $CommonAppData\FileDetailContents.xml
+    Delete /REBOOTOK  $CommonAppData\grabber_AllGame_com.xml
+    Delete /REBOOTOK  $CommonAppData\ISDNCodes.xml
+    Delete /REBOOTOK  $CommonAppData\keymap.xml
+    Delete /REBOOTOK  $CommonAppData\MusicVideoSettings.xml
+    Delete /REBOOTOK  $CommonAppData\ProgramSettingProfiles.xml
+    Delete /REBOOTOK  $CommonAppData\wikipedia.xml
+    Delete /REBOOTOK  $CommonAppData\yac-area-codes.xml
 
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
@@ -543,27 +577,6 @@ SectionEnd
     Delete /REBOOTOK  $INSTDIR\xAPMessage.dll
     Delete /REBOOTOK  $INSTDIR\xAPTransport.dll
     Delete /REBOOTOK  $INSTDIR\XPBurnComponent.dll
-
-    ; Uninstall the Common DLLs and Filters
-    ; They will onl be removed, when the UseCount = 0
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\cdxareader.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\CLDump.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpgMux.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPReader.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPSA.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPTS.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MPTSWriter.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\shoutcastsource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\TSFileSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\WinTVCapWriter.ax
-
-    ; Common DLLs will not be removed. Too Dangerous
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71u.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcp71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcr71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC80.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC80u.dll
 !macroend
 
 Section "DScaler Decoder" SecDscaler
@@ -571,12 +584,12 @@ Section "DScaler Decoder" SecDscaler
 
     ; The Following Filters and Dll need to be copied to \windows\system32 for xp
     ; In Vista they stay in the Install Directory
-    !insertmacro SetFilterDir
+    ; [OBSOLETE]  !insertmacro SetFilterDir
     
-    WriteRegStr HKLM "${REG_UNINSTALL}" Dscaler 1
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $FilterDir\GenDMOProp.dll $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegAudio.dll $FilterDir\MpegAudio.dll $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegVideo.dll $FilterDir\MpegVideo.dll $FilterDir
+    ; [OBSOLETE]  WriteRegStr HKLM "${REG_UNINSTALL}" Dscaler 1
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $INSTDIR\GenDMOProp.dll $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegAudio.dll $INSTDIR\MpegAudio.dll $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegVideo.dll $INSTDIR\MpegVideo.dll $INSTDIR
     ; Write Default Values for Filter into the registry
     WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
     WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "MPEG Audio over SPDIF" 0
@@ -598,9 +611,9 @@ SectionEnd
 !macro Remove_${SecDscaler}
     DetailPrint "Uninstalling DScaler Decoder..."
 
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\GenDMOProp.dll
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpegAudio.dll
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpegVideo.dll
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\GenDMOProp.dll
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpegAudio.dll
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpegVideo.dll
 !macroend
 
 Section "Gabest MPA/MPV decoder" SecGabest
@@ -608,11 +621,11 @@ Section "Gabest MPA/MPV decoder" SecGabest
 
     ; The Following Filters and Dll need to be copied to \windows\system32 for xp
     ; In Vista they stay in the Install Directory
-    !insertmacro SetFilterDir
+    ; [OBSOLETE]  !insertmacro SetFilterDir
     
-    WriteRegStr HKLM "${REG_UNINSTALL}" Gabest 1
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $FilterDir\MpaDecFilter.ax $FilterDir
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $FilterDir\Mpeg2DecFilter.ax $FilterDir
+    ; [OBSOLETE]  WriteRegStr HKLM "${REG_UNINSTALL}" Gabest 1
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $INSTDIR\MpaDecFilter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $INSTDIR\Mpeg2DecFilter.ax $INSTDIR
 
     ; Write Default Values for Filter into the registry
     WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
@@ -639,8 +652,8 @@ SectionEnd
 !macro Remove_${SecGabest}
     DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
 
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\MpaDecFilter.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $FilterDir\Mpeg2DecFilter.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpaDecFilter.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\Mpeg2DecFilter.ax
 !macroend
 
 #---------------------------------------------------------------------------
@@ -675,6 +688,7 @@ Section -Post
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"                            "$INSTDIR\MediaPortal.exe"      ""      "$INSTDIR\MediaPortal.exe"   0 "" "" "MediaPortal"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"              "$INSTDIR\Configuration.exe"    ""      "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"                 "$INSTDIR\MPTestTool2.exe"      "-auto" "$INSTDIR\MPTestTool2.exe"   0 "" "" "MediaPortal Debug-Mode"
+        CreateDirectory "$CommonAppData\log"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"                  "$CommonAppData\log"            ""      "$CommonAppData\log"         0 "" "" "MediaPortal Log-Files"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"    "$INSTDIR\MPInstaller.exe"      ""      "$INSTDIR\MPInstaller.exe"   0 "" "" "MediaPortal Plugins-Skins Installer"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$INSTDIR\uninstall-mp.exe"
@@ -712,10 +726,21 @@ Section -Post
     WriteUninstaller "$INSTDIR\uninstall-mp.exe"
     
     
-    ; should be obsolete sooner or later
-    WriteRegStr HKLM "${REG_UNINSTALL}" Path $INSTDIR
+    ; [OBSOLETE]  should be obsolete sooner or later
+    /*WriteRegStr HKLM "${REG_UNINSTALL}" Path $INSTDIR
     WriteRegStr HKLM "${REG_UNINSTALL}" PathFilter $FILTERDIR
-    WriteRegStr HKLM "${REG_UNINSTALL}" WindowsVersion $WindowsVersion
+    WriteRegStr HKLM "${REG_UNINSTALL}" WindowsVersion $WindowsVersion*/
+    
+    ; [OBSOLETE]   WE SHOULD USER THE OTHER REGKEY IN FUTURE
+    ; Write the Install / Config Dir into the registry for the Public SVN Installer to recognize the environment
+    WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ApplicationDir $INSTDIR
+
+    ; [OBSOLETE]   WE DONT NEED THIS REGKEY IN FUTURE
+    /*${if} $WindowsVersion == "Vista"
+        WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $CommonAppData
+    ${Else}
+        WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $INSTDIR
+    ${Endif}*/
 
     
     ; Associate .mpi files with MPInstaller
@@ -744,27 +769,6 @@ Section Uninstall
     !insertmacro SectionList "RemoveSection"
     !insertmacro Remove_${SecCore}
 
-    /*    [OBSOLETE]
-    ; In Case of Vista the Files to Uninstall are in the Appplication Data Folder
-    ${if} $WindowsVersion == "Vista"
-        StrCpy $TmpDir $CommonAppData
-    ${Else}
-         StrCpy $TmpDir $INSTDIR
-    ${Endif}
-
-    ; Config Files, which are in different location on Vista and XP (XML)
-    Delete /REBOOTOK  $TmpDir\CaptureCardDefinitions.xml
-    Delete /REBOOTOK  "$TmpDir\eHome Infrared Transceiver List XP.xml"
-    Delete /REBOOTOK  $TmpDir\FileDetailContents.xml
-    Delete /REBOOTOK  $TmpDir\grabber_AllGame_com.xml
-    Delete /REBOOTOK  $TmpDir\ISDNCodes.xml
-    Delete /REBOOTOK  $TmpDir\keymap.xml
-    Delete /REBOOTOK  $TmpDir\MusicVideoSettings.xml
-    Delete /REBOOTOK  $TmpDir\ProgramSettingProfiles.xml
-    Delete /REBOOTOK  $TmpDir\wikipedia.xml
-    Delete /REBOOTOK  $TmpDir\yac-area-codes.xml
-    */
-    
     # remove registry key
     DeleteRegKey HKLM "${REG_UNINSTALL}"
 
@@ -797,9 +801,9 @@ Section Uninstall
     
     
     
-    DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
-    DeleteRegValue HKLM "${REG_UNINSTALL}" Path
-    DeleteRegValue HKLM "${REG_UNINSTALL}" PathFilter
+    ; [OBSOLETE]  DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
+    ; [OBSOLETE]  DeleteRegValue HKLM "${REG_UNINSTALL}" Path
+    ; [OBSOLETE]  DeleteRegValue HKLM "${REG_UNINSTALL}" PathFilter
 
     ; Remove File Association for .mpi files
     !define Index "Line${__LINE__}"
@@ -857,16 +861,12 @@ Function .onInit
     # update the component status -> commandline parameters have higher priority than registry values
     ${If} $noDscaler = 1
         !insertmacro UnselectSection ${SecDscaler}
-    ${Else}
-        !insertmacro SelectSection ${SecDscaler}
     ${EndIf}
     ${If} $noGabest = 1
         !insertmacro UnselectSection ${SecGabest}
-    ${Else}
-        !insertmacro SelectSection ${SecGabest}
     ${EndIf}
 
-    /*
+    /*; [OBSOLETE]  
     ; Get Windows Version
     Call GetWindowsVersion
     Pop $R0
@@ -889,11 +889,13 @@ Function .onInit
         Abort
     ${EndIf}
     
+    /*; [OBSOLETE]  
     ${If} ${IsWinVista}
         StrCpy $WindowsVersion "Vista"
     ${Else}
         StrCpy $WindowsVersion "XP"
     ${EndIf}
+    */;   
 
     ; Check if .Net is installed
     Call IsDotNetInstalled
@@ -935,11 +937,11 @@ Function un.onInit
     
     
     # SHOULD BE OBSOLETE SOONER or LATER
-    ReadRegStr $FILTERDIR HKLM "${REG_UNINSTALL}" PathFilter
-    ReadRegStr $GABEST HKLM "${REG_UNINSTALL}" Gabest
-    ReadRegStr $DSCALER HKLM "${REG_UNINSTALL}" Dscaler
-    ReadRegStr $WindowsVersion HKLM "${REG_UNINSTALL}" WindowsVersion
-    #!insertmacro SELECT_UNSECTION Main ${UNSEC0000}
+    ; [OBSOLETE]  ReadRegStr $FILTERDIR HKLM "${REG_UNINSTALL}" PathFilter
+    ; [OBSOLETE]  ReadRegStr $GABEST HKLM "${REG_UNINSTALL}" Gabest
+    ; [OBSOLETE]  ReadRegStr $DSCALER HKLM "${REG_UNINSTALL}" Dscaler
+    ; [OBSOLETE]  ReadRegStr $WindowsVersion HKLM "${REG_UNINSTALL}" WindowsVersion
+    ; [OBSOLETE]  !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
     # SHOULD BE OBSOLETE SOONER or LATER
 
     ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
