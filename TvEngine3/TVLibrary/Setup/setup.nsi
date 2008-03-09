@@ -173,13 +173,10 @@ ShowUninstDetails show
 # USEFUL MACROS
 #---------------------------------------------------------------------------
 !macro SetCommonAppData
-
     ; Get the Common Application Data Folder
     ; Set the Context to alll, so that we get the All Users folder
     SetShellVarContext all
-    # NOT SURE WHICH DIR STRUCTURE WE WANT TO USE IN FUTURE
-    #StrCpy $CommonAppData "$APPDATA\Team MediaPortal\TV Server"
-    StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
+    StrCpy $CommonAppData "$APPDATA\Team MediaPortal\TV Server"
     ; Context back to current user
     SetShellVarContext current
 !macroend
@@ -259,6 +256,16 @@ Section "MediaPortal TV Server" SecServer
     File ..\..\Filters\bin\ttdvbacc.dll
     File ..\..\Filters\sources\StreamingServer\release\StreamingServer.dll
 
+
+    # WORKAROUND TO SUPPORT OLD LOCATION of GENTLE.CONFIG
+    ; Get the Common Application Data Folder
+    ; Set the Context to alll, so that we get the All Users folder
+    SetShellVarContext all
+    SetOutPath "$APPDATA\MediaPortal TV Server"
+    File ..\TvService\Gentle.config
+    ; Context back to current user
+    SetShellVarContext current
+    
     # Common App Data Files
     SetOutPath "$CommonAppData"
     File ..\TvService\Gentle.config
