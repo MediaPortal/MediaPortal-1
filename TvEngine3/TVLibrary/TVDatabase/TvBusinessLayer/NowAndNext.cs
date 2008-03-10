@@ -28,6 +28,7 @@ namespace TvDatabase
       _idProgramNow=idProgramNow;
       _idProgramNext=idProgramNext;
     }
+
     public int IdChannel
     {
       get
@@ -39,6 +40,7 @@ namespace TvDatabase
         _idChannel = value;
       }
     }
+
     public DateTime NowStartTime
     {
       get
@@ -50,6 +52,7 @@ namespace TvDatabase
         _nowStart = value;
       }
     }
+
     public DateTime NextStartTime
     {
       get
@@ -61,6 +64,7 @@ namespace TvDatabase
         _nextStart = value;
       }
     }
+
     public DateTime NowEndTime
     {
       get
@@ -72,6 +76,7 @@ namespace TvDatabase
         _nowEnd = value;
       }
     }
+
     public DateTime NextEndTime
     {
       get
@@ -83,6 +88,7 @@ namespace TvDatabase
         _nextEnd = value;
       }
     }
+
     public string TitleNow
     {
       get
@@ -94,6 +100,7 @@ namespace TvDatabase
         _titleNow = value;
       }
     }
+
     public string TitleNext
     {
       get
@@ -105,6 +112,7 @@ namespace TvDatabase
         _titleNext = value;
       }
     }
+
     public int IdProgramNow
     {
       get
@@ -116,6 +124,7 @@ namespace TvDatabase
         _idProgramNow = value;
       }
     }
+
     public int IdProgramNext
     {
       get

@@ -552,15 +552,15 @@ namespace TvPlugin
           }
 
           if (listNowNext.ContainsKey(CurrentId))
-            tmpString = CalculateProgress(listNowNext[CurrentId].NowStartTime, listNowNext[CurrentId].NowEndTime).ToString();          
-          else          
-            tmpString = CalculateProgress(DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1)).ToString();          
-
-          sb.Append(tmpString);
-          sb.Append("%");
+          {
+            sb.Append(CalculateProgress(listNowNext[CurrentId].NowStartTime, listNowNext[CurrentId].NowEndTime).ToString());
+            sb.Append("%");
+          }
+          //else
+          //  sb.Append(CalculateProgress(DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1)).ToString());
 
           tmpString = local736;
-          if (listNowNext.ContainsKey(CurrentId))          
+          if ((listNowNext.ContainsKey(CurrentId)) && (listNowNext[CurrentId].IdProgramNext != -1))
             tmpString = listNowNext[CurrentId].TitleNext;          
 
           item.Label2 = sb.ToString();

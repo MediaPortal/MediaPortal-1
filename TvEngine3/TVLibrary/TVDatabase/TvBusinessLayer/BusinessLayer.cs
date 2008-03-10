@@ -19,6 +19,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using System.Threading;
 using System.Diagnostics;
+using System.Data.SqlTypes;
 
 namespace TvDatabase
 {
@@ -1555,41 +1556,8 @@ namespace TvDatabase
             if (provider == "mysql")
               MySQLAdapter.Fill(dataSet);
 
-          int resultCount = dataSet.Tables[0].Rows.Count;
-          List<int> lastChannelIDs = new List<int>();
-
-          // for-loops are faster than foreach-loops
-          for (int j = 0 ; j < resultCount ; j++)
-          {
-            int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
-            // Only get the Now-Next-Data _once_ per channel
-            if (!lastChannelIDs.Contains(idChannel))
-            {
-              lastChannelIDs.Add(idChannel);
-
-              int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
-              DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
-              DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
-              string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
-
-              if (j < resultCount - 1)
-              {
-                // get the the "Next" info if it belongs to the same channel.
-                if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
-                {
-                  int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
-                  DateTime nextStart = (DateTime)dataSet.Tables[0].Rows[j + 1]["startTime"];
-                  DateTime nextEnd = (DateTime)dataSet.Tables[0].Rows[j + 1]["endTime"];
-                  string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
-
-                  NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
-                  nowNextList[idChannel] = p;
-                }
-              }
-            }
-          }
+          nowNextList = BuildNowNextFromDataSet(dataSet);
         }
-
       }
       catch (Exception ex)
       {
@@ -1613,8 +1581,54 @@ namespace TvDatabase
             break;
         }
       }
-
       return nowNextList;
+    }
+
+    private Dictionary<int, NowAndNext> BuildNowNextFromDataSet(DataSet dataSet)
+    {
+      Dictionary<int, NowAndNext> progList = new Dictionary<int, NowAndNext>();
+
+      int programsCount = dataSet.Tables[0].Rows.Count;
+      List<int> lastChannelIDs = new List<int>();
+
+      // for-loops are faster than foreach-loops
+      for (int j = 0; j < programsCount; j++)
+      {
+        int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
+        // Only get the Now-Next-Data _once_ per channel
+        if (!lastChannelIDs.Contains(idChannel))
+        {
+          lastChannelIDs.Add(idChannel);
+
+          int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
+          DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
+          DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
+          string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
+
+          if (j < programsCount - 1)
+          {
+            // get the the "Next" info if it belongs to the same channel.
+            if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
+            {
+              int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
+              DateTime nextStart = (DateTime)dataSet.Tables[0].Rows[j + 1]["startTime"];
+              DateTime nextEnd = (DateTime)dataSet.Tables[0].Rows[j + 1]["endTime"];
+              string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
+
+              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
+              progList[idChannel] = p;
+            }
+            else
+            {
+              // no "next" info because of holes in EPG data we want the "now" info nevertheless
+              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, SqlDateTime.MaxValue.Value, SqlDateTime.MaxValue.Value, nowTitle, string.Empty, nowidProgram, -1);
+              progList[idChannel] = p;
+            }
+
+          }
+        }
+      }
+      return progList;
     }
 
     #region EPG Insert
