@@ -41,11 +41,6 @@
         <onright>50</onright>
         <onup>17</onup>
         <ondown>3</ondown>
-        <subitems>
-          <subitem>101</subitem>
-          <subitem>100</subitem>
-          <subitem>417</subitem>
-        </subitems>
         <alignY>center</alignY>
       </control>
       <control>
@@ -55,13 +50,6 @@
         <onright>50</onright>
         <onup>2</onup>
         <ondown>6</ondown>
-        <subitems>
-          <subitem>103</subitem>
-          <subitem>668</subitem>
-          <subitem>669</subitem>
-          <subitem>670</subitem>
-          <subitem>620</subitem>
-        </subitems>
         <alignY>center</alignY>
       </control>
       <control>
