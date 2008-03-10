@@ -202,50 +202,68 @@ namespace SetupTv.Sections
       TvMovieDatabase database = new TvMovieDatabase();
       if (database.Connect())
       {
-        treeViewTvMStations.BeginUpdate();
-        treeViewTvMStations.Nodes.Clear();
-        imageListTvmStations.Images.Clear();
-
-        string GifBasePath = TvMovieDatabase.TVMovieProgramPath + @"Gifs\";
-
-        for (int i = 0; i < database.Stations.Count; i++)
+        try
         {
-          TVMChannel station = database.Stations[i];
+          treeViewTvMStations.BeginUpdate();
+          treeViewTvMStations.Nodes.Clear();
+          imageListTvmStations.Images.Clear();
 
-          string channelLogo = GifBasePath + station.TvmZeichen;
-          if (!File.Exists(channelLogo))
-            channelLogo = GifBasePath + @"tvmovie_senderlogoplatzhalter.gif";
+          string GifBasePath = TvMovieDatabase.TVMovieProgramPath + @"Gifs\";
 
-          // convert gif to ico
-          Bitmap tvmLogo = new Bitmap(channelLogo);
-          IntPtr iconHandle = tvmLogo.GetHicon();
-          Icon stationThumb = Icon.FromHandle(iconHandle);
-          imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
+          for (int i = 0; i < database.Stations.Count; i++)
+          {
+            try
+            {
+              TVMChannel station = database.Stations[i];
 
-          //TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmEpgDescription), new TreeNode(station.TvmWebLink) }; // new TreeNode(station.TvmSortId), 
-          TreeNode stationNode = new TreeNode(station.TvmEpgChannel, i, i);//, subItems);
-          ChannelInfo channelInfo = new ChannelInfo();
-          channelInfo.Name = station.TvmEpgChannel;
-          stationNode.Tag = channelInfo;
-          treeViewTvMStations.Nodes.Add(stationNode);
+              string channelLogo = GifBasePath + station.TvmZeichen;
+              if (!File.Exists(channelLogo))
+                channelLogo = GifBasePath + @"tvmovie_senderlogoplatzhalter.gif";
+
+              // convert gif to ico
+              Bitmap tvmLogo = new Bitmap(channelLogo);
+              IntPtr iconHandle = tvmLogo.GetHicon();
+              Icon stationThumb = Icon.FromHandle(iconHandle);
+              imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
+
+              //TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmEpgDescription), new TreeNode(station.TvmWebLink) }; // new TreeNode(station.TvmSortId), 
+              TreeNode stationNode = new TreeNode(station.TvmEpgChannel, i, i);//, subItems);
+              ChannelInfo channelInfo = new ChannelInfo();
+              channelInfo.Name = station.TvmEpgChannel;
+              stationNode.Tag = channelInfo;
+              treeViewTvMStations.Nodes.Add(stationNode);
+            }
+            catch (Exception exstat)
+            {
+              Log.Info("TvMovieSetup: Error loading TV Movie station - {0}", exstat.Message);
+            }
+          }
+
+          treeViewTvMStations.EndUpdate();
+
+          treeViewMpChannels.BeginUpdate();
+          treeViewMpChannels.Nodes.Clear();
+          try
+          {
+            ArrayList mpChannelList = database.GetChannels();
+            foreach (Channel channel in mpChannelList)
+            {
+              //TreeNode[] subItems = new TreeNode[] { new TreeNode(channel.IdChannel.ToString()), new TreeNode(channel.DisplayName) };
+              TreeNode stationNode = new TreeNode(channel.Name);//, subItems);
+              stationNode.Tag = channel;
+              treeViewMpChannels.Nodes.Add(stationNode);
+            }
+          }
+          catch (Exception exdb)
+          {
+            Log.Info("TvMovieSetup: Error loading MP's channels from database - {0}", exdb.Message);
+          }
+          treeViewMpChannels.EndUpdate();
         }
-
-        treeViewTvMStations.EndUpdate();
-
-        treeViewMpChannels.BeginUpdate();
-        treeViewMpChannels.Nodes.Clear();
-
-        ArrayList mpChannelList = database.GetChannels();
-
-        foreach (Channel channel in mpChannelList)
+        catch (Exception ex)
         {
-          //TreeNode[] subItems = new TreeNode[] { new TreeNode(channel.IdChannel.ToString()), new TreeNode(channel.DisplayName) };
-          TreeNode stationNode = new TreeNode(channel.Name);//, subItems);
-          stationNode.Tag = channel;
-          treeViewMpChannels.Nodes.Add(stationNode);
+          Log.Info("TvMovieSetup: Unhandled error in  LoadStations - {0}\n{1}", ex.Message, ex.StackTrace);
         }
-
-        treeViewMpChannels.EndUpdate();
       }
     }
 
@@ -358,7 +376,6 @@ namespace SetupTv.Sections
         foreach (TreeNode childNode in treeNode.Nodes)
           childNode.Remove();
       }
-
       try
       {
         IList mappingDb = TvMovieMapping.ListAll();
@@ -409,7 +426,7 @@ namespace SetupTv.Sections
           }
         }
         else
-          Log.Debug("TVMovie plugin: LoadMapping failed - no TV channels found!");
+          Log.Debug("TVMovie plugin: LoadMapping did not find any mapped channels");
       }
       catch (Exception ex)
       {
@@ -535,14 +552,14 @@ namespace SetupTv.Sections
     {
       if (radioButton6h.Checked)
         return "6"; else
-        if (radioButton12h.Checked)
+      if (radioButton12h.Checked)
         return "12"; else
-          if (radioButton24h.Checked)
+      if (radioButton24h.Checked)
         return "24"; else
-            if (radioButton2d.Checked)
+      if (radioButton2d.Checked)
         return "48"; else
-              if (radioButton7d.Checked)
-                return "168";
+      if (radioButton7d.Checked)
+        return "168";
 
       return "24";
     }

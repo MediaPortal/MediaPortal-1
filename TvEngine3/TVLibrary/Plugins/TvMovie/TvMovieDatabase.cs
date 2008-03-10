@@ -376,18 +376,50 @@ namespace TvEngine
         _databaseConnection.Close();
       }
 
-      _tvmEpgChannels = new List<TVMChannel>();
-      foreach (DataRow sender in tvMovieTable.Tables["Table"].Rows)
+      try
       {
-        TVMChannel current = new TVMChannel(sender["ID"].ToString(),
-                                            sender["SenderKennung"].ToString(),
-                                            sender["Bezeichnung"].ToString(),
-                                            sender["Webseite"].ToString(),
-                                            sender["SortNrTVMovie"].ToString(),
-                                            sender["Zeichen"].ToString()
-                                            );
-        _tvmEpgChannels.Add(current);
+        _tvmEpgChannels = new List<TVMChannel>();
+        foreach (DataRow sender in tvMovieTable.Tables["Table"].Rows)
+        {
+          string senderId = sender["ID"].ToString();
+          string senderKennung = sender["SenderKennung"].ToString();
+          string senderBez = sender["Bezeichnung"].ToString();
+          // these are non-vital for now.
+          string senderUrl = string.Empty;
+          string senderSort = "-1";
+          string senderZeichen = @"tvmovie_senderlogoplatzhalter.gif";
+          // Somehow TV Movie's db does not necessarily contain these columns...
+          try
+          {
+            senderUrl = sender["Webseite"].ToString();
+          }
+          catch (Exception){ }
+          try
+          {            
+            senderSort = sender["SortNrTVMovie"].ToString();            
+          }
+          catch (Exception){ }
+          try
+          {
+            senderZeichen = sender["Zeichen"].ToString();
+          }
+          catch (Exception) { }
+
+          TVMChannel current = new TVMChannel(senderId,
+                                              senderKennung,
+                                              senderBez,
+                                              senderUrl,
+                                              senderSort,
+                                              senderZeichen
+                                              );
+          _tvmEpgChannels.Add(current);
+        }
       }
+      catch (Exception ex)
+      {
+        Log.Info("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
+      }
+
       _channelList = GetChannels();
       return true;
     }
