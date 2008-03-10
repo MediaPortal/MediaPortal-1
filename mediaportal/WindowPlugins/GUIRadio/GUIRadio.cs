@@ -312,11 +312,9 @@ namespace MediaPortal.GUI.Radio
         return;
       }//if (control == btnViewAs)
 
-      if (control == btnSortBy) // sort by
+      if (control == btnSortBy)
       {
-        currentSortMethod = (SortMethod)btnSortBy.SelectedItem;
-        OnSort();
-        GUIControl.FocusControl(GetID, controlId);
+        OnShowSort();
       }
 
       if (control == facadeView)
@@ -381,23 +379,23 @@ namespace MediaPortal.GUI.Radio
     }
 
 
-    bool ViewByIcon
-    {
-      get
-      {
-        if (currentView != View.List) return true;
-        return false;
-      }
-    }
+    //bool ViewByIcon
+    //{
+    //  get
+    //  {
+    //    if (currentView != View.List) return true;
+    //    return false;
+    //  }
+    //}
 
-    bool ViewByLargeIcon
-    {
-      get
-      {
-        if (currentView == View.LargeIcons) return true;
-        return false;
-      }
-    }
+    //bool ViewByLargeIcon
+    //{
+    //  get
+    //  {
+    //    if (currentView == View.LargeIcons) return true;
+    //    return false;
+    //  }
+    //}
 
     //GUIListItem GetSelectedItem()
     //{
@@ -443,7 +441,48 @@ namespace MediaPortal.GUI.Radio
       facadeView.IsVisible = true;
       GUIControl.FocusControl(GetID, facadeView.GetID);
 
-      btnSortBy.IsAscending = sortAscending;
+      string strLine = string.Empty;
+      View view = currentView;
+      switch (view)
+      {
+        case View.List:
+          strLine = GUILocalizeStrings.Get(101);
+          break;
+        case View.Icons:
+          strLine = GUILocalizeStrings.Get(100);
+          break;
+        case View.LargeIcons:
+          strLine = GUILocalizeStrings.Get(417);
+          break;
+      }
+      if (btnViewAs != null)
+      {
+        btnViewAs.Label = strLine;
+      }
+
+      switch (currentSortMethod)
+      {
+        case SortMethod.Name:
+          strLine = GUILocalizeStrings.Get(103);
+          break;
+        case SortMethod.Type:
+          strLine = GUILocalizeStrings.Get(668);
+          break;
+        case SortMethod.Genre:
+          strLine = GUILocalizeStrings.Get(669);
+          break;
+        case SortMethod.Bitrate:
+          strLine = GUILocalizeStrings.Get(670);
+          break;
+        case SortMethod.Number:
+          strLine = GUILocalizeStrings.Get(620);
+          break;
+      }
+      if (btnSortBy != null)
+      {
+        btnSortBy.Label = strLine;
+        btnSortBy.IsAscending = sortAscending;
+      }
     }
 
     void SelectCurrentItem()
@@ -454,6 +493,24 @@ namespace MediaPortal.GUI.Radio
         GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
       }
       UpdateButtonStates();
+    }
+
+    void SwitchView()
+    {
+      switch (currentView)
+      {
+        case View.List:
+          facadeView.View = GUIFacadeControl.ViewMode.List;
+          break;
+        case View.Icons:
+          facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
+          break;
+        case View.LargeIcons:
+          facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
+          break;
+      }
+
+      UpdateButtonStates(); // Ensure "View: xxxx" button label is updated to suit
     }
 
     //void ShowThumbPanel()
@@ -480,9 +537,9 @@ namespace MediaPortal.GUI.Radio
         }
       }
       currentFolder = strNewDirectory;
-      facadeView.Clear();
-
-      string objectCount = string.Empty;
+      GUIControl.ClearControl(GetID, facadeView.GetID);
+      
+      string objectCount = String.Empty;
       int totalItems = 0;
 
       if (currentPlayList != null)
@@ -596,10 +653,11 @@ namespace MediaPortal.GUI.Radio
         }
       }
 
+      SwitchView();
       OnSort();
 
       //set object count label
-      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
+      GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(totalItems));
 
       SelectCurrentItem();
 
@@ -808,6 +866,52 @@ namespace MediaPortal.GUI.Radio
         Play(item);
         GUIPropertyManager.SetProperty("#selecteditem", item.Label);
       }
+    }
+
+    void OnShowSort()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null) return;
+      dlg.Reset();
+      dlg.SetHeading(495); // Sort options
+
+      dlg.AddLocalizedString(103); // name
+      dlg.AddLocalizedString(668); // Type
+      dlg.AddLocalizedString(669); // genre
+      dlg.AddLocalizedString(670); // bitrate
+      dlg.AddLocalizedString(620); // number
+
+      dlg.SelectedLabel = (int)currentSortMethod;
+
+      // show dialog and wait for result
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1) return;
+
+      switch (dlg.SelectedId)
+      {
+        case 103:
+          currentSortMethod = SortMethod.Name;
+          break;
+        case 668:
+          currentSortMethod = SortMethod.Type;
+          break;
+        case 669:
+          currentSortMethod = SortMethod.Genre;
+          break;
+        case 670:
+          currentSortMethod = SortMethod.Bitrate;
+          break;
+        case 620:
+          currentSortMethod = SortMethod.Number;
+          break;
+        default:
+          currentSortMethod = SortMethod.Name;
+          break;
+      }
+
+      OnSort();
+      if (btnSortBy != null)
+        GUIControl.FocusControl(GetID, btnSortBy.GetID);
     }
 
     bool IsUrl(string fileName)
