@@ -150,19 +150,33 @@ namespace TvDatabase
         TvDatabase.Program prog = null;
         if (_alwaysReplace)
         {
-          IList epgs = _layer.GetProgramExists(dbChannel, epgProgram.StartTime, epgProgram.EndTime);
-          if (epgs.Count > 0)
+          try
           {
-            prog = (TvDatabase.Program)epgs[0];
-            for (int idx = 1; idx < epgs.Count; idx++)
+            IList epgs = _layer.GetProgramExists(dbChannel, epgProgram.StartTime, epgProgram.EndTime);
+
+            if (epgs.Count > 0)
             {
-              try
+              prog = (TvDatabase.Program)epgs[0];
+              if (epgs.Count > 1) Log.Epg("- {0} entries are obsolete for {1} from {2} to {3}", epgs.Count - 1, dbChannel.DisplayName, epgProgram.StartTime, epgProgram.EndTime);
+              for (int idx = 1; idx < epgs.Count; idx++)
               {
-                ((TvDatabase.Program)epgs[i]).Delete();
+                try
+                {
+                  ((TvDatabase.Program)epgs[idx]).Delete();
+                  Log.Epg("- Deleted the epg entry {0} ({1} - {2})", ((TvDatabase.Program)epgs[idx]).Title, ((TvDatabase.Program)epgs[idx]).StartTime, ((TvDatabase.Program)epgs[idx]).EndTime);
+                }
+                catch (Exception ex)
+                {
+                  Log.Epg("Error during epg entry deletion: {0}", ex.Message);
+                }
               }
-              catch (Exception) { }
             }
           }
+          catch (Exception ex)
+          {
+            Log.Epg("Error the existing epg entry check: {0}", ex.Message);
+          }
+
             
         }
         AddProgramAndApplyTemplates(dbChannel, epgProgram, prog);
