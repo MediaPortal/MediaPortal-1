@@ -22,7 +22,7 @@
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
           <id>50</id>
-          <scrollOffset>1</scrollOffset>
+          <scrollOffset>0</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
           <!--onup>2</onup>
