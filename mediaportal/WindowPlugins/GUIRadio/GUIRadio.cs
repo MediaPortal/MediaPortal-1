@@ -42,19 +42,7 @@ namespace MediaPortal.GUI.Radio
 {
   public class GUIRadio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(50)]
-    protected GUIListControl listView = null;
-    [SkinControlAttribute(51)]
-    protected GUIThumbnailPanel thumbnailView = null;
-
+    #region enums
 
     enum SortMethod
     {
@@ -62,17 +50,20 @@ namespace MediaPortal.GUI.Radio
       Type = 1,
       Genre = 2,
       Bitrate = 3,
-      Number
+      Number = 4
     }
 
     enum View : int
     {
       List = 0,
       Icons = 1,
-      BigIcons = 2,
+      LargeIcons = 2,
     }
 
+    #endregion
+
     #region Base variabeles
+
     View currentView = View.List;
     SortMethod currentSortMethod = SortMethod.Number;
     bool sortAscending = true;
@@ -87,6 +78,17 @@ namespace MediaPortal.GUI.Radio
     //GUIRadioLastFM LastFMStation;
 
     //bool _useLastFM = false;
+
+    #endregion
+
+    #region SkinControls
+    
+    [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnNext = null;
+
     #endregion
 
     public GUIRadio()
@@ -120,7 +122,7 @@ namespace MediaPortal.GUI.Radio
         {
           if (tmpLine == "list") currentView = View.List;
           else if (tmpLine == "icons") currentView = View.Icons;
-          else if (tmpLine == "largeicons") currentView = View.BigIcons;
+          else if (tmpLine == "largeicons") currentView = View.LargeIcons;
         }
 
         tmpLine = (string)xmlreader.GetValue("myradio", "sort");
@@ -151,7 +153,7 @@ namespace MediaPortal.GUI.Radio
           case View.Icons:
             xmlwriter.SetValue("myradio", "viewby", "icons");
             break;
-          case View.BigIcons:
+          case View.LargeIcons:
             xmlwriter.SetValue("myradio", "viewby", "largeicons");
             break;
         }
@@ -185,9 +187,9 @@ namespace MediaPortal.GUI.Radio
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        if (listView.Focus || thumbnailView.Focus)
+        if (facadeView.Focus)
         {
-          GUIListItem item = GetItem(0);
+          GUIListItem item = facadeView[0];
           if (item != null)
           {
             if (item.IsFolder && item.Label == "..")
@@ -201,7 +203,7 @@ namespace MediaPortal.GUI.Radio
 
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
-        GUIListItem item = GetItem(0);
+        GUIListItem item = facadeView[0];
         if (item != null)
         {
           if (item.IsFolder && item.Label == "..")
@@ -251,8 +253,8 @@ namespace MediaPortal.GUI.Radio
       virtualDirectory.AddExtension(".pls");
       virtualDirectory.AddExtension(".asx");
 
-      ShowThumbPanel();
-      UpdateButtons();
+      SelectCurrentItem();
+      UpdateButtonStates();
       LoadDirectory(currentFolder);
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 
@@ -262,7 +264,7 @@ namespace MediaPortal.GUI.Radio
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      selectedItemIndex = GetSelectedItemNo();
+      selectedItemIndex = facadeView.SelectedListItemIndex;
       SaveSettings();
       base.OnPageDestroy(newWindowId);
     }
@@ -273,10 +275,42 @@ namespace MediaPortal.GUI.Radio
 
       if (control == btnViewAs)
       {
-        currentView = (View)btnViewAs.SelectedItem;
-        ShowThumbPanel();
+        bool shouldContinue = false;
+        do
+        {
+          shouldContinue = false;
+          switch (currentView)
+          {
+            case View.List:
+              currentView = View.Icons;
+              if (facadeView.ThumbnailView == null)
+                shouldContinue = true;
+              else
+                facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
+              break;
+
+            case View.Icons:
+              currentView = View.LargeIcons;
+              if (facadeView.ThumbnailView == null)
+                shouldContinue = true;
+              else
+                facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
+              break;
+
+            case View.LargeIcons:
+              currentView = View.List;
+              if (facadeView.ListView == null)
+                shouldContinue = true;
+              else
+                facadeView.View = GUIFacadeControl.ViewMode.List;
+              break;
+          }
+        } while (shouldContinue);
+
+        SelectCurrentItem();
         GUIControl.FocusControl(GetID, controlId);
-      }
+        return;
+      }//if (control == btnViewAs)
 
       if (control == btnSortBy) // sort by
       {
@@ -285,7 +319,7 @@ namespace MediaPortal.GUI.Radio
         GUIControl.FocusControl(GetID, controlId);
       }
 
-      if (control == listView || control == thumbnailView)
+      if (control == facadeView)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
@@ -360,80 +394,84 @@ namespace MediaPortal.GUI.Radio
     {
       get
       {
-        if (currentView == View.BigIcons) return true;
+        if (currentView == View.LargeIcons) return true;
         return false;
       }
     }
 
-    GUIListItem GetSelectedItem()
+    //GUIListItem GetSelectedItem()
+    //{
+    //  if (ViewByIcon)
+    //    return thumbnailView.SelectedListItem;
+    //  else
+    //    return listView.SelectedListItem;
+    //}
+
+    //GUIListItem GetItem(int itemIndex)
+    //{
+    //  if (ViewByIcon)
+    //  {
+    //    if (itemIndex >= thumbnailView.Count) return null;
+    //    return thumbnailView[itemIndex];
+    //  }
+    //  else
+    //  {
+    //    if (itemIndex >= listView.Count) return null;
+    //    return listView[itemIndex];
+    //  }
+    //}
+
+    //int GetSelectedItemNo()
+    //{
+    //  if (ViewByIcon)
+    //    return thumbnailView.SelectedListItemIndex;
+    //  else
+    //    return listView.SelectedListItemIndex;
+    //}
+
+    //int GetItemCount()
+    //{
+    //  if (ViewByIcon)
+    //    return thumbnailView.Count;
+    //  else
+    //    return listView.Count;
+    //}
+
+    void UpdateButtonStates()
     {
-      if (ViewByIcon)
-        return thumbnailView.SelectedListItem;
-      else
-        return listView.SelectedListItem;
-    }
-
-    GUIListItem GetItem(int itemIndex)
-    {
-      if (ViewByIcon)
-      {
-        if (itemIndex >= thumbnailView.Count) return null;
-        return thumbnailView[itemIndex];
-      }
-      else
-      {
-        if (itemIndex >= listView.Count) return null;
-        return listView[itemIndex];
-      }
-    }
-
-    int GetSelectedItemNo()
-    {
-      if (ViewByIcon)
-        return thumbnailView.SelectedListItemIndex;
-      else
-        return listView.SelectedListItemIndex;
-    }
-
-    int GetItemCount()
-    {
-      if (ViewByIcon)
-        return thumbnailView.Count;
-      else
-        return listView.Count;
-    }
-
-    void UpdateButtons()
-    {
-      listView.IsVisible = false;
-      thumbnailView.IsVisible = false;
-
-      int iControl = listView.GetID;
-      if (ViewByIcon)
-        iControl = thumbnailView.GetID;
-
-      GUIControl.ShowControl(GetID, iControl);
-      GUIControl.FocusControl(GetID, iControl);
+      facadeView.IsVisible = false;
+      facadeView.IsVisible = true;
+      GUIControl.FocusControl(GetID, facadeView.GetID);
 
       btnSortBy.IsAscending = sortAscending;
     }
 
-    void ShowThumbPanel()
+    void SelectCurrentItem()
     {
-      int itemIndex = GetSelectedItemNo();
-      thumbnailView.ShowBigIcons(ViewByLargeIcon);
-      if (itemIndex > -1)
+      int iItem = facadeView.SelectedListItemIndex;
+      if (iItem > -1)
       {
-        GUIControl.SelectItemControl(GetID, listView.GetID, itemIndex);
-        GUIControl.SelectItemControl(GetID, thumbnailView.GetID, itemIndex);
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
       }
-      UpdateButtons();
+      UpdateButtonStates();
     }
+
+    //void ShowThumbPanel()
+    //{
+    //  int itemIndex = facadeView.SelectedListItemIndex;
+    //  thumbnailView.ShowBigIcons(ViewByLargeIcon);
+    //  if (itemIndex > -1)
+    //  {
+    //    GUIControl.SelectItemControl(GetID, listView.GetID, itemIndex);
+    //    GUIControl.SelectItemControl(GetID, thumbnailView.GetID, itemIndex);
+    //  }
+    //  UpdateButtons();
+    //}
 
     void LoadDirectory(string strNewDirectory)
     {
       GUIWaitCursor.Show();
-      GUIListItem SelectedItem = GetSelectedItem();
+      GUIListItem SelectedItem = facadeView.SelectedListItem;
       if (SelectedItem != null)
       {
         if (SelectedItem.IsFolder && SelectedItem.Label != "..")
@@ -442,8 +480,7 @@ namespace MediaPortal.GUI.Radio
         }
       }
       currentFolder = strNewDirectory;
-      listView.Clear();
-      thumbnailView.Clear();
+      facadeView.Clear();
 
       string objectCount = string.Empty;
       int totalItems = 0;
@@ -457,8 +494,7 @@ namespace MediaPortal.GUI.Radio
         item.MusicTag = null;
         item.ThumbnailImage = string.Empty;
         MediaPortal.Util.Utils.SetDefaultIcons(item);
-        listView.Add(item);
-        thumbnailView.Add(item);
+        facadeView.Add(item);
 
         for (int i = 0; i < currentPlayList.Count; ++i)
         {
@@ -477,9 +513,7 @@ namespace MediaPortal.GUI.Radio
             item.IconImage = thumbnail;
             item.ThumbnailImage = thumbnail;
           }
-
-          listView.Add(item);
-          thumbnailView.Add(item);
+          facadeView.Add(item);
           totalItems++;
         }
       }
@@ -529,9 +563,7 @@ namespace MediaPortal.GUI.Radio
               //if (item.ThumbnailImage==string.Empty)
               //  item.ThumbnailImage="DefaultMyradioBig.png";
             }
-
-            listView.Add(item);
-            thumbnailView.Add(item);
+            facadeView.Add(item);
             totalItems++;
           }
         }
@@ -558,9 +590,7 @@ namespace MediaPortal.GUI.Radio
                 if (currentFolder.Length == 0 || currentFolder.Equals(currentRadioFolder)) continue;
               }
             }
-
-            listView.Add(item);
-            thumbnailView.Add(item);
+            facadeView.Add(item);
             totalItems++;
           }
         }
@@ -571,13 +601,12 @@ namespace MediaPortal.GUI.Radio
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
 
-      ShowThumbPanel();
+      SelectCurrentItem();
 
+      //set selected item
       if (selectedItemIndex >= 0)
-      {
-        GUIControl.SelectItemControl(GetID, listView.GetID, selectedItemIndex);
-        GUIControl.SelectItemControl(GetID, thumbnailView.GetID, selectedItemIndex);
-      }
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
+
       GUIWaitCursor.Hide();
     }
     #endregion
@@ -586,9 +615,9 @@ namespace MediaPortal.GUI.Radio
     {
       SortMethod method = currentSortMethod;
 
-      for (int i = 0; i < GetItemCount(); ++i)
+      for (int i = 0; i < facadeView.Count; ++i)
       {
-        GUIListItem item = GetItem(i);
+        GUIListItem item = facadeView[i];
         if (item.MusicTag != null)
         {
           RadioStation station = (RadioStation)item.MusicTag;
@@ -631,10 +660,8 @@ namespace MediaPortal.GUI.Radio
     void OnSort()
     {
       SetLabels();
-      listView.Sort(this);
-      thumbnailView.Sort(this);
-
-      UpdateButtons();
+      facadeView.Sort(this);
+      UpdateButtonStates();
     }
 
     public int Compare(GUIListItem item1, GUIListItem item2)
@@ -765,7 +792,7 @@ namespace MediaPortal.GUI.Radio
 
     void OnClick(int itemIndex)
     {
-      GUIListItem item = GetSelectedItem();
+      GUIListItem item = facadeView.SelectedListItem;
       if (item == null) return;
       if (item.IsFolder)
       {
@@ -820,9 +847,9 @@ namespace MediaPortal.GUI.Radio
       else
       {
         //add current directory to playlist player
-        for (int i = 0; i < GetItemCount(); ++i)
+        for (int i = 0; i < facadeView.Count; ++i)
         {
-          GUIListItem item = GetItem(i);
+          GUIListItem item = facadeView[i];
           if (item.IsFolder) continue;
 
           // if item is a playlist
@@ -948,7 +975,7 @@ namespace MediaPortal.GUI.Radio
       sortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
 
       OnSort();
-      UpdateButtons();
+      UpdateButtonStates();
 
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
