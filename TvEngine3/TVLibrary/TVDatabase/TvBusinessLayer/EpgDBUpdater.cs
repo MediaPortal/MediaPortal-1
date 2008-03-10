@@ -346,12 +346,14 @@ namespace TvDatabase
         dbProg = new TvDatabase.Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, starRating, classification, parentRating);
       else
       {
-        dbProg.Title=title;
-        dbProg.Description=description;
-        dbProg.Genre=genre;
-        dbProg.StarRating=starRating;
-        dbProg.Classification=classification;
-        dbProg.ParentalRating=parentRating;
+        dbProg.Title = title;
+        dbProg.Description = description;
+        dbProg.StartTime = ep.StartTime;
+        dbProg.EndTime = ep.EndTime;
+        dbProg.Genre = genre;
+        dbProg.StarRating = starRating;
+        dbProg.Classification = classification;
+        dbProg.ParentalRating = parentRating;
         dbProg.OriginalAirDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value; // TODO: /!\ add implementation
       }
       dbProg.Persist();
