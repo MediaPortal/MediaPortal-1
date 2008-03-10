@@ -83,26 +83,6 @@
         <hyperlink>762</hyperlink>
       </control>
     </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <control>
-        <description>listcontrol</description>
-        <type>listcontrol</type>
-        <id>50</id>
-        <scrollOffset>2</scrollOffset>
-      </control>
-      <control>
-        <description>Thumbnail Panel</description>
-        <type>thumbnailpanel</type>
-        <id>51</id>
-        <scrollOffset>1</scrollOffset>
-        <onleft>2</onleft>
-        <onright>2</onright>
-      </control>
-    </control>
+    <import>common.facade.xml</import>
   </controls>
 </window>
-
