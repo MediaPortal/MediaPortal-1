@@ -94,6 +94,12 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
+
+      // Disable if TVE3
+      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      {
+        this.Enabled = false;
+      }
     }
 
     /// <summary>
