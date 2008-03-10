@@ -1815,18 +1815,9 @@ namespace MediaPortal.Util
               if (IsCuesheetFile(extension))
               {
                 CueSharp.CueSheet cuesheet = new CueSharp.CueSheet(strFiles[i]);
-                foreach (string strCueDataFile in cuesheet.DataFiles)
+                foreach (CueSharp.AudioFile strCueDataFile in cuesheet.DataFiles)
                 {
-                  string strCueDataFilePath;
-                  if (Path.IsPathRooted(strCueDataFile))
-                  {
-                    strCueDataFilePath = strCueDataFile;
-                  }
-                  else
-                  {
-                    strCueDataFilePath = Path.Combine(strDir, strCueDataFile);
-                  }
-                  strCueDataFiles.Add(strCueDataFilePath);
+                  strCueDataFiles.Add(strCueDataFile.FilePath);
                 }
               }
             }

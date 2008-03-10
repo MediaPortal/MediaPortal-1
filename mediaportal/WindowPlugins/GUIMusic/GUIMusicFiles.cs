@@ -810,8 +810,11 @@ namespace MediaPortal.GUI.Music
           playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = queueItem.Path;
           playlistItem.PlayedFileName = queueItem.PlayedFileName;
+          playlistItem.StartContentPositionMS = queueItem.StartContentPositionMS;
           playlistItem.StartPlayPositionMS = queueItem.StartPlayPositionMS;
-          playlistItem.EndPlayPositionMS = queueItem.EndPlayPositionMS;
+          playlistItem.EndContentPositionMS = queueItem.EndContentPositionMS;
+          playlistItem.StartPlayOffsetMS = queueItem.StartPlayOffsetMS;
+          playlistItem.EndPlayOffsetMS = queueItem.EndPlayOffsetMS;
           playlistItem.Description = queueItem.Label;
           playlistItem.Duration = queueItem.Duration;
           playlistItem.MusicTag = queueItem.MusicTag;
@@ -1200,8 +1203,11 @@ namespace MediaPortal.GUI.Music
           playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = pItem.Path;
           playlistItem.PlayedFileName = pItem.PlayedFileName;
+          playlistItem.StartContentPositionMS = pItem.StartContentPositionMS;
           playlistItem.StartPlayPositionMS = pItem.StartPlayPositionMS;
-          playlistItem.EndPlayPositionMS = pItem.EndPlayPositionMS;
+          playlistItem.EndContentPositionMS = pItem.EndContentPositionMS;
+          playlistItem.StartPlayOffsetMS = pItem.StartPlayOffsetMS;
+          playlistItem.EndPlayOffsetMS = pItem.EndPlayOffsetMS;
           playlistItem.Description = pItem.Label;
           playlistItem.Duration = pItem.Duration;
           playlistItem.MusicTag = pItem.MusicTag;
@@ -1535,62 +1541,78 @@ namespace MediaPortal.GUI.Music
 
                   // Get the data file associated to this track and also the track descriptor
                   CueSharp.Track track = cuesheet.Tracks[track_rank];
-                  
-                  // Get tags
-                  tag = new MusicTag();
-                  // Fill infos from album
-                  tag.Album       = cuesheet.Title;
-                  tag.AlbumArtist = cuesheet.Performer;
-                  tag.Artist      = tag.AlbumArtist;
-                  tag.Comment     = cuesheet.CommentTag; // By default track comment is album one
-                  tag.DiscID      = cuesheet.DiscIDTag;
-                  tag.TrackTotal  = cuesheet.Tracks.Length;
-                  tag.Genre       = cuesheet.GenreTag;   // By default track genre is album one
-                  pItem.Label     = pItem.Path;          // By default item label is the file path
 
+                  tag = null;
                   if (track != null)
                   {
-                    string strCueDataFile = track.UsedDataFile.Filename;
-                    if (Path.IsPathRooted(strCueDataFile))
+                    // get correct tag parser
+                    tag = TagReader.TagReader.ReadTag(track.UsedDataFile.FilePath);
+                    // hack in case the tile has been set from data filename intead of track filename
+                    //  revert to track filename
+                    if (tag.Title.Trim() != string.Empty)
                     {
-                      pItem.PlayedFileName = strCueDataFile;
+                      string dataFilename = Path.GetFileNameWithoutExtension(tag.FileName);
+                      if (tag.Title == dataFilename)
+                        tag.Title = Path.GetFileNameWithoutExtension(pItem.Path);
                     }
-                    else
-                    {
-                      pItem.PlayedFileName = Path.Combine(virtualFolderParent, strCueDataFile);
-                    }
-                    pItem.StartPlayPositionMS = track.DataFileRelativeStartFramePosition.InMiliSeconds;
-                    pItem.EndPlayPositionMS   = track.DataFileRelativeEndFramePosition.InMiliSeconds;
-  
+                  }
+                  if (tag == null)
+                  {
+                    tag = new MusicTag();
+                  }
+                  // Fill infos from album
+                  if (tag.Album.Trim() == string.Empty)
+                    tag.Album = cuesheet.Title;
+                  if ((tag.AlbumArtist.Trim() == string.Empty) && (cuesheet.Performer.Trim() != string.Empty))
+                  {
+                    tag.AlbumArtist = cuesheet.Performer;
+                    tag.HasAlbumArtist = true;
+                  }
+                  if (tag.Artist.Trim() == string.Empty)
+                    tag.Artist = tag.AlbumArtist; // By default track artist is album one
+                  if (tag.Comment.Trim() == string.Empty)
+                    tag.Comment = cuesheet.CommentTag; // By default track comment is album one
+                  if (tag.DiscID == 0)
+                    tag.DiscID = cuesheet.DiscIDTag;
+                  if (tag.TrackTotal <= 0)
+                    tag.TrackTotal = cuesheet.Tracks.Length;
+                  if (tag.Year <= 0)
+                    tag.Year = cuesheet.DateTag;
+                  if (tag.Genre.Trim() == string.Empty)
+                    tag.Genre = cuesheet.GenreTag; // By default track genre is album one
+                 
+                  // Fill track specific infos
+                  if (track != null)
+                  {
                     tag.Duration = (int)track.Duration.InSeconds;
 
-                    // Fill track specific infos
                     if (track.Performer.Trim() != string.Empty)
-                      tag.Artist  = track.Performer;
+                      tag.Artist = track.Performer;
                     if (track.GenreTag.Trim() != string.Empty)
-                      tag.Genre   = track.GenreTag;
+                      tag.Genre = track.GenreTag;
                     if (track.CommentTag.Trim() != string.Empty)
                       tag.Comment = track.CommentTag;
                     
-                    if (track_rank+1 != track.TrackNumber)
-                    {
-                      // Hidden Track
-                      tag.Track    = -1;
-                      tag.Title    = string.Empty;
-                    }
-                    else
-                    {
-                      // Visible Track
-                      tag.Track   = track.TrackNumber;
-                      tag.Title   = track.Title;
-                    }
-
-                    if (tag.Title.Trim() != string.Empty)
-                      pItem.Label = tag.Title;
+                    tag.Track = track.TrackNumber;
+                    if (track.Title.Trim() != string.Empty)
+                      tag.Title = track.Title;
                   }
 
-                  bNewFile = true;
+                  if (tag.Title.Trim() != string.Empty)
+                    pItem.Label = tag.Title;
                   pItem.MusicTag = tag;
+                  if (track != null)
+                  {
+                    pItem.PlayedFileName      = track.UsedDataFile.FilePath;
+                    pItem.StartContentPositionMS = track.DataFileRelativeStartFramePosition.InMiliSeconds;
+                    pItem.StartPlayPositionMS    = track.DataFileRelativeStartPlayFramePosition.InMiliSeconds;
+                    pItem.EndContentPositionMS   = track.DataFileRelativeEndFramePosition.InMiliSeconds;
+                    pItem.StartPlayOffsetMS      = 0;
+                    pItem.EndPlayOffsetMS        = pItem.EndContentPositionMS - pItem.StartPlayPositionMS;
+                  }
+
+
+                  bNewFile = true;
                 }
                 else
                 // if id3 tag scanning is turned on AND we're scanning the directory

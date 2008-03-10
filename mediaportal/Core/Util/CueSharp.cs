@@ -136,11 +136,21 @@ namespace CueSharp
       get { return GetTagInComment("GENRE"); }
       set { SetTagInComment("GENRE", value); }
     }
-    public string DateTag
+
+    public int DateTag
     {
-      get { return GetTagInComment("DATE"); }
-      set { SetTagInComment("DATE", value); }
+      get
+      {
+        string strDate = GetTagInComment("DATE");
+        try
+        { return Convert.ToInt32(strDate); }
+        catch (Exception)
+        { }
+        return 0;
+      }
+      set { SetTagInComment("DATE", value.ToString()); }
     }
+
     public string CommentTag
     {
       get { return GetTagInComment("COMMENT"); }
@@ -186,7 +196,7 @@ namespace CueSharp
     /// <summary>
     /// The array of datafiles in the cuesheet.
     /// </summary>
-    public string[] DataFiles
+    public AudioFile[] DataFiles
     {
       get
       {
@@ -196,11 +206,11 @@ namespace CueSharp
           if (Tracks[t].DataFile.Filename != null)
             nb_datafiles++;
         }
-        string[] audiofiles = new string[nb_datafiles];
+        AudioFile[] audiofiles = new AudioFile[nb_datafiles];
         for (int t = 0, i = 0; t < Tracks.Length; ++t)
         {
           if (Tracks[t].DataFile.Filename != null)
-            audiofiles[i++] = Tracks[t].DataFile.Filename;
+            audiofiles[i++] = Tracks[t].DataFile;
         }
         return audiofiles;
       }
@@ -423,7 +433,12 @@ namespace CueSharp
         line = line.Substring(1, line.LastIndexOf('"') - 1);
       }
 
-      return new AudioFile(line, fileType);
+      string dataFilePath;
+      if (Path.IsPathRooted(line))
+        dataFilePath = line;
+      else
+        dataFilePath = Path.Combine(Path.GetDirectoryName(FilePath), line);
+      return new AudioFile(line, fileType, dataFilePath);
     }
 
     private void ParseFlags(string line, int trackOn)
@@ -667,7 +682,13 @@ namespace CueSharp
       Track track = new Track(m_Tracks.Length, "");
       track.Performer = performer;
       track.Title     = title;
-      track.DataFile  = new AudioFile(filename, fType);
+
+      string dataFilePath;
+      if (Path.IsPathRooted(filename))
+        dataFilePath = filename;
+      else
+        dataFilePath = Path.Combine(Path.GetDirectoryName(FilePath), filename);
+      track.DataFile  = new AudioFile(filename, fType, dataFilePath);
 
       AddTrack(track);
     }
@@ -1363,6 +1384,14 @@ namespace CueSharp
     }
 
     /// <summary>
+    /// Get the position of the start play frame of the track from the beginning of the data file
+    /// </summary>
+    public FramePosition DataFileRelativeStartPlayFramePosition
+    {
+      get { return GetIndex(1).Position; }
+    }
+
+    /// <summary>
     /// Get the position of the end frame of the track from the beginning of the data file
     /// </summary>
     public FramePosition DataFileRelativeEndFramePosition
@@ -1379,11 +1408,7 @@ namespace CueSharp
           try
           {
             // Get data file full path
-            string dataFilePath;
-            if (Path.IsPathRooted(dataFilename))
-              dataFilePath = dataFilename;
-            else
-              dataFilePath = Path.Combine(Path.GetDirectoryName(Sheet.FilePath), dataFilename);
+            string dataFilePath = UsedDataFile.FilePath;
 
             // Gets informations about the data file
             TagLib.ByteVector.UseBrokenLatin1Behavior = true;
@@ -1408,7 +1433,7 @@ namespace CueSharp
     /// </summary>
     public FramePosition Duration
     {
-      get { return DataFileRelativeEndFramePosition - DataFileRelativeStartFramePosition; }
+      get { return DataFileRelativeEndFramePosition - DataFileRelativeStartPlayFramePosition; }
     }
 
     /// <summary>
@@ -1711,6 +1736,7 @@ namespace CueSharp
   {
     #region Private Variables
     private string m_Filename;
+    private string m_FilePath;
     private FileType m_Filetype;
     #endregion
 
@@ -1719,6 +1745,12 @@ namespace CueSharp
     {
       get { return m_Filename; }
       set { m_Filename = value; }
+    }
+
+    public string FilePath
+    {
+      get { return m_FilePath; }
+      set { m_FilePath = value; }
     }
 
     /// <summary>
@@ -1737,7 +1769,11 @@ namespace CueSharp
 
     #region Constructors
     public AudioFile(string filename, string filetype)
+      : this(filename, filetype, filename)
+    {}
+    public AudioFile(string filename, string filetype, string filepath)
     {
+      m_FilePath = filepath;
       m_Filename = filename;
 
       switch (filetype.Trim().ToUpper())
@@ -1764,7 +1800,11 @@ namespace CueSharp
     }
 
     public AudioFile(string filename, FileType filetype)
+      : this(filename, filetype, filename)
+    {}
+    public AudioFile(string filename, FileType filetype, string filepath)
     {
+      m_FilePath = filepath;
       m_Filename = filename;
       m_Filetype = filetype;
     }

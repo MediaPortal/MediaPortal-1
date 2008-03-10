@@ -76,14 +76,15 @@ namespace MediaPortal.Player
     /// This method is used to start playing a file and start at specific position and end at a specific position
     /// </summary>
     /// <param name="strFile">file to play</param>
-    /// <param name="beginPositionMS">the start position in the currently playing file (in ms)</param>
-    /// <param name="startPositionMS">the start position in the currently playing file (in ms)</param>
-    /// <param name="endPositionMS">the end position in the currently playing file (in ms)</param>
+    /// <param name="startContentPositionMS">the start content position in the currently playing file (in ms)</param>
+    /// <param name="startPlayPositionMS">the start play position in the currently playing file (in ms) [everything before is the pre-gap]</param>
+    /// <param name="startPlayOffsetMS">the start play offset in the currently playing file (in ms) relative to startPlayPositionMS </param>
+    /// <param name="endContentPositionMS">the end content position in the currently playing file (in ms)</param>
     /// <returns>
     /// true: file is playing
     /// false: unable to play file
     /// </returns>
-    public virtual bool Play(string strFile, int beginPositionMS, int startPositionMS, int endPositionMS)
+    public virtual bool Play(string strFile, int startContentPositionMS, int startPlayPositionMS, int startPlayOffsetMS, int endContentPositionMS)
     {
       return Play(strFile);
     }
@@ -97,7 +98,7 @@ namespace MediaPortal.Player
     /// true: file is playing
     /// false: unable to play file
     /// </returns>
-    public virtual bool PlayStream(string strFile, string streamName)
+    public virtual bool PlayStream(string strFile,string streamName)
     {
       return Play(strFile);
     }
@@ -278,20 +279,9 @@ namespace MediaPortal.Player
       get { return 0; }
     }
 
-    /// <summary>
-    /// Property to get the start position in the currently playing file (in ms)
-    /// </summary>
-    public virtual int StartPositionMS
+    public virtual double MinPosition
     {
       get { return 0; }
-    }
-
-    /// <summary>
-    /// Property to get the end position in the currently playing file (in ms)
-    /// </summary>
-    public int EndPositionMS
-    {
-      get { return StartPositionMS + (int)(Duration * 1000); }
     }
 
     /// <summary>
@@ -378,7 +368,7 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool Initializing
     {
-      get { return false; }
+        get { return false; }
     }
 
     /// <summary>
@@ -498,7 +488,7 @@ namespace MediaPortal.Player
     public virtual string AudioType(int iStream)
     {
       return Strings.Unknown;
-    }
+    }    
 
     /// <summary>
     /// Property to get the total number of subtitle streams

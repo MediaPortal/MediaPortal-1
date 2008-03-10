@@ -59,8 +59,12 @@ namespace MediaPortal.GUI.Library
     protected string _playedFileName = string.Empty;              // path + filename of the data file used to play the item
     protected string _dvdLabel = string.Empty;						// indicates the disc number of movie
     protected int _duration = 0;							// duration (in seconds) of the movie or song
-    protected int _startPlayPositionMS = 0;               // start position (in ms) of the movie or song 
-    protected int _endPlayPositionMS = 0;               // end position (in ms) of the movie or song 
+    protected int _startContentPositionMS = 0;        // start position (in ms) of the movie or song content
+    protected int _startPlayPositionMS = 0;           // start play position (in ms) of the movie or song
+                                                      // everything between _startContentPositionMS and _startPlayPositionMS is seen as pregap and require a negative offset
+    protected int _endContentPositionMS = 0;          // end position (in ms) of the movie or song content
+    protected int _startPlayOffsetMS = 0;             // start play offset (in ms) of the movie or song from the beginning of the content
+    protected int _endPlayOffsetMS = 0;               // end play offset (in ms) of the movie or song from the beginning of the content
     FileInformation _fileInfo = null;								// file info (size, date/time etc.) of the file
     bool _shaded = false;						// indicates if the item needs to be rendered shaded
     float _rating = 0;								// rating of a movie
@@ -101,8 +105,11 @@ namespace MediaPortal.GUI.Library
       _pinIconName = item._pinIconName;
       _isSelected = item._isSelected;
       _isVirtual = item._isVirtual;
+      _startContentPositionMS = item._startContentPositionMS;
       _startPlayPositionMS = item._startPlayPositionMS;
-      _endPlayPositionMS = item._endPlayPositionMS;
+      _endContentPositionMS = item._endContentPositionMS;
+      _startPlayOffsetMS = item._startPlayOffsetMS;
+      _endPlayOffsetMS = item._endPlayOffsetMS;
       _playedFileName = item._playedFileName;
       _isFolder = item._isFolder;
       _folder = item._folder;
@@ -458,6 +465,14 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the start pos (in ms) of the movie or song.
     /// </summary>
+    public int StartContentPositionMS
+    {
+      get { return _startContentPositionMS; }
+      set { _startContentPositionMS = value; }
+    }
+    /// <summary>
+    /// Get/set the start play pos (in ms) of the movie or song.
+    /// </summary>
     public int StartPlayPositionMS
     {
       get { return _startPlayPositionMS; }
@@ -466,10 +481,26 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the end pos (in ms) of the movie or song.
     /// </summary>
-    public int EndPlayPositionMS
+    public int EndContentPositionMS
     {
-      get { return _endPlayPositionMS; }
-      set { _endPlayPositionMS = value; }
+      get { return _endContentPositionMS; }
+      set { _endContentPositionMS = value; }
+    }
+    /// <summary>
+    /// Get/set the start play offset (in ms) of the movie or song from the start play pos.
+    /// </summary>
+    public int StartPlayOffsetMS
+    {
+      get { return _startPlayOffsetMS; }
+      set { _startPlayOffsetMS = value; }
+    }
+    /// <summary>
+    /// Get/set the end play offset (in ms) of the movie or song from the start play pos.
+    /// </summary>
+    public int EndPlayOffsetMS
+    {
+      get { return _endPlayOffsetMS; }
+      set { _endPlayOffsetMS = value; }
     }
 
     /// <summary>

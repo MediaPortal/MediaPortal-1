@@ -602,7 +602,15 @@ namespace MediaPortal.Util
 
     public static string SecondsToShortHMSString(int lSeconds)
     {
-      if (lSeconds < 0) return ("0:00");
+      bool negative;
+      if (lSeconds < 0)
+      {
+        negative = true;
+        lSeconds = -lSeconds;
+      }
+      else
+        negative = false;
+
       int hh = lSeconds / 3600;
       lSeconds = lSeconds % 3600;
       int mm = lSeconds / 60;
@@ -610,6 +618,10 @@ namespace MediaPortal.Util
 
       string strHMS = "";
       strHMS = String.Format("{0}:{1:00}", hh, mm);
+
+      if (negative)
+        strHMS = "-" + strHMS;
+
       return strHMS;
     }
 
@@ -620,7 +632,15 @@ namespace MediaPortal.Util
 
     public static string SecondsToHMSString(int lSeconds)
     {
-      if (lSeconds < 0) return ("0:00");
+      bool negative;
+      if (lSeconds < 0)
+      {
+        negative = true;
+        lSeconds = -lSeconds;
+      }
+      else
+        negative = false;
+
       int hh = lSeconds / 3600;
       lSeconds = lSeconds % 3600;
       int mm = lSeconds / 60;
@@ -631,6 +651,10 @@ namespace MediaPortal.Util
         strHMS = String.Format("{0}:{1:00}:{2:00}", hh, mm, ss);
       else
         strHMS = String.Format("{0}:{1:00}", mm, ss);
+
+      if (negative)
+        strHMS = "-" + strHMS;
+
       return strHMS;
     }
 
@@ -659,7 +683,14 @@ namespace MediaPortal.Util
 
     public static string SecondsToHMString(int lSeconds)
     {
-      if (lSeconds < 0) return "0:00";
+      bool negative;
+      if (lSeconds < 0)
+      {
+        negative = true;
+        lSeconds = -lSeconds;
+      }
+      else
+        negative = false;
       int hh = lSeconds / 3600;
       lSeconds = lSeconds % 3600;
       int mm = lSeconds / 60;
@@ -669,6 +700,10 @@ namespace MediaPortal.Util
         strHM = String.Format("{0:00}:{1:00}", hh, mm);
       else
         strHM = String.Format("0:{0:00}", mm);
+ 
+      if (negative)
+        strHM = "-" + strHM;
+ 
       return strHM;
     }
 
