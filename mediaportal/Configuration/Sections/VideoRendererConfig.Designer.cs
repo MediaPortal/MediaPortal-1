@@ -163,6 +163,7 @@ namespace MediaPortal.Configuration.Sections
       // mpVMR9FilterMethod
       // 
       this.mpVMR9FilterMethod.BorderColor = System.Drawing.Color.Empty;
+      this.mpVMR9FilterMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpVMR9FilterMethod.FormattingEnabled = true;
       this.mpVMR9FilterMethod.Items.AddRange(new object[] {
             "None",
@@ -175,7 +176,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpVMR9FilterMethod.Name = "mpVMR9FilterMethod";
       this.mpVMR9FilterMethod.Size = new System.Drawing.Size(138, 21);
       this.mpVMR9FilterMethod.TabIndex = 2;
-      this.mpVMR9FilterMethod.Text = "Gaussian Quad Filtering";
       this.VMR9Tips.SetToolTip(this.mpVMR9FilterMethod, "The filtering method determines the scaling algorithm used by the VMR9");
       // 
       // label1
