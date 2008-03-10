@@ -543,16 +543,20 @@ namespace TvPlugin
           }
           item.Label2 = tmpString;
           item.Label3 = local789 + tmpString;
-
-          sb.Append(" - ");
+          
           if (_showChannelNumber == true)
-          {
+          {            
+            string chanNumbers = " - ";
             foreach (TuningDetail detail in _tvChannelList[i].ReferringTuningDetail())
-              sb.Append(detail.ChannelNumber + " - ");
+              chanNumbers = chanNumbers + detail.ChannelNumber + " - ";
+            // strip trailing " - "
+            chanNumbers = chanNumbers.Remove(chanNumbers.Length - 3);
+            sb.Append(chanNumbers);
           }
 
           if (listNowNext.ContainsKey(CurrentId))
           {
+            sb.Append(" - ");
             sb.Append(CalculateProgress(listNowNext[CurrentId].NowStartTime, listNowNext[CurrentId].NowEndTime).ToString());
             sb.Append("%");
           }
