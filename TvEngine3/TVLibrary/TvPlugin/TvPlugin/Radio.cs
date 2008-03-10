@@ -50,30 +50,28 @@ namespace TvPlugin
 {
   public class Radio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]    protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(7)]    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(50)]   protected GUIListControl listView = null;
-    [SkinControlAttribute(51)]   protected GUIThumbnailPanel thumbnailView = null;
-    
+    #region enums
+
     enum SortMethod
     {
       Name = 0,
       Type = 1,
       Genre = 2,
       Bitrate = 3,
-      Number
+      Number = 4
     }
 
     enum View : int
     {
       List = 0,
       Icons = 1,
-      BigIcons = 2,
+      LargeIcons = 2,
     }
 
-    #region Base variables
+    #endregion
+
+    #region Base variabeles
+
     View currentView = View.List;
     SortMethod currentSortMethod = SortMethod.Number;
     bool sortAscending = true;
@@ -83,7 +81,18 @@ namespace TvPlugin
     int selectedItemIndex = -1;
     bool showAllChannelsGroup = true;
     string rootGroup = "(none)";
-    public static RadioChannelGroup selectedGroup=null;
+    public static RadioChannelGroup selectedGroup = null;
+
+    #endregion
+
+    #region SkinControls
+    
+    [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnNext = null;
+
     #endregion
 
     //heartbeat related stuff
@@ -221,7 +230,7 @@ namespace TvPlugin
         {
           if (tmpLine == "list") currentView = View.List;
           else if (tmpLine == "icons") currentView = View.Icons;
-          else if (tmpLine == "largeicons") currentView = View.BigIcons;
+          else if (tmpLine == "largeicons") currentView = View.LargeIcons;
         }
 
         tmpLine = (string)xmlreader.GetValue("myradio", "sort");
@@ -254,7 +263,7 @@ namespace TvPlugin
           case View.Icons:
             xmlwriter.SetValue("myradio", "viewby", "icons");
             break;
-          case View.BigIcons:
+          case View.LargeIcons:
             xmlwriter.SetValue("myradio", "viewby", "largeicons");
             break;
         }
@@ -294,9 +303,9 @@ namespace TvPlugin
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        if (listView.Focus || thumbnailView.Focus)
+        if (facadeView.Focus)
         {
-          GUIListItem item = GetItem(0);
+          GUIListItem item = facadeView[0];
           if (item != null)
           {
             if (item.IsFolder && item.Label == "..")
@@ -310,7 +319,7 @@ namespace TvPlugin
 
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
-        GUIListItem item = GetItem(0);
+        GUIListItem item = facadeView[0];
         if (item != null)
         {
           if (item.IsFolder && item.Label == "..")
@@ -348,14 +357,14 @@ namespace TvPlugin
           break;
       }
 
-      ShowThumbPanel();
+      SelectCurrentItem();
       LoadDirectory(currentFolder);
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      selectedItemIndex = GetSelectedItemNo();
+      selectedItemIndex = facadeView.SelectedListItemIndex;
       SaveSettings();
       base.OnPageDestroy(newWindowId);
     }
@@ -363,12 +372,45 @@ namespace TvPlugin
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
+
       if (control == btnViewAs)
       {
-        currentView = (View)btnViewAs.SelectedItem;
-        ShowThumbPanel();
+        bool shouldContinue = false;
+        do
+        {
+          shouldContinue = false;
+          switch (currentView)
+          {
+            case View.List:
+              currentView = View.Icons;
+              if (facadeView.ThumbnailView == null)
+                shouldContinue = true;
+              else
+                facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
+              break;
+
+            case View.Icons:
+              currentView = View.LargeIcons;
+              if (facadeView.ThumbnailView == null)
+                shouldContinue = true;
+              else
+                facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
+              break;
+
+            case View.LargeIcons:
+              currentView = View.List;
+              if (facadeView.ListView == null)
+                shouldContinue = true;
+              else
+                facadeView.View = GUIFacadeControl.ViewMode.List;
+              break;
+          }
+        } while (shouldContinue);
+
+        SelectCurrentItem();
         GUIControl.FocusControl(GetID, controlId);
-      }
+        return;
+      }//if (control == btnViewAs)
 
       if (control == btnSortBy) // sort by
       {
@@ -377,7 +419,7 @@ namespace TvPlugin
         GUIControl.FocusControl(GetID, controlId);
       }
 
-      if (control == listView || control == thumbnailView)
+      if (control == facadeView)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
@@ -402,79 +444,83 @@ namespace TvPlugin
     {
       get
       {
-        if (currentView == View.BigIcons) return true;
+        if (currentView == View.LargeIcons) return true;
         return false;
       }
     }
 
-    GUIListItem GetSelectedItem()
+    //GUIListItem GetSelectedItem()
+    //{
+    //  if (ViewByIcon)
+    //    return thumbnailView.SelectedListItem;
+    //  else
+    //    return listView.SelectedListItem;
+    //}
+
+    //GUIListItem GetItem(int itemIndex)
+    //{
+    //  if (ViewByIcon)
+    //  {
+    //    if (itemIndex >= thumbnailView.Count) return null;
+    //    return thumbnailView[itemIndex];
+    //  }
+    //  else
+    //  {
+    //    if (itemIndex >= listView.Count) return null;
+    //    return listView[itemIndex];
+    //  }
+    //}
+
+    //int GetSelectedItemNo()
+    //{
+    //  if (ViewByIcon)
+    //    return thumbnailView.SelectedListItemIndex;
+    //  else
+    //    return listView.SelectedListItemIndex;
+    //}
+
+    //int GetItemCount()
+    //{
+    //  if (ViewByIcon)
+    //    return thumbnailView.Count;
+    //  else
+    //    return listView.Count;
+    //}
+
+    void UpdateButtonStates()
     {
-      if (ViewByIcon)
-        return thumbnailView.SelectedListItem;
-      else
-        return listView.SelectedListItem;
-    }
-
-    GUIListItem GetItem(int itemIndex)
-    {
-      if (ViewByIcon)
-      {
-        if (itemIndex >= thumbnailView.Count) return null;
-        return thumbnailView[itemIndex];
-      }
-      else
-      {
-        if (itemIndex >= listView.Count) return null;
-        return listView[itemIndex];
-      }
-    }
-
-    int GetSelectedItemNo()
-    {
-      if (ViewByIcon)
-        return thumbnailView.SelectedListItemIndex;
-      else
-        return listView.SelectedListItemIndex;
-    }
-
-    int GetItemCount()
-    {
-      if (ViewByIcon)
-        return thumbnailView.Count;
-      else
-        return listView.Count;
-    }
-
-    void UpdateButtons()
-    {
-      listView.IsVisible = false;
-      thumbnailView.IsVisible = false;
-
-      int iControl = listView.GetID;
-      if (ViewByIcon)
-        iControl = thumbnailView.GetID;
-
-      GUIControl.ShowControl(GetID, iControl);
-      GUIControl.FocusControl(GetID, iControl);
+      facadeView.IsVisible = false;
+      facadeView.IsVisible = true;
+      GUIControl.FocusControl(GetID, facadeView.GetID);
 
       btnSortBy.IsAscending = sortAscending;
     }
 
-    void ShowThumbPanel()
+    void SelectCurrentItem()
     {
-      int itemIndex = GetSelectedItemNo();
-      thumbnailView.ShowBigIcons(ViewByLargeIcon);
-      if (itemIndex > -1)
+      int iItem = facadeView.SelectedListItemIndex;
+      if (iItem > -1)
       {
-        GUIControl.SelectItemControl(GetID, listView.GetID, itemIndex);
-        GUIControl.SelectItemControl(GetID, thumbnailView.GetID, itemIndex);
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
       }
-      UpdateButtons();
+      UpdateButtonStates();
     }
+
+    //void ShowThumbPanel()
+    //{
+    //  int itemIndex = facadeView.SelectedListItemIndex;
+    //  thumbnailView.ShowBigIcons(ViewByLargeIcon);
+    //  if (itemIndex > -1)
+    //  {
+    //    GUIControl.SelectItemControl(GetID, listView.GetID, itemIndex);
+    //    GUIControl.SelectItemControl(GetID, thumbnailView.GetID, itemIndex);
+    //  }
+    //  UpdateButtons();
+    //}
 
     void LoadDirectory(string strNewDirectory)
     {
-      GUIListItem SelectedItem = GetSelectedItem();
+      GUIListItem SelectedItem = facadeView.SelectedListItem;
       if (SelectedItem != null)
       {
         if (SelectedItem.IsFolder && SelectedItem.Label != "..")
@@ -483,8 +529,7 @@ namespace TvPlugin
         }
       }
       currentFolder = strNewDirectory;
-      listView.Clear();
-      thumbnailView.Clear();
+      facadeView.Clear();
       
       string objectCount = String.Empty;
       int totalItems = 0;
@@ -513,8 +558,7 @@ namespace TvPlugin
             item.IconImage = thumbnail;
             item.ThumbnailImage = thumbnail;
           }
-          listView.Add(item);
-          thumbnailView.Add(item);
+          facadeView.Add(item);
           totalItems++;
         }
         if (rootGroup != "(none)")
@@ -548,8 +592,7 @@ namespace TvPlugin
                 item.IconImage = thumbnail;
                 item.ThumbnailImage = thumbnail;
               }
-              listView.Add(item);
-              thumbnailView.Add(item);
+              facadeView.Add(item);
               totalItems++;
             }
           }
@@ -570,8 +613,7 @@ namespace TvPlugin
         item.MusicTag = null;
         item.ThumbnailImage = String.Empty;
         MediaPortal.Util.Utils.SetDefaultIcons(item);
-        listView.Add(item);
-        thumbnailView.Add(item);
+        facadeView.Add(item);
         IList maps=group.ReferringRadioGroupMap();
         foreach (RadioGroupMap map in maps)
         {
@@ -597,8 +639,7 @@ namespace TvPlugin
             item.IconImage = thumbnail;
             item.ThumbnailImage = thumbnail;
           }
-          listView.Add(item);
-          thumbnailView.Add(item);
+          facadeView.Add(item);
           totalItems++;
         }
       }
@@ -606,15 +647,12 @@ namespace TvPlugin
       OnSort();
       objectCount = String.Format("{0} {1}", totalItems, GUILocalizeStrings.Get(632));
       GUIPropertyManager.SetProperty("#itemcount", objectCount);
-      ShowThumbPanel();
+      SelectCurrentItem();
       SetLabels();
 
+      //set selected item
       if (selectedItemIndex >= 0)
-      {
-        GUIControl.SelectItemControl(GetID, listView.GetID, selectedItemIndex);
-        GUIControl.SelectItemControl(GetID, thumbnailView.GetID, selectedItemIndex);
-      }
-
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
     }
     #endregion
 
@@ -654,10 +692,8 @@ namespace TvPlugin
     void OnSort()
     {
       SetLabels();
-      listView.Sort(this);
-      thumbnailView.Sort(this);
-
-      UpdateButtons();
+      facadeView.Sort(this);
+      UpdateButtonStates();
     }
 
     public int Compare(GUIListItem item1, GUIListItem item2)
@@ -763,7 +799,7 @@ namespace TvPlugin
     void OnClick(int itemIndex)
     {
       Log.Info("OnClick");
-      GUIListItem item = GetSelectedItem();
+      GUIListItem item = facadeView.SelectedListItem;
       if (item.MusicTag == null)
       {
         selectedItemIndex = -1;
@@ -890,7 +926,7 @@ namespace TvPlugin
       sortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
 
       OnSort();
-      UpdateButtons();
+      UpdateButtonStates();
 
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
