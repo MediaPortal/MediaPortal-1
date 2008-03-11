@@ -310,23 +310,6 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region decoding
-    public void SaveAnalogData(IntPtr dataPtr, int bufferLen)
-    {
-      if (dataPtr == IntPtr.Zero || bufferLen < 43)
-      {
-        return;
-      }
-      int maxLines = bufferLen / 43;
-      Marshal.Copy(dataPtr, analogBuffer, 0, bufferLen);
-      try
-      {
-        _decoder.Decode(analogBuffer, 3 * 43, maxLines);
-      }
-      catch (Exception)
-      {
-      }
-    }
-
     public void SaveData(IntPtr dataPtr)
     {
       if (dataPtr == IntPtr.Zero) return;
