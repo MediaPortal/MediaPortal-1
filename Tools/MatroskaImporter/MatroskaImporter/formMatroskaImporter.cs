@@ -89,22 +89,31 @@ namespace MatroskaImporter
     {
       btnLookup.Enabled = false;
       btnImport.Enabled = false;
-      try
+      if (cbTagRecordings.Checked)
       {
-        GetTagFiles();
+        try
+        {
+          GetTagFiles();
+        }
+        catch (Exception ex2)
+        {
+          MessageBox.Show(string.Format("Error gathering matroska tags: \n{0}", ex2.Message));
+        }
       }
-      catch (Exception ex2)
+      else      
+        OnLookupCompleted(new Dictionary<string, MatroskaTagInfo>());      
+
+      if (cbDbRecordings.Checked)
       {
-        MessageBox.Show(string.Format("Error gathering matroska tags: \n{0}", ex2.Message));
+        try
+        {
+          GetRecordings();
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show(string.Format("Error gathering recording informations: \n{0}", ex.Message));
+        }
       }
-      try
-      {
-        GetRecordings();
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show(string.Format("Error gathering recording informations: \n{0}", ex.Message));
-      }      
     }
 
     private void btnImport_Click(object sender, EventArgs e)
@@ -158,6 +167,12 @@ namespace MatroskaImporter
       btnLookup.Enabled = Directory.Exists(CurrentImportPath);
     }
 
+    private void MatroskaImporter_MouseClick(object sender, MouseEventArgs e)
+    {
+      if (e.Button == MouseButtons.Right)
+        cbUseThread.Visible = !cbUseThread.Visible;
+    }
+
     #endregion
 
     #region Tag retrieval
@@ -167,9 +182,16 @@ namespace MatroskaImporter
       Dictionary<string, MatroskaTagInfo> importTags = new Dictionary<string, MatroskaTagInfo>();
       try
       {
-        Thread lookupThread = new Thread(new ParameterizedThreadStart(MatroskaTagHandler.GetAllMatroskaTags));
-        lookupThread.Start((object)CurrentImportPath);
-        lookupThread.IsBackground = true;
+        if (cbUseThread.Checked)
+        {
+          Thread lookupThread = new Thread(new ParameterizedThreadStart(MatroskaTagHandler.GetAllMatroskaTags));
+          lookupThread.Start((object)CurrentImportPath);
+          lookupThread.IsBackground = true;
+        }
+        else
+        {
+          MatroskaTagHandler.GetAllMatroskaTags((object)CurrentImportPath);
+        }
       }
       catch (Exception ex)
       {
@@ -179,7 +201,10 @@ namespace MatroskaImporter
 
     private void OnLookupCompleted(Dictionary<string, MatroskaTagInfo> FoundTags)
     {
-      Invoke(new MethodTreeViewTags(AddTagFiles), new object[] { FoundTags });
+      if (cbUseThread.Checked)
+        Invoke(new MethodTreeViewTags(AddTagFiles), new object[] { FoundTags });
+      else
+        AddTagFiles(FoundTags);
     }
     
     /// <summary>

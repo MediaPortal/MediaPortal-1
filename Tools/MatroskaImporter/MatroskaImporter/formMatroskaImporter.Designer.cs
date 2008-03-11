@@ -36,8 +36,10 @@ namespace MatroskaImporter
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.btnExit = new System.Windows.Forms.Button();
       this.lblTags = new System.Windows.Forms.Label();
-      this.lblDbRecs = new System.Windows.Forms.Label();
       this.cbConfirmImport = new System.Windows.Forms.CheckBox();
+      this.cbTagRecordings = new System.Windows.Forms.CheckBox();
+      this.cbDbRecordings = new System.Windows.Forms.CheckBox();
+      this.cbUseThread = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // btnLookup
@@ -125,19 +127,8 @@ namespace MatroskaImporter
       this.lblTags.AutoSize = true;
       this.lblTags.Location = new System.Drawing.Point(12, 14);
       this.lblTags.Name = "lblTags";
-      this.lblTags.Size = new System.Drawing.Size(107, 13);
+      this.lblTags.Size = new System.Drawing.Size(0, 13);
       this.lblTags.TabIndex = 8;
-      this.lblTags.Text = "Recordings from tags";
-      // 
-      // lblDbRecs
-      // 
-      this.lblDbRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblDbRecs.AutoSize = true;
-      this.lblDbRecs.Location = new System.Drawing.Point(364, 14);
-      this.lblDbRecs.Name = "lblDbRecs";
-      this.lblDbRecs.Size = new System.Drawing.Size(131, 13);
-      this.lblDbRecs.TabIndex = 9;
-      this.lblDbRecs.Text = "Recordings from database";
       // 
       // cbConfirmImport
       // 
@@ -152,13 +143,52 @@ namespace MatroskaImporter
       this.cbConfirmImport.Text = "Ask for every import?";
       this.cbConfirmImport.UseVisualStyleBackColor = true;
       // 
+      // cbTagRecordings
+      // 
+      this.cbTagRecordings.AutoSize = true;
+      this.cbTagRecordings.Checked = true;
+      this.cbTagRecordings.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbTagRecordings.Location = new System.Drawing.Point(12, 7);
+      this.cbTagRecordings.Name = "cbTagRecordings";
+      this.cbTagRecordings.Size = new System.Drawing.Size(160, 17);
+      this.cbTagRecordings.TabIndex = 10;
+      this.cbTagRecordings.Text = "Lookup recordings from tags";
+      this.cbTagRecordings.UseVisualStyleBackColor = true;
+      // 
+      // cbDbRecordings
+      // 
+      this.cbDbRecordings.AutoSize = true;
+      this.cbDbRecordings.Checked = true;
+      this.cbDbRecordings.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbDbRecordings.Location = new System.Drawing.Point(367, 7);
+      this.cbDbRecordings.Name = "cbDbRecordings";
+      this.cbDbRecordings.Size = new System.Drawing.Size(175, 17);
+      this.cbDbRecordings.TabIndex = 11;
+      this.cbDbRecordings.Text = "Fetch recordings from database";
+      this.cbDbRecordings.UseVisualStyleBackColor = true;
+      // 
+      // cbUseThread
+      // 
+      this.cbUseThread.AutoSize = true;
+      this.cbUseThread.Checked = true;
+      this.cbUseThread.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbUseThread.Location = new System.Drawing.Point(230, 495);
+      this.cbUseThread.Name = "cbUseThread";
+      this.cbUseThread.Size = new System.Drawing.Size(107, 17);
+      this.cbUseThread.TabIndex = 12;
+      this.cbUseThread.Text = "Threaded lookup";
+      this.cbUseThread.UseVisualStyleBackColor = true;
+      this.cbUseThread.Visible = false;
+      // 
       // MatroskaImporter
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(712, 552);
+      this.Controls.Add(this.cbUseThread);
+      this.Controls.Add(this.cbDbRecordings);
+      this.Controls.Add(this.cbTagRecordings);
       this.Controls.Add(this.cbConfirmImport);
-      this.Controls.Add(this.lblDbRecs);
       this.Controls.Add(this.lblTags);
       this.Controls.Add(this.btnExit);
       this.Controls.Add(this.cbRecPaths);
@@ -170,6 +200,7 @@ namespace MatroskaImporter
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
       this.Name = "MatroskaImporter";
       this.Text = "TV Service recordings importer";
+      this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MatroskaImporter_MouseClick);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -185,8 +216,10 @@ namespace MatroskaImporter
     private System.Windows.Forms.ComboBox cbRecPaths;
     private System.Windows.Forms.Button btnExit;
     private System.Windows.Forms.Label lblTags;
-    private System.Windows.Forms.Label lblDbRecs;
     private System.Windows.Forms.CheckBox cbConfirmImport;
+    private System.Windows.Forms.CheckBox cbTagRecordings;
+    private System.Windows.Forms.CheckBox cbDbRecordings;
+    private System.Windows.Forms.CheckBox cbUseThread;
   }
 }
 
