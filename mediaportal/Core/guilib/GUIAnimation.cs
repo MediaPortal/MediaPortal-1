@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.Library
       for (int index = 0; index < _images.Length; index++)
       {
         _imageId++;
-        _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string)_filenames[index], Color.White);
+        _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string)_filenames[index], 0);
         _images[index].ParentControl = this;
         _images[index].ColourDiffuse = ColourDiffuse;
         _images[index].DimColor = DimColor;
