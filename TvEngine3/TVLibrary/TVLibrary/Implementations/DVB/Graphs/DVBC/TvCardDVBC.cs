@@ -63,7 +63,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardDVBC(DsDevice device)
+      : base()
     {
+      _cardType = CardType.DvbC;
       _device = device;
       _name = device.Name;
       _devicePath = device.DevicePath;
@@ -73,8 +75,7 @@ namespace TvLibrary.Implementations.DVB
         //BuildGraph();
         //RunGraph();
         //StopGraph();
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
     }
@@ -107,8 +108,7 @@ namespace TvLibrary.Implementations.DVB
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
 
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
@@ -239,7 +239,7 @@ namespace TvLibrary.Implementations.DVB
 
       _tuneRequest.put_Locator(locator);
 
-      ITvSubChannel ch = SubmitTuneRequest(subChannelId,channel, _tuneRequest);
+      ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
       RunGraph(ch.SubChannelId);
       return ch;
       //SetupPmtGrabber(dvbcChannel.PmtPid);

@@ -255,10 +255,10 @@ namespace TvService
           context.GetUser(ref user);
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
 
-					if (subchannel is AVObserverSubChannel)
+					if (subchannel is BaseSubChannel)
 					{
-            ((AVObserverSubChannel)subchannel).AudioVideoEvent -= new AVObserverSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
-            ((AVObserverSubChannel)subchannel).AudioVideoEvent += new AVObserverSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+            ((BaseSubChannel)subchannel).AudioVideoEvent -= new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+            ((BaseSubChannel)subchannel).AudioVideoEvent += new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
 					}
 
           if (!_eventsReady)
@@ -358,9 +358,9 @@ namespace TvService
         if (_cardHandler.Recorder.IsRecording(ref user)) return true;
 
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-				if (subchannel is AVObserverSubChannel)
+				if (subchannel is BaseSubChannel)
 				{
-          ((AVObserverSubChannel)subchannel).AudioVideoEvent -= new AVObserverSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
+          ((BaseSubChannel)subchannel).AudioVideoEvent -= new BaseSubChannel.AudioVideoObserverEvent(this.AudioVideoEventHandler);
 				}
 
         _eventVideo.Close();

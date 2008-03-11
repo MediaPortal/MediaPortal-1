@@ -104,7 +104,7 @@ namespace TvLibrary.Implementations.DVB
       switch (_card.cardType )
       {
         case (int)CardType.DvbS:
-          DVBSChannel tuningChannels = (DVBSChannel)_card.Channel;
+          DVBSChannel tuningChannels = (DVBSChannel)_card.CurrentChannel;
           DVBSChannel dvbsChannel = new DVBSChannel();
           dvbsChannel.Name = info.service_name;
           dvbsChannel.Provider = info.service_provider_name;
@@ -125,7 +125,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Write("Found:{0}", dvbsChannel);
           return dvbsChannel;
         case (int)CardType.DvbC:
-          DVBCChannel tuningChannelc = (DVBCChannel)_card.Channel;
+          DVBCChannel tuningChannelc = (DVBCChannel)_card.CurrentChannel;
           DVBCChannel dvbcChannel = new DVBCChannel();
           dvbcChannel.Name = info.service_name;
           dvbcChannel.Provider = info.service_provider_name;
@@ -143,7 +143,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Write("Found:{0}", dvbcChannel);
           return dvbcChannel;
         case (int)CardType.DvbT:
-          DVBTChannel tuningChannelt = (DVBTChannel)_card.Channel;
+          DVBTChannel tuningChannelt = (DVBTChannel)_card.CurrentChannel;
           DVBTChannel dvbtChannel = new DVBTChannel();
           dvbtChannel.Name = info.service_name;
           dvbtChannel.Provider = info.service_provider_name;
@@ -160,7 +160,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Write("Found:{0}", dvbtChannel);
           return dvbtChannel;
         case (int)CardType.Atsc:
-          ATSCChannel tuningChannela = (ATSCChannel)_card.Channel;
+          ATSCChannel tuningChannela = (ATSCChannel)_card.CurrentChannel;
           ATSCChannel atscChannel = new ATSCChannel();
           atscChannel.Name = info.service_name;
           atscChannel.Provider = info.service_provider_name;

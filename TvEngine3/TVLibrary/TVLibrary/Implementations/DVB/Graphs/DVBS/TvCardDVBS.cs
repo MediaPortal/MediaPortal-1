@@ -65,7 +65,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardDVBS(DsDevice device)
+      : base()
     {
+      _cardType = CardType.DvbS;
       _device = device;
       _name = device.Name;
       _devicePath = device.DevicePath;
@@ -75,8 +77,7 @@ namespace TvLibrary.Implementations.DVB
         //        BuildGraph();
         //RunGraph();
         //StopGraph();
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
     }
@@ -107,8 +108,7 @@ namespace TvLibrary.Implementations.DVB
         AddBdaTransportFiltersToGraph();
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
@@ -136,8 +136,7 @@ namespace TvLibrary.Implementations.DVB
         lowOsc = 9750;
         hiOsc = 10600;
         lnbSwitch = 11700;
-      }
-      else
+      } else
       {
         lowOsc = _parameters.LnbLowFrequency;
         hiOsc = _parameters.LnbHighFrequency;

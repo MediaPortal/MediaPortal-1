@@ -116,11 +116,6 @@ namespace TvLibrary.Interfaces
     /// </summary>
     bool HasTeletext { get;}
 
-    /// <summary>
-    /// Gets or sets the teletext callback.
-    /// </summary>
-    /// <value>The teletext callback.</value>
-    IVbiCallback TeletextCallback { get;set;}
     #endregion
 
     #region timeshifting and recording

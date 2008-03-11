@@ -44,7 +44,7 @@ using TvLibrary.Helper;
 
 namespace TvLibrary.Implementations.DVB
 {
-  public class TvDvbChannel : AVObserverSubChannel, ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel, IVideoAudioObserver
+  public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel, IVideoAudioObserver
   {
     #region MDAPI structs
 
@@ -132,30 +132,17 @@ namespace TvLibrary.Implementations.DVB
 
     #region variables
     #region local variables
-    protected GraphState _graphState = GraphState.Idle;
-    protected bool _startTimeShifting = false;
-    protected string _timeshiftFileName = "";
-    protected DateTime _dateTimeShiftStarted = DateTime.MinValue;
-
-    protected bool _startRecording = false;
-    protected string _recordingFileName = "";
-    protected DateTime _dateRecordingStarted = DateTime.MinValue;
-    protected bool _recordTransportStream = false;
     protected bool _newPMT = false;
     protected bool _newCA = false;
     protected int _pmtVersion;
     protected int _pmtPid = -1;
     protected ChannelInfo _channelInfo;
-    protected IChannel _currentChannel;
-    protected DVBTeletext _teletextDecoder;
 
     protected ITsFilter _tsFilterInterface = null;
     protected int _subChannelIndex = -1;
     protected DVBAudioStream _currentAudioStream;
-    protected IVbiCallback _teletextCallback = null;
     protected IChangeChannel _changeChannel = null;
     protected TProgram82 _mDPlugTProg82 = new TProgram82();
-    protected int _subChannelId;
 #if FORM
     protected System.Windows.Forms.Timer _pmtTimer = new System.Windows.Forms.Timer();
 #else
@@ -165,11 +152,6 @@ namespace TvLibrary.Implementations.DVB
 
 
     #region teletext
-    protected bool _grabTeletext = false;
-    protected bool _hasTeletext = false;
-    TSHelperTools.TSHeader _packetHeader;
-    TSHelperTools _tsHelper;
-
     private int _pmtLength;
     private byte[] _pmtData;
     #endregion
@@ -181,8 +163,6 @@ namespace TvLibrary.Implementations.DVB
     IBaseFilter _filterTIF;
     IBaseFilter _filterTsWriter;
     IFilterGraph2 _graphBuilder;
-    bool _graphRunning;
-    ScanParameters _parameters;
     #endregion
     #endregion
 
@@ -276,27 +256,13 @@ namespace TvLibrary.Implementations.DVB
       _pmtLength = 0;
     }
     #endregion
-
-    #region public methods
-
-    /// <summary>
-    /// Gets the sub channel id.
-    /// </summary>
-    /// <value>The sub channel id.</value>
-    public int SubChannelId
-    {
-      get
-      {
-        return _subChannelId;
-      }
-    }
-
+        
     #region tuning and graph methods
     /// <summary>
     /// Should be called before tuning to a new channel
     /// resets the state
     /// </summary>
-    public void OnBeforeTune()
+    public override void OnBeforeTune()
     {
       Log.Log.WriteFile("subch:{0} OnBeforeTune", _subChannelId);
       if (IsTimeShifting)
@@ -318,7 +284,7 @@ namespace TvLibrary.Implementations.DVB
     /// Should be called when the graph is tuned to the new channel
     /// resets the state
     /// </summary>
-    public void OnAfterTune()
+    public override void OnAfterTune()
     {
       Log.Log.WriteFile("subch:{0} OnAfterTune", _subChannelId);
       _pmtTimer.Enabled = true;
@@ -348,7 +314,7 @@ namespace TvLibrary.Implementations.DVB
     /// If graph is already running, starts the pmt grabber to grab the
     /// pmt for the new channel
     /// </summary>
-    public void OnGraphStart()
+    public override void OnGraphStart()
     {
       Log.Log.WriteFile("subch:{0} OnGraphStart", _subChannelId);
       DateTime dtNow;
@@ -392,7 +358,7 @@ namespace TvLibrary.Implementations.DVB
     /// Should be called when the graph has been started
     /// sets up the pmt grabber to grab the pmt of the channel
     /// </summary>
-    public void OnGraphStarted()
+    public override void OnGraphStarted()
     {
       Log.Log.WriteFile("subch:{0} OnGraphStarted", _subChannelId);
       _graphRunning = true;
@@ -401,7 +367,7 @@ namespace TvLibrary.Implementations.DVB
       bool result = false;
       if (dvbChannel != null)
       {
-        result=SetupPmtGrabber(dvbChannel.PmtPid, dvbChannel.ServiceId);
+        result = SetupPmtGrabber(dvbChannel.PmtPid, dvbChannel.ServiceId);
       }
       _pmtTimer.Enabled = true;
       if (dvbChannel != null && result)
@@ -424,7 +390,7 @@ namespace TvLibrary.Implementations.DVB
     /// Should be called when graph is about to stop.
     /// stops any timeshifting/recording on this channel
     /// </summary>
-    public void OnGraphStop()
+    public override void OnGraphStop()
     {
       Log.Log.WriteFile("subch:{0} OnGraphStop", _subChannelId);
       _pmtPid = -1;
@@ -457,7 +423,7 @@ namespace TvLibrary.Implementations.DVB
     /// should be called when graph has been stopped
     /// Resets the graph state
     /// </summary>
-    public void OnGraphStopped()
+    public override void OnGraphStopped()
     {
       Log.Log.WriteFile("subch:{0} OnGraphStopped", _subChannelId);
       _graphRunning = false;
@@ -465,42 +431,86 @@ namespace TvLibrary.Implementations.DVB
 
     }
 
+    #endregion
+
+    #region Timeshifting - Recording methods
+
     /// <summary>
-    /// disposes this channel
+    /// Starts recording
     /// </summary>
-    public void Decompose()
+    /// <param name="transportStream">if set to <c>true</c> [transport stream].</param>
+    /// <param name="fileName">filename to which to recording should be saved</param>
+    protected override void OnStartRecording(bool transportStream, string fileName)
     {
-      Log.Log.Info("subch:{0} Decompose()", _subChannelId);
+      Log.Log.WriteFile("subch:{0} StartRecord({1})", _subChannelId, fileName);
+      _recordTransportStream = transportStream;
+      int hr;
+      if (_tsFilterInterface != null)
+      {
+        if (transportStream)
+        {
+          _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
+          Log.Log.WriteFile("subch:{0} record transport stream mode", _subChannelId);
+        } else
+        {
+          _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.ProgramStream);
+          Log.Log.WriteFile("subch:{0} record program stream mode", _subChannelId);
+        }
+
+        hr = _tsFilterInterface.RecordSetRecordingFileName(_subChannelIndex, fileName);
+        if (hr != 0)
+        {
+          Log.Log.Error("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
+        }
+        if (_channelInfo.pids.Count == 0)
+        {
+          Log.Log.WriteFile("subch:{0} StartRecord no pmt received yet", _subChannelId);
+          _startRecording = true;
+        } else
+        {
+          Log.Log.WriteFile("subch:{0} StartRecording...", _subChannelId);
+          SetRecorderPids();
+          hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
+          if (hr != 0)
+          {
+            Log.Log.Error("subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
+          }
+          _graphState = GraphState.Recording;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Stop recording
+    /// </summary>
+    /// <returns></returns>
+    protected override void OnStopRecording()
+    {
       if (IsRecording)
-        StopRecording();
-      if (IsTimeShifting)
-        StopTimeShifting();
-      _timeshiftFileName = "";
-      _recordingFileName = "";
-      _pmtTimer.Enabled = false;
-      _graphRunning = false;
-      if (_teletextDecoder != null)
       {
-        _teletextDecoder.ClearBuffer();
+        Log.Log.WriteFile("subch:{0} StopRecord()", _subChannelId);
+
+        if (_tsFilterInterface != null)
+        {
+          _tsFilterInterface.RecordStopRecord(_subChannelIndex);
+          if (_timeshiftFileName != "")
+            _graphState = GraphState.TimeShifting;
+          else
+            _graphState = GraphState.Created;
+        }
       }
-      if (_tsFilterInterface != null && _subChannelIndex >= 0)
-      {
-        _tsFilterInterface.DeleteChannel(_subChannelIndex);
-        _subChannelIndex = -1;
-      }
-      _conditionalAccess.FreeSubChannel(_subChannelId);
     }
 
     /// <summary>
     /// sets the filename used for timeshifting
     /// </summary>
     /// <param name="fileName">timeshifting filename</param>
-    public void SetTimeShiftFileName(string fileName)
+    protected override bool OnStartTimeShifting(string fileName)
     {
       if (_channelInfo.pids.Count == 0)
       {
         Log.Log.WriteFile("subch:{0} SetTimeShiftFileName no pmt received. Timeshifting failed", _subChannelId);
-        return;
+        return false;
       }
       _timeshiftFileName = fileName;
       Log.Log.WriteFile("subch:{0} SetTimeShiftFileName:{1}", _subChannelId, fileName);
@@ -520,101 +530,14 @@ namespace TvLibrary.Implementations.DVB
 
         _graphState = GraphState.TimeShifting;
       }
-    }
-    #endregion
-
-    #region recording methods
-
-    /// <summary>
-    /// Starts recording
-    /// </summary>
-    /// <param name="transportStream">if set to <c>true</c> [transport stream].</param>
-    /// <param name="fileName">filename to which to recording should be saved</param>
-    public bool StartRecording(bool transportStream, string fileName)
-    {
-      Log.Log.WriteFile("subch:{0} StartRecord({1})", _subChannelId, fileName);
-      _recordTransportStream = transportStream;
-      int hr;
-      if (_tsFilterInterface != null)
-      {
-        if (transportStream)
-        {
-          _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.TransportStream);
-          Log.Log.WriteFile("subch:{0} record transport stream mode", _subChannelId);
-        }
-        else
-        {
-          _tsFilterInterface.RecordSetMode(_subChannelIndex, TimeShiftingMode.ProgramStream);
-          Log.Log.WriteFile("subch:{0} record program stream mode", _subChannelId);
-        }
-
-        hr = _tsFilterInterface.RecordSetRecordingFileName(_subChannelIndex, fileName);
-        if (hr != 0)
-        {
-          Log.Log.Error("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
-        }
-        if (_channelInfo.pids.Count == 0)
-        {
-          Log.Log.WriteFile("subch:{0} StartRecord no pmt received yet", _subChannelId);
-          _startRecording = true;
-        }
-        else
-        {
-          Log.Log.WriteFile("subch:{0} StartRecording...", _subChannelId);
-          SetRecorderPids();
-          hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
-          if (hr != 0)
-          {
-            Log.Log.Error("subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
-          }
-          _graphState = GraphState.Recording;
-        }
-      }
-      _recordingFileName = fileName;
-      return true;
-    }
-
-    /// <summary>
-    /// Stop recording
-    /// </summary>
-    /// <returns></returns>
-    public bool StopRecording()
-    {
-      if (IsRecording)
-      {
-        Log.Log.WriteFile("subch:{0} StopRecord()", _subChannelId);
-
-        if (_tsFilterInterface != null)
-        {
-          _tsFilterInterface.RecordStopRecord(_subChannelIndex);
-          if (_timeshiftFileName != "")
-            _graphState = GraphState.TimeShifting;
-          else
-            _graphState = GraphState.Created;
-        }
-      }
-      _startRecording = false;
-      _recordTransportStream = false;
-      _recordingFileName = "";
-      return true;
-    }
-
-
-    /// <summary>
-    /// Starts timeshifting. Note card has to be tuned first
-    /// </summary>
-    /// <param name="fileName">filename used for the timeshiftbuffer</param>
-    /// <returns>true if succeeded else false</returns>
-    public bool StartTimeShifting(string fileName)
-    {
-      SetTimeShiftFileName(fileName);
       return (_channelInfo.pids.Count != 0);
     }
+
     /// <summary>
     /// Stop recording
     /// </summary>
     /// <returns></returns>
-    public bool StopTimeShifting()
+    protected override void OnStopTimeShifting()
     {
       if (_timeshiftFileName != "")
       {
@@ -625,9 +548,7 @@ namespace TvLibrary.Implementations.DVB
         }
         _graphState = GraphState.Created;
       }
-      _startTimeShifting = false;
       _timeshiftFileName = "";
-      return true;
     }
     #endregion
 
@@ -635,7 +556,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// returns the list of available audio streams
     /// </summary>
-    public List<IAudioStream> AvailableAudioStreams
+    public override List<IAudioStream> AvailableAudioStreams
     {
       get
       {
@@ -650,8 +571,7 @@ namespace TvLibrary.Implementations.DVB
             stream.Pid = info.pid;
             stream.StreamType = AudioStreamType.AC3;
             streams.Add(stream);
-          }
-          else if (info.isAudio)
+          } else if (info.isAudio)
           {
             DVBAudioStream stream = new DVBAudioStream();
             stream.Language = info.language;
@@ -676,7 +596,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// get/set the current selected audio stream
     /// </summary>
-    public IAudioStream CurrentAudioStream
+    public override IAudioStream CurrentAudioStream
     {
       get
       {
@@ -697,177 +617,15 @@ namespace TvLibrary.Implementations.DVB
         SendPmtToCam(out updatePids);
       }
     }
-
-    public int GetCurrentVideoStream
-    {
-      get
-      {
-        if (_channelInfo == null) return -1;
-        foreach (PidInfo info in _channelInfo.pids)
-        {
-          if (info.isVideo)
-          {
-            return info.stream_type;
-          }
-        }
-        return -1;
-      }
-    }
-
-
-    #endregion
     #endregion
 
-    #region public properties
-
-    #region recording/timeshifting properties
-    /// <summary>
-    /// returns true if we record in transport stream mode
-    /// false we record in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsRecordingTransportStream
-    {
-      get
-      {
-        if (_channelInfo == null) return false;
-        foreach (PidInfo info in _channelInfo.pids)
-        {
-          if (info.isVideo)
-          {
-            if (info.IsH264Video || info.IsMpeg4Video) return true;
-          }
-        }
-        return false;
-      }
-    }
-
-    /// <summary>
-    /// returns true if we timeshift in transport stream mode
-    /// false we timeshift in program stream mode
-    /// </summary>
-    /// <value>true for transport stream, false for program stream.</value>
-    public bool IsTimeshiftingTransportStream
-    {
-      get
-      {
-        if (IsTimeShifting) return true;
-        return false;
-      }
-    }
-
-    /// <summary>
-    /// gets the current filename used for timeshifting
-    /// </summary>
-    public string TimeShiftFileName
-    {
-      get
-      {
-        return _timeshiftFileName;
-      }
-    }
-
-    /// <summary>
-    /// returns the date/time when timeshifting has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    public DateTime StartOfTimeShift
-    {
-      get
-      {
-        return _dateTimeShiftStarted;
-      }
-    }
-
-    /// <summary>
-    /// returns the date/time when recording has been started for the card specified
-    /// </summary>
-    /// <returns>DateTime containg the date/time when recording was started</returns>
-    public DateTime RecordingStarted
-    {
-      get
-      {
-        return _dateRecordingStarted;
-      }
-    }
-
-    /// <summary>
-    /// gets the current filename used for recording
-    /// </summary>
-    /// <value></value>
-    public string RecordingFileName
-    {
-      get
-      {
-        return _recordingFileName;
-      }
-    }
-
-    /// <summary>
-    /// returns true if card is currently recording
-    /// </summary>
-    /// <value>true if recording otherwise false</value>
-    public bool IsRecording
-    {
-      get
-      {
-        return (_recordingFileName.Length > 0);
-      }
-    }
-
-    /// <summary>
-    /// 
-    /// returns true if card is currently timeshifting
-    /// </summary>
-    /// <value></value>
-    public bool IsTimeShifting
-    {
-      get
-      {
-        return (_timeshiftFileName.Length > 0);
-      }
-    }
-    #endregion
-
-    #region general properties
-
-    /// <summary>
-    /// Gets or sets the parameters.
-    /// </summary>
-    /// <value>The parameters.</value>
-    public ScanParameters Parameters
-    {
-      get
-      {
-        return _parameters;
-      }
-      set
-      {
-        _parameters = value;
-      }
-    }
-    /// <summary>
-    /// Gets or sets the current channel.
-    /// </summary>
-    /// <value>The current channel.</value>
-    public IChannel CurrentChannel
-    {
-      get
-      {
-        return _currentChannel;
-      }
-      set
-      {
-        _currentChannel = value;
-      }
-    }
-
+    #region video streams methods
 
     /// <summary>
     /// Returns true when unscrambled audio/video is received otherwise false
     /// </summary>
     /// <returns>true of false</returns>
-    public bool IsReceivingAudioVideo
+    public override bool IsReceivingAudioVideo
     {
       get
       {
@@ -885,76 +643,73 @@ namespace TvLibrary.Implementations.DVB
         return ((audioEncrypted == 0) && (videoEncrypted == 0));
       }
     }
-    #endregion
 
-    #region teletext properties
-    /// <summary>
-    /// Turn on/off teletext grabbing
-    /// </summary>
-    public bool GrabTeletext
+    public override int GetCurrentVideoStream
     {
       get
       {
-        return _grabTeletext;
-      }
-      set
-      {
-        _grabTeletext = value;
-        if (_grabTeletext)
+        if (_channelInfo == null) return -1;
+        foreach (PidInfo info in _channelInfo.pids)
         {
-          int teletextPid = -1;
-          foreach (PidInfo pidInfo in _channelInfo.pids)
+          if (info.isVideo)
           {
-            if (pidInfo.isTeletext)
-            {
-              teletextPid = pidInfo.pid;
-              break;
-            }
+            return info.stream_type;
           }
-
-          if (teletextPid == -1)
-          {
-            Log.Log.Info("subch: stop grabbing teletext");
-            _tsFilterInterface.TTxStop(_subChannelIndex);
-            _grabTeletext = false;
-            return;
-          }
-          Log.Log.Info("subch: start grabbing teletext");
-          _tsFilterInterface.TTxSetCallBack(_subChannelIndex, this);
-          _tsFilterInterface.TTxSetTeletextPid(_subChannelIndex, teletextPid);
-          _tsFilterInterface.TTxStart(_subChannelIndex);
         }
-        else
+        return -1;
+      }
+    }
+
+    #endregion
+
+    #region teletext
+    protected override void OnGrabTeletext()
+    {
+      if (_grabTeletext)
+      {
+        int teletextPid = -1;
+        foreach (PidInfo pidInfo in _channelInfo.pids)
+        {
+          if (pidInfo.isTeletext)
+          {
+            teletextPid = pidInfo.pid;
+            break;
+          }
+        }
+
+        if (teletextPid == -1)
         {
           Log.Log.Info("subch: stop grabbing teletext");
           _tsFilterInterface.TTxStop(_subChannelIndex);
+          _grabTeletext = false;
+          return;
         }
+        Log.Log.Info("subch: start grabbing teletext");
+        _tsFilterInterface.TTxSetCallBack(_subChannelIndex, this);
+        _tsFilterInterface.TTxSetTeletextPid(_subChannelIndex, teletextPid);
+        _tsFilterInterface.TTxStart(_subChannelIndex);
+      } else
+      {
+        Log.Log.Info("subch: stop grabbing teletext");
+        _tsFilterInterface.TTxStop(_subChannelIndex);
       }
     }
 
-    /// <summary>
-    /// Property which returns true when the current channel contains teletext
-    /// </summary>
-    public bool HasTeletext
-    {
-      get
-      {
-        return (_hasTeletext);
-      }
-    }
-
-    /// <summary>
-    /// returns the ITeletext interface which can be used for
-    /// getting teletext pages
-    /// </summary>
-    public ITeletext TeletextDecoder
-    {
-      get
-      {
-        return _teletextDecoder;
-      }
-    }
     #endregion
+
+    #region OnDecompose
+    /// <summary>
+    /// disposes this channel
+    /// </summary>
+    protected override void OnDecompose()
+    {
+      if (_tsFilterInterface != null && _subChannelIndex >= 0)
+      {
+        _tsFilterInterface.DeleteChannel(_subChannelIndex);
+        _subChannelIndex = -1;
+      }
+      _conditionalAccess.FreeSubChannel(_subChannelId);
+    }
 
     #endregion
 
@@ -1048,7 +803,7 @@ namespace TvLibrary.Implementations.DVB
               if (_currentAudioStream.Pid == pidInfo.pid)
               {
                 Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
-                _tsFilterInterface.AnalyzerSetAudioPid(_subChannelIndex,pidInfo.pid);
+                _tsFilterInterface.AnalyzerSetAudioPid(_subChannelIndex, pidInfo.pid);
               }
               hwPids.Add((ushort)pidInfo.pid);
             }
@@ -1057,7 +812,7 @@ namespace TvLibrary.Implementations.DVB
             {
               Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
               hwPids.Add((ushort)pidInfo.pid);
-              _tsFilterInterface.AnalyzerSetVideoPid(_subChannelIndex,pidInfo.pid);
+              _tsFilterInterface.AnalyzerSetVideoPid(_subChannelIndex, pidInfo.pid);
               if (info.pcr_pid > 0 && info.pcr_pid != pidInfo.pid)
               {
                 hwPids.Add((ushort)info.pcr_pid);
@@ -1094,13 +849,11 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("subch:[0} StartRecord failed:{1:X}", _subChannelId, hr);
           }
           _graphState = GraphState.Recording;
-        }
-        else if (IsTimeShifting)
+        } else if (IsTimeShifting)
         {
           SetTimeShiftPids();
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -1121,10 +874,10 @@ namespace TvLibrary.Implementations.DVB
 
 
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
-      _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid,dvbChannel.ServiceId,_pmtData,_pmtLength);
-     
+      _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId, _pmtData, _pmtLength);
+
       //_linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
-      
+
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
       _dateTimeShiftStarted = DateTime.Now;
     }
@@ -1148,8 +901,7 @@ namespace TvLibrary.Implementations.DVB
         {
           _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, dvbChannel.PmtPid, dvbChannel.ServiceId, _pmtData, _pmtLength);
         }
-      }
-      else
+      } else
       {
         if (dvbChannel.PmtPid > 0)
         {
@@ -1174,7 +926,7 @@ namespace TvLibrary.Implementations.DVB
           if (chan != null)
           {
             //HACK: Currently Premiere Direkt Feeds (nid=133) have the free_ca flag in SDT set to true (means not scrambled), so we have to override this
-            if ((!chan.FreeToAir) || (chan.NetworkId==133 && !chan.Provider.Equals("BetaDigital")))
+            if ((!chan.FreeToAir) || (chan.NetworkId == 133 && !chan.Provider.Equals("BetaDigital")))
             {
               if (_newCA == false)
               {
@@ -1194,7 +946,7 @@ namespace TvLibrary.Implementations.DVB
         IntPtr catMem = Marshal.AllocCoTaskMem(4096);// max. size for cat
         try
         {
-          _pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelIndex,pmtMem);
+          _pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelIndex, pmtMem);
           if (_pmtLength > 6)
           {
             _pmtData = new byte[_pmtLength];
@@ -1231,13 +983,12 @@ namespace TvLibrary.Implementations.DVB
                       Marshal.Copy(catMem, cat, 0, catLength);
                       _channelInfo.DecodeCat(cat, catLength);
                     }
-                  }
-                  catch (Exception ex)
+                  } catch (Exception ex)
                   {
                     Log.Log.Write(ex); ;
                   }
                 }
-                
+
                 updatePids = true;
                 Log.Log.WriteFile("subch:{0} SendPMT version:{1} len:{2} {3}", _subChannelId, version, _pmtLength, _channelInfo.caPMT.ProgramNumber);
                 if (_conditionalAccess != null)
@@ -1254,8 +1005,7 @@ namespace TvLibrary.Implementations.DVB
                     Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
                     _pmtTimer.Interval = 100;
                     return true;
-                  }
-                  else
+                  } else
                   {
                     //cam is not ready yet
                     Log.Log.WriteFile("subch:{0} SendPmt failed cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
@@ -1263,8 +1013,7 @@ namespace TvLibrary.Implementations.DVB
                     _pmtTimer.Interval = 3000;
                     return false;
                   }
-                }
-                else
+                } else
                 {
                   Log.Log.Info("subch:{0} No cam in use", _subChannelId);
                 }
@@ -1272,20 +1021,17 @@ namespace TvLibrary.Implementations.DVB
                 _pmtVersion = version;
 
                 return true;
-              }
-              else
+              } else
               {
                 //already received this pmt
                 return true;
               }
             }
           }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Log.Write(ex);
-        }
-        finally
+        } finally
         {
           Marshal.FreeCoTaskMem(pmtMem);
           Marshal.FreeCoTaskMem(catMem);
@@ -1340,14 +1086,12 @@ namespace TvLibrary.Implementations.DVB
             }
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.WriteFile("subch:{0}", ex.Message);
         Log.Log.WriteFile("subch:{0}", ex.Source);
         Log.Log.WriteFile("subch::{0}", ex.StackTrace);
-      }
-      finally
+      } finally
       {
         _pmtTimerRentrant = false;
       }
@@ -1355,77 +1099,6 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region tswriter callback handlers
-
-    #region ITeletextCallBack Members
-
-    public IVbiCallback TeletextCallback
-    {
-      get
-      {
-        return _teletextCallback;
-      }
-      set
-      {
-        _teletextCallback = value;
-      }
-    }
-    /// <summary>
-    /// callback from the TsWriter filter when it received a new teletext packets
-    /// </summary>
-    /// <param name="data">teletext data</param>
-    /// <param name="packetCount">number of packets in data</param>
-    /// <returns></returns>
-    public int OnTeletextReceived(IntPtr data, short packetCount)
-    {
-      try
-      {
-        if (_teletextCallback != null)
-        {
-          _teletextCallback.OnVbiData(data, packetCount, false);
-        }
-        for (int i = 0; i < packetCount; ++i)
-        {
-          IntPtr packetPtr = new IntPtr(data.ToInt32() + i * 188);
-          ProcessPacket(packetPtr);
-        }
-
-      }
-      catch (Exception ex)
-      {
-        Log.Log.WriteFile(ex.ToString());
-      }
-      return 0;
-    }
-    /// <summary>
-    /// processes a single transport packet
-    /// Called from BufferCB
-    /// </summary>
-    /// <param name="ptr">pointer to the transport packet</param>
-    public void ProcessPacket(IntPtr ptr)
-    {
-      if (ptr == IntPtr.Zero) return;
-
-      _packetHeader = _tsHelper.GetHeader((IntPtr)ptr);
-      if (_packetHeader.SyncByte != 0x47)
-      {
-        Log.Log.Write("packet sync error");
-        return;
-      }
-      if (_packetHeader.TransportError == true)
-      {
-        Log.Log.Write("packet transport error");
-        return;
-      }
-      // teletext
-      if (_grabTeletext)
-      {
-        if (_teletextDecoder != null)
-        {
-          _teletextDecoder.SaveData((IntPtr)ptr);
-        }
-      }
-    }
-    #endregion
 
     #region ICaCallback Members
 
@@ -1442,27 +1115,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
-
-    #region IVideoAudioObserver
-    /// <summary>
-    /// Called when tswriter.ax has seen the video / audio data for the first time
-    /// </summary>
-    /// <returns></returns>
-    public int OnNotify(PidType pidType)
-    {
-      try
-      {
-        Log.Log.WriteFile("PID seen - type = {0}", pidType);
-        OnAudioVideoEvent(pidType);
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
-      return 0;
-    }
-    #endregion
-
 
     #region IPMTCallback Members
     /// <summary>
@@ -1490,13 +1142,11 @@ namespace TvLibrary.Implementations.DVB
             if (_filterTIF != null)
               _filterTIF.Stop();
           }
-        }
-        else
+        } else
         {
           _newPMT = true;
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -1601,7 +1251,7 @@ namespace TvLibrary.Implementations.DVB
 
       //did we already receive the pmt?
       if (_channelInfo == null) return; //nop, then return
-      if (_channelInfo.caPMT == null) return;      
+      if (_channelInfo.caPMT == null) return;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) //not a DVB channel??
         return;
@@ -1622,8 +1272,7 @@ namespace TvLibrary.Implementations.DVB
         {
           _mDPlugTProg82.Name[Index] = (byte)dvbChannel.Name[Index];
         }
-      }
-      else
+      } else
         end_Index = 0;
       _mDPlugTProg82.Name[end_Index] = 0;
 
@@ -1637,8 +1286,7 @@ namespace TvLibrary.Implementations.DVB
         {
           _mDPlugTProg82.Provider[Index] = (byte)dvbChannel.Provider[Index];
         }
-      }
-      else
+      } else
         end_Index = 0;
       _mDPlugTProg82.Provider[end_Index] = 0;
 
@@ -1800,8 +1448,7 @@ namespace TvLibrary.Implementations.DVB
                _mDPlugTProg82.ECM_PID);
           _changeChannel.ChangeChannelTP82(lparam);
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
       }

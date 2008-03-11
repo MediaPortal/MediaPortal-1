@@ -75,7 +75,7 @@
     <Compile Include="Implementations\Analog\Graphs\Analog\Cards\hauppauge.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\AnalogSubChannel.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
-    <Compile Include="Implementations\AVObserverSubChannel.cs" />
+    <Compile Include="Implementations\BaseSubChannel.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConexantBDA.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\GenericATSC.cs" />
@@ -120,6 +120,7 @@
     <Compile Include="Implementations\Helper\SidHelper.cs" />
     <Compile Include="Implementations\Hybrid\HybridCard.cs" />
     <Compile Include="Implementations\RadioWebStream\RadioWebStreamCard.cs" />
+    <Compile Include="Implementations\TvCardBase.cs" />
     <Compile Include="Implementations\TvCardCollection.cs" />
     <Compile Include="Interfaces\Analyzer\IKNC.cs" />
     <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />

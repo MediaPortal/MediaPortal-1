@@ -48,7 +48,7 @@ namespace TvLibrary.Implementations.Analog
   /// <summary>
   /// Class for handling various types of Analog TV Cards
   /// </summary>
-  public class TvCardAnalog : ITVCard
+  public class TvCardAnalog : TvCardBase, ITVCard
   {
     #region struct
     #pragma warning disable 0649 // All fields are used by the Marshal.PtrToStructure function
@@ -78,14 +78,11 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region imports
-    [DllImport("advapi32", CharSet = CharSet.Auto)]
-    private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
     [ComImport, Guid("DB35F5ED-26B2-4A2A-92D3-852E145BF32D")]
     private class MpFileWriter { }
     #endregion
 
     #region variables
-    private string _name;
     private DsDevice _tunerDevice;
     private DsDevice _audioDevice;
     private DsDevice _crossBarDevice;
@@ -93,7 +90,6 @@ namespace TvLibrary.Implementations.Analog
     private DsDevice _videoEncoderDevice;
     private DsDevice _audioEncoderDevice;
     private DsDevice _multiplexerDevice;
-    private GraphState _graphState;
     private IFilterGraph2 _graphBuilder = null;
     private DsROTEntry _rotEntry = null;
     private ICaptureGraphBuilder2 _capBuilder;
@@ -120,22 +116,11 @@ namespace TvLibrary.Implementations.Analog
     private IPin _pinVBI = null;
     private IPin _pinAnalogAudio = null;
     private IPin _pinAnalogVideo = null;
-    private int _managedThreadId;
-    private DateTime _lastSignalUpdate;
-    private bool _tunerLocked;
-    private bool _isScanning = false;
-    private object m_context = null;
     private Hauppauge _haupPauge = null;
     private IAMStreamConfig _interfaceStreamConfigVideoCapture = null;
-    private ScanParameters _parameters;
-    private bool _cardPresent = true;
-    private TvBusinessLayer _layer;
-    private TSHelperTools _tsHelper;
-    private bool _pinVideoConnected;
     private AnalogChannel _previousChannel;
-    private bool _isHybrid = false;
-    protected Dictionary<int, AnalogSubChannel> _mapSubChannels;
     private bool _isPlextorConvertX = false;
+    private bool _pinVideoConnected = false;
     #endregion
 
     #region ctor
@@ -145,82 +130,20 @@ namespace TvLibrary.Implementations.Analog
       _name = device.Name;
       _graphState = GraphState.Idle;
       _parameters = new ScanParameters();
-      _layer = new TvBusinessLayer();
-      _tsHelper = new TSHelperTools();
       _previousChannel = null;
-      _mapSubChannels = new Dictionary<int, AnalogSubChannel>();
+      _mapSubChannels = new Dictionary<int, BaseSubChannel>();
+      _devicePath = _tunerDevice.DevicePath;
+      _supportsSubChannels = false;
+      _minChannel = 0;
+      _maxChannel = 128;
+      _camType = CamType.Default;
+      _conditionalAccess = null;
+      _cardType = CardType.Analog;
+      _epgGrabbing = false;
     }
     #endregion
 
-    #region properties
-    /// <summary>
-    /// Gets a value indicating whether card supports subchannels
-    /// </summary>
-    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
-    public bool SupportsSubChannels
-    {
-      get
-      {
-        return false;
-      }
-    }
-
-    /// <summary>
-    /// Gets or sets the timeout parameters.
-    /// </summary>
-    /// <value>The parameters.</value>
-    public ScanParameters Parameters
-    {
-      get
-      {
-        return _parameters;
-      }
-      set
-      {
-        _parameters = value;
-      }
-    }
-
-    /// <summary>
-    /// Gets/sets the card name
-    /// </summary>
-    public string Name
-    {
-      get
-      {
-        return _name;
-      }
-      set
-      {
-        _name = value;
-      }
-    }
-
-    /// <summary>
-    /// Checks if the card is present
-    /// </summary>
-    public bool CardPresent
-    {
-      get
-      {
-        return _cardPresent;
-      }
-      set
-      {
-        _cardPresent = value;
-      }
-    }
-
-    /// <summary>
-    /// Gets/sets the card device
-    /// </summary>		
-    public string DevicePath
-    {
-      get
-      {
-        return _tunerDevice.DevicePath;
-      }
-    }
+    #region public methods 
 
     /// <summary>
     /// Method to check if card can tune to the channel specified
@@ -249,7 +172,7 @@ namespace TvLibrary.Implementations.Analog
     /// Stops the current graph
     /// </summary>
     /// <returns></returns>
-    public void StopGraph()
+    public override void StopGraph()
     {
       {
         if (!CheckThreadId()) return;
@@ -280,89 +203,6 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("analog: Graph stopped");
       }
     }
-
-    /// <summary>
-    /// returns the min. channel number for analog cards
-    /// </summary>
-    public int MinChannel
-    {
-      get
-      {
-        if (_filterTvTuner == null) return 0;
-        int minChannel, maxChannel;
-        IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
-        if (tvTuner == null) return 0;
-        tvTuner.ChannelMinMax(out minChannel, out maxChannel);
-        return minChannel;
-      }
-    }
-
-    /// <summary>
-    /// returns the max. channel number for analog cards
-    /// </summary>
-    /// <value>The max channel.</value>
-    public int MaxChannel
-    {
-      get
-      {
-        if (_filterTvTuner == null) return 128;
-        int minChannel, maxChannel;
-        IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
-        if (tvTuner == null) return 128;
-        tvTuner.ChannelMinMax(out minChannel, out maxChannel);
-        return maxChannel;
-      }
-    }
-
-    /// <summary>
-    /// Gets or sets the type of the cam.
-    /// </summary>
-    /// <value>The type of the cam.</value>
-    public CamType CamType
-    {
-      get
-      {
-        return CamType.Default;
-      }
-      set
-      {
-      }
-    }
-
-    /// <summary>
-    /// Gets/sets the card type
-    /// </summary>
-    public int cardType
-    {
-      get
-      {
-        return 0; // Only to handle cards without BDA driver
-      }
-    }
-
-    /// <summary>
-    /// Gets the interface for controlling the diseqc motor
-    /// </summary>
-    /// <value>Theinterface for controlling the diseqc motor.</value>
-    public IDiSEqCMotor DiSEqCMotor
-    {
-      get
-      {
-        return null;
-      }
-    }
-
-    /// <summary>
-    /// Gets the number of channels the card is currently decrypting.
-    /// </summary>
-    /// <value>The number of channels decrypting.</value>
-    public int NumberOfChannelsDecrypting
-    {
-      get
-      {
-        return 0;
-      }
-    }
     #endregion
 
     #region Channel linkage handling
@@ -372,12 +212,14 @@ namespace TvLibrary.Implementations.Analog
     public void StartLinkageScanner(BaseChannelLinkageScanner callback)
     {
     }
+
     /// <summary>
     /// Stops/Resets the linkage scanner
     /// </summary>
     public void ResetLinkageScanner()
     {
     }
+
     /// <summary>
     /// Returns the channel linkages grabbed
     /// </summary>
@@ -452,7 +294,7 @@ namespace TvLibrary.Implementations.Analog
         BuildGraph();
       }
       RunGraph();
-      AnalogSubChannel subChannel;
+      BaseSubChannel subChannel;
       if (_mapSubChannels.ContainsKey(0))
       {
         subChannel = _mapSubChannels[0];
@@ -499,121 +341,31 @@ namespace TvLibrary.Implementations.Analog
 
     #region properties
     /// <summary>
-    /// Returns if the tuner belongs to a hybrid card
-    /// </summary>
-    public bool IsHybrid
-    {
-      get
-      {
-        return _isHybrid;
-      }
-      set
-      {
-        _isHybrid = false;
-      }
-    }
-
-    /// <summary>
     /// When the tuner is locked onto a signal this property will return true
     /// otherwise false
     /// </summary>
-    public bool IsTunerLocked
+    protected override void  UpdateSignalQuality()
     {
-      get
+      TimeSpan ts = DateTime.Now - _lastSignalUpdate;
+      if (ts.TotalMilliseconds < 5000 || _graphState == GraphState.Idle)
       {
-        if (_graphState == GraphState.Idle) return false;
-        if (!CheckThreadId()) return false;
+        _tunerLocked = false;
+      } else
+      {
+
         IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
         AMTunerSignalStrength signalStrength;
         tvTuner.SignalPresent(out signalStrength);
         _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent);
-        return _tunerLocked;
       }
-    }
-
-    /// <summary>
-    /// returns the signal quality
-    /// </summary>
-    public int SignalQuality
-    {
-      get
+      if (_tunerLocked)
       {
-        if (_graphState == GraphState.Idle) return 0;
-        if (!CheckThreadId()) return 0;
-        if (IsTunerLocked) return 100;
-        return 0;
-      }
-    }
-
-    /// <summary>
-    /// returns the signal level
-    /// </summary>
-    public int SignalLevel
-    {
-      get
+        _signalLevel = 100;
+        _signalQuality = 100;
+      } else
       {
-        if (_graphState == GraphState.Idle) return 0;
-        if (!CheckThreadId()) return 0;
-        if (IsTunerLocked) return 100;
-        return 0;
-      }
-    }
-
-    /// <summary>
-    /// Updates the signal state for a card.
-    /// </summary>
-    public void ResetSignalUpdate()
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets the context.
-    /// </summary>
-    /// <value>The context.</value>
-    public object Context
-    {
-      get
-      {
-        return m_context;
-      }
-      set
-      {
-        m_context = value;
-      }
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this card is epg grabbing.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is epg grabbing; otherwise, <c>false</c>.
-    /// </value>
-    public bool IsEpgGrabbing
-    {
-      get
-      {
-        return false;
-      }
-      set
-      {
-      }
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this card is scanning for channels.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this card is scanning; otherwise, <c>false</c>.
-    /// </value>
-    public bool IsScanning
-    {
-      get
-      {
-        return _isScanning;
-      }
-      set
-      {
-        _isScanning = value;
+        _signalLevel = 0;
+        _signalQuality = 0;
       }
     }
     #endregion
@@ -787,68 +539,6 @@ namespace TvLibrary.Implementations.Analog
     }
     #endregion
 
-    #region sub channels
-    /// <summary>
-    /// Gets the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    /// <returns></returns>
-    public ITvSubChannel GetSubChannel(int id)
-    {
-      if (_mapSubChannels.ContainsKey(id))
-      {
-        return _mapSubChannels[id];
-      }
-      return null;
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    public void FreeSubChannel(int id)
-    {
-      if (_mapSubChannels.ContainsKey(id))
-      {
-        _mapSubChannels[id].Decompose();
-        _mapSubChannels.Remove(id);
-      }
-    }
-
-    /// <summary>
-    /// Gets the sub channels.
-    /// </summary>
-    /// <value>The sub channels.</value>
-    public ITvSubChannel[] SubChannels
-    {
-      get
-      {
-        int count = 0;
-        ITvSubChannel[] channels = new ITvSubChannel[_mapSubChannels.Count];
-        Dictionary<int, AnalogSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
-        while (en.MoveNext())
-        {
-          channels[count++] = en.Current.Value;
-        }
-        return channels;
-      }
-    }
-
-    /// <summary>
-    /// Frees all sub channels.
-    /// </summary>
-    private void FreeAllSubChannels()
-    {
-      Log.Log.Info("analog:FreeAllSubChannels:");
-      Dictionary<int, AnalogSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
-      while (en.MoveNext())
-      {
-        en.Current.Value.Decompose();
-      }
-      _mapSubChannels.Clear();
-    }
-    #endregion
-
     #region graph handling
     /// <summary>
     /// Builds the directshow graph for this analog tvcard
@@ -865,7 +555,6 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("analog: Graph already build");
           throw new TvException("Graph already build");
         }
-        _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
         //create a new filter graph
         _graphBuilder = (IFilterGraph2)new FilterGraph();
         _rotEntry = new DsROTEntry(_graphBuilder);
@@ -1078,6 +767,7 @@ namespace TvLibrary.Implementations.Analog
         throw new TvException("Unable to add tvtuner to graph");
       }
       _filterTvTuner = tmp;
+      UpdateMinMaxChannel();
       DevicesInUse.Instance.Add(_tunerDevice);
     }
 
@@ -3699,6 +3389,13 @@ namespace TvLibrary.Implementations.Analog
       _lastSignalUpdate = DateTime.MinValue;
     }
 
+    private void UpdateMinMaxChannel()
+    {
+      if (_filterTvTuner == null) return;
+      IAMTVTuner tvTuner = _filterTvTuner as IAMTVTuner;
+      if (tvTuner == null) return;
+      tvTuner.ChannelMinMax(out _minChannel, out _maxChannel);
+    }
     #endregion
 
     #region scanning interface
@@ -3740,6 +3437,16 @@ namespace TvLibrary.Implementations.Analog
         tvTuner.get_AudioFrequency(out audioFrequency);
         return audioFrequency;
       }
+    }
+    #endregion
+
+    #region abstract implemented Methods
+    protected override void OnScanning()
+    {
+      
+    }
+    protected override void UpdateEpgGrabber(bool value)
+    {
     }
     #endregion
   }

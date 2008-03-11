@@ -61,7 +61,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardATSC(DsDevice device)
+      : base()
     {
+      _cardType = CardType.Atsc;
       _device = device;
       _name = device.Name;
       _devicePath = device.DevicePath;
@@ -70,8 +72,7 @@ namespace TvLibrary.Implementations.DVB
         //BuildGraph();
         //RunGraph();
         //StopGraph();
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
     }
@@ -102,8 +103,7 @@ namespace TvLibrary.Implementations.DVB
         AddBdaTransportFiltersToGraph();
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
@@ -231,8 +231,7 @@ namespace TvLibrary.Implementations.DVB
         _conditionalAccess.CheckViXSATSCQAM(atscChannel);
         RunGraph(ch.SubChannelId);
         return ch;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
         throw ex;
@@ -268,7 +267,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
     #endregion
-    
+
     #region epg & scanning
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels

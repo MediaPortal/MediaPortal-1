@@ -92,7 +92,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     protected override IChannel CreateNewChannel(ChannelInfo info)
     {
-      DVBCChannel tuningChannel = (DVBCChannel)_card.Channel;
+      DVBCChannel tuningChannel = (DVBCChannel)_card.CurrentChannel;
       DVBCChannel dvbcChannel = new DVBCChannel();
       dvbcChannel.Name = info.service_name;
       dvbcChannel.LogicalChannelNumber = info.LCN;

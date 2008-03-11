@@ -114,14 +114,6 @@ namespace TvLibrary.Implementations.DVB
       Horizontal = 0,
       Vertical,
     }
-    enum CardType
-    {
-      Analog,
-      DvbS,
-      DvbT,
-      DvbC,
-      Atsc
-    }
     #endregion
 
     #region Structs
@@ -150,7 +142,6 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region variables
-    CardType _cardType;
     IBaseFilter _filterB2C2Adapter;
     DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 _interfaceB2C2DataCtrl;
     DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl;
@@ -179,6 +170,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardDvbSS2(DsDevice device)
+      : base()
     {
       _useDISEqCMotor = false;
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -191,36 +183,11 @@ namespace TvLibrary.Implementations.DVB
       }
       _conditionalAccess = new ConditionalAccess(null, null, null, null);
       _tunerDevice = device;
+      _devicePath = _tunerDevice.DevicePath;
       _name = _tunerDevice.Name;
       _ptrDisEqc = Marshal.AllocCoTaskMem(20);
       _disEqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();
-    }
-    #endregion
-
-    #region properties
-    /// <summary>
-    /// Gets/sets the card cardType
-    /// </summary>
-    public override int cardType
-    {
-      get
-      {
-        return (int)_cardType;
-      }
-      set
-      {
-      }
-    }
-    /// <summary>
-    /// Gets/sets the card device
-    /// </summary>
-    public override string DevicePath
-    {
-      get
-      {
-        return _tunerDevice.DevicePath;
-      }
     }
     #endregion
 
@@ -807,7 +774,7 @@ namespace TvLibrary.Implementations.DVB
         _signalQuality = 0;
         return;
       }
-      if (Channel == null)
+      if (CurrentChannel == null)
       {
         _tunerLocked = false;
         _signalLevel = 0;

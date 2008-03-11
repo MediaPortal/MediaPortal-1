@@ -33,10 +33,6 @@ namespace TvLibrary.Teletext
   /// <param name="subPageNumber">subpagenumber (0-79)</param>
   public delegate void PageEventHandler(int pageNumber, int subPageNumber);
 
-  public interface IVbiCallback
-  {
-    void OnVbiData( IntPtr data, int len,bool analog);
-  }
   /// <summary>
   /// teletext decoder interface
   /// </summary>

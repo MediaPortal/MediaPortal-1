@@ -85,7 +85,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     protected override IChannel CreateNewChannel(ChannelInfo info)
     {
-      ATSCChannel tuningChannel = (ATSCChannel)_card.Channel;
+      ATSCChannel tuningChannel = (ATSCChannel)_card.CurrentChannel;
       ATSCChannel atscChannel = new ATSCChannel();
       atscChannel.Name = info.service_name;
       atscChannel.LogicalChannelNumber = info.LCN;

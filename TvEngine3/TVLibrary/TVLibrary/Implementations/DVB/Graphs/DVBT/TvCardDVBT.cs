@@ -64,7 +64,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardDVBT(DsDevice device)
+      : base()
     {
+      _cardType = CardType.DvbT;
       _device = device;
       _name = device.Name;
       _devicePath = device.DevicePath;
@@ -74,8 +76,7 @@ namespace TvLibrary.Implementations.DVB
         //        BuildGraph();
         //        RunGraph();
         //        StopGraph();
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
     }
@@ -108,14 +109,13 @@ namespace TvLibrary.Implementations.DVB
         AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
 
-//                ConnectFilters();
+        //                ConnectFilters();
         GetTunerSignalStatistics();
 
 
         _graphState = GraphState.Created;
 
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
@@ -204,30 +204,28 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
           return null;
         }
-        
+
         Log.Log.Info("dvbt: tune: Assigning oldChannel");
         DVBTChannel oldChannel = CurrentChannel as DVBTChannel;
         if (CurrentChannel != null)
         {
           //@FIX this fails for back-2-back recordings
           //if (oldChannel.Equals(channel)) return _mapSubChannels[0];
-            Log.Log.Info("dvbt: tune: Current Channel != null {0}",CurrentChannel.ToString());
-        }
-        else
+          Log.Log.Info("dvbt: tune: Current Channel != null {0}", CurrentChannel.ToString());
+        } else
         { Log.Log.Info("dvbt: tune: Current channel is null"); }
         if (_graphState == GraphState.Idle)
         {
-            Log.Log.Info("dvbt: tune: Building graph");
-            BuildGraph();
-        }
-        else
+          Log.Log.Info("dvbt: tune: Building graph");
+          BuildGraph();
+        } else
         { Log.Log.Info("dvbt: tune: Graph is tunning"); }
 
         //_pmtPid = -1;
         Log.Log.Info("dvbt: tune: Getting default locator");
         ILocator locator;
         _tuningSpace.get_DefaultLocator(out locator);
-        Log.Log.Info("dvbt: tune: Putting bandwidth {0}",dvbtChannel.BandWidth);
+        Log.Log.Info("dvbt: tune: Putting bandwidth {0}", dvbtChannel.BandWidth);
         IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
         int hr = dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
         Log.Log.Info("dvbt: tune: put_ONID {0}", dvbtChannel.NetworkId);
@@ -250,8 +248,7 @@ namespace TvLibrary.Implementations.DVB
         RunGraph(ch.SubChannelId);
         Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Log.Write(ex);
         throw ex;
