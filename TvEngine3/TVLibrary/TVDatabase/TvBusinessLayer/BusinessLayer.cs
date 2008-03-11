@@ -1,3 +1,30 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
+#region Usings
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +33,11 @@ using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Text;
 using System.Globalization;
-using TvDatabase;
+using System.Threading;
+using System.Diagnostics;
+using System.Data.SqlTypes;
+using DirectShowLib;
+using DirectShowLib.BDA;
 using Gentle.Common;
 using Gentle.Framework;
 using MySql.Data.MySqlClient;
@@ -15,11 +46,8 @@ using TvLibrary.Implementations;
 using TvLibrary.Channels;
 using TvLibrary.Log;
 using TvLibrary;
-using DirectShowLib;
-using DirectShowLib.BDA;
-using System.Threading;
-using System.Diagnostics;
-using System.Data.SqlTypes;
+
+#endregion
 
 namespace TvDatabase
 {
@@ -1620,7 +1648,7 @@ namespace TvDatabase
             }
             else
             {
-              // no "next" info because of holes in EPG data we want the "now" info nevertheless
+              // no "next" info because of holes in EPG data - we want the "now" info nevertheless
               NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, SqlDateTime.MaxValue.Value, SqlDateTime.MaxValue.Value, nowTitle, string.Empty, nowidProgram, -1);
               progList[idChannel] = p;
             }
@@ -1729,6 +1757,55 @@ namespace TvDatabase
 
     #region SQL methods
 
+    /// <summary>
+    /// Checks a MySQL table for corruption and optimizes / compacts it. Use this after lots of insert / delete operations.
+    /// </summary>
+    /// <param name="aTable">The table which should be optimized. During the check process it will be locked.</param>
+    public void OptimizeMySql(string aTable)
+    {
+      Stopwatch benchClock = new Stopwatch();
+      benchClock.Start();      
+      MySqlTransaction transact = null;
+      try
+      {
+        string connectString = (Gentle.Framework.ProviderFactory.GetDefaultProvider()).ConnectionString;
+        if (string.IsNullOrEmpty(connectString))
+          return;
+
+        using (MySqlConnection connection = new MySqlConnection(connectString))
+        {
+          connection.Open();
+          transact = connection.BeginTransaction();
+          using (MySqlCommand cmd = new MySqlCommand(string.Format("LOCK TABLES {0} READ;", aTable), connection))          
+            cmd.ExecuteNonQuery();
+          
+          using (MySqlCommand cmd = new MySqlCommand(string.Format("CHECK TABLE {0}", aTable), connection))          
+            cmd.ExecuteNonQuery();
+          
+          using (MySqlCommand cmd = new MySqlCommand(string.Format("UNLOCK TABLES", aTable), connection))          
+            cmd.ExecuteNonQuery();
+          
+          using (MySqlCommand cmd = new MySqlCommand(string.Format("OPTIMIZE TABLE {0}", aTable), connection))          
+            cmd.ExecuteNonQuery();
+          
+          transact.Commit();
+          benchClock.Stop();
+          Log.Info("BusinessLayer: OptimizeMySql successful - duration: {0}ms", benchClock.ElapsedMilliseconds.ToString());
+        }
+      }
+      catch (Exception ex)
+      {
+        try
+        {
+          transact.Rollback();
+        }
+        catch (Exception) { }
+        Log.Info("BusinessLayer: OptimizeMySql unsuccessful - {0}, {1}", ex.Message, ex.StackTrace);
+      }
+      transact = null;
+      GC.Collect();
+    }
+
     private void InsertMySql(ImportParams aImportParam)
     {
       MySqlTransaction transact = null;
@@ -1740,6 +1817,7 @@ namespace TvDatabase
           transact = connection.BeginTransaction();
           ExecuteMySqlCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
           transact.Commit();
+          OptimizeMySql("Program");
         }
       }
       catch (Exception ex)

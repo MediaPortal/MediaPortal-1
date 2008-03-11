@@ -661,7 +661,7 @@ namespace SetupTv.Sections
       }
     }
 
-    void _database_OnStationsChanged(int value, int maximum, string text)
+    private void _database_OnStationsChanged(int value, int maximum, string text)
     {
       progressBarImportTotal.Maximum = maximum;
       if (value <= maximum && value >= 0)
