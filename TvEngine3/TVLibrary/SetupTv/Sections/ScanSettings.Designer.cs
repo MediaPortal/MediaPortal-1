@@ -675,11 +675,11 @@ namespace SetupTv.Sections
       // 
       this.checkBoxAlwaysUpdate.AutoSize = true;
       this.checkBoxAlwaysUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAlwaysUpdate.Location = new System.Drawing.Point(244, 19);
+      this.checkBoxAlwaysUpdate.Location = new System.Drawing.Point(148, 19);
       this.checkBoxAlwaysUpdate.Name = "checkBoxAlwaysUpdate";
-      this.checkBoxAlwaysUpdate.Size = new System.Drawing.Size(191, 17);
+      this.checkBoxAlwaysUpdate.Size = new System.Drawing.Size(310, 17);
       this.checkBoxAlwaysUpdate.TabIndex = 11;
-      this.checkBoxAlwaysUpdate.Text = "Always try to update existing entries";
+      this.checkBoxAlwaysUpdate.Text = "Always try to update existing entries (migth raise CPU usage!)";
       this.checkBoxAlwaysUpdate.UseVisualStyleBackColor = true;
       // 
       // checkBoxAlwaysFillHoles
