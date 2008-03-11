@@ -9,8 +9,8 @@ DQ = chr(34) ' fill a variable with a "  (double quote)
 MpPath = strMyFolderPath & "\MediaPortal.exe"
 MpBgImage = strMyFolderPath & "\skin\BlueTwo\Media\background.png"
 
-oWshShell.Run DQ & strMyFolderPath & "\FullscreenMsg.exe" & DQ & " Text=" & DQ & DQ,,False // initialize The fullscreen window and keep the process running
-oWshShell.Run DQ & strMyFolderPath & "\FullscreenMsg.exe" & DQ & " BgImage=" & DQ & mpBgImage & DQ,,True // load the back ground image and wait  
+oWshShell.Run DQ & strMyFolderPath & "\FullscreenMsg.exe" & DQ & " Text=" & DQ & DQ,,False ' initialize The fullscreen window and keep the process running
+oWshShell.Run DQ & strMyFolderPath & "\FullscreenMsg.exe" & DQ & " BgImage=" & DQ & mpBgImage & DQ,,True ' load the back ground image and wait  
 
 WScript.Sleep 500 ' give FullscreenMsg time to receive all information
 

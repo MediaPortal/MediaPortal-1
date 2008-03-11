@@ -95,8 +95,11 @@ namespace FullscreenMsg
       // of the app.
       if (this.Args != null)
       {
-        ProcessParameters(null, this.Args);
-        this.Args = null;
+        lock (this.Args)
+        {
+          ProcessParameters(null, this.Args);
+          this.Args = null;
+        }
       }
 
     }
