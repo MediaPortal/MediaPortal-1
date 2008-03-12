@@ -40,6 +40,7 @@ namespace MatroskaImporter
       this.cbTagRecordings = new System.Windows.Forms.CheckBox();
       this.cbDbRecordings = new System.Windows.Forms.CheckBox();
       this.cbUseThread = new System.Windows.Forms.CheckBox();
+      this.cBSortCulture = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // btnLookup
@@ -180,11 +181,25 @@ namespace MatroskaImporter
       this.cbUseThread.UseVisualStyleBackColor = true;
       this.cbUseThread.Visible = false;
       // 
+      // cBSortCulture
+      // 
+      this.cBSortCulture.AutoSize = true;
+      this.cBSortCulture.Checked = true;
+      this.cBSortCulture.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cBSortCulture.Location = new System.Drawing.Point(173, 7);
+      this.cBSortCulture.Name = "cBSortCulture";
+      this.cBSortCulture.Size = new System.Drawing.Size(165, 17);
+      this.cBSortCulture.TabIndex = 13;
+      this.cBSortCulture.Text = "Use current culture for sorting";
+      this.cBSortCulture.UseVisualStyleBackColor = true;
+      this.cBSortCulture.Visible = false;
+      // 
       // MatroskaImporter
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(712, 552);
+      this.Controls.Add(this.cBSortCulture);
       this.Controls.Add(this.cbUseThread);
       this.Controls.Add(this.cbDbRecordings);
       this.Controls.Add(this.cbTagRecordings);
@@ -220,6 +235,7 @@ namespace MatroskaImporter
     private System.Windows.Forms.CheckBox cbTagRecordings;
     private System.Windows.Forms.CheckBox cbDbRecordings;
     private System.Windows.Forms.CheckBox cbUseThread;
+    private System.Windows.Forms.CheckBox cBSortCulture;
   }
 }
 

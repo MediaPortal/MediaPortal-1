@@ -170,7 +170,10 @@ namespace MatroskaImporter
     private void MatroskaImporter_MouseClick(object sender, MouseEventArgs e)
     {
       if (e.Button == MouseButtons.Right)
+      {
         cbUseThread.Visible = !cbUseThread.Visible;
+        cBSortCulture.Visible = !cBSortCulture.Visible;
+      }
     }
 
     #endregion
@@ -225,7 +228,10 @@ namespace MatroskaImporter
             tvTagRecs.Nodes.Add(TagNode);
         }
       }
-      tvTagRecs.TreeViewNodeSorter = new RecordSorter();
+      if (cBSortCulture.Checked)
+        tvTagRecs.TreeViewNodeSorter = new RecordSorter();
+      else
+        tvTagRecs.TreeViewNodeSorter = new RecordSorterInvariant();
       tvTagRecs.Sort();
       tvTagRecs.EndUpdate();
       btnLookup.Enabled = true;
@@ -247,7 +253,10 @@ namespace MatroskaImporter
         if (RecNode != null)
           tvDbRecs.Nodes.Add(RecNode);
       }
-      tvDbRecs.TreeViewNodeSorter = new RecordSorter();
+      if (cBSortCulture.Checked)
+        tvDbRecs.TreeViewNodeSorter = new RecordSorter();
+      else
+        tvDbRecs.TreeViewNodeSorter = new RecordSorterInvariant();
       tvDbRecs.Sort();
       tvDbRecs.EndUpdate();
     }
@@ -396,6 +405,8 @@ namespace MatroskaImporter
     private int GetChannelIdByDisplayName(string aChannelName)
     {
       int channelId = -1;
+      if (string.IsNullOrEmpty(aChannelName))
+        return channelId;
       try
       {
         SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));

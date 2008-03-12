@@ -24,3 +24,25 @@ public class RecordSorter : IComparer
     return result;
   }
 }
+
+public class RecordSorterInvariant : IComparer
+{
+  // Compare the length of the strings, or the strings
+  // themselves, if they are the same length.
+  public int Compare(object x, object y)
+  {
+    int result = -1;
+    try
+    {
+      TreeNode tx = x as TreeNode;
+      TreeNode ty = y as TreeNode;
+
+      result = string.Compare(tx.Text, ty.Text, System.StringComparison.InvariantCulture);
+    }
+    catch (Exception)
+    {
+    }
+
+    return result;
+  }
+}
