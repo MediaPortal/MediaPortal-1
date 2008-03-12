@@ -85,12 +85,16 @@ namespace TvDatabase
         {
           importDirs = new string[] { aDirectory };
         }
-        foreach (string subDir in importDirs)
+        List<string> searchDirs = new List<string>(importDirs);
+        if (!searchDirs.Contains(aDirectory))
+          searchDirs.Add(aDirectory);
+
+        foreach (string subDir in searchDirs)
         {
           try
           {
             // we do not have insufficient access rights for this
-            if (subDir.Contains(@"System Volume Information"))
+            if (subDir.Contains(@"System Volume Information") || subDir.Contains(@"Recycled"))
               continue;
             string[] importFiles = Directory.GetFiles(subDir, "*.xml", SearchOption.AllDirectories);
             foreach (string recordingXml in importFiles)
