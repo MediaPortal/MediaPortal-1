@@ -225,6 +225,7 @@ namespace MatroskaImporter
             tvTagRecs.Nodes.Add(TagNode);
         }
       }
+      tvTagRecs.TreeViewNodeSorter = new RecordSorter();
       tvTagRecs.Sort();
       tvTagRecs.EndUpdate();
       btnLookup.Enabled = true;
@@ -246,6 +247,7 @@ namespace MatroskaImporter
         if (RecNode != null)
           tvDbRecs.Nodes.Add(RecNode);
       }
+      tvDbRecs.TreeViewNodeSorter = new RecordSorter();
       tvDbRecs.Sort();
       tvDbRecs.EndUpdate();
     }
@@ -258,13 +260,31 @@ namespace MatroskaImporter
     {
       try
       {
+        Channel lookupChannel = null;
+        string channelId = "unknown";
+        string channelName = "unknown";
+        string startTime = SqlDateTime.MinValue.Value == aRec.StartTime ? "unknown" : aRec.StartTime.ToString();
+        string endTime = SqlDateTime.MinValue.Value == aRec.EndTime ? "unknown" : aRec.EndTime.ToString();
+        try
+        {
+          lookupChannel = (Channel)aRec.ReferencedChannel();
+          if (lookupChannel != null)
+          {
+            channelName = lookupChannel.DisplayName;
+            channelId = lookupChannel.IdChannel.ToString();
+          }
+        }
+        catch (Exception)
+        {
+        }
+
         TreeNode[] subitems = new TreeNode[] { 
-                                               new TreeNode("Channel name: " + ((Channel)aRec.ReferencedChannel()).DisplayName), 
-                                               new TreeNode("Channel ID: " + aRec.IdChannel.ToString()), 
+                                               new TreeNode("Channel name: " + channelName), 
+                                               new TreeNode("Channel ID: " + channelId), 
                                                new TreeNode("Genre: " + aRec.Genre), 
                                                new TreeNode("Description: " + aRec.Description), 
-                                               new TreeNode("Start time: " + aRec.StartTime), 
-                                               new TreeNode("End time: " + aRec.EndTime), 
+                                               new TreeNode("Start time: " + startTime), 
+                                               new TreeNode("End time: " + endTime), 
                                                new TreeNode("Server ID: " + aRec.IdServer)
                                              };
 

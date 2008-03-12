@@ -86,6 +86,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="RecordingComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
