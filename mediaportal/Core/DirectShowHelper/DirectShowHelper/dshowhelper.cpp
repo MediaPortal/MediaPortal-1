@@ -56,6 +56,7 @@ TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9 = NULL;
 TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface = NULL;
 TMFCreateMediaType* m_pMFCreateMediaType = NULL;
 BOOL m_bEVRLoaded = false;
+char* m_RenderPrefix = "vmr9";
 
 
 
@@ -132,15 +133,15 @@ void LogPath( char* dest, char* name )
 {
   TCHAR folder[MAX_PATH];
   SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(dest,"%s\\Team Mediaportal\\MediaPortal\\log\\%s",folder,name);
+  sprintf(dest,"%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s",folder,m_RenderPrefix,name);
 }
 
 void LogRotate()
 {
 	TCHAR fileName[MAX_PATH];
-	LogPath(fileName, "vmr9.log");
+	LogPath(fileName, "log");
 	TCHAR bakFileName[MAX_PATH];
-	LogPath(bakFileName, "vmr9.bak");
+	LogPath(bakFileName, "bak");
 	remove(bakFileName);
 	rename(fileName, bakFileName);
 
@@ -162,7 +163,7 @@ string GetLogLine()
 UINT CALLBACK LogThread(void* param)
 {
 	TCHAR fileName[MAX_PATH];
-	LogPath(fileName, "vmr9.log");
+	LogPath(fileName, "log");
 	while ( m_bLoggerRunning ) {
 		if ( m_logQueue.size() > 0 ) {
 			FILE* fp = fopen(fileName,"a+");
@@ -480,6 +481,8 @@ HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService,
 BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter,DWORD monitor)
 {
 	HRESULT hr;
+	m_RenderPrefix = "evr";
+	LogRotate();
 	m_bEVRLoaded = LoadEVR();
 	if ( !m_bEVRLoaded ) 
 	{
