@@ -65,7 +65,7 @@ namespace TvMCheck
             string sqlSelect;
 
             if (cbFavorites.Checked)
-                sqlSelect = "SELECT * FROM Sender WHERE (Favorit = true) AND GueltigBis >=Now() ORDER BY Bezeichnung ASC;";
+                sqlSelect = "SELECT * FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
             else
                 sqlSelect = "SELECT * FROM Sender WHERE GueltigBis >=Now() ORDER BY Bezeichnung ASC;";
 

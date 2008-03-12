@@ -69,11 +69,14 @@ namespace MatroskaImporter
         IList allCards = Card.ListAll();
         foreach (Card tvCard in allCards)
         {
-          if (!cbRecPaths.Items.Contains(tvCard.RecordingFolder))
+          if (!string.IsNullOrEmpty(tvCard.RecordingFolder) && !cbRecPaths.Items.Contains(tvCard.RecordingFolder))
             cbRecPaths.Items.Add(tvCard.RecordingFolder);
         }
         if (cbRecPaths.Items.Count > 0)
+        {
           cbRecPaths.SelectedIndex = 0;
+          cbRecPaths_TextUpdate(this, null);
+        }
       }
       catch (Exception ex) 
       {
