@@ -13,7 +13,10 @@ namespace FullscreenMsg
         static void Main(string[] args)
         {
             App myApp = new App();
-            myApp.Run(args);
+            lock (myApp)
+            {
+              myApp.Run(args);
+            }
         }
 
         /// <summary>

@@ -95,11 +95,8 @@ namespace FullscreenMsg
       // of the app.
       if (this.Args != null)
       {
-        lock (this.Args)
-        {
           ProcessParameters(null, this.Args);
           this.Args = null;
-        }
       }
 
     }
@@ -111,6 +108,7 @@ namespace FullscreenMsg
 
       // Add the command-line arguments to our textbox, just to confirm that
       // it reached here.
+
       if (args != null && args.Length != 0)
       {
         txtArgs.Text += DateTime.Now.ToString("mm:ss.ff") + " ";
@@ -132,7 +130,6 @@ namespace FullscreenMsg
 
           Cursor.Position = new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
-          //FullScreenForm.Show();
           _bFullScreenMode = true;
         }
 
@@ -159,7 +156,7 @@ namespace FullscreenMsg
       {
         Stream stream = this.GetType().Assembly.GetManifestResourceStream("FullScreenMsg.help.rtf");
         txtArgs.LoadFile(stream, RichTextBoxStreamType.RichText);
-        
+
         this.ShowInTaskbar = true;
         this.WindowState = FormWindowState.Normal;
         this.Show();
