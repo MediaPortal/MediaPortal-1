@@ -355,7 +355,7 @@ namespace SetupTv.Sections
                 newChannels++;
               }
             }
-            layer.MapChannelToCard(card, dbChannel);
+            layer.MapChannelToCard(card, dbChannel,false);
             line = String.Format("{0}tp- {1} {2}MHz :New:{3} Updated:{4}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth, newChannels, updatedChannels);
             item.Text = line;
           }

@@ -579,7 +579,7 @@ namespace TvDatabase
       return tvChannels;
     }
 
-    public ChannelMap MapChannelToCard(Card card, Channel channel)
+	public ChannelMap MapChannelToCard(Card card, Channel channel, bool epgOnly)
     {
       IList channelMaps = card.ReferringChannelMap();
       for (int i = 0 ; i < channelMaps.Count ; ++i)
@@ -587,7 +587,7 @@ namespace TvDatabase
         ChannelMap map = (ChannelMap)channelMaps[i];
         if (map.IdChannel == channel.IdChannel && map.IdCard == card.IdCard) return map;
       }
-      ChannelMap newMap = new ChannelMap(channel.IdChannel, card.IdCard);
+	  ChannelMap newMap = new ChannelMap(channel.IdChannel, card.IdCard,epgOnly);
       newMap.Persist();
       return newMap;
     }

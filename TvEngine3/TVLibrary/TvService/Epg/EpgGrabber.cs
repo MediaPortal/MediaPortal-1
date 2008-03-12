@@ -240,7 +240,7 @@ namespace TvService
           }
           //get the channel
           Channel ch = transponder.Channels[transponder.Index];
-          if (epgCard.Card.canViewTvChannel(ch.IdChannel))
+          if (epgCard.Card.canTuneTvChannel(ch.IdChannel))
           {
             Log.Epg("epg:Grab for card:#{0} transponder #{1} index:{2}/{3} last:{4} {5}",
                       epgCard.Card.IdCard, tIdx, transponder.Index, transponder.Channels.Count,

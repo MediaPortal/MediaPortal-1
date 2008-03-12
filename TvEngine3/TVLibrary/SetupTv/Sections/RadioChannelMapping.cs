@@ -118,7 +118,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in selectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        ChannelMap map = layer.MapChannelToCard(card, channel);
+        ChannelMap map = layer.MapChannelToCard(card, channel,false);
         mpListViewChannels.Items.Remove(item);
         int imageIndex = 0;
         if (channel.FreeToAir)

@@ -432,7 +432,7 @@ namespace SetupTv.Sections
                 newChannels++;
               }
             }
-            layer.MapChannelToCard(card, dbChannel);
+            layer.MapChannelToCard(card, dbChannel,false);
             line = String.Format("{0}tp- {1} {2} {3}:New:{4} Updated:{5}", 1 + index, tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate, newChannels, updatedChannels);
             item.Text = line;
           }

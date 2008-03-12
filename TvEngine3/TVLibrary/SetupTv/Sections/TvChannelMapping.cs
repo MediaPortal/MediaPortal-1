@@ -111,13 +111,16 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in selectedItems)
       {
         Channel channel = (Channel)item.Tag;
-        ChannelMap map = layer.MapChannelToCard(card, channel);
+        ChannelMap map = layer.MapChannelToCard(card, channel,mpCheckBoxMapForEpgOnly.Checked);
         mpListViewChannels.Items.Remove(item);
 
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
-        ListViewItem newItem = mpListViewMapped.Items.Add(channel.DisplayName, imageIndex);
+        string displayName = channel.DisplayName;
+        if (mpCheckBoxMapForEpgOnly.Checked)
+            displayName = channel.DisplayName + " (EPG Only)";
+        ListViewItem newItem = mpListViewMapped.Items.Add(displayName, imageIndex);
         newItem.Tag = map;
       }
       dlg.Close();
@@ -186,8 +189,10 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
-
-        ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+        string displayName = channel.DisplayName;
+        if (map.EpgOnly)
+            displayName = channel.DisplayName + " (EPG Only)";
+        ListViewItem item = new ListViewItem(displayName, imageIndex);
         item.Tag = map;
         items.Add(item);
         bool remove = false;
@@ -323,6 +328,24 @@ namespace SetupTv.Sections
       // Perform the sort with these new sort options.
       this.mpListViewMapped.Sort();
     }
-	
+
+    private void mpListViewMapped_DoubleClick(object sender, EventArgs e)
+    {
+      if (mpListViewMapped.SelectedItems.Count == 0) return;
+      ListViewItem item = mpListViewMapped.SelectedItems[0];
+      ChannelMap map = (ChannelMap)item.Tag;
+      Channel channel = map.ReferencedChannel();
+      if (map.EpgOnly)
+      {
+        item.Text = channel.DisplayName;
+        map.EpgOnly = false;
+      }
+      else
+      {
+        item.Text = channel.DisplayName + " (EPG Only)";
+        map.EpgOnly = true;
+      }
+      map.Persist();
+    }
   }
 }

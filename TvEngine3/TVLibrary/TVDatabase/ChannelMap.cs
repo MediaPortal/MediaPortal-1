@@ -24,28 +24,32 @@ namespace TvDatabase
 		private int idChannel;
 		[TableColumn("idCard", NotNull = true), ForeignKey("Card", "idCard")]
 		private int idCard;
+    [TableColumn("epgOnly")]
+    private bool epgOnly;
 		#endregion
 			
 		#region Constructors
 		/// <summary> 
 		/// Create a new object by specifying all fields (except the auto-generated primary key field). 
 		/// </summary> 
-		public ChannelMap(int idChannel, int idCard)
+		public ChannelMap(int idChannel, int idCard, bool epgOnly)
 		{
 			isChanged = true;
 			this.idChannel = idChannel;
 			this.idCard = idCard;
+            this.epgOnly = epgOnly;
 		}
 			
 		/// <summary> 
 		/// Create an object from an existing row of data. This will be used by Gentle to 
 		/// construct objects from retrieved rows. 
 		/// </summary> 
-		public ChannelMap(int idChannelMap, int idChannel, int idCard)
+		public ChannelMap(int idChannelMap, int idChannel, int idCard,bool epgOnly)
 		{
 			this.idChannelMap = idChannelMap;
 			this.idChannel = idChannel;
 			this.idCard = idCard;
+            this.epgOnly = epgOnly;
 		}
 		#endregion
 
@@ -83,6 +87,15 @@ namespace TvDatabase
 			get { return idCard; }
 			set { isChanged |= idCard != value; idCard = value; }
 		}
+        
+        /// <summary>
+        /// Property relating to database column epgOnly
+        /// </summary>
+        public bool EpgOnly
+        {
+            get { return epgOnly; }
+            set { isChanged |= epgOnly != value; epgOnly = value; }
+        }
 		#endregion
 
 		#region Storage and Retrieval

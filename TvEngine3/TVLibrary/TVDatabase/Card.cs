@@ -290,9 +290,25 @@ namespace TvDatabase
       IList _cardChannels = this.ReferringChannelMap();
       foreach (ChannelMap _cmap in _cardChannels)
       {
-        if (channelId == _cmap.IdChannel) return true;
+          if (channelId == _cmap.IdChannel && !_cmap.EpgOnly) return true;
       }
       return false;
+    }
+
+    /// <summary>
+    /// Checks if a card can tune a specific channel
+    /// </summary>
+    /// <param name="_card">Card object</param>
+    /// <param name="_channelId">Channel id</param>
+    /// <returns>true/false</returns>
+    public bool canTuneTvChannel(int channelId)
+    {
+        IList _cardChannels = this.ReferringChannelMap();
+        foreach (ChannelMap _cmap in _cardChannels)
+        {
+            if (channelId == _cmap.IdChannel) return true;
+        }
+        return false;
     }
 
     /// <summary>

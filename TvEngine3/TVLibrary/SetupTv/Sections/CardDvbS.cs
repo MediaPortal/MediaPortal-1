@@ -901,7 +901,7 @@ namespace SetupTv.Sections
               newChannels++;
             }
           }
-          layer.MapChannelToCard(card, dbChannel);
+          layer.MapChannelToCard(card, dbChannel,false);
           line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:New:{5} Updated:{6}",
               LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate, newChannels, updatedChannels);
           item.Text = line;

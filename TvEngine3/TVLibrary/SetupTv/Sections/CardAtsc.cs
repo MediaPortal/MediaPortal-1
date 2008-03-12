@@ -370,7 +370,7 @@ namespace SetupTv.Sections
                 newChannels++;
               }
             }
-            layer.MapChannelToCard(card, dbChannel);
+            layer.MapChannelToCard(card, dbChannel,false);
             line = line = String.Format("physical channel:{0} frequency:{1} modulation:{2} New:{3} Updated:{4}", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType, newChannels, updatedChannels);
             item.Text = line;
           }

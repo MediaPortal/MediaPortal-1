@@ -816,7 +816,7 @@ namespace SetupTv.Sections
             Card dbCard = layer.GetCardByDevicePath(nodeCard.Attributes["DevicePath"].Value);
             if (dbCard != null)
             {
-              layer.MapChannelToCard(dbCard, dbChannel);
+              layer.MapChannelToCard(dbCard, dbChannel,false);
             }
           }
           foreach (XmlNode nodeTune in tuningList)

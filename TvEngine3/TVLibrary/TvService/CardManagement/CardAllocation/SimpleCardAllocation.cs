@@ -116,11 +116,11 @@ namespace TvService
               continue;
             }
 
-            //check if channel is mapped to this card
+            //check if channel is mapped to this card and that the mapping is not for "Epg Only"
             ChannelMap channelMap = null;
             foreach (ChannelMap map in dbChannel.ReferringChannelMap())
             {
-              if (map.ReferencedCard().DevicePath == keyPair.Value.DataBaseCard.DevicePath)
+                if (map.ReferencedCard().DevicePath == keyPair.Value.DataBaseCard.DevicePath && !map.EpgOnly)
               {
                 //yes
                 channelMap = map;

@@ -219,7 +219,7 @@ namespace SetupTv.Sections
           layer.AddTuningDetails(dbChannel, channel);
 
 
-          layer.MapChannelToCard(card, dbChannel);
+          layer.MapChannelToCard(card, dbChannel,false);
           layer.AddChannelToGroup(dbChannel, "Analog");
         }
 
@@ -368,7 +368,7 @@ namespace SetupTv.Sections
             layer.AddChannelToGroup(dbChannel, "Analog channels");
             layer.AddTuningDetails(dbChannel, channel);
 
-            layer.MapChannelToCard(card, dbChannel);
+            layer.MapChannelToCard(card, dbChannel,false);
             freq += 300000;
           }
         }
@@ -414,7 +414,7 @@ namespace SetupTv.Sections
       tuningDetail.Name = dbChannel.Name;
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput1;
       layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel);
+      layer.MapChannelToCard(card, dbChannel,false);
 
       dbChannel = layer.AddChannel("", "CVBS#2 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
@@ -424,7 +424,7 @@ namespace SetupTv.Sections
       tuningDetail.Name = dbChannel.Name;
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel);
+      layer.MapChannelToCard(card, dbChannel,false);
 
       dbChannel = layer.AddChannel("", "CVBS#3 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
@@ -434,7 +434,7 @@ namespace SetupTv.Sections
       tuningDetail.Name = dbChannel.Name;
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput3;
       layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel);
+      layer.MapChannelToCard(card, dbChannel,false);
 
       dbChannel = layer.AddChannel("", "SVHS#1 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
@@ -444,7 +444,7 @@ namespace SetupTv.Sections
       tuningDetail.Name = dbChannel.Name;
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput1;
       layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel);
+      layer.MapChannelToCard(card, dbChannel,false);
 
       dbChannel = layer.AddChannel("", "SVHS#2 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
@@ -454,7 +454,7 @@ namespace SetupTv.Sections
       tuningDetail.Name = dbChannel.Name;
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel);
+      layer.MapChannelToCard(card, dbChannel,false);
 
       dbChannel = layer.AddChannel("", "SVHS#3 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
@@ -464,7 +464,7 @@ namespace SetupTv.Sections
       tuningDetail.Name = dbChannel.Name;
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput3;
       layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel);
+      layer.MapChannelToCard(card, dbChannel,false);
 
       dbChannel = layer.AddChannel("", "RGB#1 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
@@ -474,7 +474,7 @@ namespace SetupTv.Sections
       tuningDetail.Name = dbChannel.Name;
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput1;
       layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel);
+      layer.MapChannelToCard(card, dbChannel,false);
 
       dbChannel = layer.AddChannel("", "RGB#2 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
@@ -484,7 +484,7 @@ namespace SetupTv.Sections
       tuningDetail.Name = dbChannel.Name;
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel);
+      layer.MapChannelToCard(card, dbChannel,false);
 
       dbChannel = layer.AddChannel("", "RGB#3 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
@@ -494,7 +494,7 @@ namespace SetupTv.Sections
       tuningDetail.Name = dbChannel.Name;
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput3;
       layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel);
+      layer.MapChannelToCard(card, dbChannel,false);
       MessageBox.Show(this,"Channels added.");
 
     }
