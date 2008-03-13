@@ -64,12 +64,12 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
-!define VER_REVISION    1
+!define VER_REVISION    2
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define VERSION "1.0 RC1 internal"
+    !define VERSION "1.0 RC2 internal"
 !else                       # it's an svn reöease
     !define VERSION "pre-release build ${VER_BUILD}"
 !endif
@@ -428,10 +428,10 @@ Section "MediaPortal core files (required)" SecCore
 
     ; Common DLLs
     ; Installing the Common dll
-    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
-    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
-    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
-    !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
+    #!insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
+    #!insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
+    #!insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
+    #!insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
 SectionEnd
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
@@ -455,12 +455,12 @@ SectionEnd
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
 
     ; Common DLLs will not be removed. Too Dangerous
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC71u.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\msvcp71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\msvcr71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC80.dll
-    !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC80u.dll
+    #!insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC71.dll
+    #!insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC71u.dll
+    #!insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\msvcp71.dll
+    #!insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\msvcr71.dll
+    #!insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC80.dll
+    #!insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC80u.dll
 
     ; Config Files
     Delete /REBOOTOK  $CommonAppData\CaptureCardDefinitions.xml
