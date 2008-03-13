@@ -256,7 +256,7 @@ Section "MediaPortal TV Server" SecServer
     File ..\..\Filters\bin\ttdvbacc.dll
     File ..\..\Filters\sources\StreamingServer\release\StreamingServer.dll
 
-
+    #  SHOULD BE [OBSOLETE]  LATER
     # WORKAROUND TO SUPPORT OLD LOCATION of GENTLE.CONFIG
     ; Get the Common Application Data Folder
     ; Set the Context to alll, so that we get the All Users folder
@@ -275,15 +275,18 @@ Section "MediaPortal TV Server" SecServer
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     DetailPrint "filter registration..."
+    #filters for digital tv
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
+    #filters for analog tv
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\mpFileWriter.ax $INSTDIR\mpFileWriter.ax $INSTDIR
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\PDMpgMux.ax $INSTDIR\PDMpgMux.ax $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RTPSource.ax $INSTDIR\RTPSource.ax $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $INSTDIR\RtspSource.ax $INSTDIR
-    #remove TsFileSource.ax ::: http://forum.team-mediaportal.com/243990-post21.html
-    #!insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
+
+    # [OBSOLETE] replaced by tsreader
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RTPSource.ax $INSTDIR\RTPSource.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $INSTDIR\RtspSource.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
 
     #---------------------------------------------------------------------------
     # SERVICE INSTALLATION
@@ -305,13 +308,13 @@ Section "MediaPortal TV Server" SecServer
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "TV-Server Configuration"
         CreateDirectory "$CommonAppData\log"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "$CommonAppData\log"   "" "$CommonAppData\log"   0 "" "" "TV-Server Log-Files"
-        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
+    # [OBSOLETE] CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
         !insertmacro MUI_STARTMENU_WRITE_END
     ${EndIf}
 SectionEnd
 !macro Remove_${SecServer}
     DetailPrint "Uninstalling MediaPortal TV Server..."
-    
+
     #---------------------------------------------------------------------------
     # SERVICE UNINSTALLATION
     #---------------------------------------------------------------------------
@@ -324,23 +327,28 @@ SectionEnd
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     DetailPrint "Unreg and remove filters..."
+    #filters for digital tv
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
+    #filters for analog tv
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\mpFileWriter.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\PDMpgMux.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RTPSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RtspSource.ax
-    #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
 
-    Delete /REBOOTOK $INSTDIR\mpFileWriter.ax
-    Delete /REBOOTOK $INSTDIR\MpgMux.ax
-    Delete /REBOOTOK $INSTDIR\PDMpgMux.ax
-    Delete /REBOOTOK $INSTDIR\RTPSource.ax
-    Delete /REBOOTOK $INSTDIR\RtspSource.ax
-    #Delete /REBOOTOK $INSTDIR\TSFileSource.ax
-    #Delete /REBOOTOK $INSTDIR\TsReader.ax
-    Delete /REBOOTOK $INSTDIR\TsWriter.ax
+    # [OBSOLETE] replaced by tsreader
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RTPSource.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RtspSource.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
+
+    # [OBSOLETE] not sure if these commands are needed or if uninstallib removes them
+    # [OBSOLETE] Delete /REBOOTOK $INSTDIR\mpFileWriter.ax
+    # [OBSOLETE] Delete /REBOOTOK $INSTDIR\MpgMux.ax
+    # [OBSOLETE] Delete /REBOOTOK $INSTDIR\PDMpgMux.ax
+    # [OBSOLETE] Delete /REBOOTOK $INSTDIR\RTPSource.ax
+    # [OBSOLETE] Delete /REBOOTOK $INSTDIR\RtspSource.ax
+    # [OBSOLETE] Delete /REBOOTOK $INSTDIR\TSFileSource.ax
+    # [OBSOLETE] Delete /REBOOTOK $INSTDIR\TsReader.ax
+    # [OBSOLETE] Delete /REBOOTOK $INSTDIR\TsWriter.ax
 
     DetailPrint "remove files..."
     # Remove TuningParameters
@@ -384,7 +392,8 @@ SectionEnd
     Delete /REBOOTOK $INSTDIR\TvService.exe
     Delete /REBOOTOK $INSTDIR\TvService.exe.config
     Delete /REBOOTOK $INSTDIR\SetupControls.dll
-    #Filters
+
+    # 3rd party assemblys
     Delete /REBOOTOK $INSTDIR\dxerr9.dll
     Delete /REBOOTOK $INSTDIR\hauppauge.dll
     Delete /REBOOTOK $INSTDIR\hcwWinTVCI.dll
@@ -396,7 +405,7 @@ SectionEnd
     # remove Start Menu shortcuts
     Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"
-    ;Delete "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk"
+    # [OBSOLETE] Delete "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk"
     # remove Desktop shortcuts
     Delete "$DESKTOP\TV-Server Configuration.lnk"
 !macroend
@@ -435,24 +444,31 @@ Section "MediaPortal TV Client plugin" SecClient
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
-    !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
-    #remove TsFileSource.ax ::: http://forum.team-mediaportal.com/243990-post21.html
-    #!insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
-    #!insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
+
+    # [OBSOLETE] replaced by tsreader
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
+
+    # [OBSOLETE] not needed because it's already installed by mp
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
 SectionEnd
 !macro Remove_${SecClient}
     DetailPrint "Uninstalling MediaPortal TV Client plugin..."
-    
+
     #---------------------------------------------------------------------------
     # FILTER UNREGISTRATION     for TVClient
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
-    #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax        ; not needed (because dman removed it from msi installer -> rev 17727)  --- chef
-    #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
+
+    # [OBSOLETE] replaced by tsreader
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
+
+    # [OBSOLETE] not needed because it's already installed by mp
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
     
     # The Plugins
     Delete /REBOOTOK  $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
@@ -472,11 +488,11 @@ SectionEnd
     Delete /REBOOTOK  $MPBaseDir\TvLibrary.Interfaces.dll
     Delete /REBOOTOK  $MPBaseDir\Gentle.config
     
-    Delete /REBOOTOK  $MPBaseDir\DVBSub2.ax
-    Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
-    #Delete /REBOOTOK  $MPBaseDir\TSFileSource.ax
-    #Delete /REBOOTOK  $MPBaseDir\TsReader.ax
-    Delete /REBOOTOK  $MPBaseDir\mmaacd.ax
+    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\DVBSub2.ax
+    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
+    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\TSFileSource.ax
+    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\TsReader.ax
+    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\mmaacd.ax
 !macroend
 
 #---------------------------------------------------------------------------
