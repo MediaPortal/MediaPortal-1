@@ -39,7 +39,6 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MoviePlayer : MediaPortal.Configuration.SectionSettings
   {
-    private bool useTsFileSourceForMpegs;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPButton parametersButton;
     private MediaPortal.UserInterface.Controls.MPTextBox parametersTextBox;
@@ -134,7 +133,6 @@ namespace MediaPortal.Configuration.Sections
         externalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "internal", true);
         externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
         audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
-        useTsFileSourceForMpegs=xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
         wmvCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "wmvaudio", false);
         // Set codecs
         string videoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
@@ -227,7 +225,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movieplayer", "internal", !externalPlayerCheckBox.Checked);
         xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
         xmlwriter.SetValueAsBool("movieplayer", "wmvaudio", wmvCheckBox.Checked);
-        xmlwriter.SetValueAsBool("movieplayer", "useTsFileSourceForMpegs", useTsFileSourceForMpegs);
         // Set codecs
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "mpeg2videocodec", videoCodecComboBox.Text);

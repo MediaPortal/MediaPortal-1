@@ -41,10 +41,6 @@ namespace MediaPortal.Player
     static ArrayList _externalPlayerList = new ArrayList();
     static bool _externalPlayersLoaded = false;
 
-    //static bool _useTSReader = System.IO.File.Exists("C:\\useTsReader.txt");
-    // TsReader.ax is now the default (and only) filter for .ts files. 
-    static bool _useTSReader = true; 
-
     public PlayerFactory()
     {
     }
@@ -172,9 +168,7 @@ namespace MediaPortal.Player
       IPlayer newPlayer = null;
       if (fileName.ToLower().IndexOf("rtsp:") >= 0)
       {
-        if (_useTSReader)
-          return new TSReaderPlayer();
-        return new RTSPPlayer();
+        return new TSReaderPlayer();
       }
       if (fileName.StartsWith("mms:") && fileName.EndsWith(".ymvp"))
       {
@@ -222,51 +216,16 @@ namespace MediaPortal.Player
         }
       }
 
-      // Don't use TsFilesource for mpegs as a test since TvEngine3 now generates better MPEG files which can be played back
-      // with the MS MPEG filter
-      // currently switchable via a hidden flag.
-
-      bool bUseTsFileSourceForMpegs = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      // Use TsReader for timeshift buffer file for TvEngine3 & .ts recordings etc.
+      if (extension == ".tsbuffer" || extension == ".ts")
       {
-        bUseTsFileSourceForMpegs = xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", false);
-      }
-      bool playWithTsFileSource = false;
-      bool isMpg = false;
-      if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
-      {
-        if (extension == ".mpg" || extension == ".mpeg")
+        if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
         {
-          isMpg = true;
-          playWithTsFileSource = bUseTsFileSourceForMpegs;
+          return new Player.BaseTSReaderPlayer();
         }
-        else
-          playWithTsFileSource = true;
+        return new Player.TSReaderPlayer();
       }
 
-      if (playWithTsFileSource)
-      {
-        bool mpgGood = true;
-        if (extension == ".mpg" || extension == ".mpeg")
-        {
-          mpgGood = CheckMpgFile(fileName);
-        }
-        if (mpgGood)
-        {
-          if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
-          {
-            if (_useTSReader && !isMpg)
-              return new Player.BaseTSReaderPlayer();
-            else
-              return new Player.BaseTStreamBufferPlayer();
-          }
-          if (_useTSReader && !isMpg)
-            newPlayer = new Player.TSReaderPlayer();
-          else
-            newPlayer = new Player.TStreamBufferPlayer9();
-          return newPlayer;
-        }
-      }
       if (!MediaPortal.Util.Utils.IsAVStream(fileName) && MediaPortal.Util.Utils.IsVideo(fileName))
       {
         newPlayer = new Player.VideoPlayerVMR9();
@@ -362,9 +321,7 @@ namespace MediaPortal.Player
       IPlayer newPlayer = null;
       if (fileName.ToLower().IndexOf("rtsp:") >= 0)
       {
-        if (_useTSReader)
-          return new TSReaderPlayer(type);
-        return new RTSPPlayer(type);
+        return new TSReaderPlayer(type);
       }
       string extension = System.IO.Path.GetExtension(fileName).ToLower();
       if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms"
@@ -396,52 +353,16 @@ namespace MediaPortal.Player
         }
       }
 
-      // Don't use TsFilesource for mpegs as a test since TvEngine3 now generates better MPEG files which can be played back
-      // with the MS MPEG filter
-      // currently switchable via a hidden flag.
-
-      bool bUseTsFileSourceForMpegs = true;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      // Use TsReader for timeshift buffer file for TvEngine3 & .ts recordings etc.
+      if (extension == ".tsbuffer" || extension == ".ts")
       {
-        bUseTsFileSourceForMpegs = xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
-      }
-      bool playWithTsFileSource = false;
-      bool isMpg = false;
-      if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
-      {
-        if (extension == ".mpg" || extension == ".mpeg")
+        if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
         {
-          playWithTsFileSource = bUseTsFileSourceForMpegs;
-          isMpg = true;
+          return new Player.BaseTSReaderPlayer(type);
         }
-        else
-          playWithTsFileSource = true;
+        return new Player.TSReaderPlayer(type);
       }
 
-      if (playWithTsFileSource)
-      {
-        bool mpgGood = true;
-        if (extension == ".mpg" || extension == ".mpeg")
-        {
-          mpgGood = CheckMpgFile(fileName);
-        }
-        mpgGood = true;
-        if (mpgGood)
-        {
-          if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
-          {
-            if (_useTSReader && !isMpg)
-              return new Player.BaseTSReaderPlayer(type);
-            else
-              return new Player.BaseTStreamBufferPlayer(type);
-          }
-          if (_useTSReader && !isMpg)
-            newPlayer = new Player.TSReaderPlayer(type);
-          else
-            newPlayer = new Player.TStreamBufferPlayer9(type);
-          return newPlayer;
-        }
-      }
       if (!MediaPortal.Util.Utils.IsAVStream(fileName) && MediaPortal.Util.Utils.IsVideo(fileName))
       {
         newPlayer = new Player.VideoPlayerVMR9(type);
