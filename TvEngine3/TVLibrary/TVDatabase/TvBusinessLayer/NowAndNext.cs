@@ -9,20 +9,16 @@ namespace TvDatabase
     int     _idChannel;
     DateTime _nowStart;
     DateTime _nowEnd;
-    DateTime _nextStart;
-    DateTime _nextEnd;
     string _titleNow;
     string _titleNext;
     int _idProgramNow;
     int _idProgramNext;
 
-    public NowAndNext(int idChannel, DateTime nowStart, DateTime nowEnd, DateTime nextStart, DateTime nextEnd, string titleNow, string titleNext, int idProgramNow, int idProgramNext)
+    public NowAndNext(int idChannel, DateTime nowStart, DateTime nowEnd, string titleNow, string titleNext, int idProgramNow, int idProgramNext)
     {
        _idChannel=idChannel;
       _nowStart=nowStart;
       _nowEnd=nowEnd;
-      _nextStart=nextStart;
-      _nextEnd=nextEnd;
       _titleNow=titleNow;
       _titleNext=titleNext;
       _idProgramNow=idProgramNow;
@@ -53,18 +49,6 @@ namespace TvDatabase
       }
     }
 
-    public DateTime NextStartTime
-    {
-      get
-      {
-        return _nextStart;
-      }
-      set
-      {
-        _nextStart = value;
-      }
-    }
-
     public DateTime NowEndTime
     {
       get
@@ -74,18 +58,6 @@ namespace TvDatabase
       set
       {
         _nowEnd = value;
-      }
-    }
-
-    public DateTime NextEndTime
-    {
-      get
-      {
-        return _nextEnd;
-      }
-      set
-      {
-        _nextEnd = value;
       }
     }
 

@@ -1639,17 +1639,15 @@ namespace TvDatabase
             if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
             {
               int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
-              DateTime nextStart = (DateTime)dataSet.Tables[0].Rows[j + 1]["startTime"];
-              DateTime nextEnd = (DateTime)dataSet.Tables[0].Rows[j + 1]["endTime"];
               string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
 
-              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
+              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
               progList[idChannel] = p;
             }
             else
             {
               // no "next" info because of holes in EPG data - we want the "now" info nevertheless
-              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, SqlDateTime.MaxValue.Value, SqlDateTime.MaxValue.Value, nowTitle, string.Empty, nowidProgram, -1);
+              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, string.Empty, nowidProgram, -1);
               progList[idChannel] = p;
             }
 
