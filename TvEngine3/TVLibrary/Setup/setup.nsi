@@ -63,12 +63,12 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
-!define VER_REVISION    1
+!define VER_REVISION    2
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define VERSION "1.0 RC1 internal"
+    !define VERSION "1.0 RC2 internal"
 !else                       # it's an svn reöease
     !define VERSION "pre-release build ${VER_BUILD}"
 !endif
@@ -282,7 +282,7 @@ Section "MediaPortal TV Server" SecServer
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $INSTDIR\RtspSource.ax $INSTDIR
     #remove TsFileSource.ax ::: http://forum.team-mediaportal.com/243990-post21.html
     #!insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    #!insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
 
     #---------------------------------------------------------------------------
@@ -330,7 +330,7 @@ SectionEnd
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RTPSource.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RtspSource.ax
     #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+    #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
 
     Delete /REBOOTOK $INSTDIR\mpFileWriter.ax
@@ -338,8 +338,8 @@ SectionEnd
     Delete /REBOOTOK $INSTDIR\PDMpgMux.ax
     Delete /REBOOTOK $INSTDIR\RTPSource.ax
     Delete /REBOOTOK $INSTDIR\RtspSource.ax
-    Delete /REBOOTOK $INSTDIR\TSFileSource.ax
-    Delete /REBOOTOK $INSTDIR\TsReader.ax
+    #Delete /REBOOTOK $INSTDIR\TSFileSource.ax
+    #Delete /REBOOTOK $INSTDIR\TsReader.ax
     Delete /REBOOTOK $INSTDIR\TsWriter.ax
 
     DetailPrint "remove files..."
@@ -438,7 +438,7 @@ Section "MediaPortal TV Client plugin" SecClient
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
     #remove TsFileSource.ax ::: http://forum.team-mediaportal.com/243990-post21.html
     #!insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
-    !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
+    #!insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
     !insertmacro InstallLib REGDLL $LibInstall2 REBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
 SectionEnd
 !macro Remove_${SecClient}
@@ -451,7 +451,7 @@ SectionEnd
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
     #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax        ; not needed (because dman removed it from msi installer -> rev 17727)  --- chef
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
+    #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
     
     # The Plugins
@@ -475,7 +475,7 @@ SectionEnd
     Delete /REBOOTOK  $MPBaseDir\DVBSub2.ax
     Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
     #Delete /REBOOTOK  $MPBaseDir\TSFileSource.ax
-    Delete /REBOOTOK  $MPBaseDir\TsReader.ax
+    #Delete /REBOOTOK  $MPBaseDir\TsReader.ax
     Delete /REBOOTOK  $MPBaseDir\mmaacd.ax
 !macroend
 
