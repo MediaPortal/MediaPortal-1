@@ -58,12 +58,12 @@ namespace MediaPortal.Configuration.Sections
     private System.ComponentModel.IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
-      private CheckBox autoDecoderSettings;
+    private MediaPortal.UserInterface.Controls.MPCheckBox autoDecoderSettings;
     private MediaPortal.UserInterface.Controls.MPGroupBox wmvGroupBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox wmvCheckBox;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     bool _init = false;
-    
+
     public MoviePlayer()
       : this("Movie Player")
     {
@@ -107,18 +107,22 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-
-      public void UpdateDecoderSettings()
-      {
-          label5.Enabled = !autoDecoderSettings.Checked;
-          label6.Enabled = !autoDecoderSettings.Checked;
-          mpLabel1.Enabled = !autoDecoderSettings.Checked;
-          videoCodecComboBox.Enabled = !autoDecoderSettings.Checked;
-          h264videoCodecComboBox.Enabled = !autoDecoderSettings.Checked;
-          audioCodecComboBox.Enabled = !autoDecoderSettings.Checked;
-      }
     /// <summary>
-    /// 
+    /// sets useability of select config depending on whether auot decoder stting option is enabled.
+    /// </summary>
+    public void UpdateDecoderSettings()
+    {
+      label5.Enabled = !autoDecoderSettings.Checked;
+      label6.Enabled = !autoDecoderSettings.Checked;
+      mpLabel1.Enabled = !autoDecoderSettings.Checked;
+      videoCodecComboBox.Enabled = !autoDecoderSettings.Checked;
+      h264videoCodecComboBox.Enabled = !autoDecoderSettings.Checked;
+      audioCodecComboBox.Enabled = !autoDecoderSettings.Checked;
+      wmvCheckBox.Enabled = !autoDecoderSettings.Checked;
+    }
+
+    /// <summary>
+    /// Loads the movie player settings
     /// </summary>
     public override void LoadSettings()
     {
@@ -127,7 +131,6 @@ namespace MediaPortal.Configuration.Sections
       {
         autoDecoderSettings.Checked = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
         UpdateDecoderSettings();
-
         fileNameTextBox.Text = xmlreader.GetValueAsString("movieplayer", "path", "");
         parametersTextBox.Text = xmlreader.GetValueAsString("movieplayer", "arguments", "");
         externalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "internal", true);
@@ -161,7 +164,7 @@ namespace MediaPortal.Configuration.Sections
             else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
           }
         }
-        Log.Info("  - videoCodec =(" + videoCodec +")");
+        Log.Info("  - videoCodec =(" + videoCodec + ")");
         if (videoCodec == string.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
@@ -212,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
-    /// 
+    /// Saves movie player settings and codec info.
     /// </summary>
     public override void SaveSettings()
     {
@@ -263,7 +266,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.autoDecoderSettings = new System.Windows.Forms.CheckBox();
+      this.autoDecoderSettings = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -274,8 +277,8 @@ namespace MediaPortal.Configuration.Sections
       this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.wmvGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.wmvCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.wmvCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.wmvGroupBox.SuspendLayout();
@@ -393,12 +396,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // autoDecoderSettings
       // 
-      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 123);
+      this.autoDecoderSettings.AutoSize = true;
+      this.autoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 131);
       this.autoDecoderSettings.Name = "autoDecoderSettings";
-      this.autoDecoderSettings.Size = new System.Drawing.Size(456, 24);
+      this.autoDecoderSettings.Size = new System.Drawing.Size(444, 17);
       this.autoDecoderSettings.TabIndex = 0;
       this.autoDecoderSettings.Text = "Automatic Decoder Settings (use with caution - knowledge of DirectShow merits req" +
           "uired)";
+      this.autoDecoderSettings.UseVisualStyleBackColor = true;
       // 
       // mpLabel1
       // 
@@ -490,6 +496,14 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox.TabStop = false;
       this.wmvGroupBox.Text = "WMV playback (internal player)";
       // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(34, 39);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(326, 16);
+      this.mpLabel2.TabIndex = 10;
+      this.mpLabel2.Text = "Will not be applied if Automatic Decoder Settings enabled.";
+      // 
       // wmvCheckBox
       // 
       this.wmvCheckBox.AutoSize = true;
@@ -501,14 +515,6 @@ namespace MediaPortal.Configuration.Sections
       this.wmvCheckBox.Text = "Use 5.1 audio playback for WMV movie files";
       this.wmvCheckBox.UseVisualStyleBackColor = true;
       // 
-      // mpLabel2
-      // 
-      this.mpLabel2.Location = new System.Drawing.Point(34, 39);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(326, 16);
-      this.mpLabel2.TabIndex = 10;
-      this.mpLabel2.Text = "Will not be applied if Automatic Decoder Settings enabled.";
-      // 
       // MoviePlayer
       // 
       this.Controls.Add(this.wmvGroupBox);
@@ -519,6 +525,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox1.PerformLayout();
       this.wmvGroupBox.ResumeLayout(false);
       this.wmvGroupBox.PerformLayout();
       this.ResumeLayout(false);
@@ -537,7 +544,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
-    /// 
+    /// sets the external movies player source file.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -560,7 +567,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
-    /// 
+    /// sets the external movies player parameters.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -574,9 +581,12 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-      private void autoDecoderSettings_CheckedChanged(object sender, EventArgs e)
-      {
-          UpdateDecoderSettings();
-      }
+    /// <summary>
+    /// updates the useable options if the auto decoder option is enabled.
+    /// </summary>
+    private void autoDecoderSettings_CheckedChanged(object sender, EventArgs e)
+    {
+      UpdateDecoderSettings();
+    }
   }
 }
