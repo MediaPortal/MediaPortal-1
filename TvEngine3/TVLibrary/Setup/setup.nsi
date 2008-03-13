@@ -282,7 +282,7 @@ Section "MediaPortal TV Server" SecServer
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $INSTDIR\RtspSource.ax $INSTDIR
     #remove TsFileSource.ax ::: http://forum.team-mediaportal.com/243990-post21.html
     #!insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
-    #!insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
     !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
 
     #---------------------------------------------------------------------------
@@ -330,7 +330,7 @@ SectionEnd
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RTPSource.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\RtspSource.ax
     #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
-    #!insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
     !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
 
     Delete /REBOOTOK $INSTDIR\mpFileWriter.ax
