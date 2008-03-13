@@ -468,7 +468,7 @@ namespace TvLibrary.Implementations.DVB.Structures
 										pidInfo.isVideo = true;
 										pidInfo.isTeletext = false;
 										pidInfo.isDVBSubtitle = false;
-										pidInfo.isAC3Audio = false;										
+										pidInfo.isAC3Audio = false;
 										break;
                   case 0x03: // audio
                     //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
@@ -521,22 +521,6 @@ namespace TvLibrary.Implementations.DVB.Structures
                       pidInfo.AddDescriptorData(data);
                       pidInfo.language = DVB_SubtitleDescriptior(data);
                     }
-                    break;
-                  case 0x11: // LATM AAC
-                    pidInfo.isAudio = true;										
-										pidInfo.isVideo = false;
-										pidInfo.isTeletext = false;
-										pidInfo.isDVBSubtitle = false;
-										pidInfo.isAC3Audio = false;
-										pidInfo.stream_type = 0x11;
-                    break;
-                  case 0x0f: // AAC
-                    pidInfo.isAudio = true;
-                    pidInfo.isVideo = false;
-                    pidInfo.isTeletext = false;
-                    pidInfo.isDVBSubtitle = false;
-                    pidInfo.isAC3Audio = false;
-                    pidInfo.stream_type = 0x0f;
                     break;
                   default:
                     pidInfo.language = "";
