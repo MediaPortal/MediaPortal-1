@@ -349,7 +349,6 @@ Section "MediaPortal core files (required)" SecCore
     File ..\xbmc\bin\Release\TaskScheduler.dll
     File ..\xbmc\bin\Release\ttBdaDrvApi_Dll.dll
     File ..\xbmc\bin\Release\ttdvbacc.dll
-    # [MAYBE OBSOLETE] File ..\xbmc\bin\Release\TTPremiumSource.ax
     File ..\xbmc\bin\Release\TVCapture.dll
     File ..\xbmc\bin\Release\TVGuideScheduler.exe
     File ..\xbmc\bin\Release\Utils.dll
@@ -415,34 +414,39 @@ Section "MediaPortal core files (required)" SecCore
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     ;filter used for SVCD and VCD playback
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
     ##### MAYBE used by VideoEditor
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
     ;filter for analog tv
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
     ; used for scanning in tve2
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
     ; used for shoutcast
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
     ; used for digital tv
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
     ##### not sure for what this is used
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TTPremiumSource.ax $INSTDIR\TTPremiumSource.ax $INSTDIR
+    ##### not sure for what this is used
+    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
 
+    # [MAYBE OBSOLETE] File ..\xbmc\bin\Release\
     # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
 
     # [OBSOLETE] Common DLLs
     # [OBSOLETE] Installing the Common dll
-    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall REBOOT_PROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
+    
+    # needed by hauppauge.dll
+    !insertmacro InstallLib DLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
+    !insertmacro InstallLib DLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
 SectionEnd
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
@@ -452,35 +456,39 @@ SectionEnd
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     ;filter used for SVCD and VCD playback
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\cdxareader.ax
+    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\cdxareader.ax
     ##### MAYBE used by VideoEditor
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\CLDump.ax
+    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\CLDump.ax
     ;filter for analog tv
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
     ; used for scanning in tve2
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MPSA.ax
+    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MPSA.ax
     ; used for shoutcast
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\shoutcastsource.ax
+    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\shoutcastsource.ax
     ; used for digital tv
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
     ##### not sure for what this is used
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\WinTVCapWriter.ax
+    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\TTPremiumSource.ax
+    ##### not sure for what this is used
+    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\WinTVCapWriter.ax
 
     # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MPReader.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MPTS.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MPTSWriter.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MPReader.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MPTS.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MPTSWriter.ax
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
 
     # [OBSOLETE] Common DLLs will not be removed. Too Dangerous
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC71.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC71u.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\msvcp71.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\msvcr71.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC80.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREMOVE $INSTDIR\MFC80u.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MFC71.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MFC71u.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MFC80.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MFC80u.dll
+
+    # needed by hauppauge.dll
+    !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\msvcp71.dll
+    !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\msvcr71.dll
 
     ; Config Files
     Delete /REBOOTOK  $CommonAppData\CaptureCardDefinitions.xml
@@ -598,7 +606,6 @@ SectionEnd
     Delete /REBOOTOK  $INSTDIR\TaskScheduler.dll
     Delete /REBOOTOK  $INSTDIR\ttBdaDrvApi_Dll.dll
     Delete /REBOOTOK  $INSTDIR\ttdvbacc.dll
-    # [MAYBE OBSOLETE] Delete /REBOOTOK  $INSTDIR\TTPremiumSource.ax
     Delete /REBOOTOK  $INSTDIR\TVCapture.dll
     Delete /REBOOTOK  $INSTDIR\TVGuideScheduler.exe
     Delete /REBOOTOK  $INSTDIR\Utils.dll
