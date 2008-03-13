@@ -97,6 +97,7 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !insertmacro un.GetOptions
 !insertmacro GetTime
 !insertmacro RefreshShellIcons
+!insertmacro un.RefreshShellIcons
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -833,7 +834,7 @@ Section Uninstall
 
     DeleteRegKey HKCR "MediaPortal.Installer" ;Delete key with association settings
 
-    ${RefreshShellIcons}
+    ${un.RefreshShellIcons}
     #System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
 
     "${Index}-NoOwn:"
