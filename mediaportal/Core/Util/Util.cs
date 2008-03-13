@@ -134,7 +134,7 @@ namespace MediaPortal.Util
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
 
-        string strTmp = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc,.cue");
+        string strTmp = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
         Tokens tok = new Tokens(strTmp, new char[] { ',' });
         foreach (string extension in tok)
         {
@@ -602,15 +602,7 @@ namespace MediaPortal.Util
 
     public static string SecondsToShortHMSString(int lSeconds)
     {
-      bool negative;
-      if (lSeconds < 0)
-      {
-        negative = true;
-        lSeconds = -lSeconds;
-      }
-      else
-        negative = false;
-
+      if (lSeconds < 0) return ("0:00");
       int hh = lSeconds / 3600;
       lSeconds = lSeconds % 3600;
       int mm = lSeconds / 60;
@@ -618,10 +610,6 @@ namespace MediaPortal.Util
 
       string strHMS = "";
       strHMS = String.Format("{0}:{1:00}", hh, mm);
-
-      if (negative)
-        strHMS = "-" + strHMS;
-
       return strHMS;
     }
 
@@ -632,15 +620,7 @@ namespace MediaPortal.Util
 
     public static string SecondsToHMSString(int lSeconds)
     {
-      bool negative;
-      if (lSeconds < 0)
-      {
-        negative = true;
-        lSeconds = -lSeconds;
-      }
-      else
-        negative = false;
-
+      if (lSeconds < 0) return ("0:00");
       int hh = lSeconds / 3600;
       lSeconds = lSeconds % 3600;
       int mm = lSeconds / 60;
@@ -651,10 +631,6 @@ namespace MediaPortal.Util
         strHMS = String.Format("{0}:{1:00}:{2:00}", hh, mm, ss);
       else
         strHMS = String.Format("{0}:{1:00}", mm, ss);
-
-      if (negative)
-        strHMS = "-" + strHMS;
-
       return strHMS;
     }
 
@@ -683,14 +659,7 @@ namespace MediaPortal.Util
 
     public static string SecondsToHMString(int lSeconds)
     {
-      bool negative;
-      if (lSeconds < 0)
-      {
-        negative = true;
-        lSeconds = -lSeconds;
-      }
-      else
-        negative = false;
+      if (lSeconds < 0) return "0:00";
       int hh = lSeconds / 3600;
       lSeconds = lSeconds % 3600;
       int mm = lSeconds / 60;
@@ -700,10 +669,6 @@ namespace MediaPortal.Util
         strHM = String.Format("{0:00}:{1:00}", hh, mm);
       else
         strHM = String.Format("0:{0:00}", mm);
- 
-      if (negative)
-        strHM = "-" + strHM;
- 
       return strHM;
     }
 

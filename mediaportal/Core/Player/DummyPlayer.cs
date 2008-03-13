@@ -43,7 +43,6 @@ namespace MediaPortal.Player
     public DummyPlayer(string filename)
     {
     }
-
     public override bool Play(string strFile)
     {
       if (_state != PlayerState.Idle)

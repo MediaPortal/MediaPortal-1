@@ -73,23 +73,6 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// This method is used to start playing a file and start at specific position and end at a specific position
-    /// </summary>
-    /// <param name="strFile">file to play</param>
-    /// <param name="startContentPositionMS">the start content position in the currently playing file (in ms)</param>
-    /// <param name="startPlayPositionMS">the start play position in the currently playing file (in ms) [everything before is the pre-gap]</param>
-    /// <param name="startPlayOffsetMS">the start play offset in the currently playing file (in ms) relative to startPlayPositionMS </param>
-    /// <param name="endContentPositionMS">the end content position in the currently playing file (in ms)</param>
-    /// <returns>
-    /// true: file is playing
-    /// false: unable to play file
-    /// </returns>
-    public virtual bool Play(string strFile, int startContentPositionMS, int startPlayPositionMS, int startPlayOffsetMS, int endContentPositionMS)
-    {
-      return Play(strFile);
-    }
-
-    /// <summary>
     /// Nearly the same as Play(), but usefull for web streams to give the real name of the stream and not url
     /// </summary>
     /// <param name="strFile">file to play</param>
@@ -100,7 +83,7 @@ namespace MediaPortal.Player
     /// </returns>
     public virtual bool PlayStream(string strFile,string streamName)
     {
-      return Play(strFile);
+        return false;
     }
 
     public virtual bool SupportsReplay
@@ -275,11 +258,6 @@ namespace MediaPortal.Player
     /// Property to get the current position in the currently playing file (in secs)
     /// </summary>
     public virtual double CurrentPosition
-    {
-      get { return 0; }
-    }
-
-    public virtual double MinPosition
     {
       get { return 0; }
     }
@@ -482,7 +460,7 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
-    /// <summary>
+        /// <summary>
     /// Property to get the type of an audio stream
     /// </summary>
     public virtual string AudioType(int iStream)

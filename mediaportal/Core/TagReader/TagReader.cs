@@ -105,10 +105,7 @@ namespace MediaPortal.TagReader
           musictag.Lyrics = "";
         else
           musictag.Lyrics = lyrics.Trim(trimChars);
-
-        if (tag.Tag.Title != null)
-          musictag.Title = tag.Tag.Title.Trim(trimChars);
-
+        musictag.Title = tag.Tag.Title.Trim(trimChars);
         musictag.Track = (int)tag.Tag.Track;
         musictag.TrackTotal = (int)tag.Tag.TrackCount;
         musictag.DiscID = (int)tag.Tag.Disc;

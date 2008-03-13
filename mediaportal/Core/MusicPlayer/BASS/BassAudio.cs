@@ -247,10 +247,6 @@ namespace MediaPortal.Player
     private int _CrossFadeIntervalMS = 4000;
     private int _DefaultCrossFadeIntervalMS = 4000;
     private int _BufferingMS = 5000;
-    private int _ContentStartPositionMS = 0; // Where content is starting in ms
-    private int _PlayStartPositionMS = 0; // Where are we supposed to start to play the content
-    private int _ContentEndPositionMS = -1;  // Where content is ending in ms
-    private int _StartPlayOffsetMS = 0;    // From where are we starting to play a song in ms (relative to the content start)
     private bool _SoftStop = true;
     private bool _Initialized = false;
     private bool _BassFreed = false;
@@ -336,23 +332,6 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Returns the Minimum position of an Audio Stream
-    /// </summary>
-    public override double MinPosition
-    {
-      get
-      {
-        int stream = GetCurrentStream();
-
-        if (stream == 0)
-          return 0;
-
-        double duration = (double)GetMinimumStreamSeconds(stream);
-        return duration;
-      }
-    }
-
-    /// <summary>
     /// Returns the Current Position in the Stream
     /// </summary>
     public override double CurrentPosition
@@ -371,7 +350,6 @@ namespace MediaPortal.Player
           pos -= _lastFMSongStartPosition;
 
         double curPosition = (double)Bass.BASS_ChannelBytes2Seconds(stream, pos); // the elapsed time length
-        curPosition = AbsoluteToPlayStartRelativeSeconds((float)curPosition);
         return curPosition;
       }
     }
@@ -1431,10 +1409,6 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public override bool Play(string filePath)
     {
-      return Play(filePath, 0, 0, 0, -1);
-    }
-    public override bool Play(string filePath, int startContentPositionMS, int startPlayPositionMS, int startPlayOffsetMS, int endContentPositionMS)
-    {
       if (!_Initialized)
         return false;
 
@@ -1585,10 +1559,6 @@ namespace MediaPortal.Player
           }
 
           Streams[CurrentStreamIndex] = stream;
-          _ContentStartPositionMS = startContentPositionMS;
-          _PlayStartPositionMS    = startPlayPositionMS;
-          _ContentEndPositionMS   = endContentPositionMS;
-          _StartPlayOffsetMS      = startPlayOffsetMS;
 
           if (stream != 0)
           {
@@ -1712,10 +1682,7 @@ namespace MediaPortal.Player
             }
           }
           else
-          {
-            Bass.BASS_ChannelSetPosition(stream, (_PlayStartPositionMS+_StartPlayOffsetMS)/1000f);
             playbackStarted = Bass.BASS_ChannelPlay(stream, false);
-          }
 
           if (stream != 0 && playbackStarted)
           {
@@ -1825,14 +1792,14 @@ namespace MediaPortal.Player
     private int RegisterPlaybackFadeOutEvent(int stream, int streamIndex, int fadeOutMS)
     {
       int syncHandle = 0;
-
-      float totaltime = GetTotalStreamSeconds(stream);
+      long len = Bass.BASS_ChannelGetLength(stream); // length in bytes
+      float totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len); // the total time length
       float fadeOutSeconds = 0;
+
       if (fadeOutMS > 0)
         fadeOutSeconds = fadeOutMS / 1000f;
-      float absolutEventTime = PlayStartRelativeToAbsoluteSeconds(totaltime - fadeOutSeconds);
 
-      long bytePos = Bass.BASS_ChannelSeconds2Bytes(stream, absolutEventTime);
+      long bytePos = Bass.BASS_ChannelSeconds2Bytes(stream, totaltime - fadeOutSeconds);
 
       syncHandle = Bass.BASS_ChannelSetSync(stream,
           BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS,
@@ -1858,24 +1825,10 @@ namespace MediaPortal.Player
     {
       int syncHandle = 0;
 
-      if (_ContentEndPositionMS >= _ContentStartPositionMS)
-      {
-        float totaltime = GetTotalStreamSeconds(stream);
-        float absolutEventTime = PlayStartRelativeToAbsoluteSeconds(totaltime);
-        long bytePos = Bass.BASS_ChannelSeconds2Bytes(stream, absolutEventTime);
-
-        syncHandle = Bass.BASS_ChannelSetSync(stream,
-          BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS,
-          bytePos, PlaybackEndProcDelegate,
-          streamIndex);
-      }
-      else
-      {
-        syncHandle = Bass.BASS_ChannelSetSync(stream,
+      syncHandle = Bass.BASS_ChannelSetSync(stream,
           BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_END,
           0, PlaybackEndProcDelegate,
           streamIndex);
-      }
 
       if (syncHandle == 0)
       {
@@ -1974,44 +1927,6 @@ namespace MediaPortal.Player
       return stream != 0 && (Bass.BASS_ChannelIsActive(stream) == (int)BASSActive.BASS_ACTIVE_PLAYING);
     }
 
-    private float PlayStartRelativeToAbsoluteSeconds(float relativeTime)
-    {
-      if (_ContentEndPositionMS >= _ContentStartPositionMS)
-        return relativeTime + (float)_PlayStartPositionMS/1000;
-      else
-        return relativeTime;
-    }
-    private float AbsoluteToPlayStartRelativeSeconds(float absoluteTime)
-    {
-      if (_ContentEndPositionMS >= _ContentStartPositionMS)
-        return absoluteTime - (float)_PlayStartPositionMS/1000;
-      else
-        return absoluteTime;
-    }
-
-    /// <summary>
-    /// Get minimum Seconds of the Stream
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    private float GetMinimumStreamSeconds(int stream)
-    {
-      if (stream == 0)
-        return 0;
-
-      float mintime;
-      if (_ContentEndPositionMS >= _ContentStartPositionMS)
-        mintime = (float)(_ContentStartPositionMS - _PlayStartPositionMS)/1000;
-      else
-        mintime = 0;
-      return mintime;
-    }
-    private float GetMinimumStreamSeconds()
-    {
-      return GetMinimumStreamSeconds(GetCurrentStream());
-    }
-
-
     /// <summary>
     /// Get Total Seconds of the Stream
     /// </summary>
@@ -2022,15 +1937,11 @@ namespace MediaPortal.Player
       if (stream == 0)
         return 0;
 
-      float totaltime;
-      if (_ContentEndPositionMS >= _ContentStartPositionMS)
-        totaltime = (float)(_ContentEndPositionMS - _PlayStartPositionMS)/1000;
-      else
-      {
-        // length in bytes
-        long len = Bass.BASS_ChannelGetLength(stream);
-        totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len);
-      }
+      // length in bytes
+      long len = Bass.BASS_ChannelGetLength(stream);
+
+      // the total time length
+      float totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len);
       return totaltime;
     }
 
@@ -2058,7 +1969,6 @@ namespace MediaPortal.Player
 
       // the elapsed time length
       float elapsedtime = Bass.BASS_ChannelBytes2Seconds(stream, pos);
-      elapsedtime = AbsoluteToPlayStartRelativeSeconds(elapsedtime);
       return elapsedtime;
     }
 
@@ -2510,35 +2420,6 @@ namespace MediaPortal.Player
       return true;
     }
 
-    private float GetStreamCurrentTime(int stream)
-    {
-      if (stream == 0)
-        return 0;
-
-      // position in bytes
-      long pos;
-      if (_Mixing)
-        pos = BassMix.BASS_Mixer_ChannelGetPosition(stream);
-      else
-        pos = Bass.BASS_ChannelGetPosition(stream);
-
-      // the elapsed time length relative to the beginning of the content
-      return AbsoluteToPlayStartRelativeSeconds(Bass.BASS_ChannelBytes2Seconds(stream, pos));
-    }
-
-    private void SetStreamCurrentTime(int stream, float timePos)
-    {
-      if (stream == 0)
-        return;
-
-      timePos = PlayStartRelativeToAbsoluteSeconds(timePos);
-
-      if (_Mixing)
-        BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, timePos));
-      else
-        Bass.BASS_ChannelSetPosition(stream, timePos);
-    }
-
     /// <summary>
     /// Seek Forward in the Stream
     /// </summary>
@@ -2560,14 +2441,25 @@ namespace MediaPortal.Player
       try
       {
         int stream = GetCurrentStream();
-        float totaltime = GetTotalStreamSeconds(stream);
-        float timePos = GetStreamCurrentTime(stream);
+        long len = Bass.BASS_ChannelGetLength(stream);                 // length in bytes
+        float totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len); // the total time length
+
+        long pos = 0;                                                  // position in bytes
+        if (_Mixing)
+          pos = BassMix.BASS_Mixer_ChannelGetPosition(stream);
+        else
+          pos = Bass.BASS_ChannelGetPosition(stream);
+
+        float timePos = Bass.BASS_ChannelBytes2Seconds(stream, pos);
         float offsetSecs = (float)ms / 1000f;
 
         if (timePos + offsetSecs >= totaltime)
           return false;
 
-        SetStreamCurrentTime(stream, timePos + offsetSecs);
+        if (_Mixing)
+          BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, timePos + offsetSecs)); // the elapsed time length
+        else
+          Bass.BASS_ChannelSetPosition(stream, (float)(timePos + offsetSecs)); // the elapsed time length
       }
 
       catch
@@ -2599,14 +2491,24 @@ namespace MediaPortal.Player
 
       try
       {
-        float timePos = GetStreamCurrentTime(stream);
-        float min_pos = GetMinimumStreamSeconds(stream);
-        timePos -= (float)ms / 1000f;
+        long len = Bass.BASS_ChannelGetLength(stream);                 // length in bytes
 
-        if (timePos <= min_pos)
+        long pos = 0;                                                  // position in bytes
+        if (_Mixing)
+          pos = BassMix.BASS_Mixer_ChannelGetPosition(stream);
+        else
+          pos = Bass.BASS_ChannelGetPosition(stream);
+
+        float timePos = Bass.BASS_ChannelBytes2Seconds(stream, pos);
+        float offsetSecs = (float)ms / 1000f;
+
+        if (timePos - offsetSecs <= 0)
           return false;
 
-        SetStreamCurrentTime(stream, timePos);
+        if (_Mixing)
+          BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, timePos - offsetSecs)); // the elapsed time length
+        else
+          Bass.BASS_ChannelSetPosition(stream, (float)(timePos - offsetSecs)); // the elapsed time length
       }
 
       catch
@@ -2635,7 +2537,10 @@ namespace MediaPortal.Player
 
         if (StreamIsPlaying(stream))
         {
-          SetStreamCurrentTime(stream, position);
+          if (_Mixing)
+            BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, position));
+          else
+            Bass.BASS_ChannelSetPosition(stream, (float)position);
         }
       }
 
@@ -2658,12 +2563,11 @@ namespace MediaPortal.Player
       if (_State != PlayState.Init)
       {
         double dCurTime = (double)GetStreamElapsedTime();
-        double dMinTime = (double)GetMinimumStreamSeconds();
 
-        dCurTime += dTime;
+        dTime = dCurTime + dTime;
 
-        if (dTime < dMinTime)
-          dTime = dMinTime;
+        if (dTime < 0.0d)
+          dTime = 0.0d;
 
         if (dTime < Duration)
           SeekToTimePosition((int)dTime);
@@ -2680,10 +2584,8 @@ namespace MediaPortal.Player
 
       if (_State != PlayState.Init)
       {
-        double dMinTime = (double)GetMinimumStreamSeconds();
-
-        if (dTime < dMinTime)
-          dTime = dMinTime;
+        if (dTime < 0.0d)
+          dTime = 0.0d;
 
         if (dTime < Duration)
           SeekToTimePosition((int)dTime);
@@ -2707,10 +2609,8 @@ namespace MediaPortal.Player
         double dSeekPercentageDuration = fOnePercentDuration * (double)iPercentage;
         double dPositionMS = dDuration += dSeekPercentageDuration;
 
-        double dMinTime = (double)GetMinimumStreamSeconds();
-
-        if (dPositionMS < dMinTime)
-          dPositionMS = dMinTime;
+        if (dPositionMS < 0)
+          dPositionMS = 0d;
 
         if (dPositionMS > dDuration)
           dPositionMS = dDuration;
@@ -2737,6 +2637,7 @@ namespace MediaPortal.Player
 
         if (iPercentage == 0)
           SeekToTimePosition(0);
+
         else
           SeekToTimePosition((int)(Duration * ((double)iPercentage / 100d)));
       }

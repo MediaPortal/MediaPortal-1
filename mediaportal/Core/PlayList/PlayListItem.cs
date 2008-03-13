@@ -49,12 +49,6 @@ namespace MediaPortal.Playlists
     protected string _fileName = "";
     protected string _description = "";
     protected int _duration = 0;
-    protected int    _startContentPositionMS = 0;
-    protected int    _startPlayPositionMS = 0;
-    protected int    _endContentPositionMS = -1;
-    protected int    _startPlayOffsetMS = 0;
-    protected int    _endPlayOffsetMS = -1;
-    protected string _playedFileName = "";
     protected object _musicTag = null;
     bool _isPlayed = false;
     PlayListItemType _itemType = PlayListItemType.Unknown;
@@ -69,15 +63,6 @@ namespace MediaPortal.Playlists
     }
 
     public PlayListItem(string description, string fileName, int duration)
-      : this(description, fileName, fileName, 0, duration*1000)
-    {
-    }
-
-    public PlayListItem(string description, string fileName, string playedFileName, int startContentPositionMS, int endContentPositionMS)
-      : this(description, fileName, playedFileName, startContentPositionMS, startContentPositionMS, 0, endContentPositionMS-startContentPositionMS, endContentPositionMS)
-    {
-    }
-    public PlayListItem(string description, string fileName, string playedFileName, int startContentPositionMS, int startPlayPositionMS, int startPlayOffsetMS, int endPlayOffsetMS, int endContentPositionMS)
     {
       if (description == null)
         return;
@@ -85,30 +70,7 @@ namespace MediaPortal.Playlists
         return;
       _description = description;
       _fileName = fileName;
-      _playedFileName = playedFileName;
-      _startContentPositionMS = startContentPositionMS;
-      _startPlayPositionMS = startPlayPositionMS;
-      _endContentPositionMS = endContentPositionMS;
-      _startPlayOffsetMS = startPlayOffsetMS;
-      _endPlayOffsetMS = endPlayOffsetMS;
-      _duration = (endContentPositionMS - startPlayPositionMS)/1000;
-    }
-
-    public virtual string PlayedFileName
-    {
-      get
-      {
-        if (_playedFileName != string.Empty)
-          return _playedFileName;
-        else
-          return _fileName;
-      }
-      set
-      {
-        if (value == null)
-          return;
-        _playedFileName = value;
-      }
+      _duration = duration;
     }
 
     public PlayListItem.PlayListItemType Type
@@ -143,32 +105,6 @@ namespace MediaPortal.Playlists
     {
       get { return _duration; }
       set { _duration = value; }
-    }
-
-    public int StartContentPositionMS
-    {
-      get { return _startContentPositionMS; }
-      set { _startContentPositionMS = value; }
-    }
-    public int StartPlayPositionMS
-    {
-      get { return _startPlayPositionMS; }
-      set { _startPlayPositionMS = value; }
-    }
-    public int EndContentPositionMS
-    {
-      get { return _endContentPositionMS; }
-      set { _endContentPositionMS = value; }
-    }
-    public int StartPlayOffsetMS
-    {
-      get { return _startPlayOffsetMS; }
-      set { _startPlayOffsetMS = value; }
-    }
-    public int EndPlayOffsetMS
-    {
-      get { return _endPlayOffsetMS; }
-      set { _endPlayOffsetMS = value; }
     }
 
     public bool Played

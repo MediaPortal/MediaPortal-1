@@ -110,16 +110,6 @@ namespace MediaPortal.Util
       if (!_Enabled) return false;
       if (!System.IO.File.Exists(_Path)) return false;
 
-      // Check the file type. We won't mount WAVE Cue files. they're handled natively in Music
-      if (System.IO.Path.GetExtension(IsoFile) == ".cue")
-      {
-        CueSharp.CueSheet cue = new CueSharp.CueSheet(IsoFile);
-        CueSharp.Track[] tracks = cue.Tracks;
-        CueSharp.AudioFile audiofile = tracks[0].DataFile;
-        if (audiofile.Filetype == CueSharp.FileType.WAVE || audiofile.Filetype == CueSharp.FileType.MP3)
-          return false;
-      }
-
       UnMount();
 
       IsoFile = Utils.RemoveTrailingSlash(IsoFile);

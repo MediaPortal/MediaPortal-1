@@ -97,12 +97,6 @@ namespace MediaPortal.Tests.Core.Playlists
       return true;
     }
 
-    public bool Play(string filePath, int startContentPositionMS, int startPlayPositionMS, int startPlayOffsetMS, int endContentPositionMS)
-    {
-      hasPlayBeenCalled = true;
-      return true;
-    }
-
     public void Stop()
     {
       throw new Exception("The method or operation is not implemented.");

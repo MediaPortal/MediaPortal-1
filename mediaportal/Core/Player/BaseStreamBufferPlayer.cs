@@ -139,7 +139,6 @@ namespace MediaPortal.Player
         return false;
       }
     }
-
     public override bool Play( string strFile )
     {
       Log.Info("Streambufferplayer play:{0}", strFile);

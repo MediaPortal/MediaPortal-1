@@ -981,10 +981,6 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile)
     {
-      return Play(strFile, -1, 0, -1, -1);
-    }
-    public static bool Play(string strFile, int startContentPositionMS, int startPlayPositionMS, int startPlayOffsetMS, int endContentPositionMS)
-    {
       try
       {
         // when we are watching TV and suddenly decides to watch a video, we want to make sure that the TV is stopped.
@@ -1067,7 +1063,7 @@ namespace MediaPortal.Player
             }
             _player = new DVDPlayer9();
             _player = CachePreviousPlayer(_player);
-            bool _isPlaybackPossible = _player.Play(strFile, startContentPositionMS, startPlayPositionMS, startPlayOffsetMS, endContentPositionMS);
+            bool _isPlaybackPossible = _player.Play(strFile);
             if (!_isPlaybackPossible)
             {
               Log.Info("player:ended");
@@ -1093,7 +1089,7 @@ namespace MediaPortal.Player
         {
           LoadChapters(strFile);
           _player = CachePreviousPlayer(_player);
-          bool bResult = _player.Play(strFile, startContentPositionMS, startPlayPositionMS, startPlayOffsetMS, endContentPositionMS);
+          bool bResult = _player.Play(strFile);
           if (!bResult)
           {
             Log.Info("player:ended");
@@ -1348,15 +1344,6 @@ namespace MediaPortal.Player
       }
     }
 
-    public static double MinPosition
-    {
-      get
-      {
-        if (_player == null) return 0;
-        return _player.MinPosition;
-      }
-    }
-
     public static double StreamPosition
     {
       get
@@ -1425,7 +1412,7 @@ namespace MediaPortal.Player
       if (_currentStep != 0 && _player != null)
       {
         double dTime = (int)_currentStep + _player.CurrentPosition;
-        if (dTime < _player.MinPosition) dTime = _player.MinPosition;
+        if (dTime < 0) dTime = 0d;
         if (dTime > _player.Duration) dTime = _player.Duration - 5;
         Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
         _player.SeekAbsolute(dTime);
@@ -1484,8 +1471,8 @@ namespace MediaPortal.Player
       int m_iTimeToStep = (int)_currentStep;
       if (m_iTimeToStep == 0) return "";
       _player.Process();
-      if (_player.CurrentPosition + m_iTimeToStep <= _player.MinPosition) return GUILocalizeStrings.Get(773);// "START"
-      if (_player.CurrentPosition + m_iTimeToStep >= _player.Duration)    return GUILocalizeStrings.Get(774);// "END"
+      if (_player.CurrentPosition + m_iTimeToStep <= 0) return GUILocalizeStrings.Get(773);// "START"
+      if (_player.CurrentPosition + m_iTimeToStep >= _player.Duration) return GUILocalizeStrings.Get(774);// "END"
       return GetSingleStep(_currentStep);
     }
 
@@ -1495,7 +1482,7 @@ namespace MediaPortal.Player
       bEnd = false;
       if (_player == null) return 0;
       int m_iTimeToStep = (int)_currentStep;
-      if (_player.CurrentPosition + m_iTimeToStep <= _player.MinPosition) bStart = true;//start
+      if (_player.CurrentPosition + m_iTimeToStep <= 0) bStart = true;//start
       if (_player.CurrentPosition + m_iTimeToStep >= _player.Duration) bEnd = true;
       return m_iTimeToStep;
     }
@@ -2057,7 +2044,7 @@ namespace MediaPortal.Player
       double nextChapter = NextChapterTime(_player.CurrentPosition);
       Log.Debug("g_Player.JumpNextChapter() - Current Position: {0}, Next Chapter: {1}", _player.CurrentPosition, nextChapter);
       
-      if (nextChapter > _player.MinPosition && nextChapter < _player.Duration)
+      if (nextChapter > 0 && nextChapter < _player.Duration)
       {
         SeekAbsolute(nextChapter);
         return true;
@@ -2073,7 +2060,7 @@ namespace MediaPortal.Player
       double prevChapter = PreviousChapterTime(_player.CurrentPosition);
       Log.Debug("g_Player.JumpPrevChapter() - Current Position: {0}, Previous Chapter: {1}", _player.CurrentPosition, prevChapter);
 
-      if (prevChapter >= _player.MinPosition && prevChapter < _player.Duration)
+      if (prevChapter >= 0 && prevChapter < _player.Duration)
       {
         SeekAbsolute(prevChapter);
         return true;
