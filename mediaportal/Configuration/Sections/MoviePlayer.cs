@@ -59,8 +59,10 @@ namespace MediaPortal.Configuration.Sections
     private System.ComponentModel.IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
+      private CheckBox autoDecoderSettings;
     private MediaPortal.UserInterface.Controls.MPGroupBox wmvGroupBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox wmvCheckBox;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     bool _init = false;
     
     public MoviePlayer()
@@ -106,6 +108,16 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+
+      public void UpdateDecoderSettings()
+      {
+          label5.Enabled = !autoDecoderSettings.Checked;
+          label6.Enabled = !autoDecoderSettings.Checked;
+          mpLabel1.Enabled = !autoDecoderSettings.Checked;
+          videoCodecComboBox.Enabled = !autoDecoderSettings.Checked;
+          h264videoCodecComboBox.Enabled = !autoDecoderSettings.Checked;
+          audioCodecComboBox.Enabled = !autoDecoderSettings.Checked;
+      }
     /// <summary>
     /// 
     /// </summary>
@@ -114,6 +126,9 @@ namespace MediaPortal.Configuration.Sections
       if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        autoDecoderSettings.Checked = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
+        UpdateDecoderSettings();
+
         fileNameTextBox.Text = xmlreader.GetValueAsString("movieplayer", "path", "");
         parametersTextBox.Text = xmlreader.GetValueAsString("movieplayer", "arguments", "");
         externalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "internal", true);
@@ -206,6 +221,7 @@ namespace MediaPortal.Configuration.Sections
       if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        xmlwriter.SetValueAsBool("movieplayer", "autodecodersettings", autoDecoderSettings.Checked);
         xmlwriter.SetValue("movieplayer", "path", fileNameTextBox.Text);
         xmlwriter.SetValue("movieplayer", "arguments", parametersTextBox.Text);
         xmlwriter.SetValueAsBool("movieplayer", "internal", !externalPlayerCheckBox.Checked);
@@ -250,6 +266,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.autoDecoderSettings = new System.Windows.Forms.CheckBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -261,6 +278,7 @@ namespace MediaPortal.Configuration.Sections
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.wmvGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.wmvCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.wmvGroupBox.SuspendLayout();
@@ -278,7 +296,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.fileNameTextBox);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 202);
+      this.groupBox1.Location = new System.Drawing.Point(0, 228);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 112);
       this.groupBox1.TabIndex = 1;
@@ -289,7 +307,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.externalPlayerCheckBox.AutoSize = true;
       this.externalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.externalPlayerCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.externalPlayerCheckBox.Location = new System.Drawing.Point(16, 32);
       this.externalPlayerCheckBox.Name = "externalPlayerCheckBox";
       this.externalPlayerCheckBox.Size = new System.Drawing.Size(231, 17);
       this.externalPlayerCheckBox.TabIndex = 0;
@@ -300,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
       // parametersButton
       // 
       this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersButton.Location = new System.Drawing.Point(384, 76);
+      this.parametersButton.Location = new System.Drawing.Point(384, 84);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
       this.parametersButton.TabIndex = 6;
@@ -313,14 +331,14 @@ namespace MediaPortal.Configuration.Sections
       this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.parametersTextBox.Location = new System.Drawing.Point(168, 76);
+      this.parametersTextBox.Location = new System.Drawing.Point(168, 84);
       this.parametersTextBox.Name = "parametersTextBox";
       this.parametersTextBox.Size = new System.Drawing.Size(208, 20);
       this.parametersTextBox.TabIndex = 5;
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 80);
+      this.label2.Location = new System.Drawing.Point(16, 88);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(72, 15);
       this.label2.TabIndex = 4;
@@ -329,7 +347,7 @@ namespace MediaPortal.Configuration.Sections
       // fileNameButton
       // 
       this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameButton.Location = new System.Drawing.Point(384, 52);
+      this.fileNameButton.Location = new System.Drawing.Point(384, 60);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 3;
@@ -342,14 +360,14 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.fileNameTextBox.Location = new System.Drawing.Point(168, 52);
+      this.fileNameTextBox.Location = new System.Drawing.Point(168, 60);
       this.fileNameTextBox.Name = "fileNameTextBox";
       this.fileNameTextBox.Size = new System.Drawing.Size(208, 20);
       this.fileNameTextBox.TabIndex = 2;
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 56);
+      this.label1.Location = new System.Drawing.Point(16, 64);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(80, 16);
       this.label1.TabIndex = 1;
@@ -359,6 +377,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.autoDecoderSettings);
       this.mpGroupBox1.Controls.Add(this.mpLabel1);
       this.mpGroupBox1.Controls.Add(this.h264videoCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.audioRendererComboBox);
@@ -370,14 +389,23 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 128);
+      this.mpGroupBox1.Size = new System.Drawing.Size(472, 154);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Codec Settings (internal player)";
       // 
+      // autoDecoderSettings
+      // 
+      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 123);
+      this.autoDecoderSettings.Name = "autoDecoderSettings";
+      this.autoDecoderSettings.Size = new System.Drawing.Size(456, 24);
+      this.autoDecoderSettings.TabIndex = 0;
+      this.autoDecoderSettings.Text = "Automatic Decoder Settings (use with caution - knowledge of DirectShow merits req" +
+          "uired)";
+      // 
       // mpLabel1
       // 
-      this.mpLabel1.Location = new System.Drawing.Point(16, 48);
+      this.mpLabel1.Location = new System.Drawing.Point(16, 52);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(146, 16);
       this.mpLabel1.TabIndex = 8;
@@ -389,7 +417,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.h264videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 44);
+      this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 48);
       this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
       this.h264videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
       this.h264videoCodecComboBox.TabIndex = 9;
@@ -400,14 +428,14 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 92);
+      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 96);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(288, 21);
       this.audioRendererComboBox.TabIndex = 7;
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 96);
+      this.label3.Location = new System.Drawing.Point(16, 100);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(88, 17);
       this.label3.TabIndex = 6;
@@ -415,7 +443,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(16, 24);
+      this.label6.Location = new System.Drawing.Point(16, 28);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(146, 16);
       this.label6.TabIndex = 0;
@@ -427,7 +455,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 68);
+      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 72);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
       this.audioCodecComboBox.TabIndex = 3;
@@ -438,14 +466,14 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.videoCodecComboBox.Location = new System.Drawing.Point(168, 20);
+      this.videoCodecComboBox.Location = new System.Drawing.Point(168, 24);
       this.videoCodecComboBox.Name = "videoCodecComboBox";
       this.videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
       this.videoCodecComboBox.TabIndex = 1;
       // 
       // label5
       // 
-      this.label5.Location = new System.Drawing.Point(16, 72);
+      this.label5.Location = new System.Drawing.Point(16, 76);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(80, 16);
       this.label5.TabIndex = 2;
@@ -455,9 +483,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.wmvGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.wmvGroupBox.Controls.Add(this.mpLabel2);
       this.wmvGroupBox.Controls.Add(this.wmvCheckBox);
       this.wmvGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.wmvGroupBox.Location = new System.Drawing.Point(0, 134);
+      this.wmvGroupBox.Location = new System.Drawing.Point(0, 160);
       this.wmvGroupBox.Name = "wmvGroupBox";
       this.wmvGroupBox.Size = new System.Drawing.Size(472, 62);
       this.wmvGroupBox.TabIndex = 7;
@@ -468,12 +497,20 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.wmvCheckBox.AutoSize = true;
       this.wmvCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.wmvCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.wmvCheckBox.Location = new System.Drawing.Point(19, 19);
       this.wmvCheckBox.Name = "wmvCheckBox";
       this.wmvCheckBox.Size = new System.Drawing.Size(233, 17);
       this.wmvCheckBox.TabIndex = 0;
       this.wmvCheckBox.Text = "Use 5.1 audio playback for WMV movie files";
       this.wmvCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(34, 39);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(326, 16);
+      this.mpLabel2.TabIndex = 10;
+      this.mpLabel2.Text = "Will not be applied if Automatic Decoder Settings enabled.";
       // 
       // MoviePlayer
       // 
@@ -539,5 +576,10 @@ namespace MediaPortal.Configuration.Sections
         parametersTextBox.Text += parameters.SelectedParameter;
       }
     }
+
+      private void autoDecoderSettings_CheckedChanged(object sender, EventArgs e)
+      {
+          UpdateDecoderSettings();
+      }
   }
 }

@@ -25,6 +25,7 @@
 
 using System;
 using System.Windows.Forms;
+using System.Collections;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Microsoft.DirectX;
@@ -35,6 +36,8 @@ using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace MediaPortal.Player
 {
@@ -62,11 +65,6 @@ namespace MediaPortal.Player
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces()
     {
-      Vmr9 = new VMR9Util();
-      // switch back to directx fullscreen mode
-      Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
-      GUIWindowManager.SendMessage(msg);
       DsRect rect = new DsRect();
       rect.top = 0;
       rect.bottom = GUIGraphicsContext.form.Height;
@@ -75,9 +73,9 @@ namespace MediaPortal.Player
       try
       {
         graphBuilder = (IGraphBuilder)new FilterGraph();
-        Vmr9.AddVMR9(graphBuilder);
-        Vmr9.Enable(false);
         // add preferred video & audio codecs
+        int hr;
+        bool bAutoDecoderSettings = false;
         string strVideoCodec = "";
         string strH264VideoCodec = "";
         string strAudioCodec = "";
@@ -87,6 +85,7 @@ namespace MediaPortal.Player
         bool wmvAudio;
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
+          bAutoDecoderSettings = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
           strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
@@ -104,56 +103,182 @@ namespace MediaPortal.Player
             intCount++;
           }
         }
-        //Manually add codecs based on file extension
-        string extension = System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
-        if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
+
+        List<String> videoFilterList = new List<String>();
+
+        //Manually add codecs based on file extension if not in auto-settings
+        if (bAutoDecoderSettings == false)
         {
-          if (strVideoCodec.Length > 0) videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
-          if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+          // switch back to directx fullscreen mode
+          Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+          GUIWindowManager.SendMessage(msg);
+
+            string extension = System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
+            if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
+            {
+                if (strVideoCodec.Length > 0) videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
+                if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+            }
+            if (extension.Equals(".wmv"))
+            {
+                videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMVideo Decoder DMO");
+                audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
+            }
+            if (extension.Equals(".mp4") || extension.Equals(".mkv"))
+            {
+                if (strH264VideoCodec.Length > 0) h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
+                if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+            }
         }
-        if (extension.Equals(".wmv"))
+        else 
         {
-          videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMVideo Decoder DMO");
-          audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
-        }
-        if (extension.Equals(".mp4") || extension.Equals(".mkv"))
-        {
-          if (strH264VideoCodec.Length > 0) h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
-          if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-        }
-        if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
-        //We now add custom filters after the Audio Renderer as AC3Filter failed to connect otherwise.
-        //FlipGer: add custom filters to graph
-        customFilters = new IBaseFilter[intFilters];
-        string[] arrFilters = strFilters.Split(';');
-        for (int i = 0; i < intFilters; i++)
-        {
-          customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
-        }
-        //Check if the WMAudio Decoder DMO filter is in the graph if so set High Resolution Output > 2 channels
-        IBaseFilter baseFilter;
-        graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
-        int hr;
-        if (baseFilter != null && wmvAudio != false) //Also check configuration option enabled
-        {
-          Log.Info("VideoPlayerVMR9: Found WMAudio Decoder DMO");
-          //Set the filter setting to enable more than 2 audio channels
-          const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
-          object val = true;
-          IPropertyBag propBag = (IPropertyBag)baseFilter;
-          hr = propBag.Write(g_wszWMACHiResOutput, ref val);
-          if (hr != 0)
+          // in order to retain the same decoding chain than one would get in graphedit when using the DShow filter priorities only, we have
+          // to be a bit slick. You'll find out that if you add the renderer first to the graph then render a file you don't end up with
+          // the same decoding chain than just rendering the file (which in turn uses VMR7). Usually ffdshow (and maybe other filters which
+          // usually handled raw video) don't end up being used.
+          // My first attempt at going around that was first render the file, then remove the renderer used by default in the graph and
+          // reconnect to the VMR9. Trouble is for an unknown reason when DX exclusive is set, in some occasions it would not connect. 
+          // I have no idea why this happens.
+          // therefore I went another way: before turning the DX surface to exclusive mode, I render the file, look for the renderer, from
+          // there crawl back the video decoding chain storing the name of each filters, back to the source.
+          // With that list of filters, I then switch the DX surface to exclusive mode, add the VMR9 renderer along with all the filters
+          // I got from my previous parsing, and finally render the file. And I finally get the same video decoding chain I got from graphedit
+          // but with VMR9 in exclusive mode now.
+
+
+          // step 1: figure out the renderer of the graph
+          hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+
+          // then, go over all the filters of the graph to find out the renderer that has been used as a default renderer (depends on merit)
+          // from there, go back up the video decoding chain, storing the name of each filters, except the last one (source)
+          // this list will be used on the final graph step, to add the VMR9 output and all the filters, and then render the file
+
+          IBaseFilter currentVideoRenderer = null;
+          ArrayList ret = new ArrayList();
+          IEnumFilters enumFilters;
+          int hrFilters = graphBuilder.EnumFilters(out enumFilters);
+          do
           {
-            Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
+            int ffetched;
+            IBaseFilter[] filters = new IBaseFilter[1];
+            hrFilters = enumFilters.Next(1, filters, out ffetched);
+            if (hrFilters == 0 && ffetched > 0)
+            {
+              FilterInfo info;
+              filters[0].QueryFilterInfo(out info);
+              String sName = info.achName;
+              // a renderer can provide a IBasicVideo2 interface - nothing else can (as far as I know)
+              // so it's a good way to figure it out
+              IBasicVideo2 localBasicVideo = filters[0] as IBasicVideo2;
+              if (localBasicVideo != null)
+              {
+                currentVideoRenderer = filters[0];
+              }
+              else
+                Marshal.ReleaseComObject(filters[0]);
+            }
           }
-          else
+          while (hrFilters == 0 && currentVideoRenderer == null);
+          Marshal.ReleaseComObject(enumFilters);
+
+          if (currentVideoRenderer != null)
           {
-            Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
-          }
-          DirectShowUtil.ReleaseComObject(baseFilter);
+            // step 2: once the renderer is found, go back up the chain and make the list of decoding steps
+            
+            // get the pin that is connected to the current renderer
+            IPin iPinSource = DirectShowUtil.FindSourcePinOf(currentVideoRenderer);
+            do
+            {
+              PinInfo outputInfo;
+              iPinSource.QueryPinInfo(out outputInfo);
+              FilterInfo info;
+              outputInfo.filter.QueryFilterInfo(out info);
+              Marshal.ReleaseComObject(iPinSource);
+              iPinSource = DirectShowUtil.FindSourcePinOf(outputInfo.filter);
+              Marshal.ReleaseComObject(outputInfo.filter);
+              if (iPinSource != null)
+                videoFilterList.Add(info.achName);
+            }
+            while (iPinSource != null);
+
+            // clear up the graph
+            if (graphBuilder != null)
+            {
+              while ((hr = Marshal.ReleaseComObject(graphBuilder)) > 0) ;
+              graphBuilder = null;
+            }
+
+            graphBuilder = (IGraphBuilder)new FilterGraph();
+
+          // switch back to directx fullscreen mode
+          Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+          GUIWindowManager.SendMessage(msg);
         }
-        hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+      }
+
+      if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
+      //We now add custom filters after the Audio Renderer as AC3Filter failed to connect otherwise.
+      //FlipGer: add custom filters to graph
+      customFilters = new IBaseFilter[intFilters];
+      string[] arrFilters = strFilters.Split(';');
+      for (int i = 0; i < intFilters; i++)
+      {
+        customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
+      }
+      //Check if the WMAudio Decoder DMO filter is in the graph if so set High Resolution Output > 2 channels
+      IBaseFilter baseFilter;
+      graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
+      if (baseFilter != null && wmvAudio != false) //Also check configuration option enabled
+      {
+        Log.Info("VideoPlayerVMR9: Found WMAudio Decoder DMO");
+        //Set the filter setting to enable more than 2 audio channels
+        const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
+        object val = true;
+        IPropertyBag propBag = (IPropertyBag)baseFilter;
+        hr = propBag.Write(g_wszWMACHiResOutput, ref val);
         if (hr != 0)
+        {
+          Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
+        }
+        else
+        {
+          Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
+        }
+        Marshal.ReleaseComObject(baseFilter);
+      }
+
+      if (bAutoDecoderSettings == true)
+      {
+        // step 3: add the VMR9 renderer, along with the filters we got from step 2, and render the file
+        // if for some reason the parsing failed, we end up doing exactly the same than as usual, ie VMR9 + render.
+        // add the VMR9 in the graph
+        Vmr9 = new VMR9Util();
+        Vmr9.AddVMR9(graphBuilder);
+        Vmr9.Enable(false);
+
+        foreach (string sFilter in videoFilterList)
+        {
+          IBaseFilter newFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, sFilter);
+          Marshal.ReleaseComObject(newFilter);
+        }
+
+        // render
+        hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+      }
+      else
+      {
+        // add the VMR9 in the graph
+        Vmr9 = new VMR9Util();
+        Vmr9.AddVMR9(graphBuilder);
+        Vmr9.Enable(false);
+
+        // render
+        hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+      }
+
+        if (Vmr9 == null)
         {
           Error.SetError("Unable to play movie", "Unable to render file. Missing codecs?");
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
