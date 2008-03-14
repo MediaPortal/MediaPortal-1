@@ -66,7 +66,7 @@ namespace TvService
     /// </summary>
     public Service1()
     {
-    
+
       string applicationPath = System.Windows.Forms.Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
@@ -82,9 +82,9 @@ namespace TvService
         RemotingConfiguration.Configure(remotingFile, false);
       }
       catch (Exception ex)
-      {      
+      {
         Log.Write(ex);
-      } 
+      }
 
       InitializeComponent();
     }
@@ -117,7 +117,7 @@ namespace TvService
         }
       }
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      Log.WriteFile("TV service V"+versionInfo.FileVersion+" starting");
+      Log.WriteFile("TV service V" + versionInfo.FileVersion + " starting");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       Process currentProcess = Process.GetCurrentProcess();
@@ -145,7 +145,7 @@ namespace TvService
       if (!_started)
         return;
       Log.WriteFile("TV service stopping");
-      
+
       StopRemoting();
       RemoteControl.Clear();
       if (_controller != null)
@@ -155,7 +155,7 @@ namespace TvService
         _controller = null;
       }
 
-      if (_powerEventThreadId != 0 )
+      if (_powerEventThreadId != 0)
       {
         Log.Debug("TVService OnStop asking PowerEventThread to exit");
         PostThreadMessage(_powerEventThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
@@ -199,7 +199,7 @@ namespace TvService
     private static extern IntPtr DispatchMessageA([In] ref MSG msg);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern IntPtr CreateWindowEx( uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y,
+    private static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y,
       int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
 
     [DllImport("user32.dll")]
@@ -210,7 +210,7 @@ namespace TvService
 
     private delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
-    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     struct WNDCLASS
     {
       public uint style;
@@ -225,11 +225,11 @@ namespace TvService
       public string lpszClassName;
     }
 
-    [DllImport("user32", CharSet=CharSet.Auto)]
+    [DllImport("user32", CharSet = CharSet.Auto)]
     private static extern int RegisterClass(ref WNDCLASS wndclass);
 
     [DllImport("user32.dll")]
-    private static extern IntPtr DefWindowProc( IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam );
+    private static extern IntPtr DefWindowProc(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
     #region WndProc message constants
     private const int WM_QUIT = 0x0012;
@@ -252,7 +252,7 @@ namespace TvService
     {
       if (msg == WM_POWERBROADCAST)
       {
-        Log.Debug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32() );
+        Log.Debug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32());
         switch (wParam.ToInt32())
         {
           case PBT_APMQUERYSUSPENDFAILED:
@@ -288,8 +288,8 @@ namespace TvService
             OnPowerEvent(PowerEventType.ResumeAutomatic);
             break;
         }
-      }                 
-      return DefWindowProc(hWnd,msg,wParam,lParam);
+      }
+      return DefWindowProc(hWnd, msg, wParam, lParam);
     }
 
     private void PowerEventThread()
@@ -315,7 +315,7 @@ namespace TvService
 
         RegisterClass(ref wndclass);
 
-        IntPtr handle= CreateWindowEx(0x80, wndclass.lpszClassName, "", 0x80000000, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, wndclass.hInstance, IntPtr.Zero);
+        IntPtr handle = CreateWindowEx(0x80, wndclass.lpszClassName, "", 0x80000000, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, wndclass.hInstance, IntPtr.Zero);
 
         if (handle.Equals(IntPtr.Zero))
         {
@@ -409,7 +409,7 @@ namespace TvService
         return false;
       }
     }
-     void GetDatabaseConnectionString(out string connectionString, out string provider)
+    void GetDatabaseConnectionString(out string connectionString, out string provider)
     {
       connectionString = "";
       provider = "";
@@ -420,7 +420,10 @@ namespace TvService
         {
           System.IO.File.Copy(fname, "gentle.config", true);
         }
-        catch (Exception) { }
+        catch (Exception ex1)
+        {
+          Log.Write(ex1);
+        }
         XmlDocument doc = new XmlDocument();
         doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
@@ -562,7 +565,7 @@ namespace TvService
     /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
     void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-      Log.WriteFile("Tvservice stopped due to a app domain exception {0}",e.ExceptionObject);
+      Log.WriteFile("Tvservice stopped due to a app domain exception {0}", e.ExceptionObject);
     }
 
     #region IPowerEventHandler implementation
@@ -578,6 +581,6 @@ namespace TvService
         _powerEventHandlers.Remove(handler);
     }
     #endregion
-    
+
   }
 }

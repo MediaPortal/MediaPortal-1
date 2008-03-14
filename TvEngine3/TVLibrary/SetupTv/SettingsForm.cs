@@ -51,7 +51,6 @@ namespace SetupTv
     protected LinkLabel linkLabel1;
     public SetupTvSettingsForm()
     {
-
       try
       {
         //
@@ -87,7 +86,10 @@ namespace SetupTv
         {
           System.IO.File.Copy(fname, "gentle.config", true);
         }
-        catch (Exception) { }
+        catch (Exception ex1)
+        {
+          Log.Write(ex1);
+        }
         try
         {
           XmlDocument doc = new XmlDocument();
@@ -244,10 +246,12 @@ namespace SetupTv
     {
       AddChildSection(null, section);
     }
+
     public void AddSection(SectionSettings section, int imageIndex)
     {
       AddChildSection(null, section, imageIndex);
     }
+
     public void AddChildSection(SectionSettings parentSection, SectionSettings section, int imageIndex)
     {
       //

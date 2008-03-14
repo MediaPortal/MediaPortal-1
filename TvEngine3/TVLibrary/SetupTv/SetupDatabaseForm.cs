@@ -392,11 +392,31 @@ namespace SetupTv
 
     private void Save()
     {
-      string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-
       string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", true);
+      string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      if (!File.Exists(fname))
+      {
+        try
+        {
+          File.Copy(Application.StartupPath + @"\gentle.config", fname, true);
+        }
+        catch (Exception exc)
+        {
+          MessageBox.Show(string.Format("Could not copy generic db config to {0} - {1}", fname, exc.Message));
+          return;
+        }        
+      }
       XmlDocument doc = new XmlDocument();
-      doc.Load(fname);
+      try
+      {
+        doc.Load(fname);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Could not load generic gentle config to insert matching connection string: {0}", ex.Message));
+        return;
+      }
+
       XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
       XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
       XmlNode nodeName = nodeKey.Attributes.GetNamedItem("name"); ;

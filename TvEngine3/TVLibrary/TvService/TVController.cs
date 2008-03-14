@@ -2091,7 +2091,10 @@ namespace TvService
         {
           System.IO.File.Copy(fname, "gentle.config", true);
         }
-        catch (Exception) { }
+        catch (Exception ex1) 
+        {
+          Log.Write(ex1);
+        }
         XmlDocument doc = new XmlDocument();
         doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
@@ -2125,7 +2128,10 @@ namespace TvService
         {
           System.IO.File.Copy(fname, "gentle.config", true);
         }
-        catch (Exception) { }
+        catch (Exception ex1)         
+        {
+          Log.Write(ex1);
+        }
         Gentle.Framework.ProviderFactory.ResetGentle(true);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
         DeInit();

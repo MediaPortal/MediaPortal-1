@@ -45,6 +45,7 @@ namespace SetupTv.Sections
       this.buttonUp = new System.Windows.Forms.Button();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.buttonRemove = new System.Windows.Forms.Button();
       this.buttonEdit = new System.Windows.Forms.Button();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.treeView1 = new System.Windows.Forms.TreeView();
@@ -55,7 +56,6 @@ namespace SetupTv.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
-      this.buttonRemove = new System.Windows.Forms.Button();
       this.contextMenuStrip2.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -94,28 +94,32 @@ namespace SetupTv.Sections
       // colEnabled
       // 
       this.colEnabled.Text = "Enabled";
-      this.colEnabled.Width = 110;
+      this.colEnabled.Width = 85;
       // 
       // colPriority
       // 
       this.colPriority.Text = "Priority";
+      this.colPriority.Width = 50;
       // 
       // colType
       // 
       this.colType.Text = "Type";
+      this.colType.Width = 50;
       // 
       // colCAMLimit
       // 
       this.colCAMLimit.Text = "Cam Limit";
+      this.colCAMLimit.Width = 65;
       // 
       // colName
       // 
       this.colName.Text = "Name";
-      this.colName.Width = 200;
+      this.colName.Width = 130;
       // 
       // colInit
       // 
       this.colInit.Text = "Init";
+      this.colInit.Width = 50;
       // 
       // contextMenuStrip2
       // 
@@ -146,8 +150,8 @@ namespace SetupTv.Sections
       // 
       // buttonDown
       // 
-      this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDown.Location = new System.Drawing.Point(371, 345);
+      this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonDown.Location = new System.Drawing.Point(90, 345);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(75, 23);
       this.buttonDown.TabIndex = 1;
@@ -157,8 +161,8 @@ namespace SetupTv.Sections
       // 
       // buttonUp
       // 
-      this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonUp.Location = new System.Drawing.Point(290, 345);
+      this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonUp.Location = new System.Drawing.Point(9, 345);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(75, 23);
       this.buttonUp.TabIndex = 2;
@@ -195,10 +199,22 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Cards";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
+      // buttonRemove
+      // 
+      this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonRemove.Enabled = false;
+      this.buttonRemove.Location = new System.Drawing.Point(371, 345);
+      this.buttonRemove.Name = "buttonRemove";
+      this.buttonRemove.Size = new System.Drawing.Size(75, 23);
+      this.buttonRemove.TabIndex = 3;
+      this.buttonRemove.Text = "Remove";
+      this.buttonRemove.UseVisualStyleBackColor = true;
+      this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
+      // 
       // buttonEdit
       // 
       this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonEdit.Location = new System.Drawing.Point(209, 345);
+      this.buttonEdit.Location = new System.Drawing.Point(290, 345);
       this.buttonEdit.Name = "buttonEdit";
       this.buttonEdit.Size = new System.Drawing.Size(75, 23);
       this.buttonEdit.TabIndex = 2;
@@ -270,18 +286,6 @@ namespace SetupTv.Sections
       // 
       this.columnHeader8.Text = "Name";
       this.columnHeader8.Width = 200;
-      // 
-      // buttonRemove
-      // 
-      this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonRemove.Enabled = false;
-      this.buttonRemove.Location = new System.Drawing.Point(128, 345);
-      this.buttonRemove.Name = "buttonRemove";
-      this.buttonRemove.Size = new System.Drawing.Size(75, 23);
-      this.buttonRemove.TabIndex = 3;
-      this.buttonRemove.Text = "Remove";
-      this.buttonRemove.UseVisualStyleBackColor = true;
-      this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
       // 
       // TvCards
       // 
