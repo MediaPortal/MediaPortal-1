@@ -400,6 +400,14 @@ namespace MediaPortal.GUI.Library
         return xmlreader.GetValueAsBool("plugins", strPluginName, true);
     }
 
+    // hwahrmann: the previous method always returns true as a default, regardless if a plugin is in xml or not.
+    // Don't know the reason why, but some code might rely on that and don't want to break it before release.
+    public static bool IsPluginNameEnabled2(string strPluginName)
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        return xmlreader.GetValueAsBool("plugins", strPluginName, false);
+    }
+
     public static bool PluginEntryExists(string strPluginName)
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))

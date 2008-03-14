@@ -97,7 +97,7 @@ namespace MediaPortal.GUI.Music
       {
         string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
 
-        if (PluginManager.IsWindowPlugInEnabled("MediaPortal.GUI.GlobalSearch.GUIGlobalMusicSearch"))
+        if (PluginManager.PluginEntryExists("Global search") && PluginManager.IsPluginNameEnabled2("Global search"))
           m_foundGlobalSearch = true;
 
         _shareList.Clear();
