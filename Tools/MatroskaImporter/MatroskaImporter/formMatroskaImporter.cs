@@ -235,7 +235,14 @@ namespace MatroskaImporter
         tvTagRecs.TreeViewNodeSorter = new RecordSorter();
       else
         tvTagRecs.TreeViewNodeSorter = new RecordSorterInvariant();
-      tvTagRecs.Sort();
+      try
+      {
+        tvTagRecs.Sort();
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Error sorting tag recordings: \n{0}", ex.Message));
+      }     
       tvTagRecs.EndUpdate();
       btnLookup.Enabled = true;
       btnImport.Enabled = (tvTagRecs.Nodes.Count > 0);
@@ -260,7 +267,15 @@ namespace MatroskaImporter
         tvDbRecs.TreeViewNodeSorter = new RecordSorter();
       else
         tvDbRecs.TreeViewNodeSorter = new RecordSorterInvariant();
-      tvDbRecs.Sort();
+
+      try
+      {
+        tvDbRecs.Sort();
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Error sorting db recordings: \n{0}", ex.Message));
+      }      
       tvDbRecs.EndUpdate();
     }
 
