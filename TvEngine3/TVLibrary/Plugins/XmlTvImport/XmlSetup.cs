@@ -121,8 +121,8 @@ namespace SetupTv.Sections
       textBoxFolder.Text = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "true").Value == "true";
       cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
-      cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "true").Value == "true";
-      checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "false").Value == "true";
+      cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
+      checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true";
 
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
       textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
