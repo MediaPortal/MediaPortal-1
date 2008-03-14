@@ -824,6 +824,7 @@ Section Uninstall
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"
+    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"
     ;Delete "$SMPROGRAMS\$StartMenuGroup\link to homepage"
     Delete "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
@@ -930,28 +931,21 @@ Function .onInit
         StrCpy $WindowsVersion 'XP'
     ${EndIf}
     */;   
-    ; check if minimum Windows version is 2000
+
+    # check if minimum Windows version is 2000
     ${If} ${AtMostWinNT4}
-        MessageBox MB_OK|MB_ICONSTOP "MediaPortal requires at least Windows 2000. Your Windows is not supported. Installation aborted"
+        MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)"
         Abort
     ${EndIf}
-    
-    /*; [OBSOLETE]  
-    ${If} ${IsWinVista}
-        StrCpy $WindowsVersion "Vista"
-    ${Else}
-        StrCpy $WindowsVersion "XP"
-    ${EndIf}
-    */;   
 
-    ; Check if .Net is installed
+    # check if .Net is installed
     Call IsDotNetInstalled
     Pop $0
     ${If} $0 == 0
-        MessageBox MB_OK|MB_ICONSTOP "Microsoft .Net Framework Runtime is a prerequisite. Please install first."
+        MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET)"
         Abort
     ${EndIf}
-    
+
     !insertmacro SetCommonAppData
 
     ; Needed for Library Install

@@ -36,6 +36,9 @@ LangString ^UninstallLink                   ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 LangString TEXT_MSGBOX_REMOVE_ALL           ${LANG_ENGLISH} "Do you want to remove your User settings?$\r$\nAttention: This will remove all your customised settings including Skins and Databases."
 
+LangString TEXT_MSGBOX_ERROR_WIN            ${LANG_ENGLISH} "MediaPortal requires at least Windows 2000. Your Windows is not supported. Installation aborted"
+LangString TEXT_MSGBOX_ERROR_DOTNET         ${LANG_ENGLISH} "Microsoft .Net Framework Runtime is a prerequisite. Please install first."
+
 
 
 #LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install MPEG-2 decoder filters"
