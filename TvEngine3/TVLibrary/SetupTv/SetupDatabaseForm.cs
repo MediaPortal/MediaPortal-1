@@ -59,6 +59,18 @@ namespace SetupTv
       {
         XmlDocument doc = new XmlDocument();
         string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        if (!File.Exists(fname))
+        {
+          try
+          {
+            File.Copy(Application.StartupPath + @"\gentle.config", fname, true);
+          }
+          catch (Exception exc)
+          {
+            MessageBox.Show(string.Format("Could not copy generic db config to {0} - {1}", fname, exc.Message));
+            return;
+          }
+        }
         doc.Load(fname);
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode serverName = nodeKey.Attributes.GetNamedItem("name");
@@ -137,9 +149,10 @@ namespace SetupTv
 
     public bool TestConnection()
     {
-      LoadConnectionDetailsFromConfig(true);
       try
       {
+        LoadConnectionDetailsFromConfig(true);
+
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false);
 
         switch (_provider)
@@ -158,13 +171,16 @@ namespace SetupTv
               connect.Close();
             }
             break;
+          default:
+            throw (new Exception("Unkown provider!"));
+            break;
         }
       }
       catch (Exception)
       {
         GC.Collect();
         return false;
-      }     
+      }
 
       SqlConnection.ClearAllPools();
 
@@ -404,7 +420,7 @@ namespace SetupTv
         {
           MessageBox.Show(string.Format("Could not copy generic db config to {0} - {1}", fname, exc.Message));
           return;
-        }        
+        }
       }
       XmlDocument doc = new XmlDocument();
       try
@@ -641,7 +657,7 @@ namespace SetupTv
     private void radioButton2_CheckedChanged(object sender, EventArgs e)
     {
       if (rbMySQL.Checked)
-      {        
+      {
         if (tbUserID.Text == "sa" || string.IsNullOrEmpty(tbUserID.Text))
         {
           OnDBTypeSelected();
@@ -676,7 +692,7 @@ namespace SetupTv
       {
         Process.Start("http://wiki.team-mediaportal.com/TV-Engine_0.3");
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     private void tbPassword_KeyUp(object sender, KeyEventArgs e)

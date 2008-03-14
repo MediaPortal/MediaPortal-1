@@ -65,8 +65,6 @@ namespace SetupTv
     /// </summary>
     public void Start()
     {
-
-
       FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
 
       Form applicationForm = null;
@@ -94,11 +92,13 @@ namespace SetupTv
       Log.Write(e.ToString());
       Log.Write(e.Exception);
     }
+
     [STAThread]
     public static void Main(string[] arguments)
     {
       Log.Info("---- start setuptv ----");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+
       //test connection with database
       Log.Info("---- check connection with database ----");
       SetupDatabaseForm dlg = new SetupDatabaseForm();
@@ -122,12 +122,14 @@ namespace SetupTv
           Log.Info("- Database created.");
         currentSchemaVersion = dlg.GetCurrentShemaVersion();
       }
+
       Log.Info("---- upgrade database schema ----");
       if (!dlg.UpgradeDBSchema(currentSchemaVersion))
       {
         MessageBox.Show("Failed to upgrade the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
+
       Log.Info("---- check if tvservice is running ----");
       int cards = 0;
       try

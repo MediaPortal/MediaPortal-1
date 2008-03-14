@@ -2113,7 +2113,6 @@ namespace TvService
     {
       try
       {
-
         XmlDocument doc = new XmlDocument();
         doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
