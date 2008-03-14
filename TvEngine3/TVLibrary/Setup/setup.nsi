@@ -58,8 +58,10 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 
-!define REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-!define MP_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!define MEMENTO_REGISTRY_ROOT HKLM
+!define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
@@ -87,8 +89,8 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 !include Library.nsh
 !include FileFunc.nsh
 !include WinVer.nsh
+!include Memento.nsh
 
-!include setup-RememberSections.nsh
 !include setup-languages.nsh
 
 !insertmacro GetParameters
@@ -118,10 +120,10 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "Team MediaPortal\TV Server"
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT         HKLM
-!define MUI_STARTMENUPAGE_REGISTRY_KEY          "${REG_UNINSTALL}"
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME    StartMenuGroup
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER       "Team MediaPortal\TV Server"
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT       HKLM
+!define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_TEXT     "Run TV-Server Configuration"
@@ -190,7 +192,7 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
-Section "MediaPortal TV Server" SecServer
+${MementoSection} "MediaPortal TV Server" SecServer
     DetailPrint "Installing MediaPortal TV Server..."
     
     SetOverwrite on
@@ -301,7 +303,7 @@ Section "MediaPortal TV Server" SecServer
     # [OBSOLETE] CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
         !insertmacro MUI_STARTMENU_WRITE_END
     ${EndIf}
-SectionEnd
+${MementoSectionEnd}
 !macro Remove_${SecServer}
     DetailPrint "Uninstalling MediaPortal TV Server..."
 
@@ -385,7 +387,7 @@ SectionEnd
     Delete "$DESKTOP\TV-Server Configuration.lnk"
 !macroend
 
-Section "MediaPortal TV Client plugin" SecClient
+${MementoSection} "MediaPortal TV Client plugin" SecClient
     DetailPrint "Installing MediaPortal TV Client plugin..."
 
     SetOverwrite on
@@ -427,7 +429,7 @@ Section "MediaPortal TV Client plugin" SecClient
 
     # [OBSOLETE] not needed because it's already installed by mp
     # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
-SectionEnd
+${MementoSectionEnd}
 !macro Remove_${SecClient}
     DetailPrint "Uninstalling MediaPortal TV Client plugin..."
 
@@ -470,19 +472,14 @@ SectionEnd
     # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\mmaacd.ax
 !macroend
 
-#---------------------------------------------------------------------------
-# This macro used to perform operation on multiple sections.
-# List all of your components in following manner here.
-!macro SectionList MacroName
-    !insertmacro "${MacroName}" "SecServer"
-    !insertmacro "${MacroName}" "SecClient"
-!macroend
+${MementoSectionDone}
 
 #---------------------------------------------------------------------------
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
-    ;Removes unselected components and writes component status to registry
-    !insertmacro SectionList "FinishSection"
+    DetailPrint "Doing post installation stuff..."
+    
+    ${MementoSectionSave}
 
     SetOverwrite on
     SetOutPath $INSTDIR
@@ -518,8 +515,8 @@ SectionEnd
 #---------------------------------------------------------------------------
 # This section is called on uninstall and removes all components
 Section Uninstall
-    ;First removes all optional components
-    !insertmacro SectionList "RemoveSection"
+    !insertmacro Remove_${SecServer}
+    !insertmacro Remove_${SecClient}
 
     ; remove registry key
     DeleteRegKey HKLM "${REG_UNINSTALL}"
@@ -569,8 +566,8 @@ Function .onInit
     StrCpy $noStartMenuSC 1
     #### END of check and parse cmdline parameter
 
-    ; Reads components status for registry
-    !insertmacro SectionList "InitSection"
+    ; reads components status for registry
+    ${MementoSectionRestore}
 
     ; update the component status -> commandline parameters have higher priority than registry values
     ${If} $noClient = 1
