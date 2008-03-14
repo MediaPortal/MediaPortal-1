@@ -161,7 +161,7 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
 OutFile "Release\setup-tve3.exe"
-InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
+InstallDir "$PROGRAMFILES\Team MediaPortal\TV Server"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
 CRCCheck on
 XPStyle on
@@ -183,6 +183,7 @@ ShowUninstDetails show
     ; Get the Common Application Data Folder
     ; Set the Context to alll, so that we get the All Users folder
     SetShellVarContext all
+    # needs to be changed if we want to edit the appdata path
     #StrCpy $CommonAppData "$APPDATA\Team MediaPortal\TV Server"
     StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
     ; Context back to current user
