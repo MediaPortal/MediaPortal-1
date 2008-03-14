@@ -39,19 +39,19 @@ SetCompressor lzma
 # VARIABLES
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
-; [OBSOLETE]  Var WindowsVersion  ; The Windows Version
+# [OBSOLETE] Var WindowsVersion  ; The Windows Version
 Var CommonAppData   ; The Common Application Folder
-; [OBSOLETE]  Var DSCALER         ; Should we install Dscaler Filter
-; [OBSOLETE]  Var GABEST          ; Should we install Gabest Filter
-; [OBSOLETE]  Var FilterDir       ; The Directory, where the filters have been installed  
-Var LibInstall      ; Needed for Library Installation
-;[OBSOLETE]Var TmpDir          ; Needed for the Uninstaller
-# variables for commandline parameters for Installer
+# [OBSOLETE] Var DSCALER         ; Should we install Dscaler Filter
+# [OBSOLETE] Var GABEST          ; Should we install Gabest Filter
+# [OBSOLETE] Var FilterDir       ; The Directory, where the filters have been installed  
+# [OBSOLETE] Var LibInstall      ; Needed for Library Installation
+# [OBSOLETE] Var TmpDir          ; Needed for the Uninstaller
+; variables for commandline parameters for Installer
 Var noDscaler
 Var noGabest
 Var noDesktopSC
 Var noStartMenuSC
-# variables for commandline parameters for UnInstaller
+; variables for commandline parameters for UnInstaller
 Var RemoveAll       ; Set, when the user decided to uninstall everything
 
 #---------------------------------------------------------------------------
@@ -94,11 +94,12 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 
 !include setup-dotnet.nsh
 
-# FileFunc macros
+; FileFunc macros
 !insertmacro GetParameters
 !insertmacro GetOptions
 !insertmacro un.GetParameters
 !insertmacro un.GetOptions
+!insertmacro GetParent
 !insertmacro GetTime
 !insertmacro RefreshShellIcons
 !insertmacro un.RefreshShellIcons
@@ -106,6 +107,7 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
 #---------------------------------------------------------------------------
+!define MUI_ABORTWARNING
 !define MUI_ICON    "images\install.ico"
 !define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
@@ -131,6 +133,7 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE
 #---------------------------------------------------------------------------
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
@@ -140,8 +143,8 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 ; UnInstaller Interface
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE un.WelcomeLeave
 !insertmacro MUI_UNPAGE_WELCOME
-!define MUI_PAGE_CUSTOMFUNCTION_PRE un.RemoveAllQuestion       # ask the user if he wants to remove all files
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
@@ -174,7 +177,6 @@ ShowUninstDetails show
 # USEFUL MACROS
 #---------------------------------------------------------------------------
 !macro SetCommonAppData
-
     ; Get the Common Application Data Folder
     ; Set the Context to alll, so that we get the All Users folder
     SetShellVarContext all
@@ -182,20 +184,6 @@ ShowUninstDetails show
     ; Context back to current user
     SetShellVarContext current
 !macroend
-
-/*; [OBSOLETE]  
-!macro SetFilterDir
-    ; The Following Filters and Dll need to be copied to \windows\system32 for xp
-    ; In Vista they stay in the Install Directory
-    ${if} $WindowsVersion == "Vista"
-        SetOutPath $INSTDIR
-        StrCpy $FilterDir $InstDir
-    ${Else}
-        SetOutPath $SYSDIR
-        StrCpy $FilterDir $SysDir
-    ${Endif}
-!macroend
-*/
 
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
@@ -215,7 +203,7 @@ Section "MediaPortal core files (required)" SecCore
     ; $5="05"      minute
     ; $6="50"      seconds
 
-    # CHECK FOR OLD FILES and DIRECTORY
+    ; CHECK FOR OLD FILES and DIRECTORY
     IfFileExists "$INSTDIR\*.*" 0 noInstDirRename
 
     /*  MAYBE WE should always rename the instdir if it exists
@@ -230,11 +218,11 @@ Section "MediaPortal core files (required)" SecCore
         ${Else}
             Goto noInstDirRename
         ${EndIf}
-    ${EndIf}*/
+    ${EndIf}
 
     instDirRename:
+    */
         Rename "$INSTDIR" "$INSTDIR_BACKUP_$1$0-$4$5"
-        #Rename "$INSTDIR" "$INSTDIR_BACKUP"
 
     noInstDirRename:
 
@@ -419,39 +407,39 @@ Section "MediaPortal core files (required)" SecCore
     #---------------------------------------------------------------------------
     SetOutPath $INSTDIR
     ;filter used for SVCD and VCD playback
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
     ##### MAYBE used by VideoEditor
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
     ;filter for analog tv
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
     ; used for scanning in tve2
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
     ; used for shoutcast
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
     ; used for digital tv
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
     ##### not sure for what this is used
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TTPremiumSource.ax $INSTDIR\TTPremiumSource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TTPremiumSource.ax $INSTDIR\TTPremiumSource.ax $INSTDIR
     ##### not sure for what this is used
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
 
     # [MAYBE OBSOLETE] File ..\xbmc\bin\Release\
     # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
 
     # [OBSOLETE] Common DLLs
     # [OBSOLETE] Installing the Common dll
-    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
     
-    # needed by hauppauge.dll
-    !insertmacro InstallLib DLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
-    !insertmacro InstallLib DLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
+    ; needed by hauppauge.dll
+    !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
+    !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
 SectionEnd
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
@@ -461,39 +449,39 @@ SectionEnd
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     ;filter used for SVCD and VCD playback
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\cdxareader.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\cdxareader.ax
     ##### MAYBE used by VideoEditor
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\CLDump.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\CLDump.ax
     ;filter for analog tv
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpgMux.ax
     ; used for scanning in tve2
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPSA.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPSA.ax
     ; used for shoutcast
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\shoutcastsource.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\shoutcastsource.ax
     ; used for digital tv
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TsReader.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TsReader.ax
     ##### not sure for what this is used
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TTPremiumSource.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TTPremiumSource.ax
     ##### not sure for what this is used
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\WinTVCapWriter.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\WinTVCapWriter.ax
 
     # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPReader.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPTS.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPTSWriter.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPReader.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPTS.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPTSWriter.ax
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TSFileSource.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TSFileSource.ax
 
     # [OBSOLETE] Common DLLs will not be removed. Too Dangerous
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC71.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC71u.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC80.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC80u.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC71.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC71u.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC80.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC80u.dll
 
-    # needed by hauppauge.dll
-    !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\msvcp71.dll
-    !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\msvcr71.dll
+    ; needed by hauppauge.dll
+    !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\msvcp71.dll
+    !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\msvcr71.dll
 
     ; Config Files
     Delete /REBOOTOK  $CommonAppData\CaptureCardDefinitions.xml
@@ -509,10 +497,14 @@ SectionEnd
 
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
-    RmDir /r /REBOOTOK $INSTDIR\Cache
-    RmDir /r /REBOOTOK $INSTDIR\Docs
     RmDir /r /REBOOTOK $CommonAppData\Burner
+    RmDir /r /REBOOTOK $INSTDIR\Cache
     RmDir /r /REBOOTOK $CommonAppData\Cache
+    RmDir /r /REBOOTOK $INSTDIR\Docs
+    RmDir /r /REBOOTOK $INSTDIR\database\convert
+    RmDir /REBOOTOK $INSTDIR\database
+    RmDir /r /REBOOTOK $INSTDIR\InputDeviceMappings\defaults
+    RmDir /REBOOTOK $INSTDIR\InputDeviceMappings
     RmDir /r /REBOOTOK $INSTDIR\language
     RmDir /r /REBOOTOK $INSTDIR\MusicPlayer
     RmDir /r /REBOOTOK $INSTDIR\osdskin-media
@@ -520,6 +512,7 @@ SectionEnd
     RmDir /r /REBOOTOK $INSTDIR\scripts
     RmDir /r /REBOOTOK $INSTDIR\skin\BlueTwo
     RmDir /r /REBOOTOK "$INSTDIR\skin\BlueTwo wide"
+    RmDir /REBOOTOK $INSTDIR\skin
     RmDir /r /REBOOTOK $INSTDIR\TTPremiumBoot
     RmDir /r /REBOOTOK $INSTDIR\Tuningparameters
     RmDir /r /REBOOTOK $INSTDIR\weather
@@ -605,7 +598,7 @@ SectionEnd
     Delete /REBOOTOK  $INSTDIR\RemotePlugins.dll
     Delete /REBOOTOK  $INSTDIR\restart.vbs
     Delete /REBOOTOK  $INSTDIR\SG_VFD.dll
-    Delete /REBOOTOK  $INSTDIR\SG_VFDv3.dll
+    Delete /REBOOTOK  $INSTDIR\SG_VFDv5.dll
     Delete /REBOOTOK  $INSTDIR\sqlite.dll
     Delete /REBOOTOK  $INSTDIR\taglib-sharp.dll
     Delete /REBOOTOK  $INSTDIR\TaskScheduler.dll
@@ -626,14 +619,11 @@ SectionEnd
 Section "DScaler Decoder" SecDscaler
     DetailPrint "Installing DScaler Decoder..."
 
-    ; The Following Filters and Dll need to be copied to \windows\system32 for xp
-    ; In Vista they stay in the Install Directory
-    ; [OBSOLETE]  !insertmacro SetFilterDir
-    
-    ; [OBSOLETE]  WriteRegStr HKLM "${REG_UNINSTALL}" Dscaler 1
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\GenDMOProp.dll $INSTDIR\GenDMOProp.dll $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpegAudio.dll $INSTDIR\MpegAudio.dll $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpegVideo.dll $INSTDIR\MpegVideo.dll $INSTDIR
+    SetOutPath $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\GenDMOProp.dll $INSTDIR\GenDMOProp.dll $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpegAudio.dll $INSTDIR\MpegAudio.dll $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpegVideo.dll $INSTDIR\MpegVideo.dll $INSTDIR
+
     ; Write Default Values for Filter into the registry
     WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
     WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "MPEG Audio over SPDIF" 0
@@ -655,21 +645,17 @@ SectionEnd
 !macro Remove_${SecDscaler}
     DetailPrint "Uninstalling DScaler Decoder..."
 
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\GenDMOProp.dll
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpegAudio.dll
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpegVideo.dll
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\GenDMOProp.dll
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpegAudio.dll
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpegVideo.dll
 !macroend
 
 Section "Gabest MPA/MPV decoder" SecGabest
     DetailPrint "Installing Gabest MPA/MPV decoder..."
 
-    ; The Following Filters and Dll need to be copied to \windows\system32 for xp
-    ; In Vista they stay in the Install Directory
-    ; [OBSOLETE]  !insertmacro SetFilterDir
-    
-    ; [OBSOLETE]  WriteRegStr HKLM "${REG_UNINSTALL}" Gabest 1
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpaDecFilter.ax $INSTDIR\MpaDecFilter.ax $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\Mpeg2DecFilter.ax $INSTDIR\Mpeg2DecFilter.ax $INSTDIR
+    SetOutPath $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpaDecFilter.ax $INSTDIR\MpaDecFilter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\Mpeg2DecFilter.ax $INSTDIR\Mpeg2DecFilter.ax $INSTDIR
 
     ; Write Default Values for Filter into the registry
     WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
@@ -696,8 +682,8 @@ SectionEnd
 !macro Remove_${SecGabest}
     DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
 
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpaDecFilter.ax
-    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\Mpeg2DecFilter.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpaDecFilter.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\Mpeg2DecFilter.ax
 !macroend
 
 #---------------------------------------------------------------------------
@@ -726,8 +712,8 @@ Section -Post
     ${EndIf}
 
     ${If} $noStartMenuSC != 1
-        !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        # We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
+      !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+        ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
         CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"                            "$INSTDIR\MediaPortal.exe"      ""      "$INSTDIR\MediaPortal.exe"   0 "" "" "MediaPortal"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"              "$INSTDIR\Configuration.exe"    ""      "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
@@ -738,44 +724,32 @@ Section -Post
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"                   "$INSTDIR\MPTestTool2.exe"      ""      "$INSTDIR\MPTestTool2.exe"   0 "" "" "MediaPortal TestTool"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$INSTDIR\uninstall-mp.exe"
         WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url" "InternetShortcut" "URL" "${URL}"
-
-        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\link to homepage.lnk" "$INSTDIR\MPInstaller.exe" "" "$INSTDIR\MPInstaller.exe" 0 "" "" "MediaPortal Extension Installer"
-        
-        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk" "$INSTDIR\.exe" "-auto" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Debug"
-        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\License.lnk" "$INSTDIR\Docs\MediaPortal License.rtf" "" "$INSTDIR\Docs\MediaPortal License.rtf" 0 "" "" "License"
-        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPTestTool.lnk" "$INSTDIR\MPTestTool2.exe" "" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Test Tool"
-        !insertmacro MUI_STARTMENU_WRITE_END
+      !insertmacro MUI_STARTMENU_WRITE_END
     ${EndIf}
 
-    !ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
-        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
-        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
-        WriteRegDword HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
-    !endif
+    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
+    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
+    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
+    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
 
-
-    WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath $INSTDIR
-    # Write Uninstall Information
+    ; Write Uninstall Information
+    WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath        $INSTDIR
     WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
     WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
     WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
     WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
     WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\MediaPortal.exe,0"
     WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-mp.exe"
-    #WriteRegStr HKLM "${REG_UNINSTALL}" ModifyPath         "$INSTDIR\add-remove-mp.exe"
     WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
     WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
  
-    #CopyFiles "$EXEPATH" "$INSTDIR\add-remove-mp.exe"
     WriteUninstaller "$INSTDIR\uninstall-mp.exe"
-    
-    
+
     ; [OBSOLETE]  should be obsolete sooner or later
     /*WriteRegStr HKLM "${REG_UNINSTALL}" Path $INSTDIR
     WriteRegStr HKLM "${REG_UNINSTALL}" PathFilter $FILTERDIR
     WriteRegStr HKLM "${REG_UNINSTALL}" WindowsVersion $WindowsVersion*/
-    
+
     ; [OBSOLETE]   WE SHOULD USER THE OTHER REGKEY IN FUTURE
     ; Write the Install / Config Dir into the registry for the Public SVN Installer to recognize the environment
     WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ApplicationDir $INSTDIR
@@ -787,7 +761,6 @@ Section -Post
         WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $INSTDIR
     ${Endif}*/
 
-    
     ; Associate .mpi files with MPInstaller
     !define Index "Line${__LINE__}"
     ; backup the association, if it already exsists
@@ -804,53 +777,49 @@ Section -Post
     WriteRegStr HKCR "MediaPortal.Installer\shell\open\command" "" '$INSTDIR\MPInstaller.exe "%1"'
 
     ${RefreshShellIcons}
-    #System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+    # [OBSOLETE] System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
     !undef Index
 SectionEnd
 
 #---------------------------------------------------------------------------
 # This section is called on uninstall and removes all components
 Section Uninstall
-    ;First removes all optional components
+    ; first removes all optional components
     !insertmacro SectionList "RemoveSection"
     !insertmacro Remove_${SecCore}
 
-    # remove registry key
+    ; remove registry key
     DeleteRegKey HKLM "${REG_UNINSTALL}"
 
-    # remove Start Menu shortcuts
+    ; remove Start Menu shortcuts
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"
-    ;Delete "$SMPROGRAMS\$StartMenuGroup\link to homepage"
     Delete "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
     RmDir "$SMPROGRAMS\$StartMenuGroup"
 
-    # remove Desktop shortcuts
+    ; remove Desktop shortcuts
     Delete "$DESKTOP\MediaPortal.lnk"
     Delete "$DESKTOP\MediaPortal Configuration.lnk"
 
-    # remove last files and instdir
-    ;Delete /REBOOTOK "$INSTDIR\add-remove-mp.exe"
+    ; remove last files and instdir
     Delete /REBOOTOK "$INSTDIR\uninstall-mp.exe"
     RmDir "$INSTDIR"
 
-    ; Do we need to deinstall everything? Then remove also the CommonAppData and InstDir
+    ; do we need to deinstall everything? Then remove also the CommonAppData and InstDir
     ${If} $RemoveAll == 1
         DetailPrint "Removing User Settings"
         RmDir /r /REBOOTOK $CommonAppData
         RmDir /r /REBOOTOK $INSTDIR
     ${EndIf}
-    
-    
-    
-    ; [OBSOLETE]  DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
-    ; [OBSOLETE]  DeleteRegValue HKLM "${REG_UNINSTALL}" Path
-    ; [OBSOLETE]  DeleteRegValue HKLM "${REG_UNINSTALL}" PathFilter
+
+    # [OBSOLETE] DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
+    # [OBSOLETE] DeleteRegValue HKLM "${REG_UNINSTALL}" Path
+    # [OBSOLETE] DeleteRegValue HKLM "${REG_UNINSTALL}" PathFilter
 
     ; Remove File Association for .mpi files
     !define Index "Line${__LINE__}"
@@ -868,7 +837,7 @@ Section Uninstall
     DeleteRegKey HKCR "MediaPortal.Installer" ;Delete key with association settings
 
     ${un.RefreshShellIcons}
-    #System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+    ; [OBSOLETE] System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
 
     "${Index}-NoOwn:"
     !undef Index
@@ -903,10 +872,10 @@ Function .onInit
     StrCpy $noStartMenuSC 1
     #### END of check and parse cmdline parameter
 
-    # Reads components status for registry
+    ; reads components status for registry
     !insertmacro SectionList "InitSection"
 
-    # update the component status -> commandline parameters have higher priority than registry values
+    ; update the component status -> commandline parameters have higher priority than registry values
     ${If} $noDscaler = 1
         !insertmacro UnselectSection ${SecDscaler}
     ${EndIf}
@@ -914,31 +883,13 @@ Function .onInit
         !insertmacro UnselectSection ${SecGabest}
     ${EndIf}
 
-    /*; [OBSOLETE]  
-    ; Get Windows Version
-    Call GetWindowsVersion
-    Pop $R0
-    StrCpy $WindowsVersion $R0
-    ${if} $WindowsVersion == "95"
-    ${OrIf} $WindowsVersion == "98"
-    ${OrIf} $WindowsVersion == "ME"
-    ${OrIf} $WindowsVersion == "NT 4.0"
-        MessageBox MB_OK|MB_ICONSTOP "MediaPortal is not support on Windows $WindowsVersion. Installation aborted"
-        Abort
-    ${EndIf}
-    ${If} $WindowsVersion == "2003"
-        ; MS Reports also XP 64 as NT 5.2. So we default on XP
-        StrCpy $WindowsVersion 'XP'
-    ${EndIf}
-    */;   
-
-    # check if minimum Windows version is 2000
-    ${If} ${AtMostWinNT4}
+    ; check if minimum Windows version is XP
+    ${If} ${AtMostWin2000}
         MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)"
         Abort
     ${EndIf}
 
-    # check if .Net is installed
+    ; check if .Net is installed
     Call IsDotNetInstalled
     Pop $0
     ${If} $0 == 0
@@ -948,18 +899,14 @@ Function .onInit
 
     !insertmacro SetCommonAppData
 
-    ; Needed for Library Install
-    ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
-    Push $0
-    ReadRegStr $0 HKLM "${REG_UNINSTALL}" Path
-    ClearErrors
-    StrCmp $0 "" +2
-    StrCpy $LibInstall 1
-    Pop $0
-FunctionEnd
-
-Function .onInstSuccess
-
+    # [OBSOLETE] Needed for Library Install
+    # [OBSOLETE] Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
+    # [OBSOLETE] Push $0
+    # [OBSOLETE] ReadRegStr $0 HKLM "${REG_UNINSTALL}" Path
+    # [OBSOLETE] ClearErrors
+    # [OBSOLETE] StrCmp $0 "" +2
+    # [OBSOLETE] StrCpy $LibInstall 1
+    # [OBSOLETE] Pop $0
 FunctionEnd
 
 Function un.onInit
@@ -976,15 +923,6 @@ Function un.onInit
     strcpy $RemoveAll 1
     #### END of check and parse cmdline parameter
     
-    
-    # SHOULD BE OBSOLETE SOONER or LATER
-    ; [OBSOLETE]  ReadRegStr $FILTERDIR HKLM "${REG_UNINSTALL}" PathFilter
-    ; [OBSOLETE]  ReadRegStr $GABEST HKLM "${REG_UNINSTALL}" Gabest
-    ; [OBSOLETE]  ReadRegStr $DSCALER HKLM "${REG_UNINSTALL}" Dscaler
-    ; [OBSOLETE]  ReadRegStr $WindowsVersion HKLM "${REG_UNINSTALL}" WindowsVersion
-    ; [OBSOLETE]  !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
-    # SHOULD BE OBSOLETE SOONER or LATER
-
     ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
@@ -998,13 +936,36 @@ Function RunConfig
     Exec "$INSTDIR\Configuration.exe"
 FunctionEnd
 
-# This function is called, before the uninstallation process is startet
-# It asks the user, if he wants to remove all files and settings
-Function un.RemoveAllQuestion
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO end
-    strcpy $RemoveAll 1
-    
-    end:
+Function WelcomeLeave
+    ; check if MP is already installed
+    ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
+    IfFileExists $R0 0 unInstallDone
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_IS_INSTALLED)"
+
+        ; get parent folder of uninstallation EXE (RO) and save it to R1
+        ${GetParent} $R0 $R1
+        ; start uninstallation of installed MP, from tmp folder, so it will delete itself
+        HideWindow
+        ClearErrors
+        CopyFiles $R0 "$TEMP\uninstall-mp.exe"
+        ExecWait '"$TEMP\uninstall-mp.exe" _?=$R1'
+        BringToFront
+
+        ; if an error occured, ask to cancel installation
+        IfErrors 0 unInstallDone
+            MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES unInstallDone IDNO 0
+            Quit
+    unInstallDone:
+
+FunctionEnd
+
+Function un.WelcomeLeave
+    ; This function is called, before the uninstallation process is startet
+    ; It asks the user, if he wants to remove all files and settings
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO noRemoveAll
+        strcpy $RemoveAll 1
+    noRemoveAll:
+
 FunctionEnd
 
 #---------------------------------------------------------------------------
