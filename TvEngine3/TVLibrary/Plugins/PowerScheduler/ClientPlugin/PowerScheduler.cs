@@ -275,6 +275,10 @@ namespace MediaPortal.Plugins.Process
             xmlwriter.SetValue("psclientplugin", "nextwakeup", nextWakeUp.ToString());
             string res = xmlwriter.GetValueAsString("psclientplugin", "nextwakeup", DateTime.MaxValue.ToString());
           }
+
+          Log.Debug("PSClientPlugin: Informing handlers about UserShutdownNow");
+          UserShutdownNow();
+
 					RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", (int)how, force);
         }
         catch (Exception e)
@@ -547,11 +551,12 @@ namespace MediaPortal.Plugins.Process
       }
     }
 
+    /*
     private void StopPlayer()
     {
       if (g_Player.Playing)
       {
-        LogVerbose("PSClientPlugin.UserShutdownNow: stopping player");
+        LogVerbose("PSClientPlugin.StopPlayer: stopping player");
         // stop the player
         Action act = new Action(Action.ActionType.ACTION_STOP, 0, 0);
         GUIGraphicsContext.OnAction(act);
@@ -565,19 +570,20 @@ namespace MediaPortal.Plugins.Process
 
         // wait another second for the player's clean-up code
         Thread.Sleep(1000);
-        LogVerbose("PSClientPlugin.UserShutdownNow: stopped player");
+        LogVerbose("PSClientPlugin.StopPlayer: stopped player");
       }
     }
-
+    */
     int UserShutdownNowCB(int p1, int p2, object d)
     {
-      if (g_Player.Playing)
+      //LogVerbose("PSClientPlugin.UserShutdownNow: called");
+      if (g_Player.Playing || g_Player.IsTimeShifting)
       {
         LogVerbose("PSClientPlugin.UserShutdownNow: stopping player");
         while (true)
         {
           g_Player.Stop();
-          if (g_Player.Playing)
+          if (g_Player.Playing || g_Player.IsTimeShifting)
           {
             if (!GUIWindowManager.HasPreviousWindow()) break;
             LogVerbose("PSClientPlugin.UserShutdownNow: player is still playing, activating previous window");
@@ -586,7 +592,7 @@ namespace MediaPortal.Plugins.Process
           else
             break;
         }
-        if (g_Player.Playing)
+        if (g_Player.Playing || g_Player.IsTimeShifting)
         {
           // could not find any previous window that allows to stop the player, we go home
           LogVerbose("PSClientPlugin.UserShutdownNow: player is still playing, activating home window");
