@@ -121,10 +121,15 @@ namespace SetupTv
     /// <returns></returns>
     public static bool Start()
     {
+      return Start("TvService");
+    }
+
+    public static bool Start(string aServiceName)
+    {
       ServiceController[] services = ServiceController.GetServices();
       foreach (ServiceController service in services)
       {
-        if (String.Compare(service.ServiceName, "TvService", true) == 0)
+        if (String.Compare(service.ServiceName, aServiceName, true) == 0)
         {
           if (service.Status == ServiceControllerStatus.Stopped)
           {

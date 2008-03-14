@@ -152,6 +152,8 @@ namespace SetupTv
       try
       {
         LoadConnectionDetailsFromConfig(true);
+        if (string.IsNullOrEmpty(tbServerHostName.Text) || string.IsNullOrEmpty(tbPassword.Text))
+          return false;
 
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false);
 
@@ -172,8 +174,7 @@ namespace SetupTv
             }
             break;
           default:
-            throw (new Exception("Unkown provider!"));
-            break;
+            throw (new Exception("Unkown provider!"));            
         }
       }
       catch (Exception)
@@ -636,9 +637,13 @@ namespace SetupTv
                                   MessageBoxIcon.Warning,
                                   MessageBoxDefaultButton.Button1) == DialogResult.Yes)
               {
+                // enable the dependency now
                 if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, true))
-                  MessageBox.Show("Failed to change the startup behaviour", "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                  MessageBox.Show("Failed to change the startup behaviour", "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);                  
               }
+              // start the service right now
+              if (!ServiceHelper.Start(DBSearchPattern))
+                MessageBox.Show(string.Format("Failed to start the dependency service: {0}", DBSearchPattern), "Dependency start error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
           }
           else
