@@ -108,7 +108,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
-      if (tabControlTvMovie.SelectedIndex == 1)
+      if (tabControlTvMovie.SelectedIndex == 2)
         SaveMapping();
 
       SaveDbSettings();
@@ -119,6 +119,8 @@ namespace SetupTv.Sections
     private void SaveDbSettings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
+
+      TvMovieDatabase.DatabasePath = tbDbPath.Text;
 
       Setting setting = layer.GetSetting("TvMovieEnabled", "false");
       if (checkBoxEnableImport.Checked)
@@ -197,7 +199,7 @@ namespace SetupTv.Sections
     /// <summary>
     /// Load stations from databases and fill controls with that data
     /// </summary>
-    private void LoadStations()
+    private void LoadStations(bool localInstall)
     {
       TvMovieDatabase database = new TvMovieDatabase();
       if (database.Connect())
@@ -207,6 +209,7 @@ namespace SetupTv.Sections
           treeViewTvMStations.BeginUpdate();
           treeViewTvMStations.Nodes.Clear();
           imageListTvmStations.Images.Clear();
+          treeViewTvMStations.ItemHeight = localInstall ? 24 : 16;
 
           string GifBasePath = TvMovieDatabase.TVMovieProgramPath + @"Gifs\";
 
@@ -216,17 +219,19 @@ namespace SetupTv.Sections
             {
               TVMChannel station = database.Stations[i];
 
-              string channelLogo = GifBasePath + station.TvmZeichen;
-              if (!File.Exists(channelLogo))
-                channelLogo = GifBasePath + @"tvmovie_senderlogoplatzhalter.gif";
+              if (localInstall)
+              {
+                string channelLogo = GifBasePath + station.TvmZeichen;
+                if (!File.Exists(channelLogo))
+                  channelLogo = GifBasePath + @"tvmovie_senderlogoplatzhalter.gif";
 
-              // convert gif to ico
-              Bitmap tvmLogo = new Bitmap(channelLogo);
-              IntPtr iconHandle = tvmLogo.GetHicon();
-              Icon stationThumb = Icon.FromHandle(iconHandle);
-              imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
-
-              //TreeNode[] subItems = new TreeNode[] { new TreeNode(station.TvmEpgDescription), new TreeNode(station.TvmWebLink) }; // new TreeNode(station.TvmSortId), 
+                // convert gif to ico
+                Bitmap tvmLogo = new Bitmap(channelLogo);
+                IntPtr iconHandle = tvmLogo.GetHicon();
+                Icon stationThumb = Icon.FromHandle(iconHandle);
+                imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));                
+              }
+              
               TreeNode stationNode = new TreeNode(station.TvmEpgChannel, i, i);//, subItems);
               ChannelInfo channelInfo = new ChannelInfo();
               channelInfo.Name = station.TvmEpgChannel;
@@ -587,13 +592,17 @@ namespace SetupTv.Sections
 
     private void checkBoxEnableImport_CheckedChanged(object sender, EventArgs e)
     {
-      groupBoxDescriptions.Enabled = groupBoxImportTime.Enabled = checkBoxEnableImport.Checked;
+      groupBoxDescriptions.Enabled = groupBoxImportTime.Enabled = groupBoxInstallMethod.Enabled = checkBoxEnableImport.Checked;
 
       if (checkBoxEnableImport.Checked)
       {
+        rbLocal.Enabled = rbLocal.Checked = !string.IsNullOrEmpty(TvMovieDatabase.TVMovieProgramPath);
+        rbManual.Checked = !rbLocal.Checked;
+        tbDbPath.Text = TvMovieDatabase.DatabasePath;
+
         try
         {
-          LoadStations();
+          LoadStations(rbLocal.Checked);
         }
         catch (Exception ex1)
         {
@@ -646,7 +655,7 @@ namespace SetupTv.Sections
     {
       TvMovieDatabase _database = new TvMovieDatabase();
       try
-      {
+      {        
         _database.LaunchTVMUpdater();
         _database.OnStationsChanged += new TvMovieDatabase.StationsChanged(_database_OnStationsChanged);
         if (_database.Connect())
@@ -666,6 +675,22 @@ namespace SetupTv.Sections
       progressBarImportTotal.Maximum = maximum;
       if (value <= maximum && value >= 0)
         progressBarImportTotal.Value = value;
+    }
+
+    private void rbLocal_CheckedChanged(object sender, EventArgs e)
+    {
+      tbDbPath.Enabled = !rbLocal.Checked;
+    }
+
+    private void buttonBrowse_Click(object sender, EventArgs e)
+    {
+      fileDialogDb.Filter = "Access database (*.mdb)|*.mdb|All files (*.*)|*.*";      
+      fileDialogDb.InitialDirectory = tbDbPath.Text;
+      if (fileDialogDb.ShowDialog(this) == DialogResult.OK)
+      {
+        TvMovieDatabase.DatabasePath = tbDbPath.Text = fileDialogDb.FileName;
+        checkBoxEnableImport_CheckedChanged(sender, null);
+      }
     }
   }
 }

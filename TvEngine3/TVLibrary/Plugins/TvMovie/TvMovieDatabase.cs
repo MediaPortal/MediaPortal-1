@@ -213,6 +213,9 @@ namespace TvEngine
       }
     }
 
+    /// <summary>
+    /// Retrieves the location of TVDaten.mdb - prefers manual configured path, does fallback to registry.
+    /// </summary>
     public static string TVMovieProgramPath
     {
       get
@@ -248,48 +251,68 @@ namespace TvEngine
 
         try
         {
+          mpPath = TvBLayer.GetSetting("TvMoviedatabasepath", path).Value;
+          if (File.Exists(mpPath))
+            return mpPath;
+        }
+        catch (Exception exdb)
+        {
+          Log.Info("TVMovie: Error getting TV Movie DB dir (DBDatei) from database {0}", exdb.Message);
+        }
+        try
+        { 
           using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
             if (rkey != null)
               path = string.Format("{0}", rkey.GetValue("DBDatei"));
-
-          mpPath = TvBLayer.GetSetting("TvMoviedatabasepath", path).Value;
         }
         catch (Exception ex)
         {
           Log.Info("TVMovie: Error getting TV Movie DB dir (DBDatei) from registry {0}", ex.Message);
         }
-        if (File.Exists(mpPath))
-          return mpPath;
-
         return path;
       }
       set
       {
-        string path = string.Empty;
-        string newPath = value;
+        string registryPath = string.Empty;
+        string newParamPath = value;
 
         try
         {
-          using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
-            if (rkey != null)
-              path = string.Format("{0}", rkey.GetValue("DBDatei"));
+          try
+          {
+            using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+              if (rkey != null)
+                registryPath = string.Format("{0}", rkey.GetValue("DBDatei"));
+          }
+          catch (Exception exr)
+          {
+            Log.Info("TVMovie: A registry lookup failed when setting TV Movie DB dir (DBDatei) - : {0}", exr.Message);
+          }
 
-          if (!File.Exists(newPath))
-            newPath = path;
+          // passed path is invalid try using the registry path
+          if (!File.Exists(newParamPath))
+            newParamPath = registryPath;
 
-          string mpPath = TvBLayer.GetSetting("TvMoviedatabasepath", string.Empty).Value;
-          Setting setting = TvBLayer.GetSetting("TvMovieEnabled");
+          Setting setting = TvBLayer.GetSetting("TvMoviedatabasepath", string.Empty);
+          string mpDbPath = setting.Value; // TvBLayer.GetSetting("TvMoviedatabasepath", string.Empty).Value;          
 
-          if (newPath == path)
-            setting.Value = string.Empty;
+          if (string.IsNullOrEmpty(newParamPath))
+          {
+            // use configured path
+            if (!string.IsNullOrEmpty(mpDbPath)) // do not check File.Exists because it might temporarily unavailable
+              return;
+            else
+              setting.Value = string.Empty;
+          }
           else
-            setting.Value = newPath;
-
+            setting.Value = newParamPath;
+          
           setting.Persist();
+          Log.Info("TVMovie: Set TV Movie DB dir to {0}", setting.Value);
         }
         catch (Exception ex)
         {
-          Log.Info("TVMovie: Error setting TV Movie DB dir (DBDatei) in registry {0}", ex.Message);
+          Log.Info("TVMovie: Error setting TV Movie DB dir (DBDatei) - {0}", ex.Message);
         }
       }
     }
