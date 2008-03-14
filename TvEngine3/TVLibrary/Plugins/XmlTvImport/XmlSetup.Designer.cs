@@ -28,9 +28,9 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabSettings = new System.Windows.Forms.TabPage();
       this.panel1 = new System.Windows.Forms.Panel();
@@ -170,7 +170,7 @@ namespace SetupTv.Sections
       this.panel1.Controls.Add(this.textBoxFolder);
       this.panel1.Location = new System.Drawing.Point(3, 3);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(469, 418);
+      this.panel1.Size = new System.Drawing.Size(472, 418);
       this.panel1.TabIndex = 0;
       this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
       // 
@@ -185,14 +185,13 @@ namespace SetupTv.Sections
       // 
       // checkBoxDeleteBeforeImport
       // 
-      this.checkBoxDeleteBeforeImport.AutoSize = true;
-      this.checkBoxDeleteBeforeImport.Location = new System.Drawing.Point(219, 97);
+      this.checkBoxDeleteBeforeImport.Location = new System.Drawing.Point(180, 86);
       this.checkBoxDeleteBeforeImport.Name = "checkBoxDeleteBeforeImport";
-      this.checkBoxDeleteBeforeImport.Size = new System.Drawing.Size(184, 17);
+      this.checkBoxDeleteBeforeImport.Size = new System.Drawing.Size(289, 40);
       this.checkBoxDeleteBeforeImport.TabIndex = 34;
-      this.checkBoxDeleteBeforeImport.Text = "Delete old programs before import";
+      this.checkBoxDeleteBeforeImport.Text = "Delete old programs before import. This is NOT safe and used inappropriately you " +
+          "might get duplicate entries!";
       this.checkBoxDeleteBeforeImport.UseVisualStyleBackColor = true;
-      this.checkBoxDeleteBeforeImport.Visible = false;
       // 
       // label23
       // 
@@ -410,9 +409,9 @@ namespace SetupTv.Sections
       // 
       // textBoxFolder
       // 
-      this.textBoxFolder.Location = new System.Drawing.Point(55, 54);
+      this.textBoxFolder.Location = new System.Drawing.Point(9, 54);
       this.textBoxFolder.Name = "textBoxFolder";
-      this.textBoxFolder.Size = new System.Drawing.Size(284, 20);
+      this.textBoxFolder.Size = new System.Drawing.Size(330, 20);
       this.textBoxFolder.TabIndex = 19;
       // 
       // tabMappings
@@ -586,14 +585,14 @@ namespace SetupTv.Sections
       this.dataGridChannelMappings.Location = new System.Drawing.Point(6, 94);
       this.dataGridChannelMappings.MultiSelect = false;
       this.dataGridChannelMappings.Name = "dataGridChannelMappings";
-      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
       this.dataGridChannelMappings.Size = new System.Drawing.Size(454, 317);
       this.dataGridChannelMappings.TabIndex = 2;
       // 
@@ -607,8 +606,8 @@ namespace SetupTv.Sections
       // tuningChannel
       // 
       this.tuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
-      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle4.BackColor = System.Drawing.Color.White;
+      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle4;
       this.tuningChannel.HeaderText = "Tuning Channel";
       this.tuningChannel.Name = "tuningChannel";
       this.tuningChannel.ReadOnly = true;
@@ -617,8 +616,8 @@ namespace SetupTv.Sections
       // guideChannel
       // 
       this.guideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
+      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle5;
       this.guideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
       this.guideChannel.HeaderText = "Guide channel";
       this.guideChannel.Name = "guideChannel";

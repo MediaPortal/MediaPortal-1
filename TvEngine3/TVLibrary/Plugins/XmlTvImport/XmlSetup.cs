@@ -49,7 +49,7 @@ namespace SetupTv.Sections
     {
       InitializeComponent();
 
-    }		
+    }
 
     public override void OnSectionDeActivated()
     {
@@ -82,18 +82,18 @@ namespace SetupTv.Sections
       setting.Value = checkBoxDeleteBeforeImport.Checked ? "true" : "false";
       setting.Persist();
 
-			setting = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml");
-			setting.Value = txtRemoteURL.Text;
+      setting = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml");
+      setting.Value = txtRemoteURL.Text;
       setting.Persist();
 
-			setting = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30");
-			setting.Value = dateTimePickerScheduler.Text;
+      setting = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30");
+      setting.Value = dateTimePickerScheduler.Text;
       setting.Persist();
 
-			setting = layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false");
-			setting.Value = chkScheduler.Checked ? "true" : "false";
-      setting.Persist();						
-			
+      setting = layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false");
+      setting.Value = chkScheduler.Checked ? "true" : "false";
+      setting.Persist();
+
 
       base.OnSectionDeActivated();
     }
@@ -122,7 +122,7 @@ namespace SetupTv.Sections
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "true").Value == "true";
       cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
       cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "true").Value == "true";
-      checkBoxDeleteBeforeImport.Checked = true; // avoid duplicates. layer.GetSetting("xmlTvDeleteBeforeImport", "false").Value == "true";
+      checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "false").Value == "true";
 
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
       textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
@@ -131,11 +131,11 @@ namespace SetupTv.Sections
       labelPrograms.Text = layer.GetSetting("xmlTvResultPrograms", "").Value;
       labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
 
-			chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
-			txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;						
-			dateTimePickerScheduler.Text = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value;
-			lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
-			lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;						
+      chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
+      txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
+      dateTimePickerScheduler.Text = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value;
+      lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
+      lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;
 
       // load all distinct groups
       try
@@ -471,27 +471,27 @@ namespace SetupTv.Sections
         if (importXML)
         {
           fileName = folder + @"\tvguide.xml";
-					/*
-					bool canRead = false;
-					bool canWrite = false;
-					IOUtil.CheckFileAccessRights(fileName, ref canRead, ref canWrite);
+          /*
+          bool canRead = false;
+          bool canWrite = false;
+          IOUtil.CheckFileAccessRights(fileName, ref canRead, ref canWrite);
 
-					if (canRead)
-					{
-						// all ok, get channels
-						Log.WriteFile(@"plugin:xmltv loading " + fileName);
-						listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
-					}
-					else
-					{
-						MessageBox.Show("Can't open tvguide.xml for reading");
-						Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "].");
-					}*/
-					
+          if (canRead)
+          {
+              // all ok, get channels
+              Log.WriteFile(@"plugin:xmltv loading " + fileName);
+              listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
+          }
+          else
+          {
+              MessageBox.Show("Can't open tvguide.xml for reading");
+              Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "].");
+          }*/
+
           try
           {
             //check if file can be opened for reading....
-            IOUtil.CheckFileAccessRights(fileName,FileMode.Open, FileAccess.Read, FileShare.Read);
+            IOUtil.CheckFileAccessRights(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             // all ok, get channels
             Log.WriteFile(@"plugin:xmltv loading " + fileName);
@@ -516,7 +516,7 @@ namespace SetupTv.Sections
           {
             // open file
             Encoding fileEncoding = Encoding.Default;
-            streamIn = File.Open(fileName, FileMode.Open,FileAccess.Read,FileShare.Read);
+            streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
             fileIn = new StreamReader(streamIn, fileEncoding, true);
 
             // ok, start reading
@@ -574,77 +574,77 @@ namespace SetupTv.Sections
 
       int iChannel = 0;
 
-			try
-			{
-				if (xmlReader.ReadToDescendant("tv"))
-				{
-					// get the first channel
-					if (xmlReader.ReadToDescendant("channel"))
-					{
-						do
-						{
-							String id = xmlReader.GetAttribute("id");
-							if (id == null || id.Length == 0)
-							{
-								Log.Error("  channel#{0} doesnt contain an id", iChannel);
-							}
-							else
-							{
-								// String displayName = null;
+      try
+      {
+        if (xmlReader.ReadToDescendant("tv"))
+        {
+          // get the first channel
+          if (xmlReader.ReadToDescendant("channel"))
+          {
+            do
+            {
+              String id = xmlReader.GetAttribute("id");
+              if (id == null || id.Length == 0)
+              {
+                Log.Error("  channel#{0} doesnt contain an id", iChannel);
+              }
+              else
+              {
+                // String displayName = null;
 
-								XmlReader xmlChannel = xmlReader.ReadSubtree();
-								xmlChannel.ReadStartElement();  // read channel
-								// now, xmlChannel is positioned on the first sub-element of <channel>
-								List<string> displayNames = new List<string>();
+                XmlReader xmlChannel = xmlReader.ReadSubtree();
+                xmlChannel.ReadStartElement();  // read channel
+                // now, xmlChannel is positioned on the first sub-element of <channel>
+                List<string> displayNames = new List<string>();
 
-								while (!xmlChannel.EOF)
-								{
-									if (xmlChannel.NodeType == XmlNodeType.Element)
-									{
-										switch (xmlChannel.Name)
-										{
-											case "display-name":
-											case "Display-Name":
-												displayNames.Add(xmlChannel.ReadString());
-												//else xmlChannel.Skip();
-												break;
-											// could read more stuff here, like icon...
-											default:
-												// unknown, skip entire node
-												xmlChannel.Skip();
-												break;
-										}
-									}
-									else
-										xmlChannel.Read();
-								}
-								foreach (string displayName in displayNames)
-								{
-									if (displayName != null)
-									{
-										Channel channel = new Channel(displayName, false, false, -1, new DateTime(), false, new DateTime(), -1, false, id, false, displayName);
-										channels.Add(channel);
-									}
-								}
-							}
-							iChannel++;
-						}
-						while (xmlReader.ReadToNextSibling("channel"));
+                while (!xmlChannel.EOF)
+                {
+                  if (xmlChannel.NodeType == XmlNodeType.Element)
+                  {
+                    switch (xmlChannel.Name)
+                    {
+                      case "display-name":
+                      case "Display-Name":
+                        displayNames.Add(xmlChannel.ReadString());
+                        //else xmlChannel.Skip();
+                        break;
+                      // could read more stuff here, like icon...
+                      default:
+                        // unknown, skip entire node
+                        xmlChannel.Skip();
+                        break;
+                    }
+                  }
+                  else
+                    xmlChannel.Read();
+                }
+                foreach (string displayName in displayNames)
+                {
+                  if (displayName != null)
+                  {
+                    Channel channel = new Channel(displayName, false, false, -1, new DateTime(), false, new DateTime(), -1, false, id, false, displayName);
+                    channels.Add(channel);
+                  }
+                }
+              }
+              iChannel++;
+            }
+            while (xmlReader.ReadToNextSibling("channel"));
 
-					}
-				}
-			}
-			catch 
-			{
-			}
-			finally
-			{
-				if (xmlReader !=null) 
-				{
-					xmlReader.Close();
-					xmlReader = null;
-				}
-			}
+          }
+        }
+      }
+      catch
+      {
+      }
+      finally
+      {
+        if (xmlReader != null)
+        {
+          xmlReader.Close();
+          xmlReader = null;
+        }
+      }
 
       return channels;
     }
@@ -793,30 +793,30 @@ namespace SetupTv.Sections
     }
 
 
-		private void retrieveRemoteFile()
-		{
-			XmlTvImporter importer = new XmlTvImporter();
-			importer.RetrieveRemoteFile(textBoxFolder.Text, txtRemoteURL.Text);
-			
-			TvBusinessLayer layer = new TvBusinessLayer();
+    private void retrieveRemoteFile()
+    {
+      XmlTvImporter importer = new XmlTvImporter();
+      importer.RetrieveRemoteFile(textBoxFolder.Text, txtRemoteURL.Text);
 
-			lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
-			lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;						
-		}
+      TvBusinessLayer layer = new TvBusinessLayer();
 
-		private void btnGetNow_Click(object sender, EventArgs e)
-		{
-			retrieveRemoteFile();
-		}
+      lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
+      lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;
+    }
 
-		private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			//persist stuff when changing tabs in the plugin.
-			this.OnSectionDeActivated();
+    private void btnGetNow_Click(object sender, EventArgs e)
+    {
+      retrieveRemoteFile();
+    }
 
-			//load settings
-			this.OnSectionActivated();
-		}
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      //persist stuff when changing tabs in the plugin.
+      this.OnSectionDeActivated();
+
+      //load settings
+      this.OnSectionActivated();
+    }
 
 
   }
