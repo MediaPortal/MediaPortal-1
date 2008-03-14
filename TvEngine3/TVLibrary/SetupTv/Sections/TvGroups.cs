@@ -140,10 +140,9 @@ namespace SetupTv.Sections
 
     private void mpComboBoxGroup_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (mpComboBoxGroup.SelectedItem == null) return;
+      if (mpComboBoxGroup.SelectedItem == null)
+        return;
       ComboGroup g = (ComboGroup)mpComboBoxGroup.SelectedItem;
-      //g.Group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
-
 
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
@@ -152,6 +151,10 @@ namespace SetupTv.Sections
       mpListViewMapped.Items.Clear();
 
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      if (cbVisibleChannels.Checked)
+        sb.AddConstraint(Operator.Equals, "visibleInGuide", 1);
+      if (cbFtaChannels.Checked)
+        sb.AddConstraint(Operator.Equals, "freetoair", 1);
       sb.AddConstraint(Operator.Equals, "isTv", 1);
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
@@ -478,6 +481,16 @@ namespace SetupTv.Sections
       }
       ReOrderMap();
       mpListViewMapped.EndUpdate();
+    }
+
+    private void mpListViewChannels_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      mpButtonMap_Click(sender, null);
+    }
+
+    private void mpListViewMapped_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      mpButtonUnmap_Click(sender, null);
     }
   }
 }
