@@ -30,18 +30,14 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
-
 using MediaPortal.Configuration.Sections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-
 using Keys = MediaPortal.Configuration.Sections.Keys;
-
 
 namespace MediaPortal.Configuration
 {
@@ -51,11 +47,9 @@ namespace MediaPortal.Configuration
   public class SettingsForm : Form
   {
     public delegate bool IECallBack(int hwnd, int lParam);
-
     private const int SW_SHOWNORMAL = 1;
     private const int SW_SHOW = 5;
     private const int SW_RESTORE = 9;
-
     private string _windowName = "MediaPortal - Setup";
 
     [DllImport("User32.")]
@@ -90,12 +84,8 @@ namespace MediaPortal.Configuration
     private SerialUIR serialuir;
     private RedEye redeye; //PB00//
     private DirectInputRemote dinputRemote;
-    
     private static ConfigSplashScreen splashScreen = new ConfigSplashScreen();
-
-    //
     // Hashtable where we store each added tree node/section for faster access
-    //
     public static Hashtable SettingSections
     {
       get { return settingSections; }
@@ -103,7 +93,6 @@ namespace MediaPortal.Configuration
 
     private static Hashtable settingSections = new Hashtable();
     private MPButton applyButton;
-    //private System.ComponentModel.IContainer components;
 
     public SettingsForm()
     {
@@ -111,36 +100,20 @@ namespace MediaPortal.Configuration
       string version = System.Configuration.ConfigurationManager.AppSettings["version"];
       splashScreen.Version = version;
       splashScreen.Run();
-
       Log.Info("SettingsForm constructor");
-      //
       // Required for Windows Form Designer support
-      //
       InitializeComponent();
-
       // Stop MCE services
       MediaPortal.Util.Utils.StopMCEServices();
-
-      //
-      // Set caption
-      //
-
-      //
       // Build options tree
-      //
-
       string strLanguage;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
-      // GUILocalizeStrings.Load(Config.GetFile(Config.Dir.Language,  strLanguage , "strings.xml"));
       GUILocalizeStrings.Load(strLanguage);
-
-
       // Register Bass.Net
       BassRegistration.BassRegistration.Register();
-
       Log.Info("add project section");
       if (splashScreen != null)
       {
@@ -148,7 +121,6 @@ namespace MediaPortal.Configuration
       }
       Project project = new Project();
       AddSection(project);
-
       Log.Info("add general section");
       if (splashScreen != null)
       {
@@ -156,7 +128,7 @@ namespace MediaPortal.Configuration
       }
       General general = new General();
       AddSection(general);
-
+      //add skins section
       Log.Info("add skins section");
       if (splashScreen != null)
       {
@@ -173,7 +145,7 @@ namespace MediaPortal.Configuration
       AddChildSection(general, new FileMenu());
       AddChildSection(general, new Volume());
       AddChildSection(general, new CDSpeed());
-      
+      //add DVD section
       Log.Info("add DVD section");
       if (splashScreen != null)
       {
@@ -181,16 +153,13 @@ namespace MediaPortal.Configuration
       }
       SectionSettings dvd = new DVD();
       AddSection(dvd);
-
       Log.Info("  add DVD codec section");
       AddChildSection(dvd, new DVDCodec());
-
       Log.Info("  add DVD player section");
       AddChildSection(dvd, new DVDPlayer());
-
       Log.Info("  add DVD postprocessing section");
       AddChildSection(dvd, new DVDPostProcessing());
-
+      //add movie section
       Log.Info("add movie section");
       if (splashScreen != null)
       {
@@ -210,7 +179,7 @@ namespace MediaPortal.Configuration
       AddChildSection(movie, new MoviePlayer());
       Log.Info("  add movie postprocessing section");
       AddChildSection(movie, new MoviePostProcessing());
-
+      //add music section
       Log.Info("add music section");
       if (splashScreen != null)
       {
@@ -234,7 +203,7 @@ namespace MediaPortal.Configuration
       AddChildSection(music, new MusicDSP());
       Log.Info("  add music asio section");
       AddChildSection(music, new MusicASIO());
-
+      //add pictures section
       Log.Info("add pictures section");
       if (splashScreen != null)
       {
@@ -246,17 +215,24 @@ namespace MediaPortal.Configuration
       AddChildSection(picture, new PictureShares());
       Log.Info("  add pictures extensions section");
       AddChildSection(picture, new PictureExtensions());
-
-      Log.Info("add radio section");
-      if (splashScreen != null)
+      //add radio section
+      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
       {
-        splashScreen.SetInformation("Adding radio section...");
+        Log.Info("radio section not added - tv server plugin installed");
       }
-      SectionSettings radio = new Sections.Radio();
-      AddSection(radio);
-      Log.Info("  add radio stations section");
-      AddChildSection(radio, new RadioStations());
-
+      else
+      {
+        Log.Info("add radio section");
+        if (splashScreen != null)
+        {
+          splashScreen.SetInformation("Adding radio section...");
+        }
+        SectionSettings radio = new Sections.Radio();
+        AddSection(radio);
+        Log.Info("  add radio stations section");
+        AddChildSection(radio, new RadioStations());
+      }
+      //add television section
       Log.Info("add television section");
       if (splashScreen != null)
       {
@@ -264,30 +240,39 @@ namespace MediaPortal.Configuration
       }
       SectionSettings television = new Television();
       AddSection(television);
-      Log.Info("  add tv capture cards section");
-      AddChildSection(television, new TVCaptureCards());
-      Log.Info("  add tv channels section");
-      AddChildSection(television, new SectionTvChannels());
-      Log.Info("  add tv channel groups section");
-      AddChildSection(television, new SectionTvGroups());
-      Log.Info("  add tv program guide section");
-      AddChildSection(television, new TVProgramGuide());
-      Log.Info("  add tv recording section");
-      AddChildSection(television, new TVRecording());
-      Log.Info("  add tv postprocessing section");
-      AddChildSection(television, new TVPostProcessing());
-      Log.Info("  add tv teletext section");
-      AddChildSection(television, new TVTeletext());
-      Log.Info("  add tv client section");
-      AddChildSection(television, new TVClient());
-
+      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      {
+        Log.Info("  add tv client section");
+        AddChildSection(television, new TVClient());
+        Log.Info("  add tv postprocessing section");
+        AddChildSection(television, new TVPostProcessing());
+        Log.Info("  add tv teletext section");
+        AddChildSection(television, new TVTeletext());
+      }
+      else
+      {
+        Log.Info("  add tv capture cards section");
+        AddChildSection(television, new TVCaptureCards());
+        Log.Info("  add tv channels section");
+        AddChildSection(television, new SectionTvChannels());
+        Log.Info("  add tv channel groups section");
+        AddChildSection(television, new SectionTvGroups());
+        Log.Info("  add tv program guide section");
+        AddChildSection(television, new TVProgramGuide());
+        Log.Info("  add tv recording section");
+        AddChildSection(television, new TVRecording());
+        Log.Info("  add tv postprocessing section");
+        AddChildSection(television, new TVPostProcessing());
+        Log.Info("  add tv teletext section");
+        AddChildSection(television, new TVTeletext());
+      }
+      //add remotes section
       SectionSettings remote = new Remote();
       if (splashScreen != null)
       {
         splashScreen.SetInformation("Adding remote...");
       }
       AddSection(remote);
-
       Log.Info("add USBUIRT section");
       AddChildSection(remote, new USBUIRT());
       Log.Info("add SerialUIR section");
@@ -298,11 +283,9 @@ namespace MediaPortal.Configuration
       Log.Info("add RedEye section"); //PB00//
       redeye = new RedEye(); //PB00//
       AddChildSection(remote, redeye); //PB00//
-
       Log.Info("add DirectInput section");
       dinputRemote = new DirectInputRemote();
       AddChildSection(remote, dinputRemote);
-
       //Look for Audio Decoders, if exist assume decoders are installed & present config option
       if (splashScreen != null)
       {
@@ -323,10 +306,6 @@ namespace MediaPortal.Configuration
           {
             AddChildSection(filterSection, new WinDVD7DecoderFilters());
           }
-          if (filter.Equals("CyberLink Audio Decoder"))
-          {
-            AddChildSection(filterSection, new PowerDVD6DecoderFilters());
-          }
           if (filter.Equals("CyberLink Audio Decoder (PDVD7)") || filter.Equals("CyberLink Audio Decode (PDVD7.x)"))
           {
             AddChildSection(filterSection, new PowerDVD7DecoderFilters());
@@ -341,7 +320,6 @@ namespace MediaPortal.Configuration
           }
         }
       }
-      
       //Look for Video Decoders, if exist assume decoders are installed & present config option
       ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
       if (availableVideoFilters.Count > 0)
@@ -360,7 +338,7 @@ namespace MediaPortal.Configuration
       }
       //Add section for video renderer configuration
       AddChildSection(filterSection, new VideoRendererConfig());
-       //Look for Audio Encoders, if exist assume encoders are installed & present config option
+      //Look for Audio Encoders, if exist assume encoders are installed & present config option
       string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
       FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
@@ -373,6 +351,7 @@ namespace MediaPortal.Configuration
             AddChildSection(EncoderfilterSection, new InterVideoEncoderFilters());
           }
         }
+      //add weather section
       if (splashScreen != null)
       {
         splashScreen.SetInformation("Adding weather section...");
@@ -385,28 +364,17 @@ namespace MediaPortal.Configuration
       }
       Log.Info("add plugins section");
       AddSection(new PluginsNew());
-
-      //
       // Select first item in the section tree
-      //
       sectionTree.SelectedNode = sectionTree.Nodes[0];
-      //if (splashScreen != null)
-      //{
-      //  splashScreen.SetInformation("Bringing to front...");
-      //}
-      //Log.Info("bring to front");
-      // make sure window is in front of mediaportal
-      
+
       if (splashScreen != null)
       {
         splashScreen.Stop(500);
         splashScreen = null;
-
         BackgroundWorker FrontWorker = new BackgroundWorker();
         FrontWorker.DoWork += new DoWorkEventHandler(FrontWorker_DoWork);
         FrontWorker.RunWorkerAsync();
       }
-
       Log.Info("settingsform constructor done");
     }
 
@@ -415,12 +383,11 @@ namespace MediaPortal.Configuration
       IntPtr hwnd;
       // get the window handle of configuration.exe
       do
-      {        
+      {
         hwnd = FindWindow(null, _windowName);
         System.Threading.Thread.Sleep(100);
-
-      } while (hwnd == IntPtr.Zero);
-
+      }
+      while (hwnd == IntPtr.Zero);
       System.Threading.Thread.Sleep(50);
       ShowWindow(hwnd, SW_SHOW);
       SetForegroundWindow(hwnd);
@@ -442,37 +409,25 @@ namespace MediaPortal.Configuration
     /// <param name="section"></param>
     public void AddChildSection(SectionSettings parentSection, SectionSettings section)
     {
-      //
       // Make sure this section doesn't already exist
-      //
       if (settingSections.ContainsKey(section.Text))
       {
         return;
       }
-
-      //
       // Add section to tree
-      //
       SectionTreeNode treeNode = new SectionTreeNode(section);
-
       if (parentSection == null)
       {
-        //
         // Add to the root
-        //
         sectionTree.Nodes.Add(treeNode);
       }
       else
       {
-        //
         // Add to the parent node
-        //
         SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
         parentTreeNode.Nodes.Add(treeNode);
       }
-
       settingSections.Add(section.Text, treeNode);
-
       //treeNode.EnsureVisible();
     }
 
@@ -663,13 +618,10 @@ namespace MediaPortal.Configuration
       {
         return false;
       }
-
       section.Dock = DockStyle.Fill;
       section.OnSectionActivated();
-
       holderPanel.Controls.Clear();
       holderPanel.Controls.Add(section);
-
       return true;
     }
 
@@ -702,18 +654,13 @@ namespace MediaPortal.Configuration
     private void SettingsForm_Load(object sender, EventArgs e)
     {
       GUIGraphicsContext.form = this;
-
       // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
       if (MediaPortal.Player.BassMusicPlayer.IsDefaultMusicPlayer)
         MediaPortal.Player.BassMusicPlayer.CreatePlayerAsync();
-
       Log.Info("Load settings");
       foreach (TreeNode treeNode in sectionTree.Nodes)
       {
-        //
         // Load settings for all sections
-        //
-
         Log.Info("  Load settings:{0}", treeNode.Text);
         LoadSectionSettings(treeNode);
       }
@@ -729,19 +676,13 @@ namespace MediaPortal.Configuration
       Log.Info("LoadSectionSettings()");
       if (currentNode != null)
       {
-        //
         // Load settings for current node
-        //
         SectionTreeNode treeNode = currentNode as SectionTreeNode;
-
         if (treeNode != null)
         {
           treeNode.Section.LoadSettings();
         }
-
-        //
         // Load settings for all child nodes
-        //
         foreach (TreeNode childNode in treeNode.Nodes)
         {
           Log.Info("  Load settings:{0}", childNode.Text);
@@ -760,19 +701,13 @@ namespace MediaPortal.Configuration
       Log.Info("SaveSectionSettings()");
       if (currentNode != null)
       {
-        //
         // Save settings for current node
-        //
         SectionTreeNode treeNode = currentNode as SectionTreeNode;
-
         if (treeNode != null)
         {
           treeNode.Section.SaveSettings();
         }
-
-        //
         // Load settings for all child nodes
-        //
         foreach (TreeNode childNode in treeNode.Nodes)
         {
           Log.Info("SaveSectionSettings:{0}", childNode.Text);
@@ -790,7 +725,6 @@ namespace MediaPortal.Configuration
     private void okButton_Click(object sender, EventArgs e)
     {
       applyButton_Click(sender, e);
-
       if (!AllFilledIn())
       {
         return;
@@ -818,7 +752,6 @@ namespace MediaPortal.Configuration
                           MessageBoxIcon.Exclamation);
           return false;
         }
-
         bool added = false;
         for (int index = 0; index < MaximumShares; index++)
         {
@@ -834,9 +767,7 @@ namespace MediaPortal.Configuration
           MessageBox.Show("No music folders specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
           return false;
-          // MediaPortal.Util.VirtualDirectory.SetInitialDefaultShares(false, true, false, false);
         }
-
         added = false;
         for (int index = 0; index < MaximumShares; index++)
         {
@@ -852,9 +783,7 @@ namespace MediaPortal.Configuration
           MessageBox.Show("No movie folders specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
           return false;
-          //MediaPortal.Util.VirtualDirectory.SetInitialDefaultShares(false, false, false, true);
         }
-
         added = false;
         for (int index = 0; index < MaximumShares; index++)
         {
@@ -870,9 +799,7 @@ namespace MediaPortal.Configuration
           MessageBox.Show("No pictures folders specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
           return false;
-          //MediaPortal.Util.VirtualDirectory.SetInitialDefaultShares(false, false, true, false);
         }
-
         // is last.fm enabled but audioscrobbler is not? 
         bool audioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
         bool lastFmOn = xmlreader.GetValueAsBool("plugins", "My Last.fm Radio", false);
@@ -888,13 +815,13 @@ namespace MediaPortal.Configuration
           string asuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
           if (!string.IsNullOrEmpty(asuser))
           {
-              MediaPortal.Music.Database.MusicDatabase mdb = MediaPortal.Music.Database.MusicDatabase.Instance;
-              string AsPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(asuser)), "");
-              if (string.IsNullOrEmpty(AsPass))
-              {
-                  MessageBox.Show("No password specified for current Audioscrobbler user", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                  return false;
-              }
+            MediaPortal.Music.Database.MusicDatabase mdb = MediaPortal.Music.Database.MusicDatabase.Instance;
+            string AsPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(asuser)), "");
+            if (string.IsNullOrEmpty(AsPass))
+            {
+              MessageBox.Show("No password specified for current Audioscrobbler user", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+              return false;
+            }
           }
         }
       }
@@ -905,9 +832,7 @@ namespace MediaPortal.Configuration
     {
       foreach (TreeNode treeNode in sectionTree.Nodes)
       {
-        //
         // Save settings for all sections
-        //
         SaveSectionSettings(treeNode);
       }
       Settings.SaveCache();
@@ -917,12 +842,9 @@ namespace MediaPortal.Configuration
     {
       try
       {
-        //
         // Check if MediaPortal is running, if so inform user that it needs to be restarted
         // for the changes to take effect.
-        //
         string processName = "MediaPortal";
-
         foreach (Process process in Process.GetProcesses())
         {
           if (process.ProcessName.Equals(processName))
@@ -930,27 +852,19 @@ namespace MediaPortal.Configuration
             DialogResult dialogResult =
               MessageBox.Show("For the changes to take effect you need to restart MediaPortal, restart now?",
                               "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
             if (dialogResult == DialogResult.Yes)
             {
               try
               {
-                //
                 // Kill the MediaPortal process by finding window and sending ALT+F4 to it.
-                //
                 IECallBack ewp = new IECallBack(EnumWindowCallBack);
                 EnumWindows(ewp, 0);
                 process.CloseMainWindow();
-
-                //
                 // Wait for the process to die, we wait for a maximum of 10 seconds
-                //
                 if (process.WaitForExit(10000))
                 {
                   SaveAllSettings();
-                  //
                   // Start the MediaPortal process
-                  // 
                   Process.Start(processName + ".exe");
                   return;
                 }
@@ -959,7 +873,6 @@ namespace MediaPortal.Configuration
               {
                 // Ignore
               }
-
               break;
             }
           }
