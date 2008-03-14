@@ -60,7 +60,9 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 
-!define REG_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!define MEMENTO_REGISTRY_ROOT HKLM
+!define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
@@ -88,10 +90,9 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !include Library.nsh
 !include FileFunc.nsh
 !include WinVer.nsh
+!include Memento.nsh
 
-!include setup-RememberSections.nsh
 !include setup-languages.nsh
-
 !include setup-dotnet.nsh
 
 ; FileFunc macros
@@ -119,10 +120,10 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER         "Team MediaPortal\MediaPortal"
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT         HKLM
-!define MUI_STARTMENUPAGE_REGISTRY_KEY          "${REG_UNINSTALL}"
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME    StartMenuGroup
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER       "Team MediaPortal\MediaPortal"
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT       HKLM
+!define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_TEXT     "Run MediaPortal Configuration"
@@ -188,7 +189,7 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
-Section "MediaPortal core files (required)" SecCore
+${MementoSection} "MediaPortal core files (required)" SecCore
     SectionIn RO
     DetailPrint "Installing MediaPortal core files..."
 
@@ -440,7 +441,7 @@ Section "MediaPortal core files (required)" SecCore
     ; needed by hauppauge.dll
     !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
     !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
-SectionEnd
+${MementoSectionEnd}
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
 
@@ -616,7 +617,7 @@ SectionEnd
     Delete /REBOOTOK  $INSTDIR\XPBurnComponent.dll
 !macroend
 
-Section "DScaler Decoder" SecDscaler
+${MementoSection} "DScaler Decoder" SecDscaler
     DetailPrint "Installing DScaler Decoder..."
 
     SetOutPath $INSTDIR
@@ -641,7 +642,7 @@ Section "DScaler Decoder" SecDscaler
     WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "IDCT to Use" 2
     WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Use accurate aspect ratios" 1
     WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Video Delay" 0
-SectionEnd
+${MementoSectionEnd}
 !macro Remove_${SecDscaler}
     DetailPrint "Uninstalling DScaler Decoder..."
 
@@ -650,7 +651,7 @@ SectionEnd
     !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpegVideo.dll
 !macroend
 
-Section "Gabest MPA/MPV decoder" SecGabest
+${MementoSection} "Gabest MPA/MPV decoder" SecGabest
     DetailPrint "Installing Gabest MPA/MPV decoder..."
 
     SetOutPath $INSTDIR
@@ -678,7 +679,7 @@ Section "Gabest MPA/MPV decoder" SecGabest
     WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Forced Subtitles" 1
     WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Hue" 180
     WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Saturation" 100
-SectionEnd
+${MementoSectionEnd}
 !macro Remove_${SecGabest}
     DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
 
@@ -686,22 +687,14 @@ SectionEnd
     !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\Mpeg2DecFilter.ax
 !macroend
 
-#---------------------------------------------------------------------------
-# This macro used to perform operation on multiple sections.
-# List all of your components in following manner here.
-!macro SectionList MacroName
-    ;This macro used to perform operation on multiple sections.
-    ;List all of your components in following manner here.
-
-    !insertmacro "${MacroName}" "SecDscaler"
-    !insertmacro "${MacroName}" "SecGabest"
-!macroend
+${MementoSectionDone}
 
 #---------------------------------------------------------------------------
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
-    ;Removes unselected components and writes component status to registry
-    !insertmacro SectionList "FinishSection"
+    DetailPrint "Doing post installation stuff..."
+    
+    ${MementoSectionSave}
 
     SetOverwrite on
     SetOutPath $INSTDIR
@@ -784,9 +777,9 @@ SectionEnd
 #---------------------------------------------------------------------------
 # This section is called on uninstall and removes all components
 Section Uninstall
-    ; first removes all optional components
-    !insertmacro SectionList "RemoveSection"
     !insertmacro Remove_${SecCore}
+    !insertmacro Remove_${SecDscaler}
+    !insertmacro Remove_${SecGabest}
 
     ; remove registry key
     DeleteRegKey HKLM "${REG_UNINSTALL}"
@@ -873,7 +866,7 @@ Function .onInit
     #### END of check and parse cmdline parameter
 
     ; reads components status for registry
-    !insertmacro SectionList "InitSection"
+    ${MementoSectionRestore}
 
     ; update the component status -> commandline parameters have higher priority than registry values
     ${If} $noDscaler = 1
