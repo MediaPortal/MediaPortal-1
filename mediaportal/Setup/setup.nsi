@@ -75,6 +75,10 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !endif
 BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 
+
+!define FILTER_REBOOT_FLAG "NOREBOOT_NOTPROTECTED"
+#!define FILTER_REBOOT_FLAG "REBOOT_NOTPROTECTED"
+
 #---------------------------------------------------------------------------
 # INCLUDE FILES
 #---------------------------------------------------------------------------
@@ -413,40 +417,41 @@ Section "MediaPortal core files (required)" SecCore
     # FILTER REGISTRATION
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
+    SetOutPath $INSTDIR
     ;filter used for SVCD and VCD playback
-    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
     ##### MAYBE used by VideoEditor
-    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
     ;filter for analog tv
-    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
     ; used for scanning in tve2
-    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
     ; used for shoutcast
-    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
     ; used for digital tv
-    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
     ##### not sure for what this is used
-    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TTPremiumSource.ax $INSTDIR\TTPremiumSource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TTPremiumSource.ax $INSTDIR\TTPremiumSource.ax $INSTDIR
     ##### not sure for what this is used
-    !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
 
     # [MAYBE OBSOLETE] File ..\xbmc\bin\Release\
     # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
 
     # [OBSOLETE] Common DLLs
     # [OBSOLETE] Installing the Common dll
-    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib DLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
     
     # needed by hauppauge.dll
-    !insertmacro InstallLib DLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
-    !insertmacro InstallLib DLL $LibInstall NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
+    !insertmacro InstallLib DLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
+    !insertmacro InstallLib DLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
 SectionEnd
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
@@ -456,39 +461,39 @@ SectionEnd
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     ;filter used for SVCD and VCD playback
-    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\cdxareader.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\cdxareader.ax
     ##### MAYBE used by VideoEditor
-    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\CLDump.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\CLDump.ax
     ;filter for analog tv
-    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpgMux.ax
     ; used for scanning in tve2
-    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MPSA.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPSA.ax
     ; used for shoutcast
-    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\shoutcastsource.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\shoutcastsource.ax
     ; used for digital tv
-    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TsReader.ax
     ##### not sure for what this is used
-    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\TTPremiumSource.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TTPremiumSource.ax
     ##### not sure for what this is used
-    !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\WinTVCapWriter.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\WinTVCapWriter.ax
 
     # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MPReader.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MPTS.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MPTSWriter.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPReader.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPTS.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPTSWriter.ax
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TSFileSource.ax
 
     # [OBSOLETE] Common DLLs will not be removed. Too Dangerous
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MFC71.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MFC71u.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MFC80.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\MFC80u.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC71.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC71u.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC80.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC80u.dll
 
     # needed by hauppauge.dll
-    !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\msvcp71.dll
-    !insertmacro UnInstallLib DLL SHARED NOREBOOT_NOTPROTECTED $INSTDIR\msvcr71.dll
+    !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\msvcp71.dll
+    !insertmacro UnInstallLib DLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\msvcr71.dll
 
     ; Config Files
     Delete /REBOOTOK  $CommonAppData\CaptureCardDefinitions.xml
@@ -626,9 +631,9 @@ Section "DScaler Decoder" SecDscaler
     ; [OBSOLETE]  !insertmacro SetFilterDir
     
     ; [OBSOLETE]  WriteRegStr HKLM "${REG_UNINSTALL}" Dscaler 1
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $INSTDIR\GenDMOProp.dll $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegAudio.dll $INSTDIR\MpegAudio.dll $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegVideo.dll $INSTDIR\MpegVideo.dll $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\GenDMOProp.dll $INSTDIR\GenDMOProp.dll $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpegAudio.dll $INSTDIR\MpegAudio.dll $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpegVideo.dll $INSTDIR\MpegVideo.dll $INSTDIR
     ; Write Default Values for Filter into the registry
     WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
     WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "MPEG Audio over SPDIF" 0
@@ -650,9 +655,9 @@ SectionEnd
 !macro Remove_${SecDscaler}
     DetailPrint "Uninstalling DScaler Decoder..."
 
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\GenDMOProp.dll
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpegAudio.dll
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpegVideo.dll
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\GenDMOProp.dll
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpegAudio.dll
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpegVideo.dll
 !macroend
 
 Section "Gabest MPA/MPV decoder" SecGabest
@@ -663,8 +668,8 @@ Section "Gabest MPA/MPV decoder" SecGabest
     ; [OBSOLETE]  !insertmacro SetFilterDir
     
     ; [OBSOLETE]  WriteRegStr HKLM "${REG_UNINSTALL}" Gabest 1
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $INSTDIR\MpaDecFilter.ax $INSTDIR
-    !insertmacro InstallLib REGDLL $LibInstall REBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $INSTDIR\Mpeg2DecFilter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpaDecFilter.ax $INSTDIR\MpaDecFilter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL $LibInstall ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\Mpeg2DecFilter.ax $INSTDIR\Mpeg2DecFilter.ax $INSTDIR
 
     ; Write Default Values for Filter into the registry
     WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
@@ -691,8 +696,8 @@ SectionEnd
 !macro Remove_${SecGabest}
     DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
 
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\MpaDecFilter.ax
-    !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $INSTDIR\Mpeg2DecFilter.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpaDecFilter.ax
+    !insertmacro UnInstallLib REGDLL SHARED ${FILTER_REBOOT_FLAG} $INSTDIR\Mpeg2DecFilter.ax
 !macroend
 
 #---------------------------------------------------------------------------
@@ -730,12 +735,13 @@ Section -Post
         CreateDirectory "$CommonAppData\log"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"                  "$CommonAppData\log"            ""      "$CommonAppData\log"         0 "" "" "MediaPortal Log-Files"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"    "$INSTDIR\MPInstaller.exe"      ""      "$INSTDIR\MPInstaller.exe"   0 "" "" "MediaPortal Plugins-Skins Installer"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"                   "$INSTDIR\MPTestTool2.exe"      ""      "$INSTDIR\MPTestTool2.exe"   0 "" "" "MediaPortal TestTool"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$INSTDIR\uninstall-mp.exe"
         WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url" "InternetShortcut" "URL" "${URL}"
 
         ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\link to homepage.lnk" "$INSTDIR\MPInstaller.exe" "" "$INSTDIR\MPInstaller.exe" 0 "" "" "MediaPortal Extension Installer"
         
-        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk" "$INSTDIR\MPTestTool2.exe" "-auto" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Debug"
+        ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk" "$INSTDIR\.exe" "-auto" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Debug"
         ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\License.lnk" "$INSTDIR\Docs\MediaPortal License.rtf" "" "$INSTDIR\Docs\MediaPortal License.rtf" 0 "" "" "License"
         ;CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MPTestTool.lnk" "$INSTDIR\MPTestTool2.exe" "" "$INSTDIR\MPTestTool2.exe" 0 "" "" "MediaPortal Test Tool"
         !insertmacro MUI_STARTMENU_WRITE_END
