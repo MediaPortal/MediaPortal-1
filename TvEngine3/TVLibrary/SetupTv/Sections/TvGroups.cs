@@ -77,7 +77,7 @@ namespace SetupTv.Sections
       InitMapping();
     }
 
-    void Init()
+    private void Init()
     {
       mpListViewGroups.Items.Clear();
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
@@ -111,6 +111,7 @@ namespace SetupTv.Sections
       newGroup.Persist();
       Init();
     }
+
     private void mpTabControl1_TabIndexChanged(object sender, EventArgs e)
     {
       if (mpTabControl1.TabIndex == 1)
@@ -306,7 +307,8 @@ namespace SetupTv.Sections
     {
       ReOrderMap();
     }
-    void ReOrderMap()
+
+    private void ReOrderMap()
     {
       for (int i = 0; i < mpListViewMapped.Items.Count; ++i)
       {
@@ -315,7 +317,8 @@ namespace SetupTv.Sections
         map.Persist();
       }
     }
-    void ReOrderGroups()
+
+    private void ReOrderGroups()
     {
       for (int i = 0; i < mpListViewGroups.Items.Count; ++i)
       {

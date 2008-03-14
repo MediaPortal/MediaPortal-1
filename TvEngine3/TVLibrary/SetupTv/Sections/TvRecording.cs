@@ -309,7 +309,7 @@ namespace SetupTv.Sections
       numericUpDownPostRec.Value = 5;
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
-      checkBoxCreateTagInfoXML.Checked = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
+      checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
       checkboxSchedulerPriority.Checked = (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes");
       formatString[0] = "";
       formatString[1] = "";

@@ -185,12 +185,12 @@ namespace SetupTv.Sections
       // 
       // checkBoxDeleteBeforeImport
       // 
-      this.checkBoxDeleteBeforeImport.Location = new System.Drawing.Point(180, 86);
+      this.checkBoxDeleteBeforeImport.AutoSize = true;
+      this.checkBoxDeleteBeforeImport.Location = new System.Drawing.Point(195, 98);
       this.checkBoxDeleteBeforeImport.Name = "checkBoxDeleteBeforeImport";
-      this.checkBoxDeleteBeforeImport.Size = new System.Drawing.Size(289, 40);
+      this.checkBoxDeleteBeforeImport.Size = new System.Drawing.Size(268, 17);
       this.checkBoxDeleteBeforeImport.TabIndex = 34;
-      this.checkBoxDeleteBeforeImport.Text = "Delete old programs before import. This is NOT safe and used inappropriately you " +
-          "might get duplicate entries!";
+      this.checkBoxDeleteBeforeImport.Text = "Delete old programs before import (Recommended!)";
       this.checkBoxDeleteBeforeImport.UseVisualStyleBackColor = true;
       // 
       // label23

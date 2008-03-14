@@ -106,7 +106,8 @@ namespace SetupTv.Sections
       RemoteControl.Instance.OnNewSchedule();
       base.OnSectionDeActivated();
     }
-    void UpdateMenu()
+
+    private void UpdateMenu()
     {
       while (tabControl1.TabPages.Count > 1)
       {
@@ -123,10 +124,10 @@ namespace SetupTv.Sections
         TabPage page = new TabPage(group.GroupName);
         page.Controls.Add(new ChannelsInGroupControl());
         page.Tag = group;
-        tabControl1.TabPages.Add(page);				
+        tabControl1.TabPages.Add(page);
       }
       ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
-      itemNew.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);			
+      itemNew.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
       addToFavoritesToolStripMenuItem.DropDownItems.Add(itemNew);
     }
 
@@ -134,14 +135,21 @@ namespace SetupTv.Sections
     {
       UpdateMenu();
       _redrawTab1 = false;
+
+      base.OnSectionActivated();
+
+      RefreshAllChannels();
+    }
+
+    private void RefreshAllChannels()
+    {
       IList dbsCards = Card.ListAll();
-      CountryCollection countries = new CountryCollection();
       Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
       foreach (Card card in dbsCards)
       {
         cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
-      }
-      base.OnSectionActivated();
+      }      
+
       mpListView1.BeginUpdate();
       mpListView1.Items.Clear();
       IList chs = Channel.ListAll();
@@ -284,11 +292,11 @@ namespace SetupTv.Sections
       }
       mpListView1.Items.AddRange(items.ToArray());
       mpListView1.EndUpdate();
-      mpLabelChannelCount.Text = String.Format("Total channels:{0}", channelCount);
-			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      mpLabelChannelCount.Text = String.Format("Total channels: {0}", channelCount);
+      mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
-    void OnAddToFavoritesMenuItem_Click(object sender, EventArgs e)
+    private void OnAddToFavoritesMenuItem_Click(object sender, EventArgs e)
     {
       ChannelGroup group;
       ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
@@ -299,7 +307,7 @@ namespace SetupTv.Sections
         {
           return;
         }
-        group = new ChannelGroup(dlg.GroupName,9999);
+        group = new ChannelGroup(dlg.GroupName, 9999);
         group.Persist();
         UpdateMenu();
       }
@@ -408,34 +416,34 @@ namespace SetupTv.Sections
     private void mpButtonDel_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
-			IList schedules = Schedule.ListAll();
-			TvServer server = new TvServer();
+      IList schedules = Schedule.ListAll();
+      TvServer server = new TvServer();
 
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
-        Channel channel = (Channel)item.Tag;				
+        Channel channel = (Channel)item.Tag;
 
-				//also delete any still active schedules
-				if (schedules != null)
-				{
-					for (int i = schedules.Count-1; i>-1; i--)
-					{
-						Schedule schedule = (Schedule)schedules[i];
-						if (schedule.IdChannel == channel.IdChannel)
-						{							
-							server.StopRecordingSchedule(schedule.IdSchedule);
-							schedule.Delete();
-							schedules.RemoveAt(i);
-						}
-					}
-				}
+        //also delete any still active schedules
+        if (schedules != null)
+        {
+          for (int i = schedules.Count - 1; i > -1; i--)
+          {
+            Schedule schedule = (Schedule)schedules[i];
+            if (schedule.IdChannel == channel.IdChannel)
+            {
+              server.StopRecordingSchedule(schedule.IdSchedule);
+              schedule.Delete();
+              schedules.RemoveAt(i);
+            }
+          }
+        }
 
         channel.Delete();
         mpListView1.Items.Remove(item);
       }
       mpListView1.EndUpdate();
       ReOrder();
-			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
     private void buttonUtp_Click(object sender, EventArgs e)
@@ -477,7 +485,7 @@ namespace SetupTv.Sections
       mpListView1.EndUpdate();
     }
 
-    void ReOrder()
+    private void ReOrder()
     {
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
@@ -559,30 +567,30 @@ namespace SetupTv.Sections
       ReOrder();
     }
 
-    void AddAttribute(XmlNode node, string tagName, string tagValue)
+    private void AddAttribute(XmlNode node, string tagName, string tagValue)
     {
       XmlAttribute attr = node.OwnerDocument.CreateAttribute(tagName);
       attr.InnerText = tagValue;
       node.Attributes.Append(attr);
     }
-    
-    void AddAttribute(XmlNode node, string tagName, int tagValue)
-    {
-      AddAttribute(node, tagName, tagValue.ToString());
-    }
-    
-    // store DateTime Values as strings. Improves readability
-    void AddAttribute(XmlNode node,string tagName, DateTime tagValue)
-    {
-        AddAttribute(node,tagName,String.Format("{0}-{1}-{2} {3}:{4}:{5}", tagValue.Year, tagValue.Month, tagValue.Day, tagValue.Hour, tagValue.Minute, tagValue.Second));
-    }
-    
-    void AddAttribute(XmlNode node, string tagName, bool tagValue)
+
+    private void AddAttribute(XmlNode node, string tagName, int tagValue)
     {
       AddAttribute(node, tagName, tagValue.ToString());
     }
 
-    void Export()
+    // store DateTime Values as strings. Improves readability
+    private void AddAttribute(XmlNode node, string tagName, DateTime tagValue)
+    {
+      AddAttribute(node, tagName, String.Format("{0}-{1}-{2} {3}:{4}:{5}", tagValue.Year, tagValue.Month, tagValue.Day, tagValue.Hour, tagValue.Minute, tagValue.Second));
+    }
+
+    private void AddAttribute(XmlNode node, string tagName, bool tagValue)
+    {
+      AddAttribute(node, tagName, tagValue.ToString());
+    }
+
+    private void Export()
     {
       XmlDocument xmlDoc = new XmlDocument();
       XmlNode rootElement = xmlDoc.CreateElement("tvserver");
@@ -606,7 +614,7 @@ namespace SetupTv.Sections
           AddAttribute(nodeCard, "DevicePath", card.DevicePath);
           AddAttribute(nodeCard, "Enabled", card.Enabled);
           AddAttribute(nodeCard, "CamType", card.CamType);
-          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);          
+          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);
           AddAttribute(nodeCard, "LastEpgGrab", card.LastEpgGrab);
           AddAttribute(nodeCard, "Name", card.Name);
           AddAttribute(nodeCard, "Priority", card.Priority);
@@ -627,10 +635,10 @@ namespace SetupTv.Sections
         AddAttribute(nodechannel, "GrabEpg", channel.GrabEpg);
         AddAttribute(nodechannel, "IdChannel", channel.IdChannel);
         AddAttribute(nodechannel, "IsRadio", channel.IsRadio);
-        AddAttribute(nodechannel, "IsTv", channel.IsTv);        
+        AddAttribute(nodechannel, "IsTv", channel.IsTv);
         AddAttribute(nodechannel, "LastGrabTime", channel.LastGrabTime);
         AddAttribute(nodechannel, "SortOrder", channel.SortOrder);
-        AddAttribute(nodechannel, "TimesWatched", channel.TimesWatched);        
+        AddAttribute(nodechannel, "TimesWatched", channel.TimesWatched);
         AddAttribute(nodechannel, "TotalTimeWatched", channel.TotalTimeWatched);
         AddAttribute(nodechannel, "VisibleInGuide", channel.VisibleInGuide);
         AddAttribute(nodechannel, "FreeToAir", channel.FreeToAir);
@@ -696,23 +704,23 @@ namespace SetupTv.Sections
       IList schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
-          XmlNode nodeSchedule = xmlDoc.CreateElement("schedule");
-          AddAttribute(nodeSchedule,"ChannelName",schedule.ReferencedChannel().Name);
-          AddAttribute(nodeSchedule, "ProgramName", schedule.ProgramName);
-          AddAttribute(nodeSchedule, "StartTime", schedule.StartTime);
-          AddAttribute(nodeSchedule, "EndTime", schedule.EndTime);
-          AddAttribute(nodeSchedule, "KeepDate", schedule.KeepDate);
-          AddAttribute(nodeSchedule, "PreRecordInterval", schedule.PreRecordInterval);
-          AddAttribute(nodeSchedule, "PostRecordInterval", schedule.PostRecordInterval);
-          AddAttribute(nodeSchedule, "Priority", schedule.Priority);
-          AddAttribute(nodeSchedule, "Quality", schedule.Quality);
-          AddAttribute(nodeSchedule, "Directory", schedule.Directory);
-          AddAttribute(nodeSchedule, "KeepMethod", schedule.KeepMethod);
-          AddAttribute(nodeSchedule, "MaxAirings", schedule.MaxAirings);
-          AddAttribute(nodeSchedule, "RecommendedCard", schedule.RecommendedCard);
-          AddAttribute(nodeSchedule, "ScheduleType", schedule.ScheduleType);
-          AddAttribute(nodeSchedule, "Series", schedule.Series);
-          nodeSchedules.AppendChild(nodeSchedule);
+        XmlNode nodeSchedule = xmlDoc.CreateElement("schedule");
+        AddAttribute(nodeSchedule, "ChannelName", schedule.ReferencedChannel().Name);
+        AddAttribute(nodeSchedule, "ProgramName", schedule.ProgramName);
+        AddAttribute(nodeSchedule, "StartTime", schedule.StartTime);
+        AddAttribute(nodeSchedule, "EndTime", schedule.EndTime);
+        AddAttribute(nodeSchedule, "KeepDate", schedule.KeepDate);
+        AddAttribute(nodeSchedule, "PreRecordInterval", schedule.PreRecordInterval);
+        AddAttribute(nodeSchedule, "PostRecordInterval", schedule.PostRecordInterval);
+        AddAttribute(nodeSchedule, "Priority", schedule.Priority);
+        AddAttribute(nodeSchedule, "Quality", schedule.Quality);
+        AddAttribute(nodeSchedule, "Directory", schedule.Directory);
+        AddAttribute(nodeSchedule, "KeepMethod", schedule.KeepMethod);
+        AddAttribute(nodeSchedule, "MaxAirings", schedule.MaxAirings);
+        AddAttribute(nodeSchedule, "RecommendedCard", schedule.RecommendedCard);
+        AddAttribute(nodeSchedule, "ScheduleType", schedule.ScheduleType);
+        AddAttribute(nodeSchedule, "Series", schedule.Series);
+        nodeSchedules.AppendChild(nodeSchedule);
       }
       rootElement.AppendChild(nodeSchedules);
       //exporting channel groups
@@ -720,8 +728,8 @@ namespace SetupTv.Sections
       IList channelgroups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in channelgroups)
       {
-        XmlNode nodeChannelGroup =xmlDoc.CreateElement("channelgroup");
-        AddAttribute(nodeChannelGroup,"GroupName",group.GroupName);
+        XmlNode nodeChannelGroup = xmlDoc.CreateElement("channelgroup");
+        AddAttribute(nodeChannelGroup, "GroupName", group.GroupName);
         AddAttribute(nodeChannelGroup, "SortOrder", group.SortOrder.ToString());
         XmlNode nodeGroupMap = xmlDoc.CreateElement("mappings");
         IList maps = group.ReferringGroupMap();
@@ -748,11 +756,12 @@ namespace SetupTv.Sections
 
     private string GetNodeAttribute(XmlNode node, string attribute, string defaultValue)
     {
-      if (node.Attributes[attribute]==null)
+      if (node.Attributes[attribute] == null)
         return defaultValue;
       else
         return node.Attributes[attribute].Value;
     }
+
     private void mpButtonImport_Click(object sender, EventArgs e)
     {
       openFileDialog1.CheckFileExists = true;
@@ -786,15 +795,15 @@ namespace SetupTv.Sections
           XmlNodeList tuningList = nodeChannel.SelectNodes("TuningDetails/tune");
           XmlNodeList mappingList = nodeChannel.SelectNodes("mappings/map");
           string name = nodeChannel.Attributes["Name"].Value;
-          bool grabEpg = (GetNodeAttribute(nodeChannel,"GrabEpg","True") == "True");
-          bool isRadio = (GetNodeAttribute(nodeChannel,"IsRadio","False") == "True");
+          bool grabEpg = (GetNodeAttribute(nodeChannel, "GrabEpg", "True") == "True");
+          bool isRadio = (GetNodeAttribute(nodeChannel, "IsRadio", "False") == "True");
           bool isTv = (GetNodeAttribute(nodeChannel, "IsTv", "True") == "True");
-          DateTime lastGrabTime = DateTime.ParseExact(GetNodeAttribute(nodeChannel,"LastGrabTime","01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+          DateTime lastGrabTime = DateTime.ParseExact(GetNodeAttribute(nodeChannel, "LastGrabTime", "01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
           int sortOrder = Int32.Parse(GetNodeAttribute(nodeChannel, "SortOrder", "0"));
-          int timesWatched = Int32.Parse(GetNodeAttribute(nodeChannel,"TimesWatched","0"));
-          DateTime totalTimeWatched = DateTime.ParseExact(GetNodeAttribute(nodeChannel,"TotalTimeWatched","01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-          bool visibileInGuide = (GetNodeAttribute(nodeChannel,"VisibleInGuide","True") == "True");
-          bool FreeToAir = (GetNodeAttribute(nodeChannel,"FreeToAir","True") == "True");
+          int timesWatched = Int32.Parse(GetNodeAttribute(nodeChannel, "TimesWatched", "0"));
+          DateTime totalTimeWatched = DateTime.ParseExact(GetNodeAttribute(nodeChannel, "TotalTimeWatched", "01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+          bool visibileInGuide = (GetNodeAttribute(nodeChannel, "VisibleInGuide", "True") == "True");
+          bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
           string displayName = GetNodeAttribute(nodeChannel, "DisplayName", name);
 
           Channel dbChannel = layer.AddChannel("", name);
@@ -816,7 +825,7 @@ namespace SetupTv.Sections
             Card dbCard = layer.GetCardByDevicePath(nodeCard.Attributes["DevicePath"].Value);
             if (dbCard != null)
             {
-              layer.MapChannelToCard(dbCard, dbChannel,false);
+              layer.MapChannelToCard(dbCard, dbChannel, false);
             }
           }
           foreach (XmlNode nodeTune in tuningList)
@@ -837,21 +846,21 @@ namespace SetupTv.Sections
             int pcrPid = Int32.Parse(nodeTune.Attributes["PcrPid"].Value);
             int pmtPid = Int32.Parse(nodeTune.Attributes["PmtPid"].Value);
             int polarisation = Int32.Parse(nodeTune.Attributes["Polarisation"].Value);
-            string provider = GetNodeAttribute(nodeTune,"Provider","");
+            string provider = GetNodeAttribute(nodeTune, "Provider", "");
             int serviceId = Int32.Parse(nodeTune.Attributes["ServiceId"].Value);
             int switchingFrequency = Int32.Parse(nodeTune.Attributes["SwitchingFrequency"].Value);
             int symbolrate = Int32.Parse(nodeTune.Attributes["Symbolrate"].Value);
             int transportId = Int32.Parse(nodeTune.Attributes["TransportId"].Value);
-            int tuningSource = Int32.Parse(GetNodeAttribute(nodeTune,"TuningSource","0"));
-            int videoPid = Int32.Parse(GetNodeAttribute(nodeTune,"VideoPid","-1"));
-            int videoSource = Int32.Parse(GetNodeAttribute(nodeTune,"VideoSource","0"));
-            int SatIndex = Int32.Parse(GetNodeAttribute(nodeTune,"SatIndex","-1"));
-            int InnerFecRate = Int32.Parse(GetNodeAttribute(nodeTune,"InnerFecRate","-1"));
-            int band = Int32.Parse(GetNodeAttribute(nodeTune,"Band","0"));
+            int tuningSource = Int32.Parse(GetNodeAttribute(nodeTune, "TuningSource", "0"));
+            int videoPid = Int32.Parse(GetNodeAttribute(nodeTune, "VideoPid", "-1"));
+            int videoSource = Int32.Parse(GetNodeAttribute(nodeTune, "VideoSource", "0"));
+            int SatIndex = Int32.Parse(GetNodeAttribute(nodeTune, "SatIndex", "-1"));
+            int InnerFecRate = Int32.Parse(GetNodeAttribute(nodeTune, "InnerFecRate", "-1"));
+            int band = Int32.Parse(GetNodeAttribute(nodeTune, "Band", "0"));
             int pilot = Int32.Parse(GetNodeAttribute(nodeTune, "Pilot", "-1"));
-            int rollOff = Int32.Parse(GetNodeAttribute(nodeTune,"RollOff","-1"));
-            string url=GetNodeAttribute(nodeTune,"Url","");
-            int bitrate=Int32.Parse(GetNodeAttribute(nodeTune,"Bitrate","0"));
+            int rollOff = Int32.Parse(GetNodeAttribute(nodeTune, "RollOff", "-1"));
+            string url = GetNodeAttribute(nodeTune, "Url", "");
+            int bitrate = Int32.Parse(GetNodeAttribute(nodeTune, "Bitrate", "0"));
 
             switch (channelType)
             {
@@ -962,29 +971,29 @@ namespace SetupTv.Sections
         // Import schedules
         foreach (XmlNode nodeSchedule in scheduleList)
         {
-            scheduleCount++;
-            string programName = nodeSchedule.Attributes["ProgramName"].Value;
-            string channel = nodeSchedule.Attributes["ChannelName"].Value;
-            int idChannel = layer.GetChannelByName(channel).IdChannel;
+          scheduleCount++;
+          string programName = nodeSchedule.Attributes["ProgramName"].Value;
+          string channel = nodeSchedule.Attributes["ChannelName"].Value;
+          int idChannel = layer.GetChannelByName(channel).IdChannel;
 
-            DateTime startTime = DateTime.ParseExact(nodeSchedule.Attributes["StartTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-            DateTime endTime = DateTime.ParseExact(nodeSchedule.Attributes["EndTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-            int scheduleType =Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
-            Schedule schedule = layer.AddSchedule(idChannel, programName, startTime, endTime, scheduleType);
+          DateTime startTime = DateTime.ParseExact(nodeSchedule.Attributes["StartTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+          DateTime endTime = DateTime.ParseExact(nodeSchedule.Attributes["EndTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+          int scheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
+          Schedule schedule = layer.AddSchedule(idChannel, programName, startTime, endTime, scheduleType);
 
-            schedule.ScheduleType = scheduleType;
-            schedule.KeepDate = DateTime.ParseExact(nodeSchedule.Attributes["KeepDate"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-            schedule.PreRecordInterval = Int32.Parse(nodeSchedule.Attributes["PreRecordInterval"].Value);
-            schedule.PostRecordInterval = Int32.Parse(nodeSchedule.Attributes["PostRecordInterval"].Value);
-            schedule.Priority = Int32.Parse(nodeSchedule.Attributes["Priority"].Value);
-            schedule.Quality = Int32.Parse(nodeSchedule.Attributes["Quality"].Value);
-            schedule.Directory = nodeSchedule.Attributes["Directory"].Value;
-            schedule.KeepMethod = Int32.Parse(nodeSchedule.Attributes["KeepMethod"].Value);
-            schedule.MaxAirings = Int32.Parse(nodeSchedule.Attributes["MaxAirings"].Value);
-            schedule.RecommendedCard = Int32.Parse(nodeSchedule.Attributes["RecommendedCard"].Value);
-            schedule.ScheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
-            schedule.Series = (GetNodeAttribute(nodeSchedule,"Series","False") == "True");
-            schedule.Persist();
+          schedule.ScheduleType = scheduleType;
+          schedule.KeepDate = DateTime.ParseExact(nodeSchedule.Attributes["KeepDate"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+          schedule.PreRecordInterval = Int32.Parse(nodeSchedule.Attributes["PreRecordInterval"].Value);
+          schedule.PostRecordInterval = Int32.Parse(nodeSchedule.Attributes["PostRecordInterval"].Value);
+          schedule.Priority = Int32.Parse(nodeSchedule.Attributes["Priority"].Value);
+          schedule.Quality = Int32.Parse(nodeSchedule.Attributes["Quality"].Value);
+          schedule.Directory = nodeSchedule.Attributes["Directory"].Value;
+          schedule.KeepMethod = Int32.Parse(nodeSchedule.Attributes["KeepMethod"].Value);
+          schedule.MaxAirings = Int32.Parse(nodeSchedule.Attributes["MaxAirings"].Value);
+          schedule.RecommendedCard = Int32.Parse(nodeSchedule.Attributes["RecommendedCard"].Value);
+          schedule.ScheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
+          schedule.Series = (GetNodeAttribute(nodeSchedule, "Series", "False") == "True");
+          schedule.Persist();
         }
         // Import channel groups
         foreach (XmlNode nodeChannelGroup in channelGroupList)
@@ -992,13 +1001,13 @@ namespace SetupTv.Sections
           channelGroupCount++;
           string groupName = nodeChannelGroup.Attributes["GroupName"].Value;
           int groupSortOrder = Int32.Parse(nodeChannelGroup.Attributes["SortOrder"].Value);
-          ChannelGroup group = new ChannelGroup(groupName,groupSortOrder);
+          ChannelGroup group = new ChannelGroup(groupName, groupSortOrder);
           group.Persist();
           XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
           foreach (XmlNode nodeMap in mappingList)
           {
             Channel channel = layer.GetChannelByName(nodeMap.Attributes["ChannelName"].Value);
-            int sortOrder=Int32.Parse(GetNodeAttribute(nodeMap,"SortOrder","9999"));
+            int sortOrder = Int32.Parse(GetNodeAttribute(nodeMap, "SortOrder", "9999"));
             if (channel != null)
             {
               GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, sortOrder);
@@ -1081,7 +1090,7 @@ namespace SetupTv.Sections
     {
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = null;
-      if (dlg.ShowDialog(this)==DialogResult.OK)
+      if (dlg.ShowDialog(this) == DialogResult.OK)
         OnSectionActivated();
     }
 
@@ -1105,7 +1114,7 @@ namespace SetupTv.Sections
       dlg.Close();
       ReOrder();
       RemoteControl.Instance.OnNewSchedule();
-			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
     private void renameMarkedChannelsBySIDToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1132,7 +1141,7 @@ namespace SetupTv.Sections
         IList details = channel.ReferringTuningDetail();
         if (details.Count > 0)
         {
-          channel.DisplayName = ((TuningDetail)details[0]).ServiceId.ToString()+" "+channel.DisplayName;
+          channel.DisplayName = ((TuningDetail)details[0]).ServiceId.ToString() + " " + channel.DisplayName;
           channel.Persist();
           item.Tag = channel;
         }

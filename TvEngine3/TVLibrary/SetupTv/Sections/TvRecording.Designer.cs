@@ -32,6 +32,8 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
       this.checkBoxCreateTagInfoXML = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkboxSchedulerPriority = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAutoDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -82,11 +84,11 @@ namespace SetupTv.Sections
       this.label12 = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).BeginInit();
       this.tabPage2.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -95,8 +97,6 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.trackBarDisk)).BeginInit();
       this.tabPage4.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -145,22 +145,51 @@ namespace SetupTv.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
+      // numericUpDownPostRec
+      // 
+      this.numericUpDownPostRec.Location = new System.Drawing.Point(109, 55);
+      this.numericUpDownPostRec.Name = "numericUpDownPostRec";
+      this.numericUpDownPostRec.Size = new System.Drawing.Size(58, 20);
+      this.numericUpDownPostRec.TabIndex = 11;
+      this.numericUpDownPostRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownPostRec.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      // 
+      // numericUpDownPreRec
+      // 
+      this.numericUpDownPreRec.Location = new System.Drawing.Point(109, 25);
+      this.numericUpDownPreRec.Name = "numericUpDownPreRec";
+      this.numericUpDownPreRec.Size = new System.Drawing.Size(58, 20);
+      this.numericUpDownPreRec.TabIndex = 10;
+      this.numericUpDownPreRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownPreRec.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      // 
       // checkBoxCreateTagInfoXML
       // 
       this.checkBoxCreateTagInfoXML.AutoSize = true;
+      this.checkBoxCreateTagInfoXML.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateTagInfoXML.Location = new System.Drawing.Point(31, 129);
       this.checkBoxCreateTagInfoXML.Name = "checkBoxCreateTagInfoXML";
-      this.checkBoxCreateTagInfoXML.Size = new System.Drawing.Size(293, 17);
+      this.checkBoxCreateTagInfoXML.Size = new System.Drawing.Size(299, 17);
       this.checkBoxCreateTagInfoXML.TabIndex = 9;
-      this.checkBoxCreateTagInfoXML.Text = "Automaticly create a xml file containing Matroska tag info";
+      this.checkBoxCreateTagInfoXML.Text = "Automatically create a xml file containing Matroska tag info";
       this.checkBoxCreateTagInfoXML.UseVisualStyleBackColor = true;
+      this.checkBoxCreateTagInfoXML.Visible = false;
       // 
       // checkboxSchedulerPriority
       // 
       this.checkboxSchedulerPriority.AutoSize = true;
-      this.checkboxSchedulerPriority.Location = new System.Drawing.Point(31, 152);
+      this.checkboxSchedulerPriority.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkboxSchedulerPriority.Location = new System.Drawing.Point(30, 93);
       this.checkboxSchedulerPriority.Name = "checkboxSchedulerPriority";
-      this.checkboxSchedulerPriority.Size = new System.Drawing.Size(344, 17);
+      this.checkboxSchedulerPriority.Size = new System.Drawing.Size(342, 17);
       this.checkboxSchedulerPriority.TabIndex = 8;
       this.checkboxSchedulerPriority.Text = "Allow server to stop LiveTV to record when no free card is available";
       this.checkboxSchedulerPriority.UseVisualStyleBackColor = true;
@@ -168,12 +197,14 @@ namespace SetupTv.Sections
       // checkBoxAutoDelete
       // 
       this.checkBoxAutoDelete.AutoSize = true;
-      this.checkBoxAutoDelete.Location = new System.Drawing.Point(31, 106);
+      this.checkBoxAutoDelete.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxAutoDelete.Location = new System.Drawing.Point(30, 152);
       this.checkBoxAutoDelete.Name = "checkBoxAutoDelete";
-      this.checkBoxAutoDelete.Size = new System.Drawing.Size(242, 17);
+      this.checkBoxAutoDelete.Size = new System.Drawing.Size(248, 17);
       this.checkBoxAutoDelete.TabIndex = 6;
-      this.checkBoxAutoDelete.Text = "Automaticly delete recordings after watching it";
+      this.checkBoxAutoDelete.Text = "Automatically delete recordings after watching it";
       this.checkBoxAutoDelete.UseVisualStyleBackColor = true;
+      this.checkBoxAutoDelete.Visible = false;
       // 
       // label4
       // 
@@ -436,7 +467,7 @@ namespace SetupTv.Sections
       // 
       this.trackBarDisk.Location = new System.Drawing.Point(30, 185);
       this.trackBarDisk.Name = "trackBarDisk";
-      this.trackBarDisk.Size = new System.Drawing.Size(391, 45);
+      this.trackBarDisk.Size = new System.Drawing.Size(391, 40);
       this.trackBarDisk.TabIndex = 7;
       this.trackBarDisk.Visible = false;
       this.trackBarDisk.Scroll += new System.EventHandler(this.trackBarDisk_Scroll);
@@ -658,32 +689,6 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
-      // numericUpDownPreRec
-      // 
-      this.numericUpDownPreRec.Location = new System.Drawing.Point(109, 25);
-      this.numericUpDownPreRec.Name = "numericUpDownPreRec";
-      this.numericUpDownPreRec.Size = new System.Drawing.Size(58, 20);
-      this.numericUpDownPreRec.TabIndex = 10;
-      this.numericUpDownPreRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownPreRec.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-      // 
-      // numericUpDownPostRec
-      // 
-      this.numericUpDownPostRec.Location = new System.Drawing.Point(109, 55);
-      this.numericUpDownPostRec.Name = "numericUpDownPostRec";
-      this.numericUpDownPostRec.Size = new System.Drawing.Size(58, 20);
-      this.numericUpDownPostRec.TabIndex = 11;
-      this.numericUpDownPostRec.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownPostRec.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -695,6 +700,8 @@ namespace SetupTv.Sections
       this.tabPage1.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).EndInit();
       this.tabPage2.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
@@ -707,8 +714,6 @@ namespace SetupTv.Sections
       this.tabPage4.ResumeLayout(false);
       this.tabPage4.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).EndInit();
       this.ResumeLayout(false);
 
     }
