@@ -797,7 +797,7 @@ Section Uninstall
 
     ; remove last files and instdir
     Delete /REBOOTOK "$INSTDIR\uninstall-mp.exe"
-    RmDir "$INSTDIR"
+    RmDir /REBOOTOK "$INSTDIR"
 
     ; do we need to deinstall everything? Then remove also the CommonAppData and InstDir
     ${If} $RemoveAll == 1
