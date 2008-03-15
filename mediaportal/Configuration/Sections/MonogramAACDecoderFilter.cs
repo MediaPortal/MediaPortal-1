@@ -234,7 +234,7 @@ namespace MediaPortal.Configuration.Sections
             regSpeakerOut = (Int32)subkey.GetValue("MixMode", 0);
             regVolume = (Int32)subkey.GetValue("Volume", 0);
             comboBoxSpeakerOutput.SelectedIndex = regSpeakerOut;
-            volumeTrackBar.Value = regVolume;
+            volumeTrackBar.Value = regVolume / 100;
           }
           catch (Exception)
           {
@@ -248,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
         if (subkey != null)
         {
           subkey.SetValue("MixMode", (Int32)comboBoxSpeakerOutput.SelectedIndex);
-          subkey.SetValue("Volume", (Int32)volumeTrackBar.Value);
+          subkey.SetValue("Volume", (Int32)volumeTrackBar.Value * 100);
         }
     }
 
