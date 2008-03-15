@@ -829,6 +829,7 @@ namespace MediaPortal.Player
       _graphBuilderInterface = null;
       _scene = null;
       g_vmr9 = null;
+      _isVmr9Initialized = false;
     }
     #endregion
 

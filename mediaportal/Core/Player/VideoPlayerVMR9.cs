@@ -176,11 +176,11 @@ namespace MediaPortal.Player
                 currentVideoRenderer = filters[0];
               }
               else
-                Marshal.ReleaseComObject(filters[0]);
+                DirectShowUtil.ReleaseComObject(filters[0]);
             }
           }
           while (hrFilters == 0 && currentVideoRenderer == null);
-          Marshal.ReleaseComObject(enumFilters);
+          DirectShowUtil.ReleaseComObject(enumFilters);
 
           if (currentVideoRenderer != null)
           {
@@ -194,9 +194,9 @@ namespace MediaPortal.Player
               iPinSource.QueryPinInfo(out outputInfo);
               FilterInfo info;
               outputInfo.filter.QueryFilterInfo(out info);
-              Marshal.ReleaseComObject(iPinSource);
+              DirectShowUtil.ReleaseComObject(iPinSource);
               iPinSource = DirectShowUtil.FindSourcePinOf(outputInfo.filter);
-              Marshal.ReleaseComObject(outputInfo.filter);
+              DirectShowUtil.ReleaseComObject(outputInfo.filter);
               if (iPinSource != null)
                 videoFilterList.Add(info.achName);
             }
@@ -205,7 +205,7 @@ namespace MediaPortal.Player
             // clear up the graph
             if (graphBuilder != null)
             {
-              while ((hr = Marshal.ReleaseComObject(graphBuilder)) > 0) ;
+              while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0) ;
               graphBuilder = null;
             }
 
@@ -246,7 +246,7 @@ namespace MediaPortal.Player
         {
           Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
         }
-        Marshal.ReleaseComObject(baseFilter);
+        DirectShowUtil.ReleaseComObject(baseFilter);
       }
 
       if (bAutoDecoderSettings == true)
@@ -261,7 +261,7 @@ namespace MediaPortal.Player
         foreach (string sFilter in videoFilterList)
         {
           IBaseFilter newFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, sFilter);
-          Marshal.ReleaseComObject(newFilter);
+          DirectShowUtil.ReleaseComObject(newFilter);
         }
 
         // render
@@ -283,7 +283,8 @@ namespace MediaPortal.Player
           Error.SetError("Unable to play movie", "Unable to render file. Missing codecs?");
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
           return false;
-        }
+        }        
+
         mediaCtrl = (IMediaControl)graphBuilder;
         mediaEvt = (IMediaEventEx)graphBuilder;
         mediaSeek = (IMediaSeeking)graphBuilder;
@@ -298,19 +299,36 @@ namespace MediaPortal.Player
           b = (ushort)0xfffff845;
         }
         Guid classID = new Guid(0x9852a670, b, 0x491b, 0x9b, 0xe6, 0xeb, 0xd8, 0x41, 0xb8, 0xa6, 0x13);
-        if (vob != null)
+
+        #region VobSub
+        // If Vobsub filter is loaded into the graph (either automatically or by adding as
+        // 'postprocessing filter' then configure it using settings stored in mediaportal.xml
+        if (vob != null) //Release old vobsub com object, if somehow a previous instance exists.
         {
-          DirectShowUtil.ReleaseComObject(vob);
+          DirectShowUtil.ReleaseComObject(vob);          
           vob = null;
         }
+
+        //Find VobSub filter instance. Try the "autoload" filter first.        
         DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
         vobSub = null;
         vobSub = (IDirectVobSub)vob;
+
+        if (vobSub == null)
+        {
+          //Try the "normal" filter then.
+          classID = new Guid("93A22E7A-5091-45ef-BA61-6DA26156A5D0");
+          DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
+          vobSub = (IDirectVobSub)vob;
+        }
+
         if (vobSub != null)
         {
-          //string defaultLanguage;
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
+            Log.Info("VideoPlayerVMR9: Setting DirectVobsub parameters");
+
+            //string defaultLanguage;
             string strTmp = "";
             string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
             int iFontSize = xmlreader.GetValueAsInt("subtitles", "fontsize", 18);
@@ -333,9 +351,110 @@ namespace MediaPortal.Player
             int B = (int)((iColor) & 0xff);
             txtcolor = (B << 16) + (G << 8) + R;
             if (iShadow > 0) fShadow = true;
-            int res = vobSub.put_TextSettings(logFont, size, txtcolor, fShadow, fOutLine, fAdvancedRenderer);
+            vobSub.put_TextSettings(logFont, size, txtcolor, fShadow, fOutLine, fAdvancedRenderer);
+
+            // Now check if vobsub's video input is not connected.
+            // Check only if vmr9 is connected (render was successful).
+            if (Vmr9.IsVMR9Connected)
+            {
+              IPin pinVideoIn = DsFindPin.ByDirection(vob, PinDirection.Input, 0);
+              // Check if video input pin is connected
+              IPin pinVideoTo = null;
+              pinVideoIn.ConnectedTo(out pinVideoTo);
+              if (hr != 0 || pinVideoTo == null)
+              {
+                // Pin is not connected. Connect it.
+                Log.Info("VideoPlayerVMR9: Connect vobsub's video pins!");
+                // This is the pin that we will connect to vobsub's input.
+                pinVideoTo = Vmr9.PinConnectedTo;
+                // We have to re-add and re-initialize vmr9 as we cannot connect to it once it has been connected to
+                Vmr9.Dispose();
+                // Just in any case...
+                pinVideoTo.Disconnect();
+                //Now force connection to vobsub
+                hr = graphBuilder.Connect(pinVideoTo, pinVideoIn);
+                if (hr != 0)
+                {
+                  Log.Info("VideoPlayerVMR9: could not connect Vobsub's input video pin...");
+                  return false;
+                }
+                Log.Info("VideoPlayerVMR9: Vobsub's video input pin connected...");
+
+                DirectShowUtil.ReleaseComObject(pinVideoTo);
+
+                //Add vmr9 again
+                Vmr9.AddVMR9(graphBuilder);
+                Vmr9.Enable(false);
+
+                // Now render vobsub's video output pin.
+                pinVideoTo = DirectShowUtil.FindPin(vob, PinDirection.Output, "Output");
+                if (pinVideoTo == null)
+                {
+                  Log.Info("VideoPlayerVMR9: Vobsub output pin NOT FOUND!");
+                  return false;
+                }
+
+                hr = graphBuilder.Render(pinVideoTo);
+                if (hr != 0)
+                {
+                  Log.Info("VideoPlayerVMR9: could not connect Vobsub to Vmr9 Renderer");
+                  return false;
+                }
+                Log.Info("VideoPlayerVMR9: Vobsub connected to Vmr9 Renderer...");
+              }
+              else DirectShowUtil.ReleaseComObject(pinVideoTo);
+
+              DirectShowUtil.ReleaseComObject(pinVideoIn);
+
+              // Query VobSub's subtitle input pin (first one).
+              IPin pinSubIn = DirectShowUtil.FindPin(vob, PinDirection.Input, "Input");
+              if (pinSubIn != null)
+              {
+                // Check if subtitle input pin is connected
+                IPin pinSubTo = null;
+                pinSubIn.ConnectedTo(out pinSubTo);
+                if (hr != 0 || pinSubTo == null)
+                {
+                  // Not connected.
+                  // Check if Haali Media Splitter is in the graph.
+                  Guid hmsclassID = new Guid("55DA30FC-F16B-49FC-BAA5-AE59FC65F82D"); //Haali
+                  IBaseFilter hms = null;
+                  DirectShowUtil.FindFilterByClassID(graphBuilder, hmsclassID, out hms);
+                  if (hms != null)
+                  {
+                    // It is. Connect it' subtitle output pin (if any) to Vobsub's subtitle input.
+                    Log.Info("VideoPlayerVMR9: Connecting Haali's subtitle output to Vobsub's input.");
+                    pinSubTo = DirectShowUtil.FindPin(hms, PinDirection.Output, "Subtitle");
+                    if (pinSubTo != null)
+                    {
+                      // Disconnect Haali's output if connected.
+                      IPin pinSubToConnectedTo = null;
+                      pinSubTo.ConnectedTo(out pinSubToConnectedTo);
+                      if (pinSubToConnectedTo != null)
+                      {
+                        pinSubTo.Disconnect();
+                        DirectShowUtil.ReleaseComObject(pinSubToConnectedTo);
+                      }
+                      // Now, connect Haali and Vobsub.
+                      hr = graphBuilder.ConnectDirect(pinSubTo, pinSubIn, null);
+                      if (hr != 0) Log.Info("VideoPlayerVMR9: Haali - Vobsub connect failed: {0}", hr);
+                      DirectShowUtil.ReleaseComObject(pinSubTo);
+                    }
+                    DirectShowUtil.ReleaseComObject(hms);
+                  }
+                }
+                else DirectShowUtil.ReleaseComObject(pinSubTo);
+                DirectShowUtil.ReleaseComObject(pinSubIn);
+              }
+
+              // Force vobsub to reload available subtitles.
+              // This is needed if added as postprocessing filter.
+              vobSub.put_FileName(m_strCurrentFile);
+            }
           }
         }
+        #endregion //Vobsub
+
         if (!Vmr9.IsVMR9Connected)
         {
           //VMR9 is not supported, switch to overlay
@@ -344,6 +463,7 @@ namespace MediaPortal.Player
           // return base.GetInterfaces();
           return false;
         }
+
         Vmr9.SetDeinterlaceMode();
         return true;
       }
@@ -472,3 +592,7 @@ namespace MediaPortal.Player
     }
   }
 }
+
+
+
+
