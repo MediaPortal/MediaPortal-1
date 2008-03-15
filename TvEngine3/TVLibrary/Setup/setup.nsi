@@ -445,22 +445,22 @@ ${MementoSectionEnd}
     # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
     
     ; The Plugins
-    Delete /REBOOTOK  $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
-    Delete /REBOOTOK  $MPBaseDir\Plugins\Windows\TvPlugin.dll
+    Delete /REBOOTOK $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
+    Delete /REBOOTOK $MPBaseDir\Plugins\Windows\TvPlugin.dll
     
     ; Common Files
-    Delete /REBOOTOK  $MPBaseDir\PowerScheduler.Interfaces.dll
-    Delete /REBOOTOK  $MPBaseDir\TvControl.dll
-    Delete /REBOOTOK  $MPBaseDir\TVDatabase.dll
-    Delete /REBOOTOK  $MPBaseDir\Gentle.Common.DLL
-    Delete /REBOOTOK  $MPBaseDir\Gentle.Framework.DLL
-    Delete /REBOOTOK  $MPBaseDir\Gentle.Provider.MySQL.dll
-    Delete /REBOOTOK  $MPBaseDir\Gentle.Provider.SQLServer.dll
-    Delete /REBOOTOK  $MPBaseDir\log4net.dll
-    Delete /REBOOTOK  $MPBaseDir\MySql.Data.dll
-    Delete /REBOOTOK  $MPBaseDir\TvBusinessLayer.dll
-    Delete /REBOOTOK  $MPBaseDir\TvLibrary.Interfaces.dll
-    Delete /REBOOTOK  $MPBaseDir\Gentle.config
+    Delete /REBOOTOK $MPBaseDir\PowerScheduler.Interfaces.dll
+    Delete /REBOOTOK $MPBaseDir\TvControl.dll
+    Delete /REBOOTOK $MPBaseDir\TVDatabase.dll
+    Delete /REBOOTOK $MPBaseDir\Gentle.Common.DLL
+    Delete /REBOOTOK $MPBaseDir\Gentle.Framework.DLL
+    Delete /REBOOTOK $MPBaseDir\Gentle.Provider.MySQL.dll
+    Delete /REBOOTOK $MPBaseDir\Gentle.Provider.SQLServer.dll
+    Delete /REBOOTOK $MPBaseDir\log4net.dll
+    Delete /REBOOTOK $MPBaseDir\MySql.Data.dll
+    Delete /REBOOTOK $MPBaseDir\TvBusinessLayer.dll
+    Delete /REBOOTOK $MPBaseDir\TvLibrary.Interfaces.dll
+    Delete /REBOOTOK $MPBaseDir\Gentle.config
     
     # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\DVBSub2.ax
     # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
@@ -524,8 +524,9 @@ Section Uninstall
     RmDir "$SMPROGRAMS\$StartMenuGroup"
 
     ; remove last files and instdir
+    RmDir /REBOOTOK "$INSTDIR\pmt"
     Delete /REBOOTOK "$INSTDIR\uninstall-tve3.exe"
-    RmDir "$INSTDIR"
+    RmDir /REBOOTOK "$INSTDIR"
 
     ${If} $RemoveAll == 1
         DetailPrint "Removing User Settings"
