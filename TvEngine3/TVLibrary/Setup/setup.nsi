@@ -670,7 +670,7 @@ Function un.onUninstSuccess
     IfRebootFlag 0 noreboot
         FileOpen $0 $INSTDIR\rebootflag w
         Delete /REBOOTOK $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
-        RmDir /REBOOTOK $INSTDIR
+        RmDir $INSTDIR
         FileClose $0
     noreboot:
 
