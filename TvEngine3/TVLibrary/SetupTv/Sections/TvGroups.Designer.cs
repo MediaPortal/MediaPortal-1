@@ -282,7 +282,6 @@ namespace SetupTv.Sections
       this.mpListViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2,
             this.columnHeader3});
-      this.mpListViewMapped.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewMapped.LargeImageList = this.imageList1;
       this.mpListViewMapped.Location = new System.Drawing.Point(249, 58);
       this.mpListViewMapped.Name = "mpListViewMapped";
@@ -292,9 +291,9 @@ namespace SetupTv.Sections
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
       this.mpListViewMapped.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListViewMapped_MouseDoubleClick);
+      this.mpListViewMapped.DragEnter += new System.Windows.Forms.DragEventHandler(this.mpListViewMapped_DragEnter);
       this.mpListViewMapped.DragDrop += new System.Windows.Forms.DragEventHandler(this.mpListViewMapped_DragDrop);
       this.mpListViewMapped.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewMapped_ColumnClick);
-      this.mpListViewMapped.DragEnter += new System.Windows.Forms.DragEventHandler(this.mpListViewMapped_DragEnter);
       this.mpListViewMapped.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListViewMapped_ItemDrag);
       // 
       // columnHeader2

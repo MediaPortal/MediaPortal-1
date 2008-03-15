@@ -50,6 +50,7 @@ namespace SetupTv.Sections
       }
 
     }
+    private MPListViewStringColumnSorter lvwColumnSorter;
     private MPListViewStringColumnSorter lvwColumnSorter1;
     private MPListViewStringColumnSorter lvwColumnSorter2;
 
@@ -62,6 +63,9 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
+      lvwColumnSorter = new MPListViewStringColumnSorter();
+      lvwColumnSorter.Order = SortOrder.None;
+      this.mpListViewGroups.ListViewItemSorter = lvwColumnSorter;
       lvwColumnSorter1 = new MPListViewStringColumnSorter();
       lvwColumnSorter1.Order = SortOrder.None;
       this.mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
@@ -269,8 +273,7 @@ namespace SetupTv.Sections
 
     private void mpListViewGroups_ColumnClick(object sender, ColumnClickEventArgs e)
     {
-      // Real sorting is now done via the up/down buttons
-      /*if (e.Column == lvwColumnSorter.SortColumn)
+      if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
         if (lvwColumnSorter.Order == SortOrder.Ascending)
@@ -290,7 +293,7 @@ namespace SetupTv.Sections
       }
 
       // Perform the sort with these new sort options.
-      this.mpListViewGroups.Sort();*/
+      this.mpListViewGroups.Sort();
     }
 
     private void mpListViewMapped_DragDrop(object sender, DragEventArgs e)
