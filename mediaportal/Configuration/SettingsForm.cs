@@ -319,6 +319,17 @@ namespace MediaPortal.Configuration
             AddChildSection(filterSection, new DScalerAudioFilter());
           }
         }
+        ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
+        if (availableAACAudioFilters.Count > 0)
+        {
+          foreach (string filter in availableAACAudioFilters)
+          {
+            if (filter.Equals("MONOGRAM AAC Decoder"))
+            {
+              AddChildSection(filterSection, new MonogramAACDecoderFilter());
+            }
+          }
+        }
       }
       //Look for Video Decoders, if exist assume decoders are installed & present config option
       ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
