@@ -94,6 +94,13 @@
 		<carrier frequency="226500" bandwidth="7"></carrier>
 		<carrier frequency="585500" bandwidth="7"></carrier>
 	</country>
+	<country name="Australia - NSW - Coffs Harbour Mt Moombil" offset="125">
+		<carrier frequency="585500" bandwidth="7" /> 
+		<carrier frequency="564500" bandwidth="7" /> 
+		<carrier frequency="599500" bandwidth="7" /> 
+		<carrier frequency="606500" bandwidth="7" /> 
+		<carrier frequency="543500" bandwidth="7" /> 
+	</country>
 	<country name="Australia - NSW - Newcastle" offset="125">
 		<carrier frequency="585500" bandwidth="7"></carrier>
 		<carrier frequency="592500" bandwidth="7"></carrier>
