@@ -76,10 +76,6 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !endif
 BrandingText "TV Server ${VERSION} by Team MediaPortal"
 
-
-!define FILTER_REBOOT_FLAG "NOREBOOT_NOTPROTECTED"
-#!define FILTER_REBOOT_FLAG "REBOOT_NOTPROTECTED"
-
 #---------------------------------------------------------------------------
 # INCLUDE FILES
 #---------------------------------------------------------------------------
@@ -161,7 +157,7 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
 OutFile "Release\setup-tve3.exe"
-InstallDir "$PROGRAMFILES\Team MediaPortal\TV Server"
+InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
 CRCCheck on
 XPStyle on
@@ -275,12 +271,12 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     #---------------------------------------------------------------------------
     DetailPrint "filter registration..."
     ; filters for digital tv
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
     ; filters for analog tv
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\mpFileWriter.ax $INSTDIR\mpFileWriter.ax $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\PDMpgMux.ax $INSTDIR\PDMpgMux.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mpFileWriter.ax $INSTDIR\mpFileWriter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\PDMpgMux.ax $INSTDIR\PDMpgMux.ax $INSTDIR
 
     #---------------------------------------------------------------------------
     # SERVICE INSTALLATION
@@ -321,12 +317,12 @@ ${MementoSectionEnd}
     #---------------------------------------------------------------------------
     DetailPrint "Unreg and remove filters..."
     ; filters for digital tv
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TsReader.ax
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TsWriter.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
     ; filters for analog tv
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\mpFileWriter.ax
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpgMux.ax
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\PDMpgMux.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\mpFileWriter.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\PDMpgMux.ax
 
     DetailPrint "remove files..."
     ; Remove TuningParameters
@@ -421,15 +417,15 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
     # FILTER REGISTRATION       for TVClient
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
 
     # [OBSOLETE] not needed because it's already installed by mp
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
     DetailPrint "Uninstalling MediaPortal TV Client plugin..."
@@ -438,15 +434,15 @@ ${MementoSectionEnd}
     # FILTER UNREGISTRATION     for TVClient
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $MPBaseDir\DVBSub2.ax
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $MPBaseDir\mmaacd.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $MPBaseDir\TSFileSource.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $MPBaseDir\RtspSource.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
 
     # [OBSOLETE] not needed because it's already installed by mp
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $MPBaseDir\TsReader.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
     
     ; The Plugins
     Delete /REBOOTOK  $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
@@ -574,7 +570,7 @@ Function .onInit
     ${If} $noClient = 1
     ${AndIf} $noServer = 1
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_PARAMETER_ERROR)" IDOK 0
-        Quit
+        Abort
     ${ElseIf} $noClient = 1
         !insertmacro SelectSection ${SecServer}
         !insertmacro UnselectSection ${SecClient}
@@ -626,6 +622,21 @@ Function .onInit
     */
 FunctionEnd
 
+Function .onSelChange
+    ; disable the next button if nothing is selected
+    Push $0
+    Push $1
+    SectionGetFlags ${SecServer} $0
+    IntOp $0 ${SF_SELECTED} & $0
+    SectionGetFlags ${SecClient} $1
+    IntOp $1 ${SF_SELECTED} & $1
+    IntOp $0 $1 | $0
+    GetDlgItem $1 $HWNDPARENT 1
+    EnableWindow $1 $0
+    Pop $1
+    Pop $0
+FunctionEnd
+
 Function un.onInit
     #### check and parse cmdline parameter
     ; set default values for parameters ........
@@ -645,21 +656,6 @@ Function un.onInit
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
     !insertmacro SetCommonAppData
-FunctionEnd
-
-Function .onSelChange
-    ; disable the next button if nothing is selected
-    Push $0
-    Push $1
-    SectionGetFlags ${SecServer} $0
-    IntOp $0 ${SF_SELECTED} & $0
-    SectionGetFlags ${SecClient} $1
-    IntOp $1 ${SF_SELECTED} & $1
-    IntOp $0 $1 | $0
-    GetDlgItem $1 $HWNDPARENT 1
-    EnableWindow $1 $0
-    Pop $1
-    Pop $0
 FunctionEnd
 
 ; Start the Setup after the successfull install
@@ -713,10 +709,10 @@ Function DirectoryPre
     ; This function is called, before the Directory Page is displayed
     ; It checks, if the Server has been selected and only displays the Directory page in this case
     ${If} ${SectionIsSelected} SecServer
-        strcpy $0 1
+        StrCpy $0 1
     ${Else}
-        strcpy $0 2
-        abort
+        StrCpy $0 2
+        Abort
     ${EndIf}
 FunctionEnd
 
@@ -724,10 +720,10 @@ Function FinishPre
     ; This function is called, before the Finish Page is displayed
     ; It checks, if the Server has been selected and only displays the Directory page in this case
     ${If} ${SectionIsSelected} SecServer
-        strcpy $0 1
+        StrCpy $0 1
     ${Else}
-        strcpy $0 2
-        abort
+        StrCpy $0 2
+        Abort
     ${EndIf}
 FunctionEnd
 
@@ -735,7 +731,7 @@ Function un.WelcomeLeave
     ; This function is called, before the uninstallation process is startet
     ; It asks the user, if he wants to remove all files and settings
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO noRemoveAll
-        strcpy $RemoveAll 1
+        StrCpy $RemoveAll 1
     noRemoveAll:
 
 FunctionEnd
