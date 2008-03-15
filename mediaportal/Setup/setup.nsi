@@ -434,9 +434,9 @@ ${MementoSection} "MediaPortal core files (required)" SecCore
     # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
     # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
     
-    ; needed by hauppauge.dll
-    !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
-    !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
+    # [OBSOLETE] not needed anymore after a code change made by diehard in rev 17975
+    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
 ${MementoSectionEnd}
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
@@ -476,9 +476,9 @@ ${MementoSectionEnd}
     # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC80.dll
     # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC80u.dll
 
-    ; needed by hauppauge.dll
-    !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\msvcp71.dll
-    !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\msvcr71.dll
+    # [OBSOLETE] not needed anymore after a code change made by diehard in rev 17975
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\msvcp71.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\msvcr71.dll
 
     ; Config Files
     Delete /REBOOTOK  $CommonAppData\CaptureCardDefinitions.xml
