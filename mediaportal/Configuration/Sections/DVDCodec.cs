@@ -38,7 +38,6 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-
   public class DVDCodec : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -51,15 +50,15 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox videoCodecComboBox;
     private MediaPortal.UserInterface.Controls.MPComboBox dvdNavigatorComboBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3;
-    //private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRGB;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDXVA;
     private System.ComponentModel.IContainer components = null;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     bool _init = false;
     /// <summary>
     /// 
     /// </summary>
     public DVDCodec()
-      : this("DVD Codec")
+      : this("DVD Codecs")
     {
     }
 
@@ -69,21 +68,16 @@ namespace MediaPortal.Configuration.Sections
     public DVDCodec(string name)
       : base(name)
     {
-
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
-
-
     }
+
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
       if (_init == false)
       {
-        //
         // Fetch available DirectShow filters
-        //
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         //Remove Muxer's from the list to avoid confusion.
         while (availableVideoFilters.Contains("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
@@ -98,19 +92,11 @@ namespace MediaPortal.Configuration.Sections
         while (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("PDR MPEG Muxer");
         while (availableAudioFilters.Contains("Nero Mpeg2 Encoder")) availableAudioFilters.Remove("Nero Mpeg2 Encoder");
         availableAudioFilters.Sort();
-        //
         // Fetch available DVD navigators
-        //
         ArrayList availableDVDNavigators = FilterHelper.GetDVDNavigators();
-
-        //
         // Fetch available Audio Renderers
-        //
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
-
-        //
         // Populate combo boxes
-        //
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
         dvdNavigatorComboBox.Items.AddRange(availableDVDNavigators.ToArray());
@@ -121,7 +107,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
-    /// 
+    /// Load DVD codec & options
     /// </summary>
     public override void LoadSettings()
     {
@@ -134,12 +120,9 @@ namespace MediaPortal.Configuration.Sections
         string audioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
         string dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
         checkBoxAC3.Checked = xmlreader.GetValueAsBool("dvdplayer", "ac3", false);
-        //checkBoxRGB.Checked = xmlreader.GetValueAsBool("dvdplayer", "usergbmode", false);
         checkBoxDXVA.Checked = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", true);
-
         audioRendererComboBox.SelectedItem = audioRenderer;
         dvdNavigatorComboBox.SelectedItem = dvdNavigator;
-
         if (audioCodec == string.Empty)
         {
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
@@ -163,7 +146,6 @@ namespace MediaPortal.Configuration.Sections
             else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
           }
         }
-
         if (videoCodec == string.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
@@ -187,18 +169,18 @@ namespace MediaPortal.Configuration.Sections
             else if (DScalerFilterFound) videoCodec = "DScaler Mpeg2 Video Decoder";
           }
         }
-
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
-
       }
       Log.Info("load dvd done");
     }
 
+    /// <summary>
+    /// Save DVD codec & options
+    /// </summary>
     public override void SaveSettings()
     {
       if (_init == false) return;
-
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("dvdplayer", "audiorenderer", audioRendererComboBox.Text);
@@ -233,16 +215,17 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxDXVA = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.audioRendererLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.videoCodecLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkBoxAC3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.dvdNavigatorComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.audioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.dvdNavigatorLabel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.videoCodecLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.audioCodecLabel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.audioRendererLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -250,43 +233,90 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.mpLabel1);
       this.groupBox1.Controls.Add(this.checkBoxDXVA);
+      this.groupBox1.Controls.Add(this.audioRendererLabel);
+      this.groupBox1.Controls.Add(this.audioRendererComboBox);
+      this.groupBox1.Controls.Add(this.videoCodecLabel);
+      this.groupBox1.Controls.Add(this.videoCodecComboBox);
       this.groupBox1.Controls.Add(this.checkBoxAC3);
       this.groupBox1.Controls.Add(this.dvdNavigatorComboBox);
-      this.groupBox1.Controls.Add(this.videoCodecComboBox);
       this.groupBox1.Controls.Add(this.audioCodecComboBox);
-      this.groupBox1.Controls.Add(this.audioRendererComboBox);
       this.groupBox1.Controls.Add(this.dvdNavigatorLabel);
-      this.groupBox1.Controls.Add(this.videoCodecLabel);
       this.groupBox1.Controls.Add(this.audioCodecLabel);
-      this.groupBox1.Controls.Add(this.audioRendererLabel);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(469, 204);
+      this.groupBox1.Size = new System.Drawing.Size(469, 216);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(165, 52);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(281, 13);
+      this.mpLabel1.TabIndex = 10;
+      this.mpLabel1.Text = "Note: Use corresponding decoders with chosen Navigator";
       // 
       // checkBoxDXVA
       // 
       this.checkBoxDXVA.AutoSize = true;
       this.checkBoxDXVA.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDXVA.Location = new System.Drawing.Point(19, 165);
+      this.checkBoxDXVA.Location = new System.Drawing.Point(19, 186);
       this.checkBoxDXVA.Name = "checkBoxDXVA";
-      this.checkBoxDXVA.Size = new System.Drawing.Size(338, 17);
+      this.checkBoxDXVA.Size = new System.Drawing.Size(333, 17);
       this.checkBoxDXVA.TabIndex = 9;
       this.checkBoxDXVA.Text = "Turn off DxVA (use this option if you have DVD navigation issues)";
       this.checkBoxDXVA.UseVisualStyleBackColor = true;
-      this.checkBoxDXVA.CheckedChanged += new System.EventHandler(this.checkBoxDXVA_CheckedChanged);
+      // 
+      // audioRendererLabel
+      // 
+      this.audioRendererLabel.Location = new System.Drawing.Point(16, 121);
+      this.audioRendererLabel.Name = "audioRendererLabel";
+      this.audioRendererLabel.Size = new System.Drawing.Size(88, 18);
+      this.audioRendererLabel.TabIndex = 4;
+      this.audioRendererLabel.Text = "Audio renderer:";
+      // 
+      // audioRendererComboBox
+      // 
+      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 118);
+      this.audioRendererComboBox.Name = "audioRendererComboBox";
+      this.audioRendererComboBox.Size = new System.Drawing.Size(285, 21);
+      this.audioRendererComboBox.TabIndex = 5;
+      // 
+      // videoCodecLabel
+      // 
+      this.videoCodecLabel.Location = new System.Drawing.Point(16, 73);
+      this.videoCodecLabel.Name = "videoCodecLabel";
+      this.videoCodecLabel.Size = new System.Drawing.Size(117, 16);
+      this.videoCodecLabel.TabIndex = 0;
+      this.videoCodecLabel.Text = "DVD video decoder:";
+      // 
+      // videoCodecComboBox
+      // 
+      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.videoCodecComboBox.Location = new System.Drawing.Point(168, 70);
+      this.videoCodecComboBox.Name = "videoCodecComboBox";
+      this.videoCodecComboBox.Size = new System.Drawing.Size(285, 21);
+      this.videoCodecComboBox.TabIndex = 1;
       // 
       // checkBoxAC3
       // 
       this.checkBoxAC3.AutoSize = true;
       this.checkBoxAC3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAC3.Location = new System.Drawing.Point(19, 139);
+      this.checkBoxAC3.Location = new System.Drawing.Point(19, 160);
       this.checkBoxAC3.Name = "checkBoxAC3";
-      this.checkBoxAC3.Size = new System.Drawing.Size(280, 17);
+      this.checkBoxAC3.Size = new System.Drawing.Size(275, 17);
       this.checkBoxAC3.TabIndex = 8;
       this.checkBoxAC3.Text = "Use AC3 filter (for some soundcards using SPDIF out)";
       this.checkBoxAC3.UseVisualStyleBackColor = true;
@@ -297,21 +327,10 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.dvdNavigatorComboBox.BorderColor = System.Drawing.Color.Empty;
       this.dvdNavigatorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.dvdNavigatorComboBox.Location = new System.Drawing.Point(168, 48);
+      this.dvdNavigatorComboBox.Location = new System.Drawing.Point(168, 25);
       this.dvdNavigatorComboBox.Name = "dvdNavigatorComboBox";
       this.dvdNavigatorComboBox.Size = new System.Drawing.Size(285, 21);
       this.dvdNavigatorComboBox.TabIndex = 3;
-      // 
-      // videoCodecComboBox
-      // 
-      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.videoCodecComboBox.Location = new System.Drawing.Point(168, 24);
-      this.videoCodecComboBox.Name = "videoCodecComboBox";
-      this.videoCodecComboBox.Size = new System.Drawing.Size(285, 21);
-      this.videoCodecComboBox.TabIndex = 1;
       // 
       // audioCodecComboBox
       // 
@@ -319,53 +338,26 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 97);
+      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 94);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(285, 21);
       this.audioCodecComboBox.TabIndex = 7;
       // 
-      // audioRendererComboBox
-      // 
-      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 73);
-      this.audioRendererComboBox.Name = "audioRendererComboBox";
-      this.audioRendererComboBox.Size = new System.Drawing.Size(285, 21);
-      this.audioRendererComboBox.TabIndex = 5;
-      // 
       // dvdNavigatorLabel
       // 
-      this.dvdNavigatorLabel.Location = new System.Drawing.Point(16, 52);
+      this.dvdNavigatorLabel.Location = new System.Drawing.Point(16, 28);
       this.dvdNavigatorLabel.Name = "dvdNavigatorLabel";
       this.dvdNavigatorLabel.Size = new System.Drawing.Size(88, 15);
       this.dvdNavigatorLabel.TabIndex = 2;
       this.dvdNavigatorLabel.Text = "DVD Navigator:";
       // 
-      // videoCodecLabel
-      // 
-      this.videoCodecLabel.Location = new System.Drawing.Point(16, 28);
-      this.videoCodecLabel.Name = "videoCodecLabel";
-      this.videoCodecLabel.Size = new System.Drawing.Size(72, 16);
-      this.videoCodecLabel.TabIndex = 0;
-      this.videoCodecLabel.Text = "Video codec:";
-      // 
       // audioCodecLabel
       // 
-      this.audioCodecLabel.Location = new System.Drawing.Point(16, 101);
+      this.audioCodecLabel.Location = new System.Drawing.Point(16, 97);
       this.audioCodecLabel.Name = "audioCodecLabel";
-      this.audioCodecLabel.Size = new System.Drawing.Size(72, 17);
+      this.audioCodecLabel.Size = new System.Drawing.Size(117, 17);
       this.audioCodecLabel.TabIndex = 6;
-      this.audioCodecLabel.Text = "Audio codec:";
-      // 
-      // audioRendererLabel
-      // 
-      this.audioRendererLabel.Location = new System.Drawing.Point(16, 77);
-      this.audioRendererLabel.Name = "audioRendererLabel";
-      this.audioRendererLabel.Size = new System.Drawing.Size(88, 18);
-      this.audioRendererLabel.TabIndex = 4;
-      this.audioRendererLabel.Text = "Audio renderer:";
+      this.audioCodecLabel.Text = "DVD audio decoder:";
       // 
       // DVDCodec
       // 
@@ -378,16 +370,5 @@ namespace MediaPortal.Configuration.Sections
 
     }
     #endregion
-
-      private void groupBox1_Enter(object sender, EventArgs e)
-      {
-
-      }
-
-      private void checkBoxDXVA_CheckedChanged(object sender, EventArgs e)
-      {
-
-      }
   }
 }
-

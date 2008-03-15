@@ -385,7 +385,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
       this.groupBox4.Controls.Add(this.label7);
       this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox4.Location = new System.Drawing.Point(192, 191);
+      this.groupBox4.Location = new System.Drawing.Point(192, 189);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(280, 71);
       this.groupBox4.TabIndex = 2;
@@ -433,7 +433,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
       this.groupBox3.Controls.Add(this.lblChanNumMaxLen);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(192, 268);
+      this.groupBox3.Location = new System.Drawing.Point(192, 264);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(280, 94);
       this.groupBox3.TabIndex = 3;
@@ -501,7 +501,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Controls.Add(this.cbAutoFullscreen);
       this.groupBox5.Controls.Add(this.cbTurnOnTv);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox5.Location = new System.Drawing.Point(192, 368);
+      this.groupBox5.Location = new System.Drawing.Point(192, 363);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(277, 44);
       this.groupBox5.TabIndex = 4;
@@ -541,7 +541,7 @@ namespace MediaPortal.Configuration.Sections
       this.gAllowedModes.Controls.Add(this.cbAllowStretch);
       this.gAllowedModes.Controls.Add(this.cbAllowPanScan);
       this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gAllowedModes.Location = new System.Drawing.Point(0, 191);
+      this.gAllowedModes.Location = new System.Drawing.Point(0, 189);
       this.gAllowedModes.Name = "gAllowedModes";
       this.gAllowedModes.Size = new System.Drawing.Size(186, 187);
       this.gAllowedModes.TabIndex = 1;
