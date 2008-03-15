@@ -20,6 +20,7 @@
  */
 #pragma once
 #include <vector>
+#include <atlbase.h>
 using namespace std;
 typedef enum 
 {
