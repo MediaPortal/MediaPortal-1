@@ -704,8 +704,10 @@ Function WelcomeLeave
             Quit
     unInstallDone:
 
+    ; if reboot flag is set, abort the installation, and continue the installer on next startup
     IfFileExists $INSTDIR\rebootflag 0 noReboot
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
+        WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" "$(^Name)" $EXEPATH
         Quit
     noReboot:
 
