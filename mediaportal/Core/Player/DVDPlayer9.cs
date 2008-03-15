@@ -153,11 +153,6 @@ namespace MediaPortal.Player
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
-        /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        {
-          _vmr9.UseRGBMode(xmlreader.GetValueAsBool("dvdplayer", "usergbmode", false));
-        }*/
-
         _vmr9.AddVMR9(_graphBuilder);
 
         try
@@ -175,7 +170,6 @@ namespace MediaPortal.Player
               {
                 if (path.Length != 0)
                   hr = _dvdCtrl.SetDVDDirectory(path);
-
               }
               _dvdCtrl.SetOption(DvdOptionFlag.HMSFTimeCodeEvents, true);	// use new HMSF timecode format
               _dvdCtrl.SetOption(DvdOptionFlag.ResetOnStop, false);
@@ -183,7 +177,6 @@ namespace MediaPortal.Player
 
               _freeNavigator = false;
             }
-
             //DirectShowUtil.ReleaseComObject( _dvdbasefilter); _dvdbasefilter = null;              
           }
         }
@@ -270,7 +263,6 @@ namespace MediaPortal.Player
       }
       catch (Exception)
       {
-        //MessageBox.Show( this, "Could not get interfaces\r\n" + ee.Message, "DVDPlayer.NET", MessageBoxButtons.OK, MessageBoxIcon.Stop );
         CloseInterfaces();
         return false;
       }
@@ -361,11 +353,11 @@ namespace MediaPortal.Player
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
-            if (customFilters[i] != null)
-            {
-                while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
-            }
-            customFilters[i] = null;
+          if (customFilters[i] != null)
+          {
+            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
+          }
+          customFilters[i] = null;
         }
 
         if (_cmdOption != null)
@@ -389,7 +381,6 @@ namespace MediaPortal.Player
           while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
           _line21Decoder = null;
         }
-
 
         if (_rotEntry != null)
         {
@@ -448,7 +439,6 @@ namespace MediaPortal.Player
       //if (GUIGraphicsContext.Vmr9Active) return;
       try
       {
-
         System.Drawing.Point pt;
         foreach (Message m in _mouseMsg)
         {
@@ -491,6 +481,5 @@ namespace MediaPortal.Player
       }
       _mouseMsg.Clear();
     }
-
   }
 }

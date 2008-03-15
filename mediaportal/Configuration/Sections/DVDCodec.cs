@@ -206,7 +206,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("dvdplayer", "audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("dvdplayer", "navigator", dvdNavigatorComboBox.Text);
         xmlwriter.SetValueAsBool("dvdplayer", "ac3", checkBoxAC3.Checked);
-        //xmlwriter.SetValueAsBool("dvdplayer", "usergbmode", checkBoxRGB.Checked);
         xmlwriter.SetValueAsBool("dvdplayer", "turnoffdxva", checkBoxDXVA.Checked);
       }
     }
