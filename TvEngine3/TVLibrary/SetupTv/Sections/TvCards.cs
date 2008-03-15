@@ -237,9 +237,12 @@ namespace SetupTv.Sections
             item.Font = new Font(item.Font, FontStyle.Strikeout);
             item.Text = "No";
           }
-
+          
           item.SubItems.Add(cardType);
-          item.SubItems.Add(card.DecryptLimit.ToString());
+          if (cardType.ToLower().Contains("dvb") || cardType.ToLower().Contains("atsc"))//CAM limit doesn't apply to non-digital cards
+              item.SubItems.Add(card.DecryptLimit.ToString());
+          else
+              item.SubItems.Add("");
           item.SubItems.Add(card.Name);
 
           //check if card is really available before setting to enabled.
@@ -342,7 +345,15 @@ namespace SetupTv.Sections
         Card card = (Card)mpListView1.SelectedItems[0].Tag;
         enabled = !RemoteControl.Instance.CardPresent(card.IdCard);
       }
-      buttonRemove.Enabled = enabled;
+      if (mpListView1.SelectedItems.Count == 1)
+      {
+          string cardType = mpListView1.SelectedItems[0].SubItems[2].Text.ToLower();
+          if (cardType.Contains("dvb") || cardType.Contains("atsc")) // Only some cards can be edited
+              buttonEdit.Enabled = true;
+          else
+              buttonEdit.Enabled = false;
+      }
+        buttonRemove.Enabled = enabled;
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
