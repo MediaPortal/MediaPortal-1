@@ -77,10 +77,6 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !endif
 BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 
-
-!define FILTER_REBOOT_FLAG "NOREBOOT_NOTPROTECTED"
-#!define FILTER_REBOOT_FLAG "REBOOT_NOTPROTECTED"
-
 #---------------------------------------------------------------------------
 # INCLUDE FILES
 #---------------------------------------------------------------------------
@@ -408,39 +404,39 @@ ${MementoSection} "MediaPortal core files (required)" SecCore
     #---------------------------------------------------------------------------
     SetOutPath $INSTDIR
     ;filter used for SVCD and VCD playback
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
     ##### MAYBE used by VideoEditor
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
     ;filter for analog tv
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
     ; used for scanning in tve2
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
     ; used for shoutcast
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
     ; used for digital tv
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
     ##### not sure for what this is used
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TTPremiumSource.ax $INSTDIR\TTPremiumSource.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TTPremiumSource.ax $INSTDIR\TTPremiumSource.ax $INSTDIR
     ##### not sure for what this is used
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
 
     # [MAYBE OBSOLETE] File ..\xbmc\bin\Release\
     # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
 
     # [OBSOLETE] Common DLLs
     # [OBSOLETE] Installing the Common dll
-    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
+    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
     
     ; needed by hauppauge.dll
-    !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
-    !insertmacro InstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
+    !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
+    !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
 ${MementoSectionEnd}
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
@@ -450,39 +446,39 @@ ${MementoSectionEnd}
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     ;filter used for SVCD and VCD playback
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\cdxareader.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\cdxareader.ax
     ##### MAYBE used by VideoEditor
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\CLDump.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\CLDump.ax
     ;filter for analog tv
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpgMux.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
     ; used for scanning in tve2
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPSA.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MPSA.ax
     ; used for shoutcast
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\shoutcastsource.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\shoutcastsource.ax
     ; used for digital tv
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TsReader.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
     ##### not sure for what this is used
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TTPremiumSource.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TTPremiumSource.ax
     ##### not sure for what this is used
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\WinTVCapWriter.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\WinTVCapWriter.ax
 
     # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPReader.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPTS.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MPTSWriter.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MPReader.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MPTS.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MPTSWriter.ax
 
     # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\TSFileSource.ax
+    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
 
     # [OBSOLETE] Common DLLs will not be removed. Too Dangerous
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC71.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC71u.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC80.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MFC80u.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC71.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC71u.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC80.dll
+    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC80u.dll
 
     ; needed by hauppauge.dll
-    !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\msvcp71.dll
-    !insertmacro UnInstallLib DLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\msvcr71.dll
+    !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\msvcp71.dll
+    !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\msvcr71.dll
 
     ; Config Files
     Delete /REBOOTOK  $CommonAppData\CaptureCardDefinitions.xml
@@ -621,9 +617,9 @@ ${MementoSection} "DScaler Decoder" SecDscaler
     DetailPrint "Installing DScaler Decoder..."
 
     SetOutPath $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\GenDMOProp.dll $INSTDIR\GenDMOProp.dll $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpegAudio.dll $INSTDIR\MpegAudio.dll $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpegVideo.dll $INSTDIR\MpegVideo.dll $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\GenDMOProp.dll $INSTDIR\GenDMOProp.dll $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegAudio.dll $INSTDIR\MpegAudio.dll $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpegVideo.dll $INSTDIR\MpegVideo.dll $INSTDIR
 
     ; Write Default Values for Filter into the registry
     WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
@@ -646,17 +642,17 @@ ${MementoSectionEnd}
 !macro Remove_${SecDscaler}
     DetailPrint "Uninstalling DScaler Decoder..."
 
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\GenDMOProp.dll
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpegAudio.dll
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpegVideo.dll
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\GenDMOProp.dll
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MpegAudio.dll
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MpegVideo.dll
 !macroend
 
 ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
     DetailPrint "Installing Gabest MPA/MPV decoder..."
 
     SetOutPath $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\MpaDecFilter.ax $INSTDIR\MpaDecFilter.ax $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} ..\xbmc\bin\Release\Mpeg2DecFilter.ax $INSTDIR\Mpeg2DecFilter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpaDecFilter.ax $INSTDIR\MpaDecFilter.ax $INSTDIR
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\Mpeg2DecFilter.ax $INSTDIR\Mpeg2DecFilter.ax $INSTDIR
 
     ; Write Default Values for Filter into the registry
     WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
@@ -683,8 +679,8 @@ ${MementoSectionEnd}
 !macro Remove_${SecGabest}
     DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
 
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\MpaDecFilter.ax
-    !insertmacro UnInstallLib REGDLL NOTSHARED ${FILTER_REBOOT_FLAG} $INSTDIR\Mpeg2DecFilter.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MpaDecFilter.ax
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\Mpeg2DecFilter.ax
 !macroend
 
 ${MementoSectionDone}
@@ -905,7 +901,7 @@ FunctionEnd
 Function un.onInit
     #### check and parse cmdline parameter
     ; set default values for parameters ........
-    strcpy $RemoveAll 0
+    StrCpy $RemoveAll 0
 
     ; gets comandline parameter
     ${un.GetParameters} $R0
@@ -913,7 +909,7 @@ Function un.onInit
     ; check for special parameter and set the their variables
     ${un.GetOptions} $R0 "/RemoveAll" $R1
     IfErrors +2
-    strcpy $RemoveAll 1
+    StrCpy $RemoveAll 1
     #### END of check and parse cmdline parameter
     
     ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
@@ -956,7 +952,7 @@ Function un.WelcomeLeave
     ; This function is called, before the uninstallation process is startet
     ; It asks the user, if he wants to remove all files and settings
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO noRemoveAll
-        strcpy $RemoveAll 1
+        StrCpy $RemoveAll 1
     noRemoveAll:
 
 FunctionEnd

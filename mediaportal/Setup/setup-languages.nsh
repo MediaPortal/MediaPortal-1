@@ -30,18 +30,14 @@
 #**********************************************************************************************************#
 
 # ENGLISH
-LangString DESC_SecDscaler                  ${LANG_ENGLISH} "Installs the DScaler Decoder"
-LangString DESC_SecGabest                   ${LANG_ENGLISH} "Installs the Gabest MPA/MPV decoder"
-LangString ^UninstallLink                   ${LANG_ENGLISH} "Uninstall $(^Name)"
+LangString DESC_SecDscaler                        ${LANG_ENGLISH} "Installs the DScaler Decoder"
+LangString DESC_SecGabest                         ${LANG_ENGLISH} "Installs the Gabest MPA/MPV decoder"
+LangString ^UninstallLink                         ${LANG_ENGLISH} "Uninstall $(^Name)"
 
-LangString TEXT_MSGBOX_REMOVE_ALL           ${LANG_ENGLISH} "Do you want to remove your User settings?$\r$\nAttention: This will remove all your customised settings including Skins and Databases."
+LangString TEXT_MSGBOX_REMOVE_ALL                 ${LANG_ENGLISH} "Do you want to remove your User settings?$\r$\nAttention: This will remove all your customised settings including Skins and Databases."
 
-LangString TEXT_MSGBOX_ERROR_DOTNET         ${LANG_ENGLISH} "Microsoft .Net Framework Runtime is a prerequisite. Please install first."
-LangString TEXT_MSGBOX_ERROR_WIN            ${LANG_ENGLISH} "MediaPortal requires at least Windows XP. Your Windows is not supported. Installation aborted"
-LangString TEXT_MSGBOX_ERROR_IS_INSTALLED   ${LANG_ENGLISH} "MediaPortal is already installed. You need to uninstall it, before you continue with the installation.$\r$\nUninstall will be lunched when pressing OK."
-LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL   ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
-
-
-
-#LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install MPEG-2 decoder filters"
-#LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "If there is no commercial MPEG-2 decoder installed on your system, you can install the decoders bundled with MediaPortal. They allow you to watch DVDs, TV and MPEG-2 videos without purchasing a third-party decoder. Furthermore those below decoders are required for DVR-MS conversion. It is recommended to leave these options enabled."
+LangString TEXT_MSGBOX_ERROR_DOTNET               ${LANG_ENGLISH} "Microsoft .Net Framework Runtime is a prerequisite. Please install first."
+LangString TEXT_MSGBOX_ERROR_WIN                  ${LANG_ENGLISH} "MediaPortal requires at least Windows XP. Your Windows is not supported. Installation aborted"
+LangString TEXT_MSGBOX_ERROR_IS_INSTALLED         ${LANG_ENGLISH} "MediaPortal is already installed. You need to uninstall it, before you continue with the installation.$\r$\nUninstall will be lunched when pressing OK."
+LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL         ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
+LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "REBOOT IS REQUIRED. DO THAT!!!!"
