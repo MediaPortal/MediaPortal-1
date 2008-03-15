@@ -75,6 +75,12 @@ namespace MediaPortal.Player
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         dvdDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
+
+        if (dvdDNavigator == "Cyberlink DVD Navigator (PDVD7)" || dvdDNavigator == "Cyberlink DVD Navigator (PDVD6)")
+        {
+          _cyberlinkDVDNavigator = true;
+        }
+
         aspectRatio = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
         if (aspectRatio == "crop") arMode = AspectRatioMode.Crop;
         if (aspectRatio == "letterbox") arMode = AspectRatioMode.LetterBox;
@@ -248,8 +254,6 @@ namespace MediaPortal.Player
 
         _videoWidth = _vmr9.VideoWidth;
         _videoHeight = _vmr9.VideoHeight;
-
-
 
         if (!_vmr9.IsVMR9Connected)
         {

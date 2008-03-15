@@ -155,6 +155,8 @@ namespace MediaPortal.Player
     protected const int WM_MOUSEMOVE = 0x0200;
     protected const int WM_LBUTTONUP = 0x0202;
 
+    protected bool _cyberlinkDVDNavigator = false;
+
     protected ArrayList _mouseMsg;
     public DVDPlayer()
     {
@@ -1765,8 +1767,18 @@ namespace MediaPortal.Player
         Log.Info("DVDPlayer:Set default subtitle language:{0} {1} {2}", _defaultSubtitleLanguage, lCID, errorText);
       }
 
-      // Force subtitles if this option is set in the configuration
-      _dvdCtrl.SetSubpictureState(_forceSubtitles, DvdCmdFlags.None, out _cmdOption);
+      try
+      {
+        //Force subtitles if this option is set in the configuration
+        _dvdCtrl.SetSubpictureState(_forceSubtitles, DvdCmdFlags.None, out _cmdOption);
+      }
+      catch (Exception ex)
+      {
+        if (!_cyberlinkDVDNavigator)
+        {
+          Log.Info("DVDPlayer:SetSubpictureState failed with: {0}", ex);
+        }
+      }
     }
 
     static int GetLCID(string language)
