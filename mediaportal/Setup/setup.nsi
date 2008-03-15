@@ -886,6 +886,12 @@ Function .onInit
         Abort
     ${EndIf}
 
+    ; check if reboot is required
+    IfFileExists $INSTDIR\rebootflag 0 noReboot
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
+        Abort
+    noReboot:
+
     !insertmacro SetCommonAppData
 
     # [OBSOLETE] Needed for Library Install
@@ -918,8 +924,19 @@ Function un.onInit
     !insertmacro SetCommonAppData
 FunctionEnd
 
-# Start the Configuration after the successfull install
-# needed in an extra function to set the working directory
+Function un.onUninstSuccess
+    ; write a reboot flag, if reboot is needed, so the installer won't continue until reboot is done
+    IfRebootFlag 0 noreboot
+        FileOpen $0 $INSTDIR\rebootflag w
+        Delete /REBOOTOK $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
+        RmDir /REBOOTOK $INSTDIR
+        FileClose $0
+    noreboot:
+
+FunctionEnd
+
+; Start the Setup after the successfull install
+; needed in an extra function to set the working directory
 Function RunConfig
     SetOutPath $INSTDIR
     Exec "$INSTDIR\Configuration.exe"
@@ -945,6 +962,11 @@ Function WelcomeLeave
             MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES unInstallDone IDNO 0
             Quit
     unInstallDone:
+
+    IfFileExists $INSTDIR\rebootflag 0 noReboot
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
+        Quit
+    noReboot:
 
 FunctionEnd
 
