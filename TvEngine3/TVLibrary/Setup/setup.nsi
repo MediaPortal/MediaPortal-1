@@ -646,7 +646,7 @@ FunctionEnd
 Function un.onInit
     #### check and parse cmdline parameter
     ; set default values for parameters ........
-    strcpy $RemoveAll 0
+    StrCpy $RemoveAll 0
 
     ; gets comandline parameter
     ${un.GetParameters} $R0
@@ -654,7 +654,7 @@ Function un.onInit
     ; check for special parameter and set the their variables
     ${un.GetOptions} $R0 "/RemoveAll" $R1
     IfErrors +2
-    strcpy $RemoveAll 1
+    StrCpy $RemoveAll 1
     #### END of check and parse cmdline parameter
 
     ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
