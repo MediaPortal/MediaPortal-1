@@ -316,7 +316,7 @@ namespace SetupTv.Sections
 
       numericUpDownPreRec.Value = int.Parse(layer.GetSetting("preRecordInterval", "5").Value);
       numericUpDownPostRec.Value = int.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-      formatString[0] = layer.GetSetting("moviesformat", @"%title% - %channel%\%title% -% date% - %start%").Value;
+      formatString[0] = layer.GetSetting("moviesformat", @"%title% - %channel% - %date%").Value;
       formatString[1] = layer.GetSetting("seriesformat", @"%title% - %channel%\%title% - %episode% - %date% - %start%").Value;
 
       /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
