@@ -526,7 +526,7 @@ Section Uninstall
     ; remove last files and instdir
     RmDir /REBOOTOK "$INSTDIR\pmt"
     Delete /REBOOTOK "$INSTDIR\uninstall-tve3.exe"
-    RmDir /REBOOTOK "$INSTDIR"
+    RmDir "$INSTDIR"
 
     ${If} $RemoveAll == 1
         DetailPrint "Removing User Settings"
@@ -670,7 +670,7 @@ Function un.onUninstSuccess
     IfRebootFlag 0 noreboot
         FileOpen $0 $INSTDIR\rebootflag w
         Delete /REBOOTOK $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
-        RmDir $INSTDIR
+        RmDir /REBOOTOK $INSTDIR
         FileClose $0
     noreboot:
 
