@@ -47,7 +47,6 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private WindUnit selectedWindUnit = WindUnit.Bft;
-
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
@@ -68,7 +67,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader6;
     private System.Windows.Forms.ColumnHeader columnHeader7;
     private System.Windows.Forms.ColumnHeader columnHeader8;
-
     private System.ComponentModel.IContainer components = null;
 
     public Weather()
@@ -90,7 +88,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
-    /// 
+    /// Loads weather settings from MediaPortal.xml
     /// </summary>
     public override void LoadSettings()
     {
@@ -100,13 +98,13 @@ namespace MediaPortal.Configuration.Sections
         switch (loadWind)
         {
           case 0: selectedWindUnit = WindUnit.Kmh;
-            windSpeedComboBox.Text = "kilometer/hour";
+            windSpeedComboBox.Text = "kilometers / hour";
             break;
           case 1: selectedWindUnit = WindUnit.mph;
-            windSpeedComboBox.Text = "miles per hour";
+            windSpeedComboBox.Text = "miles / hour";
             break;
           case 2: selectedWindUnit = WindUnit.ms;
-            windSpeedComboBox.Text = "meter/second";
+            windSpeedComboBox.Text = "meters /second";
             break;
           case 3: selectedWindUnit = WindUnit.Kn;
             windSpeedComboBox.Text = "Knots";
@@ -119,16 +117,15 @@ namespace MediaPortal.Configuration.Sections
             windSpeedComboBox.Text = "Beaufort";
             break;
         }            
-
+        // Get temperature measurement type
         string temperature = xmlreader.GetValueAsString("weather", "temperature", "C");
-
         if (temperature.Equals("C"))
           temperatureComboBox.Text = "Celsius";
         else if (temperature.Equals("F"))
           temperatureComboBox.Text = "Fahrenheit";
-
-        intervalTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("weather", "refresh", 120));
-
+        // Get refresh interval setting
+        intervalTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("weather", "refresh", 60));
+        // Get number of cities and city information
         for (int index = 0; index < MaximumCities; index++)
         {
           string cityName = String.Format("city{0}", index);
@@ -139,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
           string cityWinds = String.Format("winds{0}", index);
           string cityHumid = String.Format("humid{0}", index);
           string cityPrecip = String.Format("precip{0}", index);
-
+          //Read city information from index
           string cityNameData = xmlreader.GetValueAsString("weather", cityName, "");
           string cityCodeData = xmlreader.GetValueAsString("weather", cityCode, "");
           string citySatData = xmlreader.GetValueAsString("weather", citySat, "");
@@ -148,7 +145,6 @@ namespace MediaPortal.Configuration.Sections
           string cityWindsData = xmlreader.GetValueAsString("weather", cityWinds, "");
           string cityHumidData = xmlreader.GetValueAsString("weather", cityHumid, "");
           string cityPrecipData = xmlreader.GetValueAsString("weather", cityPrecip, "");
-
           if (cityNameData.Length > 0 && cityCodeData.Length > 0)
             citiesListView.Items.Add(new ListViewItem(new string[] { cityNameData, cityCodeData, citySatData, cityTempData, cityUVData, cityWindsData, cityHumidData, cityPrecipData }));
         }
@@ -169,20 +165,18 @@ namespace MediaPortal.Configuration.Sections
           selectedWindUnit = WindUnit.Kn;
         else if (windSpeedComboBox.Text.Equals("Beaufort"))
           selectedWindUnit = WindUnit.Bft;
-
+        // Write the speed units
         xmlwriter.SetValue("weather", "speed", (int)selectedWindUnit);
-
+        // Define the temperature measurement
         string temperature = string.Empty;
-
         if (temperatureComboBox.Text.Equals("Celsius"))
           temperature = "C";
         else if (temperatureComboBox.Text.Equals("Fahrenheit"))
           temperature = "F";
-
         xmlwriter.SetValue("weather", "temperature", temperature);
-
+        // Define the interval time between weather updates
         xmlwriter.SetValue("weather", "refresh", intervalTextBox.Text);
-
+        // Save city information
         for (int index = 0; index < MaximumCities; index++)
         {
           string cityName = String.Format("city{0}", index);
@@ -193,7 +187,6 @@ namespace MediaPortal.Configuration.Sections
           string cityWinds = String.Format("winds{0}", index);
           string cityHumid = String.Format("humid{0}", index);
           string cityPrecip = String.Format("precip{0}", index);
-
           string cityNameData = string.Empty;
           string cityCodeData = string.Empty;
           string citySatData = string.Empty;
@@ -202,7 +195,6 @@ namespace MediaPortal.Configuration.Sections
           string cityWindsData = string.Empty;
           string cityHumidData = string.Empty;
           string cityPrecipData = string.Empty;
-
           if (citiesListView.Items != null && citiesListView.Items.Count > index)
           {
             cityNameData = citiesListView.Items[index].SubItems[0].Text;
@@ -214,7 +206,6 @@ namespace MediaPortal.Configuration.Sections
             cityHumidData = citiesListView.Items[index].SubItems[6].Text;
             cityPrecipData = citiesListView.Items[index].SubItems[7].Text;
           }
-
           xmlwriter.SetValue("weather", cityName, cityNameData);
           xmlwriter.SetValue("weather", cityCode, cityCodeData);
           xmlwriter.SetValue("weather", citySat, citySatData);
@@ -468,48 +459,28 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     /// <summary>
-    /// 
+    /// Search for a city from weather.com
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void searchButton_Click(object sender, System.EventArgs e)
     {
       SearchCityForm searchForm = new SearchCityForm();
-
-      //
       // Show dialog
-      //
       if (searchForm.ShowDialog(this) == DialogResult.OK)
       {
-        //
         // Fetch selected cities
-        //
         ArrayList cities = searchForm.SelectedCities;
-
         foreach (WeatherChannel.City city in cities)
         {
-          citiesListView.Items.Add(new ListViewItem(new string[] {	city.Name, 
-																																		city.Id,
-																																	 searchForm.SatteliteImage, 
-																																	 searchForm.TemperatureImage, 
-																																	 searchForm.UVIndexImage, 
-																																	 searchForm.WindsImage, 
-																																	 searchForm.HumidityImage, 
-																																	 searchForm.PrecipitationImage }));
-
+          citiesListView.Items.Add(new ListViewItem(new string[] {  city.Name, city.Id, searchForm.SatteliteImage, searchForm.TemperatureImage, searchForm.UVIndexImage, searchForm.WindsImage, searchForm.HumidityImage, searchForm.PrecipitationImage }));
         }
       }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void removeButton_Click(object sender, System.EventArgs e)
     {
       int numberItems = citiesListView.SelectedItems.Count;
-
       for (int index = 0; index < numberItems; index++)
       {
         citiesListView.Items.RemoveAt(citiesListView.SelectedIndices[0]);
@@ -521,24 +492,17 @@ namespace MediaPortal.Configuration.Sections
       foreach (ListViewItem listItem in citiesListView.SelectedItems)
       {
         EditWeatherCityForm cityForm = new EditWeatherCityForm();
-
-        //
         // Set current image location
-        //
         cityForm.SatteliteImage = listItem.SubItems[2].Text;
         cityForm.TemperatureImage = listItem.SubItems[3].Text;
         cityForm.UVIndexImage = listItem.SubItems[4].Text;
         cityForm.WindsImage = listItem.SubItems[5].Text;
         cityForm.HumidityImage = listItem.SubItems[6].Text;
         cityForm.PrecipitationImage = listItem.SubItems[7].Text;
-
         DialogResult dialogResult = cityForm.ShowDialog(this);
-
         if (dialogResult == DialogResult.OK)
         {
-          //
           // Fetch selected image location
-          //
           listItem.SubItems[2].Text = cityForm.SatteliteImage;
           listItem.SubItems[3].Text = cityForm.TemperatureImage;
           listItem.SubItems[4].Text = cityForm.UVIndexImage;
