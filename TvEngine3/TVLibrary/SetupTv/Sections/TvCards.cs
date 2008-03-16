@@ -143,13 +143,13 @@ namespace SetupTv.Sections
             {
               osName = "Windows XP";
               if (!CheckRegistryForHotFixes("KB896626")) // Search for the DVB Hotfix
-                MessageBox.Show(this, "Your system does need MP's requirements!", "DVB-Hotfix missing!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(this, "Your system does not meet MP's requirements!", "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else if (osInfo.Version.Minor == 2)
             {
               osName = "Windows Server 2003";
               if (!CheckRegistryForHotFixes("KB896626")) // Search for the DVB Hotfix
-                MessageBox.Show(this, "Your system does need MP's requirements!", "DVB-Hotfix missing!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(this, "Your system does not meet MP's requirements!", "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             break;
           case 6:
