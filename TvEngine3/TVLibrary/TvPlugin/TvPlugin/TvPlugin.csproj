@@ -26,19 +26,20 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Core, Version=1.0.2396.11941, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Core, Version=0.2.3.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>
+      <HintPath>..\..\..\..\MP\xbmc\bin\Release\Core.dll</HintPath>
     </Reference>
-    <Reference Include="Databases, Version=1.0.2396.11943, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Databases, Version=0.2.3.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\mediaportal\Databases\bin\Release\Databases.dll</HintPath>
+      <HintPath>..\..\..\..\MP\xbmc\bin\Release\Databases.dll</HintPath>
     </Reference>
-    <Reference Include="Dialogs, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Dialogs, Version=0.2.3.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\mediaportal\Dialogs\bin\Release\Dialogs.dll</HintPath>
+      <HintPath>..\..\..\..\MP\Dialogs\bin\Release\Dialogs.dll</HintPath>
     </Reference>
     <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
@@ -75,7 +76,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Utils, Version=1.0.2378.12136, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\mediaportal\Utils\bin\Release\Utils.dll</HintPath>
+      <HintPath>..\..\..\..\MP\xbmc\bin\Release\Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

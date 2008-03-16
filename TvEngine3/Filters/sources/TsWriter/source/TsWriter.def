@@ -1,4 +1,4 @@
-LIBRARY     TsFileWriter.ax
+LIBRARY     TsWriter.ax
 
 EXPORTS
             DllMain                 PRIVATE

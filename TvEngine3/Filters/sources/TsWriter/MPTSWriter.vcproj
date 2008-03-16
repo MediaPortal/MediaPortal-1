@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="TsWriter"
 	ProjectGUID="{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
 	RootNamespace="MPTSWriter"
@@ -47,15 +47,17 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="0"
 				InlineFunctionExpansion="0"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;$(DS_BASECLASSES)&quot;;&quot;$(DXSDK_DIR)\Include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;NDEBUG;"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; NDEBUG;"
 				StringPooling="false"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="false"
+				EnableEnhancedInstructionSet="2"
+				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/TsWriter.pch"
 				AssemblerListingLocation=".\Release/"
@@ -64,7 +66,7 @@
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CallingConvention="0"
-				CompileAs="2"
+				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -81,13 +83,13 @@
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="dvbcoreutils.lib strmbase.lib winmm.lib strmiids.lib"
+				AdditionalDependencies="DvbCoreUtils.lib strmbase.lib winmm.lib"
 				ShowProgress="0"
 				OutputFile="Release/TsWriter.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(DS_BASECLASSES)\XP32_RETAIL&quot;;&quot;$(InputDir)\..\shared&quot;"
-				GenerateManifest="false"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
+				GenerateManifest="true"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=".\source\TsWriter.def"
@@ -103,7 +105,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				EmbedManifest="false"
+				EmbedManifest="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -157,7 +159,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(DS_BASECLASSES)&quot;;&quot;$(DXSDK_DIR)\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;"
 				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -184,11 +186,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dvbcoreutils.lib strmbasd.lib quartz.lib winmm.lib msvcrtd.lib ./source/ttBdaDrvApi_Dll.lib"
+				AdditionalDependencies="dvbcoreutilsD.lib strmbasd.lib quartz.lib winmm.lib msvcrtd.lib"
 				OutputFile="Debug/TsWriter.ax"
-				LinkIncremental="1"
+				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\DXSDK\Lib"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;;../shared"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
 				ModuleDefinitionFile=".\source\TsWriter.def"
@@ -622,10 +624,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\shared\DvbCoreUtils.lib"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

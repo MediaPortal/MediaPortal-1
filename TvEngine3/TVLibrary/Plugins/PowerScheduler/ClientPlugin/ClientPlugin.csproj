@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -39,10 +40,9 @@
   </Target>
   -->
   <ItemGroup>
-    <Reference Include="Core, Version=1.0.2604.20243, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Core, Version=0.2.3.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\Core.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\MP\xbmc\bin\Release\Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -50,10 +50,9 @@
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Utils, Version=1.0.2604.20221, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Utils, Version=0.2.3.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\Utils.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\MP\xbmc\bin\Release\Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

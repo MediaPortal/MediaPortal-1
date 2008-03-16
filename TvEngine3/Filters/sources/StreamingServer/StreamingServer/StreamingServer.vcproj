@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="StreamingServer"
 	ProjectGUID="{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}"
 	RootNamespace="StreamingServer"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="BasicUsageEnvironment;UsageEnvironment;liveMedia;groupsock"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;; BasicUsageEnvironment;UsageEnvironment;liveMedia;groupsock"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -64,7 +64,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="strmbasd.lib winmm.lib WSock32.Lib"
+				OutputFile=".\Debug\$(ProjectName).exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
 				ModuleDefinitionFile=""
@@ -123,13 +125,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="BasicUsageEnvironment;UsageEnvironment;liveMedia;groupsock"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;BasicUsageEnvironment;UsageEnvironment;liveMedia;groupsock"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="2"
+				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -142,10 +146,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbase.lib winmm.lib WSock32.Lib"
+				AdditionalDependencies="strmbase.lib winmm.lib WS2_32.Lib"
+				OutputFile=".\Release\$(ProjectName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				ModuleDefinitionFile="StreamingServer.def"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

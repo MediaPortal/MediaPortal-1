@@ -21,6 +21,7 @@
 #include <streams.h>
 #include "OutputPin.h"
 #include "demux.h"
+#include <atlbase.h>
  
 #define BUFFER_SIZE (1316*30)
 extern void Log(const char *fmt, ...) ;

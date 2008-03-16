@@ -1,0 +1,61 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DvbCoreUtils", "DvbCoreUtils\DvbCoreUtils.vcproj", "{4B134B4C-4EF6-4647-9CEA-A59FF0013357}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsWriter", "TsWriter\MPTSWriter.vcproj", "{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4B134B4C-4EF6-4647-9CEA-A59FF0013357} = {4B134B4C-4EF6-4647-9CEA-A59FF0013357}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsReader", "TsReader\TsReader.vcproj", "{79B3DC38-9D2C-4D9E-98F8-A610260B46A9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4B134B4C-4EF6-4647-9CEA-A59FF0013357} = {4B134B4C-4EF6-4647-9CEA-A59FF0013357}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StreamingServer", "StreamingServer\StreamingServer\StreamingServer.vcproj", "{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RtspSource", "RtspSource\RtspSource\RtspSource.vcproj", "{5DDBC183-7264-46B2-8987-214F7089EC60}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MP_DVB_Subtitles", "DVBSubtitle2\DVBSubtitle2.vcproj", "{68A0BF54-311B-4EB9-A859-398357D6B591}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPFileWriter", "MPWriter\MPWriter.vcproj", "{4D369052-C13D-4013-91A7-688C86BC9652}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4B134B4C-4EF6-4647-9CEA-A59FF0013357}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4B134B4C-4EF6-4647-9CEA-A59FF0013357}.Debug|Win32.Build.0 = Debug|Win32
+		{4B134B4C-4EF6-4647-9CEA-A59FF0013357}.Release|Win32.ActiveCfg = Release|Win32
+		{4B134B4C-4EF6-4647-9CEA-A59FF0013357}.Release|Win32.Build.0 = Release|Win32
+		{FCF30D16-2C9E-4429-B605-4ACA43023E71}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FCF30D16-2C9E-4429-B605-4ACA43023E71}.Debug|Win32.Build.0 = Debug|Win32
+		{FCF30D16-2C9E-4429-B605-4ACA43023E71}.Release|Win32.ActiveCfg = Release|Win32
+		{FCF30D16-2C9E-4429-B605-4ACA43023E71}.Release|Win32.Build.0 = Release|Win32
+		{79B3DC38-9D2C-4D9E-98F8-A610260B46A9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{79B3DC38-9D2C-4D9E-98F8-A610260B46A9}.Debug|Win32.Build.0 = Debug|Win32
+		{79B3DC38-9D2C-4D9E-98F8-A610260B46A9}.Release|Win32.ActiveCfg = Release|Win32
+		{79B3DC38-9D2C-4D9E-98F8-A610260B46A9}.Release|Win32.Build.0 = Release|Win32
+		{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}.Debug|Win32.Build.0 = Debug|Win32
+		{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}.Release|Win32.ActiveCfg = Release|Win32
+		{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}.Release|Win32.Build.0 = Release|Win32
+		{5DDBC183-7264-46B2-8987-214F7089EC60}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5DDBC183-7264-46B2-8987-214F7089EC60}.Debug|Win32.Build.0 = Debug|Win32
+		{5DDBC183-7264-46B2-8987-214F7089EC60}.Release|Win32.ActiveCfg = Release|Win32
+		{5DDBC183-7264-46B2-8987-214F7089EC60}.Release|Win32.Build.0 = Release|Win32
+		{68A0BF54-311B-4EB9-A859-398357D6B591}.Debug|Win32.ActiveCfg = Debug|Win32
+		{68A0BF54-311B-4EB9-A859-398357D6B591}.Debug|Win32.Build.0 = Debug|Win32
+		{68A0BF54-311B-4EB9-A859-398357D6B591}.Release|Win32.ActiveCfg = Release|Win32
+		{68A0BF54-311B-4EB9-A859-398357D6B591}.Release|Win32.Build.0 = Release|Win32
+		{4D369052-C13D-4013-91A7-688C86BC9652}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4D369052-C13D-4013-91A7-688C86BC9652}.Debug|Win32.Build.0 = Debug|Win32
+		{4D369052-C13D-4013-91A7-688C86BC9652}.Release|Win32.ActiveCfg = Release|Win32
+		{4D369052-C13D-4013-91A7-688C86BC9652}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

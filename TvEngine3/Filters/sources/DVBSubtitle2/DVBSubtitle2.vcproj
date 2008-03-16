@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="MP_DVB_Subtitles"
-	ProjectGUID="{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
+	ProjectGUID="{68A0BF54-311B-4EB9-A859-398357D6B591}"
 	RootNamespace="MPStreamAnalyzer"
 	>
 	<Platforms>
@@ -23,6 +23,7 @@
 			UseOfMFC="0"
 			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -48,12 +49,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(DS_BASECLASSES)&quot;;&quot;$(DXSDK_DIR)\Include&quot;"
-				PreprocessorDefinitions="NDEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
-				StringPooling="true"
+				InlineFunctionExpansion="2"
+				FavorSizeOrSpeed="1"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;NDEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
+				StringPooling="false"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
+				EnableFunctionLevelLinking="false"
+				EnableEnhancedInstructionSet="2"
+				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/DVBSub.pch"
 				AssemblerListingLocation=".\Release/"
@@ -61,7 +65,7 @@
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				CallingConvention="2"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -78,11 +82,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="strmbase.lib quartz.lib winmm.lib ws2_32.lib"
+				AdditionalDependencies="strmbase.lib winmm.lib ws2_32.lib"
 				OutputFile="Release/DVBSub2.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="$(DXSDK_DIR)\Lib;$(DS_BASECLASSES)\XP32_RETAIL"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=".\source\DVBSub2.def"
@@ -152,7 +156,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D &quot;_WIN32_WINNT=0x0501&quot; /D &quot;WINVER=0x0501&quot; /D &quot;NTDDI_VERSION=NTDDI_WINXPSP2&quot;"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(DXSDK_DIR)\Include&quot;;&quot;$(DS_BASECLASSES)&quot;"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;"
 				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -182,11 +186,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMTD"
-				AdditionalDependencies="strmbasd.lib quartz.lib winmm.lib msvcrtd.lib gdiplus.lib"
+				AdditionalDependencies="strmbasd.lib winmm.lib gdiplus.lib"
 				OutputFile="Debug/DVBSub2.ax"
-				LinkIncremental="1"
+				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(DS_BASECLASSES)\XP32_DEBUG&quot;"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				ModuleDefinitionFile=".\source\DVBSub2.def"
 				GenerateDebugInformation="true"

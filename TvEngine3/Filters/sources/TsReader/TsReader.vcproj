@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="TsReader"
-	ProjectGUID="{FCF30D16-2C9E-4429-B605-4ACA43023E71}"
+	ProjectGUID="{79B3DC38-9D2C-4D9E-98F8-A610260B46A9}"
 	RootNamespace="MPTSWriter"
 	>
 	<Platforms>
@@ -48,12 +48,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(DS_BASECLASSES)&quot;;&quot;$(DXSDK_DIR)\Include&quot;;..\StreamingServer\StreamingServer\BasicUsageEnvironment;..\StreamingServer\StreamingServer\groupsock;..\StreamingServer\StreamingServer\liveMedia;..\StreamingServer\StreamingServer\UsageEnvironment"
+				InlineFunctionExpansion="2"
+				FavorSizeOrSpeed="1"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;..\StreamingServer\StreamingServer\BasicUsageEnvironment;..\StreamingServer\StreamingServer\groupsock;..\StreamingServer\StreamingServer\liveMedia;..\StreamingServer\StreamingServer\UsageEnvironment"
 				PreprocessorDefinitions="NDEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
-				StringPooling="true"
+				StringPooling="false"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
+				EnableEnhancedInstructionSet="2"
+				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/TsReader.pch"
 				AssemblerListingLocation=".\Release/"
@@ -78,13 +81,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="Strmiids.lib"
-				AdditionalDependencies="dvbcoreutils.lib strmbase.lib quartz.lib winmm.lib msvcrt.lib  ws2_32.lib"
+				AdditionalDependencies="dvbcoreutils.lib strmbase.lib winmm.lib ws2_32.lib"
 				OutputFile="Release/TsReader.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(DS_BASECLASSES)\XP32_RETAIL\&quot;;&quot;$(InputDir)\..\shared&quot;"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=".\source\TsReader.def"
 				ProgramDatabaseFile=".\Release/TsReader.pdb"
 				StackReserveSize="2097152"
@@ -149,7 +152,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(DS_BASECLASSES)&quot;;&quot;$(DXSDK_DIR)\Include&quot;;..\StreamingServer\StreamingServer\BasicUsageEnvironment;..\StreamingServer\StreamingServer\groupsock;..\StreamingServer\StreamingServer\liveMedia;..\StreamingServer\StreamingServer\UsageEnvironment"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;;..\StreamingServer\StreamingServer\BasicUsageEnvironment;..\StreamingServer\StreamingServer\groupsock;..\StreamingServer\StreamingServer\liveMedia;..\StreamingServer\StreamingServer\UsageEnvironment"
 				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -176,11 +179,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dvbcoreutilsd.lib strmbasd.lib quartz.lib winmm.lib msvcrtd.lib ws2_32.lib"
+				AdditionalDependencies="DvbCoreUtilsD.lib strmbasd.lib quartz.lib winmm.lib msvcrtd.lib ws2_32.lib"
 				OutputFile="Debug/TsReader.ax"
-				LinkIncremental="1"
+				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(DXSDK_DIR)\Lib&quot;;&quot;$(DS_BASECLASSES)\XP32_Debug&quot;;&quot;$(InputDir)\..\shared&quot;"
+				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;;..\shared"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
 				ModuleDefinitionFile=".\source\TsReader.def"

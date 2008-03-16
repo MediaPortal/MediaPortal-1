@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="DvbCoreUtils"
 	ProjectGUID="{4B134B4C-4EF6-4647-9CEA-A59FF0013357}"
 	RootNamespace="DvbCoreUtils"
@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(InputDir)\..\shared\$(ProjectName)D.lib"
+				OutputFile="..\shared\$(ProjectName)D.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -106,14 +106,20 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
+				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="false"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				RuntimeLibrary="0"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_LIB"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="false"
+				EnableEnhancedInstructionSet="2"
+				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -126,9 +132,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(InputDir)\..\shared\$(ProjectName).lib"
-				IgnoreAllDefaultLibraries="true"
-				IgnoreDefaultLibraryNames="libcmt.lib;msvcrt.lib"
+				OutputFile="..\shared\$(ProjectName).lib"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
 			/>
 			<Tool
 				Name="VCALinkTool"
