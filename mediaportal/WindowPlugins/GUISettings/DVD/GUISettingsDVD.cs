@@ -60,8 +60,8 @@ namespace WindowPlugins.GUISettings.TV
 		[SkinControlAttribute(30)]
     protected GUIButtonControl btnAudioLanguage=null;
 
-    bool dxvaSetting = true;
-    bool subtitleSettings = false;
+    bool dxvaSetting;
+    bool subtitleSettings;
     bool settingsLoaded = false;
 
 		class CultureComparer :IComparer
@@ -84,11 +84,14 @@ namespace WindowPlugins.GUISettings.TV
 		public override bool Init()
 		{
 			bool bResult = Load (GUIGraphicsContext.Skin+@"\settings_dvd.xml");
-      LoadSettings();
-      btnDXVA.Selected = dxvaSetting;
-      btnEnableSubtitles.Selected = subtitleSettings;
       return bResult;
 		}
+
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+      LoadSettings();
+    }
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
@@ -99,8 +102,8 @@ namespace WindowPlugins.GUISettings.TV
 			if (control == btnAudioRenderer) OnAudioRenderer();
 			if (control == btnSubtitle) OnSubtitle();
 			if (control == btnAudioLanguage) OnAudioLanguage();
-      if (control == btnDXVA) SaveSettings();
-      if (control == btnEnableSubtitles) SaveSettings();
+      if (control == btnDXVA) OnDXVA();
+      if (control == btnEnableSubtitles) OnSubtitleOnOff();
 			base.OnClicked (controlId, control, actionType);
 		}
 
@@ -361,32 +364,17 @@ namespace WindowPlugins.GUISettings.TV
 
     void OnDXVA()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        bool selectedDXVA = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", true);
-        btnDXVA.Selected = selectedDXVA;
+        xmlwriter.SetValueAsBool("dvdplayer", "turnoffdxva", btnDXVA.Selected);
       }
     }
 
     void OnSubtitleOnOff()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        bool subtitleSetting = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", false);
-        btnEnableSubtitles.Selected = subtitleSetting;
-      }
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("dvdplayer", "showsubtitles", btnEnableSubtitles.Selected);
-      }
-    }
-
-    void SaveSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        xmlwriter.SetValueAsBool("dvdplayer", "showsubtitles", btnEnableSubtitles.Selected);
-        xmlwriter.SetValueAsBool("dvdplayer", "turnoffdxva", btnDXVA.Selected);
       }
     }
 
@@ -395,18 +383,12 @@ namespace WindowPlugins.GUISettings.TV
       if (settingsLoaded)
         return;
       settingsLoaded = true;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         subtitleSettings = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", false);
-        //Log.Info("LoadSettings(): showsubtitles {0}", subtitleSettings);
-        if (subtitleSettings)
-          btnEnableSubtitles.Selected = true;
-        else btnEnableSubtitles.Selected = false;
+        btnEnableSubtitles.Selected = subtitleSettings;
         dxvaSetting = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", true);
-        //Log.Info("LoadSettings(): turnoffdxva {0}", dxvaSetting);
-        if (dxvaSetting)
-          btnDXVA.Selected = true;
-        else btnDXVA.Selected = false;
+        btnDXVA.Selected = dxvaSetting;
       }
     }
 	}
