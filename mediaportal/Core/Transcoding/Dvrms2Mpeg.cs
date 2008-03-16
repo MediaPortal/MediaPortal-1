@@ -86,7 +86,7 @@ namespace MediaPortal.Core.Transcoding
 
 
         Log.Info("DVR2MPG: Add Cyberlink MPEG2 multiplexer to graph");
-        string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
+        string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
         powerDvdMuxer = Marshal.BindToMoniker(monikerPowerDvdMuxer) as IBaseFilter;
         if (powerDvdMuxer == null)
         {
@@ -95,7 +95,7 @@ namespace MediaPortal.Core.Transcoding
           return false;
         }
 
-        hr = graphBuilder.AddFilter(powerDvdMuxer, "Cyberlink MPEG Muxer");
+        hr = graphBuilder.AddFilter(powerDvdMuxer, "PDR MPEG Muxer");
         if (hr != 0)
         {
           Log.Warn("DVR2MPG: FAILED:Add Cyberlink MPEG Muxer to filtergraph :0x{0:X}", hr);
