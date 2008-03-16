@@ -718,25 +718,30 @@ namespace TvPlugin
 
         case 981: //Cancel this show
           {
-            if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+            bool deleteRec = false;
+            int schedId = -1;
+            if (server.IsRecordingSchedule(rec.IdSchedule, out card) || server.IsRecording(rec.ReferencedChannel().Name, out card))
             {
               if (PromptDeleteRecordingInProgress(true))
               {
-                server.StopRecordingSchedule(rec.IdSchedule);
-                CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
-                schedule.Persist();
-                server.OnNewSchedule();
-                LoadDirectory();
+                schedId = card.RecordingScheduleId;
+                deleteRec = true;                
               }                            
             }
             else
             {
-              server.StopRecordingSchedule(rec.IdSchedule);
+              schedId = rec.IdSchedule;
+              deleteRec = true;             
+            }
+
+            if (deleteRec)
+            {              
+              server.StopRecordingSchedule(schedId);
               CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
               schedule.Persist();
-              server.OnNewSchedule();
+              server.OnNewSchedule();                            
               LoadDirectory();
-            }            
+            }
           }
           break;
 
@@ -745,18 +750,21 @@ namespace TvPlugin
 
         case 618: // delete entire recording
           {
-            if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+            if (server.IsRecordingSchedule(rec.IdSchedule, out card) || server.IsRecording(rec.ReferencedChannel().Name, out card))
             {
               if (PromptDeleteRecordingInProgress(false))
               {
-                server.StopRecordingSchedule(rec.IdSchedule);
+                server.StopRecordingSchedule(card.RecordingScheduleId);
+                rec = Schedule.Retrieve(rec.IdSchedule);
+                rec.Delete();                            
                 LoadDirectory();
               }                                                            
             }
             else if (PromptDeleteEpisode(rec.ProgramName))
             {
+              server.StopRecordingSchedule(rec.IdSchedule);
               rec = Schedule.Retrieve(rec.IdSchedule);
-              rec.Delete();
+              rec.Delete();              
               server.OnNewSchedule();              
 
               if (showSeries && !item.IsFolder)

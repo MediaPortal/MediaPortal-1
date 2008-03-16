@@ -424,71 +424,127 @@ namespace TvPlugin
 			Update();
     }
 
-		void CancelProgram(Program program, Schedule schedule)
-		{
-			Log.Debug("TVProgammInfo.CancelProgram - programm = {0}", program.ToString());
-			Log.Debug("                            - schedule = {0}", schedule.ToString());
-			Log.Debug(" ProgramID = {0}            ScheduleID = {1}", program.IdProgram, schedule.IdSchedule);
+    private VirtualCard DeleteRecordingPrompt(TvServer server, Schedule schedule)
+    {
+      VirtualCard card = null;
+      if (server.IsRecordingSchedule(schedule.IdSchedule, out card)) //check if we currently recoding this schedule
+      {
+        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+        if (null == dlgYesNo)
+        {
+          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+          return card;
+        }
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
+        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
+        dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
+        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
+        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
-			TvServer server = new TvServer();
-			VirtualCard card = null;
-			if (server.IsRecordingSchedule(schedule.IdSchedule, out card)) //check if we currently recoding this schedule
-			{
-				GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-				if (null == dlgYesNo)
-				{
-					Log.Error("TVProgramInfo.CancelProgram: ERROR no GUIDialogYesNo found !!!!!!!!!!");
-					return;
-				}
-				dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-				dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
-				dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
-				dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
-				dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+        if (dlgYesNo.IsConfirmed)
+        {
+          server.StopRecordingSchedule(schedule.IdSchedule);
+        }
+        else
+        {
+          Log.Debug("TVProgramInfo.DeleteRecordingPrompt: not confirmed");
+          return card;
+        }
+      }
+      return card;
+    }
 
-				if (dlgYesNo.IsConfirmed)
-				{
-					server.StopRecordingSchedule(schedule.IdSchedule);
-				}
-				else
-				{
-					Log.Debug("TVProgramInfo.CancelProgram: not confirmed");
-					return;
-				}
-			}
 
-			if (schedule.ScheduleType == (int) ScheduleRecordingType.Once)
-			{
-				schedule.Delete();
-			}
-			else // advanced recording
-			{
-				GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
-				if (dlg == null)
-				{
-					Log.Error("TVProgramInfo.CancelProgram: ERROR no GUIDialogMenu found !!!!!!!!!!");
-					return;
-				}
+    void CancelProgram(Program program, Schedule schedule)
+    {
+      Log.Debug("TVProgammInfo.CancelProgram - programm = {0}", program.ToString());
+      Log.Debug("                            - schedule = {0}", schedule.ToString());
+      Log.Debug(" ProgramID = {0}            ScheduleID = {1}", program.IdProgram, schedule.IdSchedule);
 
-				dlg.Reset();
-				dlg.SetHeading(program.Title);
-				dlg.AddLocalizedString(981); //Delete this recording
-				dlg.AddLocalizedString(982); //Delete series recording
-				dlg.DoModal(GetID);
-				if (dlg.SelectedLabel == -1) return;
-				switch (dlg.SelectedId)
-				{
-					case 981: //delete specific series
-						  CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, program.StartTime);
-						  canceledSchedule.Persist();
-						break;
-					case 982: //Delete entire recording
-						  schedule.Delete();
-						break;
-				}
-			}
-			server.OnNewSchedule();
-		}
+      TvServer server = new TvServer();
+      VirtualCard card = null;
+
+      if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
+      {
+        card = DeleteRecordingPrompt(server, schedule);
+        schedule.Delete();
+      }
+
+      else if ((schedule.ScheduleType == (int)ScheduleRecordingType.Daily)
+            || (schedule.ScheduleType == (int)ScheduleRecordingType.Weekends)
+            || (schedule.ScheduleType == (int)ScheduleRecordingType.Weekly)
+            || (schedule.ScheduleType == (int)ScheduleRecordingType.WorkingDays))
+      {
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+        {
+          Log.Error("TVProgramInfo.CancelProgram: ERROR no GUIDialogMenu found !!!!!!!!!!");
+          return;
+        }
+
+        dlg.Reset();
+        dlg.SetHeading(program.Title);
+        dlg.AddLocalizedString(981); //Cancel this show
+        dlg.AddLocalizedString(982); //Delete this entire schedule
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel == -1) return;
+        bool deleteEntireSched = false;
+        switch (dlg.SelectedId)
+        {
+          case 981: //delete specific series
+
+            deleteEntireSched = false;
+            break;
+          case 982: //Delete entire recording
+            deleteEntireSched = true;
+            break;
+        }
+        card = DeleteRecordingPrompt(server, schedule);
+        if (deleteEntireSched)
+          schedule.Delete();
+        else
+        {
+          CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, program.StartTime);
+          canceledSchedule.Persist();
+        }
+      }
+
+      if ((schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel) || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel))
+      {
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+        {
+          Log.Error("TVProgramInfo.CancelProgram: ERROR no GUIDialogMenu found !!!!!!!!!!");
+          return;
+        }
+
+        dlg.Reset();
+        dlg.SetHeading(program.Title);
+        dlg.AddLocalizedString(981); //Cancel this show
+        dlg.AddLocalizedString(982); //Delete this entire schedule
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel == -1) return;
+        switch (dlg.SelectedId)
+        {
+          case 981: //delete specific series
+            CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, program.StartTime);
+            canceledSchedule.Persist();
+            break;
+          case 982: //Delete entire recording
+            schedule.Delete();
+            break;
+        }
+      }
+      //Schedules of type "EveryTimeOnXChannel never record they only create type "Once" schedules as needed.
+      //Here we check if that type "Once" associated sched has been created and if it's currently recording.
+      Schedule assocSchedule = Schedule.RetrieveOnce(schedule.IdChannel, schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+      if (assocSchedule != null)
+      {
+        card = DeleteRecordingPrompt(server, assocSchedule);        
+        assocSchedule.Delete();
+      }
+      server.OnNewSchedule();
+    }
 		
 		void CreateProgram(Program program, int scheduleType)
 		{

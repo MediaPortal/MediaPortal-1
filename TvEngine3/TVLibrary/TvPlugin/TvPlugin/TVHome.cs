@@ -1450,8 +1450,26 @@ namespace TvPlugin
         }
       }
       else
-      {
-        server.StopRecordingSchedule(card.RecordingScheduleId);
+      {        
+        IList schedulesList = Schedule.ListAll();
+        if (schedulesList != null)
+        {
+          Schedule rec = Schedule.Retrieve(card.RecordingScheduleId);
+
+          foreach (Schedule s in schedulesList)
+          {
+            if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
+            {
+              CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
+              schedule.Persist();
+              server.OnNewSchedule();
+              break;
+            }                        
+          }
+          server.StopRecordingSchedule(card.RecordingScheduleId);
+        }
+
+        
       }
       UpdateStateOfButtons();
     }
