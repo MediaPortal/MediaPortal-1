@@ -46,6 +46,7 @@
 #include "dx9allocatorpresenter.h"
 #include <map>
 #include <comutil.h>
+#include <process.h>
 using namespace std;
 
 HMODULE m_hModuleDXVA2 = NULL;
