@@ -72,8 +72,8 @@ CKnc::~CKnc(void)
 }
 
 //**************************************************************************************************
-//* IsTechnoTrend()
-//* Returns whether the tuner is a technotrend device or not
+//* IsKNC()
+//* Returns whether the tuner is a KNC device or not
 //**************************************************************************************************
 STDMETHODIMP CKnc::IsKNC( BOOL* yesNo)
 {
@@ -184,7 +184,7 @@ void OnKncCiCloseDisplay(UCHAR slot,UINT nDelay,PVOID pParam)
 //* SetTunerFilter()
 //* Called by application to set the tuner filter used
 //* method checks if this tuner filter is a techno-trend device
-//* and ifso opens the Technotrend driver and CI for further usage
+//* and if so opens the KNC driver and CI for further usage
 //**************************************************************************************************
 STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
 {
@@ -286,6 +286,7 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
       }
       else
       {
+        m_bIsKNC=true;
         LogDebug("knc card detected without CAM");
       }
     }
