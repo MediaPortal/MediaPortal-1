@@ -149,10 +149,10 @@ Boolean PrioritizedRTPStreamSelector
   FramedSource* source;
   if (!FramedSource::lookupByName(env, sourceName, source)) return False;
 
-  if (!source->isPrioritizedRTPStreamSelector()) {
-    env.setResultMsg(sourceName, " is not a Prioritized RTP Stream Selector");
-    return False;
-  }
+  //if (!source->isPrioritizedRTPStreamSelector()) {
+  //  env.setResultMsg(sourceName, " is not a Prioritized RTP Stream Selector");
+  //  return False;
+  //}
 
   resultSelector = (PrioritizedRTPStreamSelector*)source;
   return True;

@@ -186,7 +186,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dvbcoreutilsD.lib strmbasd.lib quartz.lib winmm.lib msvcrtd.lib"
+				AdditionalDependencies="dvbcoreutilsD.lib strmbasd.lib  winmm.lib"
 				OutputFile="Debug/TsWriter.ax"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"

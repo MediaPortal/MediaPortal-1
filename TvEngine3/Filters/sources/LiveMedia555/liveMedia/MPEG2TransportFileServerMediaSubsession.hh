@@ -25,7 +25,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _FILE_SERVER_MEDIA_SUBSESSION_HH
 #include "FileServerMediaSubsession.hh"
 #endif
-#include "../TsStreamFileSource.hh"
+#include "TsStreamFileSource.hh"
 #ifndef _MPEG2_TRANSPORT_STREAM_INDEX_FILE_HH
 #include "MPEG2TransportStreamIndexFile.hh"
 #endif

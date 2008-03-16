@@ -13,7 +13,7 @@
 #include "MPEG1or2Demux.hh"
 #include "MPEG2TransportStreamFromPESSource.hh"
 #include "TsFileDuration.h"
-#include "../TsStreamFileSource.hh"
+#include "TsStreamFileSource.hh"
 
 
 class MPEG2TstFileServerMediaSubsession: public FileServerMediaSubsession

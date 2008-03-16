@@ -26,7 +26,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG2TransportStreamFromESSource.hh"
 #include "MPEG2TransportStreamFramer.hh"
 #include <streams.h>
-#include "../TsFileDuration.h"
+#include "TsFileDuration.h"
 
 extern void Log(const char *fmt, ...) ;
 
