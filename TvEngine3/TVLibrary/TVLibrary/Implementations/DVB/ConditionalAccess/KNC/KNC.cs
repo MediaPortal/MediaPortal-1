@@ -22,7 +22,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
 using DirectShowLib;
 using DirectShowLib.BDA;
 using System.Windows.Forms;
@@ -74,7 +73,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets a value indicating whether this instance is techno trend.
     /// </summary>
     /// <value>
-    /// 	<c>true</c> if this instance is techno trend; otherwise, <c>false</c>.
+    /// 	<c>true</c> if this instance is a KNC card; otherwise, <c>false</c>.
     /// </value>
     public bool IsKNC
     {
@@ -131,8 +130,6 @@ namespace TvLibrary.Implementations.DVB
           filteredChannels.Add(context);
         }
       }
-
-
       for (int i = 0; i < filteredChannels.Count; ++i)
       {
         ConditionalAccessContext context = filteredChannels[i];
