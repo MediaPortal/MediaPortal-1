@@ -3146,9 +3146,9 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog:AddMpegMuxer()");
       try
       {
-        //string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
+        string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
         string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
-        string monikerPowerDirectorMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{370E9701-9DC5-42C8-BE29-4E75F0629EED}";
+        string monikerPowerDvdMuxer2 = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{370E9701-9DC5-42C8-BE29-4E75F0629EED}";
         _filterMpegMuxer = Marshal.BindToMoniker(monikerPowerDirectorMuxer) as IBaseFilter;
         int hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
         if (hr != 0)
@@ -3157,8 +3157,13 @@ namespace TvLibrary.Implementations.Analog
           hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
           if (hr != 0)
           {
-            Log.Log.WriteFile("analog:AddMpegMuxer returns:0x{0:X}", hr);
-            //throw new TvException("Unable to add Cyberlink MPEG Muxer");
+            _filterMpegMuxer = Marshal.BindToMoniker(monikerPowerDvdMuxer2) as IBaseFilter;
+            hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
+            if (hr != 0)
+            {
+              Log.Log.WriteFile("analog:AddMpegMuxer returns:0x{0:X}", hr);
+              //throw new TvException("Unable to add Cyberlink MPEG Muxer");
+            }
           }
         }
         Log.Log.WriteFile("analog:connect pinvideo {0} ->mpeg muxer", FilterGraphTools.LogPinInfo(_pinVideo));
