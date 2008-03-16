@@ -48,10 +48,8 @@ namespace DShowNET.Helper
     class VideoAnalyzer { };
     [DllImport("advapi32", CharSet = CharSet.Auto)]
     private static extern bool ConvertStringSidToSid(string pStringSid, ref IntPtr pSID);
-
     [DllImport("kernel32", CharSet = CharSet.Auto)]
     private static extern IntPtr LocalFree(IntPtr hMem);
-
     [DllImport("advapi32", CharSet = CharSet.Auto)]
     private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
     #endregion
@@ -71,15 +69,12 @@ namespace DShowNET.Helper
     IBaseFilter _filterMpeg2Demultiplexer = null;
     IBaseFilter _filterVideoAnalyzer = null;
     IBaseFilter _filterStreamBuffer = null;
-
     IStreamBufferSink3 _streamBufferSink3Interface = null;
     IStreamBufferConfigure _streamBufferConfigureInterface = null;
     bool _isRendered = false;
     bool _isGraphRunning = false;
-
     VideoAnalyzer m_VideoAnalyzer = null;
     StreamBufferConfig m_StreamBufferConfig = null;
-
     IVideoWindow _videoWindowInterface = null;
     IBasicVideo2 _basicVideoInterface = null;
     Size _sizeFrame;
@@ -324,7 +319,7 @@ namespace DShowNET.Helper
         if (capture == null)
         {
           //No Adaptec device found render std audio as normal
-          Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
+          //Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
           hr = _graphBuilderInterface.Render(_pinAudioOut);
           if (hr != 0)
           {
@@ -364,14 +359,12 @@ namespace DShowNET.Helper
           Log.Info("mpeg2:demux mpeg audio out connected");
         }
       }
-
       bool useOverlay = true;
       if (vmr9 != null && vmr9.IsVMR9Connected && vmr9.UseVmr9)
         useOverlay = false;
       if (useOverlay)
       {
         // get the interfaces of the overlay window
-
         _videoWindowInterface = _graphBuilderInterface as IVideoWindow;
         _basicVideoInterface = _graphBuilderInterface as IBasicVideo2;
         if (_videoWindowInterface == null)
@@ -381,7 +374,6 @@ namespace DShowNET.Helper
         }
         // set window message handler
         _videoWindowInterface.put_MessageDrain(GUIGraphicsContext.ActiveForm);
-
         // set the properties of the overlay window
         hr = _videoWindowInterface.put_Owner(GUIGraphicsContext.ActiveForm);
         if (hr != 0)
@@ -406,9 +398,7 @@ namespace DShowNET.Helper
         if (vmr9 != null)
           vmr9.SetDeinterlaceMode();
       }
-
       Overlay = false;
-
       // start the graph so we actually get to see the video
       _isRendered = true;
       SetVideoWindow();
@@ -546,7 +536,7 @@ namespace DShowNET.Helper
         _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
         if (capture == null)
         {
-          Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
+          //Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
           int hr = _graphBuilderInterface.Render(_pinAudioOut);
           if (hr != 0)
           {
@@ -701,7 +691,7 @@ namespace DShowNET.Helper
           _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
           if (capture == null)
           {
-            Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
+            //Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
             Log.Info("mpeg2:demux mpeg audio out->stream buffer");
             hr = _graphBuilderInterface.Connect(_pinAudioOut, _pinStreamBufferIn1);
             if (hr != 0)
@@ -759,17 +749,13 @@ namespace DShowNET.Helper
         }
         iTimeShiftBuffer *= 60; //in seconds
         int iFileDuration = iTimeShiftBuffer / 6;
-
         Log.Info("mpeg2:Set folder:{0} filecount 6-8, fileduration:{1} sec", folder, iFileDuration);
-
         // set streambuffer backing file configuration
         m_StreamBufferConfig = new StreamBufferConfig();
         _streamBufferConfigureInterface = (IStreamBufferConfigure)m_StreamBufferConfig;
-
         IntPtr HKEY = (IntPtr)unchecked((int)0x80000002L);
         IStreamBufferInitialize pTemp = (IStreamBufferInitialize)_streamBufferConfigureInterface;
         IntPtr subKey = IntPtr.Zero;
-
         RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
         hr = pTemp.SetHKEY(subKey);
         if (hr != 0)
@@ -795,7 +781,6 @@ namespace DShowNET.Helper
         {
           Log.Error("mpeg2: FAILED to set backingfile count:0x{0:X}", hr);
         }
-
         hr = _streamBufferConfigureInterface.SetBackingFileDuration((int)iFileDuration);
         if (hr != 0)
         {
@@ -806,7 +791,6 @@ namespace DShowNET.Helper
         if (streamConfig2 != null)
           streamConfig2.SetFFTransitionRates(8, 32);
       }
-
       // lock profile
       Log.Info("mpeg2:lock profile");
       hr = _streamBufferSink3Interface.LockProfile(fileName);
@@ -829,7 +813,6 @@ namespace DShowNET.Helper
       long refTime = 0;
       _streamBufferSink3Interface.SetAvailableFilter(ref refTime);
     }
-
     #endregion
 
     #region setup
@@ -841,7 +824,6 @@ namespace DShowNET.Helper
         _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
       }
       catch (Exception) { }
-      //_filterMpeg2Demultiplexer = DirectShowUtil.AddFilterToGraph(_graphBuilderInterface,"MPEG-2 Demultiplexer");
       if (_filterMpeg2Demultiplexer == null)
       {
         Log.Error("mpeg2:FAILED to create mpeg2 demuxer");
@@ -853,36 +835,28 @@ namespace DShowNET.Helper
         Log.Error("mpeg2:FAILED to add mpeg2 demuxer to graph:0x{0:X}", hr);
         return false;
       }
-
       _mpeg2DemultiplexerInterface = _filterMpeg2Demultiplexer as IMpeg2Demultiplexer;
       if (_mpeg2DemultiplexerInterface == null)
       {
         return false;
       }
-
       AMMediaType mpegVideoOut = new AMMediaType();
       mpegVideoOut.majorType = MediaType.Video;
       mpegVideoOut.subType = MediaSubType.Mpeg2Video;
-
       mpegVideoOut.unkPtr = IntPtr.Zero;
       mpegVideoOut.sampleSize = 0;
       mpegVideoOut.temporalCompression = false;
       mpegVideoOut.fixedSizeSamples = true;
-
       byte iWidthLo = (byte)(_sizeFrame.Width & 0xff);
       byte iWidthHi = (byte)(_sizeFrame.Width >> 8);
-
       byte iHeightLo = (byte)(_sizeFrame.Height & 0xff);
       byte iHeightHi = (byte)(_sizeFrame.Height >> 8);
-
       Mpeg2ProgramVideo[0x08] = iWidthLo; Mpeg2ProgramVideo[0x09] = iWidthHi;
       Mpeg2ProgramVideo[0x18] = iWidthLo; Mpeg2ProgramVideo[0x19] = iWidthHi;
       Mpeg2ProgramVideo[0x48] = iWidthLo; Mpeg2ProgramVideo[0x49] = iWidthHi;
-
       Mpeg2ProgramVideo[0x0C] = iHeightLo; Mpeg2ProgramVideo[0x0D] = iHeightHi;
       Mpeg2ProgramVideo[0x1C] = iHeightLo; Mpeg2ProgramVideo[0x1D] = iHeightHi;
       Mpeg2ProgramVideo[0x4C] = iHeightLo; Mpeg2ProgramVideo[0x4D] = iHeightHi;
-
       if (_sizeFrame.Height == 480)
       {
         //ntsc 
@@ -893,12 +867,10 @@ namespace DShowNET.Helper
         //pal
         Mpeg2ProgramVideo[0x28] = 0x80; Mpeg2ProgramVideo[0x29] = 0x1A; Mpeg2ProgramVideo[0x2a] = 0x06;
       }
-
       mpegVideoOut.formatType = FormatType.Mpeg2Video;
       mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0);
       mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
       System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
-
       AMMediaType mpegAudioOut = new AMMediaType();
       mpegAudioOut.majorType = MediaType.Audio;
       mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
@@ -910,7 +882,6 @@ namespace DShowNET.Helper
       mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
       mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
       System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
-
       AMMediaType lpcmAudioOut = new AMMediaType();
       lpcmAudioOut.majorType = MediaType.Audio;
       lpcmAudioOut.subType = MediaSubType.DVD_LPCM_AUDIO;
@@ -922,7 +893,6 @@ namespace DShowNET.Helper
       lpcmAudioOut.formatSize = LPCMAudioFormat.GetLength(0);
       lpcmAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(lpcmAudioOut.formatSize);
       System.Runtime.InteropServices.Marshal.Copy(LPCMAudioFormat, 0, lpcmAudioOut.formatPtr, lpcmAudioOut.formatSize);
-
       Log.Info("mpeg2:create video out pin on MPEG2 demuxer");
       hr = _mpeg2DemultiplexerInterface.CreateOutputPin(mpegVideoOut/*vidOut*/, "video", out _pinVideoout);
       if (hr != 0)
@@ -930,7 +900,6 @@ namespace DShowNET.Helper
         Log.Error("mpeg2:FAILED to create videout pin:0x{0:X}", hr);
         return false;
       }
-
       Log.Info("mpeg2:create mpeg audio out pin on MPEG2 demuxer");
       hr = _mpeg2DemultiplexerInterface.CreateOutputPin(mpegAudioOut, "audio", out _pinAudioOut);
       if (hr != 0)
@@ -938,7 +907,6 @@ namespace DShowNET.Helper
         Log.Error("mpeg2:FAILED to create mpeg audio out pin:0x{0:X}", hr);
         return false;
       }
-
       Log.Info("mpeg2:create lpcm audio out pin on MPEG2 demuxer");
       hr = _mpeg2DemultiplexerInterface.CreateOutputPin(lpcmAudioOut, "lpcm", out _pinLPCMOut);
       if (hr != 0)
@@ -946,10 +914,6 @@ namespace DShowNET.Helper
         Log.Error("mpeg2:FAILED to create lpcm audio out pin:0x{0:X}", hr);
         return false;
       }
-      //  Marshal.FreeCoTaskMem(mpegAudioOut.formatPtr);
-      //  Marshal.FreeCoTaskMem(mpegVideoOut.formatPtr);
-
-
       Log.Info("mpeg2:find MPEG2 demuxer input pin");
       _pinDemuxerInput = DsFindPin.ByDirection(_filterMpeg2Demultiplexer, PinDirection.Input, 0);
       if (_pinDemuxerInput != null)
@@ -959,7 +923,6 @@ namespace DShowNET.Helper
         Log.Error("mpeg2:FAILED finding MPEG2 demuxer input pin");
         return false;
       }
-
       _isGraphRunning = false;
       _mediaControlInterface = _graphBuilderInterface as IMediaControl;
       if (_mediaControlInterface == null)
@@ -985,8 +948,9 @@ namespace DShowNET.Helper
         return false;
       }
       else
+      {
         Log.Info("mpeg2:mapped MPEG2 demuxer stream 0xe0->video output ");
-
+      }
       Log.Info("mpeg2:MPEG2 demuxer map MPG stream 0xc0->audio output pin");
       pStreamId = (IMPEG2StreamIdMap)_pinAudioOut;
       hr = pStreamId.MapStreamId(0xC0, MPEG2Program.ElementaryStream, 0, 0); // hr := pStreamId.MapStreamId( 0xC0, MPEG2_PROGRAM_ELEMENTARY_STREAM, 0, 0 );
@@ -996,8 +960,9 @@ namespace DShowNET.Helper
         return false;
       }
       else
+      {
         Log.Info("mpeg2:mapped MPEG2 demuxer stream 0xc0->audio output");
-
+      }
       Log.Info("mpeg2:MPEG2 demuxer map LPCM stream 0xbd->audio output pin");
       pStreamId = (IMPEG2StreamIdMap)_pinLPCMOut;
       hr = pStreamId.MapStreamId(0xBD, MPEG2Program.ElementaryStream, 0xA0, 7);
@@ -1036,7 +1001,6 @@ namespace DShowNET.Helper
         hr = DirectShowUtil.ReleaseComObject(_pinStreamBufferIn1);
         _pinStreamBufferIn1 = null;
       }
-
       if (_filterStreamBuffer != null)
       {
         _filterStreamBuffer.Stop();
@@ -1045,8 +1009,6 @@ namespace DShowNET.Helper
         if (hr != 0)
           Log.Info("Sinkgraph:ReleaseComobject(_filterStreamBuffer):{0}", hr);
       }
-
-
       if (m_VideoAnalyzer != null)
       {
         while ((hr = DirectShowUtil.ReleaseComObject(m_VideoAnalyzer)) > 0) ;
@@ -1054,8 +1016,6 @@ namespace DShowNET.Helper
           Log.Info("Sinkgraph:ReleaseComobject(m_VideoAnalyzer):{0}", hr);
         m_VideoAnalyzer = null;
       }
-
-
       if (m_StreamBufferConfig != null)
       {
         while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
@@ -1066,12 +1026,11 @@ namespace DShowNET.Helper
     }
     bool CreateSBESink()
     {
-      if (m_VideoAnalyzer != null) return true;
-
+      if (m_VideoAnalyzer != null)
+        return true;
       Log.Info("mpeg2:add Videoanalyzer");
       try
       {
-
         m_VideoAnalyzer = new VideoAnalyzer();
         _filterVideoAnalyzer = (IBaseFilter)m_VideoAnalyzer;
       }
@@ -1084,14 +1043,12 @@ namespace DShowNET.Helper
         return false;
       }
       _graphBuilderInterface.AddFilter(_filterVideoAnalyzer, "MPEG-2 Video Analyzer");
-
       _pinVideoAnalyzerInput = DsFindPin.ByDirection(_filterVideoAnalyzer, PinDirection.Input, 0);
       if (_pinVideoAnalyzerInput == null)
       {
         Log.Info("mpeg2:FAILED to find analyser input pin");
         return false;
       }
-
       Log.Info("mpeg2:add streambuffersink");
       _filterStreamBuffer = (IBaseFilter)new StreamBufferSink();
       if (_filterStreamBuffer == null)
@@ -1099,11 +1056,8 @@ namespace DShowNET.Helper
         Log.Error("mpeg2:FAILED to add streambuffer");
         return false;
       }
-
       _graphBuilderInterface.AddFilter(_filterStreamBuffer, "SBE SINK");
-
       IntPtr subKey = IntPtr.Zero;
-
       IntPtr HKEY = (IntPtr)unchecked((int)0x80000002L);
       IStreamBufferInitialize pConfig = (IStreamBufferInitialize)_filterStreamBuffer;
       //  IntPtr[] sids = new IntPtr[] {pSid};
@@ -1112,8 +1066,6 @@ namespace DShowNET.Helper
       int hr = pConfig.SetHKEY(subKey);
       if (hr != 0)
         Log.Error("mpeg2: FAILED to set hkey:0x{0:X}", hr);
-
-
       _pinStreamBufferIn0 = DsFindPin.ByDirection(_filterStreamBuffer, PinDirection.Input, 0);
       if (_pinStreamBufferIn0 == null)
       {
@@ -1127,18 +1079,15 @@ namespace DShowNET.Helper
     {
       int hr = 0;
       Log.Info("mpeg2: close interfaces");
-
       if (_recorderId >= 0)
       {
         StopRecording();
       }
-
       if (_mediaControlInterface != null)
       {
         StopGraph();
         _mediaControlInterface = null;
       }
-
       if (_videoWindowInterface != null)
       {
         _videoWindowInterface.put_Visible(OABool.False);
@@ -1149,7 +1098,6 @@ namespace DShowNET.Helper
       _mpeg2DemultiplexerInterface = null;
       _graphBuilderInterface = null;
       _filterVideoAnalyzer = null;
-
       if (_pinAudioOut != null)
       {
         hr = DirectShowUtil.ReleaseComObject(_pinAudioOut);
@@ -1190,17 +1138,16 @@ namespace DShowNET.Helper
         hr = DirectShowUtil.ReleaseComObject(_pinStreamBufferIn1);
         _pinStreamBufferIn1 = null;
       }
-
       if (_filterStreamBuffer != null)
       {
         _filterStreamBuffer.Stop();
         while ((hr = DirectShowUtil.ReleaseComObject(_filterStreamBuffer)) > 0) ;
         _filterStreamBuffer = null;
         if (hr != 0)
+        {
           Log.Info("Sinkgraph:ReleaseComobject(_filterStreamBuffer):{0}", hr);
+        }
       }
-
-
       if (m_VideoAnalyzer != null)
       {
         while ((hr = DirectShowUtil.ReleaseComObject(m_VideoAnalyzer)) > 0) ;
@@ -1208,8 +1155,6 @@ namespace DShowNET.Helper
           Log.Info("Sinkgraph:ReleaseComobject(m_VideoAnalyzer):{0}", hr);
         m_VideoAnalyzer = null;
       }
-
-
       if (m_StreamBufferConfig != null)
       {
         while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
@@ -1217,16 +1162,13 @@ namespace DShowNET.Helper
           Log.Info("Sinkgraph:ReleaseComobject(m_StreamBufferConfig):{0}", hr);
         m_StreamBufferConfig = null;
       }
-
       if (_filterMpeg2Demultiplexer != null)
       {
         while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
         if (hr != 0) Log.Info("Sinkgraph:ReleaseComobject(_filterMpeg2Demultiplexer):{0}", hr);
         _filterMpeg2Demultiplexer = null;
       }
-
     }
-
     #endregion
 
     #region recording

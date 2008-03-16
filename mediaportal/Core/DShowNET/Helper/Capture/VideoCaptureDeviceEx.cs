@@ -372,6 +372,7 @@ namespace DShowNET.Helper
 
     public void SetFrameRate(double FrameRate)
     {
+      /*
       // set the framerate
       if (FrameRate >= 1d && FrameRate < 30d)
       {
@@ -379,7 +380,7 @@ namespace DShowNET.Helper
         {
           try
           {
-            Log.Info("SWGraph:capture FrameRate set to {0}", FrameRate);
+            Log.Info("VideoCaptureDevice: capture FrameRate set to {0}", FrameRate);
             long avgTimePerFrame = (long)(10000000d / FrameRate);
             setStreamConfigSetting(_interfaceStreamConfigVideoCapture, "AvgTimePerFrame", avgTimePerFrame);
             Log.Info("VideoCaptureDevice: capture FrameRate done :{0}", FrameRate);
@@ -419,9 +420,8 @@ namespace DShowNET.Helper
             Log.Info("VideoCaptureDevice:vport FAILED:could not set FrameRate to {0}!", FrameRate);
           }
         }
-      }
+      }*/
     }
-
 
     object getStreamConfigSetting(IAMStreamConfig streamConfig, string fieldName)
     {
@@ -551,7 +551,7 @@ namespace DShowNET.Helper
           if (fieldInfo == null)
           {
             Log.Info("  VideoCaptureDevice:setStreamConfigSetting() FAILED to to find member:{0}", fieldName);
-            throw new NotSupportedException("FAILED to find the member '" + fieldName + "' in the format block.");
+            //throw new NotSupportedException("FAILED to find the member '" + fieldName + "' in the format block.");
           }
           //Log.Info("  VideoCaptureDevice.setStreamConfigSetting() set value");
           // Update the value of the field
