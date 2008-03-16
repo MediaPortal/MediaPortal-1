@@ -662,6 +662,7 @@ namespace TvService
           _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
         }
 				_recordingsInProgressList.Remove(recording); //only remove recording from the list, if we are succesful
+        recording.Schedule.Delete();
       }
       catch (Exception ex)
       {
