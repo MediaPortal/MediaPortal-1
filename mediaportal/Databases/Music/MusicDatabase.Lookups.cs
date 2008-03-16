@@ -666,7 +666,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}%' order by iTrack asc", strAlbumArtist, strAlbum);
+        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' order by iTrack asc", strAlbumArtist, strAlbum);
         GetSongsByFilter(sql, out aSongList, "tracks");
 
         return true;
