@@ -803,7 +803,7 @@ namespace SetupTv
       if (File.Exists(DvbFixLocation))
       {
         Version aParamVersion = new Version(0, 0, 0, 0);
-        if (!CheckFileVersion(DvbFixLocation, "6.6.2710.2732", out aParamVersion))
+        if (!CheckFileVersion(DvbFixLocation, "6.5.2710.2732", out aParamVersion))
           MessageBox.Show(string.Format("Your version {0} of Psisdecd.dll in path {1} has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion.ToString(), DvbFixLocation), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
       else
