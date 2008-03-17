@@ -796,14 +796,14 @@ namespace SetupTv
       {
         if (File.Exists(DvbFixLocation))
         {
-          if (!CheckFileVersion(DvbFixLocation, "6.5.2600.2640"))
-            MessageBox.Show(string.Format("Your system does not meet MP's requirements! Your version of Psisdecd.dll in path {0} has too many bugs!", DvbFixLocation), "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          if (!CheckFileVersion(DvbFixLocation, "6.5.2710.2732"))
+            MessageBox.Show(string.Format("Your version of Psisdecd.dll in path {0} has too many bugs! \nPlease check our Wiki's requirements page.", DvbFixLocation), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
         else
-          MessageBox.Show(string.Format("Unable to check MP's requirements - Psisdecd.dll not found in path {0}!", DvbFixLocation), "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(string.Format("Psisdecd.dll not found in path {0}! \nPlease check our Wiki's requirements page.", DvbFixLocation), "Microsoft SI/PSI parser missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       else
-        MessageBox.Show("Unable to check MP's requirements - Psisdecd.dll is not registered on your system!", "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Unable to check MP's requirements - Psisdecd.dll is not registered on your system!", "Microsoft SI/PSI parser missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
     /// <summary>
