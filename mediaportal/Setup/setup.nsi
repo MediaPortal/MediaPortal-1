@@ -234,6 +234,11 @@ ${MementoSection} "MediaPortal core files (required)" SecCore
     File "..\Docs\MediaPortal License.rtf"
     File "..\Docs\SQLite Database Browser.exe"
 
+    ; xmltv
+    SetOutPath $INSTDIR\xmltv
+    File ..\xbmc\bin\Release\xmltv\ReadMe.txt
+    File ..\xbmc\bin\Release\xmltv\xmltv.dtd
+
     SetOutPath $INSTDIR
 
     ; Folder
@@ -250,7 +255,6 @@ ${MementoSection} "MediaPortal core files (required)" SecCore
     File /r ..\xbmc\bin\Release\weather
     File /r ..\xbmc\bin\Release\WebEPG
     File /r ..\xbmc\bin\Release\Wizards
-    File /r ..\xbmc\bin\Release\xmltv
 
     ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
     ;------------  Common Files and Folders for XP & Vista
@@ -349,30 +353,12 @@ ${MementoSection} "MediaPortal core files (required)" SecCore
     File ..\xbmc\bin\Release\XPBurnComponent.dll
     ;------------  End of Common Files and Folders for XP & Vista
 
-    
-    /*; [OBSOLETE]  
-    ; In Case of Vista some Folders / Files need to be copied to the Appplication Data Folder
-    ; Simply Change the output Directory in Case of Vista
-    ${if} $WindowsVersion == "Vista"
-        ; We have a special MediaPortalDirs.xml
-        File MediaPortalDirs.xml
-
-        ; We need to have the custom Inputmapping dir created
-        CreateDirectory "$CommonAppData\InputDeviceMappings\custom"
-
-        ;From here on, the Vista specific files should go to the common App Folder
-        SetOutPath $CommonAppData
-    ${Else}
-        File ..\xbmc\bin\Release\MediaPortalDirs.xml
-    ${Endif}
-    */
-
     File MediaPortalDirs.xml
-    CreateDirectory "$CommonAppData\InputDeviceMappings\custom"
-    SetOutPath $CommonAppData
 
     ; ************************************************************************
+    SetOutPath $CommonAppData
 
+    CreateDirectory "$CommonAppData\InputDeviceMappings\custom"
     ; Config Files (XML)
     File ..\xbmc\bin\Release\CaptureCardDefinitions.xml
     File "..\xbmc\bin\Release\eHome Infrared Transceiver List XP.xml"
@@ -384,18 +370,8 @@ ${MementoSection} "MediaPortal core files (required)" SecCore
     File ..\xbmc\bin\Release\ProgramSettingProfiles.xml
     File ..\xbmc\bin\Release\wikipedia.xml
     File ..\xbmc\bin\Release\yac-area-codes.xml
-
-    ; We are not deleting Files and Folders after this point
-
     ; Folders
     File /r ..\xbmc\bin\Release\thumbs
-
-    # [OBSOLETE] if we decide to install all filters to INSTDIR
-    # [OBSOLETE] The Following Filters and Dll need to be copied to \windows\system32 for xp
-    # [OBSOLETE] In Vista they stay in the Install Directory
-    # [OBSOLETE] !insertmacro SetFilterDir
-    # [OBSOLETE] NOTE: The Filters and Common DLLs found below will be deleted and unregistered manually and not via the automatic Uninstall Log
-    # [OBSOLETE] Filters (Copy and Register)
 
     #---------------------------------------------------------------------------
     # FILTER REGISTRATION
@@ -456,26 +432,43 @@ ${MementoSectionEnd}
     RmDir /r /REBOOTOK $CommonAppData\Burner
     RmDir /r /REBOOTOK $INSTDIR\Cache
     RmDir /r /REBOOTOK $CommonAppData\Cache
-    RmDir /r /REBOOTOK $INSTDIR\Docs
-    RmDir /r /REBOOTOK $INSTDIR\database\convert
-    RmDir /REBOOTOK $INSTDIR\database
-    RmDir /r /REBOOTOK $INSTDIR\InputDeviceMappings\defaults
-    RmDir /REBOOTOK $INSTDIR\InputDeviceMappings
     RmDir /r /REBOOTOK $INSTDIR\language
     RmDir /r /REBOOTOK $INSTDIR\MusicPlayer
     RmDir /r /REBOOTOK $INSTDIR\osdskin-media
     RmDir /r /REBOOTOK $INSTDIR\plugins
     RmDir /r /REBOOTOK $INSTDIR\scripts
-    RmDir /r /REBOOTOK $INSTDIR\skin\BlueTwo
-    RmDir /r /REBOOTOK "$INSTDIR\skin\BlueTwo wide"
-    RmDir /REBOOTOK $INSTDIR\skin
     RmDir /r /REBOOTOK $INSTDIR\TTPremiumBoot
     RmDir /r /REBOOTOK $INSTDIR\Tuningparameters
     RmDir /r /REBOOTOK $INSTDIR\weather
     RmDir /r /REBOOTOK $INSTDIR\WebEPG
     RmDir /r /REBOOTOK $INSTDIR\Wizards
 
-   ; Remove Files in MP Root Directory
+    ; database
+    RmDir /r /REBOOTOK $INSTDIR\database\convert
+    RmDir $INSTDIR\database
+
+    ; Doc
+    Delete /REBOOTOK "$INSTDIR\Docs\BASS License.txt"
+    Delete /REBOOTOK "$INSTDIR\Docs\LICENSE.rtf"
+    Delete /REBOOTOK "$INSTDIR\Docs\MediaPortal License.rtf"
+    Delete /REBOOTOK "$INSTDIR\Docs\SQLite Database Browser.exe"
+    RmDir $INSTDIR\Docs
+
+    ; InputDeviceMappings
+    RmDir /r /REBOOTOK $INSTDIR\InputDeviceMappings\defaults
+    RmDir $INSTDIR\InputDeviceMappings
+
+    ; skins
+    RmDir /r /REBOOTOK "$INSTDIR\skin\BlueTwo"
+    RmDir /r /REBOOTOK "$INSTDIR\skin\BlueTwo wide"
+    RmDir $INSTDIR\skin
+
+    ; xmltv
+    Delete /REBOOTOK $INSTDIR\xmltv\ReadMe.txt
+    Delete /REBOOTOK $INSTDIR\xmltv\xmltv.dtd
+    RmDir $INSTDIR\xmltv
+
+    ; Remove Files in MP Root Directory
     Delete /REBOOTOK  $INSTDIR\AppStart.exe
     Delete /REBOOTOK  $INSTDIR\AppStart.exe.config
     Delete /REBOOTOK  $INSTDIR\AxInterop.WMPLib.dll
@@ -692,22 +685,6 @@ Section -Post
  
     WriteUninstaller "$INSTDIR\uninstall-mp.exe"
 
-    ; [OBSOLETE]  should be obsolete sooner or later
-    /*WriteRegStr HKLM "${REG_UNINSTALL}" Path $INSTDIR
-    WriteRegStr HKLM "${REG_UNINSTALL}" PathFilter $FILTERDIR
-    WriteRegStr HKLM "${REG_UNINSTALL}" WindowsVersion $WindowsVersion*/
-
-    ; [OBSOLETE]   WE SHOULD USER THE OTHER REGKEY IN FUTURE
-    ; Write the Install / Config Dir into the registry for the Public SVN Installer to recognize the environment
-    WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ApplicationDir $INSTDIR
-
-    ; [OBSOLETE]   WE DONT NEED THIS REGKEY IN FUTURE
-    /*${if} $WindowsVersion == "Vista"
-        WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $CommonAppData
-    ${Else}
-        WriteRegStr HKLM "SOFTWARE\Team MediaPortal\MediaPortal" ConfigDir $INSTDIR
-    ${Endif}*/
-
     ; Associate .mpi files with MPInstaller
     !define Index "Line${__LINE__}"
     ; backup the association, if it already exsists
@@ -764,10 +741,6 @@ Section Uninstall
         RmDir /r /REBOOTOK $INSTDIR
     ${EndIf}
 
-    # [OBSOLETE] DeleteRegValue HKLM "${REG_UNINSTALL}" StartMenuGroup
-    # [OBSOLETE] DeleteRegValue HKLM "${REG_UNINSTALL}" Path
-    # [OBSOLETE] DeleteRegValue HKLM "${REG_UNINSTALL}" PathFilter
-
     ; Remove File Association for .mpi files
     !define Index "Line${__LINE__}"
     ReadRegStr $1 HKCR ".mpi" ""
@@ -784,7 +757,6 @@ Section Uninstall
     DeleteRegKey HKCR "MediaPortal.Installer" ;Delete key with association settings
 
     ${un.RefreshShellIcons}
-    ; [OBSOLETE] System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
 
     "${Index}-NoOwn:"
     !undef Index
@@ -851,15 +823,6 @@ Function .onInit
     noReboot:
 
     !insertmacro SetCommonAppData
-
-    # [OBSOLETE] Needed for Library Install
-    # [OBSOLETE] Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
-    # [OBSOLETE] Push $0
-    # [OBSOLETE] ReadRegStr $0 HKLM "${REG_UNINSTALL}" Path
-    # [OBSOLETE] ClearErrors
-    # [OBSOLETE] StrCmp $0 "" +2
-    # [OBSOLETE] StrCpy $LibInstall 1
-    # [OBSOLETE] Pop $0
 FunctionEnd
 
 Function un.onInit
