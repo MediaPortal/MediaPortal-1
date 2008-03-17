@@ -121,9 +121,10 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_FINISHPAGE_RUN
-!define MUI_FINISHPAGE_RUN_TEXT     "Run MediaPortal Configuration"
-!define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
+!define MUI_FINISHPAGE_RUN      "$INSTDIR\Configuration.exe"
+#!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
+#!define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
@@ -858,10 +859,10 @@ FunctionEnd
 
 ; Start the Setup after the successfull install
 ; needed in an extra function to set the working directory
-Function RunConfig
-    SetOutPath $INSTDIR
-    Exec "$INSTDIR\Configuration.exe"
-FunctionEnd
+#Function RunConfig
+#    SetOutPath $INSTDIR
+#    Exec "$INSTDIR\Configuration.exe"
+#FunctionEnd
 
 Function WelcomeLeave
     ; check if MP is already installed
