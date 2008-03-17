@@ -1199,7 +1199,10 @@ namespace TvEngine
         }
       }
       else
+      {
         Log.Info("TVMovie: tvuptodate.exe not found in default location: {0}", UpdaterPath);
+        UpdateDuration = 30; // workaround for systems without tvuptodate
+      }
 
       return UpdateDuration;
     }
