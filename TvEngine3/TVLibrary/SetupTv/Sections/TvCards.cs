@@ -111,82 +111,8 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       _needRestart = false;
-      CheckPrerequisites();
 
       UpdateList();
-    }
-
-    private void CheckPrerequisites()
-    {
-      string osName = string.Empty;
-      OperatingSystem osInfo = Environment.OSVersion;
-
-      if (osInfo.Platform != PlatformID.Win32NT)
-        return;
-      else
-      {
-        switch (osInfo.Version.Major)
-        {
-          case 3:
-            osName = "Windows NT 3.51";
-            return;
-          case 4:
-            osName = "Windows NT 4.0";
-            return;
-          case 5:
-            if (osInfo.Version.Minor == 0)
-            {
-              osName = "Windows 2000";
-              return;
-            }
-            else if (osInfo.Version.Minor == 1)
-            {
-              osName = "Windows XP";
-              if (!CheckRegistryForHotFixes("KB896626")) // Search for the DVB Hotfix
-                MessageBox.Show(this, "Your system does not meet MP's requirements!", "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-            else if (osInfo.Version.Minor == 2)
-            {
-              osName = "Windows Server 2003";
-              if (!CheckRegistryForHotFixes("KB896626")) // Search for the DVB Hotfix
-                MessageBox.Show(this, "Your system does not meet MP's requirements!", "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-            break;
-          case 6:
-            {
-              osName = "Windows Vista";
-              break;
-            }
-        }
-      }
-    }
-
-    private bool CheckRegistryForHotFixes(string aHotfixName)
-    {
-      bool SystemReady = false;
-      string componentsKeyName = @"SOFTWARE\Microsoft\Active Setup\Installed Components", friendlyName;
-      try
-      {
-        using (RegistryKey componentsKey = Registry.LocalMachine.OpenSubKey(componentsKeyName))
-        {
-          string[] instComps = componentsKey.GetSubKeyNames();
-          foreach (string instComp in instComps)
-          {
-            RegistryKey key = componentsKey.OpenSubKey(instComp);
-            friendlyName = (string)key.GetValue(null); // Gets the (Default) value from this key            
-            if (friendlyName != null && friendlyName.IndexOf(aHotfixName) >= 0)
-            {
-              SystemReady = true;
-              break;
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show(string.Format("Error checking registry for installed Hotfixes: {0}", ex.Message));
-      }
-      return SystemReady;
     }
 
     void UpdateList()

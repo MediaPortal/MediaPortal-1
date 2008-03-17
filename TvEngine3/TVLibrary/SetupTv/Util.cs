@@ -89,7 +89,7 @@ namespace SetupTv
 
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
 
-    
+
     static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
 
     // singleton. Dont allow any instance of this class
@@ -97,7 +97,7 @@ namespace SetupTv
     {
     }
 
-    static public string GetDriveSerial(string drive)
+    public static string GetDriveSerial(string drive)
     {
       if (drive == null) return String.Empty;
       //receives volume name of drive
@@ -118,7 +118,7 @@ namespace SetupTv
       else return "";
     }
 
-    static public string GetDriveName(string drive)
+    public static string GetDriveName(string drive)
     {
       if (drive == null) return String.Empty;
       //receives volume name of drive
@@ -139,7 +139,7 @@ namespace SetupTv
       else return "";
     }
 
-    static public int getDriveType(string drive)
+    public static int getDriveType(string drive)
     {
       if (drive == null) return 2;
       if ((GetDriveType(drive) & 5) == 5) return 5;//cd
@@ -150,7 +150,7 @@ namespace SetupTv
       return 0;
     }
 
-    static public long GetDiskSize(string drive)
+    public static long GetDiskSize(string drive)
     {
       long diskSize = 0;
       try
@@ -169,7 +169,7 @@ namespace SetupTv
       return diskSize;
     }
 
-    static public string GetSize(long dwFileSize)
+    public static string GetSize(long dwFileSize)
     {
       if (dwFileSize < 0) return "0";
       string szTemp;
@@ -215,7 +215,7 @@ namespace SetupTv
       return szTemp;
     }
 
-    static public void GetQualifiedFilename(string strBasePath, ref string strFileName)
+    public static void GetQualifiedFilename(string strBasePath, ref string strFileName)
     {
       if (strFileName == null) return;
       if (strFileName.Length <= 2) return;
@@ -243,7 +243,7 @@ namespace SetupTv
       strFileName = System.IO.Path.Combine(strBasePath, strFileName);
     }
 
-    static public string stripHTMLtags(string strHTML)
+    public static string stripHTMLtags(string strHTML)
     {
       if (strHTML == null) return String.Empty;
       if (strHTML.Length == 0) return String.Empty;
@@ -251,7 +251,7 @@ namespace SetupTv
       return stripped.Trim();
     }
 
-    static public bool IsNetwork(string strPath)
+    public static bool IsNetwork(string strPath)
     {
       if (strPath == null) return false;
       if (strPath.Length < 2) return false;
@@ -260,7 +260,7 @@ namespace SetupTv
       return false;
     }
 
-    static public bool IsHD(string strPath)
+    public static bool IsHD(string strPath)
     {
       if (strPath == null) return false;
       if (strPath.Length < 2) return false;
@@ -269,7 +269,7 @@ namespace SetupTv
       return false;
     }
 
-    static public bool IsCDDA(string strFile)
+    public static bool IsCDDA(string strFile)
     {
       if (strFile == null) return false;
       if (strFile.Length <= 0) return false;
@@ -278,7 +278,7 @@ namespace SetupTv
       return false;
     }
 
-    static public bool IsDVD(string strFile)
+    public static bool IsDVD(string strFile)
     {
       if (strFile == null) return false;
       if (strFile.Length < 2) return false;
@@ -287,7 +287,7 @@ namespace SetupTv
       return false;
     }
 
-    static public bool IsRemovable(string strFile)
+    public static bool IsRemovable(string strFile)
     {
       if (strFile == null) return false;
       if (strFile.Length < 2) return false;
@@ -296,7 +296,7 @@ namespace SetupTv
       return false;
     }
 
-    static public bool GetDVDLabel(string strFile, out string strLabel)
+    public static bool GetDVDLabel(string strFile, out string strLabel)
     {
       strLabel = "";
       if (strFile == null) return false;
@@ -306,7 +306,7 @@ namespace SetupTv
       return true;
     }
 
-    static public bool ShouldStack(string strFile1, string strFile2)
+    public static bool ShouldStack(string strFile1, string strFile2)
     {
       if (strFile1 == null) return false;
       if (strFile2 == null) return false;
@@ -348,7 +348,7 @@ namespace SetupTv
       return false;
     }
 
-    static public void RemoveStackEndings(ref string strFileName)
+    public static void RemoveStackEndings(ref string strFileName)
     {
       if (strFileName == null) return;
       string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
@@ -362,8 +362,8 @@ namespace SetupTv
         }
       }
     }
-    
-    static public void Split(string strFileNameAndPath, out string strPath, out string strFileName)
+
+    public static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
       strFileName = "";
       strPath = "";
@@ -398,7 +398,7 @@ namespace SetupTv
       }
     }
 
-    static public bool EjectCDROM(string strDrive)
+    public static bool EjectCDROM(string strDrive)
     {
       bool result = false;
       strDrive = @"\\.\" + strDrive;
@@ -423,12 +423,12 @@ namespace SetupTv
       return result;
     }
 
-    static public void EjectCDROM()
+    public static void EjectCDROM()
     {
       mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
     }
 
-    static public DateTime longtodate(long ldate)
+    public static DateTime longtodate(long ldate)
     {
       try
       {
@@ -455,7 +455,7 @@ namespace SetupTv
       return DateTime.Now;
     }
 
-    static public long datetolong(DateTime dt)
+    public static long datetolong(DateTime dt)
     {
       try
       {
@@ -480,7 +480,7 @@ namespace SetupTv
       return 0;
     }
 
-    static public string MakeFileName(string strText)
+    public static string MakeFileName(string strText)
     {
       if (strText == null) return String.Empty;
       if (strText.Length == 0) return String.Empty;
@@ -496,7 +496,7 @@ namespace SetupTv
       return strFName;
     }
 
-    static public string MakeDirectoryPath(string strText)
+    public static string MakeDirectoryPath(string strText)
     {
       if (strText == null) return String.Empty;
       if (strText.Length == 0) return String.Empty;
@@ -510,7 +510,7 @@ namespace SetupTv
       return strFName;
     }
 
-    static public bool FileDelete(string strFile)
+    public static bool FileDelete(string strFile)
     {
       if (strFile == null) return true;
       if (strFile.Length == 0) return true;
@@ -526,7 +526,7 @@ namespace SetupTv
       return false;
     }
 
-    static public bool DirectoryDelete(string strDir)
+    public static bool DirectoryDelete(string strDir)
     {
       if (strDir == null) return false;
       if (strDir.Length == 0) return false;
@@ -541,7 +541,7 @@ namespace SetupTv
       return false;
     }
 
-    static public string RemoveTrailingSlash(string strLine)
+    public static string RemoveTrailingSlash(string strLine)
     {
       if (strLine == null) return String.Empty;
       if (strLine.Length == 0) return String.Empty;
@@ -557,7 +557,7 @@ namespace SetupTv
       return strPath;
     }
 
-    static public void RGB2YUV(int R, int G, int B, out int Y, out int U, out int V)
+    public static void RGB2YUV(int R, int G, int B, out int Y, out int U, out int V)
     {
       Y = (int)(((float)R) * 0.257f + ((float)G) * 0.504f + ((float)B) * 0.098f + 16.0f);
       U = (int)(((float)R) * -0.148f + ((float)G) * -0.291f + ((float)B) * 0.439f + 128.0f);
@@ -567,7 +567,7 @@ namespace SetupTv
       V = V & 0xff;
     }
 
-    static public void RGB2YUV(int iRGB, out int YUV)
+    public static void RGB2YUV(int iRGB, out int YUV)
     {
       int Y, U, V;
       RGB2YUV((iRGB >> 16) & 0xff, (iRGB >> 8) & 0xff, (iRGB & 0xff), out Y, out U, out V);
@@ -578,7 +578,7 @@ namespace SetupTv
       YUV = Y + U + V;
     }
 
-    static public string FilterFileName(string strName)
+    public static string FilterFileName(string strName)
     {
       if (strName == null) return String.Empty;
       if (strName.Length == 0) return String.Empty;
@@ -594,7 +594,7 @@ namespace SetupTv
       return strName;
     }
 
-    static public string RemoveParenthesis(string name)
+    public static string RemoveParenthesis(string name)
     {
       while (name.IndexOf("(") != -1)
       {
@@ -625,7 +625,7 @@ namespace SetupTv
       return name;
     }
 
-    static public void DeleteFiles(string strDir, string strPattern)
+    public static void DeleteFiles(string strDir, string strPattern)
     {
       if (strDir == null) return;
       if (strDir.Length == 0) return;
@@ -652,7 +652,7 @@ namespace SetupTv
 
     }
 
-    static public DateTime ParseDateTimeString(string dateTime)
+    public static DateTime ParseDateTimeString(string dateTime)
     {
       try
       {
@@ -726,20 +726,177 @@ namespace SetupTv
       return freeBytesAvailable;
     }
 
-    static public bool HibernateSystem(bool forceShutDown)
+    public static bool HibernateSystem(bool forceShutDown)
     {
       return (SetSuspendState(PowerState.Hibernate, forceShutDown));
     }
 
-    static public bool SuspendSystem(bool forceShutDown)
+    public static bool SuspendSystem(bool forceShutDown)
     {
       return (SetSuspendState(PowerState.Suspend, forceShutDown));
     }
 
-    static private bool SetSuspendState(PowerState state, bool forceShutDown)
+    private static bool SetSuspendState(PowerState state, bool forceShutDown)
     {
 
       return (Application.SetSuspendState(state, forceShutDown, false));
+    }
+
+
+    public static void CheckPrerequisites(bool checkDvbFix)
+    {
+      string osName = string.Empty;
+      OperatingSystem osInfo = Environment.OSVersion;
+
+      if (osInfo.Platform != PlatformID.Win32NT)
+        return;
+      else
+      {
+        switch (osInfo.Version.Major)
+        {
+          case 3:
+            osName = "Windows NT 3.51";
+            return;
+          case 4:
+            osName = "Windows NT 4.0";
+            return;
+          case 5:
+            if (osInfo.Version.Minor == 0)
+            {
+              osName = "Windows 2000";
+              return;
+            }
+            else if (osInfo.Version.Minor == 1)
+            {
+              osName = "Windows XP";
+              if (checkDvbFix)              
+                CheckForDvbHotfix();              
+            }
+            else if (osInfo.Version.Minor == 2)
+            {
+              osName = "Windows Server 2003";
+              if (checkDvbFix)
+                CheckForDvbHotfix();   
+            }
+            break;
+          case 6:
+            {
+              osName = "Windows Vista";
+              break;
+            }
+        }
+      }
+    }
+
+    private static void CheckForDvbHotfix()
+    {
+      //if (!CheckRegistryForInstalledSoftware("KB896626")) // Search for the DVB Hotfix
+      string DvbFixLocation = GetRegisteredAssemblyPath("Psisdecd.dll");
+      if (!string.IsNullOrEmpty(DvbFixLocation))
+      {
+        if (File.Exists(DvbFixLocation))
+        {
+          if (!CheckFileVersion(DvbFixLocation, "6.5.2600.2640"))
+            MessageBox.Show(string.Format("Your system does not meet MP's requirements! Your version of Psisdecd.dll in path {0} has too many bugs!", DvbFixLocation), "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+        else
+          MessageBox.Show(string.Format("Unable to check MP's requirements - Psisdecd.dll not found in path {0}!", DvbFixLocation), "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+      else
+        MessageBox.Show(string.Format("Unable to check MP's requirements - Psisdecd.dll not registered on your system!"), "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+
+    /// <summary>
+    /// Checks if a file has the required version
+    /// </summary>
+    /// <param name="aFilePath">The full path to the file to check</param>
+    /// <param name="aMinimumVersion">The minimum version wanted</param>
+    /// <returns>True if the file's version is equal or higher than the given minimum</returns>
+    public static bool CheckFileVersion(string aFilePath, string aMinimumVersion)
+    {
+      try
+      {
+        System.Version desiredVersion = new System.Version(aMinimumVersion);
+        FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
+        if (!string.IsNullOrEmpty(fileVersion.FileVersion))
+        {
+          System.Version compareVersion = new System.Version(fileVersion.FileVersion);
+          return compareVersion >= desiredVersion;
+        }
+        else
+          return false;
+      }
+      catch (Exception ex)
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Searches the registry to get the location of registered dlls by their name.
+    /// </summary>
+    /// <param name="aFilename">The filename (e.g. quartz.dll)</param>
+    /// <returns>The full path the dll or an empty string</returns>
+    public static string GetRegisteredAssemblyPath(string aFilename)
+    {
+      using (RegistryKey AssemblyKey = Registry.ClassesRoot.OpenSubKey("CLSID"))
+      {
+        string[] reggedComps = AssemblyKey.GetSubKeyNames();
+        foreach (string aFilter in reggedComps)
+        {
+          using (RegistryKey key = AssemblyKey.OpenSubKey(aFilter))
+          {
+            if (key != null)
+            {
+              using (RegistryKey defaultkey = key.OpenSubKey("InprocServer32"))
+              {
+                if (defaultkey != null)
+                {
+                  string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
+                  if (!string.IsNullOrEmpty(friendlyName) && friendlyName.IndexOf(aFilename) >= 0)
+                  {
+                    return friendlyName;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      return string.Empty;
+    }
+
+    /// <summary>
+    /// Checks whether a given software application / Microsoft hotfix is installed
+    /// </summary>
+    /// <param name="aSoftwareName">The short name to search for (e.g. KB896626)</param>
+    /// <returns>True if the software is installed</returns>
+    public static bool CheckRegistryForInstalledSoftware(string aSoftwareName)
+    {
+      bool AppFound = false;
+      string componentsKeyName = @"SOFTWARE\Microsoft\Active Setup\Installed Components", friendlyName;
+      try
+      {
+        using (RegistryKey componentsKey = Registry.LocalMachine.OpenSubKey(componentsKeyName))
+        {
+          string[] instComps = componentsKey.GetSubKeyNames();
+          foreach (string instComp in instComps)
+          {
+            RegistryKey key = componentsKey.OpenSubKey(instComp);
+            friendlyName = (string)key.GetValue(null); // Gets the (Default) value from this key            
+            if (friendlyName != null && friendlyName.IndexOf(aSoftwareName) >= 0)
+            {
+              AppFound = true;
+              break;
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Error checking registry for installed components: {0}", ex.Message));
+      }
+      return AppFound;
     }
 
   }

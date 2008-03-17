@@ -152,11 +152,14 @@ namespace SetupTv
           foreach (Server server in dbsServers)
           {
             int cardNo = 1;
+            bool isLocal = server.HostName.ToLower() == Dns.GetHostName().ToLower();
+            bool DvbCheck = false;
             TvCards cardPage = new TvCards(server.HostName);
             AddChildSection(servers, cardPage, 0);
             foreach (Card dbsCard in server.ReferringCard())
             {
-              if (RemoteControl.Instance.CardPresent(dbsCard.IdCard)) {
+              if (RemoteControl.Instance.CardPresent(dbsCard.IdCard))
+              {
                 CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
                 string cardName = dbsCard.Name;
                 switch (type) {
@@ -164,32 +167,36 @@ namespace SetupTv
                     cardName = String.Format("{0} Analog {1}", cardNo, cardName);
                     AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
                     break;
-
                   case CardType.DvbT:
                     cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
                     AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
-                    //AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
+                    DvbCheck = true;
                     break;
                   case CardType.DvbC:
                     cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
                     AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
+                    DvbCheck = true;
                     break;
                   case CardType.DvbS:
                     cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
                     AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
+                    DvbCheck = true;
                     break;
                   case CardType.Atsc:
                     cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
                     AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
+                    DvbCheck = true;
                     break;
                   case CardType.Unknown:
                     cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
                     AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
                     break;
-                }
+                }                
               }
               cardNo++;
             }
+            if (isLocal)
+              Utils.CheckPrerequisites(DvbCheck);
           }
 
           TvChannels tvChannels = new TvChannels();
