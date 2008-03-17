@@ -136,6 +136,11 @@ namespace SetupTv
             service.Start();
             return true;
           }
+          else
+            if (service.Status == ServiceControllerStatus.Running)
+            {
+              return true;
+            }
         }
       }
       return false;

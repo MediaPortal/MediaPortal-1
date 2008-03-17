@@ -798,12 +798,13 @@ namespace SetupTv
       //if (!CheckRegistryForInstalledSoftware("KB896626")) // Search for the DVB Hotfix
       string DvbFixLocation = GetRegisteredAssemblyPath("PsisDecd");
       if (string.IsNullOrEmpty(DvbFixLocation))
-        DvbFixLocation = "%SYSTEMROOT%\\SYSTEM32\\PsisDecd.dll";
+        DvbFixLocation = Environment.ExpandEnvironmentVariables(@"%systemroot%\System32") + @"\psisdecd.dll";
 
       if (File.Exists(DvbFixLocation))
       {
-        if (!CheckFileVersion(DvbFixLocation, "6.5.2710.2732"))
-          MessageBox.Show(string.Format("Your version of Psisdecd.dll in path {0} has too many bugs! \nPlease check our Wiki's requirements page.", DvbFixLocation), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        Version aParamVersion = new Version(0, 0, 0, 0);
+        if (!CheckFileVersion(DvbFixLocation, "6.6.2710.2732", out aParamVersion))
+          MessageBox.Show(string.Format("Your version {0} of Psisdecd.dll in path {1} has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion.ToString(), DvbFixLocation), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
       else
         MessageBox.Show(string.Format("Psisdecd.dll is neither registered nor located in path {0}! \nPlease check our Wiki's requirements page.", DvbFixLocation), "Microsoft SI/PSI parser missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -815,16 +816,17 @@ namespace SetupTv
     /// <param name="aFilePath">The full path to the file to check</param>
     /// <param name="aMinimumVersion">The minimum version wanted</param>
     /// <returns>True if the file's version is equal or higher than the given minimum</returns>
-    public static bool CheckFileVersion(string aFilePath, string aMinimumVersion)
+    public static bool CheckFileVersion(string aFilePath, string aMinimumVersion, out Version aCurrentVersion)
     {
+      aCurrentVersion = new Version(0, 0, 0, 0);
       try
       {
         System.Version desiredVersion = new System.Version(aMinimumVersion);
         FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
         if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
         {
-          System.Version compareVersion = new System.Version(fileVersion.ProductVersion);
-          return compareVersion >= desiredVersion;
+          aCurrentVersion = new System.Version(fileVersion.ProductVersion);
+          return aCurrentVersion >= desiredVersion;
         }
         else
           return false;
@@ -860,7 +862,7 @@ namespace SetupTv
                     if (defaultkey != null)
                     {
                       string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
-                      if (!string.IsNullOrEmpty(friendlyName) && friendlyName.IndexOf(aFilename) >= 0)
+                      if (!string.IsNullOrEmpty(friendlyName) && friendlyName.ToLower().IndexOf(aFilename.ToLower()) >= 0)
                       {
                         return friendlyName;
                       }
