@@ -749,7 +749,10 @@ namespace SetupTv
       OperatingSystem osInfo = Environment.OSVersion;
 
       if (osInfo.Platform != PlatformID.Win32NT)
-        return;
+      {
+        MessageBox.Show("Your platform is not supported! \nPlease check our Wiki's requirements page.", "Requirements not met!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        Application.Exit();
+      }
       else
       {
         switch (osInfo.Version.Major)
@@ -764,7 +767,9 @@ namespace SetupTv
             if (osInfo.Version.Minor == 0)
             {
               osName = "Windows 2000";
-              return;
+              MessageBox.Show("Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.", "Windows 2000 not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+              if (checkDvbFix)
+                CheckForDvbHotfix();
             }
             else if (osInfo.Version.Minor == 1)
             {
