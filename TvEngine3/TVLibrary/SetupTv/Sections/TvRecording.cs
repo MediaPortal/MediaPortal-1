@@ -221,7 +221,7 @@ namespace SetupTv.Sections
           long quota = Int64.Parse(setting.Value);
           mpNumericTextBoxDiskQuota.Value = (int) quota/1024;
         }
-        catch (Exception e)
+        catch (Exception)
         {
           mpNumericTextBoxDiskQuota.Value = 0;
         }

@@ -121,7 +121,7 @@ namespace TvEngine
 
     #region Events
     public delegate void ProgramsChanged(int value, int maximum, string text);
-    public event ProgramsChanged OnProgramsChanged;
+    //public event ProgramsChanged OnProgramsChanged;
     public delegate void StationsChanged(int value, int maximum, string text);
     public event StationsChanged OnStationsChanged;
     #endregion

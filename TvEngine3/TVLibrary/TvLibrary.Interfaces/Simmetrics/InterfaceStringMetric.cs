@@ -2,8 +2,7 @@
 using System;
 namespace api
 {
-	
-	
+
 	public interface InterfaceStringMetric
 		{
 			System.String ShortDescriptionString

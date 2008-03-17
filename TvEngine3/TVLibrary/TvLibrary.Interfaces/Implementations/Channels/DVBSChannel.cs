@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 using DirectShowLib.BDA;
 using TvLibrary.Interfaces;
 
@@ -31,20 +32,73 @@ namespace TvLibrary.Channels
   /// </summary>
   public enum BandType
   {
+    /// <summary>
+    /// Ku-Linear - LOF1 9750, LOF2 10600, SW 11700
+    /// Universal LNB - common in Europe
+    /// </summary>
     Universal = 0,
+    /// <summary>
+    /// Ku-Circular - LOF1 10750
+    /// </summary>
     Circular = 1,
+    /// <summary>
+    /// C-Band - LOF1 5150
+    /// </summary>
     CBand = 2,
+    /// <summary>
+    /// North American Bandstacked
+    /// DishPro Ku-Linear Hi(DBS) - LOF1 11250, LOF2 14350
+    /// </summary>
     NaBandStackedDpKuHi = 3,
+    /// <summary>
+    /// North American Bandstacked
+    /// DishPro Ku-Linear Lo(FSS) - LOF1 10750, LOF2 13850
+    /// </summary>
     NaBandStackedDpKuLo = 4,
+    /// <summary>
+    /// North American Bandstacked
+    /// Ku-Linear Hi(DBS) - LOF1 11250, LOF2 10675
+    /// </summary>
     NaBandStackedKuHi = 5,
+    /// <summary>
+    /// North American Bandstacked
+    /// Ku-Linear Lo(FSS) - LOF1 10750, LOF2 10175
+    /// </summary>
     NaBandStackedKuLo = 6,
+    /// <summary>
+    /// North American Bandstacked
+    /// C-Band LOF1 5150, LOF2 5750
+    /// </summary>
     NaBandStackedC = 7,
+    /// <summary>
+    /// North American Legacy
+    /// LOF1 11250
+    /// </summary>
     NaLegacy = 8,
+    /// <summary>
+    /// North American Custom1
+    /// LOF1 11250, LOF2 11250, SW 12700
+    /// </summary>
     NaCustom1 = 9,
+    /// <summary>
+    /// North American Custom2
+    /// LOF1 11250, LOF2 11250, SW 12200
+    /// </summary>
     NaCustom2 = 10,
   }
+
+  /// <summary>
+  /// Class for LNB setup and LNB number
+  /// Helps determin the DVB-S band type and subsequent LNB frequencies
+  /// Also determins if hi band tuning is required
+  /// </summary>
   public class BandTypeConverter
   {
+    /// <summary>
+    /// Gets the Antenna Number (or LNB number)
+    /// </summary>
+    /// <param name="channel">holds tuning details for DVB-S</param>
+    /// <returns></returns>
     static public int GetAntennaNr(DVBSChannel channel)
     {
       byte disEqcPort = 0;
@@ -75,6 +129,13 @@ namespace TvLibrary.Channels
       }
       return disEqcPort;
     }
+
+    /// <summary>
+    /// Determins if the tuning paramter is HiBand and if so involke the 22Khz switch.
+    /// </summary>
+    /// <param name="channel">tuning details for specific channel / frequency</param>
+    /// <param name="parameters">holds the parameters needed for tuning channel </param>
+    /// <returns></returns>
     static public bool IsHiBand(DVBSChannel channel, ScanParameters parameters)
     {
       int lof1, lof2, sw;
@@ -84,6 +145,15 @@ namespace TvLibrary.Channels
       if (channel.Frequency >= (sw * 1000)) return true;
       return false;
     }
+
+    /// <summary>
+    /// Gets the default LNB Setup depending on the type chosen.
+    /// </summary>
+    /// <param name="parameters">Satelliet scan parameters</param>
+    /// <param name="band">LNB type i.e. Uiniversal</param>
+    /// <param name="lof1">LNB low frequency</param>
+    /// <param name="lof2">LNB high frequency</param>
+    /// <param name="sw">LNB switch frequency</param>
     static public void GetDefaultLnbSetup(ScanParameters parameters, BandType band, out int lof1, out int lof2, out int sw)
     {
       lof1 = lof2 = sw = 0;

@@ -203,7 +203,7 @@ namespace MediaPortal.Playlists
         selectedItemIndex = iPreviousItem;
       }
 
-      catch (Exception ex)
+      catch (Exception)
       {
         selectedItemIndex = -1;
       }
@@ -242,7 +242,7 @@ namespace MediaPortal.Playlists
         selectedItemIndex = iNextItem;
       }
 
-      catch (Exception ex)
+      catch (Exception)
       {
         selectedItemIndex = -1;
       }

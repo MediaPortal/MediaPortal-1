@@ -69,6 +69,9 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region variables
+    /// <summary>
+    /// DVB Graph variables
+    /// </summary>
     protected IFilterGraph2 _graphBuilder = null;
     protected ICaptureGraphBuilder2 _capBuilder = null;
     protected DsROTEntry _rotEntry = null;

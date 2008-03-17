@@ -963,6 +963,9 @@ namespace TvLibrary.Implementations.DVB
     {
       _disEqcMotor.GotoPosition(position);
     }
+    /// <summary>
+    /// Handles DiSEqC motor operations
+    /// </summary>
     public override IDiSEqCMotor DiSEqCMotor
     {
       get
@@ -971,6 +974,11 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Send the DiSEqC Command to the tuner filter
+    /// </summary>
+    /// <param name="diSEqC">DiSEqC command</param>
+    /// <returns></returns>
     public bool SendDiSEqCCommand(byte[] diSEqC)
     {
       DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4 tuner4 = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4;
@@ -983,6 +991,11 @@ namespace TvLibrary.Implementations.DVB
       return true;
     }
 
+    /// <summary>
+    /// Reads the DiSEqC Command from the tuner filter
+    /// </summary>
+    /// <param name="reply">gets the DiSEqC command</param>
+    /// <returns></returns>
     public bool ReadDiSEqCCommand(out byte[] reply)
     {
       reply = new byte[1];

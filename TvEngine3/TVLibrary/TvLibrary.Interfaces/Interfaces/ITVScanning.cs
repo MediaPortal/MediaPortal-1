@@ -46,6 +46,14 @@ namespace TvLibrary.Interfaces
     /// <param name="settings">ScanParameters to use while tuning</param>
     /// <returns>list of channels found</returns>
     List<IChannel> Scan(IChannel channel, ScanParameters settings);
+
+    /// <summary>
+    /// Tunes to channels based on the list the multiplexes that make up a DVB network.
+    /// This information is obtained from the DVB NIT (Network Information Table)
+    /// </summary>
+    /// <param name="channel">channel to tune to</param>
+    /// <param name="settings">ScanParameters to use while tuning</param>
+    /// <returns></returns>
     List<IChannel> ScanNIT(IChannel channel, ScanParameters settings);
 
     /// <summary>

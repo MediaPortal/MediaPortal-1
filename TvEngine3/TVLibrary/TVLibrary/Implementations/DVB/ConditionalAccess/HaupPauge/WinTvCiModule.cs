@@ -30,6 +30,9 @@ using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
+  /// <summary>
+  /// Class to handle the WinTV CI module and interaction with closed source dll.
+  /// </summary>
   public class WinTvCiModule: WinTv_CI_Wrapper
   {
     IBaseFilter _winTvUsbCIFilter;

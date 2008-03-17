@@ -558,7 +558,7 @@ namespace SetupTv
     {
       Assembly assm = Assembly.GetExecutingAssembly();
       string[] names = assm.GetManifestResourceNames();
-      Stream stream = null;
+      //Stream stream = null;
       for (int version = currentSchemaVersion + 1 ; version < 100 ; version++)
       {
         if (ResourceExists(names, "SetupTv." + version.ToString() + "_upgrade_sqlserver_database.sql"))

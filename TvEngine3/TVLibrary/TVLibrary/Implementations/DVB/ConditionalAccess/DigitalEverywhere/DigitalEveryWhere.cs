@@ -902,6 +902,9 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
+    /// <summary>
+    /// Set parameter to null when stopping the Graph.
+    /// </summary>
     public void OnStopGraph()
     {
       _previousChannel = null;

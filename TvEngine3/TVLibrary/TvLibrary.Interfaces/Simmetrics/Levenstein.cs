@@ -4,11 +4,12 @@ using AbstractStringMetric = api.AbstractStringMetric;
 using AbstractSubstitutionCost = api.AbstractSubstitutionCost;
 using MathFuncs = mathSimmetrics.MathFuncs;
 using SubCost01 = similaritymetrics.costfunctions.SubCost01;
+using System.Xml.Serialization;
 namespace similaritymetrics
 {
-	
+  
 	[Serializable]
-	public sealed class Levenstein:AbstractStringMetric//, System.Runtime.Serialization.ISerializable
+  public sealed class Levenstein:AbstractStringMetric//, System.Runtime.Serialization.ISerializable
 	{
 		private void  InitBlock()
 		{

@@ -978,6 +978,14 @@ namespace TvLibrary.Implementations.DVB {
       return false;
     }
 
+    /// <summary>
+    /// Connects two filters to one another
+    /// </summary>
+    /// <param name="graphBuilder">current graph reference</param>
+    /// <param name="sourceFilter">source filter</param>
+    /// <param name="destinationFilter">destination filetr</param>
+    /// <param name="deviceName">filter name</param>
+    /// <returns></returns>
     static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter, string deviceName) {
       //Log.Log.WriteFile("analog: ConnectFilter()");
       IPin testPin;

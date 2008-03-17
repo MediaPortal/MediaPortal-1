@@ -88,7 +88,7 @@ namespace SetupTv.Sections
       {
         mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value); //default is normal=3       
       }
-      catch (Exception e)
+      catch (Exception)
       {
         mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
       }

@@ -9,10 +9,7 @@ namespace TvLibrary.Implementations.DVB.Structures
   /// </summary>
   public class PidInfo
   {
-
-
     private byte[] descriptor_data;
-
     /// <summary>
     /// stream type
     /// </summary>
@@ -25,17 +22,14 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// pid
     /// </summary>
     public int pid;
-
     /// <summary>
     /// reserved
     /// </summary>
     public int reserved_2;
-
     /// <summary>
     /// es info length
     /// </summary>
     public int ES_info_length;
-
     /// <summary>
     /// audio language
     /// </summary>
@@ -79,7 +73,6 @@ namespace TvLibrary.Implementations.DVB.Structures
       stream_type = 3;
       isAudio = true;
     }
-
       /// <summary>
       /// Set the content of the descriptor for this PID
       /// </summary>
@@ -110,7 +103,6 @@ namespace TvLibrary.Implementations.DVB.Structures
               System.Array.Copy(data, 0, this.descriptor_data, start, descriptor_length);
           }
       }
-
       /// <summary>
       /// Checks if the descriptor data has been set
       /// </summary>
@@ -118,7 +110,6 @@ namespace TvLibrary.Implementations.DVB.Structures
       public bool HasDescriptorData() {
           return descriptor_data != null;
       }
-
       /// <summary>
       /// Returns the descriptor data
       /// </summary>
@@ -126,7 +117,6 @@ namespace TvLibrary.Implementations.DVB.Structures
       public byte[] GetDescriptorData() {
           return descriptor_data;
       }
-
     /// <summary>
     /// Ctor for an ac3 pid
     /// </summary> 
@@ -140,7 +130,6 @@ namespace TvLibrary.Implementations.DVB.Structures
       stream_type = 0x81;
       isAC3Audio = true;
     }
-
     /// <summary>
     /// Ctor for an video pid
     /// </summary>
@@ -175,6 +164,9 @@ namespace TvLibrary.Implementations.DVB.Structures
       isDVBSubtitle = true;
       stream_type = 5;
     }
+    /// <summary>
+    /// Determins if the pid is Mpeg-2 Layer 1 audio
+    /// </summary>
     public bool IsMpeg1Audio
     {
       get
@@ -182,6 +174,9 @@ namespace TvLibrary.Implementations.DVB.Structures
         return (isAudio && stream_type == 3);
       }
     }
+    /// <summary>
+    /// Determins if the pid is Mpeg-2 Layer 2 audio
+    /// </summary>
     public bool IsMpeg2Audio
     {
       get
@@ -189,6 +184,9 @@ namespace TvLibrary.Implementations.DVB.Structures
         return (isAudio && stream_type == 4);
       }
     }
+    /// <summary>
+    /// Determins if the pid is Mpeg-1 video
+    /// </summary>
     public bool IsMpeg1Video
     {
       get
@@ -196,6 +194,9 @@ namespace TvLibrary.Implementations.DVB.Structures
         return (isVideo && stream_type == 1);
       }
     }
+    /// <summary>
+    /// Determins if the pid is Mpeg-2 video
+    /// </summary>
     public bool IsMpeg2Video
     {
       get
@@ -203,6 +204,9 @@ namespace TvLibrary.Implementations.DVB.Structures
         return (isVideo && stream_type == 2);
       }
     }
+    /// <summary>
+    /// Determins if the pid is Mpeg-4 video
+    /// </summary>
     public bool IsMpeg4Video
     {
       get
@@ -210,6 +214,9 @@ namespace TvLibrary.Implementations.DVB.Structures
         return (isVideo && stream_type == 0x10);
       }
     }
+    /// <summary>
+    /// Determins if the pid is H,264 video
+    /// </summary>
     public bool IsH264Video
     {
       get
@@ -217,6 +224,9 @@ namespace TvLibrary.Implementations.DVB.Structures
         return (isVideo && stream_type == 0x1b);
       }
     }
+    /// <summary>
+    /// Determins if the pid is AAC audio
+    /// </summary>
     public bool IsAACAudio
     {
       get
@@ -224,6 +234,9 @@ namespace TvLibrary.Implementations.DVB.Structures
         return (isAudio && stream_type == 0x0f);
       }
     }
+    /// <summary>
+    /// Determins if the pid is LATM AAC audio
+    /// </summary>
     public bool IsLATMAACAudio
     {
       get

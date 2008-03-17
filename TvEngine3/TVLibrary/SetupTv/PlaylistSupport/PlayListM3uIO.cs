@@ -102,7 +102,7 @@ namespace MediaPortal.Playlists
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return false;
       }
@@ -167,7 +167,7 @@ namespace MediaPortal.Playlists
           }
         }
       }
-      catch (Exception e)
+      catch (Exception)
       {
       }
     }

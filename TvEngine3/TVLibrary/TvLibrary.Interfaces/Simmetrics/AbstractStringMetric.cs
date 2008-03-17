@@ -6,7 +6,6 @@ namespace api
 	
 	// Referenced classes of package api:
 	//            InterfaceStringMetric
-	
 	public abstract class AbstractStringMetric : InterfaceStringMetric
 	{
 		public abstract System.String ShortDescriptionString{get;}

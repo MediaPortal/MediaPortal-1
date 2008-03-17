@@ -176,6 +176,15 @@ namespace TvLibrary.Implementations.Analog
       _card.IsScanning = false;
       return null;
     }
+
+    /// <summary>
+    /// Tunes to channels based on the list the multiplexes that make up a DVB network.
+    /// This information is obtained from the DVB NIT (Network Information Table)
+    /// Not applicable for Analog.
+    /// </summary>
+    /// <param name="channel">channel to tune to</param>
+    /// <param name="settings">ScanParameters to use while tuning</param>
+    /// <returns></returns>
     public List<IChannel> ScanNIT(IChannel channel, ScanParameters settings)
     {
       return new List<IChannel>();

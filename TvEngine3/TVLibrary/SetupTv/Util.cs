@@ -759,15 +759,17 @@ namespace SetupTv
         {
           case 3:
             osName = "Windows NT 3.51";
+            MessageBox.Show("Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.", "Windows NT 3.51 is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             return;
           case 4:
             osName = "Windows NT 4.0";
+            MessageBox.Show("Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.", "Windows NT 4.0 is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             return;
           case 5:
             if (osInfo.Version.Minor == 0)
             {
               osName = "Windows 2000";
-              MessageBox.Show("Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.", "Windows 2000 not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+              MessageBox.Show("Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.", "Windows 2000 is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
               if (checkDvbFix)
                 CheckForDvbHotfix();
             }

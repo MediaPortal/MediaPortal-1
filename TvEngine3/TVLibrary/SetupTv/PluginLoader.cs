@@ -73,7 +73,7 @@ namespace SetupTv
                     _plugins.Add(plugin);
                   }
                 }
-                catch (System.Reflection.TargetInvocationException ex)
+                catch (System.Reflection.TargetInvocationException)
                 {
                   Log.WriteFile("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", t.FullName);
                   continue;
