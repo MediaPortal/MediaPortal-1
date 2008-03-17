@@ -769,14 +769,14 @@ namespace SetupTv
             else if (osInfo.Version.Minor == 1)
             {
               osName = "Windows XP";
-              if (checkDvbFix)              
-                CheckForDvbHotfix();              
+              if (checkDvbFix)
+                CheckForDvbHotfix();
             }
             else if (osInfo.Version.Minor == 2)
             {
               osName = "Windows Server 2003";
               if (checkDvbFix)
-                CheckForDvbHotfix();   
+                CheckForDvbHotfix();
             }
             break;
           case 6:
@@ -791,7 +791,7 @@ namespace SetupTv
     private static void CheckForDvbHotfix()
     {
       //if (!CheckRegistryForInstalledSoftware("KB896626")) // Search for the DVB Hotfix
-      string DvbFixLocation = GetRegisteredAssemblyPath("Psisdecd.dll");
+      string DvbFixLocation = GetRegisteredAssemblyPath("Psisdecd");
       if (!string.IsNullOrEmpty(DvbFixLocation))
       {
         if (File.Exists(DvbFixLocation))
@@ -803,7 +803,7 @@ namespace SetupTv
           MessageBox.Show(string.Format("Unable to check MP's requirements - Psisdecd.dll not found in path {0}!", DvbFixLocation), "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       else
-        MessageBox.Show(string.Format("Unable to check MP's requirements - Psisdecd.dll not registered on your system!"), "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Unable to check MP's requirements - Psisdecd.dll is not registered on your system!", "DVB-Hotfix (KB896626) missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
     /// <summary>
@@ -839,29 +839,40 @@ namespace SetupTv
     /// <returns>The full path the dll or an empty string</returns>
     public static string GetRegisteredAssemblyPath(string aFilename)
     {
-      using (RegistryKey AssemblyKey = Registry.ClassesRoot.OpenSubKey("CLSID"))
+      try
       {
-        string[] reggedComps = AssemblyKey.GetSubKeyNames();
-        foreach (string aFilter in reggedComps)
+        using (RegistryKey AssemblyKey = Registry.ClassesRoot.OpenSubKey("CLSID"))
         {
-          using (RegistryKey key = AssemblyKey.OpenSubKey(aFilter))
+          string[] reggedComps = AssemblyKey.GetSubKeyNames();
+          foreach (string aFilter in reggedComps)
           {
-            if (key != null)
+            try
             {
-              using (RegistryKey defaultkey = key.OpenSubKey("InprocServer32"))
+              using (RegistryKey key = AssemblyKey.OpenSubKey(aFilter))
               {
-                if (defaultkey != null)
+                if (key != null)
                 {
-                  string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
-                  if (!string.IsNullOrEmpty(friendlyName) && friendlyName.IndexOf(aFilename) >= 0)
+                  using (RegistryKey defaultkey = key.OpenSubKey("InprocServer32"))
                   {
-                    return friendlyName;
+                    if (defaultkey != null)
+                    {
+                      string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
+                      if (!string.IsNullOrEmpty(friendlyName) && friendlyName.IndexOf(aFilename) >= 0)
+                      {
+                        return friendlyName;
+                      }
+                    }
                   }
                 }
               }
             }
+            catch (Exception) { }
           }
         }
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename, ex.Message));
       }
       return string.Empty;
     }
