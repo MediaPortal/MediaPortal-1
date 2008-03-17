@@ -60,6 +60,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The capture filter.</param>
     /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
+    /// <param name="card">Determines the type of TV card</param>
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter, TvCardDvbBase card)
     {
       try

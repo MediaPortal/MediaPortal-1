@@ -178,6 +178,11 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);
       Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
 
+      string txt = "";
+      for (int i = 0; i < 4; ++i)
+        txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
+      Log.Log.WriteFile("Hauppauge: setdiseqc: {0}", txt);
+
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
       Log.Log.Info("Hauppauge: setdiseqc returned:{0:X}", hr);
     }
@@ -238,15 +243,13 @@ namespace TvLibrary.Implementations.DVB
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempInstance, 32, _tempValue, 4);
         Log.Log.Info("Hauppauge:  returned:{0:X}", hr);
       }
-
       //get Pilot
-      if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
+      /*if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
         Log.Log.Info("Hauppauge: Get Pilot");
         hr = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempInstance, 32, _tempValue, 4, out length);
         Log.Log.Info("Hauppauge:   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
-      }
-
+      }*/
       //Set the Roll-off
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
@@ -256,14 +259,13 @@ namespace TvLibrary.Implementations.DVB
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance, 32, _tempValue, 4);
         Log.Log.Info("Hauppauge:   returned:{0:X}", hr);
       }
-
       //get roll-off
-      if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
+      /*if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
         Log.Log.Info("Hauppauge: Get BDA Roll-Off");
         hr = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance, 32, _tempValue, 4, out length);
         Log.Log.Info("Hauppauge:   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
-      }
+      }*/
     }
   }
 }
