@@ -119,9 +119,8 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 !define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_FINISHPAGE_RUN
-!define MUI_FINISHPAGE_RUN_TEXT     "Run TV-Server Configuration"
-!define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
+!define MUI_FINISHPAGE_RUN      "$INSTDIR\SetupTV.exe"
+!define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
@@ -626,13 +625,6 @@ Function un.onUninstSuccess
         FileClose $0
     noreboot:
 
-FunctionEnd
-
-; Start the Setup after the successfull install
-; needed in an extra function to set the working directory
-Function RunConfig
-    SetOutPath $INSTDIR
-    Exec "$INSTDIR\SetupTV.exe"
 FunctionEnd
 
 Function WelcomeLeave
