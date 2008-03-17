@@ -801,7 +801,7 @@ namespace SetupTv
           MessageBox.Show(string.Format("Your version of Psisdecd.dll in path {0} has too many bugs! \nPlease check our Wiki's requirements page.", DvbFixLocation), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
       else
-        MessageBox.Show(string.Format("Psisdecd.dll neither registerd nor found in path {0}! \nPlease check our Wiki's requirements page.", DvbFixLocation), "Microsoft SI/PSI parser missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(string.Format("Psisdecd.dll is neither registered nor located in path {0}! \nPlease check our Wiki's requirements page.", DvbFixLocation), "Microsoft SI/PSI parser missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
     /// <summary>
