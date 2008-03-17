@@ -22,17 +22,18 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Reflection;
 using System.Data;
 using System.Data.SqlClient;
-using MySql.Data.MySqlClient;
 using System.Windows.Forms;
 using System.Xml;
 using System.Net;
+using MySql.Data.MySqlClient;
 using TvLibrary.Log;
-using System.Diagnostics;
+
 
 namespace SetupTv
 {
@@ -137,7 +138,7 @@ namespace SetupTv
 
         case ProviderType.MySql:
           if (database == "") database = "mysql";
-          return String.Format("Server={0};Database={3};User ID={1};Password={2};", server, userid, password, database);
+          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;", server, userid, password, database);
       }
       return "";
     }
