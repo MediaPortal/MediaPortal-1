@@ -111,7 +111,7 @@ namespace SetupTv.Sections
 
     void Init()
     {
-      if (checkBoxQAM.Enabled != true)
+      if (checkBoxQAM.Enabled != true || checkBoxQAM.Checked == false)
       {
         mpComboBoxFrequencies.Enabled = false;
       }
@@ -397,5 +397,10 @@ namespace SetupTv.Sections
       lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem.EnsureVisible();
     }
+
+      private void checkBoxQAM_CheckedChanged(object sender, EventArgs e)
+      {
+          mpComboBoxFrequencies.Enabled = checkBoxQAM.Checked;
+      }
   }
 }
