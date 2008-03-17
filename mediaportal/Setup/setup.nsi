@@ -32,20 +32,14 @@
 #
 #**********************************************************************************************************#
 Name "MediaPortal"
-SetCompressor lzma
-#SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
+#SetCompressor lzma
+SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
 
 #---------------------------------------------------------------------------
 # VARIABLES
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
-# [OBSOLETE] Var WindowsVersion  ; The Windows Version
 Var CommonAppData   ; The Common Application Folder
-# [OBSOLETE] Var DSCALER         ; Should we install Dscaler Filter
-# [OBSOLETE] Var GABEST          ; Should we install Gabest Filter
-# [OBSOLETE] Var FilterDir       ; The Directory, where the filters have been installed  
-# [OBSOLETE] Var LibInstall      ; Needed for Library Installation
-# [OBSOLETE] Var TmpDir          ; Needed for the Uninstaller
 ; variables for commandline parameters for Installer
 Var noDscaler
 Var noGabest
@@ -122,9 +116,7 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN      "$INSTDIR\Configuration.exe"
-#!define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
-#!define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
@@ -856,13 +848,6 @@ Function un.onUninstSuccess
     noreboot:
 
 FunctionEnd
-
-; Start the Setup after the successfull install
-; needed in an extra function to set the working directory
-#Function RunConfig
-#    SetOutPath $INSTDIR
-#    Exec "$INSTDIR\Configuration.exe"
-#FunctionEnd
 
 Function WelcomeLeave
     ; check if MP is already installed
