@@ -257,9 +257,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     File ..\..\Filters\bin\hauppauge.dll
     File ..\..\Filters\bin\hcwWinTVCI.dll
     File ..\..\Filters\bin\KNCBDACTRL.dll
+    File ..\..\Filters\bin\StreamingServer.dll
     File ..\..\Filters\bin\ttBdaDrvApi_Dll.dll
     File ..\..\Filters\bin\ttdvbacc.dll
-    File ..\..\Filters\sources\StreamingServer\release\StreamingServer.dll
 
     ; Common App Data Files
     SetOutPath "$CommonAppData"
@@ -275,7 +275,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
     ; filters for analog tv
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mpFileWriter.ax $INSTDIR\mpFileWriter.ax $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\PDMpgMux.ax $INSTDIR\PDMpgMux.ax $INSTDIR
 
     #---------------------------------------------------------------------------
@@ -321,7 +320,6 @@ ${MementoSectionEnd}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
     ; filters for analog tv
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\mpFileWriter.ax
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\PDMpgMux.ax
 
     DetailPrint "remove files..."
@@ -407,6 +405,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
     File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
     File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
     File ..\TvPlugin\TvPlugin\Gentle.config
+
     ; The Plugins
     SetOutPath $MPBaseDir\Plugins\Process
     File ..\Plugins\PowerScheduler\ClientPlugin\bin\Release\PowerSchedulerClientPlugin.dll
@@ -419,13 +418,6 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
     #---------------------------------------------------------------------------
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
-
-    # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\RtspSource.ax $MPBaseDir\RtspSource.ax $MPBaseDir
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TSFileSource.ax $MPBaseDir\TSFileSource.ax $MPBaseDir
-
-    # [OBSOLETE] not needed because it's already installed by mp
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $MPBaseDir\TsReader.ax $MPBaseDir
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
     DetailPrint "Uninstalling MediaPortal TV Client plugin..."
@@ -437,17 +429,10 @@ ${MementoSectionEnd}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
 
-    # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\TSFileSource.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\RtspSource.ax
-
-    # [OBSOLETE] not needed because it's already installed by mp
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\TsReader.ax
-    
     ; The Plugins
     Delete /REBOOTOK $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
     Delete /REBOOTOK $MPBaseDir\Plugins\Windows\TvPlugin.dll
-    
+
     ; Common Files
     Delete /REBOOTOK $MPBaseDir\PowerScheduler.Interfaces.dll
     Delete /REBOOTOK $MPBaseDir\TvControl.dll
@@ -461,12 +446,6 @@ ${MementoSectionEnd}
     Delete /REBOOTOK $MPBaseDir\TvBusinessLayer.dll
     Delete /REBOOTOK $MPBaseDir\TvLibrary.Interfaces.dll
     Delete /REBOOTOK $MPBaseDir\Gentle.config
-    
-    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\DVBSub2.ax
-    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\RtspSource.ax
-    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\TSFileSource.ax
-    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\TsReader.ax
-    # [OBSOLETE] Delete /REBOOTOK  $MPBaseDir\mmaacd.ax
 !macroend
 
 ${MementoSectionDone}
