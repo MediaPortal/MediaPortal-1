@@ -39,8 +39,6 @@ RequestExecutionLevel admin
 # VARIABLES
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
-# [OBSOLETE] Var LibInstall
-# [OBSOLETE] Var LibInstall2
 Var CommonAppData
 Var MPBaseDir
 Var InstallPath
@@ -196,14 +194,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
     ReadRegStr $InstallPath HKLM "${REG_UNINSTALL}" InstallPath
     ${If} $InstallPath != ""
-        #MessageBox MB_OKCANCEL|MB_ICONQUESTION "TV Server is already installed.$\r$\nPress 'OK' to overwrite the existing installation$\r$\nPress 'Cancel' to Abort the installation" /SD IDOK IDOK lbl_install IDCANCEL 0
-        #DetailPrint "User pressed Cancel. Skipping installation"
-        #Return
-      #lbl_install:
-        # Uninstall / Stop the TV Service before proceeding with the installation
-        DetailPrint "DeInstalling TVService"
+        DetailPrint "Uninstalling TVService"
         ExecWait '"$InstallPath\TVService.exe" /uninstall'
-        DetailPrint "Finished DeInstalling TVService"
+        DetailPrint "Finished uninstalling TVService"
     ${EndIf}
 
     Pop $0
@@ -370,9 +363,9 @@ ${MementoSectionEnd}
     Delete /REBOOTOK $INSTDIR\hauppauge.dll
     Delete /REBOOTOK $INSTDIR\hcwWinTVCI.dll
     Delete /REBOOTOK $INSTDIR\KNCBDACTRL.dll
+    Delete /REBOOTOK $INSTDIR\StreamingServer.dll
     Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
     Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
-    Delete /REBOOTOK $INSTDIR\StreamingServer.dll
     
     ; remove Start Menu shortcuts
     Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk"
@@ -586,26 +579,6 @@ Function .onInit
     noSilent:
     
     !insertmacro SetCommonAppData
-
-    /*
-    ; Needed for Library Install
-    ; Look if we already have a registry entry for TV Server. if this is the case we don't need to install anymore the Shared Libraraies
-    Push $0
-    ReadRegStr $0 HKLM "${REG_UNINSTALL}" InstallPath
-    ClearErrors
-    StrCmp $0 "" +2
-    StrCpy $LibInstall 1
-    Pop $0
-
-    ; Needed for Library Install
-    ; Look if we already have a registry entry for MP. if this is the case we don't need to install anymore the Shared Libraraies
-    Push $0
-    ReadRegSTR $0 HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-    ClearErrors
-    StrCmp $0 "" +2
-    StrCpy $LibInstall2 1
-    Pop $0
-    */
 FunctionEnd
 
 Function .onSelChange
