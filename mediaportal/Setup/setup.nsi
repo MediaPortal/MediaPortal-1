@@ -287,7 +287,6 @@ ${MementoSection} "MediaPortal core files (required)" SecCore
     File ..\xbmc\bin\Release\dxerr9.dll
     File ..\xbmc\bin\Release\DXUtil.dll
     File ..\xbmc\bin\Release\edtftpnet-1.2.2.dll
-    File ..\xbmc\bin\Release\edtftpnet-1.2.5.dll
     File ..\xbmc\bin\Release\FastBitmap.dll
     File ..\xbmc\bin\Release\fontEngine.dll
     File ..\xbmc\bin\Release\FTD2XX.DLL
@@ -407,36 +406,16 @@ ${MementoSection} "MediaPortal core files (required)" SecCore
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\cdxareader.ax $INSTDIR\cdxareader.ax $INSTDIR
     ##### MAYBE used by VideoEditor
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\CLDump.ax $INSTDIR\CLDump.ax $INSTDIR
-    ;filter for analog tv
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MpgMux.ax $INSTDIR\MpgMux.ax $INSTDIR
     ; used for scanning in tve2
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPSA.ax $INSTDIR\MPSA.ax $INSTDIR
+    ;filter for analog tv
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\PDMpgMux.ax $INSTDIR\PDMpgMux.ax $INSTDIR
     ; used for shoutcast
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\shoutcastsource.ax $INSTDIR\shoutcastsource.ax $INSTDIR
     ; used for digital tv
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
     ##### not sure for what this is used
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TTPremiumSource.ax $INSTDIR\TTPremiumSource.ax $INSTDIR
-    ##### not sure for what this is used
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\WinTVCapWriter.ax $INSTDIR\WinTVCapWriter.ax $INSTDIR
-
-    # [MAYBE OBSOLETE] File ..\xbmc\bin\Release\
-    # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPReader.ax $INSTDIR\MPReader.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTS.ax $INSTDIR\MPTS.ax $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MPTSWriter.ax $INSTDIR\MPTSWriter.ax $INSTDIR
-
-    # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TSFileSource.ax $INSTDIR\TSFileSource.ax $INSTDIR
-
-    # [OBSOLETE] Common DLLs
-    # [OBSOLETE] Installing the Common dll
-    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71.dll $INSTDIR\MFC71.dll $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\MFC71u.dll $INSTDIR\MFC71u.dll $INSTDIR
-    
-    # [OBSOLETE] not needed anymore after a code change made by diehard in rev 17975
-    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcp71.dll $INSTDIR\msvcp71.dll $INSTDIR
-    # [OBSOLETE] !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\msvcr71.dll $INSTDIR\msvcr71.dll $INSTDIR
 ${MementoSectionEnd}
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
@@ -449,36 +428,16 @@ ${MementoSectionEnd}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\cdxareader.ax
     ##### MAYBE used by VideoEditor
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\CLDump.ax
-    ;filter for analog tv
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MpgMux.ax
     ; used for scanning in tve2
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MPSA.ax
+    ;filter for analog tv
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\PDMpgMux.ax
     ; used for shoutcast
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\shoutcastsource.ax
     ; used for digital tv
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
     ##### not sure for what this is used
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TTPremiumSource.ax
-    ##### not sure for what this is used
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\WinTVCapWriter.ax
-
-    # [OBSOLETE] frodos first try for ts
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MPReader.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MPTS.ax
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MPTSWriter.ax
-
-    # [OBSOLETE] replaced by tsreader
-    # [OBSOLETE] !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TSFileSource.ax
-
-    # [OBSOLETE] Common DLLs will not be removed. Too Dangerous
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC71.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC71u.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC80.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\MFC80u.dll
-
-    # [OBSOLETE] not needed anymore after a code change made by diehard in rev 17975
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\msvcp71.dll
-    # [OBSOLETE] !insertmacro UnInstallLib DLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\msvcr71.dll
 
     ; Config Files
     Delete /REBOOTOK  $CommonAppData\CaptureCardDefinitions.xml
@@ -549,7 +508,6 @@ ${MementoSectionEnd}
     Delete /REBOOTOK  $INSTDIR\dxerr9.dll
     Delete /REBOOTOK  $INSTDIR\DXUtil.dll
     Delete /REBOOTOK  $INSTDIR\edtftpnet-1.2.2.dll
-    Delete /REBOOTOK  $INSTDIR\edtftpnet-1.2.5.dll
     Delete /REBOOTOK  $INSTDIR\FastBitmap.dll
     Delete /REBOOTOK  $INSTDIR\fontEngine.dll
     Delete /REBOOTOK  $INSTDIR\FTD2XX.DLL
