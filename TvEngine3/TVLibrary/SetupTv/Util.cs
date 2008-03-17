@@ -796,9 +796,9 @@ namespace SetupTv
     private static void CheckForDvbHotfix()
     {
       //if (!CheckRegistryForInstalledSoftware("KB896626")) // Search for the DVB Hotfix
-      string DvbFixLocation = GetRegisteredAssemblyPath("Psisdecd");
+      string DvbFixLocation = GetRegisteredAssemblyPath("PsisDecd");
       if (string.IsNullOrEmpty(DvbFixLocation))
-        DvbFixLocation = "%SYSTEMROOT%\\SYSTEM32\\Psisdecd.dll";
+        DvbFixLocation = "%SYSTEMROOT%\\SYSTEM32\\PsisDecd.dll";
 
       if (File.Exists(DvbFixLocation))
       {
@@ -821,15 +821,15 @@ namespace SetupTv
       {
         System.Version desiredVersion = new System.Version(aMinimumVersion);
         FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
-        if (!string.IsNullOrEmpty(fileVersion.FileVersion))
+        if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
         {
-          System.Version compareVersion = new System.Version(fileVersion.FileVersion);
+          System.Version compareVersion = new System.Version(fileVersion.ProductVersion);
           return compareVersion >= desiredVersion;
         }
         else
           return false;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return false;
       }
