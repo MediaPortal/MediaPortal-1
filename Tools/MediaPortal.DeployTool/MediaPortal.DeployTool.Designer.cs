@@ -334,6 +334,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MediaPortal is FREE, if you bought it on ebay, then you have been fooled ;-(.
+        /// </summary>
+        internal static string Finished_labelEbay {
+            get {
+                return ResourceManager.GetString("Finished_labelEbay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Congratulations !.
         /// </summary>
         internal static string Finished_labelHeading1 {
@@ -981,7 +990,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thank you for choosing MediaPortal!.
+        ///   Looks up a localized string similar to Thank you for choosing MediaPortal. . The FREE OpenSource MediaCenter!.
         /// </summary>
         internal static string Welcome_labelHeading1 {
             get {

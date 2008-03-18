@@ -53,6 +53,7 @@ namespace MediaPortal.DeployTool
       linkHomepage.Text = Localizer.Instance.GetString("Finished_linkHomepage");
       linkForum.Text = Localizer.Instance.GetString("Finished_linkForum");
       linkWiki.Text = Localizer.Instance.GetString("Finished_linkWiki");
+      labelEbay.Text = Localizer.Instance.GetString("Finished_labelEbay");
     }
     public override DeployDialog GetNextDialog()
     {

@@ -438,7 +438,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Select the installation folder for the TV-Server</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>Thank you for choosing MediaPortal!</value>
+    <value>Thank you for choosing MediaPortal. . The FREE OpenSource MediaCenter!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
     <value>This deployment tool will guide you through the installation process</value>
@@ -448,5 +448,8 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
     <value>Please select your language before you continue</value>
+  </data>
+  <data name="Finished_labelEbay" xml:space="preserve">
+    <value>MediaPortal is FREE, if you bought it on ebay, then you have been fooled ;-(</value>
   </data>
 </root>
