@@ -37,18 +37,18 @@ namespace MediaPortal.DeployTool
         // 
         // labelSectionHeader
         // 
-        this.labelSectionHeader.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelSectionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelSectionHeader.Location = new System.Drawing.Point(53, 28);
-        this.labelSectionHeader.Size = new System.Drawing.Size(308, 16);
+        this.labelSectionHeader.Size = new System.Drawing.Size(328, 16);
         this.labelSectionHeader.Text = "Do you want to watch HDTV with MediaPortal ?";
         // 
         // rbYesHD
         // 
         this.rbYesHD.AutoSize = true;
-        this.rbYesHD.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.rbYesHD.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbYesHD.Location = new System.Drawing.Point(94, 96);
         this.rbYesHD.Name = "rbYesHD";
-        this.rbYesHD.Size = new System.Drawing.Size(246, 18);
+        this.rbYesHD.Size = new System.Drawing.Size(240, 17);
         this.rbYesHD.TabIndex = 9;
         this.rbYesHD.TabStop = true;
         this.rbYesHD.Text = "Yes, I will use MediaPortal  to watch HD stuff.";
@@ -57,10 +57,10 @@ namespace MediaPortal.DeployTool
         // rbNoHD
         // 
         this.rbNoHD.AutoSize = true;
-        this.rbNoHD.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.rbNoHD.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbNoHD.Location = new System.Drawing.Point(94, 141);
         this.rbNoHD.Name = "rbNoHD";
-        this.rbNoHD.Size = new System.Drawing.Size(247, 18);
+        this.rbNoHD.Size = new System.Drawing.Size(244, 17);
         this.rbNoHD.TabIndex = 10;
         this.rbNoHD.TabStop = true;
         this.rbNoHD.Text = "No, I won\'t use MediaPortal to watch HD stuff.";
@@ -79,10 +79,10 @@ namespace MediaPortal.DeployTool
         // rbMaybeHD
         // 
         this.rbMaybeHD.AutoSize = true;
-        this.rbMaybeHD.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.rbMaybeHD.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbMaybeHD.Location = new System.Drawing.Point(94, 180);
         this.rbMaybeHD.Name = "rbMaybeHD";
-        this.rbMaybeHD.Size = new System.Drawing.Size(168, 18);
+        this.rbMaybeHD.Size = new System.Drawing.Size(164, 17);
         this.rbMaybeHD.TabIndex = 12;
         this.rbMaybeHD.TabStop = true;
         this.rbMaybeHD.Text = "I don\'t know what is HD stuff.";

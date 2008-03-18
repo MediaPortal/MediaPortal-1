@@ -48,10 +48,10 @@ namespace MediaPortal.DeployTool
         // labelOneClickCaption
         // 
         this.labelOneClickCaption.AutoSize = true;
-        this.labelOneClickCaption.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelOneClickCaption.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelOneClickCaption.Location = new System.Drawing.Point(88, 25);
         this.labelOneClickCaption.Name = "labelOneClickCaption";
-        this.labelOneClickCaption.Size = new System.Drawing.Size(156, 16);
+        this.labelOneClickCaption.Size = new System.Drawing.Size(153, 16);
         this.labelOneClickCaption.TabIndex = 1;
         this.labelOneClickCaption.Text = "One Click Installation";
         // 
@@ -76,10 +76,10 @@ namespace MediaPortal.DeployTool
         // labelAdvancedCaption
         // 
         this.labelAdvancedCaption.AutoSize = true;
-        this.labelAdvancedCaption.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelAdvancedCaption.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelAdvancedCaption.Location = new System.Drawing.Point(88, 140);
         this.labelAdvancedCaption.Name = "labelAdvancedCaption";
-        this.labelAdvancedCaption.Size = new System.Drawing.Size(159, 16);
+        this.labelAdvancedCaption.Size = new System.Drawing.Size(157, 16);
         this.labelAdvancedCaption.TabIndex = 5;
         this.labelAdvancedCaption.Text = "Advanced Installation";
         // 
@@ -123,7 +123,7 @@ namespace MediaPortal.DeployTool
         this.rbAdvanced.Text = "Do an advanced installation";
         this.rbAdvanced.UseVisualStyleBackColor = true;
         // 
-        // BaseInstallationTypeWithTvEngineDlg
+        // BaseInstallationTypeWithoutTvEngineDlg
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -135,7 +135,7 @@ namespace MediaPortal.DeployTool
         this.Controls.Add(this.pictureBox1);
         this.Controls.Add(this.labelOneClickDesc);
         this.Controls.Add(this.labelOneClickCaption);
-        this.Name = "BaseInstallationTypeWithTvEngineDlg";
+        this.Name = "BaseInstallationTypeWithoutTvEngineDlg";
         this.Size = new System.Drawing.Size(542, 266);
         this.Controls.SetChildIndex(this.labelOneClickCaption, 0);
         this.Controls.SetChildIndex(this.labelOneClickDesc, 0);

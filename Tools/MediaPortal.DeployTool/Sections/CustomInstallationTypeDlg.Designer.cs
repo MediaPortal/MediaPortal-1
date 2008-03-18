@@ -71,7 +71,7 @@ namespace MediaPortal.DeployTool
         // 
         this.rbTvServerMaster.AutoSize = true;
         this.rbTvServerMaster.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.rbTvServerMaster.Location = new System.Drawing.Point(3, 88);
+        this.rbTvServerMaster.Location = new System.Drawing.Point(7, 88);
         this.rbTvServerMaster.Name = "rbTvServerMaster";
         this.rbTvServerMaster.Size = new System.Drawing.Size(397, 17);
         this.rbTvServerMaster.TabIndex = 6;

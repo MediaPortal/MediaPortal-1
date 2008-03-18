@@ -36,18 +36,18 @@ namespace MediaPortal.DeployTool
         // 
         // labelSectionHeader
         // 
-        this.labelSectionHeader.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.labelSectionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelSectionHeader.Location = new System.Drawing.Point(53, 28);
-        this.labelSectionHeader.Size = new System.Drawing.Size(290, 16);
+        this.labelSectionHeader.Size = new System.Drawing.Size(306, 16);
         this.labelSectionHeader.Text = "Do you want to watch TV with MediaPortal ?";
         // 
         // rbYesWatchTv
         // 
         this.rbYesWatchTv.AutoSize = true;
-        this.rbYesWatchTv.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.rbYesWatchTv.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbYesWatchTv.Location = new System.Drawing.Point(94, 96);
         this.rbYesWatchTv.Name = "rbYesWatchTv";
-        this.rbYesWatchTv.Size = new System.Drawing.Size(217, 18);
+        this.rbYesWatchTv.Size = new System.Drawing.Size(212, 17);
         this.rbYesWatchTv.TabIndex = 9;
         this.rbYesWatchTv.TabStop = true;
         this.rbYesWatchTv.Text = "Yes, I will use MediaPortal to watch TV.";
@@ -56,10 +56,10 @@ namespace MediaPortal.DeployTool
         // rbNoWatchTv
         // 
         this.rbNoWatchTv.AutoSize = true;
-        this.rbNoWatchTv.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.rbNoWatchTv.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbNoWatchTv.Location = new System.Drawing.Point(94, 141);
         this.rbNoWatchTv.Name = "rbNoWatchTv";
-        this.rbNoWatchTv.Size = new System.Drawing.Size(221, 18);
+        this.rbNoWatchTv.Size = new System.Drawing.Size(219, 17);
         this.rbNoWatchTv.TabIndex = 10;
         this.rbNoWatchTv.TabStop = true;
         this.rbNoWatchTv.Text = "No, I won\'t use MediaPortal to watch TV.";
