@@ -191,13 +191,13 @@ MediaPortal UserInterface.</value>
   </data>
   <data name="CustomInstallation_rbClient" xml:space="preserve">
     <value>MediaPortal Client</value>
-    </data>
+  </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
     <value>This will only install MediaPortal 1.0. To watch TV, it will connect to an dedicated TV-Server in your LAN.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Singleseat Installation</value>
-    </data>
+  </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>This is the right setup for you if the TV-Cards are installed in the same PC as you want
 to use MediaPortal and watch TV on MediaPortal 1.0.</value>
@@ -211,7 +211,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   </data>
   <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
     <value>Dedicated TV-Server (slave, existing TV-Server (master) required)</value>
-    </data>
+  </data>
   <data name="CustomInstallation_labelSlave" xml:space="preserve">
     <value>This will only install the MediaPortal TV-Server on this PC. 
 The PC will then act as dedicated TV-Server and provide other PC's in your LAN with TV. (no database required)</value>
@@ -371,7 +371,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Exit</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
-    <value>This application will guide you through the installation of MediaPortal and all the requiered.</value>
+    <value>This application will guide you through the installation of MediaPortal and all the required components.</value>
     <comment>Heading directly under MP image</comment>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">

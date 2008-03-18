@@ -676,7 +676,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This application will guide you through the installation of MediaPortal and all the requiered..
+        ///   Looks up a localized string similar to This application will guide you through the installation of MediaPortal and all the required components..
         /// </summary>
         internal static string MainWindow_labelAppHeading {
             get {

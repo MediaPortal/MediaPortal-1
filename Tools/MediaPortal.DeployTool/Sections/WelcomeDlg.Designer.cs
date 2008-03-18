@@ -40,7 +40,7 @@ namespace MediaPortal.DeployTool
         // 
         this.labelHeading1.AutoSize = true;
         this.labelHeading1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.labelHeading1.Location = new System.Drawing.Point(159, 16);
+        this.labelHeading1.Location = new System.Drawing.Point(179, 16);
         this.labelHeading1.Name = "labelHeading1";
         this.labelHeading1.Size = new System.Drawing.Size(460, 16);
         this.labelHeading1.TabIndex = 1;
