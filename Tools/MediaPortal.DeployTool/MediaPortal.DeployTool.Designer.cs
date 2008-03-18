@@ -208,7 +208,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dedicated TV-Server (slave).
+        ///   Looks up a localized string similar to Dedicated TV-Server (slave, existing TV-Server (master) required).
         /// </summary>
         internal static string CustomInstallation_rbTvServerSlave {
             get {
