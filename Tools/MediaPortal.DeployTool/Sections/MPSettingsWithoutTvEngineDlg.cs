@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,64 +30,54 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using System.Collections.Specialized;
+using System.IO;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class WelcomeDlg : DeployDialog, IDeployDialog
+  public partial class MPSettingsWithoutTvEngineDlg : DeployDialog, IDeployDialog
   {
-    public WelcomeDlg()
+      public MPSettingsWithoutTvEngineDlg()
     {
       InitializeComponent();
-      type = DialogType.Welcome;
-      cbLanguage.SelectedIndex = 0;
+      type = DialogType.MPSettingsWithoutTvEngine;
+      textBoxDir.Text=Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
       UpdateUI();
     }
 
     #region IDeplayDialog interface
     public override void UpdateUI()
     {
-      labelHeading1.Text = Localizer.Instance.GetString("Welcome_labelHeading1");
-      if (InstallationProperties.Instance.Get("SVNMode") == "true")
-        labelHeading2.Text = Localizer.Instance.GetString("Welcome_labelHeading2_SVN");
-      else
-        labelHeading2.Text = Localizer.Instance.GetString("Welcome_labelHeading2");
-      labelHeading3.Text = Localizer.Instance.GetString("Welcome_labelHeading3");
+      labelHeading.Text = Localizer.Instance.GetString("MPSettings_labelHeading");
+      labelInstDir.Text = Localizer.Instance.GetString("MPSettings_labelInstDir");
+      buttonBrowse.Text = Localizer.Instance.GetString("MPSettings_buttonBrowse");
     }
     public override DeployDialog GetNextDialog()
     {
-      DialogFlowHandler.Instance.ResetHistory();
-      if (InstallationProperties.Instance.Get("SVNMode") == "true")
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation_SVN);
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
     }
     public override bool SettingsValid()
     {
+      if (!Utils.CheckTargetDir(textBoxDir.Text))
+      {
+        Utils.ErrorDlg(Localizer.Instance.GetString("MPSettings_errInvalidPath"));
+        return false;
+      }
       return true;
     }
     public override void SetProperties()
     {
-      InstallationProperties.Instance.Set("language",GetLanguageId());
+      InstallationProperties.Instance.Set("MPDir", textBoxDir.Text);
     }
     #endregion
 
-    private string GetLanguageId()
+    private void buttonBrowse_Click(object sender, EventArgs e)
     {
-      switch (cbLanguage.Text)
-      {
-        case "english":
-          return "en-US";
-        case "german":
-          return "de-DE";
-      }
-      return "en-US";
+      FolderBrowserDialog dlg = new FolderBrowserDialog();
+      dlg.Description = Localizer.Instance.GetString("MPSettings_msgSelectDir");
+      dlg.SelectedPath = textBoxDir.Text;
+      if (dlg.ShowDialog() == DialogResult.OK)
+        textBoxDir.Text = dlg.SelectedPath;
     }
-
-    private void cbLanguage_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      Localizer.Instance.SwitchCulture(GetLanguageId());
-      UpdateUI();
-    }
-
   }
 }

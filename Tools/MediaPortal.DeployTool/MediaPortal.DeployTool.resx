@@ -117,6 +117,57 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="WatchTV_labelSectionHeader" xml:space="preserve">
+    <value>Do you want to watch TV with MediaPortal ?</value>
+  </data>
+  <data name="WatchTV_on" xml:space="preserve">
+    <value>Yes, I will use MediaPortal to watch TV.</value>
+  </data>
+  <data name="WatchTV_off" xml:space="preserve">
+    <value>No, I won't use MediaPortal to watch TV.</value>
+  </data>
+  <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
+    <value>Do you want to watch HDTV with MediaPortal ?</value>
+  </data>
+  <data name="WatchHDTv_yes" xml:space="preserve">
+    <value>Yes, I will use MediaPortal  to watch HD stuff.</value>
+  </data>
+  <data name="WatchHDTv_no" xml:space="preserve">
+    <value>No, I won't use MediaPortal to watch HD stuff.</value>
+  </data>
+  <data name="WatchHDTv_maybe" xml:space="preserve">
+    <value>I don't know what is HD stuff.</value>
+  </data>
+  <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
+    <value>Which TV-Engine do you want to use ?</value>
+  </data>
+  <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
+    <value>In-build TV-Engine of MediaPortal 1.0.</value>
+  </data>
+  <data name="TvEngineType_rbTvEngine" xml:space="preserve">
+    <value>MediaPortal TV-Server 1.0</value>
+  </data>
+  <data name="TvEngineType_labelTvEngine" xml:space="preserve">
+    <value>Differences between TV-Server 1.0 and inbuild TV-Engine of MediaPortal 1.0:
++ full dvb-subtitle support
++ support HD-TV (dvb-s2 / h.264) and AAC audio (Norway, New Zealand, Australia)
++ hybrid tuner support (cards that share a tuner for DVB or analog)
++ automaticcaly detects any TV-card (analog, dvb-c, -s, -s2, -t, atsc)
++ ATSC QAM (Cable TV) support
++ allows to record in mpg or ts fileformat
++ atsc/dvb allows tuning multiple channels within same transponder/mux with one card
++ is able to provide multiple clients in the LAN with TV
+- requires MySQL or MS-SQL (will get installed automatically if not present in your system)
+
+The TV-Server completely replaces the inbuild TV-Engine, and seamlessly integrates into the 
+MediaPortal UserInterface.</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
+    <value>All required applications will be installed into their default locations and with the default settings.</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
+    <value>The advanced installation allows you to specify installation locations and other settings</value>
+  </data>
   <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
     <value>Advanced Installation</value>
   </data>
@@ -139,16 +190,31 @@
     <value>Please choose which setup you want to install:</value>
   </data>
   <data name="CustomInstallation_rbClient" xml:space="preserve">
-    <value>MediaPortal Client (connects to a TV-Server)</value>
+    <value>MediaPortal Client</value>
+    </data>
+  <data name="CustomInstallation_labelClient" xml:space="preserve">
+    <value>This will only install MediaPortal 1.0. To watch TV, it will connect to an dedicated TV-Server in your LAN.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>MediaPortal Singleseat installation (stand alone)</value>
+    <value>Singleseat Installation</value>
+    </data>
+  <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
+    <value>This is the right setup for you if the TV-Cards are installed in the same PC as you want
+to use MediaPortal and watch TV on MediaPortal 1.0.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
-    <value>MediaPortal dedicated TV-Server (master server with SQL Server)</value>
+    <value>Dedicated TV-Server (master)</value>
+  </data>
+  <data name="CustomInstallation_labelMaster" xml:space="preserve">
+    <value>This will only install the MediaPortal TV-Server on this PC.
+The PC will then act as dedicated TV-Server and provide other PC's in your LAN with TV. (database installation required)</value>
   </data>
   <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>MediaPortal dedicated TV-Server (without SQL Server)</value>
+    <value>Dedicated TV-Server (slave)</value>
+    </data>
+  <data name="CustomInstallation_labelSlave" xml:space="preserve">
+    <value>This will only install the MediaPortal TV-Server on this PC. 
+The PC will then act as dedicated TV-Server and provide other PC's in your LAN with TV. (no database required)</value>
   </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Browse</value>
@@ -185,6 +251,9 @@
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
+  </data>
+  <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
+    <value>SQL server is already present and will be used for TV-Server</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
     <value>Congratulations !</value>

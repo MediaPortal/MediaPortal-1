@@ -33,11 +33,16 @@ namespace MediaPortal.DeployTool
   public enum DialogType
   {
     Welcome,
+    WatchTV,
+    WatchHDTv,
+    TvEngineType,
     BASE_INSTALLATION_TYPE,
+    BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE,  
     CUSTOM_INSTALLATION_TYPE,
     DBMSType,
     DBMSSettings,
     MPSettings,
+    MPSettingsWithoutTvEngine,
     TvServerSettings,
     Installation,
     Installation_SVN,
@@ -102,6 +107,18 @@ namespace MediaPortal.DeployTool
           case DialogType.Welcome:
             dlg = (DeployDialog)new WelcomeDlg();
             break;
+          case DialogType.WatchTV:
+            dlg = (DeployDialog)new WatchTVDlg();
+            break;
+          case DialogType.WatchHDTv:
+            dlg = (DeployDialog)new WatchHDTvDlg();
+            break;
+          case DialogType.TvEngineType:
+            dlg = (DeployDialog)new TvEngineTypeDlg();
+            break;
+          case DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE:
+            dlg = (DeployDialog)new BaseInstallationTypeWithoutTvEngineDlg();
+            break;
           case DialogType.BASE_INSTALLATION_TYPE:
             dlg = (DeployDialog)new BaseInstallationTypeDlg();
             break;
@@ -116,6 +133,9 @@ namespace MediaPortal.DeployTool
             break;
           case DialogType.MPSettings:
             dlg = (DeployDialog)new MPSettingsDlg();
+            break;
+          case DialogType.MPSettingsWithoutTvEngine:
+                dlg = (DeployDialog)new MPSettingsWithoutTvEngineDlg();
             break;
           case DialogType.TvServerSettings:
             dlg = (DeployDialog)new TvServerSettingsDlg();

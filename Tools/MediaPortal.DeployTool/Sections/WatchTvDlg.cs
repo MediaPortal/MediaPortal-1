@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,64 +30,43 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using System.Collections.Specialized;
+using System.Resources;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class WelcomeDlg : DeployDialog, IDeployDialog
+  public partial class WatchTVDlg : DeployDialog, IDeployDialog
   {
-    public WelcomeDlg()
+    public WatchTVDlg()
     {
       InitializeComponent();
-      type = DialogType.Welcome;
-      cbLanguage.SelectedIndex = 0;
+      type = DialogType.WatchTV;
+      labelSectionHeader.Text = "";
+      rbYesWatchTv.Checked = true;
       UpdateUI();
     }
 
     #region IDeplayDialog interface
     public override void UpdateUI()
     {
-      labelHeading1.Text = Localizer.Instance.GetString("Welcome_labelHeading1");
-      if (InstallationProperties.Instance.Get("SVNMode") == "true")
-        labelHeading2.Text = Localizer.Instance.GetString("Welcome_labelHeading2_SVN");
-      else
-        labelHeading2.Text = Localizer.Instance.GetString("Welcome_labelHeading2");
-      labelHeading3.Text = Localizer.Instance.GetString("Welcome_labelHeading3");
+      labelSectionHeader.Text = Localizer.Instance.GetString("WatchTV_labelSectionHeader");
+      rbYesWatchTv.Text = Localizer.Instance.GetString("WatchTV_on");
+      rbNoWatchTv.Text = Localizer.Instance.GetString("WatchTV_off");
     }
+
     public override DeployDialog GetNextDialog()
     {
-      DialogFlowHandler.Instance.ResetHistory();
-      if (InstallationProperties.Instance.Get("SVNMode") == "true")
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation_SVN);
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
+        if (rbYesWatchTv.Checked)
+            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchHDTv);
+        else
+            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
     }
+
     public override bool SettingsValid()
     {
       return true;
     }
-    public override void SetProperties()
-    {
-      InstallationProperties.Instance.Set("language",GetLanguageId());
-    }
+
     #endregion
-
-    private string GetLanguageId()
-    {
-      switch (cbLanguage.Text)
-      {
-        case "english":
-          return "en-US";
-        case "german":
-          return "de-DE";
-      }
-      return "en-US";
-    }
-
-    private void cbLanguage_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      Localizer.Instance.SwitchCulture(GetLanguageId());
-      UpdateUI();
-    }
-
   }
 }

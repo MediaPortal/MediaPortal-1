@@ -85,6 +85,11 @@
     <Compile Include="ManualDownload.Designer.cs">
       <DependentUpon>ManualDownload.cs</DependentUpon>
     </Compile>
+    <Compile Include="MediaPortal.DeployTool.de-DE.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.de-DE.resx</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DeployDialog.resx">
@@ -110,6 +115,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.de-DE.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.de-DE.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.resx">
       <SubType>Designer</SubType>
@@ -119,6 +126,26 @@
     <EmbeddedResource Include="Sections\BaseInstallationTypeDlg.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseInstallationTypeWithoutTvEngineDlg.resx">
+      <DependentUpon>BaseInstallationTypeWithoutTvEngineDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\MPSettingsWithoutTvEngineDlg.resx">
+      <DependentUpon>MPSettingsWithoutTvEngineDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvEngineTypeDlg.resx">
+      <DependentUpon>TvEngineTypeDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\WatchHDTvDlg.resx">
+      <DependentUpon>WatchHDTvDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\WatchTvDlg.resx">
+      <DependentUpon>WatchTvDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\InstallDlg_SVN.resx">
       <DependentUpon>InstallDlg_SVN.cs</DependentUpon>
@@ -175,6 +202,36 @@
     </Compile>
     <Compile Include="Sections\BaseInstallationTypeDlg.Designer.cs">
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\BaseInstallationTypeWithoutTvEngineDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BaseInstallationTypeWithoutTvEngineDlg.Designer.cs">
+      <DependentUpon>BaseInstallationTypeWithoutTvEngineDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\MPSettingsWithoutTvEngineDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\MPSettingsWithoutTvEngineDlg.Designer.cs">
+      <DependentUpon>MPSettingsWithoutTvEngineDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TvEngineTypeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvEngineTypeDlg.Designer.cs">
+      <DependentUpon>TvEngineTypeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\WatchHDTvDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\WatchHDTvDlg.Designer.cs">
+      <DependentUpon>WatchHDTvDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\WatchTvDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\WatchTvDlg.Designer.cs">
+      <DependentUpon>WatchTvDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\InstallDlg_SVN.cs">
       <SubType>UserControl</SubType>
@@ -241,6 +298,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\smart small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\MyTV.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

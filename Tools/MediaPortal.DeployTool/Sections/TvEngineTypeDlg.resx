@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,17 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="omt_logo_header" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\omt_logo_header.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="average_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\average small.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="smart_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\smart small.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="MyTV" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\MyTV.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="labelTV3.Text" xml:space="preserve">
+    <value>Differences between TV-Server 1.0 and inbuild TV-Engine of MediaPortal 1.0
+
++ full dvb-subtitle support
++ support HD-TV (dvb-s2 / h.264)
++ automaticcaly detects any TV-card (analog, dvb-c, -s, -s2, -t, atsc)
++ allows to record in mpg or ts fileformat
++ allows to record / watch all channels on the same transponder simultaniously with one
+   dvb card
++ is able to provide multiple clients in the LAN with TV
+- requires MySQL or MS-SQL (will get installed automatically if not present in your system)
+
+The TV-Server completely replaces the inbuild TV-Engine, and seamlessly integrates into the 
+MediaPortal UserInterface.</value>
   </data>
 </root>

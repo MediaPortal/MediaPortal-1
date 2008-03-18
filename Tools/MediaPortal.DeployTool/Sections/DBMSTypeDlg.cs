@@ -24,10 +24,19 @@ namespace MediaPortal.DeployTool
       labelHeading.Text = Localizer.Instance.GetString("DBMSType_labelHeading");
       rbMSSQL.Text = Localizer.Instance.GetString("DBMSType_rbMSSQL");
       rbMySQL.Text = Localizer.Instance.GetString("DBMSType_rbMySQL");
+      rbDBAlreadyInstalled.Text = Localizer.Instance.GetString("DBMSType_rbDBAlreadyInstalled");
     }
     public override DeployDialog GetNextDialog()
     {
-      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSSettings);
+        if (rbDBAlreadyInstalled.Checked)
+        {
+            if (InstallationProperties.Instance["InstallType"] == "singleseat")
+                return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
+            else
+                return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
+        }
+        else
+            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSSettings);
     }
     public override bool SettingsValid()
     {

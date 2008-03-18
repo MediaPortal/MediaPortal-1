@@ -49,9 +49,13 @@ namespace MediaPortal.DeployTool
     {
       labelSectionHeader.Text = Localizer.Instance.GetString("CustomInstallation_labelSectionHeader");
       rbSingleSeat.Text = Localizer.Instance.GetString("CustomInstallation_rbSingleSeat");
+      labelSingleSeat.Text = Localizer.Instance.GetString("CustomInstallation_labelSingleSeat");
       rbTvServerMaster.Text = Localizer.Instance.GetString("CustomInstallation_rbTvServerMaster");
+      labelMaster.Text = Localizer.Instance.GetString("CustomInstallation_labelMaster");
       rbTvServerSlave.Text = Localizer.Instance.GetString("CustomInstallation_rbTvServerSlave");
+      labelSlave.Text = Localizer.Instance.GetString("CustomInstallation_labelSlave");
       rbClient.Text = Localizer.Instance.GetString("CustomInstallation_rbClient");
+      labelClient.Text = Localizer.Instance.GetString("CustomInstallation_labelClient");
     }
     public override DeployDialog GetNextDialog()
     {
