@@ -81,6 +81,13 @@ namespace MediaPortal.DeployTool {
             }
         }
         
+        internal static System.Drawing.Bitmap packshothh {
+            get {
+                object obj = ResourceManager.GetObject("packshothh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap smart_small {
             get {
                 object obj = ResourceManager.GetObject("smart_small", resourceCulture);
