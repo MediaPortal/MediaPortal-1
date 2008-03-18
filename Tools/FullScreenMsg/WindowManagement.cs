@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace FullscreenMsg
+namespace Windows
 {
   static class WindowManagement
   {

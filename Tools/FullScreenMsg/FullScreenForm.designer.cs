@@ -59,6 +59,7 @@
       this.lblMainLable.TabIndex = 3;
       this.lblMainLable.Text = "...";
       this.lblMainLable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      this.lblMainLable.DoubleClick += new System.EventHandler(this.lblMainLable_DoubleClick);
       // 
       // timerFullscreen
       // 

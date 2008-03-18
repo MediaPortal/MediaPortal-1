@@ -47,6 +47,7 @@ namespace FullscreenMsg
                 // Create an instance of the main form and set it in the application; 
                 // but don't try to run it.
                 this.MainForm = new MainForm();
+                this.MainForm.Visible = false;
 
                 // We want to pass along the command-line arguments to this first instance
 
@@ -62,22 +63,21 @@ namespace FullscreenMsg
             /// function, and terminate the additional instance when this returns.
             /// </summary>
             /// <param name="eventArgs"></param>
-            protected void SIApp_StartupNextInstance(object sender, 
-                StartupNextInstanceEventArgs eventArgs)
+            protected void SIApp_StartupNextInstance(object sender, StartupNextInstanceEventArgs eventArgs)
             {
-                // Copy the arguments to a string array
-                string[] args = new string[eventArgs.CommandLine.Count];
-                eventArgs.CommandLine.CopyTo(args, 0);
+              // Copy the arguments to a string array
+              string[] args = new string[eventArgs.CommandLine.Count];
+              eventArgs.CommandLine.CopyTo(args, 0);
 
-                // Create an argument array for the Invoke method
-                object[] parameters = new object[2];
-                parameters[0] = this.MainForm;
-                parameters[1] = args;
+              // Create an argument array for the Invoke method
+              object[] parameters = new object[2];
+              parameters[0] = this.MainForm;
+              parameters[1] = args;
 
-                // Need to use invoke to b/c this is being called from another thread.
-                this.MainForm.Invoke(new MainForm.ProcessParametersDelegate(
-                    ((MainForm)this.MainForm).ProcessParameters), 
-                    parameters );
+              // Need to use invoke to b/c this is being called from another thread.
+              this.MainForm.Invoke(new MainForm.ProcessParametersDelegate(
+                  ((MainForm)this.MainForm).ProcessParameters),
+                  parameters);
             }
         }
     } 

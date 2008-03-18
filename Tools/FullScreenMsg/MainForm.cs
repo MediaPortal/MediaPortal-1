@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
 using System.IO;
+using Windows;
 
 namespace FullscreenMsg
 {
@@ -109,57 +110,65 @@ namespace FullscreenMsg
       // Add the command-line arguments to our textbox, just to confirm that
       // it reached here.
 
-      if (args != null && args.Length != 0)
+      lock (args)
       {
-        txtArgs.Text += DateTime.Now.ToString("mm:ss.ff") + " ";
-        for (int i = 0; i < args.Length; i++)
+        if (args != null && args.Length != 0)
         {
-          txtArgs.Text += args[i] + " ";
-        }
-        txtArgs.Text += "\r\n";
+          txtArgs.Text += DateTime.Now.ToString("mm:ss.ff") + " ";
 
-        if (FullScreenForm == null)
+          for (int i = 0; i < args.Length; i++)
+          {
+            txtArgs.Text += args[i] + " ";
+          }
+          txtArgs.Text += "\r\n";
+
+          if (FullScreenForm == null) // create the fullscreen form instance if she does not exist
+          {
+            FullScreenForm = new frmFullScreen();
+            this.Owner = FullScreenForm;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - this.Width / 2) + 1;
+            this.Top = (Screen.PrimaryScreen.Bounds.Height / 2 - this.Height / 2) + 1;
+            FullScreenForm.lblMainLable.Text = "";
+            FullScreenForm.lblMainLable.Parent = FullScreenForm.pbBackground;
+            FullScreenForm.MainFormObj = this;
+
+            Cursor.Position = new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
+            _bFullScreenMode = true;
+          }
+
+          lock (FullScreenForm)
+          {
+            cmdArgs tmpArgs = new cmdArgs(args);
+
+            if (tmpArgs.ArgExists("Text")) FullScreenForm.lblMainLable.Text = tmpArgs.Values[tmpArgs.FindArgPos("Text")];
+            if (tmpArgs.ArgExists("TextColor")) FullScreenForm.lblMainLable.ForeColor = System.Drawing.ColorTranslator.FromHtml(tmpArgs.Values[tmpArgs.FindArgPos("TextColor")]);
+            if (tmpArgs.ArgExists("TextSize")) FullScreenForm.lblMainLable.Font = new Font(FullScreenForm.lblMainLable.Font.FontFamily, float.Parse(tmpArgs.Values[tmpArgs.FindArgPos("TextSize")]), FullScreenForm.lblMainLable.Font.Style);
+            if (tmpArgs.ArgExists("BgImage"))
+            {
+              FullScreenForm.pbBackground.Image = new Bitmap(tmpArgs.Values[tmpArgs.FindArgPos("BgImage")]);
+              if (!FullScreenForm.Visible) FullScreenForm.Show();
+            }
+
+            if (tmpArgs.ArgExists("ObservateMpStartup")) bool.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("ObservateMpStartup")], out FullScreenForm.OberservateMPStartup);
+            if (tmpArgs.ArgExists("ForceForeground")) bool.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("ForceForeground")], out FullScreenForm.ForceForeground);
+            if (tmpArgs.ArgExists("CloseOnWindowName")) FullScreenForm.CloseOnWindowName = tmpArgs.Values[tmpArgs.FindArgPos("CloseOnWindowName")];
+            if (tmpArgs.ArgExists("CloseOnForegroundWindowName")) FullScreenForm.CloseOnForegroundWindowName = tmpArgs.Values[tmpArgs.FindArgPos("CloseOnForegroundWindowName")];
+            if (tmpArgs.ArgExists("CloseTimeOut")) int.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("CloseTimeOut")], out FullScreenForm.CloseTimeOut);
+
+            if (tmpArgs.ArgExists("Close")) FullScreenForm.Close();
+          }
+        }
+        else
         {
-          FullScreenForm = new frmFullScreen();
-          this.Owner = FullScreenForm;
-          this.FormBorderStyle = FormBorderStyle.None;
-          this.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - this.Width / 2) + 1;
-          this.Top = (Screen.PrimaryScreen.Bounds.Height / 2 - this.Height / 2) + 1;
-          FullScreenForm.lblMainLable.Text = "";
-          FullScreenForm.lblMainLable.Parent = FullScreenForm.pbBackground;
+          Stream stream = this.GetType().Assembly.GetManifestResourceStream("FullScreenMsg.help.rtf");
+          txtArgs.LoadFile(stream, RichTextBoxStreamType.RichText);
 
-          Cursor.Position = new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-
-          _bFullScreenMode = true;
+          this.ShowInTaskbar = true;
+          this.WindowState = FormWindowState.Normal;
+          this.Show();
         }
-
-        cmdArgs tmpArgs = new cmdArgs(args);
-
-        if (tmpArgs.ArgExists("Text")) FullScreenForm.lblMainLable.Text = tmpArgs.Values[tmpArgs.FindArgPos("Text")];
-        if (tmpArgs.ArgExists("TextColor")) FullScreenForm.lblMainLable.ForeColor = System.Drawing.ColorTranslator.FromHtml(tmpArgs.Values[tmpArgs.FindArgPos("TextColor")]);
-        if (tmpArgs.ArgExists("TextSize")) FullScreenForm.lblMainLable.Font = new Font(FullScreenForm.lblMainLable.Font.FontFamily, float.Parse(tmpArgs.Values[tmpArgs.FindArgPos("TextSize")]), FullScreenForm.lblMainLable.Font.Style);
-        if (tmpArgs.ArgExists("BgImage"))
-        {
-          FullScreenForm.pbBackground.Image = new Bitmap(tmpArgs.Values[tmpArgs.FindArgPos("BgImage")]);
-          if (!FullScreenForm.Visible) FullScreenForm.Show();
-        }
-
-        if (tmpArgs.ArgExists("ObservateMpStartup")) bool.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("ObservateMpStartup")], out FullScreenForm.OberservateMPStartup);
-        if (tmpArgs.ArgExists("ForceForeground")) bool.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("ForceForeground")], out FullScreenForm.ForceForeground);
-        if (tmpArgs.ArgExists("CloseOnWindowName")) FullScreenForm.CloseOnWindowName = tmpArgs.Values[tmpArgs.FindArgPos("CloseOnWindowName")];
-        if (tmpArgs.ArgExists("CloseOnForegroundWindowName")) FullScreenForm.CloseOnForegroundWindowName = tmpArgs.Values[tmpArgs.FindArgPos("CloseOnForegroundWindowName")];
-        if (tmpArgs.ArgExists("CloseTimeOut")) int.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("CloseTimeOut")], out FullScreenForm.CloseTimeOut);
-
-        if (tmpArgs.ArgExists("Close")) FullScreenForm.Close();
-      }
-      else
-      {
-        Stream stream = this.GetType().Assembly.GetManifestResourceStream("FullScreenMsg.help.rtf");
-        txtArgs.LoadFile(stream, RichTextBoxStreamType.RichText);
-
-        this.ShowInTaskbar = true;
-        this.WindowState = FormWindowState.Normal;
-        this.Show();
       }
     }
   }

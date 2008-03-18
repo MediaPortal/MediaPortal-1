@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Windows;
 
 namespace FullscreenMsg
 {
@@ -14,6 +15,7 @@ namespace FullscreenMsg
     static IntPtr CurrentSpashScreenInfoHandle = IntPtr.Zero;
     string CurrentSplashScreenInfo = string.Empty;
 
+    public MainForm MainFormObj;
     public int CloseTimeOut = 1000;
     string _CloseOnWindowName = string.Empty;
     string _CloseOnForegroundWindowName = string.Empty;
@@ -132,6 +134,20 @@ namespace FullscreenMsg
         System.Threading.Thread.Sleep(CloseTimeOut);
         this.Close();
       }
+    }
+
+    private void lblMainLable_DoubleClick(object sender, EventArgs e)
+    {
+      this.WindowState = FormWindowState.Minimized;
+      this.ShowInTaskbar = true;
+
+      this.MainFormObj.FormBorderStyle = FormBorderStyle.None;
+      this.MainFormObj.Left = 0;
+      this.MainFormObj.Top = 0;
+
+      this.MainFormObj.ShowInTaskbar = true;
+      this.MainFormObj.Show();
+      this.MainFormObj.Activate();
     }
 
 
