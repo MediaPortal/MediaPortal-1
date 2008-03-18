@@ -53,6 +53,8 @@ namespace TvPlugin
     protected GUIToggleButtonControl btnSearchByDescription = null;
     [SkinControlAttribute(7)]
     protected GUISelectButtonControl btnLetter = null;
+    [SkinControlAttribute(19)]
+    protected GUIButtonControl btnSMSInput = null;
     [SkinControlAttribute(8)]
     protected GUISelectButtonControl btnShow = null;
     [SkinControlAttribute(9)]
@@ -161,7 +163,6 @@ namespace TvPlugin
       base.OnPageDestroy(newWindowId);
       listRecordings.Clear();
       listRecordings = null;
-
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
 
@@ -174,17 +175,20 @@ namespace TvPlugin
       //currentSearchKind=-1;
       listRecordings = Schedule.ListAll();
 
-
-
       btnShow.RestoreSelection = false;
       btnEpisode.RestoreSelection = false;
-      btnLetter.RestoreSelection = false;
+      if (btnLetter!=null)
+        btnLetter.RestoreSelection = false;
+
       btnShow.Clear();
       btnEpisode.Clear();
-      btnLetter.AddSubItem("#");
-      for (char k = 'A'; k <= 'Z'; k++)
+      if (btnLetter != null)
       {
-        btnLetter.AddSubItem(k.ToString());
+        btnLetter.AddSubItem("#");
+        for (char k = 'A'; k <= 'Z'; k++)
+        {
+          btnLetter.AddSubItem(k.ToString());
+        }
       }
       Update();
 
@@ -216,7 +220,7 @@ namespace TvPlugin
         currentSearchMode = SearchMode.Title;
         currentLevel = 0;
         //currentSearchKind=-1;
-        filterLetter = "";
+        filterLetter = "A";
         Update();
         GUIControl.FocusControl(GetID, btnSearchByTitle.GetID);
       }
@@ -231,6 +235,23 @@ namespace TvPlugin
         //currentSearchKind=-1;
         Update();
         GUIControl.FocusControl(GetID, btnSearchByDescription.GetID);
+      }
+
+      if (control == btnSMSInput)
+      {
+        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+        if (null == keyboard) return;
+        string searchterm = string.Empty;
+        keyboard.Reset();
+        keyboard.Text = filterLetter;
+        keyboard.DoModal(GetID); // show it...
+
+        if (keyboard.IsConfirmed)
+        {
+          filterLetter = keyboard.Text;
+          Update();
+        }
+
       }
 
       if (control == btnSortBy)
@@ -314,7 +335,10 @@ namespace TvPlugin
         titleView.IsVisible = false;
         GUIControl.FocusControl(GetID, listView.GetID);
         btnEpisode.Disabled = true;
-        btnLetter.Disabled = true;
+        if (btnLetter != null)
+          btnLetter.Disabled = true;
+        if (btnSMSInput != null)
+          btnSMSInput.Disabled = true;
         btnShow.Disabled = true;
         lblProgramDescription.IsVisible = false;
         if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
@@ -393,7 +417,10 @@ namespace TvPlugin
             imgTvLogo.IsVisible = false;
         }
         btnEpisode.Disabled = false;
-        btnLetter.Disabled = false;
+        if (btnLetter != null)
+          btnLetter.Disabled = false;
+        if (btnSMSInput != null)
+          btnSMSInput.Disabled = false;
         btnShow.Disabled = false;
         lblNumberOfItems.YPosition = listView.SpinY;
 

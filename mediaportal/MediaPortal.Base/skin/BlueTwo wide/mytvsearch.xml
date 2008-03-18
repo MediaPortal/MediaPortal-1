@@ -118,20 +118,20 @@
         <onleft>6</onleft>
         <onright>10</onright>
         <onup>5</onup>
-        <ondown>7</ondown>
+        <ondown>19</ondown>
       </control>
       <control>
-        <description>Letter button</description>
-        <type>selectbutton</type>
-        <id>7</id>
+        <description>sms input</description>
+        <type>button</type>
+        <id>19</id>
+	    <label>137</label>
         <posX>113</posX>
         <posY>310</posY>
-        <label>872</label>
-        <onleft>7</onleft>
-        <onright>10</onright>
         <onup>6</onup>
         <ondown>8</ondown>
-      </control>
+	    <onleft>19</onleft>
+        <onright>10</onright>
+      </control>	 
       <control>
         <description>Title button</description>
         <type>selectbutton</type>
@@ -139,9 +139,9 @@
         <posX>113</posX>
         <posY>356</posY>
         <label>873</label>
-        <onleft>7</onleft>
+        <onleft>19</onleft>
         <onright>10</onright>
-        <onup>7</onup>
+        <onup>19</onup>
         <ondown>9</ondown>
       </control>
       <control>
@@ -151,7 +151,7 @@
         <posX>113</posX>
         <posY>401</posY>
         <label>874</label>
-        <onleft>7</onleft>
+        <onleft>19</onleft>
         <onright>10</onright>
         <onup>8</onup>
         <ondown>2</ondown>
