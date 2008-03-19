@@ -98,24 +98,10 @@ namespace TvService
                              oldestEpisode.StartTime.ToLongDateString(),
                              oldestEpisode.StartTime.ToLongTimeString());
 
-				//-- !!! This will cause a multiple start of Scheduler class and then causing multiple recordings !!!
-        //-- Delete the file from disk and the recording entry from the database.
-        //-- TVController controller = new TVController();
-        //-- controller.DeleteRecording(oldestEpisode.IdRecording);
-        //-- controller = null;
-				if (System.IO.File.Exists(oldestEpisode.FileName))
-				{
-					try
-					{
-						System.IO.File.Delete(oldestEpisode.FileName);
-					}
-					catch(Exception e)
-					{
-						Log.Error("EpisodeManagement: Exception at deleting file ({0})", oldestEpisode.FileName);
-						Log.Write(e);
-					}
-				}
-      	oldestEpisode.Remove();
+        // Delete the file from disk and the recording entry from the database.
+        RecordingFileHandler handler = new RecordingFileHandler();
+        handler.DeleteRecordingOnDisk(oldestEpisode);
+        oldestEpisode.Delete();
       }
     }
     #endregion

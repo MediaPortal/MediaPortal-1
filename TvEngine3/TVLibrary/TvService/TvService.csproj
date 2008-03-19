@@ -89,6 +89,7 @@
     <Compile Include="CardManagement\CardHandler\TimeShifter.cs" />
     <Compile Include="CardManagement\CardHandler\UserManagement.cs" />
     <Compile Include="ChannelLinkage\ChannelLinkageGrabber.cs" />
+    <Compile Include="DiskManagement\RecordingFileHandler.cs" />
     <Compile Include="DiskManagement\DiskManagement.cs" />
     <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingFileInfo.cs" />

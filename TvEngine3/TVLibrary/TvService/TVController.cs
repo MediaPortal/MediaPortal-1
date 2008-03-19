@@ -1483,39 +1483,10 @@ namespace TvService
           return;
         }
 
-        if (System.IO.File.Exists(rec.FileName))
-        {
-          try
-          {
-            _streamer.RemoveFile(rec.FileName);
-            //Delete the matroska tag info xml file 
-            if (File.Exists(Path.ChangeExtension(rec.FileName, ".xml")))
-              File.Delete(Path.ChangeExtension(rec.FileName, ".xml"));
-            // if a recording got interrupted there may be files like <recording name>_1.mpg, etc
-            string SearchFile = System.IO.Path.GetFileNameWithoutExtension(rec.FileName) + @"*";
-            // check only the ending for underscores as a user might have a naming pattern including them between e.g. station and program title
-            string SubSearch = SearchFile.Substring((SearchFile.Length - 3));
-            int UnderScorePosition = SubSearch.LastIndexOf(@"_");
-            if (UnderScorePosition != -1)
-              // Length - 3 should be enough since there won't be thousands of files with the same name..
-              SearchFile = SearchFile.Substring(0, SearchFile.Length - 3) + @"*";
-            string[] allRecordingFiles = System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(rec.FileName), SearchFile);
-            Log.Debug("Controller: found {0} file(s) to delete for recording {1}", Convert.ToString(allRecordingFiles.Length), SearchFile);
-            foreach (string recPartPath in allRecordingFiles)
-            {
-              System.IO.File.Delete(recPartPath);
-            }
-            CleanRecordingFolders(rec.FileName);
-            rec.Delete();
-          }
-          catch (Exception)
-          {
-          }
-        }
-        else
-        {
-          rec.Delete();
-        }
+        _streamer.RemoveFile(rec.FileName);
+        RecordingFileHandler handler = new RecordingFileHandler();
+        handler.DeleteRecordingOnDisk(rec);
+        rec.Delete();
       }
       catch (Exception)
       {
@@ -2568,80 +2539,6 @@ namespace TvService
       catch (Exception ex)
       {
         Log.Write(ex);
-      }
-    }
-
-    void CleanRecordingFolders(string fileName)
-    {
-      try
-      {
-        Log.Debug("TVController: Clean orphan recording dirs for {0}", fileName);
-        string recfolder = System.IO.Path.GetDirectoryName(fileName);
-        List<string> recordingPaths = new List<string>();
-        Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-          KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-          string currentCardPath = _cards[keyPair.Value.DataBaseCard.IdCard].DataBaseCard.RecordingFolder;
-          if (!recordingPaths.Contains(currentCardPath))
-            recordingPaths.Add(currentCardPath);
-        }
-        Log.Debug("TVController: Checking {0} path(s) for cleanup", Convert.ToString(recordingPaths.Count));
-
-        foreach (string checkPath in recordingPaths)
-        {
-          if (checkPath != string.Empty && checkPath != System.IO.Path.GetPathRoot(checkPath))
-          {
-            // make sure we're only deleting directories which are "recording dirs" from a tv card
-            if (fileName.Contains(checkPath))
-            {
-              Log.Debug("TVController: Origin for recording {0} found: {1}", System.IO.Path.GetFileName(fileName), checkPath);
-              string deleteDir = recfolder;
-              // do not attempt to step higher than the recording base path
-              while (deleteDir != System.IO.Path.GetDirectoryName(checkPath) && deleteDir.Length > checkPath.Length)
-              {
-                try
-                {
-                  string[] files = System.IO.Directory.GetFiles(deleteDir);
-                  string[] subdirs = System.IO.Directory.GetDirectories(deleteDir);
-                  if (files.Length == 0)
-                  {
-                    if (subdirs.Length == 0)
-                    {
-                      System.IO.Directory.Delete(deleteDir);
-                      Log.Info("TVController: Deleted empty recording dir - {0}", deleteDir);
-                      DirectoryInfo di = System.IO.Directory.GetParent(deleteDir);
-                      deleteDir = di.FullName;
-                    }
-                    else
-                    {
-                      Log.Debug("TVController: Found {0} sub-directory(s) in recording path - not cleaning {1}", Convert.ToString(subdirs.Length), deleteDir);
-                      return;
-                    }
-                  }
-                  else
-                  {
-                    Log.Debug("TVController: Found {0} file(s) in recording path - not cleaning {1}", Convert.ToString(files.Length), deleteDir);
-                    return;
-                  }
-                }
-                catch (Exception ex1)
-                {
-                  Log.Info("TVController: Could not delete directory {0} - {1}", deleteDir, ex1.Message);
-                  // bail out to avoid i-loop
-                  return;
-                }
-              }
-            }
-          }
-          else
-            Log.Debug("TVController: Path not valid for removal - {1}", checkPath);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("TVController: Error cleaning the recording folders - {0},{1}", ex.Message, ex.StackTrace);
       }
     }
 
