@@ -134,7 +134,7 @@ namespace SetupTv
       if (!ServiceHelper.IsRunning)
       {
         Log.Info("---- tvservice is not running ----");
-        DialogResult result = MessageBox.Show("The Tv service is not running\rShould I start the tvservice?", "Mediaportal TV service", MessageBoxButtons.YesNo);
+        DialogResult result = MessageBox.Show("The Tv service is not running\rStart it now?", "Mediaportal TV service", MessageBoxButtons.YesNo);
         if (result != DialogResult.Yes) return;
         Log.Info("---- start tvservice----");
         ServiceHelper.Start();

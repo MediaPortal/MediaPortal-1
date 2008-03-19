@@ -137,12 +137,12 @@ namespace SetupTv
 
             service.Start();
 
-            while (!IsRunning && hackCounter < 120)
+            while (!IsRunning && hackCounter < 60)
             {
               System.Threading.Thread.Sleep(250);
               hackCounter++;
             }
-            return (hackCounter == 120) ? false : true;
+            return (hackCounter == 60) ? false : true;
           }
           else
             if (service.Status == ServiceControllerStatus.Running)
@@ -177,12 +177,12 @@ namespace SetupTv
       System.Threading.Thread.Sleep(1000);
 
       Start();
-      while (!IsRunning && hackCounter < 120)
+      while (!IsRunning && hackCounter < 60)
       {
         System.Threading.Thread.Sleep(250);
         hackCounter++;
       }
-      return (hackCounter == 120) ? false : true;
+      return (hackCounter == 60) ? false : true;
     }
 
     /// <summary>
