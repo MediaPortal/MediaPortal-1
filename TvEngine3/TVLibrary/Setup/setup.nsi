@@ -85,6 +85,8 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 !include WinVer.nsh
 !include Memento.nsh
 
+!include setup-AddRemovePage.nsh
+!include setup-RememberSections.nsh
 !include setup-languages.nsh
 
 !insertmacro GetParameters
@@ -120,15 +122,17 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN      "$INSTDIR\SetupTV.exe"
-!define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
+!define MUI_FINISHPAGE_RUN_TEXT "Run TV-Server Configuration"
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE
 #---------------------------------------------------------------------------
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
+#!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
 !insertmacro MUI_PAGE_WELCOME
+Page custom PageReinstall PageLeaveReinstall
+#!insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !define MUI_PAGE_CUSTOMFUNCTION_PRE ComponentsPre       #check, if MediaPortal is installed, if not uncheck and disable the ClientPluginSection
 !insertmacro MUI_PAGE_COMPONENTS
 !define MUI_PAGE_CUSTOMFUNCTION_PRE DirectoryPre        # Check, if the Server Component has been selected. Only display the directory page in this vase
@@ -181,6 +185,13 @@ ShowUninstDetails show
     StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
     ; Context back to current user
     SetShellVarContext current
+!macroend
+
+!macro SectionList MacroName
+    ; This macro used to perform operation on multiple sections.
+    ; List all of your components in following manner here.
+    !insertmacro "${MacroName}" "SecServer"
+    !insertmacro "${MacroName}" "SecClient"
 !macroend
 
 #---------------------------------------------------------------------------
@@ -446,7 +457,10 @@ ${MementoSectionDone}
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
     DetailPrint "Doing post installation stuff..."
-    
+
+    ;Removes unselected components
+    !insertmacro SectionList "FinishSection"
+    ;writes component status to registry
     ${MementoSectionSave}
 
     SetOverwrite on
@@ -483,8 +497,8 @@ SectionEnd
 #---------------------------------------------------------------------------
 # This section is called on uninstall and removes all components
 Section Uninstall
-    !insertmacro Remove_${SecServer}
-    !insertmacro Remove_${SecClient}
+    ;First removes all optional components
+    !insertmacro SectionList "RemoveSection"
 
     ; remove registry key
     DeleteRegKey HKLM "${REG_UNINSTALL}"
