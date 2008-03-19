@@ -65,7 +65,7 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
     !define VER_BUILD   0
 !endif
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define VERSION "1.0 RC2 internal"
+    !define VERSION "1.0 RC1 internal"
 !else                       # it's an svn reöease
     !define VERSION "pre-release build ${VER_BUILD}"
 !endif
@@ -82,6 +82,8 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !include WinVer.nsh
 !include Memento.nsh
 
+!include setup-AddRemovePage.nsh
+!include setup-RememberSections.nsh
 !include setup-languages.nsh
 !include setup-dotnet.nsh
 
@@ -123,8 +125,9 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE
 #---------------------------------------------------------------------------
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
+#!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
 !insertmacro MUI_PAGE_WELCOME
+Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
 !insertmacro MUI_PAGE_COMPONENTS
@@ -174,11 +177,18 @@ ShowUninstDetails show
     ; Context back to current user
     SetShellVarContext current
 !macroend
+ 
+!macro SectionList MacroName
+    ; This macro used to perform operation on multiple sections.
+    ; List all of your components in following manner here.
+    !insertmacro "${MacroName}" "SecDscaler"
+    !insertmacro "${MacroName}" "SecGabest"
+!macroend
 
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
-${MementoSection} "MediaPortal core files (required)" SecCore
+Section "MediaPortal core files (required)" SecCore
     SectionIn RO
     DetailPrint "Installing MediaPortal core files..."
 
@@ -385,7 +395,7 @@ ${MementoSection} "MediaPortal core files (required)" SecCore
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
     ##### not sure for what this is used
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\xbmc\bin\Release\TTPremiumSource.ax $INSTDIR\TTPremiumSource.ax $INSTDIR
-${MementoSectionEnd}
+SectionEnd
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
 
@@ -633,7 +643,10 @@ ${MementoSectionDone}
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
     DetailPrint "Doing post installation stuff..."
-    
+
+    ;Removes unselected components
+    !insertmacro SectionList "FinishSection"
+    ;writes component status to registry
     ${MementoSectionSave}
 
     SetOverwrite on
@@ -701,9 +714,10 @@ SectionEnd
 #---------------------------------------------------------------------------
 # This section is called on uninstall and removes all components
 Section Uninstall
+    ;First removes all optional components
+    !insertmacro SectionList "RemoveSection"
+    ;now also remove core component
     !insertmacro Remove_${SecCore}
-    !insertmacro Remove_${SecDscaler}
-    !insertmacro Remove_${SecGabest}
 
     ; remove registry key
     DeleteRegKey HKLM "${REG_UNINSTALL}"
