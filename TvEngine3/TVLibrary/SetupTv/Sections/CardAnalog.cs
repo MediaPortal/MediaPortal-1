@@ -209,7 +209,7 @@ namespace SetupTv.Sections
 
           Channel dbChannel;
           if (checkBoxNoMerge.Checked)
-            dbChannel=new Channel(channel.Name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true, "", true,channel.Name);
+            dbChannel=new Channel(channel.Name, false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1), -1, true, "", true,channel.Name);
           else
             dbChannel=layer.AddChannel("",channel.Name);
           dbChannel.IsTv = channel.IsTv;
