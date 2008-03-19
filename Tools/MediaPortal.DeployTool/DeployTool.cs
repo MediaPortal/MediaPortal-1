@@ -59,6 +59,10 @@ namespace MediaPortal.DeployTool
       Localizer.Instance.SwitchCulture("en-US");
       UpdateUI();
       InstallationProperties.Instance.Add("SVNMode", "false");
+      //Set default folders
+      InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
+      InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
+
       string[] cmdArgs = Environment.GetCommandLineArgs();
       foreach (string arg in cmdArgs)
       {

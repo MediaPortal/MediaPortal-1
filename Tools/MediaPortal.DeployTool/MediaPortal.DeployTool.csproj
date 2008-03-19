@@ -300,6 +300,9 @@
     <None Include="Resources\smart small.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ApplicationLocations.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\MyTV.png" />
     <None Include="Resources\packshothh.jpg" />
   </ItemGroup>

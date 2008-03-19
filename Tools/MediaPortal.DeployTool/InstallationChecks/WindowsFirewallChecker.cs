@@ -106,9 +106,16 @@ namespace MediaPortal.DeployTool
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"]=="1")
       {
         RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile\\GloballyOpenPorts\\List", true);
-        if (key.GetValue("554:TCP") == null)
-          result.state = CheckState.NOT_INSTALLED;
-        key.Close();
+        /*
+         * key can be null (Under Vista ...\\List doesn't always exist)
+         */ 
+        if (key != null)
+        {
+            if(key.GetValue("554:TCP") == null)
+                    result.state = CheckState.NOT_INSTALLED;
+        }
+        else
+            result.state = CheckState.NOT_INSTALLED;      
       }
       if (result.state == CheckState.INSTALLED)
       {

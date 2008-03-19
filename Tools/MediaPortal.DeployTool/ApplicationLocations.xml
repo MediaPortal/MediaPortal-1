@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Applications>
+  <DirectX9c>
+    <URL>http://directx</URL>
+    <FILE>directx.exe</FILE>
+  </DirectX9c>
+  <VCRedist>
+    <URL>http://vcredist</URL>
+    <FILE>vcredist.exe</FILE>
+  </VCRedist>
+  <MediaPortal>
+    <URL>http://mediaportal</URL>
+    <FILE>mediaportal.exe</FILE>
+  </MediaPortal>
+  <MSSQLExpress>
+    <URL>http://MSSQLExpress</URL>
+    <FILE>MSSQLEXpress.exe</FILE>
+  </MSSQLExpress>
+  <TvServer>
+    <URL>http://tvserver</URL>
+    <FILE>tvserver.exe</FILE>
+  </TvServer>
+
+</Applications>

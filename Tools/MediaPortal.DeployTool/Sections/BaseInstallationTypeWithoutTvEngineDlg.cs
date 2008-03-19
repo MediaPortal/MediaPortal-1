@@ -60,7 +60,7 @@ namespace MediaPortal.DeployTool
     {
         if (rbOneClick.Checked)
         {
-            InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
+            
             return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
         }
         else
