@@ -48,29 +48,19 @@ namespace MediaPortal.DeployTool
     }
     public bool Install()
     {
-      string msi = Path.GetTempPath() + "\\setup.msi";
+      string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer");
       string targetDir = InstallationProperties.Instance["TVServerDir"];
-      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer"), "Setup.msi", msi);
-      string parameters = "/i \"" + msi + "\" /qb TARGETDIR=\"" + targetDir + "\" /L* \"" + Path.GetTempPath() + "\\tvserverinst.log\"";
-      Process setup = Process.Start("msiexec", parameters);
+      string parameters = "/S /noClient /D=\"" + targetDir + "\" ";
+      Process setup = Process.Start(exe, parameters);
       setup.WaitForExit();
-      StreamReader sr = new StreamReader(Path.GetTempPath() + "\\tvserverinst.log");
-      bool installOk = false;
-      while (!sr.EndOfStream)
-      {
-        string line = sr.ReadLine();
-        if (line.Contains("Installation completed successfully"))
-        {
-          installOk = true;
-          break;
-        }
-      }
-      sr.Close();
-      return installOk;
+      return true;
     }
     public bool UnInstall()
     {
-      Process setup = Process.Start("msiexec", "/X {4B738773-EE07-413D-AFB7-BB0AB04A5488}");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+      string exe = (string)key.GetValue("UninstallString");
+      key.Close();
+      Process setup = Process.Start(exe, "/S /RemoveAll");
       setup.WaitForExit();
       return true;
     }
@@ -78,17 +68,22 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;
       else
       {
+        int serverInstalled = (int)key.GetValue("MementoSection_SecServer");
         string version = (string)key.GetValue("DisplayVersion");
         key.Close();
-        if (version == "1.0.0")
-          result.state = CheckState.INSTALLED;
+        if (serverInstalled == null || serverInstalled == 0)
+          result.state = CheckState.NOT_INSTALLED;
         else
-          result.state = CheckState.VERSION_MISMATCH;
+          result.state = CheckState.INSTALLED;
+        //if (version == "1.0.0")
+        //  result.state = CheckState.INSTALLED;
+        //else
+        //  result.state = CheckState.VERSION_MISMATCH;
       }
       return result;
     }

@@ -48,28 +48,18 @@ namespace MediaPortal.DeployTool
     }
     public bool Install()
     {
-      string msi = Path.GetTempPath() + "\\SetupPlugin.msi";
-      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer"), "SetupPlugin.msi", msi);
-      string parameters = "/i \"" + msi + "\" /qb /L* \"" + Path.GetTempPath() + "\\tvplugininst.log\"";
-      Process setup = Process.Start("msiexec", parameters);
+      string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer");
+      string parameters = "/S /noServer";
+      Process setup = Process.Start(exe, parameters);
       setup.WaitForExit();
-      StreamReader sr = new StreamReader(Path.GetTempPath() + "\\tvplugininst.log");
-      bool installOk = false;
-      while (!sr.EndOfStream)
-      {
-        string line = sr.ReadLine();
-        if (line.Contains("Installation completed successfully"))
-        {
-          installOk = true;
-          break;
-        }
-      }
-      sr.Close();
-      return installOk;
+      return true;
     }
     public bool UnInstall()
     {
-      Process setup = Process.Start("msiexec", "/X {F7444E89-5BC0-497E-9650-E50539860DE0}");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+      string exe = (string)key.GetValue("UninstallString");
+      key.Close();
+      Process setup = Process.Start(exe, "/S /RemoveAll");
       setup.WaitForExit();
       return true;
     }
@@ -77,17 +67,22 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F7444E89-5BC0-497E-9650-E50539860DE0}");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;
       else
       {
+        int clientInstalled=(int)key.GetValue("MementoSection_SecClient");
         string version = (string)key.GetValue("DisplayVersion");
         key.Close();
-        if (version == "1.0.0")
-          result.state = CheckState.INSTALLED;
+        if (clientInstalled == null || clientInstalled == 0)
+          result.state = CheckState.NOT_INSTALLED;
         else
-          result.state = CheckState.VERSION_MISMATCH;
+          result.state = CheckState.INSTALLED;
+        //if (version == "1.0.0")
+        //  result.state = CheckState.INSTALLED;
+        //else
+        //  result.state = CheckState.VERSION_MISMATCH;
       }
       return result;
     }
