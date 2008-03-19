@@ -63,12 +63,12 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
-!define VER_REVISION    2
+!define VER_REVISION    3
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define VERSION "1.0 RC2 internal"
+    !define VERSION "1.0 RC1 internal"
 !else                       # it's an svn reöease
     !define VERSION "pre-release build ${VER_BUILD}"
 !endif

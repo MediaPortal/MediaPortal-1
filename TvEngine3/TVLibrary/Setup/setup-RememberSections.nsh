@@ -70,29 +70,14 @@ Var AR_RegFlags
     ;Then it writes component installed flag to registry
     ;Input: section index constant name specified in Section command.
 
-    # reading old component status from registry
-    ClearErrors
-    ReadRegDWORD $AR_RegFlags ${MEMENTO_REGISTRY_ROOT} `${MEMENTO_REGISTRY_KEY}` `MementoSection_${SecName}`
-    ${If} ${Errors}
-        StrCpy $AR_RegFlags 0
-    ${EndIf}
+    ${If} ${SectionIsSelected} ${SecName}
+    ${Else}
+        ClearErrors
+        ReadRegDWORD $AR_RegFlags ${MEMENTO_REGISTRY_ROOT} `${MEMENTO_REGISTRY_KEY}` `MementoSection_${SecName}`
 
-    # checking if section is selected
-    SectionGetFlags ${${SecName}} $AR_SecFlags  ;Reading section flags
-    ;Checking lowest bit:
-    IntOp $AR_SecFlags $AR_SecFlags & 0x0001
-    IntCmp $AR_SecFlags 1 +2
-
-    ; is section selected ????
-    ${If} $AR_SecFlags == 0 ; is not selected
-        #not needed ----- done by     MementoSectionDone
-        #WriteRegDWORD HKLM "${REG_UNINSTALL}\Components" "${SecName}" 0
-        ${If} $AR_RegFlags == 1 ; was section installed prevously --> remove it
+        ${If} $AR_RegFlags == 1
             !insertmacro "Remove_${${SecName}}"
         ${EndIf}
-    ${Else}          ; is selected
-        #not needed ----- done by     MementoSectionDone
-        #WriteRegDWORD HKLM "${REG_UNINSTALL}\Components" "${SecName}" 1
     ${EndIf}
 !macroend
  
