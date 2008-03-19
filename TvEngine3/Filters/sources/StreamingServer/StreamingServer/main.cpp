@@ -1,5 +1,5 @@
 #include <streams.h>
-#include <winsock.h>
+//#include <winsock2.h>
 #include <shlobj.h>
 #include "liveMedia.hh"
 #include "BasicUsageEnvironment.hh"
