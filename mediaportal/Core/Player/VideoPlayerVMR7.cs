@@ -158,6 +158,7 @@ namespace MediaPortal.Player
 
     /// <summary> seek interface for positioning in stream. </summary>
     protected IMediaSeeking mediaSeek;
+    protected bool m_bRateSupport = false;
     /// <summary> seek interface to set position in stream. </summary>
     protected IMediaPosition mediaPos;
     /// <summary> video preview window interface. </summary>
@@ -454,7 +455,6 @@ namespace MediaPortal.Player
     {
       if (!Playing) return;
       if (!m_bStarted) return;
-      if (GUIGraphicsContext.InVmr9Render) return;
       TimeSpan ts = DateTime.Now - updateTimer;
       if (ts.TotalMilliseconds >= 800 || m_speedRate != 1)
       {
@@ -689,6 +689,25 @@ namespace MediaPortal.Player
       }
     }
 
+      private void TrySpeed(double rate, int speed)
+      {
+          m_speedRate = speed;
+          if (mediaSeek != null)
+          {
+              int hr = mediaSeek.SetRate(rate);
+              if (hr == 0)
+              {
+                  Log.Debug("Successfully set rate to {0}", rate);
+                  m_bRateSupport = true;
+                  return;
+              }
+              Log.Debug("Could not set rate to {0}, error: 0x{1:x}", rate, hr);
+
+          }
+          //fallback to skip steps
+          m_bRateSupport = false;
+      }
+
     public override int Speed
     {
       get
@@ -732,22 +751,22 @@ namespace MediaPortal.Player
           {
             switch ((int)value)
             {
-              case -1: m_speedRate = -10000; break;
-              case -2: m_speedRate = -15000; break;
-              case -4: m_speedRate = -30000; break;
-              case -8: m_speedRate = -45000; break;
-              case -16: m_speedRate = -60000; break;
-              case -32: m_speedRate = -75000; break;
+              case -1: TrySpeed(-1,-10000); break;
+              case -2: TrySpeed(-2,-15000); break;
+              case -4: TrySpeed(-4,-30000); break;
+              case -8: TrySpeed(-8,-45000); break;
+              case -16: TrySpeed(-16,-60000); break;
+              case -32: TrySpeed(-32, -75000); break;
 
               case 1:
                 m_speedRate = 10000;
                 mediaCtrl.Run();
                 break;
-              case 2: m_speedRate = 15000; break;
-              case 4: m_speedRate = 30000; break;
-              case 8: m_speedRate = 45000; break;
-              case 16: m_speedRate = 60000; break;
-              default: m_speedRate = 75000; break;
+              case 2: TrySpeed(2, 15000); break;
+              case 4: TrySpeed(4, 30000); break;
+              case 8: TrySpeed(8, 45000); break;
+              case 16: TrySpeed(16, 60000); break;
+              default: TrySpeed(32, 75000); break;
             }
           }
         }
@@ -1134,7 +1153,10 @@ namespace MediaPortal.Player
         if (code == EventCode.Complete || code == EventCode.ErrorAbort)
         {
           MovieEnded(false);
-          return;
+          /* EABIN: needed for threaded render-thread. please do not delete.
+            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+            GUIGraphicsContext.OnAction(keyAction);*/
+            return;
         }
       }
       while (hr == 0);
@@ -1146,11 +1168,13 @@ namespace MediaPortal.Player
       if (!Playing)
         return;
 
-      if ((m_speedRate == 10000) || (mediaSeek == null))
+      if ((m_speedRate == 10000) || (mediaSeek == null) || m_bRateSupport == true)
         return;
 
       TimeSpan ts = DateTime.Now - elapsedTimer;
+        //max out at 10 seeks per second
       if (ts.TotalMilliseconds < 100) return;
+      elapsedTimer = DateTime.Now;
       long earliest, latest, current, stop, rewind, pStop;
 
       mediaSeek.GetAvailable(out earliest, out latest);
@@ -1194,9 +1218,9 @@ namespace MediaPortal.Player
       }
 
       //seek to new moment in time
-      //Log.Info(" seek :{0}",rewind/10000000);
-      hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-      mediaCtrl.Pause();
+      //Log.Info(" seek :{0}",rewind/10000);
+      hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning|AMSeekingSeekingFlags.SeekToKeyFrame, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+      mediaCtrl.StopWhenReady();
     }
 
     protected virtual void OnInitialized()
