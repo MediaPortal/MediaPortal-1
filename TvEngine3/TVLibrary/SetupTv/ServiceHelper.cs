@@ -133,8 +133,16 @@ namespace SetupTv
         {
           if (service.Status == ServiceControllerStatus.Stopped)
           {
+            int hackCounter = 0;
+
             service.Start();
-            return true;
+
+            while (!IsRunning && hackCounter < 120)
+            {
+              System.Threading.Thread.Sleep(250);
+              hackCounter++;
+            }
+            return (hackCounter == 120) ? false : true;
           }
           else
             if (service.Status == ServiceControllerStatus.Running)
@@ -152,19 +160,29 @@ namespace SetupTv
     /// <returns>Always true</returns>
     public static bool Restart()
     {
+      int hackCounter = 0;
       if (!IsInstalled(@"TvService")) return false;
 
       Stop();
-      while (!IsStopped)      
-        System.Threading.Thread.Sleep(100);
-      
+
+      while (!IsStopped && hackCounter < 120) // wait a maximum of 30 seconds
+      {
+        System.Threading.Thread.Sleep(250);
+        hackCounter++;
+      }
+      if (hackCounter == 120)
+        return false;
+
+      hackCounter = 0;
       System.Threading.Thread.Sleep(1000);
 
       Start();
-      while (!IsRunning)
-        System.Threading.Thread.Sleep(100);
-
-      return true;
+      while (!IsRunning && hackCounter < 120)
+      {
+        System.Threading.Thread.Sleep(250);
+        hackCounter++;
+      }
+      return (hackCounter == 120) ? false : true;
     }
 
     /// <summary>

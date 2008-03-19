@@ -110,7 +110,7 @@ namespace SetupTv
 
       Log.Info("---- check if database needs to be updated/created ----");
       int currentSchemaVersion = dlg.GetCurrentShemaVersion();
-      if (currentSchemaVersion==-1)
+      if (currentSchemaVersion == -1)
       {
         Log.Info("---- create database ----");
         if (!dlg.ExecuteSQLScript("create"))
@@ -131,6 +131,15 @@ namespace SetupTv
       }
 
       Log.Info("---- check if tvservice is running ----");
+      if (!ServiceHelper.IsRunning)
+      {
+        Log.Info("---- tvservice is not running ----");
+        DialogResult result = MessageBox.Show("The Tv service is not running\rShould I start the tvservice?", "Mediaportal TV service", MessageBoxButtons.YesNo);
+        if (result != DialogResult.Yes) return;
+        Log.Info("---- start tvservice----");
+        ServiceHelper.Start();
+      }
+
       int cards = 0;
       try
       {
@@ -138,10 +147,7 @@ namespace SetupTv
       }
       catch (Exception)
       {
-        Log.Info("---- tvservice is not running ----");
-        DialogResult result=MessageBox.Show("The Tv service is not running\rShould I start the tvservice?","Mediaportal Tv Server",MessageBoxButtons.YesNo);
-        if (result != DialogResult.Yes) return;
-        Log.Info("---- start tvservice----");
+        Log.Info("---- restart tvservice----");
         ServiceHelper.Restart();
         try
         {
@@ -151,13 +157,13 @@ namespace SetupTv
         }
         catch (Exception ex)
         {
-          Log.Info("---- Unable to start tv service----");
+          Log.Info("---- Unable to restart tv service----");
           Log.Write(ex);
-          MessageBox.Show("Failed to startup tvservice"+ex.ToString());
+          MessageBox.Show("Failed to startup tvservice" + ex.ToString());
           return;
         }
       }
-      
+
       try
       {
         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
