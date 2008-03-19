@@ -333,6 +333,21 @@
 		<carrier frequency="514000" bandwidth="8"></carrier>
 		<carrier frequency="522000" bandwidth="8"></carrier>
 	</country>
+	<country name="Croatia - Rijeka - Ucka" offset="125">
+		<carrier frequency="530000" bandwidth="8" />
+	</country>
+	<country name="Croatia - Osijek - Josipovac" offset="125">
+		<carrier frequency="570000" bandwidth="8" />
+	</country>
+	<country name="Croatia - Zadar - Ugljan" offset="125">
+		<carrier frequency="714000" bandwidth="8" />
+	</country>
+	<country name="Croatia - Split - Labistica" offset="125">
+		<carrier frequency="594000" bandwidth="8" />
+	</country>
+	<country name="Croatia - Dubrovnik - Srd" offset="125">
+		<carrier frequency="778000" bandwidth="8" />
+	</country>
 	<country name="Czech Republic - Prague" offset="125">
 		<carrier frequency="506000" bandwidth="8"></carrier>
 		<carrier frequency="674000" bandwidth="8"></carrier>
