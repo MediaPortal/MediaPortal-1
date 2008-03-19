@@ -60,7 +60,7 @@ namespace MediaPortal.DeployTool
     {
         if (rbOneClick.Checked)
         {
-            
+            InstallationProperties.Instance.Set("InstallType", "mp_only");
             return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
         }
         else

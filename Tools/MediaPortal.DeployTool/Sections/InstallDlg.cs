@@ -158,6 +158,11 @@ namespace MediaPortal.DeployTool
         AddPackageToListView(new MediaPortalChecker());
         AddPackageToListView(new TvPluginServerChecker());
       }
+      else if (InstallationProperties.Instance["InstallType"] == "mp_only")
+      {
+          AddPackageToListView(new DirectX9Checker());
+          AddPackageToListView(new MediaPortalChecker());
+      }
       listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
       if (InstallationComplete())
         buttonInstall.Enabled = false;

@@ -20,5 +20,8 @@
     <URL>http://tvserver</URL>
     <FILE>tvserver.exe</FILE>
   </TvServer>
-
+  <MySQL>
+    <URL>http://mysql</URL>
+    <FILE>mysql.exe</FILE>
+  </MySQL>
 </Applications>
