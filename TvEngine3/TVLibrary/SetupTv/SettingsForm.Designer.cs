@@ -171,7 +171,11 @@ namespace SetupTv
       // 
       // SettingsForm
       // 
+      this.AcceptButton = this.okButton;
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.AutoScroll = true;
+      this.CancelButton = this.cancelButton;
+      this.ClientSize = new System.Drawing.Size(754, 550);
       this.Controls.Add(this.buttonViewLog);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);
