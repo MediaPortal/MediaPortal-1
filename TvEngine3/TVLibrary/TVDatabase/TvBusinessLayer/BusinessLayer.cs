@@ -41,7 +41,7 @@ using DirectShowLib.BDA;
 using Gentle.Common;
 using Gentle.Framework;
 using MySql.Data.MySqlClient;
-using FirebirdSql.Data.Firebird;
+//using FirebirdSql.Data.Firebird;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Channels;

@@ -31,7 +31,7 @@ using System.Data.SqlClient;
 using System.Windows.Forms;
 using System.Xml;
 using System.Net;
-using FirebirdSql.Data.Firebird;
+//using FirebirdSql.Data.Firebird;
 using MySql.Data.MySqlClient;
 using TvLibrary.Log;
 
@@ -190,15 +190,15 @@ namespace SetupTv
               connect.Close();
             }
             break;
-          case ProviderType.FbEmbedded:
-            using (FbConnection connect = new FbConnection(connectionString))
-            {
-              connect.Open();
-              connect.Close();
-            }
-            break;
+          //case ProviderType.FbEmbedded:
+          //  using (FbConnection connect = new FbConnection(connectionString))
+          //  {
+          //    connect.Open();
+          //    connect.Close();
+          //  }
+          //  break;
           default:
-            throw (new Exception("Unkown provider!"));
+            throw (new Exception("Unsupported provider!"));
         }
       }
       catch (Exception)
