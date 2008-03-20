@@ -25,20 +25,20 @@
 
 #**********************************************************************************************************#
 #
-# This header file is taken original taken from:           http://nsis.sourceforge.net/Add/Remove_Functionality
+# This original header file is taken from:           http://nsis.sourceforge.net/Add/Remove_Functionality
 #     and modified for our needs.
 #
 #**********************************************************************************************************#
 
-Var AR_SecFlags
-Var AR_RegFlags
+#Var AR_SecFlags
+#Var AR_RegFlags
 
 # registry
 # ${MEMENTO_REGISTRY_ROOT}
 # ${MEMENTO_REGISTRY_KEY}
 # ${MEMENTO_REGISTRY_KEY}
 #ReadRegDWORD $AR_RegFlags ${MEMENTO_REGISTRY_ROOT} `${MEMENTO_REGISTRY_KEY}` `MementoSection_${__MementoSectionLastSectionId}`
- 
+
  /*   not needed anymore ----- done by MementoSectionRestore
 !macro InitSection SecName
     ;This macro reads component installed flag from the registry and
@@ -63,7 +63,7 @@ Var AR_RegFlags
   "default_${SecName}:"
 !macroend
 */
- 
+
 !macro FinishSection SecName
     ;This macro reads section flag set by user and removes the section
     ;if it is not selected.
@@ -73,14 +73,14 @@ Var AR_RegFlags
     ${If} ${SectionIsSelected} ${SecName}
     ${Else}
         ClearErrors
-        ReadRegDWORD $AR_RegFlags ${MEMENTO_REGISTRY_ROOT} `${MEMENTO_REGISTRY_KEY}` `MementoSection_${SecName}`
+        ReadRegDWORD $R0 ${MEMENTO_REGISTRY_ROOT} `${MEMENTO_REGISTRY_KEY}` `MementoSection_${SecName}`
 
-        ${If} $AR_RegFlags == 1
+        ${If} $R0 == 1
             !insertmacro "Remove_${${SecName}}"
         ${EndIf}
     ${EndIf}
 !macroend
- 
+
 !macro RemoveSection SecName
     ;This macro is used to call section's Remove_... macro
     ;from the uninstaller.
