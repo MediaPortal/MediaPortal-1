@@ -25,7 +25,7 @@
 
 #**********************************************************************************************************#
 #
-# This header file is taken original taken from:           http://nsis.sourceforge.net/Add/Remove_Functionality
+# This original header file is taken from:           http://nsis.sourceforge.net/Add/Remove_Functionality
 #     and modified for our needs.
 #
 #**********************************************************************************************************#
@@ -37,14 +37,10 @@
     !include FileFunc.nsh
 !endif
 
-!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-    !insertmacro VersionCompare
-!endif
+!insertmacro VersionCompare
 !insertmacro GetParent
 
 #####    Add/Remove/Reinstall page
-!ifdef VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-
 Var ReinstallPageCheck
 
 Function PageReinstall
@@ -109,7 +105,7 @@ Function PageReinstallUpdateSelection
     Pop $R1
 
     ${NSD_GetState} $R2 $R1
-    
+
     ${If} $R1 == ${BST_CHECKED}
         StrCpy $ReinstallPageCheck 1
     ${Else}
@@ -146,18 +142,16 @@ Function PageLeaveReinstall
             Quit
     unInstallDone:
 
+
     ; if reboot flag is set, abort the installation, and continue the installer on next startup
-    IfFileExists $INSTDIR\rebootflag 0 noReboot
+    ${If} ${FileExists} "$INSTDIR\rebootflag"
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
         WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" "$(^Name)" $EXEPATH
         Quit
-    noReboot:
+    ${EndIf}
 
     finish:
 FunctionEnd
-
-!endif # VER_MAJOR & VER_MINOR & VER_REVISION & VER_BUILD
-#####    End of Add/Remove/Reinstall page
 
 
 
@@ -165,7 +159,7 @@ LangString TEXT_ADDREMOVE_HEADER            ${LANG_ENGLISH} "Already Installed"
 LangString TEXT_ADDREMOVE_HEADER2_REPAIR    ${LANG_ENGLISH} "Choose the maintenance option to perform."
 LangString TEXT_ADDREMOVE_HEADER2_UPDOWN    ${LANG_ENGLISH} "Choose how you want to install $(^Name)."
 LangString TEXT_ADDREMOVE_INFO_REPAIR       ${LANG_ENGLISH} "$(^Name) ${VERSION} is already installed. Select the operation you want to perform and click Next to continue."
-LangString TEXT_ADDREMOVE_INFO_UPGRADE      ${LANG_ENGLISH} "An older version of $(^Name) is installed on your system. It's recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
+LangString TEXT_ADDREMOVE_INFO_UPGRADE      ${LANG_ENGLISH} "An older version of $(^Name) is installed on your system. It is recommended that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
 LangString TEXT_ADDREMOVE_INFO_DOWNGRADE    ${LANG_ENGLISH} "A newer version of $(^Name) is already installed! It is not recommended that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
 LangString TEXT_ADDREMOVE_REPAIR_OPT1       ${LANG_ENGLISH} "Add/Remove/Reinstall components"
 LangString TEXT_ADDREMOVE_REPAIR_OPT2       ${LANG_ENGLISH} "Uninstall $(^Name)"
