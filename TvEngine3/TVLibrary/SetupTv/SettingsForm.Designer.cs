@@ -40,10 +40,11 @@ namespace SetupTv
     {
       if (disposing)
       {
-        /*if(components != null)
-				{
-					components.Dispose();
-				}*/
+          try
+          {
+              pluginsRoot.ChangedActivePlugins -= new SetupTv.Sections.Plugins.ChangedEventHandler(SectChanged);
+          }
+          catch { }
       }
       base.Dispose(disposing);
     }

@@ -46,7 +46,10 @@ namespace SetupTv
   /// </summary>
   public partial class SetupTvSettingsForm : SettingsForm
   {
-    PluginLoader _pluginLoader = new PluginLoader();
+    private PluginLoader _pluginLoader = new PluginLoader();
+    private Plugins pluginsRoot;
+    private TvBusinessLayer layer;
+    
     protected LinkLabel linkLabel1;
 
 
@@ -111,7 +114,7 @@ namespace SetupTv
           Log.Write(ex);
         }
 
-        TvBusinessLayer layer = new TvBusinessLayer();
+        layer = new TvBusinessLayer();
         Servers servers = new Servers();
         AddSection(servers);
         dbsServers = Server.ListAll();
@@ -212,16 +215,22 @@ namespace SetupTv
           AddSection(new TestService("Manual Control"));
 
           _pluginLoader.Load();
-          Plugins pluginsRoot = new Plugins("Plugins", _pluginLoader);
+          pluginsRoot = new Plugins("Plugins", _pluginLoader);
           AddSection(pluginsRoot);
+
+          pluginsRoot.ChangedActivePlugins += new SetupTv.Sections.Plugins.ChangedEventHandler(SectChanged);
 
           foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
           {
             SectionSettings settings = plugin.Setup;
             if (settings != null)
             {
-              settings.Text = plugin.Name;
-              AddChildSection(pluginsRoot, settings);
+                Setting isActive = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+                settings.Text = plugin.Name;
+                if (isActive.Value == "true")
+                {
+                    AddChildSection(pluginsRoot, settings);
+                }
             }
           }
           sectionTree.SelectedNode = sectionTree.Nodes[0];
@@ -236,6 +245,26 @@ namespace SetupTv
       }
     }
 
+
+      public void RemoveChildSection(SectionSettings parentSection, SectionSettings section)
+      {
+          // Remove section from tree
+          if (parentSection != null)
+          {
+              SectionTreeNode treeNode = new SectionTreeNode(section);
+              treeNode.Name = section.Text;
+              SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
+
+
+              for (int i = 0; i < parentTreeNode.GetNodeCount(true); i++)
+              {
+                  if (parentTreeNode.Nodes[i].Name == treeNode.Name)
+                  {
+                      parentTreeNode.Nodes.Remove(parentTreeNode.Nodes[i]);
+                  }
+              }
+          }
+      }
 
     public void AddSection(SectionSettings section, int imageIndex)
     {
@@ -286,6 +315,33 @@ namespace SetupTv
       AddChildSection(null, section);
     }
 
+      /// <summary>
+      /// Called when a plugin is selected or deselected for activation in the plugins setting
+      /// </summary>
+      /// <param name="sender">a Setting parameter passed as object</param>
+      /// <param name="e">eventarg will always retrun empty</param>
+      public void SectChanged(object sender, EventArgs e)
+      {
+          string name = ((Setting)sender).Tag.Substring(6);
+
+          foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
+          {
+              SectionSettings settings = plugin.Setup;
+              if (settings != null && plugin.Name == name)
+              {
+                  Setting isActive = layer.GetSetting(((Setting)sender).Tag, "false");
+                  settings.Text = name;
+
+                  if (isActive.Value == "true")
+                      AddChildSection(pluginsRoot, settings);
+                  else
+                      RemoveChildSection(pluginsRoot, settings);
+                 
+                  break;
+              }
+          }
+      }
+
     public override void AddChildSection(SectionSettings parentSection, SectionSettings section)
     {
       //
@@ -310,6 +366,7 @@ namespace SetupTv
         // Add to the parent node
         //
         SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
+        treeNode.Name = section.Text;
         parentTreeNode.Nodes.Add(treeNode);
       }
 

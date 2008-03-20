@@ -44,6 +44,11 @@ namespace SetupTv.Sections
     PluginLoader _loader;
     bool _needRestart = false;
     bool _ignoreEvents = false;
+    public delegate void ChangedEventHandler(object sender, EventArgs e);
+
+    public event ChangedEventHandler ChangedActivePlugins;
+
+
 
     public Plugins(string name, PluginLoader loader)
       : base(name)
@@ -61,6 +66,7 @@ namespace SetupTv.Sections
       listView1.Items.Clear();
       foreach (ITvServerPlugin plugin in _loader.Plugins)
       {
+        
         ListViewItem item = listView1.Items.Add("");
         item.SubItems.Add(plugin.Name);
         item.SubItems.Add(plugin.Author);
@@ -73,6 +79,7 @@ namespace SetupTv.Sections
 			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
       _ignoreEvents = false;
     }
+
     public override void OnSectionDeActivated()
     {
       if (_needRestart)
@@ -91,6 +98,15 @@ namespace SetupTv.Sections
       else setting.Value = "false";
       setting.Persist();
       _needRestart = true;
+
+      OnChanged(setting, EventArgs.Empty);
+    }
+
+    //Pass on the information for the plugin that was changed
+    protected virtual void OnChanged(object sender, EventArgs e)
+    {
+        if (ChangedActivePlugins != null)
+            ChangedActivePlugins(sender, e);
     }
   }
 }
