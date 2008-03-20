@@ -806,7 +806,14 @@ namespace SetupTv
       {
         Version aParamVersion = new Version(0, 0, 0, 0);
         if (!CheckFileVersion(DvbFixLocation, "6.5.2710.2732", out aParamVersion))
-          MessageBox.Show(string.Format("Your version {0} of Psisdecd.dll in path {1} has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion.ToString(), DvbFixLocation), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          if (MessageBox.Show(string.Format("Your version {0} of Psisdecd.dll in path {1} has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion.ToString(), DvbFixLocation), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+          {
+            try
+            {
+              Process.Start(@"http://wiki.team-mediaportal.com/MediaPortalRequirements");
+            }
+            catch (Exception){}
+          }
       }
       else
         MessageBox.Show(string.Format("Psisdecd.dll is neither registered nor located in path {0}! \nPlease check our Wiki's requirements page.", DvbFixLocation), "Microsoft SI/PSI parser missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
