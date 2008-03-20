@@ -260,6 +260,8 @@ namespace SetupTv
               {
                   if (parentTreeNode.Nodes[i].Name == treeNode.Name)
                   {
+                      //Remove the section from the hashtable in case we add it again
+                      settingSections.Remove(treeNode.Name);
                       parentTreeNode.Nodes.Remove(parentTreeNode.Nodes[i]);
                   }
               }
@@ -371,7 +373,7 @@ namespace SetupTv
       }
 
       settingSections.Add(section.Text, treeNode);
-
+      
       //treeNode.EnsureVisible();
     }
     
