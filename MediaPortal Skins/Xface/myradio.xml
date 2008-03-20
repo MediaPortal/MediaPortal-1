@@ -15,7 +15,7 @@
       <posY>89</posY>
       <layout>StackLayout</layout>
       <control>
-        <description>View-As button</description>
+        <description>View-As</description>
         <type>button</type>
         <id>2</id>
         <label>100</label>
@@ -23,28 +23,17 @@
         <onright>50</onright>
         <onup>17</onup>
         <ondown>3</ondown>
-        <subitems>
-          <subitem>101</subitem>
-          <subitem>100</subitem>
-          <subitem>417</subitem>
-        </subitems>
       </control>
       <control>
+        <description>Sort</description>
         <type>sortbutton</type>
         <onleft>3</onleft>
         <onright>50</onright>
         <onup>2</onup>
         <ondown>6</ondown>
-        <subitems>
-          <subitem>103</subitem>
-          <subitem>668</subitem>
-          <subitem>669</subitem>
-          <subitem>670</subitem>
-          <subitem>620</subitem>
-        </subitems>
       </control>
       <control>
-        <description>Previous button</description>
+        <description>Previous</description>
         <type>button</type>
         <id>6</id>
         <label>210</label>
@@ -77,37 +66,6 @@
         <hyperlink>762</hyperlink>
       </control>
     </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="500">WindowOpen</animation>
-      <control>
-        <description>listcontrol</description>
-        <type>listcontrol</type>
-        <id>50</id>
-        <textureHeight>45</textureHeight>
-          <font>font16</font>
-          <textXOff>82</textXOff>
-          <textXOff2>872</textXOff2>
-          <itemWidth>40</itemWidth>
-          <itemHeight>37</itemHeight>
-          <IconXOff>64</IconXOff>
-          <IconYOff>4</IconYOff>
-        <onleft>51</onleft>
-        <onright>51</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
-      </control>
-      <control>
-        <description>Thumbnail Panel</description>
-        <type>thumbnailpanel</type>
-        <id>51</id>
-        <onleft>2</onleft>
-        <onright>2</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
-      </control>
-    </control>
+    <import>common.facade.xml</import>
   </controls>
 </window>
