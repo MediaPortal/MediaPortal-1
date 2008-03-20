@@ -810,7 +810,7 @@ namespace SetupTv
           {
             try
             {
-              Process.Start(@"http://wiki.team-mediaportal.com/MediaPortalRequirements");
+              Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
             }
             catch (Exception){}
           }
