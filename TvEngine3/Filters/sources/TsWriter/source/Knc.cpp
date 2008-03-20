@@ -286,7 +286,6 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
       }
       else
       {
-        m_bIsKNC=true;
         LogDebug("knc card detected without CAM");
       }
     }
