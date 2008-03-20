@@ -148,7 +148,11 @@ namespace FullscreenMsg
             if (tmpArgs.ArgExists("BgImage"))
             {
               FullScreenForm.pbBackground.Image = new Bitmap(tmpArgs.Values[tmpArgs.FindArgPos("BgImage")]);
-              if (!FullScreenForm.Visible) FullScreenForm.Show();
+              if (!FullScreenForm.Visible)
+              {
+                FullScreenForm.Show();
+                this.Visible = false;
+              }
             }
 
             if (tmpArgs.ArgExists("ObservateMpStartup")) bool.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("ObservateMpStartup")], out FullScreenForm.OberservateMPStartup);
