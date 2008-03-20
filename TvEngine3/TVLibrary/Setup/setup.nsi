@@ -274,7 +274,22 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     #---------------------------------------------------------------------------
     DetailPrint "filter registration..."
     ; filters for digital tv
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+
+
+    ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
+
+  ${If} $MPBaseDir == ""
+    # this fallback should only be enabled until MediaPortal 1.0 is out
+    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+
+    ${If} $MPBaseDir == ""
+      !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+    ${EndIf}
+  ${EndIf}
+    
+    
+    
+    
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
     ; filters for analog tv
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mpFileWriter.ax $INSTDIR\mpFileWriter.ax $INSTDIR
@@ -320,8 +335,20 @@ ${MementoSectionEnd}
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     DetailPrint "Unreg and remove filters..."
+    
     ; filters for digital tv
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+    ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
+
+  ${If} $MPBaseDir == ""
+    # this fallback should only be enabled until MediaPortal 1.0 is out
+    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+
+    ${If} $MPBaseDir == ""
+      !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+    ${EndIf}
+  ${EndIf}
+  
+  
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
     ; filters for analog tv
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\mpFileWriter.ax
