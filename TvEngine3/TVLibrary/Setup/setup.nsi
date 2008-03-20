@@ -288,6 +288,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     DetailPrint "Finished Installing TVService"
 
     SetOutPath $INSTDIR
+    
+    SetShellVarContext all
     ${If} $noDesktopSC != 1
         CreateShortcut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
     ${EndIf}
@@ -466,6 +468,7 @@ Section -Post
     SetOverwrite on
     SetOutPath $INSTDIR
 
+    SetShellVarContext all
     ${If} $noStartMenuSC != 1
         !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
         ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
