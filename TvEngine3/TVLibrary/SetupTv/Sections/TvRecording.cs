@@ -177,11 +177,6 @@ namespace SetupTv.Sections
       UpdateDriveInfo(false);
     }
 
-    private void trackBarDisk_Scroll(object sender, EventArgs e)
-    {
-      UpdateDriveInfo(true);
-    }
-
     private void textBoxFormat_KeyPress(object sender, KeyPressEventArgs e)
     {
       if ((e.KeyChar == '/') || (e.KeyChar == ':') || (e.KeyChar == '*') ||
@@ -228,63 +223,6 @@ namespace SetupTv.Sections
         if (mpNumericTextBoxDiskQuota.Value < 500)
           mpNumericTextBoxDiskQuota.Value = 500;
       }
-      /*
-      if (save)
-      {
-        float percent = (float)trackBarDisk.Value;
-        percent /= 100f;
-        float quota = percent * ((float)totalSpace);
-        if (quota < (52428800f)) //50MB
-        {
-          quota = (52428800f);//50MB
-          percent = (quota / ((float)totalSpace)) * 100f;
-          try
-          {
-            trackBarDisk.Value = (int)percent;
-          }
-          catch (ArgumentOutOfRangeException)
-          {
-            trackBarDisk.Value = 0;
-          }
-        }
-        labelQuota.Text = Utils.GetSize((long)quota);
-
-        long longQuota = (long)quota;
-        longQuota /= 1024; // kbyte
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
-        setting.Value = longQuota.ToString();
-        setting.Persist();
-        //using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-        //{
-        //  long longQuota = (long)quota;
-        //  longQuota /= 1024; // kbyte
-        //  xmlwriter.SetValue("freediskspace", drive[0].ToString(), longQuota.ToString());
-        //}
-      }
-      else
-      {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        string quotaText = layer.GetSetting("freediskspace" + drive[0].ToString(), "51200").Value;
-        //using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-        {
-          //string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
-          float quota = (float)Int32.Parse(quotaText);
-          if (quota < 51200) quota = 51200f;
-          quota *= 1024f;//kbyte
-          labelQuota.Text = Utils.GetSize((long)quota);
-
-          float percent = (quota / ((float)totalSpace)) * 100f;
-          try
-          {
-            trackBarDisk.Value = (int)percent;
-          }
-          catch (ArgumentOutOfRangeException)
-          {
-            trackBarDisk.Value = 0;
-          }
-        }
-      }*/
     }
 
     private void textBoxPreInterval_KeyPress(object sender, KeyPressEventArgs e)
@@ -331,18 +269,10 @@ namespace SetupTv.Sections
       comboBoxMovies.SelectedIndex = 0;
       textBoxSample.Text = ShowExample(formatString[comboBoxMovies.SelectedIndex], comboBoxMovies.SelectedIndex);
 
+      enableDiskQuota.Checked = (layer.GetSetting("diskQuotaEnabled", "False").Value == "True");
+      enableDiskQuotaControls();
 
-      comboBoxDrive.Items.Clear();
-      for (char drive = 'a'; drive <= 'z'; drive++)
-      {
-        string driveLetter = String.Format("{0}:", drive);
-        if (Utils.getDriveType(driveLetter) == 3)
-        {
-          comboBoxDrive.Items.Add(driveLetter);
-        }
-      }
-      comboBoxDrive.SelectedIndex = 0;
-      UpdateDriveInfo(false);
+      LoadComboBoxDrive();
     }
 
     public override void SaveSettings()
@@ -454,6 +384,7 @@ namespace SetupTv.Sections
           _needRestart = true;
           info.card.RecordingFolder = textBoxFolder.Text;
           info.card.Persist();
+          LoadComboBoxDrive();
         }
       }
     }
@@ -491,6 +422,7 @@ namespace SetupTv.Sections
         info.card.RecordingFolder = textBoxFolder.Text;
         info.card.Persist();
         _needRestart = true;
+        LoadComboBoxDrive();
       }
     }
 
@@ -510,6 +442,7 @@ namespace SetupTv.Sections
           info.card.TimeShiftFolder = textBoxTimeShiftFolder.Text;
           info.card.Persist();
           _needRestart = true;
+          LoadComboBoxDrive();
         }
       }
     }
@@ -539,6 +472,65 @@ namespace SetupTv.Sections
     private void mpNumericTextBoxDiskQuota_Leave(object sender, EventArgs e)
     {
       UpdateDriveInfo(true);
+    }
+
+    private void enableDiskQuotaControls()
+    {
+      if (enableDiskQuota.Checked)
+      {
+        //enable all controls
+        label9.Enabled = true;
+        comboBoxDrive.Enabled = true;
+        label10.Enabled = true;
+        labelTotalDiskSpace.Enabled = true;
+        label11.Enabled = true;
+        labelFreeDiskspace.Enabled = true;
+        label14.Enabled = true;
+        mpNumericTextBoxDiskQuota.Enabled = true;
+        mpLabel5.Enabled = true;
+      }
+      else
+      {
+        //disable all controls
+        label9.Enabled = false;
+        comboBoxDrive.Enabled = false;
+        label10.Enabled = false;
+        labelTotalDiskSpace.Enabled = false;
+        label11.Enabled = false;
+        labelFreeDiskspace.Enabled = false;
+        label14.Enabled = false;
+        mpNumericTextBoxDiskQuota.Enabled = false;
+        mpLabel5.Enabled = false;
+      }
+    }
+
+    private void enableDiskQuota_CheckedChanged(object sender, EventArgs e)
+    {
+      enableDiskQuotaControls();
+    
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("diskQuotaEnabled");
+      setting.Value = ((CheckBox)sender).Checked.ToString();
+      setting.Persist();
+    }
+
+    private void LoadComboBoxDrive()
+    {
+      comboBoxDrive.Items.Clear();
+      IList cards = Card.ListAll();
+      foreach (Card card in cards)
+      {
+        if (card.RecordingFolder.Length > 0)
+        {
+          string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
+          if (Utils.getDriveType(driveLetter) == 3)
+          {
+            comboBoxDrive.Items.Add(driveLetter);
+          }
+        }
+      }
+      comboBoxDrive.SelectedIndex = 0;
+      UpdateDriveInfo(false);
     }
   }
 }

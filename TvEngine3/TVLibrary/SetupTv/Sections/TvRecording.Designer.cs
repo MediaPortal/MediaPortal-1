@@ -58,10 +58,9 @@ namespace SetupTv.Sections
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
       this.tabPage3 = new System.Windows.Forms.TabPage();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.enableDiskQuota = new System.Windows.Forms.CheckBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpNumericTextBoxDiskQuota = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.labelQuota = new System.Windows.Forms.Label();
-      this.trackBarDisk = new System.Windows.Forms.TrackBar();
       this.label14 = new System.Windows.Forms.Label();
       this.labelFreeDiskspace = new System.Windows.Forms.Label();
       this.labelTotalDiskSpace = new System.Windows.Forms.Label();
@@ -94,7 +93,6 @@ namespace SetupTv.Sections
       this.groupBox3.SuspendLayout();
       this.tabPage3.SuspendLayout();
       this.groupBox4.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarDisk)).BeginInit();
       this.tabPage4.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
@@ -416,10 +414,9 @@ namespace SetupTv.Sections
       // 
       // groupBox4
       // 
+      this.groupBox4.Controls.Add(this.enableDiskQuota);
       this.groupBox4.Controls.Add(this.mpLabel5);
       this.groupBox4.Controls.Add(this.mpNumericTextBoxDiskQuota);
-      this.groupBox4.Controls.Add(this.labelQuota);
-      this.groupBox4.Controls.Add(this.trackBarDisk);
       this.groupBox4.Controls.Add(this.label14);
       this.groupBox4.Controls.Add(this.labelFreeDiskspace);
       this.groupBox4.Controls.Add(this.labelTotalDiskSpace);
@@ -433,14 +430,26 @@ namespace SetupTv.Sections
       this.groupBox4.TabIndex = 0;
       this.groupBox4.TabStop = false;
       // 
+      // enableDiskQuota
+      // 
+      this.enableDiskQuota.AccessibleName = "";
+      this.enableDiskQuota.AutoSize = true;
+      this.enableDiskQuota.Location = new System.Drawing.Point(30, 19);
+      this.enableDiskQuota.Name = "enableDiskQuota";
+      this.enableDiskQuota.Size = new System.Drawing.Size(111, 17);
+      this.enableDiskQuota.TabIndex = 11;
+      this.enableDiskQuota.Text = "Enable disk quota";
+      this.enableDiskQuota.UseVisualStyleBackColor = true;
+      this.enableDiskQuota.CheckedChanged += new System.EventHandler(this.enableDiskQuota_CheckedChanged);
+      // 
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(300, 152);
+      this.mpLabel5.Location = new System.Drawing.Point(299, 152);
       this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(23, 13);
+      this.mpLabel5.Size = new System.Drawing.Size(79, 13);
       this.mpLabel5.TabIndex = 10;
-      this.mpLabel5.Text = "MB";
+      this.mpLabel5.Text = "MB free space.";
       // 
       // mpNumericTextBoxDiskQuota
       // 
@@ -452,26 +461,6 @@ namespace SetupTv.Sections
       this.mpNumericTextBoxDiskQuota.Value = 13;
       this.mpNumericTextBoxDiskQuota.Leave += new System.EventHandler(this.mpNumericTextBoxDiskQuota_Leave);
       // 
-      // labelQuota
-      // 
-      this.labelQuota.AutoSize = true;
-      this.labelQuota.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelQuota.Location = new System.Drawing.Point(218, 273);
-      this.labelQuota.Name = "labelQuota";
-      this.labelQuota.Size = new System.Drawing.Size(39, 13);
-      this.labelQuota.TabIndex = 8;
-      this.labelQuota.Text = "10MB";
-      this.labelQuota.Visible = false;
-      // 
-      // trackBarDisk
-      // 
-      this.trackBarDisk.Location = new System.Drawing.Point(30, 185);
-      this.trackBarDisk.Name = "trackBarDisk";
-      this.trackBarDisk.Size = new System.Drawing.Size(391, 40);
-      this.trackBarDisk.TabIndex = 7;
-      this.trackBarDisk.Visible = false;
-      this.trackBarDisk.Scroll += new System.EventHandler(this.trackBarDisk_Scroll);
-      // 
       // label14
       // 
       this.label14.AutoSize = true;
@@ -479,30 +468,30 @@ namespace SetupTv.Sections
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(201, 13);
       this.label14.TabIndex = 6;
-      this.label14.Text = "Delete recordings when there is less then";
+      this.label14.Text = "Delete recordings when there is less than";
       // 
       // labelFreeDiskspace
       // 
       this.labelFreeDiskspace.AutoSize = true;
-      this.labelFreeDiskspace.Location = new System.Drawing.Point(148, 90);
+      this.labelFreeDiskspace.Location = new System.Drawing.Point(146, 108);
       this.labelFreeDiskspace.Name = "labelFreeDiskspace";
-      this.labelFreeDiskspace.Size = new System.Drawing.Size(41, 13);
+      this.labelFreeDiskspace.Size = new System.Drawing.Size(93, 13);
       this.labelFreeDiskspace.TabIndex = 5;
-      this.labelFreeDiskspace.Text = "label13";
+      this.labelFreeDiskspace.Text = "Checking space...";
       // 
       // labelTotalDiskSpace
       // 
       this.labelTotalDiskSpace.AutoSize = true;
-      this.labelTotalDiskSpace.Location = new System.Drawing.Point(146, 64);
+      this.labelTotalDiskSpace.Location = new System.Drawing.Point(146, 90);
       this.labelTotalDiskSpace.Name = "labelTotalDiskSpace";
-      this.labelTotalDiskSpace.Size = new System.Drawing.Size(43, 13);
+      this.labelTotalDiskSpace.Size = new System.Drawing.Size(93, 13);
       this.labelTotalDiskSpace.TabIndex = 4;
-      this.labelTotalDiskSpace.Text = "dddddd";
+      this.labelTotalDiskSpace.Text = "Checking space...";
       // 
       // label11
       // 
       this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(27, 90);
+      this.label11.Location = new System.Drawing.Point(26, 108);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(82, 13);
       this.label11.TabIndex = 3;
@@ -512,7 +501,7 @@ namespace SetupTv.Sections
       // label10
       // 
       this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(27, 64);
+      this.label10.Location = new System.Drawing.Point(26, 90);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(85, 13);
       this.label10.TabIndex = 2;
@@ -523,7 +512,7 @@ namespace SetupTv.Sections
       // 
       this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDrive.FormattingEnabled = true;
-      this.comboBoxDrive.Location = new System.Drawing.Point(68, 24);
+      this.comboBoxDrive.Location = new System.Drawing.Point(68, 51);
       this.comboBoxDrive.Name = "comboBoxDrive";
       this.comboBoxDrive.Size = new System.Drawing.Size(121, 21);
       this.comboBoxDrive.TabIndex = 1;
@@ -532,7 +521,7 @@ namespace SetupTv.Sections
       // label9
       // 
       this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(27, 27);
+      this.label9.Location = new System.Drawing.Point(27, 54);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(35, 13);
       this.label9.TabIndex = 0;
@@ -710,7 +699,6 @@ namespace SetupTv.Sections
       this.tabPage3.ResumeLayout(false);
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarDisk)).EndInit();
       this.tabPage4.ResumeLayout(false);
       this.tabPage4.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -747,9 +735,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label10;
     private System.Windows.Forms.ComboBox comboBoxDrive;
     private System.Windows.Forms.Label label9;
-    private System.Windows.Forms.TrackBar trackBarDisk;
     private System.Windows.Forms.Label label15;
-    private System.Windows.Forms.Label labelQuota;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
@@ -775,5 +761,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateTagInfoXML;
     private System.Windows.Forms.NumericUpDown numericUpDownPostRec;
     private System.Windows.Forms.NumericUpDown numericUpDownPreRec;
+    private System.Windows.Forms.CheckBox enableDiskQuota;
   }
 }
