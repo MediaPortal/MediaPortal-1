@@ -652,6 +652,7 @@ Section -Post
     SetOverwrite on
     SetOutPath $INSTDIR
 
+    SetShellVarContext all
     ${If} $noDesktopSC != 1
         CreateShortcut "$DESKTOP\MediaPortal.lnk"               "$INSTDIR\MediaPortal.exe"      "" "$INSTDIR\MediaPortal.exe"   0 "" "" "MediaPortal"
         CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe"    "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
