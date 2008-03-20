@@ -47,6 +47,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FirebirdSql.Data.Firebird, Version=1.7.1.0, Culture=neutral, PublicKeyToken=fa843d180294369d">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TVDatabase\references\FirebirdSql.Data.Firebird.dll</HintPath>
+    </Reference>
     <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TVDatabase\references\Gentle.Common.dll</HintPath>
@@ -54,6 +58,10 @@
     <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TVDatabase\references\Gentle.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Provider.Firebird, Version=1.2.9.1287, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TVDatabase\references\Gentle.Provider.Firebird.dll</HintPath>
     </Reference>
     <Reference Include="Gentle.Provider.MySQL, Version=1.2.9.1288, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>

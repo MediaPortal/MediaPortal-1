@@ -29,12 +29,10 @@ using System.Collections;
 using System.Reflection;
 using System.IO;
 using System.Threading;
-
-
 using TvControl;
 using TvLibrary.Log;
-
 using TvDatabase;
+
 namespace SetupTv
 {
   /// <summary>
@@ -79,7 +77,6 @@ namespace SetupTv
           applicationForm = new WizardForm(sectionsConfiguration);
           break;
       }
-
 
       if (applicationForm != null)
       {

@@ -49,6 +49,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DirectShowLib\bin\Release\DirectShowLib.dll</HintPath>
     </Reference>
+    <Reference Include="FirebirdSql.Data.Firebird, Version=1.7.1.0, Culture=neutral, PublicKeyToken=fa843d180294369d">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\references\FirebirdSql.Data.Firebird.dll</HintPath>
+    </Reference>
     <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Gentle.Common.dll</HintPath>
@@ -56,10 +60,6 @@
     <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\references\Gentle.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\Gentle.Provider.SQLServer.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=1.0.7.30072, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
       <SpecificVersion>False</SpecificVersion>

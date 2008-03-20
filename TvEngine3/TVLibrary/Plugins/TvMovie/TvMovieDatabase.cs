@@ -40,8 +40,6 @@ using Microsoft.Win32;
 using Gentle.Common;
 using Gentle.Framework;
 
-using MySql.Data.MySqlClient;
-
 using TvDatabase;
 using TvLibrary.Log;
 

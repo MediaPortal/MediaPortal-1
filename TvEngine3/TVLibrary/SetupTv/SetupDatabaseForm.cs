@@ -31,9 +31,9 @@ using System.Data.SqlClient;
 using System.Windows.Forms;
 using System.Xml;
 using System.Net;
+using FirebirdSql.Data.Firebird;
 using MySql.Data.MySqlClient;
 using TvLibrary.Log;
-
 
 namespace SetupTv
 {
@@ -42,10 +42,11 @@ namespace SetupTv
     enum ProviderType
     {
       SqlServer,
-      MySql
+      MySql,
+      FbEmbedded,
     }
 
-    ProviderType _provider = ProviderType.SqlServer;
+    ProviderType _provider = ProviderType.MySql;
 
     public SetupDatabaseForm()
     {
@@ -54,8 +55,9 @@ namespace SetupTv
 
     private void LoadConnectionDetailsFromConfig(bool lookupMachineName)
     {
+      //<DefaultProvider name="Firebird" connectionString="User=SYSDBA;Password=masterkey;Data Source=TvLibrary.fdb;ServerType=1;Dialect=3;Charset=UNICODE_FSS;Role=;Pooling=true;" />
       //<DefaultProvider name="SQLServer" connectionString="Password=sa;Persist Security Info=True;User ID=sa;Initial Catalog=TvLibrary;Data Source=pcebeckers;" />
-      //<DefaultProvider name="MySQL" connectionString="Server=10.0.0.2;Database=test;User ID=xxx;Password=xxx" />
+      //<DefaultProvider name="MySQL" connectionString="Server=10.0.0.2;Database=TvLibrary;User ID=xxx;Password=xxx" />
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -78,20 +80,20 @@ namespace SetupTv
         XmlNode attributeConnectionString = nodeKey.Attributes.GetNamedItem("connectionString");
         string connectionString = attributeConnectionString.InnerText;
         string serverType = serverName.InnerText.ToLower();
-        if (serverType == "mysql")
+        switch (serverType)
         {
-          _provider = ProviderType.MySql;
-          rbMySQL.Checked = true;
-        }
-        else
-        {
-          if (serverType == "sqlserver")
-          {
+          case "mysql":
+            _provider = ProviderType.MySql;
+            rbMySQL.Checked = true;
+            break;
+          case "sqlserver":
             _provider = ProviderType.SqlServer;
             rbSQLServer.Checked = true;
-          }
-          else
-            return;
+            break;
+          default:
+            _provider = ProviderType.FbEmbedded;
+            rbMySQL.Checked = rbSQLServer.Checked = false;
+            break;
         }
 
         string[] parts = connectionString.Split(';');
@@ -100,23 +102,31 @@ namespace SetupTv
           string part = parts[i];
           string[] keyValue = part.Split('=');
           if (keyValue[0].ToLower() == "password")
-          {
             tbPassword.Text = keyValue[1];
-          }
-          if (keyValue[0].ToLower() == "user id")
-          {
+
+          if (keyValue[0].ToLower() == "user id" || keyValue[0].ToLower() == "user")
             tbUserID.Text = keyValue[1];
-          }
+
           if (keyValue[0].ToLower() == "data source" || keyValue[0].ToLower() == "server")
           {
             if (keyValue[1].Length == 0 || keyValue[1] == "-")
             {
-              if (lookupMachineName && _provider == ProviderType.SqlServer)
+              if (lookupMachineName)
               {
-                keyValue[1] = Dns.GetHostName() + @"\SQLEXPRESS";
+                switch (_provider)
+                {
+                  case ProviderType.SqlServer:
+                    tbServerHostName.Text = keyValue[1] = Dns.GetHostName() + @"\SQLEXPRESS";                    
+                    break;
+                  case ProviderType.MySql:
+                    tbServerHostName.Text = keyValue[1] = Dns.GetHostName();                    
+                    break;
+                  case ProviderType.FbEmbedded:
+                    tbServerHostName.Text = keyValue[1] = Dns.GetHostName();
+                    break;
+                }
               }
-            }
-            tbServerHostName.Text = keyValue[1];
+            }            
           }
         }
       }
@@ -132,13 +142,19 @@ namespace SetupTv
       {
         case ProviderType.SqlServer:
           if (database == "") database = "master";
-          if (pooling == false)
-            return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;", password, userid, server, database);
-          return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};", password, userid, server, database);
+          if (pooling)
+            return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};", password, userid, server, database);
+          return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;", password, userid, server, database);
 
         case ProviderType.MySql:
           if (database == "") database = "mysql";
           return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;", server, userid, password, database);
+
+        case ProviderType.FbEmbedded:
+          if (string.IsNullOrEmpty(database)) database = "TvLibrary.fdb";
+          if (pooling)
+            return String.Format("Database={0};User={1};Password={2};ServerType=1;Charset=UNICODE_FSS;", database, userid, password);
+          return String.Format("Database={0};User={1};Password={2};ServerType=1;Charset=UNICODE_FSS;Pooling=false;", database, userid, password);
       }
       return "";
     }
@@ -174,8 +190,15 @@ namespace SetupTv
               connect.Close();
             }
             break;
+          case ProviderType.FbEmbedded:
+            using (FbConnection connect = new FbConnection(connectionString))
+            {
+              connect.Open();
+              connect.Close();
+            }
+            break;
           default:
-            throw (new Exception("Unkown provider!"));            
+            throw (new Exception("Unkown provider!"));
         }
       }
       catch (Exception)
@@ -640,7 +663,7 @@ namespace SetupTv
               {
                 // enable the dependency now
                 if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, true))
-                  MessageBox.Show("Failed to change the startup behaviour", "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);                  
+                  MessageBox.Show("Failed to change the startup behaviour", "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
               }
               // start the service right now
               if (!ServiceHelper.Start(DBSearchPattern))
