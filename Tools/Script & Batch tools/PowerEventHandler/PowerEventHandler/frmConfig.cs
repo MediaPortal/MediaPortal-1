@@ -275,9 +275,9 @@ namespace PowerEventHandler
       try
       {
         System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(programPath); //new System.Diagnostics.ProcessStartInfo(@"C:\listfiles.bat");
-        psi.RedirectStandardOutput = true;
+        psi.RedirectStandardOutput = false;
         psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-        psi.UseShellExecute = false;
+        psi.UseShellExecute = true;
         System.Diagnostics.Process listFiles;
         txbLog.Text += "PowerEventHandler: Start program: " + programPath + Environment.NewLine;
         int LauchTimeOut = Convert.ToInt16(txbLaunchTimeout.Text) * 1000;
@@ -367,6 +367,16 @@ namespace PowerEventHandler
               e.SuppressKeyPress = true;
           }
       }
+
+    private void btnTestOnResume_Click(object sender, EventArgs e)
+    {
+      if (txbOnResume.Text != String.Empty) RunExternalProgram(txbOnResume.Text);
+    }
+
+    private void btnTestOnSuspend_Click(object sender, EventArgs e)
+    {
+      if (txbOnSuspend.Text != String.Empty) RunExternalProgram(txbOnSuspend.Text);
+    }
 
   }
 }
