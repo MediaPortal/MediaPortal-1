@@ -83,6 +83,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WizardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WizardForm.Designer.cs">
+      <DependentUpon>WizardForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="NotifyForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -164,10 +176,6 @@
     <EmbeddedResource Include="SetupDatabaseForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WizardForm.resx">
-      <DependentUpon>WizardForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -368,9 +376,6 @@
       <DependentUpon>TvSchedules.cs</DependentUpon>
     </Compile>
     <Compile Include="ServiceHelper.cs" />
-    <Compile Include="SettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="SetupDatabaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -379,9 +384,6 @@
     </Compile>
     <Compile Include="Startup.cs" />
     <Compile Include="Util.cs" />
-    <Compile Include="WizardForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
@@ -486,8 +488,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="35_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="35_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="WizardForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WizardForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="images\ms_sql_logo.gif" />
     <None Include="images\mysql_logo.gif" />
+    <EmbeddedResource Include="images\wizard-header.jpg" />
     <Content Include="SetupTv.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
