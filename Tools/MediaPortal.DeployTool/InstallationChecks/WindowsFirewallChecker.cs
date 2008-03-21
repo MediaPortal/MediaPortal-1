@@ -40,6 +40,16 @@ namespace MediaPortal.DeployTool
     {
       // Applications
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications\\List", true);
+
+      // Under Vista subkey "List" doesn't exist as default
+      if (key == null)
+      {
+          key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications", true);
+          key.CreateSubKey("List");
+          key.Flush();
+          key.Close();
+          key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications\\List", true);
+      }
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"]=="1")
         key.SetValue(InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe", InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe:*:Enabled:TvService.exe", RegistryValueKind.String);
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
@@ -75,8 +85,18 @@ namespace MediaPortal.DeployTool
     }
     private void ConfigureWindowsFirewall()
     {
-      ConfigureFirewallProfile("StandardProfile");
-      ConfigureFirewallProfile("DomainProfile");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile");
+      if (key != null)
+      {
+          key.Close();
+          ConfigureFirewallProfile("StandardProfile");
+      }
+      key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\DomainProfile");
+      if (key != null)
+      {
+          key.Close();
+          ConfigureFirewallProfile("DomainProfile");
+      }
     }
     #endregion
     public string GetDisplayName()
@@ -95,7 +115,7 @@ namespace MediaPortal.DeployTool
     }
     public bool UnInstall()
     {
-      //Uninstall not possible. Installer tries an automatic update if older version found
+      //Uninstall not yet handled...
       return true;
     }
     public CheckResult CheckStatus()
@@ -122,17 +142,25 @@ namespace MediaPortal.DeployTool
         if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
         {
           RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile\\GloballyOpenPorts\\List", true);
-          if (InstallationProperties.Instance["DBMSType"] == "mssql")
+          /*
+          * key can be null (Under Vista ...\\List doesn't always exist)
+          */
+          if (key != null)
           {
-            if (key.GetValue("1433:TCP")==null)
-              result.state = CheckState.NOT_INSTALLED;
+              if (InstallationProperties.Instance["DBMSType"] == "mssql")
+              {
+                  if (key.GetValue("1433:TCP") == null)
+                      result.state = CheckState.NOT_INSTALLED;
+              }
+              else
+              {
+                  if (key.GetValue("3306:TCP") == null)
+                      result.state = CheckState.NOT_INSTALLED;
+              }
+              key.Close();
           }
           else
-          {
-            if (key.GetValue("3306:TCP") == null)
               result.state = CheckState.NOT_INSTALLED;
-          }
-          key.Close();
         }
       }
       return result;

@@ -59,9 +59,16 @@ namespace MediaPortal.DeployTool
       Localizer.Instance.SwitchCulture("en-US");
       UpdateUI();
       InstallationProperties.Instance.Add("SVNMode", "false");
+      
       //Set default folders
       InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
       InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
+      
+        //Identify 64bit systems for new registry path
+      if (IntPtr.Size == 8)
+          InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+      else
+          InstallationProperties.Instance.Set("RegistryKeyAdd", "");
 
       string[] cmdArgs = Environment.GetCommandLineArgs();
       foreach (string arg in cmdArgs)

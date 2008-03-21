@@ -50,17 +50,15 @@ namespace MediaPortal.DeployTool
     {
       string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal");
       string targetDir = InstallationProperties.Instance["MPDir"];
-      Process setup = Process.Start(nsis, "/S /D=\"" + targetDir+"\"");
+      Process setup = Process.Start(nsis, "/S /D=\"" + targetDir + "\"");
       setup.WaitForExit();
       return (setup.ExitCode==0);
     }
     public bool UnInstall()
     {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
       if (key == null)
       {
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0 RC3");
-        if (key == null)
           return false;
       }
       Process setup = Process.Start((string)key.GetValue("UninstallString"));
@@ -72,22 +70,29 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal"));
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
       if (key == null)
       {
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0 RC3");
-        if (key == null)
-        {
           result.state = CheckState.NOT_INSTALLED;
-          return result;
-        }
       }
-      string version = (string)key.GetValue("DisplayVersion");
-      key.Close();
-      if (version == "0.2.3.0")
-        result.state = CheckState.INSTALLED;
       else
-        result.state = CheckState.VERSION_MISMATCH;
+      {
+          int MpInstalled = (int)key.GetValue("MementoSection_SecCore");
+          string version = (string)key.GetValue("DisplayVersion");
+          key.Close();
+          if (MpInstalled == 0)
+              result.state = CheckState.NOT_INSTALLED;
+          else
+              result.state = CheckState.INSTALLED;
+          /*
+          string version = (string)key.GetValue("DisplayVersion");
+          key.Close();
+          if (version == "0.9.3.0")
+            result.state = CheckState.INSTALLED;
+          else
+            result.state = CheckState.VERSION_MISMATCH;
+          */
+      }
       return result;
     }
   }
