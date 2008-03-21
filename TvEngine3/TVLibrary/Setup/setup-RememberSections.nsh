@@ -70,12 +70,11 @@
     ;Then it writes component installed flag to registry
     ;Input: section index constant name specified in Section command.
 
-    ${If} ${SectionIsSelected} ${SecName}
-    ${Else}
+    ${IfNot} ${SectionIsSelected} "${${SecName}}"
         ClearErrors
-        ReadRegDWORD $R0 ${MEMENTO_REGISTRY_ROOT} `${MEMENTO_REGISTRY_KEY}` `MementoSection_${SecName}`
+        ReadRegDWORD $R0 ${MEMENTO_REGISTRY_ROOT} '${MEMENTO_REGISTRY_KEY}' 'MementoSection_${SecName}'
 
-        ${If} $R0 == 1
+        ${If} $R0 = 1
             !insertmacro "Remove_${${SecName}}"
         ${EndIf}
     ${EndIf}
