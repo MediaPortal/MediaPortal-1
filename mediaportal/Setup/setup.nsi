@@ -39,7 +39,6 @@ SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
 # VARIABLES
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
-Var CommonAppData   ; The Common Application Folder
 ; variables for commandline parameters for Installer
 Var noDscaler
 Var noGabest
@@ -57,6 +56,7 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
+!define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal"
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
@@ -168,16 +168,7 @@ ShowUninstDetails show
 
 #---------------------------------------------------------------------------
 # USEFUL MACROS
-#---------------------------------------------------------------------------
-!macro SetCommonAppData
-    ; Get the Common Application Data Folder
-    ; Set the Context to alll, so that we get the All Users folder
-    SetShellVarContext all
-    StrCpy $CommonAppData "$APPDATA\Team MediaPortal\MediaPortal"
-    ; Context back to current user
-    SetShellVarContext current
-!macroend
- 
+#--------------------------------------------------------------------------- 
 !macro SectionList MacroName
     ; This macro used to perform operation on multiple sections.
     ; List all of your components in following manner here.
@@ -359,9 +350,9 @@ Section "MediaPortal core files (required)" SecCore
     File MediaPortalDirs.xml
 
     ; ************************************************************************
-    SetOutPath $CommonAppData
+    SetOutPath "${COMMON_APPDATA}"
 
-    CreateDirectory "$CommonAppData\InputDeviceMappings\custom"
+    CreateDirectory "${COMMON_APPDATA}\InputDeviceMappings\custom"
     ; Config Files (XML)
     File ..\xbmc\bin\Release\CaptureCardDefinitions.xml
     File "..\xbmc\bin\Release\eHome Infrared Transceiver List XP.xml"
@@ -419,22 +410,22 @@ SectionEnd
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TTPremiumSource.ax
 
     ; Config Files
-    Delete /REBOOTOK  $CommonAppData\CaptureCardDefinitions.xml
-    Delete /REBOOTOK  "$CommonAppData\eHome Infrared Transceiver List XP.xml"
-    Delete /REBOOTOK  $CommonAppData\FileDetailContents.xml
-    Delete /REBOOTOK  $CommonAppData\grabber_AllGame_com.xml
-    Delete /REBOOTOK  $CommonAppData\ISDNCodes.xml
-    Delete /REBOOTOK  $CommonAppData\keymap.xml
-    Delete /REBOOTOK  $CommonAppData\MusicVideoSettings.xml
-    Delete /REBOOTOK  $CommonAppData\ProgramSettingProfiles.xml
-    Delete /REBOOTOK  $CommonAppData\wikipedia.xml
-    Delete /REBOOTOK  $CommonAppData\yac-area-codes.xml
+    Delete /REBOOTOK  ${COMMON_APPDATA}\CaptureCardDefinitions.xml
+    Delete /REBOOTOK  "${COMMON_APPDATA}\eHome Infrared Transceiver List XP.xml"
+    Delete /REBOOTOK  ${COMMON_APPDATA}\FileDetailContents.xml
+    Delete /REBOOTOK  ${COMMON_APPDATA}\grabber_AllGame_com.xml
+    Delete /REBOOTOK  ${COMMON_APPDATA}\ISDNCodes.xml
+    Delete /REBOOTOK  ${COMMON_APPDATA}\keymap.xml
+    Delete /REBOOTOK  ${COMMON_APPDATA}\MusicVideoSettings.xml
+    Delete /REBOOTOK  ${COMMON_APPDATA}\ProgramSettingProfiles.xml
+    Delete /REBOOTOK  ${COMMON_APPDATA}\wikipedia.xml
+    Delete /REBOOTOK  ${COMMON_APPDATA}\yac-area-codes.xml
 
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
-    RmDir /r /REBOOTOK $CommonAppData\Burner
+    RmDir /r /REBOOTOK ${COMMON_APPDATA}\Burner
     RmDir /r /REBOOTOK $INSTDIR\Cache
-    RmDir /r /REBOOTOK $CommonAppData\Cache
+    RmDir /r /REBOOTOK ${COMMON_APPDATA}\Cache
     RmDir /r /REBOOTOK $INSTDIR\language
     RmDir /r /REBOOTOK $INSTDIR\MusicPlayer
     RmDir /r /REBOOTOK $INSTDIR\osdskin-media
@@ -652,7 +643,6 @@ Section -Post
     SetOverwrite on
     SetOutPath $INSTDIR
 
-    SetShellVarContext all
     ${If} $noDesktopSC != 1
         CreateShortcut "$DESKTOP\MediaPortal.lnk"               "$INSTDIR\MediaPortal.exe"      "" "$INSTDIR\MediaPortal.exe"   0 "" "" "MediaPortal"
         CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$INSTDIR\Configuration.exe"    "" "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
@@ -665,8 +655,8 @@ Section -Post
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"                            "$INSTDIR\MediaPortal.exe"      ""      "$INSTDIR\MediaPortal.exe"   0 "" "" "MediaPortal"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"              "$INSTDIR\Configuration.exe"    ""      "$INSTDIR\Configuration.exe" 0 "" "" "MediaPortal Configuration"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"                 "$INSTDIR\MPTestTool2.exe"      "-auto" "$INSTDIR\MPTestTool2.exe"   0 "" "" "MediaPortal Debug-Mode"
-        CreateDirectory "$CommonAppData\log"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"                  "$CommonAppData\log"            ""      "$CommonAppData\log"         0 "" "" "MediaPortal Log-Files"
+        CreateDirectory "${COMMON_APPDATA}\log"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"                  "${COMMON_APPDATA}\log"         ""      "${COMMON_APPDATA}\log"      0 "" "" "MediaPortal Log-Files"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"    "$INSTDIR\MPInstaller.exe"      ""      "$INSTDIR\MPInstaller.exe"   0 "" "" "MediaPortal Plugins-Skins Installer"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"                   "$INSTDIR\MPTestTool2.exe"      ""      "$INSTDIR\MPTestTool2.exe"   0 "" "" "MediaPortal TestTool"
         CreateShortcut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$INSTDIR\uninstall-mp.exe"
@@ -745,8 +735,8 @@ Section Uninstall
     ; do we need to deinstall everything? Then remove also the CommonAppData and InstDir
     ${If} $RemoveAll == 1
         DetailPrint "Removing User Settings"
-        RmDir /r /REBOOTOK $CommonAppData
-        RmDir /r /REBOOTOK $INSTDIR
+        RmDir /r /REBOOTOK "${COMMON_APPDATA}"
+        RmDir /r /REBOOTOK "$INSTDIR"
     ${EndIf}
 
     ; Remove File Association for .mpi files
@@ -830,7 +820,7 @@ Function .onInit
         Abort
     noReboot:
 
-    !insertmacro SetCommonAppData
+    SetShellVarContext all
 FunctionEnd
 
 Function un.onInit
@@ -850,7 +840,7 @@ Function un.onInit
     ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
-    !insertmacro SetCommonAppData
+    SetShellVarContext all
 FunctionEnd
 
 Function un.onUninstSuccess
