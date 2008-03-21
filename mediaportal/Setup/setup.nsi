@@ -927,8 +927,10 @@ FunctionEnd
 */
 Function un.WelcomeLeave
     ; This function is called, before the uninstallation process is startet
+    
     ; It asks the user, if he wants to remove all files and settings
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO noRemoveAll
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO noRemoveAll
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "$(TEXT_MSGBOX_REMOVE_ALL_STUPID)" IDYES 0 IDNO noRemoveAll
         StrCpy $RemoveAll 1
     noRemoveAll:
 
