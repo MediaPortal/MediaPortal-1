@@ -105,10 +105,16 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP          "images\header.bmp"
+!if ${VER_BUILD} == 0       # it's a stable release
+    !define MUI_HEADERIMAGE_BITMAP          "images\header.bmp"
+    !define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard.bmp"
+    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard.bmp"
+!else                       # it's an svn reöease
+    !define MUI_HEADERIMAGE_BITMAP          "images\header-svn.bmp"
+    !define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard-svn.bmp"
+    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard-svn.bmp"
+!endif
 !define MUI_HEADERIMAGE_RIGHT
-!define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard.bmp"
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard.bmp"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_STARTMENUPAGE_NODISABLE
@@ -184,38 +190,28 @@ Section "MediaPortal core files (required)" SecCore
     DetailPrint "Installing MediaPortal core files..."
 
     SetOverwrite on
-
-    ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-    ; $0="01"      day
-    ; $1="04"      month
-    ; $2="2005"    year
-    ; $3="Friday"  day of week name
-    ; $4="16"      hour
-    ; $5="05"      minute
-    ; $6="50"      seconds
-
+    
     ; CHECK FOR OLD FILES and DIRECTORY
-    IfFileExists "$INSTDIR\*.*" 0 noInstDirRename
+    ${If} ${FileExists} "$INSTDIR\*.*"
+        ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+        ; $0="01"      day
+        ; $1="04"      month
+        ; $2="2005"    year
+        ; $3="Friday"  day of week name
+        ; $4="16"      hour
+        ; $5="05"      minute
+        ; $6="50"      seconds
 
-    /*  MAYBE WE should always rename the instdir if it exists
-    ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
-    ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
+        #  MAYBE WE should always rename the instdir if it exists
+        ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
+        ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
 
-    ${If} $R0 < ${VER_MAJOR}
-        Goto instDirRename
-    ${Else}
-        ${If} $R1 < ${VER_MINOR}
-            Goto instDirRename
-        ${Else}
-            Goto noInstDirRename
+        ${If} $R0 != ${VER_MAJOR}
+        ${OrIf} $R1 != ${VER_MINOR}
+            Rename "$INSTDIR" "$INSTDIR_BACKUP_$1$0-$4$5"
         ${EndIf}
     ${EndIf}
 
-    instDirRename:
-    */
-        Rename "$INSTDIR" "$INSTDIR_BACKUP_$1$0-$4$5"
-
-    noInstDirRename:
 
     IfFileExists "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" 0 +2
         Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_BACKUP_$1$0-$4$5"
@@ -410,22 +406,22 @@ SectionEnd
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TTPremiumSource.ax
 
     ; Config Files
-    Delete /REBOOTOK  ${COMMON_APPDATA}\CaptureCardDefinitions.xml
-    Delete /REBOOTOK  "${COMMON_APPDATA}\eHome Infrared Transceiver List XP.xml"
-    Delete /REBOOTOK  ${COMMON_APPDATA}\FileDetailContents.xml
-    Delete /REBOOTOK  ${COMMON_APPDATA}\grabber_AllGame_com.xml
-    Delete /REBOOTOK  ${COMMON_APPDATA}\ISDNCodes.xml
-    Delete /REBOOTOK  ${COMMON_APPDATA}\keymap.xml
-    Delete /REBOOTOK  ${COMMON_APPDATA}\MusicVideoSettings.xml
-    Delete /REBOOTOK  ${COMMON_APPDATA}\ProgramSettingProfiles.xml
-    Delete /REBOOTOK  ${COMMON_APPDATA}\wikipedia.xml
-    Delete /REBOOTOK  ${COMMON_APPDATA}\yac-area-codes.xml
+    Delete /REBOOTOK "${COMMON_APPDATA}\CaptureCardDefinitions.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\eHome Infrared Transceiver List XP.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\FileDetailContents.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\grabber_AllGame_com.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\ISDNCodes.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\keymap.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\MusicVideoSettings.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\ProgramSettingProfiles.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\wikipedia.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\yac-area-codes.xml"
 
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
-    RmDir /r /REBOOTOK ${COMMON_APPDATA}\Burner
+    RmDir /r /REBOOTOK "${COMMON_APPDATA}\Burner"
     RmDir /r /REBOOTOK $INSTDIR\Cache
-    RmDir /r /REBOOTOK ${COMMON_APPDATA}\Cache
+    RmDir /r /REBOOTOK "${COMMON_APPDATA}\Cache"
     RmDir /r /REBOOTOK $INSTDIR\language
     RmDir /r /REBOOTOK $INSTDIR\MusicPlayer
     RmDir /r /REBOOTOK $INSTDIR\osdskin-media
@@ -463,99 +459,99 @@ SectionEnd
     RmDir $INSTDIR\xmltv
 
     ; Remove Files in MP Root Directory
-    Delete /REBOOTOK  $INSTDIR\AppStart.exe
-    Delete /REBOOTOK  $INSTDIR\AppStart.exe.config
-    Delete /REBOOTOK  $INSTDIR\AxInterop.WMPLib.dll
-    Delete /REBOOTOK  $INSTDIR\BallonRadio.ico
-    Delete /REBOOTOK  $INSTDIR\bass.dll
-    Delete /REBOOTOK  $INSTDIR\Bass.Net.dll
-    Delete /REBOOTOK  $INSTDIR\bass_fx.dll
-    Delete /REBOOTOK  $INSTDIR\bass_vis.dll
-    Delete /REBOOTOK  $INSTDIR\bass_vst.dll
-    Delete /REBOOTOK  $INSTDIR\bass_wadsp.dll
-    Delete /REBOOTOK  $INSTDIR\bassasio.dll
-    Delete /REBOOTOK  $INSTDIR\bassmix.dll
-    Delete /REBOOTOK  $INSTDIR\BassRegistration.dll
-    Delete /REBOOTOK  $INSTDIR\Configuration.exe
-    Delete /REBOOTOK  $INSTDIR\Configuration.exe.config
-    Delete /REBOOTOK  $INSTDIR\Core.dll
-    Delete /REBOOTOK  $INSTDIR\CSScriptLibrary.dll
-    Delete /REBOOTOK  $INSTDIR\d3dx9_30.dll
-    Delete /REBOOTOK  $INSTDIR\DaggerLib.dll
-    Delete /REBOOTOK  $INSTDIR\DaggerLib.DSGraphEdit.dll
-    Delete /REBOOTOK  $INSTDIR\Databases.dll
-    Delete /REBOOTOK  $INSTDIR\defaultMusicViews.xml
-    Delete /REBOOTOK  $INSTDIR\defaultProgramViews.xml
-    Delete /REBOOTOK  $INSTDIR\defaultVideoViews.xml
-    Delete /REBOOTOK  $INSTDIR\DirectShowLib-2005.dll
-    Delete /REBOOTOK  $INSTDIR\DirectShowLib.dll
-    Delete /REBOOTOK  $INSTDIR\dlportio.dll
-    Delete /REBOOTOK  $INSTDIR\dshowhelper.dll
-    Delete /REBOOTOK  $INSTDIR\dvblib.dll
-    Delete /REBOOTOK  $INSTDIR\dxerr9.dll
-    Delete /REBOOTOK  $INSTDIR\DXUtil.dll
-    Delete /REBOOTOK  $INSTDIR\edtftpnet-1.2.2.dll
-    Delete /REBOOTOK  $INSTDIR\FastBitmap.dll
-    Delete /REBOOTOK  $INSTDIR\fontEngine.dll
-    Delete /REBOOTOK  $INSTDIR\FTD2XX.DLL
-    Delete /REBOOTOK  $INSTDIR\hauppauge.dll
-    Delete /REBOOTOK  $INSTDIR\HcwHelper.exe
-    Delete /REBOOTOK  $INSTDIR\ICSharpCode.SharpZipLib.dll
-    Delete /REBOOTOK  $INSTDIR\inpout32.dll
-    Delete /REBOOTOK  $INSTDIR\Interop.GIRDERLib.dll
-    Delete /REBOOTOK  $INSTDIR\Interop.iTunesLib.dll
-    Delete /REBOOTOK  $INSTDIR\Interop.TunerLib.dll
-    Delete /REBOOTOK  $INSTDIR\Interop.WMEncoderLib.dll
-    Delete /REBOOTOK  $INSTDIR\Interop.WMPLib.dll
-    Delete /REBOOTOK  $INSTDIR\Interop.X10.dll
-    Delete /REBOOTOK  $INSTDIR\KCS.Utilities.dll
-    Delete /REBOOTOK  $INSTDIR\lame_enc.dll
-    Delete /REBOOTOK  $INSTDIR\LibDriverCoreClient.dll
-    Delete /REBOOTOK  $INSTDIR\log4net.dll
-    Delete /REBOOTOK  $INSTDIR\madlldlib.dll
-    Delete /REBOOTOK  $INSTDIR\MediaFoundation.dll
-    Delete /REBOOTOK  $INSTDIR\MediaPadLayer.dll
-    Delete /REBOOTOK  $INSTDIR\MediaPortalDirs.xml
-    Delete /REBOOTOK  $INSTDIR\MediaPortal.exe
-    Delete /REBOOTOK  $INSTDIR\MediaPortal.exe.config
-    Delete /REBOOTOK  $INSTDIR\MediaPortal.Support.dll
-    Delete /REBOOTOK  $INSTDIR\menu.bin
-    Delete /REBOOTOK  $INSTDIR\Microsoft.ApplicationBlocks.ApplicationUpdater.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.ApplicationBlocks.ExceptionManagement.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.Direct3D.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.Direct3DX.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.DirectDraw.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.DirectX.DirectInput.dll
-    Delete /REBOOTOK  $INSTDIR\Microsoft.Office.Interop.Outlook.dll
-    Delete /REBOOTOK  $INSTDIR\MPInstaller.exe
-    Delete /REBOOTOK  $INSTDIR\MPInstaller.Library.dll
-    Delete /REBOOTOK  $INSTDIR\mplogo.gif
-    Delete /REBOOTOK  $INSTDIR\MPTestTool2.exe
-    Delete /REBOOTOK  $INSTDIR\mpviz.dll
-    Delete /REBOOTOK  $INSTDIR\MusicShareWatcher.exe
-    Delete /REBOOTOK  $INSTDIR\MusicShareWatcherHelper.dll
-    Delete /REBOOTOK  $INSTDIR\RemotePlugins.dll
-    Delete /REBOOTOK  $INSTDIR\restart.vbs
-    Delete /REBOOTOK  $INSTDIR\SG_VFD.dll
-    Delete /REBOOTOK  $INSTDIR\SG_VFDv5.dll
-    Delete /REBOOTOK  $INSTDIR\sqlite.dll
-    Delete /REBOOTOK  $INSTDIR\taglib-sharp.dll
-    Delete /REBOOTOK  $INSTDIR\TaskScheduler.dll
-    Delete /REBOOTOK  $INSTDIR\ttBdaDrvApi_Dll.dll
-    Delete /REBOOTOK  $INSTDIR\ttdvbacc.dll
-    Delete /REBOOTOK  $INSTDIR\TVCapture.dll
-    Delete /REBOOTOK  $INSTDIR\TVGuideScheduler.exe
-    Delete /REBOOTOK  $INSTDIR\Utils.dll
-    Delete /REBOOTOK  $INSTDIR\WebEPG.dll
-    Delete /REBOOTOK  $INSTDIR\WebEPG.exe
-    Delete /REBOOTOK  $INSTDIR\WebEPG-conf.exe
-    Delete /REBOOTOK  $INSTDIR\X10Unified.dll
-    Delete /REBOOTOK  $INSTDIR\xAPMessage.dll
-    Delete /REBOOTOK  $INSTDIR\xAPTransport.dll
-    Delete /REBOOTOK  $INSTDIR\XPBurnComponent.dll
+    Delete /REBOOTOK $INSTDIR\AppStart.exe
+    Delete /REBOOTOK $INSTDIR\AppStart.exe.config
+    Delete /REBOOTOK $INSTDIR\AxInterop.WMPLib.dll
+    Delete /REBOOTOK $INSTDIR\BallonRadio.ico
+    Delete /REBOOTOK $INSTDIR\bass.dll
+    Delete /REBOOTOK $INSTDIR\Bass.Net.dll
+    Delete /REBOOTOK $INSTDIR\bass_fx.dll
+    Delete /REBOOTOK $INSTDIR\bass_vis.dll
+    Delete /REBOOTOK $INSTDIR\bass_vst.dll
+    Delete /REBOOTOK $INSTDIR\bass_wadsp.dll
+    Delete /REBOOTOK $INSTDIR\bassasio.dll
+    Delete /REBOOTOK $INSTDIR\bassmix.dll
+    Delete /REBOOTOK $INSTDIR\BassRegistration.dll
+    Delete /REBOOTOK $INSTDIR\Configuration.exe
+    Delete /REBOOTOK $INSTDIR\Configuration.exe.config
+    Delete /REBOOTOK $INSTDIR\Core.dll
+    Delete /REBOOTOK $INSTDIR\CSScriptLibrary.dll
+    Delete /REBOOTOK $INSTDIR\d3dx9_30.dll
+    Delete /REBOOTOK $INSTDIR\DaggerLib.dll
+    Delete /REBOOTOK $INSTDIR\DaggerLib.DSGraphEdit.dll
+    Delete /REBOOTOK $INSTDIR\Databases.dll
+    Delete /REBOOTOK $INSTDIR\defaultMusicViews.xml
+    Delete /REBOOTOK $INSTDIR\defaultProgramViews.xml
+    Delete /REBOOTOK $INSTDIR\defaultVideoViews.xml
+    Delete /REBOOTOK $INSTDIR\DirectShowLib-2005.dll
+    Delete /REBOOTOK $INSTDIR\DirectShowLib.dll
+    Delete /REBOOTOK $INSTDIR\dlportio.dll
+    Delete /REBOOTOK $INSTDIR\dshowhelper.dll
+    Delete /REBOOTOK $INSTDIR\dvblib.dll
+    Delete /REBOOTOK $INSTDIR\dxerr9.dll
+    Delete /REBOOTOK $INSTDIR\DXUtil.dll
+    Delete /REBOOTOK $INSTDIR\edtftpnet-1.2.2.dll
+    Delete /REBOOTOK $INSTDIR\FastBitmap.dll
+    Delete /REBOOTOK $INSTDIR\fontEngine.dll
+    Delete /REBOOTOK $INSTDIR\FTD2XX.DLL
+    Delete /REBOOTOK $INSTDIR\hauppauge.dll
+    Delete /REBOOTOK $INSTDIR\HcwHelper.exe
+    Delete /REBOOTOK $INSTDIR\ICSharpCode.SharpZipLib.dll
+    Delete /REBOOTOK $INSTDIR\inpout32.dll
+    Delete /REBOOTOK $INSTDIR\Interop.GIRDERLib.dll
+    Delete /REBOOTOK $INSTDIR\Interop.iTunesLib.dll
+    Delete /REBOOTOK $INSTDIR\Interop.TunerLib.dll
+    Delete /REBOOTOK $INSTDIR\Interop.WMEncoderLib.dll
+    Delete /REBOOTOK $INSTDIR\Interop.WMPLib.dll
+    Delete /REBOOTOK $INSTDIR\Interop.X10.dll
+    Delete /REBOOTOK $INSTDIR\KCS.Utilities.dll
+    Delete /REBOOTOK $INSTDIR\lame_enc.dll
+    Delete /REBOOTOK $INSTDIR\LibDriverCoreClient.dll
+    Delete /REBOOTOK $INSTDIR\log4net.dll
+    Delete /REBOOTOK $INSTDIR\madlldlib.dll
+    Delete /REBOOTOK $INSTDIR\MediaFoundation.dll
+    Delete /REBOOTOK $INSTDIR\MediaPadLayer.dll
+    Delete /REBOOTOK $INSTDIR\MediaPortalDirs.xml
+    Delete /REBOOTOK $INSTDIR\MediaPortal.exe
+    Delete /REBOOTOK $INSTDIR\MediaPortal.exe.config
+    Delete /REBOOTOK $INSTDIR\MediaPortal.Support.dll
+    Delete /REBOOTOK $INSTDIR\menu.bin
+    Delete /REBOOTOK $INSTDIR\Microsoft.ApplicationBlocks.ApplicationUpdater.dll
+    Delete /REBOOTOK $INSTDIR\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll
+    Delete /REBOOTOK $INSTDIR\Microsoft.ApplicationBlocks.ExceptionManagement.dll
+    Delete /REBOOTOK $INSTDIR\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll
+    Delete /REBOOTOK $INSTDIR\Microsoft.DirectX.dll
+    Delete /REBOOTOK $INSTDIR\Microsoft.DirectX.Direct3D.dll
+    Delete /REBOOTOK $INSTDIR\Microsoft.DirectX.Direct3DX.dll
+    Delete /REBOOTOK $INSTDIR\Microsoft.DirectX.DirectDraw.dll
+    Delete /REBOOTOK $INSTDIR\Microsoft.DirectX.DirectInput.dll
+    Delete /REBOOTOK $INSTDIR\Microsoft.Office.Interop.Outlook.dll
+    Delete /REBOOTOK $INSTDIR\MPInstaller.exe
+    Delete /REBOOTOK $INSTDIR\MPInstaller.Library.dll
+    Delete /REBOOTOK $INSTDIR\mplogo.gif
+    Delete /REBOOTOK $INSTDIR\MPTestTool2.exe
+    Delete /REBOOTOK $INSTDIR\mpviz.dll
+    Delete /REBOOTOK $INSTDIR\MusicShareWatcher.exe
+    Delete /REBOOTOK $INSTDIR\MusicShareWatcherHelper.dll
+    Delete /REBOOTOK $INSTDIR\RemotePlugins.dll
+    Delete /REBOOTOK $INSTDIR\restart.vbs
+    Delete /REBOOTOK $INSTDIR\SG_VFD.dll
+    Delete /REBOOTOK $INSTDIR\SG_VFDv5.dll
+    Delete /REBOOTOK $INSTDIR\sqlite.dll
+    Delete /REBOOTOK $INSTDIR\taglib-sharp.dll
+    Delete /REBOOTOK $INSTDIR\TaskScheduler.dll
+    Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
+    Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
+    Delete /REBOOTOK $INSTDIR\TVCapture.dll
+    Delete /REBOOTOK $INSTDIR\TVGuideScheduler.exe
+    Delete /REBOOTOK $INSTDIR\Utils.dll
+    Delete /REBOOTOK $INSTDIR\WebEPG.dll
+    Delete /REBOOTOK $INSTDIR\WebEPG.exe
+    Delete /REBOOTOK $INSTDIR\WebEPG-conf.exe
+    Delete /REBOOTOK $INSTDIR\X10Unified.dll
+    Delete /REBOOTOK $INSTDIR\xAPMessage.dll
+    Delete /REBOOTOK $INSTDIR\xAPTransport.dll
+    Delete /REBOOTOK $INSTDIR\XPBurnComponent.dll
 !macroend
 
 ${MementoSection} "DScaler Decoder" SecDscaler
@@ -711,7 +707,7 @@ Section Uninstall
     !insertmacro Remove_${SecCore}
 
     ; remove registry key
-    DeleteRegKey HKLM "${REG_UNINSTALL}"
+    DeleteRegValue HKLM "${REG_UNINSTALL}" "UninstallString"
 
     ; remove Start Menu shortcuts
     Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"
@@ -735,6 +731,7 @@ Section Uninstall
     ; do we need to deinstall everything? Then remove also the CommonAppData and InstDir
     ${If} $RemoveAll == 1
         DetailPrint "Removing User Settings"
+        DeleteRegKey HKLM "${REG_UNINSTALL}"
         RmDir /r /REBOOTOK "${COMMON_APPDATA}"
         RmDir /r /REBOOTOK "$INSTDIR"
     ${EndIf}
@@ -825,6 +822,34 @@ Function .onInit
     ${If} ${FileExists} "$INSTDIR\rebootflag"
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
         Abort
+    ${EndIf}
+
+    ${If} ${Silent}
+        RmDir /r "${COMMON_APPDATA}\Cache"
+
+        ; check if MP is already installed
+        ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
+        ${If} ${FileExists} "$R0"
+            ; get parent folder of uninstallation EXE (RO) and save it to R1
+            ${GetParent} $R0 $R1
+            ; start uninstallation of installed MP, from tmp folder, so it will delete itself
+            ClearErrors
+            CopyFiles $R0 "$TEMP\uninstall-mp.exe"
+            ExecWait '"$TEMP\uninstall-mp.exe" /S _?=$R1'
+
+            ; if an error occured, ask to cancel installation
+            IfErrors 0 unInstallDone
+                MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES unInstallDone IDNO 0
+                Quit
+            unInstallDone:
+
+            ; if reboot flag is set, abort the installation, and continue the installer on next startup
+            ${If} ${FileExists} "$INSTDIR\rebootflag"
+                MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
+                WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" "$(^Name)" $EXEPATH
+                Quit
+            ${EndIf}
+        ${EndIf}
     ${EndIf}
 
     SetShellVarContext all
