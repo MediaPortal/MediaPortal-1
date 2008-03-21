@@ -77,8 +77,8 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      HTTPDownload dlg = new HTTPDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MySQL"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MySQL"));
+      ManualDownload dlg = new ManualDownload();
+      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MySQL"), Utils.GetDownloadFile("MySQL"), Application.StartupPath + "\\deploy\\");
       return (result == DialogResult.OK);
     }
     public bool Install()

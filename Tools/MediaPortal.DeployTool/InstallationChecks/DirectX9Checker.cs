@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
   {
     public string GetDisplayName()
     {
-      return "DirectX 9c";
+      return "DirectX 9c - March2008";
     }
 
     public bool Download()

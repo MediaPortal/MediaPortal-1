@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
   {
     public string GetDisplayName()
     {
-      return "Microsoft Visual C++ 2005 Redistributable";
+      return "Microsoft Visual C++ 2005 SP1 Redistributable";
     }
 
     public bool Download()

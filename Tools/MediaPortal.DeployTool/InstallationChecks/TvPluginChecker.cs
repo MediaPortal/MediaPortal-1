@@ -75,7 +75,7 @@ namespace MediaPortal.DeployTool
         int clientInstalled=(int)key.GetValue("MementoSection_SecClient");
         string version = (string)key.GetValue("DisplayVersion");
         key.Close();
-        if (clientInstalled == null || clientInstalled == 0)
+        if (clientInstalled == 0)
           result.state = CheckState.NOT_INSTALLED;
         else
           result.state = CheckState.INSTALLED;

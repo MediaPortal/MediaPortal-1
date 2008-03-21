@@ -61,8 +61,8 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      HTTPDownload dlg = new HTTPDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MSSQLExpress"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MSSQLExpress"));
+      ManualDownload dlg = new ManualDownload();
+      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MSSQLExpress"), Utils.GetDownloadFile("MSSQLExpress"), Application.StartupPath + "\\deploy\\");
       return (result == DialogResult.OK);
     }
     public bool Install()
