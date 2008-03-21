@@ -620,13 +620,19 @@ Function .onInit
 
     ; if silent and tve3 is already installed, remove it first, the continue with installation
     ${If} ${Silent}
-        ReadRegStr $R1 HKLM "${REG_UNINSTALL}" "UninstallString"
-        ${If} ${FileExists} '$R1'
+        ReadRegStr $R0 HKLM "${REG_UNINSTALL}" "UninstallString"
+        ${If} ${FileExists} '$R0'
+            ${GetParent} $R0 $R1
+            ; start uninstallation of installed MP, from tmp folder, so it will delete itself
             ClearErrors
-            #MessageBox MB_YESNO|MB_ICONEXCLAMATION "xxxxx" IDYES 0 IDNO 0
-            CopyFiles $INSTDIR\uninstall-tve3.exe $TEMP
-            ExecWait '"$TEMP\uninstall-tve3.exe" /S _?=$INSTDIR'
-            #ExecWait '$R1 /S _?=$INSTDIR'
+            CopyFiles $R0 "$TEMP\uninstall-tve3.exe"
+            ExecWait '"$TEMP\uninstall-tve3.exe" /S _?=$R1'
+
+            ; if an error occured, ask to cancel installation
+            #${If} ${Errors}
+            #    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES +2 IDNO 0
+            #    Quit
+            #${EndIf}
         ${EndIf}
     ${EndIf}
 
