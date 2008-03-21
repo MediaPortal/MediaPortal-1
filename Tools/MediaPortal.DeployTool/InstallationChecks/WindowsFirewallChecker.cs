@@ -50,8 +50,9 @@ namespace MediaPortal.DeployTool
           key.Close();
           key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications\\List", true);
       }
+
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"]=="1")
-        key.SetValue(InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe", InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe:*:Enabled:TvService.exe", RegistryValueKind.String);
+          key.SetValue(InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe", InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe:*:Enabled:TvService.exe", RegistryValueKind.String);
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
       {
         if (InstallationProperties.Instance["DBMSType"] == "mssql")
@@ -64,12 +65,24 @@ namespace MediaPortal.DeployTool
       }
       key.Flush();
       key.Close();
+      
       // Ports
       key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\GloballyOpenPorts\\List", true);
+
+        // Under Vista subkey "List" doesn't exist as default
+      if (key == null)
+      {
+          key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications", true);
+          key.CreateSubKey("List");
+          key.Flush();
+          key.Close();
+          key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications\\List", true);
+
+      }
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
-        key.SetValue("554:TCP", "554:TCP:*:Enabled:MediaPortal TvServer RTSP Streaming (TCP)", RegistryValueKind.String);
+          key.SetValue("554:TCP", "554:TCP:*:Enabled:MediaPortal TvServer RTSP Streaming (TCP)", RegistryValueKind.String);
       for (int i = 6970; i < 10000; i++)
-        key.SetValue(i.ToString() + ":UDP", i.ToString() + ":UDP:*:Enabled:MediaPortal TvServer RTSP Streaming (UDP Port " + i.ToString() + ")", RegistryValueKind.String);
+          key.SetValue(i.ToString() + ":UDP", i.ToString() + ":UDP:*:Enabled:MediaPortal TvServer RTSP Streaming (UDP Port " + i.ToString() + ")", RegistryValueKind.String);
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
       {
         if (InstallationProperties.Instance["DBMSType"] == "mssql")
@@ -83,6 +96,7 @@ namespace MediaPortal.DeployTool
       key.Flush();
       key.Close();
     }
+
     private void ConfigureWindowsFirewall()
     {
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile");
