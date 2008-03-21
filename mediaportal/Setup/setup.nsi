@@ -823,7 +823,7 @@ Function .onInit
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
         Abort
     ${EndIf}
-
+/*
     ${If} ${Silent}
         RmDir /r "${COMMON_APPDATA}\Cache"
 
@@ -851,7 +851,7 @@ Function .onInit
             ${EndIf}
         ${EndIf}
     ${EndIf}
-
+*/
     SetShellVarContext all
 FunctionEnd
 
