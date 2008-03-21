@@ -277,7 +277,7 @@ namespace TvEngine.PowerScheduler
       // 
       // button2
       // 
-      this.button2.Location = new System.Drawing.Point(376, 205);
+      this.button2.Location = new System.Drawing.Point(376, 219);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(25, 23);
       this.button2.TabIndex = 6;
@@ -371,7 +371,7 @@ namespace TvEngine.PowerScheduler
             0,
             0});
       this.numericUpDown4.Name = "numericUpDown4";
-      this.numericUpDown4.Size = new System.Drawing.Size(41, 20);
+      this.numericUpDown4.Size = new System.Drawing.Size(55, 20);
       this.numericUpDown4.TabIndex = 1;
       // 
       // numericUpDown3
@@ -383,7 +383,7 @@ namespace TvEngine.PowerScheduler
             0,
             0});
       this.numericUpDown3.Name = "numericUpDown3";
-      this.numericUpDown3.Size = new System.Drawing.Size(41, 20);
+      this.numericUpDown3.Size = new System.Drawing.Size(55, 20);
       this.numericUpDown3.TabIndex = 2;
       // 
       // numericUpDown2
@@ -395,7 +395,7 @@ namespace TvEngine.PowerScheduler
             0,
             0});
       this.numericUpDown2.Name = "numericUpDown2";
-      this.numericUpDown2.Size = new System.Drawing.Size(41, 20);
+      this.numericUpDown2.Size = new System.Drawing.Size(55, 20);
       this.numericUpDown2.TabIndex = 0;
       // 
       // checkBox4
@@ -451,7 +451,7 @@ namespace TvEngine.PowerScheduler
       // 
       // button3
       // 
-      this.button3.Location = new System.Drawing.Point(379, 179);
+      this.button3.Location = new System.Drawing.Point(376, 193);
       this.button3.Name = "button3";
       this.button3.Size = new System.Drawing.Size(25, 23);
       this.button3.TabIndex = 9;
