@@ -860,7 +860,7 @@ Function un.onUninstSuccess
         FileClose $0
     ${EndIf}
 FunctionEnd
-
+/*
 Function WelcomeLeave
     ; check if MP is already installed
     ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
@@ -890,7 +890,7 @@ Function WelcomeLeave
         Quit
     ${EndIf}
 FunctionEnd
-
+*/
 Function un.WelcomeLeave
     ; This function is called, before the uninstallation process is startet
     ; It asks the user, if he wants to remove all files and settings
