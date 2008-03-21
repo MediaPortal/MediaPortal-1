@@ -553,15 +553,22 @@ Function .onInit
     ${GetParameters} $R0
 
     ; check for special parameter and set the their variables
+    ClearErrors
     ${GetOptions} $R0 "/noClient" $R1
     IfErrors +2
     StrCpy $noClient 1
+
+    ClearErrors
     ${GetOptions} $R0 "/noServer" $R1
     IfErrors +2
     StrCpy $noServer 1
+
+    ClearErrors
     ${GetOptions} $R0 "/noDesktopSC" $R1
     IfErrors +2
     StrCpy $noDesktopSC 1
+
+    ClearErrors
     ${GetOptions} $R0 "/noStartMenuSC" $R1
     IfErrors +2
     StrCpy $noStartMenuSC 1
@@ -606,10 +613,10 @@ Function .onInit
     ${EndIf}
 
     ; check if reboot is required
-    IfFileExists $INSTDIR\rebootflag 0 noReboot
+    ${If} ${FileExists} "$INSTDIR\rebootflag"
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
         Abort
-    noReboot:
+    ${EndIf}
 
     ; if silent and tve3 is already installed, remove it first, the continue with installation
     IfSilent 0 noSilent
@@ -652,6 +659,7 @@ Function un.onInit
     ${un.GetParameters} $R0
 
     ; check for special parameter and set the their variables
+    ClearErrors
     ${un.GetOptions} $R0 "/RemoveAll" $R1
     IfErrors +2
     StrCpy $RemoveAll 1
@@ -666,19 +674,18 @@ FunctionEnd
 
 Function un.onUninstSuccess
     ; write a reboot flag, if reboot is needed, so the installer won't continue until reboot is done
-    IfRebootFlag 0 noreboot
+    ${If} ${RebootFlag}
         FileOpen $0 $INSTDIR\rebootflag w
         Delete /REBOOTOK $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
         RmDir /REBOOTOK $INSTDIR
         FileClose $0
-    noreboot:
-
+    ${EndIf}
 FunctionEnd
 
 Function WelcomeLeave
     ; check if MP is already installed
     ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
-    IfFileExists $R0 0 unInstallDone
+    ${If} ${FileExists} "$R0"
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_IS_INSTALLED)"
 
         ; get parent folder of uninstallation EXE (RO) and save it to R1
@@ -691,18 +698,18 @@ Function WelcomeLeave
         BringToFront
 
         ; if an error occured, ask to cancel installation
-        IfErrors 0 unInstallDone
+        ${If} ${Errors}
             MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES unInstallDone IDNO 0
             Quit
-    unInstallDone:
+        ${EndIf}
+    ${EndIf}
 
     ; if reboot flag is set, abort the installation, and continue the installer on next startup
-    IfFileExists $INSTDIR\rebootflag 0 noReboot
+    ${If} ${FileExists} "$INSTDIR\rebootflag"
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
         WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" "$(^Name)" $EXEPATH
         Quit
-    noReboot:
-
+    ${EndIf}
 FunctionEnd
 
 Function ComponentsPre
