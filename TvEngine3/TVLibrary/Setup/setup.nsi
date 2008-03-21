@@ -39,7 +39,6 @@ RequestExecutionLevel admin
 # VARIABLES
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
-Var CommonAppData
 Var MPBaseDir
 Var InstallPath
 ; variables for commandline parameters for Installer
@@ -60,6 +59,9 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
+# needs to be changed if we want to edit the appdata path
+#!define COMMON_APPDATA        "$APPDATA\Team MediaPortal\TV Server"
+!define COMMON_APPDATA        "$APPDATA\MediaPortal TV Server"
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
@@ -176,17 +178,6 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # USEFUL MACROS
 #---------------------------------------------------------------------------
-!macro SetCommonAppData
-    ; Get the Common Application Data Folder
-    ; Set the Context to alll, so that we get the All Users folder
-    SetShellVarContext all
-    # needs to be changed if we want to edit the appdata path
-    #StrCpy $CommonAppData "$APPDATA\Team MediaPortal\TV Server"
-    StrCpy $CommonAppData "$APPDATA\MediaPortal TV Server"
-    ; Context back to current user
-    SetShellVarContext current
-!macroend
-
 !macro SectionList MacroName
     ; This macro used to perform operation on multiple sections.
     ; List all of your components in following manner here.
@@ -199,7 +190,7 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 ${MementoSection} "MediaPortal TV Server" SecServer
     DetailPrint "Installing MediaPortal TV Server..."
-    
+
     SetOverwrite on
 
     ReadRegStr $InstallPath HKLM "${REG_UNINSTALL}" InstallPath
@@ -265,7 +256,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     File ..\..\Filters\bin\ttdvbacc.dll
 
     ; Common App Data Files
-    SetOutPath "$CommonAppData"
+    SetOutPath "${COMMON_APPDATA}"
     File ..\TvService\Gentle.config
 
     #---------------------------------------------------------------------------
@@ -303,8 +294,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     DetailPrint "Finished Installing TVService"
 
     SetOutPath $INSTDIR
-    
-    SetShellVarContext all
+
     ${If} $noDesktopSC != 1
         CreateShortcut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
     ${EndIf}
@@ -313,9 +303,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
         !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
         ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
         CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "TV-Server Configuration"
-        CreateDirectory "$CommonAppData\log"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "$CommonAppData\log"   "" "$CommonAppData\log"   0 "" "" "TV-Server Log-Files"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+        CreateDirectory "${COMMON_APPDATA}\log"
+        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
     # [OBSOLETE] CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
         !insertmacro MUI_STARTMENU_WRITE_END
     ${EndIf}
@@ -335,7 +325,6 @@ ${MementoSectionEnd}
     #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
     #---------------------------------------------------------------------------
     DetailPrint "Unreg and remove filters..."
-    
     ; filters for digital tv
     ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
 
@@ -495,7 +484,6 @@ Section -Post
     SetOverwrite on
     SetOutPath $INSTDIR
 
-    SetShellVarContext all
     ${If} $noStartMenuSC != 1
         !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
         ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
@@ -545,7 +533,7 @@ Section Uninstall
 
     ${If} $RemoveAll == 1
         DetailPrint "Removing User Settings"
-        RmDir /r /REBOOTOK $CommonAppData
+        RmDir /r /REBOOTOK "${COMMON_APPDATA}"
         RmDir /r /REBOOTOK $INSTDIR
     ${EndIf}
 SectionEnd
@@ -636,8 +624,8 @@ Function .onInit
         #ExecWait '$R1 /S _?=$INSTDIR'
 
     noSilent:
-    
-    !insertmacro SetCommonAppData
+
+    SetShellVarContext all
 FunctionEnd
 
 Function .onSelChange
@@ -673,7 +661,7 @@ Function un.onInit
     ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
-    !insertmacro SetCommonAppData
+    SetShellVarContext all
 FunctionEnd
 
 Function un.onUninstSuccess
