@@ -224,6 +224,11 @@ Section "MediaPortal core files (required)" SecCore
     File "..\Docs\MediaPortal License.rtf"
     File "..\Docs\SQLite Database Browser.exe"
 
+    ; WebEPG
+    SetOutPath $INSTDIR\WebEPG
+    File /r ..\xbmc\bin\Release\WebEPG\channels
+    File /r ..\xbmc\bin\Release\WebEPG\grabbers
+
     ; xmltv
     SetOutPath $INSTDIR\xmltv
     File ..\xbmc\bin\Release\xmltv\ReadMe.txt
@@ -243,7 +248,6 @@ Section "MediaPortal core files (required)" SecCore
     File /r ..\xbmc\bin\Release\TTPremiumBoot
     File /r ..\xbmc\bin\Release\Tuningparameters
     File /r ..\xbmc\bin\Release\weather
-    File /r ..\xbmc\bin\Release\WebEPG
     File /r ..\xbmc\bin\Release\Wizards
 
     ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
@@ -452,6 +456,11 @@ SectionEnd
     RmDir /r /REBOOTOK "$INSTDIR\skin\BlueTwo"
     RmDir /r /REBOOTOK "$INSTDIR\skin\BlueTwo wide"
     RmDir $INSTDIR\skin
+
+    ; WebEPG
+    RmDir /r /REBOOTOK "$INSTDIR\WebEPG\channels"
+    RmDir /r /REBOOTOK "$INSTDIR\WebEPG\grabbers"
+    RmDir $INSTDIR\WebEPG
 
     ; xmltv
     Delete /REBOOTOK $INSTDIR\xmltv\ReadMe.txt
