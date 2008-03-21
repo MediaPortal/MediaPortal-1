@@ -141,7 +141,7 @@ Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_INSTFILES
-!define MUI_PAGE_CUSTOMFUNCTION_PRE FinishPre           # Check, if the Server Component has been selected. Only display the Startmenu page in this vase
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW FinishShow           # Check, if the Server Component has been selected. Only display the Startmenu page in this vase
 !insertmacro MUI_PAGE_FINISH
 
 ; UnInstaller Interface
@@ -619,18 +619,16 @@ Function .onInit
     ${EndIf}
 
     ; if silent and tve3 is already installed, remove it first, the continue with installation
-    IfSilent 0 noSilent
-
+    ${If} ${Silent}
         ReadRegStr $R1 HKLM "${REG_UNINSTALL}" "UninstallString"
-        IfFileExists '$R1' 0 noSilent
-
-        ClearErrors
-        #MessageBox MB_YESNO|MB_ICONEXCLAMATION "xxxxx" IDYES 0 IDNO 0
-        CopyFiles $INSTDIR\uninstall-tve3.exe $TEMP
-        ExecWait '"$TEMP\uninstall-tve3.exe" /S _?=$INSTDIR'
-        #ExecWait '$R1 /S _?=$INSTDIR'
-
-    noSilent:
+        ${If} ${FileExists} '$R1'
+            ClearErrors
+            #MessageBox MB_YESNO|MB_ICONEXCLAMATION "xxxxx" IDYES 0 IDNO 0
+            CopyFiles $INSTDIR\uninstall-tve3.exe $TEMP
+            ExecWait '"$TEMP\uninstall-tve3.exe" /S _?=$INSTDIR'
+            #ExecWait '$R1 /S _?=$INSTDIR'
+        ${EndIf}
+    ${EndIf}
 
     SetShellVarContext all
 FunctionEnd
@@ -731,28 +729,26 @@ FunctionEnd
 
 Function DirectoryPre
     ; This function is called, before the Directory Page is displayed
+
     ; It checks, if the Server has been selected and only displays the Directory page in this case
-    ${If} ${SectionIsSelected} SecServer
-        StrCpy $0 1
-    ${Else}
-        StrCpy $0 2
+    ${IfNot} ${SectionIsSelected} SecServer
         Abort
     ${EndIf}
 FunctionEnd
 
-Function FinishPre
-    ; This function is called, before the Finish Page is displayed
-    ; It checks, if the Server has been selected and only displays the Directory page in this case
-    ${If} ${SectionIsSelected} SecServer
-        StrCpy $0 1
-    ${Else}
-        StrCpy $0 2
-        Abort
+Function FinishShow
+    ; This function is called, after the Finish Page creation is finished
+
+    ; It checks, if the Server has been selected and only displays the run checkbox in this case
+    ${IfNot} ${SectionIsSelected} SecServer
+        SendMessage $mui.FinishPage.Run ${BM_CLICK} 0 0
+        ShowWindow  $mui.FinishPage.Run ${SW_HIDE}
     ${EndIf}
 FunctionEnd
 
 Function un.WelcomeLeave
     ; This function is called, before the uninstallation process is startet
+
     ; It asks the user, if he wants to remove all files and settings
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_REMOVE_ALL)" IDYES 0 IDNO noRemoveAll
         StrCpy $RemoveAll 1
