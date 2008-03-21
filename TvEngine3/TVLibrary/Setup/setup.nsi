@@ -681,7 +681,7 @@ Function un.onUninstSuccess
         FileClose $0
     ${EndIf}
 FunctionEnd
-
+/*
 Function WelcomeLeave
     ; check if MP is already installed
     ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
@@ -711,7 +711,7 @@ Function WelcomeLeave
         Quit
     ${EndIf}
 FunctionEnd
-
+*/
 Function ComponentsPre
     ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
 
