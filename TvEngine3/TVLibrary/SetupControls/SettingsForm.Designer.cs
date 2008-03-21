@@ -53,7 +53,7 @@ namespace SetupTv
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
-    private void InitializeComponent()
+    protected void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
       this.sectionTree = new System.Windows.Forms.TreeView();
@@ -64,6 +64,7 @@ namespace SetupTv
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonViewLog = new MediaPortal.UserInterface.Controls.MPButton();
+      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.SuspendLayout();
       // 
       // sectionTree
@@ -169,6 +170,18 @@ namespace SetupTv
       this.buttonViewLog.UseVisualStyleBackColor = true;
       this.buttonViewLog.Click += new System.EventHandler(this.buttonViewLog_Click);
       // 
+      // linkLabel1
+      // 
+      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabel1.AutoSize = true;
+      this.linkLabel1.Location = new System.Drawing.Point(13, 504);
+      this.linkLabel1.Name = "linkLabel1";
+      this.linkLabel1.Size = new System.Drawing.Size(113, 13);
+      this.linkLabel1.TabIndex = 8;
+      this.linkLabel1.TabStop = true;
+      this.linkLabel1.Text = "Donate to MediaPortal";
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      // 
       // SettingsForm
       // 
       this.AcceptButton = this.okButton;
@@ -176,6 +189,7 @@ namespace SetupTv
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(704, 530);
+      this.Controls.Add(this.linkLabel1);
       this.Controls.Add(this.buttonViewLog);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);
@@ -191,9 +205,20 @@ namespace SetupTv
       this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
     #endregion
+
+    protected MediaPortal.UserInterface.Controls.MPButton cancelButton;
+    protected MediaPortal.UserInterface.Controls.MPButton okButton;
+    protected MediaPortal.UserInterface.Controls.MPButton applyButton;
+    protected MediaPortal.UserInterface.Controls.MPButton buttonViewLog;
+    protected MediaPortal.UserInterface.Controls.MPBeveledLine beveledLine1;
+    protected System.Windows.Forms.TreeView sectionTree;
+    protected System.Windows.Forms.Panel holderPanel;
+    protected MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
+    protected System.Windows.Forms.LinkLabel linkLabel1;
   }
 }

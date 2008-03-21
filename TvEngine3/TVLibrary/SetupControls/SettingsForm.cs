@@ -38,14 +38,6 @@ namespace SetupTv
 {
   public partial class SettingsForm : Form
   {
-    protected MPButton cancelButton;
-    protected MPButton okButton;
-    protected MPButton applyButton;
-    protected MPButton buttonViewLog;
-    protected MPBeveledLine beveledLine1;
-    protected TreeView sectionTree;
-    protected Panel holderPanel;
-    protected MPGradientLabel headerLabel;
     protected SectionSettings _previousSection = null;
     protected static Hashtable settingSections = new Hashtable();
 
@@ -172,6 +164,11 @@ namespace SetupTv
     private void holderPanel_Paint(object sender, PaintEventArgs e)
     {
 
+    }
+
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      System.Diagnostics.Process.Start((string)e.Link.LinkData);
     }
   }
 }

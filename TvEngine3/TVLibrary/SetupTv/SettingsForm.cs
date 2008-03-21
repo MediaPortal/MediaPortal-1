@@ -44,13 +44,11 @@ namespace SetupTv
   /// <summary>
   /// Summary description for Settings.
   /// </summary>
-  public partial class SetupTvSettingsForm : SettingsForm
+  public class SetupTvSettingsForm : SettingsForm
   {
     private PluginLoader _pluginLoader = new PluginLoader();
     private Plugins pluginsRoot;
     private TvBusinessLayer layer;
-    
-    protected LinkLabel linkLabel1;
 
 
     public SetupTvSettingsForm()
@@ -60,7 +58,7 @@ namespace SetupTv
         //
         // Required for Windows Form Designer support
         //
-        InitializeComponent();
+        base.InitializeComponent();
         // 
         linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
 
@@ -225,12 +223,12 @@ namespace SetupTv
             SectionSettings settings = plugin.Setup;
             if (settings != null)
             {
-                Setting isActive = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
-                settings.Text = plugin.Name;
-                if (isActive.Value == "true")
-                {
-                    AddChildSection(pluginsRoot, settings);
-                }
+              Setting isActive = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+              settings.Text = plugin.Name;
+              if (isActive.Value == "true")
+              {
+                AddChildSection(pluginsRoot, settings);
+              }
             }
           }
           sectionTree.SelectedNode = sectionTree.Nodes[0];
@@ -246,27 +244,27 @@ namespace SetupTv
     }
 
 
-      public void RemoveChildSection(SectionSettings parentSection, SectionSettings section)
+    public void RemoveChildSection(SectionSettings parentSection, SectionSettings section)
+    {
+      // Remove section from tree
+      if (parentSection != null)
       {
-          // Remove section from tree
-          if (parentSection != null)
+        SectionTreeNode treeNode = new SectionTreeNode(section);
+        treeNode.Name = section.Text;
+        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
+
+
+        for (int i = 0; i < parentTreeNode.GetNodeCount(true); i++)
+        {
+          if (parentTreeNode.Nodes[i].Name == treeNode.Name)
           {
-              SectionTreeNode treeNode = new SectionTreeNode(section);
-              treeNode.Name = section.Text;
-              SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
-
-
-              for (int i = 0; i < parentTreeNode.GetNodeCount(true); i++)
-              {
-                  if (parentTreeNode.Nodes[i].Name == treeNode.Name)
-                  {
-                      //Remove the section from the hashtable in case we add it again
-                      settingSections.Remove(treeNode.Name);
-                      parentTreeNode.Nodes.Remove(parentTreeNode.Nodes[i]);
-                  }
-              }
+            //Remove the section from the hashtable in case we add it again
+            settingSections.Remove(treeNode.Name);
+            parentTreeNode.Nodes.Remove(parentTreeNode.Nodes[i]);
           }
+        }
       }
+    }
 
     public void AddSection(SectionSettings section, int imageIndex)
     {
@@ -317,32 +315,32 @@ namespace SetupTv
       AddChildSection(null, section);
     }
 
-      /// <summary>
-      /// Called when a plugin is selected or deselected for activation in the plugins setting
-      /// </summary>
-      /// <param name="sender">a Setting parameter passed as object</param>
-      /// <param name="e">eventarg will always retrun empty</param>
-      public void SectChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Called when a plugin is selected or deselected for activation in the plugins setting
+    /// </summary>
+    /// <param name="sender">a Setting parameter passed as object</param>
+    /// <param name="e">eventarg will always retrun empty</param>
+    public void SectChanged(object sender, EventArgs e)
+    {
+      string name = ((Setting)sender).Tag.Substring(6);
+
+      foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
       {
-          string name = ((Setting)sender).Tag.Substring(6);
+        SectionSettings settings = plugin.Setup;
+        if (settings != null && plugin.Name == name)
+        {
+          Setting isActive = layer.GetSetting(((Setting)sender).Tag, "false");
+          settings.Text = name;
 
-          foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
-          {
-              SectionSettings settings = plugin.Setup;
-              if (settings != null && plugin.Name == name)
-              {
-                  Setting isActive = layer.GetSetting(((Setting)sender).Tag, "false");
-                  settings.Text = name;
+          if (isActive.Value == "true")
+            AddChildSection(pluginsRoot, settings);
+          else
+            RemoveChildSection(pluginsRoot, settings);
 
-                  if (isActive.Value == "true")
-                      AddChildSection(pluginsRoot, settings);
-                  else
-                      RemoveChildSection(pluginsRoot, settings);
-                 
-                  break;
-              }
-          }
+          break;
+        }
       }
+    }
 
     public override void AddChildSection(SectionSettings parentSection, SectionSettings section)
     {
@@ -373,10 +371,10 @@ namespace SetupTv
       }
 
       settingSections.Add(section.Text, treeNode);
-      
+
       //treeNode.EnsureVisible();
     }
-    
+
     public override void sectionTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
     {
       SectionTreeNode treeNode = e.Node as SectionTreeNode;
@@ -569,13 +567,6 @@ namespace SetupTv
       process.StartInfo.Arguments = String.Format(@"{0}\MediaPortal TV Server\log\", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
       process.StartInfo.UseShellExecute = true;
       process.Start();
-    }
-
-
-
-    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-      System.Diagnostics.Process.Start((string)e.Link.LinkData);
     }
   }
 }
