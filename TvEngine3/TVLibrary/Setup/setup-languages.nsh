@@ -42,5 +42,5 @@ LangString TEXT_MSGBOX_ERROR_WIN                  ${LANG_ENGLISH} "MediaPortal r
 LangString TEXT_MSGBOX_ERROR_IS_INSTALLED         ${LANG_ENGLISH} "TVServer is already installed. You need to uninstall it, before you continue with the installation.$\r$\nUninstall will be lunched when pressing OK."
 LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL         ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
 LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "REBOOT IS REQUIRED. DO THAT!!!!"
-LangString TEXT_MSGBOX_ERROR_MSI_CLIENT           ${LANG_ENGLISH} "MSI client error"
-LangString TEXT_MSGBOX_ERROR_MSI_SERVER           ${LANG_ENGLISH} "MSI server error"
+LangString TEXT_MSGBOX_ERROR_MSI_CLIENT           ${LANG_ENGLISH} "Old MSI-based TV Client plugin is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
+LangString TEXT_MSGBOX_ERROR_MSI_SERVER           ${LANG_ENGLISH} "Old MSI-based TV Server plugin is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
