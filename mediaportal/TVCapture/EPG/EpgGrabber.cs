@@ -498,8 +498,8 @@ namespace MediaPortal.TV.Epg
               }
               else
               {
-                title = Marshal.PtrToStringAnsi( ptrTitle );
-                description = Marshal.PtrToStringAnsi( ptrDesc );
+                title = DvbTextConverter.Convert(ptrTitle, language);
+                description = DvbTextConverter.Convert(ptrDesc, language);
               }
               newEvent.Languages.Add(new EPGLanguage(language, title, description));
             }

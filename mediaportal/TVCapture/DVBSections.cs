@@ -31,6 +31,7 @@ using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using System.Threading;
+using System.Text;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
@@ -545,10 +546,20 @@ namespace MediaPortal.TV.Recording
       pmt = new PMTData();
 
       byte[] d = new byte[255];
+      Marshal.Copy((IntPtr)(((int)data)+42),d,0,255);
+      //Log.Info("service_name: {0} {1} {2}", d[0], d[1], d[2]);
+      ch.service_name = DvbTextConverter.Convert(d, 255, "");
+      //Log.Info("service_name: {0}", ch.service_name);
+      //ch.service_name =  Marshal.PtrToStringAnsi((IntPtr)(((int)data) + 42));
+      Marshal.Copy((IntPtr)(((int)data)+297),d,0,255);
+      ch.service_provider_name = DvbTextConverter.Convert(d, 255, "");
+      //Log.Info("service_provider_name: {0}", ch.service_provider_name);
+      //ch.service_provider_name = Marshal.PtrToStringAnsi((IntPtr)(((int)data) + 297));
+
       //Marshal.Copy((IntPtr)(((int)data)+42),d,0,255);
-      ch.service_name = Marshal.PtrToStringAnsi((IntPtr)(((int)data) + 42));
+      //ch.service_name = Marshal.PtrToStringAnsi((IntPtr)(((int)data) + 42));
       //Marshal.Copy((IntPtr)(((int)data)+297),d,0,255);
-      ch.service_provider_name = Marshal.PtrToStringAnsi((IntPtr)(((int)data) + 297));
+      //ch.service_provider_name = Marshal.PtrToStringAnsi((IntPtr)(((int)data) + 297));
       ch.eitPreFollow = (Marshal.ReadInt16(data, 552)) == 1 ? true : false;
       ch.eitSchedule = (Marshal.ReadInt16(data, 554)) == 1 ? true : false;
       ch.scrambled = (Marshal.ReadInt16(data, 556)) == 1 ? true : false;
@@ -2027,12 +2038,12 @@ namespace MediaPortal.TV.Recording
         try
         {
           System.Array.Copy(buf, pointer, b, 0, event_name_length);
-          eit.event_name = getString468A(b, event_name_length);
+          eit.event_name = DvbTextConverter.Convert(b, event_name_length, eit.seLanguageCode);
           pointer += event_name_length;
           text_length = buf[pointer];
           pointer += 1;
           System.Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
-          eit.event_text = getString468A(b, text_length);
+          eit.event_text = DvbTextConverter.Convert(b, text_length, eit.seLanguageCode);
         }
         catch (Exception)
         {
@@ -2291,13 +2302,13 @@ namespace MediaPortal.TV.Recording
           item_description_length = b[0];
           pointer += 1 + item_description_length;
           System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
-          string testText = getString468A(b, item_description_length);
+          string testText = DvbTextConverter.Convert(b, item_description_length, eit.eeLanguageCode);
           if (testText == null)
             testText = "-not avail.-";
           //Log.WriteFile(LogType.Log,"dvbsections: item-description={0}",testText);
           item_length = b[0];
           System.Array.Copy(buf, pointer + 1, b, 0, item_length);
-          item = getString468A(b, item_length);
+          item = DvbTextConverter.Convert(b, item_length, eit.eeLanguageCode);
           pointer += 1 + item_length;
           len1 -= (2 + item_description_length + item_length);
           lenB -= (2 + item_description_length + item_length);
@@ -2307,7 +2318,7 @@ namespace MediaPortal.TV.Recording
         pointer += 1;
         lenB -= 1;
         System.Array.Copy(buf, pointer, b, 0, text_length);
-        text = getString468A(b, text_length);
+        text = DvbTextConverter.Convert(b, text_length, eit.eeLanguageCode);
         eit.event_item += item;
         eit.event_item_text += text;
       }
@@ -2461,13 +2472,13 @@ namespace MediaPortal.TV.Recording
       pointer = 4;
       byte[] spn = new byte[b.Length - pointer + 1];
       System.Array.Copy(b, pointer, spn, 0, b.Length - pointer);
-      serviceData.serviceProviderName = getString468A(spn, service_provider_name_length);
+      serviceData.serviceProviderName = DvbTextConverter.Convert(spn, service_provider_name_length, "");
       pointer += service_provider_name_length;
       service_name_length = b[pointer];
       pointer += 1;
       byte[] sn = new byte[b.Length - pointer + 1];
       System.Array.Copy(b, pointer, sn, 0, b.Length - pointer);
-      serviceData.serviceName = getString468A(sn, service_name_length);
+      serviceData.serviceName = DvbTextConverter.Convert(sn, service_name_length, "");
       return serviceData;
     }
     public static string getString468A(byte[] b, int l1)
