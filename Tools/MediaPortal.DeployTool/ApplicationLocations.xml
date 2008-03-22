@@ -9,7 +9,7 @@
 	</MSSQLExpress>	
     <MySQL>
 	   <URL>http://dev.mysql.com/get/Downloads/MySQL-5.0/mysql-essential-5.0.45-win32.msi/from/http://sunsite.informatik.rwth-aachen.de/mysql/</URL>
-	   <FILE>mysql_essentials.msi</FILE>
+	   <FILE>mysql-essential-5.0.45-win32.msi</FILE>
     </MySQL>	
 	<MediaPortal>
     <URL>http://not_used</URL>
