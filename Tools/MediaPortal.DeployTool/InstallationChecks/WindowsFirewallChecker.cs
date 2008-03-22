@@ -30,101 +30,114 @@ using Microsoft.Win32;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
+using NetFwTypeLib;
 
 namespace MediaPortal.DeployTool
 {
   class WindowsFirewallChecker: IInstallationPackage
   {
+    #region Firewall API functions
+      //private const string CLSID_FIREWALL_MANAGER = "{304CE942-6E39-40D8-943A-B913C40C9CD4}";
+      private const string PROGID_FIREWALL_MANAGER = "HNetCfg.FwMgr";
+      private const string PROGID_AUTHORIZED_APPLICATION = "HNetCfg.FwAuthorizedApplication";
+      private const string PROGID_OPEN_PORT = "HNetCfg.FWOpenPort";
+
+      private static NetFwTypeLib.INetFwMgr GetFirewallManager()
+      {
+          //Type objectType = Type.GetTypeFromCLSID(new Guid(CLSID_FIREWALL_MANAGER));
+          Type objectType = Type.GetTypeFromProgID(PROGID_FIREWALL_MANAGER);
+          return Activator.CreateInstance(objectType) as NetFwTypeLib.INetFwMgr;
+      }
+      private bool AuthorizeApplication(string title, string applicationPath, NET_FW_SCOPE_ scope, NET_FW_IP_VERSION_ ipVersion)
+      {
+          Type type = Type.GetTypeFromProgID(PROGID_AUTHORIZED_APPLICATION);  
+          INetFwAuthorizedApplication auth = Activator.CreateInstance(type) as INetFwAuthorizedApplication;
+          auth.Name  = title;  
+          auth.ProcessImageFileName = applicationPath;  
+          auth.Scope = scope;  
+          auth.IpVersion = ipVersion;  
+          auth.Enabled = true;
+          INetFwMgr manager = GetFirewallManager(); 
+          try 
+          { 
+              manager.LocalPolicy.CurrentProfile.AuthorizedApplications.Add(auth); 
+          }
+          catch
+          { 
+              return false; 
+          } 
+          return true;
+      }   
+      private bool GloballyOpenPort(string title, int portNo, NET_FW_SCOPE_ scope, NET_FW_IP_PROTOCOL_ protocol, NET_FW_IP_VERSION_ ipVersion)
+      {  
+          Type type = Type.GetTypeFromProgID(PROGID_OPEN_PORT);  
+          INetFwOpenPort port = Activator.CreateInstance(type) as INetFwOpenPort;  
+          port.Name = title;  
+          port.Port = portNo;  
+          port.Scope = scope;  
+          port.Protocol = protocol;  
+          port.IpVersion = ipVersion;  
+          INetFwMgr manager = GetFirewallManager();  
+          try  
+          {    
+              manager.LocalPolicy.CurrentProfile.GloballyOpenPorts.Add(port);  
+          }  
+          catch
+          {    
+              return false;  
+          }
+          return true;
+      }
+
+      #endregion
     #region Helper functions
-    private void ConfigureFirewallProfile(string profile)
+    private void ConfigureFirewallProfile()
     {
-      // Applications
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications\\List", true);
+        int port = 0;
+        string app = "";
 
-      // Under Vista subkey "List" doesn't exist as default
-      if (key == null)
-      {
-          key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications", true);
-          key.CreateSubKey("List");
-          key.Flush();
-          key.Close();
-          key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications\\List", true);
-      }
-
-      if (InstallationProperties.Instance["ConfigureTVServerFirewall"]=="1")
-          key.SetValue(InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe", InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe:*:Enabled:TvService.exe", RegistryValueKind.String);
-      if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
-      {
-        if (InstallationProperties.Instance["DBMSType"] == "mssql")
+        if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
         {
-          key.SetValue(InstallationProperties.Instance["DBMSDir"] + "\\MSSQL.1\\MSSQL\\Binn\\sqlservr.exe", InstallationProperties.Instance["DBMSDir"] + "\\MSSQL.1\\MSSQL\\Binn\\sqlservr.exe:*:Enabled:sqlservr.exe", RegistryValueKind.String);
-          key.SetValue(InstallationProperties.Instance["DBMSDir"] + "\\90\\Shared\\sqlbrowser.exe", InstallationProperties.Instance["DBMSDir"] + "\\90\\Shared\\sqlbrowser.exe:*:Enabled:sqlbrowser.exe", RegistryValueKind.String);
-        }
-        else
-          key.SetValue(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-net.exe", InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld-net.exe:*:Enable:mysqld-nt.exe", RegistryValueKind.String);
-      }
-      key.Flush();
-      key.Close();
-      
-      // Ports
-      key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\GloballyOpenPorts\\List", true);
-
-        // Under Vista subkey "List" doesn't exist as default
-      if (key == null)
-      {
-          key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications", true);
-          key.CreateSubKey("List");
-          key.Flush();
-          key.Close();
-          key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\" + profile + "\\AuthorizedApplications\\List", true);
-
-      }
-      if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
-          key.SetValue("554:TCP", "554:TCP:*:Enabled:MediaPortal TvServer RTSP Streaming (TCP)", RegistryValueKind.String);
-      for (int i = 6970; i < 10000; i++)
-          key.SetValue(i.ToString() + ":UDP", i.ToString() + ":UDP:*:Enabled:MediaPortal TvServer RTSP Streaming (UDP Port " + i.ToString() + ")", RegistryValueKind.String);
-      if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
-      {
-        if (InstallationProperties.Instance["DBMSType"] == "mssql")
+            //TVService
+            app = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
+            MessageBox.Show("Going to configure TVService application: [" + app + "]");
+            AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        } 
+        if  (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
         {
-          key.SetValue("1433:TCP", "1433:TCP:*:Enabled:Microsoft SQL Server Express (TCP)", RegistryValueKind.String);
-          key.SetValue("1434:UDP", "1434:UDP:*:Enabled:Microsoft SQL Server Express (UDP)");
+            if (InstallationProperties.Instance["DBMSType"] == "mssql")
+            {
+                //SQL2005 TCP Port
+                port = 1433;
+                MessageBox.Show("Going to configure SQL2005 TCP port: [" + port.ToString() + "]");
+                GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+                
+                //SQL2005 UDP Port
+                port = 1434;
+                MessageBox.Show("Going to configure SQL2005 UDP port: [" + port.ToString() + "]");
+                GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+            }
+            else
+            {
+                //MySQL TCP Port
+                port = 3306;
+                MessageBox.Show("Going to configure MySQL port: [" + port.ToString() + "]");
+                GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+            }
         }
-        else
-          key.SetValue("3306:TCP", "3306:TCP:*:Enabled:MySQL Server 5 (TCP)");
-      }
-      key.Flush();
-      key.Close();
-    }
-
-    private void ConfigureWindowsFirewall()
-    {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile");
-      if (key != null)
-      {
-          key.Close();
-          ConfigureFirewallProfile("StandardProfile");
-      }
-      key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\DomainProfile");
-      if (key != null)
-      {
-          key.Close();
-          ConfigureFirewallProfile("DomainProfile");
-      }
     }
     #endregion
     public string GetDisplayName()
     {
       return "Windows Firewall Config";
     }
-
     public bool Download()
     {
       return true;
     }
     public bool Install()
     {
-      ConfigureWindowsFirewall();
+      ConfigureFirewallProfile();
       return true;
     }
     public bool UnInstall()
@@ -137,44 +150,49 @@ namespace MediaPortal.DeployTool
       CheckResult result;
       result.needsDownload = false;
       result.state = CheckState.INSTALLED;
-      if (InstallationProperties.Instance["ConfigureTVServerFirewall"]=="1")
+      INetFwMgr fwMgr = GetFirewallManager();
+
+      if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
       {
-        RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile\\GloballyOpenPorts\\List", true);
-        /*
-         * key can be null (Under Vista ...\\List doesn't always exist)
-         */ 
-        if (key != null)
-        {
-            if(key.GetValue("554:TCP") == null)
-                    result.state = CheckState.NOT_INSTALLED;
-        }
-        else
-            result.state = CheckState.NOT_INSTALLED;      
+          //If firewall is not enabled, no need to configure it
+          if (fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled == false)
+              result.state = CheckState.INSTALLED;
+
+          System.Collections.IEnumerator e = null;
+          e = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
+
+          while (e.MoveNext())
+          {
+              INetFwAuthorizedApplication app = e.Current as INetFwAuthorizedApplication;
+              if (app.Name == "MediaPortal TV Server")
+                  result.state = CheckState.INSTALLED;
+              else
+                  result.state = CheckState.NOT_INSTALLED;
+          }
       }
       if (result.state == CheckState.INSTALLED)
       {
         if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
         {
-          RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\StandardProfile\\GloballyOpenPorts\\List", true);
-          /*
-          * key can be null (Under Vista ...\\List doesn't always exist)
-          */
-          if (key != null)
-          {
-              if (InstallationProperties.Instance["DBMSType"] == "mssql")
-              {
-                  if (key.GetValue("1433:TCP") == null)
-                      result.state = CheckState.NOT_INSTALLED;
-              }
-              else
-              {
-                  if (key.GetValue("3306:TCP") == null)
-                      result.state = CheckState.NOT_INSTALLED;
-              }
-              key.Close();
-          }
-          else
-              result.state = CheckState.NOT_INSTALLED;
+            result.state = CheckState.NOT_INSTALLED;
+            
+            System.Collections.IEnumerator e = null;
+            e = fwMgr.LocalPolicy.CurrentProfile.GloballyOpenPorts.GetEnumerator();
+
+            while (e.MoveNext())
+            {
+                INetFwOpenPort app = e.Current as INetFwOpenPort;
+                if (InstallationProperties.Instance["DBMSType"] == "mssql")
+                {
+                    if(app.Port == 1433)  
+                        result.state = CheckState.INSTALLED;
+                }
+                else
+                {
+                    if(app.Port == 3306)
+                        result.state = CheckState.INSTALLED;
+                }
+            }
         }
       }
       return result;
