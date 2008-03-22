@@ -104,7 +104,7 @@ namespace MediaPortal.Configuration.Sections
             windSpeedComboBox.Text = "miles / hour";
             break;
           case 2: selectedWindUnit = WindUnit.ms;
-            windSpeedComboBox.Text = "meters /second";
+            windSpeedComboBox.Text = "meters / second";
             break;
           case 3: selectedWindUnit = WindUnit.Kn;
             windSpeedComboBox.Text = "Knots";
@@ -155,11 +155,11 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        if (windSpeedComboBox.Text.Equals("kilometer/hour"))
+        if (windSpeedComboBox.Text.Equals("kilometers / hour"))
           selectedWindUnit = WindUnit.Kmh;
-        else if (windSpeedComboBox.Text.Equals("miles per hour"))
+        else if (windSpeedComboBox.Text.Equals("miles / hour"))
           selectedWindUnit = WindUnit.mph;
-        else if (windSpeedComboBox.Text.Equals("meter/second"))
+        else if (windSpeedComboBox.Text.Equals("meters / second"))
           selectedWindUnit = WindUnit.ms;
         else if (windSpeedComboBox.Text.Equals("Knots"))
           selectedWindUnit = WindUnit.Kn;
