@@ -63,6 +63,7 @@
         <subitem>898</subitem>
         <subitem>899</subitem>
         <subitem>998</subitem>
+	<subitem>1066</subitem>
       </subitems>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -102,6 +103,7 @@
         <subitem>884</subitem>
         <subitem>885</subitem>
         <subitem>993</subitem>
+        <subitem>1067</subitem>
       </subitems>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -136,17 +138,18 @@
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
       <subitems>
-        <subitem>1024x768</subitem>
-        <subitem>720x576</subitem>
-        <subitem>704x480</subitem>
-        <subitem>720x288</subitem>
-        <subitem>720x240</subitem>
-        <subitem>704x576</subitem>
-        <subitem>640x480</subitem>
-        <subitem>640x288</subitem>
-        <subitem>640x240</subitem>
-        <subitem>352x288</subitem>
-        <subitem>352x240</subitem>
+	<subitem>1068</subitem>
+        <subitem>1069</subitem>
+        <subitem>1070</subitem>
+        <subitem>1071</subitem>
+        <subitem>1072</subitem>
+        <subitem>1073</subitem>
+        <subitem>1074</subitem>
+        <subitem>1075</subitem>
+        <subitem>1076</subitem>
+        <subitem>1077</subitem>
+        <subitem>1078</subitem>
+        <subitem>1079</subitem>
       </subitems>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -181,9 +184,9 @@
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
       <subitems>
-        <subitem>15 FPS</subitem>
-        <subitem>25 FPS</subitem>
-        <subitem>30 FPS</subitem>
+        <subitem>1080</subitem>
+        <subitem>1081</subitem>
+        <subitem>1082</subitem>
       </subitems>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -218,10 +221,11 @@
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
       <subitems>
-        <subitem>100 Kbps</subitem>
-        <subitem>256 Kbps</subitem>
-        <subitem>384 Kbps</subitem>
-        <subitem>768 Kbps</subitem>
+        <subitem>1083</subitem>
+        <subitem>1084</subitem>
+        <subitem>1085</subitem>
+        <subitem>1086</subitem>
+	<subitem>1087</subitem>
       </subitems>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
