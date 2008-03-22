@@ -321,7 +321,7 @@ namespace WindowPlugins.GUISettings.TV
       int deInterlaceMode = 1;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        deInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 1);
+        deInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
       }
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
