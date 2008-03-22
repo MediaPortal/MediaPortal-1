@@ -72,7 +72,7 @@ namespace MediaPortal.DeployTool
 
       //Identify OS. Supporting XP and newer, but XP 64bit
       Version OsVersion = Environment.OSVersion.Version;
-      if (OsVersion.Major < 5 | (OsVersion.Major = 5 & IntPtr.Size == 8))
+      if (OsVersion.Major < 5 || (OsVersion.Major == 5 && IntPtr.Size == 8))
       {
         MessageBox.Show("Sorry your OS is not supported by current MediaPortal installer");
         Application.Exit();
