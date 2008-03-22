@@ -1,6 +1,8 @@
 
 
 1. Update to the latest Windows SDK (previously the Platform SDK).
+        http://www.microsoft.com/downloads/details.aspx?FamilyId=F26B1AA4-741A-433A-9BE5-FA919850BDBF&displaylang=en
+
    Rename the 
         C:\Program Files\Microsoft SDKs\Windows\vX.X
    to
