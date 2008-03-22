@@ -100,7 +100,7 @@ namespace MediaPortal.DeployTool
         {
             //TVService
             app = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
-            MessageBox.Show("Going to configure TVService application: [" + app + "]");
+            //MessageBox.Show("Going to configure TVService application: [" + app + "]");
             AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
         } 
         if  (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
@@ -109,19 +109,19 @@ namespace MediaPortal.DeployTool
             {
                 //SQL2005 TCP Port
                 port = 1433;
-                MessageBox.Show("Going to configure SQL2005 TCP port: [" + port.ToString() + "]");
+                //MessageBox.Show("Going to configure SQL2005 TCP port: [" + port.ToString() + "]");
                 GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
                 
                 //SQL2005 UDP Port
                 port = 1434;
-                MessageBox.Show("Going to configure SQL2005 UDP port: [" + port.ToString() + "]");
+                //MessageBox.Show("Going to configure SQL2005 UDP port: [" + port.ToString() + "]");
                 GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
             }
             else
             {
                 //MySQL TCP Port
                 port = 3306;
-                MessageBox.Show("Going to configure MySQL port: [" + port.ToString() + "]");
+                //MessageBox.Show("Going to configure MySQL port: [" + port.ToString() + "]");
                 GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
             }
         }
@@ -161,13 +161,14 @@ namespace MediaPortal.DeployTool
           System.Collections.IEnumerator e = null;
           e = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
 
+          result.state = CheckState.NOT_INSTALLED;
           while (e.MoveNext())
           {
               INetFwAuthorizedApplication app = e.Current as INetFwAuthorizedApplication;
-              if (app.Name == "MediaPortal TV Server")
-                  result.state = CheckState.INSTALLED;
-              else
-                  result.state = CheckState.NOT_INSTALLED;
+              string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe".ToLower();
+              MessageBox.Show("Checking if firewall allow [" + app + "]");
+              if (app.ProcessImageFileName.ToLower() == apptv)
+                  result.state = CheckState.INSTALLED;           
           }
       }
       if (result.state == CheckState.INSTALLED)

@@ -64,12 +64,20 @@ namespace MediaPortal.DeployTool
       InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
       InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
       
-        //Identify 64bit systems for new registry path
+      //Identify 64bit systems for new registry path
       if (IntPtr.Size == 8)
           InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
       else
           InstallationProperties.Instance.Set("RegistryKeyAdd", "");
 
+      //Identify OS. Supporting XP and newer, but XP 64bit
+      Version OsVersion = Environment.OSVersion.Version;
+      if (OsVersion.Major < 5 | (OsVersion.Major = 5 & IntPtr.Size == 8))
+      {
+        MessageBox.Show("Sorry your OS is not supported by current MediaPortal installer");
+        Application.Exit();
+      }
+      
       string[] cmdArgs = Environment.GetCommandLineArgs();
       foreach (string arg in cmdArgs)
       {

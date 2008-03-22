@@ -50,7 +50,7 @@ namespace MediaPortal.DeployTool
     {
       string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer");
       string targetDir = InstallationProperties.Instance["TVServerDir"];
-      string parameters = "/S /noClient /D=\"" + targetDir + "\" ";
+      string parameters = "/noClient /D=\"" + targetDir + "\" ";
       Process setup = Process.Start(exe, parameters);
       setup.WaitForExit();
       return true;

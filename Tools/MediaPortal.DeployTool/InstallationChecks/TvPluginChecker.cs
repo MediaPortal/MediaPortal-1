@@ -49,7 +49,7 @@ namespace MediaPortal.DeployTool
     public bool Install()
     {
       string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer");
-      string parameters = "/S /noServer";
+      string parameters = "/noServer";
       Process setup = Process.Start(exe, parameters);
       setup.WaitForExit();
       return true;
