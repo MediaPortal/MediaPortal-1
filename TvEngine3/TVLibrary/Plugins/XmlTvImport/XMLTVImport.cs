@@ -739,11 +739,18 @@ namespace TvEngine
                 for (int i = 0 ; i < progChan.programs.Count ; ++i)
                 {
                   Program prog = (Program)progChan.programs[i];
-                  if (prog.StartTime == prog.EndTime)
+                  if (i + 1 < progChan.programs.Count)
                   {
-                    if (i + 1 < progChan.programs.Count)
+                    //correct the times of the current program using the times of the next one
+                    Program progNext = (Program)progChan.programs[i + 1];
+                    if (prog.StartTime >= prog.EndTime)
                     {
-                      Program progNext = (Program)progChan.programs[i + 1];
+                      prog.EndTime = progNext.StartTime;
+                    }
+                    if (prog.EndTime > progNext.StartTime)
+                    {
+                      //if the endTime of this program is later that the start of the next program 
+                      //it probably needs to be corrected (only needed when the grabber )
                       prog.EndTime = progNext.StartTime;
                     }
                   }

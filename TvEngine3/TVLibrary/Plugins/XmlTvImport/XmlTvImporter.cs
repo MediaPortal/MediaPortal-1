@@ -531,17 +531,6 @@ namespace TvEngine
       if (importXML)
       {
         string fileName = folder + @"\tvguide.xml";
-        /*
-        bool canRead = false;
-        bool canWrite = false;
-        IOUtil.CheckFileAccessRights(fileName, ref canRead, ref canWrite);
-
-        if (!canRead)
-        {
-            Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access.");
-            return;
-        }
-        */
 
         try
         {
@@ -558,15 +547,6 @@ namespace TvEngine
       if (importLST)
       {
         string fileName = folder + @"\tvguide.lst";
-        /*bool canRead = false;
-        bool canWrite = false;
-        IOUtil.CheckFileAccessRights(fileName, ref canRead, ref canWrite);
-
-        if (!canRead)
-        {
-            Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access.");
-            return;
-        }*/
 
         try
         {
