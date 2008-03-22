@@ -70,17 +70,16 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal"));
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
       if (key == null)
       {
           result.state = CheckState.NOT_INSTALLED;
       }
       else
       {
-          int MpInstalled = (int)key.GetValue("MementoSection_SecCore");
-          string version = (string)key.GetValue("DisplayVersion");
-          key.Close();
-          if (MpInstalled == 0)
+          string MpPath = (string)key.GetValue("UninstallString");
+          key.Close();    
+          if (MpPath == null | !File.Exists(MpPath))
               result.state = CheckState.NOT_INSTALLED;
           else
               result.state = CheckState.INSTALLED;
