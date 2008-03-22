@@ -165,9 +165,9 @@ namespace MediaPortal.DeployTool
           while (e.MoveNext())
           {
               INetFwAuthorizedApplication app = e.Current as INetFwAuthorizedApplication;
-              string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe".ToLower();
-              MessageBox.Show("Checking if firewall allow [" + app + "]");
-              if (app.ProcessImageFileName.ToLower() == apptv)
+              string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
+              //MessageBox.Show("Checking if firewall allow [" + app + "]");
+              if (app.ProcessImageFileName.ToLower() == apptv.ToLower())
                   result.state = CheckState.INSTALLED;           
           }
       }
