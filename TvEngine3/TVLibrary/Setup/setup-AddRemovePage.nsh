@@ -30,12 +30,8 @@
 #
 #**********************************************************************************************************#
 
-!ifndef WORDFUNC_INCLUDED
-    !include WordFunc.nsh
-!endif
-!ifndef FILEFUNC_INCLUDED
-    !include FileFunc.nsh
-!endif
+!include WordFunc.nsh
+!include FileFunc.nsh
 
 !insertmacro VersionCompare
 !insertmacro GetParent
@@ -125,27 +121,26 @@ Function PageLeaveReinstall
     doUninstall:
     ; check if MP is already installed
     ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
-    IfFileExists $R0 0 unInstallDone
-
+    ${If} ${FileExists} "$R0"
         ; get parent folder of uninstallation EXE (RO) and save it to R1
         ${GetParent} $R0 $R1
         ; start uninstallation of installed MP, from tmp folder, so it will delete itself
         HideWindow
         ClearErrors
-        CopyFiles $R0 "$TEMP\uninstall-tve3.exe"
-        ExecWait '"$TEMP\uninstall-tve3.exe" _?=$R1'
+        CopyFiles $R0 "$TEMP\uninstall-temp.exe"
+        ExecWait '"$TEMP\uninstall-temp.exe" _?=$R1'
         BringToFront
 
         ; if an error occured, ask to cancel installation
-        IfErrors 0 unInstallDone
-            MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES unInstallDone IDNO 0
+        ${If} ${Errors}
+            MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" IDYES +2
             Quit
-    unInstallDone:
-
+        ${EndIf}
+    ${EndIf}
 
     ; if reboot flag is set, abort the installation, and continue the installer on next startup
     ${If} ${FileExists} "$INSTDIR\rebootflag"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
         WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" "$(^Name)" $EXEPATH
         Quit
     ${EndIf}
