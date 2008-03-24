@@ -2421,7 +2421,7 @@ namespace TvPlugin
 
     public bool ShowDefaultHome()
     {
-      return false;
+      return true;
     }
 
     #endregion
