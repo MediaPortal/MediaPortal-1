@@ -394,7 +394,7 @@ ${MementoSectionEnd}
     Delete /REBOOTOK $INSTDIR\StreamingServer.dll
     Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
     Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
-    
+
     ; remove Start Menu shortcuts
     Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk"
     Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"
@@ -640,40 +640,35 @@ Function .onInit
 FunctionEnd
 
 Function .onSelChange
-    ; disable the next button if nothing is selected
-    Push $0
-    Push $1
-    SectionGetFlags ${SecServer} $0
-    IntOp $0 ${SF_SELECTED} & $0
-    SectionGetFlags ${SecClient} $1
-    IntOp $1 ${SF_SELECTED} & $1
-    IntOp $0 $1 | $0
-    GetDlgItem $1 $HWNDPARENT 1
-    EnableWindow $1 $0
-    Pop $1
-    Pop $0
+  ; disable the next button if nothing is selected
+  ${IfNot} ${SectionIsSelected} ${SecServer}
+  ${AndIfNot} ${SectionIsSelected} ${SecClient}
+    EnableWindow $mui.Button.Next 0
+  ${Else}
+    EnableWindow $mui.Button.Next 1
+  ${EndIf}
 FunctionEnd
 
 Function un.onInit
-    #### check and parse cmdline parameter
-    ; set default values for parameters ........
-    StrCpy $RemoveAll 0
+  #### check and parse cmdline parameter
+  ; set default values for parameters ........
+  StrCpy $RemoveAll 0
 
-    ; gets comandline parameter
-    ${un.GetParameters} $R0
+  ; gets comandline parameter
+  ${un.GetParameters} $R0
 
-    ; check for special parameter and set the their variables
-    ClearErrors
-    ${un.GetOptions} $R0 "/RemoveAll" $R1
-    IfErrors +2
-    StrCpy $RemoveAll 1
-    #### END of check and parse cmdline parameter
+  ; check for special parameter and set the their variables
+  ClearErrors
+  ${un.GetOptions} $R0 "/RemoveAll" $R1
+  IfErrors +2
+  StrCpy $RemoveAll 1
+  #### END of check and parse cmdline parameter
 
-    ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
-    ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
-    !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
+  ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
+  ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
+  !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
-    SetShellVarContext all
+  SetShellVarContext all
 FunctionEnd
 
 Function un.onUninstSuccess
