@@ -63,9 +63,6 @@ namespace TvLibrary.Implementations.DVB
 
     [ComImport, Guid("3E8868CB-5FE8-402C-AA90-CB1AC6AE3240")]
     class CyberLinkDumpFilter { };
-
-    [ComImport, Guid("72E6DB8F-9F33-4D1C-A37C-DE8148C0BE74")]
-    protected class MDAPIFilter { };
     #endregion
 
     #region variables
@@ -88,7 +85,7 @@ namespace TvLibrary.Implementations.DVB
     protected DsDevice _captureDevice = null;
     protected DsDevice _deviceWinTvUsb = null;
     protected BaseEpgGrabber _epgGrabberCallback = null;
-    protected IBaseFilter _mdapiFilter = null;
+    protected MDPlugs _mdplugs = null;
     protected List<IBDA_SignalStatistics> _tunerStatistics = new List<IBDA_SignalStatistics>();
     protected IBaseFilter _filterTsWriter;
     protected bool _graphRunning = false;
@@ -128,7 +125,8 @@ namespace TvLibrary.Implementations.DVB
     {
       int id = _subChannelId++;
       Log.Log.Info("dvb:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
-      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, _mdapiFilter, _filterTIF, _filterTsWriter, id);
+
+      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, ref _conditionalAccess, ref _mdplugs, _filterTIF, _filterTsWriter, id);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
@@ -790,68 +788,9 @@ namespace TvLibrary.Implementations.DVB
     {
       //multi demux
       int hr;
-      #region Check MDAPI
-      bool useMDAPI = false;
-      if (System.IO.Directory.Exists("MDPLUGINS"))
-      {
-        try
-        {
-          string xmlFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
-          if (!System.IO.File.Exists(xmlFile))
-          {
-            XmlDocument doc = new XmlDocument();
-            XmlNode rootNode = doc.CreateElement("cards");
-            XmlNode nodeCard = doc.CreateElement("card");
-            XmlAttribute attr = doc.CreateAttribute("DevicePath");
-            attr.InnerText = DevicePath;
-            nodeCard.Attributes.Append(attr);
-            attr = doc.CreateAttribute("Name");
-            attr.InnerText = Name;
-            nodeCard.Attributes.Append(attr);
-            attr = doc.CreateAttribute("EnableMdapi");
-            attr.InnerText = "yes";
-            nodeCard.Attributes.Append(attr);
-            rootNode.AppendChild(nodeCard);
-            doc.AppendChild(rootNode);
-            doc.Save(xmlFile);
-            useMDAPI = true;
-          } else
-          {
-            bool cardFound = false;
-            XmlDocument doc = new XmlDocument();
-            doc.Load(xmlFile);
-            XmlNodeList cardList = doc.SelectNodes("/cards/card");
-            foreach (XmlNode nodeCard in cardList)
-            {
-              if (nodeCard.Attributes["DevicePath"].Value == DevicePath)
-              {
-                useMDAPI = (nodeCard.Attributes["EnableMdapi"].Value == "yes");
-                cardFound = true;
-                break;
-              }
-            }
-            if (!cardFound)
-            {
-              XmlNode nodeNewCard = doc.CreateElement("card");
-              XmlAttribute attr = doc.CreateAttribute("DevicePath");
-              attr.InnerText = DevicePath;
-              nodeNewCard.Attributes.Append(attr);
-              attr = doc.CreateAttribute("Name");
-              attr.InnerText = Name;
-              nodeNewCard.Attributes.Append(attr);
-              attr = doc.CreateAttribute("EnableMdapi");
-              attr.InnerText = "yes";
-              nodeNewCard.Attributes.Append(attr);
-              XmlNode rootNode = doc.SelectSingleNode("/cards");
-              rootNode.AppendChild(nodeNewCard);
-              doc.Save(xmlFile);
-              useMDAPI = true;
-            }
-          }
-        } catch (Exception) { }
-      }
-      #endregion
-      if (useMDAPI)
+
+      _mdplugs = MDPlugs.Create(_captureDevice);
+      if (_mdplugs != null)
       {
         Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
         _infTeeSecond = (IBaseFilter)new InfTee();
@@ -861,39 +800,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Error("dvb:Add 2nd InfTee returns:0x{0:X}", hr);
           throw new TvException("Unable to add  _infTeeSecond");
         }
-        //capture -> maintee -> mdapi -> secondtee-> demux
-        Log.Log.Info("dvb: add mdapi filter");
-        _mdapiFilter = (IBaseFilter)new MDAPIFilter();
-        hr = _graphBuilder.AddFilter(_mdapiFilter, "MDApi");
-
-        Log.Log.Info("dvb: connect maintee->mdapi");
-        IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
-        IPin mdApiIn = DsFindPin.ByDirection(_mdapiFilter, PinDirection.Input, 0);
-        hr = _graphBuilder.Connect(mainTeeOut, mdApiIn);
-        if (hr != 0)
-        {
-          Log.Log.Info("unable to connect maintee->mdapi");
-        }
-        Log.Log.Info("dvb: connect mdapi->2nd tee");
-        IPin mdApiOut = DsFindPin.ByDirection(_mdapiFilter, PinDirection.Output, 0);
-        IPin secondTeeIn = DsFindPin.ByDirection(_infTeeSecond, PinDirection.Input, 0);
-        hr = _graphBuilder.Connect(mdApiOut, secondTeeIn);
-        if (hr != 0)
-        {
-          Log.Log.Info("unable to connect mdapi->2nd tee");
-        }
-        //connect the 2nd inftee main -> TIF MPEG2 Demultiplexer
-        Log.Log.WriteFile("dvb:  Render [inftee2]->[demux]");
-        mainTeeOut = DsFindPin.ByDirection(_infTeeSecond, PinDirection.Output, 0);
-        IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-        hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
-        Release.ComObject("maintee pin0", mainTeeOut);
-        Release.ComObject("tifdemux pinin", demuxPinIn);
-        if (hr != 0)
-        {
-          Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
-          throw new TvException("Unable to add  mainInfTee");
-        }
+        _mdplugs.Connectmdapifilter(_graphBuilder, ref _infTeeMain, ref _infTeeSecond, ref _filterMpeg2DemuxTif);
       } else
       {
         //connect the [inftee main] -> [TIF MPEG2 Demultiplexer]
@@ -1167,11 +1074,6 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("  free...");
       _interfaceChannelScan = null;
       _interfaceEpgGrabber = null;
-      if (_mdapiFilter != null)
-      {
-        Release.ComObject("MDAPI filter", _mdapiFilter);
-        _mdapiFilter = null;
-      }
       if (_filterMpeg2DemuxTif != null)
       {
         Release.ComObject("_filterMpeg2DemuxTif filter", _filterMpeg2DemuxTif);

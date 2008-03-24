@@ -88,6 +88,7 @@
     <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />
     <Compile Include="Implementations\DVB\DisEqC\IDiSEqCController.cs" />
     <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
+    <Compile Include="Implementations\DVB\Graphs\MDPlug.cs" />
     <Compile Include="Implementations\DVB\Graphs\SS2\DVBSS2Scanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\TvDvbChannel.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
