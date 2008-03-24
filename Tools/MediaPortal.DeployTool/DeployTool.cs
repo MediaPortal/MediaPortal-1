@@ -70,12 +70,37 @@ namespace MediaPortal.DeployTool
       else
           InstallationProperties.Instance.Set("RegistryKeyAdd", "");
 
-      //Identify OS. Supporting XP and newer, but XP 64bit
+      //Identify OS. Supporting XP SP2 and newer, but XP 64bit
       Version OsVersion = Environment.OSVersion.Version;
-      if (OsVersion.Major < 5 || (OsVersion.Major == 5 && IntPtr.Size == 8))
+      bool OsSupport = false;
+
+        switch(OsVersion.Major)
+        {
+            case 4:                         // 4.x = Win95,98,ME and NT 
+                OsSupport = false;
+                break;
+            case 5:
+                if (OsVersion.Minor == 0)   // 5.0 = Windows2000
+                    OsSupport = false;
+                if (OsVersion.Minor == 1)   // 5.1 = WindowsXP
+                {
+                    if ( (int.Parse(Environment.OSVersion.ServicePack.Replace("Service Pack ", "")) < 2) | (IntPtr.Size == 8))
+                        OsSupport = false;
+                    else
+                        OsSupport = true;
+                }
+                if (OsVersion.Major == 2)   // 5.2 = Windows2003
+                    OsSupport = true;
+                break;
+            case 6:                         // 6.0 = Windows Vista, 2008
+                OsSupport = true;
+                break;
+        }
+
+      if (!OsSupport)
       {
-        MessageBox.Show("Sorry your OS is not supported by current MediaPortal installer");
-        Application.Exit();
+          MessageBox.Show("Sorry your OS is not supported by current MediaPortal installer", Environment.OSVersion.VersionString, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+          Application.Exit();
       }
       
       string[] cmdArgs = Environment.GetCommandLineArgs();

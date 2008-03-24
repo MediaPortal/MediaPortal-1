@@ -69,20 +69,28 @@ namespace MediaPortal.DeployTool
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
       if (key == null)
-        result.state = CheckState.NOT_INSTALLED;
+      {
+          result.state = CheckState.NOT_INSTALLED;
+      }
       else
       {
-        int clientInstalled=(int)key.GetValue("MementoSection_SecClient");
-        string version = (string)key.GetValue("DisplayVersion");
-        key.Close();
-        if (clientInstalled == 0)
-          result.state = CheckState.NOT_INSTALLED;
-        else
-          result.state = CheckState.INSTALLED;
-        //if (version == "1.0.0")
-        //  result.state = CheckState.INSTALLED;
-        //else
-        //  result.state = CheckState.VERSION_MISMATCH;
+          string TV3Path = (string)key.GetValue("UninstallString");
+          int clientInstalled = (int)key.GetValue("MementoSection_SecClient");
+          //string version = (string)key.GetValue("DisplayVersion");
+          key.Close();
+          if (TV3Path == null | !File.Exists(TV3Path))
+              result.state = CheckState.NOT_INSTALLED;
+          else
+          {
+              if (clientInstalled == 1)
+                  result.state = CheckState.INSTALLED;
+              else
+                  result.state = CheckState.NOT_INSTALLED;
+          }
+          //if (version == "1.0.0")
+          //  result.state = CheckState.INSTALLED;
+          //else
+          //  result.state = CheckState.VERSION_MISMATCH;
       }
       return result;
     }
