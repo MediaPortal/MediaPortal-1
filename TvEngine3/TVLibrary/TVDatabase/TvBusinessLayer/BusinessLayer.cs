@@ -1816,7 +1816,7 @@ namespace TvDatabase
           transact = connection.BeginTransaction();
           ExecuteMySqlCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
           transact.Commit();
-          OptimizeMySql("Program");
+          //OptimizeMySql("Program");
         }
       }
       catch (Exception ex)
