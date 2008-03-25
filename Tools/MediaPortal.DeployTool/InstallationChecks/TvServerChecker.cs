@@ -50,10 +50,19 @@ namespace MediaPortal.DeployTool
     {
       string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer");
       string targetDir = InstallationProperties.Instance["TVServerDir"];
-      string parameters = "/noClient /D=\"" + targetDir + "\" ";
+      //NSIS installed doesn't want " in parameters (chefkoch)
+      //Rember that /D must be the last one         (chefkoch)
+      string parameters = "/noClient /D=" + targetDir;
       Process setup = Process.Start(exe, parameters);
-      setup.WaitForExit();
-      return true;
+      try
+      {
+          setup.WaitForExit();
+          return true;
+      }
+      catch
+      {
+          return false;
+      }
     }
     public bool UnInstall()
     {

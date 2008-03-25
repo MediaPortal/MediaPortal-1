@@ -77,8 +77,8 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      ManualDownload dlg = new ManualDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MySQL"), Utils.GetDownloadFile("MySQL"), Application.StartupPath + "\\deploy\\");
+      HTTPDownload dlg = new HTTPDownload();
+      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MySQL"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MySQL"));
       return (result == DialogResult.OK);
     }
     public bool Install()
@@ -123,13 +123,20 @@ namespace MediaPortal.DeployTool
       System.Threading.Thread.Sleep(2000);
       cmdLine = "-u root --password="+InstallationProperties.Instance["DBMSPassword"]+" --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" + InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
       Process mysql = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
-      mysql.WaitForExit();
-      return true;
+      try
+      {
+          mysql.WaitForExit();
+          return true;
+      }
+      catch
+      {
+          return false;
+      }
     }
     public bool UnInstall()
     {
-      Process setup = Process.Start("msiexec", "/X {2FEB25F8-C3CB-49A2-AE79-DE17FFAFB5D9}");
-      setup.WaitForExit();
+      Process mysql = Process.Start("msiexec", "/X {2FEB25F8-C3CB-49A2-AE79-DE17FFAFB5D9}");
+      mysql.WaitForExit();
       return true;
     }
     public CheckResult CheckStatus()

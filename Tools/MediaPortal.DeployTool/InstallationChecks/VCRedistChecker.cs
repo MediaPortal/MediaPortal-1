@@ -42,15 +42,22 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      ManualDownload dlg = new ManualDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("VCRedist"), Utils.GetDownloadFile("VCRedist"), Application.StartupPath + "\\deploy");
+      HTTPDownload dlg = new HTTPDownload();
+      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("VCRedist"), Application.StartupPath + "\\deploy" + Utils.GetDownloadFile("VCRedist"));
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
       Process setup = Process.Start(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("VCRedist"), "/Q");
-      setup.WaitForExit();
-      return true;
+      try
+      {
+          setup.WaitForExit();
+          return true;
+      }
+      catch
+      {
+          return false;
+      }
     }
     public bool UnInstall()
     {

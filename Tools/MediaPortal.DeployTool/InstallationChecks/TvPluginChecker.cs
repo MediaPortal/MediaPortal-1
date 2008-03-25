@@ -70,8 +70,15 @@ namespace MediaPortal.DeployTool
       string exe = (string)key.GetValue("UninstallString");
       key.Close();
       Process setup = Process.Start(exe, "/S /RemoveAll");
-      setup.WaitForExit();
-      return true;
+      try
+      {
+          setup.WaitForExit();
+          return true;
+      }
+      catch
+      {
+          return false;
+      }
     }
     public CheckResult CheckStatus()
     {

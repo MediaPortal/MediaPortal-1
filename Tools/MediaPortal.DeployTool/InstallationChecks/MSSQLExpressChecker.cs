@@ -61,15 +61,8 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      ManualDownload dlg = new ManualDownload();
-      string DownloadFile = Utils.GetDownloadFile("MSSQLExpress");
-      string LangCode = System.Globalization.CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName;
-      string NewFileName = "";
-      if (LangCode == "ENU")
-          NewFileName = DownloadFile;
-      else
-          NewFileName = DownloadFile.Split('.') + LangCode + ".exe";
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MSSQLExpress"), NewFileName, Application.StartupPath + "\\deploy\\");
+      HTTPDownload dlg = new HTTPDownload();
+      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MSSQLExpress"), Application.StartupPath + "\\deploy\\" + ReformatDownloadFile(Utils.GetDownloadFile("MSSQLExpress")));
       return (result == DialogResult.OK);
     }
     public bool Install()
@@ -77,31 +70,38 @@ namespace MediaPortal.DeployTool
 
       string tmpPath=Path.GetTempPath()+"\\SQLEXPRESS";
       //Extract all files
-      Process extract=Process.Start(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MSSQLExpress"),"/X:\""+tmpPath+"\" /Q");
+      Process extract=Process.Start(Application.StartupPath + "\\deploy\\" + ReformatDownloadFile(Utils.GetDownloadFile("MSSQLExpress")),"/X:\""+tmpPath+"\" /Q");
       extract.WaitForExit();
       //Prepare the unattended ini file
       PrepareTemplateINI(tmpPath+"\\template.ini");
       //run the setup
-      Process setup=Process.Start(tmpPath+"\\setup.exe","/wait /settings \""+tmpPath+"\\template.ini\" /qb");
-      setup.WaitForExit();
-      if (setup.ExitCode == 0)
+      Process setup = Process.Start(tmpPath+"\\setup.exe","/wait /settings \""+tmpPath+"\\template.ini\" /qb");
+      try
       {
-        Directory.Delete(tmpPath, true);
-        return true;
+          setup.WaitForExit();
+          if (setup.ExitCode == 0)
+          {
+              Directory.Delete(tmpPath, true);
+              return true;
+          }
+          else
+              return false;
       }
-      else
-        return false;
+      catch
+      {
+          return false;
+      }
     }
     public bool UnInstall()
     {
       Process setup = Process.Start("msiexec", "/X {2AFFFDD7-ED85-4A90-8C52-5DA9EBDC9B8F}");
       setup.WaitForExit();
-      return true;
+       return true;
     }
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MSSQLExpress"));
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + ReformatDownloadFile(Utils.GetDownloadFile("MSSQLExpress")));
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;
@@ -115,6 +115,16 @@ namespace MediaPortal.DeployTool
           result.state = CheckState.VERSION_MISMATCH;
       }
       return result;
+    }
+    public string ReformatDownloadFile(string filename)
+    {
+        string LangCode = System.Globalization.CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName;
+        string NewFileName = "";
+        if (LangCode == "ENU")
+            NewFileName = filename;
+        else
+            NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
+        return NewFileName;
     }
   }
 }

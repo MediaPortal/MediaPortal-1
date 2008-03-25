@@ -51,8 +51,15 @@ namespace MediaPortal.DeployTool
       string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal");
       string targetDir = InstallationProperties.Instance["MPDir"];
       Process setup = Process.Start(nsis, "/D=\"" + targetDir + "\"");
-      setup.WaitForExit();
-      return (setup.ExitCode==0);
+      try
+      {
+          setup.WaitForExit();
+          return true;
+      }
+      catch
+      {
+          return false;
+      }
     }
     public bool UnInstall()
     {
