@@ -537,12 +537,17 @@ namespace TvPlugin
       if (currentWindow.IsTv) return;
       if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_RADIO) return;
 
-      TVHome.Card.StopTimeShifting();
+      //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
+      if (TVHome.Connected)
+        TVHome.Card.StopTimeShifting();
     }
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       if (type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio) return;
+
+      //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
+      if (!TVHome.Connected) return;
 
       //GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       //if (currentWindow.IsTv) return;
