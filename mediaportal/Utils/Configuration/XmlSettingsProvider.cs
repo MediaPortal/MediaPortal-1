@@ -41,14 +41,14 @@ namespace MediaPortal.Profile
     {
       filename = xmlFileName;
       document = new XmlDocument();
-      bool docLoaded = false;
+      //bool docLoaded = false;
       try
       {
         document.Load(filename);
         if (document.DocumentElement == null) 
           document = null;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         if (File.Exists(filename + ".bak"))
           document.Load(filename + ".bak");

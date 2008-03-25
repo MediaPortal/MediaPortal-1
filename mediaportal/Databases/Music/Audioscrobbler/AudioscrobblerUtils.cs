@@ -2288,7 +2288,7 @@ namespace MediaPortal.Music.Database
                 break;
               default:
                 continue;
-                break;
+                //break;
             }
             
           } // <-- while reading
