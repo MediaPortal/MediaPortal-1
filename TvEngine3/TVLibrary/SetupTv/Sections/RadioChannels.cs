@@ -430,6 +430,18 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
+        IList maps = channel.ReferringRadioGroupMap();
+        // Bav: fixing Mantis bug 1178: Can't delete Radio channels in SetupTV
+        foreach (RadioGroupMap map in maps)
+        {
+          map.Remove();
+        }
+        maps = channel.ReferringGroupMap();
+        foreach (GroupMap map in maps)
+        {
+          map.Remove();
+        }
+        // Bav - End of fix
         channel.Delete();
         mpListView1.Items.Remove(item);
       }
