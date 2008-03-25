@@ -212,9 +212,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     File ..\Plugins\ComSkipLauncher\bin\Release\ComSkipLauncher.dll
     File ..\Plugins\ConflictsManager\bin\Release\ConflictsManager.dll
     File ..\Plugins\PersonalTVGuide\bin\Release\PersonalTVGuide.dll
-    File ..\Plugins\PluginBase\bin\Release\PluginBase.dll
     File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.dll
-    File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.Interfaces.dll
     File ..\Plugins\ServerBlaster\ServerBlaster\bin\Release\ServerBlaster.dll
     File ..\Plugins\TvMovie\bin\Release\TvMovie.dll
     File ..\Plugins\XmlTvImport\bin\Release\XmlTvImport.dll
@@ -224,7 +222,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     File ..\DirectShowLib\bin\Release\DirectShowLib.dll
     File ..\dvblib.dll
     File ..\Plugins\PluginBase\bin\Release\PluginBase.dll
-    File ..\Plugins\XmlTvImport\bin\Release\PowerScheduler.Interfaces.DLL
+    File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.Interfaces.dll
     File "..\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Release\Blaster.exe"
     File ..\Setup\mp.ico
     File ..\SetupTv\bin\Release\SetupTv.exe
@@ -351,9 +349,7 @@ ${MementoSectionEnd}
     Delete /REBOOTOK $INSTDIR\Plugins\ComSkipLauncher.dll
     Delete /REBOOTOK $INSTDIR\Plugins\ConflictsManager.dll
     Delete /REBOOTOK $INSTDIR\Plugins\PersonalTVGuide.dll
-    Delete /REBOOTOK $INSTDIR\Plugins\PluginBase.dll
     Delete /REBOOTOK $INSTDIR\Plugins\PowerScheduler.dll
-    Delete /REBOOTOK $INSTDIR\Plugins\PowerScheduler.Interfaces.dll
     Delete /REBOOTOK $INSTDIR\Plugins\ServerBlaster.dll
     Delete /REBOOTOK $INSTDIR\Plugins\TvMovie.dll
     Delete /REBOOTOK $INSTDIR\Plugins\XmlTvImport.dll
