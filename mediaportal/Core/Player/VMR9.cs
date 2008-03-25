@@ -109,7 +109,6 @@ namespace MediaPortal.Player
     IBaseFilter _vmr9Filter = null;
     int _videoHeight, _videoWidth;
     int _videoAspectRatioX, _videoAspectRatioY;
-
     IQualProp _qualityInterface = null;
     int _frameCounter = 0;
     DateTime _repaintTimer = DateTime.Now;
@@ -118,7 +117,9 @@ namespace MediaPortal.Player
     bool _isVmr9Initialized = false;
     int _threadId;
     Vmr9PlayState currentVmr9State = Vmr9PlayState.Playing;
-  
+    string pixelAdaptive = "";
+    string verticalStretch = "";
+    string medianFiltering = "";  
     #endregion
 
     #region ctor
@@ -574,14 +575,15 @@ namespace MediaPortal.Player
     public void SetDeinterlacePrefs()
     {
       if (!_isVmr9Initialized) return;
+      Log.Debug("VMR9: SetDeinterlacePrefs()");
       int DeInterlaceMode = 3;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        //None
-        //Bob
-        //Weave
-        //Best
         DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+        //None = 0
+        if (DeInterlaceMode == 1) DeInterlaceMode = 2; //BOB = 0x02
+        if (DeInterlaceMode == 2) DeInterlaceMode = 4; //Weave = 0x04
+        if (DeInterlaceMode == 3) DeInterlaceMode = 1; //NextBest = 0x01
       }
       Vmr9SetDeinterlacePrefs((uint)DeInterlaceMode);
     }
@@ -591,18 +593,212 @@ namespace MediaPortal.Player
       if (!GUIGraphicsContext.IsEvr)
       {
         if (!_isVmr9Initialized) return;
-        int DeInterlaceMode = 3;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        Log.Debug("VMR9: SetDeinterlaceMode()");
+        IVMRDeinterlaceControl9 deinterlace = (IVMRDeinterlaceControl9)_vmr9Filter;
+        IPin InPin = null;
+        int hr = _vmr9Filter.FindPin("VMR Input0", out InPin);
+        AMMediaType mediatype = new AMMediaType();
+        InPin.ConnectionMediaType(mediatype);
+        //Start by getting the media type of the video stream.
+        //Only VideoInfoHeader2 formats can be interlaced.
+        if (mediatype.formatType == FormatType.VideoInfo2)
         {
-          //None
-          //Bob
-          //Weave
-          //Best
-          DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+          Log.Debug("VMR9: SetDeinterlaceMode - FormatType = VideoInfo2");
+          int numModes = 0;
+          VideoInfoHeader2 VideoHeader2 = new VideoInfoHeader2();
+          Marshal.PtrToStructure(mediatype.formatPtr, VideoHeader2);
+          VMR9VideoDesc VideoDesc = new VMR9VideoDesc();
+          // If the FormatType is VideoInfo2, check the dwInterlaceFlags field for the AMInterlace.IsInterlaced flag.
+          //The presence of this flag indicates the video is interlaced.
+          if ((VideoHeader2.InterlaceFlags & AMInterlace.IsInterlaced) !=0)
+          {
+            Log.Debug("VMR9: SetDeinterlaceMode - Interlaced frame detected");
+            //Fill in the VMR9VideoDesc structure with a description of the video stream.
+            VideoDesc.dwSize = Marshal.SizeOf(VideoDesc); // dwSize: Set this field to sizeof(VMR9VideoDesc).
+            VideoDesc.dwSampleWidth = VideoHeader2.BmiHeader.Width; // dwSampleWidth: Set this field to pBMI->biWidth. 
+            VideoDesc.dwSampleHeight = VideoHeader2.BmiHeader.Height; // dwSampleHeight: Set this field to abs(pBMI->biHeight). 
+            //SampleFormat: This field describes the interlace characteristics of the media type.
+            //Check the dwInterlaceFlags field in the VIDEOINFOHEADER2 structure, and set SampleFormat equal to the equivalent VMR9_SampleFormat flag.
+            Log.Info("VMR9: InterlaceFlags - {0}", VideoHeader2.InterlaceFlags);
+            if ((VideoHeader2.InterlaceFlags & AMInterlace.IsInterlaced) != 0)
+            {
+              if ((VideoHeader2.InterlaceFlags & AMInterlace.DisplayModeBobOnly) == 0)
+              {
+                VideoDesc.SampleFormat = VMR9SampleFormat.ProgressiveFrame;
+              }
+              if ((VideoHeader2.InterlaceFlags & AMInterlace.OneFieldPerSample) != 0)
+              {
+                if ((VideoHeader2.InterlaceFlags & AMInterlace.Field1First) != 0)
+                  VideoDesc.SampleFormat = VMR9SampleFormat.FieldSingleEven;
+                else
+                  VideoDesc.SampleFormat = VMR9SampleFormat.FieldSingleOdd;
+              }
+              if ((VideoHeader2.InterlaceFlags & AMInterlace.Field1First) != 0)
+              {
+                VideoDesc.SampleFormat = VMR9SampleFormat.FieldInterleavedEvenFirst;
+              }
+              else
+                VideoDesc.SampleFormat = VMR9SampleFormat.FieldInterleavedOddFirst;
+            }
+            //InputSampleFreq: This field gives the input frequency, which can be calculated from the AvgTimePerFrame field in the VIDEOINFOHEADER2 structure.
+            //In the general case, set dwNumerator to 10000000, and set dwDenominator to AvgTimePerFrame. 
+            VideoDesc.InputSampleFreq.dwDenominator = 10000000;
+            VideoDesc.InputSampleFreq.dwNumerator = (int)VideoHeader2.AvgTimePerFrame;
+            //OutputFrameFreq: This field gives the output frequency, which can be calculated from the InputSampleFreq value and the interleaving characteristics of the input stream:
+            //Set OutputFrameFreq.dwDenominator equal to InputSampleFreq.dwDenominator.
+            //If the input video is interleaved, set OutputFrameFreq.dwNumerator to 2 x InputSampleFreq.dwNumerator. (After deinterlacing, the frame rate is doubled.)
+            //Otherwise, set the value to InputSampleFreq.dwNumerator.
+            VideoDesc.OutputFrameFreq.dwDenominator = 10000000;
+            VideoDesc.OutputFrameFreq.dwNumerator = (int)VideoHeader2.AvgTimePerFrame * 2;
+            VideoDesc.dwFourCC = VideoHeader2.BmiHeader.Compression; //dwFourCC: Set this field to pBMI->biCompression.
+            //Pass the structure to the IVMRDeinterlaceControl9::GetNumberOfDeinterlaceModes method.
+            //Call the method twice. The first call returns the number of deinterlace modes the hardware supports for the specified format.
+            hr = deinterlace.GetNumberOfDeinterlaceModes(ref VideoDesc, ref numModes, null);
+            if (hr == 0 && numModes != 0)
+            {
+              Guid[] modes = new Guid[numModes];
+              {
+                //Allocate an array of GUIDs of this size, and call the method again, passing in the address of the array.
+                //The second call fills the array with GUIDs. Each GUID identifies one deinterlacing mode. 
+                hr = deinterlace.GetNumberOfDeinterlaceModes(ref VideoDesc, ref numModes, modes);
+                for (int i = 0; i < numModes; i++)
+                {
+                  //To get the capabiltiies of a particular mode, call the IVMRDeinterlaceControl9::GetDeinterlaceModeCaps method.
+                  //Pass in the same VMR9VideoDesc structure, along with one of the GUIDs from the array.
+                  //The method fills a VMR9DeinterlaceCaps structure with the mode capabilities. 
+                  VMR9DeinterlaceCaps caps = new VMR9DeinterlaceCaps();
+                  caps.dwSize = Marshal.SizeOf(typeof(VMR9DeinterlaceCaps));
+                  hr = deinterlace.GetDeinterlaceModeCaps(modes[i], ref VideoDesc, ref caps);
+                  if (hr == 0)
+                  {
+                    Log.Debug("VMR9: AvailableDeinterlaceMode - {0}: {1}", i, modes[i]);
+                    switch (caps.DeinterlaceTechnology)
+                    {
+                      //The algorithm is unknown or proprietary
+                      case VMR9DeinterlaceTech.Unknown:
+                        {
+                          Log.Info("VMR9: Unknown H/W de-interlace mode");
+                          break;
+                        }
+                      //The algorithm creates each missing line by repeating the line above it or below it.
+                      //This method creates jagged artifacts and is not recommended.
+                      case VMR9DeinterlaceTech.BOBLineReplicate:
+                        {
+                          Log.Info("VMR9: BOB Line Replicate capable");
+                          break;
+                        }
+                      //The algorithm creates the missing lines by vertically stretching each video field by a factor of two.
+                      //For example, it might average two lines or use a (-1, 9, 9, -1)/16 filter across four lines.
+                      //Slight vertical adjustments are made to ensure that the resulting image does not "bob" up and down
+                      case VMR9DeinterlaceTech.BOBVerticalStretch:
+                        {
+                          Log.Info("VMR9: BOB Vertical Stretch capable");
+                          verticalStretch = modes[i].ToString();
+                          break;
+                        }
+                      //The algorithm uses median filtering to recreate the pixels in the missing lines.
+                      case VMR9DeinterlaceTech.MedianFiltering:
+                        {
+                          Log.Info("VMR9: Median Filtering capable");
+                          medianFiltering = modes[i].ToString();
+                          break;
+                        }
+                      //The algorithm uses an edge filter to create the missing lines.
+                      //In this process, spatial directional filters are applied to determine the orientation of edges in the picture content.
+                      //Missing pixels are created by filtering along (rather than across) the detected edges.
+                      case VMR9DeinterlaceTech.EdgeFiltering:
+                        {
+                          Log.Info("VMR9: Edge Filtering capable");
+                          break;
+                        }
+                      //The algorithm uses spatial or temporal interpolation, switching between the two on a field-by-field basis, depending on the amount of motion.
+                      case VMR9DeinterlaceTech.FieldAdaptive:
+                        {
+                          Log.Info("VMR9: Field Adaptive capable");
+                          break;
+                        }
+                      //The algorithm uses spatial or temporal interpolation, switching between the two on a pixel-by-pixel basis, depending on the amount of motion.
+                      case VMR9DeinterlaceTech.PixelAdaptive:
+                        {
+                          Log.Info("VMR9: Pixel Adaptive capable");
+                          pixelAdaptive = modes[i].ToString();
+                          break;
+                        }
+                      //The algorithm identifies objects within a sequence of video fields.
+                      //Before it recreates the missing pixels, it aligns the movement axes of the individual objects in the scene to make them parallel with the time axis.
+                      case VMR9DeinterlaceTech.MotionVectorSteered:
+                        {
+                          Log.Info("VMR9: Motion Vector Steered capable");
+                          break;
+                        }
+                    }
+                  }
+                }
+              }
+              //Set the MP preferred h/w de-interlace modes in order of quality
+              //pixel adaptive, then median filtering & finally vertical stretch
+              if (pixelAdaptive != "")
+              {
+                Guid DeinterlaceMode = new Guid(pixelAdaptive);
+                Log.Debug("VMR9: trying pixel adaptive");
+                hr = deinterlace.SetDeinterlaceMode(0, DeinterlaceMode);
+                if (hr != 0)
+                {
+                  Log.Error("VMR9: pixel adaptive failed!");
+                }
+                else
+                {
+                  Log.Info("VMR9: setting pixel adaptive succeeded");
+                  medianFiltering = "";
+                  verticalStretch = "";
+                }
+              }
+              if (medianFiltering != "")
+              {
+                Guid DeinterlaceMode = new Guid(medianFiltering);
+                Log.Debug("VMR9: trying median filtering");
+                hr = deinterlace.SetDeinterlaceMode(0, DeinterlaceMode);
+                if (hr != 0)
+                {
+                  Log.Error("VMR9: median filtering failed!");
+                }
+                else
+                {
+                  Log.Info("VMR9: setting median filtering succeeded");
+                  verticalStretch = "";
+                }
+              }
+              if (verticalStretch != "")
+              {
+                Guid DeinterlaceMode = new Guid(verticalStretch);
+                Log.Debug("VMR9: trying vertical stretch");
+                hr = deinterlace.SetDeinterlaceMode(0, DeinterlaceMode);
+                if (hr != 0)
+                {
+                  Log.Error("VMR9: Cannot set H/W de-interlace mode - using VMR9 fallback");
+                }
+                Log.Info("VMR9: setting vertical stretch succeeded");
+              }
+            }
+            else
+              Log.Info("VMR9: No H/W de-interlaced modes supported, using fallback preference");
+          }
+          else
+            Log.Info("VMR9: progressive mode detected - no need to de-interlace");
         }
-        Vmr9SetDeinterlaceMode((short)DeInterlaceMode);
+        //If the format type is VideoInfo, it must be a progressive frame.
+        else
+          Log.Info("VMR9: no need to de-interlace this video source");
+        //release the VMR9 pin
+        hr = DirectShowUtil.ReleaseComObject(InPin);
+        if (hr != 0)
+        {
+          Log.Error("VMR9: failed releasing InPin 0x:(0)", hr);
+        }
+        else
+          InPin = null;
       }
-    }
+    } 
 
     public void Enable(bool onOff)
     {
@@ -756,7 +952,6 @@ namespace MediaPortal.Player
     }
     #endregion
 
-
     #region IDisposeable
     /// <summary>
     /// removes the vmr9 filter from the graph and free up all unmanaged resources
@@ -833,5 +1028,5 @@ namespace MediaPortal.Player
     }
     #endregion
 
-  }//public class VMR9Util
-}//namespace MediaPortal.Player 
+  }
+}
