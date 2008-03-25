@@ -73,19 +73,32 @@ namespace MediaPortal.DeployTool
       //Identify OS. Supporting XP SP2 and newer, but XP 64bit
       Version OsVersion = Environment.OSVersion.Version;
       bool OsSupport = false;
+      string OsDesc = "";
 
         switch(OsVersion.Major)
         {
             case 4:                         // 4.x = Win95,98,ME and NT 
+                OsDesc = "Windows 95/98/ME/NT";
                 OsSupport = false;
                 break;
             case 5:
                 if (OsVersion.Minor == 0)   // 5.0 = Windows2000
+                {
+                    OsDesc = "Windows 2000";
                     OsSupport = false;
+                }
                 if (OsVersion.Minor == 1)   // 5.1 = WindowsXP
                 {
-                    if ( (int.Parse(Environment.OSVersion.ServicePack.Replace("Service Pack ", "")) < 2) | (IntPtr.Size == 8))
+                    if (int.Parse(Environment.OSVersion.ServicePack.Replace("Service Pack ", "")) < 2)                        
+                    {
+                        OsDesc = "Windows XP ServicePack 1";
                         OsSupport = false;
+                    }
+                    else if (IntPtr.Size == 8)
+                    {
+                        OsDesc = "Windows XP 64bit";
+                        OsSupport = false;
+                    }
                     else
                         OsSupport = true;
                 }
@@ -99,8 +112,8 @@ namespace MediaPortal.DeployTool
 
       if (!OsSupport)
       {
-          MessageBox.Show("Sorry your OS is not supported by current MediaPortal installer", Environment.OSVersion.VersionString, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-          Application.Exit();
+          MessageBox.Show("Sorry your OS is not currently supported by MediaPortal !", OsDesc, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+          Environment.Exit(-1);
       }
       
       string[] cmdArgs = Environment.GetCommandLineArgs();
