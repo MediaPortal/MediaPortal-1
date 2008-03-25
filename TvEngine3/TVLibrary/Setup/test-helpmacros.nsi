@@ -63,4 +63,17 @@ Function .onInit
     MessageBox MB_ICONINFORMATION|MB_OK "no TVServerIsInstalled"
   ${EndIf}
 
+
+  ${If} ${MSI_TVServerIsInstalled}
+    MessageBox MB_ICONINFORMATION|MB_OK "MSI_TVServerIsInstalled"
+  ${Else}
+    MessageBox MB_ICONINFORMATION|MB_OK "no MSI_TVServerIsInstalled"
+  ${EndIf}
+
+  ${If} ${MSI_TVClientIsInstalled}
+    MessageBox MB_ICONINFORMATION|MB_OK "MSI_TVClientIsInstalled"
+  ${Else}
+    MessageBox MB_ICONINFORMATION|MB_OK "no MSI_TVClientIsInstalled"
+  ${EndIf}
+
 FunctionEnd

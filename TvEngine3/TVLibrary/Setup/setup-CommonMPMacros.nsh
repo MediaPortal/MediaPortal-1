@@ -89,58 +89,12 @@
 !macroend
 
 
-/*
-
-#deprecated
-
-  !macro _LOGICLIB_TEMP
-    !ifndef _LOGICLIB_TEMP
-      !define _LOGICLIB_TEMP
-      Var /GLOBAL _LOGICLIB_TEMP  ; Temporary variable to aid the more elaborate logic tests
-    !endif
-  !macroend
-  
-  !macro _= _a _b _t _f
-    IntCmp `${_a}` `${_b}` `${_t}` `${_f}` `${_f}`
-  !macroend
-  
-!macro _MPIsInstalled _a _b _t _f
-  !insertmacro _LOGICLIB_TEMP
-  
-  !define MP_REG_UNINSTALL_OLD  ""
-  !define MP_REG_UNINSTALL_OLD  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0"
-HKEY_LOCAL_MACHINE\SOFTWARE\Team MediaPortal\MediaPortal
-
-  ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "UninstallString"
-  ${If} $MPBaseDir == ""
-    # this fallback should only be enabled until MediaPortal 1.0 is out
-    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-
-#!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
-#!define TV3_REG_UNINSTALL     "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-
-    ${If} $MPBaseDir == ""
-        !insertmacro UnselectSection "${SecClient}"
-        ; Make the unselected section read only
-        !insertmacro SetSectionFlag "${SecClient}" 16
-        SectionGetText ${SecClient} $R0
-        SectionSetText ${SecClient} "$R0 ($(TEXT_MP_NOT_INSTALLED))"
-    ${EndIf}
-  ${EndIf}
-    SectionGetFlags `${_b}` $_LOGICLIB_TEMP
-    IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP & `${_a}`
-
-    !insertmacro _= $_LOGICLIB_TEMP `${_a}` `${_t}` `${_f}`
-  !macroend
-*/
-
 
 #**********************************************************************************************************#
 #
 # Useful macros for MediaPortal and addtional Software which can be used like other LogicLib expressions.
 #
 #**********************************************************************************************************#
-
 
 !ifndef MP_REG_UNINSTALL
   !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
@@ -151,6 +105,7 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Team MediaPortal\MediaPortal
 
 #**********************************************************************************************************#
 # LOGICLIB EXPRESSIONS
+
 !macro _MP023IsInstalled _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0" "UninstallString"
@@ -167,6 +122,7 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Team MediaPortal\MediaPortal
 !macroend
 !define MPIsInstalled `"" MPIsInstalled ""`
 
+;======================================
 
 !macro _TVServerIsInstalled _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
@@ -189,6 +145,24 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Team MediaPortal\MediaPortal
   StrCmp $_LOGICLIB_TEMP 1 `${_t}` `${_f}`
 !macroend
 !define TVClientIsInstalled `"" TVClientIsInstalled ""`
+
+;======================================
+
+!macro _MSI_TVServerIsInstalled _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ClearErrors
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4B738773-EE07-413D-AFB7-BB0AB04A5488}" "UninstallString"
+  IfErrors `${_f}` `${_t}`
+!macroend
+!define MSI_TVServerIsInstalled `"" MSI_TVServerIsInstalled ""`
+
+!macro _MSI_TVClientIsInstalled _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ClearErrors
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}" "UninstallString"
+  IfErrors `${_f}` `${_t}`
+!macroend
+!define MSI_TVClientIsInstalled `"" MSI_TVClientIsInstalled ""`
 
 #**********************************************************************************************************#
 # Get MP infos
@@ -213,8 +187,6 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Team MediaPortal\MediaPortal
   ${EndIf}
 
 !macroend
-
-
 
 
 

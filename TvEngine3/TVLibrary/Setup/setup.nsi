@@ -597,17 +597,13 @@ Function .onInit
     ${EndIf}
 
     ; check if old msi based client plugin is installed.
-    ClearErrors
-    ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}" "UninstallString"
-    ${IfNot} ${Errors}
+    ${If} ${MSI_TVClientIsInstalled}
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)" IDOK 0
         Abort
     ${EndIf}
 
     ; check if old msi based server is installed.
-    ClearErrors
-    ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4B738773-EE07-413D-AFB7-BB0AB04A5488}" "UninstallString"
-    ${IfNot} ${Errors}
+    ${If} ${MSI_TVServerIsInstalled}
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_SERVER)" IDOK 0
         Abort
     ${EndIf}
