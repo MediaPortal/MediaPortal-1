@@ -105,7 +105,7 @@ namespace MediaPortal.DeployTool
         } 
         if  (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
         {
-            if (InstallationProperties.Instance["DBMSType"] == "mssql")
+            if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
             {
                 //SQL2005 TCP Port
                 port = 1433;
@@ -183,7 +183,7 @@ namespace MediaPortal.DeployTool
             while (e.MoveNext())
             {
                 INetFwOpenPort app = e.Current as INetFwOpenPort;
-                if (InstallationProperties.Instance["DBMSType"] == "mssql")
+                if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
                 {
                     if(app.Port == 1433)  
                         result.state = CheckState.INSTALLED;

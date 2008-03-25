@@ -45,9 +45,11 @@ namespace MediaPortal.DeployTool
     public override void SetProperties()
     {
       if (rbMSSQL.Checked)
-        InstallationProperties.Instance.Set("DBMSType", "mssql");
-      else
+        InstallationProperties.Instance.Set("DBMSType", "mssql2005");
+      if (rbMySQL.Checked)
         InstallationProperties.Instance.Set("DBMSType", "mysql");
+      if (rbDBAlreadyInstalled)
+          InstallationProperties.Instance.Set("DBMSType", "DBAlreadyInstalled");
     }
     #endregion
   }

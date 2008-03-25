@@ -128,9 +128,9 @@ namespace MediaPortal.DeployTool
         AddPackageToListView(new DirectX9Checker());
         AddPackageToListView(new VCRedistChecker());
         AddPackageToListView(new MediaPortalChecker());
-        if (InstallationProperties.Instance["DBMSType"] == "mssql")
+        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
           AddPackageToListView(new MSSQLExpressChecker());
-        else
+        if (InstallationProperties.Instance["DBMSType"] == "mysql")
           AddPackageToListView(new MySQLChecker());
         AddPackageToListView(new TvServerChecker());
         AddPackageToListView(new TvPluginServerChecker());
@@ -139,7 +139,7 @@ namespace MediaPortal.DeployTool
       else if (InstallationProperties.Instance["InstallType"] == "tvserver_master")
       {
         AddPackageToListView(new VCRedistChecker());
-        if (InstallationProperties.Instance["DBMSType"] == "mssql")
+        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
           AddPackageToListView(new MSSQLExpressChecker());
         else
           AddPackageToListView(new MySQLChecker());
