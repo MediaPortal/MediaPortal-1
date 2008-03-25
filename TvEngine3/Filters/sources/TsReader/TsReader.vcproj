@@ -50,13 +50,14 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;; ..\LiveMedia555\BasicUsageEnvironment;..\LiveMedia555\groupsock;..\LiveMedia555\liveMedia;..\LiveMedia555\UsageEnvironment; ..\shared; ..\streamingserver\streamingserver"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32; _WIN32; NDEBUG; _CRT_SECURE_NO_WARNINGS"
 				StringPooling="false"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="2"
+				EnableFunctionLevelLinking="false"
+				EnableEnhancedInstructionSet="1"
 				FloatingPointModel="2"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/TsReader.pch"
@@ -81,14 +82,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="Strmiids.lib"
-				AdditionalDependencies="dvbcoreutils.lib strmbase.lib winmm.lib WSock32.Lib livemedia555.lib"
+				LinkLibraryDependencies="false"
+				UseUnicodeResponseFiles="false"
+				AdditionalDependencies="strmbase.lib msvcrt.lib winmm.lib winmm.lib WSock32.Lib livemedia555.lib dvbcoreutils.lib "
+				ShowProgress="1"
 				OutputFile="Release/TsReader.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
+				GenerateManifest="true"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				ModuleDefinitionFile=".\source\TsReader.def"
 				ProgramDatabaseFile=".\Release/TsReader.pdb"
 				StackReserveSize="2097152"
@@ -100,6 +104,9 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				OutputManifestFile=".\Release\manifest"
+				EmbedManifest="true"
+				VerboseOutput="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"

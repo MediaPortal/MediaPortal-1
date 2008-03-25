@@ -25,13 +25,9 @@
 #if !defined(AFX_CRITICALSECTION_H__3B3A15BD_92D5_4044_8D69_5E1B8F15F369__INCLUDED_)
 #define AFX_CRITICALSECTION_H__3B3A15BD_92D5_4044_8D69_5E1B8F15F369__INCLUDED_
 
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-#ifndef _WINDOWS_
 #include <Windows.h>
-#endif /* _WINDOWS_ */
 
 
 namespace Mediaportal

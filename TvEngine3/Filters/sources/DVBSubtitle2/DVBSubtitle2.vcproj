@@ -52,7 +52,7 @@
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;NDEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;NDEBUG;_WIN32"
 				StringPooling="false"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="false"

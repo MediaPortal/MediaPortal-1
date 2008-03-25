@@ -47,11 +47,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
+				Optimization="2"
 				InlineFunctionExpansion="0"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE; NDEBUG;"
+				PreprocessorDefinitions="NDEBUG;WIN32; _WIN32; _CRT_SECURE_NO_WARNINGS"
 				StringPooling="false"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
