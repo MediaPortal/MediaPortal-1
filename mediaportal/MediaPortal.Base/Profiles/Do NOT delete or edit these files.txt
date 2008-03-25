@@ -1,0 +1,7 @@
+If we want to be hunted down and beaten to within an inch of your life then please don't mess with these files.
+These are the set profiles for WMV transcoding.
+Adjusting these WMV profiles will only probably cause your transcoding not to work.
+
+The Custom profile will be adjusted by MediaPortal for any pre-defined settings you would like.
+
+DMAN_LFC
