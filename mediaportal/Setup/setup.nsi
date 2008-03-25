@@ -243,6 +243,7 @@ Section "MediaPortal core files (required)" SecCore
     File /r ..\xbmc\bin\Release\MusicPlayer
     File /r ..\xbmc\bin\Release\osdskin-media
     File /r ..\xbmc\bin\Release\plugins
+    File /r ..\xbmc\bin\Release\Profiles
     File /r ..\xbmc\bin\Release\scripts
     File /r ..\xbmc\bin\Release\skin
     File /r ..\xbmc\bin\Release\TTPremiumBoot
@@ -430,6 +431,7 @@ SectionEnd
     RmDir /r /REBOOTOK $INSTDIR\MusicPlayer
     RmDir /r /REBOOTOK $INSTDIR\osdskin-media
     RmDir /r /REBOOTOK $INSTDIR\plugins
+    RmDir /r /REBOOTOK $INSTDIR\Profiles
     RmDir /r /REBOOTOK $INSTDIR\scripts
     RmDir /r /REBOOTOK $INSTDIR\TTPremiumBoot
     RmDir /r /REBOOTOK $INSTDIR\Tuningparameters
