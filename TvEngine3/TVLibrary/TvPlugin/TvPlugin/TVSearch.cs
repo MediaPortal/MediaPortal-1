@@ -993,21 +993,23 @@ namespace TvPlugin
     }
 
     void SetChannelLogo(Program prog, ref GUIListItem item)
-    {
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
-      if (!System.IO.File.Exists(strLogo))
-      {
-        strLogo = "defaultVideoBig.png";
-      }
+    {      
+      string strLogo = String.Empty;
+
       if (filterShow == String.Empty)
       {
         strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.Title);
-        if (!System.IO.File.Exists(strLogo))
-        {
-          strLogo = "defaultVideoBig.png";
-        }
       }
 
+      if (!System.IO.File.Exists(strLogo) || strLogo == String.Empty)
+      {
+        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);        
+      }
+
+      if (!System.IO.File.Exists(strLogo))
+      {
+        strLogo = "defaultVideoBig.png";
+      }      
 
       item.ThumbnailImage = strLogo;
       item.IconImageBig = strLogo;
@@ -1155,12 +1157,12 @@ namespace TvPlugin
       if (prog != null)
       {
         GUIPropertyManager.SetProperty("#TV.Search.Description", prog.Description);
-        GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
+        GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);        
       }
       else
       {
         GUIPropertyManager.SetProperty("#TV.Search.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Search.Genre", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Search.Genre", String.Empty);        
       }
 
 
