@@ -28,7 +28,7 @@ Page license
 
 !include LogicLib.nsh
 
-!include setup-RememberSections.nsh
+!include setup-CommonMPMacros.nsh
 
 ;--------------------------------
 
