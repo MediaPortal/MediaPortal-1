@@ -190,6 +190,14 @@
 
 
 
+#**********************************************************************************************************#
+#
+# common language strings
+#
+#**********************************************************************************************************#
+LangString TEXT_MP_NOT_INSTALLED                  ${LANG_ENGLISH} "MediaPortal not installed"
+LangString TEXT_TVSERVER_NOT_INSTALLED            ${LANG_ENGLISH} "TVServer not installed"
+
   /*
 ; Section flag test
 !macro _MPIsInstalled _a _b _t _f

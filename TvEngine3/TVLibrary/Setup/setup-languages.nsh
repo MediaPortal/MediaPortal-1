@@ -34,7 +34,6 @@ LangString DESC_SecServer                         ${LANG_ENGLISH} "Installs the 
 LangString DESC_SecClient                         ${LANG_ENGLISH} "Installs the MediaPortal TV Client plugin"
 LangString ^UninstallLink                         ${LANG_ENGLISH} "Uninstall $(^Name)"
 
-LangString TEXT_MP_NOT_INSTALLED                  ${LANG_ENGLISH} "MediaPortal not installed"
 LangString TEXT_MSGBOX_PARAMETER_ERROR            ${LANG_ENGLISH} "You have done something wrong!$\r$\nIt is not allowed to use 'noClient' & 'noServer' at the same time."
 LangString TEXT_MSGBOX_REMOVE_ALL                 ${LANG_ENGLISH} "!!! ATTENTION !!!$\r$\nDo you want to make a complete cleanup?$\r$\nThis removes completly the registry keys, the installation and the common app data directory."
 LangString TEXT_MSGBOX_REMOVE_ALL_STUPID          ${LANG_ENGLISH} "!!! ATTENTION !!!$\r$\nAgain for those who slept the msgBox before. :( $(TEXT_MSGBOX_REMOVE_ALL)"
