@@ -375,7 +375,7 @@ namespace WindowPlugins.VideoEditor
 				transcodeProgresstime.Start();
 				//filetoConvert = inFilename.FullName;
 				
-				if (!tompeg.Transcode(mpegInfo, MediaPortal.Core.Transcoding.VideoFormat.Mpeg2, MediaPortal.Core.Transcoding.Quality.High))
+				if (!tompeg.Transcode(mpegInfo, MediaPortal.Core.Transcoding.VideoFormat.Mpeg2, MediaPortal.Core.Transcoding.Quality.High, MediaPortal.Core.Transcoding.Standard.PAL))
 				{
 					//	titelLbl.Label = "finished";
 
@@ -442,7 +442,7 @@ namespace WindowPlugins.VideoEditor
 				
 				//filetoConvert = inFilename.FullName;
 				toDivx.CreateProfile(new System.Drawing.Size(360, 288), 2000, 25);
-				toDivx.Transcode(divxInfo, MediaPortal.Core.Transcoding.VideoFormat.Divx, MediaPortal.Core.Transcoding.Quality.Custom);
+				toDivx.Transcode(divxInfo, MediaPortal.Core.Transcoding.VideoFormat.Divx, MediaPortal.Core.Transcoding.Quality.Custom, MediaPortal.Core.Transcoding.Standard.PAL);
 				convertProgresstime.Start();
 				while (!toDivx.IsFinished())
 				{

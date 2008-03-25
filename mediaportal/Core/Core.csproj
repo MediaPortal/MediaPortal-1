@@ -350,6 +350,7 @@
     <Compile Include="ThumbDbLib\ThumbnailDatabase.cs" />
     <Compile Include="ThumbDbLib\ThumbnailDatabaseCache.cs" />
     <Compile Include="Transcoding\Dvrms2Divx.cs" />
+    <Compile Include="Transcoding\TSReader2MP4.cs" />
     <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1861,16 +1862,13 @@
     <Compile Include="Transcoding\Dvrms2Mpeg.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Transcoding\Dvrms2XVID.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Transcoding\ITranscode.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Transcoding\TranscodeFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Transcoding\WMVEncoder.cs">
+    <Compile Include="Transcoding\Dvrms2WMV.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UdpHelper\UdpHelper.cs" />
@@ -1998,6 +1996,7 @@
     <Compile Include="wmfsdk\WriterTypes.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Transcoding\Wmlib.cs" />
     <EmbeddedResource Include="MusicPlayer\Visualization\VisualizationWindow.resx">
       <DependentUpon>VisualizationWindow.cs</DependentUpon>
       <SubType>Designer</SubType>

@@ -39,7 +39,7 @@
       <type>label</type>
       <id>2</id>
       <posX>546</posX>
-      <posY>129</posY>
+      <posY>130</posY>
       <label>146</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -51,7 +51,7 @@
       <type>spincontrol</type>
       <id>3</id>
       <posX>1043</posX>
-      <posY>134</posY>
+      <posY>132</posY>
       <onup>17</onup>
       <ondown>5</ondown>
       <onleft>3</onleft>
@@ -62,8 +62,8 @@
       <subitems>
         <subitem>898</subitem>
         <subitem>899</subitem>
-        <subitem>998</subitem>
-	<subitem>1066</subitem>
+        <!-- re-enable when MP4 is completed -->
+        <!-- <subitem>1066</subitem> -->
       </subitems>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -89,7 +89,7 @@
       <type>spincontrol</type>
       <id>5</id>
       <posX>1043</posX>
-      <posY>185</posY>
+      <posY>182</posY>
       <onup>3</onup>
       <ondown>7</ondown>
       <onleft>5</onleft>
@@ -103,7 +103,46 @@
         <subitem>884</subitem>
         <subitem>885</subitem>
         <subitem>1067</subitem>
-        <subitem>993</subitem>
+        <subitem>1068</subitem>
+        <!-- re-enable when custom settings are done -->
+        <!-- <subitem>993</subitem> -->
+      </subitems>
+      <textureUp>arrow_round_right_nofocus.png</textureUp>
+      <textureDown>arrow_round_left_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Video Standard</description>
+      <type>label</type>
+      <id>16</id>
+      <posX>546</posX>
+      <posY>230</posY>
+      <label>1090</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Video Standard select</description>
+      <type>spincontrol</type>
+      <id>17</id>
+      <posX>1043</posX>
+      <posY>232</posY>
+      <onup>5</onup>
+      <ondown>7</ondown>
+      <onleft>17</onleft>
+      <onright>17</onright>
+      <align>right</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <showrange>no</showrange>
+      <subitems>
+        <subitem>1091</subitem>
+        <subitem>1092</subitem>
+        <subitem>1093</subitem>
       </subitems>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -117,7 +156,7 @@
       <type>label</type>
       <id>6</id>
       <posX>546</posX>
-      <posY>225</posY>
+      <posY>280</posY>
       <label>289</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -129,7 +168,7 @@
       <type>spincontrol</type>
       <id>7</id>
       <posX>1043</posX>
-      <posY>230</posY>
+      <posY>282</posY>
       <onup>5</onup>
       <ondown>9</ondown>
       <onleft>7</onleft>
@@ -138,7 +177,6 @@
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
       <subitems>
-	<subitem>1068</subitem>
         <subitem>1069</subitem>
         <subitem>1070</subitem>
         <subitem>1071</subitem>
@@ -148,8 +186,6 @@
         <subitem>1075</subitem>
         <subitem>1076</subitem>
         <subitem>1077</subitem>
-        <subitem>1078</subitem>
-        <subitem>1079</subitem>
       </subitems>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -163,7 +199,7 @@
       <type>label</type>
       <id>8</id>
       <posX>546</posX>
-      <posY>270</posY>
+      <posY>320</posY>
       <label>989</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -175,7 +211,7 @@
       <type>spincontrol</type>
       <id>9</id>
       <posX>1043</posX>
-      <posY>276</posY>
+      <posY>322</posY>
       <onup>7</onup>
       <ondown>11</ondown>
       <onleft>9</onleft>
@@ -184,6 +220,8 @@
       <textcolor>FFFFFFFF</textcolor>
       <showrange>no</showrange>
       <subitems>
+        <subitem>1078</subitem>
+        <subitem>1079</subitem>
         <subitem>1080</subitem>
         <subitem>1081</subitem>
         <subitem>1082</subitem>
@@ -200,7 +238,7 @@
       <type>label</type>
       <id>10</id>
       <posX>546</posX>
-      <posY>316</posY>
+      <posY>370</posY>
       <label>990</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -212,7 +250,7 @@
       <type>spincontrol</type>
       <id>11</id>
       <posX>1043</posX>
-      <posY>321</posY>
+      <posY>372</posY>
       <onup>9</onup>
       <ondown>13</ondown>
       <onleft>11</onleft>
@@ -225,7 +263,9 @@
         <subitem>1084</subitem>
         <subitem>1085</subitem>
         <subitem>1086</subitem>
-	<subitem>1087</subitem>
+        <subitem>1087</subitem>
+        <subitem>1088</subitem>
+        <subitem>1089</subitem>
       </subitems>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -239,7 +279,7 @@
       <type>label</type>
       <id>12</id>
       <posX>546</posX>
-      <posY>361</posY>
+      <posY>420</posY>
       <label>991</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -251,7 +291,7 @@
       <type>spincontrol</type>
       <id>13</id>
       <posX>1043</posX>
-      <posY>366</posY>
+      <posY>422</posY>
       <onup>9</onup>
       <ondown>15</ondown>
       <onleft>13</onleft>
@@ -275,7 +315,7 @@
       <type>checkmark</type>
       <id>15</id>
       <posX>546</posX>
-      <posY>406</posY>
+      <posY>470</posY>
       <label>992</label>
       <textcolor>FFFFFFFF</textcolor>
       <onleft>15</onleft>

@@ -44,7 +44,9 @@ namespace MediaPortal.TV.Recording
     #region vars
     static ArrayList queue = new ArrayList();
     static Thread WorkerThread = null;
+    #endregion
 
+    #region enums
     public enum Status
     {
       Waiting,
@@ -63,15 +65,17 @@ namespace MediaPortal.TV.Recording
       public Status status;
       public int percentDone;
       public int bitRate;
-      public int FPS;
+      public double FPS;
       public int Type;
       public Quality quality;
+      public Standard standard;
       public bool deleteOriginal;
       public Size ScreenSize;
       public DateTime StartTime;
       public bool LowPriority = true;
       #endregion
-      public TranscoderInfo(TVRecorded recording, int kbps, int fps, Size newSize, bool deleteWhenDone, int qualityIndex, DateTime dateTime, int outputType, bool priority)
+
+      public TranscoderInfo(TVRecorded recording, int kbps, double fps, Size newSize, bool deleteWhenDone, int qualityIndex, int standardIndex, DateTime dateTime, int outputType, bool priority)
       {
         recorded = recording;
         status = Status.Waiting;
@@ -81,10 +85,12 @@ namespace MediaPortal.TV.Recording
         ScreenSize = newSize;
         deleteOriginal = deleteWhenDone;
         quality = (Quality)qualityIndex;
+        standard = (Standard)standardIndex;
         StartTime = dateTime;
         Type = outputType;
         LowPriority = priority;
       }
+
       public void SetProperties()
       {
         if (status != Status.Busy)
@@ -118,89 +124,96 @@ namespace MediaPortal.TV.Recording
     #region public methods
     public static void Transcode(TVRecorded rec, bool manual)
     {
-      int bitRate, FPS, Priority, QualityIndex, ScreenSizeIndex, Type, AutoHours;
+      int bitRate, Priority, QualityIndex, StandardIndex, ScreenSizeIndex, Type, AutoHours;
+      double FPS;
       bool deleteOriginal, AutoDeleteOriginal, AutoCompress;
       Size ScreenSize = new Size(0, 0);
-
-
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        bitRate = xmlreader.GetValueAsInt("compression", "bitrate", 4);
-        FPS = xmlreader.GetValueAsInt("compression", "fps", 1);
+        bitRate = xmlreader.GetValueAsInt("compression", "bitrate", 3);
+        FPS = xmlreader.GetValueAsInt("compression", "fps", 2);
         Priority = xmlreader.GetValueAsInt("compression", "priority", 0);
         QualityIndex = xmlreader.GetValueAsInt("compression", "quality", 3);
-        ScreenSizeIndex = xmlreader.GetValueAsInt("compression", "screensize", 1);
-        Type = xmlreader.GetValueAsInt("compression", "type", 0);
-        deleteOriginal = xmlreader.GetValueAsBool("compression", "deleteoriginal", true);
-
+        ScreenSizeIndex = xmlreader.GetValueAsInt("compression", "screensize", 2);
+        Type = xmlreader.GetValueAsInt("compression", "type", 2);
+        deleteOriginal = xmlreader.GetValueAsBool("compression", "deleteoriginal", false);
         AutoHours = xmlreader.GetValueAsInt("autocompression", "hour", 4);
-        AutoDeleteOriginal = xmlreader.GetValueAsBool("autocompression", "deleteoriginal", true);
-        AutoCompress = xmlreader.GetValueAsBool("autocompression", "enabled", true);
+        AutoDeleteOriginal = xmlreader.GetValueAsBool("autocompression", "deleteoriginal", false);
+        AutoCompress = xmlreader.GetValueAsBool("autocompression", "enabled", false);
+        StandardIndex = xmlreader.GetValueAsInt("compression", "standard", 2);
       }
       switch (bitRate)
       {
         case 0:
-          bitRate = 100;
+          bitRate = 100;  //Portable
           break;
         case 1:
-          bitRate = 256;
+          bitRate = 256; //Low
           break;
         case 2:
-          bitRate = 384;
+          bitRate = 384; //Medium
           break;
         case 3:
-          bitRate = 768;
+          bitRate = 768; //High
+          break;
+        case 4:
+          bitRate = 1536; //Very High
+          break;
+        case 5:
+          bitRate = 3072; //HiDef
+          break;
+        case 6:
+          bitRate = 5376; //Custom
           break;
       }
-      switch (FPS)
+      switch ((int)FPS)
       {
         case 0:
-          FPS = 15;
+          FPS = 12.5; //Portable (PAL)
           break;
         case 1:
-          FPS = 25;
+          FPS = 15; //Portable (NTSC)
           break;
         case 2:
-          FPS = 30;
+          FPS = 23.97; //Film
+          break;
+        case 3:
+          FPS = 25; //PAL
+          break;
+        case 4:
+          FPS = 29.97; //NTSC
           break;
       }
       switch (ScreenSizeIndex)
       {
         case 0:
-          ScreenSize = new Size(1024, 768);
+          ScreenSize = new Size(240, 180); //Portable (NTSC)
           break;
         case 1:
-          ScreenSize = new Size(720, 576);
+          ScreenSize = new Size(288, 216); //Portable (PAL)
           break;
         case 2:
-          ScreenSize = new Size(704, 480);
+          ScreenSize = new Size(352, 240); //Low (NTSC)
           break;
         case 3:
-          ScreenSize = new Size(740, 288);
+          ScreenSize = new Size(352, 288); //Low (PAL)
           break;
         case 4:
-          ScreenSize = new Size(740, 240);
+          ScreenSize = new Size(640, 480); //Medium
           break;
         case 5:
-          ScreenSize = new Size(704, 576);
+          ScreenSize = new Size(704, 480); //NTSC
           break;
         case 6:
-          ScreenSize = new Size(640, 480);
+          ScreenSize = new Size(720, 576); //PAL
           break;
         case 7:
-          ScreenSize = new Size(640, 288);
+          ScreenSize = new Size(1280, 720); //HiDef
           break;
         case 8:
-          ScreenSize = new Size(640, 240);
-          break;
-        case 9:
-          ScreenSize = new Size(352, 288);
-          break;
-        case 10:
-          ScreenSize = new Size(352, 240);
+          ScreenSize = new Size(1920, 1080); //Custom only
           break;
       }
-
       lock (queue)
       {
         DateTime dtStart = DateTime.Now;
@@ -210,10 +223,9 @@ namespace MediaPortal.TV.Recording
           deleteWhenDone = AutoDeleteOriginal;
           dtStart = dtStart.AddHours(AutoHours);
         }
-        TranscoderInfo info = new TranscoderInfo(rec, bitRate, FPS, ScreenSize, deleteWhenDone, QualityIndex, dtStart, Type, Priority == 0);
+        TranscoderInfo info = new TranscoderInfo(rec, bitRate, FPS, ScreenSize, deleteWhenDone, QualityIndex, StandardIndex, dtStart, Type, Priority == 0);
         queue.Add(info);
       }
-
       if (WorkerThread == null)
       {
         WorkerThread = new Thread(new ThreadStart(TranscodeWorkerThread));
@@ -275,6 +287,7 @@ namespace MediaPortal.TV.Recording
         } while (deleted);
       }
     }
+
     public static ArrayList Queue
     {
       get
@@ -282,6 +295,7 @@ namespace MediaPortal.TV.Recording
         return queue;
       }
     }
+
     public static bool IsTranscoding(TVRecorded rec)
     {
       lock (queue)
@@ -299,7 +313,6 @@ namespace MediaPortal.TV.Recording
     #region transcoding workerthread
     static void TranscodeWorkerThread()
     {
-
       while (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
       {
         if (queue.Count == 0)
@@ -324,7 +337,6 @@ namespace MediaPortal.TV.Recording
               }
             }
           }
-
           if (transcording != null && transcording.status == Status.Waiting)
           {
             try
@@ -345,12 +357,10 @@ namespace MediaPortal.TV.Recording
 
     static void DoTranscode(TranscoderInfo tinfo)
     {
-
       if (tinfo.LowPriority)
         System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
       else
         System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Normal;
-
       tinfo.status = Status.Busy;
       TranscodeInfo info = new TranscodeInfo();
       info.Author = "MediaPortal";
@@ -362,38 +372,42 @@ namespace MediaPortal.TV.Recording
       TimeSpan ts = (tinfo.recorded.EndTime - tinfo.recorded.StartTime);
       info.Duration = (int)ts.TotalSeconds;
       info.file = tinfo.recorded.FileName;
-
-
       bool isMpeg = (tinfo.Type == 0);
       bool isWMV = (tinfo.Type == 1);
-      bool isXVID = (tinfo.Type == 2);
+      bool isMP4 = (tinfo.Type == 2);
       switch (tinfo.quality)
       {
+        case Quality.HiDef:
+          tinfo.ScreenSize = new Size(1280, 720); //HiDef
+          tinfo.FPS = 0; //keep video FPS
+          tinfo.bitRate = 3072;
+          break;
+        case Quality.VeryHigh:
+          tinfo.ScreenSize = new Size(0, 0); //keep video resolution
+          tinfo.FPS = 0; //keep video FPS
+          tinfo.bitRate = 1536;
+          break;
         case Quality.High:
           tinfo.ScreenSize = new Size(0, 0);//keep video resolution
-          tinfo.FPS = 0;//keep video FPS
+          tinfo.FPS = 0; //keep video FPS
           tinfo.bitRate = 768;
           break;
-
         case Quality.Medium:
-          tinfo.ScreenSize = new Size(0, 0);//keep video resolution
-          tinfo.FPS = 0;//keep video FPS
+          tinfo.ScreenSize = new Size(640, 480); //Medium
+          tinfo.FPS = 0; //keep video FPS
           tinfo.bitRate = 384;
           break;
-
         case Quality.Low:
-          tinfo.ScreenSize = new Size(0, 0);//keep video resolution
-          tinfo.FPS = 0;//keep video FPS
+          tinfo.ScreenSize = new Size(352, 288); //Low (PAL)
+          tinfo.FPS = 0; //keep video FPS
           tinfo.bitRate = 256;
           break;
-
         case Quality.Portable:
-          tinfo.ScreenSize = new Size(352, 288);
-          tinfo.FPS = 15;
+          tinfo.ScreenSize = new Size(288, 216); //Low (PAL)
+          tinfo.FPS = 12.5; //set fps to 15fps
           tinfo.bitRate = 100;
           break;
       }
-
       tinfo.SetProperties();
       if (isWMV)
       {
@@ -405,15 +419,12 @@ namespace MediaPortal.TV.Recording
         ConvertToMpg(info, tinfo);
         return;
       }
-
-
-      if (isXVID)
+      if (isMP4)
       {
-        ConvertToXvid(info, tinfo);
+        ConvertToMP4(info, tinfo);
         return;
       }
     }
-
     #endregion
 
     #region transcoding methods
@@ -421,7 +432,7 @@ namespace MediaPortal.TV.Recording
     {
       TranscodeToWMV WMVConverter = new TranscodeToWMV();
       WMVConverter.CreateProfile(tinfo.ScreenSize, tinfo.bitRate, tinfo.FPS);
-      if (!WMVConverter.Transcode(info, VideoFormat.Wmv, tinfo.quality))
+      if (!WMVConverter.Transcode(info, VideoFormat.Wmv, tinfo.quality, tinfo.standard))
       {
         tinfo.status = Status.Error;
         tinfo.SetProperties();
@@ -441,7 +452,7 @@ namespace MediaPortal.TV.Recording
       }
       if (tinfo.deleteOriginal)
       {
-         MediaPortal.Util.Utils.DeleteRecording(info.file);
+        MediaPortal.Util.Utils.DeleteRecording(info.file);
         tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".wmv");
         TVDatabase.SetRecordedFileName(tinfo.recorded);
       }
@@ -452,7 +463,7 @@ namespace MediaPortal.TV.Recording
     static void ConvertToMpg(TranscodeInfo info, TranscoderInfo tinfo)
     {
       Dvrms2Mpeg mpgConverter = new Dvrms2Mpeg();
-      if (!mpgConverter.Transcode(info, VideoFormat.Mpeg2, tinfo.quality))
+      if (!mpgConverter.Transcode(info, VideoFormat.Mpeg2, tinfo.quality, tinfo.standard))
       {
         tinfo.status = Status.Error;
         tinfo.SetProperties();
@@ -480,71 +491,38 @@ namespace MediaPortal.TV.Recording
       tinfo.SetProperties();
     }
 
-		static void ConvertToXvid(TranscodeInfo info, TranscoderInfo tinfo)
-		{
-			Dvrms2XVID xvidEncoder = new Dvrms2XVID();
-			xvidEncoder.CreateProfile(tinfo.ScreenSize, tinfo.bitRate, tinfo.FPS);
-			if (!xvidEncoder.Transcode(info, VideoFormat.Xvid, tinfo.quality))
-			{
-				tinfo.status = Status.Error;
-				tinfo.SetProperties();
-				return;
-			}
-			while (!xvidEncoder.IsFinished())
-			{
-				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
-				tinfo.percentDone = xvidEncoder.Percentage();
-				tinfo.SetProperties();
-				System.Threading.Thread.Sleep(1000);
-				if (tinfo.status == Status.Canceled)
-				{
-					xvidEncoder.Stop();
-					return;
-				}
-			}
-			if (tinfo.deleteOriginal)
-			{
-				MediaPortal.Util.Utils.DeleteRecording(info.file);
-				tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".avi");
-				TVDatabase.SetRecordedFileName(tinfo.recorded);
-			}
-			tinfo.status = Status.Completed;
-			tinfo.SetProperties();
-			return;
-		}
-		static void ConvertDvrmsToDivx(TranscodeInfo info, TranscoderInfo tinfo)
-		{
-			Dvrms2Divx divxEncoder = new Dvrms2Divx();
-			divxEncoder.CreateProfile(tinfo.ScreenSize, tinfo.bitRate, tinfo.FPS);
-			if (!divxEncoder.Transcode(info, VideoFormat.Xvid, tinfo.quality))
-			{
-				tinfo.status = Status.Error;
-				tinfo.SetProperties();
-				return;
-			}
-			while (!divxEncoder.IsFinished())
-			{
-				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
-				tinfo.percentDone = divxEncoder.Percentage();
-				tinfo.SetProperties();
-				System.Threading.Thread.Sleep(1000);
-				if (tinfo.status == Status.Canceled)
-				{
-					divxEncoder.Stop();
-					return;
-				}
-			}
-			if (tinfo.deleteOriginal)
-			{
-				MediaPortal.Util.Utils.DeleteRecording(info.file);
-				tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".avi");
-				TVDatabase.SetRecordedFileName(tinfo.recorded);
-			}
-			tinfo.status = Status.Completed;
-			tinfo.SetProperties();
-			return;
-
-		}
+    static void ConvertToMP4(TranscodeInfo info, TranscoderInfo tinfo)
+    {
+      Transcode2MP4 mp4Encoder = new Transcode2MP4();
+      mp4Encoder.CreateProfile(tinfo.ScreenSize, tinfo.bitRate, tinfo.FPS);
+      if (!mp4Encoder.Transcode(info, VideoFormat.MP4, tinfo.quality, tinfo.standard))
+      {
+        tinfo.status = Status.Error;
+        tinfo.SetProperties();
+        return;
+      }
+      while (!mp4Encoder.IsFinished())
+      {
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+        tinfo.percentDone = mp4Encoder.Percentage();
+        tinfo.SetProperties();
+        System.Threading.Thread.Sleep(1000);
+        if (tinfo.status == Status.Canceled)
+        {
+          mp4Encoder.Stop();
+          return;
+        }
+      }
+      if (tinfo.deleteOriginal)
+      {
+        MediaPortal.Util.Utils.DeleteRecording(info.file);
+        tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".mp4");
+        TVDatabase.SetRecordedFileName(tinfo.recorded);
+      }
+      tinfo.status = Status.Completed;
+      tinfo.SetProperties();
+      return;
+    }
     #endregion
   }
 }

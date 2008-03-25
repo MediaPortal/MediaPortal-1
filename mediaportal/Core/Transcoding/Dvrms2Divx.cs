@@ -77,7 +77,7 @@ namespace MediaPortal.Core.Transcoding
 			fps = FPS;
 		}
 
-		public bool Transcode(TranscodeInfo info, MediaPortal.Core.Transcoding.VideoFormat format, MediaPortal.Core.Transcoding.Quality quality)
+		public bool Transcode(TranscodeInfo info, MediaPortal.Core.Transcoding.VideoFormat format, MediaPortal.Core.Transcoding.Quality quality, Standard standard)
 		{
 			if (!Supports(format)) return false;
 			string ext = System.IO.Path.GetExtension(info.file);

@@ -54,7 +54,7 @@ namespace WindowPlugins.VideoEditor
                     break;
                 case MediaPortal.Core.Transcoding.VideoFormat.Wmv:
                     break;
-                case MediaPortal.Core.Transcoding.VideoFormat.Xvid:
+                case MediaPortal.Core.Transcoding.VideoFormat.MP4:
                     break;
                 default:
                     break;
