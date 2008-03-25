@@ -212,7 +212,7 @@ namespace DShowNET.Helper
             }
             else
             {
-              Log.Info("added filter:{0} to graph", strFilterName);
+              Log.Debug("added filter:{0} to graph", strFilterName);
               if (pinOut != null)
               {
                 hr.Set(graphBuilder.Render(pinOut));
@@ -222,7 +222,7 @@ namespace DShowNET.Helper
               if (setAsReferenceClock)
               {
                 hr.Set((graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock));
-                Log.Info("setAsReferenceClock sync source " + hr.ToDXString());
+                Log.Debug("setAsReferenceClock sync source " + hr.ToDXString());
               }
               return NewFilter;
             }
@@ -388,7 +388,7 @@ namespace DShowNET.Helper
       to.QueryFilterInfo(out info);
       outputPin.QueryPinInfo(out outputInfo);
       if (info.achName.Equals(filtername)) return false; //do not connect to self
-      Log.Info("Testing filter: {0}", info.achName);
+      Log.Debug("Testing filter: {0}", info.achName);
       
       IEnumPins enumPins;
       IPin[] pins = new IPin[1];
@@ -404,14 +404,14 @@ namespace DShowNET.Helper
         {
             PinInfo pinInfo;
             pins[0].QueryPinInfo(out pinInfo);
-            Log.Info("Testing compatibility to {0}",
+            Log.Debug("Testing compatibility to {0}",
               pinInfo.name);
             //ListMediaTypes(pins[0]);
             //hr =  outputPin.Connect(pins[0], null);
             hr = graphBuilder.ConnectDirect(outputPin, pins[0], null);
             if (hr == 0)
             {
-              Log.Info("Connection succeeded");
+              Log.Debug("Connection succeeded");
               if (RenderOutputPins(graphBuilder, to))
               {
                 Log.Info("Successfully rendered pin {0}:{1} to {2}:{3}.", 
@@ -422,7 +422,7 @@ namespace DShowNET.Helper
               }
               else
               {
-                Log.Info("Rendering got stuck. Trying next filter, and disconnecting {0}!",  outputInfo.name);
+                Log.Debug("Rendering got stuck. Trying next filter, and disconnecting {0}!", outputInfo.name);
                 outputPin.Disconnect();
                 pins[0].Disconnect();
               }
@@ -437,7 +437,7 @@ namespace DShowNET.Helper
       ReleaseComObject(enumPins);
       if (!ret)
       {
-        Log.Info("Dead end. Could not successfully connect pin {0} to filter {1}!", outputInfo.name, info.achName);
+        Log.Debug("Dead end. Could not successfully connect pin {0} to filter {1}!", outputInfo.name, info.achName);
       }
       return ret;
     }
@@ -518,7 +518,7 @@ namespace DShowNET.Helper
         RegistryKey filterKey = Registry.ClassesRoot.OpenSubKey(@"CLSID\{083863F1-70DE-11d0-BD40-00A0C911CE86}\Instance\{" + clsid.ToString() + @"}" );
         if (filterKey == null)
         {
-          Log.Warn("Could not get merit value for clsid {0}, key not found!", clsid);
+          Log.Debug("Could not get merit value for clsid {0}, key not found!", clsid);
           _meritCache[clsid] = Merit.DoNotUse;
           return Merit.DoNotUse;
         }
@@ -533,7 +533,7 @@ namespace DShowNET.Helper
       }
       catch (Exception e)
       {
-        Log.Warn("Could not get merit value for clsid {0}. Error: {1}", clsid, e.Message);
+        Log.Debug("Could not get merit value for clsid {0}. Error: {1}", clsid, e.Message);
         return Merit.DoNotUse;
       }
     }
@@ -640,15 +640,15 @@ namespace DShowNET.Helper
       hr = outputPin.EnumMediaTypes(out enumTypes);
       if (hr != 0)
       {
-        Log.Info("Failed: {0:x}", hr);
+        Log.Debug("Failed: {0:x}", hr);
         return false;
       } 
-      Log.Info("Got enum");
+      Log.Debug("Got enum");
       ArrayList major = new ArrayList();
       ArrayList sub = new ArrayList();
       if (TryNewFilters)
       {
-        Log.Info("Getting corresponding filters");
+        Log.Debug("Getting corresponding filters");
         for (; ; )
         {
           AMMediaType[] mediaTypes = new AMMediaType[1];
@@ -659,17 +659,17 @@ namespace DShowNET.Helper
           sub.Add(mediaTypes[0].subType);
         }
         ReleaseComObject(enumTypes);
-        Log.Info("Found {0} media types", major.Count);
+        Log.Debug("Found {0} media types", major.Count);
         Guid[] majorTypes = (Guid[])major.ToArray(typeof(Guid));
         Guid[] subTypes = (Guid[])sub.ToArray(typeof(Guid));
-        Log.Info("Loading filters");
+        Log.Debug("Loading filters");
         ArrayList filters = FilterHelper.GetFilters(majorTypes, subTypes, (Merit)0x00400000);
-        Log.Info("Loaded {0} filters", filters.Count);
+        Log.Debug("Loaded {0} filters", filters.Count);
         foreach (string name in filters)
         {
           if (!CheckFilterIsLoaded(graphBuilder, name))
           {
-            Log.Info("Loading filter: {0}", name);
+            Log.Debug("Loading filter: {0}", name);
             IBaseFilter f = DirectShowUtil.AddFilterToGraph(graphBuilder, name);
             if (f != null)
             {
@@ -687,11 +687,11 @@ namespace DShowNET.Helper
           }
           else
           {
-            Log.Info("Ignoring filter {0}. Already in graph.", name);
+            Log.Debug("Ignoring filter {0}. Already in graph.", name);
           }
         }
       }
-      Log.Info("TryConnect failed.");
+      Log.Debug("TryConnect failed.");
       return outputInfo.name.StartsWith("~");
     }
 
