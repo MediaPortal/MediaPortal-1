@@ -48,7 +48,7 @@ namespace MediaPortal.DeployTool
         InstallationProperties.Instance.Set("DBMSType", "mssql2005");
       if (rbMySQL.Checked)
         InstallationProperties.Instance.Set("DBMSType", "mysql");
-      if (rbDBAlreadyInstalled)
+      if (rbDBAlreadyInstalled.Checked)
           InstallationProperties.Instance.Set("DBMSType", "DBAlreadyInstalled");
     }
     #endregion
