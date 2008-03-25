@@ -1930,6 +1930,11 @@
     <carrier frequency="706000" bandwidth="8" />
     <carrier frequency="778000" bandwidth="8" />
   </country>
+  <country name="New Zealand - Wellington - Fitherbert" offset="0">
+    <carrier frequency="714000" bandwidth="8" />
+    <carrier frequency="730000" bandwidth="8" />
+    <carrier frequency="762000" bandwidth="8" />
+  </country>
   <country name="New Zealand - Christchurch" offset="0">
     <carrier frequency="680000" bandwidth="8" />
     <carrier frequency="698000" bandwidth="8" />
