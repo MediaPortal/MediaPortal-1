@@ -2287,7 +2287,7 @@ namespace DirectShowLib
         );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  /*[ComImport, System.Security.SuppressUnmanagedCodeSecurity,
   Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IVideoEncoder : IEncoderAPI
@@ -2334,7 +2334,7 @@ namespace DirectShowLib
         );
 
     #endregion
-  }
+  }*/
 
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
   Guid("6feded3e-0ff1-4901-a2f1-43f7012c8515"),
