@@ -83,7 +83,7 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !include Memento.nsh
 
 !include setup-AddRemovePage.nsh
-!include setup-RememberSections.nsh
+!include setup-CommonMPMacros.nsh
 !include setup-languages.nsh
 !include setup-dotnet.nsh
 
