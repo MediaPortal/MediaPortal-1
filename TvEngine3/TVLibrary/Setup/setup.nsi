@@ -708,19 +708,9 @@ Function WelcomeLeave
 FunctionEnd
 */
 Function ComponentsPre
-    ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
-
-  ${If} $MPBaseDir == ""
-    # this fallback should only be enabled until MediaPortal 1.0 is out
-    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-
-    ${If} $MPBaseDir == ""
-        !insertmacro UnselectSection "${SecClient}"
-        ; Make the unselected section read only
-        !insertmacro SetSectionFlag "${SecClient}" 16
-        SectionGetText ${SecClient} $R0
-        SectionSetText ${SecClient} "$R0 ($(TEXT_MP_NOT_INSTALLED))"
-    ${EndIf}
+  ${IfNot} ${MP023IsInstalled}
+  ${AndIfNot} ${MPIsInstalled}
+    !insertmacro DisableComponent "${SecClient}" " ($(TEXT_MP_NOT_INSTALLED))"
   ${EndIf}
 FunctionEnd
 
