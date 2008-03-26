@@ -168,10 +168,23 @@
 !macro _MSI_TVClientIsInstalled _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
   ClearErrors
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F7444E89-5BC0-497E-9650-E50539860DE0}" "UninstallString"
+  IfErrors 0 `${_t}`
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}" "UninstallString"
   IfErrors `${_f}` `${_t}`
 !macroend
 !define MSI_TVClientIsInstalled `"" MSI_TVClientIsInstalled ""`
+
+;======================================
+
+!macro _VCRedistIsInstalled _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ClearErrors
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{7299052b-02a4-4627-81f2-1818da5d550d}" "DisplayVersion"
+  IfErrors `${_f}` 0
+  StrCmp $_LOGICLIB_TEMP "8.0.56336" `${_t}` `${_f}`
+!macroend
+!define VCRedistIsInstalled `"" VCRedistIsInstalled ""`
 
 #**********************************************************************************************************#
 # Get MP infos

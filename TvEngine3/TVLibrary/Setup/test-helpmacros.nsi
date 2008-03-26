@@ -76,4 +76,11 @@ Function .onInit
     MessageBox MB_ICONINFORMATION|MB_OK "no MSI_TVClientIsInstalled"
   ${EndIf}
 
+
+  ${If} ${VCRedistIsInstalled}
+    MessageBox MB_ICONINFORMATION|MB_OK "VCRedistIsInstalled"
+  ${Else}
+    MessageBox MB_ICONINFORMATION|MB_OK "no VCRedistIsInstalled"
+  ${EndIf}
+
 FunctionEnd
