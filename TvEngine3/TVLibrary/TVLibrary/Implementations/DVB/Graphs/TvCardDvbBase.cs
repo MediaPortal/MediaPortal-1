@@ -788,8 +788,10 @@ namespace TvLibrary.Implementations.DVB
     {
       //multi demux
       int hr;
-
-      _mdplugs = MDPlugs.Create(_captureDevice);
+      DsDevice dv = _captureDevice;
+      if (dv == null)
+        dv = _tunerDevice; 
+      _mdplugs = MDPlugs.Create(dv);
       if (_mdplugs != null)
       {
         Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
