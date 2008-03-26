@@ -85,7 +85,6 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !include setup-AddRemovePage.nsh
 !include setup-CommonMPMacros.nsh
 !include setup-languages.nsh
-!include setup-dotnet.nsh
 
 ; FileFunc macros
 !insertmacro GetParameters
