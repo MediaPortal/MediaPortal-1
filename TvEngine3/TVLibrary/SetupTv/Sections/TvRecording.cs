@@ -371,6 +371,8 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
+      MatroskaTagHandler.OnTagLookupCompleted += new MatroskaTagHandler.TagLookupSuccessful(OnLookupCompleted);
+
       _needRestart = false;
       comboBoxCards.Items.Clear();
       IList cards = Card.ListAll();
@@ -390,6 +392,9 @@ namespace SetupTv.Sections
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
+
+      MatroskaTagHandler.OnTagLookupCompleted -= new MatroskaTagHandler.TagLookupSuccessful(OnLookupCompleted);
+
       SaveSettings();
       if (_needRestart)
       {
@@ -555,8 +560,11 @@ namespace SetupTv.Sections
           }
         }
       }
-      comboBoxDrive.SelectedIndex = 0;
-      UpdateDriveInfo(false);
+      if (comboBoxDrive.Items.Count > 0)
+      {
+        comboBoxDrive.SelectedIndex = 0;
+        UpdateDriveInfo(false);
+      }
     }
 
     #endregion
@@ -616,8 +624,6 @@ namespace SetupTv.Sections
 
     private void LoadDbImportSettings()
     {
-      MatroskaTagHandler.OnTagLookupCompleted += new MatroskaTagHandler.TagLookupSuccessful(OnLookupCompleted);
-
       GetRecordingsFromDb();
 
       try
@@ -730,7 +736,11 @@ namespace SetupTv.Sections
               }
             }
             if (!RecFileFound)
-              tvTagRecs.Nodes.Add(TagNode);
+            {
+              // only add those tags which specify a still valid filename
+              if (File.Exists(TagRec.FileName))
+                tvTagRecs.Nodes.Add(TagNode);
+            }
           }
         }
       }
@@ -773,22 +783,29 @@ namespace SetupTv.Sections
         {
         }
 
-        TreeNode[] subitems = new TreeNode[] { 
-                                               new TreeNode("Channel name: " + channelName), 
-                                               new TreeNode("Channel ID: " + channelId), 
-                                               new TreeNode("Genre: " + aRec.Genre), 
-                                               new TreeNode("Description: " + aRec.Description), 
-                                               new TreeNode("Start time: " + startTime), 
-                                               new TreeNode("End time: " + endTime), 
-                                               new TreeNode("Server ID: " + aRec.IdServer)
-                                             };
+        //TreeNode[] subitems = new TreeNode[] { 
+        //                                       new TreeNode("Channel name: " + channelName), 
+        //                                       new TreeNode("Channel ID: " + channelId), 
+        //                                       new TreeNode("Genre: " + aRec.Genre), 
+        //                                       new TreeNode("Description: " + aRec.Description), 
+        //                                       new TreeNode("Start time: " + startTime), 
+        //                                       new TreeNode("End time: " + endTime), 
+        //                                       new TreeNode("Server ID: " + aRec.IdServer)
+        //                                     };
         // /!\ TODO: need some code to disable the checkboxes for subnodes
         //foreach (TreeNode subItem in subitems)
         //{
         //  subItem.StateImageIndex = -1;
         //}
+        //TreeNode recItem = new TreeNode(aRec.Title, subitems);
 
-        TreeNode recItem = new TreeNode(aRec.Title, subitems);
+        string NodeTitle = string.Empty;
+        if (startTime != "unknown" && endTime != "unknown")
+          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}-{3}", aRec.Title, channelName, startTime, endTime);
+        else
+          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}", aRec.Title, channelName, startTime);
+
+        TreeNode recItem = new TreeNode(NodeTitle);
         recItem.Tag = aRec;
         recItem.Checked = true;
         return recItem;

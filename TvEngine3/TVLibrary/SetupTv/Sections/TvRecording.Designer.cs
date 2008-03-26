@@ -82,14 +82,14 @@ namespace SetupTv.Sections
       this.textBoxFolder = new System.Windows.Forms.TextBox();
       this.label12 = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
-      this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tpRecordImport = new System.Windows.Forms.TabPage();
-      this.cbRecPaths = new System.Windows.Forms.ComboBox();
-      this.lblRecFolders = new System.Windows.Forms.Label();
-      this.tvTagRecs = new System.Windows.Forms.TreeView();
-      this.lblImportItems = new System.Windows.Forms.Label();
-      this.btnImport = new System.Windows.Forms.Button();
       this.btnRemoveInvalidFiles = new System.Windows.Forms.Button();
+      this.btnImport = new System.Windows.Forms.Button();
+      this.lblImportItems = new System.Windows.Forms.Label();
+      this.tvTagRecs = new System.Windows.Forms.TreeView();
+      this.lblRecFolders = new System.Windows.Forms.Label();
+      this.cbRecPaths = new System.Windows.Forms.ComboBox();
+      this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -381,8 +381,8 @@ namespace SetupTv.Sections
       this.textBoxFormat.Name = "textBoxFormat";
       this.textBoxFormat.Size = new System.Drawing.Size(328, 20);
       this.textBoxFormat.TabIndex = 3;
-      this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
       this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
+      this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
       // 
       // label6
       // 
@@ -687,10 +687,6 @@ namespace SetupTv.Sections
       this.comboBoxCards.TabIndex = 0;
       this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
       // 
-      // openFileDialog1
-      // 
-      this.openFileDialog1.FileName = "openFileDialog1";
-      // 
       // tpRecordImport
       // 
       this.tpRecordImport.Controls.Add(this.btnRemoveInvalidFiles);
@@ -707,6 +703,60 @@ namespace SetupTv.Sections
       this.tpRecordImport.Text = "Database import";
       this.tpRecordImport.UseVisualStyleBackColor = true;
       // 
+      // btnRemoveInvalidFiles
+      // 
+      this.btnRemoveInvalidFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnRemoveInvalidFiles.Location = new System.Drawing.Point(215, 336);
+      this.btnRemoveInvalidFiles.Name = "btnRemoveInvalidFiles";
+      this.btnRemoveInvalidFiles.Size = new System.Drawing.Size(170, 23);
+      this.btnRemoveInvalidFiles.TabIndex = 4;
+      this.btnRemoveInvalidFiles.Text = "Remove no longer existing files";
+      this.btnRemoveInvalidFiles.UseVisualStyleBackColor = true;
+      this.btnRemoveInvalidFiles.Click += new System.EventHandler(this.btnRemoveInvalidFiles_Click);
+      // 
+      // btnImport
+      // 
+      this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnImport.Location = new System.Drawing.Point(30, 336);
+      this.btnImport.Name = "btnImport";
+      this.btnImport.Size = new System.Drawing.Size(170, 23);
+      this.btnImport.TabIndex = 3;
+      this.btnImport.Text = "Import selected files";
+      this.btnImport.UseVisualStyleBackColor = true;
+      this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+      // 
+      // lblImportItems
+      // 
+      this.lblImportItems.AutoSize = true;
+      this.lblImportItems.Location = new System.Drawing.Point(27, 75);
+      this.lblImportItems.Name = "lblImportItems";
+      this.lblImportItems.Size = new System.Drawing.Size(307, 13);
+      this.lblImportItems.TabIndex = 4;
+      this.lblImportItems.Text = "Recorded files which are currently not present in your database:";
+      // 
+      // tvTagRecs
+      // 
+      this.tvTagRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tvTagRecs.CheckBoxes = true;
+      this.tvTagRecs.FullRowSelect = true;
+      this.tvTagRecs.Location = new System.Drawing.Point(30, 94);
+      this.tvTagRecs.Name = "tvTagRecs";
+      this.tvTagRecs.ShowPlusMinus = false;
+      this.tvTagRecs.ShowRootLines = false;
+      this.tvTagRecs.Size = new System.Drawing.Size(355, 236);
+      this.tvTagRecs.TabIndex = 2;
+      // 
+      // lblRecFolders
+      // 
+      this.lblRecFolders.AutoSize = true;
+      this.lblRecFolders.Location = new System.Drawing.Point(27, 24);
+      this.lblRecFolders.Name = "lblRecFolders";
+      this.lblRecFolders.Size = new System.Drawing.Size(88, 13);
+      this.lblRecFolders.TabIndex = 2;
+      this.lblRecFolders.Text = "Recording folder:";
+      // 
       // cbRecPaths
       // 
       this.cbRecPaths.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -719,57 +769,9 @@ namespace SetupTv.Sections
       this.cbRecPaths.TabIndex = 1;
       this.cbRecPaths.SelectedIndexChanged += new System.EventHandler(this.cbRecPaths_SelectedIndexChanged);
       // 
-      // lblRecFolders
+      // openFileDialog1
       // 
-      this.lblRecFolders.AutoSize = true;
-      this.lblRecFolders.Location = new System.Drawing.Point(27, 24);
-      this.lblRecFolders.Name = "lblRecFolders";
-      this.lblRecFolders.Size = new System.Drawing.Size(88, 13);
-      this.lblRecFolders.TabIndex = 2;
-      this.lblRecFolders.Text = "Recording folder:";
-      // 
-      // tvTagRecs
-      // 
-      this.tvTagRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tvTagRecs.CheckBoxes = true;
-      this.tvTagRecs.FullRowSelect = true;
-      this.tvTagRecs.Location = new System.Drawing.Point(30, 94);
-      this.tvTagRecs.Name = "tvTagRecs";
-      this.tvTagRecs.Size = new System.Drawing.Size(355, 236);
-      this.tvTagRecs.TabIndex = 3;
-      // 
-      // lblImportItems
-      // 
-      this.lblImportItems.AutoSize = true;
-      this.lblImportItems.Location = new System.Drawing.Point(27, 75);
-      this.lblImportItems.Name = "lblImportItems";
-      this.lblImportItems.Size = new System.Drawing.Size(307, 13);
-      this.lblImportItems.TabIndex = 4;
-      this.lblImportItems.Text = "Recorded files which are currently not present in your database:";
-      // 
-      // btnImport
-      // 
-      this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnImport.Location = new System.Drawing.Point(30, 336);
-      this.btnImport.Name = "btnImport";
-      this.btnImport.Size = new System.Drawing.Size(170, 23);
-      this.btnImport.TabIndex = 5;
-      this.btnImport.Text = "Import selected files";
-      this.btnImport.UseVisualStyleBackColor = true;
-      this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
-      // 
-      // btnRemoveInvalidFiles
-      // 
-      this.btnRemoveInvalidFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnRemoveInvalidFiles.Location = new System.Drawing.Point(215, 336);
-      this.btnRemoveInvalidFiles.Name = "btnRemoveInvalidFiles";
-      this.btnRemoveInvalidFiles.Size = new System.Drawing.Size(170, 23);
-      this.btnRemoveInvalidFiles.TabIndex = 6;
-      this.btnRemoveInvalidFiles.Text = "Remove no longer existing files";
-      this.btnRemoveInvalidFiles.UseVisualStyleBackColor = true;
-      this.btnRemoveInvalidFiles.Click += new System.EventHandler(this.btnRemoveInvalidFiles_Click);
+      this.openFileDialog1.FileName = "openFileDialog1";
       // 
       // TvRecording
       // 
