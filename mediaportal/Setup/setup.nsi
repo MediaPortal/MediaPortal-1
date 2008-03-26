@@ -53,6 +53,9 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 
+!define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/MediaPortalRequirements"
+
+
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
