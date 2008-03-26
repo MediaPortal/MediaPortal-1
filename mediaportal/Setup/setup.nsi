@@ -817,7 +817,8 @@ Function .onInit
 
     ; check if minimum Windows version is XP
     ${If} ${AtMostWin2000}
-        MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)"
+        MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
+        ExecShell open "${WEB_REQUIREMENTS}"
         Abort
     ${EndIf}
 
@@ -826,6 +827,13 @@ Function .onInit
     Pop $0
     ${If} $0 == 0
         MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET)"
+        Abort
+    ${EndIf}
+
+    ; check if VC Redist 2005 SP1 is installed
+    ${IfNot} ${VCRedistIsInstalled}
+        MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
+        ExecShell open "${WEB_REQUIREMENTS}"
         Abort
     ${EndIf}
 

@@ -36,9 +36,3 @@ LangString ^UninstallLink                         ${LANG_ENGLISH} "Uninstall $(^
 
 LangString TEXT_MSGBOX_REMOVE_ALL                 ${LANG_ENGLISH} "!!! ATTENTION !!!$\r$\nDo you want to make a complete cleanup?$\r$\nThis removes completly the registry keys, the installation and the common app data directory, inclusive thumbs, databases, skins and plugins!"
 LangString TEXT_MSGBOX_REMOVE_ALL_STUPID          ${LANG_ENGLISH} "!!! ATTENTION !!!$\r$\nAgain for those who slept the msgBox before. :( $(TEXT_MSGBOX_REMOVE_ALL)"
-
-LangString TEXT_MSGBOX_ERROR_DOTNET               ${LANG_ENGLISH} "Microsoft .Net Framework Runtime is a prerequisite. Please install first."
-LangString TEXT_MSGBOX_ERROR_WIN                  ${LANG_ENGLISH} "MediaPortal requires at least Windows XP. Your Windows is not supported. Installation aborted"
-LangString TEXT_MSGBOX_ERROR_IS_INSTALLED         ${LANG_ENGLISH} "MediaPortal is already installed. You need to uninstall it, before you continue with the installation.$\r$\nUninstall will be lunched when pressing OK."
-LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL         ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
-LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is required after a previous action. Reboot you system and try it again."
