@@ -123,11 +123,12 @@ namespace SetupTv.Sections
 
                 foreach (Card card in dbsCards)
                 {
+
 					        User[] users = TvControl.RemoteControl.Instance.GetUsersForCard(card.IdCard);
         					
 					        foreach (User u in users)
 					        {
-						        if (u.Name == user.Name)
+						        if (u.Name == user.Name || u.Name == "setuptv")
 						        {							
 							        Channel ch = Channel.Retrieve(u.IdChannel);
 
