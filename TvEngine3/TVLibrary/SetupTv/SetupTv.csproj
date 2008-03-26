@@ -489,6 +489,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>WizardForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="36_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="36_upgrade_sqlserver_database.sql" />
     <None Include="images\ms_sql_logo.gif" />
     <None Include="images\mysql_logo.gif" />
     <EmbeddedResource Include="images\wizard-header.jpg" />
