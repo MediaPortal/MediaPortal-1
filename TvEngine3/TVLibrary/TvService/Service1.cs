@@ -59,6 +59,7 @@ namespace TvService
     bool _priorityApplied = false;
     TVController _controller;
     List<PowerEventHandler> _powerEventHandlers;
+
     #endregion
 
     /// <summary>
@@ -133,9 +134,11 @@ namespace TvService
       {
       }
       StartRemoting();
+      Utils.ShutDownMCEServices();
       _started = true;
       Log.WriteFile("TV service started");
     }
+
 
     /// <summary>
     /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
@@ -163,6 +166,8 @@ namespace TvService
       }
       _powerEventThreadId = 0;
       _powerEventThread = null;
+
+      Utils.RestartMCEServices();
 
       GC.Collect();
       GC.Collect();

@@ -121,25 +121,25 @@ namespace SetupTv.Sections
 
 				IList dbsCards = Card.ListAll();				
 
-        foreach (Card card in dbsCards)
-        {
-					User[] users = TvControl.RemoteControl.Instance.GetUsersForCard(card.IdCard);
-					
-					foreach (User u in users)
-					{
-						if (u.Name == user.Name)
-						{							
-							Channel ch = Channel.Retrieve(u.IdChannel);
+                foreach (Card card in dbsCards)
+                {
+					        User[] users = TvControl.RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        					
+					        foreach (User u in users)
+					        {
+						        if (u.Name == user.Name)
+						        {							
+							        Channel ch = Channel.Retrieve(u.IdChannel);
 
-							if (ch.Name == client.Description)
-							{
-								user.CardId = card.IdCard;
-								break;
-							}
-						}
-					} 
-					if (user.CardId > -1) break;
-        }
+							        if (ch.Name == client.Description)
+							        {
+								        user.CardId = card.IdCard;
+								        break;
+							        }
+						        }
+					        } 
+					        if (user.CardId > -1) break;
+                }
 				
 				bool res = TvControl.RemoteControl.Instance.StopTimeShifting(ref user, TvStoppedReason.KickedByAdmin);				
 
