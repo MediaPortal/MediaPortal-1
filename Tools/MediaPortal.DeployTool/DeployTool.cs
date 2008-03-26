@@ -32,6 +32,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool
 {
@@ -53,29 +54,30 @@ namespace MediaPortal.DeployTool
 
     public DeployTool()
     {
-      InitializeComponent();
-      if (!Directory.Exists(Application.StartupPath + "\\deploy"))
-        Directory.CreateDirectory(Application.StartupPath + "\\deploy");
-      Localizer.Instance.SwitchCulture("en-US");
-      UpdateUI();
-      InstallationProperties.Instance.Add("SVNMode", "false");
-      
-      //Set default folders
-      InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
-      InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
-      
-      //Identify 64bit systems for new registry path
-      if (IntPtr.Size == 8)
-          InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-      else
-          InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+        InitializeComponent();
+        if (!Directory.Exists(Application.StartupPath + "\\deploy"))
+            Directory.CreateDirectory(Application.StartupPath + "\\deploy");
+        Localizer.Instance.SwitchCulture("en-US");
+        UpdateUI();
+        InstallationProperties.Instance.Add("SVNMode", "false");
 
-      //Identify OS. Supporting XP SP2 and newer, but XP 64bit
-      Version OsVersion = Environment.OSVersion.Version;
-      bool OsSupport = false;
-      string OsDesc = "";
+        //Set default folders
+        InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
+        InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
+        
+        #region Identify 64bit systems for correct registry path    
+        if (IntPtr.Size == 8)
+            InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+        else
+            InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+        #endregion
 
-        switch(OsVersion.Major)
+        #region Identify OS. Supporting XP SP2 and newer, but XP 64bit
+        Version OsVersion = Environment.OSVersion.Version;
+        bool OsSupport = false;
+        string OsDesc = "";
+
+        switch (OsVersion.Major)
         {
             case 4:                         // 4.x = Win95,98,ME and NT 
                 OsDesc = "Windows 95/98/ME/NT";
@@ -89,7 +91,7 @@ namespace MediaPortal.DeployTool
                 }
                 if (OsVersion.Minor == 1)   // 5.1 = WindowsXP
                 {
-                    if (int.Parse(Environment.OSVersion.ServicePack.Replace("Service Pack ", "")) < 2)                        
+                    if (int.Parse(Environment.OSVersion.ServicePack.Replace("Service Pack ", "")) < 2)
                     {
                         OsDesc = "Windows XP ServicePack 1";
                         OsSupport = false;
@@ -110,27 +112,58 @@ namespace MediaPortal.DeployTool
                 break;
         }
 
-      if (!OsSupport)
-      {
-          MessageBox.Show("Sorry your OS is not currently supported by MediaPortal !", OsDesc, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-          Environment.Exit(-1);
-      }
-      
-      string[] cmdArgs = Environment.GetCommandLineArgs();
-      foreach (string arg in cmdArgs)
-      {
-        if (arg.ToLowerInvariant() == "svn")
+        if (!OsSupport)
         {
-          InstallationProperties.Instance.Set("SVNMode", "true");
-          break;
+            MessageBox.Show("Sorry your OS is not currently supported by MediaPortal !", OsDesc, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            Environment.Exit(-1);
         }
-      }
-      _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
-      splitContainer2.Panel1.Controls.Add(_currentDialog);
-      InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
-      backButton.Visible = false;
-      UpdateUI();
+        #endregion
+
+        #region Check if MSI packages are still installed: if so abort installation...
+        bool OldMSI = false;
+        RegistryKey key;
+
+        //MP
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{xxxxx}");
+        if (key != null && File.Exists(key.GetValue("UninstallString").ToString()))
+            OldMSI = true;
+        key.Close();
+
+        //TvServer MSI
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
+        if (key != null && File.Exists(key.GetValue("UninstallString").ToString()))
+            OldMSI = true;
+        key.Close();
+
+        //TvClient MSI
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F7444E89-5BC0-497E-9650-E50539860DE0}");
+        if (key != null && File.Exists(key.GetValue("UninstallString").ToString()))
+            OldMSI = true;
+        key.Close();
+
+        if (OldMSI)
+        {
+            MessageBox.Show("Please remove MP and TV3 old msi package before installing this version", "Old install found !!!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            Environment.Exit(-2);
+        }
+        #endregion
+
+        string[] cmdArgs = Environment.GetCommandLineArgs();
+        foreach (string arg in cmdArgs)
+        {
+            if (arg.ToLowerInvariant() == "svn")
+            {
+                InstallationProperties.Instance.Set("SVNMode", "true");
+                break;
+            }
+        }
+        _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
+        splitContainer2.Panel1.Controls.Add(_currentDialog);
+        InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
+        backButton.Visible = false;
+        UpdateUI();
     }
+
     private void SwitchDialog(DeployDialog dlg)
     {
       splitContainer2.Panel1.Controls.Clear();
