@@ -147,6 +147,8 @@ namespace TvService
     {
       if (!_started)
         return;
+
+     
       Log.WriteFile("TV service stopping");
 
       StopRemoting();
@@ -167,12 +169,14 @@ namespace TvService
       _powerEventThreadId = 0;
       _powerEventThread = null;
 
-      Utils.RestartMCEServices();
-
-      GC.Collect();
-      GC.Collect();
-      GC.Collect();
-      GC.Collect();
+      if (!Environment.HasShutdownStarted)
+      {
+          Utils.RestartMCEServices();
+          GC.Collect();
+          GC.Collect();
+          GC.Collect();
+          GC.Collect(); 
+      }
       _started = false;
       Log.WriteFile("TV service stopped");
     }
