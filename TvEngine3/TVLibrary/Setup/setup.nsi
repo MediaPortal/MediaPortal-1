@@ -55,6 +55,10 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 
+!define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements"
+
+
+
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !define MEMENTO_REGISTRY_ROOT HKLM
@@ -586,12 +590,6 @@ Function .onInit
         !insertmacro UnselectSection ${SecServer}
     ${EndIf}
 
-    ; check if minimum Windows version is XP
-    ${If} ${AtMostWin2000}
-        MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)"
-        Abort
-    ${EndIf}
-
     ; check if old msi based client plugin is installed.
     ${If} ${MSI_TVClientIsInstalled}
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)" IDOK 0
@@ -601,6 +599,20 @@ Function .onInit
     ; check if old msi based server is installed.
     ${If} ${MSI_TVServerIsInstalled}
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_SERVER)" IDOK 0
+        Abort
+    ${EndIf}
+
+    ; check if minimum Windows version is XP
+    ${If} ${AtMostWin2000}
+        MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
+        ExecShell open "${WEB_REQUIREMENTS}"
+        Abort
+    ${EndIf}
+
+    ; check if VC Redist 2005 SP1 is installed
+    ${IfNot} ${VCRedistIsInstalled}
+        MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
+        ExecShell open "${WEB_REQUIREMENTS}"
         Abort
     ${EndIf}
 
