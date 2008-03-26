@@ -103,6 +103,7 @@ namespace SetupTv
       {
         Log.Info("---- ask user for connection details ----");
         dlg.ShowDialog();
+        return;
       }
 
       Log.Info("---- check if database needs to be updated/created ----");

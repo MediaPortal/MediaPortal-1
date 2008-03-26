@@ -488,7 +488,8 @@ namespace SetupTv
         return;
       }
       Save();
-      Close();
+      Application.Restart();
+      //Close();
     }
 
     /// <summary>

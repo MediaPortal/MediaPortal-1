@@ -189,26 +189,31 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sections\CardAnalog.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\CardAnalog.Designer.cs">
       <DependentUpon>CardAnalog.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\CardAtsc.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\CardAtsc.Designer.cs">
       <DependentUpon>CardAtsc.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\CardDvbC.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\CardDvbC.Designer.cs">
       <DependentUpon>CardDvbC.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\CardDvbS.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\CardDvbS.Designer.cs">
       <DependentUpon>CardDvbS.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\CardDvbT.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\CardDvbT.Designer.cs">
       <DependentUpon>CardDvbT.cs</DependentUpon>
@@ -226,6 +231,7 @@
       <DependentUpon>ChannelsInRadioGroupControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\Combinations.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Combinations.Designer.cs">
       <DependentUpon>Combinations.cs</DependentUpon>
@@ -234,11 +240,13 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Sections\RadioCombinations.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\RadioCombinations.Designer.cs">
       <DependentUpon>RadioCombinations.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\RadioGroups.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\RadioGroups.Designer.cs">
       <DependentUpon>RadioGroups.cs</DependentUpon>
@@ -281,71 +289,85 @@
       <DependentUpon>Plugins.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\RadioEpgGrabber.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\RadioEpgGrabber.Designer.cs">
       <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\ScanSettings.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\ScanSettings.Designer.cs">
       <DependentUpon>ScanSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\Servers.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Servers.Designer.cs">
       <DependentUpon>Servers.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\StreamingServer.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\StreamingServer.Designer.cs">
       <DependentUpon>StreamingServer.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvRecording.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TvRecording.Designer.cs">
       <DependentUpon>TvRecording.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TestService.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TestService.Designer.cs">
       <DependentUpon>TestService.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvEpgGrabber.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TvEpgGrabber.Designer.cs">
       <DependentUpon>TvEpgGrabber.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\RadioChannelMapping.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\RadioChannelMapping.Designer.cs">
       <DependentUpon>RadioChannelMapping.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\RadioChannels.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\RadioChannels.Designer.cs">
       <DependentUpon>RadioChannels.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvCards.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TvCards.Designer.cs">
       <DependentUpon>TvCards.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvChannelMapping.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TvChannelMapping.Designer.cs">
       <DependentUpon>TvChannelMapping.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TVChannels.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVChannels.Designer.cs">
       <DependentUpon>TVChannels.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvGroups.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TvGroups.Designer.cs">
       <DependentUpon>TvGroups.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvSchedules.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TvSchedules.Designer.cs">
       <DependentUpon>TvSchedules.cs</DependentUpon>
