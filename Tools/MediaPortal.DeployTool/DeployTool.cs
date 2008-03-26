@@ -124,7 +124,7 @@ namespace MediaPortal.DeployTool
         RegistryKey key;
 
         //MP
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{xxxxx}");
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{87819CFA-1786-484D-B0DE-10B5FBF2625D}");
         if (key != null)
         {
             if (File.Exists(key.GetValue("UninstallString").ToString()))
@@ -141,8 +141,15 @@ namespace MediaPortal.DeployTool
             key.Close();
         }
 
-        //TvClient MSI
+        //TvClient MSI: two codes for this software ;-(
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F7444E89-5BC0-497E-9650-E50539860DE0}");
+        if (key != null)
+        {
+            if (File.Exists(key.GetValue("UninstallString").ToString()))
+                OldMSI = true;
+            key.Close();
+        }
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}");
         if (key != null)
         {
             if (File.Exists(key.GetValue("UninstallString").ToString()))
