@@ -58,7 +58,6 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements"
 
 
-
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !define MEMENTO_REGISTRY_ROOT HKLM
