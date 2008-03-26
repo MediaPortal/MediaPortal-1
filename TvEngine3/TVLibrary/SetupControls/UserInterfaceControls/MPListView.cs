@@ -71,6 +71,11 @@ namespace MediaPortal.UserInterface.Controls
     public MPListView()
       : base()
     {
+       //  Activate double buffering
+      SetStyle( ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer , true );
+      
+      // Allows for catching the WM_ERASEBKGND message
+      SetStyle(ControlStyles.EnableNotifyMessage, true);
       this.AllowRowReorder = true;
     }
 
@@ -232,5 +237,24 @@ namespace MediaPortal.UserInterface.Controls
       base.OnDoubleClick(e);
     }
 
+    protected override void OnPaintBackground(PaintEventArgs pevent)
+    {
+    }
+
+
+    protected override void OnPaint(PaintEventArgs pea)
+    {
+        base.OnPaint(pea);
+    }
+
+
+    protected override void OnNotifyMessage(Message m)
+    {
+        // filter WM_ERASEBKGND
+        if (m.Msg != 0x14)
+        {
+            base.OnNotifyMessage(m);
+        }
+    }
   }
 }

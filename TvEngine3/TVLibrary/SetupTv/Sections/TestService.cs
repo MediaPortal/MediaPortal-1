@@ -49,6 +49,7 @@ namespace SetupTv.Sections
     {
       InitializeComponent();
       mpComboBoxChannels.ImageList = imageList1;
+      this.DoubleBuffered = true;
     }
 
 
@@ -80,6 +81,7 @@ namespace SetupTv.Sections
       timer1.Enabled = true;
 
       mpListView1.Items.Clear();
+
       buttonRestart.Visible = false;
     }
 
@@ -217,25 +219,23 @@ namespace SetupTv.Sections
           progressBarLevel.Value = Math.Min(100, card.SignalLevel);
           progressBarQuality.Value = Math.Min(100, card.SignalQuality);
 
-          mpCheckBoxRec.Checked = card.IsRecording;
+         
           mpLabelRecording.Text = card.RecordingFileName;
 
-          mpCheckBoxTimeShift.Checked = card.IsTimeShifting;
+         
           mpLabelTimeShift.Text = card.TimeShiftFileName;
           mpLabelChannel.Text = card.Channel.ToString();
-          if (mpCheckBoxRec.Checked)
-          {
+          if (card.IsRecording)
             mpButtonRec.Text = "Stop Record";
-          }
           else
-          {
             mpButtonRec.Text = "Record";
-          }
-          if (mpCheckBoxTimeShift.Checked)
+
+          if (card.IsTimeShifting)
             mpButtonTimeShift.Text = "Stop TimeShift";
           else
             mpButtonTimeShift.Text = "Start TimeShift";
-          return;
+          
+           return;
         }
         else
         {
@@ -245,9 +245,7 @@ namespace SetupTv.Sections
       mpLabelTunerLocked.Text = "no";
       progressBarLevel.Value = 0;
       progressBarQuality.Value = 0;
-      mpCheckBoxRec.Checked = false;
       mpLabelRecording.Text = "";
-      mpCheckBoxTimeShift.Checked = false;
       mpLabelTimeShift.Text = "";
       mpButtonRec.Text = "Record";
       mpButtonTimeShift.Text = "Start TimeShift";
@@ -259,6 +257,8 @@ namespace SetupTv.Sections
     }
     void UpdateCardStatus()
     {
+
+      ColumnHeaderAutoResizeStyle oldheadsize = ColumnHeaderAutoResizeStyle.HeaderSize;
       if (ServiceHelper.IsStopped) return;
       if (_cards == null) return;
       if (_cards.Count == 0) return;
@@ -409,7 +409,9 @@ namespace SetupTv.Sections
           item.SubItems[5].Text = "";
           item.SubItems[6].Text = "";
         }
-				mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      
+      if(oldheadsize != ColumnHeaderAutoResizeStyle.HeaderSize)
+		mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       }
       catch (Exception ex)
       {
