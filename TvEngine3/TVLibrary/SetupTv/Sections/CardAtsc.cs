@@ -53,6 +53,8 @@ namespace SetupTv.Sections
     int _channelCount = 0;
     bool _isScanning = false;
     bool _stopScanning = false;
+    
+
     public CardAtsc()
       : this("DVBC")
     {
@@ -171,6 +173,8 @@ namespace SetupTv.Sections
     {
       if (_isScanning == false)
       {
+        checkBoxQAM.Enabled = false;
+         
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
         if (card.Enabled == false) {
@@ -327,7 +331,13 @@ namespace SetupTv.Sections
             }
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
-            dbChannel.FreeToAir = channel.FreeToAir;
+
+            //Over the air ATSC is never scrambled
+            if (!checkBoxQAM.Checked)
+                dbChannel.FreeToAir = true;
+            else
+                dbChannel.FreeToAir = channel.FreeToAir;
+
             dbChannel.Persist();
             if (currentDetail == null)
             {
@@ -384,6 +394,7 @@ namespace SetupTv.Sections
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
+        checkBoxQAM.Enabled = true;
         mpComboBoxFrequencies.Enabled = true;
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;

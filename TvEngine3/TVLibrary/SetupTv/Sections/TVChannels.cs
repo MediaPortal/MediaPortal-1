@@ -234,6 +234,7 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (ch.FreeToAir == false)
           imageIndex = 2;
+
         ListViewItem item = new ListViewItem(ch.DisplayName, imageIndex);
         item.SubItems.Add("-");
         item.Checked = ch.VisibleInGuide;
@@ -419,6 +420,18 @@ namespace SetupTv.Sections
       IList schedules = Schedule.ListAll();
       TvServer server = new TvServer();
 
+      //Since it takes a very long time to add channels, make sure the user really wants to delete them
+      if (mpListView1.SelectedItems.Count > 0)
+      {
+          string holder = String.Format("Are you sure you want to delete these {0:d} channels?", mpListView1.SelectedItems.Count);
+
+          if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
+          {
+              mpListView1.EndUpdate();
+              return;
+          }
+      }
+
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
@@ -441,6 +454,7 @@ namespace SetupTv.Sections
         channel.Delete();
         mpListView1.Items.Remove(item);
       }
+
       mpListView1.EndUpdate();
       ReOrder();
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);

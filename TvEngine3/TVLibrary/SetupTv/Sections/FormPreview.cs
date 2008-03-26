@@ -37,23 +37,28 @@ namespace SetupTv.Sections
       }
     }
 
-    private void FormPreview_Load(object sender, EventArgs e)
-    {
-      this.Text = "Preview " + _channel.Name;
-
-      TvServer server = new TvServer();
-      TvResult result;
-      User user = new User();
-      result = server.StartTimeShifting(ref user,_channel.IdChannel, out _card);
-      if (result != TvResult.Succeeded)
+      public new DialogResult ShowDialog(IWin32Window owner)
       {
-        MessageBox.Show("Preview failed:" + result.ToString());
-        return;
+          this.Text = "Preview " + _channel.Name;
+
+          TvServer server = new TvServer();
+          TvResult result;
+          User user = new User();
+          result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
+          if (result != TvResult.Succeeded)
+          {
+              MessageBox.Show("Preview failed:" + result.ToString());
+              this.Close();
+              return DialogResult.None;
+          }
+
+          Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.Name, user.CardId, user.SubChannel, user.Name, _card.TimeShiftFileName);
+          _player = new Player();
+          _player.Play(_card.TimeShiftFileName, this);
+
+         return base.ShowDialog(owner);
       }
-      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.Name, user.CardId, user.SubChannel, user.Name, _card.TimeShiftFileName);
-      _player = new Player();
-      _player.Play(_card.TimeShiftFileName, this);
-    }
+
     protected override void OnClosing(CancelEventArgs e)
     {
       if (_player != null)
