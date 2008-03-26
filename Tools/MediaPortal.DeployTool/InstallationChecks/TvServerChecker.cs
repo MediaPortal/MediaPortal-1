@@ -52,7 +52,7 @@ namespace MediaPortal.DeployTool
       string targetDir = InstallationProperties.Instance["TVServerDir"];
       //NSIS installed doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
-      string parameters = "/noClient /D=" + targetDir;
+      string parameters = "/S /noClient /D=" + targetDir;
       Process setup = Process.Start(exe, parameters);
       try
       {

@@ -49,16 +49,14 @@ namespace MediaPortal.DeployTool
     public bool Install()
     {
       string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer");
-
-      // Add here "/S" once it works with WaitForExit()
-      string parameters = "";
+      string parameters = "/S";
       if (InstallationProperties.Instance["InstallType"] == "singleseat")
       {
           parameters += "";
       }
       else
       {
-          parameters += "/noServer";
+          parameters += " /noServer";
       }
       Process setup = Process.Start(exe, parameters);
       setup.WaitForExit();
