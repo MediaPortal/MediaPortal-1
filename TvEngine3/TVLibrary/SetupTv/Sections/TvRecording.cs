@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,32 +20,43 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
+
+#region Usings
+
 using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-using DirectShowLib;
 
+using DirectShowLib;
+using DirectShowLib.BDA;
+
+using Gentle.Framework;
 
 using TvDatabase;
-
 using TvControl;
 using TvLibrary;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
-using DirectShowLib.BDA;
+
+#endregion
 
 namespace SetupTv.Sections
 {
   public partial class TvRecording : SectionSettings
   {
+    #region CardInfo class
+
     public class CardInfo
     {
       public Card card;
@@ -56,6 +69,11 @@ namespace SetupTv.Sections
         return card.Name;
       }
     }
+
+    #endregion
+
+    #region Example Format class
+
     private string[] formatString = { string.Empty, string.Empty };
     private class Example
     {
@@ -82,7 +100,6 @@ namespace SetupTv.Sections
         EndDate = endDate;
       }
     }
-
 
     private string ShowExample(string strInput, int recType)
     {
@@ -148,7 +165,17 @@ namespace SetupTv.Sections
       strReturn += strName + ".mpg";
       return strReturn;
     }
+
+    #endregion
+
+    #region Vars
+
     bool _needRestart = false;
+
+    #endregion
+
+    #region Constructors
+
     public TvRecording()
       : this("Recording settings")
     {
@@ -160,86 +187,9 @@ namespace SetupTv.Sections
       InitializeComponent();
     }
 
-    private void textBoxFormat_TextChanged(object sender, EventArgs e)
-    {
-      formatString[comboBoxMovies.SelectedIndex] = textBoxFormat.Text;
-      textBoxSample.Text = ShowExample(textBoxFormat.Text, comboBoxMovies.SelectedIndex);
-    }
+    #endregion
 
-    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-      textBoxFormat.Text = formatString[comboBoxMovies.SelectedIndex];
-    }
-
-    private void comboBoxDrive_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      UpdateDriveInfo(false);
-    }
-
-    private void textBoxFormat_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      if ((e.KeyChar == '/') || (e.KeyChar == ':') || (e.KeyChar == '*') ||
-        (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
-        (e.KeyChar == '>') || (e.KeyChar == '|'))
-      {
-        e.Handled = true;
-      }
-    }
-
-    void UpdateDriveInfo(bool save)
-    {
-      string drive = (string)comboBoxDrive.SelectedItem;
-      ulong freeSpace = Utils.GetFreeDiskSpace(drive);
-      long totalSpace = Utils.GetDiskSize(drive);
-
-      labelFreeDiskspace.Text = Utils.GetSize((long)freeSpace);
-      labelTotalDiskSpace.Text = Utils.GetSize((long)totalSpace);
-      if (labelTotalDiskSpace.Text == "0")
-        labelTotalDiskSpace.Text = "Not available - WMI service not available";
-      if (save)
-      {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
-        if (mpNumericTextBoxDiskQuota.Value < 500)
-          mpNumericTextBoxDiskQuota.Value = 500;
-        long quota = mpNumericTextBoxDiskQuota.Value * 1024;
-        setting.Value = quota.ToString();
-        setting.Persist();
-      }
-      else
-      {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
-        try
-        {
-          long quota = Int64.Parse(setting.Value);
-          mpNumericTextBoxDiskQuota.Value = (int) quota/1024;
-        }
-        catch (Exception)
-        {
-          mpNumericTextBoxDiskQuota.Value = 0;
-        }
-        if (mpNumericTextBoxDiskQuota.Value < 500)
-          mpNumericTextBoxDiskQuota.Value = 500;
-      }
-    }
-
-    private void textBoxPreInterval_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
-      {
-        e.Handled = true;
-      }
-    }
-
-    private void textBoxPostInterval_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
-      {
-        e.Handled = true;
-      }
-    }
+    #region Serialization
 
     public override void LoadSettings()
     {
@@ -317,32 +267,62 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("scheduleroverlivetv", "yes");
       if (checkboxSchedulerPriority.Checked)
       {
-          setting.Value = "yes";
+        setting.Value = "yes";
       }
       else
       {
-          setting.Value = "no";
+        setting.Value = "no";
       }
       setting.Persist();
 
-   
+      UpdateDriveInfo(true);
+    }
 
-      //DatabaseManager.Instance.SaveChanges();
-      /*
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+    #endregion
+
+    #region GUI-Events
+
+    private void textBoxFormat_TextChanged(object sender, EventArgs e)
+    {
+      formatString[comboBoxMovies.SelectedIndex] = textBoxFormat.Text;
+      textBoxSample.Text = ShowExample(textBoxFormat.Text, comboBoxMovies.SelectedIndex);
+    }
+
+    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+      textBoxFormat.Text = formatString[comboBoxMovies.SelectedIndex];
+    }
+
+    private void comboBoxDrive_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      UpdateDriveInfo(false);
+    }
+
+    private void textBoxFormat_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if ((e.KeyChar == '/') || (e.KeyChar == ':') || (e.KeyChar == '*') ||
+        (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
+        (e.KeyChar == '>') || (e.KeyChar == '|'))
       {
-        xmlwriter.SetValue("capture", "prerecord", startTextBox.Text);
-        xmlwriter.SetValue("capture", "postrecord", endTextBox.Text);
-
-        xmlwriter.SetValueAsBool("capture", "deletewatchedshows", cbDeleteWatchedShows.Checked);
-        xmlwriter.SetValueAsBool("capture", "addrecordingstomoviedatabase", cbAddRecordingsToMovie.Checked);
-
-        xmlwriter.SetValue("capture", "moviesformat", formatString[0]);
-        xmlwriter.SetValue("capture", "seriesformat", formatString[1]);
+        e.Handled = true;
       }
-      UpdateDriveInfo(true);
-      */
-      UpdateDriveInfo(true);
+    }
+
+    private void textBoxPreInterval_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
+    }
+
+    private void textBoxPostInterval_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
     }
 
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
@@ -401,8 +381,12 @@ namespace SetupTv.Sections
       if (comboBoxCards.Items.Count > 0)
         comboBoxCards.SelectedIndex = 0;
       UpdateDriveInfo(false);
+
+      LoadDbImportSettings();
+
       base.OnSectionActivated();
     }
+
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
@@ -474,6 +458,58 @@ namespace SetupTv.Sections
       UpdateDriveInfo(true);
     }
 
+    private void enableDiskQuota_CheckedChanged(object sender, EventArgs e)
+    {
+      enableDiskQuotaControls();
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("diskQuotaEnabled");
+      setting.Value = ((CheckBox)sender).Checked.ToString();
+      setting.Persist();
+    }
+
+    #endregion
+
+    #region Quota handling
+
+    private void UpdateDriveInfo(bool save)
+    {
+      string drive = (string)comboBoxDrive.SelectedItem;
+      ulong freeSpace = Utils.GetFreeDiskSpace(drive);
+      long totalSpace = Utils.GetDiskSize(drive);
+
+      labelFreeDiskspace.Text = Utils.GetSize((long)freeSpace);
+      labelTotalDiskSpace.Text = Utils.GetSize((long)totalSpace);
+      if (labelTotalDiskSpace.Text == "0")
+        labelTotalDiskSpace.Text = "Not available - WMI service not available";
+      if (save)
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
+        if (mpNumericTextBoxDiskQuota.Value < 500)
+          mpNumericTextBoxDiskQuota.Value = 500;
+        long quota = mpNumericTextBoxDiskQuota.Value * 1024;
+        setting.Value = quota.ToString();
+        setting.Persist();
+      }
+      else
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
+        try
+        {
+          long quota = Int64.Parse(setting.Value);
+          mpNumericTextBoxDiskQuota.Value = (int)quota / 1024;
+        }
+        catch (Exception)
+        {
+          mpNumericTextBoxDiskQuota.Value = 0;
+        }
+        if (mpNumericTextBoxDiskQuota.Value < 500)
+          mpNumericTextBoxDiskQuota.Value = 500;
+      }
+    }
+
     private void enableDiskQuotaControls()
     {
       if (enableDiskQuota.Checked)
@@ -504,16 +540,6 @@ namespace SetupTv.Sections
       }
     }
 
-    private void enableDiskQuota_CheckedChanged(object sender, EventArgs e)
-    {
-      enableDiskQuotaControls();
-    
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("diskQuotaEnabled");
-      setting.Value = ((CheckBox)sender).Checked.ToString();
-      setting.Persist();
-    }
-
     private void LoadComboBoxDrive()
     {
       comboBoxDrive.Items.Clear();
@@ -532,5 +558,427 @@ namespace SetupTv.Sections
       comboBoxDrive.SelectedIndex = 0;
       UpdateDriveInfo(false);
     }
+
+    #endregion
+
+    #region DB Imports
+
+    #region RecordSorter
+
+    // Create a sorter that implements the IComparer interface.
+    public class RecordSorter : IComparer
+    {
+      // Compare the length of the strings, or the strings
+      // themselves, if they are the same length.
+      public int Compare(object x, object y)
+      {
+        int result = 0;
+        try
+        {
+          TreeNode tx = x as TreeNode;
+          TreeNode ty = y as TreeNode;
+
+          result = string.Compare(tx.Text, ty.Text, System.StringComparison.CurrentCulture);
+        }
+        catch (Exception)
+        {
+        }
+
+        return result;
+      }
+    }
+
+    #endregion
+
+    #region Delegates
+
+    protected delegate void MethodTreeViewTags(Dictionary<string, MatroskaTagInfo> FoundTags);
+
+    #endregion
+
+    #region Fields
+
+    private string fCurrentImportPath;
+    public string CurrentImportPath
+    {
+      get { return fCurrentImportPath; }
+      set
+      {
+        fCurrentImportPath = value;
+      }
+    }
+
+    private List<TreeNode> tvDbRecs = new List<TreeNode>();
+
+    #endregion
+
+    #region Settings
+
+    private void LoadDbImportSettings()
+    {
+      MatroskaTagHandler.OnTagLookupCompleted += new MatroskaTagHandler.TagLookupSuccessful(OnLookupCompleted);
+
+      GetRecordingsFromDb();
+
+      try
+      {
+        IList allCards = Card.ListAll();
+        foreach (Card tvCard in allCards)
+        {
+          if (!string.IsNullOrEmpty(tvCard.RecordingFolder) && !cbRecPaths.Items.Contains(tvCard.RecordingFolder))
+            cbRecPaths.Items.Add(tvCard.RecordingFolder);
+        }
+        if (cbRecPaths.Items.Count > 0)
+        {
+          cbRecPaths.SelectedIndex = 0;
+        }
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Error gathering recording folders of all tv cards: \n{0}", ex.Message));
+      }
+    }
+
+    private void cbRecPaths_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      try
+      {
+        CurrentImportPath = cbRecPaths.Text;
+        GetTagFiles();
+      }
+      catch (Exception ex2)
+      {
+        MessageBox.Show(string.Format("Error gathering matroska tags: \n{0}", ex2.Message));
+      }
+    }
+
+    #endregion
+
+    #region Recording retrieval
+
+    private void GetRecordingsFromDb()
+    {
+      try
+      {
+        tvDbRecs.Clear();
+        IList recordings = Recording.ListAll();
+        foreach (Recording rec in recordings)
+        {
+          TreeNode RecNode = BuildNodeFromRecording(rec);
+          if (RecNode != null)
+            tvDbRecs.Add(RecNode);
+        }
+      }
+      catch (Exception ex1)
+      {
+        MessageBox.Show(string.Format("Error retrieving recordings from database: \n{0}", ex1.Message));
+      }
+    }
+
+    #endregion
+
+    #region Tag retrieval
+
+    private void GetTagFiles()
+    {
+      btnImport.Enabled = false;
+      Dictionary<string, MatroskaTagInfo> importTags = new Dictionary<string, MatroskaTagInfo>();
+      try
+      {
+        Thread lookupThread = new Thread(new ParameterizedThreadStart(MatroskaTagHandler.GetAllMatroskaTags));
+        lookupThread.Start((object)CurrentImportPath);
+        lookupThread.IsBackground = true;
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(ex.Message);
+      }
+    }
+
+    private void OnLookupCompleted(Dictionary<string, MatroskaTagInfo> FoundTags)
+    {
+      Invoke(new MethodTreeViewTags(AddTagFiles), new object[] { FoundTags });
+    }
+
+    /// <summary>
+    /// Invoke method from MethodTreeViewTags delegate!!!
+    /// </summary>
+    /// <param name="FoundTags"></param>
+    private void AddTagFiles(Dictionary<string, MatroskaTagInfo> FoundTags)
+    {
+      tvTagRecs.Nodes.Clear();
+      tvTagRecs.BeginUpdate();
+      foreach (KeyValuePair<string, MatroskaTagInfo> kvp in FoundTags)
+      {
+        Recording TagRec = BuildRecordingFromTag(kvp.Key, kvp.Value);
+        if (TagRec != null)
+        {
+          TreeNode TagNode = BuildNodeFromRecording(TagRec);
+          if (TagNode != null)
+          {
+            bool RecFileFound = false;
+            foreach (TreeNode dbRec in tvDbRecs)
+            {
+              Recording currentDbRec = dbRec.Tag as Recording;
+              if (currentDbRec != null)
+              {
+                if (Path.GetFileNameWithoutExtension(currentDbRec.FileName) == Path.GetFileNameWithoutExtension(TagRec.FileName))
+                {
+                  RecFileFound = true;
+                  break;
+                }
+              }
+            }
+            if (!RecFileFound)
+              tvTagRecs.Nodes.Add(TagNode);
+          }
+        }
+      }
+      //tvTagRecs.TreeViewNodeSorter = new RecordSorter();
+      //try
+      //{
+      //  tvTagRecs.Sort();
+      //}
+      //catch (Exception ex)
+      //{
+      //  MessageBox.Show(string.Format("Error sorting tag recordings: \n{0}", ex.Message));
+      //}
+      tvTagRecs.EndUpdate();
+      btnImport.Enabled = (tvTagRecs.Nodes.Count > 0);
+    }
+
+    #endregion
+
+    #region Visualisation
+
+    private TreeNode BuildNodeFromRecording(Recording aRec)
+    {
+      try
+      {
+        Channel lookupChannel = null;
+        string channelId = "unknown";
+        string channelName = "unknown";
+        string startTime = SqlDateTime.MinValue.Value == aRec.StartTime ? "unknown" : aRec.StartTime.ToString();
+        string endTime = SqlDateTime.MinValue.Value == aRec.EndTime ? "unknown" : aRec.EndTime.ToString();
+        try
+        {
+          lookupChannel = (Channel)aRec.ReferencedChannel();
+          if (lookupChannel != null)
+          {
+            channelName = lookupChannel.DisplayName;
+            channelId = lookupChannel.IdChannel.ToString();
+          }
+        }
+        catch (Exception)
+        {
+        }
+
+        TreeNode[] subitems = new TreeNode[] { 
+                                               new TreeNode("Channel name: " + channelName), 
+                                               new TreeNode("Channel ID: " + channelId), 
+                                               new TreeNode("Genre: " + aRec.Genre), 
+                                               new TreeNode("Description: " + aRec.Description), 
+                                               new TreeNode("Start time: " + startTime), 
+                                               new TreeNode("End time: " + endTime), 
+                                               new TreeNode("Server ID: " + aRec.IdServer)
+                                             };
+        // /!\ TODO: need some code to disable the checkboxes for subnodes
+        //foreach (TreeNode subItem in subitems)
+        //{
+        //  subItem.StateImageIndex = -1;
+        //}
+
+        TreeNode recItem = new TreeNode(aRec.Title, subitems);
+        recItem.Tag = aRec;
+        recItem.Checked = true;
+        return recItem;
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Could not build TreeNode from recording: {0}\n{1}", aRec.Title, ex.Message));
+        return null;
+      }
+    }
+
+    #endregion
+
+    #region Tag to recording conversion
+
+    private Recording BuildRecordingFromTag(string aFileName, MatroskaTagInfo aTag)
+    {
+      Recording tagRec = null;
+      try
+      {
+        string physicalFile = GetRecordingFilename(aFileName);
+        tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
+                                         GetRecordingStartTime(physicalFile),
+                                         GetRecordingEndTime(physicalFile),
+                                         aTag.title,
+                                         aTag.description,
+                                         aTag.genre,
+                                         physicalFile,
+                                         0,
+                                         SqlDateTime.MaxValue.Value,
+                                         0,
+                                         GetServerId()
+                                         );
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Could not build recording from tag: {0}\n{1}", aFileName, ex.Message));
+      }
+      return tagRec;
+    }
+
+    private DateTime GetRecordingStartTime(string aFileName)
+    {
+      DateTime startTime = SqlDateTime.MinValue.Value;
+      if (File.Exists(aFileName))
+      {
+        FileInfo fi = new FileInfo(aFileName);
+        startTime = fi.CreationTime;
+      }
+      return startTime;
+    }
+
+    private DateTime GetRecordingEndTime(string aFileName)
+    {
+      DateTime endTime = SqlDateTime.MinValue.Value;
+      if (File.Exists(aFileName))
+      {
+        FileInfo fi = new FileInfo(aFileName);
+        endTime = fi.LastWriteTime;
+      }
+      return endTime;
+    }
+
+    private string GetRecordingFilename(string aTagFilename)
+    {
+      string recordingFile = Path.ChangeExtension(aTagFilename, ".ts");
+      try
+      {
+        string[] validExtensions = new string[] { ".ts", ".mpg" };
+        foreach (string ext in validExtensions)
+        {
+          string[] lookupFiles = Directory.GetFiles(Path.GetDirectoryName(aTagFilename), string.Format("{0}{1}", Path.GetFileNameWithoutExtension(aTagFilename), ext), SearchOption.TopDirectoryOnly);
+          if (lookupFiles.Length == 1)
+          {
+            recordingFile = lookupFiles[0];
+            return recordingFile;
+          }
+        }
+      }
+      catch (Exception)
+      {
+      }
+      return recordingFile;
+    }
+
+    private int GetServerId()
+    {
+      int serverId = 1;
+      try
+      {
+        string localHost = System.Net.Dns.GetHostName();
+        IList dbsServers = Server.ListAll();
+        foreach (Server computer in dbsServers)
+        {
+          if (computer.HostName.ToLower() == localHost.ToLower())
+            serverId = computer.IdServer;
+        }
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Could not get ServerID for recording!\n{0}", ex.Message));
+      }
+      return serverId;
+    }
+
+    private int GetChannelIdByDisplayName(string aChannelName)
+    {
+      int channelId = -1;
+      if (string.IsNullOrEmpty(aChannelName))
+        return channelId;
+      try
+      {
+        SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+        sb.AddConstraint(Operator.Equals, "displayName", aChannelName);
+        sb.SetRowLimit(1);
+        SqlStatement stmt = sb.GetStatement(true);
+        IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+        if (channels.Count == 1)
+          channelId = ((Channel)channels[0]).IdChannel;
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Could not get ChannelID for DisplayName: {0}\n{1}", aChannelName, ex.Message));
+      }
+      return channelId;
+    }
+
+    #endregion
+
+    #region Import
+
+    private void btnImport_Click(object sender, EventArgs e)
+    {
+      foreach (TreeNode tagRec in tvTagRecs.Nodes)
+      {
+        if (tagRec.Checked) // only import the recordings which the user has selected
+        {
+          Recording currentTagRec = tagRec.Tag as Recording;
+          if (currentTagRec != null)
+          {
+            //if (MessageBox.Show(this, string.Format("Import {0} now? \n{1}", currentTagRec.Title, currentTagRec.FileName), "Recording not found in DB", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            //{
+            try
+            {
+              currentTagRec.Persist();
+            }
+            catch (Exception ex)
+            {
+              MessageBox.Show(string.Format("Importing failed: {0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            //}
+          }
+        }
+      }
+      // Refresh the view
+      GetRecordingsFromDb();
+      GetTagFiles();
+    }
+
+    #endregion
+
+    #region Cleanup
+
+    private void btnRemoveInvalidFiles_Click(object sender, EventArgs e)
+    {
+      foreach (TreeNode dbRec in tvDbRecs)
+      {
+        Recording currentDbRec = dbRec.Tag as Recording;
+        if (currentDbRec != null)
+        {
+          if (!File.Exists(currentDbRec.FileName))
+          {
+            if (MessageBox.Show(this, string.Format("Delete entry {0} now? \n{1}", currentDbRec.Title, currentDbRec.FileName), "Recording not found on disk!", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            {
+              try
+              {
+                currentDbRec.Delete();
+              }
+              catch (Exception ex)
+              {
+                MessageBox.Show(string.Format("Cleanup failed: {0}", ex.Message), "Could not delete entry", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    #endregion
+
+    #endregion
   }
 }

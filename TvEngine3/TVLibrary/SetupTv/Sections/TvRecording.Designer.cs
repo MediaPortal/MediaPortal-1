@@ -83,6 +83,13 @@ namespace SetupTv.Sections
       this.label12 = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.tpRecordImport = new System.Windows.Forms.TabPage();
+      this.cbRecPaths = new System.Windows.Forms.ComboBox();
+      this.lblRecFolders = new System.Windows.Forms.Label();
+      this.tvTagRecs = new System.Windows.Forms.TreeView();
+      this.lblImportItems = new System.Windows.Forms.Label();
+      this.btnImport = new System.Windows.Forms.Button();
+      this.btnRemoveInvalidFiles = new System.Windows.Forms.Button();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -95,6 +102,7 @@ namespace SetupTv.Sections
       this.groupBox4.SuspendLayout();
       this.tabPage4.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      this.tpRecordImport.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -106,6 +114,7 @@ namespace SetupTv.Sections
       this.tabControl1.Controls.Add(this.tabPage2);
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Controls.Add(this.tabPage4);
+      this.tabControl1.Controls.Add(this.tpRecordImport);
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -172,6 +181,8 @@ namespace SetupTv.Sections
       // checkBoxCreateTagInfoXML
       // 
       this.checkBoxCreateTagInfoXML.AutoSize = true;
+      this.checkBoxCreateTagInfoXML.Checked = true;
+      this.checkBoxCreateTagInfoXML.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxCreateTagInfoXML.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateTagInfoXML.Location = new System.Drawing.Point(31, 129);
       this.checkBoxCreateTagInfoXML.Name = "checkBoxCreateTagInfoXML";
@@ -184,6 +195,8 @@ namespace SetupTv.Sections
       // checkboxSchedulerPriority
       // 
       this.checkboxSchedulerPriority.AutoSize = true;
+      this.checkboxSchedulerPriority.Checked = true;
+      this.checkboxSchedulerPriority.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkboxSchedulerPriority.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkboxSchedulerPriority.Location = new System.Drawing.Point(30, 93);
       this.checkboxSchedulerPriority.Name = "checkboxSchedulerPriority";
@@ -368,8 +381,8 @@ namespace SetupTv.Sections
       this.textBoxFormat.Name = "textBoxFormat";
       this.textBoxFormat.Size = new System.Drawing.Size(328, 20);
       this.textBoxFormat.TabIndex = 3;
-      this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
       this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
+      this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
       // 
       // label6
       // 
@@ -678,6 +691,86 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // tpRecordImport
+      // 
+      this.tpRecordImport.Controls.Add(this.btnRemoveInvalidFiles);
+      this.tpRecordImport.Controls.Add(this.btnImport);
+      this.tpRecordImport.Controls.Add(this.lblImportItems);
+      this.tpRecordImport.Controls.Add(this.tvTagRecs);
+      this.tpRecordImport.Controls.Add(this.lblRecFolders);
+      this.tpRecordImport.Controls.Add(this.cbRecPaths);
+      this.tpRecordImport.Location = new System.Drawing.Point(4, 22);
+      this.tpRecordImport.Name = "tpRecordImport";
+      this.tpRecordImport.Padding = new System.Windows.Forms.Padding(3);
+      this.tpRecordImport.Size = new System.Drawing.Size(457, 374);
+      this.tpRecordImport.TabIndex = 4;
+      this.tpRecordImport.Text = "Database import";
+      this.tpRecordImport.UseVisualStyleBackColor = true;
+      // 
+      // cbRecPaths
+      // 
+      this.cbRecPaths.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbRecPaths.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbRecPaths.FormattingEnabled = true;
+      this.cbRecPaths.Location = new System.Drawing.Point(30, 43);
+      this.cbRecPaths.Name = "cbRecPaths";
+      this.cbRecPaths.Size = new System.Drawing.Size(355, 21);
+      this.cbRecPaths.TabIndex = 1;
+      this.cbRecPaths.SelectedIndexChanged += new System.EventHandler(this.cbRecPaths_SelectedIndexChanged);
+      // 
+      // lblRecFolders
+      // 
+      this.lblRecFolders.AutoSize = true;
+      this.lblRecFolders.Location = new System.Drawing.Point(27, 24);
+      this.lblRecFolders.Name = "lblRecFolders";
+      this.lblRecFolders.Size = new System.Drawing.Size(88, 13);
+      this.lblRecFolders.TabIndex = 2;
+      this.lblRecFolders.Text = "Recording folder:";
+      // 
+      // tvTagRecs
+      // 
+      this.tvTagRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tvTagRecs.CheckBoxes = true;
+      this.tvTagRecs.FullRowSelect = true;
+      this.tvTagRecs.Location = new System.Drawing.Point(30, 94);
+      this.tvTagRecs.Name = "tvTagRecs";
+      this.tvTagRecs.Size = new System.Drawing.Size(355, 236);
+      this.tvTagRecs.TabIndex = 3;
+      // 
+      // lblImportItems
+      // 
+      this.lblImportItems.AutoSize = true;
+      this.lblImportItems.Location = new System.Drawing.Point(27, 75);
+      this.lblImportItems.Name = "lblImportItems";
+      this.lblImportItems.Size = new System.Drawing.Size(307, 13);
+      this.lblImportItems.TabIndex = 4;
+      this.lblImportItems.Text = "Recorded files which are currently not present in your database:";
+      // 
+      // btnImport
+      // 
+      this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnImport.Location = new System.Drawing.Point(30, 336);
+      this.btnImport.Name = "btnImport";
+      this.btnImport.Size = new System.Drawing.Size(170, 23);
+      this.btnImport.TabIndex = 5;
+      this.btnImport.Text = "Import selected files";
+      this.btnImport.UseVisualStyleBackColor = true;
+      this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+      // 
+      // btnRemoveInvalidFiles
+      // 
+      this.btnRemoveInvalidFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnRemoveInvalidFiles.Location = new System.Drawing.Point(215, 336);
+      this.btnRemoveInvalidFiles.Name = "btnRemoveInvalidFiles";
+      this.btnRemoveInvalidFiles.Size = new System.Drawing.Size(170, 23);
+      this.btnRemoveInvalidFiles.TabIndex = 6;
+      this.btnRemoveInvalidFiles.Text = "Remove no longer existing files";
+      this.btnRemoveInvalidFiles.UseVisualStyleBackColor = true;
+      this.btnRemoveInvalidFiles.Click += new System.EventHandler(this.btnRemoveInvalidFiles_Click);
+      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -702,6 +795,8 @@ namespace SetupTv.Sections
       this.tabPage4.ResumeLayout(false);
       this.tabPage4.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      this.tpRecordImport.ResumeLayout(false);
+      this.tpRecordImport.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -762,5 +857,12 @@ namespace SetupTv.Sections
     private System.Windows.Forms.NumericUpDown numericUpDownPostRec;
     private System.Windows.Forms.NumericUpDown numericUpDownPreRec;
     private System.Windows.Forms.CheckBox enableDiskQuota;
+    private System.Windows.Forms.TabPage tpRecordImport;
+    private System.Windows.Forms.Button btnImport;
+    private System.Windows.Forms.Label lblImportItems;
+    private System.Windows.Forms.TreeView tvTagRecs;
+    private System.Windows.Forms.Label lblRecFolders;
+    private System.Windows.Forms.ComboBox cbRecPaths;
+    private System.Windows.Forms.Button btnRemoveInvalidFiles;
   }
 }
