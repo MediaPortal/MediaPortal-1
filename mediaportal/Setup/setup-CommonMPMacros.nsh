@@ -115,6 +115,16 @@
 #**********************************************************************************************************#
 # LOGICLIB EXPRESSIONS
 
+;======================================   OLD MP INSTALLATION TESTs
+
+!macro _MP022IsInstalled _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ClearErrors
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{87819CFA-1786-484D-B0DE-10B5FBF2625D}" "UninstallString"
+  IfErrors `${_f}` `${_t}`
+!macroend
+!define MP022IsInstalled `"" MP022IsInstalled ""`
+
 !macro _MP023IsInstalled _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0" "UninstallString"
@@ -123,6 +133,28 @@
 !macroend
 !define MP023IsInstalled `"" MP023IsInstalled ""`
 
+;======================================   OLD TVServer/TVClient INSTALLATION TESTs
+
+!macro _MSI_TVServerIsInstalled _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ClearErrors
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4B738773-EE07-413D-AFB7-BB0AB04A5488}" "UninstallString"
+  IfErrors `${_f}` `${_t}`
+!macroend
+!define MSI_TVServerIsInstalled `"" MSI_TVServerIsInstalled ""`
+
+!macro _MSI_TVClientIsInstalled _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ClearErrors
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F7444E89-5BC0-497E-9650-E50539860DE0}" "UninstallString"
+  IfErrors 0 `${_t}`
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}" "UninstallString"
+  IfErrors `${_f}` `${_t}`
+!macroend
+!define MSI_TVClientIsInstalled `"" MSI_TVClientIsInstalled ""`
+
+;======================================
+
 !macro _MPIsInstalled _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
   ReadRegStr $_LOGICLIB_TEMP HKLM "${MP_REG_UNINSTALL}" "UninstallString"
@@ -130,8 +162,6 @@
   IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MPIsInstalled `"" MPIsInstalled ""`
-
-;======================================
 
 !macro _TVServerIsInstalled _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
@@ -155,27 +185,7 @@
 !macroend
 !define TVClientIsInstalled `"" TVClientIsInstalled ""`
 
-;======================================
-
-!macro _MSI_TVServerIsInstalled _a _b _t _f
-  !insertmacro _LOGICLIB_TEMP
-  ClearErrors
-  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4B738773-EE07-413D-AFB7-BB0AB04A5488}" "UninstallString"
-  IfErrors `${_f}` `${_t}`
-!macroend
-!define MSI_TVServerIsInstalled `"" MSI_TVServerIsInstalled ""`
-
-!macro _MSI_TVClientIsInstalled _a _b _t _f
-  !insertmacro _LOGICLIB_TEMP
-  ClearErrors
-  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F7444E89-5BC0-497E-9650-E50539860DE0}" "UninstallString"
-  IfErrors 0 `${_t}`
-  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}" "UninstallString"
-  IfErrors `${_f}` `${_t}`
-!macroend
-!define MSI_TVClientIsInstalled `"" MSI_TVClientIsInstalled ""`
-
-;======================================
+;======================================   3rd PARTY APPLICATION TESTs
 
 !macro _VCRedistIsInstalled _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
