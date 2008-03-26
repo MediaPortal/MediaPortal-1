@@ -196,6 +196,37 @@
 !macroend
 !define VCRedistIsInstalled `"" VCRedistIsInstalled ""`
 
+!macro _dotNetIsInstalled _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+
+  ReadRegStr $4 HKLM "Software\Microsoft\.NETFramework" "InstallRoot"
+  # remove trailing back slash
+  Push $4
+  Exch $EXEDIR
+  Exch $EXEDIR
+  Pop $4
+  # if the root directory doesn't exist .NET is not installed
+  IfFileExists $4 0 `${_f}`
+
+  StrCpy $0 0
+
+  EnumStart:
+
+    EnumRegKey $2 HKLM "Software\Microsoft\.NETFramework\Policy"  $0
+    IntOp $0 $0 + 1
+    StrCmp $2 "" `${_f}`
+
+    StrCpy $1 0
+
+    EnumPolicy:
+
+      EnumRegValue $3 HKLM "Software\Microsoft\.NETFramework\Policy\$2" $1
+      IntOp $1 $1 + 1
+       StrCmp $3 "" EnumStart
+        IfFileExists "$4\$2.$3" `${_t}` EnumPolicy
+!macroend
+!define dotNetIsInstalled `"" dotNetIsInstalled ""`
+
 #**********************************************************************************************************#
 # Get MP infos
 !macro MP_GET_INSTALL_DIR _var
