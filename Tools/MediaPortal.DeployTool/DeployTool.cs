@@ -125,21 +125,30 @@ namespace MediaPortal.DeployTool
 
         //MP
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{xxxxx}");
-        if (key != null && File.Exists(key.GetValue("UninstallString").ToString()))
-            OldMSI = true;
-        key.Close();
+        if (key != null)
+        {
+            if (File.Exists(key.GetValue("UninstallString").ToString()))
+                OldMSI = true;
+            key.Close();
+        }
 
         //TvServer MSI
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
-        if (key != null && File.Exists(key.GetValue("UninstallString").ToString()))
-            OldMSI = true;
-        key.Close();
+        if (key != null)
+        {
+            if(File.Exists(key.GetValue("UninstallString").ToString()))
+                   OldMSI = true;
+            key.Close();
+        }
 
         //TvClient MSI
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F7444E89-5BC0-497E-9650-E50539860DE0}");
-        if (key != null && File.Exists(key.GetValue("UninstallString").ToString()))
-            OldMSI = true;
-        key.Close();
+        if (key != null)
+        {
+            if (File.Exists(key.GetValue("UninstallString").ToString()))
+                OldMSI = true;
+            key.Close();
+        }
 
         if (OldMSI)
         {
