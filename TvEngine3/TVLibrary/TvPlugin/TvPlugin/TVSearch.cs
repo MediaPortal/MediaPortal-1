@@ -1154,15 +1154,28 @@ namespace TvPlugin
 
       GUIPropertyManager.SetProperty("#TV.Search.Title", prog.Title);
       GUIPropertyManager.SetProperty("#TV.Search.Time", strTime);
+      lblProgramTime.Label = strTime;
+      lblProgramTime.IsVisible = true;
       if (prog != null)
       {
         GUIPropertyManager.SetProperty("#TV.Search.Description", prog.Description);
-        GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);        
+        GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);  
+              
+        lblProgramDescription.Label = prog.Description;
+        lblProgramDescription.IsVisible = true;
+        lblProgramGenre.Label = prog.Genre;
+        lblProgramGenre.IsVisible = true;
+
       }
       else
       {
         GUIPropertyManager.SetProperty("#TV.Search.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Search.Genre", String.Empty);        
+        GUIPropertyManager.SetProperty("#TV.Search.Genre", String.Empty);
+
+        lblProgramDescription.Label = String.Empty;
+        lblProgramDescription.IsVisible = false;
+        lblProgramGenre.Label = String.Empty;
+        lblProgramGenre.IsVisible = false;
       }
 
 
