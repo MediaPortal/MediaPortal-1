@@ -551,6 +551,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (checkBoxCompressor.Checked)
       {
+        _comp.Preset_Medium();
         BassFx.BASS_FX_DSP_Set(_stream, BASSFXDsp.BASS_FX_DSPFX_COMPRESSOR, _compPrio);
         BassFx.BASS_FX_DSP_SetParameters(_stream, _comp);
 

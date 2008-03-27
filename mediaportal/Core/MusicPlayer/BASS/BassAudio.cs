@@ -1396,6 +1396,7 @@ namespace MediaPortal.Player
             if (_comp == null)
               _comp = new BASS_FX_DSPCOMPRESSOR();
 
+            _comp.Preset_Medium();
             _comp.fThreshold = (float)Un4seen.Bass.Utils.DBToLevel(Convert.ToInt32(value) / 10d, 1.0);
           }
           break;
@@ -1554,7 +1555,7 @@ namespace MediaPortal.Player
           {
             // Do an upmix of the stereo according to the matrix. 
             // Now Plugin the stream to the mixer and set the mixing matrix
-            BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSStream.BASS_MIXER_MATRIX | BASSStream.BASS_STREAM_AUTOFREE);
+            BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSStream.BASS_MIXER_MATRIX | BASSStream.BASS_STREAM_AUTOFREE | BASSStream.BASS_MIXER_NORAMPIN);
             BassMix.BASS_Mixer_ChannelSetMatrix(stream, ref _MixingMatrix[0, 0]);
           }
 
@@ -2376,7 +2377,7 @@ namespace MediaPortal.Player
           // Some Winamp dsps might raise an exception when closing
           foreach (int waDspPlugin in _waDspPlugins.Values)
           {
-            BassWa.BASS_WADSP_ChannelRemoveDSP(waDspPlugin);
+            BassWa.BASS_WADSP_Stop(waDspPlugin);
           }
         }
         catch (Exception)
