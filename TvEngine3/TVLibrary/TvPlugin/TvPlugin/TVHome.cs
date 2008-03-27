@@ -1460,16 +1460,18 @@ namespace TvPlugin
         if (schedulesList != null)
         {
           Schedule rec = Schedule.Retrieve(card.RecordingScheduleId);
-
-          foreach (Schedule s in schedulesList)
+          if (rec != null)
           {
-            if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
+            foreach (Schedule s in schedulesList)
             {
-              CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
-              schedule.Persist();
-              server.OnNewSchedule();
-              break;
-            }                        
+              if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
+              {
+                CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
+                schedule.Persist();
+                server.OnNewSchedule();
+                break;
+              }
+            }
           }
           server.StopRecordingSchedule(card.RecordingScheduleId);
         }

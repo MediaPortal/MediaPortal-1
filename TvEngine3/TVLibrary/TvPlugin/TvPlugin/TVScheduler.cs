@@ -750,13 +750,24 @@ namespace TvPlugin
 
         case 618: // delete entire recording
           {
-            if (server.IsRecordingSchedule(rec.IdSchedule, out card) || server.IsRecording(rec.ReferencedChannel().Name, out card))
+            bool isRecSchedule = server.IsRecordingSchedule(rec.IdSchedule, out card);
+            bool isRec = false;
+            
+            if (card.RecordingScheduleId == -1)
+            {
+              isRec = server.IsRecording(rec.ReferencedChannel().Name, out card);
+            }
+
+            if (isRecSchedule || isRec)
             {
               if (PromptDeleteRecordingInProgress(false))
               {
                 server.StopRecordingSchedule(card.RecordingScheduleId);
                 rec = Schedule.Retrieve(rec.IdSchedule);
-                rec.Delete();                            
+                if (rec != null)
+                {
+                  rec.Delete();
+                }
                 LoadDirectory();
               }                                                            
             }
@@ -764,7 +775,10 @@ namespace TvPlugin
             {
               server.StopRecordingSchedule(rec.IdSchedule);
               rec = Schedule.Retrieve(rec.IdSchedule);
-              rec.Delete();              
+              if (rec != null)
+              {
+                rec.Delete();
+              }        
               server.OnNewSchedule();              
 
               if (showSeries && !item.IsFolder)
