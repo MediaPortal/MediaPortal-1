@@ -168,7 +168,11 @@ Page custom PageReinstall PageLeaveReinstall
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
-OutFile "Release\setup-mediaportal.exe"
+!ifdef HIGH_BUILD
+  OutFile "Release\setup-mp-high.exe"
+!else
+  OutFile "Release\setup-mediaportal.exe"
+!endif
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
 CRCCheck on
