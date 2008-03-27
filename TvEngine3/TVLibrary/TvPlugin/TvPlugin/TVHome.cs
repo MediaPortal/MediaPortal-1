@@ -97,6 +97,7 @@ namespace TvPlugin
     static bool _userChannelChanged = false;
     static private bool _doingHandleServerNotConnected = false;
     static private bool _doingChannelChange = false;
+    static private bool _ServerNotConnectedHandled = false;
     //Stopwatch benchClock = null;
 
     [SkinControlAttribute(2)]
@@ -281,59 +282,72 @@ namespace TvPlugin
     {
       // _doingHandleServerNotConnected is used to avoid multiple calls to this method.
       // the result could be that the dialogue is not shown.
-
-      if (_doingHandleServerNotConnected) return TVHome.Connected;
-      _doingHandleServerNotConnected = true;
-      bool remConnected = RemoteControl.IsConnected;
-
-      // we just did a successful connect      
-      if (remConnected && !TVHome.Connected)
+      try
       {
-        GUIMessage initMsg = null;
-        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)GUIWindow.Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(initMsg);
-      }
+        if (_ServerNotConnectedHandled) return true; //still not connected
 
-      TVHome.Connected = remConnected;
+        if (_doingHandleServerNotConnected) return !TVHome.Connected;
+        _doingHandleServerNotConnected = true;
+        bool remConnected = RemoteControl.IsConnected;
 
-      if (!TVHome.Connected)
-      {
-        g_Player.Stop();
-        TVHome.Card.User.Name = new User().Name;
-
-        if (g_Player.FullScreen)
+        // we just did a successful connect      
+        if (remConnected && !TVHome.Connected)
         {
-          GUIMessage initMsgTV = null;
-          initMsgTV = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)GUIWindow.Window.WINDOW_TV, 0, 0, 0, 0, null);
-          GUIWindowManager.SendThreadMessage(initMsgTV);
+          GUIMessage initMsg = null;
+          initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)GUIWindow.Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(initMsg);
+        }
 
+        TVHome.Connected = remConnected;
+
+        if (!TVHome.Connected)
+        {
+          g_Player.Stop();
+          TVHome.Card.User.Name = new User().Name;
+
+          if (g_Player.FullScreen)
+          {
+            GUIMessage initMsgTV = null;
+            initMsgTV = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)GUIWindow.Window.WINDOW_TV, 0, 0, 0, 0, null);
+            GUIWindowManager.SendThreadMessage(initMsgTV);
+
+            _doingHandleServerNotConnected = false;
+            return true;
+          }
+          _ServerNotConnectedHandled = true;          
+          GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+
+          if (pDlgOK != null)
+          {            
+            pDlgOK.Reset();
+            pDlgOK.SetHeading(605);//my tv
+            pDlgOK.SetLine(1, TVHome.Navigator.CurrentChannel);
+            pDlgOK.SetLine(2, GUILocalizeStrings.Get(1510)); //Connection to TV server lost
+
+            //pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+
+            ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
+            Thread showDlgThread = new Thread(pThread);
+
+            // show the dialog asynch.
+            // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+            showDlgThread.Start(pDlgOK);
+          }
           _doingHandleServerNotConnected = false;
           return true;
         }
-
-        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-
-        if (pDlgOK != null)
-        {
-          pDlgOK.Reset();
-          pDlgOK.SetHeading(605);//my tv
-          pDlgOK.SetLine(1, TVHome.Navigator.CurrentChannel);
-          pDlgOK.SetLine(2, GUILocalizeStrings.Get(1510)); //Connection to TV server lost
-
-          //pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-
-          ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
-          Thread showDlgThread = new Thread(pThread);
-
-          // show the dialog asynch.
-          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-          showDlgThread.Start(pDlgOK);
-        }
-        _doingHandleServerNotConnected = false;
+      }
+      catch (Exception e)
+      {        
+        //we assume that server is disconnected.
+        Log.Error("TVHome.HandleServerNotConnected caused an error {0},{1}", e.Message, e.StackTrace);
+        _doingHandleServerNotConnected = false;        
         return true;
       }
-
-      _doingHandleServerNotConnected = false;
+      finally
+      {
+        _doingHandleServerNotConnected = false;        
+      }
       return false;
     }
 
@@ -2109,6 +2123,7 @@ namespace TvPlugin
 
           //GUIWaitCursor.Hide();
           _doingChannelChange = false;
+          _ServerNotConnectedHandled = false;
           return true;
         }
         else
