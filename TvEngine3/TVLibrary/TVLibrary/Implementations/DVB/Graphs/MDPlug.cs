@@ -439,7 +439,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        //Log.Log.Write(ex);
         Log.Log.Info("mdplug: This MDAPIfilter doesnt have Extend capabilities. We will use standard");
         _changeChannel_Ex = null;
       }

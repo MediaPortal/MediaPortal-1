@@ -98,6 +98,7 @@ namespace TvLibrary.Implementations.DVB
     private TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
     protected bool tunerOnly = false;
     WinTvCiModule winTvCiHandler = null;
+    protected bool _cardUsesRealCAM = true;
     #endregion
 
     #region ctor
@@ -727,12 +728,12 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:  using only tv tuner filter...");
         ConnectMpeg2DemuxToInfTee();
         AddTsWriterFilterToGraph();
-        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
+        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this,_cardUsesRealCAM);
         return;
       }
       ConnectMpeg2DemuxToInfTee();
       AddTsWriterFilterToGraph();
-      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
+      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this,_cardUsesRealCAM);
     }
 
     /// <summary>
@@ -794,6 +795,7 @@ namespace TvLibrary.Implementations.DVB
       _mdplugs = MDPlugs.Create(dv);
       if (_mdplugs != null)
       {
+        _cardUsesRealCAM = false;
         Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
         _infTeeSecond = (IBaseFilter)new InfTee();
         hr = _graphBuilder.AddFilter(_infTeeSecond, "Inf Tee 2");
@@ -803,7 +805,8 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("Unable to add  _infTeeSecond");
         }
         _mdplugs.Connectmdapifilter(_graphBuilder, ref _infTeeMain, ref _infTeeSecond, ref _filterMpeg2DemuxTif);
-      } else
+      } 
+      else
       {
         //connect the [inftee main] -> [TIF MPEG2 Demultiplexer]
         Log.Log.WriteFile("dvb:  Render [inftee]->[demux]");

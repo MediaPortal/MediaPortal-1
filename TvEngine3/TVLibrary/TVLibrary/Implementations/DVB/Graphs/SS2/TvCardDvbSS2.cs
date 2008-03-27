@@ -181,7 +181,7 @@ namespace TvLibrary.Implementations.DVB
         if (setting.Value == "yes")
           _useDISEqCMotor = true;
       }
-      _conditionalAccess = new ConditionalAccess(null, null, null, null);
+      _conditionalAccess = new ConditionalAccess(null, null, null, null,false);
       _tunerDevice = device;
       _devicePath = _tunerDevice.DevicePath;
       _name = _tunerDevice.Name;

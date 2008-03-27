@@ -818,25 +818,19 @@ namespace TvLibrary.Implementations.DVB
         updatePids = false;
         if (_mdplugs != null)
         {
-            if (_newCA == false)
-            {
-              Log.Log.Info("subch:{0} SendPmt:wait for ca", _subChannelId);
-              return false;//cat not received yet
-            }
-          // GEMX 16.03.08: The hack seems to be no longer needed
-          // speeds up channel changing for FTA channels
-          //DVBBaseChannel chan = _currentChannel as DVBBaseChannel;
-          //if (chan != null)
-          //{
+          DVBBaseChannel chan = _currentChannel as DVBBaseChannel;
+          if (chan != null)
+          {
             //HACK: Currently Premiere Direkt Feeds (nid=133) have the free_ca flag in SDT set to true (means not scrambled), so we have to override this
-            //if ((!chan.FreeToAir) || (chan.NetworkId == 133 && !chan.Provider.Equals("BetaDigital")))
-            //{
-            //  if (_newCA == false)
-            //  {
-            //    Log.Log.Info("subch:{0} SendPmt:wait for ca", _subChannelId);
-            //    return false;//cat not received yet
-            //  }
-            //}
+            if ((!chan.FreeToAir) || (chan.NetworkId == 133 && !chan.Provider.Equals("BetaDigital")))
+            {
+              if (_newCA == false)
+              {
+                Log.Log.Info("subch:{0} SendPmt:wait for ca", _subChannelId);
+                return false;//cat not received yet
+              }
+            }
+          }
         }
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
         if (channel == null)

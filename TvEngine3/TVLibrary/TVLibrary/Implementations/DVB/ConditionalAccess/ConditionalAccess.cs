@@ -38,6 +38,7 @@ namespace TvLibrary.Implementations.DVB
   public class ConditionalAccess
   {
     #region variables
+    bool _useCam;
     DigitalEverywhere _digitalEveryWhere = null;
     TechnoTrend _technoTrend = null;
     Twinhan _twinhan = null;
@@ -61,10 +62,12 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="analyzerFilter">The capture filter.</param>
     /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
     /// <param name="card">Determines the type of TV card</param>
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter, TvCardDvbBase card)
+    /// <param name="useCAM">Indicates if the real cam is to be used or not</param>
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter, TvCardDvbBase card, bool useCAM)
     {
       try
       {
+        _useCam = useCAM;
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
         //DVB checks. Conditional Access & DiSEqC etc.
@@ -248,6 +251,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        if (!_useCam) return true;
         if (_knc != null)
         {
           return _knc.IsCamReady();
@@ -289,6 +293,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        if (!_useCam) return;
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.ResetCAM();
@@ -368,6 +373,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        if (!_useCam) return true;
         if (channel.FreeToAir) return true;//no need to descramble this one...
 
         AddSubChannel(subChannel);
@@ -487,6 +493,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
+        if (!_useCam) return;
         if (_digitalEveryWhere != null)
         {
           bool isDvbc, isDvbt, isDvbs, isAtsc;
