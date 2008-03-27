@@ -770,19 +770,20 @@ namespace TvEngine.PowerScheduler
     /// <returns>Last time of user input</returns>
     DateTime GetLastInputTime()
     {
+      long systemUptime = Environment.TickCount;
+
       LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
       lastInputInfo.cbSize = (uint) Marshal.SizeOf(lastInputInfo);
-
+      lastInputInfo.dwTime = 0;
+      
       if (!GetLastInputInfo(ref lastInputInfo))
       {
         Log.Error("PowerScheduler: Unable to GetLastInputInfo!");
         return DateTime.MinValue;
       }
 
-      long lastKick= lastInputInfo.dwTime;
-      long tick = GetTickCount();
-
-      long delta = lastKick - tick;
+      long lastKick = lastInputInfo.dwTime;
+      long delta = lastKick - systemUptime;
 
       if (delta > 0)
       {
@@ -1147,11 +1148,14 @@ namespace TvEngine.PowerScheduler
       {
         // adjust _lastUserTime by user activity
         DateTime userInput = GetLastInputTime();
+        
         if (userInput > _lastUserTime)
         {
           _lastUserTime = userInput;
           LogVerbose("PowerScheduler: User input detected at {0}", _lastUserTime);
         }
+
+        LogVerbose("PowerScheduler: lastUserTime: {0:HH:mm:ss.ffff} , {1}", _lastUserTime, _currentUnattended);
 
         bool val= _lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout);
         if( val != _currentUnattended )
