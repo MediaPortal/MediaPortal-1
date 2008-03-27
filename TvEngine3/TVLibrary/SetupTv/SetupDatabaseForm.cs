@@ -116,19 +116,21 @@ namespace SetupTv
                 switch (_provider)
                 {
                   case ProviderType.SqlServer:
-                    tbServerHostName.Text = keyValue[1] = Dns.GetHostName() + @"\SQLEXPRESS";                    
+                    tbServerHostName.Text = keyValue[1] = Dns.GetHostName() + @"\SQLEXPRESS";
                     break;
                   case ProviderType.MySql:
-                    tbServerHostName.Text = keyValue[1] = Dns.GetHostName();                    
+                    tbServerHostName.Text = keyValue[1] = Dns.GetHostName();
                     break;
                   case ProviderType.FbEmbedded:
                     tbServerHostName.Text = keyValue[1] = Dns.GetHostName();
                     break;
                 }
               }
-            } 
+            }
             else
-            { tbServerHostName.Text = keyValue[1]; }
+            {
+              tbServerHostName.Text = keyValue[1];
+            }
           }
         }
       }
@@ -192,13 +194,6 @@ namespace SetupTv
               connect.Close();
             }
             break;
-          //case ProviderType.FbEmbedded:
-          //  using (FbConnection connect = new FbConnection(connectionString))
-          //  {
-          //    connect.Open();
-          //    connect.Close();
-          //  }
-          //  break;
           default:
             throw (new Exception("Unsupported provider!"));
         }
@@ -233,36 +228,20 @@ namespace SetupTv
             stream = assm.GetManifestResourceStream("SetupTv." + prefix + "_mysql_database.sql");
             break;
         }
-        StreamReader reader = new StreamReader(stream);
-        string sql = reader.ReadToEnd();
-        string[] cmds = null;
+
+        string sql = string.Empty;
+        using (StreamReader reader = new StreamReader(stream))
+          sql = reader.ReadToEnd();
+
+        string[] CommandScript = null;
         switch (_provider)
         {
           case ProviderType.SqlServer:
-            string currentDir = System.IO.Directory.GetCurrentDirectory();
-            currentDir += @"\";
-            sql = sql.Replace(@"C:\Program Files\Microsoft SQL Server\MSSQL\data\", currentDir);
-            sql = sql.Replace("GO\r\n", "!");
-            sql = sql.Replace("\r\n", " ");
-            sql = sql.Replace("\t", " ");
-            cmds = sql.Split('!');
+            CommandScript = CleanMsSqlStatement(sql);
             break;
 
           case ProviderType.MySql:
-            sql = sql.Replace("\r\n", "\r");
-            sql = sql.Replace("\t", " ");
-            string[] lines = sql.Split('\r');
-            sql = "";
-            for (int i = 0 ; i < lines.Length ; ++i)
-            {
-              string line = lines[i].Trim();
-              if (line.StartsWith("/*")) continue;
-              if (line.StartsWith("--")) continue;
-              if (line.Length == 0) continue;
-              sql += line;
-            }
-
-            cmds = sql.Split('#');
+            CommandScript = CleanMySqlStatement(sql);
             break;
         }
 
@@ -273,23 +252,24 @@ namespace SetupTv
             using (SqlConnection connect = new SqlConnection(connectionString))
             {
               connect.Open();
-              for (int i = 0 ; i < cmds.Length ; ++i)
+              foreach (string SingleStmt in CommandScript)
               {
-                cmds[i] = cmds[i].Trim();
-                if (cmds[i].Length > 0)
+                string SqlStmt = SingleStmt.Trim();
+                if (!string.IsNullOrEmpty(SqlStmt) && !SqlStmt.StartsWith("--") && !SqlStmt.StartsWith("/*"))
                 {
                   try
                   {
-                    SqlCommand cmd = connect.CreateCommand();
-                    cmd.CommandText = cmds[i];
-                    cmd.CommandType = CommandType.Text;
-                    TvLibrary.Log.Log.Write("sql:{0}", cmds[i]);
-                    cmd.ExecuteNonQuery();
+                    using (SqlCommand cmd = new SqlCommand(SqlStmt, connect))
+                    {
+                      Log.Write("  Exec SQL: {0}", SqlStmt);
+                      cmd.ExecuteNonQuery();
+                    }
                   }
-                  catch (Exception ex)
+                  catch (SqlException ex)
                   {
-                    TvLibrary.Log.Log.Error("failed:sql:{0}", cmds[i]);
-                    TvLibrary.Log.Log.Error("reason:{0}", ex.ToString());
+                    Log.Write("  ********* SQL statement failed! *********");
+                    Log.Write("  ********* Error reason: {0}", ex.Message);
+                    Log.Write("  ********* Error code: {0}, Line: {1} *********", ex.Number.ToString(), ex.LineNumber.ToString());
                     succeeded = false;
                   }
                 }
@@ -300,27 +280,25 @@ namespace SetupTv
             using (MySqlConnection connect = new MySqlConnection(connectionString))
             {
               connect.Open();
-              for (int i = 0 ; i < cmds.Length ; ++i)
+              foreach (string SingleStmt in CommandScript)
               {
-                cmds[i] = cmds[i].Trim();
-                if (cmds[i].Length > 0)
+                string SqlStmt = SingleStmt.Trim();
+                if (!string.IsNullOrEmpty(SqlStmt) && !SqlStmt.StartsWith("--") && !SqlStmt.StartsWith("/*"))
                 {
-                  if (!cmds[i].StartsWith("--") && !cmds[i].StartsWith("/*"))
+                  try
                   {
-                    try
+                    using (MySqlCommand cmd = new MySqlCommand(SqlStmt, connect))
                     {
-                      MySqlCommand cmd = connect.CreateCommand();
-                      cmd.CommandText = cmds[i];
-                      cmd.CommandType = CommandType.Text;
-                      TvLibrary.Log.Log.Write("sql:{0}", cmds[i]);
+                      Log.Write("  Exec SQL: {0}", SqlStmt);
                       cmd.ExecuteNonQuery();
                     }
-                    catch (Exception ex)
-                    {
-                      TvLibrary.Log.Log.Error("failed:sql:{0}", cmds[i]);
-                      TvLibrary.Log.Log.Error("reason:{0}", ex.ToString());
-                      succeeded = false;
-                    }
+                  }
+                  catch (MySqlException ex)
+                  {
+                    Log.Write("  ********* SQL statement failed! *********");
+                    Log.Write("  ********* Error reason: {0}", ex.Message);
+                    Log.Write("  ********* Error code: {0} *********", ex.Number.ToString());
+                    succeeded = false;
                   }
                 }
               }
@@ -328,13 +306,41 @@ namespace SetupTv
             break;
         }
       }
-      catch (Exception ex)
+      catch (Exception gex)
       {
-        MessageBox.Show(this, "Unable to " + prefix + " database:" + ex.Message);
+        MessageBox.Show(this, "Unable to " + prefix + " database:" + gex.Message);
         succeeded = false;
       }
       SqlConnection.ClearAllPools();
       return succeeded;
+    }
+
+    private string[] CleanMsSqlStatement(string sql)
+    {
+      string currentDir = System.IO.Directory.GetCurrentDirectory();
+      currentDir += @"\";
+      sql = sql.Replace(@"C:\Program Files\Microsoft SQL Server\MSSQL\data\", currentDir);
+      sql = sql.Replace("GO\r\n", "!");
+      sql = sql.Replace("\r\n", " ");
+      sql = sql.Replace("\t", " ");
+      return sql.Split('!');
+    }
+
+    private string[] CleanMySqlStatement(string sql)
+    {
+      sql = sql.Replace("\r\n", "\r");
+      sql = sql.Replace("\t", " ");
+      string[] lines = sql.Split('\r');
+      sql = "";
+      for (int i = 0 ; i < lines.Length ; ++i)
+      {
+        string line = lines[i].Trim();
+        if (line.StartsWith("/*")) continue;
+        if (line.StartsWith("--")) continue;
+        if (line.Length == 0) continue;
+        sql += line;
+      }
+      return sql.Split('#');
     }
 
     private void mpButtonTest_Click(object sender, EventArgs e)
