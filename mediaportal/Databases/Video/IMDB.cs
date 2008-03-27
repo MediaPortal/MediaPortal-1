@@ -602,6 +602,7 @@ namespace MediaPortal.Video.Database
                    m_progress.OnProgress(line1, line2, line3, percent);
                  try
                  {
+                   Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
                    AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
                    IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
                    grabber.FindFilm(strSearch, aLimits[i], elements);
