@@ -214,7 +214,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     SetOutPath $INSTDIR\Plugins
     File ..\Plugins\ComSkipLauncher\bin\Release\ComSkipLauncher.dll
     File ..\Plugins\ConflictsManager\bin\Release\ConflictsManager.dll
-    File ..\Plugins\PersonalTVGuide\bin\Release\PersonalTVGuide.dll
+    # removed it because it is not working like it should
+    #File ..\Plugins\PersonalTVGuide\bin\Release\PersonalTVGuide.dll
     File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.dll
     File ..\Plugins\ServerBlaster\ServerBlaster\bin\Release\ServerBlaster.dll
     File ..\Plugins\TvMovie\bin\Release\TvMovie.dll
@@ -351,7 +352,7 @@ ${MementoSectionEnd}
     ; Remove Plugins
     Delete /REBOOTOK $INSTDIR\Plugins\ComSkipLauncher.dll
     Delete /REBOOTOK $INSTDIR\Plugins\ConflictsManager.dll
-    Delete /REBOOTOK $INSTDIR\Plugins\PersonalTVGuide.dll
+    #Delete /REBOOTOK $INSTDIR\Plugins\PersonalTVGuide.dll
     Delete /REBOOTOK $INSTDIR\Plugins\PowerScheduler.dll
     Delete /REBOOTOK $INSTDIR\Plugins\ServerBlaster.dll
     Delete /REBOOTOK $INSTDIR\Plugins\TvMovie.dll
