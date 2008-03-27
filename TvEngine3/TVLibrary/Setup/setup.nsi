@@ -225,7 +225,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     File ..\DirectShowLib\bin\Release\DirectShowLib.dll
     File ..\dvblib.dll
     File ..\Plugins\PluginBase\bin\Release\PluginBase.dll
-    File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.Interfaces.dll
+    File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
     File "..\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Release\Blaster.exe"
     File ..\Setup\mp.ico
     File ..\SetupTv\bin\Release\SetupTv.exe
@@ -413,7 +413,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
     #---------------------------- File Copy ----------------------
     ; Common Files
     SetOutPath $MPBaseDir
-    File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.Interfaces.dll
+    File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
     File ..\TvControl\bin\Release\TvControl.dll
     File ..\TVDatabase\bin\Release\TVDatabase.dll
     File ..\TVDatabase\references\Gentle.Common.DLL

@@ -140,6 +140,7 @@
     <ProjectReference Include="..\..\TvService\TvService.csproj">
       <Project>{3BE4F3AA-36EB-4956-B000-E29C74FC6AB0}</Project>
       <Name>TvService</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
@@ -149,6 +150,7 @@
     <ProjectReference Include="PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
       <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
       <Name>PowerScheduler.Interfaces</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

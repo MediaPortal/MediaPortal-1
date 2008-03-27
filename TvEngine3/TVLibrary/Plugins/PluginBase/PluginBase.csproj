@@ -47,10 +47,12 @@
     <Reference Include="Gentle.Common, Version=1.2.9.18127, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\Gentle.Common.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Gentle.Framework, Version=1.2.9.18134, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -70,18 +72,22 @@
     <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
       <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
       <Name>SetupControls</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\TVDatabase\TVDatabase.csproj">
       <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
       <Name>TVDatabase</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

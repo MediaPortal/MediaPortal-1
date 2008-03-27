@@ -6,7 +6,7 @@ namespace SetupTv.Sections
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private new System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
