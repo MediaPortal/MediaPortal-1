@@ -1,7 +1,7 @@
 -- MySQL Administrator dump 1.4
 --
 -- ------------------------------------------------------
--- Server version	5.0.26-community-nt
+-- Server version	5.1.23-rc-community
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -32,15 +32,8 @@ CREATE TABLE `CanceledSchedule` (
   `cancelDateTime` datetime NOT NULL,
   PRIMARY KEY  (`idCanceledSchedule`),
   KEY `FK_CanceledSchedule_Schedule` (`idSchedule`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
---
--- Dumping data for table `CanceledSchedule`
---
-
-/*!40000 ALTER TABLE `CanceledSchedule` DISABLE KEYS */;
-/*!40000 ALTER TABLE `CanceledSchedule` ENABLE KEYS */;
-
 
 --
 -- Definition of table `Card`
@@ -63,7 +56,7 @@ CREATE TABLE `Card` (
   `decryptLimit` int(11) NOT NULL,
   PRIMARY KEY  (`idCard`),
   KEY `FK_Card_Server` (`idServer`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -75,7 +68,7 @@ CREATE TABLE `CardGroup` (
   `idCardGroup` int(11) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY  (`idCardGroup`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -90,7 +83,7 @@ CREATE TABLE `CardGroupMap` (
   PRIMARY KEY  (`idMapping`),
   KEY `FK_CardGroupMap_Card` (`idCard`),
   KEY `FK_CardGroupMap_CardGroup` (`idCardGroup`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -113,8 +106,8 @@ CREATE TABLE `Channel` (
   `freetoair` bit(1) NOT NULL,
   `displayName` varchar(200) NOT NULL,
   PRIMARY KEY  (`idChannel`),
-  KEY `IDX_Channel1` (`isTv`,`sortOrder`)
-) ENGINE=MyISAM AUTO_INCREMENT=383 DEFAULT CHARSET=latin1;
+  KEY `idxChannel` (`isTv`,`sortOrder`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 #
 
 --
@@ -128,21 +121,20 @@ CREATE TABLE `ChannelGroup` (
   `sortOrder` int(11) NOT NULL,
   PRIMARY KEY  (`idGroup`),
   KEY `IDX_ChannelGroup` (`sortOrder`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 #
 
 --
--- Definition of table `ChannelGroup`
+-- Definition of table `ChannelLinkageMap`
 --
 
-DROP TABLE IF EXISTS `RadioChannelGroup`;
-CREATE TABLE `RadioChannelGroup` (
-  `idGroup` int(11) NOT NULL auto_increment,
-  `groupName` varchar(200) NOT NULL,
-  `sortOrder` int(11) NOT NULL,
-  PRIMARY KEY  (`idGroup`),
-  KEY `IDX_RadioChannelGroup` (`sortOrder`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+DROP TABLE IF EXISTS `ChannelLinkageMap`;
+CREATE TABLE `ChannelLinkageMap` (
+  `idMapping` int(11) NOT NULL auto_increment,
+  `idPortalChannel` int(11) NOT NULL,
+  `idLinkedChannel` int(11) NOT NULL,
+  PRIMARY KEY (`idMapping`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -157,7 +149,7 @@ CREATE TABLE `ChannelMap` (
   PRIMARY KEY  (`idChannelMap`),
   KEY `FK_ChannelMap_Cards` (`idCard`),
   KEY `FK_ChannelMap_Channels` (`idChannel`)
-) ENGINE=MyISAM AUTO_INCREMENT=289 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -176,7 +168,7 @@ CREATE TABLE `Conflict` (
   KEY `FK_Conflict_Channel` (`idChannel`),
   KEY `FK_Conflict_Schedule` (`idSchedule`),
   KEY `FK_Conflict_Schedule1` (`idConflictingSchedule`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -192,7 +184,7 @@ CREATE TABLE `DiSEqCMotor` (
   PRIMARY KEY  (`idDiSEqCMotor`),
   KEY `FK_DisEqcMotor_Satellite` (`idSatellite`),
   KEY `FK_DisEqcMotor_Card` (`idCard`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -207,7 +199,7 @@ CREATE TABLE `Favorite` (
   `timesWatched` int(11) NOT NULL,
   PRIMARY KEY  (`idFavorite`),
   KEY `FK_Favorites_Programs` (`idProgram`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -223,23 +215,68 @@ CREATE TABLE `GroupMap` (
   PRIMARY KEY  (`idMap`),
   KEY `FK_GroupMap_Channel` (`idChannel`),
   KEY `FK_GroupMap_ChannelGroup` (`idGroup`)
-) ENGINE=MyISAM AUTO_INCREMENT=145 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
--- Definition of table `RadioGroupMap`
+-- Definition of table `History`
 --
 
-DROP TABLE IF EXISTS `RadioGroupMap`;
-CREATE TABLE `RadioGroupMap` (
-  `idMap` int(11) NOT NULL auto_increment,
-  `idGroup` int(11) NOT NULL,
-  `idChannel` int(11) NOT NULL,
-  `SortOrder` int(11) NOT NULL,
-  PRIMARY KEY  (`idMap`),
-  KEY `FK_RadioGroupMap_Channel` (`idChannel`),
-  KEY `FK_RadioGroupMap_ChannelGroup` (`idGroup`)
-) ENGINE=MyISAM AUTO_INCREMENT=145 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+DROP TABLE IF EXISTS `History`;
+CREATE TABLE `History`(
+	`idHistory` int NOT NULL auto_increment,
+	`idChannel` int NOT NULL,
+	`startTime` datetime NOT NULL,
+	`endTime` datetime NOT NULL,
+	`title` varchar(1000) NOT NULL,
+	`description` varchar(1000) NOT NULL,
+	`genre` varchar(1000) NOT NULL,
+	`recorded` bit NOT NULL,
+	`watched` int NOT NULL,
+  PRIMARY KEY  (`idHistory`),
+  KEY `FK_History_Channel` (`idChannel`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+#
+
+--
+-- Definition of table `Keyword`
+--
+
+DROP TABLE IF EXISTS `Keyword`;
+CREATE TABLE `Keyword`(
+	`idKeyword` int NOT NULL auto_increment,
+  `keywordName` varchar(200) NOT NULL,  
+	`rating` int NOT NULL,
+	`autoRecord` bit(1) NOT NULL,
+	`searchIn` int NOT NULL,
+  PRIMARY KEY  (`idKeyword`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+#
+
+--
+-- Definition of table `KeywordMap`
+--
+
+DROP TABLE IF EXISTS `KeywordMap`;
+CREATE TABLE `KeywordMap`(
+	`idKeywordMap` int NOT NULL auto_increment,
+	`idKeyword` int NOT NULL,
+  `idChannelGroup` int NOT NULL,
+  PRIMARY KEY  (`idKeywordMap`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+#
+
+--
+-- Definition of table `PersonalTVGuideMap`
+--
+
+DROP TABLE IF EXISTS `PersonalTVGuideMap`;
+CREATE TABLE `PersonalTVGuideMap`(
+	`idPersonalTVGuideMap` int NOT NULL auto_increment,
+	`idKeyword` int NOT NULL,
+  `idProgram` int NOT NULL,
+  PRIMARY KEY  (`idPersonalTVGuideMap`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -264,7 +301,37 @@ CREATE TABLE  `Program` (
   `parentalRating` int(11) NOT NULL,
   PRIMARY KEY  (`idProgram`),
   UNIQUE KEY `idProgramBeginEnd` (`idChannel`,`startTime`,`endTime`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+#
+
+--
+-- Definition of table `RadioChannelGroup`
+--
+
+DROP TABLE IF EXISTS `RadioChannelGroup`;
+CREATE TABLE `RadioChannelGroup` (
+  `idGroup` int(11) NOT NULL auto_increment,
+  `groupName` varchar(200) NOT NULL,
+  `sortOrder` int(11) NOT NULL,
+  PRIMARY KEY  (`idGroup`),
+  KEY `IDX_RadioChannelGroup` (`sortOrder`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+#
+
+--
+-- Definition of table `RadioGroupMap`
+--
+
+DROP TABLE IF EXISTS `RadioGroupMap`;
+CREATE TABLE `RadioGroupMap` (
+  `idMap` int(11) NOT NULL auto_increment,
+  `idGroup` int(11) NOT NULL,
+  `idChannel` int(11) NOT NULL,
+  `SortOrder` int(11) NOT NULL,
+  PRIMARY KEY  (`idMap`),
+  KEY `FK_RadioGroupMap_Channel` (`idChannel`),
+  KEY `FK_RadioGroupMap_ChannelGroup` (`idGroup`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -289,7 +356,7 @@ CREATE TABLE `Recording` (
   PRIMARY KEY  (`idRecording`),
   KEY `FK_Recording_Server` (`idServer`),
   KEY `FK_Recordings_Channels` (`idChannel`)
-) ENGINE=MyISAM AUTO_INCREMENT=43 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -302,7 +369,7 @@ CREATE TABLE `Satellite` (
   `satelliteName` varchar(200) NOT NULL,
   `transponderFileName` varchar(200) NOT NULL,
   PRIMARY KEY  (`idSatellite`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -329,7 +396,7 @@ CREATE TABLE `Schedule` (
   `recommendedCard` int(11) NOT NULL,
   PRIMARY KEY  (`id_Schedule`),
   KEY `FK_Schedule_Channel` (`idChannel`)
-) ENGINE=MyISAM AUTO_INCREMENT=43 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -342,7 +409,7 @@ CREATE TABLE `Server` (
   `isMaster` bit(1) NOT NULL,
   `hostName` varchar(256) NOT NULL,
   PRIMARY KEY  (`idServer`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -355,19 +422,21 @@ CREATE TABLE `Setting` (
   `tag` varchar(200) NOT NULL,
   `value` varchar(4096) NOT NULL,
   PRIMARY KEY  (`idSetting`)
-) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
--- Definition of table `ChannelLinkageMap`
+-- Definition of table `Timespan`
 --
-DROP TABLE IF EXISTS `ChannelLinkageMap`;
-CREATE TABLE `ChannelLinkageMap` (
-  `idMapping` int(11) NOT NULL auto_increment,
-  `idPortalChannel` int(11) NOT NULL,
-  `idLinkedChannel` int(11) NOT NULL,
-  PRIMARY KEY (`idMapping`)
-) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+
+DROP TABLE IF EXISTS `Timespan`;
+CREATE TABLE `Timespan`(
+	`idTimespan` int NOT NULL auto_increment,
+	`startTime` datetime NOT NULL,
+	`endTime` datetime NOT NULL, 
+	`dayOfWeek` int NOT NULL,
+  PRIMARY KEY  (`idTimespan`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
 --
@@ -413,7 +482,7 @@ CREATE TABLE `TuningDetail` (
   `bitrate` int(11) NOT NULL,
   PRIMARY KEY  (`idTuning`),
   KEY `IDX_TuningDetail1` (`idChannel`)
-) ENGINE=MyISAM AUTO_INCREMENT=396 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 #
 
 --
@@ -429,80 +498,8 @@ CREATE TABLE `TvMovieMapping`(
 	`timeSharingEnd` varchar(200) NOT NULL,
   PRIMARY KEY  (`idMapping`),
   KEY `FK_TvMovieMapping_Channel` (`idChannel`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
-
-DROP TABLE IF EXISTS `History`;
-CREATE TABLE `History`(
-	`idHistory` int NOT NULL auto_increment,
-	`idChannel` int NOT NULL,
-	`startTime` datetime NOT NULL,
-	`endTime` datetime NOT NULL,
-	`title` varchar(1000) NOT NULL,
-	`description` varchar(1000) NOT NULL,
-	`genre` varchar(1000) NOT NULL,
-	`recorded` bit NOT NULL,
-	`watched` int NOT NULL,
-  PRIMARY KEY  (`idHistory`),
-  KEY `FK_History_Channel` (`idChannel`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
-#
-
---
--- Definition of table `Keyword`
---
-
-DROP TABLE IF EXISTS `Keyword`;
-CREATE TABLE `Keyword`(
-	`idKeyword` int NOT NULL auto_increment,
-  `keywordName` varchar(200) NOT NULL,  
-	`rating` int NOT NULL,
-	`autoRecord` bit(1) NOT NULL,
-	`searchIn` int NOT NULL,
-  PRIMARY KEY  (`idKeyword`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
-#
-
---
--- Definition of table `Timespan`
---
-
-DROP TABLE IF EXISTS `Timespan`;
-CREATE TABLE `Timespan`(
-	`idTimespan` int NOT NULL auto_increment,
-	`startTime` datetime NOT NULL,
-	`endTime` datetime NOT NULL, 
-	`dayOfWeek` int NOT NULL,
-  PRIMARY KEY  (`idTimespan`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
-#
-
---
--- Definition of table `PersonalTVGuideMap`
---
-
-DROP TABLE IF EXISTS `PersonalTVGuideMap`;
-CREATE TABLE `PersonalTVGuideMap`(
-	`idPersonalTVGuideMap` int NOT NULL auto_increment,
-	`idKeyword` int NOT NULL,
-  `idProgram` int NOT NULL,
-  PRIMARY KEY  (`idPersonalTVGuideMap`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
-#
-
---
--- Definition of table `KeywordMap`
---
-
-DROP TABLE IF EXISTS `KeywordMap`;
-CREATE TABLE `KeywordMap`(
-	`idKeywordMap` int NOT NULL auto_increment,
-	`idKeyword` int NOT NULL,
-  `idChannelGroup` int NOT NULL,
-  PRIMARY KEY  (`idKeywordMap`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
-#
-
 
 --
 -- Definition of table `Version`
@@ -513,15 +510,10 @@ CREATE TABLE `Version` (
   `idVersion` int(11) NOT NULL auto_increment,
   `versionNumber` int(11) NOT NULL,
   PRIMARY KEY  (`idVersion`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
---
--- Dumping data for table `Version`
---
 
-/*!40000 ALTER TABLE `Version` DISABLE KEYS */;
 INSERT INTO `Version` VALUES  (1,33);
-/*!40000 ALTER TABLE `Version` ENABLE KEYS */;
 #
 
 
@@ -533,9 +525,3 @@ INSERT INTO `Version` VALUES  (1,33);
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-
-
-CREATE INDEX idProgramStart ON Program (startTime);
-#
-CREATE INDEX idxChannel ON Channel (isTv,sortOrder);
-#
