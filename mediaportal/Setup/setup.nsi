@@ -38,9 +38,11 @@ SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
 !ifdef HIGH_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
   !define MEDIAPORTAL.FILTERBIN "..\xbmc\bin\Release"
+  !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !else
   !define MEDIAPORTAL.BASE "..\xbmc\bin\Release"
   !define MEDIAPORTAL.FILTERBIN "..\xbmc\bin\Release"
+  !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !endif
 
 #---------------------------------------------------------------------------
@@ -234,179 +236,177 @@ Section "MediaPortal core files (required)" SecCore
       GenDMOProp.dll MpegAudio.dll MpegVideo.dll \
       MpaDecFilter.ax Mpeg2DecFilter.ax"
   File /r "${MEDIAPORTAL.BASE}"
-!else  
-    ; Doc
-    SetOutPath $INSTDIR\Docs
-    File "..\Docs\BASS License.txt"
-    File "..\Docs\LICENSE.rtf"
-    File "..\Docs\MediaPortal License.rtf"
-    File "..\Docs\SQLite Database Browser.exe"
+!else
+  ; Doc
+  SetOutPath $INSTDIR\Docs
+  File "..\Docs\BASS License.txt"
+  File "..\Docs\LICENSE.rtf"
+  File "..\Docs\MediaPortal License.rtf"
+  File "..\Docs\SQLite Database Browser.exe"
 
-    ; WebEPG
-    SetOutPath $INSTDIR\WebEPG
-    File /r "${MEDIAPORTAL.BASE}\WebEPG\channels"
-    File /r "${MEDIAPORTAL.BASE}\WebEPG\grabbers"
+  ; WebEPG
+  SetOutPath $INSTDIR\WebEPG
+  File /r "${MEDIAPORTAL.BASE}\WebEPG\channels"
+  File /r "${MEDIAPORTAL.BASE}\WebEPG\grabbers"
 
-    ; xmltv
-    SetOutPath $INSTDIR\xmltv
-    File "${MEDIAPORTAL.BASE}\xmltv\ReadMe.txt"
-    File "${MEDIAPORTAL.BASE}\xmltv\xmltv.dtd"
+  ; xmltv
+  SetOutPath $INSTDIR\xmltv
+  File "${MEDIAPORTAL.BASE}\xmltv\ReadMe.txt"
+  File "${MEDIAPORTAL.BASE}\xmltv\xmltv.dtd"
 
-    SetOutPath $INSTDIR
+  ; Folder
+  SetOutPath $INSTDIR
+  File /r "${MEDIAPORTAL.BASE}\database"
+  File /r "${MEDIAPORTAL.BASE}\InputDeviceMappings"
+  File /r "${MEDIAPORTAL.BASE}\language"
+  File /r "${MEDIAPORTAL.BASE}\MusicPlayer"
+  File /r "${MEDIAPORTAL.BASE}\osdskin-media"
+  File /r "${MEDIAPORTAL.BASE}\plugins"
+  File /r "${MEDIAPORTAL.BASE}\Profiles"
+  File /r "${MEDIAPORTAL.BASE}\scripts"
+  File /r "${MEDIAPORTAL.BASE}\skin"
+  File /r "${MEDIAPORTAL.BASE}\TTPremiumBoot"
+  File /r "${MEDIAPORTAL.BASE}\Tuningparameters"
+  File /r "${MEDIAPORTAL.BASE}\weather"
+  File /r "${MEDIAPORTAL.BASE}\Wizards"
 
-    ; Folder
-    File /r "${MEDIAPORTAL.BASE}\database"
-    File /r "${MEDIAPORTAL.BASE}\InputDeviceMappings"
-    File /r "${MEDIAPORTAL.BASE}\language"
-    File /r "${MEDIAPORTAL.BASE}\MusicPlayer"
-    File /r "${MEDIAPORTAL.BASE}\osdskin-media"
-    File /r "${MEDIAPORTAL.BASE}\plugins"
-    File /r "${MEDIAPORTAL.BASE}\Profiles"
-    File /r "${MEDIAPORTAL.BASE}\scripts"
-    File /r "${MEDIAPORTAL.BASE}\skin"
-    File /r "${MEDIAPORTAL.BASE}\TTPremiumBoot"
-    File /r "${MEDIAPORTAL.BASE}\Tuningparameters"
-    File /r "${MEDIAPORTAL.BASE}\weather"
-    File /r "${MEDIAPORTAL.BASE}\Wizards"
+  ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
+  ;------------  Common Files and Folders for XP & Vista
+  ; Files
+  File "${MEDIAPORTAL.BASE}\AppStart.exe"
+  File "${MEDIAPORTAL.BASE}\AppStart.exe.config"
+  File "${MEDIAPORTAL.BASE}\AxInterop.WMPLib.dll"
+  File "${MEDIAPORTAL.BASE}\BallonRadio.ico"
+  File "${MEDIAPORTAL.BASE}\bass.dll"
+  File "${MEDIAPORTAL.BASE}\Bass.Net.dll"
+  File "${MEDIAPORTAL.BASE}\bass_fx.dll"
+  File "${MEDIAPORTAL.BASE}\bass_vis.dll"
+  File "${MEDIAPORTAL.BASE}\bass_vst.dll"
+  File "${MEDIAPORTAL.BASE}\bass_wadsp.dll"
+  File "${MEDIAPORTAL.BASE}\bassasio.dll"
+  File "${MEDIAPORTAL.BASE}\bassmix.dll"
+  File "${MEDIAPORTAL.BASE}\BassRegistration.dll"
+  File "${MEDIAPORTAL.BASE}\CSScriptLibrary.dll"
+  File "${MEDIAPORTAL.BASE}\d3dx9_30.dll"
+  File "${MEDIAPORTAL.BASE}\defaultMusicViews.xml"
+  File "${MEDIAPORTAL.BASE}\defaultProgramViews.xml"
+  File "${MEDIAPORTAL.BASE}\defaultVideoViews.xml"
+  File "${MEDIAPORTAL.BASE}\dlportio.dll"
+  File "${MEDIAPORTAL.BASE}\dvblib.dll"
+  File "${MEDIAPORTAL.BASE}\dxerr9.dll"
+  File "${MEDIAPORTAL.BASE}\edtftpnet-1.2.2.dll"
+  File "${MEDIAPORTAL.BASE}\FastBitmap.dll"
+  File "${MEDIAPORTAL.BASE}\FTD2XX.DLL"
+  File "${MEDIAPORTAL.BASE}\hauppauge.dll"
+  File "${MEDIAPORTAL.BASE}\ICSharpCode.SharpZipLib.dll"
+  File "${MEDIAPORTAL.BASE}\inpout32.dll"
+  File "${MEDIAPORTAL.BASE}\Interop.GIRDERLib.dll"
+  File "${MEDIAPORTAL.BASE}\Interop.iTunesLib.dll"
+  File "${MEDIAPORTAL.BASE}\Interop.TunerLib.dll"
+  File "${MEDIAPORTAL.BASE}\Interop.WMEncoderLib.dll"
+  File "${MEDIAPORTAL.BASE}\Interop.WMPLib.dll"
+  File "${MEDIAPORTAL.BASE}\KCS.Utilities.dll"
+  File "${MEDIAPORTAL.BASE}\lame_enc.dll"
+  File "${MEDIAPORTAL.BASE}\LibDriverCoreClient.dll"
+  File "${MEDIAPORTAL.BASE}\log4net.dll"
+  File "${MEDIAPORTAL.BASE}\MediaPadLayer.dll"
+  File "${MEDIAPORTAL.BASE}\menu.bin"
+  File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
+  File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll"
+  File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ExceptionManagement.dll"
+  File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll"
+  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.dll"
+  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.Direct3D.dll"
+  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.Direct3DX.dll"
+  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.DirectDraw.dll"
+  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.DirectInput.dll"
+  File "${MEDIAPORTAL.BASE}\Microsoft.Office.Interop.Outlook.dll"
+  File "${MEDIAPORTAL.BASE}\mplogo.gif"
+  File "${MEDIAPORTAL.BASE}\mpviz.dll"
+  File "${MEDIAPORTAL.BASE}\restart.vbs"
+  File "${MEDIAPORTAL.BASE}\SG_VFD.dll"
+  File "${MEDIAPORTAL.BASE}\SG_VFDv5.dll"
+  File "${MEDIAPORTAL.BASE}\sqlite.dll"
+  File "${MEDIAPORTAL.BASE}\taglib-sharp.dll"
+  File "${MEDIAPORTAL.BASE}\TaskScheduler.dll"
+  File "${MEDIAPORTAL.BASE}\ttBdaDrvApi_Dll.dll"
+  File "${MEDIAPORTAL.BASE}\ttdvbacc.dll"
+  File "${MEDIAPORTAL.BASE}\X10Unified.dll"
+  File "${MEDIAPORTAL.BASE}\xAPMessage.dll"
+  File "${MEDIAPORTAL.BASE}\xAPTransport.dll"
 
-    ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
-    ;------------  Common Files and Folders for XP & Vista
-    ; Files
-    File "${MEDIAPORTAL.BASE}\AppStart.exe"
-    File "${MEDIAPORTAL.BASE}\AppStart.exe.config"
-    File "${MEDIAPORTAL.BASE}\AxInterop.WMPLib.dll"
-    File "${MEDIAPORTAL.BASE}\BallonRadio.ico"
-    File "${MEDIAPORTAL.BASE}\bass.dll"
-    File "${MEDIAPORTAL.BASE}\Bass.Net.dll"
-    File "${MEDIAPORTAL.BASE}\bass_fx.dll"
-    File "${MEDIAPORTAL.BASE}\bass_vis.dll"
-    File "${MEDIAPORTAL.BASE}\bass_vst.dll"
-    File "${MEDIAPORTAL.BASE}\bass_wadsp.dll"
-    File "${MEDIAPORTAL.BASE}\bassasio.dll"
-    File "${MEDIAPORTAL.BASE}\bassmix.dll"
-    File "${MEDIAPORTAL.BASE}\BassRegistration.dll"
-    File "${MEDIAPORTAL.BASE}\CSScriptLibrary.dll"
-    File "${MEDIAPORTAL.BASE}\d3dx9_30.dll"
-    File "${MEDIAPORTAL.BASE}\dlportio.dll"
-    File "${MEDIAPORTAL.BASE}\dvblib.dll"
-    File "${MEDIAPORTAL.BASE}\dxerr9.dll"
-    File "${MEDIAPORTAL.BASE}\edtftpnet-1.2.2.dll"
-    File "${MEDIAPORTAL.BASE}\FastBitmap.dll"
-    File "${MEDIAPORTAL.BASE}\FTD2XX.DLL"
-    File "${MEDIAPORTAL.BASE}\hauppauge.dll"
-    File "${MEDIAPORTAL.BASE}\ICSharpCode.SharpZipLib.dll"
-    File "${MEDIAPORTAL.BASE}\inpout32.dll"
-    File "${MEDIAPORTAL.BASE}\Interop.GIRDERLib.dll"
-    File "${MEDIAPORTAL.BASE}\Interop.iTunesLib.dll"
-    File "${MEDIAPORTAL.BASE}\Interop.TunerLib.dll"
-    File "${MEDIAPORTAL.BASE}\Interop.WMEncoderLib.dll"
-    File "${MEDIAPORTAL.BASE}\Interop.WMPLib.dll"
-    File "${MEDIAPORTAL.BASE}\KCS.Utilities.dll"
-    File "${MEDIAPORTAL.BASE}\lame_enc.dll"
-    File "${MEDIAPORTAL.BASE}\LibDriverCoreClient.dll"
-    File "${MEDIAPORTAL.BASE}\log4net.dll"
-    File "${MEDIAPORTAL.BASE}\MediaPadLayer.dll"
-    File "${MEDIAPORTAL.BASE}\menu.bin"
-    File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
-    File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll"
-    File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ExceptionManagement.dll"
-    File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll"
-    File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.dll"
-    File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.Direct3D.dll"
-    File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.Direct3DX.dll"
-    File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.DirectDraw.dll"
-    File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.DirectInput.dll"
-    File "${MEDIAPORTAL.BASE}\Microsoft.Office.Interop.Outlook.dll"
-    File "${MEDIAPORTAL.BASE}\mplogo.gif"
-    File "${MEDIAPORTAL.BASE}\mpviz.dll"
-    File "${MEDIAPORTAL.BASE}\restart.vbs"
-    File "${MEDIAPORTAL.BASE}\SG_VFD.dll"
-    File "${MEDIAPORTAL.BASE}\SG_VFDv5.dll"
-    File "${MEDIAPORTAL.BASE}\sqlite.dll"
-    File "${MEDIAPORTAL.BASE}\taglib-sharp.dll"
-    File "${MEDIAPORTAL.BASE}\TaskScheduler.dll"
-    File "${MEDIAPORTAL.BASE}\ttBdaDrvApi_Dll.dll"
-    File "${MEDIAPORTAL.BASE}\ttdvbacc.dll"
-    File "${MEDIAPORTAL.BASE}\X10Unified.dll"
-    File "${MEDIAPORTAL.BASE}\xAPMessage.dll"
-    File "${MEDIAPORTAL.BASE}\xAPTransport.dll"
-
-    File "${MEDIAPORTAL.BASE}\Configuration.exe"
-    File "${MEDIAPORTAL.BASE}\Configuration.exe.config"
-    File "${MEDIAPORTAL.BASE}\Core.dll"
-    File "${MEDIAPORTAL.BASE}\DaggerLib.dll"
-    File "${MEDIAPORTAL.BASE}\DaggerLib.DSGraphEdit.dll"
-    File "${MEDIAPORTAL.BASE}\Databases.dll"
-    File "${MEDIAPORTAL.BASE}\defaultMusicViews.xml"
-    File "${MEDIAPORTAL.BASE}\defaultProgramViews.xml"
-    File "${MEDIAPORTAL.BASE}\defaultVideoViews.xml"
-    File "${MEDIAPORTAL.BASE}\DirectShowLib-2005.dll"
-    File "${MEDIAPORTAL.BASE}\DirectShowLib.dll"
-    File "${MEDIAPORTAL.BASE}\dshowhelper.dll"
-    File "${MEDIAPORTAL.BASE}\DXUtil.dll"
-    File "${MEDIAPORTAL.BASE}\fontEngine.dll"
-    File "${MEDIAPORTAL.BASE}\HcwHelper.exe"
-    File "${MEDIAPORTAL.BASE}\Interop.X10.dll"
-    File "${MEDIAPORTAL.BASE}\madlldlib.dll"
-    File "${MEDIAPORTAL.BASE}\MediaFoundation.dll"
-    File "${MEDIAPORTAL.BASE}\MediaPortal.exe"
-    File "${MEDIAPORTAL.BASE}\MediaPortal.exe.config"
-    File "${MEDIAPORTAL.BASE}\MediaPortal.Support.dll"
-    File "${MEDIAPORTAL.BASE}\MPInstaller.exe"
-    File "${MEDIAPORTAL.BASE}\MPInstaller.Library.dll"
-    File "${MEDIAPORTAL.BASE}\MPTestTool2.exe"
-    File "${MEDIAPORTAL.BASE}\MusicShareWatcher.exe"
-    File "${MEDIAPORTAL.BASE}\MusicShareWatcherHelper.dll"
-    File "${MEDIAPORTAL.BASE}\RemotePlugins.dll"
-    File "${MEDIAPORTAL.BASE}\TVCapture.dll"
-    File "${MEDIAPORTAL.BASE}\TVGuideScheduler.exe"
-    File "${MEDIAPORTAL.BASE}\Utils.dll"
-    File "${MEDIAPORTAL.BASE}\WebEPG.dll"
-    File "${MEDIAPORTAL.BASE}\WebEPG.exe"
-    File "${MEDIAPORTAL.BASE}\WebEPG-conf.exe"
-    File "${MEDIAPORTAL.BASE}\XPBurnComponent.dll"
-    ;------------  End of Common Files and Folders for XP & Vista
-
-    File MediaPortalDirs.xml
-
-    ; ************************************************************************
-    SetOutPath "${COMMON_APPDATA}"
-
-    CreateDirectory "${COMMON_APPDATA}\InputDeviceMappings\custom"
-    ; Config Files (XML)
-    File "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
-    File "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
-    File "${MEDIAPORTAL.BASE}\FileDetailContents.xml"
-    File "${MEDIAPORTAL.BASE}\grabber_AllGame_com.xml"
-    File "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
-    File "${MEDIAPORTAL.BASE}\keymap.xml"
-    File "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
-    File "${MEDIAPORTAL.BASE}\ProgramSettingProfiles.xml"
-    File "${MEDIAPORTAL.BASE}\wikipedia.xml"
-    File "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
-    ; Folders
-    File /r "${MEDIAPORTAL.BASE}\thumbs"
+  SetOutPath "${COMMON_APPDATA}"
+  CreateDirectory "${COMMON_APPDATA}\InputDeviceMappings\custom"
+  ; Config Files (XML)
+  File "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
+  File "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
+  File "${MEDIAPORTAL.BASE}\FileDetailContents.xml"
+  File "${MEDIAPORTAL.BASE}\grabber_AllGame_com.xml"
+  File "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
+  File "${MEDIAPORTAL.BASE}\keymap.xml"
+  File "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
+  File "${MEDIAPORTAL.BASE}\ProgramSettingProfiles.xml"
+  File "${MEDIAPORTAL.BASE}\wikipedia.xml"
+  File "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
+  ; Folders
+  File /r "${MEDIAPORTAL.BASE}\thumbs"
 !endif
 
-    #---------------------------------------------------------------------------
-    # FILTER REGISTRATION
-    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
-    #---------------------------------------------------------------------------
-    SetOutPath $INSTDIR
-    ;filter used for SVCD and VCD playback
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\cdxareader.ax"       $INSTDIR\cdxareader.ax $INSTDIR
-    ##### MAYBE used by VideoEditor
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\CLDump.ax"           $INSTDIR\CLDump.ax $INSTDIR
-    ; used for scanning in tve2
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MPSA.ax"             $INSTDIR\MPSA.ax $INSTDIR
-    ;filter for analog tv
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\PDMpgMux.ax"         $INSTDIR\PDMpgMux.ax $INSTDIR
-    ; used for shoutcast
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\shoutcastsource.ax"  $INSTDIR\shoutcastsource.ax $INSTDIR
-    ; used for digital tv
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TsReader.ax"         $INSTDIR\TsReader.ax $INSTDIR
-    ##### not sure for what this is used
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TTPremiumSource.ax"  $INSTDIR\TTPremiumSource.ax $INSTDIR
+  SetOutPath $INSTDIR
+  File "${MEDIAPORTAL.XBMCBIN}\Configuration.exe"
+  File "${MEDIAPORTAL.XBMCBIN}\Configuration.exe.config"
+  File "${MEDIAPORTAL.XBMCBIN}\Core.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\DaggerLib.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\DaggerLib.DSGraphEdit.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\Databases.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\DirectShowLib-2005.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\DirectShowLib.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\dshowhelper.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\DXUtil.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\fontEngine.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\HcwHelper.exe"
+  File "${MEDIAPORTAL.XBMCBIN}\Interop.X10.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\madlldlib.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\MediaFoundation.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\MediaPortal.exe"
+  File "${MEDIAPORTAL.XBMCBIN}\MediaPortal.exe.config"
+  File "${MEDIAPORTAL.XBMCBIN}\MediaPortal.Support.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\MPInstaller.exe"
+  File "${MEDIAPORTAL.XBMCBIN}\MPInstaller.Library.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\MPTestTool2.exe"
+  File "${MEDIAPORTAL.XBMCBIN}\MusicShareWatcher.exe"
+  File "${MEDIAPORTAL.XBMCBIN}\MusicShareWatcherHelper.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\RemotePlugins.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\TVCapture.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\TVGuideScheduler.exe"
+  File "${MEDIAPORTAL.XBMCBIN}\Utils.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\WebEPG.dll"
+  File "${MEDIAPORTAL.XBMCBIN}\WebEPG.exe"
+  File "${MEDIAPORTAL.XBMCBIN}\WebEPG-conf.exe"
+  File "${MEDIAPORTAL.XBMCBIN}\XPBurnComponent.dll"
+  ;------------  End of Common Files and Folders for XP & Vista
+
+  File MediaPortalDirs.xml
+
+  #---------------------------------------------------------------------------
+  # FILTER REGISTRATION
+  #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+  #---------------------------------------------------------------------------
+  SetOutPath $INSTDIR
+  ;filter used for SVCD and VCD playback
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\cdxareader.ax"       $INSTDIR\cdxareader.ax $INSTDIR
+  ##### MAYBE used by VideoEditor
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\CLDump.ax"           $INSTDIR\CLDump.ax $INSTDIR
+  ; used for scanning in tve2
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MPSA.ax"             $INSTDIR\MPSA.ax $INSTDIR
+  ;filter for analog tv
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\PDMpgMux.ax"         $INSTDIR\PDMpgMux.ax $INSTDIR
+  ; used for shoutcast
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\shoutcastsource.ax"  $INSTDIR\shoutcastsource.ax $INSTDIR
+  ; used for digital tv
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TsReader.ax"         $INSTDIR\TsReader.ax $INSTDIR
+  ##### not sure for what this is used
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TTPremiumSource.ax"  $INSTDIR\TTPremiumSource.ax $INSTDIR
 SectionEnd
 !macro Remove_${SecCore}
     DetailPrint "Uninstalling MediaPortal core files..."
