@@ -1147,8 +1147,62 @@ namespace MediaPortal.GUI.Video
 
     #endregion
 
+    private void FetchMatroskaInfo(string path, bool pathIsDirectory,ref IMDBMovie movie)
+    {
+      string xmlFile="";
+      if (pathIsDirectory)
+      {
+        string[] files=System.IO.Directory.GetFiles(path,"*.xml");
+        if (files.Length > 0)
+          xmlFile = files[0];
+      }
+      else
+        xmlFile=System.IO.Path.ChangeExtension(path,".xml");
+      //Log.Debug("Using matroska file {0}", xmlFile);
+      MatroskaTagInfo minfo = MatroskaTagHandler.Fetch(xmlFile);
+      if (minfo!=null)
+      {
+        //Log.Debug("Found {0}", minfo.title);
+        movie.Title = minfo.title;
+        movie.Plot = minfo.description;
+        movie.Genre = minfo.genre;
+      }
+    }
+    private void SetMovieProperties(string path)
+    {
+      IMDBMovie info = new IMDBMovie();
+      bool isDirectory = false;
+      if (System.IO.Directory.Exists(path))
+      {
+        isDirectory = true;
+        //Log.Debug("item {0} is a directory. Searching for files with movie info...", path);
+        string[] files = System.IO.Directory.GetFiles(path);
+        foreach (string file in files)
+        {
+          IMDBMovie movie = new IMDBMovie();
+          VideoDatabase.GetMovieInfo(file, ref movie);
+          if (!movie.IsEmpty)
+          {
+            info = movie;
+            //Log.Debug("Found movie with info {0}", movie.Title);
+            break;
+          }
+        }
+      }
+      else
+        VideoDatabase.GetMovieInfo(path, ref info);
+      if (info.IsEmpty)
+      {
+        //Log.Debug("No IMDB info found. Searching for a matroska tagged file...");
+        FetchMatroskaInfo(path, isDirectory, ref info);
+      }
+      info.SetProperties();
+    }
+
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
+      if (item.Label!="..")
+        SetMovieProperties(item.Path);
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip == null)
         return;
