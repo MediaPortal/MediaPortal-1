@@ -41,15 +41,16 @@ namespace SetupTv.Sections
       // 
       this.label1.Location = new System.Drawing.Point(12, 9);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(326, 31);
+      this.label1.Size = new System.Drawing.Size(297, 58);
       this.label1.TabIndex = 0;
-      this.label1.Text = "If your card has a CAM module then specify the number of channels this cam can de" +
-          "code simultanously";
+      this.label1.Text = "If your card has a CAM module then specify the number of channels this CAM can de" +
+          "code simultaneously. \r\n\r\nSetting the value to 0 will disable the limit completel" +
+          "y.";
       // 
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(12, 49);
+      this.label3.Location = new System.Drawing.Point(12, 77);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(111, 13);
       this.label3.TabIndex = 2;
@@ -58,7 +59,7 @@ namespace SetupTv.Sections
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(201, 49);
+      this.label4.Location = new System.Drawing.Point(184, 77);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(121, 13);
       this.label4.TabIndex = 4;
@@ -66,7 +67,8 @@ namespace SetupTv.Sections
       // 
       // mpButtonSave
       // 
-      this.mpButtonSave.Location = new System.Drawing.Point(182, 81);
+      this.mpButtonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonSave.Location = new System.Drawing.Point(146, 114);
       this.mpButtonSave.Name = "mpButtonSave";
       this.mpButtonSave.Size = new System.Drawing.Size(75, 23);
       this.mpButtonSave.TabIndex = 1;
@@ -76,9 +78,9 @@ namespace SetupTv.Sections
       // 
       // numericUpDownDecryptLimit
       // 
-      this.numericUpDownDecryptLimit.Location = new System.Drawing.Point(129, 47);
+      this.numericUpDownDecryptLimit.Location = new System.Drawing.Point(129, 75);
       this.numericUpDownDecryptLimit.Name = "numericUpDownDecryptLimit";
-      this.numericUpDownDecryptLimit.Size = new System.Drawing.Size(66, 20);
+      this.numericUpDownDecryptLimit.Size = new System.Drawing.Size(49, 20);
       this.numericUpDownDecryptLimit.TabIndex = 5;
       this.numericUpDownDecryptLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.numericUpDownDecryptLimit.Value = new decimal(new int[] {
@@ -89,8 +91,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonCancel
       // 
+      this.mpButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(263, 81);
+      this.mpButtonCancel.Location = new System.Drawing.Point(227, 114);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 6;
@@ -104,7 +107,7 @@ namespace SetupTv.Sections
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
-      this.ClientSize = new System.Drawing.Size(350, 116);
+      this.ClientSize = new System.Drawing.Size(314, 149);
       this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.numericUpDownDecryptLimit);
       this.Controls.Add(this.mpButtonSave);

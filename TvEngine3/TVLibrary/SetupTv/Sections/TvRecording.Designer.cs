@@ -57,7 +57,6 @@ namespace SetupTv.Sections
       this.label5 = new System.Windows.Forms.Label();
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
       this.tabPage3 = new System.Windows.Forms.TabPage();
-      this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.enableDiskQuota = new System.Windows.Forms.CheckBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpNumericTextBoxDiskQuota = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
@@ -99,7 +98,6 @@ namespace SetupTv.Sections
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.tabPage3.SuspendLayout();
-      this.groupBox4.SuspendLayout();
       this.tabPage4.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tpRecordImport.SuspendLayout();
@@ -381,8 +379,8 @@ namespace SetupTv.Sections
       this.textBoxFormat.Name = "textBoxFormat";
       this.textBoxFormat.Size = new System.Drawing.Size(328, 20);
       this.textBoxFormat.TabIndex = 3;
-      this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
       this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
+      this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
       // 
       // label6
       // 
@@ -417,7 +415,16 @@ namespace SetupTv.Sections
       // 
       // tabPage3
       // 
-      this.tabPage3.Controls.Add(this.groupBox4);
+      this.tabPage3.Controls.Add(this.mpLabel5);
+      this.tabPage3.Controls.Add(this.enableDiskQuota);
+      this.tabPage3.Controls.Add(this.mpNumericTextBoxDiskQuota);
+      this.tabPage3.Controls.Add(this.label14);
+      this.tabPage3.Controls.Add(this.comboBoxDrive);
+      this.tabPage3.Controls.Add(this.labelFreeDiskspace);
+      this.tabPage3.Controls.Add(this.label9);
+      this.tabPage3.Controls.Add(this.labelTotalDiskSpace);
+      this.tabPage3.Controls.Add(this.label10);
+      this.tabPage3.Controls.Add(this.label11);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
       this.tabPage3.Size = new System.Drawing.Size(457, 374);
@@ -425,29 +432,11 @@ namespace SetupTv.Sections
       this.tabPage3.Text = "Disk quota";
       this.tabPage3.UseVisualStyleBackColor = true;
       // 
-      // groupBox4
-      // 
-      this.groupBox4.Controls.Add(this.enableDiskQuota);
-      this.groupBox4.Controls.Add(this.mpLabel5);
-      this.groupBox4.Controls.Add(this.mpNumericTextBoxDiskQuota);
-      this.groupBox4.Controls.Add(this.label14);
-      this.groupBox4.Controls.Add(this.labelFreeDiskspace);
-      this.groupBox4.Controls.Add(this.labelTotalDiskSpace);
-      this.groupBox4.Controls.Add(this.label11);
-      this.groupBox4.Controls.Add(this.label10);
-      this.groupBox4.Controls.Add(this.comboBoxDrive);
-      this.groupBox4.Controls.Add(this.label9);
-      this.groupBox4.Location = new System.Drawing.Point(6, 3);
-      this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(445, 365);
-      this.groupBox4.TabIndex = 0;
-      this.groupBox4.TabStop = false;
-      // 
       // enableDiskQuota
       // 
       this.enableDiskQuota.AccessibleName = "";
       this.enableDiskQuota.AutoSize = true;
-      this.enableDiskQuota.Location = new System.Drawing.Point(30, 19);
+      this.enableDiskQuota.Location = new System.Drawing.Point(30, 75);
       this.enableDiskQuota.Name = "enableDiskQuota";
       this.enableDiskQuota.Size = new System.Drawing.Size(111, 17);
       this.enableDiskQuota.TabIndex = 11;
@@ -458,7 +447,7 @@ namespace SetupTv.Sections
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(299, 152);
+      this.mpLabel5.Location = new System.Drawing.Point(302, 163);
       this.mpLabel5.Name = "mpLabel5";
       this.mpLabel5.Size = new System.Drawing.Size(79, 13);
       this.mpLabel5.TabIndex = 10;
@@ -466,7 +455,7 @@ namespace SetupTv.Sections
       // 
       // mpNumericTextBoxDiskQuota
       // 
-      this.mpNumericTextBoxDiskQuota.Location = new System.Drawing.Point(231, 149);
+      this.mpNumericTextBoxDiskQuota.Location = new System.Drawing.Point(234, 160);
       this.mpNumericTextBoxDiskQuota.Name = "mpNumericTextBoxDiskQuota";
       this.mpNumericTextBoxDiskQuota.Size = new System.Drawing.Size(62, 20);
       this.mpNumericTextBoxDiskQuota.TabIndex = 9;
@@ -477,7 +466,7 @@ namespace SetupTv.Sections
       // label14
       // 
       this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(26, 152);
+      this.label14.Location = new System.Drawing.Point(27, 163);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(201, 13);
       this.label14.TabIndex = 6;
@@ -486,7 +475,7 @@ namespace SetupTv.Sections
       // labelFreeDiskspace
       // 
       this.labelFreeDiskspace.AutoSize = true;
-      this.labelFreeDiskspace.Location = new System.Drawing.Point(146, 108);
+      this.labelFreeDiskspace.Location = new System.Drawing.Point(147, 134);
       this.labelFreeDiskspace.Name = "labelFreeDiskspace";
       this.labelFreeDiskspace.Size = new System.Drawing.Size(93, 13);
       this.labelFreeDiskspace.TabIndex = 5;
@@ -495,7 +484,7 @@ namespace SetupTv.Sections
       // labelTotalDiskSpace
       // 
       this.labelTotalDiskSpace.AutoSize = true;
-      this.labelTotalDiskSpace.Location = new System.Drawing.Point(146, 90);
+      this.labelTotalDiskSpace.Location = new System.Drawing.Point(147, 116);
       this.labelTotalDiskSpace.Name = "labelTotalDiskSpace";
       this.labelTotalDiskSpace.Size = new System.Drawing.Size(93, 13);
       this.labelTotalDiskSpace.TabIndex = 4;
@@ -504,7 +493,7 @@ namespace SetupTv.Sections
       // label11
       // 
       this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(26, 108);
+      this.label11.Location = new System.Drawing.Point(27, 134);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(82, 13);
       this.label11.TabIndex = 3;
@@ -514,7 +503,7 @@ namespace SetupTv.Sections
       // label10
       // 
       this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(26, 90);
+      this.label10.Location = new System.Drawing.Point(27, 116);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(85, 13);
       this.label10.TabIndex = 2;
@@ -525,16 +514,16 @@ namespace SetupTv.Sections
       // 
       this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDrive.FormattingEnabled = true;
-      this.comboBoxDrive.Location = new System.Drawing.Point(68, 51);
+      this.comboBoxDrive.Location = new System.Drawing.Point(30, 43);
       this.comboBoxDrive.Name = "comboBoxDrive";
-      this.comboBoxDrive.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxDrive.Size = new System.Drawing.Size(355, 21);
       this.comboBoxDrive.TabIndex = 1;
       this.comboBoxDrive.SelectedIndexChanged += new System.EventHandler(this.comboBoxDrive_SelectedIndexChanged);
       // 
       // label9
       // 
       this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(27, 54);
+      this.label9.Location = new System.Drawing.Point(27, 24);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(35, 13);
       this.label9.TabIndex = 0;
@@ -606,9 +595,9 @@ namespace SetupTv.Sections
       // 
       // buttonTimeShiftBrowse
       // 
-      this.buttonTimeShiftBrowse.Location = new System.Drawing.Point(362, 263);
+      this.buttonTimeShiftBrowse.Location = new System.Drawing.Point(362, 265);
       this.buttonTimeShiftBrowse.Name = "buttonTimeShiftBrowse";
-      this.buttonTimeShiftBrowse.Size = new System.Drawing.Size(23, 23);
+      this.buttonTimeShiftBrowse.Size = new System.Drawing.Size(23, 20);
       this.buttonTimeShiftBrowse.TabIndex = 21;
       this.buttonTimeShiftBrowse.Text = "...";
       this.buttonTimeShiftBrowse.UseVisualStyleBackColor = true;
@@ -643,9 +632,9 @@ namespace SetupTv.Sections
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Location = new System.Drawing.Point(362, 207);
+      this.buttonBrowse.Location = new System.Drawing.Point(362, 209);
       this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(23, 23);
+      this.buttonBrowse.Size = new System.Drawing.Size(23, 20);
       this.buttonBrowse.TabIndex = 4;
       this.buttonBrowse.Text = "...";
       this.buttonBrowse.UseVisualStyleBackColor = true;
@@ -792,8 +781,7 @@ namespace SetupTv.Sections
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       this.tabPage3.ResumeLayout(false);
-      this.groupBox4.ResumeLayout(false);
-      this.groupBox4.PerformLayout();
+      this.tabPage3.PerformLayout();
       this.tabPage4.ResumeLayout(false);
       this.tabPage4.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -824,7 +812,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.ComboBox comboBoxMovies;
     private System.Windows.Forms.TabPage tabPage3;
-    private System.Windows.Forms.GroupBox groupBox4;
     private System.Windows.Forms.Label label14;
     private System.Windows.Forms.Label labelFreeDiskspace;
     private System.Windows.Forms.Label labelTotalDiskSpace;
