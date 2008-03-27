@@ -65,9 +65,6 @@ ALTER TABLE `Program` MODIFY COLUMN `description` VARCHAR(8000) CHARACTER SET ut
  CHARACTER SET utf8 COLLATE utf8_general_ci, 
  ROW_FORMAT = DYNAMIC; 
 
-ALTER TABLE `Program` 
- ADD UNIQUE INDEX `idProgramBeginEnd` USING BTREE(`idChannel`, `startTime`, `endTime`); 
-
 ALTER TABLE `RadioChannelGroup` MODIFY COLUMN `groupName` VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, 
  CHARACTER SET utf8 COLLATE utf8_general_ci; 
 
