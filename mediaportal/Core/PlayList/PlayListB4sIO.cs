@@ -51,6 +51,11 @@ namespace MediaPortal.Playlists
       return true;
     }
 
+    public bool Load(PlayList playlist, string fileName, string label)
+    {
+      return Load(playlist, fileName);
+    }
+
     public bool Load(PlayList playlist, string fileName)
     {
       playlist.Clear();
@@ -134,7 +139,7 @@ namespace MediaPortal.Playlists
         writer.WriteAttributeString("num_entries", playlist.Count.ToString());
         writer.WriteAttributeString("label", playlist.Name);
 
-        foreach(PlayListItem item in playlist)
+        foreach (PlayListItem item in playlist)
         {
           writer.WriteStartElement("entry");
           writer.WriteAttributeString("Playstring", "file:" + item.FileName);

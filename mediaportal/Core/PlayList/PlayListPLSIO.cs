@@ -27,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Net;
+using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
 namespace MediaPortal.Playlists
@@ -38,15 +40,31 @@ namespace MediaPortal.Playlists
 
     public bool Load(PlayList playlist, string fileName)
     {
-      string basePath;
-      string extension = Path.GetExtension(fileName);
-      extension.ToLower();
+      return Load(playlist, fileName, null);
+    }
+
+    public bool Load(PlayList playlist, string fileName, string label)
+    {
+      string basePath = String.Empty;
+      Stream stream;
+
+      if (fileName.ToLower().StartsWith("http"))
+      {
+        // We've got a URL pointing to a pls
+        WebClient client = new WebClient();
+        byte[] buffer = client.DownloadData(fileName);
+        stream = new MemoryStream(buffer);
+      }
+      else
+      {
+        // We've got a plain pls file
+        basePath = Path.GetDirectoryName(Path.GetFullPath(fileName));
+        stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+      }
 
       playlist.Clear();
       playlist.Name = Path.GetFileName(fileName);
-      basePath = Path.GetDirectoryName(Path.GetFullPath(fileName));
       Encoding fileEncoding = Encoding.Default;
-      FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
       StreamReader file = new StreamReader(stream, fileEncoding, true);
       if (file == null)
       {
@@ -121,7 +139,16 @@ namespace MediaPortal.Playlists
           }
           else
           {
-            if (infoLine == "") infoLine = System.IO.Path.GetFileName(fileName);
+            if (infoLine == "")
+            {
+              // For a URL we need to set the label in for the Playlist name, in order to be played.
+              if (label != null && fileName.ToLower().StartsWith("http"))
+              {
+                infoLine = label;
+              }
+              else
+                infoLine = System.IO.Path.GetFileName(fileName);
+            }
           }
           if (leftPart.StartsWith("length"))
           {

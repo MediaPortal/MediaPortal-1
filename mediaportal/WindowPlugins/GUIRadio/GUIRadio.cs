@@ -956,13 +956,21 @@ namespace MediaPortal.GUI.Radio
           GUIListItem item = facadeView[i];
           if (item.IsFolder) continue;
 
+          // We could get a Playlist as part of a URL
+          string strPath = item.Path;
+          if (strPath == String.Empty)
+          {
+            RadioStation station = item.MusicTag as RadioStation;
+            strPath = station.URL;
+          }
+
           // if item is a playlist
-          if (MediaPortal.Util.Utils.IsPlayList(item.Path))
+          if (MediaPortal.Util.Utils.IsPlayList(strPath))
           {
             // then load the playlist
             PlayList playlist = new PlayList();
-            IPlayListIO loader = PlayListFactory.CreateIO(item.Path);
-            loader.Load(playlist, item.Path);
+            IPlayListIO loader = PlayListFactory.CreateIO(strPath);
+            loader.Load(playlist, strPath, item.Label);
 
             // and if it contains any items
             if (playlist.Count > 0)

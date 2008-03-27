@@ -44,6 +44,11 @@ namespace MediaPortal.Playlists
     {
     }
 
+    public bool Load(PlayList playlist, string fileName, string label)
+    {
+      return Load(playlist, fileName);
+    }
+
     public bool Load(PlayList incomingPlaylist, string playlistFileName)
     {
       if (playlistFileName == null)

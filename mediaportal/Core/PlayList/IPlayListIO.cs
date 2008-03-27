@@ -26,12 +26,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Playlists
 {
   public interface IPlayListIO
   {
     bool Load(PlayList playlist, string fileName);
+    bool Load(PlayList playlist, string fileName, string label);
     void Save(PlayList playlist, string fileName);
   }
 }
