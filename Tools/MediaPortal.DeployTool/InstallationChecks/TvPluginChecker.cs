@@ -49,17 +49,15 @@ namespace MediaPortal.DeployTool
     public bool Install()
     {
       string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer");
-      string parameters = "/S";
-      if (InstallationProperties.Instance["InstallType"] == "singleseat")
-      {
-          parameters += "";
-      }
-      else
-      {
-          parameters += " /noServer";
-      }
+      //NSIS installed doesn't want " in parameters (chefkoch)
+      //Rember that /D must be the last one         (chefkoch)
+      string parameters = "/S /noServer /DeployMode";
       Process setup = Process.Start(exe, parameters);
-      setup.WaitForExit();
+      try
+      {
+          setup.WaitForExit();
+      }
+      catch { }
       return true;
     }
     public bool UnInstall()
@@ -71,12 +69,9 @@ namespace MediaPortal.DeployTool
       try
       {
           setup.WaitForExit();
-          return true;
       }
-      catch
-      {
-          return false;
-      }
+      catch { }
+      return true;
     }
     public CheckResult CheckStatus()
     {

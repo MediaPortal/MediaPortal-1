@@ -119,51 +119,6 @@ namespace MediaPortal.DeployTool
         }
         #endregion
 
-        #region Check if MSI packages are still installed: if so abort installation...
-        bool OldMSI = false;
-        RegistryKey key;
-
-        //MP
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{87819CFA-1786-484D-B0DE-10B5FBF2625D}");
-        if (key != null)
-        {
-            if (File.Exists(key.GetValue("UninstallString").ToString()))
-                OldMSI = true;
-            key.Close();
-        }
-
-        //TvServer MSI
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
-        if (key != null)
-        {
-            if(File.Exists(key.GetValue("UninstallString").ToString()))
-                   OldMSI = true;
-            key.Close();
-        }
-
-        //TvClient MSI: two codes for this software ;-(
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F7444E89-5BC0-497E-9650-E50539860DE0}");
-        if (key != null)
-        {
-            if (File.Exists(key.GetValue("UninstallString").ToString()))
-                OldMSI = true;
-            key.Close();
-        }
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}");
-        if (key != null)
-        {
-            if (File.Exists(key.GetValue("UninstallString").ToString()))
-                OldMSI = true;
-            key.Close();
-        }
-
-        if (OldMSI)
-        {
-            MessageBox.Show("Please remove MP and TV3 old msi package before installing this version", "Old install found !!!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            Environment.Exit(-2);
-        }
-        #endregion
-
         string[] cmdArgs = Environment.GetCommandLineArgs();
         foreach (string arg in cmdArgs)
         {

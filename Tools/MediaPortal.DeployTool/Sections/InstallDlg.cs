@@ -122,46 +122,46 @@ namespace MediaPortal.DeployTool
     }
     private void PopulateListView()
     {
-      listView.Items.Clear();
-      if (InstallationProperties.Instance["InstallType"] == "singleseat")
-      {
+        listView.Items.Clear();
+        AddPackageToListView(new OldMsiChecker());
         AddPackageToListView(new DirectX9Checker());
         AddPackageToListView(new VCRedistChecker());
-        AddPackageToListView(new MediaPortalChecker());
-        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
-          AddPackageToListView(new MSSQLExpressChecker());
-        if (InstallationProperties.Instance["DBMSType"] == "mysql")
-          AddPackageToListView(new MySQLChecker());
-        AddPackageToListView(new TvServerChecker());
-        AddPackageToListView(new TvPluginServerChecker());
-        AddPackageToListView(new WindowsFirewallChecker());
-      }
-      else if (InstallationProperties.Instance["InstallType"] == "tvserver_master")
-      {
-        AddPackageToListView(new VCRedistChecker());
-        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
-          AddPackageToListView(new MSSQLExpressChecker());
-        else
-          AddPackageToListView(new MySQLChecker());
-        AddPackageToListView(new TvServerChecker());
-        AddPackageToListView(new WindowsFirewallChecker());
-      }
-      else if (InstallationProperties.Instance["InstallType"] == "tvserver_slave")
-      {
-        AddPackageToListView(new VCRedistChecker());
-        AddPackageToListView(new TvServerChecker());
-        AddPackageToListView(new WindowsFirewallChecker());
-      }
-      else if (InstallationProperties.Instance["InstallType"] == "client")
-      {
-        AddPackageToListView(new DirectX9Checker());
-        AddPackageToListView(new MediaPortalChecker());
-        AddPackageToListView(new TvPluginServerChecker());
-      }
-      else if (InstallationProperties.Instance["InstallType"] == "mp_only")
-      {
-          AddPackageToListView(new DirectX9Checker());
-          AddPackageToListView(new MediaPortalChecker());
+        switch(InstallationProperties.Instance["InstallType"])
+        {            
+            case "singleseat":
+                        AddPackageToListView(new MediaPortalChecker());
+                        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
+                            AddPackageToListView(new MSSQLExpressChecker());
+                        if (InstallationProperties.Instance["DBMSType"] == "mysql")
+                            AddPackageToListView(new MySQLChecker());
+                        AddPackageToListView(new TvServerChecker());
+                        AddPackageToListView(new TvPluginServerChecker());
+                        AddPackageToListView(new WindowsFirewallChecker());
+                        break;
+
+            case "tvserver_master":
+                        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
+                          AddPackageToListView(new MSSQLExpressChecker());
+                        if (InstallationProperties.Instance["DBMSType"] == "mysql")
+                          AddPackageToListView(new MySQLChecker());
+                        AddPackageToListView(new TvServerChecker());
+                        AddPackageToListView(new WindowsFirewallChecker());
+                        break;
+
+            case "tvserver_slave":
+                        AddPackageToListView(new TvServerChecker());
+                        AddPackageToListView(new WindowsFirewallChecker());
+                        break;
+
+            case "client":
+                        AddPackageToListView(new MediaPortalChecker());
+                        AddPackageToListView(new TvPluginServerChecker());
+                        break;
+
+            case "mp_only":
+                        AddPackageToListView(new MediaPortalChecker());
+                        break;
+
       }
       listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
       if (InstallationComplete())

@@ -54,12 +54,9 @@ namespace MediaPortal.DeployTool
       try
       {
           setup.WaitForExit();
-          return true;
       }
-      catch
-      {
-          return false;
-      }
+      catch { }
+      return true;
     }
     public bool UnInstall()
     {
@@ -68,9 +65,13 @@ namespace MediaPortal.DeployTool
       {
           return false;
       }
-      Process setup = Process.Start((string)key.GetValue("UninstallString"));
-      setup.WaitForExit();
       key.Close();
+      Process setup = Process.Start((string)key.GetValue("UninstallString"));
+      try
+      {
+          setup.WaitForExit();
+      }
+      catch { }
       return true;
     }
     public CheckResult CheckStatus()
