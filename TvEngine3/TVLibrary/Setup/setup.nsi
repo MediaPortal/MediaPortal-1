@@ -46,6 +46,7 @@ Var noClient
 Var noServer
 Var noDesktopSC
 Var noStartMenuSC
+Var DeployMode
 ; variables for commandline parameters for UnInstaller
 Var RemoveAll       ; Set, when the user decided to uninstall everything
 
@@ -476,10 +477,30 @@ ${MementoSectionDone}
 Section -Post
     DetailPrint "Doing post installation stuff..."
 
-    ;Removes unselected components
-    !insertmacro SectionList "FinishSection"
-    ;writes component status to registry
-    ${MementoSectionSave}
+    ${If} $DeployMode == 1
+
+      ReadRegDWORD $R0 ${MEMENTO_REGISTRY_ROOT} '${MEMENTO_REGISTRY_KEY}' 'MementoSection_SecServer'
+      ReadRegDWORD $R1 ${MEMENTO_REGISTRY_ROOT} '${MEMENTO_REGISTRY_KEY}' 'MementoSection_SecClient'
+
+      ;writes component status to registry
+      ${MementoSectionSave}
+
+      ${If} $noClient == 1
+      ${AndIf} $R1 != ""
+        WriteRegDWORD ${MEMENTO_REGISTRY_ROOT} "${MEMENTO_REGISTRY_KEY}" 'MementoSection_SecClient' $R1
+      ${ElseIf} $noServer == 1
+      ${AndIf} $R0 != ""
+        WriteRegDWORD ${MEMENTO_REGISTRY_ROOT} "${MEMENTO_REGISTRY_KEY}" 'MementoSection_SecServer' $R0
+      ${EndIf}
+
+    ${Else}
+
+      ;Removes unselected components
+      !insertmacro SectionList "FinishSection"
+      ;writes component status to registry
+      ${MementoSectionSave}
+
+    ${EndIf}
 
     SetOverwrite on
     SetOutPath $INSTDIR
@@ -548,6 +569,7 @@ Function .onInit
     StrCpy $noServer 0
     StrCpy $noDesktopSC 0
     StrCpy $noStartMenuSC 0
+    StrCpy $DeployMode 0
 
     ; gets comandline parameter
     ${GetParameters} $R0
@@ -572,6 +594,11 @@ Function .onInit
     ${GetOptions} $R0 "/noStartMenuSC" $R1
     IfErrors +2
     StrCpy $noStartMenuSC 1
+
+    ClearErrors
+    ${GetOptions} $R0 "/DeployMode" $R1
+    IfErrors +2
+    StrCpy $DeployMode 1
     #### END of check and parse cmdline parameter
 
     ; reads components status for registry
