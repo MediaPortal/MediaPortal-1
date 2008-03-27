@@ -39,7 +39,6 @@ namespace MediaPortal.DeployTool
     {
       return "MP/TV3 packages (MSI)";
     }
-
     public bool Download()
     {
         return true;
@@ -50,34 +49,28 @@ namespace MediaPortal.DeployTool
     }
     public bool UnInstall()
     {
-      string remove;
       Process setup;
 
-      remove = CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}");
-      if (remove != null)
+      if( CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}" != null))
       {
-          setup = Process.Start(remove);
+          setup = Process.Start("msiexec.exe", "/I{87819CFA-1786-484D-B0DE-10B5FBF2625D}");
           setup.WaitForExit();
       }
-      remove = CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
-      if (remove != null)
+      if( CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}" != null))
       {
-          setup = Process.Start(remove);
+          setup = Process.Start("msiexec.exe", "/I{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
           setup.WaitForExit();
       }
-      remove = CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}");
-      if (remove != null)
+      if( CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}" != null))
       {
-          setup = Process.Start(remove);
+          setup = Process.Start("msiexec.exe", "/I{F7444E89-5BC0-497E-9650-E50539860DE0}");
           setup.WaitForExit();
       }
-      remove = CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}");
-      if (remove != null)
+      if (CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}" != null))
       {
-          setup = Process.Start(remove);
+          setup = Process.Start("msiexec.exe", "/I{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}");
           setup.WaitForExit();
       }
-
       return true;
     }
     public CheckResult CheckStatus()
@@ -87,20 +80,20 @@ namespace MediaPortal.DeployTool
       result.state = CheckState.INSTALLED;
 
       //MP
-      if( CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}") != null)
-          result.state = CheckState.VERSION_LOOKUP_FAILED;
+      if (CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}") != null)
+          result.state = CheckState.VERSION_MISMATCH;
 
       //TVServer
       if( CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
-          result.state = CheckState.VERSION_LOOKUP_FAILED;
+          result.state = CheckState.VERSION_MISMATCH;
 
       //TVClient old
       if( CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
-            result.state = CheckState.VERSION_LOOKUP_FAILED;
+          result.state = CheckState.VERSION_MISMATCH;
 
       //TVClient new
       if( CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}") != null)
-            result.state = CheckState.VERSION_LOOKUP_FAILED;
+          result.state = CheckState.VERSION_MISMATCH;
 
       return result;
     }
