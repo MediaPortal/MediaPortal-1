@@ -51,22 +51,22 @@ namespace MediaPortal.DeployTool
     {
       Process setup;
 
-      if( CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}" != null))
+      if( CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}") != null)
       {
           setup = Process.Start("msiexec.exe", "/I{87819CFA-1786-484D-B0DE-10B5FBF2625D}");
           setup.WaitForExit();
       }
-      if( CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}" != null))
+      if( CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
       {
           setup = Process.Start("msiexec.exe", "/I{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
           setup.WaitForExit();
       }
-      if( CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}" != null))
+      if( CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
       {
           setup = Process.Start("msiexec.exe", "/I{F7444E89-5BC0-497E-9650-E50539860DE0}");
           setup.WaitForExit();
       }
-      if (CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}" != null))
+      if (CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}") != null)
       {
           setup = Process.Start("msiexec.exe", "/I{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}");
           setup.WaitForExit();
