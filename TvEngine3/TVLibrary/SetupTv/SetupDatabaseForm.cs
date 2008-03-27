@@ -126,7 +126,9 @@ namespace SetupTv
                     break;
                 }
               }
-            }            
+            } 
+            else
+            { tbServerHostName.Text = keyValue[1]; }
           }
         }
       }
