@@ -17,6 +17,7 @@
     <Channel id="tv3.no" siteId="tv3" />
     <Channel id="viasat4@viasat.no" siteId="viasat4" />
     <Channel id="3sat.de" siteId="3sat" />
+    <Channel id="aljazint.int" siteId="aljazint" />
     <Channel id="animalplanet.com" siteId="animal" />
     <Channel id="bbcprime.com" siteId="bbcprime" />
     <Channel id="bbcworld.com" siteId="bbcworld" />
@@ -44,6 +45,7 @@
     <Channel id="dr2@dr.dk" siteId="dr2" />
     <Channel id="dsf.de" siteId="dsf" />
     <Channel id="eurosport@eurosport.com" siteId="eurospo" />
+    <Channel id="eurosport2@eurosport.com" siteId="eurospo2" />
     <Channel id="extremesports.tv" siteId="extreme" />   
     <Channel id="hallmarkchannel.com" siteId="hallmark" />  
     <Channel id="history@viasat.no" siteId="viahis" />
@@ -83,11 +85,13 @@
     <Channel id="family@tv1000.no" siteId="tv1kfamily" />
     <Channel id="nordic@tv1000.no" siteId="tv1knordic" />
     <Channel id="vh1.com" siteId="vh1" />
+    <Channel id="vh1classic.com" siteId="vh1classic" />
     <Channel id="explorer@viasat.no" siteId="viaexpl" />
     <Channel id="sport@viasatsport.no" siteId="viaspo" />
     <Channel id="sport2@viasatsport.no" siteId="viaspo2" />
     <Channel id="sport3@viasatsport.no" siteId="viaspo3" />
     <Channel id="ztv.se" siteId="ztvsve" />
+    <Channel id="silver.no" siteId="silver" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" />
