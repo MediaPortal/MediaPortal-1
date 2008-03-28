@@ -659,11 +659,13 @@ namespace MediaPortal.Video.Database
             if (fetcher.Count > 0)
             {
               int iMoviesFound = fetcher.Count;
-              if (iMoviesFound == 1)
+              //GEMX 28.03.08: There should always be a choice to enter the movie manually 
+              //               in case the 1 and only found name is wrong
+              /*if (iMoviesFound == 1)
               {
                 selectedMovie = 0;
-              }
-              else if (iMoviesFound > 1)
+              } else */
+              if (iMoviesFound > 0)
               {
                 if (!fetcher.OnSelectMovie(fetcher, out selectedMovie))
                 {

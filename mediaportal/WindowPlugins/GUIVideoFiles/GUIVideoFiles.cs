@@ -2390,7 +2390,7 @@ namespace MediaPortal.GUI.Video
     public bool OnScanStart(int total)
     {
       _scanning = true;
-      _conflictFiles = new ArrayList();
+      _conflictFiles.Clear();
       scanningFileTotal = total;
       scanningFileNumber = 1;
       return true;
@@ -2401,7 +2401,7 @@ namespace MediaPortal.GUI.Video
       if (_conflictFiles.Count > 0)
       {
         GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
-        // more then 1 movie found
+        // more than 1 movie found
         // ask user to select 1
         do
         {
