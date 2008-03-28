@@ -293,7 +293,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${MEDIAPORTAL.BASE}\CSScriptLibrary.dll"
   File "${MEDIAPORTAL.BASE}\d3dx9_30.dll"
   File "${MEDIAPORTAL.BASE}\defaultMusicViews.xml"
-  File "${MEDIAPORTAL.BASE}\defaultProgramViews.xml"
+  #File "${MEDIAPORTAL.BASE}\defaultProgramViews.xml"
   File "${MEDIAPORTAL.BASE}\defaultVideoViews.xml"
   File "${MEDIAPORTAL.BASE}\dlportio.dll"
   File "${MEDIAPORTAL.BASE}\dvblib.dll"
@@ -345,11 +345,11 @@ Section "MediaPortal core files (required)" SecCore
   File "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
   File "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
   File "${MEDIAPORTAL.BASE}\FileDetailContents.xml"
-  File "${MEDIAPORTAL.BASE}\grabber_AllGame_com.xml"
+  #File "${MEDIAPORTAL.BASE}\grabber_AllGame_com.xml"
   File "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
   File "${MEDIAPORTAL.BASE}\keymap.xml"
   File "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
-  File "${MEDIAPORTAL.BASE}\ProgramSettingProfiles.xml"
+  #File "${MEDIAPORTAL.BASE}\ProgramSettingProfiles.xml"
   File "${MEDIAPORTAL.BASE}\wikipedia.xml"
   File "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
   ; Folders
@@ -862,7 +862,7 @@ Function .onInit
 
     ; check if reboot is required
     ${If} ${FileExists} "$INSTDIR\rebootflag"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
         Abort
     ${EndIf}
 /*
