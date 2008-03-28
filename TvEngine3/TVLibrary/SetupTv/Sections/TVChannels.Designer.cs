@@ -193,7 +193,7 @@ namespace SetupTv.Sections
       this.mpButtonClear.Name = "mpButtonClear";
       this.mpButtonClear.Size = new System.Drawing.Size(50, 23);
       this.mpButtonClear.TabIndex = 7;
-      this.mpButtonClear.Text = "Clear all";
+      this.mpButtonClear.Text = "Clear";
       this.mpButtonClear.UseVisualStyleBackColor = true;
       this.mpButtonClear.Click += new System.EventHandler(this.mpButtonClear_Click);
       // 
@@ -252,9 +252,9 @@ namespace SetupTv.Sections
       // mpButtonExpert
       // 
       this.mpButtonExpert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonExpert.Location = new System.Drawing.Point(272, 351);
+      this.mpButtonExpert.Location = new System.Drawing.Point(267, 351);
       this.mpButtonExpert.Name = "mpButtonExpert";
-      this.mpButtonExpert.Size = new System.Drawing.Size(45, 23);
+      this.mpButtonExpert.Size = new System.Drawing.Size(50, 23);
       this.mpButtonExpert.TabIndex = 8;
       this.mpButtonExpert.Text = "Export";
       this.mpButtonExpert.UseVisualStyleBackColor = true;
@@ -263,9 +263,9 @@ namespace SetupTv.Sections
       // mpButtonImport
       // 
       this.mpButtonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonImport.Location = new System.Drawing.Point(272, 326);
+      this.mpButtonImport.Location = new System.Drawing.Point(267, 326);
       this.mpButtonImport.Name = "mpButtonImport";
-      this.mpButtonImport.Size = new System.Drawing.Size(45, 23);
+      this.mpButtonImport.Size = new System.Drawing.Size(50, 23);
       this.mpButtonImport.TabIndex = 7;
       this.mpButtonImport.Text = "Import";
       this.mpButtonImport.UseVisualStyleBackColor = true;
