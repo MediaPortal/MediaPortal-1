@@ -56,10 +56,11 @@ namespace SetupTv.Sections
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.label1 = new System.Windows.Forms.Label();
       this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label1 = new System.Windows.Forms.Label();
+      this.mpButtonUncheckEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -187,11 +188,11 @@ namespace SetupTv.Sections
       // 
       // mpButtonClear
       // 
-      this.mpButtonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonClear.Location = new System.Drawing.Point(351, 327);
+      this.mpButtonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonClear.Location = new System.Drawing.Point(191, 351);
       this.mpButtonClear.Name = "mpButtonClear";
-      this.mpButtonClear.Size = new System.Drawing.Size(98, 23);
-      this.mpButtonClear.TabIndex = 1;
+      this.mpButtonClear.Size = new System.Drawing.Size(50, 23);
+      this.mpButtonClear.TabIndex = 7;
       this.mpButtonClear.Text = "Clear all";
       this.mpButtonClear.UseVisualStyleBackColor = true;
       this.mpButtonClear.Click += new System.EventHandler(this.mpButtonClear_Click);
@@ -207,11 +208,11 @@ namespace SetupTv.Sections
       // mpButtonDel
       // 
       this.mpButtonDel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonDel.Location = new System.Drawing.Point(76, 350);
+      this.mpButtonDel.Location = new System.Drawing.Point(191, 326);
       this.mpButtonDel.Name = "mpButtonDel";
-      this.mpButtonDel.Size = new System.Drawing.Size(55, 23);
-      this.mpButtonDel.TabIndex = 1;
-      this.mpButtonDel.Text = "Delete";
+      this.mpButtonDel.Size = new System.Drawing.Size(50, 23);
+      this.mpButtonDel.TabIndex = 6;
+      this.mpButtonDel.Text = "&Delete";
       this.mpButtonDel.UseVisualStyleBackColor = true;
       this.mpButtonDel.Click += new System.EventHandler(this.mpButtonDel_Click);
       // 
@@ -220,8 +221,8 @@ namespace SetupTv.Sections
       this.buttonUtp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonUtp.Location = new System.Drawing.Point(9, 326);
       this.buttonUtp.Name = "buttonUtp";
-      this.buttonUtp.Size = new System.Drawing.Size(55, 23);
-      this.buttonUtp.TabIndex = 3;
+      this.buttonUtp.Size = new System.Drawing.Size(45, 23);
+      this.buttonUtp.TabIndex = 1;
       this.buttonUtp.Text = "Up";
       this.buttonUtp.UseVisualStyleBackColor = true;
       this.buttonUtp.Click += new System.EventHandler(this.buttonUtp_Click);
@@ -229,10 +230,10 @@ namespace SetupTv.Sections
       // buttonDown
       // 
       this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.Location = new System.Drawing.Point(9, 350);
+      this.buttonDown.Location = new System.Drawing.Point(9, 351);
       this.buttonDown.Name = "buttonDown";
-      this.buttonDown.Size = new System.Drawing.Size(55, 23);
-      this.buttonDown.TabIndex = 4;
+      this.buttonDown.Size = new System.Drawing.Size(45, 23);
+      this.buttonDown.TabIndex = 2;
       this.buttonDown.Text = "Down";
       this.buttonDown.UseVisualStyleBackColor = true;
       this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
@@ -240,31 +241,31 @@ namespace SetupTv.Sections
       // mpButtonEdit
       // 
       this.mpButtonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonEdit.Location = new System.Drawing.Point(76, 326);
+      this.mpButtonEdit.Location = new System.Drawing.Point(125, 326);
       this.mpButtonEdit.Name = "mpButtonEdit";
-      this.mpButtonEdit.Size = new System.Drawing.Size(55, 23);
-      this.mpButtonEdit.TabIndex = 5;
-      this.mpButtonEdit.Text = "Edit";
+      this.mpButtonEdit.Size = new System.Drawing.Size(50, 23);
+      this.mpButtonEdit.TabIndex = 4;
+      this.mpButtonEdit.Text = "&Edit";
       this.mpButtonEdit.UseVisualStyleBackColor = true;
       this.mpButtonEdit.Click += new System.EventHandler(this.mpButtonEdit_Click);
       // 
       // mpButtonExpert
       // 
-      this.mpButtonExpert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonExpert.Location = new System.Drawing.Point(142, 350);
+      this.mpButtonExpert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonExpert.Location = new System.Drawing.Point(277, 351);
       this.mpButtonExpert.Name = "mpButtonExpert";
-      this.mpButtonExpert.Size = new System.Drawing.Size(55, 23);
-      this.mpButtonExpert.TabIndex = 6;
+      this.mpButtonExpert.Size = new System.Drawing.Size(45, 23);
+      this.mpButtonExpert.TabIndex = 8;
       this.mpButtonExpert.Text = "Export";
       this.mpButtonExpert.UseVisualStyleBackColor = true;
       this.mpButtonExpert.Click += new System.EventHandler(this.mpButtonExpert_Click);
       // 
       // mpButtonImport
       // 
-      this.mpButtonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonImport.Location = new System.Drawing.Point(142, 326);
+      this.mpButtonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonImport.Location = new System.Drawing.Point(277, 326);
       this.mpButtonImport.Name = "mpButtonImport";
-      this.mpButtonImport.Size = new System.Drawing.Size(55, 23);
+      this.mpButtonImport.Size = new System.Drawing.Size(45, 23);
       this.mpButtonImport.TabIndex = 7;
       this.mpButtonImport.Text = "Import";
       this.mpButtonImport.UseVisualStyleBackColor = true;
@@ -289,6 +290,7 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.mpButtonUncheckEncrypted);
       this.tabPage1.Controls.Add(this.label1);
       this.tabPage1.Controls.Add(this.mpButtonDeleteEncrypted);
       this.tabPage1.Controls.Add(this.mpButtonAdd);
@@ -310,39 +312,6 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Channels";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
-      // mpButtonDeleteEncrypted
-      // 
-      this.mpButtonDeleteEncrypted.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(351, 351);
-      this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
-      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(98, 23);
-      this.mpButtonDeleteEncrypted.TabIndex = 10;
-      this.mpButtonDeleteEncrypted.Text = "Delete encrypted";
-      this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
-      this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
-      // 
-      // mpButtonAdd
-      // 
-      this.mpButtonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonAdd.Location = new System.Drawing.Point(221, 351);
-      this.mpButtonAdd.Name = "mpButtonAdd";
-      this.mpButtonAdd.Size = new System.Drawing.Size(55, 23);
-      this.mpButtonAdd.TabIndex = 9;
-      this.mpButtonAdd.Text = "Add";
-      this.mpButtonAdd.UseVisualStyleBackColor = true;
-      this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
-      // 
-      // mpButtonPreview
-      // 
-      this.mpButtonPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonPreview.Location = new System.Drawing.Point(221, 326);
-      this.mpButtonPreview.Name = "mpButtonPreview";
-      this.mpButtonPreview.Size = new System.Drawing.Size(55, 23);
-      this.mpButtonPreview.TabIndex = 8;
-      this.mpButtonPreview.Text = "Preview";
-      this.mpButtonPreview.UseVisualStyleBackColor = true;
-      this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
-      // 
       // label1
       // 
       this.label1.AutoSize = true;
@@ -351,6 +320,50 @@ namespace SetupTv.Sections
       this.label1.Size = new System.Drawing.Size(257, 13);
       this.label1.TabIndex = 11;
       this.label1.Text = "Only selected channels will show up in your TV guide";
+      // 
+      // mpButtonDeleteEncrypted
+      // 
+      this.mpButtonDeleteEncrypted.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(337, 351);
+      this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
+      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(110, 23);
+      this.mpButtonDeleteEncrypted.TabIndex = 10;
+      this.mpButtonDeleteEncrypted.Text = "Delete encrypted";
+      this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
+      this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
+      // 
+      // mpButtonAdd
+      // 
+      this.mpButtonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonAdd.Location = new System.Drawing.Point(69, 326);
+      this.mpButtonAdd.Name = "mpButtonAdd";
+      this.mpButtonAdd.Size = new System.Drawing.Size(50, 23);
+      this.mpButtonAdd.TabIndex = 3;
+      this.mpButtonAdd.Text = "&Add";
+      this.mpButtonAdd.UseVisualStyleBackColor = true;
+      this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
+      // 
+      // mpButtonPreview
+      // 
+      this.mpButtonPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonPreview.Location = new System.Drawing.Point(69, 351);
+      this.mpButtonPreview.Name = "mpButtonPreview";
+      this.mpButtonPreview.Size = new System.Drawing.Size(106, 23);
+      this.mpButtonPreview.TabIndex = 5;
+      this.mpButtonPreview.Text = "Pre&view";
+      this.mpButtonPreview.UseVisualStyleBackColor = true;
+      this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
+      // 
+      // mpButtonUncheckEncrypted
+      // 
+      this.mpButtonUncheckEncrypted.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonUncheckEncrypted.Location = new System.Drawing.Point(337, 326);
+      this.mpButtonUncheckEncrypted.Name = "mpButtonUncheckEncrypted";
+      this.mpButtonUncheckEncrypted.Size = new System.Drawing.Size(110, 23);
+      this.mpButtonUncheckEncrypted.TabIndex = 9;
+      this.mpButtonUncheckEncrypted.Text = "Uncheck encrypted";
+      this.mpButtonUncheckEncrypted.UseVisualStyleBackColor = true;
+      this.mpButtonUncheckEncrypted.Click += new System.EventHandler(this.mpButtonUncheckEncrypted_Click);
       // 
       // TvChannels
       // 
@@ -400,5 +413,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem renameMarkedChannelsBySIDToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem addSIDInFrontOfNameToolStripMenuItem;
     private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonUncheckEncrypted;
   }
 }

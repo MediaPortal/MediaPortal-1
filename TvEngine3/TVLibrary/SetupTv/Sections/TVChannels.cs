@@ -1108,6 +1108,16 @@ namespace SetupTv.Sections
         OnSectionActivated();
     }
 
+
+    private void mpButtonUncheckEncrypted_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in mpListView1.Items)
+      {
+        Channel channel = (Channel)item.Tag;
+        item.Checked = channel.FreeToAir;        
+      }
+    }
+
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
     {
       NotifyForm dlg = new NotifyForm("Clearing all scrambled tv channels...", "This can take some time\n\nPlease be patient...");
