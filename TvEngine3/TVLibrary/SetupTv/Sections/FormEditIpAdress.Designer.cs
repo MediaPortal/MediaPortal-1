@@ -36,15 +36,18 @@ namespace SetupTv.Sections
       // 
       // mpLabel1
       // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.BackColor = System.Drawing.SystemColors.Control;
       this.mpLabel1.Location = new System.Drawing.Point(12, 14);
       this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(241, 30);
+      this.mpLabel1.Size = new System.Drawing.Size(329, 13);
       this.mpLabel1.TabIndex = 0;
-      this.mpLabel1.Text = "Please select the ip adress used by the server for streaming:";
+      this.mpLabel1.Text = "Please select the IP address used by the server for RTSP streaming:";
       // 
       // mpButtonOK
       // 
-      this.mpButtonOK.Location = new System.Drawing.Point(40, 85);
+      this.mpButtonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonOK.Location = new System.Drawing.Point(183, 80);
       this.mpButtonOK.Name = "mpButtonOK";
       this.mpButtonOK.Size = new System.Drawing.Size(75, 23);
       this.mpButtonOK.TabIndex = 1;
@@ -54,7 +57,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonCancel
       // 
-      this.mpButtonCancel.Location = new System.Drawing.Point(150, 85);
+      this.mpButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.mpButtonCancel.Location = new System.Drawing.Point(264, 80);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 2;
@@ -62,13 +67,15 @@ namespace SetupTv.Sections
       this.mpButtonCancel.UseVisualStyleBackColor = true;
       this.mpButtonCancel.Click += new System.EventHandler(this.button2_Click);
       // 
-      // comboBox1
+      // mpComboBox1
       // 
+      this.mpComboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBox1.FormattingEnabled = true;
-      this.mpComboBox1.Location = new System.Drawing.Point(12, 47);
+      this.mpComboBox1.Location = new System.Drawing.Point(15, 41);
       this.mpComboBox1.Name = "mpComboBox1";
-      this.mpComboBox1.Size = new System.Drawing.Size(241, 21);
+      this.mpComboBox1.Size = new System.Drawing.Size(324, 21);
       this.mpComboBox1.TabIndex = 0;
       // 
       // FormEditIpAdress
@@ -77,7 +84,7 @@ namespace SetupTv.Sections
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
-      this.ClientSize = new System.Drawing.Size(265, 122);
+      this.ClientSize = new System.Drawing.Size(351, 115);
       this.Controls.Add(this.mpComboBox1);
       this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.mpButtonOK);
@@ -87,9 +94,10 @@ namespace SetupTv.Sections
       this.ShowIcon = false;
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "Change server";
+      this.Text = "Assign network interface for streaming";
       this.Load += new System.EventHandler(this.FormEditIpAdress_Load);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
