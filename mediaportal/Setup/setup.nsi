@@ -261,7 +261,7 @@ Section "MediaPortal core files (required)" SecCore
 
   SetOverwrite on
 
-!ifndef HIGH_BUILD   # USE BaseDIFF directory for svn builds
+!ifdef HIGH_BUILD   # USE BaseDIFF directory for svn builds
   SetOutPath $INSTDIR
 
   #filters are installed seperatly and are always include in SVN and FINAL releases
