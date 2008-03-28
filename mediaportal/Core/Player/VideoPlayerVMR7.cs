@@ -759,7 +759,7 @@ namespace MediaPortal.Player
               case -32: TrySpeed(-32, -75000); break;
 
               case 1:
-                m_speedRate = 10000;
+                  TrySpeed(1, 10000);
                 mediaCtrl.Run();
                 break;
               case 2: TrySpeed(2, 15000); break;
