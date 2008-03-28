@@ -201,45 +201,82 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
-Section "MediaPortal core files (required)" SecCore
-    SectionIn RO
-    DetailPrint "Installing MediaPortal core files..."
+!ifdef HIGH_BUILD     # optional Section which could create a backup
+Section "Backup current installation status" SecBackup
 
-    SetOverwrite on
-    
-    ; CHECK FOR OLD FILES and DIRECTORY
-    ${If} ${FileExists} "$INSTDIR\*.*"
-        ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-        ; $0="01"      day
-        ; $1="04"      month
-        ; $2="2005"    year
-        ; $3="Friday"  day of week name
-        ; $4="16"      hour
-        ; $5="05"      minute
-        ; $6="50"      seconds
+  ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+  ; $0="01"      day
+  ; $1="04"      month
+  ; $2="2005"    year
+  ; $3="Friday"  day of week name
+  ; $4="16"      hour
+  ; $5="05"      minute
+  ; $6="50"      seconds
 
-        #  MAYBE WE should always rename the instdir if it exists
-        ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
-        ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
+  DetailPrint "Creating backup of installation dir, this might take some minutes."
+  CreateDirectory "$INSTDIR_BACKUP_$1$0-$4$5"
+  CopyFiles /SILENT "$INSTDIR\*.*" "$INSTDIR_BACKUP_$1$0-$4$5"
 
-        ${If} $R0 != ${VER_MAJOR}
-        ${OrIf} $R1 != ${VER_MINOR}
-            Rename "$INSTDIR" "$INSTDIR_BACKUP_$1$0-$4$5"
-        ${EndIf}
+  DetailPrint "Creating backup of configuration dir, this might take some minutes."
+  CreateDirectory "$INSTDIR_BACKUP_$1$0-$4$5"
+  CopyFiles /SILENT "$INSTDIR\*.*" "$INSTDIR_BACKUP_$1$0-$4$5"
+
+SectionEnd
+!else                 # Required invisible Section which renames the INSTDIR to get a real clean installation
+Section "-backup" SecBackup
+
+  ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+  ; $0="01"      day
+  ; $1="04"      month
+  ; $2="2005"    year
+  ; $3="Friday"  day of week name
+  ; $4="16"      hour
+  ; $5="05"      minute
+  ; $6="50"      seconds
+
+  ; CHECK FOR OLD FILES and DIRECTORY
+  ${If} ${FileExists} "$INSTDIR\*.*"
+
+    #  MAYBE WE should always rename the instdir if it exists
+    ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
+    ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
+
+    ${If} $R0 != ${VER_MAJOR}
+    ${OrIf} $R1 != ${VER_MINOR}
+      Rename "$INSTDIR" "$INSTDIR_BACKUP_$1$0-$4$5"
     ${EndIf}
 
+  ${EndIf}
 
-    IfFileExists "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" 0 +2
-        Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_BACKUP_$1$0-$4$5"
+  ${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
+    Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_BACKUP_$1$0-$4$5"
+  ${EndIf}
 
-!ifdef HIGH_BUILD
+SectionEnd
+!endif
+
+Section "MediaPortal core files (required)" SecCore
+  SectionIn RO
+  DetailPrint "Installing MediaPortal core files..."
+
+  SetOverwrite on
+
+!ifndef HIGH_BUILD   # USE BaseDIFF directory for svn builds
   SetOutPath $INSTDIR
 
-  !define EXCLUDED_FILES \
+  #filters are installed seperatly and are always include in SVN and FINAL releases
+  !define EXCLUDED_FILTERS \ 
       "cdxareader.ax CLDump.ax MPSA.ax PDMpgMux.ax shoutcastsource.ax TsReader.ax TTPremiumSource.ax \
       GenDMOProp.dll MpegAudio.dll MpegVideo.dll \
       MpaDecFilter.ax Mpeg2DecFilter.ax"
-  File /r "${MEDIAPORTAL.BASE}"
+  #CONFIG FILES ARE ALWAYS INSTALLED by SVN and FINAL releases, BECAUSE of the config dir location
+  !define EXCLUDED_CONFIG_FILES \
+      "CaptureCardDefinitions.xml 'eHome Infrared Transceiver List XP.xml' FileDetailContents.xml ISDNCodes.xml \
+      keymap.xml MusicVideoSettings.xml wikipedia.xml yac-area-codes.xml \
+      'thumbs' \
+      " ;grabber_AllGame_com.xml ProgramSettingProfiles.xml
+
+  File /r /x ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}"
 !else
   ; Doc
   SetOutPath $INSTDIR\Docs
@@ -338,24 +375,26 @@ Section "MediaPortal core files (required)" SecCore
   File "${MEDIAPORTAL.BASE}\X10Unified.dll"
   File "${MEDIAPORTAL.BASE}\xAPMessage.dll"
   File "${MEDIAPORTAL.BASE}\xAPTransport.dll"
+!endif
 
+  # COMMON CONFIG files for SVN and FINAL RELEASES
   SetOutPath "${COMMON_APPDATA}"
   CreateDirectory "${COMMON_APPDATA}\InputDeviceMappings\custom"
   ; Config Files (XML)
-  File "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
-  File "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
-  File "${MEDIAPORTAL.BASE}\FileDetailContents.xml"
-  #File "${MEDIAPORTAL.BASE}\grabber_AllGame_com.xml"
-  File "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
-  File "${MEDIAPORTAL.BASE}\keymap.xml"
-  File "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
-  #File "${MEDIAPORTAL.BASE}\ProgramSettingProfiles.xml"
-  File "${MEDIAPORTAL.BASE}\wikipedia.xml"
-  File "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
+  File "${MEDIAPORTAL.XBMCBIN}\CaptureCardDefinitions.xml"
+  File "${MEDIAPORTAL.XBMCBIN}\eHome Infrared Transceiver List XP.xml"
+  File "${MEDIAPORTAL.XBMCBIN}\FileDetailContents.xml"
+  #File "${MEDIAPORTAL.XBMCBIN}\grabber_AllGame_com.xml"
+  File "${MEDIAPORTAL.XBMCBIN}\ISDNCodes.xml"
+  File "${MEDIAPORTAL.XBMCBIN}\keymap.xml"
+  File "${MEDIAPORTAL.XBMCBIN}\MusicVideoSettings.xml"
+  #File "${MEDIAPORTAL.XBMCBIN}\ProgramSettingProfiles.xml"
+  File "${MEDIAPORTAL.XBMCBIN}\wikipedia.xml"
+  File "${MEDIAPORTAL.XBMCBIN}\yac-area-codes.xml"
   ; Folders
-  File /r "${MEDIAPORTAL.BASE}\thumbs"
-!endif
+  File /r "${MEDIAPORTAL.XBMCBIN}\thumbs"
 
+  # COMMON files for SVN and FINAL RELEASES
   SetOutPath $INSTDIR
   File "${MEDIAPORTAL.XBMCBIN}\Configuration.exe"
   File "${MEDIAPORTAL.XBMCBIN}\Configuration.exe.config"
@@ -388,7 +427,6 @@ Section "MediaPortal core files (required)" SecCore
   File "${MEDIAPORTAL.XBMCBIN}\WebEPG.exe"
   File "${MEDIAPORTAL.XBMCBIN}\WebEPG-conf.exe"
   File "${MEDIAPORTAL.XBMCBIN}\XPBurnComponent.dll"
-  ;------------  End of Common Files and Folders for XP & Vista
 
   File MediaPortalDirs.xml
 
