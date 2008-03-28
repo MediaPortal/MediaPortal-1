@@ -102,3 +102,4 @@ xcopy /y %1\MPInstaller\bin\%2\MPInstaller.* .
 REM Register
 regsvr32 /s MPSA.ax
 regsvr32 /s cdxareader.ax
+regsvr32 /s TTPremiumSource.ax
