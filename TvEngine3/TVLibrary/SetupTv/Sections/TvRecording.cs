@@ -687,10 +687,10 @@ namespace SetupTv.Sections
 
     private void GetTagFiles()
     {
-      btnImport.Enabled = false;
-      Dictionary<string, MatroskaTagInfo> importTags = new Dictionary<string, MatroskaTagInfo>();
       try
       {
+        btnImport.Enabled = false;
+        Dictionary<string, MatroskaTagInfo> importTags = new Dictionary<string, MatroskaTagInfo>();
         Thread lookupThread = new Thread(new ParameterizedThreadStart(MatroskaTagHandler.GetAllMatroskaTags));
         lookupThread.Start((object)CurrentImportPath);
         lookupThread.IsBackground = true;
@@ -703,7 +703,11 @@ namespace SetupTv.Sections
 
     private void OnLookupCompleted(Dictionary<string, MatroskaTagInfo> FoundTags)
     {
-      Invoke(new MethodTreeViewTags(AddTagFiles), new object[] { FoundTags });
+      try
+      {
+        Invoke(new MethodTreeViewTags(AddTagFiles), new object[] { FoundTags });
+      }
+      catch (Exception) { }
     }
 
     /// <summary>
@@ -712,49 +716,58 @@ namespace SetupTv.Sections
     /// <param name="FoundTags"></param>
     private void AddTagFiles(Dictionary<string, MatroskaTagInfo> FoundTags)
     {
-      tvTagRecs.Nodes.Clear();
-      tvTagRecs.BeginUpdate();
-      foreach (KeyValuePair<string, MatroskaTagInfo> kvp in FoundTags)
+      try
       {
-        Recording TagRec = BuildRecordingFromTag(kvp.Key, kvp.Value);
-        if (TagRec != null)
+        tvTagRecs.Nodes.Clear();
+        tvTagRecs.BeginUpdate();
+        foreach (KeyValuePair<string, MatroskaTagInfo> kvp in FoundTags)
         {
-          TreeNode TagNode = BuildNodeFromRecording(TagRec);
-          if (TagNode != null)
+          Recording TagRec = BuildRecordingFromTag(kvp.Key, kvp.Value);
+          if (TagRec != null)
           {
-            bool RecFileFound = false;
-            foreach (TreeNode dbRec in tvDbRecs)
+            TreeNode TagNode = BuildNodeFromRecording(TagRec);
+            if (TagNode != null)
             {
-              Recording currentDbRec = dbRec.Tag as Recording;
-              if (currentDbRec != null)
+              bool RecFileFound = false;
+              foreach (TreeNode dbRec in tvDbRecs)
               {
-                if (Path.GetFileNameWithoutExtension(currentDbRec.FileName) == Path.GetFileNameWithoutExtension(TagRec.FileName))
+                Recording currentDbRec = dbRec.Tag as Recording;
+                if (currentDbRec != null)
                 {
-                  RecFileFound = true;
-                  break;
+                  if (Path.GetFileNameWithoutExtension(currentDbRec.FileName) == Path.GetFileNameWithoutExtension(TagRec.FileName))
+                  {
+                    RecFileFound = true;
+                    break;
+                  }
                 }
               }
-            }
-            if (!RecFileFound)
-            {
-              // only add those tags which specify a still valid filename
-              if (File.Exists(TagRec.FileName))
-                tvTagRecs.Nodes.Add(TagNode);
+              if (!RecFileFound)
+              {
+                // only add those tags which specify a still valid filename
+                if (File.Exists(TagRec.FileName))
+                  tvTagRecs.Nodes.Add(TagNode);
+              }
             }
           }
         }
+        //tvTagRecs.TreeViewNodeSorter = new RecordSorter();
+        //try
+        //{
+        //  tvTagRecs.Sort();
+        //}
+        //catch (Exception ex)
+        //{
+        //  MessageBox.Show(string.Format("Error sorting tag recordings: \n{0}", ex.Message));
+        //}
+        tvTagRecs.EndUpdate();
+        btnImport.Enabled = (tvTagRecs.Nodes.Count > 0);
       }
-      //tvTagRecs.TreeViewNodeSorter = new RecordSorter();
-      //try
-      //{
-      //  tvTagRecs.Sort();
-      //}
-      //catch (Exception ex)
-      //{
-      //  MessageBox.Show(string.Format("Error sorting tag recordings: \n{0}", ex.Message));
-      //}
-      tvTagRecs.EndUpdate();
-      btnImport.Enabled = (tvTagRecs.Nodes.Count > 0);
+      catch (Exception)
+      {
+        // just in case the GUI controls could be null due to timing problems on thread callback
+        if (btnImport != null)
+          btnImport.Enabled = false;
+      }
     }
 
     #endregion
