@@ -145,9 +145,12 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 #---------------------------------------------------------------------------
 #!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
 !insertmacro MUI_PAGE_WELCOME
+!ifdef HIGH_BUILD
+!else
 Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
+!endif
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
@@ -303,6 +306,12 @@ Section "MediaPortal core files (required)" SecCore
   File "..\Docs\MediaPortal License.rtf"
   File "..\Docs\SQLite Database Browser.exe"
 
+  ; plugins
+  SetOutPath "$INSTDIR\plugins\process"
+  File /r "${MEDIAPORTAL.BASE}\plugins\process\LCDDrivers"
+  SetOutPath "$INSTDIR\plugins\Windows"
+  File "${MEDIAPORTAL.BASE}\plugins\Windows\XihSolutions.DotMSN.dll"
+
   ; WebEPG
   SetOutPath $INSTDIR\WebEPG
   File /r "${MEDIAPORTAL.BASE}\WebEPG\channels"
@@ -413,7 +422,19 @@ Section "MediaPortal core files (required)" SecCore
   File /r "${MEDIAPORTAL.XBMCBIN}\thumbs"
 
   # COMMON files for SVN and FINAL RELEASES
-  SetOutPath $INSTDIR
+  SetOutPath "$INSTDIR\plugins\ExternalPlayers"
+  File "${MEDIAPORTAL.XBMCBIN}\plugins\ExternalPlayers\ExternalPlayers.dll"
+
+  SetOutPath "$INSTDIR\plugins\process"
+  File "${MEDIAPORTAL.XBMCBIN}\plugins\process\ProcessPlugins.dll"
+
+  SetOutPath "$INSTDIR\plugins\subtitle"
+  File "${MEDIAPORTAL.XBMCBIN}\plugins\subtitle\SubtitlePlugins.dll"
+
+  SetOutPath "$INSTDIR\plugins\Windows"
+  File "${MEDIAPORTAL.XBMCBIN}\plugins\Windows\WindowPlugins.dll"
+
+  SetOutPath "$INSTDIR"
   File "${MEDIAPORTAL.XBMCBIN}\Configuration.exe"
   File "${MEDIAPORTAL.XBMCBIN}\Configuration.exe.config"
   File "${MEDIAPORTAL.XBMCBIN}\Core.dll"
