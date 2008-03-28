@@ -47,6 +47,6 @@ public:
 private:
   void DVB_GetService(BYTE *b,CChannelInfo& info);
   ISdtCallBack* m_pCallback;
-  bool m_bFound;
+  DWORD m_timer;
   CTsHeader             m_tsHeader;
 };

@@ -35,7 +35,7 @@ DEFINE_GUID(IID_ITSChannelScan, 0x1663dc42, 0xd169, 0x41da, 0xbc, 0xe2, 0xee, 0x
 
 DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 {
-	STDMETHOD(Start)(THIS_ BOOL waitForVCT)PURE;
+	STDMETHOD(Start)(THIS_ bool waitForVCT)PURE;
 	STDMETHOD(Stop)(THIS_)PURE;
 	STDMETHOD(GetCount)(THIS_ int* channelCount)PURE;
 	STDMETHOD(IsReady)(THIS_ BOOL* yesNo)PURE;
@@ -74,7 +74,7 @@ public:
 	
   DECLARE_IUNKNOWN
 	
-	STDMETHODIMP Start(BOOL waitForVCT);
+	STDMETHODIMP Start(bool waitForVCT);
 	STDMETHODIMP Stop();
 	STDMETHODIMP GetCount(int* channelCount);
 	STDMETHODIMP IsReady( BOOL* yesNo);

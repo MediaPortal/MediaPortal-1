@@ -49,7 +49,7 @@ STDMETHODIMP CChannelScan::SetCallBack(IChannelScanCallback* callback)
 	m_pCallback=callback;
 	return S_OK;
 }
-STDMETHODIMP CChannelScan::Start(BOOL waitForVCT)
+STDMETHODIMP CChannelScan::Start(bool waitForVCT)
 {
 	CEnterCriticalSection enter(m_section);
 	try

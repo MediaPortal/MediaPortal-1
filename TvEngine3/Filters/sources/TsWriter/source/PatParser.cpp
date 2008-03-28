@@ -90,25 +90,6 @@ void  CPatParser::Reset(IChannelScanCallback* callback, bool waitForVCT)
 //*****************************************************************************
 BOOL CPatParser::IsReady()
 {
-  DWORD timeSpan=GetTickCount()-m_tickCount;
-  if (timeSpan < 1000) return FALSE;
-	DWORD timeSpan1=GetTickCount()-m_tickCount;
-	//a1jatt if channels not ready in 30 seconds , it will never be ready, so dump them 
-	if (timeSpan1 > 25000) 
-	{
-		int t=0;
-		for (itChannels it1=m_mapChannels.begin(); it1 !=m_mapChannels.end();it1++)
-		{
-			CChannelInfo& info1=it1->second;
-			if (info1.PmtReceived == false || info1.SdtReceived == false) 
-			{
-					m_mapChannels.erase(t);
-			}
-				t++;
-		}
-		m_tickCount=GetTickCount();
-		return FALSE;
-	}
 	bool vctReady=false;
 
   if (m_vctParser.Count() > 0)
@@ -117,7 +98,7 @@ BOOL CPatParser::IsReady()
   }
 	if (m_nitDecoder.Ready()==false) 
 	{
-//		LogDebug("nit not ready");
+		//LogDebug("nit not ready");
 		return FALSE;
 	}
   if (false==m_sdtParser.IsReady()) 
@@ -130,7 +111,7 @@ BOOL CPatParser::IsReady()
 	for (itChannels it=m_mapChannels.begin(); it !=m_mapChannels.end();++it)
   {
 		CChannelInfo& info=it->second;
-		if (info.PmtReceived == false || info.SdtReceived == false) 
+		if (info.PmtReceived == false) 
 		{
 			//LogDebug("ch:%d pmt:%d sdt:%d othermux:%d %s onid:%x tsid:%x sid:%x",
 			//	x,info.PmtReceived,info.SdtReceived,info.OtherMux,info.ServiceName,
@@ -139,10 +120,10 @@ BOOL CPatParser::IsReady()
 		}
 		x++;
 	}
-	if (m_waitForVCT && !vctReady)
-		return FALSE;
+	//if (m_waitForVCT && !vctReady)
+	//	return FALSE;
 	m_finished=true;
-  return TRUE;
+	return TRUE;
 }
 
 //*****************************************************************************
@@ -295,10 +276,19 @@ bool CPatParser::PmtParserExists(int pid,int serviceId)
 void CPatParser::OnTsPacket(byte* tsPacket)
 {
 	CEnterCriticalSection enter(m_section);
-	if (m_finished) return;
+	//if (m_finished) return;
   int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
 
-	
+	if (m_pCallback!=NULL)
+	{
+		if (IsReady() )
+    {
+			LogDebug("Scanner finished. Triggering callback");
+			m_pCallback->OnScannerDone();
+      m_pCallback=NULL;
+			return;
+    }
+	}	
   if (pid==PID_NIT) 
   {
     m_nitDecoder.OnTsPacket(tsPacket);
@@ -326,14 +316,6 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 		CPmtParser *parser=*it;
 		parser->OnTsPacket(tsPacket);
 		++it;
-	}
-	if (m_pCallback!=NULL)
-	{
-		if (IsReady() )
-    {
-			m_pCallback->OnScannerDone();
-      m_pCallback=NULL;
-    }
 	}
 }
 

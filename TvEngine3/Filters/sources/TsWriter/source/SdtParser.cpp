@@ -37,14 +37,15 @@ CSdtParser::~CSdtParser(void)
 
 void CSdtParser::Reset()
 {        
-  m_bFound=false;
-
 	CSectionDecoder::Reset();
+	m_timer=GetTickCount();
 }
 
 bool CSdtParser::IsReady()
 {
-  return m_bFound;
+	DWORD timeSpan=GetTickCount()-m_timer;
+	if (timeSpan >=5000) return true;
+	return false;
 }
 void CSdtParser::SetCallback(ISdtCallBack* callback)
 {
@@ -105,7 +106,6 @@ void  CSdtParser::OnNewSection(CSection& sections)
         info.ServiceId=service_id;
         info.FreeCAMode=free_CA_mode;
 				info.OtherMux = (sections.table_id==0x46);
-				m_bFound=true;
         if (m_pCallback!=NULL)
           m_pCallback->OnSdtReceived(info);
 		  }
@@ -120,7 +120,6 @@ void  CSdtParser::OnNewSection(CSection& sections)
 		  len1 -= x;
 	  }		
   }        
-
 }
 
 void CSdtParser::DVB_GetService(BYTE *b,CChannelInfo& info)
