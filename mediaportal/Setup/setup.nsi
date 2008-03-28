@@ -265,18 +265,36 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath $INSTDIR
 
   #filters are installed seperatly and are always include in SVN and FINAL releases
-  !define EXCLUDED_FILTERS \ 
-      "cdxareader.ax CLDump.ax MPSA.ax PDMpgMux.ax shoutcastsource.ax TsReader.ax TTPremiumSource.ax \
-      GenDMOProp.dll MpegAudio.dll MpegVideo.dll \
-      MpaDecFilter.ax Mpeg2DecFilter.ax"
+  !define EXCLUDED_FILTERS "\
+    /x cdxareader.ax \
+    /x CLDump.ax \
+    /x MPSA.ax \
+    /x PDMpgMux.ax \
+    /x shoutcastsource.ax \
+    /x TsReader.ax \
+    /x TTPremiumSource.ax \
+    /x GenDMOProp.dll \
+    /x MpegAudio.dll \
+    /x MpegVideo.dll \
+    /x MpaDecFilter.ax \
+    /x Mpeg2DecFilter.ax \
+    "
   #CONFIG FILES ARE ALWAYS INSTALLED by SVN and FINAL releases, BECAUSE of the config dir location
-  !define EXCLUDED_CONFIG_FILES \
-      "CaptureCardDefinitions.xml 'eHome Infrared Transceiver List XP.xml' FileDetailContents.xml ISDNCodes.xml \
-      keymap.xml MusicVideoSettings.xml wikipedia.xml yac-area-codes.xml \
-      'thumbs' \
-      " ;grabber_AllGame_com.xml ProgramSettingProfiles.xml
+  !define EXCLUDED_CONFIG_FILES "\
+    /x CaptureCardDefinitions.xml \
+    /x 'eHome Infrared Transceiver List XP.xml' \
+    /x FileDetailContents.xml \
+    /x ISDNCodes.xml \
+    /x keymap.xml \
+    /x MusicVideoSettings.xml \
+    /x wikipedia.xml \
+    /x yac-area-codes.xml \
+    /x thumbs \
+    "
+    #/x grabber_AllGame_com.xml \
+    #/x ProgramSettingProfiles.xml \
 
-  File /r /x ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}"
+  File /nonfatal /r ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}"
 !else
   ; Doc
   SetOutPath $INSTDIR\Docs
