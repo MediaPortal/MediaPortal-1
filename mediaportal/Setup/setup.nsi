@@ -38,12 +38,14 @@ SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
 !ifdef HIGH_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
   !define MEDIAPORTAL.FILTERBIN "..\xbmc\bin\Release"
-  !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
+  !define MEDIAPORTAL.XBMCBIN ".."
 !else
-  !define MEDIAPORTAL.BASE "..\xbmc\bin\Release"
+  !define MEDIAPORTAL.BASE "..\MediaPortal.Base"
   !define MEDIAPORTAL.FILTERBIN "..\xbmc\bin\Release"
   !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !endif
+!define BUILD_TYPE "Release"
+;!define BUILD_TYPE "Debug"
 
 #---------------------------------------------------------------------------
 # VARIABLES
@@ -264,9 +266,6 @@ Section "MediaPortal core files (required)" SecCore
 
   SetOverwrite on
 
-!ifdef HIGH_BUILD   # USE BaseDIFF directory for svn builds
-  SetOutPath $INSTDIR
-
   #filters are installed seperatly and are always include in SVN and FINAL releases
   !define EXCLUDED_FILTERS "\
     /x cdxareader.ax \
@@ -297,112 +296,117 @@ Section "MediaPortal core files (required)" SecCore
     #/x grabber_AllGame_com.xml \
     #/x ProgramSettingProfiles.xml \
 
-  File /nonfatal /r ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}"
-!else
+  SetOutPath $INSTDIR
+  File /nonfatal /r /x svn ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+
+
+
+  ; ========================================
+  ; MediaPortalEXE
+  File "..\Configuration\bin\${BUILD_TYPE}\MediaPortal.*"
+  ; Configuration
+  File "..\Configuration\bin\${BUILD_TYPE}\Configuration.*"
+
+  ; ========================================
+  ; Core
+  File "..\core\bin\${BUILD_TYPE}\Core.*"
+  File "..\core\bin\${BUILD_TYPE}\DirectShowLib.*"
+  File "..\core\directshowhelper\directshowhelper\Release\dshowhelper.dll"
+  File "..\core\DXUtil\Release\DXUtil.dll"
+  File "..\core\fontengine\fontengine\${BUILD_TYPE}\fontengine.*"
+  ; Utils
+  File "..\Utils\bin\${BUILD_TYPE}\Utils.dll"
+  ; Support
+  File "..\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.*"
+  ; Databases
+  File "..\databases\bin\${BUILD_TYPE}\databases.*"
+  ; TvCapture
+  File "..\tvcapture\bin\${BUILD_TYPE}\tvcapture.*"
+  ; TvGuideScheduler
+  File "..\TVGuideScheduler\bin\${BUILD_TYPE}\TVGuideScheduler.*"
+
+  ; ========================================
+  ; MusicShareWatcher
+  File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.*"
+  File "..\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
+  ; MPInstaller
+  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.*"
+  File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.*"
+  ; MPTestTool2
+  File "..\MPTestTool2\bin\${BUILD_TYPE}\MPTestTool2.exe"
+  File "..\MPTestTool2\bin\${BUILD_TYPE}\DaggerLib.dll"
+  File "..\MPTestTool2\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
+  File "..\MPTestTool2\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
+  File "..\MPTestTool2\bin\${BUILD_TYPE}\MediaFoundation.dll"
+  ; WebEPG
+  File "..\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
+  File /oname=WebEPG.exe "..\WebEPG\WebEPG-xmltv\bin\${BUILD_TYPE}\WebEPG-xmltv.exe"
+  File "..\WebEPG\WebEPG-conf\bin\${BUILD_TYPE}\WebEPG-conf.exe"
+
+  ; ========================================
+  ; Plugins
+  File "..\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.*"
+  File "..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HCWHelper.*"
+  File "..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll"
+
+  SetOutPath "$INSTDIR\plugins\ExternalPlayers"
+  File "..\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.*"
+  SetOutPath "$INSTDIR\plugins\process"
+  File "..\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.*"
+  SetOutPath "$INSTDIR\plugins\subtitle"
+  File "..\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.*"
+  SetOutPath "$INSTDIR\plugins\Windows"
+  File "..\Dialogs\bin\${BUILD_TYPE}\Dialogs.*"
+  File "..\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.*"
+
+  ; MyBurner plugin dependencies
+#xcopy /y %1\WindowPlugins\GUIBurner\madlldlib.dll .
+#xcopy /y %1\XPImapiBurner\bin\%2\XPBurnComponent.dll .
+#REM xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
+  SetOutPath "$INSTDIR"
+  File "..\WindowPlugins\GUIBurner\madlldlib.dll"
+  File "..\XPImapiBurner\bin\${BUILD_TYPE}\XPBurnComponent.dll"
+  #File "..\WindowPlugins\GUIBurner\XPBurnComponent.dll"
+
+  ; ========================================
+  ; Wizards
+  SetOutPath "$INSTDIR\Wizards"
+  File "..\Configuration\Wizards\*.*"
+
+  /*
+REM TTPremiumBoot
+xcopy /y %1\TTPremiumBoot\*.* TTPremiumBoot\
+xcopy /y %1\TTPremiumBoot\21\*.* TTPremiumBoot\21\
+xcopy /y %1\TTPremiumBoot\24\*.* TTPremiumBoot\24\
+xcopy /y %1\TTPremiumBoot\24Data\*.* \
+REM TTPremiumBoot
+xcopy /y %1\scripts\*.* scripts\
+xcopy /y %1\scripts\imdb\*.* scripts\imdb\
+*/
+/*
+  ; TTPremiumBoot
+  SetOutPath "$INSTDIR\TTPremiumBoot"
+  File "..\TTPremiumBoot\*.*"
+  SetOutPath "$INSTDIR\TTPremiumBoot\21"
+  File "..\TTPremiumBoot\21\*.*"
+  SetOutPath "$INSTDIR\TTPremiumBoot\24"
+  File "..\TTPremiumBoot\24\*.*"
+  SetOutPath "$INSTDIR\TTPremiumBoot\24Data"
+  File "..\TTPremiumBoot\24Data\*.*"
+  ; scripts
+  SetOutPath "$INSTDIR\scripts"
+  File "..\scripts\*.*"
+  SetOutPath "$INSTDIR\scripts\imdb"
+  File "..\scripts\imdb\*.*"
+*/
+  /*
   ; Doc
   SetOutPath $INSTDIR\Docs
   File "..\Docs\BASS License.txt"
   File "..\Docs\LICENSE.rtf"
   File "..\Docs\MediaPortal License.rtf"
   File "..\Docs\SQLite Database Browser.exe"
-
-  ; plugins
-  SetOutPath "$INSTDIR\plugins\process"
-  File /r "${MEDIAPORTAL.BASE}\plugins\process\LCDDrivers"
-  SetOutPath "$INSTDIR\plugins\Windows"
-  File "${MEDIAPORTAL.BASE}\plugins\Windows\XihSolutions.DotMSN.dll"
-
-  ; WebEPG
-  SetOutPath $INSTDIR\WebEPG
-  File /r "${MEDIAPORTAL.BASE}\WebEPG\channels"
-  File /r "${MEDIAPORTAL.BASE}\WebEPG\grabbers"
-
-  ; xmltv
-  SetOutPath $INSTDIR\xmltv
-  File "${MEDIAPORTAL.BASE}\xmltv\ReadMe.txt"
-  File "${MEDIAPORTAL.BASE}\xmltv\xmltv.dtd"
-
-  ; Folder
-  SetOutPath $INSTDIR
-  File /r "${MEDIAPORTAL.BASE}\database"
-  File /r "${MEDIAPORTAL.BASE}\InputDeviceMappings"
-  File /r "${MEDIAPORTAL.BASE}\language"
-  File /r "${MEDIAPORTAL.BASE}\MusicPlayer"
-  File /r "${MEDIAPORTAL.BASE}\osdskin-media"
-  File /r "${MEDIAPORTAL.BASE}\plugins"
-  File /r "${MEDIAPORTAL.BASE}\Profiles"
-  File /r "${MEDIAPORTAL.BASE}\scripts"
-  File /r "${MEDIAPORTAL.BASE}\skin"
-  File /r "${MEDIAPORTAL.BASE}\TTPremiumBoot"
-  File /r "${MEDIAPORTAL.BASE}\Tuningparameters"
-  File /r "${MEDIAPORTAL.BASE}\weather"
-  File /r "${MEDIAPORTAL.BASE}\Wizards"
-
-  ; Attention: Don't forget to add a Remove for every file to the UniNstall Section
-  ;------------  Common Files and Folders for XP & Vista
-  ; Files
-  File "${MEDIAPORTAL.BASE}\AppStart.exe"
-  File "${MEDIAPORTAL.BASE}\AppStart.exe.config"
-  File "${MEDIAPORTAL.BASE}\AxInterop.WMPLib.dll"
-  File "${MEDIAPORTAL.BASE}\BallonRadio.ico"
-  File "${MEDIAPORTAL.BASE}\bass.dll"
-  File "${MEDIAPORTAL.BASE}\Bass.Net.dll"
-  File "${MEDIAPORTAL.BASE}\bass_fx.dll"
-  File "${MEDIAPORTAL.BASE}\bass_vis.dll"
-  File "${MEDIAPORTAL.BASE}\bass_vst.dll"
-  File "${MEDIAPORTAL.BASE}\bass_wadsp.dll"
-  File "${MEDIAPORTAL.BASE}\bassasio.dll"
-  File "${MEDIAPORTAL.BASE}\bassmix.dll"
-  File "${MEDIAPORTAL.BASE}\BassRegistration.dll"
-  File "${MEDIAPORTAL.BASE}\CSScriptLibrary.dll"
-  File "${MEDIAPORTAL.BASE}\d3dx9_30.dll"
-  File "${MEDIAPORTAL.BASE}\defaultMusicViews.xml"
-  #File "${MEDIAPORTAL.BASE}\defaultProgramViews.xml"
-  File "${MEDIAPORTAL.BASE}\defaultVideoViews.xml"
-  File "${MEDIAPORTAL.BASE}\dlportio.dll"
-  File "${MEDIAPORTAL.BASE}\dvblib.dll"
-  File "${MEDIAPORTAL.BASE}\dxerr9.dll"
-  File "${MEDIAPORTAL.BASE}\edtftpnet-1.2.2.dll"
-  File "${MEDIAPORTAL.BASE}\FastBitmap.dll"
-  File "${MEDIAPORTAL.BASE}\FTD2XX.DLL"
-  File "${MEDIAPORTAL.BASE}\hauppauge.dll"
-  File "${MEDIAPORTAL.BASE}\ICSharpCode.SharpZipLib.dll"
-  File "${MEDIAPORTAL.BASE}\inpout32.dll"
-  File "${MEDIAPORTAL.BASE}\Interop.GIRDERLib.dll"
-  File "${MEDIAPORTAL.BASE}\Interop.iTunesLib.dll"
-  File "${MEDIAPORTAL.BASE}\Interop.TunerLib.dll"
-  File "${MEDIAPORTAL.BASE}\Interop.WMEncoderLib.dll"
-  File "${MEDIAPORTAL.BASE}\Interop.WMPLib.dll"
-  File "${MEDIAPORTAL.BASE}\KCS.Utilities.dll"
-  File "${MEDIAPORTAL.BASE}\lame_enc.dll"
-  File "${MEDIAPORTAL.BASE}\LibDriverCoreClient.dll"
-  File "${MEDIAPORTAL.BASE}\log4net.dll"
-  File "${MEDIAPORTAL.BASE}\MediaPadLayer.dll"
-  File "${MEDIAPORTAL.BASE}\menu.bin"
-  File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
-  File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll"
-  File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ExceptionManagement.dll"
-  File "${MEDIAPORTAL.BASE}\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll"
-  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.dll"
-  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.Direct3D.dll"
-  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.Direct3DX.dll"
-  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.DirectDraw.dll"
-  File "${MEDIAPORTAL.BASE}\Microsoft.DirectX.DirectInput.dll"
-  File "${MEDIAPORTAL.BASE}\Microsoft.Office.Interop.Outlook.dll"
-  File "${MEDIAPORTAL.BASE}\mplogo.gif"
-  File "${MEDIAPORTAL.BASE}\mpviz.dll"
-  File "${MEDIAPORTAL.BASE}\restart.vbs"
-  File "${MEDIAPORTAL.BASE}\SG_VFD.dll"
-  File "${MEDIAPORTAL.BASE}\SG_VFDv5.dll"
-  File "${MEDIAPORTAL.BASE}\sqlite.dll"
-  File "${MEDIAPORTAL.BASE}\taglib-sharp.dll"
-  File "${MEDIAPORTAL.BASE}\TaskScheduler.dll"
-  File "${MEDIAPORTAL.BASE}\ttBdaDrvApi_Dll.dll"
-  File "${MEDIAPORTAL.BASE}\ttdvbacc.dll"
-  File "${MEDIAPORTAL.BASE}\X10Unified.dll"
-  File "${MEDIAPORTAL.BASE}\xAPMessage.dll"
-  File "${MEDIAPORTAL.BASE}\xAPTransport.dll"
-!endif
+*/
 
   # COMMON CONFIG files for SVN and FINAL RELEASES
   SetOutPath "${COMMON_APPDATA}"
@@ -420,52 +424,6 @@ Section "MediaPortal core files (required)" SecCore
   File "${MEDIAPORTAL.XBMCBIN}\yac-area-codes.xml"
   ; Folders
   File /r "${MEDIAPORTAL.XBMCBIN}\thumbs"
-
-  # COMMON files for SVN and FINAL RELEASES
-  SetOutPath "$INSTDIR\plugins\ExternalPlayers"
-  File "${MEDIAPORTAL.XBMCBIN}\plugins\ExternalPlayers\ExternalPlayers.dll"
-
-  SetOutPath "$INSTDIR\plugins\process"
-  File "${MEDIAPORTAL.XBMCBIN}\plugins\process\ProcessPlugins.dll"
-
-  SetOutPath "$INSTDIR\plugins\subtitle"
-  File "${MEDIAPORTAL.XBMCBIN}\plugins\subtitle\SubtitlePlugins.dll"
-
-  SetOutPath "$INSTDIR\plugins\Windows"
-  File "${MEDIAPORTAL.XBMCBIN}\plugins\Windows\WindowPlugins.dll"
-
-  SetOutPath "$INSTDIR"
-  File "${MEDIAPORTAL.XBMCBIN}\Configuration.exe"
-  File "${MEDIAPORTAL.XBMCBIN}\Configuration.exe.config"
-  File "${MEDIAPORTAL.XBMCBIN}\Core.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\DaggerLib.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\DaggerLib.DSGraphEdit.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\Databases.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\DirectShowLib-2005.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\DirectShowLib.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\dshowhelper.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\DXUtil.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\fontEngine.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\HcwHelper.exe"
-  File "${MEDIAPORTAL.XBMCBIN}\Interop.X10.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\madlldlib.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\MediaFoundation.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\MediaPortal.exe"
-  File "${MEDIAPORTAL.XBMCBIN}\MediaPortal.exe.config"
-  File "${MEDIAPORTAL.XBMCBIN}\MediaPortal.Support.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\MPInstaller.exe"
-  File "${MEDIAPORTAL.XBMCBIN}\MPInstaller.Library.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\MPTestTool2.exe"
-  File "${MEDIAPORTAL.XBMCBIN}\MusicShareWatcher.exe"
-  File "${MEDIAPORTAL.XBMCBIN}\MusicShareWatcherHelper.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\RemotePlugins.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\TVCapture.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\TVGuideScheduler.exe"
-  File "${MEDIAPORTAL.XBMCBIN}\Utils.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\WebEPG.dll"
-  File "${MEDIAPORTAL.XBMCBIN}\WebEPG.exe"
-  File "${MEDIAPORTAL.XBMCBIN}\WebEPG-conf.exe"
-  File "${MEDIAPORTAL.XBMCBIN}\XPBurnComponent.dll"
 
   File MediaPortalDirs.xml
 
