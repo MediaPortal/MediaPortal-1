@@ -251,6 +251,7 @@
 
 !macroend
 
+!insertmacro GetTime
 !macro GET_BACKUP_POSTFIX _var
 
   ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
