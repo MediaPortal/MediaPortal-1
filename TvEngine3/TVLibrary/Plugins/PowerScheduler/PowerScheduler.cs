@@ -823,7 +823,9 @@ namespace TvEngine.PowerScheduler
             SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
           }
 
-          if (unattended)
+          // Bav fixing mantis bug 1183: TV Server kick comp to hib after long time "editing" in TV Setup
+          // DisAllowShutdown takes some seconds to run => check once again Unattended 
+          if (Unattended)
           {
             Log.Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
             SuspendSystem();
