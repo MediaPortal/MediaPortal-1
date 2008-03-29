@@ -65,6 +65,7 @@ namespace SetupTv
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonViewLog = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+      this.helpButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // sectionTree
@@ -182,6 +183,17 @@ namespace SetupTv
       this.linkLabel1.Text = "Donate to MediaPortal";
       this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
+      // helpButton
+      // 
+      this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.helpButton.Location = new System.Drawing.Point(292, 506);
+      this.helpButton.Name = "helpButton";
+      this.helpButton.Size = new System.Drawing.Size(75, 23);
+      this.helpButton.TabIndex = 9;
+      this.helpButton.Text = "&Help";
+      this.helpButton.UseVisualStyleBackColor = true;
+      this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+      // 
       // SettingsForm
       // 
       this.AcceptButton = this.okButton;
@@ -189,6 +201,7 @@ namespace SetupTv
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(716, 537);
+      this.Controls.Add(this.helpButton);
       this.Controls.Add(this.linkLabel1);
       this.Controls.Add(this.buttonViewLog);
       this.Controls.Add(this.applyButton);
@@ -220,5 +233,6 @@ namespace SetupTv
     protected System.Windows.Forms.Panel holderPanel;
     protected MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
     protected System.Windows.Forms.LinkLabel linkLabel1;
+    protected MediaPortal.UserInterface.Controls.MPButton helpButton;
   }
 }

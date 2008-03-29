@@ -243,6 +243,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\Setup\mp.ico
   File ..\SetupTv\bin\Release\SetupTv.exe
   File ..\SetupTv\bin\Release\SetupTv.exe.config
+  File ..\SetupTv\HelpReferences.xml
   File ..\TvControl\bin\Release\TvControl.dll
   File ..\TVDatabase\bin\Release\TVDatabase.dll
   File ..\TVDatabase\references\Gentle.Common.DLL
@@ -268,7 +269,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\..\Filters\bin\StreamingServer.dll
   File ..\..\Filters\bin\ttBdaDrvApi_Dll.dll
   File ..\..\Filters\bin\ttdvbacc.dll
-
+  
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
   File ..\TvService\Gentle.config

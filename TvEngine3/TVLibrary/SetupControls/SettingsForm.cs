@@ -160,6 +160,11 @@ namespace SetupTv
     {
     }
 
+    public virtual void helpButton_Click(object sender, EventArgs e)
+    {
+
+    }
+
 
     private void holderPanel_Paint(object sender, PaintEventArgs e)
     {

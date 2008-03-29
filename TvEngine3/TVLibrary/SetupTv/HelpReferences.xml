@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<helpsystem>
+  <general baseurl="http://wiki.team-mediaportal.com/TV-Engine_0.3/" />
+
+  <section name="SetupTv.Sections.ScanSettings" suburl="config-General_Settings" />
+  <section name="SetupTv.Sections.RadioChannels" suburl="config-RadioStations" />
+  <section name="SetupTv.Sections.TestService" suburl="config-ManualControl" />
+</helpsystem>

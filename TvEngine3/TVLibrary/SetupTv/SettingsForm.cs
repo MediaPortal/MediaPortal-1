@@ -50,6 +50,7 @@ namespace SetupTv
     private Plugins pluginsRoot;
     private TvBusinessLayer layer;
 
+    string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Application.StartupPath);
 
     public SetupTvSettingsForm()
     {
@@ -240,6 +241,15 @@ namespace SetupTv
       {
         Log.Error("Failed to startup cause of exception");
         Log.Write(ex);
+      }
+
+
+
+      if (!System.IO.File.Exists(helpReferencesFile))
+      {
+        Log.Error("File not found: {0}", helpReferencesFile);
+        helpButton.Enabled = false;
+        return;
       }
     }
 
@@ -567,6 +577,41 @@ namespace SetupTv
       process.StartInfo.Arguments = String.Format(@"{0}\MediaPortal TV Server\log\", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
       process.StartInfo.UseShellExecute = true;
       process.Start();
+    }
+
+    public override void helpButton_Click(object sender, EventArgs e)
+    {
+      if (!System.IO.File.Exists(helpReferencesFile))
+      {
+        Log.Error("File not found: {0}", helpReferencesFile);
+        return;
+      }
+      Log.Debug("Trying to get help url for section: {0}", _previousSection.ToString());
+
+
+      XmlDocument doc = new XmlDocument();
+      doc.Load(helpReferencesFile);
+
+      XmlNode generalNode = doc.SelectSingleNode("/helpsystem/general");
+      XmlNodeList sectionNodes = doc.SelectNodes("/helpsystem/section");
+
+      for (int i = 0; i < sectionNodes.Count; i++)
+      {
+        XmlNode sectionNode = sectionNodes[i];
+        if (sectionNode.Attributes["name"].Value == _previousSection.ToString())
+        {
+          Log.Error(@"{0}{1}",
+            generalNode.Attributes["baseurl"].Value,
+            sectionNode.Attributes["suburl"].Value);
+          System.Diagnostics.Process.Start(
+            String.Format(@"{0}{1}",
+            generalNode.Attributes["baseurl"].Value,
+            sectionNode.Attributes["suburl"].Value));
+          return;
+        }
+      }
+
+      Log.Error("No help reference found for section: {0}", _previousSection.ToString());
     }
   }
 }
