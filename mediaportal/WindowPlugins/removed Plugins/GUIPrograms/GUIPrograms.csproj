@@ -231,15 +231,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="additional files\defaultProgramViews.xml" />
-    <Content Include="additional files\FileDetailContents.xml" />
-    <Content Include="additional files\grabber_AllGame_com.xml" />
-    <Content Include="additional files\ProgramSettingProfiles.xml" />
-    <Content Include="additional files\FileDetailContents.xml" />
-    <Content Include="additional files\skin\BlueTwo wide\DialogFileInfo.xml" />
-    <Content Include="additional files\skin\BlueTwo wide\myprograms.xml" />
-    <Content Include="additional files\skin\BlueTwo\DialogFileInfo.xml" />
-    <Content Include="additional files\skin\BlueTwo\myprograms.xml" />
+    <Content Include="GUIPrograms.Base\defaultProgramViews.xml" />
+    <Content Include="GUIPrograms.Base\FileDetailContents.xml" />
+    <Content Include="GUIPrograms.Base\grabber_AllGame_com.xml" />
+    <Content Include="GUIPrograms.Base\ProgramSettingProfiles.xml" />
+    <Content Include="GUIPrograms.Base\skin\BlueTwo wide\DialogFileInfo.xml" />
+    <Content Include="GUIPrograms.Base\skin\BlueTwo wide\myprograms.xml" />
+    <Content Include="GUIPrograms.Base\skin\BlueTwo\DialogFileInfo.xml" />
+    <Content Include="GUIPrograms.Base\skin\BlueTwo\myprograms.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
