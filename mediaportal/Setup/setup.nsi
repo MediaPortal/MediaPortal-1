@@ -423,7 +423,7 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   #File /nonfatal "${MEDIAPORTAL.BASE}\grabber_AllGame_com.xml"
   #File /nonfatal "${MEDIAPORTAL.BASE}\ProgramSettingProfiles.xml"
   ; Folders
-  File /r "${MEDIAPORTAL.BASE}\thumbs"
+  File /r /nonfatal "${MEDIAPORTAL.BASE}\thumbs"
 
   File MediaPortalDirs.xml
 
