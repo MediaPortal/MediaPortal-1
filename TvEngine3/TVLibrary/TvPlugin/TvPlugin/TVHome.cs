@@ -1714,12 +1714,12 @@ namespace TvPlugin
           timeShiftStartPointPercent *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.Record.percent1", ((int)timeShiftStartPointPercent).ToString());
 
-          if (!g_Player.Paused)
-          {
+          //if (!g_Player.Paused) // remarked by LKuech too fix the bug that the current position was not shown correctly when paused live tv
+          //{
             double playingPointPercent = ((double)playingPoint) / ((double)programDuration);
             playingPointPercent *= 100.0d;
             GUIPropertyManager.SetProperty("#TV.Record.percent2", ((int)playingPointPercent).ToString());
-          }
+          //}
 
           double percentLivePoint = ((double)livePoint) / ((double)programDuration);
           percentLivePoint *= 100.0d;
