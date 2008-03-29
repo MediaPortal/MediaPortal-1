@@ -40,161 +40,99 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AllGameInfoScraper.cs" />
-    <Compile Include="appDirBrowse.cs" />
-    <Compile Include="appDirCache.cs" />
-    <Compile Include="appFilesEdit.cs" />
-    <Compile Include="AppFilesImportProgress.cs">
+    <Compile Include="Configuration\AppFilesImportProgress.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppFilesView.cs">
+    <Compile Include="Configuration\AppFilesView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="appGrouper.cs" />
-    <Compile Include="AppItem.cs" />
-    <Compile Include="appItemAppExec.cs" />
-    <Compile Include="AppItemGamebase.cs" />
-    <Compile Include="appItemMameDirect.cs" />
-    <Compile Include="ApplicationFactory.cs" />
-    <Compile Include="AppList.cs" />
-    <Compile Include="appMyFileIni.cs" />
-    <Compile Include="appMyFileMeedio.cs" />
-    <Compile Include="AppSettings.cs">
+    <Compile Include="Configuration\AppSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsAppExec.cs">
+    <Compile Include="Configuration\AppSettingsAppExec.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsDirBrowse.cs">
+    <Compile Include="Configuration\AppSettingsDirBrowse.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsDirCache.cs">
+    <Compile Include="Configuration\AppSettingsDirCache.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsFilelauncher.cs">
+    <Compile Include="Configuration\AppSettingsFilelauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsGamebase.cs">
+    <Compile Include="Configuration\AppSettingsGamebase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsGrouper.cs">
+    <Compile Include="Configuration\AppSettingsGrouper.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsMameDirect.cs">
+    <Compile Include="Configuration\AppSettingsMameDirect.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsMyFileIni.cs">
+    <Compile Include="Configuration\AppSettingsMyFileIni.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsMyFileMeedio.cs">
+    <Compile Include="Configuration\AppSettingsMyFileMeedio.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AppSettingsPrePost.cs">
+    <Compile Include="Configuration\AppSettingsPrePost.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AppSettingsRoot.cs">
+    <Compile Include="Configuration\AppSettingsRoot.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FileDetailsForm.cs">
+    <Compile Include="Configuration\FileDetailsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FileInfo.cs" />
-    <Compile Include="FileInfoScraperForm.cs">
+    <Compile Include="Configuration\FileInfoScraperForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FileItem.cs" />
-    <Compile Include="FilelinkItem.cs" />
-    <Compile Include="FilelinkList.cs" />
-    <Compile Include="FileList.cs" />
-    <Compile Include="GUIProgramInfo.cs" />
-    <Compile Include="GUIPrograms.cs" />
-    <Compile Include="MyFileIniImporter.cs" />
-    <Compile Include="MyFileIniReader.cs" />
-    <Compile Include="MyFileMeedioImporter.cs" />
-    <Compile Include="MyGamebaseImporter.cs" />
-    <Compile Include="MyMameImporter.cs" />
-    <Compile Include="ProgramComparer.cs" />
-    <Compile Include="ProgramContentManager.cs" />
-    <Compile Include="ProgramDatabase.cs" />
-    <Compile Include="ProgramDBComparer.cs" />
-    <Compile Include="ProgramFilterItem.cs" />
-    <Compile Include="ProgramSettings.cs" />
-    <Compile Include="ProgramSort.cs" />
-    <Compile Include="ProgramState.cs" />
-    <Compile Include="ProgramUtils.cs" />
-    <Compile Include="ProgramViewHandler.cs" />
-    <Compile Include="ProgramViews.cs">
+    <Compile Include="Configuration\ProgramViews.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SetupForm.cs">
+    <Compile Include="Configuration\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="taggedMenuItem.cs">
+    <Compile Include="Configuration\taggedMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="AppFilesImportProgress.resx">
-      <DependentUpon>AppFilesImportProgress.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppFilesView.resx">
-      <DependentUpon>AppFilesView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettings.resx">
-      <DependentUpon>AppSettings.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsAppExec.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsDirBrowse.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsDirCache.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsFilelauncher.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsGamebase.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsGrouper.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsMameDirect.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsMyFileIni.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsMyFileMeedio.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsPrePost.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppSettingsRoot.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FileDetailsForm.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FileInfoScraperForm.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProgramViews.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SetupForm.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="taggedMenuItem.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <Compile Include="GUIPrograms\AllGameInfoScraper.cs" />
+    <Compile Include="ApplicationItems\appDirBrowse.cs" />
+    <Compile Include="ApplicationItems\appDirCache.cs" />
+    <Compile Include="ApplicationItems\appFilesEdit.cs" />
+    <Compile Include="ApplicationItems\appGrouper.cs" />
+    <Compile Include="ApplicationItems\AppItem.cs" />
+    <Compile Include="ApplicationItems\appItemAppExec.cs" />
+    <Compile Include="ApplicationItems\AppItemGamebase.cs" />
+    <Compile Include="ApplicationItems\appItemMameDirect.cs" />
+    <Compile Include="ApplicationItems\ApplicationFactory.cs" />
+    <Compile Include="ApplicationItems\AppList.cs" />
+    <Compile Include="ApplicationItems\appMyFileIni.cs" />
+    <Compile Include="ApplicationItems\appMyFileMeedio.cs" />
+    <Compile Include="FileItems\FileInfo.cs" />
+    <Compile Include="FileItems\FileItem.cs" />
+    <Compile Include="FileItems\FilelinkItem.cs" />
+    <Compile Include="FileItems\FilelinkList.cs" />
+    <Compile Include="FileItems\FileList.cs" />
+    <Compile Include="GUIPrograms\GUIProgramInfo.cs" />
+    <Compile Include="GUIPrograms\GUIPrograms.cs" />
+    <Compile Include="ApplicationItems\MyFileIniImporter.cs" />
+    <Compile Include="ApplicationItems\MyFileIniReader.cs" />
+    <Compile Include="ApplicationItems\MyFileMeedioImporter.cs" />
+    <Compile Include="ApplicationItems\MyGamebaseImporter.cs" />
+    <Compile Include="ApplicationItems\MyMameImporter.cs" />
+    <Compile Include="GUIPrograms\ProgramComparer.cs" />
+    <Compile Include="GUIPrograms\ProgramContentManager.cs" />
+    <Compile Include="GUIPrograms\ProgramDatabase.cs" />
+    <Compile Include="GUIPrograms\ProgramDBComparer.cs" />
+    <Compile Include="GUIPrograms\ProgramFilterItem.cs" />
+    <Compile Include="GUIPrograms\ProgramSettings.cs" />
+    <Compile Include="GUIPrograms\ProgramSort.cs" />
+    <Compile Include="GUIPrograms\ProgramState.cs" />
+    <Compile Include="GUIPrograms\ProgramUtils.cs" />
+    <Compile Include="GUIPrograms\ProgramViewHandler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Core\Core.csproj">
@@ -213,6 +151,95 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\AppFilesImportProgress.resx">
+      <DependentUpon>AppFilesImportProgress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppFilesView.resx">
+      <DependentUpon>AppFilesView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettings.resx">
+      <DependentUpon>AppSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsAppExec.resx">
+      <DependentUpon>AppSettingsAppExec.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsDirBrowse.resx">
+      <DependentUpon>AppSettingsDirBrowse.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsDirCache.resx">
+      <DependentUpon>AppSettingsDirCache.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsFilelauncher.resx">
+      <DependentUpon>AppSettingsFilelauncher.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsGamebase.resx">
+      <DependentUpon>AppSettingsGamebase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsGrouper.resx">
+      <DependentUpon>AppSettingsGrouper.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsMameDirect.resx">
+      <DependentUpon>AppSettingsMameDirect.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsMyFileIni.resx">
+      <DependentUpon>AppSettingsMyFileIni.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsMyFileMeedio.resx">
+      <DependentUpon>AppSettingsMyFileMeedio.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsPrePost.resx">
+      <DependentUpon>AppSettingsPrePost.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\AppSettingsRoot.resx">
+      <DependentUpon>AppSettingsRoot.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\FileDetailsForm.resx">
+      <DependentUpon>FileDetailsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\FileInfoScraperForm.resx">
+      <DependentUpon>FileInfoScraperForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\ProgramViews.resx">
+      <DependentUpon>ProgramViews.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\taggedMenuItem.resx">
+      <DependentUpon>taggedMenuItem.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="additional files\defaultProgramViews.xml" />
+    <Content Include="additional files\FileDetailContents.xml" />
+    <Content Include="additional files\grabber_AllGame_com.xml" />
+    <Content Include="additional files\ProgramSettingProfiles.xml" />
+    <Content Include="additional files\FileDetailContents.xml" />
+    <Content Include="additional files\skin\BlueTwo wide\DialogFileInfo.xml" />
+    <Content Include="additional files\skin\BlueTwo wide\myprograms.xml" />
+    <Content Include="additional files\skin\BlueTwo\DialogFileInfo.xml" />
+    <Content Include="additional files\skin\BlueTwo\myprograms.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
