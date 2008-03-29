@@ -61,57 +61,58 @@ namespace MediaPortal.Player.Subtitles
       public LineContent[] lc;
       public UInt64 timeStamp;
       public UInt64 timeOut; // in seconds
-
     }
 
-    public enum TeletextCharTable { 
-        English = 1,
-        Swedish = 2,
-        Third = 3,
-        Fourth = 4,
-        Fifth = 5,
-        Sixth = 6//,
+    public enum TeletextCharTable 
+    { 
+      English = 1,
+      Swedish = 2,
+      Third = 3,
+      Fourth = 4,
+      Fifth = 5,
+      Sixth = 6//,
     }
 
-    public class TeletextPageEntry {
+    public class TeletextPageEntry 
+    {
+      public TeletextPageEntry() {}
 
-        public TeletextPageEntry() { }
+      public TeletextPageEntry(TeletextPageEntry e) 
+      {
+        page = e.page;
+        encoding = e.encoding;
+        language = String.Copy(e.language);
+      }
 
-        public TeletextPageEntry(TeletextPageEntry e) {
-            page = e.page;
-            encoding = e.encoding;
-            language = String.Copy(e.language);
-        }
-
-        public int page = -1; // indicates not valid
-        public TeletextCharTable encoding;
-        public string language;
+      public int page = -1; // indicates not valid
+      public TeletextCharTable encoding;
+      public string language;
     }
 
     public class Subtitle
     {
-        public static int idCount = 0;
-        public Subtitle()
-        {
-            id = idCount++;
-        }
-        public Bitmap subBitmap;
-        public uint width;
-        public uint height;
-        public double presentTime;  // NOTE: in seconds
-        public double timeOut;      // NOTE: in seconds
-        public int firstScanLine;
-        public long id = 0;
+      public static int idCount = 0;
+      public Subtitle()
+      {
+        id = idCount++;
+      }
+      public Bitmap subBitmap;
+      public uint width;
+      public uint height;
+      public double presentTime;  // NOTE: in seconds
+      public double timeOut;      // NOTE: in seconds
+      public int firstScanLine;
+      public long id = 0;
 
-        public void Dispose()
-        {
-            if (subBitmap != null) subBitmap.Dispose();
-        }
+      public void Dispose()
+      {
+        if (subBitmap != null) subBitmap.Dispose();
+      }
 
-        public override string ToString()
-        {
-            return "Subtitle " + id + " meta data: Timeout=" + timeOut + " timestamp=" + presentTime;
-        }
+      public override string ToString()
+      {
+        return "Subtitle " + id + " meta data: Timeout=" + timeOut + " timestamp=" + presentTime;
+      }
     }
 
   /// <summary>
@@ -155,7 +156,7 @@ namespace MediaPortal.Player.Subtitles
     // important, these delegates must NOT be garbage collected
     // or horrible things will happen when the native code tries to call those!
     private SubtitleCallback callBack;
-   // private TextSubtitleCallback textCallBack;
+    //private TextSubtitleCallback textCallBack;
     private ResetCallback resetCallBack;
     private UpdateTimeoutCallback updateTimeoutCallBack;
     
@@ -227,29 +228,29 @@ namespace MediaPortal.Player.Subtitles
       player = p;
     }
 
-
-
-      public void SetSubtitleOption(SubtitleOption option)
+    public void SetSubtitleOption(SubtitleOption option)
+    {
+      if (option.type == SubtitleType.None) 
       {
-          if (option.type == SubtitleType.None) {
-              useBitmap = false;
-              activeSubPage = 0;
-          }
-          else if (option.type == SubtitleType.Teletext) {
-              useBitmap = false;
-              activeSubPage = option.entry.page;
-              Log.Debug("SubtitleRender: Now rendering {0} teletext subtitle page {1}", option.language,activeSubPage);
-          }
-          else if (option.type == SubtitleType.Bitmap)
-          {
-              useBitmap = true;
-              Log.Debug("SubtitleRender: Now rendering bitmap subtitles in language {0}", option.language);
-          }
-          else
-          {
-              Log.Error("Unknown subtitle option " + option);
-          }
+        useBitmap = false;
+        activeSubPage = 0;
       }
+      else if (option.type == SubtitleType.Teletext) 
+      {
+        useBitmap = false;
+        activeSubPage = option.entry.page;
+        Log.Debug("SubtitleRender: Now rendering {0} teletext subtitle page {1}", option.language,activeSubPage);
+      }
+      else if (option.type == SubtitleType.Bitmap)
+      {
+        useBitmap = true;
+        Log.Debug("SubtitleRender: Now rendering bitmap subtitles in language {0}", option.language);
+      }
+      else
+      {
+        Log.Error("Unknown subtitle option " + option);
+      }
+    }
  
     /// <summary>
     /// Alerts the subtitle render that a seek has just been performed.
@@ -272,7 +273,6 @@ namespace MediaPortal.Player.Subtitles
       Log.Debug("New StartPos is " + startPos);
       return 0;
     }
-
 
     /// <summary>
     /// Alerts the subtitle render that a reset has just been performed.
@@ -317,20 +317,20 @@ namespace MediaPortal.Player.Subtitles
       return 0;
     }
 
-      private void AddSubtitle(Subtitle sub)
+    private void AddSubtitle(Subtitle sub)
+    {
+      lock (subtitles)
       {
-          lock (subtitles)
-          {
-              while (subtitles.Count >= MAX_SUBTITLES_IN_QUEUE)
-              {
-                  Log.Debug("SubtitleRenderer: Subtitle queue too big, discarding first element");
-                  subtitles.First.Value.Dispose();
-                  subtitles.RemoveFirst();
-              }
-              subtitles.AddLast(sub);
-              Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
-          }
+        while (subtitles.Count >= MAX_SUBTITLES_IN_QUEUE)
+        {
+          Log.Debug("SubtitleRenderer: Subtitle queue too big, discarding first element");
+          subtitles.First.Value.Dispose();
+          subtitles.RemoveFirst();
+        }
+        subtitles.AddLast(sub);
+        Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
       }
+    }
 
     /// <summary>
     /// Callback from subtitle filter, alerting us that a new subtitle is available
@@ -390,119 +390,117 @@ namespace MediaPortal.Player.Subtitles
       return 0;
     }
 
-     /* private double posOnLastTextSub = -1;
-      private bool lastTextSubBlank = false;
-      private bool useMinSeperation = false;*/
+    /* private double posOnLastTextSub = -1;
+    private bool lastTextSubBlank = false;
+    private bool useMinSeperation = false;*/
 
-      public void OnTextSubtitle(ref TEXT_SUBTITLE sub)
+    public void OnTextSubtitle(ref TEXT_SUBTITLE sub)
+    {
+      //bool blank = false;
+      Log.Debug("On TextSubtitle called");
+
+      try
       {
-          //bool blank = false;
-          Log.Debug("On TextSubtitle called");
+        if (sub.page == activeSubPage)
+        {
+          Log.Debug("Page: " + sub.page);
+          Log.Debug("Character table: " + sub.encoding);
+          Log.Debug("Timeout: " + sub.timeOut);
+          Log.Debug("Timestamp" + sub.timeStamp);
+          Log.Debug("Language: " + sub.language);
 
-          try
+          String content = sub.text;
+          if (content == null)
           {
-              if (sub.page == activeSubPage)
-              {
-                  Log.Debug("Page: " + sub.page);
-                  Log.Debug("Character table: " + sub.encoding);
-                  Log.Debug("Timeout: " + sub.timeOut);
-                  Log.Debug("Timestamp" + sub.timeStamp);
-                  Log.Debug("Language: " + sub.language);
-
-                  String content = sub.text;
-                  if (content == null)
-                  {
-                      Log.Error("OnTextSubtitle: sub.txt == null!");
-                      return;
-                  }
-                  Log.Debug("Content: ");
-                  if (content.Trim().Length > 0) // debug log subtitles
-                  {
-                      StringTokenizer st = new StringTokenizer(content, new char[] { '\n' });
-                      while (st.HasMore)
-                      {
-                          Log.Debug(st.NextToken());
-                      }
-                  }
-                  else
-                  {
-                      //blank = true;
-                      Log.Debug("<BLANK PAGE>");
-                  }
-              }
+            Log.Error("OnTextSubtitle: sub.txt == null!");
+            return;
           }
-          catch (Exception e)
+          Log.Debug("Content: ");
+          if (content.Trim().Length > 0) // debug log subtitles
           {
-              Log.Error("Problem with TEXT_SUBTITLE");
-              Log.Error(e);
+            StringTokenizer st = new StringTokenizer(content, new char[] { '\n' });
+            while (st.HasMore)
+            {
+              Log.Debug(st.NextToken());
+            }
           }
-
-          try
+          else
           {
-              // if we dont need the subtitle
-              if (!renderSubtitles || useBitmap || (activeSubPage != sub.page))
-              {
-                  Log.Debug("Text subtitle (page {0}) discarded: useBitmap is {1} and activeSubPage is {2}", sub.page, useBitmap, activeSubPage);
-                  return;
-              }
-              else
-              {
-                  Log.Debug("Text subtitle (page {0}) ACCEPTED: useBitmap is {1} and activeSubPage is {2}", sub.page, useBitmap, activeSubPage);
-              }
-
-              Subtitle subtitle = new Subtitle();
-              subtitle.subBitmap = RenderText(sub.lc);
-              subtitle.timeOut = sub.timeOut;
-              subtitle.presentTime = sub.timeStamp / 90000.0f + startPos;
-              
-              subtitle.height = 576;
-              subtitle.width = 720;
-              subtitle.firstScanLine = 0;
-
-              AddSubtitle(subtitle);
+            //blank = true;
+            Log.Debug("<BLANK PAGE>");
           }
-          catch (Exception e)
-          {
-              Log.Error("Problem processing text subtitle");
-              Log.Error(e);
-          }
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Error("Problem with TEXT_SUBTITLE");
+        Log.Error(e);
+      }
 
+      try
+      {
+        // if we dont need the subtitle
+        if (!renderSubtitles || useBitmap || (activeSubPage != sub.page))
+        {
+          Log.Debug("Text subtitle (page {0}) discarded: useBitmap is {1} and activeSubPage is {2}", sub.page, useBitmap, activeSubPage);
           return;
-      }
+        }
+        else
+        {
+          Log.Debug("Text subtitle (page {0}) ACCEPTED: useBitmap is {1} and activeSubPage is {2}", sub.page, useBitmap, activeSubPage);
+        }
 
-      public static Bitmap RenderText(LineContent[] lc)
+        Subtitle subtitle = new Subtitle();
+        subtitle.subBitmap = RenderText(sub.lc);
+        subtitle.timeOut = sub.timeOut;
+        subtitle.presentTime = sub.timeStamp / 90000.0f + startPos;
+
+        subtitle.height = 576;
+        subtitle.width = 720;
+        subtitle.firstScanLine = 0;
+
+        AddSubtitle(subtitle);
+      }
+      catch (Exception e)
       {
-
-          int w = 720;
-          int h = 576;
-
-          Bitmap bmp = new Bitmap(w, h);
-
-          using (Graphics gBmp = Graphics.FromImage(bmp))
-          using (SolidBrush brush = new SolidBrush(Color.FromArgb(255, 255, 255)))
-          using (SolidBrush blackBrush = new SolidBrush(Color.FromArgb(0, 0, 0)))
-          {
-              gBmp.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-              for (int i = 0; i < lc.Length; i++)
-              {
-                  using (System.Drawing.Font fnt = new System.Drawing.Font("Courier", (lc[i].doubleHeight ? 22 : 15), FontStyle.Bold)) // fixed width font!
-                  {
-                      int vertOffset = (h / lc.Length) * i;
-
-                      SizeF size = gBmp.MeasureString(lc[i].line, fnt);
-                      //gBmp.FillRectangle(new SolidBrush(Color.Pink), new Rectangle(0, 0, w, h));
-                      int horzOffset = (int)((w - size.Width) / 2); // center based on actual text width
-                      gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset + 1, vertOffset + 0));
-                      gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset + 0, vertOffset + 1));
-                      gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset - 1, vertOffset + 0));
-                      gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset + 0, vertOffset - 1));
-                      gBmp.DrawString(lc[i].line, fnt, brush, new PointF(horzOffset, vertOffset));
-
-                  }
-              }
-          }
-          return bmp;
+        Log.Error("Problem processing text subtitle");
+        Log.Error(e);
       }
+
+      return;
+    }
+
+    public static Bitmap RenderText(LineContent[] lc)
+    {
+      int w = 720;
+      int h = 576;
+
+      Bitmap bmp = new Bitmap(w, h);
+
+      using (Graphics gBmp = Graphics.FromImage(bmp))
+      using (SolidBrush brush = new SolidBrush(Color.FromArgb(255, 255, 255)))
+      using (SolidBrush blackBrush = new SolidBrush(Color.FromArgb(0, 0, 0)))
+      {
+        gBmp.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+        for (int i = 0; i < lc.Length; i++)
+        {
+          using (System.Drawing.Font fnt = new System.Drawing.Font("Courier", (lc[i].doubleHeight ? 22 : 15), FontStyle.Bold)) // fixed width font!
+          {
+            int vertOffset = (h / lc.Length) * i;
+
+            SizeF size = gBmp.MeasureString(lc[i].line, fnt);
+            //gBmp.FillRectangle(new SolidBrush(Color.Pink), new Rectangle(0, 0, w, h));
+            int horzOffset = (int)((w - size.Width) / 2); // center based on actual text width
+            gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset + 1, vertOffset + 0));
+            gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset + 0, vertOffset + 1));
+            gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset - 1, vertOffset + 0));
+            gBmp.DrawString(lc[i].line, fnt, blackBrush, new PointF(horzOffset + 0, vertOffset - 1));
+            gBmp.DrawString(lc[i].line, fnt, brush, new PointF(horzOffset, vertOffset));
+          }
+        }
+      }
+      return bmp;
+    }
 
 
     /// <summary>
