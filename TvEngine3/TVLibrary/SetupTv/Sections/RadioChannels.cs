@@ -629,7 +629,8 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in mpListView1.Items)
       {
         Channel channel = (Channel)item.Tag;
-        item.Checked = channel.FreeToAir;
+        if (!channel.FreeToAir)
+          item.Checked = false;
       }
     }
 
