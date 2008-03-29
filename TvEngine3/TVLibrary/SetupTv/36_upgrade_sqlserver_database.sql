@@ -7,7 +7,7 @@ DELETE FROM Program
 GO
 
 IF  EXISTS (SELECT * FROM sys.indexes WHERE name = '_dta_index_Program_7_645577338__K3_1_2_4_5_6_7_8') 
-ALTER TABLE Program DROP CONSTRAINT _dta_index_Program_7_645577338__K3_1_2_4_5_6_7_8
+DROP INDEX _dta_index_Program_7_645577338__K3_1_2_4_5_6_7_8 on Program 
 GO
 
 ALTER TABLE Program ALTER COLUMN title varchar(2000) NOT NULL
