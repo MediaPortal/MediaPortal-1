@@ -752,8 +752,8 @@ namespace TvPlugin
           {
             bool isRecSchedule = server.IsRecordingSchedule(rec.IdSchedule, out card);
             bool isRec = false;
-            
-            if (card.RecordingScheduleId == -1)
+
+            if (card == null || (card != null && card.RecordingScheduleId == -1))
             {
               isRec = server.IsRecording(rec.ReferencedChannel().Name, out card);
             }
