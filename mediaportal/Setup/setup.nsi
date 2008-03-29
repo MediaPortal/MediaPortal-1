@@ -38,7 +38,7 @@ SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
 !ifdef HIGH_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
   !define MEDIAPORTAL.FILTERBIN "..\xbmc\bin\Release"
-  !define MEDIAPORTAL.XBMCBIN ".."
+  !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !else
   !define MEDIAPORTAL.BASE "..\MediaPortal.Base"
   !define MEDIAPORTAL.FILTERBIN "..\xbmc\bin\Release"
@@ -412,18 +412,18 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   SetOutPath "${COMMON_APPDATA}"
   CreateDirectory "${COMMON_APPDATA}\InputDeviceMappings\custom"
   ; Config Files (XML)
-  File "${MEDIAPORTAL.XBMCBIN}\CaptureCardDefinitions.xml"
-  File "${MEDIAPORTAL.XBMCBIN}\eHome Infrared Transceiver List XP.xml"
-  File "${MEDIAPORTAL.XBMCBIN}\FileDetailContents.xml"
-  #File "${MEDIAPORTAL.XBMCBIN}\grabber_AllGame_com.xml"
-  File "${MEDIAPORTAL.XBMCBIN}\ISDNCodes.xml"
-  File "${MEDIAPORTAL.XBMCBIN}\keymap.xml"
-  File "${MEDIAPORTAL.XBMCBIN}\MusicVideoSettings.xml"
-  #File "${MEDIAPORTAL.XBMCBIN}\ProgramSettingProfiles.xml"
-  File "${MEDIAPORTAL.XBMCBIN}\wikipedia.xml"
-  File "${MEDIAPORTAL.XBMCBIN}\yac-area-codes.xml"
+  File "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
+  File "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
+  File "${MEDIAPORTAL.BASE}\FileDetailContents.xml"
+  File "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
+  File "${MEDIAPORTAL.BASE}\keymap.xml"
+  File "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
+  File "${MEDIAPORTAL.BASE}\wikipedia.xml"
+  File "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
+  #File "${MEDIAPORTAL.BASE}\grabber_AllGame_com.xml"
+  #File "${MEDIAPORTAL.BASE}\ProgramSettingProfiles.xml"
   ; Folders
-  File /r "${MEDIAPORTAL.XBMCBIN}\thumbs"
+  File /r "${MEDIAPORTAL.BASE}\thumbs"
 
   File MediaPortalDirs.xml
 
@@ -473,13 +473,13 @@ SectionEnd
     Delete /REBOOTOK "${COMMON_APPDATA}\CaptureCardDefinitions.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\eHome Infrared Transceiver List XP.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\FileDetailContents.xml"
-    Delete /REBOOTOK "${COMMON_APPDATA}\grabber_AllGame_com.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\ISDNCodes.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\keymap.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\MusicVideoSettings.xml"
-    Delete /REBOOTOK "${COMMON_APPDATA}\ProgramSettingProfiles.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\wikipedia.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\yac-area-codes.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\grabber_AllGame_com.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\ProgramSettingProfiles.xml"
 
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
