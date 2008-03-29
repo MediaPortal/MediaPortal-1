@@ -251,6 +251,22 @@
 
 !macroend
 
+!insertmacro GetTime
+!macro GET_BACKUP_POSTFIX _var
+
+  ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+  ; $0="01"      day
+  ; $1="04"      month
+  ; $2="2005"    year
+  ; $3="Friday"  day of week name
+  ; $4="16"      hour
+  ; $5="05"      minute
+  ; $6="50"      seconds
+  
+  StrCpy ${_var} "BACKUP_$1-$0_$4-$5"
+
+!macroend
+
 
 
 #**********************************************************************************************************#

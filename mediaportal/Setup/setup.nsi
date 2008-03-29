@@ -37,11 +37,11 @@ SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
 
 !ifdef HIGH_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
-  !define MEDIAPORTAL.FILTERBIN "..\xbmc\bin\Release"
+  !define MEDIAPORTAL.FILTERBIN "..\MediaPortal.Base"
   !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !else
   !define MEDIAPORTAL.BASE "..\MediaPortal.Base"
-  !define MEDIAPORTAL.FILTERBIN "..\xbmc\bin\Release"
+  !define MEDIAPORTAL.FILTERBIN "..\MediaPortal.Base"
   !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !endif
 !define BUILD_TYPE "Release"
@@ -107,7 +107,6 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !insertmacro un.GetParameters
 !insertmacro un.GetOptions
 !insertmacro GetParent
-!insertmacro GetTime
 !insertmacro RefreshShellIcons
 !insertmacro un.RefreshShellIcons
 
@@ -209,52 +208,38 @@ ShowUninstDetails show
 !ifdef HIGH_BUILD     # optional Section which could create a backup
 Section "Backup current installation status" SecBackup
 
-  ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  ; $0="01"      day
-  ; $1="04"      month
-  ; $2="2005"    year
-  ; $3="Friday"  day of week name
-  ; $4="16"      hour
-  ; $5="05"      minute
-  ; $6="50"      seconds
+  !insertmacro GET_BACKUP_POSTFIX $R0
 
   DetailPrint "Creating backup of installation dir, this might take some minutes."
-  CreateDirectory "$INSTDIR_BACKUP_$1$0-$4$5"
-  CopyFiles /SILENT "$INSTDIR\*.*" "$INSTDIR_BACKUP_$1$0-$4$5"
+  CreateDirectory "$INSTDIR_$R0"
+  CopyFiles /SILENT "$INSTDIR\*.*" "$INSTDIR_$R0"
 
   DetailPrint "Creating backup of configuration dir, this might take some minutes."
-  CreateDirectory "$INSTDIR_BACKUP_$1$0-$4$5"
-  CopyFiles /SILENT "$INSTDIR\*.*" "$INSTDIR_BACKUP_$1$0-$4$5"
+  CreateDirectory "${COMMON_APPDATA}_$R0"
+  CopyFiles /SILENT "${COMMON_APPDATA}\*.*" "${COMMON_APPDATA}_$R0"
 
 SectionEnd
 !else                 # Required invisible Section which renames the INSTDIR to get a real clean installation
 Section "-backup" SecBackup
 
-  ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  ; $0="01"      day
-  ; $1="04"      month
-  ; $2="2005"    year
-  ; $3="Friday"  day of week name
-  ; $4="16"      hour
-  ; $5="05"      minute
-  ; $6="50"      seconds
+  !insertmacro GET_BACKUP_POSTFIX $R0
 
   ; CHECK FOR OLD FILES and DIRECTORY
   ${If} ${FileExists} "$INSTDIR\*.*"
 
     #  MAYBE WE should always rename the instdir if it exists
-    ReadRegDWORD $R0 HKLM "${REG_UNINSTALL}" "VersionMajor"
-    ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMinor"
+    ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMajor"
+    ReadRegDWORD $R2 HKLM "${REG_UNINSTALL}" "VersionMinor"
 
-    ${If} $R0 != ${VER_MAJOR}
-    ${OrIf} $R1 != ${VER_MINOR}
-      Rename "$INSTDIR" "$INSTDIR_BACKUP_$1$0-$4$5"
+    ${If} $R1 != ${VER_MAJOR}
+    ${OrIf} $R2 != ${VER_MINOR}
+      Rename "$INSTDIR" "$INSTDIR_$R0"
     ${EndIf}
 
   ${EndIf}
 
   ${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
-    Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_BACKUP_$1$0-$4$5"
+    Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
   ${EndIf}
 
 SectionEnd
@@ -414,7 +399,6 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   ; Config Files (XML)
   File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\FileDetailContents.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
@@ -422,6 +406,7 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
   #File /nonfatal "${MEDIAPORTAL.BASE}\grabber_AllGame_com.xml"
   #File /nonfatal "${MEDIAPORTAL.BASE}\ProgramSettingProfiles.xml"
+  #File /nonfatal "${MEDIAPORTAL.BASE}\FileDetailContents.xml"
   ; Folders
   #SetOutPath "${COMMON_APPDATA}\thumbs"
   File /nonfatal /r "${MEDIAPORTAL.BASE}\thumbs"
@@ -473,14 +458,15 @@ SectionEnd
     ; Config Files
     Delete /REBOOTOK "${COMMON_APPDATA}\CaptureCardDefinitions.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\eHome Infrared Transceiver List XP.xml"
-    Delete /REBOOTOK "${COMMON_APPDATA}\FileDetailContents.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\ISDNCodes.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\keymap.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\MusicVideoSettings.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\wikipedia.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\yac-area-codes.xml"
+
     Delete /REBOOTOK "${COMMON_APPDATA}\grabber_AllGame_com.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\ProgramSettingProfiles.xml"
+    Delete /REBOOTOK "${COMMON_APPDATA}\FileDetailContents.xml"
 
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
