@@ -73,9 +73,10 @@ xcopy /y %1\WebEPG\WebEPG\bin\%2\WebEPG.dll .
 copy %1\WebEPG\WebEPG-xmltv\bin\%2\WebEPG-xmltv.exe WebEPG.exe
 xcopy /y %1\WebEPG\WebEPG-conf\bin\%2\WebEPG-conf.exe .
 
-REM TTPremiumBoot
-xcopy /y %1\scripts\*.* scripts\
-xcopy /y %1\scripts\imdb\*.* scripts\imdb\
+rem C#scripts
+rem don't need to be copied seperate, those files are already in MediaPortal.Base
+rem xcopy /y %1\scripts\*.* scripts\
+rem xcopy /y %1\scripts\imdb\*.* scripts\imdb\
 
 
 rem MyBurner plugin dependencies
