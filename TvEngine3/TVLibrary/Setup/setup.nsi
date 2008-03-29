@@ -183,234 +183,218 @@ ShowUninstDetails show
 # USEFUL MACROS
 #---------------------------------------------------------------------------
 !macro SectionList MacroName
-    ${If} $DeployMode == 1
+  ${If} $DeployMode == 1
     MessageBox MB_OK|MB_ICONEXCLAMATION "SectionList..."
-    ${EndIf}
-    ; This macro used to perform operation on multiple sections.
-    ; List all of your components in following manner here.
-    !insertmacro "${MacroName}" "SecServer"
-    !insertmacro "${MacroName}" "SecClient"
+  ${EndIf}
+  ; This macro used to perform operation on multiple sections.
+  ; List all of your components in following manner here.
+  !insertmacro "${MacroName}" "SecServer"
+  !insertmacro "${MacroName}" "SecClient"
 !macroend
 
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
 ${MementoSection} "MediaPortal TV Server" SecServer
-    DetailPrint "Installing MediaPortal TV Server..."
-    ${If} $DeployMode == 1
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Installing MediaPortal TV Server..."
-    ${EndIf}
-
-    SetOverwrite on
-
-    ReadRegStr $InstallPath HKLM "${REG_UNINSTALL}" InstallPath
-    ${If} $InstallPath != ""
-        DetailPrint "Uninstalling TVService"
-        ExecWait '"$InstallPath\TVService.exe" /uninstall'
-        DetailPrint "Finished uninstalling TVService"
-    ${EndIf}
-
-    Pop $0
-
-    #---------------------------- File Copy ----------------------
-    ; Tuning Parameter Directory
-    SetOutPath $INSTDIR\TuningParameters
-    File /r /x .svn ..\TvService\bin\Release\TuningParameters\*
-
-    ; The Plugin Directory
-    SetOutPath $INSTDIR\Plugins
-    File ..\Plugins\ComSkipLauncher\bin\Release\ComSkipLauncher.dll
-    File ..\Plugins\ConflictsManager\bin\Release\ConflictsManager.dll
-    # removed it because it is not working like it should
-    #File ..\Plugins\PersonalTVGuide\bin\Release\PersonalTVGuide.dll
-    File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.dll
-    File ..\Plugins\ServerBlaster\ServerBlaster\bin\Release\ServerBlaster.dll
-    File ..\Plugins\TvMovie\bin\Release\TvMovie.dll
-    File ..\Plugins\XmlTvImport\bin\Release\XmlTvImport.dll
-
-    ; Rest of Files
-    SetOutPath $INSTDIR
-    File ..\DirectShowLib\bin\Release\DirectShowLib.dll
-    File ..\dvblib.dll
-    File ..\Plugins\PluginBase\bin\Release\PluginBase.dll
-    File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
-    File "..\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Release\Blaster.exe"
-    File ..\Setup\mp.ico
-    File ..\SetupTv\bin\Release\SetupTv.exe
-    File ..\SetupTv\bin\Release\SetupTv.exe.config
-    File ..\TvControl\bin\Release\TvControl.dll
-    File ..\TVDatabase\bin\Release\TVDatabase.dll
-    File ..\TVDatabase\references\Gentle.Common.DLL
-    File ..\TVDatabase\references\Gentle.Framework.DLL
-    File ..\TVDatabase\references\Gentle.Provider.MySQL.dll
-    File ..\TVDatabase\references\Gentle.Provider.SQLServer.dll
-    File ..\TVDatabase\references\log4net.dll
-    File ..\TVDatabase\references\MySql.Data.dll
-    File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
-    File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
-    File ..\TVLibrary\bin\Release\TVLibrary.dll
-    File ..\TvService\bin\Release\TuningParameters\Germany_Unitymedia_NRW.dvbc
-    File ..\TvService\Gentle.config
-    File ..\TvService\bin\Release\TvService.exe
-    File ..\TvService\bin\Release\TvService.exe.config
-    File ..\SetupControls\bin\Release\SetupControls.dll
-
-    ; 3rd party assemblys
-    File ..\..\Filters\bin\dxerr9.dll
-    File ..\..\Filters\bin\hauppauge.dll
-    File ..\..\Filters\bin\hcwWinTVCI.dll
-    File ..\..\Filters\bin\KNCBDACTRL.dll
-    File ..\..\Filters\bin\StreamingServer.dll
-    File ..\..\Filters\bin\ttBdaDrvApi_Dll.dll
-    File ..\..\Filters\bin\ttdvbacc.dll
-
-    ; Common App Data Files
-    SetOutPath "${COMMON_APPDATA}"
-    File ..\TvService\Gentle.config
-
-    #---------------------------------------------------------------------------
-    # FILTER REGISTRATION   for TVServer
-    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
-    #---------------------------------------------------------------------------
-    DetailPrint "filter registration..."
-    ; filters for digital tv
-
-
-    ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
-
-  ${If} $MPBaseDir == ""
-    # this fallback should only be enabled until MediaPortal 1.0 is out
-    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-
-    ${If} $MPBaseDir == ""
-      !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
-    ${EndIf}
+  DetailPrint "Installing MediaPortal TV Server..."
+  ${If} $DeployMode == 1
+  MessageBox MB_OK|MB_ICONEXCLAMATION "Installing MediaPortal TV Server..."
   ${EndIf}
-    
-    
-    
-    
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
-    ; filters for analog tv
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mpFileWriter.ax $INSTDIR\mpFileWriter.ax $INSTDIR
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\PDMpgMux.ax $INSTDIR\PDMpgMux.ax $INSTDIR
 
-    #---------------------------------------------------------------------------
-    # SERVICE INSTALLATION
-    #---------------------------------------------------------------------------
-    DetailPrint "Installing TVService"
-    ExecWait '"$INSTDIR\TVService.exe" /install'
-    DetailPrint "Finished Installing TVService"
+  ; Kill running Programs
+  DetailPrint "Terminating processes ..."
+  ExecWait '"taskkill" /F /IM Translator.exe'
+  ExecWait '"taskkill" /F /IM TrayLauncher.exe'
 
-    SetOutPath $INSTDIR
+  SetOverwrite on
 
-    ${If} $noDesktopSC != 1
-        CreateShortcut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
-    ${EndIf}
+  ReadRegStr $InstallPath HKLM "${REG_UNINSTALL}" InstallPath
+  ${If} $InstallPath != ""
+    DetailPrint "Uninstalling TVService"
+    ExecWait '"$InstallPath\TVService.exe" /uninstall'
+    DetailPrint "Finished uninstalling TVService"
+  ${EndIf}
 
-    ${If} $noStartMenuSC != 1
-        !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
-        CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
-        CreateDirectory "${COMMON_APPDATA}\log"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
+  Pop $0
+
+  #---------------------------- File Copy ----------------------
+  ; Tuning Parameter Directory
+  SetOutPath $INSTDIR\TuningParameters
+  File /r /x .svn ..\TvService\bin\Release\TuningParameters\*
+
+  ; The Plugin Directory
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\ComSkipLauncher\bin\Release\ComSkipLauncher.dll
+  File ..\Plugins\ConflictsManager\bin\Release\ConflictsManager.dll
+  # removed it because it is not working like it should
+  #File ..\Plugins\PersonalTVGuide\bin\Release\PersonalTVGuide.dll
+  File ..\Plugins\PowerScheduler\bin\Release\PowerScheduler.dll
+  File ..\Plugins\ServerBlaster\ServerBlaster\bin\Release\ServerBlaster.dll
+  File ..\Plugins\TvMovie\bin\Release\TvMovie.dll
+  File ..\Plugins\XmlTvImport\bin\Release\XmlTvImport.dll
+
+  ; Rest of Files
+  SetOutPath $INSTDIR
+  File ..\DirectShowLib\bin\Release\DirectShowLib.dll
+  File ..\dvblib.dll
+  File ..\Plugins\PluginBase\bin\Release\PluginBase.dll
+  File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
+  File "..\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Release\Blaster.exe"
+  File ..\Setup\mp.ico
+  File ..\SetupTv\bin\Release\SetupTv.exe
+  File ..\SetupTv\bin\Release\SetupTv.exe.config
+  File ..\TvControl\bin\Release\TvControl.dll
+  File ..\TVDatabase\bin\Release\TVDatabase.dll
+  File ..\TVDatabase\references\Gentle.Common.DLL
+  File ..\TVDatabase\references\Gentle.Framework.DLL
+  File ..\TVDatabase\references\Gentle.Provider.MySQL.dll
+  File ..\TVDatabase\references\Gentle.Provider.SQLServer.dll
+  File ..\TVDatabase\references\log4net.dll
+  File ..\TVDatabase\references\MySql.Data.dll
+  File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
+  File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
+  File ..\TVLibrary\bin\Release\TVLibrary.dll
+  File ..\TvService\bin\Release\TuningParameters\Germany_Unitymedia_NRW.dvbc
+  File ..\TvService\Gentle.config
+  File ..\TvService\bin\Release\TvService.exe
+  File ..\TvService\bin\Release\TvService.exe.config
+  File ..\SetupControls\bin\Release\SetupControls.dll
+
+  ; 3rd party assemblys
+  File ..\..\Filters\bin\dxerr9.dll
+  File ..\..\Filters\bin\hauppauge.dll
+  File ..\..\Filters\bin\hcwWinTVCI.dll
+  File ..\..\Filters\bin\KNCBDACTRL.dll
+  File ..\..\Filters\bin\StreamingServer.dll
+  File ..\..\Filters\bin\ttBdaDrvApi_Dll.dll
+  File ..\..\Filters\bin\ttdvbacc.dll
+
+  ; Common App Data Files
+  SetOutPath "${COMMON_APPDATA}"
+  File ..\TvService\Gentle.config
+
+  #---------------------------------------------------------------------------
+  # FILTER REGISTRATION   for TVServer
+  #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+  #---------------------------------------------------------------------------
+  DetailPrint "filter registration..."
+  ; filters for digital tv
+  ${IfNot} ${MP023IsInstalled}
+  ${AndIfNot} ${MPIsInstalled}
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsReader.ax $INSTDIR\TsReader.ax $INSTDIR
+  ${EndIf}
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\TsWriter.ax $INSTDIR\TsWriter.ax $INSTDIR
+  ; filters for analog tv
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mpFileWriter.ax $INSTDIR\mpFileWriter.ax $INSTDIR
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\PDMpgMux.ax $INSTDIR\PDMpgMux.ax $INSTDIR
+
+  #---------------------------------------------------------------------------
+  # SERVICE INSTALLATION
+  #---------------------------------------------------------------------------
+  DetailPrint "Installing TVService"
+  ExecWait '"$INSTDIR\TVService.exe" /install'
+  DetailPrint "Finished Installing TVService"
+
+  SetOutPath $INSTDIR
+  ${If} $noDesktopSC != 1
+    CreateShortcut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+  ${EndIf}
+
+  ${If} $noStartMenuSC != 1
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
+    CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    CreateDirectory "${COMMON_APPDATA}\log"
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
     # [OBSOLETE] CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
-        !insertmacro MUI_STARTMENU_WRITE_END
-    ${EndIf}
+    !insertmacro MUI_STARTMENU_WRITE_END
+  ${EndIf}
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
-    DetailPrint "Uninstalling MediaPortal TV Server..."
-    ${If} $DeployMode == 1
+  DetailPrint "Uninstalling MediaPortal TV Server..."
+  ${If} $DeployMode == 1
     MessageBox MB_OK|MB_ICONEXCLAMATION "Uninstalling MediaPortal TV Server..."
-    ${EndIf}
-
-    #---------------------------------------------------------------------------
-    # SERVICE UNINSTALLATION
-    #---------------------------------------------------------------------------
-    DetailPrint "DeInstalling TVService"
-    ExecWait '"$INSTDIR\TVService.exe" /uninstall'
-    DetailPrint "Finished DeInstalling TVService"
-
-    #---------------------------------------------------------------------------
-    # FILTER UNREGISTRATION     for TVServer
-    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
-    #---------------------------------------------------------------------------
-    DetailPrint "Unreg and remove filters..."
-    ; filters for digital tv
-    ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
-
-  ${If} $MPBaseDir == ""
-    # this fallback should only be enabled until MediaPortal 1.0 is out
-    ReadRegStr $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-
-    ${If} $MPBaseDir == ""
-      !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
-    ${EndIf}
   ${EndIf}
-  
-  
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
-    ; filters for analog tv
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\mpFileWriter.ax
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\PDMpgMux.ax
 
-    DetailPrint "remove files..."
-    ; Remove TuningParameters
-    RmDir /r /REBOOTOK $INSTDIR\TuningParameters
+  #---------------------------------------------------------------------------
+  # SERVICE UNINSTALLATION
+  #---------------------------------------------------------------------------
+  DetailPrint "DeInstalling TVService"
+  ExecWait '"$INSTDIR\TVService.exe" /uninstall'
+  DetailPrint "Finished DeInstalling TVService"
 
-    ; Remove Plugins
-    Delete /REBOOTOK $INSTDIR\Plugins\ComSkipLauncher.dll
-    Delete /REBOOTOK $INSTDIR\Plugins\ConflictsManager.dll
-    #Delete /REBOOTOK $INSTDIR\Plugins\PersonalTVGuide.dll
-    Delete /REBOOTOK $INSTDIR\Plugins\PowerScheduler.dll
-    Delete /REBOOTOK $INSTDIR\Plugins\ServerBlaster.dll
-    Delete /REBOOTOK $INSTDIR\Plugins\TvMovie.dll
-    Delete /REBOOTOK $INSTDIR\Plugins\XmlTvImport.dll
-    RmDir "$INSTDIR\Plugins"
-    
-    ; And finally remove all the files installed
-    ; Leave the directory in place, as it might contain user modified files
-    Delete /REBOOTOK $INSTDIR\DirectShowLib.dll
-    Delete /REBOOTOK $INSTDIR\dvblib.dll
-    Delete /REBOOTOK $INSTDIR\PluginBase.dll
-    Delete /REBOOTOK $INSTDIR\PowerScheduler.Interfaces.DLL
-    Delete /REBOOTOK $INSTDIR\Blaster.exe
-    Delete /REBOOTOK $INSTDIR\mp.ico
-    Delete /REBOOTOK $INSTDIR\SetupTv.exe
-    Delete /REBOOTOK $INSTDIR\SetupTv.exe.config
-    Delete /REBOOTOK $INSTDIR\TvControl.dll
-    Delete /REBOOTOK $INSTDIR\TVDatabase.dll
-    Delete /REBOOTOK $INSTDIR\Gentle.Common.DLL
-    Delete /REBOOTOK $INSTDIR\Gentle.Framework.DLL
-    Delete /REBOOTOK $INSTDIR\Gentle.Provider.MySQL.dll
-    Delete /REBOOTOK $INSTDIR\Gentle.Provider.SQLServer.dll
-    Delete /REBOOTOK $INSTDIR\log4net.dll
-    Delete /REBOOTOK $INSTDIR\MySql.Data.dll
-    Delete /REBOOTOK $INSTDIR\TvBusinessLayer.dll
-    Delete /REBOOTOK $INSTDIR\TvLibrary.Interfaces.dll
-    Delete /REBOOTOK $INSTDIR\TVLibrary.dll
-    Delete /REBOOTOK $INSTDIR\Germany_Unitymedia_NRW.dvbc
-    Delete /REBOOTOK $INSTDIR\Gentle.config
-    Delete /REBOOTOK $INSTDIR\TvService.exe
-    Delete /REBOOTOK $INSTDIR\TvService.exe.config
-    Delete /REBOOTOK $INSTDIR\SetupControls.dll
+  #---------------------------------------------------------------------------
+  # FILTER UNREGISTRATION     for TVServer
+  #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+  #---------------------------------------------------------------------------
+  DetailPrint "Unreg and remove filters..."
+  ; filters for digital tv
+  ${IfNot} ${MP023IsInstalled}
+  ${AndIfNot} ${MPIsInstalled}
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+  ${EndIf}
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
+  ; filters for analog tv
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\mpFileWriter.ax
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\PDMpgMux.ax
 
-    ; 3rd party assemblys
-    Delete /REBOOTOK $INSTDIR\dxerr9.dll
-    Delete /REBOOTOK $INSTDIR\hauppauge.dll
-    Delete /REBOOTOK $INSTDIR\hcwWinTVCI.dll
-    Delete /REBOOTOK $INSTDIR\KNCBDACTRL.dll
-    Delete /REBOOTOK $INSTDIR\StreamingServer.dll
-    Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
-    Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
+  DetailPrint "remove files..."
+  ; Remove TuningParameters
+  RmDir /r /REBOOTOK $INSTDIR\TuningParameters
 
-    ; remove Start Menu shortcuts
-    Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk"
-    Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"
-    # [OBSOLETE] Delete "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk"
-    ; remove Desktop shortcuts
-    Delete "$DESKTOP\TV-Server Configuration.lnk"
+  ; Remove Plugins
+  Delete /REBOOTOK $INSTDIR\Plugins\ComSkipLauncher.dll
+  Delete /REBOOTOK $INSTDIR\Plugins\ConflictsManager.dll
+  #Delete /REBOOTOK $INSTDIR\Plugins\PersonalTVGuide.dll
+  Delete /REBOOTOK $INSTDIR\Plugins\PowerScheduler.dll
+  Delete /REBOOTOK $INSTDIR\Plugins\ServerBlaster.dll
+  Delete /REBOOTOK $INSTDIR\Plugins\TvMovie.dll
+  Delete /REBOOTOK $INSTDIR\Plugins\XmlTvImport.dll
+  RmDir "$INSTDIR\Plugins"
+
+  ; And finally remove all the files installed
+  ; Leave the directory in place, as it might contain user modified files
+  Delete /REBOOTOK $INSTDIR\DirectShowLib.dll
+  Delete /REBOOTOK $INSTDIR\dvblib.dll
+  Delete /REBOOTOK $INSTDIR\PluginBase.dll
+  Delete /REBOOTOK $INSTDIR\PowerScheduler.Interfaces.DLL
+  Delete /REBOOTOK $INSTDIR\Blaster.exe
+  Delete /REBOOTOK $INSTDIR\mp.ico
+  Delete /REBOOTOK $INSTDIR\SetupTv.exe
+  Delete /REBOOTOK $INSTDIR\SetupTv.exe.config
+  Delete /REBOOTOK $INSTDIR\TvControl.dll
+  Delete /REBOOTOK $INSTDIR\TVDatabase.dll
+  Delete /REBOOTOK $INSTDIR\Gentle.Common.DLL
+  Delete /REBOOTOK $INSTDIR\Gentle.Framework.DLL
+  Delete /REBOOTOK $INSTDIR\Gentle.Provider.MySQL.dll
+  Delete /REBOOTOK $INSTDIR\Gentle.Provider.SQLServer.dll
+  Delete /REBOOTOK $INSTDIR\log4net.dll
+  Delete /REBOOTOK $INSTDIR\MySql.Data.dll
+  Delete /REBOOTOK $INSTDIR\TvBusinessLayer.dll
+  Delete /REBOOTOK $INSTDIR\TvLibrary.Interfaces.dll
+  Delete /REBOOTOK $INSTDIR\TVLibrary.dll
+  Delete /REBOOTOK $INSTDIR\Germany_Unitymedia_NRW.dvbc
+  Delete /REBOOTOK $INSTDIR\Gentle.config
+  Delete /REBOOTOK $INSTDIR\TvService.exe
+  Delete /REBOOTOK $INSTDIR\TvService.exe.config
+  Delete /REBOOTOK $INSTDIR\SetupControls.dll
+
+  ; 3rd party assemblys
+  Delete /REBOOTOK $INSTDIR\dxerr9.dll
+  Delete /REBOOTOK $INSTDIR\hauppauge.dll
+  Delete /REBOOTOK $INSTDIR\hcwWinTVCI.dll
+  Delete /REBOOTOK $INSTDIR\KNCBDACTRL.dll
+  Delete /REBOOTOK $INSTDIR\StreamingServer.dll
+  Delete /REBOOTOK $INSTDIR\ttBdaDrvApi_Dll.dll
+  Delete /REBOOTOK $INSTDIR\ttdvbacc.dll
+
+  ; remove Start Menu shortcuts
+  Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"
+  # [OBSOLETE] Delete "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk"
+  ; remove Desktop shortcuts
+  Delete "$DESKTOP\TV-Server Configuration.lnk"
 !macroend
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
@@ -664,7 +648,7 @@ Function .onInit
 
     ; check if reboot is required
     ${If} ${FileExists} "$INSTDIR\rebootflag"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
         Abort
     ${EndIf}
 /*
