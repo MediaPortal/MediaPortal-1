@@ -41,11 +41,11 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_bMeasureCompensation=false;
 	m_dwSeekingCaps =
     AM_SEEKING_CanSeekAbsolute	|
-	AM_SEEKING_CanSeekForwards	|
-	AM_SEEKING_CanSeekBackwards	|
-	AM_SEEKING_CanGetStopPos	|
-	AM_SEEKING_CanGetDuration |
-  //AM_SEEKING_CanGetCurrentPos |
+	  AM_SEEKING_CanSeekForwards	|
+	  AM_SEEKING_CanSeekBackwards	|
+	  AM_SEEKING_CanGetStopPos	|
+	  AM_SEEKING_CanGetDuration |
+    //AM_SEEKING_CanGetCurrentPos |
 	AM_SEEKING_Source;
   m_bSeeking=false;
 }
@@ -63,32 +63,31 @@ STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
   if (riid == IID_IStreamBufferConfigure)
   {
-	    LogDebug("vid:IID_IStreamBufferConfigure()");
+    LogDebug("vid:IID_IStreamBufferConfigure()");
   }
   if (riid == IID_IStreamBufferInitialize)
   {
-  
-	    LogDebug("vid:IID_IStreamBufferInitialize()");
+    LogDebug("vid:IID_IStreamBufferInitialize()");
   }
   if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
   {
-	    LogDebug("vid:IID_IStreamBufferMediaSeeking()");
+    LogDebug("vid:IID_IStreamBufferMediaSeeking()");
   }
   if (riid == IID_IStreamBufferSource)
   {
-	    LogDebug("vid:IID_IStreamBufferSource()");
+    LogDebug("vid:IID_IStreamBufferSource()");
   }
   if (riid == IID_IStreamBufferDataCounters)
   {
-	    LogDebug("vid:IID_IStreamBufferDataCounters()");
+    LogDebug("vid:IID_IStreamBufferDataCounters()");
   }
   if (riid == IID_IMediaSeeking)
   {
-      return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+    return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
   }
   if (riid == IID_IMediaPosition)
   {
-      return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+    return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
   }
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -104,29 +103,26 @@ HRESULT CVideoPin::GetMediaType(CMediaType *pmt)
 HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest)
 {
 	HRESULT hr;
-
-
 	CheckPointer(pAlloc, E_POINTER);
 	CheckPointer(pRequest, E_POINTER);
 
 	if (pRequest->cBuffers == 0)
 	{
-			pRequest->cBuffers = 30;
+    pRequest->cBuffers = 30;
 	}
 
 	pRequest->cbBuffer = 8192;
-
 
 	ALLOCATOR_PROPERTIES Actual;
 	hr = pAlloc->SetProperties(pRequest, &Actual);
 	if (FAILED(hr))
 	{
-			return hr;
+    return hr;
 	}
 
 	if (Actual.cbBuffer < pRequest->cbBuffer)
 	{
-			return E_FAIL;
+    return E_FAIL;
 	}
 
 	return S_OK;
@@ -200,7 +196,6 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
   LogDebug("vid:CompleteConnect() ok");
 	return hr;
 }
-
 
 HRESULT CVideoPin::BreakConnect()
 {
@@ -278,7 +273,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       pSample->SetDiscontinuity(TRUE);
       m_bDiscontinuity=FALSE;
     }
-
  
     //if we got a new buffer
     if (buffer!=NULL)
@@ -301,7 +295,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         // and subtract the pin's m_rtStart timestamp
         cRefTime-=m_rtStart;
 
-        if (m_bMeasureCompensation)
+        // Use same timestamp compensation for video and audio. This will fix 
+        // 1) stuttering after seeking or zapping (EVR)
+        // 2) lipsync after seeking or zapping (EVR)
+        // -- tourettes
+        /*if (m_bMeasureCompensation)
         {
           // next.. seeking is not perfect since the file does not contain a PCR for every micro second. 
           // even if we find the exact pcr time during seeking, the next start of a pes-header might start a few 
@@ -314,13 +312,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           fTime/=1000.0f;
           LogDebug("vid:compensation:%03.3f",fTime);
           prevTime=-1;
-
-          IDVBSubtitle* pDVBSubtitleFilter(m_pTsReaderFilter->GetSubtitleFilter());
-          if( pDVBSubtitleFilter )
-          {
-            pDVBSubtitleFilter->SetTimeCompensation( cRefTime );
-          }
-        }
+        }*/
         //adjust the timestamp with the compensation
         cRefTime -=m_pTsReaderFilter->Compensation;
 
@@ -332,14 +324,14 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         fTime/=1000.0f;
         //if (fTime < 5)
         {
-        //  LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+          //LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
           prevTime=fTime;
         }
       }
       else
       {
         //buffer has no timestamp
-       // LogDebug("vid:gotbuffer:%d ",buffer->Length());
+        //LogDebug("vid:gotbuffer:%d ",buffer->Length());
         pSample->SetTime(NULL,NULL);  
         pSample->SetSyncPoint(FALSE);
       }
@@ -361,8 +353,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   m_bInFillBuffer=false;
   return NOERROR;
 }
-
-
 
 //******************************************************
 /// Called when thread is about to start delivering data to the codec
@@ -389,8 +379,7 @@ HRESULT CVideoPin::OnThreadStartPlay()
 	return CSourceStream::OnThreadStartPlay( );
 }
 
-
-	// CSourceSeeking
+// CSourceSeeking
 HRESULT CVideoPin::ChangeStart()
 {
   UpdateFromSeek();
@@ -405,8 +394,8 @@ HRESULT CVideoPin::ChangeRate()
 {
   if( m_dRateSeeking <= 0 ) 
   {
-      m_dRateSeeking = 1.0;  // Reset to a reasonable value.
-      return E_FAIL;
+    m_dRateSeeking = 1.0;  // Reset to a reasonable value.
+    return E_FAIL;
   }
   UpdateFromSeek();
   return S_OK;
@@ -462,7 +451,6 @@ void CVideoPin::UpdateFromSeek()
   float seekTime=(float)rtSeek.Millisecs();
   seekTime/=1000.0f;
   
-  
   //get the earliest timestamp available in the file
   float earliesTimeStamp= tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
   if (earliesTimeStamp<0) earliesTimeStamp=0;
@@ -490,37 +478,37 @@ void CVideoPin::UpdateFromSeek()
   {
     //normally the audio pin does the acutal seeking
     //check if its connected. If not, we'll do the seeking
-      if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
-      {
-        //tell the filter we are starting a seek operation
-				m_pTsReaderFilter->SeekStart();
-      }
+    if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+    {
+      //tell the filter we are starting a seek operation
+			m_pTsReaderFilter->SeekStart();
+    }
 
-	  	//deliver a begin-flush to the codec filter so it stops asking for data
-      HRESULT hr=DeliverBeginFlush();
+  	//deliver a begin-flush to the codec filter so it stops asking for data
+    HRESULT hr=DeliverBeginFlush();
 
-      //stop the thread
-      Stop();
-      if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
-      {
-        //do the seek..
-        m_pTsReaderFilter->Seek(rtSeek,true);
-      }
+    //stop the thread
+    Stop();
+    if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+    {
+      //do the seek..
+      m_pTsReaderFilter->Seek(rtSeek,true);
+    }
 
-      //deliver a end-flush to the codec filter so it will start asking for data again
-      hr=DeliverEndFlush();
-      
-      if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
-      {
-        //tell filter we're done with seeking
-        m_pTsReaderFilter->SeekDone(rtSeek);
-      }
+    //deliver a end-flush to the codec filter so it will start asking for data again
+    hr=DeliverEndFlush();
+    
+    if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
+    {
+      //tell filter we're done with seeking
+      m_pTsReaderFilter->SeekDone(rtSeek);
+    }
 
-      //set our start time
-      //m_rtStart=rtSeek;
+    //set our start time
+    //m_rtStart=rtSeek;
 
-      // and restart the thread
-      Run();
+    // and restart the thread
+    Run();
   }
   else
   {
@@ -602,11 +590,11 @@ STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
 /// 
 STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
- // LogDebug("vid:GetCurrentPosition");
+  //LogDebug("vid:GetCurrentPosition");
   return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
 }
 
 STDMETHODIMP CVideoPin::Notify(IBaseFilter * pSender, Quality q)
 {
-    return E_NOTIMPL;
+  return E_NOTIMPL;
 }

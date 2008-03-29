@@ -61,11 +61,11 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	m_rtStart=0;
 	m_dwSeekingCaps =
     AM_SEEKING_CanSeekAbsolute	|
-	AM_SEEKING_CanSeekForwards	|
-	AM_SEEKING_CanSeekBackwards	|
-	AM_SEEKING_CanGetStopPos	|
-	AM_SEEKING_CanGetDuration	|
-  //AM_SEEKING_CanGetCurrentPos |
+	  AM_SEEKING_CanSeekForwards	|
+	  AM_SEEKING_CanSeekBackwards	|
+	  AM_SEEKING_CanGetStopPos	|
+	  AM_SEEKING_CanGetDuration	|
+    //AM_SEEKING_CanGetCurrentPos |
 	AM_SEEKING_Source;
   m_bSeeking=false;
   m_binUpdateFromSeek=false;
@@ -79,26 +79,23 @@ STDMETHODIMP CAudioPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
   if (riid == IID_IStreamBufferConfigure)
   {
-  
-	    LogDebug("aud:IID_IStreamBufferConfigure()");
+    LogDebug("aud:IID_IStreamBufferConfigure()");
   }
   if (riid == IID_IStreamBufferInitialize)
   {
-  
-	    LogDebug("aud:IID_IStreamBufferInitialize()");
+    LogDebug("aud:IID_IStreamBufferInitialize()");
   }
   if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
   {
-  
-	    LogDebug("aud:IID_IStreamBufferMediaSeeking()");
+    LogDebug("aud:IID_IStreamBufferMediaSeeking()");
   }
   if (riid == IID_IStreamBufferSource)
   {
-	    LogDebug("aud:IID_IStreamBufferSource()");
+    LogDebug("aud:IID_IStreamBufferSource()");
   }
   if (riid == IID_IStreamBufferDataCounters)
   {
-	    LogDebug("aud:IID_IStreamBufferDataCounters()");
+    LogDebug("aud:IID_IStreamBufferDataCounters()");
   }
   if (riid == IID_IMediaSeeking)
   {
@@ -128,6 +125,7 @@ void CAudioPin::SetDiscontinuity(bool onOff)
 {
   m_bDiscontinuity=onOff;
 }
+
 HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
 {
   LogDebug("aud:CheckConnect()");
@@ -137,29 +135,26 @@ HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
 HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest)
 {
 	HRESULT hr;
-
-
 	CheckPointer(pAlloc, E_POINTER);
 	CheckPointer(pRequest, E_POINTER);
 
 	if (pRequest->cBuffers == 0)
 	{
-			pRequest->cBuffers = 30;
+    pRequest->cBuffers = 30;
 	}
 
 	pRequest->cbBuffer = 8192;
-
 
 	ALLOCATOR_PROPERTIES Actual;
 	hr = pAlloc->SetProperties(pRequest, &Actual);
 	if (FAILED(hr))
 	{
-			return hr;
+    return hr;
 	}
 
 	if (Actual.cbBuffer < pRequest->cbBuffer)
 	{
-			return E_FAIL;
+    return E_FAIL;
 	}
 
 	return S_OK;
@@ -363,7 +358,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   return NOERROR;
 }
 
-
 bool CAudioPin::IsConnected()
 {
   return m_bConnected;
@@ -383,8 +377,8 @@ HRESULT CAudioPin::ChangeRate()
 {
   if( m_dRateSeeking <= 0 ) 
   {
-      m_dRateSeeking = 1.0;  // Reset to a reasonable value.
-      return E_FAIL;
+    m_dRateSeeking = 1.0;  // Reset to a reasonable value.
+    return E_FAIL;
   }
   UpdateFromSeek();
 	return S_OK;
@@ -499,30 +493,30 @@ void CAudioPin::UpdateFromSeek()
   //       singleseat: always tell the filter that we are starting a seek operation - This fixes rewinding/forwarding
   if (ThreadExists() || !m_pTsReaderFilter->IsStreaming()) 
   {
-      //tell the filter we are starting a seek operation
-      m_pTsReaderFilter->SeekStart();
-			
-      //deliver a begin-flush to the codec filter so it stops asking for data
-      DeliverBeginFlush();
-			
-      //stop the thread
-      Stop();
-			
-      //do the seek...
-      m_pTsReaderFilter->Seek(rtSeek,true);
+    //tell the filter we are starting a seek operation
+    m_pTsReaderFilter->SeekStart();
+		
+    //deliver a begin-flush to the codec filter so it stops asking for data
+    DeliverBeginFlush();
+		
+    //stop the thread
+    Stop();
+		
+    //do the seek...
+    m_pTsReaderFilter->Seek(rtSeek,true);
 
-      //deliver a end-flush to the codec filter so it will start asking for data again
-      DeliverEndFlush();
-			
-      //tell filter we're done with seeking
-      m_pTsReaderFilter->SeekDone(rtSeek);
+    //deliver a end-flush to the codec filter so it will start asking for data again
+    DeliverEndFlush();
+		
+    //tell filter we're done with seeking
+    m_pTsReaderFilter->SeekDone(rtSeek);
 
-      //set our start time
-      //m_rtStart=rtSeek;
-      
-      // and restart the thread
-      Run();
-			//LogDebug("aud seek running");
+    //set our start time
+    //m_rtStart=rtSeek;
+    
+    // and restart the thread
+    Run();
+		//LogDebug("aud seek running");
   }
   else
   {
@@ -538,7 +532,6 @@ void CAudioPin::UpdateFromSeek()
   LogDebug("aud seek done---");
 }
 
-
 //******************************************************
 /// GetAvailable() returns 
 /// pEarliest -> the earliest (pcr) timestamp in the file
@@ -546,7 +539,7 @@ void CAudioPin::UpdateFromSeek()
 /// 
 STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
-//  LogDebug("aud:GetAvailable");
+  //LogDebug("aud:GetAvailable");
   //if we are timeshifting, the earliest/latest timestamp can change
   if (m_pTsReaderFilter->IsTimeShifting())
   {
@@ -583,7 +576,7 @@ STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 //
 STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
 {
- // LogDebug("aud:GetDuration");
+  //LogDebug("aud:GetDuration");
   if (m_pTsReaderFilter->IsTimeShifting())
   {
     CTsDuration duration=m_pTsReaderFilter->GetDuration();
@@ -597,7 +590,9 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
     m_rtDuration=CRefTime(refTime);
   }
   if (pDuration!=NULL)
+  {
     return CSourceSeeking::GetDuration(pDuration);
+  }
   return S_OK;
 }
 
@@ -608,11 +603,11 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
 /// 
 STDMETHODIMP CAudioPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
- // LogDebug("aud:GetCurrentPosition");
+  //LogDebug("aud:GetCurrentPosition");
   return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
 }
 
 STDMETHODIMP CAudioPin::Notify(IBaseFilter * pSender, Quality q)
 {
-    return E_NOTIMPL;
+  return E_NOTIMPL;
 }
