@@ -379,11 +379,6 @@ xcopy /y %1\TTPremiumBoot\*.* TTPremiumBoot\
 xcopy /y %1\TTPremiumBoot\21\*.* TTPremiumBoot\21\
 xcopy /y %1\TTPremiumBoot\24\*.* TTPremiumBoot\24\
 xcopy /y %1\TTPremiumBoot\24Data\*.* \
-REM TTPremiumBoot
-xcopy /y %1\scripts\*.* scripts\
-xcopy /y %1\scripts\imdb\*.* scripts\imdb\
-*/
-/*
   ; TTPremiumBoot
   SetOutPath "$INSTDIR\TTPremiumBoot"
   File "..\TTPremiumBoot\*.*"
@@ -393,7 +388,12 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   File "..\TTPremiumBoot\24\*.*"
   SetOutPath "$INSTDIR\TTPremiumBoot\24Data"
   File "..\TTPremiumBoot\24Data\*.*"
-  ; scripts
+*/
+/*
+REM C#scripts
+xcopy /y %1\scripts\*.* scripts\
+xcopy /y %1\scripts\imdb\*.* scripts\imdb\
+  ; C#scripts
   SetOutPath "$INSTDIR\scripts"
   File "..\scripts\*.*"
   SetOutPath "$INSTDIR\scripts\imdb"
