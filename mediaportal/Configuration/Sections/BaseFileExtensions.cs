@@ -31,7 +31,7 @@ using System.Windows.Forms;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public abstract class BaseFileExtensions : MediaPortal.Configuration.SectionSettings
+  public class BaseFileExtensions : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPButton removeButton;
@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration.Sections
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
-    private void InitializeComponent()
+    protected void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -263,6 +263,16 @@ namespace MediaPortal.Configuration.Sections
     {
       removeButton.Enabled = (extensionsListBox.SelectedItems.Count > 0);
     }
+
+    public override object GetSetting(string name)
+    {
+      switch (name.ToLower())
+      {
+        case "extensions":
+          return Extensions;
+      }
+
+      return null;
+    }
   }
 }
-
