@@ -175,8 +175,9 @@ namespace MediaPortal.Dialogs
 
     public override void DoModal(int ParentID)
     {
-      GUIControl cntl = GetControl((int)Controls.BUTTON_CONFLICT_EPISODE);
-      if (cntl != null) cntl.Visible = _conflictingEpisodes;
+      if (_conflictingEpisodes) ShowControl(GetID, (int)Controls.BUTTON_CONFLICT_EPISODE);
+      else HideControl(GetID, (int)Controls.BUTTON_CONFLICT_EPISODE);
+            
       base.DoModal(ParentID);
     }
 
