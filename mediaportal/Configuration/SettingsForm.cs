@@ -87,9 +87,9 @@ namespace MediaPortal.Configuration
     private TreeView sectionTree;
     private Panel holderPanel;
     private MPGradientLabel headerLabel;
-    private SerialUIR serialuir;
-    private RedEye redeye; //PB00//
-    private DirectInputRemote dinputRemote;
+    private RemoteSerialUIR serialuir;
+    private RemoteRedEye redeye; //PB00//
+    private RemoteDirectInput dinputRemote;
     private static ConfigSplashScreen splashScreen = new ConfigSplashScreen();
     // Hashtable where we store each added tree node/section for faster access
     public static Hashtable SettingSections
@@ -280,17 +280,17 @@ namespace MediaPortal.Configuration
       }
       AddSection(remote);
       Log.Info("add USBUIRT section");
-      AddChildSection(remote, new USBUIRT());
+      AddChildSection(remote, new RemoteUSBUIRT());
       Log.Info("add SerialUIR section");
-      serialuir = new SerialUIR();
+      serialuir = new RemoteSerialUIR();
       AddChildSection(remote, serialuir);
       Log.Info("add WINLIRC section"); //sd00//
-      AddChildSection(remote, new Sections.WINLIRC()); //sd00//
+      AddChildSection(remote, new Sections.RemoteWinLirc()); //sd00//
       Log.Info("add RedEye section"); //PB00//
-      redeye = new RedEye(); //PB00//
+      redeye = new RemoteRedEye(); //PB00//
       AddChildSection(remote, redeye); //PB00//
       Log.Info("add DirectInput section");
-      dinputRemote = new DirectInputRemote();
+      dinputRemote = new RemoteDirectInput();
       AddChildSection(remote, dinputRemote);
       //Look for Audio Decoders, if exist assume decoders are installed & present config option
       if (splashScreen != null)

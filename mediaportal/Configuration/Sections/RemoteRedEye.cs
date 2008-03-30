@@ -36,7 +36,7 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class RedEye : MediaPortal.Configuration.SectionSettings
+  public class RemoteRedEye : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
@@ -58,12 +58,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton cmdTest;
 
 
-    public RedEye()
+    public RemoteRedEye()
       : this("RedEye")
     {
     }
 
-    public RedEye(string name)
+    public RemoteRedEye(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

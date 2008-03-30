@@ -33,7 +33,7 @@ namespace MediaPortal.Configuration.Sections
   /// <summary>
   /// Summary description for DirectInputRemote.
   /// </summary>
-  public class DirectInputRemote : SectionSettings
+  public class RemoteDirectInput : SectionSettings
   {
     /// <summary> 
     /// Required designer variable.
@@ -64,13 +64,13 @@ namespace MediaPortal.Configuration.Sections
 
     private MediaPortal.UserInterface.Controls.MPTextBox lastEdit;
 
-    public DirectInputRemote()
+    public RemoteDirectInput()
       : this("Direct Input")
     {
     }
 
 
-    public DirectInputRemote(string name)
+    public RemoteDirectInput(string name)
       : base(name)
     {
       // This call is required by the Windows.Forms Form Designer.

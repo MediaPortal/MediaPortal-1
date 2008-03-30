@@ -35,7 +35,7 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class WINLIRC : MediaPortal.Configuration.SectionSettings
+  public class RemoteWinLirc : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
@@ -49,12 +49,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel IRDelayLabel;
     private System.ComponentModel.IContainer components = null;
 
-    public WINLIRC()
+    public RemoteWinLirc()
       : this("WINLIRC")
     {
     }
 
-    public WINLIRC(string name)
+    public RemoteWinLirc(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

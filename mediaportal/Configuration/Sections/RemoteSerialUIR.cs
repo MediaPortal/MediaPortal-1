@@ -36,7 +36,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class SerialUIR : MediaPortal.Configuration.SectionSettings
+  public class RemoteSerialUIR : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
@@ -69,12 +69,12 @@ namespace MediaPortal.Configuration.Sections
 
     private bool initialize = false;
 
-    public SerialUIR()
+    public RemoteSerialUIR()
       : this("SerialUIR")
     {
     }
 
-    public SerialUIR(string name)
+    public RemoteSerialUIR(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

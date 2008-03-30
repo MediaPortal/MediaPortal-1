@@ -55,11 +55,11 @@
     <section name="MediaPortal.Configuration.Sections.TVClient" suburl="Television" />
 
     <section name="MediaPortal.Configuration.Sections.Remote" suburl="Remote" />
-    <section name="MediaPortal.Configuration.Sections.USBUIRT" suburl="Remote" />
-    <section name="MediaPortal.Configuration.Sections.SerialUIR" suburl="Remote" />
-    <section name="MediaPortal.Configuration.Sections.WINLIRC" suburl="Remote" />
-    <section name="MediaPortal.Configuration.Sections.RedEye" suburl="Remote" />
-    <section name="MediaPortal.Configuration.Sections.DirectInputRemote" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.RemoteUSBUIRT" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.RemoteSerialUIR" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.RemoteWinLirc" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.RemoteRedEye" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.RemoteDirectInput" suburl="Remote" />
 
     <section name="MediaPortal.Configuration.Sections.FiltersSection" suburl="Filters" />
     <section name="MediaPortal.Configuration.Sections.MPEG2DecAudioFilter" suburl="Filters" />

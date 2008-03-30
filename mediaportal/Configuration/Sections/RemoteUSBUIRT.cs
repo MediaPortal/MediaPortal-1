@@ -35,7 +35,7 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class USBUIRT : MediaPortal.Configuration.SectionSettings
+  public class RemoteUSBUIRT : MediaPortal.Configuration.SectionSettings
   {
     private const string USBUIRT_PLUGINVER = "1.16 (February 18, 2006)";
 
@@ -74,12 +74,12 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    public USBUIRT()
+    public RemoteUSBUIRT()
       : this("USBUIRT")
     {
     }
 
-    public USBUIRT(string name)
+    public RemoteUSBUIRT(string name)
       : base(name)
     {
 
@@ -168,7 +168,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(USBUIRT));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RemoteUSBUIRT));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.SettingsPnl = new System.Windows.Forms.Panel();
       this.testSendIrBtn = new MediaPortal.UserInterface.Controls.MPButton();
