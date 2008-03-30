@@ -282,7 +282,7 @@ Section "MediaPortal core files (required)" SecCore
     #/x ProgramSettingProfiles.xml \
 
   SetOutPath $INSTDIR
-  File /nonfatal /r /x svn ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+  File /nonfatal /r /x .svn ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
 
 
 
@@ -409,7 +409,7 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   #File /nonfatal "${MEDIAPORTAL.BASE}\FileDetailContents.xml"
   ; Folders
   #SetOutPath "${COMMON_APPDATA}\thumbs"
-  File /nonfatal /r "${MEDIAPORTAL.BASE}\thumbs"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\thumbs"
 
   File MediaPortalDirs.xml
 
