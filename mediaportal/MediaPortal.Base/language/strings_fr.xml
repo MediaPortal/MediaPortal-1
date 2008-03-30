@@ -890,6 +890,34 @@
     <String id="1062">Objet</String>
     <String id="1064">Favoris</String>
     <String id="1065">Aller à</String>
+    <String id="1066">MP4</String>
+    <String id="1067">Très élevé</String>
+    <String id="1068">Haute Def</String>
+    <String id="1069">240x180</String>
+    <String id="1070">288x216</String>
+    <String id="1071">352x240</String>
+    <String id="1072">352x288</String>
+    <String id="1073">640x480</String>
+    <String id="1074">704x480</String>
+    <String id="1075">720x576</String>
+    <String id="1076">1280x720</String>
+    <String id="1077">1920x1080</String>
+    <String id="1078">12.5 FPS</String>
+    <String id="1079">15 FPS</String>
+    <String id="1080">23.97 FPS</String>
+    <String id="1081">25 FPS</String>
+    <String id="1082">29.97 FPS</String>
+    <String id="1083">100 Kbps</String>
+    <String id="1084">256 Kbps</String>
+    <String id="1085">384 Kbps</String>
+    <String id="1086">768 Kbps</String>
+    <String id="1087">1536 Kbps</String>
+    <String id="1088">3072 Kbps</String>
+    <String id="1089">5376 Kbps</String>
+    <String id="1090">Video Standard</String>
+    <String id="1091">Film</String>
+    <String id="1092">NTSC</String>
+    <String id="1093">PAL</String>
     <String id="1100">Importer le CD</String>
     <String id="1101">Importer la chanson choisie</String>
     <String id="1102">Annuler l'importation du CD</String>
@@ -900,6 +928,14 @@
     <String id="1111">Utiliser nouveau</String>
     <String id="1112">Laisser conflit</String>
     <String id="1190">Zoom 14:9</String>
+    <String id="1191">Répète Listes</String>
+    <String id="1192">Utiliser VMR9 pour flux Web</String>
+    <String id="1193">Activer effets sonores sur GUI</String>
+    <String id="1194">Demarrer avec Basic Home</String>
+    <String id="1195">Activer contrôle GUI à la souris</String>
+    <String id="1196">Activer sous-titres</String>
+    <String id="1197">Désactiver DXVA</String>
+    <String id="1198">Navigateur DVD</String>
     <String id="1200">Installation rapide</String>
     <String id="1300" prefix="Mes ">fichiers TV</String>
     <String id="1440" prefix="Mon ">Télétexte</String>
@@ -1287,6 +1323,7 @@
     <String id="6036">Codec Video H.264</String>
     <String id="6037">Film empilé</String>
     <String id="6038">Selectionner disque à lancer</String>
+    <String id="6039">Codec audio LATM AAC</String>
     <String id="8000" prefix="Mes ">Messages</String>
     <String id="8001">Vérifier boîte aux lettres</String>
     <String id="8002">Vérification auto. inactive</String>
@@ -1697,5 +1734,6 @@
     <String id="200048">Re-créer toutes les vignettes</String>
     <String id="200049">Seulement les enregs déjà vus</String>
     <String id="200050">Cela supprimera les enregs du disque dur</String>		
+    <String id="200051">Supprimer cet épisode ?</String>
   </Section>
 </Language>
