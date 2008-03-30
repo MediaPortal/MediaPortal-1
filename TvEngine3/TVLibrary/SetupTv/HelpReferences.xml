@@ -1,8 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <helpsystem>
   <general baseurl="http://wiki.team-mediaportal.com/TV-Engine_0.3/" />
+  <section name="SetupTv.Sections.Servers" suburl="config-TV-Servers" />
+  <section name="SetupTv.Sections.TvCards" suburl="config-TV-Servers" />
+  <section name="SetupTv.Sections.CardDvbS" suburl="config-TV-Servers" />
+
+  <section name="SetupTv.Sections.TvChannels" suburl="config-TV-Channels" />
+  <section name="SetupTv.Sections.TvCombinations" suburl="config-TV-Channels" />
+  <section name="SetupTv.Sections.TvChannelMapping" suburl="config-TV-Channels" />
+  <section name="SetupTv.Sections.TvEpgGrabber" suburl="config-TV-Channels" />
+  <section name="SetupTv.Sections.TvGroups" suburl="config-TV-Channels" />
+
+  <section name="SetupTv.Sections.RadioChannels" suburl="config-RadioStations" />
+  <section name="SetupTv.Sections.RadioCombinations" suburl="config-RadioStations" />
+  <section name="SetupTv.Sections.RadioChannelMapping" suburl="config-RadioStations" />
+  <section name="SetupTv.Sections.RadioEpgGrabber" suburl="config-RadioStations" />
+  <section name="SetupTv.Sections.RadioGroups" suburl="config-RadioStations" />
 
   <section name="SetupTv.Sections.ScanSettings" suburl="config-General_Settings" />
-  <section name="SetupTv.Sections.RadioChannels" suburl="config-RadioStations" />
+  <section name="SetupTv.Sections.TvRecording" suburl="config-Recording" />
+  <section name="SetupTv.Sections.TvSchedules" suburl="config-TV-Schedules" />
+  <section name="SetupTv.Sections.StreamingServer" suburl="config-Streaming_Server" />
   <section name="SetupTv.Sections.TestService" suburl="config-ManualControl" />
+
+  <section name="SetupTv.Sections.Plugins" suburl="config-TV-Server" />
+  <section name="SetupTv.Sections.CMSetup" suburl="config-ConflictsManager" />
+  <section name="TvEngine.PowerScheduler.PowerSchedulerMasterSetup" suburl="config-PowerScheduler" />
+  <!--section name="SetupTv.Sections.PluginSetup" suburl="....." />
+  <section name="SetupTv.Sections.PTVGSetup" suburl="....." />
+  <section name="SetupTv.Sections.BlasterSetup" suburl="....." />
+  <section name="SetupTv.Sections.TvMovieSetup" suburl="....." />
+  <section name="SetupTv.Sections.XmlSetup" suburl="....." /-->
 </helpsystem>
