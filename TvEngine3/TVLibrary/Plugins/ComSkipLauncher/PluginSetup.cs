@@ -136,6 +136,11 @@ namespace SetupTv.Sections
         textBoxProgram.Text = openFileDialog.FileName;
     }
 
+    private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      Process.Start("http://www.kaashoek.com/comskip/");
+    }
+
   }
 
 }

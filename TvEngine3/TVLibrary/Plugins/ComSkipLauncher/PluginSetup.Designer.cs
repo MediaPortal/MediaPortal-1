@@ -217,6 +217,7 @@ namespace SetupTv.Sections
           this.linkLabel.TabStop = true;
           this.linkLabel.Text = "http://www.kaashoek.com/comskip/";
           this.linkLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+          this.linkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
           // 
           // labelComSkip
           // 
