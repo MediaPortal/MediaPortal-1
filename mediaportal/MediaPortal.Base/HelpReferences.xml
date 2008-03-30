@@ -46,8 +46,8 @@
 
     <section name="MediaPortal.Configuration.Sections.Television" suburl="Television" />
     <section name="MediaPortal.Configuration.Sections.TVCaptureCards" suburl="Television" />
-    <section name="MediaPortal.Configuration.Sections.SectionTvChannels" suburl="Television" />
-    <section name="MediaPortal.Configuration.Sections.SectionTvGroups" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.TVChannels" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.TVGroups" suburl="Television" />
     <section name="MediaPortal.Configuration.Sections.TVProgramGuide" suburl="Television" />
     <section name="MediaPortal.Configuration.Sections.TVRecording" suburl="Television" />
     <section name="MediaPortal.Configuration.Sections.TVPostProcessing" suburl="Television" />

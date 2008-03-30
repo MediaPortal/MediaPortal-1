@@ -260,9 +260,9 @@ namespace MediaPortal.Configuration
         Log.Info("  add tv capture cards section");
         AddChildSection(television, new TVCaptureCards());
         Log.Info("  add tv channels section");
-        AddChildSection(television, new SectionTvChannels());
+        AddChildSection(television, new TVChannels());
         Log.Info("  add tv channel groups section");
-        AddChildSection(television, new SectionTvGroups());
+        AddChildSection(television, new TVGroups());
         Log.Info("  add tv program guide section");
         AddChildSection(television, new TVProgramGuide());
         Log.Info("  add tv recording section");

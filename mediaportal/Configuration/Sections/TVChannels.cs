@@ -40,7 +40,7 @@ using DirectShowLib;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class SectionTvChannels : MediaPortal.Configuration.SectionSettings
+  public class TVChannels : MediaPortal.Configuration.SectionSettings
   {
     public class ComboCard
     {
@@ -105,12 +105,12 @@ namespace MediaPortal.Configuration.Sections
     }
 
 
-    public SectionTvChannels()
+    public TVChannels()
       : this("TV Channels")
     {
     }
 
-    public SectionTvChannels(string name)
+    public TVChannels(string name)
       : base(name)
     {
 
@@ -159,7 +159,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SectionTvChannels));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TVChannels));
       this.imageListLocks = new System.Windows.Forms.ImageList(this.components);
       this.xmlOpenDialog = new System.Windows.Forms.OpenFileDialog();
       this.xmlSaveDialog = new System.Windows.Forms.SaveFileDialog();

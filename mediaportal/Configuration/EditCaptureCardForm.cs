@@ -2107,7 +2107,7 @@ namespace MediaPortal.Configuration
       okButton.Enabled = true;
       cancelButton.Enabled = true;
       TVDatabase.ClearCache();
-      MediaPortal.Configuration.Sections.SectionTvChannels.UpdateList();
+      MediaPortal.Configuration.Sections.TVChannels.UpdateList();
       MediaPortal.Configuration.Sections.RadioStations.UpdateList();
     }
     void dlg_OnScanStarted(object sender, EventArgs args)

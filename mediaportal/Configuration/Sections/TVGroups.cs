@@ -34,7 +34,7 @@ using MWCommon;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class SectionTvGroups : MediaPortal.Configuration.SectionSettings
+  public class TVGroups : MediaPortal.Configuration.SectionSettings
   {
     private System.ComponentModel.IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPTabControl tabControlTvGroups;
@@ -68,12 +68,12 @@ namespace MediaPortal.Configuration.Sections
     private static bool _reloadList = false;
     private static bool _providerInit = false;
 
-    public SectionTvGroups()
+    public TVGroups()
       : this("TV Channel Groups")
     {
     }
 
-    public SectionTvGroups(string name)
+    public TVGroups(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
@@ -109,7 +109,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SectionTvGroups));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TVGroups));
       this.tabControlTvGroups = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageTvChannelGroups = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.buttonGroupDown = new MediaPortal.UserInterface.Controls.MPButton();
