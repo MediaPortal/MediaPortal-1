@@ -45,5 +45,7 @@ namespace TvLibrary.Interfaces.Analyzer
     int DescrambleService(IntPtr pmt, short pmtLen, ref bool succeeded);
     [PreserveSig]
     int DescrambleMultiple(IntPtr serviceIds, short nrOfServiceIds, ref bool succeeded);
+    [PreserveSig]
+    int IsCamPresent(ref bool no);
   };
 }
