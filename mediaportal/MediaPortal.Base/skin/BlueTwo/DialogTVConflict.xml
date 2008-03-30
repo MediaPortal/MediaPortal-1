@@ -83,17 +83,17 @@
       <width>370</width>
       <label>1111</label>
       <onup>11</onup>
-      <ondown>13</ondown>
+      <ondown>14</ondown>
     </control>
 
     <control>
-      <description>Keep Conflict</description>
+      <description>Skip conflicting Episode</description>
       <type>button</type>
-      <id>13</id>
+      <id>14</id>
       <posX>170</posX>
       <posY>438</posY>
       <width>370</width>
-      <label>1112</label>
+      <label>1113</label>
       <onup>12</onup>
       <ondown>3</ondown>
     </control>

@@ -768,7 +768,7 @@ namespace MediaPortal.GUI.TV
                 }
                 break;
               }
-            case 2: return false;   // No Skipping new Recording
+            //case 2: ;   // ToDo: Skip only conflicting episodes
             default: return true;   // Skipping new Recording
           }
         }

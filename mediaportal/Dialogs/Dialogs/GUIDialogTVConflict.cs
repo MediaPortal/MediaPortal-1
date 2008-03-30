@@ -46,13 +46,14 @@ namespace MediaPortal.Dialogs
       HEADING = 4,
       BUTTON_NEW_REC = 11,
       BUTTON_CONFLICT_REC = 12,
-      BUTTON_KEEP_CONFLICT = 13
+      BUTTON_CONFLICT_EPISODE = 14
     };
     #endregion
 
     #region Variables
     // Private Variables
     // Protected Variables
+    protected bool _conflictingEpisodes = false;
     // Public Variables
     #endregion
 
@@ -62,6 +63,14 @@ namespace MediaPortal.Dialogs
       GetID = (int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT;
     }
 
+    #endregion
+
+    #region Properties
+    public bool ConflictingEpisodes
+    {
+      get { return _conflictingEpisodes; }
+      set { _conflictingEpisodes = value; }
+    }
     #endregion
 
     #region Public Methods
@@ -133,6 +142,7 @@ namespace MediaPortal.Dialogs
     public override void Reset()
     {
       base.Reset();
+      ConflictingEpisodes = false;
       GUIListControl list = (GUIListControl)GetControl((int)Controls.LIST);
       if (list != null) list.Clear();
     }
@@ -153,7 +163,7 @@ namespace MediaPortal.Dialogs
             SelectedLabel = 1;
             PageDestroy();
           }
-          else if ((int)Controls.BUTTON_KEEP_CONFLICT == iControl)
+          else if ((int)Controls.BUTTON_CONFLICT_EPISODE == iControl)
           {
             SelectedLabel = 2;
             PageDestroy();
@@ -162,7 +172,14 @@ namespace MediaPortal.Dialogs
       }
       return base.OnMessage(message);
     }
-   
+
+    public override void DoModal(int ParentID)
+    {
+      GUIControl cntl = GetControl((int)Controls.BUTTON_CONFLICT_EPISODE);
+      if (cntl != null) cntl.Visible = _conflictingEpisodes;
+      base.DoModal(ParentID);
+    }
+
     #endregion
 
   }

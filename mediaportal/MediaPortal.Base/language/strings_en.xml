@@ -927,6 +927,7 @@
     <String id="1110">Skip new recording</String>
     <String id="1111">Skip conflicting recording(s)</String>
     <String id="1112">Keep conflict</String>
+    <String id="1113">Skip conflicting episode(s)</String>
     <String id="1190">Zoom 14:9</String>
     <String id="1191">Repeat Playlists</String>
     <String id="1192">Use VMR9 for Web Streams</String>
