@@ -96,7 +96,6 @@
       <label>1113</label>
       <onup>12</onup>
       <ondown>3</ondown>
-      <visible>false</visible>
     </control>
 
   </controls>
