@@ -297,7 +297,7 @@ namespace MediaPortal.Configuration
       {
         splashScreen.SetInformation("Adding filters section...");
       }
-      Filters filterSection = new Filters();
+      FiltersSection filterSection = new FiltersSection();
       AddSection(filterSection);
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
       if (availableAudioFilters.Count > 0)
