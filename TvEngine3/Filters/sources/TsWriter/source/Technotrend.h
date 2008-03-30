@@ -46,6 +46,7 @@ public:
   STDMETHODIMP SetTunerFilter(IBaseFilter* tunerFilter);
 	STDMETHODIMP IsTechnoTrend( BOOL* yesNo);
 	STDMETHODIMP IsCamReady( BOOL* yesNo);
+  STDMETHODIMP IsCamPresent( BOOL* yesNo);
 	STDMETHODIMP SetAntennaPower( BOOL onOff);
 	STDMETHODIMP SetDisEqc( BYTE* diseqc, BYTE len, BYTE Repeat,BYTE Toneburst,int ePolarity);
 	STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);

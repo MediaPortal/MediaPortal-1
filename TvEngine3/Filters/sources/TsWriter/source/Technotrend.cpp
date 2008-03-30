@@ -424,11 +424,26 @@ STDMETHODIMP CTechnotrend::IsTechnoTrend( BOOL* yesNo)
 STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
 {
   *yesNo=FALSE;
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK ||m_slotStatus==CI_SLOT_DBG_MSG)
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK || m_slotStatus==CI_SLOT_CA_OK) // ||m_slotStatus==CI_SLOT_DBG_MSG)
   {
     *yesNo=TRUE;
   }
 	LogDebug("TechnoTrend: IsCamReady: %d",*yesNo);
+  return S_OK;
+}
+
+//**************************************************************************************************
+//* IsCamPresent()
+//* Returns whether the CAM is inserted
+//**************************************************************************************************
+STDMETHODIMP CTechnotrend::IsCamPresent( BOOL* yesNo)
+{
+  *yesNo=TRUE;
+  if (m_slotStatus==CI_SLOT_EMPTY || m_slotStatus==CI_SLOT_UNKNOWN_STATE)
+  {
+    *yesNo=FALSE;
+  }
+	LogDebug("TechnoTrend: IsCamPresent: %d",*yesNo);
   return S_OK;
 }
 
@@ -518,7 +533,7 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
   {
     LogDebug("TechnoTrend: DescrambleMultiple: serviceId:%d", pNrs[i]);
   }
-	
+  /*
 	// Workaround for first time initialisation of ci slot
 	int iRetryLoop=0;
 	while (m_slotStatus==CI_SLOT_UNKNOWN_STATE && iRetryLoop<=20) {
@@ -529,8 +544,8 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
 		iRetryLoop++; 
 		Sleep(100);
 	}	// loop
-
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
+  */
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK || m_slotStatus==CI_SLOT_CA_OK) // || m_slotStatus==CI_SLOT_DBG_MSG)
   {
 
     BDAAPICIMULTIDECODE readPSI=(BDAAPICIMULTIDECODE)GetProcAddress(m_dll,"bdaapiCIMultiDecode");
@@ -568,7 +583,6 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
     LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
     *succeeded=TRUE;
   }
-
   return S_OK;
 }
 //**************************************************************************************************
@@ -599,7 +613,7 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
     LogDebug("Technotrend: unable to get proc adress of bdaapiCIGetSlotStatus");
   }
   LogDebug("TechnoTrend: DescrambleService:(%d)",m_slotStatus);
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK||m_slotStatus==CI_SLOT_DBG_MSG )
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK || m_slotStatus==CI_SLOT_CA_OK) // || m_slotStatus==CI_SLOT_DBG_MSG)
   {
     BDAAPICIREADPSIFASTWITHPMT readPSI=(BDAAPICIREADPSIFASTWITHPMT)GetProcAddress(m_dll,"bdaapiCIReadPSIFastWithPMT");
     //BDAAPICIREADPSIFASTDRVDEMUX readPSI=(BDAAPICIREADPSIFASTDRVDEMUX)GetProcAddress(m_dll,"_bdaapiCIReadPSIFastDrvDemux@8");
@@ -636,7 +650,6 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
     LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
     *succeeded=TRUE;
   }
-
   return S_OK;
 }
 //**************************************************************************************************
