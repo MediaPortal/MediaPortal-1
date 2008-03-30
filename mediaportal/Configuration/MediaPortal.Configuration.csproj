@@ -304,6 +304,39 @@
     <Compile Include="Sections\BaseShares.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\BaseViews.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersDScalerAudio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersDScalerVideo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersEncoder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersInterVideoEncoder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersMonogramAACDecoder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersPowerDVD7Decoder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersPureVideoDecoder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersVideoRendererConfig.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersVideoRendererConfig.Designer.cs">
+      <DependentUpon>FiltersVideoRendererConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\FiltersWinDVD7Decoder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\GeneralCDSpeed.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -347,39 +380,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\RemoteUSBUIRT.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\BaseViews.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersDScalerAudio.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersDScalerVideo.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersEncoder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersInterVideoEncoder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersMonogramAACDecoder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersPowerDVD7Decoder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersPureVideoDecoder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersVideoRendererConfig.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersVideoRendererConfig.designer.cs">
-      <DependentUpon>FiltersVideoRendererConfig.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\Subdialogs\FiltersWinDVD7Decoder.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVClient.cs">
@@ -659,6 +659,46 @@
       <DependentUpon>BaseShares.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseViews.resx">
+      <DependentUpon>BaseViews.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersDScalerAudio.resx">
+      <DependentUpon>FiltersDScalerAudio.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersDScalerVideo.resx">
+      <DependentUpon>FiltersDScalerVideo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersEncoder.resx">
+      <DependentUpon>FiltersEncoder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersInterVideoEncoder.resx">
+      <DependentUpon>FiltersInterVideoEncoder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersMonogramAACDecoder.resx">
+      <DependentUpon>FiltersMonogramAACDecoder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersPowerDVD7Decoder.resx">
+      <DependentUpon>FiltersPowerDVD7Decoder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersPureVideoDecoder.resx">
+      <DependentUpon>FiltersPureVideoDecoder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersVideoRendererConfig.resx">
+      <DependentUpon>FiltersVideoRendererConfig.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersWinDVD7Decoder.resx">
+      <DependentUpon>FiltersWinDVD7Decoder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralCDSpeed.resx">
       <DependentUpon>GeneralCDSpeed.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -709,46 +749,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\RemoteUSBUIRT.resx">
       <DependentUpon>RemoteUSBUIRT.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\BaseViews.resx">
-      <DependentUpon>BaseViews.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\FiltersDScalerAudio.resx">
-      <DependentUpon>FiltersDScalerAudio.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\FiltersDScalerVideo.resx">
-      <DependentUpon>FiltersDScalerVideo.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\FiltersEncoder.resx">
-      <DependentUpon>FiltersEncoder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\FiltersInterVideoEncoder.resx">
-      <DependentUpon>FiltersInterVideoEncoder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\FiltersMonogramAACDecoder.resx">
-      <DependentUpon>FiltersMonogramAACDecoder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\FiltersPowerDVD7Decoder.resx">
-      <DependentUpon>FiltersPowerDVD7Decoder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\FiltersPureVideoDecoder.resx">
-      <DependentUpon>FiltersPureVideoDecoder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\FiltersVideoRendererConfig.resx">
-      <DependentUpon>FiltersVideoRendererConfig.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\FiltersWinDVD7Decoder.resx">
-      <DependentUpon>FiltersWinDVD7Decoder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVClient.resx">
