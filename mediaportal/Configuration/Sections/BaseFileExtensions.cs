@@ -31,7 +31,7 @@ using System.Windows.Forms;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public abstract class FileExtensions : MediaPortal.Configuration.SectionSettings
+  public abstract class BaseFileExtensions : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPButton removeButton;
@@ -64,7 +64,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    public FileExtensions()
+    public BaseFileExtensions()
       : base("<Unknown>")
     {
       // This call is required by the Windows Form Designer.
@@ -73,7 +73,7 @@ namespace MediaPortal.Configuration.Sections
       // TODO: Add any initialization after the InitializeComponent call
     }
 
-    public FileExtensions(string name)
+    public BaseFileExtensions(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

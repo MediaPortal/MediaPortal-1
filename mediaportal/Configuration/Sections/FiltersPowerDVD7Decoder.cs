@@ -36,7 +36,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class PowerDVD7DecoderFilters : MediaPortal.Configuration.SectionSettings
+  public class FiltersPowerDVD7Decoder : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSpeakerConfig;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxOutPutMode;
@@ -58,7 +58,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public PowerDVD7DecoderFilters()
+    public FiltersPowerDVD7Decoder()
       : this("PowerDVD 7 Decoder Settings")
     {
     }
@@ -66,7 +66,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public PowerDVD7DecoderFilters(string name)
+    public FiltersPowerDVD7Decoder(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

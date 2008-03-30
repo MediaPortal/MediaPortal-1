@@ -34,7 +34,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class MusicShares : MediaPortal.Configuration.Sections.Shares
+  public class MusicShares : MediaPortal.Configuration.Sections.BaseShares
   {
     private System.ComponentModel.IContainer components = null;
 

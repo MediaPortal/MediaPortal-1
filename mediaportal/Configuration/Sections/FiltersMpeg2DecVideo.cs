@@ -38,7 +38,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class MPEG2DecVideoFilter : MediaPortal.Configuration.SectionSettings
+  public class FiltersMPEG2DecVideo : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSettings;
     private MediaPortal.UserInterface.Controls.MPLabel labelDeinterlaceMethod;
@@ -62,7 +62,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public MPEG2DecVideoFilter()
+    public FiltersMPEG2DecVideo()
       : this("MPV Decoder")
     {
     }
@@ -70,7 +70,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public MPEG2DecVideoFilter(string name)
+    public FiltersMPEG2DecVideo(string name)
       : base(name)
     {
 

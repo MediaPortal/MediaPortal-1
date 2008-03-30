@@ -40,7 +40,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public abstract class Views : MediaPortal.Configuration.SectionSettings
+  public abstract class BaseViews : MediaPortal.Configuration.SectionSettings
   {
     public class SyncedCheckBox : CheckBox
     {
@@ -213,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    public Views()
+    public BaseViews()
       : base("<Unknown>")
     {
       // This call is required by the Windows Form Designer.
@@ -222,7 +222,7 @@ namespace MediaPortal.Configuration.Sections
       // TODO: Add any initialization after the InitializeComponent call
     }
 
-    public Views(string name)
+    public BaseViews(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

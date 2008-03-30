@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class WinDVD7DecoderFilters : MediaPortal.Configuration.SectionSettings
+  public class FiltersWinDVD7Decoder : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDxVA;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHWMC;
@@ -54,7 +54,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public WinDVD7DecoderFilters()
+    public FiltersWinDVD7Decoder()
       : this("WinDVD 7 Decoder Filters")
     {
     }
@@ -62,7 +62,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public WinDVD7DecoderFilters(string name)
+    public FiltersWinDVD7Decoder(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

@@ -37,7 +37,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class MPEG2DecAudioFilter : MediaPortal.Configuration.SectionSettings
+  public class FiltersMPEG2DecAudio : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPcm16Bit;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPcm24Bit;
@@ -70,7 +70,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public MPEG2DecAudioFilter()
+    public FiltersMPEG2DecAudio()
       : this("MPA Decoder")
     {
     }
@@ -78,7 +78,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public MPEG2DecAudioFilter(string name)
+    public FiltersMPEG2DecAudio(string name)
       : base(name)
     {
 

@@ -1,6 +1,6 @@
 namespace MediaPortal.Configuration.Sections
 {
-  partial class VideoRendererConfig
+  partial class FiltersVideoRenderer
   {
     /// <summary> 
     /// Required designer variable.
@@ -28,7 +28,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VideoRendererConfig));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FiltersVideoRenderer));
       this.checkboxMpNonsquare = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonEVR = new System.Windows.Forms.RadioButton();

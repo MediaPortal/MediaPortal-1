@@ -39,7 +39,7 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class MovieViews : MediaPortal.Configuration.Sections.Views
+  public class MovieViews : MediaPortal.Configuration.Sections.BaseViews
   {
     string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
     string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");

@@ -38,7 +38,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class PureVideoDecoderFilters : MediaPortal.Configuration.SectionSettings
+  public class FiltersPureVideoDecoder : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSpeakerSetup;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxHeadphones;
@@ -70,7 +70,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public PureVideoDecoderFilters()
+    public FiltersPureVideoDecoder()
       : this("NVIDIA PureVideo Decoder Settings")
     {
     }
@@ -78,7 +78,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public PureVideoDecoderFilters(string name)
+    public FiltersPureVideoDecoder(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

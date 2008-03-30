@@ -549,7 +549,7 @@ namespace MediaPortal.Configuration.Sections
       {
         name = name.Substring(pos + 1);
       }
-      Shares.ShareData share = new Shares.ShareData(name, folder, "");
+      BaseShares.ShareData share = new BaseShares.ShareData(name, folder, "");
       sharesMusic.Add(share);
       return name;
     }
@@ -562,7 +562,7 @@ namespace MediaPortal.Configuration.Sections
       {
         name = name.Substring(pos + 1);
       }
-      Shares.ShareData share = new Shares.ShareData(name, folder, "");
+      BaseShares.ShareData share = new BaseShares.ShareData(name, folder, "");
       sharesVideos.Add(share);
       return name;
     }
@@ -575,7 +575,7 @@ namespace MediaPortal.Configuration.Sections
       {
         name = name.Substring(pos + 1);
       }
-      Shares.ShareData share = new Shares.ShareData(name, folder, "");
+      BaseShares.ShareData share = new BaseShares.ShareData(name, folder, "");
       sharesPhotos.Add(share);
       return name;
     }
@@ -610,7 +610,7 @@ namespace MediaPortal.Configuration.Sections
 
           if (sharesList != null && sharesList.Count > index)
           {
-            Shares.ShareData shareData = sharesList[index] as Shares.ShareData;
+            BaseShares.ShareData shareData = sharesList[index] as BaseShares.ShareData;
 
             if (shareData != null)
             {

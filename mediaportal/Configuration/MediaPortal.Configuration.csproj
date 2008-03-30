@@ -322,6 +322,12 @@
     <Compile Include="Sections\FiltersMonogramAACDecoder.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\FiltersMpeg2DecAudio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersMpeg2DecVideo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\FiltersPowerDVD7Decoder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -482,11 +488,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MovieViews.cs">
-    </Compile>
-    <Compile Include="Sections\Mpeg2DecAudioFilter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Mpeg2DecVideoFilter.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Music.cs">
@@ -502,6 +503,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MusicViews.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\PictureExtensions.cs">
       <SubType>UserControl</SubType>
@@ -683,6 +685,14 @@
       <DependentUpon>FiltersMonogramAACDecoder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersMpeg2DecAudio.resx">
+      <DependentUpon>FiltersMpeg2DecAudio.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersMpeg2DecVideo.resx">
+      <DependentUpon>FiltersMpeg2DecVideo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\FiltersPowerDVD7Decoder.resx">
       <DependentUpon>FiltersPowerDVD7Decoder.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -853,12 +863,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MovieViews.resx">
       <DependentUpon>MovieViews.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Mpeg2DecAudioFilter.resx">
-      <DependentUpon>Mpeg2DecAudioFilter.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Mpeg2DecVideoFilter.resx">
-      <DependentUpon>Mpeg2DecVideoFilter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Music.resx">
       <DependentUpon>Music.cs</DependentUpon>

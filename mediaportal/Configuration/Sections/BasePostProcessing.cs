@@ -36,7 +36,7 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class PostProcessing : MediaPortal.Configuration.SectionSettings
+  public class BasePostProcessing : MediaPortal.Configuration.SectionSettings
   {
     public MediaPortal.UserInterface.Controls.MPGroupBox groupBoxActivatedFilters;
     public MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAvailableFilters;
@@ -47,12 +47,12 @@ namespace MediaPortal.Configuration.Sections
     public ListBox lBDSFilter;
     public System.ComponentModel.IContainer components = null;
 
-    public PostProcessing()
+    public BasePostProcessing()
       : this("Post Processing")
     {
     }
 
-    public PostProcessing(string name)
+    public BasePostProcessing(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

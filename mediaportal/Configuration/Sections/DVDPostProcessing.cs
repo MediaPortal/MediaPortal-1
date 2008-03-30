@@ -36,7 +36,7 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class DVDPostProcessing : MediaPortal.Configuration.Sections.PostProcessing
+  public class DVDPostProcessing : MediaPortal.Configuration.Sections.BasePostProcessing
   {
     private System.ComponentModel.IContainer components = null;
 

@@ -33,7 +33,7 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-	public class MovieExtensions : MediaPortal.Configuration.Sections.FileExtensions
+	public class MovieExtensions : MediaPortal.Configuration.Sections.BaseFileExtensions
 	{
 		private System.ComponentModel.IContainer components = null;
 

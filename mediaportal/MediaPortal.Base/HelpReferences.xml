@@ -60,14 +60,18 @@
     <section name="MediaPortal.Configuration.Sections.RemoteWinLirc" suburl="Remote" />
     <section name="MediaPortal.Configuration.Sections.RemoteRedEye" suburl="Remote" />
     <section name="MediaPortal.Configuration.Sections.RemoteDirectInput" suburl="Remote" />
-
+    
     <section name="MediaPortal.Configuration.Sections.FiltersSection" suburl="Filters" />
-    <section name="MediaPortal.Configuration.Sections.MPEG2DecAudioFilter" suburl="Filters" />
-    <section name="MediaPortal.Configuration.Sections.DScalerAudioFilter" suburl="Filters" />
-    <section name="MediaPortal.Configuration.Sections.MonogramAACDecoderFilter" suburl="Filters" />
-    <section name="MediaPortal.Configuration.Sections.MPEG2DecVideoFilter" suburl="Filters" />
-    <section name="MediaPortal.Configuration.Sections.DScalerVideoFilter" suburl="Filters" />
-    <section name="MediaPortal.Configuration.Sections.VideoRendererConfig" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersDScalerAudio" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersDScalerVideo" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersInterVideoEncoder" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersMonogramAACDecoder" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersMPEG2DecAudio" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersMPEG2DecVideo" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersPowerDVD7Decoder" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersPureVideoDecoder" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersWinDVD7Decoder" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.FiltersVideoRenderer" suburl="Filters" />
 
     <section name="MediaPortal.Configuration.Sections.Weather" suburl="Weather" />
 

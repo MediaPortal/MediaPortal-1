@@ -8,17 +8,17 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public partial class VideoRendererConfig : MediaPortal.Configuration.SectionSettings
+  public partial class FiltersVideoRenderer : MediaPortal.Configuration.SectionSettings
   {
 
     bool _init = false;
 
-    public VideoRendererConfig()
+    public FiltersVideoRenderer()
       :
       this("Video Renderer Settings")
     {
     }
-    public VideoRendererConfig(string name):
+    public FiltersVideoRenderer(string name):
       base(name)
     {
       InitializeComponent();

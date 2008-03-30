@@ -297,7 +297,7 @@ namespace MediaPortal.Configuration
       {
         splashScreen.SetInformation("Adding filters section...");
       }
-      FiltersSection filterSection = new FiltersSection();
+      Filters filterSection = new Filters();
       AddSection(filterSection);
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
       if (availableAudioFilters.Count > 0)
@@ -306,23 +306,23 @@ namespace MediaPortal.Configuration
         {
           if (filter.Equals("NVIDIA Audio Decoder"))
           {
-            AddChildSection(filterSection, new PureVideoDecoderFilters());
+            AddChildSection(filterSection, new FiltersPureVideoDecoder());
           }
           if (filter.Equals("InterVideo Audio Decoder"))
           {
-            AddChildSection(filterSection, new WinDVD7DecoderFilters());
+            AddChildSection(filterSection, new FiltersWinDVD7Decoder());
           }
           if (filter.Equals("CyberLink Audio Decoder (PDVD7)") || filter.Equals("CyberLink Audio Decode (PDVD7.x)"))
           {
-            AddChildSection(filterSection, new PowerDVD7DecoderFilters());
+            AddChildSection(filterSection, new FiltersPowerDVD7Decoder());
           }
           if (filter.Equals("MPA Decoder Filter"))
           {
-            AddChildSection(filterSection, new MPEG2DecAudioFilter());
+            AddChildSection(filterSection, new FiltersMPEG2DecAudio());
           }
           if (filter.Equals("DScaler Audio Decoder"))
           {
-            AddChildSection(filterSection, new DScalerAudioFilter());
+            AddChildSection(filterSection, new FiltersDScalerAudio());
           }
         }
         ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
@@ -332,7 +332,7 @@ namespace MediaPortal.Configuration
           {
             if (filter.Equals("MONOGRAM AAC Decoder"))
             {
-              AddChildSection(filterSection, new MonogramAACDecoderFilter());
+              AddChildSection(filterSection, new FiltersMonogramAACDecoder());
             }
           }
         }
@@ -345,16 +345,16 @@ namespace MediaPortal.Configuration
         {
           if (filter.Equals("MPV Decoder Filter"))
           {
-            AddChildSection(filterSection, new MPEG2DecVideoFilter());
+            AddChildSection(filterSection, new FiltersMPEG2DecVideo());
           }
           if (filter.Equals("DScaler Mpeg2 Video Decoder"))
           {
-            AddChildSection(filterSection, new DScalerVideoFilter());
+            AddChildSection(filterSection, new FiltersDScalerVideo());
           }
         }
       }
       //Add section for video renderer configuration
-      AddChildSection(filterSection, new VideoRendererConfig());
+      AddChildSection(filterSection, new FiltersVideoRenderer());
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
       string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
       FilterCollection legacyFilters = Filters.LegacyFilters;
@@ -365,7 +365,7 @@ namespace MediaPortal.Configuration
           {
             EncoderFiltersSection EncoderfilterSection = new EncoderFiltersSection();
             AddSection(EncoderfilterSection);
-            AddChildSection(EncoderfilterSection, new InterVideoEncoderFilters());
+            AddChildSection(EncoderfilterSection, new FiltersInterVideoEncoder());
           }
         }
       //add weather section

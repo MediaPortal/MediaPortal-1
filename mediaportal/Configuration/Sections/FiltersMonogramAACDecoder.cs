@@ -36,7 +36,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class MonogramAACDecoderFilter : MediaPortal.Configuration.SectionSettings
+  public class FiltersMonogramAACDecoder : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSpeakerOutput;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
@@ -52,7 +52,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// Sets Monogram AAC decoder output & volume settings
     /// </summary>
-    public MonogramAACDecoderFilter()
+    public FiltersMonogramAACDecoder()
       : this("Monogram AAC Decoder Settings")
     {
     }
@@ -60,7 +60,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// Will add configuration child to section tree
     /// </summary>
-    public MonogramAACDecoderFilter(string name)
+    public FiltersMonogramAACDecoder(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
@@ -89,7 +89,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonogramAACDecoderFilter));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FiltersMonogramAACDecoder));
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.mpGradientLabel1 = new MediaPortal.UserInterface.Controls.MPGradientLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();

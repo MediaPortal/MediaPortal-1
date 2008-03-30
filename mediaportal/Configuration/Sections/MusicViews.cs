@@ -38,7 +38,7 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class MusicViews : MediaPortal.Configuration.Sections.Views
+  public class MusicViews : MediaPortal.Configuration.Sections.BaseViews
   {
     string defaultMusicViews = Config.GetFile(Config.Dir.Base, "defaultMusicViews.xml");
     string customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");

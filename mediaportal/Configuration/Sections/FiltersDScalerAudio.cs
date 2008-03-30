@@ -37,7 +37,7 @@ using DirectShowLib;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class DScalerAudioFilter : MediaPortal.Configuration.SectionSettings
+  public class FiltersDScalerAudio : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
@@ -52,7 +52,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public DScalerAudioFilter()
+    public FiltersDScalerAudio()
       : this("DScaler Audio Decoder")
     {
     }
@@ -60,7 +60,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public DScalerAudioFilter(string name)
+    public FiltersDScalerAudio(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

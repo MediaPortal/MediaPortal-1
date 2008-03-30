@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class InterVideoEncoderFilters : MediaPortal.Configuration.SectionSettings
+  public class FiltersInterVideoEncoder : MediaPortal.Configuration.SectionSettings
   {
     private Int32 _regQuality;
     private Int32 _regMode;
@@ -73,7 +73,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public InterVideoEncoderFilters()
+    public FiltersInterVideoEncoder()
       : this("InterVideo Encoder Filters")
     {
     }
@@ -81,7 +81,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public InterVideoEncoderFilters(string name)
+    public FiltersInterVideoEncoder(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

@@ -34,7 +34,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class PictureShares : MediaPortal.Configuration.Sections.Shares
+  public class PictureShares : MediaPortal.Configuration.Sections.BaseShares
   {
     private System.ComponentModel.IContainer components = null;
 

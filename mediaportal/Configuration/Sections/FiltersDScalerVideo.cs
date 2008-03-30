@@ -37,7 +37,7 @@ using DirectShowLib;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class DScalerVideoFilter : MediaPortal.Configuration.SectionSettings
+  public class FiltersDScalerVideo : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
@@ -60,7 +60,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public DScalerVideoFilter()
+    public FiltersDScalerVideo()
       : this("DScaler Video Decoder")
     {
     }
@@ -68,7 +68,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public DScalerVideoFilter(string name)
+    public FiltersDScalerVideo(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

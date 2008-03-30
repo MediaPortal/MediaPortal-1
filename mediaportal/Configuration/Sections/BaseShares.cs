@@ -31,7 +31,7 @@ using System.Windows.Forms;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public abstract class Shares : MediaPortal.Configuration.SectionSettings
+  public abstract class BaseShares : MediaPortal.Configuration.SectionSettings
   {
     public class ShareData
     {
@@ -81,7 +81,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRemember;
     private System.ComponentModel.IContainer components = null;
 
-    public Shares()
+    public BaseShares()
       : base("<Unknown>")
     {
       // This call is required by the Windows Form Designer.
@@ -90,7 +90,7 @@ namespace MediaPortal.Configuration.Sections
       // TODO: Add any initialization after the InitializeComponent call
     }
 
-    public Shares(string name)
+    public BaseShares(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
