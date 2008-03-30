@@ -618,7 +618,7 @@ namespace TvPlugin
 								}
 								break;
 							}
-						case 2: // No Skipping new Recording  =>  Allow conflict !!!!
+/*						case 2: // No Skipping new Recording  =>  Allow conflict !!!!
 							{
 								Log.Debug("TVProgramInfo.CreateProgram: Allow conflict !!!");
 								if (saveSchedule != null)
@@ -638,7 +638,7 @@ namespace TvPlugin
 								dbConflict.Persist();
 								server.OnNewSchedule();
 								return;
-							}
+							}*/
 						default: // Skipping new Recording
 							{
 								Log.Debug("TVProgramInfo.CreateProgram: Default => Skip new recording");
