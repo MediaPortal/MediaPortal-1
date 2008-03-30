@@ -295,13 +295,46 @@
     <Compile Include="SectionSettings.designer.cs">
       <DependentUpon>SectionSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\CDSpeed.cs">
+    <Compile Include="Sections\BaseFileExtensions.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\CDSpeed.Designer.cs">
-      <DependentUpon>CDSpeed.cs</DependentUpon>
+    <Compile Include="Sections\BasePostProcessing.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BaseShares.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralCDSpeed.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralCDSpeed.Designer.cs">
+      <DependentUpon>GeneralCDSpeed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\GeneralDaemonTools.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralFileMenu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralKeyboardControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralKeys.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralSkin.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralStartupDelay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralStartupDelay.Designer.cs">
+      <DependentUpon>GeneralStartupDelay.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\GeneralThumbs.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralVolume.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MonogramAACDecoderFilter.cs">
@@ -319,19 +352,10 @@
     <Compile Include="Sections\RemoteUSBUIRT.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\StartupDelay.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\StartupDelay.Designer.cs">
-      <DependentUpon>StartupDelay.cs</DependentUpon>
-    </Compile>
     <Compile Include="Sections\TVClient.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVTeletext.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\PostProcessing.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\PowerDVD7DecoderFilters.cs">
@@ -359,7 +383,6 @@
       <DependentUpon>MusicDSP.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\MusicShares.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MusicWinampPreview.cs">
       <SubType>Form</SubType>
@@ -415,9 +438,6 @@
     <Compile Include="Sections\MusicImport.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\DaemonTools.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\Subdialogs\DlgMovieList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -437,40 +457,24 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\DVDPostProcessing.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\FileExtensions.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\FileMenu.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Filters.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\KeyboardControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Keys.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MovieDatabase.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MovieExtensions.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MoviePlayer.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MoviePostProcessing.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Movies.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MovieShares.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MovieViews.cs">
       <SubType>UserControl</SubType>
@@ -488,7 +492,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MusicExtensions.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MusicSort.cs">
       <SubType>UserControl</SubType>
@@ -497,13 +500,11 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\PictureExtensions.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Pictures.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\PictureShares.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Plugins.cs">
       <SubType>UserControl</SubType>
@@ -526,12 +527,6 @@
     <Compile Include="Sections\Remote.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\Shares.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Skin.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\Television.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -548,15 +543,11 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVPostProcessing.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVProgramGuide.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVRecording.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Volume.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Weather.cs">
@@ -649,13 +640,53 @@
       <DependentUpon>SearchCityForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\CDSpeed.resx">
+    <EmbeddedResource Include="Sections\BaseFileExtensions.resx">
+      <DependentUpon>BaseFileExtensions.cs</DependentUpon>
       <SubType>Designer</SubType>
-      <DependentUpon>CDSpeed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BasePostProcessing.resx">
+      <DependentUpon>BasePostProcessing.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseShares.resx">
+      <DependentUpon>BaseShares.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralCDSpeed.resx">
+      <DependentUpon>GeneralCDSpeed.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralDaemonTools.resx">
+      <DependentUpon>GeneralDaemonTools.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralFileMenu.resx">
+      <DependentUpon>GeneralFileMenu.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralKeyboardControl.resx">
+      <DependentUpon>GeneralKeyboardControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralKeys.resx">
+      <DependentUpon>GeneralKeys.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralSkin.resx">
+      <DependentUpon>GeneralSkin.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralStartupDelay.resx">
+      <DependentUpon>GeneralStartupDelay.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralThumbs.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GeneralThumbs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralVolume.resx">
+      <DependentUpon>GeneralVolume.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MonogramAACDecoderFilter.resx">
       <SubType>Designer</SubType>
@@ -677,20 +708,12 @@
       <DependentUpon>RemoteUSBUIRT.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\StartupDelay.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>StartupDelay.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVClient.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TVClient.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVTeletext.resx">
       <DependentUpon>TVTeletext.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\PostProcessing.resx">
-      <DependentUpon>PostProcessing.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\PowerDVD7DecoderFilters.resx">
@@ -777,9 +800,6 @@
       <DependentUpon>MusicImport.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\DaemonTools.resx">
-      <DependentUpon>DaemonTools.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Subdialogs\DlgMovieList.resx">
       <DependentUpon>DlgMovieList.cs</DependentUpon>
     </EmbeddedResource>
@@ -801,20 +821,8 @@
     <EmbeddedResource Include="Sections\DVDPostProcessing.resx">
       <DependentUpon>DVDPostProcessing.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\FileExtensions.resx">
-      <DependentUpon>FileExtensions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\FileMenu.resx">
-      <DependentUpon>FileMenu.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Filters.resx">
       <DependentUpon>Filters.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\KeyboardControl.resx">
-      <DependentUpon>KeyboardControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Keys.resx">
-      <DependentUpon>Keys.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MovieDatabase.resx">
       <DependentUpon>MovieDatabase.cs</DependentUpon>
@@ -888,12 +896,6 @@
       <DependentUpon>Remote.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Shares.resx">
-      <DependentUpon>Shares.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Skin.resx">
-      <DependentUpon>Skin.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Television.resx">
       <DependentUpon>Television.cs</DependentUpon>
     </EmbeddedResource>
@@ -917,9 +919,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVRecording.resx">
       <DependentUpon>TVRecording.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Volume.resx">
-      <DependentUpon>Volume.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Weather.resx">
       <DependentUpon>Weather.cs</DependentUpon>
