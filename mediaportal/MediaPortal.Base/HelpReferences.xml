@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<helpsystem>
+  <general baseurl="http://wiki.team-mediaportal.com/MediaPortalSetup_" />
+  <sections>
+    <section name="MediaPortal.Configuration.Sections.Project" suburl="Project" />
+
+    <section name="MediaPortal.Configuration.Sections.General" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.StartupDelay" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.Skin" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.KeyboardControl" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.Keys" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralOSD" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralSkipSteps" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralThumbs" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.DaemonTools" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.FileMenu" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.Volume" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.CDSpeed" suburl="General" />
+
+    <section name="MediaPortal.Configuration.Sections.DVD" suburl="DVD" />
+    <section name="MediaPortal.Configuration.Sections.DVDCodec" suburl="DVD" />
+    <section name="MediaPortal.Configuration.Sections.DVDPlayer" suburl="DVD" />
+    <section name="MediaPortal.Configuration.Sections.DVDPostProcessing" suburl="DVD" />
+
+    <section name="MediaPortal.Configuration.Sections.Movies" suburl="Movies" />
+    <section name="MediaPortal.Configuration.Sections.MovieShares" suburl="Movies" />
+    <section name="MediaPortal.Configuration.Sections.MovieExtensions" suburl="Movies" />
+    <section name="MediaPortal.Configuration.Sections.MovieDatabase" suburl="Movies" />
+    <section name="MediaPortal.Configuration.Sections.MovieViews" suburl="Movies" />
+    <section name="MediaPortal.Configuration.Sections.MoviePlayer" suburl="Movies" />
+    <section name="MediaPortal.Configuration.Sections.MoviePostProcessing" suburl="Movies" />
+
+    <section name="MediaPortal.Configuration.Sections.Music" suburl="Music" />
+    <section name="MediaPortal.Configuration.Sections.MusicShares" suburl="Music" />
+    <section name="MediaPortal.Configuration.Sections.MusicExtensions" suburl="Music" />
+    <section name="MediaPortal.Configuration.Sections.MusicDatabase" suburl="Music" />
+    <section name="MediaPortal.Configuration.Sections.MusicViews" suburl="Music" />
+    <section name="MediaPortal.Configuration.Sections.MusicSort" suburl="Music" />
+    <section name="MediaPortal.Configuration.Sections.MusicImport" suburl="Music" />
+    <section name="MediaPortal.Configuration.Sections.MusicDSP" suburl="Music" />
+    <section name="MediaPortal.Configuration.Sections.MusicASIO" suburl="Music" />
+
+    <section name="MediaPortal.Configuration.Sections.Pictures" suburl="Pictures" />
+    <section name="MediaPortal.Configuration.Sections.PictureShares" suburl="Pictures" />
+    <section name="MediaPortal.Configuration.Sections.PictureExtensions" suburl="Pictures" />
+
+    <section name="MediaPortal.Configuration.Sections.Television" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.TVCaptureCards" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.SectionTvChannels" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.SectionTvGroups" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.TVProgramGuide" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.TVRecording" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.TVPostProcessing" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.TVTeletext" suburl="Television" />
+    <section name="MediaPortal.Configuration.Sections.TVClient" suburl="Television" />
+
+    <section name="MediaPortal.Configuration.Sections.Remote" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.USBUIRT" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.SerialUIR" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.WINLIRC" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.RedEye" suburl="Remote" />
+    <section name="MediaPortal.Configuration.Sections.DirectInputRemote" suburl="Remote" />
+
+    <section name="MediaPortal.Configuration.Sections.FiltersSection" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.MPEG2DecAudioFilter" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.DScalerAudioFilter" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.MonogramAACDecoderFilter" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.MPEG2DecVideoFilter" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.DScalerVideoFilter" suburl="Filters" />
+    <section name="MediaPortal.Configuration.Sections.VideoRendererConfig" suburl="Filters" />
+
+    <section name="MediaPortal.Configuration.Sections.Weather" suburl="Weather" />
+
+    <section name="MediaPortal.Configuration.Sections.PluginsNew" suburl="Plugins" />
+  </sections>
+</helpsystem>

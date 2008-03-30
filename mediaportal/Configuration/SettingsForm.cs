@@ -38,6 +38,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using Keys = MediaPortal.Configuration.Sections.Keys;
+using System.Xml;
 
 namespace MediaPortal.Configuration
 {
@@ -51,7 +52,11 @@ namespace MediaPortal.Configuration
     private const int SW_SHOW = 5;
     private const int SW_RESTORE = 9;
     private MPButton viewLogFilesButton;
+    private MPButton helpButton;
     private string _windowName = "MediaPortal - Setup";
+    private SectionSettings _previousSection = null;
+
+    string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Application.StartupPath);
 
     [DllImport("User32.")]
     public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
@@ -379,6 +384,12 @@ namespace MediaPortal.Configuration
       // Select first item in the section tree
       sectionTree.SelectedNode = sectionTree.Nodes[0];
 
+      if (!System.IO.File.Exists(helpReferencesFile))
+      {
+        Log.Error("File not found: {0}", helpReferencesFile);
+        helpButton.Enabled = false;
+      }
+
       if (splashScreen != null)
       {
         splashScreen.Stop(500);
@@ -387,6 +398,7 @@ namespace MediaPortal.Configuration
         FrontWorker.DoWork += new DoWorkEventHandler(FrontWorker_DoWork);
         FrontWorker.RunWorkerAsync();
       }
+
       Log.Info("settingsform constructor done");
     }
 
@@ -475,6 +487,7 @@ namespace MediaPortal.Configuration
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.viewLogFilesButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.helpButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // sectionTree
@@ -578,6 +591,17 @@ namespace MediaPortal.Configuration
       this.viewLogFilesButton.UseVisualStyleBackColor = true;
       this.viewLogFilesButton.Click += new System.EventHandler(this.viewLogFilesButton_Click);
       // 
+      // helpButton
+      // 
+      this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.helpButton.Location = new System.Drawing.Point(276, 479);
+      this.helpButton.Name = "helpButton";
+      this.helpButton.Size = new System.Drawing.Size(75, 23);
+      this.helpButton.TabIndex = 8;
+      this.helpButton.Text = "&Help";
+      this.helpButton.UseVisualStyleBackColor = true;
+      this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+      // 
       // SettingsForm
       // 
       this.AcceptButton = this.okButton;
@@ -585,6 +609,7 @@ namespace MediaPortal.Configuration
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(704, 510);
+      this.Controls.Add(this.helpButton);
       this.Controls.Add(this.viewLogFilesButton);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);
@@ -639,14 +664,27 @@ namespace MediaPortal.Configuration
     /// <param name="section"></param>
     private bool ActivateSection(SectionSettings section)
     {
-      if (section.CanActivate == false)
+      try
       {
-        return false;
+        if (section.CanActivate == false)
+        {
+          return false;
+        }
+        section.Dock = DockStyle.Fill;
+        section.OnSectionActivated();
+        if (section != _previousSection && _previousSection != null)
+        {
+          _previousSection.OnSectionDeActivated();
+        }
+        _previousSection = section;
+
+        holderPanel.Controls.Clear();
+        holderPanel.Controls.Add(section);
       }
-      section.Dock = DockStyle.Fill;
-      section.OnSectionActivated();
-      holderPanel.Controls.Clear();
-      holderPanel.Controls.Add(section);
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
       return true;
     }
 
@@ -928,6 +966,36 @@ namespace MediaPortal.Configuration
       process.StartInfo.Arguments = Config.GetFolder(Config.Dir.Log);
       process.StartInfo.UseShellExecute = true;
       process.Start();
+    }
+
+    private void helpButton_Click(object sender, EventArgs e)
+    {
+      if (!System.IO.File.Exists(helpReferencesFile))
+      {
+        Log.Error("File not found: {0}", helpReferencesFile);
+        return;
+      }
+
+      XmlDocument doc = new XmlDocument();
+      doc.Load(helpReferencesFile);
+
+      XmlNode generalNode = doc.SelectSingleNode("/helpsystem/general");
+      XmlNodeList sectionNodes = doc.SelectNodes("/helpsystem/sections/section");
+
+      for (int i = 0; i < sectionNodes.Count; i++)
+      {
+        XmlNode sectionNode = sectionNodes[i];
+        if (sectionNode.Attributes["name"].Value == _previousSection.ToString())
+        {
+          System.Diagnostics.Process.Start(
+            String.Format(@"{0}{1}",
+            generalNode.Attributes["baseurl"].Value,
+            sectionNode.Attributes["suburl"].Value));
+          return;
+        }
+      }
+
+      Log.Error("No help reference found for section: {0}", _previousSection.ToString());
     }
   }
 }
