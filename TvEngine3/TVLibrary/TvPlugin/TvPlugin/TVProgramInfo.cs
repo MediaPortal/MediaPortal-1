@@ -580,10 +580,10 @@ namespace TvPlugin
 			IList conflicts = layer.GetConflictingSchedules(schedule);
 			Log.Debug("TVProgramInfo.CreateProgram - conflicts.Count = {0}", conflicts.Count);
 			TvServer server = new TvServer();
+		  bool skipConflictingEpisodes = false;
 			if (conflicts.Count > 0)
 			{
-				GUIDialogTVConflict dlg =
-					(GUIDialogTVConflict) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
+				GUIDialogTVConflict dlg = (GUIDialogTVConflict) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
 				if (dlg != null)
 				{
 					dlg.Reset();
@@ -598,6 +598,7 @@ namespace TvPlugin
 						item.TVTag = conflict;
 						dlg.AddConflictRecording(item);
 					}
+				  dlg.ConflictingEpisodes = (scheduleType != (int)ScheduleRecordingType.Once);
 					dlg.DoModal(GetID);
 					switch (dlg.SelectedLabel)
 					{
@@ -618,27 +619,12 @@ namespace TvPlugin
 								}
 								break;
 							}
-/*						case 2: // No Skipping new Recording  =>  Allow conflict !!!!
+						case 2: // Skip for conflicting episodes
 							{
-								Log.Debug("TVProgramInfo.CreateProgram: Allow conflict !!!");
-								if (saveSchedule != null)
-								{
-									Log.Debug("TVProgramInfo.CreateProgram - UnCancleSerie at {0}", program.StartTime);
-									saveSchedule.UnCancelSerie(program.StartTime);
-									saveSchedule.Persist();
-									schedule = saveSchedule;
-								}
-								else
-								{
-									Log.Debug("TVProgramInfo.CreateProgram - create schedule = {0}", schedule.ToString());
-									schedule.Persist();
-								}
-								Schedule conflictingSchedule = (Schedule) conflicts[0];
-								Conflict dbConflict = new Conflict(schedule.IdSchedule, conflictingSchedule.IdSchedule, schedule.IdChannel, schedule.StartTime);
-								dbConflict.Persist();
-								server.OnNewSchedule();
-								return;
-							}*/
+								Log.Debug("TVProgramInfo.CreateProgram: Skip conflicting episode(s)");
+							  skipConflictingEpisodes = true;
+							  break;
+							}
 						default: // Skipping new Recording
 							{
 								Log.Debug("TVProgramInfo.CreateProgram: Default => Skip new recording");
@@ -659,7 +645,25 @@ namespace TvPlugin
 				Log.Debug("TVProgramInfo.CreateProgram - create schedule = {0}", schedule.ToString());
 				schedule.Persist();
 			}
-			server.OnNewSchedule();
+      if (skipConflictingEpisodes)
+      {
+        List<Schedule> episodes = layer.GetRecordingTimes(schedule);
+        foreach (Schedule episode in episodes)
+        {
+          if (DateTime.Now > episode.EndTime) continue;
+          if (episode.IsSerieIsCanceled(episode.StartTime)) continue;
+          foreach (Schedule conflict in conflicts)
+          {
+            if (episode.IsOverlapping(conflict))
+            {
+              Log.Debug("TVProgramInfo.CreateProgram - skip episode = {0}", episode.ToString());
+              CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, episode.StartTime);
+              canceledSchedule.Persist();
+            }
+          }
+        }
+      }
+		  server.OnNewSchedule();
 		}
 
     void OnAdvancedRecord()
