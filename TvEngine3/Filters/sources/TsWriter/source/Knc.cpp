@@ -97,7 +97,27 @@ STDMETHODIMP CKnc::IsCamReady( BOOL* yesNo)
     }
     if (KNCBDA_CI_IsReady())
     {
+      LogDebug("KNCBDA_CI_IsReady %d",yesNo);
       *yesNo=TRUE;
+    }
+  }
+  return S_OK;
+}
+
+//**************************************************************************************************
+//* IsCIAvailable()
+//* Returns whether the CI clot is available
+//**************************************************************************************************
+STDMETHODIMP CKnc::IsCIAvailable( BOOL* yesNo)
+{
+  *yesNo=FALSE;
+  if (m_bIsKNC)
+  {
+    if (KNCBDA_CI_IsAvailable())
+    {
+      *yesNo=TRUE;
+      LogDebug("KNCBDA_CI_IsAvailable %d",yesNo);
+      return S_OK;
     }
   }
   return S_OK;

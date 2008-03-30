@@ -52,6 +52,7 @@ namespace TvLibrary.Implementations.DVB
     OnAirATSC _isonairatsc = null;
     ViXSATSC _isvixsatsc = null;
     ConexantBDA _conexant = null;
+    //anysee _anysee = null;
     #endregion
 
     //ctor
@@ -133,6 +134,14 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           _hauppauge = null;
+
+          /*Log.Log.Info("Check for anysee");
+          _anysee = new anysee(tunerFilter, analyzerFilter);
+          if (_anysee.Isanysee)
+          {
+            Log.Log.Info("anysee device detected");
+            return;
+          }*/
 
           Log.Log.WriteFile("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter, analyzerFilter);
@@ -254,6 +263,7 @@ namespace TvLibrary.Implementations.DVB
         if (!_useCam) return true;
         if (_knc != null)
         {
+          Log.Log.WriteFile("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());
           return _knc.IsCamReady();
         }
         if (_digitalEveryWhere != null)
@@ -267,8 +277,16 @@ namespace TvLibrary.Implementations.DVB
         if (_technoTrend != null)
         {
           Log.Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(), _technoTrend.IsCamReady());
+          if (_technoTrend.IsCamPresent() == false)
+          {
+            return _technoTrend.IsCamPresent();
+          }
           return _technoTrend.IsCamReady();
         }
+        /*if (_anysee != null)
+        {
+          return _anysee.IsCamReady();
+        }*/
         if (_winTvCiModule != null)
         {
           //How do we check this???

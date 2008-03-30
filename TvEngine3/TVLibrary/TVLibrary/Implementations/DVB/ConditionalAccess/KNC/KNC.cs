@@ -66,6 +66,7 @@ namespace TvLibrary.Implementations.DVB
       if (_KNCInterface == null) return false;
       bool yesNo = false;
       _KNCInterface.IsCamReady(ref yesNo);
+      Log.Log.Info("KNC: IsCAMReady {0}", yesNo);
       return yesNo;
     }
 
@@ -82,6 +83,7 @@ namespace TvLibrary.Implementations.DVB
         if (_KNCInterface == null) return false;
         bool yesNo = false;
         _KNCInterface.IsKNC(ref yesNo);
+        Log.Log.Info("KNC: IsKNC {0}", yesNo);
         return yesNo;
       }
     }
@@ -100,8 +102,8 @@ namespace TvLibrary.Implementations.DVB
       {
         Marshal.WriteByte(ptrPmt, i, pmt[i]);
       }
-
       _KNCInterface.DescrambleService(ptrPmt, (short)PMTlength, ref succeeded);
+      Log.Log.Info("KNC: SendPMT {0}", succeeded);
       return succeeded;
     }
 
@@ -164,7 +166,11 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool IsCamPresent()
     {
-      return true;
+      if (_KNCInterface == null) return false;
+      bool yesNo = false;
+      _KNCInterface.IsCIAvailable(ref yesNo);
+      Log.Log.Info("KNC: IsCIAvailable {0}", yesNo);
+      return yesNo;
     }
   }
 }

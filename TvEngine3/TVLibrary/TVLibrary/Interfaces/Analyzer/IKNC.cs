@@ -38,6 +38,8 @@ Guid("C71E2EFA-2439-4dbe-A1F7-935ADC37A4EC"),
     [PreserveSig]
     int IsCamReady(ref bool yesNo);
     [PreserveSig]
+    int IsCIAvailable(ref bool yesNo);
+    [PreserveSig]
     int SetDisEqc(short diseqcType, short hiband, short vertical);
     [PreserveSig]
     int DescrambleService(IntPtr pmt, short pmtLen, ref bool succeeded);

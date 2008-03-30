@@ -29,6 +29,7 @@ DECLARE_INTERFACE_(IKNC, IUnknown)
   STDMETHOD(SetTunerFilter)(THIS_ IBaseFilter* tunerFilter)PURE;
 	STDMETHOD(IsKNC)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(IsCamReady)(THIS_ BOOL* yesNo)PURE;
+ 	STDMETHOD(IsCIAvailable)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(SetDisEqc)(THIS_ int diseqcType, int hiband, int vertical)PURE;
 	STDMETHOD(DescrambleService)(THIS_ BYTE* PMT, int PMTLength,BOOL* succeeded)PURE;
 	STDMETHOD(DescrambleMultiple)(THIS_ WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)PURE;
@@ -44,6 +45,7 @@ public:
   STDMETHODIMP SetTunerFilter(IBaseFilter* tunerFilter);
 	STDMETHODIMP IsKNC( BOOL* yesNo);
 	STDMETHODIMP IsCamReady( BOOL* yesNo);
+  STDMETHODIMP IsCIAvailable( BOOL* yesNo);
 	STDMETHODIMP SetDisEqc( int diseqcType, int hiband, int vertical);
 	STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);
 	STDMETHODIMP DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded);
