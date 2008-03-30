@@ -586,23 +586,18 @@ namespace SetupTv
         Log.Error("File not found: {0}", helpReferencesFile);
         return;
       }
-      Log.Debug("Trying to get help url for section: {0}", _previousSection.ToString());
-
 
       XmlDocument doc = new XmlDocument();
       doc.Load(helpReferencesFile);
 
       XmlNode generalNode = doc.SelectSingleNode("/helpsystem/general");
-      XmlNodeList sectionNodes = doc.SelectNodes("/helpsystem/section");
+      XmlNodeList sectionNodes = doc.SelectNodes("/helpsystem/sections/section");
 
       for (int i = 0; i < sectionNodes.Count; i++)
       {
         XmlNode sectionNode = sectionNodes[i];
         if (sectionNode.Attributes["name"].Value == _previousSection.ToString())
         {
-          Log.Error(@"{0}{1}",
-            generalNode.Attributes["baseurl"].Value,
-            sectionNode.Attributes["suburl"].Value);
           System.Diagnostics.Process.Start(
             String.Format(@"{0}{1}",
             generalNode.Attributes["baseurl"].Value,
