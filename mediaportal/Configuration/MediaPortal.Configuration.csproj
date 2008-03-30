@@ -248,9 +248,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SearchSHOUTcast.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Subdialogs\EditCaptureCardForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -540,6 +537,9 @@
     </Compile>
     <Compile Include="Sections\TVCaptureCards.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Subdialogs\SearchSHOUTcast.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Subdialogs\TvChannelLookupService.cs">
       <SubType>Form</SubType>
