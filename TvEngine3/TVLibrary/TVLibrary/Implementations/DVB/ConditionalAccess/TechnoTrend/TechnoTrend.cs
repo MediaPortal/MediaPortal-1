@@ -194,7 +194,10 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public bool IsCamPresent()
     {
-      return true;
+      if (_technoTrendInterface == null) return false;
+      bool yesNo = false;
+      _technoTrendInterface.IsCamPresent(ref yesNo);
+      return yesNo;
     }
 
     #region IDiSEqCController Members
