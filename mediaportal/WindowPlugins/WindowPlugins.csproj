@@ -778,21 +778,6 @@
     <Compile Include="GUIWikipedia\WikipediaImage.cs" />
     <Compile Include="GUIWikipedia\GUIWikipedia.cs" />
     <Compile Include="GUIWikipedia\WikipediaArticle.cs" />
-    <Compile Include="GUIX10\ApplianceConfiguration.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIX10\ApplianceForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUIX10\GUIX10.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIX10\SendX10.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIX10\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Home\GUIBasicHome.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -868,12 +853,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUITrailers\GUITrailersSetupForm.resx">
       <DependentUpon>GUITrailersSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIX10\ApplianceForm.resx">
-      <DependentUpon>ApplianceForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIX10\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Home\resources\folder.png" />
     <EmbeddedResource Include="Home\resources\node.png" />
