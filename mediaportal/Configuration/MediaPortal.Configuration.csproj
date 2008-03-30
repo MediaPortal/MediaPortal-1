@@ -307,6 +307,18 @@
     <Compile Include="Sections\MonogramAACDecoderFilter.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\RemoteDirectInput.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\RemoteRedEye.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\RemoteSerialUIR.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\RemoteUSBUIRT.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\StartupDelay.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -404,9 +416,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\DaemonTools.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\DirectInputRemote.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Subdialogs\DlgMovieList.cs">
@@ -514,13 +523,7 @@
     <Compile Include="Sections\RadioStations.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\RedEye.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\Remote.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\SerialUIR.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Shares.cs">
@@ -553,16 +556,13 @@
     <Compile Include="Sections\TVRecording.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\USBUIRT.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\Volume.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Weather.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\WinLirc.cs">
+    <Compile Include="Sections\RemoteWinLirc.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Wizard_AnalogTV.cs">
@@ -660,6 +660,22 @@
     <EmbeddedResource Include="Sections\MonogramAACDecoderFilter.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MonogramAACDecoderFilter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\RemoteDirectInput.resx">
+      <DependentUpon>RemoteDirectInput.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\RemoteRedEye.resx">
+      <DependentUpon>RemoteRedEye.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\RemoteSerialUIR.resx">
+      <DependentUpon>RemoteSerialUIR.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\RemoteUSBUIRT.resx">
+      <DependentUpon>RemoteUSBUIRT.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\StartupDelay.resx">
       <SubType>Designer</SubType>
@@ -763,9 +779,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DaemonTools.resx">
       <DependentUpon>DaemonTools.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\DirectInputRemote.resx">
-      <DependentUpon>DirectInputRemote.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Subdialogs\DlgMovieList.resx">
       <DependentUpon>DlgMovieList.cs</DependentUpon>
@@ -871,15 +884,9 @@
     <EmbeddedResource Include="Sections\RadioStations.resx">
       <DependentUpon>RadioStations.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RedEye.resx">
-      <DependentUpon>RedEye.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Remote.resx">
       <DependentUpon>Remote.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\SerialUIR.resx">
-      <DependentUpon>SerialUIR.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Shares.resx">
       <DependentUpon>Shares.cs</DependentUpon>
@@ -911,17 +918,15 @@
     <EmbeddedResource Include="Sections\TVRecording.resx">
       <DependentUpon>TVRecording.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\USBUIRT.resx">
-      <DependentUpon>USBUIRT.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Volume.resx">
       <DependentUpon>Volume.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Weather.resx">
       <DependentUpon>Weather.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\WinLirc.resx">
-      <DependentUpon>WinLirc.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\RemoteWinLirc.resx">
+      <DependentUpon>RemoteWinLirc.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Wizard_AnalogTV.resx">
       <DependentUpon>Wizard_AnalogTV.cs</DependentUpon>
