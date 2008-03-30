@@ -25,7 +25,7 @@
 
 namespace MediaPortal.Configuration.Sections
 {
-  partial class StartupDelay
+  partial class GeneralStartupDelay
   {
     /// <summary> 
     /// Required designer variable.

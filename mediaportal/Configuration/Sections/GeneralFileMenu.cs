@@ -37,7 +37,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class FileMenu : MediaPortal.Configuration.SectionSettings
+  public class GeneralFileMenu : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPCheckBox chbEnabled;
@@ -47,12 +47,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTextBox textTrashcanFolder;
     private System.ComponentModel.IContainer components = null;
 
-    public FileMenu()
+    public GeneralFileMenu()
       : this("File Menu")
     {
     }
 
-    public FileMenu(string name)
+    public GeneralFileMenu(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

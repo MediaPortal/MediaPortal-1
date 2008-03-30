@@ -5,17 +5,17 @@
     <section name="MediaPortal.Configuration.Sections.Project" suburl="Project" />
 
     <section name="MediaPortal.Configuration.Sections.General" suburl="General" />
-    <section name="MediaPortal.Configuration.Sections.StartupDelay" suburl="General" />
-    <section name="MediaPortal.Configuration.Sections.Skin" suburl="General" />
-    <section name="MediaPortal.Configuration.Sections.KeyboardControl" suburl="General" />
-    <section name="MediaPortal.Configuration.Sections.Keys" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralCDSpeed" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralDaemonTools" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralFileMenu" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralKeyboardControl" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralKeys" suburl="General" />
     <section name="MediaPortal.Configuration.Sections.GeneralOSD" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralSkin" suburl="General" />
     <section name="MediaPortal.Configuration.Sections.GeneralSkipSteps" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralStartupDelay" suburl="General" />
     <section name="MediaPortal.Configuration.Sections.GeneralThumbs" suburl="General" />
-    <section name="MediaPortal.Configuration.Sections.DaemonTools" suburl="General" />
-    <section name="MediaPortal.Configuration.Sections.FileMenu" suburl="General" />
-    <section name="MediaPortal.Configuration.Sections.Volume" suburl="General" />
-    <section name="MediaPortal.Configuration.Sections.CDSpeed" suburl="General" />
+    <section name="MediaPortal.Configuration.Sections.GeneralVolume" suburl="General" />
 
     <section name="MediaPortal.Configuration.Sections.DVD" suburl="DVD" />
     <section name="MediaPortal.Configuration.Sections.DVDCodec" suburl="DVD" />

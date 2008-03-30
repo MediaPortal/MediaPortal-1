@@ -9,14 +9,14 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public partial class StartupDelay : SectionSettings
+  public partial class GeneralStartupDelay : SectionSettings
   {
     #region ctor
-    public StartupDelay()
+    public GeneralStartupDelay()
       : this("Startup Delay")
     {
     }
-    public StartupDelay(string name)
+    public GeneralStartupDelay(string name)
       : base("Startup Delay")
     {
       InitializeComponent();

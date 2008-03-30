@@ -36,7 +36,7 @@ using MediaPortal.GUI.Library;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class Keys : MediaPortal.Configuration.SectionSettings
+  public class GeneralKeys : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
@@ -66,12 +66,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox idComboBox;
     private MediaPortal.UserInterface.Controls.MPTextBox idTextBox;
 
-    public Keys()
+    public GeneralKeys()
       : this("Keys and Sounds")
     {
     }
 
-    public Keys(string name)
+    public GeneralKeys(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

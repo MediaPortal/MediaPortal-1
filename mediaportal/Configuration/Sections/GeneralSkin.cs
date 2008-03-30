@@ -38,7 +38,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class Skin : SectionSettings
+  public class GeneralSkin : SectionSettings
   {
     private string SkinDirectory;
     private string LanguageDirectory;
@@ -57,12 +57,12 @@ namespace MediaPortal.Configuration.Sections
     private PictureBox previewPictureBox;
     private new IContainer components = null;
 
-    public Skin()
+    public GeneralSkin()
       : this("Skin")
     {
     }
 
-    public Skin(string name)
+    public GeneralSkin(string name)
       : base(name)
     {
       SkinDirectory = Config.GetFolder(Config.Dir.Skin);

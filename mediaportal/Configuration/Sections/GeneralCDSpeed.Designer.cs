@@ -1,6 +1,6 @@
 namespace MediaPortal.Configuration.Sections
 {
-  partial class CDSpeed
+  partial class GeneralCDSpeed
   {
     /// <summary> 
     /// Required designer variable.

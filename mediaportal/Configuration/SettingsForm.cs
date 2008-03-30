@@ -37,7 +37,7 @@ using MediaPortal.Configuration.Sections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using Keys = MediaPortal.Configuration.Sections.Keys;
+using Keys = MediaPortal.Configuration.Sections.GeneralKeys;
 using System.Xml;
 
 namespace MediaPortal.Configuration
@@ -140,17 +140,17 @@ namespace MediaPortal.Configuration
       {
         splashScreen.SetInformation("Adding skins section...");
       }
-      AddChildSection(general, new StartupDelay());
-      AddChildSection(general, new Skin());
-      AddChildSection(general, new KeyboardControl());
+      AddChildSection(general, new GeneralStartupDelay());
+      AddChildSection(general, new GeneralSkin());
+      AddChildSection(general, new GeneralKeyboardControl());
       AddChildSection(general, new Keys());
       AddChildSection(general, new GeneralOSD());
       AddChildSection(general, new GeneralSkipSteps());
       AddChildSection(general, new GeneralThumbs());
-      AddChildSection(general, new Sections.DaemonTools());
-      AddChildSection(general, new FileMenu());
-      AddChildSection(general, new Volume());
-      AddChildSection(general, new CDSpeed());
+      AddChildSection(general, new Sections.GeneralDaemonTools());
+      AddChildSection(general, new GeneralFileMenu());
+      AddChildSection(general, new GeneralVolume());
+      AddChildSection(general, new GeneralCDSpeed());
       //add DVD section
       Log.Info("add DVD section");
       if (splashScreen != null)

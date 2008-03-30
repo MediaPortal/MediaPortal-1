@@ -35,11 +35,11 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class Volume : MediaPortal.Configuration.SectionSettings
+  public class GeneralVolume : MediaPortal.Configuration.SectionSettings
   {
     #region Constructors
 
-    public Volume()
+    public GeneralVolume()
       : base("Volume Settings")
     {
       InitializeComponent();
@@ -489,8 +489,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPRadioButton _useWave;
 
     #endregion Fields
-      private MPGroupBox mpGroupBox1;
-      private MPCheckBox _useVolumeOSD;
+    private MPGroupBox mpGroupBox1;
+    private MPCheckBox _useVolumeOSD;
 
     private MPRadioButton _useSystemCurrent;
   }

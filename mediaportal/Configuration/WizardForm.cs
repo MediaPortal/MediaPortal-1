@@ -193,7 +193,7 @@ namespace MediaPortal.Configuration
 
         AddSection(new Sections.Wizard_Welcome(), "Welcome to MediaPortal", "");
         AddSection(new Sections.General(), "General", "General information...");
-        AddSection(new Sections.Skin(), "Skin", "Skin settings...");
+        AddSection(new Sections.GeneralSkin(), "Skin", "Skin settings...");
         AddSection(new Sections.Wizard_SelectPlugins(), "Media", "Let MediaPortal find your media (music, movies, pictures) on your harddisk");
         //if (analogCard)
         //{

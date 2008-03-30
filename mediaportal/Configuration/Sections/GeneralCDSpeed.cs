@@ -36,7 +36,7 @@ using Un4seen.Bass.AddOn.Cd;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public partial class CDSpeed : SectionSettings
+  public partial class GeneralCDSpeed : SectionSettings
   {
     public class SyncedComboBox : ComboBox
     {
@@ -147,11 +147,11 @@ namespace MediaPortal.Configuration.Sections
         "52",
       };
 
-    public CDSpeed()
+    public GeneralCDSpeed()
       : this("CD/DVD Speed")
     { }
 
-    public CDSpeed(string name)
+    public GeneralCDSpeed(string name)
       : base(name)
     {
       InitializeComponent();

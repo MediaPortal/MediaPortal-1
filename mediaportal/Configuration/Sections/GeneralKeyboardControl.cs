@@ -31,7 +31,7 @@ using System.Windows.Forms;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class KeyboardControl : MediaPortal.Configuration.SectionSettings
+  public class GeneralKeyboardControl : MediaPortal.Configuration.SectionSettings
   {
 
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -40,7 +40,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private MediaPortal.UserInterface.Controls.MPListView sharesListView;
     private System.ComponentModel.IContainer components = null;
-    public KeyboardControl()
+    public GeneralKeyboardControl()
       : base("Keyboard shortcuts")
     {
       // This call is required by the Windows Form Designer.
@@ -49,7 +49,7 @@ namespace MediaPortal.Configuration.Sections
       // TODO: Add any initialization after the InitializeComponent call
     }
 
-    public KeyboardControl(string name)
+    public GeneralKeyboardControl(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.

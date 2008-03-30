@@ -35,7 +35,7 @@ using MediaPortal.Util;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class DaemonTools : MediaPortal.Configuration.SectionSettings
+  public class GeneralDaemonTools : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDaemonTools;
@@ -49,12 +49,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAskBeforePlaying;
     private System.ComponentModel.IContainer components = null;
 
-    public DaemonTools()
+    public GeneralDaemonTools()
       : this("Daemon Tools")
     {
     }
 
-    public DaemonTools(string name)
+    public GeneralDaemonTools(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
