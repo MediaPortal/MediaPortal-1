@@ -248,31 +248,34 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="EditCaptureCardForm.cs">
+    <Compile Include="SearchSHOUTcast.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditGroupForm.cs">
+    <Compile Include="Subdialogs\EditCaptureCardForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="editName.cs">
+    <Compile Include="Subdialogs\EditGroupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditRadioStationForm.cs">
+    <Compile Include="Subdialogs\editName.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditShareForm.cs">
+    <Compile Include="Subdialogs\EditRadioStationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditTVChannelForm.cs">
+    <Compile Include="Subdialogs\EditShareForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditWeatherCityForm.cs">
+    <Compile Include="Subdialogs\EditTVChannelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subdialogs\EditWeatherCityForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LaunchGuideScheduler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ParameterForm.cs">
+    <Compile Include="Subdialogs\ParameterForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -283,10 +286,7 @@
     <Compile Include="RadioStation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SearchCityForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SearchSHOUTcast.cs">
+    <Compile Include="Subdialogs\SearchCityForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SectionSettings.cs">
@@ -415,16 +415,16 @@
     <Compile Include="Sections\MusicShares.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\Subdialogs\MusicWinampPreview.cs">
+    <Compile Include="Subdialogs\MusicWinampPreview.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Sections\Subdialogs\MusicWinampPreview.Designer.cs">
+    <Compile Include="Subdialogs\MusicWinampPreview.Designer.cs">
       <DependentUpon>MusicWinampPreview.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\Subdialogs\DlgMovieConflicts.cs">
+    <Compile Include="Subdialogs\DlgMovieConflicts.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Sections\Subdialogs\DlgProgress.cs">
+    <Compile Include="Subdialogs\DlgProgress.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sections\GeneralOSD.cs">
@@ -451,7 +451,7 @@
     <Compile Include="Sections\MusicImport.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\Subdialogs\DlgMovieList.cs">
+    <Compile Include="Subdialogs\DlgMovieList.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sections\DVD.cs">
@@ -541,7 +541,7 @@
     <Compile Include="Sections\TVCaptureCards.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\Subdialogs\TvChannelLookupService.cs">
+    <Compile Include="Subdialogs\TvChannelLookupService.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sections\TVChannels.cs">
@@ -608,35 +608,35 @@
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <EmbeddedResource Include="EditCaptureCardForm.resx">
+    <EmbeddedResource Include="Subdialogs\EditCaptureCardForm.resx">
       <DependentUpon>EditCaptureCardForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditGroupForm.resx">
+    <EmbeddedResource Include="Subdialogs\EditGroupForm.resx">
       <DependentUpon>EditGroupForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="editName.resx">
+    <EmbeddedResource Include="Subdialogs\editName.resx">
       <DependentUpon>editName.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditRadioStationForm.resx">
+    <EmbeddedResource Include="Subdialogs\EditRadioStationForm.resx">
       <DependentUpon>EditRadioStationForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditShareForm.resx">
-      <DependentUpon>EditShareForm.cs</DependentUpon>
+    <EmbeddedResource Include="Subdialogs\EditShareForm.resx">
       <SubType>Designer</SubType>
+      <DependentUpon>EditShareForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditTVChannelForm.resx">
+    <EmbeddedResource Include="Subdialogs\EditTVChannelForm.resx">
       <DependentUpon>EditTVChannelForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditWeatherCityForm.resx">
+    <EmbeddedResource Include="Subdialogs\EditWeatherCityForm.resx">
       <DependentUpon>EditWeatherCityForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ParameterForm.resx">
+    <EmbeddedResource Include="Subdialogs\ParameterForm.resx">
       <DependentUpon>ParameterForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -645,7 +645,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="SearchCityForm.resx">
+    <EmbeddedResource Include="Subdialogs\SearchCityForm.resx">
       <DependentUpon>SearchCityForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -785,15 +785,15 @@
       <DependentUpon>MusicShares.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\MusicWinampPreview.resx">
+    <EmbeddedResource Include="Subdialogs\MusicWinampPreview.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MusicWinampPreview.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\DlgMovieConflicts.resx">
+    <EmbeddedResource Include="Subdialogs\DlgMovieConflicts.resx">
       <DependentUpon>DlgMovieConflicts.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\DlgProgress.resx">
+    <EmbeddedResource Include="Subdialogs\DlgProgress.resx">
       <DependentUpon>DlgProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -825,7 +825,7 @@
       <DependentUpon>MusicImport.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\DlgMovieList.resx">
+    <EmbeddedResource Include="Subdialogs\DlgMovieList.resx">
       <DependentUpon>DlgMovieList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DVD.resx">
@@ -915,7 +915,7 @@
     <EmbeddedResource Include="Sections\TVCaptureCards.resx">
       <DependentUpon>TVCaptureCards.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Subdialogs\TvChannelLookupService.resx">
+    <EmbeddedResource Include="Subdialogs\TvChannelLookupService.resx">
       <DependentUpon>TvChannelLookupService.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVChannels.resx">
