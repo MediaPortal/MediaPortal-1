@@ -50,6 +50,7 @@ namespace MediaPortal.Configuration
     private const int SW_SHOWNORMAL = 1;
     private const int SW_SHOW = 5;
     private const int SW_RESTORE = 9;
+    private MPButton viewLogFilesButton;
     private string _windowName = "MediaPortal - Setup";
 
     [DllImport("User32.")]
@@ -473,6 +474,7 @@ namespace MediaPortal.Configuration
       this.holderPanel = new System.Windows.Forms.Panel();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.viewLogFilesButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // sectionTree
@@ -495,7 +497,7 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(621, 479);
+      this.cancelButton.Location = new System.Drawing.Point(519, 479);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 1;
@@ -506,7 +508,7 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(542, 479);
+      this.okButton.Location = new System.Drawing.Point(438, 479);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -556,7 +558,7 @@ namespace MediaPortal.Configuration
       // applyButton
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(462, 479);
+      this.applyButton.Location = new System.Drawing.Point(357, 479);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
       this.applyButton.TabIndex = 6;
@@ -566,6 +568,16 @@ namespace MediaPortal.Configuration
       this.applyButton.Visible = false;
       this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
       // 
+      // viewLogFilesButton
+      // 
+      this.viewLogFilesButton.Location = new System.Drawing.Point(600, 479);
+      this.viewLogFilesButton.Name = "viewLogFilesButton";
+      this.viewLogFilesButton.Size = new System.Drawing.Size(96, 23);
+      this.viewLogFilesButton.TabIndex = 7;
+      this.viewLogFilesButton.Text = "View &log files";
+      this.viewLogFilesButton.UseVisualStyleBackColor = true;
+      this.viewLogFilesButton.Click += new System.EventHandler(this.viewLogFilesButton_Click);
+      // 
       // SettingsForm
       // 
       this.AcceptButton = this.okButton;
@@ -573,6 +585,7 @@ namespace MediaPortal.Configuration
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(704, 510);
+      this.Controls.Add(this.viewLogFilesButton);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);
       this.Controls.Add(this.holderPanel);
@@ -584,9 +597,10 @@ namespace MediaPortal.Configuration
       this.Name = "SettingsForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MediaPortal - Setup";
-      this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.Load += new System.EventHandler(this.SettingsForm_Load);
+      this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -905,6 +919,15 @@ namespace MediaPortal.Configuration
         ShowWindow(windowHandle, SW_SHOWNORMAL);
       }
       return true;
+    }
+
+    private void viewLogFilesButton_Click(object sender, EventArgs e)
+    {
+      Process process = new Process();
+      process.StartInfo.FileName = "explorer.exe";
+      process.StartInfo.Arguments = Config.GetFolder(Config.Dir.Log);
+      process.StartInfo.UseShellExecute = true;
+      process.Start();
     }
   }
 }
