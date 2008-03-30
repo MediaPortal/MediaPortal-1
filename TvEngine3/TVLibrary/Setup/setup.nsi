@@ -203,8 +203,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ExecWait '"taskkill" /F /IM Translator.exe'
-  ExecWait '"taskkill" /F /IM TrayLauncher.exe'
+  ExecWait '"taskkill" /F /IM TVService.exe'
+  ExecWait '"taskkill" /F /IM SetupTv.exe'
 
   SetOverwrite on
 
@@ -318,6 +318,11 @@ ${MementoSectionEnd}
     MessageBox MB_OK|MB_ICONEXCLAMATION "Uninstalling MediaPortal TV Server..."
   ${EndIf}
 
+  ; Kill running Programs
+  DetailPrint "Terminating processes ..."
+  ExecWait '"taskkill" /F /IM TVService.exe'
+  ExecWait '"taskkill" /F /IM SetupTv.exe'
+
   #---------------------------------------------------------------------------
   # SERVICE UNINSTALLATION
   #---------------------------------------------------------------------------
@@ -404,6 +409,11 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
     MessageBox MB_OK|MB_ICONEXCLAMATION "Installing MediaPortal TV Client plugin..."
     ${EndIf}
 
+  ; Kill running Programs
+  DetailPrint "Terminating processes ..."
+  ExecWait '"taskkill" /F /IM MediaPortal.exe'
+  ExecWait '"taskkill" /F /IM configuration.exe'
+
     SetOverwrite on
 
     ReadRegSTR $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
@@ -443,6 +453,11 @@ ${MementoSectionEnd}
     ${If} $DeployMode == 1
     MessageBox MB_OK|MB_ICONEXCLAMATION "Uninstalling MediaPortal TV Client plugin..."
     ${EndIf}
+
+  ; Kill running Programs
+  DetailPrint "Terminating processes ..."
+  ExecWait '"taskkill" /F /IM MediaPortal.exe'
+  ExecWait '"taskkill" /F /IM configuration.exe'
 
     #---------------------------------------------------------------------------
     # FILTER UNREGISTRATION     for TVClient
@@ -699,7 +714,7 @@ Function un.onInit
   StrCpy $RemoveAll 1
   #### END of check and parse cmdline parameter
 
-  ReadRegStr $MPBaseDir HKLM "${MP_REG_UNINSTALL}" "InstallPath"
+  !insertmacro MP_GET_INSTALL_DIR "$MPBaseDir"
   ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
