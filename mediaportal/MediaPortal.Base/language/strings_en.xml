@@ -829,10 +829,10 @@
     <String id="997">Completed</String>
     <String id="998">XviD</String>
     <String id="999">This plug-in allows you to transcode your</String>
-    <String id="1000">TV Recordings from dvr-ms into mpg, xvid or wmv</String>
-    <String id="1001">Please note. You'll need to have the</String>
-    <String id="1002">Elecard MPEG2 video decoder installed</String>
-    <String id="1003">for transcoding to xvid</String>
+    <String id="1000">TV Recordings from dvr-ms to mpg or wmv</String>
+    <String id="1001">Please note. You'll need to have your recordings</String>
+    <String id="1002">working within MediaPortal with video & audio</String>
+    <String id="1003">before attempting to transcode to wmv.</String>
     <String id="1004">About to start recording</String>
     <String id="1005">on channel</String>
     <String id="1006">Allow recording to begin</String>
