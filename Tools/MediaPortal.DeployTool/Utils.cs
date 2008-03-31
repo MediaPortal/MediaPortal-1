@@ -73,7 +73,15 @@ namespace MediaPortal.DeployTool
     public static string GetDownloadFile(string id)
     {
       XmlDocument doc = new XmlDocument();
-      doc.Load(Application.StartupPath + "\\ApplicationLocations.xml");
+      HTTPDownload dlg = new HTTPDownload();
+      string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
+
+      //HTTP update of the xml file with the application download URLs
+      if (!File.Exists(XmlFile))
+      {
+          DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+      }
+      doc.Load(XmlFile);
       XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/FILE");
       return node.InnerText;
     }

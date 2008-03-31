@@ -346,7 +346,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Uninstalling...</value>
   </data>
   <data name="Install_stateInstalled" xml:space="preserve">
-    <value>Installed</value>
+    <value>Ok</value>
   </data>
   <data name="Install_stateNotInstalled" xml:space="preserve">
     <value>Not installed</value>
@@ -445,5 +445,8 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
     <value>MediaPortal is FREE, if you bought it on ebay, then you have been fooled ;-(</value>
+  </data>
+  <data name="Install_actionConfigure" xml:space="preserve">
+    <value>Configure</value>
   </data>
 </root>

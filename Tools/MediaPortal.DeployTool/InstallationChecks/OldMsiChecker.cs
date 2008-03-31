@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
   {
     public string GetDisplayName()
     {
-      return "MP/TV3 packages (MSI)";
+      return "Remove MP/TV-Engine old msi packages";
     }
     public bool Download()
     {

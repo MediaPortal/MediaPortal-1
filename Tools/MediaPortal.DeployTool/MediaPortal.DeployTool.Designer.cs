@@ -451,6 +451,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure.
+        /// </summary>
+        internal static string Install_actionConfigure {
+            get {
+                return ResourceManager.GetString("Install_actionConfigure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download-&gt;install.
         /// </summary>
         internal static string Install_actionDownloadInstall {
@@ -613,7 +622,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installed.
+        ///   Looks up a localized string similar to Ok.
         /// </summary>
         internal static string Install_stateInstalled {
             get {
