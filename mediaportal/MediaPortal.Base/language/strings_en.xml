@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programs</String>
@@ -831,7 +831,7 @@
     <String id="999">This plug-in allows you to transcode your</String>
     <String id="1000">TV Recordings from dvr-ms to mpg or wmv</String>
     <String id="1001">Please note. You'll need to have your recordings</String>
-    <String id="1002">working within MediaPortal with video & audio</String>
+    <String id="1002">working within MediaPortal with video and audio</String>
     <String id="1003">before attempting to transcode to wmv.</String>
     <String id="1004">About to start recording</String>
     <String id="1005">on channel</String>
