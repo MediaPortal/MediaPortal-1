@@ -40,12 +40,7 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MusicViews : MediaPortal.Configuration.Sections.BaseViews
   {
-    string defaultMusicViews = Config.GetFile(Config.Dir.Base, "defaultMusicViews.xml");
-    string customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");
-
-    private System.ComponentModel.IContainer components = null;
-
-    private string[] _selections = new string[]
+    private string[] selections = new string[]
       {
         "album",
         "artist",
@@ -60,7 +55,7 @@ namespace MediaPortal.Configuration.Sections
         "recently added"
       };
 
-    private string[] _sqloperators = new string[]
+    private string[] sqloperators = new string[]
       {
         "",
         "=",
@@ -74,7 +69,7 @@ namespace MediaPortal.Configuration.Sections
         "group",
       };
 
-    private string[] _viewsAs = new string[]
+    private string[] viewsAs = new string[]
 			{
 				"List",
 				"Icons",
@@ -83,7 +78,7 @@ namespace MediaPortal.Configuration.Sections
         "Albums",
 		  };
 
-    private string[] _sortBy = new string[]
+    private string[] sortBy = new string[]
 			{
         "Name",
         "Date",
@@ -98,87 +93,19 @@ namespace MediaPortal.Configuration.Sections
       };
 
     public MusicViews()
-      : this("Music Views")
-    { }
+      : this("Music Views") { }
 
     public MusicViews(string name)
-      : base(name)
-    {
-      // This call is required by the Windows Form Designer.
-      InitializeComponent();
-    }
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
-    }
+      : base(name) { }
 
     public override void LoadSettings()
     {
-      selections = _selections;
-      sqloperators = _sqloperators;
-      viewsAs = _viewsAs;
-      sortBy = _sortBy;
-
-      if (!File.Exists(customMusicViews))
-      {
-        File.Copy(defaultMusicViews, customMusicViews);
-      }
-
-      views = new ArrayList();
-
-      try
-      {
-        using (FileStream fileStream = new FileInfo(customMusicViews).OpenRead())
-        {
-          SoapFormatter formatter = new SoapFormatter();
-          views = (ArrayList)formatter.Deserialize(fileStream);
-          fileStream.Close();
-        }
-      }
-      catch (Exception)
-      {
-      }
-
-      LoadViews();
+      base.LoadSettings("Music", selections, sqloperators, viewsAs, sortBy);
     }
 
     public override void SaveSettings()
     {
-      if (settingsChanged)
-        try
-        {
-          using (FileStream fileStream = new FileInfo(customMusicViews).OpenWrite())
-          {
-            SoapFormatter formatter = new SoapFormatter();
-            formatter.Serialize(fileStream, views);
-            fileStream.Close();
-          }
-        }
-        catch (Exception)
-        {
-        }
+      base.SaveSettings("Music");
     }
-
-    #region Designer generated code
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
-      components = new System.ComponentModel.Container();
-    }
-    #endregion
   }
 }

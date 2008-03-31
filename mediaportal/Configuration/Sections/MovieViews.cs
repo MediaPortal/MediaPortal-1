@@ -42,12 +42,11 @@ namespace MediaPortal.Configuration.Sections
   public class MovieViews : MediaPortal.Configuration.Sections.BaseViews
   {
     string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
-    string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");
+    string customVideoViews = Config.GetFile(Config.Dir.Config, "Views.xml");
 
-    public System.ComponentModel.IContainer components = null;
-
-    private string[] _selections = new string[]
-      {"watched",
+    private string[] selections = new string[]
+      {
+        "watched",
         "actor",
         "title",
         "genre",
@@ -55,7 +54,7 @@ namespace MediaPortal.Configuration.Sections
         "rating",
       };
 
-    private string[] _sqloperators = new string[]
+    private string[] sqloperators = new string[]
       {
         "",
         "=",
@@ -67,7 +66,7 @@ namespace MediaPortal.Configuration.Sections
         "like",
       };
 
-    private string[] _viewsAs = new string[]
+    private string[] viewsAs = new string[]
 			{
 				"List",
 				"Icons",
@@ -75,7 +74,7 @@ namespace MediaPortal.Configuration.Sections
 				"Filmstrip",
 		  };
 
-    private string[] _sortBy = new string[]
+    private string[] sortBy = new string[]
 			{
         "Name",
         "Date",
@@ -86,87 +85,19 @@ namespace MediaPortal.Configuration.Sections
       };
 
     public MovieViews()
-      : this("Movie Views")
-    { }
+      : this("Movie Views") { }
 
     public MovieViews(string name)
-      : base(name)
-    {
-      // This call is required by the Windows Form Designer.
-      InitializeComponent();
-    }
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
-    }
+      : base(name) { }
 
     public override void LoadSettings()
     {
-      selections = _selections;
-      sqloperators = _sqloperators;
-      viewsAs = _viewsAs;
-      sortBy = _sortBy;
-
-      if (!File.Exists(customVideoViews))
-      {
-        File.Copy(defaultVideoViews, customVideoViews);
-      }
-
-      views = new ArrayList();
-
-      try
-      {
-        using (FileStream fileStream = new FileInfo(customVideoViews).OpenRead())
-        {
-          SoapFormatter formatter = new SoapFormatter();
-          views = (ArrayList)formatter.Deserialize(fileStream);
-          fileStream.Close();
-        }
-      }
-      catch (Exception)
-      {
-      }
-
-      LoadViews();
+      base.LoadSettings("Video", selections, sqloperators, viewsAs, sortBy);
     }
 
     public override void SaveSettings()
     {
-      if (settingsChanged)
-        try
-        {
-          using (FileStream fileStream = new FileInfo(customVideoViews).OpenWrite())
-          {
-            SoapFormatter formatter = new SoapFormatter();
-            formatter.Serialize(fileStream, views);
-            fileStream.Close();
-          }
-        }
-        catch (Exception)
-        {
-        }
+      base.SaveSettings("Video");
     }
-
-    #region Designer generated code
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
-      components = new System.ComponentModel.Container();
-    }
-    #endregion
   }
 }

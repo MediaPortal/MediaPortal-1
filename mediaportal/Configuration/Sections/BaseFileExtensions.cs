@@ -274,5 +274,21 @@ namespace MediaPortal.Configuration.Sections
 
       return null;
     }
+
+    protected void LoadSettings(string section, string defaultExt)
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        Extensions = xmlreader.GetValueAsString(section, "extensions", defaultExt);
+      }
+    }
+
+    protected void SaveSettings(string section)
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue(section, "extensions", Extensions);
+      }
+    }
   }
 }

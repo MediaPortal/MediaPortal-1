@@ -36,29 +36,19 @@ namespace MediaPortal.Configuration.Sections
   public class PictureExtensions : MediaPortal.Configuration.Sections.BaseFileExtensions
   {
     public PictureExtensions()
-      : this("Picture Extensions")
-    {
-    }
+      : this("Picture Extensions") { }
 
     public PictureExtensions(string name)
-      : base(name)
-    {
-    }
+      : base(name) { }
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        Extensions = xmlreader.GetValueAsString("pictures", "extensions", ".jpg,.jpeg,.gif,.bmp,.png");
-      }
+      base.LoadSettings("pictures", ".jpg,.jpeg,.gif,.bmp,.png");
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        xmlwriter.SetValue("pictures", "extensions", Extensions);
-      }
+      base.SaveSettings("pictures");
     }
   }
 }

@@ -40,7 +40,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public abstract class BaseViews : MediaPortal.Configuration.SectionSettings
+  public class BaseViews : MediaPortal.Configuration.SectionSettings
   {
     public class SyncedCheckBox : CheckBox
     {
@@ -161,7 +161,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel lblViews;
     private IContainer components = null;
 
-    public string[] selections
+    public string[] Selections
     {
       get
       {
@@ -174,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
     
-    public string[] sqloperators
+    public string[] Sqloperators
     {
       get
       {
@@ -187,7 +187,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
     
-    public string[] viewsAs
+    public string[] ViewsAs
     {
       get
       {
@@ -200,7 +200,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
     
-    public string[] sortBy
+    public string[] SortBy
     {
       get
       {
@@ -427,7 +427,7 @@ namespace MediaPortal.Configuration.Sections
 
       // Create the combo box object and set its properties
       SyncedComboBox cbSelection = new SyncedComboBox("Selection");
-      foreach (string strText in selections)
+      foreach (string strText in Selections)
       {
         cbSelection.Items.Add(strText);
       }
@@ -437,7 +437,7 @@ namespace MediaPortal.Configuration.Sections
       cbSelection.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
 
       SyncedComboBox cbOperators = new SyncedComboBox("Operator");
-      foreach (string strText in sqloperators)
+      foreach (string strText in Sqloperators)
       {
         cbOperators.Items.Add(strText);
       }
@@ -446,7 +446,7 @@ namespace MediaPortal.Configuration.Sections
       cbOperators.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
 
       SyncedComboBox cbView = new SyncedComboBox("ViewAs");
-      foreach (string strText in viewsAs)
+      foreach (string strText in ViewsAs)
       {
         cbView.Items.Add(strText);
       }
@@ -455,7 +455,7 @@ namespace MediaPortal.Configuration.Sections
       cbView.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
 
       SyncedComboBox cbSort = new SyncedComboBox("SortBy");
-      foreach (string strText in sortBy)
+      foreach (string strText in SortBy)
       {
         cbSort.Items.Add(strText);
       }
@@ -747,5 +747,67 @@ namespace MediaPortal.Configuration.Sections
       }
       LoadViews();
     }
+
+
+
+    protected void LoadSettings(
+      string mediaType,
+      string[] selections,
+      string[] sqloperators,
+      string[] viewsAs,
+      string[] sortBy
+      )
+    {
+      string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
+      string defaultViews = Config.GetFile(Config.Dir.Base, "default" + mediaType + "Views.xml");
+      Selections = selections;
+      Sqloperators = sqloperators;
+      ViewsAs = viewsAs;
+      SortBy = sortBy;
+
+      if (!File.Exists(customViews))
+      {
+        File.Copy(defaultViews, customViews);
+      }
+
+      views = new ArrayList();
+
+      try
+      {
+        using (FileStream fileStream = new FileInfo(customViews).OpenRead())
+        {
+          SoapFormatter formatter = new SoapFormatter();
+          views = (ArrayList)formatter.Deserialize(fileStream);
+          fileStream.Close();
+        }
+      }
+      catch (Exception)
+      {
+      }
+
+      LoadViews();
+    }
+
+    protected void SaveSettings(string mediaType)
+    {
+      string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
+      if (settingsChanged)
+        try
+        {
+          using (FileStream fileStream = new FileInfo(customViews).OpenWrite())
+          {
+            SoapFormatter formatter = new SoapFormatter();
+            formatter.Serialize(fileStream, views);
+            fileStream.Close();
+          }
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+
+
+
   }
 }

@@ -649,18 +649,6 @@
       <DependentUpon>SearchCityForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\BasePostProcessing.resx">
-      <DependentUpon>BasePostProcessing.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\BaseShares.resx">
-      <DependentUpon>BaseShares.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\BaseViews.resx">
-      <DependentUpon>BaseViews.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\FiltersDScalerAudio.resx">
       <DependentUpon>FiltersDScalerAudio.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -777,10 +765,6 @@
       <DependentUpon>MusicDSP.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MusicShares.resx">
-      <DependentUpon>MusicShares.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\MusicWinampPreview.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MusicWinampPreview.cs</DependentUpon>
@@ -833,9 +817,6 @@
     <EmbeddedResource Include="Sections\DVDPlayer.resx">
       <DependentUpon>DVDPlayer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\DVDPostProcessing.resx">
-      <DependentUpon>DVDPostProcessing.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Filters.resx">
       <DependentUpon>Filters.cs</DependentUpon>
     </EmbeddedResource>
@@ -845,17 +826,8 @@
     <EmbeddedResource Include="Sections\MoviePlayer.resx">
       <DependentUpon>MoviePlayer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MoviePostProcessing.resx">
-      <DependentUpon>MoviePostProcessing.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Movies.resx">
       <DependentUpon>Movies.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MovieShares.resx">
-      <DependentUpon>MovieShares.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MovieViews.resx">
-      <DependentUpon>MovieViews.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Music.resx">
       <DependentUpon>Music.cs</DependentUpon>
@@ -867,14 +839,8 @@
       <DependentUpon>MusicSort.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MusicViews.resx">
-      <DependentUpon>MusicViews.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Pictures.resx">
       <DependentUpon>Pictures.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\PictureShares.resx">
-      <DependentUpon>PictureShares.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Plugins.resx">
       <DependentUpon>Plugins.cs</DependentUpon>
@@ -910,9 +876,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVGroups.resx">
       <DependentUpon>TVGroups.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVPostProcessing.resx">
-      <DependentUpon>TVPostProcessing.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVProgramGuide.resx">
       <DependentUpon>TVProgramGuide.cs</DependentUpon>

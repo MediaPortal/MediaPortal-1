@@ -31,7 +31,7 @@ using System.Windows.Forms;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public abstract class BaseShares : MediaPortal.Configuration.SectionSettings
+  public class BaseShares : MediaPortal.Configuration.SectionSettings
   {
     public class ShareData
     {
@@ -478,6 +478,159 @@ namespace MediaPortal.Configuration.Sections
     {
       editButton.Enabled = deleteButton.Enabled = (sharesListView.SelectedItems.Count > 0);
     }
+
+    public override object GetSetting(string name)
+    {
+      switch (name.ToLower())
+      {
+        case "shares.available":
+          return CurrentShares.Count > 0;
+
+        case "shares":
+          ArrayList shares = new ArrayList();
+
+          foreach (ListViewItem listItem in CurrentShares)
+          {
+            shares.Add(listItem.SubItems[2].Text);
+          }
+          return shares;
+      }
+
+      return null;
+    }
+
+    protected void LoadSettings(string section, string defaultSharePath)
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        string defaultShare = xmlreader.GetValueAsString(section, "default", "");
+        RememberLastFolder = xmlreader.GetValueAsBool(section, "rememberlastfolder", false);
+
+        for (int index = 0; index < MaximumShares; index++)
+        {
+          string shareName = String.Format("sharename{0}", index);
+          string sharePath = String.Format("sharepath{0}", index);
+          string sharePin = String.Format("pincode{0}", index);
+
+          string shareType = String.Format("sharetype{0}", index);
+          string shareServer = String.Format("shareserver{0}", index);
+          string shareLogin = String.Format("sharelogin{0}", index);
+          string sharePwd = String.Format("sharepassword{0}", index);
+          string sharePort = String.Format("shareport{0}", index);
+          string shareRemotePath = String.Format("shareremotepath{0}", index);
+          string shareViewPath = String.Format("shareview{0}", index);
+
+          string shareNameData = xmlreader.GetValueAsString(section, shareName, "");
+          string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
+          string sharePinData = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, sharePin, ""));
+
+          // provide one default share
+          if (index == 0 && shareNameData == string.Empty)
+          {
+            shareNameData = Util.VirtualDirectory.GetShareNameDefault(defaultSharePath);
+            sharePathData = defaultSharePath;
+            sharePinData = string.Empty;
+          }
+
+          bool shareTypeData = xmlreader.GetValueAsBool(section, shareType, false);
+          string shareServerData = xmlreader.GetValueAsString(section, shareServer, "");
+          string shareLoginData = xmlreader.GetValueAsString(section, shareLogin, "");
+          string sharePwdData = xmlreader.GetValueAsString(section, sharePwd, "");
+          int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
+          string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
+          int shareView = xmlreader.GetValueAsInt(section, shareViewPath, (int)ShareData.Views.List);
+
+          if (shareNameData != null && shareNameData.Length > 0)
+          {
+            ShareData newShare = new ShareData(shareNameData, sharePathData, sharePinData);
+            newShare.IsRemote = shareTypeData;
+            newShare.Server = shareServerData;
+            newShare.LoginName = shareLoginData;
+            newShare.PassWord = sharePwdData;
+            newShare.Port = sharePortData;
+            newShare.RemoteFolder = shareRemotePathData;
+            newShare.DefaultView = (ShareData.Views)shareView;
+
+            AddShare(newShare, shareNameData.Equals(defaultShare));
+          }
+        }
+      }
+
+      //
+      // Add static shares
+      //
+      AddStaticShares(DriveType.DVD, "DVD");
+    }
+
+    protected void SaveSettings(string section)
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        string defaultShare = string.Empty;
+
+        for (int index = 0; index < MaximumShares; index++)
+        {
+          string shareName = String.Format("sharename{0}", index);
+          string sharePath = String.Format("sharepath{0}", index);
+          string sharePin = String.Format("pincode{0}", index);
+
+          string shareType = String.Format("sharetype{0}", index);
+          string shareServer = String.Format("shareserver{0}", index);
+          string shareLogin = String.Format("sharelogin{0}", index);
+          string sharePwd = String.Format("sharepassword{0}", index);
+          string sharePort = String.Format("shareport{0}", index);
+          string shareRemotePath = String.Format("shareremotepath{0}", index);
+          string shareViewPath = String.Format("shareview{0}", index);
+
+          string shareNameData = string.Empty;
+          string sharePathData = string.Empty;
+          string sharePinData = string.Empty;
+
+          bool shareTypeData = false;
+          string shareServerData = string.Empty;
+          string shareLoginData = string.Empty;
+          string sharePwdData = string.Empty;
+          int sharePortData = 21;
+          string shareRemotePathData = string.Empty;
+          int shareView = (int)ShareData.Views.List;
+
+          if (CurrentShares != null && CurrentShares.Count > index)
+          {
+            ShareData shareData = CurrentShares[index].Tag as ShareData;
+
+            if (shareData != null)
+            {
+              shareNameData = shareData.Name;
+              sharePathData = shareData.Folder;
+              sharePinData = shareData.PinCode;
+
+              shareTypeData = shareData.IsRemote;
+              shareServerData = shareData.Server;
+              shareLoginData = shareData.LoginName;
+              sharePwdData = shareData.PassWord;
+              sharePortData = shareData.Port;
+              shareRemotePathData = shareData.RemoteFolder;
+              shareView = (int)shareData.DefaultView;
+
+              if (CurrentShares[index] == DefaultShare)
+                defaultShare = shareNameData;
+            }
+          }
+          xmlwriter.SetValue(section, shareName, shareNameData);
+          xmlwriter.SetValue(section, sharePath, sharePathData);
+          xmlwriter.SetValue(section, sharePin, MediaPortal.Util.Utils.EncryptPin(sharePinData));
+
+          xmlwriter.SetValueAsBool(section, shareType, shareTypeData);
+          xmlwriter.SetValue(section, shareServer, shareServerData);
+          xmlwriter.SetValue(section, shareLogin, shareLoginData);
+          xmlwriter.SetValue(section, sharePwd, sharePwdData);
+          xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
+          xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
+          xmlwriter.SetValue(section, shareViewPath, shareView);
+        }
+        xmlwriter.SetValue(section, "default", defaultShare);
+        xmlwriter.SetValueAsBool(section, "rememberlastfolder", RememberLastFolder);
+      }
+    }
   }
 }
-

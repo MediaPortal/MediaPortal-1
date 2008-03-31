@@ -36,29 +36,19 @@ namespace MediaPortal.Configuration.Sections
   public class MusicExtensions : MediaPortal.Configuration.Sections.BaseFileExtensions
   {
     public MusicExtensions()
-      : this("Music Extensions")
-    {
-    }
+      : this("Music Extensions") { }
 
     public MusicExtensions(string name)
-      : base(name)
-    {
-    }
+      : base(name) { }
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        Extensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
-      }
+      base.LoadSettings("music", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        xmlwriter.SetValue("music", "extensions", Extensions);
-      }
+      base.SaveSettings("music");
     }
   }
 }

@@ -38,14 +38,14 @@ namespace MediaPortal.Configuration.Sections
 {
   public class BasePostProcessing : MediaPortal.Configuration.SectionSettings
   {
-    public MediaPortal.UserInterface.Controls.MPGroupBox groupBoxActivatedFilters;
-    public MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAvailableFilters;
-    public MediaPortal.UserInterface.Controls.MPLabel labelWarning;
-    public MediaPortal.UserInterface.Controls.MPLabel labelPropertiesHint;
-    public CheckedListBox cLBDSFilter;
-    public Button bSetup;
-    public ListBox lBDSFilter;
-    public System.ComponentModel.IContainer components = null;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxActivatedFilters;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAvailableFilters;
+    private MediaPortal.UserInterface.Controls.MPLabel labelWarning;
+    private MediaPortal.UserInterface.Controls.MPLabel labelPropertiesHint;
+    private CheckedListBox cLBDSFilter;
+    private Button bSetup;
+    private ListBox lBDSFilter;
+    private System.ComponentModel.IContainer components = null;
 
     public BasePostProcessing()
       : this("Post Processing")
@@ -228,6 +228,77 @@ namespace MediaPortal.Configuration.Sections
       cLBDSFilter.Items.RemoveAt(cLBDSFilter.SelectedIndex);
       if (cLBDSFilter.Items.Count > 0)
         cLBDSFilter.SelectedIndex = tmpIndex - 1;
+    }
+
+    private void cLBDSFilter_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void LoadSettings(string section)
+    {
+      string strFilters = "";
+      string strUsedFilters = "";
+      cLBDSFilter.Sorted = false;
+      lBDSFilter.Sorted = false;
+      cLBDSFilter.DisplayMember = "Name";
+      lBDSFilter.DisplayMember = "Name";
+      lBDSFilter.FormattingEnabled = true;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        int intCount = 0;
+        while (xmlreader.GetValueAsString(section, "filter" + intCount.ToString(), "undefined") != "undefined")
+        {
+          strFilters += xmlreader.GetValueAsString(section, "filter" + intCount.ToString(), "undefined") + ";";
+          if (xmlreader.GetValueAsBool(section, "usefilter" + intCount.ToString(), false))
+          {
+            strUsedFilters += xmlreader.GetValueAsString(section, "filter" + intCount.ToString(), "undefined") + ";";
+          }
+          intCount++;
+        }
+      }
+      foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
+      {
+        try
+        {
+          if (device.Name != null)
+          {
+            lBDSFilter.Items.Add(device);
+            foreach (string filter in strFilters.Split(';'))
+            {
+              if (filter.Equals(device.Name))
+              {
+                cLBDSFilter.Items.Add(device);
+                cLBDSFilter.SetItemChecked(cLBDSFilter.Items.Count - 1, strUsedFilters.Contains(device.Name));
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+        }
+      }
+      cLBDSFilter.Sorted = true;
+      lBDSFilter.Sorted = true;
+      if (cLBDSFilter.Items.Count > 0)
+        cLBDSFilter.SelectedIndex = 0;
+      if (lBDSFilter.Items.Count > 0)
+        lBDSFilter.SelectedIndex = 0;
+    }
+
+    protected void SaveSettings(string section)
+    {
+      DsDevice tmpDevice = null;
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+        {
+          tmpDevice = (DsDevice)cLBDSFilter.Items[i];
+          xmlwriter.SetValue(section, "filter" + i.ToString(), tmpDevice.Name);
+          xmlwriter.SetValueAsBool(section, "usefilter" + i.ToString(), cLBDSFilter.GetItemChecked(i));
+        }
+        xmlwriter.SetValue(section, "filter" + cLBDSFilter.Items.Count.ToString(), "undefined");
+      }
     }
   }
 }
