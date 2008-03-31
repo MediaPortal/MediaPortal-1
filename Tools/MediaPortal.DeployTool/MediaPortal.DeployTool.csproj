@@ -30,10 +30,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
     <Reference Include="Interop.NetFwTypeLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Interop.NetFwTypeLib.dll</HintPath>
@@ -76,9 +72,6 @@
     <Compile Include="InstallationChecks\OldMsiChecker.cs" />
     <Compile Include="InstallationChecks\VCRedistChecker.cs" />
     <Compile Include="InstallationChecks\WindowsFirewallChecker.cs" />
-    <Compile Include="InstallationChecks\TvServerChecker_SVN.cs" />
-    <Compile Include="InstallationChecks\TvPluginChecker_SVN.cs" />
-    <Compile Include="InstallationChecks\MediaPortalChecker_SVN.cs" />
     <Compile Include="InstallationChecks\MySQLChecker.cs" />
     <Compile Include="InstallationChecks\MSSQLExpressChecker.cs" />
     <Compile Include="InstallationChecks\TvPluginChecker.cs" />
@@ -152,10 +145,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\WatchTvDlg.resx">
       <DependentUpon>WatchTvDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\InstallDlg_SVN.resx">
-      <DependentUpon>InstallDlg_SVN.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\CustomInstallationTypeDlg.resx">
@@ -240,12 +229,6 @@
     <Compile Include="Sections\WatchTvDlg.Designer.cs">
       <DependentUpon>WatchTvDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\InstallDlg_SVN.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\InstallDlg_SVN.Designer.cs">
-      <DependentUpon>InstallDlg_SVN.cs</DependentUpon>
-    </Compile>
     <Compile Include="Sections\CustomInstallationTypeDlg.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -294,7 +277,6 @@
     <Compile Include="Sections\WelcomeDlg.Designer.cs">
       <DependentUpon>WelcomeDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="SnapshotLookup.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

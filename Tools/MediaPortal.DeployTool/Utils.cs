@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using ICSharpCode.SharpZipLib.Zip;
 using System.Resources;
 using System.Globalization;
 using System.Xml;
@@ -58,8 +57,16 @@ namespace MediaPortal.DeployTool
 
     public static string GetDownloadURL(string id)
     {
-      XmlDocument doc=new XmlDocument();
-      doc.Load(Application.StartupPath+"\\ApplicationLocations.xml");
+      XmlDocument doc = new XmlDocument();
+      HTTPDownload dlg = new HTTPDownload();
+      string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
+
+      //HTTP update of the xml file with the application download URLs
+      if(!File.Exists(XmlFile))
+      {
+        DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+      }
+      doc.Load(XmlFile);
       XmlNode node=doc.SelectSingleNode("/Applications/"+id+"/URL");
       return node.InnerText;
     }
@@ -94,26 +101,5 @@ namespace MediaPortal.DeployTool
         return true;
       }
     }
-
-    public static void UnzipFile(string zipArchive, string fileToExtract, string targetFile)
-    {
-      File.Delete(targetFile);
-      ZipFile zip=new ZipFile(zipArchive);
-      int idx=zip.FindEntry(fileToExtract,true);
-      Stream zipStream=zip.GetInputStream(idx);
-      FileStream target=new FileStream(targetFile,FileMode.CreateNew);
-      byte[] buffer=new byte[1024];
-      int bytesRead;
-      do
-      {
-        bytesRead = zipStream.Read(buffer, 0, buffer.Length);
-        if (bytesRead > 0)
-          target.Write(buffer, 0, bytesRead);
-      } while (bytesRead > 0);
-      target.Close();
-      zipStream.Close();
-      zip.Close();
-    }
-
   }
 }

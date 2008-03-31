@@ -45,7 +45,6 @@ namespace MediaPortal.DeployTool
     MPSettingsWithoutTvEngine,
     TvServerSettings,
     Installation,
-    Installation_SVN,
     Finished
   }
   public sealed class DialogFlowHandler
@@ -142,9 +141,6 @@ namespace MediaPortal.DeployTool
             break;
           case DialogType.Installation:
             dlg = (DeployDialog)new InstallDlg();
-            break;
-          case DialogType.Installation_SVN:
-            dlg = (DeployDialog)new InstallDlg_SVN();
             break;
           case DialogType.Finished:
             dlg = (DeployDialog)new FinishedDlg();

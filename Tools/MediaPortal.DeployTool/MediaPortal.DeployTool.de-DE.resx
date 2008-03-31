@@ -315,9 +315,6 @@ Der PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>MediaPortal Deploy Tool</value>
     <comment>Name for the title bar of the app</comment>
   </data>
-  <data name="MainWindow_AppName_SVN" xml:space="preserve">
-    <value>MediaPortal Deploy Tool -- SVN Modus</value>
-  </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>zurück</value>
   </data>
@@ -441,9 +438,6 @@ in die Oberfläche von MediaPortal.</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
     <value>Das Deployment Tool wird Sie durch den Installationsvorgang leiten</value>
-  </data>
-  <data name="Welcome_labelHeading2_SVN" xml:space="preserve">
-    <value>Das Deployment Tool wird alle installierten Applikationen updaten</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
     <value>Bitte wählen Sie Ihre Srache aus</value>

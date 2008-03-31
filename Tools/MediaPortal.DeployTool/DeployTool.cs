@@ -43,10 +43,7 @@ namespace MediaPortal.DeployTool
 
     private void UpdateUI()
     {
-      if (InstallationProperties.Instance.Get("SVNMode")=="true")
-        this.Text = Localizer.Instance.GetString("MainWindow_AppName_SVN");
-      else
-        this.Text = Localizer.Instance.GetString("MainWindow_AppName");
+      this.Text = Localizer.Instance.GetString("MainWindow_AppName");
       labelAppHeading.Text = Localizer.Instance.GetString("MainWindow_labelAppHeading");
       backButton.Text = Localizer.Instance.GetString("MainWindow_backButton");
       nextButton.Text = Localizer.Instance.GetString("MainWindow_nextButton");
@@ -59,7 +56,6 @@ namespace MediaPortal.DeployTool
             Directory.CreateDirectory(Application.StartupPath + "\\deploy");
         Localizer.Instance.SwitchCulture("en-US");
         UpdateUI();
-        InstallationProperties.Instance.Add("SVNMode", "false");
 
         //Set default folders
         InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
@@ -119,15 +115,6 @@ namespace MediaPortal.DeployTool
         }
         #endregion
 
-        string[] cmdArgs = Environment.GetCommandLineArgs();
-        foreach (string arg in cmdArgs)
-        {
-            if (arg.ToLowerInvariant() == "svn")
-            {
-                InstallationProperties.Instance.Set("SVNMode", "true");
-                break;
-            }
-        }
         _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
         splitContainer2.Panel1.Controls.Add(_currentDialog);
         InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");

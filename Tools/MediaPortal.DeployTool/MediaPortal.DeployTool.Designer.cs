@@ -658,16 +658,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MediaPortal Deploy Tool -- SVN Mode.
-        /// </summary>
-        internal static string MainWindow_AppName_SVN {
-            get {
-                return ResourceManager.GetString("MainWindow_AppName_SVN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to back.
+        ///   Looks up a localized string similar to Back.
         /// </summary>
         internal static string MainWindow_backButton {
             get {
@@ -694,7 +685,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to next.
+        ///   Looks up a localized string similar to Next.
         /// </summary>
         internal static string MainWindow_nextButton {
             get {
@@ -766,7 +757,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to link.
+        ///   Looks up a localized string similar to Link.
         /// </summary>
         internal static string ManualDownload_linkURL {
             get {
@@ -1004,15 +995,6 @@ namespace MediaPortal.DeployTool {
         internal static string Welcome_labelHeading2 {
             get {
                 return ResourceManager.GetString("Welcome_labelHeading2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This deployment tool will update all installed applications to the current svn revision.
-        /// </summary>
-        internal static string Welcome_labelHeading2_SVN {
-            get {
-                return ResourceManager.GetString("Welcome_labelHeading2_SVN", resourceCulture);
             }
         }
         
