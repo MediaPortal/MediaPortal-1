@@ -37,14 +37,12 @@ namespace MediaPortal.DeployTool
   class WindowsFirewallChecker: IInstallationPackage
   {
     #region Firewall API functions
-      //private const string CLSID_FIREWALL_MANAGER = "{304CE942-6E39-40D8-943A-B913C40C9CD4}";
       private const string PROGID_FIREWALL_MANAGER = "HNetCfg.FwMgr";
       private const string PROGID_AUTHORIZED_APPLICATION = "HNetCfg.FwAuthorizedApplication";
       private const string PROGID_OPEN_PORT = "HNetCfg.FWOpenPort";
 
       private static NetFwTypeLib.INetFwMgr GetFirewallManager()
       {
-          //Type objectType = Type.GetTypeFromCLSID(new Guid(CLSID_FIREWALL_MANAGER));
           Type objectType = Type.GetTypeFromProgID(PROGID_FIREWALL_MANAGER);
           return Activator.CreateInstance(objectType) as NetFwTypeLib.INetFwMgr;
       }
@@ -100,7 +98,6 @@ namespace MediaPortal.DeployTool
         {
             //TVService
             app = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
-            //MessageBox.Show("Going to configure TVService application: [" + app + "]");
             AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
         } 
         if  (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
@@ -109,19 +106,16 @@ namespace MediaPortal.DeployTool
             {
                 //SQL2005 TCP Port
                 port = 1433;
-                //MessageBox.Show("Going to configure SQL2005 TCP port: [" + port.ToString() + "]");
                 GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
                 
                 //SQL2005 UDP Port
                 port = 1434;
-                //MessageBox.Show("Going to configure SQL2005 UDP port: [" + port.ToString() + "]");
                 GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
             }
             else
             {
                 //MySQL TCP Port
                 port = 3306;
-                //MessageBox.Show("Going to configure MySQL port: [" + port.ToString() + "]");
                 GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
             }
         }
@@ -166,7 +160,6 @@ namespace MediaPortal.DeployTool
           {
               INetFwAuthorizedApplication app = e.Current as INetFwAuthorizedApplication;
               string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
-              //MessageBox.Show("Checking if firewall allow [" + app + "]");
               if (app.ProcessImageFileName.ToLower() == apptv.ToLower())
                   result.state = CheckState.INSTALLED;           
           }
