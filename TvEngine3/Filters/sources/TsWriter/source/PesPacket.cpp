@@ -60,7 +60,7 @@ int CBuffer::Write(byte* data, int len, bool isStart,CPcr& pcr)
   {
 		if (len>=19)
 		{
-			CPcr::DecodeFromPesHeader(data,m_pts,m_dts);
+			CPcr::DecodeFromPesHeader(data,0,m_pts,m_dts);
 			int pos=data[8]+9;
 			if (pos < len)
 			{

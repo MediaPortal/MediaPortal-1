@@ -572,7 +572,7 @@ void CMultiplexer::PatchPtsDts(byte* pesHeader,CPcr& startPcr)
 {
 	CPcr pts;
 	CPcr dts;
-  if (!CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+  if (!CPcr::DecodeFromPesHeader(pesHeader,0,pts,dts))
   {
 		return ;
 	}

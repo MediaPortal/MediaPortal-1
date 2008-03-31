@@ -120,8 +120,8 @@ BOOL CPatParser::IsReady()
 		}
 		x++;
 	}
-	//if (m_waitForVCT && !vctReady)
-	//	return FALSE;
+	if (m_waitForVCT && !vctReady)
+		return FALSE;
 	m_finished=true;
 	return TRUE;
 }

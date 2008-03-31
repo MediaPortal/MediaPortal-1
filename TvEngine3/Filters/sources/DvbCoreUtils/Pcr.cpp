@@ -88,12 +88,15 @@ void CPcr::Decode(byte* data)
 	IsValid=true;
 }
 
-bool CPcr::DecodeFromPesHeader(byte* pesHeader, CPcr& pts, CPcr& dts)
+bool CPcr::DecodeFromPesHeader(byte* pesHeader,int payloadStart,CPcr& pts, CPcr& dts)
 {
   pts.Reset();
 	dts.Reset();
 	bool ptsAvailable=false;
 	bool dtsAvailable=false;
+
+	if (payloadStart+8>187) return false;
+
 	if ( (pesHeader[7]&0x80)!=0) 
 	{
 		ptsAvailable=true;
@@ -101,6 +104,7 @@ bool CPcr::DecodeFromPesHeader(byte* pesHeader, CPcr& pts, CPcr& dts)
 	}
 	if (ptsAvailable)
 	{	
+		if (payloadStart+13>187) return false;
 		//if (PTS_DTS_flags =='10' ) {
     //  '0010'        4 bslbf       0010                9
     //  PTS [32..30]  3 bslbf           111             9
@@ -126,6 +130,7 @@ bool CPcr::DecodeFromPesHeader(byte* pesHeader, CPcr& pts, CPcr& dts)
 
 	if (dtsAvailable)
 	{
+		if (payloadStart+18>187) return false;
 		// 14       15        16        17      18
 		//76543210 76543210 76543210 76543210 76543210
 		//0001dddM dddddddd dddddddM dddddddd dddddddM 

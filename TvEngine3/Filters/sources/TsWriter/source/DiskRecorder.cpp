@@ -1289,7 +1289,7 @@ void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 	byte* pesHeader=&tsPacket[start];
 	CPcr pts;
 	CPcr dts;
-	if (!CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+	if (!CPcr::DecodeFromPesHeader(pesHeader,start,pts,dts))
 	{
 		return ;
 	}

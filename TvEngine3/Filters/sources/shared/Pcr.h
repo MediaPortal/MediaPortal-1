@@ -30,7 +30,7 @@ public:
 	virtual ~CPcr(void);
   void   Reset();
   void   Decode(byte* data);
-  static bool DecodeFromPesHeader(byte* pesHeader, CPcr& pts, CPcr& dts);
+  static bool DecodeFromPesHeader(byte* pesHeader,int payloadStart,CPcr& pts, CPcr& dts);
   void   FromClock(double clock);
   double ToClock() const;
   void   Time(int& day, int& hour, int &minutes, int& seconds, int & millsecs);
