@@ -288,7 +288,10 @@ Section "MediaPortal core files (required)" SecCore
 
   ; ========================================
   ; MediaPortalEXE
-  File "..\Configuration\bin\${BUILD_TYPE}\MediaPortal.*"
+  ;should be           , but because of postbuild.bat there are too much matching files
+  ;File "..\xbmc\bin\Release\${BUILD_TYPE}\MediaPortal.*"
+  File "..\xbmc\bin\Release\${BUILD_TYPE}\MediaPortal.exe"
+  File "..\xbmc\bin\Release\${BUILD_TYPE}\MediaPortal.exe.config"
   ; Configuration
   File "..\Configuration\bin\${BUILD_TYPE}\Configuration.*"
 
