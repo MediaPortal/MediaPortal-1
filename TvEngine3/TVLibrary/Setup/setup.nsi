@@ -183,9 +183,6 @@ ShowUninstDetails show
 # USEFUL MACROS
 #---------------------------------------------------------------------------
 !macro SectionList MacroName
-  ${If} $DeployMode == 1
-    MessageBox MB_OK|MB_ICONEXCLAMATION "SectionList..."
-  ${EndIf}
   ; This macro used to perform operation on multiple sections.
   ; List all of your components in following manner here.
   !insertmacro "${MacroName}" "SecServer"
@@ -197,9 +194,6 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 ${MementoSection} "MediaPortal TV Server" SecServer
   DetailPrint "Installing MediaPortal TV Server..."
-  ${If} $DeployMode == 1
-  MessageBox MB_OK|MB_ICONEXCLAMATION "Installing MediaPortal TV Server..."
-  ${EndIf}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
@@ -314,9 +308,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
   DetailPrint "Uninstalling MediaPortal TV Server..."
-  ${If} $DeployMode == 1
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Uninstalling MediaPortal TV Server..."
-  ${EndIf}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
@@ -405,9 +396,6 @@ ${MementoSectionEnd}
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
   DetailPrint "Installing MediaPortal TV Client plugin..."
-  ${If} $DeployMode == 1
-  MessageBox MB_OK|MB_ICONEXCLAMATION "Installing MediaPortal TV Client plugin..."
-  ${EndIf}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
@@ -450,9 +438,6 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
   DetailPrint "Uninstalling MediaPortal TV Client plugin..."
-  ${If} $DeployMode == 1
-  MessageBox MB_OK|MB_ICONEXCLAMATION "Uninstalling MediaPortal TV Client plugin..."
-  ${EndIf}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
@@ -491,9 +476,6 @@ ${MementoSectionDone}
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
     DetailPrint "Doing post installation stuff..."
-    ${If} $DeployMode == 1
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Doing post installation stuff..."
-    ${EndIf}
 
     ${If} $DeployMode == 1
       MessageBox MB_OK|MB_ICONEXCLAMATION "DeployMode == 1"
