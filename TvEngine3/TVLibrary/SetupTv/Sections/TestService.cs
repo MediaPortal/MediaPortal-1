@@ -33,6 +33,7 @@ using TvLibrary.Log;
 
 using Gentle.Common;
 using Gentle.Framework;
+using SetupControls;
 namespace SetupTv.Sections
 {
   public partial class TestService : SectionSettings

@@ -32,9 +32,11 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Net;
 using System.Net.Sockets;
-using MediaPortal.UserInterface.Controls;
 
-namespace SetupTv
+using MediaPortal.UserInterface.Controls;
+using SetupTv;
+
+namespace SetupControls
 {
   public partial class SettingsForm : Form
   {

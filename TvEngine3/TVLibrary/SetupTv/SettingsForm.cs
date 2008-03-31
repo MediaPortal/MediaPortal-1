@@ -44,7 +44,7 @@ namespace SetupTv
   /// <summary>
   /// Summary description for Settings.
   /// </summary>
-  public class SetupTvSettingsForm : SettingsForm
+  public class SetupTvSettingsForm : SetupControls.SettingsForm
   {
     private PluginLoader _pluginLoader = new PluginLoader();
     private Plugins pluginsRoot;

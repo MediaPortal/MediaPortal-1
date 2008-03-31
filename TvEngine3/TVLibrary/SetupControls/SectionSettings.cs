@@ -29,6 +29,8 @@ using System.Data;
 using System.Windows.Forms;
 using System.Xml;
 
+using SetupControls;
+
 namespace SetupTv
 {
   public partial class SectionSettings : System.Windows.Forms.UserControl

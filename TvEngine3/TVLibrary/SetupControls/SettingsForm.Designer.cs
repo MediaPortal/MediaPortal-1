@@ -23,7 +23,7 @@
 
 #endregion
 
-namespace SetupTv
+namespace SetupControls
 {
   partial class SettingsForm
   {

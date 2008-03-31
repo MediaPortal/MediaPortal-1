@@ -83,6 +83,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\FormEditCard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FormEditCard.designer.cs">
+      <DependentUpon>FormEditCard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FormEditChannel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FormEditChannel.designer.cs">
+      <DependentUpon>FormEditChannel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FormEditIpAdress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FormEditIpAdress.designer.cs">
+      <DependentUpon>FormEditIpAdress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FormPreview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FormPreview.designer.cs">
+      <DependentUpon>FormPreview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\GroupNameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\GroupNameForm.designer.cs">
+      <DependentUpon>GroupNameForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,10 +163,6 @@
     <EmbeddedResource Include="Sections\CardDvbT.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CardDvbT.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GroupNameForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>GroupNameForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TestService.resx">
       <SubType>Designer</SubType>
@@ -236,9 +262,6 @@
     <Compile Include="Sections\Combinations.Designer.cs">
       <DependentUpon>Combinations.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\ComboBoxEx .cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Sections\RadioCombinations.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -250,36 +273,6 @@
     </Compile>
     <Compile Include="Sections\RadioGroups.Designer.cs">
       <DependentUpon>RadioGroups.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\FormEditCard.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Sections\FormEditCard.Designer.cs">
-      <DependentUpon>FormEditCard.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\FormEditChannel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Sections\FormEditChannel.Designer.cs">
-      <DependentUpon>FormEditChannel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\FormEditIpAdress.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Sections\FormEditIpAdress.Designer.cs">
-      <DependentUpon>FormEditIpAdress.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\FormPreview.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Sections\FormPreview.Designer.cs">
-      <DependentUpon>FormPreview.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\GroupNameForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Sections\GroupNameForm.Designer.cs">
-      <DependentUpon>GroupNameForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\player.cs" />
     <Compile Include="Sections\Plugins.cs">
@@ -423,6 +416,26 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Dialogs\FormEditCard.resx">
+      <DependentUpon>FormEditCard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FormEditChannel.resx">
+      <DependentUpon>FormEditChannel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FormEditIpAdress.resx">
+      <DependentUpon>FormEditIpAdress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FormPreview.resx">
+      <DependentUpon>FormPreview.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\GroupNameForm.resx">
+      <DependentUpon>GroupNameForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="NotifyForm.resx">
       <DependentUpon>NotifyForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -446,22 +459,6 @@
     <EmbeddedResource Include="Sections\RadioGroups.resx">
       <DependentUpon>RadioGroups.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\FormEditCard.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FormEditCard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\FormEditChannel.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FormEditChannel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\FormEditIpAdress.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FormEditIpAdress.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\FormPreview.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FormPreview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Plugins.resx">
       <SubType>Designer</SubType>
