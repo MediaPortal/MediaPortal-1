@@ -8,6 +8,10 @@ namespace MediaPortal.DeployTool
   {
     NOT_INSTALLED,
     INSTALLED,
+    NOT_CONFIGURED,
+    CONFIGURED,
+    NOT_REMOVED,
+    REMOVED,
     VERSION_MISMATCH,
     VERSION_LOOKUP_FAILED
   }

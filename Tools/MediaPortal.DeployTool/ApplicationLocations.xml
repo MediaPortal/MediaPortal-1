@@ -12,11 +12,11 @@
 	   <FILE>mysql-essential-5.0.45-win32.msi</FILE>
     </MySQL>	
 	<MediaPortal>
-    <URL>http://not_used</URL>
+    <URL>http://install.team-mediaportal.com/DeployTool</URL>
 		<FILE>setup-mediaportal.exe</FILE>
 	</MediaPortal>
 	<TvServer>
-		<URL>http://not_used</URL>
+		<URL>http://install.team-mediaportal.com/DeployTool</URL>
 		<FILE>setup-tve3.exe</FILE>
 	</TvServer>
 	<VCRedist>

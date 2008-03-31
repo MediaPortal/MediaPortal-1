@@ -110,6 +110,26 @@ namespace MediaPortal.DeployTool
             item.SubItems.Add(Localizer.Instance.GetString("Install_actionInstall"));
           item.ForeColor = System.Drawing.Color.Red;
           break;
+        case CheckState.CONFIGURED:
+            item.SubItems.Add(Localizer.Instance.GetString("Install_stateConfigured"));
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+            item.ForeColor = System.Drawing.Color.Green;
+          break;
+        case CheckState.NOT_CONFIGURED:
+            item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotConfigured"));
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionConfigure"));
+            item.ForeColor = System.Drawing.Color.Red;
+          break;
+        case CheckState.NOT_REMOVED:
+            item.SubItems.Add(Localizer.Instance.GetString("Install_stateUninstall"));
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionRemove"));
+            item.ForeColor = System.Drawing.Color.Red;
+          break;
+        case CheckState.REMOVED:
+            item.SubItems.Add(Localizer.Instance.GetString("Install_stateRemoved"));
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+            item.ForeColor = System.Drawing.Color.Green;
+          break;
         case CheckState.VERSION_MISMATCH:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateVersionMismatch"));
           if (result.needsDownload)
@@ -199,6 +219,24 @@ namespace MediaPortal.DeployTool
             {
               Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"), package.GetDisplayName()));
               return false;
+            }
+            break;
+          case CheckState.NOT_CONFIGURED:
+            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgConfiguring");
+            Update();
+            if (!package.Install())
+            {
+                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errConfigureFailed"), package.GetDisplayName()));
+                return false;
+            }
+            break;
+          case CheckState.REMOVED:
+            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgRemoving");
+            Update();
+            if (!package.Install())
+            {
+                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errRemoveFailed"), package.GetDisplayName()));
+                return false;
             }
             break;
           case CheckState.VERSION_MISMATCH:

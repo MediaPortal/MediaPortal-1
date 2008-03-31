@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
   {
     public string GetDisplayName()
     {
-      return "Remove MP/TV-Engine old msi packages";
+      return "MP/TV-Engine old msi packages";
     }
     public bool Download()
     {
@@ -77,23 +77,23 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = false;
-      result.state = CheckState.INSTALLED;
+      result.state = CheckState.REMOVED;
 
       //MP
       if (CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}") != null)
-          result.state = CheckState.VERSION_MISMATCH;
+          result.state = CheckState.NOT_REMOVED;
 
       //TVServer
       if( CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
-          result.state = CheckState.VERSION_MISMATCH;
+          result.state = CheckState.NOT_REMOVED;
 
       //TVClient old
       if( CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
-          result.state = CheckState.VERSION_MISMATCH;
+          result.state = CheckState.NOT_REMOVED;
 
       //TVClient new
       if( CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}") != null)
-          result.state = CheckState.VERSION_MISMATCH;
+          result.state = CheckState.NOT_REMOVED;
 
       return result;
     }

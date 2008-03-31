@@ -143,32 +143,32 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = false;
-      result.state = CheckState.INSTALLED;
+      result.state = CheckState.CONFIGURED;
       INetFwMgr fwMgr = GetFirewallManager();
 
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
       {
           //If firewall is not enabled, no need to configure it
           if (fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled == false)
-              result.state = CheckState.INSTALLED;
+              result.state = CheckState.CONFIGURED;
 
           System.Collections.IEnumerator e = null;
           e = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
 
-          result.state = CheckState.NOT_INSTALLED;
+          result.state = CheckState.NOT_CONFIGURED;
           while (e.MoveNext())
           {
               INetFwAuthorizedApplication app = e.Current as INetFwAuthorizedApplication;
               string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
               if (app.ProcessImageFileName.ToLower() == apptv.ToLower())
-                  result.state = CheckState.INSTALLED;           
+                  result.state = CheckState.CONFIGURED;           
           }
       }
-      if (result.state == CheckState.INSTALLED)
+      if (result.state == CheckState.CONFIGURED)
       {
         if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
         {
-            result.state = CheckState.NOT_INSTALLED;
+            result.state = CheckState.NOT_CONFIGURED;
             
             System.Collections.IEnumerator e = null;
             e = fwMgr.LocalPolicy.CurrentProfile.GloballyOpenPorts.GetEnumerator();
@@ -178,13 +178,13 @@ namespace MediaPortal.DeployTool
                 INetFwOpenPort app = e.Current as INetFwOpenPort;
                 if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
                 {
-                    if(app.Port == 1433)  
-                        result.state = CheckState.INSTALLED;
+                    if(app.Port == 1433)
+                        result.state = CheckState.CONFIGURED;
                 }
                 else
                 {
                     if(app.Port == 3306)
-                        result.state = CheckState.INSTALLED;
+                        result.state = CheckState.CONFIGURED;
                 }
             }
         }

@@ -346,7 +346,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Uninstalling...</value>
   </data>
   <data name="Install_stateInstalled" xml:space="preserve">
-    <value>Ok</value>
+    <value>Installed</value>
   </data>
   <data name="Install_stateNotInstalled" xml:space="preserve">
     <value>Not installed</value>
@@ -448,5 +448,32 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Configure</value>
+  </data>
+  <data name="Install_actionRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Install_errConfigureFailed" xml:space="preserve">
+    <value>Configuration failed</value>
+  </data>
+  <data name="Install_errRemoveFailed" xml:space="preserve">
+    <value>Uninstall failed</value>
+  </data>
+  <data name="Install_msgConfiguring" xml:space="preserve">
+    <value>Configuring</value>
+  </data>
+  <data name="Install_msgRemoving" xml:space="preserve">
+    <value>Uninstalling</value>
+  </data>
+  <data name="Install_stateConfigured" xml:space="preserve">
+    <value>Configured</value>
+  </data>
+  <data name="Install_stateNotConfigured" xml:space="preserve">
+    <value>Unconfigured</value>
+  </data>
+  <data name="Install_stateRemoved" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="Install_stateUninstall" xml:space="preserve">
+    <value>Uninstall</value>
   </data>
 </root>
