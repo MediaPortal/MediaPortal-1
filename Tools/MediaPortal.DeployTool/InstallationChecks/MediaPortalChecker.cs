@@ -50,7 +50,7 @@ namespace MediaPortal.DeployTool
     {
       string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal");
       string targetDir = InstallationProperties.Instance["MPDir"];
-      Process setup = Process.Start(nsis, "/D=\"" + targetDir + "\"");
+      Process setup = Process.Start(nsis, "/S /D=" + targetDir);
       try
       {
           setup.WaitForExit();
