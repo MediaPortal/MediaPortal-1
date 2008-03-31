@@ -864,6 +864,18 @@ Function .onInit
         !insertmacro UnselectSection ${SecGabest}
     ${EndIf}
 
+    ; check if old mp 0.2.2 is installed
+    ${If} ${MP022IsInstalled}
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP022)" IDOK 0
+        Abort
+    ${EndIf}
+
+    ; check if old mp 0.2.3 is installed.
+    ${If} ${MP023IsInstalled}
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)" IDOK 0
+        Abort
+    ${EndIf}
+
     ; check if minimum Windows version is XP
     ${If} ${AtMostWin2000}
         MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
