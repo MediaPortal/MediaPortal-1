@@ -248,6 +248,12 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Sections\Project.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Project.designer.cs">
+      <DependentUpon>Project.cs</DependentUpon>
+    </Compile>
     <Compile Include="Subdialogs\EditCaptureCardForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -520,9 +526,6 @@
     <Compile Include="Sections\PluginsNew.Designer.cs">
       <DependentUpon>PluginsNew.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\Project.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\Radio.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -608,6 +611,10 @@
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="Sections\Project.resx">
+      <DependentUpon>Project.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\EditCaptureCardForm.resx">
       <DependentUpon>EditCaptureCardForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -848,9 +855,6 @@
     <EmbeddedResource Include="Sections\PluginsNew.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PluginsNew.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Project.resx">
-      <DependentUpon>Project.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Radio.resx">
       <DependentUpon>Radio.cs</DependentUpon>
