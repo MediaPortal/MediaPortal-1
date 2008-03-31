@@ -39,4 +39,4 @@ LangString TEXT_MSGBOX_REMOVE_ALL                 ${LANG_ENGLISH} "!!! ATTENTION
 LangString TEXT_MSGBOX_REMOVE_ALL_STUPID          ${LANG_ENGLISH} "!!! ATTENTION !!!$\r$\nAgain for those who slept the msgBox before. :( $(TEXT_MSGBOX_REMOVE_ALL)"
 
 LangString TEXT_MSGBOX_ERROR_MSI_CLIENT           ${LANG_ENGLISH} "Old MSI-based TV Client plugin is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
-LangString TEXT_MSGBOX_ERROR_MSI_SERVER           ${LANG_ENGLISH} "Old MSI-based TV Server plugin is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
+LangString TEXT_MSGBOX_ERROR_MSI_SERVER           ${LANG_ENGLISH} "Old MSI-based TV Server is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
