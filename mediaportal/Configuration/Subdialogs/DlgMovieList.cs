@@ -107,93 +107,106 @@ namespace MediaPortal.Configuration.Sections
     {
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelFileName = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textBoxTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonFind = new MediaPortal.UserInterface.Controls.MPButton();
+      this.textBoxTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelFileName = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // listView1
       // 
+      this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                this.columnHeader1});
-      this.listView1.Location = new System.Drawing.Point(8, 56);
+            this.columnHeader1});
+      this.listView1.Location = new System.Drawing.Point(10, 60);
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(360, 200);
+      this.listView1.Size = new System.Drawing.Size(442, 244);
       this.listView1.TabIndex = 0;
+      this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
       this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
       // 
       // columnHeader1
       // 
       this.columnHeader1.Text = "Name";
-      this.columnHeader1.Width = 350;
-      // 
-      // button1
-      // 
-      this.button1.Location = new System.Drawing.Point(264, 320);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(40, 23);
-      this.button1.TabIndex = 1;
-      this.button1.Text = "Ok";
-      this.button1.Click += new System.EventHandler(this.button1_Click);
-      // 
-      // button2
-      // 
-      this.button2.Location = new System.Drawing.Point(312, 320);
-      this.button2.Name = "button2";
-      this.button2.Size = new System.Drawing.Size(56, 23);
-      this.button2.TabIndex = 2;
-      this.button2.Text = "Cancel";
-      this.button2.Click += new System.EventHandler(this.button2_Click);
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(16, 8);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(100, 16);
-      this.label1.TabIndex = 3;
-      this.label1.Text = "IMDB resutls for:";
-      // 
-      // labelFileName
-      // 
-      this.labelFileName.Location = new System.Drawing.Point(24, 32);
-      this.labelFileName.Name = "labelFileName";
-      this.labelFileName.Size = new System.Drawing.Size(344, 16);
-      this.labelFileName.TabIndex = 4;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(16, 272);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(48, 16);
-      this.label2.TabIndex = 5;
-      this.label2.Text = "Title:";
-      // 
-      // textBoxTitle
-      // 
-      this.textBoxTitle.Location = new System.Drawing.Point(72, 264);
-      this.textBoxTitle.Name = "textBoxTitle";
-      this.textBoxTitle.Size = new System.Drawing.Size(192, 20);
-      this.textBoxTitle.TabIndex = 6;
-      this.textBoxTitle.Text = "";
+      this.columnHeader1.Width = 572;
       // 
       // buttonFind
       // 
-      this.buttonFind.Location = new System.Drawing.Point(280, 264);
+      this.buttonFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonFind.Location = new System.Drawing.Point(393, 310);
       this.buttonFind.Name = "buttonFind";
-      this.buttonFind.Size = new System.Drawing.Size(40, 23);
+      this.buttonFind.Size = new System.Drawing.Size(59, 26);
       this.buttonFind.TabIndex = 7;
       this.buttonFind.Text = "Find";
+      this.buttonFind.UseVisualStyleBackColor = true;
       this.buttonFind.Click += new System.EventHandler(this.buttonFind_Click);
+      // 
+      // textBoxTitle
+      // 
+      this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTitle.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxTitle.Location = new System.Drawing.Point(45, 311);
+      this.textBoxTitle.Name = "textBoxTitle";
+      this.textBoxTitle.Size = new System.Drawing.Size(342, 22);
+      this.textBoxTitle.TabIndex = 6;
+      // 
+      // label2
+      // 
+      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label2.Location = new System.Drawing.Point(7, 315);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(41, 18);
+      this.label2.TabIndex = 5;
+      this.label2.Text = "Title:";
+      // 
+      // labelFileName
+      // 
+      this.labelFileName.Location = new System.Drawing.Point(10, 28);
+      this.labelFileName.Name = "labelFileName";
+      this.labelFileName.Size = new System.Drawing.Size(443, 18);
+      this.labelFileName.TabIndex = 4;
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(8, 9);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(120, 19);
+      this.label1.TabIndex = 3;
+      this.label1.Text = "IMDB resutls for:";
+      // 
+      // button2
+      // 
+      this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button2.Location = new System.Drawing.Point(393, 340);
+      this.button2.Name = "button2";
+      this.button2.Size = new System.Drawing.Size(59, 27);
+      this.button2.TabIndex = 2;
+      this.button2.Text = "Cancel";
+      this.button2.UseVisualStyleBackColor = true;
+      this.button2.Click += new System.EventHandler(this.button2_Click);
+      // 
+      // button1
+      // 
+      this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button1.Location = new System.Drawing.Point(327, 340);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(60, 27);
+      this.button1.TabIndex = 1;
+      this.button1.Text = "Ok";
+      this.button1.UseVisualStyleBackColor = true;
+      this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
       // DlgMovieList
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(384, 350);
+      this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
+      this.ClientSize = new System.Drawing.Size(464, 376);
       this.Controls.Add(this.buttonFind);
       this.Controls.Add(this.textBoxTitle);
       this.Controls.Add(this.label2);
@@ -202,10 +215,12 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.button2);
       this.Controls.Add(this.button1);
       this.Controls.Add(this.listView1);
+      this.MinimumSize = new System.Drawing.Size(472, 408);
       this.Name = "DlgMovieList";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "IMDB Movie results";
-      this.StartPosition = FormStartPosition.CenterScreen;
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion

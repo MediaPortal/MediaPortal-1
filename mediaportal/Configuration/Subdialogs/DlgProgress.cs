@@ -87,93 +87,98 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-        this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
-        this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.progressBar = new System.Windows.Forms.ProgressBar();
-        this.progressBar1 = new System.Windows.Forms.ProgressBar();
-        this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
-        this.SuspendLayout();
-        // 
-        // button2
-        // 
-        this.button2.Location = new System.Drawing.Point(221, 110);
-        this.button2.Name = "button2";
-        this.button2.Size = new System.Drawing.Size(56, 23);
-        this.button2.TabIndex = 2;
-        this.button2.Text = "Cancel";
-        this.button2.UseVisualStyleBackColor = true;
-        this.button2.Click += new System.EventHandler(this.button2_Click);
-        // 
-        // label1
-        // 
-        this.label1.Location = new System.Drawing.Point(16, 8);
-        this.label1.Name = "label1";
-        this.label1.Size = new System.Drawing.Size(351, 16);
-        this.label1.TabIndex = 3;
-        this.label1.Text = "label1";
-        // 
-        // label2
-        // 
-        this.label2.Location = new System.Drawing.Point(16, 24);
-        this.label2.Name = "label2";
-        this.label2.Size = new System.Drawing.Size(351, 16);
-        this.label2.TabIndex = 5;
-        this.label2.Text = "label2";
-        // 
-        // progressBar
-        // 
-        this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.progressBar.Location = new System.Drawing.Point(12, 43);
-        this.progressBar.Name = "progressBar";
-        this.progressBar.Size = new System.Drawing.Size(348, 16);
-        this.progressBar.TabIndex = 5;
-        // 
-        // progressBar1
-        // 
-        this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.progressBar1.Location = new System.Drawing.Point(12, 88);
-        this.progressBar1.Name = "progressBar1";
-        this.progressBar1.Size = new System.Drawing.Size(348, 16);
-        this.progressBar1.TabIndex = 6;
-        // 
-        // mpLabel1
-        // 
-        this.mpLabel1.Location = new System.Drawing.Point(12, 69);
-        this.mpLabel1.Name = "mpLabel1";
-        this.mpLabel1.Size = new System.Drawing.Size(351, 16);
-        this.mpLabel1.TabIndex = 7;
-        this.mpLabel1.Text = "mpLabel1";
-        // 
-        // mpButton1
-        // 
-        this.mpButton1.Location = new System.Drawing.Point(283, 110);
-        this.mpButton1.Name = "mpButton1";
-        this.mpButton1.Size = new System.Drawing.Size(77, 23);
-        this.mpButton1.TabIndex = 8;
-        this.mpButton1.Text = "Cancel Scan";
-        this.mpButton1.UseVisualStyleBackColor = true;
-        this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
-        // 
-        // DlgProgress
-        // 
-        this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-        this.ClientSize = new System.Drawing.Size(384, 140);
-        this.Controls.Add(this.mpButton1);
-        this.Controls.Add(this.mpLabel1);
-        this.Controls.Add(this.progressBar1);
-        this.Controls.Add(this.label2);
-        this.Controls.Add(this.label1);
-        this.Controls.Add(this.button2);
-        this.Controls.Add(this.progressBar);
-        this.Name = "DlgProgress";
-        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-        this.Text = "Searching IMDB...";
-        this.Load += new System.EventHandler(this.DlgProgress_Load);
-        this.ResumeLayout(false);
+      this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.progressBar = new System.Windows.Forms.ProgressBar();
+      this.progressBar1 = new System.Windows.Forms.ProgressBar();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.SuspendLayout();
+      // 
+      // button2
+      // 
+      this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button2.Location = new System.Drawing.Point(313, 135);
+      this.button2.Name = "button2";
+      this.button2.Size = new System.Drawing.Size(67, 26);
+      this.button2.TabIndex = 2;
+      this.button2.Text = "Cancel";
+      this.button2.UseVisualStyleBackColor = true;
+      this.button2.Click += new System.EventHandler(this.button2_Click);
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(11, 9);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(469, 19);
+      this.label1.TabIndex = 3;
+      this.label1.Text = "label1";
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(11, 35);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(469, 18);
+      this.label2.TabIndex = 5;
+      this.label2.Text = "label2";
+      // 
+      // progressBar
+      // 
+      this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar.Location = new System.Drawing.Point(14, 56);
+      this.progressBar.Name = "progressBar";
+      this.progressBar.Size = new System.Drawing.Size(366, 18);
+      this.progressBar.TabIndex = 5;
+      // 
+      // progressBar1
+      // 
+      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar1.Location = new System.Drawing.Point(14, 108);
+      this.progressBar1.Name = "progressBar1";
+      this.progressBar1.Size = new System.Drawing.Size(366, 18);
+      this.progressBar1.TabIndex = 6;
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpLabel1.Location = new System.Drawing.Point(14, 88);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(422, 18);
+      this.mpLabel1.TabIndex = 7;
+      this.mpLabel1.Text = "mpLabel1";
+      // 
+      // mpButton1
+      // 
+      this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButton1.Location = new System.Drawing.Point(209, 135);
+      this.mpButton1.Name = "mpButton1";
+      this.mpButton1.Size = new System.Drawing.Size(98, 26);
+      this.mpButton1.TabIndex = 8;
+      this.mpButton1.Text = "Cancel Scan";
+      this.mpButton1.UseVisualStyleBackColor = true;
+      this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
+      // 
+      // DlgProgress
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
+      this.ClientSize = new System.Drawing.Size(392, 168);
+      this.Controls.Add(this.mpButton1);
+      this.Controls.Add(this.mpLabel1);
+      this.Controls.Add(this.progressBar1);
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this.label1);
+      this.Controls.Add(this.button2);
+      this.Controls.Add(this.progressBar);
+      this.MaximumSize = new System.Drawing.Size(500, 200);
+      this.MinimumSize = new System.Drawing.Size(300, 200);
+      this.Name = "DlgProgress";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+      this.Text = "Searching IMDB...";
+      this.Load += new System.EventHandler(this.DlgProgress_Load);
+      this.ResumeLayout(false);
 
     }
     #endregion

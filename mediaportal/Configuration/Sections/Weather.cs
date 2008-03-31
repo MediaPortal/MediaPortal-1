@@ -84,7 +84,7 @@ namespace MediaPortal.Configuration.Sections
       // Populate combo boxes with default values
       //
       temperatureComboBox.Items.AddRange(new string[] { "Celsius", "Fahrenheit" });
-      windSpeedComboBox.Items.AddRange(new string[] { "kilometer/hour", "miles per hour", "meter/second", "Knots", "Beaufort" });
+      windSpeedComboBox.Items.AddRange(new string[] { "kilometers / hour", "miles / hour", "meters / second", "Knots", "Beaufort" });
     }
 
     /// <summary>

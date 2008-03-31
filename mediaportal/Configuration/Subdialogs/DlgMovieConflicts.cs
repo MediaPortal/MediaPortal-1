@@ -110,11 +110,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listView1
       // 
+      this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-      this.listView1.Location = new System.Drawing.Point(8, 34);
+      this.listView1.Location = new System.Drawing.Point(10, 39);
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(360, 200);
+      this.listView1.Size = new System.Drawing.Size(444, 267);
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
@@ -123,13 +126,14 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader1
       // 
       this.columnHeader1.Text = "Name";
-      this.columnHeader1.Width = 350;
+      this.columnHeader1.Width = 440;
       // 
       // button2
       // 
-      this.button2.Location = new System.Drawing.Point(312, 277);
+      this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button2.Location = new System.Drawing.Point(386, 343);
       this.button2.Name = "button2";
-      this.button2.Size = new System.Drawing.Size(56, 23);
+      this.button2.Size = new System.Drawing.Size(68, 26);
       this.button2.TabIndex = 2;
       this.button2.Text = "Close";
       this.button2.UseVisualStyleBackColor = true;
@@ -137,33 +141,37 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 8);
+      this.label1.Location = new System.Drawing.Point(19, 9);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(352, 23);
+      this.label1.Size = new System.Drawing.Size(423, 27);
       this.label1.TabIndex = 3;
       this.label1.Text = "There was a conflict with the following files/movies:";
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(8, 242);
+      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label2.Location = new System.Drawing.Point(8, 312);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(49, 16);
+      this.label2.Size = new System.Drawing.Size(39, 19);
       this.label2.TabIndex = 5;
       this.label2.Text = "Title:";
       // 
       // textBoxTitle
       // 
+      this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTitle.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxTitle.Location = new System.Drawing.Point(77, 238);
+      this.textBoxTitle.Location = new System.Drawing.Point(43, 312);
       this.textBoxTitle.Name = "textBoxTitle";
-      this.textBoxTitle.Size = new System.Drawing.Size(192, 20);
+      this.textBoxTitle.Size = new System.Drawing.Size(337, 22);
       this.textBoxTitle.TabIndex = 6;
       // 
       // buttonFind
       // 
-      this.buttonFind.Location = new System.Drawing.Point(312, 235);
+      this.buttonFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonFind.Location = new System.Drawing.Point(386, 310);
       this.buttonFind.Name = "buttonFind";
-      this.buttonFind.Size = new System.Drawing.Size(40, 23);
+      this.buttonFind.Size = new System.Drawing.Size(68, 27);
       this.buttonFind.TabIndex = 7;
       this.buttonFind.Text = "Find";
       this.buttonFind.UseVisualStyleBackColor = true;
@@ -171,14 +179,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // DlgMovieConflicts
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(384, 310);
+      this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
+      this.ClientSize = new System.Drawing.Size(464, 376);
       this.Controls.Add(this.buttonFind);
       this.Controls.Add(this.textBoxTitle);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.button2);
       this.Controls.Add(this.listView1);
+      this.MinimumSize = new System.Drawing.Size(472, 408);
       this.Name = "DlgMovieConflicts";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "IMDB Movie conflicts";
