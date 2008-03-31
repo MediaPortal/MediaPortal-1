@@ -72,6 +72,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelHomepage = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabelPayPal = new System.Windows.Forms.LinkLabel();
       this.labelMePo = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.helpButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxInfo.SuspendLayout();
       this.groupBoxContact.SuspendLayout();
       this.SuspendLayout();
@@ -254,8 +255,20 @@ namespace MediaPortal.Configuration.Sections
       this.labelMePo.Size = new System.Drawing.Size(258, 202);
       this.labelMePo.TabIndex = 9;
       // 
+      // helpButton
+      // 
+      this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.helpButton.Location = new System.Drawing.Point(364, 382);
+      this.helpButton.Name = "helpButton";
+      this.helpButton.Size = new System.Drawing.Size(105, 23);
+      this.helpButton.TabIndex = 10;
+      this.helpButton.Text = "&Update Help";
+      this.helpButton.UseVisualStyleBackColor = true;
+      this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+      // 
       // Project
       // 
+      this.Controls.Add(this.helpButton);
       this.Controls.Add(this.linkLabelPayPal);
       this.Controls.Add(this.groupBoxContact);
       this.Controls.Add(this.groupBoxInfo);
@@ -266,6 +279,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxContact.ResumeLayout(false);
       this.groupBoxContact.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -286,5 +300,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelInfo2;
     private System.Windows.Forms.LinkLabel linkLabelPayPal;
     private MediaPortal.UserInterface.Controls.MPLabel labelMePo;
+    private MediaPortal.UserInterface.Controls.MPButton helpButton;
   }
 }

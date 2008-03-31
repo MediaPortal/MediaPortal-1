@@ -98,5 +98,10 @@ namespace MediaPortal.Configuration.Sections
         System.Diagnostics.Process.Start(sInfo);
       }
     }
+    
+    private void helpButton_Click(object sender, EventArgs e)
+    {
+      HelpSystem.UpdateHelpReferences("MediaPortal");
+    }
   }
 }

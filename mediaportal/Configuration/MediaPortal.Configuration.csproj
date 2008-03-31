@@ -248,6 +248,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="HelpSystem.cs" />
     <Compile Include="Sections\Project.cs">
       <SubType>UserControl</SubType>
     </Compile>

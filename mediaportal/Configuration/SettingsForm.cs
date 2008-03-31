@@ -56,8 +56,6 @@ namespace MediaPortal.Configuration
     private string _windowName = "MediaPortal - Setup";
     private SectionSettings _previousSection = null;
 
-    string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Application.StartupPath);
-
     [DllImport("User32.")]
     public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
 
@@ -383,12 +381,6 @@ namespace MediaPortal.Configuration
       AddSection(new PluginsNew());
       // Select first item in the section tree
       sectionTree.SelectedNode = sectionTree.Nodes[0];
-
-      if (!System.IO.File.Exists(helpReferencesFile))
-      {
-        Log.Error("File not found: {0}", helpReferencesFile);
-        helpButton.Enabled = false;
-      }
 
       if (splashScreen != null)
       {
@@ -970,32 +962,7 @@ namespace MediaPortal.Configuration
 
     private void helpButton_Click(object sender, EventArgs e)
     {
-      if (!System.IO.File.Exists(helpReferencesFile))
-      {
-        Log.Error("File not found: {0}", helpReferencesFile);
-        return;
-      }
-
-      XmlDocument doc = new XmlDocument();
-      doc.Load(helpReferencesFile);
-
-      XmlNode generalNode = doc.SelectSingleNode("/helpsystem/general");
-      XmlNodeList sectionNodes = doc.SelectNodes("/helpsystem/sections/section");
-
-      for (int i = 0; i < sectionNodes.Count; i++)
-      {
-        XmlNode sectionNode = sectionNodes[i];
-        if (sectionNode.Attributes["name"].Value == _previousSection.ToString())
-        {
-          System.Diagnostics.Process.Start(
-            String.Format(@"{0}{1}",
-            generalNode.Attributes["baseurl"].Value,
-            sectionNode.Attributes["suburl"].Value));
-          return;
-        }
-      }
-
-      Log.Error("No help reference found for section: {0}", _previousSection.ToString());
+      HelpSystem.ShowHelp(_previousSection.ToString());
     }
   }
 }
