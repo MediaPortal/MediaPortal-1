@@ -54,6 +54,7 @@
     <Compile Include="ComboBoxEx .cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="HelpSystem.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>

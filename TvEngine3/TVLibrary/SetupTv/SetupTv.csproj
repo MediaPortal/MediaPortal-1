@@ -113,6 +113,12 @@
     <Compile Include="Dialogs\GroupNameForm.designer.cs">
       <DependentUpon>GroupNameForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\Project.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Project.designer.cs">
+      <DependentUpon>Project.cs</DependentUpon>
+    </Compile>
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -450,6 +456,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Combinations.resx">
       <DependentUpon>Combinations.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Project.resx">
+      <DependentUpon>Project.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\RadioCombinations.resx">

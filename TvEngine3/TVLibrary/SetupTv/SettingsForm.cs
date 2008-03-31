@@ -113,6 +113,9 @@ namespace SetupTv
           Log.Write(ex);
         }
 
+        Project project = new Project();
+        AddSection(project);
+
         layer = new TvBusinessLayer();
         Servers servers = new Servers();
         AddSection(servers);
@@ -581,32 +584,7 @@ namespace SetupTv
 
     public override void helpButton_Click(object sender, EventArgs e)
     {
-      if (!System.IO.File.Exists(helpReferencesFile))
-      {
-        Log.Error("File not found: {0}", helpReferencesFile);
-        return;
-      }
-
-      XmlDocument doc = new XmlDocument();
-      doc.Load(helpReferencesFile);
-
-      XmlNode generalNode = doc.SelectSingleNode("/helpsystem/general");
-      XmlNodeList sectionNodes = doc.SelectNodes("/helpsystem/sections/section");
-
-      for (int i = 0; i < sectionNodes.Count; i++)
-      {
-        XmlNode sectionNode = sectionNodes[i];
-        if (sectionNode.Attributes["name"].Value == _previousSection.ToString())
-        {
-          System.Diagnostics.Process.Start(
-            String.Format(@"{0}{1}",
-            generalNode.Attributes["baseurl"].Value,
-            sectionNode.Attributes["suburl"].Value));
-          return;
-        }
-      }
-
-      Log.Error("No help reference found for section: {0}", _previousSection.ToString());
+      SetupControls.HelpSystem.ShowHelp(_previousSection.ToString());
     }
   }
 }

@@ -39,7 +39,7 @@ using TvEngine;
 
 namespace SetupTv.Sections
 {
-  public partial class Plugins : SectionSettings
+  public partial class Plugins : SetupTv.SectionSettings
   {
     PluginLoader _loader;
     bool _needRestart = false;
