@@ -404,85 +404,85 @@ ${MementoSectionEnd}
 !macroend
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
-    DetailPrint "Installing MediaPortal TV Client plugin..."
-    ${If} $DeployMode == 1
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Installing MediaPortal TV Client plugin..."
-    ${EndIf}
+  DetailPrint "Installing MediaPortal TV Client plugin..."
+  ${If} $DeployMode == 1
+  MessageBox MB_OK|MB_ICONEXCLAMATION "Installing MediaPortal TV Client plugin..."
+  ${EndIf}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
   ExecWait '"taskkill" /F /IM MediaPortal.exe'
   ExecWait '"taskkill" /F /IM configuration.exe'
 
-    SetOverwrite on
+  SetOverwrite on
 
-    ReadRegSTR $MPBaseDir HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
-    DetailPrint "MediaPortal Installed at: $MpBaseDir"
+  !insertmacro MP_GET_INSTALL_DIR "$MPBaseDir"
+  DetailPrint "MediaPortal Installed at: $MpBaseDir"
+  
+  #---------------------------- File Copy ----------------------
+  ; Common Files
+  SetOutPath $MPBaseDir
+  File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
+  File ..\TvControl\bin\Release\TvControl.dll
+  File ..\TVDatabase\bin\Release\TVDatabase.dll
+  File ..\TVDatabase\references\Gentle.Common.DLL
+  File ..\TVDatabase\references\Gentle.Framework.DLL
+  File ..\TVDatabase\references\Gentle.Provider.MySQL.dll
+  File ..\TVDatabase\references\Gentle.Provider.SQLServer.dll
+  File ..\TVDatabase\references\log4net.dll
+  File ..\TVDatabase\references\MySql.Data.dll
+  File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
+  File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
+  File ..\TvPlugin\TvPlugin\Gentle.config
 
-    #---------------------------- File Copy ----------------------
-    ; Common Files
-    SetOutPath $MPBaseDir
-    File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
-    File ..\TvControl\bin\Release\TvControl.dll
-    File ..\TVDatabase\bin\Release\TVDatabase.dll
-    File ..\TVDatabase\references\Gentle.Common.DLL
-    File ..\TVDatabase\references\Gentle.Framework.DLL
-    File ..\TVDatabase\references\Gentle.Provider.MySQL.dll
-    File ..\TVDatabase\references\Gentle.Provider.SQLServer.dll
-    File ..\TVDatabase\references\log4net.dll
-    File ..\TVDatabase\references\MySql.Data.dll
-    File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
-    File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
-    File ..\TvPlugin\TvPlugin\Gentle.config
+  ; The Plugins
+  SetOutPath $MPBaseDir\Plugins\Process
+  File ..\Plugins\PowerScheduler\ClientPlugin\bin\Release\PowerSchedulerClientPlugin.dll
+  SetOutPath $MPBaseDir\Plugins\Windows
+  File ..\TvPlugin\TvPlugin\bin\Release\TvPlugin.dll
 
-    ; The Plugins
-    SetOutPath $MPBaseDir\Plugins\Process
-    File ..\Plugins\PowerScheduler\ClientPlugin\bin\Release\PowerSchedulerClientPlugin.dll
-    SetOutPath $MPBaseDir\Plugins\Windows
-    File ..\TvPlugin\TvPlugin\bin\Release\TvPlugin.dll
-
-    #---------------------------------------------------------------------------
-    # FILTER REGISTRATION       for TVClient
-    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
-    #---------------------------------------------------------------------------
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
+  #---------------------------------------------------------------------------
+  # FILTER REGISTRATION       for TVClient
+  #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+  #---------------------------------------------------------------------------
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
-    DetailPrint "Uninstalling MediaPortal TV Client plugin..."
-    ${If} $DeployMode == 1
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Uninstalling MediaPortal TV Client plugin..."
-    ${EndIf}
+  DetailPrint "Uninstalling MediaPortal TV Client plugin..."
+  ${If} $DeployMode == 1
+  MessageBox MB_OK|MB_ICONEXCLAMATION "Uninstalling MediaPortal TV Client plugin..."
+  ${EndIf}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
   ExecWait '"taskkill" /F /IM MediaPortal.exe'
   ExecWait '"taskkill" /F /IM configuration.exe'
 
-    #---------------------------------------------------------------------------
-    # FILTER UNREGISTRATION     for TVClient
-    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
-    #---------------------------------------------------------------------------
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
+  #---------------------------------------------------------------------------
+  # FILTER UNREGISTRATION     for TVClient
+  #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+  #---------------------------------------------------------------------------
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
 
-    ; The Plugins
-    Delete /REBOOTOK $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
-    Delete /REBOOTOK $MPBaseDir\Plugins\Windows\TvPlugin.dll
+  ; The Plugins
+  Delete /REBOOTOK $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
+  Delete /REBOOTOK $MPBaseDir\Plugins\Windows\TvPlugin.dll
 
-    ; Common Files
-    Delete /REBOOTOK $MPBaseDir\PowerScheduler.Interfaces.dll
-    Delete /REBOOTOK $MPBaseDir\TvControl.dll
-    Delete /REBOOTOK $MPBaseDir\TVDatabase.dll
-    Delete /REBOOTOK $MPBaseDir\Gentle.Common.DLL
-    Delete /REBOOTOK $MPBaseDir\Gentle.Framework.DLL
-    Delete /REBOOTOK $MPBaseDir\Gentle.Provider.MySQL.dll
-    Delete /REBOOTOK $MPBaseDir\Gentle.Provider.SQLServer.dll
-    Delete /REBOOTOK $MPBaseDir\log4net.dll
-    Delete /REBOOTOK $MPBaseDir\MySql.Data.dll
-    Delete /REBOOTOK $MPBaseDir\TvBusinessLayer.dll
-    Delete /REBOOTOK $MPBaseDir\TvLibrary.Interfaces.dll
-    Delete /REBOOTOK $MPBaseDir\Gentle.config
+  ; Common Files
+  Delete /REBOOTOK $MPBaseDir\PowerScheduler.Interfaces.dll
+  Delete /REBOOTOK $MPBaseDir\TvControl.dll
+  Delete /REBOOTOK $MPBaseDir\TVDatabase.dll
+  Delete /REBOOTOK $MPBaseDir\Gentle.Common.DLL
+  Delete /REBOOTOK $MPBaseDir\Gentle.Framework.DLL
+  Delete /REBOOTOK $MPBaseDir\Gentle.Provider.MySQL.dll
+  Delete /REBOOTOK $MPBaseDir\Gentle.Provider.SQLServer.dll
+  Delete /REBOOTOK $MPBaseDir\log4net.dll
+  Delete /REBOOTOK $MPBaseDir\MySql.Data.dll
+  Delete /REBOOTOK $MPBaseDir\TvBusinessLayer.dll
+  Delete /REBOOTOK $MPBaseDir\TvLibrary.Interfaces.dll
+  Delete /REBOOTOK $MPBaseDir\Gentle.config
 !macroend
 
 ${MementoSectionDone}
