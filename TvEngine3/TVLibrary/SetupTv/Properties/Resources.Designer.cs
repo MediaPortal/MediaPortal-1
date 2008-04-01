@@ -67,6 +67,48 @@ namespace SetupTv.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap icon_card {
+            get {
+                object obj = ResourceManager.GetObject("icon_card", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icon_computer {
+            get {
+                object obj = ResourceManager.GetObject("icon_computer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icon_radio_fta {
+            get {
+                object obj = ResourceManager.GetObject("icon_radio_fta", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icon_radio_scrambled {
+            get {
+                object obj = ResourceManager.GetObject("icon_radio_scrambled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icon_tv_fta {
+            get {
+                object obj = ResourceManager.GetObject("icon_tv_fta", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icon_tv_scrambled {
+            get {
+                object obj = ResourceManager.GetObject("icon_tv_scrambled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap logo_MePo {
             get {
                 object obj = ResourceManager.GetObject("logo_MePo", resourceCulture);
