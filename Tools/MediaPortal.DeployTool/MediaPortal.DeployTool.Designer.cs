@@ -334,6 +334,33 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want to only to download components ?.
+        /// </summary>
+        internal static string DownloadOnly_labelSectionHeader {
+            get {
+                return ResourceManager.GetString("DownloadOnly_labelSectionHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No, download and install MediaPortal on this machine.
+        /// </summary>
+        internal static string DownloadOnly_no {
+            get {
+                return ResourceManager.GetString("DownloadOnly_no", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes, I will use them to install MediaPortal on another machine.
+        /// </summary>
+        internal static string DownloadOnly_yes {
+            get {
+                return ResourceManager.GetString("DownloadOnly_yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MediaPortal is FREE, if you bought it on ebay, then you have been fooled ;-(.
         /// </summary>
         internal static string Finished_labelEbay {

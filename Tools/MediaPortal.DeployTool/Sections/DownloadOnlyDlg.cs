@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,58 +30,47 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using System.Collections.Specialized;
+using System.Resources;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class WelcomeDlg : DeployDialog, IDeployDialog
+  public partial class DownloadOnlyDlg : DeployDialog, IDeployDialog
   {
-    public WelcomeDlg()
+    public DownloadOnlyDlg()
     {
       InitializeComponent();
-      type = DialogType.Welcome;
-      cbLanguage.SelectedIndex = 0;
+      type = DialogType.DownloadOnly;
+      labelSectionHeader.Text = "";
+      rbNoDlOnly.Checked = true;
       UpdateUI();
     }
 
     #region IDeplayDialog interface
     public override void UpdateUI()
     {
-      labelHeading1.Text = Localizer.Instance.GetString("Welcome_labelHeading1");
-      labelHeading2.Text = Localizer.Instance.GetString("Welcome_labelHeading2");
-      labelHeading3.Text = Localizer.Instance.GetString("Welcome_labelHeading3");
+      labelSectionHeader.Text = Localizer.Instance.GetString("DownloadOnly_labelSectionHeader");
+      rbYesDlOnly.Text = Localizer.Instance.GetString("DownloadOnly_yes");
+      rbNoDlOnly.Text = Localizer.Instance.GetString("DownloadOnly_no");
     }
     public override DeployDialog GetNextDialog()
     {
-      DialogFlowHandler.Instance.ResetHistory();
-      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DownloadOnly);
+        if (rbYesDlOnly.Checked)
+        {
+            InstallationProperties.Instance.Set("DownloadOnly", "yes");
+            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
+        }
+        else
+        {
+            InstallationProperties.Instance.Set("DownloadOnly", "no");
+            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
+        }
     }
     public override bool SettingsValid()
     {
       return true;
     }
-    public override void SetProperties()
-    {
-      InstallationProperties.Instance.Set("language",GetLanguageId());
-    }
+
     #endregion
-
-    private string GetLanguageId()
-    {
-      switch (cbLanguage.Text)
-      {
-        case "english":
-          return "en-US";
-        case "german":
-          return "de-DE";
-      }
-      return "en-US";
-    }
-
-    private void cbLanguage_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      Localizer.Instance.SwitchCulture(GetLanguageId());
-      UpdateUI();
-    }
-
   }
 }

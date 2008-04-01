@@ -143,7 +143,7 @@ namespace MediaPortal.DeployTool
     private void PopulateListView()
     {
         listView.Items.Clear();
-        AddPackageToListView(new OldMsiChecker());
+        AddPackageToListView(new OldPackageChecker());
         AddPackageToListView(new DirectX9Checker());
         AddPackageToListView(new VCRedistChecker());
         switch(InstallationProperties.Instance["InstallType"])

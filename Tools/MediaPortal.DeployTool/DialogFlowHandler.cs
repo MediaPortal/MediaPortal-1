@@ -33,6 +33,7 @@ namespace MediaPortal.DeployTool
   public enum DialogType
   {
     Welcome,
+    DownloadOnly,
     WatchTV,
     WatchHDTv,
     TvEngineType,
@@ -105,6 +106,9 @@ namespace MediaPortal.DeployTool
         {
           case DialogType.Welcome:
             dlg = (DeployDialog)new WelcomeDlg();
+            break;
+          case DialogType.DownloadOnly:
+            dlg = (DeployDialog)new DownloadOnlyDlg();
             break;
           case DialogType.WatchTV:
             dlg = (DeployDialog)new WatchTVDlg();
