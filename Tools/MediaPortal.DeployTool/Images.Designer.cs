@@ -67,6 +67,13 @@ namespace MediaPortal.DeployTool {
             }
         }
         
+        internal static System.Drawing.Bitmap MePo_download {
+            get {
+                object obj = ResourceManager.GetObject("MePo-download", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap MyTV {
             get {
                 object obj = ResourceManager.GetObject("MyTV", resourceCulture);

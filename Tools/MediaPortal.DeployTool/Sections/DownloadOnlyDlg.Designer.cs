@@ -30,6 +30,8 @@ namespace MediaPortal.DeployTool
     {
         this.rbYesDlOnly = new System.Windows.Forms.RadioButton();
         this.rbNoDlOnly = new System.Windows.Forms.RadioButton();
+        this.pictureBox1 = new System.Windows.Forms.PictureBox();
+        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
         this.SuspendLayout();
         // 
         // labelSectionHeader
@@ -64,10 +66,20 @@ namespace MediaPortal.DeployTool
         this.rbNoDlOnly.Text = "No, download and install MediaPortal on this machine";
         this.rbNoDlOnly.UseVisualStyleBackColor = true;
         // 
+        // pictureBox1
+        // 
+        this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.MePo_download;
+        this.pictureBox1.Location = new System.Drawing.Point(22, 96);
+        this.pictureBox1.Name = "pictureBox1";
+        this.pictureBox1.Size = new System.Drawing.Size(56, 63);
+        this.pictureBox1.TabIndex = 11;
+        this.pictureBox1.TabStop = false;
+        // 
         // DownloadOnlyDlg
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.Controls.Add(this.pictureBox1);
         this.Controls.Add(this.rbNoDlOnly);
         this.Controls.Add(this.rbYesDlOnly);
         this.Name = "DownloadOnlyDlg";
@@ -75,6 +87,8 @@ namespace MediaPortal.DeployTool
         this.Controls.SetChildIndex(this.labelSectionHeader, 0);
         this.Controls.SetChildIndex(this.rbYesDlOnly, 0);
         this.Controls.SetChildIndex(this.rbNoDlOnly, 0);
+        this.Controls.SetChildIndex(this.pictureBox1, 0);
+        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
         this.ResumeLayout(false);
         this.PerformLayout();
 
@@ -84,6 +98,7 @@ namespace MediaPortal.DeployTool
 
     private System.Windows.Forms.RadioButton rbYesDlOnly;
     private System.Windows.Forms.RadioButton rbNoDlOnly;
+      private System.Windows.Forms.PictureBox pictureBox1;
 
   }
 }
