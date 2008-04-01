@@ -44,7 +44,7 @@ void CSdtParser::Reset()
 bool CSdtParser::IsReady()
 {
 	DWORD timeSpan=GetTickCount()-m_timer;
-	if (timeSpan >=5000) return true;
+	if (timeSpan >=7000) return true;
 	return false;
 }
 void CSdtParser::SetCallback(ISdtCallBack* callback)
