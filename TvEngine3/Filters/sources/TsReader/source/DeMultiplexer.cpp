@@ -804,7 +804,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
       //get pts/dts from pes header
       CPcr pts;
       CPcr dts;
-      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
+      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pos,pts,dts))
       {
         m_pCurrentAudioBuffer->SetPts(pts);
       }
@@ -898,7 +898,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
       //get pts/dts from pes header
       CPcr pts;
       CPcr dts;
-      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
+      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pos,pts,dts))
       {
 				double diff;
 				if (!m_lastVideoPTS.IsValid)
