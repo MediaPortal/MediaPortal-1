@@ -54,6 +54,12 @@
     <Compile Include="ComboBoxEx .cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MPForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MPForm.Designer.cs">
+      <DependentUpon>MPForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="HelpSystem.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
@@ -130,9 +136,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SettingsForm.resx">
+    <EmbeddedResource Include="MPForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>SettingsForm.cs</DependentUpon>
+      <DependentUpon>MPForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\DataGridBooleanNoNull.resx">
       <DependentUpon>DataGridBooleanNoNull.cs</DependentUpon>
@@ -158,6 +164,9 @@
       <DependentUpon>MWTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SetupTv.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
