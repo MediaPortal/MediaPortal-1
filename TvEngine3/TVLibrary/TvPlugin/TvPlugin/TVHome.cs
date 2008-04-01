@@ -258,6 +258,9 @@ namespace TvPlugin
       }
       Log.Debug("TVHome: HeartBeat Transmitter started.");
       heartBeatTransmitterThread = new Thread(HeartBeatTransmitter);
+      //GEMX 01.04.08: Better debuggin plus IsBackground=true fixes MP not closing correctly if TvService is not running
+      heartBeatTransmitterThread.IsBackground = true;
+      heartBeatTransmitterThread.Name="TvClient-TvHome: HeartBeat transmitter thread";
       heartBeatTransmitterThread.Start();
     }
 
