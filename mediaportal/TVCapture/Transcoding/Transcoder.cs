@@ -430,7 +430,7 @@ namespace MediaPortal.TV.Recording
     #region transcoding methods
     static void ConvertToWmv(TranscodeInfo info, TranscoderInfo tinfo)
     {
-      TranscodeToWMV WMVConverter = new TranscodeToWMV();
+      DVRMS2WMV WMVConverter = new DVRMS2WMV();
       WMVConverter.CreateProfile(tinfo.ScreenSize, tinfo.bitRate, tinfo.FPS);
       if (!WMVConverter.Transcode(info, VideoFormat.Wmv, tinfo.quality, tinfo.standard))
       {

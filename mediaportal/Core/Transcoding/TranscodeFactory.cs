@@ -43,7 +43,7 @@ namespace MediaPortal.Core.Transcoding
       else
       {
         if (format == VideoFormat.Wmv)
-          return new TranscodeToWMV();
+          return new DVRMS2WMV();
       }
       return null;
     }

@@ -38,7 +38,6 @@ using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using MediaPortal.Configuration;
-
 using Toub.MediaCenter.Dvrms.Metadata;
 
 namespace MediaPortal.GUI.TV
@@ -73,8 +72,10 @@ namespace MediaPortal.GUI.TV
     }
   }
   #endregion
+
   /// <summary>
-  /// 
+  /// shows recorded content and program information (wheren provided)
+  /// from in-built TV engine database or that from TVServer
   /// </summary>
   public class GUIRecordedTV : GUIWindow, IComparer<GUIListItem>
   {
@@ -83,8 +84,7 @@ namespace MediaPortal.GUI.TV
       GetID = (int)GUIWindow.Window.WINDOW_RECORDEDTV;
     }
 
-    #region variables
-
+    #region enums
     enum SortMethod
     {
       Channel = 0,
@@ -100,7 +100,9 @@ namespace MediaPortal.GUI.TV
       Album,
       BigIcon,
     }
+    #endregion
 
+    #region variables
     ViewAs currentViewMethod = ViewAs.Album;
     SortMethod currentSortMethod = SortMethod.Date;
     bool m_bSortAscending = true;
@@ -109,14 +111,12 @@ namespace MediaPortal.GUI.TV
     int m_iSelectedItem = 0;
     string currentShow = string.Empty;
     RecordingThumbCacher thumbworker = null;
-
     [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
     [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
     [SkinControlAttribute(5)]    protected GUIButtonControl btnView = null;
     [SkinControlAttribute(6)]    protected GUIButtonControl btnCleanup = null;
     [SkinControlAttribute(10)]   protected GUIListControl listAlbums = null;
     [SkinControlAttribute(11)]   protected GUIListControl listViews = null;
-
     #endregion
 
     #region Serialisation
@@ -201,7 +201,6 @@ namespace MediaPortal.GUI.TV
       g_Player.PlayBackStopped += new MediaPortal.Player.g_Player.StoppedHandler(OnPlayRecordingBackStopped);
       g_Player.PlayBackEnded += new MediaPortal.Player.g_Player.EndedHandler(OnPlayRecordingBackEnded);
       g_Player.PlayBackStarted += new MediaPortal.Player.g_Player.StartedHandler(OnPlayRecordingBackStarted);
-
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvrecordedtv.xml");
       LoadSettings();
       return bResult;
@@ -250,17 +249,16 @@ namespace MediaPortal.GUI.TV
           if (GUIGraphicsContext.ShowBackground)
           {
             // stop timeshifting & viewing... 
-
             Recorder.StopViewing();
           }
         }
       }
       base.OnPageDestroy(newWindowId);
     }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-
       LoadSettings();
       LoadDirectory();
       if (Recorder.IsViewing())
@@ -269,7 +267,6 @@ namespace MediaPortal.GUI.TV
         if (cntl != null) cntl.Visible = true;
         cntl = GetControl(99);
         if (cntl != null) cntl.Visible = true;
-
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
         msg.SendToTargetWindow = true;
         GUIWindowManager.SendThreadMessage(msg);
@@ -284,9 +281,7 @@ namespace MediaPortal.GUI.TV
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
-
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-
       if (thumbworker == null)
       {
         if (_createRecordedThumbs)
@@ -317,7 +312,6 @@ namespace MediaPortal.GUI.TV
         }
         LoadDirectory();
       }
-
       if (control == btnSortBy) // sort by
       {
         switch (currentSortMethod)
@@ -343,7 +337,6 @@ namespace MediaPortal.GUI.TV
         }
         OnSort();
       }
-
       if (control == btnCleanup)
       {
         OnDeleteWatchedRecordings();
@@ -382,18 +375,15 @@ namespace MediaPortal.GUI.TV
       if (pItem == null) return;
       if (pItem.IsFolder) return;
       TVRecorded rec = (TVRecorded)pItem.TVTag;
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(rec.Title);
-
       dlg.AddLocalizedString(655);     //Play recorded tv
       dlg.AddLocalizedString(656);     //Delete recorded tv
       if (pItem.IsPlayed)
         dlg.AddLocalizedString(830); //Reset watched status
       dlg.AddLocalizedString(1048);//Settings
-
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
       switch (dlg.SelectedId)
@@ -468,7 +458,6 @@ namespace MediaPortal.GUI.TV
         String strDefaultSeenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoSeenBig.png";
         GUIControl.ClearControl(GetID, listAlbums.GetID);
         GUIControl.ClearControl(GetID, listViews.GetID);
-
         List<TVRecorded> recordings = new List<TVRecorded>();
         List<GUIListItem> itemlist = new List<GUIListItem>();
         TVDatabase.GetRecordedTV(ref recordings);
@@ -501,7 +490,6 @@ namespace MediaPortal.GUI.TV
               item.Label = rec.Title;
               item.TVTag = rec;
               string strLogo = Util.Utils.GetCoverArt(Thumbs.TVRecorded, Util.Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Util.Utils.GetThumbExtension())));
-              
               if (!System.IO.File.Exists(strLogo))
               {
                 strLogo = Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
@@ -567,17 +555,14 @@ namespace MediaPortal.GUI.TV
           listAlbums.Add(item);
           listViews.Add(item);
         }
-
         //set object count label
         GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(itemlist.Count));
 
         GUIControl cntlLabel = GetControl(12);
-
         if (currentViewMethod == ViewAs.Album)
           cntlLabel.YPosition = listAlbums.SpinY;
         else
           cntlLabel.YPosition = listViews.SpinY;
-
         OnSort();
         UpdateProperties();
         GUIWaitCursor.Hide();
@@ -627,10 +612,7 @@ namespace MediaPortal.GUI.TV
 //          break;
       }
       GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
-
-
       btnSortBy.IsAscending = m_bSortAscending;
-
       if (currentViewMethod == ViewAs.List)
       {
         listAlbums.IsVisible = false;
@@ -696,14 +678,12 @@ namespace MediaPortal.GUI.TV
         LoadDirectory();
         return false;
       }
-
       TVRecorded rec = (TVRecorded)pItem.TVTag;
       if (System.IO.File.Exists(rec.FileName))
       {
         Log.Info("GUIRecordedTV: play - {0}", rec.FileName);
         g_Player.Stop();
         Recorder.StopViewing();
-
         rec.Played++;
         TVDatabase.PlayedRecordedTV(rec);
         IMDBMovie movieDetails = new IMDBMovie();
@@ -756,7 +736,6 @@ namespace MediaPortal.GUI.TV
       if (pItem == null) return;
       if (pItem.IsFolder) return;
       TVRecorded rec = (TVRecorded)pItem.TVTag;
-
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
       if (rec.Played > 0) dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
@@ -766,13 +745,11 @@ namespace MediaPortal.GUI.TV
       dlgYesNo.SetLine(3, string.Empty);
       dlgYesNo.SetDefaultToYes(false);
       dlgYesNo.DoModal(GetID);
-
       if (!dlgYesNo.IsConfirmed)
       {
         return;
       }
       Recorder.DeleteRecording(rec);
-
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
@@ -831,7 +808,6 @@ namespace MediaPortal.GUI.TV
       }
       rec.SetProperties();
     }
-
     #endregion
 
     #region album/list view management
@@ -844,7 +820,6 @@ namespace MediaPortal.GUI.TV
       GUIListItem item = GUIControl.GetSelectedListItem(GetID, iControl);
       return item;
     }
-
     GUIListItem GetItem(int iItem)
     {
       if (currentViewMethod == ViewAs.List)
@@ -858,14 +833,12 @@ namespace MediaPortal.GUI.TV
         return listAlbums[iItem];
       }
     }
-
     int GetSelectedItemNo()
     {
       int iControl;
       iControl = listAlbums.GetID;
       if (currentViewMethod == ViewAs.List)
         iControl = listViews.GetID;
-
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
       OnMessage(msg);
       int iItem = (int)msg.Param1;
@@ -1041,12 +1014,9 @@ namespace MediaPortal.GUI.TV
       int movieid = VideoDatabase.GetMovieId(filename);
       if (fileid < 0)
         return;
-
       if (VideoDatabase.HasMovieInfo(filename))
         VideoDatabase.DeleteMovieStopTime(fileid);
-
       g_Player.Stop();
-
       List<TVRecorded> itemlist = new List<TVRecorded>();
       TVDatabase.GetRecordedTV(ref itemlist);
       foreach (TVRecorded rec in itemlist)

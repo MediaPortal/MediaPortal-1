@@ -29,20 +29,22 @@ using System.Text;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using DirectShowLib.SBE;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
-
+using MediaPortal.Player;
 
 namespace MediaPortal.Core.Transcoding
 {
   /// <summary>
   /// This class encodes an video file to .wmv format
   /// </summary>
-  public class DVRMS2WMV : ITranscode
+  public class TSReader2WMV : ITranscode
   {
+    [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
+    protected class TsReader { }
+
     #region imports
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern int SetWmvProfile(DirectShowLib.IBaseFilter filter, int bitrate, int fps, int screenX, int screenY);
@@ -55,18 +57,19 @@ namespace MediaPortal.Core.Transcoding
     #endregion
 
     #region Guids
+    Guid AVC1 = new Guid("31435641-0000-0010-8000-00AA00389B71");
     Guid IID_IWMWriterAdvanced2 = new Guid(0x962dc1ec, 0xc046, 0x4db8, 0x9c, 0xc7, 0x26, 0xce, 0xae, 0x50, 0x08, 0x17);
     #endregion
 
     protected DsROTEntry _rotEntry = null;
     protected IGraphBuilder graphBuilder = null;
-    protected IStreamBufferSource bufferSource = null;
     protected IMediaControl mediaControl = null;
     protected IMediaPosition mediaPos = null;
-    protected IStreamBufferMediaSeeking mediaSeeking = null;
+    protected IMediaSeeking mediaSeeking = null;
     protected IMediaEventEx mediaEvt = null;
-    protected IBaseFilter Mpeg2VideoCodec = null;
-    protected IBaseFilter Mpeg2AudioCodec = null;
+    protected IBaseFilter tsreaderSource = null; //TSReader source
+    protected IBaseFilter VideoCodec = null; //Video decoder, either MPEG-2 or H.264
+    protected IBaseFilter AudioCodec = null; //Audio decoder, either Mpeg-2/AC3 or AAC
     protected IBaseFilter fileWriterbase = null;
     protected long m_dDuration;
     protected int bitrate;
@@ -76,7 +79,9 @@ namespace MediaPortal.Core.Transcoding
     protected const int WS_CLIPCHILDREN = 0x02000000;
     protected const int WS_CLIPSIBLINGS = 0x04000000;
 
-    public DVRMS2WMV()
+
+
+    public TSReader2WMV()
     {
     }
 
@@ -99,85 +104,154 @@ namespace MediaPortal.Core.Transcoding
       {
         if (!Supports(format)) return false;
         string ext = System.IO.Path.GetExtension(info.file);
-        if (ext.ToLower() != ".dvr-ms" && ext.ToLower() != ".sbe")
+        if (ext.ToLower() != ".ts" && ext.ToLower() != ".mpg")
         {
-          Log.Info("DVRMS2WMV: wrong file format");
+          Log.Info("TSReader2WMV: wrong file format");
           return false;
         }
-        Log.Info("DVRMS2WMV: create graph");
+        Log.Info("TSReader2WMV: create graph");
         graphBuilder = (IGraphBuilder)new FilterGraph();
         _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
-        Log.Info("DVRMS2WMV: add streambuffersource");
-        bufferSource = (IStreamBufferSource)new StreamBufferSource();
-        IBaseFilter filter = (IBaseFilter)bufferSource;
-        graphBuilder.AddFilter(filter, "SBE SOURCE");
-        Log.Info("DVRMS2WMV: load file:{0}", info.file);
-        IFileSourceFilter fileSource = (IFileSourceFilter)bufferSource;
+        Log.Info("TSReader2WMV: add filesource");
+        TsReader reader = new TsReader();
+        tsreaderSource = (IBaseFilter)reader;
+        //ITSReader ireader = (ITSReader)reader;
+        //ireader.SetTsReaderCallback(this);
+        //ireader.SetRequestAudioChangeCallback(this);
+        IBaseFilter filter = (IBaseFilter)tsreaderSource;
+        graphBuilder.AddFilter(filter, "TSReader Source");
+        IFileSourceFilter fileSource = (IFileSourceFilter)tsreaderSource;
+        Log.Info("TSReader2WMV: load file:{0}", info.file);
         int hr = fileSource.Load(info.file, null);
-        //add mpeg2 audio/video codecs
+        //add audio/video codecs
         string strVideoCodec = "";
+        string strH264VideoCodec = "";
         string strAudioCodec = "";
+        string strAACAudioCodec = "";
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "MPEG2Dec Filter");
-          strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "MPA Decoder Filter");
+          strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
+          strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+          strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
+          strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
         }
-        Log.Info("DVRMS2WMV: add mpeg2 video codec:{0}", strVideoCodec);
-        Mpeg2VideoCodec = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
-        if (hr != 0)
-        {
-          Log.Error("DVRMS2WMV:FAILED:Add mpeg2 video  to filtergraph :0x{0:X}", hr);
-          Cleanup();
-          return false;
-        }
-        Log.Info("DVRMS2WMV: add mpeg2 audio codec:{0}", strAudioCodec);
-        Mpeg2AudioCodec = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-        if (Mpeg2AudioCodec == null)
-        {
-          Log.Error("DVRMS2WMV:FAILED:unable to add mpeg2 audio codec");
-          Cleanup();
-          return false;
-        }
-        Log.Info("DVRMS2WMV: connect streambufer source->mpeg audio/video decoders");
-        //connect output #0 of streambuffer source->mpeg2 audio codec pin 1
-        //connect output #1 of streambuffer source->mpeg2 video codec pin 1
+        //Find the type of decoder required for the output video & audio pins on TSReader.
+        Log.Info("TSReader2WMV: find tsreader compatible audio/video decoders");
         IPin pinOut0, pinOut1;
         IPin pinIn0, pinIn1;
-        pinOut0 = DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 0);//audio
-        pinOut1 = DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 1);//video
+        pinOut0 = DsFindPin.ByDirection((IBaseFilter)tsreaderSource, PinDirection.Output, 0);//audio
+        pinOut1 = DsFindPin.ByDirection((IBaseFilter)tsreaderSource, PinDirection.Output, 1);//video
         if (pinOut0 == null || pinOut1 == null)
         {
-          Log.Error("DVRMS2WMV:FAILED:unable to get pins of source");
+          Log.Error("TSReader2WMV: FAILED: unable to get output pins of tsreader");
           Cleanup();
           return false;
         }
-        pinIn0 = DsFindPin.ByDirection(Mpeg2VideoCodec, PinDirection.Input, 0);//video
-        pinIn1 = DsFindPin.ByDirection(Mpeg2AudioCodec, PinDirection.Input, 0);//audio
+        bool usingAAC = false;
+        IEnumMediaTypes enumMediaTypes;
+        hr = pinOut0.EnumMediaTypes(out enumMediaTypes);
+        while (true)
+        {
+          AMMediaType[] mediaTypes = new AMMediaType[1];
+          int typesFetched;
+          hr = enumMediaTypes.Next(1, mediaTypes, out typesFetched);
+          if (hr != 0 || typesFetched == 0) break;
+          if (mediaTypes[0].majorType == MediaType.Audio && mediaTypes[0].subType == MediaSubType.LATMAAC)
+          {
+            Log.Info("TSReader2WMV: found LATM AAC audio out pin on tsreader");
+            usingAAC = true;
+          }
+        }
+        bool usingH264 = false;
+        hr = pinOut1.EnumMediaTypes(out enumMediaTypes);
+        while (true)
+        {
+          AMMediaType[] mediaTypes = new AMMediaType[1];
+          int typesFetched;
+          hr = enumMediaTypes.Next(1, mediaTypes, out typesFetched);
+          if (hr != 0 || typesFetched == 0) break;
+          if (mediaTypes[0].majorType == MediaType.Video && mediaTypes[0].subType == AVC1)
+          {
+            Log.Info("TSReader2WMV: found H.264 video out pin on tsreader");
+            usingH264 = true;
+          }
+        }
+        //Add the type of decoder required for the output video & audio pins on TSReader.
+        Log.Info("TSReader2WMV: add audio/video decoders to graph");
+        if (usingH264 == false)
+        {
+          Log.Info("TSReader2WMV: add mpeg2 video decoder:{0}", strVideoCodec);
+          VideoCodec = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
+          if (VideoCodec == null)
+          {
+            Log.Error("TSReader2WMV: unable to add mpeg2 video decoder");
+            Cleanup();
+            return false;
+          }
+        }
+        else
+        {
+          Log.Info("TSReader2WMV: add h264 video codec:{0}", strH264VideoCodec);
+          VideoCodec = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
+          if (VideoCodec == null)
+          {
+            Log.Error("TSReader2WMV: FAILED:unable to add h264 video codec");
+            Cleanup();
+            return false;
+          }
+        }
+        if (usingAAC == false)
+        {
+          Log.Info("TSReader2WMV: add mpeg2 audio codec:{0}", strAudioCodec);
+          AudioCodec = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+          if (AudioCodec == null)
+          {
+            Log.Error("TSReader2WMV: FAILED:unable to add mpeg2 audio codec");
+            Cleanup();
+            return false;
+          }
+        }
+        else
+        {
+          Log.Info("TSReader2WMV: add aac audio codec:{0}", strAACAudioCodec);
+          AudioCodec = DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
+          if (AudioCodec == null)
+          {
+            Log.Error("TSReader2WMV: FAILED:unable to add aac audio codec");
+            Cleanup();
+            return false;
+          }
+        }
+        Log.Info("TSReader2WMV: connect tsreader->audio/video decoders");
+        //connect output #0 (audio) of tsreader->audio decoder input pin 0
+        //connect output #1 (video) of tsreader->video decoder input pin 0
+        pinIn0 = DsFindPin.ByDirection(AudioCodec, PinDirection.Input, 0);//audio
+        pinIn1 = DsFindPin.ByDirection(VideoCodec, PinDirection.Input, 0);//video
         if (pinIn0 == null || pinIn1 == null)
         {
-          Log.Error("DVRMS2WMV:FAILED:unable to get pins of mpeg2 video/audio codec");
+          Log.Error("TSReader2WMV: FAILED: unable to get pins of video/audio codecs");
           Cleanup();
           return false;
         }
-        hr = graphBuilder.Connect(pinOut0, pinIn1);
+        hr = graphBuilder.Connect(pinOut0, pinIn0);
         if (hr != 0)
         {
-          Log.Error("DVRMS2WMV:FAILED:unable to connect audio pins :0x{0:X}", hr);
+          Log.Error("TSReader2WMV: FAILED: unable to connect audio pins :0x{0:X}", hr);
           Cleanup();
           return false;
         }
-        hr = graphBuilder.Connect(pinOut1, pinIn0);
+        hr = graphBuilder.Connect(pinOut1, pinIn1);
         if (hr != 0)
         {
-          Log.Error("DVRMS2WMV:FAILED:unable to connect video pins :0x{0:X}", hr);
+          Log.Error("TSReader2WMV: FAILED: unable to connect video pins :0x{0:X}", hr);
           Cleanup();
           return false;
         }
         string outputFilename = System.IO.Path.ChangeExtension(info.file, ".wmv");
         if (!AddWmAsfWriter(outputFilename, quality, standard)) return false;
-        Log.Info("DVRMS2WMV: start pre-run");
+        Log.Info("TSReader2WMV: start pre-run");
         mediaControl = graphBuilder as IMediaControl;
-        mediaSeeking = bufferSource as IStreamBufferMediaSeeking;
+        mediaSeeking = tsreaderSource as IMediaSeeking;
         mediaEvt = graphBuilder as IMediaEventEx;
         mediaPos = graphBuilder as IMediaPosition;
         //get file duration
@@ -194,11 +268,11 @@ namespace MediaPortal.Core.Transcoding
           mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         }
         double duration = m_dDuration / 10000000d;
-        Log.Info("DVRMS2WMV: movie duration:{0}", Util.Utils.SecondsToHMSString((int)duration));
+        Log.Info("TSReader2WMV: movie duration:{0}", Util.Utils.SecondsToHMSString((int)duration));
         hr = mediaControl.Run();
         if (hr != 0)
         {
-          Log.Error("DVRMS2WMV:FAILED:unable to start graph :0x{0:X}", hr);
+          Log.Error("TSReader2WMV: FAILED: unable to start graph :0x{0:X}", hr);
           Cleanup();
           return false;
         }
@@ -214,20 +288,20 @@ namespace MediaPortal.Core.Transcoding
           maxCount--;
           if (maxCount <= 0) break;
         }
-        Log.Info("DVRMS2WMV: pre-run done");
-        Log.Info("DVRMS2WMV: Get duration of movie");
+        Log.Info("TSReader2WMV: pre-run done");
+        Log.Info("TSReader2WMV: Get duration of movie");
         mediaControl.Stop();
         FilterState state;
         mediaControl.GetState(500, out state);
         GC.Collect(); GC.Collect(); GC.Collect(); GC.WaitForPendingFinalizers();
-        Log.Info("DVRMS2WMV: reconnect mpeg2 video codec->ASF WM Writer");
+        Log.Info("TSReader2WMV: reconnect mpeg2 video codec->ASF WM Writer");
         graphBuilder.RemoveFilter(fileWriterbase);
         if (!AddWmAsfWriter(outputFilename, quality, standard)) return false;
-        Log.Info("DVRMS2WMV: Start transcoding");
+        Log.Info("TSReader2WMV: Start transcoding");
         hr = mediaControl.Run();
         if (hr != 0)
         {
-          Log.Error("DVRMS2WMV:FAILED:unable to start graph :0x{0:X}", hr);
+          Log.Error("TSReader2WMV:FAILED:unable to start graph :0x{0:X}", hr);
           Cleanup();
           return false;
         }
@@ -282,7 +356,7 @@ namespace MediaPortal.Core.Transcoding
 
     void Cleanup()
     {
-      Log.Info("DVRMS2WMV: cleanup");
+      Log.Info("TSReader2WMV: cleanup");
       if (mediaControl != null)
       {
         mediaControl.Stop();
@@ -292,15 +366,15 @@ namespace MediaPortal.Core.Transcoding
       mediaEvt = null;
       mediaPos = null;
       mediaControl = null;
-      if (Mpeg2AudioCodec != null)
-        DirectShowUtil.ReleaseComObject(Mpeg2AudioCodec);
-      Mpeg2AudioCodec = null;
-      if (Mpeg2VideoCodec != null)
-        DirectShowUtil.ReleaseComObject(Mpeg2VideoCodec);
-      Mpeg2VideoCodec = null;
-      if (bufferSource != null)
-        DirectShowUtil.ReleaseComObject(bufferSource);
-      bufferSource = null;
+      if (AudioCodec != null)
+        DirectShowUtil.ReleaseComObject(AudioCodec);
+      AudioCodec = null;
+      if (VideoCodec != null)
+        DirectShowUtil.ReleaseComObject(VideoCodec);
+      VideoCodec = null;
+      if (tsreaderSource != null)
+        DirectShowUtil.ReleaseComObject(tsreaderSource);
+      tsreaderSource = null;
       DirectShowUtil.RemoveFilters(graphBuilder);
       if (_rotEntry != null)
       {
@@ -329,20 +403,19 @@ namespace MediaPortal.Core.Transcoding
       //add asf file writer
       IPin pinOut0, pinOut1;
       IPin pinIn0, pinIn1;
-      Log.Info("DVRMS2WMV: add WM ASF Writer to graph");
+      Log.Info("TSReader2WMV: add WM ASF Writer to graph");
       string monikerAsfWriter = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7C23220E-55BB-11D3-8B16-00C04FB6BD3D}";
       fileWriterbase = Marshal.BindToMoniker(monikerAsfWriter) as IBaseFilter;
       if (fileWriterbase == null)
       {
-        Log.Error("DVRMS2WMV:FAILED:Unable to create ASF WM Writer");
+        Log.Error("TSReader2WMV:FAILED:Unable to create ASF WM Writer");
         Cleanup();
         return false;
       }
-
       int hr = graphBuilder.AddFilter(fileWriterbase, "WM ASF Writer");
       if (hr != 0)
       {
-        Log.Error("DVRMS2WMV:FAILED:Add ASF WM Writer to filtergraph :0x{0:X}", hr);
+        Log.Error("TSReader2WMV:FAILED:Add ASF WM Writer to filtergraph :0x{0:X}", hr);
         Cleanup();
         return false;
       }
@@ -355,51 +428,49 @@ namespace MediaPortal.Core.Transcoding
       }
       hr = fileWriterFilter.SetFileName(fileName, null);
       hr = fileWriterFilter.SetMode(AMFileSinkFlags.OverWrite);
-      Log.Info("DVRMS2WMV: connect audio/video codecs outputs -> ASF WM Writer");
+      Log.Info("TSReader2WMV: connect audio/video codecs outputs -> ASF WM Writer");
       //connect output #0 of videocodec->asf writer pin 1
       //connect output #0 of audiocodec->asf writer pin 0
-      pinOut0 = DsFindPin.ByDirection((IBaseFilter)Mpeg2AudioCodec, PinDirection.Output, 0);
-      pinOut1 = DsFindPin.ByDirection((IBaseFilter)Mpeg2VideoCodec, PinDirection.Output, 0);
+      pinOut0 = DsFindPin.ByDirection((IBaseFilter)AudioCodec, PinDirection.Output, 0);
+      pinOut1 = DsFindPin.ByDirection((IBaseFilter)VideoCodec, PinDirection.Output, 0);
       if (pinOut0 == null || pinOut1 == null)
       {
-        Log.Error("DVRMS2WMV:FAILED:unable to get outpins of video codec");
+        Log.Error("TSReader2WMV:FAILED:unable to get outpins of video codec");
         Cleanup();
         return false;
       }
       pinIn0 = DsFindPin.ByDirection(fileWriterbase, PinDirection.Input, 0);
       if (pinIn0 == null)
       {
-        Log.Error("DVRMS2WMV:FAILED:unable to get pins of asf wm writer");
+        Log.Error("TSReader2WMV:FAILED:unable to get pins of asf wm writer");
         Cleanup();
         return false;
       }
       hr = graphBuilder.Connect(pinOut0, pinIn0);
       if (hr != 0)
       {
-        Log.Error("DVRMS2WMV:FAILED:unable to connect audio pins :0x{0:X}", hr);
+        Log.Error("TSReader2WMV:FAILED:unable to connect audio pins :0x{0:X}", hr);
         Cleanup();
         return false;
       }
       pinIn1 = DsFindPin.ByDirection(fileWriterbase, PinDirection.Input, 1);
       if (pinIn1 == null)
       {
-        Log.Error("DVRMS2WMV:FAILED:unable to get pins of asf wm writer");
+        Log.Error("TSReader2WMV:FAILED:unable to get pins of asf wm writer");
         Cleanup();
         return false;
       }
       hr = graphBuilder.Connect(pinOut1, pinIn1);
       if (hr != 0)
       {
-        Log.Error("DVRMS2WMV:FAILED:unable to connect video pins :0x{0:X}", hr);
+        Log.Error("TSReader2WMV:FAILED:unable to connect video pins :0x{0:X}", hr);
         Cleanup();
         return false;
       }
-
       IConfigAsfWriter config = fileWriterbase as IConfigAsfWriter;
       IWMProfileManager profileManager = null;
       IWMProfileManager2 profileManager2 = null;
       IWMProfile profile = null;
-
       hr = WMLib.WMCreateProfileManager(out profileManager);
       string strprofileType = "";
       switch (quality)
@@ -418,7 +489,7 @@ namespace MediaPortal.Core.Transcoding
           {
             strprofileType = Config.GetFile(Config.Dir.Base, @"Profiles\MPHiDef-PAL.prx");
           }
-          Log.Info("DVRMS2WMV: set WMV HiDef quality profile {0}", strprofileType);
+          Log.Info("TSReader2WMV: set WMV HiDef quality profile {0}", strprofileType);
           break;
         case Quality.VeryHigh:
           if (standard == Standard.Film)
@@ -433,7 +504,7 @@ namespace MediaPortal.Core.Transcoding
           {
             strprofileType = Config.GetFile(Config.Dir.Base, @"Profiles\MPVeryHigh-PAL.prx");
           }
-          Log.Info("DVRMS2WMV: set WMV Very High quality profile {0}", strprofileType);
+          Log.Info("TSReader2WMV: set WMV Very High quality profile {0}", strprofileType);
           break;
         case Quality.High:
           if (standard == Standard.Film)
@@ -448,7 +519,7 @@ namespace MediaPortal.Core.Transcoding
           {
             strprofileType = Config.GetFile(Config.Dir.Base, @"Profiles\MPHigh-PAL.prx");
           }
-          Log.Info("DVRMS2WMV: set WMV High quality profile {0}", strprofileType);
+          Log.Info("TSReader2WMV: set WMV High quality profile {0}", strprofileType);
           break;
         case Quality.Medium:
           if (standard == Standard.Film)
@@ -463,7 +534,7 @@ namespace MediaPortal.Core.Transcoding
           {
             strprofileType = Config.GetFile(Config.Dir.Base, @"Profiles\MPMedium-PAL.prx");
           }
-          Log.Info("DVRMS2WMV: set WMV Medium quality profile {0}", strprofileType);
+          Log.Info("TSReader2WMV: set WMV Medium quality profile {0}", strprofileType);
           break;
         case Quality.Low:
           if (standard == Standard.Film)
@@ -478,7 +549,7 @@ namespace MediaPortal.Core.Transcoding
           {
             strprofileType = Config.GetFile(Config.Dir.Base, @"Profiles\MPLow-PAL.prx");
           }
-          Log.Info("DVRMS2WMV: set WMV Low quality profile {0}", strprofileType);
+          Log.Info("TSReader2WMV: set WMV Low quality profile {0}", strprofileType);
           break;
         case Quality.Portable:
           if (standard == Standard.Film)
@@ -493,7 +564,7 @@ namespace MediaPortal.Core.Transcoding
           {
             strprofileType = Config.GetFile(Config.Dir.Base, @"Profiles\MPPortable-PAL.prx");
           }
-          Log.Info("DVRMS2WMV: set WMV Portable quality profile {0}", strprofileType);
+          Log.Info("TSReader2WMV: set WMV Portable quality profile {0}", strprofileType);
           break;
         case Quality.Custom:
           //load custom profile
@@ -523,7 +594,7 @@ namespace MediaPortal.Core.Transcoding
             case 3:
               customBitrate = "768Kbs";
               videoBitrate = 631000;
-              audioBitrate = 128040; 
+              audioBitrate = 128040;
               break;
             case 4:
               customBitrate = "1536Kbs";
@@ -541,7 +612,7 @@ namespace MediaPortal.Core.Transcoding
               audioBitrate = 320032;
               break;
           }
-          Log.Info("DVRMS2WMV: custom bitrate = {0}", customBitrate);
+          Log.Info("TSReader2WMV: custom bitrate = {0}", customBitrate);
           //TODO: get fps values & frame size
           videoHeight = 576; //hard coded for now
           videoWidth = 720; //hard coded for now
@@ -551,7 +622,7 @@ namespace MediaPortal.Core.Transcoding
           //SetCutomProfile(videoBitrate, audioBitrate, videoHeight, videoWidth, videoFps); //based on user inputs
           //We then reload it after as per other quality settings / profiles.
           strprofileType = Config.GetFile(Config.Dir.Base, @"Profiles\MPCustom.prx");
-          Log.Info("DVRMS2WMV: set WMV Custom quality profile {0}", strprofileType);
+          Log.Info("TSReader2WMV: set WMV Custom quality profile {0}", strprofileType);
           break;
       }
       //Loads profile from the above quality selection.
@@ -562,20 +633,20 @@ namespace MediaPortal.Core.Transcoding
       hr = profileManager2.LoadProfileByData(profileContents, out profile);
       if (hr != 0)
       {
-        Log.Info("DVRMS2WMV: get WMV profile - FAILED! {0}", hr);
+        Log.Info("TSReader2WMV: get WMV profile - FAILED! {0}", hr);
         Cleanup();
         return false;
       }
-      Log.Info("DVRMS2WMV: load profile - SUCCESS!");
+      Log.Info("TSReader2WMV: load profile - SUCCESS!");
       //configures the WM ASF Writer to the chosen profile
       hr = config.ConfigureFilterUsingProfile(profile);
       if (hr != 0)
       {
-        Log.Info("DVRMS2WMV: configure profile - FAILED! {0}", hr);
+        Log.Info("TSReader2WMV: configure profile - FAILED! {0}", hr);
         Cleanup();
         return false;
       }
-      Log.Info("DVRMS2WMV: configure profile - SUCCESS!");
+      Log.Info("TSReader2WMV: configure profile - SUCCESS!");
       //TODO: Add DB recording information into WMV.
 
       //Release resorces
@@ -642,20 +713,20 @@ namespace MediaPortal.Core.Transcoding
       profileManager2 = profileManager as IWMProfileManager2;
       profileManagerLanguage = profileManager as IWMProfileManagerLanguage;
       hr = profileManager2.GetSystemProfileVersion(out wmversion);
-      Log.Info("DVRMS2WMV: WM version=" + wmversion.ToString());
+      Log.Info("TSReader2WMV: WM version=" + wmversion.ToString());
       hr = profileManagerLanguage.GetUserLanguageID(out langID);
-      Log.Info("DVRMS2WMV: WM language ID=" + langID.ToString());
+      Log.Info("TSReader2WMV: WM language ID=" + langID.ToString());
       hr = profileManager2.SetSystemProfileVersion(DefaultWMversion);
       hr = profileManager2.GetSystemProfileCount(out nbrProfiles);
-      Log.Info("DVRMS2WMV: ProfileCount=" + nbrProfiles.ToString());
+      Log.Info("TSReader2WMV: ProfileCount=" + nbrProfiles.ToString());
       //load the profile contents
       hr = profileManager.LoadProfileByData(profileContents, out profile);
       //get the profile name
       hr = profile.GetName(profileName, ref profileNameLen);
-      Log.Info("DVRMS2WMV: profile name {0}", profileName.ToString());
+      Log.Info("TSReader2WMV: profile name {0}", profileName.ToString());
       //get the profile description
       hr = profile.GetDescription(profileDescription, ref profileDescLen);
-      Log.Info("DVRMS2WMV: profile description {0}", profileDescription.ToString());
+      Log.Info("TSReader2WMV: profile description {0}", profileDescription.ToString());
       //get the stream count
       hr = profile.GetStreamCount(out streamCount);
       for (int i = 0; i < streamCount; i++)
