@@ -43,7 +43,7 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       HTTPDownload dlg = new HTTPDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("VCRedist"), Application.StartupPath + "\\deploy" + Utils.GetDownloadFile("VCRedist"));
+      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("VCRedist"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("VCRedist"));
       return (result == DialogResult.OK);
     }
     public bool Install()
@@ -69,6 +69,14 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("VCRedist"));
+      if (InstallationProperties.Instance["InstallType"] == "download_only")
+      {
+          if (result.needsDownload == false)
+              result.state = CheckState.DOWNLOADED;
+          else
+              result.state = CheckState.NON_DOWNLOADED;
+          return result;
+      }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\{7299052b-02a4-4627-81f2-1818da5d550d}");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;

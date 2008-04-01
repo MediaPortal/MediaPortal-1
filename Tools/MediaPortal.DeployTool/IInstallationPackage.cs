@@ -12,6 +12,8 @@ namespace MediaPortal.DeployTool
     CONFIGURED,
     NOT_REMOVED,
     REMOVED,
+    DOWNLOADED,
+    NON_DOWNLOADED,
     VERSION_MISMATCH,
     VERSION_LOOKUP_FAILED
   }

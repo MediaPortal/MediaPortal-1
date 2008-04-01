@@ -487,6 +487,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download.
+        /// </summary>
+        internal static string Install_actionDownload {
+            get {
+                return ResourceManager.GetString("Install_actionDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download-&gt;install.
         /// </summary>
         internal static string Install_actionDownloadInstall {
@@ -546,6 +555,15 @@ namespace MediaPortal.DeployTool {
         internal static string Install_actionUninstallInstall {
             get {
                 return ResourceManager.GetString("Install_actionUninstallInstall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download.
+        /// </summary>
+        internal static string Install_buttonDownload {
+            get {
+                return ResourceManager.GetString("Install_buttonDownload", resourceCulture);
             }
         }
         
@@ -676,15 +694,6 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uninstalling.
-        /// </summary>
-        internal static string Install_msgRemoving {
-            get {
-                return ResourceManager.GetString("Install_msgRemoving", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Uninstalling....
         /// </summary>
         internal static string Install_msgUninstalling {
@@ -703,6 +712,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloaded.
+        /// </summary>
+        internal static string Install_stateDownloaded {
+            get {
+                return ResourceManager.GetString("Install_stateDownloaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Installed.
         /// </summary>
         internal static string Install_stateInstalled {
@@ -717,6 +735,15 @@ namespace MediaPortal.DeployTool {
         internal static string Install_stateNotConfigured {
             get {
                 return ResourceManager.GetString("Install_stateNotConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not downloaded.
+        /// </summary>
+        internal static string Install_stateNotDownloaded {
+            get {
+                return ResourceManager.GetString("Install_stateNotDownloaded", resourceCulture);
             }
         }
         

@@ -461,9 +461,6 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   <data name="Install_msgConfiguring" xml:space="preserve">
     <value>Configuring</value>
   </data>
-  <data name="Install_msgRemoving" xml:space="preserve">
-    <value>Uninstalling</value>
-  </data>
   <data name="Install_stateConfigured" xml:space="preserve">
     <value>Configured</value>
   </data>
@@ -484,5 +481,17 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   </data>
   <data name="DownloadOnly_yes" xml:space="preserve">
     <value>Yes, I will use them to install MediaPortal on another machine</value>
+  </data>
+  <data name="Install_buttonDownload" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Install_stateDownloaded" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="Install_actionDownload" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Install_stateNotDownloaded" xml:space="preserve">
+    <value>Not downloaded</value>
   </data>
 </root>

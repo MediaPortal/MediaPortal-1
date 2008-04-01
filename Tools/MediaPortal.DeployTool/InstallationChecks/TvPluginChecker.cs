@@ -77,6 +77,14 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
+      if (InstallationProperties.Instance["InstallType"] == "download_only")
+      {
+          if (result.needsDownload == false)
+              result.state = CheckState.DOWNLOADED;
+          else
+              result.state = CheckState.NON_DOWNLOADED;
+          return result;
+      }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
       if (key == null)
       {

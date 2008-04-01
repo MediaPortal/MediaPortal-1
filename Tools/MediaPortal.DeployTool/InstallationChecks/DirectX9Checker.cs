@@ -69,6 +69,14 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("DirectX9c"));
+      if (InstallationProperties.Instance["InstallType"] == "download_only")
+      {
+          if (result.needsDownload == false)
+              result.state = CheckState.DOWNLOADED;
+          else
+              result.state = CheckState.NON_DOWNLOADED;
+          return result;
+      }
       RegistryKey key=Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;

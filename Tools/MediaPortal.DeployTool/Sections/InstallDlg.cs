@@ -50,7 +50,10 @@ namespace MediaPortal.DeployTool
     public override void UpdateUI()
     {
       labelHeading.Text = Localizer.Instance.GetString("Install_labelHeading");
-      buttonInstall.Text = Localizer.Instance.GetString("Install_buttonInstall");
+      if (InstallationProperties.Instance["InstallType"] == "download_only")
+        buttonInstall.Text = Localizer.Instance.GetString("Install_buttonDownload");
+      else
+        buttonInstall.Text = Localizer.Instance.GetString("Install_buttonInstall");
       listView.Columns[0].Text = Localizer.Instance.GetString("Install_colApplication");
       listView.Columns[1].Text = Localizer.Instance.GetString("Install_colState");
       listView.Columns[2].Text = Localizer.Instance.GetString("Install_colAction");
@@ -82,7 +85,7 @@ namespace MediaPortal.DeployTool
       {
         IInstallationPackage package = (IInstallationPackage)item.Tag;
         CheckResult result = package.CheckStatus();
-        if (result.state != CheckState.INSTALLED)
+        if (result.state != CheckState.INSTALLED && result.state != CheckState.DOWNLOADED)
         {
           isComplete = false;
           break;
@@ -120,16 +123,26 @@ namespace MediaPortal.DeployTool
             item.SubItems.Add(Localizer.Instance.GetString("Install_actionConfigure"));
             item.ForeColor = System.Drawing.Color.Red;
           break;
-        case CheckState.NOT_REMOVED:
-            item.SubItems.Add(Localizer.Instance.GetString("Install_stateUninstall"));
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionRemove"));
-            item.ForeColor = System.Drawing.Color.Red;
-          break;
         case CheckState.REMOVED:
             item.SubItems.Add(Localizer.Instance.GetString("Install_stateRemoved"));
             item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
             item.ForeColor = System.Drawing.Color.Green;
-          break;
+            break;
+        case CheckState.NOT_REMOVED:
+            item.SubItems.Add(Localizer.Instance.GetString("Install_stateUninstall"));
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionRemove"));
+            item.ForeColor = System.Drawing.Color.Red;
+            break;
+        case CheckState.DOWNLOADED:
+            item.SubItems.Add(Localizer.Instance.GetString("Install_stateDownloaded"));
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+            item.ForeColor = System.Drawing.Color.Green;
+            break;
+        case CheckState.NON_DOWNLOADED:
+            item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotDownloaded"));
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionDownload"));
+            item.ForeColor = System.Drawing.Color.Red;
+            break;
         case CheckState.VERSION_MISMATCH:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateVersionMismatch"));
           if (result.needsDownload)
@@ -143,7 +156,8 @@ namespace MediaPortal.DeployTool
     private void PopulateListView()
     {
         listView.Items.Clear();
-        AddPackageToListView(new OldPackageChecker());
+        if (InstallationProperties.Instance["InstallType"] != "download_only")
+            AddPackageToListView(new OldPackageChecker());
         AddPackageToListView(new DirectX9Checker());
         AddPackageToListView(new VCRedistChecker());
         switch(InstallationProperties.Instance["InstallType"])
@@ -180,6 +194,14 @@ namespace MediaPortal.DeployTool
 
             case "mp_only":
                         AddPackageToListView(new MediaPortalChecker());
+                        break;
+
+            case "download_only":
+                        AddPackageToListView(new MediaPortalChecker());
+                        AddPackageToListView(new MSSQLExpressChecker());
+                        AddPackageToListView(new MySQLChecker());
+                        AddPackageToListView(new TvServerChecker());
+                        AddPackageToListView(new TvPluginServerChecker());
                         break;
 
       }
@@ -231,7 +253,7 @@ namespace MediaPortal.DeployTool
             }
             break;
           case CheckState.REMOVED:
-            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgRemoving");
+            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgUninstalling");
             Update();
             if (!package.Install())
             {
@@ -263,6 +285,15 @@ namespace MediaPortal.DeployTool
             {
               Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"), package.GetDisplayName()));
               return false;
+            }
+            break;
+          case CheckState.NON_DOWNLOADED:
+            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgDownloading");
+            Update();
+            if (!package.Download())
+            {
+                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errDownloadFailed"), package.GetDisplayName()));
+                return false;
             }
             break;
         }

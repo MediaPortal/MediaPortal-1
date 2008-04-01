@@ -143,6 +143,14 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MySQL"));
+      if (InstallationProperties.Instance["InstallType"] == "download_only")
+      {
+          if (result.needsDownload == false)
+              result.state = CheckState.DOWNLOADED;
+          else
+              result.state = CheckState.NON_DOWNLOADED;
+          return result;
+      }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "MySQL AB\\MySQL Server 5.0");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;

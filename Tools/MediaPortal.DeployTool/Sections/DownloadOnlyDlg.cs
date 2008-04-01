@@ -57,12 +57,11 @@ namespace MediaPortal.DeployTool
     {
         if (rbYesDlOnly.Checked)
         {
-            InstallationProperties.Instance.Set("DownloadOnly", "yes");
+            InstallationProperties.Instance.Set("InstallType", "download_only");
             return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
         }
         else
         {
-            InstallationProperties.Instance.Set("DownloadOnly", "no");
             return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
         }
     }
