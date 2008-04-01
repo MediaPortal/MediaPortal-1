@@ -12,6 +12,7 @@ DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD%
 
 DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /revert
 
+EXIT
 rem these commands are necessary to get the svn revision, to enable them just remove the EXIT one line above
 DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /GetVersion
 IF NOT EXIST version.txt EXIT
