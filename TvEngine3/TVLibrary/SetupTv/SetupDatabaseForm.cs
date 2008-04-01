@@ -43,7 +43,6 @@ namespace SetupTv
     {
       SqlServer,
       MySql,
-      FbEmbedded,
     }
 
     ProviderType _provider = ProviderType.MySql;
@@ -91,9 +90,7 @@ namespace SetupTv
             rbSQLServer.Checked = true;
             break;
           default:
-            _provider = ProviderType.FbEmbedded;
-            rbMySQL.Checked = rbSQLServer.Checked = false;
-            break;
+            return;
         }
 
         string[] parts = connectionString.Split(';');
@@ -121,9 +118,6 @@ namespace SetupTv
                   case ProviderType.MySql:
                     tbServerHostName.Text = keyValue[1] = Dns.GetHostName();
                     break;
-                  case ProviderType.FbEmbedded:
-                    tbServerHostName.Text = keyValue[1] = Dns.GetHostName();
-                    break;
                 }
               }
             }
@@ -140,25 +134,25 @@ namespace SetupTv
       }
     }
 
-    private string ComposeConnectionString(string server, string userid, string password, string database, bool pooling)
+    private string ComposeConnectionString(string server, string userid, string password, string database, bool pooling, int timeout)
     {
       switch (_provider)
       {
         case ProviderType.SqlServer:
           if (database == "") database = "master";
           if (pooling)
-            return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};", password, userid, server, database);
-          return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;", password, userid, server, database);
+            return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Connection Timeout={4};", password, userid, server, database, timeout);
+          return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;Connection Timeout={4};", password, userid, server, database, timeout);
 
         case ProviderType.MySql:
           if (database == "") database = "mysql";
-          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;", server, userid, password, database);
+          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};", server, userid, password, database, timeout);
 
-        case ProviderType.FbEmbedded:
-          if (string.IsNullOrEmpty(database)) database = "TvLibrary.fdb";
-          if (pooling)
-            return String.Format("Database={0};User={1};Password={2};ServerType=1;Charset=UNICODE_FSS;", database, userid, password);
-          return String.Format("Database={0};User={1};Password={2};ServerType=1;Charset=UNICODE_FSS;Pooling=false;", database, userid, password);
+        //case ProviderType.FbEmbedded:
+        //  if (string.IsNullOrEmpty(database)) database = "TvLibrary.fdb";
+        //  if (pooling)
+        //    return String.Format("Database={0};User={1};Password={2};ServerType=1;Charset=UNICODE_FSS;", database, userid, password);
+        //  return String.Format("Database={0};User={1};Password={2};ServerType=1;Charset=UNICODE_FSS;Pooling=false;", database, userid, password);
       }
       return "";
     }
@@ -176,7 +170,7 @@ namespace SetupTv
         if (string.IsNullOrEmpty(tbServerHostName.Text) || string.IsNullOrEmpty(tbPassword.Text))
           return false;
 
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 15);
 
         switch (_provider)
         {
@@ -245,7 +239,7 @@ namespace SetupTv
             break;
         }
 
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", true);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", true, 300);
         switch (_provider)
         {
           case ProviderType.SqlServer:
@@ -271,6 +265,11 @@ namespace SetupTv
                     Log.Write("  ********* Error reason: {0}", ex.Message);
                     Log.Write("  ********* Error code: {0}, Line: {1} *********", ex.Number.ToString(), ex.LineNumber.ToString());
                     succeeded = false;
+                    if (connect.State != ConnectionState.Open)
+                    {
+                      Log.Write("  ********* Connection status = {0} - aborting further command execution..", connect.State.ToString());
+                      break;
+                    }
                   }
                 }
               }
@@ -299,6 +298,11 @@ namespace SetupTv
                     Log.Write("  ********* Error reason: {0}", ex.Message);
                     Log.Write("  ********* Error code: {0} *********", ex.Number.ToString());
                     succeeded = false;
+                    if (connect.State != ConnectionState.Open)
+                    {
+                      Log.Write("  ********* Connection status = {0} - aborting further command execution..", connect.State.ToString());
+                      break;
+                    }
                   }
                 }
               }
@@ -346,13 +350,13 @@ namespace SetupTv
     private void mpButtonTest_Click(object sender, EventArgs e)
     {
       CheckServiceName();
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 5);
 
       if (rbSQLServer.Checked)
       {
         _provider = ProviderType.SqlServer;
         try
-        {
-          string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false);
+        {          
           using (SqlConnection connect = new SqlConnection(connectionString))
           {
             connect.Open();
@@ -401,7 +405,6 @@ namespace SetupTv
         _provider = ProviderType.MySql;
         try
         {
-          string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false);
           using (MySqlConnection connect = new MySqlConnection(connectionString))
           {
             connect.Open();
@@ -441,7 +444,7 @@ namespace SetupTv
 
     private void Save()
     {
-      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", true);
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", true, 300);
       string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
       if (!File.Exists(fname))
       {
@@ -510,7 +513,7 @@ namespace SetupTv
       LoadConnectionDetailsFromConfig(false);
       try
       {
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", false);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", false, 15);
         switch (_provider)
         {
           case ProviderType.SqlServer:
@@ -581,6 +584,7 @@ namespace SetupTv
       }
       return false;
     }
+
     /// <summary>
     /// Upgrades the db schema 
     /// </summary>
