@@ -60,30 +60,37 @@ namespace SetupTv.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap labelMePo_Image {
+        internal static System.Drawing.Bitmap animation_SatDish {
             get {
-                object obj = ResourceManager.GetObject("labelMePo_Image", resourceCulture);
+                object obj = ResourceManager.GetObject("animation_SatDish", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap linkLabelPayPal_Image {
+        internal static System.Drawing.Bitmap logo_MePo {
             get {
-                object obj = ResourceManager.GetObject("linkLabelPayPal_Image", resourceCulture);
+                object obj = ResourceManager.GetObject("logo_MePo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap ms_sql_logo {
+        internal static System.Drawing.Bitmap logo_MSSQL {
             get {
-                object obj = ResourceManager.GetObject("ms_sql_logo", resourceCulture);
+                object obj = ResourceManager.GetObject("logo_MSSQL", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap mysql_logo {
+        internal static System.Drawing.Bitmap logo_MySQL {
             get {
-                object obj = ResourceManager.GetObject("mysql_logo", resourceCulture);
+                object obj = ResourceManager.GetObject("logo_MySQL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap logo_PayPal {
+            get {
+                object obj = ResourceManager.GetObject("logo_PayPal", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

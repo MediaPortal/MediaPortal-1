@@ -246,7 +246,7 @@ namespace SetupTv.Sections
       // 
       this.linkLabelPayPal.ActiveLinkColor = System.Drawing.Color.Transparent;
       this.linkLabelPayPal.DisabledLinkColor = System.Drawing.Color.Transparent;
-      this.linkLabelPayPal.Image = global::SetupTv.Properties.Resources.linkLabelPayPal_Image;
+      this.linkLabelPayPal.Image = global::SetupTv.Properties.Resources.logo_PayPal;
       this.linkLabelPayPal.LinkColor = System.Drawing.Color.Transparent;
       this.linkLabelPayPal.Location = new System.Drawing.Point(133, 314);
       this.linkLabelPayPal.Name = "linkLabelPayPal";
@@ -259,7 +259,7 @@ namespace SetupTv.Sections
       // 
       // labelMePo
       // 
-      this.labelMePo.Image = global::SetupTv.Properties.Resources.labelMePo_Image;
+      this.labelMePo.Image = global::SetupTv.Properties.Resources.logo_MePo;
       this.labelMePo.Location = new System.Drawing.Point(3, 142);
       this.labelMePo.Name = "labelMePo";
       this.labelMePo.Size = new System.Drawing.Size(258, 202);
