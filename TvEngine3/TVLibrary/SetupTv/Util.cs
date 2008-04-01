@@ -714,6 +714,7 @@ namespace SetupTv
 
     public static ulong GetFreeDiskSpace(string drive)
     {
+      if (drive == null) return 0;
       ulong freeBytesAvailable = 0;
       ulong totalNumberOfBytes = 0;
       ulong totalNumberOfFreeBytes = 0;

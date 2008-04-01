@@ -479,6 +479,7 @@ namespace SetupTv.Sections
 
     private void UpdateDriveInfo(bool save)
     {
+      if (comboBoxDrive.SelectedItem == null) return;
       string drive = (string)comboBoxDrive.SelectedItem;
       ulong freeSpace = Utils.GetFreeDiskSpace(drive);
       long totalSpace = Utils.GetDiskSize(drive);

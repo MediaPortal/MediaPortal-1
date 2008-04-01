@@ -555,7 +555,6 @@ namespace SetupTv
       try
       {
         applyButton_Click(sender, e);
-
         if (null != _previousSection)
         {
           _previousSection.OnSectionDeActivated();
@@ -563,8 +562,9 @@ namespace SetupTv
         }
         Close();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Write(ex);
       }
     }
 
