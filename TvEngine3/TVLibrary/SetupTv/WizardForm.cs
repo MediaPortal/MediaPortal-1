@@ -33,7 +33,7 @@ using System.Reflection;
 
 namespace SetupTv
 {
-  public partial class WizardForm : System.Windows.Forms.Form
+  public partial class WizardForm : SetupControls.MPForm
   {
     internal class SectionHolder
     {

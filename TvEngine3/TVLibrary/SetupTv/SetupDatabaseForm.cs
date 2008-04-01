@@ -37,7 +37,7 @@ using TvLibrary.Log;
 
 namespace SetupTv
 {
-  public partial class SetupDatabaseForm : Form
+  public partial class SetupDatabaseForm : SetupControls.MPForm
   {
     enum ProviderType
     {

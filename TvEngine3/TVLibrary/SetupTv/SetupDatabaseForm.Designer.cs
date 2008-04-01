@@ -28,23 +28,22 @@ namespace SetupTv
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SetupDatabaseForm));
       this.gbConnectionSetup = new System.Windows.Forms.GroupBox();
       this.gbDbLogon = new System.Windows.Forms.GroupBox();
+      this.lblUserId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbPassword = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblPassword = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbUserID = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.gbServerLocation = new System.Windows.Forms.GroupBox();
+      this.tbServiceDependency = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblServiceName = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lbServerHostname = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbServerHostName = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.lblDBChoice = new System.Windows.Forms.LinkLabel();
       this.pbMySQL = new System.Windows.Forms.PictureBox();
       this.pbSQLServer = new System.Windows.Forms.PictureBox();
       this.rbMySQL = new System.Windows.Forms.RadioButton();
       this.rbSQLServer = new System.Windows.Forms.RadioButton();
-      this.lblUserId = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbPassword = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lblPassword = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbUserID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbServiceDependency = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lblServiceName = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lbServerHostname = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbServerHostName = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -85,6 +84,41 @@ namespace SetupTv
       this.gbDbLogon.TabStop = false;
       this.gbDbLogon.Text = "Database logon: ";
       // 
+      // lblUserId
+      // 
+      this.lblUserId.AutoSize = true;
+      this.lblUserId.Location = new System.Drawing.Point(6, 25);
+      this.lblUserId.Name = "lblUserId";
+      this.lblUserId.Size = new System.Drawing.Size(49, 13);
+      this.lblUserId.TabIndex = 5;
+      this.lblUserId.Text = "User ID: ";
+      // 
+      // tbPassword
+      // 
+      this.tbPassword.Location = new System.Drawing.Point(99, 48);
+      this.tbPassword.Name = "tbPassword";
+      this.tbPassword.PasswordChar = '*';
+      this.tbPassword.Size = new System.Drawing.Size(220, 20);
+      this.tbPassword.TabIndex = 8;
+      this.tbPassword.UseSystemPasswordChar = true;
+      this.tbPassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbPassword_KeyUp);
+      // 
+      // lblPassword
+      // 
+      this.lblPassword.AutoSize = true;
+      this.lblPassword.Location = new System.Drawing.Point(6, 51);
+      this.lblPassword.Name = "lblPassword";
+      this.lblPassword.Size = new System.Drawing.Size(56, 13);
+      this.lblPassword.TabIndex = 7;
+      this.lblPassword.Text = "Password:";
+      // 
+      // tbUserID
+      // 
+      this.tbUserID.Location = new System.Drawing.Point(99, 22);
+      this.tbUserID.Name = "tbUserID";
+      this.tbUserID.Size = new System.Drawing.Size(220, 20);
+      this.tbUserID.TabIndex = 7;
+      // 
       // gbServerLocation
       // 
       this.gbServerLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -100,6 +134,42 @@ namespace SetupTv
       this.gbServerLocation.TabIndex = 3;
       this.gbServerLocation.TabStop = false;
       this.gbServerLocation.Text = "Database location: ";
+      // 
+      // tbServiceDependency
+      // 
+      this.tbServiceDependency.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbServiceDependency.Location = new System.Drawing.Point(99, 48);
+      this.tbServiceDependency.Name = "tbServiceDependency";
+      this.tbServiceDependency.Size = new System.Drawing.Size(220, 20);
+      this.tbServiceDependency.TabIndex = 5;
+      // 
+      // lblServiceName
+      // 
+      this.lblServiceName.AutoSize = true;
+      this.lblServiceName.Location = new System.Drawing.Point(6, 51);
+      this.lblServiceName.Name = "lblServiceName";
+      this.lblServiceName.Size = new System.Drawing.Size(71, 13);
+      this.lblServiceName.TabIndex = 13;
+      this.lblServiceName.Text = "Dependency:";
+      // 
+      // lbServerHostname
+      // 
+      this.lbServerHostname.AutoSize = true;
+      this.lbServerHostname.Location = new System.Drawing.Point(6, 25);
+      this.lbServerHostname.Name = "lbServerHostname";
+      this.lbServerHostname.Size = new System.Drawing.Size(58, 13);
+      this.lbServerHostname.TabIndex = 12;
+      this.lbServerHostname.Text = "Hostname:";
+      // 
+      // tbServerHostName
+      // 
+      this.tbServerHostName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbServerHostName.Location = new System.Drawing.Point(99, 22);
+      this.tbServerHostName.Name = "tbServerHostName";
+      this.tbServerHostName.Size = new System.Drawing.Size(220, 20);
+      this.tbServerHostName.TabIndex = 4;
       // 
       // lblDBChoice
       // 
@@ -162,77 +232,6 @@ namespace SetupTv
       this.rbSQLServer.UseVisualStyleBackColor = true;
       this.rbSQLServer.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
       // 
-      // lblUserId
-      // 
-      this.lblUserId.AutoSize = true;
-      this.lblUserId.Location = new System.Drawing.Point(6, 25);
-      this.lblUserId.Name = "lblUserId";
-      this.lblUserId.Size = new System.Drawing.Size(49, 13);
-      this.lblUserId.TabIndex = 5;
-      this.lblUserId.Text = "User ID: ";
-      // 
-      // tbPassword
-      // 
-      this.tbPassword.Location = new System.Drawing.Point(99, 48);
-      this.tbPassword.Name = "tbPassword";
-      this.tbPassword.PasswordChar = '*';
-      this.tbPassword.Size = new System.Drawing.Size(220, 20);
-      this.tbPassword.TabIndex = 8;
-      this.tbPassword.UseSystemPasswordChar = true;
-      this.tbPassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbPassword_KeyUp);
-      // 
-      // lblPassword
-      // 
-      this.lblPassword.AutoSize = true;
-      this.lblPassword.Location = new System.Drawing.Point(6, 51);
-      this.lblPassword.Name = "lblPassword";
-      this.lblPassword.Size = new System.Drawing.Size(56, 13);
-      this.lblPassword.TabIndex = 7;
-      this.lblPassword.Text = "Password:";
-      // 
-      // tbUserID
-      // 
-      this.tbUserID.Location = new System.Drawing.Point(99, 22);
-      this.tbUserID.Name = "tbUserID";
-      this.tbUserID.Size = new System.Drawing.Size(220, 20);
-      this.tbUserID.TabIndex = 7;
-      // 
-      // tbServiceDependency
-      // 
-      this.tbServiceDependency.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbServiceDependency.Location = new System.Drawing.Point(99, 48);
-      this.tbServiceDependency.Name = "tbServiceDependency";
-      this.tbServiceDependency.Size = new System.Drawing.Size(220, 20);
-      this.tbServiceDependency.TabIndex = 5;
-      // 
-      // lblServiceName
-      // 
-      this.lblServiceName.AutoSize = true;
-      this.lblServiceName.Location = new System.Drawing.Point(6, 51);
-      this.lblServiceName.Name = "lblServiceName";
-      this.lblServiceName.Size = new System.Drawing.Size(71, 13);
-      this.lblServiceName.TabIndex = 13;
-      this.lblServiceName.Text = "Dependency:";
-      // 
-      // lbServerHostname
-      // 
-      this.lbServerHostname.AutoSize = true;
-      this.lbServerHostname.Location = new System.Drawing.Point(6, 25);
-      this.lbServerHostname.Name = "lbServerHostname";
-      this.lbServerHostname.Size = new System.Drawing.Size(58, 13);
-      this.lbServerHostname.TabIndex = 12;
-      this.lbServerHostname.Text = "Hostname:";
-      // 
-      // tbServerHostName
-      // 
-      this.tbServerHostName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbServerHostName.Location = new System.Drawing.Point(99, 22);
-      this.tbServerHostName.Name = "tbServerHostName";
-      this.tbServerHostName.Size = new System.Drawing.Size(220, 20);
-      this.tbServerHostName.TabIndex = 4;
-      // 
       // btnTest
       // 
       this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -274,7 +273,6 @@ namespace SetupTv
       this.Controls.Add(this.btnSave);
       this.Controls.Add(this.mpLabel1);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
       this.MinimizeBox = false;
       this.Name = "SetupDatabaseForm";

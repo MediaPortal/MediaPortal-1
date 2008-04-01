@@ -53,7 +53,6 @@ namespace SetupTv
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WizardForm));
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.nextButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.backButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -168,7 +167,7 @@ namespace SetupTv
       // 
       // WizardForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(618, 552);
       this.Controls.Add(this.holderPanel);
       this.Controls.Add(this.panel2);
@@ -178,7 +177,6 @@ namespace SetupTv
       this.Controls.Add(this.nextButton);
       this.Controls.Add(this.cancelButton);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "WizardForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "WizardForm";

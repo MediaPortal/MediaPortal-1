@@ -38,7 +38,7 @@ using SetupTv;
 
 namespace SetupControls
 {
-  public partial class SettingsForm : Form
+  public partial class SettingsForm : SetupControls.MPForm
   {
     protected SectionSettings _previousSection = null;
     protected static Hashtable settingSections = new Hashtable();
@@ -51,12 +51,12 @@ namespace SetupControls
       get { return settingSections; }
     }
 
-
     public SettingsForm()
     {
+      InitializeComponent();
 
+      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
     }
-
 
     public virtual void AddSection(SectionSettings section)
     {
@@ -164,7 +164,7 @@ namespace SetupControls
 
     public virtual void helpButton_Click(object sender, EventArgs e)
     {
-
+      SetupControls.HelpSystem.ShowHelp(_previousSection.ToString());
     }
 
 

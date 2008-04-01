@@ -50,20 +50,10 @@ namespace SetupTv
     private Plugins pluginsRoot;
     private TvBusinessLayer layer;
 
-    string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Application.StartupPath);
-
     public SetupTvSettingsForm()
     {
       try
       {
-        //
-        // Required for Windows Form Designer support
-        //
-        base.InitializeComponent();
-        // 
-        linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
-
-
         CheckForIllegalCrossThreadCalls = false;
         //
         // Set caption
@@ -245,15 +235,6 @@ namespace SetupTv
         Log.Error("Failed to startup cause of exception");
         Log.Write(ex);
       }
-
-
-
-      if (!System.IO.File.Exists(helpReferencesFile))
-      {
-        Log.Error("File not found: {0}", helpReferencesFile);
-        helpButton.Enabled = false;
-        return;
-      }
     }
 
 
@@ -390,12 +371,8 @@ namespace SetupTv
 
     public override void sectionTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
     {
-      SectionTreeNode treeNode = e.Node as SectionTreeNode;
+      base.sectionTree_BeforeSelect(sender, e);
 
-      if (treeNode != null)
-      {
-        e.Cancel = !treeNode.Section.CanActivate;
-      }
       if (!e.Cancel)
         if (!ServiceHelper.IsRunning)
         {
@@ -406,15 +383,7 @@ namespace SetupTv
 
     public override void sectionTree_AfterSelect(object sender, TreeViewEventArgs e)
     {
-      SectionTreeNode treeNode = e.Node as SectionTreeNode;
-
-      if (treeNode != null)
-      {
-        if (ActivateSection(treeNode.Section))
-        {
-          headerLabel.Caption = treeNode.Section.Text;
-        }
-      }
+      base.sectionTree_AfterSelect(sender, e);
     }
 
     public override bool ActivateSection(SectionSettings section)
@@ -582,9 +551,22 @@ namespace SetupTv
       process.Start();
     }
 
-    public override void helpButton_Click(object sender, EventArgs e)
+    private void InitializeComponent()
     {
-      SetupControls.HelpSystem.ShowHelp(_previousSection.ToString());
+      this.SuspendLayout();
+      // 
+      // sectionTree
+      // 
+      this.sectionTree.LineColor = System.Drawing.Color.Black;
+      // 
+      // SetupTvSettingsForm
+      // 
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.ClientSize = new System.Drawing.Size(716, 537);
+      this.Name = "SetupTvSettingsForm";
+      this.ResumeLayout(false);
+      this.PerformLayout();
+
     }
   }
 }

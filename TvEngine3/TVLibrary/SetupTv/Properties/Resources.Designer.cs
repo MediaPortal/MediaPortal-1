@@ -60,6 +60,20 @@ namespace SetupTv.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap labelMePo_Image {
+            get {
+                object obj = ResourceManager.GetObject("labelMePo_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap linkLabelPayPal_Image {
+            get {
+                object obj = ResourceManager.GetObject("linkLabelPayPal_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap ms_sql_logo {
             get {
                 object obj = ResourceManager.GetObject("ms_sql_logo", resourceCulture);
@@ -71,13 +85,6 @@ namespace SetupTv.Properties {
             get {
                 object obj = ResourceManager.GetObject("mysql_logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Icon SetupTv {
-            get {
-                object obj = ResourceManager.GetObject("SetupTv", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
             }
         }
         

@@ -37,12 +37,9 @@ namespace SetupControls
     /// </summary>
     protected override void Dispose(bool disposing)
     {
-      if (disposing)
+      if (disposing && (components != null))
       {
-        /*if(components != null)
-				{
-					components.Dispose();
-				}*/
+        components.Dispose();
       }
       base.Dispose(disposing);
     }
@@ -55,7 +52,6 @@ namespace SetupControls
     /// </summary>
     protected void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
       this.sectionTree = new System.Windows.Forms.TreeView();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -197,7 +193,7 @@ namespace SetupControls
       // SettingsForm
       // 
       this.AcceptButton = this.okButton;
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(716, 537);
@@ -211,7 +207,6 @@ namespace SetupControls
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.sectionTree);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "SettingsForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Settings";
@@ -224,15 +219,15 @@ namespace SetupControls
 
     #endregion
 
-    protected MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    protected MediaPortal.UserInterface.Controls.MPButton okButton;
-    protected MediaPortal.UserInterface.Controls.MPButton applyButton;
-    protected MediaPortal.UserInterface.Controls.MPButton buttonViewLog;
-    protected MediaPortal.UserInterface.Controls.MPBeveledLine beveledLine1;
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton okButton;
+    private MediaPortal.UserInterface.Controls.MPButton applyButton;
+    private MediaPortal.UserInterface.Controls.MPButton buttonViewLog;
+    private MediaPortal.UserInterface.Controls.MPBeveledLine beveledLine1;
     protected System.Windows.Forms.TreeView sectionTree;
     protected System.Windows.Forms.Panel holderPanel;
-    protected MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
-    protected System.Windows.Forms.LinkLabel linkLabel1;
-    protected MediaPortal.UserInterface.Controls.MPButton helpButton;
+    private MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
+    private System.Windows.Forms.LinkLabel linkLabel1;
+    private MediaPortal.UserInterface.Controls.MPButton helpButton;
   }
 }

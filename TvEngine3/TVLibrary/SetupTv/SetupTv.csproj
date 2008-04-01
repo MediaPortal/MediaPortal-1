@@ -11,7 +11,8 @@
     <AssemblyName>SetupTv</AssemblyName>
     <Win32Resource>
     </Win32Resource>
-    <ApplicationIcon>SetupTv.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -201,10 +202,6 @@
     <EmbeddedResource Include="Sections\TvGroups.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TvGroups.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SetupDatabaseForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -492,16 +489,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="35_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="35_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="WizardForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>WizardForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="36_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="36_upgrade_sqlserver_database.sql" />
     <None Include="images\ms_sql_logo.gif" />
     <None Include="images\mysql_logo.gif" />
     <EmbeddedResource Include="images\wizard-header.jpg" />
-    <Content Include="SetupTv.ico" />
+    <None Include="images\labelMePo.Image.png" />
+    <None Include="images\linkLabelPayPal.Image.bmp" />
+    <None Include="images\ms_sql_logo.gif" />
+    <None Include="images\mysql_logo.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

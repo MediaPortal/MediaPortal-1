@@ -55,7 +55,6 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Project));
       this.groupBoxInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelInfo2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelInfo1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -70,9 +69,9 @@ namespace SetupTv.Sections
       this.labelForums = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabelHomepage = new System.Windows.Forms.LinkLabel();
       this.labelHomepage = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.helpButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkLabelPayPal = new System.Windows.Forms.LinkLabel();
       this.labelMePo = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.helpButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxInfo.SuspendLayout();
       this.groupBoxContact.SuspendLayout();
       this.SuspendLayout();
@@ -232,11 +231,22 @@ namespace SetupTv.Sections
       this.labelHomepage.TabIndex = 0;
       this.labelHomepage.Text = "Homepage:";
       // 
+      // helpButton
+      // 
+      this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.helpButton.Location = new System.Drawing.Point(364, 382);
+      this.helpButton.Name = "helpButton";
+      this.helpButton.Size = new System.Drawing.Size(105, 23);
+      this.helpButton.TabIndex = 10;
+      this.helpButton.Text = "&Update Help";
+      this.helpButton.UseVisualStyleBackColor = true;
+      this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+      // 
       // linkLabelPayPal
       // 
       this.linkLabelPayPal.ActiveLinkColor = System.Drawing.Color.Transparent;
       this.linkLabelPayPal.DisabledLinkColor = System.Drawing.Color.Transparent;
-      this.linkLabelPayPal.Image = ((System.Drawing.Image)(resources.GetObject("linkLabelPayPal.Image")));
+      this.linkLabelPayPal.Image = global::SetupTv.Properties.Resources.linkLabelPayPal_Image;
       this.linkLabelPayPal.LinkColor = System.Drawing.Color.Transparent;
       this.linkLabelPayPal.Location = new System.Drawing.Point(133, 314);
       this.linkLabelPayPal.Name = "linkLabelPayPal";
@@ -249,22 +259,11 @@ namespace SetupTv.Sections
       // 
       // labelMePo
       // 
-      this.labelMePo.Image = ((System.Drawing.Image)(resources.GetObject("labelMePo.Image")));
+      this.labelMePo.Image = global::SetupTv.Properties.Resources.labelMePo_Image;
       this.labelMePo.Location = new System.Drawing.Point(3, 142);
       this.labelMePo.Name = "labelMePo";
       this.labelMePo.Size = new System.Drawing.Size(258, 202);
       this.labelMePo.TabIndex = 9;
-      // 
-      // helpButton
-      // 
-      this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.helpButton.Location = new System.Drawing.Point(364, 382);
-      this.helpButton.Name = "helpButton";
-      this.helpButton.Size = new System.Drawing.Size(105, 23);
-      this.helpButton.TabIndex = 10;
-      this.helpButton.Text = "&Update Help";
-      this.helpButton.UseVisualStyleBackColor = true;
-      this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
       // 
       // Project
       // 
