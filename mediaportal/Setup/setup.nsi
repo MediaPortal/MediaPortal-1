@@ -268,9 +268,9 @@ Section "MediaPortal core files (required)" SecCore
     "
   #CONFIG FILES ARE ALWAYS INSTALLED by SVN and FINAL releases, BECAUSE of the config dir location
   !define EXCLUDED_CONFIG_FILES "\
+    /x MediaPortalDirs.xml \
     /x CaptureCardDefinitions.xml \
     /x 'eHome Infrared Transceiver List XP.xml' \
-    /x FileDetailContents.xml \
     /x ISDNCodes.xml \
     /x keymap.xml \
     /x MusicVideoSettings.xml \
@@ -278,6 +278,7 @@ Section "MediaPortal core files (required)" SecCore
     /x yac-area-codes.xml \
     /x thumbs \
     "
+    #/x FileDetailContents.xml \
     #/x grabber_AllGame_com.xml \
     #/x ProgramSettingProfiles.xml \
 
@@ -285,6 +286,7 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
 
 
+  File MediaPortalDirs.xml
 
   ; ========================================
   ; MediaPortalEXE
@@ -413,7 +415,6 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   #SetOutPath "${COMMON_APPDATA}\thumbs"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\thumbs"
 
-  File MediaPortalDirs.xml
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
