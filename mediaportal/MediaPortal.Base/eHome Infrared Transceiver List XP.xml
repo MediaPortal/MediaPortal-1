@@ -12,4 +12,5 @@
 	<transceiver deviceid="#vid_2304&amp;pid_0225" name="Pinnacle PCTV Remote" />
 	<transceiver deviceid="#vid_051c&amp;pid_c001" name="Shuttle MCE Remote" />
 	<transceiver deviceid="#vid_1308&amp;pid_c001" name="another Shuttle MCE Remote" />
+    <transceiver deviceid="#vid_04b4&amp;pid_0100" name="Centarea Master Remote II" />
 </ehomelist>
