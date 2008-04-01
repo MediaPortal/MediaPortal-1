@@ -829,10 +829,10 @@
     <String id="997">Ferdig</String>
     <String id="998">XviD</String>
     <String id="999">Denne pluginen lar deg kode om dine</String>
-    <String id="1000">TV-programmet fra dvr-ms til mpg, xvid eller wmv</String>
-    <String id="1001">Vennligst husk. Du trenger å ha en</String>
-    <String id="1002">Elecard MPEG2 video dekoder installert</String>
-    <String id="1003">for å kode om til xvid.</String>
+    <String id="1000">TV-programmet fra dvr-ms til mpg or wmv</String>
+    <String id="1001">Vennligst husk. Dine opptak må</String>
+    <String id="1002">virke i MediaPortal med både lyd å bilde</String>
+    <String id="1003">før du koder om til wmv.</String>
     <String id="1004">I ferd med å starte opptak</String>
     <String id="1005">på kanal</String>
     <String id="1006">Tillat opptaket å begynne</String>
