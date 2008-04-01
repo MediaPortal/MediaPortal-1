@@ -60,7 +60,7 @@ CKnc::~CKnc(void)
 {
   if (m_bIsKNC)
   {
-    KNCBDA_CI_Disable();
+    KNCBDA_CI_Disable(0);
   }
   if (m_hMod!=NULL)
   {
@@ -90,12 +90,12 @@ STDMETHODIMP CKnc::IsCamReady( BOOL* yesNo)
   *yesNo=FALSE;
   if (m_bIsKNC)
   {
-    if (KNCBDA_CI_IsAvailable() ==FALSE)
+    if (KNCBDA_CI_IsAvailable(0) ==FALSE)
     {
       *yesNo=TRUE;
       return S_OK;
     }
-    if (KNCBDA_CI_IsReady())
+    if (KNCBDA_CI_IsReady(0))
     {
       LogDebug("KNCBDA_CI_IsReady %d",yesNo);
       *yesNo=TRUE;
@@ -113,7 +113,7 @@ STDMETHODIMP CKnc::IsCIAvailable( BOOL* yesNo)
   *yesNo=FALSE;
   if (m_bIsKNC)
   {
-    if (KNCBDA_CI_IsAvailable())
+    if (KNCBDA_CI_IsAvailable(0))
     {
       *yesNo=TRUE;
       LogDebug("KNCBDA_CI_IsAvailable %d",yesNo);
@@ -157,7 +157,7 @@ STDMETHODIMP CKnc::DescrambleService( BYTE* pmt, int PMTLength,BOOL* succeeded)
 {
   if (m_bIsKNC)
   {
-    BOOL result=KNCBDA_CI_SendPMTCommand(pmt, PMTLength);
+    BOOL result=KNCBDA_CI_SendPMTCommand(0,pmt, PMTLength);
     LogDebug("KNCBDA_CI_SendPMTCommand %d",result);
     *succeeded = (result==TRUE);
     //*succeeded=true;
@@ -296,13 +296,13 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
     m_callback.OnKncCiMenuChoice=&OnKncCiMenuChoice;
     m_callback.OnKncCiRequest=&OnKncCiRequest;
     m_callback.OnKncCiCloseDisplay=&OnKncCiCloseDisplay;
-    if ( KNCBDA_CI_Enable(tunerFilter,&m_callback))
+    if ( KNCBDA_CI_Enable(0,tunerFilter,&m_callback))
     {
-      if (KNCBDA_CI_IsReady())
+      if (KNCBDA_CI_IsReady(0))
       {
 				m_bIsKNC=true;
         LogDebug("knc card detected with CAM");
-        KNCBDA_CI_HW_Enable(TRUE);
+        KNCBDA_CI_HW_Enable(0,TRUE);
       }
       else
       {

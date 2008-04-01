@@ -44,15 +44,16 @@ typedef struct TKNCBDACICallback
 }TKNCBDACICallback, *PKNCBDACICallback;
 
 //FUNCTION TEMPLATES
-typedef BOOL __stdcall TKNCBDA_CI_Enable(IUnknown*,PVOID);
-typedef BOOL __stdcall TKNCBDA_CI_Disable();
-typedef BOOL __stdcall TKNCBDA_CI_IsAvailable();
-typedef BOOL __stdcall TKNCBDA_CI_IsReady();
-typedef BOOL __stdcall TKNCBDA_CI_HW_Enable(BOOL);
-typedef BOOL __stdcall TKNCBDA_CI_GetName(LPTSTR,UINT);
-typedef BOOL __stdcall TKNCBDA_CI_SendPMTCommand(PBYTE,int);
-typedef BOOL __stdcall TKNCBDA_CI_EnterMenu(UCHAR);
-typedef BOOL __stdcall TKNCBDA_CI_SelectMenu(UCHAR,UCHAR);
-typedef BOOL __stdcall TKNCBDA_CI_CloseMenu(UCHAR);
-typedef BOOL __stdcall TKNCBDA_CI_SendMenuAnswer(UCHAR,BOOL,LPCTSTR);
+typedef BOOL __stdcall TKNCBDA_CI_Enable(int,IUnknown*,PVOID);
+typedef BOOL __stdcall TKNCBDA_CI_Disable(int);
+typedef BOOL __stdcall TKNCBDA_CI_IsAvailable(int);
+typedef BOOL __stdcall TKNCBDA_CI_IsReady(int);
+typedef BOOL __stdcall TKNCBDA_CI_HW_Enable(int,BOOL);
+typedef BOOL __stdcall TKNCBDA_CI_GetName(int,LPTSTR,UINT);
+typedef BOOL __stdcall TKNCBDA_CI_SendPMTCommand(int,PBYTE,int);
+typedef BOOL __stdcall TKNCBDA_CI_EnterMenu(int,UCHAR);
+typedef BOOL __stdcall TKNCBDA_CI_SelectMenu(int,UCHAR,UCHAR);
+typedef BOOL __stdcall TKNCBDA_CI_CloseMenu(int,UCHAR);
+typedef BOOL __stdcall TKNCBDA_CI_SendMenuAnswer(int,UCHAR,BOOL,LPCTSTR);
+
 
