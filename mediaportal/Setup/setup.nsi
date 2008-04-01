@@ -387,14 +387,13 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   SetOutPath "$INSTDIR\scripts\imdb"
   File "..\scripts\imdb\*.*"
 */
-  /*
+
   ; Doc
   SetOutPath $INSTDIR\Docs
   File "..\Docs\BASS License.txt"
-  File "..\Docs\LICENSE.rtf"
+  #File "..\Docs\LICENSE.rtf"
   File "..\Docs\MediaPortal License.rtf"
-  File "..\Docs\SQLite Database Browser.exe"
-*/
+  #File "..\Docs\SQLite Database Browser.exe"
 
   # COMMON CONFIG files for SVN and FINAL RELEASES
   SetOutPath "${COMMON_APPDATA}"
@@ -467,9 +466,9 @@ SectionEnd
     Delete /REBOOTOK "${COMMON_APPDATA}\wikipedia.xml"
     Delete /REBOOTOK "${COMMON_APPDATA}\yac-area-codes.xml"
 
-    Delete /REBOOTOK "${COMMON_APPDATA}\grabber_AllGame_com.xml"
-    Delete /REBOOTOK "${COMMON_APPDATA}\ProgramSettingProfiles.xml"
-    Delete /REBOOTOK "${COMMON_APPDATA}\FileDetailContents.xml"
+    #Delete /REBOOTOK "${COMMON_APPDATA}\grabber_AllGame_com.xml"
+    #Delete /REBOOTOK "${COMMON_APPDATA}\ProgramSettingProfiles.xml"
+    #Delete /REBOOTOK "${COMMON_APPDATA}\FileDetailContents.xml"
 
     ; Remove the Folders
     RmDir /r /REBOOTOK $INSTDIR\Burner
@@ -482,7 +481,7 @@ SectionEnd
     RmDir /r /REBOOTOK $INSTDIR\plugins
     RmDir /r /REBOOTOK $INSTDIR\Profiles
     RmDir /r /REBOOTOK $INSTDIR\scripts
-    RmDir /r /REBOOTOK $INSTDIR\TTPremiumBoot
+    #RmDir /r /REBOOTOK $INSTDIR\TTPremiumBoot
     RmDir /r /REBOOTOK $INSTDIR\Tuningparameters
     RmDir /r /REBOOTOK $INSTDIR\weather
     RmDir /r /REBOOTOK $INSTDIR\WebEPG
@@ -494,9 +493,9 @@ SectionEnd
 
     ; Doc
     Delete /REBOOTOK "$INSTDIR\Docs\BASS License.txt"
-    Delete /REBOOTOK "$INSTDIR\Docs\LICENSE.rtf"
+    #Delete /REBOOTOK "$INSTDIR\Docs\LICENSE.rtf"
     Delete /REBOOTOK "$INSTDIR\Docs\MediaPortal License.rtf"
-    Delete /REBOOTOK "$INSTDIR\Docs\SQLite Database Browser.exe"
+    #Delete /REBOOTOK "$INSTDIR\Docs\SQLite Database Browser.exe"
     RmDir $INSTDIR\Docs
 
     ; InputDeviceMappings
@@ -541,7 +540,7 @@ SectionEnd
     Delete /REBOOTOK $INSTDIR\DaggerLib.DSGraphEdit.dll
     Delete /REBOOTOK $INSTDIR\Databases.dll
     Delete /REBOOTOK $INSTDIR\defaultMusicViews.xml
-    Delete /REBOOTOK $INSTDIR\defaultProgramViews.xml
+    #Delete /REBOOTOK $INSTDIR\defaultProgramViews.xml
     Delete /REBOOTOK $INSTDIR\defaultVideoViews.xml
     Delete /REBOOTOK $INSTDIR\DirectShowLib-2005.dll
     Delete /REBOOTOK $INSTDIR\DirectShowLib.dll
@@ -556,6 +555,7 @@ SectionEnd
     Delete /REBOOTOK $INSTDIR\FTD2XX.DLL
     Delete /REBOOTOK $INSTDIR\hauppauge.dll
     Delete /REBOOTOK $INSTDIR\HcwHelper.exe
+    Delete /REBOOTOK $INSTDIR\HelpReferences.xml
     Delete /REBOOTOK $INSTDIR\ICSharpCode.SharpZipLib.dll
     Delete /REBOOTOK $INSTDIR\inpout32.dll
     Delete /REBOOTOK $INSTDIR\Interop.GIRDERLib.dll
