@@ -135,7 +135,7 @@ namespace TvEngine
     {
       get
       {
-        return new SetupTv.Sections.XmlSetup();
+        return new SetupTv.Sections.XmlTvSetup();
       }
     }
 

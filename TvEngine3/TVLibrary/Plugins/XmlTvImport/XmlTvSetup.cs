@@ -37,14 +37,14 @@ using Tst;
 
 namespace SetupTv.Sections
 {
-  public partial class XmlSetup : SectionSettings
+  public partial class XmlTvSetup : SetupTv.SectionSettings
   {
-    public XmlSetup()
+    public XmlTvSetup()
       : this("XmlTv")
     {
     }
 
-    public XmlSetup(string name)
+    public XmlTvSetup(string name)
       : base(name)
     {
       InitializeComponent();

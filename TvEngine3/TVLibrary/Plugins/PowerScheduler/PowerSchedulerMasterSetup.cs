@@ -36,9 +36,8 @@ using TvDatabase;
 
 namespace TvEngine.PowerScheduler
 {
-  public partial class PowerSchedulerMasterSetup : SectionSettings
+  public partial class PowerSchedulerMasterSetup : SetupTv.SectionSettings
   {
-
     TvBusinessLayer _layer;
 
     public PowerSchedulerMasterSetup()

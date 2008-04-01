@@ -39,7 +39,7 @@ using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
-  public partial class TvMovieSetup : SectionSettings
+  public partial class TvMovieSetup : SetupTv.SectionSettings
   {
     #region ChannelInfo class
     class ChannelInfo

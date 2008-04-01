@@ -1,7 +1,7 @@
 namespace SetupTv.Sections
 {
 
-    partial class PluginSetup
+    partial class ComSkipSetup
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace SetupTv.Sections
         /// </summary>
         private void InitializeComponent()
         {
-          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginSetup));
+          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ComSkipSetup));
           this.groupBoxTest = new System.Windows.Forms.GroupBox();
           this.textBoxTest = new System.Windows.Forms.TextBox();
           this.buttonTest = new System.Windows.Forms.Button();

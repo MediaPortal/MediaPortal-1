@@ -109,7 +109,7 @@ namespace TvEngine
     [CLSCompliant(false)]
     public SetupTv.SectionSettings Setup
     {
-      get { return new SetupTv.Sections.PluginSetup(); }
+      get { return new SetupTv.Sections.ComSkipSetup(); }
     }
 
     #endregion

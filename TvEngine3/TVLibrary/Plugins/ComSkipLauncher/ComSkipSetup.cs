@@ -14,11 +14,9 @@ using TvDatabase;
 
 namespace SetupTv.Sections
 {
-
   [CLSCompliant(false)]
-  public partial class PluginSetup : SetupTv.SectionSettings
+  public partial class ComSkipSetup : SetupTv.SectionSettings
   {
-
     #region Constants
 
     const string ParametersMessage =
@@ -61,7 +59,7 @@ namespace SetupTv.Sections
 
     #region Constructor
 
-    public PluginSetup()
+    public ComSkipSetup()
     {
       InitializeComponent();
     }

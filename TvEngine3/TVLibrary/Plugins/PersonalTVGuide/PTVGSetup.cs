@@ -12,7 +12,7 @@ using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
-	public partial class PTVGSetup : SectionSettings
+	public partial class PTVGSetup : SetupTv.SectionSettings
 	{
 		#region constructor
 		public PTVGSetup()

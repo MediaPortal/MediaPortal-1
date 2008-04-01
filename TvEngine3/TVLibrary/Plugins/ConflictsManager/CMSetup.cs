@@ -9,7 +9,7 @@ using TvDatabase;
 
 namespace SetupTv.Sections
 {
-  public partial class CMSetup : SectionSettings
+  public partial class CMSetup : SetupTv.SectionSettings
   {
     #region constructors
     public CMSetup()
@@ -44,6 +44,5 @@ namespace SetupTv.Sections
       base.OnSectionDeActivated();
     }
     #endregion
-
   }
 }

@@ -1,6 +1,6 @@
 namespace SetupTv.Sections
 {
-  partial class XmlSetup
+  partial class XmlTvSetup
   {
     /// <summary>
     /// Required designer variable.
