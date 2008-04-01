@@ -366,6 +366,7 @@ ${MementoSectionEnd}
   Delete /REBOOTOK $INSTDIR\Gentle.Framework.DLL
   Delete /REBOOTOK $INSTDIR\Gentle.Provider.MySQL.dll
   Delete /REBOOTOK $INSTDIR\Gentle.Provider.SQLServer.dll
+  Delete /REBOOTOK $INSTDIR\HelpReferences.xml
   Delete /REBOOTOK $INSTDIR\log4net.dll
   Delete /REBOOTOK $INSTDIR\MySql.Data.dll
   Delete /REBOOTOK $INSTDIR\TvBusinessLayer.dll
