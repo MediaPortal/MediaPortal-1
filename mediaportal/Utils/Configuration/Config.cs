@@ -215,14 +215,20 @@ private Config()
     private static void LoadDirs(string startuppath)
     {
       Set(Dir.Base, startuppath + @"\");
-      LoadDefaultDirs();
-      if (!ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
-      {
-        if (!ReadConfig(Get(Dir.Base)))
-        {
-          LoadDefaultDirs();
-        }
-      }
+
+      string tagFile = Path.Combine(Get(Dir.Base), @"USE_BASE_DIR");
+      if (File.Exists(tagFile))
+        UseBaseDirectory();
+      else
+        LoadDefaultDirs();
+
+      //if (!ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
+      //{
+      //  if (!ReadConfig(Get(Dir.Base)))
+      //  {
+      //    LoadDefaultDirs();
+      //  }
+      //}
     }
 
     /// <summary>
@@ -310,7 +316,32 @@ private Config()
       return false;
     }
 
+
+    /// <summary>
+    /// Defines the paths where to redirect when we use the common appdata directory
+    /// </summary>
     private static void LoadDefaultDirs()
+    {
+      string baseDir = Get(Dir.Base);
+      string commonData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+      Set(Dir.Cache, Path.Combine(commonData, @"\Team MediaPortal\MediaPortal\cache\"));
+      Set(Dir.Config, Path.Combine(commonData, @"\Team MediaPortal\MediaPortal\"));
+      Set(Dir.CustomInputDevice, Path.Combine(commonData, @"\Team MediaPortal\MediaPortal\InputDeviceMappings\"));
+      Set(Dir.CustomInputDefault, Path.Combine(baseDir, @"InputDeviceMappings\defaults\"));
+      Set(Dir.Database, Path.Combine(commonData, @"\Team MediaPortal\MediaPortal\database\"));
+      Set(Dir.Language, Path.Combine(baseDir, @"language\"));
+      Set(Dir.Log, Path.Combine(commonData, @"\Team MediaPortal\MediaPortal\log\"));
+      Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
+      Set(Dir.Skin, Path.Combine(baseDir, @"skin\"));
+      Set(Dir.Thumbs, Path.Combine(commonData, @"\Team MediaPortal\MediaPortal\thumbs\"));
+      Set(Dir.Weather, Path.Combine(baseDir, @"weather\"));
+      Set(Dir.BurnerSupport, Path.Combine(baseDir, @"Burner\"));
+    }
+
+    /// <summary>
+    /// Defines the paths where to redirect when the user wants to store all files in installation directory.
+    /// </summary>
+    private static void UseBaseDirectory()
     {
       string baseDir = Get(Dir.Base);
       Set(Dir.Cache, Path.Combine(baseDir, @"cache\"));
