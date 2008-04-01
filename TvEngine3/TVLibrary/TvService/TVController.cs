@@ -683,6 +683,7 @@ namespace TvService
     /// <value>cardtype (Analog,DvbS,DvbT,DvbC,Atsc)</value>
     public CardType Type(int cardId)
     {
+      if (!_cards.ContainsKey(cardId)) return CardType.Unknown;
 			if (ValidateTvControllerParams(cardId)) return CardType.Unknown;															      
       return _cards[cardId].Type;
     }
@@ -715,7 +716,9 @@ namespace TvService
     /// </summary>
     /// <returns>true if card is present otherwise false</returns>		
     public bool CardPresent(int cardId)
-    {			
+    {
+      //gemx 01.04.08: This is needed otherwise we get a recursive endless loop
+      if (!_cards.ContainsKey(cardId)) return false;
       if (!IsLocal(cardId)) {
         RemoteControl.HostName = _cards[cardId].DataBaseCard.ReferencedServer().HostName;
         return RemoteControl.Instance.CardPresent(cardId);
