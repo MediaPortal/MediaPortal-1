@@ -29,7 +29,7 @@ namespace SetupTv.Sections
     private void InitializeComponent()
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabPageScan = new System.Windows.Forms.TabPage();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.checkBoxEnableLinkageScanner = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -48,7 +48,7 @@ namespace SetupTv.Sections
       this.label4 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabPageApplication = new System.Windows.Forms.TabPage();
       this.groupBox8 = new System.Windows.Forms.GroupBox();
       this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -56,7 +56,7 @@ namespace SetupTv.Sections
       this.label45 = new System.Windows.Forms.Label();
       this.label44 = new System.Windows.Forms.Label();
       this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
-      this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.tabPageEPG = new System.Windows.Forms.TabPage();
       this.groupBox9 = new System.Windows.Forms.GroupBox();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.edTitleTemplate = new System.Windows.Forms.TextBox();
@@ -85,7 +85,7 @@ namespace SetupTv.Sections
       this.label14 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
-      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.tabPageTS = new System.Windows.Forms.TabPage();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.numericUpDownWaitTimeshifting = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownWaitUnscrambled = new System.Windows.Forms.NumericUpDown();
@@ -103,7 +103,7 @@ namespace SetupTv.Sections
       this.label19 = new System.Windows.Forms.Label();
       this.label18 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
+      this.tabPageScan.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSDT)).BeginInit();
@@ -111,11 +111,11 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAT)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPAT)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).BeginInit();
-      this.tabPage2.SuspendLayout();
+      this.tabPageApplication.SuspendLayout();
       this.groupBox8.SuspendLayout();
       this.groupBox6.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).BeginInit();
-      this.tabPage3.SuspendLayout();
+      this.tabPageEPG.SuspendLayout();
       this.groupBox9.SuspendLayout();
       this.groupBox7.SuspendLayout();
       this.groupBox5.SuspendLayout();
@@ -123,7 +123,7 @@ namespace SetupTv.Sections
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgRefresh)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeOut)).BeginInit();
-      this.tabPage4.SuspendLayout();
+      this.tabPageTS.SuspendLayout();
       this.groupBox3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTimeshifting)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitUnscrambled)).BeginInit();
@@ -137,27 +137,27 @@ namespace SetupTv.Sections
       this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Controls.Add(this.tabPage3);
-      this.tabControl1.Controls.Add(this.tabPage4);
+      this.tabControl1.Controls.Add(this.tabPageApplication);
+      this.tabControl1.Controls.Add(this.tabPageScan);
+      this.tabControl1.Controls.Add(this.tabPageEPG);
+      this.tabControl1.Controls.Add(this.tabPageTS);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(484, 454);
       this.tabControl1.TabIndex = 15;
       // 
-      // tabPage1
+      // tabPageScan
       // 
-      this.tabPage1.Controls.Add(this.groupBox4);
-      this.tabPage1.Controls.Add(this.groupBox1);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(476, 428);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Scan";
-      this.tabPage1.UseVisualStyleBackColor = true;
+      this.tabPageScan.Controls.Add(this.groupBox4);
+      this.tabPageScan.Controls.Add(this.groupBox1);
+      this.tabPageScan.Location = new System.Drawing.Point(4, 22);
+      this.tabPageScan.Name = "tabPageScan";
+      this.tabPageScan.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageScan.Size = new System.Drawing.Size(476, 428);
+      this.tabPageScan.TabIndex = 0;
+      this.tabPageScan.Text = "Scan";
+      this.tabPageScan.UseVisualStyleBackColor = true;
       // 
       // groupBox4
       // 
@@ -385,17 +385,17 @@ namespace SetupTv.Sections
       this.label6.TabIndex = 6;
       this.label6.Text = "SDT/VCT:";
       // 
-      // tabPage2
+      // tabPageApplication
       // 
-      this.tabPage2.Controls.Add(this.groupBox8);
-      this.tabPage2.Controls.Add(this.groupBox6);
-      this.tabPage2.Location = new System.Drawing.Point(4, 22);
-      this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(476, 428);
-      this.tabPage2.TabIndex = 1;
-      this.tabPage2.Text = "Application";
-      this.tabPage2.UseVisualStyleBackColor = true;
+      this.tabPageApplication.Controls.Add(this.groupBox8);
+      this.tabPageApplication.Controls.Add(this.groupBox6);
+      this.tabPageApplication.Location = new System.Drawing.Point(4, 22);
+      this.tabPageApplication.Name = "tabPageApplication";
+      this.tabPageApplication.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageApplication.Size = new System.Drawing.Size(476, 428);
+      this.tabPageApplication.TabIndex = 1;
+      this.tabPageApplication.Text = "Application";
+      this.tabPageApplication.UseVisualStyleBackColor = true;
       // 
       // groupBox8
       // 
@@ -476,7 +476,7 @@ namespace SetupTv.Sections
       this.groupBox6.Size = new System.Drawing.Size(464, 107);
       this.groupBox6.TabIndex = 80;
       this.groupBox6.TabStop = false;
-      this.groupBox6.Text = "Advanced settings";
+      this.groupBox6.Text = "Delay for TVcard detection";
       // 
       // label45
       // 
@@ -510,19 +510,19 @@ namespace SetupTv.Sections
       this.delayDetectUpDown.Size = new System.Drawing.Size(47, 20);
       this.delayDetectUpDown.TabIndex = 79;
       // 
-      // tabPage3
+      // tabPageEPG
       // 
-      this.tabPage3.Controls.Add(this.groupBox9);
-      this.tabPage3.Controls.Add(this.groupBox7);
-      this.tabPage3.Controls.Add(this.groupBox5);
-      this.tabPage3.Controls.Add(this.groupBox2);
-      this.tabPage3.Location = new System.Drawing.Point(4, 22);
-      this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage3.Size = new System.Drawing.Size(476, 428);
-      this.tabPage3.TabIndex = 2;
-      this.tabPage3.Text = "EPG";
-      this.tabPage3.UseVisualStyleBackColor = true;
+      this.tabPageEPG.Controls.Add(this.groupBox9);
+      this.tabPageEPG.Controls.Add(this.groupBox7);
+      this.tabPageEPG.Controls.Add(this.groupBox5);
+      this.tabPageEPG.Controls.Add(this.groupBox2);
+      this.tabPageEPG.Location = new System.Drawing.Point(4, 22);
+      this.tabPageEPG.Name = "tabPageEPG";
+      this.tabPageEPG.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageEPG.Size = new System.Drawing.Size(476, 428);
+      this.tabPageEPG.TabIndex = 2;
+      this.tabPageEPG.Text = "EPG";
+      this.tabPageEPG.UseVisualStyleBackColor = true;
       // 
       // groupBox9
       // 
@@ -855,16 +855,16 @@ namespace SetupTv.Sections
       this.label7.TabIndex = 2;
       this.label7.Text = "Timeout:";
       // 
-      // tabPage4
+      // tabPageTS
       // 
-      this.tabPage4.Controls.Add(this.groupBox3);
-      this.tabPage4.Location = new System.Drawing.Point(4, 22);
-      this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage4.Size = new System.Drawing.Size(476, 428);
-      this.tabPage4.TabIndex = 3;
-      this.tabPage4.Text = "Timeshifting";
-      this.tabPage4.UseVisualStyleBackColor = true;
+      this.tabPageTS.Controls.Add(this.groupBox3);
+      this.tabPageTS.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTS.Name = "tabPageTS";
+      this.tabPageTS.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageTS.Size = new System.Drawing.Size(476, 428);
+      this.tabPageTS.TabIndex = 3;
+      this.tabPageTS.Text = "Timeshifting";
+      this.tabPageTS.UseVisualStyleBackColor = true;
       // 
       // groupBox3
       // 
@@ -1068,7 +1068,7 @@ namespace SetupTv.Sections
       this.Name = "ScanSettings";
       this.Size = new System.Drawing.Size(484, 454);
       this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
+      this.tabPageScan.ResumeLayout(false);
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
       this.groupBox1.ResumeLayout(false);
@@ -1078,13 +1078,13 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAT)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPAT)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).EndInit();
-      this.tabPage2.ResumeLayout(false);
+      this.tabPageApplication.ResumeLayout(false);
       this.groupBox8.ResumeLayout(false);
       this.groupBox8.PerformLayout();
       this.groupBox6.ResumeLayout(false);
       this.groupBox6.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
-      this.tabPage3.ResumeLayout(false);
+      this.tabPageEPG.ResumeLayout(false);
       this.groupBox9.ResumeLayout(false);
       this.groupBox9.PerformLayout();
       this.groupBox7.ResumeLayout(false);
@@ -1096,7 +1096,7 @@ namespace SetupTv.Sections
       this.groupBox2.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgRefresh)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeOut)).EndInit();
-      this.tabPage4.ResumeLayout(false);
+      this.tabPageTS.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTimeshifting)).EndInit();
@@ -1111,7 +1111,7 @@ namespace SetupTv.Sections
     #endregion
 
     private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.TabPage tabPageScan;
     private System.Windows.Forms.GroupBox groupBox4;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableLinkageScanner;
     private System.Windows.Forms.GroupBox groupBox2;
@@ -1130,11 +1130,11 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.TabPage tabPage2;
+    private System.Windows.Forms.TabPage tabPageApplication;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxPrio;
     private MediaPortal.UserInterface.Controls.MPLabel lblPriority;
-    private System.Windows.Forms.TabPage tabPage3;
-    private System.Windows.Forms.TabPage tabPage4;
+    private System.Windows.Forms.TabPage tabPageEPG;
+    private System.Windows.Forms.TabPage tabPageTS;
     private System.Windows.Forms.GroupBox groupBox3;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label16;
