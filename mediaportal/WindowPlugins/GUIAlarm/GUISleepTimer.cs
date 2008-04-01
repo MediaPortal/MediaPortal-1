@@ -25,216 +25,204 @@
 
 using System;
 using System.Collections;
+using System.Windows.Forms;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 
+
 namespace MediaPortal.GUI.Alarm
 {
-	public delegate void SleepTimerElapsedEventHandler(object sender, EventArgs e);
-	/// <summary>
-	/// Summary description for GUISleepTimer.
-	/// </summary>
-	public class GUISleepTimer : GUIWindow, IDisposable
-	{
-		public event SleepTimerElapsedEventHandler SleepTimerElapsed;
-		public const int WindowSleepTimer = 5002;
+  public delegate void SleepTimerElapsedEventHandler(object sender, EventArgs e);
 
-		#region Private Variables	
-			private System.Windows.Forms.Timer _SleepTimer = new System.Windows.Forms.Timer();
-			private long _SleepCount;
-            private int _PreviousgPlayerVolume = 0;
-		#endregion
-		
-		#region Private Enumerations
-			enum Controls
-			{
-				EnableButton = 3,
-				Minutes = 4,
-				VolumeFade = 5,	
-				ReturnHomeButton = 6,
-				ResetButton = 7
-			}
-		#endregion
+  /// <summary>
+  /// Summary description for GUISleepTimer.
+  /// </summary>
+  public class GUISleepTimer : GUIWindow, IDisposable
+  {
+    public event SleepTimerElapsedEventHandler SleepTimerElapsed;
+    public const int WindowSleepTimer = 5002;
 
-		#region Constructor
-			public GUISleepTimer()
-			{
-				_SleepTimer.Tick += new EventHandler(OnTimer);
-				_SleepTimer.Interval = 1000; //second	
-				this.SleepTimerElapsed +=new SleepTimerElapsedEventHandler(GUISleepTimer_SleepTimerElapsed);
-				GetID=(int)GUISleepTimer.WindowSleepTimer;
-			}
-		#endregion
+    #region Private Variables
+    private Timer _SleepTimer = new Timer();
+    private long _SleepCount;
+    private int _PreviousgPlayerVolume = 0;
+    #endregion
 
-		#region Overrides
-			public override bool Init()
-			{
-				GUIPropertyManager.SetProperty("#currentsleeptime","00:00");
-				return Load (GUIGraphicsContext.Skin+@"\myalarmsleeptimer.xml");
-			}
+    #region Skin control IDs
+    enum Controls
+    {
+      EnableButton = 3,
+      Minutes = 4,
+      VolumeFade = 5,
+      ReturnHomeButton = 6,
+      ResetButton = 7
+    }
 
-			public override void OnAction(Action action)
-			{
-				switch (action.wID)
-				{
-					case Action.ActionType.ACTION_PREVIOUS_MENU:
-					{
-						GUIWindowManager.ShowPreviousWindow();
-						return;
-					}
-				}
-				
-				base.OnAction(action);
-			}
-			public override bool OnMessage(GUIMessage message)
-			{
-				switch ( message.Message )
-				{
+    [SkinControlAttribute(3)]    protected GUIToggleButtonControl btnEnabled = null;
+    [SkinControlAttribute(4)]    protected GUISpinControl ctlMinutes = null;
+    [SkinControlAttribute(5)]    protected GUICheckMarkControl chkFadeVolume = null;
+    [SkinControlAttribute(6)]    protected GUICheckMarkControl btnReturnHome = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnReset = null;
+    #endregion
 
-					case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-						base.OnMessage(message);
-						GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
-						return true;
-					//break;
-					case GUIMessage.MessageType.GUI_MSG_CLICKED:
-					{
-						//get sender control
-						base.OnMessage(message);
-						int iControl=message.SenderControlId;
-								
-						if (iControl==(int)Controls.EnableButton)
-						{
-							GUIToggleButtonControl btnEnabled = (GUIToggleButtonControl)GetControl((int)Controls.EnableButton);
-							GUISpinControl ctlMinutes = (GUISpinControl)GetControl((int)Controls.Minutes);
-							
-							if(!btnEnabled.Selected)
-							{
-								_SleepTimer.Enabled = false;
-								GUIPropertyManager.SetProperty("#currentsleeptime","00:00");
+    #region Constructor
+    public GUISleepTimer()
+    {
+      _SleepTimer.Tick += new EventHandler(OnTimer);
+      _SleepTimer.Interval = 1000; //second	
+      this.SleepTimerElapsed += new SleepTimerElapsedEventHandler(GUISleepTimer_SleepTimerElapsed);
+      GetID = (int)GUISleepTimer.WindowSleepTimer;
+    }
+    #endregion
 
-                                //revert volume to original volume
-                                if (_PreviousgPlayerVolume > 0)
-                                {
-                                    g_Player.Volume = _PreviousgPlayerVolume;
-                                }
-                                else
-                                {
-                                    g_Player.Volume = 99;
-                                }
-							}
-							else
-							{
+    #region Overrides
+    public override bool Init()
+    {
+      GUIPropertyManager.SetProperty("#currentsleeptime", "00:00");
+      return Load(GUIGraphicsContext.Skin + @"\myalarmsleeptimer.xml");
+    }
 
-								_SleepCount = ctlMinutes.Value*60;
-								if(ctlMinutes.Value > 0)
-								{
-									_SleepTimer.Enabled = true;
-                                    _PreviousgPlayerVolume = g_Player.Volume;
-								}
-								else
-								{
-									btnEnabled.Selected = false;
-								}
-							}
-						}	
-						if(iControl==(int)Controls.ResetButton)
-						{
-							GUISpinControl ctlMinutes = (GUISpinControl)GetControl((int)Controls.Minutes);
-							_SleepCount = ctlMinutes.Value*60;
-							GUIPropertyManager.SetProperty("#currentsleeptime",ConvertToTime(_SleepCount));	
-						}
-					
-						return true;
-					}
-				}
-				return base.OnMessage(message);
+    public override void OnAction(Action action)
+    {
+      switch (action.wID)
+      {
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
+          {
+            GUIWindowManager.ShowPreviousWindow();
+            return;
+          }
+      }
 
-			}
-		#endregion
+      base.OnAction(action);
+    }
 
-		#region Private Methods
-				/// <summary>
-				/// Executes on the interval of the timer object.
-				/// </summary>
-				/// <param name="sender"></param>
-				/// <param name="e"></param>
-				private void OnTimer(Object sender, EventArgs e)
-				{
-					_SleepCount--;
-					
-					if(_SleepCount == 0)
-					{
-						OnSleepTimerElapsed(e);
-					}
-					else
-					{
-						GUICheckMarkControl chkFadeVolume = (GUICheckMarkControl)GetControl((int)Controls.VolumeFade);
-						//calculate if there is 100 seconds left in the sleep timer
-						bool MinuteLeft = _SleepCount <= 100;
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
+          break;
 
-						if(chkFadeVolume.Selected && MinuteLeft)
-						{
-							if(g_Player.Volume > 0)
-								g_Player.Volume--;
-						}
-					}
+        case GUIMessage.MessageType.GUI_MSG_CLICKED:
+          {
+            int controlId = message.SenderControlId;
+            if (controlId == btnEnabled.GetID)
+            {
+              if (!btnEnabled.Selected)
+              {
+                _SleepTimer.Enabled = false;
+                GUIPropertyManager.SetProperty("#currentsleeptime", "00:00");
+                //revert volume to original volume
+                if (_PreviousgPlayerVolume > 0)
+                  g_Player.Volume = _PreviousgPlayerVolume;
+              }
+              else
+              {
+                _SleepCount = ctlMinutes.Value * 60;
+                if (ctlMinutes.Value > 0)
+                {
+                  _SleepTimer.Enabled = true;
+                  _PreviousgPlayerVolume = g_Player.Volume;
+                }
+                else
+                {
+                  btnEnabled.Selected = false;
+                }
+              }
+            }
 
-					GUIPropertyManager.SetProperty("#currentsleeptime",ConvertToTime(_SleepCount));
-				}
-				/// <summary>
-				/// Converts tick counts to a formated time string 00:00
-				/// </summary>
-				/// <param name="tickCount"></param>
-				/// <returns>formatted time string</returns>
-				private string ConvertToTime(long tickCount)
-				{
-					// tickcount is in seconds, convert to a minutes: seconds string
-					long seconds = tickCount;
-					string val = (seconds/60).ToString("00") + ":" + (seconds % 60).ToString("00");
-					return val;	
-				}
+            if (controlId == btnReset.GetID)
+            {
+              _SleepCount = ctlMinutes.Value * 60;
+              GUIPropertyManager.SetProperty("#currentsleeptime", ConvertToTime(_SleepCount));
+            }
+          }
+          break;
+      }
 
-				protected virtual void OnSleepTimerElapsed(EventArgs e) 
-				{
-					if (SleepTimerElapsed != null) SleepTimerElapsed(this, e);
-				}
+      return base.OnMessage(message);
+    }
 
-				/// <summary>
-				/// Handles the sleep timer elapsed event
-				/// </summary>
-				/// <param name="sender"></param>
-				/// <param name="e"></param>
-				private void GUISleepTimer_SleepTimerElapsed(object sender, EventArgs e)
-				{
-					_SleepTimer.Enabled=false;
-					g_Player.Stop();
-					((GUIToggleButtonControl)GetControl((int)Controls.EnableButton)).Selected = false;
+    #endregion
 
-                    //revert volume to original volume
-                    if (_PreviousgPlayerVolume > 0)
-                    {
-                        g_Player.Volume = _PreviousgPlayerVolume;
-                    }
-                    else
-                    {
-                        g_Player.Volume = 99;
-                    }
-						
-					//returns to the home screen so powerscheduler plugin can suspend the pc
-					if(((GUICheckMarkControl)GetControl((int)Controls.ReturnHomeButton)).Selected)
-						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-						//Util.WindowsController.ExitWindows(Util.RestartOptions.Hibernate,true);
-				}
-			#endregion
+    #region Private Methods
+    /// <summary>
+    /// Executes on the interval of the timer object.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnTimer(Object sender, EventArgs e)
+    {
+      _SleepCount--;
 
-		#region IDisposable Members
+      if (_SleepCount == 0)
+      {
+        OnSleepTimerElapsed(e);
+      }
+      else
+      {
+        //calculate if there is 100 seconds left in the sleep timer
+        bool MinuteLeft = _SleepCount <= 100;
 
-		public void Dispose()
-		{
-			_SleepTimer.Dispose();
-		}
+        if (chkFadeVolume.Selected && MinuteLeft)
+        {
+          if (g_Player.Volume > 0)
+            g_Player.Volume--;
+        }
+      }
 
-		#endregion
-	}
+      GUIPropertyManager.SetProperty("#currentsleeptime", ConvertToTime(_SleepCount));
+    }
+    /// <summary>
+    /// Converts tick counts to a formated time string 00:00
+    /// </summary>
+    /// <param name="tickCount"></param>
+    /// <returns>formatted time string</returns>
+    private string ConvertToTime(long tickCount)
+    {
+      // tickcount is in seconds, convert to a minutes: seconds string
+      long seconds = tickCount;
+      string val = (seconds / 60).ToString("00") + ":" + (seconds % 60).ToString("00");
+      return val;
+    }
+
+    protected virtual void OnSleepTimerElapsed(EventArgs e)
+    {
+      if (SleepTimerElapsed != null) SleepTimerElapsed(this, e);
+    }
+
+    /// <summary>
+    /// Handles the sleep timer elapsed event
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void GUISleepTimer_SleepTimerElapsed(object sender, EventArgs e)
+    {
+      _SleepTimer.Enabled = btnEnabled.Selected = false;
+      g_Player.Stop();
+
+      //revert volume to original volume
+      if (_PreviousgPlayerVolume > 0)
+        g_Player.Volume = _PreviousgPlayerVolume;
+
+      //returns to the home screen so powerscheduler plugin can suspend the pc
+      if (btnReturnHome.Selected)
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+
+      //Util.WindowsController.ExitWindows(Util.RestartOptions.Hibernate,true);
+    }
+    #endregion
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      _SleepTimer.Dispose();
+    }
+
+    #endregion
+  }
 }
