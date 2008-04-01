@@ -28,11 +28,11 @@
     <section name="SetupTv.Sections.CMSetup" suburl="ConflictsManager" />
     <section name="TvEngine.PowerScheduler.PowerSchedulerMasterSetup" suburl="PowerScheduler" />
     <!--
-    <section name="SetupTv.Sections.PluginSetup" suburl="....." />
+    <section name="SetupTv.Sections.ComSkipSetup" suburl="....." />
     <section name="SetupTv.Sections.PTVGSetup" suburl="....." />
     <section name="SetupTv.Sections.BlasterSetup" suburl="....." />
     <section name="SetupTv.Sections.TvMovieSetup" suburl="....." />
-    <section name="SetupTv.Sections.XmlSetup" suburl="....." /
+    <section name="SetupTv.Sections.XmlTvSetup" suburl="....." /
     -->
   </sections>
 </helpsystem>
