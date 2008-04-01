@@ -32,9 +32,11 @@ namespace MediaPortal.GUI.Video
     public string genre;
     public string channelName;
   }
+
   class MatroskaTagHandler
   {
     #region Private members
+
     private static XmlNode AddSimpleTag(string tagName, string value, XmlDocument doc)
     {
       XmlNode rootNode = doc.CreateElement("SimpleTag");
@@ -46,55 +48,69 @@ namespace MediaPortal.GUI.Video
       rootNode.AppendChild(valueNode);
       return rootNode;
     }
+
     #endregion
 
     #region Public members
+
     public static MatroskaTagInfo Fetch(string filename)
     {
-      if (!File.Exists(filename))
-        return null;
       MatroskaTagInfo info = new MatroskaTagInfo();
-      XmlDocument doc = new XmlDocument();
-      doc.Load(filename);
-      XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
-      foreach (XmlNode simpleTag in simpleTags)
+      try
       {
-        string tagName = simpleTag.ChildNodes[0].InnerText;
-        switch (tagName)
+        if (!File.Exists(filename))
+          return null;
+
+        XmlDocument doc = new XmlDocument();
+        doc.Load(filename);
+        XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
+        foreach (XmlNode simpleTag in simpleTags)
         {
-          case "TITLE":
-            info.title = simpleTag.ChildNodes[1].InnerText;
-            break;
-          case "COMMENT":
-            info.description = simpleTag.ChildNodes[1].InnerText;
-            break;
-          case "GENRE":
-            info.genre = simpleTag.ChildNodes[1].InnerText;
-            break;
-          case "CHANNEL_NAME":
-            info.channelName = simpleTag.ChildNodes[1].InnerText;
-            break;
+          string tagName = simpleTag.ChildNodes[0].InnerText;
+          switch (tagName)
+          {
+            case "TITLE":
+              info.title = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "COMMENT":
+              info.description = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "GENRE":
+              info.genre = simpleTag.ChildNodes[1].InnerText;
+              break;
+            case "CHANNEL_NAME":
+              info.channelName = simpleTag.ChildNodes[1].InnerText;
+              break;
+          }
         }
       }
+      catch (System.Exception) { } // loading the XML doc could fail
       return info;
     }
+
     public static void Persist(string filename, MatroskaTagInfo taginfo)
     {
-      if (!Directory.Exists(Path.GetDirectoryName(filename)))
-        Directory.CreateDirectory(Path.GetDirectoryName(filename));
-      XmlDocument doc = new XmlDocument();
-      XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-      XmlNode tagsNode = doc.CreateElement("tags");
-      XmlNode tagNode = doc.CreateElement("tag");
-      tagNode.AppendChild(AddSimpleTag("TITLE", taginfo.title, doc));
-      tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.description, doc));
-      tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.genre, doc));
-      tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.channelName, doc));
-      tagsNode.AppendChild(tagNode);
-      doc.AppendChild(tagsNode);
-      doc.InsertBefore(xmldecl, tagsNode);
-      doc.Save(filename);
+      try
+      {
+        if (!Directory.Exists(Path.GetDirectoryName(filename)))
+          Directory.CreateDirectory(Path.GetDirectoryName(filename));
+
+        XmlDocument doc = new XmlDocument();
+        XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+        XmlNode tagsNode = doc.CreateElement("tags");
+        XmlNode tagNode = doc.CreateElement("tag");
+        tagNode.AppendChild(AddSimpleTag("TITLE", taginfo.title, doc));
+        tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.description, doc));
+        tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.genre, doc));
+        tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.channelName, doc));
+        tagsNode.AppendChild(tagNode);
+        doc.AppendChild(tagsNode);
+        doc.InsertBefore(xmldecl, tagsNode);
+        doc.Save(filename);
+      }
+      catch (System.Exception) { }
     }
+
     #endregion
   }
 }
