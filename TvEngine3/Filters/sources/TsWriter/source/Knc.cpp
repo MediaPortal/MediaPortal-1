@@ -169,7 +169,6 @@ STDMETHODIMP CKnc::DescrambleService( BYTE* pmt, int PMTLength,BOOL* succeeded)
   return S_OK;
 }
 
-
 void OnKncCiState(UCHAR slot,int State, LPCTSTR lpszMessage,PVOID pParam) 
 {
   LogDebug("OnKncCiState slot:%d state:%d msg:%s", slot,State,lpszMessage);
@@ -203,7 +202,7 @@ void OnKncCiCloseDisplay(UCHAR slot,UINT nDelay,PVOID pParam)
 //**************************************************************************************************
 //* SetTunerFilter()
 //* Called by application to set the tuner filter used
-//* method checks if this tuner filter is a techno-trend device
+//* method checks if this tuner filter is a KNC device
 //* and if so opens the KNC driver and CI for further usage
 //**************************************************************************************************
 STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
