@@ -25,10 +25,9 @@
 
 #**********************************************************************************************************#
 #
-# For the MediaPortal Installer to work you need:
-# 1. Lastest NSIS version from http://nsis.sourceforge.net/Download
-#
-# Editing is much more easier, if you install HM NSIS Edit from http://hmne.sourceforge.net
+#   For building the installer on your own you need:
+#       1. Lastest NSIS version from http://nsis.sourceforge.net/Download
+#       2. The xml-plugin from http://nsis.sourceforge.net/XML_plug-in
 #
 #**********************************************************************************************************#
 Name "MediaPortal TV Server / Client"
