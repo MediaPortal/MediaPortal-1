@@ -129,13 +129,15 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
+!ifndef HIGH_BUILD
 !define MUI_STARTMENUPAGE_NODISABLE
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER       "Team MediaPortal\MediaPortal"
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT       HKLM
 !define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
+!endif
 !define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_FINISHPAGE_RUN      "$INSTDIR\Configuration.exe"
+!define MUI_FINISHPAGE_RUN      "$MPdir.Base\Configuration.exe"
 !define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
@@ -153,7 +155,9 @@ Page custom PageReinstall PageLeaveReinstall
 !endif
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
+!ifndef HIGH_BUILD
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
+!else
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 ; UnInstaller Interface
@@ -177,7 +181,9 @@ Page custom PageReinstall PageLeaveReinstall
   OutFile "Release\setup-mediaportal.exe"
 !endif
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
+!ifndef HIGH_BUILD
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
+!endif
 CRCCheck on
 XPStyle on
 ShowInstDetails show
@@ -303,7 +309,13 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn ${EXCLUDED_FOLDERS} ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
 
 
+!ifdef HIGH_BUILD
+  SetOverwrite off
   File MediaPortalDirs.xml
+  SetOverwrite on
+!else
+  File MediaPortalDirs.xml
+!endif
 
   ; ========================================
   ; MediaPortalEXE
@@ -757,6 +769,7 @@ Section -Post
 
     ;Removes unselected components
     !insertmacro SectionList "FinishSection"
+!ifndef HIGH_BUILD
     ;writes component status to registry
     ${MementoSectionSave}
 
@@ -799,8 +812,9 @@ Section -Post
     WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$MPdir.Base\uninstall-mp.exe"
     WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
     WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
- 
+
     WriteUninstaller "$MPdir.Base\uninstall-mp.exe"
+!endif
 
     ; Associate .mpi files with MPInstaller
     !define Index "Line${__LINE__}"
@@ -937,11 +951,13 @@ Function .onInit
         Abort
     ${EndIf}
 
+!ifndef HIGH_BUILD
     ; check if old mp 0.2.3 is installed.
-    #${If} ${MP023IsInstalled}
-    #    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)" IDOK 0
-    #    Abort
-    #${EndIf}
+    ${If} ${MP023IsInstalled}
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)" IDOK 0
+        Abort
+    ${EndIf}
+!endif
 
     ; check if minimum Windows version is XP
     ${If} ${AtMostWin2000}
