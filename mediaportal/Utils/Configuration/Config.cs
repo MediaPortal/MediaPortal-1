@@ -313,16 +313,20 @@ private Config()
     private static void LoadDefaultDirs()
     {
       string baseDir = Get(Dir.Base);
-      Set(Dir.Cache, Path.Combine(baseDir, @"cache\"));
-      Set(Dir.Config, baseDir);
-      Set(Dir.CustomInputDevice, Path.Combine(baseDir, @"InputDeviceMappings\custom\"));
+      string commonAppData =
+        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+        + @"\Team MediaPortal\MediaPortal\";
+
+      Set(Dir.Cache, Path.Combine(commonAppData, @"cache\"));
+      Set(Dir.Config, commonAppData);
+      Set(Dir.CustomInputDevice, Path.Combine(commonAppData, @"InputDeviceMappings\"));
       Set(Dir.CustomInputDefault, Path.Combine(baseDir, @"InputDeviceMappings\defaults\"));
-      Set(Dir.Database, Path.Combine(baseDir, @"database\"));
+      Set(Dir.Database, Path.Combine(commonAppData, @"database\"));
       Set(Dir.Language, Path.Combine(baseDir, @"language\"));
-      Set(Dir.Log, Path.Combine(baseDir, @"log\"));
+      Set(Dir.Log, Path.Combine(commonAppData, @"log\"));
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(baseDir, @"skin\"));
-      Set(Dir.Thumbs, Path.Combine(baseDir, @"thumbs\"));
+      Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
       Set(Dir.Weather, Path.Combine(baseDir, @"weather\"));
       Set(Dir.BurnerSupport, Path.Combine(baseDir, @"Burner\"));
     }

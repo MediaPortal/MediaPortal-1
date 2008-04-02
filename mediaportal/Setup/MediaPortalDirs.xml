@@ -41,7 +41,7 @@
   </Dir>
       <!-- The Path were the Custom Inputdevice Mappings are located. -->
   <Dir id = "CustomInputDevice">
-    <Path>%ProgramData%\Team MediaPortal\MediaPortal\InputDeviceMappings\custom\</Path>
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\InputDeviceMappings\</Path>
   </Dir>
   <!-- The Path were the Default Inputdevice Mappings are located. -->
   <Dir id = "CustomInputDefault">
