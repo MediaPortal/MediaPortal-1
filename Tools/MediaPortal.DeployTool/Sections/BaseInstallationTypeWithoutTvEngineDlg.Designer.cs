@@ -85,7 +85,7 @@ namespace MediaPortal.DeployTool
         // 
         // pictureBox2
         // 
-        this.pictureBox2.Image = global::MediaPortal.DeployTool.Images.smart_small;
+        this.pictureBox2.Image = global::MediaPortal.DeployTool.Images.MePo_smart;
         this.pictureBox2.Location = new System.Drawing.Point(16, 140);
         this.pictureBox2.Name = "pictureBox2";
         this.pictureBox2.Size = new System.Drawing.Size(69, 93);
@@ -94,7 +94,7 @@ namespace MediaPortal.DeployTool
         // 
         // pictureBox1
         // 
-        this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.average_small;
+        this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.MePo_average;
         this.pictureBox1.Location = new System.Drawing.Point(16, 25);
         this.pictureBox1.Name = "pictureBox1";
         this.pictureBox1.Size = new System.Drawing.Size(69, 93);

@@ -31,16 +31,16 @@ namespace MediaPortal.DeployTool
         this.splitContainer1 = new System.Windows.Forms.SplitContainer();
         this.panel1 = new System.Windows.Forms.Panel();
         this.labelAppHeading = new System.Windows.Forms.Label();
+        this.pictureBox1 = new System.Windows.Forms.PictureBox();
         this.splitContainer2 = new System.Windows.Forms.SplitContainer();
         this.nextButton = new System.Windows.Forms.Button();
         this.backButton = new System.Windows.Forms.Button();
-        this.pictureBox1 = new System.Windows.Forms.PictureBox();
         this.splitContainer1.Panel1.SuspendLayout();
         this.splitContainer1.Panel2.SuspendLayout();
         this.splitContainer1.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
         this.splitContainer2.Panel2.SuspendLayout();
         this.splitContainer2.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
         this.SuspendLayout();
         // 
         // splitContainer1
@@ -84,6 +84,17 @@ namespace MediaPortal.DeployTool
         this.labelAppHeading.Text = "This application will guide you through the installation of MediaPortal and all t" +
             "he required components";
         // 
+        // pictureBox1
+        // 
+        this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+        this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.MP_logo;
+        this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+        this.pictureBox1.Name = "pictureBox1";
+        this.pictureBox1.Size = new System.Drawing.Size(666, 122);
+        this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+        this.pictureBox1.TabIndex = 3;
+        this.pictureBox1.TabStop = false;
+        // 
         // splitContainer2
         // 
         this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -124,17 +135,6 @@ namespace MediaPortal.DeployTool
         this.backButton.UseVisualStyleBackColor = true;
         this.backButton.Click += new System.EventHandler(this.backButton_Click);
         // 
-        // pictureBox1
-        // 
-        this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.omt_logo_header;
-        this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-        this.pictureBox1.Name = "pictureBox1";
-        this.pictureBox1.Size = new System.Drawing.Size(666, 122);
-        this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-        this.pictureBox1.TabIndex = 3;
-        this.pictureBox1.TabStop = false;
-        // 
         // DeployTool
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -149,10 +149,10 @@ namespace MediaPortal.DeployTool
         this.splitContainer1.Panel1.PerformLayout();
         this.splitContainer1.Panel2.ResumeLayout(false);
         this.splitContainer1.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
         this.splitContainer2.Panel2.ResumeLayout(false);
         this.splitContainer2.Panel2.PerformLayout();
         this.splitContainer2.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
         this.ResumeLayout(false);
 
     }

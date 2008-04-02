@@ -60,44 +60,44 @@ namespace MediaPortal.DeployTool {
             }
         }
         
-        internal static System.Drawing.Bitmap average_small {
+        internal static System.Drawing.Bitmap MePo_average {
             get {
-                object obj = ResourceManager.GetObject("average_small", resourceCulture);
+                object obj = ResourceManager.GetObject("MePo_average", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         internal static System.Drawing.Bitmap MePo_download {
             get {
-                object obj = ResourceManager.GetObject("MePo-download", resourceCulture);
+                object obj = ResourceManager.GetObject("MePo_download", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap MyTV {
+        internal static System.Drawing.Bitmap MePo_smart {
             get {
-                object obj = ResourceManager.GetObject("MyTV", resourceCulture);
+                object obj = ResourceManager.GetObject("MePo_smart", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap omt_logo_header {
+        internal static System.Drawing.Bitmap MePo_tv {
             get {
-                object obj = ResourceManager.GetObject("omt_logo_header", resourceCulture);
+                object obj = ResourceManager.GetObject("MePo_tv", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap packshothh {
+        internal static System.Drawing.Bitmap MP_logo {
             get {
-                object obj = ResourceManager.GetObject("packshothh", resourceCulture);
+                object obj = ResourceManager.GetObject("MP_logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap smart_small {
+        internal static System.Drawing.Bitmap MP_packshoth {
             get {
-                object obj = ResourceManager.GetObject("smart_small", resourceCulture);
+                object obj = ResourceManager.GetObject("MP_packshoth", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

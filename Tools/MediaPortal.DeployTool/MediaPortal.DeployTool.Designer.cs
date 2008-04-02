@@ -334,7 +334,10 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you want to only to download components ?.
+        ///   Looks up a localized string similar to An internet connection is required for the installation process.
+        ///Do you want to start with the installation process now, 
+        ///or do you want to only download the required components in order to perform the installation later, 
+        ///maybe on a pc without an internet connection?.
         /// </summary>
         internal static string DownloadOnly_labelSectionHeader {
             get {
@@ -343,7 +346,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No, download and install MediaPortal on this machine.
+        ///   Looks up a localized string similar to Only download required components.
         /// </summary>
         internal static string DownloadOnly_no {
             get {
@@ -352,7 +355,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Yes, I will use them to install MediaPortal on another machine.
+        ///   Looks up a localized string similar to Start with the installation now.
         /// </summary>
         internal static string DownloadOnly_yes {
             get {

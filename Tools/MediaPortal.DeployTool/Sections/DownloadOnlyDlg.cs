@@ -42,7 +42,7 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.DownloadOnly;
       labelSectionHeader.Text = "";
-      rbNoDlOnly.Checked = true;
+      rbInstallNow.Checked = true;
       UpdateUI();
     }
 
@@ -50,12 +50,12 @@ namespace MediaPortal.DeployTool
     public override void UpdateUI()
     {
       labelSectionHeader.Text = Localizer.Instance.GetString("DownloadOnly_labelSectionHeader");
-      rbYesDlOnly.Text = Localizer.Instance.GetString("DownloadOnly_yes");
-      rbNoDlOnly.Text = Localizer.Instance.GetString("DownloadOnly_no");
+      rbDownloadOnly.Text = Localizer.Instance.GetString("DownloadOnly_yes");
+      rbInstallNow.Text = Localizer.Instance.GetString("DownloadOnly_no");
     }
     public override DeployDialog GetNextDialog()
     {
-        if (rbYesDlOnly.Checked)
+        if (rbDownloadOnly.Checked)
         {
             InstallationProperties.Instance.Set("InstallType", "download_only");
             return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);

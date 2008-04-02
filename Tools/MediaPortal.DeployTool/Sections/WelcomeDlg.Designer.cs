@@ -82,7 +82,7 @@ namespace MediaPortal.DeployTool
         // 
         // pictureBox1
         // 
-        this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.packshothh;
+        this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.MP_packshoth;
         this.pictureBox1.Location = new System.Drawing.Point(3, 16);
         this.pictureBox1.Name = "pictureBox1";
         this.pictureBox1.Size = new System.Drawing.Size(150, 232);

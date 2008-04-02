@@ -28,8 +28,9 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-        this.rbYesDlOnly = new System.Windows.Forms.RadioButton();
-        this.rbNoDlOnly = new System.Windows.Forms.RadioButton();
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DownloadOnlyDlg));
+        this.rbDownloadOnly = new System.Windows.Forms.RadioButton();
+        this.rbInstallNow = new System.Windows.Forms.RadioButton();
         this.pictureBox1 = new System.Windows.Forms.PictureBox();
         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
         this.SuspendLayout();
@@ -38,38 +39,38 @@ namespace MediaPortal.DeployTool
         // 
         this.labelSectionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelSectionHeader.Location = new System.Drawing.Point(53, 28);
-        this.labelSectionHeader.Size = new System.Drawing.Size(330, 16);
-        this.labelSectionHeader.Text = "Do you want to only to download components ?";
+        this.labelSectionHeader.Size = new System.Drawing.Size(682, 64);
+        this.labelSectionHeader.Text = resources.GetString("labelSectionHeader.Text");
         // 
-        // rbYesDlOnly
+        // rbDownloadOnly
         // 
-        this.rbYesDlOnly.AutoSize = true;
-        this.rbYesDlOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.rbYesDlOnly.Location = new System.Drawing.Point(94, 96);
-        this.rbYesDlOnly.Name = "rbYesDlOnly";
-        this.rbYesDlOnly.Size = new System.Drawing.Size(312, 17);
-        this.rbYesDlOnly.TabIndex = 9;
-        this.rbYesDlOnly.TabStop = true;
-        this.rbYesDlOnly.Text = "Yes, I will use them to install MediaPortal on another machine";
-        this.rbYesDlOnly.UseVisualStyleBackColor = true;
+        this.rbDownloadOnly.AutoSize = true;
+        this.rbDownloadOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.rbDownloadOnly.Location = new System.Drawing.Point(94, 164);
+        this.rbDownloadOnly.Name = "rbDownloadOnly";
+        this.rbDownloadOnly.Size = new System.Drawing.Size(197, 17);
+        this.rbDownloadOnly.TabIndex = 9;
+        this.rbDownloadOnly.TabStop = true;
+        this.rbDownloadOnly.Text = "Only download required components";
+        this.rbDownloadOnly.UseVisualStyleBackColor = true;
         // 
-        // rbNoDlOnly
+        // rbInstallNow
         // 
-        this.rbNoDlOnly.AutoSize = true;
-        this.rbNoDlOnly.Checked = true;
-        this.rbNoDlOnly.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.rbNoDlOnly.Location = new System.Drawing.Point(94, 141);
-        this.rbNoDlOnly.Name = "rbNoDlOnly";
-        this.rbNoDlOnly.Size = new System.Drawing.Size(277, 17);
-        this.rbNoDlOnly.TabIndex = 10;
-        this.rbNoDlOnly.TabStop = true;
-        this.rbNoDlOnly.Text = "No, download and install MediaPortal on this machine";
-        this.rbNoDlOnly.UseVisualStyleBackColor = true;
+        this.rbInstallNow.AutoSize = true;
+        this.rbInstallNow.Checked = true;
+        this.rbInstallNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.rbInstallNow.Location = new System.Drawing.Point(94, 123);
+        this.rbInstallNow.Name = "rbInstallNow";
+        this.rbInstallNow.Size = new System.Drawing.Size(162, 17);
+        this.rbInstallNow.TabIndex = 10;
+        this.rbInstallNow.TabStop = true;
+        this.rbInstallNow.Text = "Start with the installation now";
+        this.rbInstallNow.UseVisualStyleBackColor = true;
         // 
         // pictureBox1
         // 
         this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.MePo_download;
-        this.pictureBox1.Location = new System.Drawing.Point(22, 96);
+        this.pictureBox1.Location = new System.Drawing.Point(19, 123);
         this.pictureBox1.Name = "pictureBox1";
         this.pictureBox1.Size = new System.Drawing.Size(56, 63);
         this.pictureBox1.TabIndex = 11;
@@ -80,13 +81,13 @@ namespace MediaPortal.DeployTool
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         this.Controls.Add(this.pictureBox1);
-        this.Controls.Add(this.rbNoDlOnly);
-        this.Controls.Add(this.rbYesDlOnly);
+        this.Controls.Add(this.rbInstallNow);
+        this.Controls.Add(this.rbDownloadOnly);
         this.Name = "DownloadOnlyDlg";
         this.Size = new System.Drawing.Size(542, 266);
         this.Controls.SetChildIndex(this.labelSectionHeader, 0);
-        this.Controls.SetChildIndex(this.rbYesDlOnly, 0);
-        this.Controls.SetChildIndex(this.rbNoDlOnly, 0);
+        this.Controls.SetChildIndex(this.rbDownloadOnly, 0);
+        this.Controls.SetChildIndex(this.rbInstallNow, 0);
         this.Controls.SetChildIndex(this.pictureBox1, 0);
         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
         this.ResumeLayout(false);
@@ -96,8 +97,8 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    private System.Windows.Forms.RadioButton rbYesDlOnly;
-    private System.Windows.Forms.RadioButton rbNoDlOnly;
+    private System.Windows.Forms.RadioButton rbDownloadOnly;
+    private System.Windows.Forms.RadioButton rbInstallNow;
       private System.Windows.Forms.PictureBox pictureBox1;
 
   }

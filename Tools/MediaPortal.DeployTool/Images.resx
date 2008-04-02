@@ -118,22 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="omt_logo_header" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\omt_logo_header.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MePo_smart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MePo_smart.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="MyTV" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\MyTV.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MePo_tv" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MePo_tv.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="average_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\average small.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MP_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MP_logo.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="packshothh" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\packshothh.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MP_packshoth" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MP_packshoth.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="smart_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\smart small.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MePo_average" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MePo_average.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="MePo-download" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\MePo-download.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MePo_download" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MePo_download.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

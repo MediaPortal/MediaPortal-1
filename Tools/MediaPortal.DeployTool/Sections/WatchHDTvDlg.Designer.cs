@@ -68,8 +68,9 @@ namespace MediaPortal.DeployTool
         // 
         // pictureBox1
         // 
-        this.pictureBox1.BackgroundImage = global::MediaPortal.DeployTool.Images.MyTV;
-        this.pictureBox1.InitialImage = global::MediaPortal.DeployTool.Images.MyTV;
+        this.pictureBox1.BackgroundImage = global::MediaPortal.DeployTool.Images.MePo_tv;
+        this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.MePo_tv;
+        this.pictureBox1.InitialImage = global::MediaPortal.DeployTool.Images.MePo_tv;
         this.pictureBox1.Location = new System.Drawing.Point(22, 96);
         this.pictureBox1.Name = "pictureBox1";
         this.pictureBox1.Size = new System.Drawing.Size(56, 63);

@@ -290,24 +290,18 @@
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\omt_logo_header.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\average small.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\smart small.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="ApplicationLocations.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Interop.NetFwTypeLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\MyTV.png" />
-    <Content Include="Resources\MePo-download.png" />
-    <None Include="Resources\packshothh.jpg" />
+    <None Include="Resources\MePo_average.png" />
+    <None Include="Resources\MePo_smart.png" />
+    <None Include="Resources\MePo_tv.png" />
+    <None Include="Resources\MP_logo.png" />
+    <None Include="Resources\MP_packshoth.jpg" />
+    <Content Include="Resources\MePo_download.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
