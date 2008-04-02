@@ -147,17 +147,20 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 #---------------------------------------------------------------------------
 #!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
 !insertmacro MUI_PAGE_WELCOME
-!ifdef HIGH_BUILD
-!else
+
+!ifndef HIGH_BUILD
 Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
 !endif
+
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
+
 !ifndef HIGH_BUILD
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
-!else
+!endif
+
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 ; UnInstaller Interface
