@@ -29,9 +29,11 @@
 
 !include FileFunc.nsh
 !insertmacro GetRoot
+!insertmacro un.GetRoot
 
 !include WordFunc.nsh
 !insertmacro WordReplace
+!insertmacro un.WordReplace
 
 #**********************************************************************************************************#
 #
@@ -330,7 +332,32 @@ LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is r
 
 
 
-Function GET_PATH_TEXT
+#***************************
+#***************************
+  
+Var MyDocs
+Var UserAppData
+Var CommonAppData
+
+Var MPdir.Base
+
+Var MPdir.Config
+Var MPdir.Plugins
+Var MPdir.Log
+Var MPdir.CustomInputDevice
+Var MPdir.CustomInputDefault
+Var MPdir.Skin
+Var MPdir.Language
+Var MPdir.Database
+Var MPdir.Thumbs
+Var MPdir.Weather
+Var MPdir.Cache
+Var MPdir.BurnerSupport
+
+#***************************
+#***************************
+
+!macro GET_PATH_TEXT
 
   Pop $R0
 
@@ -384,38 +411,28 @@ Function GET_PATH_TEXT
 
   end:
 
+!macroend
+Function GET_PATH_TEXT
+  !insertmacro GET_PATH_TEXT
 FunctionEnd
-  
-Var MyDocs
-Var UserAppData
-Var CommonAppData
+Function un.GET_PATH_TEXT
+  !insertmacro GET_PATH_TEXT
+FunctionEnd
 
-Var MPdir.Base
+#***************************
+#***************************
 
-Var MPdir.Config
-Var MPdir.Plugins
-Var MPdir.Log
-Var MPdir.CustomInputDevice
-Var MPdir.CustomInputDefault
-Var MPdir.Skin
-Var MPdir.Language
-Var MPdir.Database
-Var MPdir.Thumbs
-Var MPdir.Weather
-Var MPdir.Cache
-Var MPdir.BurnerSupport
-
-!macro ReadMPdir DIR
+!macro ReadMPdir UNINSTALL_PREFIX DIR
 
   Push "${DIR}"
-  Call GET_PATH_TEXT
+  Call ${UNINSTALL_PREFIX}GET_PATH_TEXT
   Pop $0
   ${IfThen} $0 == -1 ${|} Goto error ${|}
 
-  ${WordReplace} "$0" "%APPDATA%" "$UserAppData" "+" $0
-  ${WordReplace} "$0" "%PROGRAMDATA%" "$CommonAppData" "+" $0
+  ${${UNINSTALL_PREFIX}WordReplace} "$0" "%APPDATA%" "$UserAppData" "+" $0
+  ${${UNINSTALL_PREFIX}WordReplace} "$0" "%PROGRAMDATA%" "$CommonAppData" "+" $0
 
-  ${GetRoot} "$0" $1
+  ${${UNINSTALL_PREFIX}GetRoot} "$0" $1
 
   ${IfThen} $1 == "" ${|} StrCpy $0 "$MPdir.Base\$0" ${|}
 
@@ -435,25 +452,12 @@ Var MPdir.BurnerSupport
 
 !macroend
 
+#***************************
+#***************************
 
+!macro ReadConfig UNINSTALL_PREFIX
 
-Function LoadDefaultDirs
-
-  StrCpy $MPdir.Config              "$MPdir.Base\Config"
-  StrCpy $MPdir.Plugins             "$MPdir.Base\plugins"
-  StrCpy $MPdir.Log                 "$MPdir.Base\log"
-  StrCpy $MPdir.CustomInputDevice   "$MPdir.Base\InputDeviceMappings\custom"
-  StrCpy $MPdir.CustomInputDefault  "$MPdir.Base\InputDeviceMappings\defaults"
-  StrCpy $MPdir.Skin                "$MPdir.Base\skin"
-  StrCpy $MPdir.Language            "$MPdir.Base\language"
-  StrCpy $MPdir.Database            "$MPdir.Base\database"
-  StrCpy $MPdir.Thumbs              "$MPdir.Base\thumbs"
-  StrCpy $MPdir.Weather             "$MPdir.Base\weather"
-  StrCpy $MPdir.Cache               "$MPdir.Base\cache"
-  StrCpy $MPdir.BurnerSupport       "$MPdir.Base\Burner"
-
-FunctionEnd
-Function ReadConfig
+  #MessageBox MB_OK "${UNINSTALL_PREFIX}"
 
   Pop $0
   IfFileExists "$0\MediaPortalDirs.xml" 0 error
@@ -465,18 +469,18 @@ Function ReadConfig
 
   #</Dir>  Log CustomInputDevice CustomInputDefault Skin Language Database Thumbs Weather Cache BurnerSupport
 
-  !insertmacro ReadMPdir Config
-  !insertmacro ReadMPdir Plugins
-  !insertmacro ReadMPdir Log
-  !insertmacro ReadMPdir CustomInputDevice
-  !insertmacro ReadMPdir CustomInputDefault
-  !insertmacro ReadMPdir Skin
-  !insertmacro ReadMPdir Language
-  !insertmacro ReadMPdir Database
-  !insertmacro ReadMPdir Thumbs
-  !insertmacro ReadMPdir Weather
-  !insertmacro ReadMPdir Cache
-  !insertmacro ReadMPdir BurnerSupport
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" Config
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" Plugins
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" Log
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" CustomInputDevice
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" CustomInputDefault
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" Skin
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" Language
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" Database
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" Thumbs
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" Weather
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" Cache
+  !insertmacro ReadMPdir "${UNINSTALL_PREFIX}" BurnerSupport
 
 
   Push "0"
@@ -487,12 +491,42 @@ Function ReadConfig
 
   end:
 
+!macroend
+Function ReadConfig
+  !insertmacro ReadConfig ""
+FunctionEnd
+Function un.ReadConfig
+  !insertmacro ReadConfig "un."
 FunctionEnd
 
+#***************************
+#***************************
 
+!macro LoadDefaultDirs
 
-!define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs`
-!macro ReadMediaPortalDirs
+  StrCpy $MPdir.Config              "$CommonAppData\Team MediaPortal\MediaPortal"
+
+  StrCpy $MPdir.Plugins             "$MPdir.Base\plugins"
+  StrCpy $MPdir.Log                 "$MPdir.Config\log"
+  StrCpy $MPdir.CustomInputDevice   "$MPdir.Config\InputDeviceMappings"
+  StrCpy $MPdir.CustomInputDefault  "$MPdir.Base\InputDeviceMappings\defaults"
+  StrCpy $MPdir.Skin                "$MPdir.Base\skin"
+  StrCpy $MPdir.Language            "$MPdir.Base\language"
+  StrCpy $MPdir.Database            "$MPdir.Config\database"
+  StrCpy $MPdir.Thumbs              "$MPdir.Config\thumbs"
+  StrCpy $MPdir.Weather             "$MPdir.Base\weather"
+  StrCpy $MPdir.Cache               "$MPdir.Config\cache"
+  StrCpy $MPdir.BurnerSupport       "$MPdir.Base\Burner"
+
+!macroend
+
+#***************************
+#***************************
+
+!define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs ""`
+!define un.ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs "un."`
+!macro ReadMediaPortalDirs UNINSTALL_PREFIX
+  #MessageBox MB_OK "${UNINSTALL_PREFIX}"
 
   !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
   SetShellVarContext current
@@ -502,31 +536,40 @@ FunctionEnd
   StrCpy $CommonAppData "$APPDATA"
 
 
-  Call LoadDefaultDirs
+  !insertmacro LoadDefaultDirs
 
   Push "$MyDocs\Team MediaPortal"
-  Call ReadConfig
+  Call ${UNINSTALL_PREFIX}ReadConfig
   Pop $0
   ${If} $0 != 0   ; an error occured
-    MessageBox MB_OK "error: read mpdirs.xml in $MyDocs\Team MediaPortal"
+    #MessageBox MB_OK "error: read mpdirs.xml in $MyDocs\Team MediaPortal"
 
     Push "$MPdir.Base"
-    Call ReadConfig
+    Call ${UNINSTALL_PREFIX}ReadConfig
     Pop $0
     ${If} $0 != 0   ; an error occured
-      MessageBox MB_OK "error: read mpdirs.xml in $MPdir.Base"
+      #MessageBox MB_OK "error: read mpdirs.xml in $MPdir.Base"
 
-      Call LoadDefaultDirs
+      !insertmacro LoadDefaultDirs
 
     ${EndIf}
 
   ${EndIf}
 
+      MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
+      $\r$\nBase:  $MPdir.Base$\r$\n \
+      $\r$\nConfig:  $MPdir.Config \
+      $\r$\nPlugins: $MPdir.Plugins \
+      $\r$\nLog: $MPdir.Log \
+      $\r$\nCustomInputDevice: $MPdir.CustomInputDevice \
+      $\r$\nCustomInputDefault: $MPdir.CustomInputDefault \
+      $\r$\nSkin: $MPdir.Skin \
+      $\r$\nLanguage: $MPdir.Language \
+      $\r$\nDatabase: $MPdir.Database \
+      $\r$\nThumbs: $MPdir.Thumbs \
+      $\r$\nWeather: $MPdir.Weather \
+      $\r$\nCache: $MPdir.Cache \
+      $\r$\nBurnerSupport: $MPdir.BurnerSupport \
+      "
+
 !macroend
-  
-  
-  
-  
-  
-  
-  

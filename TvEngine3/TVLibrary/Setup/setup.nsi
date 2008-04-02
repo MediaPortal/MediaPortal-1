@@ -38,7 +38,6 @@ RequestExecutionLevel admin
 # VARIABLES
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
-Var MPBaseDir
 Var InstallPath
 ; variables for commandline parameters for Installer
 Var noClient
@@ -404,12 +403,12 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 
   SetOverwrite on
 
-  !insertmacro MP_GET_INSTALL_DIR "$MPBaseDir"
-  DetailPrint "MediaPortal Installed at: $MpBaseDir"
+  DetailPrint "MediaPortal Installed at: $MPdir.Base"
+  DetailPrint "MediaPortalPlugins are at: $MPdir.Plugins"
   
   #---------------------------- File Copy ----------------------
   ; Common Files
-  SetOutPath $MPBaseDir
+  SetOutPath "$MPdir.Base"
   File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
   File ..\TvControl\bin\Release\TvControl.dll
   File ..\TVDatabase\bin\Release\TVDatabase.dll
@@ -424,17 +423,17 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File ..\TvPlugin\TvPlugin\Gentle.config
 
   ; The Plugins
-  SetOutPath $MPBaseDir\Plugins\Process
+  SetOutPath "$MPdir.Plugins\Process"
   File ..\Plugins\PowerScheduler\ClientPlugin\bin\Release\PowerSchedulerClientPlugin.dll
-  SetOutPath $MPBaseDir\Plugins\Windows
+  SetOutPath "$MPdir.Plugins\Windows"
   File ..\TvPlugin\TvPlugin\bin\Release\TvPlugin.dll
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax $MPBaseDir\DVBSub2.ax $MPBaseDir
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax $MPBaseDir\mmaacd.ax $MPBaseDir
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\DVBSub2.ax "$MPdir.Base\DVBSub2.ax" "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED ..\..\Filters\bin\mmaacd.ax "$MPdir.Base\mmaacd.ax" "$MPdir.Base"
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
   DetailPrint "Uninstalling MediaPortal TV Client plugin..."
@@ -448,26 +447,26 @@ ${MementoSectionEnd}
   # FILTER UNREGISTRATION     for TVClient
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\DVBSub2.ax
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $MPBaseDir\mmaacd.ax
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub2.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mmaacd.ax"
 
   ; The Plugins
-  Delete /REBOOTOK $MPBaseDir\Plugins\Process\PowerSchedulerClientPlugin.dll
-  Delete /REBOOTOK $MPBaseDir\Plugins\Windows\TvPlugin.dll
+  Delete /REBOOTOK "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\Windows\TvPlugin.dll"
 
   ; Common Files
-  Delete /REBOOTOK $MPBaseDir\PowerScheduler.Interfaces.dll
-  Delete /REBOOTOK $MPBaseDir\TvControl.dll
-  Delete /REBOOTOK $MPBaseDir\TVDatabase.dll
-  Delete /REBOOTOK $MPBaseDir\Gentle.Common.DLL
-  Delete /REBOOTOK $MPBaseDir\Gentle.Framework.DLL
-  Delete /REBOOTOK $MPBaseDir\Gentle.Provider.MySQL.dll
-  Delete /REBOOTOK $MPBaseDir\Gentle.Provider.SQLServer.dll
-  Delete /REBOOTOK $MPBaseDir\log4net.dll
-  Delete /REBOOTOK $MPBaseDir\MySql.Data.dll
-  Delete /REBOOTOK $MPBaseDir\TvBusinessLayer.dll
-  Delete /REBOOTOK $MPBaseDir\TvLibrary.Interfaces.dll
-  Delete /REBOOTOK $MPBaseDir\Gentle.config
+  Delete /REBOOTOK "$MPdir.Base\PowerScheduler.Interfaces.dll"
+  Delete /REBOOTOK "$MPdir.Base\TvControl.dll"
+  Delete /REBOOTOK "$MPdir.Base\TVDatabase.dll"
+  Delete /REBOOTOK "$MPdir.Base\Gentle.Common.DLL"
+  Delete /REBOOTOK "$MPdir.Base\Gentle.Framework.DLL"
+  Delete /REBOOTOK "$MPdir.Base\Gentle.Provider.MySQL.dll"
+  Delete /REBOOTOK "$MPdir.Base\Gentle.Provider.SQLServer.dll"
+  Delete /REBOOTOK "$MPdir.Base\log4net.dll"
+  Delete /REBOOTOK "$MPdir.Base\MySql.Data.dll"
+  Delete /REBOOTOK "$MPdir.Base\TvBusinessLayer.dll"
+  Delete /REBOOTOK "$MPdir.Base\TvLibrary.Interfaces.dll"
+  Delete /REBOOTOK "$MPdir.Base\Gentle.config"
 !macroend
 
 ${MementoSectionDone}
@@ -649,6 +648,8 @@ Function .onInit
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
         Abort
     ${EndIf}
+
+    ${ReadMediaPortalDirs}
 /*
     ; if silent and tve3 is already installed, remove it first, the continue with installation
     ${If} ${Silent}
@@ -696,7 +697,8 @@ Function un.onInit
   StrCpy $RemoveAll 1
   #### END of check and parse cmdline parameter
 
-  !insertmacro MP_GET_INSTALL_DIR "$MPBaseDir"
+  ${un.ReadMediaPortalDirs}
+
   ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
