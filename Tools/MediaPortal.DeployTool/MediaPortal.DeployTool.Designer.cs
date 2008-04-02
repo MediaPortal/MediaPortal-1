@@ -335,9 +335,9 @@ namespace MediaPortal.DeployTool {
         
         /// <summary>
         ///   Looks up a localized string similar to An internet connection is required for the installation process.
-        ///Do you want to start with the installation process now, 
-        ///or do you want to only download the required components in order to perform the installation later, 
-        ///maybe on a pc without an internet connection?.
+        ///Do you want to start with the installation process now, or do you want
+        ///to only download the required components in order to perform the 
+        ///installation later,  maybe on a pc without an internet connection?.
         /// </summary>
         internal static string DownloadOnly_labelSectionHeader {
             get {
@@ -1110,7 +1110,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Yes, I will use MediaPortal  to watch HD content..
+        ///   Looks up a localized string similar to Yes, I will use MediaPortal to watch HD content..
         /// </summary>
         internal static string WatchHDTv_yes {
             get {

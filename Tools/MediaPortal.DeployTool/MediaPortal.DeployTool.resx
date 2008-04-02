@@ -475,9 +475,9 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>An internet connection is required for the installation process.
-Do you want to start with the installation process now, 
-or do you want to only download the required components in order to perform the installation later, 
-maybe on a pc without an internet connection?</value>
+Do you want to start with the installation process now, or do you want
+to only download the required components in order to perform the 
+installation later,  maybe on a pc without an internet connection?</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
     <value>Only download required components</value>

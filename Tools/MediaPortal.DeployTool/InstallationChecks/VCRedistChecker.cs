@@ -84,7 +84,7 @@ namespace MediaPortal.DeployTool
           if (result.needsDownload == false)
               result.state = CheckState.DOWNLOADED;
           else
-              result.state = CheckState.NON_DOWNLOADED;
+              result.state = CheckState.NOT_DOWNLOADED;
           return result;
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\{7299052b-02a4-4627-81f2-1818da5d550d}");

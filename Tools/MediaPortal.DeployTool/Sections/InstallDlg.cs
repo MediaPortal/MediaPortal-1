@@ -91,11 +91,8 @@ namespace MediaPortal.DeployTool
       {
         IInstallationPackage package = (IInstallationPackage)item.Tag;
         CheckResult result = package.CheckStatus();
-        if (result.state != CheckState.INSTALLED && result.state != CheckState.DOWNLOADED)
-        {
+        if (result.state == CheckState.NOT_INSTALLED || result.state == CheckState.NOT_DOWNLOADED || result.state == CheckState.NOT_REMOVED)
           isComplete = false;
-          break;
-        }
       }
       return isComplete;
     }
@@ -144,7 +141,7 @@ namespace MediaPortal.DeployTool
             item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
             item.ForeColor = System.Drawing.Color.Green;
             break;
-        case CheckState.NON_DOWNLOADED:
+        case CheckState.NOT_DOWNLOADED:
             item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotDownloaded"));
             item.SubItems.Add(Localizer.Instance.GetString("Install_actionDownload"));
             item.ForeColor = System.Drawing.Color.Red;
@@ -293,7 +290,7 @@ namespace MediaPortal.DeployTool
               return false;
             }
             break;
-          case CheckState.NON_DOWNLOADED:
+          case CheckState.NOT_DOWNLOADED:
             item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgDownloading");
             Update();
             if (!package.Download())
