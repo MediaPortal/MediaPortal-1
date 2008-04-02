@@ -24,6 +24,14 @@
 #endregion
 
 
+!include FileFunc.nsh
+!include "XML.nsh"
+
+!include FileFunc.nsh
+!insertmacro GetRoot
+
+!include WordFunc.nsh
+!insertmacro WordReplace
 
 #**********************************************************************************************************#
 #
@@ -319,6 +327,204 @@ LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is r
   #!define MPIsInstalled `${SF_SELECTED} SectionFlagIsSet`
 !define MPIsInstalled "!insertmacro _MPIsInstalled"
   */
+
+
+
+Function GET_PATH_TEXT
+
+  Pop $R0
+
+  ${xml::GotoPath} "/Config" $0
+  ${If} $0 != 0
+  #  MessageBox MB_OK "error: xml::GotoPath /Config"
+    Goto error
+  ${EndIf}
+
+  loop:
+
+  ${xml::FindNextElement} "Dir" $0 $1
+  ${If} $1 != 0
+  #  MessageBox MB_OK "error: xml::FindNextElement >/Dir< >$0<"
+    Goto error
+  ${EndIf}
+  ;MessageBox MB_OK "xml::FindNextElement$\n$$0=$0$\n$$1=$1"
+
+  ${xml::ElementPath} $0
+  ${xml::GetAttribute} "id" $0 $1
+  ${If} $1 != 0
+  #  MessageBox MB_OK "error: xml::GetAttribute >id< >$0<"
+    Goto error
+  ${EndIf}
+  ${IfThen} $0 == $R0  ${|} Goto foundDir ${|}
+
+  Goto loop
+
+
+  foundDir:
+  ${xml::ElementPath} $0
+  ${xml::GotoPath} "$0/Path" $1
+  ${If} $1 != 0
+  #  MessageBox MB_OK "error: xml::GotoPath >$0/Path<"
+    Goto error
+  ${EndIf}
+
+  ${xml::GetText} $0 $1
+  ${If} $1 != 0
+    ; maybe the path is only empty, which means MPdir.Base
+    #MessageBox MB_OK "error: xml::GetText"
+    #Goto error
+    StrCpy $0 ""
+  ${EndIf}
+
+  Push $0
+  Goto end
+
+  error:
+  Push "-1"
+
+  end:
+
+FunctionEnd
+  
+Var MyDocs
+Var UserAppData
+Var CommonAppData
+
+Var MPdir.Base
+
+Var MPdir.Config
+Var MPdir.Plugins
+Var MPdir.Log
+Var MPdir.CustomInputDevice
+Var MPdir.CustomInputDefault
+Var MPdir.Skin
+Var MPdir.Language
+Var MPdir.Database
+Var MPdir.Thumbs
+Var MPdir.Weather
+Var MPdir.Cache
+Var MPdir.BurnerSupport
+
+!macro ReadMPdir DIR
+
+  Push "${DIR}"
+  Call GET_PATH_TEXT
+  Pop $0
+  ${IfThen} $0 == -1 ${|} Goto error ${|}
+
+  ${WordReplace} "$0" "%APPDATA%" "$UserAppData" "+" $0
+  ${WordReplace} "$0" "%PROGRAMDATA%" "$CommonAppData" "+" $0
+
+  ${GetRoot} "$0" $1
+
+  ${IfThen} $1 == "" ${|} StrCpy $0 "$MPdir.Base\$0" ${|}
+
+  ; TRIM    \    AT THE END
+  StrLen $1 "$0"
+      #MessageBox MB_OK "1 $1$\r$\n2 $2$\r$\n3 $3"
+  IntOp $2 $1 - 1
+      #MessageBox MB_OK "1 $1$\r$\n2 $2$\r$\n3 $3"
+  StrCpy $3 $0 1 $2
+      #MessageBox MB_OK "1 $1$\r$\n2 $2$\r$\n3 $3"
+  
+  ${If} $3 == "\"
+    StrCpy $MPdir.${DIR} $0 $2
+  ${Else}
+    StrCpy $MPdir.${DIR} $0
+  ${EndIf}
+
+!macroend
+
+
+
+Function LoadDefaultDirs
+
+  StrCpy $MPdir.Config              "$MPdir.Base\Config"
+  StrCpy $MPdir.Plugins             "$MPdir.Base\plugins"
+  StrCpy $MPdir.Log                 "$MPdir.Base\log"
+  StrCpy $MPdir.CustomInputDevice   "$MPdir.Base\InputDeviceMappings\custom"
+  StrCpy $MPdir.CustomInputDefault  "$MPdir.Base\InputDeviceMappings\defaults"
+  StrCpy $MPdir.Skin                "$MPdir.Base\skin"
+  StrCpy $MPdir.Language            "$MPdir.Base\language"
+  StrCpy $MPdir.Database            "$MPdir.Base\database"
+  StrCpy $MPdir.Thumbs              "$MPdir.Base\thumbs"
+  StrCpy $MPdir.Weather             "$MPdir.Base\weather"
+  StrCpy $MPdir.Cache               "$MPdir.Base\cache"
+  StrCpy $MPdir.BurnerSupport       "$MPdir.Base\Burner"
+
+FunctionEnd
+Function ReadConfig
+
+  Pop $0
+  IfFileExists "$0\MediaPortalDirs.xml" 0 error
+
+  
+  #${xml::LoadFile} "$EXEDIR\MediaPortalDirsXP.xml" $0
+  ${xml::LoadFile} "$0\MediaPortalDirs.xml" $0
+  ${IfThen} $0 != 0 ${|} Goto error ${|}
+
+  #</Dir>  Log CustomInputDevice CustomInputDefault Skin Language Database Thumbs Weather Cache BurnerSupport
+
+  !insertmacro ReadMPdir Config
+  !insertmacro ReadMPdir Plugins
+  !insertmacro ReadMPdir Log
+  !insertmacro ReadMPdir CustomInputDevice
+  !insertmacro ReadMPdir CustomInputDefault
+  !insertmacro ReadMPdir Skin
+  !insertmacro ReadMPdir Language
+  !insertmacro ReadMPdir Database
+  !insertmacro ReadMPdir Thumbs
+  !insertmacro ReadMPdir Weather
+  !insertmacro ReadMPdir Cache
+  !insertmacro ReadMPdir BurnerSupport
+
+
+  Push "0"
+  Goto end
+
+  error:
+  Push "-1"
+
+  end:
+
+FunctionEnd
+
+
+
+!define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs`
+!macro ReadMediaPortalDirs
+
+  !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+  SetShellVarContext current
+  StrCpy $MyDocs "$DOCUMENTS"
+  StrCpy $UserAppData "$APPDATA"
+  SetShellVarContext all
+  StrCpy $CommonAppData "$APPDATA"
+
+
+  Call LoadDefaultDirs
+
+  Push "$MyDocs\Team MediaPortal"
+  Call ReadConfig
+  Pop $0
+  ${If} $0 != 0   ; an error occured
+    MessageBox MB_OK "error: read mpdirs.xml in $MyDocs\Team MediaPortal"
+
+    Push "$MPdir.Base"
+    Call ReadConfig
+    Pop $0
+    ${If} $0 != 0   ; an error occured
+      MessageBox MB_OK "error: read mpdirs.xml in $MPdir.Base"
+
+      Call LoadDefaultDirs
+
+    ${EndIf}
+
+  ${EndIf}
+
+!macroend
+  
+  
   
   
   

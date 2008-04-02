@@ -39,8 +39,7 @@ SectionEnd ; end the section
 
 ;--------------------------------
 
-
-Function .onInit
+!macro DoInstallChecks
 
   ${If} ${MP023IsInstalled}
     !insertmacro MP_GET_INSTALL_DIR $R0
@@ -83,4 +82,40 @@ Function .onInit
     MessageBox MB_ICONINFORMATION|MB_OK "no VCRedistIsInstalled"
   ${EndIf}
 
+!macroend
+
+Function .onInit
+
+  MessageBox MB_ICONINFORMATION|MB_YESNO "DoInstallChecks?" IDNO noInstallChecks
+    !insertmacro DoInstallChecks
+
+  noInstallChecks:
+
+  MessageBox MB_ICONINFORMATION|MB_YESNO "DoXmlTests?" IDNO noXmlTests
+  
+  
+      ${ReadMediaPortalDirs}
+
+      MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
+      $\r$\nBase:  $MPdir.Base$\r$\n \
+      $\r$\nConfig:  $MPdir.Config \
+      $\r$\nPlugins: $MPdir.Plugins \
+      $\r$\nLog: $MPdir.Log \
+      $\r$\nCustomInputDevice: $MPdir.CustomInputDevice \
+      $\r$\nCustomInputDefault: $MPdir.CustomInputDefault \
+      $\r$\nSkin: $MPdir.Skin \
+      $\r$\nLanguage: $MPdir.Language \
+      $\r$\nDatabase: $MPdir.Database \
+      $\r$\nThumbs: $MPdir.Thumbs \
+      $\r$\nWeather: $MPdir.Weather \
+      $\r$\nCache: $MPdir.Cache \
+      $\r$\nBurnerSupport: $MPdir.BurnerSupport \
+      "
+
+  noXmlTests:
+
+
+
+
 FunctionEnd
+
