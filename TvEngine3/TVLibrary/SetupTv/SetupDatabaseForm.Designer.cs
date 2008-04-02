@@ -187,7 +187,7 @@ namespace SetupTv
       // pbMySQL
       // 
       this.pbMySQL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.pbMySQL.Image = global::SetupTv.Properties.Resources.mysql_logo;
+      this.pbMySQL.Image = global::SetupTv.Properties.Resources.logo_MySQL;
       this.pbMySQL.Location = new System.Drawing.Point(204, 41);
       this.pbMySQL.Name = "pbMySQL";
       this.pbMySQL.Size = new System.Drawing.Size(150, 75);
@@ -199,7 +199,7 @@ namespace SetupTv
       // pbSQLServer
       // 
       this.pbSQLServer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.pbSQLServer.Image = global::SetupTv.Properties.Resources.ms_sql_logo;
+      this.pbSQLServer.Image = global::SetupTv.Properties.Resources.logo_MSSQL;
       this.pbSQLServer.Location = new System.Drawing.Point(19, 41);
       this.pbSQLServer.Name = "pbSQLServer";
       this.pbSQLServer.Size = new System.Drawing.Size(150, 75);
