@@ -248,6 +248,17 @@ Section "MediaPortal core files (required)" SecCore
   SectionIn RO
   DetailPrint "Installing MediaPortal core files..."
 
+  DetailPrint "Terminating processes ..."
+  ExecWait '"taskkill" /F /IM MediaPortal.exe'
+  ExecWait '"taskkill" /F /IM configuration.exe'
+
+  ExecWait '"taskkill" /F /IM MPInstaller.exe'
+  ExecWait '"taskkill" /F /IM MPTestTool2.exe'
+  ExecWait '"taskkill" /F /IM MusicShareWatcher.exe'
+  ExecWait '"taskkill" /F /IM TVGuideScheduler.exe'
+  ExecWait '"taskkill" /F /IM WebEPG.exe'
+  ExecWait '"taskkill" /F /IM WebEPG-conf.exe'
+
   SetOverwrite on
 
   !define EXCLUDED_FOLDERS "\
@@ -468,7 +479,18 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TTPremiumSource.ax"  "$MPdir.Base\TTPremiumSource.ax" "$MPdir.Base"
 SectionEnd
 !macro Remove_${SecCore}
-    DetailPrint "Uninstalling MediaPortal core files..."
+  DetailPrint "Uninstalling MediaPortal core files..."
+
+  DetailPrint "Terminating processes ..."
+  ExecWait '"taskkill" /F /IM MediaPortal.exe'
+  ExecWait '"taskkill" /F /IM configuration.exe'
+
+  ExecWait '"taskkill" /F /IM MPInstaller.exe'
+  ExecWait '"taskkill" /F /IM MPTestTool2.exe'
+  ExecWait '"taskkill" /F /IM MusicShareWatcher.exe'
+  ExecWait '"taskkill" /F /IM TVGuideScheduler.exe'
+  ExecWait '"taskkill" /F /IM WebEPG.exe'
+  ExecWait '"taskkill" /F /IM WebEPG-conf.exe'
 
     #---------------------------------------------------------------------------
     # FILTER UNREGISTRATION     for TVClient
@@ -916,10 +938,10 @@ Function .onInit
     ${EndIf}
 
     ; check if old mp 0.2.3 is installed.
-    ${If} ${MP023IsInstalled}
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)" IDOK 0
-        Abort
-    ${EndIf}
+    #${If} ${MP023IsInstalled}
+    #    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)" IDOK 0
+    #    Abort
+    #${EndIf}
 
     ; check if minimum Windows version is XP
     ${If} ${AtMostWin2000}
