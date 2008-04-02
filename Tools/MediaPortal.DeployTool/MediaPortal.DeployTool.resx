@@ -130,13 +130,13 @@
     <value>Do you want to watch HDTV with MediaPortal ?</value>
   </data>
   <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Yes, I will use MediaPortal  to watch HD stuff.</value>
+    <value>Yes, I will use MediaPortal to watch HD content.</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
-    <value>No, I won't use MediaPortal to watch HD stuff.</value>
+    <value>No, I won't use MediaPortal to watch HD content.</value>
   </data>
   <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>I don't know what is HD stuff.</value>
+    <value>I don't know what is HD content.</value>
   </data>
   <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
     <value>Which TV-Engine do you want to use ?</value>
@@ -258,7 +258,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   <data name="Finished_labelHeading1" xml:space="preserve">
     <value>Congratulations !</value>
   </data>
-  <data name="Finished_labelHeading2" xml:space="preserve">
+  <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>You successfully completed your setup of MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3" xml:space="preserve">
@@ -333,7 +333,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   <data name="Install_errUninstallFailed" xml:space="preserve">
     <value>Failed to uninstall application [{0}]</value>
   </data>
-  <data name="Install_labelHeading" xml:space="preserve">
+  <data name="Install_labelHeadingInstall" xml:space="preserve">
     <value>Press the "install" button to perform all necessary actions to install your setup</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
@@ -496,5 +496,11 @@ maybe on a pc without an internet connection?</value>
   </data>
   <data name="Install_stateNotDownloaded" xml:space="preserve">
     <value>Not downloaded</value>
+  </data>
+  <data name="Finished_labelHeading2_download" xml:space="preserve">
+    <value>You successfully completed the download of MediaPortal components</value>
+  </data>
+  <data name="Install_labelHeadingDownload" xml:space="preserve">
+    <value>Press the "download" button to perform the download of all needed components</value>
   </data>
 </root>

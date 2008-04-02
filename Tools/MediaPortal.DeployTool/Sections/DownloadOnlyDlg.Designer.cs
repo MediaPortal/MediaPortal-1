@@ -39,7 +39,7 @@ namespace MediaPortal.DeployTool
         // 
         this.labelSectionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.labelSectionHeader.Location = new System.Drawing.Point(53, 28);
-        this.labelSectionHeader.Size = new System.Drawing.Size(682, 64);
+        this.labelSectionHeader.Size = new System.Drawing.Size(476, 64);
         this.labelSectionHeader.Text = resources.GetString("labelSectionHeader.Text");
         // 
         // rbDownloadOnly

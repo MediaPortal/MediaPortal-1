@@ -50,8 +50,8 @@ namespace MediaPortal.DeployTool
     public override void UpdateUI()
     {
       labelSectionHeader.Text = Localizer.Instance.GetString("DownloadOnly_labelSectionHeader");
-      rbDownloadOnly.Text = Localizer.Instance.GetString("DownloadOnly_yes");
-      rbInstallNow.Text = Localizer.Instance.GetString("DownloadOnly_no");
+      rbDownloadOnly.Text = Localizer.Instance.GetString("DownloadOnly_no");
+      rbInstallNow.Text = Localizer.Instance.GetString("DownloadOnly_yes");
     }
     public override DeployDialog GetNextDialog()
     {

@@ -1,26 +1,32 @@
 ﻿<Applications>
 	<DirectX9c>
-		<URL>http://go.microsoft.com/fwlink/?linkid=56511</URL>
+		<URL>http://go.microsoft.com/fwlink/?LinkId=56511</URL>
 		<FILE>directx_mar2008_redist.exe</FILE>
+    <TYPE>Manual</TYPE>
 	</DirectX9c>
 	<MSSQLExpress>
 		<URL>http://go.microsoft.com/fwlink/?LinkId=65212</URL>
 		<FILE>sqlexpr32.exe</FILE>
+    <TYPE>Automatic</TYPE>
 	</MSSQLExpress>	
-    <MySQL>
+  <MySQL>
 	   <URL>http://dev.mysql.com/get/Downloads/MySQL-5.0/mysql-essential-5.0.45-win32.msi/from/http://sunsite.informatik.rwth-aachen.de/mysql/</URL>
 	   <FILE>mysql-essential-5.0.45-win32.msi</FILE>
-    </MySQL>	
+      <TYPE>Automatic</TYPE>
+  </MySQL>	
 	<MediaPortal>
-    <URL>http://install.team-mediaportal.com/DeployTool</URL>
+    <URL>http://sourceforge.net/projects/mediaportal/</URL>
 		<FILE>setup-mediaportal.exe</FILE>
+    <TYPE>Automatic</TYPE>
 	</MediaPortal>
 	<TvServer>
-		<URL>http://install.team-mediaportal.com/DeployTool</URL>
+		<URL>http://sourceforge.net/projects/mediaportal/</URL>
 		<FILE>setup-tve3.exe</FILE>
+    <TYPE>Automatic</TYPE>
 	</TvServer>
 	<VCRedist>
 	    <URL>http://go.microsoft.com/fwlink/?LinkId=107086</URL>
 		<FILE>vcredist_x86.exe</FILE>
+    <TYPE>Manual</TYPE>
 	</VCRedist>
 </Applications>

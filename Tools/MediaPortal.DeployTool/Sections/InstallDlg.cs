@@ -46,17 +46,23 @@ namespace MediaPortal.DeployTool
       UpdateUI();
     }
 
-    #region IDeplayDialog interface
+    #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading.Text = Localizer.Instance.GetString("Install_labelHeading");
       if (InstallationProperties.Instance["InstallType"] == "download_only")
-        buttonInstall.Text = Localizer.Instance.GetString("Install_buttonDownload");
+      {
+          labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingDownload");
+          buttonInstall.Text = Localizer.Instance.GetString("Install_buttonDownload");
+      }
       else
-        buttonInstall.Text = Localizer.Instance.GetString("Install_buttonInstall");
+      {
+          labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingInstall");
+          buttonInstall.Text = Localizer.Instance.GetString("Install_buttonInstall");
+      }
       listView.Columns[0].Text = Localizer.Instance.GetString("Install_colApplication");
       listView.Columns[1].Text = Localizer.Instance.GetString("Install_colState");
       listView.Columns[2].Text = Localizer.Instance.GetString("Install_colAction");
+      labelSectionHeader.Text = "";
     }
     public override DeployDialog GetNextDialog()
     {

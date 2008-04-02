@@ -42,8 +42,18 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      ManualDownload dlg = new ManualDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("DirectX9c"), Utils.GetDownloadFile("DirectX9c"), Application.StartupPath + "\\deploy");
+      string prg = "DirectX9c";
+      DialogResult result;
+      if(Utils.GetDownloadURL(prg) == "Manual")
+      {
+          ManualDownload dlg = new ManualDownload();
+          result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Utils.GetDownloadFile(prg), Application.StartupPath + "\\deploy");
+      }
+      else
+      {
+          HTTPDownload dlg = new HTTPDownload();
+          result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg));
+      }
       return (result == DialogResult.OK);
     }
     public bool Install()

@@ -126,7 +126,6 @@ namespace MediaPortal.DeployTool
         this.Controls.Add(this.labelHeading1);
         this.Name = "FinishedDlg";
         this.Size = new System.Drawing.Size(620, 281);
-        this.Controls.SetChildIndex(this.labelSectionHeader, 0);
         this.Controls.SetChildIndex(this.labelHeading1, 0);
         this.Controls.SetChildIndex(this.labelHeading2, 0);
         this.Controls.SetChildIndex(this.labelHeading3, 0);

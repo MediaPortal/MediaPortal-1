@@ -42,9 +42,19 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-      HTTPDownload dlg = new HTTPDownload();
-      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MediaPortal"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal"));
-      return (result == DialogResult.OK);
+        string prg = "MediaPortal";
+        DialogResult result;
+        if (Utils.GetDownloadURL(prg) == "Manual")
+        {
+            ManualDownload dlg = new ManualDownload();
+            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Utils.GetDownloadFile(prg), Application.StartupPath + "\\deploy");
+        }
+        else
+        {
+            HTTPDownload dlg = new HTTPDownload();
+            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg));
+        }
+        return (result == DialogResult.OK);
     }
     public bool Install()
     {

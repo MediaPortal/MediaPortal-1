@@ -382,11 +382,20 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You successfully completed the download of MediaPortal components.
+        /// </summary>
+        internal static string Finished_labelHeading2_download {
+            get {
+                return ResourceManager.GetString("Finished_labelHeading2_download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You successfully completed your setup of MediaPortal.
         /// </summary>
-        internal static string Finished_labelHeading2 {
+        internal static string Finished_labelHeading2_install {
             get {
-                return ResourceManager.GetString("Finished_labelHeading2", resourceCulture);
+                return ResourceManager.GetString("Finished_labelHeading2_install", resourceCulture);
             }
         }
         
@@ -661,11 +670,20 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Press the &quot;download&quot; button to perform the download of all needed components.
+        /// </summary>
+        internal static string Install_labelHeadingDownload {
+            get {
+                return ResourceManager.GetString("Install_labelHeadingDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Press the &quot;install&quot; button to perform all necessary actions to install your setup.
         /// </summary>
-        internal static string Install_labelHeading {
+        internal static string Install_labelHeadingInstall {
             get {
-                return ResourceManager.GetString("Install_labelHeading", resourceCulture);
+                return ResourceManager.GetString("Install_labelHeadingInstall", resourceCulture);
             }
         }
         
@@ -1074,7 +1092,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I don&apos;t know what is HD stuff..
+        ///   Looks up a localized string similar to I don&apos;t know what is HD content..
         /// </summary>
         internal static string WatchHDTv_maybe {
             get {
@@ -1083,7 +1101,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No, I won&apos;t use MediaPortal to watch HD stuff..
+        ///   Looks up a localized string similar to No, I won&apos;t use MediaPortal to watch HD content..
         /// </summary>
         internal static string WatchHDTv_no {
             get {
@@ -1092,7 +1110,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Yes, I will use MediaPortal  to watch HD stuff..
+        ///   Looks up a localized string similar to Yes, I will use MediaPortal  to watch HD content..
         /// </summary>
         internal static string WatchHDTv_yes {
             get {

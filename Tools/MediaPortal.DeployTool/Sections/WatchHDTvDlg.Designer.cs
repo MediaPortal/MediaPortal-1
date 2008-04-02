@@ -48,10 +48,10 @@ namespace MediaPortal.DeployTool
         this.rbYesHD.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbYesHD.Location = new System.Drawing.Point(94, 96);
         this.rbYesHD.Name = "rbYesHD";
-        this.rbYesHD.Size = new System.Drawing.Size(240, 17);
+        this.rbYesHD.Size = new System.Drawing.Size(256, 17);
         this.rbYesHD.TabIndex = 9;
         this.rbYesHD.TabStop = true;
-        this.rbYesHD.Text = "Yes, I will use MediaPortal  to watch HD stuff.";
+        this.rbYesHD.Text = "Yes, I will use MediaPortal  to watch HD content.";
         this.rbYesHD.UseVisualStyleBackColor = true;
         // 
         // rbNoHD
@@ -60,10 +60,10 @@ namespace MediaPortal.DeployTool
         this.rbNoHD.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbNoHD.Location = new System.Drawing.Point(94, 141);
         this.rbNoHD.Name = "rbNoHD";
-        this.rbNoHD.Size = new System.Drawing.Size(244, 17);
+        this.rbNoHD.Size = new System.Drawing.Size(260, 17);
         this.rbNoHD.TabIndex = 10;
         this.rbNoHD.TabStop = true;
-        this.rbNoHD.Text = "No, I won\'t use MediaPortal to watch HD stuff.";
+        this.rbNoHD.Text = "No, I won\'t use MediaPortal to watch HD content.";
         this.rbNoHD.UseVisualStyleBackColor = true;
         // 
         // pictureBox1
@@ -83,10 +83,10 @@ namespace MediaPortal.DeployTool
         this.rbMaybeHD.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.rbMaybeHD.Location = new System.Drawing.Point(94, 180);
         this.rbMaybeHD.Name = "rbMaybeHD";
-        this.rbMaybeHD.Size = new System.Drawing.Size(164, 17);
+        this.rbMaybeHD.Size = new System.Drawing.Size(180, 17);
         this.rbMaybeHD.TabIndex = 12;
         this.rbMaybeHD.TabStop = true;
-        this.rbMaybeHD.Text = "I don\'t know what is HD stuff.";
+        this.rbMaybeHD.Text = "I don\'t know what is HD content.";
         this.rbMaybeHD.UseVisualStyleBackColor = true;
         // 
         // WatchHDTvDlg
