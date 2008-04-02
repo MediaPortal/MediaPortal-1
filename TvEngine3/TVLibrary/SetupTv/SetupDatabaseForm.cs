@@ -350,11 +350,12 @@ namespace SetupTv
     private void mpButtonTest_Click(object sender, EventArgs e)
     {
       CheckServiceName();
-      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 5);
-
+      
       if (rbSQLServer.Checked)
       {
         _provider = ProviderType.SqlServer;
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 5);
+
         try
         {          
           using (SqlConnection connect = new SqlConnection(connectionString))
@@ -403,6 +404,8 @@ namespace SetupTv
       else
       {
         _provider = ProviderType.MySql;
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 5);
+
         try
         {
           using (MySqlConnection connect = new MySqlConnection(connectionString))
