@@ -34,7 +34,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for SearchCityForm.
   /// </summary>
-  public class SearchCityForm : System.Windows.Forms.Form
+  public class SearchCityForm : MediaPortal.Configuration.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxNewCity;
     private System.Windows.Forms.ListBox listBoxCityResults;
@@ -153,6 +153,7 @@ namespace MediaPortal.Configuration
       // buttonCancelCity
       // 
       this.buttonCancelCity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancelCity.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancelCity.Location = new System.Drawing.Point(381, 327);
       this.buttonCancelCity.Name = "buttonCancelCity";
       this.buttonCancelCity.Size = new System.Drawing.Size(75, 23);
@@ -392,15 +393,16 @@ namespace MediaPortal.Configuration
       this.searchTextBox.Name = "searchTextBox";
       this.searchTextBox.Size = new System.Drawing.Size(292, 20);
       this.searchTextBox.TabIndex = 0;
-      this.searchTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyUp);
       this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
+      this.searchTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyUp);
       // 
       // SearchCityForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.buttonCancelCity;
       this.ClientSize = new System.Drawing.Size(506, 372);
       this.Controls.Add(this.groupBoxNewCity);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "SearchCityForm";
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

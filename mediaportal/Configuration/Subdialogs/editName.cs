@@ -34,11 +34,11 @@ namespace MediaPortal
   /// <summary>
   /// Summary description for editName.
   /// </summary>
-  public class editName : System.Windows.Forms.Form
+  public class editName : MediaPortal.Configuration.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxName;
-    private MediaPortal.UserInterface.Controls.MPButton btnOk;
+    private MediaPortal.UserInterface.Controls.MPButton buttonOK;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -80,7 +80,7 @@ namespace MediaPortal
     {
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxName = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // label1
@@ -93,32 +93,36 @@ namespace MediaPortal
       // 
       // textBoxName
       // 
+      this.textBoxName.BorderColor = System.Drawing.Color.Empty;
       this.textBoxName.Location = new System.Drawing.Point(16, 40);
       this.textBoxName.Name = "textBoxName";
       this.textBoxName.Size = new System.Drawing.Size(256, 20);
       this.textBoxName.TabIndex = 0;
-      this.textBoxName.Text = "";
       this.textBoxName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.editName_KeyDown);
       // 
-      // btnOk
+      // buttonOK
       // 
-      this.btnOk.Location = new System.Drawing.Point(232, 72);
-      this.btnOk.Name = "btnOk";
-      this.btnOk.Size = new System.Drawing.Size(40, 23);
-      this.btnOk.TabIndex = 1;
-      this.btnOk.Text = "Ok";
-      this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+      this.buttonOK.Location = new System.Drawing.Point(232, 72);
+      this.buttonOK.Name = "buttonOK";
+      this.buttonOK.Size = new System.Drawing.Size(40, 23);
+      this.buttonOK.TabIndex = 1;
+      this.buttonOK.Text = "OK";
+      this.buttonOK.UseVisualStyleBackColor = true;
+      this.buttonOK.Click += new System.EventHandler(this.btnOk_Click);
       // 
       // editName
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.buttonOK;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(292, 102);
-      this.Controls.Add(this.btnOk);
+      this.Controls.Add(this.buttonOK);
       this.Controls.Add(this.textBoxName);
       this.Controls.Add(this.label1);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "editName";
       this.Text = "Enter a name for this channel";
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion

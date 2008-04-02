@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
   /// <summary>
   /// Summary description for DlgMovieConflicts.
   /// </summary>
-  public class DlgMovieConflicts : System.Windows.Forms.Form, IMDB.IProgress
+  public class DlgMovieConflicts : MediaPortal.Configuration.MPForm, IMDB.IProgress
   {
     private System.Windows.Forms.ListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -115,9 +115,9 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-      this.listView1.Location = new System.Drawing.Point(10, 39);
+      this.listView1.Location = new System.Drawing.Point(8, 34);
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(444, 267);
+      this.listView1.Size = new System.Drawing.Size(447, 281);
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
@@ -131,9 +131,9 @@ namespace MediaPortal.Configuration.Sections
       // button2
       // 
       this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button2.Location = new System.Drawing.Point(386, 343);
+      this.button2.Location = new System.Drawing.Point(399, 347);
       this.button2.Name = "button2";
-      this.button2.Size = new System.Drawing.Size(68, 26);
+      this.button2.Size = new System.Drawing.Size(56, 23);
       this.button2.TabIndex = 2;
       this.button2.Text = "Close";
       this.button2.UseVisualStyleBackColor = true;
@@ -141,18 +141,18 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(19, 9);
+      this.label1.Location = new System.Drawing.Point(16, 8);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(423, 27);
+      this.label1.Size = new System.Drawing.Size(352, 23);
       this.label1.TabIndex = 3;
       this.label1.Text = "There was a conflict with the following files/movies:";
       // 
       // label2
       // 
       this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label2.Location = new System.Drawing.Point(8, 312);
+      this.label2.Location = new System.Drawing.Point(7, 320);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(39, 19);
+      this.label2.Size = new System.Drawing.Size(32, 17);
       this.label2.TabIndex = 5;
       this.label2.Text = "Title:";
       // 
@@ -161,17 +161,17 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTitle.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxTitle.Location = new System.Drawing.Point(43, 312);
+      this.textBoxTitle.Location = new System.Drawing.Point(36, 320);
       this.textBoxTitle.Name = "textBoxTitle";
-      this.textBoxTitle.Size = new System.Drawing.Size(337, 22);
+      this.textBoxTitle.Size = new System.Drawing.Size(358, 20);
       this.textBoxTitle.TabIndex = 6;
       // 
       // buttonFind
       // 
       this.buttonFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonFind.Location = new System.Drawing.Point(386, 310);
+      this.buttonFind.Location = new System.Drawing.Point(399, 319);
       this.buttonFind.Name = "buttonFind";
-      this.buttonFind.Size = new System.Drawing.Size(68, 27);
+      this.buttonFind.Size = new System.Drawing.Size(56, 23);
       this.buttonFind.TabIndex = 7;
       this.buttonFind.Text = "Find";
       this.buttonFind.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // DlgMovieConflicts
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(464, 376);
       this.Controls.Add(this.buttonFind);
       this.Controls.Add(this.textBoxTitle);
@@ -187,7 +187,7 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.label1);
       this.Controls.Add(this.button2);
       this.Controls.Add(this.listView1);
-      this.MinimumSize = new System.Drawing.Size(472, 408);
+      this.MinimumSize = new System.Drawing.Size(393, 354);
       this.Name = "DlgMovieConflicts";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "IMDB Movie conflicts";

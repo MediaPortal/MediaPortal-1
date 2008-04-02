@@ -35,14 +35,14 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for EditGroupForm.
   /// </summary>
-  public class EditGroupForm : System.Windows.Forms.Form
+  public class EditGroupForm : MediaPortal.Configuration.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxName;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxPincode;
-    private MediaPortal.UserInterface.Controls.MPButton buttonOk;
-    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
+    private MediaPortal.UserInterface.Controls.MPButton buttonOK;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
     TVGroup group = new TVGroup();
     /// <summary>
     /// Required designer variable.
@@ -87,8 +87,8 @@ namespace MediaPortal.Configuration
       this.textBoxName = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxPincode = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // label1
@@ -101,11 +101,11 @@ namespace MediaPortal.Configuration
       // 
       // textBoxName
       // 
+      this.textBoxName.BorderColor = System.Drawing.Color.Empty;
       this.textBoxName.Location = new System.Drawing.Point(32, 48);
       this.textBoxName.Name = "textBoxName";
       this.textBoxName.Size = new System.Drawing.Size(208, 20);
       this.textBoxName.TabIndex = 1;
-      this.textBoxName.Text = "";
       // 
       // label2
       // 
@@ -117,44 +117,52 @@ namespace MediaPortal.Configuration
       // 
       // textBoxPincode
       // 
+      this.textBoxPincode.BorderColor = System.Drawing.Color.Empty;
       this.textBoxPincode.Location = new System.Drawing.Point(32, 112);
       this.textBoxPincode.MaxLength = 4;
       this.textBoxPincode.Name = "textBoxPincode";
       this.textBoxPincode.PasswordChar = '*';
+      this.textBoxPincode.Size = new System.Drawing.Size(100, 20);
       this.textBoxPincode.TabIndex = 3;
-      this.textBoxPincode.Text = "";
       // 
-      // buttonOk
+      // buttonOK
       // 
-      this.buttonOk.Location = new System.Drawing.Point(136, 152);
-      this.buttonOk.Name = "buttonOk";
-      this.buttonOk.Size = new System.Drawing.Size(32, 23);
-      this.buttonOk.TabIndex = 4;
-      this.buttonOk.Text = "Ok";
-      this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
+      this.buttonOK.Location = new System.Drawing.Point(136, 152);
+      this.buttonOK.Name = "buttonOK";
+      this.buttonOK.Size = new System.Drawing.Size(32, 23);
+      this.buttonOK.TabIndex = 4;
+      this.buttonOK.Text = "OK";
+      this.buttonOK.UseVisualStyleBackColor = true;
+      this.buttonOK.Click += new System.EventHandler(this.buttonOk_Click);
       // 
-      // btnCancel
+      // buttonCancel
       // 
-      this.btnCancel.Location = new System.Drawing.Point(184, 152);
-      this.btnCancel.Name = "btnCancel";
-      this.btnCancel.Size = new System.Drawing.Size(56, 23);
-      this.btnCancel.TabIndex = 5;
-      this.btnCancel.Text = "Cancel";
-      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.buttonCancel.Location = new System.Drawing.Point(184, 152);
+      this.buttonCancel.Name = "buttonCancel";
+      this.buttonCancel.Size = new System.Drawing.Size(56, 23);
+      this.buttonCancel.TabIndex = 5;
+      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.UseVisualStyleBackColor = true;
+      this.buttonCancel.Click += new System.EventHandler(this.btnCancel_Click);
       // 
       // EditGroupForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.buttonOK;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(264, 198);
-      this.Controls.Add(this.btnCancel);
-      this.Controls.Add(this.buttonOk);
+      this.Controls.Add(this.buttonCancel);
+      this.Controls.Add(this.buttonOK);
       this.Controls.Add(this.textBoxPincode);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.textBoxName);
       this.Controls.Add(this.label1);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "EditGroupForm";
       this.Text = "Edit Group";
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion

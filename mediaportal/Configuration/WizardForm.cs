@@ -39,7 +39,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for WizardForm.
   /// </summary>
-  public class WizardForm : System.Windows.Forms.Form
+  public class WizardForm : MediaPortal.Configuration.MPForm
   {
     internal class SectionHolder
     {
@@ -357,17 +357,16 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WizardForm));
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.nextButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.backButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.topPanel = new System.Windows.Forms.Panel();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.infoLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.topicLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panel1 = new System.Windows.Forms.Panel();
       this.panel2 = new System.Windows.Forms.Panel();
       this.holderPanel = new System.Windows.Forms.Panel();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.topPanel.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
@@ -418,15 +417,6 @@ namespace MediaPortal.Configuration
       this.topPanel.Size = new System.Drawing.Size(618, 72);
       this.topPanel.TabIndex = 2;
       // 
-      // pictureBox1
-      // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(528, 14);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(70, 48);
-      this.pictureBox1.TabIndex = 2;
-      this.pictureBox1.TabStop = false;
-      // 
       // infoLabel
       // 
       this.infoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -470,9 +460,18 @@ namespace MediaPortal.Configuration
       this.holderPanel.Size = new System.Drawing.Size(584, 408);
       this.holderPanel.TabIndex = 4;
       // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = global::MediaPortal.Configuration.Properties.Resources.wizard_header;
+      this.pictureBox1.Location = new System.Drawing.Point(528, 14);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(70, 48);
+      this.pictureBox1.TabIndex = 2;
+      this.pictureBox1.TabStop = false;
+      // 
       // WizardForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(618, 552);
       this.Controls.Add(this.holderPanel);
       this.Controls.Add(this.panel2);
@@ -482,7 +481,6 @@ namespace MediaPortal.Configuration
       this.Controls.Add(this.nextButton);
       this.Controls.Add(this.cancelButton);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "WizardForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "WizardForm";

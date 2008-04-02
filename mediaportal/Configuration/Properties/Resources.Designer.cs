@@ -60,9 +60,37 @@ namespace MediaPortal.Configuration.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap remote_MceEurope {
+            get {
+                object obj = ResourceManager.GetObject("remote_MceEurope", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap remote_MceUSA {
+            get {
+                object obj = ResourceManager.GetObject("remote_MceUSA", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap splashscreen_configuration {
             get {
                 object obj = ResourceManager.GetObject("splashscreen_configuration", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap wizard_background {
+            get {
+                object obj = ResourceManager.GetObject("wizard_background", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap wizard_header {
+            get {
+                object obj = ResourceManager.GetObject("wizard_header", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

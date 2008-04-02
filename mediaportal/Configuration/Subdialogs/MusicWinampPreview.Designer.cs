@@ -77,6 +77,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // btClose
       // 
+      this.btClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.btClose.Location = new System.Drawing.Point(340, 331);
       this.btClose.Name = "btClose";
       this.btClose.Size = new System.Drawing.Size(75, 23);
@@ -99,6 +100,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = this.btClose;
       this.ClientSize = new System.Drawing.Size(462, 366);
       this.ControlBox = false;
       this.Controls.Add(this.mpLabel1);
@@ -107,6 +109,7 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.btStart);
       this.Controls.Add(this.pictureBoxVis);
       this.Controls.Add(this.btClose);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "MusicWinampPreview";
       this.Text = "MusicWinampPreview";
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxVis)).EndInit();

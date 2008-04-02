@@ -6,7 +6,8 @@
     <ProjectGuid>{68168FAA-A363-4F64-981C-32629A537900}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>config.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>Configuration</AssemblyName>
@@ -247,6 +248,12 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MPForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MPForm.Designer.cs">
+      <DependentUpon>MPForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HelpSystem.cs" />
     <Compile Include="Sections\Project.cs">
@@ -612,9 +619,17 @@
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="MPForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MPForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Project.resx">
       <DependentUpon>Project.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Remote.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Remote.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\EditCaptureCardForm.resx">
       <DependentUpon>EditCaptureCardForm.cs</DependentUpon>
@@ -737,18 +752,6 @@
       <DependentUpon>GeneralVolume.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RemoteDirectInput.resx">
-      <DependentUpon>RemoteDirectInput.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RemoteRedEye.resx">
-      <DependentUpon>RemoteRedEye.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RemoteSerialUIR.resx">
-      <DependentUpon>RemoteSerialUIR.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\RemoteUSBUIRT.resx">
       <DependentUpon>RemoteUSBUIRT.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -863,10 +866,6 @@
     <EmbeddedResource Include="Sections\RadioStations.resx">
       <DependentUpon>RadioStations.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Remote.resx">
-      <DependentUpon>Remote.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Television.resx">
       <DependentUpon>Television.cs</DependentUpon>
     </EmbeddedResource>
@@ -916,20 +915,11 @@
     <EmbeddedResource Include="Sections\Wizard_Welcome.resx">
       <DependentUpon>Wizard_Welcome.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SettingsForm.resx">
-      <DependentUpon>SettingsForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ConfigSplashScreen.resx">
-      <DependentUpon>ConfigSplashScreen.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WizardForm.resx">
-      <DependentUpon>WizardForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Content Include="config.ico" />
-    <None Include="splashscreen_configuration.png" />
+    <None Include="Resources\config.ico" />
+    <None Include="Resources\wizard_background.png" />
+    <None Include="Resources\wizard_header.jpg" />
+    <None Include="Resources\remote.MceEurope.png" />
+    <None Include="Resources\remote.MceUSA.png" />
     <Content Include="Wizards\DVD.xml" />
     <Content Include="Wizards\FirstTimeSetup.xml" />
     <Content Include="Wizards\Movies.xml" />
@@ -942,10 +932,10 @@
     <Content Include="Wizards\wizard_music.png" />
     <Content Include="Wizards\wizard_picture.png" />
     <Content Include="Wizards\wizard_television.png" />
-    <Content Include="wizard_background.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Resources\splashscreen_configuration.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

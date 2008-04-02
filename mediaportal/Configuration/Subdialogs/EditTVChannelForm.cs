@@ -39,7 +39,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for EditTVChannelForm.
   /// </summary>
-  public class EditTVChannelForm : System.Windows.Forms.Form
+  public class EditTVChannelForm : MediaPortal.Configuration.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
@@ -2766,13 +2766,13 @@ namespace MediaPortal.Configuration
       // EditTVChannelForm
       // 
       this.AcceptButton = this.okButton;
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(504, 462);
       this.Controls.Add(this.tabControl1);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MinimumSize = new System.Drawing.Size(384, 208);
       this.Name = "EditTVChannelForm";
       this.ShowInTaskbar = false;

@@ -34,7 +34,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for EditWeatherCityForm.
   /// </summary>
-  public class EditWeatherCityForm : System.Windows.Forms.Form
+  public class EditWeatherCityForm : MediaPortal.Configuration.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -118,15 +118,17 @@ namespace MediaPortal.Configuration
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(335, 336);
       this.cancelButton.Name = "cancelButton";
+      this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 10;
       this.cancelButton.Text = "Cancel";
+      this.cancelButton.UseVisualStyleBackColor = true;
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
       // 
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.precipitationTextBox);
       this.groupBox1.Controls.Add(this.label7);
       this.groupBox1.Controls.Add(this.humidityTextBox);
@@ -140,6 +142,7 @@ namespace MediaPortal.Configuration
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.locationTextBox);
       this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(9, 9);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(400, 320);
@@ -149,11 +152,11 @@ namespace MediaPortal.Configuration
       // 
       // precipitationTextBox
       // 
+      this.precipitationTextBox.BorderColor = System.Drawing.Color.Empty;
       this.precipitationTextBox.Location = new System.Drawing.Point(16, 288);
       this.precipitationTextBox.Name = "precipitationTextBox";
       this.precipitationTextBox.Size = new System.Drawing.Size(336, 20);
       this.precipitationTextBox.TabIndex = 21;
-      this.precipitationTextBox.Text = "";
       // 
       // label7
       // 
@@ -165,11 +168,11 @@ namespace MediaPortal.Configuration
       // 
       // humidityTextBox
       // 
+      this.humidityTextBox.BorderColor = System.Drawing.Color.Empty;
       this.humidityTextBox.Location = new System.Drawing.Point(16, 248);
       this.humidityTextBox.Name = "humidityTextBox";
       this.humidityTextBox.Size = new System.Drawing.Size(336, 20);
       this.humidityTextBox.TabIndex = 19;
-      this.humidityTextBox.Text = "";
       // 
       // label6
       // 
@@ -181,11 +184,11 @@ namespace MediaPortal.Configuration
       // 
       // windsTextBox
       // 
+      this.windsTextBox.BorderColor = System.Drawing.Color.Empty;
       this.windsTextBox.Location = new System.Drawing.Point(16, 208);
       this.windsTextBox.Name = "windsTextBox";
       this.windsTextBox.Size = new System.Drawing.Size(336, 20);
       this.windsTextBox.TabIndex = 17;
-      this.windsTextBox.Text = "";
       // 
       // label5
       // 
@@ -197,11 +200,11 @@ namespace MediaPortal.Configuration
       // 
       // uvIndexTextBox
       // 
+      this.uvIndexTextBox.BorderColor = System.Drawing.Color.Empty;
       this.uvIndexTextBox.Location = new System.Drawing.Point(16, 168);
       this.uvIndexTextBox.Name = "uvIndexTextBox";
       this.uvIndexTextBox.Size = new System.Drawing.Size(336, 20);
       this.uvIndexTextBox.TabIndex = 15;
-      this.uvIndexTextBox.Text = "";
       // 
       // label4
       // 
@@ -213,11 +216,11 @@ namespace MediaPortal.Configuration
       // 
       // temperatureTextBox
       // 
+      this.temperatureTextBox.BorderColor = System.Drawing.Color.Empty;
       this.temperatureTextBox.Location = new System.Drawing.Point(16, 128);
       this.temperatureTextBox.Name = "temperatureTextBox";
       this.temperatureTextBox.Size = new System.Drawing.Size(336, 20);
       this.temperatureTextBox.TabIndex = 13;
-      this.temperatureTextBox.Text = "";
       // 
       // label2
       // 
@@ -230,23 +233,23 @@ namespace MediaPortal.Configuration
       // label3
       // 
       this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(368, 40);
       this.label3.TabIndex = 11;
       this.label3.Text = "Below you can enter the location of the various weather images. The image locatio" +
-        "n should be entered as a normal http-address.";
+          "n should be entered as a normal http-address.";
       // 
       // locationTextBox
       // 
       this.locationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.locationTextBox.BorderColor = System.Drawing.Color.Empty;
       this.locationTextBox.Location = new System.Drawing.Point(16, 88);
       this.locationTextBox.Name = "locationTextBox";
       this.locationTextBox.Size = new System.Drawing.Size(336, 20);
       this.locationTextBox.TabIndex = 7;
-      this.locationTextBox.Text = "";
       // 
       // label1
       // 
@@ -261,22 +264,27 @@ namespace MediaPortal.Configuration
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Location = new System.Drawing.Point(255, 336);
       this.okButton.Name = "okButton";
+      this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 11;
       this.okButton.Text = "OK";
+      this.okButton.UseVisualStyleBackColor = true;
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
       // 
       // EditWeatherCityForm
       // 
+      this.AcceptButton = this.okButton;
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(418, 368);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
       this.Name = "EditWeatherCityForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "EditWeatherCityForm";
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }

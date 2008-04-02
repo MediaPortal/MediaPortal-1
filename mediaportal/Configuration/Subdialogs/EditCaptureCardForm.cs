@@ -48,7 +48,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for EditCaptureCardForm.
   /// </summary>
-  public class EditCaptureCardForm : System.Windows.Forms.Form
+  public class EditCaptureCardForm : MediaPortal.Configuration.MPForm
   {
     static CaptureCardDefinitions mCaptureCardDefinitions = CaptureCardDefinitions.Instance;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
@@ -518,6 +518,10 @@ namespace MediaPortal.Configuration
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxAudioQuality = new System.Windows.Forms.ComboBox();
       this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbTVVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.tbTVHigh = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tbTVMin = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbDisableDNR = new System.Windows.Forms.CheckBox();
       this.cbHighVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbHighMax = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -549,10 +553,6 @@ namespace MediaPortal.Configuration
       this.tabPageAutotune = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPageAutotuneRadio = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.cbTVVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tbTVHigh = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbTVMin = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.cropGroupBox.SuspendLayout();
@@ -1111,6 +1111,42 @@ namespace MediaPortal.Configuration
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "Quality settings:";
       // 
+      // cbTVVBR
+      // 
+      this.cbTVVBR.AutoSize = true;
+      this.cbTVVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbTVVBR.Location = new System.Drawing.Point(248, 183);
+      this.cbTVVBR.Name = "cbTVVBR";
+      this.cbTVVBR.Size = new System.Drawing.Size(13, 12);
+      this.cbTVVBR.TabIndex = 23;
+      this.cbTVVBR.UseVisualStyleBackColor = true;
+      // 
+      // tbTVHigh
+      // 
+      this.tbTVHigh.BorderColor = System.Drawing.Color.Empty;
+      this.tbTVHigh.Location = new System.Drawing.Point(168, 183);
+      this.tbTVHigh.Name = "tbTVHigh";
+      this.tbTVHigh.Size = new System.Drawing.Size(64, 20);
+      this.tbTVHigh.TabIndex = 22;
+      this.tbTVHigh.Text = "300";
+      // 
+      // tbTVMin
+      // 
+      this.tbTVMin.BorderColor = System.Drawing.Color.Empty;
+      this.tbTVMin.Location = new System.Drawing.Point(80, 183);
+      this.tbTVMin.Name = "tbTVMin";
+      this.tbTVMin.Size = new System.Drawing.Size(64, 20);
+      this.tbTVMin.TabIndex = 21;
+      this.tbTVMin.Text = "100";
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.Location = new System.Drawing.Point(16, 183);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(64, 16);
+      this.mpLabel3.TabIndex = 20;
+      this.mpLabel3.Text = "Live TV";
+      // 
       // cbDisableDNR
       // 
       this.cbDisableDNR.AutoSize = true;
@@ -1389,58 +1425,24 @@ namespace MediaPortal.Configuration
       this.tabPageAutotuneRadio.UseVisualStyleBackColor = true;
       this.tabPageAutotuneRadio.Enter += new System.EventHandler(this.tabPageAutotuneRadio_Enter);
       // 
-      // cbTVVBR
-      // 
-      this.cbTVVBR.AutoSize = true;
-      this.cbTVVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbTVVBR.Location = new System.Drawing.Point(248, 183);
-      this.cbTVVBR.Name = "cbTVVBR";
-      this.cbTVVBR.Size = new System.Drawing.Size(13, 12);
-      this.cbTVVBR.TabIndex = 23;
-      this.cbTVVBR.UseVisualStyleBackColor = true;
-      // 
-      // tbTVHigh
-      // 
-      this.tbTVHigh.BorderColor = System.Drawing.Color.Empty;
-      this.tbTVHigh.Location = new System.Drawing.Point(168, 183);
-      this.tbTVHigh.Name = "tbTVHigh";
-      this.tbTVHigh.Size = new System.Drawing.Size(64, 20);
-      this.tbTVHigh.TabIndex = 22;
-      this.tbTVHigh.Text = "300";
-      // 
-      // tbTVMin
-      // 
-      this.tbTVMin.BorderColor = System.Drawing.Color.Empty;
-      this.tbTVMin.Location = new System.Drawing.Point(80, 183);
-      this.tbTVMin.Name = "tbTVMin";
-      this.tbTVMin.Size = new System.Drawing.Size(64, 20);
-      this.tbTVMin.TabIndex = 21;
-      this.tbTVMin.Text = "100";
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.Location = new System.Drawing.Point(16, 183);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(64, 16);
-      this.mpLabel3.TabIndex = 20;
-      this.mpLabel3.Text = "Live TV";
-      // 
       // EditCaptureCardForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.okButton;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(564, 496);
       this.Controls.Add(this.tabControl1);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MinimumSize = new System.Drawing.Size(480, 296);
       this.Name = "EditCaptureCardForm";
       this.ShowInTaskbar = false;
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Edit properties of your TV card";
-      this.Closing += new System.ComponentModel.CancelEventHandler(this.EditCaptureCardForm_Closing);
       this.Load += new System.EventHandler(this.EditCaptureCardForm_Load);
+      this.Closing += new System.ComponentModel.CancelEventHandler(this.EditCaptureCardForm_Closing);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();

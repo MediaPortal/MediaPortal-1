@@ -45,7 +45,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for Settings.
   /// </summary>
-  public class SettingsForm : Form
+  public class SettingsForm : MediaPortal.Configuration.MPForm
   {
     public delegate bool IECallBack(int hwnd, int lParam);
     private const int SW_SHOWNORMAL = 1;
@@ -470,7 +470,6 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
       this.sectionTree = new System.Windows.Forms.TreeView();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -597,7 +596,7 @@ namespace MediaPortal.Configuration
       // SettingsForm
       // 
       this.AcceptButton = this.okButton;
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(704, 510);
@@ -610,7 +609,6 @@ namespace MediaPortal.Configuration
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.sectionTree);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "SettingsForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MediaPortal - Setup";
