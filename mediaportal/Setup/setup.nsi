@@ -270,16 +270,6 @@ Section "MediaPortal core files (required)" SecCore
 
   SetOverwrite on
 
-  !define EXCLUDED_FOLDERS "\
-    /x '${MEDIAPORTAL.BASE}\database\' \
-    /x '${MEDIAPORTAL.BASE}\InputDeviceMappings' \
-    /x '${MEDIAPORTAL.BASE}\language' \
-    /x '${MEDIAPORTAL.BASE}\plugins' \
-    /x '${MEDIAPORTAL.BASE}\skin' \
-    /x '${MEDIAPORTAL.BASE}\thumbs' \
-    /x '${MEDIAPORTAL.BASE}\weather' \
-    "
-
   #filters are installed seperatly and are always include in SVN and FINAL releases
   !define EXCLUDED_FILTERS "\
     /x cdxareader.ax \
@@ -964,7 +954,19 @@ Function .onInit
         Abort
     ${EndIf}
 
-!ifndef HIGH_BUILD
+    ; check if old mp 0.2.3 RC3 is installed
+    ${If} ${MP023RC3IsInstalled}
+        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023RC3)" IDOK 0
+        Abort
+    ${EndIf}
+
+!ifdef HIGH_BUILD
+    ; check if old mp 0.2.3 is installed.
+    ${IfNot} ${MP023IsInstalled}
+        MessageBox MB_OK|MB_ICONEXCLAMATION "MediaPortal 0.2.3.0 installation is not found. Please install 0.2.3.0 first." IDOK 0
+        Abort
+    ${EndIf}
+!else
     ; check if old mp 0.2.3 is installed.
     ${If} ${MP023IsInstalled}
         MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)" IDOK 0
