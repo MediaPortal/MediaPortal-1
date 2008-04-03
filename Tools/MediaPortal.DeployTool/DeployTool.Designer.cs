@@ -142,6 +142,7 @@ namespace MediaPortal.DeployTool
         this.BackColor = System.Drawing.Color.White;
         this.ClientSize = new System.Drawing.Size(666, 416);
         this.Controls.Add(this.splitContainer1);
+        this.MaximizeBox = false;
         this.Name = "DeployTool";
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
         this.Text = "MediaPortal Deploy Tool";
