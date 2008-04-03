@@ -243,7 +243,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelPayPal.Size = new System.Drawing.Size(72, 29);
       this.linkLabelPayPal.TabIndex = 2;
       this.linkLabelPayPal.TabStop = true;
-      this.linkLabelPayPal.Text = "http://sourceforge.net/donate/index.php?group_id=107397";
+      this.linkLabelPayPal.Text = "http://www.team-mediaportal.com/donate.html";
       this.linkLabelPayPal.VisitedLinkColor = System.Drawing.Color.Transparent;
       this.linkLabelPayPal.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelPayPal_LinkClicked);
       // 

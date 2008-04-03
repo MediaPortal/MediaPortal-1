@@ -630,6 +630,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>Remote.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SettingsForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Subdialogs\EditCaptureCardForm.resx">
       <DependentUpon>EditCaptureCardForm.cs</DependentUpon>
       <SubType>Designer</SubType>

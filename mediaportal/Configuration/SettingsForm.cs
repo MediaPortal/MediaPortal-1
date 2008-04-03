@@ -54,6 +54,7 @@ namespace MediaPortal.Configuration
     private MPButton viewLogFilesButton;
     private MPButton helpButton;
     private string _windowName = "MediaPortal - Setup";
+    private LinkLabel linkLabel1;
     private SectionSettings _previousSection = null;
 
     [DllImport("User32.")]
@@ -107,6 +108,7 @@ namespace MediaPortal.Configuration
       Log.Info("SettingsForm constructor");
       // Required for Windows Form Designer support
       InitializeComponent();
+      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
       // Stop MCE services
       MediaPortal.Util.Utils.StopMCEServices();
       // Build options tree
@@ -479,6 +481,7 @@ namespace MediaPortal.Configuration
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.viewLogFilesButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.helpButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.SuspendLayout();
       // 
       // sectionTree
@@ -593,6 +596,18 @@ namespace MediaPortal.Configuration
       this.helpButton.UseVisualStyleBackColor = true;
       this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
       // 
+      // linkLabel1
+      // 
+      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabel1.AutoSize = true;
+      this.linkLabel1.Location = new System.Drawing.Point(13, 484);
+      this.linkLabel1.Name = "linkLabel1";
+      this.linkLabel1.Size = new System.Drawing.Size(113, 13);
+      this.linkLabel1.TabIndex = 9;
+      this.linkLabel1.TabStop = true;
+      this.linkLabel1.Text = "Donate to MediaPortal";
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      // 
       // SettingsForm
       // 
       this.AcceptButton = this.okButton;
@@ -600,6 +615,7 @@ namespace MediaPortal.Configuration
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(704, 510);
+      this.Controls.Add(this.linkLabel1);
       this.Controls.Add(this.helpButton);
       this.Controls.Add(this.viewLogFilesButton);
       this.Controls.Add(this.applyButton);
@@ -615,6 +631,7 @@ namespace MediaPortal.Configuration
       this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -961,6 +978,11 @@ namespace MediaPortal.Configuration
     private void helpButton_Click(object sender, EventArgs e)
     {
       HelpSystem.ShowHelp(_previousSection.ToString());
+    }
+
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      System.Diagnostics.Process.Start((string)e.Link.LinkData);
     }
   }
 }
