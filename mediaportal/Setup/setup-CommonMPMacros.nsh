@@ -564,8 +564,8 @@ FunctionEnd
     ${EndIf}
 
   ${EndIf}
-
-      #MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
+/*
+      MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
       $\r$\nBase:  $MPdir.Base$\r$\n \
       $\r$\nConfig:  $MPdir.Config \
       $\r$\nPlugins: $MPdir.Plugins \
@@ -580,5 +580,5 @@ FunctionEnd
       $\r$\nCache: $MPdir.Cache \
       $\r$\nBurnerSupport: $MPdir.BurnerSupport \
       "
-
+*/
 !macroend
