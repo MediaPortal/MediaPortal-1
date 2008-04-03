@@ -23,9 +23,10 @@
 
 #endregion
 
-
-!include FileFunc.nsh
-!include "XML.nsh"
+!include /nonFatal "XML.nsh"
+!ifndef xml::SetCondenseWhiteSpace
+  !error "$\r$\n$\r$\nYou need the xml plugin to compile this script. Look at$\r$\n$\r$\n     http://nsis.sourceforge.net/XML_plug-in$\r$\n$\r$\ndownload and install it!$\r$\n$\r$\n"
+!endif
 
 !include FileFunc.nsh
 !insertmacro GetRoot
