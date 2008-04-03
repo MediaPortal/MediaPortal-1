@@ -525,10 +525,10 @@ FunctionEnd
 
 !define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs ""`
 !define un.ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs "un."`
-!macro ReadMediaPortalDirs UNINSTALL_PREFIX
+!macro ReadMediaPortalDirs UNINSTALL_PREFIX INSTDIR
   #MessageBox MB_OK "${UNINSTALL_PREFIX}"
 
-  !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+  StrCpy $MPdir.Base "${INSTDIR}"
   SetShellVarContext current
   StrCpy $MyDocs "$DOCUMENTS"
   StrCpy $UserAppData "$APPDATA"

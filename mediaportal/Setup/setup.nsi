@@ -271,13 +271,13 @@ Section "MediaPortal core files (required)" SecCore
   SetOverwrite on
 
   !define EXCLUDED_FOLDERS "\
-    /x database \
-    /x InputDeviceMappings \
-    /x language \
-    /x plugins \
-    /x skin \
-    /x thumbs \
-    /x weather \
+    /x '${MEDIAPORTAL.BASE}\database\' \
+    /x '${MEDIAPORTAL.BASE}\InputDeviceMappings' \
+    /x '${MEDIAPORTAL.BASE}\language' \
+    /x '${MEDIAPORTAL.BASE}\plugins' \
+    /x '${MEDIAPORTAL.BASE}\skin' \
+    /x '${MEDIAPORTAL.BASE}\thumbs' \
+    /x '${MEDIAPORTAL.BASE}\weather' \
     "
 
   #filters are installed seperatly and are always include in SVN and FINAL releases
@@ -308,10 +308,62 @@ Section "MediaPortal core files (required)" SecCore
     /x yac-area-codes.xml \
     "
 
+  # Files which were diffed before including in installer
+  # means all of them are in full installer, but only the changed and new ones are in svn installer 
+  #We can not use the complete mediaportal.base dir recoursivly , because the plugins, thumbs, weather need to be extracted to their special MPdir location
+  # exluding only the folders does not work because /x plugins won't extract the \plugins AND musicplayer\plugins directory
   SetOutPath "$MPdir.Base"
-  File /nonfatal /r /x .svn ${EXCLUDED_FOLDERS} ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+  File /nonfatal /x .svn ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+  SetOutPath "$MPdir.Base\MusicPlayer"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MusicPlayer\*"
+  SetOutPath "$MPdir.Base\osdskin-media"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\osdskin-media\*"
+  SetOutPath "$MPdir.Base\Profiles"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Profiles\*"
+  SetOutPath "$MPdir.Base\scripts"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\scripts\*"
+  SetOutPath "$MPdir.Base\Tuningparameters"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Tuningparameters\*"
+  SetOutPath "$MPdir.Base\WebEPG"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\WebEPG\*"
+  SetOutPath "$MPdir.Base\Wizards"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Wizards\*"
+  SetOutPath "$MPdir.Base\xmltv"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
+  ; Doc
+  SetOutPath "$MPdir.Base\Docs"
+  File "..\Docs\BASS License.txt"
+  File "..\Docs\MediaPortal License.rtf"
+  #File "..\Docs\LICENSE.rtf"
+  #File "..\Docs\SQLite Database Browser.exe"
+
+  # COMMON CONFIG files for SVN and FINAL RELEASES
+  SetOutPath "$MPdir.Config"
+  File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
+
+  SetOutPath "$MPdir.Database"  
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\database\*"
+  SetOutPath "$MPdir.CustomInputDefault"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
+  SetOutPath "$MPdir.Language"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\language\*"
+  SetOutPath "$MPdir.Plugins"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\plugins\*"
+  SetOutPath "$MPdir.Skin"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\skin\*"
+  SetOutPath "$MPdir.Thumbs"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\thumbs\*"
+  SetOutPath "$MPdir.Weather"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\weather\*"
 
 
+  SetOutPath "$MPdir.Base"
 !ifdef HIGH_BUILD
   SetOverwrite off
   File MediaPortalDirs.xml
@@ -382,9 +434,9 @@ Section "MediaPortal core files (required)" SecCore
   File "..\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.*"
 
   ; MyBurner plugin dependencies
-#xcopy /y %1\WindowPlugins\GUIBurner\madlldlib.dll .
-#xcopy /y %1\XPImapiBurner\bin\%2\XPBurnComponent.dll .
-#REM xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
+  #xcopy /y %1\WindowPlugins\GUIBurner\madlldlib.dll .
+  #xcopy /y %1\XPImapiBurner\bin\%2\XPBurnComponent.dll .
+  #REM xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
   SetOutPath "$MPdir.Base"
   File "..\WindowPlugins\GUIBurner\madlldlib.dll"
   File "..\XPImapiBurner\bin\${BUILD_TYPE}\XPBurnComponent.dll"
@@ -420,10 +472,7 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
   File "..\scripts\*.*"
   SetOutPath "$INSTDIR\scripts\imdb"
   File "..\scripts\imdb\*.*"
-  
-  
-  
-  
+
   #SetOutPath "$MPdir.Cache"
   #SetOutPath "$MPdir.BurnerSupport"
       $\r$\nConfig:  $MPdir.Config \
@@ -431,47 +480,8 @@ xcopy /y %1\scripts\imdb\*.* scripts\imdb\
       $\r$\nLog: $MPdir.Log \
       $\r$\nCustomInputDevice: $MPdir.CustomInputDevice \
       $\r$\nDatabase: $MPdir.Database \
-  
-  
-  
-  
-  
 */
 
-  ; Doc
-  SetOutPath "$MPdir.Base\Docs"
-  File "..\Docs\BASS License.txt"
-  #File "..\Docs\LICENSE.rtf"
-  File "..\Docs\MediaPortal License.rtf"
-  #File "..\Docs\SQLite Database Browser.exe"
-
-  # Files which were diffed before including in installer
-  # means all of them are in full installer, but only the changed and new ones are in svn installer 
-  
-  # COMMON CONFIG files for SVN and FINAL RELEASES
-  SetOutPath "$MPdir.Config"
-  File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
-  
-  SetOutPath "$MPdir.Database"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\database\*"
-  SetOutPath "$MPdir.CustomInputDefault"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
-  SetOutPath "$MPdir.Language"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\language\*"
-  SetOutPath "$MPdir.Plugins"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\plugins\*"
-  SetOutPath "$MPdir.Skin"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\skin\*"
-  SetOutPath "$MPdir.Thumbs"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\thumbs\*"
-  SetOutPath "$MPdir.Weather"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\weather\*"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -989,7 +999,7 @@ Function .onInit
         Abort
     ${EndIf}
 
-    ${ReadMediaPortalDirs}
+    #${ReadMediaPortalDirs}
 /*
     ${If} ${Silent}
         RmDir /r "${COMMON_APPDATA}\Cache"
@@ -1022,6 +1032,11 @@ Function .onInit
     SetShellVarContext all
 FunctionEnd
 
+Function .onVerifyInstDir
+  #MessageBox MB_OK "onVerifyInstDir"
+  ${ReadMediaPortalDirs} "$INSTDIR"
+FunctionEnd
+
 Function un.onInit
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -1037,7 +1052,7 @@ Function un.onInit
   StrCpy $RemoveAll 1
   #### END of check and parse cmdline parameter
 
-  ${un.ReadMediaPortalDirs}
+  ${un.ReadMediaPortalDirs} "$INSTDIR"
 
   ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
