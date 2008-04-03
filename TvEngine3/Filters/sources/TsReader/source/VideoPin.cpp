@@ -46,7 +46,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	  AM_SEEKING_CanGetStopPos	|
 	  AM_SEEKING_CanGetDuration |
     //AM_SEEKING_CanGetCurrentPos |
-	AM_SEEKING_Source;
+	  AM_SEEKING_Source;
   m_bSeeking=false;
 }
 
@@ -94,7 +94,7 @@ STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 
 HRESULT CVideoPin::GetMediaType(CMediaType *pmt)
 {
-  LogDebug("vid:GetMediaType()");
+  //LogDebug("vid:GetMediaType()");
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.GetVideoStreamType(*pmt);
 	return S_OK;
@@ -162,7 +162,7 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
     }
   }
 
-  LogDebug("vid:CheckConnect()");
+  //LogDebug("vid:CheckConnect()");
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)

@@ -66,7 +66,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	  AM_SEEKING_CanGetStopPos	|
 	  AM_SEEKING_CanGetDuration	|
     //AM_SEEKING_CanGetCurrentPos |
-	AM_SEEKING_Source;
+	  AM_SEEKING_Source;
   m_bSeeking=false;
   m_binUpdateFromSeek=false;
 }
@@ -110,7 +110,7 @@ STDMETHODIMP CAudioPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 
 HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
 {
-  LogDebug("aud:GetMediaType()");
+  //LogDebug("aud:GetMediaType()");
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 
   int audioIndex = 0;
@@ -128,7 +128,7 @@ void CAudioPin::SetDiscontinuity(bool onOff)
 
 HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
 {
-  LogDebug("aud:CheckConnect()");
+  //LogDebug("aud:CheckConnect()");
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 
@@ -188,14 +188,14 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
   }
-	LogDebug("aud:CompleteConnect() ok");
+	//LogDebug("aud:CompleteConnect() ok");
 	return hr;
 }
 
 HRESULT CAudioPin::BreakConnect()
 {
   m_bConnected=false;
-	LogDebug("aud:BreakConnect()");
+	//LogDebug("aud:BreakConnect()");
   return CSourceStream::BreakConnect();
 }
 
@@ -362,7 +362,7 @@ bool CAudioPin::IsConnected()
 {
   return m_bConnected;
 }
-// CMediaSeeking
+
 HRESULT CAudioPin::ChangeStart()
 {
   UpdateFromSeek();
