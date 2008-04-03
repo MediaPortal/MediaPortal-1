@@ -15,7 +15,7 @@
       <TYPE>Automatic</TYPE>
   </MySQL>	
 	<MediaPortal>
-    <URL>http://install.team-mediaportal/MediaPortal</URL>
+    <URL>http://install.team-mediaportal.com/MediaPortal</URL>
 		<FILE>package-mediaportal.exe</FILE>
     <TYPE>Automatic</TYPE>
 	</MediaPortal>
@@ -25,7 +25,7 @@
     <TYPE>Automatic</TYPE>
 	</TvServer>
 	<VCRedist>
-	    <URL>http://install.team-mediaportal/VcRedist</URL>
+	    <URL>http://install.team-mediaportal.com/VcRedist</URL>
 		<FILE>vcredist_x86.exe</FILE>
     <TYPE>Automatic</TYPE>
 	</VCRedist>
