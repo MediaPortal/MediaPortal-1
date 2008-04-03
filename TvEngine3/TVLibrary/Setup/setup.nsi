@@ -474,183 +474,191 @@ ${MementoSectionDone}
 #---------------------------------------------------------------------------
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
-    DetailPrint "Doing post installation stuff..."
+  DetailPrint "Doing post installation stuff..."
 
-    ${If} $DeployMode == 1
-      MessageBox MB_OK|MB_ICONEXCLAMATION "DeployMode == 1"
+  ${If} $DeployMode == 1
 
-      ReadRegDWORD $R0 ${MEMENTO_REGISTRY_ROOT} '${MEMENTO_REGISTRY_KEY}' 'MementoSection_SecServer'
-      ReadRegDWORD $R1 ${MEMENTO_REGISTRY_ROOT} '${MEMENTO_REGISTRY_KEY}' 'MementoSection_SecClient'
+    #MessageBox MB_OK|MB_ICONEXCLAMATION "DeployMode == 1"
+    ReadRegDWORD $R0 ${MEMENTO_REGISTRY_ROOT} '${MEMENTO_REGISTRY_KEY}' 'MementoSection_SecServer'
+    ReadRegDWORD $R1 ${MEMENTO_REGISTRY_ROOT} '${MEMENTO_REGISTRY_KEY}' 'MementoSection_SecClient'
 
-      ;writes component status to registry
-      ${MementoSectionSave}
+    ;writes component status to registry
+    ${MementoSectionSave}
 
-      ${If} $noClient == 1
-      ${AndIf} $R1 != ""
-        WriteRegDWORD ${MEMENTO_REGISTRY_ROOT} "${MEMENTO_REGISTRY_KEY}" 'MementoSection_SecClient' $R1
-      ${ElseIf} $noServer == 1
-      ${AndIf} $R0 != ""
-        WriteRegDWORD ${MEMENTO_REGISTRY_ROOT} "${MEMENTO_REGISTRY_KEY}" 'MementoSection_SecServer' $R0
-      ${EndIf}
-
-    ${Else}
-
-      ;Removes unselected components
-      !insertmacro SectionList "FinishSection"
-      ;writes component status to registry
-      ${MementoSectionSave}
-
+    ${If} $noClient == 1
+    ${AndIf} $R1 != ""
+      WriteRegDWORD ${MEMENTO_REGISTRY_ROOT} "${MEMENTO_REGISTRY_KEY}" 'MementoSection_SecClient' $R1
+    ${ElseIf} $noServer == 1
+    ${AndIf} $R0 != ""
+      WriteRegDWORD ${MEMENTO_REGISTRY_ROOT} "${MEMENTO_REGISTRY_KEY}" 'MementoSection_SecServer' $R0
     ${EndIf}
 
-    SetOverwrite on
-    SetOutPath $INSTDIR
+  ${Else}
 
-    ${If} $noStartMenuSC != 1
-        !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
-        CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe"
-        WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url" "InternetShortcut" "URL" "${URL}"
-        !insertmacro MUI_STARTMENU_WRITE_END
-    ${EndIf}
+    ;Removes unselected components
+    !insertmacro SectionList "FinishSection"
 
-    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
-    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
-    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
-    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
+    ;writes component status to registry
+    ${MementoSectionSave}
 
-    ; Write Uninstall Information
-    WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath        $INSTDIR
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\mp.ico,0"
-    WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-tve3.exe"
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
- 
-    WriteUninstaller "$INSTDIR\uninstall-tve3.exe"
+  ${EndIf}
+
+  SetOverwrite on
+  SetOutPath $INSTDIR
+
+  ${If} $noStartMenuSC != 1
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
+    CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
+    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe"
+    WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url" "InternetShortcut" "URL" "${URL}"
+    !insertmacro MUI_STARTMENU_WRITE_END
+  ${EndIf}
+
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
+
+  ; Write Uninstall Information
+  WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath        $INSTDIR
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\mp.ico,0"
+  WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-tve3.exe"
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
+
+  WriteUninstaller "$INSTDIR\uninstall-tve3.exe"
 SectionEnd
 
 #---------------------------------------------------------------------------
 # This section is called on uninstall and removes all components
 Section Uninstall
-    ;First removes all optional components
-    !insertmacro SectionList "RemoveSection"
+  ;First removes all optional components
+  !insertmacro SectionList "RemoveSection"
 
-    ; remove registry key
-    DeleteRegKey HKLM "${REG_UNINSTALL}"
+  ; remove registry key
+  DeleteRegKey HKLM "${REG_UNINSTALL}"
 
-    ; remove Start Menu shortcuts
-    Delete "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk"
-    Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
-    RmDir "$SMPROGRAMS\$StartMenuGroup"
+  ; remove Start Menu shortcuts
+  Delete "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
+  RmDir "$SMPROGRAMS\$StartMenuGroup"
 
-    ; remove last files and instdir
-    RmDir /REBOOTOK "$INSTDIR\pmt"
-    Delete /REBOOTOK "$INSTDIR\uninstall-tve3.exe"
-    RmDir "$INSTDIR"
+  ; remove last files and instdir
+  RmDir /REBOOTOK "$INSTDIR\pmt"
+  Delete /REBOOTOK "$INSTDIR\uninstall-tve3.exe"
+  RmDir "$INSTDIR"
 
-    ${If} $RemoveAll == 1
-        DetailPrint "Removing User Settings"
-        RmDir /r /REBOOTOK "${COMMON_APPDATA}"
-        RmDir /r /REBOOTOK $INSTDIR
-    ${EndIf}
+  ${If} $RemoveAll == 1
+    DetailPrint "Removing User Settings"
+    RmDir /r /REBOOTOK "${COMMON_APPDATA}"
+    RmDir /r /REBOOTOK $INSTDIR
+  ${EndIf}
 SectionEnd
 
 #---------------------------------------------------------------------------
 # FUNCTIONS
 #---------------------------------------------------------------------------
 Function .onInit
-    #### check and parse cmdline parameter
-    ; set default values for parameters ........
-    StrCpy $noClient 0
-    StrCpy $noServer 0
-    StrCpy $noDesktopSC 0
-    StrCpy $noStartMenuSC 0
-    StrCpy $DeployMode 0
+  #### check and parse cmdline parameter
+  ; set default values for parameters ........
+  StrCpy $noClient 0
+  StrCpy $noServer 0
+  StrCpy $noDesktopSC 0
+  StrCpy $noStartMenuSC 0
+  StrCpy $DeployMode 0
 
-    ; gets comandline parameter
-    ${GetParameters} $R0
+  ; gets comandline parameter
+  ${GetParameters} $R0
 
-    ; check for special parameter and set the their variables
-    ClearErrors
-    ${GetOptions} $R0 "/noClient" $R1
-    IfErrors +2
-    StrCpy $noClient 1
+  ; check for special parameter and set the their variables
+  ClearErrors
+  ${GetOptions} $R0 "/noClient" $R1
+  IfErrors +2
+  StrCpy $noClient 1
 
-    ClearErrors
-    ${GetOptions} $R0 "/noServer" $R1
-    IfErrors +2
-    StrCpy $noServer 1
+  ClearErrors
+  ${GetOptions} $R0 "/noServer" $R1
+  IfErrors +2
+  StrCpy $noServer 1
 
-    ClearErrors
-    ${GetOptions} $R0 "/noDesktopSC" $R1
-    IfErrors +2
-    StrCpy $noDesktopSC 1
+  ClearErrors
+  ${GetOptions} $R0 "/noDesktopSC" $R1
+  IfErrors +2
+  StrCpy $noDesktopSC 1
 
-    ClearErrors
-    ${GetOptions} $R0 "/noStartMenuSC" $R1
-    IfErrors +2
-    StrCpy $noStartMenuSC 1
+  ClearErrors
+  ${GetOptions} $R0 "/noStartMenuSC" $R1
+  IfErrors +2
+  StrCpy $noStartMenuSC 1
 
-    ClearErrors
-    ${GetOptions} $R0 "/DeployMode" $R1
-    IfErrors +2
-    StrCpy $DeployMode 1
-    #### END of check and parse cmdline parameter
+  ClearErrors
+  ${GetOptions} $R0 "/DeployMode" $R1
+  IfErrors +2
+  StrCpy $DeployMode 1
+  #### END of check and parse cmdline parameter
 
-    ; reads components status for registry
-    ${MementoSectionRestore}
+  ; reads components status for registry
+  ${MementoSectionRestore}
 
-    ; update the component status -> commandline parameters have higher priority than registry values
-    ${If} $noClient = 1
-    ${AndIf} $noServer = 1
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_PARAMETER_ERROR)" IDOK 0
-        Abort
-    ${ElseIf} $noClient = 1
-        !insertmacro SelectSection ${SecServer}
-        !insertmacro UnselectSection ${SecClient}
-    ${ElseIf} $noServer = 1
-        !insertmacro SelectSection ${SecClient}
-        !insertmacro UnselectSection ${SecServer}
-    ${EndIf}
+  ; update the component status -> commandline parameters have higher priority than registry values
+  ${If} $noClient = 1
+  ${AndIf} $noServer = 1
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_PARAMETER_ERROR)" IDOK 0
+    Abort
+  ${ElseIf} $noClient = 1
+    !insertmacro SelectSection ${SecServer}
+    !insertmacro UnselectSection ${SecClient}
+  ${ElseIf} $noServer = 1
+    !insertmacro SelectSection ${SecClient}
+    !insertmacro UnselectSection ${SecServer}
+  ${EndIf}
 
-    ; check if old msi based client plugin is installed.
-    ${If} ${MSI_TVClientIsInstalled}
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)" IDOK 0
-        Abort
-    ${EndIf}
+  ; check if old msi based client plugin is installed.
+  ${If} ${MSI_TVClientIsInstalled}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)" IDOK 0
+    Abort
+  ${EndIf}
 
-    ; check if old msi based server is installed.
-    ${If} ${MSI_TVServerIsInstalled}
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_SERVER)" IDOK 0
-        Abort
-    ${EndIf}
+  ; check if old msi based server is installed.
+  ${If} ${MSI_TVServerIsInstalled}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_SERVER)" IDOK 0
+    Abort
+  ${EndIf}
 
-    ; check if minimum Windows version is XP
-    ${If} ${AtMostWin2000}
-        MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
-        ExecShell open "${WEB_REQUIREMENTS}"
-        Abort
-    ${EndIf}
+  ; check if minimum Windows version is XP
+  ${If} ${AtMostWin2000}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${EndIf}
 
-    ; check if VC Redist 2005 SP1 is installed
-    ${IfNot} ${VCRedistIsInstalled}
-        MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
-        ExecShell open "${WEB_REQUIREMENTS}"
-        Abort
-    ${EndIf}
+  ; check if VC Redist 2005 SP1 is installed
+  ${IfNot} ${VCRedistIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${EndIf}
 
-    ; check if reboot is required
-    ${If} ${FileExists} "$INSTDIR\rebootflag"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
-        Abort
-    ${EndIf}
+  ; check if reboot is required
+  ${If} ${FileExists} "$INSTDIR\rebootflag"
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
+    Abort
+  ${EndIf}
 
-    ${ReadMediaPortalDirs}
-/*
+  ${IfNot} ${MP023IsInstalled}
+  ${AndIfNot} ${MPIsInstalled}
+    !insertmacro DisableComponent "${SecClient}" " ($(TEXT_MP_NOT_INSTALLED))"
+  ${else}
+    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+  ${ReadMediaPortalDirs} $MPdir.Base
+  ${EndIf}
+
+  /*
     ; if silent and tve3 is already installed, remove it first, the continue with installation
     ${If} ${Silent}
         ReadRegStr $R0 HKLM "${REG_UNINSTALL}" "UninstallString"
@@ -669,7 +677,7 @@ Function .onInit
         ${EndIf}
     ${EndIf}
 */
-    SetShellVarContext all
+  SetShellVarContext all
 FunctionEnd
 
 Function .onSelChange
@@ -697,22 +705,28 @@ Function un.onInit
   StrCpy $RemoveAll 1
   #### END of check and parse cmdline parameter
 
-  ${un.ReadMediaPortalDirs}
+  ${IfNot} ${MP023IsInstalled}
+  ${AndIfNot} ${MPIsInstalled}
+    Sleep 1
+  ${else}
+    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+    ${un.ReadMediaPortalDirs} $MPdir.Base
+  ${EndIf}
 
-  ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
+  !insertmacro TVSERVER_GET_INSTALL_DIR $INSTDIR
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
   SetShellVarContext all
 FunctionEnd
 
 Function un.onUninstSuccess
-    ; write a reboot flag, if reboot is needed, so the installer won't continue until reboot is done
-    ${If} ${RebootFlag}
-        FileOpen $0 $INSTDIR\rebootflag w
-        Delete /REBOOTOK $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
-        RmDir /REBOOTOK $INSTDIR
-        FileClose $0
-    ${EndIf}
+  ; write a reboot flag, if reboot is needed, so the installer won't continue until reboot is done
+  ${If} ${RebootFlag}
+    FileOpen $0 $INSTDIR\rebootflag w
+    Delete /REBOOTOK $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
+    RmDir /REBOOTOK $INSTDIR
+    FileClose $0
+  ${EndIf}
 FunctionEnd
 /*
 Function WelcomeLeave
@@ -746,46 +760,45 @@ Function WelcomeLeave
 FunctionEnd
 */
 Function ComponentsPre
-  ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalled}
-    !insertmacro DisableComponent "${SecClient}" " ($(TEXT_MP_NOT_INSTALLED))"
-  ${EndIf}
+  #${IfNot} ${MP023IsInstalled}
+  #${AndIfNot} ${MPIsInstalled}
+  #  !insertmacro DisableComponent "${SecClient}" " ($(TEXT_MP_NOT_INSTALLED))"
+  #${EndIf}
 FunctionEnd
 
 Function DirectoryPre
-    ; This function is called, before the Directory Page is displayed
+  ; This function is called, before the Directory Page is displayed
 
-    ; It checks, if the Server has been selected and only displays the Directory page in this case
-    ${IfNot} ${SectionIsSelected} SecServer
-        Abort
-    ${EndIf}
+  ; It checks, if the Server has been selected and only displays the Directory page in this case
+  ${IfNot} ${SectionIsSelected} SecServer
+    Abort
+  ${EndIf}
 FunctionEnd
 
 Function FinishShow
-    ; This function is called, after the Finish Page creation is finished
+  ; This function is called, after the Finish Page creation is finished
 
-    ; It checks, if the Server has been selected and only displays the run checkbox in this case
-    ${IfNot} ${SectionIsSelected} SecServer
-        SendMessage $mui.FinishPage.Run ${BM_CLICK} 0 0
-        ShowWindow  $mui.FinishPage.Run ${SW_HIDE}
-    ${EndIf}
+  ; It checks, if the Server has been selected and only displays the run checkbox in this case
+  ${IfNot} ${SectionIsSelected} SecServer
+    SendMessage $mui.FinishPage.Run ${BM_CLICK} 0 0
+    ShowWindow  $mui.FinishPage.Run ${SW_HIDE}
+  ${EndIf}
 FunctionEnd
 
 Function un.WelcomeLeave
-    ; This function is called, before the uninstallation process is startet
+  ; This function is called, before the uninstallation process is startet
 
-    ; It asks the user, if he wants to remove all files and settings
-    StrCpy $RemoveAll 0
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "$(TEXT_MSGBOX_REMOVE_ALL)" IDNO +3
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "$(TEXT_MSGBOX_REMOVE_ALL_STUPID)" IDNO +2
-    StrCpy $RemoveAll 1
-
+  ; It asks the user, if he wants to remove all files and settings
+  StrCpy $RemoveAll 0
+  MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "$(TEXT_MSGBOX_REMOVE_ALL)" IDNO +3
+  MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "$(TEXT_MSGBOX_REMOVE_ALL_STUPID)" IDNO +2
+  StrCpy $RemoveAll 1
 FunctionEnd
 
 #---------------------------------------------------------------------------
 # SECTION DECRIPTIONS     must be at the end
 #---------------------------------------------------------------------------
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SecClient)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SecServer)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SecClient)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SecServer)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
