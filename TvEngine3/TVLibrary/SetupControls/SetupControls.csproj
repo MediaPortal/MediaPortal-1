@@ -140,6 +140,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>MPForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SettingsForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserInterfaceControls\DataGridBooleanNoNull.resx">
       <DependentUpon>DataGridBooleanNoNull.cs</DependentUpon>
       <SubType>Designer</SubType>
