@@ -179,7 +179,7 @@ Page custom PageReinstall PageLeaveReinstall
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
 !ifdef HIGH_BUILD
-  OutFile "Release\setup-mp-high.exe"
+  OutFile "Release\MediaPortal-svn-.exe"
 !else
   OutFile "Release\setup-mediaportal.exe"
 !endif
