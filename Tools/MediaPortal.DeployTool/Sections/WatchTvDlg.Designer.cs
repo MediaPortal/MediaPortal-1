@@ -72,7 +72,7 @@ namespace MediaPortal.DeployTool
         this.pictureBox1.InitialImage = global::MediaPortal.DeployTool.Images.MePo_tv;
         this.pictureBox1.Location = new System.Drawing.Point(22, 96);
         this.pictureBox1.Name = "pictureBox1";
-        this.pictureBox1.Size = new System.Drawing.Size(69, 93);
+        this.pictureBox1.Size = new System.Drawing.Size(69, 82);
         this.pictureBox1.TabIndex = 11;
         this.pictureBox1.TabStop = false;
         // 

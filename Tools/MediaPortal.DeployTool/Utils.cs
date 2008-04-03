@@ -64,7 +64,15 @@ namespace MediaPortal.DeployTool
       //HTTP update of the xml file with the application download URLs
       if(!File.Exists(XmlFile))
       {
-        DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+          try
+          {
+              DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+          }
+          catch(System.UnauthorizedAccessException)
+          {
+              ErrorDlg("Need write access to: " + Application.StartupPath + " and subdirs.");
+              Environment.Exit(-2);
+          }
       }
       doc.Load(XmlFile);
       XmlNode node=doc.SelectSingleNode("/Applications/"+id+"/URL");
