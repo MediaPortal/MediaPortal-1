@@ -127,6 +127,7 @@
 
 ;======================================   OLD MP INSTALLATION TESTs
 
+# old installations < 0.2.3.0 RC 3
 !macro _MP022IsInstalled _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
   ClearErrors
@@ -134,6 +135,14 @@
   IfErrors `${_f}` `${_t}`
 !macroend
 !define MP022IsInstalled `"" MP022IsInstalled ""`
+
+!macro _MP023RC3IsInstalled _a _b _t _f
+  !insertmacro _LOGICLIB_TEMP
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0 RC3" "UninstallString"
+
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
+!macroend
+!define MP023RC3IsInstalled `"" MP023RC3IsInstalled ""`
 
 !macro _MP023IsInstalled _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
@@ -525,10 +534,10 @@ FunctionEnd
 
 !define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs ""`
 !define un.ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs "un."`
-!macro ReadMediaPortalDirs UNINSTALL_PREFIX
+!macro ReadMediaPortalDirs UNINSTALL_PREFIX INSTDIR
   #MessageBox MB_OK "${UNINSTALL_PREFIX}"
 
-  !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+  StrCpy $MPdir.Base "${INSTDIR}"
   SetShellVarContext current
   StrCpy $MyDocs "$DOCUMENTS"
   StrCpy $UserAppData "$APPDATA"
