@@ -68,9 +68,9 @@ namespace MediaPortal.DeployTool
           {
               DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
           }
-          catch(System.UnauthorizedAccessException)
+          catch (Exception e)
           {
-              ErrorDlg("Need write access to: " + Application.StartupPath + " and subdirs.");
+              ErrorDlg("Need write access to: " + Application.StartupPath + "(" + e.Message + ")");
               Environment.Exit(-2);
           }
       }
@@ -87,7 +87,15 @@ namespace MediaPortal.DeployTool
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))
       {
-          DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+          try
+          {
+              DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+          }
+          catch (Exception e)
+          {
+              ErrorDlg("Need write access to: " + Application.StartupPath + "(" + e.Message + ")");
+              Environment.Exit(-2);
+          }
       }
       doc.Load(XmlFile);
       XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/FILE");

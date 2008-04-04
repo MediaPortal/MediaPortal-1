@@ -38,18 +38,19 @@ namespace MediaPortal.DeployTool
       labelURL.Text = url;
       labelTarget.Text = Path.GetFileName(targetFile);
       client = new WebClient();
+      client.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.BypassCache);
       client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
       client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
       try
       {
         client.DownloadFileAsync(new Uri(url), targetFile);
+        
       }
       catch
       {
         Utils.ErrorDlg(Localizer.Instance.GetString("HTTPDownload_errDownloadFailed"));
         File.Delete(targetFile);
         DialogResult = DialogResult.Cancel;
-        //Close();
       }
     }
 
