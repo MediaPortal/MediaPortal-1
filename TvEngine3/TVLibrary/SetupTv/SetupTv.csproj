@@ -11,8 +11,7 @@
     <AssemblyName>SetupTv</AssemblyName>
     <Win32Resource>
     </Win32Resource>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>images\icon.mpConfig.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -491,13 +490,26 @@
     <EmbeddedResource Include="35_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="36_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="36_upgrade_sqlserver_database.sql" />
-    <None Include="images\ms_sql_logo.gif" />
-    <None Include="images\mysql_logo.gif" />
     <EmbeddedResource Include="images\wizard-header.jpg" />
-    <None Include="images\labelMePo.Image.png" />
-    <None Include="images\linkLabelPayPal.Image.bmp" />
     <None Include="images\ms_sql_logo.gif" />
     <None Include="images\mysql_logo.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\animation.SatDish.gif" />
+    <Content Include="images\icon.card.gif" />
+    <Content Include="images\icon.computer.gif" />
+    <Content Include="images\icon.mpConfig.ico" />
+    <Content Include="images\icon.radio_fta.png" />
+    <Content Include="images\icon.radio_scrambled.png" />
+    <Content Include="images\icon.tv_fta.png" />
+    <Content Include="images\icon.tv_scrambled.png" />
+    <Content Include="images\icon.user.ico" />
+    <Content Include="images\logo.MePo.png" />
+    <Content Include="images\logo.MSSQL.gif" />
+    <Content Include="images\logo.MySQL.gif" />
+    <Content Include="images\logo.PayPal.bmp" />
+    <Content Include="images\tvguide_recordserie_button.png" />
+    <Content Include="images\tvguide_record_button.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
