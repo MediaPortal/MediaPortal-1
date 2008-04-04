@@ -37,31 +37,30 @@ using MediaPortal.Topbar;
 
 namespace MediaPortal.GUI.Home
 {
-	/// <summary>
-	/// The implementation of the GUIHome Window.
-	/// </summary>
-  public class GUIHome : GUIHomeBaseWindow 
-	{
-
-		#region Constructors/Destructors
-		public GUIHome()
-		{
-			GetID =(int)GUIWindow.Window.WINDOW_HOME;
+  /// <summary>
+  /// The implementation of the GUIHome Window.
+  /// </summary>
+  public class GUIHome : GUIHomeBaseWindow
+  {
+    #region Constructors/Destructors
+    public GUIHome()
+    {
+      GetID = (int)GUIWindow.Window.WINDOW_HOME;
     }
-		#endregion
+    #endregion
 
     #region <Base class> Overrides
     public override bool Init()
-		{
+    {
       return (Load(GUIGraphicsContext.Skin + @"\myHome.xml"));
-		}
+    }
 
-		protected override void LoadButtonNames()
-		{
-			if (menuMain == null) return;
-			menuMain.ButtonInfos.Clear();
-			ArrayList plugins = PluginManager.SetupForms;
-			int myPluginsCount = 0;
+    protected override void LoadButtonNames()
+    {
+      if (menuMain == null) return;
+      menuMain.ButtonInfos.Clear();
+      ArrayList plugins = PluginManager.SetupForms;
+      int myPluginsCount = 0;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         foreach (ISetupForm setup in plugins)
@@ -118,8 +117,8 @@ namespace MediaPortal.GUI.Home
           menuMain.ButtonInfos.Add(new MenuButtonInfo(GUILocalizeStrings.Get(913), (int)GUIWindow.Window.WINDOW_MYPLUGINS, focusTexture, nonFocusTexture, hover, nonFocusHover, index));
         }
       }
-		}
- 
+    }
+
     #endregion
 
   }

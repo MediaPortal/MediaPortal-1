@@ -82,24 +82,20 @@ namespace ProcessPlugins.TvMovie
 
     #region ISetupForm Members
 
-
     public string PluginName()
     {
       return "TV Movie Clickfinder";
     }
-
 
     public string Description()
     {
       return "Import TV Movie Clickfinder EPG data (disabled if no Clickfinder is installed)";
     }
 
-
     public string Author()
     {
       return "mPod";
     }
-
 
     public void ShowPlugin()
     {
@@ -112,30 +108,25 @@ namespace ProcessPlugins.TvMovie
         MessageBox.Show("Can't find TV Movie Clickfinder database.\nPlease install TV Movie Clickfinder first.", "Error locating Clickfinder", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
-
     public bool CanEnable()
     {
       return (TvMovieDatabase.DatabasePath != string.Empty);
     }
-
 
     public int GetWindowId()
     {
       return -1;
     }
 
-
     public bool DefaultEnabled()
     {
       return false;
     }
 
-
     public bool HasSetup()
     {
       return true;
     }
-
 
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
@@ -146,11 +137,9 @@ namespace ProcessPlugins.TvMovie
       return false;
     }
 
-
     #endregion
 
     #region IPlugin Members
-
     
     public void Start()
     {
@@ -161,7 +150,6 @@ namespace ProcessPlugins.TvMovie
       _schedules.Start();
     }
 
-
     public void Stop()
     {
       if (_database != null)
@@ -169,7 +157,6 @@ namespace ProcessPlugins.TvMovie
       _epgImportTimer.Dispose();
       _schedules.Stop();
     }
-
 
     #endregion
   }

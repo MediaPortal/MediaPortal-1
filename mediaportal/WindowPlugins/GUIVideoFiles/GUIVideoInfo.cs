@@ -414,13 +414,15 @@ namespace MediaPortal.GUI.Video
     void Refresh(bool forceFolderThumb)
     {
       string coverArtImage = string.Empty;
+      string largeCoverArtImage = string.Empty; //added by BoelShit
       try
       {
         string imageUrl = currentMovie.ThumbURL;
         if (imageUrl.Length > 0)
         {
           coverArtImage = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
-          string largeCoverArtImage = MediaPortal.Util.Utils.ConvertToLargeCoverArt(coverArtImage);
+          largeCoverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title); //added by BoelShit
+          string largeCoverArtImageConvert = MediaPortal.Util.Utils.ConvertToLargeCoverArt(coverArtImage); //edited by Boelshit
           
           if (!File.Exists(coverArtImage))
           {
@@ -448,10 +450,10 @@ namespace MediaPortal.GUI.Video
               {
                 MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
-                if (File.Exists(temporaryFilenameLarge))                
-                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);                
-                else                
-                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);                
+                if (File.Exists(temporaryFilenameLarge))
+                    MediaPortal.Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImageConvert, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);  //edited by Boelshit              
+                else
+                    MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImageConvert, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);  //edited by Boelshit              
               }
               MediaPortal.Util.Utils.FileDelete(temporaryFilename);
             }//if ( strExtension.Length>0)
@@ -461,33 +463,37 @@ namespace MediaPortal.GUI.Video
             }
           }
 
-          if (((File.Exists(coverArtImage)) && (FolderForThumbs != string.Empty)) || forceFolderThumb)
+          if (((File.Exists(largeCoverArtImage)) && (FolderForThumbs != string.Empty)) || forceFolderThumb) //edited by BoelShit
           {
-            // copy icon to folder also;
-            string strFolderImage = string.Empty;              
-            if (forceFolderThumb)
-              strFolderImage = Path.GetFullPath(currentMovie.Path);
-            else
-              strFolderImage = Path.GetFullPath(FolderForThumbs);
-
-            strFolderImage += "\\folder.jpg"; //TODO                  
-            try
-            {
-              MediaPortal.Util.Utils.FileDelete(strFolderImage);
+              // copy icon to folder also;
+              string strFolderImage = string.Empty;
               if (forceFolderThumb)
-              {
-                if (File.Exists(largeCoverArtImage))
-                  File.Copy(largeCoverArtImage, strFolderImage, true);
-                else
-                  File.Copy(coverArtImage, strFolderImage, true);
-              }
+                  strFolderImage = Path.GetFullPath(currentMovie.Path);
               else
-                File.Copy(coverArtImage, strFolderImage, false);
-            }
-            catch (Exception ex1)
-            {
-              Log.Error("GUIVideoInfo: Error creating folder thumb {0}", ex1.Message);
-            }
+                  strFolderImage = Path.GetFullPath(FolderForThumbs);
+
+              strFolderImage += "\\folder.jpg"; //TODO                  
+              try
+              {
+                  MediaPortal.Util.Utils.FileDelete(strFolderImage);
+                  if (forceFolderThumb)
+                  {
+                      if (File.Exists(largeCoverArtImage))
+                        File.Copy(largeCoverArtImage, strFolderImage, true);
+                      
+                      else if (File.Exists(largeCoverArtImageConvert)) //edited by BoelShit
+                            File.Copy(largeCoverArtImageConvert, strFolderImage, true); //edited by BoelShit
+                      else //edited by BoelShit
+                            File.Copy(coverArtImage, strFolderImage, true); //edited by BoelShit
+                  }
+                  else
+                      File.Copy(largeCoverArtImage, strFolderImage, false); //edited by BoelShit
+                      File.Copy(coverArtImage, strFolderImage, false); //edited by BoelShit
+              }
+              catch (Exception ex1)
+              {
+                  Log.Error("GUIVideoInfo: Error creating folder thumb {0}", ex1.Message);
+              }
           }
         }
       }

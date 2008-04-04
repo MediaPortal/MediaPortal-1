@@ -130,7 +130,7 @@ namespace MediaPortal.GUI.Video
 
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     public int GetWindowId()

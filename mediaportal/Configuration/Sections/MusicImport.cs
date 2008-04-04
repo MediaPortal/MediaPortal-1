@@ -156,7 +156,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        checkBoxReplace.Checked = xmlreader.GetValueAsBool("musicimport", "mp3replaceexisting", true);
+        checkBoxReplace.Checked = xmlreader.GetValueAsBool("musicimport", "mp3replaceexisting", false);
         checkBoxMono.Checked = xmlreader.GetValueAsBool("musicimport", "mp3mono", false);
         checkBoxCBR.Checked = xmlreader.GetValueAsBool("musicimport", "mp3cbr", false);
         checkBoxDatabase.Checked = xmlreader.GetValueAsBool("musicimport", "mp3database", true);
@@ -172,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
         labelBitrate.Text = "Target Bitrate: " + Rates[hScrollBarBitrate.Value] + " kBps";
         textBoxFormat.Text = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track% %title%");
         checkBoxUnknown.Enabled = checkBoxDatabase.Checked;
-        checkBoxUnknown.Checked = !xmlreader.GetValueAsBool("musicimport", "importunknown", true);
+        checkBoxUnknown.Checked = !xmlreader.GetValueAsBool("musicimport", "importunknown", false);
       }
       textBoxSample.Text = ShowExample(textBoxFormat.Text);
     }
@@ -495,6 +495,8 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxUnknown
       // 
       this.checkBoxUnknown.AutoSize = true;
+      this.checkBoxUnknown.Checked = true;
+      this.checkBoxUnknown.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxUnknown.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUnknown.Location = new System.Drawing.Point(20, 72);
       this.checkBoxUnknown.Name = "checkBoxUnknown";
@@ -517,6 +519,8 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxDatabase
       // 
       this.checkBoxDatabase.AutoSize = true;
+      this.checkBoxDatabase.Checked = true;
+      this.checkBoxDatabase.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxDatabase.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDatabase.Location = new System.Drawing.Point(20, 48);
       this.checkBoxDatabase.Name = "checkBoxDatabase";
@@ -561,6 +565,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.textBoxImportDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxImportDir.BorderColor = System.Drawing.Color.Empty;
       this.textBoxImportDir.Location = new System.Drawing.Point(96, 124);
       this.textBoxImportDir.Name = "textBoxImportDir";
       this.textBoxImportDir.Size = new System.Drawing.Size(240, 20);
@@ -702,6 +707,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.BackColor = System.Drawing.SystemColors.ControlLight;
+      this.textBoxSample.BorderColor = System.Drawing.Color.Empty;
       this.textBoxSample.Location = new System.Drawing.Point(80, 76);
       this.textBoxSample.Name = "textBoxSample";
       this.textBoxSample.ReadOnly = true;
@@ -730,12 +736,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.textBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFormat.BorderColor = System.Drawing.Color.Empty;
       this.textBoxFormat.Location = new System.Drawing.Point(80, 48);
       this.textBoxFormat.Name = "textBoxFormat";
       this.textBoxFormat.Size = new System.Drawing.Size(336, 20);
       this.textBoxFormat.TabIndex = 4;
-      this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
       this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
+      this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
       // 
       // label38
       // 

@@ -54,6 +54,7 @@ namespace MediaPortal.GUI.MusicVideos
     [SkinControlAttribute(50)]    protected GUIListControl listSongs = null;
 
     #endregion
+
     #region Enumerations
     enum State
     {
@@ -84,9 +85,9 @@ namespace MediaPortal.GUI.MusicVideos
     public GUIMusicVideos()
     {
     }
-
-
+    
     #region ISetupForm Members
+
     public bool CanEnable()
     {
       return true;
@@ -107,10 +108,8 @@ namespace MediaPortal.GUI.MusicVideos
       return true;
     }
 
-
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
-
       strButtonText = GUILocalizeStrings.Get(30000);// "My MusicVideos";
       strButtonImage = "";
       strButtonImageFocus = "";
@@ -128,23 +127,24 @@ namespace MediaPortal.GUI.MusicVideos
       return "This plugin shows online music videos from Yahoo";
     }
 
-
     public bool ShowDefaultHome()
     {
-      return true;
+      return false;
     }
+
     public void ShowPlugin() // show the setup dialog
     {
       System.Windows.Forms.Form setup = new SetupForm();
       setup.ShowDialog();
     }
+
     public int GetWindowId()
     {
       return GetID;
     }
+
     #endregion
-
-
+    
     #region GUIWindow Overrides
 
     public override int GetID

@@ -91,14 +91,14 @@ namespace MediaPortal.MusicImport
         mp3MONO = xmlreader.GetValueAsBool("musicimport", "mp3mono", false);
         mp3CBR = xmlreader.GetValueAsBool("musicimport", "mp3cbr", false);
         mp3FastMode = xmlreader.GetValueAsBool("musicimport", "mp3fastmode", false);
-        mp3ReplaceExisting = xmlreader.GetValueAsBool("musicimport", "mp3replaceexisting", true);
+        mp3ReplaceExisting = xmlreader.GetValueAsBool("musicimport", "mp3replaceexisting", false);
         mp3BitRate = xmlreader.GetValueAsInt("musicimport", "mp3bitrate", 2);
         mp3Quality = xmlreader.GetValueAsInt("musicimport", "mp3quality", 2);
         mp3Priority = xmlreader.GetValueAsInt("musicimport", "mp3priority", 0);
         mp3ImportDir = xmlreader.GetValueAsString("musicimport", "mp3importdir", "C:");
         mp3Database = xmlreader.GetValueAsBool("musicimport", "mp3database", true);
-        mp3Background = xmlreader.GetValueAsBool("musicimport", "mp3background", false);
-        importUnknown = xmlreader.GetValueAsBool("musicimport", "importunknown", true);
+        mp3Background = xmlreader.GetValueAsBool("musicimport", "mp3background", true);
+        importUnknown = xmlreader.GetValueAsBool("musicimport", "importunknown", false);
         format = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track%. %title%");
       }
       Rates = Mpeg1BitRates.Split(',');

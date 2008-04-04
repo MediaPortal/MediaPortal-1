@@ -47,7 +47,6 @@ namespace MediaPortal.TvNotifies
 
     public NotifyManager()
     {
-
       _notifiesList = new List<TVNotify>();
       TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(OnNotifiesChanged);
       using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -121,7 +120,7 @@ namespace MediaPortal.TvNotifies
 
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     public int GetWindowId()
@@ -161,12 +160,5 @@ namespace MediaPortal.TvNotifies
     }
 
     #endregion
-
-    //#region IShowPlugin Members
-    //public bool ShowDefaultHome()
-    //{
-    //  return false;
-    //}
-    //#endregion
   }
 }

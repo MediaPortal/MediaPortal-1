@@ -41,6 +41,7 @@ namespace MediaPortal.InputDevices
 		public MameDevice()
     {
     }
+
     #region ISetupForm Members
 
     public bool CanEnable()

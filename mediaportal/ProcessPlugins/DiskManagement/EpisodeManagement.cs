@@ -72,7 +72,7 @@ namespace ProcessPlugins.DiskSpace
       return oldestEpisode;
     }
 
-    #region episode disk management
+    #region Episode disk management
     private void OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
       Log.Info("EpisodeManagement: recording {0} ended. type: {1} max episodes: {2}",
@@ -134,7 +134,7 @@ namespace ProcessPlugins.DiskSpace
 
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     public int GetWindowId()

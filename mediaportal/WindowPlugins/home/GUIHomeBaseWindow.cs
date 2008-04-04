@@ -39,34 +39,38 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Home
 {
-	/// <summary>
-	/// The implementation of the GUIHome Window base class.  (This window is coupled to the home.xml skin file).
-	/// </summary>
+  /// <summary>
+  /// The implementation of the GUIHome Window base class.  (This window is coupled to the home.xml skin file).
+  /// </summary>
   public abstract class GUIHomeBaseWindow : GUIWindow
-	{
-		#region Properties (Skin)
-		[SkinControlAttribute(200)]		protected GUILabelControl lblDate = null;
-		[SkinControlAttribute(201)]		protected GUILabelControl lblTime = null;
-		[SkinControlAttribute(50)]		protected GUIMenuControl  menuMain = null;
-    [SkinControlAttribute(99)]    protected GUIVideoControl videoWindow = null;
+  {
+    #region Properties (Skin)
+    [SkinControlAttribute(200)]
+    protected GUILabelControl lblDate = null;
+    [SkinControlAttribute(201)]
+    protected GUILabelControl lblTime = null;
+    [SkinControlAttribute(50)]
+    protected GUIMenuControl menuMain = null;
+    [SkinControlAttribute(99)]
+    protected GUIVideoControl videoWindow = null;
 
-		#endregion
-		
-		#region Variables
-		protected bool _useMyPlugins = true;
+    #endregion
+
+    #region Variables
+    protected bool _useMyPlugins = true;
     protected bool _fixedScroll = true;  // fix scrollbar in the middle of menu
     protected bool _enableAnimation = true;
     protected DateTime _updateTimer = DateTime.MinValue;
-    protected int  _notifyTVTimeout = 15;
+    protected int _notifyTVTimeout = 15;
     protected bool _playNotifyBeep = true;
-    protected int  _preNotifyConfig = 60;
+    protected int _preNotifyConfig = 60;
     protected GUIOverlayWindow _overlayWin = null;
     static bool _addedGlobalMessageHandler = false;
-		#endregion
+    #endregion
 
-		#region Constructor
-		public GUIHomeBaseWindow()
-		{
+    #region Constructor
+    public GUIHomeBaseWindow()
+    {
       LoadSettings();
       //do this only once, we dont want a global message handler for every derived class
       if (!_addedGlobalMessageHandler)
@@ -75,18 +79,18 @@ namespace MediaPortal.GUI.Home
         GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
       }
     }
-		#endregion
+    #endregion
 
     #region Serialisation
     protected virtual void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _fixedScroll     = xmlreader.GetValueAsBool("home", "scrollfixed", true);		      // fix scrollbar in the middle of menu
-        _useMyPlugins    = xmlreader.GetValueAsBool("home", "usemyplugins", true);		    // use previous menu handling
+        _fixedScroll = xmlreader.GetValueAsBool("home", "scrollfixed", true);		      // fix scrollbar in the middle of menu
+        _useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true);		    // use previous menu handling
         _enableAnimation = xmlreader.GetValueAsBool("home", "enableanimation", true);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15);
-        _playNotifyBeep  = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
+        _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
         _preNotifyConfig = xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300);
       }
     }
@@ -94,22 +98,22 @@ namespace MediaPortal.GUI.Home
     #endregion
 
     #region Override
-    
-		/// <summary>
+
+    /// <summary>
     /// OnWindowLoaded() gets called when the window is fully loaded and all controls are initialized
     /// In this home plugin, its now time to add the button for each dynamic plugin
     /// </summary>
-		protected override void OnWindowLoaded()
-		{
+    protected override void OnWindowLoaded()
+    {
       base.OnWindowLoaded();
       if (menuMain != null)
       {
-        menuMain.FixedScroll     = _fixedScroll;
+        menuMain.FixedScroll = _fixedScroll;
         menuMain.EnableAnimation = _enableAnimation;
       }
       LoadButtonNames();
       menuMain.ButtonInfos.Sort(menuMain.Compare);
-		}
+    }
 
     protected override void OnPageLoad()
     {
@@ -121,25 +125,25 @@ namespace MediaPortal.GUI.Home
       }
     }
 
-		protected virtual void LoadButtonNames()
-		{
-		}
-        
-		public override bool OnMessage(GUIMessage message)
-		{
-			switch (message.Message)
-			{
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+    protected virtual void LoadButtonNames()
+    {
+    }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#date");
           if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
           break;
-        
+
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
-					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, message.Param1, 0, null);
-					GUIWindowManager.SendThreadMessage(msg);
-					break;
-			}
-			return base.OnMessage(message);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, message.Param1, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
+          break;
+      }
+      return base.OnMessage(message);
     }
 
     public override void Process()
@@ -152,7 +156,7 @@ namespace MediaPortal.GUI.Home
         if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
       }
     }
-        
+
     #endregion
 
     #region Methods
@@ -171,7 +175,7 @@ namespace MediaPortal.GUI.Home
     public string GetHoverFileName(string FileName)
     {
       string name = System.IO.Path.GetFileName(FileName);
-      string dir  = System.IO.Path.GetDirectoryName(FileName);
+      string dir = System.IO.Path.GetDirectoryName(FileName);
       if (dir.Length > 0) dir = dir + "\\";
       if (!name.ToLower().Contains("hover_")) FileName = dir + "hover_" + name;
       return GetMediaFileName(FileName);
@@ -188,14 +192,14 @@ namespace MediaPortal.GUI.Home
 
     protected string GetMediaFileName(string name)
     {
-      if (System.IO.Path.GetPathRoot(name) == "") 
+      if (System.IO.Path.GetPathRoot(name) == "")
       {
         name = String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, name);
       }
       if ((System.IO.Path.HasExtension(name)) && (System.IO.File.Exists(name))) return System.IO.Path.GetFileName(name);
 
 
-      
+
       string filename = System.IO.Path.ChangeExtension(name, ".png");
       if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
 
@@ -206,13 +210,14 @@ namespace MediaPortal.GUI.Home
       if (System.IO.File.Exists(filename)) return System.IO.Path.GetFileName(filename);
 
       filename = System.IO.Path.ChangeExtension(name, ".xml");
-      if (System.IO.File.Exists(filename)) return "media\\" +   System.IO.Path.GetFileName(filename);
+      if (System.IO.File.Exists(filename)) return "media\\" + System.IO.Path.GetFileName(filename);
 
       return string.Empty;
     }
     #endregion
 
     #region OnGlobalMessage routines
+
     private void OnGlobalMessage(GUIMessage message)
     {
       if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
@@ -239,6 +244,7 @@ namespace MediaPortal.GUI.Home
         case GUIMessage.MessageType.GUI_MSG_NOTIFY:
           ShowNotify(message.Label, message.Label2, message.Label3);
           break;
+
         case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
           string Head = "", Line1 = "", Line2 = "", Line3 = ""; ;
           if (message.Param1 != 0) Head = GUILocalizeStrings.Get(message.Param1);
@@ -315,7 +321,8 @@ namespace MediaPortal.GUI.Home
           break;
       }
     }
-    void ShowInfo(string strHeading, string strLine1, string strLine2)
+
+    private void ShowInfo(string strHeading, string strLine1, string strLine2)
     {
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
       pDlgOK.SetHeading(strHeading);
@@ -325,7 +332,7 @@ namespace MediaPortal.GUI.Home
       pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
     }
 
-    void ShowNotify(string strHeading, string description, string imgFileName)
+    private void ShowNotify(string strHeading, string description, string imgFileName)
     {
       GUIDialogNotify dlgYesNo = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       dlgYesNo.SetHeading(strHeading);
@@ -333,7 +340,8 @@ namespace MediaPortal.GUI.Home
       dlgYesNo.SetImage(imgFileName);
       dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
     }
-    bool AskYesNo(string strHeading, string strLine1, string strLine2, string strLine3)
+
+    private bool AskYesNo(string strHeading, string strLine1, string strLine2, string strLine3)
     {
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       dlgYesNo.SetHeading(strHeading);

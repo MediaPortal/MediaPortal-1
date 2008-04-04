@@ -96,7 +96,6 @@ namespace MediaPortal.GUI.MusicVideos
             this.countryList.Name = "countryList";
             this.countryList.Size = new System.Drawing.Size(98, 21);
             this.countryList.TabIndex = 11;
-            this.countryList.SelectedIndexChanged += new System.EventHandler(this.countryList_SelectedIndexChanged);
             // 
             // label1
             // 

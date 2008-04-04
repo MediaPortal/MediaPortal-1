@@ -145,7 +145,7 @@ namespace MediaPortal.MusicShareWatcher
 
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     public int GetWindowId()

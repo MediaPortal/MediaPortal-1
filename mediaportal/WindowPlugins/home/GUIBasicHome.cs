@@ -35,7 +35,8 @@ namespace WindowPlugins.home
   /// </summary>
   public class GUIBasicHome : GUIWindow
   {
-    [SkinControlAttribute(99)]  protected GUIVideoControl _videoWindow = null;
+    [SkinControlAttribute(99)]
+    protected GUIVideoControl _videoWindow = null;
 
     public GUIBasicHome()
     {

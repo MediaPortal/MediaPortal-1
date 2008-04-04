@@ -132,11 +132,6 @@ namespace MediaPortal.GUI.MusicVideos
       this.Close();
     }
 
-    private void countryList_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
     private void EditBtn_Click(object sender, EventArgs e)
     {
       ListView.SelectedListViewItemCollection loSelectedList = FavoriteList.SelectedItems;
@@ -204,12 +199,6 @@ namespace MediaPortal.GUI.MusicVideos
         updateFavoriteList();
       }
     }
-
-    private void label2_Click(object sender, EventArgs e)
-    {
-
-    }
-
 
   }
 }

@@ -105,7 +105,7 @@ namespace ProcessPlugins.DiskSpace
 
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     public int GetWindowId()

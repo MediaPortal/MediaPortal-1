@@ -35,30 +35,30 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Home
 {
-	/// <summary>
-	/// The implementation of the GUIHome Window.  (This window is coupled to the home.xml skin file).
-	/// </summary>
-	public class GUIPlugIns : GUIHomeBaseWindow
-	{
-		#region Constructor
-		public GUIPlugIns()
-		{
-			GetID =(int)GUIWindow.Window.WINDOW_MYPLUGINS;
+  /// <summary>
+  /// The implementation of the GUIHome Window.  (This window is coupled to the home.xml skin file).
+  /// </summary>
+  public class GUIPlugIns : GUIHomeBaseWindow
+  {
+    #region Constructor
+    public GUIPlugIns()
+    {
+      GetID = (int)GUIWindow.Window.WINDOW_MYPLUGINS;
     }
-		#endregion
+    #endregion
 
     #region Override
     public override bool Init()
-		{
-			//GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
-			return (Load(GUIGraphicsContext.Skin + @"\myHomePlugIns.xml"));
-		}
-    		
-		protected override void LoadButtonNames()
-		{
-			if (menuMain == null) return;
-			menuMain.ButtonInfos.Clear();
-			ArrayList plugins = PluginManager.SetupForms;
+    {
+      //GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
+      return (Load(GUIGraphicsContext.Skin + @"\myHomePlugIns.xml"));
+    }
+
+    protected override void LoadButtonNames()
+    {
+      if (menuMain == null) return;
+      menuMain.ButtonInfos.Clear();
+      ArrayList plugins = PluginManager.SetupForms;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.Home
             {
               if (showInPlugIns.ToLower().Equals("no")) continue;
             }
-            
+
             if ((focusTexture == null) || (focusTexture.Length < 1)) focusTexture = setup.PluginName();
             if ((nonFocusTexture == null) || (nonFocusTexture.Length < 1)) nonFocusTexture = setup.PluginName();
             if ((hover == null) || (hover.Length < 1)) hover = setup.PluginName();
