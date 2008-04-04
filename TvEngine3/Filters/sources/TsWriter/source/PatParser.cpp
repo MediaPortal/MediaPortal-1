@@ -86,24 +86,12 @@ void  CPatParser::Reset(IChannelScanCallback* callback, bool waitForVCT)
 	LogDebug("PatParser::Reset done");
 }
 
- 
 //*****************************************************************************
 BOOL CPatParser::IsReady()
 {
-	bool vctReady=false;
-
-  if (m_vctParser.Count() > 0)
-  {
-		vctReady=true;
-  }
 	if (m_nitDecoder.Ready()==false) 
 	{
 		//LogDebug("nit not ready");
-		return FALSE;
-	}
-  if (false==m_sdtParser.IsReady()) 
-	{
-		//LogDebug("sdt not ready");
 		return FALSE;
 	}
   
@@ -111,7 +99,7 @@ BOOL CPatParser::IsReady()
 	for (itChannels it=m_mapChannels.begin(); it !=m_mapChannels.end();++it)
   {
 		CChannelInfo& info=it->second;
-		if (info.PmtReceived == false) 
+		if (!info.PmtReceived || !info.SdtReceived) 
 		{
 			//LogDebug("ch:%d pmt:%d sdt:%d othermux:%d %s onid:%x tsid:%x sid:%x",
 			//	x,info.PmtReceived,info.SdtReceived,info.OtherMux,info.ServiceName,
@@ -120,8 +108,6 @@ BOOL CPatParser::IsReady()
 		}
 		x++;
 	}
-	if (m_waitForVCT && !vctReady)
-		return FALSE;
 	m_finished=true;
 	return TRUE;
 }
@@ -172,9 +158,11 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 void CPatParser::OnChannel(const CChannelInfo& info)
 {
   LogDebug("onch: %s %x %x", info.ServiceName,info.PidTable.VideoPid,info.PidTable.AC3Pid);
-  CChannelInfo i=info;
-	// The minor channel number in a VCT seems to be equal to what the SID is in a PMT
-	// so we have to do the mapping this way - gemx
+
+	// check if we really have a channel with this sid
+	itChannels it=m_mapChannels.find(info.ServiceId);
+	if (it==m_mapChannels.end()) return;
+
 	m_mapChannels[info.ServiceId].Frequency=info.Frequency;
 	m_mapChannels[info.ServiceId].MajorChannel=info.MajorChannel;
 	m_mapChannels[info.ServiceId].MinorChannel=info.MinorChannel;
@@ -184,46 +172,49 @@ void CPatParser::OnChannel(const CChannelInfo& info)
 	m_mapChannels[info.ServiceId].Modulation=info.Modulation;
 	m_mapChannels[info.ServiceId].ServiceType=info.ServiceType;
 	m_mapChannels[info.ServiceId].OtherMux=info.OtherMux;
+	m_mapChannels[info.ServiceId].SdtReceived=true;
 }
 
 //*****************************************************************************
 void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 {
 	itChannels it=m_mapChannels.find(sdtInfo.ServiceId);
-  if (it!=m_mapChannels.end())
-  {
-    CChannelInfo& info=it->second;
-		if (info.SdtReceived==false) 
-		{
-      m_tickCount = GetTickCount();
-			info.NetworkId=sdtInfo.NetworkId;
-			info.TransportId=sdtInfo.TransportId;
-			info.ServiceId=sdtInfo.ServiceId;
-			info.FreeCAMode=sdtInfo.FreeCAMode;
-			info.ServiceType=sdtInfo.ServiceType;
-			info.OtherMux=sdtInfo.OtherMux;
-			info.SdtReceived=true;
-			strcpy(info.ProviderName,sdtInfo.ProviderName);
-     
-      int number=0;
-      char compareBuffer[255];
-      for (itChannels it2 = m_mapChannels.begin();it2!=m_mapChannels.end();++it2)
-      {
-        CChannelInfo& info2=it2->second;
-        if (info2.ServiceId==sdtInfo.ServiceId) continue;
-        if (number==0)
-			    strcpy(compareBuffer,sdtInfo.ServiceName);
-        else
-          sprintf(compareBuffer,"%s (%d)", sdtInfo.ServiceName,number);
-          if (strcmp(info2.ServiceName,compareBuffer)==0) number++;
-      }
 
-      if (number==0)
-			  strcpy(info.ServiceName,sdtInfo.ServiceName);
-      else
-        sprintf(info.ServiceName,"%s (%d)", sdtInfo.ServiceName,number);
-		}
-	}
+	// check if we really have a channel with this sid
+  if (it==m_mapChannels.end()) return;
+
+  CChannelInfo& info=it->second;
+
+	// check if we already set the sdt for this channel
+	if (info.SdtReceived) return;
+
+	m_tickCount = GetTickCount();
+	info.NetworkId=sdtInfo.NetworkId;
+	info.TransportId=sdtInfo.TransportId;
+	info.ServiceId=sdtInfo.ServiceId;
+	info.FreeCAMode=sdtInfo.FreeCAMode;
+	info.ServiceType=sdtInfo.ServiceType;
+	info.OtherMux=sdtInfo.OtherMux;
+	info.SdtReceived=true;
+	strcpy(info.ProviderName,sdtInfo.ProviderName);
+     
+  int number=0;
+  char compareBuffer[255];
+  for (itChannels it2 = m_mapChannels.begin();it2!=m_mapChannels.end();++it2)
+  {
+		CChannelInfo& info2=it2->second;
+    if (info2.ServiceId==sdtInfo.ServiceId) continue;
+    if (number==0)
+			strcpy(compareBuffer,sdtInfo.ServiceName);
+    else
+      sprintf(compareBuffer,"%s (%d)", sdtInfo.ServiceName,number);
+    if (strcmp(info2.ServiceName,compareBuffer)==0) number++;
+  }
+
+  if (number==0)
+		strcpy(info.ServiceName,sdtInfo.ServiceName);
+  else
+    sprintf(info.ServiceName,"%s (%d)", sdtInfo.ServiceName,number);
 }
 
 void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfo)
@@ -359,6 +350,7 @@ void CPatParser::OnNewSection(CSection& sections)
 				info.ServiceId=serviceId;
         info.PidTable.PmtPid=pmtPid;
 				info.PmtReceived=false;
+				info.SdtReceived=false;
 				m_mapChannels[serviceId]=info;
 			//	LogDebug("pat: tsid:%x sid:%x pmt:%x", transport_stream_id,serviceId,pmtPid);
 			}

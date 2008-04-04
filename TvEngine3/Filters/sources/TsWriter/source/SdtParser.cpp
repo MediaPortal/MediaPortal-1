@@ -38,15 +38,8 @@ CSdtParser::~CSdtParser(void)
 void CSdtParser::Reset()
 {        
 	CSectionDecoder::Reset();
-	m_timer=GetTickCount();
 }
 
-bool CSdtParser::IsReady()
-{
-	DWORD timeSpan=GetTickCount()-m_timer;
-	if (timeSpan >=7000) return true;
-	return false;
-}
 void CSdtParser::SetCallback(ISdtCallBack* callback)
 {
   m_pCallback=callback;

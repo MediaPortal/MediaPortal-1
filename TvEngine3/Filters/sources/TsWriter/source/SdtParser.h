@@ -43,10 +43,8 @@ public:
 	void  OnNewSection(CSection& sections);
   void  Reset();
   void SetCallback(ISdtCallBack* callback);
-  bool IsReady();
 private:
   void DVB_GetService(BYTE *b,CChannelInfo& info);
   ISdtCallBack* m_pCallback;
-  DWORD m_timer;
   CTsHeader             m_tsHeader;
 };
