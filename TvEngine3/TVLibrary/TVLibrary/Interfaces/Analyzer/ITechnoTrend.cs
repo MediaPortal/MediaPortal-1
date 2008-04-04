@@ -36,6 +36,8 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int IsTechnoTrend(ref bool yesNo);
     [PreserveSig]
+    int IsCamPresent(ref bool yesNo);
+    [PreserveSig]
     int IsCamReady(ref bool yesNo);
     [PreserveSig]
     int SetAntennaPower(bool onOff);
@@ -45,7 +47,5 @@ namespace TvLibrary.Interfaces.Analyzer
     int DescrambleService(IntPtr pmt, short pmtLen, ref bool succeeded);
     [PreserveSig]
     int DescrambleMultiple(IntPtr serviceIds, short nrOfServiceIds, ref bool succeeded);
-    [PreserveSig]
-    int IsCamPresent(ref bool no);
   };
 }

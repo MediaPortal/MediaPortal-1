@@ -29,6 +29,7 @@ DECLARE_INTERFACE_(ITechnoTrend, IUnknown)
 {
   STDMETHOD(SetTunerFilter)(THIS_ IBaseFilter* tunerFilter)PURE;
 	STDMETHOD(IsTechnoTrend)(THIS_ BOOL* yesNo)PURE;
+	STDMETHOD(IsCamPresent)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(IsCamReady)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(SetAntennaPower)(THIS_ BOOL onOff)PURE;
 	STDMETHOD(SetDisEqc)(THIS_ BYTE* diseqc, BYTE len, BYTE Repeat,BYTE Toneburst,int ePolarity)PURE;
@@ -45,8 +46,8 @@ public:
   
   STDMETHODIMP SetTunerFilter(IBaseFilter* tunerFilter);
 	STDMETHODIMP IsTechnoTrend( BOOL* yesNo);
-	STDMETHODIMP IsCamReady( BOOL* yesNo);
   STDMETHODIMP IsCamPresent( BOOL* yesNo);
+	STDMETHODIMP IsCamReady( BOOL* yesNo);
 	STDMETHODIMP SetAntennaPower( BOOL onOff);
 	STDMETHODIMP SetDisEqc( BYTE* diseqc, BYTE len, BYTE Repeat,BYTE Toneburst,int ePolarity);
 	STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);
