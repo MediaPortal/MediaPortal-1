@@ -155,6 +155,7 @@ Page custom PageReinstall PageLeaveReinstall
 !endif
 
 !insertmacro MUI_PAGE_COMPONENTS
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE DirectoryLeave
 !insertmacro MUI_PAGE_DIRECTORY
 
 !ifndef HIGH_BUILD
@@ -1001,7 +1002,7 @@ Function .onInit
         Abort
     ${EndIf}
 
-    #${ReadMediaPortalDirs}
+    ${ReadMediaPortalDirs} "$INSTDIR"
 /*
     ${If} ${Silent}
         RmDir /r "${COMMON_APPDATA}\Cache"
@@ -1034,11 +1035,6 @@ Function .onInit
     SetShellVarContext all
 FunctionEnd
 
-Function .onVerifyInstDir
-  #MessageBox MB_OK "onVerifyInstDir"
-  ${ReadMediaPortalDirs} "$INSTDIR"
-FunctionEnd
-
 Function un.onInit
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -1054,9 +1050,8 @@ Function un.onInit
   StrCpy $RemoveAll 1
   #### END of check and parse cmdline parameter
 
-  ${un.ReadMediaPortalDirs} "$INSTDIR"
-
   ReadRegStr $INSTDIR HKLM "${REG_UNINSTALL}" "InstallPath"
+  ${un.ReadMediaPortalDirs} "$INSTDIR"
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
 
   SetShellVarContext all
@@ -1102,6 +1097,12 @@ Function WelcomeLeave
     ${EndIf}
 FunctionEnd
 */
+
+Function DirectoryLeave
+  #MessageBox MB_OK "onVerifyInstDir"
+  ${ReadMediaPortalDirs} "$INSTDIR"
+FunctionEnd
+
 Function un.WelcomeLeave
     ; This function is called, before the uninstallation process is startet
 
