@@ -92,8 +92,8 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_pTimeShiftFile=NULL;
 
 	m_bStartPcrFound=false;
-	m_startPcr.Reset();
-	m_highestPcr.Reset();
+//	m_startPcr.Reset();
+//	m_highestPcr.Reset();
 	m_bDetermineNewStartPcr=false;
 	m_iPatVersion=0;
 	m_iPmtVersion=0;
@@ -103,7 +103,7 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 		m_pWriteBuffer = new byte[RECORD_BUFFER_SIZE];
 	m_iWriteBufferPos=0;
   m_TsPacketCount=0;
-	m_bIgnoreNextPcrJump=false;
+//	m_bIgnoreNextPcrJump=false;
   m_bClearTsQueue=false;
 	m_pPmtParser=new CPmtParser();
 	m_multiPlexer.SetFileWriterCallBack(this);
@@ -141,9 +141,9 @@ void CDiskRecorder::SetFileName(char* pszFileName)
 		m_iPmtPid=-1;
 		m_pcrPid=-1;
 		m_vecPids.clear();
-		m_startPcr.Reset();
+//		m_startPcr.Reset();
 		m_bStartPcrFound=false;
-		m_highestPcr.Reset();
+//		m_highestPcr.Reset();
 		m_bDetermineNewStartPcr=false;
 		m_multiPlexer.Reset();
 		strcpy(m_szFileName,pszFileName);
@@ -203,9 +203,9 @@ bool CDiskRecorder::Start()
 		m_iPmtContinuityCounter=-1;
 		m_iPatContinuityCounter=-1;
 		m_bDetermineNewStartPcr=false;
-		m_startPcr.Reset();
+//		m_startPcr.Reset();
 		m_bStartPcrFound=false;
-		m_highestPcr.Reset();
+//		m_highestPcr.Reset();
 		m_mapLastPtsDts.clear();
 		m_iPacketCounter=0;
 		m_iWriteBufferPos=0;
@@ -289,14 +289,14 @@ void CDiskRecorder::Reset()
 		m_iPmtPid=-1;
 		m_pcrPid=-1;
 		m_bDetermineNewStartPcr=false;
-		m_startPcr.Reset();
+//		m_startPcr.Reset();
 		m_bStartPcrFound=false;
-		m_highestPcr.Reset();
+//		m_highestPcr.Reset();
 		m_vecPids.clear();
 		m_pPmtParser->Reset();
     m_tsQueue.clear();
-    m_pcrHole.Reset();
-    m_backwardsPcrHole.Reset();
+//    m_pcrHole.Reset();
+//    m_backwardsPcrHole.Reset();
 		DR_FAKE_NETWORK_ID   = 0x456;
 		DR_FAKE_TRANSPORT_ID = 0x4;
 		DR_FAKE_SERVICE_ID   = 0x89;
@@ -691,7 +691,8 @@ void CDiskRecorder::SetPcrPid(int pcrPid)
 		{
 			WriteLog("determine new start pcr"); 
 			m_bDetermineNewStartPcr=true;
-			m_bIgnoreNextPcrJump=true;
+//			m_bIgnoreNextPcrJump=true;
+   		m_mapLastPtsDts.clear();
 		}
 		m_pcrPid=pcrPid;
 		m_vecPids.clear();
@@ -870,12 +871,20 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 			{
 			  byte pkt[200];
 			  memcpy(pkt,tsPacket,188);
-			  PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  
+			  PatchPtsDts(pkt,m_tsHeader,info);					  					  
 			  start=m_tsHeader.PayLoadStart;
 			  if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) writeTS = false; 
 			}
 			if (writeTS)
-			{
+			{                  
+
+    if (m_tsHeader.AdaptionFieldLength && (tsPacket[5] & 0x80))
+    {
+      LogDebug("Discontinuity !");
+    	LogDebug("tsheader:%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x",
+					tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9]);
+    }
+
 				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2||info.streamType==SERVICE_TYPE_VIDEO_MPEG4||info.streamType==SERVICE_TYPE_VIDEO_H264)
 			  {
 				  //video
@@ -900,7 +909,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				  {						
-					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
+					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,info);					  					  												
 						Write(pkt,188);
 					  m_iPacketCounter++;
 				  }
@@ -931,7 +940,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				  {						  
-					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  							
+					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,info);					  					  							
 						Write(pkt,188);
 					  m_iPacketCounter++;
 				  }
@@ -950,7 +959,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 
 				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				  {						  						  
-					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
+					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,info);					  					  												
 					  Write(pkt,188);
 					  m_iPacketCounter++;
 				  }
@@ -1139,150 +1148,210 @@ void CDiskRecorder::WriteFakePMT()
 }
 
 
+// - Ambass -
+// To be able to patch in an easy way PCR & PTS/DTS, all this part will use their 90kHz clock resolution. ( 27MHz extension is never used. )
+
+__int64 CDiskRecorder::EcPcrTime(__int64 New, __int64 Prev)
+{   // Compute a signed difference between new and previous 33bits timer.
+		__int64 dt = New - Prev ;
+		if (dt & 0x100000000) dt |= 0xFFFFFFFF00000000LL ;  // Negative
+		else                  dt &= 0x00000000FFFFFFFFLL ;  // Positive
+		return dt ;
+}
+
 void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 {
-	//LogDebug("pcr pid:%x  head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x",header.Pid, tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5]);
+	bool wr=false;
+	bool wjump=false;
+  bool verbose=false ;															// Debug verbosity(true) or Info (false)
+
 	if (header.PayLoadOnly()) return;
-	//LogDebug(" pcrflag:%x", (tsPacket[5]&0x10));
-	//LogDebug(" opcrflag:%x", (tsPacket[5]&0x8));
 	m_adaptionField.Decode(header,tsPacket);
 	if (m_adaptionField.PcrFlag==false) return;
 	CPcr pcrNew=m_adaptionField.Pcr;
-	bool logNextPcr = false;
-  if (m_bStartPcrFound)
-	{
-		if (m_bDetermineNewStartPcr )
-		{
-			m_bDetermineNewStartPcr=false;
 
-			CPcr duration=m_highestPcr ;
-			duration-=m_startPcr;
-			CPcr newStartPcr=pcrNew;
-			newStartPcr-=duration ;
-			WriteLog("Pcr start    :%s",m_startPcr.ToString());
-			WriteLog("Pcr high     :%s",m_highestPcr.ToString());
-			WriteLog("Pcr duration :%s",duration.ToString());
-			WriteLog("Pcr current  :%s",pcrNew.ToString());
-			WriteLog("Pcr newstart :%s",newStartPcr.ToString());
-
-			m_startPcr  = newStartPcr;
-			m_highestPcr= newStartPcr;
-			m_prevPcr   = newStartPcr;
-		}
-	}
-
-	if (m_bStartPcrFound==false)
+	DWORD TimeStamp = GetTickCount();                 // try to have an idea of elapsed time from previous PCR ( used for long delays )
+	__int64 dt2 = ((__int64)(TimeStamp - m_prevTimeStamp)) * 90 /*KHz*/  ;
+	
+	if (m_bStartPcrFound==false)                      // Tv or recording turned on. !
 	{
 		m_bDetermineNewStartPcr=false;
 		m_bStartPcrFound=true;
-		m_startPcr  = pcrNew;
-		m_highestPcr= pcrNew;
-		WriteLog("Pcr new start pcr :%s - pid:%x", m_startPcr.ToString() , header.Pid);
-	} 
+		m_JumpInProgress=0 ;
+		m_PcrSpeed = 4500 ;															// Should start with a non stupid value, common value seems 6~50 mS ( 540~4500 ).
+		m_PcrCompensation = (0x000000LL - (__int64) pcrNew.PcrReferenceBase) & 0x1FFFFFFFFLL ;  // Compensation to apply ( Expected fake PCR start - current PCR ) always modulo 33 bits.
+		m_prevPcr = pcrNew ;
 
-	CPcr pcrHi=pcrNew;
-	CPcr diff;
-
-	if (pcrNew > m_highestPcr)
-	{
-		m_highestPcr = pcrNew;
+    wr=verbose ;      
+		{                       // Info.
+			CPcr NextPcr ;
+			NextPcr.PcrReferenceBase = 0x1FFFFFFFF - pcrNew.PcrReferenceBase ;
+			NextPcr.PcrReferenceExtension = 0 ;
+			WriteLog("Info : Next broadcaster program clock reference rollover : %s", NextPcr.ToString()) ;
+		}
 	}
-
-  if (pcrNew > m_prevPcr)
-  {
-    diff = pcrNew - m_prevPcr;
-  }
-  else
-  {
-    diff = m_prevPcr - pcrNew;
-  }
-
-  if (m_bDetermineNewStartPcr)
-  {
-    WriteLog( "not allowed to patch PCRs yet - m_bDetermineNewStartPcr = true" );
-  }
-
-	// PCR value has jumped too much in the stream
-  if (diff.ToClock() > DR_MAX_ALLOWED_PCR_DIFF && m_prevPcr.ToClock() > 0 && !m_bDetermineNewStartPcr )
+	else
 	{
-    logNextPcr = true;
-    if (m_bIgnoreNextPcrJump)
+		if ((pcrNew.PcrReferenceBase < 0x10000) && (m_prevPcr.PcrReferenceBase > 0x1FFFF0000))  // Just info, on rollover ,previous was 1FFFxxxx, new is 0x00000xxxx
+			WriteLog("Info : Normal broadcaster program clock reference rollover passed !") ;
+
+		__int64 dt = EcPcrTime( pcrNew.PcrReferenceBase, m_prevPcr.PcrReferenceBase ) ;  // Delta from previous PCR
+		if (m_bDetermineNewStartPcr)
 		{
-			WriteLog("Ignoring first PCR jump after channel change" );
-			m_bIgnoreNextPcrJump=false;
+			m_bDetermineNewStartPcr=false;
+			m_JumpInProgress=0 ;
+			m_PcrCompensation -= dt ;                   // Now it result as a "zero" delta on Fake PCR.
+			m_PcrCompensation += (__int64)m_PcrSpeed ;  // Increase it a bit with averaged delta should not be stupid.
+			m_prevPcr = pcrNew ;
+
+			wr=verbose ;
+			{                       // Info.
+				CPcr NextPcr ;
+				NextPcr.PcrReferenceBase = 0x1FFFFFFFF - pcrNew.PcrReferenceBase ;
+				NextPcr.PcrReferenceExtension = 0 ;
+				WriteLog("Info : Next broadcaster program clock reference rollover : %s", NextPcr.ToString()) ;
+			}
 		}
 		else
 		{
-			if (diff.ToClock() > 95443L) // Max PCR value 95443.71768
+			if (dt < 0)                                                                 // Could not admit a negative jump in Fake PCR
 			{
-				m_bPCRRollover = true;
-				m_pcrDuration = m_prevPcr;
-				m_pcrDuration -= m_startPcr;
-				m_pcrHole.Reset();
-        m_backwardsPcrHole.Reset();
-				m_startPcr.Reset();
-				m_highestPcr.Reset();
+				__int64 FutureComp   = m_PcrCompensation - dt + (__int64)m_PcrSpeed ;       // If the jump is real, this will be ne future compensation to apply.
+				if (m_JumpInProgress)                                                       // Jump in progress...
+				{
+					__int64 EcFutureComp = EcPcrTime(m_PcrFutureCompensation, FutureComp) ;     // Check if future compensation quite equal to previous one ( Arbitrary values proportional on common PCR delta ) 
+					if ((EcFutureComp < - 8*m_PcrSpeed) || (EcFutureComp > 8*m_PcrSpeed))
+					{                                                                             // false ! Jump is different !!!
+						m_PcrFutureCompensation = FutureComp ;
+						m_prevPcr.PcrReferenceBase += (__int64)( m_PcrSpeed  / 2 ) ;                // Evaluate current PCR to recover in case of false jump. 
+						m_JumpInProgress=1 ;                                                        // Restart confirmation cycle
 
-				WriteLog( "PCR rollover detected" );
+						if (verbose) WriteLog("PCR backward jump ( %I64d ) New !! ( Confirm count = %d ), Wait again for confirmation.", dt, m_JumpInProgress) ;
+						wjump=verbose ;
+					}
+					else
+					{
+						m_JumpInProgress++ ;                                                        // true !
+						if (m_JumpInProgress >= 3)                                                  // Jump comleted ?
+						{
+							m_PcrCompensation = FutureComp ;                                             // Update compensation
+							m_prevPcr = pcrNew ;    
+							m_JumpInProgress=0 ;                                                         // Jump completed.
+
+							WriteLog("Info : Program clock reference backward jump ( %I64d ).", dt) ;
+						  wjump=verbose ;
+						}
+						else
+							m_prevPcr.PcrReferenceBase += (__int64)( m_PcrSpeed / 2 ) ;           // Evaluate current PCR to recover in case of false jump. 
+					}
+				}
+				else
+				{                                                                           // Jump detected, but may be false, need to confirm, no change 
+					m_JumpInProgress=1 ;
+					m_PcrFutureCompensation = FutureComp ;
+					m_prevPcr.PcrReferenceBase += (__int64)( m_PcrSpeed  / 2 ) ;              // Evaluate current PCR to recover in case of false jump. 
+                                                                                    // Approximative and slower than reality to avoid falling in negative case.
+					if (verbose) WriteLog("PCR backward jump ( %I64d ) detected, Wait for confirmation.", dt) ;
+					wjump=verbose ;
+				}
 			}
 			else
-			{      
-				logNextPcr = true;
-        CPcr step;
-				step.FromClock(0.02); // an estimated PCR step, to be fixed with some average from the stream...
+			{                                                                             // Positive jump.
+				if (dt > 8*m_PcrSpeed)                                                      // Arbitrary threshold ( Arbitrary values proportional on common PCR delta  )
+				{                                                                           // "long" jump ?
+					__int64 dt3 = dt2-dt ;
+					if ((dt3 < 15000) && (dt3 > -15000))                                         // Arbitrary values, Is the jump coherent to system clock 
+					{                                                                                // Yes, probable signal lost, do nothing.
+						if (verbose) WriteLog("PCR forward jump ( %I64d ) detected with coherent time jump ( %I64d ) : Nothing done ( signal lost ? ).", dt, dt2) ;
+						m_prevPcr = pcrNew ;    
+					}
+					else
+					{                                                                                // No,
+						__int64 FutureComp   = m_PcrCompensation - dt + (__int64)m_PcrSpeed ;          // If the jump is real, this will be the future compensation to apply.
+						if (m_JumpInProgress)
+						{
+							__int64 EcFutureComp = EcPcrTime(m_PcrFutureCompensation, FutureComp) ;      // Check if future compensation quite equal to previous one ( Arbitrary values proportional on common PCR delta ) 
+							if ((EcFutureComp < - 8*m_PcrSpeed) || (EcFutureComp > 8*m_PcrSpeed))                                                                                                                          
+							{                                                                               // false ! Jump is different !!!                                                                                
+								m_PcrFutureCompensation = FutureComp ;                                                                                                                                                       
+								m_prevPcr.PcrReferenceBase += (__int64)( m_PcrSpeed  / 2 ) ;                  // Evaluate current PCR to recover in case of false jump. 
+								m_JumpInProgress=1 ;                                                          // Restart confirmation cycle
 
-				if (pcrNew > m_prevPcr)
-				{
-					m_pcrHole += diff;
-					m_pcrHole -= step;
-					WriteLog( "Jump forward in PCR detected" );
+								if (verbose) WriteLog("PCR forward jump ( %I64d ) New !! ( Confirm count = %d ), Wait again for confirmation.", dt, m_JumpInProgress) ;
+								wjump=verbose ;                                             
+							}
+							else
+							{
+								m_JumpInProgress++ ;                                                          // true !                 
+								if (m_JumpInProgress >= 3)                                                    // Jump comleted ?        
+								{                                                                                                 
+									m_PcrCompensation = FutureComp ;                                              // Update compensation 
+									m_prevPcr = pcrNew ;    
+									m_JumpInProgress=0 ;                                                          // Jump completed.
+
+									WriteLog("Info : Program clock reference forward jump ( %I64d ).", dt) ;
+									wjump=verbose ;
+								}
+								else
+									m_prevPcr.PcrReferenceBase += (__int64)( m_PcrSpeed  / 2 ) ;                  // Evaluate current PCR to recover in case of false jump. 
+							}
+						}
+						else
+						{      
+							m_JumpInProgress=1 ;                                                      // Jump detected, but may be false, need to confirm, no change             
+							m_PcrFutureCompensation = m_PcrCompensation - dt + (__int64)m_PcrSpeed ;                                                              
+							m_prevPcr.PcrReferenceBase += (__int64)( m_PcrSpeed  / 2 ) ;              // Evaluate current PCR to recover in case of false jump.                  
+                                                                                        // Approximative and slower than reality to avoid falling in negative case.
+							if (verbose) WriteLog("PCR forward jump ( %I64d, Time Jump %I64d ) detected, Wait for confirmation.", dt, dt2) ;
+							wjump=verbose ;
+						}
+					}
 				}
 				else
 				{
-					m_backwardsPcrHole += diff;
-					m_backwardsPcrHole += step;
-          WriteLog( "Jump backward in PCR detected" );
+   				m_PcrSpeed += ((float)dt - m_PcrSpeed) * 0.1 ;                                // Time average between 2 PCR
+					if (m_JumpInProgress && verbose)
+					{
+						WriteLog("PCR jump aborted after %d confirmation.", m_JumpInProgress) ;
+					}
+					m_JumpInProgress = 0 ;                                                        // Normal.
+					m_prevPcr = pcrNew ;
 				}
 			}
 		}
 	}
 
-  /*pcrHi -= m_startPcr;
-  pcrHi += m_backwardsPcrHole;
-  pcrHi -= m_pcrHole;*/
-
-  double result = pcrHi.ToClock() - m_startPcr.ToClock() + m_backwardsPcrHole.ToClock() - m_pcrHole.ToClock();
-  pcrHi.FromClock(result);
-
-	if (m_bPCRRollover)
+	if (wjump)
 	{
-		pcrHi += m_pcrDuration;
+		WriteLog("PcrCompensation %I64x, newPcr %I64x, prevPcr %I64x, FutureComp %I64x, Speed %f,  ",m_PcrCompensation, pcrNew.PcrReferenceBase, m_prevPcr.PcrReferenceBase, m_PcrFutureCompensation, m_PcrSpeed) ;
+//    WriteLog("tsheader:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x",
+//					tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11]);
 	}
 
-	if( logNextPcr )
-  {
-    WriteLog("PCR: %s new: %s prev: %s start: %s diff: %s hole: %s holeB: %s  - pid:%x", pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), m_pcrHole.ToString(), m_backwardsPcrHole.ToString(), header.Pid );
-  }
-	tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
-	tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
-	tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
-	tsPacket[9] = (byte)(((pcrHi.PcrReferenceBase>>1)&0xff));
-	tsPacket[10]=	(byte)(((pcrHi.PcrReferenceBase&0x1)<<7) + 0x7e+ ((pcrHi.PcrReferenceExtension>>8)&0x1));
-	tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
+	__int64 PcrObj = (m_prevPcr.PcrReferenceBase + m_PcrCompensation) & 0x1FFFFFFFFLL ;
 
-	m_prevPcr = pcrNew;
-	//LogDebug("myPcr: %s tsPCR: %s",tmpPcr.ToString(),m_prevPcr.ToString());
+	if (wr) WriteLog("Pcr : %I64x ( Prev : %I64x ), Comp : %I64x, >> Fake Pcr : %I64x ( TimeStamp %x) ", pcrNew.PcrReferenceBase, m_prevPcr.PcrReferenceBase, m_PcrCompensation, PcrObj, TimeStamp ) ;
+
+	tsPacket[6] = (byte)(((PcrObj>>25)&0xff));
+	tsPacket[7] = (byte)(((PcrObj>>17)&0xff));
+	tsPacket[8] = (byte)(((PcrObj>>9)&0xff));
+	tsPacket[9] = (byte)(((PcrObj>>1)&0xff));
+	tsPacket[10]=	(byte)(((PcrObj&0x1)<<7) + (tsPacket[10] & 0x7e ));
+
+	m_prevTimeStamp = TimeStamp ;
 }
 
-void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
+void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidInfo)
 {
 	if (false==header.PayloadUnitStart) return;
 
+	DWORD TimeStamp = GetTickCount();
+	
 	int start=header.PayLoadStart;
-	if (start>=188) 
+	if (start>169) 
 	{
-		LogDebug("ERROR: payload start>188. payloadStart=%d adaptionControl=%d adaptionFieldLength=%d",start,header.AdaptionControl,header.AdaptionFieldLength);
-		//return;
+		LogDebug("ERROR: Cannot not patch pts-dts payload start>169. payloadStart=%d adaptionControl=%d adaptionFieldLength=%d Pid %x",start,header.AdaptionControl,header.AdaptionFieldLength,header.Pid) ;
+		return;
 	}
 	if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
 
@@ -1293,90 +1362,96 @@ void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 	{
 		return ;
 	}
-	imapLastPtsDts it=m_mapLastPtsDts.find(header.Pid);
+
+// ---- As it's really difficult to detect random jumps on non monotonic Video PTS ( occurs first, then audio, then PCR ) 
+// ---- this is just to monitor random PTS/DTS jumps. PCR compensation is used as default. 
+// ---- It seems enough to avoid definitive freezes & crashes....
+
+	imapLastPtsDts it=m_mapLastPtsDts.begin() ;
+	while(it != m_mapLastPtsDts.end())
+	{
+		if (it->m_Pid == header.Pid)  break ; 
+		it++ ;
+	}
+
 	if (it==m_mapLastPtsDts.end())
 	{
 		LastPtsDtsRecord lastRec;
-		lastRec.pts.Reset();
-		lastRec.dts.Reset();
-		m_mapLastPtsDts[header.Pid]=lastRec;
-		it=m_mapLastPtsDts.find(header.Pid);
+		lastRec.m_prevPts = -1;
+		lastRec.m_prevDts = -1;
+		lastRec.m_PtsCompensation = m_PcrCompensation ;
+		lastRec.m_DtsCompensation = m_PcrCompensation ;
+		lastRec.m_Pid = header.Pid ;
+		m_mapLastPtsDts.push_back(lastRec) ;
+		it = m_mapLastPtsDts.end() ;
+		it-- ;
+//Remove verbosity		WriteLog(">>> Add Pid %x ( Type : %x, Logical %x, fake pid %x ) <<<<<", it->m_Pid, PidInfo.streamType, PidInfo.logicalStreamType, PidInfo.fakePid ) ;
 	}
-	LastPtsDtsRecord &lastPtsDts=it->second;
+
 	if (pts.IsValid)
 	{
-		CPcr ptsorg=pts;
-		pts -= startPcr;
-		//pts -= m_pcrHole;
-		// GEMX: code is currently being tested
-		if (lastPtsDts.pts.IsValid)
+		if (it->m_prevPts!=-1)
 		{
-			double diff=0;
-			if (pts.ToClock()>lastPtsDts.pts.ToClock())
-				diff=pts.ToClock()-lastPtsDts.pts.ToClock();
-			else
-				diff=lastPtsDts.pts.ToClock()-pts.ToClock();
-			// Only apply pcr hole patching if pts also jumped
-			lastPtsDts.pts=pts;
-			if (diff>DR_MAX_ALLOWED_PCR_DIFF && m_pcrHole.IsValid)
-					pts -= m_pcrHole;
+			__int64 dt = EcPcrTime( pts.PcrReferenceBase, it->m_prevPts ) ;
+			__int64 dt2 = ((__int64)(TimeStamp - it->m_prevPtsTimeStamp)) * 90 /*KHz*/  ;
+			__int64 dt3 = dt2-dt ;
+//Remove verbosity if (((dt3 < -30000LL) || (dt3 > 30000LL)) && (((PidInfo.fakePid & 0xFF0)==DR_FAKE_VIDEO_PID) || ((PidInfo.fakePid & 0xFF0)==DR_FAKE_AUDIO_PID)))      
+//Remove verbosity			{
+//Remove verbosity				WriteLog(">>> Pts Jump detected %I64d ( Time %I64d  / DT %I64d )( new %I64x, prev %I64x, pid %x pespid %x)<<<<<", dt, dt2, dt3,  pts.PcrReferenceBase, it->m_prevPts, header.Pid, tsPacket[start+3]) ;
+//Remove verbosity				WriteLog("head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x", tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11]);
+//Remove verbosity			}
 		}
-		else
-		{
-			lastPtsDts.pts=pts;
-			pts-=m_pcrHole;
-		}
-		if( m_bPCRRollover )
-			pts += m_pcrDuration;		
+
+		it->m_prevPts = pts.PcrReferenceBase ;
+
+		__int64 ptsPatched = (pts.PcrReferenceBase + m_PcrCompensation /*it->m_PtsCompensation*/) & 0x1FFFFFFFFLL ;
 
 		// 9       10        11        12      13
 		//76543210 76543210 76543210 76543210 76543210
 		//0011pppM pppppppp pppppppM pppppppp pppppppM 
 		//LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
-		byte marker=0x21;
-		if (dts.PcrReferenceBase!=0) marker=0x31;
-		pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
-		pesHeader[12]=(byte)(   (pts.PcrReferenceBase&0xff));				   pts.PcrReferenceBase>>=8;
-		pesHeader[11]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
-		pesHeader[10]=(byte)(   (pts.PcrReferenceBase&0xff));					 pts.PcrReferenceBase>>=8;
-		pesHeader[9] =(byte)( (((pts.PcrReferenceBase&7)<<1)+marker)); 
+
+		pesHeader[13]=(byte)( ((ptsPatched&0x7f)<<1) + (pesHeader[13] & 0x01));
+		ptsPatched>>=7;
+		pesHeader[12]=(byte)(   (ptsPatched&0xff));				   ptsPatched>>=8;
+		pesHeader[11]=(byte)( ((ptsPatched&0x7f)<<1) + (pesHeader[11] & 0x01));
+		ptsPatched>>=7;
+		pesHeader[10]=(byte)(   (ptsPatched&0xff));					 ptsPatched>>=8;
+		pesHeader[9] =(byte)( ((ptsPatched&7)<<1)    + (pesHeader[9] & 0xF1)) ; 
+
+		it->m_prevPtsTimeStamp = TimeStamp ;
 
 		if (dts.IsValid)
 		{
-			CPcr dtsorg=dts;
-			dts -= startPcr;
-			//dts -= m_pcrHole;
-
-			// GEMX: deactivated. code is currently being tested
-			if (lastPtsDts.dts.IsValid)
+			if (it->m_prevDts!=-1)
 			{
-				double diff=0;
-				if (dts.ToClock()>lastPtsDts.dts.ToClock())
-					diff=dts.ToClock()-lastPtsDts.dts.ToClock();
-				else
-					diff=lastPtsDts.dts.ToClock()-dts.ToClock();
-				// Only apply pcr hole patching if dts also jumped
-				lastPtsDts.dts=dts;
-				if (diff>DR_MAX_ALLOWED_PCR_DIFF && m_pcrHole.IsValid)
-					dts -= m_pcrHole;
+				__int64 dt  = EcPcrTime( dts.PcrReferenceBase, it->m_prevDts ) ;
+				__int64 dt2 = ((__int64)(TimeStamp - it->m_prevPtsTimeStamp)) * 90 /*KHz*/  ;
+				__int64 dt3 = dt2-dt ;
+//Remove verbosity				if (((dt3 < -30000LL) || (dt3 > 30000LL)) && (((PidInfo.fakePid & 0xFF0)==DR_FAKE_VIDEO_PID) || ((PidInfo.fakePid & 0xFF0)==DR_FAKE_AUDIO_PID)))           
+//Remove verbosity				{
+//Remove verbosity					WriteLog(">>> Dts Jump detected %I64d ( new %I64x, prev %I64x, pid %x)<<<<<", dt, dts.PcrReferenceBase, it->m_prevDts, header.Pid) ;
+//Remove verbosity					WriteLog("head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x", tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9],tsPacket[10],tsPacket[11]);
+//Remove verbosity				}
 			}
-			else
-			{
-				lastPtsDts.dts=dts;
-				dts-=m_pcrHole;
-			}
-			if( m_bPCRRollover )
-				dts += m_pcrDuration;			
 
+			it->m_prevPts = dts.PcrReferenceBase ;
+			__int64 dtsPatched = (dts.PcrReferenceBase +  m_PcrCompensation /*it->m_DtsCompensation*/) & 0x1FFFFFFFFLL ;
+
+//      WriteLog(" 14- %x 16- %x 18 %x",pesHeader[14] & 0xF1,pesHeader[16] & 0x01,pesHeader[18] & 0x01) ;
 			// 14       15        16        17      18
 			//76543210 76543210 76543210 76543210 76543210
 			//0001pppM pppppppp pppppppM pppppppp pppppppM 
 			//LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
-			pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
-			pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
-			pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
-			pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
-			pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
+			pesHeader[18]=(byte)( ((dtsPatched&0x7f)<<1) + (pesHeader[18] & 0x01));
+			dtsPatched>>=7;
+			pesHeader[17]=(byte)(   (dtsPatched&0xff));				  dtsPatched>>=8;
+			pesHeader[16]=(byte)( ((dtsPatched&0x7f)<<1) + (pesHeader[16] & 0x01));
+			dtsPatched>>=7;
+			pesHeader[15]=(byte)(   (dtsPatched&0xff));					dtsPatched>>=8;
+			pesHeader[14]=(byte)( ((dtsPatched&7)<<1)    + (pesHeader[14] & 0xF1)); 
+
+			it->m_prevDtsTimeStamp = TimeStamp ;
 		}
 	}
 }

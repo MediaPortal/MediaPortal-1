@@ -352,15 +352,14 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	}
 
 	// Check if file is being read by something.
-  while(IsFileLocked(pFilename) && Tmo) { Sleep(50) ; Tmo-- ;}
+  TCHAR sz[MAX_PATH];
+  sprintf(sz, "%S", pFilename);
+  // Can be locked temporarily to update duration or definitely (!) if timeshift is paused.
+	while(!DeleteFile(sz) && Tmo) { Sleep(50) ; Tmo-- ;}
   if (Tmo)
   {
-    // Warning : the file can be eventually locked now before deleting !!
-		TCHAR sz[MAX_PATH];
-		sprintf(sz, "%S", pFilename);
-		DeleteFile(sz);
     if (Tmo!=5) 
-  	  LogDebug("File : %ws has waited %d times for unlocking...", pFilename, 5-Tmo);
+  	  LogDebug("File : %ws has waited %d times for unlocking and deleting...", pFilename, 5-Tmo);
   }
   else
     LogDebug("File : %ws locked.", pFilename);

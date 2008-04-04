@@ -56,8 +56,13 @@ enum PidType
 
 typedef struct stLastPtsDtsRecord
 {
-	CPcr pts;
-	CPcr dts;
+  __int64 m_prevPts ;
+  __int64 m_prevDts ;
+  DWORD   m_prevPtsTimeStamp ;
+  DWORD   m_prevDtsTimeStamp ;
+  __int64 m_PtsCompensation ;
+  __int64 m_DtsCompensation ;
+  int m_Pid ;
 } LastPtsDtsRecord;
 
 class CDiskRecorder: public IFileWriter
@@ -109,8 +114,9 @@ private:
   void WriteFakePAT();  
   void WriteFakePMT();
 
+  __int64 EcPcrTime(__int64 New, __int64 Prev) ;
   void PatchPcr(byte* tsPacket,CTsHeader& header);
-  void PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr);
+  void PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& pidInfo);
 
 	CMultiplexer     m_multiPlexer;
 	MultiFileWriterParam m_params;
@@ -132,8 +138,6 @@ private:
 	int									 m_iPatContinuityCounter;
   
   BOOL            m_bPaused;
-	CPcr            m_startPcr;
-	CPcr            m_highestPcr;
   bool            m_bDetermineNewStartPcr;
 	bool		        m_bStartPcrFound;
   int             m_iPacketCounter;
@@ -145,16 +149,19 @@ private:
   CTsHeader       m_tsHeader;
   CAdaptionField  m_adaptionField;
   CPcr            m_prevPcr;
-  CPcr            m_pcrHole;
-  CPcr            m_backwardsPcrHole;
-  CPcr            m_pcrDuration;
-  bool            m_bPCRRollover;
-  bool            m_bIgnoreNextPcrJump;
+
+	int             m_JumpInProgress ;              // Jump detected, wait confirmation
+	float           m_PcrSpeed ;                    // Time average between PCR samples
+	__int64         m_PcrCompensation ;             // Compensation from PCR/PTS/DTS to fake PCR/PTS/DTS ( 33 bits offset with PCR resoluion )
+	__int64         m_PcrFutureCompensation ;       // Future compensation computed during jump detection.
+	DWORD           m_prevTimeStamp ;               // TimeStamp of last PCR patching.
 
   vector<char*>   m_tsQueue;
   bool            m_bClearTsQueue;
   unsigned long   m_TsPacketCount;
-  map<unsigned short,LastPtsDtsRecord> m_mapLastPtsDts;
-  typedef map<unsigned short,LastPtsDtsRecord>::iterator imapLastPtsDts;
+
+  vector <LastPtsDtsRecord> m_mapLastPtsDts;
+  typedef vector<LastPtsDtsRecord>::iterator imapLastPtsDts;
+
 	IVideoAudioObserver *m_pVideoAudioObserver;
 };

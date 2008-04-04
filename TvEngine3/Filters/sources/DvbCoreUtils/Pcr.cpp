@@ -97,7 +97,7 @@ bool CPcr::DecodeFromPesHeader(byte* pesHeader,int payloadStart,CPcr& pts, CPcr&
 
 	if (payloadStart+8>187) return false;
 
-	if ( (pesHeader[7]&0x80)!=0) 
+	if (((pesHeader[6]&0xC0)==0x80) && ((pesHeader[7]&0x80)!=0)) 
 	{
 		ptsAvailable=true;
 		if ( (pesHeader[7]&0x40)!=0) dtsAvailable=true;
