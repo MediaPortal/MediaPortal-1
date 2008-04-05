@@ -199,7 +199,7 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 
 HRESULT CVideoPin::BreakConnect()
 {
-  LogDebug("vid:BreakConnect() ok");
+  //LogDebug("vid:BreakConnect() ok");
   m_bConnected=false;
   return CSourceStream::BreakConnect();
 }
