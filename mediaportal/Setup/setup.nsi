@@ -207,7 +207,7 @@ ShowUninstDetails show
 !macro SectionList MacroName
     ; This macro used to perform operation on multiple sections.
     ; List all of your components in following manner here.
-    !insertmacro "${MacroName}" "SecDscaler"
+    #!insertmacro "${MacroName}" "SecDscaler"
     !insertmacro "${MacroName}" "SecGabest"
 !macroend
 
@@ -694,6 +694,7 @@ SectionEnd
     Delete /REBOOTOK "$MPdir.Base\XPBurnComponent.dll"
 !macroend
 
+/*
 ${MementoSection} "DScaler Decoder" SecDscaler
     DetailPrint "Installing DScaler Decoder..."
 
@@ -727,41 +728,54 @@ ${MementoSectionEnd}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpegAudio.dll"
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpegVideo.dll"
 !macroend
+*/
 
 ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
-    DetailPrint "Installing Gabest MPA/MPV decoder..."
+  DetailPrint "Installing Gabest MPA/MPV decoder..."
 
-    SetOutPath "$MPdir.Base"
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MpaDecFilter.ax"   "$MPdir.Base\MpaDecFilter.ax" "$MPdir.Base"
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\Mpeg2DecFilter.ax" "$MPdir.Base\Mpeg2DecFilter.ax" "$MPdir.Base"
+  SetOutPath "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MpaDecFilter.ax"   "$MPdir.Base\MpaDecFilter.ax" "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\Mpeg2DecFilter.ax" "$MPdir.Base\Mpeg2DecFilter.ax" "$MPdir.Base"
 
-    ; Write Default Values for Filter into the registry
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Dynamic Range" 0
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 LFE" 0
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Speaker Config" 2
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3Decoder" 0
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Boost" 0
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Dynamic Range" 0
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS LFE" 0
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Speaker Config" 2
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTSDecoder" 0
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Normalize" 0
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Output Format" 0
+  ; Write Default Values for Filter into the registry
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Dynamic Range" 0
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 LFE" 0
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Speaker Config" 2
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3Decoder" 0
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Boost" 0
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Dynamic Range" 0
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS LFE" 0
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Speaker Config" 2
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTSDecoder" 0
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Normalize" 0
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Output Format" 0
 
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Brightness" 128
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Contrast" 100
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Deinterlace" 0
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Enable Planar YUV Modes" 1
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Forced Subtitles" 1
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Hue" 180
-    WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Saturation" 100
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Brightness" 128
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Contrast" 100
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Deinterlace" 0
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Enable Planar YUV Modes" 1
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Forced Subtitles" 1
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Hue" 180
+  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Saturation" 100
+
+  ; adjust the merit of this directshow filter
+  SetOutPath "$MPdir.Base"
+  File "Resources\SetMerit.exe"
+  ; set merit for MPA
+  ExecWait '"$MPdir.Base\SetMerit.exe" {3D446B6F-71DE-4437-BE15-8CE47174340F} 00600000'
+  ; set merit for MPV
+  ExecWait '"$MPdir.Base\SetMerit.exe" {39F498AF-1A09-4275-B193-673B0BA3D478} 00600000'
 ${MementoSectionEnd}
-!macro Remove_${SecGabest}
-    DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
 
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpaDecFilter.ax"
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\Mpeg2DecFilter.ax"
+!macro Remove_${SecGabest}
+  DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
+
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpaDecFilter.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\Mpeg2DecFilter.ax"
+
+  ; remove the tool to adjust the merit
+  Delete /REBOOTOK "$MPdir.Base\SetMerit.exe"
 !macroend
 
 ${MementoSectionDone}
