@@ -858,166 +858,175 @@ SectionEnd
 #---------------------------------------------------------------------------
 # This section is called on uninstall and removes all components
 Section Uninstall
-    ;First removes all optional components
-    !insertmacro SectionList "RemoveSection"
-    ;now also remove core component
-    !insertmacro Remove_${SecCore}
+  ;First removes all optional components
+  !insertmacro SectionList "RemoveSection"
+  ;now also remove core component
+  !insertmacro Remove_${SecCore}
 
-    ; remove registry key
-    DeleteRegValue HKLM "${REG_UNINSTALL}" "UninstallString"
+  ; remove registry key
+  DeleteRegValue HKLM "${REG_UNINSTALL}" "UninstallString"
 
-    ; remove Start Menu shortcuts
-    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"
-    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"
-    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"
-    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"
-    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"
-    Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"
-    Delete "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"
-    Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
-    RmDir "$SMPROGRAMS\$StartMenuGroup"
+  ; remove Start Menu shortcuts
+  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"
+  Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
+  RmDir "$SMPROGRAMS\$StartMenuGroup"
 
-    ; remove Desktop shortcuts
-    Delete "$DESKTOP\MediaPortal.lnk"
-    Delete "$DESKTOP\MediaPortal Configuration.lnk"
+  ; remove Desktop shortcuts
+  Delete "$DESKTOP\MediaPortal.lnk"
+  Delete "$DESKTOP\MediaPortal Configuration.lnk"
 
-    ; remove last files and instdir
-    Delete /REBOOTOK "$MPdir.Base\uninstall-mp.exe"
-    RmDir "$MPdir.Base"
+  ; remove last files and instdir
+  Delete /REBOOTOK "$MPdir.Base\uninstall-mp.exe"
+  RmDir "$MPdir.Base"
 
-    ; do we need to deinstall everything? Then remove also the CommonAppData and InstDir
-    ${If} $RemoveAll == 1
-        DetailPrint "Removing User Settings"
-        DeleteRegKey HKLM "${REG_UNINSTALL}"
-        RmDir /r /REBOOTOK "$MPdir.Config"
-        RmDir /r /REBOOTOK "$MPdir.Database"
-        RmDir /r /REBOOTOK "$MPdir.Plugins"
-        RmDir /r /REBOOTOK "$MPdir.Skin"
-        RmDir /r /REBOOTOK "$MPdir.Base"
-    ${EndIf}
+  ; do we need to deinstall everything? Then remove also the CommonAppData and InstDir
+  ${If} $RemoveAll == 1
+    DetailPrint "Removing User Settings"
+    DeleteRegKey HKLM "${REG_UNINSTALL}"
+    RmDir /r /REBOOTOK "$MPdir.Config"
+    RmDir /r /REBOOTOK "$MPdir.Database"
+    RmDir /r /REBOOTOK "$MPdir.Plugins"
+    RmDir /r /REBOOTOK "$MPdir.Skin"
+    RmDir /r /REBOOTOK "$MPdir.Base"
+  ${EndIf}
 
-    ; Remove File Association for .mpi files
-    !define Index "Line${__LINE__}"
-    ReadRegStr $1 HKCR ".mpi" ""
-    StrCmp $1 "MediaPortal.Installer" 0 "${Index}-NoOwn" ; only do this if we own it
-    ReadRegStr $1 HKCR ".mpi" "backup_val"
-    StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
-    DeleteRegKey HKCR ".mpi"
-    Goto "${Index}-NoOwn"
+  ; Remove File Association for .mpi files
+  !define Index "Line${__LINE__}"
+  ReadRegStr $1 HKCR ".mpi" ""
+  StrCmp $1 "MediaPortal.Installer" 0 "${Index}-NoOwn" ; only do this if we own it
+  ReadRegStr $1 HKCR ".mpi" "backup_val"
+  StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
+  DeleteRegKey HKCR ".mpi"
+  Goto "${Index}-NoOwn"
 
-    "${Index}-Restore:"
-    WriteRegStr HKCR ".mpi" "" $1
-    DeleteRegValue HKCR ".mpi" "backup_val"
+  "${Index}-Restore:"
+  WriteRegStr HKCR ".mpi" "" $1
+  DeleteRegValue HKCR ".mpi" "backup_val"
 
-    DeleteRegKey HKCR "MediaPortal.Installer" ;Delete key with association settings
+  DeleteRegKey HKCR "MediaPortal.Installer" ;Delete key with association settings
 
-    ${un.RefreshShellIcons}
+  ${un.RefreshShellIcons}
 
-    "${Index}-NoOwn:"
-    !undef Index
+  "${Index}-NoOwn:"
+  !undef Index
 SectionEnd
 
 #---------------------------------------------------------------------------
 # FUNCTIONS
 #---------------------------------------------------------------------------
 Function .onInit
-    #### check and parse cmdline parameter
-    ; set default values for parameters ........
-    StrCpy $noDscaler 0
-    StrCpy $noGabest 0
-    StrCpy $noDesktopSC 0
-    StrCpy $noStartMenuSC 0
+  #### check and parse cmdline parameter
+  ; set default values for parameters ........
+  StrCpy $noDscaler 0
+  StrCpy $noGabest 0
+  StrCpy $noDesktopSC 0
+  StrCpy $noStartMenuSC 0
 
-    ; gets comandline parameter
-    ${GetParameters} $R0
+  ; gets comandline parameter
+  ${GetParameters} $R0
 
-    ; check for special parameter and set the their variables
-    ClearErrors
-    ${GetOptions} $R0 "/noDscaler" $R1
-    IfErrors +2
-    StrCpy $noDscaler 1
+  ; check for special parameter and set the their variables
+  ClearErrors
+  ${GetOptions} $R0 "/noDscaler" $R1
+  IfErrors +2
+  StrCpy $noDscaler 1
 
-    ClearErrors
-    ${GetOptions} $R0 "/noGabest" $R1
-    IfErrors +2
-    StrCpy $noGabest 1
+  ClearErrors
+  ${GetOptions} $R0 "/noGabest" $R1
+  IfErrors +2
+  StrCpy $noGabest 1
 
-    ClearErrors
-    ${GetOptions} $R0 "/noDesktopSC" $R1
-    IfErrors +2
-    StrCpy $noDesktopSC 1
+  ClearErrors
+  ${GetOptions} $R0 "/noDesktopSC" $R1
+  IfErrors +2
+  StrCpy $noDesktopSC 1
 
-    ClearErrors
-    ${GetOptions} $R0 "/noStartMenuSC" $R1
-    IfErrors +2
-    StrCpy $noStartMenuSC 1
-    #### END of check and parse cmdline parameter
+  ClearErrors
+  ${GetOptions} $R0 "/noStartMenuSC" $R1
+  IfErrors +2
+  StrCpy $noStartMenuSC 1
+  #### END of check and parse cmdline parameter
 
-    ; reads components status for registry
-    ${MementoSectionRestore}
+  ; reads components status for registry
+  ${MementoSectionRestore}
 
-    ; update the component status -> commandline parameters have higher priority than registry values
-    ${If} $noDscaler = 1
-        !insertmacro UnselectSection ${SecDscaler}
-    ${EndIf}
-    ${If} $noGabest = 1
-        !insertmacro UnselectSection ${SecGabest}
-    ${EndIf}
+  ; update the component status -> commandline parameters have higher priority than registry values
+  ${If} $noDscaler = 1
+    !insertmacro UnselectSection ${SecDscaler}
+  ${EndIf}
+  ${If} $noGabest = 1
+    !insertmacro UnselectSection ${SecGabest}
+  ${EndIf}
 
-    ; check if old mp 0.2.2 is installed
-    ${If} ${MP022IsInstalled}
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP022)" IDOK 0
-        Abort
-    ${EndIf}
+  ; check if old mp 0.2.2 is installed
+  ${If} ${MP022IsInstalled}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP022)"
+    Abort
+  ${EndIf}
 
-    ; check if old mp 0.2.3 RC3 is installed
-    ${If} ${MP023RC3IsInstalled}
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023RC3)" IDOK 0
-        Abort
-    ${EndIf}
+  ; check if old mp 0.2.3 RC3 is installed
+  ${If} ${MP023RC3IsInstalled}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023RC3)"
+    Abort
+  ${EndIf}
 
 !ifdef HIGH_BUILD
-    ; check if old mp 0.2.3 is installed.
-    ${IfNot} ${MP023IsInstalled}
-        MessageBox MB_OK|MB_ICONEXCLAMATION "MediaPortal 0.2.3.0 installation is not found. Please install 0.2.3.0 first." IDOK 0
-        Abort
-    ${EndIf}
+  ; check if old mp 0.2.3 is installed.
+  ${IfNot} ${MP023IsInstalled}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "MediaPortal 0.2.3.0 installation is not found. Please install 0.2.3.0 first."
+    Abort
+  ${EndIf}
 !else
-    ; check if old mp 0.2.3 is installed.
-    ${If} ${MP023IsInstalled}
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)" IDOK 0
-        Abort
-    ${EndIf}
+  ; check if old mp 0.2.3 is installed.
+  ${If} ${MP023IsInstalled}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)"
+    Abort
+  ${EndIf}
 !endif
 
-    ; check if minimum Windows version is XP
-    ${If} ${AtMostWin2000}
-        MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
-        ExecShell open "${WEB_REQUIREMENTS}"
-        Abort
-    ${EndIf}
+  ; check if minimum Windows version is XP
+  ${If} ${AtMostWin2000}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${EndIf}
 
-    ; check if .Net is installed
-    ${IfNot} ${dotNetIsInstalled}
-        MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET)" IDNO +2
-        ExecShell open "${WEB_REQUIREMENTS}"
-        Abort
-    ${EndIf}
+  ; check if current user is admin
+  UserInfo::GetOriginalAccountType
+  Pop $0
+  #StrCmp $0 "Admin" 0 +3
+  ${IfNot} $0 == "Admin"
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ADMIN)"
+    Abort
+  ${EndIf}
 
-    ; check if VC Redist 2005 SP1 is installed
-    ${IfNot} ${VCRedistIsInstalled}
-        MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
-        ExecShell open "${WEB_REQUIREMENTS}"
-        Abort
-    ${EndIf}
+  ; check if .Net is installed
+  ${IfNot} ${dotNetIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${EndIf}
 
-    ; check if reboot is required
-    ${If} ${FileExists} "$MPdir.Base\rebootflag"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
-        Abort
-    ${EndIf}
+  ; check if VC Redist 2005 SP1 is installed
+  ${IfNot} ${VCRedistIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${EndIf}
 
-    ${ReadMediaPortalDirs} "$INSTDIR"
+  ; check if reboot is required
+  ${If} ${FileExists} "$MPdir.Base\rebootflag"
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
+    Abort
+  ${EndIf}
+
+  ${ReadMediaPortalDirs} "$INSTDIR"
 /*
     ${If} ${Silent}
         RmDir /r "${COMMON_APPDATA}\Cache"
