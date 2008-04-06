@@ -176,6 +176,8 @@ namespace MPTail
       AddLogger(mpLogPath + "TsReader.log", MPTabCtrl);
       AddLogger(mpLogPath + "Error.log", MPTabCtrl);
       AddLogger(mpLogPath + "Recorder.log", MPTabCtrl);
+      AddLogger(mpLogPath + "EVR.log", MPTabCtrl);
+      AddLogger(mpLogPath + "VMR9.log", MPTabCtrl);
 
       AddLogger(tveLogPath + "TV.log", TVETabCtrl);
       AddLogger(tveLogPath + "Error.log", TVETabCtrl);
