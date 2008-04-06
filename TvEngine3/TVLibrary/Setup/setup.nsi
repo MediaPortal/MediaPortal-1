@@ -609,7 +609,7 @@ Function .onInit
   ; update the component status -> commandline parameters have higher priority than registry values
   ${If} $noClient = 1
   ${AndIf} $noServer = 1
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_PARAMETER_ERROR)" IDOK 0
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_PARAMETER_ERROR)"
     Abort
   ${ElseIf} $noClient = 1
     !insertmacro SelectSection ${SecServer}
@@ -621,13 +621,13 @@ Function .onInit
 
   ; check if old msi based client plugin is installed.
   ${If} ${MSI_TVClientIsInstalled}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)" IDOK 0
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)"
     Abort
   ${EndIf}
 
   ; check if old msi based server is installed.
   ${If} ${MSI_TVServerIsInstalled}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_SERVER)" IDOK 0
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_SERVER)"
     Abort
   ${EndIf}
 
@@ -635,6 +635,15 @@ Function .onInit
   ${If} ${AtMostWin2000}
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
     ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${EndIf}
+
+  ; check if current user is admin
+  UserInfo::GetOriginalAccountType
+  Pop $0
+  #StrCmp $0 "Admin" 0 +3
+  ${IfNot} $0 == "Admin"
+    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ADMIN)"
     Abort
   ${EndIf}
 
