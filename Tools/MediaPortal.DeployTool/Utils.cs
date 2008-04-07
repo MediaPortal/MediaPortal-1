@@ -108,10 +108,7 @@ namespace MediaPortal.DeployTool
         
         //Ack for SQL2005 native language download
         if (prg == "MSSQLExpress")
-        {
-            FileName = Utils.GetDownloadFile(prg);
-            string a = LocalizeDownloadFile(FileName);
-        }
+            FileName = LocalizeDownloadFile(Utils.GetDownloadFile(prg));
         else
             FileName = Utils.GetDownloadFile(prg);
 
