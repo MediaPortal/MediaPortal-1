@@ -39,6 +39,9 @@ namespace MediaPortal.DeployTool
   {
     public WatchTVDlg()
     {
+      // First install screen: check if OS is compliant !!!
+      Utils.CheckOSRequirement();
+
       InitializeComponent();
       type = DialogType.WatchTV;
       labelSectionHeader.Text = "";

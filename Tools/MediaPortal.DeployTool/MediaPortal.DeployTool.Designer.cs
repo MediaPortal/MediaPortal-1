@@ -985,6 +985,33 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorry your OS is not currently supported by MediaPortal !.
+        /// </summary>
+        internal static string OS_Support {
+            get {
+                return ResourceManager.GetString("OS_Support", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Need write access to startup directory.
+        /// </summary>
+        internal static string Startup_Readonly {
+            get {
+                return ResourceManager.GetString("Startup_Readonly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please start installation from a local or network mapped drive.
+        /// </summary>
+        internal static string Startup_UNC {
+            get {
+                return ResourceManager.GetString("Startup_UNC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Which TV-Engine do you want to use ?.
         /// </summary>
         internal static string TvEngineType_labelSectionHeader {

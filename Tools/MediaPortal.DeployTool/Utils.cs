@@ -152,7 +152,7 @@ namespace MediaPortal.DeployTool
         }
         if (!OsSupport)
         {
-            MessageBox.Show("Sorry your OS is not currently supported by MediaPortal !", OsDesc, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show(Localizer.Instance.GetString("OS_Support"), OsDesc, MessageBoxButtons.OK, MessageBoxIcon.Stop);
             Environment.Exit(-1);
         }
     }
@@ -169,14 +169,14 @@ namespace MediaPortal.DeployTool
     {
         if (Application.StartupPath.StartsWith("\\"))
         {
-            MessageBox.Show("Please start installation from a local or network mapped drive.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show(Localizer.Instance.GetString("Startup_UNC"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
             Environment.Exit(-2);
         }
         FileInfo file = new FileInfo(Application.ExecutablePath);
         DirectoryInfo dir = file.Directory;
         if((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
         {
-            MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show(Localizer.Instance.GetString("Startup_Readonly"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
             Environment.Exit(-3);
         }
 

@@ -62,10 +62,7 @@ namespace MediaPortal.DeployTool
         //Check if x86 or x64 architecture
         Utils.Check64bit();
 
-        //Check is OS is supported
-        Utils.CheckOSRequirement();
-
-        //Check if app is started from UNC path and if dir is readonly
+        //Check if appplication is started from UNC path and if startup path is readonly
         Utils.CheckStartupPath();
 
         //Create necessary directory tree
