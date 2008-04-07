@@ -762,12 +762,11 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     //start rtsp stream from the seek-time
     m_rtspClient.Play(startTime);
 	
-    DWORD dwTick=GetTickCount();
-    while (m_buffer.Size() == 0 && GetTickCount() - dwTick <=5000) // lets exit the loop if no data received for 5 secs.	
+    int loop=0;
+    while (m_buffer.Size() == 0 && loop++ <= 50 ) // lets exit the loop if no data received for 5 secs.	
     {
       LogDebug("CTsReaderFilter:: Seek-->buffer empty, sleep(100ms)");
-      Sleep(100);	  		  
-      dwTick=GetTickCount();	  
+      Sleep(100);	  		
     }
 
     m_tickCount=GetTickCount();
