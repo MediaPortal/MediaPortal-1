@@ -52,69 +52,27 @@ namespace MediaPortal.DeployTool
     public DeployTool()
     {
         InitializeComponent();
-        if (!Directory.Exists(Application.StartupPath + "\\deploy"))
-            Directory.CreateDirectory(Application.StartupPath + "\\deploy");
         Localizer.Instance.SwitchCulture("en-US");
         UpdateUI();
 
         //Set default folders
         InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
         InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
-        
-        #region Identify 64bit systems for correct registry path    
-        if (IntPtr.Size == 8)
-            InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-        else
-            InstallationProperties.Instance.Set("RegistryKeyAdd", "");
-        #endregion
 
-        #region Identify OS. Supporting XP SP2 and newer, but XP 64bit
-        Version OsVersion = Environment.OSVersion.Version;
-        bool OsSupport = false;
-        string OsDesc = "";
+        //Check if x86 or x64 architecture
+        Utils.Check64bit();
 
-        switch (OsVersion.Major)
-        {
-            case 4:                         // 4.x = Win95,98,ME and NT 
-                OsDesc = "Windows 95/98/ME/NT";
-                OsSupport = false;
-                break;
-            case 5:
-                if (OsVersion.Minor == 0)   // 5.0 = Windows2000
-                {
-                    OsDesc = "Windows 2000";
-                    OsSupport = false;
-                }
-                if (OsVersion.Minor == 1)   // 5.1 = WindowsXP
-                {
-                    if (int.Parse(Environment.OSVersion.ServicePack.Substring("Service Pack ".Length, 1)) < 2)
-                    {
-                        OsDesc = "Windows XP ServicePack 1";
-                        OsSupport = false;
-                    }
-                    else if (IntPtr.Size == 8)
-                    {
-                        OsDesc = "Windows XP 64bit";
-                        OsSupport = false;
-                    }
-                    else
-                        OsSupport = true;
-                }
-                if (OsVersion.Major == 2)   // 5.2 = Windows2003
-                    OsSupport = true;
-                break;
-            case 6:                         // 6.0 = Windows Vista, 2008
-                OsSupport = true;
-                break;
-        }
+        //Check is OS is supported
+        Utils.CheckOSRequirement();
 
-        if (!OsSupport)
-        {
-            MessageBox.Show("Sorry your OS is not currently supported by MediaPortal !", OsDesc, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            Environment.Exit(-1);
-        }
-        #endregion
+        //Check if app is started from UNC path and if dir is readonly
+        Utils.CheckStartupPath();
 
+        //Create necessary directory tree
+        if (!Directory.Exists(Application.StartupPath + "\\deploy"))
+            Directory.CreateDirectory(Application.StartupPath + "\\deploy");
+
+        // Paint first screen
         _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
         splitContainer2.Panel1.Controls.Add(_currentDialog);
         InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
