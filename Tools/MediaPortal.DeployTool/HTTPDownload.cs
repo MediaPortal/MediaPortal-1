@@ -35,16 +35,15 @@ namespace MediaPortal.DeployTool
     }
     private void DownloadFile(string url, string targetFile)
     {
+      FileInfo info = new FileInfo(targetFile);
       labelURL.Text = url;
       labelTarget.Text = Path.GetFileName(targetFile);
       client = new WebClient();
-      client.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.BypassCache);
       client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
-      client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
+      client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);  
       try
       {
-        client.DownloadFileAsync(new Uri(url), targetFile);
-        
+          client.DownloadFileAsync(new Uri(url), targetFile);    
       }
       catch
       {
@@ -52,6 +51,7 @@ namespace MediaPortal.DeployTool
         File.Delete(targetFile);
         DialogResult = DialogResult.Cancel;
       }
+
     }
 
     void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)

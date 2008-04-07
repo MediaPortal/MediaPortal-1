@@ -85,6 +85,37 @@ namespace MediaPortal.DeployTool
       XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/FILE");
       return node.InnerText;
     }
+    public static string GetDownloadType(string id)
+      {
+          XmlDocument doc = new XmlDocument();
+          HTTPDownload dlg = new HTTPDownload();
+          string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
+
+          //HTTP update of the xml file with the application download URLs
+          if (!File.Exists(XmlFile))
+          {
+              DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+          }
+          doc.Load(XmlFile);
+          XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/TYPE");
+          return node.InnerText;
+      }
+
+    public static DialogResult DownloadFile(string prg)
+    {
+        DialogResult result;
+        if (Utils.GetDownloadType(prg) == "Manual")
+        {
+            ManualDownload dlg = new ManualDownload();
+            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Utils.GetDownloadFile(prg), Application.StartupPath + "\\deploy");
+        }
+        else
+        {
+            HTTPDownload dlg = new HTTPDownload();
+            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg));
+        }
+        return result;
+    }
 
     public static bool CheckTargetDir(string dir)
     {

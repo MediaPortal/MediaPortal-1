@@ -44,15 +44,15 @@ namespace MediaPortal.DeployTool
     {
         string prg = "TvServer";
         DialogResult result;
-        if (Utils.GetDownloadURL(prg) == "Manual")
+        result = Utils.DownloadFile(prg);
+        FileInfo info = new FileInfo(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg));
+
+        for (int i = 0; i < 5; i++)
         {
-            ManualDownload dlg = new ManualDownload();
-            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Utils.GetDownloadFile(prg), Application.StartupPath + "\\deploy");
-        }
-        else
-        {
-            HTTPDownload dlg = new HTTPDownload();
-            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg));
+            if (info.Length < 100000)
+                result = Utils.DownloadFile(prg);
+            else
+                break;
         }
         return (result == DialogResult.OK);
     }

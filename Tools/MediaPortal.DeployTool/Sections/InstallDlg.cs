@@ -232,8 +232,7 @@ namespace MediaPortal.DeployTool
               item.SubItems[1].Text=Localizer.Instance.GetString("Install_msgDownloading");
               Update();
               if (!package.Download())
-              {
-                
+              {      
                 Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"),package.GetDisplayName()));
                 return false;
               }
