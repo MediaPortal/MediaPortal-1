@@ -399,7 +399,7 @@ Section "MediaPortal core files (required)" SecCore
   File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.*"
   File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.*"
   ; MPTestTool2
-  File "..\MPTestTool2\bin\${BUILD_TYPE}\MPTestTool2.exe"
+  File /nonfatal "..\MPTestTool2\bin\${BUILD_TYPE}\MPTestTool2.exe"
   File "..\MPTestTool2\bin\${BUILD_TYPE}\DaggerLib.dll"
   File "..\MPTestTool2\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
   File "..\MPTestTool2\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
