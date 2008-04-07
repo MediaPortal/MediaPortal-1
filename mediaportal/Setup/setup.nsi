@@ -921,6 +921,8 @@ SectionEnd
 # FUNCTIONS
 #---------------------------------------------------------------------------
 Function .onInit
+  ${LOG_OPEN}
+
   #### check and parse cmdline parameter
   ; set default values for parameters ........
   StrCpy $noDscaler 0
@@ -1059,6 +1061,14 @@ Function .onInit
     SetShellVarContext all
 FunctionEnd
 
+Function .onInstFailed
+  ${LOG_CLOSE}
+FunctionEnd
+
+Function .onInstSuccess
+  ${LOG_CLOSE}
+FunctionEnd
+
 Function un.onInit
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -1132,7 +1142,6 @@ Function DirectoryLeave
   ${EndIf}
 !endif
 
-  ${DEBUG_MSG} "onVerifyInstDir"
   ${ReadMediaPortalDirs} "$INSTDIR"
 FunctionEnd
 

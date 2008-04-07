@@ -317,28 +317,49 @@ LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is r
 # logging system
 #
 #**********************************************************************************************************#
-!ifndef INSTALL_LOG_FILE
 
-!define LOG_TEXT `!insertmacro LOG_TEXT ""`
-!define un.LOG_TEXT `!insertmacro LOG_TEXT "un."`
+!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
 
-!macro LOG_TEXT UNINSTALL_PREFIX TEXT
+!ifdef INSTALL_LOG_FILE
+Var LogFile
 
+!define LOG_OPEN `!insertmacro LOG_OPEN`
+!macro LOG_OPEN
+#!ifdef logfile_isopen
+#  !error "log is already opened"
+#!else
+  FileOpen $LogFile "${INSTALL_LOG_FILE}" w
+  #!define logfile_isopen
+#!endif
+!macroend
 
+!define LOG_CLOSE `!insertmacro LOG_CLOSE`
+!macro LOG_CLOSE
+#!ifdef logfile_isopen
+  FileClose $LogFile
+  #!undef logfile_isopen
+#!else
+#  !error "log is not opened yet"
+#!endif
+!macroend
+
+!define LOG_TEXT `!insertmacro LOG_TEXT`
+!macro LOG_TEXT TEXT
+  FileWrite $LogFile "${TEXT}$\n"
 !macroend
 
 !endif
 
-!define SHOW_DEBUG_MSG
+/*
+Function .onInit
+FunctionEnd
 
-!define DEBUG_MSG `!insertmacro DEBUG_MSG`
-!macro DEBUG_MSG TEXT
+Function .onInstFailed
+FunctionEnd
 
-!ifdef SHOW_DEBUG_MSG
-  MessageBox MB_OK "${TEXT}"
-!endif
-
-!macroend
+Function .onInstSuccess
+FunctionEnd
+*/
 
 
 
@@ -406,7 +427,7 @@ Var MPdir.BurnerSupport
 
   ${xml::GotoPath} "/Config" $0
   ${If} $0 != 0
-    ${DEBUG_MSG} "error: xml::GotoPath /Config"
+    ${LOG_TEXT}  "ERROR: xml::GotoPath /Config"
     Goto error
   ${EndIf}
 
@@ -414,15 +435,15 @@ Var MPdir.BurnerSupport
 
   ${xml::FindNextElement} "Dir" $0 $1
   ${If} $1 != 0
-    ${DEBUG_MSG} "error: xml::FindNextElement >/Dir< >$0<"
+    ${LOG_TEXT}  "ERROR: xml::FindNextElement >/Dir< >$0<"
     Goto error
   ${EndIf}
-  ${DEBUG_MSG} "xml::FindNextElement$\n$$0=$0$\n$$1=$1"
+  ${LOG_TEXT}  "ERROR: xml::FindNextElement > $$0=$0 $$1=$1"
 
   ${xml::ElementPath} $0
   ${xml::GetAttribute} "id" $0 $1
   ${If} $1 != 0
-    ${DEBUG_MSG} "error: xml::GetAttribute >id< >$0<"
+    ${LOG_TEXT} "ERROR: xml::GetAttribute >id< >$0<"
     Goto error
   ${EndIf}
   ${IfThen} $0 == $R0  ${|} Goto foundDir ${|}
@@ -434,7 +455,7 @@ Var MPdir.BurnerSupport
   ${xml::ElementPath} $0
   ${xml::GotoPath} "$0/Path" $1
   ${If} $1 != 0
-    ${DEBUG_MSG} "error: xml::GotoPath >$0/Path<"
+    ${LOG_TEXT} "ERROR: xml::GotoPath >$0/Path<"
     Goto error
   ${EndIf}
 
@@ -481,11 +502,11 @@ FunctionEnd
 
   ; TRIM    \    AT THE END
   StrLen $1 "$0"
-    ${DEBUG_MSG} "1 $1$\r$\n2 $2$\r$\n3 $3"
+    #${DEBUG_MSG} "1 $1$\r$\n2 $2$\r$\n3 $3"
   IntOp $2 $1 - 1
-    ${DEBUG_MSG} "1 $1$\r$\n2 $2$\r$\n3 $3"
+    #${DEBUG_MSG} "1 $1$\r$\n2 $2$\r$\n3 $3"
   StrCpy $3 $0 1 $2
-    ${DEBUG_MSG} "1 $1$\r$\n2 $2$\r$\n3 $3"
+    #${DEBUG_MSG} "1 $1$\r$\n2 $2$\r$\n3 $3"
 
   ${If} $3 == "\"
     StrCpy $MPdir.${DIR} $0 $2
@@ -499,8 +520,6 @@ FunctionEnd
 #***************************
 
 !macro ReadConfig UNINSTALL_PREFIX
-
-  ${DEBUG_MSG} "${UNINSTALL_PREFIX}"
 
   Pop $0
   IfFileExists "$0\MediaPortalDirs.xml" 0 error
@@ -569,7 +588,7 @@ FunctionEnd
 !define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs ""`
 !define un.ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs "un."`
 !macro ReadMediaPortalDirs UNINSTALL_PREFIX INSTDIR
-  ${DEBUG_MSG} "${UNINSTALL_PREFIX}"
+  ${LOG_TEXT} "macro ReadMediaPortalDirs"
 
   StrCpy $MPdir.Base "${INSTDIR}"
   SetShellVarContext current
@@ -585,34 +604,37 @@ FunctionEnd
   Call ${UNINSTALL_PREFIX}ReadConfig
   Pop $0
   ${If} $0 != 0   ; an error occured
-    ${DEBUG_MSG} "error: read mpdirs.xml in $MyDocs\Team MediaPortal"
+    ${LOG_TEXT} "ERROR: could not read '$MyDocs\Team MediaPortal\MediaPortalDirs.xml'"
 
     Push "$MPdir.Base"
     Call ${UNINSTALL_PREFIX}ReadConfig
     Pop $0
     ${If} $0 != 0   ; an error occured
-      ${DEBUG_MSG} "error: read mpdirs.xml in $MPdir.Base"
+      ${LOG_TEXT} "ERROR: could not read '$MPdir.Base\MediaPortalDirs.xml'"
 
+      ${LOG_TEXT} "INFO: no MediaPortalDirs.xml read. using LoadDefaultDirs"
       !insertmacro LoadDefaultDirs
 
+    ${Else}
+      ${LOG_TEXT} "INFO: read '$MPdir.Base\MediaPortalDirs.xml' successfully"
     ${EndIf}
 
+  ${Else}
+    ${LOG_TEXT} "INFO: read '$MyDocs\Team MediaPortal\MediaPortalDirs.xml' successfully"
   ${EndIf}
-/*
-      MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
-      $\r$\nBase:  $MPdir.Base$\r$\n \
-      $\r$\nConfig:  $MPdir.Config \
-      $\r$\nPlugins: $MPdir.Plugins \
-      $\r$\nLog: $MPdir.Log \
-      $\r$\nCustomInputDevice: $MPdir.CustomInputDevice \
-      $\r$\nCustomInputDefault: $MPdir.CustomInputDefault \
-      $\r$\nSkin: $MPdir.Skin \
-      $\r$\nLanguage: $MPdir.Language \
-      $\r$\nDatabase: $MPdir.Database \
-      $\r$\nThumbs: $MPdir.Thumbs \
-      $\r$\nWeather: $MPdir.Weather \
-      $\r$\nCache: $MPdir.Cache \
-      $\r$\nBurnerSupport: $MPdir.BurnerSupport \
-      "
-*/
+
+  ${LOG_TEXT} "INFO: Installer will use the following directories:$\r$\n"
+  ${LOG_TEXT} "          Base:  $MPdir.Base"
+  ${LOG_TEXT} "          Config:  $MPdir.Config"
+  ${LOG_TEXT} "          Plugins: $MPdir.Plugins"
+  ${LOG_TEXT} "          Log: $MPdir.Log"
+  ${LOG_TEXT} "          CustomInputDevice: $MPdir.CustomInputDevice"
+  ${LOG_TEXT} "          CustomInputDefault: $MPdir.CustomInputDefault"
+  ${LOG_TEXT} "          Skin: $MPdir.Skin"
+  ${LOG_TEXT} "          Language: $MPdir.Language"
+  ${LOG_TEXT} "          Database: $MPdir.Database"
+  ${LOG_TEXT} "          Thumbs: $MPdir.Thumbs"
+  ${LOG_TEXT} "          Weather: $MPdir.Weather"
+  ${LOG_TEXT} "          Cache: $MPdir.Cache"
+  ${LOG_TEXT} "          BurnerSupport: $MPdir.BurnerSupport"
 !macroend
