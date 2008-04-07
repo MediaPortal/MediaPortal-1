@@ -54,11 +54,7 @@ namespace MediaPortal.DeployTool
         InitializeComponent();
         Localizer.Instance.SwitchCulture("en-US");
         UpdateUI();
-
-        //Set default folders
-        InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
-        InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
-
+       
         //Check if x86 or x64 architecture
         Utils.Check64bit();
 
@@ -68,6 +64,10 @@ namespace MediaPortal.DeployTool
         //Create necessary directory tree
         if (!Directory.Exists(Application.StartupPath + "\\deploy"))
             Directory.CreateDirectory(Application.StartupPath + "\\deploy");
+
+        //Set default folders
+        InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
+        InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
 
         // Paint first screen
         _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
