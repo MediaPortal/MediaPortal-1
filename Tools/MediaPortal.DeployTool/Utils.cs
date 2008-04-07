@@ -104,17 +104,39 @@ namespace MediaPortal.DeployTool
     public static DialogResult DownloadFile(string prg)
     {
         DialogResult result;
+        string FileName;
+        
+        //Ack for SQL2005 native language download
+        if (prg == "MSSQLExpress")
+        {
+            FileName = Utils.GetDownloadFile(prg);
+            string a = LocalizeDownloadFile(FileName);
+        }
+        else
+            FileName = Utils.GetDownloadFile(prg);
+
         if (Utils.GetDownloadType(prg) == "Manual")
         {
             ManualDownload dlg = new ManualDownload();
-            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Utils.GetDownloadFile(prg), Application.StartupPath + "\\deploy");
+            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), FileName, Application.StartupPath + "\\deploy");
         }
         else
         {
             HTTPDownload dlg = new HTTPDownload();
-            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg));
+            result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Application.StartupPath + "\\deploy\\" + FileName);
         }
         return result;
+    }
+
+    public static string LocalizeDownloadFile(string filename)
+    {
+        string LangCode = System.Globalization.CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName;
+        string NewFileName = "";
+        if (LangCode == "ENU")
+            NewFileName = filename;
+        else
+            NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
+        return NewFileName;
     }
 
     public static bool CheckTargetDir(string dir)
@@ -196,21 +218,21 @@ namespace MediaPortal.DeployTool
             InstallationProperties.Instance.Set("RegistryKeyAdd", "");
     }
 
-    public static void CheckStartupPath()
+    public static bool CheckStartupPath()
     {
         if (Application.StartupPath.StartsWith("\\"))
         {
             MessageBox.Show(Localizer.Instance.GetString("Startup_UNC"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            Environment.Exit(-2);
+            return false;
         }
         FileInfo file = new FileInfo(Application.ExecutablePath);
         DirectoryInfo dir = file.Directory;
         if((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
         {
             MessageBox.Show(Localizer.Instance.GetString("Startup_Readonly"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            Environment.Exit(-3);
+            return false;
         }
-
+        return true;
     }
   }
 }

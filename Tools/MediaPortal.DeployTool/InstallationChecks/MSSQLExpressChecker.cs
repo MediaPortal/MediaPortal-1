@@ -64,7 +64,7 @@ namespace MediaPortal.DeployTool
         string prg = "MSSQLExpress";
         DialogResult result;
         result = Utils.DownloadFile(prg);
-        FileInfo FileInfo = new FileInfo(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg));
+        FileInfo FileInfo = new FileInfo(Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile(prg)));
 
         for (int i = 0; i < 5; i++)
         {
@@ -80,7 +80,7 @@ namespace MediaPortal.DeployTool
 
       string tmpPath=Path.GetTempPath()+"\\SQLEXPRESS";
       //Extract all files
-      Process extract=Process.Start(Application.StartupPath + "\\deploy\\" + ReformatDownloadFile(Utils.GetDownloadFile("MSSQLExpress")),"/X:\""+tmpPath+"\" /Q");
+      Process extract=Process.Start(Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile("MSSQLExpress")),"/X:\""+tmpPath+"\" /Q");
       extract.WaitForExit();
       //Prepare the unattended ini file
       PrepareTemplateINI(tmpPath+"\\template.ini");
@@ -111,7 +111,7 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + ReformatDownloadFile(Utils.GetDownloadFile("MSSQLExpress")));
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile("MSSQLExpress")));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
           if (result.needsDownload == false)
@@ -133,16 +133,6 @@ namespace MediaPortal.DeployTool
           result.state = CheckState.VERSION_MISMATCH;
       }
       return result;
-    }
-    public string ReformatDownloadFile(string filename)
-    {
-        string LangCode = System.Globalization.CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName;
-        string NewFileName = "";
-        if (LangCode == "ENU")
-            NewFileName = filename;
-        else
-            NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
-        return NewFileName;
     }
   }
 }

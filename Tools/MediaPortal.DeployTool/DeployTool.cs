@@ -51,15 +51,12 @@ namespace MediaPortal.DeployTool
 
     public DeployTool()
     {
-        InitializeComponent();
-        Localizer.Instance.SwitchCulture("en-US");
-        UpdateUI();
-       
+        //Check if appplication is started from UNC path and if startup path is readonly
+        if (!Utils.CheckStartupPath())
+            Environment.Exit(-1);
+
         //Check if x86 or x64 architecture
         Utils.Check64bit();
-
-        //Check if appplication is started from UNC path and if startup path is readonly
-        Utils.CheckStartupPath();
 
         //Create necessary directory tree
         if (!Directory.Exists(Application.StartupPath + "\\deploy"))
@@ -70,6 +67,10 @@ namespace MediaPortal.DeployTool
         InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
 
         // Paint first screen
+        InitializeComponent();
+        Localizer.Instance.SwitchCulture("en-US");
+        UpdateUI();
+        
         _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
         splitContainer2.Panel1.Controls.Add(_currentDialog);
         InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
