@@ -1132,7 +1132,7 @@ Function DirectoryLeave
   ${EndIf}
 !endif
 
-  #MessageBox MB_OK "onVerifyInstDir"
+  ${DEBUG_MSG} "onVerifyInstDir"
   ${ReadMediaPortalDirs} "$INSTDIR"
 FunctionEnd
 
