@@ -35,7 +35,6 @@ namespace MediaPortal.DeployTool
     }
     private void DownloadFile(string url, string targetFile)
     {
-      FileInfo info = new FileInfo(targetFile);
       labelURL.Text = url;
       labelTarget.Text = Path.GetFileName(targetFile);
       client = new WebClient();
@@ -51,7 +50,6 @@ namespace MediaPortal.DeployTool
         File.Delete(targetFile);
         DialogResult = DialogResult.Cancel;
       }
-
     }
 
     void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)

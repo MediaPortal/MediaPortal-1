@@ -45,11 +45,11 @@ namespace MediaPortal.DeployTool
         string prg = "TvServer";
         DialogResult result;
         result = Utils.DownloadFile(prg);
-        FileInfo info = new FileInfo(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg));
+        FileInfo FileInfo = new FileInfo(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg));
 
         for (int i = 0; i < 5; i++)
         {
-            if (info.Length < 100000)
+            if (FileInfo.Length < 100.000)
                 result = Utils.DownloadFile(prg);
             else
                 break;
