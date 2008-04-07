@@ -1123,6 +1123,15 @@ FunctionEnd
 */
 
 Function DirectoryLeave
+
+
+!ifdef HIGH_BUILD
+  ${IfNot} ${FileExists} "$INSTDIR\MediaPortal.exe"
+    MessageBox MB_OK|MB_ICONEXCLAMATION "This is not the installation directory where MP 0.2.3.0 was installed. Please choose the correct one!"
+    Abort
+  ${EndIf}
+!endif
+
   #MessageBox MB_OK "onVerifyInstDir"
   ${ReadMediaPortalDirs} "$INSTDIR"
 FunctionEnd

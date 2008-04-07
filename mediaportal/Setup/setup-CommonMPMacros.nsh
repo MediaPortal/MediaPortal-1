@@ -310,6 +310,38 @@ LangString TEXT_MSGBOX_ERROR_IS_INSTALLED         ${LANG_ENGLISH} "$(^Name) is a
 LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL         ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
 LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is required after a previous action. Reboot you system and try it again."
 
+
+
+#**********************************************************************************************************#
+#
+# logging system
+#
+#**********************************************************************************************************#
+!ifndef INSTALL_LOG_FILE
+
+!define LOG_TEXT `!insertmacro LOG_TEXT ""`
+!define un.LOG_TEXT `!insertmacro LOG_TEXT "un."`
+
+!macro LOG_TEXT UNINSTALL_PREFIX TEXT
+
+
+!macroend
+
+!endif
+
+!define SHOW_DEBUG_MSG
+
+!define DEBUG_MSG `!insertmacro DEBUG_MSG`
+!macro DEBUG_MSG TEXT
+
+!ifdef SHOW_DEBUG_MSG
+  MessageBox MB_OK "${TEXT}"
+!endif
+
+!macroend
+
+
+
   /*
 ; Section flag test
 !macro _MPIsInstalled _a _b _t _f
@@ -374,7 +406,7 @@ Var MPdir.BurnerSupport
 
   ${xml::GotoPath} "/Config" $0
   ${If} $0 != 0
-  #  MessageBox MB_OK "error: xml::GotoPath /Config"
+    ${DEBUG_MSG} "error: xml::GotoPath /Config"
     Goto error
   ${EndIf}
 
@@ -382,15 +414,15 @@ Var MPdir.BurnerSupport
 
   ${xml::FindNextElement} "Dir" $0 $1
   ${If} $1 != 0
-  #  MessageBox MB_OK "error: xml::FindNextElement >/Dir< >$0<"
+    ${DEBUG_MSG} "error: xml::FindNextElement >/Dir< >$0<"
     Goto error
   ${EndIf}
-  ;MessageBox MB_OK "xml::FindNextElement$\n$$0=$0$\n$$1=$1"
+  ${DEBUG_MSG} "xml::FindNextElement$\n$$0=$0$\n$$1=$1"
 
   ${xml::ElementPath} $0
   ${xml::GetAttribute} "id" $0 $1
   ${If} $1 != 0
-  #  MessageBox MB_OK "error: xml::GetAttribute >id< >$0<"
+    ${DEBUG_MSG} "error: xml::GetAttribute >id< >$0<"
     Goto error
   ${EndIf}
   ${IfThen} $0 == $R0  ${|} Goto foundDir ${|}
@@ -402,7 +434,7 @@ Var MPdir.BurnerSupport
   ${xml::ElementPath} $0
   ${xml::GotoPath} "$0/Path" $1
   ${If} $1 != 0
-  #  MessageBox MB_OK "error: xml::GotoPath >$0/Path<"
+    ${DEBUG_MSG} "error: xml::GotoPath >$0/Path<"
     Goto error
   ${EndIf}
 
@@ -449,12 +481,12 @@ FunctionEnd
 
   ; TRIM    \    AT THE END
   StrLen $1 "$0"
-      #MessageBox MB_OK "1 $1$\r$\n2 $2$\r$\n3 $3"
+    ${DEBUG_MSG} "1 $1$\r$\n2 $2$\r$\n3 $3"
   IntOp $2 $1 - 1
-      #MessageBox MB_OK "1 $1$\r$\n2 $2$\r$\n3 $3"
+    ${DEBUG_MSG} "1 $1$\r$\n2 $2$\r$\n3 $3"
   StrCpy $3 $0 1 $2
-      #MessageBox MB_OK "1 $1$\r$\n2 $2$\r$\n3 $3"
-  
+    ${DEBUG_MSG} "1 $1$\r$\n2 $2$\r$\n3 $3"
+
   ${If} $3 == "\"
     StrCpy $MPdir.${DIR} $0 $2
   ${Else}
@@ -468,7 +500,7 @@ FunctionEnd
 
 !macro ReadConfig UNINSTALL_PREFIX
 
-  #MessageBox MB_OK "${UNINSTALL_PREFIX}"
+  ${DEBUG_MSG} "${UNINSTALL_PREFIX}"
 
   Pop $0
   IfFileExists "$0\MediaPortalDirs.xml" 0 error
@@ -537,7 +569,7 @@ FunctionEnd
 !define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs ""`
 !define un.ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs "un."`
 !macro ReadMediaPortalDirs UNINSTALL_PREFIX INSTDIR
-  #MessageBox MB_OK "${UNINSTALL_PREFIX}"
+  ${DEBUG_MSG} "${UNINSTALL_PREFIX}"
 
   StrCpy $MPdir.Base "${INSTDIR}"
   SetShellVarContext current
@@ -553,13 +585,13 @@ FunctionEnd
   Call ${UNINSTALL_PREFIX}ReadConfig
   Pop $0
   ${If} $0 != 0   ; an error occured
-    #MessageBox MB_OK "error: read mpdirs.xml in $MyDocs\Team MediaPortal"
+    ${DEBUG_MSG} "error: read mpdirs.xml in $MyDocs\Team MediaPortal"
 
     Push "$MPdir.Base"
     Call ${UNINSTALL_PREFIX}ReadConfig
     Pop $0
     ${If} $0 != 0   ; an error occured
-      #MessageBox MB_OK "error: read mpdirs.xml in $MPdir.Base"
+      ${DEBUG_MSG} "error: read mpdirs.xml in $MPdir.Base"
 
       !insertmacro LoadDefaultDirs
 
