@@ -78,6 +78,12 @@
     <Compile Include="AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CrashRestart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CrashRestart.Designer.cs">
+      <DependentUpon>CrashRestart.cs</DependentUpon>
+    </Compile>
     <Compile Include="MPTestTool.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +104,10 @@
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrashRestart.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CrashRestart.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MPTestTool.resx">
       <SubType>Designer</SubType>

@@ -33,6 +33,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using DaggerLib.DSGraphEdit;
+using MediaPortal.Configuration;
 
 namespace MPTestTool
 {
@@ -40,9 +41,11 @@ namespace MPTestTool
   {
     #region Variables
     string _tempDir = "";
-    string _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)+"\\MediaPortalLogs.zip";
+    string _zipFile = "";
     bool _autoMode = false;
     bool _crashed = false;
+    bool _restartMP=false;
+    int _cancelDelay=10;
     Process _processMP = null;
     int _lastMPLogLevel = 2;
     int _graphsCreated = 0;
@@ -53,11 +56,13 @@ namespace MPTestTool
     private void ShowUsage()
     {
       string usageText = "\n" +
-        "Usage: MPTestTool.exe [-auto] [-crashed] [-zipFile <path+filename>] \n" +
+        "Usage: MPTestTool.exe [-auto] [-crashed] [-zipFile <path+filename>] [-restartMP <delay in seconds>] \n" +
         "\n" +
-        "\tauto   : Perform all actions automatically and start MediaPortal in between\n" +
-        "\tcrashed: Used internally by MediaPortal if it crashes\n" +
-        "\tzipFile: full path and filename to the zip where all logfiles will be included\n" +
+        "auto     : Perform all actions automatically and start MediaPortal in between\n" +
+        "crashed  : Used internally by MediaPortal if it crashes\n" +
+        "zipFile  : full path and filename to the zip where all logfiles will be included\n" +
+        "restartMP: automatically collects all logs, saves them as zip to desktop, restarts MP and closes\n" +
+        "           the delay is the time in where you can cancel the operation\n" +
         "\n";
       MessageBox.Show(usageText,"MediaPortal test tool usage",MessageBoxButtons.OK,MessageBoxIcon.Information);
     }
@@ -74,6 +79,7 @@ namespace MPTestTool
       if (!_tempDir.EndsWith("\\"))
         _tempDir += "\\";
       _tempDir += "MPTemp";
+      _zipFile=Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)+"\\MediaPortalLogs_"+DateTime.Now.ToString("dd_MM_yy")+".zip";
       tbZipFile.Text = _zipFile;
       if (!ParseCommandLine())
         Application.Exit();
@@ -92,7 +98,22 @@ namespace MPTestTool
         CheckRequirements();
         preTestButton.Enabled = false;
         LaunchMPButton.Enabled = false;
-        Utils.ErrorDlg("MediaPortal crashed unexpectedly.");
+        if (_restartMP)
+        {
+          CrashRestartDlg dlg = new CrashRestartDlg(_cancelDelay);
+          if (dlg.ShowDialog() == DialogResult.OK)
+          {
+            PerformPostTestActions();
+            string mpExe=Config.GetFolder(Config.Dir.Base)+"\\MediaPortal.exe";
+            Utils.WarningDlg(mpExe);
+            tmrShutdown.Enabled = true;
+            Process mp = new Process();
+            mp.StartInfo.FileName = mpExe;
+            mp.Start();
+          }
+        }
+        else
+          Utils.ErrorDlg("MediaPortal crashed unexpectedly.");
       }
     }
 
@@ -112,6 +133,14 @@ namespace MPTestTool
             break;
           case "-crashed":
             _crashed = true;
+            break;
+          case "-restartmp":
+            _restartMP = true;
+            if (!Int32.TryParse(args[++i],out _cancelDelay))
+            {
+              ShowUsage();
+              return false;
+            }
             break;
           default:
             ShowUsage();
@@ -319,6 +348,12 @@ namespace MPTestTool
       }
       b.Dispose(); 
       panel.Dispose();
+    }
+
+    private void tmrShutdown_Tick(object sender, EventArgs e)
+    {
+      tmrShutdown.Enabled = false;
+      Close();
     }
   }
 }
