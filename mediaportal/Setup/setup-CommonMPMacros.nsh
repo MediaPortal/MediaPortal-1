@@ -345,7 +345,7 @@ Var LogFile
 
 !define LOG_TEXT `!insertmacro LOG_TEXT`
 !macro LOG_TEXT TEXT
-  FileWrite $LogFile "${TEXT}$\n"
+  FileWrite $LogFile "${TEXT}$\r$\n"
 !macroend
 
 !endif
