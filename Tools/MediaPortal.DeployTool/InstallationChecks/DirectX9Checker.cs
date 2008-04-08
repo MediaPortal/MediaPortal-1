@@ -45,16 +45,7 @@ namespace MediaPortal.DeployTool
       string prg = "DirectX9c";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
       DialogResult result;
-      result = Utils.DownloadFile(prg);
-      FileInfo FileInfo = new FileInfo(FileName);
-      
-      for (int i = 0; i < 5; i++)
-      {
-          if(File.Exists(FileName) & FileInfo.Length < 10000)
-              result = Utils.DownloadFile(prg);
-          else
-              break;
-      }
+      result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()

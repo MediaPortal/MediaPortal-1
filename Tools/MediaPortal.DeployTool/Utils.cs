@@ -124,6 +124,20 @@ namespace MediaPortal.DeployTool
         }
         return result;
     }
+    public static DialogResult RetryDownloadFile(string FileName, string prg)
+    {
+        DialogResult result = DialogResult.Cancel;
+        FileInfo FileInfo = new FileInfo(FileName);
+        for (int i = 0; i < 5; i++)
+        {
+            if (File.Exists(FileName) & FileInfo.Length > 10000)
+                break;
+            else
+                result = DownloadFile(prg);
+        }
+        return result;
+    }
+
 
     public static string LocalizeDownloadFile(string filename)
     {
