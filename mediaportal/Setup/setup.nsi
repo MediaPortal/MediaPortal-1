@@ -400,10 +400,10 @@ Section "MediaPortal core files (required)" SecCore
   File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.*"
   ; MPTestTool2
   File /nonfatal "..\MPTestTool2\bin\${BUILD_TYPE}\MPTestTool2.exe"
-  File "..\MPTestTool2\bin\${BUILD_TYPE}\DaggerLib.dll"
-  File "..\MPTestTool2\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
-  File "..\MPTestTool2\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
-  File "..\MPTestTool2\bin\${BUILD_TYPE}\MediaFoundation.dll"
+  File /nonfatal "..\MPTestTool2\bin\${BUILD_TYPE}\DaggerLib.dll"
+  File /nonfatal "..\MPTestTool2\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
+  File /nonfatal "..\MPTestTool2\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
+  File /nonfatal "..\MPTestTool2\bin\${BUILD_TYPE}\MediaFoundation.dll"
   ; WebEPG
   File "..\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
   File /oname=WebEPG.exe "..\WebEPG\WebEPG-xmltv\bin\${BUILD_TYPE}\WebEPG-xmltv.exe"
