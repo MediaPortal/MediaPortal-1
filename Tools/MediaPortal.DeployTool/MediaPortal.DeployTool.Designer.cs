@@ -382,7 +382,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You successfully completed the download of MediaPortal components.
+        ///   Looks up a localized string similar to You successfully downloaded all MediaPortal components.
         /// </summary>
         internal static string Finished_labelHeading2_download {
             get {
@@ -391,7 +391,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You successfully completed your setup of MediaPortal.
+        ///   Looks up a localized string similar to You successfully completed the setup of MediaPortal.
         /// </summary>
         internal static string Finished_labelHeading2_install {
             get {
@@ -1003,7 +1003,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please start installation from a local or network mapped drive.
+        ///   Looks up a localized string similar to Please start installation from a local or mapped network drive.
         /// </summary>
         internal static string Startup_UNC {
             get {

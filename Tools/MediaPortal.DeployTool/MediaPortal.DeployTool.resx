@@ -259,7 +259,7 @@ The PC will then act as dedicated TV-Server and provide other PCs in your LAN wi
     <value>Congratulations !</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
-    <value>You successfully completed your setup of MediaPortal</value>
+    <value>You successfully completed the setup of MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3" xml:space="preserve">
     <value>Below you can find some useful links that will help you getting started with MediaPortal</value>
@@ -498,7 +498,7 @@ installation later (maybe on a pc without an internet connection)?</value>
     <value>Not downloaded</value>
   </data>
   <data name="Finished_labelHeading2_download" xml:space="preserve">
-    <value>You successfully completed the download of MediaPortal components</value>
+    <value>You successfully downloaded all MediaPortal components</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
     <value>Press the "download" button to perform the download of all needed components</value>
@@ -510,6 +510,6 @@ installation later (maybe on a pc without an internet connection)?</value>
     <value>Need write access to startup directory</value>
   </data>
   <data name="Startup_UNC" xml:space="preserve">
-    <value>Please start installation from a local or network mapped drive</value>
+    <value>Please start installation from a local or mapped network drive</value>
   </data>
 </root>
