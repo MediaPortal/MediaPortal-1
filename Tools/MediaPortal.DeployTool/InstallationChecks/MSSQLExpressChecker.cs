@@ -62,13 +62,14 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
         string prg = "MSSQLExpress";
+        string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile(prg));
         DialogResult result;
         result = Utils.DownloadFile(prg);
-        FileInfo FileInfo = new FileInfo(Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile(prg)));
+        FileInfo FileInfo = new FileInfo(FileName);
 
         for (int i = 0; i < 5; i++)
         {
-            if (FileInfo.Length < 100.000)
+            if (File.Exists(FileName) & FileInfo.Length < 10000)
                 result = Utils.DownloadFile(prg);
             else
                 break;
