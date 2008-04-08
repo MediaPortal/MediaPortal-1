@@ -130,10 +130,16 @@ namespace MediaPortal.DeployTool
         FileInfo FileInfo = new FileInfo(FileName);
         for (int i = 0; i < 5; i++)
         {
-            if (File.Exists(FileName) & FileInfo.Length > 10000)
-                break;
+            if (File.Exists(FileName))
+            {
+                if (FileInfo.Length > 10000)
+                    break;
+                else
+                    result = DownloadFile(prg);
+            }
             else
                 result = DownloadFile(prg);
+            if (result == DialogResult.Cancel) break;
         }
         return result;
     }
