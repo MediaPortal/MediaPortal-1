@@ -439,21 +439,22 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\Wizards"
   File "..\Configuration\Wizards\*.*"
 
+  ; TTPremiumBoot
+  SetOutPath "$MPdir.Base\TTPremiumBoot"
+  File "..\TTPremiumBoot\*.*"
+  # obsolete, because it is out of date
+  SetOutPath "$MPdir.Base\TTPremiumBoot\21"
+  File "..\TTPremiumBoot\21\*.*"
+  SetOutPath "$MPdir.Base\TTPremiumBoot\24"
+  File "..\TTPremiumBoot\24\*.*"
+  SetOutPath "$MPdir.Base\TTPremiumBoot\24Data"
+  File "..\TTPremiumBoot\24Data\*.*"
   /*
 REM TTPremiumBoot
 xcopy /y %1\TTPremiumBoot\*.* TTPremiumBoot\
 xcopy /y %1\TTPremiumBoot\21\*.* TTPremiumBoot\21\
 xcopy /y %1\TTPremiumBoot\24\*.* TTPremiumBoot\24\
 xcopy /y %1\TTPremiumBoot\24Data\*.* \
-  ; TTPremiumBoot
-  SetOutPath "$MPdir.Base\TTPremiumBoot"
-  File "..\TTPremiumBoot\*.*"
-  SetOutPath "$INSTDIR\TTPremiumBoot\21"
-  File "..\TTPremiumBoot\21\*.*"
-  SetOutPath "$INSTDIR\TTPremiumBoot\24"
-  File "..\TTPremiumBoot\24\*.*"
-  SetOutPath "$INSTDIR\TTPremiumBoot\24Data"
-  File "..\TTPremiumBoot\24Data\*.*"
 */
 /*
 REM C#scripts
