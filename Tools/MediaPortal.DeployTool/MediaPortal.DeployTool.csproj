@@ -9,6 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MediaPortal.DeployTool</RootNamespace>
     <AssemblyName>MediaPortal.DeployTool</AssemblyName>
+    <ApplicationIcon>Install.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -293,6 +294,7 @@
     <Content Include="ApplicationLocations.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Install.ico" />
     <Content Include="Interop.NetFwTypeLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

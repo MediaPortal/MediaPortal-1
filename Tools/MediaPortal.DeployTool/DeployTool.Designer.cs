@@ -28,6 +28,7 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployTool));
         this.splitContainer1 = new System.Windows.Forms.SplitContainer();
         this.panel1 = new System.Windows.Forms.Panel();
         this.labelAppHeading = new System.Windows.Forms.Label();
@@ -142,6 +143,7 @@ namespace MediaPortal.DeployTool
         this.BackColor = System.Drawing.Color.White;
         this.ClientSize = new System.Drawing.Size(666, 416);
         this.Controls.Add(this.splitContainer1);
+        this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
         this.MaximizeBox = false;
         this.Name = "DeployTool";
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
