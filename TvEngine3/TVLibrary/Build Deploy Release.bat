@@ -15,8 +15,8 @@ DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /re
 
 EXIT
 rem these commands are necessary to get the svn revision, to enable them just remove the EXIT one line above
-DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /GetVersion
-IF NOT EXIST version.txt EXIT
-SET /p version=<version.txt
-DEL version.txt
-"%ProgramFiles%\NSIS\makensis.exe" /DVER_BUILD=%version% Setup\setup.nsi
+DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /GetVersion >> build.log
+IF NOT EXIST version.txt EXIT >> build.log
+SET /p version=<version.txt >> build.log
+DEL version.txt >> build.log
+"%ProgramFiles%\NSIS\makensis.exe" /DVER_BUILD=%version% Setup\setup.nsi >> build.log
