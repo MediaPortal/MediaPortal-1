@@ -17,11 +17,13 @@ namespace MediaPortal.DeployTool
     VERSION_MISMATCH,
     VERSION_LOOKUP_FAILED
   }
+
   public struct CheckResult
   {
     public CheckState state;
     public bool needsDownload;
   }
+
   interface IInstallationPackage
   {
     string GetDisplayName();

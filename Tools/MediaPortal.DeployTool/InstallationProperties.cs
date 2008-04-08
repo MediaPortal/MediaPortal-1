@@ -5,14 +5,14 @@ using System.Collections.Specialized;
 
 namespace MediaPortal.DeployTool
 {
-  class InstallationProperties: NameValueCollection
+  class InstallationProperties : NameValueCollection
   {
     #region Singleton implementation
     static readonly InstallationProperties _instance = new InstallationProperties();
     static InstallationProperties()
     {
     }
-    InstallationProperties() 
+    InstallationProperties()
       : base()
     {
 

@@ -31,6 +31,7 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       UpdateUI();
     }
+
     public DialogResult ShowDialog(string url, string targetFile, string targetDir)
     {
       _url = url;
@@ -43,10 +44,12 @@ namespace MediaPortal.DeployTool
     {
       Process.Start(_url);
     }
+
     private void linkDir_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       Process.Start(labelTargetDir.Text);
     }
+
     private void buttonContinue_Click(object sender, EventArgs e)
     {
       if (!File.Exists(labelTargetDir.Text + "\\" + labelTargetFile.Text))

@@ -38,7 +38,7 @@ namespace MediaPortal.DeployTool
     WatchHDTv,
     TvEngineType,
     BASE_INSTALLATION_TYPE,
-    BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE,  
+    BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE,
     CUSTOM_INSTALLATION_TYPE,
     DBMSType,
     DBMSSettings,
@@ -48,17 +48,20 @@ namespace MediaPortal.DeployTool
     Installation,
     Finished
   }
+
   public sealed class DialogFlowHandler
   {
     #region Singleton implementation
     static readonly DialogFlowHandler _instance = new DialogFlowHandler();
+
     static DialogFlowHandler()
     {
     }
     DialogFlowHandler()
     {
-      _dlgs=new List<DeployDialog>();
+      _dlgs = new List<DeployDialog>();
     }
+
     public static DialogFlowHandler Instance
     {
       get
@@ -70,13 +73,13 @@ namespace MediaPortal.DeployTool
 
     #region Variables
     private List<DeployDialog> _dlgs;
-    private int _currentDlgIndex=-1;
+    private int _currentDlgIndex = -1;
     #endregion
 
     #region Private members
     private DeployDialog FindDialog(DialogType dlgType)
     {
-      for (int i=0;i<_dlgs.Count;i++)
+      for (int i = 0 ; i < _dlgs.Count ; i++)
       {
         if (_dlgs[i].type == dlgType)
         {
@@ -94,9 +97,10 @@ namespace MediaPortal.DeployTool
       if (_currentDlgIndex == 0)
         return null;
       _currentDlgIndex--;
-      isFirstDlg=(_currentDlgIndex==0);
+      isFirstDlg = (_currentDlgIndex == 0);
       return _dlgs[_currentDlgIndex];
     }
+
     public DeployDialog GetDialogInstance(DialogType dlgType)
     {
       DeployDialog dlg = FindDialog(dlgType);
@@ -138,7 +142,7 @@ namespace MediaPortal.DeployTool
             dlg = (DeployDialog)new MPSettingsDlg();
             break;
           case DialogType.MPSettingsWithoutTvEngine:
-                dlg = (DeployDialog)new MPSettingsWithoutTvEngineDlg();
+            dlg = (DeployDialog)new MPSettingsWithoutTvEngineDlg();
             break;
           case DialogType.TvServerSettings:
             dlg = (DeployDialog)new TvServerSettingsDlg();
@@ -160,9 +164,10 @@ namespace MediaPortal.DeployTool
         dlg.UpdateUI();
       return dlg;
     }
+
     public void ResetHistory()
     {
-      DeployDialog cachedDlg=_dlgs[0];
+      DeployDialog cachedDlg = _dlgs[0];
       _dlgs.Clear();
       _dlgs.Add(cachedDlg);
     }

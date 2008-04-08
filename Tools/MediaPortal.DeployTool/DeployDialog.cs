@@ -33,7 +33,7 @@ using System.Collections.Specialized;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class DeployDialog : UserControl,IDeployDialog
+  public partial class DeployDialog : UserControl, IDeployDialog
   {
     public DialogType type;
 
@@ -47,14 +47,17 @@ namespace MediaPortal.DeployTool
     public virtual void UpdateUI()
     {
     }
+
     public virtual DeployDialog GetNextDialog()
     {
       return null;
     }
+
     public virtual bool SettingsValid()
     {
       return false;
     }
+
     public virtual void SetProperties()
     {
     }

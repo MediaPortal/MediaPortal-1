@@ -121,46 +121,46 @@
     <value>Do you want to watch TV with MediaPortal ?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
-    <value>Yes, I will use MediaPortal to watch TV.</value>
+    <value>Yes - I will use MediaPortal to watch TV.</value>
   </data>
   <data name="WatchTV_off" xml:space="preserve">
-    <value>No, I won't use MediaPortal to watch TV.</value>
+    <value>No - I will not use MediaPortal to watch TV.</value>
   </data>
   <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
     <value>Do you want to watch HDTV with MediaPortal ?</value>
   </data>
   <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Yes, I will use MediaPortal to watch HD content.</value>
+    <value>Yes - I will use MediaPortal to watch HD content.</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
-    <value>No, I won't use MediaPortal to watch HD content.</value>
+    <value>No - I will not use MediaPortal to watch HD content.</value>
   </data>
   <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>I don't know what is HD content.</value>
+    <value>I do not know what HD content is.</value>
   </data>
   <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
     <value>Which TV-Engine do you want to use ?</value>
   </data>
   <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>In-build TV-Engine of MediaPortal 1.0.</value>
+    <value>Inbuild TV-Plugin of MediaPortal 1.0.</value>
   </data>
   <data name="TvEngineType_rbTvEngine" xml:space="preserve">
     <value>MediaPortal TV-Server 1.0</value>
   </data>
   <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Differences between TV-Server 1.0 and inbuild TV-Engine of MediaPortal 1.0:
-+ full dvb-subtitle support
-+ support HD-TV (dvb-s2 / h.264) and AAC audio (Norway, New Zealand, Australia)
+    <value>Differences between TV-Server 1.0 and inbuild TV-Plugin of MediaPortal 1.0:
++ full DVB-subtitle support
++ support for HD-TV (dvb-s2 / h.264) and AAC audio (Norway, New Zealand, Australia)
 + hybrid tuner support (cards that share a tuner for DVB or analog)
-+ automaticcaly detects any TV-card (analog, dvb-c, -s, -s2, -t, atsc)
++ automatically detects any TV-card (analog, DVB-C, -S, -S2, -T, ATSC)
 + ATSC QAM (Cable TV) support
-+ allows to record in mpg or ts fileformat
-+ atsc/dvb allows tuning multiple channels within same transponder/mux with one card
-+ is able to provide multiple clients in the LAN with TV
-- requires MySQL or MS-SQL (will get installed automatically if not present in your system)
++ allows to record in .mpg or .ts file format
++ ATSC/DVB allows tuning multiple channels within same transponder/mux with one card
++ provides TV to multiple clients in your LAN
+- requires MySQL or MS-SQL (will get installed automatically if not present on your system)
 
-The TV-Server completely replaces the inbuild TV-Engine, and seamlessly integrates into the 
-MediaPortal UserInterface.</value>
+The TV-Server completely replaces the inbuild TV-Plugin and seamlessly integrates into the 
+MediaPortal User Interface.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>All required applications will be installed into their default locations and with the default settings.</value>
@@ -178,7 +178,7 @@ MediaPortal UserInterface.</value>
     <value>One Click Installation</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>All required applications will be installed into their default locations and with the default settings. The database password is "MediaPortal".</value>
+    <value>All required applications will be installed into their default locations using default settings. The database password is "MediaPortal".</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Perform an advanced installation</value>
@@ -190,10 +190,10 @@ MediaPortal UserInterface.</value>
     <value>Please choose which setup you want to install:</value>
   </data>
   <data name="CustomInstallation_rbClient" xml:space="preserve">
-    <value>MediaPortal Client</value>
+    <value>MediaPortal client</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>This will only install MediaPortal 1.0. To watch TV, it will connect to an dedicated TV-Server in your LAN.</value>
+    <value>This will only install MediaPortal 1.0. To watch TV it will connect to an dedicated TV-Server on your LAN.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Singleseat Installation</value>
@@ -206,15 +206,15 @@ to use MediaPortal and watch TV on MediaPortal 1.0.</value>
     <value>Dedicated TV-Server (master)</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
-    <value>This will only install the MediaPortal TV-Server on this PC.
+    <value>This will only install the MediaPortal TV-Service on this PC.
 The PC will then act as dedicated TV-Server and provide other PC's in your LAN with TV. (database installation required)</value>
   </data>
   <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
     <value>Dedicated TV-Server (slave, existing TV-Server (master) required)</value>
   </data>
   <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>This will only install the MediaPortal TV-Server on this PC. 
-The PC will then act as dedicated TV-Server and provide other PC's in your LAN with TV. (no database required)</value>
+    <value>This will only install the MediaPortal TV-Service on this PC. 
+The PC will then act as dedicated TV-Server and provide other PCs in your LAN with TV (no database required).</value>
   </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Browse</value>
@@ -226,7 +226,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>You have to supply a valid installation path for the SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>You have to supply a password for the sa SQL-Server user.</value>
+    <value>You have to supply a password for the "sa" SQL-Server user.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Please set the needed options for the SQL-Server installation:</value>
@@ -262,7 +262,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>You successfully completed your setup of MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3" xml:space="preserve">
-    <value>Below you may find some useful links that help you getting started with MediaPortal</value>
+    <value>Below you can find some useful links that will help you getting started with MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
     <value>MediaPortal Forum</value>
@@ -286,7 +286,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Target:</value>
   </data>
   <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
-    <value>Download canceled by user</value>
+    <value>Download cancelled by user</value>
   </data>
   <data name="HTTPDownload_Title" xml:space="preserve">
     <value>Downloading file...</value>
@@ -358,7 +358,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Failed to lookup the most recent svn revision on the MediaPortal homepage</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
-    <value>MediaPortal Deploy Tool</value>
+    <value>MediaPortal Installation Tool</value>
     <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
@@ -381,7 +381,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>The requested file still does not exist</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Hit "continue", when you finished downloading the requested file</value>
+    <value>Hit "continue" when you finished downloading the requested file</value>
   </data>
   <data name="ManualDownload_labelDir" xml:space="preserve">
     <value>Target directory:</value>
@@ -423,28 +423,28 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Configure Windows Firewall to allow external access to TvServer</value>
   </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
-    <value>You have to supply a valid installation path for the TV-Server.</value>
+    <value>You have to supply a valid installation path for the TV-Service.</value>
   </data>
   <data name="TvServerSettings_labelHeading" xml:space="preserve">
-    <value>Please set the needed options for the TV-Server installation:</value>
+    <value>Please set the needed options for the TV-Service installation:</value>
   </data>
   <data name="TvServerSettings_labelInstDir" xml:space="preserve">
-    <value>TV-Server install dir:</value>
+    <value>TV-Service installation directory:</value>
   </data>
   <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
-    <value>Select the installation folder for the TV-Server</value>
+    <value>Select the installation folder for the TV-Service</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>Thank you for choosing MediaPortal. . The FREE OpenSource MediaCenter!</value>
+    <value>Thank you for choosing MediaPortal... The FREE OpenSource MediaCenter!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
-    <value>This deployment tool will guide you through the installation process</value>
+    <value>This tool will guide you through the installation process</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
     <value>Please select your language before you continue</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal is FREE, if you bought it on ebay, then you have been fooled ;-(</value>
+    <value>MediaPortal is FREE - if you bought it on ebay you have been fooled!</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Configure</value>
@@ -475,9 +475,9 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>An internet connection is required for the installation process.
-Do you want to start with the installation process now, or do you want
-to only download the required components in order to perform the 
-installation later,  maybe on a pc without an internet connection?</value>
+Do you want to start with the installation process now or do you just 
+want to download the required components in order to perform the 
+installation later (maybe on a pc without an internet connection)?</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
     <value>Only download required components</value>

@@ -39,7 +39,7 @@ namespace MediaPortal.DeployTool
   public partial class DeployTool : Form
   {
     private DeployDialog _currentDialog;
-    private string _currentCulture="en-US";
+    private string _currentCulture = "en-US";
 
     private void UpdateUI()
     {
@@ -51,31 +51,31 @@ namespace MediaPortal.DeployTool
 
     public DeployTool()
     {
-        //Check if appplication is started from UNC path and if startup path is readonly
-        if (!Utils.CheckStartupPath())
-            Environment.Exit(-1);
+      //Check if appplication is started from UNC path and if startup path is readonly
+      if (!Utils.CheckStartupPath())
+        Environment.Exit(-1);
 
-        //Check if x86 or x64 architecture
-        Utils.Check64bit();
+      //Check if x86 or x64 architecture
+      Utils.Check64bit();
 
-        //Create necessary directory tree
-        if (!Directory.Exists(Application.StartupPath + "\\deploy"))
-            Directory.CreateDirectory(Application.StartupPath + "\\deploy");
+      //Create necessary directory tree
+      if (!Directory.Exists(Application.StartupPath + "\\deploy"))
+        Directory.CreateDirectory(Application.StartupPath + "\\deploy");
 
-        //Set default folders
-        InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
-        InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
+      //Set default folders
+      InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
+      InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
 
-        // Paint first screen
-        InitializeComponent();
-        Localizer.Instance.SwitchCulture("en-US");
-        UpdateUI();
-        
-        _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
-        splitContainer2.Panel1.Controls.Add(_currentDialog);
-        InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
-        backButton.Visible = false;
-        UpdateUI();
+      // Paint first screen
+      InitializeComponent();
+      Localizer.Instance.SwitchCulture("en-US");
+      UpdateUI();
+
+      _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
+      splitContainer2.Panel1.Controls.Add(_currentDialog);
+      InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
+      backButton.Visible = false;
+      UpdateUI();
     }
 
     private void SwitchDialog(DeployDialog dlg)
@@ -113,7 +113,7 @@ namespace MediaPortal.DeployTool
 
     private void backButton_Click(object sender, EventArgs e)
     {
-      bool isFirstDlg=false;
+      bool isFirstDlg = false;
       _currentDialog = DialogFlowHandler.Instance.GetPreviousDlg(ref isFirstDlg);
       if (isFirstDlg)
         backButton.Visible = false;
