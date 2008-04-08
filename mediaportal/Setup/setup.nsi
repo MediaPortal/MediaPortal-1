@@ -31,16 +31,16 @@
 #
 #**********************************************************************************************************#
 Name "MediaPortal"
-#SetCompressor lzma
-SetCompressor /SOLID lzma  ; disabled solid, because of performance reasons
+SetCompressor /SOLID lzma
+RequestExecutionLevel admin
 
 !ifdef HIGH_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
-  !define MEDIAPORTAL.FILTERBIN "..\MediaPortal.Base"
+  !define MEDIAPORTAL.FILTERBIN "..\..\DirectShowFilters\Release"
   !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !else
   !define MEDIAPORTAL.BASE "..\MediaPortal.Base"
-  !define MEDIAPORTAL.FILTERBIN "..\MediaPortal.Base"
+  !define MEDIAPORTAL.FILTERBIN "..\..\DirectShowFilters\Release"
   !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !endif
 !define BUILD_TYPE "Release"
