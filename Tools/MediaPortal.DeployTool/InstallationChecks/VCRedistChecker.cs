@@ -80,10 +80,18 @@ namespace MediaPortal.DeployTool
           return result;
       }
       string ManifestDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\winsxs\\Manifests\\";
-      string ManifestCRT = "x86_microsoft.vc80.crt_1fc8b3b9a1e18e3b_8.0.50727.762_none_10b2f55f9bffb8f8.manifest";
-      string ManifestMFC = "x86_microsoft.vc80.mfc_1fc8b3b9a1e18e3b_8.0.50727.762_none_0c178a139ee2a7ed.manifest";
-      string ManifestATL = "x86_microsoft.vc80.atl_1fc8b3b9a1e18e3b_8.0.50727.762_none_11ecb0ab9b2caf3c.manifest";
-      if (File.Exists(ManifestDir + ManifestCRT) && File.Exists(ManifestDir + ManifestMFC) && File.Exists(ManifestDir + ManifestATL))
+      //Manifests for Vista
+      string ManifestCRT_Vista = "x86_microsoft.vc80.crt_1fc8b3b9a1e18e3b_8.0.50727.762_none_10b2f55f9bffb8f8.manifest";
+      string ManifestMFC_Vista = "x86_microsoft.vc80.mfc_1fc8b3b9a1e18e3b_8.0.50727.762_none_0c178a139ee2a7ed.manifest";
+      string ManifestATL_Vista = "x86_microsoft.vc80.atl_1fc8b3b9a1e18e3b_8.0.50727.762_none_11ecb0ab9b2caf3c.manifest";
+      //Manifests for XP
+      string ManifestCRT_XP    = "x86_Microsoft.VC80.CRT_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_6b128700.manifest";
+      string ManifestMFC_XP    = "x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_3bf8fa05.manifest";
+      string ManifestATL_XP    = "x86_Microsoft.VC80.ATL_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_cbb27474.manifest";
+      
+      if (File.Exists(ManifestDir + ManifestCRT_Vista) && File.Exists(ManifestDir + ManifestMFC_Vista) && File.Exists(ManifestDir + ManifestATL_Vista))
+          result.state = CheckState.INSTALLED;
+      else if (File.Exists(ManifestDir + ManifestCRT_XP) && File.Exists(ManifestDir + ManifestMFC_XP) && File.Exists(ManifestDir + ManifestATL_XP))
           result.state = CheckState.INSTALLED;
       else
           result.state = CheckState.NOT_INSTALLED;
