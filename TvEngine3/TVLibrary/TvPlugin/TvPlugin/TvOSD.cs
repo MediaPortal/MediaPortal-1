@@ -1300,7 +1300,18 @@ namespace TvPlugin
       }
       else
       {
-        return TVHome.Navigator.ZapChannel.DisplayName;
+        string tmpDisplayName = TVHome.Navigator.ZapChannel.DisplayName;
+        Channel tmpChannel = TVHome.Navigator.GetChannel(tmpDisplayName);
+
+        if (tmpChannel != null)
+        {
+          return TVHome.Navigator.ZapChannel.DisplayName;
+        }
+        else
+        {
+          TVHome.Navigator.ReLoad(); // Let TvHome reload all channel information from the database. This makes sure that recently renamed linked subchannels handled the right way.
+          return TVHome.Navigator.ZapChannel.DisplayName;
+        }
       }
     }
 
