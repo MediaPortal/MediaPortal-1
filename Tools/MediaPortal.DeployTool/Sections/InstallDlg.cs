@@ -41,7 +41,7 @@ namespace MediaPortal.DeployTool
     public InstallDlg()
     {
       InitializeComponent();
-      type=DialogType.Installation;
+      type = DialogType.Installation;
       PopulateListView();
       UpdateUI();
     }
@@ -51,13 +51,13 @@ namespace MediaPortal.DeployTool
     {
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-          labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingDownload");
-          buttonInstall.Text = Localizer.Instance.GetString("Install_buttonDownload");
+        labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingDownload");
+        buttonInstall.Text = Localizer.Instance.GetString("Install_buttonDownload");
       }
       else
       {
-          labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingInstall");
-          buttonInstall.Text = Localizer.Instance.GetString("Install_buttonInstall");
+        labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingInstall");
+        buttonInstall.Text = Localizer.Instance.GetString("Install_buttonInstall");
       }
       listView.Columns[0].Text = Localizer.Instance.GetString("Install_colApplication");
       listView.Columns[1].Text = Localizer.Instance.GetString("Install_colState");
@@ -96,9 +96,10 @@ namespace MediaPortal.DeployTool
       }
       return isComplete;
     }
+
     private void AddPackageToListView(IInstallationPackage package)
     {
-      ListViewItem item=listView.Items.Add(package.GetDisplayName());
+      ListViewItem item = listView.Items.Add(package.GetDisplayName());
       item.Tag = package;
       CheckResult result = package.CheckStatus();
       switch (result.state)
@@ -117,35 +118,35 @@ namespace MediaPortal.DeployTool
           item.ForeColor = System.Drawing.Color.Red;
           break;
         case CheckState.CONFIGURED:
-            item.SubItems.Add(Localizer.Instance.GetString("Install_stateConfigured"));
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
-            item.ForeColor = System.Drawing.Color.Green;
+          item.SubItems.Add(Localizer.Instance.GetString("Install_stateConfigured"));
+          item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+          item.ForeColor = System.Drawing.Color.Green;
           break;
         case CheckState.NOT_CONFIGURED:
-            item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotConfigured"));
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionConfigure"));
-            item.ForeColor = System.Drawing.Color.Red;
+          item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotConfigured"));
+          item.SubItems.Add(Localizer.Instance.GetString("Install_actionConfigure"));
+          item.ForeColor = System.Drawing.Color.Red;
           break;
         case CheckState.REMOVED:
-            item.SubItems.Add(Localizer.Instance.GetString("Install_stateRemoved"));
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
-            item.ForeColor = System.Drawing.Color.Green;
-            break;
+          item.SubItems.Add(Localizer.Instance.GetString("Install_stateRemoved"));
+          item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+          item.ForeColor = System.Drawing.Color.Green;
+          break;
         case CheckState.NOT_REMOVED:
-            item.SubItems.Add(Localizer.Instance.GetString("Install_stateUninstall"));
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionRemove"));
-            item.ForeColor = System.Drawing.Color.Red;
-            break;
+          item.SubItems.Add(Localizer.Instance.GetString("Install_stateUninstall"));
+          item.SubItems.Add(Localizer.Instance.GetString("Install_actionRemove"));
+          item.ForeColor = System.Drawing.Color.Red;
+          break;
         case CheckState.DOWNLOADED:
-            item.SubItems.Add(Localizer.Instance.GetString("Install_stateDownloaded"));
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
-            item.ForeColor = System.Drawing.Color.Green;
-            break;
+          item.SubItems.Add(Localizer.Instance.GetString("Install_stateDownloaded"));
+          item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+          item.ForeColor = System.Drawing.Color.Green;
+          break;
         case CheckState.NOT_DOWNLOADED:
-            item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotDownloaded"));
-            item.SubItems.Add(Localizer.Instance.GetString("Install_actionDownload"));
-            item.ForeColor = System.Drawing.Color.Red;
-            break;
+          item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotDownloaded"));
+          item.SubItems.Add(Localizer.Instance.GetString("Install_actionDownload"));
+          item.ForeColor = System.Drawing.Color.Red;
+          break;
         case CheckState.VERSION_MISMATCH:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateVersionMismatch"));
           if (result.needsDownload)
@@ -156,56 +157,57 @@ namespace MediaPortal.DeployTool
           break;
       }
     }
+
     private void PopulateListView()
     {
-        listView.Items.Clear();
-        if (InstallationProperties.Instance["InstallType"] != "download_only")
-            AddPackageToListView(new OldPackageChecker());
-        AddPackageToListView(new DirectX9Checker());
-        AddPackageToListView(new VCRedistChecker());
-        switch(InstallationProperties.Instance["InstallType"])
-        {            
-            case "singleseat":
-                        AddPackageToListView(new MediaPortalChecker());
-                        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
-                            AddPackageToListView(new MSSQLExpressChecker());
-                        if (InstallationProperties.Instance["DBMSType"] == "mysql")
-                            AddPackageToListView(new MySQLChecker());
-                        AddPackageToListView(new TvServerChecker());
-                        AddPackageToListView(new TvPluginServerChecker());
-                        AddPackageToListView(new WindowsFirewallChecker());
-                        break;
+      listView.Items.Clear();
+      if (InstallationProperties.Instance["InstallType"] != "download_only")
+        AddPackageToListView(new OldPackageChecker());
+      AddPackageToListView(new DirectX9Checker());
+      AddPackageToListView(new VCRedistChecker());
+      switch (InstallationProperties.Instance["InstallType"])
+      {
+        case "singleseat":
+          AddPackageToListView(new MediaPortalChecker());
+          if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
+            AddPackageToListView(new MSSQLExpressChecker());
+          if (InstallationProperties.Instance["DBMSType"] == "mysql")
+            AddPackageToListView(new MySQLChecker());
+          AddPackageToListView(new TvServerChecker());
+          AddPackageToListView(new TvPluginServerChecker());
+          AddPackageToListView(new WindowsFirewallChecker());
+          break;
 
-            case "tvserver_master":
-                        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
-                          AddPackageToListView(new MSSQLExpressChecker());
-                        if (InstallationProperties.Instance["DBMSType"] == "mysql")
-                          AddPackageToListView(new MySQLChecker());
-                        AddPackageToListView(new TvServerChecker());
-                        AddPackageToListView(new WindowsFirewallChecker());
-                        break;
+        case "tvserver_master":
+          if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
+            AddPackageToListView(new MSSQLExpressChecker());
+          if (InstallationProperties.Instance["DBMSType"] == "mysql")
+            AddPackageToListView(new MySQLChecker());
+          AddPackageToListView(new TvServerChecker());
+          AddPackageToListView(new WindowsFirewallChecker());
+          break;
 
-            case "tvserver_slave":
-                        AddPackageToListView(new TvServerChecker());
-                        AddPackageToListView(new WindowsFirewallChecker());
-                        break;
+        case "tvserver_slave":
+          AddPackageToListView(new TvServerChecker());
+          AddPackageToListView(new WindowsFirewallChecker());
+          break;
 
-            case "client":
-                        AddPackageToListView(new MediaPortalChecker());
-                        AddPackageToListView(new TvPluginServerChecker());
-                        break;
+        case "client":
+          AddPackageToListView(new MediaPortalChecker());
+          AddPackageToListView(new TvPluginServerChecker());
+          break;
 
-            case "mp_only":
-                        AddPackageToListView(new MediaPortalChecker());
-                        break;
+        case "mp_only":
+          AddPackageToListView(new MediaPortalChecker());
+          break;
 
-            case "download_only":
-                        AddPackageToListView(new MediaPortalChecker());
-                        AddPackageToListView(new MSSQLExpressChecker());
-                        AddPackageToListView(new MySQLChecker());
-                        AddPackageToListView(new TvServerChecker());
-                        AddPackageToListView(new TvPluginServerChecker());
-                        break;
+        case "download_only":
+          AddPackageToListView(new MediaPortalChecker());
+          AddPackageToListView(new MSSQLExpressChecker());
+          AddPackageToListView(new MySQLChecker());
+          AddPackageToListView(new TvServerChecker());
+          AddPackageToListView(new TvPluginServerChecker());
+          break;
 
       }
       listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -219,7 +221,7 @@ namespace MediaPortal.DeployTool
         PopulateListView();
     }
 
-    private bool PerformPackageAction(IInstallationPackage package,ListViewItem item)
+    private bool PerformPackageAction(IInstallationPackage package, ListViewItem item)
     {
       CheckResult result = package.CheckStatus();
       if (result.state != CheckState.INSTALLED)
@@ -229,11 +231,11 @@ namespace MediaPortal.DeployTool
           case CheckState.NOT_INSTALLED:
             if (result.needsDownload)
             {
-              item.SubItems[1].Text=Localizer.Instance.GetString("Install_msgDownloading");
+              item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgDownloading");
               Update();
               if (!package.Download())
-              {      
-                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"),package.GetDisplayName()));
+              {
+                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"), package.GetDisplayName()));
                 return false;
               }
             }
@@ -245,24 +247,27 @@ namespace MediaPortal.DeployTool
               return false;
             }
             break;
+
           case CheckState.NOT_CONFIGURED:
             item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgConfiguring");
             Update();
             if (!package.Install())
             {
-                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errConfigureFailed"), package.GetDisplayName()));
-                return false;
+              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errConfigureFailed"), package.GetDisplayName()));
+              return false;
             }
             break;
+
           case CheckState.REMOVED:
             item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgUninstalling");
             Update();
             if (!package.Install())
             {
-                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errRemoveFailed"), package.GetDisplayName()));
-                return false;
+              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errRemoveFailed"), package.GetDisplayName()));
+              return false;
             }
             break;
+
           case CheckState.VERSION_MISMATCH:
             item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgUninstalling");
             Update();
@@ -289,13 +294,14 @@ namespace MediaPortal.DeployTool
               return false;
             }
             break;
+
           case CheckState.NOT_DOWNLOADED:
             item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgDownloading");
             Update();
             if (!package.Download())
             {
-                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errDownloadFailed"), package.GetDisplayName()));
-                return false;
+              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errDownloadFailed"), package.GetDisplayName()));
+              return false;
             }
             break;
         }
@@ -307,7 +313,7 @@ namespace MediaPortal.DeployTool
       foreach (ListViewItem item in listView.Items)
       {
         IInstallationPackage package = (IInstallationPackage)item.Tag;
-        if (!PerformPackageAction(package,item))
+        if (!PerformPackageAction(package, item))
           break;
       }
       PopulateListView();

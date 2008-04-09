@@ -27,37 +27,44 @@ namespace MediaPortal.DeployTool
     {
       InitializeComponent();
     }
-    public DialogResult ShowDialog(string url, string targetFile)
+
+    public DialogResult ShowDialog(string url, string targetFile, string userAgentOs)
     {
       _target = targetFile;
-      DownloadFile(url, targetFile);
+      DownloadFile(url, targetFile, userAgentOs);
       return base.ShowDialog();
     }
-    private void DownloadFile(string url, string targetFile)
+
+    private void DownloadFile(string url, string targetFile, string userAgentOs)
     {
       labelURL.Text = url;
       labelTarget.Text = Path.GetFileName(targetFile);
       client = new WebClient();
+      client.Headers.Add("user-agent", @"Mozilla/4.0 (compatible; MSIE 7.0;" + userAgentOs);
       client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
-      client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);  
+      client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
       try
       {
-          client.DownloadFileAsync(new Uri(url), targetFile);    
+        client.DownloadFileAsync(new Uri(url), targetFile);
       }
       catch
       {
         Utils.ErrorDlg(Localizer.Instance.GetString("HTTPDownload_errDownloadFailed"));
-        File.Delete(targetFile);
+        try
+        {
+          File.Delete(targetFile);
+        }
+        catch (Exception) { }
         DialogResult = DialogResult.Cancel;
       }
     }
 
-    void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+    private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
     {
       DialogResult = DialogResult.OK;
     }
 
-    void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+    private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
       progressBar.Value = e.ProgressPercentage;
     }
@@ -66,7 +73,11 @@ namespace MediaPortal.DeployTool
     {
       client.CancelAsync();
       Utils.ErrorDlg(Localizer.Instance.GetString("HTTPDownload_msgCanceledByUser"));
-      File.Delete(_target);
+      try
+      {
+        File.Delete(_target);
+      }
+      catch (Exception) { }
       DialogResult = DialogResult.Cancel;
     }
   }

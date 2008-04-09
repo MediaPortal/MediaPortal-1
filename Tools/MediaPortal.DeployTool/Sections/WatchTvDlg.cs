@@ -40,7 +40,7 @@ namespace MediaPortal.DeployTool
     public WatchTVDlg()
     {
       // First install screen: check if OS is compliant !!!
-      Utils.CheckOSRequirement();
+      Utils.CheckOSRequirement(true);
 
       InitializeComponent();
       type = DialogType.WatchTV;

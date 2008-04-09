@@ -65,7 +65,7 @@ namespace MediaPortal.DeployTool
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))
       {
-        DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+        DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile, GetUserAgentOsString());
       }
       doc.Load(XmlFile);
       XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/URL");
@@ -81,7 +81,7 @@ namespace MediaPortal.DeployTool
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))
       {
-        DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+        DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile, GetUserAgentOsString());
       }
       doc.Load(XmlFile);
       XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/FILE");
@@ -97,7 +97,7 @@ namespace MediaPortal.DeployTool
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))
       {
-        DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile);
+        DialogResult result = dlg.ShowDialog("http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml", XmlFile, GetUserAgentOsString());
       }
       doc.Load(XmlFile);
       XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/TYPE");
@@ -123,7 +123,7 @@ namespace MediaPortal.DeployTool
       else
       {
         HTTPDownload dlg = new HTTPDownload();
-        result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Application.StartupPath + "\\deploy\\" + FileName);
+        result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Application.StartupPath + "\\deploy\\" + FileName, GetUserAgentOsString());
       }
       return result;
     }
@@ -132,7 +132,8 @@ namespace MediaPortal.DeployTool
     {
       DialogResult result = DialogResult.Cancel;
       FileInfo FileInfo = new FileInfo(FileName);
-      for (int i = 0 ; i < 5 ; i++)
+
+      for (int i = 0; i < 5; i++)
       {
         if (File.Exists(FileName))
         {
@@ -183,9 +184,22 @@ namespace MediaPortal.DeployTool
       }
     }
 
-    public static void CheckOSRequirement()
+    private static string GetUserAgentOsString()
     {
+      string OsVersion = CheckOSRequirement(false);
+      if (!string.IsNullOrEmpty(OsVersion))
+      {
+        if (OsVersion == "Windows Vista")
+          return "Windows NT 6.0";
+        else
+          if (OsVersion == "Windows 2003 Server")
+            return "Windows NT 5.2";
+      }
+      return "Windows NT 5.1"; // XP
+    }
 
+    public static string CheckOSRequirement(bool NotifyUnsupported)
+    {
       Version OsVersion = Environment.OSVersion.Version;
       bool OsSupport = false;
       string OsDesc = "";
@@ -196,6 +210,7 @@ namespace MediaPortal.DeployTool
           OsDesc = "Windows 95/98/ME/NT";
           OsSupport = false;
           break;
+
         case 5:
           if (OsVersion.Minor == 0)   // 5.0 = Windows2000
           {
@@ -215,34 +230,43 @@ namespace MediaPortal.DeployTool
               OsSupport = false;
             }
             else
+            {
               OsSupport = true;
+              OsDesc = "Windows XP";
+            }
           }
           if (OsVersion.Major == 2)   // 5.2 = Windows2003
+          {
             OsSupport = true;
+            OsDesc = "Windows 2003 Server";
+          }
           break;
-        case 6:                         // 6.0 = WindowsVista, Windows2008
+
+        case 6:                       // 6.0 = WindowsVista, Windows2008
           OsSupport = true;
+          OsDesc = "Windows Vista";
           break;
       }
-      if (!OsSupport)
+      if (!OsSupport && NotifyUnsupported)
       {
         MessageBox.Show(Localizer.Instance.GetString("OS_Support"), OsDesc, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         Environment.Exit(-1);
       }
+      return OsDesc;
     }
 
     public static void Check64bit()
     {
-        if (IntPtr.Size == 8)
-        { 
-            InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-            InstallationProperties.Instance.Set("Sql2005Download", "64");
-        }
-        else
-        {
-            InstallationProperties.Instance.Set("RegistryKeyAdd", "");
-            InstallationProperties.Instance.Set("Sql2005Download", "32");
-        }
+      if (IntPtr.Size == 8)
+      {
+        InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+        InstallationProperties.Instance.Set("Sql2005Download", "64");
+      }
+      else
+      {
+        InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+        InstallationProperties.Instance.Set("Sql2005Download", "32");
+      }
     }
 
     public static bool CheckStartupPath()
