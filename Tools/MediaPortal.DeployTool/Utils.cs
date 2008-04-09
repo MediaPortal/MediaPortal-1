@@ -6,6 +6,7 @@ using System.IO;
 using System.Resources;
 using System.Globalization;
 using System.Xml;
+using System.Management;
 
 namespace MediaPortal.DeployTool
 {
@@ -257,33 +258,51 @@ namespace MediaPortal.DeployTool
 
     public static void Check64bit()
     {
-      if (IntPtr.Size == 8)
-      {
-        InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-        InstallationProperties.Instance.Set("Sql2005Download", "64");
-      }
-      else
-      {
-        InstallationProperties.Instance.Set("RegistryKeyAdd", "");
-        InstallationProperties.Instance.Set("Sql2005Download", "32");
-      }
+        string Architecture = null;
+        ManagementClass management = new ManagementClass("Win32_OperatingSystem");
+        ManagementObjectCollection mngInstance = management.GetInstances();
+        foreach (ManagementObject mngObject in mngInstance)
+        {
+            Architecture = mngObject["OSArchitecture"].ToString();
+        }
+
+        if (Architecture == "64-bit")
+        {
+            //MessageBox.Show("64-bit OS detected");
+            InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+            InstallationProperties.Instance.Set("Sql2005Download", "64");
+        }
+        else
+        {
+            //MessageBox.Show("32-bit OS detected");
+            InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+            InstallationProperties.Instance.Set("Sql2005Download", "32");
+        }
     }
 
     public static bool CheckStartupPath()
     {
-      if (Application.StartupPath.StartsWith("\\"))
-      {
-        MessageBox.Show(Localizer.Instance.GetString("Startup_UNC"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        return false;
-      }
-      FileInfo file = new FileInfo(Application.ExecutablePath);
-      DirectoryInfo dir = file.Directory;
-      if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-      {
-        MessageBox.Show(Localizer.Instance.GetString("Startup_Readonly"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        return false;
-      }
-      return true;
+        try
+        {
+            if (Directory.GetCurrentDirectory().StartsWith("\\"))
+            {
+                MessageBox.Show(Localizer.Instance.GetString("Startup_UNC"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return false;
+            }
+            FileInfo file = new FileInfo(Application.ExecutablePath);
+            DirectoryInfo dir = file.Directory;
+            if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            {
+                MessageBox.Show(Localizer.Instance.GetString("Startup_Readonly"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return false;
+            }
+            return true;
+        }
+        catch
+        {
+            MessageBox.Show(Localizer.Instance.GetString("Startup_UNC_Readonly"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            return false;
+        }
     }
   }
 }
