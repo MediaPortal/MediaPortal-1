@@ -512,4 +512,7 @@ installation later (maybe on a pc without an internet connection)?</value>
   <data name="Startup_UNC" xml:space="preserve">
     <value>Please start installation from a local or mapped network drive</value>
   </data>
+  <data name="Startup_UNC_Readonly" xml:space="preserve">
+    <value>Unable to determine startup path. Please try running from a local drive with write access.</value>
+  </data>
 </root>
