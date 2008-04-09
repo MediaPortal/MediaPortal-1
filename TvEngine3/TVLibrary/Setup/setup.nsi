@@ -307,16 +307,16 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   SetOutPath $INSTDIR
   ${If} $noDesktopSC != 1
-    CreateShortcut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+    CreateShortCut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
   ${EndIf}
 
   ${If} $noStartMenuSC != 1
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
     CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
     CreateDirectory "${COMMON_APPDATA}\log"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
+    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
     # [OBSOLETE] CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
     !insertmacro MUI_STARTMENU_WRITE_END
   ${EndIf}
@@ -353,7 +353,7 @@ ${MementoSectionEnd}
 
   DetailPrint "remove files..."
   ; Remove TuningParameters
-  RmDir /r /REBOOTOK $INSTDIR\TuningParameters
+  RMDir /r /REBOOTOK $INSTDIR\TuningParameters
 
   ; Remove Plugins
   Delete /REBOOTOK $INSTDIR\Plugins\ComSkipLauncher.dll
@@ -363,7 +363,7 @@ ${MementoSectionEnd}
   Delete /REBOOTOK $INSTDIR\Plugins\ServerBlaster.dll
   Delete /REBOOTOK $INSTDIR\Plugins\TvMovie.dll
   Delete /REBOOTOK $INSTDIR\Plugins\XmlTvImport.dll
-  RmDir "$INSTDIR\Plugins"
+  RMDir "$INSTDIR\Plugins"
 
   ; And finally remove all the files installed
   ; Leave the directory in place, as it might contain user modified files
@@ -563,17 +563,17 @@ Section Uninstall
   ; remove Start Menu shortcuts
   Delete "$SMPROGRAMS\$StartMenuGroup\uninstall TV-Server.lnk"
   Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
-  RmDir "$SMPROGRAMS\$StartMenuGroup"
+  RMDir "$SMPROGRAMS\$StartMenuGroup"
 
   ; remove last files and instdir
-  RmDir /REBOOTOK "$INSTDIR\pmt"
+  RMDir /REBOOTOK "$INSTDIR\pmt"
   Delete /REBOOTOK "$INSTDIR\uninstall-tve3.exe"
-  RmDir "$INSTDIR"
+  RMDir "$INSTDIR"
 
   ${If} $RemoveAll == 1
     DetailPrint "Removing User Settings"
-    RmDir /r /REBOOTOK "${COMMON_APPDATA}"
-    RmDir /r /REBOOTOK $INSTDIR
+    RMDir /r /REBOOTOK "${COMMON_APPDATA}"
+    RMDir /r /REBOOTOK $INSTDIR
   ${EndIf}
 SectionEnd
 
