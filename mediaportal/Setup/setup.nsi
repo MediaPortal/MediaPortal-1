@@ -865,7 +865,7 @@ Function .onInit
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
-  StrCpy $noDscaler 0
+#  StrCpy $noDscaler 0
   StrCpy $noGabest 0
   StrCpy $noDesktopSC 0
   StrCpy $noStartMenuSC 0
@@ -873,11 +873,13 @@ Function .onInit
   ; gets comandline parameter
   ${GetParameters} $R0
 
+/*
   ; check for special parameter and set the their variables
   ClearErrors
   ${GetOptions} $R0 "/noDscaler" $R1
   IfErrors +2
   StrCpy $noDscaler 1
+*/
 
   ClearErrors
   ${GetOptions} $R0 "/noGabest" $R1
