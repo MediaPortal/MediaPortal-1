@@ -64,8 +64,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("hoverKeepAspectratio")]      protected bool    _hoverKeepAspectRatio = true;
     [XMLSkinElement("scrollTimeMin")]             protected int     _scrollTimeMin        = 100;        // min duration for a scrolling - speedup
     [XMLSkinElement("scrollTime")]                protected int     _scrollTimeMax        = 160;        // max. duration for a scrolling - normal
-    [XMLSkinElement("mouseScrollTimeMin")]        protected int     _mouseScrollTimeMin   = 160;
-    [XMLSkinElement("mouseScrollTime")]           protected int     _mouseScrollTimeMax   = 400;
+    [XMLSkinElement("mouseScrollTimeMin")]        protected int     _mouseScrollTimeMin   = 250;
+    [XMLSkinElement("mouseScrollTime")]           protected int     _mouseScrollTimeMax   = 600;
     [XMLSkinElement("spaceAfterSelected")]        protected int     _spaceAfterSelected   = 0;
     [XMLSkinElement("horizontal")]                protected bool    _horizontal           = false;
     [XMLSkinElement("showAllHover")]              protected bool    _showAllHover         = false;
