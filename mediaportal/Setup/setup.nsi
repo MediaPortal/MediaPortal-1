@@ -403,13 +403,8 @@ Section "MediaPortal core files (required)" SecCore
   File "..\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.*"
 
   ; MyBurner plugin dependencies
-  #xcopy /y %1\WindowPlugins\GUIBurner\madlldlib.dll .
-  #xcopy /y %1\XPImapiBurner\bin\%2\XPBurnComponent.dll .
-  #REM xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
   SetOutPath "$MPdir.Base"
-  File "..\WindowPlugins\GUIBurner\madlldlib.dll"
   File "..\XPImapiBurner\bin\${BUILD_TYPE}\XPBurnComponent.dll"
-  #File "..\WindowPlugins\GUIBurner\XPBurnComponent.dll"
 
   ; ========================================
   ; Wizards
