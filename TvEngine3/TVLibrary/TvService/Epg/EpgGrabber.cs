@@ -226,7 +226,11 @@ namespace TvService
         {
           int index = transponder.Index;
           allChecked++;
-          if (allChecked > transponder.Channels.Count) return;
+          if (allChecked > transponder.Channels.Count)
+          {
+            _transponderIndex = tIdx;
+            return;
+          }
           transponder.Index++;
           if (transponder.Index >= transponder.Channels.Count)
             transponder.Index = 0;
@@ -250,11 +254,12 @@ namespace TvService
             _transponderIndex = tIdx;
             return;
           }
-          else
-          {
+          // GEMX 09.04.08: This causes an infinite loop if a channel cannot be tuned
+          //else
+          //{
             //restore index...
-            transponder.Index = index;
-          }
+          //  transponder.Index = index;
+          //}
         }
       }
     }
