@@ -51,10 +51,6 @@ namespace MediaPortal.DeployTool
 
     public DeployTool()
     {
-      //Check if appplication is started from UNC path and if startup path is readonly
-      if (!Utils.CheckStartupPath())
-        Environment.Exit(-1);
-
       //Check if x86 or x64 architecture
       Utils.Check64bit();
 

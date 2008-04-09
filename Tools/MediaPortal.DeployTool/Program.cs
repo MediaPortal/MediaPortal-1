@@ -36,9 +36,12 @@ namespace MediaPortal.DeployTool
     [STAThread]
     static void Main()
     {
-      Application.EnableVisualStyles();
-      Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new DeployTool());
+        if (Utils.CheckStartupPath())
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new DeployTool());
+        }
     }
   }
 }
