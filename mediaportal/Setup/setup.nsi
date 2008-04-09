@@ -130,13 +130,11 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 !define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
-!ifndef HIGH_BUILD
 !define MUI_STARTMENUPAGE_NODISABLE
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER       "Team MediaPortal\MediaPortal"
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT       HKLM
 !define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
-!endif
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN      "$MPdir.Base\Configuration.exe"
 !define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
