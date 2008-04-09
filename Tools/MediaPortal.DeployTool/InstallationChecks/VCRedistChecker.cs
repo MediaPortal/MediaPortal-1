@@ -79,18 +79,14 @@ namespace MediaPortal.DeployTool
               result.state = CheckState.NOT_DOWNLOADED;
           return result;
       }
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\{7299052b-02a4-4627-81f2-1818da5d550d}");
-      if (key == null)
-        result.state = CheckState.NOT_INSTALLED;
-      else
-      {
-        string version = (string)key.GetValue("DisplayVersion");
-        key.Close();
-        if (version == "8.0.56336")
+      string ManifestDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\winsxs\\Manifests\\";
+      string ManifestCRT = "x86_microsoft.vc80.crt_1fc8b3b9a1e18e3b_8.0.50727.762_none_10b2f55f9bffb8f8.manifest";
+      string ManifestMFC = "x86_microsoft.vc80.mfc_1fc8b3b9a1e18e3b_8.0.50727.762_none_0c178a139ee2a7ed.manifest";
+      string ManifestATL = "x86_microsoft.vc80.atl_1fc8b3b9a1e18e3b_8.0.50727.762_none_11ecb0ab9b2caf3c.manifest";
+      if (File.Exists(ManifestDir + ManifestCRT) && File.Exists(ManifestDir + ManifestMFC) && File.Exists(ManifestDir + ManifestATL))
           result.state = CheckState.INSTALLED;
-        else
-          result.state = CheckState.VERSION_MISMATCH;
-      }
+      else
+          result.state = CheckState.NOT_INSTALLED;
       return result;
     }
   }
