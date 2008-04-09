@@ -52,7 +52,7 @@ SetCompressor /SOLID lzma
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
 ; variables for commandline parameters for Installer
-Var noDscaler
+#Var noDscaler
 Var noGabest
 Var noDesktopSC
 Var noStartMenuSC
@@ -289,6 +289,8 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Profiles\*"
   SetOutPath "$MPdir.Base\scripts"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\scripts\*"
+  SetOutPath "$MPdir.Base\TTPremiumBoot"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\TTPremiumBoot\*"
   SetOutPath "$MPdir.Base\Tuningparameters"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Tuningparameters\*"
   SetOutPath "$MPdir.Base\WebEPG"
@@ -414,42 +416,6 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\Wizards"
   File "..\Configuration\Wizards\*.*"
 
-  ; TTPremiumBoot
-  SetOutPath "$MPdir.Base\TTPremiumBoot"
-  File "..\TTPremiumBoot\*.*"
-  SetOutPath "$MPdir.Base\TTPremiumBoot\21"
-  File "..\TTPremiumBoot\21\*.*"
-  SetOutPath "$MPdir.Base\TTPremiumBoot\24"
-  File "..\TTPremiumBoot\24\*.*"
-  SetOutPath "$MPdir.Base\TTPremiumBoot\24Data"
-  File "..\TTPremiumBoot\24Data\*.*"
-  /*
-REM TTPremiumBoot
-xcopy /y %1\TTPremiumBoot\*.* TTPremiumBoot\
-xcopy /y %1\TTPremiumBoot\21\*.* TTPremiumBoot\21\
-xcopy /y %1\TTPremiumBoot\24\*.* TTPremiumBoot\24\
-xcopy /y %1\TTPremiumBoot\24Data\*.* \
-*/
-/*
-REM C#scripts
-xcopy /y %1\scripts\*.* scripts\
-xcopy /y %1\scripts\imdb\*.* scripts\imdb\
-  ; C#scripts
-  SetOutPath "$INSTDIR\scripts"
-  File "..\scripts\*.*"
-  SetOutPath "$INSTDIR\scripts\imdb"
-  File "..\scripts\imdb\*.*"
-
-  #SetOutPath "$MPdir.Cache"
-  #SetOutPath "$MPdir.BurnerSupport"
-      $\r$\nConfig:  $MPdir.Config \
-      $\r$\nPlugins: $MPdir.Plugins \
-      $\r$\nLog: $MPdir.Log \
-      $\r$\nCustomInputDevice: $MPdir.CustomInputDevice \
-      $\r$\nDatabase: $MPdir.Database \
-*/
-
-
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
@@ -517,7 +483,7 @@ SectionEnd
     RmDir /r /REBOOTOK "$MPdir.Base\osdskin-media"
     RmDir /r /REBOOTOK "$MPdir.Base\Profiles"
     RmDir /r /REBOOTOK "$MPdir.Base\scripts"
-    #RmDir /r /REBOOTOK "$MPdir.Base\TTPremiumBoot"
+    RmDir /r /REBOOTOK "$MPdir.Base\TTPremiumBoot"
     RmDir /r /REBOOTOK "$MPdir.Base\Tuningparameters"
     RmDir /r /REBOOTOK "$MPdir.Base\WebEPG"
     RmDir /r /REBOOTOK "$MPdir.Base\Wizards"
