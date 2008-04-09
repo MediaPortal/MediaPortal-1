@@ -97,8 +97,8 @@ namespace SetupTv.Sections
       this.labelInfo2.Name = "labelInfo2";
       this.labelInfo2.Size = new System.Drawing.Size(440, 30);
       this.labelInfo2.TabIndex = 1;
-      this.labelInfo2.Text = "It allows you to listen to your favorite music and radio, watch your videos and D" +
-          "VDs, view, schedule and record live TV and much more!";
+      this.labelInfo2.Text = "Clients like MediaPortal can use the TV-Server to watch Live-TV/recordings/EPG ov" +
+          "er the network.";
       // 
       // labelInfo1
       // 
@@ -108,8 +108,8 @@ namespace SetupTv.Sections
       this.labelInfo1.Name = "labelInfo1";
       this.labelInfo1.Size = new System.Drawing.Size(440, 32);
       this.labelInfo1.TabIndex = 0;
-      this.labelInfo1.Text = "MediaPortal is an open source project, hosted at SourceForge, that will turn your" +
-          " home computer into a fully fledged multi media center (HTPC).";
+      this.labelInfo1.Text = "The TV-Server is an application which allows you to setup one or more central ser" +
+          "vers with multiple TV cards.";
       // 
       // groupBoxContact
       // 
