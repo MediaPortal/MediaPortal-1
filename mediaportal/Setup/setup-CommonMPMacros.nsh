@@ -77,35 +77,35 @@
 */
 
 !macro FinishSection SecName
-    ;This macro reads section flag set by user and removes the section
-    ;if it is not selected.
-    ;Then it writes component installed flag to registry
-    ;Input: section index constant name specified in Section command.
+  ;This macro reads section flag set by user and removes the section
+  ;if it is not selected.
+  ;Then it writes component installed flag to registry
+  ;Input: section index constant name specified in Section command.
 
-    ${IfNot} ${SectionIsSelected} "${${SecName}}"
-        ClearErrors
-        ReadRegDWORD $R0 ${MEMENTO_REGISTRY_ROOT} '${MEMENTO_REGISTRY_KEY}' 'MementoSection_${SecName}'
+  ${IfNot} ${SectionIsSelected} "${${SecName}}"
+    ClearErrors
+    ReadRegDWORD $R0 ${MEMENTO_REGISTRY_ROOT} '${MEMENTO_REGISTRY_KEY}' 'MementoSection_${SecName}'
 
-        ${If} $R0 = 1
-            !insertmacro "Remove_${${SecName}}"
-        ${EndIf}
+    ${If} $R0 = 1
+      !insertmacro "Remove_${${SecName}}"
     ${EndIf}
+  ${EndIf}
 !macroend
 
 !macro RemoveSection SecName
-    ;This macro is used to call section's Remove_... macro
-    ;from the uninstaller.
-    ;Input: section index constant name specified in Section command.
+  ;This macro is used to call section's Remove_... macro
+  ;from the uninstaller.
+  ;Input: section index constant name specified in Section command.
 
-    !insertmacro "Remove_${${SecName}}"
+  !insertmacro "Remove_${${SecName}}"
 !macroend
 
 !macro DisableComponent SectionName AddText
-    !insertmacro UnselectSection "${SectionName}"
-    ; Make the unselected section read only
-    !insertmacro SetSectionFlag "${SectionName}" 16
-    SectionGetText ${SectionName} $R0
-    SectionSetText ${SectionName} "$R0${AddText}"
+  !insertmacro UnselectSection "${SectionName}"
+  ; Make the unselected section read only
+  !insertmacro SetSectionFlag "${SectionName}" 16
+  SectionGetText ${SectionName} $R0
+  SectionSetText ${SectionName} "$R0${AddText}"
 !macroend
 
 
@@ -130,6 +130,8 @@
 
 # old installations < 0.2.3.0 RC 3
 !macro _MP022IsInstalled _a _b _t _f
+  SetRegView 32
+
   !insertmacro _LOGICLIB_TEMP
   ClearErrors
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{87819CFA-1786-484D-B0DE-10B5FBF2625D}" "UninstallString"
@@ -138,6 +140,8 @@
 !define MP022IsInstalled `"" MP022IsInstalled ""`
 
 !macro _MP023RC3IsInstalled _a _b _t _f
+  SetRegView 32
+
   !insertmacro _LOGICLIB_TEMP
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0 RC3" "UninstallString"
 
@@ -146,6 +150,8 @@
 !define MP023RC3IsInstalled `"" MP023RC3IsInstalled ""`
 
 !macro _MP023IsInstalled _a _b _t _f
+  SetRegView 32
+
   !insertmacro _LOGICLIB_TEMP
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0" "UninstallString"
 
@@ -156,6 +162,8 @@
 ;======================================   OLD TVServer/TVClient INSTALLATION TESTs
 
 !macro _MSI_TVServerIsInstalled _a _b _t _f
+  SetRegView 32
+
   !insertmacro _LOGICLIB_TEMP
   ClearErrors
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4B738773-EE07-413D-AFB7-BB0AB04A5488}" "UninstallString"
@@ -164,6 +172,8 @@
 !define MSI_TVServerIsInstalled `"" MSI_TVServerIsInstalled ""`
 
 !macro _MSI_TVClientIsInstalled _a _b _t _f
+  SetRegView 32
+
   !insertmacro _LOGICLIB_TEMP
   ClearErrors
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F7444E89-5BC0-497E-9650-E50539860DE0}" "UninstallString"
@@ -176,6 +186,8 @@
 ;======================================
 
 !macro _MPIsInstalled _a _b _t _f
+  SetRegView 32
+
   !insertmacro _LOGICLIB_TEMP
   ReadRegStr $_LOGICLIB_TEMP HKLM "${MP_REG_UNINSTALL}" "UninstallString"
 
@@ -184,6 +196,8 @@
 !define MPIsInstalled `"" MPIsInstalled ""`
 
 !macro _TVServerIsInstalled _a _b _t _f
+  SetRegView 32
+
   !insertmacro _LOGICLIB_TEMP
   ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
 
@@ -195,6 +209,8 @@
 !define TVServerIsInstalled `"" TVServerIsInstalled ""`
 
 !macro _TVClientIsInstalled _a _b _t _f
+  SetRegView 32
+
   !insertmacro _LOGICLIB_TEMP
   ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
 
@@ -208,15 +224,38 @@
 ;======================================   3rd PARTY APPLICATION TESTs
 
 !macro _VCRedistIsInstalled _a _b _t _f
-  !insertmacro _LOGICLIB_TEMP
+
   ClearErrors
-  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{7299052b-02a4-4627-81f2-1818da5d550d}" "DisplayVersion"
-  IfErrors `${_f}` 0
-  StrCmp $_LOGICLIB_TEMP "8.0.56336" `${_t}` `${_f}`
+  ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+  IfErrors `${_f}`
+
+  StrCpy $R1 $R0 3
+ 
+  StrCmp $R1 '5.1' lbl_winnt_XP
+  StrCmp $R1 '5.2' lbl_winnt_2003
+  StrCmp $R1 '6.0' lbl_winnt_vista `${_f}`
+
+
+  lbl_winnt_vista:
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc80.crt_1fc8b3b9a1e18e3b_8.0.50727.762_none_10b2f55f9bffb8f8.manifest" 0 `${_f}`
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc80.crt_1fc8b3b9a1e18e3b_8.0.50727.762_none_10b2f55f9bffb8f8.manifest" 0 `${_f}`
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc80.crt_1fc8b3b9a1e18e3b_8.0.50727.762_none_10b2f55f9bffb8f8.manifest" 0 `${_f}`
+  Goto END_OF_VCRedistIsInstalled
+
+  lbl_winnt_2003:
+  lbl_winnt_XP:
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC80.CRT_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_6b128700.manifest" 0 `${_f}`
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_3bf8fa05.manifest" 0 `${_f}`
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC80.ATL_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_cbb27474.manifest" 0 `${_f}`
+  Goto END_OF_VCRedistIsInstalled
+
+  END_OF_VCRedistIsInstalled:
 !macroend
 !define VCRedistIsInstalled `"" VCRedistIsInstalled ""`
 
 !macro _dotNetIsInstalled _a _b _t _f
+  SetRegView 32
+
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $4 HKLM "Software\Microsoft\.NETFramework" "InstallRoot"
@@ -250,6 +289,7 @@
 #**********************************************************************************************************#
 # Get MP infos
 !macro MP_GET_INSTALL_DIR _var
+  SetRegView 32
 
   ${If} ${MP023IsInstalled}
     ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
@@ -262,6 +302,7 @@
 !macroend
 
 !macro TVSERVER_GET_INSTALL_DIR _var
+  SetRegView 32
 
   ${If} ${TVServerIsInstalled}
     ReadRegStr ${_var} HKLM "${TV3_REG_UNINSTALL}" "InstallPath"

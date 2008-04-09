@@ -75,18 +75,21 @@ SectionEnd ; end the section
     MessageBox MB_ICONINFORMATION|MB_OK "no MSI_TVClientIsInstalled"
   ${EndIf}
 
-
-  ${If} ${VCRedistIsInstalled}
-    MessageBox MB_ICONINFORMATION|MB_OK "VCRedistIsInstalled"
-  ${Else}
-    MessageBox MB_ICONINFORMATION|MB_OK "no VCRedistIsInstalled"
-  ${EndIf}
-
 !macroend
 
 Function .onInit
 
-  MessageBox MB_ICONINFORMATION|MB_YESNO "DoInstallChecks?" IDNO noInstallChecks
+  MessageBox MB_ICONINFORMATION|MB_YESNO "Do vcr InstallCheck?" IDNO novcrInstallCheck
+
+  ${If} ${VCRedistIsInstalled}
+    MessageBox MB_ICONINFORMATION|MB_OK "vcr IsInstalled"
+  ${Else}
+    MessageBox MB_ICONINFORMATION|MB_OK "no vcr IsInstalled"
+  ${EndIf}
+
+  novcrInstallCheck:
+  
+  MessageBox MB_ICONINFORMATION|MB_YESNO "Do MP InstallChecks?" IDNO noInstallChecks
     !insertmacro DoInstallChecks
 
   noInstallChecks:
@@ -94,9 +97,9 @@ Function .onInit
   MessageBox MB_ICONINFORMATION|MB_YESNO "DoXmlTests?" IDNO noXmlTests
   
   
-      ${ReadMediaPortalDirs}
+      #${ReadMediaPortalDirs}
 
-      MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
+      #MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
       $\r$\nBase:  $MPdir.Base$\r$\n \
       $\r$\nConfig:  $MPdir.Config \
       $\r$\nPlugins: $MPdir.Plugins \
