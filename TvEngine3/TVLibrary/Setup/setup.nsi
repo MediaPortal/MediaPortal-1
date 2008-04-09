@@ -137,6 +137,11 @@ BrandingText "TV Server ${VERSION} by Team MediaPortal"
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN      "$INSTDIR\SetupTV.exe"
 !define MUI_FINISHPAGE_RUN_TEXT "Run TV-Server Configuration"
+#!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\readme.txt
+#!define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme"
+#!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+!define MUI_FINISHPAGE_LINK "Donate to MediaPortal"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://www.team-mediaportal.com/donate.html"
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
