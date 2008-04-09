@@ -61,10 +61,9 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-        string prg = "MSSQLExpress";
-        string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile(prg));
-        DialogResult result;
-        result = Utils.RetryDownloadFile(FileName, prg);
+        string prg = "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"];
+        string FileName = InstallationProperties.Instance["Sql2005FileName"];
+        DialogResult result = Utils.RetryDownloadFile(FileName, prg);
         return (result == DialogResult.OK);
     }
     public bool Install()
@@ -72,7 +71,7 @@ namespace MediaPortal.DeployTool
 
       string tmpPath=Path.GetTempPath()+"\\SQLEXPRESS";
       //Extract all files
-      Process extract=Process.Start(Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile("MSSQLExpress")),"/X:\""+tmpPath+"\" /Q");
+      Process extract = Process.Start(InstallationProperties.Instance["Sql2005FileName"], "/X:\"" + tmpPath + "\" /Q");
       extract.WaitForExit();
       //Prepare the unattended ini file
       PrepareTemplateINI(tmpPath+"\\template.ini");
@@ -103,7 +102,11 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile("MSSQLExpress")));
+      string prg = "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"];
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile(prg), Utils.GetDownloadType(prg));
+      InstallationProperties.Instance.Set("Sql2005FileName", FileName);
+
+      result.needsDownload = !File.Exists(FileName);
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
           if (result.needsDownload == false)

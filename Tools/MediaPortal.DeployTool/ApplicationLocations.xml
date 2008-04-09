@@ -8,7 +8,17 @@
 		<URL>http://install.team-mediaportal.com/Sql2005</URL>
 		<FILE>sqlexpr32.exe</FILE>
     <TYPE>Automatic</TYPE>
-	</MSSQLExpress>	
+	</MSSQLExpress>
+	<MSSQLExpress32>
+		<URL>http://install.team-mediaportal.com/Sql2005_32bit</URL>
+		<FILE>sqlexpr32.exe</FILE>
+    <TYPE>Automatic</TYPE>
+	</MSSQLExpress32>
+  <MSSQLExpress64>
+    <URL>http://install.team-mediaportal.com/Sql2005_64bit</URL>
+    <FILE>sqlexpr.exe</FILE>
+    <TYPE>Manual</TYPE>
+  </MSSQLExpress64>
   <MySQL>
 	   <URL>http://install.team-mediaportal.com/MySql</URL>
 	   <FILE>mysql-essential-5.0.45-win32.msi</FILE>

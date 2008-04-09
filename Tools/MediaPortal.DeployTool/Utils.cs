@@ -110,8 +110,8 @@ namespace MediaPortal.DeployTool
       string FileName;
 
       //Ack for SQL2005 native language download
-      if (prg == "MSSQLExpress")
-        FileName = LocalizeDownloadFile(Utils.GetDownloadFile(prg));
+      if (prg == "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"])
+        FileName = LocalizeDownloadFile(Utils.GetDownloadFile(prg), Utils.GetDownloadType(prg));
       else
         FileName = Utils.GetDownloadFile(prg);
 
@@ -148,11 +148,11 @@ namespace MediaPortal.DeployTool
       return result;
     }
 
-    public static string LocalizeDownloadFile(string filename)
+    public static string LocalizeDownloadFile(string filename, string downloadtype)
     {
       string LangCode = System.Globalization.CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName;
       string NewFileName = "";
-      if (LangCode == "ENU")
+      if (LangCode == "ENU" || downloadtype == "Manual")
         NewFileName = filename;
       else
         NewFileName = filename.Split('.')[0] + "_" + LangCode + ".exe";
@@ -185,6 +185,7 @@ namespace MediaPortal.DeployTool
 
     public static void CheckOSRequirement()
     {
+
       Version OsVersion = Environment.OSVersion.Version;
       bool OsSupport = false;
       string OsDesc = "";
@@ -232,10 +233,16 @@ namespace MediaPortal.DeployTool
 
     public static void Check64bit()
     {
-      if (IntPtr.Size == 8)
-        InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-      else
-        InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+        if (IntPtr.Size == 8)
+        { 
+            InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+            InstallationProperties.Instance.Set("Sql2005Download", "64");
+        }
+        else
+        {
+            InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+            InstallationProperties.Instance.Set("Sql2005Download", "32");
+        }
     }
 
     public static bool CheckStartupPath()
