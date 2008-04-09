@@ -35,11 +35,11 @@ SetCompressor /SOLID lzma
 RequestExecutionLevel admin
 
 !ifdef HIGH_BUILD
-  !define TVSERVER.BASE "..\..\Filters\bin"
-  !define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\Release"
+  !define TVSERVER.BASE "..\TVServer.Base"
+  !define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\bin\Release"
 !else
-  !define TVSERVER.BASE "..\..\Filters\bin"
-  !define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\Release"
+  !define TVSERVER.BASE "..\TVServer.Base"
+  !define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\bin\Release"
 !endif
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"
