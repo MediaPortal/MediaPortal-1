@@ -32,7 +32,6 @@
 #**********************************************************************************************************#
 Name "MediaPortal"
 SetCompressor /SOLID lzma
-RequestExecutionLevel admin
 
 !ifdef HIGH_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
@@ -45,6 +44,8 @@ RequestExecutionLevel admin
 !endif
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"
+
+#!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
 
 #---------------------------------------------------------------------------
 # VARIABLES
@@ -155,13 +156,13 @@ Page custom PageReinstall PageLeaveReinstall
 !endif
 
 !insertmacro MUI_PAGE_COMPONENTS
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE DirectoryLeave
 !insertmacro MUI_PAGE_DIRECTORY
 
 !ifndef HIGH_BUILD
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !endif
 
+!define MUI_PAGE_CUSTOMFUNCTION_PRE InstFilePre
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 ; UnInstaller Interface
@@ -185,9 +186,7 @@ Page custom PageReinstall PageLeaveReinstall
   OutFile "Release\setup-mediaportal.exe"
 !endif
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
-!ifndef HIGH_BUILD
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
-!endif
 CRCCheck on
 XPStyle on
 RequestExecutionLevel admin
@@ -227,30 +226,6 @@ Section "Backup current installation status" SecBackup
   DetailPrint "Creating backup of configuration dir, this might take some minutes."
   CreateDirectory "$MPdir.Config_$R0"
   CopyFiles /SILENT "$MPdir.Config\*.*" "$MPdir.Config_$R0"
-
-SectionEnd
-!else                 # Required invisible Section which renames the INSTDIR to get a real clean installation
-Section "-backup" SecBackup
-
-  !insertmacro GET_BACKUP_POSTFIX $R0
-
-  ; CHECK FOR OLD FILES and DIRECTORY
-  ${If} ${FileExists} "$MPdir.Base\*.*"
-
-    #  MAYBE WE should always rename the instdir if it exists
-    ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMajor"
-    ReadRegDWORD $R2 HKLM "${REG_UNINSTALL}" "VersionMinor"
-
-    ${If} $R1 != ${VER_MAJOR}
-    ${OrIf} $R2 != ${VER_MINOR}
-      Rename "$MPdir.Base" "$MPdir.Base_$R0"
-    ${EndIf}
-
-  ${EndIf}
-
-  #${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
-  #  Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
-  #${EndIf}
 
 SectionEnd
 !endif
@@ -442,7 +417,6 @@ Section "MediaPortal core files (required)" SecCore
   ; TTPremiumBoot
   SetOutPath "$MPdir.Base\TTPremiumBoot"
   File "..\TTPremiumBoot\*.*"
-  # obsolete, because it is out of date
   SetOutPath "$MPdir.Base\TTPremiumBoot\21"
   File "..\TTPremiumBoot\21\*.*"
   SetOutPath "$MPdir.Base\TTPremiumBoot\24"
@@ -789,7 +763,7 @@ Section -Post
 
     ;Removes unselected components
     !insertmacro SectionList "FinishSection"
-!ifndef HIGH_BUILD
+
     ;writes component status to registry
     ${MementoSectionSave}
 
@@ -834,7 +808,6 @@ Section -Post
     WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
 
     WriteUninstaller "$MPdir.Base\uninstall-mp.exe"
-!endif
 
     ; Associate .mpi files with MPInstaller
     !define Index "Line${__LINE__}"
@@ -979,19 +952,11 @@ Function .onInit
     Abort
   ${EndIf}
 
-!ifdef HIGH_BUILD
-  ; check if old mp 0.2.3 is installed.
-  ${IfNot} ${MP023IsInstalled}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "MediaPortal 0.2.3.0 installation is not found. Please install 0.2.3.0 first."
-    Abort
-  ${EndIf}
-!else
   ; check if old mp 0.2.3 is installed.
   ${If} ${MP023IsInstalled}
     MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)"
     Abort
   ${EndIf}
-!endif
 
   ; check if minimum Windows version is XP
   ${If} ${AtMostWin2000}
@@ -1029,7 +994,10 @@ Function .onInit
     Abort
   ${EndIf}
 
-  ${ReadMediaPortalDirs} "$INSTDIR"
+
+  ${If} ${Silent}
+    Call InstFilePre
+  ${EndIf}
 /*
     ${If} ${Silent}
         RmDir /r "${COMMON_APPDATA}\Cache"
@@ -1133,15 +1101,26 @@ Function WelcomeLeave
 FunctionEnd
 */
 
-Function DirectoryLeave
+Function InstFilePre
+  ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMajor"
+  ReadRegDWORD $R2 HKLM "${REG_UNINSTALL}" "VersionMinor"
 
+  ${IfNot} ${MPIsInstalled}
+    ${If} $R1 != ${VER_MAJOR}
+    ${OrIf} $R2 != ${VER_MINOR}
 
-!ifdef HIGH_BUILD
-  ${IfNot} ${FileExists} "$INSTDIR\MediaPortal.exe"
-    MessageBox MB_OK|MB_ICONEXCLAMATION "This is not the installation directory where MP 0.2.3.0 was installed. Please choose the correct one!"
-    Abort
+      !insertmacro GET_BACKUP_POSTFIX $R0
+
+      ${If} ${FileExists} "$MPdir.Base\*.*"
+        Rename "$MPdir.Base" "$MPdir.Base_$R0"
+      ${EndIf}
+
+      ${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
+        Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
+      ${EndIf}
+
+    ${EndIf}
   ${EndIf}
-!endif
 
   ${ReadMediaPortalDirs} "$INSTDIR"
 FunctionEnd

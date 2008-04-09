@@ -318,48 +318,47 @@ LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is r
 #
 #**********************************************************************************************************#
 
-!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
-
 !ifdef INSTALL_LOG_FILE
 Var LogFile
+!endif
 
 !define LOG_OPEN `!insertmacro LOG_OPEN`
 !macro LOG_OPEN
+!ifdef INSTALL_LOG_FILE
+
 #!ifdef logfile_isopen
 #  !error "log is already opened"
 #!else
   FileOpen $LogFile "${INSTALL_LOG_FILE}" w
   #!define logfile_isopen
 #!endif
+
+!endif
 !macroend
 
 !define LOG_CLOSE `!insertmacro LOG_CLOSE`
 !macro LOG_CLOSE
+!ifdef INSTALL_LOG_FILE
+
 #!ifdef logfile_isopen
   FileClose $LogFile
   #!undef logfile_isopen
 #!else
 #  !error "log is not opened yet"
 #!endif
+
+!endif
 !macroend
 
 !define LOG_TEXT `!insertmacro LOG_TEXT`
 !macro LOG_TEXT TEXT
+!ifdef INSTALL_LOG_FILE
+
   FileWrite $LogFile "${TEXT}$\r$\n"
-!macroend
 
 !endif
+!macroend
 
-/*
-Function .onInit
-FunctionEnd
-
-Function .onInstFailed
-FunctionEnd
-
-Function .onInstSuccess
-FunctionEnd
-*/
 
 
 
