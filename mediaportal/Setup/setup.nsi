@@ -160,10 +160,7 @@ Page custom PageReinstall PageLeaveReinstall
 
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
-
-!ifndef HIGH_BUILD
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
-!endif
 
 !define MUI_PAGE_CUSTOMFUNCTION_PRE InstFilePre
 !insertmacro MUI_PAGE_INSTFILES
@@ -448,225 +445,224 @@ SectionEnd
   ExecWait '"taskkill" /F /IM WebEPG.exe'
   ExecWait '"taskkill" /F /IM WebEPG-conf.exe'
 
-    #---------------------------------------------------------------------------
-    # FILTER UNREGISTRATION     for TVClient
-    #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
-    #---------------------------------------------------------------------------
-    ;filter used for SVCD and VCD playback
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\cdxareader.ax"
-    ##### MAYBE used by VideoEditor
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\CLDump.ax"
-    ; used for scanning in tve2
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPSA.ax"
-    ;filter for analog tv
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\PDMpgMux.ax"
-    ; used for shoutcast
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\shoutcastsource.ax"
-    ; used for digital tv
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TsReader.ax"
-    ##### not sure for what this is used
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TTPremiumSource.ax"
+  #---------------------------------------------------------------------------
+  # FILTER UNREGISTRATION     for TVClient
+  #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
+  #---------------------------------------------------------------------------
+  ;filter used for SVCD and VCD playback
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\cdxareader.ax"
+  ##### MAYBE used by VideoEditor
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\CLDump.ax"
+  ; used for scanning in tve2
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPSA.ax"
+  ;filter for analog tv
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\PDMpgMux.ax"
+  ; used for shoutcast
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\shoutcastsource.ax"
+  ; used for digital tv
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TsReader.ax"
+  ##### not sure for what this is used
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TTPremiumSource.ax"
 
-    ; Config Files
-    Delete /REBOOTOK "$MPdir.Config\CaptureCardDefinitions.xml"
-    Delete /REBOOTOK "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
-    Delete /REBOOTOK "$MPdir.Config\ISDNCodes.xml"
-    Delete /REBOOTOK "$MPdir.Config\keymap.xml"
-    Delete /REBOOTOK "$MPdir.Config\MusicVideoSettings.xml"
-    Delete /REBOOTOK "$MPdir.Config\wikipedia.xml"
-    Delete /REBOOTOK "$MPdir.Config\yac-area-codes.xml"
+  ; Config Files
+  Delete /REBOOTOK "$MPdir.Config\CaptureCardDefinitions.xml"
+  Delete /REBOOTOK "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
+  Delete /REBOOTOK "$MPdir.Config\ISDNCodes.xml"
+  Delete /REBOOTOK "$MPdir.Config\keymap.xml"
+  Delete /REBOOTOK "$MPdir.Config\MusicVideoSettings.xml"
+  Delete /REBOOTOK "$MPdir.Config\wikipedia.xml"
+  Delete /REBOOTOK "$MPdir.Config\yac-area-codes.xml"
 
-    ; Remove the Folders
-    RmDir /r /REBOOTOK "$MPdir.Base\MusicPlayer"
-    RmDir /r /REBOOTOK "$MPdir.Base\osdskin-media"
-    RmDir /r /REBOOTOK "$MPdir.Base\Profiles"
-    RmDir /r /REBOOTOK "$MPdir.Base\scripts"
-    RmDir /r /REBOOTOK "$MPdir.Base\TTPremiumBoot"
-    RmDir /r /REBOOTOK "$MPdir.Base\Tuningparameters"
-    RmDir /r /REBOOTOK "$MPdir.Base\WebEPG"
-    RmDir /r /REBOOTOK "$MPdir.Base\Wizards"
+  ; Remove the Folders
+  RMDir /r /REBOOTOK "$MPdir.Base\MusicPlayer"
+  RMDir /r /REBOOTOK "$MPdir.Base\osdskin-media"
+  RMDir /r /REBOOTOK "$MPdir.Base\Profiles"
+  RMDir /r /REBOOTOK "$MPdir.Base\scripts"
+  RMDir /r /REBOOTOK "$MPdir.Base\TTPremiumBoot"
+  RMDir /r /REBOOTOK "$MPdir.Base\Tuningparameters"
+  RMDir /r /REBOOTOK "$MPdir.Base\WebEPG"
+  RMDir /r /REBOOTOK "$MPdir.Base\Wizards"
 
-    RmDir /r /REBOOTOK "$MPdir.BurnerSupport"
-    RmDir /r /REBOOTOK "$MPdir.Cache"
-    RmDir /r /REBOOTOK "$MPdir.CustomInputDefault"
-    RmDir /r /REBOOTOK "$MPdir.Language"
-    RmDir /r /REBOOTOK "$MPdir.Weather"
+  RMDir /r /REBOOTOK "$MPdir.BurnerSupport"
+  RMDir /r /REBOOTOK "$MPdir.Cache"
+  RMDir /r /REBOOTOK "$MPdir.CustomInputDefault"
+  RMDir /r /REBOOTOK "$MPdir.Language"
+  RMDir /r /REBOOTOK "$MPdir.Weather"
 
-    ; Doc
-    Delete /REBOOTOK "$MPdir.Base\Docs\BASS License.txt"
-    Delete /REBOOTOK "$MPdir.Base\Docs\MediaPortal License.rtf"
-    #Delete /REBOOTOK "$INSTDIR\Docs\LICENSE.rtf"
-    #Delete /REBOOTOK "$INSTDIR\Docs\SQLite Database Browser.exe"
-    RmDir "$MPdir.Base\Docs"
+  ; Doc
+  Delete /REBOOTOK "$MPdir.Base\Docs\BASS License.txt"
+  Delete /REBOOTOK "$MPdir.Base\Docs\MediaPortal License.rtf"
+  #Delete /REBOOTOK "$INSTDIR\Docs\LICENSE.rtf"
+  #Delete /REBOOTOK "$INSTDIR\Docs\SQLite Database Browser.exe"
+  RMDir "$MPdir.Base\Docs"
 
-    ; WebEPG
-    RmDir /r /REBOOTOK "$MPdir.Base\WebEPG\channels"
-    RmDir /r /REBOOTOK "$MPdir.Base\WebEPG\grabbers"
-    RmDir "$MPdir.Base\WebEPG"
+  ; WebEPG
+  RMDir /r /REBOOTOK "$MPdir.Base\WebEPG\channels"
+  RMDir /r /REBOOTOK "$MPdir.Base\WebEPG\grabbers"
+  RMDir "$MPdir.Base\WebEPG"
 
-    ; xmltv
-    Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
-    Delete /REBOOTOK "$MPdir.Base\xmltv\xmltv.dtd"
-    RmDir "$MPdir.Base\xmltv"
+  ; xmltv
+  Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
+  Delete /REBOOTOK "$MPdir.Base\xmltv\xmltv.dtd"
+  RMDir "$MPdir.Base\xmltv"
 
-    ; database
-    RmDir /r /REBOOTOK "$MPdir.Database\convert"
-    RmDir "$MPdir.Database"
+  ; database
+  RMDir /r /REBOOTOK "$MPdir.Database\convert"
+  RMDir "$MPdir.Database"
 
-    ; plugins
-    Delete /REBOOTOK "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
-    RmDir "$MPdir.Plugins\ExternalPlayers"
+  ; plugins
+  Delete /REBOOTOK "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
+  RMDir "$MPdir.Plugins\ExternalPlayers"
 
-    RmDir /r /REBOOTOK "$MPdir.Plugins\process\LCDDrivers"
-    Delete /REBOOTOK "$MPdir.Plugins\process\ProcessPlugins.dll"
-    Delete /REBOOTOK "$MPdir.Plugins\process\PowerSchedulerClientPlugin.dll"
-    RmDir "$MPdir.Plugins\process"
+  RMDir /r /REBOOTOK "$MPdir.Plugins\process\LCDDrivers"
+  Delete /REBOOTOK "$MPdir.Plugins\process\ProcessPlugins.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\process\PowerSchedulerClientPlugin.dll"
+  RMDir "$MPdir.Plugins\process"
 
-    Delete /REBOOTOK "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
-    RmDir "$MPdir.Plugins\subtitle"
+  Delete /REBOOTOK "$MPdir.Plugins\subtitle\SubtitlePlugins.dll"
+  RMDir "$MPdir.Plugins\subtitle"
 
-    Delete /REBOOTOK "$MPdir.Plugins\Windows\Dialogs.dll"
-    Delete /REBOOTOK "$MPdir.Plugins\Windows\WindowPlugins.dll"
-    Delete /REBOOTOK "$MPdir.Plugins\Windows\XihSolutions.DotMSN.dll"
-    Delete /REBOOTOK "$MPdir.Plugins\Windows\TvPlugin.dll"
-    RmDir "$MPdir.Plugins\Windows"
+  Delete /REBOOTOK "$MPdir.Plugins\Windows\Dialogs.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\Windows\XihSolutions.DotMSN.dll"
+  Delete /REBOOTOK "$MPdir.Plugins\Windows\TvPlugin.dll"
+  RMDir "$MPdir.Plugins\Windows"
 
-    RmDir "$MPdir.Plugins"
+  RMDir "$MPdir.Plugins"
 
-    ; skins
-    RmDir /r /REBOOTOK "$MPdir.Skin\BlueTwo"
-    RmDir /r /REBOOTOK "$MPdir.Skin\BlueTwo wide"
-    RmDir "$MPdir.Skin"
+  ; skins
+  RMDir /r /REBOOTOK "$MPdir.Skin\BlueTwo"
+  RMDir /r /REBOOTOK "$MPdir.Skin\BlueTwo wide"
+  RMDir "$MPdir.Skin"
 
-    ; Remove Files in MP Root Directory
-    Delete /REBOOTOK "$MPdir.Base\AppStart.exe"
-    Delete /REBOOTOK "$MPdir.Base\AppStart.exe.config"
-    Delete /REBOOTOK "$MPdir.Base\AxInterop.WMPLib.dll"
-    Delete /REBOOTOK "$MPdir.Base\BallonRadio.ico"
-    Delete /REBOOTOK "$MPdir.Base\bass.dll"
-    Delete /REBOOTOK "$MPdir.Base\Bass.Net.dll"
-    Delete /REBOOTOK "$MPdir.Base\bass_fx.dll"
-    Delete /REBOOTOK "$MPdir.Base\bass_vis.dll"
-    Delete /REBOOTOK "$MPdir.Base\bass_vst.dll"
-    Delete /REBOOTOK "$MPdir.Base\bass_wadsp.dll"
-    Delete /REBOOTOK "$MPdir.Base\bassasio.dll"
-    Delete /REBOOTOK "$MPdir.Base\bassmix.dll"
-    Delete /REBOOTOK "$MPdir.Base\BassRegistration.dll"
-    Delete /REBOOTOK "$MPdir.Base\Configuration.exe"
-    Delete /REBOOTOK "$MPdir.Base\Configuration.exe.config"
-    Delete /REBOOTOK "$MPdir.Base\Core.dll"
-    Delete /REBOOTOK "$MPdir.Base\CSScriptLibrary.dll"
-    Delete /REBOOTOK "$MPdir.Base\d3dx9_30.dll"
-    Delete /REBOOTOK "$MPdir.Base\DaggerLib.dll"
-    Delete /REBOOTOK "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
-    Delete /REBOOTOK "$MPdir.Base\Databases.dll"
-    Delete /REBOOTOK "$MPdir.Base\defaultMusicViews.xml"
-    Delete /REBOOTOK "$MPdir.Base\defaultVideoViews.xml"
-    Delete /REBOOTOK "$MPdir.Base\DirectShowLib-2005.dll"
-    Delete /REBOOTOK "$MPdir.Base\DirectShowLib.dll"
-    Delete /REBOOTOK "$MPdir.Base\dlportio.dll"
-    Delete /REBOOTOK "$MPdir.Base\dshowhelper.dll"
-    Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
-    Delete /REBOOTOK "$MPdir.Base\dxerr9.dll"
-    Delete /REBOOTOK "$MPdir.Base\DXUtil.dll"
-    Delete /REBOOTOK "$MPdir.Base\edtftpnet-1.2.2.dll"
-    Delete /REBOOTOK "$MPdir.Base\FastBitmap.dll"
-    Delete /REBOOTOK "$MPdir.Base\fontEngine.dll"
-    Delete /REBOOTOK "$MPdir.Base\FTD2XX.DLL"
-    Delete /REBOOTOK "$MPdir.Base\hauppauge.dll"
-    Delete /REBOOTOK "$MPdir.Base\HcwHelper.exe"
-    Delete /REBOOTOK "$MPdir.Base\HelpReferences.xml"
-    Delete /REBOOTOK "$MPdir.Base\ICSharpCode.SharpZipLib.dll"
-    Delete /REBOOTOK "$MPdir.Base\inpout32.dll"
-    Delete /REBOOTOK "$MPdir.Base\Interop.GIRDERLib.dll"
-    Delete /REBOOTOK "$MPdir.Base\Interop.iTunesLib.dll"
-    Delete /REBOOTOK "$MPdir.Base\Interop.TunerLib.dll"
-    Delete /REBOOTOK "$MPdir.Base\Interop.WMEncoderLib.dll"
-    Delete /REBOOTOK "$MPdir.Base\Interop.WMPLib.dll"
-    Delete /REBOOTOK "$MPdir.Base\Interop.X10.dll"
-    Delete /REBOOTOK "$MPdir.Base\KCS.Utilities.dll"
-    Delete /REBOOTOK "$MPdir.Base\lame_enc.dll"
-    Delete /REBOOTOK "$MPdir.Base\LibDriverCoreClient.dll"
-    Delete /REBOOTOK "$MPdir.Base\log4net.dll"
-    Delete /REBOOTOK "$MPdir.Base\madlldlib.dll"
-    Delete /REBOOTOK "$MPdir.Base\MediaFoundation.dll"
-    Delete /REBOOTOK "$MPdir.Base\MediaPadLayer.dll"
-    Delete /REBOOTOK "$MPdir.Base\MediaPortalDirs.xml"
-    Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe"
-    Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe.config"
-    Delete /REBOOTOK "$MPdir.Base\MediaPortal.Support.dll"
-    Delete /REBOOTOK "$MPdir.Base\menu.bin"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ExceptionManagement.dll"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.dll"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.Direct3D.dll"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.Direct3DX.dll"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.DirectDraw.dll"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.DirectInput.dll"
-    Delete /REBOOTOK "$MPdir.Base\Microsoft.Office.Interop.Outlook.dll"
-    Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe"
-    Delete /REBOOTOK "$MPdir.Base\MPInstaller.Library.dll"
-    Delete /REBOOTOK "$MPdir.Base\mplogo.gif"
-    Delete /REBOOTOK "$MPdir.Base\MPTestTool2.exe"
-    Delete /REBOOTOK "$MPdir.Base\mpviz.dll"
-    Delete /REBOOTOK "$MPdir.Base\MusicShareWatcher.exe"
-    Delete /REBOOTOK "$MPdir.Base\MusicShareWatcherHelper.dll"
-    Delete /REBOOTOK "$MPdir.Base\RemotePlugins.dll"
-    Delete /REBOOTOK "$MPdir.Base\restart.vbs"
-    Delete /REBOOTOK "$MPdir.Base\SG_VFD.dll"
-    Delete /REBOOTOK "$MPdir.Base\SG_VFDv5.dll"
-    Delete /REBOOTOK "$MPdir.Base\sqlite.dll"
-    Delete /REBOOTOK "$MPdir.Base\taglib-sharp.dll"
-    Delete /REBOOTOK "$MPdir.Base\TaskScheduler.dll"
-    Delete /REBOOTOK "$MPdir.Base\ttBdaDrvApi_Dll.dll"
-    Delete /REBOOTOK "$MPdir.Base\ttdvbacc.dll"
-    Delete /REBOOTOK "$MPdir.Base\TVCapture.dll"
-    Delete /REBOOTOK "$MPdir.Base\TVGuideScheduler.exe"
-    Delete /REBOOTOK "$MPdir.Base\Utils.dll"
-    Delete /REBOOTOK "$MPdir.Base\WebEPG.dll"
-    Delete /REBOOTOK "$MPdir.Base\WebEPG.exe"
-    Delete /REBOOTOK "$MPdir.Base\WebEPG-conf.exe"
-    Delete /REBOOTOK "$MPdir.Base\X10Unified.dll"
-    Delete /REBOOTOK "$MPdir.Base\xAPMessage.dll"
-    Delete /REBOOTOK "$MPdir.Base\xAPTransport.dll"
-    Delete /REBOOTOK "$MPdir.Base\XPBurnComponent.dll"
+  ; Remove Files in MP Root Directory
+  Delete /REBOOTOK "$MPdir.Base\AppStart.exe"
+  Delete /REBOOTOK "$MPdir.Base\AppStart.exe.config"
+  Delete /REBOOTOK "$MPdir.Base\AxInterop.WMPLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\BallonRadio.ico"
+  Delete /REBOOTOK "$MPdir.Base\bass.dll"
+  Delete /REBOOTOK "$MPdir.Base\Bass.Net.dll"
+  Delete /REBOOTOK "$MPdir.Base\bass_fx.dll"
+  Delete /REBOOTOK "$MPdir.Base\bass_vis.dll"
+  Delete /REBOOTOK "$MPdir.Base\bass_vst.dll"
+  Delete /REBOOTOK "$MPdir.Base\bass_wadsp.dll"
+  Delete /REBOOTOK "$MPdir.Base\bassasio.dll"
+  Delete /REBOOTOK "$MPdir.Base\bassmix.dll"
+  Delete /REBOOTOK "$MPdir.Base\BassRegistration.dll"
+  Delete /REBOOTOK "$MPdir.Base\Configuration.exe"
+  Delete /REBOOTOK "$MPdir.Base\Configuration.exe.config"
+  Delete /REBOOTOK "$MPdir.Base\Core.dll"
+  Delete /REBOOTOK "$MPdir.Base\CSScriptLibrary.dll"
+  Delete /REBOOTOK "$MPdir.Base\d3dx9_30.dll"
+  Delete /REBOOTOK "$MPdir.Base\DaggerLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
+  Delete /REBOOTOK "$MPdir.Base\Databases.dll"
+  Delete /REBOOTOK "$MPdir.Base\defaultMusicViews.xml"
+  Delete /REBOOTOK "$MPdir.Base\defaultVideoViews.xml"
+  Delete /REBOOTOK "$MPdir.Base\DirectShowLib-2005.dll"
+  Delete /REBOOTOK "$MPdir.Base\DirectShowLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\dlportio.dll"
+  Delete /REBOOTOK "$MPdir.Base\dshowhelper.dll"
+  Delete /REBOOTOK "$MPdir.Base\dvblib.dll"
+  Delete /REBOOTOK "$MPdir.Base\dxerr9.dll"
+  Delete /REBOOTOK "$MPdir.Base\DXUtil.dll"
+  Delete /REBOOTOK "$MPdir.Base\edtftpnet-1.2.2.dll"
+  Delete /REBOOTOK "$MPdir.Base\FastBitmap.dll"
+  Delete /REBOOTOK "$MPdir.Base\fontEngine.dll"
+  Delete /REBOOTOK "$MPdir.Base\FTD2XX.DLL"
+  Delete /REBOOTOK "$MPdir.Base\hauppauge.dll"
+  Delete /REBOOTOK "$MPdir.Base\HcwHelper.exe"
+  Delete /REBOOTOK "$MPdir.Base\HelpReferences.xml"
+  Delete /REBOOTOK "$MPdir.Base\ICSharpCode.SharpZipLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\inpout32.dll"
+  Delete /REBOOTOK "$MPdir.Base\Interop.GIRDERLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\Interop.iTunesLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\Interop.TunerLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\Interop.WMEncoderLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\Interop.WMPLib.dll"
+  Delete /REBOOTOK "$MPdir.Base\Interop.X10.dll"
+  Delete /REBOOTOK "$MPdir.Base\KCS.Utilities.dll"
+  Delete /REBOOTOK "$MPdir.Base\lame_enc.dll"
+  Delete /REBOOTOK "$MPdir.Base\LibDriverCoreClient.dll"
+  Delete /REBOOTOK "$MPdir.Base\log4net.dll"
+  Delete /REBOOTOK "$MPdir.Base\madlldlib.dll"
+  Delete /REBOOTOK "$MPdir.Base\MediaFoundation.dll"
+  Delete /REBOOTOK "$MPdir.Base\MediaPadLayer.dll"
+  Delete /REBOOTOK "$MPdir.Base\MediaPortalDirs.xml"
+  Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe"
+  Delete /REBOOTOK "$MPdir.Base\MediaPortal.exe.config"
+  Delete /REBOOTOK "$MPdir.Base\MediaPortal.Support.dll"
+  Delete /REBOOTOK "$MPdir.Base\menu.bin"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ExceptionManagement.dll"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.dll"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.Direct3D.dll"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.Direct3DX.dll"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.DirectDraw.dll"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.DirectX.DirectInput.dll"
+  Delete /REBOOTOK "$MPdir.Base\Microsoft.Office.Interop.Outlook.dll"
+  Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe"
+  Delete /REBOOTOK "$MPdir.Base\MPInstaller.Library.dll"
+  Delete /REBOOTOK "$MPdir.Base\mplogo.gif"
+  Delete /REBOOTOK "$MPdir.Base\MPTestTool2.exe"
+  Delete /REBOOTOK "$MPdir.Base\mpviz.dll"
+  Delete /REBOOTOK "$MPdir.Base\MusicShareWatcher.exe"
+  Delete /REBOOTOK "$MPdir.Base\MusicShareWatcherHelper.dll"
+  Delete /REBOOTOK "$MPdir.Base\RemotePlugins.dll"
+  Delete /REBOOTOK "$MPdir.Base\restart.vbs"
+  Delete /REBOOTOK "$MPdir.Base\SG_VFD.dll"
+  Delete /REBOOTOK "$MPdir.Base\SG_VFDv5.dll"
+  Delete /REBOOTOK "$MPdir.Base\sqlite.dll"
+  Delete /REBOOTOK "$MPdir.Base\taglib-sharp.dll"
+  Delete /REBOOTOK "$MPdir.Base\TaskScheduler.dll"
+  Delete /REBOOTOK "$MPdir.Base\ttBdaDrvApi_Dll.dll"
+  Delete /REBOOTOK "$MPdir.Base\ttdvbacc.dll"
+  Delete /REBOOTOK "$MPdir.Base\TVCapture.dll"
+  Delete /REBOOTOK "$MPdir.Base\TVGuideScheduler.exe"
+  Delete /REBOOTOK "$MPdir.Base\Utils.dll"
+  Delete /REBOOTOK "$MPdir.Base\WebEPG.dll"
+  Delete /REBOOTOK "$MPdir.Base\WebEPG.exe"
+  Delete /REBOOTOK "$MPdir.Base\WebEPG-conf.exe"
+  Delete /REBOOTOK "$MPdir.Base\X10Unified.dll"
+  Delete /REBOOTOK "$MPdir.Base\xAPMessage.dll"
+  Delete /REBOOTOK "$MPdir.Base\xAPTransport.dll"
+  Delete /REBOOTOK "$MPdir.Base\XPBurnComponent.dll"
 !macroend
 
 /*
 ${MementoSection} "DScaler Decoder" SecDscaler
-    DetailPrint "Installing DScaler Decoder..."
+  DetailPrint "Installing DScaler Decoder..."
 
-    SetOutPath "$MPdir.Base"
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\GenDMOProp.dll"  "$MPdir.Base\GenDMOProp.dll" "$MPdir.Base"
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MpegAudio.dll"   "$MPdir.Base\MpegAudio.dll" "$MPdir.Base"
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MpegVideo.dll"   "$MPdir.Base\MpegVideo.dll" "$MPdir.Base"
+  SetOutPath "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\GenDMOProp.dll"  "$MPdir.Base\GenDMOProp.dll" "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MpegAudio.dll"   "$MPdir.Base\MpegAudio.dll" "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MpegVideo.dll"   "$MPdir.Base\MpegVideo.dll" "$MPdir.Base"
 
-    ; Write Default Values for Filter into the registry
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "MPEG Audio over SPDIF" 0
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "SPDIF Audio Time Offset" 0
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Speaker Config" 1
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Use SPDIF for AC3 & DTS" 0
+  ; Write Default Values for Filter into the registry
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "MPEG Audio over SPDIF" 0
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "SPDIF Audio Time Offset" 0
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Speaker Config" 1
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Use SPDIF for AC3 & DTS" 0
 
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "3:2 playback smoothing" 1
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Colour space to output" 1
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Deinterlace Mode" 2
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Display Forced Subtitles" 1
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Do Analog Blanking" 1
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "DVB Aspect Preferences" 0
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Hardcode for PAL with ffdshow" 0
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "IDCT to Use" 2
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Use accurate aspect ratios" 1
-    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Video Delay" 0
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "3:2 playback smoothing" 1
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Colour space to output" 1
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Deinterlace Mode" 2
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Display Forced Subtitles" 1
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Do Analog Blanking" 1
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "DVB Aspect Preferences" 0
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Hardcode for PAL with ffdshow" 0
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "IDCT to Use" 2
+  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Use accurate aspect ratios" 1    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Video Delay" 0
 ${MementoSectionEnd}
 !macro Remove_${SecDscaler}
-    DetailPrint "Uninstalling DScaler Decoder..."
+  DetailPrint "Uninstalling DScaler Decoder..."
 
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\GenDMOProp.dll"
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpegAudio.dll"
-    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpegVideo.dll"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\GenDMOProp.dll"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpegAudio.dll"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpegVideo.dll"
 !macroend
 */
 
@@ -707,7 +703,6 @@ ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
   ; set merit for MPV
   ExecWait '"$MPdir.Base\SetMerit.exe" {39F498AF-1A09-4275-B193-673B0BA3D478} 00600000'
 ${MementoSectionEnd}
-
 !macro Remove_${SecGabest}
   DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
 
@@ -723,74 +718,74 @@ ${MementoSectionDone}
 #---------------------------------------------------------------------------
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
-    DetailPrint "Doing post installation stuff..."
+  DetailPrint "Doing post installation stuff..."
 
-    ;Removes unselected components
-    !insertmacro SectionList "FinishSection"
+  ;Removes unselected components
+  !insertmacro SectionList "FinishSection"
 
-    ;writes component status to registry
-    ${MementoSectionSave}
+  ;writes component status to registry
+  ${MementoSectionSave}
 
-    SetOverwrite on
-    SetOutPath "$MPdir.Base"
+  SetOverwrite on
+  SetOutPath "$MPdir.Base"
 
-    ${If} $noDesktopSC != 1
-        CreateShortcut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
-        CreateShortcut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
-    ${EndIf}
+  ${If} $noDesktopSC != 1
+    CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
+    CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+  ${EndIf}
 
-    ${If} $noStartMenuSC != 1
-      !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-        ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
-        CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\MPTestTool2.exe"   "-auto" "$MPdir.Base\MPTestTool2.exe"   0 "" "" "MediaPortal Debug-Mode"
-        CreateDirectory "$MPdir.Log"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"                  "$MPdir.Log"                    ""      "$MPdir.Log"                    0 "" "" "MediaPortal Log-Files"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"    "$MPdir.Base\MPInstaller.exe"   ""      "$MPdir.Base\MPInstaller.exe"   0 "" "" "MediaPortal Plugins-Skins Installer"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"                   "$MPdir.Base\MPTestTool2.exe"   ""      "$MPdir.Base\MPTestTool2.exe"   0 "" "" "MediaPortal TestTool"
-        CreateShortcut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
-        WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url" "InternetShortcut" "URL" "${URL}"
-      !insertmacro MUI_STARTMENU_WRITE_END
-    ${EndIf}
+  ${If} $noStartMenuSC != 1
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+      ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
+      CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\MPTestTool2.exe"   "-auto" "$MPdir.Base\MPTestTool2.exe"   0 "" "" "MediaPortal Debug-Mode"
+      CreateDirectory "$MPdir.Log"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"                  "$MPdir.Log"                    ""      "$MPdir.Log"                    0 "" "" "MediaPortal Log-Files"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"    "$MPdir.Base\MPInstaller.exe"   ""      "$MPdir.Base\MPInstaller.exe"   0 "" "" "MediaPortal Plugins-Skins Installer"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"                   "$MPdir.Base\MPTestTool2.exe"   ""      "$MPdir.Base\MPTestTool2.exe"   0 "" "" "MediaPortal TestTool"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
+      WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url" "InternetShortcut" "URL" "${URL}"
+    !insertmacro MUI_STARTMENU_WRITE_END
+  ${EndIf}
 
-    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
-    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
-    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
-    WriteRegDword HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionMinor"    "${VER_MINOR}"
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionRevision" "${VER_REVISION}"
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionBuild"    "${VER_BUILD}"
 
-    ; Write Uninstall Information
-    WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath        "$MPdir.Base"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
-    WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$MPdir.Base\MediaPortal.exe,0"
-    WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$MPdir.Base\uninstall-mp.exe"
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
+  ; Write Uninstall Information
+  WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath        "$MPdir.Base"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "$(^Name)"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${COMPANY}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${URL}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$MPdir.Base\MediaPortal.exe,0"
+  WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$MPdir.Base\uninstall-mp.exe"
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
+  WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
 
-    WriteUninstaller "$MPdir.Base\uninstall-mp.exe"
+  WriteUninstaller "$MPdir.Base\uninstall-mp.exe"
 
-    ; Associate .mpi files with MPInstaller
-    !define Index "Line${__LINE__}"
-    ; backup the association, if it already exsists
-    ReadRegStr $1 HKCR ".mpi" ""
-    StrCmp $1 "" "${Index}-NoBackup"
-    StrCmp $1 "MediaPortal.Installer" "${Index}-NoBackup"
-    WriteRegStr HKCR ".mpi" "backup_val" $1
+  ; Associate .mpi files with MPInstaller
+  !define Index "Line${__LINE__}"
+  ; backup the association, if it already exsists
+  ReadRegStr $1 HKCR ".mpi" ""
+  StrCmp $1 "" "${Index}-NoBackup"
+  StrCmp $1 "MediaPortal.Installer" "${Index}-NoBackup"
+  WriteRegStr HKCR ".mpi" "backup_val" $1
 
-    "${Index}-NoBackup:"
-    WriteRegStr HKCR ".mpi" "" "MediaPortal.Installer"
-    WriteRegStr HKCR "MediaPortal.Installer" "" "MediaPortal Installer"
-    WriteRegStr HKCR "MediaPortal.Installer\shell" "" "open"
-    WriteRegStr HKCR "MediaPortal.Installer\DefaultIcon" "" "$MPdir.Base\MPInstaller.exe,0"
-    WriteRegStr HKCR "MediaPortal.Installer\shell\open\command" "" '$MPdir.Base\MPInstaller.exe "%1"'
+  "${Index}-NoBackup:"
+  WriteRegStr HKCR ".mpi" "" "MediaPortal.Installer"
+  WriteRegStr HKCR "MediaPortal.Installer" "" "MediaPortal Installer"
+  WriteRegStr HKCR "MediaPortal.Installer\shell" "" "open"
+  WriteRegStr HKCR "MediaPortal.Installer\DefaultIcon" "" "$MPdir.Base\MPInstaller.exe,0"
+  WriteRegStr HKCR "MediaPortal.Installer\shell\open\command" "" '$MPdir.Base\MPInstaller.exe "%1"'
 
-    ${RefreshShellIcons}
-    # [OBSOLETE] System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
-    !undef Index
+  ${RefreshShellIcons}
+  # [OBSOLETE] System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+  !undef Index
 SectionEnd
 
 #---------------------------------------------------------------------------
@@ -813,7 +808,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"
   Delete "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"
   Delete "$SMPROGRAMS\$StartMenuGroup\web site.url"
-  RmDir "$SMPROGRAMS\$StartMenuGroup"
+  RMDir "$SMPROGRAMS\$StartMenuGroup"
 
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"
@@ -821,17 +816,17 @@ Section Uninstall
 
   ; remove last files and instdir
   Delete /REBOOTOK "$MPdir.Base\uninstall-mp.exe"
-  RmDir "$MPdir.Base"
+  RMDir "$MPdir.Base"
 
   ; do we need to deinstall everything? Then remove also the CommonAppData and InstDir
   ${If} $RemoveAll == 1
     DetailPrint "Removing User Settings"
     DeleteRegKey HKLM "${REG_UNINSTALL}"
-    RmDir /r /REBOOTOK "$MPdir.Config"
-    RmDir /r /REBOOTOK "$MPdir.Database"
-    RmDir /r /REBOOTOK "$MPdir.Plugins"
-    RmDir /r /REBOOTOK "$MPdir.Skin"
-    RmDir /r /REBOOTOK "$MPdir.Base"
+    RMDir /r /REBOOTOK "$MPdir.Config"
+    RMDir /r /REBOOTOK "$MPdir.Database"
+    RMDir /r /REBOOTOK "$MPdir.Plugins"
+    RMDir /r /REBOOTOK "$MPdir.Skin"
+    RMDir /r /REBOOTOK "$MPdir.Base"
   ${EndIf}
 
   ; Remove File Association for .mpi files
@@ -899,9 +894,9 @@ Function .onInit
   ${MementoSectionRestore}
 
   ; update the component status -> commandline parameters have higher priority than registry values
-  ${If} $noDscaler = 1
-    !insertmacro UnselectSection ${SecDscaler}
-  ${EndIf}
+#  ${If} $noDscaler = 1
+#    !insertmacro UnselectSection ${SecDscaler}
+#  ${EndIf}
   ${If} $noGabest = 1
     !insertmacro UnselectSection ${SecGabest}
   ${EndIf}
@@ -964,36 +959,8 @@ Function .onInit
   ${If} ${Silent}
     Call InstFilePre
   ${EndIf}
-/*
-    ${If} ${Silent}
-        RmDir /r "${COMMON_APPDATA}\Cache"
 
-        ; check if MP is already installed
-        ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
-        ${If} ${FileExists} "$R0"
-            ; get parent folder of uninstallation EXE (RO) and save it to R1
-            ${GetParent} $R0 $R1
-            ; start uninstallation of installed MP, from tmp folder, so it will delete itself
-            ClearErrors
-            CopyFiles $R0 "$TEMP\uninstall-mp.exe"
-            ExecWait '"$TEMP\uninstall-mp.exe" /S _?=$R1'
-
-            ; if an error occured, ask to cancel installation
-            IfErrors 0 unInstallDone
-                MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES unInstallDone IDNO 0
-                Quit
-            unInstallDone:
-
-            ; if reboot flag is set, abort the installation, and continue the installer on next startup
-            ${If} ${FileExists} "$INSTDIR\rebootflag"
-                MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
-                WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" "$(^Name)" $EXEPATH
-                Quit
-            ${EndIf}
-        ${EndIf}
-    ${EndIf}
-*/
-    SetShellVarContext all
+  SetShellVarContext all
 FunctionEnd
 
 Function .onInstFailed
@@ -1031,41 +998,10 @@ Function un.onUninstSuccess
   ${If} ${RebootFlag}
     FileOpen $0 "$MPdir.Base\rebootflag" w
     Delete /REBOOTOK "$MPdir.Base\rebootflag" ; this will not be deleted until the reboot because it is currently opened
-    RmDir /REBOOTOK "$MPdir.Base"
+    RMDir /REBOOTOK "$MPdir.Base"
     FileClose $0
   ${EndIf}
 FunctionEnd
-/*
-Function WelcomeLeave
-    ; check if MP is already installed
-    ReadRegStr $R0 HKLM "${REG_UNINSTALL}" UninstallString
-    ${If} ${FileExists} "$R0"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_IS_INSTALLED)"
-
-        ; get parent folder of uninstallation EXE (RO) and save it to R1
-        ${GetParent} $R0 $R1
-        ; start uninstallation of installed MP, from tmp folder, so it will delete itself
-        HideWindow
-        ClearErrors
-        CopyFiles $R0 "$TEMP\uninstall-mp.exe"
-        ExecWait '"$TEMP\uninstall-mp.exe" _?=$R1'
-        BringToFront
-
-        ; if an error occured, ask to cancel installation
-        ${If} ${Errors}
-            MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" /SD IDNO IDYES unInstallDone IDNO 0
-            Quit
-        ${EndIf}
-    ${EndIf}
-
-    ; if reboot flag is set, abort the installation, and continue the installer on next startup
-    ${If} ${FileExists} "$INSTDIR\rebootflag"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)" IDOK 0
-        WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" "$(^Name)" $EXEPATH
-        Quit
-    ${EndIf}
-FunctionEnd
-*/
 
 Function InstFilePre
   ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMajor"
@@ -1106,6 +1042,6 @@ FunctionEnd
 # SECTION DECRIPTIONS     must be at the end
 #---------------------------------------------------------------------------
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecDscaler} $(DESC_SecDscaler)
+    #!insertmacro MUI_DESCRIPTION_TEXT ${SecDscaler} $(DESC_SecDscaler)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecGabest}  $(DESC_SecGabest)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
