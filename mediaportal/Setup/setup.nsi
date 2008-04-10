@@ -183,7 +183,7 @@ Page custom PageReinstall PageLeaveReinstall
 !ifdef HIGH_BUILD
   OutFile "Release\MediaPortal-svn-.exe"
 !else
-  OutFile "Release\setup-mediaportal.exe"
+  OutFile "Release\package-mediaportal.exe"
 !endif
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath

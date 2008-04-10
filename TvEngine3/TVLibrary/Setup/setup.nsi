@@ -175,7 +175,11 @@ Page custom PageReinstall PageLeaveReinstall
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
-OutFile "Release\setup-tve3.exe"
+!ifdef HIGH_BUILD
+  OutFile "Release\setup-tve3.exe"
+!else
+  OutFile "Release\package-tvengine.exe"
+!endif
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
 CRCCheck on
