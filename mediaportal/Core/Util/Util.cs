@@ -2049,9 +2049,8 @@ namespace MediaPortal.Util
 
           if (appendPrefix)
             artistName = string.Format("{0}, {1}", tempName, artistName.Substring(0, prefix.Length));
-
           else
-            artistName = temp;
+            artistName = tempName;
 
           return true;
         }

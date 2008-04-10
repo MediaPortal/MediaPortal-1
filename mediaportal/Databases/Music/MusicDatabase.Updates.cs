@@ -91,7 +91,7 @@ namespace MediaPortal.Music.Database
     private string _previousDirectory = null;
     private string _previousNegHitDir = null;
     private MusicTag _previousMusicTag = null;
-    private bool _foundVariousArtist = false;    
+    private bool _foundVariousArtist = false;
 
     private char[] trimChars = { ' ', '\x00', '|' };
 
@@ -513,7 +513,7 @@ namespace MediaPortal.Music.Database
       }
       return (int)Errors.ERROR_OK;
     }
-    
+
     /// <summary>
     /// Compress the database to save space
     /// </summary>
@@ -785,7 +785,6 @@ namespace MediaPortal.Music.Database
         }
         AddedCounter++;
 
-
         if ((SongCounter % 10) == 0)
         {
           NewProgress = StartProgress + ((ProgressRange * SongCounter) / TotalSongs);
@@ -829,7 +828,7 @@ namespace MediaPortal.Music.Database
               }
             }
           }
-          catch(Exception ex)
+          catch (Exception ex)
           {
             // We might not be able to access a folder. i.e. System Volume Information
             Log.Warn("Musicdatabasereorg: Unable to process files in directory {0}. {1}", dir, ex.Message);
@@ -1169,8 +1168,13 @@ namespace MediaPortal.Music.Database
     }
 
     private void ExtractCoverArt(MusicTag tag)
-    {      
-      string tagAlbumName = string.Format("{0}-{1}", tag.Artist.Trim(trimChars), tag.Album.Trim(trimChars));
+    {
+      string formattedArtist = tag.Artist.Trim(trimChars);
+      string formattedAlbum = tag.Album.Trim(trimChars);
+      if (_stripArtistPrefixes)
+        Util.Utils.StripArtistNamePrefix(ref formattedArtist, true);
+
+      string tagAlbumName = string.Format("{0}-{1}", formattedArtist, formattedAlbum);
       string smallThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
       string largeThumbPath = Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
 
@@ -1294,7 +1298,7 @@ namespace MediaPortal.Music.Database
             Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
           if (!File.Exists(localFolderLThumb))
           {
-              Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+            Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
           }
         }
         catch (Exception ex1)
@@ -1309,14 +1313,14 @@ namespace MediaPortal.Music.Database
       DatabaseReorgEventArgs MyArtistArgs = new DatabaseReorgEventArgs();
       ArrayList allArtists = new ArrayList();
       List<Song> groupedArtistSongs = new List<Song>();
-      List<String> imageTracks = new List<string>();      
+      List<String> imageTracks = new List<string>();
 
       if (GetAllArtists(ref allArtists))
       {
         for (int i = 0 ; i < allArtists.Count ; i++)
         {
           string curArtist = allArtists[i].ToString();
-          if (!string.IsNullOrEmpty(curArtist) && curArtist != "unknown")            
+          if (!string.IsNullOrEmpty(curArtist) && curArtist != "unknown")
           {
             MyArtistArgs.phase = string.Format("Creating artist preview thumbs: {1}/{2} - {0}", curArtist, Convert.ToString(i + 1), Convert.ToString(allArtists.Count));
             // range = 80-90
@@ -1413,7 +1417,7 @@ namespace MediaPortal.Music.Database
           }
         }  // for all genres
       }
-    } 
+    }
 
     private void UpdateVariousArtist(MusicTag tag)
     {
@@ -1668,7 +1672,7 @@ namespace MediaPortal.Music.Database
 
         DatabaseUtility.RemoveInvalidChars(ref strUserName);
 
-        
+
         strSQL = String.Format("select * from scrobbleusers where strUsername like '{0}'", strUserName);
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
