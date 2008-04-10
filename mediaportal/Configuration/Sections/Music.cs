@@ -1304,7 +1304,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxVizOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxVizOptions.Location = new System.Drawing.Point(16, 178);
       this.groupBoxVizOptions.Name = "groupBoxVizOptions";
-      this.groupBoxVizOptions.Size = new System.Drawing.Size(432, 84);
+      this.groupBoxVizOptions.Size = new System.Drawing.Size(432, 54);
       this.groupBoxVizOptions.TabIndex = 3;
       this.groupBoxVizOptions.TabStop = false;
       this.groupBoxVizOptions.Text = "Visualization options";
@@ -1313,7 +1313,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.ShowVizInNowPlayingChkBox.AutoSize = true;
       this.ShowVizInNowPlayingChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ShowVizInNowPlayingChkBox.Location = new System.Drawing.Point(91, 49);
+      this.ShowVizInNowPlayingChkBox.Location = new System.Drawing.Point(91, 23);
       this.ShowVizInNowPlayingChkBox.Name = "ShowVizInNowPlayingChkBox";
       this.ShowVizInNowPlayingChkBox.Size = new System.Drawing.Size(201, 17);
       this.ShowVizInNowPlayingChkBox.TabIndex = 4;
@@ -1325,21 +1325,23 @@ namespace MediaPortal.Configuration.Sections
       this.ShowLyricsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.ShowLyricsCmbBox.Enabled = false;
       this.ShowLyricsCmbBox.FormattingEnabled = true;
-      this.ShowLyricsCmbBox.Location = new System.Drawing.Point(91, 22);
+      this.ShowLyricsCmbBox.Location = new System.Drawing.Point(121, 32);
       this.ShowLyricsCmbBox.Name = "ShowLyricsCmbBox";
       this.ShowLyricsCmbBox.Size = new System.Drawing.Size(293, 21);
       this.ShowLyricsCmbBox.TabIndex = 1;
+      this.ShowLyricsCmbBox.Visible = false;
       // 
       // label9
       // 
       this.label9.AutoSize = true;
       this.label9.Enabled = false;
-      this.label9.Location = new System.Drawing.Point(22, 25);
+      this.label9.Location = new System.Drawing.Point(22, 35);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(63, 13);
       this.label9.TabIndex = 0;
       this.label9.Text = "Show lyrics:";
       this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.label9.Visible = false;
       // 
       // MiscTabPg
       // 
