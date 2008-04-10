@@ -484,6 +484,14 @@ namespace MediaPortal.Player
       }
     }
 
+    public override bool IsCDA
+    {
+      get
+      {
+        return _isCDDAFile;
+      }
+    }
+
     public override bool HasVideo
     {
       get { return true; }
