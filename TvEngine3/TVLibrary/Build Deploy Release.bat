@@ -13,8 +13,8 @@ DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% >> 
 
 DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /revert >> build.log
 
-EXIT
-rem these commands are necessary to get the svn revision, to enable them just remove the EXIT one line above
+
+rem be sure you have installed nsis and the required plugins to compile the installer.exe
 DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /GetVersion >> build.log
 IF NOT EXIST version.txt EXIT >> build.log
 SET /p version=<version.txt >> build.log
