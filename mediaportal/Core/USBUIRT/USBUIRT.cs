@@ -179,8 +179,8 @@ namespace MediaPortal.IR
     #region constants
 
     private static int UUIRTDRV_IRFMT_UUIRT = 0x0000;
-    private const string remotefile = "UIRTUSB-remote.xml";
-    private const string tunerfile = "UIRTUSB-tuner.xml";
+    static readonly string remotefile = Config.GetFile(Config.Dir.Config, "UIRTUSB-remote.xml");
+    static readonly string tunerfile  = Config.GetFile(Config.Dir.Config, "UIRTUSB-tuner.xml");
     //private const string    USBUIRT_PLUGINVER = "1.1 (December 23, 2005)";
 
     #endregion
