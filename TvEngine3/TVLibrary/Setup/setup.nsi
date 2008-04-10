@@ -33,7 +33,7 @@
 Name "MediaPortal TV Server / Client"
 SetCompressor /SOLID lzma
 
-!ifdef HIGH_BUILD
+!ifdef SVN_BUILD
   !define TVSERVER.BASE "..\TVServer.Base"
   !define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\bin\Release"
 !else
@@ -175,7 +175,7 @@ Page custom PageReinstall PageLeaveReinstall
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
-!ifdef HIGH_BUILD
+!ifdef SVN_BUILD
   OutFile "Release\setup-tve3.exe"
 !else
   OutFile "Release\package-tvengine.exe"

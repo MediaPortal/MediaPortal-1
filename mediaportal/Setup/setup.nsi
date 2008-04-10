@@ -33,7 +33,7 @@
 Name "MediaPortal"
 SetCompressor /SOLID lzma
 
-!ifdef HIGH_BUILD
+!ifdef SVN_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
   !define MEDIAPORTAL.FILTERBIN "..\..\DirectShowFilters\bin\Release"
   !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
@@ -152,7 +152,7 @@ BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
 #!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
 !insertmacro MUI_PAGE_WELCOME
 
-!ifndef HIGH_BUILD
+!ifndef SVN_BUILD
 Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
@@ -180,7 +180,7 @@ Page custom PageReinstall PageLeaveReinstall
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
-!ifdef HIGH_BUILD
+!ifdef SVN_BUILD
   OutFile "Release\MediaPortal-svn-.exe"
 !else
   OutFile "Release\package-mediaportal.exe"
@@ -214,7 +214,7 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
-!ifdef HIGH_BUILD     # optional Section which could create a backup
+!ifdef SVN_BUILD     # optional Section which could create a backup
 Section "Backup current installation status" SecBackup
 
   !insertmacro GET_BACKUP_POSTFIX $R0
@@ -333,7 +333,7 @@ Section "MediaPortal core files (required)" SecCore
 
 
   SetOutPath "$MPdir.Base"
-!ifdef HIGH_BUILD
+!ifdef SVN_BUILD
   SetOverwrite off
   File MediaPortalDirs.xml
   SetOverwrite on
