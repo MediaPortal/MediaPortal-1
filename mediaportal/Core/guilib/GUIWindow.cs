@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.Library
   /// Pluginwindows should be copied in the plugins/windows folder
   /// </summary>
   public class GUIWindow : Page
-  {        
+  {
     #region window ids
 
     /// <summary>
@@ -242,6 +242,7 @@ namespace MediaPortal.GUI.Library
       Yes,
     }
     #endregion
+
     #region variables
     private int _windowId = -1;
     private int _previousWindowId = -1;
@@ -1007,11 +1008,12 @@ namespace MediaPortal.GUI.Library
     /// <returns>GUIControl or null if control is not found</returns>
     public virtual GUIControl GetControl(int iControlId)
     {
-      for (int x = 0; x < Children.Count; ++x)
+      for (int x = 0; x < Children.Count; x++)
       {
         GUIControl cntl = (GUIControl)Children[x];
         GUIControl cntlFound = cntl.GetControlById(iControlId);
-        if (cntlFound != null) return cntlFound;
+        if (cntlFound != null)
+          return cntlFound;
 
       }
       return null;
@@ -1495,9 +1497,11 @@ namespace MediaPortal.GUI.Library
         return false;
       }
     }
+
     public virtual void OnAdded()
     {
     }
+
     #region effects
 
 
@@ -1515,9 +1519,11 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.SetWindowTransform(transform);
       return true;
     }
+
     void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState)
     {
     }
+
     bool HasAnimation(AnimationType animType)
     {
       if (_showAnimation.AnimationType == AnimationType.WindowOpen)
@@ -1590,8 +1596,6 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
-
-
 
     #endregion
     /// XAML related code follows

@@ -1017,7 +1017,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>window found or null if not found</returns>
     public static GUIWindow GetWindow(int dwID)
     {
-      for (int x = 0; x < _windowCount; ++x)
+      for (int x = 0; x < _windowCount; x++)
       {
         if (_listWindows[x].GetID == dwID)
         {

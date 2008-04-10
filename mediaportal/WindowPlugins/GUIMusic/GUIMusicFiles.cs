@@ -1379,9 +1379,9 @@ namespace MediaPortal.GUI.Music
       if (nFolderCount == (int)items.Count)
         return;
 
-      GUIDialogProgress dlg = null;
+      GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (!aPlaylistAdd)
-        dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        dlg = null;
 
       if (currentFolder.Length == 0)
         return;
