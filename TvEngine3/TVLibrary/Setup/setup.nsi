@@ -32,7 +32,6 @@
 #**********************************************************************************************************#
 Name "MediaPortal TV Server / Client"
 SetCompressor /SOLID lzma
-RequestExecutionLevel admin
 
 !ifdef HIGH_BUILD
   !define TVSERVER.BASE "..\TVServer.Base"
