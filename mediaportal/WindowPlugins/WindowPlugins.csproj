@@ -222,10 +222,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="X10Unified, Version=0.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\X10Unified.dll</HintPath>
-    </Reference>
     <Reference Include="xAPMessage, Version=1.2.9.8, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\xAPMessage.dll</HintPath>
