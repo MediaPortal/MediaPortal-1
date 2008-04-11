@@ -256,7 +256,6 @@
     </Compile>
     <Compile Include="HelpSystem.cs" />
     <Compile Include="Sections\GeneralWatchdog.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\GeneralWatchdog.Designer.cs">
       <DependentUpon>GeneralWatchdog.cs</DependentUpon>
