@@ -6,7 +6,7 @@ using System.IO;
 using System.Resources;
 using System.Globalization;
 using System.Xml;
-using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool
 {
@@ -256,62 +256,30 @@ namespace MediaPortal.DeployTool
       return OsDesc;
     }
 
-    #region 64bit API detection
-    public class WinApi
-    {
-        [DllImport("kernel32.dll")]
-        public static extern void GetSystemInfo([MarshalAs(UnmanagedType.Struct)] ref SYSTEM_INFO lpSystemInfo);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SYSTEM_INFO
-        {
-            internal _PROCESSOR_INFO_UNION uProcessorInfo;
-            public uint dwPageSize;
-            public IntPtr lpMinimumApplicationAddress;
-            public IntPtr lpMaximumApplicationAddress;
-            public IntPtr dwActiveProcessorMask;
-            public uint dwNumberOfProcessors;
-            public uint dwProcessorType;
-            public uint dwAllocationGranularity;
-            public ushort dwProcessorLevel;
-            public ushort dwProcessorRevision;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        public struct _PROCESSOR_INFO_UNION
-        {
-            [FieldOffset(0)]
-            internal uint dwOemId;
-            [FieldOffset(0)]
-            internal ushort wProcessorArchitecture;
-            [FieldOffset(2)]
-            internal ushort wReserved;
-        }
-    }
     public static void Check64bit()
     {
-        WinApi.SYSTEM_INFO sysinfo = new WinApi.SYSTEM_INFO();
-        WinApi.GetSystemInfo(ref sysinfo);
-        switch (sysinfo.uProcessorInfo.wProcessorArchitecture)
-        {
-            case 9:
-            case 6:
-                    MessageBox.Show("DEBUG: 64-bit OS detected");
-                    InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-                    InstallationProperties.Instance.Set("Sql2005Download", "64");
-                    break;
-            case 0:
+        try
+            {
+                RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows");
+                if (key == null)
+                {
                     MessageBox.Show("DEBUG: 32-bit OS detected");
                     InstallationProperties.Instance.Set("RegistryKeyAdd", "");
                     InstallationProperties.Instance.Set("Sql2005Download", "32");
-                    break;
-            default:
-                    MessageBox.Show("Unknown architecture", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Environment.Exit(-2);
-                    break;
-        }
+                }
+                else
+                {
+                    key.Close();
+                    MessageBox.Show("DEBUG: 64-bit OS detected");
+                    InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+                    InstallationProperties.Instance.Set("Sql2005Download", "64");
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("DEBUG: Check64bit() - Exception: " + e.Message + "( " + e.StackTrace + " )");
+            }
     }
-    #endregion
 
     public static bool CheckStartupPath()
     {
