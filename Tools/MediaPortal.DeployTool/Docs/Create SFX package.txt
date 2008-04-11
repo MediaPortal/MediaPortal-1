@@ -2,17 +2,17 @@
 		MediaPortal Setup 1.0RC1
 
 
-To create the selfextracting package you need WinRAR 3.71.
+To create the selfextracting package you need WinRAR >= 3.71
 
 Files to include:
 
    MediaPortal.DeployTool.exe
    Interop.NetFwTypeLib.dll
    de-de\MediaPortal.DeployTool.resources.dll
+   deploy\package-mediaportal.exe
+   deploy\package-tvengine.exe
 
+If others localization files are added, you must include them ;)
 
-If others localization files are added, you must include them
-
-Once the RAR is created, look at WinRAR_*.jpg to complete the job
-
+for WinRAR options look at WinRAR_*.jpg
 
