@@ -266,7 +266,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\TVDatabase\TvBusinessLayer\bin\Release\TvBusinessLayer.dll
   File ..\TvLibrary.Interfaces\bin\Release\TvLibrary.Interfaces.dll
   File ..\TVLibrary\bin\Release\TVLibrary.dll
-  File ..\TvService\bin\Release\TuningParameters\Germany_Unitymedia_NRW.dvbc
   File ..\TvService\Gentle.config
   File ..\TvService\bin\Release\TvService.exe
   File ..\TvService\bin\Release\TvService.exe.config
