@@ -80,11 +80,11 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
     !define VER_BUILD   0
 !endif
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define VERSION "1.0 RC1 internal"
+    !define VERSION "1.0 RC1"
 !else                       # it's an svn reöease
-    !define VERSION "pre-release build ${VER_BUILD}"
+    !define VERSION "build ${VER_BUILD} for TESTING ONLY"
 !endif
-BrandingText "MediaPortal ${VERSION} by Team MediaPortal"
+BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
