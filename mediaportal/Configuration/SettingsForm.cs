@@ -141,6 +141,7 @@ namespace MediaPortal.Configuration
         splashScreen.SetInformation("Adding skins section...");
       }
       AddChildSection(general, new GeneralStartupDelay());
+      AddChildSection(general, new GeneralWatchdog());
       AddChildSection(general, new GeneralSkin());
       AddChildSection(general, new GeneralKeyboardControl());
       AddChildSection(general, new Keys());

@@ -34,6 +34,7 @@ namespace MPTestTool
     private void btnCancel_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.Cancel;
+      Close();
     }
   }
 }

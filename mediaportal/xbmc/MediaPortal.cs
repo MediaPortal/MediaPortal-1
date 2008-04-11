@@ -227,7 +227,10 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Error("No write permissions to set registry keys for SVN installer");
       }
 
-      bool autoHideTaskbar = true; ;
+      bool autoHideTaskbar = true;
+      bool watchdogEnabled = true;
+      bool restartOnError=false;
+      int restartDelay=10;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -252,6 +255,10 @@ public class MediaPortalApp : D3DApp, IRender
         _startupDelay = xmlreader.GetValueAsInt("general", "startup delay", 0);
         _waitForTvServer = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
 
+        watchdogEnabled=xmlreader.GetValueAsBool("general", "watchdogEnabled", true);
+        restartOnError = xmlreader.GetValueAsBool("general", "restartOnError", false);
+        restartDelay = xmlreader.GetValueAsInt("general", "restart delay", 10);
+
         GUIGraphicsContext._useScreenSelector |= xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
       }
 
@@ -259,6 +266,23 @@ public class MediaPortalApp : D3DApp, IRender
       AddExceptionHandler();
 #endif
       Log.BackupLogFiles();
+      if (watchdogEnabled)
+      {
+        StreamWriter sw = new StreamWriter(Application.StartupPath + "\\mediaportal.running", false);
+        sw.WriteLine("running");
+        sw.Close();
+        Log.Info("Main: Starting MPTestTool as exception watchdog");
+        string cmdargs = "-watchdog";
+        if (restartOnError)
+          cmdargs += " -restartMP " + restartDelay.ToString();
+        Process mpTestTool = new Process();
+        mpTestTool.StartInfo.ErrorDialog = true;
+        mpTestTool.StartInfo.UseShellExecute = true;
+        mpTestTool.StartInfo.WorkingDirectory = Application.StartupPath;
+        mpTestTool.StartInfo.FileName = "MPTestTool2.exe";
+        mpTestTool.StartInfo.Arguments = cmdargs;
+        mpTestTool.Start();
+      }
       Log.Info("Main: MediaPortal is starting up");
       Log.Info("Main: Using Directories:");
       foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
@@ -526,8 +550,12 @@ public class MediaPortalApp : D3DApp, IRender
         }
         else
         {
-          if (_mpCrashed)
+          if (!_mpCrashed)
           {
+            if (File.Exists(Application.StartupPath + "\\mediaportal.running"))
+              File.Delete(Application.StartupPath + "\\mediaportal.running");
+            // GEMX 08.04.08: The MPTestTool2 is now always started in the background and monitors MP itself
+            /*
             Process mpTestTool = new Process();
             mpTestTool.StartInfo.ErrorDialog = true;
             mpTestTool.StartInfo.UseShellExecute = true;
@@ -535,6 +563,7 @@ public class MediaPortalApp : D3DApp, IRender
             mpTestTool.StartInfo.FileName = "MPTestTool2.exe";
             mpTestTool.StartInfo.Arguments = "-crashed";
             mpTestTool.Start();
+            */
           }
         }
       }

@@ -62,6 +62,8 @@ namespace MediaPortal
       ExceptionLogger logger = new ExceptionLogger(ex);
       logger.CreateLogs(directory);
       Log.Info("MediaPortal: stop...");
+      // GEMX 08.04.08: The MPTestTool2 is now always started in the background and monitors MP itself
+      /*
       Process mpTestTool = new Process();
       mpTestTool.StartInfo.ErrorDialog = true;
       mpTestTool.StartInfo.UseShellExecute = true;
@@ -69,6 +71,7 @@ namespace MediaPortal
       mpTestTool.StartInfo.FileName = "MPTestTool2.exe";
       mpTestTool.StartInfo.Arguments = "-crashed";
       mpTestTool.Start();
+       */
       Application.Exit();
     }
   }

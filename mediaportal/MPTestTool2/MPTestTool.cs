@@ -43,7 +43,7 @@ namespace MPTestTool
     string _tempDir = "";
     string _zipFile = "";
     bool _autoMode = false;
-    bool _crashed = false;
+    bool _watchdog = false;
     bool _restartMP=false;
     int _cancelDelay=10;
     Process _processMP = null;
@@ -56,10 +56,10 @@ namespace MPTestTool
     private void ShowUsage()
     {
       string usageText = "\n" +
-        "Usage: MPTestTool.exe [-auto] [-crashed] [-zipFile <path+filename>] [-restartMP <delay in seconds>] \n" +
+        "Usage: MPTestTool.exe [-auto] [-watchdog] [-zipFile <path+filename>] [-restartMP <delay in seconds>] \n" +
         "\n" +
         "auto     : Perform all actions automatically and start MediaPortal in between\n" +
-        "crashed  : Used internally by MediaPortal if it crashes\n" +
+        "watchdog : Used internally by MediaPortal to monitor MP\n" +
         "zipFile  : full path and filename to the zip where all logfiles will be included\n" +
         "restartMP: automatically collects all logs, saves them as zip to desktop, restarts MP and closes\n" +
         "           the delay is the time in where you can cancel the operation\n" +
@@ -93,27 +93,11 @@ namespace MPTestTool
         setStatus("Running in auto/debug mode...");
         tmrUnAttended.Enabled = true;
       }
-      if (_crashed)
+      if (_watchdog)
       {
-        CheckRequirements();
-        preTestButton.Enabled = false;
-        LaunchMPButton.Enabled = false;
-        if (_restartMP)
-        {
-          CrashRestartDlg dlg = new CrashRestartDlg(_cancelDelay);
-          if (dlg.ShowDialog() == DialogResult.OK)
-          {
-            PerformPostTestActions();
-            string mpExe=Config.GetFolder(Config.Dir.Base)+"\\MediaPortal.exe";
-            Utils.WarningDlg(mpExe);
-            tmrShutdown.Enabled = true;
-            Process mp = new Process();
-            mp.StartInfo.FileName = mpExe;
-            mp.Start();
-          }
-        }
-        else
-          Utils.ErrorDlg("MediaPortal crashed unexpectedly.");
+        WindowState = FormWindowState.Minimized;
+        ShowInTaskbar = false;
+        tmrWatchdog.Enabled=true;
       }
     }
 
@@ -131,8 +115,8 @@ namespace MPTestTool
           case "-auto":
             _autoMode = true;
             break;
-          case "-crashed":
-            _crashed = true;
+          case "-watchdog":
+            _watchdog = true;
             break;
           case "-restartmp":
             _restartMP = true;
@@ -350,10 +334,49 @@ namespace MPTestTool
       panel.Dispose();
     }
 
-    private void tmrShutdown_Tick(object sender, EventArgs e)
+    private void tmrWatchdog_Tick(object sender, EventArgs e)
     {
-      tmrShutdown.Enabled = false;
-      Close();
+      tmrWatchdog.Enabled = false;
+      Process[] procs=Process.GetProcesses();
+      bool running=false;
+      foreach (Process p in procs)
+      {
+        if (p.ProcessName == "MediaPortal")
+        {
+          running = true;
+          break;
+        }
+      }
+      if (running)
+        tmrWatchdog.Enabled = true;
+      else
+      {
+        if (!File.Exists(Application.StartupPath + "\\mediaportal.running"))
+        {
+          Close();
+          return;
+        }
+        this.ShowInTaskbar = true;
+        this.WindowState = FormWindowState.Normal;
+        CheckRequirements();
+        preTestButton.Enabled = false;
+        LaunchMPButton.Enabled = false;
+        if (!_restartMP)
+          Utils.ErrorDlg("MediaPortal crashed unexpectedly.");
+        else
+        {
+          CrashRestartDlg dlg = new CrashRestartDlg(_cancelDelay);
+          if (dlg.ShowDialog() == DialogResult.OK)
+          {
+            PerformPostTestActions();
+            string mpExe = Config.GetFolder(Config.Dir.Base) + "\\MediaPortal.exe";
+            Process mp = new Process();
+            mp.StartInfo.FileName = mpExe;
+            mp.Start();
+            Close();
+          }
+        }
+      }
     }
   }
 }

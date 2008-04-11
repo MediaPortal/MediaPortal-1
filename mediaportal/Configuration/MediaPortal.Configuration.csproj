@@ -255,6 +255,12 @@
       <DependentUpon>MPForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HelpSystem.cs" />
+    <Compile Include="Sections\GeneralWatchdog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralWatchdog.Designer.cs">
+      <DependentUpon>GeneralWatchdog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\Project.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -621,6 +627,10 @@
     <EmbeddedResource Include="MPForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MPForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralWatchdog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GeneralWatchdog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Project.resx">
       <DependentUpon>Project.cs</DependentUpon>
