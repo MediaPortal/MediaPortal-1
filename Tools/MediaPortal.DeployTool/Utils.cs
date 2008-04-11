@@ -6,7 +6,7 @@ using System.IO;
 using System.Resources;
 using System.Globalization;
 using System.Xml;
-using System.Management;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool
 {
@@ -256,34 +256,68 @@ namespace MediaPortal.DeployTool
       return OsDesc;
     }
 
-    public static void Check64bit()
+    #region 64bit API detection
+    public class WinApi
     {
-        string Architecture = null;
-        ManagementClass management = new ManagementClass("Win32_OperatingSystem");
-        ManagementObjectCollection mngInstance = management.GetInstances();
-        foreach (ManagementObject mngObject in mngInstance)
+        [DllImport("kernel32.dll")]
+        public static extern void GetSystemInfo([MarshalAs(UnmanagedType.Struct)] ref SYSTEM_INFO lpSystemInfo);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SYSTEM_INFO
         {
-            Architecture = mngObject["OSArchitecture"].ToString();
+            internal _PROCESSOR_INFO_UNION uProcessorInfo;
+            public uint dwPageSize;
+            public IntPtr lpMinimumApplicationAddress;
+            public IntPtr lpMaximumApplicationAddress;
+            public IntPtr dwActiveProcessorMask;
+            public uint dwNumberOfProcessors;
+            public uint dwProcessorType;
+            public uint dwAllocationGranularity;
+            public ushort dwProcessorLevel;
+            public ushort dwProcessorRevision;
         }
 
-        if (Architecture == "64-bit")
+        [StructLayout(LayoutKind.Explicit)]
+        public struct _PROCESSOR_INFO_UNION
         {
-            //MessageBox.Show("64-bit OS detected");
-            InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-            InstallationProperties.Instance.Set("Sql2005Download", "64");
-        }
-        else
-        {
-            //MessageBox.Show("32-bit OS detected");
-            InstallationProperties.Instance.Set("RegistryKeyAdd", "");
-            InstallationProperties.Instance.Set("Sql2005Download", "32");
+            [FieldOffset(0)]
+            internal uint dwOemId;
+            [FieldOffset(0)]
+            internal ushort wProcessorArchitecture;
+            [FieldOffset(2)]
+            internal ushort wReserved;
         }
     }
+    public static void Check64bit()
+    {
+        WinApi.SYSTEM_INFO sysinfo = new WinApi.SYSTEM_INFO();
+        WinApi.GetSystemInfo(ref sysinfo);
+        switch (sysinfo.uProcessorInfo.wProcessorArchitecture)
+        {
+            case 9:
+            case 6:
+                    MessageBox.Show("DEBUG: 64-bit OS detected");
+                    InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+                    InstallationProperties.Instance.Set("Sql2005Download", "64");
+                    break;
+            case 0:
+                    MessageBox.Show("DEBUG: 32-bit OS detected");
+                    InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+                    InstallationProperties.Instance.Set("Sql2005Download", "32");
+                    break;
+            default:
+                    MessageBox.Show("Unknown architecture", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Environment.Exit(-2);
+                    break;
+        }
+    }
+    #endregion
 
     public static bool CheckStartupPath()
     {
         try
         {
+            
             if (Directory.GetCurrentDirectory().StartsWith("\\"))
             {
                 MessageBox.Show(Localizer.Instance.GetString("Startup_UNC"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -298,9 +332,10 @@ namespace MediaPortal.DeployTool
             }
             return true;
         }
-        catch
+        catch(Exception e)
         {
             MessageBox.Show(Localizer.Instance.GetString("Startup_UNC_Readonly"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show("DEBUG: Check64bit() - Exception: " + e.Message + "( " + e.StackTrace + " )");
             return false;
         }
     }
