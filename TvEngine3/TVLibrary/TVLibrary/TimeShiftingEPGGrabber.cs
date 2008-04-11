@@ -77,12 +77,9 @@ namespace TvLibrary
     void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       TimeSpan ts = DateTime.Now - _grabStartTime;
-      if (ts.TotalMinutes > 2)
-      {
-        Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {1} mins", ts.TotalMinutes);
-        _epgTimer.Enabled = false;
-        _card.AbortGrabbing();
-      }
+      Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {1} mins", ts.TotalMinutes);
+      _epgTimer.Enabled = false;
+      _card.AbortGrabbing();
     }
 
     #region BaseEpgGrabber implementation

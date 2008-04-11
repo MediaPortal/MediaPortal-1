@@ -79,6 +79,8 @@ namespace TvDatabase
       _grabberName = grabberName;
       _checkForLastUpdate = checkForLastUpdate;
       ReloadConfig();
+      if (_alwaysReplace)
+        _checkForLastUpdate = false;
     }
     #endregion
 
