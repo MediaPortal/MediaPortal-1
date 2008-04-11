@@ -50,20 +50,16 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label")]
     protected string _label = "";
     protected GUIFont _font = null;
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("disabledcolor")]
-    protected long _disabledColor = 0xFF606060;
-    [XMLSkinElement("hyperlink")]
-    protected int _hyperLinkWindowId = -1;
+
+    [XMLSkinElement("textcolor")]                     protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus")]          		protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("disabledcolor")]                 protected long _disabledColor = 0xFF606060;
+    [XMLSkinElement("hyperlink")]                     protected int _hyperLinkWindowId = -1;
 
     protected string _scriptAction = "";
-    [XMLSkinElement("textXOff")]
-    protected int _textOffsetX = 0;
-    [XMLSkinElement("textYOff")]
-    protected int _textOffsetY = 0;
-    [XMLSkinElement("textalign")]
-    protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textXOff")]                      protected int _textOffsetX = 0;
+    [XMLSkinElement("textYOff")]                      protected int _textOffsetY = 0;
+    [XMLSkinElement("textalign")]                     protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
 
 
     public GUIToggleButtonControl(int parentId)
@@ -109,6 +105,7 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
+      // Do not render if not visible.
       if (GUIGraphicsContext.EditMode == false)
       {
         if (!IsVisible)
@@ -118,6 +115,7 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      // The GUIButtonControl has the focus
       if (Focus)
       {
         int dwAlphaCounter = _frameCounter + 2;
@@ -144,13 +142,18 @@ namespace MediaPortal.GUI.Library
           _imageAlternativeNonFocused.Render(timePassed);
       }
 
+      // render the text on the button
       if (_label.Length > 0 && _font != null)
       {
+        /* replaced by the following not commented line
         long color = _textColor;
         if (Disabled)
           color = _disabledColor;
         if (Dimmed)
           color &= (DimColor);
+        */
+
+        long color = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
 
         // render the text on the button
         int x = 0;

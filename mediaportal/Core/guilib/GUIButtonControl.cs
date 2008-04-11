@@ -210,7 +210,7 @@ namespace MediaPortal.GUI.Library
       _labelControl.Width = labelWidth;
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.Label = _label;
-			_labelControl.TextColor = Disabled ? _disabledColor : Focus? _textColor : _textColorNoFocus;
+      _labelControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
 
       // render the text on the button
       int x = 0;
