@@ -76,7 +76,7 @@ namespace MediaPortal.Player
       {
         dvdDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
 
-        if (dvdDNavigator == "Cyberlink DVD Navigator (PDVD7)" || dvdDNavigator == "Cyberlink DVD Navigator (PDVD6)")
+        if (dvdDNavigator == "Cyberlink DVD Navigator (PDVD7)" || dvdDNavigator == "Cyberlink DVD Navigator (PDVD6)" || dvdDNavigator == "Cyberlink DVD Navigator (PDVD8)")
         {
           _cyberlinkDVDNavigator = true;
         }
