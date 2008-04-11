@@ -303,7 +303,7 @@ namespace MediaPortal.DeployTool
         catch(Exception e)
         {
             MessageBox.Show(Localizer.Instance.GetString("Startup_UNC_Readonly"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            MessageBox.Show("DEBUG: Check64bit() - Exception: " + e.Message + "( " + e.StackTrace + " )");
+            MessageBox.Show("DEBUG: CheckStartupPath() - Exception: " + e.Message + "( " + e.StackTrace + " )");
             return false;
         }
     }
