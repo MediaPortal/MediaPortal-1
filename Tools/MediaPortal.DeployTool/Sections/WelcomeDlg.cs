@@ -70,8 +70,10 @@ namespace MediaPortal.DeployTool
       {
         case "english":
           return "en-US";
-        case "german":
+        case "deutsch":
           return "de-DE";
+        case "italiano":
+          return "it-IT";
       }
       return "en-US";
     }

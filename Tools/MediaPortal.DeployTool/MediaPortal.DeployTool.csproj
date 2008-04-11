@@ -85,11 +85,6 @@
     <Compile Include="ManualDownload.Designer.cs">
       <DependentUpon>ManualDownload.cs</DependentUpon>
     </Compile>
-    <Compile Include="MediaPortal.DeployTool.de-DE.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MediaPortal.DeployTool.de-DE.resx</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DeployDialog.resx">
@@ -117,6 +112,9 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MediaPortal.DeployTool.de-DE.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.it-IT.resx">
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.resx">
       <SubType>Designer</SubType>
