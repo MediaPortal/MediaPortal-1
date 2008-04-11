@@ -154,6 +154,8 @@ namespace MediaPortal.GUI.Library
         */
 
         long color = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+        if (Dimmed)
+          color &= (DimColor);
 
         // render the text on the button
         int x = 0;
