@@ -114,7 +114,7 @@ namespace TvService
 
       foreach (Card card in cards)
       {				
-        if (false == card.Enabled) continue;
+        if (!card.Enabled||!card.GrabEPG) continue;
 
 				try
 				{

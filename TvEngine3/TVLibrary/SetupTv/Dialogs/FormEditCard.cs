@@ -58,11 +58,13 @@ namespace SetupTv.Sections
     private void FormEditCard_Load(object sender, EventArgs e)
     {
       numericUpDownDecryptLimit.Value = _card.DecryptLimit;
+      checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
       _card.DecryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
+      _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
       this.Close();
     }
 

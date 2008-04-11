@@ -182,6 +182,21 @@ namespace SetupTv.Sections
             item.SubItems.Add("Yes");
           }
 
+          if (cardType.ToLower().Contains("dvb") || cardType.ToLower().Contains("atsc"))//CAM limit doesn't apply to non-digital cards
+          {
+              if (!card.GrabEPG)
+              {
+                  item.SubItems.Add("No");
+              }
+              else
+              {
+                  item.SubItems.Add("Yes");
+              }
+          }
+   
+          else
+              item.SubItems.Add("");
+
           item.Tag = card;
         }
 
