@@ -289,7 +289,6 @@
     <Compile Include="GUIAlarm\AlarmSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUIAlarm\Sleeptimer.cs" />
     <Compile Include="GUIAlarm\GUIAlarm.cs">
       <SubType>Code</SubType>
     </Compile>
