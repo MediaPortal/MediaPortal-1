@@ -193,6 +193,7 @@
     <Compile Include="InputMapper\InputMappingForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Remotes\CentareaHID\CentareaRemote.cs" />
     <Compile Include="Remotes\DirectInputRemote\DirectInputHandler.cs">
       <SubType>Code</SubType>
     </Compile>

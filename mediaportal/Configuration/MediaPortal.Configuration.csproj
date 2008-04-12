@@ -256,6 +256,7 @@
     </Compile>
     <Compile Include="HelpSystem.cs" />
     <Compile Include="Sections\GeneralWatchdog.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\GeneralWatchdog.Designer.cs">
       <DependentUpon>GeneralWatchdog.cs</DependentUpon>
@@ -932,6 +933,9 @@
     <None Include="Resources\wizard_header.jpg" />
     <None Include="Resources\remote.MceEurope.png" />
     <None Include="Resources\remote.MceUSA.png" />
+    <None Include="Resources\remote.HidKeys.png" />
+    <None Include="Resources\remote.FireDtv.png" />
+    <None Include="Resources\remote.Centarea.png" />
     <Content Include="Wizards\DVD.xml" />
     <Content Include="Wizards\FirstTimeSetup.xml" />
     <Content Include="Wizards\Movies.xml" />

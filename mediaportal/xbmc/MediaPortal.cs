@@ -3312,6 +3312,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
     }
     return;  //?
+      
     GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;

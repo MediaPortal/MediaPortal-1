@@ -31,13 +31,11 @@ namespace MediaPortal.InputDevices
 {
   public static class InputDevices
   {
-
     #region Methods
 
     static InputDevices()
     {
     }
-
 
     public static void Init()
     {
@@ -51,11 +49,12 @@ namespace MediaPortal.InputDevices
 
       diRemote.Init();
       X10Remote.Init();
+      CentareaRemote.Init();
       HidListener.Init(GUIGraphicsContext.ActiveForm);
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
-      IrTrans.Init(GUIGraphicsContext.ActiveForm);
+      IrTrans.Init(GUIGraphicsContext.ActiveForm);      
     }
 
     public static void Stop()
@@ -69,6 +68,7 @@ namespace MediaPortal.InputDevices
       HidListener.DeInit();
       MCE2005Remote.DeInit();
       FireDTVRemote.DeInit();
+      CentareaRemote.DeInit();
       HCWRemote.DeInit();
       IrTrans.DeInit();
       diRemote.Stop();
@@ -81,6 +81,9 @@ namespace MediaPortal.InputDevices
       action = null;
       key = (char)0;
       keyCode = Keys.A;
+
+      if (CentareaRemote.WndProc(ref msg))
+        return true;
 
       if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
         return true;
@@ -123,6 +126,7 @@ namespace MediaPortal.InputDevices
     private static DirectInputHandler diRemote = new DirectInputHandler();
     private static IrTrans IrTrans = new IrTrans();
     private static FireDTVRemote FireDTVRemote = new FireDTVRemote();
+    private static CentareaRemote CentareaRemote = new CentareaRemote();
     private static AppCommands _lastHidRequest;
     
     static int _lastHidRequestTick;
