@@ -39,9 +39,13 @@ namespace MediaPortal.InputDevices
     const int WM_KEYDOWN = 0x0100;
     const int WM_SYSKEYDOWN = 0x0104;
     const int WM_APPCOMMAND = 0x0319;
+    const int WM_LBUTTONDOWN = 0x0201;
+    const int WM_RBUTTONDOWN = 0x0204;
+    const int WM_MOVE = 0x0003;
 
     bool _remoteActive = false;   // Centarea Remote enabled and mapped
     bool _verboseLogging = false; // Log key presses
+    bool _mapMouseButton = true;  // Interpret the joystick push as "ok" button
     InputHandler _inputHandler;   // Input Mapper
 
     #region Constructor
@@ -93,7 +97,7 @@ namespace MediaPortal.InputDevices
       {
         Log.Info("Centarea: Stopping Centarea HID remote");
         _remoteActive = false;
-        _inputHandler = null;        
+        _inputHandler = null;
       }
     }
 
@@ -110,7 +114,7 @@ namespace MediaPortal.InputDevices
     {
       if (_remoteActive)
       {
-        if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == WM_APPCOMMAND)
+        if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == WM_APPCOMMAND || msg.Msg == WM_LBUTTONDOWN)
         {
           switch ((Keys)msg.WParam)
           {
@@ -122,6 +126,14 @@ namespace MediaPortal.InputDevices
               break;
             default:
               int keycode = (int)msg.WParam;
+              // Due to the non-perfect placement of the OK button we allow the user to remap the joystick to okay.
+              // Unfortunately this will have SYSTEMWIDE effect.
+              if (_mapMouseButton && msg.Msg == WM_LBUTTONDOWN)
+              {
+                if (_verboseLogging)
+                  Log.Debug("Centarea: Command \"{0}\" mapped for joystick button", keycode);
+                keycode = 13;
+              }
               // The Centarea Remote sends key combos. Therefore we use this trick to get a 1:1 mapping
               if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) keycode += 1000;
               if ((Control.ModifierKeys & Keys.Control) == Keys.Control) keycode += 10000;
@@ -149,7 +161,7 @@ namespace MediaPortal.InputDevices
               break;
           }
           return true;
-        }        
+        }
       }
       return false;
     }

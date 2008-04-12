@@ -166,6 +166,7 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox mpCheckBox1;
     private MPCheckBox mpCheckBox2;
     private MPButton mpButton1;
+    private MPCheckBox checkBoxCentareaReMapMouseButton;
     private MPLabel labelFireDTVModel;
 
     #endregion
@@ -390,7 +391,7 @@ namespace MediaPortal.Configuration.Sections
 
         checkBoxHidEnabled.Checked = xmlreader.GetValueAsBool("remote", "HID", false);
         checkBoxHidExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);
-        checkBoxHidGlobal.Checked = xmlreader.GetValueAsBool("remote", "HIDGlobal", false);
+        checkBoxHidGlobal.Checked = xmlreader.GetValueAsBool("remote", "HIDGlobal", true);
         buttonHidMapping.Enabled = checkBoxHidEnabled.Checked;
 
         #endregion
@@ -455,6 +456,7 @@ namespace MediaPortal.Configuration.Sections
 
         checkBoxCentareaEnabled.Checked = xmlreader.GetValueAsBool("remote", "Centarea", false);
         checkBoxCentareaVerbose.Checked = xmlreader.GetValueAsBool("remote", "CentareaVerbose", false);
+        checkBoxCentareaReMapMouseButton.Checked = xmlreader.GetValueAsBool("remote", "CentareaMouseOkMap", true);
 
         #endregion
       }
@@ -530,6 +532,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("remote", "Centarea", checkBoxCentareaEnabled.Checked);
         xmlwriter.SetValueAsBool("remote", "CentareaVerbose", checkBoxCentareaVerbose.Checked);
+        xmlwriter.SetValueAsBool("remote", "CentareaMouseOkMap", checkBoxCentareaReMapMouseButton.Checked);
 
         #endregion
       }
@@ -664,6 +667,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxCentareaReMapMouseButton = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -704,12 +708,12 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlRemotes.Controls.Add(this.tabPageMce);
-      this.tabControlRemotes.Controls.Add(this.tabPageHcw);
-      this.tabControlRemotes.Controls.Add(this.tabPageX10);
       this.tabControlRemotes.Controls.Add(this.tabPageHid);
-      this.tabControlRemotes.Controls.Add(this.tabPageIrTrans);
-      this.tabControlRemotes.Controls.Add(this.tabPageFireDtv);
       this.tabControlRemotes.Controls.Add(this.tabPageCentarea);
+      this.tabControlRemotes.Controls.Add(this.tabPageFireDtv);
+      this.tabControlRemotes.Controls.Add(this.tabPageX10);
+      this.tabControlRemotes.Controls.Add(this.tabPageHcw);
+      this.tabControlRemotes.Controls.Add(this.tabPageIrTrans);
       this.tabControlRemotes.Location = new System.Drawing.Point(0, 8);
       this.tabControlRemotes.Name = "tabControlRemotes";
       this.tabControlRemotes.SelectedIndex = 0;
@@ -1360,6 +1364,8 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxHidGlobal
       // 
       this.checkBoxHidGlobal.AutoSize = true;
+      this.checkBoxHidGlobal.Checked = true;
+      this.checkBoxHidGlobal.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxHidGlobal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxHidGlobal.Location = new System.Drawing.Point(16, 70);
       this.checkBoxHidGlobal.Name = "checkBoxHidGlobal";
@@ -1696,13 +1702,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxCentareaOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxCentareaOptions.Controls.Add(this.checkBoxCentareaReMapMouseButton);
       this.groupBoxCentareaOptions.Controls.Add(this.checkBoxCentareaVerbose);
       this.groupBoxCentareaOptions.Controls.Add(this.checkBoxCentareaEnabled);
       this.groupBoxCentareaOptions.Controls.Add(this.buttonCentareaMapping);
       this.groupBoxCentareaOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxCentareaOptions.Location = new System.Drawing.Point(12, 8);
       this.groupBoxCentareaOptions.Name = "groupBoxCentareaOptions";
-      this.groupBoxCentareaOptions.Size = new System.Drawing.Size(440, 72);
+      this.groupBoxCentareaOptions.Size = new System.Drawing.Size(440, 95);
       this.groupBoxCentareaOptions.TabIndex = 4;
       this.groupBoxCentareaOptions.TabStop = false;
       // 
@@ -1782,6 +1789,19 @@ namespace MediaPortal.Configuration.Sections
       this.mpButton1.TabIndex = 1;
       this.mpButton1.Text = "Mapping";
       this.mpButton1.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxCentareaReMapMouseButton
+      // 
+      this.checkBoxCentareaReMapMouseButton.AutoSize = true;
+      this.checkBoxCentareaReMapMouseButton.Checked = true;
+      this.checkBoxCentareaReMapMouseButton.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxCentareaReMapMouseButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxCentareaReMapMouseButton.Location = new System.Drawing.Point(16, 70);
+      this.checkBoxCentareaReMapMouseButton.Name = "checkBoxCentareaReMapMouseButton";
+      this.checkBoxCentareaReMapMouseButton.Size = new System.Drawing.Size(281, 17);
+      this.checkBoxCentareaReMapMouseButton.TabIndex = 5;
+      this.checkBoxCentareaReMapMouseButton.Text = "Map left mouse click to \'OK\' command (joystick button)";
+      this.checkBoxCentareaReMapMouseButton.UseVisualStyleBackColor = true;
       // 
       // Remote
       // 
