@@ -85,6 +85,8 @@ namespace MediaPortal.DeployTool
     private void cbLanguage_SelectedIndexChanged(object sender, EventArgs e)
     {
       Localizer.Instance.SwitchCulture(GetLanguageId());
+      if (ParentForm != null)
+        ((IDeployDialog)ParentForm).UpdateUI();
       UpdateUI();
 
     }

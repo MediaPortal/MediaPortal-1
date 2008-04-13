@@ -36,18 +36,32 @@ using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class DeployTool : Form
+  public partial class DeployTool : Form, IDeployDialog
   {
     private DeployDialog _currentDialog;
     private string _currentCulture = "en-US";
 
-    private void UpdateUI()
+    #region IDeplayDialog interface
+    public void UpdateUI()
     {
       this.Text = Localizer.Instance.GetString("MainWindow_AppName");
       labelAppHeading.Text = Localizer.Instance.GetString("MainWindow_labelAppHeading");
       backButton.Text = Localizer.Instance.GetString("MainWindow_backButton");
       nextButton.Text = Localizer.Instance.GetString("MainWindow_nextButton");
     }
+    public DeployDialog GetNextDialog()
+    {
+      return null;
+    }
+    public bool SettingsValid()
+    {
+      return true;
+    }
+    public void SetProperties()
+    {
+      return;
+    }
+    #endregion
 
     public DeployTool()
     {
