@@ -1,1 +1,0 @@
-"%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release /project Setup MediaPortal.sln
