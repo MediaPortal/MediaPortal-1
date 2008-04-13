@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.UserInterface.Controls
 {
   public partial class MPForm : Form
   {

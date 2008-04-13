@@ -61,7 +61,7 @@ namespace ProcessPlugins.ComSkipLauncher
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(56, 24);
       this.buttonOK.TabIndex = 5;
-      this.buttonOK.Text = "OK";
+      this.buttonOK.Text = "&OK";
       this.buttonOK.UseVisualStyleBackColor = true;
       this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
       // 
@@ -73,7 +73,7 @@ namespace ProcessPlugins.ComSkipLauncher
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(56, 24);
       this.buttonCancel.TabIndex = 6;
-      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.Text = "&Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
@@ -287,14 +287,10 @@ namespace ProcessPlugins.ComSkipLauncher
       this.Controls.Add(this.groupBoxTest);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.buttonOK);
-      this.MaximizeBox = false;
-      this.MinimizeBox = false;
       this.MinimumSize = new System.Drawing.Size(360, 372);
       this.Name = "Configuration";
-      this.ShowIcon = false;
-      this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "ComSkip Launcher";
+      this.Text = "ComSkip Launcher - Setup";
       this.groupBoxWhat.ResumeLayout(false);
       this.groupBoxWhat.PerformLayout();
       this.groupBoxTest.ResumeLayout(false);

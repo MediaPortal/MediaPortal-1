@@ -38,7 +38,7 @@ namespace MediaPortal.MPExTuneCmd
   /// <summary>
   /// Summary description for MPExTuneCmdForm.
   /// </summary>
-  public class MPExTuneCmdForm : System.Windows.Forms.Form
+  public class MPExTuneCmdForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox MpExTuneCmdLoc;
@@ -105,7 +105,6 @@ namespace MediaPortal.MPExTuneCmd
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(MPExTuneCmdForm));
       this.MpExTuneCmdLoc = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.browseButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -117,9 +116,12 @@ namespace MediaPortal.MPExTuneCmd
       // 
       // MpExTuneCmdLoc
       // 
+      this.MpExTuneCmdLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.MpExTuneCmdLoc.BorderColor = System.Drawing.Color.Empty;
       this.MpExTuneCmdLoc.Location = new System.Drawing.Point(112, 16);
       this.MpExTuneCmdLoc.Name = "MpExTuneCmdLoc";
-      this.MpExTuneCmdLoc.Size = new System.Drawing.Size(192, 20);
+      this.MpExTuneCmdLoc.Size = new System.Drawing.Size(190, 20);
       this.MpExTuneCmdLoc.TabIndex = 0;
       this.MpExTuneCmdLoc.Text = "C:\\dtvcon\\dtvcmd.exe";
       // 
@@ -133,36 +135,46 @@ namespace MediaPortal.MPExTuneCmd
       // 
       // browseButton
       // 
-      this.browseButton.Location = new System.Drawing.Point(312, 15);
+      this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.browseButton.Location = new System.Drawing.Point(308, 16);
       this.browseButton.Name = "browseButton";
       this.browseButton.Size = new System.Drawing.Size(24, 24);
       this.browseButton.TabIndex = 2;
       this.browseButton.Text = "...";
+      this.browseButton.UseVisualStyleBackColor = true;
       this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
       // 
       // ok_button
       // 
-      this.ok_button.Location = new System.Drawing.Point(208, 120);
+      this.ok_button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.ok_button.Location = new System.Drawing.Point(214, 127);
       this.ok_button.Name = "ok_button";
-      this.ok_button.Size = new System.Drawing.Size(56, 32);
+      this.ok_button.Size = new System.Drawing.Size(56, 24);
       this.ok_button.TabIndex = 3;
-      this.ok_button.Text = "OK";
+      this.ok_button.Text = "&OK";
+      this.ok_button.UseVisualStyleBackColor = true;
       this.ok_button.Click += new System.EventHandler(this.ok_button_Click);
       // 
       // cancel_button
       // 
-      this.cancel_button.Location = new System.Drawing.Point(280, 120);
+      this.cancel_button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancel_button.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.cancel_button.Location = new System.Drawing.Point(276, 127);
       this.cancel_button.Name = "cancel_button";
-      this.cancel_button.Size = new System.Drawing.Size(56, 32);
+      this.cancel_button.Size = new System.Drawing.Size(56, 24);
       this.cancel_button.TabIndex = 4;
-      this.cancel_button.Text = "Cancel";
+      this.cancel_button.Text = "&Cancel";
+      this.cancel_button.UseVisualStyleBackColor = true;
       this.cancel_button.Click += new System.EventHandler(this.cancel_button_Click);
       // 
       // MPExTuneCmdDelim
       // 
+      this.MPExTuneCmdDelim.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.MPExTuneCmdDelim.BorderColor = System.Drawing.Color.Empty;
       this.MPExTuneCmdDelim.Location = new System.Drawing.Point(112, 56);
       this.MPExTuneCmdDelim.Name = "MPExTuneCmdDelim";
-      this.MPExTuneCmdDelim.Size = new System.Drawing.Size(192, 20);
+      this.MPExTuneCmdDelim.Size = new System.Drawing.Size(190, 20);
       this.MPExTuneCmdDelim.TabIndex = 5;
       this.MPExTuneCmdDelim.Text = "#";
       // 
@@ -176,7 +188,9 @@ namespace MediaPortal.MPExTuneCmd
       // 
       // MPExTuneCmdForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.ok_button;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.cancel_button;
       this.ClientSize = new System.Drawing.Size(344, 163);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.MPExTuneCmdDelim);
@@ -185,10 +199,12 @@ namespace MediaPortal.MPExTuneCmd
       this.Controls.Add(this.browseButton);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.MpExTuneCmdLoc);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "MPExTuneCmdForm";
-      this.Text = "MPExTuneCmd Setup 0.1";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "MPExTuneCmd - Setup";
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion

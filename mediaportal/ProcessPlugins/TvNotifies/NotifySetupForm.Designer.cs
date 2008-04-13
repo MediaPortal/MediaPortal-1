@@ -67,6 +67,9 @@ namespace MediaPortal.TvNotifies
       // 
       // groupBoxNotifyTV
       // 
+      this.groupBoxNotifyTV.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxNotifyTV.Controls.Add(this.textBoxPreNotify);
       this.groupBoxNotifyTV.Controls.Add(this.labelPreNotify);
       this.groupBoxNotifyTV.Controls.Add(this.checkBoxNotifyPlaySound);
@@ -82,6 +85,8 @@ namespace MediaPortal.TvNotifies
       // 
       // textBoxPreNotify
       // 
+      this.textBoxPreNotify.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxPreNotify.BorderColor = System.Drawing.Color.Empty;
       this.textBoxPreNotify.Location = new System.Drawing.Point(200, 21);
       this.textBoxPreNotify.Name = "textBoxPreNotify";
@@ -100,6 +105,8 @@ namespace MediaPortal.TvNotifies
       // 
       // checkBoxNotifyPlaySound
       // 
+      this.checkBoxNotifyPlaySound.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxNotifyPlaySound.AutoSize = true;
       this.checkBoxNotifyPlaySound.Checked = true;
       this.checkBoxNotifyPlaySound.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -113,6 +120,8 @@ namespace MediaPortal.TvNotifies
       // 
       // textBoxNotifyTimeoutVal
       // 
+      this.textBoxNotifyTimeoutVal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxNotifyTimeoutVal.BorderColor = System.Drawing.Color.Empty;
       this.textBoxNotifyTimeoutVal.Location = new System.Drawing.Point(200, 47);
       this.textBoxNotifyTimeoutVal.Name = "textBoxNotifyTimeoutVal";
@@ -131,6 +140,8 @@ namespace MediaPortal.TvNotifies
       // 
       // labelNotifyHint
       // 
+      this.labelNotifyHint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.labelNotifyHint.Location = new System.Drawing.Point(15, 128);
       this.labelNotifyHint.Name = "labelNotifyHint";
       this.labelNotifyHint.Size = new System.Drawing.Size(262, 39);
@@ -140,37 +151,42 @@ namespace MediaPortal.TvNotifies
       // 
       // buttonCancel
       // 
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancel.Location = new System.Drawing.Point(198, 170);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 5;
-      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.Text = "&Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // buttonOk
       // 
+      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOk.Location = new System.Drawing.Point(110, 170);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 6;
-      this.buttonOk.Text = "Ok";
+      this.buttonOk.Text = "&OK";
       this.buttonOk.UseVisualStyleBackColor = true;
       this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
       // 
       // NotifySetupForm
       // 
+      this.AcceptButton = this.buttonOk;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(285, 204);
       this.Controls.Add(this.buttonOk);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.labelNotifyHint);
       this.Controls.Add(this.groupBoxNotifyTV);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "NotifySetupForm";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "Notifier setup";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "TV Notifier - Setup";
       this.groupBoxNotifyTV.ResumeLayout(false);
       this.groupBoxNotifyTV.PerformLayout();
       this.ResumeLayout(false);

@@ -36,7 +36,7 @@ namespace MediaPortal.PowerScheduler
   /// <summary>
   /// Summary description for PowerSchedulerSetupForm.
   /// </summary>
-  public class PowerSchedulerSetupForm : System.Windows.Forms.Form
+  public class PowerSchedulerSetupForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPButton cb_ok;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
@@ -49,6 +49,7 @@ namespace MediaPortal.PowerScheduler
     private MediaPortal.UserInterface.Controls.MPCheckBox cbxReinit;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown nud_wakeup;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown nud_shutdown;
+    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -128,6 +129,7 @@ namespace MediaPortal.PowerScheduler
       this.cbxReinit = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.nud_wakeup = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.nud_shutdown = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).BeginInit();
@@ -135,17 +137,19 @@ namespace MediaPortal.PowerScheduler
       // 
       // cb_ok
       // 
-      this.cb_ok.Location = new System.Drawing.Point(277, 260);
+      this.cb_ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cb_ok.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.cb_ok.Location = new System.Drawing.Point(205, 260);
       this.cb_ok.Name = "cb_ok";
       this.cb_ok.Size = new System.Drawing.Size(75, 23);
       this.cb_ok.TabIndex = 0;
-      this.cb_ok.Text = "OK";
+      this.cb_ok.Text = "&OK";
       this.cb_ok.UseVisualStyleBackColor = true;
       this.cb_ok.Click += new System.EventHandler(this.cb_ok_Click);
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 8);
+      this.label2.Location = new System.Drawing.Point(9, 8);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(296, 45);
       this.label2.TabIndex = 0;
@@ -154,7 +158,7 @@ namespace MediaPortal.PowerScheduler
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 58);
+      this.label3.Location = new System.Drawing.Point(9, 58);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(304, 40);
       this.label3.TabIndex = 0;
@@ -163,7 +167,7 @@ namespace MediaPortal.PowerScheduler
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 115);
+      this.label1.Location = new System.Drawing.Point(9, 115);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(96, 16);
       this.label1.TabIndex = 0;
@@ -171,15 +175,17 @@ namespace MediaPortal.PowerScheduler
       // 
       // cobx_shutdown
       // 
+      this.cobx_shutdown.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cobx_shutdown.BorderColor = System.Drawing.Color.Empty;
       this.cobx_shutdown.Items.AddRange(new object[] {
             "Hibernate",
             "Suspend",
             "Shutdown (no wakeup)",
             "None (or windows inbuilt)"});
-      this.cobx_shutdown.Location = new System.Drawing.Point(133, 112);
+      this.cobx_shutdown.Location = new System.Drawing.Point(126, 112);
       this.cobx_shutdown.Name = "cobx_shutdown";
-      this.cobx_shutdown.Size = new System.Drawing.Size(219, 21);
+      this.cobx_shutdown.Size = new System.Drawing.Size(235, 21);
       this.cobx_shutdown.TabIndex = 14;
       // 
       // cbxExtensive
@@ -206,13 +212,16 @@ namespace MediaPortal.PowerScheduler
       // 
       // groupBox1
       // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.cbxReinit);
       this.groupBox1.Controls.Add(this.cbxForced);
       this.groupBox1.Controls.Add(this.cbxExtensive);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(19, 148);
+      this.groupBox1.Location = new System.Drawing.Point(12, 148);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(333, 93);
+      this.groupBox1.Size = new System.Drawing.Size(349, 93);
       this.groupBox1.TabIndex = 18;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Advanced options";
@@ -232,20 +241,35 @@ namespace MediaPortal.PowerScheduler
       // 
       this.nud_wakeup.Location = new System.Drawing.Point(304, 12);
       this.nud_wakeup.Name = "nud_wakeup";
-      this.nud_wakeup.Size = new System.Drawing.Size(48, 20);
+      this.nud_wakeup.Size = new System.Drawing.Size(57, 20);
       this.nud_wakeup.TabIndex = 12;
       // 
       // nud_shutdown
       // 
       this.nud_shutdown.Location = new System.Drawing.Point(304, 67);
       this.nud_shutdown.Name = "nud_shutdown";
-      this.nud_shutdown.Size = new System.Drawing.Size(48, 20);
+      this.nud_shutdown.Size = new System.Drawing.Size(57, 20);
       this.nud_shutdown.TabIndex = 13;
+      // 
+      // btnCancel
+      // 
+      this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.btnCancel.Location = new System.Drawing.Point(286, 260);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(75, 23);
+      this.btnCancel.TabIndex = 19;
+      this.btnCancel.Text = "&Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
       // 
       // PowerSchedulerSetupForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.cb_ok;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.btnCancel;
       this.ClientSize = new System.Drawing.Size(373, 295);
+      this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.nud_shutdown);
       this.Controls.Add(this.nud_wakeup);
       this.Controls.Add(this.cobx_shutdown);
@@ -254,9 +278,10 @@ namespace MediaPortal.PowerScheduler
       this.Controls.Add(this.label2);
       this.Controls.Add(this.cb_ok);
       this.Controls.Add(this.groupBox1);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "PowerSchedulerSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "Power scheduler configuration";
+      this.Text = "PowerScheduler - Setup";
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).EndInit();
@@ -294,6 +319,12 @@ namespace MediaPortal.PowerScheduler
       {
         if (SaveSettings()) this.Close();
       }
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+      LoadSettings();
+      this.Close();
     }
 
 

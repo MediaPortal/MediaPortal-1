@@ -1,4 +1,4 @@
-﻿namespace MediaPortal.Configuration
+﻿namespace MediaPortal.UserInterface.Controls
 {
   partial class MPForm
   {

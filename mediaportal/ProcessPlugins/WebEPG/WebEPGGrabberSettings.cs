@@ -32,7 +32,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.ProcessPlugins.WebEPG
 {
-  public partial class WebEPGGrabberSettings : Form
+  public partial class WebEPGGrabberSettings : MediaPortal.UserInterface.Controls.MPForm
   {
 
     #region Ctor
@@ -125,7 +125,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       }
     }
 
-    private void mpButton1_Click(object sender, EventArgs e)
+    private void btnOK_Click(object sender, EventArgs e)
     {
       // save settings
       SaveSettings();
@@ -133,7 +133,16 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       Close();
     }
 
-    #endregion
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+      // restore settings
+      LoadSettings();
+      //close form
+      Close();
+    }
+
+#endregion
 
   }
 }

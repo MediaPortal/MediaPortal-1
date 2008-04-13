@@ -40,14 +40,15 @@ namespace MediaPortal.WinampPlayer
   /// <summary>
   /// Summary description for Configuration.
   /// </summary>
-  public class ConfigurationForm : System.Windows.Forms.Form
+  public class ConfigurationForm : MediaPortal.UserInterface.Controls.MPForm
   {
     public const string WINAMPINI = "winamp.ini";
 
     private string m_enabledExt = "";
-    private MediaPortal.UserInterface.Controls.MPButton buttonEnable;
+    private MediaPortal.UserInterface.Controls.MPButton btnOK;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox extensionBox;
+    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -59,6 +60,7 @@ namespace MediaPortal.WinampPlayer
       // Required for Windows Form Designer support
       //
       InitializeComponent();
+      LoadSettings();
     }
 
     /// <summary>
@@ -83,57 +85,76 @@ namespace MediaPortal.WinampPlayer
     /// </summary>
     private void InitializeComponent()
     {
-        this.buttonEnable = new MediaPortal.UserInterface.Controls.MPButton();
-        this.extensionBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-        this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.SuspendLayout();
-        // 
-        // buttonEnable
-        // 
-        this.buttonEnable.Location = new System.Drawing.Point(136, 56);
-        this.buttonEnable.Name = "buttonEnable";
-        this.buttonEnable.Size = new System.Drawing.Size(75, 23);
-        this.buttonEnable.TabIndex = 3;
-        this.buttonEnable.Text = "Save";
-        this.buttonEnable.UseVisualStyleBackColor = true;
-        this.buttonEnable.Click += new System.EventHandler(this.buttonEnable_Click);
-        // 
-        // extensionBox
-        // 
-        this.extensionBox.BorderColor = System.Drawing.Color.Empty;
-        this.extensionBox.Location = new System.Drawing.Point(72, 16);
-        this.extensionBox.Name = "extensionBox";
-        this.extensionBox.Size = new System.Drawing.Size(256, 20);
-        this.extensionBox.TabIndex = 4;
-        this.extensionBox.Text = ".cda, .mp3, .mp2, .mp1, .aac, .apl, .wav, .voc, .au, .snd, .aif, .aiff, .wma";
-        // 
-        // label1
-        // 
-        this.label1.Location = new System.Drawing.Point(8, 16);
-        this.label1.Name = "label1";
-        this.label1.Size = new System.Drawing.Size(64, 23);
-        this.label1.TabIndex = 5;
-        this.label1.Text = "Extensions";
-        // 
-        // ConfigurationForm
-        // 
-        this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-        this.ClientSize = new System.Drawing.Size(344, 85);
-        this.Controls.Add(this.label1);
-        this.Controls.Add(this.extensionBox);
-        this.Controls.Add(this.buttonEnable);
-        this.Name = "ConfigurationForm";
-        this.Text = "Configuration";
-        this.Closing += new System.ComponentModel.CancelEventHandler(this.ConfigurationForm_Closing);
-        this.Load += new System.EventHandler(this.ConfigurationForm_Load);
-        this.ResumeLayout(false);
-        this.PerformLayout();
+      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.extensionBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.SuspendLayout();
+      // 
+      // btnOK
+      // 
+      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Location = new System.Drawing.Point(186, 50);
+      this.btnOK.Name = "btnOK";
+      this.btnOK.Size = new System.Drawing.Size(75, 23);
+      this.btnOK.TabIndex = 3;
+      this.btnOK.Text = "&OK";
+      this.btnOK.UseVisualStyleBackColor = true;
+      this.btnOK.Click += new System.EventHandler(this.bnOK_Click);
+      // 
+      // extensionBox
+      // 
+      this.extensionBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.extensionBox.BorderColor = System.Drawing.Color.Empty;
+      this.extensionBox.Location = new System.Drawing.Point(82, 16);
+      this.extensionBox.Name = "extensionBox";
+      this.extensionBox.Size = new System.Drawing.Size(260, 20);
+      this.extensionBox.TabIndex = 4;
+      this.extensionBox.Text = ".cda, .mp3, .mp2, .mp1, .aac, .apl, .wav, .voc, .au, .snd, .aif, .aiff, .wma";
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(12, 19);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(64, 23);
+      this.label1.TabIndex = 5;
+      this.label1.Text = "Extensions";
+      // 
+      // btnCancel
+      // 
+      this.btnCancel.Location = new System.Drawing.Point(267, 50);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(75, 23);
+      this.btnCancel.TabIndex = 6;
+      this.btnCancel.Text = "&Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      // 
+      // ConfigurationForm
+      // 
+      this.AcceptButton = this.btnOK;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.btnCancel;
+      this.ClientSize = new System.Drawing.Size(354, 85);
+      this.Controls.Add(this.btnCancel);
+      this.Controls.Add(this.label1);
+      this.Controls.Add(this.extensionBox);
+      this.Controls.Add(this.btnOK);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+      this.Name = "ConfigurationForm";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "Winamp - Setup";
+      this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion
 
-    private void ConfigurationForm_Load(object sender, System.EventArgs e)
+
+    private void LoadSettings()
     {
+      extensionBox.Text = String.Empty;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_enabledExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions", "");
@@ -143,7 +164,7 @@ namespace MediaPortal.WinampPlayer
         extensionBox.Text = m_enabledExt;
     }
 
-    private void ConfigurationForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    private void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -151,12 +172,16 @@ namespace MediaPortal.WinampPlayer
       }
     }
 
-    private void buttonEnable_Click(object sender, System.EventArgs e)
+    private void bnOK_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        xmlWriter.SetValue("winampplugin", "enabledextensions", extensionBox.Text);
-      }
+      SaveSettings();
+      this.Close();
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+      LoadSettings();
+      this.Close();
     }
 
   }

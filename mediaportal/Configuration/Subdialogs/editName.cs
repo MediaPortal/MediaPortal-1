@@ -34,7 +34,7 @@ namespace MediaPortal
   /// <summary>
   /// Summary description for editName.
   /// </summary>
-  public class editName : MediaPortal.Configuration.MPForm
+  public class editName : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxName;

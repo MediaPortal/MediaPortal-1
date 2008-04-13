@@ -33,7 +33,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.ProcessPlugins.MusicDBReorg
 {
-  public partial class MusicDBReorgSettings : Form
+  public partial class MusicDBReorgSettings : MediaPortal.UserInterface.Controls.MPForm
   {
 
     #region Ctor
@@ -126,10 +126,19 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
       }
     }
 
-    private void mpButton1_Click(object sender, EventArgs e)
+    private void btnOK_Click(object sender, EventArgs e)
     {
       // save settings
       SaveSettings();
+      //close form
+      Close();
+    }
+
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+      // restore settings
+      LoadSettings();
       //close form
       Close();
     }

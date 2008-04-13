@@ -34,7 +34,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for EditWeatherCityForm.
   /// </summary>
-  public class EditWeatherCityForm : MediaPortal.Configuration.MPForm
+  public class EditWeatherCityForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;

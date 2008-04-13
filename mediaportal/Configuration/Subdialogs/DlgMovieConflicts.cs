@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
   /// <summary>
   /// Summary description for DlgMovieConflicts.
   /// </summary>
-  public class DlgMovieConflicts : MediaPortal.Configuration.MPForm, IMDB.IProgress
+  public class DlgMovieConflicts : MediaPortal.UserInterface.Controls.MPForm, IMDB.IProgress
   {
     private System.Windows.Forms.ListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;

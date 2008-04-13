@@ -37,7 +37,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.AudioScrobbler
 {
-  public partial class AudioscrobblerSettings : Form
+  public partial class AudioscrobblerSettings : MediaPortal.UserInterface.Controls.MPForm
   {
     private AudioscrobblerUtils lastFmLookup;
     List<Song> songList = null;

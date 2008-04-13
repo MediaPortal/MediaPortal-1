@@ -430,9 +430,6 @@
     <Compile Include="MPExTuneCmd\MPExTuneCmdForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MPExTuneCmd\MPExTunerCmdForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MusicDBReorg\MusicDBReorg.cs" />
     <Compile Include="MusicDBReorg\MusicDBReorgSettings.cs">
       <SubType>Form</SubType>
@@ -501,9 +498,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MPExTuneCmd\MPExTuneCmdForm.resx">
       <DependentUpon>MPExTuneCmdForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MPExTuneCmd\MPExTunerCmdForm.resx">
-      <DependentUpon>MPExTunerCmdForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>

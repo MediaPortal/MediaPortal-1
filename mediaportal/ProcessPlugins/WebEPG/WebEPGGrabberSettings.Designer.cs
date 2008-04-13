@@ -66,13 +66,16 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       this.cbWednesday = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbTuesday = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbMonday = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpGroupBox1
       // 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.minutesTextBox);
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
       this.mpGroupBox1.Controls.Add(this.hoursTextBox);
@@ -80,7 +83,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(12, 12);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(211, 48);
+      this.mpGroupBox1.Size = new System.Drawing.Size(235, 48);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Schedule time";
@@ -123,6 +126,9 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       // 
       // mpGroupBox2
       // 
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.cbSunday);
       this.mpGroupBox2.Controls.Add(this.cbSaturday);
       this.mpGroupBox2.Controls.Add(this.cbFriday);
@@ -133,18 +139,19 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox2.Location = new System.Drawing.Point(12, 67);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(211, 123);
+      this.mpGroupBox2.Size = new System.Drawing.Size(235, 123);
       this.mpGroupBox2.TabIndex = 1;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Run on";
       // 
       // cbSunday
       // 
+      this.cbSunday.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.cbSunday.AutoSize = true;
       this.cbSunday.Checked = true;
       this.cbSunday.CheckState = System.Windows.Forms.CheckState.Checked;
       this.cbSunday.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbSunday.Location = new System.Drawing.Point(120, 65);
+      this.cbSunday.Location = new System.Drawing.Point(146, 65);
       this.cbSunday.Name = "cbSunday";
       this.cbSunday.Size = new System.Drawing.Size(60, 17);
       this.cbSunday.TabIndex = 6;
@@ -153,11 +160,12 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       // 
       // cbSaturday
       // 
+      this.cbSaturday.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.cbSaturday.AutoSize = true;
       this.cbSaturday.Checked = true;
       this.cbSaturday.CheckState = System.Windows.Forms.CheckState.Checked;
       this.cbSaturday.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbSaturday.Location = new System.Drawing.Point(120, 42);
+      this.cbSaturday.Location = new System.Drawing.Point(146, 42);
       this.cbSaturday.Name = "cbSaturday";
       this.cbSaturday.Size = new System.Drawing.Size(66, 17);
       this.cbSaturday.TabIndex = 5;
@@ -166,11 +174,12 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       // 
       // cbFriday
       // 
+      this.cbFriday.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.cbFriday.AutoSize = true;
       this.cbFriday.Checked = true;
       this.cbFriday.CheckState = System.Windows.Forms.CheckState.Checked;
       this.cbFriday.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbFriday.Location = new System.Drawing.Point(120, 19);
+      this.cbFriday.Location = new System.Drawing.Point(146, 19);
       this.cbFriday.Name = "cbFriday";
       this.cbFriday.Size = new System.Drawing.Size(52, 17);
       this.cbFriday.TabIndex = 4;
@@ -229,26 +238,44 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       this.cbMonday.Text = "Monday";
       this.cbMonday.UseVisualStyleBackColor = true;
       // 
-      // mpButton1
+      // btnOK
       // 
-      this.mpButton1.Location = new System.Drawing.Point(82, 196);
-      this.mpButton1.Name = "mpButton1";
-      this.mpButton1.Size = new System.Drawing.Size(75, 23);
-      this.mpButton1.TabIndex = 2;
-      this.mpButton1.Text = "Save";
-      this.mpButton1.UseVisualStyleBackColor = true;
-      this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
+      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Location = new System.Drawing.Point(91, 196);
+      this.btnOK.Name = "btnOK";
+      this.btnOK.Size = new System.Drawing.Size(75, 23);
+      this.btnOK.TabIndex = 2;
+      this.btnOK.Text = "&OK";
+      this.btnOK.UseVisualStyleBackColor = true;
+      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
       // 
-      // SetupForm
+      // btnCancel
       // 
+      this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.btnCancel.Location = new System.Drawing.Point(172, 196);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(75, 23);
+      this.btnCancel.TabIndex = 3;
+      this.btnCancel.Text = "&Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      // 
+      // WebEPGGrabberSettings
+      // 
+      this.AcceptButton = this.btnOK;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(236, 224);
-      this.Controls.Add(this.mpButton1);
+      this.CancelButton = this.btnCancel;
+      this.ClientSize = new System.Drawing.Size(259, 231);
+      this.Controls.Add(this.btnCancel);
+      this.Controls.Add(this.btnOK);
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
-      this.Name = "SetupForm";
-      this.Text = "EPG Grabber setup";
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+      this.Name = "WebEPGGrabberSettings";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "WebEPG Grabber - Setup";
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.mpGroupBox2.ResumeLayout(false);
@@ -272,6 +299,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     private MediaPortal.UserInterface.Controls.MPCheckBox cbWednesday;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbTuesday;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbMonday;
-    private MediaPortal.UserInterface.Controls.MPButton mpButton1;
+    private MediaPortal.UserInterface.Controls.MPButton btnOK;
+    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
   }
 }

@@ -39,7 +39,7 @@ namespace MediaPortal.InputDevices
   /// <summary>
   /// Summary description for HCWMappingForm.
   /// </summary>
-  public class MappingForm : System.Windows.Forms.Form
+  public class MappingForm : MediaPortal.UserInterface.Controls.MPForm
   {
     Array windowsList = Enum.GetValues(typeof(GUIWindow.Window));
     Array actionList = Enum.GetValues(typeof(Action.ActionType));
@@ -150,7 +150,6 @@ namespace MediaPortal.InputDevices
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(MappingForm));
       this.treeMapping = new System.Windows.Forms.TreeView();
       this.radioButtonWindow = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonFullscreen = new MediaPortal.UserInterface.Controls.MPRadioButton();
@@ -187,56 +186,68 @@ namespace MediaPortal.InputDevices
       // treeMapping
       // 
       this.treeMapping.AllowDrop = true;
-      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)));
+      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.treeMapping.FullRowSelect = true;
       this.treeMapping.HideSelection = false;
-      this.treeMapping.ImageIndex = -1;
-      this.treeMapping.Location = new System.Drawing.Point(16, 56);
+      this.treeMapping.Location = new System.Drawing.Point(11, 20);
       this.treeMapping.Name = "treeMapping";
-      this.treeMapping.SelectedImageIndex = -1;
       this.treeMapping.Size = new System.Drawing.Size(312, 330);
       this.treeMapping.TabIndex = 1;
       this.treeMapping.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMapping_AfterSelect);
       // 
       // radioButtonWindow
       // 
+      this.radioButtonWindow.AutoSize = true;
+      this.radioButtonWindow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonWindow.Location = new System.Drawing.Point(24, 24);
       this.radioButtonWindow.Name = "radioButtonWindow";
-      this.radioButtonWindow.Size = new System.Drawing.Size(88, 16);
+      this.radioButtonWindow.Size = new System.Drawing.Size(63, 17);
       this.radioButtonWindow.TabIndex = 9;
       this.radioButtonWindow.Text = "Window";
+      this.radioButtonWindow.UseVisualStyleBackColor = true;
       this.radioButtonWindow.Click += new System.EventHandler(this.radioButtonWindow_Click);
       // 
       // radioButtonFullscreen
       // 
+      this.radioButtonFullscreen.AutoSize = true;
+      this.radioButtonFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonFullscreen.Location = new System.Drawing.Point(112, 24);
       this.radioButtonFullscreen.Name = "radioButtonFullscreen";
-      this.radioButtonFullscreen.Size = new System.Drawing.Size(88, 16);
+      this.radioButtonFullscreen.Size = new System.Drawing.Size(72, 17);
       this.radioButtonFullscreen.TabIndex = 10;
       this.radioButtonFullscreen.Text = "Fullscreen";
+      this.radioButtonFullscreen.UseVisualStyleBackColor = true;
       this.radioButtonFullscreen.Click += new System.EventHandler(this.radioButtonFullscreen_Click);
       // 
       // radioButtonPlaying
       // 
+      this.radioButtonPlaying.AutoSize = true;
+      this.radioButtonPlaying.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonPlaying.Location = new System.Drawing.Point(24, 48);
       this.radioButtonPlaying.Name = "radioButtonPlaying";
-      this.radioButtonPlaying.Size = new System.Drawing.Size(88, 16);
+      this.radioButtonPlaying.Size = new System.Drawing.Size(58, 17);
       this.radioButtonPlaying.TabIndex = 11;
       this.radioButtonPlaying.Text = "Playing";
+      this.radioButtonPlaying.UseVisualStyleBackColor = true;
       this.radioButtonPlaying.Click += new System.EventHandler(this.radioButtonPlaying_Click);
       // 
       // radioButtonNoCondition
       // 
+      this.radioButtonNoCondition.AutoSize = true;
+      this.radioButtonNoCondition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonNoCondition.Location = new System.Drawing.Point(112, 48);
       this.radioButtonNoCondition.Name = "radioButtonNoCondition";
-      this.radioButtonNoCondition.Size = new System.Drawing.Size(88, 16);
+      this.radioButtonNoCondition.Size = new System.Drawing.Size(85, 17);
       this.radioButtonNoCondition.TabIndex = 12;
       this.radioButtonNoCondition.Text = "No Condition";
+      this.radioButtonNoCondition.UseVisualStyleBackColor = true;
       this.radioButtonNoCondition.Click += new System.EventHandler(this.radioButtonNoCondition_Click);
       // 
       // comboBoxCondProperty
       // 
+      this.comboBoxCondProperty.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxCondProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCondProperty.ForeColor = System.Drawing.Color.Blue;
       this.comboBoxCondProperty.Location = new System.Drawing.Point(24, 72);
@@ -248,6 +259,7 @@ namespace MediaPortal.InputDevices
       // 
       // comboBoxCmdProperty
       // 
+      this.comboBoxCmdProperty.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCmdProperty.ForeColor = System.Drawing.Color.DarkGreen;
       this.comboBoxCmdProperty.Location = new System.Drawing.Point(24, 96);
@@ -266,7 +278,8 @@ namespace MediaPortal.InputDevices
       this.groupBoxCondition.Controls.Add(this.radioButtonNoCondition);
       this.groupBoxCondition.Controls.Add(this.comboBoxCondProperty);
       this.groupBoxCondition.Enabled = false;
-      this.groupBoxCondition.Location = new System.Drawing.Point(352, 120);
+      this.groupBoxCondition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxCondition.Location = new System.Drawing.Point(347, 93);
       this.groupBoxCondition.Name = "groupBoxCondition";
       this.groupBoxCondition.Size = new System.Drawing.Size(224, 112);
       this.groupBoxCondition.TabIndex = 15;
@@ -275,47 +288,62 @@ namespace MediaPortal.InputDevices
       // 
       // radioButtonAction
       // 
+      this.radioButtonAction.AutoSize = true;
+      this.radioButtonAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonAction.Location = new System.Drawing.Point(24, 24);
       this.radioButtonAction.Name = "radioButtonAction";
-      this.radioButtonAction.Size = new System.Drawing.Size(88, 16);
+      this.radioButtonAction.Size = new System.Drawing.Size(54, 17);
       this.radioButtonAction.TabIndex = 14;
       this.radioButtonAction.Text = "Action";
+      this.radioButtonAction.UseVisualStyleBackColor = true;
       this.radioButtonAction.Click += new System.EventHandler(this.radioButtonAction_Click);
       // 
       // radioButtonKey
       // 
+      this.radioButtonKey.AutoSize = true;
+      this.radioButtonKey.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonKey.Location = new System.Drawing.Point(112, 24);
       this.radioButtonKey.Name = "radioButtonKey";
-      this.radioButtonKey.Size = new System.Drawing.Size(88, 16);
+      this.radioButtonKey.Size = new System.Drawing.Size(71, 17);
       this.radioButtonKey.TabIndex = 16;
       this.radioButtonKey.Text = "Keystroke";
+      this.radioButtonKey.UseVisualStyleBackColor = true;
       this.radioButtonKey.Click += new System.EventHandler(this.radioButtonKey_Click);
       // 
       // radioButtonActWindow
       // 
+      this.radioButtonActWindow.AutoSize = true;
+      this.radioButtonActWindow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonActWindow.Location = new System.Drawing.Point(24, 48);
       this.radioButtonActWindow.Name = "radioButtonActWindow";
-      this.radioButtonActWindow.Size = new System.Drawing.Size(88, 16);
+      this.radioButtonActWindow.Size = new System.Drawing.Size(63, 17);
       this.radioButtonActWindow.TabIndex = 14;
       this.radioButtonActWindow.Text = "Window";
+      this.radioButtonActWindow.UseVisualStyleBackColor = true;
       this.radioButtonActWindow.Click += new System.EventHandler(this.radioButtonActWindow_Click);
       // 
       // radioButtonToggle
       // 
+      this.radioButtonToggle.AutoSize = true;
+      this.radioButtonToggle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonToggle.Location = new System.Drawing.Point(112, 48);
       this.radioButtonToggle.Name = "radioButtonToggle";
-      this.radioButtonToggle.Size = new System.Drawing.Size(88, 16);
+      this.radioButtonToggle.Size = new System.Drawing.Size(86, 17);
       this.radioButtonToggle.TabIndex = 17;
       this.radioButtonToggle.Text = "Toggle Layer";
+      this.radioButtonToggle.UseVisualStyleBackColor = true;
       this.radioButtonToggle.Click += new System.EventHandler(this.radioButtonToggle_Click);
       // 
       // radioButtonPower
       // 
+      this.radioButtonPower.AutoSize = true;
+      this.radioButtonPower.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonPower.Location = new System.Drawing.Point(24, 72);
       this.radioButtonPower.Name = "radioButtonPower";
-      this.radioButtonPower.Size = new System.Drawing.Size(80, 16);
+      this.radioButtonPower.Size = new System.Drawing.Size(80, 17);
       this.radioButtonPower.TabIndex = 18;
       this.radioButtonPower.Text = "Powerdown";
+      this.radioButtonPower.UseVisualStyleBackColor = true;
       this.radioButtonPower.Click += new System.EventHandler(this.radioButtonPower_Click);
       // 
       // groupBoxAction
@@ -331,7 +359,8 @@ namespace MediaPortal.InputDevices
       this.groupBoxAction.Controls.Add(this.radioButtonPower);
       this.groupBoxAction.Controls.Add(this.comboBoxCmdProperty);
       this.groupBoxAction.Enabled = false;
-      this.groupBoxAction.Location = new System.Drawing.Point(352, 240);
+      this.groupBoxAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxAction.Location = new System.Drawing.Point(347, 211);
       this.groupBoxAction.Name = "groupBoxAction";
       this.groupBoxAction.Size = new System.Drawing.Size(224, 168);
       this.groupBoxAction.TabIndex = 16;
@@ -340,11 +369,14 @@ namespace MediaPortal.InputDevices
       // 
       // radioButtonProcess
       // 
+      this.radioButtonProcess.AutoSize = true;
+      this.radioButtonProcess.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonProcess.Location = new System.Drawing.Point(112, 72);
       this.radioButtonProcess.Name = "radioButtonProcess";
-      this.radioButtonProcess.Size = new System.Drawing.Size(80, 16);
+      this.radioButtonProcess.Size = new System.Drawing.Size(62, 17);
       this.radioButtonProcess.TabIndex = 21;
       this.radioButtonProcess.Text = "Process";
+      this.radioButtonProcess.UseVisualStyleBackColor = true;
       this.radioButtonProcess.Click += new System.EventHandler(this.radioButtonProcess_Click);
       // 
       // labelSound
@@ -357,6 +389,7 @@ namespace MediaPortal.InputDevices
       // 
       // comboBoxSound
       // 
+      this.comboBoxSound.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSound.ForeColor = System.Drawing.Color.DarkRed;
       this.comboBoxSound.Location = new System.Drawing.Point(72, 128);
@@ -368,29 +401,35 @@ namespace MediaPortal.InputDevices
       // applyButton
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(348, 437);
+      this.applyButton.Location = new System.Drawing.Point(343, 395);
       this.applyButton.Name = "applyButton";
+      this.applyButton.Size = new System.Drawing.Size(75, 23);
       this.applyButton.TabIndex = 20;
-      this.applyButton.Text = "Apply";
+      this.applyButton.Text = "&Apply";
+      this.applyButton.UseVisualStyleBackColor = true;
       this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
       // 
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(428, 437);
+      this.okButton.Location = new System.Drawing.Point(424, 395);
       this.okButton.Name = "okButton";
+      this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 19;
-      this.okButton.Text = "OK";
+      this.okButton.Text = "&OK";
+      this.okButton.UseVisualStyleBackColor = true;
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
       // 
       // cancelButton
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(507, 437);
+      this.cancelButton.Location = new System.Drawing.Point(505, 395);
       this.cancelButton.Name = "cancelButton";
+      this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 18;
-      this.cancelButton.Text = "Cancel";
+      this.cancelButton.Text = "&Cancel";
+      this.cancelButton.UseVisualStyleBackColor = true;
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
       // 
       // groupBoxLayer
@@ -399,7 +438,8 @@ namespace MediaPortal.InputDevices
       this.groupBoxLayer.Controls.Add(this.comboBoxLayer);
       this.groupBoxLayer.Controls.Add(this.labelLayer);
       this.groupBoxLayer.Enabled = false;
-      this.groupBoxLayer.Location = new System.Drawing.Point(352, 48);
+      this.groupBoxLayer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxLayer.Location = new System.Drawing.Point(347, 12);
       this.groupBoxLayer.Name = "groupBoxLayer";
       this.groupBoxLayer.Size = new System.Drawing.Size(224, 64);
       this.groupBoxLayer.TabIndex = 22;
@@ -408,6 +448,7 @@ namespace MediaPortal.InputDevices
       // 
       // comboBoxLayer
       // 
+      this.comboBoxLayer.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxLayer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxLayer.ForeColor = System.Drawing.Color.DimGray;
       this.comboBoxLayer.Location = new System.Drawing.Point(80, 24);
@@ -427,60 +468,65 @@ namespace MediaPortal.InputDevices
       // buttonUp
       // 
       this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonUp.Location = new System.Drawing.Point(16, 392);
+      this.buttonUp.Location = new System.Drawing.Point(7, 356);
       this.buttonUp.Name = "buttonUp";
-      this.buttonUp.Size = new System.Drawing.Size(56, 16);
+      this.buttonUp.Size = new System.Drawing.Size(56, 23);
       this.buttonUp.TabIndex = 23;
       this.buttonUp.Text = "Up";
+      this.buttonUp.UseVisualStyleBackColor = true;
       this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
       // 
       // buttonDown
       // 
       this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.Location = new System.Drawing.Point(80, 392);
+      this.buttonDown.Location = new System.Drawing.Point(75, 356);
       this.buttonDown.Name = "buttonDown";
-      this.buttonDown.Size = new System.Drawing.Size(56, 16);
+      this.buttonDown.Size = new System.Drawing.Size(56, 23);
       this.buttonDown.TabIndex = 24;
       this.buttonDown.Text = "Down";
+      this.buttonDown.UseVisualStyleBackColor = true;
       this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
       // 
       // buttonNew
       // 
       this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonNew.Location = new System.Drawing.Point(144, 392);
+      this.buttonNew.Location = new System.Drawing.Point(139, 356);
       this.buttonNew.Name = "buttonNew";
-      this.buttonNew.Size = new System.Drawing.Size(56, 16);
+      this.buttonNew.Size = new System.Drawing.Size(56, 23);
       this.buttonNew.TabIndex = 26;
       this.buttonNew.Text = "New";
+      this.buttonNew.UseVisualStyleBackColor = true;
       this.buttonNew.Click += new System.EventHandler(this.buttonNew_Click);
       // 
       // buttonRemove
       // 
       this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonRemove.Location = new System.Drawing.Point(208, 392);
+      this.buttonRemove.Location = new System.Drawing.Point(203, 356);
       this.buttonRemove.Name = "buttonRemove";
-      this.buttonRemove.Size = new System.Drawing.Size(56, 16);
+      this.buttonRemove.Size = new System.Drawing.Size(56, 23);
       this.buttonRemove.TabIndex = 27;
       this.buttonRemove.Text = "Remove";
+      this.buttonRemove.UseVisualStyleBackColor = true;
       this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
       // 
       // buttonDefault
       // 
       this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDefault.Location = new System.Drawing.Point(272, 392);
+      this.buttonDefault.Location = new System.Drawing.Point(267, 356);
       this.buttonDefault.Name = "buttonDefault";
-      this.buttonDefault.Size = new System.Drawing.Size(56, 16);
+      this.buttonDefault.Size = new System.Drawing.Size(56, 23);
       this.buttonDefault.TabIndex = 28;
       this.buttonDefault.Text = "Default";
+      this.buttonDefault.UseVisualStyleBackColor = true;
       this.buttonDefault.Click += new System.EventHandler(this.buttonReset_Click);
       // 
       // MappingForm
       // 
       this.AcceptButton = this.okButton;
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(592, 470);
+      this.ClientSize = new System.Drawing.Size(592, 430);
       this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.buttonDefault);
       this.Controls.Add(this.buttonRemove);
@@ -493,12 +539,14 @@ namespace MediaPortal.InputDevices
       this.Controls.Add(this.groupBoxAction);
       this.Controls.Add(this.groupBoxCondition);
       this.Controls.Add(this.groupBoxLayer);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "MappingForm";
-      this.ShowInTaskbar = false;
-      this.Text = "MediaPortal - Setup";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "MAME Devices - Setup";
       this.groupBoxCondition.ResumeLayout(false);
+      this.groupBoxCondition.PerformLayout();
       this.groupBoxAction.ResumeLayout(false);
+      this.groupBoxAction.PerformLayout();
       this.groupBoxLayer.ResumeLayout(false);
       this.ResumeLayout(false);
 

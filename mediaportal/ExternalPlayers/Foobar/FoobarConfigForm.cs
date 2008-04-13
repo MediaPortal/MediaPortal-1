@@ -39,7 +39,7 @@ namespace MediaPortal.FoobarPlugin
   /// <summary>
   /// Summary description for FoobarConfigForm.
   /// </summary>
-  public class FoobarConfigForm : System.Windows.Forms.Form
+  public class FoobarConfigForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private System.Windows.Forms.LinkLabel linkLabelPluginSource;
     private GroupBox groupBoxFoobarLocation;
@@ -55,6 +55,8 @@ namespace MediaPortal.FoobarPlugin
     private MediaPortal.UserInterface.Controls.MPLabel labelFoobarFileTypes;
     private LinkLabel linkLabelStartupParameter;
     private TextBox textBoxStartupParameter;
+    private MediaPortal.UserInterface.Controls.MPButton btnOK;
+    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -67,9 +69,7 @@ namespace MediaPortal.FoobarPlugin
       //
       InitializeComponent();
 
-      //
-      // TODO: Add any constructor code after InitializeComponent call
-      //
+      LoadSettings();
     }
 
     /// <summary>
@@ -94,7 +94,6 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FoobarConfigForm));
       this.linkLabelPluginSource = new System.Windows.Forms.LinkLabel();
       this.groupBoxFoobarLocation = new System.Windows.Forms.GroupBox();
       this.labelPortNumber = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -109,6 +108,8 @@ namespace MediaPortal.FoobarPlugin
       this.textBoxStartupParameter = new System.Windows.Forms.TextBox();
       this.textBoxFoobarExtensions = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.labelFoobarFileTypes = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxFoobarLocation.SuspendLayout();
       this.groupBoxFoobarSettings.SuspendLayout();
       this.SuspendLayout();
@@ -150,7 +151,7 @@ namespace MediaPortal.FoobarPlugin
       // 
       this.labelPortNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelPortNumber.AutoSize = true;
-      this.labelPortNumber.Location = new System.Drawing.Point(300, 57);
+      this.labelPortNumber.Location = new System.Drawing.Point(293, 57);
       this.labelPortNumber.Name = "labelPortNumber";
       this.labelPortNumber.Size = new System.Drawing.Size(26, 13);
       this.labelPortNumber.TabIndex = 13;
@@ -159,6 +160,7 @@ namespace MediaPortal.FoobarPlugin
       // textBoxPortNumber
       // 
       this.textBoxPortNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxPortNumber.BorderColor = System.Drawing.Color.Empty;
       this.textBoxPortNumber.Enabled = false;
       this.textBoxPortNumber.Location = new System.Drawing.Point(326, 54);
       this.textBoxPortNumber.Name = "textBoxPortNumber";
@@ -171,6 +173,7 @@ namespace MediaPortal.FoobarPlugin
       // 
       this.textBoxHostname.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxHostname.BorderColor = System.Drawing.Color.Empty;
       this.textBoxHostname.Enabled = false;
       this.textBoxHostname.Location = new System.Drawing.Point(92, 54);
       this.textBoxHostname.Name = "textBoxHostname";
@@ -181,6 +184,7 @@ namespace MediaPortal.FoobarPlugin
       // buttonBrowseFoobarLoc
       // 
       this.buttonBrowseFoobarLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonBrowseFoobarLoc.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonBrowseFoobarLoc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.buttonBrowseFoobarLoc.Location = new System.Drawing.Point(356, 19);
       this.buttonBrowseFoobarLoc.Name = "buttonBrowseFoobarLoc";
@@ -194,6 +198,7 @@ namespace MediaPortal.FoobarPlugin
       // 
       this.textBoxFoobarPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFoobarPath.BorderColor = System.Drawing.Color.Empty;
       this.textBoxFoobarPath.Enabled = false;
       this.textBoxFoobarPath.Location = new System.Drawing.Point(92, 21);
       this.textBoxFoobarPath.Name = "textBoxFoobarPath";
@@ -260,6 +265,7 @@ namespace MediaPortal.FoobarPlugin
       // 
       this.textBoxFoobarExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFoobarExtensions.BorderColor = System.Drawing.Color.Empty;
       this.textBoxFoobarExtensions.Location = new System.Drawing.Point(13, 93);
       this.textBoxFoobarExtensions.Name = "textBoxFoobarExtensions";
       this.textBoxFoobarExtensions.Size = new System.Drawing.Size(367, 20);
@@ -275,18 +281,42 @@ namespace MediaPortal.FoobarPlugin
       this.labelFoobarFileTypes.TabIndex = 5;
       this.labelFoobarFileTypes.Text = "Supported file types (other files will be played by MP\'s internal player)";
       // 
+      // btnOK
+      // 
+      this.btnOK.Location = new System.Drawing.Point(248, 291);
+      this.btnOK.Name = "btnOK";
+      this.btnOK.Size = new System.Drawing.Size(75, 23);
+      this.btnOK.TabIndex = 9;
+      this.btnOK.Text = "&OK";
+      this.btnOK.UseVisualStyleBackColor = true;
+      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+      // 
+      // btnCancel
+      // 
+      this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.btnCancel.Location = new System.Drawing.Point(329, 291);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(75, 23);
+      this.btnCancel.TabIndex = 10;
+      this.btnCancel.Text = "&Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      // 
       // FoobarConfigForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(416, 293);
+      this.AcceptButton = this.btnOK;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.btnCancel;
+      this.ClientSize = new System.Drawing.Size(416, 326);
+      this.Controls.Add(this.btnCancel);
+      this.Controls.Add(this.btnOK);
       this.Controls.Add(this.groupBoxFoobarSettings);
       this.Controls.Add(this.groupBoxFoobarLocation);
       this.Controls.Add(this.linkLabelPluginSource);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
       this.Name = "FoobarConfigForm";
-      this.Text = "Foobar2000 plugin settings";
-      this.Closing += new System.ComponentModel.CancelEventHandler(this.FoobarConfigForm_Closing);
-      this.Load += new System.EventHandler(this.FoobarConfigForm_Load);
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "Foobar2000 - Setup";
       this.groupBoxFoobarLocation.ResumeLayout(false);
       this.groupBoxFoobarLocation.PerformLayout();
       this.groupBoxFoobarSettings.ResumeLayout(false);
@@ -324,9 +354,7 @@ namespace MediaPortal.FoobarPlugin
     /// When this form loads, read the configuration file for the variables that this
     /// form sets up
     /// </summary>
-    /// <param name="sender">the sender instance</param>
-    /// <param name="e">the event.  Form load!</param>
-    private void FoobarConfigForm_Load(object sender, System.EventArgs e)
+    private void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -336,7 +364,7 @@ namespace MediaPortal.FoobarPlugin
         textBoxFoobarPath.Text = xmlreader.GetValueAsString("foobarplugin", "path", "");
         textBoxStartupParameter.Text = xmlreader.GetValueAsString("foobarplugin", "startupparameter", "/hide /command:\"Playback/Order/Default\"");
       }
-      if (textBoxFoobarPath.Text == "")
+      if (textBoxFoobarPath.Text.Equals(String.Empty))
       {
         using (RegistryKey pRegKey = Registry.CurrentUser)
         {
@@ -353,7 +381,7 @@ namespace MediaPortal.FoobarPlugin
             else
             {
               MessageBox.Show("Foobar2000 is not installed on your system!\r\nPlease install it first before actually trying to use this plugin!", "Foobar2000 plugin error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-              Close();
+              //Close();
             }
           }
         }
@@ -363,9 +391,7 @@ namespace MediaPortal.FoobarPlugin
     /// <summary>
     /// Write the variables from the form to the configuration file when this form closes
     /// </summary>
-    /// <param name="sender">the sender instance</param>
-    /// <param name="e">the event.  Closing!</param>
-    private void FoobarConfigForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    private void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -416,6 +442,18 @@ namespace MediaPortal.FoobarPlugin
       catch
       {
       }
+    }
+
+    private void btnOK_Click(object sender, EventArgs e)
+    {
+      SaveSettings();
+      this.Close();
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+      LoadSettings();
+      this.Close();
     }
   }
 }

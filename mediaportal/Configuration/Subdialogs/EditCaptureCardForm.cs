@@ -48,7 +48,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for EditCaptureCardForm.
   /// </summary>
-  public class EditCaptureCardForm : MediaPortal.Configuration.MPForm
+  public class EditCaptureCardForm : MediaPortal.UserInterface.Controls.MPForm
   {
     static CaptureCardDefinitions mCaptureCardDefinitions = CaptureCardDefinitions.Instance;
     private MediaPortal.UserInterface.Controls.MPLabel label1;

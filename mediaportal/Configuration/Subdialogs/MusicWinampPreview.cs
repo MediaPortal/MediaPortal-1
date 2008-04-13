@@ -40,7 +40,7 @@ namespace MediaPortal.Configuration.Sections
   /// <summary>
   /// This Form shows the Preview of Winamp Visualisation Plugins.
   /// </summary>
-  public partial class MusicWinampPreview : MediaPortal.Configuration.MPForm
+  public partial class MusicWinampPreview : MediaPortal.UserInterface.Controls.MPForm
   {
 
     #region Variables

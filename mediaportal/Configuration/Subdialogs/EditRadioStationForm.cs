@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for EditRadioStationForm.
   /// </summary>
-  public class EditRadioStationForm : MediaPortal.Configuration.MPForm
+  public class EditRadioStationForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPButton buttonClose;

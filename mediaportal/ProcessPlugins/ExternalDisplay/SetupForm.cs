@@ -35,7 +35,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// The setup form of this plugin
   /// </summary>
   /// <author>JoeDalton</author>
-  public class SetupForm : Form
+  public class SetupForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private IContainer components;
     private MPLabel label1;
@@ -76,6 +76,7 @@ namespace ProcessPlugins.ExternalDisplay
     private MPLabel mpLabel5;
     private MPTextBox txtCharsToScroll;
     private MPLabel mpLabel4;
+    private MPButton btnCancel;
     private IDisplay lcd = null;
 
     public SetupForm()
@@ -173,6 +174,7 @@ namespace ProcessPlugins.ExternalDisplay
       this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
       this.cbExtensiveLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
       this.gbGraphMode.SuspendLayout();
@@ -182,8 +184,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // btnAdvanced
       // 
-      this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnAdvanced.Location = new System.Drawing.Point(271, 266);
+      this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnAdvanced.Location = new System.Drawing.Point(267, 266);
       this.btnAdvanced.Name = "btnAdvanced";
       this.btnAdvanced.Size = new System.Drawing.Size(88, 23);
       this.btnAdvanced.TabIndex = 70;
@@ -193,6 +195,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // cmbPort
       // 
+      this.cmbPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbPort.BorderColor = System.Drawing.Color.Empty;
       this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbPort.Items.AddRange(new object[] {
@@ -213,7 +217,7 @@ namespace ProcessPlugins.ExternalDisplay
             "localhost"});
       this.cmbPort.Location = new System.Drawing.Point(40, 48);
       this.cmbPort.Name = "cmbPort";
-      this.cmbPort.Size = new System.Drawing.Size(64, 21);
+      this.cmbPort.Size = new System.Drawing.Size(60, 21);
       this.cmbPort.TabIndex = 20;
       // 
       // label1
@@ -245,13 +249,14 @@ namespace ProcessPlugins.ExternalDisplay
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(373, 313);
+      this.groupBox1.Size = new System.Drawing.Size(369, 313);
       this.groupBox1.TabIndex = 3;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Configuration";
       // 
       // label5
       // 
+      this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label5.Location = new System.Drawing.Point(5, 253);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(56, 16);
@@ -260,10 +265,11 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // tbContrast
       // 
+      this.tbContrast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.tbContrast.Location = new System.Drawing.Point(4, 266);
       this.tbContrast.Maximum = 255;
       this.tbContrast.Name = "tbContrast";
-      this.tbContrast.Size = new System.Drawing.Size(160, 42);
+      this.tbContrast.Size = new System.Drawing.Size(160, 45);
       this.tbContrast.TabIndex = 73;
       this.tbContrast.TickFrequency = 8;
       this.tbContrast.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -271,6 +277,7 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // txtScrollDelay
       // 
+      this.txtScrollDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.txtScrollDelay.BorderColor = System.Drawing.Color.Empty;
       this.txtScrollDelay.Location = new System.Drawing.Point(96, 207);
       this.txtScrollDelay.Name = "txtScrollDelay";
@@ -280,7 +287,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // gbGraphMode
       // 
-      this.gbGraphMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.gbGraphMode.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.gbGraphMode.Controls.Add(this.txtPixelsToScroll);
       this.gbGraphMode.Controls.Add(this.mpLabel5);
@@ -298,17 +306,19 @@ namespace ProcessPlugins.ExternalDisplay
       this.gbGraphMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbGraphMode.Location = new System.Drawing.Point(168, 72);
       this.gbGraphMode.Name = "gbGraphMode";
-      this.gbGraphMode.Size = new System.Drawing.Size(191, 188);
+      this.gbGraphMode.Size = new System.Drawing.Size(187, 188);
       this.gbGraphMode.TabIndex = 72;
       this.gbGraphMode.TabStop = false;
       this.gbGraphMode.Text = "GraphMode";
       // 
       // txtPixelsToScroll
       // 
+      this.txtPixelsToScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtPixelsToScroll.BorderColor = System.Drawing.Color.Empty;
       this.txtPixelsToScroll.Location = new System.Drawing.Point(86, 135);
       this.txtPixelsToScroll.Name = "txtPixelsToScroll";
-      this.txtPixelsToScroll.Size = new System.Drawing.Size(48, 20);
+      this.txtPixelsToScroll.Size = new System.Drawing.Size(44, 20);
       this.txtPixelsToScroll.TabIndex = 57;
       this.txtPixelsToScroll.Text = "10";
       // 
@@ -334,10 +344,12 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // txtFontSize
       // 
+      this.txtFontSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtFontSize.BorderColor = System.Drawing.Color.Empty;
       this.txtFontSize.Location = new System.Drawing.Point(86, 110);
       this.txtFontSize.Name = "txtFontSize";
-      this.txtFontSize.Size = new System.Drawing.Size(48, 20);
+      this.txtFontSize.Size = new System.Drawing.Size(44, 20);
       this.txtFontSize.TabIndex = 54;
       this.txtFontSize.Text = "10";
       // 
@@ -357,7 +369,7 @@ namespace ProcessPlugins.ExternalDisplay
       this.txtFont.BorderColor = System.Drawing.Color.Empty;
       this.txtFont.Location = new System.Drawing.Point(86, 87);
       this.txtFont.Name = "txtFont";
-      this.txtFont.Size = new System.Drawing.Size(99, 20);
+      this.txtFont.Size = new System.Drawing.Size(95, 21);
       this.txtFont.TabIndex = 52;
       this.txtFont.Text = "Arial Black";
       // 
@@ -381,28 +393,34 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // txtTimG
       // 
+      this.txtTimG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtTimG.BorderColor = System.Drawing.Color.Empty;
       this.txtTimG.Location = new System.Drawing.Point(86, 64);
       this.txtTimG.Name = "txtTimG";
-      this.txtTimG.Size = new System.Drawing.Size(48, 20);
+      this.txtTimG.Size = new System.Drawing.Size(44, 20);
       this.txtTimG.TabIndex = 50;
       this.txtTimG.Text = "1";
       // 
       // txtRowsG
       // 
+      this.txtRowsG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtRowsG.BorderColor = System.Drawing.Color.Empty;
       this.txtRowsG.Location = new System.Drawing.Point(86, 40);
       this.txtRowsG.Name = "txtRowsG";
-      this.txtRowsG.Size = new System.Drawing.Size(48, 20);
+      this.txtRowsG.Size = new System.Drawing.Size(44, 20);
       this.txtRowsG.TabIndex = 40;
       this.txtRowsG.Text = "240";
       // 
       // txtColsG
       // 
+      this.txtColsG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtColsG.BorderColor = System.Drawing.Color.Empty;
       this.txtColsG.Location = new System.Drawing.Point(86, 16);
       this.txtColsG.Name = "txtColsG";
-      this.txtColsG.Size = new System.Drawing.Size(48, 20);
+      this.txtColsG.Size = new System.Drawing.Size(44, 20);
       this.txtColsG.TabIndex = 30;
       this.txtColsG.Text = "320";
       // 
@@ -426,6 +444,7 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // mpLabel3
       // 
+      this.mpLabel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpLabel3.Location = new System.Drawing.Point(5, 205);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(80, 23);
@@ -435,6 +454,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // gbTextMode
       // 
+      this.gbTextMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.gbTextMode.Controls.Add(this.txtCharsToScroll);
       this.gbTextMode.Controls.Add(this.mpLabel4);
       this.gbTextMode.Controls.Add(this.label2);
@@ -453,6 +474,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // txtCharsToScroll
       // 
+      this.txtCharsToScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtCharsToScroll.BorderColor = System.Drawing.Color.Empty;
       this.txtCharsToScroll.Location = new System.Drawing.Point(88, 90);
       this.txtCharsToScroll.Name = "txtCharsToScroll";
@@ -480,6 +503,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // txtTim
       // 
+      this.txtTim.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtTim.BorderColor = System.Drawing.Color.Empty;
       this.txtTim.Location = new System.Drawing.Point(88, 64);
       this.txtTim.Name = "txtTim";
@@ -489,6 +514,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // txtRows
       // 
+      this.txtRows.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtRows.BorderColor = System.Drawing.Color.Empty;
       this.txtRows.Location = new System.Drawing.Point(88, 40);
       this.txtRows.Name = "txtRows";
@@ -498,6 +525,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // txtCols
       // 
+      this.txtCols.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtCols.BorderColor = System.Drawing.Color.Empty;
       this.txtCols.Location = new System.Drawing.Point(88, 16);
       this.txtCols.Name = "txtCols";
@@ -540,13 +569,14 @@ namespace ProcessPlugins.ExternalDisplay
       this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbType.Location = new System.Drawing.Point(40, 16);
       this.cmbType.Name = "cmbType";
-      this.cmbType.Size = new System.Drawing.Size(319, 21);
+      this.cmbType.Size = new System.Drawing.Size(315, 21);
       this.cmbType.Sorted = true;
       this.cmbType.TabIndex = 10;
       this.cmbType.SelectionChangeCommitted += new System.EventHandler(this.cmbType_SelectionChangeCommitted);
       // 
       // cbLight
       // 
+      this.cbLight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.cbLight.AutoSize = true;
       this.cbLight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbLight.Location = new System.Drawing.Point(8, 233);
@@ -570,9 +600,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnOK.Location = new System.Drawing.Point(303, 344);
+      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Location = new System.Drawing.Point(218, 340);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(78, 23);
       this.btnOK.TabIndex = 5;
@@ -596,17 +625,32 @@ namespace ProcessPlugins.ExternalDisplay
       this.cbExtensiveLogging.Text = "Extensive logging";
       this.cbExtensiveLogging.UseVisualStyleBackColor = true;
       // 
+      // btnCancel
+      // 
+      this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.btnCancel.Location = new System.Drawing.Point(302, 340);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(75, 23);
+      this.btnCancel.TabIndex = 7;
+      this.btnCancel.Text = "&Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      // 
       // SetupForm
       // 
       this.AcceptButton = this.btnOK;
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.btnCancel;
       this.ClientSize = new System.Drawing.Size(389, 375);
+      this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.cbExtensiveLogging);
       this.Controls.Add(this.btnOK);
       this.Controls.Add(this.cbPropertyBrowser);
       this.Controls.Add(this.groupBox1);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "SetupForm";
-      this.Text = "ExternalDisplay Configuration";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "ExternalDisplay - Setup";
       this.Load += new System.EventHandler(this.SetupForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -673,6 +717,12 @@ namespace ProcessPlugins.ExternalDisplay
         txtFont.Items.Add(oneFontFamily.Name);
       }
 
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+      Settings.Reset();
+      Close();
     }
   }
 }

@@ -30,7 +30,7 @@ using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.DirectTVTunerPlugin
 {
-  public partial class SetupForm : Form
+  public partial class SetupForm : MediaPortal.UserInterface.Controls.MPForm
   {
 
     private DirecTVSettings _settings;

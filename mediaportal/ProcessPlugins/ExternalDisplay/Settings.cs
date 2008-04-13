@@ -444,6 +444,11 @@ namespace ProcessPlugins.ExternalDisplay
 
     #endregion
 
+    public static void Reset()
+    {
+      m_Instance = Load();
+    }
+
     /// <summary>
     /// Loads the settings from XML
     /// </summary>

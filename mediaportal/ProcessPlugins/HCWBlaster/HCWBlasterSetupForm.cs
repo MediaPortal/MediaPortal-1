@@ -36,12 +36,13 @@ namespace MediaPortal.HCWBlaster
   /// <summary>
   /// Summary description for HCWBlasterSetupForm.
   /// </summary>
-  public class HCWBlasterSetupForm : System.Windows.Forms.Form
+  public class HCWBlasterSetupForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPButton btnOK;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkExtendedLog;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -103,6 +104,7 @@ namespace MediaPortal.HCWBlaster
       this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.chkExtendedLog = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -113,47 +115,71 @@ namespace MediaPortal.HCWBlaster
       this.label1.Size = new System.Drawing.Size(224, 29);
       this.label1.TabIndex = 6;
       this.label1.Text = "To configure the IR Blaster, use the original Hauppauge IR configuration software" +
-        ".";
+          ".";
       // 
       // btnOK
       // 
-      this.btnOK.Location = new System.Drawing.Point(184, 120);
+      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Location = new System.Drawing.Point(130, 118);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(72, 22);
       this.btnOK.TabIndex = 5;
-      this.btnOK.Text = "OK";
+      this.btnOK.Text = "&OK";
+      this.btnOK.UseVisualStyleBackColor = true;
       this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
       // 
       // chkExtendedLog
       // 
+      this.chkExtendedLog.AutoSize = true;
+      this.chkExtendedLog.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkExtendedLog.Location = new System.Drawing.Point(16, 64);
       this.chkExtendedLog.Name = "chkExtendedLog";
-      this.chkExtendedLog.Size = new System.Drawing.Size(224, 21);
+      this.chkExtendedLog.Size = new System.Drawing.Size(146, 17);
       this.chkExtendedLog.TabIndex = 4;
       this.chkExtendedLog.Text = "Enable Extended Logging";
+      this.chkExtendedLog.UseVisualStyleBackColor = true;
       // 
       // groupBox1
       // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.chkExtendedLog);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(248, 96);
+      this.groupBox1.Size = new System.Drawing.Size(272, 96);
       this.groupBox1.TabIndex = 7;
       this.groupBox1.TabStop = false;
       // 
+      // btnCancel
+      // 
+      this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.btnCancel.Location = new System.Drawing.Point(208, 118);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(72, 22);
+      this.btnCancel.TabIndex = 8;
+      this.btnCancel.Text = "&Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      // 
       // HCWBlasterSetupForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(266, 152);
-      this.ControlBox = false;
+      this.AcceptButton = this.btnOK;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.btnCancel;
+      this.ClientSize = new System.Drawing.Size(292, 152);
+      this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.btnOK);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "HCWBlasterSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "Hauppauge IR Blaster Setup";
+      this.Text = "Hauppauge IR Blaster - Setup";
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -162,6 +188,12 @@ namespace MediaPortal.HCWBlaster
     private void btnOK_Click(object sender, System.EventArgs e)
     {
       SaveSettings();
+      this.Close();
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+      LoadSettings();
       this.Close();
     }
   }

@@ -248,12 +248,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MPForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MPForm.Designer.cs">
-      <DependentUpon>MPForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="HelpSystem.cs" />
     <Compile Include="Sections\GeneralWatchdog.cs">
       <SubType>UserControl</SubType>
@@ -624,10 +618,6 @@
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <EmbeddedResource Include="MPForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>MPForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseViews.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>

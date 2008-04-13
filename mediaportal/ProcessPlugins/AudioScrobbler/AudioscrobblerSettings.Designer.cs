@@ -199,7 +199,8 @@ namespace MediaPortal.AudioScrobbler
       // 
       // pictureBoxASLogo
       // 
-      this.pictureBoxASLogo.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.pictureBoxASLogo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxASLogo.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxASLogo.Image")));
       this.pictureBoxASLogo.Location = new System.Drawing.Point(0, 0);
       this.pictureBoxASLogo.Name = "pictureBoxASLogo";
@@ -239,6 +240,9 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabControlSettings
       // 
+      this.tabControlSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlSettings.Controls.Add(this.tabPageLastFMSettings);
       this.tabControlSettings.Controls.Add(this.tabPageMusicSettings);
       this.tabControlSettings.Controls.Add(this.tabPageCoverArt);
@@ -268,14 +272,15 @@ namespace MediaPortal.AudioScrobbler
       // 
       // labelNewUserHint
       // 
+      this.labelNewUserHint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelNewUserHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelNewUserHint.ForeColor = System.Drawing.SystemColors.ControlText;
       this.labelNewUserHint.Location = new System.Drawing.Point(23, 256);
       this.labelNewUserHint.Name = "labelNewUserHint";
       this.labelNewUserHint.Size = new System.Drawing.Size(262, 36);
       this.labelNewUserHint.TabIndex = 9;
-      this.labelNewUserHint.Text = "Please enter your last.fm user and password\r\nThen click \"Save\" and re-enter the c" +
-          "onfig\r\n";
+      this.labelNewUserHint.Text = "Please enter your last.fm user and password\r\nThen click \"OK\" and re-enter the con" +
+          "fig";
       this.labelNewUserHint.Visible = false;
       // 
       // labelNoUser
@@ -292,6 +297,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // labelPluginBannerHint
       // 
+      this.labelPluginBannerHint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelPluginBannerHint.Location = new System.Drawing.Point(305, 12);
       this.labelPluginBannerHint.Name = "labelPluginBannerHint";
       this.labelPluginBannerHint.Size = new System.Drawing.Size(246, 194);
@@ -300,6 +306,8 @@ namespace MediaPortal.AudioScrobbler
       // 
       // linkLabel1
       // 
+      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.linkLabel1.AutoSize = true;
       this.linkLabel1.Location = new System.Drawing.Point(305, 268);
       this.linkLabel1.Name = "linkLabel1";
@@ -325,6 +333,8 @@ namespace MediaPortal.AudioScrobbler
       // 
       // groupBoxOptions
       // 
+      this.groupBoxOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxOptions.Controls.Add(this.checkBoxEnableNowPlaying);
       this.groupBoxOptions.Controls.Add(this.checkBoxEnableSubmits);
       this.groupBoxOptions.Controls.Add(this.checkBoxLogVerbose);
@@ -393,6 +403,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonDelUser
       // 
+      this.buttonDelUser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonDelUser.Enabled = false;
       this.buttonDelUser.Location = new System.Drawing.Point(223, 37);
       this.buttonDelUser.Name = "buttonDelUser";
@@ -404,6 +415,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonAddUser
       // 
+      this.buttonAddUser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonAddUser.Location = new System.Drawing.Point(187, 37);
       this.buttonAddUser.Name = "buttonAddUser";
       this.buttonAddUser.Size = new System.Drawing.Size(35, 21);
@@ -414,6 +426,8 @@ namespace MediaPortal.AudioScrobbler
       // 
       // comboBoxUserName
       // 
+      this.comboBoxUserName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxUserName.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxUserName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxUserName.FormattingEnabled = true;
@@ -596,7 +610,7 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarConsiderCount.Location = new System.Drawing.Point(17, 170);
       this.trackBarConsiderCount.Maximum = 3;
       this.trackBarConsiderCount.Name = "trackBarConsiderCount";
-      this.trackBarConsiderCount.Size = new System.Drawing.Size(226, 40);
+      this.trackBarConsiderCount.Size = new System.Drawing.Size(226, 45);
       this.trackBarConsiderCount.TabIndex = 19;
       this.trackBarConsiderCount.Value = 2;
       this.trackBarConsiderCount.ValueChanged += new System.EventHandler(this.trackBarConsiderCount_ValueChanged);
@@ -670,7 +684,7 @@ namespace MediaPortal.AudioScrobbler
       this.trackBarRandomness.Maximum = 100;
       this.trackBarRandomness.Minimum = 25;
       this.trackBarRandomness.Name = "trackBarRandomness";
-      this.trackBarRandomness.Size = new System.Drawing.Size(226, 40);
+      this.trackBarRandomness.Size = new System.Drawing.Size(226, 45);
       this.trackBarRandomness.SmallChange = 5;
       this.trackBarRandomness.TabIndex = 0;
       this.trackBarRandomness.TickFrequency = 15;
@@ -691,6 +705,9 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabControlCoverArt
       // 
+      this.tabControlCoverArt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlCoverArt.Controls.Add(this.tabPageArtistArt);
       this.tabControlCoverArt.Controls.Add(this.tabPageAlbumArt);
       this.tabControlCoverArt.Location = new System.Drawing.Point(6, 6);
@@ -716,6 +733,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // checkBoxCoverArtistsMissing
       // 
+      this.checkBoxCoverArtistsMissing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxCoverArtistsMissing.AutoSize = true;
       this.checkBoxCoverArtistsMissing.Checked = true;
       this.checkBoxCoverArtistsMissing.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -740,6 +758,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonCoverArtistsLookup
       // 
+      this.buttonCoverArtistsLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCoverArtistsLookup.Enabled = false;
       this.buttonCoverArtistsLookup.Location = new System.Drawing.Point(452, 41);
       this.buttonCoverArtistsLookup.Name = "buttonCoverArtistsLookup";
@@ -751,6 +770,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonCoverArtistsRefresh
       // 
+      this.buttonCoverArtistsRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCoverArtistsRefresh.Location = new System.Drawing.Point(452, 12);
       this.buttonCoverArtistsRefresh.Name = "buttonCoverArtistsRefresh";
       this.buttonCoverArtistsRefresh.Size = new System.Drawing.Size(83, 23);
@@ -764,6 +784,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewCoverArtists.AllowColumnReorder = true;
       this.listViewCoverArtists.AllowDrop = true;
       this.listViewCoverArtists.AllowRowReorder = false;
+      this.listViewCoverArtists.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewCoverArtists.Location = new System.Drawing.Point(6, 12);
       this.listViewCoverArtists.Name = "listViewCoverArtists";
       this.listViewCoverArtists.ShowGroups = false;
@@ -788,6 +811,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // checkBoxCoverAlbumsMissing
       // 
+      this.checkBoxCoverAlbumsMissing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxCoverAlbumsMissing.AutoSize = true;
       this.checkBoxCoverAlbumsMissing.Checked = true;
       this.checkBoxCoverAlbumsMissing.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -812,6 +836,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonCoverAlbumsLookup
       // 
+      this.buttonCoverAlbumsLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCoverAlbumsLookup.Enabled = false;
       this.buttonCoverAlbumsLookup.Location = new System.Drawing.Point(452, 41);
       this.buttonCoverAlbumsLookup.Name = "buttonCoverAlbumsLookup";
@@ -823,6 +848,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonCoverAlbumsRefresh
       // 
+      this.buttonCoverAlbumsRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCoverAlbumsRefresh.Location = new System.Drawing.Point(452, 12);
       this.buttonCoverAlbumsRefresh.Name = "buttonCoverAlbumsRefresh";
       this.buttonCoverAlbumsRefresh.Size = new System.Drawing.Size(83, 23);
@@ -836,6 +862,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewCoverAlbums.AllowColumnReorder = true;
       this.listViewCoverAlbums.AllowDrop = true;
       this.listViewCoverAlbums.AllowRowReorder = false;
+      this.listViewCoverAlbums.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewCoverAlbums.Location = new System.Drawing.Point(6, 12);
       this.listViewCoverAlbums.Name = "listViewCoverAlbums";
       this.listViewCoverAlbums.ShowGroups = false;
@@ -857,6 +886,9 @@ namespace MediaPortal.AudioScrobbler
       // 
       // tabControlLiveFeeds
       // 
+      this.tabControlLiveFeeds.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlLiveFeeds.Controls.Add(this.tabPageRecent);
       this.tabControlLiveFeeds.Controls.Add(this.tabPageNeighbours);
       this.tabControlLiveFeeds.Controls.Add(this.tabPageSuggestions);
@@ -887,6 +919,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonRefreshRecent
       // 
+      this.buttonRefreshRecent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonRefreshRecent.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshRecent.Name = "buttonRefreshRecent";
       this.buttonRefreshRecent.Size = new System.Drawing.Size(83, 23);
@@ -900,6 +933,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewRecentTracks.AllowColumnReorder = true;
       this.listViewRecentTracks.AllowDrop = true;
       this.listViewRecentTracks.AllowRowReorder = false;
+      this.listViewRecentTracks.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewRecentTracks.Location = new System.Drawing.Point(6, 12);
       this.listViewRecentTracks.Name = "listViewRecentTracks";
       this.listViewRecentTracks.ShowGroups = false;
@@ -924,6 +960,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // comboBoxNeighbourMode
       // 
+      this.comboBoxNeighbourMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxNeighbourMode.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxNeighbourMode.Enabled = false;
       this.comboBoxNeighbourMode.FormattingEnabled = true;
@@ -940,6 +977,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonNeighboursFilter
       // 
+      this.buttonNeighboursFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonNeighboursFilter.Enabled = false;
       this.buttonNeighboursFilter.Location = new System.Drawing.Point(452, 239);
       this.buttonNeighboursFilter.Name = "buttonNeighboursFilter";
@@ -951,6 +989,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonRefreshNeigboursArtists
       // 
+      this.buttonRefreshNeigboursArtists.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonRefreshNeigboursArtists.Enabled = false;
       this.buttonRefreshNeigboursArtists.Location = new System.Drawing.Point(452, 210);
       this.buttonRefreshNeigboursArtists.Name = "buttonRefreshNeigboursArtists";
@@ -962,6 +1001,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonRefreshNeighbours
       // 
+      this.buttonRefreshNeighbours.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonRefreshNeighbours.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshNeighbours.Name = "buttonRefreshNeighbours";
       this.buttonRefreshNeighbours.Size = new System.Drawing.Size(83, 23);
@@ -975,6 +1015,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewNeighbours.AllowColumnReorder = true;
       this.listViewNeighbours.AllowDrop = true;
       this.listViewNeighbours.AllowRowReorder = false;
+      this.listViewNeighbours.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewNeighbours.Location = new System.Drawing.Point(6, 12);
       this.listViewNeighbours.Name = "listViewNeighbours";
       this.listViewNeighbours.ShowGroups = false;
@@ -1010,6 +1053,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // labelArtistMatch
       // 
+      this.labelArtistMatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelArtistMatch.AutoSize = true;
       this.labelArtistMatch.Location = new System.Drawing.Point(9, 242);
       this.labelArtistMatch.Name = "labelArtistMatch";
@@ -1047,6 +1091,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonRefreshSuggestions
       // 
+      this.buttonRefreshSuggestions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonRefreshSuggestions.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshSuggestions.Name = "buttonRefreshSuggestions";
       this.buttonRefreshSuggestions.Size = new System.Drawing.Size(83, 23);
@@ -1061,6 +1106,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewSuggestions.AllowColumnReorder = true;
       this.listViewSuggestions.AllowDrop = true;
       this.listViewSuggestions.AllowRowReorder = false;
+      this.listViewSuggestions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewSuggestions.AutoArrange = false;
       this.listViewSuggestions.FullRowSelect = true;
       this.listViewSuggestions.Location = new System.Drawing.Point(6, 12);
@@ -1087,6 +1135,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewSysRecs.AllowColumnReorder = true;
       this.listViewSysRecs.AllowDrop = true;
       this.listViewSysRecs.AllowRowReorder = false;
+      this.listViewSysRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewSysRecs.AutoArrange = false;
       this.listViewSysRecs.Location = new System.Drawing.Point(6, 12);
       this.listViewSysRecs.Name = "listViewSysRecs";
@@ -1098,6 +1149,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonRefreshSysRecs
       // 
+      this.buttonRefreshSysRecs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonRefreshSysRecs.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshSysRecs.Name = "buttonRefreshSysRecs";
       this.buttonRefreshSysRecs.Size = new System.Drawing.Size(83, 23);
@@ -1119,6 +1171,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonArtistsRefresh
       // 
+      this.buttonArtistsRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonArtistsRefresh.Location = new System.Drawing.Point(452, 12);
       this.buttonArtistsRefresh.Name = "buttonArtistsRefresh";
       this.buttonArtistsRefresh.Size = new System.Drawing.Size(83, 23);
@@ -1132,6 +1185,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewTopArtists.AllowColumnReorder = true;
       this.listViewTopArtists.AllowDrop = true;
       this.listViewTopArtists.AllowRowReorder = false;
+      this.listViewTopArtists.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewTopArtists.AutoArrange = false;
       this.listViewTopArtists.Location = new System.Drawing.Point(6, 12);
       this.listViewTopArtists.Name = "listViewTopArtists";
@@ -1154,6 +1210,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonRefreshWeeklyArtists
       // 
+      this.buttonRefreshWeeklyArtists.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonRefreshWeeklyArtists.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshWeeklyArtists.Name = "buttonRefreshWeeklyArtists";
       this.buttonRefreshWeeklyArtists.Size = new System.Drawing.Size(83, 23);
@@ -1167,6 +1224,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewWeeklyArtists.AllowColumnReorder = true;
       this.listViewWeeklyArtists.AllowDrop = true;
       this.listViewWeeklyArtists.AllowRowReorder = false;
+      this.listViewWeeklyArtists.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewWeeklyArtists.Location = new System.Drawing.Point(6, 12);
       this.listViewWeeklyArtists.Name = "listViewWeeklyArtists";
       this.listViewWeeklyArtists.ShowGroups = false;
@@ -1188,6 +1248,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonTopTracks
       // 
+      this.buttonTopTracks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonTopTracks.Location = new System.Drawing.Point(452, 12);
       this.buttonTopTracks.Name = "buttonTopTracks";
       this.buttonTopTracks.Size = new System.Drawing.Size(83, 23);
@@ -1201,6 +1262,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewTopTracks.AllowColumnReorder = true;
       this.listViewTopTracks.AllowDrop = true;
       this.listViewTopTracks.AllowRowReorder = false;
+      this.listViewTopTracks.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewTopTracks.Location = new System.Drawing.Point(6, 12);
       this.listViewTopTracks.Name = "listViewTopTracks";
       this.listViewTopTracks.ShowGroups = false;
@@ -1222,6 +1286,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonRefreshWeeklyTracks
       // 
+      this.buttonRefreshWeeklyTracks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonRefreshWeeklyTracks.Location = new System.Drawing.Point(452, 12);
       this.buttonRefreshWeeklyTracks.Name = "buttonRefreshWeeklyTracks";
       this.buttonRefreshWeeklyTracks.Size = new System.Drawing.Size(83, 23);
@@ -1235,6 +1300,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewWeeklyTracks.AllowColumnReorder = true;
       this.listViewWeeklyTracks.AllowDrop = true;
       this.listViewWeeklyTracks.AllowRowReorder = false;
+      this.listViewWeeklyTracks.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewWeeklyTracks.Location = new System.Drawing.Point(6, 12);
       this.listViewWeeklyTracks.Name = "listViewWeeklyTracks";
       this.listViewWeeklyTracks.ShowGroups = false;
@@ -1263,6 +1331,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // checkBoxLocalOnly
       // 
+      this.checkBoxLocalOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxLocalOnly.AutoSize = true;
       this.checkBoxLocalOnly.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxLocalOnly.Location = new System.Drawing.Point(454, 158);
@@ -1274,6 +1343,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // checkBoxTagRandomize
       // 
+      this.checkBoxTagRandomize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxTagRandomize.AutoSize = true;
       this.checkBoxTagRandomize.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxTagRandomize.Location = new System.Drawing.Point(454, 137);
@@ -1285,6 +1355,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonTaggedTracks
       // 
+      this.buttonTaggedTracks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonTaggedTracks.Location = new System.Drawing.Point(452, 239);
       this.buttonTaggedTracks.Name = "buttonTaggedTracks";
       this.buttonTaggedTracks.Size = new System.Drawing.Size(83, 23);
@@ -1295,6 +1366,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonTaggedAlbums
       // 
+      this.buttonTaggedAlbums.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonTaggedAlbums.Location = new System.Drawing.Point(452, 210);
       this.buttonTaggedAlbums.Name = "buttonTaggedAlbums";
       this.buttonTaggedAlbums.Size = new System.Drawing.Size(83, 23);
@@ -1305,6 +1377,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // labelTagDesc
       // 
+      this.labelTagDesc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.labelTagDesc.AutoSize = true;
       this.labelTagDesc.Location = new System.Drawing.Point(452, 93);
       this.labelTagDesc.Name = "labelTagDesc";
@@ -1314,6 +1387,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // textBoxTagToSearch
       // 
+      this.textBoxTagToSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTagToSearch.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTagToSearch.Location = new System.Drawing.Point(454, 111);
       this.textBoxTagToSearch.Name = "textBoxTagToSearch";
@@ -1324,6 +1398,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonGetTaggedArtists
       // 
+      this.buttonGetTaggedArtists.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonGetTaggedArtists.Location = new System.Drawing.Point(452, 181);
       this.buttonGetTaggedArtists.Name = "buttonGetTaggedArtists";
       this.buttonGetTaggedArtists.Size = new System.Drawing.Size(83, 23);
@@ -1334,6 +1409,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       // buttonTagsRefresh
       // 
+      this.buttonTagsRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonTagsRefresh.Location = new System.Drawing.Point(452, 12);
       this.buttonTagsRefresh.Name = "buttonTagsRefresh";
       this.buttonTagsRefresh.Size = new System.Drawing.Size(83, 23);
@@ -1347,6 +1423,9 @@ namespace MediaPortal.AudioScrobbler
       this.listViewTags.AllowColumnReorder = true;
       this.listViewTags.AllowDrop = true;
       this.listViewTags.AllowRowReorder = false;
+      this.listViewTags.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewTags.FullRowSelect = true;
       this.listViewTags.LabelEdit = true;
       this.listViewTags.Location = new System.Drawing.Point(6, 12);
@@ -1359,11 +1438,12 @@ namespace MediaPortal.AudioScrobbler
       // buttonCancel
       // 
       this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancel.Location = new System.Drawing.Point(503, 391);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 2;
-      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.Text = "&Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
@@ -1374,7 +1454,7 @@ namespace MediaPortal.AudioScrobbler
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 1;
-      this.buttonOk.Text = "Save";
+      this.buttonOk.Text = "&OK";
       this.buttonOk.UseVisualStyleBackColor = true;
       this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
       // 
@@ -1398,17 +1478,19 @@ namespace MediaPortal.AudioScrobbler
       // 
       // AudioscrobblerSettings
       // 
+      this.AcceptButton = this.buttonOk;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(594, 426);
       this.Controls.Add(this.tabControlSettings);
       this.Controls.Add(this.panelPicBox);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.buttonOk);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "AudioscrobblerSettings";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "Audioscrobbler settings";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "Audioscrobbler - Setup";
       this.panelPicBox.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).EndInit();
       this.tabControlSettings.ResumeLayout(false);
