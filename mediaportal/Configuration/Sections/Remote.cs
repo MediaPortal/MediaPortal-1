@@ -894,7 +894,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageCentarea.Padding = new System.Windows.Forms.Padding(3);
       this.tabPageCentarea.Size = new System.Drawing.Size(464, 374);
       this.tabPageCentarea.TabIndex = 6;
-      this.tabPageCentarea.Text = "Centarea";
+      this.tabPageCentarea.Text = "Sceneo";
       this.tabPageCentarea.UseVisualStyleBackColor = true;
       // 
       // groupBoxCentareaOptions
@@ -920,9 +920,9 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCentareaReMapMouseButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCentareaReMapMouseButton.Location = new System.Drawing.Point(16, 70);
       this.checkBoxCentareaReMapMouseButton.Name = "checkBoxCentareaReMapMouseButton";
-      this.checkBoxCentareaReMapMouseButton.Size = new System.Drawing.Size(281, 17);
+      this.checkBoxCentareaReMapMouseButton.Size = new System.Drawing.Size(227, 17);
       this.checkBoxCentareaReMapMouseButton.TabIndex = 5;
-      this.checkBoxCentareaReMapMouseButton.Text = "Map left mouse click to \'OK\' command (joystick button)";
+      this.checkBoxCentareaReMapMouseButton.Text = "Map mouse clicks to \'Ok\' and \"Info\" button";
       this.checkBoxCentareaReMapMouseButton.UseVisualStyleBackColor = true;
       // 
       // checkBoxCentareaVerbose
@@ -942,9 +942,9 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCentareaEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCentareaEnabled.Location = new System.Drawing.Point(16, 24);
       this.checkBoxCentareaEnabled.Name = "checkBoxCentareaEnabled";
-      this.checkBoxCentareaEnabled.Size = new System.Drawing.Size(323, 17);
+      this.checkBoxCentareaEnabled.Size = new System.Drawing.Size(277, 17);
       this.checkBoxCentareaEnabled.TabIndex = 0;
-      this.checkBoxCentareaEnabled.Text = "Use Centarea Master Remote II (Sceneo / Sunwave SMR-140)";
+      this.checkBoxCentareaEnabled.Text = "Use Centarea Master Remote II / Sunwave SMR-140";
       this.checkBoxCentareaEnabled.UseVisualStyleBackColor = true;
       this.checkBoxCentareaEnabled.CheckedChanged += new System.EventHandler(this.checkBoxCentareaEnabled_CheckedChanged);
       // 

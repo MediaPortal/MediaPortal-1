@@ -114,7 +114,7 @@ namespace MediaPortal.InputDevices
     {
       if (_remoteActive)
       {
-        if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == WM_APPCOMMAND || msg.Msg == WM_LBUTTONDOWN)
+        if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == WM_APPCOMMAND || msg.Msg == WM_LBUTTONDOWN || msg.Msg == WM_RBUTTONDOWN)
         {
           switch ((Keys)msg.WParam)
           {
@@ -126,13 +126,33 @@ namespace MediaPortal.InputDevices
               break;
             default:
               int keycode = (int)msg.WParam;
+
+              AppCommands appCommand = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
+              // find out which request the MCE remote handled last
+              if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) && (appCommand != AppCommands.VolumeUp))
+              {
+                // possible that it is the same request mapped to an app command?
+                if (Environment.TickCount - InputDevices.LastHidRequestTick < 1000)
+                  return true;
+              }
+              InputDevices.LastHidRequest = appCommand;
+
               // Due to the non-perfect placement of the OK button we allow the user to remap the joystick to okay.
               // Unfortunately this will have SYSTEMWIDE effect.
-              if (_mapMouseButton && msg.Msg == WM_LBUTTONDOWN)
+              if (_mapMouseButton)
               {
-                if (_verboseLogging)
-                  Log.Debug("Centarea: Command \"{0}\" mapped for joystick button", keycode);
-                keycode = 13;
+                if (msg.Msg == WM_LBUTTONDOWN)
+                {
+                  if (_verboseLogging)
+                    Log.Debug("Centarea: Command \"{0}\" mapped for left mouse button", keycode);
+                  keycode = 13;
+                }
+                if (msg.Msg == WM_RBUTTONDOWN)
+                {
+                  if (_verboseLogging)
+                    Log.Debug("Centarea: Command \"{0}\" mapped for right mouse button", keycode);
+                  keycode = 10069;
+                }
               }
               // The Centarea Remote sends key combos. Therefore we use this trick to get a 1:1 mapping
               if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) keycode += 1000;
@@ -150,7 +170,6 @@ namespace MediaPortal.InputDevices
                 else
                 {
                   Log.Debug("Centarea: Command \"{0}\" not mapped", keycode);
-                  return false;
                 }
               }
               catch (ApplicationException)
