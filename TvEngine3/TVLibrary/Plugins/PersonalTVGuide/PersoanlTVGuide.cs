@@ -36,7 +36,8 @@ namespace TvEngine
 	public class PersonalTVGuide : ITvServerPlugin, IStandbyHandler
 	{
 		#region variables
-		private TvBusinessLayer cmLayer = new TvBusinessLayer();
+		//private TvBusinessLayer cmLayer = new TvBusinessLayer();
+	  private bool _stopService = false;
 		private bool _isUpdating = false;
 		private bool _debugMode = true;
 		#endregion
@@ -100,8 +101,14 @@ namespace TvEngine
 			IList list = Keyword.ListAll();
 			foreach (Keyword key in list)
 			{
-				UpdateKeyword(key);
+				if (_stopService)
+				{
+          Log.Info("PersonalTVGuide: Stop Update loop");
+				  break;
+				}
+        UpdateKeyword(key);
 			}
+      TvBusinessLayer cmLayer = new TvBusinessLayer();
       Setting setting = cmLayer.GetSetting("PTVGLastUpdateTime", DateTime.Now.ToString());
       setting.Value = DateTime.Now.ToString();
       setting.Persist();
@@ -239,7 +246,8 @@ namespace TvEngine
 		{
 			LoadSettings();
 			if (_debugMode) Log.WriteFile("plugin: PersonalTVGuide started");
-			ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
+      _stopService = false;
+      ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
 			events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
       if (_debugMode) UpdatePersonalTVGuide();  // Only for testing !!!!
 		}
@@ -249,6 +257,7 @@ namespace TvEngine
 		/// </summary>
 		public void Stop()
 		{
+      _stopService = true;
 			if (_debugMode) Log.WriteFile("plugin: PersonalTVGuide stopped");
 			ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
 			events.OnTvServerEvent -= new TvServerEventHandler(events_OnTvServerEvent);
