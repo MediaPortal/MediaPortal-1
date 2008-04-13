@@ -46,7 +46,7 @@ namespace MediaPortal.DeployTool
       UpdateUI();
     }
 
-    #region IDeplayDialog interface
+    #region IDeployDialog interface
     public override void UpdateUI()
     {     
       labelOneClickCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelOneClickCaption");

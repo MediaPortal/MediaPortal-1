@@ -45,7 +45,7 @@ namespace MediaPortal.DeployTool
       UpdateUI();
     }
 
-    #region IDeplayDialog interface
+    #region IDeployDialog interface
     public override void UpdateUI()
     {
       labelHeading.Text = Localizer.Instance.GetString("MPSettings_labelHeading");

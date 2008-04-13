@@ -42,7 +42,7 @@ namespace MediaPortal.DeployTool
       UpdateUI();
     }
 
-    #region IDeplayDialog interface
+    #region IDeployDialog interface
     public override void UpdateUI()
     {
       labelHeading1.Text = Localizer.Instance.GetString("Welcome_labelHeading1");

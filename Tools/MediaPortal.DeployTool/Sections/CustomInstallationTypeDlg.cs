@@ -44,7 +44,7 @@ namespace MediaPortal.DeployTool
       UpdateUI();
     }
 
-    #region IDeplayDialog interface
+    #region IDeployDialog interface
     public override void UpdateUI()
     {
       labelSectionHeader.Text = Localizer.Instance.GetString("CustomInstallation_labelSectionHeader");

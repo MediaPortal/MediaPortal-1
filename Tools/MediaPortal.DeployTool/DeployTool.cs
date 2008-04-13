@@ -41,7 +41,7 @@ namespace MediaPortal.DeployTool
     private DeployDialog _currentDialog;
     private string _currentCulture = "en-US";
 
-    #region IDeplayDialog interface
+    #region IDeployDialog interface
     public void UpdateUI()
     {
       this.Text = Localizer.Instance.GetString("MainWindow_AppName");
