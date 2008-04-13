@@ -131,9 +131,12 @@ namespace MediaPortal.InputDevices
               // find out which request the MCE remote handled last
               if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) && (appCommand != AppCommands.VolumeUp))
               {
-                // possible that it is the same request mapped to an app command?
-                if (Environment.TickCount - InputDevices.LastHidRequestTick < 1000)
-                  return true;
+                if (Enum.IsDefined(typeof(AppCommands), InputDevices.LastHidRequest))
+                {
+                  // possible that it is the same request mapped to an app command?
+                  if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
+                    return true;
+                }
               }
               InputDevices.LastHidRequest = appCommand;
 
