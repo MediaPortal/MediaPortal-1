@@ -327,9 +327,6 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
   <data name="Install_errInstallFailed" xml:space="preserve">
     <value>Errore durante l'installazione dell'applicazione [{0}]</value>
   </data>
-  <data name="Install_errUninstallFailed" xml:space="preserve">
-    <value>Errore durante la rimozione dell'applicazione [{0}]</value>
-  </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
     <value>Premere il bottone "installa" per eseguire tutte le azioni richieste dalla vostra installazione</value>
   </data>
