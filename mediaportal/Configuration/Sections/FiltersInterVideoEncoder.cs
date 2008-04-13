@@ -142,8 +142,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.AudioQuality);
       this.mpGroupBox2.Controls.Add(this.SampleFrequency);
       this.mpGroupBox2.Controls.Add(this.AudioBitrate);
@@ -244,8 +242,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxFrequency
       // 
-      this.comboBoxFrequency.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxFrequency.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxFrequency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFrequency.DropDownWidth = 125;
       this.comboBoxFrequency.Items.AddRange(new object[] {
@@ -261,8 +258,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxAudioBitrate
       // 
-      this.comboBoxAudioBitrate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxAudioBitrate.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxAudioBitrate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAudioBitrate.Items.AddRange(new object[] {
             "128",
@@ -381,6 +377,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxEncoderQuality
       // 
+      this.comboBoxEncoderQuality.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxEncoderQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxEncoderQuality.FormattingEnabled = true;
       this.comboBoxEncoderQuality.Items.AddRange(new object[] {
@@ -395,6 +392,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxVideoFormat
       // 
+      this.comboBoxVideoFormat.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxVideoFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxVideoFormat.FormattingEnabled = true;
       this.comboBoxVideoFormat.Items.AddRange(new object[] {
@@ -418,6 +416,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxAspectRatio
       // 
+      this.comboBoxAspectRatio.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxAspectRatio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAspectRatio.FormattingEnabled = true;
       this.comboBoxAspectRatio.Items.AddRange(new object[] {
@@ -441,6 +440,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxFrameRate
       // 
+      this.comboBoxFrameRate.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxFrameRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFrameRate.FormattingEnabled = true;
       this.comboBoxFrameRate.Items.AddRange(new object[] {
@@ -452,11 +452,11 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxFrameRate.TabIndex = 4;
       this.comboBoxFrameRate.SelectedIndexChanged += new System.EventHandler(this.comboBoxFrameRate_SelectedIndexChanged);
       // 
-      // InterVideoEncoderFilters
+      // FiltersInterVideoEncoder
       // 
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
-      this.Name = "InterVideoEncoderFilters";
+      this.Name = "FiltersInterVideoEncoder";
       this.Size = new System.Drawing.Size(472, 408);
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();

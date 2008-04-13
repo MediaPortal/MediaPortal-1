@@ -292,7 +292,7 @@ namespace MediaPortal.Configuration.Sections
       this.lblViews.AutoSize = true;
       this.lblViews.Location = new System.Drawing.Point(13, 27);
       this.lblViews.Name = "lblViews";
-      this.lblViews.Size = new System.Drawing.Size(32, 16);
+      this.lblViews.Size = new System.Drawing.Size(33, 13);
       this.lblViews.TabIndex = 0;
       this.lblViews.Text = "View:";
       // 
@@ -302,9 +302,9 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.cbViews.BorderColor = System.Drawing.Color.Empty;
       this.cbViews.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbViews.Location = new System.Drawing.Point(143, 24);
+      this.cbViews.Location = new System.Drawing.Point(145, 24);
       this.cbViews.Name = "cbViews";
-      this.cbViews.Size = new System.Drawing.Size(313, 21);
+      this.cbViews.Size = new System.Drawing.Size(311, 21);
       this.cbViews.TabIndex = 1;
       this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
       // 
@@ -313,7 +313,7 @@ namespace MediaPortal.Configuration.Sections
       this.lblViewName.AutoSize = true;
       this.lblViewName.Location = new System.Drawing.Point(13, 54);
       this.lblViewName.Name = "lblViewName";
-      this.lblViewName.Size = new System.Drawing.Size(132, 16);
+      this.lblViewName.Size = new System.Drawing.Size(126, 13);
       this.lblViewName.TabIndex = 2;
       this.lblViewName.Text = "Name or Localized Code:";
       // 
@@ -322,9 +322,9 @@ namespace MediaPortal.Configuration.Sections
       this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tbViewName.BorderColor = System.Drawing.Color.Empty;
-      this.tbViewName.Location = new System.Drawing.Point(143, 51);
+      this.tbViewName.Location = new System.Drawing.Point(145, 51);
       this.tbViewName.Name = "tbViewName";
-      this.tbViewName.Size = new System.Drawing.Size(313, 21);
+      this.tbViewName.Size = new System.Drawing.Size(311, 20);
       this.tbViewName.TabIndex = 3;
       // 
       // dataGrid
@@ -374,15 +374,16 @@ namespace MediaPortal.Configuration.Sections
       this.btnDelete.UseVisualStyleBackColor = true;
       this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
       // 
-      // Views
+      // BaseViews
       // 
       this.Controls.Add(this.groupBox);
-      this.Name = "Views";
+      this.Name = "BaseViews";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox.ResumeLayout(false);
       this.groupBox.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     #endregion

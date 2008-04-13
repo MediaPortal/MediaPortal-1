@@ -36,7 +36,7 @@ using MediaPortal.GUI.Library;
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
-  public class GeneralKeys : MediaPortal.Configuration.SectionSettings
+  public class Keys : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
@@ -66,12 +66,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox idComboBox;
     private MediaPortal.UserInterface.Controls.MPTextBox idTextBox;
 
-    public GeneralKeys()
+    public Keys()
       : this("Keys and Sounds")
     {
     }
 
-    public GeneralKeys(string name)
+    public Keys(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
@@ -414,8 +414,8 @@ namespace MediaPortal.Configuration.Sections
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.idTextBox);
       this.groupBox1.Controls.Add(this.idComboBox);
       this.groupBox1.Controls.Add(this.addButton);
@@ -429,6 +429,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.descriptionTextBox);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.keyTreeView);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
@@ -438,21 +439,23 @@ namespace MediaPortal.Configuration.Sections
       // 
       // idTextBox
       // 
-      this.idTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this.idTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.idTextBox.BorderColor = System.Drawing.Color.Empty;
       this.idTextBox.Enabled = false;
       this.idTextBox.Location = new System.Drawing.Point(168, 324);
       this.idTextBox.MaxLength = 3;
       this.idTextBox.Name = "idTextBox";
       this.idTextBox.Size = new System.Drawing.Size(40, 20);
       this.idTextBox.TabIndex = 6;
-      this.idTextBox.Text = "";
       this.idTextBox.Visible = false;
       this.idTextBox.TextChanged += new System.EventHandler(this.idTextBox_TextChanged);
       // 
       // idComboBox
       // 
       this.idComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.idComboBox.BorderColor = System.Drawing.Color.Empty;
       this.idComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.idComboBox.Enabled = false;
       this.idComboBox.Location = new System.Drawing.Point(168, 324);
@@ -470,6 +473,7 @@ namespace MediaPortal.Configuration.Sections
       this.addButton.Size = new System.Drawing.Size(72, 22);
       this.addButton.TabIndex = 1;
       this.addButton.Text = "Add";
+      this.addButton.UseVisualStyleBackColor = true;
       this.addButton.Click += new System.EventHandler(this.addButton_Click);
       // 
       // deleteButton
@@ -481,6 +485,7 @@ namespace MediaPortal.Configuration.Sections
       this.deleteButton.Size = new System.Drawing.Size(72, 22);
       this.deleteButton.TabIndex = 2;
       this.deleteButton.Text = "Delete";
+      this.deleteButton.UseVisualStyleBackColor = true;
       this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
       // 
       // fileNameButton
@@ -492,18 +497,19 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 12;
       this.fileNameButton.Text = "Browse";
+      this.fileNameButton.UseVisualStyleBackColor = true;
       this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
       // 
       // soundTextBox
       // 
       this.soundTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.soundTextBox.BorderColor = System.Drawing.Color.Empty;
       this.soundTextBox.Enabled = false;
       this.soundTextBox.Location = new System.Drawing.Point(168, 372);
       this.soundTextBox.Name = "soundTextBox";
       this.soundTextBox.Size = new System.Drawing.Size(208, 20);
       this.soundTextBox.TabIndex = 11;
-      this.soundTextBox.Text = "";
       this.soundTextBox.TextChanged += new System.EventHandler(this.soundTextBox_TextChanged);
       // 
       // label4
@@ -519,14 +525,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.keyTextBox.AcceptsReturn = true;
       this.keyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.keyTextBox.BorderColor = System.Drawing.Color.Empty;
       this.keyTextBox.Enabled = false;
       this.keyTextBox.Location = new System.Drawing.Point(168, 348);
       this.keyTextBox.Name = "keyTextBox";
       this.keyTextBox.ReadOnly = true;
       this.keyTextBox.Size = new System.Drawing.Size(288, 20);
       this.keyTextBox.TabIndex = 9;
-      this.keyTextBox.Text = "";
       this.keyTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyTextBox_KeyDown);
       // 
       // label3
@@ -550,13 +556,13 @@ namespace MediaPortal.Configuration.Sections
       // descriptionTextBox
       // 
       this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.descriptionTextBox.BorderColor = System.Drawing.Color.Empty;
       this.descriptionTextBox.Enabled = false;
       this.descriptionTextBox.Location = new System.Drawing.Point(168, 300);
       this.descriptionTextBox.Name = "descriptionTextBox";
       this.descriptionTextBox.Size = new System.Drawing.Size(288, 20);
       this.descriptionTextBox.TabIndex = 4;
-      this.descriptionTextBox.Text = "";
       this.descriptionTextBox.TextChanged += new System.EventHandler(this.descriptionTextBox_TextChanged);
       // 
       // label1
@@ -571,14 +577,12 @@ namespace MediaPortal.Configuration.Sections
       // keyTreeView
       // 
       this.keyTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.keyTreeView.FullRowSelect = true;
       this.keyTreeView.HideSelection = false;
-      this.keyTreeView.ImageIndex = -1;
       this.keyTreeView.Location = new System.Drawing.Point(16, 24);
       this.keyTreeView.Name = "keyTreeView";
-      this.keyTreeView.SelectedImageIndex = -1;
       this.keyTreeView.Size = new System.Drawing.Size(440, 240);
       this.keyTreeView.TabIndex = 0;
       this.keyTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.keyTreeView_AfterSelect);
@@ -589,6 +593,7 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "Keys";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }

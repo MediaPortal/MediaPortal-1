@@ -296,7 +296,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.fileNameTextBox);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 228);
+      this.groupBox1.Location = new System.Drawing.Point(0, 239);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 112);
       this.groupBox1.TabIndex = 1;
@@ -307,7 +307,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.externalPlayerCheckBox.AutoSize = true;
       this.externalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.externalPlayerCheckBox.Location = new System.Drawing.Point(16, 32);
+      this.externalPlayerCheckBox.Location = new System.Drawing.Point(19, 28);
       this.externalPlayerCheckBox.Name = "externalPlayerCheckBox";
       this.externalPlayerCheckBox.Size = new System.Drawing.Size(231, 17);
       this.externalPlayerCheckBox.TabIndex = 0;
@@ -389,7 +389,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 154);
+      this.mpGroupBox1.Size = new System.Drawing.Size(472, 165);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Codec Settings (internal player)";
@@ -397,13 +397,14 @@ namespace MediaPortal.Configuration.Sections
       // autoDecoderSettings
       // 
       this.autoDecoderSettings.AutoSize = true;
+      this.autoDecoderSettings.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
       this.autoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 131);
+      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 129);
       this.autoDecoderSettings.Name = "autoDecoderSettings";
-      this.autoDecoderSettings.Size = new System.Drawing.Size(444, 17);
+      this.autoDecoderSettings.Size = new System.Drawing.Size(309, 30);
       this.autoDecoderSettings.TabIndex = 0;
-      this.autoDecoderSettings.Text = "Automatic Decoder Settings (use with caution - knowledge of DirectShow merits req" +
-          "uired)";
+      this.autoDecoderSettings.Text = "Automatic Decoder Settings \r\n(use with caution - knowledge of DirectShow merits r" +
+          "equired)";
       this.autoDecoderSettings.UseVisualStyleBackColor = true;
       // 
       // mpLabel1
@@ -489,7 +490,7 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox.Controls.Add(this.mpLabel2);
       this.wmvGroupBox.Controls.Add(this.wmvCheckBox);
       this.wmvGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.wmvGroupBox.Location = new System.Drawing.Point(0, 160);
+      this.wmvGroupBox.Location = new System.Drawing.Point(0, 171);
       this.wmvGroupBox.Name = "wmvGroupBox";
       this.wmvGroupBox.Size = new System.Drawing.Size(472, 62);
       this.wmvGroupBox.TabIndex = 7;

@@ -37,7 +37,7 @@ using MediaPortal.Configuration.Sections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using Keys = MediaPortal.Configuration.Sections.GeneralKeys;
+using Keys = MediaPortal.Configuration.Sections.Keys;
 using System.Xml;
 
 namespace MediaPortal.Configuration
@@ -578,6 +578,7 @@ namespace MediaPortal.Configuration
       // 
       // viewLogFilesButton
       // 
+      this.viewLogFilesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.viewLogFilesButton.Location = new System.Drawing.Point(600, 479);
       this.viewLogFilesButton.Name = "viewLogFilesButton";
       this.viewLogFilesButton.Size = new System.Drawing.Size(96, 23);

@@ -628,6 +628,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>MPForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseViews.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BaseViews.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralWatchdog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GeneralWatchdog.cs</DependentUpon>
