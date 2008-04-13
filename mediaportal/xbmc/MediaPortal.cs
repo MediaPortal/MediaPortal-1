@@ -57,6 +57,7 @@ using Microsoft.Win32;
 using MediaPortal.Configuration;
 
 using Timer = System.Timers.Timer;
+using System.ServiceProcess;
 #endregion
 
 namespace MediaPortal
@@ -229,8 +230,8 @@ public class MediaPortalApp : D3DApp, IRender
 
       bool autoHideTaskbar = true;
       bool watchdogEnabled = true;
-      bool restartOnError=false;
-      int restartDelay=10;
+      bool restartOnError = false;
+      int restartDelay = 10;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -255,7 +256,7 @@ public class MediaPortalApp : D3DApp, IRender
         _startupDelay = xmlreader.GetValueAsInt("general", "startup delay", 0);
         _waitForTvServer = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
 
-        watchdogEnabled=xmlreader.GetValueAsBool("general", "watchdogEnabled", true);
+        watchdogEnabled = xmlreader.GetValueAsBool("general", "watchdogEnabled", true);
         restartOnError = xmlreader.GetValueAsBool("general", "restartOnError", false);
         restartDelay = xmlreader.GetValueAsInt("general", "restart delay", 10);
 
@@ -336,9 +337,10 @@ public class MediaPortalApp : D3DApp, IRender
         if (_waitForTvServer)
         {
           Log.Info("Main: Wait for TvServer requested. Checking if installed...");
-          System.ServiceProcess.ServiceController ctrl = new System.ServiceProcess.ServiceController("TVService");
+          ServiceController ctrl = null;
           try
           {
+            ctrl = new ServiceController("TVService");
             string name = ctrl.ServiceName;
           }
           catch (Exception)
@@ -349,17 +351,17 @@ public class MediaPortalApp : D3DApp, IRender
           if (ctrl != null)
           {
             Log.Info("Main: TvServer found. Checking status...");
-            if (ctrl.Status == System.ServiceProcess.ServiceControllerStatus.StartPending)
+            if (ctrl.Status == ServiceControllerStatus.StartPending || ctrl.Status == ServiceControllerStatus.Stopped)
             {
               Log.Info("Main: TvServer is start pending. Waiting until it starts up...");
               if (splashScreen != null)
                 splashScreen.SetInformation("Waiting for startup of TvServer...");
               try
               {
-                ctrl.WaitForStatus(System.ServiceProcess.ServiceControllerStatus.Running);
+                ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 45));
               }
               catch (Exception) { }
-              if (ctrl.Status == System.ServiceProcess.ServiceControllerStatus.Running)
+              if (ctrl.Status == ServiceControllerStatus.Running)
                 Log.Info("Main: Ok. TvServer is started.");
               else
                 Log.Info("Main: Failed. TvServer is in status {0}", ctrl.Status.ToString());
@@ -393,7 +395,7 @@ public class MediaPortalApp : D3DApp, IRender
                 if (strVersion.Length > 0)
                 {
                   string strTmp = "";
-                  for (int i = 0; i < strVersion.Length; ++i)
+                  for (int i = 0 ; i < strVersion.Length ; ++i)
                   {
                     if (Char.IsDigit(strVersion[i]))
                     {
@@ -419,7 +421,7 @@ public class MediaPortalApp : D3DApp, IRender
                 if (strVersionMng.Length > 0)
                 {
                   string strTmp = "";
-                  for (int i = 0; i < strVersionMng.Length; ++i)
+                  for (int i = 0 ; i < strVersionMng.Length ; ++i)
                   {
                     if (Char.IsDigit(strVersionMng[i]))
                     {
@@ -3312,7 +3314,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
     }
     return;  //?
-      
+
     GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
