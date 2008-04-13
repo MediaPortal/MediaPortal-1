@@ -644,7 +644,20 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 				if (item.size()>0)
 					lang.event+=item;
 				if (text.size()>0)
-					lang.text+=text;
+				{
+					if (lang.text.size()>0)
+					{
+						if ((BYTE)text[0]<0x20)
+						{
+							lang.text+="\n";
+							lang.text+=text.erase(0,1);
+						}
+						else
+							lang.text+=text;
+					}
+					else
+						lang.text=text;
+				}
 							//LogDebug("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 				return;
 			}
@@ -653,9 +666,9 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		EPGLanguage lang;
 		lang.language=language;
 		if (item.size()>0)
-			lang.event+=item;
-		if (text.size()>0)
-			lang.text+=text;
+			lang.event=item;
+		if (text.size()>0 && strcmp(item.c_str(),text.c_str())!=0)
+			lang.text=text;
 		lang.parentalRating=0;
 			//LogDebug("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 		epgEvent.vecLanguages.push_back(lang);

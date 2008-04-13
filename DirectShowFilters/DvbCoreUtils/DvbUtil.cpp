@@ -115,10 +115,11 @@ void CDvbUtil::getString468A(BYTE *b, int maxLen,char *text)
 		{
 			goto cont;
 		}
-		if (i==0 && ((BYTE)c) < 0x20)
+		// GEMX: 11.04.08: This strips off a probably encoding pointer byte !!!
+		/*if (i==0 && ((BYTE)c) < 0x20)
 		{
 			goto cont;
-		}
+		}*/
 				
 		if (c == em_ON)
 		{
