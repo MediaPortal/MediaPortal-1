@@ -54,7 +54,7 @@ namespace MediaPortal.DeployTool
       //MP < 0.2.3.0 RC3
       if( CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}") != null)
       {
-          setup = Process.Start("msiexec.exe", "/I{87819CFA-1786-484D-B0DE-10B5FBF2625D}");
+          setup = Process.Start("msiexec.exe", "/x {87819CFA-1786-484D-B0DE-10B5FBF2625D} /qn");
           setup.WaitForExit();
       }
       //MP 0.2.3.0 RC3
@@ -72,19 +72,19 @@ namespace MediaPortal.DeployTool
       //TVServer
       if( CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
       {
-          setup = Process.Start("msiexec.exe", "/I{4B738773-EE07-413D-AFB7-BB0AB04A5488}");
+          setup = Process.Start("msiexec.exe", "/x {4B738773-EE07-413D-AFB7-BB0AB04A5488} /qn");
           setup.WaitForExit();
       }
       //TVClient old
       if( CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
       {
-          setup = Process.Start("msiexec.exe", "/I{F7444E89-5BC0-497E-9650-E50539860DE0}");
+          setup = Process.Start("msiexec.exe", "/x {F7444E89-5BC0-497E-9650-E50539860DE0} /qn");
           setup.WaitForExit();
       }
       //TVClient new
       if (CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}") != null)
       {
-          setup = Process.Start("msiexec.exe", "/I{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}");
+          setup = Process.Start("msiexec.exe", "/x {FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA} /qn");
           setup.WaitForExit();
       }
       return true;
