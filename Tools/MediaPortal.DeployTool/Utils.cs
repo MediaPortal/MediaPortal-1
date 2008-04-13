@@ -263,14 +263,12 @@ namespace MediaPortal.DeployTool
                 RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows");
                 if (key == null)
                 {
-                    MessageBox.Show("DEBUG: 32-bit OS detected");
                     InstallationProperties.Instance.Set("RegistryKeyAdd", "");
                     InstallationProperties.Instance.Set("Sql2005Download", "32");
                 }
                 else
                 {
                     key.Close();
-                    MessageBox.Show("DEBUG: 64-bit OS detected");
                     InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
                     InstallationProperties.Instance.Set("Sql2005Download", "64");
                 }
@@ -300,10 +298,9 @@ namespace MediaPortal.DeployTool
             }
             return true;
         }
-        catch(Exception e)
+        catch
         {
             MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            MessageBox.Show("DEBUG: CheckStartupPath() - Exception: " + e.Message + "( " + e.StackTrace + " )");
             return false;
         }
     }
