@@ -654,15 +654,15 @@ namespace TvService
         }
         else
         {
-          if (DateTime.Now < recording.Program.EndTime)
+          Log.Debug("Scheduler: endtime={0}, Program.EndTime={1}, postRecTime={2}", recording.EndTime, recording.Program.EndTime, recording.Schedule.PostRecordInterval);
+          if (DateTime.Now <= recording.Program.EndTime.AddMinutes(recording.Schedule.PostRecordInterval))
           {
             CanceledSchedule canceled = new CanceledSchedule(recording.Schedule.IdSchedule, recording.Program.StartTime);
             canceled.Persist();
           }
           _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
         }
-				_recordingsInProgressList.Remove(recording); //only remove recording from the list, if we are succesful
-        recording.Schedule.Delete();
+				_recordingsInProgressList.Remove(recording); //only remove recording from the list, if we are succesful       
       }
       catch (Exception ex)
       {
