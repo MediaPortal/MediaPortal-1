@@ -354,9 +354,12 @@ Section "MediaPortal core files (required)" SecCore
   ; Core
   File "..\core\bin\${BUILD_TYPE}\Core.*"
   File "..\core\bin\${BUILD_TYPE}\DirectShowLib.*"
-  File "..\core\directshowhelper\directshowhelper\Release\dshowhelper.dll"
-  File "..\core\DXUtil\Release\DXUtil.dll"
-  File "..\core\fontengine\fontengine\${BUILD_TYPE}\fontengine.*"
+
+  #those files are moved to MediaPortal.Base
+  #File "..\core\directshowhelper\directshowhelper\Release\dshowhelper.dll"
+  #File "..\core\DXUtil\Release\DXUtil.dll"
+  #File "..\core\fontengine\fontengine\${BUILD_TYPE}\fontengine.*"
+
   ; Utils
   File "..\Utils\bin\${BUILD_TYPE}\Utils.dll"
   ; Support
