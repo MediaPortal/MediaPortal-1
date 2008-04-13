@@ -350,7 +350,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>MediaPortal Installations-Tool</value>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
-    <value>zurück</value>
+    <value>Zurück</value>
   </data>
   <data name="MainWindow_buttonClose" xml:space="preserve">
     <value>Beenden</value>
@@ -359,7 +359,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Diese Anwendung wird Sie durch die Installation von MediaPortal und aller benötigten Komponenten führen</value>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
-    <value>weiter</value>
+    <value>Weiter</value>
   </data>
   <data name="ManualDownload_buttonContinue" xml:space="preserve">
     <value>Weiter</value>
