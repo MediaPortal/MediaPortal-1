@@ -191,7 +191,6 @@ namespace SQLite.NET
     private static bool WaitForFile(string fileName)
     {
       // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec      
       int count = 0;
       bool validFile = false;
       try
@@ -207,9 +206,9 @@ namespace SQLite.NET
 
       if (validFile)
       {
-        while (!File.Exists(fileName) && count < 100)
+        while (!File.Exists(fileName) && count < 10)
         {
-          System.Threading.Thread.Sleep(100);
+          System.Threading.Thread.Sleep(250);
           count++;
         }
       }
@@ -218,7 +217,7 @@ namespace SQLite.NET
         return true;
       }
 
-      return (validFile && count < 100);
+      return (validFile && count < 10);
     }
 
     // Methods
@@ -367,7 +366,7 @@ namespace SQLite.NET
 
           dbHandle = IntPtr.Zero;
 
-          bool res2 = WaitForFile(this.DBName);
+          // bool res2 = WaitForFile(this.DBName);
 
           SqliteError err = (SqliteError)sqlite3_open16(this.DBName, out dbHandle);
 

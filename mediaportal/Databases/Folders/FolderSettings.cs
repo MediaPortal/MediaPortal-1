@@ -28,8 +28,10 @@ using System.IO;
 using System.Threading;
 using System.Collections.Generic;
 using System.Text;
+
 using Databases.Folders;
 using Databases.Folders.SqlServer;
+
 namespace MediaPortal.Database
 {
   public class FolderSettings
@@ -42,11 +44,9 @@ namespace MediaPortal.Database
       _database = null;
     }
 
-
     private static bool WaitForPath(string pathName)
     {
-      // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec      
+      // while waking up from hibernation it can take a while before a network drive is accessible.   
       int count = 0;
 
       if (pathName.Length == 0 || pathName == "root")
@@ -55,28 +55,30 @@ namespace MediaPortal.Database
       }
 
       //we cant be sure if pathName is a file or a folder, so we look for both.      
-      while ((!Directory.Exists(pathName) && !File.Exists(pathName)) && count < 100)
+      while ((!Directory.Exists(pathName) && !File.Exists(pathName)) && count < 10)
       {
-        System.Threading.Thread.Sleep(100);
+        System.Threading.Thread.Sleep(250);
         count++;
       }
 
-      return (count < 100);
+      return (count < 10);
     }
 
     public static void DeleteFolderSetting(string path, string Key)
     {
-      bool res = WaitForPath(path);
+      //bool res = WaitForPath(path);
       _database.DeleteFolderSetting(path, Key);
     }
+
     public static void AddFolderSetting(string path, string Key, Type type, object Value)
     {
-      bool res = WaitForPath(path);
-      _database.AddFolderSetting( path,  Key,  type,  Value);
+      //bool res = WaitForPath(path);
+      _database.AddFolderSetting(path, Key, type, Value);
     }
+
     public static void GetFolderSetting(string path, string Key, Type type, out object Value)
     {
-      bool res = WaitForPath(path);
+      //bool res = WaitForPath(path);
       _database.GetFolderSetting(path, Key, type, out Value);
     }
   }

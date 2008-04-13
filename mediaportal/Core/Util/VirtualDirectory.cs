@@ -571,9 +571,9 @@ namespace MediaPortal.Util
     /// </returns>
     public ArrayList GetDirectory(string strDir)
     {
-      bool res = WaitForPath(strDir);
+      // bool res = WaitForPath(strDir);
 
-      if ((strDir == null) || (strDir == "") || !res)
+      if ((strDir == null) || (strDir == ""))// || !res)
       {
         m_strPreviousDir = "";
         CurrentShare = "";
@@ -920,11 +920,11 @@ namespace MediaPortal.Util
     /// </returns>
     public ArrayList GetDirectoryUnProtected(string strDir, bool useExtensions)
     {
-      bool res = WaitForPath(strDir);
+      // bool res = WaitForPath(strDir);
 
       if (strDir == null) return GetRoot();
       if (strDir == "") return GetRoot();
-      if (!res) return GetRoot();
+      //if (!res) return GetRoot();
 
       //if we have a folder like D:\
       //then remove the \
@@ -1392,8 +1392,8 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetDirectoryExt(string strDir)
     {
-      bool res = WaitForPath(strDir);
-      if ((strDir == null) || (strDir == "") || !res)
+      // bool res = WaitForPath(strDir);
+      if ((strDir == null) || (strDir == ""))// || !res)
       {
         m_strPreviousDir = "";
         CurrentShare = "";
@@ -1816,7 +1816,7 @@ namespace MediaPortal.Util
     private bool WaitForPath(string pathName)
     {
       // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec      
+      // lets wait 10 sec
       int count = 0;      
 
       if (pathName.Length == 0 || pathName == "root" || IsRemote(pathName))
@@ -1825,13 +1825,13 @@ namespace MediaPortal.Util
       }
       
       //we cant be sure if pathName is a file or a folder, so we look for both.      
-      while ((!Directory.Exists(pathName) && !File.Exists(pathName)) && count < 100)
+      while ((!Directory.Exists(pathName) && !File.Exists(pathName)) && count < 10)
       {
-        System.Threading.Thread.Sleep(100);
+        System.Threading.Thread.Sleep(250);
         count++;
       }
                   
-      return (count < 100);
+      return (count < 10);
     }
 
     /// <summary>
