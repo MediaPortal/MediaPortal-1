@@ -206,14 +206,14 @@ to use MediaPortal and watch TV on MediaPortal 1.0.</value>
     <value>Dedicated TV-Server (master)</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
-    <value>This will only install the MediaPortal TV-Service on this PC.
+    <value>This will only install the MediaPortal TV-Server on this PC.
 The PC will then act as dedicated TV-Server and provide other PC's in your LAN with TV. (database installation required)</value>
   </data>
   <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
     <value>Dedicated TV-Server (slave, existing TV-Server (master) required)</value>
   </data>
   <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>This will only install the MediaPortal TV-Service on this PC. 
+    <value>This will only install the MediaPortal TV-Server on this PC. 
 The PC will then act as dedicated TV-Server and provide other PCs in your LAN with TV (no database required).</value>
   </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
@@ -294,9 +294,6 @@ The PC will then act as dedicated TV-Server and provide other PCs in your LAN wi
   <data name="Install_actionDownloadInstall" xml:space="preserve">
     <value>Download-&gt;install</value>
   </data>
-  <data name="Install_actionDownloadUpdate" xml:space="preserve">
-    <value>Download recent snapshot-&gt;Update with recent snapshot</value>
-  </data>
   <data name="Install_actionInstall" xml:space="preserve">
     <value>Install</value>
   </data>
@@ -330,9 +327,6 @@ The PC will then act as dedicated TV-Server and provide other PCs in your LAN wi
   <data name="Install_errInstallFailed" xml:space="preserve">
     <value>Failed to install application [{0}]</value>
   </data>
-  <data name="Install_errUninstallFailed" xml:space="preserve">
-    <value>Failed to uninstall application [{0}]</value>
-  </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
     <value>Press the "install" button to perform all necessary actions to install your setup</value>
   </data>
@@ -353,9 +347,6 @@ The PC will then act as dedicated TV-Server and provide other PCs in your LAN wi
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
     <value>Another version is already installed</value>
-  </data>
-  <data name="InstallDlg_VersionLookupFailed" xml:space="preserve">
-    <value>Failed to lookup the most recent svn revision on the MediaPortal homepage</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>MediaPortal Installation Tool</value>
@@ -382,12 +373,6 @@ The PC will then act as dedicated TV-Server and provide other PCs in your LAN wi
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Hit "continue" when you finished downloading the requested file</value>
-  </data>
-  <data name="ManualDownload_labelDir" xml:space="preserve">
-    <value>Target directory:</value>
-  </data>
-  <data name="ManualDownload_labelFile" xml:space="preserve">
-    <value>Filename:</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>You have to manually download the following file</value>
@@ -420,19 +405,19 @@ The PC will then act as dedicated TV-Server and provide other PCs in your LAN wi
     <value>Browse</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Configure Windows Firewall to allow external access to TvServer</value>
+    <value>Configure Windows Firewall to allow external access to TV-Server</value>
   </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
-    <value>You have to supply a valid installation path for the TV-Service.</value>
+    <value>You have to supply a valid installation path for the TV-Server.</value>
   </data>
   <data name="TvServerSettings_labelHeading" xml:space="preserve">
-    <value>Please set the needed options for the TV-Service installation:</value>
+    <value>Please set the needed options for the TV-Server installation:</value>
   </data>
   <data name="TvServerSettings_labelInstDir" xml:space="preserve">
-    <value>TV-Service installation directory:</value>
+    <value>TV-Server installation directory:</value>
   </data>
   <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
-    <value>Select the installation folder for the TV-Service</value>
+    <value>Select the installation folder for the TV-Server</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
     <value>Thank you for choosing MediaPortal... The FREE OpenSource MediaCenter!</value>
@@ -505,14 +490,5 @@ installation later (maybe on a pc without an internet connection)?</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Sorry your OS is not currently supported by MediaPortal !</value>
-  </data>
-  <data name="Startup_Readonly" xml:space="preserve">
-    <value>Need write access to startup directory</value>
-  </data>
-  <data name="Startup_UNC" xml:space="preserve">
-    <value>Please start installation from a local or mapped network drive</value>
-  </data>
-  <data name="Startup_UNC_Readonly" xml:space="preserve">
-    <value>Unable to determine startup path. Please try running from a local drive with write access.</value>
   </data>
 </root>

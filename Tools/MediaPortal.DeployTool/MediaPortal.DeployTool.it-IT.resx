@@ -182,10 +182,10 @@ interfaccia utente di MediaPortal.
     <value>Tutte le applicazioni necessarie verrano installate nelle loro cartella di default e usando i parametri di default. La password del database è "MediaPortal".</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
-    <value>Esegue un'installazione avanzata</value>
+    <value>Eseguire installazione avanzata</value>
   </data>
   <data name="BaseInstallation_rbOneClick" xml:space="preserve">
-    <value>Esegue un'installazione di tipo "One-Click"</value>
+    <value>Eseguire installazione "One-Click"</value>
   </data>
   <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
     <value>Scegliere quale setup si vuole installare:</value>
@@ -294,9 +294,6 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
   <data name="Install_actionDownloadInstall" xml:space="preserve">
     <value>Download-&gt;Installazione</value>
   </data>
-  <data name="Install_actionDownloadUpdate" xml:space="preserve">
-    <value>Download di uno snapshot recente-&gt;Aggiornamento di uno snapshot recente</value>
-  </data>
   <data name="Install_actionInstall" xml:space="preserve">
     <value>Installazione</value>
   </data>
@@ -354,9 +351,6 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
   <data name="Install_stateVersionMismatch" xml:space="preserve">
     <value>Un'altra versione è già installata</value>
   </data>
-  <data name="InstallDlg_VersionLookupFailed" xml:space="preserve">
-    <value>Erroe durante la ricerca della versione SVN più aggiornata sulla hoempage MediaPortal</value>
-  </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>Strumento di installazione di MediaPortal</value>
   </data>
@@ -380,12 +374,6 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Premere "continua" quando è finito il download del file richiesto</value>
-  </data>
-  <data name="ManualDownload_labelDir" xml:space="preserve">
-    <value>Cartella di destinazione:</value>
-  </data>
-  <data name="ManualDownload_labelFile" xml:space="preserve">
-    <value>Nome file:</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>E' necessario scaricare manualmente il seguente file</value>
@@ -430,10 +418,10 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Cartella di installazione per TV-Server:</value>
   </data>
   <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
-    <value>Selezionare la cartella di installazione per TV-Service</value>
+    <value>Selezionare la cartella di installazione per TV-Server</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>Grazie per aver scelto MediaPortal... Il MediaCenter GRATUITO e OpenSource!</value>
+    <value>Grazie per aver scelto MediaPortal...il MediaCenter OpenSource GRATUITO!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
     <value>Questo strumento vi guiderà attraverso il processo d'installazione</value>
@@ -484,7 +472,7 @@ sucessivamente (magari su un pc che non ha connessione internet) ?</value>
     <value>Comincia l'installazione adesso</value>
   </data>
   <data name="Install_buttonDownload" xml:space="preserve">
-    <value>Da scaricare</value>
+    <value>Scarica</value>
   </data>
   <data name="Install_stateDownloaded" xml:space="preserve">
     <value>Già scaricato</value>
@@ -503,14 +491,5 @@ sucessivamente (magari su un pc che non ha connessione internet) ?</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Spiacenti, questo Sistema Operativo non è supportato da MediaPortal !</value>
-  </data>
-  <data name="Startup_Readonly" xml:space="preserve">
-    <value>E' necessario un accesso in scrittura alla cartella di partenza</value>
-  </data>
-  <data name="Startup_UNC" xml:space="preserve">
-    <value>E' necessario lanciare l'installazione da un disco locale</value>
-  </data>
-  <data name="Startup_UNC_Readonly" xml:space="preserve">
-    <value>Impossibile determinare la cartella di partenza. Provare a lanciare l'installazione da un disco locale.</value>
   </data>
 </root>

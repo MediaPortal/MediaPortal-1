@@ -294,9 +294,6 @@ PC-en vil da brukes som en dedikert TV-Server som andre klienter på nettverket 
   <data name="Install_actionDownloadInstall" xml:space="preserve">
     <value>Last ned-&gt;installer</value>
   </data>
-  <data name="Install_actionDownloadUpdate" xml:space="preserve">
-    <value>Last ned siste svn snapshot-&gt;Oppdater med nyeste svn snapshot</value>
-  </data>
   <data name="Install_actionInstall" xml:space="preserve">
     <value>Innstaller</value>
   </data>
@@ -330,9 +327,6 @@ PC-en vil da brukes som en dedikert TV-Server som andre klienter på nettverket 
   <data name="Install_errInstallFailed" xml:space="preserve">
     <value>En feil oppstod under installasjon av programmet [{0}]</value>
   </data>
-  <data name="Install_errUninstallFailed" xml:space="preserve">
-    <value>En feil oppstod under avinstallasjon av programmet [{0}]</value>
-  </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
     <value>Klikk på “installasjon” knappen for å gjøre ferdig til installasjon</value>
   </data>
@@ -353,9 +347,6 @@ PC-en vil da brukes som en dedikert TV-Server som andre klienter på nettverket 
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
     <value>En annen versjon er allerede installert</value>
-  </data>
-  <data name="InstallDlg_VersionLookupFailed" xml:space="preserve">
-    <value>En feil oppstod under oppdatering av den siste svn versjonen fra MediaPortal sin hjemmeside</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>MediaPortal Deploy Tool</value>
@@ -380,12 +371,6 @@ PC-en vil da brukes som en dedikert TV-Server som andre klienter på nettverket 
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Klikk på “fortsett”, når du er ferdig med å laste ned filen</value>
-  </data>
-  <data name="ManualDownload_labelDir" xml:space="preserve">
-    <value>Folder mål:</value>
-  </data>
-  <data name="ManualDownload_labelFile" xml:space="preserve">
-    <value>Filnavn:</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>Du må manuelt laste ned følgende fil</value>
@@ -502,14 +487,5 @@ Vil du starte installasjons prosessen np, eller bare laste ned
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Beklager ditt operativ system er ikke støttet av MediaPortal</value>
-  </data>
-  <data name="Startup_Readonly" xml:space="preserve">
-    <value>Trenger skrive tilgang for oppstarts folderen</value>
-  </data>
-  <data name="Startup_UNC" xml:space="preserve">
-    <value>Vennligst start installasjonen fra en lokal folder eller tilkoblet netverks folder</value>
-  </data>
-  <data name="Startup_UNC_Readonly" xml:space="preserve">
-    <value>Kan ikke finne oppstarts bane. Vennligst prøv å kjøre programmet fra en lokal mappe med skrive tilgang</value>
   </data>
 </root>

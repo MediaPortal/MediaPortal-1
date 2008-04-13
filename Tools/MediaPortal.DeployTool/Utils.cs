@@ -288,21 +288,21 @@ namespace MediaPortal.DeployTool
             
             if (Directory.GetCurrentDirectory().StartsWith("\\"))
             {
-                MessageBox.Show(Localizer.Instance.GetString("Startup_UNC"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show("Please start installation from a local drive.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
             }
             FileInfo file = new FileInfo(Application.ExecutablePath);
             DirectoryInfo dir = file.Directory;
             if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
             {
-                MessageBox.Show(Localizer.Instance.GetString("Startup_Readonly"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return false;
             }
             return true;
         }
         catch(Exception e)
         {
-            MessageBox.Show(Localizer.Instance.GetString("Startup_UNC_Readonly"), Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
             MessageBox.Show("DEBUG: CheckStartupPath() - Exception: " + e.Message + "( " + e.StackTrace + " )");
             return false;
         }

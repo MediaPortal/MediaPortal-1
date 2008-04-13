@@ -46,7 +46,7 @@ namespace MediaPortal.DeployTool
       UpdateUI();
     }
 
-    #region IDeplayDialog interface
+    #region IDeployDialog interface
     public override void UpdateUI()
     {
       labelOneClickCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelOneClickCaption");
@@ -55,6 +55,7 @@ namespace MediaPortal.DeployTool
       labelAdvancedCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelAdvancedCaption");
       labelAdvancedDesc.Text = Localizer.Instance.GetString("BaseInstallation_labelAdvancedDesc");
       rbAdvanced.Text = Localizer.Instance.GetString("BaseInstallation_rbAdvanced");
+
     }
     public override DeployDialog GetNextDialog()
     {

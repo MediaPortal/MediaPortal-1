@@ -74,7 +74,9 @@ namespace MediaPortal.DeployTool
         this.cbLanguage.Items.AddRange(new object[] {
             "english",
             "deutsch",
-            "italiano"});
+            "italiano",
+            "norsk",
+            "dansk"});
         this.cbLanguage.Location = new System.Drawing.Point(456, 128);
         this.cbLanguage.Name = "cbLanguage";
         this.cbLanguage.Size = new System.Drawing.Size(121, 23);

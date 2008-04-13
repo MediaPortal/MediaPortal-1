@@ -74,9 +74,9 @@ namespace MediaPortal.DeployTool
           return "de-DE";
         case "italiano":
           return "it-IT";
-        case "":
+        case "dansk":
           return "da-DK";
-        case "x":
+        case "norsk":
           return "nb-NO";
       }
       return "en-US";
@@ -86,6 +86,7 @@ namespace MediaPortal.DeployTool
     {
       Localizer.Instance.SwitchCulture(GetLanguageId());
       UpdateUI();
+
     }
 
   }

@@ -293,9 +293,6 @@ Denne PC vil fungere som dedikeret TV-Server og giver mulighed for TV på andre 
   <data name="Install_actionDownloadInstall" xml:space="preserve">
     <value>Download-&gt;Installér</value>
   </data>
-  <data name="Install_actionDownloadUpdate" xml:space="preserve">
-    <value>Download nyeste testversion-&gt;Opdatér med nyeste testversion</value>
-  </data>
   <data name="Install_actionInstall" xml:space="preserve">
     <value>Installér</value>
   </data>
@@ -329,9 +326,6 @@ Denne PC vil fungere som dedikeret TV-Server og giver mulighed for TV på andre 
   <data name="Install_errInstallFailed" xml:space="preserve">
     <value>Installationen af applikationen fejlede [{0}]</value>
   </data>
-  <data name="Install_errUninstallFailed" xml:space="preserve">
-    <value>Afinstallationen af  applikationen fejlede [{0}]</value>
-  </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
     <value>Tryk på "Installér" for at udføre alle handlinger for installationen</value>
   </data>
@@ -352,9 +346,6 @@ Denne PC vil fungere som dedikeret TV-Server og giver mulighed for TV på andre 
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
     <value>En anden version er allerede installeret</value>
-  </data>
-  <data name="InstallDlg_VersionLookupFailed" xml:space="preserve">
-    <value>Detektionen af nyeste testversion fra MediaPortals hjemmeside fejlede</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>MediaPortal Installations Værktøj</value>
@@ -379,12 +370,6 @@ Denne PC vil fungere som dedikeret TV-Server og giver mulighed for TV på andre 
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Tryk "Fortsæt", når du er færdig med at downloade den nødvendige fil</value>
-  </data>
-  <data name="ManualDownload_labelDir" xml:space="preserve">
-    <value>Destinations folder:</value>
-  </data>
-  <data name="ManualDownload_labelFile" xml:space="preserve">
-    <value>Filnavn:</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>Du skal manuelt downloade denne fil</value>
@@ -502,11 +487,5 @@ måske på en PC uden internetforbindelse?</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Desværre understøttes dit operativ system for tiden ikke af MediaPortal!</value>
-  </data>
-  <data name="Startup_Readonly" xml:space="preserve">
-    <value>Skrivetilladelse til folder påkrævet</value>
-  </data>
-  <data name="Startup_UNC" xml:space="preserve">
-    <value>Start installationen fra et lokalt et bogstav-mappet netværksdrev</value>
   </data>
 </root>

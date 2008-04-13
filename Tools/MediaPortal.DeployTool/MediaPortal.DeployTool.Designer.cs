@@ -142,7 +142,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This will only install the MediaPortal TV-Service on this PC.
+        ///   Looks up a localized string similar to This will only install the MediaPortal TV-Server on this PC.
         ///The PC will then act as dedicated TV-Server and provide other PC&apos;s in your LAN with TV. (database installation required).
         /// </summary>
         internal static string CustomInstallation_labelMaster {
@@ -171,7 +171,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This will only install the MediaPortal TV-Service on this PC. 
+        ///   Looks up a localized string similar to This will only install the MediaPortal TV-Server on this PC. 
         ///The PC will then act as dedicated TV-Server and provide other PCs in your LAN with TV (no database required)..
         /// </summary>
         internal static string CustomInstallation_labelSlave {
@@ -517,15 +517,6 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download recent snapshot-&gt;Update with recent snapshot.
-        /// </summary>
-        internal static string Install_actionDownloadUpdate {
-            get {
-                return ResourceManager.GetString("Install_actionDownloadUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Install.
         /// </summary>
         internal static string Install_actionInstall {
@@ -657,15 +648,6 @@ namespace MediaPortal.DeployTool {
         internal static string Install_errRemoveFailed {
             get {
                 return ResourceManager.GetString("Install_errRemoveFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to uninstall application [{0}].
-        /// </summary>
-        internal static string Install_errUninstallFailed {
-            get {
-                return ResourceManager.GetString("Install_errUninstallFailed", resourceCulture);
             }
         }
         
@@ -805,15 +787,6 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to lookup the most recent svn revision on the MediaPortal homepage.
-        /// </summary>
-        internal static string InstallDlg_VersionLookupFailed {
-            get {
-                return ResourceManager.GetString("InstallDlg_VersionLookupFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to MediaPortal Installation Tool.
         /// </summary>
         internal static string MainWindow_AppName {
@@ -882,24 +855,6 @@ namespace MediaPortal.DeployTool {
         internal static string ManualDownload_labelDesc {
             get {
                 return ResourceManager.GetString("ManualDownload_labelDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Target directory:.
-        /// </summary>
-        internal static string ManualDownload_labelDir {
-            get {
-                return ResourceManager.GetString("ManualDownload_labelDir", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Filename:.
-        /// </summary>
-        internal static string ManualDownload_labelFile {
-            get {
-                return ResourceManager.GetString("ManualDownload_labelFile", resourceCulture);
             }
         }
         
@@ -994,33 +949,6 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Need write access to startup directory.
-        /// </summary>
-        internal static string Startup_Readonly {
-            get {
-                return ResourceManager.GetString("Startup_Readonly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please start installation from a local or mapped network drive.
-        /// </summary>
-        internal static string Startup_UNC {
-            get {
-                return ResourceManager.GetString("Startup_UNC", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to determine startup path. Please try running from a local drive with write access..
-        /// </summary>
-        internal static string Startup_UNC_Readonly {
-            get {
-                return ResourceManager.GetString("Startup_UNC_Readonly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Which TV-Engine do you want to use ?.
         /// </summary>
         internal static string TvEngineType_labelSectionHeader {
@@ -1074,7 +1002,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configure Windows Firewall to allow external access to TvServer.
+        ///   Looks up a localized string similar to Configure Windows Firewall to allow external access to TV-Server.
         /// </summary>
         internal static string TvServerSettings_checkBoxFirewall {
             get {
@@ -1083,7 +1011,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You have to supply a valid installation path for the TV-Service..
+        ///   Looks up a localized string similar to You have to supply a valid installation path for the TV-Server..
         /// </summary>
         internal static string TvServerSettings_errInvalidPath {
             get {
@@ -1092,7 +1020,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please set the needed options for the TV-Service installation:.
+        ///   Looks up a localized string similar to Please set the needed options for the TV-Server installation:.
         /// </summary>
         internal static string TvServerSettings_labelHeading {
             get {
@@ -1101,7 +1029,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TV-Service installation directory:.
+        ///   Looks up a localized string similar to TV-Server installation directory:.
         /// </summary>
         internal static string TvServerSettings_labelInstDir {
             get {
@@ -1110,7 +1038,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select the installation folder for the TV-Service.
+        ///   Looks up a localized string similar to Select the installation folder for the TV-Server.
         /// </summary>
         internal static string TvServerSettings_msgSelectDir {
             get {
