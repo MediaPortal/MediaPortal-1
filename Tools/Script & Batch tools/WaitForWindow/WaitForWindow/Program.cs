@@ -19,8 +19,12 @@ namespace WaitForWindow
       if (args != null && args.Length != 0)
       {
         cmdArgs tmpArgs = new cmdArgs(args);
+        
         string WaitForWindowName = string.Empty;
         bool WaitForForeGroundWindow = false;
+        int WaitTimeOut = -1;
+        DateTime startTime = DateTime.Now;
+
         if (tmpArgs.ArgExists("WindowName")) WaitForWindowName = tmpArgs.Values[tmpArgs.FindArgPos("WindowName")];
         if (tmpArgs.ArgExists("ForeGroundWindowName"))
         {
@@ -28,6 +32,11 @@ namespace WaitForWindow
           WaitForForeGroundWindow = true;
         }
 
+        if (tmpArgs.ArgExists("WaitTimeOut"))
+        {
+          int.TryParse(tmpArgs.Values[tmpArgs.FindArgPos("WaitTimeOut")], out WaitTimeOut);
+        }
+        
         if (WaitForWindowName != string.Empty)
         {
           IntPtr tmpFoundWindowHandle = IntPtr.Zero;
@@ -37,11 +46,20 @@ namespace WaitForWindow
           {
             System.Threading.Thread.Sleep(250);
             WindowManagement.GetHandleFromPartialCaption(ref tmpFoundWindowHandle, WaitForWindowName);
+
+            if (WaitTimeOut != -1)
+            {
+              TimeSpan tmpSpan = DateTime.Now - startTime;
+              if (WaitTimeOut <= tmpSpan.TotalMilliseconds)
+              {
+                System.Environment.Exit(1);
+              }
+            }
           }
         }
       }
 
-      //Application.Run(new Form1());
+      System.Environment.Exit(0);
     }
   }
 }
