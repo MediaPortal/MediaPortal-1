@@ -60,14 +60,26 @@ namespace MediaPortal.DeployTool
       //MP 0.2.3.0 RC3
       if (CheckUninstallString("MediaPortal 0.2.3.0 RC3") != null)
       {
-          setup = Process.Start(CheckUninstallString("MediaPortal 0.2.3.0 RC3"));
+          string RegistryFullPathName = CheckUninstallString("MediaPortal 0.2.3.0 RC3");
+          string FileName  = Path.GetFileName(RegistryFullPathName);
+          string Directory = Path.GetDirectoryName(RegistryFullPathName);
+          string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
+          File.Copy(RegistryFullPathName, TempFullPathName);
+          setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
           setup.WaitForExit();
+          File.Delete(TempFullPathName);
       }
       //MP 0.2.3.0
       if (CheckUninstallString("MediaPortal 0.2.3.0") != null)
       {
-          setup = Process.Start(CheckUninstallString("MediaPortal 0.2.3.0"));
+          string RegistryFullPathName = CheckUninstallString("MediaPortal 0.2.3.0");
+          string FileName  = Path.GetFileName(RegistryFullPathName);
+          string Directory = Path.GetDirectoryName(RegistryFullPathName);
+          string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
+          File.Copy(RegistryFullPathName, TempFullPathName);
+          setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
           setup.WaitForExit();
+          File.Delete(TempFullPathName);
       }
       //TVServer
       if( CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
