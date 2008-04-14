@@ -899,17 +899,45 @@ namespace TvPlugin
       */
       string fileName = rec.FileName;
 
-      //populates recording metadata to g_player;
-      g_Player.currentFileName = fileName;
-      g_Player.currentTitle = rec.Title;
-      g_Player.currentDescription = rec.Description;
+      bool recFileExists = System.IO.File.Exists(fileName);
 
+      if (!recFileExists && !TVHome.UseRTSP())
+      {
+        if (TVHome.RecordingPath().Length > 0)
+        {
+
+          string path = Path.GetDirectoryName(fileName);
+          int index = path.LastIndexOf("\\");
+
+
+          if (index == -1)
+          {
+            fileName = TVHome.RecordingPath() + "\\" + Path.GetFileName(fileName);
+          }
+          else
+          {
+            fileName = TVHome.RecordingPath() + path.Substring(index) + "\\" + Path.GetFileName(fileName);
+          }
+        }
+        else
+        {
+          fileName = fileName.Replace(":", "");
+          fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
+        }
+        recFileExists = System.IO.File.Exists(fileName);        
+      }      
 
       if (!System.IO.File.Exists(fileName))
       {
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
       }
-      Log.Info("TvRecorded Play:{0}", fileName);
+
+      //populates recording metadata to g_player;
+      g_Player.currentFileName = fileName;
+      g_Player.currentTitle = rec.Title;
+      g_Player.currentDescription = rec.Description;
+
+      Log.Info("TvRecorded Play:{0} - using rtsp mode:{1}", fileName, TVHome.UseRTSP());      
       if (g_Player.Play(fileName, g_Player.MediaType.Recording))
       {
         if (Utils.IsVideo(fileName))

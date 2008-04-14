@@ -85,6 +85,9 @@ namespace TvPlugin
     TvCropManager _cropManager = new TvCropManager();
     TvNotifyManager _notifyManager = new TvNotifyManager();
     static string[] _preferredLanguages;
+    static bool _usertsp = true;
+    static string _recordingpath = "";
+    static string _timeshiftingpath = "";       
     static bool _preferAC3 = false;
     static bool _preferAudioTypeOverLang = false;
     static bool _autoFullScreen = false;
@@ -276,6 +279,21 @@ namespace TvPlugin
       }
     }
 
+    static public bool UseRTSP()
+    {
+      return _usertsp;
+    }
+
+    static public string RecordingPath()
+    {
+      return _recordingpath;
+    }
+
+    static public string TimeshiftingPath()
+    {
+      return _timeshiftingpath;
+    }
+
     static public bool DoingChannelChange()
     {
       return _doingChannelChange;
@@ -465,6 +483,10 @@ namespace TvPlugin
 
         string preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
         _preferredLanguages = preferredLanguages.Split(';');
+
+        _usertsp = xmlreader.GetValueAsBool("tvservice", "usertsp", true);
+        _recordingpath = xmlreader.GetValueAsString("tvservice", "recordingpath", "");
+        _timeshiftingpath = xmlreader.GetValueAsString("tvservice", "timeshiftingpath", "");        
 
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _preferAudioTypeOverLang = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
@@ -2479,14 +2501,32 @@ namespace TvPlugin
       if (channel.IsRadio)
         mediaType = g_Player.MediaType.Radio;
 
-      bool useRtsp = System.IO.File.Exists("usertsp.txt");
+      bool forceRtsp = System.IO.File.Exists("usertsp.txt");
       benchClock.Stop();
       Log.Warn("tvhome:startplay.  Phase 1 - {0} ms - Done method initialization", benchClock.ElapsedMilliseconds.ToString());
       benchClock.Reset();
       benchClock.Start();
-      if (System.IO.File.Exists(timeshiftFileName) && !useRtsp)
+
+      bool tsFileExists = System.IO.File.Exists(timeshiftFileName);
+
+      if (!tsFileExists && !_usertsp)
       {
-        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
+
+        if (_timeshiftingpath.Length > 0)
+        {
+          timeshiftFileName = _timeshiftingpath + "\\" + Path.GetFileName(timeshiftFileName);
+        }
+        else
+        {
+          timeshiftFileName = timeshiftFileName.Replace(":", "");
+          timeshiftFileName = "\\\\" + RemoteControl.HostName + "\\" + timeshiftFileName;
+        }
+        tsFileExists = System.IO.File.Exists(timeshiftFileName);
+      }
+
+      if (tsFileExists && !forceRtsp)
+      {
+        MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, _usertsp);
         g_Player.Play(timeshiftFileName, mediaType);
         benchClock.Stop();
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
