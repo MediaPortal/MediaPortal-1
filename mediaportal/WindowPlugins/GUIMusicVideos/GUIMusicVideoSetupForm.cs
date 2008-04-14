@@ -36,7 +36,7 @@ using MediaPortal.MusicVideos.Database;
 
 namespace MediaPortal.GUI.MusicVideos
 {
-  public partial class SetupForm : Form
+  public partial class SetupForm : MediaPortal.UserInterface.Controls.MPForm
   {
     public SetupForm()
     {

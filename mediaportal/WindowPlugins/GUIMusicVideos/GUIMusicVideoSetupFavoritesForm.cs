@@ -33,7 +33,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.GUI.MusicVideos
 {
-    public partial class SetupFavoriteForm : Form
+    public partial class SetupFavoriteForm : MediaPortal.UserInterface.Controls.MPForm
     {
        
         //private int miFavoriteId;

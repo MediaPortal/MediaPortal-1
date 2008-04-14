@@ -83,16 +83,20 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // pictureBoxBanner
       // 
-      this.pictureBoxBanner.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.pictureBoxBanner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxBanner.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxBanner.Image")));
       this.pictureBoxBanner.Location = new System.Drawing.Point(0, 0);
       this.pictureBoxBanner.Name = "pictureBoxBanner";
       this.pictureBoxBanner.Size = new System.Drawing.Size(400, 75);
+      this.pictureBoxBanner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
       this.pictureBoxBanner.TabIndex = 0;
       this.pictureBoxBanner.TabStop = false;
       // 
       // groupBoxSettings
       // 
+      this.groupBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSettings.Controls.Add(this.checkBoxDirectSkip);
       this.groupBoxSettings.Controls.Add(this.labelEngine);
       this.groupBoxSettings.Controls.Add(this.comboBoxStreamPlayerType);
@@ -110,6 +114,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // checkBoxDirectSkip
       // 
+      this.checkBoxDirectSkip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxDirectSkip.AutoSize = true;
       this.checkBoxDirectSkip.Checked = true;
       this.checkBoxDirectSkip.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -123,6 +129,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // labelEngine
       // 
+      this.labelEngine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.labelEngine.AutoSize = true;
       this.labelEngine.Location = new System.Drawing.Point(78, 155);
       this.labelEngine.Name = "labelEngine";
@@ -147,6 +155,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // labelListEntries
       // 
+      this.labelListEntries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.labelListEntries.AutoSize = true;
       this.labelListEntries.Location = new System.Drawing.Point(79, 128);
       this.labelListEntries.Name = "labelListEntries";
@@ -173,6 +183,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // checkBoxShowBallonTips
       // 
+      this.checkBoxShowBallonTips.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxShowBallonTips.AutoSize = true;
       this.checkBoxShowBallonTips.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxShowBallonTips.Location = new System.Drawing.Point(32, 93);
@@ -184,6 +196,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // checkBoxSubmitToProfile
       // 
+      this.checkBoxSubmitToProfile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxSubmitToProfile.AutoSize = true;
       this.checkBoxSubmitToProfile.Checked = true;
       this.checkBoxSubmitToProfile.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -197,6 +211,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // checkBoxUseTrayIcon
       // 
+      this.checkBoxUseTrayIcon.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxUseTrayIcon.AutoSize = true;
       this.checkBoxUseTrayIcon.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUseTrayIcon.Location = new System.Drawing.Point(15, 73);
@@ -210,6 +226,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // buttonCancel
       // 
       this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancel.Location = new System.Drawing.Point(307, 253);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
@@ -225,23 +242,25 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.buttonSave.Name = "buttonSave";
       this.buttonSave.Size = new System.Drawing.Size(75, 23);
       this.buttonSave.TabIndex = 3;
-      this.buttonSave.Text = "&Save";
+      this.buttonSave.Text = "&OK";
       this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
       // 
       // PluginSetupForm
       // 
+      this.AcceptButton = this.buttonSave;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(394, 288);
       this.Controls.Add(this.buttonSave);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.groupBoxSettings);
       this.Controls.Add(this.panelBannerAlign);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "PluginSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "GUI Last.fm radio setup";
+      this.Text = "My Last.fm Radio - Setup";
       this.panelBannerAlign.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBanner)).EndInit();
       this.groupBoxSettings.ResumeLayout(false);

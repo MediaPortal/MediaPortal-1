@@ -86,11 +86,12 @@ namespace MediaPortal.GUI.MusicVideos
       // 
       // buttonCancel
       // 
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancel.Location = new System.Drawing.Point(107, 78);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 6;
-      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.Text = "&Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.btnCancel_Click);
       // 
@@ -100,7 +101,7 @@ namespace MediaPortal.GUI.MusicVideos
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 5;
-      this.buttonOk.Text = "OK";
+      this.buttonOk.Text = "&OK";
       this.buttonOk.UseVisualStyleBackColor = true;
       this.buttonOk.Click += new System.EventHandler(this.btnOk_Click);
       // 
@@ -113,12 +114,15 @@ namespace MediaPortal.GUI.MusicVideos
       // 
       // SetupFavoriteForm
       // 
+      this.AcceptButton = this.buttonOk;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(213, 133);
       this.Controls.Add(this.groupBoxMusicVideoFavs);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "SetupFavoriteForm";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Setup favorites";
       this.Load += new System.EventHandler(this.SetupFavoriteForm_Load);
       this.groupBoxMusicVideoFavs.ResumeLayout(false);

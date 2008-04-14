@@ -36,10 +36,10 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Summary description for GUITrailersSetupForm.
   /// </summary>
-  public class GUITrailersSetupForm : System.Windows.Forms.Form
+  public class GUITrailersSetupForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBox300;
-    private MediaPortal.UserInterface.Controls.MPButton button1;
+    private MediaPortal.UserInterface.Controls.MPButton btnOK;
     private MediaPortal.UserInterface.Controls.MPCheckBox GermanTrailerCheckBox;
     private CheckedListBox YahooServerListBox;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
@@ -53,6 +53,7 @@ namespace MediaPortal.GUI.Video
     private MediaPortal.UserInterface.Controls.MPGroupBox TsrVodnbrOfResultGrpBox;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButton2;
     private MediaPortal.UserInterface.Controls.MPRadioButton rbnmbOfResultsDef;
+    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -65,9 +66,7 @@ namespace MediaPortal.GUI.Video
       //
       InitializeComponent();
 
-      //
-      // TODO: Add any constructor code after InitializeComponent call
-      //
+      LoadSettings();
     }
 
     /// <summary>
@@ -93,7 +92,7 @@ namespace MediaPortal.GUI.Video
     private void InitializeComponent()
     {
       this.checkBox300 = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.GermanTrailerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.YahooServerListBox = new System.Windows.Forms.CheckedListBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -107,6 +106,7 @@ namespace MediaPortal.GUI.Video
       this.TsrVodnbrOfResultGrpBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButton2 = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.rbnmbOfResultsDef = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.TsrVodBitrateStreamGrpBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.upDowNmbOfResults)).BeginInit();
       this.TsrVodnbrOfResultGrpBox.SuspendLayout();
@@ -114,6 +114,8 @@ namespace MediaPortal.GUI.Video
       // 
       // checkBox300
       // 
+      this.checkBox300.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBox300.AutoSize = true;
       this.checkBox300.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBox300.Location = new System.Drawing.Point(48, 12);
@@ -124,18 +126,20 @@ namespace MediaPortal.GUI.Video
       this.checkBox300.UseVisualStyleBackColor = true;
       this.checkBox300.CheckedChanged += new System.EventHandler(this.checkBox300_CheckedChanged);
       // 
-      // button1
+      // btnOK
       // 
-      this.button1.Location = new System.Drawing.Point(361, 248);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(75, 32);
-      this.button1.TabIndex = 2;
-      this.button1.Text = "OK";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new System.EventHandler(this.button1_Click);
+      this.btnOK.Location = new System.Drawing.Point(280, 257);
+      this.btnOK.Name = "btnOK";
+      this.btnOK.Size = new System.Drawing.Size(75, 23);
+      this.btnOK.TabIndex = 2;
+      this.btnOK.Text = "&OK";
+      this.btnOK.UseVisualStyleBackColor = true;
+      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
       // 
       // GermanTrailerCheckBox
       // 
+      this.GermanTrailerCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.GermanTrailerCheckBox.AutoSize = true;
       this.GermanTrailerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.GermanTrailerCheckBox.Location = new System.Drawing.Point(48, 33);
@@ -148,6 +152,8 @@ namespace MediaPortal.GUI.Video
       // 
       // YahooServerListBox
       // 
+      this.YahooServerListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.YahooServerListBox.CheckOnClick = true;
       this.YahooServerListBox.Items.AddRange(new object[] {
             "wmcontent74.bcst.yahoo.com",
@@ -161,6 +167,8 @@ namespace MediaPortal.GUI.Video
       // 
       // label1
       // 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(45, 62);
       this.label1.Name = "label1";
@@ -171,6 +179,8 @@ namespace MediaPortal.GUI.Video
       // 
       // TsrVodCheckBox
       // 
+      this.TsrVodCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.TsrVodCheckBox.AutoSize = true;
       this.TsrVodCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.TsrVodCheckBox.Location = new System.Drawing.Point(48, 133);
@@ -292,21 +302,37 @@ namespace MediaPortal.GUI.Video
       this.rbnmbOfResultsDef.Text = "default";
       this.rbnmbOfResultsDef.UseVisualStyleBackColor = true;
       // 
+      // btnCancel
+      // 
+      this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.btnCancel.Location = new System.Drawing.Point(361, 257);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(75, 23);
+      this.btnCancel.TabIndex = 10;
+      this.btnCancel.Text = "&Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      // 
       // GUITrailersSetupForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.btnOK;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.btnCancel;
       this.ClientSize = new System.Drawing.Size(448, 292);
+      this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.TsrVodnbrOfResultGrpBox);
       this.Controls.Add(this.TsrVodBitrateStreamGrpBox);
       this.Controls.Add(this.TsrVodCheckBox);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.YahooServerListBox);
       this.Controls.Add(this.GermanTrailerCheckBox);
-      this.Controls.Add(this.button1);
+      this.Controls.Add(this.btnOK);
       this.Controls.Add(this.checkBox300);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "GUITrailersSetupForm";
-      this.Text = "My Trailers Setup";
-      this.Load += new System.EventHandler(this.GUITrailersSetupForm_Load);
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "My Trailers - Setup";
       this.TsrVodBitrateStreamGrpBox.ResumeLayout(false);
       this.TsrVodBitrateStreamGrpBox.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.upDowNmbOfResults)).EndInit();
@@ -323,7 +349,7 @@ namespace MediaPortal.GUI.Video
 
     }
 
-    private void GUITrailersSetupForm_Load(object sender, System.EventArgs e)
+    private void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -360,7 +386,14 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    private void button1_Click(object sender, System.EventArgs e)
+    private void btnOK_Click(object sender, System.EventArgs e)
+    {
+      SaveSettings();
+      this.Close();
+
+    }
+
+    private void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -394,8 +427,6 @@ namespace MediaPortal.GUI.Video
           xmlwriter.SetValue("mytrailers", "YahooServer", string.Empty);
 
       }
-      this.Close();
-
     }
 
     private void TsrVodCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -407,6 +438,12 @@ namespace MediaPortal.GUI.Video
     private void radioButton2_CheckedChanged(object sender, EventArgs e)
     {
       upDowNmbOfResults.Enabled = radioButton2.Checked;
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+      LoadSettings();
+      this.Close();
     }
 
 

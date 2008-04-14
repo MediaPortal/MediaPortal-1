@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.MyMail
   /// <summary>
   /// Summary description for MailDetailSetup.
   /// </summary>
-  public class MailDetailSetup : System.Windows.Forms.Form
+  public class MailDetailSetup : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;
@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.MyMail
       this.btnOk.Name = "btnOk";
       this.btnOk.Size = new System.Drawing.Size(75, 23);
       this.btnOk.TabIndex = 3;
-      this.btnOk.Text = "OK";
+      this.btnOk.Text = "&OK";
       this.btnOk.UseVisualStyleBackColor = true;
       this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
       // 
@@ -163,7 +163,7 @@ namespace MediaPortal.GUI.MyMail
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(75, 23);
       this.btnCancel.TabIndex = 4;
-      this.btnCancel.Text = "Cancel";
+      this.btnCancel.Text = "&Cancel";
       this.btnCancel.UseVisualStyleBackColor = true;
       // 
       // gbConnection
@@ -257,6 +257,7 @@ namespace MediaPortal.GUI.MyMail
       // 
       this.tbPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbPassword.BorderColor = System.Drawing.Color.Empty;
       this.tbPassword.Location = new System.Drawing.Point(112, 134);
       this.tbPassword.Name = "tbPassword";
       this.tbPassword.PasswordChar = '*';
@@ -268,6 +269,7 @@ namespace MediaPortal.GUI.MyMail
       // 
       this.tbUsername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbUsername.BorderColor = System.Drawing.Color.Empty;
       this.tbUsername.Location = new System.Drawing.Point(112, 108);
       this.tbUsername.Name = "tbUsername";
       this.tbUsername.Size = new System.Drawing.Size(316, 20);
@@ -276,6 +278,9 @@ namespace MediaPortal.GUI.MyMail
       // 
       // tbPort
       // 
+      this.tbPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbPort.BorderColor = System.Drawing.Color.Empty;
       this.tbPort.Location = new System.Drawing.Point(112, 82);
       this.tbPort.Name = "tbPort";
       this.tbPort.Size = new System.Drawing.Size(64, 20);
@@ -286,6 +291,7 @@ namespace MediaPortal.GUI.MyMail
       // 
       this.tbServerAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbServerAddress.BorderColor = System.Drawing.Color.Empty;
       this.tbServerAddress.Location = new System.Drawing.Point(112, 21);
       this.tbServerAddress.Name = "tbServerAddress";
       this.tbServerAddress.Size = new System.Drawing.Size(316, 20);
@@ -368,6 +374,7 @@ namespace MediaPortal.GUI.MyMail
       // 
       this.tbAttachmentFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbAttachmentFolder.BorderColor = System.Drawing.Color.Empty;
       this.tbAttachmentFolder.Location = new System.Drawing.Point(111, 42);
       this.tbAttachmentFolder.Name = "tbAttachmentFolder";
       this.tbAttachmentFolder.Size = new System.Drawing.Size(289, 20);
@@ -378,6 +385,7 @@ namespace MediaPortal.GUI.MyMail
       // 
       this.tbMailboxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbMailboxFolder.BorderColor = System.Drawing.Color.Empty;
       this.tbMailboxFolder.Location = new System.Drawing.Point(111, 17);
       this.tbMailboxFolder.Name = "tbMailboxFolder";
       this.tbMailboxFolder.Size = new System.Drawing.Size(289, 20);
@@ -419,6 +427,7 @@ namespace MediaPortal.GUI.MyMail
       // 
       this.tbBoxLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbBoxLabel.BorderColor = System.Drawing.Color.Empty;
       this.tbBoxLabel.Location = new System.Drawing.Point(112, 42);
       this.tbBoxLabel.Name = "tbBoxLabel";
       this.tbBoxLabel.Size = new System.Drawing.Size(316, 20);
@@ -448,15 +457,18 @@ namespace MediaPortal.GUI.MyMail
       // 
       // MailDetailSetup
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.btnOk;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.btnCancel;
       this.ClientSize = new System.Drawing.Size(464, 402);
       this.Controls.Add(this.gbGeneral);
       this.Controls.Add(this.gbStorage);
       this.Controls.Add(this.gbConnection);
       this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.btnOk);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "MailDetailSetup";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Edit Mailbox Details";
       this.Load += new System.EventHandler(this.MailDetailSetup_Load);
       this.gbConnection.ResumeLayout(false);

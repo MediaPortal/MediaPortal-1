@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.GUIBurner
   /// <summary>
   /// Summary description for BurnerSetupForm.
   /// </summary>
-  public partial class BurnerSetupForm : Form
+  public partial class BurnerSetupForm : MediaPortal.UserInterface.Controls.MPForm
   {
     #region Private Variables
     private XPBurn.XPBurnCD CDBurner;
@@ -339,6 +339,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.buttonSelectDvdBurnPathLocation = new MediaPortal.UserInterface.Controls.MPButton();
       this.textBoxDVDBurnExePath = new System.Windows.Forms.TextBox();
       this.groupBoxOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxDoNotEject = new System.Windows.Forms.CheckBox();
       this.groupBoxAspectRatio = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonAspectRatio16x9 = new System.Windows.Forms.RadioButton();
       this.radioButtonAspectRatio4x3 = new System.Windows.Forms.RadioButton();
@@ -358,7 +359,6 @@ namespace MediaPortal.GUI.GUIBurner
       this.mpTextBoxBurnerDriver = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonOK = new MediaPortal.UserInterface.Controls.MPButton();
-      this.checkBoxDoNotEject = new System.Windows.Forms.CheckBox();
       this.groupBoxSupportFiles.SuspendLayout();
       this.groupBoxOptions.SuspendLayout();
       this.groupBoxAspectRatio.SuspendLayout();
@@ -368,6 +368,8 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // groupBoxSupportFiles
       // 
+      this.groupBoxSupportFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSupportFiles.Controls.Add(this.labelCygwinPathCorrect);
       this.groupBoxSupportFiles.Controls.Add(this.labelDVDburnPathCorrect);
       this.groupBoxSupportFiles.Controls.Add(this.linkLabelCygwinDownload);
@@ -443,6 +445,7 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // buttonSelectDvdBurnPathLocation
       // 
+      this.buttonSelectDvdBurnPathLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonSelectDvdBurnPathLocation.Location = new System.Drawing.Point(568, 76);
       this.buttonSelectDvdBurnPathLocation.Name = "buttonSelectDvdBurnPathLocation";
       this.buttonSelectDvdBurnPathLocation.Size = new System.Drawing.Size(30, 24);
@@ -453,6 +456,8 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // textBoxDVDBurnExePath
       // 
+      this.textBoxDVDBurnExePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDVDBurnExePath.Location = new System.Drawing.Point(171, 79);
       this.textBoxDVDBurnExePath.Name = "textBoxDVDBurnExePath";
       this.textBoxDVDBurnExePath.Size = new System.Drawing.Size(380, 20);
@@ -461,6 +466,8 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // groupBoxOptions
       // 
+      this.groupBoxOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxOptions.Controls.Add(this.checkBoxDoNotEject);
       this.groupBoxOptions.Controls.Add(this.groupBoxAspectRatio);
       this.groupBoxOptions.Controls.Add(this.groupBoxDVDFormat);
@@ -477,6 +484,19 @@ namespace MediaPortal.GUI.GUIBurner
       this.groupBoxOptions.TabIndex = 60;
       this.groupBoxOptions.TabStop = false;
       this.groupBoxOptions.Text = "Options";
+      // 
+      // checkBoxDoNotEject
+      // 
+      this.checkBoxDoNotEject.AutoSize = true;
+      this.checkBoxDoNotEject.Checked = true;
+      this.checkBoxDoNotEject.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxDoNotEject.Location = new System.Drawing.Point(420, 141);
+      this.checkBoxDoNotEject.Name = "checkBoxDoNotEject";
+      this.checkBoxDoNotEject.Size = new System.Drawing.Size(168, 17);
+      this.checkBoxDoNotEject.TabIndex = 70;
+      this.checkBoxDoNotEject.Text = "Do not eject disc after burning";
+      this.checkBoxDoNotEject.UseVisualStyleBackColor = true;
+      this.checkBoxDoNotEject.Visible = false;
       // 
       // groupBoxAspectRatio
       // 
@@ -551,7 +571,7 @@ namespace MediaPortal.GUI.GUIBurner
       // checkBoxDontBurnDVD
       // 
       this.checkBoxDontBurnDVD.AutoSize = true;
-      this.checkBoxDontBurnDVD.Location = new System.Drawing.Point(420, 120);
+      this.checkBoxDontBurnDVD.Location = new System.Drawing.Point(420, 118);
       this.checkBoxDontBurnDVD.Name = "checkBoxDontBurnDVD";
       this.checkBoxDontBurnDVD.Size = new System.Drawing.Size(126, 17);
       this.checkBoxDontBurnDVD.TabIndex = 67;
@@ -574,15 +594,17 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       this.labelTempHint.AutoSize = true;
       this.labelTempHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelTempHint.Location = new System.Drawing.Point(120, 55);
+      this.labelTempHint.Location = new System.Drawing.Point(117, 62);
       this.labelTempHint.Name = "labelTempHint";
-      this.labelTempHint.Size = new System.Drawing.Size(469, 13);
+      this.labelTempHint.Size = new System.Drawing.Size(466, 13);
       this.labelTempHint.TabIndex = 60;
       this.labelTempHint.Text = "All temp files for the burn process will be stored there (This may be up to 5 gb " +
-          "for a complete DVD).";
+          "for a complete DVD)";
       // 
       // textBoxTempPath
       // 
+      this.textBoxTempPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTempPath.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTempPath.Enabled = false;
       this.textBoxTempPath.Location = new System.Drawing.Point(120, 27);
@@ -601,6 +623,7 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // buttonSelectTempPathLocation
       // 
+      this.buttonSelectTempPathLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonSelectTempPathLocation.Enabled = false;
       this.buttonSelectTempPathLocation.Location = new System.Drawing.Point(568, 24);
       this.buttonSelectTempPathLocation.Name = "buttonSelectTempPathLocation";
@@ -612,16 +635,20 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // buttonCancel
       // 
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancel.Location = new System.Drawing.Point(540, 393);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(88, 24);
       this.buttonCancel.TabIndex = 59;
-      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.Text = "&Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
       this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // groupBoxDeviceSettings
       // 
+      this.groupBoxDeviceSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxDeviceSettings.Controls.Add(this.comboBoxDeviceSelection);
       this.groupBoxDeviceSettings.Controls.Add(this.labelDriveletter);
       this.groupBoxDeviceSettings.Controls.Add(this.mpTextBoxBurnerDriver);
@@ -636,6 +663,8 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // comboBoxDeviceSelection
       // 
+      this.comboBoxDeviceSelection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDeviceSelection.Enabled = false;
       this.comboBoxDeviceSelection.FormattingEnabled = true;
       this.comboBoxDeviceSelection.Location = new System.Drawing.Point(120, 21);
@@ -645,6 +674,7 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // labelDriveletter
       // 
+      this.labelDriveletter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelDriveletter.AutoSize = true;
       this.labelDriveletter.Location = new System.Drawing.Point(499, 24);
       this.labelDriveletter.Name = "labelDriveletter";
@@ -654,6 +684,7 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // mpTextBoxBurnerDriver
       // 
+      this.mpTextBoxBurnerDriver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTextBoxBurnerDriver.BorderColor = System.Drawing.Color.Empty;
       this.mpTextBoxBurnerDriver.Location = new System.Drawing.Point(566, 21);
       this.mpTextBoxBurnerDriver.Name = "mpTextBoxBurnerDriver";
@@ -671,40 +702,30 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // buttonOK
       // 
+      this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOK.Location = new System.Drawing.Point(437, 393);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(88, 24);
       this.buttonOK.TabIndex = 2;
-      this.buttonOK.Text = "OK";
+      this.buttonOK.Text = "&OK";
       this.buttonOK.UseVisualStyleBackColor = true;
       this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
       // 
-      // checkBoxDoNotEject
-      // 
-      this.checkBoxDoNotEject.AutoSize = true;
-      this.checkBoxDoNotEject.Checked = true;
-      this.checkBoxDoNotEject.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxDoNotEject.Location = new System.Drawing.Point(420, 131);
-      this.checkBoxDoNotEject.Name = "checkBoxDoNotEject";
-      this.checkBoxDoNotEject.Size = new System.Drawing.Size(168, 17);
-      this.checkBoxDoNotEject.TabIndex = 70;
-      this.checkBoxDoNotEject.Text = "Do not eject disc after burning";
-      this.checkBoxDoNotEject.UseVisualStyleBackColor = true;
-      this.checkBoxDoNotEject.Visible = false;
-      // 
       // BurnerSetupForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.buttonOK;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(640, 429);
       this.Controls.Add(this.groupBoxSupportFiles);
       this.Controls.Add(this.groupBoxOptions);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.groupBoxDeviceSettings);
       this.Controls.Add(this.buttonOK);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "BurnerSetupForm";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "My Burner setup";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "My Burner - Setup";
       this.groupBoxSupportFiles.ResumeLayout(false);
       this.groupBoxSupportFiles.PerformLayout();
       this.groupBoxOptions.ResumeLayout(false);

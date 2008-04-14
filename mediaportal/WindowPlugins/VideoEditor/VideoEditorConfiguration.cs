@@ -35,11 +35,12 @@ using DirectShowLib;
 
 namespace WindowPlugins.VideoEditor
 {
-	public partial class VideoEditorConfiguration : Form
+	public partial class VideoEditorConfiguration : MediaPortal.UserInterface.Controls.MPForm
 	{
 		public VideoEditorConfiguration()
 		{
 			InitializeComponent();
+      LoadSettings();
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -57,17 +58,31 @@ namespace WindowPlugins.VideoEditor
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
-			{
-				xmlwriter.SetValue("VideoEditor", "mencoder", mencoderPath.Text);
-			}
+      SaveSettings();
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}
 
+    private void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("VideoEditor", "mencoder", mencoderPath.Text);
+      }
+    }
+
+    private void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      {
+        mencoderPath.Text = xmlreader.GetValueAsString("VideoEditor", "mencoder", String.Empty);
+      }
+    }
+
 		private void cancelButton_Click(object sender, EventArgs e)
 		{
-			DialogResult = DialogResult.Cancel;
+      LoadSettings();
+      DialogResult = DialogResult.Cancel;
 			this.Close();
 		}
 	}

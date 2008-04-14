@@ -33,7 +33,7 @@ namespace GUIRSSFeed
   /// <summary>
   /// Details form for entering a site for My News Plugin
   /// </summary>
-  public class DetailsForm : System.Windows.Forms.Form
+  public class DetailsForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel labelDescription;
     private MediaPortal.UserInterface.Controls.MPLabel labelEncoding;
@@ -43,7 +43,7 @@ namespace GUIRSSFeed
     private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
     private MediaPortal.UserInterface.Controls.MPTextBox textImage;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPButton buttonClear;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
     private MediaPortal.UserInterface.Controls.MPTextBox textDescription;
     private MediaPortal.UserInterface.Controls.MPButton buttonSave;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxURL;
@@ -62,8 +62,6 @@ namespace GUIRSSFeed
       // The InitializeComponent() call is required for Windows Forms designer support.
       //
       InitializeComponent();
-      buttonClear.Click += new EventHandler(textClear);
-      buttonSave.Click += new EventHandler(saveInfo);
       buttonBrowse.Click += new EventHandler(browseFile);
 
       if (ID > -1)
@@ -119,14 +117,6 @@ namespace GUIRSSFeed
       }
     }
 
-    void textClear(object obj, EventArgs ea)
-    {
-      textName.Text = "";
-      textBoxURL.Text = "";
-      textDescription.Text = "";
-      textEncoding.Text = "windows-1252";
-    }
-
     void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -165,7 +155,7 @@ namespace GUIRSSFeed
       this.textEncoding = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.textDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.buttonClear = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textImage = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
@@ -178,6 +168,8 @@ namespace GUIRSSFeed
       // 
       // textBoxURL
       // 
+      this.textBoxURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxURL.Location = new System.Drawing.Point(80, 58);
       this.textBoxURL.Name = "textBoxURL";
@@ -186,6 +178,8 @@ namespace GUIRSSFeed
       // 
       // textEncoding
       // 
+      this.textEncoding.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textEncoding.BorderColor = System.Drawing.Color.Empty;
       this.textEncoding.Location = new System.Drawing.Point(80, 93);
       this.textEncoding.Name = "textEncoding";
@@ -195,30 +189,36 @@ namespace GUIRSSFeed
       // 
       // buttonSave
       // 
+      this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonSave.Location = new System.Drawing.Point(320, 180);
       this.buttonSave.Name = "buttonSave";
       this.buttonSave.Size = new System.Drawing.Size(75, 23);
       this.buttonSave.TabIndex = 7;
-      this.buttonSave.Text = "Save";
+      this.buttonSave.Text = "&OK";
       this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
       // 
       // textDescription
       // 
+      this.textDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textDescription.BorderColor = System.Drawing.Color.Empty;
       this.textDescription.Location = new System.Drawing.Point(340, 24);
       this.textDescription.Name = "textDescription";
       this.textDescription.Size = new System.Drawing.Size(136, 20);
       this.textDescription.TabIndex = 5;
       // 
-      // buttonClear
+      // buttonCancel
       // 
-      this.buttonClear.Location = new System.Drawing.Point(401, 180);
-      this.buttonClear.Name = "buttonClear";
-      this.buttonClear.Size = new System.Drawing.Size(75, 23);
-      this.buttonClear.TabIndex = 8;
-      this.buttonClear.Text = "Clear";
-      this.buttonClear.UseVisualStyleBackColor = true;
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.buttonCancel.Location = new System.Drawing.Point(401, 180);
+      this.buttonCancel.Name = "buttonCancel";
+      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+      this.buttonCancel.TabIndex = 8;
+      this.buttonCancel.Text = "&Cancel";
+      this.buttonCancel.UseVisualStyleBackColor = true;
+      this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // label2
       // 
@@ -231,6 +231,8 @@ namespace GUIRSSFeed
       // 
       // textImage
       // 
+      this.textImage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textImage.BorderColor = System.Drawing.Color.Empty;
       this.textImage.Location = new System.Drawing.Point(80, 128);
       this.textImage.Name = "textImage";
@@ -239,6 +241,8 @@ namespace GUIRSSFeed
       // 
       // buttonBrowse
       // 
+      this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonBrowse.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonBrowse.Location = new System.Drawing.Point(401, 126);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
@@ -292,7 +296,9 @@ namespace GUIRSSFeed
       // 
       // DetailsForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.buttonSave;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(488, 215);
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.textImage);
@@ -301,13 +307,13 @@ namespace GUIRSSFeed
       this.Controls.Add(this.textBoxURL);
       this.Controls.Add(this.textName);
       this.Controls.Add(this.labelThumbnail);
-      this.Controls.Add(this.buttonClear);
+      this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.buttonSave);
       this.Controls.Add(this.labelEncoding);
       this.Controls.Add(this.labelDescription);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.labelFeedName);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "DetailsForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "DetailsForm";
@@ -319,7 +325,13 @@ namespace GUIRSSFeed
 
     private void buttonSave_Click(object sender, System.EventArgs e)
     {
+      SaveSettings();
+      this.Close();
+    }
 
+    private void buttonCancel_Click(object sender, EventArgs e)
+    {
+      this.Close();
     }
   }
 }

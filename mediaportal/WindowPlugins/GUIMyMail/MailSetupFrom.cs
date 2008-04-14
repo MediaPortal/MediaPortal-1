@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.MyMail
   /// <summary>
   /// Zusammenfassung für MailSetupFrom.
   /// </summary>
-  public class MailSetupFrom : Form
+  public class MailSetupFrom : MediaPortal.UserInterface.Controls.MPForm
   {
     ArrayList m_mailBox = new ArrayList();
     private NumericUpDown numericUpDown1;
@@ -102,6 +102,7 @@ namespace MediaPortal.GUI.MyMail
       // 
       // btnAdd
       // 
+      this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnAdd.Location = new System.Drawing.Point(296, 16);
       this.btnAdd.Name = "btnAdd";
       this.btnAdd.Size = new System.Drawing.Size(80, 24);
@@ -119,12 +120,13 @@ namespace MediaPortal.GUI.MyMail
       this.lbMailboxes.Name = "lbMailboxes";
       this.lbMailboxes.Size = new System.Drawing.Size(280, 277);
       this.lbMailboxes.TabIndex = 0;
-      this.lbMailboxes.DoubleClick += new System.EventHandler(this.lbMailboxes_DoubleClick);
       this.lbMailboxes.SelectedIndexChanged += new System.EventHandler(this.lbMailboxes_SelectedIndexChanged);
+      this.lbMailboxes.DoubleClick += new System.EventHandler(this.lbMailboxes_DoubleClick);
       // 
       // btnDelete
       // 
-      this.btnDelete.Location = new System.Drawing.Point(296, 72);
+      this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnDelete.Location = new System.Drawing.Point(296, 75);
       this.btnDelete.Name = "btnDelete";
       this.btnDelete.Size = new System.Drawing.Size(80, 24);
       this.btnDelete.TabIndex = 3;
@@ -139,7 +141,7 @@ namespace MediaPortal.GUI.MyMail
       this.btnClose.Name = "btnClose";
       this.btnClose.Size = new System.Drawing.Size(80, 24);
       this.btnClose.TabIndex = 2;
-      this.btnClose.Text = "Close";
+      this.btnClose.Text = "&Done";
       this.btnClose.UseVisualStyleBackColor = true;
       this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
       // 
@@ -163,7 +165,8 @@ namespace MediaPortal.GUI.MyMail
       // 
       // btnEdit
       // 
-      this.btnEdit.Location = new System.Drawing.Point(296, 40);
+      this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnEdit.Location = new System.Drawing.Point(296, 46);
       this.btnEdit.Name = "btnEdit";
       this.btnEdit.Size = new System.Drawing.Size(80, 23);
       this.btnEdit.TabIndex = 2;
@@ -195,15 +198,18 @@ namespace MediaPortal.GUI.MyMail
       // 
       // MailSetupFrom
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.btnClose;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.btnClose;
       this.ClientSize = new System.Drawing.Size(410, 352);
-      this.ControlBox = false;
       this.Controls.Add(this.label1);
       this.Controls.Add(this.numericUpDown1);
       this.Controls.Add(this.gbMailboxes);
       this.Controls.Add(this.btnClose);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "MailSetupFrom";
-      this.Text = "Mailbox Configuration";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "My Mail - Setup";
       this.Load += new System.EventHandler(this.MailSetupFrom_Load);
       this.gbMailboxes.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();

@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.MSN
   /// <summary>
   /// Summary description for MessengerSetup.
   /// </summary>
-  public class MessengerSetup : System.Windows.Forms.Form
+  public class MessengerSetup : MediaPortal.UserInterface.Controls.MPForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxEMail;
@@ -60,6 +60,7 @@ namespace MediaPortal.GUI.MSN
     private MediaPortal.UserInterface.Controls.MPComboBox cbProxyType;
     private MediaPortal.UserInterface.Controls.MPLabel label8;
     private MediaPortal.UserInterface.Controls.MPTextBox tbProxyPort;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -72,9 +73,7 @@ namespace MediaPortal.GUI.MSN
       //
       InitializeComponent();
 
-      //
-      // TODO: Add any constructor code after InitializeComponent call
-      //
+      LoadSettings();
     }
 
     /// <summary>
@@ -121,12 +120,15 @@ namespace MediaPortal.GUI.MSN
       this.tbProxyUserName = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.tbProxyPort = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.tbProxyHost = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // label1
       // 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 19);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(100, 16);
@@ -135,6 +137,8 @@ namespace MediaPortal.GUI.MSN
       // 
       // textBoxEMail
       // 
+      this.textBoxEMail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxEMail.BorderColor = System.Drawing.Color.Empty;
       this.textBoxEMail.Location = new System.Drawing.Point(19, 38);
       this.textBoxEMail.Name = "textBoxEMail";
@@ -143,6 +147,8 @@ namespace MediaPortal.GUI.MSN
       // 
       // label2
       // 
+      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.Location = new System.Drawing.Point(16, 67);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(100, 16);
@@ -151,6 +157,8 @@ namespace MediaPortal.GUI.MSN
       // 
       // textBoxPassword
       // 
+      this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxPassword.BorderColor = System.Drawing.Color.Empty;
       this.textBoxPassword.Location = new System.Drawing.Point(19, 86);
       this.textBoxPassword.Name = "textBoxPassword";
@@ -160,16 +168,20 @@ namespace MediaPortal.GUI.MSN
       // 
       // buttonOK
       // 
-      this.buttonOK.Location = new System.Drawing.Point(471, 275);
+      this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.buttonOK.Location = new System.Drawing.Point(381, 279);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(84, 26);
       this.buttonOK.TabIndex = 4;
-      this.buttonOK.Text = "Ok";
+      this.buttonOK.Text = "&OK";
       this.buttonOK.UseVisualStyleBackColor = true;
       this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
       // 
       // chkSignIn
       // 
+      this.chkSignIn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.chkSignIn.AutoSize = true;
       this.chkSignIn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkSignIn.Location = new System.Drawing.Point(19, 167);
@@ -181,6 +193,8 @@ namespace MediaPortal.GUI.MSN
       // 
       // InitialStatusBox
       // 
+      this.InitialStatusBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.InitialStatusBox.BorderColor = System.Drawing.Color.Empty;
       this.InitialStatusBox.Items.AddRange(new object[] {
             "Online",
@@ -196,6 +210,8 @@ namespace MediaPortal.GUI.MSN
       // 
       // label3
       // 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 113);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(100, 16);
@@ -204,6 +220,8 @@ namespace MediaPortal.GUI.MSN
       // 
       // chkPopupWindow
       // 
+      this.chkPopupWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.chkPopupWindow.AutoSize = true;
       this.chkPopupWindow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkPopupWindow.Location = new System.Drawing.Point(19, 190);
@@ -254,8 +272,10 @@ namespace MediaPortal.GUI.MSN
       // 
       // label7
       // 
+      this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(19, 166);
+      this.label7.Location = new System.Drawing.Point(17, 163);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(91, 13);
       this.label7.TabIndex = 1;
@@ -263,8 +283,10 @@ namespace MediaPortal.GUI.MSN
       // 
       // label6
       // 
+      this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(19, 113);
+      this.label6.Location = new System.Drawing.Point(17, 113);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(84, 13);
       this.label6.TabIndex = 1;
@@ -272,8 +294,10 @@ namespace MediaPortal.GUI.MSN
       // 
       // label5
       // 
+      this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(19, 67);
+      this.label5.Location = new System.Drawing.Point(17, 67);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(85, 13);
       this.label5.TabIndex = 1;
@@ -281,8 +305,9 @@ namespace MediaPortal.GUI.MSN
       // 
       // label8
       // 
+      this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(182, 22);
+      this.label8.Location = new System.Drawing.Point(182, 19);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(29, 13);
       this.label8.TabIndex = 1;
@@ -291,7 +316,7 @@ namespace MediaPortal.GUI.MSN
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(17, 22);
+      this.label4.Location = new System.Drawing.Point(17, 19);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(68, 13);
       this.label4.TabIndex = 1;
@@ -299,6 +324,8 @@ namespace MediaPortal.GUI.MSN
       // 
       // cbProxyType
       // 
+      this.cbProxyType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cbProxyType.BorderColor = System.Drawing.Color.Empty;
       this.cbProxyType.Items.AddRange(new object[] {
             "Socks 4",
@@ -311,6 +338,8 @@ namespace MediaPortal.GUI.MSN
       // 
       // cbUseProxyServer
       // 
+      this.cbUseProxyServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cbUseProxyServer.AutoSize = true;
       this.cbUseProxyServer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbUseProxyServer.Location = new System.Drawing.Point(22, 216);
@@ -322,8 +351,10 @@ namespace MediaPortal.GUI.MSN
       // 
       // tbProxyPassword
       // 
+      this.tbProxyPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbProxyPassword.BorderColor = System.Drawing.Color.Empty;
-      this.tbProxyPassword.Location = new System.Drawing.Point(21, 132);
+      this.tbProxyPassword.Location = new System.Drawing.Point(20, 133);
       this.tbProxyPassword.Name = "tbProxyPassword";
       this.tbProxyPassword.PasswordChar = '*';
       this.tbProxyPassword.Size = new System.Drawing.Size(232, 20);
@@ -331,6 +362,8 @@ namespace MediaPortal.GUI.MSN
       // 
       // tbProxyUserName
       // 
+      this.tbProxyUserName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbProxyUserName.BorderColor = System.Drawing.Color.Empty;
       this.tbProxyUserName.Location = new System.Drawing.Point(20, 86);
       this.tbProxyUserName.Name = "tbProxyUserName";
@@ -339,6 +372,7 @@ namespace MediaPortal.GUI.MSN
       // 
       // tbProxyPort
       // 
+      this.tbProxyPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.tbProxyPort.BorderColor = System.Drawing.Color.Empty;
       this.tbProxyPort.Location = new System.Drawing.Point(185, 38);
       this.tbProxyPort.Name = "tbProxyPort";
@@ -353,18 +387,32 @@ namespace MediaPortal.GUI.MSN
       this.tbProxyHost.Size = new System.Drawing.Size(144, 20);
       this.tbProxyHost.TabIndex = 2;
       // 
+      // buttonCancel
+      // 
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.buttonCancel.Location = new System.Drawing.Point(471, 279);
+      this.buttonCancel.Name = "buttonCancel";
+      this.buttonCancel.Size = new System.Drawing.Size(84, 26);
+      this.buttonCancel.TabIndex = 11;
+      this.buttonCancel.Text = "&Cancel";
+      this.buttonCancel.UseVisualStyleBackColor = true;
+      this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+      // 
       // MessengerSetup
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.buttonOK;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(577, 317);
+      this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.buttonOK);
       this.Controls.Add(this.groupBox1);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "MessengerSetup";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "MessengerSetup";
-      this.Load += new System.EventHandler(this.MessengerSetup_Load);
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "MSN Messenger - Setup";
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
@@ -375,6 +423,12 @@ namespace MediaPortal.GUI.MSN
     #endregion
 
     private void buttonOK_Click(object sender, System.EventArgs e)
+    {
+      SaveSettings();
+      this.Close();
+    }
+
+    private void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -398,10 +452,9 @@ namespace MediaPortal.GUI.MSN
         xmlWriter.SetValue("MSNmessenger", "proxytype", cbProxyType.SelectedIndex.ToString());
 
       }
-      this.Close();
     }
 
-    private void MessengerSetup_Load(object sender, System.EventArgs e)
+    private void LoadSettings()
     {
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -428,6 +481,12 @@ namespace MediaPortal.GUI.MSN
     private void label3_Click(object sender, System.EventArgs e)
     {
 
+    }
+
+    private void buttonCancel_Click(object sender, EventArgs e)
+    {
+      LoadSettings();
+      this.Close();
     }
   }
 }

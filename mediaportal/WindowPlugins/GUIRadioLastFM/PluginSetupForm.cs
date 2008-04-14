@@ -30,7 +30,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
-  public partial class PluginSetupForm : Form
+  public partial class PluginSetupForm : MediaPortal.UserInterface.Controls.MPForm
   {
     public PluginSetupForm()
     {
