@@ -28,7 +28,6 @@ namespace MediaPortal.InputDevices
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RemoteLearn));
       this.ButtonStartLearn = new MediaPortal.UserInterface.Controls.MPButton();
       this.ButtonEndLearn = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpCancel = new MediaPortal.UserInterface.Controls.MPButton();
@@ -45,6 +44,7 @@ namespace MediaPortal.InputDevices
       // 
       // ButtonStartLearn
       // 
+      this.ButtonStartLearn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.ButtonStartLearn.Location = new System.Drawing.Point(325, 22);
       this.ButtonStartLearn.Name = "ButtonStartLearn";
       this.ButtonStartLearn.Size = new System.Drawing.Size(84, 23);
@@ -55,6 +55,7 @@ namespace MediaPortal.InputDevices
       // 
       // ButtonEndLearn
       // 
+      this.ButtonEndLearn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.ButtonEndLearn.Location = new System.Drawing.Point(325, 68);
       this.ButtonEndLearn.Name = "ButtonEndLearn";
       this.ButtonEndLearn.Size = new System.Drawing.Size(84, 23);
@@ -65,6 +66,8 @@ namespace MediaPortal.InputDevices
       // 
       // mpCancel
       // 
+      this.mpCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.mpCancel.Location = new System.Drawing.Point(334, 401);
       this.mpCancel.Name = "mpCancel";
       this.mpCancel.Size = new System.Drawing.Size(75, 23);
@@ -75,7 +78,8 @@ namespace MediaPortal.InputDevices
       // 
       // buttonOK
       // 
-      this.buttonOK.Location = new System.Drawing.Point(148, 401);
+      this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOK.Location = new System.Drawing.Point(172, 401);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(75, 23);
       this.buttonOK.TabIndex = 2;
@@ -85,6 +89,8 @@ namespace MediaPortal.InputDevices
       // 
       // mpBeveledLine1
       // 
+      this.mpBeveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpBeveledLine1.Location = new System.Drawing.Point(5, 370);
       this.mpBeveledLine1.Name = "mpBeveledLine1";
       this.mpBeveledLine1.Size = new System.Drawing.Size(424, 2);
@@ -93,7 +99,8 @@ namespace MediaPortal.InputDevices
       // 
       // mpApply
       // 
-      this.mpApply.Location = new System.Drawing.Point(247, 401);
+      this.mpApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpApply.Location = new System.Drawing.Point(253, 401);
       this.mpApply.Name = "mpApply";
       this.mpApply.Size = new System.Drawing.Size(75, 23);
       this.mpApply.TabIndex = 1;
@@ -105,6 +112,9 @@ namespace MediaPortal.InputDevices
       // 
       this.mpListView.AllowDrop = true;
       this.mpListView.AllowRowReorder = false;
+      this.mpListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderMPAction,
             this.columnHeaderX10Key});
@@ -129,6 +139,7 @@ namespace MediaPortal.InputDevices
       // 
       // InputMapperButton
       // 
+      this.InputMapperButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.InputMapperButton.Location = new System.Drawing.Point(325, 194);
       this.InputMapperButton.Name = "InputMapperButton";
       this.InputMapperButton.Size = new System.Drawing.Size(84, 23);
@@ -139,9 +150,10 @@ namespace MediaPortal.InputDevices
       // 
       // mpRemotenumber
       // 
+      this.mpRemotenumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpRemotenumber.BorderColor = System.Drawing.Color.Empty;
       this.mpRemotenumber.FormattingEnabled = true;
-      this.mpRemotenumber.Location = new System.Drawing.Point(12, 327);
+      this.mpRemotenumber.Location = new System.Drawing.Point(12, 330);
       this.mpRemotenumber.Name = "mpRemotenumber";
       this.mpRemotenumber.Size = new System.Drawing.Size(283, 21);
       this.mpRemotenumber.TabIndex = 8;
@@ -149,6 +161,7 @@ namespace MediaPortal.InputDevices
       // 
       // mpLabel1
       // 
+      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpLabel1.AutoSize = true;
       this.mpLabel1.Location = new System.Drawing.Point(9, 311);
       this.mpLabel1.Name = "mpLabel1";
@@ -158,8 +171,10 @@ namespace MediaPortal.InputDevices
       // 
       // RemoteLearn
       // 
+      this.AcceptButton = this.buttonOK;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.CancelButton = this.mpCancel;
       this.ClientSize = new System.Drawing.Size(441, 436);
       this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.mpRemotenumber);
@@ -171,8 +186,7 @@ namespace MediaPortal.InputDevices
       this.Controls.Add(this.mpBeveledLine1);
       this.Controls.Add(this.mpApply);
       this.Controls.Add(this.mpListView);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "RemoteLearn";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Teach X10 Remote Control";

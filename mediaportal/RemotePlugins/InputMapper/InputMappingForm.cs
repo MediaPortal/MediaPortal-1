@@ -44,7 +44,7 @@ namespace MediaPortal.InputDevices
   /// <summary>
   /// Summary description for ButtonMappingForm.
   /// </summary>
-  public class InputMappingForm : System.Windows.Forms.Form
+  public class InputMappingForm : MediaPortal.UserInterface.Controls.MPForm
   {
     Array nativeWindowsList = Enum.GetValues(typeof(GUIWindow.Window));
     ArrayList windowsList = new ArrayList();
@@ -246,7 +246,6 @@ namespace MediaPortal.InputDevices
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InputMappingForm));
       this.treeMapping = new System.Windows.Forms.TreeView();
       this.labelExpand = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonDefault = new MediaPortal.UserInterface.Controls.MPButton();
@@ -289,8 +288,9 @@ namespace MediaPortal.InputDevices
       // treeMapping
       // 
       this.treeMapping.AllowDrop = true;
-      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.treeMapping.FullRowSelect = true;
       this.treeMapping.HideSelection = false;
       this.treeMapping.Location = new System.Drawing.Point(16, 56);
@@ -301,6 +301,7 @@ namespace MediaPortal.InputDevices
       // 
       // labelExpand
       // 
+      this.labelExpand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.labelExpand.AutoSize = true;
       this.labelExpand.Location = new System.Drawing.Point(328, 374);
       this.labelExpand.Name = "labelExpand";
@@ -311,8 +312,8 @@ namespace MediaPortal.InputDevices
       // 
       // buttonDefault
       // 
-      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDefault.Location = new System.Drawing.Point(268, 442);
+      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDefault.Location = new System.Drawing.Point(262, 442);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(75, 23);
       this.buttonDefault.TabIndex = 28;
@@ -365,7 +366,8 @@ namespace MediaPortal.InputDevices
       // buttonApply
       // 
       this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonApply.Location = new System.Drawing.Point(346, 442);
+      this.buttonApply.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.buttonApply.Location = new System.Drawing.Point(343, 442);
       this.buttonApply.Name = "buttonApply";
       this.buttonApply.Size = new System.Drawing.Size(75, 23);
       this.buttonApply.TabIndex = 20;
@@ -376,7 +378,7 @@ namespace MediaPortal.InputDevices
       // buttonOk
       // 
       this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonOk.Location = new System.Drawing.Point(426, 442);
+      this.buttonOk.Location = new System.Drawing.Point(424, 442);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 19;
@@ -696,8 +698,10 @@ namespace MediaPortal.InputDevices
       // 
       // InputMappingForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AcceptButton = this.buttonOk;
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScroll = true;
+      this.CancelButton = this.buttonCancel;
       this.ClientSize = new System.Drawing.Size(590, 475);
       this.Controls.Add(this.labelExpand);
       this.Controls.Add(this.treeMapping);
@@ -714,10 +718,10 @@ namespace MediaPortal.InputDevices
       this.Controls.Add(this.groupBoxAction);
       this.Controls.Add(this.groupBoxCondition);
       this.Controls.Add(this.groupBoxLayer);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Name = "InputMappingForm";
       this.ShowInTaskbar = false;
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "MediaPortal - Setup";
       this.groupBoxAction.ResumeLayout(false);
       this.groupBoxAction.PerformLayout();
