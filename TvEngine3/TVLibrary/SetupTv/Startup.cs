@@ -43,9 +43,10 @@ namespace SetupTv
     enum StartupMode
     {
       Normal,
-      Wizard
+      Wizard,
+      DbCleanup,
     }
-    StartupMode startupMode = StartupMode.Normal;
+    static StartupMode startupMode = StartupMode.Normal;
 
     string sectionsConfiguration = String.Empty;
 
@@ -76,6 +77,10 @@ namespace SetupTv
         case StartupMode.Wizard:
           applicationForm = new WizardForm(sectionsConfiguration);
           break;
+
+        case StartupMode.DbCleanup:
+          applicationForm = new SetupTvSettingsForm();
+          break;
       }
 
       if (applicationForm != null)
@@ -83,6 +88,7 @@ namespace SetupTv
         System.Windows.Forms.Application.Run(applicationForm);
       }
     }
+
     public static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
       Log.Write("Exception in setuptv");
@@ -96,13 +102,34 @@ namespace SetupTv
       Log.Info("---- start setuptv ----");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
 
+      foreach (string param in arguments)
+      {
+        if (param == "--delete-db" || param == "-d")
+          startupMode = StartupMode.DbCleanup;
+      }
+
       //test connection with database
       Log.Info("---- check connection with database ----");
       SetupDatabaseForm dlg = new SetupDatabaseForm();
       if (!dlg.TestConnection())
       {
-        Log.Info("---- ask user for connection details ----");
-        dlg.ShowDialog();
+        if (startupMode == StartupMode.DbCleanup)
+        {
+          Log.Info("---- could not delete database because the connection is not setup correctly ----");
+          MessageBox.Show("Unable to find a previous tvlibrary schema. Please make sure there is no old database in place!", "DB cleanup failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+        else
+        {
+          Log.Info("---- ask user for connection details ----");
+          dlg.ShowDialog();
+        }
+        return; // close the application without restart here.
+      }
+
+      if (startupMode == StartupMode.DbCleanup)
+      {
+        if (!dlg.ExecuteSQLScript("delete"))
+          MessageBox.Show("Failed to drop the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
 

@@ -491,6 +491,8 @@
     <EmbeddedResource Include="36_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="36_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="images\wizard-header.jpg" />
+    <EmbeddedResource Include="delete_mysql_database.sql" />
+    <EmbeddedResource Include="delete_sqlserver_database.sql" />
     <None Include="images\ms_sql_logo.gif" />
     <None Include="images\mysql_logo.gif" />
   </ItemGroup>
