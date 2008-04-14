@@ -258,7 +258,7 @@ namespace MediaPortal.DeployTool
             }
             break;
 
-          case CheckState.REMOVED:
+          case CheckState.NOT_REMOVED:
             item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgUninstalling");
             Update();
             if (!package.Install())

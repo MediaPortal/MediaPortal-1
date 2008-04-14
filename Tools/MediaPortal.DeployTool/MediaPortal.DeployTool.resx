@@ -491,4 +491,7 @@ installation later (maybe on a pc without an internet connection)?</value>
   <data name="OS_Support" xml:space="preserve">
     <value>Sorry your OS is not currently supported by MediaPortal !</value>
   </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>Your OS is unsupported because Microsoft did not release several required hotfixes for it.\nContinue at your own risk</value>
+  </data>
 </root>

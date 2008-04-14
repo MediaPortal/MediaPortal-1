@@ -45,6 +45,7 @@ namespace MediaPortal.DeployTool
     }
     public bool Install()
     {
+        UnInstall();
         return true;
     }
     public bool UnInstall()

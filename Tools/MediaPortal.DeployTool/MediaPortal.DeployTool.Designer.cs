@@ -949,6 +949,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your OS is unsupported because Microsoft did not release several required hotfixes for it.\nContinue at your own risk.
+        /// </summary>
+        internal static string OS_Warning {
+            get {
+                return ResourceManager.GetString("OS_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Which TV-Engine do you want to use ?.
         /// </summary>
         internal static string TvEngineType_labelSectionHeader {

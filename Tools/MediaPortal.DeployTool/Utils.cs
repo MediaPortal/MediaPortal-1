@@ -7,6 +7,7 @@ using System.Resources;
 using System.Globalization;
 using System.Xml;
 using Microsoft.Win32;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool
 {
@@ -199,13 +200,38 @@ namespace MediaPortal.DeployTool
       return "Windows NT 5.1"; // XP
     }
 
+#region Operation System Version Check
+    [DllImport("kernel32.dll")]
+    private static extern bool GetVersionEx(ref OSVERSIONINFOEX osVersionInfo);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct OSVERSIONINFOEX
+    {
+        public int dwOSVersionInfoSize;
+        public int dwMajorVersion;
+        public int dwMinorVersion;
+        public int dwBuildNumber;
+        public int dwPlatformId;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string szCSDVersion;
+        public short wServicePackMajor;
+        public short wServicePackMinor;
+        public short wSuiteMask;
+        public byte wProductType;
+        public byte wReserved;
+    }
+
     public static string CheckOSRequirement(bool NotifyUnsupported)
     {
-      Version OsVersion = Environment.OSVersion.Version;
+      OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+      OperatingSystem osInfo = Environment.OSVersion;
+
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));  
+
       bool OsSupport = false;
       string OsDesc = "";
 
-      switch (OsVersion.Major)
+      switch (osInfo.Version.Major)
       {
         case 4:                         // 4.x = Win95,98,ME and NT 
           OsDesc = "Windows 95/98/ME/NT";
@@ -213,19 +239,19 @@ namespace MediaPortal.DeployTool
           break;
 
         case 5:
-          if (OsVersion.Minor == 0)   // 5.0 = Windows2000
+            if (osInfo.Version.Minor == 0)   // 5.0 = Windows2000
           {
             OsDesc = "Windows 2000";
             OsSupport = false;
           }
-          if (OsVersion.Minor == 1)   // 5.1 = WindowsXP
+          if (osInfo.Version.Minor == 1)   // 5.1 = WindowsXP
           {
-            if (int.Parse(Environment.OSVersion.ServicePack.Substring("Service Pack ".Length, 1)) < 2)
+            if (osVersionInfo.wServicePackMajor < 2)
             {
               OsDesc = "Windows XP ServicePack 1";
               OsSupport = false;
             }
-            else if (IntPtr.Size == 8)
+            else if (Check64bit())
             {
               OsDesc = "Windows XP 64bit";
               OsSupport = false;
@@ -236,16 +262,28 @@ namespace MediaPortal.DeployTool
               OsDesc = "Windows XP";
             }
           }
-          if (OsVersion.Major == 2)   // 5.2 = Windows2003
+          if (osInfo.Version.Major == 2)   // 5.2 = Windows2003
           {
             OsSupport = true;
             OsDesc = "Windows 2003 Server";
+            DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            if (btn == DialogResult.Cancel) Environment.Exit(-1);
           }
           break;
 
-        case 6:                       // 6.0 = WindowsVista, Windows2008
-          OsSupport = true;
-          OsDesc = "Windows Vista";
+        case 6:                       
+            if (osVersionInfo.wProductType != 3)       // Windows Vista
+            {
+                OsSupport = true;
+                OsDesc = "Windows Vista";
+            }
+            else                                       // Windows 2008
+            {
+                OsSupport = true;
+                OsDesc = "Windows 2008";
+                DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                if (btn == DialogResult.Cancel) Environment.Exit(-1);
+            }
           break;
       }
       if (!OsSupport && NotifyUnsupported)
@@ -254,29 +292,33 @@ namespace MediaPortal.DeployTool
         Environment.Exit(-1);
       }
       return OsDesc;
-    }
+  }
+#endregion
 
-    public static void Check64bit()
+  public static bool Check64bit()
     {
         try
+        {
+            RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows");
+            if (key == null)
             {
-                RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows");
-                if (key == null)
-                {
-                    InstallationProperties.Instance.Set("RegistryKeyAdd", "");
-                    InstallationProperties.Instance.Set("Sql2005Download", "32");
-                }
-                else
-                {
-                    key.Close();
-                    InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-                    InstallationProperties.Instance.Set("Sql2005Download", "64");
-                }
+                InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+                InstallationProperties.Instance.Set("Sql2005Download", "32");
+                return false;
             }
-            catch (Exception e)
+            else
             {
-                MessageBox.Show("DEBUG: Check64bit() - Exception: " + e.Message + "( " + e.StackTrace + " )");
+                key.Close();
+                InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+                InstallationProperties.Instance.Set("Sql2005Download", "64");
+                return true;
             }
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show("DEBUG: Check64bit() - Exception: " + e.Message + "( " + e.StackTrace + " )");
+        }
+        return false;
     }
 
     public static bool CheckStartupPath()
