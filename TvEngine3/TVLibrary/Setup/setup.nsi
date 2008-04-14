@@ -43,6 +43,8 @@ SetCompressor /SOLID lzma
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"
 
+#!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
+
 #---------------------------------------------------------------------------
 # VARIABLES
 #---------------------------------------------------------------------------
@@ -583,6 +585,8 @@ SectionEnd
 # FUNCTIONS
 #---------------------------------------------------------------------------
 Function .onInit
+  ${LOG_OPEN}
+
   #### check and parse cmdline parameter
   ; set default values for parameters ........
   StrCpy $noClient 0
@@ -706,6 +710,14 @@ Function .onInit
     ${EndIf}
 */
   SetShellVarContext all
+FunctionEnd
+
+Function .onInstFailed
+  ${LOG_CLOSE}
+FunctionEnd
+
+Function .onInstSuccess
+  ${LOG_CLOSE}
 FunctionEnd
 
 Function .onSelChange

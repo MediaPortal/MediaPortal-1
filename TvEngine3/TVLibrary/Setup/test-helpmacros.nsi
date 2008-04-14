@@ -18,6 +18,8 @@ Page license
 
 ;--------------------------------
 
+!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
+
 #!include "x64.nsh"
 #!include Sections.nsh
 #!include LogicLib.nsh
@@ -78,6 +80,8 @@ SectionEnd ; end the section
 !macroend
 
 Function .onInit
+  ${LOG_OPEN}
+
 
   MessageBox MB_ICONINFORMATION|MB_YESNO "Do vcr InstallCheck?" IDNO novcrInstallCheck
 
@@ -88,18 +92,25 @@ Function .onInit
   ${EndIf}
 
   novcrInstallCheck:
-  
+
+
   MessageBox MB_ICONINFORMATION|MB_YESNO "Do MP InstallChecks?" IDNO noInstallChecks
     !insertmacro DoInstallChecks
 
   noInstallChecks:
 
-  MessageBox MB_ICONINFORMATION|MB_YESNO "DoXmlTests?" IDNO noXmlTests
-  
-  
-      #${ReadMediaPortalDirs}
 
-      #MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
+  MessageBox MB_ICONINFORMATION|MB_YESNO "DoXmlTests?" IDNO noXmlTests
+
+  ${IfNot} ${MP023IsInstalled}
+  ${AndIfNot} ${MPIsInstalled}
+    MessageBox MB_ICONINFORMATION|MB_OK "no MPIsInstalled"
+  ${else}
+    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+    ${ReadMediaPortalDirs} $MPdir.Base
+  ${EndIf}
+
+      MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
       $\r$\nBase:  $MPdir.Base$\r$\n \
       $\r$\nConfig:  $MPdir.Config \
       $\r$\nPlugins: $MPdir.Plugins \
@@ -119,6 +130,15 @@ Function .onInit
 
 
 
+  Abort
 
+FunctionEnd
+
+Function .onInstFailed
+  ${LOG_CLOSE}
+FunctionEnd
+
+Function .onInstSuccess
+  ${LOG_CLOSE}
 FunctionEnd
 

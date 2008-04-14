@@ -361,6 +361,10 @@ LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is r
 Var LogFile
 !endif
 
+!define prefixERROR "[ERROR     !!!]   "
+!define prefixDEBUG "[    DEBUG    ]   "
+!define prefixINFO  "[         INFO]   "
+
 !define LOG_OPEN `!insertmacro LOG_OPEN`
 !macro LOG_OPEN
 !ifdef INSTALL_LOG_FILE
@@ -390,10 +394,18 @@ Var LogFile
 !macroend
 
 !define LOG_TEXT `!insertmacro LOG_TEXT`
-!macro LOG_TEXT TEXT
+!macro LOG_TEXT LEVEL TEXT
 !ifdef INSTALL_LOG_FILE
 
-  FileWrite $LogFile "${TEXT}$\r$\n"
+  !if "${LEVEL}" == "DEBUG"
+    FileWrite $LogFile "${prefixDEBUG}${TEXT}$\r$\n"
+  !else if "${LEVEL}" == "ERROR"
+    FileWrite $LogFile "${prefixERROR}${TEXT}$\r$\n"
+  !else if "${LEVEL}" == "INFO"
+    FileWrite $LogFile "${prefixINFO}${TEXT}$\r$\n"
+  !else
+    !error "$\r$\n$\r$\nYou call macro LOG_TEXT with wrong LogLevel. Only 'DEBUG', 'ERROR' and 'INFO' are valid!$\r$\n$\r$\n"
+  !endif
 
 !endif
 !macroend
@@ -465,7 +477,7 @@ Var MPdir.BurnerSupport
 
   ${xml::GotoPath} "/Config" $0
   ${If} $0 != 0
-    ${LOG_TEXT}  "ERROR: xml::GotoPath /Config"
+    ${LOG_TEXT} "ERROR" "xml::GotoPath /Config"
     Goto error
   ${EndIf}
 
@@ -473,15 +485,14 @@ Var MPdir.BurnerSupport
 
   ${xml::FindNextElement} "Dir" $0 $1
   ${If} $1 != 0
-    ${LOG_TEXT}  "ERROR: xml::FindNextElement >/Dir< >$0<"
+    ${LOG_TEXT} "ERROR" "xml::FindNextElement >/Dir< >$0<"
     Goto error
   ${EndIf}
-  ${LOG_TEXT}  "ERROR: xml::FindNextElement > $$0=$0 $$1=$1"
 
   ${xml::ElementPath} $0
   ${xml::GetAttribute} "id" $0 $1
   ${If} $1 != 0
-    ${LOG_TEXT} "ERROR: xml::GetAttribute >id< >$0<"
+    ${LOG_TEXT} "ERROR" "xml::GetAttribute >id< >$0<"
     Goto error
   ${EndIf}
   ${IfThen} $0 == $R0  ${|} Goto foundDir ${|}
@@ -493,7 +504,7 @@ Var MPdir.BurnerSupport
   ${xml::ElementPath} $0
   ${xml::GotoPath} "$0/Path" $1
   ${If} $1 != 0
-    ${LOG_TEXT} "ERROR: xml::GotoPath >$0/Path<"
+    ${LOG_TEXT} "ERROR" "xml::GotoPath >$0/Path<"
     Goto error
   ${EndIf}
 
@@ -525,12 +536,14 @@ FunctionEnd
 #***************************
 
 !macro ReadMPdir UNINSTALL_PREFIX DIR
+  ${LOG_TEXT} "DEBUG" "macro: ReadMPdir | DIR: ${DIR}"
 
   Push "${DIR}"
   Call ${UNINSTALL_PREFIX}GET_PATH_TEXT
   Pop $0
   ${IfThen} $0 == -1 ${|} Goto error ${|}
 
+  ${LOG_TEXT} "DEBUG" "macro: ReadMPdir | text found in xml: '$0'"
   ${${UNINSTALL_PREFIX}WordReplace} "$0" "%APPDATA%" "$UserAppData" "+" $0
   ${${UNINSTALL_PREFIX}WordReplace} "$0" "%PROGRAMDATA%" "$CommonAppData" "+" $0
 
@@ -557,10 +570,10 @@ FunctionEnd
 #***************************
 #***************************
 
-!macro ReadConfig UNINSTALL_PREFIX
+!macro ReadConfig UNINSTALL_PREFIX PATH_TO_XML
+  ${LOG_TEXT} "DEBUG" "macro: ReadConfig | UNINSTALL_PREFIX: ${UNINSTALL_PREFIX} | PATH_TO_XML: ${PATH_TO_XML}"
 
-  Pop $0
-  IfFileExists "$0\MediaPortalDirs.xml" 0 error
+  IfFileExists "${PATH_TO_XML}\MediaPortalDirs.xml" 0 error
 
   
   #${xml::LoadFile} "$EXEDIR\MediaPortalDirsXP.xml" $0
@@ -593,10 +606,14 @@ FunctionEnd
 
 !macroend
 Function ReadConfig
-  !insertmacro ReadConfig ""
+  Pop $0
+
+  !insertmacro ReadConfig "" "$0"
 FunctionEnd
 Function un.ReadConfig
-  !insertmacro ReadConfig "un."
+  Pop $0
+
+  !insertmacro ReadConfig "un." "$0"
 FunctionEnd
 
 #***************************
@@ -626,7 +643,7 @@ FunctionEnd
 !define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs ""`
 !define un.ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs "un."`
 !macro ReadMediaPortalDirs UNINSTALL_PREFIX INSTDIR
-  ${LOG_TEXT} "macro ReadMediaPortalDirs"
+  ${LOG_TEXT} "DEBUG" "macro ReadMediaPortalDirs"
 
   StrCpy $MPdir.Base "${INSTDIR}"
   SetShellVarContext current
@@ -642,37 +659,37 @@ FunctionEnd
   Call ${UNINSTALL_PREFIX}ReadConfig
   Pop $0
   ${If} $0 != 0   ; an error occured
-    ${LOG_TEXT} "ERROR: could not read '$MyDocs\Team MediaPortal\MediaPortalDirs.xml'"
+    ${LOG_TEXT} "ERROR" "could not read '$MyDocs\Team MediaPortal\MediaPortalDirs.xml'"
 
     Push "$MPdir.Base"
     Call ${UNINSTALL_PREFIX}ReadConfig
     Pop $0
     ${If} $0 != 0   ; an error occured
-      ${LOG_TEXT} "ERROR: could not read '$MPdir.Base\MediaPortalDirs.xml'"
+      ${LOG_TEXT} "ERROR" "could not read '$MPdir.Base\MediaPortalDirs.xml'"
 
-      ${LOG_TEXT} "INFO: no MediaPortalDirs.xml read. using LoadDefaultDirs"
+      ${LOG_TEXT} "INFO" "no MediaPortalDirs.xml read. using LoadDefaultDirs"
       !insertmacro LoadDefaultDirs
 
     ${Else}
-      ${LOG_TEXT} "INFO: read '$MPdir.Base\MediaPortalDirs.xml' successfully"
+      ${LOG_TEXT} "INFO" "read '$MPdir.Base\MediaPortalDirs.xml' successfully"
     ${EndIf}
 
   ${Else}
-    ${LOG_TEXT} "INFO: read '$MyDocs\Team MediaPortal\MediaPortalDirs.xml' successfully"
+    ${LOG_TEXT} "INFO" "read '$MyDocs\Team MediaPortal\MediaPortalDirs.xml' successfully"
   ${EndIf}
 
-  ${LOG_TEXT} "INFO: Installer will use the following directories:$\r$\n"
-  ${LOG_TEXT} "          Base:  $MPdir.Base"
-  ${LOG_TEXT} "          Config:  $MPdir.Config"
-  ${LOG_TEXT} "          Plugins: $MPdir.Plugins"
-  ${LOG_TEXT} "          Log: $MPdir.Log"
-  ${LOG_TEXT} "          CustomInputDevice: $MPdir.CustomInputDevice"
-  ${LOG_TEXT} "          CustomInputDefault: $MPdir.CustomInputDefault"
-  ${LOG_TEXT} "          Skin: $MPdir.Skin"
-  ${LOG_TEXT} "          Language: $MPdir.Language"
-  ${LOG_TEXT} "          Database: $MPdir.Database"
-  ${LOG_TEXT} "          Thumbs: $MPdir.Thumbs"
-  ${LOG_TEXT} "          Weather: $MPdir.Weather"
-  ${LOG_TEXT} "          Cache: $MPdir.Cache"
-  ${LOG_TEXT} "          BurnerSupport: $MPdir.BurnerSupport"
+  ${LOG_TEXT} "INFO" "Installer will use the following directories:$\r$\n"
+  ${LOG_TEXT} "INFO" "          Base:  $MPdir.Base"
+  ${LOG_TEXT} "INFO" "          Config:  $MPdir.Config"
+  ${LOG_TEXT} "INFO" "          Plugins: $MPdir.Plugins"
+  ${LOG_TEXT} "INFO" "          Log: $MPdir.Log"
+  ${LOG_TEXT} "INFO" "          CustomInputDevice: $MPdir.CustomInputDevice"
+  ${LOG_TEXT} "INFO" "          CustomInputDefault: $MPdir.CustomInputDefault"
+  ${LOG_TEXT} "INFO" "          Skin: $MPdir.Skin"
+  ${LOG_TEXT} "INFO" "          Language: $MPdir.Language"
+  ${LOG_TEXT} "INFO" "          Database: $MPdir.Database"
+  ${LOG_TEXT} "INFO" "          Thumbs: $MPdir.Thumbs"
+  ${LOG_TEXT} "INFO" "          Weather: $MPdir.Weather"
+  ${LOG_TEXT} "INFO" "          Cache: $MPdir.Cache"
+  ${LOG_TEXT} "INFO" "          BurnerSupport: $MPdir.BurnerSupport"
 !macroend
