@@ -381,7 +381,7 @@ namespace MediaPortal.FoobarPlugin
             else
             {
               MessageBox.Show("Foobar2000 is not installed on your system!\r\nPlease install it first before actually trying to use this plugin!", "Foobar2000 plugin error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-              //Close();
+              Close();
             }
           }
         }
