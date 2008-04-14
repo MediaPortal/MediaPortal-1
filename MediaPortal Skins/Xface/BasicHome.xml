@@ -49,12 +49,15 @@
 			<label>#highlightedbutton</label>
 			<align>center</align>
 			<font>dingbats</font>
-			<textcolor>90ffffff</textcolor>
+			<textcolor>ccffffff</textcolor>
 			<animation effect="fade" time="250">WindowOpen</animation>
 			<animation effect="fade" time="500">WindowClose</animation>
 		</control>
+		
+		
+<!-- ***** Plugins *************************** -->		
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>2</id>
 			<posX>0</posX>
@@ -74,7 +77,7 @@
 			<visible>Control.IsVisible(2)</visible>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>22</id>
 			<posX>0</posX>
@@ -94,7 +97,28 @@
 			<visible>Control.IsVisible(22)</visible>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Plugins</description>
+			<type>button</type>
+			<id>222</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>192</width>
+			<height>194</height>
+			<textureFocus>-</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>33</onleft>
+			<onright>6</onright>
+			<onup>210</onup>
+			<ondown>603</ondown>
+			<visible>Control.IsVisible(222)</visible>
+		</control>
+
+		<control>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>2</id>
 			<posX>849</posX>
@@ -115,7 +139,7 @@
 			<animation effect="slide" start="-154,-50" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>2</id>
 			<posX>849</posX>
@@ -136,7 +160,7 @@
 			<animation effect="slide" start="-369,-50" end="-154,-50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>2</id>
 			<posX>849</posX>
@@ -157,7 +181,7 @@
 			<animation effect="slide" start="-504,15" end="-369,-50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>2</id>
 			<posX>849</posX>
@@ -175,10 +199,10 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(5)</visible>
-			<animation effect="slide" start="-278,100" end="-504,15" time="400" reversible="false">visiblechange</animation>
+			<animation effect="slide" start="-262,100" end="-504,15" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>2</id>
 			<posX>849</posX>
@@ -196,9 +220,12 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(6)</visible>
-			<animation effect="slide" start="0,0" end="-278,100" time="400" reversible="false">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="-262,100" time="400" reversible="false">visiblechange</animation>
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
+    		
+				
+<!-- ***** Video *************************** -->		
 		<control>
 			<description>home BM Video</description>
 			<type>button</type>
@@ -249,6 +276,32 @@
 			<ondown>606</ondown>
 			<visible>Control.IsVisible(33)</visible>
 		</control>
+		<control>
+			<description>home BM Video</description>
+			<type>button</type>
+			<id>333</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>-</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<hyperlink>501</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>2</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>44</onleft>
+			<onright>2</onright>
+			<onup>210</onup>
+			<ondown>606</ondown>
+			<visible>Control.IsVisible(333)</visible>
+		</control>
+		
 		<control>
 			<description>home BM Video</description>
 			<type>button</type>
@@ -380,8 +433,10 @@
 			<visible>Control.HasFocus(2)</visible>
 			<animation effect="slide" start="-215,0" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
+		
+<!-- ***** Pictures *************************** -->		
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>4</id>
 			<posX>0</posX>
@@ -407,7 +462,7 @@
 			<visible>Control.IsVisible(4)</visible>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>44</id>
 			<posX>0</posX>
@@ -433,7 +488,34 @@
 			<visible>Control.IsVisible(44)</visible>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM Pictures</description>
+			<type>button</type>
+			<id>444</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>-</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<hyperlink>2</hyperlink>
+			<label>2</label>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>1</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>55</onleft>
+			<onright>3</onright>
+			<onup>210</onup>
+			<ondown>603</ondown>
+			<visible>Control.IsVisible(444)</visible>
+		</control>
+
+		<control>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>4</id>
 			<posX>480</posX>
@@ -459,7 +541,7 @@
 			<animation effect="slide" start="0,0" end="215,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>4</id>
 			<posX>480</posX>
@@ -485,7 +567,7 @@
 			<animation effect="slide" start="215,0" end="369,50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>4</id>
 			<posX>480</posX>
@@ -512,7 +594,7 @@
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>4</id>
 			<posX>480</posX>
@@ -538,7 +620,7 @@
 			<animation effect="slide" start="98,150" end="-135,65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>4</id>
 			<posX>480</posX>
@@ -563,6 +645,8 @@
 			<visible>Control.HasFocus(2)</visible>
 			<animation effect="slide" start="-135,65" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
+		
+<!-- ***** Music *************************** -->		
 		<control>
 			<description>home BM Music</description>
 			<type>button</type>
@@ -616,6 +700,32 @@
 		<control>
 			<description>home BM Music</description>
 			<type>button</type>
+			<id>555</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>-</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<hyperlink>6</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>3</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>66</onleft>
+			<onright>4</onright>
+			<onup>210</onup>
+			<ondown>601</ondown>
+			<visible>Control.IsVisible(555)</visible>
+		</control>
+						
+		<control>
+			<description>home BM Music</description>
+			<type>button</type>
 			<id>5</id>
 			<posX>345</posX>
 			<posY>375</posY>
@@ -663,7 +773,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(5)</visible>
-			<animation effect="slide" start="135,-60" end="350,-65" time="400" reversible="false">visiblechange</animation>
+			<animation effect="slide" start="135,-65" end="350,-65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -744,8 +854,10 @@
 			<visible>Control.HasFocus(2)</visible>
 			<animation effect="slide" start="242,85" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
+		
+<!-- ***** TV *************************** -->			
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>6</id>
 			<posX>0</posX>
@@ -768,9 +880,9 @@
 			<onup>210</onup>
 			<ondown>608</ondown>
 			<visible>Control.IsVisible(6)</visible>
-		</control>
+		</control>		
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>66</id>
 			<posX>0</posX>
@@ -794,8 +906,34 @@
 			<ondown>608</ondown>
 			<visible>Control.IsVisible(66)</visible>
 		</control>
+    <control>
+			<description>home BM TV</description>
+			<type>button</type>
+			<id>666</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>-</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<hyperlink>34</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>913</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>22</onleft>
+			<onright>5</onright>
+			<onup>210</onup>
+			<ondown>608</ondown>
+			<visible>Control.IsVisible(666)</visible>
+		</control>
+		
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>6</id>
 			<posX>587</posX>
@@ -821,7 +959,7 @@
 			<animation effect="slide" start="0,0" end="-242,-85" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>6</id>
 			<posX>587</posX>
@@ -844,10 +982,10 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(5)</visible>
-			<animation effect="slide" start="-242,-85" end="-107,-140" time="400" reversible="false">visiblechange</animation>
+			<animation effect="slide" start="-242,-85" end="-107,-150" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>6</id>
 			<posX>587</posX>
@@ -870,10 +1008,10 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(4)</visible>
-			<animation effect="slide" start="-107,-140" end="108,-140" time="400" reversible="false">visiblechange</animation>
+			<animation effect="slide" start="-107,-150" end="108,-150" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>6</id>
 			<posX>587</posX>
@@ -896,10 +1034,10 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(3)</visible>
-			<animation effect="slide" start="108,-140" end="262,-100" time="400" reversible="false">visiblechange</animation>
+			<animation effect="slide" start="108,-150" end="262,-100" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>6</id>
 			<posX>587</posX>
@@ -925,8 +1063,10 @@
 			<animation effect="slide" start="262,-100" end="0,0" time="400" reversible="false">visiblechange</animation>
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
+		
+<!-- ***** Pictures Anti-clockwise*************************** -->			
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>22</id>
 			<posX>849</posX>
@@ -947,7 +1087,7 @@
 			<animation effect="slide" start="-262,100" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>22</id>
 			<posX>849</posX>
@@ -969,7 +1109,7 @@
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>22</id>
 			<posX>849</posX>
@@ -990,7 +1130,7 @@
 			<animation effect="slide" start="-369,-50" end="-504,15" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>22</id>
 			<posX>849</posX>
@@ -1011,7 +1151,7 @@
 			<animation effect="slide" start="-145,-50" end="-369,-50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Radio</description>
+			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>22</id>
 			<posX>849</posX>
@@ -1031,8 +1171,10 @@
 			<visible>Control.HasFocus(66)</visible>
 			<animation effect="slide" start="0,0" end="-145,-50" time="400" reversible="false">visiblechange</animation>
 		</control>
+		
+<!-- ***** Music Anti-clockwise*************************** -->		
 		<control>
-			<description>home BM Video</description>
+			<description>home BM Music</description>
 			<type>button</type>
 			<id>33</id>
 			<posX>695</posX>
@@ -1058,7 +1200,7 @@
 			<animation effect="slide" start="0,0" end="-215,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Video</description>
+			<description>home BM Music</description>
 			<type>button</type>
 			<id>33</id>
 			<posX>695</posX>
@@ -1084,7 +1226,7 @@
 			<animation effect="slide" start="-215,0" end="-350,65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Video</description>
+			<description>home BM Music</description>
 			<type>button</type>
 			<id>33</id>
 			<posX>695</posX>
@@ -1111,7 +1253,7 @@
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Video</description>
+			<description>home BM Music</description>
 			<type>button</type>
 			<id>33</id>
 			<posX>695</posX>
@@ -1137,7 +1279,7 @@
 			<animation effect="slide" start="-108,150" end="154,50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Video</description>
+			<description>home BM Music</description>
 			<type>button</type>
 			<id>33</id>
 			<posX>695</posX>
@@ -1162,8 +1304,10 @@
 			<visible>Control.HasFocus(55)</visible>
 			<animation effect="slide" start="154,50" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
+		
+<!-- ***** TV Anti-clockwise*************************** -->		
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>44</id>
 			<posX>480</posX>
@@ -1189,7 +1333,7 @@
 			<animation effect="slide" start="0,0" end="-135,65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>44</id>
 			<posX>480</posX>
@@ -1216,7 +1360,7 @@
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>44</id>
 			<posX>480</posX>
@@ -1242,7 +1386,7 @@
 			<animation effect="slide" start="107,150" end="369,50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>44</id>
 			<posX>480</posX>
@@ -1268,7 +1412,7 @@
 			<animation effect="slide" start="369,50" end="215,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM FFS</description>
+			<description>home BM TV</description>
 			<type>button</type>
 			<id>44</id>
 			<posX>480</posX>
@@ -1293,8 +1437,10 @@
 			<visible>Control.HasFocus(55)</visible>
 			<animation effect="slide" start="215,0" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
+		
+<!-- ***** Plugins Anti-clockwise*************************** -->		
 		<control>
-			<description>home BM Music</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>55</id>
 			<posX>345</posX>
@@ -1321,7 +1467,7 @@
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Music</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>55</id>
 			<posX>345</posX>
@@ -1347,7 +1493,7 @@
 			<animation effect="slide" start="242,85" end="504,-15" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Music</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>55</id>
 			<posX>345</posX>
@@ -1373,7 +1519,7 @@
 			<animation effect="slide" start="504,-15" end="350,-65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Music</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>55</id>
 			<posX>345</posX>
@@ -1399,7 +1545,7 @@
 			<animation effect="slide" start="350,-65" end="135,-65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Music</description>
+			<description>home BM Plugins</description>
 			<type>button</type>
 			<id>55</id>
 			<posX>345</posX>
@@ -1424,8 +1570,10 @@
 			<visible>Control.HasFocus(55)</visible>
 			<animation effect="slide" start="135,-65" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
+		
+<!-- ***** Videos Anti-clockwise*************************** -->		
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM Videos</description>
 			<type>button</type>
 			<id>66</id>
 			<posX>587</posX>
@@ -1451,7 +1599,7 @@
 			<animation effect="slide" start="0,0" end="262,-100" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM Videos</description>
 			<type>button</type>
 			<id>66</id>
 			<posX>587</posX>
@@ -1477,7 +1625,7 @@
 			<animation effect="slide" start="262,-100" end="108,-150" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM Videos</description>
 			<type>button</type>
 			<id>66</id>
 			<posX>587</posX>
@@ -1503,7 +1651,7 @@
 			<animation effect="slide" start="108,-150" end="-107,-150" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM Videos</description>
 			<type>button</type>
 			<id>66</id>
 			<posX>587</posX>
@@ -1529,7 +1677,7 @@
 			<animation effect="slide" start="-107,-150" end="-242,-85" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>home BM Pictures</description>
+			<description>home BM Videos</description>
 			<type>button</type>
 			<id>66</id>
 			<posX>587</posX>
@@ -1555,32 +1703,640 @@
 			<animation effect="slide" start="-242,-85" end="0,0" time="400" reversible="false">visiblechange</animation>
 			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
-		<control>
-			<description>Date</description>
-			<type>label</type>
-			<id>200</id>
-			<posX>745</posX>
-			<posY>626</posY>
-			<label>-</label>
-			<align>right</align>
-			<font>font13</font>
-			<textcolor>ffa9d0f7</textcolor>
-			<animation effect="fade" time="250">WindowOpen</animation>
-			<animation effect="fade" time="500">WindowClose</animation>
+		
+<!-- ***** Plugins, from submenu ***** -->
+<control>
+			<description>home BM Plugins</description>
+			<type>button</type>
+			<id>222</id>
+			<posX>849</posX>
+			<posY>360</posY>
+			<width>192</width>
+			<height>194</height>
+			<textureFocus>hover_my radio1.png</textureFocus>
+			<textureNoFocus>hover_my radio1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>21</onleft>
+			<onright>6</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(222)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
-			<description>Time</description>
-			<type>label</type>
-			<id>201</id>
-			<posX>768</posX>
-			<posY>626</posY>
-			<label>-</label>
-			<align>left</align>
-			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
-			<animation effect="fade" time="250">WindowOpen</animation>
-			<animation effect="fade" time="500">WindowClose</animation>
+			<description>home BM Plugins</description>
+			<type>button</type>
+			<id>222</id>
+			<posX>695</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>194</height>
+			<textureFocus>hover_my radio1.png</textureFocus>
+			<textureNoFocus>hover_my radio1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>21</onleft>
+			<onright>6</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(333)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
+		<control>
+			<description>home BM Plugins</description>
+			<type>button</type>
+			<id>222</id>
+			<posX>480</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>194</height>
+			<textureFocus>hover_my radio1.png</textureFocus>
+			<textureNoFocus>hover_my radio1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>21</onleft>
+			<onright>6</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(444)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Plugins</description>
+			<type>button</type>
+			<id>222</id>
+			<posX>345</posX>
+			<posY>375</posY>
+			<width>192</width>
+			<height>194</height>
+			<textureFocus>hover_my radio1.png</textureFocus>
+			<textureNoFocus>hover_my radio1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>21</onleft>
+			<onright>6</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(555)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Plugins</description>
+			<type>button</type>
+			<id>222</id>
+			<posX>587</posX>
+			<posY>460</posY>
+			<width>192</width>
+			<height>194</height>
+			<textureFocus>hover_my radio1.png</textureFocus>
+			<textureNoFocus>hover_my radio1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>21</onleft>
+			<onright>6</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(666)</visible>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		
+<!-- ***** Videos, from submenu ***** -->
+		<control>
+			<description>home BM Video</description>
+			<type>button</type>
+			<id>333</id>
+			<posX>849</posX>
+			<posY>360</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my videos1.png</textureFocus>
+			<textureNoFocus>hover_my videos1.png</textureNoFocus>
+			<hyperlink>501</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>2</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>3</onleft>
+			<onright>2</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(666)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Video</description>
+			<type>button</type>
+			<id>333</id>
+			<posX>587</posX>
+			<posY>460</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my videos1.png</textureFocus>
+			<textureNoFocus>hover_my videos1.png</textureNoFocus>
+			<hyperlink>501</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>2</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>3</onleft>
+			<onright>2</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(555)</visible>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Video</description>
+			<type>button</type>
+			<id>333</id>
+			<posX>345</posX>
+			<posY>375</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my videos1.png</textureFocus>
+			<textureNoFocus>hover_my videos1.png</textureNoFocus>
+			<hyperlink>501</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>2</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>3</onleft>
+			<onright>2</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(444)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Video</description>
+			<type>button</type>
+			<id>333</id>
+			<posX>480</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my videos1.png</textureFocus>
+			<textureNoFocus>hover_my videos1.png</textureNoFocus>
+			<hyperlink>501</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>2</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>3</onleft>
+			<onright>2</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(333)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Video</description>
+			<type>button</type>
+			<id>333</id>
+			<posX>695</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my videos1.png</textureFocus>
+			<textureNoFocus>hover_my videos1.png</textureNoFocus>
+			<hyperlink>501</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>2</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>3</onleft>
+			<onright>2</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(222)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		
+<!-- ***** Pictures, from submenu ***** -->
+		<control>
+			<description>home BM Pictures</description>
+			<type>button</type>
+			<id>444</id>
+			<posX>695</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>1</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>4</onleft>
+			<onright>3</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(666)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Pictures</description>
+			<type>button</type>
+			<id>444</id>
+			<posX>849</posX>
+			<posY>360</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>1</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>4</onleft>
+			<onright>3</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(555)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Pictures</description>
+			<type>button</type>
+			<id>444</id>
+			<posX>578</posX>
+			<posY>460</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>1</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>4</onleft>
+			<onright>3</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(444)</visible>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Pictures</description>
+			<type>button</type>
+			<id>444</id>
+			<posX>345</posX>
+			<posY>375</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>1</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>4</onleft>
+			<onright>3</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(333)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Pictures</description>
+			<type>button</type>
+			<id>444</id>
+			<posX>480</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>1</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>4</onleft>
+			<onright>3</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(222)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		
+<!-- ***** Music, from submenu ***** -->
+    <control>
+			<description>home BM Music</description>
+			<type>button</type>
+			<id>555</id>
+			<posX>480</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my music1.png</textureFocus>
+			<textureNoFocus>hover_my music1.png</textureNoFocus>
+			<hyperlink>6</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>3</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>5</onleft>
+			<onright>4</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(666)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Music</description>
+			<type>button</type>
+			<id>555</id>
+			<posX>695</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my music1.png</textureFocus>
+			<textureNoFocus>hover_my music1.png</textureNoFocus>
+			<hyperlink>6</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>3</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>5</onleft>
+			<onright>4</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(555)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Music</description>
+			<type>button</type>
+			<id>555</id>
+			<posX>849</posX>
+			<posY>360</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my music1.png</textureFocus>
+			<textureNoFocus>hover_my music1.png</textureNoFocus>
+			<hyperlink>6</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>3</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>5</onleft>
+			<onright>4</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(444)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Music</description>
+			<type>button</type>
+			<id>555</id>
+			<posX>587</posX>
+			<posY>460</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my music1.png</textureFocus>
+			<textureNoFocus>hover_my music1.png</textureNoFocus>
+			<hyperlink>6</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<onleft>5</onleft>
+			<onright>4</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(333)</visible>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Music</description>
+			<type>button</type>
+			<id>555</id>
+			<posX>345</posX>
+			<posY>375</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my music1.png</textureFocus>
+			<textureNoFocus>hover_my music1.png</textureNoFocus>
+			<hyperlink>6</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>3</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>5</onleft>
+			<onright>4</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(222)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		
+<!-- ***** TV, from submenu ***** -->		
+		<control>
+			<description>home BM TV</description>
+			<type>button</type>
+			<id>666</id>
+			<posX>345</posX>
+			<posY>375</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<hyperlink>30</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>665</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>6</onleft>
+			<onright>5</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(666)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM TV</description>
+			<type>button</type>
+			<id>666</id>
+			<posX>480</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<hyperlink>30</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>665</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>6</onleft>
+			<onright>5</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(555)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM TV</description>
+			<type>button</type>
+			<id>666</id>
+			<posX>695</posX>
+			<posY>310</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<hyperlink>30</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>665</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>6</onleft>
+			<onright>5</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(444)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM TV</description>
+			<type>button</type>
+			<id>666</id>
+			<posX>849</posX>
+			<posY>360</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<hyperlink>30</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>665</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>6</onleft>
+			<onright>5</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(333)</visible>
+			<animation effect="zoom" start="80,80" end="100,100" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM TV</description>
+			<type>button</type>
+			<id>666</id>
+			<posX>587</posX>
+			<posY>460</posY>
+			<width>192</width>
+			<height>168</height>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<hyperlink>30</hyperlink>
+			<hover>-</hover>
+			<hoverX>502</hoverX>
+			<hoverY>360</hoverY>
+			<hoverWidth>272</hoverWidth>
+			<hoverHeight>306</hoverHeight>
+			<label>665</label>
+			<textcolor>00ffffff</textcolor>
+			<textcolorNoFocus>00ffffff</textcolorNoFocus>
+			<onleft>6</onleft>
+			<onright>5</onright>
+			<onup>210</onup>
+			<ondown>66</ondown>
+			<visible>Control.HasFocus(222)</visible>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
+		</control>
+		
+<!-- ***** Others controls ***** -->		
 		<control>
 			<type>image</type>
 			<posX>423</posX>
@@ -1773,6 +2529,7 @@
 			<animation effect="fade" time="250">WindowOpen</animation>
 			<animation effect="fade" time="500">WindowClose</animation>
 		</control>
+<!-- Sub controls ********************************** -->
 		<control>
 			<description>Subbackground</description>
 			<type>image</type>
@@ -1781,7 +2538,8 @@
 			<posY>655</posY>
 			<width>774</width>
 			<height>45</height>
-			<texture>Subbackground.png</texture>			<visible>[Control.IsVisible(601)|Control.IsVisible(602)|Control.IsVisible(603)|Control.IsVisible(604)|Control.IsVisible(605)|Control.IsVisible(606)|Control.IsVisible(607)|Control.IsVisible(608)|Control.IsVisible(609)|Control.IsVisible(610)|Control.IsVisible(611)|Control.IsVisible(612)]</visible>
+			<texture>Subbackground.png</texture>
+			<visible>[Control.IsVisible(601)|Control.IsVisible(602)|Control.IsVisible(603)|Control.IsVisible(604)|Control.IsVisible(605)|Control.IsVisible(606)|Control.IsVisible(607)|Control.IsVisible(608)|Control.IsVisible(609)|Control.IsVisible(610)|Control.IsVisible(611)|Control.IsVisible(612)]</visible>
 			<animation effect="fade" time="300">Visible</animation>
 			<animation effect="fade" time="400">WindowOpen</animation>
 			<animation effect="fade" time="400">WindowClose</animation>
@@ -1797,7 +2555,7 @@
 			<textalign>center</textalign>
 			<textureFocus>subleft_focus.png</textureFocus>
 			<textureNoFocus>subleft_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(5)|Control.HasFocus(55)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
+			<visible>Control.HasFocus(5)|Control.HasFocus(55)|Control.HasFocus(555)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
 			<label>tv series</label>
 			<hyperlink>9811</hyperlink>
 			<font>font14</font>
@@ -1805,7 +2563,7 @@
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
-			<onup>5</onup>
+			<onup>555</onup>
 			<ondown>601</ondown>
 			<onleft>601</onleft>
 			<onright>602</onright>
@@ -1824,15 +2582,15 @@
 			<textalign>center</textalign>
 			<textureFocus>submiddle_focus.png</textureFocus>
 			<textureNoFocus>submiddle_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(5)|Control.HasFocus(55)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
-			<label>trailers</label>
+			<visible>Control.HasFocus(5)|Control.HasFocus(55)|Control.HasFocus(555)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
+			<label>5900</label>
 			<hyperlink>5900</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>5</onup>
+			<textXOff>30</textXOff>
+			<onup>555</onup>
 			<ondown>602</ondown>
 			<onleft>601</onleft>
 			<onright>612</onright>
@@ -1851,15 +2609,15 @@
 			<textalign>center</textalign>
 			<textureFocus>subright_focus.png</textureFocus>
 			<textureNoFocus>subright_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(5)|Control.HasFocus(55)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
-			<label>music videos</label>
+			<visible>Control.HasFocus(5)|Control.HasFocus(55)|Control.HasFocus(555)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
+			<label>30000</label>
 			<hyperlink>4734</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>5</onup>
+			<textXOff>30</textXOff>
+			<onup>555</onup>
 			<ondown>612</ondown>
 			<onleft>602</onleft>
 			<onright>612</onright>
@@ -1878,15 +2636,15 @@
 			<textalign>center</textalign>
 			<textureFocus>subleft_focus.png</textureFocus>
 			<textureNoFocus>subleft_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
-			<label>scheduled rec</label>
+			<visible>Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(222)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
+			<label>603</label>
 			<hyperlink>601</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>2</onup>
+			<textXOff>20</textXOff>
+			<onup>222</onup>
 			<ondown>603</ondown>
 			<onleft>603</onleft>
 			<onright>604</onright>
@@ -1905,15 +2663,15 @@
 			<textalign>center</textalign>
 			<textureFocus>submiddle_focus.png</textureFocus>
 			<textureNoFocus>submiddle_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
-			<label>recorded tv</label>
+			<visible>Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(222)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
+			<label>604</label>
 			<hyperlink>603</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>2</onup>
+			<textXOff>30</textXOff>
+			<onup>222</onup>
 			<ondown>604</ondown>
 			<onleft>603</onleft>
 			<onright>605</onright>
@@ -1932,15 +2690,15 @@
 			<textalign>center</textalign>
 			<textureFocus>subright_focus.png</textureFocus>
 			<textureNoFocus>subright_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
-			<label>tv guide</label>
+			<visible>Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(222)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
+			<label>600</label>
 			<hyperlink>600</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>2</onup>
+			<textXOff>30</textXOff>
+			<onup>222</onup>
 			<ondown>605</ondown>
 			<onleft>604</onleft>
 			<onright>605</onright>
@@ -1959,15 +2717,15 @@
 			<textalign>center</textalign>
 			<textureFocus>subleft_focus.png</textureFocus>
 			<textureNoFocus>subleft_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(3)|Control.HasFocus(33)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
-			<label>last fm radio</label>
+			<visible>Control.HasFocus(3)|Control.HasFocus(33)|Control.HasFocus(333)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
+			<label>34000</label>
 			<hyperlink>7890</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>3</onup>
+			<textXOff>30</textXOff>
+			<onup>333</onup>
 			<ondown>606</ondown>
 			<onleft>606</onleft>
 			<onright>607</onright>
@@ -1986,15 +2744,15 @@
 			<textalign>center</textalign>
 			<textureFocus>submiddle_focus.png</textureFocus>
 			<textureNoFocus>submiddle_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(3)|Control.HasFocus(33)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
-			<label>current playlist</label>
+			<visible>Control.HasFocus(3)|Control.HasFocus(33)|Control.HasFocus(333)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
+			<label>4555</label>
 			<hyperlink>500</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>3</onup>
+			<textXOff>30</textXOff>
+			<onup>333</onup>
 			<ondown>607</ondown>
 			<onleft>606</onleft>
 			<onright>611</onright>
@@ -2013,15 +2771,15 @@
 			<textalign>center</textalign>
 			<textureFocus>subright_focus.png</textureFocus>
 			<textureNoFocus>subright_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(3)|Control.HasFocus(33)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
-			<label>myradio</label>
+			<visible>Control.HasFocus(3)|Control.HasFocus(33)|Control.HasFocus(333)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
+			<label>665</label>
 			<hyperlink>30</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>3</onup>
+			<textXOff>30</textXOff>
+			<onup>333</onup>
 			<ondown>611</ondown>
 			<onleft>607</onleft>
 			<onright>611</onright>
@@ -2040,15 +2798,15 @@
 			<textalign>center</textalign>
 			<textureFocus>subleft_focus.png</textureFocus>
 			<textureNoFocus>subleft_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(6)|Control.HasFocus(66)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
-			<label>weather</label>
+			<visible>Control.HasFocus(6)|Control.HasFocus(66)|Control.HasFocus(666)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
+			<label>8</label>
 			<hyperlink>2600</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>6</onup>
+			<textXOff>30</textXOff>
+			<onup>666</onup>
 			<ondown>608</ondown>
 			<onleft>608</onleft>
 			<onright>609</onright>
@@ -2067,15 +2825,15 @@
 			<textalign>center</textalign>
 			<textureFocus>submiddle_focus.png</textureFocus>
 			<textureNoFocus>submiddle_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(6)|Control.HasFocus(66)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
-			<label>Plugins</label>
+			<visible>Control.HasFocus(6)|Control.HasFocus(66)|Control.HasFocus(666)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
+			<label>913</label>
 			<hyperlink>34</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>6</onup>
+			<textXOff>30</textXOff>
+			<onup>666</onup>
 			<ondown>609</ondown>
 			<onleft>608</onleft>
 			<onright>610</onright>
@@ -2094,15 +2852,15 @@
 			<textalign>center</textalign>
 			<textureFocus>subright_focus.png</textureFocus>
 			<textureNoFocus>subright_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(6)|Control.HasFocus(66)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
-			<label>news</label>
+			<visible>Control.HasFocus(6)|Control.HasFocus(66)|Control.HasFocus(666)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
+			<label>9</label>
 			<hyperlink>2700</hyperlink>
 			<font>font14</font>
 			<textcolor>ffffffff</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
-			<textXOff>40</textXOff>
-			<onup>6</onup>
+			<textXOff>30</textXOff>
+			<onup>666</onup>
 			<ondown>610</ondown>
 			<onleft>609</onleft>
 			<onright>610</onright>

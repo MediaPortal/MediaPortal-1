@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>603</id>
-  <defaultcontrol>2</defaultcontrol>
+  <defaultcontrol>11</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:652</define>
   <controls>
@@ -74,7 +74,7 @@
       <control>
       <type>actiongroup</type>
       <description>action menu</description>
-      <defaultcontrol>2</defaultcontrol>
+      <defaultcontrol>11</defaultcontrol>
       <onexit>50</onexit>
       <buttonX>-210</buttonX>
       <buttonY>64</buttonY>

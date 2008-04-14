@@ -1,6 +1,8 @@
 <?xml version="1.0" standalone="yes"?>
 <window>
 	<controls>
+	
+<!-- ***** Plugin *************************** -->			
 		<control>
 			<description>home BM Radio</description>
 			<type>image</type>
@@ -10,7 +12,7 @@
 			<width>192</width>
 			<height>194</height>
 			<texture>hover_my radio1.png</texture>
-			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
+			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(222)|Control.HasFocus(333)|Control.HasFocus(444)|Control.HasFocus(555)|Control.HasFocus(666)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -22,7 +24,7 @@
 			<height>194</height>
 			<texture>hover_my radio1.png</texture>
 			<visible>Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="zoom" start="120,120" end="100,100" center="0,0" time="500">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -40,8 +42,8 @@
 			<description>home BM Radio</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>480</posX>
-			<posY>310</posY>
+			<posX>849</posX>
+			<posY>360</posY>
 			<width>192</width>
 			<height>194</height>
 			<texture>hover_my radio1.png</texture>
@@ -60,6 +62,8 @@
 			<visible>Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
 			<animation effect="zoom" start="100,100" end="80,80" center="0,0" time="500">visiblechange</animation>
 		</control>
+		
+<!-- ***** Videos *************************** -->				
 		<control>
 			<description>home BM Video</description>
 			<type>image</type>
@@ -69,7 +73,7 @@
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my videos1.png</texture>
-			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
+			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(222)|Control.HasFocus(333)|Control.HasFocus(444)|Control.HasFocus(555)|Control.HasFocus(666)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -93,14 +97,14 @@
 			<height>168</height>
 			<texture>hover_my videos1.png</texture>
 			<visible>Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="zoom" start="120,120" end="100,100" center="0,0" time="500">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>345</posX>
-			<posY>375</posY>
+			<posX>695</posX>
+			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my videos1.png</texture>
@@ -119,6 +123,8 @@
 			<visible>Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
 			<animation effect="zoom" start="100,100" end="80,80" center="0,0" time="500">visiblechange</animation>
 		</control>
+		
+<!-- ***** TV *************************** -->				
 		<control>
 			<description>home BM FFS</description>
 			<type>image</type>
@@ -127,15 +133,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<texture>hover_my pictures1.png</texture>
-			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
+			<texture>hover_my tv1.png</texture>
+			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(222)|Control.HasFocus(333)|Control.HasFocus(444)|Control.HasFocus(555)|Control.HasFocus(666)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
 		</control>
 		<control>
 			<description>home BM FFS</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>695</posX>
-			<posY>310</posY>
+			<posX>345</posX>
+			<posY>375</posY>
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my tv1.png</texture>
@@ -146,8 +152,8 @@
 			<description>home BM FFS</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>849</posX>
-			<posY>360</posY>
+			<posX>480</posX>
+			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my tv1.png</texture>
@@ -164,20 +170,22 @@
 			<height>168</height>
 			<texture>hover_my tv1.png</texture>
 			<visible>Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="zoom" start="120,120" end="100,100" center="0,0" time="500">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>345</posX>
-			<posY>375</posY>
+			<posX>849</posX>
+			<posY>360</posY>
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my tv1.png</texture>
 			<visible>Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
 			<animation effect="zoom" start="100,100" end="80,80" center="0,0" time="500">visiblechange</animation>
 		</control>
+		
+<!-- ***** Music *************************** -->			
 		<control>
 			<description>home BM Music</description>
 			<type>image</type>
@@ -187,7 +195,7 @@
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my music1.png</texture>
-			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
+			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(222)|Control.HasFocus(333)|Control.HasFocus(444)|Control.HasFocus(555)|Control.HasFocus(666)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -217,15 +225,15 @@
 			<description>home BM Music</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>849</posX>
-			<posY>360</posY>
+			<posX>345</posX>
+			<posY>375</posY>
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my music1.png</texture>
 			<visible>Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
 			<animation effect="zoom" start="100,100" end="80,80" center="0,0" time="500">visiblechange</animation>
 		</control>
-		<control>
+  	<control>
 			<description>home BM Music</description>
 			<type>image</type>
 			<id>1</id>
@@ -235,8 +243,10 @@
 			<height>168</height>
 			<texture>hover_my music1.png</texture>
 			<visible>Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(611)</visible>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="zoom" start="120,120" end="100,100" center="0,0" time="500">visiblechange</animation>
 		</control>
+	
+<!-- ***** Pictures *************************** -->			
 		<control>
 			<description>home BM Pictures</description>
 			<type>image</type>
@@ -245,19 +255,31 @@
 			<posY>460</posY>
 			<width>192</width>
 			<height>168</height>
-			<texture>hover_my tv1.png</texture>
-			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
+			<texture>hover_my pictures1.png</texture>
+			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(222)|Control.HasFocus(333)|Control.HasFocus(444)|Control.HasFocus(555)|Control.HasFocus(666)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>345</posX>
-			<posY>375</posY>
+			<posX>695</posX>
+			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my pictures1.png</texture>
 			<visible>Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
+			<animation effect="zoom" start="100,100" end="80,80" center="0,0" time="500">visiblechange</animation>
+		</control>
+		<control>
+			<description>home BM Pictures</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>849</posX>
+			<posY>360</posY>
+			<width>192</width>
+			<height>168</height>
+			<texture>hover_my pictures1.png</texture>
+			<visible>Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
 			<animation effect="zoom" start="100,100" end="80,80" center="0,0" time="500">visiblechange</animation>
 		</control>
 		<control>
@@ -269,18 +291,6 @@
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my pictures1.png</texture>
-			<visible>Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(612)</visible>
-			<animation effect="zoom" start="100,100" end="80,80" center="0,0" time="500">visiblechange</animation>
-		</control>
-		<control>
-			<description>home BM Pictures</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>695</posX>
-			<posY>310</posY>
-			<width>192</width>
-			<height>168</height>
-			<texture>hover_my pictures1.png</texture>
 			<visible>Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
 			<animation effect="zoom" start="100,100" end="80,80" center="0,0" time="500">visiblechange</animation>
 		</control>
@@ -288,8 +298,8 @@
 			<description>home BM Pictures</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>849</posX>
-			<posY>360</posY>
+			<posX>345</posX>
+			<posY>375</posY>
 			<width>192</width>
 			<height>168</height>
 			<texture>hover_my pictures1.png</texture>

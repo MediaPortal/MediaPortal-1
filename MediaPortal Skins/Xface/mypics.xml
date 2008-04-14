@@ -56,6 +56,15 @@
           <id>3</id>
           <label>103</label>
           <onup>2</onup>
+          <ondown>4</ondown>
+          <onright>50</onright>
+        </control>
+        <control>
+          <description>Switch View</description>
+          <type>button</type>
+          <id>4</id>
+          <label>457</label>
+          <onup>3</onup>
           <ondown>6</ondown>
           <onright>50</onright>
         </control>
@@ -64,7 +73,7 @@
           <type>button</type>
           <id>6</id>
           <label>108</label>
-          <onup>3</onup>
+          <onup>4</onup>
           <ondown>7</ondown>
           <onright>50</onright>
         </control>

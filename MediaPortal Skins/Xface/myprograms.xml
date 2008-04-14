@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>3</id>
-  <defaultcontrol>2</defaultcontrol>
+  <defaultcontrol>6</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:134</define>
   <define>#header.image:programs_logo.png</define>

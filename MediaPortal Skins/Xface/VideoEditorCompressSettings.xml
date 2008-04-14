@@ -19,8 +19,8 @@
       <description>Header</description>
       <type>label</type>
       <id>23</id>
-      <posX>270</posX>
-      <posY>133</posY>
+      <posX>304</posX>
+      <posY>112</posY>
       <align>left</align>
       <font>font16</font>
       <label>2055</label>
@@ -28,7 +28,7 @@
     <control>
       <type>label</type>
       <id>34</id>
-      <posX>230</posX>
+      <posX>212</posX>
       <posY>199</posY>
       <align>left</align>
       <font>font14</font>
@@ -38,8 +38,8 @@
       <description>VideoqualySelect</description>
       <type>spincontrol</type>
       <id>402</id>
-      <posX>356</posX>
-      <posY>201</posY>
+      <posX>380</posX>
+      <posY>207</posY>
       <height>20</height>
       <width>20</width>
       <font>font14</font>
@@ -58,7 +58,7 @@
     <control>
       <type>label</type>
       <id>44</id>
-      <posX>230</posX>
+      <posX>212</posX>
       <posY>236</posY>
       <align>left</align>
       <font>font14</font>
@@ -68,8 +68,8 @@
       <description>VideoqualySelect</description>
       <type>spincontrol</type>
       <id>403</id>
-      <posX>356</posX>
-      <posY>238</posY>
+      <posX>380</posX>
+      <posY>245</posY>
       <height>20</height>
       <width>20</width>
       <font>font14</font>
@@ -88,7 +88,7 @@
     <control>
       <type>label</type>
       <id>55</id>
-      <posX>230</posX>
+      <posX>212</posX>
       <posY>272</posY>
       <align>left</align>
       <font>font14</font>
@@ -99,7 +99,7 @@
       <description>movie slider</description>
       <id>100</id>
       <posX>230</posX>
-      <posY>302</posY>
+      <posY>320</posY>
       <onup>403</onup>
       <ondown>104</ondown>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
@@ -110,7 +110,7 @@
     <control>
       <type>label</type>
       <id>102</id>
-      <posX>330</posX>
+      <posX>380</posX>
       <posY>272</posY>
       <font>font14</font>
       <label>720x576</label>
@@ -119,8 +119,8 @@
       <type>button</type>
       <description>Abort</description>
       <id>24</id>
-      <posX>210</posX>
-      <posY>380</posY>
+      <posX>220</posX>
+      <posY>360</posY>
       <width>100</width>
       <onup>100</onup>
       <ondown>302</ondown>
@@ -133,8 +133,8 @@
       <type>button</type>
       <description>OK</description>
       <id>104</id>
-      <posX>390</posX>
-      <posY>380</posY>
+      <posX>400</posX>
+      <posY>360</posY>
       <width>100</width>
       <onup>100</onup>
       <ondown>302</ondown>

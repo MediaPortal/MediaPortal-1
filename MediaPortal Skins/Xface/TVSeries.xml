@@ -134,6 +134,17 @@
 			<colorDiffuse>effffffff</colorDiffuse>
 		</control>
 		
+		<control>
+			<type>image</type>
+			<posX>10</posX>
+			<posY>587</posY>
+			<height>162</height>
+		    <width>325</width>
+		    <texture>tvseries_detailback.png</texture>
+			<colorDiffuse>effffffff</colorDiffuse>
+			<visible>!Control.IsVisible(1235)</visible>
+		</control>
+		
 		<!-- ********************** TOP BANNER | BACKGROUND ********************** -->	
 		
 	    <control>
@@ -194,9 +205,9 @@
 			<type>fadelabel</type>
 			<description>Title</description>
 			<id>640</id>
-			<posX>11</posX>
+			<posX>65</posX>
 			<posY>1</posY>
-			<width>1150</width>
+			<width>990</width>
 			<label>#TVSeries.Title</label>
 			<textcolor>44FFFFFF</textcolor>
 			<font>dingbats</font>
@@ -206,8 +217,8 @@
 			<type>fadelabel</type>
 			<description>Subtitle</description>
 			<id>33</id>
-			<posX>80</posX>
-			<posY>40</posY>
+			<posX>30</posX>
+			<posY>55</posY>
 			<width>400</width>
 			<label>#TVSeries.Subtitle</label>
 			<textcolor>dddddd</textcolor><!-- ffb9d5ff -->
@@ -234,17 +245,112 @@
 			<type>image</type>
 			<description>Season Cover</description>
 			<id>46</id>
-			<posX>28</posX>
-			<posY>90</posY>
+			<posX>221</posX>
+			<posY>594</posY>
+			<height>147</height>	
 			<width>220</width>
 			<centered>yes</centered>
 			<keepaspectratio>yes</keepaspectratio>
 			<colordiffuse>ffFFFFFF</colordiffuse>
 			<texture flipY="true">#TVSeries.SeasonBanner</texture>
-			<visible>Control.IsVisible(1235)+!Control.IsVisible(1232)</visible>
+			<visible>Control.IsVisible(1235)+Control.IsVisible(1232)</visible>
+		</control>
+
+		
+
+		<control>
+			<type>image</type>
+			<description>Series Banner in Series Details</description>
+			<id>69</id>
+			<posX>10</posX>
+			<posY>542</posY>
+			<width>325</width>
+			<height>147</height>
+			<centered>yes</centered>
+			<keepaspectratio>yes</keepaspectratio>
+			<texture>#TVSeries.SeriesBanner</texture>
+			<visible>!Control.IsVisible(1235)</visible>
 		</control>
 		
+		<!-- **********************SERIES DETAILS ******************** -->
+		<control>
+     	 <description>Series Details</description>
+     	 <type>label</type>
+     	 <id>0</id>
+     	 <posX>18</posX>
+     	 <posY>648</posY>
+     	 <width>190</width>
+     	 <label>Airs:</label>
+		 <textcolor>433f3f</textcolor>
+		 <font>font12</font>
+     	 <visible>!Control.IsVisible(1235)</visible>
+   		</control>
+		
+		<control>
+     	 <description>Series Details</description>
+     	 <type>label</type>
+     	 <id>0</id>
+     	 <posX>62</posX>
+     	 <posY>648</posY>
+     	 <width>190</width>
+     	 <label>#TVSeries.Series.AirsDay</label>
+     	 <font>font12</font>
+     	 <visible>!Control.IsVisible(1235)</visible>
+   		</control>
+		
+		<control>
+     	 <description>Series Details</description>
+     	 <type>label</type>
+     	 <id>0</id>
+     	 <posX>210</posX>
+     	 <posY>648</posY>
+     	 <width>190</width>
+     	 <label>On:</label>
+		 <textcolor>433f3f</textcolor>
+		 <font>font12</font>
+     	 <visible>!Control.IsVisible(1235)</visible>
+   		</control>
+		
+		<control>
+     	 <description>Series Details</description>
+     	 <type>label</type>
+     	 <id>0</id>
+     	 <posX>243</posX>
+     	 <posY>648</posY>
+     	 <width>190</width>
+     	 <label>#TVSeries.Series.Network</label>
+		 <font>font12</font>
+     	 <visible>!Control.IsVisible(1235)</visible>
+   		</control>
+		
+		<control>
+     	 <description>Series Details</description>
+     	 <type>label</type>
+     	 <id>0</id>
+     	 <posX>18</posX>
+     	 <posY>670</posY>
+     	 <width>190</width>
+     	 <label>Actors:</label>
+		 <textcolor>433f3f</textcolor>
+		 <font>font12</font>
+     	 <visible>!Control.IsVisible(1235)</visible>
+   		</control>
+		
+		<control>
+     	 <description>Series Details (textbox)</description>
+     	 <type>textboxscrollup</type>
+    	 <id>0</id>
+     	 <posX>18</posX>
+     	 <posY>692</posY>
+   	 	 <width>320</width>
+   	 	 <height>55</height>
+   	  	 <font>font12</font>
+   	  	 <label>#TVSeries.Series.Actors</label>
+   	  	 <visible>!Control.IsVisible(1235)</visible>
+   		</control>
+		
 		<!-- ********************** DESCRIPTION ********************** -->
+		
 		
 		<control>
 			<type>image</type>
@@ -263,15 +369,17 @@
 			<type>textboxscrollup</type>
 			<description>Description</description>
 			<id>631</id>
-			<posX>286</posX>
+			<posX>393</posX>
 			<posY>593</posY>
-			<width>700</width>
+			<width>600</width>
 			<height>148</height>
 			<seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
 			<textcolor>666666</textcolor>
-			<font>font10</font>
+			<font>font12</font>
 			<label>#TVSeries.Description</label>
 		</control>
+		
+		
 		
 		<!-- ********************** LOGOS ********************** -->
 		
@@ -328,27 +436,27 @@
 			<type>image</type>
 			<description>Left Arrow</description>
 			<id>67</id>
-			<posX>3</posX>
-			<posY>290</posY>
-			<height>65</height>
-			<width>43</width>
+			<posX>1000</posX>
+			<posY>586</posY>
+			<height>30</height>
+			<width>30</width>
 			<zoom>true</zoom>
 			<keepaspectratio>yes</keepaspectratio>
 			<texture flipY="true">tvseries_arrow_left.png</texture>
-			<visible>!Control.IsVisible(1232)+!Control.IsVisible(1235)</visible>
+			<!--<visible>!Control.IsVisible(1232)+!Control.IsVisible(1235)</visible>-->
 		</control>
 		<control>
 			<type>image</type>
 			<description>Right Arrow</description>
 			<id>67</id>
-			<posX>1317</posX>
-			<posY>290</posY>
-			<height>65</height>
-			<width>43</width>
+			<posX>1199</posX>
+			<posY>586</posY>
+			<height>30</height>
+			<width>30</width>
 			<zoom>true</zoom>
 			<keepaspectratio>yes</keepaspectratio>
 			<texture flipY="true">tvseries_arrow_right.png</texture>
-			<visible>!Control.IsVisible(1232)+!Control.IsVisible(1235)</visible>
+			<!--<visible>!Control.IsVisible(1232)+!Control.IsVisible(1235)</visible> -->
 		</control>
 		
 		<!-- NEED TO FIGURE OUT HOW TO ROTATE THE LABELS 90 DEGREES TO HAVE THEM ON TOP OF THE LEFT/RIGHT ARROWS
@@ -431,8 +539,8 @@
 						<height>450</height><!-- 480 for 5 row || 330 for 3 row -->
 						
 						<!-- up/down buttons & page # -->
-						<spinPosX>1244</spinPosX>
-						<spinPosY>590</spinPosY>
+						<spinPosX>1249</spinPosX>
+						<spinPosY>585</spinPosY>
 						<spinColor>ffffffff</spinColor>
 						
 						<!-- Textures -->

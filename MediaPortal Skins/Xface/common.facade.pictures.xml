@@ -28,6 +28,8 @@
           <IconXOff>64</IconXOff>
           <IconYOff>4</IconYOff>
           <scrollOffset>2</scrollOffset>
+          <folderPrefix></folderPrefix>
+          <folderSuffix></folderSuffix>
         </control>
         <control>
           <description>Thumbnail Panel</description>
@@ -38,6 +40,8 @@
           <font>font12</font>
           <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
           <enableFocusZoom>yes</enableFocusZoom>
+          <folderPrefix></folderPrefix>
+          <folderSuffix></folderSuffix>
         </control>
         <control>
           <description>Filmstrip view</description>
@@ -60,7 +64,7 @@
           <textureHeight>289</textureHeight>
           <font>font11</font>
           <textXOff>8</textXOff>
-		  <textYOff>-25</textYOff>
+		      <textYOff>-25</textYOff>
           <selectedColor>00ffffff</selectedColor>
           <textcolor>00ffffff</textcolor>
           <colordiffuse>00ffffff</colordiffuse>
@@ -73,6 +77,8 @@
           <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
           <showInfoImage>no</showInfoImage>
+          <folderPrefix></folderPrefix>
+          <folderSuffix></folderSuffix>
           <thumbAnimation effect="zoom" start="100,100" end="140,140" time="300">focus</thumbAnimation>
           <thumbAnimation effect="zoom" start="140,140" end="100,100" time="300">unfocus</thumbAnimation>
         </control>
