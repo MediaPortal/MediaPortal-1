@@ -489,4 +489,8 @@ sucessivamente (magari su un pc che non ha connessione internet) ?</value>
   <data name="OS_Support" xml:space="preserve">
     <value>Spiacenti, questo Sistema Operativo non è supportato da MediaPortal !</value>
   </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>Il vostro Sistema Operativo non è supportato a causa di molti hotfixes mancanti da parte di Microsoft.
+Preseguire l'installazione è un vostro rischio.</value>
+  </data>
 </root>
