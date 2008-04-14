@@ -488,4 +488,8 @@ Vil du starte installasjons prosessen np, eller bare laste ned
   <data name="OS_Support" xml:space="preserve">
     <value>Beklager ditt operativ system er ikke støttet av MediaPortal</value>
   </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>Ditt operativsystem er ikke støttet, grunnet mangel på oppdateringer fra Microsoft.
+Fortsett på egen risiko....</value>
+  </data>
 </root>
