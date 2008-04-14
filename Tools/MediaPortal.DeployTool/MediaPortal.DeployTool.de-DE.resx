@@ -487,4 +487,8 @@ später vorzunehmen?</value>
   <data name="OS_Support" xml:space="preserve">
     <value>Ihr Betriebssystem wird nicht von MediaPortal unterstützt.</value>
   </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>Ihr Betriebsystem wird nicht unterstützt, weil MS einige benötigte Hotfixes nicht veröffentlicht hat.
+Fortsetzung erfolgt auf eigenes Risiko.</value>
+  </data>
 </root>
