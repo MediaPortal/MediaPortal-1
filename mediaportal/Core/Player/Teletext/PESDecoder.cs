@@ -8,6 +8,11 @@ namespace MediaPortal.Player.Teletext
     delegate void PESCallback(int streamid, byte[] header, int headerlen,
                                        byte[] data, int datalen, bool isStart, UInt64 presentTime);
 
+    /// <summary>
+    /// Generic PES decoder with some teletext specific sanity checks
+    /// DO NOT USE TO DECODE NON-TELETEXT PES PACKETS WITHOUT REMOVING 
+    /// THOSE CHECKS!
+    /// </summary>
     class PESDecoder
     {
         public const byte TS_PACKET_SYNC = 0x47;
@@ -110,6 +115,8 @@ namespace MediaPortal.Player.Teletext
 
         public void OnTsPacket(byte[] tsPacket, UInt64 presentTime)
         {
+            assert(tsPacket.Length == 188, "PESDECODER: Input TsPacket not 188 bytes long!");
+
            // Log.Debug("PESDECODER ONTSPACKET");
     	    TSHeader header = new TSHeader(tsPacket);
             if (!SanityCheck(header,tsPacket)) return;
@@ -147,10 +154,12 @@ namespace MediaPortal.Player.Teletext
 			        m_iWritePos = 0;
 
 			        m_iPesHeaderLen=tsPacket[pos+8]+9;
+                    assert(m_iPesHeaderLen == 45, "PES header not 45 as required for teletext PES packets (actual "+ m_iPesHeaderLen +")" );
                     
                     if (m_pesHeader.Length < m_iPesHeaderLen) {
                         Log.Error("PESDecoder: Reported header length is bigger than header buffer! : {0} vs {1}", m_pesHeader.Length, m_iPesHeaderLen);
                     }
+                    assert(tsPacket.Length >= pos + m_iPesHeaderLen, "m_iPesHeaderLen too long! tsPacket length is " + tsPacket.Length + " but m_iPesHeaderLen = " + m_iPesHeaderLen + " and pos = " + pos);
                     Array.Copy(tsPacket, pos, m_pesHeader, 0, m_iPesHeaderLen);
 			       //above replaces -> memcpy(m_pesHeader,&tsPacket[pos],m_iPesHeaderLen);
 			        
@@ -182,6 +191,8 @@ namespace MediaPortal.Player.Teletext
 
             int bytesToWrite = 188 -pos;
             assert(bytesToWrite < 188, "Bytes to write too big : " + bytesToWrite);
+
+            assert(tsPacket.Length >= pos + bytesToWrite, "tsPacketLength " + tsPacket.Length + " pos " + pos + " bytesToWrite " + bytesToWrite);
             Array.Copy(tsPacket,pos,m_pesBuffer,m_iWritePos, bytesToWrite);
 	        m_iWritePos += bytesToWrite;
 

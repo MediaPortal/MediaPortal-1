@@ -264,7 +264,7 @@ namespace MediaPortal.Player.Teletext
                         Log.Debug("Data starts without data_identifier! data_identifier has value of data_unit_id, data_unit_id of data_unit_length etc..!!!");
                     }
 
-                    assert(data_unit_id == 0xFF || data_unit_id == 0x02 || data_unit_id == 0x03, "Data unit id invalid value");
+                    assert(data_unit_id == 0xFF || data_unit_id == 0x02 || data_unit_id == 0x03, "Data unit id invalid value " + data_unit_id);
                     return;
                 }
 
