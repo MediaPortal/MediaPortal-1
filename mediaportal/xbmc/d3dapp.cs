@@ -797,7 +797,7 @@ namespace MediaPortal
     /// 
     public void SwitchFullScreenOrWindowed(bool bWindowed)
     {
-      if (!useExclusiveDirectXMode)
+      if (!useExclusiveDirectXMode || useEnhancedVideoRenderer)
         return;
 
       // Temporary remove the handler
