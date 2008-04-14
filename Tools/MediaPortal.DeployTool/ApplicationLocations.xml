@@ -4,11 +4,6 @@
 		<FILE>directx_mar2008_redist.exe</FILE>
     <TYPE>Automatic</TYPE>
 	</DirectX9c>
-	<MSSQLExpress>
-		<URL>http://install.team-mediaportal.com/Sql2005</URL>
-		<FILE>sqlexpr32.exe</FILE>
-    <TYPE>Automatic</TYPE>
-	</MSSQLExpress>
 	<MSSQLExpress32>
 		<URL>http://install.team-mediaportal.com/Sql2005_32bit</URL>
 		<FILE>sqlexpr32.exe</FILE>
