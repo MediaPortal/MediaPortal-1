@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
-    <value>Vil du se TV med MediaPortal?,Vil du bruge MediaPortal til TV?</value>
+    <value>Vil du se TV med MediaPortal?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
-    <value>Ja, jeg vil bruge MediaPortal til at se TV.,Ja, jeg vil bruge MediaPortal til at se TV.</value>
+    <value>Ja, jeg vil bruge MediaPortal til at se TV.</value>
   </data>
   <data name="WatchTV_off" xml:space="preserve">
-    <value>Nej, jeg vil ikke bruge MediaPortal til at se TV.,Nej, MediaPortal skal ikke bruges til TV.</value>
+    <value>Nej, jeg vil ikke bruge MediaPortal til at se TV.</value>
   </data>
   <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Vil du se HDTV med MediaPortal?,Vil du se HDTV med MediaPortal?</value>
+    <value>Vil du se HDTV med MediaPortal?</value>
   </data>
   <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Ja, jeg vil bruge MediaPortal til at se HD indhold.,Ja, jeg vil bruge MediaPortal til at se HD indhold.</value>
+    <value>Ja, jeg vil bruge MediaPortal til at se HD indhold.</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nej, jeg vil ikke bruge MediaPortal til at se HD indhold.,Nej, MediaPortal vil ikke blive brugt til at se HD indhold.</value>
+    <value>Nej, jeg vil ikke bruge MediaPortal til at se HD indhold.</value>
   </data>
   <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Jeg ved ikke hvad HDTV er.,Jeg ved ikke hvad HD indhold er.</value>
+    <value>Jeg ved ikke hvad HDTV er.</value>
   </data>
   <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
     <value>Hvilken TV-Engine vil du benytte?</value>
@@ -205,15 +205,15 @@ MediaPortals brugerflade.</value>
     <value>Dedikeret TV-Server (primær server)</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
-    <value>Kun TV-Server installeres på denne PC.
-Denne PC vil fungere som dedikeret TV-Server og giver mulighed for TV på andre PC'er (klienter) i netværket. (Installation af database er nødvendig)</value>
+    <value>Kun TV-Server installeres på denne PC. Denne PC vil fungere som dedikeret TV-Server
+ og giver mulighed for TV på andre PC'er (klienter) i netværket. (Installation af database er nødvendig)</value>
   </data>
   <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
     <value>Dedikeret TV-Server (slave, eksisterende primær TV-server kræves)</value>
   </data>
   <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Kun TV-Server installeres på denne PC.
-Denne PC vil fungere som dedikeret TV-Server og giver mulighed for TV på andre PC'er (klienter) i netværket. (database ikke nødvendig)</value>
+    <value>Kun TV-Server installeres på denne PC. Denne PC vil fungere som dedikeret TV-Server
+og giver mulighed for TV på andre PC'er (klienter) i netværket. (database ikke nødvendig)</value>
   </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Browse</value>
@@ -348,7 +348,7 @@ Denne PC vil fungere som dedikeret TV-Server og giver mulighed for TV på andre 
     <value>En anden version er allerede installeret</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
-    <value>MediaPortal Installations Værktøj</value>
+    <value>MediaPortal Installations Værktøj (Deploy Tool)</value>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Tilbage</value>
@@ -426,7 +426,7 @@ Denne PC vil fungere som dedikeret TV-Server og giver mulighed for TV på andre 
     <value>Angiv dit sprog før du går videre</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal er OpenSource! Hvis du har købt det er du blevet snydt ;-(</value>
+    <value>MediaPortal er OpenSource! Hvis du har købt det på Ebay er du blevet snydt ;-(</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Konfigurer</value>
@@ -450,7 +450,7 @@ Denne PC vil fungere som dedikeret TV-Server og giver mulighed for TV på andre 
     <value>Ikke konfigureret</value>
   </data>
   <data name="Install_stateRemoved" xml:space="preserve">
-    <value>Fjernet</value>
+    <value>Ikke installeret</value>
   </data>
   <data name="Install_stateUninstall" xml:space="preserve">
     <value>Afinstallér</value>
@@ -487,5 +487,9 @@ måske på en PC uden internetforbindelse?</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Desværre understøttes dit operativ system for tiden ikke af MediaPortal!</value>
+  </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>Dit operativsystem understøttes ikke af MediaPortal, fordi Microsoft ikke har udgivet
+nødvendige fejlrettelser til det. Fortsæt for egen risiko.</value>
   </data>
 </root>
