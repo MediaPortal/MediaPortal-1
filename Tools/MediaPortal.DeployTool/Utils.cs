@@ -246,7 +246,7 @@ namespace MediaPortal.DeployTool
           }
           if (osInfo.Version.Minor == 1)   // 5.1 = WindowsXP
           {
-            if (osVersionInfo.wServicePackMajor < 2)
+            if (int.Parse(osInfo.ServicePack.Substring("Service Pack ".Length, 1)) < 2)
             {
               OsDesc = "Windows XP ServicePack 1";
               OsSupport = false;
