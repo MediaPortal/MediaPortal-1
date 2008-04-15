@@ -167,6 +167,7 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox mpCheckBox2;
     private MPButton mpButton1;
     private MPCheckBox checkBoxCentareaReMapMouseButton;
+    private MPCheckBox checkBoxMapJoystick;
     private MPLabel labelFireDTVModel;
 
     #endregion
@@ -452,11 +453,12 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
 
-        #region Centarea
+        #region Sceneo
 
         checkBoxCentareaEnabled.Checked = xmlreader.GetValueAsBool("remote", "Centarea", false);
         checkBoxCentareaVerbose.Checked = xmlreader.GetValueAsBool("remote", "CentareaVerbose", false);
         checkBoxCentareaReMapMouseButton.Checked = xmlreader.GetValueAsBool("remote", "CentareaMouseOkMap", true);
+        checkBoxMapJoystick.Checked = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
 
         #endregion
       }
@@ -528,11 +530,12 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
 
-        #region Centarea
+        #region Sceneo
 
         xmlwriter.SetValueAsBool("remote", "Centarea", checkBoxCentareaEnabled.Checked);
         xmlwriter.SetValueAsBool("remote", "CentareaVerbose", checkBoxCentareaVerbose.Checked);
         xmlwriter.SetValueAsBool("remote", "CentareaMouseOkMap", checkBoxCentareaReMapMouseButton.Checked);
+        xmlwriter.SetValueAsBool("remote", "CentareaJoystickMap", checkBoxMapJoystick.Checked);
 
         #endregion
       }
@@ -668,6 +671,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxMapJoystick = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -901,6 +905,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxCentareaOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxCentareaOptions.Controls.Add(this.checkBoxMapJoystick);
       this.groupBoxCentareaOptions.Controls.Add(this.checkBoxCentareaReMapMouseButton);
       this.groupBoxCentareaOptions.Controls.Add(this.checkBoxCentareaVerbose);
       this.groupBoxCentareaOptions.Controls.Add(this.checkBoxCentareaEnabled);
@@ -908,7 +913,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxCentareaOptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxCentareaOptions.Location = new System.Drawing.Point(12, 8);
       this.groupBoxCentareaOptions.Name = "groupBoxCentareaOptions";
-      this.groupBoxCentareaOptions.Size = new System.Drawing.Size(440, 95);
+      this.groupBoxCentareaOptions.Size = new System.Drawing.Size(440, 120);
       this.groupBoxCentareaOptions.TabIndex = 4;
       this.groupBoxCentareaOptions.TabStop = false;
       // 
@@ -1803,6 +1808,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpButton1.Text = "Mapping";
       this.mpButton1.UseVisualStyleBackColor = true;
       // 
+      // checkBoxMapJoystick
+      // 
+      this.checkBoxMapJoystick.AutoSize = true;
+      this.checkBoxMapJoystick.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxMapJoystick.Location = new System.Drawing.Point(16, 93);
+      this.checkBoxMapJoystick.Name = "checkBoxMapJoystick";
+      this.checkBoxMapJoystick.Size = new System.Drawing.Size(291, 17);
+      this.checkBoxMapJoystick.TabIndex = 6;
+      this.checkBoxMapJoystick.Text = "Map mouse movement to cursor directions (experimental)";
+      this.checkBoxMapJoystick.UseVisualStyleBackColor = true;
+      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -2178,7 +2194,7 @@ namespace MediaPortal.Configuration.Sections
     }
     #endregion
 
-    #region Form control commands Centarea
+    #region Form control commands Sceneo
 
     private void buttonCentareaMapping_Click(object sender, EventArgs e)
     {

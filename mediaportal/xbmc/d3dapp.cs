@@ -105,7 +105,7 @@ namespace MediaPortal
     protected bool ready;
     protected bool hasFocus;
     protected bool isMultiThreaded = true;
-    protected bool _fromTray = false;    
+    protected bool _fromTray = false;
     protected bool frameMoving; // Internal variables used for timing
     protected bool singleStep;
     // Main objects used for creating and rendering the 3D scene
@@ -257,6 +257,7 @@ namespace MediaPortal
     private bool alwaysOnTop = false;
     private bool useExclusiveDirectXMode;
     private bool useEnhancedVideoRenderer;
+    private bool _disableMouseEvents = false;
 
     [DllImport("winmm.dll")]
     internal static extern uint timeBeginPeriod(uint period);
@@ -309,12 +310,13 @@ namespace MediaPortal
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
-        useEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useevr", false);        
-        if (useEnhancedVideoRenderer) 
+        useEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useevr", false);
+        if (useEnhancedVideoRenderer)
           useExclusiveDirectXMode = false;
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
+        _disableMouseEvents = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
       }
 
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
@@ -329,13 +331,13 @@ namespace MediaPortal
 #endif
       InitializeComponent();
       if (!GUIGraphicsContext.UseSeparateRenderThread)
-      if (debugChangeDeviceHack)
-      {
-      }
+        if (debugChangeDeviceHack)
+        {
+        }
 
       GUIGraphicsContext.IsVMR9Exclusive = useExclusiveDirectXMode;
       GUIGraphicsContext.IsEvr = useEnhancedVideoRenderer;
-     playlistPlayer = PlayListPlayer.SingletonPlayer;
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
     protected void SetupCamera2D()
@@ -548,7 +550,7 @@ namespace MediaPortal
           break;// no need to loop again.. result would be the same
       }
 
-    EndWindowedDeviceComboSearch:
+      EndWindowedDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -657,7 +659,7 @@ namespace MediaPortal
           break;// no need to loop again.. result would be the same
       }
 
-    EndFullscreenDeviceComboSearch:
+      EndFullscreenDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -1263,13 +1265,13 @@ namespace MediaPortal
         {
 #endif
         if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this))
-          {
-            // Yield some CPU time to other processes
+        {
+          // Yield some CPU time to other processes
 #if !PROFILING
-            Thread.Sleep(100); // 100 milliseconds
+          Thread.Sleep(100); // 100 milliseconds
 #endif
-          }
-          Render3DEnvironment();
+        }
+        Render3DEnvironment();
 #if DEBUG
 #else
         }
@@ -1311,7 +1313,7 @@ namespace MediaPortal
     }
 
     public void RecoverDevice()
-    {      
+    {
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
       {
         //Debugger.Launch();
@@ -1708,14 +1710,14 @@ namespace MediaPortal
         timer.Enabled = true;
       }
 
-      bool result = ShowLastActiveModule();      
+      bool result = ShowLastActiveModule();
     }
 
     private void TvDelayThread()
-    {      
+    {
       //we have to use a small delay before calling tvfullscreen.                              
       Thread.Sleep(200);
-      g_Player.ShowFullScreenWindow();      
+      g_Player.ShowFullScreenWindow();
     }
     /*
     private void ModuleDelayThread(int lastActiveModule)
@@ -1727,7 +1729,7 @@ namespace MediaPortal
     */
 
     protected bool ShowLastActiveModule()
-    {          
+    {
       bool showLastActiveModule = false;
       int lastActiveModule = -1;
       bool lastActiveModuleFullscreen = false;
@@ -1759,16 +1761,16 @@ namespace MediaPortal
             Log.Debug("ShowLastActiveModule() - system probably awoken by user, continuing with ShowLastActiveModule");
           }
         }
-        
+
       }
 
-      Log.Debug("d3dapp: ShowLastActiveModule active : {0}", showLastActiveModule); 
-      
+      Log.Debug("d3dapp: ShowLastActiveModule active : {0}", showLastActiveModule);
+
 
       if (showLastActiveModule)
       {
         Log.Debug("d3dapp: ShowLastActiveModule module : {0}", lastActiveModule);
-        Log.Debug("d3dapp: ShowLastActiveModule fullscreen : {0}", lastActiveModuleFullscreen); 
+        Log.Debug("d3dapp: ShowLastActiveModule fullscreen : {0}", lastActiveModuleFullscreen);
         if (lastActiveModule < 0)
         {
           Log.Error("Error recalling last active module - invalid module name '{0}'", lastActiveModule);
@@ -1778,22 +1780,22 @@ namespace MediaPortal
         {
           try
           {
-            GUIWindowManager.ActivateWindow(lastActiveModule);                                                               
+            GUIWindowManager.ActivateWindow(lastActiveModule);
             /*            
             ThreadStart ts = delegate() { ModuleDelayThread(lastActiveModule); };            
             Thread moduleDelayThread = new Thread(ts);            
             moduleDelayThread.Start();
-            */            
+            */
 
             if (lastActiveModule == (int)GUIWindow.Window.WINDOW_TV && lastActiveModuleFullscreen)
             {
               //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV);
               //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);                            
-            
+
               Thread tvDelayThread = new Thread(TvDelayThread);
-              tvDelayThread.Start();              
-            }             
-            
+              tvDelayThread.Start();
+            }
+
             return true;
           }
           catch (Exception e)
@@ -1804,8 +1806,8 @@ namespace MediaPortal
         }
       }
       return false;
-    }    
- 
+    }
+
     private void D3DApp_Closing(object sender, CancelEventArgs e)
     {
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
@@ -2137,7 +2139,7 @@ namespace MediaPortal
         active = !(this.WindowState == FormWindowState.Minimized);
         base.OnResize(e);
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Error("d3dapp: An error occured in OnResize - {0}", ex.Message);
       }
@@ -2219,15 +2221,18 @@ namespace MediaPortal
       }
       else if (lastx != e.X || lasty != e.Y)
       {
-        //this.Text=String.Format("show {0},{1} {2},{3}",e.X,e.Y,lastx,lasty);
-        lastx = e.X;
-        lasty = e.Y;
-        Cursor ourCursor = this.Cursor;
-        if (!_showCursor)
+        if (!_disableMouseEvents)
         {
-          Cursor.Show();
-          _showCursor = true;
-          Invalidate(true);
+          //this.Text=String.Format("show {0},{1} {2},{3}",e.X,e.Y,lastx,lasty);
+          lastx = e.X;
+          lasty = e.Y;
+          Cursor ourCursor = this.Cursor;
+          if (!_showCursor)
+          {
+            Cursor.Show();
+            _showCursor = true;
+            Invalidate(true);
+          }
         }
         _mouseTimeOutTimer = DateTime.Now;
       }
@@ -2664,7 +2669,7 @@ namespace MediaPortal
       mousedoubleclick(e);
     }
 
-		private void timer_Tick(object sender, EventArgs e)
+    private void timer_Tick(object sender, EventArgs e)
     {
       OnProcess();
       FrameMove();
@@ -2675,7 +2680,7 @@ namespace MediaPortal
       bool skipMessage = false;
       Rectangle newBounds = new Rectangle(x, y, width, height);
       if (GUIGraphicsContext._useScreenSelector && isMaximized)
-      {        
+      {
         if (!newBounds.Equals(GUIGraphicsContext.currentScreen.Bounds))
         {
           skipMessage = true;
@@ -2691,7 +2696,7 @@ namespace MediaPortal
       }
     }
   }
-		
+
   #region Enums for D3D Applications
 
   /// <summary>

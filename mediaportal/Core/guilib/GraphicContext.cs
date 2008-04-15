@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Library
       STARTING,		// starting up
       RUNNING,		// running
       STOPPING,		// stopping
-			SUSPENDING, // system in suspend mode
+      SUSPENDING, // system in suspend mode
       LOST
     }
     /// <summary>
@@ -456,6 +456,18 @@ namespace MediaPortal.GUI.Library
         }
         return form.ClientSize.Width;
       }
+    }
+
+    public static void ResetCursor()
+    {
+      int posx = form.ClientRectangle.Width / 2 + form.Location.X;
+      int posy = form.ClientRectangle.Width / 2 + form.Location.Y;
+
+      Cursor.Position = new Point(posx, posy);
+
+      //if (DX9Device != null)
+      //  DX9Device.SetCursorPosition(posx, posy, true);
+      Cursor.Hide();
     }
 
     /// <summary>
@@ -1035,7 +1047,6 @@ namespace MediaPortal.GUI.Library
       set { m_skinSize = value; }
     }
 
-
     /// <summary>
     /// Get/Set whether we should show the GUI as background or 
     /// live tv as background
@@ -1075,7 +1086,6 @@ namespace MediaPortal.GUI.Library
         m_iScrollSpeedHorizontal = value;
       }
     }
-
 
     /// <summary>
     /// Get/Set the current maximum number of FPS
@@ -1149,8 +1159,8 @@ namespace MediaPortal.GUI.Library
           vmr9Active = value;
           if (vmr9Active)
             Log.Debug("VMR9: Now active");
-          else          
-            Log.Debug("VMR9: Inactive");          
+          else
+            Log.Debug("VMR9: Inactive");
         }
       }
     }
@@ -1275,7 +1285,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     public static void SetScalingResolution(/*RESOLUTION res,*/ int posX, int posY, bool needsScaling)
     {
       //m_windowResolution = res;
@@ -1329,22 +1338,27 @@ namespace MediaPortal.GUI.Library
     {
       _finalTransform = matrix;
     }
+
     public static float[,] GetFinalMatrix()
     {
       return _finalTransform.Matrix;
     }
+
     public static float ScaleFinalXCoord(float x, float y)
     {
       return _finalTransform.TransformXCoord(x, y, 0);
     }
+
     public static float ScaleFinalYCoord(float x, float y)
     {
       return _finalTransform.TransformYCoord(x, y, 0);
     }
+
     public static float ScaleFinalZCoord(float x, float y)
     {
       return _finalTransform.TransformZCoord(x, y, 0);
     }
+
     public static void ScaleFinalCoords(ref float x, ref float y, ref float z)
     {
       _finalTransform.TransformPosition(ref x, ref y, ref z);
@@ -1355,6 +1369,7 @@ namespace MediaPortal.GUI.Library
       uint alpha = _finalTransform.TransformAlpha((color >> 24) & 0xff);
       return ((alpha << 24) & 0xff000000) | (color & 0xffffff);
     }
+
     public static void SetWindowTransform(TransformMatrix matrix)
     { // reset the group transform stack
 
@@ -1371,6 +1386,7 @@ namespace MediaPortal.GUI.Library
         _groupTransforms.Add(matrix);
       UpdateFinalTransform(_groupTransforms[_groupTransforms.Count - 1]);
     }
+
     public static void RemoveTransform()
     {
       if (_groupTransforms.Count > 0)
@@ -1380,7 +1396,6 @@ namespace MediaPortal.GUI.Library
       else
         UpdateFinalTransform(new TransformMatrix());
     }
-
 
     public static void SetCameraPosition(Point camera)
     {
