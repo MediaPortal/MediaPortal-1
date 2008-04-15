@@ -40,7 +40,7 @@ namespace MediaPortal.WinampPlayer
   /// <summary>
   /// Summary description for Configuration.
   /// </summary>
-  public class ConfigurationForm : MediaPortal.UserInterface.Controls.MPForm
+  public class ConfigurationForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     public const string WINAMPINI = "winamp.ini";
 

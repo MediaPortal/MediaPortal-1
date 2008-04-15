@@ -12,7 +12,7 @@ using MediaPortal.GUI.Library;
 namespace ProcessPlugins.ComSkipLauncher
 {
 
-  public partial class Configuration : MediaPortal.UserInterface.Controls.MPForm
+  public partial class Configuration : MediaPortal.UserInterface.Controls.MPConfigForm
   {
 
     #region Constants

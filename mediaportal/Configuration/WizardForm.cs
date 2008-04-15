@@ -39,7 +39,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for WizardForm.
   /// </summary>
-  public class WizardForm : MediaPortal.UserInterface.Controls.MPForm
+  public class WizardForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     internal class SectionHolder
     {

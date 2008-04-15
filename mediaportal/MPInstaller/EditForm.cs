@@ -38,7 +38,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class EditForm : Form
+  public partial class EditForm : MPInstallerForm
   {
     private MPinstallerStruct _struct = new MPinstallerStruct();
     private string proiect_file_name = "Untitled";

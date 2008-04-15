@@ -43,7 +43,7 @@ namespace MediaPortal
   /// <summary>
   /// Summary description for CodecsForm.
   /// </summary>
-  public class CodecsForm : System.Windows.Forms.Form
+  public class CodecsForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private System.Windows.Forms.LinkLabel LinkLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel label2;

@@ -33,7 +33,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.ProcessPlugins.MusicDBReorg
 {
-  public partial class MusicDBReorgSettings : MediaPortal.UserInterface.Controls.MPForm
+  public partial class MusicDBReorgSettings : MediaPortal.UserInterface.Controls.MPConfigForm
   {
 
     #region Ctor

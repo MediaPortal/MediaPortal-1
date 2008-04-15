@@ -35,7 +35,7 @@ using MediaPortal.Profile;
 
 namespace MediaPortal.InputDevices
 {
-  public partial class RemoteLearn : MediaPortal.UserInterface.Controls.MPForm
+  public partial class RemoteLearn : MediaPortal.UserInterface.Controls.MPConfigForm
   {
 
     #region Variables

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class login_form : Form
+  public partial class login_form : MPInstallerForm
   {
     public string username = string.Empty;
     public string password = string.Empty;

@@ -35,7 +35,7 @@ using System.Net;
 
 namespace MediaPortal.MPInstaller
 {
-    public partial class download_form : Form
+    public partial class download_form : MPInstallerForm
     {
         string source = string.Empty;
         string dest = string.Empty;

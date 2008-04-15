@@ -29,7 +29,6 @@ namespace MPTestTool
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MPTestTool));
       this.settingsGroup = new System.Windows.Forms.GroupBox();
       this.btnZipFile = new System.Windows.Forms.Button();
       this.tbZipFile = new System.Windows.Forms.TextBox();
@@ -340,7 +339,6 @@ namespace MPTestTool
       this.Controls.Add(this.step2Group);
       this.Controls.Add(this.step1Group);
       this.Controls.Add(this.settingsGroup);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Menu = this.mainMenu;
       this.Name = "MPTestTool";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

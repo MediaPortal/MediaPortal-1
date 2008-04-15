@@ -40,7 +40,7 @@ namespace MediaPortal.ITunesPlayer
   /// <summary>
   /// Summary description for Configuration.
   /// </summary>
-  public class ConfigurationForm : MediaPortal.UserInterface.Controls.MPForm
+  public class ConfigurationForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
 
     private string m_enabledExt = "";

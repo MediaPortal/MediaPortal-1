@@ -57,7 +57,7 @@ namespace MediaPortal
   /// <summary>
   /// The base class for all the graphics (D3D) samples, it derives from windows forms
   /// </summary>
-  public class D3DApp : Form
+  public class D3DApp : MediaPortal.UserInterface.Controls.MPForm
   {
     private const int MILLI_SECONDS_TIMER = 1;
     protected string m_strSkin = "BlueTwo";
@@ -2045,7 +2045,7 @@ namespace MediaPortal
       // notifyIcon
       // 
       this.notifyIcon.ContextMenu = this.contextMenu;
-      this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
       this.notifyIcon.Text = "MediaPortal";
       this.notifyIcon.DoubleClick += new System.EventHandler(this.Restore_OnClick);
       // 
@@ -2074,20 +2074,20 @@ namespace MediaPortal
       // 
       // D3DApp
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(720, 576);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.KeyPreview = true;
       this.MinimumSize = new System.Drawing.Size(100, 100);
       this.Name = "D3DApp";
+      this.Load += new System.EventHandler(this.D3DApp_Load);
       this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseDoubleClick);
+      this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
       this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
       this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
-      this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
-      this.Load += new System.EventHandler(this.D3DApp_Load);
       this.ResumeLayout(false);
+
     }
 
     /// <summary>

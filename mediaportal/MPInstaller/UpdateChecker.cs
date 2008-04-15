@@ -35,7 +35,7 @@ using MediaPortal.MPInstaller;
 
 namespace MediaPortal.MPInstaller
 {
-    public partial class UpdateChecker : Form
+    public partial class UpdateChecker : MPInstallerForm
     {
         MPInstallHelper lst = new MPInstallHelper();
         MPInstallHelper lst_online = new MPInstallHelper();

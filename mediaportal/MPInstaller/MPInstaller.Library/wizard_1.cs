@@ -36,7 +36,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class wizard_1 : Form
+  public partial class wizard_1 : MPInstallerForm
   {
     public int step = 0;
     public MPpackageStruct package;

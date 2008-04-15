@@ -37,7 +37,7 @@ namespace GUIRSSFeed
   /// <summary>
   /// A setup form for the My News Plugin
   /// </summary>
-  public class SetupForm : MediaPortal.UserInterface.Controls.MPForm, ISetupForm, IShowPlugin
+  public class SetupForm : MediaPortal.UserInterface.Controls.MPConfigForm, ISetupForm, IShowPlugin
   {
     private MediaPortal.UserInterface.Controls.MPButton buttonAdd;
     private System.Windows.Forms.ListBox listBox;

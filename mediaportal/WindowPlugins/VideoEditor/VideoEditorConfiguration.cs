@@ -35,7 +35,7 @@ using DirectShowLib;
 
 namespace WindowPlugins.VideoEditor
 {
-	public partial class VideoEditorConfiguration : MediaPortal.UserInterface.Controls.MPForm
+	public partial class VideoEditorConfiguration : MediaPortal.UserInterface.Controls.MPConfigForm
 	{
 		public VideoEditorConfiguration()
 		{

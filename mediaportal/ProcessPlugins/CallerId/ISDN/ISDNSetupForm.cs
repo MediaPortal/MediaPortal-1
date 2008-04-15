@@ -36,7 +36,7 @@ namespace ProcessPlugins.CallerId
   /// <summary>
   /// Summary description for ISDNSetupForm.
   /// </summary>
-  public class ISDNSetupForm : MediaPortal.UserInterface.Controls.MPForm
+  public class ISDNSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStopMedia;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIncomingCall;

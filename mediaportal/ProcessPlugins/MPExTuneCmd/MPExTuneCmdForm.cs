@@ -38,7 +38,7 @@ namespace MediaPortal.MPExTuneCmd
   /// <summary>
   /// Summary description for MPExTuneCmdForm.
   /// </summary>
-  public class MPExTuneCmdForm : MediaPortal.UserInterface.Controls.MPForm
+  public class MPExTuneCmdForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox MpExTuneCmdLoc;

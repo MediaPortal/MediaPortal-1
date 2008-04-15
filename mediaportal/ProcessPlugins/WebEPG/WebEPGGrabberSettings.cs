@@ -32,7 +32,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.ProcessPlugins.WebEPG
 {
-  public partial class WebEPGGrabberSettings : MediaPortal.UserInterface.Controls.MPForm
+  public partial class WebEPGGrabberSettings : MediaPortal.UserInterface.Controls.MPConfigForm
   {
 
     #region Ctor

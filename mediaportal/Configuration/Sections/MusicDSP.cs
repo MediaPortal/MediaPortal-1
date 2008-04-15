@@ -372,7 +372,7 @@ namespace MediaPortal.Configuration.Sections
           _vstProc = new VSTPROC(vstEditorCallBack);
           BassVst.BASS_VST_SetCallback(_vstHandle, _vstProc, 0);
           // create a new System.Windows.Forms.Form
-          Form f = new Form();
+          Form f = new MediaPortal.UserInterface.Controls.MPConfigForm();
           f.Width = vstInfo.editorWidth + 4;
           f.Height = vstInfo.editorHeight + 34;
           f.Closing += new CancelEventHandler(f_Closing);

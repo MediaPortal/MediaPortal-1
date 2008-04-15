@@ -177,7 +177,6 @@ namespace MediaPortal.MPInstaller
           this.Controls.Add(this.button1);
           this.DoubleBuffered = true;
           this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
-          this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
           this.MaximizeBox = false;
           this.Name = "start_form";
           this.RightToLeft = System.Windows.Forms.RightToLeft.No;

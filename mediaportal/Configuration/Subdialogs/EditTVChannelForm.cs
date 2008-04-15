@@ -39,7 +39,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for EditTVChannelForm.
   /// </summary>
-  public class EditTVChannelForm : MediaPortal.UserInterface.Controls.MPForm
+  public class EditTVChannelForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPButton okButton;

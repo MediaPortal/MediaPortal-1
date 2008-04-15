@@ -34,7 +34,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for ParameterForm.
   /// </summary>
-  public class ParameterForm : MediaPortal.UserInterface.Controls.MPForm
+  public class ParameterForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPButton okButton;

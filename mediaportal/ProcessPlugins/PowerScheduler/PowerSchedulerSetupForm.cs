@@ -36,7 +36,7 @@ namespace MediaPortal.PowerScheduler
   /// <summary>
   /// Summary description for PowerSchedulerSetupForm.
   /// </summary>
-  public class PowerSchedulerSetupForm : MediaPortal.UserInterface.Controls.MPForm
+  public class PowerSchedulerSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPButton cb_ok;
     private MediaPortal.UserInterface.Controls.MPLabel label2;

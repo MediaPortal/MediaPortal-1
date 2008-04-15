@@ -39,7 +39,7 @@ namespace MediaPortal.FoobarPlugin
   /// <summary>
   /// Summary description for FoobarConfigForm.
   /// </summary>
-  public class FoobarConfigForm : MediaPortal.UserInterface.Controls.MPForm
+  public class FoobarConfigForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private System.Windows.Forms.LinkLabel linkLabelPluginSource;
     private GroupBox groupBoxFoobarLocation;

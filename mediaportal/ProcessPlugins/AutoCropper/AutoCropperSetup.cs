@@ -39,7 +39,7 @@ using MediaPortal.Configuration;
 #pragma warning disable 108
 namespace ProcessPlugins.AutoCropper
 {
-  public class AutoCropperConfig : MediaPortal.UserInterface.Controls.MPForm
+  public class AutoCropperConfig : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private System.ComponentModel.IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPCheckBox enableAutoCropper;

@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.MyMail
   /// <summary>
   /// Summary description for MailDetailSetup.
   /// </summary>
-  public class MailDetailSetup : MediaPortal.UserInterface.Controls.MPForm
+  public class MailDetailSetup : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;

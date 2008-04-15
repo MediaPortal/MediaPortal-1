@@ -36,7 +36,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.TvNotifies
 {
-  public partial class NotifySetupForm : MediaPortal.UserInterface.Controls.MPForm
+  public partial class NotifySetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     public NotifySetupForm()
     {

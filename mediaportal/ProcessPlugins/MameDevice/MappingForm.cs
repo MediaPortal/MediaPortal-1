@@ -39,7 +39,7 @@ namespace MediaPortal.InputDevices
   /// <summary>
   /// Summary description for HCWMappingForm.
   /// </summary>
-  public class MappingForm : MediaPortal.UserInterface.Controls.MPForm
+  public class MappingForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     Array windowsList = Enum.GetValues(typeof(GUIWindow.Window));
     Array actionList = Enum.GetValues(typeof(Action.ActionType));

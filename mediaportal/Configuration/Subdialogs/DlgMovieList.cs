@@ -35,7 +35,7 @@ namespace MediaPortal.Configuration.Sections
   /// <summary>
   /// Summary description for DlgMovieList.
   /// </summary>
-  public class DlgMovieList : MediaPortal.UserInterface.Controls.MPForm
+  public class DlgMovieList : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private System.Windows.Forms.ListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;

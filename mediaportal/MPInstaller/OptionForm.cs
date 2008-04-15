@@ -33,7 +33,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class OptionForm : Form
+  public partial class OptionForm : MPInstallerForm
   {
     public OptionForm()
     {

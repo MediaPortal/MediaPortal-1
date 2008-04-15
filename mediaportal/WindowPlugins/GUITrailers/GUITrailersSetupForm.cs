@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Summary description for GUITrailersSetupForm.
   /// </summary>
-  public class GUITrailersSetupForm : MediaPortal.UserInterface.Controls.MPForm
+  public class GUITrailersSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBox300;
     private MediaPortal.UserInterface.Controls.MPButton btnOK;

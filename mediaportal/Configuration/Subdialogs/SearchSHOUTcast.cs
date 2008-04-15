@@ -39,7 +39,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for SearchSHOUTcast.
   /// </summary>
-  public class SearchSHOUTcast : MediaPortal.UserInterface.Controls.MPForm
+  public class SearchSHOUTcast : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPButton SearchButton;
     private MediaPortal.UserInterface.Controls.MPTextBox SearchText;

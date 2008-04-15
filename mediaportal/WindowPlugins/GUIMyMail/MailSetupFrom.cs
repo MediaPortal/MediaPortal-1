@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.MyMail
   /// <summary>
   /// Zusammenfassung für MailSetupFrom.
   /// </summary>
-  public class MailSetupFrom : MediaPortal.UserInterface.Controls.MPForm
+  public class MailSetupFrom : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     ArrayList m_mailBox = new ArrayList();
     private NumericUpDown numericUpDown1;

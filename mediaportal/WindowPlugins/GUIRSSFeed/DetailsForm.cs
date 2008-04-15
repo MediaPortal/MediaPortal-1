@@ -33,7 +33,7 @@ namespace GUIRSSFeed
   /// <summary>
   /// Details form for entering a site for My News Plugin
   /// </summary>
-  public class DetailsForm : MediaPortal.UserInterface.Controls.MPForm
+  public class DetailsForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel labelDescription;
     private MediaPortal.UserInterface.Controls.MPLabel labelEncoding;

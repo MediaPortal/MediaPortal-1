@@ -56,7 +56,7 @@ namespace MPTestTool
 	/// <summary>
 	/// Shows the progress of the current action in a dialog.
 	/// </summary>
-	public class ProgressDialog : System.Windows.Forms.Form
+  public class ProgressDialog : MPForm
 	{
     private System.Windows.Forms.Label actionLabel;
 		private System.Windows.Forms.Button okButton;

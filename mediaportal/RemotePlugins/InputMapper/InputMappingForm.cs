@@ -44,7 +44,7 @@ namespace MediaPortal.InputDevices
   /// <summary>
   /// Summary description for ButtonMappingForm.
   /// </summary>
-  public class InputMappingForm : MediaPortal.UserInterface.Controls.MPForm
+  public class InputMappingForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     Array nativeWindowsList = Enum.GetValues(typeof(GUIWindow.Window));
     ArrayList windowsList = new ArrayList();

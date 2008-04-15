@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.MSN
   /// <summary>
   /// Summary description for MessengerSetup.
   /// </summary>
-  public class MessengerSetup : MediaPortal.UserInterface.Controls.MPForm
+  public class MessengerSetup : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxEMail;

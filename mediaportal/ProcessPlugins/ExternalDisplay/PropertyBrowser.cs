@@ -40,7 +40,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// setup form.
   /// </remarks>
   /// <author>JoeDalton</author>
-  public class PropertyBrowser : MediaPortal.UserInterface.Controls.MPForm
+  public class PropertyBrowser : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private delegate void SetStatusDelegate(Status status);
 

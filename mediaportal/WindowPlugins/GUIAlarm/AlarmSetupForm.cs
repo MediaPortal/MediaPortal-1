@@ -37,7 +37,7 @@ namespace MediaPortal.GUI.Alarm
   /// <summary>
   /// Summary description for SetupForm.
   /// </summary>
-  public class AlarmSetupForm : MediaPortal.UserInterface.Controls.MPForm, ISetupForm, IShowPlugin
+  public class AlarmSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm, ISetupForm, IShowPlugin
   {
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;

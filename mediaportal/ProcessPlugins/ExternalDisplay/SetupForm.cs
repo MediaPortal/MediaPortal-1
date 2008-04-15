@@ -35,7 +35,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// The setup form of this plugin
   /// </summary>
   /// <author>JoeDalton</author>
-  public class SetupForm : MediaPortal.UserInterface.Controls.MPForm
+  public class SetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private IContainer components;
     private MPLabel label1;

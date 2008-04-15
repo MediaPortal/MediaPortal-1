@@ -40,7 +40,7 @@ using MediaPortal.Util;
 
 namespace MediaPortal.MPInstaller
 {
-    public partial class Form2 : Form
+    public partial class Form2 : MPInstallerForm
     {
         public string baseDir;
         public int sortColumn;

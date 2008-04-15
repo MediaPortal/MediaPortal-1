@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
   /// <summary>
   /// Summary description for DlgProgress.
   /// </summary>
-  public class DlgProgress : MediaPortal.UserInterface.Controls.MPForm
+  public class DlgProgress : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPButton button2;
       private MediaPortal.UserInterface.Controls.MPLabel label1;

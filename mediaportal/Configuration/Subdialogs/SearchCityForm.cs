@@ -34,7 +34,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for SearchCityForm.
   /// </summary>
-  public class SearchCityForm : MediaPortal.UserInterface.Controls.MPForm
+  public class SearchCityForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxNewCity;
     private System.Windows.Forms.ListBox listBoxCityResults;

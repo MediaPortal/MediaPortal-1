@@ -33,7 +33,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Home
 {
-  public partial class GUIHomeSetupForm : MediaPortal.UserInterface.Controls.MPForm , ISetupForm, IComparer
+  public partial class GUIHomeSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm , ISetupForm, IComparer
   {
     public GUIHomeSetupForm()
     {

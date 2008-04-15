@@ -37,7 +37,7 @@ namespace MediaPortal.Configuration.Sections
   /// <summary>
   /// Summary description for TvChannelLookupService.
   /// </summary>
-  public class TvChannelLookupService : MediaPortal.UserInterface.Controls.MPForm
+  public class TvChannelLookupService : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPLabel label2;

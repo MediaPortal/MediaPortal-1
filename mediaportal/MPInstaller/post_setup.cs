@@ -34,7 +34,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-    public partial class post_setup : Form
+    public partial class post_setup : MPInstallerForm
     {
         public MPinstallerStruct _struct;
         public post_setup()

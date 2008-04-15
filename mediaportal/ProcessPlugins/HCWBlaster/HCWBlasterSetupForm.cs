@@ -36,7 +36,7 @@ namespace MediaPortal.HCWBlaster
   /// <summary>
   /// Summary description for HCWBlasterSetupForm.
   /// </summary>
-  public class HCWBlasterSetupForm : MediaPortal.UserInterface.Controls.MPForm
+  public class HCWBlasterSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPButton btnOK;

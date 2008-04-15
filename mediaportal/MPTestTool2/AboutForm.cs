@@ -57,7 +57,7 @@ namespace MPTestTool
 	/// <summary>
 	/// Description of AboutForm.
 	/// </summary>
-	public class AboutForm : System.Windows.Forms.Form
+  public class AboutForm : MPForm
 	{
 		private System.Windows.Forms.Label aboutLicense;
     private System.Windows.Forms.Label aboutHeader;

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace MPTestTool
 {
-  public partial class CrashRestartDlg : Form
+  public partial class CrashRestartDlg : MPForm
   {
     private int ticks = 10;
 

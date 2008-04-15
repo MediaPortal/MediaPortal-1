@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.GUIBurner
   /// <summary>
   /// Summary description for BurnerSetupForm.
   /// </summary>
-  public partial class BurnerSetupForm : MediaPortal.UserInterface.Controls.MPForm
+  public partial class BurnerSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     #region Private Variables
     private XPBurn.XPBurnCD CDBurner;

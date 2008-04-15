@@ -33,7 +33,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class SkinSelect : Form
+  public partial class SkinSelect : MPInstallerForm
   {
     public string Type = string.Empty;
     public string SubType = string.Empty;

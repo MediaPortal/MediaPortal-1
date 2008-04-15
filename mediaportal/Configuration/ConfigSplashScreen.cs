@@ -123,7 +123,7 @@ namespace MediaPortal.Configuration
     /// <summary>
     /// Summary description for SplashScreen.
     /// </summary>
-    private class SplashForm : Form
+    private class SplashForm : MediaPortal.UserInterface.Controls.MPConfigForm
     {
       private Panel panel1;
       private Label versionLabel;

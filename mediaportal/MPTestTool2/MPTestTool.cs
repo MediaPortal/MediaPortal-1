@@ -37,7 +37,7 @@ using MediaPortal.Configuration;
 
 namespace MPTestTool
 {
-  public partial class MPTestTool : Form
+  public partial class MPTestTool : MPForm
   {
     #region Variables
     string _tempDir = "";

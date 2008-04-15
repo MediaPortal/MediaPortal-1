@@ -34,7 +34,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for EditShare.
   /// </summary>
-  public class EditShareForm : MediaPortal.UserInterface.Controls.MPForm
+  public class EditShareForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPButton folderButton;

@@ -33,7 +33,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class GroupForm : Form
+  public partial class GroupForm : MPInstallerForm
   {
     public MPinstallerStruct _struct;
     public GroupForm()

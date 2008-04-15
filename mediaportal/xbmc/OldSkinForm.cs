@@ -33,7 +33,7 @@ namespace MediaPortal
 	/// <summary>
 	/// Summary description for OldSkinForm.
 	/// </summary>
-	public class OldSkinForm : System.Windows.Forms.Form
+	public class OldSkinForm : MediaPortal.UserInterface.Controls.MPForm
 	{
 		private MediaPortal.UserInterface.Controls.MPLabel label1;
 		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxIgnoreMsg;

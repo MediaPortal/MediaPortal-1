@@ -33,7 +33,7 @@ namespace MediaPortal
   /// <summary>
   /// A form to allow the user to change the current D3D settings.
   /// </summary>
-  public class D3DSettingsForm : System.Windows.Forms.Form
+  public class D3DSettingsForm : MediaPortal.UserInterface.Controls.MPForm
   {
     private D3DEnumeration enumeration;
     public D3DSettings settings; // Potential new D3D settings

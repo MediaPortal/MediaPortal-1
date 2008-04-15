@@ -36,7 +36,7 @@ namespace MediaPortal.Topbar
   /// <summary>
   /// Summary description for TopBarSetupForm.
   /// </summary>
-  public class TopBarSetupForm : MediaPortal.UserInterface.Controls.MPForm
+  public class TopBarSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     private MediaPortal.UserInterface.Controls.MPCheckBox chkAutoHide;
     private MediaPortal.UserInterface.Controls.MPButton buttonOk;

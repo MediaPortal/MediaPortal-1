@@ -45,7 +45,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for Settings.
   /// </summary>
-  public class SettingsForm : MediaPortal.UserInterface.Controls.MPForm
+  public class SettingsForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     public delegate bool IECallBack(int hwnd, int lParam);
     private const int SW_SHOWNORMAL = 1;

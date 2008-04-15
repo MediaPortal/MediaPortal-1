@@ -60,6 +60,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IInternalPlugin.cs" />
+    <Compile Include="MPInstallerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MPInstallerForm.Designer.cs">
+      <DependentUpon>MPInstallerForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MPinstallerStruct.cs" />
     <Compile Include="MPIutils.cs" />
     <Compile Include="MPpackageStruct.cs" />
@@ -84,10 +90,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MPInstallerForm.resx">
+      <DependentUpon>MPInstallerForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="wizard_1.resx">
       <DependentUpon>wizard_1.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\MPI MediaPortal Installer.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
