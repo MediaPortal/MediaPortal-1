@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="TsReader"
 	ProjectGUID="{79B3DC38-9D2C-4D9E-98F8-A610260B46A9}"
 	RootNamespace="MPTSWriter"
@@ -188,7 +188,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="DvbCoreUtilsD.lib strmbasd.lib quartz.lib winmm.lib msvcrtd.lib ws2_32.lib livemedia555.lib"
+				AdditionalDependencies="DvbCoreUtilsD.lib strmbasd.lib quartz.lib winmm.lib msvcrtd.lib ws2_32.lib livemedia555D.lib"
 				OutputFile="Debug/TsReader.ax"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
