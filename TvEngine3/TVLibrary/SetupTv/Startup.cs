@@ -116,15 +116,11 @@ namespace SetupTv
       if (!dlg.TestConnection())
       {
         if (startupMode == StartupMode.DbCleanup)
-        {
-          Log.Info("---- could not delete database because the connection is not setup correctly ----");
-          MessageBox.Show("Unable to find a previous tvlibrary schema. Please make sure there is no old database in place!", "DB cleanup failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-        else
-        {
-          Log.Info("---- ask user for connection details ----");
-          dlg.ShowDialog();
-        }
+          Log.Info("---- could not delete database yet because the connection is not setup correctly ----");
+
+        Log.Info("---- ask user for connection details ----");
+        dlg.ShowDialog();
+
         return; // close the application without restart here.
       }
 
