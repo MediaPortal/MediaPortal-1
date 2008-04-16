@@ -79,7 +79,7 @@ namespace MediaPortal.DeployTool
     #region Private members
     private DeployDialog FindDialog(DialogType dlgType)
     {
-      for (int i = 0 ; i < _dlgs.Count ; i++)
+      for (int i = 0; i < _dlgs.Count; i++)
       {
         if (_dlgs[i].type == dlgType)
         {

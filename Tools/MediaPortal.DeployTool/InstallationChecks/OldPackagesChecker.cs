@@ -37,68 +37,68 @@ namespace MediaPortal.DeployTool
   {
     public string GetDisplayName()
     {
-        return "Old MP/TV-Engine installation";
+      return "Old MP/TV-Engine installation";
     }
     public bool Download()
     {
-        return true;
+      return true;
     }
     public bool Install()
     {
-        UnInstall();
-        return true;
+      UnInstall();
+      return true;
     }
     public bool UnInstall()
     {
       Process setup;
 
       //MP < 0.2.3.0 RC3
-      if( CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}") != null)
+      if (CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}") != null)
       {
-          setup = Process.Start("msiexec.exe", "/x {87819CFA-1786-484D-B0DE-10B5FBF2625D} /qn");
-          setup.WaitForExit();
+        setup = Process.Start("msiexec.exe", "/x {87819CFA-1786-484D-B0DE-10B5FBF2625D} /qn");
+        setup.WaitForExit();
       }
       //MP 0.2.3.0 RC3
       if (CheckUninstallString("MediaPortal 0.2.3.0 RC3") != null)
       {
-          string RegistryFullPathName = CheckUninstallString("MediaPortal 0.2.3.0 RC3");
-          string FileName  = Path.GetFileName(RegistryFullPathName);
-          string Directory = Path.GetDirectoryName(RegistryFullPathName);
-          string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
-          File.Copy(RegistryFullPathName, TempFullPathName);
-          setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
-          setup.WaitForExit();
-          File.Delete(TempFullPathName);
+        string RegistryFullPathName = CheckUninstallString("MediaPortal 0.2.3.0 RC3");
+        string FileName = Path.GetFileName(RegistryFullPathName);
+        string Directory = Path.GetDirectoryName(RegistryFullPathName);
+        string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
+        File.Copy(RegistryFullPathName, TempFullPathName);
+        setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
+        setup.WaitForExit();
+        File.Delete(TempFullPathName);
       }
       //MP 0.2.3.0
       if (CheckUninstallString("MediaPortal 0.2.3.0") != null)
       {
-          string RegistryFullPathName = CheckUninstallString("MediaPortal 0.2.3.0");
-          string FileName  = Path.GetFileName(RegistryFullPathName);
-          string Directory = Path.GetDirectoryName(RegistryFullPathName);
-          string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
-          File.Copy(RegistryFullPathName, TempFullPathName);
-          setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
-          setup.WaitForExit();
-          File.Delete(TempFullPathName);
+        string RegistryFullPathName = CheckUninstallString("MediaPortal 0.2.3.0");
+        string FileName = Path.GetFileName(RegistryFullPathName);
+        string Directory = Path.GetDirectoryName(RegistryFullPathName);
+        string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
+        File.Copy(RegistryFullPathName, TempFullPathName);
+        setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
+        setup.WaitForExit();
+        File.Delete(TempFullPathName);
       }
       //TVServer
-      if( CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
+      if (CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
       {
-          setup = Process.Start("msiexec.exe", "/x {4B738773-EE07-413D-AFB7-BB0AB04A5488} /qn");
-          setup.WaitForExit();
+        setup = Process.Start("msiexec.exe", "/x {4B738773-EE07-413D-AFB7-BB0AB04A5488} /qn");
+        setup.WaitForExit();
       }
       //TVClient old
-      if( CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
+      if (CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
       {
-          setup = Process.Start("msiexec.exe", "/x {F7444E89-5BC0-497E-9650-E50539860DE0} /qn");
-          setup.WaitForExit();
+        setup = Process.Start("msiexec.exe", "/x {F7444E89-5BC0-497E-9650-E50539860DE0} /qn");
+        setup.WaitForExit();
       }
       //TVClient new
       if (CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}") != null)
       {
-          setup = Process.Start("msiexec.exe", "/x {FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA} /qn");
-          setup.WaitForExit();
+        setup = Process.Start("msiexec.exe", "/x {FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA} /qn");
+        setup.WaitForExit();
       }
       return true;
     }
@@ -110,27 +110,27 @@ namespace MediaPortal.DeployTool
 
       //MP < 0.2.3.0 RC3
       if (CheckUninstallString("{87819CFA-1786-484D-B0DE-10B5FBF2625D}") != null)
-          result.state = CheckState.NOT_REMOVED;
+        result.state = CheckState.NOT_REMOVED;
 
       //MP 0.2.3.0 RC3
       if (CheckUninstallString("MediaPortal 0.2.3.0 RC3") != null)
-          result.state = CheckState.NOT_REMOVED;
+        result.state = CheckState.NOT_REMOVED;
 
       //MP 0.2.3.0
       if (CheckUninstallString("MediaPortal 0.2.3.0") != null)
-          result.state = CheckState.NOT_REMOVED;
+        result.state = CheckState.NOT_REMOVED;
 
       //TVServer
-      if( CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
-          result.state = CheckState.NOT_REMOVED;
+      if (CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
+        result.state = CheckState.NOT_REMOVED;
 
       //TVClient old
-      if( CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
-          result.state = CheckState.NOT_REMOVED;
+      if (CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
+        result.state = CheckState.NOT_REMOVED;
 
       //TVClient new
-      if( CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}") != null)
-          result.state = CheckState.NOT_REMOVED;
+      if (CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}") != null)
+        result.state = CheckState.NOT_REMOVED;
 
       return result;
     }
@@ -140,13 +140,13 @@ namespace MediaPortal.DeployTool
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
       if (key != null)
       {
-          strUninstall = key.GetValue("UninstallString").ToString();
-          key.Close();
-          return strUninstall;
-          
+        strUninstall = key.GetValue("UninstallString").ToString();
+        key.Close();
+        return strUninstall;
+
       }
       else
-          return null;
+        return null;
     }
   }
 }

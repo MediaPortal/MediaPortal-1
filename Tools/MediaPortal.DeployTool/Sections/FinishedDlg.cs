@@ -40,7 +40,7 @@ namespace MediaPortal.DeployTool
     public FinishedDlg()
     {
       InitializeComponent();
-      type=DialogType.Finished;
+      type = DialogType.Finished;
       UpdateUI();
     }
 
@@ -49,9 +49,9 @@ namespace MediaPortal.DeployTool
     {
       labelHeading1.Text = Localizer.Instance.GetString("Finished_labelHeading1");
       if (InstallationProperties.Instance["InstallType"] == "download_only")
-          labelHeading2.Text = Localizer.Instance.GetString("Finished_labelHeading2_download");
+        labelHeading2.Text = Localizer.Instance.GetString("Finished_labelHeading2_download");
       else
-          labelHeading2.Text = Localizer.Instance.GetString("Finished_labelHeading2_install");
+        labelHeading2.Text = Localizer.Instance.GetString("Finished_labelHeading2_install");
       labelHeading3.Text = Localizer.Instance.GetString("Finished_labelHeading3");
       linkHomepage.Text = Localizer.Instance.GetString("Finished_linkHomepage");
       linkForum.Text = Localizer.Instance.GetString("Finished_linkForum");

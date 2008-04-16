@@ -40,7 +40,7 @@ namespace MediaPortal.DeployTool
     public TvServerSettingsDlg()
     {
       InitializeComponent();
-      type=DialogType.TvServerSettings;
+      type = DialogType.TvServerSettings;
       textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
       UpdateUI();
     }

@@ -59,10 +59,10 @@ namespace MediaPortal.DeployTool
 
     public override DeployDialog GetNextDialog()
     {
-        if (rbYesWatchTv.Checked)
-            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchHDTv);
-        else
-            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
+      if (rbYesWatchTv.Checked)
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchHDTv);
+      else
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
     }
 
     public override bool SettingsValid()

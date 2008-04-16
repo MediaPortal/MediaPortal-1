@@ -40,8 +40,8 @@ namespace MediaPortal.DeployTool
     public MPSettingsDlg()
     {
       InitializeComponent();
-      type=DialogType.MPSettings;
-      textBoxDir.Text=Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
+      type = DialogType.MPSettings;
+      textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
       UpdateUI();
     }
 

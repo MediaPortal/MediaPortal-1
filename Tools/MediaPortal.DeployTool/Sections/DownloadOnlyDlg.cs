@@ -55,15 +55,15 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-        if (rbDownloadOnly.Checked)
-        {
-            InstallationProperties.Instance.Set("InstallType", "download_only");
-            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
-        }
-        else
-        {
-            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
-        }
+      if (rbDownloadOnly.Checked)
+      {
+        InstallationProperties.Instance.Set("InstallType", "download_only");
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
+      }
+      else
+      {
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
+      }
     }
     public override bool SettingsValid()
     {

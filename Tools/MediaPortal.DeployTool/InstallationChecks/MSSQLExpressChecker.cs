@@ -34,14 +34,14 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool
 {
-  class MSSQLExpressChecker: IInstallationPackage
+  class MSSQLExpressChecker : IInstallationPackage
   {
     [DllImport("kernel32")]
-    private static extern long WritePrivateProfileString(string section,string key, string val, string filePath);
+    private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
     private void PrepareTemplateINI(string iniFile)
     {
-      WritePrivateProfileString("Options","USERNAME","MediaPortal",iniFile);
+      WritePrivateProfileString("Options", "USERNAME", "MediaPortal", iniFile);
       WritePrivateProfileString("Options", "COMPANYNAME", "\"Team MediaPortal\"", iniFile);
       WritePrivateProfileString("Options", "INSTALLSQLDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
       WritePrivateProfileString("Options", "INSTALLSQLDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
@@ -53,7 +53,7 @@ namespace MediaPortal.DeployTool
       WritePrivateProfileString("Options", "SAPWD", InstallationProperties.Instance["DBMSPassword"], iniFile);
       WritePrivateProfileString("Options", "DISABLENETWORKPROTOCOLS", "0", iniFile);
     }
-    
+
     public string GetDisplayName()
     {
       return "MS SQL Express 2005";
@@ -61,43 +61,43 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-        string prg = "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"];
-        string FileName = InstallationProperties.Instance["Sql2005FileName"];
-        DialogResult result = Utils.RetryDownloadFile(FileName, prg);
-        return (result == DialogResult.OK);
+      string prg = "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"];
+      string FileName = InstallationProperties.Instance["Sql2005FileName"];
+      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
+      return (result == DialogResult.OK);
     }
     public bool Install()
     {
 
-      string tmpPath=Path.GetTempPath()+"\\SQLEXPRESS";
+      string tmpPath = Path.GetTempPath() + "\\SQLEXPRESS";
       //Extract all files
       Process extract = Process.Start(InstallationProperties.Instance["Sql2005FileName"], "/X:\"" + tmpPath + "\" /Q");
       extract.WaitForExit();
       //Prepare the unattended ini file
-      PrepareTemplateINI(tmpPath+"\\template.ini");
+      PrepareTemplateINI(tmpPath + "\\template.ini");
       //run the setup
-      Process setup = Process.Start(tmpPath+"\\setup.exe","/wait /settings \""+tmpPath+"\\template.ini\" /qb");
+      Process setup = Process.Start(tmpPath + "\\setup.exe", "/wait /settings \"" + tmpPath + "\\template.ini\" /qb");
       try
       {
-          setup.WaitForExit();
-          if (setup.ExitCode == 0)
-          {
-              Directory.Delete(tmpPath, true);
-              return true;
-          }
-          else
-              return false;
+        setup.WaitForExit();
+        if (setup.ExitCode == 0)
+        {
+          Directory.Delete(tmpPath, true);
+          return true;
+        }
+        else
+          return false;
       }
       catch
       {
-          return false;
+        return false;
       }
     }
     public bool UnInstall()
     {
       Process setup = Process.Start("msiexec", "/X {2AFFFDD7-ED85-4A90-8C52-5DA9EBDC9B8F}");
       setup.WaitForExit();
-       return true;
+      return true;
     }
     public CheckResult CheckStatus()
     {
@@ -109,11 +109,11 @@ namespace MediaPortal.DeployTool
       result.needsDownload = !File.Exists(FileName);
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-          if (result.needsDownload == false)
-              result.state = CheckState.DOWNLOADED;
-          else
-              result.state = CheckState.NOT_DOWNLOADED;
-          return result;
+        if (result.needsDownload == false)
+          result.state = CheckState.DOWNLOADED;
+        else
+          result.state = CheckState.NOT_DOWNLOADED;
+        return result;
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
       if (key == null)

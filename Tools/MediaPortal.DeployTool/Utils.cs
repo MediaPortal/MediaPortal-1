@@ -200,25 +200,25 @@ namespace MediaPortal.DeployTool
       return "Windows NT 5.1"; // XP
     }
 
-#region Operation System Version Check
+    #region Operation System Version Check
     [DllImport("kernel32.dll")]
     private static extern bool GetVersionEx(ref OSVERSIONINFOEX osVersionInfo);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct OSVERSIONINFOEX
     {
-        public int dwOSVersionInfoSize;
-        public int dwMajorVersion;
-        public int dwMinorVersion;
-        public int dwBuildNumber;
-        public int dwPlatformId;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        public string szCSDVersion;
-        public short wServicePackMajor;
-        public short wServicePackMinor;
-        public short wSuiteMask;
-        public byte wProductType;
-        public byte wReserved;
+      public int dwOSVersionInfoSize;
+      public int dwMajorVersion;
+      public int dwMinorVersion;
+      public int dwBuildNumber;
+      public int dwPlatformId;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string szCSDVersion;
+      public short wServicePackMajor;
+      public short wServicePackMinor;
+      public short wSuiteMask;
+      public byte wProductType;
+      public byte wReserved;
     }
 
     public static string CheckOSRequirement(bool NotifyUnsupported)
@@ -226,7 +226,7 @@ namespace MediaPortal.DeployTool
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
       OperatingSystem osInfo = Environment.OSVersion;
 
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));  
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
 
       bool OsSupport = false;
       string OsDesc = "";
@@ -239,7 +239,7 @@ namespace MediaPortal.DeployTool
           break;
 
         case 5:
-            if (osInfo.Version.Minor == 0)   // 5.0 = Windows2000
+          if (osInfo.Version.Minor == 0)   // 5.0 = Windows2000
           {
             OsDesc = "Windows 2000";
             OsSupport = false;
@@ -271,19 +271,19 @@ namespace MediaPortal.DeployTool
           }
           break;
 
-        case 6:                       
-            if (osVersionInfo.wProductType != 3)       // Windows Vista
-            {
-                OsSupport = true;
-                OsDesc = "Windows Vista";
-            }
-            else                                       // Windows 2008
-            {
-                OsSupport = true;
-                OsDesc = "Windows 2008";
-                DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                if (btn == DialogResult.Cancel) Environment.Exit(-1);
-            }
+        case 6:
+          if (osVersionInfo.wProductType != 3)       // Windows Vista
+          {
+            OsSupport = true;
+            OsDesc = "Windows Vista";
+          }
+          else                                       // Windows 2008
+          {
+            OsSupport = true;
+            OsDesc = "Windows 2008";
+            DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            if (btn == DialogResult.Cancel) Environment.Exit(-1);
+          }
           break;
       }
       if (!OsSupport && NotifyUnsupported)
@@ -292,59 +292,59 @@ namespace MediaPortal.DeployTool
         Environment.Exit(-1);
       }
       return OsDesc;
-  }
-#endregion
+    }
+    #endregion
 
-  public static bool Check64bit()
+    public static bool Check64bit()
     {
-        try
+      try
+      {
+        RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows");
+        if (key == null)
         {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows");
-            if (key == null)
-            {
-                InstallationProperties.Instance.Set("RegistryKeyAdd", "");
-                InstallationProperties.Instance.Set("Sql2005Download", "32");
-                return false;
-            }
-            else
-            {
-                key.Close();
-                InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-                InstallationProperties.Instance.Set("Sql2005Download", "64");
-                return true;
-            }
+          InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+          InstallationProperties.Instance.Set("Sql2005Download", "32");
+          return false;
         }
-        catch (Exception e)
+        else
         {
-            MessageBox.Show("DEBUG: Check64bit() - Exception: " + e.Message + "( " + e.StackTrace + " )");
+          key.Close();
+          InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+          InstallationProperties.Instance.Set("Sql2005Download", "64");
+          return true;
         }
-        return false;
+      }
+      catch (Exception e)
+      {
+        MessageBox.Show("DEBUG: Check64bit() - Exception: " + e.Message + "( " + e.StackTrace + " )");
+      }
+      return false;
     }
 
     public static bool CheckStartupPath()
     {
-        try
+      try
+      {
+
+        if (Directory.GetCurrentDirectory().StartsWith("\\"))
         {
-            
-            if (Directory.GetCurrentDirectory().StartsWith("\\"))
-            {
-                MessageBox.Show("Please start installation from a local drive.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                return false;
-            }
-            FileInfo file = new FileInfo(Application.ExecutablePath);
-            DirectoryInfo dir = file.Directory;
-            if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-            {
-                MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                return false;
-            }
-            return true;
+          MessageBox.Show("Please start installation from a local drive.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+          return false;
         }
-        catch
+        FileInfo file = new FileInfo(Application.ExecutablePath);
+        DirectoryInfo dir = file.Directory;
+        if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
         {
-            MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            return false;
+          MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+          return false;
         }
+        return true;
+      }
+      catch
+      {
+        MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        return false;
+      }
     }
   }
 }

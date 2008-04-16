@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
 {
   public partial class TvEngineTypeDlg : DeployDialog, IDeployDialog
   {
-      public TvEngineTypeDlg()
+    public TvEngineTypeDlg()
     {
       InitializeComponent();
       type = DialogType.TvEngineType;
@@ -49,10 +49,10 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-        labelSectionHeader.Text = Localizer.Instance.GetString("TvEngineType_labelSectionHeader");
-        rbTV2.Text = Localizer.Instance.GetString("TvEngineType_rbTvBuildIn");
-        rbTV3.Text = Localizer.Instance.GetString("TvEngineType_rbTvEngine");
-        labelTV3.Text = Localizer.Instance.GetString("TvEngineType_labelTvEngine");
+      labelSectionHeader.Text = Localizer.Instance.GetString("TvEngineType_labelSectionHeader");
+      rbTV2.Text = Localizer.Instance.GetString("TvEngineType_rbTvBuildIn");
+      rbTV3.Text = Localizer.Instance.GetString("TvEngineType_rbTvEngine");
+      labelTV3.Text = Localizer.Instance.GetString("TvEngineType_labelTvEngine");
     }
     public override DeployDialog GetNextDialog()
     {

@@ -37,11 +37,11 @@ namespace MediaPortal.DeployTool
 {
   public partial class MPSettingsWithoutTvEngineDlg : DeployDialog, IDeployDialog
   {
-      public MPSettingsWithoutTvEngineDlg()
+    public MPSettingsWithoutTvEngineDlg()
     {
       InitializeComponent();
       type = DialogType.MPSettingsWithoutTvEngine;
-      textBoxDir.Text=Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
+      textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
       UpdateUI();
     }
 

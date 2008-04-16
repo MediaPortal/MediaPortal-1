@@ -60,7 +60,7 @@ namespace MediaPortal.DeployTool
     }
     public override void SetProperties()
     {
-      InstallationProperties.Instance.Set("language",GetLanguageId());
+      InstallationProperties.Instance.Set("language", GetLanguageId());
     }
     #endregion
 

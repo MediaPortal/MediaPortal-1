@@ -35,7 +35,7 @@ using System.ServiceProcess;
 
 namespace MediaPortal.DeployTool
 {
-  class MySQLChecker: IInstallationPackage
+  class MySQLChecker : IInstallationPackage
   {
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
@@ -45,8 +45,8 @@ namespace MediaPortal.DeployTool
       WritePrivateProfileString("client", "port", "3306", iniFile);
       WritePrivateProfileString("mysql", "default-character-set", "latin1", iniFile);
       WritePrivateProfileString("mysqld", "port", "3306", iniFile);
-      WritePrivateProfileString("mysqld", "basedir","\""+ InstallationProperties.Instance["DBMSDir"].Replace('\\','/')+"/\"", iniFile);
-      WritePrivateProfileString("mysqld", "datadir","\""+ InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/Data/\"", iniFile);
+      WritePrivateProfileString("mysqld", "basedir", "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
+      WritePrivateProfileString("mysqld", "datadir", "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/Data/\"", iniFile);
       WritePrivateProfileString("mysqld", "default-character-set", "latin1", iniFile);
       WritePrivateProfileString("mysqld", "default-storage-engine", "INNODB", iniFile);
       WritePrivateProfileString("mysqld", "sql-mode", "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
@@ -77,20 +77,20 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-        string prg = "MySQL";
-        string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
-        DialogResult result;
-        result = Utils.RetryDownloadFile(FileName, prg);
-        return (result == DialogResult.OK);
+      string prg = "MySQL";
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
+      DialogResult result;
+      result = Utils.RetryDownloadFile(FileName, prg);
+      return (result == DialogResult.OK);
     }
     public bool Install()
     {
       string cmdLine = "/i \"" + Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MySQL") + "\"";
-      cmdLine+=" ADDLOCAL=\"Server,ClientPrograms,MySQLCommandLineShell,MysqlCommandLineUtilsFeature,ServerInstanceConfig\"";
-      cmdLine+=" INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
-      cmdLine+=" /qb-";
-      cmdLine+=" /L* \""+Path.GetTempPath()+"\\mysqlinst.log\"";
-      Process setup=Process.Start("msiexec.exe",cmdLine);
+      cmdLine += " ADDLOCAL=\"Server,ClientPrograms,MySQLCommandLineShell,MysqlCommandLineUtilsFeature,ServerInstanceConfig\"";
+      cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
+      cmdLine += " /qb-";
+      cmdLine += " /L* \"" + Path.GetTempPath() + "\\mysqlinst.log\"";
+      Process setup = Process.Start("msiexec.exe", cmdLine);
       setup.WaitForExit();
       StreamReader sr = new StreamReader(Path.GetTempPath() + "\\mysqlinst.log");
       bool installOk = false;
@@ -119,20 +119,20 @@ namespace MediaPortal.DeployTool
         return false;
       }
       System.Threading.Thread.Sleep(2000);
-      cmdLine="-u root password "+InstallationProperties.Instance["DBMSPassword"];
+      cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
       Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
       mysqladmin.WaitForExit();
       System.Threading.Thread.Sleep(2000);
-      cmdLine = "-u root --password="+InstallationProperties.Instance["DBMSPassword"]+" --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" + InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
+      cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" + InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
       Process mysql = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
       try
       {
-          mysql.WaitForExit();
-          return true;
+        mysql.WaitForExit();
+        return true;
       }
       catch
       {
-          return false;
+        return false;
       }
     }
     public bool UnInstall()
@@ -147,11 +147,11 @@ namespace MediaPortal.DeployTool
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MySQL"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-          if (result.needsDownload == false)
-              result.state = CheckState.DOWNLOADED;
-          else
-              result.state = CheckState.NOT_DOWNLOADED;
-          return result;
+        if (result.needsDownload == false)
+          result.state = CheckState.DOWNLOADED;
+        else
+          result.state = CheckState.NOT_DOWNLOADED;
+        return result;
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "MySQL AB\\MySQL Server 5.0");
       if (key == null)

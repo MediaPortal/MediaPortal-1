@@ -33,7 +33,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool
 {
-  class TvServerChecker: IInstallationPackage
+  class TvServerChecker : IInstallationPackage
   {
     public string GetDisplayName()
     {
@@ -42,11 +42,11 @@ namespace MediaPortal.DeployTool
 
     public bool Download()
     {
-        string prg = "TvServer";
-        string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
-        DialogResult result;
-        result = Utils.RetryDownloadFile(FileName, prg);
-        return (result == DialogResult.OK);
+      string prg = "TvServer";
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
+      DialogResult result;
+      result = Utils.RetryDownloadFile(FileName, prg);
+      return (result == DialogResult.OK);
     }
     public bool Install()
     {
@@ -58,7 +58,7 @@ namespace MediaPortal.DeployTool
       Process setup = Process.Start(exe, parameters);
       try
       {
-          setup.WaitForExit();
+        setup.WaitForExit();
       }
       catch { }
       return true;
@@ -78,36 +78,36 @@ namespace MediaPortal.DeployTool
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-          if (result.needsDownload == false)
-              result.state = CheckState.DOWNLOADED;
-          else
-              result.state = CheckState.NOT_DOWNLOADED;
-          return result;
+        if (result.needsDownload == false)
+          result.state = CheckState.DOWNLOADED;
+        else
+          result.state = CheckState.NOT_DOWNLOADED;
+        return result;
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
       if (key == null)
       {
-          result.state = CheckState.NOT_INSTALLED;
+        result.state = CheckState.NOT_INSTALLED;
       }
       else
       {
-          string TV3Path = (string)key.GetValue("UninstallString");
-          int serverInstalled = (int)key.GetValue("MementoSection_SecServer");
-          //string version = (string)key.GetValue("DisplayVersion");
-          key.Close();
-          if (TV3Path == null | !File.Exists(TV3Path))
-              result.state = CheckState.NOT_INSTALLED;
+        string TV3Path = (string)key.GetValue("UninstallString");
+        int serverInstalled = (int)key.GetValue("MementoSection_SecServer");
+        //string version = (string)key.GetValue("DisplayVersion");
+        key.Close();
+        if (TV3Path == null | !File.Exists(TV3Path))
+          result.state = CheckState.NOT_INSTALLED;
+        else
+        {
+          if (serverInstalled == 1)
+            result.state = CheckState.INSTALLED;
           else
-          {
-              if (serverInstalled == 1)
-                  result.state = CheckState.INSTALLED;
-              else
-                  result.state = CheckState.NOT_INSTALLED;
-          }
-          //if (version == "1.0.0")
-          //  result.state = CheckState.INSTALLED;
-          //else
-          //  result.state = CheckState.VERSION_MISMATCH;
+            result.state = CheckState.NOT_INSTALLED;
+        }
+        //if (version == "1.0.0")
+        //  result.state = CheckState.INSTALLED;
+        //else
+        //  result.state = CheckState.VERSION_MISMATCH;
       }
       return result;
     }

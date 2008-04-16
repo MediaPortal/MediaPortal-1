@@ -33,7 +33,7 @@ using System.Diagnostics;
 
 namespace MediaPortal.DeployTool
 {
-  class DirectX9Checker: IInstallationPackage
+  class DirectX9Checker : IInstallationPackage
   {
     public string GetDisplayName()
     {
@@ -51,15 +51,15 @@ namespace MediaPortal.DeployTool
     public bool Install()
     {
       string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("DirectX9c");
-      Process setup = Process.Start(exe,"/q /t:\""+Path.GetTempPath()+"\\directx9c\"");
+      Process setup = Process.Start(exe, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
       try
       {
-          setup.WaitForExit();
-          return true;
+        setup.WaitForExit();
+        return true;
       }
       catch
       {
-          return false;
+        return false;
       }
     }
     public bool UnInstall()
@@ -73,13 +73,13 @@ namespace MediaPortal.DeployTool
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("DirectX9c"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-          if (result.needsDownload == false)
-              result.state = CheckState.DOWNLOADED;
-          else
-              result.state = CheckState.NOT_DOWNLOADED;
-          return result;
+        if (result.needsDownload == false)
+          result.state = CheckState.DOWNLOADED;
+        else
+          result.state = CheckState.NOT_DOWNLOADED;
+        return result;
       }
-      RegistryKey key=Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;
       else

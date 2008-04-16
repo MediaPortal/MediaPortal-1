@@ -34,91 +34,91 @@ using NetFwTypeLib;
 
 namespace MediaPortal.DeployTool
 {
-  class WindowsFirewallChecker: IInstallationPackage
+  class WindowsFirewallChecker : IInstallationPackage
   {
     #region Firewall API functions
-      private const string PROGID_FIREWALL_MANAGER = "HNetCfg.FwMgr";
-      private const string PROGID_AUTHORIZED_APPLICATION = "HNetCfg.FwAuthorizedApplication";
-      private const string PROGID_OPEN_PORT = "HNetCfg.FWOpenPort";
+    private const string PROGID_FIREWALL_MANAGER = "HNetCfg.FwMgr";
+    private const string PROGID_AUTHORIZED_APPLICATION = "HNetCfg.FwAuthorizedApplication";
+    private const string PROGID_OPEN_PORT = "HNetCfg.FWOpenPort";
 
-      private static NetFwTypeLib.INetFwMgr GetFirewallManager()
+    private static NetFwTypeLib.INetFwMgr GetFirewallManager()
+    {
+      Type objectType = Type.GetTypeFromProgID(PROGID_FIREWALL_MANAGER);
+      return Activator.CreateInstance(objectType) as NetFwTypeLib.INetFwMgr;
+    }
+    private bool AuthorizeApplication(string title, string applicationPath, NET_FW_SCOPE_ scope, NET_FW_IP_VERSION_ ipVersion)
+    {
+      Type type = Type.GetTypeFromProgID(PROGID_AUTHORIZED_APPLICATION);
+      INetFwAuthorizedApplication auth = Activator.CreateInstance(type) as INetFwAuthorizedApplication;
+      auth.Name = title;
+      auth.ProcessImageFileName = applicationPath;
+      auth.Scope = scope;
+      auth.IpVersion = ipVersion;
+      auth.Enabled = true;
+      INetFwMgr manager = GetFirewallManager();
+      try
       {
-          Type objectType = Type.GetTypeFromProgID(PROGID_FIREWALL_MANAGER);
-          return Activator.CreateInstance(objectType) as NetFwTypeLib.INetFwMgr;
+        manager.LocalPolicy.CurrentProfile.AuthorizedApplications.Add(auth);
       }
-      private bool AuthorizeApplication(string title, string applicationPath, NET_FW_SCOPE_ scope, NET_FW_IP_VERSION_ ipVersion)
+      catch
       {
-          Type type = Type.GetTypeFromProgID(PROGID_AUTHORIZED_APPLICATION);  
-          INetFwAuthorizedApplication auth = Activator.CreateInstance(type) as INetFwAuthorizedApplication;
-          auth.Name  = title;  
-          auth.ProcessImageFileName = applicationPath;  
-          auth.Scope = scope;  
-          auth.IpVersion = ipVersion;  
-          auth.Enabled = true;
-          INetFwMgr manager = GetFirewallManager(); 
-          try 
-          { 
-              manager.LocalPolicy.CurrentProfile.AuthorizedApplications.Add(auth); 
-          }
-          catch
-          { 
-              return false; 
-          } 
-          return true;
-      }   
-      private bool GloballyOpenPort(string title, int portNo, NET_FW_SCOPE_ scope, NET_FW_IP_PROTOCOL_ protocol, NET_FW_IP_VERSION_ ipVersion)
-      {  
-          Type type = Type.GetTypeFromProgID(PROGID_OPEN_PORT);  
-          INetFwOpenPort port = Activator.CreateInstance(type) as INetFwOpenPort;  
-          port.Name = title;  
-          port.Port = portNo;  
-          port.Scope = scope;  
-          port.Protocol = protocol;  
-          port.IpVersion = ipVersion;  
-          INetFwMgr manager = GetFirewallManager();  
-          try  
-          {    
-              manager.LocalPolicy.CurrentProfile.GloballyOpenPorts.Add(port);  
-          }  
-          catch
-          {    
-              return false;  
-          }
-          return true;
+        return false;
       }
+      return true;
+    }
+    private bool GloballyOpenPort(string title, int portNo, NET_FW_SCOPE_ scope, NET_FW_IP_PROTOCOL_ protocol, NET_FW_IP_VERSION_ ipVersion)
+    {
+      Type type = Type.GetTypeFromProgID(PROGID_OPEN_PORT);
+      INetFwOpenPort port = Activator.CreateInstance(type) as INetFwOpenPort;
+      port.Name = title;
+      port.Port = portNo;
+      port.Scope = scope;
+      port.Protocol = protocol;
+      port.IpVersion = ipVersion;
+      INetFwMgr manager = GetFirewallManager();
+      try
+      {
+        manager.LocalPolicy.CurrentProfile.GloballyOpenPorts.Add(port);
+      }
+      catch
+      {
+        return false;
+      }
+      return true;
+    }
 
-      #endregion
+    #endregion
     #region Helper functions
     private void ConfigureFirewallProfile()
     {
-        int port = 0;
-        string app = "";
+      int port = 0;
+      string app = "";
 
-        if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
+      if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
+      {
+        //TVService
+        app = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
+        AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+      }
+      if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
+      {
+        if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
         {
-            //TVService
-            app = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
-            AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
-        } 
-        if  (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
-        {
-            if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
-            {
-                //SQL2005 TCP Port
-                port = 1433;
-                GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
-                
-                //SQL2005 UDP Port
-                port = 1434;
-                GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
-            }
-            else
-            {
-                //MySQL TCP Port
-                port = 3306;
-                GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
-            }
+          //SQL2005 TCP Port
+          port = 1433;
+          GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+
+          //SQL2005 UDP Port
+          port = 1434;
+          GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
         }
+        else
+        {
+          //MySQL TCP Port
+          port = 3306;
+          GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        }
+      }
     }
     #endregion
     public string GetDisplayName()
@@ -148,45 +148,45 @@ namespace MediaPortal.DeployTool
 
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
       {
-          //If firewall is not enabled, no need to configure it
-          if (fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled == false)
-              result.state = CheckState.CONFIGURED;
+        //If firewall is not enabled, no need to configure it
+        if (fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled == false)
+          result.state = CheckState.CONFIGURED;
 
-          System.Collections.IEnumerator e = null;
-          e = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
+        System.Collections.IEnumerator e = null;
+        e = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
 
-          result.state = CheckState.NOT_CONFIGURED;
-          while (e.MoveNext())
-          {
-              INetFwAuthorizedApplication app = e.Current as INetFwAuthorizedApplication;
-              string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
-              if (app.ProcessImageFileName.ToLower() == apptv.ToLower())
-                  result.state = CheckState.CONFIGURED;           
-          }
+        result.state = CheckState.NOT_CONFIGURED;
+        while (e.MoveNext())
+        {
+          INetFwAuthorizedApplication app = e.Current as INetFwAuthorizedApplication;
+          string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
+          if (app.ProcessImageFileName.ToLower() == apptv.ToLower())
+            result.state = CheckState.CONFIGURED;
+        }
       }
       if (result.state == CheckState.CONFIGURED)
       {
         if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
         {
-            result.state = CheckState.NOT_CONFIGURED;
-            
-            System.Collections.IEnumerator e = null;
-            e = fwMgr.LocalPolicy.CurrentProfile.GloballyOpenPorts.GetEnumerator();
+          result.state = CheckState.NOT_CONFIGURED;
 
-            while (e.MoveNext())
+          System.Collections.IEnumerator e = null;
+          e = fwMgr.LocalPolicy.CurrentProfile.GloballyOpenPorts.GetEnumerator();
+
+          while (e.MoveNext())
+          {
+            INetFwOpenPort app = e.Current as INetFwOpenPort;
+            if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
             {
-                INetFwOpenPort app = e.Current as INetFwOpenPort;
-                if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
-                {
-                    if(app.Port == 1433)
-                        result.state = CheckState.CONFIGURED;
-                }
-                else
-                {
-                    if(app.Port == 3306)
-                        result.state = CheckState.CONFIGURED;
-                }
+              if (app.Port == 1433)
+                result.state = CheckState.CONFIGURED;
             }
+            else
+            {
+              if (app.Port == 3306)
+                result.state = CheckState.CONFIGURED;
+            }
+          }
         }
       }
       return result;

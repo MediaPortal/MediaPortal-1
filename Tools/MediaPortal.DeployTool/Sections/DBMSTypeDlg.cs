@@ -28,15 +28,15 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-        if (rbDBAlreadyInstalled.Checked)
-        {
-            if (InstallationProperties.Instance["InstallType"] == "singleseat")
-                return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
-            else
-                return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
-        }
+      if (rbDBAlreadyInstalled.Checked)
+      {
+        if (InstallationProperties.Instance["InstallType"] == "singleseat")
+          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
         else
-            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSSettings);
+          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
+      }
+      else
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSSettings);
     }
     public override bool SettingsValid()
     {
@@ -49,7 +49,7 @@ namespace MediaPortal.DeployTool
       if (rbMySQL.Checked)
         InstallationProperties.Instance.Set("DBMSType", "mysql");
       if (rbDBAlreadyInstalled.Checked)
-          InstallationProperties.Instance.Set("DBMSType", "DBAlreadyInstalled");
+        InstallationProperties.Instance.Set("DBMSType", "DBAlreadyInstalled");
     }
     #endregion
   }

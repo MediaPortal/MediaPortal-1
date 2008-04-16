@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
 {
   public partial class BaseInstallationTypeWithoutTvEngineDlg : DeployDialog, IDeployDialog
   {
-      public BaseInstallationTypeWithoutTvEngineDlg()
+    public BaseInstallationTypeWithoutTvEngineDlg()
     {
       InitializeComponent();
       type = DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE;
@@ -48,29 +48,29 @@ namespace MediaPortal.DeployTool
 
     #region IDeployDialog interface
     public override void UpdateUI()
-    {     
+    {
       labelOneClickCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelOneClickCaption");
       labelOneClickDesc.Text = Localizer.Instance.GetString("BaseInstallationNoTvEngine_labelOneClickDesc");
       rbOneClick.Text = Localizer.Instance.GetString("BaseInstallation_rbOneClick");
       labelAdvancedCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelAdvancedCaption");
       labelAdvancedDesc.Text = Localizer.Instance.GetString("BaseInstallationNoTvEngine_labelAdvancedDesc");
-      rbAdvanced.Text = Localizer.Instance.GetString("BaseInstallation_rbAdvanced");   
+      rbAdvanced.Text = Localizer.Instance.GetString("BaseInstallation_rbAdvanced");
     }
     public override DeployDialog GetNextDialog()
     {
-        if (rbOneClick.Checked)
-        {
-            InstallationProperties.Instance.Set("InstallType", "mp_only");
-            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
-        }
-        else
-            return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettingsWithoutTvEngine);
+      if (rbOneClick.Checked)
+      {
+        InstallationProperties.Instance.Set("InstallType", "mp_only");
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
+      }
+      else
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettingsWithoutTvEngine);
     }
     public override bool SettingsValid()
     {
       return true;
     }
-    
+
     #endregion
   }
 }

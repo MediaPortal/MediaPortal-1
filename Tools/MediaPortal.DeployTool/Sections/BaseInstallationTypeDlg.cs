@@ -72,11 +72,11 @@ namespace MediaPortal.DeployTool
     {
       if (rbOneClick.Checked)
       {
-        InstallationProperties.Instance.Set("InstallTypeHeader",Localizer.Instance.GetString("BaseInstallation_rbOneClick"));
+        InstallationProperties.Instance.Set("InstallTypeHeader", Localizer.Instance.GetString("BaseInstallation_rbOneClick"));
         InstallationProperties.Instance.Set("InstallType", "singleseat");
         InstallationProperties.Instance.Set("DBMSType", "mssql2005");
         InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server");
-        InstallationProperties.Instance.Set("DBMSPassword","MediaPortal");
+        InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
         InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
       }
