@@ -235,15 +235,15 @@ Section "MediaPortal core files (required)" SecCore
   DetailPrint "Installing MediaPortal core files..."
 
   DetailPrint "Terminating processes ..."
-  ${HIDDEN_CMD} '"taskkill" /F /IM MediaPortal.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM configuration.exe'
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
 
-  ${HIDDEN_CMD} '"taskkill" /F /IM MPInstaller.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM MPTestTool2.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM MusicShareWatcher.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM TVGuideScheduler.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM WebEPG.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM WebEPG-conf.exe'
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPInstaller.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPTestTool2.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MusicShareWatcher.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVGuideScheduler.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG-conf.exe"' SW_HIDE
 
   SetOverwrite on
 
@@ -438,15 +438,15 @@ SectionEnd
   DetailPrint "Uninstalling MediaPortal core files..."
 
   DetailPrint "Terminating processes ..."
-  ${HIDDEN_CMD} '"taskkill" /F /IM MediaPortal.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM configuration.exe'
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
 
-  ${HIDDEN_CMD} '"taskkill" /F /IM MPInstaller.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM MPTestTool2.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM MusicShareWatcher.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM TVGuideScheduler.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM WebEPG.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM WebEPG-conf.exe'
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPInstaller.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPTestTool2.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MusicShareWatcher.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVGuideScheduler.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG-conf.exe"' SW_HIDE
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient

@@ -216,8 +216,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ${HIDDEN_CMD} '"taskkill" /F /IM TVService.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM SetupTv.exe'
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVService.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM SetupTv.exe"' SW_HIDE
 
   SetOverwrite on
 
@@ -330,8 +330,8 @@ ${MementoSectionEnd}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ${HIDDEN_CMD} '"taskkill" /F /IM TVService.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM SetupTv.exe'
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVService.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM SetupTv.exe"' SW_HIDE
 
   #---------------------------------------------------------------------------
   # SERVICE UNINSTALLATION
@@ -419,8 +419,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ${HIDDEN_CMD} '"taskkill" /F /IM MediaPortal.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM configuration.exe'
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
 
   SetOverwrite on
 
@@ -461,8 +461,8 @@ ${MementoSectionEnd}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ${HIDDEN_CMD} '"taskkill" /F /IM MediaPortal.exe'
-  ${HIDDEN_CMD} '"taskkill" /F /IM configuration.exe'
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient
@@ -586,7 +586,6 @@ SectionEnd
 #---------------------------------------------------------------------------
 Function .onInit
   ${LOG_OPEN}
-  ${HIDDEN_CMD_INIT}
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -715,12 +714,10 @@ FunctionEnd
 
 Function .onInstFailed
   ${LOG_CLOSE}
-  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function .onInstSuccess
   ${LOG_CLOSE}
-  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function .onSelChange

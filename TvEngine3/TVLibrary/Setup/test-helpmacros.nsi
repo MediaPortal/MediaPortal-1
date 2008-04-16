@@ -81,7 +81,6 @@ SectionEnd ; end the section
 
 Function .onInit
   ${LOG_OPEN}
-  ${HIDDEN_CMD_INIT}
 
 
 
@@ -108,7 +107,7 @@ Function .onInit
 
   MessageBox MB_ICONINFORMATION|MB_YESNO "Do kill process test?" IDNO noKillProcess
 
-  ${HIDDEN_CMD} '"taskkill" /F /IM MPInstaller.exe'
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPInstaller.exe"' SW_HIDE
 
   noKillProcess:
 
@@ -150,11 +149,9 @@ FunctionEnd
 
 Function .onInstFailed
   ${LOG_CLOSE}
-  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function .onInstSuccess
   ${LOG_CLOSE}
-  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
