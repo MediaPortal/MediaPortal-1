@@ -12,6 +12,11 @@ namespace TvService
     public ProjectInstaller()
     {
       InitializeComponent();
+      this.Committed += new InstallEventHandler(ProjectInstaller_Committed);
+    }
+
+    private void ProjectInstaller_Committed(object sender, InstallEventArgs e)
+    {
       SetRegistryOptions();
     }
 
