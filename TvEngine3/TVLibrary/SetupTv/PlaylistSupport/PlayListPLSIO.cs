@@ -75,7 +75,7 @@ namespace MediaPortal.Playlists
           file.Close();
           return true;
         }
-        fileEncoding = Encoding.Default;
+        fileEncoding = Encoding.Default; // No unicode??? rtv
         stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
         file = new StreamReader(stream, fileEncoding, true);
 

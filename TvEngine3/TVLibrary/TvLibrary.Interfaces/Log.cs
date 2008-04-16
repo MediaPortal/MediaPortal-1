@@ -74,6 +74,7 @@ namespace TvLibrary.Log
     /// </summary>
     static Log()
     {
+      Directory.CreateDirectory(string.Format(@"{0}\log\", GetPathName()));
       //BackupLogFiles(); <-- do not rotate logs when e.g. SetupTv is started.
     }
 
@@ -132,8 +133,7 @@ namespace TvLibrary.Log
       //		StackFrame stackFrame = stackTrace.GetFrame(1);
       //		MethodBase methodBase = stackFrame.GetMethod();
       //		WriteFile(LogType.Log, "{0}", methodBase.Name);
-      String log = String.Format("{0:X} {1}",
-          System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
+      String log = String.Format("{0:X} {1}", Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
       WriteToFile(LogType.Info, log);
     }
 
@@ -213,7 +213,6 @@ namespace TvLibrary.Log
 
         default:
           return String.Format(@"{0}\log\tv.log", Path);
-
       }
     }
 
@@ -266,10 +265,13 @@ namespace TvLibrary.Log
           string logFileName = GetFileName(logType);
           try
           {
-            DateTime checkDate = DateTime.Now - _logDaysToKeep;
-            FileInfo logFi = new FileInfo(logFileName);
-            if (checkDate > logFi.CreationTime)
-              BackupLogFiles();
+            if (File.Exists(logFileName))
+            {
+              DateTime checkDate = DateTime.Now - _logDaysToKeep;
+              FileInfo logFi = new FileInfo(logFileName);
+              if (checkDate > logFi.CreationTime)
+                BackupLogFiles();
+            }              
           }
           catch (Exception) { }
 
