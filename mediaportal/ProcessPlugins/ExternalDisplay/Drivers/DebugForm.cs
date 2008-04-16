@@ -35,7 +35,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
   /// messages that otherwise would be displayed on the display
   /// </summary>
   /// <author>JoeDalton</author>
-  public class DebugForm : Form, IDisplay
+  public class DebugForm : MediaPortal.UserInterface.Controls.MPForm, IDisplay
   {
     /// <summary>
     /// Required designer variable.
