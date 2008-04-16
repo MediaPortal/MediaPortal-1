@@ -40,7 +40,7 @@ namespace MPTail
   public partial class frmMain : Form
   {
     private string mpLogPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)+@"\Team Mediaportal\Mediaportal\Log\";
-    private string tveLogPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\MediaPortal TV Server\log\";
+    private string tveLogPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team Mediaportal\MediaPortal TV Server\log\";
     private LastSettings lastSettings;
     private List<string> customFiles;
     private List<TailedRichTextBox> loggerCollection;
