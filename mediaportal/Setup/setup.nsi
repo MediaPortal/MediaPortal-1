@@ -235,15 +235,15 @@ Section "MediaPortal core files (required)" SecCore
   DetailPrint "Installing MediaPortal core files..."
 
   DetailPrint "Terminating processes ..."
-  ExecWait '"taskkill" /F /IM MediaPortal.exe'
-  ExecWait '"taskkill" /F /IM configuration.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MediaPortal.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM configuration.exe'
 
-  ExecWait '"taskkill" /F /IM MPInstaller.exe'
-  ExecWait '"taskkill" /F /IM MPTestTool2.exe'
-  ExecWait '"taskkill" /F /IM MusicShareWatcher.exe'
-  ExecWait '"taskkill" /F /IM TVGuideScheduler.exe'
-  ExecWait '"taskkill" /F /IM WebEPG.exe'
-  ExecWait '"taskkill" /F /IM WebEPG-conf.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MPInstaller.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MPTestTool2.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MusicShareWatcher.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM TVGuideScheduler.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM WebEPG.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM WebEPG-conf.exe'
 
   SetOverwrite on
 
@@ -438,15 +438,15 @@ SectionEnd
   DetailPrint "Uninstalling MediaPortal core files..."
 
   DetailPrint "Terminating processes ..."
-  ExecWait '"taskkill" /F /IM MediaPortal.exe'
-  ExecWait '"taskkill" /F /IM configuration.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MediaPortal.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM configuration.exe'
 
-  ExecWait '"taskkill" /F /IM MPInstaller.exe'
-  ExecWait '"taskkill" /F /IM MPTestTool2.exe'
-  ExecWait '"taskkill" /F /IM MusicShareWatcher.exe'
-  ExecWait '"taskkill" /F /IM TVGuideScheduler.exe'
-  ExecWait '"taskkill" /F /IM WebEPG.exe'
-  ExecWait '"taskkill" /F /IM WebEPG-conf.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MPInstaller.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MPTestTool2.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MusicShareWatcher.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM TVGuideScheduler.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM WebEPG.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM WebEPG-conf.exe'
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient
@@ -858,6 +858,7 @@ SectionEnd
 #---------------------------------------------------------------------------
 Function .onInit
   ${LOG_OPEN}
+  ${HIDDEN_CMD_INIT}
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -968,10 +969,12 @@ FunctionEnd
 
 Function .onInstFailed
   ${LOG_CLOSE}
+  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function .onInstSuccess
   ${LOG_CLOSE}
+  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function un.onInit
