@@ -6,7 +6,7 @@ using System.IO;
 using System.Resources;
 using System.Globalization;
 using System.Xml;
-using Microsoft.Win32;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool
@@ -191,7 +191,7 @@ namespace MediaPortal.DeployTool
       string OsVersion = CheckOSRequirement(false);
       if (!string.IsNullOrEmpty(OsVersion))
       {
-        if (OsVersion == "Windows Vista")
+        if (OsVersion == "Windows Vista" || OsVersion == "Windows 2008")
           return "Windows NT 6.0";
         else
           if (OsVersion == "Windows 2003 Server")
@@ -298,31 +298,31 @@ namespace MediaPortal.DeployTool
     }
     #endregion
 
+    #region IsWow64 check
+    [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool IsWow64Process(
+         [In] IntPtr hProcess,
+         [Out] out bool lpSystemInfo
+         );
+
     public static bool Check64bit()
     {
-      try
-      {
-        RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows");
-        if (key == null)
-        {
-          InstallationProperties.Instance.Set("RegistryKeyAdd", "");
-          InstallationProperties.Instance.Set("Sql2005Download", "32");
-          return false;
-        }
-        else
-        {
-          key.Close();
-          InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
-          InstallationProperties.Instance.Set("Sql2005Download", "64");
+      //IsWow64Process is not supported under Windows2000
+      if (CheckOSRequirement(false) == "Windows 2000") return false;
+      Process p = Process.GetCurrentProcess();
+      IntPtr handle = p.Handle;
+      bool isWow64;
+      bool success = IsWow64Process(handle, out isWow64);
+      if (!success)
+        throw new System.ComponentModel.Win32Exception();
+      else
+        if (isWow64)
           return true;
-        }
-      }
-      catch (Exception e)
-      {
-        MessageBox.Show("DEBUG: Check64bit() - Exception: " + e.Message + "( " + e.StackTrace + " )");
-      }
-      return false;
+        else
+          return false;
     }
+    #endregion
 
     public static bool CheckStartupPath()
     {

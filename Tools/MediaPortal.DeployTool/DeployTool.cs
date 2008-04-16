@@ -66,7 +66,16 @@ namespace MediaPortal.DeployTool
     public DeployTool()
     {
       //Check if x86 or x64 architecture
-      Utils.Check64bit();
+      if (Utils.Check64bit())
+      {
+        InstallationProperties.Instance.Set("RegistryKeyAdd", "Wow6432Node\\");
+        InstallationProperties.Instance.Set("Sql2005Download", "64");
+      }
+      else
+      {
+        InstallationProperties.Instance.Set("RegistryKeyAdd", "");
+        InstallationProperties.Instance.Set("Sql2005Download", "32");
+      }
 
       //Create necessary directory tree
       if (!Directory.Exists(Application.StartupPath + "\\deploy"))
