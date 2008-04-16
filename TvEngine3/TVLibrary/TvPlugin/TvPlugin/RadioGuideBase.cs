@@ -230,7 +230,7 @@ namespace TvPlugin
             }
             else
             {
-              OnRecord(true);
+              OnSelectItem(true);
             }
           }
           break;
@@ -621,7 +621,7 @@ namespace TvPlugin
             }
             if (iControl >= 100)
             {
-              OnRecord(true);
+              OnSelectItem(true);
               Update(false);
               SetFocus();
             }
@@ -1947,14 +1947,17 @@ namespace TvPlugin
           dlg.AddLocalizedString(264);// Record
         }
 
-
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1) return;
         switch (dlg.SelectedId)
         {
-
           case 938: // view channel
-            //listen to:_currentChannel
+            Log.Debug("viewch channel:{0}", _currentChannel);
+            TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+            if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.ReferencedChannel().IdChannel)
+            {
+              g_Player.ShowFullScreenWindow();
+            }
             return;
 
 
@@ -2000,21 +2003,64 @@ namespace TvPlugin
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
     }
 
-    void OnRecord(bool isItemSelected)
+    void OnSelectItem(bool isItemSelected)
     {
-      if (_singleChannelView)
+      if (_currentProgram == null)
+        return;
+      if (isItemSelected)
       {
-        Channel station = (Channel)_channelList[_singleChannelNumber];
-        //@todo
-        //Recorder.StartRadio(station.Name);
-      }
-      else
-      {
-        Channel station = (Channel)_channelList[_channelOffset + _cursorX];
-        //@todo
-        //Recorder.StartRadio(station.Name);
+        if (_currentProgram.IsRunningAt(DateTime.Now) ||
+            _currentProgram.EndTime <= DateTime.Now)
+        {
+          //view this channel
+          if (g_Player.Playing && g_Player.IsTVRecording)
+          {
+            g_Player.Stop(true);
+          }
+
+          // clicked the show we're currently watching
+          if (TVHome.Navigator.CurrentChannel == _currentChannel)
+          {
+            Log.Debug("RadioGuide: clicked on a currently running show");
+            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+            if (dlg == null)
+              return;
+
+            dlg.Reset();
+            dlg.SetHeading(_currentProgram.Title);
+            dlg.AddLocalizedString(938);  //View this channel
+            dlg.AddLocalizedString(1041); //Upcoming episodes
+            dlg.DoModal(GetID);
+
+            if (dlg.SelectedLabel == -1)
+              return;
+
+            switch (dlg.SelectedId)
+            {
+              case 1041:
+                ShowProgramInfo();
+                Log.Debug("RadioGuide: show episodes or repeatings for current show");
+                break;
+              case 938:
+                Log.Debug("RadioGuide: switch currently running show to fullscreen");
+                TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+                break;
+            }
+          }
+          else
+          {
+            // zap to selected show's channel
+            TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+          }
+
+        }
+        else
+          ShowProgramInfo();
+        return;
       }
     }
+
+
     /// <summary>
     /// "Record" entry in context menu
     /// </summary>

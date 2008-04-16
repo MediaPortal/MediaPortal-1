@@ -1068,10 +1068,9 @@ namespace TvPlugin
       {
         dlg.Add(Navigator.Groups[i].GroupName);
         if (Navigator.Groups[i].GroupName == Navigator.CurrentGroup.GroupName)
-        {
           selected = i;
-        }
       }
+
       dlg.SelectedLabel = selected;
       dlg.DoModal(GUIWindowManager.ActiveWindow);
       if (dlg.SelectedLabel < 0)
@@ -1617,7 +1616,6 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
         return;
       }*/
-
       if (g_Player.Playing && g_Player.IsTimeShifting)
       {
         if (TVHome.Card != null)
@@ -2018,7 +2016,7 @@ namespace TvPlugin
             if (g_Player.IsVideo) return true;
             if (g_Player.IsDVD) return true;
             if (g_Player.IsMusic) return true;
-            if (g_Player.IsRadio) return true;
+            //if (g_Player.IsRadio) return true;
           }
           else
           {
@@ -2775,8 +2773,8 @@ namespace TvPlugin
           //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
           m_groups.Add(group);
         }
+        MediaPortal.GUI.Library.Log.Info("loaded {0} tv groups", m_groups.Count);
 
-        MediaPortal.GUI.Library.Log.Info("loaded {0} groups", m_groups.Count);
         //TVHome.Connected = true;
       }
       catch (Exception ex)
@@ -2817,7 +2815,7 @@ namespace TvPlugin
     }
 
     /// <summary>
-    /// Gets the currently active channel group.
+    /// Gets the currently active tv channel group.
     /// </summary>
     public ChannelGroup CurrentGroup
     {
@@ -2829,7 +2827,7 @@ namespace TvPlugin
     }
 
     /// <summary>
-    /// Gets the list of channel groups.
+    /// Gets the list of tv channel groups.
     /// </summary>
     public List<ChannelGroup> Groups
     {
