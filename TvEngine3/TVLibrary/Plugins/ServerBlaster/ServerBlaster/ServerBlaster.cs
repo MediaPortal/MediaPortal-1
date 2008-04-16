@@ -142,7 +142,7 @@ namespace TvEngine
     {
       try
       {
-        using (FileStream fs = new FileStream(String.Format(@"{0}\MediaPortal TV Server\ServerBlaster.dat", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)), FileMode.Open, FileAccess.Read))
+        using (FileStream fs = new FileStream(String.Format(@"{0}\ServerBlaster.dat", Log.GetPathName()), FileMode.Open, FileAccess.Read))
         {
           BinaryFormatter bf = new BinaryFormatter();
           _packetCollection = bf.Deserialize(fs) as Hashtable;

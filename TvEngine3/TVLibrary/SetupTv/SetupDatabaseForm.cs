@@ -60,7 +60,7 @@ namespace SetupTv
       try
       {
         XmlDocument doc = new XmlDocument();
-        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
         if (!File.Exists(fname))
         {
           try
@@ -448,7 +448,7 @@ namespace SetupTv
     private void Save()
     {
       string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", true, 300);
-      string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
       if (!File.Exists(fname))
       {
         try

@@ -424,7 +424,7 @@ namespace TvService
       provider = "";
       try
       {
-        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
         try
         {
           System.IO.File.Copy(fname, "gentle.config", true);
@@ -434,7 +434,7 @@ namespace TvService
           Log.Write(ex1);
         }
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString"); ;
         XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name"); ;

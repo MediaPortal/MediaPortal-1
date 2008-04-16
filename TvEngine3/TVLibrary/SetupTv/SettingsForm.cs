@@ -63,7 +63,7 @@ namespace SetupTv
         //
         // Build options tree
         //
-        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
         try
         {
           System.IO.File.Copy(fname, "gentle.config", true);
@@ -546,7 +546,7 @@ namespace SetupTv
     {
       Process process = new Process();
       process.StartInfo.FileName = "explorer.exe";
-      process.StartInfo.Arguments = String.Format(@"{0}\MediaPortal TV Server\log\", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      process.StartInfo.Arguments = String.Format(@"{0}\log\", Log.GetPathName());
       process.StartInfo.UseShellExecute = true;
       process.Start();
     }

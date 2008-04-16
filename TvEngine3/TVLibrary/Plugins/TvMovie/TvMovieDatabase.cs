@@ -600,7 +600,7 @@ namespace TvEngine
       _slowImport = TvBLayer.GetSetting("TvMovieSlowImport", "false").Value == "true";
       _actorCount = Convert.ToInt32(TvBLayer.GetSetting("TvMovieLimitActors", "5").Value);
 
-      _xmlFile = String.Format(@"{0}\MediaPortal TV Server\TVMovieMapping.xml", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", Log.GetPathName());
     }
 
     private int ImportStation(string stationName, List<Mapping> channelNames, IList allChannels, bool useGentle)

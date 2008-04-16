@@ -164,25 +164,29 @@ namespace TvLibrary.Log
           System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
       WriteToFile(LogType.Info, log);
     }
+
+    static public string GetPathName()
+    {
+        return String.Format(@"{0}\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+    }
+
     static string GetFileName(LogType logType)
     {
+      string Path = GetPathName();
       switch (logType)
       {
         case LogType.Debug:
-          return String.Format(@"{0}\MediaPortal TV Server\log\tv.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-
         case LogType.Info:
-          return String.Format(@"{0}\MediaPortal TV Server\log\tv.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+          return String.Format(@"{0}\log\tv.log", Path);
 
         case LogType.Error:
-          return String.Format(@"{0}\MediaPortal TV Server\log\error.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+            return String.Format(@"{0}\log\error.log", Path);
 
         case LogType.Epg:
-          return String.Format(@"{0}\MediaPortal TV Server\log\epg.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+            return String.Format(@"{0}\log\epg.log", Path);
 
         default:
-          return String.Format(@"{0}\MediaPortal TV Server\log\tv.log", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-
+            return String.Format(@"{0}\log\tv.log", Path);
 
       }
     }

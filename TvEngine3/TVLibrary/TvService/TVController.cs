@@ -257,7 +257,7 @@ namespace TvService
       try
       {
         //load the database connection string from the config file
-        Log.WriteFile(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        Log.WriteFile(@"{0}\gentle.config", Log.GetPathName());
         string connectionString, provider;
         GetDatabaseConnectionString(out connectionString, out provider);
         string ConnectionLog = connectionString.Remove(connectionString.IndexOf(@"Password=") + 8);
@@ -2060,7 +2060,7 @@ namespace TvService
       provider = "";
       try
       {
-        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
         try
         {
           System.IO.File.Copy(fname, "gentle.config", true);
@@ -2070,7 +2070,7 @@ namespace TvService
           Log.Write(ex1);
         }
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString"); ;
         XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name"); ;
@@ -2088,15 +2088,15 @@ namespace TvService
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString"); ;
         XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
         nodeProvider.InnerText = connectionString;
         nodeConnection.InnerText = provider;
-        doc.Save(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+        doc.Save(String.Format(@"{0}\gentle.config", Log.GetPathName()));
 
-        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
         try
         {
           System.IO.File.Copy(fname, "gentle.config", true);
