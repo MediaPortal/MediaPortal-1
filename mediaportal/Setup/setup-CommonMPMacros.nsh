@@ -412,6 +412,28 @@ Var LogFile
 
 
 
+#**********************************************************************************************************#
+#
+# logging system
+#
+#**********************************************************************************************************#
+#!define KILLMODE "1"
+
+!define KILLPROCESS `!insertmacro KILLPROCESS`
+!macro KILLPROCESS PROCESS
+!if ${KILLMODE} == "1"
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM "${PROCESS}""' SW_HIDE
+  Sleep 300
+!else if ${KILLMODE} == "2"
+  ExecWait '"taskkill" /F /IM "${PROCESS}"'
+!else if ${KILLMODE} == "3"
+  nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
+!else
+
+  nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
+
+!endif
+!macroend
 
   /*
 ; Section flag test

@@ -107,9 +107,11 @@ Function .onInit
 
   MessageBox MB_ICONINFORMATION|MB_YESNO "Do kill process test?" IDNO noKillProcess
 
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPInstaller.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM makensisw.exe"' SW_HIDE
-  Sleep 2000
+  ${KILLPROCESS} "MPInstaller.exe"
+  ${KILLPROCESS} "makensisw.exe"
+  ${KILLPROCESS} "Input Service Configuration.exe"
+
+  MessageBox MB_ICONINFORMATION|MB_OK "KillProcess FINISHED"
 
   noKillProcess:
 

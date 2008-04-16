@@ -235,16 +235,15 @@ Section "MediaPortal core files (required)" SecCore
   DetailPrint "Installing MediaPortal core files..."
 
   DetailPrint "Terminating processes ..."
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
+  ${KILLPROCESS} "MediaPortal.exe"
+  ${KILLPROCESS} "configuration.exe"
 
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPInstaller.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPTestTool2.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MusicShareWatcher.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVGuideScheduler.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG-conf.exe"' SW_HIDE
-  Sleep 2000
+  ${KILLPROCESS} "MPInstaller.exe"
+  ${KILLPROCESS} "MPTestTool2.exe"
+  ${KILLPROCESS} "MusicShareWatcher.exe"
+  ${KILLPROCESS} "TVGuideScheduler.exe"
+  ${KILLPROCESS} "WebEPG.exe"
+  ${KILLPROCESS} "WebEPG-conf.exe"
 
   SetOverwrite on
 
@@ -439,16 +438,15 @@ SectionEnd
   DetailPrint "Uninstalling MediaPortal core files..."
 
   DetailPrint "Terminating processes ..."
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
+  ${KILLPROCESS} "MediaPortal.exe"
+  ${KILLPROCESS} "configuration.exe"
 
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPInstaller.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MPTestTool2.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MusicShareWatcher.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVGuideScheduler.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG-conf.exe"' SW_HIDE
-  Sleep 2000
+  ${KILLPROCESS} "MPInstaller.exe"
+  ${KILLPROCESS} "MPTestTool2.exe"
+  ${KILLPROCESS} "MusicShareWatcher.exe"
+  ${KILLPROCESS} "TVGuideScheduler.exe"
+  ${KILLPROCESS} "WebEPG.exe"
+  ${KILLPROCESS} "WebEPG-conf.exe"
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient

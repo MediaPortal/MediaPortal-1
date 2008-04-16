@@ -216,9 +216,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVService.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM SetupTv.exe"' SW_HIDE
-  Sleep 2000
+  ${KILLPROCESS} "TVService.exe"
+  ${KILLPROCESS} "SetupTv.exe"
 
   SetOverwrite on
 
@@ -331,9 +330,8 @@ ${MementoSectionEnd}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVService.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM SetupTv.exe"' SW_HIDE
-  Sleep 2000
+  ${KILLPROCESS} "TVService.exe"
+  ${KILLPROCESS} "SetupTv.exe"
 
   #---------------------------------------------------------------------------
   # SERVICE UNINSTALLATION
@@ -421,9 +419,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
-  Sleep 2000
+  ${KILLPROCESS} "MediaPortal.exe"
+  ${KILLPROCESS} "configuration.exe"
 
   SetOverwrite on
 
@@ -464,9 +461,8 @@ ${MementoSectionEnd}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
-  Sleep 2000
+  ${KILLPROCESS} "MediaPortal.exe"
+  ${KILLPROCESS} "configuration.exe"
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient
