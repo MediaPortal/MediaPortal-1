@@ -65,7 +65,7 @@ namespace MediaPortal.MusicShareWatcher
           // notifyIcon1
           // 
           this.notifyIcon1.ContextMenuStrip = this.contextMenu;
-          this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+          this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
           this.notifyIcon1.Text = "MediaPortal Music Share Watcher";
           this.notifyIcon1.Visible = true;
           // 
