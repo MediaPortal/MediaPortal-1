@@ -1,3 +1,4 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,11 +19,14 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
+
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Text;
 
 namespace TvLibrary.Log
 {
@@ -50,43 +54,173 @@ namespace TvLibrary.Log
       /// </summary>
       Epg
     }
-    static DateTime _previousDate;
+
     /// <summary>
-    /// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
+    /// Configure after how many days the log file shall be rotated when a new line is added
+    /// </summary>
+    static TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
+
+    #region Constructors
+
+    /// <summary>
+    /// Private singleton constructor . Do not allow any instance of this class.
     /// </summary>
     private Log()
     {
     }
 
     /// <summary>
-    /// Deletes the logfile.
+    /// Static constructor
     /// </summary>
     static Log()
     {
-      _previousDate = DateTime.Now.Date;
-      //System.IO.Directory.CreateDirectory("log");
-      BackupLogFiles();
+      //BackupLogFiles(); <-- do not rotate logs when e.g. SetupTv is started.
     }
+
+    #endregion
+
+    #region Public methods
+
     /// <summary>
     /// Backups the log files.
     /// </summary>
     public static void BackupLogFiles()
     {
-      BackupLogFile();
+      RotateLogs();
     }
 
     /// <summary>
-    /// Backups the log file.
+    /// Writes the specified exception to the log file
     /// </summary>
-    public static void BackupLogFile()
+    /// <param name="ex">The ex.</param>
+    public static void Write(Exception ex)
     {
-      Initialize();
+      WriteToFile(LogType.Error, "Exception   :{0}", ex.ToString());
+      WriteToFile(LogType.Error, "Exception   :{0}", ex.Message);
+      WriteToFile(LogType.Error, "  site      :{0}", ex.TargetSite);
+      WriteToFile(LogType.Error, "  source    :{0}", ex.Source);
+      WriteToFile(LogType.Error, "  stacktrace:{0}", ex.StackTrace);
     }
 
     /// <summary>
-    /// Initializes this instance.
+    /// Write a string to the logfile.
     /// </summary>
-    static void Initialize()
+    /// <param name="format">The format of the string.</param>
+    /// <param name="arg">An array containing the actual data of the string.</param>
+    public static void Write(string format, params object[] arg)
+    {
+      // uncomment the following four lines to help identify the calling method, this
+      // is useful in situations where an unreported exception causes problems
+      //		StackTrace stackTrace = new StackTrace();
+      //		StackFrame stackFrame = stackTrace.GetFrame(1);
+      //		MethodBase methodBase = stackFrame.GetMethod();
+      //		WriteFile(LogType.Log, "{0}", methodBase.Name);
+
+      WriteToFile(LogType.Info, format, arg);
+    }
+
+    /// <summary>
+    /// Write a string to the logfile.
+    /// </summary>
+    /// <param name="format">The format of the string.</param>
+    /// <param name="arg">An array containing the actual data of the string.</param>
+    public static void WriteThreadId(string format, params object[] arg)
+    {
+      // uncomment the following four lines to help identify the calling method, this
+      // is useful in situations where an unreported exception causes problems
+      //		StackTrace stackTrace = new StackTrace();
+      //		StackFrame stackFrame = stackTrace.GetFrame(1);
+      //		MethodBase methodBase = stackFrame.GetMethod();
+      //		WriteFile(LogType.Log, "{0}", methodBase.Name);
+      String log = String.Format("{0:X} {1}",
+          System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
+      WriteToFile(LogType.Info, log);
+    }
+
+    public static string GetPathName()
+    {
+      return String.Format(@"{0}\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+    }
+
+    /// <summary>
+    /// Logs the message to the error file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    public static void Error(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Error, format, arg);
+    }
+
+    /// <summary>
+    /// Logs the message to the info file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    public static void Info(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Info, format, arg);
+    }
+
+    /// <summary>
+    /// Logs the message to the debug file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    public static void Debug(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Debug, format, arg);
+    }
+
+    /// <summary>
+    /// Logs the message to the epg file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    public static void Epg(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Epg, format, arg);
+    }
+
+    /// <summary>
+    /// Logs the message to the info file
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    public static void WriteFile(string format, params object[] arg)
+    {
+      WriteToFile(LogType.Info, format, arg);
+    }
+
+    #endregion
+
+    #region Private methods
+
+    private static string GetFileName(LogType logType)
+    {
+      string Path = GetPathName();
+      switch (logType)
+      {
+        case LogType.Debug:
+        case LogType.Info:
+          return String.Format(@"{0}\log\tv.log", Path);
+
+        case LogType.Error:
+          return String.Format(@"{0}\log\error.log", Path);
+
+        case LogType.Epg:
+          return String.Format(@"{0}\log\epg.log", Path);
+
+        default:
+          return String.Format(@"{0}\log\tv.log", Path);
+
+      }
+    }
+
+    /// <summary>
+    /// Deletes .bak file, moves .log to .bak for every LogType
+    /// </summary>
+    private static void RotateLogs()
     {
       try
       {
@@ -118,153 +252,36 @@ namespace TvLibrary.Log
     }
 
     /// <summary>
-    /// Writes the specified exception to the log file
-    /// </summary>
-    /// <param name="ex">The ex.</param>
-    static public void Write(Exception ex)
-    {
-      WriteToFile(LogType.Error, "Exception   :{0}", ex.ToString());
-      WriteToFile(LogType.Error, "Exception   :{0}", ex.Message);
-      WriteToFile(LogType.Error, "  site      :{0}", ex.TargetSite);
-      WriteToFile(LogType.Error, "  source    :{0}", ex.Source);
-      WriteToFile(LogType.Error, "  stacktrace:{0}", ex.StackTrace);
-    }
-
-    /// <summary>
-    /// Write a string to the logfile.
-    /// </summary>
-    /// <param name="format">The format of the string.</param>
-    /// <param name="arg">An array containing the actual data of the string.</param>
-    static public void Write(string format, params object[] arg)
-    {
-      // uncomment the following four lines to help identify the calling method, this
-      // is useful in situations where an unreported exception causes problems
-      //		StackTrace stackTrace = new StackTrace();
-      //		StackFrame stackFrame = stackTrace.GetFrame(1);
-      //		MethodBase methodBase = stackFrame.GetMethod();
-      //		WriteFile(LogType.Log, "{0}", methodBase.Name);
-
-      WriteToFile(LogType.Info, format, arg);
-    }
-
-    /// <summary>
-    /// Write a string to the logfile.
-    /// </summary>
-    /// <param name="format">The format of the string.</param>
-    /// <param name="arg">An array containing the actual data of the string.</param>
-    static public void WriteThreadId(string format, params object[] arg)
-    {
-      // uncomment the following four lines to help identify the calling method, this
-      // is useful in situations where an unreported exception causes problems
-      //		StackTrace stackTrace = new StackTrace();
-      //		StackFrame stackFrame = stackTrace.GetFrame(1);
-      //		MethodBase methodBase = stackFrame.GetMethod();
-      //		WriteFile(LogType.Log, "{0}", methodBase.Name);
-      String log = String.Format("{0:X} {1}",
-          System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
-      WriteToFile(LogType.Info, log);
-    }
-
-    static public string GetPathName()
-    {
-        return String.Format(@"{0}\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-    }
-
-    static string GetFileName(LogType logType)
-    {
-      string Path = GetPathName();
-      switch (logType)
-      {
-        case LogType.Debug:
-        case LogType.Info:
-          return String.Format(@"{0}\log\tv.log", Path);
-
-        case LogType.Error:
-            return String.Format(@"{0}\log\error.log", Path);
-
-        case LogType.Epg:
-            return String.Format(@"{0}\log\epg.log", Path);
-
-        default:
-            return String.Format(@"{0}\log\tv.log", Path);
-
-      }
-    }
-
-		
-    /// <summary>
-    /// Logs the message to the error file
-    /// </summary>
-    /// <param name="format">The format.</param>
-    /// <param name="arg">The arg.</param>
-    static public void Error(string format, params object[] arg)
-    {
-      WriteToFile(LogType.Error, format, arg);
-    }
-    /// <summary>
-    /// Logs the message to the info file
-    /// </summary>
-    /// <param name="format">The format.</param>
-    /// <param name="arg">The arg.</param>
-    static public void Info(string format, params object[] arg)
-    {
-      WriteToFile(LogType.Info, format, arg);
-    }
-    /// <summary>
-    /// Logs the message to the debug file
-    /// </summary>
-    /// <param name="format">The format.</param>
-    /// <param name="arg">The arg.</param>
-    static public void Debug(string format, params object[] arg)
-    {
-      WriteToFile(LogType.Debug, format, arg);
-    }
-    /// <summary>
-    /// Logs the message to the epg file
-    /// </summary>
-    /// <param name="format">The format.</param>
-    /// <param name="arg">The arg.</param>
-    static public void Epg(string format, params object[] arg)
-    {
-      WriteToFile(LogType.Epg, format, arg);
-    }
-    /// <summary>
-    /// Logs the message to the info file
-    /// </summary>
-    /// <param name="format">The format.</param>
-    /// <param name="arg">The arg.</param>
-    static public void WriteFile(string format, params object[] arg)
-    {
-      WriteToFile(LogType.Info, format, arg);
-    }
-
-    /// <summary>
     /// Writes the file.
     /// </summary>
     /// <param name="logType">the type of logging.</param>
     /// <param name="format">The format.</param>
     /// <param name="arg">The arg.</param>
-    static void WriteToFile(LogType logType, string format, params object[] arg)
+    private static void WriteToFile(LogType logType, string format, params object[] arg)
     {
       lock (typeof(Log))
       {
         try
         {
-          if (_previousDate != DateTime.Now.Date)
+          string logFileName = GetFileName(logType);
+          try
           {
-            _previousDate = DateTime.Now.Date;
-            BackupLogFiles();
+            DateTime checkDate = DateTime.Now - _logDaysToKeep;
+            FileInfo logFi = new FileInfo(logFileName);
+            if (checkDate > logFi.CreationTime)
+              BackupLogFiles();
           }
+          catch (Exception) { }
 
-          using (StreamWriter writer = new StreamWriter(GetFileName(logType), true))
+          using (StreamWriter writer = new StreamWriter(logFileName, true))
           {
-						string thread = Thread.CurrentThread.Name;
-						if (thread == null)
-						{
-							thread = Thread.CurrentThread.ManagedThreadId.ToString();
-						}
+            string thread = Thread.CurrentThread.Name;
+            if (thread == null)
+            {
+              thread = Thread.CurrentThread.ManagedThreadId.ToString();
+            }
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-						writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, string.Format(format, arg));
+            writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, string.Format(format, arg));
             writer.Close();
           }
         }
@@ -272,7 +289,9 @@ namespace TvLibrary.Log
         {
         }
       }
-      //
-    }//static public void WriteFile(string format, params object[] arg)
+    }
+
+    #endregion
+
   }
 }
