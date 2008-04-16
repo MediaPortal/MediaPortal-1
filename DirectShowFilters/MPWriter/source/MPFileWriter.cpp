@@ -78,30 +78,31 @@ const AMOVIESETUP_FILTER sudDump =
 	sudPins						// Pin details
 };
 
+static char logbuffer[2000]; 
+
 void LogDebug(const char *fmt, ...) 
 {
 	va_list ap;
 	va_start(ap,fmt);
 
-	char buffer[1000]; 
 	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(buffer, fmt, ap);
+	tmp=vsprintf(logbuffer, fmt, ap);
 	va_end(ap); 
 
 	TCHAR folder[MAX_PATH];
 	TCHAR fileName[MAX_PATH];
 	::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-	sprintf(fileName,"%s\\MediaPortal TV Server\\log\\MPFileWriter.Log",folder);
+	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\MPFileWriter.Log",folder);
+
 	FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
-			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-			buffer);
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
+			logbuffer);
 		fclose(fp);
 	}
 };
