@@ -596,7 +596,7 @@
     <String id="705">RSS letöltése - </String>
     <String id="706">Hírforrás kiválasztása</String>
     <String id="707">TV bekapcsolás</String>
-    <String id="708">Időeltolásos felvétel</String>
+    <String id="708">Időcsúsztatás</String>
     <String id="709">Automatikus frissítés</String>
     <String id="710">Az új verzió rendelkezésre áll</String>
     <String id="711">Frissítés v#old -&gt;v#new ?</String>
@@ -646,9 +646,9 @@
     <String id="756">Nincs TV kártya ennek a vételéhez: {0}</String>
     <String id="757">Az összes TV kártya várakozik</String>
     <String id="758">A TV kártya nem rögzít</String>
-    <String id="759">Nem tudom a elindítani az időeltolásos felvételt</String>
-    <String id="760">Nincs TV kártya az időeltolásos felvételhez</String>
-    <String id="761">Nem tudom leállítani az időeltolásos felvételt</String>
+    <String id="759">Nem tudom a elindítani az időscsúsztatás</String>
+    <String id="760">Nincs TV kártya az időcsúsztatáshoz</String>
+    <String id="761">Nem tudom leállítani az időcsúsztatást</String>
     <String id="762">Nem tudom elindítani TV-t</String>
     <String id="763">A rögzítő dolgozik</String>
     <String id="764">A rögzítő szüneteltetve</String>
@@ -664,9 +664,9 @@
     <String id="774">VÉG</String>
     <String id="775">A TV automatikus bekapcsolása a TV menübe lépve</String>
     <String id="776">Ne indítsa/váltson a TV-re automatikusan a TV menübe lépve</String>
-    <String id="777">Időeltolásos felvételi mód</String>
-    <String id="778">Automatikus időeltolásos felvétel bekapcsolása</String>
-    <String id="779">Manuális időeltolásos felvétel bekapcsolása</String>
+    <String id="777">Időcsúsztatás</String>
+    <String id="778">Időcsúsztatás automatikus bekapcsolása</String>
+    <String id="779">Időcsúsztatás manuális bekapcsolása</String>
     <String id="780">Válasszon ütemezési módot</String>
     <String id="781">Gyors rögzítés</String>
     <String id="782">Fejlett rögzítés</String>
@@ -884,7 +884,7 @@
     <String id="1052">Dalok</String>
     <String id="1053">Ismeretlen hívó</String>
     <String id="1054">(felvétel)</String>
-    <String id="1055">(időeltolásos felvétel)</String>
+    <String id="1055">(időcsúsztatás)</String>
     <String id="1056">(nem elérhető)</String>
     <String id="1061">Eltávolítható</String>
     <String id="1062">Objektumok</String>
@@ -913,7 +913,7 @@
     <String id="1448">Nincs kijelölve semmi</String>
     <String id="1449">Rögzítés leállítása</String>
     <String id="1450">Biztos benne hogy leállítja a rögzítést?</String>
-    <String id="1500">Nem tudom elindítani az időeltolásos felvételt</String>
+    <String id="1500">Nem tudom elindítani az időcsúsztatást</String>
     <String id="1501">A TV kártya le van tiltva</String>
     <String id="1502">Nincs szabad TV kártya</String>
     <String id="1503">A csatorna kódolt</String>
@@ -1248,7 +1248,7 @@
     <String id="6002">Audió renderelő</String>
     <String id="6003">Deinterlacing</String>
     <String id="6004">Képarány</String>
-    <String id="6005">Időeltolásos felvételi buffer</String>
+    <String id="6005">Időcsúsztatás buffer</String>
     <String id="6006">Automatikus TV bekapcsolás</String>
     <String id="6007">Rögzítési beállítások</String>
     <String id="6008">Csatorna rendezés</String>
@@ -1690,5 +1690,8 @@
     <String id="200048">Ikonok létrehozása újra</String>
     <String id="200049">Csak a megtekintett felvételek ehhez a műsorhoz</String>
     <String id="200050">Ez a művelet törli a felvételeket a merevlemezről</String>
+    <String id="33032">Ennek az albumnak a száma</String>
+    <String id="33033">nem található a gyüjteményedben!</String>
+
   </Section>
 </Language>
