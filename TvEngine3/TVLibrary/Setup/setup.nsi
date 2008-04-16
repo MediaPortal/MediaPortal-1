@@ -216,8 +216,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ExecWait '"taskkill" /F /IM TVService.exe'
-  ExecWait '"taskkill" /F /IM SetupTv.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM TVService.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM SetupTv.exe'
 
   SetOverwrite on
 
@@ -330,8 +330,8 @@ ${MementoSectionEnd}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ExecWait '"taskkill" /F /IM TVService.exe'
-  ExecWait '"taskkill" /F /IM SetupTv.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM TVService.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM SetupTv.exe'
 
   #---------------------------------------------------------------------------
   # SERVICE UNINSTALLATION
@@ -419,8 +419,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ExecWait '"taskkill" /F /IM MediaPortal.exe'
-  ExecWait '"taskkill" /F /IM configuration.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MediaPortal.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM configuration.exe'
 
   SetOverwrite on
 
@@ -461,8 +461,8 @@ ${MementoSectionEnd}
 
   ; Kill running Programs
   DetailPrint "Terminating processes ..."
-  ExecWait '"taskkill" /F /IM MediaPortal.exe'
-  ExecWait '"taskkill" /F /IM configuration.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM MediaPortal.exe'
+  ${HIDDEN_CMD} '"taskkill" /F /IM configuration.exe'
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient
@@ -586,6 +586,7 @@ SectionEnd
 #---------------------------------------------------------------------------
 Function .onInit
   ${LOG_OPEN}
+  ${HIDDEN_CMD_INIT}
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -714,10 +715,12 @@ FunctionEnd
 
 Function .onInstFailed
   ${LOG_CLOSE}
+  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function .onInstSuccess
   ${LOG_CLOSE}
+  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function .onSelChange

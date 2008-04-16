@@ -81,6 +81,10 @@ SectionEnd ; end the section
 
 Function .onInit
   ${LOG_OPEN}
+  ${HIDDEN_CMD_INIT}
+
+
+
 
 
   MessageBox MB_ICONINFORMATION|MB_YESNO "Do vcr InstallCheck?" IDNO novcrInstallCheck
@@ -94,10 +98,20 @@ Function .onInit
   novcrInstallCheck:
 
 
+
   MessageBox MB_ICONINFORMATION|MB_YESNO "Do MP InstallChecks?" IDNO noInstallChecks
     !insertmacro DoInstallChecks
 
   noInstallChecks:
+
+
+
+  MessageBox MB_ICONINFORMATION|MB_YESNO "Do kill process test?" IDNO noKillProcess
+
+  ${HIDDEN_CMD} '"taskkill" /F /IM MPInstaller.exe'
+
+  noKillProcess:
+
 
 
   MessageBox MB_ICONINFORMATION|MB_YESNO "DoXmlTests?" IDNO noXmlTests
@@ -136,9 +150,11 @@ FunctionEnd
 
 Function .onInstFailed
   ${LOG_CLOSE}
+  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function .onInstSuccess
   ${LOG_CLOSE}
+  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 

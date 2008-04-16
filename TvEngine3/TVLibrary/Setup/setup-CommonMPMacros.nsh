@@ -412,6 +412,29 @@ Var LogFile
 
 
 
+#**********************************************************************************************************#
+#
+# HIDDEN_CMD system
+#
+#**********************************************************************************************************#
+!define HIDDEN_CMD_INIT `!insertmacro HIDDEN_CMD_INIT`
+!macro HIDDEN_CMD_INIT
+  SetOverwrite on
+  SetOutPath "$TEMP"
+  File .\HiddenCmd.exe
+!macroend
+
+!define HIDDEN_CMD_CLOSE `!insertmacro HIDDEN_CMD_CLOSE`
+!macro HIDDEN_CMD_CLOSE
+  Delete "$TEMP\HiddenCmd.exe"
+!macroend
+
+!define HIDDEN_CMD `!insertmacro HIDDEN_CMD`
+!macro HIDDEN_CMD CMD
+  ExecWait '"$TEMP\HiddenCmd.exe" ${CMD}'
+!macroend
+
+
 
   /*
 ; Section flag test
