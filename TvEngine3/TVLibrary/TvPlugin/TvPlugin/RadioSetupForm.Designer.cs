@@ -29,19 +29,22 @@ namespace TvPlugin
     private void InitializeComponent()
     {
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
+      this.cbRememberLastGroup = new System.Windows.Forms.CheckBox();
+      this.comboBoxGroups = new System.Windows.Forms.ComboBox();
+      this.label1 = new System.Windows.Forms.Label();
       this.cbShowAllChannelsGroup = new System.Windows.Forms.CheckBox();
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonOk = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label1 = new System.Windows.Forms.Label();
-      this.comboBoxGroups = new System.Windows.Forms.ComboBox();
-      this.cbRememberLastGroup = new System.Windows.Forms.CheckBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.cbRememberLastGroup);
@@ -54,6 +57,56 @@ namespace TvPlugin
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Channel groups";
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(10, 52);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(107, 13);
+      this.label3.TabIndex = 5;
+      this.label3.Text = "Remember last group";
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(10, 32);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(152, 13);
+      this.label2.TabIndex = 4;
+      this.label2.Text = "Show the \"All channels group\"";
+      // 
+      // cbRememberLastGroup
+      // 
+      this.cbRememberLastGroup.AutoSize = true;
+      this.cbRememberLastGroup.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.cbRememberLastGroup.Location = new System.Drawing.Point(165, 52);
+      this.cbRememberLastGroup.Name = "cbRememberLastGroup";
+      this.cbRememberLastGroup.Size = new System.Drawing.Size(15, 14);
+      this.cbRememberLastGroup.TabIndex = 3;
+      this.cbRememberLastGroup.UseVisualStyleBackColor = true;
+      this.cbRememberLastGroup.CheckedChanged += new System.EventHandler(this.cbRememberLastGroup_CheckedChanged);
+      // 
+      // comboBoxGroups
+      // 
+      this.comboBoxGroups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxGroups.FormattingEnabled = true;
+      this.comboBoxGroups.Location = new System.Drawing.Point(124, 75);
+      this.comboBoxGroups.Name = "comboBoxGroups";
+      this.comboBoxGroups.Size = new System.Drawing.Size(194, 21);
+      this.comboBoxGroups.TabIndex = 2;
+      this.comboBoxGroups.SelectedIndexChanged += new System.EventHandler(this.comboBoxGroups_SelectedIndexChanged);
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(10, 78);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(108, 13);
+      this.label1.TabIndex = 1;
+      this.label1.Text = "Group to show in root";
       // 
       // cbShowAllChannelsGroup
       // 
@@ -68,75 +121,30 @@ namespace TvPlugin
       // 
       // mpButtonCancel
       // 
+      this.mpButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.mpButtonCancel.Location = new System.Drawing.Point(237, 150);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 9;
-      this.mpButtonCancel.Text = "Cancel";
+      this.mpButtonCancel.Text = "&Cancel";
       this.mpButtonCancel.UseVisualStyleBackColor = true;
       // 
       // mpButtonOk
       // 
+      this.mpButtonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpButtonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
       this.mpButtonOk.Location = new System.Drawing.Point(69, 150);
       this.mpButtonOk.Name = "mpButtonOk";
       this.mpButtonOk.Size = new System.Drawing.Size(75, 23);
       this.mpButtonOk.TabIndex = 8;
-      this.mpButtonOk.Text = "Ok";
+      this.mpButtonOk.Text = "&OK";
       this.mpButtonOk.UseVisualStyleBackColor = true;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(7, 78);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(108, 13);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Group to show in root";
-      // 
-      // comboBoxGroups
-      // 
-      this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxGroups.FormattingEnabled = true;
-      this.comboBoxGroups.Location = new System.Drawing.Point(121, 75);
-      this.comboBoxGroups.Name = "comboBoxGroups";
-      this.comboBoxGroups.Size = new System.Drawing.Size(194, 21);
-      this.comboBoxGroups.TabIndex = 2;
-      this.comboBoxGroups.SelectedIndexChanged += new System.EventHandler(this.comboBoxGroups_SelectedIndexChanged);
-      // 
-      // cbRememberLastGroup
-      // 
-      this.cbRememberLastGroup.AutoSize = true;
-      this.cbRememberLastGroup.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.cbRememberLastGroup.Location = new System.Drawing.Point(165, 52);
-      this.cbRememberLastGroup.Name = "cbRememberLastGroup";
-      this.cbRememberLastGroup.Size = new System.Drawing.Size(15, 14);
-      this.cbRememberLastGroup.TabIndex = 3;
-      this.cbRememberLastGroup.UseVisualStyleBackColor = true;
-      this.cbRememberLastGroup.CheckedChanged += new System.EventHandler(this.cbRememberLastGroup_CheckedChanged);
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(10, 32);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(152, 13);
-      this.label2.TabIndex = 4;
-      this.label2.Text = "Show the \"All channels group\"";
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(10, 52);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(107, 13);
-      this.label3.TabIndex = 5;
-      this.label3.Text = "Remember last group";
-      // 
       // RadioSetupForm
       // 
+      this.AcceptButton = this.mpButtonOk;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
@@ -145,11 +153,9 @@ namespace TvPlugin
       this.Controls.Add(this.mpButtonOk);
       this.Controls.Add(this.groupBox1);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-      this.MaximizeBox = false;
-      this.MinimizeBox = false;
       this.Name = "RadioSetupForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "MyRadio Setup";
+      this.Text = "MyRadio - Setup";
       this.Load += new System.EventHandler(this.RadioSetupForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
