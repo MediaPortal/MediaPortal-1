@@ -244,6 +244,7 @@ Section "MediaPortal core files (required)" SecCore
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVGuideScheduler.exe"' SW_HIDE
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG.exe"' SW_HIDE
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG-conf.exe"' SW_HIDE
+  Sleep 2000
 
   SetOverwrite on
 
@@ -447,6 +448,7 @@ SectionEnd
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVGuideScheduler.exe"' SW_HIDE
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG.exe"' SW_HIDE
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM WebEPG-conf.exe"' SW_HIDE
+  Sleep 2000
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient

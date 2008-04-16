@@ -218,6 +218,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   DetailPrint "Terminating processes ..."
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVService.exe"' SW_HIDE
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM SetupTv.exe"' SW_HIDE
+  Sleep 2000
 
   SetOverwrite on
 
@@ -332,6 +333,7 @@ ${MementoSectionEnd}
   DetailPrint "Terminating processes ..."
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM TVService.exe"' SW_HIDE
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM SetupTv.exe"' SW_HIDE
+  Sleep 2000
 
   #---------------------------------------------------------------------------
   # SERVICE UNINSTALLATION
@@ -421,6 +423,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   DetailPrint "Terminating processes ..."
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
+  Sleep 2000
 
   SetOverwrite on
 
@@ -463,6 +466,7 @@ ${MementoSectionEnd}
   DetailPrint "Terminating processes ..."
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM MediaPortal.exe"' SW_HIDE
   ExecShell "" "Cmd.exe" '/C "taskkill /F /IM configuration.exe"' SW_HIDE
+  Sleep 2000
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient
