@@ -35,7 +35,7 @@ LangString DESC_SecClient                         ${LANG_ENGLISH} "Installs the 
 LangString ^UninstallLink                         ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 LangString TEXT_MSGBOX_PARAMETER_ERROR            ${LANG_ENGLISH} "You have done something wrong!$\r$\nIt is not allowed to use 'noClient' & 'noServer' at the same time."
-LangString TEXT_MSGBOX_REMOVE_ALL                 ${LANG_ENGLISH} "!!! ATTENTION !!!$\r$\nDo you want to make a complete cleanup?$\r$\nThis removes completly the registry keys, the installation and the common app data directory."
+LangString TEXT_MSGBOX_REMOVE_ALL                 ${LANG_ENGLISH} "!!! ATTENTION !!!$\r$\nDo you want to make a complete cleanup?$\r$\nThis removes completly the registry keys, the installation and the common app data directory AND THE ---TVDATABASE---!!!"
 LangString TEXT_MSGBOX_REMOVE_ALL_STUPID          ${LANG_ENGLISH} "!!! ATTENTION !!!$\r$\nAgain for those who slept the msgBox before. :( $(TEXT_MSGBOX_REMOVE_ALL)"
 
 LangString TEXT_MSGBOX_ERROR_MSI_CLIENT           ${LANG_ENGLISH} "Old MSI-based TV Client plugin is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."

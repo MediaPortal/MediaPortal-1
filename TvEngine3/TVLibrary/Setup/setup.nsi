@@ -334,6 +334,13 @@ ${MementoSectionEnd}
   ${KILLPROCESS} "SetupTv.exe"
 
   #---------------------------------------------------------------------------
+  # CLEARING DATABASE if RemoveAll was selected
+  #---------------------------------------------------------------------------
+  ${If} $RemoveAll == 1
+    ExecWait '"$INSTDIR\SetupTv.exe" --delete-db'
+  ${EndIf}
+
+  #---------------------------------------------------------------------------
   # SERVICE UNINSTALLATION
   #---------------------------------------------------------------------------
   DetailPrint "DeInstalling TVService"
