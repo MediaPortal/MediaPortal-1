@@ -643,7 +643,8 @@ namespace TvPlugin
 
     public override void Process()
     {
-      TVHome.UpdateProgressPercentageBar();
+      // This somehow breaks directly stop timeshifting after it started
+      //TVHome.UpdateProgressPercentageBar();
 
       OnKeyTimeout();
       if (_needUpdate)
