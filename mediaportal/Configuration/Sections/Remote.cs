@@ -594,6 +594,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHidEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPageCentarea = new System.Windows.Forms.TabPage();
       this.groupBoxCentareaOptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxMapJoystick = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxCentareaReMapMouseButton = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxCentareaVerbose = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxCentareaEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -671,7 +672,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.checkBoxMapJoystick = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -845,14 +845,12 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxHidGlobal
       // 
       this.checkBoxHidGlobal.AutoSize = true;
-      this.checkBoxHidGlobal.Checked = true;
-      this.checkBoxHidGlobal.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxHidGlobal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxHidGlobal.Location = new System.Drawing.Point(16, 70);
       this.checkBoxHidGlobal.Name = "checkBoxHidGlobal";
-      this.checkBoxHidGlobal.Size = new System.Drawing.Size(352, 17);
+      this.checkBoxHidGlobal.Size = new System.Drawing.Size(397, 17);
       this.checkBoxHidGlobal.TabIndex = 5;
-      this.checkBoxHidGlobal.Text = "Respond to keys even if MediaPortal is not the foreground application";
+      this.checkBoxHidGlobal.Text = "Support input even if MP is in background (slows down keyboard in other apps)";
       this.checkBoxHidGlobal.UseVisualStyleBackColor = true;
       // 
       // checkBoxHidExtendedLogging
@@ -916,6 +914,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxCentareaOptions.Size = new System.Drawing.Size(440, 120);
       this.groupBoxCentareaOptions.TabIndex = 4;
       this.groupBoxCentareaOptions.TabStop = false;
+      // 
+      // checkBoxMapJoystick
+      // 
+      this.checkBoxMapJoystick.AutoSize = true;
+      this.checkBoxMapJoystick.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxMapJoystick.Location = new System.Drawing.Point(16, 93);
+      this.checkBoxMapJoystick.Name = "checkBoxMapJoystick";
+      this.checkBoxMapJoystick.Size = new System.Drawing.Size(291, 17);
+      this.checkBoxMapJoystick.TabIndex = 6;
+      this.checkBoxMapJoystick.Text = "Map mouse movement to cursor directions (experimental)";
+      this.checkBoxMapJoystick.UseVisualStyleBackColor = true;
       // 
       // checkBoxCentareaReMapMouseButton
       // 
@@ -1808,17 +1817,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpButton1.Text = "Mapping";
       this.mpButton1.UseVisualStyleBackColor = true;
       // 
-      // checkBoxMapJoystick
-      // 
-      this.checkBoxMapJoystick.AutoSize = true;
-      this.checkBoxMapJoystick.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxMapJoystick.Location = new System.Drawing.Point(16, 93);
-      this.checkBoxMapJoystick.Name = "checkBoxMapJoystick";
-      this.checkBoxMapJoystick.Size = new System.Drawing.Size(291, 17);
-      this.checkBoxMapJoystick.TabIndex = 6;
-      this.checkBoxMapJoystick.Text = "Map mouse movement to cursor directions (experimental)";
-      this.checkBoxMapJoystick.UseVisualStyleBackColor = true;
-      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -2205,11 +2203,13 @@ namespace MediaPortal.Configuration.Sections
       dlg.ShowDialog(this);
     }
 
-    #endregion
-
     private void checkBoxCentareaEnabled_CheckedChanged(object sender, EventArgs e)
     {
       buttonCentareaMapping.Enabled = checkBoxCentareaEnabled.Checked;
     }
+
+    #endregion
+
+
   }
 }
