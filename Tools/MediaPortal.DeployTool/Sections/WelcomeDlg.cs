@@ -78,6 +78,8 @@ namespace MediaPortal.DeployTool
           return "da-DK";
         case "norsk":
           return "nb-NO";
+        case "français":
+          return "fr-FR";
       }
       return "en-US";
     }

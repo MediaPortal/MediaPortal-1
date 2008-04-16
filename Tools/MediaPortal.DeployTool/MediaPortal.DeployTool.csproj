@@ -116,6 +116,9 @@
       <SubType>Designer</SubType>
       <LastGenOutput>MediaPortal.DeployTool.de-DE.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.fr-FR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.it-IT.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
