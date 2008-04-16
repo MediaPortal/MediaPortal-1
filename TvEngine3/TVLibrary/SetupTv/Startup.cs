@@ -29,6 +29,7 @@ using System.Collections;
 using System.Reflection;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
 using TvControl;
 using TvLibrary.Log;
 using TvDatabase;
@@ -99,7 +100,8 @@ namespace SetupTv
     [STAThread]
     public static void Main(string[] arguments)
     {
-      Log.Info("---- start setuptv ----");
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      Log.Info("---- start setuptv V" + versionInfo.FileVersion + "----");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
 
       foreach (string param in arguments)
