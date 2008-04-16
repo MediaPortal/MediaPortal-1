@@ -51,8 +51,9 @@ namespace MediaPortal.InputDevices
     bool _remoteActive = false;   // Centarea Remote enabled and mapped
     bool _verboseLogging = false; // Log key presses
     bool _mapMouseButton = true;  // Interpret the joystick push as "ok" button
-    bool _mapJoystick = true;    // Map any mouse movement to cursor keys
+    bool _mapJoystick = true;     // Map any mouse movement to cursor keys
     int _lastMouseTick = 0;       // When did the last mouse action occur
+    int _ignoreDupMsg = 0;        // Offset to compensate the self-induced mouse movement
     InputHandler _inputHandler;   // Input Mapper
 
     #region Constructor
@@ -165,35 +166,51 @@ namespace MediaPortal.InputDevices
                   keycode = 10069;
                 }
               }
+              // Since mouse support is semi optimal we have this option to use the joystick like cursor keys
               if (_mapJoystick)
               {
                 if (msg.Msg == WM_MOUSEMOVE)
                 {
-                  if (Environment.TickCount - _lastMouseTick < 100)
-                    return false;
-
                   Point p = new Point(msg.LParam.ToInt32());
-                  MouseDirection mmove = OnMouseMoved(p);
-                  MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor();
-                  _lastMouseTick = Environment.TickCount;
-
-                  switch (mmove)
+                  _ignoreDupMsg++;
+                  if (Environment.TickCount - _lastMouseTick < 175)
                   {
-                    case MouseDirection.Up:
-                      keycode = 38;
-                      break;
-                    case MouseDirection.Right:
-                      keycode = 39;
-                      break;
-                    case MouseDirection.Down:
-                      keycode = 40;
-                      break;
-                    case MouseDirection.Left:
-                      keycode = 37;
-                      break;
+                    if (_ignoreDupMsg % 4 == 0)
+                      MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(true);
+                    return false;
                   }
-                  if (_verboseLogging && mmove != MouseDirection.None)
-                    Log.Debug("Centarea: Command \"{0}\" mapped for mouse movement", mmove.ToString());
+                  else
+                  {
+                    if (_ignoreDupMsg % 2 == 0)
+                    {
+                      MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(true);
+                      MouseDirection mmove = OnMouseMoved(p);
+                      _lastMouseTick = Environment.TickCount;
+                      _ignoreDupMsg = 0;
+
+                      switch (mmove)
+                      {
+                        case MouseDirection.Up:
+                          keycode = 38;
+                          break;
+                        case MouseDirection.Right:
+                          keycode = 39;
+                          break;
+                        case MouseDirection.Down:
+                          keycode = 40;
+                          break;
+                        case MouseDirection.Left:
+                          keycode = 37;
+                          break;
+                      }
+                      if (mmove != MouseDirection.None)
+                      {
+                        MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(false);
+                        if (_verboseLogging)
+                          Log.Debug("Centarea: Command \"{0}\" mapped for mouse movement", mmove.ToString());
+                      }
+                    }
+                  }
                 }
               }
               // The Centarea Remote sends key combos. Therefore we use this trick to get a 1:1 mapping
@@ -237,21 +254,20 @@ namespace MediaPortal.InputDevices
     {
       int x_Val, y_Val;
       MouseDirection direction = MouseDirection.None;
-      //Translating mouse motion on the control to a 30 x 30 cartesian grid.
-      y_Val = (p.Y * 31 / MediaPortal.GUI.Library.GUIGraphicsContext.Height) - 15;
-      x_Val = (p.X * 31 / MediaPortal.GUI.Library.GUIGraphicsContext.Width) - 15;
+      //Translating mouse motion on the control to a 60 x 60 cartesian grid.
+      y_Val = (p.Y * 61 / MediaPortal.GUI.Library.GUIGraphicsContext.form.ClientSize.Height) - 30;
+      x_Val = (p.X * 61 / MediaPortal.GUI.Library.GUIGraphicsContext.form.ClientSize.Width) - 30;
       y_Val = -y_Val;
 
       int radius = (int)Math.Sqrt(y_Val * y_Val + x_Val * x_Val);
-      if (radius > 2 && radius < 15)
+      if (radius > 1)// && radius < 15)
         direction = GetDirection(x_Val, y_Val);
       return direction;
     }
 
     private MouseDirection GetDirection(float x, float y)
     {
-      //Changing cartesian coordinates from control surface to  
-      //more usable polar coordinates
+      //Changing cartesian coordinates from control surface to more usable polar coordinates
       double theta;
       if (x >= 0 && y > 0)
         theta = (Math.Atan(y / x) * (180 / Math.PI));

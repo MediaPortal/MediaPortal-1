@@ -152,6 +152,7 @@ namespace MediaPortal.GUI.Library
     public static bool _useScreenSelector = false;
     private static AdapterInformation _currentFullscreenAdapterInfo = null;
     private static Screen _currentScreen = null;
+    private static Point _screenCenterPos = new Point();
 
     [DllImport("user32.dll")]
     static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
@@ -458,12 +459,46 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public static void ResetCursor()
+    /// <summary>
+    /// Gets the center of MP's current Window Area
+    /// </summary>
+    public static Point OutputScreenCenter
     {
-      int posx = form.ClientRectangle.Width / 2 + form.Location.X;
-      int posy = form.ClientRectangle.Width / 2 + form.Location.Y;
+      get
+      {
+        if (_screenCenterPos.IsEmpty)
+        {
+          int borderWidth = (form.Size.Width - form.ClientRectangle.Width) / 2;
+          // we can only assume that the title bar occupies this space - no frames regarded yet
+          int borderHeight = (form.Size.Height - form.ClientRectangle.Height);
+          _screenCenterPos = new Point((form.ClientRectangle.Width / 2) + form.Location.X + borderWidth, (form.ClientRectangle.Height / 2) + form.Location.Y + borderHeight);
+        }
+        return _screenCenterPos;
+      }
+    }
 
-      Cursor.Position = new Point(posx, posy);
+    public static void ResetCursor(bool interpolate)
+    {
+      int newX, newY;
+      if (interpolate)
+      {
+        Point oldPos = Cursor.Position;
+        if (form.ClientRectangle.Width - oldPos.X < OutputScreenCenter.X)
+          newX = OutputScreenCenter.X + (int)((oldPos.X - OutputScreenCenter.X) / 1.3);
+        else
+          newX = OutputScreenCenter.X - (int)((OutputScreenCenter.X - oldPos.X) / 1.3);
+
+        if (form.ClientRectangle.Height - oldPos.Y < OutputScreenCenter.Y)
+          newY = OutputScreenCenter.Y + (int)((oldPos.Y - OutputScreenCenter.Y) / 1.3);
+        else
+          newY = OutputScreenCenter.Y - (int)((OutputScreenCenter.Y - oldPos.Y) / 1.3);
+      }
+      else
+      {
+        newX = OutputScreenCenter.X;
+        newY = OutputScreenCenter.Y;
+      }
+      Cursor.Position = new Point(newX, newY);
 
       //if (DX9Device != null)
       //  DX9Device.SetCursorPosition(posx, posy, true);
