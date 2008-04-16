@@ -223,61 +223,63 @@ namespace MediaPortal.DeployTool
 
     public static string CheckOSRequirement(bool NotifyUnsupported)
     {
-      OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      OperatingSystem osInfo = Environment.OSVersion;
-
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
-
       bool OsSupport = false;
-      string OsDesc = "";
 
-      switch (osInfo.Version.Major)
+      OsDetection.OperatingSystemVersion os = new OsDetection.OperatingSystemVersion();
+      string OsDesc = os.VersionString;
+
+      switch (os.OSMajorVersion)
       {
-        case 4:                         // 4.x = Win95,98,ME and NT 
-          OsDesc = "Windows 95/98/ME/NT";
+        case 4:                                       // 4.x = Win95,98,ME and NT 
           OsSupport = false;
           break;
 
         case 5:
-          if (osInfo.Version.Minor == 0)   // 5.0 = Windows2000
+          switch (os.OSMinorVersion)
           {
-            OsDesc = "Windows 2000";
-            OsSupport = false;
-          }
-          if (osInfo.Version.Minor == 1)   // 5.1 = WindowsXP
-          {
-            if (int.Parse(osInfo.ServicePack.Substring("Service Pack ".Length, 1)) < 2)
-            {
-              OsDesc = "Windows XP ServicePack 1";
+            case 0:                                   // 5.0 = Windows2000
               OsSupport = false;
-            }
-            else if (Check64bit())
-            {
-              OsDesc = "Windows XP 64bit";
-              OsSupport = false;
-            }
-            else
-            {
-              OsSupport = true;
-              OsDesc = "Windows XP";
-            }
-          }
-          if (osInfo.Version.Major == 2)   // 5.2 = Windows2003
-          {
-            OsSupport = true;
-            OsDesc = "Windows 2003 Server";
-            DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (btn == DialogResult.Cancel) Environment.Exit(-1);
+              break;
+
+            case 1:                                   // 5.1 = WindowsXP 32bit
+
+              if (os.OSServicePackMajor < 2)
+              {
+                OsDesc = "Windows XP ServicePack 1";
+                OsSupport = false;
+              }
+              else
+              {
+                OsSupport = true;
+              }
+              break;
+
+            case 2:                                   // 5.2 = Windows2003 e WindowsXP 64bit
+              if (os.OSProductType == OsDetection.OSProductType.Workstation)
+              {
+                OsSupport = true;
+                OsDesc = "Windows XP 64bit";
+                DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                if (btn == DialogResult.Cancel) Environment.Exit(-1);
+              }
+              else
+              {
+                OsSupport = true;
+                OsDesc = "Windows 2003 Server";
+                DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                if (btn == DialogResult.Cancel) Environment.Exit(-1);
+              }
+              break;
           }
           break;
 
-        case 6:
-          if (osVersionInfo.wProductType != 3)       // Windows Vista
+        case 6:                                      // 6.0 = WindowsVista and Windows2008
+          if (os.OSProductType == OsDetection.OSProductType.Workstation)
           {
             OsSupport = true;
             OsDesc = "Windows Vista";
           }
-          else                                       // Windows 2008
+          else
           {
             OsSupport = true;
             OsDesc = "Windows 2008";
@@ -285,6 +287,7 @@ namespace MediaPortal.DeployTool
             if (btn == DialogResult.Cancel) Environment.Exit(-1);
           }
           break;
+
       }
       if (!OsSupport && NotifyUnsupported)
       {
