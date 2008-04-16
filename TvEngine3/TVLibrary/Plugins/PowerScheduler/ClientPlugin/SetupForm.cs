@@ -37,7 +37,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.Plugins.Process
 {
-  public partial class SetupForm : Form
+  public partial class SetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     #region Ctor
     public SetupForm()
@@ -93,6 +93,12 @@ namespace MediaPortal.Plugins.Process
     private void numericUpDown1_ValueChanged(object sender, EventArgs e)
     {
 
+    }
+
+    private void cancelButton_Click(object sender, EventArgs e)
+    {
+      LoadSettings();
+      Close();
     }
 
   }
