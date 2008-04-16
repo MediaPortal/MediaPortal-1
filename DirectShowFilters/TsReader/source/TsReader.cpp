@@ -41,18 +41,19 @@
 
 void GetLogFile(char *pLog)
 {
-  OSVERSIONINFO osvi;
+  /*OSVERSIONINFO osvi;
   osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-  GetVersionEx (&osvi);
+  GetVersionEx (&osvi);*/
   
+  // Both Vista and XP are onw using the same logging folders
   // Vista
-  if(osvi.dwMajorVersion >= 6) 
+  //if(osvi.dwMajorVersion >= 6) 
   {
     TCHAR folder[MAX_PATH];
     ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
     sprintf(pLog,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader.log",folder);
   }
-  else // XP or earlier
+  /*else // XP or earlier
   {
   	char moduleFileName[1024];
 	  GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
@@ -60,7 +61,7 @@ void GetLogFile(char *pLog)
 	  logFile=logFile.substr(0, logFile.rfind("\\"));
 	  logFile.append("\\log\\TsReader.log");
     strncpy(pLog, logFile.c_str(), 1024);
-  }
+  }*/
 }
 
 

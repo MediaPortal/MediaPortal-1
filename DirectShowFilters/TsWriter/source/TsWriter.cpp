@@ -80,7 +80,7 @@ void LogDebug(const char *fmt, ...)
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
   ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\MediaPortal TV Server\\log\\TsWriter.Log",folder);
+  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsWriter.Log",folder);
 	FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
 	{
