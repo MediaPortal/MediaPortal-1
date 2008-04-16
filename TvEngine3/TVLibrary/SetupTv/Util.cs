@@ -746,53 +746,47 @@ namespace SetupTv
 
     public static void CheckPrerequisites(bool checkDvbFix)
     {
-      string osName = string.Empty;
-      OperatingSystem osInfo = Environment.OSVersion;
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
 
-      if (osInfo.Platform != PlatformID.Win32NT)
+      if (os.OSPlatformId == OsDetection.OSPlatformId.Win32s)
       {
         MessageBox.Show("Your platform is not supported! \nPlease check our Wiki's requirements page.", "Requirements not met!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         Application.Exit();
       }
-      else
+
+      string MsgNotSupported = "Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.";
+      switch (os.OSMajorVersion)
       {
-        switch (osInfo.Version.Major)
-        {
-          case 3:
-            osName = "Windows NT 3.51";
-            MessageBox.Show("Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.", "Windows NT 3.51 is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            return;
-          case 4:
-            osName = "Windows NT 4.0";
-            MessageBox.Show("Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.", "Windows NT 4.0 is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            return;
-          case 5:
-            if (osInfo.Version.Minor == 0)
-            {
-              osName = "Windows 2000";
-              MessageBox.Show("Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.", "Windows 2000 is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        case 3:                               // 3.x = NT 3.51
+          MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        case 4:                               // 4.x = NT 4.0
+          MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        case 5:
+          switch (os.OSMinorVersion)
+          {
+            case 0:                          // 5.0 = Windows2000
+              MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
               if (checkDvbFix)
                 CheckForDvbHotfix();
-            }
-            else if (osInfo.Version.Minor == 1)
-            {
-              osName = "Windows XP";
-              if (checkDvbFix)
-                CheckForDvbHotfix();
-            }
-            else if (osInfo.Version.Minor == 2)
-            {
-              osName = "Windows Server 2003";
-              if (checkDvbFix)
-                CheckForDvbHotfix();
-            }
-            break;
-          case 6:
-            {
-              osName = "Windows Vista";
               break;
-            }
-        }
+            case 1:                          // 5.1 = WindowsXP 32bit
+              if (checkDvbFix)
+                CheckForDvbHotfix();
+              break;
+            case 2:                          // 5.2 = Windows2003 & WindowsXP 64bit 
+              if (os.OSProductType != OsDetection.OSProductType.Workstation)
+                MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+              if (checkDvbFix)
+                CheckForDvbHotfix();
+              break;
+          }
+          break;
+        case 6:                              // 6.0 = WindowsVista & Windows2008
+          if (os.OSProductType != OsDetection.OSProductType.Workstation)
+            MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          break;
       }
     }
 
@@ -813,7 +807,7 @@ namespace SetupTv
             {
               Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
             }
-            catch (Exception){}
+            catch (Exception) { }
           }
       }
       else

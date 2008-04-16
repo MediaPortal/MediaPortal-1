@@ -113,6 +113,7 @@
     <Compile Include="Dialogs\GroupNameForm.designer.cs">
       <DependentUpon>GroupNameForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OSVersion.cs" />
     <Compile Include="Sections\Project.cs">
       <SubType>UserControl</SubType>
     </Compile>
