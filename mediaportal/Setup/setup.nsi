@@ -858,7 +858,6 @@ SectionEnd
 #---------------------------------------------------------------------------
 Function .onInit
   ${LOG_OPEN}
-  ${HIDDEN_CMD_INIT}
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -969,12 +968,10 @@ FunctionEnd
 
 Function .onInstFailed
   ${LOG_CLOSE}
-  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function .onInstSuccess
   ${LOG_CLOSE}
-  ${HIDDEN_CMD_CLOSE}
 FunctionEnd
 
 Function un.onInit
