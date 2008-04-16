@@ -139,7 +139,7 @@ namespace TvLibrary.Log
 
     public static string GetPathName()
     {
-      return String.Format(@"{0}\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     }
 
     /// <summary>
