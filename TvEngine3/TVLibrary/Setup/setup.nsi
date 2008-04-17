@@ -72,9 +72,8 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
-# needs to be changed if we want to edit the appdata path
-#!define COMMON_APPDATA        "$APPDATA\Team MediaPortal\TV Server"
-!define COMMON_APPDATA        "$APPDATA\MediaPortal TV Server"
+
+!define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
 
 !define VER_MAJOR       0
 !define VER_MINOR       9
