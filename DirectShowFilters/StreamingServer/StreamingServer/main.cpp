@@ -89,7 +89,7 @@ void StreamSetup(char* ipAdress)
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
   ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\MediaPortal TV Server\\log\\streaming server.Log",folder);
+  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\streaming server.Log",folder);
 	::DeleteFile(fileName);
 
    Log("-------------- v1.0.0.1---------------");
