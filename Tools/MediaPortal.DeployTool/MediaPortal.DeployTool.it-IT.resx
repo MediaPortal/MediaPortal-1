@@ -493,4 +493,9 @@ sucessivamente (magari su un pc che non ha connessione internet) ?</value>
     <value>Il vostro Sistema Operativo non è supportato a causa di molti hotfixes mancanti da parte di Microsoft.
 Preseguire l'installazione è un vostro rischio.</value>
   </data>
+  <data name="DownloadSettings_failed" xml:space="preserve">
+    <value>Download del file di configurazione fallito.
+Controllare la configurazione di Internet Explorer.
+Se esiste un file corrotto, verrà cancellato ora.</value>
+  </data>
 </root>
