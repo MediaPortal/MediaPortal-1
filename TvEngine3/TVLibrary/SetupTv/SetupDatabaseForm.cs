@@ -321,7 +321,7 @@ namespace SetupTv
 
     private string[] CleanMsSqlStatement(string sql)
     {
-      string currentDir = System.IO.Directory.GetCurrentDirectory();
+      string currentDir = Directory.GetCurrentDirectory();
       currentDir += @"\";
       sql = sql.Replace(@"C:\Program Files\Microsoft SQL Server\MSSQL\data\", currentDir);
       sql = sql.Replace("GO\r\n", "!");
@@ -334,6 +334,7 @@ namespace SetupTv
     {
       sql = sql.Replace("\r\n", "\r");
       sql = sql.Replace("\t", " ");
+      sql = sql.Replace('"', '`'); // allow usage of ANSI quoted identifiers
       string[] lines = sql.Split('\r');
       sql = "";
       for (int i = 0 ; i < lines.Length ; ++i)
@@ -349,15 +350,28 @@ namespace SetupTv
 
     private void mpButtonTest_Click(object sender, EventArgs e)
     {
-      CheckServiceName();
-      
+      if (string.IsNullOrEmpty(tbUserID.Text))
+      {
+        tbUserID.BackColor = Color.Red;
+        MessageBox.Show("Please specify a valid database user", "Specify UserID", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+      if (string.IsNullOrEmpty(tbPassword.Text))
+      {
+        tbPassword.BackColor = Color.Red;
+        MessageBox.Show("Please specify a valid password for the database user", "Specify Password", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+
+      CheckServiceName();      
+
       if (rbSQLServer.Checked)
       {
         _provider = ProviderType.SqlServer;
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 5);
 
         try
-        {          
+        {
           using (SqlConnection connect = new SqlConnection(connectionString))
           {
             connect.Open();
@@ -754,6 +768,30 @@ namespace SetupTv
     private void pbMySQL_Click(object sender, EventArgs e)
     {
       rbMySQL.Checked = true;
+    }
+
+    private void tbServerHostName_TextChanged(object sender, EventArgs e)
+    {
+      if (tbServerHostName.BackColor == Color.Red)
+        tbServerHostName.BackColor = SystemColors.Window;
+    }
+
+    private void tbServiceDependency_TextChanged(object sender, EventArgs e)
+    {
+      if (tbServiceDependency.BackColor == Color.Red)
+        tbServiceDependency.BackColor = SystemColors.Window;
+    }
+
+    private void tbUserID_TextChanged(object sender, EventArgs e)
+    {
+      if (tbUserID.BackColor == Color.Red)
+        tbUserID.BackColor = SystemColors.Window;
+    }
+
+    private void tbPassword_TextChanged(object sender, EventArgs e)
+    {
+      if (tbPassword.BackColor == Color.Red)
+        tbPassword.BackColor = SystemColors.Window;
     }
   }
 }

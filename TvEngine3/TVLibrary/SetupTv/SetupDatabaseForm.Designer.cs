@@ -101,6 +101,7 @@ namespace SetupTv
       this.tbPassword.Size = new System.Drawing.Size(220, 20);
       this.tbPassword.TabIndex = 8;
       this.tbPassword.UseSystemPasswordChar = true;
+      this.tbPassword.TextChanged += new System.EventHandler(this.tbPassword_TextChanged);
       this.tbPassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbPassword_KeyUp);
       // 
       // lblPassword
@@ -118,6 +119,7 @@ namespace SetupTv
       this.tbUserID.Name = "tbUserID";
       this.tbUserID.Size = new System.Drawing.Size(220, 20);
       this.tbUserID.TabIndex = 7;
+      this.tbUserID.TextChanged += new System.EventHandler(this.tbUserID_TextChanged);
       // 
       // gbServerLocation
       // 
@@ -143,6 +145,7 @@ namespace SetupTv
       this.tbServiceDependency.Name = "tbServiceDependency";
       this.tbServiceDependency.Size = new System.Drawing.Size(220, 20);
       this.tbServiceDependency.TabIndex = 5;
+      this.tbServiceDependency.TextChanged += new System.EventHandler(this.tbServiceDependency_TextChanged);
       // 
       // lblServiceName
       // 
@@ -170,6 +173,7 @@ namespace SetupTv
       this.tbServerHostName.Name = "tbServerHostName";
       this.tbServerHostName.Size = new System.Drawing.Size(220, 20);
       this.tbServerHostName.TabIndex = 4;
+      this.tbServerHostName.TextChanged += new System.EventHandler(this.tbServerHostName_TextChanged);
       // 
       // lblDBChoice
       // 

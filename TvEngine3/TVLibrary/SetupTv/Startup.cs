@@ -133,7 +133,7 @@ namespace SetupTv
 
       Log.Info("---- check if database needs to be updated/created ----");
       int currentSchemaVersion = dlg.GetCurrentShemaVersion();
-      if (currentSchemaVersion == -1)
+      if (currentSchemaVersion <= 36) // drop pre-1.0 DBs and handle -1
       {
         Log.Info("---- create database ----");
         if (!dlg.ExecuteSQLScript("create"))
