@@ -63,7 +63,6 @@ namespace MediaPortal.DeployTool
       XmlDocument doc = new XmlDocument();
       HTTPDownload dlg = new HTTPDownload();
       string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      FileInfo XmlInfo = new FileInfo(XmlFile);
       string XmlUrl = GetDownloadSettingsUrl();
 
       //HTTP update of the xml file with the application download URLs
@@ -71,15 +70,19 @@ namespace MediaPortal.DeployTool
       {
         DialogResult result = dlg.ShowDialog(XmlUrl, XmlFile, GetUserAgentOsString());
       }
-      if (XmlInfo.Length == 0)
+      try
+      {
+        doc.Load(XmlFile);
+        XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/URL");
+        return node.InnerText;
+      }
+      catch
       {
         // TODO: MessageBox.Show(Localizer.Instance.GetString("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         MessageBox.Show("Download of settings file failed. Please review your InternetExplorer configuration.", XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         Environment.Exit(-2);
       }
-      doc.Load(XmlFile);
-      XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/URL");
-      return node.InnerText;
+      return String.Empty;
     }
 
     public static string GetDownloadFile(string id)
@@ -87,7 +90,6 @@ namespace MediaPortal.DeployTool
       XmlDocument doc = new XmlDocument();
       HTTPDownload dlg = new HTTPDownload();
       string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      FileInfo XmlInfo = new FileInfo(XmlFile);
       string XmlUrl = GetDownloadSettingsUrl();
 
       //HTTP update of the xml file with the application download URLs
@@ -95,15 +97,19 @@ namespace MediaPortal.DeployTool
       {
         DialogResult result = dlg.ShowDialog(XmlUrl, XmlFile, GetUserAgentOsString());
       }
-      if (XmlInfo.Length == 0)
+      try
+      {
+        doc.Load(XmlFile);
+        XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/FILE");
+        return node.InnerText;
+      }
+      catch
       {
         // TODO: MessageBox.Show(Localizer.Instance.GetString("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         MessageBox.Show("Download of settings file failed. Please review your InternetExplorer configuration.", XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         Environment.Exit(-2);
       }
-      doc.Load(XmlFile);
-      XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/FILE");
-      return node.InnerText;
+      return String.Empty;
     }
 
     public static string GetDownloadType(string id)
@@ -111,7 +117,6 @@ namespace MediaPortal.DeployTool
       XmlDocument doc = new XmlDocument();
       HTTPDownload dlg = new HTTPDownload();
       string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      FileInfo XmlInfo = new FileInfo(XmlFile);
       string XmlUrl = GetDownloadSettingsUrl();
 
       //HTTP update of the xml file with the application download URLs
@@ -119,15 +124,19 @@ namespace MediaPortal.DeployTool
       {
         DialogResult result = dlg.ShowDialog(XmlUrl, XmlFile, GetUserAgentOsString());
       }
-      if (XmlInfo.Length == 0)
+      try
+      {
+        doc.Load(XmlFile);
+        XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/TYPE");
+        return node.InnerText;
+      }
+      catch
       {
         // TODO: MessageBox.Show(Localizer.Instance.GetString("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         MessageBox.Show("Download of settings file failed. Please review your InternetExplorer configuration.", XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         Environment.Exit(-2);
       }
-      doc.Load(XmlFile);
-      XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/TYPE");
-      return node.InnerText;
+      return String.Empty;
     }
 
     public static DialogResult DownloadFile(string prg)
