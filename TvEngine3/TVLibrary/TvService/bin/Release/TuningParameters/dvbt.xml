@@ -1799,7 +1799,6 @@
   <country name="Italy - Padova" offset="125">
     <carrier frequency="490000" bandwidth="8" />
     <carrier frequency="514000" bandwidth="8" />
-    <carrier frequency="674000" bandwidth="8" />
     <carrier frequency="706000" bandwidth="8" />
     <carrier frequency="770000" bandwidth="8" />
     <carrier frequency="818000" bandwidth="8" />
