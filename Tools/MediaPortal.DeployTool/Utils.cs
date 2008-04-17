@@ -58,12 +58,12 @@ namespace MediaPortal.DeployTool
     }
     #endregion
 
-    public static string GetDownloadURL(string id)
+    public static string GetDownloadString(string session_id, string node_id)
     {
       XmlDocument doc = new XmlDocument();
       HTTPDownload dlg = new HTTPDownload();
       string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      string XmlUrl = GetDownloadSettingsUrl();
+      string XmlUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
 
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))
@@ -73,67 +73,14 @@ namespace MediaPortal.DeployTool
       try
       {
         doc.Load(XmlFile);
-        XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/URL");
+        XmlNode node = doc.SelectSingleNode("/Applications/" + session_id + "/" + node_id);
         return node.InnerText;
       }
       catch
       {
         // TODO: MessageBox.Show(Localizer.Instance.GetString("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        MessageBox.Show("Download of settings file failed. Please review your InternetExplorer configuration.", XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        Environment.Exit(-2);
-      }
-      return String.Empty;
-    }
-
-    public static string GetDownloadFile(string id)
-    {
-      XmlDocument doc = new XmlDocument();
-      HTTPDownload dlg = new HTTPDownload();
-      string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      string XmlUrl = GetDownloadSettingsUrl();
-
-      //HTTP update of the xml file with the application download URLs
-      if (!File.Exists(XmlFile))
-      {
-        DialogResult result = dlg.ShowDialog(XmlUrl, XmlFile, GetUserAgentOsString());
-      }
-      try
-      {
-        doc.Load(XmlFile);
-        XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/FILE");
-        return node.InnerText;
-      }
-      catch
-      {
-        // TODO: MessageBox.Show(Localizer.Instance.GetString("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        MessageBox.Show("Download of settings file failed. Please review your InternetExplorer configuration.", XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        Environment.Exit(-2);
-      }
-      return String.Empty;
-    }
-
-    public static string GetDownloadType(string id)
-    {
-      XmlDocument doc = new XmlDocument();
-      HTTPDownload dlg = new HTTPDownload();
-      string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      string XmlUrl = GetDownloadSettingsUrl();
-
-      //HTTP update of the xml file with the application download URLs
-      if (!File.Exists(XmlFile))
-      {
-        DialogResult result = dlg.ShowDialog(XmlUrl, XmlFile, GetUserAgentOsString());
-      }
-      try
-      {
-        doc.Load(XmlFile);
-        XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/TYPE");
-        return node.InnerText;
-      }
-      catch
-      {
-        // TODO: MessageBox.Show(Localizer.Instance.GetString("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        MessageBox.Show("Download of settings file failed. Please review your InternetExplorer configuration.", XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        MessageBox.Show("Download of settings file failed.\nPlease review your InternetExplorer configuration.\nCorrupted config file, if found, will now be deleted.", XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        File.Delete(XmlFile);
         Environment.Exit(-2);
       }
       return String.Empty;
@@ -146,19 +93,19 @@ namespace MediaPortal.DeployTool
 
       //Ack for SQL2005 native language download
       if (prg == "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"])
-        FileName = LocalizeDownloadFile(Utils.GetDownloadFile(prg), Utils.GetDownloadType(prg));
+        FileName = LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"));
       else
-        FileName = Utils.GetDownloadFile(prg);
+        FileName = Utils.GetDownloadString(prg, "FILE");
 
-      if (Utils.GetDownloadType(prg) == "Manual")
+      if (Utils.GetDownloadString(prg, "TYPE") == "Manual")
       {
         ManualDownload dlg = new ManualDownload();
-        result = dlg.ShowDialog(Utils.GetDownloadURL(prg), FileName, Application.StartupPath + "\\deploy");
+        result = dlg.ShowDialog(Utils.GetDownloadString(prg, "URL"), FileName, Application.StartupPath + "\\deploy");
       }
       else
       {
         HTTPDownload dlg = new HTTPDownload();
-        result = dlg.ShowDialog(Utils.GetDownloadURL(prg), Application.StartupPath + "\\deploy\\" + FileName, GetUserAgentOsString());
+        result = dlg.ShowDialog(Utils.GetDownloadString(prg, "URL"), Application.StartupPath + "\\deploy\\" + FileName, GetUserAgentOsString());
       }
       return result;
     }
@@ -386,11 +333,6 @@ namespace MediaPortal.DeployTool
     public static string GetPackageVersion()
     {
       return "1.0 RC1";
-    }
-
-    public static string GetDownloadSettingsUrl()
-    {
-      return "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
     }
 
   }

@@ -43,14 +43,14 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       string prg = "TvServer";
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result;
       result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer");
+      string exe = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("TvServer", "FILE");
       //NSIS installed doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
       string parameters = "/S /noServer /DeployMode";
@@ -78,7 +78,7 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("TvServer", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         if (result.needsDownload == false)

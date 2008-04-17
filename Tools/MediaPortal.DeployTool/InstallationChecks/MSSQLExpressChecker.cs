@@ -103,7 +103,7 @@ namespace MediaPortal.DeployTool
     {
       CheckResult result;
       string prg = "MSSQLExpress" + InstallationProperties.Instance["Sql2005Download"];
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadFile(prg), Utils.GetDownloadType(prg));
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"));
       InstallationProperties.Instance.Set("Sql2005FileName", FileName);
 
       result.needsDownload = !File.Exists(FileName);

@@ -43,14 +43,14 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       string prg = "MediaPortal";
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result;
       result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal");
+      string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MediaPortal", "FILE");
       string targetDir = InstallationProperties.Instance["MPDir"];
       Process setup = Process.Start(nsis, "/S /D=" + targetDir);
       try
@@ -94,7 +94,7 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal"));
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MediaPortal", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         if (result.needsDownload == false)

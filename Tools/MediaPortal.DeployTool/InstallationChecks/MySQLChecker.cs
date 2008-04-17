@@ -78,14 +78,14 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       string prg = "MySQL";
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result;
       result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      string cmdLine = "/i \"" + Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MySQL") + "\"";
+      string cmdLine = "/i \"" + Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MySQL", "FILE") + "\"";
       cmdLine += " ADDLOCAL=\"Server,ClientPrograms,MySQLCommandLineShell,MysqlCommandLineUtilsFeature,ServerInstanceConfig\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
       cmdLine += " /qb-";
@@ -144,7 +144,7 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MySQL"));
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MySQL", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         if (result.needsDownload == false)

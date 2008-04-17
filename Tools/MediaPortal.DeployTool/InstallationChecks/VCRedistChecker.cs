@@ -43,14 +43,14 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       string prg = "VCRedist";
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result;
       result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      Process setup = Process.Start(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("VCRedist"), "/Q");
+      Process setup = Process.Start(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("VCRedist", "FILE"), "/Q");
       try
       {
         setup.WaitForExit();
@@ -70,7 +70,7 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("VCRedist"));
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("VCRedist", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         if (result.needsDownload == false)

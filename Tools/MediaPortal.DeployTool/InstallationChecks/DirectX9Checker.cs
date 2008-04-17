@@ -43,14 +43,14 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       string prg = "DirectX9c";
-      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile(prg);
+      string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result;
       result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("DirectX9c");
+      string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("DirectX9c", "FILE");
       Process setup = Process.Start(exe, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
       try
       {
@@ -70,7 +70,7 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("DirectX9c"));
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("DirectX9c", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         if (result.needsDownload == false)

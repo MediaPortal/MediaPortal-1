@@ -496,6 +496,8 @@ installation later (maybe on a pc without an internet connection)?</value>
 Continue at your own risk</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
-    <value>Download of settings file failed. Please review your Internet Explorer's connection configuration.</value>
+    <value>Download of settings file failed.
+Please review your InternetExplorer configuration.
+Corrupted config file, if found, will now be deleted.</value>
   </data>
 </root>
