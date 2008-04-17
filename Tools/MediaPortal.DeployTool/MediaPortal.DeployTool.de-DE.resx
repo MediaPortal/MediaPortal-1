@@ -491,4 +491,7 @@ später vorzunehmen?</value>
     <value>Ihr Betriebsystem wird nicht unterstützt, weil MS einige benötigte Hotfixes nicht veröffentlicht hat.
 Fortsetzung erfolgt auf eigenes Risiko.</value>
   </data>
+  <data name="DownloadSettings_failed" xml:space="preserve">
+    <value>Die benötigten Einstellungen konnten nicht geladen werden. Bitte überprüfen sie die Verbindungs-Optionen des Internet Explorers.</value>
+  </data>
 </root>
