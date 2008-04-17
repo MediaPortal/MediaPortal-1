@@ -492,6 +492,8 @@ später vorzunehmen?</value>
 Fortsetzung erfolgt auf eigenes Risiko.</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
-    <value>Die benötigten Einstellungen konnten nicht geladen werden. Bitte überprüfen sie die Verbindungs-Optionen des Internet Explorers.</value>
+    <value>Die benötigten Einstellungen konnten nicht geladen werden.
+Bitte überprüfen sie die Verbindungs-Optionen des Internet Explorers.
+Einstellungsdatei ist beschädigt und wird gelöscht, falls vorhanden.</value>
   </data>
 </root>
