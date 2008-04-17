@@ -286,6 +286,8 @@ namespace MediaPortal.GUI.Library
       if (!m_directoryLoaded)
         LoadDirectory();
 
+
+
       // Randomize or sort our images if necessary
       //if (m_randomized)
       //  random_shuffle(m_files.begin(), m_files.end());
@@ -296,6 +298,32 @@ namespace MediaPortal.GUI.Library
 
         m_images.Add(pImage);
       }
+
+      //randomize the images if specified by skin
+      if (m_randomized && m_images.Count > 1)
+      {
+        //create a second list to work with and copy ordered images to it
+        List<GUIImage> randomlist = new List<GUIImage>();
+        randomlist.AddRange(m_images);
+        //Log.Info("m_images.Count is {0}", m_images.Count.ToString());
+        //clear the images from the original list so that we can add them back randomly
+        m_images.Clear();
+        int randomCount = randomlist.Count;
+        //Log.Info("{0} files to sort", randomCount.ToString());
+        Random r = new Random();
+        int randomnum;
+
+        for (int i = 0; i < randomCount; i++)
+        {
+          randomnum = r.Next(0, randomlist.Count - 1);
+          //add random image to image list
+          m_images.Add(randomlist[randomnum]);
+          //Log.Info("Added image {0} to m_images", randomnum.ToString());
+          //remove said image from our second list so it wont be picked again
+          randomlist.RemoveAt(randomnum);
+        }
+      }
+
       // Load in the current image, and reset our timer
       m_imageTimer.StartZero();
       m_fadeTimer.Stop();
