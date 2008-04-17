@@ -492,4 +492,9 @@ Vil du starte installasjons prosessen np, eller bare laste ned
     <value>Ditt operativsystem er ikke støttet, grunnet mangel på oppdateringer fra Microsoft.
 Fortsett på egen risiko....</value>
   </data>
+  <data name="DownloadSettings_failed" xml:space="preserve">
+    <value>Nedlasting av oppsett fil feilet.
+Vennligst sjekk Internet Explorer innstillinger.
+Den ødelagte oppsett filen vil nå bli slettet, hvis den finnes.</value>
+  </data>
 </root>
