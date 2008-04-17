@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>700</id>
   <defaultcontrol>24</defaultcontrol>
@@ -63,12 +63,12 @@
         <ondown>31</ondown>
       </control>
       <control>
-        <description>Rendering Options</description>
+        <description>Recording options</description>
         <type>button</type>
         <id>31</id>
         <label>6007</label>
         <hyperlink>701</hyperlink>
-        <onup>17</onup>
+        <onup>28</onup>
       </control>
       <control>
         <description>Automatically turn TV on</description>

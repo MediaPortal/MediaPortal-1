@@ -58,12 +58,12 @@
         <ondown>31</ondown>
       </control>
       <control>
-        <description>Rendering Options</description>
+        <description>Recording Options</description>
         <type>button</type>
         <id>31</id>
         <label>6007</label>
         <hyperlink>701</hyperlink>
-        <onup>17</onup>
+        <onup>28</onup>
       </control>
       <control>
         <description>Automatically turn TV on</description>
