@@ -643,14 +643,19 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 				//found.
 				if (item.size()>0)
 					lang.event+=item;
-				if (text.size()>0)
+				if (text.size()>0 && strcmp(item.c_str(),text.c_str())!=0)
 				{
 					if (lang.text.size()>0)
 					{
 						if ((BYTE)text[0]<0x20)
 						{
-							lang.text+="\n";
-							lang.text+=text.erase(0,1);
+							if (!lang.CR_added)
+							{
+								lang.text+="\n";
+								lang.CR_added=true;
+							}
+							if (text.size()>1)
+								lang.text+=text.erase(0,1);
 						}
 						else
 							lang.text+=text;
@@ -664,6 +669,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		}
 		//add new language...
 		EPGLanguage lang;
+		lang.CR_added=false;
 		lang.language=language;
 		if (item.size()>0)
 			lang.event=item;
@@ -720,10 +726,11 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 			if (6+event_len > descriptor_len+2)
 			{
 		    EPGLanguage lang;
+				lang.CR_added=false;
 		    lang.language=ISO_639_language_code;
 		    lang.event="";
 		    lang.text="";
-			lang.parentalRating=0;
+				lang.parentalRating=0;
 		    epgEvent.vecLanguages.push_back(lang);
 				LogDebug("*** DecodeShortEventDescriptor: check1: %d %d",event_len,descriptor_len);
 				return;
@@ -736,6 +743,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 		else if (event_len<0)
 		{
 	    EPGLanguage lang;
+			lang.CR_added=false;
 	    lang.language=ISO_639_language_code;
 	    lang.event="";
 	    lang.text="";
@@ -752,10 +760,11 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 			if (off+text_len > descriptor_len+2) 
 			{
 	      EPGLanguage lang;
+				lang.CR_added=false;
 	      lang.language=ISO_639_language_code;
 	      lang.event="";
 	      lang.text="";
-		  lang.parentalRating=0;
+				lang.parentalRating=0;
 	      epgEvent.vecLanguages.push_back(lang);
 				LogDebug("*** DecodeShortEventDescriptor: check2: %d %d",event_len,descriptor_len);
 				return;
@@ -768,10 +777,11 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 		else if (text_len<0)
 		{
 	    EPGLanguage lang;
+			lang.CR_added=false;
 	    lang.language=ISO_639_language_code;
 	    lang.event="";
 	    lang.text="";
-		lang.parentalRating=0;
+			lang.parentalRating=0;
 	    epgEvent.vecLanguages.push_back(lang);
 			LogDebug("*** DecodeShortEventDescriptor: check2a: %d %d",event_len,descriptor_len);
 			return;
@@ -791,6 +801,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 			}
 		}
 		EPGLanguage lang;
+		lang.CR_added=false;
 		lang.language=ISO_639_language_code;
 		if (eventText.size()>0)
 			lang.event=eventText;

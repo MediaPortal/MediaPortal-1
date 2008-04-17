@@ -349,7 +349,9 @@ namespace TvDatabase
       else
       {
         dbProg.Title = title;
-        dbProg.Description = description;
+        // this prevents a more detailed description getting overriden by a short description from another transponder
+        if (dbProg.Description.Length<description.Length)
+          dbProg.Description = description;
         dbProg.StartTime = ep.StartTime;
         dbProg.EndTime = ep.EndTime;
         dbProg.Genre = genre;
