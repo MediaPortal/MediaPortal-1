@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
   {
     public string GetDisplayName()
     {
-      return "MediaPortal TV-Server";
+      return "MediaPortal TV-Server " + Utils.GetPackageVersion();
     }
 
     public bool Download()
@@ -93,21 +93,22 @@ namespace MediaPortal.DeployTool
       {
         string TV3Path = (string)key.GetValue("UninstallString");
         int serverInstalled = (int)key.GetValue("MementoSection_SecServer");
-        //string version = (string)key.GetValue("DisplayVersion");
+        string version = (string)key.GetValue("DisplayVersion");
         key.Close();
         if (TV3Path == null | !File.Exists(TV3Path))
           result.state = CheckState.NOT_INSTALLED;
         else
         {
           if (serverInstalled == 1)
-            result.state = CheckState.INSTALLED;
+          {
+            if (version == Utils.GetPackageVersion())
+              result.state = CheckState.INSTALLED;
+            else
+              result.state = CheckState.VERSION_MISMATCH;
+          }
           else
             result.state = CheckState.NOT_INSTALLED;
         }
-        //if (version == "1.0.0")
-        //  result.state = CheckState.INSTALLED;
-        //else
-        //  result.state = CheckState.VERSION_MISMATCH;
       }
       return result;
     }

@@ -349,5 +349,11 @@ namespace MediaPortal.DeployTool
         return false;
       }
     }
+
+    public static string GetPackageVersion()
+    {
+      return "1.0 RC1";
+    }
+
   }
 }

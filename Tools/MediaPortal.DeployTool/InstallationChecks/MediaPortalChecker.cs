@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
   {
     public string GetDisplayName()
     {
-      return "MediaPortal";
+      return "MediaPortal " + Utils.GetPackageVersion();
     }
 
     public bool Download()
@@ -62,18 +62,33 @@ namespace MediaPortal.DeployTool
     }
     public bool UnInstall()
     {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
-      if (key == null)
+      RegistryKey key;
+      Process setup;
+
+      // 1.0.x
+      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
+      if (key != null)
       {
-        return false;
-      }
-      key.Close();
-      Process setup = Process.Start((string)key.GetValue("UninstallString"));
-      try
-      {
+        key.Close();
+        setup = Process.Start((string)key.GetValue("UninstallString"));
         setup.WaitForExit();
       }
-      catch { }
+
+      // 0.2.3.0
+      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
+      if (key != null)
+      {
+        string RegistryFullPathName = key.GetValue("UninstallString").ToString();
+        string FileName = Path.GetFileName(RegistryFullPathName);
+        string Directory = Path.GetDirectoryName(RegistryFullPathName);
+        string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
+        key.Close();
+        File.Copy(RegistryFullPathName, TempFullPathName);
+        setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
+        setup.WaitForExit();
+        File.Delete(TempFullPathName);
+      }
+
       return true;
     }
     public CheckResult CheckStatus()
@@ -88,28 +103,38 @@ namespace MediaPortal.DeployTool
           result.state = CheckState.NOT_DOWNLOADED;
         return result;
       }
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
-      if (key == null)
+      RegistryKey keyold = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
+      RegistryKey keynew = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
+
+      if (keyold != null)
       {
-        result.state = CheckState.NOT_INSTALLED;
-      }
-      else
-      {
-        string MpPath = (string)key.GetValue("UninstallString");
-        key.Close();
+        string MpPath = (string)keyold.GetValue("UninstallString");
+        string version = (string)keyold.GetValue("DisplayVersion");
+        keyold.Close();
         if (MpPath == null | !File.Exists(MpPath))
           result.state = CheckState.NOT_INSTALLED;
         else
-          result.state = CheckState.INSTALLED;
-        /*
-        string version = (string)key.GetValue("DisplayVersion");
-        key.Close();
-        if (version == "0.9.3.0")
-          result.state = CheckState.INSTALLED;
-        else
           result.state = CheckState.VERSION_MISMATCH;
-        */
       }
+      else if (keynew != null)
+      {
+        string MpPath = (string)keynew.GetValue("UninstallString");
+        string version = (string)keynew.GetValue("DisplayVersion");
+        keynew.Close();
+        if (MpPath == null | !File.Exists(MpPath))
+        {
+          result.state = CheckState.NOT_INSTALLED;
+        }
+        else
+        {
+          if (version == Utils.GetPackageVersion())
+            result.state = CheckState.INSTALLED;
+          else
+            result.state = CheckState.VERSION_MISMATCH;
+        }
+      }
+      else
+        result.state = CheckState.NOT_INSTALLED;
       return result;
     }
   }

@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
   {
     public string GetDisplayName()
     {
-      return "Old MP/TV-Engine installation";
+      return "Very old MP/TV-Engine installation";
     }
     public bool Download()
     {
@@ -70,31 +70,20 @@ namespace MediaPortal.DeployTool
         setup.WaitForExit();
         File.Delete(TempFullPathName);
       }
-      //MP 0.2.3.0
-      if (CheckUninstallString("MediaPortal 0.2.3.0") != null)
-      {
-        string RegistryFullPathName = CheckUninstallString("MediaPortal 0.2.3.0");
-        string FileName = Path.GetFileName(RegistryFullPathName);
-        string Directory = Path.GetDirectoryName(RegistryFullPathName);
-        string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
-        File.Copy(RegistryFullPathName, TempFullPathName);
-        setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
-        setup.WaitForExit();
-        File.Delete(TempFullPathName);
-      }
-      //TVServer
+      
+      //TVServer MSI
       if (CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
       {
         setup = Process.Start("msiexec.exe", "/x {4B738773-EE07-413D-AFB7-BB0AB04A5488} /qn");
         setup.WaitForExit();
       }
-      //TVClient old
+      //TVClient (old MSI clsid)
       if (CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
       {
         setup = Process.Start("msiexec.exe", "/x {F7444E89-5BC0-497E-9650-E50539860DE0} /qn");
         setup.WaitForExit();
       }
-      //TVClient new
+      //TVClient (new MSI clsid)
       if (CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}") != null)
       {
         setup = Process.Start("msiexec.exe", "/x {FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA} /qn");
@@ -116,19 +105,15 @@ namespace MediaPortal.DeployTool
       if (CheckUninstallString("MediaPortal 0.2.3.0 RC3") != null)
         result.state = CheckState.NOT_REMOVED;
 
-      //MP 0.2.3.0
-      if (CheckUninstallString("MediaPortal 0.2.3.0") != null)
-        result.state = CheckState.NOT_REMOVED;
-
-      //TVServer
+      //TVServer MSI
       if (CheckUninstallString("{4B738773-EE07-413D-AFB7-BB0AB04A5488}") != null)
         result.state = CheckState.NOT_REMOVED;
 
-      //TVClient old
+      //TVClient (old MSI clsid)
       if (CheckUninstallString("{F7444E89-5BC0-497E-9650-E50539860DE0}") != null)
         result.state = CheckState.NOT_REMOVED;
 
-      //TVClient new
+      //TVClient (new MSI clsid)
       if (CheckUninstallString("{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}") != null)
         result.state = CheckState.NOT_REMOVED;
 
@@ -143,7 +128,6 @@ namespace MediaPortal.DeployTool
         strUninstall = key.GetValue("UninstallString").ToString();
         key.Close();
         return strUninstall;
-
       }
       else
         return null;
