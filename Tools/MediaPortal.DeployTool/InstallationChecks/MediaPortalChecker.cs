@@ -103,17 +103,17 @@ namespace MediaPortal.DeployTool
           result.state = CheckState.NOT_DOWNLOADED;
         return result;
       }
+
+      result.state = CheckState.NOT_INSTALLED;
+
       RegistryKey keyold = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
       RegistryKey keynew = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
-
       if (keyold != null)
       {
         string MpPath = (string)keyold.GetValue("UninstallString");
         string version = (string)keyold.GetValue("DisplayVersion");
         keyold.Close();
-        if (MpPath == null | !File.Exists(MpPath))
-          result.state = CheckState.NOT_INSTALLED;
-        else
+        if (MpPath != null && File.Exists(MpPath))
           result.state = CheckState.VERSION_MISMATCH;
       }
       else if (keynew != null)
@@ -121,11 +121,7 @@ namespace MediaPortal.DeployTool
         string MpPath = (string)keynew.GetValue("UninstallString");
         string version = (string)keynew.GetValue("DisplayVersion");
         keynew.Close();
-        if (MpPath == null | !File.Exists(MpPath))
-        {
-          result.state = CheckState.NOT_INSTALLED;
-        }
-        else
+        if (MpPath != null | File.Exists(MpPath))
         {
           if (version == Utils.GetPackageVersion())
             result.state = CheckState.INSTALLED;
@@ -133,8 +129,6 @@ namespace MediaPortal.DeployTool
             result.state = CheckState.VERSION_MISMATCH;
         }
       }
-      else
-        result.state = CheckState.NOT_INSTALLED;
       return result;
     }
   }

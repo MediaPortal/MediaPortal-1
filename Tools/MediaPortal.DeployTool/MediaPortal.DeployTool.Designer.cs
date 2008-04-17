@@ -364,6 +364,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download of settings file failed. Please review your InternetExplorer configuration..
+        /// </summary>
+        internal static string DownloadSettings_failed {
+            get {
+                return ResourceManager.GetString("DownloadSettings_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MediaPortal is FREE - if you bought it on ebay you have been fooled!.
         /// </summary>
         internal static string Finished_labelEbay {

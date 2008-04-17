@@ -495,4 +495,7 @@ installation later (maybe on a pc without an internet connection)?</value>
     <value>Your OS is unsupported because Microsoft did not release several required hotfixes for it.
 Continue at your own risk</value>
   </data>
+  <data name="DownloadSettings_failed" xml:space="preserve">
+    <value>Download of settings file failed. Please review your InternetExplorer configuration.</value>
+  </data>
 </root>
