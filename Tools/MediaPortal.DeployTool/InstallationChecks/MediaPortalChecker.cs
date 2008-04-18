@@ -69,8 +69,8 @@ namespace MediaPortal.DeployTool
       key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
       if (key != null)
       {
-        key.Close();
         setup = Process.Start((string)key.GetValue("UninstallString"));
+        key.Close();
         setup.WaitForExit();
       }
 
