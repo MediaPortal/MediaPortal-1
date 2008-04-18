@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
-    <value>Möchten Sie MediaPortal benutzen um Fernsehen zu schauen?</value>
+    <value>MediaPortal für TV verwenden?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
     <value>Ja, ich möchte mit MediaPortal fernsehen.</value>
