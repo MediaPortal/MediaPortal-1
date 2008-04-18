@@ -130,10 +130,10 @@
     <value>Voulez-vous regarder la TVHD avec MediaPortal?</value>
   </data>
   <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Oui - je vais utiliser MediaPortal pour visionner du contenu HD.</value>
+    <value>Oui, je vais l'utiliser pour visionner du contenu HD.</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Non - je ne vais pas utiliser MediaPortal pour visionner du contenu HD.</value>
+    <value>Non, je ne vais pas l'utiliser pour visionner du contenu HD.</value>
   </data>
   <data name="WatchHDTv_maybe" xml:space="preserve">
     <value>Je ne sais pas ce qu'est le contenu HD.</value>
@@ -178,7 +178,7 @@ l'interface de MediaPortal.</value>
     <value>Installation en un clic</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Toutes les applications nécessaires seront installés dans leurs emplacements par défaut en utiliseront les paramètres par défaut. Le mot de passe de la base de données est "MediaPortal".</value>
+    <value>Toutes les applications nécessaires seront installés dans leurs emplacements par défaut et utiliseront les paramètres par défaut. Le mot de passe de la base de données est "MediaPortal".</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Effectuez une installation avancée</value>
@@ -425,7 +425,7 @@ et communiquera avec les autres PC de votre Réseau avec TV (pas de base de donn
     <value>Cet outil vous guidera à travers le processus d'installation</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
-    <value>S’il vous plaît choisissez votre langue :</value>
+    <value>S’il vous plaît choisissez votre langue avant de continuer :</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
     <value>MediaPortal est GRATUIT - si vous l'avez acheté sur ebay, vous avez été dupé!</value>
@@ -459,9 +459,11 @@ et communiquera avec les autres PC de votre Réseau avec TV (pas de base de donn
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>Une connexion Internet est nécessaire pour le processus d'installation.
+
 Voulez-vous commencer le processus d'installation maintenant ou 
 voulez-vous juste télécharger les composants pour une installation
-ultérieure (peut-être sur un PC sans connexion Internet)?</value>
+ultérieure?
+(peut-être sur un PC sans connexion Internet)?</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
     <value>Télécharger uniquement les composantes requis</value>
