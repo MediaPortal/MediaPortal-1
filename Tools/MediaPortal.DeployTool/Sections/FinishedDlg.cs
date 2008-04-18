@@ -57,6 +57,7 @@ namespace MediaPortal.DeployTool
       linkForum.Text = Localizer.Instance.GetString("Finished_linkForum");
       linkWiki.Text = Localizer.Instance.GetString("Finished_linkWiki");
       labelEbay.Text = Localizer.Instance.GetString("Finished_labelEbay");
+      labelSectionHeader.Text = "";
     }
     public override DeployDialog GetNextDialog()
     {
