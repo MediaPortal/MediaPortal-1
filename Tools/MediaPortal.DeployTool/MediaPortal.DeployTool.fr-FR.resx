@@ -172,13 +172,13 @@ l'interface de MediaPortal.</value>
     <value>Installation avancée</value>
   </data>
   <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
-    <value>L'installation avancé vous permet d'installer le Serveur / configurations du Client  et de préciser les emplacements d'installation et d'autres paramètres</value>
+    <value>L'installation avancé vous permet d'installer le Serveur / Client et de préciser les emplacements d'installation et d'autres paramètres.</value>
   </data>
   <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
     <value>Installation en un clic</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Toutes les applications nécessaires seront installés dans leurs emplacements par défaut en utilisant les paramètres par défaut. Le mot de passe de la base de données est "MediaPortal".</value>
+    <value>Toutes les applications nécessaires seront installés dans leurs emplacements par défaut en utiliseront les paramètres par défaut. Le mot de passe de la base de données est "MediaPortal".</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Effectuez une installation avancée</value>
@@ -193,28 +193,28 @@ l'interface de MediaPortal.</value>
     <value>Client MediaPortal </value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Cela va installer uniquement MediaPortal 1.0. Pour regarder la télévision il va se connecter à un serveur-TV dédié sur votre Réseau.</value>
+    <value>Cela va installer uniquement MediaPortal 1.0. Pour regarder la télévision il se connectera à un serveur-TV dédié sur le Réseau.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>Instalation simple</value>
+    <value>Instalation unique</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>C'est l'installation à utiliser si les Cartes-TV sont installées dans le même PC que celui qui est utilisé 
-pour MediaPortal et pour regarder la TV dans MediaPortal 1.0.</value>
+    <value>C'est l'installation à utiliser si les Cartes-TV sont installées dans le même PC que celui qui est
+utilisé pour MediaPortal et aussi pour regarder la TV dans MediaPortal 1.0.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>TV-Server dédié (maître)</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
-    <value>Cela va installer uniquement le MediaPortal TV-Server sur ce PC.
-Le PC fera alors office de serveur TV dédié et fournira aux autres ordinateurs de votre réseau local la TV. (Installation d'une Base de données nécessaire)</value>
+    <value>Cela va installer uniquement le MediaPortal TV-Server sur ce PC. Le PC fera alors office de serveur TV dédié
+et fournira aux autres ordinateurs de votre réseau local la TV. (Installation d'une Base de données nécessaire)</value>
   </data>
   <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
     <value>TV-Server dédié (esclave, TV-Server existant (maître) requis)</value>
   </data>
   <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Cela va uniquement installer le MediaPortal TV-Server sur ce PC.
-Le PC fera alors office de serveur-TV dédié et communiquera avec les autres PC de votre Réseau avec la TV (pas de base de données requise).
+    <value>Cela va uniquement installer le MediaPortal TV-Server sur ce PC. Le PC fera alors office de serveur-TV dédié
+et communiquera avec les autres PC de votre Réseau avec TV (pas de base de données requise).
 </value>
   </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
@@ -230,22 +230,22 @@ Le PC fera alors office de serveur-TV dédié et communiquera avec les autres PC
     <value>Vous devez fournir un mot de passe pour le «sa» SQL-Server utilisateur.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
-    <value>S’il vous plaît sélectionner les options nécessaires à l'installation de SQL-Server:</value>
+    <value>S’il vous plaît sélectionner les options nécessaires à l'installation du serveur SQL:</value>
   </data>
   <data name="DBMSSettings_labelInstDir" xml:space="preserve">
     <value>Répertoire d'installation</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Mot de passe pour «sa» de l'utilisateur SQL Server</value>
+    <value>Mot de passe de l'utilisateur «sa» du serveur SQL:</value>
   </data>
   <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Le mot de passe de l'administrateur-utilisateur de SQL-Server. Est par défaut "MediaPortal")</value>
+    <value>(Le mot de passe de l'administrateur-utilisateur du serveur SQL. Est par défaut "MediaPortal")</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Sélectionnez le dossier d'installation de SQL-Server</value>
   </data>
   <data name="DBMSType_labelHeading" xml:space="preserve">
-    <value>S’il vous plaît sélectionner le SQL Server que vous voulez utiliser:</value>
+    <value>S’il vous plaît sélectionner le serveur SQL que vous voulez utiliser:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
     <value>Microsoft SQL-Server Express</value>
@@ -296,7 +296,7 @@ Le PC fera alors office de serveur-TV dédié et communiquera avec les autres PC
     <value>Télécharger-&gt;installer</value>
   </data>
   <data name="Install_actionInstall" xml:space="preserve">
-    <value>installer</value>
+    <value>Installer</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
     <value>&lt;pas d'action&gt;</value>
@@ -329,7 +329,7 @@ Le PC fera alors office de serveur-TV dédié et communiquera avec les autres PC
     <value>Impossible d'installer l'application [(0)]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Appuyez sur le bouton "installer" pour exécuter toutes les actions nécessaires à l'installion de votre configuration</value>
+    <value>Appuyez sur "installer" pour exécuter toutes les actions nécessaires à l'installion de votre configuration</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Téléchargement...</value>
@@ -341,7 +341,7 @@ Le PC fera alors office de serveur-TV dédié et communiquera avec les autres PC
     <value>Désinstallation ...</value>
   </data>
   <data name="Install_stateInstalled" xml:space="preserve">
-    <value>installé</value>
+    <value>Installé</value>
   </data>
   <data name="Install_stateNotInstalled" xml:space="preserve">
     <value>Non installé</value>
@@ -350,7 +350,7 @@ Le PC fera alors office de serveur-TV dédié et communiquera avec les autres PC
     <value>Une autre version est déjà installée</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
-    <value>MediaPortal outil d'installation</value>
+    <value>Outil d'installation de MediaPortal</value>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Retour</value>
@@ -359,7 +359,7 @@ Le PC fera alors office de serveur-TV dédié et communiquera avec les autres PC
     <value>Sortir</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
-    <value>Cette application vous guidera à travers l'installation de MediaPortal et de tous les composants nécessaires.</value>
+    <value>Cette application vous guidera à travers l'installation de MediaPortal et de tous les composants requis.</value>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Suivant</value>
@@ -425,7 +425,7 @@ Le PC fera alors office de serveur-TV dédié et communiquera avec les autres PC
     <value>Cet outil vous guidera à travers le processus d'installation</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
-    <value>S’il vous plaît choisissez votre langue avant de continuer</value>
+    <value>S’il vous plaît choisissez votre langue :</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
     <value>MediaPortal est GRATUIT - si vous l'avez acheté sur ebay, vous avez été dupé!</value>
@@ -459,12 +459,12 @@ Le PC fera alors office de serveur-TV dédié et communiquera avec les autres PC
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>Une connexion Internet est nécessaire pour le processus d'installation.
-Voulez-vous commencer le processus d'installation maintenant ou voulez-vous juste 
-télécharger les composants nécessaires à l'exécution de
-l'installation ultérieure (peut-être sur un PC sans connexion Internet)?</value>
+Voulez-vous commencer le processus d'installation maintenant ou 
+voulez-vous juste télécharger les composants pour une installation
+ultérieure (peut-être sur un PC sans connexion Internet)?</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
-    <value>télécharger uniquement les composantes requis</value>
+    <value>Télécharger uniquement les composantes requis</value>
   </data>
   <data name="DownloadOnly_yes" xml:space="preserve">
     <value>Commencer maintenant l'installation</value>
