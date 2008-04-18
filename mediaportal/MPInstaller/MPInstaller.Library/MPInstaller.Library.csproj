@@ -70,6 +70,7 @@
     <Compile Include="MPIutils.cs" />
     <Compile Include="MPpackageStruct.cs" />
     <Compile Include="properties.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="wizard_1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,9 +102,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\MPI MediaPortal Installer.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

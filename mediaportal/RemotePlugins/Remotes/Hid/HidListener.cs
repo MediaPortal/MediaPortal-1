@@ -37,11 +37,28 @@ namespace MediaPortal.InputDevices
 {
   public class HidListener
   {
+    const uint WM_GLOBALKEYPRESSED = 0x0463;
+
+    [DllImport("GlobalCatchKeys.dll")]
+    static extern void StartHook();
+
+    [DllImport("GlobalCatchKeys.dll")]
+    static extern void StopHook();
+
+    [DllImport("GlobalCatchKeys.dll")]
+    static extern void AddWatch(IntPtr aHandle, uint aKeyCode);
+
+    [DllImport("GlobalCatchKeys.dll")]
+    static extern void RemoveWatch(IntPtr aHandle, uint aKeyCode);
+
+
+
+
     bool controlEnabled = false;
     bool controlEnabledGlobally = false;
     bool logVerbose = false;           // Verbose logging
     InputHandler _inputHandler;
-    KeyboardHook _keyboardHook;
+//    KeyboardHook _keyboardHook;
 
     public HidListener()
     {
@@ -52,7 +69,7 @@ namespace MediaPortal.InputDevices
       Init();
     }
 
-    void Init()
+    private void Init()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -73,22 +90,23 @@ namespace MediaPortal.InputDevices
 
       if (controlEnabledGlobally)
       {
-        _keyboardHook = new KeyboardHook();
-        _keyboardHook.KeyDown += new KeyEventHandler(OnKeyDown);
-        _keyboardHook.IsEnabled = true;
+        StartHook();
+        AddWatch(GUIGraphicsContext.form.Handle, (uint)Keys.MediaStop);
+//        _keyboardHook = new KeyboardHook();
+//        _keyboardHook.KeyDown += new KeyEventHandler(OnKeyDown);
+//        _keyboardHook.IsEnabled = true;
       }
     }
 
     public void DeInit()
     {
-      if (_keyboardHook != null && _keyboardHook.IsEnabled)
-        _keyboardHook.IsEnabled = false;
+  //    RemoveWatch(GUIGraphicsContext.form.Handle, (uint)Keys.MediaStop);
+      StopHook();
+//      if (_keyboardHook != null && _keyboardHook.IsEnabled)
+//        _keyboardHook.IsEnabled = false;
     }
 
-    [DllImport("user32.dll")]
-    static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
-
-    void OnKeyDown(object sender, KeyEventArgs e)
+    private void OnKeyDown(object sender, KeyEventArgs e)
     {
       if (GUIGraphicsContext.form != null && GUIGraphicsContext.form.Focused == false)
       {
@@ -103,7 +121,7 @@ namespace MediaPortal.InputDevices
           // since the normal process involves geting polled via WndProc we have to get a tiny bit dirty 
           // and send a message back to the main form in order to get the key press handled without 
           // duplicating action mapping code from the main app
-          SendMessage(GUIGraphicsContext.form.Handle, 0x0319, (uint)GUIGraphicsContext.form.Handle, (uint)lParam);
+//          SendMessage(GUIGraphicsContext.form.Handle, 0x0319, (uint)GUIGraphicsContext.form.Handle, (uint)lParam);
         }
       }
     }
@@ -131,6 +149,27 @@ namespace MediaPortal.InputDevices
       return AppCommands.None;
     }
 
+    struct KeyboardHookStruct
+    {
+      public KeyboardHookStruct(Message e)
+      {
+        KeyboardHookStruct khs = (KeyboardHookStruct)Marshal.PtrToStructure(e.LParam, typeof(KeyboardHookStruct));
+
+        virtualKey = khs.virtualKey;
+        scanCode = khs.scanCode;
+        flags = khs.flags;
+        time = khs.time;
+        dwExtraInfo = khs.dwExtraInfo;
+      }
+
+      public int virtualKey;
+      public int scanCode;
+      public int flags;
+      public int time;
+      public int dwExtraInfo;
+    }
+
+
     public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
       action = null;
@@ -139,6 +178,12 @@ namespace MediaPortal.InputDevices
 
       if (controlEnabled)
       {
+        if (msg.Msg == WM_GLOBALKEYPRESSED && (int)msg.WParam == 256)
+        {
+          KeyboardHookStruct khs = new KeyboardHookStruct(msg);
+          MessageBox.Show(((System.Windows.Forms.Keys)khs.virtualKey).ToString());
+        }
+
         // we are only interested in WM_APPCOMMAND
         if (msg.Msg != 0x0319)
           return false;

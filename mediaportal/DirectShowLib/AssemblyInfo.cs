@@ -31,11 +31,11 @@ using System.Security.Permissions;
 [assembly : AssemblyTitle("DirectShow Net Library")]
 [assembly : AssemblyDescription(".NET Interfaces for calling DirectShow.  See http://directshownet.sourceforge.net/")]
 [assembly : AssemblyConfiguration("")]
-[assembly : AssemblyCompany("")]
+[assembly: AssemblyCompany("Team MediaPortal")]
 [assembly : Guid("6D0386CE-37E6-4f77-B678-07C584105DC6")]
 [assembly : AssemblyVersion("2.0.0.0")]
 #if DEBUG
-[assembly : AssemblyProduct("Debug Version")]
+[assembly: AssemblyProduct("MediaPortal")]
 #else
 [assembly : AssemblyProduct("Release Version")]
 #endif
@@ -51,3 +51,4 @@ using System.Security.Permissions;
 [assembly : ComVisible(false)]
 [assembly : CLSCompliant(true)]
 [assembly : SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode=true)]
+[assembly: AssemblyFileVersionAttribute("2.0.0.0")]
