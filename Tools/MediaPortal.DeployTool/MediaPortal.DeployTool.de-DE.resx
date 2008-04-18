@@ -121,28 +121,28 @@
     <value>Möchten Sie MediaPortal benutzen um Fernsehen zu schauen?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
-    <value>Ja, ich möchte MediaPortal zum Fernsehen benutzen</value>
+    <value>Ja, ich möchte mit MediaPortal fernsehen.</value>
   </data>
   <data name="WatchTV_off" xml:space="preserve">
-    <value>Nein, ich möchte MediaPortal nicht zum Fernsehen benutzen</value>
+    <value>Nein, ich möchte MediaPortal nicht zum Fernsehen benutzen.</value>
   </data>
   <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
     <value>Möchten Sie HDTV mit MediaPortal erleben?</value>
   </data>
   <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Ja, ich möchte MediaPortal benutzen um HDTV zu schauen</value>
+    <value>Ja, MediaPortal soll dazu in der Lage sein.</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nein, ich möchte MediaPortal nicht benutzen um HDTV zu schauen</value>
+    <value>Nein, ich benötige keine HDTV-Unterstützung.</value>
   </data>
   <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Ich habe keine Ahnung was HDTV ist</value>
+    <value>Ich bin mir nicht sicher.</value>
   </data>
   <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
     <value>Welche TV-Engine möchten Sie benutzen?</value>
   </data>
   <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Eingebaute TV-Engine von MediaPortal 1.0.</value>
+    <value>Eingebautes TV-Modul von MediaPortal 1.0.</value>
   </data>
   <data name="TvEngineType_rbTvEngine" xml:space="preserve">
     <value>MediaPortal TV-Server 1.0</value>
@@ -193,7 +193,7 @@ in die Oberfläche von MediaPortal.</value>
     <value>MediaPortal Client (zur Verbindung mit einem TV-Server)</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Es wird nur MediaPortal 1.0 installiert. Um Fern zu sehen verbindet sich MediaPortal mit einem TV-Server in Ihrem Netzwerk.</value>
+    <value>Es wird nur MediaPortal 1.0 installiert. Zum Fernsehen verbindet sich MediaPortal mit einem TV-Server in Ihrem Netzwerk.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>MediaPortal "Single Seat" Installation (alles auf einem Rechner)</value>
@@ -245,13 +245,13 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Bitte wählen Sie den zu installierenden SQL-Server Typ aus:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express</value>
+    <value>Microsoft SQL-Server 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
-    <value>Es wurde ein bereits installierter SQL Server gefunden. Dieser wird für den TV-Server verwendet</value>
+    <value>Es ist bereits ein SQL Server vorhanden. Der TV-Server soll diesen verwenden.</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
     <value>Herzlichen Glückwunsch !</value>
@@ -326,7 +326,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Es ist ein Fehler bei der Installation der Anwendung [{0}] aufgetreten</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Drücken Sie "Installieren", um alle für Ihre Konfiguration notwendigen Applikationen zu installieren</value>
+    <value>Drücken Sie "Installieren" um alle für die gewählte Konfiguration notwendigen Applikationen zu installieren.</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Download läuft...</value>
@@ -356,7 +356,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Beenden</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
-    <value>Diese Anwendung wird Sie durch die Installation von MediaPortal und aller benötigten Komponenten führen</value>
+    <value>Diese Anwendung wird Sie durch die Installation von MediaPortal und aller benötigten Komponenten führen.</value>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Weiter</value>
@@ -419,7 +419,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Vielen Dank, dass Sie sich für MediaPortal entschieden haben!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
-    <value>Diese Anwendung wird Sie durch den Installationsvorgang begleiten</value>
+    <value>Diese Anwendung wird Sie durch den Installationsvorgang begleiten.</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
     <value>Bitte wählen Sie Ihre Srache aus</value>
@@ -456,9 +456,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>Für die Installation wird eine Internetverbindung benötigt.
-Möchten sie die Installations-Schritte jetzt durchführen, oder lediglich 
-die benötigten Dateien herunterladen um die eigentliche Installation 
-später vorzunehmen?</value>
+Möchten sie die Installations-Schritte jetzt durchführen, oder lediglich die benötigten Dateien herunterladen um die eigentliche Installation später vorzunehmen?</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
     <value>Nur Downloads durchführen</value>
@@ -482,7 +480,7 @@ später vorzunehmen?</value>
     <value>Die benötigten Komponenten wurden erfolgreich heruntergeladen.</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Drücken sie "Download" um die benötigten Dateien jetzt herunter zu laden.</value>
+    <value>Klicken sie "Herunterladen" um den Internet-Download der nötigen Dateien jetzt zu starten.</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Ihr Betriebssystem wird nicht von MediaPortal unterstützt.</value>
