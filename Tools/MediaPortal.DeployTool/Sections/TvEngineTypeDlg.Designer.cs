@@ -40,7 +40,7 @@ namespace MediaPortal.DeployTool
       // 
       // labelSectionHeader
       // 
-      this.labelSectionHeader.Location = new System.Drawing.Point(0, 0);
+      this.labelSectionHeader.Location = new System.Drawing.Point(120, 0);
       this.labelSectionHeader.Size = new System.Drawing.Size(229, 13);
       this.labelSectionHeader.Text = "Which TV-Engine do you want to use ?";
       // 

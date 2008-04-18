@@ -155,7 +155,7 @@
 + riconoscimento automatico per ogni tipo di scheda TV (analogica, DVB-C, -S, -S2, -T, ATSC)
 + supporto per ATSC QAM (TV via cavo)
 + permette registrazioni in formato .mpg o .ts
-+ ATSC/DVB permettono di sintonizzare più canali con lo stesso transponder/mux con una scheda
++ ATSC/DVB sintonizzano più canali con lo stesso transponder/mux con una sola scheda
 + invia il segnale TV a più clients nella rete LAN
 - richiede MySQL o MS-SQL (verrà installato automaticamente se non presente)
 
@@ -194,7 +194,7 @@ interfaccia utente di MediaPortal.
     <value>MediaPortal client</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Questa scelta installerà solamente MediaPortal 1.0. Per guardare la TV si connetterà a un Tv-Server dedicato nella vostra rete LAN.</value>
+    <value>Questa scelta installerà solamente MediaPortal 1.0. Per guardare la TV si connetterà a un Tv-Server dedicato nella rete LAN.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Installazione "Singleseat"</value>
@@ -458,9 +458,11 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>E' richiesta una connessione internet per l'installazione.
-Volete cominciare il processo di installazione adesso o volete solamente
-scaricare i componenti necessari per poi eseguire l'installazione 
-sucessivamente (magari su un pc che non ha connessione internet) ?</value>
+
+Volete cominciare il processo di installazione adesso o
+volete solamente scaricare i componenti necessari per 
+poi eseguire l'installazione sucessivamente ?
+(magari su un pc che non ha connessione internet)</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
     <value>Solo scarico componenti richiesti</value>
