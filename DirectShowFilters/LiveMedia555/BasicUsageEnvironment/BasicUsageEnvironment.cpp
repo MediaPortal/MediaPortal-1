@@ -34,7 +34,6 @@ void Log(const char *fmt, ...)
 	va_start(ap,fmt);
 	tmp=vsprintf(buffer, fmt, ap);
 	va_end(ap); 
-
 	
 	SYSTEMTIME systemTime;
 	GetLocalTime(&systemTime);
@@ -42,8 +41,8 @@ void Log(const char *fmt, ...)
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
   ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\streaming server.Log",folder);
-	FILE* fp = fopen(fileName,"a+");
+  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
+  FILE* fp = fopen(fileName,"a+");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
@@ -60,9 +59,8 @@ void Log(const char *fmt, ...)
 		systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
 		buffer);
   ::OutputDebugString(buf);
-  
-
 }
+
 #if defined(__WIN32__) || defined(_WIN32)
 extern "C" int initializeWinsockIfNecessary();
 #endif

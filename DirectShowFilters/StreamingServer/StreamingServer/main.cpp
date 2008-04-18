@@ -89,10 +89,10 @@ void StreamSetup(char* ipAdress)
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
   ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal\\Log\\streaming server.Log",folder);
-	::DeleteFile(fileName);
+  sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
+  ::DeleteFile(fileName);
 
-   Log("-------------- v1.0.0.1---------------");
+  Log("-------------- v1.0.0.1---------------");
 	Log("Stream server:Setup stream server for ip:%s",ipAdress);
 	
 	ReceivingInterfaceAddr=inet_addr(ipAdress );
