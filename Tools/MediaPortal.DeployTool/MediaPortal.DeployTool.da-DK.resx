@@ -155,9 +155,9 @@
 + automatisk detektion af TV-kort (analog, dvb-t, -c, -s, -s2, atsc)
 + ATSC QAM understøttes
 + optagelser i mpg eller ts filformater
-+ for atsc/dvb understøttes samtidig tuning af flere kanaler på samme frekvens/mux med et tv-kort
++ for dvb understøttes samtidig tuning af flere kanaler på samme frekvens med et tv-kort
 + det er muligt at levere TV til flere klienter i netværket
-- kræver MySQL eller MS-SQL (vil automatisk blive instaleret, hvis det ikke allerede er i systemet)
+- kræver MySQL eller MS-SQL (vil automatisk blive installeret, hvis det ikke findes)
 
 TV-Server erstatter fuldstændigt den inbyggede TV-Engine, og bliver en fuldt integreret del af  
 MediaPortals brugerflade.</value>
