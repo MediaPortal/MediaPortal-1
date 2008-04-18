@@ -70,6 +70,7 @@
     <Compile Include="PowerManager.cs" />
     <Compile Include="PowerSchedulerEventArgs.cs" />
     <Compile Include="PowerSettings.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemotePowerControl.cs" />
     <Compile Include="TimerException.cs" />
     <Compile Include="WaitableTimer.cs" />
