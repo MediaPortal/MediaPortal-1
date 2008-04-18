@@ -119,9 +119,8 @@
   </resheader>
   <data name="labelSectionHeader.Text" xml:space="preserve">
     <value>An internet connection is required for the installation process.
-Do you want to start with the installation process now, or do you want
-to only download the required components in order to perform the 
-installation later,  maybe on a pc without an internet connection?
+
+Do you want to start with the installation process now, or do you want to only download the required components in order to perform the installation later,  maybe on a pc without an internet connection?
 </value>
   </data>
 </root>
