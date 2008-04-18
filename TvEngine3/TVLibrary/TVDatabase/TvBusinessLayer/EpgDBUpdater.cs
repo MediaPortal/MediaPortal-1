@@ -348,10 +348,15 @@ namespace TvDatabase
         dbProg = new TvDatabase.Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, false, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, starRating, classification, parentRating);
       else
       {
-        dbProg.Title = title;
         // this prevents a more detailed description getting overriden by a short description from another transponder
-        if (dbProg.Description.Length<description.Length)
+        if (dbProg.Title == title)
+        {
+           if (dbProg.Description.Length < description.Length)
+            dbProg.Description = description;
+        }
+        else
           dbProg.Description = description;
+        dbProg.Title = title;
         dbProg.StartTime = ep.StartTime;
         dbProg.EndTime = ep.EndTime;
         dbProg.Genre = genre;
