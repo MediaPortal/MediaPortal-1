@@ -38,7 +38,7 @@ namespace MediaPortal.DeployTool
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(449, 71);
+      this.buttonBrowse.Location = new System.Drawing.Point(449, 64);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(103, 23);
       this.buttonBrowse.TabIndex = 21;
@@ -50,7 +50,7 @@ namespace MediaPortal.DeployTool
       // 
       this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxDir.Location = new System.Drawing.Point(9, 73);
+      this.textBoxDir.Location = new System.Drawing.Point(9, 66);
       this.textBoxDir.Name = "textBoxDir";
       this.textBoxDir.Size = new System.Drawing.Size(417, 20);
       this.textBoxDir.TabIndex = 20;
@@ -58,7 +58,8 @@ namespace MediaPortal.DeployTool
       // labelInstDir
       // 
       this.labelInstDir.AutoSize = true;
-      this.labelInstDir.Location = new System.Drawing.Point(6, 57);
+      this.labelInstDir.ForeColor = System.Drawing.Color.White;
+      this.labelInstDir.Location = new System.Drawing.Point(6, 50);
       this.labelInstDir.Name = "labelInstDir";
       this.labelInstDir.Size = new System.Drawing.Size(101, 13);
       this.labelInstDir.TabIndex = 19;
@@ -67,7 +68,8 @@ namespace MediaPortal.DeployTool
       // labelHeading
       // 
       this.labelHeading.AutoSize = true;
-      this.labelHeading.Location = new System.Drawing.Point(4, 30);
+      this.labelHeading.ForeColor = System.Drawing.Color.White;
+      this.labelHeading.Location = new System.Drawing.Point(4, 23);
       this.labelHeading.Name = "labelHeading";
       this.labelHeading.Size = new System.Drawing.Size(289, 13);
       this.labelHeading.TabIndex = 18;
@@ -78,7 +80,8 @@ namespace MediaPortal.DeployTool
       this.checkBoxFirewall.AutoSize = true;
       this.checkBoxFirewall.Checked = true;
       this.checkBoxFirewall.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxFirewall.Location = new System.Drawing.Point(9, 110);
+      this.checkBoxFirewall.ForeColor = System.Drawing.Color.White;
+      this.checkBoxFirewall.Location = new System.Drawing.Point(9, 118);
       this.checkBoxFirewall.Name = "checkBoxFirewall";
       this.checkBoxFirewall.Size = new System.Drawing.Size(331, 17);
       this.checkBoxFirewall.TabIndex = 22;

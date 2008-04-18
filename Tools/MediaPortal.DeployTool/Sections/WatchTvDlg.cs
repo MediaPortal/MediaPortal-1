@@ -37,6 +37,8 @@ namespace MediaPortal.DeployTool
 {
   public partial class WatchTVDlg : DeployDialog, IDeployDialog
   {
+    bool rbYesChecked;
+
     public WatchTVDlg()
     {
       // First install screen: check if OS is compliant !!!
@@ -45,7 +47,8 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.WatchTV;
       labelSectionHeader.Text = "";
-      rbYesWatchTv.Checked = true;
+      imgYes.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      rbYesChecked = true;
       UpdateUI();
     }
 
@@ -59,7 +62,7 @@ namespace MediaPortal.DeployTool
 
     public override DeployDialog GetNextDialog()
     {
-      if (rbYesWatchTv.Checked)
+      if (rbYesChecked)
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchHDTv);
       else
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
@@ -71,5 +74,19 @@ namespace MediaPortal.DeployTool
     }
 
     #endregion
+
+    private void imgYes_Click(object sender, EventArgs e)
+    {
+      imgYes.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgNo.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      rbYesChecked = true;
+    }
+
+    private void imgNo_Click(object sender, EventArgs e)
+    {
+      imgYes.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgNo.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      rbYesChecked = false;
+    }
   }
 }

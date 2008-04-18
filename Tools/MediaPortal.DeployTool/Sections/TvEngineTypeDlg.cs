@@ -37,12 +37,14 @@ namespace MediaPortal.DeployTool
 {
   public partial class TvEngineTypeDlg : DeployDialog, IDeployDialog
   {
+    bool tve3Checked;
     public TvEngineTypeDlg()
     {
       InitializeComponent();
       type = DialogType.TvEngineType;
       labelSectionHeader.Text = "";
-      rbTV3.Checked = true;
+      imgTVE3.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      tve3Checked = true;
       UpdateUI();
     }
 
@@ -56,10 +58,10 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      if (rbTV2.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
-      else
+      if (tve3Checked)
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE);
+      else
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE);
     }
     public override bool SettingsValid()
     {
@@ -68,5 +70,18 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
+    private void imgTVE2_Click(object sender, EventArgs e)
+    {
+      imgTVE2.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgTVE3.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      tve3Checked = false;
+    }
+
+    private void imgTVE3_Click(object sender, EventArgs e)
+    {
+      imgTVE2.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgTVE3.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      tve3Checked = true;
+    }
   }
 }

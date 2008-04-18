@@ -37,12 +37,15 @@ namespace MediaPortal.DeployTool
 {
   public partial class DownloadOnlyDlg : DeployDialog, IDeployDialog
   {
+    bool rbYesChecked;
+
     public DownloadOnlyDlg()
     {
       InitializeComponent();
       type = DialogType.DownloadOnly;
       labelSectionHeader.Text = "";
-      rbInstallNow.Checked = true;
+      imgInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      rbYesChecked = true;
       UpdateUI();
     }
 
@@ -55,7 +58,7 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      if (rbDownloadOnly.Checked)
+      if (rbYesChecked)
       {
         InstallationProperties.Instance.Set("InstallType", "download_only");
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
@@ -71,5 +74,21 @@ namespace MediaPortal.DeployTool
     }
 
     #endregion
+
+    private void imgInstallNow_Click(object sender, EventArgs e)
+    {
+      imgInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgDownloadOnly.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      rbYesChecked = true;
+    }
+
+    private void imgDownloadOnly_Click(object sender, EventArgs e)
+    {
+      imgInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgDownloadOnly.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      rbYesChecked = false;
+    }
+
+
   }
 }

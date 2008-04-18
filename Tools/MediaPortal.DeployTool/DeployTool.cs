@@ -45,7 +45,7 @@ namespace MediaPortal.DeployTool
     public void UpdateUI()
     {
       this.Text = Localizer.Instance.GetString("MainWindow_AppName");
-      labelAppHeading.Text = Localizer.Instance.GetString("MainWindow_labelAppHeading");
+      //labelAppHeading.Text = Localizer.Instance.GetString("MainWindow_labelAppHeading");
       backButton.Text = Localizer.Instance.GetString("MainWindow_backButton");
       nextButton.Text = Localizer.Instance.GetString("MainWindow_nextButton");
     }

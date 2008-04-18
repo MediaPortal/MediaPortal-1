@@ -85,6 +85,31 @@
     <Compile Include="ManualDownload.Designer.cs">
       <DependentUpon>ManualDownload.cs</DependentUpon>
     </Compile>
+    <Compile Include="MediaPortal.DeployTool.da-DK.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.da-DK.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.de-DE.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.de-DE.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.fr-FR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.fr-FR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.it-IT.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.it-IT.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.nb-NO.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.nb-NO.resx</DependentUpon>
+    </Compile>
     <Compile Include="OSVersion.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -111,19 +136,28 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.da-DK.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.da-DK.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.de-DE.resx">
       <SubType>Designer</SubType>
       <LastGenOutput>MediaPortal.DeployTool.de-DE.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.fr-FR.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.fr-FR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.it-IT.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.it-IT.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.nb-NO.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.nb-NO.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.resx">
       <SubType>Designer</SubType>
@@ -308,7 +342,19 @@
     <None Include="Resources\MePo_tv.png" />
     <None Include="Resources\MP_logo.png" />
     <None Include="Resources\MP_packshoth.jpg" />
+    <None Include="Resources\TsWriter.ax" />
+    <None Include="Resources\Background top.png" />
+    <None Include="Resources\Background bottom.png" />
+    <None Include="Resources\Background middle internet connection.png" />
+    <None Include="Resources\Background middle one click install choose.png" />
+    <None Include="Resources\Background middle TV  yes no.png" />
+    <None Include="Resources\Background middle TV install.png" />
+    <None Include="Resources\Background middle with MP Box.png" />
+    <None Include="Resources\Background middle empty.png" />
+    <None Include="Resources\Choose button on.png" />
+    <None Include="Resources\Choose button off.png" />
     <Content Include="Resources\MePo_download.png" />
+    <None Include="Resources\MP_logo.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

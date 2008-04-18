@@ -11,10 +11,13 @@ namespace MediaPortal.DeployTool
 {
   public partial class DBMSTypeDlg : DeployDialog, IDeployDialog
   {
+    int dbmsType;
     public DBMSTypeDlg()
     {
       InitializeComponent();
       type = DialogType.DBMSType;
+      imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      dbmsType = 1;
       UpdateUI();
     }
 
@@ -28,7 +31,7 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      if (rbDBAlreadyInstalled.Checked)
+      if (dbmsType == 3)
       {
         if (InstallationProperties.Instance["InstallType"] == "singleseat")
           return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
@@ -44,13 +47,43 @@ namespace MediaPortal.DeployTool
     }
     public override void SetProperties()
     {
-      if (rbMSSQL.Checked)
-        InstallationProperties.Instance.Set("DBMSType", "mssql2005");
-      if (rbMySQL.Checked)
-        InstallationProperties.Instance.Set("DBMSType", "mysql");
-      if (rbDBAlreadyInstalled.Checked)
-        InstallationProperties.Instance.Set("DBMSType", "DBAlreadyInstalled");
+      switch (dbmsType)
+      {
+        case 1:
+          InstallationProperties.Instance.Set("DBMSType", "mssql2005");
+          break;
+        case 2:
+          InstallationProperties.Instance.Set("DBMSType", "mysql");
+          break;
+        case 3:
+          InstallationProperties.Instance.Set("DBMSType", "DBAlreadyInstalled");
+          break;
+      }
     }
     #endregion
+
+    private void imgMS_Click(object sender, EventArgs e)
+    {
+      imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      dbmsType = 1;
+    }
+
+    private void imgMySQL_Click(object sender, EventArgs e)
+    {
+      imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      dbmsType = 2;
+    }
+
+    private void imgExists_Click(object sender, EventArgs e)
+    {
+      imgMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      dbmsType = 3;
+    }
   }
 }

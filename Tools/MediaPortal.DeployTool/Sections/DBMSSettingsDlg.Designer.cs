@@ -41,6 +41,7 @@ namespace MediaPortal.DeployTool
       // labelHeading
       // 
       this.labelHeading.AutoSize = true;
+      this.labelHeading.ForeColor = System.Drawing.Color.White;
       this.labelHeading.Location = new System.Drawing.Point(4, 30);
       this.labelHeading.Name = "labelHeading";
       this.labelHeading.Size = new System.Drawing.Size(296, 13);
@@ -50,6 +51,7 @@ namespace MediaPortal.DeployTool
       // labelInstDir
       // 
       this.labelInstDir.AutoSize = true;
+      this.labelInstDir.ForeColor = System.Drawing.Color.White;
       this.labelInstDir.Location = new System.Drawing.Point(7, 57);
       this.labelInstDir.Name = "labelInstDir";
       this.labelInstDir.Size = new System.Drawing.Size(51, 13);
@@ -62,7 +64,7 @@ namespace MediaPortal.DeployTool
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDir.Location = new System.Drawing.Point(10, 78);
       this.textBoxDir.Name = "textBoxDir";
-      this.textBoxDir.Size = new System.Drawing.Size(463, 20);
+      this.textBoxDir.Size = new System.Drawing.Size(508, 20);
       this.textBoxDir.TabIndex = 4;
       this.textBoxDir.Text = "C:\\Programme\\MSSQL";
       // 
@@ -78,6 +80,7 @@ namespace MediaPortal.DeployTool
       // labelPassword
       // 
       this.labelPassword.AutoSize = true;
+      this.labelPassword.ForeColor = System.Drawing.Color.White;
       this.labelPassword.Location = new System.Drawing.Point(7, 102);
       this.labelPassword.Name = "labelPassword";
       this.labelPassword.Size = new System.Drawing.Size(70, 13);
@@ -87,6 +90,7 @@ namespace MediaPortal.DeployTool
       // labelPasswordDesc
       // 
       this.labelPasswordDesc.AutoSize = true;
+      this.labelPasswordDesc.ForeColor = System.Drawing.Color.White;
       this.labelPasswordDesc.Location = new System.Drawing.Point(7, 153);
       this.labelPasswordDesc.Name = "labelPasswordDesc";
       this.labelPasswordDesc.Size = new System.Drawing.Size(374, 13);
@@ -96,7 +100,7 @@ namespace MediaPortal.DeployTool
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(488, 77);
+      this.buttonBrowse.Location = new System.Drawing.Point(533, 77);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(93, 23);
       this.buttonBrowse.TabIndex = 10;
@@ -109,6 +113,7 @@ namespace MediaPortal.DeployTool
       this.checkBoxFirewall.AutoSize = true;
       this.checkBoxFirewall.Checked = true;
       this.checkBoxFirewall.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxFirewall.ForeColor = System.Drawing.Color.White;
       this.checkBoxFirewall.Location = new System.Drawing.Point(10, 182);
       this.checkBoxFirewall.Name = "checkBoxFirewall";
       this.checkBoxFirewall.Size = new System.Drawing.Size(363, 17);
@@ -120,6 +125,7 @@ namespace MediaPortal.DeployTool
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
       this.Controls.Add(this.checkBoxFirewall);
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.labelPasswordDesc);
@@ -129,7 +135,7 @@ namespace MediaPortal.DeployTool
       this.Controls.Add(this.labelInstDir);
       this.Controls.Add(this.labelHeading);
       this.Name = "DBMSSettingsDlg";
-      this.Size = new System.Drawing.Size(620, 224);
+      this.Size = new System.Drawing.Size(665, 224);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.labelHeading, 0);
       this.Controls.SetChildIndex(this.labelInstDir, 0);

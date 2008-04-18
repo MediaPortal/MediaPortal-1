@@ -37,12 +37,15 @@ namespace MediaPortal.DeployTool
 {
   public partial class BaseInstallationTypeDlg : DeployDialog, IDeployDialog
   {
+    bool rbOneClickChecked;
+
     public BaseInstallationTypeDlg()
     {
       InitializeComponent();
       type = DialogType.BASE_INSTALLATION_TYPE;
       labelSectionHeader.Text = "";
-      rbOneClick.Checked = true;
+      imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      rbOneClickChecked = true;
       UpdateUI();
     }
 
@@ -59,7 +62,7 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      if (rbOneClick.Checked)
+      if (rbOneClickChecked)
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       else
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.CUSTOM_INSTALLATION_TYPE);
@@ -70,7 +73,7 @@ namespace MediaPortal.DeployTool
     }
     public override void SetProperties()
     {
-      if (rbOneClick.Checked)
+      if (rbOneClickChecked)
       {
         InstallationProperties.Instance.Set("InstallTypeHeader", Localizer.Instance.GetString("BaseInstallation_rbOneClick"));
         InstallationProperties.Instance.Set("InstallType", "singleseat");
@@ -82,5 +85,27 @@ namespace MediaPortal.DeployTool
       }
     }
     #endregion
+
+    private void imgOneClick_Click(object sender, EventArgs e)
+    {
+      imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      rbOneClickChecked = true;
+    }
+    private void rbOneClick_Click(object sender, EventArgs e)
+    {
+      imgOneClick_Click(sender, e);
+    }
+
+    private void imgAdvanced_Click(object sender, EventArgs e)
+    {
+      imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      rbOneClickChecked = false;
+    }
+    private void rbAdvanced_Click(object sender, EventArgs e)
+    {
+      imgAdvanced_Click(sender, e);
+    }
   }
 }

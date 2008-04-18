@@ -37,12 +37,15 @@ namespace MediaPortal.DeployTool
 {
   public partial class BaseInstallationTypeWithoutTvEngineDlg : DeployDialog, IDeployDialog
   {
+    bool rbOneClickChecked;
+
     public BaseInstallationTypeWithoutTvEngineDlg()
     {
       InitializeComponent();
       type = DialogType.BASE_INSTALLATION_TYPE_WITHOUT_TVENGINE;
       labelSectionHeader.Text = "";
-      rbOneClick.Checked = true;
+      imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      rbOneClickChecked = true;
       UpdateUI();
     }
 
@@ -58,7 +61,7 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      if (rbOneClick.Checked)
+      if (rbOneClickChecked)
       {
         InstallationProperties.Instance.Set("InstallType", "mp_only");
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
@@ -72,5 +75,28 @@ namespace MediaPortal.DeployTool
     }
 
     #endregion
+
+    private void imgOneClick_Click(object sender, EventArgs e)
+    {
+      imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      rbOneClickChecked = true;
+    }
+
+    private void rbOneClick_Click(object sender, EventArgs e)
+    {
+      imgOneClick_Click(sender, e);
+    }
+
+    private void imgAdvanced_Click(object sender, EventArgs e)
+    {
+      imgOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      rbOneClickChecked = false;
+    }
+    private void rbAdvanced_Click(object sender, EventArgs e)
+    {
+      imgAdvanced_Click(sender, e);
+    }
   }
 }

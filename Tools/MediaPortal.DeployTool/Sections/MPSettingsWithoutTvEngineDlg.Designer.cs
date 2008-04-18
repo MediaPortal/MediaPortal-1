@@ -37,7 +37,7 @@ namespace MediaPortal.DeployTool
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(441, 71);
+      this.buttonBrowse.Location = new System.Drawing.Point(441, 64);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(99, 23);
       this.buttonBrowse.TabIndex = 14;
@@ -49,7 +49,7 @@ namespace MediaPortal.DeployTool
       // 
       this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxDir.Location = new System.Drawing.Point(9, 73);
+      this.textBoxDir.Location = new System.Drawing.Point(9, 66);
       this.textBoxDir.Name = "textBoxDir";
       this.textBoxDir.Size = new System.Drawing.Size(417, 20);
       this.textBoxDir.TabIndex = 13;
@@ -57,7 +57,8 @@ namespace MediaPortal.DeployTool
       // labelInstDir
       // 
       this.labelInstDir.AutoSize = true;
-      this.labelInstDir.Location = new System.Drawing.Point(6, 57);
+      this.labelInstDir.ForeColor = System.Drawing.Color.White;
+      this.labelInstDir.Location = new System.Drawing.Point(6, 50);
       this.labelInstDir.Name = "labelInstDir";
       this.labelInstDir.Size = new System.Drawing.Size(109, 13);
       this.labelInstDir.TabIndex = 12;
@@ -66,13 +67,14 @@ namespace MediaPortal.DeployTool
       // labelHeading
       // 
       this.labelHeading.AutoSize = true;
-      this.labelHeading.Location = new System.Drawing.Point(4, 30);
+      this.labelHeading.ForeColor = System.Drawing.Color.White;
+      this.labelHeading.Location = new System.Drawing.Point(6, 23);
       this.labelHeading.Name = "labelHeading";
       this.labelHeading.Size = new System.Drawing.Size(297, 13);
       this.labelHeading.TabIndex = 11;
       this.labelHeading.Text = "Please set the needed options for the MediaPortal installation:";
       // 
-      // MPSettingsDlg
+      // MPSettingsWithoutTvEngineDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -80,7 +82,7 @@ namespace MediaPortal.DeployTool
       this.Controls.Add(this.textBoxDir);
       this.Controls.Add(this.labelInstDir);
       this.Controls.Add(this.labelHeading);
-      this.Name = "MPSettingsDlg";
+      this.Name = "MPSettingsWithoutTvEngineDlg";
       this.Size = new System.Drawing.Size(620, 172);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.labelHeading, 0);

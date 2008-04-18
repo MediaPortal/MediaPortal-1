@@ -36,11 +36,13 @@ namespace MediaPortal.DeployTool
 {
   public partial class CustomInstallationTypeDlg : DeployDialog, IDeployDialog
   {
+    int installType;
     public CustomInstallationTypeDlg()
     {
       InitializeComponent();
       type = DialogType.CUSTOM_INSTALLATION_TYPE;
-      rbSingleSeat.Checked = true;
+      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      installType = 1;
       UpdateUI();
     }
 
@@ -59,15 +61,19 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      if (rbSingleSeat.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
-      if (rbTvServerMaster.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
-      if (rbTvServerSlave.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
-      if (rbClient.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
-      return null;
+      switch (installType)
+      {
+        case 1:
+          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
+        case 2:
+          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
+        case 3:
+          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
+        case 4:
+          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
+        default:
+          return null;
+      }
     }
     public override bool SettingsValid()
     {
@@ -75,27 +81,62 @@ namespace MediaPortal.DeployTool
     }
     public override void SetProperties()
     {
-      if (rbSingleSeat.Checked)
+      switch (installType)
       {
-        InstallationProperties.Instance.Set("InstallTypeHeader", rbSingleSeat.Text);
-        InstallationProperties.Instance.Set("InstallType", "singleseat");
-      }
-      else if (rbTvServerMaster.Checked)
-      {
-        InstallationProperties.Instance.Set("InstallTypeHeader", rbTvServerMaster.Text);
-        InstallationProperties.Instance.Set("InstallType", "tvserver_master");
-      }
-      else if (rbTvServerSlave.Checked)
-      {
-        InstallationProperties.Instance.Set("InstallTypeHeader", rbTvServerSlave.Text);
-        InstallationProperties.Instance.Set("InstallType", "tvserver_slave");
-      }
-      else
-      {
-        InstallationProperties.Instance.Set("InstallTypeHeader", rbClient.Text);
-        InstallationProperties.Instance.Set("InstallType", "client");
+        case 1:
+          InstallationProperties.Instance.Set("InstallTypeHeader", rbSingleSeat.Text);
+          InstallationProperties.Instance.Set("InstallType", "singleseat");
+          break;
+        case 2:
+          InstallationProperties.Instance.Set("InstallTypeHeader", rbTvServerMaster.Text);
+          InstallationProperties.Instance.Set("InstallType", "tvserver_master");
+          break;
+        case 3:
+          InstallationProperties.Instance.Set("InstallTypeHeader", rbTvServerSlave.Text);
+          InstallationProperties.Instance.Set("InstallType", "tvserver_slave");
+          break;
+        case 4:
+          InstallationProperties.Instance.Set("InstallTypeHeader", rbClient.Text);
+          InstallationProperties.Instance.Set("InstallType", "client");
+          break;
       }
     }
     #endregion
+
+    private void imgSingle_Click(object sender, EventArgs e)
+    {
+      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgSlave.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      installType = 1;
+    }
+
+    private void imgMaster_Click(object sender, EventArgs e)
+    {
+      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgSlave.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      installType = 2;
+    }
+
+    private void imgSlave_Click(object sender, EventArgs e)
+    {
+      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgSlave.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      installType = 3;
+    }
+
+    private void imgClient_Click(object sender, EventArgs e)
+    {
+      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgSlave.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
+      installType = 4;
+    }
   }
 }
