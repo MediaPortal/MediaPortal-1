@@ -259,7 +259,7 @@ PC-en vil da brukes som en dedikert TV-Server som andre klienter på nettverket 
     <value>Gratulerer !</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
-    <value>Unner her finner du hjelpe lenker for bruk/oppsett av MediaPortal</value>
+    <value>Under her finner du hjelpe lenker for bruk/oppsett av MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3" xml:space="preserve">
     <value>MediaPortal Forum</value>
@@ -367,7 +367,7 @@ PC-en vil da brukes som en dedikert TV-Server som andre klienter på nettverket 
     <value>Fortsett</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>En fil som trengs fines fortsatt ikke</value>
+    <value>En fil som trengs finnes fortsatt ikke</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Klikk på “fortsett”, når du er ferdig med å laste ned filen</value>
@@ -458,7 +458,7 @@ PC-en vil da brukes som en dedikert TV-Server som andre klienter på nettverket 
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>En internett tilkobling kreves for denne installasjons prosessen.
-Vil du starte installasjons prosessen nå, eller bare laste ned
+Vil du starte installasjons prosessen nå, eller bare laste ned 
 komponentene for å installere senere.</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
@@ -494,7 +494,7 @@ Fortsett på egen risiko....</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
     <value>Nedlasting av oppsett fil feilet.
-Vennligst sjekk Internet Explorer innstillinger.
+Vennligst sjekk Internet Explorer innstillingene.
 Den ødelagte oppsett filen vil nå bli slettet, hvis den finnes.</value>
   </data>
 </root>
