@@ -395,19 +395,24 @@ Var LogFile
 
 !define LOG_TEXT `!insertmacro LOG_TEXT`
 !macro LOG_TEXT LEVEL TEXT
-!ifdef INSTALL_LOG_FILE
+!define ___log_txt___ "${prefix${LEVEL}}${TEXT}$\r$\n"
 
-  !if "${LEVEL}" == "DEBUG"
-    FileWrite $LogFile "${prefixDEBUG}${TEXT}$\r$\n"
-  !else if "${LEVEL}" == "ERROR"
-    FileWrite $LogFile "${prefixERROR}${TEXT}$\r$\n"
-  !else if "${LEVEL}" == "INFO"
-    FileWrite $LogFile "${prefixINFO}${TEXT}$\r$\n"
-  !else
-    !error "$\r$\n$\r$\nYou call macro LOG_TEXT with wrong LogLevel. Only 'DEBUG', 'ERROR' and 'INFO' are valid!$\r$\n$\r$\n"
+!if     "${LEVEL}" != "DEBUG"
+  !if   "${LEVEL}" != "ERROR"
+    !if "${LEVEL}" != "INFO"
+      !error "$\r$\n$\r$\nYou call macro LOG_TEXT with wrong LogLevel. Only 'DEBUG', 'ERROR' and 'INFO' are valid!$\r$\n$\r$\n"
+    !endif
   !endif
-
 !endif
+
+!ifdef INSTALL_LOG_FILE
+  DetailPrint "${___log_txt___}"
+  FileWrite $LogFile "${___log_txt___}"
+!else
+  DetailPrint "${___log_txt___}"
+!endif
+
+!undef ___log_txt___
 !macroend
 
 

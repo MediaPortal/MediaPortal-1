@@ -701,10 +701,11 @@ ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
   ; adjust the merit of this directshow filter
   SetOutPath "$MPdir.Base"
   File "Resources\SetMerit.exe"
-  ; set merit for MPA
-  ExecWait '"$MPdir.Base\SetMerit.exe" {3D446B6F-71DE-4437-BE15-8CE47174340F} 00600000'
-  ; set merit for MPV
-  ExecWait '"$MPdir.Base\SetMerit.exe" {39F498AF-1A09-4275-B193-673B0BA3D478} 00600000'
+
+  ${LOG_TEXT} "INFO" "set merit for MPA"
+  nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {3D446B6F-71DE-4437-BE15-8CE47174340F} 00600000'
+  ${LOG_TEXT} "INFO" "set merit for MPV"
+  nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {39F498AF-1A09-4275-B193-673B0BA3D478} 00600000'
 ${MementoSectionEnd}
 !macro Remove_${SecGabest}
   DetailPrint "Uninstalling Gabest MPA/MPV decoder..."
