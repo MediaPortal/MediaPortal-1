@@ -28,7 +28,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Text;
+using System.IO;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace MediaPortal.DeployTool
 {
@@ -38,7 +40,16 @@ namespace MediaPortal.DeployTool
     {
       InitializeComponent();
       type = DialogType.Welcome;
-      cbLanguage.SelectedIndex = 3;
+      DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
+      DirectoryInfo[] subDirs = dir.GetDirectories("??-??");
+      foreach (DirectoryInfo d in subDirs)
+      {
+        CultureInfo ci = new CultureInfo(d.Name);
+        SimpleCultureInfo sci = new SimpleCultureInfo(d.Name, ci.NativeName);
+        cbLanguage.Items.Add(sci);
+        if (ci.Name == System.Threading.Thread.CurrentThread.CurrentCulture.Name)
+          cbLanguage.SelectedItem = sci;
+      }
       UpdateUI();
     }
 
@@ -67,28 +78,9 @@ namespace MediaPortal.DeployTool
 
     private string GetLanguageId()
     {
-      switch (cbLanguage.Text)
-      {
-        case "english":
-          return "en-US";
-        case "deutsch":
-          return "de-DE";
-        case "italiano":
-          return "it-IT";
-        case "dansk":
-          return "da-DK";
-        case "norsk":
-          return "nb-NO";
-        case "français":
-          return "fr-FR";
-        case "dutch":
-          return "nl-NL";
-        case "russian":
-          return "ru-RU";
-        case "turkish":
-          return "tr-TR";
-      }
-      return "en-US";
+      if (cbLanguage.SelectedIndex == -1) return "en-US";
+      SimpleCultureInfo sci = (SimpleCultureInfo)cbLanguage.SelectedItem;
+      return sci.name;
     }
 
     private void cbLanguage_SelectedIndexChanged(object sender, EventArgs e)

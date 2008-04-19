@@ -34,6 +34,20 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool
 {
+  public class SimpleCultureInfo
+  {
+    public string nativeName;
+    public string name;
+    public SimpleCultureInfo(string name, string nativeName)
+    {
+      this.name = name;
+      this.nativeName = nativeName;
+    }
+    public override string ToString()
+    {
+      return nativeName;
+    }
+  }
   public sealed class Localizer
   {
     #region Singleton implementation
