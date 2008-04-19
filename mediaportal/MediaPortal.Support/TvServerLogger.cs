@@ -39,7 +39,7 @@ namespace MediaPortal.Support
 
     public void CreateLogs(string destinationFolder)
     {
-      string logPath=Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)+"\\MediaPortal TV Server\\log";
+      string logPath=Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)+"\\Team MediaPortal\\MediaPortal TV Server\\log";
       if (!Directory.Exists(logPath))
         return;
       DirectoryInfo dir=new DirectoryInfo(logPath);
