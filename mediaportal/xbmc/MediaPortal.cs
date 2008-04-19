@@ -269,7 +269,9 @@ public class MediaPortalApp : D3DApp, IRender
       Log.BackupLogFiles();
       if (watchdogEnabled)
       {
-        StreamWriter sw = new StreamWriter(Application.StartupPath + "\\mediaportal.running", false);
+        //StreamWriter sw = new StreamWriter(Application.StartupPath + "\\mediaportal.running", false);
+        // BAV: fixing mantis bug 1216: Watcher process uses a wrong folder for integrity file
+        StreamWriter sw = new StreamWriter(Config.GetFolder(Config.Dir.Config) + "\\mediaportal.running", false);
         sw.WriteLine("running");
         sw.Close();
         Log.Info("Main: Starting MPTestTool as exception watchdog");
@@ -554,8 +556,13 @@ public class MediaPortalApp : D3DApp, IRender
         {
           if (!_mpCrashed)
           {
-            if (File.Exists(Application.StartupPath + "\\mediaportal.running"))
-              File.Delete(Application.StartupPath + "\\mediaportal.running");
+            // BAV: fixing mantis bug 1216: Watcher process uses a wrong folder for integrity file
+            //if (File.Exists(Application.StartupPath + "\\mediaportal.running"))
+            //  File.Delete(Application.StartupPath + "\\mediaportal.running");
+            if (File.Exists(Config.GetFolder(Config.Dir.Config) + "\\mediaportal.running"))
+              File.Delete(Config.GetFolder(Config.Dir.Config) + "\\mediaportal.running");
+            
+
             // GEMX 08.04.08: The MPTestTool2 is now always started in the background and monitors MP itself
             /*
             Process mpTestTool = new Process();

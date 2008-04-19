@@ -351,7 +351,9 @@ namespace MPTestTool
         tmrWatchdog.Enabled = true;
       else
       {
-        if (!File.Exists(Application.StartupPath + "\\mediaportal.running"))
+        // BAV: fixing mantis bug 1216: Watcher process uses a wrong folder for integrity file
+        //if (!File.Exists(Application.StartupPath + "\\mediaportal.running"))
+        if (!File.Exists(Config.GetFolder(Config.Dir.Config) + "\\mediaportal.running"))
         {
           Close();
           return;
