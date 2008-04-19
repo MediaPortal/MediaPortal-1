@@ -12,7 +12,7 @@ using TvDatabase;
 
 namespace TvPlugin
 {
-  public partial class RadioSetupForm : Form
+  public partial class RadioSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     #region variables
     private bool _showAllChannelsGroup = true;

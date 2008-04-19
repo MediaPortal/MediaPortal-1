@@ -37,7 +37,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.Plugins.Process
 {
-  public partial class SetupForm : Form
+  public partial class SetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     #region Ctor
     public SetupForm()
