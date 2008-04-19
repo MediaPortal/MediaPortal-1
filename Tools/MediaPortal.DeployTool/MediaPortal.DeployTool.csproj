@@ -159,10 +159,19 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MediaPortal.DeployTool.nb-NO.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.nl-NL.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MediaPortal.DeployTool.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.ru-RU.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.tr-TR.resx">
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseInstallationTypeDlg.resx">
       <SubType>Designer</SubType>

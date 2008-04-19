@@ -38,7 +38,7 @@ namespace MediaPortal.DeployTool
     {
       InitializeComponent();
       type = DialogType.Welcome;
-      cbLanguage.SelectedIndex = 0;
+      cbLanguage.SelectedIndex = 3;
       UpdateUI();
     }
 
@@ -81,6 +81,12 @@ namespace MediaPortal.DeployTool
           return "nb-NO";
         case "français":
           return "fr-FR";
+        case "dutch":
+          return "nl-NL";
+        case "russian":
+          return "ru-RU";
+        case "turkish":
+          return "tr-TR";
       }
       return "en-US";
     }
