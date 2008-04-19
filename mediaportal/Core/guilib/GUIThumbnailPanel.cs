@@ -1101,11 +1101,11 @@ namespace MediaPortal.GUI.Library
 
         if (_listItems.Count - iItem + 1 <= _columnCount)  // special handling for the last rows
         {
-          /*int iItemsPerPage = (_rowCount*_columnCount);
+          int iItemsPerPage = (_rowCount*_columnCount);
           iPage = (iItem + 1)/iItemsPerPage;
           if ((iItem + 1) % iItemsPerPage > 0) iPage++;
           _offset = (iPage - 1)*iItemsPerPage;
-          iItem = _listItems.Count - 1 - _offset;
+          iItem -= _offset;
           
           while ((iItem <= _columnCount * (_rowCount-1)) && (_offset > 0))
           {
@@ -1118,8 +1118,8 @@ namespace MediaPortal.GUI.Library
             iItem -= _columnCount;
           }
           _cursorX = iItem;
-           */
-          _cursorX = _cursorY = 1;
+           
+          //_cursorX = _cursorY = 1;
           _controlUpDown.Value = iPage;
           return;
         }
