@@ -392,7 +392,7 @@ namespace MediaPortal.Configuration.Sections
 
         checkBoxHidEnabled.Checked = xmlreader.GetValueAsBool("remote", "HID", false);
         checkBoxHidExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);
-        checkBoxHidGlobal.Checked = xmlreader.GetValueAsBool("remote", "HIDGlobal", true);
+        checkBoxHidGlobal.Checked = xmlreader.GetValueAsBool("remote", "HIDGlobal", false);
         buttonHidMapping.Enabled = checkBoxHidEnabled.Checked;
 
         #endregion
