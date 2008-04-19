@@ -296,7 +296,7 @@ namespace MediaPortal.MPInstaller
           this.mozItem1.Images.SelectedImage = ((System.Drawing.Image)(resources.GetObject("resource.SelectedImage")));
           this.mozItem1.Location = new System.Drawing.Point(2, 2);
           this.mozItem1.Name = "mozItem1";
-          this.mozItem1.Size = new System.Drawing.Size(151, 58);
+          this.mozItem1.Size = new System.Drawing.Size(151, 52);
           this.mozItem1.TabIndex = 0;
           this.mozItem1.Text = "mozItem1";
           this.mozItem1.TextAlign = Pabo.MozBar.MozTextAlign.Right;
@@ -353,7 +353,6 @@ namespace MediaPortal.MPInstaller
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
           this.ClientSize = new System.Drawing.Size(792, 416);
           this.Controls.Add(this.tabControl1);
-          this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
           this.Name = "controlp";
           this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
           this.Text = "Control panel";

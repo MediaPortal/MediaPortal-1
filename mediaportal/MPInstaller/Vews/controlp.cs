@@ -40,7 +40,7 @@ using Pabo.MozBar;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class controlp : Form
+  public partial class controlp : MPInstallerForm
   {
     public MPInstallHelper lst = new MPInstallHelper();
     public MPInstallHelper lst_online = new MPInstallHelper();

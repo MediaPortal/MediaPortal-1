@@ -33,7 +33,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class Info : Form
+  public partial class Info : MPInstallerForm
   {
     private MPpackageStruct info_pk;
 
