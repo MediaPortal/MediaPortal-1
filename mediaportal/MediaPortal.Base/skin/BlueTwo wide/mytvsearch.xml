@@ -36,8 +36,8 @@
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>
-      <posX>493</posX>
-      <posY>706</posY>
+      <posX>1252</posX>
+      <posY>580</posY>
       <label>#itemcount</label>
       <font>font13</font>
       <align>left</align>
@@ -181,7 +181,7 @@
           <subitem>=450</subitem>
         </subitems>
         <width>566</width>
-        <height>493</height>
+        <height>453</height>
         <textXOff>18</textXOff>
         <textYOff>2</textYOff>
         <textXOff2>796</textXOff2>
