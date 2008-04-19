@@ -1,20 +1,29 @@
 @ECHO OFF
 
-rem IF EXIST DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe GOTO BUILT
+echo.
+echo -= TV Server / Client plugin : Build Deploy Release.bat =-
 
+echo.
+echo Building DeployVersionSVN...
 "%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release DeployVersionSVN\DeployVersionSVN.sln > build.log
 
-:BUILT
-
+echo.
+echo Writing SVN revision assemblies...
 DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% >> build.log
 
+echo.
+echo Building TV Server...
 "%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" TvLibrary.sln >> build.log
+echo.
+echo Building TV Client plugin...
 "%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" TvPlugin\TvPlugin.sln >> build.log
 
+echo.
+echo Reverting assemblies...
 DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /revert >> build.log
 
-
-rem be sure you have installed nsis and the required plugins to compile the installer.exe
+echo.
+echo Building Installer...
 DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe /svn=%CD% /GetVersion >> build.log
 IF NOT EXIST version.txt EXIT >> build.log
 SET /p version=<version.txt >> build.log
