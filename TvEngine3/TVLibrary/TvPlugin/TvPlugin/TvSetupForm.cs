@@ -10,7 +10,7 @@ using MediaPortal.Configuration;
 
 namespace TvPlugin
 {
-  public partial class TvSetupForm : Form
+  public partial class TvSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     #region variables
     private string _serverHostName;

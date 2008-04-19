@@ -2451,13 +2451,15 @@ namespace TvPlugin
 
     public bool HasSetup()
     {
-      return true;
+      return false;
     }
 
     public void ShowPlugin()
     {
+      /*
       TvSetupForm setup = new TvSetupForm();
       setup.ShowDialog();
+       */
     }
 
     #endregion

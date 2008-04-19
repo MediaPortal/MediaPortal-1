@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace TvPlugin
 {
-  public partial class TvSetupAudioLanguageForm : Form
+  public partial class TvSetupAudioLanguageForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
     public TvSetupAudioLanguageForm()
     {
