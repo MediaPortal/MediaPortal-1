@@ -274,6 +274,8 @@ namespace TvLibrary.Log
               try
               {
                 FileInfo logFi = new FileInfo(logFileName);
+                // The information is retrieved from a cache and might be outdated.
+                logFi.Refresh();
                 fileDate = logFi.CreationTime;
               }
               catch (Exception) { }
