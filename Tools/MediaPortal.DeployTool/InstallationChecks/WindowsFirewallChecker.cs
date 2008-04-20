@@ -150,7 +150,10 @@ namespace MediaPortal.DeployTool
       {
         //If firewall is not enabled, no need to configure it
         if (fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled == false)
+        {
           result.state = CheckState.CONFIGURED;
+          return result;
+        }
 
         System.Collections.IEnumerator e = null;
         e = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
