@@ -262,6 +262,7 @@ namespace TvLibrary.Log
         try
         {
           string logFileName = GetFileName(logType);
+          bool newFile = false;
           try
           {
             // If the user or some other event deleted the dir make sure to recreate it.
@@ -281,8 +282,13 @@ namespace TvLibrary.Log
               catch (Exception) { }
               // File is older than today - _logDaysToKeep = rotate
               if (checkDate.CompareTo(fileDate) > 0)
+              {
                 BackupLogFiles();
+                newFile = true;
+              }
             }
+            else
+              newFile = true;
           }
           catch (Exception) { }
 
@@ -295,6 +301,14 @@ namespace TvLibrary.Log
             }
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
             writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, string.Format(format, arg));
+            if (newFile)
+            {
+              try
+              {
+                File.SetCreationTime(logFileName, DateTime.Now);
+              }
+              catch (Exception) { }
+            }
             writer.Close();
           }
         }
