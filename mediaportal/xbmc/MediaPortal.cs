@@ -209,6 +209,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
       }
     }
+    Log.BackupLogFiles();
     if (!Config.DirsFileUpdateDetected)
     {
       try
@@ -226,6 +227,15 @@ public class MediaPortalApp : D3DApp, IRender
       catch (UnauthorizedAccessException)
       {
         Log.Error("No write permissions to set registry keys for SVN installer");
+      }
+
+      //check if mediaportal has been configured
+      if (!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      {
+        //no, then start configuration.exe in wizard form
+        Log.Info("MediaPortal.xml not found. Launching configuration tool and exiting...");
+        System.Diagnostics.Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard");
+        return;
       }
 
       bool autoHideTaskbar = true;
@@ -266,7 +276,6 @@ public class MediaPortalApp : D3DApp, IRender
 #if !DEBUG
       AddExceptionHandler();
 #endif
-      Log.BackupLogFiles();
       if (watchdogEnabled)
       {
         //StreamWriter sw = new StreamWriter(Application.StartupPath + "\\mediaportal.running", false);
@@ -313,13 +322,6 @@ public class MediaPortalApp : D3DApp, IRender
         applicationPath = Path.GetDirectoryName(applicationPath);
         Directory.SetCurrentDirectory(applicationPath);
         Log.Info("Main: Set current directory to: {0}", applicationPath);
-        //check if mediaportal has been configured
-        if (!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
-        {
-          //no, then start configuration.exe in wizard form
-          System.Diagnostics.Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard");
-          return;
-        }
         //CodecsForm form = new CodecsForm();
         //if (!form.AreCodecsInstalled())
         //{
