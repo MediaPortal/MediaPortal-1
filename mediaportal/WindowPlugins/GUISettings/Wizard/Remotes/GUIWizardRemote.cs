@@ -201,7 +201,16 @@ namespace MediaPortal.GUI.Settings.Wizard
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESTART_REMOTE_CONTROLS, 0, 0, 0, 0, 0, null);
       GUIGraphicsContext.SendMessage(msg);
 
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_CARDS_DETECTED);
-    }
+      bool tvPluginInstalled;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        tvPluginInstalled = xmlreader.GetValueAsBool("pluginsdlls", "TvPlugin.dll", false);
+      }
+
+      if (tvPluginInstalled)
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_FINISHED);
+      else
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_CARDS_DETECTED);   
+   }
   }
 }
