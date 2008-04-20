@@ -1224,6 +1224,7 @@ public class MediaPortalApp : D3DApp, IRender
 
         if (xmlreader.GetValueAsBool("general", "restartonresume", false))
         {
+          File.Delete(Config.GetFolder(Config.Dir.Config) + "\\mediaportal.running");
           Log.Info("Main: OnResume - prepare for restart!");
           Process restartScript = new Process();
           restartScript.EnableRaisingEvents = false;
