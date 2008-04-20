@@ -170,6 +170,9 @@
     <EmbeddedResource Include="MediaPortal.DeployTool.ru-RU.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.sv-SE.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.tr-TR.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
