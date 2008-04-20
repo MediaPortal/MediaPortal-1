@@ -99,7 +99,7 @@ namespace SetupTv
 
     [STAThread]
     public static void Main(string[] arguments)
-    {
+    {      
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
       Log.Info("---- start setuptv V" + versionInfo.FileVersion + "----");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
@@ -126,7 +126,9 @@ namespace SetupTv
 
       if (startupMode == StartupMode.DbCleanup)
       {
-        if (!dlg.ExecuteSQLScript("delete"))
+        if (dlg.ExecuteSQLScript("delete"))
+          MessageBox.Show("Your old database has been dropped.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        else
           MessageBox.Show("Failed to drop the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
