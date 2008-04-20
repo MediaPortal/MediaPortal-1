@@ -61,9 +61,9 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
+      InstallationProperties.Instance.Set("InstallType", "mp_only");
       if (rbOneClickChecked)
       {
-        InstallationProperties.Instance.Set("InstallType", "mp_only");
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       }
       else
