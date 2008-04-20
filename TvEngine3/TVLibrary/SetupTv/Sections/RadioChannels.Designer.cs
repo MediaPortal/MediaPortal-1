@@ -55,6 +55,7 @@ namespace SetupTv.Sections
       this.btnPlaylist = new System.Windows.Forms.Button();
       this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnPreview = new System.Windows.Forms.Button();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -87,8 +88,8 @@ namespace SetupTv.Sections
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
-      this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
+      this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
       // 
       // hdrhekje
@@ -161,7 +162,7 @@ namespace SetupTv.Sections
       // mpButtonClear
       // 
       this.mpButtonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonClear.Location = new System.Drawing.Point(191, 351);
+      this.mpButtonClear.Location = new System.Drawing.Point(125, 351);
       this.mpButtonClear.Name = "mpButtonClear";
       this.mpButtonClear.Size = new System.Drawing.Size(50, 23);
       this.mpButtonClear.TabIndex = 7;
@@ -180,7 +181,7 @@ namespace SetupTv.Sections
       // mpButtonDel
       // 
       this.mpButtonDel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonDel.Location = new System.Drawing.Point(191, 326);
+      this.mpButtonDel.Location = new System.Drawing.Point(69, 351);
       this.mpButtonDel.Name = "mpButtonDel";
       this.mpButtonDel.Size = new System.Drawing.Size(50, 23);
       this.mpButtonDel.TabIndex = 5;
@@ -240,6 +241,7 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.btnPreview);
       this.tabPage1.Controls.Add(this.mpButtonUncheckEncrypted);
       this.tabPage1.Controls.Add(this.btnPlaylist);
       this.tabPage1.Controls.Add(this.mpButtonDeleteEncrypted);
@@ -273,7 +275,7 @@ namespace SetupTv.Sections
       // btnPlaylist
       // 
       this.btnPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnPlaylist.Location = new System.Drawing.Point(69, 351);
+      this.btnPlaylist.Location = new System.Drawing.Point(201, 326);
       this.btnPlaylist.Name = "btnPlaylist";
       this.btnPlaylist.Size = new System.Drawing.Size(106, 23);
       this.btnPlaylist.TabIndex = 6;
@@ -302,6 +304,17 @@ namespace SetupTv.Sections
       this.mpButtonAdd.Text = "&Add";
       this.mpButtonAdd.UseVisualStyleBackColor = true;
       this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
+      // 
+      // btnPreview
+      // 
+      this.btnPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnPreview.Location = new System.Drawing.Point(201, 351);
+      this.btnPreview.Name = "btnPreview";
+      this.btnPreview.Size = new System.Drawing.Size(106, 23);
+      this.btnPreview.TabIndex = 10;
+      this.btnPreview.Text = "&Preview";
+      this.btnPreview.UseVisualStyleBackColor = true;
+      this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
       // 
       // RadioChannels
       // 
@@ -345,5 +358,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonDeleteEncrypted;
     private System.Windows.Forms.Button btnPlaylist;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonUncheckEncrypted;
+    private System.Windows.Forms.Button btnPreview;
   }
 }

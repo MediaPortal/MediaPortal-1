@@ -135,8 +135,11 @@ namespace SetupTv.Sections
     protected IPin _pinAudio;
     IMediaControl _mediaCtrl;
     protected IVideoWindow _videoWin = null;
+    protected Form _form;
+
     public bool Play(string fileName, Form form)
     {
+      _form = form;
       Log.WriteFile("play:{0}", fileName);
       int hr;
       _graphBuilder = (IFilterGraph2)new FilterGraph();
@@ -267,6 +270,10 @@ namespace SetupTv.Sections
       mediaVideo.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaVideo.formatSize);
       System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mediaVideo.formatPtr, mediaVideo.formatSize);
       return mediaVideo;
+    }
+    public void ResizeToParent()
+    {
+      _videoWin.SetWindowPosition(_form.ClientRectangle.X, _form.ClientRectangle.Y, _form.ClientRectangle.Width, _form.ClientRectangle.Height);
     }
   }
 }

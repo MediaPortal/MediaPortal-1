@@ -37,6 +37,7 @@ namespace SetupTv.Sections
       this.ClientSize = new System.Drawing.Size(360, 266);
       this.Name = "FormPreview";
       this.Text = "FormPreview";
+      this.Resize += new System.EventHandler(this.FormPreview_Resize);
       this.ResumeLayout(false);
 
     }

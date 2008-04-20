@@ -72,5 +72,10 @@ namespace SetupTv.Sections
       }
       base.OnClosing(e);
     }
+
+    private void FormPreview_Resize(object sender, EventArgs e)
+    {
+      _player.ResizeToParent();
+    }
   }
 }

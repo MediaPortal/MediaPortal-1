@@ -69,8 +69,8 @@ namespace SetupTv.Sections
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
       this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
-      this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
       this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+      this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
       this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
       // 
       // columnHeader1
@@ -167,6 +167,7 @@ namespace SetupTv.Sections
       this.mpButtonPreview.TabIndex = 4;
       this.mpButtonPreview.Text = "Preview";
       this.mpButtonPreview.UseVisualStyleBackColor = true;
+      this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
       // ChannelsInRadioGroupControl
       // 
