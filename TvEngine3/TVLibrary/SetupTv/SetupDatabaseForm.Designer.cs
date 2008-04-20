@@ -35,6 +35,8 @@ namespace SetupTv
       this.lblPassword = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbUserID = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.gbServerLocation = new System.Windows.Forms.GroupBox();
+      this.tbDatabaseName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblDbName = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbServiceDependency = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.lblServiceName = new MediaPortal.UserInterface.Controls.MPLabel();
       this.lbServerHostname = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -47,6 +49,7 @@ namespace SetupTv
       this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.btnDrop = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbConnectionSetup.SuspendLayout();
       this.gbDbLogon.SuspendLayout();
       this.gbServerLocation.SuspendLayout();
@@ -65,7 +68,7 @@ namespace SetupTv
       this.gbConnectionSetup.Controls.Add(this.rbSQLServer);
       this.gbConnectionSetup.Location = new System.Drawing.Point(12, 12);
       this.gbConnectionSetup.Name = "gbConnectionSetup";
-      this.gbConnectionSetup.Size = new System.Drawing.Size(374, 346);
+      this.gbConnectionSetup.Size = new System.Drawing.Size(374, 375);
       this.gbConnectionSetup.TabIndex = 9;
       this.gbConnectionSetup.TabStop = false;
       this.gbConnectionSetup.Text = "Connection settings";
@@ -77,7 +80,7 @@ namespace SetupTv
       this.gbDbLogon.Controls.Add(this.lblPassword);
       this.gbDbLogon.Controls.Add(this.tbUserID);
       this.gbDbLogon.Enabled = false;
-      this.gbDbLogon.Location = new System.Drawing.Point(19, 242);
+      this.gbDbLogon.Location = new System.Drawing.Point(19, 277);
       this.gbDbLogon.Name = "gbDbLogon";
       this.gbDbLogon.Size = new System.Drawing.Size(335, 82);
       this.gbDbLogon.TabIndex = 6;
@@ -99,7 +102,7 @@ namespace SetupTv
       this.tbPassword.Name = "tbPassword";
       this.tbPassword.PasswordChar = '*';
       this.tbPassword.Size = new System.Drawing.Size(220, 20);
-      this.tbPassword.TabIndex = 8;
+      this.tbPassword.TabIndex = 7;
       this.tbPassword.UseSystemPasswordChar = true;
       this.tbPassword.TextChanged += new System.EventHandler(this.tbPassword_TextChanged);
       this.tbPassword.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbPassword_KeyUp);
@@ -118,13 +121,15 @@ namespace SetupTv
       this.tbUserID.Location = new System.Drawing.Point(99, 22);
       this.tbUserID.Name = "tbUserID";
       this.tbUserID.Size = new System.Drawing.Size(220, 20);
-      this.tbUserID.TabIndex = 7;
+      this.tbUserID.TabIndex = 6;
       this.tbUserID.TextChanged += new System.EventHandler(this.tbUserID_TextChanged);
       // 
       // gbServerLocation
       // 
       this.gbServerLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbServerLocation.Controls.Add(this.tbDatabaseName);
+      this.gbServerLocation.Controls.Add(this.lblDbName);
       this.gbServerLocation.Controls.Add(this.tbServiceDependency);
       this.gbServerLocation.Controls.Add(this.lblServiceName);
       this.gbServerLocation.Controls.Add(this.lbServerHostname);
@@ -132,10 +137,29 @@ namespace SetupTv
       this.gbServerLocation.Enabled = false;
       this.gbServerLocation.Location = new System.Drawing.Point(19, 154);
       this.gbServerLocation.Name = "gbServerLocation";
-      this.gbServerLocation.Size = new System.Drawing.Size(335, 82);
+      this.gbServerLocation.Size = new System.Drawing.Size(335, 109);
       this.gbServerLocation.TabIndex = 3;
       this.gbServerLocation.TabStop = false;
       this.gbServerLocation.Text = "Database location: ";
+      // 
+      // tbDatabaseName
+      // 
+      this.tbDatabaseName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbDatabaseName.Location = new System.Drawing.Point(99, 74);
+      this.tbDatabaseName.Name = "tbDatabaseName";
+      this.tbDatabaseName.Size = new System.Drawing.Size(220, 20);
+      this.tbDatabaseName.TabIndex = 5;
+      this.tbDatabaseName.TextChanged += new System.EventHandler(this.tbDatabaseName_TextChanged);
+      // 
+      // lblDbName
+      // 
+      this.lblDbName.AutoSize = true;
+      this.lblDbName.Location = new System.Drawing.Point(6, 77);
+      this.lblDbName.Name = "lblDbName";
+      this.lblDbName.Size = new System.Drawing.Size(78, 13);
+      this.lblDbName.TabIndex = 15;
+      this.lblDbName.Text = "Schema name:";
       // 
       // tbServiceDependency
       // 
@@ -144,7 +168,7 @@ namespace SetupTv
       this.tbServiceDependency.Location = new System.Drawing.Point(99, 48);
       this.tbServiceDependency.Name = "tbServiceDependency";
       this.tbServiceDependency.Size = new System.Drawing.Size(220, 20);
-      this.tbServiceDependency.TabIndex = 5;
+      this.tbServiceDependency.TabIndex = 4;
       this.tbServiceDependency.TextChanged += new System.EventHandler(this.tbServiceDependency_TextChanged);
       // 
       // lblServiceName
@@ -172,7 +196,7 @@ namespace SetupTv
       this.tbServerHostName.Location = new System.Drawing.Point(99, 22);
       this.tbServerHostName.Name = "tbServerHostName";
       this.tbServerHostName.Size = new System.Drawing.Size(220, 20);
-      this.tbServerHostName.TabIndex = 4;
+      this.tbServerHostName.TabIndex = 3;
       this.tbServerHostName.TextChanged += new System.EventHandler(this.tbServerHostName_TextChanged);
       // 
       // lblDBChoice
@@ -239,10 +263,10 @@ namespace SetupTv
       // btnTest
       // 
       this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnTest.Location = new System.Drawing.Point(229, 372);
+      this.btnTest.Location = new System.Drawing.Point(229, 401);
       this.btnTest.Name = "btnTest";
       this.btnTest.Size = new System.Drawing.Size(75, 23);
-      this.btnTest.TabIndex = 9;
+      this.btnTest.TabIndex = 8;
       this.btnTest.Text = "&Test";
       this.btnTest.UseVisualStyleBackColor = true;
       this.btnTest.Click += new System.EventHandler(this.mpButtonTest_Click);
@@ -250,10 +274,10 @@ namespace SetupTv
       // btnSave
       // 
       this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnSave.Location = new System.Drawing.Point(310, 372);
+      this.btnSave.Location = new System.Drawing.Point(310, 401);
       this.btnSave.Name = "btnSave";
       this.btnSave.Size = new System.Drawing.Size(75, 23);
-      this.btnSave.TabIndex = 10;
+      this.btnSave.TabIndex = 9;
       this.btnSave.Text = "&Save";
       this.btnSave.UseVisualStyleBackColor = true;
       this.btnSave.Click += new System.EventHandler(this.mpButtonSave_Click);
@@ -267,11 +291,24 @@ namespace SetupTv
       this.mpLabel1.TabIndex = 0;
       this.mpLabel1.Text = "Server:";
       // 
+      // btnDrop
+      // 
+      this.btnDrop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnDrop.Location = new System.Drawing.Point(310, 401);
+      this.btnDrop.Name = "btnDrop";
+      this.btnDrop.Size = new System.Drawing.Size(75, 23);
+      this.btnDrop.TabIndex = 10;
+      this.btnDrop.Text = "&Delete";
+      this.btnDrop.UseVisualStyleBackColor = true;
+      this.btnDrop.Visible = false;
+      this.btnDrop.Click += new System.EventHandler(this.btnDrop_Click);
+      // 
       // SetupDatabaseForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(397, 407);
+      this.ClientSize = new System.Drawing.Size(397, 436);
+      this.Controls.Add(this.btnDrop);
       this.Controls.Add(this.gbConnectionSetup);
       this.Controls.Add(this.btnTest);
       this.Controls.Add(this.btnSave);
@@ -316,5 +353,8 @@ namespace SetupTv
     private MediaPortal.UserInterface.Controls.MPTextBox tbPassword;
     private MediaPortal.UserInterface.Controls.MPLabel lblPassword;
     private MediaPortal.UserInterface.Controls.MPTextBox tbUserID;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbDatabaseName;
+    private MediaPortal.UserInterface.Controls.MPLabel lblDbName;
+    private MediaPortal.UserInterface.Controls.MPButton btnDrop;
   }
 }

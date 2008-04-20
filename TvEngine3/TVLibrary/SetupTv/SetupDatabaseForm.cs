@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
+#region Usings
+
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -31,9 +38,10 @@ using System.Data.SqlClient;
 using System.Windows.Forms;
 using System.Xml;
 using System.Net;
-//using FirebirdSql.Data.Firebird;
 using MySql.Data.MySqlClient;
 using TvLibrary.Log;
+
+#endregion
 
 namespace SetupTv
 {
@@ -45,11 +53,20 @@ namespace SetupTv
       MySql,
     }
 
+    StartupMode _dialogMode = StartupMode.Normal;
     ProviderType _provider = ProviderType.MySql;
+    string _schemaName = "MpTvDbRC1";
 
-    public SetupDatabaseForm()
+    public SetupDatabaseForm(StartupMode aStartMode)
     {
       InitializeComponent();
+      _dialogMode = aStartMode;
+
+      if (aStartMode == StartupMode.DbCleanup)
+      {
+        btnSave.Visible = false;
+        btnDrop.Visible = true;
+      }
     }
 
     private void LoadConnectionDetailsFromConfig(bool lookupMachineName)
@@ -104,6 +121,12 @@ namespace SetupTv
           if (keyValue[0].ToLower() == "user id" || keyValue[0].ToLower() == "user")
             tbUserID.Text = keyValue[1];
 
+          if (keyValue[0].ToLower() == "initial catalog" || keyValue[0].ToLower() == "database")
+          {
+            tbDatabaseName.Text = keyValue[1];
+            _schemaName = tbDatabaseName.Text;
+          }
+
           if (keyValue[0].ToLower() == "data source" || keyValue[0].ToLower() == "server")
           {
             if (keyValue[1].Length == 0 || keyValue[1] == "-")
@@ -136,6 +159,7 @@ namespace SetupTv
 
     private string ComposeConnectionString(string server, string userid, string password, string database, bool pooling, int timeout)
     {
+      _schemaName = database;
       switch (_provider)
       {
         case ProviderType.SqlServer:
@@ -147,12 +171,6 @@ namespace SetupTv
         case ProviderType.MySql:
           if (database == "") database = "mysql";
           return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};", server, userid, password, database, timeout);
-
-        //case ProviderType.FbEmbedded:
-        //  if (string.IsNullOrEmpty(database)) database = "TvLibrary.fdb";
-        //  if (pooling)
-        //    return String.Format("Database={0};User={1};Password={2};ServerType=1;Charset=UNICODE_FSS;", database, userid, password);
-        //  return String.Format("Database={0};User={1};Password={2};ServerType=1;Charset=UNICODE_FSS;Pooling=false;", database, userid, password);
       }
       return "";
     }
@@ -223,11 +241,12 @@ namespace SetupTv
             break;
         }
 
+        _schemaName = tbDatabaseName.Text;
+        string[] CommandScript = null;
         string sql = string.Empty;
         using (StreamReader reader = new StreamReader(stream))
           sql = reader.ReadToEnd();
 
-        string[] CommandScript = null;
         switch (_provider)
         {
           case ProviderType.SqlServer:
@@ -239,6 +258,7 @@ namespace SetupTv
             break;
         }
 
+        // As the connection string sets the DB schema name we need to compose it after cleaning the statement.
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", true, 300);
         switch (_provider)
         {
@@ -323,6 +343,7 @@ namespace SetupTv
     {
       string currentDir = Directory.GetCurrentDirectory();
       currentDir += @"\";
+      sql = sql.Replace(@"%TvLibrary%", _schemaName);
       sql = sql.Replace(@"C:\Program Files\Microsoft SQL Server\MSSQL\data\", currentDir);
       sql = sql.Replace("GO\r\n", "!");
       sql = sql.Replace("\r\n", " ");
@@ -335,6 +356,7 @@ namespace SetupTv
       sql = sql.Replace("\r\n", "\r");
       sql = sql.Replace("\t", " ");
       sql = sql.Replace('"', '`'); // allow usage of ANSI quoted identifiers
+      sql = sql.Replace(@"%TvLibrary%", _schemaName);
       string[] lines = sql.Split('\r');
       sql = "";
       for (int i = 0 ; i < lines.Length ; ++i)
@@ -363,12 +385,14 @@ namespace SetupTv
         return;
       }
 
-      CheckServiceName();      
+      CheckServiceName();
+
+      string TestDb = _dialogMode == StartupMode.Normal ? string.Empty : tbDatabaseName.Text;
 
       if (rbSQLServer.Checked)
       {
         _provider = ProviderType.SqlServer;
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 5);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, TestDb, false, 5);
 
         try
         {
@@ -383,11 +407,16 @@ namespace SetupTv
           {
             if (sqlex.Class < 20 || sqlex.Number == 233)
             {
-              if (sqlex.Number == 18456 || sqlex.Number == 233)
+              if (sqlex.Number == 18456 || sqlex.Number == 233) // Wrong login
               {
                 tbServerHostName.BackColor = Color.GreenYellow;
+                tbDatabaseName.BackColor = Color.GreenYellow;
                 tbUserID.BackColor = Color.Red;
                 tbPassword.BackColor = Color.Red;
+              }
+              else if (sqlex.Number == 4060) // Cannot open database "TvLibrary" requested by the login
+              {
+                tbDatabaseName.BackColor = Color.Red;
               }
               else
               {
@@ -401,24 +430,26 @@ namespace SetupTv
               MessageBox.Show(string.Format("Connection error: {0}", sqlex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
           }
+          MessageBox.Show(this, "Connection failed!\n" + sqlex.Message);
           return;
         }
         catch (Exception ex)
         {
           tbServerHostName.BackColor = Color.Red;
-          MessageBox.Show(this, "Connection failed!" + ex.Message);
+          MessageBox.Show(this, "Connection failed!\n" + ex.Message);
           return;
         }
         SqlConnection.ClearAllPools();
         tbServerHostName.BackColor = Color.GreenYellow;
         tbUserID.BackColor = Color.GreenYellow;
         tbPassword.BackColor = Color.GreenYellow;
+        tbDatabaseName.BackColor = Color.GreenYellow;
         MessageBox.Show(this, "Connection succeeded!");
       }
       else
       {
         _provider = ProviderType.MySql;
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 5);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, TestDb, false, 5);
 
         try
         {
@@ -428,15 +459,25 @@ namespace SetupTv
             connect.Close();
           }
         }
+        catch (MySqlException myex)
+        {
+          if (myex.Number == 1049) //unknown database
+            tbDatabaseName.BackColor = Color.Red;
+          else
+            tbServerHostName.BackColor = Color.Red;
+          MessageBox.Show(this, "Connection failed!\n" + myex.Message);
+          return;
+        }
         catch (Exception ex)
         {
           tbServerHostName.BackColor = Color.Red;
-          MessageBox.Show(this, "Connection failed!" + ex.Message);
+          MessageBox.Show(this, "Connection failed!\n" + ex.Message);
           return;
         }
         tbServerHostName.BackColor = Color.GreenYellow;
         tbUserID.BackColor = Color.GreenYellow;
         tbPassword.BackColor = Color.GreenYellow;
+        tbDatabaseName.BackColor = Color.GreenYellow;
         MessageBox.Show(this, "Connection succeeded!");
       }
     }
@@ -459,9 +500,9 @@ namespace SetupTv
       return ServerName;
     }
 
-    private void Save()
+    private void SaveGentleConfig()
     {
-      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", true, 300);
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, tbDatabaseName.Text, true, 300);
       string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
       if (!File.Exists(fname))
       {
@@ -497,7 +538,7 @@ namespace SetupTv
 
       string ServerName = ParseServerHostName(tbServerHostName.Text);
       bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
-      TvLibrary.Log.Log.Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
+      Log.Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
       CheckServiceName();
 
       doc.Save(fname);
@@ -515,9 +556,21 @@ namespace SetupTv
         MessageBox.Show(this, "Please specify the hostname or ip-address for the server. Not 127.0.0.1!");
         return;
       }
-      Save();
-      Application.Restart();
-      //Close();
+      SaveGentleConfig();
+      if (_dialogMode == StartupMode.Normal)
+        Application.Restart();
+      else
+        this.Close();
+    }
+
+    private void btnDrop_Click(object sender, EventArgs e)
+    {
+      if (ExecuteSQLScript("delete"))
+        MessageBox.Show("Your old database has been dropped.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      else
+        MessageBox.Show("Failed to drop the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+      this.Close();
     }
 
     /// <summary>
@@ -530,7 +583,7 @@ namespace SetupTv
       LoadConnectionDetailsFromConfig(false);
       try
       {
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "TvLibrary", false, 15);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, tbDatabaseName.Text, false, 15);
         switch (_provider)
         {
           case ProviderType.SqlServer:
@@ -793,5 +846,12 @@ namespace SetupTv
       if (tbPassword.BackColor == Color.Red)
         tbPassword.BackColor = SystemColors.Window;
     }
+
+    private void tbDatabaseName_TextChanged(object sender, EventArgs e)
+    {
+      if (tbDatabaseName.BackColor == Color.Red)
+        tbDatabaseName.BackColor = SystemColors.Window;
+    }
+
   }
 }

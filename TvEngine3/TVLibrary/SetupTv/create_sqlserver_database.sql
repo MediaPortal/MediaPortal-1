@@ -1,17 +1,17 @@
 ﻿use master
 
-IF EXISTS (SELECT name FROM sysdatabases WHERE name = N'TvLibrary')
+IF EXISTS (SELECT name FROM sysdatabases WHERE name = N'%TvLibrary%')
 BEGIN
-    ALTER DATABASE TvLibrary set read_only with rollback immediate
-    ALTER DATABASE TvLibrary set read_write with rollback immediate
-	DROP DATABASE TvLibrary
+    ALTER DATABASE %TvLibrary% set read_only with rollback immediate
+    ALTER DATABASE %TvLibrary% set read_write with rollback immediate
+	DROP DATABASE %TvLibrary%
 END
 GO
 
-CREATE DATABASE TvLibrary 
+CREATE DATABASE %TvLibrary% 
 GO
 
-use TvLibrary
+use %TvLibrary%
 GO
 
 

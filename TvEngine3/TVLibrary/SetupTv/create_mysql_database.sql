@@ -16,14 +16,14 @@
 --
 -- Delete schema TvLibrary
 --
-DROP DATABASE IF EXISTS TvLibrary;
+DROP DATABASE IF EXISTS %TvLibrary%;
 
 --
 -- Create schema TvLibrary
 --
 
-CREATE DATABASE IF NOT EXISTS TvLibrary;
-USE TvLibrary;
+CREATE DATABASE IF NOT EXISTS %TvLibrary%;
+USE %TvLibrary%;
 #
 --
 -- Definition of table `CanceledSchedule`

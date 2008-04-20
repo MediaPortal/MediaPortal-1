@@ -36,17 +36,19 @@ using TvDatabase;
 
 namespace SetupTv
 {
+  public enum StartupMode
+  {
+    Normal,
+    Wizard,
+    DbCleanup,
+    DbConfig,
+  }
+
   /// <summary>
   /// Summary description for Startup.
   /// </summary>
   public class Startup
   {
-    enum StartupMode
-    {
-      Normal,
-      Wizard,
-      DbCleanup,
-    }
     static StartupMode startupMode = StartupMode.Normal;
 
     string sectionsConfiguration = String.Empty;
@@ -99,38 +101,28 @@ namespace SetupTv
 
     [STAThread]
     public static void Main(string[] arguments)
-    {      
+    {
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
       Log.Info("---- start setuptv V" + versionInfo.FileVersion + "----");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
 
       foreach (string param in arguments)
       {
-        if (param == "--delete-db" || param == "-d")
+        if (param == "--delete-db" || param == "-d" || param == @"/d")
           startupMode = StartupMode.DbCleanup;
+        if (param == "--configure-db" || param == "-c" || param == @"/c")
+          startupMode = StartupMode.DbConfig;
       }
 
       //test connection with database
       Log.Info("---- check connection with database ----");
-      SetupDatabaseForm dlg = new SetupDatabaseForm();
-      if (!dlg.TestConnection())
+      SetupDatabaseForm dlg = new SetupDatabaseForm(startupMode);
+      if (startupMode != StartupMode.Normal || !dlg.TestConnection())
       {
-        if (startupMode == StartupMode.DbCleanup)
-          Log.Info("---- could not delete database yet because the connection is not setup correctly ----");
-
         Log.Info("---- ask user for connection details ----");
         dlg.ShowDialog();
 
         return; // close the application without restart here.
-      }
-
-      if (startupMode == StartupMode.DbCleanup)
-      {
-        if (dlg.ExecuteSQLScript("delete"))
-          MessageBox.Show("Your old database has been dropped.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        else
-          MessageBox.Show("Failed to drop the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        return;
       }
 
       Log.Info("---- check if database needs to be updated/created ----");
