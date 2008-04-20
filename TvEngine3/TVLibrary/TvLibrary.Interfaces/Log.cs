@@ -74,7 +74,6 @@ namespace TvLibrary.Log
     /// </summary>
     static Log()
     {
-      Directory.CreateDirectory(string.Format(@"{0}\log\", GetPathName()));
       //BackupLogFiles(); <-- do not rotate logs when e.g. SetupTv is started.
     }
 
@@ -137,11 +136,6 @@ namespace TvLibrary.Log
       WriteToFile(LogType.Info, log);
     }
 
-    public static string GetPathName()
-    {
-      return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-    }
-
     /// <summary>
     /// Logs the message to the error file
     /// </summary>
@@ -190,6 +184,11 @@ namespace TvLibrary.Log
     public static void WriteFile(string format, params object[] arg)
     {
       WriteToFile(LogType.Info, format, arg);
+    }
+
+    public static string GetPathName()
+    {
+      return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     }
 
     #endregion
@@ -265,13 +264,23 @@ namespace TvLibrary.Log
           string logFileName = GetFileName(logType);
           try
           {
+            // If the user or some other event deleted the dir make sure to recreate it.
+            Directory.CreateDirectory(Path.GetDirectoryName(logFileName));
             if (File.Exists(logFileName))
             {
               DateTime checkDate = DateTime.Now - _logDaysToKeep;
-              FileInfo logFi = new FileInfo(logFileName);
-              if (checkDate > logFi.CreationTime)
+              // Set the file date to a default which would NOT rotate for the case that FileInfo fetching will fail
+              DateTime fileDate = DateTime.Now;
+              try
+              {
+                FileInfo logFi = new FileInfo(logFileName);
+                fileDate = logFi.CreationTime;
+              }
+              catch (Exception) { }
+              // File is older than today - _logDaysToKeep = rotate
+              if (checkDate.CompareTo(fileDate) > 0)
                 BackupLogFiles();
-            }              
+            }
           }
           catch (Exception) { }
 
