@@ -599,99 +599,118 @@ namespace TvPlugin
       GUIControl.ClearControl(GetID, listViews.GetID);
 
       List<GUIListItem> itemlist = new List<GUIListItem>();
-      IList recordings = Recording.ListAll();
-      if (currentShow == string.Empty)
+      try
       {
-        foreach (Recording rec in recordings)
+        IList recordings = Recording.ListAll();
+        if (currentShow == string.Empty)
         {
-          bool add = true;
-          foreach (GUIListItem item in itemlist)
+          foreach (Recording rec in recordings)
           {
-            Recording rec2 = item.TVTag as Recording;
-            if (rec.Title.Equals(rec2.Title))
+            // catch exceptions here so MP will go on list further recs
+            try
             {
-              item.IsFolder = true;
-              Utils.SetDefaultIcons(item);
-              string strLogo = Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
-              if (System.IO.File.Exists(strLogo))
+              bool add = true;
+              foreach (GUIListItem item in itemlist)
               {
+                Recording rec2 = item.TVTag as Recording;
+                if (rec != null)
+                {
+                  if (rec.Title.Equals(rec2.Title))
+                  {
+                    item.IsFolder = true;
+                    Utils.SetDefaultIcons(item);
+                    string strLogo = Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
+                    if (System.IO.File.Exists(strLogo))
+                    {
+                      item.ThumbnailImage = strLogo;
+                      item.IconImageBig = strLogo;
+                      item.IconImage = strLogo;
+                    }
+                    add = false;
+                    break;
+                  }
+                }
+              }
+              if (add)
+              {
+                GUIListItem item = new GUIListItem();
+                item.Label = rec.Title;
+                item.TVTag = rec;
+                //string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
+                string strLogo = Utils.GetCoverArt(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Utils.GetThumbExtension())));
+
+                if (!System.IO.File.Exists(strLogo))
+                {
+                  strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
+                  if (!System.IO.File.Exists(strLogo))
+                  {
+                    strLogo = rec.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
+                  }
+                }
+                else
+                {
+                  string strLogoL = Utils.ConvertToLargeCoverArt(strLogo);
+                  if (System.IO.File.Exists(strLogoL))
+                    item.IconImageBig = strLogoL;
+                  else
+                    item.IconImageBig = strLogo;
+                }
                 item.ThumbnailImage = strLogo;
-                item.IconImageBig = strLogo;
                 item.IconImage = strLogo;
-              }
-              add = false;
-              break;
-            }
-          }
-          if (add)
-          {
-            GUIListItem item = new GUIListItem();
-            item.Label = rec.Title;
-            item.TVTag = rec;
-            //string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
-            string strLogo = Utils.GetCoverArt(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Utils.GetThumbExtension())));
-
-            if (!System.IO.File.Exists(strLogo))
-            {
-              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
-              if (!System.IO.File.Exists(strLogo))
-              {
-                strLogo = rec.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
+                itemlist.Add(item);
               }
             }
-            else
+            catch (Exception recex)
             {
-              string strLogoL = Utils.ConvertToLargeCoverArt(strLogo);
-              if (System.IO.File.Exists(strLogoL))
-                item.IconImageBig = strLogoL;
-              else
-                item.IconImageBig = strLogo;
+              Log.Info("TVRecorded: error processing recordings {0}", recex.Message);
             }
-            item.ThumbnailImage = strLogo;
-            item.IconImage = strLogo;
-            itemlist.Add(item);
           }
         }
-      }
-      else
-      {
-        GUIListItem item = new GUIListItem();
-        item.Label = "..";
-        item.IsFolder = true;
-        Utils.SetDefaultIcons(item);
-        itemlist.Add(item);
-        foreach (Recording rec in recordings)
+        else
         {
-          if (rec.Title.Equals(currentShow))
+          GUIListItem item = new GUIListItem();
+          item.Label = "..";
+          item.IsFolder = true;
+          Utils.SetDefaultIcons(item);
+          itemlist.Add(item);
+          foreach (Recording rec in recordings)
           {
-            item = new GUIListItem();
-            item.Label = rec.Title;
-            item.TVTag = rec;
-            //string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
-            string strLogo = Utils.GetCoverArt(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Utils.GetThumbExtension())));
-
-            if (!System.IO.File.Exists(strLogo))
+            if (rec.Title.Equals(currentShow))
             {
-              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
+              item = new GUIListItem();
+              item.Label = rec.Title;
+              item.TVTag = rec;
+              //string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
+              string strLogo = Utils.GetCoverArt(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Utils.GetThumbExtension())));
+
               if (!System.IO.File.Exists(strLogo))
               {
-                strLogo = rec.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
+                strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
+                if (!System.IO.File.Exists(strLogo))
+                {
+                  strLogo = rec.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
+                }
               }
-            }
-            else
-            {
-              string strLogoL = Utils.ConvertToLargeCoverArt(strLogo);
-              if (System.IO.File.Exists(strLogoL))
-                item.IconImageBig = strLogoL;
               else
-                item.IconImageBig = strLogo;
+              {
+                string strLogoL = Utils.ConvertToLargeCoverArt(strLogo);
+                if (System.IO.File.Exists(strLogoL))
+                  item.IconImageBig = strLogoL;
+                else
+                  item.IconImageBig = strLogo;
+              }
+              item.ThumbnailImage = strLogo;
+              item.IconImage = strLogo;
+              itemlist.Add(item);
             }
-            item.ThumbnailImage = strLogo;
-            item.IconImage = strLogo;
-            itemlist.Add(item);
           }
         }
       }
+      catch (Exception ex)
+      {
+        Log.Error("TvRecorded: Error fetching recordings from database {0}", ex.Message);
+      }
+
       foreach (GUIListItem item in itemlist)
       {
         listAlbums.Add(item);
@@ -707,7 +726,7 @@ namespace TvPlugin
       else
         cntlLabel.YPosition = listViews.SpinY;
 
-      OnSort();      
+      OnSort();
       UpdateProperties();
     }
 
@@ -924,8 +943,8 @@ namespace TvPlugin
           fileName = fileName.Replace(":", "");
           fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
         }
-        recFileExists = System.IO.File.Exists(fileName);        
-      }      
+        recFileExists = System.IO.File.Exists(fileName);
+      }
 
       if (!System.IO.File.Exists(fileName))
       {
@@ -937,7 +956,7 @@ namespace TvPlugin
       g_Player.currentTitle = rec.Title;
       g_Player.currentDescription = rec.Description;
 
-      Log.Info("TvRecorded Play:{0} - using rtsp mode:{1}", fileName, TVHome.UseRTSP());      
+      Log.Info("TvRecorded Play:{0} - using rtsp mode:{1}", fileName, TVHome.UseRTSP());
       if (g_Player.Play(fileName, g_Player.MediaType.Recording))
       {
         if (Utils.IsVideo(fileName))
