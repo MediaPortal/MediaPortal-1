@@ -113,18 +113,18 @@ BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
 # INSTALLER INTERFACE settings
 #---------------------------------------------------------------------------
 !define MUI_ABORTWARNING
-!define MUI_ICON    "images\install.ico"
+!define MUI_ICON    "Resources\install.ico"
 !define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
 !define MUI_HEADERIMAGE
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define MUI_HEADERIMAGE_BITMAP          "images\header.bmp"
-    !define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard.bmp"
-    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard.bmp"
+    !define MUI_HEADERIMAGE_BITMAP          "Resources\header.bmp"
+    !define MUI_WELCOMEFINISHPAGE_BITMAP    "Resources\wizard.bmp"
+    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "Resources\wizard.bmp"
 !else                       # it's an svn reöease
-    !define MUI_HEADERIMAGE_BITMAP          "images\header-svn.bmp"
-    !define MUI_WELCOMEFINISHPAGE_BITMAP    "images\wizard-svn.bmp"
-    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "images\wizard-svn.bmp"
+    !define MUI_HEADERIMAGE_BITMAP          "Resources\header-svn.bmp"
+    !define MUI_WELCOMEFINISHPAGE_BITMAP    "Resources\wizard-svn.bmp"
+    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "Resources\wizard-svn.bmp"
 !endif
 !define MUI_HEADERIMAGE_RIGHT
 
