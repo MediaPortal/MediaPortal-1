@@ -118,135 +118,134 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
-    <value>Vill du använda MediaPortal för att titta på TV ?</value>
+    <value>Você gostaria de assistir TV com o MediaPortal ?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
-    <value>Ja, jag vill använda MediaPortal för att titta på TV.</value>
+    <value>Sim - Eu utilizarei o MediaPortal para assistir TV.</value>
   </data>
   <data name="WatchTV_off" xml:space="preserve">
-    <value>Nej, jag vill inte använda MediaPortal för att titta på TV.</value>
+    <value>Não - Eu não usarei o MediaPortal para assistir TV.</value>
   </data>
   <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>Kommer du titta på HD material med MediaPortal ? </value>
+    <value>Você deseja assistir TV em alta definição (HD) com o MediaPortal ?</value>
   </data>
   <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Ja, jag kommer att använda MediaPortal för att titta på HD material.</value>
+    <value>Sim - Eu utilizarei o MediaPortal para assistir conteúdo em Alta Definição (HD)</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Nej, jag kommer inte använda MediaPortal för att titta på HD material.</value>
+    <value>Não - Eu não utilizarei o MediaPortal para assistir conteúdo em Alta Definição.</value>
   </data>
   <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>Jag vet inte vad som är HD material.</value>
+    <value>Eu não sei o que é conteúdo em Alta Definição (HD)</value>
   </data>
   <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Vilken TV-motor vill du använda ?</value>
+    <value>Que TV-Engine você gostaria de utilizar ?</value>
   </data>
   <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>Inbyggda TV-motorn i  MediaPortal 1.0.</value>
+    <value>Plugin Interno do MediaPortal 1.0</value>
   </data>
   <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Server 1.0</value>
+    <value>Servidor de TV MediaPortal 1.0</value>
   </data>
   <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>Skillnad mellan TV-Server 1.0 och den inbyggda TV-motorn i MediaPortal 1.0
-+ fullt DVB-undertext stöd.
-+ stöd för HD-TV (dvb-s2 / h.264) och AAC ljud (Norge, Nya Zeeland, Australien)
-+ stöd för TV-kort av hybrid typ (TV-kort som delar samma tuner för DVB och analog signal)
-+ automatisk detekterar anslutna TV-kort (analog, dvb-c, -s, -s2, -t, atsc)
-+ stöd för ATSC QAM (kabel TV)
-+ stöd för inspelning i mpg eller ts filformat.
-+ atsc/DVB tillåter att spela in/titta på flera kanaler ifrån samma transponder/mux med ett TV-kort.
-+ möjlighet att sända ut TV till flera clienter över LAN.
-- behöver MySQL eller MS-SQL (vilket kommer att installeras automatiskt om det ej redan finns installerat)
+    <value>Diferenças entre Servidor de TV e Plugin Interno do MediaPortal 1.0:
++ suporte completo a subtítulo DVB (Digital Vídeo Broadcast)
++ suporte para TV em Alta Definição (dbv-s2 / h.264) e áudio AAC (Noruega, Nova Zelândia, Austrália)
++ suporte para cartão hibrido (placas de TV com um sintonizador digital e outro analógico)
++ detecção automática de qualquer placa de TV (analógica, DVB-C, -S, -S2, -T, ATSC)
++ suporte para TV a cabo (ATSC QAM)
++ permite gravar em formato .mpg ou .ts
++ suporte ATSC/DVB permite sintonizar vários canais com um único transponder/mux
++ prove TV para múltiplos clientes em uma rede local
+- requer MySQL ou MS-SQL (será instalado automaticamente se não existir em seu sistema)
 
-TV-Servern kommer att helt ersätta den inbyggda TV-motorn, och helt sömlöst vara integrerad i MediaPortals användargänssnitt.</value>
+O servidor de TV substitui completamente o Plugin Interno e integra perfeitamente na interface 
+de usuário do MediaPortal.
+</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
-    <value>Alla applicationer kommer att bli installerade på dess standard platser och med dess standard inställningar.</value>
+    <value>Todas as aplicações necessárias serão instaladas em seus lugares e com a configuração padrão.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
-    <value>Avancerad installation tillåter dig att specificera installations plats och andra inställningar </value>
+    <value>A Instalação avançada permite especificar os lugares e outras configurações.</value>
   </data>
   <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
-    <value>Avancerad installation</value>
+    <value>Instalação Avançada</value>
   </data>
   <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
-    <value>Advancerad installation tillåter dig att installera Server/Client konfigurationer, specifiera installationsplatser och andra inställningar</value>
+    <value>A instalação avançada permite você instalar a configuração Servidor/Cliente e especificar os lugares de instalação e outras configurações</value>
   </data>
   <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
-    <value>Singel klicks installation</value>
+    <value>Instalação em um click</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Alla applikationer som behövs kommer att installeras till dess standard platser och med dess standard inställningar. Databas lösenordet är "MediaPortal".</value>
+    <value>Todos os aplicativos requeridos serão instalados no seus lugares padrão e com a configuração padrão. A senha do banco de dados é "MediaPortal".</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
-    <value>Utför en avancerad installation</value>
+    <value>Executar a instalação avançada</value>
   </data>
   <data name="BaseInstallation_rbOneClick" xml:space="preserve">
-    <value>Utför en singel klicks installation</value>
+    <value>Executar a Instalação em um click</value>
   </data>
   <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
-    <value>Välj vilken typ av konfiguration du vill installera.</value>
+    <value>Por favor escolha que instalação deseja executar:</value>
   </data>
   <data name="CustomInstallation_rbClient" xml:space="preserve">
-    <value>MediaPortal Klient</value>
+    <value>Cliente MediaPortal</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Detta kommer endast installera MediaPortal 1.0. För att titta på TV, kommer den att koppla upp 
-sig mot en TV-Server i ditt lokala nätverk.</value>
+    <value>Somente será instalado o MediaPortal 1.0. Para assistir TV será necessária a conexão com um servidor de TV dedicado em sua rede local.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>Singleseat installation</value>
+    <value>Instalação Posição Única</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>Detta är den rätta valet om du har TV-korten installerade på samma dator 
-som du vill använda MediaPortal för att titta på TV med MediaPortal 1.0.</value>
+    <value>Está é a melhor opção se as placas de TV estão instaladas no mesmo PC que você deseja 
+utilizar o MediaPortal e assistir TV utilizando o MediaPortal 1.0</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
-    <value>Dedicerad TV-Server (master)</value>
+    <value>Servidor de TV dedicado (principal)</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
-    <value>Detta kommer endast installera MediaPortal TV-Server på denna dator.
-Denna dator kommer sen att fungera som en dedicerad TV-Server och leverera TV till andra datorer 
-i ditt lokala nätverk. (databas installation behövs)</value>
+    <value>Somente instalará o Servidor de TV do MediaPortal em este PC.
+O PC atuará como um servidor dedicado de TV e proverá a outros PCs na sua rede local o sinal de TV (instalação de base de dados requerida)</value>
   </data>
   <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Dedicerad TV-Server (slave, existerande TV-Server (master) behövs)</value>
+    <value>Servidor de TV dedicado (secundário, um servidor de TV (principal) é necessário)</value>
   </data>
   <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Detta kommer endast installera MediaPortal TV-Server på denna dator.
-Denna dator kommer sen att fungera som en dedicerad TV-Server och leverera TV till andra datorer 
-i ditt lokala nätverk. (ingen databas behövs)</value>
+    <value>Somente instalará o Servidor de TV do MediaPortal em este PC.
+O PC atuará como um servidor dedicado de TV e proverá a outros PCs na sua rede local o sinal de TV (não requer base de dados)</value>
   </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
-    <value>Bläddra</value>
+    <value>Navegar</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Konfigurerar Windows Brandväggen till att tillåta extern åtkomst till databasserver</value>
+    <value>Configure o Firewall do Windows para permitir acesso externo a base de dados do servidor</value>
   </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
-    <value>Du måste välja en gillitig installationssökväg för SQL-Serven.</value>
+    <value>Você necessita fornecer um diretório valido para a instalação do servidor SQL</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Du måste välja ett lösenord för "sa" SQL-Server användare.</value>
+    <value>Você deve fornecer uma senha para o usuário "sa" no servidor SQL.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
-    <value>Välj önskade inställningar för SQL-Server installationen:</value>
+    <value>Por favor, selecione as opções necessárias para a instalação do Servidor SQL:</value>
   </data>
   <data name="DBMSSettings_labelInstDir" xml:space="preserve">
-    <value>Installationsmapp</value>
+    <value>Diretório de instalação</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Lösenord för "sa" användaren på SQL Servern</value>
+    <value>Senha para o usuário "sa" do Servidor SQL</value>
   </data>
   <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Lösenordet för admin - användaren av SQL-Serven. Standard är "MediaPortal")</value>
+    <value>(A senha para o usuário administrador do servidor SQL. O padrão é "MediaPortal")</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
-    <value>Välj installationsmapp för SQL-Serven</value>
+    <value>Selecione o diretório para a instalação do Servidor SQL</value>
   </data>
   <data name="DBMSType_labelHeading" xml:space="preserve">
-    <value>Välj vilken SQL-Server du vill använda:</value>
+    <value>Por favor, selecione o Servidor SQL que deseja utilizar:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
     <value>Microsoft SQL-Server Express</value>
@@ -255,251 +254,254 @@ i ditt lokala nätverk. (ingen databas behövs)</value>
     <value>MySQL 5</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
-    <value>SQL server finns redan och kommer att användas till TV-Servern</value>
+    <value>O servidor SQL já está presente em seu sistema e será utilizado para o Servidor de TV</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
-    <value>Gratulerar !</value>
+    <value>Parabéns !</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
-    <value>Du har nu felfritt slutfört din installation av MediaPortal</value>
+    <value>Você instalou com sucesso o MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3" xml:space="preserve">
-    <value>Nedan hittar du några användbara länkar som hjälper dig komma igång med MediaPortal</value>
+    <value>Abaixo você pode encontrar alguns links úteis que te ajudará a iniciar o uso do MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
-    <value>MediaPortal Forum</value>
+    <value>Forum do MediaPortal</value>
   </data>
   <data name="Finished_linkHomepage" xml:space="preserve">
-    <value>MediaPortal Hemsida</value>
+    <value>Pagina Inicial do MediaPortal</value>
   </data>
   <data name="Finished_linkWiki" xml:space="preserve">
-    <value>MediaPortal Wiki</value>
+    <value>Wiki do MediaPortal</value>
   </data>
   <data name="HTTPDownload_buttonCancel" xml:space="preserve">
-    <value>Avbryt</value>
+    <value>Cancelar</value>
   </data>
   <data name="HTTPDownload_errDownloadFailed" xml:space="preserve">
-    <value>Ett fel uppstod vid nerladdning av den begärda filen</value>
+    <value>Ocorreu um erro ao baixar da internet o arquivo requerido</value>
   </data>
   <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
-    <value>Nerladdnings länk:</value>
+    <value>URL de descarga:</value>
   </data>
   <data name="HTTPDownload_labelTargetFile" xml:space="preserve">
-    <value>Mål:</value>
+    <value>Destino:</value>
   </data>
   <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
-    <value>Nerladdning avbruten av användaren</value>
+    <value>Descarga cancelada pelo usuario</value>
   </data>
   <data name="HTTPDownload_Title" xml:space="preserve">
-    <value>Laddar ner fil...</value>
+    <value>Descarregando os arquivos...</value>
   </data>
   <data name="Install_actionDownloadInstall" xml:space="preserve">
-    <value>Ladda ner-&gt;Installera</value>
+    <value>Descarga-&gt;Instalação</value>
   </data>
   <data name="Install_actionInstall" xml:space="preserve">
-    <value>Installera</value>
+    <value>Instalar</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;ingen åtgärd&gt;</value>
+    <value>&lt;sem ação&gt;</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
-    <value>Avinstallera föregående-&gt;Ladda ner-&gt;Installera</value>
+    <value>Desinstalar anterior-&gt;Descarregar-&gt;Instalar</value>
   </data>
   <data name="Install_actionUninstallInstall" xml:space="preserve">
-    <value>Avinstallera föregående-&gt;Installera</value>
+    <value>Desinstalar anterior-&gt;Instalar </value>
   </data>
   <data name="Install_buttonInstall" xml:space="preserve">
-    <value>Installera</value>
+    <value>Instalar </value>
   </data>
   <data name="Install_colAction" xml:space="preserve">
-    <value>Åtgärd</value>
+    <value>Ação</value>
   </data>
   <data name="Install_colApplication" xml:space="preserve">
-    <value>Applikation </value>
+    <value>Aplicativo</value>
   </data>
   <data name="Install_colState" xml:space="preserve">
-    <value>Status</value>
+    <value>Estado</value>
   </data>
   <data name="Install_errAppsMissing" xml:space="preserve">
-    <value>Alla applikationer som behövs är ej installerade.</value>
+    <value>Não estão instalados todos os aplicativos requeridos</value>
   </data>
   <data name="Install_errDownloadFailed" xml:space="preserve">
-    <value>Misslyckades ladda ner applikation [{0}]</value>
+    <value>Falha ao descarregar o aplicativo [{0}]</value>
   </data>
   <data name="Install_errInstallFailed" xml:space="preserve">
-    <value>Misslyckades installera applikation [{0}]</value>
+    <value>Falha ao instalar o aplicativo [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Tryck på "Installera" knappen för att utföra alla nödvändiga åtgärder för att installera dina val.</value>
+    <value>Pressione o botão "instalar" para executar todas as ações necessárias para a instalação</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
-    <value>Laddar ner...</value>
+    <value>Descarregando...</value>
   </data>
   <data name="Install_msgInstalling" xml:space="preserve">
-    <value>Installerar...</value>
+    <value>Instalando...</value>
   </data>
   <data name="Install_msgUninstalling" xml:space="preserve">
-    <value>Avinstallerar...</value>
+    <value>Desinstalando...</value>
   </data>
   <data name="Install_stateInstalled" xml:space="preserve">
-    <value>Installerad</value>
+    <value>Instalado</value>
   </data>
   <data name="Install_stateNotInstalled" xml:space="preserve">
-    <value>Ej installerad</value>
+    <value>Não Instalado</value>
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
-    <value>En annan version är redan installerad</value>
+    <value>Outra versão já instalada anteriormente</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
-    <value>MediaPortal Deploy Tool</value>
+    <value>Ferramenta de Instalação do MediaPortal</value>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
-    <value>Tillbaka</value>
+    <value>Voltar</value>
   </data>
   <data name="MainWindow_buttonClose" xml:space="preserve">
-    <value>Stäng</value>
+    <value>Sair</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
-    <value>Denna applikation kommer att guida dig igenom installationen av MediaPortal och alla komponenter som behövs.</value>
+    <value>Este programa o guiará na instalação do MediaPortal e de todos os componentes necessários.</value>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
-    <value>Nästa</value>
+    <value>Próximo</value>
   </data>
   <data name="ManualDownload_buttonContinue" xml:space="preserve">
-    <value>Fortsätt</value>
+    <value>Continuar</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>Den begärda filen finns fortfarande inte</value>
+    <value>O arquivo solicitado ainda não existe</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Tryck på "Fortsätt", när du laddat ner filen</value>
+    <value>Pressione "continuar" quando terminar de descarregar o arquivo solicitado</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
-    <value>Du måste manuellt ladda ner följande fil</value>
+    <value>Você tem que descarregar o seguinte arquivo manualmente</value>
   </data>
   <data name="ManualDownload_linkDir" xml:space="preserve">
-    <value>Öppna mapp</value>
+    <value>Abrir diretório</value>
   </data>
   <data name="ManualDownload_linkURL" xml:space="preserve">
-    <value>Länk</value>
+    <value>Link</value>
   </data>
   <data name="ManualDownload_Title" xml:space="preserve">
-    <value>Manuell nerladdning</value>
+    <value>Descarregar manualmente</value>
   </data>
   <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Bläddra</value>
+    <value>Navegar</value>
   </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
-    <value>Du måste välja en gilltig installationssökväg för MediaPortal.</value>
+    <value>Você tem que fornecer um caminho válido para instalação do MediaPortal.</value>
   </data>
   <data name="MPSettings_labelHeading" xml:space="preserve">
-    <value>Välj önskade inställningar för MediaPortal installationen:</value>
+    <value>Por favor defina as opções necessárias para a instalação do MediaPortal:</value>
   </data>
   <data name="MPSettings_labelInstDir" xml:space="preserve">
-    <value>MediaPortal installationsmapp:</value>
+    <value>Diretório de instalação:</value>
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
-    <value>Välj installationsmapp för MediaPortal</value>
+    <value>Selecione o diretório de instalação do MediaPortal</value>
   </data>
   <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Bläddra</value>
+    <value>Navegar</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Konfigurerar Windows Brandväggen till att tillåta extern åtkomst till TV-Servern</value>
+    <value>Configure o Firewall do Windows para permitir acesso externo ao servidor de TV</value>
   </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
-    <value>Du måste välja en gilltig installationssökväg för TV-Servern </value>
+    <value>Você tem que fornecer um caminho válido para instalação do Servidor de TV.</value>
   </data>
   <data name="TvServerSettings_labelHeading" xml:space="preserve">
-    <value>Välj önskade inställningar för TV-Server installationen:</value>
+    <value>Por favor defina as opções necessárias para a instalação do Servidor de TV:</value>
   </data>
   <data name="TvServerSettings_labelInstDir" xml:space="preserve">
-    <value>TV-Server installationsmapp:</value>
+    <value>Diretório de instalação:</value>
   </data>
   <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
-    <value>Välj installationsmapp för TV-Servern</value>
+    <value>Selecione o diretório de instalação do Servidor de TV</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>Tack för att du väljer MediaPortal. . The FREE OpenSource MediaCenter!</value>
+    <value>Obrigado por escolher MediaPortal.... O OpenSource MediaCenter GRATUITO!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
-    <value>Detta installationsprogram kommer att guida dig igenom hela installations processen</value>
+    <value>Esta ferramenta o guiará no processo de instalação</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
-    <value>Välj språk innan du går vidare</value>
+    <value>Por favor selecione o idioma antes de pressionar "continuar"</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal är GRATIS, om du har köpt det på ebay, så har du blivit lurad ;-(</value>
+    <value>MediaPortal é GRATUITO! Se você pagou por ele você foi enganado!</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
-    <value>Konfigurera</value>
+    <value>Configurar</value>
   </data>
   <data name="Install_actionRemove" xml:space="preserve">
-    <value>Tar bort</value>
+    <value>Remover</value>
   </data>
   <data name="Install_errConfigureFailed" xml:space="preserve">
-    <value>Konfiguration misslyckades</value>
+    <value>A configuração falhou</value>
   </data>
   <data name="Install_errRemoveFailed" xml:space="preserve">
-    <value>Avinstallation misslyckades</value>
+    <value>A desinstalação falhou</value>
   </data>
   <data name="Install_msgConfiguring" xml:space="preserve">
-    <value>Konfigurerar</value>
+    <value>Configurando</value>
   </data>
   <data name="Install_stateConfigured" xml:space="preserve">
-    <value>Konfigurerad</value>
+    <value>Configurado</value>
   </data>
   <data name="Install_stateNotConfigured" xml:space="preserve">
-    <value>Ej konfigurerad</value>
+    <value>Não configurado</value>
   </data>
   <data name="Install_stateRemoved" xml:space="preserve">
-    <value>Borttagen</value>
+    <value>Removido</value>
   </data>
   <data name="Install_stateUninstall" xml:space="preserve">
-    <value>Avinstallerar</value>
+    <value>Desinstalado</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
-    <value>En internet uppkoppling är ett krav för att installationsprocessen skall fungera.
-Vill du starta installationsprocessen nu , eller vill du ladda ner alla komponenter 
-som behövs för att utföra installationen senare, kanske på en PC utan en internetanslutning?</value>
+    <value>Será necessária uma conexão a internet para o processo de instalação:
+
+Você quer começar o processo de instalação agora, ou você simplesmente 
+deseja baixar os componentes necessários a fim de executar a instalação 
+mais tarde? 
+(Talvez em um PC sem uma conexão à Internet)
+</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
-    <value>Ladda endast ner komponenterna som behövs</value>
+    <value>Só descarregar os componentes necessários</value>
   </data>
   <data name="DownloadOnly_yes" xml:space="preserve">
-    <value>Påbörja installationen nu</value>
+    <value>Iniciar a instalação agora</value>
   </data>
   <data name="Install_buttonDownload" xml:space="preserve">
-    <value>Ladda ner</value>
+    <value>Descarregar</value>
   </data>
   <data name="Install_stateDownloaded" xml:space="preserve">
-    <value>Nerladdad</value>
+    <value>Descarregado</value>
   </data>
   <data name="Install_actionDownload" xml:space="preserve">
-    <value>Laddar ner</value>
+    <value>Descarregar</value>
   </data>
   <data name="Install_stateNotDownloaded" xml:space="preserve">
-    <value>Ej nedladdad</value>
+    <value>Não descarregado</value>
   </data>
   <data name="Finished_labelHeading2_download" xml:space="preserve">
-    <value>Du har nu laddat ner alla MediaPortals komponenter</value>
+    <value>Você descarregou com sucesso todos os componentes do MediaPortal</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Tryck på knappen "Ladda ner" för att ladda ner alla komponenter som behövs.</value>
+    <value>Pressione  “descarregar” para iniciar a descarga de todos os componentes necessários</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
-    <value>Tyvärr stödjer MediaPortal inte ditt operativsystem !</value>
+    <value>Infelizmente o seu Sistema Operativo não é suportado atualmente pelo MediaPortal!</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Ditt operativsystem stödjs är ej pga Microsoft har inte släppt flera hotfixar som behövs.
-Fortsätt på din egen risk </value>
+    <value>Seu sistema operacional é incompatível porque Microsoft não liberou várias correções de falhos necessárias para o seu sistema. 
+Continue por sua conta e risco
+</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
-    <value>Nerladdning av inställningsfil misslyckades.
-Kollla dina inställningar i Internet Explorer.
-korrupt konfigurationsfil, om funnen, kommer nu raderas.</value>
-  </data>
-  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Konfigurera Windows Brandväggen till att tillåta extern åtkomst till MediaPortal</value>
+    <value>A descarga do arquivo de configurações falhou. 
+Por favor, revise as configurações do Internet Explorer. 
+O arquivo de configuração corrompido será apagado.
+</value>
   </data>
 </root>
