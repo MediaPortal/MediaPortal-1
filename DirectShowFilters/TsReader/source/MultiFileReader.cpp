@@ -27,6 +27,9 @@
 #include "MultiFileReader.h"
 #include <atlbase.h>
 
+//Maximum time in msec to wait for the buffer file to become available - Needed for DVB radio (this sometimes takes some time)
+#define MAX_BUFFER_TIMEOUT	1500
+
 extern void LogDebug(const char *fmt, ...) ;
 MultiFileReader::MultiFileReader():
 	m_TSBufferFile(),
@@ -83,7 +86,17 @@ HRESULT MultiFileReader::OpenFile()
 {
 	HRESULT hr = m_TSBufferFile.OpenFile();
 
-	RefreshTSBufferFile();
+	//For radio the buffer sometimes needs some time to become available, so wait try it more than once
+	DWORD tc=GetTickCount();
+	while (RefreshTSBufferFile()==S_FALSE)
+	{
+		if (GetTickCount()-tc>MAX_BUFFER_TIMEOUT)
+		{
+			LogDebug("MultiFileReader: timedout while waiting for buffer file to become available");
+			return S_FALSE;
+		}
+	}
+			
 
 	m_currentPosition = 0;
 	m_llBufferPointer = 0;	
@@ -295,6 +308,9 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
     Error=0  ;
   	m_TSBufferFile.SetFilePointer(0, FILE_END);
 	  __int64 fileLength = m_TSBufferFile.GetFilePointer();
+		if (fileLength==0)
+			return S_FALSE;
+
 	  if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long))) Error|=0x01;
 
 	  m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
@@ -309,7 +325,8 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
     if (!SUCCEEDED(result)||  bytesRead!=sizeof(filesRemoved)) Error=0x08;
 
     // If no files added or removed, break the loop !
-    if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) break ;
+    if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) 
+			break ;
 
     __int64 remainingLength = fileLength - sizeof(__int64) - sizeof(long) - sizeof(long) - sizeof(long) - sizeof(long) ;
 
