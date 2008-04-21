@@ -1187,7 +1187,13 @@ namespace MediaPortal.GUI.Video
       int count = g_Player.AudioStreams;
       // cycle through each audiostream and add it to our list control
       for (int i = 0; i < count; i++)
-        dlg.Add(g_Player.AudioLanguage(i));
+      {
+        string audioType = g_Player.AudioType(i);
+        if (audioType == Strings.Unknown)
+          dlg.Add(g_Player.AudioLanguage(i));
+        else
+          dlg.Add(String.Format("{0}:{1}", audioType, g_Player.AudioLanguage(i)));
+      }
 
       // select/focus the audiostream, which is active atm
       dlg.SelectedLabel = g_Player.CurrentAudioStream;
