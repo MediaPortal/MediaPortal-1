@@ -256,9 +256,6 @@ Section "MediaPortal core files (required)" SecCore
     /x shoutcastsource.ax \
     /x TsReader.ax \
     /x TTPremiumSource.ax \
-    /x GenDMOProp.dll \
-    /x MpegAudio.dll \
-    /x MpegVideo.dll \
     /x MpaDecFilter.ax \
     /x Mpeg2DecFilter.ax \
     "
@@ -632,41 +629,6 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\xAPTransport.dll"
   Delete /REBOOTOK "$MPdir.Base\XPBurnComponent.dll"
 !macroend
-
-/*
-${MementoSection} "DScaler Decoder" SecDscaler
-  DetailPrint "Installing DScaler Decoder..."
-
-  SetOutPath "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\GenDMOProp.dll"  "$MPdir.Base\GenDMOProp.dll" "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MpegAudio.dll"   "$MPdir.Base\MpegAudio.dll" "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\MpegVideo.dll"   "$MPdir.Base\MpegVideo.dll" "$MPdir.Base"
-
-  ; Write Default Values for Filter into the registry
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Dynamic Range Control" 1
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "MPEG Audio over SPDIF" 0
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "SPDIF Audio Time Offset" 0
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Speaker Config" 1
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Audio Filter" "Use SPDIF for AC3 & DTS" 0
-
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "3:2 playback smoothing" 1
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Colour space to output" 1
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Deinterlace Mode" 2
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Display Forced Subtitles" 1
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Do Analog Blanking" 1
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "DVB Aspect Preferences" 0
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Hardcode for PAL with ffdshow" 0
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "IDCT to Use" 2
-  WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Use accurate aspect ratios" 1    WriteRegStr HKCU "Software\DScaler5\Mpeg Video Filter" "Video Delay" 0
-${MementoSectionEnd}
-!macro Remove_${SecDscaler}
-  DetailPrint "Uninstalling DScaler Decoder..."
-
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\GenDMOProp.dll"
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpegAudio.dll"
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpegVideo.dll"
-!macroend
-*/
 
 ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
   DetailPrint "Installing Gabest MPA/MPV decoder..."
