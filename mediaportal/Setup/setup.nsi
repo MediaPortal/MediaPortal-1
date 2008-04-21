@@ -245,19 +245,6 @@ Section "MediaPortal core files (required)" SecCore
 
   SetOverwrite on
 
-  #filters are installed seperatly and are always include in SVN and FINAL releases
-  !define EXCLUDED_FILTERS "\
-    /x cdxareader.ax \
-    /x CLDump.ax \
-    /x MPSA.ax \
-    /x PDMpgMux.ax \
-    /x shoutcastsource.ax \
-    /x TsReader.ax \
-    /x TTPremiumSource.ax \
-    /x MpaDecFilter.ax \
-    /x Mpeg2DecFilter.ax \
-    "
-
   #CONFIG FILES ARE ALWAYS INSTALLED by SVN and FINAL releases, BECAUSE of the config dir location
   !define EXCLUDED_CONFIG_FILES "\
     /x CaptureCardDefinitions.xml \
@@ -274,7 +261,7 @@ Section "MediaPortal core files (required)" SecCore
   #We can not use the complete mediaportal.base dir recoursivly , because the plugins, thumbs, weather need to be extracted to their special MPdir location
   # exluding only the folders does not work because /x plugins won't extract the \plugins AND musicplayer\plugins directory
   SetOutPath "$MPdir.Base"
-  File /nonfatal /x .svn ${EXCLUDED_FILTERS} ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+  File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
   SetOutPath "$MPdir.Base\MusicPlayer"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MusicPlayer\*"
   SetOutPath "$MPdir.Base\osdskin-media"
@@ -327,14 +314,7 @@ Section "MediaPortal core files (required)" SecCore
 
 
   SetOutPath "$MPdir.Base"
-!ifdef SVN_BUILD
-  SetOverwrite off
-  File MediaPortalDirs.xml
   SetOverwrite on
-!else
-  File MediaPortalDirs.xml
-!endif
-
   ; ========================================
   ; MediaPortalEXE
   ;should be           , but because of postbuild.bat there are too much matching files
