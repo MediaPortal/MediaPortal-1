@@ -817,17 +817,17 @@ namespace SetupTv
       {
         try
         {
+          string ErrorMsg = string.Empty;
           if (dllPaths.Count == 1)
-            if (MessageBox.Show(string.Format("Your version {0} of Psisdecd.dll has too many bugs! \nPlease check our Wiki's requirements page.", mostRecentVer.ToString()), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
-              Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
-
+            ErrorMsg = string.Format("Your version {0} of Psisdecd.dll has too many bugs! \nPlease check our Wiki's requirements page.", mostRecentVer.ToString());
           if (dllPaths.Count > 1)
-            if (MessageBox.Show(string.Format("Found {0} occurences of outdated Psisdecd.dll! \nPlease clean up your system and check our Wiki's requirements page.", dllPaths.Count.ToString()), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
-              Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
-
+            ErrorMsg = string.Format("Found {0} occurences of outdated Psisdecd.dll! \nMost recent installed version: {1} \nPlease clean up your system and check our Wiki's requirements page.", dllPaths.Count.ToString(), mostRecentVer.ToString());
           if (dllPaths.Count < 1)
-            if (MessageBox.Show("Psisdecd.dll may not be registered properly! \nPlease check our Wiki's requirements page.", "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
-              Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
+            ErrorMsg = "Psisdecd.dll may not be registered properly! \nPlease check our Wiki's requirements page.";
+
+          TvLibrary.Log.Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
+          if (MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+            Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
         }
         catch (Exception) { }
       }
