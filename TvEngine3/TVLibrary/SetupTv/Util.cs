@@ -24,20 +24,23 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Collections;
 using System.Management;
-using System.Diagnostics;
-using System.Text;
+using System.Net;
+using System.ServiceProcess;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
-using System.ServiceProcess;
 using System.Windows.Forms;
+
 using Microsoft.Win32;
+
 
 
 namespace SetupTv
@@ -793,25 +796,41 @@ namespace SetupTv
     private static void CheckForDvbHotfix()
     {
       //if (!CheckRegistryForInstalledSoftware("KB896626")) // Search for the DVB Hotfix
-      string DvbFixLocation = GetRegisteredAssemblyPath("PsisDecd");
-      if (string.IsNullOrEmpty(DvbFixLocation))
-        DvbFixLocation = Environment.ExpandEnvironmentVariables(@"%systemroot%\System32") + @"\psisdecd.dll";
-
-      if (File.Exists(DvbFixLocation))
+      List<string> dllPaths = GetRegisteredAssemblyPaths("PsisDecd");
+      Version aParamVersion = new Version(0, 0, 0, 0);
+      Version mostRecentVer = aParamVersion;
+      bool validDllFound = false;
+      foreach (string dllPath in dllPaths)
       {
-        Version aParamVersion = new Version(0, 0, 0, 0);
-        if (!CheckFileVersion(DvbFixLocation, "6.5.2710.2732", out aParamVersion))
-          if (MessageBox.Show(string.Format("Your version {0} of Psisdecd.dll in path {1} has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion.ToString(), DvbFixLocation), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
-          {
-            try
-            {
-              Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
-            }
-            catch (Exception) { }
-          }
+        if (File.Exists(dllPath))
+        {
+          if (CheckFileVersion(dllPath, "6.5.2710.2732", out aParamVersion))
+            validDllFound = true;
+          TvLibrary.Log.Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(), dllPath);
+          if (aParamVersion > mostRecentVer)
+            mostRecentVer = aParamVersion;
+        }
+        else
+          TvLibrary.Log.Log.Info("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
       }
-      else
-        MessageBox.Show(string.Format("Psisdecd.dll is neither registered nor located in path {0}! \nPlease check our Wiki's requirements page.", DvbFixLocation), "Microsoft SI/PSI parser missing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      if (!validDllFound)
+      {
+        try
+        {
+          if (dllPaths.Count == 1)
+            if (MessageBox.Show(string.Format("Your version {0} of Psisdecd.dll has too many bugs! \nPlease check our Wiki's requirements page.", mostRecentVer.ToString()), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+              Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
+
+          if (dllPaths.Count > 1)
+            if (MessageBox.Show(string.Format("Found {0} occurences of outdated Psisdecd.dll! \nPlease clean up your system and check our Wiki's requirements page.", dllPaths.Count.ToString()), "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+              Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
+
+          if (dllPaths.Count < 1)
+            if (MessageBox.Show("Psisdecd.dll may not be registered properly! \nPlease check our Wiki's requirements page.", "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+              Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
+        }
+        catch (Exception) { }
+      }
     }
 
     /// <summary>
@@ -846,8 +865,9 @@ namespace SetupTv
     /// </summary>
     /// <param name="aFilename">The filename (e.g. quartz.dll)</param>
     /// <returns>The full path the dll or an empty string</returns>
-    public static string GetRegisteredAssemblyPath(string aFilename)
+    public static List<string> GetRegisteredAssemblyPaths(string aFilename)
     {
+      List<string> resultPaths = new List<string>(1);
       try
       {
         using (RegistryKey AssemblyKey = Registry.ClassesRoot.OpenSubKey("CLSID"))
@@ -868,7 +888,8 @@ namespace SetupTv
                       string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
                       if (!string.IsNullOrEmpty(friendlyName) && friendlyName.ToLower().IndexOf(aFilename.ToLower()) >= 0)
                       {
-                        return friendlyName;
+                        if (!resultPaths.Contains(friendlyName))
+                          resultPaths.Add(friendlyName);
                       }
                     }
                   }
@@ -883,7 +904,7 @@ namespace SetupTv
       {
         MessageBox.Show(string.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename, ex.Message));
       }
-      return string.Empty;
+      return resultPaths;
     }
 
     /// <summary>
