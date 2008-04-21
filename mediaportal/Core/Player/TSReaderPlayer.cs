@@ -198,6 +198,73 @@ namespace MediaPortal.Player
     }
     #endregion
 
+    protected bool IsVideoFile(string filename)
+    {
+      return (filename.ToLower().IndexOf(".tsbuffer") < 0 && filename.ToLower().IndexOf("radio.tsbuffer") < 0);
+    }
+    protected void LoadMyTvFilterSettings(ref int intFilters,ref string strFilters,ref string strVideoCodec, ref string strAudioCodec, ref string strAACAudioCodec, ref string strH264VideoCodec, ref string strAudioRenderer, ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        // FlipGer: load infos for custom filters
+        int intCount = 0;
+        while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
+        {
+          if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
+          {
+            strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+            intFilters++;
+          }
+          intCount++;
+        }
+        strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
+        strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+        strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
+        strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
+        strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
+        enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
+        enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
+        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
+        if (strValue.Equals("zoom"))
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
+        if (strValue.Equals("stretch"))
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
+        if (strValue.Equals("normal"))
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
+        if (strValue.Equals("original"))
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
+        if (strValue.Equals("letterbox"))
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
+        if (strValue.Equals("panscan"))
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+        if (strValue.Equals("zoom149"))
+          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+      }
+    }
+    protected void LoadMyVideosFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec, ref string strAudioCodec, ref string strAACAudioCodec, ref string strH264VideoCodec, ref string strAudioRenderer, ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        // FlipGer: load infos for custom filters
+        int intCount = 0;
+        while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
+        {
+          if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
+          {
+            strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
+            intFilters++;
+          }
+          intCount++;
+        }
+        strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
+        strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
+        strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
+        
+        strAudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+
+      }
+    }
+
     protected override void OnInitialized()
     {
       Log.Info("TSReaderPlayer: OnInitialized");
@@ -257,42 +324,12 @@ namespace MediaPortal.Player
         string strH264VideoCodec = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        {
-          // FlipGer: load infos for custom filters
-          int intCount = 0;
-          while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
-          {
-            if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
-            {
-              strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
-              intFilters++;
-            }
-            intCount++;
-          }
-          strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
-          strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-          strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
-          strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
-          strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
-          enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
-          enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
-          string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
-          if (strValue.Equals("zoom"))
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-          if (strValue.Equals("stretch"))
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-          if (strValue.Equals("normal"))
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-          if (strValue.Equals("original"))
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-          if (strValue.Equals("letterbox"))
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-          if (strValue.Equals("panscan"))
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-          if (strValue.Equals("zoom149"))
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
-        }
+
+        if (IsVideoFile(filename))
+          LoadMyVideosFilterSettings(ref intFilters,ref strFilters,ref strVideoCodec, ref strAudioCodec, ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer, ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles);
+        else
+          LoadMyTvFilterSettings(ref intFilters,ref strFilters,ref strVideoCodec, ref strAudioCodec, ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer, ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles);
+
         if (_isRadio == false)
         {
           if (strVideoCodec.Length > 0)
