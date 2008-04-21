@@ -280,9 +280,11 @@ public class MediaPortalApp : D3DApp, IRender
       {
         //StreamWriter sw = new StreamWriter(Application.StartupPath + "\\mediaportal.running", false);
         // BAV: fixing mantis bug 1216: Watcher process uses a wrong folder for integrity file
-        StreamWriter sw = new StreamWriter(Config.GetFolder(Config.Dir.Config) + "\\mediaportal.running", false);
-        sw.WriteLine("running");
-        sw.Close();
+        using (StreamWriter sw = new StreamWriter(Config.GetFile(Config.Dir.Config, "mediaportal.running"), false))
+        {
+          sw.WriteLine("running");
+          sw.Close();
+        }
         Log.Info("Main: Starting MPTestTool as exception watchdog");
         string cmdargs = "-watchdog";
         if (restartOnError)
@@ -399,7 +401,7 @@ public class MediaPortalApp : D3DApp, IRender
                 if (strVersion.Length > 0)
                 {
                   string strTmp = "";
-                  for (int i = 0 ; i < strVersion.Length ; ++i)
+                  for (int i = 0; i < strVersion.Length; ++i)
                   {
                     if (Char.IsDigit(strVersion[i]))
                     {
@@ -425,7 +427,7 @@ public class MediaPortalApp : D3DApp, IRender
                 if (strVersionMng.Length > 0)
                 {
                   string strTmp = "";
-                  for (int i = 0 ; i < strVersionMng.Length ; ++i)
+                  for (int i = 0; i < strVersionMng.Length; ++i)
                   {
                     if (Char.IsDigit(strVersionMng[i]))
                     {
@@ -558,12 +560,8 @@ public class MediaPortalApp : D3DApp, IRender
         {
           if (!_mpCrashed)
           {
-            // BAV: fixing mantis bug 1216: Watcher process uses a wrong folder for integrity file
-            //if (File.Exists(Application.StartupPath + "\\mediaportal.running"))
-            //  File.Delete(Application.StartupPath + "\\mediaportal.running");
-            if (File.Exists(Config.GetFolder(Config.Dir.Config) + "\\mediaportal.running"))
-              File.Delete(Config.GetFolder(Config.Dir.Config) + "\\mediaportal.running");
-            
+            if (File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.running")))
+              File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
 
             // GEMX 08.04.08: The MPTestTool2 is now always started in the background and monitors MP itself
             /*
@@ -1224,7 +1222,7 @@ public class MediaPortalApp : D3DApp, IRender
 
         if (xmlreader.GetValueAsBool("general", "restartonresume", false))
         {
-          File.Delete(Config.GetFolder(Config.Dir.Config) + "\\mediaportal.running");
+          File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
           Log.Info("Main: OnResume - prepare for restart!");
           Process restartScript = new Process();
           restartScript.EnableRaisingEvents = false;
