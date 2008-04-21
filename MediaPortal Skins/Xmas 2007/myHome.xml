@@ -6,6 +6,7 @@
   <autohidetopbar>yes</autohidetopbar>
   <controls>
     <control>
+      <description>BG</description>
       <type>multiimage</type>
       <id>1</id>
       <width>720</width>
@@ -17,9 +18,8 @@
       <randomize>false</randomize>
       <animation effect="fade" time="200">VisibleChange</animation>
     </control>
-
     <control>
-      <description>menu background image</description>
+      <description>MPlogo</description>
       <type>image</type>
       <id>1</id>
       <posX>520</posX>
