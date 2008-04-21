@@ -280,7 +280,7 @@ namespace TvEngine.PowerScheduler
       this.button2.Location = new System.Drawing.Point(376, 219);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(25, 23);
-      this.button2.TabIndex = 6;
+      this.button2.TabIndex = 7;
       this.button2.Text = "...";
       this.button2.UseVisualStyleBackColor = true;
       this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -290,7 +290,7 @@ namespace TvEngine.PowerScheduler
       this.textBox2.Location = new System.Drawing.Point(38, 222);
       this.textBox2.Name = "textBox2";
       this.textBox2.Size = new System.Drawing.Size(329, 20);
-      this.textBox2.TabIndex = 5;
+      this.textBox2.TabIndex = 6;
       this.toolTip1.SetToolTip(this.textBox2, "Command will have \"standby\" and \"wakeup\" as argument for the appropriate action");
       // 
       // label5
@@ -308,7 +308,7 @@ namespace TvEngine.PowerScheduler
       this.checkBox5.Location = new System.Drawing.Point(39, 176);
       this.checkBox5.Name = "checkBox5";
       this.checkBox5.Size = new System.Drawing.Size(277, 17);
-      this.checkBox5.TabIndex = 3;
+      this.checkBox5.TabIndex = 5;
       this.checkBox5.Text = "Reinitialize service on wakeup (also reinitializes tuner)";
       this.checkBox5.UseVisualStyleBackColor = true;
       // 
@@ -372,7 +372,13 @@ namespace TvEngine.PowerScheduler
             0});
       this.numericUpDown4.Name = "numericUpDown4";
       this.numericUpDown4.Size = new System.Drawing.Size(55, 20);
-      this.numericUpDown4.TabIndex = 1;
+      this.numericUpDown4.TabIndex = 3;
+      this.numericUpDown4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.numericUpDown4.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
       // 
       // numericUpDown3
       // 
@@ -384,7 +390,13 @@ namespace TvEngine.PowerScheduler
             0});
       this.numericUpDown3.Name = "numericUpDown3";
       this.numericUpDown3.Size = new System.Drawing.Size(55, 20);
-      this.numericUpDown3.TabIndex = 2;
+      this.numericUpDown3.TabIndex = 4;
+      this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.numericUpDown3.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
       // 
       // numericUpDown2
       // 
@@ -396,7 +408,13 @@ namespace TvEngine.PowerScheduler
             0});
       this.numericUpDown2.Name = "numericUpDown2";
       this.numericUpDown2.Size = new System.Drawing.Size(55, 20);
-      this.numericUpDown2.TabIndex = 0;
+      this.numericUpDown2.TabIndex = 2;
+      this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.numericUpDown2.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
       // 
       // checkBox4
       // 
