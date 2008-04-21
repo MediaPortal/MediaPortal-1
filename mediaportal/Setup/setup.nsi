@@ -297,10 +297,13 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
 
-  SetOutPath "$MPdir.Database"  
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\database\*"
+  SetOutPath "$MPdir.BurnerSupport"
+  CreateDirectory "$MPdir.BurnerSupport"
+
   SetOutPath "$MPdir.CustomInputDefault"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
+  SetOutPath "$MPdir.Database"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\database\*"
   SetOutPath "$MPdir.Language"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\language\*"
   SetOutPath "$MPdir.Plugins"
