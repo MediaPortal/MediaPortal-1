@@ -216,18 +216,45 @@ namespace TvLibrary.Log
     }
 
     /// <summary>
+    /// Since Windows caches API calls to the FileSystem a simple FileInfo.CreationTime will be wrong when replacing files (even after refresh).
+    /// Therefore we set it manually.
+    /// </summary>
+    /// <param name="aFileName"></param>
+    private static void CreateBlankFile(string aFileName)
+    {
+      try
+      {
+        using (StreamWriter sw = File.CreateText(aFileName))
+        {
+          sw.Close();
+          try
+          {
+            File.SetCreationTime(aFileName, DateTime.Now);
+          }
+          catch (Exception) { }
+        }
+      }
+      catch (Exception) { }
+    }
+
+    /// <summary>
     /// Deletes .bak file, moves .log to .bak for every LogType
     /// </summary>
     private static void RotateLogs()
     {
       try
       {
+        // Get full path for tv.log
         string name = GetFileName(LogType.Info);
         string bakFile = name.Replace(".log", ".bak");
+        // Delete outdated log
         if (File.Exists(bakFile))
           File.Delete(bakFile);
+        // Rotate current log
         if (File.Exists(name))
           File.Move(name, bakFile);
+        // Create a new tv.log with correct timestamps
+        CreateBlankFile(name);
 
         name = GetFileName(LogType.Error);
         bakFile = name.Replace(".log", ".bak");
@@ -235,6 +262,7 @@ namespace TvLibrary.Log
           File.Delete(bakFile);
         if (File.Exists(name))
           File.Move(name, bakFile);
+        CreateBlankFile(name);
 
         name = GetFileName(LogType.Epg);
         bakFile = name.Replace(".log", ".bak");
@@ -242,6 +270,7 @@ namespace TvLibrary.Log
           File.Delete(bakFile);
         if (File.Exists(name))
           File.Move(name, bakFile);
+        CreateBlankFile(name);
       }
       catch (Exception ex)
       {
@@ -262,7 +291,6 @@ namespace TvLibrary.Log
         try
         {
           string logFileName = GetFileName(logType);
-          bool newFile = false;
           try
           {
             // If the user or some other event deleted the dir make sure to recreate it.
@@ -282,13 +310,8 @@ namespace TvLibrary.Log
               catch (Exception) { }
               // File is older than today - _logDaysToKeep = rotate
               if (checkDate.CompareTo(fileDate) > 0)
-              {
                 BackupLogFiles();
-                newFile = true;
-              }
             }
-            else
-              newFile = true;
           }
           catch (Exception) { }
 
@@ -301,14 +324,6 @@ namespace TvLibrary.Log
             }
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
             writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, string.Format(format, arg));
-            if (newFile)
-            {
-              try
-              {
-                File.SetCreationTime(logFileName, DateTime.Now);
-              }
-              catch (Exception) { }
-            }
             writer.Close();
           }
         }
