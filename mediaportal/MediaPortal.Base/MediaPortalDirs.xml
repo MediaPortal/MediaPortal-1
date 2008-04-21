@@ -73,6 +73,6 @@
   </Dir>
   <!-- The path to CYGWIN files needed for the burner plugin -->
   <Dir id = "BurnerSupport">
-    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Burner\</Path>
+    <Path>Burner\</Path>
   </Dir>
 </Config>
