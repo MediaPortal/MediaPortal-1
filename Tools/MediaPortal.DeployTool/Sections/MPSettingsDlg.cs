@@ -42,6 +42,7 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.MPSettings;
       textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
+      checkBoxFirewall.Text = Localizer.Instance.GetString("MPSettings_checkBoxFirewall");
       UpdateUI();
     }
 
@@ -54,6 +55,7 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
+      if (checkBoxFirewall.Enabled == true) InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
       if (InstallationProperties.Instance["InstallType"] == "client")
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       else

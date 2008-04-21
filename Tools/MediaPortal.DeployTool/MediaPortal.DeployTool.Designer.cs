@@ -917,6 +917,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure Windows Firewall to allow external access to MediaPortal.
+        /// </summary>
+        internal static string MPSettings_checkBoxFirewall {
+            get {
+                return ResourceManager.GetString("MPSettings_checkBoxFirewall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have to supply a valid installation path for MediaPortal..
         /// </summary>
         internal static string MPSettings_errInvalidPath {

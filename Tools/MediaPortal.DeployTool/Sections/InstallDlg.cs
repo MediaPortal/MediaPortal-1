@@ -91,9 +91,10 @@ namespace MediaPortal.DeployTool
       {
         IInstallationPackage package = (IInstallationPackage)item.Tag;
         CheckResult result = package.CheckStatus();
-        if (result.state == CheckState.NOT_INSTALLED || 
-            result.state == CheckState.NOT_DOWNLOADED || 
+        if (result.state == CheckState.NOT_INSTALLED ||
+            result.state == CheckState.NOT_DOWNLOADED ||
             result.state == CheckState.NOT_REMOVED ||
+            result.state == CheckState.NOT_CONFIGURED ||
             result.state == CheckState.VERSION_MISMATCH)
           isComplete = false;
       }
@@ -198,6 +199,7 @@ namespace MediaPortal.DeployTool
         case "client":
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new TvPluginServerChecker());
+          AddPackageToListView(new WindowsFirewallChecker());
           break;
 
         case "mp_only":

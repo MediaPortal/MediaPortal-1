@@ -500,4 +500,7 @@ Preseguire l'installazione è un vostro rischio.</value>
 Controllare la configurazione di Internet Explorer.
 Se esiste un file corrotto, verrà cancellato ora.</value>
   </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Configurare il Firewall di Windows per permettere accessi esterni a MediaPortal</value>
+  </data>
 </root>

@@ -100,6 +100,12 @@ namespace MediaPortal.DeployTool
         app = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
         AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
       }
+      if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1")
+      {
+        //MediaProtal
+        app = InstallationProperties.Instance["MPDir"] + "\\MediaPortal.exe";
+        AuthorizeApplication("MediaPortal", app, NET_FW_SCOPE_.NET_FW_SCOPE_LOCAL_SUBNET, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+      }
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
       {
         if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
@@ -136,7 +142,7 @@ namespace MediaPortal.DeployTool
     }
     public bool UnInstall()
     {
-      //Uninstall not yet handled...
+      //Uninstall not handled: ports/app are left in the auth part of the firewall
       return true;
     }
     public CheckResult CheckStatus()
@@ -146,39 +152,52 @@ namespace MediaPortal.DeployTool
       result.state = CheckState.CONFIGURED;
       INetFwMgr fwMgr = GetFirewallManager();
 
-      if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
+      //If firewall is not enabled, no need to configure it
+      if (fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled == false)
       {
-        //If firewall is not enabled, no need to configure it
-        if (fwMgr.LocalPolicy.CurrentProfile.FirewallEnabled == false)
-        {
-          result.state = CheckState.CONFIGURED;
-          return result;
-        }
-
-        System.Collections.IEnumerator e = null;
-        e = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
-
-        result.state = CheckState.NOT_CONFIGURED;
-        while (e.MoveNext())
-        {
-          INetFwAuthorizedApplication app = e.Current as INetFwAuthorizedApplication;
-          string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
-          if (app.ProcessImageFileName.ToLower() == apptv.ToLower())
-            result.state = CheckState.CONFIGURED;
-        }
+        result.state = CheckState.CONFIGURED;
+        return result;
       }
+
+      System.Collections.IEnumerator e1 = null;
+      e1 = fwMgr.LocalPolicy.CurrentProfile.AuthorizedApplications.GetEnumerator();
+
+      //TvService
+      string apptv = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
+      bool chktv = false;
+      if (InstallationProperties.Instance["ConfigureTVServerFirewall"] != "1") chktv = true;
+
+      //MediaPortal
+      string appmp = InstallationProperties.Instance["MPdir"] + "\\MediaPortal.exe";
+      bool chkmp = false;
+      if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] != "1") chkmp = true;
+
+      while (e1.MoveNext())
+      {
+        INetFwAuthorizedApplication app = e1.Current as INetFwAuthorizedApplication;
+        if (app.ProcessImageFileName.ToLower() == apptv.ToLower())
+          chktv = true;
+        if (app.ProcessImageFileName.ToLower() == appmp.ToLower())
+          chkmp = true;
+      }
+
+      if (chktv == true && chkmp == true)
+        result.state = CheckState.CONFIGURED;
+      else
+        result.state = CheckState.NOT_CONFIGURED;
+
       if (result.state == CheckState.CONFIGURED)
       {
         if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
         {
           result.state = CheckState.NOT_CONFIGURED;
 
-          System.Collections.IEnumerator e = null;
-          e = fwMgr.LocalPolicy.CurrentProfile.GloballyOpenPorts.GetEnumerator();
+          System.Collections.IEnumerator e2 = null;
+          e2 = fwMgr.LocalPolicy.CurrentProfile.GloballyOpenPorts.GetEnumerator();
 
-          while (e.MoveNext())
+          while (e2.MoveNext())
           {
-            INetFwOpenPort app = e.Current as INetFwOpenPort;
+            INetFwOpenPort app = e2.Current as INetFwOpenPort;
             if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
             {
               if (app.Port == 1433)
