@@ -52,7 +52,6 @@ SetCompressor /SOLID lzma
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
 ; variables for commandline parameters for Installer
-#Var noDscaler
 Var noGabest
 Var noDesktopSC
 Var noStartMenuSC
@@ -207,7 +206,6 @@ ShowUninstDetails show
 !macro SectionList MacroName
     ; This macro used to perform operation on multiple sections.
     ; List all of your components in following manner here.
-    #!insertmacro "${MacroName}" "SecDscaler"
     !insertmacro "${MacroName}" "SecGabest"
 !macroend
 
@@ -823,21 +821,12 @@ Function .onInit
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
-#  StrCpy $noDscaler 0
   StrCpy $noGabest 0
   StrCpy $noDesktopSC 0
   StrCpy $noStartMenuSC 0
 
   ; gets comandline parameter
   ${GetParameters} $R0
-
-/*
-  ; check for special parameter and set the their variables
-  ClearErrors
-  ${GetOptions} $R0 "/noDscaler" $R1
-  IfErrors +2
-  StrCpy $noDscaler 1
-*/
 
   ClearErrors
   ${GetOptions} $R0 "/noGabest" $R1
@@ -859,9 +848,6 @@ Function .onInit
   ${MementoSectionRestore}
 
   ; update the component status -> commandline parameters have higher priority than registry values
-#  ${If} $noDscaler = 1
-#    !insertmacro UnselectSection ${SecDscaler}
-#  ${EndIf}
   ${If} $noGabest = 1
     !insertmacro UnselectSection ${SecGabest}
   ${EndIf}
@@ -1007,6 +993,5 @@ FunctionEnd
 # SECTION DECRIPTIONS     must be at the end
 #---------------------------------------------------------------------------
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    #!insertmacro MUI_DESCRIPTION_TEXT ${SecDscaler} $(DESC_SecDscaler)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecGabest}  $(DESC_SecGabest)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END

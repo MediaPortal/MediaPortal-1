@@ -30,7 +30,6 @@
 #**********************************************************************************************************#
 
 # ENGLISH
-LangString DESC_SecDscaler                        ${LANG_ENGLISH} "Installs the DScaler Decoder"
 LangString DESC_SecGabest                         ${LANG_ENGLISH} "Installs the Gabest MPA/MPV decoder"
 LangString ^UninstallLink                         ${LANG_ENGLISH} "Uninstall $(^Name)"
 
