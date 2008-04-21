@@ -203,7 +203,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <visible>Player.HasMedia</visible>
     </control>
-     <control>
+    <control>
       <description>video preview window</description>
       <type>videowindow</type>
       <id>99</id>

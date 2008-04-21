@@ -48,7 +48,7 @@
       <spaceBetweenButtons>18</spaceBetweenButtons>
       <numberOfButtons>3</numberOfButtons>
       <textureButtonFocus>button_empty.png</textureButtonFocus>
-  <textureButtonNoFocus>buttonNF_empty.png</textureButtonNoFocus>
+      <textureButtonNoFocus>buttonNF_empty.png</textureButtonNoFocus>
       <hoverX>60</hoverX>
       <hoverY>225</hoverY>
       <hoverWidth>432</hoverWidth>
