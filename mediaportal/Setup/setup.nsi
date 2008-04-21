@@ -117,12 +117,11 @@ BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
 !define MUI_UNICON  "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 
 !define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE_BITMAP              "Resources\header.bmp"
 !if ${VER_BUILD} == 0       # it's a stable release
-    !define MUI_HEADERIMAGE_BITMAP          "Resources\header.bmp"
     !define MUI_WELCOMEFINISHPAGE_BITMAP    "Resources\wizard.bmp"
     !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "Resources\wizard.bmp"
 !else                       # it's an svn reöease
-    !define MUI_HEADERIMAGE_BITMAP          "Resources\header-svn.bmp"
     !define MUI_WELCOMEFINISHPAGE_BITMAP    "Resources\wizard-svn.bmp"
     !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "Resources\wizard-svn.bmp"
 !endif
