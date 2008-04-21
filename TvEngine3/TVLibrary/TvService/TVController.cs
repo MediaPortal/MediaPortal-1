@@ -308,17 +308,23 @@ namespace TvService
         if (_ourServer == null)
         {
           //then add ourselfs to the server
-          Log.WriteFile("Controller: create new server in database");
-          _ourServer = new Server(false, Dns.GetHostName());
           if (servers.Count == 0)
           {
             //there are no other servers
             //so we are the master one.
+            Log.WriteFile("Controller: create new server in database");
+            _ourServer = new Server(false, Dns.GetHostName());
             _ourServer.IsMaster = true;
             _isMaster = true;
+            _ourServer.Persist();
+            Log.WriteFile("Controller: new server created for {0} master:{1} ", Dns.GetHostName(), _isMaster);
           }
-          _ourServer.Persist();
-          Log.WriteFile("Controller: new server created for {0} master:{1} ", Dns.GetHostName(), _isMaster);
+          else
+          {
+            Log.WriteFile("Controller: sorry, master/slave server setups are not supported. Since there is already another server in the db, we exit here.");
+            return false;
+          }
+          
         }
         _isMaster = _ourServer.IsMaster;
 
