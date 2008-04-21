@@ -129,6 +129,11 @@ namespace SetupTv
       int currentSchemaVersion = dlg.GetCurrentShemaVersion();
       if (currentSchemaVersion <= 36) // drop pre-1.0 DBs and handle -1
       {
+        // Allow users to cancel DB recreation to backup their old DB
+        if (currentSchemaVersion > 0)
+          if (MessageBox.Show("Your existing database cannot be upgraded and will be replaced by an empty database. Continue now?", "DB recreation needed", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Cancel)
+            return;
+
         Log.Info("---- create database ----");
         if (!dlg.ExecuteSQLScript("create"))
         {
