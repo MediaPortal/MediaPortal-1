@@ -122,7 +122,7 @@ namespace MediaPortal.DeployTool
     public string CheckUninstallString(string clsid)
     {
       string strUninstall;
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
       if (key != null)
       {
         strUninstall = key.GetValue("UninstallString").ToString();
