@@ -41,10 +41,18 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.Welcome;
       DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
-      DirectoryInfo[] subDirs = dir.GetDirectories("??-??");
+      DirectoryInfo[] subDirs = dir.GetDirectories();
       foreach (DirectoryInfo d in subDirs)
       {
-        CultureInfo ci = new CultureInfo(d.Name);
+        CultureInfo ci = null;
+        try
+        {
+          ci = new CultureInfo(d.Name);
+        }
+        catch (Exception)
+        {
+          continue;
+        }
         SimpleCultureInfo sci = new SimpleCultureInfo(d.Name, ci.NativeName);
         cbLanguage.Items.Add(sci);
         if (ci.Name == System.Threading.Thread.CurrentThread.CurrentCulture.Name)
