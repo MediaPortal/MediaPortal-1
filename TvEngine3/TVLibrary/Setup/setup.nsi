@@ -43,7 +43,7 @@ SetCompressor /SOLID lzma
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"
 
-#!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
+!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
 
 #---------------------------------------------------------------------------
 # VARIABLES
