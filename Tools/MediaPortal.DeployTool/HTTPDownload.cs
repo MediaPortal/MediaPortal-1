@@ -63,6 +63,21 @@ namespace MediaPortal.DeployTool
       labelURL.Text = url;
       labelTarget.Text = Path.GetFileName(targetFile);
       client = new WebClient();
+      
+      /*
+      Uri fileuri = new Uri(url);
+      Uri proxyUri = client.Proxy.GetProxy(fileuri);
+      if (proxyUri == fileuri)
+      {
+        MessageBox.Show("No proxy detected.", url, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      }
+      else
+      {
+        MessageBox.Show("Proxy is " + proxyUri.ToString(), url, MessageBoxButtons.OK,MessageBoxIcon.Warning);
+      }
+      */
+
+      client.Proxy.Credentials = CredentialCache.DefaultCredentials;
       client.Headers.Add("user-agent", @"Mozilla/4.0 (compatible; MSIE 7.0;" + userAgentOs);
       client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
       client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
