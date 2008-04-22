@@ -69,15 +69,6 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// Stops the splash screen after given wait time
-    /// </summary>
-    public void Stop(int aWaitTime)
-    {
-      Thread.Sleep(aWaitTime);
-      stopRequested = true;
-    }
-
-    /// <summary>
     /// Determine if the Splash has been closed
     /// </summary>
     public bool isStopped()
@@ -114,6 +105,7 @@ namespace MediaPortal
           oldInfo = info;
         }
         Thread.Sleep(25);
+        Application.DoEvents();
       }
       frm.FadeOut();
       frm.Close();  //closes, and disposes the form
