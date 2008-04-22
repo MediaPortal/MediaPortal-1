@@ -238,7 +238,7 @@ namespace SetupTv.Sections
                 imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
               }
 
-              TreeNode stationNode = new TreeNode(station.TvmEpgChannel, i, i);//, subItems);
+              TreeNode stationNode = new TreeNode(station.TvmEpgDescription, i, i);//, subItems);
               ChannelInfo channelInfo = new ChannelInfo();
               channelInfo.Name = station.TvmEpgChannel;
               stationNode.Tag = channelInfo;
