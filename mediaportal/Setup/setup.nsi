@@ -45,7 +45,7 @@ SetCompressor /SOLID lzma
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"
 
-#!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
+!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
 
 #---------------------------------------------------------------------------
 # VARIABLES
@@ -211,6 +211,24 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
+Section "-prepare" SecPrepare
+  DetailPrint "Prepare installation..."
+
+  DetailPrint "Terminating processes..."
+  ${KILLPROCESS} "MediaPortal.exe"
+  ${KILLPROCESS} "configuration.exe"
+
+  ${KILLPROCESS} "MPInstaller.exe"
+  ${KILLPROCESS} "MPTestTool2.exe"
+  ${KILLPROCESS} "MusicShareWatcher.exe"
+  ${KILLPROCESS} "TVGuideScheduler.exe"
+  ${KILLPROCESS} "WebEPG.exe"
+  ${KILLPROCESS} "WebEPG-conf.exe"
+
+  DetailPrint "Deleting SkinCache..."
+  RMDir /r "$MPdir.Cache"
+SectionEnd
+
 !ifdef SVN_BUILD     # optional Section which could create a backup
 Section "Backup current installation status" SecBackup
 
@@ -230,17 +248,6 @@ SectionEnd
 Section "MediaPortal core files (required)" SecCore
   SectionIn RO
   DetailPrint "Installing MediaPortal core files..."
-
-  DetailPrint "Terminating processes ..."
-  ${KILLPROCESS} "MediaPortal.exe"
-  ${KILLPROCESS} "configuration.exe"
-
-  ${KILLPROCESS} "MPInstaller.exe"
-  ${KILLPROCESS} "MPTestTool2.exe"
-  ${KILLPROCESS} "MusicShareWatcher.exe"
-  ${KILLPROCESS} "TVGuideScheduler.exe"
-  ${KILLPROCESS} "WebEPG.exe"
-  ${KILLPROCESS} "WebEPG-conf.exe"
 
   SetOverwrite on
 
