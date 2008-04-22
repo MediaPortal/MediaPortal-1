@@ -843,27 +843,35 @@ Function .onInit
 
   ; check if old mp 0.2.2 is installed
   ${If} ${MP022IsInstalled}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP022)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP022)"
     Abort
   ${EndIf}
 
   ; check if old mp 0.2.3 RC3 is installed
   ${If} ${MP023RC3IsInstalled}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023RC3)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023RC3)"
     Abort
   ${EndIf}
 
   ; check if old mp 0.2.3 is installed.
   ${If} ${MP023IsInstalled}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MP023)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023)"
     Abort
   ${EndIf}
 
-  ; check if minimum Windows version is XP
+  ; check if minimum Windows version is XP and STOP if not
   ${If} ${AtMostWin2000}
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
     ExecShell open "${WEB_REQUIREMENTS}"
     Abort
+  ${EndIf}
+
+  ${If} $DeployMode == 0
+    ${If} ${IsWin2003}
+    #${OrIf} ${IsWin2008}
+      MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
+      ExecShell open "${WEB_REQUIREMENTS}"
+    ${EndIf}
   ${EndIf}
 
   ; check if current user is admin
@@ -871,7 +879,7 @@ Function .onInit
   Pop $0
   #StrCmp $0 "Admin" 0 +3
   ${IfNot} $0 == "Admin"
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ADMIN)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_ADMIN)"
     Abort
   ${EndIf}
 
@@ -891,7 +899,7 @@ Function .onInit
 
   ; check if reboot is required
   ${If} ${FileExists} "$MPdir.Base\rebootflag"
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
     Abort
   ${EndIf}
 

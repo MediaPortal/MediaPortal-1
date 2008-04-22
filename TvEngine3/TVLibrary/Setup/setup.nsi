@@ -636,7 +636,7 @@ Function .onInit
   ; update the component status -> commandline parameters have higher priority than registry values
   ${If} $noClient = 1
   ${AndIf} $noServer = 1
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_PARAMETER_ERROR)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_PARAMETER_ERROR)"
     Abort
   ${ElseIf} $noClient = 1
     !insertmacro SelectSection ${SecServer}
@@ -648,21 +648,29 @@ Function .onInit
 
   ; check if old msi based client plugin is installed.
   ${If} ${MSI_TVClientIsInstalled}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)"
     Abort
   ${EndIf}
 
   ; check if old msi based server is installed.
   ${If} ${MSI_TVServerIsInstalled}
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_MSI_SERVER)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MSI_SERVER)"
     Abort
   ${EndIf}
 
-  ; check if minimum Windows version is XP
+  ; check if minimum Windows version is XP and STOP if not
   ${If} ${AtMostWin2000}
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
     ExecShell open "${WEB_REQUIREMENTS}"
     Abort
+  ${EndIf}
+
+  ${If} $DeployMode == 0
+    ${If} ${IsWin2003}
+    #${OrIf} ${IsWin2008}
+      MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
+      ExecShell open "${WEB_REQUIREMENTS}"
+    ${EndIf}
   ${EndIf}
 
   ; check if current user is admin
@@ -670,7 +678,7 @@ Function .onInit
   Pop $0
   #StrCmp $0 "Admin" 0 +3
   ${IfNot} $0 == "Admin"
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ADMIN)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_ADMIN)"
     Abort
   ${EndIf}
 
@@ -683,7 +691,7 @@ Function .onInit
 
   ; check if reboot is required
   ${If} ${FileExists} "$INSTDIR\rebootflag"
-    MessageBox MB_OK|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
     Abort
   ${EndIf}
 
