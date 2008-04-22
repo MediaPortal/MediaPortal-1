@@ -277,10 +277,6 @@ namespace MediaPortal.GUI.MyMail
         count++;
       }
 
-      string applicationPath = Application.ExecutablePath;
-      applicationPath = Path.GetFullPath(applicationPath);
-      applicationPath = Path.GetDirectoryName(applicationPath);
-
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         MailBox tmpBox;
@@ -297,9 +293,11 @@ namespace MediaPortal.GUI.MyMail
 
           // check full pathnames
           if (!Path.IsPathRooted(tmpBox.AttachmentFolder))
-            tmpBox.AttachmentFolder = applicationPath + @"\email\" + tmpBox.AttachmentFolder;
+            tmpBox.AttachmentFolder = Config.GetSubFolder(
+              Config.Dir.Config, @"MyMail\" + tmpBox.AttachmentFolder);
           if (!Path.IsPathRooted(tmpBox.MailboxFolder))
-            tmpBox.MailboxFolder = applicationPath + @"\email\" + tmpBox.MailboxFolder;
+            tmpBox.MailboxFolder = Config.GetSubFolder(
+              Config.Dir.Config, @"MyMail\" + tmpBox.MailboxFolder);
 
           if (tmpBox.BoxLabel == "")
           {
