@@ -106,6 +106,8 @@ namespace SetupTv.Sections
     }
     #endregion
 
+    #region Serialisation
+
     public override void OnSectionDeActivated()
     {
       if (tabControlTvMovie.SelectedIndex == 2)
@@ -196,6 +198,10 @@ namespace SetupTv.Sections
       SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);
     }
 
+    #endregion
+
+    #region Mapping methods
+
     /// <summary>
     /// Load stations from databases and fill controls with that data
     /// </summary>
@@ -229,9 +235,9 @@ namespace SetupTv.Sections
                 Bitmap tvmLogo = new Bitmap(channelLogo);
                 IntPtr iconHandle = tvmLogo.GetHicon();
                 Icon stationThumb = Icon.FromHandle(iconHandle);
-                imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));                
+                imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
               }
-              
+
               TreeNode stationNode = new TreeNode(station.TvmEpgChannel, i, i);//, subItems);
               ChannelInfo channelInfo = new ChannelInfo();
               channelInfo.Name = station.TvmEpgChannel;
@@ -254,7 +260,7 @@ namespace SetupTv.Sections
             foreach (Channel channel in mpChannelList)
             {
               //TreeNode[] subItems = new TreeNode[] { new TreeNode(channel.IdChannel.ToString()), new TreeNode(channel.DisplayName) };
-              TreeNode stationNode = new TreeNode(channel.Name);//, subItems);
+              TreeNode stationNode = new TreeNode(channel.DisplayName);
               stationNode.Tag = channel;
               treeViewMpChannels.Nodes.Add(stationNode);
             }
@@ -349,8 +355,7 @@ namespace SetupTv.Sections
           TvMovieMapping mapping = null;
           try
           {
-            mapping = new TvMovieMapping(layer.GetChannelByName(channel.Text).IdChannel,
-              channelInfo.Name, channelInfo.Start, channelInfo.End);
+            mapping = new TvMovieMapping(((Channel)channel.Tag).IdChannel, channelInfo.Name, channelInfo.Start, channelInfo.End);
           }
           catch (Exception exm)
           {
@@ -391,8 +396,7 @@ namespace SetupTv.Sections
             string MpChannelName = string.Empty;
             try
             {
-              MpChannelName = Channel.Retrieve(mapping.IdChannel).Name;
-              TreeNode channelNode = FindChannel(MpChannelName);
+              TreeNode channelNode = FindChannel(mapping.IdChannel);
               if (channelNode != null)
               {
                 string stationName = mapping.StationName;
@@ -441,12 +445,20 @@ namespace SetupTv.Sections
       treeViewMpChannels.EndUpdate();
     }
 
-    private TreeNode FindChannel(string aMpChannelName)
+    private TreeNode FindChannel(int mpChannelId)
     {
       foreach (TreeNode MpNode in treeViewMpChannels.Nodes)
-        if (MpNode.Text.Equals(aMpChannelName, StringComparison.CurrentCulture))
-          return MpNode;
-
+        if (MpNode.Tag != null)
+        {
+          Channel checkChannel = MpNode.Tag as Channel;
+          if (checkChannel != null)
+          {
+            if (checkChannel.IdChannel == mpChannelId)
+              return MpNode;
+          }
+          else
+            Log.Debug("TVMovie plugin: FindChannel failed - no Channel in Node tag of {0}", MpNode.Text);
+        }
       return null;
     }
 
@@ -537,6 +549,10 @@ namespace SetupTv.Sections
         treeViewMpChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
     }
 
+    #endregion
+
+    #region Form settings
+
     private void checkBoxUseShortDesc_CheckedChanged(object sender, EventArgs e)
     {
       if (checkBoxUseShortDesc.Checked)
@@ -557,14 +573,14 @@ namespace SetupTv.Sections
     {
       if (radioButton6h.Checked)
         return "6"; else
-      if (radioButton12h.Checked)
+        if (radioButton12h.Checked)
         return "12"; else
-      if (radioButton24h.Checked)
+          if (radioButton24h.Checked)
         return "24"; else
-      if (radioButton2d.Checked)
+            if (radioButton2d.Checked)
         return "48"; else
-      if (radioButton7d.Checked)
-        return "168";
+              if (radioButton7d.Checked)
+                return "168";
 
       return "24";
     }
@@ -628,6 +644,10 @@ namespace SetupTv.Sections
         SaveMapping();
     }
 
+    #endregion
+
+    #region Manual import methods
+
     /// <summary>
     /// Inmediately updates and imports EPG data
     /// </summary>
@@ -655,7 +675,7 @@ namespace SetupTv.Sections
     {
       TvMovieDatabase _database = new TvMovieDatabase();
       try
-      {        
+      {
         _database.LaunchTVMUpdater();
         _database.OnStationsChanged += new TvMovieDatabase.StationsChanged(_database_OnStationsChanged);
         if (_database.Connect())
@@ -684,7 +704,7 @@ namespace SetupTv.Sections
 
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
-      fileDialogDb.Filter = "Access database (*.mdb)|*.mdb|All files (*.*)|*.*";      
+      fileDialogDb.Filter = "Access database (*.mdb)|*.mdb|All files (*.*)|*.*";
       fileDialogDb.InitialDirectory = tbDbPath.Text;
       if (fileDialogDb.ShowDialog(this) == DialogResult.OK)
       {
@@ -692,5 +712,7 @@ namespace SetupTv.Sections
         checkBoxEnableImport_CheckedChanged(sender, null);
       }
     }
+
+    #endregion
   }
 }
