@@ -10,15 +10,15 @@ namespace MediaPortal.Configuration
 {
   public static class HelpSystem
   {
-    static string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Application.StartupPath);
+    static string helpReferencesFile = Config.GetFile(Config.Dir.Config, "HelpReferences.xml");
     static string helpReferencesTemp = String.Format(@"{0}_temp", helpReferencesFile);
-    static string helpReferencesBaseURL = @"http://install.team-mediaportal.com/HelpReferences_{0}.xml";
+    static string helpReferencesURL = @"http://install.team-mediaportal.com/HelpReferences_MediaPortal.xml";
 
     public static void ShowHelp(string sectionName)
     {
       if (!System.IO.File.Exists(helpReferencesFile))
       {
-        MessageBox.Show("File not found: {0}", helpReferencesFile);
+        MessageBox.Show("No help reference found.\r\nPlease update your help references by pressing 'Update Help' on Project Section.");
         return;
       }
 
@@ -41,13 +41,11 @@ namespace MediaPortal.Configuration
         }
       }
 
-      MessageBox.Show("No help reference found for section: {0}", sectionName);
+      MessageBox.Show(String.Format("No help reference found for section: {0}\r\n\r\nPlease update your help references by pressing 'Update Help' on Project Section.", sectionName));
     }
 
-    public static void UpdateHelpReferences(string product)
+    public static void UpdateHelpReferences()
     {
-      string helpReferencesURL = String.Format(helpReferencesBaseURL, product);
-
       Application.DoEvents();
       try
       {

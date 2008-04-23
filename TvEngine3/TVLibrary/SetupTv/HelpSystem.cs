@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,19 +31,21 @@ using System.Xml;
 using System.Net;
 using System.IO;
 
-namespace SetupControls
+using TvLibrary.Log;
+
+namespace SetupTv
 {
   public static class HelpSystem
   {
-    static string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Application.StartupPath);
+    static string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Log.GetPathName());
     static string helpReferencesTemp = String.Format(@"{0}_temp", helpReferencesFile);
-    static string helpReferencesBaseURL = @"http://install.team-mediaportal.com/HelpReferences_{0}.xml";
+    static string helpReferencesURL = @"http://install.team-mediaportal.com/HelpReferences_TVServer.xml";
 
     public static void ShowHelp(string sectionName)
     {
       if (!System.IO.File.Exists(helpReferencesFile))
       {
-        MessageBox.Show("File not found: {0}", helpReferencesFile);
+        MessageBox.Show("No help reference found.\r\nPlease update your help references by pressing 'Update Help' on Project Section.");
         return;
       }
 
@@ -41,13 +68,11 @@ namespace SetupControls
         }
       }
 
-      MessageBox.Show("No help reference found for section: {0}", sectionName);
+      MessageBox.Show(String.Format("No help reference found for section: {0}\r\n\r\nPlease update your help references by pressing 'Update Help' on Project Section.", sectionName));
     }
 
-    public static void UpdateHelpReferences(string product)
+    public static void UpdateHelpReferences()
     {
-      string helpReferencesURL = String.Format(helpReferencesBaseURL, product);
-
       Application.DoEvents();
       try
       {

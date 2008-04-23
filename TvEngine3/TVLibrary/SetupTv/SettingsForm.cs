@@ -507,7 +507,7 @@ namespace SetupTv
         SaveSectionSettings(treeNode);
       }
     }
-
+    
 
     public override void cancelButton_Click(object sender, EventArgs e)
     {
@@ -549,6 +549,11 @@ namespace SetupTv
       process.StartInfo.Arguments = String.Format(@"{0}\log\", Log.GetPathName());
       process.StartInfo.UseShellExecute = true;
       process.Start();
+    }
+
+    public override void helpButton_Click(object sender, EventArgs e)
+    {
+      HelpSystem.ShowHelp(_previousSection.ToString());
     }
 
     private void InitializeComponent()

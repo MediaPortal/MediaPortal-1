@@ -164,7 +164,6 @@ namespace SetupControls
 
     public virtual void helpButton_Click(object sender, EventArgs e)
     {
-      SetupControls.HelpSystem.ShowHelp(_previousSection.ToString());
     }
 
 

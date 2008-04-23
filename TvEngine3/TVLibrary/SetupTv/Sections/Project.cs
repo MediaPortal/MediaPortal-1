@@ -103,7 +103,7 @@ namespace SetupTv.Sections
     
     private void helpButton_Click(object sender, EventArgs e)
     {
-      SetupControls.HelpSystem.UpdateHelpReferences("TVServer");
+      HelpSystem.UpdateHelpReferences();
     }
   }
 }

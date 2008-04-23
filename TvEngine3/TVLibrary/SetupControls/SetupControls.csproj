@@ -60,7 +60,6 @@
     <Compile Include="MPForm.Designer.cs">
       <DependentUpon>MPForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="HelpSystem.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>

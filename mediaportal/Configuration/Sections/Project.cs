@@ -101,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
     
     private void helpButton_Click(object sender, EventArgs e)
     {
-      HelpSystem.UpdateHelpReferences("MediaPortal");
+      HelpSystem.UpdateHelpReferences();
     }
   }
 }
