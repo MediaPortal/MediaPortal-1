@@ -530,9 +530,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\dream%2520multimedia.gif" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher.gif" />
   </ItemGroup>
   <ItemGroup>
@@ -572,6 +569,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AutoCropper\Readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
