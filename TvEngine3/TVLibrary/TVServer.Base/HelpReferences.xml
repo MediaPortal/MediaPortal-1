@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <helpsystem>
-  <general baseurl="http://wiki.team-mediaportal.com/TV-Engine_0.3/config-" />
+  <general baseurl="http://wiki.team-mediaportal.com/TV-Server/config-" />
   <sections>
     <section name="SetupTv.Sections.Servers" suburl="TV-Servers" />
     <section name="SetupTv.Sections.TvCards" suburl="TV-Servers" />
