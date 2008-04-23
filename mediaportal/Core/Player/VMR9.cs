@@ -619,7 +619,6 @@ namespace MediaPortal.Player
             VideoDesc.dwSampleHeight = VideoHeader2.BmiHeader.Height; // dwSampleHeight: Set this field to abs(pBMI->biHeight). 
             //SampleFormat: This field describes the interlace characteristics of the media type.
             //Check the dwInterlaceFlags field in the VIDEOINFOHEADER2 structure, and set SampleFormat equal to the equivalent VMR9_SampleFormat flag.
-            Log.Info("VMR9: InterlaceFlags - {0}", VideoHeader2.InterlaceFlags);
             if ((VideoHeader2.InterlaceFlags & AMInterlace.IsInterlaced) != 0)
             {
               if ((VideoHeader2.InterlaceFlags & AMInterlace.DisplayModeBobOnly) == 0)
