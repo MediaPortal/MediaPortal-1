@@ -254,7 +254,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\Setup\mp.ico
   File ..\SetupTv\bin\Release\SetupTv.exe
   File ..\SetupTv\bin\Release\SetupTv.exe.config
-  File ..\SetupTv\HelpReferences.xml
   File ..\TvControl\bin\Release\TvControl.dll
   File ..\TVDatabase\bin\Release\TVDatabase.dll
   File ..\TVDatabase\references\Gentle.Common.DLL
@@ -283,7 +282,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
-  File ..\TvService\Gentle.config
+  File "..\TvService\Gentle.config"
+  File "${TVSERVER.BASE}\HelpReferences.xml"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
@@ -401,7 +401,6 @@ ${MementoSectionEnd}
   Delete /REBOOTOK $INSTDIR\Gentle.Framework.DLL
   Delete /REBOOTOK $INSTDIR\Gentle.Provider.MySQL.dll
   Delete /REBOOTOK $INSTDIR\Gentle.Provider.SQLServer.dll
-  Delete /REBOOTOK $INSTDIR\HelpReferences.xml
   Delete /REBOOTOK $INSTDIR\log4net.dll
   Delete /REBOOTOK $INSTDIR\MySql.Data.dll
   Delete /REBOOTOK $INSTDIR\TvBusinessLayer.dll

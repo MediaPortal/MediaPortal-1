@@ -255,6 +255,7 @@ Section "MediaPortal core files (required)" SecCore
   !define EXCLUDED_CONFIG_FILES "\
     /x CaptureCardDefinitions.xml \
     /x 'eHome Infrared Transceiver List XP.xml' \
+    /x HelpReferences.xml \
     /x ISDNCodes.xml \
     /x keymap.xml \
     /x MusicVideoSettings.xml \
@@ -297,6 +298,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Config"
   File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\HelpReferences.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
@@ -464,6 +466,7 @@ SectionEnd
   ; Config Files
   Delete /REBOOTOK "$MPdir.Config\CaptureCardDefinitions.xml"
   Delete /REBOOTOK "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
+  Delete /REBOOTOK "$MPdir.Config\HelpReferences.xml"
   Delete /REBOOTOK "$MPdir.Config\ISDNCodes.xml"
   Delete /REBOOTOK "$MPdir.Config\keymap.xml"
   Delete /REBOOTOK "$MPdir.Config\MusicVideoSettings.xml"
@@ -569,7 +572,6 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\FTD2XX.DLL"
   Delete /REBOOTOK "$MPdir.Base\hauppauge.dll"
   Delete /REBOOTOK "$MPdir.Base\HcwHelper.exe"
-  Delete /REBOOTOK "$MPdir.Base\HelpReferences.xml"
   Delete /REBOOTOK "$MPdir.Base\ICSharpCode.SharpZipLib.dll"
   Delete /REBOOTOK "$MPdir.Base\inpout32.dll"
   Delete /REBOOTOK "$MPdir.Base\Interop.GIRDERLib.dll"
