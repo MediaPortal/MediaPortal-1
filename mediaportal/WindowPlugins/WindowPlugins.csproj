@@ -375,24 +375,6 @@
     <Compile Include="GUIMusic\MusicViewHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIMyMail\GUIMyMailPlugin.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIMyMail\MailClass.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIMyMail\MailDetailSetup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUIMyMail\MailInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIMyMail\MailOverlay.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIMyMail\MailSetupFrom.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="GUIPictures\GUIPictures.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -825,12 +807,6 @@
     <EmbeddedResource Include="GUIMusicVideos\GUIMusicVideoSetupForm.resx">
       <DependentUpon>GUIMusicVideoSetupForm.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIMyMail\MailDetailSetup.resx">
-      <DependentUpon>MailDetailSetup.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIMyMail\MailSetupFrom.resx">
-      <DependentUpon>MailSetupFrom.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIRadioLastFM\PluginSetupForm.resx">
       <SubType>Designer</SubType>
