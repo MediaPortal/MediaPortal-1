@@ -6,6 +6,8 @@ using System.Xml;
 using System.Net;
 using System.IO;
 
+using MediaPortal.GUI.Library;
+
 namespace MediaPortal.Configuration
 {
   public static class HelpSystem
@@ -41,7 +43,8 @@ namespace MediaPortal.Configuration
         }
       }
 
-      MessageBox.Show(String.Format("No help reference found for section: {0}\r\n\r\nPlease update your help references by pressing 'Update Help' on Project Section.", sectionName));
+      Log.Error("No help reference found for section: {0}", sectionName);
+      MessageBox.Show(String.Format("No help reference found for section:\r\n       {0}\r\n\r\nPlease update your help references by pressing 'Update Help' on Project Section.", sectionName));
     }
 
     public static void UpdateHelpReferences()
@@ -81,8 +84,9 @@ namespace MediaPortal.Configuration
 
         MessageBox.Show("HelpReferences update succeeded.");
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("EXCEPTION in UpdateHelpReferences | {0}\r\n{1}", ex.Message, ex.Source);
         MessageBox.Show("HelpReferences update failed.");
       }
       Application.DoEvents();
