@@ -40,11 +40,21 @@ namespace MediaPortal.DeployTool
     {
       InitializeComponent();
       type = DialogType.Welcome;
+      SimpleCultureInfo sci;
+      CultureInfo ci;
+
+      //Default culture en-US is not in a resource file
+      ci = new CultureInfo("en-US");
+      sci = new SimpleCultureInfo("en-US", ci.NativeName);
+      cbLanguage.Items.Add(sci);
+      cbLanguage.SelectedItem = sci;
+      //
+
       DirectoryInfo dir = new DirectoryInfo(Application.StartupPath);
       DirectoryInfo[] subDirs = dir.GetDirectories();
       foreach (DirectoryInfo d in subDirs)
       {
-        CultureInfo ci = null;
+        ci = null;
         try
         {
           ci = new CultureInfo(d.Name);
@@ -53,7 +63,7 @@ namespace MediaPortal.DeployTool
         {
           continue;
         }
-        SimpleCultureInfo sci = new SimpleCultureInfo(d.Name, ci.NativeName);
+        sci = new SimpleCultureInfo(d.Name, ci.NativeName);
         cbLanguage.Items.Add(sci);
         if (ci.Name == System.Threading.Thread.CurrentThread.CurrentCulture.Name)
           cbLanguage.SelectedItem = sci;

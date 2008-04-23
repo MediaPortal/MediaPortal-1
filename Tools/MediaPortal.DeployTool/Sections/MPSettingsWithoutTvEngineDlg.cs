@@ -55,7 +55,6 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      if (checkBoxFirewall.Enabled == true) InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
     }
     public override bool SettingsValid()
@@ -70,6 +69,10 @@ namespace MediaPortal.DeployTool
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("MPDir", textBoxDir.Text);
+      if (checkBoxFirewall.Checked)
+        InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
+      else
+        InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "0");
     }
     #endregion
 

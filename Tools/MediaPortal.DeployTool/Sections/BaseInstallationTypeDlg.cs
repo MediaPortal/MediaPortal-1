@@ -81,6 +81,7 @@ namespace MediaPortal.DeployTool
         InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server");
         InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
+        InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
         InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
       }
     }

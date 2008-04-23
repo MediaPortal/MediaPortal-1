@@ -44,7 +44,12 @@ namespace MediaPortal.DeployTool
     private static NetFwTypeLib.INetFwMgr GetFirewallManager()
     {
       Type objectType = Type.GetTypeFromProgID(PROGID_FIREWALL_MANAGER);
+#if DEBUG
+      if (objectType == Type.Missing) MessageBox.Show("object type is - Missing -", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      if (objectType == null) MessageBox.Show("object type is - Null -", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
       return Activator.CreateInstance(objectType) as NetFwTypeLib.INetFwMgr;
+
     }
     private bool AuthorizeApplication(string title, string applicationPath, NET_FW_SCOPE_ scope, NET_FW_IP_VERSION_ ipVersion)
     {
@@ -150,6 +155,22 @@ namespace MediaPortal.DeployTool
       CheckResult result;
       result.needsDownload = false;
       result.state = CheckState.CONFIGURED;
+
+      //If both applications don't request to configure fw, no need to go further
+      if (InstallationProperties.Instance["ConfigureTVServerFirewall"] != "1" &&
+          InstallationProperties.Instance["ConfigureMediaPortalFirewall"] != "1")
+      {
+        result.state = CheckState.CONFIGURED;
+        return result;
+      }
+
+#if DEBUG
+      if (InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
+        MessageBox.Show("TVServer request firewall cfg", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1")
+        MessageBox.Show("MediaPortal request firewall cfg", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
+
       INetFwMgr fwMgr = GetFirewallManager();
 
       //If firewall is not enabled, no need to configure it

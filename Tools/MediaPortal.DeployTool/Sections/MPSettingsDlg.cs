@@ -73,6 +73,10 @@ namespace MediaPortal.DeployTool
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("MPDir", textBoxDir.Text);
+      if (checkBoxFirewall.Checked)
+        InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
+      else
+        InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "0");
     }
     #endregion
 

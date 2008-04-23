@@ -64,7 +64,7 @@ namespace MediaPortal.DeployTool
       labelTarget.Text = Path.GetFileName(targetFile);
       client = new WebClient();
       
-      /*
+#if DEBUG
       Uri fileuri = new Uri(url);
       Uri proxyUri = client.Proxy.GetProxy(fileuri);
       if (proxyUri == fileuri)
@@ -75,7 +75,7 @@ namespace MediaPortal.DeployTool
       {
         MessageBox.Show("Proxy is " + proxyUri.ToString(), url, MessageBoxButtons.OK,MessageBoxIcon.Warning);
       }
-      */
+#endif
 
       client.Proxy.Credentials = CredentialCache.DefaultCredentials;
       client.Headers.Add("user-agent", @"Mozilla/4.0 (compatible; MSIE 7.0;" + userAgentOs);
