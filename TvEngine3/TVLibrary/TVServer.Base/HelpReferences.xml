@@ -25,14 +25,13 @@
     <section name="SetupTv.Sections.TestService" suburl="ManualControl" />
 
     <section name="SetupTv.Sections.Plugins" suburl="TV-Server" />
+    
+    <section name="SetupTv.Sections.ComSkipSetup" suburl="ComSkipLauncher" />
     <section name="SetupTv.Sections.CMSetup" suburl="ConflictsManager" />
+    <!--<section name="SetupTv.Sections.PTVGSetup" suburl="PersonalTvGuide" />-->
     <section name="TvEngine.PowerScheduler.PowerSchedulerMasterSetup" suburl="PowerScheduler" />
-    <!--
-    <section name="SetupTv.Sections.ComSkipSetup" suburl="....." />
-    <section name="SetupTv.Sections.PTVGSetup" suburl="....." />
-    <section name="SetupTv.Sections.BlasterSetup" suburl="....." />
-    <section name="SetupTv.Sections.TvMovieSetup" suburl="....." />
-    <section name="SetupTv.Sections.XmlTvSetup" suburl="....." /
-    -->
+    <section name="SetupTv.Sections.BlasterSetup" suburl="ServerBlaster" />
+    <section name="SetupTv.Sections.TvMovieSetup" suburl="TvMovieEpgImport" />
+    <section name="SetupTv.Sections.XmlTvSetup" suburl="XmlTv" />
   </sections>
 </helpsystem>
