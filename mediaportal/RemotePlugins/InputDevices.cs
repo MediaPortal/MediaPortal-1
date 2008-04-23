@@ -44,9 +44,7 @@ namespace MediaPortal.InputDevices
         Log.Info("Remotes: Init was called before Stop - stopping devices now");
         Stop();
       }
-
       _initialized = true;
-
       diRemote.Init();
       X10Remote.Init();
       CentareaRemote.Init();

@@ -131,17 +131,26 @@ namespace MediaPortal.InputDevices
 
     public void Init()
     {
-      CreateMapper();
-      if (_inputHandler.IsLoaded)
+      bool _controlEnabled = false;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        CreateListener();
-        InitDeviceList();
-        LoadSettings();
-        AttachHandlers();
+        _controlEnabled = xmlreader.GetValueAsBool("remote", "DirectInput", false);
+      }
+      if (_controlEnabled)
+      {
+        CreateMapper();
+        if (_inputHandler.IsLoaded)
+        {
+          CreateListener();
+          InitDeviceList();
+          LoadSettings();
+          AttachHandlers();
+        }
+        else
+          Log.Info("DirectInput: Error loading default mapping file - please reinstall MediaPortal");
       }
       else
-        Log.Info("DirectInput: Error loading default mapping file - please reinstall MediaPortal");
-
+        Log.Info("DirectInput: not enabled");
     }
 
     public void InitDeviceList()

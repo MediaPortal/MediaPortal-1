@@ -133,7 +133,6 @@ namespace MediaPortal.InputDevices
     {
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         _basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
-
       string xmlPath = GetXmlPath(deviceXmlName);
       LoadMapping(xmlPath);
     }
@@ -194,7 +193,6 @@ namespace MediaPortal.InputDevices
       return path;
     }
 
-
     /// <summary>
     /// Load mapping from XML file
     /// </summary>
@@ -211,7 +209,6 @@ namespace MediaPortal.InputDevices
         {
           string name = nodeButton.Attributes["name"].Value;
           string value = nodeButton.Attributes["code"].Value;
-
           ArrayList mapping = new ArrayList();
           XmlNodeList listActions = nodeButton.SelectNodes("action");
           foreach (XmlNode nodeAction in listActions)
@@ -245,7 +242,6 @@ namespace MediaPortal.InputDevices
         _isLoaded = true;
       }
     }
-
 
     /// <summary>
     /// Evaluates the button number, gets its mapping and executes the action
