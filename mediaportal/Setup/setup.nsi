@@ -414,6 +414,17 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\shoutcastsource.ax"  "$MPdir.Base\shoutcastsource.ax" "$MPdir.Base"
   ; used for digital tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TsReader.ax"         "$MPdir.Base\TsReader.ax" "$MPdir.Base"
+  ${If} ${RunningX64}
+    SetRegView 64
+  ${Endif}
+  WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+  WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+  WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+  WriteRegStr HKCR "Media Type\Extensions\.rtsp"      "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+  ${If} ${RunningX64}
+    SetRegView 32
+  ${Endif}
+
   ##### not sure for what this is used
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TTPremiumSource.ax"  "$MPdir.Base\TTPremiumSource.ax" "$MPdir.Base"
 SectionEnd

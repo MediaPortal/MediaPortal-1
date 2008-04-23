@@ -354,6 +354,17 @@ ${MementoSectionEnd}
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsReader.ax
+
+    ${If} ${RunningX64}
+      SetRegView 64
+    ${Endif}
+    WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+    WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+    WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+    WriteRegStr HKCR "Media Type\Extensions\.rtsp"      "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
+    ${If} ${RunningX64}
+      SetRegView 32
+    ${Endif}
   ${EndIf}
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED $INSTDIR\TsWriter.ax
   ; filters for analog tv
