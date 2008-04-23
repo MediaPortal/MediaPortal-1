@@ -3,9 +3,13 @@
   <general baseurl="http://wiki.team-mediaportal.com/TV-Server/config-" />
   <sections>
     <section name="SetupTv.Sections.Servers" suburl="TV-Servers" />
-    <section name="SetupTv.Sections.TvCards" suburl="TV-Servers" />
+    <section name="SetupTv.Sections.TvCards" suburl="TV-Servers" />    
+    <section name="SetupTv.Sections.CardAnalog" suburl="TV-Servers" />
+    <section name="SetupTv.Sections.CardAtsc" suburl="TV-Servers" />
+    <section name="SetupTv.Sections.CardDvbC" suburl="TV-Servers" />
     <section name="SetupTv.Sections.CardDvbS" suburl="TV-Servers" />
-
+    <section name="SetupTv.Sections.CardDvbT" suburl="TV-Servers" />
+    
     <section name="SetupTv.Sections.TvChannels" suburl="TV-Channels" />
     <section name="SetupTv.Sections.TvCombinations" suburl="TV-Channels" />
     <section name="SetupTv.Sections.TvChannelMapping" suburl="TV-Channels" />
@@ -28,10 +32,12 @@
     
     <section name="SetupTv.Sections.ComSkipSetup" suburl="ComSkipLauncher" />
     <section name="SetupTv.Sections.CMSetup" suburl="ConflictsManager" />
-    <!--<section name="SetupTv.Sections.PTVGSetup" suburl="PersonalTvGuide" />-->
     <section name="TvEngine.PowerScheduler.PowerSchedulerMasterSetup" suburl="PowerScheduler" />
     <section name="SetupTv.Sections.BlasterSetup" suburl="ServerBlaster" />
     <section name="SetupTv.Sections.TvMovieSetup" suburl="TvMovieEpgImport" />
     <section name="SetupTv.Sections.XmlTvSetup" suburl="XmlTv" />
+
+    <!-- deprecated / disabled sections -->
+    <!--<section name="SetupTv.Sections.PTVGSetup" suburl="PersonalTvGuide" />-->
   </sections>
 </helpsystem>
