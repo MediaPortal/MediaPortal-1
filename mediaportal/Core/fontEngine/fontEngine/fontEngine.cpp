@@ -43,10 +43,10 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 }
 
 #define MAX_TEXTURES			    2000
-#define MAX_TEXTURE_COORDS		80000
-#define MaxNumfontVertices		80000
-#define MAX_FONTS				      40
-#define MaxNumTextureVertices	30000
+#define MAX_TEXTURE_COORDS		8000
+#define MaxNumfontVertices		8000
+#define MAX_FONTS				      20
+#define MaxNumTextureVertices	3000
 
 // A structure for our custom vertex type
 struct CUSTOMVERTEX
@@ -271,12 +271,12 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 	
 	if (textureData[selected].pVertexBuffer==NULL)
 	{
-		m_pDevice->CreateVertexBuffer(		MaxNumTextureVertices*sizeof(CUSTOMVERTEX),
+		m_pDevice->CreateVertexBuffer( MaxNumTextureVertices*sizeof(CUSTOMVERTEX),
 											D3DUSAGE_WRITEONLY, 
 											D3DFVF_CUSTOMVERTEX,
 											D3DPOOL_MANAGED, 
 											&textureData[selected].pVertexBuffer, 
-											NULL) ;  
+											NULL);  
 	}
 	if (textureData[selected].vertices==NULL)
 	{
