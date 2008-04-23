@@ -124,7 +124,4 @@
   <data name="tvmovie4_topgrafik-nw" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\TvMovie\tvmovie4_topgrafik-nw.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dream%20multimedia" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dream%20multimedia.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
 </root>
