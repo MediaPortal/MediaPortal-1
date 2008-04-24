@@ -332,11 +332,11 @@ namespace SetupTv.Sections
       textBoxTimeShiftFolder.Text = info.card.TimeShiftFolder;
       if (textBoxFolder.Text == "")
       {
-        textBoxFolder.Text = System.IO.Directory.GetCurrentDirectory();
+        textBoxFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)); 
       }
       if (textBoxTimeShiftFolder.Text == "")
       {
-        textBoxTimeShiftFolder.Text = System.IO.Directory.GetCurrentDirectory();
+        textBoxTimeShiftFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
       }
       switch (info.card.RecordingFormat)
       {
