@@ -381,6 +381,7 @@
     <Compile Include="Util\IMPawardsSearch.cs" />
     <Compile Include="Util\PRNG.cs" />
     <Compile Include="Util\ProcessLock.cs" />
+    <Compile Include="Util\RegistryTools.cs" />
     <Compile Include="Util\StopWatch.cs" />
     <Compile Include="Util\UnhandledExceptionLogger.cs" />
     <Compile Include="UserInterfaceControls\MPTabPage.cs">
