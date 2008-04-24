@@ -318,7 +318,7 @@ namespace TvPlugin
           return;
         
       Log.Debug("TVHome: Filter check started.");
-      filterCheckThread = new Thread(HeartBeatTransmitter);
+      filterCheckThread = new Thread(FilterChecker);
       filterCheckThread.IsBackground = true;
       filterCheckThread.Priority = ThreadPriority.BelowNormal;
       filterCheckThread.Name = "TvClient-TvHome: FilterChecker thread";
