@@ -69,6 +69,30 @@ namespace SetupTv
       }
     }
 
+    private void SetupDatabaseForm_Load(object sender, EventArgs e)
+    {
+      LoadConnectionDetailsFromConfig(true);
+      SetInitialFocus();
+    }
+
+    private void SetInitialFocus()
+    {
+      switch (_dialogMode)
+      {
+        case StartupMode.Normal:
+          if (gbDbLogon.Enabled)
+            this.ActiveControl = tbPassword;
+          break;
+        case StartupMode.DbCleanup:
+          this.ActiveControl = btnTest;
+          break;
+        case StartupMode.DbConfig:
+          if (gbServerLocation.Enabled)
+            this.ActiveControl = tbDatabaseName;
+          break;
+      }
+    }
+
     private void LoadConnectionDetailsFromConfig(bool lookupMachineName)
     {
       //<DefaultProvider name="Firebird" connectionString="User=SYSDBA;Password=masterkey;Data Source=TvLibrary.fdb;ServerType=1;Dialect=3;Charset=UNICODE_FSS;Role=;Pooling=true;" />
@@ -173,11 +197,6 @@ namespace SetupTv
           return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};", server, userid, password, database, timeout);
       }
       return "";
-    }
-
-    private void SetupDatabaseForm_Load(object sender, EventArgs e)
-    {
-      LoadConnectionDetailsFromConfig(true);
     }
 
     public bool TestConnection()

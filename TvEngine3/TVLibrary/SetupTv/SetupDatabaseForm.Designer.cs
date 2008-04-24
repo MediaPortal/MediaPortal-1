@@ -69,7 +69,7 @@ namespace SetupTv
       this.gbConnectionSetup.Location = new System.Drawing.Point(12, 12);
       this.gbConnectionSetup.Name = "gbConnectionSetup";
       this.gbConnectionSetup.Size = new System.Drawing.Size(374, 375);
-      this.gbConnectionSetup.TabIndex = 9;
+      this.gbConnectionSetup.TabIndex = 0;
       this.gbConnectionSetup.TabStop = false;
       this.gbConnectionSetup.Text = "Connection settings";
       // 
@@ -83,7 +83,7 @@ namespace SetupTv
       this.gbDbLogon.Location = new System.Drawing.Point(19, 277);
       this.gbDbLogon.Name = "gbDbLogon";
       this.gbDbLogon.Size = new System.Drawing.Size(335, 82);
-      this.gbDbLogon.TabIndex = 6;
+      this.gbDbLogon.TabIndex = 2;
       this.gbDbLogon.TabStop = false;
       this.gbDbLogon.Text = "Database logon: ";
       // 
@@ -138,7 +138,7 @@ namespace SetupTv
       this.gbServerLocation.Location = new System.Drawing.Point(19, 154);
       this.gbServerLocation.Name = "gbServerLocation";
       this.gbServerLocation.Size = new System.Drawing.Size(335, 109);
-      this.gbServerLocation.TabIndex = 3;
+      this.gbServerLocation.TabIndex = 1;
       this.gbServerLocation.TabStop = false;
       this.gbServerLocation.Text = "Database location: ";
       // 
@@ -242,7 +242,7 @@ namespace SetupTv
       this.rbMySQL.Location = new System.Drawing.Point(204, 122);
       this.rbMySQL.Name = "rbMySQL";
       this.rbMySQL.Size = new System.Drawing.Size(72, 17);
-      this.rbMySQL.TabIndex = 2;
+      this.rbMySQL.TabIndex = 0;
       this.rbMySQL.TabStop = true;
       this.rbMySQL.Text = "My SQL 5";
       this.rbMySQL.UseVisualStyleBackColor = true;
@@ -254,7 +254,7 @@ namespace SetupTv
       this.rbSQLServer.Location = new System.Drawing.Point(19, 122);
       this.rbSQLServer.Name = "rbSQLServer";
       this.rbSQLServer.Size = new System.Drawing.Size(153, 17);
-      this.rbSQLServer.TabIndex = 1;
+      this.rbSQLServer.TabIndex = 0;
       this.rbSQLServer.TabStop = true;
       this.rbSQLServer.Text = "Microsoft SQL Server 2005";
       this.rbSQLServer.UseVisualStyleBackColor = true;
@@ -266,7 +266,7 @@ namespace SetupTv
       this.btnTest.Location = new System.Drawing.Point(229, 401);
       this.btnTest.Name = "btnTest";
       this.btnTest.Size = new System.Drawing.Size(75, 23);
-      this.btnTest.TabIndex = 8;
+      this.btnTest.TabIndex = 3;
       this.btnTest.Text = "&Test";
       this.btnTest.UseVisualStyleBackColor = true;
       this.btnTest.Click += new System.EventHandler(this.mpButtonTest_Click);
@@ -277,7 +277,7 @@ namespace SetupTv
       this.btnSave.Location = new System.Drawing.Point(310, 401);
       this.btnSave.Name = "btnSave";
       this.btnSave.Size = new System.Drawing.Size(75, 23);
-      this.btnSave.TabIndex = 9;
+      this.btnSave.TabIndex = 3;
       this.btnSave.Text = "&Save";
       this.btnSave.UseVisualStyleBackColor = true;
       this.btnSave.Click += new System.EventHandler(this.mpButtonSave_Click);
@@ -297,7 +297,7 @@ namespace SetupTv
       this.btnDrop.Location = new System.Drawing.Point(310, 401);
       this.btnDrop.Name = "btnDrop";
       this.btnDrop.Size = new System.Drawing.Size(75, 23);
-      this.btnDrop.TabIndex = 10;
+      this.btnDrop.TabIndex = 3;
       this.btnDrop.Text = "&Delete";
       this.btnDrop.UseVisualStyleBackColor = true;
       this.btnDrop.Visible = false;
@@ -308,11 +308,11 @@ namespace SetupTv
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(397, 436);
-      this.Controls.Add(this.btnDrop);
       this.Controls.Add(this.gbConnectionSetup);
       this.Controls.Add(this.btnTest);
-      this.Controls.Add(this.btnSave);
       this.Controls.Add(this.mpLabel1);
+      this.Controls.Add(this.btnSave);
+      this.Controls.Add(this.btnDrop);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
       this.MaximizeBox = false;
       this.MinimizeBox = false;
