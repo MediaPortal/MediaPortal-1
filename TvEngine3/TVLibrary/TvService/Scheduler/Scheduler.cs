@@ -188,7 +188,7 @@ namespace TvService
         if (IsRecordingSchedule(schedule.IdSchedule, out card)) continue;
 
         //check if this series is canceled
-        if (schedule.IsSerieIsCanceled(schedule.StartTime)) continue;
+        if (schedule.IsSerieIsCanceled(new DateTime(DateTime.Now.Year, DateTime.Now.Month,DateTime.Now.Day,DateTime.Now.Hour,DateTime.Now.Minute,0))) continue;
 
         //check if its time to record this schedule.
         RecordingDetail newRecording;
