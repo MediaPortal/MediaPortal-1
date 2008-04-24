@@ -283,7 +283,7 @@ namespace TvPlugin
       }
     }
 
-    private void LogRegisteredFilter(string aFilterName)
+    private void LogRegisteredFilter(string aFilterName, bool aLogMissing)
     {
       // Search for aFilterName (e.g. TsReader.ax) on every installation
       List<string> filterLocations = RegistryTools.GetRegisteredAssemblyPaths(aFilterName);
@@ -301,14 +301,16 @@ namespace TvPlugin
         }
       }
       else
-        Log.Error("TVHome: *** WARNING *** Unable to detect registered filter: {0}!", aFilterName);
+        if (aLogMissing)
+          Log.Error("TVHome: *** WARNING *** Unable to detect registered filter: {0}!", aFilterName);
     }
 
     private void FilterChecker()
     {
-      LogRegisteredFilter("TsReader.ax");
+      LogRegisteredFilter("TsReader.ax", true);
       if (_useDvbSubtitles)
-        LogRegisteredFilter("DVBsub2.ax");
+        LogRegisteredFilter("DVBsub2.ax", true);
+      LogRegisteredFilter("mdapifilter", false);
     }
 
     private void startFilterCheckThread()
