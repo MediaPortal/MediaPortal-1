@@ -141,7 +141,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Error("XMLTVImport: Error parsing star-rating - {0}", epgRating);
+        Log.Error("XMLTVImport: Error parsing star-rating - {0}", epgRating, ex.Message);
       }
       return Rating;
     }
