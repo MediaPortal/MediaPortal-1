@@ -1480,7 +1480,7 @@ namespace MediaPortal.Video.Database
       {
         // Body of the page with the searchresults
         string absoluteUri;
-        string strBody = GetPage(strURL, "iso-8859-1", out absoluteUri);
+        string strBody = GetPage(strURL, "utf-8", out absoluteUri);
 
         // Get start of Movielist, so search for <b>Titel:</b><br><br>
 
@@ -1513,64 +1513,63 @@ namespace MediaPortal.Video.Database
             int iEndAHREF = strBody.IndexOf("</a>");
             if (iEndAHREF >= 0)
             {
-              iAHREF += "<a href=.".Length;
+              iAHREF += "<a href=.".Length - 1;
               string strAHRef = strBody.Substring(iAHREF, iEndAHREF - iAHREF);
+              // Get Link Delimeter
+              string strDelim = strAHRef.Substring(0, 1);
               // remove everything between the font Tags, it is only the english title ;-)
-              int iFontStart = strAHRef.IndexOf("<font size='1'>");
+              int iFontStart = strAHRef.IndexOf("<font size=>");
               int iFontEnd = strAHRef.IndexOf("</font>");
               // be sure you found something
               if ((iFontStart >= 0) && (iFontEnd) >= 0)
                 strAHRef = strAHRef.Substring(0, iFontStart) + strAHRef.Substring(iFontEnd + "</font>".Length, strAHRef.Length - iFontEnd - "</font>".Length);
-              // Find beginning of the title
-              int iURL = strAHRef.IndexOf(">");
+              // find end of the link
+              int iURL = strAHRef.IndexOf(strDelim, 1);
               if (iURL > 0)
               {
                 // read the link
-                strURL = strAHRef.Substring(0, iURL);
-                if (strURL[strURL.Length - 1] == '\'')
-                  strURL = strURL.Substring(0, strURL.Length - 1);
-                // extract the title
-                strTitle = "";
-                iURL++;
-                int iURLEnd = strAHRef.IndexOf("<", iURL);
-                if (iURLEnd > 0)
+                strURL = strAHRef.Substring(1, iURL - 1);
+                if (iURL > 0)
                 {
-                  strTitle = strAHRef.Substring(iURL, iURLEnd - iURL);
+                  // read link
+                  strURL = strAHRef.Substring(1, iURL - 1);
+                  // extract the title
+                  strTitle = "";
+                  iURL--;
+                  iURL = strAHRef.LastIndexOf(">");
+                  iURL = iURL + 1;
+                  int iURLEnd = strAHRef.IndexOf("<", iURL);
+                  if (iURLEnd > 0)
+                    strTitle = strAHRef.Substring(iURL, iURLEnd - iURL);
+                  else
+                    strTitle = strAHRef.Substring(iURL);
+
+                  strURL = String.Format("http://www.ofdb.de/{0}", strURL);
+
+                  HTMLUtil htmlUtil = new HTMLUtil();
+
+                  htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+                  MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(strURL, strTitle + " (ofdb_de)", "OFDB_DE");
+                  elements.Add(url);
+                  // count the new element
+                  iCount++;
                 }
-                else
-                  strTitle = strAHRef.Substring(iURL);
-
-                strURL = String.Format("http://www.ofdb.de/{0}", strURL);
-
-                HTMLUtil htmlUtil = new HTMLUtil();
-
-                htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-
-                IMDBUrl url = new IMDBUrl(strURL, strTitle + " (ofdb)", "OFDB");
-                elements.Add(url);
-
-                // count the new element
-                iCount++;
+                if (iEndAHREF + 1 >= strBody.Length)
+                  break;
+                iStartOfMovieList = iEndAHREF + 1;
+                strBody = strBody.Substring(iEndAHREF + 1);
               }
-              if (iEndAHREF + 1 >= strBody.Length)
+              else
                 break;
-              iStartOfMovieList = iEndAHREF + 1;
-              strBody = strBody.Substring(iEndAHREF + 1);
             }
             else
-            {
               break;
-            }
-          }
-          else
-          {
-            break;
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+        Log.Error("OFDB_DE: Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
       }
     } // END FindOFDB()
 
@@ -1616,6 +1615,9 @@ namespace MediaPortal.Video.Database
         {
           // strip the information and add the separator
           strTemp = strIn.Substring(0, iEnd) + strSep;
+          // is there a cast at all? (animation do not have one)
+          if (strTemp.Trim() == "&raquo;")
+            return "";
           // Only add infos if there is some
           if (strTemp.Length >= 2)
           {
@@ -1668,7 +1670,7 @@ namespace MediaPortal.Video.Database
         movieDetails.Database = "OFDB";
 
         string absoluteUri;
-        string strBody = GetPage(url.URL, "iso-8859-1", out absoluteUri);
+        string strBody = GetPage(url.URL, "utf-8", out absoluteUri);
 
         // Read Starting Points of the details
         //int iTitle = strBody.IndexOf("Originaltitel:");
@@ -1677,32 +1679,12 @@ namespace MediaPortal.Video.Database
         int iGenre = strBody.IndexOf("Genre(s):");
         int iYear = strBody.IndexOf("Erscheinungsjahr:");
         int iPlotOutline = strBody.IndexOf("<b>Inhalt:</b>");
-        int iImage = strBody.IndexOf("<img src=\"images/film/");
+        int iImage = strBody.IndexOf("http://img.ofdb.de/film/");
+        int iCover = strBody.IndexOf("view.php?page=fassung");
         int iRating = strBody.IndexOf("Note:");
-        int iPlot = strBody.IndexOf("view.php?page=inhalt&");
+        int iPlot = strBody.IndexOf("plot/");
 
-        // to much information :-)
-        //int iATitle = strBody.IndexOf("Alternativtitel:");
-
-        // Not available in OFDB?
-        //int iCredits=strBody.IndexOf("Writing credits");				
-        //int iCred=strBody.IndexOf("redited cast:"); // Complete credited cast or Credited cast
-        //int iPlotSummary=strBody.IndexOf("Plot Summary:</b>");
-        //int iTagLine=strBody.IndexOf("Tagline:</b>");
-
-        // Go get the title
-        //iStart = iTitle;
-        //if (iStart >= 0)
-        //	movieDetails.Title = ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ");
-        movieDetails.Title = url.Title.Substring(0, url.Title.Length - 7);
-
-        // Add alternative titles - could be to much :-)
-        // it is to much, so comment out
-        /*
-        iStart = iATitle;
-        if (iStart >= 0)
-          movieDetails.Title += " ("+ParseListOFDB(strBody.Substring(iStart,strBody.Length-iStart)," / ")+")";
-        */
+        movieDetails.Title = url.Title.Substring(0, url.Title.Length - 9);
 
         // Go get the director
         iStart = iDirectedBy;
@@ -1736,15 +1718,55 @@ namespace MediaPortal.Video.Database
         }
 
         // Go get the picture
-        iStart = iImage;
+        // There may be a bigger cover
+        iStart = iCover;
         if (iStart >= 0)
         {
-          iStart += 10;
+          // cover link found
+          strTemp = strBody.Substring(iStart, strBody.Length - iStart);
+          iEnd = strTemp.IndexOf("\"");
+          if ((iStart >= 0) & (iEnd >= 0))
+          {
+            // search big frontcover
+            string strCoverPage = GetPage("http://www.ofdb.de/" + strTemp.Substring(0, iEnd), "utf-8", out absoluteUri);
+            iStart = strCoverPage.IndexOf("http://img.ofdb.de/fassung/");
+            if (iStart >= 0)
+            {
+              strTemp = strCoverPage.Substring(iStart, strCoverPage.Length - iStart);
+              iEnd = strTemp.IndexOf("\"");
+              movieDetails.ThumbURL = strTemp.Substring(0, iEnd);
+            }
+            // search runtime
+            iStart = strCoverPage.IndexOf("Laufzeit:");
+            if (iStart >= 0)
+            {
+              strTemp = strCoverPage.Substring(iStart, strCoverPage.Length - iStart);
+              iStart = strTemp.IndexOf("<b>") + 3;
+              strTemp = strTemp.Substring(iStart, strTemp.Length - iStart);
+              iEnd = strTemp.IndexOf(":");
+              movieDetails.RunTime = Int32.Parse(strTemp.Substring(0, iEnd));
+            }
+            // search FSK (mpaa-rating)
+            iStart = strCoverPage.IndexOf("Freigabe:");
+            if (iStart >= 0)
+            {
+              strTemp = strCoverPage.Substring(iStart, strCoverPage.Length - iStart);
+              iStart = strTemp.IndexOf("<b>") + 3;
+              strTemp = strTemp.Substring(iStart, strTemp.Length - iStart);
+              iEnd = strTemp.IndexOf("</b>");
+              movieDetails.MPARating = strTemp.Substring(0, iEnd);
+            }
+          }
+        }
+
+        iStart = iImage;
+        if ((iStart >= 0) & (movieDetails.ThumbURL.Length == 0))
+        {
           // found one
           strTemp = strBody.Substring(iStart, strBody.Length - iStart);
           iEnd = strTemp.IndexOf("\"");
           if (iEnd >= 0)
-            movieDetails.ThumbURL = "http://www.ofdb.de/" + strTemp.Substring(0, iEnd);
+            movieDetails.ThumbURL = strTemp.Substring(0, iEnd);
         }
 
         // Go get the rating, votes and position
@@ -1824,7 +1846,7 @@ namespace MediaPortal.Video.Database
             try
             {
               // Open the new page with detailed description
-              string strPlotHTML = GetPage("http://www.ofdb.de/" + strPlotURL, "iso-8859-1", out absoluteUri);
+              string strPlotHTML = GetPage("http://www.ofdb.de/" + strPlotURL, "utf-8", out absoluteUri);
 
               if (0 != strPlotHTML.Length)
               {
