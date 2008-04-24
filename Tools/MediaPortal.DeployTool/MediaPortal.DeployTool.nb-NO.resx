@@ -497,4 +497,7 @@ Fortsett på egen risiko....</value>
 Vennligst sjekk Internet Explorer innstillingene.
 Den ødelagte oppsett filen vil nå bli slettet, hvis den finnes.</value>
   </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Stille inn Windows Firewall til å akseptere ekstern tilkobling for MediaPortal</value>
+  </data>
 </root>
