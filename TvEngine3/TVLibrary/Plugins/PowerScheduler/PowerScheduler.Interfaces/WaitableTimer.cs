@@ -151,6 +151,7 @@ namespace TvEngine.PowerScheduler
 
 					// Create thread
 					m_Waiting = new Thread(new ThreadStart(WaitThread));
+          m_Waiting.Name = "PowerScheduler Waiter";
 
 					// Run it
 					m_Waiting.Start();

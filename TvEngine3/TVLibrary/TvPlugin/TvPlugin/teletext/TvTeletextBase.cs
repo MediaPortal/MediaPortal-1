@@ -103,7 +103,8 @@ namespace TvPlugin {
       // Create an update thread and set it's priority to lowest
       _updateThreadStop = false;
       _updateThread = new Thread(UpdatePage);
-      _updateThread.Priority = ThreadPriority.Lowest;
+      _updateThread.Name = "Teletext Updater";
+      _updateThread.Priority = ThreadPriority.BelowNormal;
       _updateThread.IsBackground = true;
       _updateThread.Start();
       lblMessage.Label = "";

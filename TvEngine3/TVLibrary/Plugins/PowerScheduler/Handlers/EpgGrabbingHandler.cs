@@ -185,6 +185,8 @@ namespace TvEngine.PowerScheduler.Handlers
             // kick off EPG thread
             _epgThreadRunning = true;
             Thread workerThread = new Thread(new ThreadStart(EPGThreadFunction));
+            workerThread.Name = "EPG Grabbing Handler";
+            workerThread.IsBackground = true;
             workerThread.Priority = ThreadPriority.Lowest;
             workerThread.Start();
           }

@@ -521,6 +521,8 @@ namespace TvService
           }
         }
         heartBeatMonitorThread = new Thread(HeartBeatMonitor);
+        heartBeatMonitorThread.Name = "HeartBeatMonitor";
+        heartBeatMonitorThread.IsBackground = true;
         heartBeatMonitorThread.Start();
       }
       catch (Exception ex)

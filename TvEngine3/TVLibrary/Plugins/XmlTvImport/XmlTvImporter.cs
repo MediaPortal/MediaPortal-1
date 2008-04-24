@@ -575,6 +575,8 @@ namespace TvEngine
       param._importLST = importLST;
       param._importDate = importDate;
       Thread workerThread = new Thread(new ParameterizedThreadStart(ThreadFunctionImportTVGuide));
+      workerThread.Name = "XmlTvImporter";
+      workerThread.IsBackground = true;
       workerThread.Priority = ThreadPriority.Lowest;
       workerThread.Start(param);
     }

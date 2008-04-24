@@ -123,6 +123,8 @@ namespace TvService
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       Process currentProcess = Process.GetCurrentProcess();
       _powerEventThread = new Thread(PowerEventThread);
+      _powerEventThread.Name = "PowerEventThread";
+      _powerEventThread.IsBackground = true;
       _powerEventThread.Start();
       //currentProcess.PriorityClass = ProcessPriorityClass.High;
       _controller = new TVController();

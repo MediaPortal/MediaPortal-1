@@ -194,6 +194,7 @@ namespace SetupTv.Sections
         }
         LoadList(String.Format(@"Tuningparameters\{0}.qam", mpComboBoxFrequencies.SelectedItem));
         Thread scanThread = new Thread(new ThreadStart(DoScan));
+        scanThread.Name = "ATSC scan thread";
         scanThread.Start();
         listViewStatus.Items.Clear();
       }

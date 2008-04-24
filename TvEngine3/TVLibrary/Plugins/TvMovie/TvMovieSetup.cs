@@ -660,6 +660,7 @@ namespace SetupTv.Sections
       try
       {
         Thread manualThread = new Thread(new ThreadStart(ManualImportThread));
+        manualThread.Name = "TV Movie manual importer";
         manualThread.Priority = ThreadPriority.Normal;
         manualThread.IsBackground = false;
         manualThread.Start();

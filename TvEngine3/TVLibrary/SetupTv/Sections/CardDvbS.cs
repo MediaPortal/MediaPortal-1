@@ -635,6 +635,7 @@ namespace SetupTv.Sections
           return;
         }
         Thread scanThread = new Thread(new ThreadStart(DoScan));
+        scanThread.Name = "DVB-S scan thread";
         scanThread.Start();
       }
       else

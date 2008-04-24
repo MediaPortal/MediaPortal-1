@@ -144,6 +144,7 @@ namespace SetupTv.Sections
           return;
         }
         Thread scanThread = new Thread(new ThreadStart(DoTvScan));
+        scanThread.Name = "Analog TV scan thread";
         scanThread.Start();
       }
       else
@@ -273,6 +274,7 @@ namespace SetupTv.Sections
           return;
         }
         Thread scanThread = new Thread(new ThreadStart(DoRadioScan));
+        scanThread.Name = "Analog Radio scan thread";
         scanThread.Start();
       }
       else

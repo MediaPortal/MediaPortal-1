@@ -1715,11 +1715,13 @@ namespace TvDatabase
           case "mysql":
             importThread = new Thread(new ParameterizedThreadStart(ImportMySqlThread));
             importThread.Priority = aThreadPriority;
+            importThread.Name = "MySQL EPG importer";
             importThread.Start(param);
             break;
           case "sqlserver":
             importThread = new Thread(new ParameterizedThreadStart(ImportSqlServerThread));
             importThread.Priority = aThreadPriority;
+            importThread.Name = "MSSQL EPG importer";
             importThread.Start(param);
             break;
           default:

@@ -282,6 +282,7 @@ namespace SetupTv.Sections
         }
         LoadList(String.Format(@"Tuningparameters\{0}.dvbc", mpComboBoxCountry.SelectedItem));
         Thread scanThread = new Thread(new ThreadStart(DoScan));
+        scanThread.Name = "DVB-C scan thread";
         scanThread.Start();
         listViewStatus.Items.Clear();
       }
@@ -527,6 +528,7 @@ namespace SetupTv.Sections
         if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _channelCount), "Manual scan results", MessageBoxButtons.YesNo))
         {
           Thread scanThread = new Thread(new ThreadStart(DoScan));
+          scanThread.Name = "DVB-C scan thread";
           scanThread.Start();
         }
       }

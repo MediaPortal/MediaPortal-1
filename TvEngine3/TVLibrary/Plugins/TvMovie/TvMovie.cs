@@ -150,6 +150,8 @@ namespace TvEngine
         try
         {
           Thread importThread = new Thread(new ThreadStart(ImportThread));
+          importThread.Name = "TV Movie importer";
+          importThread.IsBackground = true;
           importThread.Priority = ThreadPriority.Lowest;
           importThread.Start();
         }

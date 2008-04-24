@@ -71,6 +71,8 @@ namespace TvEngine
 				try
 				{
 					Thread updateThread = new Thread(new ThreadStart(UpdateThread));
+          updateThread.Name = "PersonalTVGuide";
+          updateThread.IsBackground = true;
 					updateThread.Priority = ThreadPriority.Lowest;
 					updateThread.Start();
 				}

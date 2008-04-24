@@ -693,6 +693,7 @@ namespace SetupTv.Sections
         btnImport.Enabled = false;
         Dictionary<string, MatroskaTagInfo> importTags = new Dictionary<string, MatroskaTagInfo>();
         Thread lookupThread = new Thread(new ParameterizedThreadStart(MatroskaTagHandler.GetAllMatroskaTags));
+        lookupThread.Name = "MatroskaTagHandler";
         lookupThread.Start((object)CurrentImportPath);
         lookupThread.IsBackground = true;
       }
