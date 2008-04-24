@@ -151,6 +151,7 @@ namespace TvPlugin
       lblProgramTime.Label = strTime;
       lblProgramDescription.Label = program.Description;
       lblProgramTitle.Label = program.Title;
+      lblProgramChannel.Label = Channel.Retrieve(program.IdChannel).DisplayName;
     }
 
     void Update()
@@ -170,6 +171,7 @@ namespace TvPlugin
       lblProgramTime.Label = strTime;
       lblProgramDescription.Label = currentProgram.Description;
       lblProgramTitle.Label = currentProgram.Title;
+      lblProgramChannel.Label = Channel.Retrieve(currentProgram.IdChannel).DisplayName;
 
       //check if we are recording this program
       IList schedules = Schedule.ListAll();
