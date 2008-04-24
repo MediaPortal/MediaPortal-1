@@ -84,7 +84,7 @@ namespace SetupTv.Sections
     {
       if (_needRestart)
       {
-        RemoteControl.Instance.Restart();
+       // RemoteControl.Instance.Restart();
       }
       base.OnSectionDeActivated();
     }
