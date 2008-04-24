@@ -301,7 +301,7 @@ namespace TvPlugin
         }
       }
       else
-        Log.Error("TVHome: *** WARNING *** Unable to detect a registered filter {0}!", aFilterName);
+        Log.Error("TVHome: *** WARNING *** Unable to detect registered filter: {0}!", aFilterName);
     }
 
     private void FilterChecker()
@@ -321,7 +321,7 @@ namespace TvPlugin
       filterCheckThread = new Thread(FilterChecker);
       filterCheckThread.IsBackground = true;
       filterCheckThread.Priority = ThreadPriority.BelowNormal;
-      filterCheckThread.Name = "TvClient-TvHome: FilterChecker thread";
+      filterCheckThread.Name = "FilterChecker";
       filterCheckThread.Start();
     }
 
