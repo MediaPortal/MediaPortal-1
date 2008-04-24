@@ -42,8 +42,8 @@ namespace TvDatabase
       High
     }
     public static DateTime MinSchedule = new DateTime(2000, 1, 1);
-    static public readonly int HighestPriority = Int32.MaxValue;
-    static public readonly int LowestPriority = 0;
+    public static readonly int HighestPriority = Int32.MaxValue;
+    public static readonly int LowestPriority = 0;
     bool _isSeries = false;
     #region Members
     private bool isChanged;

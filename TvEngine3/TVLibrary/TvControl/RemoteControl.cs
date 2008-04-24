@@ -41,7 +41,7 @@ namespace TvControl
     /// Gets or sets the name the hostname of the master tv-server.
     /// </summary>
     /// <value>The name of the host.</value>
-    static public string HostName
+    public static string HostName
     {
       get
       {
@@ -60,7 +60,7 @@ namespace TvControl
     /// returns an the <see cref="T:TvControl.IController"/> interface to the tv server
     /// </summary>
     /// <value>The instance.</value>
-    static public IController Instance
+    public static IController Instance
     {
       get
       {
@@ -109,7 +109,7 @@ namespace TvControl
     /// <value>
     /// 	<c>true</c> if this instance is connected; otherwise, <c>false</c>.
     /// </value>
-    static public bool IsConnected
+    public static bool IsConnected
     {
       get
       {
@@ -128,7 +128,7 @@ namespace TvControl
     /// <summary>
     /// Clears this instance.
     /// </summary>
-    static public void Clear()
+    public static void Clear()
     {
       _tvControl = null;
     }

@@ -55,7 +55,7 @@ namespace TvPlugin
 
     #endregion
 
-    static public CropSettings CropSettings
+    public static CropSettings CropSettings
     {
       get
       {

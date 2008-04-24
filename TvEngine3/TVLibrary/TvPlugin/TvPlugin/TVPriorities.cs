@@ -791,7 +791,7 @@ namespace TvPlugin
       SetProperties(rec,prog);
     }
 
-    static public void OnSetEpisodesToKeep(Schedule rec)
+    public static void OnSetEpisodesToKeep(Schedule rec)
     {
       Schedule schedule = Schedule.Retrieve(rec.IdSchedule);
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -817,7 +817,7 @@ namespace TvPlugin
       server.OnNewSchedule();
     }
 
-    static public void OnSetQuality(Schedule rec)
+    public static void OnSetQuality(Schedule rec)
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;

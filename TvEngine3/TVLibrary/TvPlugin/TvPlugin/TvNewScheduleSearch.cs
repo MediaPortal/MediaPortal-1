@@ -133,7 +133,7 @@ namespace TvPlugin
       base.OnAction(action);
     }
 
-    static public SearchType SearchFor
+    public static SearchType SearchFor
     {
       get
       {

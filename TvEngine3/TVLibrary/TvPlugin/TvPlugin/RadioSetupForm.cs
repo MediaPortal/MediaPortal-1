@@ -21,7 +21,8 @@ namespace TvPlugin
     #endregion
 
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -30,7 +31,8 @@ namespace TvPlugin
         _rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
       }
     }
-    void SaveSettings()
+
+    private void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -39,6 +41,7 @@ namespace TvPlugin
         xmlreader.SetValue("myradio", "rootgroup",_rootGroup);
       }
     }
+
     #endregion
 
     public RadioSetupForm()

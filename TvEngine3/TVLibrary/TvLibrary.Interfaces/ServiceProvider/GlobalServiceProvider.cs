@@ -30,7 +30,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// returns the instance of the global ServiceProvider
     /// </summary>
-    static public ServiceProvider Instance
+    public static ServiceProvider Instance
     {
       get
       {

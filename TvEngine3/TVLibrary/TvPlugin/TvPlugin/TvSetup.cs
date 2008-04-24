@@ -25,7 +25,7 @@ namespace TvPlugin
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE;
     }
 
-    void LoadSettings()
+    private void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -33,7 +33,7 @@ namespace TvPlugin
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -133,12 +133,13 @@ namespace TvPlugin
       {
         bool basicHome;
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+          basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
         int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;
         GUIWindowManager.ActivateWindow(homeWindow);
       }
       base.OnClicked(controlId, control, actionType);
     }
+
     protected override void OnPageLoad()
     {
       LoadSettings();

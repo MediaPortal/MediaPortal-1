@@ -80,7 +80,7 @@ namespace TvPlugin
 			Update();
 		}
 
-		static public Recording CurrentProgram
+		public static Recording CurrentProgram
 		{
 			get { return currentProgram;}
 			set { currentProgram=value;}

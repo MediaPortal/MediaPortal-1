@@ -233,7 +233,7 @@ namespace TvLibrary.Epg
     /// </summary>
     /// <param name="code">The code.</param>
     /// <returns>language</returns>
-    static public string GetLanguageFromCode(string code)
+    public static string GetLanguageFromCode(string code)
     {
       int n = 0;
       if (code == null)

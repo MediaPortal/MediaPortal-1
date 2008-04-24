@@ -140,7 +140,7 @@ namespace TvDatabase
 		/// <summary>
 		/// Static method to retrieve all instances that are stored in the database in one call
 		/// </summary>
-		static public IList ListAll()
+		public static IList ListAll()
 		{
 			return Broker.RetrieveList(typeof(Conflict));
 		}

@@ -64,7 +64,7 @@ namespace TvPlugin
       _timer.Tick += new EventHandler(_timer_Tick);
     }
 
-    static public void OnNotifiesChanged()
+    public static void OnNotifiesChanged()
     {
       Log.Info("TvNotify:OnNotifiesChanged");
       _notifiesListChanged = true;

@@ -99,7 +99,7 @@ namespace TvLibrary.Channels
     /// </summary>
     /// <param name="channel">holds tuning details for DVB-S</param>
     /// <returns></returns>
-    static public int GetAntennaNr(DVBSChannel channel)
+    public static int GetAntennaNr(DVBSChannel channel)
     {
       byte disEqcPort = 0;
 
@@ -136,7 +136,7 @@ namespace TvLibrary.Channels
     /// <param name="channel">tuning details for specific channel / frequency</param>
     /// <param name="parameters">holds the parameters needed for tuning channel </param>
     /// <returns></returns>
-    static public bool IsHiBand(DVBSChannel channel, ScanParameters parameters)
+    public static bool IsHiBand(DVBSChannel channel, ScanParameters parameters)
     {
       int lof1, lof2, sw;
       BandTypeConverter.GetDefaultLnbSetup(parameters, channel.BandType, out  lof1, out  lof2, out  sw);
@@ -154,7 +154,7 @@ namespace TvLibrary.Channels
     /// <param name="lof1">LNB low frequency</param>
     /// <param name="lof2">LNB high frequency</param>
     /// <param name="sw">LNB switch frequency</param>
-    static public void GetDefaultLnbSetup(ScanParameters parameters, BandType band, out int lof1, out int lof2, out int sw)
+    public static void GetDefaultLnbSetup(ScanParameters parameters, BandType band, out int lof1, out int lof2, out int sw)
     {
       lof1 = lof2 = sw = 0;
       if (parameters.UseDefaultLnbFrequencies == false)

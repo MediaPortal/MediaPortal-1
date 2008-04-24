@@ -112,13 +112,13 @@ namespace TvPlugin
       Update();
     }
 
-    static public Program CurrentProgram
+    public static Program CurrentProgram
     {
       get { return currentProgram; }
       set { currentProgram = value; }
     }
 
-    static public Schedule CurrentRecording
+    public static Schedule CurrentRecording
     {
       set
       {

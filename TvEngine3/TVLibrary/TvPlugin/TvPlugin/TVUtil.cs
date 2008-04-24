@@ -49,12 +49,10 @@ namespace TvPlugin
       _days = days;
     }
 
-
     #region IDisposable Members
 
 
     #endregion
-
 
     public List<Schedule> GetRecordingTimes(Schedule rec)
     {
