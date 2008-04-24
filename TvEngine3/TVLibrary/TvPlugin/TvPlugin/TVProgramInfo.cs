@@ -265,6 +265,8 @@ namespace TvPlugin
       }
       if (itemToSelect != -1)
         lstUpcomingEpsiodes.SelectedListItemIndex = itemToSelect;
+      string strObjects = String.Format("{0} {1}", lstUpcomingEpsiodes.ListItems.Count, GUILocalizeStrings.Get(632));
+      GUIPropertyManager.SetProperty("#itemcount", strObjects);
     }
 
     bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)

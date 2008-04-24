@@ -1135,6 +1135,7 @@ namespace TvPlugin
 
       if (schedule.IdChannel < 0)
       {
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", schedule.ReferencedChannel().DisplayName);
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
         if (System.IO.File.Exists(logo))
         {
