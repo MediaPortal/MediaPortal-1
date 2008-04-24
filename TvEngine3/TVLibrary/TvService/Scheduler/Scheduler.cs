@@ -175,8 +175,7 @@ namespace TvService
     /// DoSchedule() will start recording any schedule if its time todo so
     /// </summary>
     void DoSchedule()
-    {
-      DateTime now = DateTime.Now;
+    {      
       IList schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
@@ -187,8 +186,9 @@ namespace TvService
         VirtualCard card;
         if (IsRecordingSchedule(schedule.IdSchedule, out card)) continue;
 
+        DateTime now = DateTime.Now;
         //check if this series is canceled
-        if (schedule.IsSerieIsCanceled(new DateTime(DateTime.Now.Year, DateTime.Now.Month,DateTime.Now.Day,DateTime.Now.Hour,DateTime.Now.Minute,0))) continue;
+        if (schedule.IsSerieIsCanceled(new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0))) continue;
 
         //check if its time to record this schedule.
         RecordingDetail newRecording;
