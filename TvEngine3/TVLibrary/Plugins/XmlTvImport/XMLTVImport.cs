@@ -109,31 +109,40 @@ namespace TvEngine
 
     private int ParseStarRating(string epgRating)
     {
-      // format = 5.2/10
-      // check if the epgRating is within a xml tag			
-      epgRating = epgRating.Trim();
-      if (epgRating.Length == 0)
-      {
-        return -1;
-      }
-
-      if (epgRating.StartsWith("<"))
-      {
-        int endStartTagIdx = epgRating.IndexOf(">") + 1;
-        int length = epgRating.IndexOf("</", endStartTagIdx) - endStartTagIdx;
-        epgRating = epgRating.Substring(endStartTagIdx, length);
-      }
-      string strRating = epgRating.Remove(epgRating.IndexOf(@"/"));
       int Rating = -1;
-      decimal tmpRating = -1;
-      NumberFormatInfo NFO = NumberFormatInfo.InvariantInfo;
-      NumberStyles NStyle = NumberStyles.Float;
+      try
+      {
+        // format = 5.2/10
+        // check if the epgRating is within a xml tag			
+        epgRating = epgRating.Trim();
+        if (string.IsNullOrEmpty(epgRating))
+          return Rating;
 
-      if (Decimal.TryParse(strRating, NStyle, NFO, out tmpRating))
-        Rating = Convert.ToInt16(tmpRating);
-      else
-        Log.Info("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
+        if (epgRating.StartsWith("<"))
+        {
+          int endStartTagIdx = epgRating.IndexOf(">") + 1;
+          int length = epgRating.IndexOf("</", endStartTagIdx) - endStartTagIdx;
+          epgRating = epgRating.Substring(endStartTagIdx, length);
+        }
+        string strRating = epgRating;
+        int slashPos = strRating.IndexOf('/');
+        // Some EPG providers only supply the value without n/10
+        if (slashPos > 0)
+          strRating = strRating.Remove(slashPos);
+        
+        decimal tmpRating = -1;
+        NumberFormatInfo NFO = NumberFormatInfo.InvariantInfo;
+        NumberStyles NStyle = NumberStyles.Float;
 
+        if (Decimal.TryParse(strRating, NStyle, NFO, out tmpRating))
+          Rating = Convert.ToInt16(tmpRating);
+        else
+          Log.Info("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("XMLTVImport: Error parsing star-rating - {0},({1})", epgRating, strRating);
+      }
       return Rating;
     }
 
@@ -794,7 +803,7 @@ namespace TvEngine
                     }
                     catch (Exception)
                     {
-                      Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);                      
+                      Log.Info("XMLTVImport: Invalid year for OnAirDate - {0}", prog.OriginalAirDate);
                     }
 
                     bool overlaps = false;
