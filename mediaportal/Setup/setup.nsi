@@ -55,6 +55,7 @@ Var StartMenuGroup  ; Holds the Startmenu\Programs folder
 Var noGabest
 Var noDesktopSC
 Var noStartMenuSC
+Var DeployMode
 ; variables for commandline parameters for UnInstaller
 Var RemoveAll       ; Set, when the user decided to uninstall everything
 
@@ -822,6 +823,7 @@ Function .onInit
   StrCpy $noGabest 0
   StrCpy $noDesktopSC 0
   StrCpy $noStartMenuSC 0
+  StrCpy $DeployMode 0
 
   ; gets comandline parameter
   ${GetParameters} $R0
@@ -840,6 +842,11 @@ Function .onInit
   ${GetOptions} $R0 "/noStartMenuSC" $R1
   IfErrors +2
   StrCpy $noStartMenuSC 1
+
+  ClearErrors
+  ${GetOptions} $R0 "/DeployMode" $R1
+  IfErrors +2
+  StrCpy $DeployMode 1
   #### END of check and parse cmdline parameter
 
   ; reads components status for registry
