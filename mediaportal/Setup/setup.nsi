@@ -154,6 +154,8 @@ BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
 Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
 !insertmacro MUI_PAGE_LICENSE "..\Docs\BASS License.txt"
+!else
+#!insertmacro MUI_PAGE_LICENSE "..\Docs\svn-info.rtf"
 !endif
 
 !insertmacro MUI_PAGE_COMPONENTS
@@ -910,6 +912,12 @@ Function .onInit
     Abort
   ${EndIf}
 
+!ifdef SVN_BUILD
+  ${IfNot} ${MPIsInstalled}
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_SVN_NOMP)"
+    Abort
+  ${EndIf}
+!endif
 
   ${If} ${Silent}
     Call InstFilePre

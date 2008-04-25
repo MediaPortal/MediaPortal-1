@@ -39,3 +39,6 @@ LangString TEXT_MSGBOX_REMOVE_ALL_STUPID          ${LANG_ENGLISH} "!!! ATTENTION
 LangString TEXT_MSGBOX_ERROR_MP022                ${LANG_ENGLISH} "Old MSI-based MediaPortal 0.2.2.0 is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
 LangString TEXT_MSGBOX_ERROR_MP023RC3             ${LANG_ENGLISH} "Old MediaPortal 0.2.3.0 RC3 is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
 LangString TEXT_MSGBOX_ERROR_MP023                ${LANG_ENGLISH} "Old MediaPortal 0.2.3.0 is still installed. Why didn't you follow the instructions and didn't remove it first? Do that and restart this setup."
+
+
+LangString TEXT_MSGBOX_ERROR_SVN_NOMP             ${LANG_ENGLISH} "MediaPortal 1.0 RC1 is not installed. You need to install this before you can install an svn snapshot."

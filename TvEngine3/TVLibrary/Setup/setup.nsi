@@ -150,7 +150,13 @@ BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
 #!define MUI_PAGE_CUSTOMFUNCTION_LEAVE WelcomeLeave
 !insertmacro MUI_PAGE_WELCOME
 Page custom PageReinstall PageLeaveReinstall
-#!insertmacro MUI_PAGE_LICENSE "..\Docs\MediaPortal License.rtf"
+
+!ifndef SVN_BUILD
+#!insertmacro MUI_PAGE_LICENSE "..\Docs\license.rtf"
+!else
+#!insertmacro MUI_PAGE_LICENSE "..\Docs\svn-info.rtf"
+!endif
+
 !define MUI_PAGE_CUSTOMFUNCTION_PRE ComponentsPre       #check, if MediaPortal is installed, if not uncheck and disable the ClientPluginSection
 !insertmacro MUI_PAGE_COMPONENTS
 !define MUI_PAGE_CUSTOMFUNCTION_PRE DirectoryPre        # Check, if the Server Component has been selected. Only display the directory page in this vase
@@ -698,12 +704,11 @@ Function .onInit
     Abort
   ${EndIf}
 
-  ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalled}
+  ${IfNot} ${MPIsInstalled}
     !insertmacro DisableComponent "${SecClient}" " ($(TEXT_MP_NOT_INSTALLED))"
   ${else}
     !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
-  ${ReadMediaPortalDirs} $MPdir.Base
+    ${ReadMediaPortalDirs} $MPdir.Base
   ${EndIf}
 
   /*
