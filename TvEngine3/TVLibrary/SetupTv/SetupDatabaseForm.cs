@@ -394,13 +394,19 @@ namespace SetupTv
       if (string.IsNullOrEmpty(tbUserID.Text))
       {
         tbUserID.BackColor = Color.Red;
-        MessageBox.Show("Please specify a valid database user", "Specify UserID", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Please specify a valid database user!", "Specify user", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
       if (string.IsNullOrEmpty(tbPassword.Text))
       {
         tbPassword.BackColor = Color.Red;
-        MessageBox.Show("Please specify a valid password for the database user", "Specify Password", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Please specify a valid password for the database user!", "Specify password", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+      if (string.IsNullOrEmpty(tbDatabaseName.Text) || tbDatabaseName.Text.ToLower() == "mysql" || tbDatabaseName.Text.ToLower() == "master")
+      {
+        tbDatabaseName.BackColor = Color.Red;
+        MessageBox.Show("Please specify a valid schema name!", "Specify schema name", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
 
