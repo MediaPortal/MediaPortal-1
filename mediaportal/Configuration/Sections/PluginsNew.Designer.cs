@@ -76,6 +76,10 @@ namespace MediaPortal.Configuration.Sections
       this.imageListContextMenu = new System.Windows.Forms.ImageList(this.components);
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.mpButtonConfig = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonPlugin = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonHome = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonEnable = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewPlugins = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeaderName = new System.Windows.Forms.ColumnHeader();
       this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -131,6 +135,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.mpButtonConfig);
+      this.tabPage1.Controls.Add(this.mpButtonPlugin);
+      this.tabPage1.Controls.Add(this.mpButtonHome);
+      this.tabPage1.Controls.Add(this.mpButtonEnable);
       this.tabPage1.Controls.Add(this.listViewPlugins);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -139,6 +147,54 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Plugins";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // mpButtonConfig
+      // 
+      this.mpButtonConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonConfig.Enabled = false;
+      this.mpButtonConfig.Location = new System.Drawing.Point(361, 328);
+      this.mpButtonConfig.Name = "mpButtonConfig";
+      this.mpButtonConfig.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonConfig.TabIndex = 4;
+      this.mpButtonConfig.Text = "&Config";
+      this.mpButtonConfig.UseVisualStyleBackColor = true;
+      this.mpButtonConfig.Click += new System.EventHandler(this.itemConfigure_Click);
+      // 
+      // mpButtonPlugin
+      // 
+      this.mpButtonPlugin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonPlugin.Enabled = false;
+      this.mpButtonPlugin.Location = new System.Drawing.Point(253, 328);
+      this.mpButtonPlugin.Name = "mpButtonPlugin";
+      this.mpButtonPlugin.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonPlugin.TabIndex = 3;
+      this.mpButtonPlugin.Text = "In &Plugins";
+      this.mpButtonPlugin.UseVisualStyleBackColor = true;
+      this.mpButtonPlugin.Click += new System.EventHandler(this.itemMyPlugins_Click);
+      // 
+      // mpButtonHome
+      // 
+      this.mpButtonHome.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonHome.Enabled = false;
+      this.mpButtonHome.Location = new System.Drawing.Point(145, 328);
+      this.mpButtonHome.Name = "mpButtonHome";
+      this.mpButtonHome.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonHome.TabIndex = 2;
+      this.mpButtonHome.Text = "In &Home";
+      this.mpButtonHome.UseVisualStyleBackColor = true;
+      this.mpButtonHome.Click += new System.EventHandler(this.itemMyHome_Click);
+      // 
+      // mpButtonEnable
+      // 
+      this.mpButtonEnable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonEnable.Enabled = false;
+      this.mpButtonEnable.Location = new System.Drawing.Point(37, 328);
+      this.mpButtonEnable.Name = "mpButtonEnable";
+      this.mpButtonEnable.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonEnable.TabIndex = 1;
+      this.mpButtonEnable.Text = "&Enable";
+      this.mpButtonEnable.UseVisualStyleBackColor = true;
+      this.mpButtonEnable.Click += new System.EventHandler(this.itemEnabled_Click);
       // 
       // listViewPlugins
       // 
@@ -150,6 +206,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderName});
+      this.listViewPlugins.FullRowSelect = true;
       listViewGroup1.Header = "Window Plugins";
       listViewGroup1.Name = "listViewGroupWindow";
       listViewGroup2.Header = "External Players";
@@ -163,6 +220,7 @@ namespace MediaPortal.Configuration.Sections
             listViewGroup2,
             listViewGroup3,
             listViewGroup4});
+      this.listViewPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
       this.listViewPlugins.HideSelection = false;
       this.listViewPlugins.HotTracking = true;
       this.listViewPlugins.HoverSelection = true;
@@ -350,6 +408,10 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonInstall;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     private System.Windows.Forms.ImageList imageListMPInstaller;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonConfig;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonPlugin;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonHome;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonEnable;
 
 
   }

@@ -117,6 +117,7 @@ namespace MediaPortal.Configuration.Sections
         LoadSettings();
         LoadListFiles();
         LoadToListview("All");
+        
       }
     }
 
@@ -566,6 +567,7 @@ namespace MediaPortal.Configuration.Sections
         itemTag.IsPlugins = true;
       }
       updateListViewItem(listViewPlugins.FocusedItem);
+      listViewPlugins_Click(sender, e);
     }
 
     private void itemMyHome_Click(object sender, EventArgs e)
@@ -581,6 +583,8 @@ namespace MediaPortal.Configuration.Sections
         itemTag.IsHome = true;
       }
       updateListViewItem(listViewPlugins.FocusedItem);
+      listViewPlugins_Click(sender, e);
+
     }
 
     private void itemEnabled_Click(object sender, EventArgs e)
@@ -592,6 +596,7 @@ namespace MediaPortal.Configuration.Sections
         itemTag.IsEnabled = itemTag.SetupForm.DefaultEnabled();
       }
       updateListViewItem(listViewPlugins.FocusedItem);
+      listViewPlugins_Click(sender, e);
     }
 
     private void itemConfigure_Click(object sender, EventArgs e)
@@ -661,6 +666,11 @@ namespace MediaPortal.Configuration.Sections
     {
       contextMenuStrip.Items.Clear();
 
+      mpButtonHome.Enabled = false;
+      mpButtonEnable.Enabled = false;
+      mpButtonPlugin.Enabled = false;
+      mpButtonConfig.Enabled = false;
+
       if (listViewPlugins.FocusedItem != null)
       {
         ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
@@ -668,21 +678,25 @@ namespace MediaPortal.Configuration.Sections
         addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
         addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
         addContextMenuSeparator();
+        mpButtonEnable.Enabled = true;
 
         if (!itemTag.IsEnabled)
         {
           addContextMenuItem("Enabled", "Disabled", imageListContextMenu.Images[1], true);
+          mpButtonEnable.Text = "Enable";
         }
         else
         {
           addContextMenuItem("Enabled", "Enabled", imageListContextMenu.Images[0], true);
           string dummy;
+          mpButtonEnable.Text = "Disable";
           if (itemTag.SetupForm.CanEnable() && itemTag.IsWindow &&
               itemTag.SetupForm.GetHome(out dummy, out dummy, out dummy, out dummy))
           {
             if (!itemTag.IsHome)
             {
               addContextMenuItem("My Home", "Listed in Home", imageListContextMenu.Images[1], true);
+              mpButtonHome.Enabled = true;
             }
             else
             {
@@ -692,6 +706,7 @@ namespace MediaPortal.Configuration.Sections
             if (!itemTag.IsPlugins)
             {
               addContextMenuItem("My Plugins", "Listed in My Plugins", imageListContextMenu.Images[1], true);
+              mpButtonPlugin.Enabled = true;
             }
             else
             {
@@ -703,6 +718,7 @@ namespace MediaPortal.Configuration.Sections
           {
             addContextMenuSeparator();
             addContextMenuItem("Config", "Configuration", null, true);
+            mpButtonConfig.Enabled = true;
           }
         }
       }
