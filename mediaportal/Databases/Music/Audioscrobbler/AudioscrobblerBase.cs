@@ -127,6 +127,8 @@ namespace MediaPortal.Music.Database
     private static Song _currentSong;
     #endregion
 
+    #region Constructor
+
     /// <summary>
     /// ctor
     /// </summary>
@@ -140,6 +142,9 @@ namespace MediaPortal.Music.Database
         Log.Info("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog = {2}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog));
     }
 
+    #endregion
+
+    #region Settings
 
     static void LoadSettings()
     {
@@ -172,7 +177,7 @@ namespace MediaPortal.Music.Database
         }
       }  
 
-      queue = new AudioscrobblerQueue(Config.GetFile(Config.Dir.Base, "Trackcache-" + Username + ".xml"));
+      queue = new AudioscrobblerQueue(Config.GetFile(Config.Dir.Database, "Trackcache-" + Username + ".xml"));
 
       queueLock = new Object();
       submitLock = new Object();
@@ -189,6 +194,8 @@ namespace MediaPortal.Music.Database
       _subscriber = false;
       _currentSong = new Song();
     }
+
+    #endregion
 
     #region Public getters and setters
     /// <summary>

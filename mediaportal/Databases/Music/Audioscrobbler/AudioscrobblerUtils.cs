@@ -23,6 +23,8 @@
 
 #endregion
 
+#region Usings
+
 using System;
 using System.Threading;
 using System.Collections.Generic;
@@ -35,6 +37,8 @@ using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+
+#endregion
 
 namespace MediaPortal.Music.Database
 {
@@ -413,6 +417,8 @@ namespace MediaPortal.Music.Database
   
   public class AudioscrobblerUtils
   {
+    #region Member variables
+
     private bool _useDebugLog = false;
     private bool _doCoverLookups = true;
     private bool _decodeUtf8 = false;
@@ -439,6 +445,10 @@ namespace MediaPortal.Music.Database
     // List<Song> songList = null;
     List<String> _unwantedTags = null;
 
+    #endregion
+
+    #region Constructors
+
     /// <summary>
     /// Static constructor
     /// </summary>
@@ -453,6 +463,10 @@ namespace MediaPortal.Music.Database
     {
       LoadSettings();
     }
+
+    #endregion
+
+    #region Request queueing
 
     /// <summary>
     /// Adds a request to the request queue.
@@ -503,6 +517,8 @@ namespace MediaPortal.Music.Database
         lock (_queueMutex)
           _requestQueue.Remove(request);
     }
+
+    #endregion
 
     #region SongComparer
     private static bool IsSongBelowMinPercentage(Song aSong)

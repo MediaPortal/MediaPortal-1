@@ -114,35 +114,36 @@ namespace MediaPortal.Music.Database
       if (!dirty)
         return;
 
-      XmlTextWriter writer = new XmlTextWriter(xml_path, Encoding.UTF8);
-
-      writer.Formatting = Formatting.Indented;
-      writer.Indentation = 4;
-      writer.IndentChar = ' ';
-
-      writer.WriteStartDocument(true);
-
-      writer.WriteStartElement("AudioscrobblerQueue");
-      foreach (QueuedTrack track in queue)
+      using (XmlTextWriter writer = new XmlTextWriter(xml_path, Encoding.UTF8))
       {
-        writer.WriteStartElement("CachedSong");
-        writer.WriteElementString("Artist", track.Artist);
-        writer.WriteElementString("Album", track.Album);
-        writer.WriteElementString("Title", track.Title);
-        writer.WriteElementString("TrackNr", track.TrackNr.ToString());
-        writer.WriteElementString("Duration", track.Duration.ToString());
-        //DateTime startTime = DateTime.Now;
-        //string submitStartTime = string.Empty;
-        //if (DateTime.TryParse(track.StartTime, out startTime))
-        //  submitStartTime = Convert.ToString(Util.Utils.GetUnixTime(startTime.ToUniversalTime()));
-        //else
-        //  submitStartTime = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow - new TimeSpan(0, 0, track.Duration)));
-        writer.WriteElementString("Playtime", track.StartTime);
-        writer.WriteEndElement(); // Track
+        writer.Formatting = Formatting.Indented;
+        writer.Indentation = 4;
+        writer.IndentChar = ' ';
+
+        writer.WriteStartDocument(true);
+
+        writer.WriteStartElement("AudioscrobblerQueue");
+        foreach (QueuedTrack track in queue)
+        {
+          writer.WriteStartElement("CachedSong");
+          writer.WriteElementString("Artist", track.Artist);
+          writer.WriteElementString("Album", track.Album);
+          writer.WriteElementString("Title", track.Title);
+          writer.WriteElementString("TrackNr", track.TrackNr.ToString());
+          writer.WriteElementString("Duration", track.Duration.ToString());
+          //DateTime startTime = DateTime.Now;
+          //string submitStartTime = string.Empty;
+          //if (DateTime.TryParse(track.StartTime, out startTime))
+          //  submitStartTime = Convert.ToString(Util.Utils.GetUnixTime(startTime.ToUniversalTime()));
+          //else
+          //  submitStartTime = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow - new TimeSpan(0, 0, track.Duration)));
+          writer.WriteElementString("Playtime", track.StartTime);
+          writer.WriteEndElement(); // Track
+        }
+        writer.WriteEndElement(); // AudioscrobblerQueue
+        writer.WriteEndDocument();
+        writer.Close();
       }
-      writer.WriteEndElement(); // AudioscrobblerQueue
-      writer.WriteEndDocument();
-      writer.Close();
     }
 
     public void LoadQueue()
