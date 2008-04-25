@@ -1,0 +1,96 @@
+﻿<MPinstaler>
+	<ver>1.00.000</ver>
+	<FileList>
+		<File>
+			<FileName>mymail.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>BlueTwo</SubType>
+			<Source>skinfiles\BlueTwo\mymail.xml</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=|DefaultFile=True|</Option>
+			<Guid>9d2928c6-ae76-47a1-99dd-95d67e0e1f44</Guid>
+		</File>
+		<File>
+			<FileName>mailnotify.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>BlueTwo</SubType>
+			<Source>skinfiles\BlueTwo\mailnotify.xml</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=|DefaultFile=True|</Option>
+			<Guid>f82d59dc-03b0-40ef-989e-b196bf0ef1d4</Guid>
+		</File>
+		<File>
+			<FileName>mailInfo.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>BlueTwo</SubType>
+			<Source>skinfiles\BlueTwo\mailInfo.xml</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=|DefaultFile=True|</Option>
+			<Guid>efbb65a8-a64b-4153-8fe8-29988d1a0af8</Guid>
+		</File>
+		<File>
+			<FileName>mymail.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>BlueTwo wide</SubType>
+			<Source>skinfiles\BlueTwo wide\mymail.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>5d1ee46e-a16b-4fd6-9678-e1bf60be56da</Guid>
+		</File>
+		<File>
+			<FileName>mailnotify.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>BlueTwo wide</SubType>
+			<Source>skinfiles\BlueTwo wide\mailnotify.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>472321a5-33e4-4f2c-8259-77a6569a64eb</Guid>
+		</File>
+		<File>
+			<FileName>mailInfo.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>BlueTwo wide</SubType>
+			<Source>skinfiles\BlueTwo wide\mailInfo.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>1a23b859-c190-4a96-9729-2d3239f437a5</Guid>
+		</File>
+		<File>
+			<FileName>MyMail.dll</FileName>
+			<Type>Plugin</Type>
+			<SubType>Window</SubType>
+			<Source>bin\Release\MyMail.dll</Source>
+			<Id>01010</Id>
+			<Option />
+			<Guid>fefd3d76-0eee-4387-8de9-41e5363c3271</Guid>
+		</File>
+	</FileList>
+	<StringList />
+	<Actions>
+		<Action Place="POSTSETUP" Id="1" Command="MyMail.dll" />
+		<Action Place="POSTSETUP" Id="1" Command="GUIProgramsAlt.dll" />
+	</Actions>
+	<SetupGroups />
+	<SetupGroupMappings />
+	<Option>
+		<BuildFileName />
+		<ProiectFileName>E:\mediaportal\mediaportal\WindowPlugins\GUIMyMail\MyMail.xmp</ProiectFileName>
+		<ProiectName>My Mail</ProiectName>
+		<Author>_Agree_</Author>
+		<UpdateURL>http://www.team-mediaportal.com</UpdateURL>
+		<Version>0.1</Version>
+		<Description>Receive and read your mails in MediaPortal</Description>
+		<Group>PIM</Group>
+		<Release>Stable </Release>
+	</Option>
+	<Properties>
+		<MPMaxVersion />
+		<MPMinVersion />
+		<MinExtensionVersion />
+		<MaxExtensionVersion />
+		<ForumURL />
+		<WebURL />
+		<CreationDate>Sunday, November 04, 2007 12:00:00 AM</CreationDate>
+		<SingleGroupSelect>False</SingleGroupSelect>
+	</Properties>
+</MPinstaler>
