@@ -43,8 +43,6 @@ SetCompressor /SOLID lzma
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"
 
-!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
-
 #---------------------------------------------------------------------------
 # VARIABLES
 #---------------------------------------------------------------------------
@@ -72,7 +70,6 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
-
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
 
 !define VER_MAJOR       0
@@ -87,6 +84,8 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
     !define VERSION "1.0 RC1 SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
+
+!define INSTALL_LOG
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES

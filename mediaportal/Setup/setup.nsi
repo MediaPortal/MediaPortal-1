@@ -45,8 +45,6 @@ SetCompressor /SOLID lzma
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"
 
-!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
-
 #---------------------------------------------------------------------------
 # VARIABLES
 #---------------------------------------------------------------------------
@@ -85,6 +83,8 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
     !define VERSION "1.0 RC1 SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
+
+!define INSTALL_LOG
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES

@@ -357,10 +357,12 @@ LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is r
 # logging system
 #
 #**********************************************************************************************************#
-
-!ifdef INSTALL_LOG_FILE
-Var LogFile
+!ifdef INSTALL_LOG
+!ifndef INSTALL_LOG_FILE
+  !define INSTALL_LOG_FILE "${COMMON_APPDATA}\log\install_${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.log"
 !endif
+
+Var LogFile
 
 !define prefixERROR "[ERROR     !!!]   "
 !define prefixDEBUG "[    DEBUG    ]   "
@@ -368,35 +370,22 @@ Var LogFile
 
 !define LOG_OPEN `!insertmacro LOG_OPEN`
 !macro LOG_OPEN
-!ifdef INSTALL_LOG_FILE
 
-#!ifdef logfile_isopen
-#  !error "log is already opened"
-#!else
-  FileOpen $LogFile "${INSTALL_LOG_FILE}" w
-  #!define logfile_isopen
-#!endif
+  FileOpen $LogFile "$TEMP\install_$(^Name).log" w
 
-!endif
 !macroend
 
 !define LOG_CLOSE `!insertmacro LOG_CLOSE`
 !macro LOG_CLOSE
-!ifdef INSTALL_LOG_FILE
 
-#!ifdef logfile_isopen
   FileClose $LogFile
-  #!undef logfile_isopen
-#!else
-#  !error "log is not opened yet"
-#!endif
 
-!endif
+  CopyFiles "$TEMP\install_$(^Name).log" "${INSTALL_LOG_FILE}"
+
 !macroend
 
 !define LOG_TEXT `!insertmacro LOG_TEXT`
 !macro LOG_TEXT LEVEL TEXT
-!define ___log_txt___ "${prefix${LEVEL}}${TEXT}$\r$\n"
 
 !if     "${LEVEL}" != "DEBUG"
   !if   "${LEVEL}" != "ERROR"
@@ -406,15 +395,25 @@ Var LogFile
   !endif
 !endif
 
-!ifdef INSTALL_LOG_FILE
-  DetailPrint "${___log_txt___}"
-  FileWrite $LogFile "${___log_txt___}"
-!else
-  DetailPrint "${___log_txt___}"
-!endif
+  FileWrite $LogFile "${prefix${LEVEL}}${TEXT}$\r$\n"
 
-!undef ___log_txt___
 !macroend
+
+!else
+
+!define LOG_OPEN `!insertmacro LOG_OPEN`
+!macro LOG_OPEN
+!macroend
+
+!define LOG_CLOSE `!insertmacro LOG_CLOSE`
+!macro LOG_CLOSE
+!macroend
+
+!define LOG_TEXT `!insertmacro LOG_TEXT`
+!macro LOG_TEXT LEVEL TEXT
+!macroend
+
+!endif
 
 
 
