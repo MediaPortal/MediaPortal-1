@@ -177,7 +177,7 @@ namespace MediaPortal.Music.Database
         }
       }  
 
-      queue = new AudioscrobblerQueue(Config.GetFile(Config.Dir.Database, "Trackcache-" + Username + ".xml"));
+      queue = new AudioscrobblerQueue(Config.GetFile(Config.Dir.Database, "LastFmCache-" + Username + ".xml"));
 
       queueLock = new Object();
       submitLock = new Object();
