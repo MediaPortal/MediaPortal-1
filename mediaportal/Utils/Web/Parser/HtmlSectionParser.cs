@@ -254,30 +254,34 @@ namespace MediaPortal.Utils.Web
       MatchTagCollection tags = HtmlString.TagList(source);
 
       bool isOptionalTag = false;
+      bool zTag = false;
 
 
       for (int i = 0; i < tags.Count; i++)
       {
         MatchTag tag = tags[i];
         // check if tag + data is optional / regex
+        zTag = false;
         if (char.ToUpper(tag.TagName[0]) == 'Z')
         {
+          zTag = true;
           isOptionalTag = true;
           if (tag.IsClose)
             isOptionalTag = false;
 
-          i++;
-          if (i < tags.Count)
-            tag = tags[i];
-          else
-            break;
+          //i++;
+          //if (i < tags.Count)
+          //  tag = tags[i];
+          //else
+          //  break;
         }
 
         // Check if tag is one of interest
         if (_template.Tags.IndexOf(char.ToUpper(tag.TagName[0])) != -1)
         {
           DataField section;
-
+          if (!zTag)
+          {
           // Add tag to array of fields
           section = new DataField();
           section.optional = isOptionalTag;
@@ -294,9 +298,10 @@ namespace MediaPortal.Utils.Web
             data.dataTags += section.dataElements.Count;
           }
 
-          data.dataFields.Add(section);
-          if (!isOptionalTag)
-            data.minFields++;
+            data.dataFields.Add(section);
+            if (!isOptionalTag)
+              data.minFields++;
+          }
 
           // Add data between this tag and the next to field array
           int start = tag.Index + tag.Length;
@@ -304,13 +309,14 @@ namespace MediaPortal.Utils.Web
           if (i + 1 < tags.Count)
           {
             tag = tags[i + 1];
-            //if (char.ToUpper(tag.TagName[0]) == 'Z')
-            //{
-            //  isOptionalTag = true;
-            //  if (tag.IsClose && i + 2 < tags.Count && char.ToUpper(tags[i + 2].TagName[0]) != 'Z')
-            //  {
-            //    isOptionalTag = false;
-            //  }
+            zTag = false;
+            if (char.ToUpper(tag.TagName[0]) == 'Z')
+            {
+              zTag = true;
+              isOptionalTag = true;
+              if (tag.IsClose)
+                isOptionalTag = false;
+            }
 
             //  start = tag.Index + tag.Length;
             //  i++;
@@ -325,23 +331,27 @@ namespace MediaPortal.Utils.Web
           {
             end = source.Length;
           }
-          section = new DataField();
-          section.optional = isOptionalTag;
-          section.htmlTag = null;
-          section.source = HtmlString.Decode(source.Substring(start, end - start));
-          section.hasData = false;
-          if (section.source.IndexOf("<#") != -1 || section.source.IndexOf("<*") != -1)
-          {
-            section.hasData = true;
-            if (isOptionalTag)
-              data.optionalData = true;
 
-            section.dataElements = GetElements(section.source);
-            data.dataTags += section.dataElements.Count;
+          if (!zTag)
+          {
+            section = new DataField();
+            section.optional = isOptionalTag;
+            section.htmlTag = null;
+            section.source = HtmlString.Decode(source.Substring(start, end - start));
+            section.hasData = false;
+            if (section.source.IndexOf("<#") != -1 || section.source.IndexOf("<*") != -1)
+            {
+              section.hasData = true;
+              if (isOptionalTag)
+                data.optionalData = true;
+
+              section.dataElements = GetElements(section.source);
+              data.dataTags += section.dataElements.Count;
+            }
+            data.dataFields.Add(section);
+            if (!isOptionalTag)
+              data.minFields++;
           }
-          data.dataFields.Add(section);
-          if (!isOptionalTag)
-            data.minFields++;
         }
       }
 
