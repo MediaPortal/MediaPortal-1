@@ -359,6 +359,10 @@ LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is r
 #**********************************************************************************************************#
 !ifdef INSTALL_LOG
 !ifndef INSTALL_LOG_FILE
+  !ifndef COMMON_APPDATA
+    !error "$\r$\n$\r$\nCOMMON_APPDATA is not defined!$\r$\n$\r$\n"
+  !endif
+
   !define INSTALL_LOG_FILE "${COMMON_APPDATA}\log\install_${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.log"
 !endif
 
