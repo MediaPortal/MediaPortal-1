@@ -240,37 +240,43 @@ namespace MediaPortal.Utils.Time
 
         for (int i = 0; i < timeZoneKeys.Length; i++)
         {
-          using (RegistryKey TZKey = RegKeyRoot.OpenSubKey(timeZoneKeys[i]))
-            if (TZKey != null && TZKey.ValueCount > 0)
-            {
-              TimeZoneInfo TZInfo = new TimeZoneInfo();
-
-              //TZInfo.Index = (int)TZKey.GetValue(VALUE_INDEX);
-              TZInfo.Display = (string)TZKey.GetValue(VALUE_DISPLAY_NAME);
-              TZInfo.StdName = (string)TZKey.GetValue(VALUE_STANDARD_NAME);
-              TZInfo.DltName = (string)TZKey.GetValue(VALUE_DAYLIGHT_NAME);
-              byte[] timeZoneData = (byte[])TZKey.GetValue(VALUE_ZONE_INFO);
-
-              if (timeZoneData != null)
+          try
+          {
+            using (RegistryKey TZKey = RegKeyRoot.OpenSubKey(timeZoneKeys[i]))
+              if (TZKey != null && TZKey.ValueCount > 0)
               {
-                int index = 0;
-                TZInfo.Offset = BitConverter.ToInt32(timeZoneData, index);
-                index += LENGTH_DWORD;
-                TZInfo.StdOffset = BitConverter.ToInt32(timeZoneData, index);
-                index += LENGTH_DWORD;
-                TZInfo.DltOffset = BitConverter.ToInt32(timeZoneData, index);
-                index += LENGTH_DWORD;
-                TZInfo.StdDate = GetDate(timeZoneData, index);
-                index += LENGTH_SYSTEMTIME;
-                TZInfo.DltDate = GetDate(timeZoneData, index);
+                TimeZoneInfo TZInfo = new TimeZoneInfo();
 
-                _TimeZoneList.Add(timeZoneKeys[i], TZInfo);
+                //TZInfo.Index = (int)TZKey.GetValue(VALUE_INDEX);
+                TZInfo.Display = (string)TZKey.GetValue(VALUE_DISPLAY_NAME);
+                TZInfo.StdName = (string)TZKey.GetValue(VALUE_STANDARD_NAME);
+                TZInfo.DltName = (string)TZKey.GetValue(VALUE_DAYLIGHT_NAME);
+                byte[] timeZoneData = (byte[])TZKey.GetValue(VALUE_ZONE_INFO);
 
-                if (!_TimeZoneNames.ContainsKey(TZInfo.StdName))
-                  _TimeZoneNames.Add(TZInfo.StdName, timeZoneKeys[i]);
+                if (timeZoneData != null)
+                {
+                  int index = 0;
+                  TZInfo.Offset = BitConverter.ToInt32(timeZoneData, index);
+                  index += LENGTH_DWORD;
+                  TZInfo.StdOffset = BitConverter.ToInt32(timeZoneData, index);
+                  index += LENGTH_DWORD;
+                  TZInfo.DltOffset = BitConverter.ToInt32(timeZoneData, index);
+                  index += LENGTH_DWORD;
+                  TZInfo.StdDate = GetDate(timeZoneData, index);
+                  index += LENGTH_SYSTEMTIME;
+                  TZInfo.DltDate = GetDate(timeZoneData, index);
+
+                  _TimeZoneList.Add(timeZoneKeys[i], TZInfo);
+
+                  if (!_TimeZoneNames.ContainsKey(TZInfo.StdName))
+                    _TimeZoneNames.Add(TZInfo.StdName, timeZoneKeys[i]);
+                }
+
               }
-
-            }
+          }
+          catch (Exception)
+          {
+          }
         }
         RegKeyRoot.Close();
       }
