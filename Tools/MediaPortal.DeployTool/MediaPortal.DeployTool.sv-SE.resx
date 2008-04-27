@@ -210,14 +210,6 @@ som du vill använda MediaPortal för att titta på TV med MediaPortal 1.0.</val
 Denna dator kommer sen att fungera som en dedicerad TV-Server och leverera TV till andra datorer 
 i ditt lokala nätverk. (databas installation behövs)</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Dedicerad TV-Server (slave, existerande TV-Server (master) behövs)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Detta kommer endast installera MediaPortal TV-Server på denna dator.
-Denna dator kommer sen att fungera som en dedicerad TV-Server och leverera TV till andra datorer 
-i ditt lokala nätverk. (ingen databas behövs)</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Bläddra</value>
   </data>

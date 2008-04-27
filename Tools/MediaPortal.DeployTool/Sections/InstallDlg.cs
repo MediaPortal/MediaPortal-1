@@ -179,7 +179,6 @@ namespace MediaPortal.DeployTool
             AddPackageToListView(new MySQLChecker());
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginServerChecker());
-          AddPackageToListView(new WindowsFirewallChecker());
           break;
 
         case "tvserver_master":
@@ -188,18 +187,11 @@ namespace MediaPortal.DeployTool
           if (InstallationProperties.Instance["DBMSType"] == "mysql")
             AddPackageToListView(new MySQLChecker());
           AddPackageToListView(new TvServerChecker());
-          AddPackageToListView(new WindowsFirewallChecker());
-          break;
-
-        case "tvserver_slave":
-          AddPackageToListView(new TvServerChecker());
-          AddPackageToListView(new WindowsFirewallChecker());
           break;
 
         case "client":
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new TvPluginServerChecker());
-          AddPackageToListView(new WindowsFirewallChecker());
           break;
 
         case "mp_only":
@@ -215,6 +207,9 @@ namespace MediaPortal.DeployTool
           break;
 
       }
+      if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
+          InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
+        AddPackageToListView(new WindowsFirewallChecker());
       listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
       if (InstallationComplete())
         buttonInstall.Enabled = false;

@@ -171,16 +171,6 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This will only install the MediaPortal TV-Server on this PC. 
-        ///The PC will then act as dedicated TV-Server and provide other PCs in your LAN with TV (no database required)..
-        /// </summary>
-        internal static string CustomInstallation_labelSlave {
-            get {
-                return ResourceManager.GetString("CustomInstallation_labelSlave", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to MediaPortal client.
         /// </summary>
         internal static string CustomInstallation_rbClient {
@@ -204,15 +194,6 @@ namespace MediaPortal.DeployTool {
         internal static string CustomInstallation_rbTvServerMaster {
             get {
                 return ResourceManager.GetString("CustomInstallation_rbTvServerMaster", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Dedicated TV-Server (slave, existing TV-Server (master) required).
-        /// </summary>
-        internal static string CustomInstallation_rbTvServerSlave {
-            get {
-                return ResourceManager.GetString("CustomInstallation_rbTvServerSlave", resourceCulture);
             }
         }
         

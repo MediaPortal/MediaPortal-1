@@ -209,13 +209,6 @@ MediaPortal bruker grensesnitt.</value>
     <value>Denne vil bare installere MediaPortal TV-Server på denne PC-en.
 PC-en vil da fungere som en TV-Server og gi andre PC-er på ditt nettverk tilgang til TV (database installasjon kreves).</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Dedikert TV-Server (slave, en eksisterende TV-Server (hoved) kreves)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Denne vil bare installere MediaPortal TV-Server på denne PC-en.
-PC-en vil da brukes som en dedikert TV-Server som andre klienter på nettverket bruker for å se på tv (ingen db kreves).</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Finn</value>
   </data>

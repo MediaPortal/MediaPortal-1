@@ -209,14 +209,6 @@ utilisé pour MediaPortal et aussi pour regarder la TV dans MediaPortal 1.0.</va
     <value>Cela va installer uniquement le MediaPortal TV-Server sur ce PC. Le PC fera alors office de serveur TV dédié
 et fournira aux autres ordinateurs de votre réseau local la TV. (Installation d'une Base de données nécessaire)</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>TV-Server dédié (esclave, TV-Server existant (maître) requis)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Cela va uniquement installer le MediaPortal TV-Server sur ce PC. Le PC fera alors office de serveur-TV dédié
-et communiquera avec les autres PC de votre Réseau avec TV (pas de base de données requise).
-</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Parcourir</value>
   </data>

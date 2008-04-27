@@ -207,14 +207,6 @@
     <value>Будет установлен только сервер MediaPortal.
 Компьютер будет выступать в роли выделенного сервера и использоваться другим компьютера в локальной сети для просмотра ТВ. (требуется установка базы данных)</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Выделенный ТВ Сервер (подчиненный, требуется существующий ТВ Сервер (главный))</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>На этом компьютере будет установлен только сервер MediaPortal.
-Компьютер будет выступать в роли выделенного сервера и использоваться другим компьютера в локальной сети для просмотра ТВ. (установка базы данных не требуется)
-</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Обзор</value>
   </data>

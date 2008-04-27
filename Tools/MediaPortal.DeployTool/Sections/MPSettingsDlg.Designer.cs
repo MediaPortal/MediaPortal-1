@@ -83,9 +83,9 @@ namespace MediaPortal.DeployTool
       this.checkBoxFirewall.ForeColor = System.Drawing.Color.White;
       this.checkBoxFirewall.Location = new System.Drawing.Point(10, 117);
       this.checkBoxFirewall.Name = "checkBoxFirewall";
-      this.checkBoxFirewall.Size = new System.Drawing.Size(331, 17);
+      this.checkBoxFirewall.Size = new System.Drawing.Size(343, 17);
       this.checkBoxFirewall.TabIndex = 23;
-      this.checkBoxFirewall.Text = "Configure Windows Firewall to allow external access to TvServer";
+      this.checkBoxFirewall.Text = "Configure Windows Firewall to allow external access to MediaPortal";
       this.checkBoxFirewall.UseVisualStyleBackColor = true;
       // 
       // MPSettingsDlg

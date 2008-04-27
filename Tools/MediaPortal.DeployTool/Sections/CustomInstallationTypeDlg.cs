@@ -54,8 +54,6 @@ namespace MediaPortal.DeployTool
       labelSingleSeat.Text = Localizer.Instance.GetString("CustomInstallation_labelSingleSeat");
       rbTvServerMaster.Text = Localizer.Instance.GetString("CustomInstallation_rbTvServerMaster");
       labelMaster.Text = Localizer.Instance.GetString("CustomInstallation_labelMaster");
-      rbTvServerSlave.Text = Localizer.Instance.GetString("CustomInstallation_rbTvServerSlave");
-      labelSlave.Text = Localizer.Instance.GetString("CustomInstallation_labelSlave");
       rbClient.Text = Localizer.Instance.GetString("CustomInstallation_rbClient");
       labelClient.Text = Localizer.Instance.GetString("CustomInstallation_labelClient");
     }
@@ -68,8 +66,6 @@ namespace MediaPortal.DeployTool
         case 2:
           return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
         case 3:
-          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
-        case 4:
           return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
         default:
           return null;
@@ -92,10 +88,6 @@ namespace MediaPortal.DeployTool
           InstallationProperties.Instance.Set("InstallType", "tvserver_master");
           break;
         case 3:
-          InstallationProperties.Instance.Set("InstallTypeHeader", rbTvServerSlave.Text);
-          InstallationProperties.Instance.Set("InstallType", "tvserver_slave");
-          break;
-        case 4:
           InstallationProperties.Instance.Set("InstallTypeHeader", rbClient.Text);
           InstallationProperties.Instance.Set("InstallType", "client");
           break;
@@ -107,7 +99,6 @@ namespace MediaPortal.DeployTool
     {
       imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
       imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgSlave.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
       imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
       installType = 1;
     }
@@ -116,27 +107,16 @@ namespace MediaPortal.DeployTool
     {
       imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
       imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgSlave.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
       imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
       installType = 2;
-    }
-
-    private void imgSlave_Click(object sender, EventArgs e)
-    {
-      imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgSlave.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      installType = 3;
     }
 
     private void imgClient_Click(object sender, EventArgs e)
     {
       imgSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
       imgMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      imgSlave.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
       imgClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_on;
-      installType = 4;
+      installType = 3;
     }
   }
 }

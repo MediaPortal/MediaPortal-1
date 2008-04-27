@@ -68,7 +68,7 @@ namespace MediaPortal.DeployTool
             this.columnHeader3});
       this.listView.Location = new System.Drawing.Point(3, 54);
       this.listView.Name = "listView";
-      this.listView.Size = new System.Drawing.Size(614, 174);
+      this.listView.Size = new System.Drawing.Size(614, 184);
       this.listView.TabIndex = 15;
       this.listView.UseCompatibleStateImageBehavior = false;
       this.listView.View = System.Windows.Forms.View.Details;

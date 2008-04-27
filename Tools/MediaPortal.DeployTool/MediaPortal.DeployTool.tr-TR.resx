@@ -208,13 +208,6 @@ Arayüzüne entegre olacaktır.</value>
     <value>Sadece MediaPortal TV-Sunucusu'nu kuracaktır.
 Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer bilgisayarlara bilgi sağlayacaktır (veritabanı kurulumu gerekli)</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>TV-Sunucusu (İkincil - mevcut TV-Sunucusu (Asil) gerekir)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Sadece MediaPortal TV-Sunucusu'nu kuracaktır.
-Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer bilgisayarlara bilgi sağlayacaktır (veritabanı kurulumu gerekli değil)</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Gözat</value>
   </data>

@@ -208,13 +208,6 @@ wilt gebruiken en TV wilt kijken met MediaPortal 1.0.</value>
     <value>Hiermee installeert u alleen de MediaPortal TV-server op deze PC.
 De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere PC's in uw netwerk. (Database-installatie noodzakelijk.)</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Dedicated TV-Server (slave, bestaande TV-server (master) nodig)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Hiermee installeert u alleen de MediaPortal TV-server op deze PC.
-De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere PC's in uw netwerk. (Geen database-installatie noodzakelijk.)</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Zoeken</value>
   </data>

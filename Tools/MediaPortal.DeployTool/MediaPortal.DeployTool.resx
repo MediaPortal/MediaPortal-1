@@ -209,13 +209,6 @@ to use MediaPortal and watch TV on MediaPortal 1.0.</value>
     <value>This will only install the MediaPortal TV-Server on this PC.
 The PC will then act as dedicated TV-Server and provide other PC's in your LAN with TV. (database installation required)</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Dedicated TV-Server (slave, existing TV-Server (master) required)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>This will only install the MediaPortal TV-Server on this PC. 
-The PC will then act as dedicated TV-Server and provide other PCs in your LAN with TV (no database required).</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Browse</value>
   </data>

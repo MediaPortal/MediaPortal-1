@@ -141,9 +141,6 @@ namespace MediaPortal.DeployTool
           case DialogType.MPSettings:
             dlg = (DeployDialog)new MPSettingsDlg();
             break;
-          case DialogType.MPSettingsWithoutTvEngine:
-            dlg = (DeployDialog)new MPSettingsWithoutTvEngineDlg();
-            break;
           case DialogType.TvServerSettings:
             dlg = (DeployDialog)new TvServerSettingsDlg();
             break;

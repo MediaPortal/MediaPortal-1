@@ -208,13 +208,6 @@ MediaPortals brugerflade.</value>
     <value>Kun TV-Server installeres på denne PC. Denne PC vil fungere som dedikeret TV-Server
  og giver mulighed for TV på andre PC'er (klienter) i netværket. (Installation af database er nødvendig)</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Dedikeret TV-Server (slave, eksisterende primær TV-server kræves)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Kun TV-Server installeres på denne PC. Denne PC vil fungere som dedikeret TV-Server
-og giver mulighed for TV på andre PC'er (klienter) i netværket. (database ikke nødvendig)</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Browse</value>
   </data>

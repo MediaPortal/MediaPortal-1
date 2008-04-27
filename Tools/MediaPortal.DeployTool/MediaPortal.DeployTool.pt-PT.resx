@@ -208,13 +208,6 @@ O TV-Server (servidor de TV) substituirá completamente o Plugin de TV (inbuild 
     <value>Será apenas instalado o servidor de TV do MediaPortal neste PC.
 O PC será utilizado como um servidor de TV dedicado e fornece outros PC's na sua LAN com TV (instalação da base de dados requerida)</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Servidor de TV dedicado (secundário, servidor de TV existente (principal) necessário)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Será apenas instalado o servidor de TV do MediaPortal neste PC.
-O PC será utilizado como um servidor de TV dedicado e fornece outros PC's na sua LAN com TV (base de dados não requerida)</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Explorar</value>
   </data>

@@ -197,24 +197,17 @@ interfaccia utente di MediaPortal.
     <value>Questa scelta installerà solamente MediaPortal 1.0. Per guardare la TV si connetterà a un Tv-Server dedicato nella rete LAN.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>Installazione "Singleseat"</value>
+    <value>MediaPortal "Singleseat"</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Questa è la scelta giusta se le vostre schede TV sono installate nelle stesso PC in cui userete MediaPortal per guardare la TV.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
-    <value>TV-Server dedicato (master)</value>
+    <value>MediaPortal TV-Server dedicato</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
     <value>Questa scelta installerà solo MediaPortal TV-Server su questo PC.
 Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri PC nella LAN. (richiesta installazione database)</value>
-  </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>TV-Server dedicato (slave, necessario un TV-Server (master)  a cui collegarsi)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Questa scelta installerà solo MediaPortal TV-Server su questo PC.
-Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri PC nella LAN. (database non richiesto)</value>
   </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Cerca</value>

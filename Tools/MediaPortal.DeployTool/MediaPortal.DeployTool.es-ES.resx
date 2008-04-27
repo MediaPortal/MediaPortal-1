@@ -209,13 +209,6 @@ teniendo en el mismo PC las Tarjetas de Sintonización.</value>
     <value>Esta Opción solo instalará el Servidor de MediaPortal TV-Server en este PC.
 El PC actuará como Servidor dedicado para TV-Sever y permitirá el acceso de los puestos (Es necesario la instalación de la BD)</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Servidor dedicado de TV-Server (Esclavo, Se requiere un Servidor maestro de TV-Server)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Esta opción solo instalará la versión de MediaPortal TV- Server en este PC
-Esta opción actuará como Servidor Dedicado de TV-Sever para los clientes de RED (No requiere BD)</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Examinar</value>
   </data>

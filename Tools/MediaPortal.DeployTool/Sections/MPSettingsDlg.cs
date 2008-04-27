@@ -55,7 +55,6 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      if (checkBoxFirewall.Enabled == true) InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
       if (InstallationProperties.Instance["InstallType"] == "client")
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       else

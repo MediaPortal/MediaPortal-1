@@ -208,12 +208,6 @@ und integriert sich völlig transparent in die Oberfläche von MediaPortal.</val
     <value>Es wird nur der MediaPortal TV-Server installiert. 
 Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>MediaPortal dedizierter TV-Server (ohne SQL Server)</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Es wird nur der TV-Server auf diesem PC installiert.</value>
-  </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Durchsuchen</value>
   </data>
