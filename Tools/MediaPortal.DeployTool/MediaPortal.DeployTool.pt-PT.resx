@@ -502,4 +502,7 @@ Ficheiro de configuração corrompido, se for encontrado, será agora apagado.
 
 </value>
   </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Configura a Firewall do Windows para permitir acesso externo ao MediaPortal</value>
+  </data>
 </root>

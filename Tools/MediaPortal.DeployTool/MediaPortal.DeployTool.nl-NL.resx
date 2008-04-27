@@ -499,4 +499,7 @@ Doorgaan is op eigen risico.</value>
 Kijk a.u.b. de instellingen van uw browser na.
 Het beschadigde bestand wordt nu, indien aanwezig, verwijderd.</value>
   </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Configureer uw firewall, zodat deze toegang geeft tot MediaPortal</value>
+  </data>
 </root>
