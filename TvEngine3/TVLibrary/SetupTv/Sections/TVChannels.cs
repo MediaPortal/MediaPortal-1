@@ -759,7 +759,7 @@ namespace SetupTv.Sections
       }
       rootElement.AppendChild(nodeChannelGroups);
       xmlDoc.AppendChild(rootElement);
-      xmlDoc.Save("export.xml");
+      xmlDoc.Save(String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\export.xml", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
       MessageBox.Show(this, "Channels, channel groups and schedules exported to 'export.xml'");
     }
 
@@ -782,6 +782,7 @@ namespace SetupTv.Sections
       openFileDialog1.DefaultExt = "xml";
       openFileDialog1.RestoreDirectory = true;
       openFileDialog1.Title = "Load channels, channel groups and schedules";
+      openFileDialog1.InitialDirectory = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
       openFileDialog1.FileName = "export.xml";
       openFileDialog1.AddExtension = true;
       openFileDialog1.Multiselect = false;
