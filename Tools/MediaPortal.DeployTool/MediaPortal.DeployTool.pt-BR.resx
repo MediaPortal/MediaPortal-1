@@ -504,4 +504,7 @@ Por favor, revise as configurações do Internet Explorer.
 O arquivo de configuração corrompido será apagado.
 </value>
   </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Configure o Firewall do Windows para permitir acesso externo ao MediaPortal</value>
+  </data>
 </root>
