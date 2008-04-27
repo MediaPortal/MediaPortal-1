@@ -70,6 +70,9 @@ namespace MediaPortal.GUI.TV
     protected GUILabelControl lblProgramGenre = null;
     [SkinControlAttribute(18)]
     protected GUIImage imgTvLogo = null;
+    [SkinControlAttribute(19)]
+    protected GUIButtonControl btnSMSInput = null;
+
 
     DirectoryHistory history = new DirectoryHistory();
     enum SearchMode
@@ -172,13 +175,16 @@ namespace MediaPortal.GUI.TV
 
       btnShow.RestoreSelection = false;
       btnEpisode.RestoreSelection = false;
-      btnLetter.RestoreSelection = false;
       btnShow.Clear();
       btnEpisode.Clear();
-      btnLetter.AddSubItem("#");
-      for (char k = 'A'; k <= 'Z'; k++)
+      if (btnLetter != null)
       {
-        btnLetter.AddSubItem(k.ToString());
+        btnLetter.RestoreSelection = false;
+        btnLetter.AddSubItem("#");
+        for (char k = 'A'; k <= 'Z'; k++)
+        {
+          btnLetter.AddSubItem(k.ToString());
+        }
       }
       Update();
 
@@ -259,7 +265,7 @@ namespace MediaPortal.GUI.TV
           OnClick(iItem);
         }
       }
-      if (control == btnLetter)
+      if ((btnLetter != null) && (control == btnLetter))
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
@@ -268,6 +274,19 @@ namespace MediaPortal.GUI.TV
         filterEpisode = string.Empty;
         Update();
         GUIControl.FocusControl(GetID, btnLetter.GetID);
+      }
+      if (control == btnSMSInput)
+      {
+        VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+        if (null == keyboard) return;
+        keyboard.Reset();
+        keyboard.Text = filterLetter;
+        keyboard.DoModal(GetID); // show it...
+        if (keyboard.IsConfirmed)
+        {
+          filterLetter = keyboard.Text;
+          Update();
+        }
       }
       if (control == btnShow)
       {
@@ -311,7 +330,7 @@ namespace MediaPortal.GUI.TV
 				titleView.IsVisible = false;
 				GUIControl.FocusControl(GetID, listView.GetID);
 				btnEpisode.Disabled = true;
-				btnLetter.Disabled = true;
+				if (btnLetter != null) btnLetter.Disabled = true;
 				btnShow.Disabled = true;
 				lblProgramDescription.IsVisible = false;
 				if (lblProgramGenre != null) lblProgramGenre.IsVisible = false;
@@ -374,7 +393,7 @@ namespace MediaPortal.GUI.TV
 					lblNumberOfItems.YPosition = titleView.SpinY;
 				}
 				btnEpisode.Disabled = false;
-				btnLetter.Disabled = false;
+				if (btnLetter != null) btnLetter.Disabled = false;
 				btnShow.Disabled = false;
 				lblNumberOfItems.YPosition = listView.SpinY;
 			}
