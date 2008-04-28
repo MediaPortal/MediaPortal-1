@@ -14,6 +14,7 @@ using MediaPortal.Devices;
 using MediaPortal.GUI.Library;
 
 using XPListview;
+using System.Threading;
 
 namespace BlasterTest
 {
@@ -171,6 +172,7 @@ namespace BlasterTest
 		[STAThread]
 		static void Main(string[] args)
 		{
+      Thread.CurrentThread.Name = "BlasterTest";
 			Form1 form = new Form1();
 
 			foreach(string arg in args)

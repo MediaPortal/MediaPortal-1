@@ -318,7 +318,7 @@ namespace TvLibrary.Log
           using (StreamWriter writer = new StreamWriter(logFileName, true))
           {
             string thread = Thread.CurrentThread.Name;
-            if (thread == null)
+            if (string.IsNullOrEmpty(thread))
             {
               thread = Thread.CurrentThread.ManagedThreadId.ToString();
             }

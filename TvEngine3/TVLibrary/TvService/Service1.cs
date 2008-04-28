@@ -66,8 +66,7 @@ namespace TvService
     /// Initializes a new instance of the <see cref="Service1"/> class.
     /// </summary>
     public Service1()
-    {
-
+    {      
       string applicationPath = System.Windows.Forms.Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
@@ -102,7 +101,7 @@ namespace TvService
     {
       if (_started)
         return;
-
+      
       // apply process priority on initial service start.
       if (!_priorityApplied)
       {
@@ -117,6 +116,7 @@ namespace TvService
           // applyProcessPriority can generate an exception when we cannot connect to the database
         }
       }
+      Thread.CurrentThread.Name = "TVService";
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
       Log.WriteFile("TV service V" + versionInfo.FileVersion + " starting");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
@@ -149,8 +149,7 @@ namespace TvService
     {
       if (!_started)
         return;
-
-     
+           
       Log.WriteFile("TV service stopping");
 
       StopRemoting();
@@ -420,6 +419,7 @@ namespace TvService
         return false;
       }
     }
+
     void GetDatabaseConnectionString(out string connectionString, out string provider)
     {
       connectionString = "";
@@ -456,7 +456,7 @@ namespace TvService
         string connectionString, provider;
         GetDatabaseConnectionString(out connectionString, out provider);
         string ConnectionLog = connectionString.Remove(connectionString.IndexOf(@"Password=") + 8);
-        Log.Info("Controller: using {0} database connection: {1}", provider, ConnectionLog);
+        // Log.Info("TVService: using {0} database connection: {1}", provider, ConnectionLog);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
 
         TvDatabase.TvBusinessLayer layer = new TvDatabase.TvBusinessLayer();

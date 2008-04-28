@@ -1152,7 +1152,7 @@ namespace TvEngine
     /// Launches TV Movie's own internet update tool
     /// </summary>
     /// <returns>Number of seconds needed for the update</returns>
-    public long LaunchTVMUpdater()
+    public long LaunchTVMUpdater(bool aHideUpdater)
     {
       long UpdateDuration = 0;
       string UpdaterPath = Path.Combine(TVMovieProgramPath, @"tvuptodate.exe");
@@ -1178,11 +1178,11 @@ namespace TvEngine
           ProcessStartInfo startInfo = new ProcessStartInfo("tvuptodate.exe");
           //startInfo.Arguments = "";
           startInfo.FileName = UpdaterPath;
-          startInfo.WindowStyle = ProcessWindowStyle.Normal;
+          startInfo.WindowStyle = aHideUpdater ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal;
           startInfo.WorkingDirectory = Path.GetDirectoryName(UpdaterPath);
-
           Process UpdateProcess = Process.Start(startInfo);
           UpdateProcess.PriorityClass = ProcessPriorityClass.BelowNormal;
+          
           UpdateProcess.WaitForExit(600000); // do not wait longer than 10 minutes for the internet update
 
           BenchClock.Stop();

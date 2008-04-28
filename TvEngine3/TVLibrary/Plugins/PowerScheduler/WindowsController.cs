@@ -171,7 +171,9 @@ namespace TvEngine.PowerScheduler
       env.how = how;
       env.force = force;
       env.after = after;
-      (new Thread(ExitWindowsDefaultThread)).Start(env);
+      Thread exitWinThread = new Thread(ExitWindowsDefaultThread);
+      exitWinThread.Name = "WinController exit thread";
+      exitWinThread.Start(env);
     }
 
     protected static void ExitWindowsDefaultThread(object _data)

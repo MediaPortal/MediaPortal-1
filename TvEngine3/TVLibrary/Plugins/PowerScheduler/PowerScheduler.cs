@@ -412,7 +412,10 @@ namespace TvEngine.PowerScheduler
       data.that = this;
       data.how = (RestartOptions)how;
       data.force = force;
-      (new Thread(SuspendSystemThread)).Start(data);
+      
+      Thread suspendThread = new Thread(SuspendSystemThread);
+      suspendThread.Name = "Powerscheduler Suspender";
+      suspendThread.Start(data);
     }
 
     protected static void SuspendSystemThread(object _data)
@@ -453,6 +456,7 @@ namespace TvEngine.PowerScheduler
       Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
       WindowsController.ExitWindows((RestartOptions)how, force, SuspendSystemThreadAfter);
     }
+
     protected void SuspendSystemThreadAfter(RestartOptions how, bool force, bool result)
     {
       lock (this)

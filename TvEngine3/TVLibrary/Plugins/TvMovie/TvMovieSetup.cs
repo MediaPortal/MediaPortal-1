@@ -677,7 +677,7 @@ namespace SetupTv.Sections
       TvMovieDatabase _database = new TvMovieDatabase();
       try
       {
-        _database.LaunchTVMUpdater();
+        _database.LaunchTVMUpdater(false);
         _database.OnStationsChanged += new TvMovieDatabase.StationsChanged(_database_OnStationsChanged);
         if (_database.Connect())
           _database.Import();

@@ -102,6 +102,7 @@ namespace SetupTv
     [STAThread]
     public static void Main(string[] arguments)
     {
+      Thread.CurrentThread.Name = "SetupTv";
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
       Log.Info("---- start setuptv V" + versionInfo.FileVersion + "----");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);

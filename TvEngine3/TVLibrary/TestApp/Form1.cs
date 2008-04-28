@@ -44,6 +44,7 @@ namespace TestApp
     public Form1()
     {
       InitializeComponent();
+      Thread.CurrentThread.Name = "TestApp";
     }
 
     private void Form1_Load(object sender, EventArgs e)
