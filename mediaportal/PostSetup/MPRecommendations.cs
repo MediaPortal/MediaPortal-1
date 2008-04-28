@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace PostSetup
 {
@@ -52,6 +53,7 @@ namespace PostSetup
 
 		public MPRecommendations(string[] args)
 		{
+          Thread.CurrentThread.Name = "MPRecommendations";
 			// READ THIS!!
 			// You need to do some changes in Setup project for MediaPortal.
 			// Click on the setup project solution and click Custom Actions Editor (at the toolbar above) 

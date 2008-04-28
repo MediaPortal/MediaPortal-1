@@ -156,9 +156,7 @@ namespace MediaPortal.Music.Database
         _artistsStripped = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
 
         string tmpPass;
-        ParseLock = new object();
-
-        
+        ParseLock = new object();        
 
         tmpPass = MusicDatabase.Instance.AddScrobbleUserPassword(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "");
         _useDebugLog = (MusicDatabase.Instance.AddScrobbleUserSettings(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "iDebugLog", -1) == 1) ? true : false;
@@ -175,7 +173,7 @@ namespace MediaPortal.Music.Database
             Log.Error("Audioscrobbler: Password decryption failed {0}", ex.Message);
           }
         }
-      }  
+      }
 
       queue = new AudioscrobblerQueue(Config.GetFile(Config.Dir.Database, "LastFmCache-" + Username + ".xml"));
 
@@ -484,6 +482,7 @@ namespace MediaPortal.Music.Database
 
     private static void Worker_TryHandshake(object sender, DoWorkEventArgs e)
     {
+      Thread.CurrentThread.Name = "Scrobbler handshake";
       HandshakeType ReasonForHandshake = (HandshakeType)e.Argument;
       Exception errorReason = null;
       bool success = false;
@@ -851,6 +850,7 @@ namespace MediaPortal.Music.Database
     {
       submitThread = new Thread(new ThreadStart(SubmitQueue));
       submitThread.IsBackground = true;
+      submitThread.Name = "Scrobbler";
       submitThread.Priority = ThreadPriority.BelowNormal;
       submitThread.Start();
     }
@@ -904,6 +904,7 @@ namespace MediaPortal.Music.Database
 
     private static void Worker_TryAnnounceTracks(object sender, DoWorkEventArgs e)
     {
+      Thread.CurrentThread.Name = "Scrobbler nowplaying";
       // s=<sessionID>       The Session ID string as returned by the handshake. Required.
       // a=<artist>          The artist name. Required.
       // t=<track>           The track name. Required.
@@ -945,6 +946,7 @@ namespace MediaPortal.Music.Database
       // Only one thread should attempt to run through the queue at a time.
       lock (submitLock)
       {
+        Thread.CurrentThread.Name = "Scrobbler submit";
         int _submittedSongs = 0;
 
         // Save the queue now since connecting to AS may time out, which

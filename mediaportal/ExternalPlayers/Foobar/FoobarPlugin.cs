@@ -119,6 +119,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     public FoobarPlugin()
     {
+      //Thread.CurrentThread.Name = "FoobarPlugin";
       // empty constructor
     }
 

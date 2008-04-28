@@ -120,6 +120,8 @@ namespace MediaPortal.Music.Amazon
 
       System.Threading.ThreadStart threadStart = new ThreadStart(InternalGetAlbumInfo);
       System.Threading.Thread albumGrabberThread = new System.Threading.Thread(threadStart);
+      albumGrabberThread.IsBackground = true;
+      albumGrabberThread.Name = "AmazonGrabber";
       albumGrabberThread.Start();
     }
 

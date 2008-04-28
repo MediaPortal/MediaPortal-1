@@ -160,7 +160,7 @@ namespace MediaPortal.MusicVideos.Database
     }
     public void DownloadWorker(object sender, DoWorkEventArgs e)
     {
-
+      Thread.CurrentThread.Name = "Yahoo worker";
       HTMLdownload = downloadHtml((String)e.Argument);
       _workerCompleted = true;
       //return HTMLdownload;

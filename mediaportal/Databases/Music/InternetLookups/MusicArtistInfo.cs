@@ -32,6 +32,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 
 using MediaPortal.Util;
+using System.Threading;
 
 namespace MediaPortal.Music.Database
 {

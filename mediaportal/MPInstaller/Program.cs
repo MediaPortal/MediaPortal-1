@@ -29,51 +29,53 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using MediaPortal.MPInstaller;
+using System.Threading;
 
 namespace MediaPortal.MPInstaller
 {
-    static class Program
+  static class Program
+  {
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    static void Main(string[] args)
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main(string[] args)
+      string fil = string.Empty;
+      if (args.Length > 0)
+        fil = args[0];
+      Application.EnableVisualStyles();
+      Application.SetCompatibleTextRenderingDefault(false);
+      Thread.CurrentThread.Name = "MPInstaller";
+
+      if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"\MediaPortal.exe"))
+      {
+        if (!String.IsNullOrEmpty(fil))
         {
-            string fil = string.Empty;
-            if (args.Length > 0)
-                fil = args[0];
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-          
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"\MediaPortal.exe"))
+          if (Path.GetExtension(fil) == ".mpi")
+          {
+            wizard_1 wiz = new wizard_1();
+            wiz.package.LoadFromFile(fil);
+            if (wiz.package.isValid)
             {
-                if (!String.IsNullOrEmpty(fil))
-                {
-                    if (Path.GetExtension(fil) == ".mpi")
-                    {
-                        wizard_1 wiz = new wizard_1();
-                        wiz.package.LoadFromFile(fil);
-                        if (wiz.package.isValid)
-                        {
-                            wiz.starStep();
-                        }
-                        else
-                            MessageBox.Show("Invalid package !");
-                    }
-                    if (Path.GetExtension(fil) == ".xmp")
-                    {
-                        EditForm create_dlg = new EditForm(Path.GetFullPath(fil));
-                        create_dlg.ShowDialog();
-                    }
-                }
-                else
-                    Application.Run(new start_form());
+              wiz.starStep();
             }
             else
-            {
-                MessageBox.Show(AppDomain.CurrentDomain.BaseDirectory + @"\MediaPortal.exe not found. Program Exit.....");
-            }
+              MessageBox.Show("Invalid package !");
+          }
+          if (Path.GetExtension(fil) == ".xmp")
+          {
+            EditForm create_dlg = new EditForm(Path.GetFullPath(fil));
+            create_dlg.ShowDialog();
+          }
         }
+        else
+          Application.Run(new start_form());
+      }
+      else
+      {
+        MessageBox.Show(AppDomain.CurrentDomain.BaseDirectory + @"\MediaPortal.exe not found. Program Exit.....");
+      }
     }
+  }
 }

@@ -238,8 +238,9 @@ namespace PostSetup
         dl.ProgressCallback += new DownloadProgressHandler(DownloadProgressCallback);
         dl.ErrorCallback += new DownloadErrorHandler(DownloadErrorCallback);
 
-        this.dt = new Thread(
-          new ThreadStart(dl.Download));
+        this.dt = new Thread(new ThreadStart(dl.Download));
+        dt.IsBackground = true;
+        dt.Name = "MP3Loader";
         dt.Start();
 
         while (dt.IsAlive)

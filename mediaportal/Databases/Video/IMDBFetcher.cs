@@ -65,7 +65,8 @@ namespace MediaPortal.Video.Database
         return false;
       }
       movieThread = new Thread(new ThreadStart(this._fetch));
-      //Log.Info("Thread for Fetching Movie list:{0}", movieThread.ManagedThreadId);
+      movieThread.Name = "IMDBFetcher";
+      movieThread.IsBackground = true;
       movieThread.Start();
       if (!OnSearchStarted(this))
       {
@@ -109,7 +110,8 @@ namespace MediaPortal.Video.Database
         return false;
       }
       detailsThread = new Thread(new ThreadStart(this._fetchDetails));
-      //Log.Info("Thread for Fetching details:{0}", detailsThread.ManagedThreadId);
+      detailsThread.IsBackground = true;
+      detailsThread.Name = "IMDBDetails";
       detailsThread.Start();
       if (!OnDetailsStarted(this))
       {
@@ -196,7 +198,8 @@ namespace MediaPortal.Video.Database
         return false;
       }
       actorsThread = new Thread(new ThreadStart(this._fetchActors));
-      //Log.Info("Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
+      actorsThread.IsBackground = true;
+      actorsThread.Name = "IMDBActors";
       actorsThread.Start();
       if (!OnActorsStarted(this))
       {

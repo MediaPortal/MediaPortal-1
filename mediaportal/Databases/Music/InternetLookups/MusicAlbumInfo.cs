@@ -30,6 +30,7 @@ using System.Text;
 using System.Collections;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using System.Threading;
 
 namespace MediaPortal.Music.Database
 {

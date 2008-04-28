@@ -34,6 +34,7 @@ using System.IO;
 using System.Diagnostics;
 using DaggerLib.DSGraphEdit;
 using MediaPortal.Configuration;
+using System.Threading;
 
 namespace MPTestTool
 {
@@ -74,6 +75,7 @@ namespace MPTestTool
 
     public MPTestTool()
     {
+      Thread.CurrentThread.Name = "MPTestTool";
       InitializeComponent();
       _tempDir=Path.GetTempPath();
       if (!_tempDir.EndsWith("\\"))
