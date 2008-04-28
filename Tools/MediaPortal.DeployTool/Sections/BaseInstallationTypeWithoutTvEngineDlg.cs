@@ -67,7 +67,7 @@ namespace MediaPortal.DeployTool
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       }
       else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettingsWithoutTvEngine);
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
     }
     public override bool SettingsValid()
     {

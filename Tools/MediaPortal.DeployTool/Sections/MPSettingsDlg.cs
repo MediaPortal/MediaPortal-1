@@ -55,7 +55,8 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
-      if (InstallationProperties.Instance["InstallType"] == "client")
+      if (InstallationProperties.Instance["InstallType"] == "client" ||
+          InstallationProperties.Instance["InstallType"] == "mp_only" )
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       else
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);

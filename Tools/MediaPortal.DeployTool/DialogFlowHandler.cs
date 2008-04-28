@@ -43,7 +43,6 @@ namespace MediaPortal.DeployTool
     DBMSType,
     DBMSSettings,
     MPSettings,
-    MPSettingsWithoutTvEngine,
     TvServerSettings,
     Installation,
     Finished
