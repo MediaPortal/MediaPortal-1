@@ -310,11 +310,11 @@ Section "MediaPortal core files (required)" SecCore
 
   SetOutPath "$MPdir.BurnerSupport"
   CreateDirectory "$MPdir.BurnerSupport"
+  SetOutPath "$MPdir.Database"
+  CreateDirectory "$MPdir.database"
 
   SetOutPath "$MPdir.CustomInputDefault"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
-  SetOutPath "$MPdir.Database"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\database\*"
   SetOutPath "$MPdir.Language"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\language\*"
   SetOutPath "$MPdir.Plugins"
@@ -502,10 +502,6 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
   Delete /REBOOTOK "$MPdir.Base\xmltv\xmltv.dtd"
   RMDir "$MPdir.Base\xmltv"
-
-  ; database
-  RMDir /r /REBOOTOK "$MPdir.Database\convert"
-  RMDir "$MPdir.Database"
 
   ; plugins
   Delete /REBOOTOK "$MPdir.Plugins\ExternalPlayers\ExternalPlayers.dll"
