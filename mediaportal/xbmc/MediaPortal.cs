@@ -248,7 +248,6 @@ public class MediaPortalApp : D3DApp, IRender
       }
 #if !DEBUG
       AddExceptionHandler();
-#endif
       if (watchdogEnabled)
       {
         //StreamWriter sw = new StreamWriter(Application.StartupPath + "\\mediaportal.running", false);
@@ -270,6 +269,7 @@ public class MediaPortalApp : D3DApp, IRender
         mpTestTool.StartInfo.Arguments = cmdargs;
         mpTestTool.Start();
       }
+#endif
       Log.Info("Main: MediaPortal is starting up");
       Log.Info("Main: Using Directories:");
       foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
