@@ -133,6 +133,7 @@ namespace MediaPortal.Player
 
       System.Threading.ThreadStart ts = new System.Threading.ThreadStart(InternalCreatePlayerAsync);
       BassAsyncLoadThread = new System.Threading.Thread(ts);
+      BassAsyncLoadThread.Name = "BassAudio";
       BassAsyncLoadThread.Start();
     }
 

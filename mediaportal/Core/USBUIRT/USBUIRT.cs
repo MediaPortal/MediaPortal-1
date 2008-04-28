@@ -1084,6 +1084,8 @@ namespace MediaPortal.IR
 
       ThreadStart learnThreadStarter = new ThreadStart(LearnTunerCodesAsync);
       Thread learnThread = new Thread(learnThreadStarter);
+      learnThread.IsBackground = true;
+      learnThread.Name = "USBUIRTLearner";
       learnThread.Start();
     }
 

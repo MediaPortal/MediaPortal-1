@@ -57,6 +57,7 @@ namespace MediaPortal.Configuration
     public void Run()
     {
       Thread thread = new Thread(new ThreadStart(DoRun));
+      thread.Name = "ConfigSplashscreen";
       thread.Start();
     }
 

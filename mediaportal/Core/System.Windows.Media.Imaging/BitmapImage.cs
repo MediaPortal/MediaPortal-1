@@ -72,6 +72,7 @@ namespace System.Windows.Media.Imaging
 
 		private void DownloadWorker(object sender, DoWorkEventArgs e)
 		{
+          Thread.CurrentThread.Name = "BitmapImage-Downloader";
 			using(WebClient client = new WebClient())
 				client.DownloadData((string)e.Argument);
 		}

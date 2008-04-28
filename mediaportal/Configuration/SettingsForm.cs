@@ -39,6 +39,7 @@ using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using Keys = MediaPortal.Configuration.Sections.Keys;
 using System.Xml;
+using System.Threading;
 
 namespace MediaPortal.Configuration
 {
@@ -399,6 +400,7 @@ namespace MediaPortal.Configuration
 
     void FrontWorker_DoWork(object sender, DoWorkEventArgs e)
     {
+      Thread.CurrentThread.Name = "Config form waiter";
       IntPtr hwnd;
       // get the window handle of configuration.exe
       do

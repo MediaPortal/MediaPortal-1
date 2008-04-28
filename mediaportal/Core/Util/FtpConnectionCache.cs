@@ -30,6 +30,7 @@ using System.ComponentModel;
 
 using EnterpriseDT.Net.Ftp;
 using MediaPortal.GUI.Library;
+using System.Threading;
 
 namespace MediaPortal.Util
 {
@@ -73,7 +74,8 @@ namespace MediaPortal.Util
       {
         try
         {
-          System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Lowest;
+          //Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+          Thread.CurrentThread.Name = "FtpConnection";
           BytesTransferred = 0;
           BytesOffset = 0;
 

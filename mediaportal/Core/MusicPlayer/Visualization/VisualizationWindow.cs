@@ -1655,6 +1655,8 @@ namespace MediaPortal.Visualization
       System.Threading.ThreadStart renderTs = new System.Threading.ThreadStart(this.RunRenderThread);
       VizRenderThread = new System.Threading.Thread(renderTs);
       VizRenderThread.Priority = System.Threading.ThreadPriority.AboveNormal;
+      VizRenderThread.IsBackground = true;
+      VizRenderThread.Name = "VizRenderer";
       VizRenderThread.Start();
     }
 

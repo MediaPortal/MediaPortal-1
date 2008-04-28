@@ -33,6 +33,7 @@ using MediaPortal.Ripper;
 using MediaPortal.Configuration;
 
 using EnterpriseDT.Net.Ftp;
+using System.Threading;
 
 namespace MediaPortal.Util
 {
@@ -675,7 +676,7 @@ namespace MediaPortal.Util
                 VirtualShare = true;
               }
               //Start listening to Volume Events.Wait 10 seconds in another thread and start listeneing again
-              new System.Threading.Thread(new System.Threading.ThreadStart(this._startListening)).Start();
+              StartVolumeListener();
             }
             else
             {
@@ -958,7 +959,7 @@ namespace MediaPortal.Util
               VirtualShare = true;
             }
             //Start listening to Volume Events (Hack to start listening after 10 seconds)
-            new System.Threading.Thread(new System.Threading.ThreadStart(this._startListening)).Start();
+            StartVolumeListener();
           }
           else
           {
@@ -1080,6 +1081,14 @@ namespace MediaPortal.Util
         }
       }
       return items;
+    }
+
+    private void StartVolumeListener()
+    {
+      Thread VirtDirListener = new Thread(new ThreadStart(this._startListening));
+      VirtDirListener.IsBackground = true;
+      VirtDirListener.Name = "VirtualDirectoryListener";
+      VirtDirListener.Start();
     }
 
     /// <summary>
@@ -1500,7 +1509,7 @@ namespace MediaPortal.Util
                 VirtualShare = true;
               }
               //Start listening to Volume Events (Hack to start listening after 10 seconds)
-              new System.Threading.Thread(new System.Threading.ThreadStart(this._startListening)).Start();
+              StartVolumeListener();
             }
             else
             {
@@ -1974,7 +1983,7 @@ namespace MediaPortal.Util
               VirtualShare = true;
             }
             //Start listening to Volume Events.Wait 10 seconds in another thread and start listeneing again
-            new System.Threading.Thread(new System.Threading.ThreadStart(this._startListening)).Start();
+            StartVolumeListener();
           }
           else
           {

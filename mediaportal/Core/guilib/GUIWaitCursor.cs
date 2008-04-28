@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Library
 
     #region Methods
 
-    private static Thread guiWaitCursorThread = null;//new Thread(GUIWaitCursorThread);
+    private static Thread guiWaitCursorThread = null;
 
     public static void Dispose()
     {
@@ -115,6 +115,8 @@ namespace MediaPortal.GUI.Library
       if (guiWaitCursorThread == null)
       {
         guiWaitCursorThread = new Thread(GUIWaitCursorThread);
+        guiWaitCursorThread.IsBackground = true;
+        guiWaitCursorThread.Name = "Waitcursor";
         guiWaitCursorThread.Start();
       }
     }

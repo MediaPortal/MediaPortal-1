@@ -38,8 +38,6 @@ namespace MediaPortal
   {
     public void LogCrash(object sender, UnhandledExceptionEventArgs eventArgs)
     {
-
-
       Log.Error("MediaPortal: Unhandled exception occured");
       string directory = "log";
 
