@@ -2770,11 +2770,11 @@ namespace TvPlugin
 
         TvBusinessLayer layer = new TvBusinessLayer();
         MediaPortal.GUI.Library.Log.Info("Checking if radio group for all radio channels exists");
-        RadioChannelGroup allRadioChannelsGroup = layer.GetRadioChannelGroupByName(GUILocalizeStrings.Get(972));
+        RadioChannelGroup allRadioChannelsGroup = layer.GetRadioChannelGroupByName("All Channels");
         if (allRadioChannelsGroup == null)
         {
           MediaPortal.GUI.Library.Log.Info("All channels group for radio channels does not exist. Creating it...");
-          allRadioChannelsGroup = new RadioChannelGroup(GUILocalizeStrings.Get(972), 9999);
+          allRadioChannelsGroup = new RadioChannelGroup("All Channels", 9999);
           allRadioChannelsGroup.Persist();
         }
         IList radioChannels = layer.GetAllRadioChannels();
@@ -2798,7 +2798,7 @@ namespace TvPlugin
         found = false;
         foreach (ChannelGroup group in groups)
         {
-          if (group.GroupName == GUILocalizeStrings.Get(972))
+          if (group.GroupName == "All Channels")
           {
             found = true;
             foreach (Channel channel in channels)
@@ -2816,7 +2816,7 @@ namespace TvPlugin
               }
               if (!groupContainsChannel)
               {
-                layer.AddChannelToGroup(channel, GUILocalizeStrings.Get(972));
+                layer.AddChannelToGroup(channel, "All Channels");
 
               }
             }
@@ -2826,12 +2826,12 @@ namespace TvPlugin
 
         if (!found)
         {
-          MediaPortal.GUI.Library.Log.Info(" group:{0} not found. create it", GUILocalizeStrings.Get(972));
+          MediaPortal.GUI.Library.Log.Info(" group:{0} not found. create it", "All Channels");
           foreach (Channel channel in channels)
           {
-            layer.AddChannelToGroup(channel, GUILocalizeStrings.Get(972));
+            layer.AddChannelToGroup(channel, "All Channels");
           }
-          MediaPortal.GUI.Library.Log.Info(" group:{0} created", GUILocalizeStrings.Get(972));
+          MediaPortal.GUI.Library.Log.Info(" group:{0} created", "All Channels");
         }
 
         groups = ChannelGroup.ListAll();
@@ -3400,7 +3400,7 @@ namespace TvPlugin
       MediaPortal.GUI.Library.Log.Info("ChannelNavigator::LoadSettings()");
       string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
-      string groupname = xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
+      string groupname = xmlreader.GetValueAsString("mytv", "group", "All Channels");
       m_currentgroup = GetGroupIndex(groupname);
       if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
         m_currentgroup = 0;

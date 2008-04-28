@@ -600,7 +600,7 @@ namespace TvPlugin
         {
           if (!showAllChannelsGroup)
           {
-            if (group.GroupName == GUILocalizeStrings.Get(972))
+            if (group.GroupName == "All Channels")
               continue;
           }
           if (group.GroupName == rootGroup)
