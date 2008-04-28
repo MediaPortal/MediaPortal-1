@@ -310,8 +310,12 @@ Section "MediaPortal core files (required)" SecCore
 
   SetOutPath "$MPdir.BurnerSupport"
   CreateDirectory "$MPdir.BurnerSupport"
+  SetOutPath "$MPdir.Config"
+  CreateDirectory "$MPdir.Config
   SetOutPath "$MPdir.Database"
-  CreateDirectory "$MPdir.database"
+  CreateDirectory "$MPdir.Database"
+  SetOutPath "$MPdir.Log"
+  CreateDirectory "$MPdir.Log"
 
   SetOutPath "$MPdir.CustomInputDefault"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
@@ -699,12 +703,12 @@ Section -Post
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\MPTestTool2.exe"   "-auto" "$MPdir.Base\MPTestTool2.exe"   0 "" "" "MediaPortal Debug-Mode"
-      CreateDirectory "$MPdir.Log"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"                  "$MPdir.Log"                    ""      "$MPdir.Log"                    0 "" "" "MediaPortal Log-Files"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"    "$MPdir.Base\MPInstaller.exe"   ""      "$MPdir.Base\MPInstaller.exe"   0 "" "" "MediaPortal Plugins-Skins Installer"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal TestTool.lnk"                   "$MPdir.Base\MPTestTool2.exe"   ""      "$MPdir.Base\MPTestTool2.exe"   0 "" "" "MediaPortal TestTool"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
-      WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url" "InternetShortcut" "URL" "${URL}"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
+      WriteINIStr "$SMPROGRAMS\$StartMenuGroup\Help.url"      "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
+      WriteINIStr "$SMPROGRAMS\$StartMenuGroup\web site.url"  "InternetShortcut" "URL" "${URL}"
     !insertmacro MUI_STARTMENU_WRITE_END
   ${EndIf}
 
