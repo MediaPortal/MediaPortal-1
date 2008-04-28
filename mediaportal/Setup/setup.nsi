@@ -297,6 +297,15 @@ Section "MediaPortal core files (required)" SecCore
   #File "..\Docs\LICENSE.rtf"
   #File "..\Docs\SQLite Database Browser.exe"
 
+  SetOutPath "$MPdir.BurnerSupport"
+  CreateDirectory "$MPdir.BurnerSupport"
+  SetOutPath "$MPdir.Config"
+  CreateDirectory "$MPdir.Config"
+  SetOutPath "$MPdir.Database"
+  CreateDirectory "$MPdir.Database"
+  SetOutPath "$MPdir.Log"
+  CreateDirectory "$MPdir.Log"
+
   # COMMON CONFIG files for SVN and FINAL RELEASES
   SetOutPath "$MPdir.Config"
   File /nonfatal "${MEDIAPORTAL.BASE}\CaptureCardDefinitions.xml"
@@ -307,15 +316,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
-
-  SetOutPath "$MPdir.BurnerSupport"
-  CreateDirectory "$MPdir.BurnerSupport"
-  SetOutPath "$MPdir.Config"
-  CreateDirectory "$MPdir.Config
-  SetOutPath "$MPdir.Database"
-  CreateDirectory "$MPdir.Database"
-  SetOutPath "$MPdir.Log"
-  CreateDirectory "$MPdir.Log"
 
   SetOutPath "$MPdir.CustomInputDefault"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
