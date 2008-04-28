@@ -55,6 +55,8 @@ namespace MediaPortal.TV.Recording
       _conflictingRecordings = new List<TVRecording>();
       TVDatabase.GetRecordings(ref _recordings);
       Thread WorkerThread = new Thread(new ThreadStart(WorkerThreadFunction));
+      WorkerThread.Name = "ConflictManager";
+      WorkerThread.IsBackground = true;
       WorkerThread.Start();
     }
 

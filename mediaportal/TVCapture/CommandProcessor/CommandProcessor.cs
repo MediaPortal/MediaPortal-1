@@ -284,6 +284,7 @@ namespace MediaPortal.TV.Recording
     #region private members
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
+      Thread.CurrentThread.Name = "CommandProcessor";
       Log.Info("Commandprocessor: Starting");
       if (GUIGraphicsContext.DX9Device != null)
       {
@@ -299,9 +300,7 @@ namespace MediaPortal.TV.Recording
       }
       Log.Debug("Commandprocessor: Running");
 
-
-      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
-
+      Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;      
 
       while (_isRunning)
       {

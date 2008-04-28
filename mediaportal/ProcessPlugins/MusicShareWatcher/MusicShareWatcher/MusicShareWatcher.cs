@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicShareWatcher;
 using MediaPortal.Services;
+using System.Threading;
 
 namespace MediaPortal.MusicShareWatcher
 {
@@ -39,7 +40,7 @@ namespace MediaPortal.MusicShareWatcher
     public MusicShareWatcher()
     {
       InitializeComponent();
-
+      Thread.CurrentThread.Name = "MusicShareWatcherApp";
       bMonitoring = true;
       // Setup the Watching
       watcher = new MusicShareWatcherHelper();

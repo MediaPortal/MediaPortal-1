@@ -54,7 +54,7 @@ namespace MediaPortal.TV.Recording
     {
       bool stopped = false;
 
-      Log.WriteFile(LogType.Recorder, "Command:Stop radio");
+      //Log.WriteFile(LogType.Recorder, "Command:Stop radio");
 
       if (g_Player.Playing && g_Player.IsRadio)
       {

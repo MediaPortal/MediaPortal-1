@@ -254,6 +254,7 @@
     </Compile>
     <Compile Include="AutoCropper\AutoCropper.cs" />
     <Compile Include="AutoCropper\AutoCropperSetup.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="AutoCropper\FrameAnalyzer.cs" />
     <Compile Include="AutoCropper\MovingAverage.cs" />
@@ -262,6 +263,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CallerId\ISDN\ISDNSetupForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="CallerId\ISDN\ISDNWatch.cs">
       <SubType>Code</SubType>
@@ -274,6 +276,7 @@
     </Compile>
     <Compile Include="ComSkipLauncher\ComSkipLauncher.cs" />
     <Compile Include="ComSkipLauncher\Configuration.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="ComSkipLauncher\Configuration.Designer.cs">
       <DependentUpon>Configuration.cs</DependentUpon>
@@ -284,6 +287,7 @@
     <Compile Include="DirecTV Serial Control\KeyMap.cs" />
     <Compile Include="DirecTV Serial Control\SerialInterface.cs" />
     <Compile Include="DirecTV Serial Control\SetupForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="DirecTV Serial Control\SetupForm.Designer.cs">
       <DependentUpon>SetupForm.cs</DependentUpon>
@@ -297,6 +301,7 @@
     </Compile>
     <Compile Include="ExternalDisplay\Drivers\CrystalFontz634.cs" />
     <Compile Include="ExternalDisplay\Drivers\DebugForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="ExternalDisplay\DisplayHandler.cs">
       <SubType>Code</SubType>
@@ -338,6 +343,7 @@
     </Compile>
     <Compile Include="ExternalDisplay\Drivers\NoritakeGU7000.cs" />
     <Compile Include="ExternalDisplay\PropertyBrowser.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="ExternalDisplay\Settings.cs">
       <SubType>Code</SubType>
@@ -383,6 +389,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExternalDisplay\SetupForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="ExternalDisplay\Status.cs">
       <SubType>Code</SubType>
@@ -406,6 +413,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HCWBlaster\HCWBlasterSetupForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="HCWBlaster\HCWIRBlaster.cs">
       <SubType>Code</SubType>
@@ -414,14 +422,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MameDevice\MappingForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="MPExTuneCmd\MPExTuneCmd.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MPExTuneCmd\MPExTuneCmdForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="MusicDBReorg\MusicDBReorg.cs" />
     <Compile Include="MusicDBReorg\MusicDBReorgSettings.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="MusicDBReorg\MusicDBReorgSettings.Designer.cs">
       <DependentUpon>MusicDBReorgSettings.cs</DependentUpon>
@@ -431,6 +442,7 @@
     <Compile Include="PowerScheduler\PowerManager.cs" />
     <Compile Include="PowerScheduler\PowerScheduler.cs" />
     <Compile Include="PowerScheduler\PowerSchedulerSetupForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="PowerScheduler\TimerException.cs" />
     <Compile Include="PowerScheduler\WaitableTimer.cs" />
@@ -450,12 +462,14 @@
     <Compile Include="TvMovie\TvMovie.cs" />
     <Compile Include="TvNotifies\NotifyManager.cs" />
     <Compile Include="TvNotifies\NotifySetupForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="TvNotifies\NotifySetupForm.Designer.cs">
       <DependentUpon>NotifySetupForm.cs</DependentUpon>
     </Compile>
     <Compile Include="WebEPG\WebEPGGrabber.cs" />
     <Compile Include="WebEPG\WebEPGGrabberSettings.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="WebEPG\WebEPGGrabberSettings.Designer.cs">
       <DependentUpon>WebEPGGrabberSettings.cs</DependentUpon>

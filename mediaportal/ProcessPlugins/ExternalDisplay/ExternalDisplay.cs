@@ -106,6 +106,7 @@ namespace ProcessPlugins.ExternalDisplay
         stopRequested = false;
         t = new Thread(new ThreadStart(Run));
         t.Priority = ThreadPriority.Lowest;
+        t.IsBackground = true;
         t.Name = "ExternalDisplay";
         t.Start();
         //subscribe for action notification

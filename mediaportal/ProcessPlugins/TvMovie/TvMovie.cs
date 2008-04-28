@@ -75,6 +75,7 @@ namespace ProcessPlugins.TvMovie
       {
         Thread importThread = new Thread(new ThreadStart(ImportThread));
         importThread.Priority = ThreadPriority.Lowest;
+        importThread.Name = "TVMovie Importer";
         importThread.Start();
       }
     }

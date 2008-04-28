@@ -75,6 +75,7 @@ namespace MediaPortal.InputDevices.HcwHelper
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
         checkThread.Priority = ThreadPriority.Highest;
+        checkThread.Name = "HcwHelperChecker";
         checkThread.Start();
         connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
         StartIR();

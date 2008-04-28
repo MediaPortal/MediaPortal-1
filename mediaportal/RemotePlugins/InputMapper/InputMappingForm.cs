@@ -760,6 +760,7 @@ namespace MediaPortal.InputDevices
           this.ShowInTaskbar = true;
           this.WindowState = FormWindowState.Minimized;
           Thread closeThread = new Thread(new ThreadStart(CloseThread));
+          closeThread.Name = "InputMapperClose";
           closeThread.Start();
           return;
         }

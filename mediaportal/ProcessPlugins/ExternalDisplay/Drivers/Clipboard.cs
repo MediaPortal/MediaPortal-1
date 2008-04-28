@@ -125,6 +125,8 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       }
       th = new Thread(new ThreadStart(CopySTA));
       th.SetApartmentState(ApartmentState.STA);
+      th.IsBackground = true;
+      th.Name = "VFD-Clipboard";
       th.Start();
       th.Join();
     }

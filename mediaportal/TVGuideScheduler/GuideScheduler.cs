@@ -41,6 +41,8 @@ namespace MediaPortal.TVGuideScheduler
   {
     public static void Main(string[] options)
     {
+      Thread.CurrentThread.Name = "TvGuideScheduler";
+
       string grabber = null;
       int grabberDays;
       string multiGrab;

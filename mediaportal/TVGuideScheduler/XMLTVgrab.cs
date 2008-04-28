@@ -48,7 +48,7 @@ namespace MediaPortal.TVGuideScheduler
 				if (runLowPrio)
 					grabThreads[i].Priority=ThreadPriority.Lowest;
 				grabThreads[i]= new Thread(new ThreadStart( helper.RunThread )) ;
-				grabThreads[i].Name = s;
+                grabThreads[i].Name = string.Format("XMLTV Grabber {0}", s);
 				grabThreads[i].Start();
 				Thread.Sleep(10);
 				i++;

@@ -164,7 +164,8 @@ namespace ProcessPlugins.CallerId
     public void Start()
     {
       Thread watchThread = new Thread(new ThreadStart(WatchThread));
-      watchThread.Name = "CAPI Monitoring";
+      watchThread.Name = "CAPI Monitor";
+      watchThread.IsBackground = true;
       watchThread.Start();
     }
 

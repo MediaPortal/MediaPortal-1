@@ -50,6 +50,7 @@ namespace MediaPortal.TV.DiskSpace
       Thread WorkerThread = new Thread(new ThreadStart(ImportWorkerThreadFunction));
       WorkerThread.SetApartmentState(ApartmentState.STA);
       WorkerThread.IsBackground = true;
+      WorkerThread.Name = "Recording Importer";
       WorkerThread.Start();
     }
 

@@ -242,6 +242,8 @@ namespace MediaPortal
     void StartListener()
     {
       inputListener = new Thread(new ThreadStart(this.ThreadFunction));
+      inputListener.IsBackground = true;
+      inputListener.Name = "DirectInputListener";
       inputListener.Start();
       isRunning = true;
     }

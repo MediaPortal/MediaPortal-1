@@ -174,7 +174,8 @@ namespace MediaPortal.InputDevices
         }
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
-        checkThread.Priority = ThreadPriority.Highest;
+        checkThread.Name = "HcwHelperCheck";
+        checkThread.Priority = ThreadPriority.AboveNormal;
         checkThread.Start();
       }
     }
@@ -197,7 +198,7 @@ namespace MediaPortal.InputDevices
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             _controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
           if (_controlEnabled)
-            Process.Start(System.Windows.Forms.Application.StartupPath + @"\HcwHelper.exe");
+            Process.Start(Application.StartupPath + @"\HcwHelper.exe");
           else
             _exit = true;
         }
