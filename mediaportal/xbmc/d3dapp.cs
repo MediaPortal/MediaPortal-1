@@ -1181,6 +1181,8 @@ namespace MediaPortal
             {
               GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
               Thread tvWaitThread = new Thread(TvWaitThread);
+              tvWaitThread.IsBackground = true;
+              tvWaitThread.Name = "TvWaitThread";
               tvWaitThread.Start();
             }
           else
@@ -1705,6 +1707,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.UseSeparateRenderThread)
       {
         Thread renderThread = new Thread(new ThreadStart(RenderWorkerThread));
+        renderThread.Name = "RenderThread";
         renderThread.IsBackground = true;
         renderThread.Start();
         timer.Enabled = true;
@@ -1793,6 +1796,8 @@ namespace MediaPortal
               //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);                            
 
               Thread tvDelayThread = new Thread(TvDelayThread);
+              tvDelayThread.IsBackground = true;
+              tvDelayThread.Name = "TvDelayThread";
               tvDelayThread.Start();
             }
 

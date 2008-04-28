@@ -242,12 +242,14 @@ namespace MediaPortal.GUI.Pictures
       lock (_prefetchingThreadLock)
       {
         _prefetchingThread = new Thread(new ThreadStart(LoadNextSlideThread));
-        _prefetchingThread.Priority = ThreadPriority.BelowNormal;
+        _prefetchingThread.IsBackground = true;
+        _prefetchingThread.Name = "PicPrefetch";
+        //_prefetchingThread.Priority = ThreadPriority.BelowNormal;
         string cacheString = String.Format("cache:{0}|{1}|{2} ",
           _slides[0] != null ? "1" : "0",
           _slides[1] != null ? "1" : "0",
           _slides[2] != null ? "1" : "0");
-        Trace.WriteLine(cacheString + String.Format("prefetching {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
+        //Trace.WriteLine(cacheString + String.Format("prefetching {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
         _prefetchingThread.Start();
       }
     }
@@ -2301,6 +2303,8 @@ namespace MediaPortal.GUI.Pictures
         using (WaitCursor cursor = new WaitCursor())
         {
           Thread WorkerThread = new Thread(new ThreadStart(LoadRawPictureThread));
+          WorkerThread.IsBackground = true;
+          WorkerThread.Name = "PicRawLoader";
           WorkerThread.Start();
 
           // Update window

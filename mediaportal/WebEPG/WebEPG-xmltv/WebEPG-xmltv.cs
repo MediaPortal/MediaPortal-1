@@ -34,6 +34,7 @@ using MediaPortal.Services;
 using MediaPortal.Webepg.TV.Database;
 using MediaPortal.Util;
 using MediaPortal.Utils.CommandLine;
+using System.Threading;
 
 namespace MediaPortal.EPG.WebEPGxmltv
 {
@@ -66,7 +67,7 @@ namespace MediaPortal.EPG.WebEPGxmltv
 
       // set process priority lower
       System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
-
+      Thread.CurrentThread.Name = "WebEPG-xmltv";
       // try to catch all exceptions .. disabled in debug mode.
 #if !DEBUG
       try

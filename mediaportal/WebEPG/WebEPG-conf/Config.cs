@@ -39,6 +39,7 @@ using MediaPortal.Util;
 using MediaPortal.WebEPG.Config.Grabber;
 using MediaPortal.WebEPG.config;
 using MediaPortal.EPG.config;
+using System.Threading;
 
 namespace WebEPG_conf
 {
@@ -108,6 +109,7 @@ namespace WebEPG_conf
       // Required for Windows Form Designer support
       //
       InitializeComponent();
+      Thread.CurrentThread.Name = "WebEPG Config";
 
       lvMapping.Columns.Add("EPG Name", 100, HorizontalAlignment.Left);
       lvMapping.Columns.Add("Channel Name", 100, HorizontalAlignment.Left);

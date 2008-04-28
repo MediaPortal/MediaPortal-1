@@ -238,9 +238,6 @@ namespace MediaPortal.GUI.Video
       Update();
 
       ThumbDownloader thumbWorker = new ThumbDownloader(currentMovie);
-      //imageSearchThread = new Thread(new ThreadStart(AmazonLookupThread));
-      //imageSearchThread.IsBackground = true;
-      //imageSearchThread.Start();
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -281,10 +278,6 @@ namespace MediaPortal.GUI.Video
           Update();
 
           ThumbDownloader thumbWorker = new ThumbDownloader(currentMovie);
-
-          //imageSearchThread = new Thread(new ThreadStart(AmazonLookupThread));
-          //imageSearchThread.IsBackground = true;
-          //imageSearchThread.Start();
         }
         return;
       }

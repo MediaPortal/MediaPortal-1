@@ -63,6 +63,7 @@ namespace MediaPortal.Utils.Web
 
     private void RequestWorker_DoWork(object sender, DoWorkEventArgs e)
     {
+      Thread.CurrentThread.Name = "HTTP Async request";
       SendWorkerRequest((string)e.Argument, _requestDelay);
     }
 

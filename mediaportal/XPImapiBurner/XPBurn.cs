@@ -1277,6 +1277,7 @@ namespace XPBurn
       {
         fFullErase = (eraseType == EraseKind.ekFull);
         Thread eraseThread = new Thread(new ThreadStart(EraseDiscThread));
+        eraseThread.Name = "DiscEraser";
         fIsErasing = true;
         eraseThread.Start();
       }
@@ -1348,6 +1349,8 @@ namespace XPBurn
       fEjectAfterBurn = ejectAfterBurn;
 
       Thread burnThread = new Thread(new ThreadStart(RecordDiscThread));
+      burnThread.IsBackground = false;
+      burnThread.Name = "DiscBurner";
       burnThread.Start();
     }
 

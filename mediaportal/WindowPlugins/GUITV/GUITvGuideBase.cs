@@ -2340,11 +2340,12 @@ namespace MediaPortal.GUI.TV
         return;
       }
       _tvGuideFileWatcher.EnableRaisingEvents = false;
-      //Thread workerThread = new Thread(new ThreadStart(ThreadFunctionImportTVGuide));
+      
       if (!_workerThreadRunning)
       {
         _workerThreadRunning = true;
         Thread workerThread = new Thread(new ThreadStart(ThreadFunctionImportTVGuide));
+        workerThread.Name = "TvGuideImporter";
         workerThread.Priority = ThreadPriority.Lowest;
         workerThread.Start();
       }

@@ -350,6 +350,7 @@ namespace WindowPlugins.VideoEditor
 					{
 			          joinThread = new Thread(new ThreadStart(joinMpeg));
 			          joinThread.Priority = ThreadPriority.BelowNormal;
+                      joinThread.Name = "VideoJoiner";
           			  joinThread.Start();
 					}
 				}

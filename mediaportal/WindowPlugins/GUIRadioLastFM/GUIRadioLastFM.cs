@@ -134,6 +134,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void Worker_LoadSettings(object sender, DoWorkEventArgs e)
     {
+      System.Threading.Thread.CurrentThread.Name = "LastFm";
       if (!LastFMStation.IsInit)
       {
         LastFMStation.LoadConfig();

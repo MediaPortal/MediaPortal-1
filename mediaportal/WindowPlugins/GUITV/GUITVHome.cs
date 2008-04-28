@@ -62,7 +62,6 @@ namespace MediaPortal.GUI.TV
       IMG_REC_CHANNEL = 21,
       LABEL_REC_INFO = 22,
       IMG_REC_RECTANGLE = 23,
-
     };
 
     static bool _isTvOn = true;
@@ -391,6 +390,8 @@ namespace MediaPortal.GUI.TV
           if (useDelay)
           {
             Thread tvDelayThread = new Thread(TvDelayThread);
+            tvDelayThread.IsBackground = true;
+            tvDelayThread.Name = "TvDelayThread";
             tvDelayThread.Start();
           }
           else //no delay needed here, since this is when the system is being used normally

@@ -632,6 +632,7 @@ namespace WindowPlugins.VideoEditor
           }
           cutThread = new Thread(new ThreadStart(CutMpeg));
           cutThread.Priority = ThreadPriority.BelowNormal;
+          cutThread.Name = "MpegCutter";
 
           progressBar.Percentage = 0;
           progressBar.IsVisible = true;
@@ -642,6 +643,7 @@ namespace WindowPlugins.VideoEditor
         case FileTypes.Ts:
           cutThread = new Thread(new ThreadStart(CutTs));
           cutThread.Priority = ThreadPriority.BelowNormal;
+          cutThread.Name = "TsCutter";
 
           progressBar.Percentage = 0;
           progressBar.IsVisible = true;

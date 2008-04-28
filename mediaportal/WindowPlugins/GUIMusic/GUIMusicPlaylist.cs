@@ -233,12 +233,16 @@ namespace MediaPortal.GUI.Music
       if ((action.wID == Action.ActionType.ACTION_MUSIC_PLAY || action.wID == Action.ActionType.ACTION_PLAY) && GUIWindowManager.ActiveWindow == GetID)
         try
         {
-          if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
-            playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+          // Avoid double action if e.g. jumped to playlist screen.
+          if (base.PlayNowJumpTo != PlayNowJumpToType.CurrentPlaylistAlways && base.PlayNowJumpTo != PlayNowJumpToType.CurrentPlaylistMultipleItems)
+          {
+            if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
+              playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
 
-          playlistPlayer.Play(facadeView.SelectedListItemIndex);
-          bool didJump = DoPlayNowJumpTo(facadeView.Count);
-          Log.Debug("GUIMusicPlaylist: Doing play now jump to: {0} ({1})", PlayNowJumpTo, didJump);
+            playlistPlayer.Play(facadeView.SelectedListItemIndex);
+            bool didJump = DoPlayNowJumpTo(facadeView.Count);
+            Log.Debug("GUIMusicPlaylist: Doing play now jump to: {0} ({1})", PlayNowJumpTo, didJump);
+          }
         }
         catch (Exception ex)
         {

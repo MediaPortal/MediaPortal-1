@@ -57,6 +57,7 @@ namespace MediaPortal
     public void Run()
     {
       Thread thread = new Thread(new ThreadStart(DoRun));
+      thread.Name = "SplashScreen";
       thread.Start();
     }
 

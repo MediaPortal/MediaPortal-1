@@ -118,6 +118,7 @@ namespace MediaPortal.GUI.TV
       // Create an update thread and set it's priority to lowest
       _updateThreadStop = false;
       _updateThread = new Thread(UpdatePage);
+      _updateThread.Name = "TeletextUpdater";
       _updateThread.Priority = ThreadPriority.Normal;
       _updateThread.IsBackground = true;
       _updateThread.Start();

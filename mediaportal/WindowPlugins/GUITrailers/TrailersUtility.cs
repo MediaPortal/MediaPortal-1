@@ -70,6 +70,7 @@ namespace MediaPortal.GUI.Video
 
     public void DownloadWorker(object sender, DoWorkEventArgs e)
     {
+      Thread.CurrentThread.Name = "Trailers";
       WebClient wc = new WebClient();
 
       try

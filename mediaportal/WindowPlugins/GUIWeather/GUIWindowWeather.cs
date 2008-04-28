@@ -1599,6 +1599,7 @@ namespace MediaPortal.GUI.Weather
 
     void DownloadWorker(object sender, DoWorkEventArgs e)
     {
+      System.Threading.Thread.CurrentThread.Name = "Weather updater";
       _workerCompleted = false;
 
       _refreshTimer = DateTime.Now;

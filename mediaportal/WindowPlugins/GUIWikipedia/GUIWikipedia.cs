@@ -365,6 +365,7 @@ namespace Wikipedia
     // All kind of stuff because of the wait cursor ;-)
     void DownloadWorker(object sender, DoWorkEventArgs e)
     {
+      Thread.CurrentThread.Name = "Wikipedia";
       _workerCompleted = false;
 
       using (WaitCursor cursor = new WaitCursor())

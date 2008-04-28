@@ -608,7 +608,10 @@ namespace MediaPortal.GUI.Video
             else
             {
               //download subtitle files
-              new Thread(new ThreadStart(this._downloadSubtitles)).Start();
+              Thread subLoaderThread = new Thread(new ThreadStart(this._downloadSubtitles));
+              subLoaderThread.IsBackground = true;
+              subLoaderThread.Name = "SubtitleLoader";
+              subLoaderThread.Start();
             }
           }
         }
