@@ -54,6 +54,8 @@ namespace WindowPlugins.GUISettings.TV
     protected GUIButtonControl btnAutoTurnOnTv = null;
     [SkinControlAttribute(26)]
     protected GUIButtonControl btnAutoTurnOnTS = null;
+    [SkinControlAttribute(31)]
+    protected GUIButtonControl btnRecordingOptions = null;
     [SkinControlAttribute(33)]
     protected GUIButtonControl btnAudioRenderer = null;
     [SkinControlAttribute(34)]
@@ -71,6 +73,18 @@ namespace WindowPlugins.GUISettings.TV
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\settings_tv.xml");
+    }
+
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      {
+        btnTimeshiftBuffer.Visible = false;
+        btnAutoTurnOnTS.Visible = false;
+        btnRecordingOptions.Visible = false;
+        btnEpg.Visible = false;
+      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
