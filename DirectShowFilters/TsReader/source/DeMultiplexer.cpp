@@ -215,44 +215,55 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
 
   switch (m_audioStreams[stream].audioType)
   {
-    case SERVICE_TYPE_AUDIO_MPEG1:// Should be mapped to MPEG2 because otherwise not playable
+    // MPEG1 shouldn't be mapped to MPEG2 audio as it will break Cyberlink audio codec 
+    // (and MPA is not working with the MPEG1 to MPEG2 mapping...)
+    case SERVICE_TYPE_AUDIO_MPEG1:
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_MPEG1Payload);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      break;
     case SERVICE_TYPE_AUDIO_MPEG2:
-	    pmt.InitMediaType();
-	    pmt.SetType      (& MEDIATYPE_Audio);
-	    pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
-	    pmt.SetSampleSize(1);
-	    pmt.SetTemporalCompression(FALSE);
-	    pmt.SetVariableSize();
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(MPEG2AudioFormat,sizeof(MPEG2AudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_AAC:
-	    pmt.InitMediaType();
-	    pmt.SetType      (& MEDIATYPE_Audio);
-	    pmt.SetSubtype   (& MEDIASUBTYPE_AAC);
-	    pmt.SetSampleSize(1);
-	    pmt.SetTemporalCompression(FALSE);
-	    pmt.SetVariableSize();
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_AAC);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(AACAudioFormat,sizeof(AACAudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_LATM_AAC:
-	    pmt.InitMediaType();
-	    pmt.SetType      (& MEDIATYPE_Audio);
-	    pmt.SetSubtype   (& MEDIASUBTYPE_LATM_AAC);
-	    pmt.SetSampleSize(1);
-	    pmt.SetTemporalCompression(FALSE);
-	    pmt.SetVariableSize();
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_LATM_AAC);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(AACAudioFormat,sizeof(AACAudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_AC3:
-	    pmt.InitMediaType();
-	    pmt.SetType      (& MEDIATYPE_Audio);
-	    pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);
-	    pmt.SetSampleSize(1);
-	    pmt.SetTemporalCompression(FALSE);
-	    pmt.SetVariableSize();
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
       break;
