@@ -789,6 +789,10 @@ Section Uninstall
     RMDir /r /REBOOTOK "$MPdir.Plugins"
     RMDir /r /REBOOTOK "$MPdir.Skin"
     RMDir /r /REBOOTOK "$MPdir.Base"
+
+    SetShellVarContext all
+    RMDir /r /REBOOTOK "$APPDATA\VirtualStore\ProgramData\Team MediaPortal\MediaPortal"
+    RMDir /r /REBOOTOK "$APPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal"
   ${EndIf}
 
   ; Remove File Association for .mpi files
