@@ -12,16 +12,16 @@
       <posY>430</posY>
       <width>700</width>
       <height>140</height>
-      <texture>zaposd_background_wide.png</texture>
+      <texture>zaposd_background_wide_nothumb.png</texture>
     </control>
     <control>
       <description>TV Logo</description>
       <type>image</type>
       <id>10</id>
-      <posX>56</posX>
-      <posY>461</posY>
-      <width>50</width>
-      <height>50</height>
+      <posX>31</posX>
+      <posY>451</posY>
+      <width>100</width>
+      <height>100</height>
       <texture>#TV.View.thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
