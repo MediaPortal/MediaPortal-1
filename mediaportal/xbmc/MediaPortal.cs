@@ -772,11 +772,13 @@ public class MediaPortalApp : D3DApp, IRender
 
           case PBT_APMSTANDBY:
             Log.Info("Main: Windows is standbying");
+            if (!OnQuerySuspend(ref msg)) return;
             OnSuspend(ref msg);
             break;
 
           case PBT_APMSUSPEND:
             Log.Info("Main: Windows is hibernating");
+            if (!OnQuerySuspend(ref msg)) return;
             OnSuspend(ref msg);
             break;
 
