@@ -466,13 +466,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_screenCenterPos.IsEmpty)
-        {
-          int borderWidth = (form.Size.Width - form.ClientRectangle.Width) / 2;
-          // we can only assume that the title bar occupies this space - no frames regarded yet
-          int borderHeight = (form.Size.Height - form.ClientRectangle.Height);
-          _screenCenterPos = new Point((form.ClientRectangle.Width / 2) + form.Location.X + borderWidth, (form.ClientRectangle.Height / 2) + form.Location.Y + borderHeight);
-        }
+        int borderWidth = (form.Size.Width - form.ClientRectangle.Width) / 2;
+        // we can only assume that the title bar occupies this space
+        int borderHeight = (form.Size.Height - form.ClientRectangle.Height) + (2 * borderWidth);
+        _screenCenterPos = new Point((form.ClientRectangle.Width / 2) + borderWidth + form.Location.X, (form.ClientRectangle.Height / 2) + borderHeight + form.Location.Y);
+
         return _screenCenterPos;
       }
     }
@@ -484,14 +482,14 @@ namespace MediaPortal.GUI.Library
       {
         Point oldPos = Cursor.Position;
         if (form.ClientRectangle.Width - oldPos.X < OutputScreenCenter.X)
-          newX = OutputScreenCenter.X + (int)((oldPos.X - OutputScreenCenter.X) / 1.3);
+          newX = OutputScreenCenter.X + (int)((oldPos.X - OutputScreenCenter.X) / 4);
         else
-          newX = OutputScreenCenter.X - (int)((OutputScreenCenter.X - oldPos.X) / 1.3);
+          newX = OutputScreenCenter.X - (int)((OutputScreenCenter.X - oldPos.X) / 4);
 
         if (form.ClientRectangle.Height - oldPos.Y < OutputScreenCenter.Y)
-          newY = OutputScreenCenter.Y + (int)((oldPos.Y - OutputScreenCenter.Y) / 1.3);
+          newY = OutputScreenCenter.Y + (int)((oldPos.Y - OutputScreenCenter.Y) / 4);
         else
-          newY = OutputScreenCenter.Y - (int)((OutputScreenCenter.Y - oldPos.Y) / 1.3);
+          newY = OutputScreenCenter.Y - (int)((OutputScreenCenter.Y - oldPos.Y) / 4);
       }
       else
       {

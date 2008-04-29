@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <mappings version="3">
 	<remote family="Centarea HID">
-		<button name="Power TV" code="30">
+		<button name="Power TV" code="100115">
 			<action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="SHUTDOWN" sound="back.wav" />
 		</button>
 		<button name="Record" code="10082">

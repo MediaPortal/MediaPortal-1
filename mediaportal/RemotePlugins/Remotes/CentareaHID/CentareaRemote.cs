@@ -167,20 +167,23 @@ namespace MediaPortal.InputDevices
                 }
               }
               // Since mouse support is semi optimal we have this option to use the joystick like cursor keys
-              if (_mapJoystick)
+              if (_mapJoystick && MediaPortal.GUI.Library.GUIGraphicsContext.Fullscreen)
               {
                 if (msg.Msg == WM_MOUSEMOVE)
                 {
                   Point p = new Point(msg.LParam.ToInt32());
                   _ignoreDupMsg++;
-                  if (Environment.TickCount - _lastMouseTick < 175)
+                  // we ignore double actions for the configured time
+                  if (Environment.TickCount - _lastMouseTick < 200)
                   {
+                    // on contineous movements we allow the mouse to travel a little more from the center to build up some scrolling speed
                     if (_ignoreDupMsg % 4 == 0)
                       MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(true);
                     return false;
                   }
                   else
                   {
+                    // since our ResetCursor() triggers a mouse move MSG as well we ignore ever second event
                     if (_ignoreDupMsg % 2 == 0)
                     {
                       MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(true);
@@ -250,99 +253,101 @@ namespace MediaPortal.InputDevices
 
     #region Joystick handling
 
-    ///// <summary>
-    ///// Calculates the deviation of the new position from the app area's center point
-    ///// </summary>
-    ///// <param name="aVerticalMove">Calculate a horizontal or vertical movement</param>
-    ///// <param name="aNewPosition">The position after movement</param>
-    ///// <returns>The amount of pixels the cursor has moved. A negative value indicates left/up movement</returns>
-    //private int GetPointDeviation(bool aVerticalMove, int aNewPosition)
-    //{
-    //  int OldPos = aVerticalMove ? MediaPortal.GUI.Library.GUIGraphicsContext.OutputScreenCenter.Y : MediaPortal.GUI.Library.GUIGraphicsContext.OutputScreenCenter.X;
-    //  if (OldPos > aNewPosition)
-    //    return (OldPos - aNewPosition) * -1;
-    //  else
-    //    return aNewPosition - OldPos;
-    //}
+    /// <summary>
+    /// Calculates the deviation of the new position from the app area's center point
+    /// </summary>
+    /// <param name="aVerticalMove">Calculate a horizontal or vertical movement</param>
+    /// <param name="aNewPosition">The position after movement</param>
+    /// <returns>The amount of pixels the cursor has moved. A negative value indicates left/up movement</returns>
+    private int GetPointDeviation(bool aVerticalMove, int aNewPosition)
+    {
+      int OldPos = aVerticalMove ? MediaPortal.GUI.Library.GUIGraphicsContext.OutputScreenCenter.Y : MediaPortal.GUI.Library.GUIGraphicsContext.OutputScreenCenter.X;
+      if (OldPos > aNewPosition)
+        return (OldPos - aNewPosition) * -1;
+      else
+        return aNewPosition - OldPos;
+    }
 
-    ///// <summary>
-    ///// Translates a mouse movement into a direction
-    ///// </summary>
-    ///// <param name="p">The new cursor coordinates</param>
-    ///// <returns>None for minimal movement, else up/down/left/right</returns>
-    //private MouseDirection OnMouseMoved(Point p)
-    //{
-    //  MouseDirection direction = MouseDirection.None;
-    //  int xMove = GetPointDeviation(false, p.X);
-    //  int yMove = GetPointDeviation(true, p.Y);
-    //  // using the pythagoras theorem to get the total movement length
-    //  double TotalWay = Math.Sqrt(((double)(Math.Abs(xMove) * Math.Abs(xMove)) + (double)(Math.Abs(yMove) * Math.Abs(yMove))));
-    //  // set a direction only if movement exceeds a minimum limit
-    //  if (TotalWay > 10)
-    //    direction = GetDirection(xMove, yMove);
-    //  return direction;
-    //}
-
-    ///// <summary>
-    ///// Calculates one of four directions based on the length of two vectors
-    ///// </summary>
-    ///// <param name="axMove">The horizontal movement</param>
-    ///// <param name="ayMove">The vertical movement</param>
-    ///// <returns>up/down/left/right</returns>
-    //private MouseDirection GetDirection(int axMove, int ayMove)
-    //{
-    //  if (axMove <= 0) // up
-    //  {
-    //    if (ayMove <= 0) // left
-    //      return (Math.Abs(axMove) >= Math.Abs(ayMove)) ? MouseDirection.Up : MouseDirection.Left;
-    //    else // right
-    //      return (Math.Abs(axMove) >= Math.Abs(ayMove)) ? MouseDirection.Up : MouseDirection.Right;
-    //  }
-    //  else // down
-    //  {
-    //    if (ayMove <= 0) // left
-    //      return (Math.Abs(axMove) >= Math.Abs(ayMove)) ? MouseDirection.Down : MouseDirection.Left;
-    //    else // right
-    //      return (Math.Abs(axMove) >= Math.Abs(ayMove)) ? MouseDirection.Down : MouseDirection.Right;
-    //  }
-    //}
-
+    /// <summary>
+    /// Translates a mouse movement into a direction
+    /// </summary>
+    /// <param name="p">The new cursor coordinates</param>
+    /// <returns>None for minimal movement, else up/down/left/right</returns>
     private MouseDirection OnMouseMoved(Point p)
     {
-      int x_Val, y_Val;
       MouseDirection direction = MouseDirection.None;
-      //Translating mouse motion on the control to a 60 x 60 cartesian grid.
-      y_Val = (p.Y * 61 / MediaPortal.GUI.Library.GUIGraphicsContext.form.ClientSize.Height) - 30;
-      x_Val = (p.X * 61 / MediaPortal.GUI.Library.GUIGraphicsContext.form.ClientSize.Width) - 30;
-      y_Val = -y_Val;
-
-      int radius = (int)Math.Sqrt(y_Val * y_Val + x_Val * x_Val);
-      if (radius > 1)// && radius < 15)
-        direction = GetDirection(x_Val, y_Val);
+      int xMove = GetPointDeviation(false, p.X);
+      int yMove = GetPointDeviation(true, p.Y);
+      // using the pythagoras theorem to get the total movement length
+      double TotalWay = Math.Sqrt(((double)(Math.Abs(xMove) * Math.Abs(xMove)) + (double)(Math.Abs(yMove) * Math.Abs(yMove))));
+      // set a direction only if movement exceeds a minimum limit
+      // usually pushing the joystick knob once results in a two pixel movement.
+      if (TotalWay > 1)
+        direction = GetDirection(xMove, yMove);
       return direction;
     }
 
-    private MouseDirection GetDirection(float x, float y)
+    /// <summary>
+    /// Calculates one of four directions based on the length of two vectors
+    /// </summary>
+    /// <param name="axMove">The horizontal movement</param>
+    /// <param name="ayMove">The vertical movement</param>
+    /// <returns>up/down/left/right</returns>
+    private MouseDirection GetDirection(int axMove, int ayMove)
     {
-      //Changing cartesian coordinates from control surface to more usable polar coordinates
-      double theta;
-      if (x >= 0 && y > 0)
-        theta = (Math.Atan(y / x) * (180 / Math.PI));
-      else if (x < 0)
-        theta = ((Math.PI + Math.Atan(y / x)) * (180 / Math.PI));
-      else theta = (((2 * Math.PI) + Math.Atan(y / x)) * (180 / Math.PI));
-
-      if (theta <= 48.5 || theta > 318.5)
-        return MouseDirection.Right;
-      else if (theta > 48.5 && theta <= 138.5)
-        return MouseDirection.Up;
-      else if (theta > 138.5 && theta <= 228.5)
-        return MouseDirection.Left;
-      else if (theta > 228.5 && theta <= 318.5)
-        return MouseDirection.Down;
-      else
-        return MouseDirection.None;
+      if (ayMove <= 0) // up
+      {
+        if (axMove <= 0) // left
+          // if we move the mouse more to the left than up the resulting direction is plain left.
+          return (Math.Abs(axMove) <= Math.Abs(ayMove)) ? MouseDirection.Up : MouseDirection.Left;
+        else // right
+          return (Math.Abs(axMove) <= Math.Abs(ayMove)) ? MouseDirection.Up : MouseDirection.Right;
+      }
+      else // down
+      {
+        if (axMove <= 0) // left
+          return (Math.Abs(axMove) <= Math.Abs(ayMove)) ? MouseDirection.Down : MouseDirection.Left;
+        else // right
+          return (Math.Abs(axMove) <= Math.Abs(ayMove)) ? MouseDirection.Down : MouseDirection.Right;
+      }
     }
+
+    //private MouseDirection OnMouseMoved(Point p)
+    //{
+    //  int x_Val, y_Val;
+    //  MouseDirection direction = MouseDirection.None;
+    //  //Translating mouse motion on the control to a 60 x 60 cartesian grid.
+    //  y_Val = (p.Y * 61 / MediaPortal.GUI.Library.GUIGraphicsContext.form.ClientSize.Height) - 30;
+    //  x_Val = (p.X * 61 / MediaPortal.GUI.Library.GUIGraphicsContext.form.ClientSize.Width) - 30;
+    //  y_Val = -y_Val;
+
+    //  int radius = (int)Math.Sqrt(y_Val * y_Val + x_Val * x_Val);
+    //  if (radius > 1)// && radius < 15)
+    //    direction = GetDirection(x_Val, y_Val);
+    //  return direction;
+    //}
+
+    //private MouseDirection GetDirection(float x, float y)
+    //{
+    //  //Changing cartesian coordinates from control surface to more usable polar coordinates
+    //  double theta;
+    //  if (x >= 0 && y > 0)
+    //    theta = (Math.Atan(y / x) * (180 / Math.PI));
+    //  else if (x < 0)
+    //    theta = ((Math.PI + Math.Atan(y / x)) * (180 / Math.PI));
+    //  else theta = (((2 * Math.PI) + Math.Atan(y / x)) * (180 / Math.PI));
+
+    //  if (theta <= 48.5 || theta > 318.5)
+    //    return MouseDirection.Right;
+    //  else if (theta > 48.5 && theta <= 138.5)
+    //    return MouseDirection.Up;
+    //  else if (theta > 138.5 && theta <= 228.5)
+    //    return MouseDirection.Left;
+    //  else if (theta > 228.5 && theta <= 318.5)
+    //    return MouseDirection.Down;
+    //  else
+    //    return MouseDirection.None;
+    //}
 
     #endregion
   }
