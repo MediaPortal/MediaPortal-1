@@ -64,6 +64,8 @@ namespace WindowPlugins.GUISettings.TV
     protected GUIButtonControl btnH264VideoCodec = null;
     [SkinControlAttribute(36)]
     protected GUIButtonControl btnAACAudioCodec = null;
+    [SkinControlAttribute(37)]
+    protected GUIButtonControl btnXMLEpg = null;
     
     public GUISettingsTv()
     {
@@ -84,6 +86,7 @@ namespace WindowPlugins.GUISettings.TV
         btnAutoTurnOnTS.Visible = false;
         btnRecordingOptions.Visible = false;
         btnEpg.Visible = false;
+        btnXMLEpg.Visible = false;
       }
     }
 
