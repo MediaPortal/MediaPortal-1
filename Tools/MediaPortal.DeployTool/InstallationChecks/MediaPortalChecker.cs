@@ -112,6 +112,11 @@ namespace MediaPortal.DeployTool
       {
         string MpPath = (string)keyold.GetValue("UninstallString");
         string version = (string)keyold.GetValue("DisplayVersion");
+
+#if DEBUG
+        MessageBox.Show("Verifying MP v0.2.3.0 (MpPath=" + MpPath + ",version=" + version + ")", "Debug information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
+
         keyold.Close();
         if (MpPath != null && File.Exists(MpPath))
           result.state = CheckState.VERSION_MISMATCH;
@@ -120,6 +125,11 @@ namespace MediaPortal.DeployTool
       {
         string MpPath = (string)keynew.GetValue("UninstallString");
         string version = (string)keynew.GetValue("DisplayVersion");
+
+#if DEBUG
+        MessageBox.Show("Verifying MP v1.0 (MpPath=" + MpPath + ",version=" + version + ")", "Debug information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
+
         keynew.Close();
         if (MpPath != null | File.Exists(MpPath))
         {
