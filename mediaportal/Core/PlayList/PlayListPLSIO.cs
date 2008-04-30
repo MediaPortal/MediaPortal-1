@@ -162,7 +162,11 @@ namespace MediaPortal.Playlists
           if (durationLine.Length > 0 && infoLine.Length > 0 && fileName.Length > 0)
           {
             int duration = System.Int32.Parse(durationLine);
-           
+
+            // Remove trailing slashes. Might cause playback issues
+            if (fileName.EndsWith("/"))
+              fileName = fileName.Substring(0, fileName.Length - 1);
+
             string tmp = fileName.ToLower();
             PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
             if (tmp.IndexOf("http:") < 0 && tmp.IndexOf("mms:") < 0 && tmp.IndexOf("rtp:") < 0)
