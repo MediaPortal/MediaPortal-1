@@ -69,7 +69,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override bool CanActivate
     {
-      get { return MediaPortal.IR.USBUIRT.Instance != null; }
+      get { return true; }
     }
 
     #endregion
@@ -82,16 +82,36 @@ namespace MediaPortal.Configuration.Sections
     public RemoteUSBUIRT(string name)
       : base(name)
     {
-
       InitializeComponent();
 
+      lblUSBUIRTConfigVersion.Text = USBUIRT_PLUGINVER;
+    }
+
+    public override void  OnSectionActivated()
+    {
+      if (inputCheckBox.Checked || outputCheckBox.Checked)
+      {
+        if (MediaPortal.IR.USBUIRT.Instance == null)
+          if (!InitUSBUIRTInstance())
+            Log.Info("USBUIRT: InitUSBUIRTInstance failed in OnSectionActivated!");
+      }
+    }
+
+    private bool InitUSBUIRTInstance()
+    {
       MediaPortal.IR.USBUIRT.Create(new MediaPortal.IR.USBUIRT.OnRemoteCommand(OnRemoteCommand));
 
       if (MediaPortal.IR.USBUIRT.Instance == null)
-        return;
+        return false;
 
       lblUSBUIRTVersion.Text = MediaPortal.IR.USBUIRT.Instance.GetVersions();
-      lblUSBUIRTConfigVersion.Text = USBUIRT_PLUGINVER;
+
+      EnableTestIrControls();
+
+      MediaPortal.IR.USBUIRT.Instance.CommandRepeatCount = (int)commandRepeatNumUpDn.Value;
+      MediaPortal.IR.USBUIRT.Instance.InterCommandDelay = (int)interCommandDelayNumUpDn.Value;
+
+      return true;
     }
 
     /// <summary>
@@ -106,7 +126,8 @@ namespace MediaPortal.Configuration.Sections
           components.Dispose();
         }
 
-        MediaPortal.IR.USBUIRT.Instance.Dispose();
+        if (MediaPortal.IR.USBUIRT.Instance != null)
+          MediaPortal.IR.USBUIRT.Instance.Dispose();
       }
       base.Dispose(disposing);
     }
@@ -119,24 +140,20 @@ namespace MediaPortal.Configuration.Sections
         {
           Log.Info("USBUIRT: Setting configuration control values");
 
+          //detach event handlers to prevent unnessesary early initializing of UIRT
+          inputCheckBox.CheckedChanged -= new EventHandler(inputCheckBox_CheckedChanged);
           inputCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
+          inputCheckBox.CheckedChanged += new EventHandler(inputCheckBox_CheckedChanged);
+
+          outputCheckBox.CheckedChanged -= new EventHandler(outputCheckBox_CheckedChanged);
           outputCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "external", false);
+          outputCheckBox.CheckedChanged += new EventHandler(outputCheckBox_CheckedChanged);
+
           digitCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "is3digit", false);
           enterCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "needsenter", false);
 
-          int repeatCount = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2);
-          commandRepeatNumUpDn.Value = repeatCount;
-
-          int interCommandDelay = xmlreader.GetValueAsInt("USBUIRT", "commanddelay", 100);
-          interCommandDelayNumUpDn.Value = interCommandDelay;
-
-          EnableTestIrControls();
-
-          if (MediaPortal.IR.USBUIRT.Instance == null)
-            return;
-
-          MediaPortal.IR.USBUIRT.Instance.CommandRepeatCount = repeatCount;
-          MediaPortal.IR.USBUIRT.Instance.InterCommandDelay = interCommandDelay;
+          commandRepeatNumUpDn.Value = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2); ;
+          interCommandDelayNumUpDn.Value = xmlreader.GetValueAsInt("USBUIRT", "commanddelay", 100);
         }
 
         catch (Exception ex)
@@ -525,6 +542,18 @@ namespace MediaPortal.Configuration.Sections
 
     private void outputCheckBox_CheckedChanged(object sender, System.EventArgs e)
     {
+      if (inputCheckBox.Checked || outputCheckBox.Checked)
+      {
+        if (MediaPortal.IR.USBUIRT.Instance == null)
+        {
+          if (!InitUSBUIRTInstance())
+          {
+            outputCheckBox.Checked = false;
+            return;
+          }
+        }
+      }
+
       bool setTopControl = outputCheckBox.Checked;
       digitCheckBox.Enabled = setTopControl;
       enterCheckBox.Enabled = setTopControl;
@@ -539,6 +568,18 @@ namespace MediaPortal.Configuration.Sections
 
     private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
     {
+      if (inputCheckBox.Checked || outputCheckBox.Checked)
+      {
+        if (MediaPortal.IR.USBUIRT.Instance == null)
+        {
+          if (!InitUSBUIRTInstance())
+          {
+            inputCheckBox.Checked = false;
+            return;
+          }
+        }
+      }
+
       internalCommandsButton.Enabled = inputCheckBox.Checked;
       MediaPortal.IR.USBUIRT.Instance.ReceiveEnabled = inputCheckBox.Checked;
     }
