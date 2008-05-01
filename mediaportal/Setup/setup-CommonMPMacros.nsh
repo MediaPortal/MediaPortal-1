@@ -36,11 +36,107 @@
 !insertmacro WordReplace
 !insertmacro un.WordReplace
 
+
+
 #**********************************************************************************************************#
 #
-# different useful macros
+# logging system
 #
 #**********************************************************************************************************#
+!ifdef INSTALL_LOG
+!ifndef INSTALL_LOG_FILE
+  !ifndef COMMON_APPDATA
+    !error "$\r$\n$\r$\nCOMMON_APPDATA is not defined!$\r$\n$\r$\n"
+  !endif
+
+  !define INSTALL_LOG_FILE "${COMMON_APPDATA}\log\install_${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.log"
+!endif
+
+Var LogFile
+
+!define prefixERROR "[ERROR     !!!]   "
+!define prefixDEBUG "[    DEBUG    ]   "
+!define prefixINFO  "[         INFO]   "
+
+!define LOG_OPEN `!insertmacro LOG_OPEN`
+!macro LOG_OPEN
+
+  FileOpen $LogFile "$TEMP\install_$(^Name).log" w
+
+!macroend
+
+!define LOG_CLOSE `!insertmacro LOG_CLOSE`
+!macro LOG_CLOSE
+
+  FileClose $LogFile
+
+  CopyFiles "$TEMP\install_$(^Name).log" "${INSTALL_LOG_FILE}"
+
+!macroend
+
+!define LOG_TEXT `!insertmacro LOG_TEXT`
+!macro LOG_TEXT LEVEL TEXT
+
+!if     "${LEVEL}" != "DEBUG"
+  !if   "${LEVEL}" != "ERROR"
+    !if "${LEVEL}" != "INFO"
+      !error "$\r$\n$\r$\nYou call macro LOG_TEXT with wrong LogLevel. Only 'DEBUG', 'ERROR' and 'INFO' are valid!$\r$\n$\r$\n"
+    !endif
+  !endif
+!endif
+
+  FileWrite $LogFile "${prefix${LEVEL}}${TEXT}$\r$\n"
+
+!macroend
+
+!else
+
+!define LOG_OPEN `!insertmacro LOG_OPEN`
+!macro LOG_OPEN
+!macroend
+
+!define LOG_CLOSE `!insertmacro LOG_CLOSE`
+!macro LOG_CLOSE
+!macroend
+
+!define LOG_TEXT `!insertmacro LOG_TEXT`
+!macro LOG_TEXT LEVEL TEXT
+!macroend
+
+!endif
+
+
+
+#**********************************************************************************************************#
+#
+# killing a process
+#
+#**********************************************************************************************************#
+!define KILLPROCESS `!insertmacro KILLPROCESS`
+!macro KILLPROCESS PROCESS
+!if ${KILLMODE} == "1"
+  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM "${PROCESS}""' SW_HIDE
+  Sleep 300
+!else if ${KILLMODE} == "2"
+  ExecWait '"taskkill" /F /IM "${PROCESS}"'
+!else if ${KILLMODE} == "3"
+  nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
+!else
+
+  nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
+
+!endif
+!macroend
+
+
+
+
+
+
+
+
+
+
 
 #Var AR_SecFlags
 #Var AR_RegFlags
@@ -351,98 +447,6 @@ LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL         ${LANG_ENGLISH} "An error occu
 LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is required after a previous action. Reboot you system and try it again."
 
 
-
-#**********************************************************************************************************#
-#
-# logging system
-#
-#**********************************************************************************************************#
-!ifdef INSTALL_LOG
-!ifndef INSTALL_LOG_FILE
-  !ifndef COMMON_APPDATA
-    !error "$\r$\n$\r$\nCOMMON_APPDATA is not defined!$\r$\n$\r$\n"
-  !endif
-
-  !define INSTALL_LOG_FILE "${COMMON_APPDATA}\log\install_${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.log"
-!endif
-
-Var LogFile
-
-!define prefixERROR "[ERROR     !!!]   "
-!define prefixDEBUG "[    DEBUG    ]   "
-!define prefixINFO  "[         INFO]   "
-
-!define LOG_OPEN `!insertmacro LOG_OPEN`
-!macro LOG_OPEN
-
-  FileOpen $LogFile "$TEMP\install_$(^Name).log" w
-
-!macroend
-
-!define LOG_CLOSE `!insertmacro LOG_CLOSE`
-!macro LOG_CLOSE
-
-  FileClose $LogFile
-
-  CopyFiles "$TEMP\install_$(^Name).log" "${INSTALL_LOG_FILE}"
-
-!macroend
-
-!define LOG_TEXT `!insertmacro LOG_TEXT`
-!macro LOG_TEXT LEVEL TEXT
-
-!if     "${LEVEL}" != "DEBUG"
-  !if   "${LEVEL}" != "ERROR"
-    !if "${LEVEL}" != "INFO"
-      !error "$\r$\n$\r$\nYou call macro LOG_TEXT with wrong LogLevel. Only 'DEBUG', 'ERROR' and 'INFO' are valid!$\r$\n$\r$\n"
-    !endif
-  !endif
-!endif
-
-  FileWrite $LogFile "${prefix${LEVEL}}${TEXT}$\r$\n"
-
-!macroend
-
-!else
-
-!define LOG_OPEN `!insertmacro LOG_OPEN`
-!macro LOG_OPEN
-!macroend
-
-!define LOG_CLOSE `!insertmacro LOG_CLOSE`
-!macro LOG_CLOSE
-!macroend
-
-!define LOG_TEXT `!insertmacro LOG_TEXT`
-!macro LOG_TEXT LEVEL TEXT
-!macroend
-
-!endif
-
-
-
-#**********************************************************************************************************#
-#
-# logging system
-#
-#**********************************************************************************************************#
-#!define KILLMODE "1"
-
-!define KILLPROCESS `!insertmacro KILLPROCESS`
-!macro KILLPROCESS PROCESS
-!if ${KILLMODE} == "1"
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM "${PROCESS}""' SW_HIDE
-  Sleep 300
-!else if ${KILLMODE} == "2"
-  ExecWait '"taskkill" /F /IM "${PROCESS}"'
-!else if ${KILLMODE} == "3"
-  nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
-!else
-
-  nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
-
-!endif
-!macroend
 
   /*
 ; Section flag test
