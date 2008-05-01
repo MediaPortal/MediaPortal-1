@@ -487,8 +487,12 @@ SectionEnd
   RMDir /r /REBOOTOK "$MPdir.BurnerSupport"
   RMDir /r /REBOOTOK "$MPdir.Cache"
   RMDir /r /REBOOTOK "$MPdir.CustomInputDefault"
-  RMDir /r /REBOOTOK "$MPdir.Language"
   RMDir /r /REBOOTOK "$MPdir.Weather"
+
+  ; Language
+  Delete /REBOOTOK "$MPdir.Language\*"
+  RMDir /r /REBOOTOK "$MPdir.Language\Spanish Latin"
+  RMDir "$MPdir.Language"
 
   ; Doc
   Delete /REBOOTOK "$MPdir.Base\Docs\BASS License.txt"
@@ -786,6 +790,7 @@ Section Uninstall
     DeleteRegKey HKLM "${REG_UNINSTALL}"
     RMDir /r /REBOOTOK "$MPdir.Config"
     RMDir /r /REBOOTOK "$MPdir.Database"
+    RMDir /r /REBOOTOK "$MPdir.Language"
     RMDir /r /REBOOTOK "$MPdir.Plugins"
     RMDir /r /REBOOTOK "$MPdir.Skin"
     RMDir /r /REBOOTOK "$MPdir.Base"
