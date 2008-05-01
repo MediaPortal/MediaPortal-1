@@ -734,24 +734,10 @@ Section -Post
 
   WriteUninstaller "$MPdir.Base\uninstall-mp.exe"
 
-  ; Associate .mpi files with MPInstaller
-  !define Index "Line${__LINE__}"
-  ; backup the association, if it already exsists
-  ReadRegStr $1 HKCR ".mpi" ""
-  StrCmp $1 "" "${Index}-NoBackup"
-  StrCmp $1 "MediaPortal.Installer" "${Index}-NoBackup"
-  WriteRegStr HKCR ".mpi" "backup_val" $1
-
-  "${Index}-NoBackup:"
-  WriteRegStr HKCR ".mpi" "" "MediaPortal.Installer"
-  WriteRegStr HKCR "MediaPortal.Installer" "" "MediaPortal Installer"
-  WriteRegStr HKCR "MediaPortal.Installer\shell" "" "open"
-  WriteRegStr HKCR "MediaPortal.Installer\DefaultIcon" "" "$MPdir.Base\MPInstaller.exe,0"
-  WriteRegStr HKCR "MediaPortal.Installer\shell\open\command" "" '$MPdir.Base\MPInstaller.exe "%1"'
+  ${registerExtension} "$MPdir.Base\MPInstaller.exe" ".mpi" "MediaPortal extension package"
+  ${registerExtension} "$MPdir.Base\MPInstaller.exe" ".xmp" "MediaPortal extension project"
 
   ${RefreshShellIcons}
-  # [OBSOLETE] System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
-  !undef Index
 SectionEnd
 
 #---------------------------------------------------------------------------
@@ -800,25 +786,10 @@ Section Uninstall
     RMDir /r /REBOOTOK "$APPDATA\VirtualStore\Program Files\Team MediaPortal\MediaPortal"
   ${EndIf}
 
-  ; Remove File Association for .mpi files
-  !define Index "Line${__LINE__}"
-  ReadRegStr $1 HKCR ".mpi" ""
-  StrCmp $1 "MediaPortal.Installer" 0 "${Index}-NoOwn" ; only do this if we own it
-  ReadRegStr $1 HKCR ".mpi" "backup_val"
-  StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
-  DeleteRegKey HKCR ".mpi"
-  Goto "${Index}-NoOwn"
-
-  "${Index}-Restore:"
-  WriteRegStr HKCR ".mpi" "" $1
-  DeleteRegValue HKCR ".mpi" "backup_val"
-
-  DeleteRegKey HKCR "MediaPortal.Installer" ;Delete key with association settings
+  ${unregisterExtension} ".mpi" "MediaPortal extension package"
+  ${unregisterExtension} ".xmp" "MediaPortal extension project"
 
   ${un.RefreshShellIcons}
-
-  "${Index}-NoOwn:"
-  !undef Index
 SectionEnd
 
 #---------------------------------------------------------------------------
