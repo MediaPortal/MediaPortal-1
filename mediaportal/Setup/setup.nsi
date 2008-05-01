@@ -526,7 +526,6 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Plugins\Windows\Dialogs.dll"
   Delete /REBOOTOK "$MPdir.Plugins\Windows\WindowPlugins.dll"
   Delete /REBOOTOK "$MPdir.Plugins\Windows\XihSolutions.DotMSN.dll"
-  Delete /REBOOTOK "$MPdir.Plugins\Windows\TvPlugin.dll"
   RMDir "$MPdir.Plugins\Windows"
 
   RMDir "$MPdir.Plugins"
