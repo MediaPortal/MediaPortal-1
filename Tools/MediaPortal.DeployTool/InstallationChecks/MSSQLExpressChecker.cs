@@ -72,7 +72,14 @@ namespace MediaPortal.DeployTool
       string tmpPath = Path.GetTempPath() + "\\SQLEXPRESS";
       //Extract all files
       Process extract = Process.Start(InstallationProperties.Instance["Sql2005FileName"], "/X:\"" + tmpPath + "\" /Q");
-      extract.WaitForExit();
+      try
+      {
+        extract.WaitForExit();
+      }
+      catch
+      {
+        return false;
+      }
       //Prepare the unattended ini file
       PrepareTemplateINI(tmpPath + "\\template.ini");
       //run the setup

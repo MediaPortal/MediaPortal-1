@@ -91,7 +91,14 @@ namespace MediaPortal.DeployTool
       cmdLine += " /qb-";
       cmdLine += " /L* \"" + Path.GetTempPath() + "\\mysqlinst.log\"";
       Process setup = Process.Start("msiexec.exe", cmdLine);
-      setup.WaitForExit();
+      try
+      {
+        setup.WaitForExit();
+      }
+      catch
+      {
+        return false;
+      }
       StreamReader sr = new StreamReader(Path.GetTempPath() + "\\mysqlinst.log");
       bool installOk = false;
       while (!sr.EndOfStream)

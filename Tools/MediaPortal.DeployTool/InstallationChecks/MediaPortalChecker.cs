@@ -56,37 +56,34 @@ namespace MediaPortal.DeployTool
       try
       {
         setup.WaitForExit();
+        return true;
       }
-      catch { }
-      return true;
+      catch 
+      {
+        return false;
+      }
     }
     public bool UnInstall()
     {
       RegistryKey key;
-      Process setup;
+      string RegistryFullPathName;
 
       // 1.0.x
       key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
       if (key != null)
       {
-        setup = Process.Start((string)key.GetValue("UninstallString"));
+        RegistryFullPathName = key.GetValue("UninstallString").ToString();
         key.Close();
-        setup.WaitForExit();
+        UninstallNSIS(RegistryFullPathName);
       }
 
       // 0.2.3.0
       key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal 0.2.3.0");
       if (key != null)
       {
-        string RegistryFullPathName = key.GetValue("UninstallString").ToString();
-        string FileName = Path.GetFileName(RegistryFullPathName);
-        string Directory = Path.GetDirectoryName(RegistryFullPathName);
-        string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
+        RegistryFullPathName = key.GetValue("UninstallString").ToString();
         key.Close();
-        File.Copy(RegistryFullPathName, TempFullPathName);
-        setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
-        setup.WaitForExit();
-        File.Delete(TempFullPathName);
+        UninstallNSIS(RegistryFullPathName);   
       }
 
       return true;
@@ -131,7 +128,7 @@ namespace MediaPortal.DeployTool
 #endif
 
         keynew.Close();
-        if (MpPath != null | File.Exists(MpPath))
+        if (MpPath != null && File.Exists(MpPath))
         {
           if (version == Utils.GetPackageVersion())
             result.state = CheckState.INSTALLED;
@@ -140,6 +137,18 @@ namespace MediaPortal.DeployTool
         }
       }
       return result;
+    }
+
+    public void UninstallNSIS(string RegistryFullPathName)
+    {
+      Process setup;
+      string FileName = Path.GetFileName(RegistryFullPathName);
+      string Directory = Path.GetDirectoryName(RegistryFullPathName);
+      string TempFullPathName = Environment.GetEnvironmentVariable("TEMP") + "\\" + FileName;
+      File.Copy(RegistryFullPathName, TempFullPathName);
+      setup = Process.Start(TempFullPathName, " /S _?=" + Directory);
+      setup.WaitForExit();
+      File.Delete(TempFullPathName);
     }
   }
 }
