@@ -482,14 +482,14 @@ namespace MediaPortal.GUI.Library
       {
         Point oldPos = Cursor.Position;
         if (form.ClientRectangle.Width - oldPos.X < OutputScreenCenter.X)
-          newX = OutputScreenCenter.X + (int)((oldPos.X - OutputScreenCenter.X) / 4);
+          newX = OutputScreenCenter.X + (int)((oldPos.X - OutputScreenCenter.X) / 2);
         else
-          newX = OutputScreenCenter.X - (int)((OutputScreenCenter.X - oldPos.X) / 4);
+          newX = OutputScreenCenter.X - (int)((OutputScreenCenter.X - oldPos.X) / 2);
 
         if (form.ClientRectangle.Height - oldPos.Y < OutputScreenCenter.Y)
-          newY = OutputScreenCenter.Y + (int)((oldPos.Y - OutputScreenCenter.Y) / 4);
+          newY = OutputScreenCenter.Y + (int)((oldPos.Y - OutputScreenCenter.Y) / 2);
         else
-          newY = OutputScreenCenter.Y - (int)((OutputScreenCenter.Y - oldPos.Y) / 4);
+          newY = OutputScreenCenter.Y - (int)((OutputScreenCenter.Y - oldPos.Y) / 2);
       }
       else
       {

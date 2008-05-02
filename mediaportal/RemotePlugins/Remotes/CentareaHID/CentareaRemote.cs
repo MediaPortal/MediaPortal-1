@@ -173,47 +173,40 @@ namespace MediaPortal.InputDevices
                 {
                   Point p = new Point(msg.LParam.ToInt32());
                   _ignoreDupMsg++;
+                  // One push often triggers two mouse move actions
+                  // since our ResetCursor() triggers a mouse move MSG as well we ignore every third event
+                  if (_ignoreDupMsg % 2 == 0)
+                    MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(false);
                   // we ignore double actions for the configured time
-                  if (Environment.TickCount - _lastMouseTick < 200)
-                  {
-                    // on contineous movements we allow the mouse to travel a little more from the center to build up some scrolling speed
-                    if (_ignoreDupMsg % 4 == 0)
-                      MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(true);
+                  if (Environment.TickCount - _lastMouseTick < 400)
                     return false;
-                  }
-                  else
-                  {
-                    // since our ResetCursor() triggers a mouse move MSG as well we ignore ever second event
-                    if (_ignoreDupMsg % 2 == 0)
-                    {
-                      MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(true);
-                      MouseDirection mmove = OnMouseMoved(p);
-                      _lastMouseTick = Environment.TickCount;
-                      _ignoreDupMsg = 0;
 
-                      switch (mmove)
-                      {
-                        case MouseDirection.Up:
-                          keycode = 38;
-                          break;
-                        case MouseDirection.Right:
-                          keycode = 39;
-                          break;
-                        case MouseDirection.Down:
-                          keycode = 40;
-                          break;
-                        case MouseDirection.Left:
-                          keycode = 37;
-                          break;
-                      }
-                      if (mmove != MouseDirection.None)
-                      {
-                        MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(false);
-                        if (_verboseLogging)
-                          Log.Debug("Centarea: Command \"{0}\" mapped for mouse movement", mmove.ToString());
-                      }
-                    }
+                  MouseDirection mmove = OnMouseMoved(p);
+                  _lastMouseTick = Environment.TickCount;
+                  _ignoreDupMsg = 0;
+
+                  switch (mmove)
+                  {
+                    case MouseDirection.Up:
+                      keycode = 38;
+                      break;
+                    case MouseDirection.Right:
+                      keycode = 39;
+                      break;
+                    case MouseDirection.Down:
+                      keycode = 40;
+                      break;
+                    case MouseDirection.Left:
+                      keycode = 37;
+                      break;
                   }
+                  if (mmove != MouseDirection.None)
+                  {
+                    MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(false);
+                    if (_verboseLogging)
+                      Log.Debug("Centarea: Command \"{0}\" mapped for mouse movement", mmove.ToString());
+                  }
+
                 }
               }
               // The Centarea Remote sends key combos. Therefore we use this trick to get a 1:1 mapping
@@ -279,11 +272,12 @@ namespace MediaPortal.InputDevices
       int xMove = GetPointDeviation(false, p.X);
       int yMove = GetPointDeviation(true, p.Y);
       // using the pythagoras theorem to get the total movement length
-      double TotalWay = Math.Sqrt(((double)(Math.Abs(xMove) * Math.Abs(xMove)) + (double)(Math.Abs(yMove) * Math.Abs(yMove))));
+      double TotalWay = Math.Sqrt(((double)((Math.Abs(xMove) * Math.Abs(xMove))) + (double)((Math.Abs(yMove) * Math.Abs(yMove)))));
       // set a direction only if movement exceeds a minimum limit
-      // usually pushing the joystick knob once results in a two pixel movement.
-      if (TotalWay > 1)
+      // usually pushing the joystick knob once results in a two pixel movement.      
+      if (TotalWay > 0.9)
         direction = GetDirection(xMove, yMove);
+      Log.Debug("Centarea: Mouse movement of {0} pixels heading {1}", TotalWay, direction);
       return direction;
     }
 
