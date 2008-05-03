@@ -34,6 +34,7 @@ using MediaPortal.Services;
 using MediaPortal.Webepg.TV.Database;
 using MediaPortal.Util;
 using MediaPortal.Utils.CommandLine;
+using MediaPortal.Configuration;
 using System.Threading;
 
 namespace MediaPortal.EPG.WebEPGxmltv
@@ -73,22 +74,38 @@ namespace MediaPortal.EPG.WebEPGxmltv
       try
       {
 #endif
+      
         // Set location of directories and config file
-        string webepgDirectory = Environment.CurrentDirectory;
+      bool mediaPortalPresent = false;
+      if (File.Exists(Config.GetFile(Config.Dir.Base, "MediaPortalDirs.xml")))
+        mediaPortalPresent = true;
+
+      string webepgDirectory = Config.GetFolder(Config.Dir.Base);
         if (webepgArgs.IsOption(CommandLineOptions.Option.webepg))
           webepgDirectory = webepgArgs.GetOption(CommandLineOptions.Option.webepg);
+
 
         string xmltvDirectory;
         if (webepgArgs.IsOption(CommandLineOptions.Option.xmltv))
           xmltvDirectory = webepgArgs.GetOption(CommandLineOptions.Option.xmltv);
         else
-          xmltvDirectory = webepgDirectory + "\\xmltv\\";
+        {
+          if (mediaPortalPresent)
+            xmltvDirectory = Config.GetSubFolder(Config.Dir.Config, @"xmltv\");
+          else
+            xmltvDirectory = webepgDirectory + "\\xmltv\\";
+        }
 
         string configFile;
         if (webepgArgs.IsOption(CommandLineOptions.Option.config))
           configFile = webepgArgs.GetOption(CommandLineOptions.Option.config);
         else
-          configFile = webepgDirectory + "\\WebEPG\\WebEPG.xml";
+        {
+          if (mediaPortalPresent)
+            configFile = Config.GetFile(Config.Dir.Config, "WebEPG", "WebEPG.xml");
+          else
+            configFile = webepgDirectory + "\\WebEPG\\WebEPG.xml";
+        }
 
         _log.Info(LogType.WebEPG, "WebEPG: Using directories");
         _log.Info(LogType.WebEPG, " WebEPG - {0}", webepgDirectory);
