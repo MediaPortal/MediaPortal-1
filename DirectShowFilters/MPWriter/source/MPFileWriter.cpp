@@ -101,6 +101,7 @@ void LogDebug(const char *fmt, ...)
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
+			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
 			logbuffer);
 		fclose(fp);
