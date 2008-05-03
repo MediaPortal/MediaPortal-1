@@ -98,6 +98,9 @@ namespace MediaPortal.EPG
         return false;
 
       // Open XMLTV output file
+      if (!Directory.Exists(_xmltvDirectory))
+        Directory.CreateDirectory(_xmltvDirectory);
+
       XMLTVExport xmltv = new XMLTVExport(_xmltvDirectory);
       xmltv.Open();
 
