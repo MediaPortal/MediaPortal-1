@@ -22,6 +22,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -60,6 +61,27 @@ namespace TvLibrary.Log
     /// </summary>
     static TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
 
+    /// <summary>
+    /// Configure if: 1. (false) the log should be kept but no further logging be done or 
+    /// 2. (true) logs will always be rotated and therefore missing the original error reason
+    /// </summary>
+    static bool _rotateOnOversize = false;
+
+    /// <summary>
+    /// The maximum size of each log file in Megabytes
+    /// </summary>
+    static int _maxLogSizeMb = 100;
+
+    /// <summary>
+    /// The maximum count of identic messages to be logged in a row
+    /// </summary>
+    static int _maxRepetitions = 5;
+
+    /// <summary>
+    /// The last log n lines to compare for repeated entries.
+    /// </summary>
+    static List<string> _lastLogLines = new List<string>(_maxRepetitions);
+
     #region Constructors
 
     /// <summary>
@@ -75,6 +97,7 @@ namespace TvLibrary.Log
     static Log()
     {
       //BackupLogFiles(); <-- do not rotate logs when e.g. SetupTv is started.
+      _lastLogLines.Clear();
     }
 
     #endregion
@@ -87,6 +110,7 @@ namespace TvLibrary.Log
     public static void BackupLogFiles()
     {
       RotateLogs();
+      _lastLogLines.Clear();
     }
 
     /// <summary>
@@ -95,11 +119,14 @@ namespace TvLibrary.Log
     /// <param name="ex">The ex.</param>
     public static void Write(Exception ex)
     {
-      WriteToFile(LogType.Error, "Exception   :{0}", ex.ToString());
-      WriteToFile(LogType.Error, "Exception   :{0}", ex.Message);
-      WriteToFile(LogType.Error, "  site      :{0}", ex.TargetSite);
-      WriteToFile(LogType.Error, "  source    :{0}", ex.Source);
-      WriteToFile(LogType.Error, "  stacktrace:{0}", ex.StackTrace);
+      StringBuilder sb = new StringBuilder();
+      sb.AppendFormat("Exception   :{0}\n", ex.ToString());
+      sb.AppendFormat("Exception   :{0}\n", ex.Message);
+      sb.AppendFormat("  site      :{0}\n", ex.TargetSite);
+      sb.AppendFormat("  source    :{0}\n", ex.Source);
+      sb.AppendFormat("  stacktrace:{0}\n", ex.StackTrace);
+
+      WriteToFile(LogType.Error, sb.ToString());
     }
 
     /// <summary>
@@ -132,7 +159,7 @@ namespace TvLibrary.Log
       //		StackFrame stackFrame = stackTrace.GetFrame(1);
       //		MethodBase methodBase = stackFrame.GetMethod();
       //		WriteFile(LogType.Log, "{0}", methodBase.Name);
-      String log = String.Format("{0:X} {1}", Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
+      string log = String.Format("{0:X} {1}", Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
       WriteToFile(LogType.Info, log);
     }
 
@@ -244,37 +271,77 @@ namespace TvLibrary.Log
     {
       try
       {
-        // Get full path for tv.log
-        string name = GetFileName(LogType.Info);
-        string bakFile = name.Replace(".log", ".bak");
-        // Delete outdated log
-        if (File.Exists(bakFile))
-          File.Delete(bakFile);
-        // Rotate current log
-        if (File.Exists(name))
-          File.Move(name, bakFile);
-        // Create a new tv.log with correct timestamps
-        CreateBlankFile(name);
+        List<string> physicalLogFiles = new List<string>(3);
+        // Get all log types
+        foreach (LogType logtype in Enum.GetValues(typeof(LogType)))
+        {
+          // Get full path for log
+          string name = GetFileName(logtype);
+          // Since e.g. debug and info might share the same file make sure we only rotate once
+          if (!physicalLogFiles.Contains(name))
+            physicalLogFiles.Add(name);
+        }
 
-        name = GetFileName(LogType.Error);
-        bakFile = name.Replace(".log", ".bak");
-        if (File.Exists(bakFile))
-          File.Delete(bakFile);
-        if (File.Exists(name))
-          File.Move(name, bakFile);
-        CreateBlankFile(name);
-
-        name = GetFileName(LogType.Epg);
-        bakFile = name.Replace(".log", ".bak");
-        if (File.Exists(bakFile))
-          File.Delete(bakFile);
-        if (File.Exists(name))
-          File.Move(name, bakFile);
-        CreateBlankFile(name);
+        foreach (string logFileName in physicalLogFiles)
+        {
+          // make sure other files will be rotated even if one file fails
+          try
+          {
+            string bakFileName = logFileName.Replace(".log", ".bak");
+            // Delete outdated log
+            if (File.Exists(bakFileName))
+              File.Delete(bakFileName);
+            // Rotate current log
+            if (File.Exists(logFileName))
+              File.Move(logFileName, bakFileName);
+            // Create a new log file with correct timestamps
+            CreateBlankFile(logFileName);
+          }
+          catch (UnauthorizedAccessException) { }
+          catch (ArgumentException) { }
+          catch (IOException) { }
+        }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        Log.Write(ex);
+        // Maybe add EventLog here...
+      }
+    }
+
+    /// <summary>
+    /// Compares the cache's last log entries to check whether we have repeating lines that should not be logged
+    /// </summary>
+    /// <param name="logLine">A new log line</param>
+    /// <returns>True if the cache only contains the exact lines as given by parameter</returns>
+    private static bool IsRepetition(string aLogLine)
+    {
+      bool result = true;
+      // as long as the cache is not full we have no repetitions
+      if (_lastLogLines.Count == _maxRepetitions)
+      {
+        foreach (string singleLine in _lastLogLines)
+        {
+          if (aLogLine.CompareTo(singleLine) != 0)
+          {
+            result = false;
+            break;
+          }
+        }
+      }
+      else
+        result = false;
+
+      return result;
+    }
+
+    private static void CacheLogLine(string aLogLine)
+    {
+      if (!string.IsNullOrEmpty(aLogLine))
+      {
+        if (_lastLogLines.Count == _maxRepetitions)
+          _lastLogLines.RemoveAt(0);
+
+        _lastLogLines.Add(aLogLine);
       }
     }
 
@@ -291,6 +358,12 @@ namespace TvLibrary.Log
         try
         {
           string logFileName = GetFileName(logType);
+          string logLine = string.Format(format, arg);
+
+          if (IsRepetition(logLine))
+            return;
+          CacheLogLine(logLine);
+
           try
           {
             // If the user or some other event deleted the dir make sure to recreate it.
@@ -306,6 +379,15 @@ namespace TvLibrary.Log
                 // The information is retrieved from a cache and might be outdated.
                 logFi.Refresh();
                 fileDate = logFi.CreationTime;
+
+                // Some log source went out of control here - do not log until out of disk space!
+                if (logFi.Length > _maxLogSizeMb * 1000 * 1000)
+                {
+                  if (_rotateOnOversize)
+                    BackupLogFiles();
+                  else
+                    return;
+                }
               }
               catch (Exception) { }
               // File is older than today - _logDaysToKeep = rotate
@@ -319,11 +401,10 @@ namespace TvLibrary.Log
           {
             string thread = Thread.CurrentThread.Name;
             if (string.IsNullOrEmpty(thread))
-            {
               thread = Thread.CurrentThread.ManagedThreadId.ToString();
-            }
-            writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-            writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, string.Format(format, arg));
+
+            writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
+            writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, logLine);
             writer.Close();
           }
         }
