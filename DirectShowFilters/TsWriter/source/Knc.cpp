@@ -58,12 +58,10 @@ CKnc::CKnc(LPUNKNOWN pUnk, HRESULT *phr)
 //**************************************************************************************************
 CKnc::~CKnc(void)
 {
-  if (m_bIsKNC)
-  {
-    KNCBDA_CI_Disable(0);
-  }
   if (m_hMod!=NULL)
   {
+	// Always call CI_Disable to free the library. No matter if the card is a knc one or not
+    KNCBDA_CI_Disable(0);
     FreeLibrary(m_hMod);
     m_hMod=NULL;
   }
