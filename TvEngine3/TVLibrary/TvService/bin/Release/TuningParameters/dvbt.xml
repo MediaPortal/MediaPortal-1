@@ -2868,30 +2868,159 @@
     <carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Alvsbyn" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
     <carrier frequency="618000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
     <carrier frequency="682000" bandwidth="8"></carrier>
     <carrier frequency="562000" bandwidth="8"></carrier>
     <carrier frequency="610000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Alvsbyn - Boden-Skogsa" offset="125">
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Bredaker" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Gunnarsbyn" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Harads" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Korstrask" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Lillpite Bastaberget" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Niemisel" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Savast" offset="125">
+    <carrier frequency="642000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Vidsel" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Vitberget" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Alvsbyn - Vuollerim" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Ange Snoberg" offset="125">
-    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="762000" bandwidth="8"></carrier>
     <carrier frequency="530000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Arvidsjaur Jultrask" offset="125">
+  <country name="Sweden - Ange Snoberg - Erikslund-Bergasen" offset="125">
     <carrier frequency="578000" bandwidth="8"></carrier>
-    <carrier frequency="642000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ange Snoberg - Fransta" offset="125">
+    <carrier frequency="690000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ange Snoberg - Ljungaverk" offset="125">
+    <carrier frequency="802000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ange Snoberg - Munkbysjon-Munkbyn" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ange Snoberg - Nordanede" offset="125">
+    <carrier frequency="666000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ange Snoberg - Overturingen" offset="125">
+    <carrier frequency="514000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ange Snoberg - Ramsjo" offset="125">
+    <carrier frequency="810000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ange Snoberg - Torpshammar" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ange Snoberg - Vemdalsskalet" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Arvidsjaur Jultrask" offset="125">
+    <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="498000" bandwidth="8"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
-    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="578000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Arvidsjaur Jultrask - Adolfstrom" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Arvidsjaur Jultrask - Arjeplog Galtispouda" offset="125">
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Arvidsjaur Jultrask - Jakkvik Frakenmyren" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Arvidsjaur Jultrask - Jarvtrask" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Arvidsjaur Jultrask - Laisvall" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Arvidsjaur Jultrask - Moskosel" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Arvidsjaur Jultrask - Sadvaluspen" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Arvidsjaur Jultrask - Suddesjaur" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Backefors" offset="125">
-    <carrier frequency="586000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="514000" bandwidth="8"></carrier>
     <carrier frequency="482000" bandwidth="8"></carrier>
+    <carrier frequency="586000" bandwidth="8"></carrier>
     <carrier frequency="506000" bandwidth="8"></carrier>
-    <carrier frequency="826000" bandwidth="8"></carrier>
+    <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Bengtsfors" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Dals Langed" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Edsleskog-Hogheden" offset="125">
+    <carrier frequency="722000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Fengersfors" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Folsbyn" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Grebbestad" offset="125">
+    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="482000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Halle" offset="125">
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Krokstrand" offset="125">
+    <carrier frequency="818000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Stomne-Skasas" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Svinesund" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Backefors - Uddevalla-Kapelle" offset="125">
+    <carrier frequency="714000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Bollnas" offset="125">
     <carrier frequency="538000" bandwidth="8"></carrier>
@@ -2929,12 +3058,11 @@
   <country name="Sweden - Bollnas - Rengsjo" offset="125">
     <carrier frequency="634000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Bollnas - Skattungbyn" offset="125">
-    <carrier frequency="746000" bandwidth="8"></carrier>
-  </country>
   <country name="Sweden - Bollnas - Soderhamn" offset="125">
     <carrier frequency="714000" bandwidth="8"></carrier>
     <carrier frequency="810000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="842000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Bollnas - Vaxbo" offset="125">
     <carrier frequency="682000" bandwidth="8"></carrier>
@@ -2946,12 +3074,14 @@
     <carrier frequency="658000" bandwidth="8"></carrier>
     <carrier frequency="738000" bandwidth="8"></carrier>
     <carrier frequency="538000" bandwidth="8"></carrier>
-    <carrier frequency="594000" bandwidth="8"></carrier>
-    <carrier frequency="794000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Boras Dalsjofors - Boras-Sjobo" offset="125">
-    <carrier frequency="770000" bandwidth="8"></carrier>
-    <carrier frequency="810000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="842000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="826000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Boras Dalsjofors - Fritsla" offset="125">
     <carrier frequency="554000" bandwidth="8"></carrier>
@@ -2971,6 +3101,8 @@
   <country name="Sweden - Boras Dalsjofors - Ulricehamn" offset="125">
     <carrier frequency="618000" bandwidth="8"></carrier>
     <carrier frequency="842000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="826000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Borlange Idkerberget" offset="125">
     <carrier frequency="682000" bandwidth="8"></carrier>
@@ -2982,12 +3114,16 @@
     <carrier frequency="666000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Borlange Idkerberget - Avesta Krylbo" offset="125">
-    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
     <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="826000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Borlange Idkerberget - Borlange-Nygardarna" offset="125">
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="578000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Borlange Idkerberget - Dalstuga" offset="125">
     <carrier frequency="594000" bandwidth="8"></carrier>
@@ -3004,6 +3140,8 @@
   <country name="Sweden - Borlange Idkerberget - Enviken" offset="125">
     <carrier frequency="474000" bandwidth="8"></carrier>
     <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Borlange Idkerberget - Falun-Lovberget" offset="125">
     <carrier frequency="682000" bandwidth="8"></carrier>
@@ -3032,10 +3170,14 @@
   <country name="Sweden - Borlange Idkerberget - Leksand-Asledsberget" offset="125">
     <carrier frequency="754000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="810000" bandwidth="8"></carrier>
+    <carrier frequency="834000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Borlange Idkerberget - Ludvika Bjorkasen" offset="125">
     <carrier frequency="498000" bandwidth="8"></carrier>
     <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Borlange Idkerberget - Sagmyra" offset="125">
     <carrier frequency="514000" bandwidth="8"></carrier>
@@ -3076,28 +3218,44 @@
   <country name="Sweden - Emmaboda Balshult - Bromsebro" offset="125">
     <carrier frequency="554000" bandwidth="8"></carrier>
     <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="474000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Emmaboda Balshult - Hogsby Virstad" offset="125">
     <carrier frequency="594000" bandwidth="8"></carrier>
     <carrier frequency="642000" bandwidth="8"></carrier>
+    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="786000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Emmaboda Balshult - Oskarshamn" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
     <carrier frequency="610000" bandwidth="8"></carrier>
-    <carrier frequency="762000" bandwidth="8"></carrier>
     <carrier frequency="786000" bandwidth="8"></carrier>
-    <carrier frequency="802000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Filipstad Klockarhojden" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="490000" bandwidth="8"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
-    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="642000" bandwidth="8"></carrier>
-    <carrier frequency="626000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Filipstad Klockarhojden - Kristinehamn Utsiktsberget" offset="125">
-    <carrier frequency="546000" bandwidth="8"></carrier>
-    <carrier frequency="522000" bandwidth="8"></carrier>
+  <country name="Sweden - Filipstad Klockarhojden - Lekvattnet" offset="125">
     <carrier frequency="642000" bandwidth="8"></carrier>
-    <carrier frequency="626000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Filipstad Klockarhojden - Lesjofors" offset="125">
+    <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Filipstad Klockarhojden - Loffstrand" offset="125">
+    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="578000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="802000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Filipstad Klockarhojden - Sunnemo" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Finnveden" offset="125">
     <carrier frequency="514000" bandwidth="8"></carrier>
@@ -3115,16 +3273,52 @@
     <carrier frequency="610000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Gallivare" offset="125">
-    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
     <carrier frequency="514000" bandwidth="8"></carrier>
     <carrier frequency="626000" bandwidth="8"></carrier>
     <carrier frequency="530000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Gallivare - Jokkmokk Tjalmejaure" offset="125">
-    <carrier frequency="586000" bandwidth="8"></carrier>
-    <carrier frequency="690000" bandwidth="8"></carrier>
-    <carrier frequency="722000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="634000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="738000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Jokkmokk-Nyborg" offset="125">
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="802000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Kvikkjokk-Arrevare" offset="125">
+    <carrier frequency="722000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Kvikkjokk-Tavvevare" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Porjus" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="810000" bandwidth="8"></carrier>
+    <carrier frequency="826000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Randijaure" offset="125">
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Ritsem" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Seitevaare" offset="125">
+    <carrier frequency="514000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Skaulo Pyhakielinen" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Skroven" offset="125">
+    <carrier frequency="498000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Gallivare - Vietas" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Gavle Skogmur" offset="125">
     <carrier frequency="522000" bandwidth="8"></carrier>
@@ -3151,32 +3345,79 @@
     <carrier frequency="642000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Goteborg-Brudaremossen" offset="125">
-    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
-    <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
     <carrier frequency="778000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Alafors" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Alingsas-Mariedal" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Alvangen" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Goteborg-Brudaremossen - Bollebygd" offset="125">
-    <carrier frequency="578000" bandwidth="8"></carrier>
-    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Floda" offset="125">
+    <carrier frequency="722000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Goteborg-Brudaremossen - Goteborg-Slattadamm" offset="125">
-    <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="546000" bandwidth="8"></carrier>
     <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
     <carrier frequency="778000" bandwidth="8"></carrier>
-    <carrier frequency="594000" bandwidth="8"></carrier>
-    <carrier frequency="818000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Hallesaker-Skaregarde" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Halleviksstrand" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Kallered" offset="125">
+    <carrier frequency="786000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Kungalv" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Kungsbacka-Ojersbo" offset="125">
+    <carrier frequency="706000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Kyrkesund" offset="125">
+    <carrier frequency="786000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Goteborg-Brudaremossen - Molndal-Vasterberget" offset="125">
-    <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="546000" bandwidth="8"></carrier>
     <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
     <carrier frequency="778000" bandwidth="8"></carrier>
-    <carrier frequency="594000" bandwidth="8"></carrier>
-    <carrier frequency="818000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Goteborg-Brudaremossen - Ronnang" offset="125">
+    <carrier frequency="474000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Goteborg-Brudaremossen - Satila" offset="125">
-    <carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="562000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Halmstad Oskarstrom" offset="125">
     <carrier frequency="474000" bandwidth="8"></carrier>
@@ -3198,31 +3439,61 @@
     <carrier frequency="762000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Helsingborg Olympia" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="634000" bandwidth="8"></carrier>
     <carrier frequency="506000" bandwidth="8"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
-    <carrier frequency="570000" bandwidth="8"></carrier>
-    <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="650000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Horby-Sallerup" offset="125">
-    <carrier frequency="482000" bandwidth="8"></carrier>
-    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
     <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="818000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
     <carrier frequency="794000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Horby-Sallerup - Angelholm Vegeholm" offset="125">
-    <carrier frequency="482000" bandwidth="8"></carrier>
-    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
     <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="818000" bandwidth="8"></carrier>
-    <carrier frequency="794000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Horby-Sallerup - Glimakra" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Horby-Sallerup - Grevie" offset="125">
+    <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Horby-Sallerup - Kagerod-Mollarp" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Horby-Sallerup - Loderups Strandbad" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Horby-Sallerup - Norra Rorum" offset="125">
+    <carrier frequency="602000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Horby-Sallerup - Orkelljunga" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="634000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Horby-Sallerup - Stora Herrestad" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Horby-Sallerup - Tormestorp" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Horby-Sallerup - Tyringe" offset="125">
+    <carrier frequency="674000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Horby-Sallerup - Ystad-Metallgatan" offset="125">
-    <carrier frequency="482000" bandwidth="8"></carrier>
-    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
     <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="818000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
     <carrier frequency="794000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Hudiksvall Forsa" offset="125">
@@ -3249,6 +3520,8 @@
   <country name="Sweden - Hudiksvall Forsa - Hudiksvall-Galgberget" offset="125">
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="642000" bandwidth="8"></carrier>
+    <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="514000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Jonkoping Bondberget" offset="125">
     <carrier frequency="554000" bandwidth="8"></carrier>
@@ -3257,8 +3530,10 @@
     <carrier frequency="570000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Jonkoping Bondberget - Bankeryd" offset="125">
-    <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="546000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="770000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Jonkoping Bondberget - Huskvarna" offset="125">
     <carrier frequency="626000" bandwidth="8"></carrier>
@@ -3267,8 +3542,10 @@
     <carrier frequency="474000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Jonkoping Bondberget - Mullsjo-Torestorp" offset="125">
-    <carrier frequency="834000" bandwidth="8"></carrier>
-    <carrier frequency="850000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="586000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Jonkoping Bondberget - Norrahammar" offset="125">
     <carrier frequency="738000" bandwidth="8"></carrier>
@@ -3280,43 +3557,102 @@
     <carrier frequency="650000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Kalix" offset="125">
-    <carrier frequency="706000" bandwidth="8"></carrier>
-    <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="586000" bandwidth="8"></carrier>
+    <carrier frequency="538000" bandwidth="8"></carrier>
     <carrier frequency="786000" bandwidth="8"></carrier>
     <carrier frequency="746000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Kalix - Hedenaset" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kalix - Svanstein" offset="125">
+    <carrier frequency="714000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Karlshamn" offset="125">
-    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="498000" bandwidth="8"></carrier>
     <carrier frequency="642000" bandwidth="8"></carrier>
-    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Karlshamn - Degeberga" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Karlshamn - Olofstrom" offset="125">
+    <carrier frequency="690000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Karlshamn - Villands Vanga" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Karlskrona Vamo" offset="125">
-    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="498000" bandwidth="8"></carrier>
     <carrier frequency="642000" bandwidth="8"></carrier>
-    <carrier frequency="522000" bandwidth="8"></carrier>
-  </country>
-  <country name="Sweden - Karlskrona-Jamjo" offset="125">
     <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Karlskrona Vamo - Kallinge-Kalleberga" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="498000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Karlskrona Vamo - Karlskrona-Jamjo" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="498000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Karlstad Sormon" offset="125">
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
-    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="642000" bandwidth="8"></carrier>
-    <carrier frequency="626000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Karlstad Sormon - Alvsbacka" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Karlstad Sormon - Arvika-Orshultaberget" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Karlstad Sormon - Edane" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Karlstad Sormon - Grums" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Karlstad Sormon - Svaneholm" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Kiruna Kirunavaara" offset="125">
     <carrier frequency="618000" bandwidth="8"></carrier>
     <carrier frequency="586000" bandwidth="8"></carrier>
     <carrier frequency="562000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kiruna Kirunavaara - Arosjokk" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kiruna Kirunavaara - Bjorkliden-Tornehamn" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kiruna Kirunavaara - Idivuoma" offset="125">
+    <carrier frequency="666000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kiruna Kirunavaara - Karesuando" offset="125">
+    <carrier frequency="482000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kiruna Kirunavaara - Kurravaara" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kiruna Kirunavaara - Puoltsa" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kiruna Kirunavaara - Stordalen" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kiruna Kirunavaara - Tornetrask" offset="125">
+    <carrier frequency="738000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Kiruna Kirunavaara - Vassijaure" offset="125">
     <carrier frequency="698000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Kisa" offset="125">
@@ -3337,28 +3673,66 @@
     <carrier frequency="722000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Lycksele Knaften" offset="125">
-    <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
     <carrier frequency="730000" bandwidth="8"></carrier>
     <carrier frequency="482000" bandwidth="8"></carrier>
     <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Asele Aslia" offset="125">
+    <carrier frequency="802000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Bjorksele" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Borgsjobyn" offset="125">
+    <carrier frequency="810000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Faltrask" offset="125">
+    <carrier frequency="602000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Fredrika" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Lycksele Knaften - Gunnarn-Sorsjoliden" offset="125">
     <carrier frequency="586000" bandwidth="8"></carrier>
     <carrier frequency="514000" bandwidth="8"></carrier>
     <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Hallastrom" offset="125">
+    <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Kristineberg" offset="125">
     <carrier frequency="610000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Lycksele Knaften - Lillogda" offset="125">
+    <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Overrissjo" offset="125">
+    <carrier frequency="642000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Rusksele" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Umgransele-Granselelund" offset="125">
+    <carrier frequency="714000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Lycksele Knaften - Vindelgransele" offset="125">
+    <carrier frequency="618000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Malmo Jagersro" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="634000" bandwidth="8"></carrier>
     <carrier frequency="506000" bandwidth="8"></carrier>
     <carrier frequency="522000" bandwidth="8"></carrier>
-    <carrier frequency="570000" bandwidth="8"></carrier>
-    <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="650000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Malmo Jagersro 2" offset="125">
-    <carrier frequency="177500" bandwidth="8"></carrier>
+  <country name="Sweden - Malmo Jagersro - Trelleborg-Gylle" offset="125">
     <carrier frequency="570000" bandwidth="8"></carrier>
     <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="634000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Mora Eldris" offset="125">
     <carrier frequency="482000" bandwidth="8"></carrier>
@@ -3378,6 +3752,9 @@
   <country name="Sweden - Mora Eldris - Dalfors" offset="125">
     <carrier frequency="602000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Mora Eldris - Drevdagen" offset="125">
+    <carrier frequency="682000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Mora Eldris - Furudal" offset="125">
     <carrier frequency="762000" bandwidth="8"></carrier>
   </country>
@@ -3390,6 +3767,8 @@
   <country name="Sweden - Mora Eldris - Malung" offset="125">
     <carrier frequency="562000" bandwidth="8"></carrier>
     <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="770000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Mora Eldris - Oxberg" offset="125">
     <carrier frequency="738000" bandwidth="8"></carrier>
@@ -3409,6 +3788,9 @@
   <country name="Sweden - Mora Eldris - Sarna Mickeltemplet" offset="125">
     <carrier frequency="538000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Mora Eldris - Skattungbyn" offset="125">
+    <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Mora Eldris - Sorsjon" offset="125">
     <carrier frequency="546000" bandwidth="8"></carrier>
   </country>
@@ -3419,8 +3801,10 @@
     <carrier frequency="754000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Mora Eldris - Transtrand Bolheden" offset="125">
-    <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="722000" bandwidth="8"></carrier>
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Motala Ervasteby" offset="125">
     <carrier frequency="522000" bandwidth="8"></carrier>
@@ -3444,6 +3828,9 @@
   <country name="Sweden - Nassjo - Ingatorp" offset="125">
     <carrier frequency="674000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Nassjo - Jarnforsen" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Nassjo - Mariannelund" offset="125">
     <carrier frequency="834000" bandwidth="8"></carrier>
   </country>
@@ -3455,7 +3842,9 @@
   </country>
   <country name="Sweden - Nassjo - Tranas-Bredkarr" offset="125">
     <carrier frequency="546000" bandwidth="8"></carrier>
-    <carrier frequency="634000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="770000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Nassjo - Vetlanda-Nye" offset="125">
     <carrier frequency="602000" bandwidth="8"></carrier>
@@ -3468,8 +3857,10 @@
     <carrier frequency="802000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Norrkoping-Krokek - Atvidaberg" offset="125">
-    <carrier frequency="490000" bandwidth="8"></carrier>
-    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="786000" bandwidth="8"></carrier>
+    <carrier frequency="530000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Norrkoping-Krokek - Gusum" offset="125">
     <carrier frequency="482000" bandwidth="8"></carrier>
@@ -3483,6 +3874,8 @@
   <country name="Sweden - Norrkoping-Krokek - Soderkoping" offset="125">
     <carrier frequency="506000" bandwidth="8"></carrier>
     <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="586000" bandwidth="8"></carrier>
+    <carrier frequency="490000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Norrkoping-Krokek - Tystberga" offset="125">
     <carrier frequency="842000" bandwidth="8"></carrier>
@@ -3490,6 +3883,8 @@
   <country name="Sweden - Norrkoping-Krokek - Valdemarsvik" offset="125">
     <carrier frequency="834000" bandwidth="8"></carrier>
     <carrier frequency="794000" bandwidth="8"></carrier>
+    <carrier frequency="842000" bandwidth="8"></carrier>
+    <carrier frequency="858000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Orebro Lockhyttan" offset="125">
     <carrier frequency="586000" bandwidth="8"></carrier>
@@ -3511,8 +3906,10 @@
     <carrier frequency="754000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Orebro Lockhyttan - Kopparberg" offset="125">
-    <carrier frequency="514000" bandwidth="8"></carrier>
-    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="586000" bandwidth="8"></carrier>
+    <carrier frequency="538000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Ornskoldsvik As" offset="125">
     <carrier frequency="490000" bandwidth="8"></carrier>
@@ -3520,18 +3917,216 @@
     <carrier frequency="578000" bandwidth="8"></carrier>
     <carrier frequency="506000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Ornskoldsvik As - Algsjo" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Billsjo" offset="125">
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Bjorna" offset="125">
+    <carrier frequency="602000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Bredbyn Vasterfannbyn" offset="125">
+    <carrier frequency="706000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Bredbyn-Kubbe" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Flarke" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Flyggsjo" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Hadanberg" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Husum" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Ornskoldsvik As - Kopmanholmen" offset="125">
     <carrier frequency="490000" bandwidth="8"></carrier>
     <carrier frequency="474000" bandwidth="8"></carrier>
     <carrier frequency="578000" bandwidth="8"></carrier>
     <carrier frequency="506000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Ostersund Brattasen" offset="125">
+  <country name="Sweden - Ornskoldsvik As - Mjallom" offset="125">
+    <carrier frequency="666000" bandwidth="8"></carrier>
     <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="802000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Moliden" offset="125">
+    <carrier frequency="738000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Nyliden" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Sidensjo Aberget" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Skalmsjo" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Sorflarke" offset="125">
+    <carrier frequency="722000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Trehorningsjo" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Ullanger Skidsta" offset="125">
+    <carrier frequency="770000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ornskoldsvik As - Ulvohamn" offset="125">
     <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
     <carrier frequency="730000" bandwidth="8"></carrier>
     <carrier frequency="738000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Akersjon" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - An" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Are" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - As" offset="125">
+    <carrier frequency="618000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Bispfors" offset="125">
+    <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="538000" bandwidth="8"></carrier>
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Boberg" offset="125">
+    <carrier frequency="650000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Bydalen-Hovdehogen" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Duved" offset="125">
+    <carrier frequency="626000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Enafors" offset="125">
+    <carrier frequency="602000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Fjal" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Fjallsta" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Frankrikegarden-Frankrike" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Fullsjon" offset="125">
+    <carrier frequency="794000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Gillhov" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Hallan" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Hoglunda" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Hotagen" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Jarpen Mellangardsberget" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Kallror" offset="125">
+    <carrier frequency="698000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Kaxas" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Kottsjon" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Laxsjo" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Laxviken" offset="125">
+    <carrier frequency="714000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Lit" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Mardsjo" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Medstugan" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Mjosjo" offset="125">
+    <carrier frequency="650000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Nalden" offset="125">
+    <carrier frequency="810000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Nasteln" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Naverede Oberget" offset="125">
+    <carrier frequency="714000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Nyhem" offset="125">
+    <carrier frequency="482000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Olden-Telestation" offset="125">
+    <carrier frequency="482000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Overammer" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Pilgrimstad" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Ragunda" offset="125">
+    <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="538000" bandwidth="8"></carrier>
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Rissna" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Skalan" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Skarvangen" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Storlien" offset="125">
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Stugun" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Svenstavik" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Undersaker" offset="125">
+    <carrier frequency="650000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Valadalen" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Ostersund Brattasen - Valsjobyn" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Osthammar Valo" offset="125">
     <carrier frequency="626000" bandwidth="8"></carrier>
@@ -3541,26 +4136,73 @@
     <carrier frequency="690000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Osthammar Valo - Vaddo Elmsta" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
+    <carrier frequency="810000" bandwidth="8"></carrier>
+    <carrier frequency="850000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Osthammar Valo - Vato" offset="125">
     <carrier frequency="514000" bandwidth="8"></carrier>
-    <carrier frequency="834000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Overkalix" offset="125">
-    <carrier frequency="706000" bandwidth="8"></carrier>
-    <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
     <carrier frequency="786000" bandwidth="8"></carrier>
     <carrier frequency="746000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Overkalix - Overtornea Sarkivaara" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+    <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="498000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Overkalix - Soukolojarvi" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Pajala" offset="125">
-    <carrier frequency="602000" bandwidth="8"></carrier>
+    <carrier frequency="578000" bandwidth="8"></carrier>
     <carrier frequency="490000" bandwidth="8"></carrier>
     <carrier frequency="554000" bandwidth="8"></carrier>
-    <carrier frequency="738000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Pajala - Aareavaara" offset="125">
+    <carrier frequency="514000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Pajala - Muodoslompolo" offset="125">
+    <carrier frequency="626000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Pajala - Olkamangi" offset="125">
+    <carrier frequency="642000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Pajala - Saivomuotka" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Pajala - Suijavaara" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Skelleftea" offset="125">
     <carrier frequency="490000" bandwidth="8"></carrier>
     <carrier frequency="514000" bandwidth="8"></carrier>
-    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
     <carrier frequency="650000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Skelleftea - Andersvattnet-Ersmyrberget" offset="125">
+    <carrier frequency="618000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Skelleftea - Bjurtrask" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Skelleftea - Bygdetrask" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Skelleftea - Ljusvattnet" offset="125">
+    <carrier frequency="618000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Skelleftea - Lovanger" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Skelleftea - Renstrom" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Skovde" offset="125">
     <carrier frequency="602000" bandwidth="8"></carrier>
@@ -3579,10 +4221,73 @@
     <carrier frequency="530000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Solleftea Multra" offset="125">
-    <carrier frequency="658000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
     <carrier frequency="498000" bandwidth="8"></carrier>
     <carrier frequency="554000" bandwidth="8"></carrier>
     <carrier frequency="514000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Asmon-Sormoflo" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Berghamn" offset="125">
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Bonhamn" offset="125">
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Dal" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Edsele" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Flyn" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Forsed" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Forsmo" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Forsmo-Yttersel" offset="125">
+    <carrier frequency="482000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Forsnaset" offset="125">
+    <carrier frequency="810000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Gallsatter" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Graninge" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Guliksberg" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Guliksberg-Rodvattnet" offset="125">
+    <carrier frequency="794000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Halaforsen" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Helgum" offset="125">
+    <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Hemson" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Hornon" offset="125">
+    <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Jude" offset="125">
+    <carrier frequency="738000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Kalarne" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Kasta Ringkallen" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Solleftea Multra - Kramfors-Lugnvik" offset="125">
     <carrier frequency="778000" bandwidth="8"></carrier>
@@ -3590,19 +4295,64 @@
     <carrier frequency="554000" bandwidth="8"></carrier>
     <carrier frequency="514000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Solleftea Multra - Kramfors-Ostby" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Krangede" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Langsele" offset="125">
+    <carrier frequency="738000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Nasaker" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Nasanget" offset="125">
+    <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Osterforse" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Ostergraninge" offset="125">
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Ramsele Skavasen" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+    <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Resele" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Seltjarn" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Skorped" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Solleftea Multra - Solleftea-Hallsta" offset="125">
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="626000" bandwidth="8"></carrier>
     <carrier frequency="714000" bandwidth="8"></carrier>
     <carrier frequency="762000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Solleftea Multra - Utansjo" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Utanskog" offset="125">
+    <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Solleftea Multra - Valanger" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Stockholm Nacka" offset="125">
     <carrier frequency="490000" bandwidth="8"></carrier>
     <carrier frequency="642000" bandwidth="8"></carrier>
     <carrier frequency="754000" bandwidth="8"></carrier>
     <carrier frequency="706000" bandwidth="8"></carrier>
-    <carrier frequency="730000" bandwidth="8"></carrier>
     <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Stockholm Nacka - Bergshamra-Vaxtuna" offset="125">
     <carrier frequency="522000" bandwidth="8"></carrier>
@@ -3621,10 +4371,13 @@
     <carrier frequency="754000" bandwidth="8"></carrier>
     <carrier frequency="706000" bandwidth="8"></carrier>
     <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="578000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Stockholm Nacka - Nynashamn-Vattentornet" offset="125">
     <carrier frequency="610000" bandwidth="8"></carrier>
-    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="482000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="578000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Stockholm Nacka - Osmo-Bjorsta" offset="125">
     <carrier frequency="474000" bandwidth="8"></carrier>
@@ -3636,6 +4389,7 @@
     <carrier frequency="546000" bandwidth="8"></carrier>
     <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="842000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Stockholm Nacka - Stockholm-Marieberg" offset="125">
     <carrier frequency="490000" bandwidth="8"></carrier>
@@ -3643,101 +4397,501 @@
     <carrier frequency="754000" bandwidth="8"></carrier>
     <carrier frequency="706000" bandwidth="8"></carrier>
     <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Stockholm Nacka - Svardsosund-Svardso" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Stockholm Nacka - Tullinge-Hamra" offset="125">
     <carrier frequency="586000" bandwidth="8"></carrier>
     <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="634000" bandwidth="8"></carrier>
+    <carrier frequency="514000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Storuman" offset="125">
-    <carrier frequency="674000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
     <carrier frequency="594000" bandwidth="8"></carrier>
-    <carrier frequency="786000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Ammarnas Ribovardo" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Ammarnas-Tjultrask" offset="125">
+    <carrier frequency="714000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Borgafjall" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Borkan" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Dorotea" offset="125">
+    <carrier frequency="794000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Gardikfors" offset="125">
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Gargnas" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Hemavan" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="490000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Joestrom" offset="125">
+    <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Kultsjon" offset="125">
+    <carrier frequency="738000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Mala" offset="125">
+    <carrier frequency="682000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Matsdal" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Norsjovallen" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Risback" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Slussfors" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Sorsele Nalovardo" offset="125">
+    <carrier frequency="738000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Sorsele-Vattentornet" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Stalon" offset="125">
+    <carrier frequency="482000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Tarnaby Ryfjallet" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+    <carrier frequency="562000" bandwidth="8"></carrier>
+    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="722000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Tarnamo" offset="125">
+    <carrier frequency="682000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Umfors" offset="125">
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Storuman - Vilhelmina" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Sundsvall S Stadsberget" offset="125">
     <carrier frequency="682000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
     <carrier frequency="650000" bandwidth="8"></carrier>
-    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Albacken" offset="125">
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Bredsjon" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Hallsjo" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Sundsvall S Stadsberget - Harnosand Harnon" offset="125">
-    <carrier frequency="682000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
-    <carrier frequency="546000" bandwidth="8"></carrier>
-    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Jarkvissle" offset="125">
+    <carrier frequency="498000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Kalen" offset="125">
+    <carrier frequency="810000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Klingsta" offset="125">
+    <carrier frequency="666000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Knavland" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Kovland" offset="125">
+    <carrier frequency="738000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Kvarnsvedjan" offset="125">
+    <carrier frequency="498000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Lagfors" offset="125">
+    <carrier frequency="602000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Laggarberg" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Liden" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Liden-Osterstrom" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Ljustorp" offset="125">
+    <carrier frequency="802000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Sundsvall S Stadsberget - Matfors" offset="125">
     <carrier frequency="682000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
     <carrier frequency="650000" bandwidth="8"></carrier>
   </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Norrhassel" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Selanger" offset="125">
+    <carrier frequency="594000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Skottsund" offset="125">
+    <carrier frequency="498000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Soraker" offset="125">
+    <carrier frequency="722000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Sorbygden" offset="125">
+    <carrier frequency="650000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Stigsjo" offset="125">
+    <carrier frequency="786000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Stode Intaget" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Stode-Hullsjon" offset="125">
+    <carrier frequency="482000" bandwidth="8"></carrier>
+  </country>
   <country name="Sweden - Sundsvall S Stadsberget - Sundsbruk" offset="125">
     <carrier frequency="682000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
     <carrier frequency="650000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Vastansjo" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sundsvall S Stadsberget - Viksjo" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Sunne Blabarskullen" offset="125">
     <carrier frequency="594000" bandwidth="8"></carrier>
     <carrier frequency="618000" bandwidth="8"></carrier>
-    <carrier frequency="786000" bandwidth="8"></carrier>
-    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Amotfors Kroppstad" offset="125">
+    <carrier frequency="834000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Arjang" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+    <carrier frequency="738000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Bjurberget-Hemtjarn" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Bograngen" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Bortansbyn-Bortan" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Bosebyn" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Eksharad Ekesberget" offset="125">
+    <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Fredros" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Grasmark" offset="125">
+    <carrier frequency="474000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Gumhojden" offset="125">
+    <carrier frequency="674000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Gunnarskog" offset="125">
+    <carrier frequency="826000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Sunne Blabarskullen - Hagfors Varmullsasen" offset="125">
-    <carrier frequency="482000" bandwidth="8"></carrier>
-    <carrier frequency="602000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="578000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
     <carrier frequency="802000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Sunne Blabarskullen - Loffstrand" offset="125">
+  <country name="Sweden - Sunne Blabarskullen - Haljeboda" offset="125">
     <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Holjes" offset="125">
+    <carrier frequency="722000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Hovfjallet" offset="125">
+    <carrier frequency="850000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Ivarsbyn" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Karlanda" offset="125">
     <carrier frequency="650000" bandwidth="8"></carrier>
-    <carrier frequency="762000" bandwidth="8"></carrier>
-    <carrier frequency="770000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Sunne Blabarskullen - Torsby Bada" offset="125">
-    <carrier frequency="482000" bandwidth="8"></carrier>
+  <country name="Sweden - Sunne Blabarskullen - Koppom" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+    <carrier frequency="738000" bandwidth="8"></carrier>
     <carrier frequency="602000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
-    <carrier frequency="802000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Sveg Brickan" offset="125">
-    <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="594000" bandwidth="8"></carrier>
-    <carrier frequency="674000" bandwidth="8"></carrier>
+  <country name="Sweden - Sunne Blabarskullen - Kristinehamn Utsiktsberget" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="546000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Manserud" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Munkfors" offset="125">
+    <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="562000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Ostmark" offset="125">
+    <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Ransater" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Rojdafors" offset="125">
+    <carrier frequency="482000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Skillingsfors" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Skymnas" offset="125">
+    <carrier frequency="498000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Sulvik" offset="125">
     <carrier frequency="778000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Sveg Brickan - Drevdagen" offset="125">
+  <country name="Sweden - Sunne Blabarskullen - Sunne-As" offset="125">
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Sunne-Leran" offset="125">
+    <carrier frequency="826000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Syssleback" offset="125">
+    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="578000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="802000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Tocksfors" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+    <carrier frequency="738000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Torsby Bada" offset="125">
+    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="578000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="802000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Uggleheden" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Vagsjofors" offset="125">
+    <carrier frequency="690000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sunne Blabarskullen - Vitsand" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan" offset="125">
+    <carrier frequency="474000" bandwidth="8"></carrier>
+    <carrier frequency="498000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Angersjo" offset="125">
+    <carrier frequency="514000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Funasdalen Funasdalsberget" offset="125">
+    <carrier frequency="706000" bandwidth="8"></carrier>
     <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="786000" bandwidth="8"></carrier>
+    <carrier frequency="810000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Funasdalen-Telestation" offset="125">
+    <carrier frequency="762000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Gordalen" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Grovelsjon" offset="125">
+    <carrier frequency="666000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Hede" offset="125">
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
+    <carrier frequency="722000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Hogvalen" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Klovsjo" offset="125">
+    <carrier frequency="650000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Langa" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Linsell" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Ljungdalen" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Lofsdalen" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Mittadalen" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Morkret" offset="125">
+    <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Overhogdal" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Ramundberget" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Randalen" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Sveg-Ransjo" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Tannas Vastra Kroket" offset="125">
+    <carrier frequency="530000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Sveg Brickan - Tanndalen" offset="125">
+    <carrier frequency="626000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Tasjo" offset="125">
-    <carrier frequency="706000" bandwidth="8"></carrier>
-    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
     <carrier frequency="714000" bandwidth="8"></carrier>
     <carrier frequency="634000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Trollhattan" offset="125">
-    <carrier frequency="730000" bandwidth="8"></carrier>
+  <country name="Sweden - Tasjo - Backe" offset="125">
+    <carrier frequency="682000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Bjorkvattnet" offset="125">
+    <carrier frequency="674000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Gaddede" offset="125">
+    <carrier frequency="482000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Hakafot" offset="125">
+    <carrier frequency="514000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Harrsjon" offset="125">
     <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Hoting" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Jormvattnet" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Junsele Hamptjarnsberget" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Junsele-Vallen" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Norraker" offset="125">
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Rosson" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Tasjo - Stromsund-Grelsgard" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Trollhattan" offset="125">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
     <carrier frequency="554000" bandwidth="8"></carrier>
     <carrier frequency="506000" bandwidth="8"></carrier>
-    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="754000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Uddevalla Herrestad" offset="125">
-    <carrier frequency="730000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="490000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
     <carrier frequency="554000" bandwidth="8"></carrier>
     <carrier frequency="506000" bandwidth="8"></carrier>
-    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Ellos" offset="125">
+    <carrier frequency="770000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Hamburgsund" offset="125">
+    <carrier frequency="674000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Henan" offset="125">
+    <carrier frequency="722000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Hunnebostrand" offset="125">
+    <carrier frequency="682000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Kampersvik" offset="125">
+    <carrier frequency="778000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Kungshamn" offset="125">
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Lilla Edet" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Munkedal" offset="125">
+    <carrier frequency="770000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Odsmal" offset="125">
+    <carrier frequency="770000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Uddevalla Herrestad - Stromstad" offset="125">
-    <carrier frequency="730000" bandwidth="8"></carrier>
-    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="482000" bandwidth="8"></carrier>
     <carrier frequency="554000" bandwidth="8"></carrier>
     <carrier frequency="506000" bandwidth="8"></carrier>
-    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="754000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Uddevalla Herrestad - Vassbotten" offset="125">
+    <carrier frequency="722000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Uppsala-Vedyxa" offset="125">
     <carrier frequency="626000" bandwidth="8"></carrier>
@@ -3745,20 +4899,66 @@
     <carrier frequency="650000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
     <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="722000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Uppsala-Vedyxa - Uppsala-Rickomberga" offset="125">
     <carrier frequency="666000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Vannas Granlundsberget" offset="125">
-    <carrier frequency="594000" bandwidth="8"></carrier>
     <carrier frequency="682000" bandwidth="8"></carrier>
     <carrier frequency="706000" bandwidth="8"></carrier>
     <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="594000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Agnas" offset="125">
+    <carrier frequency="522000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Botsmark" offset="125">
+    <carrier frequency="730000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Bygdsiljum" offset="125">
+    <carrier frequency="538000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Flurkmark" offset="125">
+    <carrier frequency="554000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Grasmyr" offset="125">
+    <carrier frequency="650000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Hummelholm" offset="125">
+    <carrier frequency="802000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Logdealv" offset="125">
+    <carrier frequency="626000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Nordmaling" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Norrfors" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Overklinten" offset="125">
+    <carrier frequency="586000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Robertsfors" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Savar Sorbyn" offset="125">
+    <carrier frequency="506000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Tavelsjo" offset="125">
+    <carrier frequency="562000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Umea-Mariehem" offset="125">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vannas Granlundsberget - Varmvattnet" offset="125">
+    <carrier frequency="658000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Vannas Granlundsberget - Vindeln-Renfors" offset="125">
-    <carrier frequency="546000" bandwidth="8"></carrier>
+    <carrier frequency="506000" bandwidth="8"></carrier>
     <carrier frequency="570000" bandwidth="8"></carrier>
-    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="546000" bandwidth="8"></carrier>
     <carrier frequency="634000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Varberg Grimeton" offset="125">
@@ -3782,10 +4982,13 @@
     <carrier frequency="482000" bandwidth="8"></carrier>
     <carrier frequency="578000" bandwidth="8"></carrier>
     <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Vasteras Lillharad - Fagersta Jattasen" offset="125">
     <carrier frequency="514000" bandwidth="8"></carrier>
     <carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="810000" bandwidth="8"></carrier>
+    <carrier frequency="834000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Vastervik Farhult" offset="125">
     <carrier frequency="626000" bandwidth="8"></carrier>
@@ -3797,12 +5000,13 @@
     <carrier frequency="626000" bandwidth="8"></carrier>
     <carrier frequency="578000" bandwidth="8"></carrier>
   </country>
-  <country name="Sweden - Vastervik Farhult - Jarnforsen" offset="125">
-    <carrier frequency="522000" bandwidth="8"></carrier>
-  </country>
   <country name="Sweden - Vastervik Farhult - Lonneberga" offset="125">
     <carrier frequency="562000" bandwidth="8"></carrier>
     <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Sweden - Vastervik Farhult - Lottorp" offset="125">
+    <carrier frequency="722000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Vastervik Farhult - Virserum" offset="125">
     <carrier frequency="618000" bandwidth="8"></carrier>
@@ -3812,7 +5016,7 @@
   </country>
   <country name="Sweden - Visby Follingbo" offset="125">
     <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
     <carrier frequency="690000" bandwidth="8"></carrier>
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
@@ -3820,21 +5024,15 @@
   <country name="Sweden - Visby Follingbo - Faro-Ajkestrask" offset="125">
     <carrier frequency="554000" bandwidth="8"></carrier>
     <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Visby Follingbo - Farosund-Bunge" offset="125">
     <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
     <carrier frequency="690000" bandwidth="8"></carrier>
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
-  </country>
-  <country name="Sweden - Visby Follingbo - Irevik-3195" offset="125">
-    <carrier frequency="482000" bandwidth="8"></carrier>
-    <carrier frequency="522000" bandwidth="8"></carrier>
-  </country>
-  <country name="Sweden - Visby Follingbo - Ljugarn-3193" offset="125">
-    <carrier frequency="554000" bandwidth="8"></carrier>
-    <carrier frequency="666000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Visby Follingbo - Visby-Hamnen" offset="125">
     <carrier frequency="482000" bandwidth="8"></carrier>
@@ -3845,7 +5043,7 @@
   </country>
   <country name="Sweden - Visby Follingbo - Visby-Havdhem" offset="125">
     <carrier frequency="634000" bandwidth="8"></carrier>
-    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
     <carrier frequency="690000" bandwidth="8"></carrier>
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
@@ -3868,10 +5066,14 @@
   <country name="Sweden - Vislanda Nydala - Markaryd Hualtet" offset="125">
     <carrier frequency="674000" bandwidth="8"></carrier>
     <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
+    <carrier frequency="850000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Vislanda Nydala - Traryd Betas" offset="125">
-    <carrier frequency="714000" bandwidth="8"></carrier>
-    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
+    <carrier frequency="850000" bandwidth="8"></carrier>
   </country>
 
   <country name="Swiss - All Regions" offset="125">
