@@ -58,7 +58,7 @@ namespace TvPlugin
     [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
 
     bool _canceled = false;
-    bool _running = false;    
+    bool _running = false;
     int _parentWindowID = 0;
     GUIWindow _parentWindow = null;
     List<Channel> _tvChannelList = null;
@@ -70,7 +70,7 @@ namespace TvPlugin
 
     bool _byIndex = false;
     bool _showChannelNumber = false;
-    int _channelNumberMaxLength = 3;    
+    int _channelNumberMaxLength = 3;
 
     #region Serialisation
     void LoadSettings()
@@ -124,12 +124,12 @@ namespace TvPlugin
     /// Gets a value indicating whether the dialog was canceled. 
     /// </summary>
     /// <value><c>true</c> if dialog was canceled without a selection</value>
-    public  bool Canceled
+    public bool Canceled
     {
-        get
-        {
-            return _canceled;
-        }
+      get
+      {
+        return _canceled;
+      }
     }
 
     /// <summary>
@@ -147,7 +147,7 @@ namespace TvPlugin
         _selectedChannel = value;
       }
     }
-	
+
     /// <summary>
     /// Gets or sets a value indicating whether [auto zap].
     /// </summary>
@@ -215,7 +215,7 @@ namespace TvPlugin
         if (_channelList.Count == 0)
         {
           Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
-          for (int i = 0; i < 10; ++i)
+          for (int i = 0 ; i < 10 ; ++i)
             _channelList.Add(newChannel);
         }
       }
@@ -233,7 +233,7 @@ namespace TvPlugin
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
         OnMessage(msg);
 
-        GUIWindowManager.UnRoute();        
+        GUIWindowManager.UnRoute();
         _running = false;
         _parentWindow = null;
       }
@@ -260,19 +260,19 @@ namespace TvPlugin
               {
                 // switching logic
                 SelectedChannel = (Channel)lstChannels.SelectedListItem.MusicTag;
-                
+
                 Channel changeChannel = null;
                 if (AutoZap)
                 {
                   string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
                   if ((TVHome.Navigator.CurrentChannel != selectedChan) || g_Player.IsTVRecording)
-                  {                    
-                    changeChannel = (Channel)_tvChannelList[lstChannels.SelectedListItemIndex];                    
+                  {
+                    changeChannel = (Channel)_tvChannelList[lstChannels.SelectedListItemIndex];
                   }
                 }
                 _canceled = false;
                 Close();
-                
+
                 //This one shows the zapOSD when changing channel from mini GUIDE, this is currently unwanted.
                 /*
                 TvFullScreen TVWindow = (TvFullScreen)GUIWindowManager.GetWindow((int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
@@ -282,8 +282,8 @@ namespace TvPlugin
                 TVHome.UserChannelChanged = true;
 
                 if (changeChannel != null)
-                {                  
-                  TVHome.ViewChannel(changeChannel);                  
+                {
+                  TVHome.ViewChannel(changeChannel);
                 }
               }
             }
@@ -348,8 +348,8 @@ namespace TvPlugin
     /// Page gets loaded
     /// </summary>
     protected override void OnPageLoad()
-    {      
-      benchClock = Stopwatch.StartNew();      
+    {
+      benchClock = Stopwatch.StartNew();
       Log.Debug("miniguide: onpageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
@@ -360,7 +360,7 @@ namespace TvPlugin
       Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
       FillChannelList();
       FillGroupList();
-      base.OnPageLoad();      
+      base.OnPageLoad();
     }
 
     private void OnGroupChanged()
@@ -385,14 +385,14 @@ namespace TvPlugin
       // spin control
       spinGroup.Reset();
       // start to fill them up again
-      for (int i = 0; i < _channelGroupList.Count; i++)
+      for (int i = 0 ; i < _channelGroupList.Count ; i++)
       {
         current = _channelGroupList[i];
         spinGroup.AddLabel(current.GroupName, i);
         // set selected
         if (current.GroupName.CompareTo(TVHome.Navigator.CurrentGroup.GroupName) == 0)
         {
-          spinGroup.Value = i;          
+          spinGroup.Value = i;
         }
       }
 
@@ -415,7 +415,7 @@ namespace TvPlugin
       TvBusinessLayer layer = new TvBusinessLayer();
       _tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
       benchClock.Stop();
-      string BenchGroupChannels = benchClock.ElapsedMilliseconds.ToString();      
+      string BenchGroupChannels = benchClock.ElapsedMilliseconds.ToString();
       benchClock.Reset();
       benchClock.Start();
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext(_tvChannelList);
@@ -441,7 +441,7 @@ namespace TvPlugin
       string local1054 = GUILocalizeStrings.Get(1054); // (recording)
       string local1055 = GUILocalizeStrings.Get(1055); // (timeshifting)
       string local1056 = GUILocalizeStrings.Get(1056); // (unavailable)
-      
+
       if (!CheckChannelState)
         Log.Debug("miniguide: not checking channel state");
       else
@@ -472,7 +472,7 @@ namespace TvPlugin
 
       benchClock.Reset();
       benchClock.Start();
-      for (int i = 0; i < _tvChannelList.Count; i++)
+      for (int i = 0 ; i < _tvChannelList.Count ; i++)
       {
         CurrentChan = _tvChannelList[i];
         CurrentId = CurrentChan.IdChannel;
@@ -544,13 +544,14 @@ namespace TvPlugin
           if (listNowNext.ContainsKey(CurrentId))
           {
             //tmpString = CurrentChan.CurrentProgram.Title; <-- this would be SLOW
-            tmpString = listNowNext[CurrentId].TitleNow;
+            if (!string.IsNullOrEmpty(listNowNext[CurrentId].TitleNow))
+              tmpString = listNowNext[CurrentId].TitleNow;
           }
           item.Label2 = tmpString;
           item.Label3 = local789 + tmpString;
-          
+
           if (_showChannelNumber == true)
-          {            
+          {
             string chanNumbers = " - ";
             foreach (TuningDetail detail in _tvChannelList[i].ReferringTuningDetail())
               chanNumbers = chanNumbers + detail.ChannelNumber + " - ";
@@ -574,7 +575,7 @@ namespace TvPlugin
 
           tmpString = local736;
           if ((listNowNext.ContainsKey(CurrentId)) && (listNowNext[CurrentId].IdProgramNext != -1))
-            tmpString = listNowNext[CurrentId].TitleNext;          
+            tmpString = listNowNext[CurrentId].TitleNext;
 
           item.Label2 = sb.ToString();
           item.Label = local790 + tmpString;
@@ -605,7 +606,7 @@ namespace TvPlugin
         if (fprogress > 100.0f)
           fprogress = 100.0f;
         if (fprogress < 1.0f)
-          fprogress = 0;        
+          fprogress = 0;
       }
       return fprogress;
     }
@@ -643,7 +644,7 @@ namespace TvPlugin
           System.Threading.Thread.Sleep(50);
       }
 
-      Close();      
+      Close();
     }
 
     // Overlay IRenderLayer members
