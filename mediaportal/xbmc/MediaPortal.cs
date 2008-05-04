@@ -301,6 +301,7 @@ public class MediaPortalApp : D3DApp, IRender
         splashScreen.Run();
         //clientInfo=null;
 #endif
+        Application.DoEvents(); 
         if (_waitForTvServer)
         {
           Log.Info("Main: Wait for TvServer requested. Checking if installed...");
@@ -337,6 +338,7 @@ public class MediaPortalApp : D3DApp, IRender
             ctrl.Close();
           }
         }
+        Application.DoEvents();
         if (_startupDelay > 0)
         {
           Log.Info("Main: Waiting {0} second(s) before startup", _startupDelay);
@@ -379,6 +381,7 @@ public class MediaPortalApp : D3DApp, IRender
                   }
                 }
               }
+              Application.DoEvents();
               string strVersionMng = (string)subkey.GetValue("ManagedDirectXVersion");
               if (strVersionMng != null)
               {
@@ -396,6 +399,7 @@ public class MediaPortalApp : D3DApp, IRender
               }
             }
           }
+          Application.DoEvents();
           // CHECK if Windows MediaPlayer 9 is installed
           Log.Info("Main: Verifying Windows Media Player");
           using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Active Setup\Installed Components\{22d6f312-b0f6-11d0-94ab-0080c74c7e95}"))
@@ -426,7 +430,8 @@ public class MediaPortalApp : D3DApp, IRender
 #if !DEBUG
         try
         {
-#endif
+#endif  
+          Application.DoEvents();
           if (splashScreen != null)
           {
             splashScreen.SetInformation("Initializing DirectX...");
@@ -445,6 +450,7 @@ public class MediaPortalApp : D3DApp, IRender
               Log.Info("Main: Running");
               GUIGraphicsContext.BlankScreen = false;
               Application.Run(app);
+              app.Focus();
               Debug.WriteLine("after Application.Run");
             }
             //#if !DEBUG

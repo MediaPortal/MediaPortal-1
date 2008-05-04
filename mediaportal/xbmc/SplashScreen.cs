@@ -106,7 +106,7 @@ namespace MediaPortal
           oldInfo = info;
         }
         Thread.Sleep(25);
-        Application.DoEvents();
+        //Application.DoEvents();
       }
       frm.FadeOut();
       frm.Close();  //closes, and disposes the form
