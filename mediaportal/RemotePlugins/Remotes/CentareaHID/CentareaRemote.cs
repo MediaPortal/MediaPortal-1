@@ -173,8 +173,7 @@ namespace MediaPortal.InputDevices
                 {
                   Point p = new Point(msg.LParam.ToInt32());
                   _ignoreDupMsg++;
-                  // One push often triggers two mouse move actions
-                  // since our ResetCursor() triggers a mouse move MSG as well we ignore every third event
+                  // since our ResetCursor() triggers a mouse move MSG as well we ignore every second event
                   if (_ignoreDupMsg % 2 == 0)
                     MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(false);
                   // we ignore double actions for the configured time
@@ -206,7 +205,6 @@ namespace MediaPortal.InputDevices
                     if (_verboseLogging)
                       Log.Debug("Centarea: Command \"{0}\" mapped for mouse movement", mmove.ToString());
                   }
-
                 }
               }
               // The Centarea Remote sends key combos. Therefore we use this trick to get a 1:1 mapping
@@ -274,10 +272,11 @@ namespace MediaPortal.InputDevices
       // using the pythagoras theorem to get the total movement length
       double TotalWay = Math.Sqrt(((double)((Math.Abs(xMove) * Math.Abs(xMove))) + (double)((Math.Abs(yMove) * Math.Abs(yMove)))));
       // set a direction only if movement exceeds a minimum limit
-      // usually pushing the joystick knob once results in a two pixel movement.      
+      // usually pushing the joystick knob once results in a one pixel movement.      
       if (TotalWay > 0.9)
         direction = GetDirection(xMove, yMove);
-      Log.Debug("Centarea: Mouse movement of {0} pixels heading {1}", TotalWay, direction);
+      if (_verboseLogging)
+        Log.Debug("Centarea: Mouse movement of {0} pixels heading {1}", TotalWay, direction);
       return direction;
     }
 

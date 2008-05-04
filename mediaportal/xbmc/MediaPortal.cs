@@ -342,11 +342,13 @@ public class MediaPortalApp : D3DApp, IRender
         if (_startupDelay > 0)
         {
           Log.Info("Main: Waiting {0} second(s) before startup", _startupDelay);
-          if (splashScreen != null)
+          for (int i = _startupDelay ; i > 0 ; i--)
           {
-            splashScreen.SetInformation("Waiting " + _startupDelay.ToString() + " second(s) before startup...");
+            if (splashScreen != null)
+              splashScreen.SetInformation("Waiting " + i.ToString() + " second(s) before startup...");            
+            Application.DoEvents();
+            Thread.Sleep(1000);
           }
-          Thread.Sleep(_startupDelay * 1000);
         }
         Log.Info("Main: Verifying DirectX 9");
         try
@@ -433,9 +435,8 @@ public class MediaPortalApp : D3DApp, IRender
 #endif  
           Application.DoEvents();
           if (splashScreen != null)
-          {
             splashScreen.SetInformation("Initializing DirectX...");
-          }
+
           MediaPortalApp app = new MediaPortalApp();
           Log.Info("Main: Initializing DirectX");
           if (app.CreateGraphicsSample())
@@ -443,6 +444,8 @@ public class MediaPortalApp : D3DApp, IRender
             IMessageFilter filter = new ThreadMessageFilter(app);
             Application.AddMessageFilter(filter);
             // Initialize Input Devices
+            if (splashScreen != null)
+              splashScreen.SetInformation("Initializing input devices...");
             InputDevices.Init();
             try
             {
@@ -502,17 +505,6 @@ public class MediaPortalApp : D3DApp, IRender
           {
             if (File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.running")))
               File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
-
-            // GEMX 08.04.08: The MPTestTool2 is now always started in the background and monitors MP itself
-            /*
-            Process mpTestTool = new Process();
-            mpTestTool.StartInfo.ErrorDialog = true;
-            mpTestTool.StartInfo.UseShellExecute = true;
-            mpTestTool.StartInfo.WorkingDirectory = Application.StartupPath;
-            mpTestTool.StartInfo.FileName = "MPTestTool2.exe";
-            mpTestTool.StartInfo.Arguments = "-crashed";
-            mpTestTool.Start();
-            */
           }
         }
       }
@@ -745,7 +737,7 @@ public class MediaPortalApp : D3DApp, IRender
           //An application that grants permission should carry out preparations for the suspension before returning.
           //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSUSPEND:
-            Log.Info("Main: Windows is requesting hibernate mode");
+            Log.Info("Main: Windows is requesting hibernate mode - UI bit: {0}", msg.LParam.ToInt32());
             if (!OnQuerySuspend(ref msg)) return;
             break;
 
@@ -754,7 +746,7 @@ public class MediaPortalApp : D3DApp, IRender
           //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSTANDBY:
             // Stop all media before suspending or hibernating
-            Log.Info("Main: Windows is requesting standby mode");
+            Log.Info("Main: Windows is requesting standby mode - UI bit: {0}", msg.LParam.ToInt32());
             if (!OnQuerySuspend(ref msg)) return;
             break;
 
@@ -777,13 +769,13 @@ public class MediaPortalApp : D3DApp, IRender
             break;
 
           case PBT_APMSTANDBY:
-            Log.Info("Main: Windows is standbying");
+            Log.Info("Main: Windows is going to standby");
             if (!OnQuerySuspend(ref msg)) return;
             OnSuspend(ref msg);
             break;
 
           case PBT_APMSUSPEND:
-            Log.Info("Main: Windows is hibernating");
+            Log.Info("Main: Windows is suspending");
             if (!OnQuerySuspend(ref msg)) return;
             OnSuspend(ref msg);
             break;
