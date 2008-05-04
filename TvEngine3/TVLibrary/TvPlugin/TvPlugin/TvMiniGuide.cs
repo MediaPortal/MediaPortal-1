@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -560,9 +561,13 @@ namespace TvPlugin
 
           if (listNowNext.ContainsKey(CurrentId))
           {
-            sb.Append(" - ");
-            sb.Append(CalculateProgress(listNowNext[CurrentId].NowStartTime, listNowNext[CurrentId].NowEndTime).ToString());
-            sb.Append("%");
+            // if the "Now" DB entry is in the future we set MinValue intentionally to avoid wrong percentage calculations
+            if (listNowNext[CurrentId].NowStartTime != SqlDateTime.MinValue.Value)
+            {
+              sb.Append(" - ");
+              sb.Append(CalculateProgress(listNowNext[CurrentId].NowStartTime, listNowNext[CurrentId].NowEndTime).ToString());
+              sb.Append("%");
+            }
           }
           //else
           //  sb.Append(CalculateProgress(DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1)).ToString());
@@ -592,16 +597,17 @@ namespace TvPlugin
     {
       TimeSpan length = end - start;
       TimeSpan passed = DateTime.Now - start;
+      double fprogress = 0;
       if (length.TotalMinutes > 0)
       {
-        double fprogress = (passed.TotalMinutes / length.TotalMinutes) * 100;
+        fprogress = (passed.TotalMinutes / length.TotalMinutes) * 100;
         fprogress = Math.Floor(fprogress);
         if (fprogress > 100.0f)
-          return 100.0f;
-        return fprogress;
+          fprogress = 100.0f;
+        if (fprogress < 1.0f)
+          fprogress = 0;        
       }
-      else
-        return 0;
+      return fprogress;
     }
 
     /// <summary>

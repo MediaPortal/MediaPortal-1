@@ -1634,6 +1634,14 @@ namespace TvDatabase
           DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
           string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
 
+          // if the first entry is not valid for the "Now" entry - use if for "Next" info
+          if (nowStart > DateTime.Now)
+          {
+            NowAndNext p = new NowAndNext(idChannel, SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value, string.Empty, nowTitle, -1, nowidProgram);
+            progList[idChannel] = p;
+            continue;
+          }
+
           if (j < programsCount - 1)
           {
             // get the the "Next" info if it belongs to the same channel.
