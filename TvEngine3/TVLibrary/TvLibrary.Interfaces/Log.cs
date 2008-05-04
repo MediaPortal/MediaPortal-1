@@ -345,6 +345,50 @@ namespace TvLibrary.Log
       }
     }
 
+
+    /// <summary>
+    /// Does pre-logging tasks - like check for rotation, oversize, etc
+    /// </summary>
+    /// <param name="aLogFileName">The file to be checked</param>
+    /// <returns>False if logging must not go on</returns>
+    private static bool CheckLogPrepared(string aLogFileName)
+    {
+      bool result = true;
+      try
+      {
+        // If the user or some other event deleted the dir make sure to recreate it.
+        Directory.CreateDirectory(Path.GetDirectoryName(aLogFileName));
+        if (File.Exists(aLogFileName))
+        {
+          DateTime checkDate = DateTime.Now - _logDaysToKeep;
+          // Set the file date to a default which would NOT rotate for the case that FileInfo fetching will fail
+          DateTime fileDate = DateTime.Now;
+          try
+          {
+            FileInfo logFi = new FileInfo(aLogFileName);
+            // The information is retrieved from a cache and might be outdated.
+            logFi.Refresh();
+            fileDate = logFi.CreationTime;
+
+            // Some log source went out of control here - do not log until out of disk space!
+            if (logFi.Length > _maxLogSizeMb * 1000 * 1000)
+            {
+              if (_rotateOnOversize)
+                BackupLogFiles();
+              else
+                result = false;
+            }
+          }
+          catch (Exception) { }
+          // File is older than today - _logDaysToKeep = rotate
+          if (checkDate.CompareTo(fileDate) > 0)
+            BackupLogFiles();
+        }
+      }
+      catch (Exception) { }
+      return result;
+    }
+
     /// <summary>
     /// Writes the file.
     /// </summary>
@@ -364,48 +408,18 @@ namespace TvLibrary.Log
             return;
           CacheLogLine(logLine);
 
-          try
+          if (CheckLogPrepared(logFileName))
           {
-            // If the user or some other event deleted the dir make sure to recreate it.
-            Directory.CreateDirectory(Path.GetDirectoryName(logFileName));
-            if (File.Exists(logFileName))
+            using (StreamWriter writer = new StreamWriter(logFileName, true))
             {
-              DateTime checkDate = DateTime.Now - _logDaysToKeep;
-              // Set the file date to a default which would NOT rotate for the case that FileInfo fetching will fail
-              DateTime fileDate = DateTime.Now;
-              try
-              {
-                FileInfo logFi = new FileInfo(logFileName);
-                // The information is retrieved from a cache and might be outdated.
-                logFi.Refresh();
-                fileDate = logFi.CreationTime;
+              string thread = Thread.CurrentThread.Name;
+              if (string.IsNullOrEmpty(thread))
+                thread = Thread.CurrentThread.ManagedThreadId.ToString();
 
-                // Some log source went out of control here - do not log until out of disk space!
-                if (logFi.Length > _maxLogSizeMb * 1000 * 1000)
-                {
-                  if (_rotateOnOversize)
-                    BackupLogFiles();
-                  else
-                    return;
-                }
-              }
-              catch (Exception) { }
-              // File is older than today - _logDaysToKeep = rotate
-              if (checkDate.CompareTo(fileDate) > 0)
-                BackupLogFiles();
+              writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
+              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, logLine);
+              writer.Close();
             }
-          }
-          catch (Exception) { }
-
-          using (StreamWriter writer = new StreamWriter(logFileName, true))
-          {
-            string thread = Thread.CurrentThread.Name;
-            if (string.IsNullOrEmpty(thread))
-              thread = Thread.CurrentThread.ManagedThreadId.ToString();
-
-            writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
-            writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, logLine);
-            writer.Close();
           }
         }
         catch (Exception)

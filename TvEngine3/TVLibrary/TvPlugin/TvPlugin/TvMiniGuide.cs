@@ -394,6 +394,10 @@ namespace TvPlugin
           spinGroup.Value = i;          
         }
       }
+
+      if (_channelGroupList.Count < 2)
+        spinGroup.Visible = false;
+
       benchClock.Stop();
       Log.Debug("miniguide: FillGroupList finished after {0}ms", benchClock.ElapsedMilliseconds.ToString());
     }

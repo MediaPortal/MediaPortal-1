@@ -600,7 +600,7 @@ namespace TvPlugin
                 if (TVHome.Card.IsTimeShifting)
                 {
                   _currentChannel = TVHome.Navigator.CurrentChannel; //contains the display name
-                  for (int i = 0; i < _channelList.Count; i++)
+                  for (int i = 0 ; i < _channelList.Count ; i++)
                   {
                     Channel chan = (Channel)_channelList[i];
                     if (chan.DisplayName.Equals(_currentChannel))
@@ -625,7 +625,7 @@ namespace TvPlugin
                 DateTime dtNow = DateTime.Now;
                 cntlDay.Reset();
                 cntlDay.SetRange(0, MaxDaysInGuide - 1);
-                for (int iDay = 0; iDay < MaxDaysInGuide; iDay++)
+                for (int iDay = 0 ; iDay < MaxDaysInGuide ; iDay++)
                 {
                   DateTime dtTemp = dtNow.AddDays(iDay);
                   string day;
@@ -649,7 +649,7 @@ namespace TvPlugin
               GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
               if (cntlTimeInterval != null)
               {
-                for (int i = 1; i <= 4; i++)
+                for (int i = 1 ; i <= 4 ; i++)
                   cntlTimeInterval.AddLabel(String.Empty, i);
                 cntlTimeInterval.Value = 1;
               }
@@ -843,11 +843,11 @@ namespace TvPlugin
 
         // Find first day in TVGuide and set spincontrol position 
         int iDay = CalcDays();
-        for (; iDay < 0; ++iDay)
+        for ( ; iDay < 0 ; ++iDay)
         {
           _viewingTime = _viewingTime.AddDays(1.0);
         }
-        for (; iDay >= MaxDaysInGuide; --iDay)
+        for ( ; iDay >= MaxDaysInGuide ; --iDay)
         {
           _viewingTime = _viewingTime.AddDays(-1.0);
         }
@@ -880,7 +880,7 @@ namespace TvPlugin
         DateTime dt = new DateTime();
         dt = _viewingTime;
 
-        for (int iLabel = 0; iLabel < 4; iLabel++)
+        for (int iLabel = 0 ; iLabel < 4 ; iLabel++)
         {
           xpos = iLabel * iLabelWidth + labelTime.XPosition;
           ypos = labelTime.YPosition;
@@ -929,7 +929,7 @@ namespace TvPlugin
         int iItemHeight = cntlChannelTemplate.Height;
 
         _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
-        for (int iChan = 0; iChan < _channelCount; ++iChan)
+        for (int iChan = 0 ; iChan < _channelCount ; ++iChan)
         {
           xpos = cntlChannelTemplate.XPosition;
           ypos = cntlChannelTemplate.YPosition + iChan * iItemHeight;
@@ -1026,7 +1026,7 @@ namespace TvPlugin
           _cursorX = 0;
         }
 
-        for (int i = 0; i < controlList.Count; ++i)
+        for (int i = 0 ; i < controlList.Count ; ++i)
         {
           GUIControl cntl = (GUIControl)controlList[i];
           if (cntl.GetID >= 100)
@@ -1055,7 +1055,7 @@ namespace TvPlugin
           List<Channel> visibleChannels = new List<Channel>();
 
           int chan = _channelOffset;
-          for (int iChannel = 0; iChannel < _channelCount; iChannel++)
+          for (int iChannel = 0 ; iChannel < _channelCount ; iChannel++)
           {
             if (chan < _channelList.Count)
             {
@@ -1070,7 +1070,7 @@ namespace TvPlugin
           setGuideHeadngVisibility(true);
           setSingleChannelLabelVisibility(false);
           chan = _channelOffset;
-          for (int iChannel = 0; iChannel < _channelCount; iChannel++)
+          for (int iChannel = 0 ; iChannel < _channelCount ; iChannel++)
           {
             if (chan < _channelList.Count)
             {
@@ -1221,7 +1221,7 @@ namespace TvPlugin
     {
       string strLogo;
       int chan = _channelOffset;
-      for (int iChannel = 0; iChannel < _channelCount; iChannel++)
+      for (int iChannel = 0 ; iChannel < _channelCount ; iChannel++)
       {
         if (chan < _channelList.Count)
         {
@@ -1312,7 +1312,7 @@ namespace TvPlugin
 
 
       // ichan = number of rows
-      for (int ichan = 0; ichan < _channelCount; ++ichan)
+      for (int ichan = 0 ; ichan < _channelCount ; ++ichan)
       {
         GUIButton3PartControl imgCh = GetControl(ichan + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
         imgCh.TexutureIcon = "";
@@ -1579,7 +1579,7 @@ namespace TvPlugin
 
           int iStartXPos = 0;
           int iEndXPos = 0;
-          for (int iBlok = 0; iBlok < _numberOfBlocks; iBlok++)
+          for (int iBlok = 0 ; iBlok < _numberOfBlocks ; iBlok++)
           {
             float fWidthEnd = (float)width;
             DateTime dtBlokEnd = dtBlokStart.AddMinutes(_timePerBlock - 1); //
@@ -1774,7 +1774,7 @@ namespace TvPlugin
     int ProgramCount(int iChannel)
     {
       int iProgramCount = 0;
-      for (int iProgram = 0; iProgram < _numberOfBlocks * 5; ++iProgram)
+      for (int iProgram = 0 ; iProgram < _numberOfBlocks * 5 ; ++iProgram)
       {
         int iControlId = 100 + iChannel * RowID + iProgram * ColID;
         GUIControl cntl = GetControl(iControlId);
@@ -1883,7 +1883,7 @@ namespace TvPlugin
             Update(false);
         }
 
-        for (int x = 1; x < ColID; x++)
+        for (int x = 1 ; x < ColID ; x++)
         {
           iControlId = 100 + _cursorX * RowID + (x - 1) * ColID;
           control = GetControl(iControlId);
@@ -2014,7 +2014,7 @@ namespace TvPlugin
           _cursorX--;
         }
 
-        for (int x = 1; x < ColID; x++)
+        for (int x = 1 ; x < ColID ; x++)
         {
           iControlId = 100 + _cursorX * RowID + (x - 1) * ColID;
           control = GetControl(iControlId);
@@ -2405,7 +2405,9 @@ namespace TvPlugin
           dlg.AddLocalizedString(264);// Record
         }
         //dlg.AddLocalizedString(937);// Reload tvguide
-        dlg.AddLocalizedString(971);// Group
+
+        if (TVHome.Navigator.Groups.Count > 1)
+          dlg.AddLocalizedString(971);// Group
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
@@ -2718,7 +2720,7 @@ namespace TvPlugin
     void OnPageUp()
     {
       UnFocus();
-      for (int i = 0; i < _channelCount; ++i)
+      for (int i = 0 ; i < _channelCount ; ++i)
         OnUp(false);
       Correct();
       Update(false);
@@ -2727,7 +2729,7 @@ namespace TvPlugin
     void OnPageDown()
     {
       UnFocus();
-      for (int i = 0; i < _channelCount; ++i)
+      for (int i = 0 ; i < _channelCount ; ++i)
         OnDown(false);
       Correct();
       Update(false);
@@ -2908,7 +2910,7 @@ namespace TvPlugin
         if (_channelList.Count == 0)
         {
           Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
-          for (int i = 0; i < 10; ++i)
+          for (int i = 0 ; i < 10 ; ++i)
             _channelList.Add(newChannel);
         }
       }
