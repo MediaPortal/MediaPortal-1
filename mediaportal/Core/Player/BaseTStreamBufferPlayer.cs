@@ -94,7 +94,7 @@ namespace MediaPortal.Player
     protected int _aspectX = 1;
     protected int _aspectY = 1;
     protected long _speedRate = 10000;
-    bool _isUsingNvidiaCodec = false;
+    bool _CodecSupportsFastSeeking = false;
     protected ITSFileSource _interfaceTsFileSource = null;
     protected IBaseFilter _videoCodecFilter = null;
     protected IBaseFilter _h264videoCodecFilter = null;
@@ -585,7 +585,7 @@ namespace MediaPortal.Player
           return 1;
         if (_mediaSeeking == null)
           return 1;
-        if (_isUsingNvidiaCodec)
+        if (_CodecSupportsFastSeeking)
           return iSpeed;
         switch (_speedRate)
         {
@@ -619,7 +619,7 @@ namespace MediaPortal.Player
       {
         if (_state != PlayState.Init)
         {
-          if (_isUsingNvidiaCodec)
+          if (_CodecSupportsFastSeeking)
           {
             if (iSpeed != value)
             {
@@ -1177,6 +1177,7 @@ namespace MediaPortal.Player
         string strFilters = ""; // FlipGer: collect custom filters
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
+          _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
           // FlipGer: load infos for custom filters
           int intCount = 0;
           while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
@@ -1226,8 +1227,7 @@ namespace MediaPortal.Player
         {
           customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
-        if (strVideoCodec.ToLower().IndexOf("nvidia") >= 0)
-          _isUsingNvidiaCodec = true;
+
         //render outputpins of SBE
         DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
         _mediaCtrl = (IMediaControl)_graphBuilder;
