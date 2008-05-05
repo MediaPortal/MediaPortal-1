@@ -40,10 +40,10 @@ namespace WebEPG_conf
       this.bOk = new System.Windows.Forms.Button();
       this.bCancel = new System.Windows.Forms.Button();
       this.gbMergeTime = new System.Windows.Forms.GroupBox();
-      this.lStart = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
       this.tbEnd = new System.Windows.Forms.MaskedTextBox();
+      this.label1 = new System.Windows.Forms.Label();
       this.tbStart = new System.Windows.Forms.MaskedTextBox();
+      this.lStart = new System.Windows.Forms.Label();
       this.gbGrabber.SuspendLayout();
       this.gbMergeTime.SuspendLayout();
       this.SuspendLayout();
@@ -88,6 +88,7 @@ namespace WebEPG_conf
       this.bGrabber.TabIndex = 6;
       this.bGrabber.Text = "...";
       this.bGrabber.UseVisualStyleBackColor = true;
+      this.bGrabber.Visible = false;
       this.bGrabber.Click += new System.EventHandler(this.bGrabber_Click);
       // 
       // Grabber
@@ -166,14 +167,14 @@ namespace WebEPG_conf
       this.gbMergeTime.TabStop = false;
       this.gbMergeTime.Text = "Merge Time";
       // 
-      // lStart
+      // tbEnd
       // 
-      this.lStart.AutoSize = true;
-      this.lStart.Location = new System.Drawing.Point(6, 23);
-      this.lStart.Name = "lStart";
-      this.lStart.Size = new System.Drawing.Size(29, 13);
-      this.lStart.TabIndex = 0;
-      this.lStart.Text = "Start";
+      this.tbEnd.Location = new System.Drawing.Point(195, 19);
+      this.tbEnd.Mask = "90:00";
+      this.tbEnd.Name = "tbEnd";
+      this.tbEnd.Size = new System.Drawing.Size(61, 20);
+      this.tbEnd.TabIndex = 3;
+      this.tbEnd.ValidatingType = typeof(System.DateTime);
       // 
       // label1
       // 
@@ -184,15 +185,6 @@ namespace WebEPG_conf
       this.label1.TabIndex = 2;
       this.label1.Text = "End";
       // 
-      // tbEnd
-      // 
-      this.tbEnd.Location = new System.Drawing.Point(195, 19);
-      this.tbEnd.Mask = "90:00";
-      this.tbEnd.Name = "tbEnd";
-      this.tbEnd.Size = new System.Drawing.Size(61, 20);
-      this.tbEnd.TabIndex = 3;
-      this.tbEnd.ValidatingType = typeof(System.DateTime);
-      // 
       // tbStart
       // 
       this.tbStart.Location = new System.Drawing.Point(67, 20);
@@ -201,6 +193,15 @@ namespace WebEPG_conf
       this.tbStart.Size = new System.Drawing.Size(56, 20);
       this.tbStart.TabIndex = 1;
       this.tbStart.ValidatingType = typeof(System.DateTime);
+      // 
+      // lStart
+      // 
+      this.lStart.AutoSize = true;
+      this.lStart.Location = new System.Drawing.Point(6, 23);
+      this.lStart.Name = "lStart";
+      this.lStart.Size = new System.Drawing.Size(29, 13);
+      this.lStart.TabIndex = 0;
+      this.lStart.Text = "Start";
       // 
       // MergedChannelDetails
       // 

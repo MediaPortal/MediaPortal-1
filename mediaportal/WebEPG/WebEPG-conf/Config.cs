@@ -41,6 +41,8 @@ using MediaPortal.WebEPG.config;
 using MediaPortal.EPG.config;
 using MediaPortal.Configuration;
 using System.Threading;
+using TvDatabase;
+using ChannelMap = MediaPortal.WebEPG.config.ChannelMap;
 
 namespace WebEPG_conf
 {
@@ -87,7 +89,7 @@ namespace WebEPG_conf
     private Dictionary<string, ChannelMap> _channelMapping;
     private fSelection selection;
     private MergedChannelDetails _mergeConfig;
-    private TreeNode tChannels;
+    //private TreeNode tChannels;
     private TreeNode tGrabbers;
     private SortedList CountryList;
     private SortedList ChannelList;
@@ -429,6 +431,7 @@ namespace WebEPG_conf
       this.bGrabber.TabIndex = 6;
       this.bGrabber.Text = "...";
       this.bGrabber.UseVisualStyleBackColor = true;
+      this.bGrabber.Visible = false;
       this.bGrabber.Click += new System.EventHandler(this.bGrabber_Click);
       // 
       // Grabber
@@ -694,30 +697,36 @@ namespace WebEPG_conf
     #endregion
 
     #region Private
-    private void getTVChannels()
+    private void getMediaPortalTvChannels()
     {
-      _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Button: Import");
-      try
+      ArrayList channels = new ArrayList();
+
+      TVDatabase.GetChannels(ref channels);
+      for (int i = 0; i < channels.Count; i++)
       {
-        ArrayList channels = new ArrayList();
-
-        TVDatabase.GetChannels(ref channels);
-        for (int i = 0; i < channels.Count; i++)
+        TVChannel chan = (TVChannel)channels[i];
+        if (!_channelMapping.ContainsKey(chan.Name))
         {
-          TVChannel chan = (TVChannel)channels[i];
-          if (!_channelMapping.ContainsKey(chan.Name))
-          {
-            ChannelMap channel = new ChannelMap();
-            channel.displayName = chan.Name;
-            _channelMapping.Add(chan.Name, channel);
+          ChannelMap channel = new ChannelMap();
+          channel.displayName = chan.Name;
+          _channelMapping.Add(chan.Name, channel);
 
-          }
-          RedrawList(null);
         }
       }
-      catch (Exception ex)
+    }
+
+    private void getTvServerTvChannels()
+    {
+      IList Channels = Channel.ListAll();
+
+      foreach (Channel chan in Channels)
       {
-        _log.WriteFile(LogType.WebEPG, Level.Error, "WebEPG Config: Import failed - {0}", ex.Message);
+        if (!_channelMapping.ContainsKey(chan.Name))
+        {
+          ChannelMap channel = new ChannelMap();
+          channel.displayName = chan.Name;
+          _channelMapping.Add(chan.Name, channel);
+        }
       }
     }
 
@@ -880,8 +889,8 @@ namespace WebEPG_conf
       hGrabberConfigInfo = new Hashtable();
       CountryList = new SortedList();
       tGrabbers = new TreeNode("Web Sites");
-      if (System.IO.Directory.Exists(_webepgFilesDir + "\\Grabbers"))
-        GetTreeGrabbers(ref tGrabbers, _webepgFilesDir + "\\Grabbers");
+      if (System.IO.Directory.Exists(_webepgFilesDir + "Grabbers"))
+        GetTreeGrabbers(ref tGrabbers, _webepgFilesDir + "Grabbers");
       else
         _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Cannot find grabbers directory");
 
@@ -910,31 +919,31 @@ namespace WebEPG_conf
         }
       }
 
-      tChannels = new TreeNode("Channels");
-      IDictionaryEnumerator countryEnum = CountryList.GetEnumerator();
-      while (countryEnum.MoveNext())
-      {
-        SortedList chList = (SortedList)countryEnum.Value;
-        TreeNode cNode = new TreeNode();
-        cNode.Text = (string)countryEnum.Key;
+      //tChannels = new TreeNode("Channels");
+      //IDictionaryEnumerator countryEnum = CountryList.GetEnumerator();
+      //while (countryEnum.MoveNext())
+      //{
+      //  SortedList chList = (SortedList)countryEnum.Value;
+      //  TreeNode cNode = new TreeNode();
+      //  cNode.Text = (string)countryEnum.Key;
 
-        IDictionaryEnumerator chEnum = chList.GetEnumerator();
-        while (chEnum.MoveNext())
-        {
-          TreeNode chNode = new TreeNode();
+      //  IDictionaryEnumerator chEnum = chList.GetEnumerator();
+      //  while (chEnum.MoveNext())
+      //  {
+      //    TreeNode chNode = new TreeNode();
 
-          ChannelConfigInfo info = (ChannelConfigInfo)hChannelConfigInfo[chEnum.Key];
-          chNode.Text = info.FullName;
-          string[] tag = new string[2];
-          tag[0] = info.ChannelID;
-          tag[1] = (string)chEnum.Value;
-          chNode.Tag = tag;
+      //    ChannelConfigInfo info = (ChannelConfigInfo)hChannelConfigInfo[chEnum.Key];
+      //    chNode.Text = info.FullName;
+      //    string[] tag = new string[2];
+      //    tag[0] = info.ChannelID;
+      //    tag[1] = (string)chEnum.Value;
+      //    chNode.Tag = tag;
 
-          cNode.Nodes.Add(chNode);
-        }
+      //    cNode.Nodes.Add(chNode);
+      //  }
 
-        tChannels.Nodes.Add(cNode);
-      }
+      //  tChannels.Nodes.Add(cNode);
+      //}
 
       ChannelList = new SortedList();
     }
@@ -1026,8 +1035,8 @@ namespace WebEPG_conf
         //}
         //else
         //{
-          channel.id = xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
-          channel.grabber = grabber;
+        channel.id = xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
+        channel.grabber = grabber;
         //}
         _configFile.Channels.Add(channel);
       }
@@ -1054,7 +1063,7 @@ namespace WebEPG_conf
               mergedChannel.end = xmlreader.GetValueAsString("Merge" + i.ToString(), "End" + c.ToString(), "0:0");
               channel.merged.Add(mergedChannel);
             }
-            
+
             _configFile.Channels.Add(channel);
           }
         }
@@ -1146,40 +1155,73 @@ namespace WebEPG_conf
 
     private void GetTreeGrabbers(ref TreeNode Main, string Location)
     {
-      System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location);
-      System.IO.DirectoryInfo[] dirList = dir.GetDirectories();
-      if (dirList.Length > 0)
+      foreach (string countryName in _countryList.Keys)
       {
-        if (dirList.Length == 1)
+        string countryLocation = Location + "\\" + _countryList[countryName];
+        if(Directory.Exists(countryLocation))
         {
-          System.IO.DirectoryInfo g = dirList[0];
-          if (g.Name == ".svn")
-            GetGrabbers(ref Main, Location);
-        }
-        else
-        {
-          for (int i = 0; i < dirList.Length; i++)
-          {
-            //LOAD FOLDERS
-            System.IO.DirectoryInfo g = dirList[i];
-            TreeNode MainNext = new TreeNode(g.Name);
-            GetTreeGrabbers(ref MainNext, g.FullName);
-            Main.Nodes.Add(MainNext);
-            //MainNext.Tag = (g.FullName);
-          }
+          TreeNode MainNext = new TreeNode(countryName);
+          GetGrabbers(ref MainNext, countryLocation);
+          Main.Nodes.Add(MainNext);
         }
       }
-      else
-      {
-        GetGrabbers(ref Main, Location);
-      }
+      //DirectoryInfo dir = new System.IO.DirectoryInfo(Location);
+      //DirectoryInfo[] dirList = dir.GetDirectories();
+      //if (dirList.Length > 0)
+      //{
+      //  if (dirList.Length == 1)
+      //  {
+      //    System.IO.DirectoryInfo g = dirList[0];
+      //    if (g.Name == ".svn")
+      //      GetGrabbers(ref Main, Location);
+      //  }
+      //  else
+      //  {
+      //    for (int i = 0; i < dirList.Length; i++)
+      //    {
+      //      //LOAD FOLDERS
+      //      System.IO.DirectoryInfo g = dirList[i];
+      //      TreeNode MainNext = new TreeNode(g.Name);
+      //      GetTreeGrabbers(ref MainNext, g.FullName);
+      //      Main.Nodes.Add(MainNext);
+      //      //MainNext.Tag = (g.FullName);
+      //    }
+      //  }
+      //}
+      //else
+      //{
+      //  GetGrabbers(ref Main, Location);
+      //}
     }
     #endregion
 
     #region Event handlers
     private void bImport_Click(object sender, EventArgs e)
     {
-      getTVChannels();
+      _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Button: Import");
+      try
+      {
+        switch (cbSource.SelectedItem.ToString())
+        {
+          case "MediaPortal":
+            _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Importing from MediaPortal Database");
+            getMediaPortalTvChannels();
+            break;
+          case "TV Server":
+            _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Importing from TV Server Database");
+            getTvServerTvChannels();
+            break;
+          default:
+            break;
+        }
+
+        RedrawList(null);
+      }
+      catch (Exception ex)
+      {
+        _log.WriteFile(LogType.WebEPG, Level.Error, "WebEPG Config: Import failed - {0}", ex.Message);
+        MessageBox.Show("An error occured while trying to import channels. See log for more details.", "Import Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
     }
 
     private void bSave_Click(object sender, EventArgs e)
@@ -1216,7 +1258,13 @@ namespace WebEPG_conf
           bImport.Enabled = true;
           break;
         case "TV Server":
-          bImport.Enabled = false;
+          if (File.Exists("TVDatabase.dll"))
+            bImport.Enabled = true;
+          else
+          {
+            MessageBox.Show("TVDatabase.dll not found. Unable to import from database.", "TV Server file missing", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            bImport.Enabled = false;
+          }
           break;
         default:
           break;
@@ -1270,7 +1318,7 @@ namespace WebEPG_conf
     {
       if (selection == null)
       {
-        selection = new fSelection(tChannels, tGrabbers, true, this.DoSelect);
+        selection = new fSelection(tGrabbers, true, this.DoSelect);
         selection.MinimizeBox = false;
         selection.Closed += new System.EventHandler(this.CloseSelect);
         selection.Show();
@@ -1283,17 +1331,17 @@ namespace WebEPG_conf
 
     private void bGrabber_Click(object sender, EventArgs e)
     {
-      if (selection == null)
-      {
-        selection = new fSelection(tChannels, tGrabbers, false, this.DoSelect);
-        selection.MinimizeBox = false;
-        selection.Closed += new System.EventHandler(this.CloseSelect);
-        selection.Show();
-      }
-      else
-      {
-        selection.BringToFront();
-      }
+      //if (selection == null)
+      //{
+      //  selection = new fSelection(tChannels, tGrabbers, false, this.DoSelect);
+      //  selection.MinimizeBox = false;
+      //  selection.Closed += new System.EventHandler(this.CloseSelect);
+      //  selection.Show();
+      //}
+      //else
+      //{
+      //  selection.BringToFront();
+      //}
     }
 
     private bool UpdateGrabberDetails(string channelId, string grabberId)
@@ -1450,7 +1498,7 @@ namespace WebEPG_conf
     private void bMergedAdd_Click(object sender, EventArgs e)
     {
       lvMerged.SelectedItems.Clear();
-      _mergeConfig = new MergedChannelDetails(tChannels, tGrabbers, null, this.bMergedOk_Click);
+      _mergeConfig = new MergedChannelDetails(tGrabbers, null, this.bMergedOk_Click);
       _mergeConfig.MinimizeBox = false;
       _mergeConfig.Show();
     }
@@ -1493,7 +1541,7 @@ namespace WebEPG_conf
       if (lvMerged.SelectedItems.Count == 1 && lvMapping.SelectedItems.Count == 1)
       {
         MergedChannel channel = (MergedChannel)lvMerged.SelectedItems[0].Tag;
-        _mergeConfig = new MergedChannelDetails(tChannels, tGrabbers, channel, this.bMergedOk_Click);
+        _mergeConfig = new MergedChannelDetails(tGrabbers, channel, this.bMergedOk_Click);
         _mergeConfig.MinimizeBox = false;
         _mergeConfig.Show();
       }
@@ -1539,7 +1587,7 @@ namespace WebEPG_conf
         {
           if (_channelMapping.ContainsKey(lvMapping.SelectedItems[0].Text))
           {
-            if (_channelMapping[lvMapping.SelectedItems[0].Text].merged == null || 
+            if (_channelMapping[lvMapping.SelectedItems[0].Text].merged == null ||
               _channelMapping[lvMapping.SelectedItems[0].Text].merged.Count <= 1)
             {
               ChannelMap channelMap = _channelMapping[lvMapping.SelectedItems[0].Text];

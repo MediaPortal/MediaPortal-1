@@ -12,10 +12,9 @@ namespace WebEPG_conf
   public partial class MergedChannelDetails : Form
   {
     private fSelection _selection;
-    private TreeNode _tChannels;
     private TreeNode _tGrabbers;
 
-    public MergedChannelDetails(TreeNode channels, TreeNode grabbers, MergedChannel channel, System.EventHandler ok_click)
+    public MergedChannelDetails(TreeNode grabbers, MergedChannel channel, System.EventHandler ok_click)
     {
       InitializeComponent();
 
@@ -27,7 +26,6 @@ namespace WebEPG_conf
         tbStart.Text = channel.start;
         tbEnd.Text = channel.end;
       }
-      _tChannels = channels;
       _tGrabbers = grabbers;
       bOk.Click += ok_click;
     }
@@ -52,7 +50,7 @@ namespace WebEPG_conf
 
     private void bChannelID_Click(object sender, EventArgs e)
     {
-      _selection = new fSelection(_tChannels, _tGrabbers, true, this.DoSelect);
+      _selection = new fSelection(_tGrabbers, true, this.DoSelect);
       _selection.MinimizeBox = false;
       _selection.Text = "Merge Selection";
       _selection.Closed += new System.EventHandler(this.CloseSelect);
@@ -61,11 +59,11 @@ namespace WebEPG_conf
 
     private void bGrabber_Click(object sender, EventArgs e)
     {
-      _selection = new fSelection(_tChannels, _tGrabbers, false, this.DoSelect);
-      _selection.MinimizeBox = false;
-      _selection.Text = "Merge Selection";
-      _selection.Closed += new System.EventHandler(this.CloseSelect);
-      _selection.Show();
+      //_selection = new fSelection(_tChannels, _tGrabbers, false, this.DoSelect);
+      //_selection.MinimizeBox = false;
+      //_selection.Text = "Merge Selection";
+      //_selection.Closed += new System.EventHandler(this.CloseSelect);
+      //_selection.Show();
     }
 
     private void DoSelect(Object source, EventArgs e)
