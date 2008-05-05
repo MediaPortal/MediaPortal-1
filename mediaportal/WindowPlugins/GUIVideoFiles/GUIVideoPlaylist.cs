@@ -679,7 +679,7 @@ namespace MediaPortal.GUI.Video
 
       string currentFile = g_Player.CurrentFile;
       GUIListItem item = facadeView[iItem];
-      PlayList loPlayList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
+      PlayList loPlayList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
       string strFileName = string.Empty;
       MVPlayListItem loItemToDelete = null;
       foreach (MVPlayListItem loItem in loPlayList)
