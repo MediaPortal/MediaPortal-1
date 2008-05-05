@@ -624,16 +624,17 @@ namespace MediaPortal.Configuration
       this.helpToolStripSplitButton.Name = "helpToolStripSplitButton";
       this.helpToolStripSplitButton.Size = new System.Drawing.Size(60, 22);
       this.helpToolStripSplitButton.Text = "Help";
+      this.helpToolStripSplitButton.ToolTipText = "Opens the online wiki page for the active configuration section.";
       this.helpToolStripSplitButton.ButtonClick += new System.EventHandler(this.helpToolStripSplitButton_ButtonClick);
       // 
       // updateHelpToolStripMenuItem
       // 
       this.updateHelpToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_refresh;
       this.updateHelpToolStripMenuItem.Name = "updateHelpToolStripMenuItem";
-      this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+      this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.updateHelpToolStripMenuItem.Text = "Update Help";
-      this.updateHelpToolStripMenuItem.ToolTipText = "Online update for the help references file. Start an incorrect wiki page was open" +
-          "ed.";
+      this.updateHelpToolStripMenuItem.ToolTipText = "Online update for the help references file. Use it if an incorrect wiki page was " +
+          "opened.";
       this.updateHelpToolStripMenuItem.Click += new System.EventHandler(this.updateHelpToolStripMenuItem_Click);
       // 
       // configToolStripSplitButton
