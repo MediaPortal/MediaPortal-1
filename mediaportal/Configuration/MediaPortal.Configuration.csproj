@@ -930,6 +930,9 @@
     <None Include="Resources\remote.HidKeys.png" />
     <None Include="Resources\remote.FireDtv.png" />
     <None Include="Resources\remote.Centarea.png" />
+    <Content Include="Resources\icon_folder.png" />
+    <Content Include="Resources\icon_help.png" />
+    <Content Include="Resources\icon_refresh.png" />
     <Content Include="Wizards\DVD.xml" />
     <Content Include="Wizards\FirstTimeSetup.xml" />
     <Content Include="Wizards\Movies.xml" />

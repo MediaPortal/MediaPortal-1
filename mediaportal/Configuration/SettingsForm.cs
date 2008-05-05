@@ -52,10 +52,16 @@ namespace MediaPortal.Configuration
     private const int SW_SHOWNORMAL = 1;
     private const int SW_SHOW = 5;
     private const int SW_RESTORE = 9;
-    private MPButton viewLogFilesButton;
-    private MPButton helpButton;
     private string _windowName = "MediaPortal - Setup";
     private LinkLabel linkLabel1;
+    private ToolStrip toolStrip1;
+    private ToolStripSplitButton helpToolStripSplitButton;
+    private ToolStripSplitButton configToolStripSplitButton;
+    private ToolStripMenuItem thumbsToolStripMenuItem;
+    private ToolStripMenuItem logsToolStripMenuItem;
+    private ToolStripMenuItem databaseToolStripMenuItem;
+    private ToolStripMenuItem updateHelpToolStripMenuItem;
+    private ToolStripMenuItem skinsToolStripMenuItem;
     private SectionSettings _previousSection = null;
 
     [DllImport("User32.")]
@@ -482,9 +488,16 @@ namespace MediaPortal.Configuration
       this.holderPanel = new System.Windows.Forms.Panel();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.viewLogFilesButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.helpButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+      this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+      this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
+      this.updateHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.configToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
+      this.thumbsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.logsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.databaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.skinsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // sectionTree
@@ -496,9 +509,9 @@ namespace MediaPortal.Configuration
       this.sectionTree.HotTracking = true;
       this.sectionTree.Indent = 19;
       this.sectionTree.ItemHeight = 16;
-      this.sectionTree.Location = new System.Drawing.Point(16, 16);
+      this.sectionTree.Location = new System.Drawing.Point(16, 28);
       this.sectionTree.Name = "sectionTree";
-      this.sectionTree.Size = new System.Drawing.Size(184, 440);
+      this.sectionTree.Size = new System.Drawing.Size(184, 428);
       this.sectionTree.TabIndex = 2;
       this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
       this.sectionTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.sectionTree_BeforeSelect);
@@ -507,7 +520,7 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(519, 479);
+      this.cancelButton.Location = new System.Drawing.Point(613, 479);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 1;
@@ -518,7 +531,7 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(438, 479);
+      this.okButton.Location = new System.Drawing.Point(532, 479);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -534,7 +547,7 @@ namespace MediaPortal.Configuration
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.Location = new System.Drawing.Point(216, 16);
+      this.headerLabel.Location = new System.Drawing.Point(216, 28);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
       this.headerLabel.Size = new System.Drawing.Size(472, 24);
@@ -550,9 +563,9 @@ namespace MediaPortal.Configuration
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanel.AutoScroll = true;
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
-      this.holderPanel.Location = new System.Drawing.Point(216, 48);
+      this.holderPanel.Location = new System.Drawing.Point(216, 58);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(472, 408);
+      this.holderPanel.Size = new System.Drawing.Size(472, 398);
       this.holderPanel.TabIndex = 4;
       // 
       // beveledLine1
@@ -568,7 +581,7 @@ namespace MediaPortal.Configuration
       // applyButton
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(357, 479);
+      this.applyButton.Location = new System.Drawing.Point(451, 479);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
       this.applyButton.TabIndex = 6;
@@ -578,39 +591,96 @@ namespace MediaPortal.Configuration
       this.applyButton.Visible = false;
       this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
       // 
-      // viewLogFilesButton
-      // 
-      this.viewLogFilesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.viewLogFilesButton.Location = new System.Drawing.Point(600, 479);
-      this.viewLogFilesButton.Name = "viewLogFilesButton";
-      this.viewLogFilesButton.Size = new System.Drawing.Size(96, 23);
-      this.viewLogFilesButton.TabIndex = 7;
-      this.viewLogFilesButton.Text = "View &log files";
-      this.viewLogFilesButton.UseVisualStyleBackColor = true;
-      this.viewLogFilesButton.Click += new System.EventHandler(this.viewLogFilesButton_Click);
-      // 
-      // helpButton
-      // 
-      this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.helpButton.Location = new System.Drawing.Point(276, 479);
-      this.helpButton.Name = "helpButton";
-      this.helpButton.Size = new System.Drawing.Size(75, 23);
-      this.helpButton.TabIndex = 8;
-      this.helpButton.Text = "&Help";
-      this.helpButton.UseVisualStyleBackColor = true;
-      this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
-      // 
       // linkLabel1
       // 
       this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(13, 484);
+      this.linkLabel1.Location = new System.Drawing.Point(12, 484);
       this.linkLabel1.Name = "linkLabel1";
       this.linkLabel1.Size = new System.Drawing.Size(113, 13);
       this.linkLabel1.TabIndex = 9;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "Donate to MediaPortal";
       this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      // 
+      // toolStrip1
+      // 
+      this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.helpToolStripSplitButton,
+            this.configToolStripSplitButton});
+      this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+      this.toolStrip1.Name = "toolStrip1";
+      this.toolStrip1.Size = new System.Drawing.Size(704, 25);
+      this.toolStrip1.TabIndex = 10;
+      this.toolStrip1.Text = "toolStrip1";
+      // 
+      // helpToolStripSplitButton
+      // 
+      this.helpToolStripSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+      this.helpToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.updateHelpToolStripMenuItem});
+      this.helpToolStripSplitButton.Image = global::MediaPortal.Configuration.Properties.Resources.icon_help;
+      this.helpToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.helpToolStripSplitButton.Name = "helpToolStripSplitButton";
+      this.helpToolStripSplitButton.Size = new System.Drawing.Size(60, 22);
+      this.helpToolStripSplitButton.Text = "Help";
+      this.helpToolStripSplitButton.ButtonClick += new System.EventHandler(this.helpToolStripSplitButton_ButtonClick);
+      // 
+      // updateHelpToolStripMenuItem
+      // 
+      this.updateHelpToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_refresh;
+      this.updateHelpToolStripMenuItem.Name = "updateHelpToolStripMenuItem";
+      this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+      this.updateHelpToolStripMenuItem.Text = "Update Help";
+      this.updateHelpToolStripMenuItem.ToolTipText = "Online update for the help references file. Start an incorrect wiki page was open" +
+          "ed.";
+      this.updateHelpToolStripMenuItem.Click += new System.EventHandler(this.updateHelpToolStripMenuItem_Click);
+      // 
+      // configToolStripSplitButton
+      // 
+      this.configToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.thumbsToolStripMenuItem,
+            this.logsToolStripMenuItem,
+            this.databaseToolStripMenuItem,
+            this.skinsToolStripMenuItem});
+      this.configToolStripSplitButton.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
+      this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.configToolStripSplitButton.Name = "configToolStripSplitButton";
+      this.configToolStripSplitButton.Size = new System.Drawing.Size(117, 22);
+      this.configToolStripSplitButton.Text = "User Config files";
+      this.configToolStripSplitButton.ButtonClick += new System.EventHandler(this.configToolStripSplitButton_ButtonClick);
+      // 
+      // thumbsToolStripMenuItem
+      // 
+      this.thumbsToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
+      this.thumbsToolStripMenuItem.Name = "thumbsToolStripMenuItem";
+      this.thumbsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+      this.thumbsToolStripMenuItem.Text = "Open Thumbs directory";
+      this.thumbsToolStripMenuItem.Click += new System.EventHandler(this.thumbsToolStripMenuItem_Click);
+      // 
+      // logsToolStripMenuItem
+      // 
+      this.logsToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
+      this.logsToolStripMenuItem.Name = "logsToolStripMenuItem";
+      this.logsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+      this.logsToolStripMenuItem.Text = "Open Log directory";
+      this.logsToolStripMenuItem.Click += new System.EventHandler(this.logsToolStripMenuItem_Click);
+      // 
+      // databaseToolStripMenuItem
+      // 
+      this.databaseToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
+      this.databaseToolStripMenuItem.Name = "databaseToolStripMenuItem";
+      this.databaseToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+      this.databaseToolStripMenuItem.Text = "Open Database directory";
+      this.databaseToolStripMenuItem.Click += new System.EventHandler(this.databaseToolStripMenuItem_Click);
+      // 
+      // skinsToolStripMenuItem
+      // 
+      this.skinsToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
+      this.skinsToolStripMenuItem.Name = "skinsToolStripMenuItem";
+      this.skinsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+      this.skinsToolStripMenuItem.Text = "Open Skins directory";
+      this.skinsToolStripMenuItem.Click += new System.EventHandler(this.skinsToolStripMenuItem_Click);
       // 
       // SettingsForm
       // 
@@ -619,9 +689,8 @@ namespace MediaPortal.Configuration
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(704, 510);
+      this.Controls.Add(this.toolStrip1);
       this.Controls.Add(this.linkLabel1);
-      this.Controls.Add(this.helpButton);
-      this.Controls.Add(this.viewLogFilesButton);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);
       this.Controls.Add(this.holderPanel);
@@ -634,6 +703,8 @@ namespace MediaPortal.Configuration
       this.Text = "MediaPortal - Setup";
       this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
+      this.toolStrip1.ResumeLayout(false);
+      this.toolStrip1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -970,23 +1041,53 @@ namespace MediaPortal.Configuration
       return true;
     }
 
-    private void viewLogFilesButton_Click(object sender, EventArgs e)
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process process = new Process();
-      process.StartInfo.FileName = "explorer.exe";
-      process.StartInfo.Arguments = Config.GetFolder(Config.Dir.Log);
-      process.StartInfo.UseShellExecute = true;
-      process.Start();
+      System.Diagnostics.Process.Start((string)e.Link.LinkData);
     }
 
-    private void helpButton_Click(object sender, EventArgs e)
+    private void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
     {
       HelpSystem.ShowHelp(_previousSection.ToString());
     }
 
-    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void updateHelpToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      System.Diagnostics.Process.Start((string)e.Link.LinkData);
+      HelpSystem.UpdateHelpReferences();
+    }
+
+    private void OpenMpDirectory(Config.Dir dir)
+    {
+      Process process = new Process();
+      process.StartInfo.FileName = "explorer.exe";
+      process.StartInfo.Arguments = Config.GetFolder(dir);
+      process.StartInfo.UseShellExecute = true;
+      process.Start();
+    }
+
+    private void configToolStripSplitButton_ButtonClick(object sender, EventArgs e)
+    {
+      OpenMpDirectory(Config.Dir.Config);
+    }
+
+    private void thumbsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      OpenMpDirectory(Config.Dir.Thumbs);
+    }
+
+    private void logsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      OpenMpDirectory(Config.Dir.Log);
+    }
+
+    private void databaseToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      OpenMpDirectory(Config.Dir.Database);
+    }
+
+    private void skinsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      OpenMpDirectory(Config.Dir.Skin);
     }
   }
 }
