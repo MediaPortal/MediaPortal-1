@@ -51,11 +51,14 @@ namespace SetupTv.Sections
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.btnPreview = new System.Windows.Forms.Button();
       this.mpButtonUncheckEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnPlaylist = new System.Windows.Forms.Button();
       this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnPreview = new System.Windows.Forms.Button();
+      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+      this.renameSelectedChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.addSIDInFrontOfNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -126,9 +129,12 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToFavoritesToolStripMenuItem,
             this.deleteThisChannelToolStripMenuItem,
-            this.editChannelToolStripMenuItem});
+            this.editChannelToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.renameSelectedChannelsBySIDToolStripMenuItem,
+            this.addSIDInFrontOfNameToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(177, 70);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 142);
       // 
       // addToFavoritesToolStripMenuItem
       // 
@@ -261,6 +267,17 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Channels";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
+      // btnPreview
+      // 
+      this.btnPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnPreview.Location = new System.Drawing.Point(201, 351);
+      this.btnPreview.Name = "btnPreview";
+      this.btnPreview.Size = new System.Drawing.Size(106, 23);
+      this.btnPreview.TabIndex = 10;
+      this.btnPreview.Text = "&Preview";
+      this.btnPreview.UseVisualStyleBackColor = true;
+      this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
+      // 
       // mpButtonUncheckEncrypted
       // 
       this.mpButtonUncheckEncrypted.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -305,16 +322,24 @@ namespace SetupTv.Sections
       this.mpButtonAdd.UseVisualStyleBackColor = true;
       this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
       // 
-      // btnPreview
+      // toolStripMenuItem1
       // 
-      this.btnPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnPreview.Location = new System.Drawing.Point(201, 351);
-      this.btnPreview.Name = "btnPreview";
-      this.btnPreview.Size = new System.Drawing.Size(106, 23);
-      this.btnPreview.TabIndex = 10;
-      this.btnPreview.Text = "&Preview";
-      this.btnPreview.UseVisualStyleBackColor = true;
-      this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
+      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(173, 6);
+      // 
+      // renameSelectedChannelsBySIDToolStripMenuItem
+      // 
+      this.renameSelectedChannelsBySIDToolStripMenuItem.Name = "renameSelectedChannelsBySIDToolStripMenuItem";
+      this.renameSelectedChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.renameSelectedChannelsBySIDToolStripMenuItem.Text = "Rename selected channel(s) by SID";
+      this.renameSelectedChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renameSelectedChannelsBySIDToolStripMenuItem_Click);
+      // 
+      // addSIDInFrontOfNameToolStripMenuItem
+      // 
+      this.addSIDInFrontOfNameToolStripMenuItem.Name = "addSIDInFrontOfNameToolStripMenuItem";
+      this.addSIDInFrontOfNameToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.addSIDInFrontOfNameToolStripMenuItem.Text = "Add SID in front of name";
+      this.addSIDInFrontOfNameToolStripMenuItem.Click += new System.EventHandler(this.addSIDInFrontOfNameToolStripMenuItem_Click);
       // 
       // RadioChannels
       // 
@@ -359,5 +384,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button btnPlaylist;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonUncheckEncrypted;
     private System.Windows.Forms.Button btnPreview;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+    private System.Windows.Forms.ToolStripMenuItem renameSelectedChannelsBySIDToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem addSIDInFrontOfNameToolStripMenuItem;
   }
 }
