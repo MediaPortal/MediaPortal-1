@@ -339,10 +339,24 @@ namespace MediaPortal.Player
 
         if (_isRadio == false)
         {
-          if (strVideoCodec.Length > 0)
-            _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+          try
+          {
+            if (strVideoCodec.Length > 0)
+              _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+          }
+          catch (Exception ex)
+          {
+            Log.Warn("Failed to add video decoder. Maybe it's missing?\nMessage: {0}", ex.Message);
+          }
+          try
+          {
           if (strH264VideoCodec.Length > 0)
             _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
+          }
+          catch (Exception ex)
+          {
+            Log.Warn("Failed to add h.264 video decoder. Maybe it's missing?\nMessage: {0}", ex.Message);
+          }
         }
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
@@ -446,7 +460,15 @@ namespace MediaPortal.Player
               DirectShowUtil.ReleaseComObject(pins[0]);
               continue;
             }
-            _graphBuilder.Render(pins[0]);
+            try
+            {
+              _graphBuilder.Render(pins[0]);
+            }
+            catch (Exception ex)
+            {
+              Log.Warn("Failed to render an output pin of TsReader. Maybe it's a radio recording and we try to render the video pin.\nMessage: {0}", ex.Message);
+            }
+            
             DirectShowUtil.ReleaseComObject(pins[0]);
           }
           DirectShowUtil.ReleaseComObject(enumPins);
@@ -528,10 +550,11 @@ namespace MediaPortal.Player
               Application.DoEvents();
               if (count > 20)
               {
-                Log.Debug("TSReaderPlayer: no vmr9 connection, stopping");
-                g_Player.Stop();
-                Cleanup();
-                return false;
+                Log.Debug("TSReaderPlayer: no vmr9 connection. Maybe we have a radio recording but expect video too so we suppose it's ok.");
+                return true;
+                //g_Player.Stop();
+                //Cleanup();
+                //return false;
               }
               count++;
               System.Threading.Thread.Sleep(100);
