@@ -41,6 +41,7 @@ namespace MediaPortal.GUI.Weather
   public class GUIWindowWeather : GUIWindow, ISetupForm, IShowPlugin
   {
     #region structs
+
     class LocationInfo
     {
       public string City;
@@ -67,9 +68,11 @@ namespace MediaPortal.GUI.Weather
       public string Humidity;
       public string Wind;
     };
+
     #endregion
 
     #region enums
+
     enum Controls
     {
       CONTROL_BTNSWITCH = 2,
@@ -98,10 +101,11 @@ namespace MediaPortal.GUI.Weather
       CONTROL_LABELD0LOW = 33,
       CONTROL_LABELD0GEN = 34,
       CONTROL_IMAGED0IMG = 35,
-      CONTROL_LABELSUNR = 70,
-      CONTROL_STATICSUNR = 71,
-      CONTROL_LABELSUNS = 72,
-      CONTROL_STATICSUNS = 73,
+      // Controls 31..35 - 71..75 are reserved for day 0-4 !!!
+      CONTROL_LABELSUNR = 200,
+      CONTROL_STATICSUNR = 201,
+      CONTROL_LABELSUNS = 202,
+      CONTROL_STATICSUNS = 203,
       CONTROL_IMAGE_SAT = 1000,
       CONTROL_IMAGE_SAT_END = 1100,
       CONTROL_IMAGE_SUNCLOCK = 1200,
@@ -132,12 +136,14 @@ namespace MediaPortal.GUI.Weather
       Humidity,
       Precipitation
     }
+
     #endregion
 
     #region variables
-    const int NUM_DAYS = 4;
-    const char DEGREE_CHARACTER = (char)176;				//the degree 'o' character
-    const string PARTNER_ID = "1004124588";			//weather.com partner id
+
+    const int NUM_DAYS = 5;
+    const char DEGREE_CHARACTER = (char)176;				  //the degree 'o' character
+    const string PARTNER_ID = "1004124588";			      //weather.com partner id
     const string PARTNER_KEY = "079f24145f208494";		//weather.com partner key
 
     string _locationCode = "UKXX0085";
@@ -173,6 +179,7 @@ namespace MediaPortal.GUI.Weather
     Mode _currentMode = Mode.Weather;
     Geochron _geochronGenerator;
     float _lastTimeSunClockRendered;
+
     #endregion
 
     ImageView _imageView = ImageView.Satellite;
@@ -189,8 +196,8 @@ namespace MediaPortal.GUI.Weather
         _forecast[i].High = string.Empty;
         _forecast[i].Low = string.Empty;
       }
-      GetID = (int)GUIWindow.Window.WINDOW_WEATHER;
 
+      GetID = (int)GUIWindow.Window.WINDOW_WEATHER;
     }
 
     public override bool Init()
@@ -261,6 +268,7 @@ namespace MediaPortal.GUI.Weather
       base.OnPageDestroy(new_windowId);
       _geochronGenerator = null;
     }
+
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -305,35 +313,23 @@ namespace MediaPortal.GUI.Weather
         switch (_imageView)
         {
           case ImageView.Satellite:
-            {
-              _urlViewImage = _urlSattelite;
-              break;
-            }
+            _urlViewImage = _urlSattelite;
+            break;
           case ImageView.Temperature:
-            {
-              _urlViewImage = _urlTemperature;
-              break;
-            }
+            _urlViewImage = _urlTemperature;
+            break;
           case ImageView.UVIndex:
-            {
-              _urlViewImage = _urlUvIndex;
-              break;
-            }
+            _urlViewImage = _urlUvIndex;
+            break;
           case ImageView.Winds:
-            {
-              _urlViewImage = _urlWinds;
-              break;
-            }
+            _urlViewImage = _urlWinds;
+            break;
           case ImageView.Humidity:
-            {
-              _urlViewImage = _urlHumidity;
-              break;
-            }
+            _urlViewImage = _urlHumidity;
+            break;
           case ImageView.Precipitation:
-            {
-              _urlViewImage = _urlPreciptation;
-              break;
-            }
+            _urlViewImage = _urlPreciptation;
+            break;
         }
         img.SetFileName(_urlViewImage);
         //reallocate & load then new image
@@ -385,35 +381,23 @@ namespace MediaPortal.GUI.Weather
             switch (_imageView)
             {
               case ImageView.Satellite:
-                {
-                  _urlViewImage = _urlSattelite;
-                  break;
-                }
+                _urlViewImage = _urlSattelite;
+                break;
               case ImageView.Temperature:
-                {
-                  _urlViewImage = _urlTemperature;
-                  break;
-                }
+                _urlViewImage = _urlTemperature;
+                break;
               case ImageView.UVIndex:
-                {
-                  _urlViewImage = _urlUvIndex;
-                  break;
-                }
+                _urlViewImage = _urlUvIndex;
+                break;
               case ImageView.Winds:
-                {
-                  _urlViewImage = _urlWinds;
-                  break;
-                }
+                _urlViewImage = _urlWinds;
+                break;
               case ImageView.Humidity:
-                {
-                  _urlViewImage = _urlHumidity;
-                  break;
-                }
+                _urlViewImage = _urlHumidity;
+                break;
               case ImageView.Precipitation:
-                {
-                  _urlViewImage = _urlPreciptation;
-                  break;
-                }
+                _urlViewImage = _urlPreciptation;
+                break;
             }
             img.SetFileName(_urlViewImage);
             //reallocate & load then new image
@@ -436,47 +420,35 @@ namespace MediaPortal.GUI.Weather
         switch (_imageView)
         {
           case ImageView.Satellite:
-            {
-              _imageView = ImageView.Temperature;
-              UpdateButtons();
-              BackgroundUpdate(true);
-              break;
-            }
+            _imageView = ImageView.Temperature;
+            UpdateButtons();
+            BackgroundUpdate(true);
+            break;
           case ImageView.Temperature:
-            {
-              _imageView = ImageView.UVIndex;
-              UpdateButtons();
-              BackgroundUpdate(true);
-              break;
-            }
+            _imageView = ImageView.UVIndex;
+            UpdateButtons();
+            BackgroundUpdate(true);
+            break;
           case ImageView.UVIndex:
-            {
-              _imageView = ImageView.Winds;
-              UpdateButtons();
-              BackgroundUpdate(true);
-              break;
-            }
+            _imageView = ImageView.Winds;
+            UpdateButtons();
+            BackgroundUpdate(true);
+            break;
           case ImageView.Winds:
-            {
-              _imageView = ImageView.Humidity;
-              UpdateButtons();
-              BackgroundUpdate(true);
-              break;
-            }
+            _imageView = ImageView.Humidity;
+            UpdateButtons();
+            BackgroundUpdate(true);
+            break;
           case ImageView.Humidity:
-            {
-              _imageView = ImageView.Precipitation;
-              UpdateButtons();
-              BackgroundUpdate(true);
-              break;
-            }
+            _imageView = ImageView.Precipitation;
+            UpdateButtons();
+            BackgroundUpdate(true);
+            break;
           case ImageView.Precipitation:
-            {
-              _imageView = ImageView.Satellite;
-              UpdateButtons();
-              BackgroundUpdate(true);
-              break;
-            }
+            _imageView = ImageView.Satellite;
+            UpdateButtons();
+            BackgroundUpdate(true);
+            break;
         }
       }
       else
@@ -484,48 +456,41 @@ namespace MediaPortal.GUI.Weather
         switch (_dayNum)
         {
           case -2:
-            {
-              _selectedDayName = _forecast[0].Day;
-              _dayNum = 0;
-              UpdateButtons();
-              _dayNum = 1;
-              break;
-            }
+            _selectedDayName = _forecast[0].Day;
+            _dayNum = 0;
+            UpdateButtons();
+            _dayNum = 1;
+            break;
           case -1:
-            {
-              _selectedDayName = "All";
-              UpdateButtons();
-              _dayNum = 0;
-              break;
-            }
+            _selectedDayName = "All";
+            UpdateButtons();
+            _dayNum = 0;
+            break;
           case 0:
-            {
-              _selectedDayName = _forecast[0].Day;
-              UpdateButtons();
-              _dayNum = 1;
-              break;
-            }
+            _selectedDayName = _forecast[0].Day;
+            UpdateButtons();
+            _dayNum = 1;
+            break;
           case 1:
-            {
-              _selectedDayName = _forecast[1].Day;
-              UpdateButtons();
-              _dayNum = 2;
-              break;
-            }
+            _selectedDayName = _forecast[1].Day;
+            UpdateButtons();
+            _dayNum = 2;
+            break;
           case 2:
-            {
-              _selectedDayName = _forecast[2].Day;
-              UpdateButtons();
-              _dayNum = 3;
-              break;
-            }
+            _selectedDayName = _forecast[2].Day;
+            UpdateButtons();
+            _dayNum = 3;
+            break;
           case 3:
-            {
-              _selectedDayName = _forecast[3].Day;
-              UpdateButtons();
-              _dayNum = -1;
-              break;
-            }
+            _selectedDayName = _forecast[3].Day;
+            UpdateButtons();
+            _dayNum = 4;
+            break;
+          case 4:
+            _selectedDayName = _forecast[4].Day;
+            UpdateButtons();
+            _dayNum = -1;
+            break;
         }
       }
     }
@@ -544,9 +509,9 @@ namespace MediaPortal.GUI.Weather
       }
     }
 
-
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
       _listLocations.Clear();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -596,7 +561,6 @@ namespace MediaPortal.GUI.Weather
           if (city.Length > 0 && strCode.Length > 0)
           {
             if (strSatURL.Length == 0)
-              //strSatURL = "http://www.zdf.de/ZDFde/wetter/showpicture/0,2236,161,00.gif";
               strSatURL = "http://www.heute.de/CMO/frontend/subsystem_we/WeShowPicture/0,6008,161,00.gif";
 
             LocationInfo loc = new LocationInfo();
@@ -625,7 +589,7 @@ namespace MediaPortal.GUI.Weather
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -635,6 +599,7 @@ namespace MediaPortal.GUI.Weather
       }
 
     }
+
     #endregion
 
     int ConvertSpeed(int curSpeed)
@@ -663,24 +628,9 @@ namespace MediaPortal.GUI.Weather
 
       return curSpeed;
 
-      ////got through that so if temp is C, speed must be M or S
-      //if (_temperatureFarenheit[0] == 'C')
-      //{
-      //  if (_currentWindUnit == WindUnit.ms)
-      //    return (int)(curSpeed * (1000.0 / 3600.0) + 0.5);		//mps
-      //  else
-      //    return (int)(curSpeed / (8.0 / 5.0));		//mph
-      //}
-      //else
-      //{
-      //  if (_currentWindUnit == WindUnit.ms)
-      //    return (int)(curSpeed * (8.0 / 5.0) * (1000.0 / 3600.0) + 0.5);		//mps
-      //  else
-      //    return (int)(curSpeed * (8.0 / 5.0));		//kph
-      //}
     }
 
-    void UpdateButtons()
+    private void UpdateButtons()
     {
       if (_currentMode == Mode.Weather)
       {
@@ -734,19 +684,26 @@ namespace MediaPortal.GUI.Weather
           GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELSUNS);
           for (int i = 0 ; i < NUM_DAYS ; i++)
           {
-            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0DAY + (i * 10), _forecast[i].Day);
-            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0HI + (i * 10), _forecast[i].High);
-            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0LOW + (i * 10), _forecast[i].Low);
-            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0GEN + (i * 10), _forecast[i].Overview);
+            try
+            {
+              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0DAY + (i * 10), _forecast[i].Day);
+              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0HI + (i * 10), _forecast[i].High);
+              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0LOW + (i * 10), _forecast[i].Low);
+              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0GEN + (i * 10), _forecast[i].Overview);
 
-            //Seems a bit messy, but works. Remove, Create and then Add the image to update nicely
-            //Remove(_forecast[i].m_pImage.GetID);
-            GUIImage image = (GUIImage)GetControl((int)Controls.CONTROL_IMAGED0IMG + (i * 10));
-            image.ColourDiffuse = 0xffffffff;
-            image.SetFileName(_forecast[i].iconImageNameLow);
-            //				_forecast[i].m_pImage = new GUIImage(GetID, (int)Controls.CONTROL_IMAGED0IMG+(i*10), posX, posY, 64, 64, _forecast[i].iconImageNameLow, 0);
-            //			cntl=(GUIControl)_forecast[i].m_pImage;
-            //		Add(ref cntl);
+              //Seems a bit messy, but works. Remove, Create and then Add the image to update nicely
+              //Remove(_forecast[i].m_pImage.GetID);
+              GUIImage image = (GUIImage)GetControl((int)Controls.CONTROL_IMAGED0IMG + (i * 10));
+              image.ColourDiffuse = 0xffffffff;
+              image.SetFileName(_forecast[i].iconImageNameLow);
+              //				_forecast[i].m_pImage = new GUIImage(GetID, (int)Controls.CONTROL_IMAGED0IMG+(i*10), posX, posY, 64, 64, _forecast[i].iconImageNameLow, 0);
+              //			cntl=(GUIControl)_forecast[i].m_pImage;
+              //		Add(ref cntl);
+            }
+            catch (NullReferenceException)
+            {
+              Log.Warn("GUIWindowWeather: Error assigning controls for day {0}/{1} - your skin might be outdated!", i, NUM_DAYS);
+            }
           }
         }
         else
@@ -783,7 +740,6 @@ namespace MediaPortal.GUI.Weather
           GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BTNVIEW);
           GUIControl.ShowControl(GetID, (int)Controls.CONTROL_LOCATIONSELECT);
 
-          //					_nowImage.SetFileName(_forecast[currentDayNum].iconImageNameLow);
           _nowImage.SetFileName(_forecast[currentDayNum].iconImageNameHigh);
         }
       }
@@ -821,35 +777,23 @@ namespace MediaPortal.GUI.Weather
         switch (_imageView)
         {
           case ImageView.Satellite:
-            {
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(737));
-              break;
-            }
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(737));
+            break;
           case ImageView.Temperature:
-            {
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(738));
-              break;
-            }
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(738));
+            break;
           case ImageView.UVIndex:
-            {
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(739));
-              break;
-            }
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(739));
+            break;
           case ImageView.Winds:
-            {
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(740));
-              break;
-            }
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(740));
+            break;
           case ImageView.Humidity:
-            {
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(741));
-              break;
-            }
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(741));
+            break;
           case ImageView.Precipitation:
-            {
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(742));
-              break;
-            }
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(742));
+            break;
         }
       }
       else if (_currentMode == Mode.Weather)
@@ -868,35 +812,23 @@ namespace MediaPortal.GUI.Weather
         switch (_imageView)
         {
           case ImageView.Satellite:
-            {
-              _urlViewImage = _urlSattelite;
-              break;
-            }
+            _urlViewImage = _urlSattelite;
+            break;
           case ImageView.Temperature:
-            {
-              _urlViewImage = _urlTemperature;
-              break;
-            }
+            _urlViewImage = _urlTemperature;
+            break;
           case ImageView.UVIndex:
-            {
-              _urlViewImage = _urlUvIndex;
-              break;
-            }
+            _urlViewImage = _urlUvIndex;
+            break;
           case ImageView.Winds:
-            {
-              _urlViewImage = _urlWinds;
-              break;
-            }
+            _urlViewImage = _urlWinds;
+            break;
           case ImageView.Humidity:
-            {
-              _urlViewImage = _urlHumidity;
-              break;
-            }
+            _urlViewImage = _urlHumidity;
+            break;
           case ImageView.Precipitation:
-            {
-              _urlViewImage = _urlPreciptation;
-              break;
-            }
+            _urlViewImage = _urlPreciptation;
+            break;
         }
         img.SetFileName(_urlViewImage);
         //reallocate & load then new image
@@ -905,7 +837,7 @@ namespace MediaPortal.GUI.Weather
       }
     }
 
-    bool Download(string weatherFile)
+    private bool Download(string weatherFile)
     {
       string url;
 
@@ -920,7 +852,8 @@ namespace MediaPortal.GUI.Weather
 
       if (!Util.Win32API.IsConnectedToInternet(ref code))
       {
-        if (System.IO.File.Exists(weatherFile)) return true;
+        if (File.Exists(weatherFile))
+          return true;
 
         Log.Info("MyWeather.Download: No internet connection {0}", code);
 
@@ -945,14 +878,14 @@ namespace MediaPortal.GUI.Weather
         }
         catch (Exception ex)
         {
-          Log.Info("Failed to download weather:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          Log.Info("Failed to download weather:{0} {1}", ex.Message, ex.Source);
         }
       }
       return false;
     }
 
     //convert weather.com day strings into localized string id's
-    string LocalizeDay(string dayName)
+    private string LocalizeDay(string dayName)
     {
       string localizedDay = string.Empty;
 
@@ -976,7 +909,7 @@ namespace MediaPortal.GUI.Weather
       return localizedDay;
     }
 
-    string RelocalizeTime(string usFormatTime)
+    private string RelocalizeTime(string usFormatTime)
     {
       string result = usFormatTime;
 
@@ -1007,7 +940,7 @@ namespace MediaPortal.GUI.Weather
       return result;
     }
 
-    string RelocalizeDateTime(string usFormatDateTime)
+    private string RelocalizeDateTime(string usFormatDateTime)
     {
       string result = usFormatDateTime;
 
@@ -1039,7 +972,7 @@ namespace MediaPortal.GUI.Weather
       return result;
     }
 
-    string LocalizeOverview(string token)
+    private string LocalizeOverview(string token)
     {
       string localizedLine = string.Empty;
 
@@ -1165,11 +1098,10 @@ namespace MediaPortal.GUI.Weather
       }
 
       return localizedLine;
-
     }
 
     //splitStart + End are the chars to search between for a space to replace with a \n
-    void SplitLongString(ref string lineString, int splitStart, int splitEnd)
+    private void SplitLongString(ref string lineString, int splitStart, int splitEnd)
     {
       //search chars 10 to 15 for a space
       //if we find one, replace it with a newline
@@ -1183,9 +1115,8 @@ namespace MediaPortal.GUI.Weather
       }
     }
 
-
     //Do a complete download, parse and update
-    void RefreshMe(bool autoUpdate)
+    private void RefreshMe(bool autoUpdate)
     {
       using (WaitCursor cursor = new WaitCursor())
         lock (this)
@@ -1224,7 +1155,7 @@ namespace MediaPortal.GUI.Weather
         }
     }
 
-    void ParseAndBuildWindString(XmlNode node, string unitSpeed, out string wind)
+    private void ParseAndBuildWindString(XmlNode node, string unitSpeed, out string wind)
     {
       int tempInteger = 0;
       string tempString = string.Empty;
@@ -1256,7 +1187,7 @@ namespace MediaPortal.GUI.Weather
       }
     }
 
-    bool LoadWeather(string weatherFile)
+    private bool LoadWeather(string weatherFile)
     {
       int tempInteger = 0;
       string tempString = string.Empty;
@@ -1428,16 +1359,11 @@ namespace MediaPortal.GUI.Weather
         }
       }
 
-      //			if (pDlgProgress!=null)
-      //			{
-      //				pDlgProgress.SetPercentage(70);
-      //				pDlgProgress.Progress();
-      //			}
       return true;
     }
 
 
-    void GetString(XmlNode xmlElement, string tagName, out string stringValue, string defaultValue)
+    private void GetString(XmlNode xmlElement, string tagName, out string stringValue, string defaultValue)
     {
       stringValue = string.Empty;
 
@@ -1473,7 +1399,7 @@ namespace MediaPortal.GUI.Weather
       base.Process();
     }
 
-    void GetInteger(XmlNode xmlElement, string tagName, out int intValue)
+    private void GetInteger(XmlNode xmlElement, string tagName, out int intValue)
     {
       intValue = 0;
       XmlNode node = xmlElement.SelectSingleNode(tagName);
@@ -1504,7 +1430,6 @@ namespace MediaPortal.GUI.Weather
       base.Render(timePassed);
     }
 
-
     private void updateSunClock()
     {
       GUIImage clockImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGE_SUNCLOCK);
@@ -1520,7 +1445,6 @@ namespace MediaPortal.GUI.Weather
         clockImage.IsVisible = true;
       }
     }
-
 
     #region ISetupForm Members
 
@@ -1543,6 +1467,7 @@ namespace MediaPortal.GUI.Weather
     {
       return false;
     }
+
     public int GetWindowId()
     {
       return GetID;
@@ -1585,7 +1510,7 @@ namespace MediaPortal.GUI.Weather
 
     ///////////////////////////////////////////
 
-    void BackgroundUpdate(bool isAuto)
+    private void BackgroundUpdate(bool isAuto)
     {
       BackgroundWorker worker = new BackgroundWorker();
 
@@ -1596,7 +1521,7 @@ namespace MediaPortal.GUI.Weather
         GUIWindowManager.Process();
     }
 
-    void DownloadWorker(object sender, DoWorkEventArgs e)
+    private void DownloadWorker(object sender, DoWorkEventArgs e)
     {
       System.Threading.Thread.CurrentThread.Name = "Weather updater";
       _workerCompleted = false;
@@ -1608,8 +1533,7 @@ namespace MediaPortal.GUI.Weather
       _workerCompleted = true;
     }
 
-    bool _workerCompleted = false;
-
+    private bool _workerCompleted = false;
   }
 }
 
