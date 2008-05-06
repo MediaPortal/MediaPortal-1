@@ -601,66 +601,17 @@ namespace TvEngine
                   {
                     if (nodeEpisodeNumSystem != null && nodeEpisodeNumSystem == "xmltv_ns")
                     {
+                      // http://xml.coverpages.org/XMLTV-DTD-20021210.html
                       serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum.Replace(" ", ""));
-                      int pos = 0;
-                      int Epos = 0;
-                      pos = serEpNum.IndexOf(".", pos);
-                      if (pos == 0) //na_dd grabber only gives '..0/2' etc
-                      {
-                        Epos = pos;
-                        pos = serEpNum.IndexOf(".", pos + 1);
-                        episodeNum = serEpNum.Substring(Epos + 1, (pos - 1) - Epos);
-                        episodePart = serEpNum.Substring(pos + 1, serEpNum.Length - (pos + 1));
-                        if (episodePart.IndexOf("/", 0) != -1)// danish guide gives: episode-num system="xmltv_ns"> . 113 . </episode-num>
-                        {
-                          if (episodePart.Substring(2, 1) == "1") episodePart = "";
-                          else
-                          {
-                            int p = 0;
-                            int t = 0;
-
-                            if (Convert.ToInt32(episodePart.Substring(0, 1)) == 0)
-                            {
-                              p = Convert.ToInt32(episodePart.Substring(0, 1)) + 1;
-                              t = Convert.ToInt32(episodePart.Substring(2, 1));
-                              episodePart = Convert.ToString(p) + "/" + Convert.ToString(t);
-                            }
-                          }
-                        }
-                      }
-                      else if (pos > 0)
-                      {
-                        seriesNum = serEpNum.Substring(0, pos);
-                        Epos = pos;
-                        pos = serEpNum.IndexOf(".", pos + 1);
-                        episodeNum = serEpNum.Substring(Epos + 1, (pos - 1) - Epos);
-                        episodePart = serEpNum.Substring(pos + 1, serEpNum.Length - (pos + 1));
-                        if (episodePart.IndexOf("/", 0) != -1)
-                        {
-                          if (episodePart.Substring(2, 1) == "1") episodePart = "";
-                          else
-                          {
-                            int p = 0;
-                            int t = 0;
-                            if (Convert.ToInt32(episodePart.Substring(0, 1)) == 0)
-                            {
-                              p = Convert.ToInt32(episodePart.Substring(0, 1)) + 1;
-                            }
-                            else
-                            {
-                              p = Convert.ToInt32(episodePart.Substring(0, 1));
-                            }
-                            t = Convert.ToInt32(episodePart.Substring(2, 1));
-                            episodePart = Convert.ToString(p) + "/" + Convert.ToString(t);
-                          }
-                        }
-                      }
-                      else
-                      {
-                        seriesNum = serEpNum;
-                        episodeNum = "";
-                        episodePart = "";
-                      }
+                      int dot1 = serEpNum.IndexOf(".", 0);
+                      int dot2 = serEpNum.IndexOf(".", dot1 + 1);
+                      seriesNum = serEpNum.Substring(0, dot1);
+                      episodeNum = serEpNum.Substring(dot1 + 1, dot2 - (dot1 + 1));
+                      episodePart = serEpNum.Substring(dot2 + 1, serEpNum.Length - (dot2 + 1));
+                      
+                      seriesNum = CorrectEpisodeNum(seriesNum);
+                      episodeNum = CorrectEpisodeNum(episodeNum);
+                      episodePart = CorrectEpisodeNum(episodePart);
                     }
                   }
 
@@ -883,6 +834,30 @@ namespace TvEngine
         xmlReader = null;
       }
       return result;
+    }
+
+    string CorrectEpisodeNum(string episodenum)
+    {
+      int p = 0;
+      int t = 0;
+      string epnum = episodenum;
+
+      if(epnum == "")
+        return epnum;
+
+      int slashpos = epnum.IndexOf("/", 0);
+      if( slashpos == -1)
+      {
+        p = Convert.ToInt32(epnum) + 1;
+        epnum = Convert.ToString(p);
+      } 
+      else
+      {
+        p = Convert.ToInt32(epnum.Substring(0, slashpos)) + 1;
+        t = Convert.ToInt32(epnum.Substring(slashpos + 1, epnum.Length - (slashpos + 1)));
+        epnum = Convert.ToString(p) + "/" + Convert.ToString(t);
+      }
+      return epnum;
     }
 
     int GetTimeOffset(string timeZone)
