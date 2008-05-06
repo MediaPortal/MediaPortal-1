@@ -59,9 +59,12 @@ namespace SetupControls
       this.holderPanel = new System.Windows.Forms.Panel();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonViewLog = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-      this.helpButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+      this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
+      this.updateHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.configToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
+      this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // sectionTree
@@ -73,9 +76,9 @@ namespace SetupControls
       this.sectionTree.HotTracking = true;
       this.sectionTree.Indent = 19;
       this.sectionTree.ItemHeight = 16;
-      this.sectionTree.Location = new System.Drawing.Point(16, 16);
+      this.sectionTree.Location = new System.Drawing.Point(16, 28);
       this.sectionTree.Name = "sectionTree";
-      this.sectionTree.Size = new System.Drawing.Size(184, 467);
+      this.sectionTree.Size = new System.Drawing.Size(184, 455);
       this.sectionTree.TabIndex = 3;
       this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
       this.sectionTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.sectionTree_BeforeSelect);
@@ -84,7 +87,7 @@ namespace SetupControls
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(532, 506);
+      this.cancelButton.Location = new System.Drawing.Point(625, 506);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 1;
@@ -95,7 +98,7 @@ namespace SetupControls
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(453, 506);
+      this.okButton.Location = new System.Drawing.Point(546, 506);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -111,7 +114,7 @@ namespace SetupControls
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.Location = new System.Drawing.Point(216, 16);
+      this.headerLabel.Location = new System.Drawing.Point(216, 28);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
       this.headerLabel.Size = new System.Drawing.Size(484, 24);
@@ -127,9 +130,9 @@ namespace SetupControls
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanel.AutoScroll = true;
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
-      this.holderPanel.Location = new System.Drawing.Point(216, 48);
+      this.holderPanel.Location = new System.Drawing.Point(216, 58);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(484, 435);
+      this.holderPanel.Size = new System.Drawing.Size(484, 425);
       this.holderPanel.TabIndex = 5;
       this.holderPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.holderPanel_Paint);
       // 
@@ -146,7 +149,7 @@ namespace SetupControls
       // applyButton
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(373, 506);
+      this.applyButton.Location = new System.Drawing.Point(466, 506);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
       this.applyButton.TabIndex = 7;
@@ -155,17 +158,6 @@ namespace SetupControls
       this.applyButton.UseVisualStyleBackColor = true;
       this.applyButton.Visible = false;
       this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
-      // 
-      // buttonViewLog
-      // 
-      this.buttonViewLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonViewLog.Location = new System.Drawing.Point(612, 506);
-      this.buttonViewLog.Name = "buttonViewLog";
-      this.buttonViewLog.Size = new System.Drawing.Size(96, 23);
-      this.buttonViewLog.TabIndex = 2;
-      this.buttonViewLog.Text = "View &log files";
-      this.buttonViewLog.UseVisualStyleBackColor = true;
-      this.buttonViewLog.Click += new System.EventHandler(this.buttonViewLog_Click);
       // 
       // linkLabel1
       // 
@@ -179,16 +171,48 @@ namespace SetupControls
       this.linkLabel1.Text = "Donate to MediaPortal";
       this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
-      // helpButton
+      // toolStrip1
       // 
-      this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.helpButton.Location = new System.Drawing.Point(292, 506);
-      this.helpButton.Name = "helpButton";
-      this.helpButton.Size = new System.Drawing.Size(75, 23);
-      this.helpButton.TabIndex = 9;
-      this.helpButton.Text = "&Help";
-      this.helpButton.UseVisualStyleBackColor = true;
-      this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+      this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.helpToolStripSplitButton,
+            this.configToolStripSplitButton});
+      this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+      this.toolStrip1.Name = "toolStrip1";
+      this.toolStrip1.Size = new System.Drawing.Size(716, 25);
+      this.toolStrip1.TabIndex = 13;
+      this.toolStrip1.Text = "toolStrip1";
+      // 
+      // helpToolStripSplitButton
+      // 
+      this.helpToolStripSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+      this.helpToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.updateHelpToolStripMenuItem});
+      this.helpToolStripSplitButton.Image = global::SetupControls.Properties.Resources.icon_help;
+      this.helpToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.helpToolStripSplitButton.Name = "helpToolStripSplitButton";
+      this.helpToolStripSplitButton.Size = new System.Drawing.Size(60, 22);
+      this.helpToolStripSplitButton.Text = "Help";
+      this.helpToolStripSplitButton.ToolTipText = "Opens the online wiki page for the active configuration section.";
+      this.helpToolStripSplitButton.ButtonClick += new System.EventHandler(this.helpToolStripSplitButton_ButtonClick);
+      // 
+      // updateHelpToolStripMenuItem
+      // 
+      this.updateHelpToolStripMenuItem.Image = global::SetupControls.Properties.Resources.icon_refresh;
+      this.updateHelpToolStripMenuItem.Name = "updateHelpToolStripMenuItem";
+      this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.updateHelpToolStripMenuItem.Text = "Update Help";
+      this.updateHelpToolStripMenuItem.ToolTipText = "Online update for the help references file. Use it if an incorrect wiki page was " +
+          "opened.";
+      this.updateHelpToolStripMenuItem.Click += new System.EventHandler(this.updateHelpToolStripMenuItem_Click);
+      // 
+      // configToolStripSplitButton
+      // 
+      this.configToolStripSplitButton.Image = global::SetupControls.Properties.Resources.icon_folder;
+      this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.configToolStripSplitButton.Name = "configToolStripSplitButton";
+      this.configToolStripSplitButton.Size = new System.Drawing.Size(131, 22);
+      this.configToolStripSplitButton.Text = "Open Log directory";
+      this.configToolStripSplitButton.ButtonClick += new System.EventHandler(this.configToolStripSplitButton_ButtonClick);
       // 
       // SettingsForm
       // 
@@ -197,9 +221,8 @@ namespace SetupControls
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(716, 537);
-      this.Controls.Add(this.helpButton);
+      this.Controls.Add(this.toolStrip1);
       this.Controls.Add(this.linkLabel1);
-      this.Controls.Add(this.buttonViewLog);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);
       this.Controls.Add(this.holderPanel);
@@ -212,6 +235,8 @@ namespace SetupControls
       this.Text = "Settings";
       this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
+      this.toolStrip1.ResumeLayout(false);
+      this.toolStrip1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -222,12 +247,14 @@ namespace SetupControls
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
     private MediaPortal.UserInterface.Controls.MPButton applyButton;
-    private MediaPortal.UserInterface.Controls.MPButton buttonViewLog;
     private MediaPortal.UserInterface.Controls.MPBeveledLine beveledLine1;
     protected System.Windows.Forms.TreeView sectionTree;
     protected System.Windows.Forms.Panel holderPanel;
     private MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
     private System.Windows.Forms.LinkLabel linkLabel1;
-    private MediaPortal.UserInterface.Controls.MPButton helpButton;
+    protected System.Windows.Forms.ToolStrip toolStrip1;
+    protected System.Windows.Forms.ToolStripSplitButton helpToolStripSplitButton;
+    protected System.Windows.Forms.ToolStripSplitButton configToolStripSplitButton;
+    protected System.Windows.Forms.ToolStripMenuItem updateHelpToolStripMenuItem;
   }
 }

@@ -60,6 +60,11 @@
     <Compile Include="MPForm.Designer.cs">
       <DependentUpon>MPForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,6 +144,11 @@
       <SubType>Designer</SubType>
       <DependentUpon>MPForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SettingsForm.cs</DependentUpon>
@@ -170,6 +180,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SetupTv.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\icon_folder.png" />
+    <Content Include="Resources\icon_help.png" />
+    <Content Include="Resources\icon_refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

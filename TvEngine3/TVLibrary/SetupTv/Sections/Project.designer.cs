@@ -69,7 +69,6 @@ namespace SetupTv.Sections
       this.labelForums = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabelHomepage = new System.Windows.Forms.LinkLabel();
       this.labelHomepage = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.helpButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkLabelPayPal = new System.Windows.Forms.LinkLabel();
       this.labelMePo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxInfo.SuspendLayout();
@@ -231,17 +230,6 @@ namespace SetupTv.Sections
       this.labelHomepage.TabIndex = 0;
       this.labelHomepage.Text = "Homepage:";
       // 
-      // helpButton
-      // 
-      this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.helpButton.Location = new System.Drawing.Point(364, 382);
-      this.helpButton.Name = "helpButton";
-      this.helpButton.Size = new System.Drawing.Size(105, 23);
-      this.helpButton.TabIndex = 10;
-      this.helpButton.Text = "&Update Help";
-      this.helpButton.UseVisualStyleBackColor = true;
-      this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
-      // 
       // linkLabelPayPal
       // 
       this.linkLabelPayPal.ActiveLinkColor = System.Drawing.Color.Transparent;
@@ -267,7 +255,6 @@ namespace SetupTv.Sections
       // 
       // Project
       // 
-      this.Controls.Add(this.helpButton);
       this.Controls.Add(this.linkLabelPayPal);
       this.Controls.Add(this.groupBoxContact);
       this.Controls.Add(this.groupBoxInfo);
@@ -299,6 +286,5 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelInfo2;
     private System.Windows.Forms.LinkLabel linkLabelPayPal;
     private MediaPortal.UserInterface.Controls.MPLabel labelMePo;
-    private MediaPortal.UserInterface.Controls.MPButton helpButton;
   }
 }

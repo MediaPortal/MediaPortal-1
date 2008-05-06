@@ -158,15 +158,6 @@ namespace SetupControls
     {
     }
 
-    public virtual void buttonViewLog_Click(object sender, EventArgs e)
-    {
-    }
-
-    public virtual void helpButton_Click(object sender, EventArgs e)
-    {
-    }
-
-
     private void holderPanel_Paint(object sender, PaintEventArgs e)
     {
 
@@ -175,6 +166,21 @@ namespace SetupControls
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       System.Diagnostics.Process.Start((string)e.Link.LinkData);
+    }
+
+    public virtual void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
+    {
+
+    }
+
+    public virtual void updateHelpToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    public virtual void configToolStripSplitButton_ButtonClick(object sender, EventArgs e)
+    {
+
     }
   }
 }

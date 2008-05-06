@@ -489,6 +489,10 @@
     <EmbeddedResource Include="images\wizard-header.jpg" />
     <EmbeddedResource Include="delete_mysql_database.sql" />
     <EmbeddedResource Include="delete_sqlserver_database.sql" />
+    <EmbeddedResource Include="SettingsForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SetupDatabaseForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SetupDatabaseForm.cs</DependentUpon>

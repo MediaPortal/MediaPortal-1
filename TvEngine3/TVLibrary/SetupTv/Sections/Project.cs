@@ -100,10 +100,5 @@ namespace SetupTv.Sections
         System.Diagnostics.Process.Start(sInfo);
       }
     }
-    
-    private void helpButton_Click(object sender, EventArgs e)
-    {
-      HelpSystem.UpdateHelpReferences();
-    }
   }
 }
