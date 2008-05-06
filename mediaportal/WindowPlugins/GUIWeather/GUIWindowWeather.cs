@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+﻿#region Copyright (C) 2005-2008 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
@@ -180,7 +180,7 @@ namespace MediaPortal.GUI.Weather
     public GUIWindowWeather()
     {
       //loop here as well
-      for (int i = 0; i < NUM_DAYS; i++)
+      for (int i = 0 ; i < NUM_DAYS ; i++)
       {
         _forecast[i].iconImageNameLow = Config.GetFile(Config.Dir.Weather, @"64x64\na.png");
         _forecast[i].iconImageNameHigh = Config.GetFile(Config.Dir.Weather, @"128x128\na.png");
@@ -575,7 +575,7 @@ namespace MediaPortal.GUI.Weather
         _refreshTimer = DateTime.Now.AddMinutes(-(_refreshIntercal + 1));
 
         bool bFound = false;
-        for (int i = 0; i < 20; i++)
+        for (int i = 0 ; i < 20 ; i++)
         {
           string cityTag = String.Format("city{0}", i);
           string strCodeTag = String.Format("code{0}", i);
@@ -684,13 +684,13 @@ namespace MediaPortal.GUI.Weather
     {
       if (_currentMode == Mode.Weather)
       {
-        for (int i = 10; i < 900; ++i)
+        for (int i = 10 ; i < 900 ; ++i)
           GUIControl.ShowControl(GetID, i);
         GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BTNVIEW);
         GUIControl.ShowControl(GetID, (int)Controls.CONTROL_LOCATIONSELECT);
 
 
-        for (int i = (int)Controls.CONTROL_IMAGE_SAT; i < (int)Controls.CONTROL_IMAGE_SAT_END; ++i)
+        for (int i = (int)Controls.CONTROL_IMAGE_SAT ; i < (int)Controls.CONTROL_IMAGE_SAT_END ; ++i)
           GUIControl.HideControl(GetID, i);
         GUIControl.HideControl(GetID, (int)Controls.CONTROL_IMAGE_SUNCLOCK);
 
@@ -732,7 +732,7 @@ namespace MediaPortal.GUI.Weather
           GUIControl.HideControl(GetID, (int)Controls.CONTROL_STATICSUNS);
           GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELSUNR);
           GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELSUNS);
-          for (int i = 0; i < NUM_DAYS; i++)
+          for (int i = 0 ; i < NUM_DAYS ; i++)
           {
             GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0DAY + (i * 10), _forecast[i].Day);
             GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0HI + (i * 10), _forecast[i].High);
@@ -751,7 +751,7 @@ namespace MediaPortal.GUI.Weather
         }
         else
         {
-          for (int i = 0; i < NUM_DAYS; i++)
+          for (int i = 0 ; i < NUM_DAYS ; i++)
           {
             GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELD0DAY + (i * 10));
             GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELD0HI + (i * 10));
@@ -791,11 +791,11 @@ namespace MediaPortal.GUI.Weather
       {
         GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(19100));
 
-        for (int i = 10; i < 900; ++i)
+        for (int i = 10 ; i < 900 ; ++i)
           GUIControl.HideControl(GetID, i);
         GUIControl.HideControl(GetID, (int)Controls.CONTROL_IMAGE_SUNCLOCK);
 
-        for (int i = (int)Controls.CONTROL_IMAGE_SAT; i < (int)Controls.CONTROL_IMAGE_SAT_END; ++i)
+        for (int i = (int)Controls.CONTROL_IMAGE_SAT ; i < (int)Controls.CONTROL_IMAGE_SAT_END ; ++i)
           GUIControl.ShowControl(GetID, i);
 
         GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BTNVIEW);
@@ -808,9 +808,9 @@ namespace MediaPortal.GUI.Weather
         GUIControl.HideControl(GetID, (int)Controls.CONTROL_BTNVIEW);
         GUIControl.HideControl(GetID, (int)Controls.CONTROL_LOCATIONSELECT);
 
-        for (int i = (int)Controls.CONTROL_IMAGE_SAT; i < (int)Controls.CONTROL_IMAGE_SAT_END; ++i)
+        for (int i = (int)Controls.CONTROL_IMAGE_SAT ; i < (int)Controls.CONTROL_IMAGE_SAT_END ; ++i)
           GUIControl.HideControl(GetID, i);
-        for (int i = 10; i < 900; ++i)
+        for (int i = 10 ; i < 900 ; ++i)
           GUIControl.HideControl(GetID, i);
 
         GUIControl.ShowControl(GetID, (int)Controls.CONTROL_IMAGE_SUNCLOCK);
@@ -934,8 +934,7 @@ namespace MediaPortal.GUI.Weather
       else
         c_units = 'm';
 
-      url = String.Format("http://xoap.weather.com/weather/local/{0}?cc=*&unit={1}&dayf=4&prod=xoap&par={2}&key={3}",
-        _locationCode, c_units.ToString(), PARTNER_ID, PARTNER_KEY);
+      url = String.Format("http://xoap.weather.com/weather/local/{0}?cc=*&dayf=5&link=xoap∏=xoap&par={1}&key={2}&unit={3}", _locationCode, PARTNER_ID, PARTNER_KEY, c_units);
 
       using (WebClient client = new WebClient())
       {
@@ -1174,7 +1173,7 @@ namespace MediaPortal.GUI.Weather
     {
       //search chars 10 to 15 for a space
       //if we find one, replace it with a newline
-      for (int i = splitStart; i < splitEnd && i < (int)lineString.Length; i++)
+      for (int i = splitStart ; i < splitEnd && i < (int)lineString.Length ; i++)
       {
         if (lineString[i] == ' ')
         {
@@ -1356,7 +1355,7 @@ namespace MediaPortal.GUI.Weather
       if (null != element)
       {
         XmlNode pOneDayElement = element.SelectSingleNode("day"); ;
-        for (int i = 0; i < NUM_DAYS; i++)
+        for (int i = 0 ; i < NUM_DAYS ; i++)
         {
           if (null != pOneDayElement)
           {
