@@ -946,13 +946,14 @@ namespace TvPlugin
         recFileExists = System.IO.File.Exists(fileName);
       }
 
+      //populates recording metadata to g_player;
+      g_Player.currentFileName = fileName;
+
       if (!System.IO.File.Exists(fileName))
       {
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
       }
 
-      //populates recording metadata to g_player;
-      g_Player.currentFileName = fileName;
       g_Player.currentTitle = rec.Title;
       g_Player.currentDescription = rec.Description;
 
