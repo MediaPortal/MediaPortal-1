@@ -1,3 +1,24 @@
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 #pragma once
 
 #pragma warning(push, 2)
@@ -11,9 +32,9 @@
 #pragma warning(pop)
 using namespace std;
 #define CHECK_HR(hr, msg) if ( FAILED(hr) ) Log( msg );
-#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
+#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 
-#define NUM_SURFACES 5
+#define NUM_SURFACES 10
 
 class EVRCustomPresenter;
 
@@ -50,29 +71,28 @@ class EVRCustomPresenter
 
 public:
 	EVRCustomPresenter(IVMR9Callback* callback, IDirect3DDevice9* direct3dDevice,HMONITOR monitor);
-    virtual ~EVRCustomPresenter();
-	//IQualProp (stub)
-    virtual HRESULT STDMETHODCALLTYPE get_FramesDroppedInRenderer(int *pcFrames);
-    virtual HRESULT STDMETHODCALLTYPE get_FramesDrawn(int *pcFramesDrawn) ;     
-    virtual HRESULT STDMETHODCALLTYPE get_AvgFrameRate(int *piAvgFrameRate);    
-    virtual HRESULT STDMETHODCALLTYPE get_Jitter(int *iJitter) ;     
-    virtual HRESULT STDMETHODCALLTYPE get_AvgSyncOffset(int *piAvg) ;
-    virtual HRESULT STDMETHODCALLTYPE get_DevSyncOffset(int *piDev) ;
+  virtual ~EVRCustomPresenter();
+  //IQualProp (stub)
+  virtual HRESULT STDMETHODCALLTYPE get_FramesDroppedInRenderer(int *pcFrames);
+  virtual HRESULT STDMETHODCALLTYPE get_FramesDrawn(int *pcFramesDrawn);     
+  virtual HRESULT STDMETHODCALLTYPE get_AvgFrameRate(int *piAvgFrameRate);    
+  virtual HRESULT STDMETHODCALLTYPE get_Jitter(int *iJitter);     
+  virtual HRESULT STDMETHODCALLTYPE get_AvgSyncOffset(int *piAvg);
+  virtual HRESULT STDMETHODCALLTYPE get_DevSyncOffset(int *piDev);
 
 	//IMFAsyncCallback
-    virtual HRESULT STDMETHODCALLTYPE GetParameters( 
-        /* [out] */  DWORD *pdwFlags,
-        /* [out] */  DWORD *pdwQueue);
+  virtual HRESULT STDMETHODCALLTYPE GetParameters( 
+      /* [out] */  DWORD *pdwFlags,
+      /* [out] */  DWORD *pdwQueue);
     
-    virtual HRESULT STDMETHODCALLTYPE Invoke( 
-        /* [in] */  IMFAsyncResult *pAsyncResult);
+  virtual HRESULT STDMETHODCALLTYPE Invoke( 
+      /* [in] */  IMFAsyncResult *pAsyncResult);
 
 	//IMFGetService
-	virtual HRESULT STDMETHODCALLTYPE GetService( 
+  virtual HRESULT STDMETHODCALLTYPE GetService( 
             /* [in] */  REFGUID guidService,
             /* [in] */  REFIID riid,
             /* [iid_is][out] */ LPVOID *ppvObject);
-
 
 	//IMFVideoDeviceID
 	virtual HRESULT STDMETHODCALLTYPE GetDeviceID(IID* pDeviceID);
@@ -88,108 +108,105 @@ public:
             ULONG_PTR ulParam);
 
 	//IMFClockState
-        virtual HRESULT STDMETHODCALLTYPE OnClockStart( 
-            /* [in] */ MFTIME hnsSystemTime,
-            /* [in] */ LONGLONG llClockStartOffset);
-        
-        virtual HRESULT STDMETHODCALLTYPE OnClockStop( 
-            /* [in] */ MFTIME hnsSystemTime);
-        
-        virtual HRESULT STDMETHODCALLTYPE OnClockPause( 
-            /* [in] */ MFTIME hnsSystemTime);
-        
-        virtual HRESULT STDMETHODCALLTYPE OnClockRestart( 
-            /* [in] */ MFTIME hnsSystemTime);
-        
-        virtual HRESULT STDMETHODCALLTYPE OnClockSetRate( 
-            /* [in] */ MFTIME hnsSystemTime,
-            /* [in] */ float flRate);
+  virtual HRESULT STDMETHODCALLTYPE OnClockStart( 
+      /* [in] */ MFTIME hnsSystemTime,
+      /* [in] */ LONGLONG llClockStartOffset);
 
+  virtual HRESULT STDMETHODCALLTYPE OnClockStop( 
+      /* [in] */ MFTIME hnsSystemTime);
+
+  virtual HRESULT STDMETHODCALLTYPE OnClockPause( 
+      /* [in] */ MFTIME hnsSystemTime);
+
+  virtual HRESULT STDMETHODCALLTYPE OnClockRestart( 
+      /* [in] */ MFTIME hnsSystemTime);
+
+  virtual HRESULT STDMETHODCALLTYPE OnClockSetRate( 
+      /* [in] */ MFTIME hnsSystemTime,
+      /* [in] */ float flRate);
 
 	//IMFRateSupport
-    virtual HRESULT STDMETHODCALLTYPE GetSlowestRate( 
-        /* [in] */ MFRATE_DIRECTION eDirection,
-        /* [in] */ BOOL fThin,
-		/* [out] */ float *pflRate);
-    
-    virtual HRESULT STDMETHODCALLTYPE GetFastestRate( 
-        /* [in] */ MFRATE_DIRECTION eDirection,
-        /* [in] */ BOOL fThin,
-        /* [out] */ float *pflRate);
-    
-    virtual HRESULT STDMETHODCALLTYPE IsRateSupported( 
-        /* [in] */ BOOL fThin,
-        /* [in] */ float flRate,
-        /* [unique][out][in] */ float *pflNearestSupportedRate);
+  virtual HRESULT STDMETHODCALLTYPE GetSlowestRate( 
+      /* [in] */ MFRATE_DIRECTION eDirection,
+      /* [in] */ BOOL fThin,
+  /* [out] */ float *pflRate);
 
-        virtual HRESULT STDMETHODCALLTYPE GetNativeVideoSize( 
-            /* [unique][out][in] */  SIZE *pszVideo,
-            /* [unique][out][in] */  SIZE *pszARVideo) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetIdealVideoSize( 
-            /* [unique][out][in] */  SIZE *pszMin,
-            /* [unique][out][in] */  SIZE *pszMax) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetVideoPosition( 
-            /* [unique][in] */  const MFVideoNormalizedRect *pnrcSource,
-            /* [unique][in] */  const LPRECT prcDest) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetVideoPosition( 
-            /* [out] */  MFVideoNormalizedRect *pnrcSource,
-            /* [out] */  LPRECT prcDest) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetAspectRatioMode( 
-            /* [in] */ DWORD dwAspectRatioMode) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetAspectRatioMode( 
-            /* [out] */  DWORD *pdwAspectRatioMode) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetVideoWindow( 
-            /* [in] */  HWND hwndVideo) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetVideoWindow( 
-            /* [out] */  HWND *phwndVideo) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE RepaintVideo( void) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetCurrentImage( 
-            /* [out][in] */  BITMAPINFOHEADER *pBih,
-            /* [size_is][size_is][out] */  BYTE **pDib,
-            /* [out] */  DWORD *pcbDib,
-            /* [unique][out][in] */  LONGLONG *pTimeStamp) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetBorderColor( 
-            /* [in] */ COLORREF Clr) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetBorderColor( 
-            /* [out] */  COLORREF *pClr) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetRenderingPrefs( 
-            /* [in] */ DWORD dwRenderFlags) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetRenderingPrefs( 
-            /* [out] */  DWORD *pdwRenderFlags) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetFullscreen( 
-            /* [in] */ BOOL fFullscreen) ;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetFullscreen( 
-            /* [out] */  BOOL *pfFullscreen) ;
+  virtual HRESULT STDMETHODCALLTYPE GetFastestRate( 
+      /* [in] */ MFRATE_DIRECTION eDirection,
+      /* [in] */ BOOL fThin,
+      /* [out] */ float *pflRate);
 
-        
-	      virtual HRESULT STDMETHODCALLTYPE IsInTrustedVideoMode (BOOL *pYes);
-	      virtual HRESULT STDMETHODCALLTYPE CanConstrict (BOOL *pYes);
-        virtual HRESULT STDMETHODCALLTYPE SetConstriction(DWORD dwKPix);
-        virtual HRESULT STDMETHODCALLTYPE DisableImageExport(BOOL bDisable);
+  virtual HRESULT STDMETHODCALLTYPE IsRateSupported( 
+      /* [in] */ BOOL fThin,
+      /* [in] */ float flRate,
+      /* [unique][out][in] */ float *pflNearestSupportedRate);
 
-    // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
-        REFIID riid,
-        void** ppvObject);
-    virtual HRESULT STDMETHODCALLTYPE MapOutputCoordinateToInputStream(float xOut,float yOut,DWORD dwOutputStreamIndex,DWORD dwInputStreamIndex,float* pxIn,float* pyIn);
+  virtual HRESULT STDMETHODCALLTYPE GetNativeVideoSize( 
+      /* [unique][out][in] */  SIZE *pszVideo,
+      /* [unique][out][in] */  SIZE *pszARVideo) ;
 
-    virtual ULONG STDMETHODCALLTYPE AddRef();
-    virtual ULONG STDMETHODCALLTYPE Release();
+  virtual HRESULT STDMETHODCALLTYPE GetIdealVideoSize( 
+      /* [unique][out][in] */  SIZE *pszMin,
+      /* [unique][out][in] */  SIZE *pszMax) ;
+
+  virtual HRESULT STDMETHODCALLTYPE SetVideoPosition( 
+      /* [unique][in] */  const MFVideoNormalizedRect *pnrcSource,
+      /* [unique][in] */  const LPRECT prcDest) ;
+
+  virtual HRESULT STDMETHODCALLTYPE GetVideoPosition( 
+      /* [out] */  MFVideoNormalizedRect *pnrcSource,
+      /* [out] */  LPRECT prcDest) ;
+
+  virtual HRESULT STDMETHODCALLTYPE SetAspectRatioMode( 
+      /* [in] */ DWORD dwAspectRatioMode) ;
+
+  virtual HRESULT STDMETHODCALLTYPE GetAspectRatioMode( 
+      /* [out] */  DWORD *pdwAspectRatioMode) ;
+
+  virtual HRESULT STDMETHODCALLTYPE SetVideoWindow( 
+      /* [in] */  HWND hwndVideo) ;
+
+  virtual HRESULT STDMETHODCALLTYPE GetVideoWindow( 
+      /* [out] */  HWND *phwndVideo) ;
+
+  virtual HRESULT STDMETHODCALLTYPE RepaintVideo( void) ;
+
+  virtual HRESULT STDMETHODCALLTYPE GetCurrentImage( 
+      /* [out][in] */  BITMAPINFOHEADER *pBih,
+      /* [size_is][size_is][out] */  BYTE **pDib,
+      /* [out] */  DWORD *pcbDib,
+      /* [unique][out][in] */  LONGLONG *pTimeStamp) ;
+
+  virtual HRESULT STDMETHODCALLTYPE SetBorderColor( 
+      /* [in] */ COLORREF Clr) ;
+
+  virtual HRESULT STDMETHODCALLTYPE GetBorderColor( 
+      /* [out] */  COLORREF *pClr) ;
+
+  virtual HRESULT STDMETHODCALLTYPE SetRenderingPrefs( 
+      /* [in] */ DWORD dwRenderFlags) ;
+
+  virtual HRESULT STDMETHODCALLTYPE GetRenderingPrefs( 
+      /* [out] */  DWORD *pdwRenderFlags) ;
+
+  virtual HRESULT STDMETHODCALLTYPE SetFullscreen( 
+      /* [in] */ BOOL fFullscreen) ;
+
+  virtual HRESULT STDMETHODCALLTYPE GetFullscreen( 
+      /* [out] */  BOOL *pfFullscreen) ;
+
+
+  virtual HRESULT STDMETHODCALLTYPE IsInTrustedVideoMode (BOOL *pYes);
+  virtual HRESULT STDMETHODCALLTYPE CanConstrict (BOOL *pYes);
+  virtual HRESULT STDMETHODCALLTYPE SetConstriction(DWORD dwKPix);
+  virtual HRESULT STDMETHODCALLTYPE DisableImageExport(BOOL bDisable);
+
+  // IUnknown
+  virtual HRESULT STDMETHODCALLTYPE QueryInterface( REFIID riid, void** ppvObject);
+  virtual HRESULT STDMETHODCALLTYPE MapOutputCoordinateToInputStream(float xOut,float yOut,DWORD dwOutputStreamIndex,DWORD dwInputStreamIndex,float* pxIn,float* pyIn);
+
+  virtual ULONG STDMETHODCALLTYPE AddRef();
+  virtual ULONG STDMETHODCALLTYPE Release();
 
 	//Local
 	void ReleaseCallBack();
@@ -199,7 +216,9 @@ public:
 	BOOL CheckForInput();
 	HRESULT ProcessInputNotify(int* samplesProcessed);
   void EnableFrameSkipping(bool onOff);
+
 protected:
+
 	void LogStats();
 	void ReleaseSurfaces();
 	HRESULT Paint(CComPtr<IDirect3DSurface9> pSurface);
@@ -210,14 +229,14 @@ protected:
 	HRESULT CreateProposedOutputType(IMFMediaType* pMixerType, IMFMediaType** pType);
 	HRESULT RenegotiateMediaOutputType();
 	BOOL CheckForEndOfStream();
-	void	StartWorkers();
-	void	StopWorkers();
-	void	StartThread(PHANDLE handle, SchedulerParams* pParams,
+	void StartWorkers();
+	void StopWorkers();
+	void StartThread(PHANDLE handle, SchedulerParams* pParams,
 					UINT (CALLBACK *ThreadProc)(void*), UINT* threadId, int threadPriority);
-	void	EndThread(HANDLE hThread, SchedulerParams* params);
-	void    NotifyThread(SchedulerParams* params);
-	void    NotifyScheduler();
-	void    NotifyWorker();
+	void EndThread(HANDLE hThread, SchedulerParams* params);
+	void NotifyThread(SchedulerParams* params);
+	void NotifyScheduler();
+	void NotifyWorker();
 	HRESULT GetTimeToSchedule(IMFSample* pSample, LONGLONG* pDelta);
 	void  Flush();
 	void ScheduleSample(IMFSample* pSample);
@@ -225,11 +244,11 @@ protected:
 	BOOL PopSample();
 	HRESULT TrackSample(IMFSample *pSample);
 	HRESULT GetFreeSample(IMFSample** ppSample);
-	void	ReturnSample(IMFSample* pSample, BOOL tryNotify);
-	HRESULT PresentSample(IMFSample* pSample);
-	void    ResetStatistics();
-
-    CComPtr<IDirect3DDevice9> m_pD3DDev;
+	void ReturnSample(IMFSample* pSample, BOOL tryNotify);
+	void ResetStatistics();
+	
+  HRESULT PresentSample(IMFSample* pSample);
+  CComPtr<IDirect3DDevice9> m_pD3DDev;
 	IVMR9Callback* m_pCallback;
 	CComPtr<IDirect3DDeviceManager9> m_pDeviceManager;
 	CComPtr<IMediaEventSink> m_pEventSink;
@@ -247,33 +266,33 @@ protected:
 	CMyQueue<IMFSample*> m_qScheduledSamples;
 	SchedulerParams m_schedulerParams;
 	SchedulerParams m_workerParams;
-	BOOL		  m_bSchedulerRunning;
-	HANDLE		  m_hScheduler;
-	HANDLE		  m_hWorker;
-	UINT		  m_uSchedulerThreadId;
-	UINT		  m_uWorkerThreadId;
-	UINT          m_iResetToken;
-	float		  m_fRate;
-	long		  m_refCount;
-	//int			  m_surfaceCount;
-	HMONITOR	  m_hMonitor;
-	int   m_iVideoWidth, m_iVideoHeight;
-	int   m_iARX, m_iARY;
-	double m_fps ;
-	BOOL		m_bfirstFrame;
-	BOOL		m_bfirstInput;
-	BOOL		m_bInputAvailable;
-	//LONG		m_lInputAvailable;
-	BOOL		m_bendStreaming;
-	BOOL		m_bReallocSurfaces;
-	BOOL	    m_bFlush;
-	DWORD m_dwLastStatLogTime;
-	int m_iExpectedFrameDuration;
-	int m_iMaxFrameTimeDiff;
-	int m_iMinFrameTimeDiff;
-	DWORD m_dwVariance;
-	int m_iFramesDrawn, m_iFramesDropped, m_iFramesForStats;
-	LONGLONG m_hnsLastFrameTime, m_hnsTotalDiff;
-	RENDER_STATE m_state;
-  bool  m_enableFrameSkipping;
+	BOOL      m_bSchedulerRunning;
+	HANDLE    m_hScheduler;
+	HANDLE    m_hWorker;
+	UINT      m_uSchedulerThreadId;
+	UINT      m_uWorkerThreadId;
+	UINT      m_iResetToken;
+	float     m_fRate;
+	long      m_refCount;
+	//int       m_surfaceCount;
+	HMONITOR  m_hMonitor;
+	int       m_iVideoWidth, m_iVideoHeight;
+	int       m_iARX, m_iARY;
+	double    m_fps;
+	BOOL      m_bfirstFrame;
+	BOOL      m_bfirstInput;
+	BOOL      m_bInputAvailable;
+	//LONG      m_lInputAvailable;
+	BOOL      m_bendStreaming;
+	BOOL      m_bReallocSurfaces;
+	BOOL      m_bFlush;
+	DWORD     m_dwLastStatLogTime;
+	int       m_iExpectedFrameDuration;
+	int       m_iMaxFrameTimeDiff;
+	int       m_iMinFrameTimeDiff;
+	DWORD     m_dwVariance;
+	int       m_iFramesDrawn, m_iFramesDropped, m_iFramesForStats;
+	LONGLONG  m_hnsLastFrameTime, m_hnsTotalDiff;
+  bool      m_enableFrameSkipping;
+  RENDER_STATE m_state;
 };
