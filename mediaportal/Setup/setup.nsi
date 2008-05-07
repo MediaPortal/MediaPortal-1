@@ -288,8 +288,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\WebEPG\*"
   SetOutPath "$MPdir.Base\Wizards"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Wizards\*"
-  SetOutPath "$MPdir.Base\xmltv"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "..\Docs\BASS License.txt"
@@ -316,6 +314,8 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal "${MEDIAPORTAL.BASE}\MusicVideoSettings.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
+  SetOutPath "$MPdir.Config\xmltv"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
 
   SetOutPath "$MPdir.CustomInputDefault"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
