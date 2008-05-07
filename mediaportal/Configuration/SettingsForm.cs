@@ -511,7 +511,7 @@ namespace MediaPortal.Configuration
       this.sectionTree.ItemHeight = 16;
       this.sectionTree.Location = new System.Drawing.Point(16, 28);
       this.sectionTree.Name = "sectionTree";
-      this.sectionTree.Size = new System.Drawing.Size(184, 428);
+      this.sectionTree.Size = new System.Drawing.Size(184, 462);
       this.sectionTree.TabIndex = 2;
       this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
       this.sectionTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.sectionTree_BeforeSelect);
@@ -520,7 +520,7 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(613, 479);
+      this.cancelButton.Location = new System.Drawing.Point(621, 513);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 1;
@@ -531,7 +531,7 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(532, 479);
+      this.okButton.Location = new System.Drawing.Point(540, 513);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -550,7 +550,7 @@ namespace MediaPortal.Configuration
       this.headerLabel.Location = new System.Drawing.Point(216, 28);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(472, 24);
+      this.headerLabel.Size = new System.Drawing.Size(480, 24);
       this.headerLabel.TabIndex = 3;
       this.headerLabel.TabStop = false;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
@@ -565,23 +565,23 @@ namespace MediaPortal.Configuration
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
       this.holderPanel.Location = new System.Drawing.Point(216, 58);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(472, 398);
+      this.holderPanel.Size = new System.Drawing.Size(480, 432);
       this.holderPanel.TabIndex = 4;
       // 
       // beveledLine1
       // 
       this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 469);
+      this.beveledLine1.Location = new System.Drawing.Point(8, 503);
       this.beveledLine1.Name = "beveledLine1";
-      this.beveledLine1.Size = new System.Drawing.Size(688, 2);
+      this.beveledLine1.Size = new System.Drawing.Size(696, 2);
       this.beveledLine1.TabIndex = 5;
       this.beveledLine1.TabStop = false;
       // 
       // applyButton
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(451, 479);
+      this.applyButton.Location = new System.Drawing.Point(459, 513);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
       this.applyButton.TabIndex = 6;
@@ -595,7 +595,7 @@ namespace MediaPortal.Configuration
       // 
       this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(12, 484);
+      this.linkLabel1.Location = new System.Drawing.Point(12, 518);
       this.linkLabel1.Name = "linkLabel1";
       this.linkLabel1.Size = new System.Drawing.Size(113, 13);
       this.linkLabel1.TabIndex = 9;
@@ -610,7 +610,7 @@ namespace MediaPortal.Configuration
             this.configToolStripSplitButton});
       this.toolStrip1.Location = new System.Drawing.Point(0, 0);
       this.toolStrip1.Name = "toolStrip1";
-      this.toolStrip1.Size = new System.Drawing.Size(704, 25);
+      this.toolStrip1.Size = new System.Drawing.Size(712, 25);
       this.toolStrip1.TabIndex = 10;
       this.toolStrip1.Text = "toolStrip1";
       // 
@@ -631,7 +631,7 @@ namespace MediaPortal.Configuration
       // 
       this.updateHelpToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_refresh;
       this.updateHelpToolStripMenuItem.Name = "updateHelpToolStripMenuItem";
-      this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
       this.updateHelpToolStripMenuItem.Text = "Update Help";
       this.updateHelpToolStripMenuItem.ToolTipText = "Online update for the help references file. Use it if an incorrect wiki page was " +
           "opened.";
@@ -689,7 +689,7 @@ namespace MediaPortal.Configuration
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(704, 510);
+      this.ClientSize = new System.Drawing.Size(712, 544);
       this.Controls.Add(this.toolStrip1);
       this.Controls.Add(this.linkLabel1);
       this.Controls.Add(this.applyButton);
