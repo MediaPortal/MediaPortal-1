@@ -389,22 +389,24 @@ namespace MediaPortal.Utils.Web
             element.start = element.name.Substring(pos + 1, sepPos - pos - 1);
             element.end = element.name.Substring(sepPos + 1, element.name.Length - sepPos - 2);
           }
-          element.name = element.name.Substring(0, pos + 1);
+          element.name = element.name.Substring(1, pos-1);
         }
-
-        if (i == 0 && tag.Index > 0)
-          element.start = source.Substring(0, tag.Index);
-
-        if (i + 1 == elementTags.Count && tag.Index + tag.Length != source.Length)
-          element.end = source.Substring(tag.Index + tag.Length, source.Length - tag.Index - tag.Length);
-
-        if (i + 1 < elementTags.Count)
+        else
         {
-          Match nextTag = elementTags[i + 1];
-          element.end = source.Substring(tag.Index + tag.Length, nextTag.Index - tag.Index - tag.Length);
-        }
+          if (i == 0 && tag.Index > 0)
+            element.start = source.Substring(0, tag.Index);
 
-        element.name = element.name.Substring(1, element.name.Length - 2);
+          if (i + 1 == elementTags.Count && tag.Index + tag.Length != source.Length)
+            element.end = source.Substring(tag.Index + tag.Length, source.Length - tag.Index - tag.Length);
+
+          if (i + 1 < elementTags.Count)
+          {
+            Match nextTag = elementTags[i + 1];
+            element.end = source.Substring(tag.Index + tag.Length, nextTag.Index - tag.Index - tag.Length);
+          }
+
+          element.name = element.name.Substring(1, element.name.Length - 2);
+        }
         elements.Add(element);
       }
 
