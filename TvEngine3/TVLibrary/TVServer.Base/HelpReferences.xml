@@ -2,8 +2,10 @@
 <helpsystem>
   <general baseurl="http://wiki.team-mediaportal.com/TV-Server/Configuration/" />
   <sections>
+    <section name="SetupTv.Sections.Project" suburl="" />
+
     <section name="SetupTv.Sections.Servers" suburl="TVServers" />
-    <section name="SetupTv.Sections.TvCards" suburl="TVServers" />    
+    <section name="SetupTv.Sections.TvCards" suburl="TVServers" />
     <section name="SetupTv.Sections.CardAnalog" suburl="TVServers/ScanAnalog" />
     <section name="SetupTv.Sections.CardAtsc" suburl="TVServers" />
     <section name="SetupTv.Sections.CardDvbC" suburl="TVServers" />
@@ -34,7 +36,7 @@
     <section name="SetupTv.Sections.CMSetup" suburl="Plugins/ConflictsManager" />
     <section name="TvEngine.PowerScheduler.PowerSchedulerMasterSetup" suburl="Plugins/PowerScheduler" />
     <section name="SetupTv.Sections.BlasterSetup" suburl="Plugins/ServerBlaster" />
-    <section name="SetupTv.Sections.TvMovieSetup" suburl="Plugins/TvMovieEpgImport" />
+    <section name="SetupTv.Sections.TvMovieSetup" suburl="Plugins/TvMovieEpg" />
     <section name="SetupTv.Sections.XmlTvSetup" suburl="Plugins/XmlTv" />
 
     <!-- deprecated / disabled sections -->
