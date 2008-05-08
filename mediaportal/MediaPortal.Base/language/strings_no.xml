@@ -750,7 +750,7 @@
     <String id="910">Logger på...</String>
     <String id="911">Ingen kanaler</String>
     <String id="912">Kan ikke laste ned siste nytt</String>
-    <String id="913" prefix="Mine ">Programtilegg</String>
+    <String id="913" prefix="Mine ">Tillegg</String>
     <String id="914">Opptak</String>
     <String id="915">TV-kanaler</String>
     <String id="916">Ekstern fil</String>
@@ -1573,7 +1573,7 @@
     <String id="100031">Innstillinger-&gt;skjerm-&gt;rullehastighet</String>
     <String id="100032">MSN Messenger</String>
     <String id="100033">MSN Messenger-samtale</String>
-    <String id="100034" prefix="Mine ">Programtilegg</String>
+    <String id="100034" prefix="Mine ">Tillegg</String>
     <String id="100035">Basic home</String>
     <String id="100100">Ja/nei-dialog</String>
     <String id="100101">Fremdriftsdialog</String>
