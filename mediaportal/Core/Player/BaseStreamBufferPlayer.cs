@@ -1204,6 +1204,7 @@ namespace MediaPortal.Player
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
+          Log.Debug("BaseStreamBufferPlayer: Codec supports fast seeking = {0}", _CodecSupportsFastSeeking);
           // FlipGer: load infos for custom filters
           int intCount = 0;
           while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")

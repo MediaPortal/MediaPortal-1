@@ -1178,6 +1178,7 @@ namespace MediaPortal.Player
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
+          Log.Debug("TSStreamBufferPlayer: Codec supports fast seeking = {0}", _CodecSupportsFastSeeking);
           // FlipGer: load infos for custom filters
           int intCount = 0;
           while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
@@ -1253,7 +1254,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.Error("TSStreamBufferPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("TSStreamBufferPlayer: exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         return false;
       }
       finally
