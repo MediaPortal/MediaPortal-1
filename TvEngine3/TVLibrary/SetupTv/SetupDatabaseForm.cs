@@ -93,6 +93,8 @@ namespace SetupTv
       }
     }
 
+    #region Settings
+
     private void LoadConnectionDetailsFromConfig(bool lookupMachineName)
     {
       //<DefaultProvider name="Firebird" connectionString="User=SYSDBA;Password=masterkey;Data Source=TvLibrary.fdb;ServerType=1;Dialect=3;Charset=UNICODE_FSS;Role=;Pooling=true;" />
@@ -242,6 +244,10 @@ namespace SetupTv
       return true;
     }
 
+    #endregion
+
+    #region SQL methods
+
     public bool ExecuteSQLScript(string prefix)
     {
       bool succeeded = true;
@@ -389,8 +395,13 @@ namespace SetupTv
       return sql.Split('#');
     }
 
+    #endregion
+
+    #region Connection test
+
     private void mpButtonTest_Click(object sender, EventArgs e)
     {
+      btnTest.Enabled = false;
       if (string.IsNullOrEmpty(tbUserID.Text))
       {
         tbUserID.BackColor = Color.Red;
@@ -410,102 +421,125 @@ namespace SetupTv
         return;
       }
 
+      if (tbServerHostName.Text.ToLower().IndexOf("localhost") >= 0 || tbServerHostName.Text.ToLower().IndexOf("127.0.0.1") >= 0)
+      {
+        tbServerHostName.BackColor = Color.Red;
+        MessageBox.Show("Please specify a valid hostname or IP address for the server!", "Specify server name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+
       CheckServiceName();
 
       string TestDb = _dialogMode == StartupMode.Normal ? string.Empty : tbDatabaseName.Text;
+      bool TestSuccess = false;
 
       if (rbSQLServer.Checked)
-      {
-        _provider = ProviderType.SqlServer;
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, TestDb, false, 5);
+        TestSuccess = AttemptMsSqlTestConnect(TestDb);
+      else
+        TestSuccess = AttemptMySqlTestConnect(TestDb);
 
-        try
+      // Do not allow to "use" incorrect data
+      btnSave.Enabled = btnDrop.Enabled = TestSuccess;
+      // Now the user can click again
+      btnTest.Enabled = true;
+    }
+
+    private bool AttemptMySqlTestConnect(string aTestDb)
+    {
+      _provider = ProviderType.MySql;
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb, false, 5);
+
+      try
+      {
+        using (MySqlConnection connect = new MySqlConnection(connectionString))
         {
-          using (SqlConnection connect = new SqlConnection(connectionString))
-          {
-            connect.Open();
-          }
+          connect.Open();
+          connect.Close();
         }
-        catch (SqlException sqlex)
+      }
+      catch (MySqlException myex)
+      {
+        if (myex.Number == 1049) //unknown database
+          tbDatabaseName.BackColor = Color.Red;
+        else
+          tbServerHostName.BackColor = Color.Red;
+        MessageBox.Show(this, "Connection failed!\n" + myex.Message);
+        return false;
+      }
+      catch (Exception ex)
+      {
+        tbServerHostName.BackColor = Color.Red;
+        MessageBox.Show(this, "Connection failed!\n" + ex.Message);
+        return false;
+      }
+      tbServerHostName.BackColor = Color.GreenYellow;
+      tbUserID.BackColor = Color.GreenYellow;
+      tbPassword.BackColor = Color.GreenYellow;
+      tbDatabaseName.BackColor = Color.GreenYellow;
+      MessageBox.Show(this, "Connection succeeded!");
+      return true;
+    }
+
+    private bool AttemptMsSqlTestConnect(string aTestDb)
+    {
+      _provider = ProviderType.SqlServer;
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb, false, 5);
+
+      try
+      {
+        using (SqlConnection connect = new SqlConnection(connectionString))
         {
-          if (sqlex.Class > 10)
+          connect.Open();
+        }
+      }
+      catch (SqlException sqlex)
+      {
+        if (sqlex.Class > 10)
+        {
+          if (sqlex.Class < 20 || sqlex.Number == 233)
           {
-            if (sqlex.Class < 20 || sqlex.Number == 233)
+            if (sqlex.Number == 18456 || sqlex.Number == 233) // Wrong login
             {
-              if (sqlex.Number == 18456 || sqlex.Number == 233) // Wrong login
-              {
-                tbServerHostName.BackColor = Color.GreenYellow;
-                tbDatabaseName.BackColor = Color.GreenYellow;
-                tbUserID.BackColor = Color.Red;
-                tbPassword.BackColor = Color.Red;
-              }
-              else if (sqlex.Number == 4060) // Cannot open database "TvLibrary" requested by the login
-              {
-                tbDatabaseName.BackColor = Color.Red;
-              }
-              else
-              {
-                tbServerHostName.BackColor = Color.Yellow;
-                MessageBox.Show(string.Format("Test failed: {0}", sqlex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-              }
+              tbServerHostName.BackColor = Color.GreenYellow;
+              tbDatabaseName.BackColor = Color.GreenYellow;
+              tbUserID.BackColor = Color.Red;
+              tbPassword.BackColor = Color.Red;
+            }
+            else if (sqlex.Number == 4060) // Cannot open database "TvLibrary" requested by the login
+            {
+              tbDatabaseName.BackColor = Color.Red;
             }
             else
             {
-              tbServerHostName.BackColor = Color.Red;
-              MessageBox.Show(string.Format("Connection error: {0}", sqlex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              tbServerHostName.BackColor = Color.Yellow;
+              MessageBox.Show(string.Format("Test failed: {0}", sqlex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
           }
-          MessageBox.Show(this, "Connection failed!\n" + sqlex.Message);
-          return;
-        }
-        catch (Exception ex)
-        {
-          tbServerHostName.BackColor = Color.Red;
-          MessageBox.Show(this, "Connection failed!\n" + ex.Message);
-          return;
-        }
-        SqlConnection.ClearAllPools();
-        tbServerHostName.BackColor = Color.GreenYellow;
-        tbUserID.BackColor = Color.GreenYellow;
-        tbPassword.BackColor = Color.GreenYellow;
-        tbDatabaseName.BackColor = Color.GreenYellow;
-        MessageBox.Show(this, "Connection succeeded!");
-      }
-      else
-      {
-        _provider = ProviderType.MySql;
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, TestDb, false, 5);
-
-        try
-        {
-          using (MySqlConnection connect = new MySqlConnection(connectionString))
+          else
           {
-            connect.Open();
-            connect.Close();
+            tbServerHostName.BackColor = Color.Red;
+            MessageBox.Show(string.Format("Connection error: {0}", sqlex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           }
         }
-        catch (MySqlException myex)
-        {
-          if (myex.Number == 1049) //unknown database
-            tbDatabaseName.BackColor = Color.Red;
-          else
-            tbServerHostName.BackColor = Color.Red;
-          MessageBox.Show(this, "Connection failed!\n" + myex.Message);
-          return;
-        }
-        catch (Exception ex)
-        {
-          tbServerHostName.BackColor = Color.Red;
-          MessageBox.Show(this, "Connection failed!\n" + ex.Message);
-          return;
-        }
-        tbServerHostName.BackColor = Color.GreenYellow;
-        tbUserID.BackColor = Color.GreenYellow;
-        tbPassword.BackColor = Color.GreenYellow;
-        tbDatabaseName.BackColor = Color.GreenYellow;
-        MessageBox.Show(this, "Connection succeeded!");
+        MessageBox.Show(this, "Connection failed!\n" + sqlex.Message);
+        return false;
       }
+      catch (Exception ex)
+      {
+        tbServerHostName.BackColor = Color.Red;
+        MessageBox.Show(this, "Connection failed!\n" + ex.Message);
+        return false;
+      }
+      SqlConnection.ClearAllPools();
+      tbServerHostName.BackColor = Color.GreenYellow;
+      tbUserID.BackColor = Color.GreenYellow;
+      tbPassword.BackColor = Color.GreenYellow;
+      tbDatabaseName.BackColor = Color.GreenYellow;
+      MessageBox.Show(this, "Connection succeeded!");
+      return true;
     }
+
+    #endregion
 
     /// <summary>
     /// Gets the server name from the config field (strips MSSQL instance name)
@@ -564,24 +598,14 @@ namespace SetupTv
       string ServerName = ParseServerHostName(tbServerHostName.Text);
       bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
       Log.Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
-      CheckServiceName();
 
       doc.Save(fname);
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
-      if (tbServerHostName.Text.ToLower().IndexOf("localhost") >= 0)
-      {
-        MessageBox.Show(this, "Please specify the hostname or ip-address for the server. Not Localhost!");
-        return;
-      }
-      if (tbServerHostName.Text.ToLower().IndexOf("127.0.0.1") >= 0)
-      {
-        MessageBox.Show(this, "Please specify the hostname or ip-address for the server. Not 127.0.0.1!");
-        return;
-      }
       SaveGentleConfig();
+
       if (_dialogMode == StartupMode.Normal)
         Application.Restart();
       else
@@ -597,6 +621,8 @@ namespace SetupTv
 
       this.Close();
     }
+
+    #region Schema update methods
 
     /// <summary>
     /// Gets the current schema version (-1= No database installed)
@@ -705,6 +731,10 @@ namespace SetupTv
       return true;
     }
 
+    #endregion
+
+    #region Service check methods
+
     public bool IsDatabaseOnLocalMachine(string DBServerName)
     {
       // please add better check if needed
@@ -783,6 +813,10 @@ namespace SetupTv
         }
       }
     }
+
+    #endregion
+
+    #region Control events
 
     private void OnDBTypeSelected()
     {
@@ -878,5 +912,6 @@ namespace SetupTv
         tbDatabaseName.BackColor = SystemColors.Window;
     }
 
+    #endregion
   }
 }

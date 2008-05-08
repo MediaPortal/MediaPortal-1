@@ -274,6 +274,7 @@ namespace SetupTv
       // btnSave
       // 
       this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnSave.Enabled = false;
       this.btnSave.Location = new System.Drawing.Point(310, 401);
       this.btnSave.Name = "btnSave";
       this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -294,6 +295,7 @@ namespace SetupTv
       // btnDrop
       // 
       this.btnDrop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnDrop.Enabled = false;
       this.btnDrop.Location = new System.Drawing.Point(310, 401);
       this.btnDrop.Name = "btnDrop";
       this.btnDrop.Size = new System.Drawing.Size(75, 23);
