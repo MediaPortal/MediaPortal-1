@@ -117,8 +117,12 @@ namespace MediaPortal.Configuration
       InitializeComponent();
       this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
       // Stop MCE services
+      if (splashScreen != null)
+        splashScreen.SetInformation("Stopping MCE services...");
       MediaPortal.Util.Utils.StopMCEServices();
       // Build options tree
+      if (splashScreen != null)
+        splashScreen.SetInformation("Loading language...");
       string strLanguage;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -129,24 +133,21 @@ namespace MediaPortal.Configuration
       BassRegistration.BassRegistration.Register();
       Log.Info("add project section");
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding project section...");
-      }
+
       Project project = new Project();
       AddSection(project);
       Log.Info("add general section");
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding general section...");
-      }
+
       General general = new General();
       AddSection(general);
       //add skins section
       Log.Info("add skins section");
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding skins section...");
-      }
+
       AddChildSection(general, new GeneralStartupDelay());
       AddChildSection(general, new GeneralWatchdog());
       AddChildSection(general, new GeneralSkin());
@@ -159,12 +160,12 @@ namespace MediaPortal.Configuration
       AddChildSection(general, new GeneralFileMenu());
       AddChildSection(general, new GeneralVolume());
       AddChildSection(general, new GeneralCDSpeed());
+
       //add DVD section
       Log.Info("add DVD section");
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding DVD section...");
-      }
+
       SectionSettings dvd = new DVD();
       AddSection(dvd);
       Log.Info("  add DVD codec section");
@@ -176,9 +177,8 @@ namespace MediaPortal.Configuration
       //add movie section
       Log.Info("add movie section");
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding movie section...");
-      }
+
       SectionSettings movie = new Movies();
       AddSection(movie);
       Log.Info("  add movie shares section");
@@ -193,12 +193,12 @@ namespace MediaPortal.Configuration
       AddChildSection(movie, new MoviePlayer());
       Log.Info("  add movie postprocessing section");
       AddChildSection(movie, new MoviePostProcessing());
+
       //add music section
       Log.Info("add music section");
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding music section...");
-      }
+
       SectionSettings music = new Sections.Music();
       AddSection(music);
       Log.Info("  add music shares section");
@@ -217,12 +217,12 @@ namespace MediaPortal.Configuration
       AddChildSection(music, new MusicDSP());
       Log.Info("  add music asio section");
       AddChildSection(music, new MusicASIO());
+
       //add pictures section
       Log.Info("add pictures section");
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding pictures section...");
-      }
+
       SectionSettings picture = new Pictures();
       AddSection(picture);
       Log.Info("  add pictures shares section");
@@ -238,9 +238,8 @@ namespace MediaPortal.Configuration
       {
         Log.Info("add radio section");
         if (splashScreen != null)
-        {
           splashScreen.SetInformation("Adding radio section...");
-        }
+
         SectionSettings radio = new Sections.Radio();
         AddSection(radio);
         Log.Info("  add radio stations section");
@@ -249,9 +248,8 @@ namespace MediaPortal.Configuration
       //add television section
       Log.Info("add television section");
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding television section...");
-      }
+
       SectionSettings television = new Television();
       AddSection(television);
       if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
@@ -280,12 +278,12 @@ namespace MediaPortal.Configuration
         Log.Info("  add tv teletext section");
         AddChildSection(television, new TVTeletext());
       }
+
       //add remotes section
       SectionSettings remote = new Remote();
       if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Adding remote...");
-      }
+        splashScreen.SetInformation("Adding remote section...");
+
       AddSection(remote);
       Log.Info("add USBUIRT section");
       AddChildSection(remote, new RemoteUSBUIRT());
@@ -300,16 +298,19 @@ namespace MediaPortal.Configuration
       Log.Info("add DirectInput section");
       dinputRemote = new RemoteDirectInput();
       AddChildSection(remote, dinputRemote);
+
       //Look for Audio Decoders, if exist assume decoders are installed & present config option
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding filters section...");
-      }
+
       FiltersSection filterSection = new FiltersSection();
       AddSection(filterSection);
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
       if (availableAudioFilters.Count > 0)
       {
+        if (splashScreen != null)
+          splashScreen.SetInformation("Adding audio filters...");
+
         foreach (string filter in availableAudioFilters)
         {
           if (filter.Equals("NVIDIA Audio Decoder"))
@@ -349,6 +350,8 @@ namespace MediaPortal.Configuration
       ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
       if (availableVideoFilters.Count > 0)
       {
+        if (splashScreen != null)
+          splashScreen.SetInformation("Adding video filters...");
         foreach (string filter in availableVideoFilters)
         {
           if (filter.Equals("MPV Decoder Filter"))
@@ -378,33 +381,33 @@ namespace MediaPortal.Configuration
         }
       //add weather section
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Adding weather section...");
-      }
+
       Log.Info("add weather section");
       AddSection(new Weather());
       if (splashScreen != null)
-      {
         splashScreen.SetInformation("Loading plugins...");
-      }
+
       Log.Info("add plugins section");
       AddSection(new PluginsNew());
+      if (splashScreen != null)
+        splashScreen.SetInformation("Finished plugin loading...");
       // Select first item in the section tree
       sectionTree.SelectedNode = sectionTree.Nodes[0];
 
       if (splashScreen != null)
       {
-        splashScreen.Stop(500);
+        splashScreen.Stop(1000);
         splashScreen = null;
         BackgroundWorker FrontWorker = new BackgroundWorker();
-        FrontWorker.DoWork += new DoWorkEventHandler(FrontWorker_DoWork);
+        FrontWorker.DoWork += new DoWorkEventHandler(Worker_BringConfigToForeground);
         FrontWorker.RunWorkerAsync();
       }
 
       Log.Info("settingsform constructor done");
     }
 
-    void FrontWorker_DoWork(object sender, DoWorkEventArgs e)
+    private void Worker_BringConfigToForeground(object sender, DoWorkEventArgs e)
     {
       Thread.CurrentThread.Name = "Config form waiter";
       IntPtr hwnd;
@@ -412,10 +415,10 @@ namespace MediaPortal.Configuration
       do
       {
         hwnd = FindWindow(null, _windowName);
-        System.Threading.Thread.Sleep(100);
+        System.Threading.Thread.Sleep(250);
       }
       while (hwnd == IntPtr.Zero);
-      System.Threading.Thread.Sleep(50);
+      System.Threading.Thread.Sleep(100);
       ShowWindow(hwnd, SW_SHOW);
       SetForegroundWindow(hwnd);
     }
@@ -984,48 +987,77 @@ namespace MediaPortal.Configuration
       Settings.SaveCache();
     }
 
+    /// <summary>
+    /// Checks whether a process is currently running
+    /// </summary>
+    /// <param name="aShouldExit">Indicate that a windows application should be closed gracefully. If it does not respond in 10 seconds a kill is performed</param>
+    /// <returns>If the given process is still present.</returns>
+    private bool CheckForRunningProcess(string aProcessName, bool aShouldExit)
+    {
+      bool mpRunning = false;
+      string processName = aProcessName;
+      foreach (Process process in Process.GetProcesses())
+      {
+        if (process.ProcessName.Equals(processName))
+        {
+          if (!aShouldExit)
+          {
+            mpRunning = true;
+            break;
+          }
+          else
+          {
+            try
+            {
+              // Kill the MediaPortal process by finding window and sending ALT+F4 to it.
+              IECallBack ewp = new IECallBack(EnumWindowCallBack);
+              EnumWindows(ewp, 0);
+              process.CloseMainWindow();
+              // Wait for the process to die, we wait for a maximum of 10 seconds
+              if (!process.WaitForExit(10000))
+                process.Kill();
+            }
+            catch (Exception)
+            {
+              try
+              {
+                process.Kill();
+              }
+              catch (Exception) { }
+            }
+
+            mpRunning = CheckForRunningProcess(aProcessName, false);
+            break;
+          }
+        }
+      }
+      return mpRunning;
+    }
+
     private void applyButton_Click(object sender, EventArgs e)
     {
       try
       {
-        // Check if MediaPortal is running, if so inform user that it needs to be restarted
-        // for the changes to take effect.
-        string processName = "MediaPortal";
-        foreach (Process process in Process.GetProcesses())
+        // Check if MediaPortal is running, if so inform user that it needs to be restarted for the changes to take effect.
+        if (CheckForRunningProcess("MediaPortal", false))
         {
-          if (process.ProcessName.Equals(processName))
+          DialogResult dialogResult =
+            MessageBox.Show("For the changes to take effect you need to restart MediaPortal, restart now?",
+                            "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+          if (dialogResult == DialogResult.Yes)
           {
-            DialogResult dialogResult =
-              MessageBox.Show("For the changes to take effect you need to restart MediaPortal, restart now?",
-                              "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (dialogResult == DialogResult.Yes)
+            if (!CheckForRunningProcess("MediaPortal", true))
             {
-              try
-              {
-                // Kill the MediaPortal process by finding window and sending ALT+F4 to it.
-                IECallBack ewp = new IECallBack(EnumWindowCallBack);
-                EnumWindows(ewp, 0);
-                process.CloseMainWindow();
-                // Wait for the process to die, we wait for a maximum of 10 seconds
-                if (process.WaitForExit(10000))
-                {
-                  SaveAllSettings();
-                  // Start the MediaPortal process
-                  Process.Start(processName + ".exe");
-                  return;
-                }
-              }
-              catch
-              {
-                // Ignore
-              }
-              break;
+              SaveAllSettings();
+              // Start the MediaPortal process
+              Process.Start(Config.GetFile(Config.Dir.Base, "MediaPortal.exe"));
+              return;
             }
           }
         }
       }
-      catch (Exception)
-      { }
+      catch (Exception) { }
+
       SaveAllSettings();
     }
 
