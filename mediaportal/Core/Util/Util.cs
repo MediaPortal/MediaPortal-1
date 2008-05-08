@@ -319,11 +319,11 @@ namespace MediaPortal.Util
 
     public static bool IsVideo(string strPath)
     {
-      if (strPath == null)                           return false;
-      if (IsLastFMStream(strPath))                   return false;
-      if (strPath.ToLower().IndexOf("rtsp:") >= 0)   return true;
+      if (strPath == null) return false;
+      if (IsLastFMStream(strPath)) return false;
+      if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
       if (strPath.ToLower().StartsWith("mms:")
-        && strPath.ToLower().EndsWith(".ymvp"))      return true;
+        && strPath.ToLower().EndsWith(".ymvp")) return true;
       try
       {
         if (!System.IO.Path.HasExtension(strPath))
@@ -378,8 +378,8 @@ namespace MediaPortal.Util
 
     public static bool IsAudio(string strPath)
     {
-      if (strPath == null)              return false;
-      if (IsLastFMStream(strPath))      return true;
+      if (strPath == null) return false;
+      if (IsLastFMStream(strPath)) return true;
       try
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;
@@ -598,7 +598,7 @@ namespace MediaPortal.Util
         if (System.IO.File.Exists(strThumb))
           item.ThumbnailImage = strThumb;
       }
-    }  
+    }
 
     public static string SecondsToShortHMSString(int lSeconds)
     {
@@ -675,7 +675,7 @@ namespace MediaPortal.Util
     public static long GetUnixTime(DateTime desiredTime_)
     {
       TimeSpan ts = (desiredTime_ - new DateTime(1970, 1, 1, 0, 0, 0));
-     
+
       return (long)ts.TotalSeconds;
     }
 
@@ -781,7 +781,7 @@ namespace MediaPortal.Util
       else
         strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
           MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Songs
-      
+
       return strObjects;
     }
 
@@ -1267,10 +1267,8 @@ namespace MediaPortal.Util
 
     public static void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
     {
-      if (strURL == null) return;
-      if (strURL.Length == 0) return;
-      if (strFile == null) return;
-      if (strFile.Length == 0) return;
+      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+        return;
 
       using (WebClient client = new WebClient())
       {
@@ -1297,7 +1295,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Info("download failed:{0}", ex.Message);
+          Log.Info("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
         }
       }
     }
@@ -1343,46 +1341,48 @@ namespace MediaPortal.Util
 
     public static void DownLoadImage(string strURL, string strFile)
     {
-      if (strURL == null) return;
-      if (strURL.Length == 0) return;
-      if (strFile == null) return;
-      if (strFile.Length == 0) return;
+      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+        return;
+
       try
       {
         HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(strURL);
         wr.Timeout = 5000;
         HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
 
-        Stream str = ws.GetResponseStream();
-        byte[] inBuf = new byte[900000];
-        int bytesToRead = (int)inBuf.Length;
-        int bytesRead = 0;
-
-        DateTime dt = DateTime.Now;
-        while (bytesToRead > 0)
+        using (Stream str = ws.GetResponseStream())
         {
-          dt = DateTime.Now;
-          int n = str.Read(inBuf, bytesRead, bytesToRead);
-          if (n == 0)
-            break;
-          bytesRead += n;
-          bytesToRead -= n;
-          TimeSpan ts = DateTime.Now - dt;
-          if (ts.TotalSeconds >= 5)
+          byte[] inBuf = new byte[900000];
+          int bytesToRead = (int)inBuf.Length;
+          int bytesRead = 0;
+
+          DateTime dt = DateTime.Now;
+          while (bytesToRead > 0)
           {
-            throw new Exception("timeout");
+            dt = DateTime.Now;
+            int n = str.Read(inBuf, bytesRead, bytesToRead);
+            if (n == 0)
+              break;
+            bytesRead += n;
+            bytesToRead -= n;
+            TimeSpan ts = DateTime.Now - dt;
+            if (ts.TotalSeconds >= 5)
+            {
+              throw new Exception("timeout");
+            }
+          }
+          using (FileStream fstr = new FileStream(strFile, FileMode.OpenOrCreate, FileAccess.Write))
+          {
+            fstr.Write(inBuf, 0, bytesRead);
+            str.Close();
+            fstr.Close();
           }
         }
-        FileStream fstr = new FileStream(strFile, FileMode.OpenOrCreate, FileAccess.Write);
-        fstr.Write(inBuf, 0, bytesRead);
-        str.Close();
-        fstr.Close();
-
         GUITextureManager.CleanupThumbs();
       }
       catch (Exception ex)
       {
-        Log.Info("download failed:{0}", ex.Message);
+        Log.Info("Utils: DownLoadImage {1} failed:{0}", ex.Message, strURL);
       }
     }
 
@@ -1672,8 +1672,8 @@ namespace MediaPortal.Util
 
     public static string EncryptLine(string strLine)
     {
-      if (strLine == null)            return string.Empty;
-      if (strLine.Length == 0)        return string.Empty;
+      if (strLine == null) return string.Empty;
+      if (strLine.Length == 0) return string.Empty;
       if (String.Compare(Strings.Unknown, strLine, true) == 0) return string.Empty;
       CRCTool crc = new CRCTool();
       crc.Init(CRCTool.CRCCode.CRC32);
@@ -1684,7 +1684,7 @@ namespace MediaPortal.Util
 
     public static string TryEverythingToGetFolderThumbByFilename(string aSongPath)
     {
-      string strThumb = string.Empty;      
+      string strThumb = string.Empty;
 
       strThumb = GetLocalFolderThumb(aSongPath);
       if (File.Exists(strThumb))
@@ -1714,7 +1714,7 @@ namespace MediaPortal.Util
             imageFiles = Directory.GetFiles(searchPath, @"*.jpg", SearchOption.TopDirectoryOnly);
 
           long maxSize = 0;
-          for (int i = 0 ; i < imageFiles.Length ; i++)
+          for (int i = 0; i < imageFiles.Length; i++)
           {
             try
             {
@@ -1778,8 +1778,8 @@ namespace MediaPortal.Util
 
     public static string GetLocalFolderThumb(string strFile)
     {
-      if (strFile == null)              return string.Empty;
-      if (strFile.Length == 0)          return string.Empty;
+      if (strFile == null) return string.Empty;
+      if (strFile.Length == 0) return string.Empty;
 
       string strPath, strFileName;
       Utils.Split(strFile, out strPath, out strFileName);
@@ -1791,7 +1791,7 @@ namespace MediaPortal.Util
     public static string GetLocalFolderThumbForDir(string strDirPath)
     {
       if (string.IsNullOrEmpty(strDirPath))
-        return string.Empty;      
+        return string.Empty;
 
       string strFolderJpg = String.Format(@"{0}\{1}{2}", Thumbs.MusicFolder, EncryptLine(strDirPath), GetThumbExtension());
 
@@ -1818,9 +1818,9 @@ namespace MediaPortal.Util
 
     public static string ConvertToLargeCoverArt(string smallArt)
     {
-      if (smallArt == null)             return string.Empty;
-      if (smallArt.Length == 0)         return string.Empty;
-      if (smallArt == string.Empty)     return smallArt;
+      if (smallArt == null) return string.Empty;
+      if (smallArt.Length == 0) return string.Empty;
+      if (smallArt == string.Empty) return smallArt;
 
       string smallExt = GetThumbExtension();
       string LargeExt = String.Format(@"L{0}", GetThumbExtension());
@@ -1890,7 +1890,7 @@ namespace MediaPortal.Util
           }
 
           string defaultBackground = currentSkin + @"\media\previewbackground.png";
-     
+
           if (File.Exists(defaultBackground))
           {
             using (Image imgFolder = Image.FromFile(defaultBackground))
@@ -1973,7 +1973,7 @@ namespace MediaPortal.Util
                   using (Image thumbImage = Image.FromFile(tmpFile))
                   {
                     if (Picture.CreateThumbnail(thumbImage, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true))
-                    {                      
+                    {
                       // we do not want a folderL.jpg
                       if (!aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
                       {
@@ -1983,7 +1983,7 @@ namespace MediaPortal.Util
                     }
                     System.Threading.Thread.Sleep(10);
                     if (System.IO.File.Exists(aThumbPath))
-                      result = true;                      
+                      result = true;
                   }
                 }
                 catch (Exception ex2)
