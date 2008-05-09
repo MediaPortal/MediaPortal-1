@@ -821,7 +821,13 @@ namespace SetupTv.Sections
           bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
           string displayName = GetNodeAttribute(nodeChannel, "DisplayName", name);
 
-          Channel dbChannel = layer.AddChannel("", name);
+          // Channel dbChannel = layer.AddChannel("", name);
+          // rtv: since analog allows NOT to merge channels we need to take care of this. US users e.g. have multiple stations named "Sport" with different tuningdetails.
+          // using AddChannel would incorrectly "merge" these totally different channels.
+          // see this: http://forum.team-mediaportal.com/1-0-rc1-svn-builds-271/importing-exported-channel-list-groups-channels-39368/
+
+          Channel dbChannel = layer.AddNewChannel(name);
+
           dbChannel.GrabEpg = grabEpg;
           dbChannel.IsRadio = isRadio;
           dbChannel.IsTv = isTv;

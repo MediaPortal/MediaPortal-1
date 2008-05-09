@@ -219,11 +219,9 @@ namespace SetupTv.Sections
           dbChannel.Persist();
           layer.AddTuningDetails(dbChannel, channel);
 
-
           layer.MapChannelToCard(card, dbChannel,false);
           layer.AddChannelToGroup(dbChannel, "Analog");
         }
-
 
       }
       finally
