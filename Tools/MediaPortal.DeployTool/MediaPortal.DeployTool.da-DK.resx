@@ -490,4 +490,7 @@ nødvendige fejlrettelser til det. Fortsæt for egen risiko.</value>
 Check din Internet Explorer kofiguration.
 Nu slettes en eventuel korrupt konfigurations fil.</value>
   </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Konfigurer Windows Firewall til at tillade ekstern adgang til MediaPortal</value>
+  </data>
 </root>
