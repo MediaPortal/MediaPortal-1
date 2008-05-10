@@ -487,6 +487,12 @@ namespace MediaPortal.Configuration.Sections
     }
     #endregion
 
+    public override void OnSectionActivated()
+    {
+      groupBoxAacDecoderSettings.Visible = groupBoxFormat.Visible = SettingsForm.AdvancedMode;
+      base.OnSectionActivated();
+    }
+
     public override void LoadSettings()
     {
       using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Gabest\Filters\MPEG Audio Decoder"))

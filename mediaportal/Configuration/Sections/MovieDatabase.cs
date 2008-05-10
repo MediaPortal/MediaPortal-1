@@ -239,7 +239,7 @@ namespace MediaPortal.Configuration.Sections
       //
       // Load selected shares
       //
-      SectionSettings section = SectionSettings.GetSection("MovieShares");
+      SectionSettings section = SectionSettings.GetSection("Movie Folders");
 
       if (section != null)
       {
@@ -257,7 +257,7 @@ namespace MediaPortal.Configuration.Sections
       //
       // Fetch extensions
       //
-      section = SectionSettings.GetSection("MovieExtensions");
+      section = SectionSettings.GetSection("Movie Extensions");
 
       if (section != null)
       {

@@ -28,6 +28,7 @@ using System.Drawing.Drawing2D;
 using System.Data;
 using System.Windows.Forms;
 using System.Xml;
+using System.Collections.Generic;
 
 namespace MediaPortal.Configuration
 {
@@ -72,7 +73,15 @@ namespace MediaPortal.Configuration
     public static SectionSettings GetSection(string name)
     {
       SectionSettings sectionSettings = null;
-      SectionTreeNode sectionTreeNode = SettingsForm.SettingSections[name] as SectionTreeNode;
+      SectionTreeNode sectionTreeNode = null;
+      try
+      {
+        sectionTreeNode = new SectionTreeNode(SettingsForm.SettingSections[name].ConfigSection);
+      }
+      catch (KeyNotFoundException)
+      {
+        MessageBox.Show("Someone broke section handling specifying a non existing name for {0}!", name);
+      }
 
       if (sectionTreeNode != null)
       {
@@ -89,15 +98,15 @@ namespace MediaPortal.Configuration
 
         while (enumerator.MoveNext())
         {
-          SectionTreeNode treeNode = enumerator.Value as SectionTreeNode;
+          sectionTreeNode = enumerator.Value as SectionTreeNode;
 
-          if (treeNode != null)
+          if (sectionTreeNode != null)
           {
-            Type sectionType = treeNode.Section.GetType();
+            Type sectionType = sectionTreeNode.Section.GetType();
 
             if (sectionType.Name.Equals(name))
             {
-              sectionSettings = treeNode.Section;
+              sectionSettings = sectionTreeNode.Section;
               break;
             }
           }

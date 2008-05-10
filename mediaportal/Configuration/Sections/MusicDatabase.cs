@@ -111,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
       //
       // Load selected shares
       //
-      SectionSettings section = SectionSettings.GetSection("MusicShares");
+      SectionSettings section = SectionSettings.GetSection("Music Folders");
 
       if (section != null)
       {
@@ -129,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
       //
       // Fetch extensions
       //
-      section = SectionSettings.GetSection("MusicExtensions");
+      section = SectionSettings.GetSection("Music Extensions");
 
       if (section != null)
       {

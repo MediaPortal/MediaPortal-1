@@ -40,6 +40,8 @@ using MediaPortal.UserInterface.Controls;
 using Keys = MediaPortal.Configuration.Sections.Keys;
 using System.Xml;
 using System.Threading;
+using System.Collections.Generic;
+using System.IO;
 
 namespace MediaPortal.Configuration
 {
@@ -48,21 +50,7 @@ namespace MediaPortal.Configuration
   /// </summary>
   public class SettingsForm : MediaPortal.UserInterface.Controls.MPConfigForm
   {
-    public delegate bool IECallBack(int hwnd, int lParam);
-    private const int SW_SHOWNORMAL = 1;
-    private const int SW_SHOW = 5;
-    private const int SW_RESTORE = 9;
-    private string _windowName = "MediaPortal - Setup";
-    private LinkLabel linkLabel1;
-    private ToolStrip toolStrip1;
-    private ToolStripSplitButton helpToolStripSplitButton;
-    private ToolStripSplitButton configToolStripSplitButton;
-    private ToolStripMenuItem thumbsToolStripMenuItem;
-    private ToolStripMenuItem logsToolStripMenuItem;
-    private ToolStripMenuItem databaseToolStripMenuItem;
-    private ToolStripMenuItem updateHelpToolStripMenuItem;
-    private ToolStripMenuItem skinsToolStripMenuItem;
-    private SectionSettings _previousSection = null;
+    #region DLL imports
 
     [DllImport("User32.")]
     public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
@@ -87,26 +75,110 @@ namespace MediaPortal.Configuration
     [DllImport("User32")]
     private static extern int SetForegroundWindow(IntPtr hwnd);
 
+    #endregion
+
+    #region ConfigPage struct
+
+    public struct ConfigPage
+    {
+      string sectionName;
+      SectionSettings parentsection;
+      SectionSettings configSection;
+      bool isExpertSetting;
+
+      public ConfigPage(SectionSettings aParentsection, SectionSettings aConfigSection, bool aIsExpertSetting)
+      {
+        sectionName = aConfigSection.Text;
+        parentsection = aParentsection;
+        configSection = aConfigSection;
+        isExpertSetting = aIsExpertSetting;
+      }
+
+      public string SectionName
+      {
+        get { return sectionName; }
+      }
+
+      public SectionSettings Parentsection
+      {
+        get { return parentsection; }
+      }
+
+      public SectionSettings ConfigSection
+      {
+        get { return configSection; }
+      }
+
+      public bool IsVisible
+      {
+        // Show expert settings only in advanced mode.
+        get { return AdvancedMode ? true : !isExpertSetting; }
+      }
+    }
+
+    #endregion
+
+    #region Variables
+
+    public delegate bool IECallBack(int hwnd, int lParam);
+    private const int SW_SHOWNORMAL = 1;
+    private const int SW_SHOW = 5;
+    private const int SW_RESTORE = 9;
+    private string _windowName = "MediaPortal - Setup";
+    private LinkLabel linkLabel1;
+    private ToolStrip toolStrip1;
+    private ToolStripSplitButton helpToolStripSplitButton;
+    private ToolStripSplitButton configToolStripSplitButton;
+    private ToolStripMenuItem thumbsToolStripMenuItem;
+    private ToolStripMenuItem logsToolStripMenuItem;
+    private ToolStripMenuItem databaseToolStripMenuItem;
+    private ToolStripMenuItem updateHelpToolStripMenuItem;
+    private ToolStripMenuItem skinsToolStripMenuItem;
+    private SectionSettings _previousSection = null;
     private MPButton cancelButton;
     private MPButton okButton;
     private MPBeveledLine beveledLine1;
     private TreeView sectionTree;
     private Panel holderPanel;
     private MPGradientLabel headerLabel;
-    private RemoteSerialUIR serialuir;
-    private RemoteRedEye redeye; //PB00//
     private RemoteDirectInput dinputRemote;
+    private RemoteSerialUIR serialuir;
+    private MPButton applyButton;
+
     private static ConfigSplashScreen splashScreen = new ConfigSplashScreen();
+
+    #region Properties
+
     // Hashtable where we store each added tree node/section for faster access
-    public static Hashtable SettingSections
+    private static Dictionary<string, ConfigPage> settingSections = new Dictionary<string, ConfigPage>();
+    private ToolStripButton toolStripButtonSwitchAdvanced;
+
+    public static Dictionary<string, ConfigPage> SettingSections
     {
       get { return settingSections; }
     }
 
-    private static Hashtable settingSections = new Hashtable();
-    private MPButton applyButton;
+    private static bool advancedMode = false;
+    public static bool AdvancedMode
+    {
+      get { return advancedMode; }
+    }
+
+    public static bool UseTvServer
+    {
+      get { return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"); }
+    }
+
+    #endregion
+
+    #endregion
 
     public SettingsForm()
+    {
+      OnStartup();
+    }
+
+    private void OnStartup()
     {
       // start the splashscreen      
       string version = System.Configuration.ConfigurationManager.AppSettings["version"];
@@ -134,177 +206,77 @@ namespace MediaPortal.Configuration
       Log.Info("add project section");
       if (splashScreen != null)
         splashScreen.SetInformation("Adding project section...");
-
       Project project = new Project();
-      AddSection(project);
+      AddSection(new ConfigPage(null, project, false));
+
       Log.Info("add general section");
       if (splashScreen != null)
         splashScreen.SetInformation("Adding general section...");
 
-      General general = new General();
-      AddSection(general);
-      //add skins section
-      Log.Info("add skins section");
+      AddTabGeneral();
+      AddTabMovies();
+      AddTabDvd();
+      AddTabTelevision();
+      AddTabRadio();
+      AddTabMusic();
+      AddTabPictures();
+      AddTabRemote();
+      AddTabFilters();
+      AddTabWeather();
+      AddTabPlugins();
+
+      ToggleSectionVisibility(false);
+
+      // Select first item in the section tree
+      if (sectionTree.Nodes.Count > 0)
+        sectionTree.SelectedNode = sectionTree.Nodes[0];
+
       if (splashScreen != null)
-        splashScreen.SetInformation("Adding skins section...");
-
-      AddChildSection(general, new GeneralStartupDelay());
-      AddChildSection(general, new GeneralWatchdog());
-      AddChildSection(general, new GeneralSkin());
-      AddChildSection(general, new GeneralKeyboardControl());
-      AddChildSection(general, new Keys());
-      AddChildSection(general, new GeneralOSD());
-      AddChildSection(general, new GeneralSkipSteps());
-      AddChildSection(general, new GeneralThumbs());
-      AddChildSection(general, new Sections.GeneralDaemonTools());
-      AddChildSection(general, new GeneralFileMenu());
-      AddChildSection(general, new GeneralVolume());
-      AddChildSection(general, new GeneralCDSpeed());
-
-      //add DVD section
-      Log.Info("add DVD section");
-      if (splashScreen != null)
-        splashScreen.SetInformation("Adding DVD section...");
-
-      SectionSettings dvd = new DVD();
-      AddSection(dvd);
-      Log.Info("  add DVD codec section");
-      AddChildSection(dvd, new DVDCodec());
-      Log.Info("  add DVD player section");
-      AddChildSection(dvd, new DVDPlayer());
-      Log.Info("  add DVD postprocessing section");
-      AddChildSection(dvd, new DVDPostProcessing());
-      //add movie section
-      Log.Info("add movie section");
-      if (splashScreen != null)
-        splashScreen.SetInformation("Adding movie section...");
-
-      SectionSettings movie = new Movies();
-      AddSection(movie);
-      Log.Info("  add movie shares section");
-      AddChildSection(movie, new MovieShares());
-      Log.Info("  add movie extensions section");
-      AddChildSection(movie, new MovieExtensions());
-      Log.Info("  add movie database section");
-      AddChildSection(movie, new MovieDatabase());
-      Log.Info("  add movie views section");
-      AddChildSection(movie, new MovieViews());
-      Log.Info("  add movie player section");
-      AddChildSection(movie, new MoviePlayer());
-      Log.Info("  add movie postprocessing section");
-      AddChildSection(movie, new MoviePostProcessing());
-
-      //add music section
-      Log.Info("add music section");
-      if (splashScreen != null)
-        splashScreen.SetInformation("Adding music section...");
-
-      SectionSettings music = new Sections.Music();
-      AddSection(music);
-      Log.Info("  add music shares section");
-      AddChildSection(music, new MusicShares());
-      Log.Info("  add music extensions section");
-      AddChildSection(music, new MusicExtensions());
-      Log.Info("  add music database section");
-      AddChildSection(music, new MusicDatabase());
-      Log.Info("  add music views section");
-      AddChildSection(music, new MusicViews());
-      Log.Info("  add music sort section");
-      AddChildSection(music, new MusicSort());
-      Log.Info("  add music import section");
-      AddChildSection(music, new MusicImport());
-      Log.Info("  add music dsp section");
-      AddChildSection(music, new MusicDSP());
-      Log.Info("  add music asio section");
-      AddChildSection(music, new MusicASIO());
-
-      //add pictures section
-      Log.Info("add pictures section");
-      if (splashScreen != null)
-        splashScreen.SetInformation("Adding pictures section...");
-
-      SectionSettings picture = new Pictures();
-      AddSection(picture);
-      Log.Info("  add pictures shares section");
-      AddChildSection(picture, new PictureShares());
-      Log.Info("  add pictures extensions section");
-      AddChildSection(picture, new PictureExtensions());
-      //add radio section
-      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
       {
-        Log.Info("radio section not added - tv server plugin installed");
-      }
-      else
-      {
-        Log.Info("add radio section");
-        if (splashScreen != null)
-          splashScreen.SetInformation("Adding radio section...");
-
-        SectionSettings radio = new Sections.Radio();
-        AddSection(radio);
-        Log.Info("  add radio stations section");
-        AddChildSection(radio, new RadioStations());
-      }
-      //add television section
-      Log.Info("add television section");
-      if (splashScreen != null)
-        splashScreen.SetInformation("Adding television section...");
-
-      SectionSettings television = new Television();
-      AddSection(television);
-      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
-      {
-        Log.Info("  add tv client section");
-        AddChildSection(television, new TVClient());
-        Log.Info("  add tv postprocessing section");
-        AddChildSection(television, new TVPostProcessing());
-        Log.Info("  add tv teletext section");
-        AddChildSection(television, new TVTeletext());
-      }
-      else
-      {
-        Log.Info("  add tv capture cards section");
-        AddChildSection(television, new TVCaptureCards());
-        Log.Info("  add tv channels section");
-        AddChildSection(television, new TVChannels());
-        Log.Info("  add tv channel groups section");
-        AddChildSection(television, new TVGroups());
-        Log.Info("  add tv program guide section");
-        AddChildSection(television, new TVProgramGuide());
-        Log.Info("  add tv recording section");
-        AddChildSection(television, new TVRecording());
-        Log.Info("  add tv postprocessing section");
-        AddChildSection(television, new TVPostProcessing());
-        Log.Info("  add tv teletext section");
-        AddChildSection(television, new TVTeletext());
+        splashScreen.Stop(1000);
+        splashScreen = null;
+        BackgroundWorker FrontWorker = new BackgroundWorker();
+        FrontWorker.DoWork += new DoWorkEventHandler(Worker_BringConfigToForeground);
+        FrontWorker.RunWorkerAsync();
       }
 
-      //add remotes section
-      SectionSettings remote = new Remote();
+      Log.Info("settingsform constructor done");
+    }
+
+    #region Section handling
+
+    private void AddTabPlugins()
+    {
       if (splashScreen != null)
-        splashScreen.SetInformation("Adding remote section...");
+        splashScreen.SetInformation("Loading plugins...");
 
-      AddSection(remote);
-      Log.Info("add USBUIRT section");
-      AddChildSection(remote, new RemoteUSBUIRT());
-      Log.Info("add SerialUIR section");
-      serialuir = new RemoteSerialUIR();
-      AddChildSection(remote, serialuir);
-      Log.Info("add WINLIRC section"); //sd00//
-      AddChildSection(remote, new Sections.RemoteWinLirc()); //sd00//
-      Log.Info("add RedEye section"); //PB00//
-      redeye = new RemoteRedEye(); //PB00//
-      AddChildSection(remote, redeye); //PB00//
-      Log.Info("add DirectInput section");
-      dinputRemote = new RemoteDirectInput();
-      AddChildSection(remote, dinputRemote);
+      Log.Info("add plugins section");
+      PluginsNew pluginsNew = new PluginsNew();
+      AddSection(new ConfigPage(null, pluginsNew, false));
+      if (splashScreen != null)
+        splashScreen.SetInformation("Finished plugin loading...");
+    }
 
+    private void AddTabWeather()
+    {
+      //add weather section
+      if (splashScreen != null)
+        splashScreen.SetInformation("Adding weather section...");
+
+      Log.Info("add weather section");
+      Weather weather = new Weather();
+      AddSection(new ConfigPage(null, weather, false));
+    }
+
+    private void AddTabFilters()
+    {
       //Look for Audio Decoders, if exist assume decoders are installed & present config option
       if (splashScreen != null)
         splashScreen.SetInformation("Adding filters section...");
 
       FiltersSection filterSection = new FiltersSection();
-      AddSection(filterSection);
+      AddSection(new ConfigPage(null, filterSection, false));
+
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
       if (availableAudioFilters.Count > 0)
       {
@@ -315,25 +287,31 @@ namespace MediaPortal.Configuration
         {
           if (filter.Equals("NVIDIA Audio Decoder"))
           {
-            AddChildSection(filterSection, new FiltersPureVideoDecoder());
+            FiltersPureVideoDecoder nvidiaConfig = new FiltersPureVideoDecoder();
+            AddSection(new ConfigPage(filterSection, nvidiaConfig, true));
           }
           if (filter.Equals("InterVideo Audio Decoder"))
           {
-            AddChildSection(filterSection, new FiltersWinDVD7Decoder());
+            FiltersWinDVD7Decoder windvdConfig = new FiltersWinDVD7Decoder();
+            AddSection(new ConfigPage(filterSection, windvdConfig, true));
           }
           if (filter.Equals("CyberLink Audio Decoder (PDVD7)") || filter.Equals("CyberLink Audio Decode (PDVD7.x)"))
           {
-            AddChildSection(filterSection, new FiltersPowerDVD7Decoder());
+            FiltersPowerDVD7Decoder pdvdConfig = new FiltersPowerDVD7Decoder();
+            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
           if (filter.Equals("MPA Decoder Filter"))
           {
-            AddChildSection(filterSection, new FiltersMPEG2DecAudio());
+            FiltersMPEG2DecAudio mpaConfig = new FiltersMPEG2DecAudio();
+            AddSection(new ConfigPage(filterSection, mpaConfig, false));
           }
           if (filter.Equals("DScaler Audio Decoder"))
           {
-            AddChildSection(filterSection, new FiltersDScalerAudio());
+            FiltersDScalerAudio dscalerConfig = new FiltersDScalerAudio();
+            AddSection(new ConfigPage(filterSection, dscalerConfig, true));
           }
         }
+
         ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
         if (availableAACAudioFilters.Count > 0)
         {
@@ -341,7 +319,8 @@ namespace MediaPortal.Configuration
           {
             if (filter.Equals("MONOGRAM AAC Decoder"))
             {
-              AddChildSection(filterSection, new FiltersMonogramAACDecoder());
+              FiltersMonogramAACDecoder monogramConfig = new FiltersMonogramAACDecoder();
+              AddSection(new ConfigPage(filterSection, monogramConfig, true));
             }
           }
         }
@@ -356,56 +335,298 @@ namespace MediaPortal.Configuration
         {
           if (filter.Equals("MPV Decoder Filter"))
           {
-            AddChildSection(filterSection, new FiltersMPEG2DecVideo());
+            FiltersMPEG2DecVideo mpvConfig = new FiltersMPEG2DecVideo();
+            AddSection(new ConfigPage(filterSection, mpvConfig, true));
           }
           if (filter.Equals("DScaler Mpeg2 Video Decoder"))
           {
-            AddChildSection(filterSection, new FiltersDScalerVideo());
+            FiltersDScalerVideo dscalervConfig = new FiltersDScalerVideo();
+            AddSection(new ConfigPage(filterSection, dscalervConfig, true));
+          }
+          // if we do not have the audio codec installed we want to see the video config nevertheless
+          if (filter.IndexOf("CyberLink Video/SP Decoder (PDVD7") > -1)
+          {
+            FiltersPowerDVD7Decoder pdvdConfig = new FiltersPowerDVD7Decoder();
+            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
         }
       }
+
+
       //Add section for video renderer configuration
-      AddChildSection(filterSection, new FiltersVideoRenderer());
+      FiltersVideoRenderer renderConfig = new FiltersVideoRenderer();
+      AddSection(new ConfigPage(filterSection, renderConfig, true));
+
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
       string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
       FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
-        for (int i = 0; i < audioEncoders.Length; ++i)
+        for (int i = 0 ; i < audioEncoders.Length ; ++i)
         {
           if (String.Compare(audioCodec.Name, audioEncoders[i], true) == 0)
           {
             EncoderFiltersSection EncoderfilterSection = new EncoderFiltersSection();
-            AddSection(EncoderfilterSection);
-            AddChildSection(EncoderfilterSection, new FiltersInterVideoEncoder());
+            AddSection(new ConfigPage(null, EncoderfilterSection, true));
+
+            FiltersInterVideoEncoder windvdEncoderConfig = new FiltersInterVideoEncoder();
+            AddSection(new ConfigPage(EncoderfilterSection, windvdEncoderConfig, true));
           }
         }
-      //add weather section
-      if (splashScreen != null)
-        splashScreen.SetInformation("Adding weather section...");
+    }
 
-      Log.Info("add weather section");
-      AddSection(new Weather());
+    private void AddTabRemote()
+    {
+      //add remotes section      
       if (splashScreen != null)
-        splashScreen.SetInformation("Loading plugins...");
+        splashScreen.SetInformation("Adding remote section...");
+      SectionSettings remote = new Remote();
+      AddSection(new ConfigPage(null, remote, false));
 
-      Log.Info("add plugins section");
-      AddSection(new PluginsNew());
-      if (splashScreen != null)
-        splashScreen.SetInformation("Finished plugin loading...");
-      // Select first item in the section tree
-      sectionTree.SelectedNode = sectionTree.Nodes[0];
+      Log.Info("add DirectInput section");
+      RemoteDirectInput dinputConf = new RemoteDirectInput();
+      AddSection(new ConfigPage(remote, dinputConf, false));
 
+      RemoteUSBUIRT usbuirtConf = new RemoteUSBUIRT();
+      AddSection(new ConfigPage(remote, usbuirtConf, true));
+      serialuir = new RemoteSerialUIR();
+      AddSection(new ConfigPage(remote, serialuir, true));
+      RemoteWinLirc winlircConf = new RemoteWinLirc();
+      AddSection(new ConfigPage(remote, winlircConf, true));
+      RemoteRedEye redeyeConf = new RemoteRedEye();
+      AddSection(new ConfigPage(remote, redeyeConf, true));
+    }
+
+    private void AddTabTelevision()
+    {
+      //add television section
+      Log.Info("add television section");
       if (splashScreen != null)
+        splashScreen.SetInformation("Adding television section...");
+
+      SectionSettings television = new Television();
+      AddSection(new ConfigPage(null, television, false));
+
+      if (UseTvServer)
       {
-        splashScreen.Stop(1000);
-        splashScreen = null;
-        BackgroundWorker FrontWorker = new BackgroundWorker();
-        FrontWorker.DoWork += new DoWorkEventHandler(Worker_BringConfigToForeground);
-        FrontWorker.RunWorkerAsync();
+        Log.Info("  add tv client section");
+        AddSection(new ConfigPage(television, new TVClient(), false));
+      }
+      else
+      {
+        Log.Info("  add tv capture cards section");
+        AddSection(new ConfigPage(television, new TVCaptureCards(), false));
+        Log.Info("  add tv channels section");
+        AddSection(new ConfigPage(television, new TVChannels(), false));
+        Log.Info("  add tv channel groups section");
+        AddSection(new ConfigPage(television, new TVGroups(), false));
+        Log.Info("  add tv program guide section");
+        AddSection(new ConfigPage(television, new TVProgramGuide(), false));
+        Log.Info("  add tv recording section");
+        AddSection(new ConfigPage(television, new TVRecording(), false));
       }
 
-      Log.Info("settingsform constructor done");
+      Log.Info("  add tv postprocessing section");
+      AddSection(new ConfigPage(television, new TVPostProcessing(), true));
+      Log.Info("  add tv teletext section");
+      AddSection(new ConfigPage(television, new TVTeletext(), true));
     }
+
+    private void AddTabRadio()
+    {
+      //add radio section
+      if (UseTvServer)
+      {
+        Log.Info("radio section not added - tv server plugin installed");
+      }
+      else
+      {
+        Log.Info("add radio section");
+        if (splashScreen != null)
+          splashScreen.SetInformation("Adding radio section...");
+
+        SectionSettings radio = new Sections.Radio();
+        AddSection(new ConfigPage(null, radio, false));
+        Log.Info("  add radio stations section");
+        AddSection(new ConfigPage(radio, new RadioStations(), false));
+      }
+    }
+
+    private void AddTabPictures()
+    {
+      //add pictures section
+      Log.Info("add pictures section");
+      if (splashScreen != null)
+        splashScreen.SetInformation("Adding pictures section...");
+
+      SectionSettings picture = new Pictures();
+      AddSection(new ConfigPage(null, picture, false));
+
+      AddSection(new ConfigPage(picture, new PictureShares(), false));
+      AddSection(new ConfigPage(picture, new PictureExtensions(), true));
+    }
+
+    private void AddTabMusic()
+    {
+      //add music section
+      Log.Info("add music section");
+      if (splashScreen != null)
+        splashScreen.SetInformation("Adding music section...");
+
+      SectionSettings music = new Sections.Music();
+      AddSection(new ConfigPage(null, music, false));
+
+      Log.Info("  add music shares section");
+      AddSection(new ConfigPage(music, new MusicShares(), false));
+      Log.Info("  add music database section");
+      AddSection(new ConfigPage(music, new MusicDatabase(), false));
+      Log.Info("  add music import section");
+      AddSection(new ConfigPage(music, new MusicImport(), false));
+
+      Log.Info("  add music extensions section");
+      AddSection(new ConfigPage(music, new MusicExtensions(), true));
+      Log.Info("  add music views section");
+      AddSection(new ConfigPage(music, new MusicViews(), true));
+      Log.Info("  add music sort section");
+      AddSection(new ConfigPage(music, new MusicSort(), true));
+      Log.Info("  add music dsp section");
+      AddSection(new ConfigPage(music, new MusicDSP(), true));
+      Log.Info("  add music asio section");
+      AddSection(new ConfigPage(music, new MusicASIO(), true));
+    }
+
+    private void AddTabMovies()
+    {
+      //add movie section
+      Log.Info("add movie section");
+      if (splashScreen != null)
+        splashScreen.SetInformation("Adding movie section...");
+
+      SectionSettings movie = new Movies();
+      AddSection(new ConfigPage(null, movie, false));
+
+      Log.Info("  add movie shares section");
+      AddSection(new ConfigPage(movie, new MovieShares(), false));
+      Log.Info("  add movie database section");
+      MovieDatabase movieDbConfig = new MovieDatabase();
+      AddSection(new ConfigPage(movie, movieDbConfig, false));
+      Log.Info("  add movie player section");
+      AddSection(new ConfigPage(movie, new MoviePlayer(), false));
+
+      Log.Info("  add movie extensions section");
+      AddSection(new ConfigPage(movie, new MovieExtensions(), true));
+      Log.Info("  add movie views section");
+      AddSection(new ConfigPage(movie, new MovieViews(), true));
+      Log.Info("  add movie postprocessing section");
+      AddSection(new ConfigPage(movie, new MoviePostProcessing(), true));
+    }
+
+    private void AddTabDvd()
+    {
+      //add DVD section
+      Log.Info("add DVD section");
+      if (splashScreen != null)
+        splashScreen.SetInformation("Adding DVD section...");
+
+      SectionSettings dvd = new DVD();
+      AddSection(new ConfigPage(null, dvd, false));
+
+      Log.Info("  add DVD codec section");
+      AddSection(new ConfigPage(dvd, new DVDCodec(), false));
+
+      Log.Info("  add DVD player section");
+      AddSection(new ConfigPage(dvd, new DVDPlayer(), true));
+      Log.Info("  add DVD postprocessing section");
+      AddSection(new ConfigPage(dvd, new DVDPostProcessing(), true));
+    }
+
+    private void AddTabGeneral()
+    {
+      General general = new General();
+      AddSection(new ConfigPage(null, general, false));
+
+      //add skins section
+      Log.Info("add skins section");
+      if (splashScreen != null)
+        splashScreen.SetInformation("Adding skins section...");
+
+      GeneralSkin skinConfig = new GeneralSkin();
+      AddSection(new ConfigPage(general, skinConfig, false));
+
+      AddSection(new ConfigPage(general, new GeneralThumbs(), false));      
+      AddSection(new ConfigPage(general, new GeneralVolume(), false));
+
+      AddSection(new ConfigPage(general, new GeneralKeyboardControl(), true));
+      AddSection(new ConfigPage(general, new Keys(), true));
+      AddSection(new ConfigPage(general, new GeneralOSD(), true));
+      AddSection(new ConfigPage(general, new GeneralSkipSteps(), true));
+      AddSection(new ConfigPage(general, new GeneralStartupDelay(), true));
+      AddSection(new ConfigPage(general, new GeneralWatchdog(), true));
+      AddSection(new ConfigPage(general, new GeneralDaemonTools(), true));
+      AddSection(new ConfigPage(general, new GeneralFileMenu(), true));
+      // Removed because of various issues with DVD playback
+      // AddSection(new ConfigPage(general, new GeneralCDSpeed(), true));
+    }
+
+    private void ToggleSectionVisibility(bool aShowAdvancedOptions)
+    {
+      advancedMode = aShowAdvancedOptions;
+
+      sectionTree.BeginUpdate();
+      TreeNode currentSelected = (TreeNode)sectionTree.SelectedNode;
+      sectionTree.Nodes.Clear();
+
+      foreach (KeyValuePair<string, ConfigPage> singleConfig in settingSections)
+      {
+        ConfigPage currentSection = singleConfig.Value;
+
+        // Add all loaded sections to the TreeView
+        if (currentSection.IsVisible)
+        {
+          SectionTreeNode treeNode = new SectionTreeNode(currentSection.ConfigSection);
+          // If not parent is specified we add the section as root node.
+          if (currentSection.Parentsection == null)
+          {
+            // Add to the root
+            sectionTree.Nodes.Add(treeNode);
+          }
+          else
+          {
+            // Find parent section (IndexOfKey is buggy)
+            int parentPos = -1;
+            // This limits usage to one level only - loop subitems if you want to build a tree
+            for (int i = 0 ; i < sectionTree.Nodes.Count ; i++)
+              if (sectionTree.Nodes[i].Text.CompareTo(currentSection.Parentsection.Text) == 0)
+              {
+                parentPos = i;
+                break;
+              }
+
+            if (parentPos > -1)
+            {
+              // Add to the parent node
+              SectionTreeNode parentTreeNode = (SectionTreeNode)sectionTree.Nodes[parentPos];
+              parentTreeNode.Nodes.Add(treeNode);
+            }
+          }
+        }
+      }
+      if (currentSelected != null)
+      {
+        // Reselect the node we were editing before
+        foreach (TreeNode parentNode in sectionTree.Nodes)
+          foreach (TreeNode node in parentNode.Nodes)
+            if (node.Text.CompareTo(currentSelected.Text) == 0)
+            {
+              sectionTree.SelectedNode = node;
+              node.EnsureVisible();
+              break;
+            }
+
+      }
+      sectionTree.EndUpdate();
+    }
+
+    #endregion
 
     private void Worker_BringConfigToForeground(object sender, DoWorkEventArgs e)
     {
@@ -423,42 +644,12 @@ namespace MediaPortal.Configuration
       SetForegroundWindow(hwnd);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="section"></param>
-    public void AddSection(SectionSettings section)
+    public void AddSection(ConfigPage aSection)
     {
-      AddChildSection(null, section);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="parentSection"></param>
-    /// <param name="section"></param>
-    public void AddChildSection(SectionSettings parentSection, SectionSettings section)
-    {
-      // Make sure this section doesn't already exist
-      if (settingSections.ContainsKey(section.Text))
-      {
+      if (settingSections.ContainsKey(aSection.SectionName))
         return;
-      }
-      // Add section to tree
-      SectionTreeNode treeNode = new SectionTreeNode(section);
-      if (parentSection == null)
-      {
-        // Add to the root
-        sectionTree.Nodes.Add(treeNode);
-      }
-      else
-      {
-        // Add to the parent node
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
-        parentTreeNode.Nodes.Add(treeNode);
-      }
-      settingSections.Add(section.Text, treeNode);
-      //treeNode.EnsureVisible();
+
+      settingSections.Add(aSection.SectionName, aSection);
     }
 
     /// <summary>
@@ -484,6 +675,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
       this.sectionTree = new System.Windows.Forms.TreeView();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -500,6 +692,7 @@ namespace MediaPortal.Configuration
       this.logsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.databaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.skinsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripButtonSwitchAdvanced = new System.Windows.Forms.ToolStripButton();
       this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -610,7 +803,8 @@ namespace MediaPortal.Configuration
       // 
       this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.helpToolStripSplitButton,
-            this.configToolStripSplitButton});
+            this.configToolStripSplitButton,
+            this.toolStripButtonSwitchAdvanced});
       this.toolStrip1.Location = new System.Drawing.Point(0, 0);
       this.toolStrip1.Name = "toolStrip1";
       this.toolStrip1.Size = new System.Drawing.Size(712, 25);
@@ -686,6 +880,19 @@ namespace MediaPortal.Configuration
       this.skinsToolStripMenuItem.Text = "Open Skins directory";
       this.skinsToolStripMenuItem.Click += new System.EventHandler(this.skinsToolStripMenuItem_Click);
       // 
+      // toolStripButtonSwitchAdvanced
+      // 
+      this.toolStripButtonSwitchAdvanced.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+      this.toolStripButtonSwitchAdvanced.AutoSize = false;
+      this.toolStripButtonSwitchAdvanced.CheckOnClick = true;
+      this.toolStripButtonSwitchAdvanced.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this.toolStripButtonSwitchAdvanced.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSwitchAdvanced.Image")));
+      this.toolStripButtonSwitchAdvanced.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButtonSwitchAdvanced.Name = "toolStripButtonSwitchAdvanced";
+      this.toolStripButtonSwitchAdvanced.Size = new System.Drawing.Size(125, 22);
+      this.toolStripButtonSwitchAdvanced.Text = "Switch to expert mode";
+      this.toolStripButtonSwitchAdvanced.Click += new System.EventHandler(this.toolStripButtonSwitchAdvanced_Click);
+      // 
       // SettingsForm
       // 
       this.AcceptButton = this.okButton;
@@ -744,10 +951,6 @@ namespace MediaPortal.Configuration
       }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="section"></param>
     private bool ActivateSection(SectionSettings section)
     {
       try
@@ -769,7 +972,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.Error(ex);
       }
       return true;
     }
@@ -795,11 +998,6 @@ namespace MediaPortal.Configuration
       }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void SettingsForm_Load(object sender, EventArgs e)
     {
       GUIGraphicsContext.form = this;
@@ -807,19 +1005,26 @@ namespace MediaPortal.Configuration
       if (MediaPortal.Player.BassMusicPlayer.IsDefaultMusicPlayer)
         MediaPortal.Player.BassMusicPlayer.CreatePlayerAsync();
       Log.Info("Load settings");
-      foreach (TreeNode treeNode in sectionTree.Nodes)
+
+      // We load ALL sections - not just those which are visible currently
+      foreach (KeyValuePair<string, ConfigPage> singleConfig in settingSections)
       {
-        // Load settings for all sections
-        Log.Info("  Load settings:{0}", treeNode.Text);
-        LoadSectionSettings(treeNode);
+        ConfigPage config = singleConfig.Value;
+        TreeNode loadNode = new SectionTreeNode(config.ConfigSection) as TreeNode;
+        if (loadNode != null)
+        {
+          // LoadSectionSettings will recursively load all settings
+          if (loadNode.Parent == null)
+          {
+            Log.Info("  Load settings:{0}", loadNode.Text);
+            LoadSectionSettings(loadNode);
+          }
+        }
       }
+
       Log.Info("Load settings done");
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="currentNode"></param>
     private void LoadSectionSettings(TreeNode currentNode)
     {
       Log.Info("LoadSectionSettings()");
@@ -841,10 +1046,6 @@ namespace MediaPortal.Configuration
       Log.Info("LoadSectionSettings() done");
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="currentNode"></param>
     private void SaveSectionSettings(TreeNode currentNode)
     {
       Log.Info("SaveSectionSettings()");
@@ -883,7 +1084,7 @@ namespace MediaPortal.Configuration
 
     private bool AllFilledIn()
     {
-      int MaximumShares = 20;
+      int MaximumShares = 250;
       //Do we have 1 or more music,picture,video shares?
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -902,13 +1103,14 @@ namespace MediaPortal.Configuration
           return false;
         }
         bool added = false;
-        for (int index = 0; index < MaximumShares; index++)
+        for (int index = 0 ; index < MaximumShares ; index++)
         {
           string sharePath = String.Format("sharepath{0}", index);
           string sharePathData = xmlreader.GetValueAsString("music", sharePath, "");
           if (!MediaPortal.Util.Utils.IsDVD(sharePathData) && sharePathData != string.Empty)
           {
             added = true;
+            break;
           }
         }
         if (!added)
@@ -918,13 +1120,14 @@ namespace MediaPortal.Configuration
           return false;
         }
         added = false;
-        for (int index = 0; index < MaximumShares; index++)
+        for (int index = 0 ; index < MaximumShares ; index++)
         {
           string sharePath = String.Format("sharepath{0}", index);
           string shareNameData = xmlreader.GetValueAsString("movies", sharePath, "");
           if (!MediaPortal.Util.Utils.IsDVD(shareNameData) && shareNameData != string.Empty)
           {
             added = true;
+            break;
           }
         }
         if (!added)
@@ -934,13 +1137,14 @@ namespace MediaPortal.Configuration
           return false;
         }
         added = false;
-        for (int index = 0; index < MaximumShares; index++)
+        for (int index = 0 ; index < MaximumShares ; index++)
         {
           string sharePath = String.Format("sharepath{0}", index);
           string shareNameData = xmlreader.GetValueAsString("pictures", sharePath, "");
           if (!MediaPortal.Util.Utils.IsDVD(shareNameData) && shareNameData != string.Empty)
           {
             added = true;
+            break;
           }
         }
         if (!added)
@@ -979,11 +1183,19 @@ namespace MediaPortal.Configuration
 
     private void SaveAllSettings()
     {
-      foreach (TreeNode treeNode in sectionTree.Nodes)
+      // We save ALL sections - not just those which are visible currently
+      foreach (KeyValuePair<string, ConfigPage> singleConfig in settingSections)
       {
-        // Save settings for all sections
-        SaveSectionSettings(treeNode);
+        ConfigPage config = singleConfig.Value;
+        TreeNode saveNode = new SectionTreeNode(config.ConfigSection) as TreeNode;
+        if (saveNode != null)
+        {
+          // SaveSectionSettings recursively saves all subnodes as well
+          if (saveNode.Parent == null)
+            SaveSectionSettings(saveNode);
+        }
       }
+
       Settings.SaveCache();
     }
 
@@ -1121,6 +1333,12 @@ namespace MediaPortal.Configuration
     private void skinsToolStripMenuItem_Click(object sender, EventArgs e)
     {
       OpenMpDirectory(Config.Dir.Skin);
+    }
+
+    private void toolStripButtonSwitchAdvanced_Click(object sender, EventArgs e)
+    {
+      ToggleSectionVisibility(toolStripButtonSwitchAdvanced.Checked);
+      toolStripButtonSwitchAdvanced.Text = toolStripButtonSwitchAdvanced.Checked ? "Switch to standard mode" : "Switch to expert mode";
     }
   }
 }

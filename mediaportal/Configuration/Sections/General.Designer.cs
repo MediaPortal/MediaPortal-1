@@ -56,7 +56,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpThreadPriority = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lbDebug = new System.Windows.Forms.Label();
       this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.labelPriority = new System.Windows.Forms.Label();
       this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lbScreen = new System.Windows.Forms.Label();
       this.cbScreen = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -66,7 +66,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpThreadPriority
       // 
-      this.mpThreadPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpThreadPriority.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpThreadPriority.BorderColor = System.Drawing.Color.Empty;
       this.mpThreadPriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpThreadPriority.FormattingEnabled = true;
@@ -75,7 +76,7 @@ namespace MediaPortal.Configuration.Sections
             "AboveNormal",
             "Normal",
             "BelowNormal"});
-      this.mpThreadPriority.Location = new System.Drawing.Point(329, 345);
+      this.mpThreadPriority.Location = new System.Drawing.Point(329, 372);
       this.mpThreadPriority.MinimumSize = new System.Drawing.Size(100, 0);
       this.mpThreadPriority.Name = "mpThreadPriority";
       this.mpThreadPriority.Size = new System.Drawing.Size(131, 21);
@@ -85,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.lbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(6, 349);
+      this.lbDebug.Location = new System.Drawing.Point(6, 375);
       this.lbDebug.Name = "lbDebug";
       this.lbDebug.Size = new System.Drawing.Size(73, 13);
       this.lbDebug.TabIndex = 3;
@@ -96,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxGeneralSettings.Controls.Add(this.label1);
+      this.groupBoxGeneralSettings.Controls.Add(this.labelPriority);
       this.groupBoxGeneralSettings.Controls.Add(this.mpThreadPriority);
       this.groupBoxGeneralSettings.Controls.Add(this.lbDebug);
       this.groupBoxGeneralSettings.Controls.Add(this.cbDebug);
@@ -111,15 +112,15 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General settings";
       // 
-      // label1
+      // labelPriority
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(242, 349);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(81, 13);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Process priority:";
+      this.labelPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelPriority.AutoSize = true;
+      this.labelPriority.Location = new System.Drawing.Point(242, 375);
+      this.labelPriority.Name = "labelPriority";
+      this.labelPriority.Size = new System.Drawing.Size(81, 13);
+      this.labelPriority.TabIndex = 1;
+      this.labelPriority.Text = "Process priority:";
       // 
       // cbDebug
       // 
@@ -132,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
             "Warning",
             "Information",
             "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(85, 345);
+      this.cbDebug.Location = new System.Drawing.Point(85, 372);
       this.cbDebug.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbDebug.Name = "cbDebug";
       this.cbDebug.Size = new System.Drawing.Size(131, 21);
@@ -142,7 +143,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.lbScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.lbScreen.AutoSize = true;
-      this.lbScreen.Location = new System.Drawing.Point(6, 375);
+      this.lbScreen.Location = new System.Drawing.Point(6, 349);
       this.lbScreen.Name = "lbScreen";
       this.lbScreen.Size = new System.Drawing.Size(67, 13);
       this.lbScreen.TabIndex = 5;
@@ -150,12 +151,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbScreen
       // 
-      this.cbScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.cbScreen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cbScreen.BorderColor = System.Drawing.Color.Empty;
       this.cbScreen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbScreen.Enabled = false;
       this.cbScreen.FormattingEnabled = true;
-      this.cbScreen.Location = new System.Drawing.Point(85, 372);
+      this.cbScreen.Location = new System.Drawing.Point(85, 346);
       this.cbScreen.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbScreen.Name = "cbScreen";
       this.cbScreen.Size = new System.Drawing.Size(375, 21);
@@ -213,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpThreadPriority;
     private System.Windows.Forms.Label lbDebug;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneralSettings;
-    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label labelPriority;
     private MediaPortal.UserInterface.Controls.MPComboBox cbDebug;
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
     private MediaPortal.UserInterface.Controls.MPComboBox cbScreen;

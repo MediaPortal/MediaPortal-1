@@ -643,7 +643,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     void Cleanup()
     {
       _cachedTextureFileName = "";

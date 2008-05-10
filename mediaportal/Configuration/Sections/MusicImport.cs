@@ -149,9 +149,6 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public override void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))

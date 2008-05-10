@@ -57,6 +57,12 @@ namespace MediaPortal.Configuration.Sections
       base.Dispose(disposing);
     }
 
+    public override void OnSectionActivated()
+    {
+      groupBoxVolumeOsd.Visible = SettingsForm.AdvancedMode;
+      base.OnSectionActivated();
+    }
+
     public override void LoadSettings()
     {
       // default default
@@ -222,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxScale = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this._customTextbox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this._useCustomHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this._useLogarithmicHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
@@ -233,33 +239,33 @@ namespace MediaPortal.Configuration.Sections
       this._useCustomLevel = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this._useSystemCurrent = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this._useLastKnownLevel = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxMixerControl = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this._useWave = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this._useMasterVolume = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxVolumeOsd = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this._useVolumeOSD = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox1.SuspendLayout();
+      this.groupBoxScale.SuspendLayout();
       this.groupBox2.SuspendLayout();
-      this.groupBox3.SuspendLayout();
-      this.mpGroupBox1.SuspendLayout();
+      this.groupBoxMixerControl.SuspendLayout();
+      this.groupBoxVolumeOsd.SuspendLayout();
       this.SuspendLayout();
       // 
-      // groupBox1
+      // groupBoxScale
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxScale.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this._customTextbox);
-      this.groupBox1.Controls.Add(this._useCustomHandler);
-      this.groupBox1.Controls.Add(this._useLogarithmicHandler);
-      this.groupBox1.Controls.Add(this._useWindowsHandler);
-      this.groupBox1.Controls.Add(this._useClassicHandler);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 113);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 128);
-      this.groupBox1.TabIndex = 1;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Style";
+      this.groupBoxScale.Controls.Add(this._customTextbox);
+      this.groupBoxScale.Controls.Add(this._useCustomHandler);
+      this.groupBoxScale.Controls.Add(this._useLogarithmicHandler);
+      this.groupBoxScale.Controls.Add(this._useWindowsHandler);
+      this.groupBoxScale.Controls.Add(this._useClassicHandler);
+      this.groupBoxScale.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxScale.Location = new System.Drawing.Point(0, 113);
+      this.groupBoxScale.Name = "groupBoxScale";
+      this.groupBoxScale.Size = new System.Drawing.Size(472, 128);
+      this.groupBoxScale.TabIndex = 1;
+      this.groupBoxScale.TabStop = false;
+      this.groupBoxScale.Text = "Scale";
       // 
       // _customTextbox
       // 
@@ -388,19 +394,19 @@ namespace MediaPortal.Configuration.Sections
       this._useLastKnownLevel.UseVisualStyleBackColor = true;
       this._useLastKnownLevel.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
-      // groupBox3
+      // groupBoxMixerControl
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxMixerControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox3.Controls.Add(this._useWave);
-      this.groupBox3.Controls.Add(this._useMasterVolume);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(0, 247);
-      this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(472, 88);
-      this.groupBox3.TabIndex = 2;
-      this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Control";
+      this.groupBoxMixerControl.Controls.Add(this._useWave);
+      this.groupBoxMixerControl.Controls.Add(this._useMasterVolume);
+      this.groupBoxMixerControl.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMixerControl.Location = new System.Drawing.Point(0, 247);
+      this.groupBoxMixerControl.Name = "groupBoxMixerControl";
+      this.groupBoxMixerControl.Size = new System.Drawing.Size(472, 88);
+      this.groupBoxMixerControl.TabIndex = 2;
+      this.groupBoxMixerControl.TabStop = false;
+      this.groupBoxMixerControl.Text = "Control";
       // 
       // _useWave
       // 
@@ -424,19 +430,18 @@ namespace MediaPortal.Configuration.Sections
       this._useMasterVolume.Text = "&Master Volume";
       this._useMasterVolume.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBox1
+      // groupBoxVolumeOsd
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxVolumeOsd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this._useVolumeOSD);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 341);
-      this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 67);
-      this.mpGroupBox1.TabIndex = 3;
-      this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "OSD";
-      this.mpGroupBox1.Visible = false;
+      this.groupBoxVolumeOsd.Controls.Add(this._useVolumeOSD);
+      this.groupBoxVolumeOsd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxVolumeOsd.Location = new System.Drawing.Point(0, 341);
+      this.groupBoxVolumeOsd.Name = "groupBoxVolumeOsd";
+      this.groupBoxVolumeOsd.Size = new System.Drawing.Size(472, 67);
+      this.groupBoxVolumeOsd.TabIndex = 3;
+      this.groupBoxVolumeOsd.TabStop = false;
+      this.groupBoxVolumeOsd.Text = "OSD";
       // 
       // _useVolumeOSD
       // 
@@ -451,20 +456,20 @@ namespace MediaPortal.Configuration.Sections
       // 
       // GeneralVolume
       // 
-      this.Controls.Add(this.mpGroupBox1);
-      this.Controls.Add(this.groupBox3);
+      this.Controls.Add(this.groupBoxVolumeOsd);
+      this.Controls.Add(this.groupBoxMixerControl);
       this.Controls.Add(this.groupBox2);
-      this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.groupBoxScale);
       this.Name = "GeneralVolume";
       this.Size = new System.Drawing.Size(472, 408);
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
+      this.groupBoxScale.ResumeLayout(false);
+      this.groupBoxScale.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
-      this.groupBox3.ResumeLayout(false);
-      this.groupBox3.PerformLayout();
-      this.mpGroupBox1.ResumeLayout(false);
-      this.mpGroupBox1.PerformLayout();
+      this.groupBoxMixerControl.ResumeLayout(false);
+      this.groupBoxMixerControl.PerformLayout();
+      this.groupBoxVolumeOsd.ResumeLayout(false);
+      this.groupBoxVolumeOsd.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -476,7 +481,7 @@ namespace MediaPortal.Configuration.Sections
     int _customLevel;
     string _customText = string.Empty;
     private MPTextBox _customTextbox;
-    MPGroupBox groupBox1;
+    MPGroupBox groupBoxScale;
     MPGroupBox groupBox2;
     private MPTextBox _levelTextbox;
     private MPRadioButton _useClassicHandler;
@@ -485,12 +490,12 @@ namespace MediaPortal.Configuration.Sections
     private MPRadioButton _useWindowsHandler;
     private MPRadioButton _useLastKnownLevel;
     private MPRadioButton _useLogarithmicHandler;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMixerControl;
     private MediaPortal.UserInterface.Controls.MPRadioButton _useMasterVolume;
     private MediaPortal.UserInterface.Controls.MPRadioButton _useWave;
 
     #endregion Fields
-    private MPGroupBox mpGroupBox1;
+    private MPGroupBox groupBoxVolumeOsd;
     private MPCheckBox _useVolumeOSD;
 
     private MPRadioButton _useSystemCurrent;

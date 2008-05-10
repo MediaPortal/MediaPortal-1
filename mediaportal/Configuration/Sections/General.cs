@@ -142,6 +142,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
+
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // Load general settings
@@ -225,6 +226,13 @@ namespace MediaPortal.Configuration.Sections
     {
       if (sectionEntries[e.Index][1].Equals("usescreenselector"))
         cbScreen.Enabled = e.NewValue == CheckState.Checked;
+    }
+
+    public override void OnSectionActivated()
+    {
+      mpThreadPriority.Visible = SettingsForm.AdvancedMode;
+      labelPriority.Visible = SettingsForm.AdvancedMode;
+      base.OnSectionActivated();
     }
   }
 }
