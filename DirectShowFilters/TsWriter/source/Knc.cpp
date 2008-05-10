@@ -212,77 +212,99 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
     KNCBDA_CI_Enable=(TKNCBDA_CI_Enable*)GetProcAddress(m_hMod,"KNCBDA_CI_Enable");
 		if(KNCBDA_CI_Enable==NULL)
 		{
-      LogDebug("KNCBDA_CI_Enable not found in dll");
+			LogDebug("KNCBDA_CI_Enable not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;
 		}
 
 		KNCBDA_CI_Disable=(TKNCBDA_CI_Disable*)GetProcAddress(m_hMod,"KNCBDA_CI_Disable");
 		if(KNCBDA_CI_Disable==NULL)
 		{
-      LogDebug("KNCBDA_CI_Disable not found in dll");
+			LogDebug("KNCBDA_CI_Disable not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;
 		}
 
 		KNCBDA_CI_IsAvailable=(TKNCBDA_CI_IsAvailable*)GetProcAddress(m_hMod,"KNCBDA_CI_IsAvailable");
 		if(KNCBDA_CI_IsAvailable==NULL)
 		{
-      LogDebug("KNCBDA_CI_IsAvailable not found in dll");
+		      LogDebug("KNCBDA_CI_IsAvailable not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;
 		}
 
 		KNCBDA_CI_IsReady=(TKNCBDA_CI_IsReady*)GetProcAddress(m_hMod,"KNCBDA_CI_IsReady");
 		if(KNCBDA_CI_IsReady==NULL)
 		{
-      LogDebug("KNCBDA_CI_IsReady not found in dll");
+		    LogDebug("KNCBDA_CI_IsReady not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;
 		}
 
 		KNCBDA_CI_HW_Enable=(TKNCBDA_CI_HW_Enable*)GetProcAddress(m_hMod,"KNCBDA_CI_HW_Enable");
 		if(KNCBDA_CI_HW_Enable==NULL)
 		{
-      LogDebug("KNCBDA_CI_HW_Enable not found in dll");
+			LogDebug("KNCBDA_CI_HW_Enable not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;
 		}
 
 		KNCBDA_CI_GetName=(TKNCBDA_CI_GetName*)GetProcAddress(m_hMod,"KNCBDA_CI_GetName");
 		if(KNCBDA_CI_GetName==NULL)
 		{
-      LogDebug("KNCBDA_CI_GetName not found in dll");
+			LogDebug("KNCBDA_CI_GetName not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;
 		}
 
 		KNCBDA_CI_SendPMTCommand=(TKNCBDA_CI_SendPMTCommand*)GetProcAddress(m_hMod,"KNCBDA_CI_SendPMTCommand");
 		if(KNCBDA_CI_SendPMTCommand==NULL)
 		{
-      LogDebug("KNCBDA_CI_SendPMTCommand not found in dll");
+		    LogDebug("KNCBDA_CI_SendPMTCommand not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;
 		}
 
 		KNCBDA_CI_EnterMenu=(TKNCBDA_CI_EnterMenu*)GetProcAddress(m_hMod,"KNCBDA_CI_EnterMenu");
 		if(KNCBDA_CI_EnterMenu==NULL)
 		{
-      LogDebug("KNCBDA_CI_EnterMenu not found in dll");
+			LogDebug("KNCBDA_CI_EnterMenu not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;
 		}
 
 		KNCBDA_CI_SelectMenu=(TKNCBDA_CI_SelectMenu*)GetProcAddress(m_hMod,"KNCBDA_CI_SelectMenu");
 		if(KNCBDA_CI_SelectMenu==NULL)
 		{
-      LogDebug("KNCBDA_CI_SelectMenu not found in dll");
+			LogDebug("KNCBDA_CI_SelectMenu not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;
 		}
 
 		KNCBDA_CI_CloseMenu=(TKNCBDA_CI_CloseMenu*)GetProcAddress(m_hMod,"KNCBDA_CI_CloseMenu");
 		if(KNCBDA_CI_CloseMenu==NULL)
 		{
-      LogDebug("KNCBDA_CI_CloseMenu not found in dll");
+			LogDebug("KNCBDA_CI_CloseMenu not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK; 
 		}
 
 		KNCBDA_CI_SendMenuAnswer=(TKNCBDA_CI_SendMenuAnswer*)GetProcAddress(m_hMod,"KNCBDA_CI_SendMenuAnswer");
 		if(KNCBDA_CI_SendMenuAnswer==NULL)
 		{
-      LogDebug("KNCBDA_CI_SendMenuAnswer not found in dll");
+			LogDebug("KNCBDA_CI_SendMenuAnswer not found in dll");
+		    FreeLibrary(m_hMod);
+			m_hMod=NULL;
 			return S_OK;  
 		}
     LogDebug("KNCBDA_CI_Enable");
@@ -306,6 +328,12 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
         LogDebug("knc card detected without CAM");
       }
     }
+	if(m_bIsKNC == false){
+		LogDebug("knc not detected. releasing library");
+		KNCBDA_CI_Disable(0);
+		FreeLibrary(m_hMod);
+		m_hMod=NULL;
+	}
   }
   else
   {

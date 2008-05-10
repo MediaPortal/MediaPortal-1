@@ -57,6 +57,7 @@ public:
   void OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo);
 private:
   bool        GetDeviceID(IBaseFilter* tunerFilter, UINT& deviceId);
+  void		  FreeTechnotrendLibrary();
   HANDLE      m_hBdaApi;
   int         m_slotStatus;
   DEVICE_CAT  m_deviceType;

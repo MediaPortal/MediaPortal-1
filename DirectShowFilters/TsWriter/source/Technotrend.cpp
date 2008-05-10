@@ -143,11 +143,15 @@ CTechnotrend::~CTechnotrend(void)
   }
   if (m_dll!=NULL)
   {
-    FreeLibrary(m_dll);
-    m_dll=NULL;
+    FreeTechnotrendLibrary();
   }
 }
 
+void CTechnotrend::FreeTechnotrendLibrary(){
+	LogDebug("Releasing TechnoTrend library");
+    FreeLibrary(m_dll);
+    m_dll=NULL;
+}
 
 //**************************************************************************************************
 //* callback from driver when the CI slot state changes
@@ -304,7 +308,10 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   }
 
   FILTER_INFO info;
-  if (!SUCCEEDED(tunerFilter->QueryFilterInfo(&info))) return S_OK;
+  if (!SUCCEEDED(tunerFilter->QueryFilterInfo(&info))) {
+	  FreeTechnotrendLibrary();
+	  return S_OK;
+  }
   if (wcscmp(info.achName,LBDG2_NAME_C_TUNER)==0) m_deviceType=BUDGET_2;
   if (wcscmp(info.achName,LBDG2_NAME_S_TUNER)==0) m_deviceType=BUDGET_2;
   if (wcscmp(info.achName,LBDG2_NAME_T_TUNER)==0) m_deviceType=BUDGET_2;
@@ -318,7 +325,10 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   if (wcscmp(info.achName,LUSB2BDA_DVB_NAME_S_TUNER)==0) m_deviceType=USB_2;
   if (wcscmp(info.achName,LUSB2BDA_DVB_NAME_T_TUNER)==0) m_deviceType=USB_2;
   if (wcscmp(info.achName,LUSB2BDA_DVBS_NAME_PIN_TUNER)==0) m_deviceType=USB_2_PINNACLE;
-  if (m_deviceType==UNKNOWN) return S_OK;
+  if (m_deviceType==UNKNOWN) {
+	  FreeTechnotrendLibrary();
+	  return S_OK;
+  }
 
   LogDebug("Technotrend: card detected type:%d",m_deviceType);
   UINT deviceId;
@@ -326,6 +336,7 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   {
     LogDebug("Technotrend: unable to determine the device id");
     m_deviceType=UNKNOWN;  
+	FreeTechnotrendLibrary();
     return S_OK;
   }
   BDAAPIOPENHWIDX openHwIdx= (BDAAPIOPENHWIDX)GetProcAddress(m_dll,"bdaapiOpenHWIdx");
@@ -335,6 +346,7 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
     if (m_hBdaApi == INVALID_HANDLE_VALUE) 
     {
       LogDebug("Technotrend: unable to open the device");
+	  FreeTechnotrendLibrary();
       return S_OK;
     }
     LogDebug("Technotrend: OpenHWIdx succeeded");
@@ -342,6 +354,7 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   else
   {
     LogDebug("Technotrend: unable to get proc adress of bdaapiOpenHWIdx");
+	FreeTechnotrendLibrary();
     return S_OK;
   }
 
