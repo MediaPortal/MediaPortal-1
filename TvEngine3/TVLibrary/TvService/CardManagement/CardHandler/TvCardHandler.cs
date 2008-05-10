@@ -71,6 +71,11 @@ namespace TvService
     public TvCardHandler(Card dbsCard, ITVCard card)
     {
       _dbsCard = dbsCard;
+      TvCardAnalog analogCard = card as TvCardAnalog;
+      if (analogCard != null)
+      {
+        analogCard.CardId = _dbsCard.IdCard;
+      }
       Card = card;
       if (_card == null)
         IsLocal = false;

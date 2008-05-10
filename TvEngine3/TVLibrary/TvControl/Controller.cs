@@ -818,5 +818,41 @@ namespace TvControl
     /// <value>The number of channels decrypting.</value>
     int NumberOfChannelsDecrypting(int cardId);
     #endregion
+
+    #region quality control
+    /// <summary>
+    /// Indicates if bit rate modes are supported
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>true/false</returns>
+    bool SupportsQualityControl(int cardId);
+
+    /// <summary>
+    /// Indicates if bit rate modes are supported
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>true/false</returns>
+    bool SupportsBitRateModes(int cardId);
+
+    /// <summary>
+    /// Indicates if peak bit rate mode is supported
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>true/false</returns>
+    bool SupportsPeakBitRateMode(int cardId);
+
+    /// <summary>
+    /// Indicates if bit rate control is supported
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>true/false</returns>
+    bool SupportsBitRate(int cardId);
+
+    /// <summary>
+    /// Reloads the configuration of quality control for the given card
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    void ReloadQualityControlConfigration(int cardId);
+    #endregion
   }
 }

@@ -629,5 +629,13 @@ namespace TvLibrary.Implementations.RadioWebStream
     public void ResetSignalUpdate()
     {
     }
+
+    /// <summary>
+    /// Reloads the quality control configuration
+    /// </summary>
+    public void ReloadQualityControlConfiguration()
+    {
+    }
+
   }
 }

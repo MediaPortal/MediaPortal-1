@@ -200,6 +200,11 @@ namespace TvLibrary.Interfaces
     /// Property which returns true if card supports quality control
     /// </summary>
     bool SupportsQualityControl { get;}
+
+    /// <summary>
+    /// Reloads the quality control configuration
+    /// </summary>
+    void ReloadQualityControlConfiguration();
     #endregion
 
     #region properties

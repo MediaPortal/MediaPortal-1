@@ -74,6 +74,8 @@
     <Compile Include="DeviceSorter.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\Cards\hauppauge.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\AnalogSubChannel.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\QualityControlFactory.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\VideoEncoderControl.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />

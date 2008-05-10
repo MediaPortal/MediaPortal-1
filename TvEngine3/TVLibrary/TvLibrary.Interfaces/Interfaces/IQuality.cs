@@ -21,13 +21,97 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TvLibrary.Implementations.Analog;
 
 namespace TvLibrary.Interfaces
 {
+
+    /// <summary>
+  /// used by the IVideoEncoder interface getvalue(ENCAPIPARAM_BITRATE_MODE)
+  /// </summary>
+  public enum VIDEOENCODER_BITRATE_MODE
+  {
+    Undefined = -1,
+    ConstantBitRate = 0,
+    VariableBitRateAverage,
+    VariableBitRatePeak
+  };
+
+
+  /// <summary>
+  /// QualityType's for setting the desired quality
+  /// </summary>
+  public enum QualityType
+  {
+    /// <summary>undefined/default quality</summary>
+    Default,
+    /// <summary>custom quality setting, defined in SetupTv</summary>
+    Custom,
+    /// <summary>portable quality setting for those recordings that dont need to be close to perfect</summary>
+    Portable,
+    /// <summary>low quality setting for those recordings that dont need to be close to perfect</summary>
+    Low,
+    /// <summary>medium quality but still quite a bit less diskspace needed than high</summary>
+    Medium,
+    /// <summary>high quality setting will create larger files then the other options</summary>
+    High
+  }
+
   /// <summary>
   /// interface for quality control of a card
   /// </summary>
   public interface IQuality
   {
+    /// <summary>
+    /// Gets/Sets the quality bit type (only the bit rate)
+    /// </summary>
+    QualityType QualityType
+    {
+      get;
+      set;
+    }
+
+    /// <summary>
+    /// Gets/Sets the bit rate mode. Works only if this is supported
+    /// </summary>
+    VIDEOENCODER_BITRATE_MODE BitRateMode
+    {
+      get;
+      set;
+    }
+
+    /// <summary>
+    /// Indicates if bit rate modes are supported
+    /// </summary>
+    /// <returns>true/false</returns>
+    bool SupportsBitRateModes();
+
+    /// <summary>
+    /// Indicates if peak bit rate mode is supported
+    /// </summary>
+    /// <returns>true/false</returns>
+    bool SupportsPeakBitRateMode();
+
+    /// <summary>
+    /// Indicates if bit rate control is supported
+    /// </summary>
+    /// <returns>true/false</returns>
+    bool SupportsBitRate();
+
+    /// <summary>
+    /// Called when playback starts
+    /// </summary>
+    void StartPlayback();
+
+    /// <summary>
+    /// Called when record starts
+    /// </summary>
+    void StartRecord();
+
+    /// <summary>
+    /// Sets the new configuration object
+    /// </summary>
+    void SetConfiguration(Configuration configuration);
+
   }
 }

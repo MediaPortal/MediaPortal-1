@@ -2376,6 +2376,76 @@ namespace TvService
     }
     #endregion
 
+    #region quality control
+    /// <summary>
+    /// Indicates if bit rate modes are supported
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>true/false</returns>
+    public bool SupportsQualityControl(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId)) return false;
+      return _cards[cardId].Card.SupportsQualityControl;
+    }
+    /// <summary>
+    /// Indicates if bit rate modes are supported
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>true/false</returns>
+    public bool SupportsBitRateModes(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId)) return false;
+      IQuality qualityControl = _cards[cardId].Card.Quality;
+      if (qualityControl != null)
+      {
+        return qualityControl.SupportsBitRateModes();
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Indicates if peak bit rate mode is supported
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>true/false</returns>
+    public bool SupportsPeakBitRateMode(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId)) return false;
+      IQuality qualityControl = _cards[cardId].Card.Quality;
+      if(qualityControl!=null){
+        return qualityControl.SupportsPeakBitRateMode();
+      }
+      return false;
+    }
+
+
+    /// <summary>
+    /// Indicates if bit rate control is supported
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>true/false</returns>
+    public bool SupportsBitRate(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId)) return false;
+      IQuality qualityControl = _cards[cardId].Card.Quality;
+      if(qualityControl!=null){
+        return qualityControl.SupportsBitRate();
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Reloads the configuration of quality control for the given card
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    public void ReloadQualityControlConfigration(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId)) return ;
+      _cards[cardId].Card.ReloadQualityControlConfiguration();
+    }
+
+    #endregion
+
     #endregion
 
     #region private members

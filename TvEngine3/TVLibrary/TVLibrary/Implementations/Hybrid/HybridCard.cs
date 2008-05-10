@@ -31,6 +31,7 @@ using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
+using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Helper;
 
@@ -63,6 +64,11 @@ namespace TvLibrary.Implementations.Hybrid
     public void Add(int idCard, ITVCard card)
     {
       _idCards.Add(idCard);
+      TvCardAnalog analogCard = card as TvCardAnalog;
+      if (analogCard != null)
+      {
+        analogCard.CardId = idCard;
+      }
       _cards.Add(card);
     }
 
@@ -586,6 +592,14 @@ namespace TvLibrary.Implementations.Hybrid
     public void FreeSubChannel(int id)
     {
       _cards[_currentCardIndex].FreeSubChannel(id);
+    }
+
+    /// <summary>
+    /// Reloads the quality control configuration
+    /// </summary>
+    public void ReloadQualityControlConfiguration()
+    {
+      _cards[_currentCardIndex].ReloadQualityControlConfiguration();
     }
 
     #endregion

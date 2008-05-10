@@ -240,34 +240,6 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
-    #region quality control
-    /// <summary>
-    /// Get/Set the quality
-    /// </summary>
-    /// <value></value>
-    public IQuality Quality
-    {
-      get
-      {
-        return null;
-      }
-      set
-      {
-      }
-    }
-    /// <summary>
-    /// Property which returns true if card supports quality control
-    /// </summary>
-    /// <value></value>
-    public bool SupportsQualityControl
-    {
-      get
-      {
-        return false;
-      }
-    }
-    #endregion
-
     #region epg & scanning
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels

@@ -2151,7 +2151,7 @@ namespace DirectShowLib
   public interface ICodecAPI
   {
     [PreserveSig]
-    int IsSupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    int IsSupported([In] Guid Api);
 
     [PreserveSig]
     int IsModifiable([In] Guid Api);
@@ -2248,14 +2248,14 @@ namespace DirectShowLib
   public interface IEncoderAPI
   {
     [PreserveSig]
-    int IsSupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    int IsSupported([In] Guid Api);
 
     [PreserveSig]
-    int IsAvailable([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
+    int IsAvailable([In] Guid Api);
 
     [PreserveSig]
     int GetParameterRange(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+        [In] Guid Api,
         [Out] out object ValueMin,
         [Out] out object ValueMax,
         [Out] out object SteppingDelta
@@ -2263,26 +2263,26 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetParameterValues(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+        [In] Guid Api,
         [Out] out object[] Values,
         [Out] out int ValuesCount
         );
 
     [PreserveSig]
     int GetDefaultValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+        [In] Guid Api,
         [Out] out object Value
         );
 
     [PreserveSig]
     int GetValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+        [In] Guid Api,
         [Out] out object Value
         );
 
     [PreserveSig]
     int SetValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+        [In] Guid Api,
         [In] object Value
         );
   }
@@ -2295,14 +2295,14 @@ namespace DirectShowLib
     #region IEncoderAPI Methods
 
     [PreserveSig]
-    new int IsSupported([In] Guid Api);
+    new int IsSupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
 
     [PreserveSig]
-    new int IsAvailable([In] Guid Api);
+    new int IsAvailable([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
 
     [PreserveSig]
     new int GetParameterRange(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [Out] out object ValueMin,
         [Out] out object ValueMax,
         [Out] out object SteppingDelta
@@ -2310,27 +2310,27 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int GetParameterValues(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)]  Guid Api,
         [Out] out object[] Values,
         [Out] out int ValuesCount
         );
 
     [PreserveSig]
     new int GetDefaultValue(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)]  Guid Api,
         [Out] out object Value
         );
 
     [PreserveSig]
     new int GetValue(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)]  Guid Api,
         [Out] out object Value
         );
 
     [PreserveSig]
     new int SetValue(
-        [In] Guid Api,
-        [In] object Value
+        [In, MarshalAs(UnmanagedType.LPStruct)]  Guid Api,
+        [In] ref object Value
         );
 
     #endregion
