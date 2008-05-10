@@ -375,11 +375,6 @@ namespace TvLibrary.Implementations.Analog
         AMTunerSignalStrength signalStrength;
         tvTuner.SignalPresent(out signalStrength);
         _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent);
-        if (signalStrength == AMTunerSignalStrength.HasNoSignalStrength)
-        {
-          _tunerLocked = true;
-          Log.Log.WriteFile("ANALOG: HAS NO SIGNAL STRENGTH");
-        }
       }
       if (_tunerLocked)
       {
