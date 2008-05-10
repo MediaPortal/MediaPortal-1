@@ -436,6 +436,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.TabIndex = 3;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "OSD";
+      this.mpGroupBox1.Visible = false;
       // 
       // _useVolumeOSD
       // 
@@ -448,13 +449,13 @@ namespace MediaPortal.Configuration.Sections
       this._useVolumeOSD.Text = "Show default Volume OSD for fullscreen video";
       this._useVolumeOSD.UseVisualStyleBackColor = true;
       // 
-      // Volume
+      // GeneralVolume
       // 
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
-      this.Name = "Volume";
+      this.Name = "GeneralVolume";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();

@@ -486,7 +486,6 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListView.TabIndex = 0;
       this.sharesListView.UseCompatibleStateImageBehavior = false;
       this.sharesListView.View = System.Windows.Forms.View.Details;
-      this.sharesListView.SelectedIndexChanged += new System.EventHandler(this.sharesListView_SelectedIndexChanged);
       // 
       // columnHeader1
       // 
@@ -513,14 +512,6 @@ namespace MediaPortal.Configuration.Sections
 
     }
     #endregion
-
-    private void sharesListView_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-
-    }
-
-
-
   }
 }
 
