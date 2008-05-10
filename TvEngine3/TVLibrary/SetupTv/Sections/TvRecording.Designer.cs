@@ -57,16 +57,16 @@ namespace SetupTv.Sections
       this.label5 = new System.Windows.Forms.Label();
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
       this.tabPage3 = new System.Windows.Forms.TabPage();
-      this.enableDiskQuota = new System.Windows.Forms.CheckBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.enableDiskQuota = new System.Windows.Forms.CheckBox();
       this.mpNumericTextBoxDiskQuota = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.label14 = new System.Windows.Forms.Label();
-      this.labelFreeDiskspace = new System.Windows.Forms.Label();
-      this.labelTotalDiskSpace = new System.Windows.Forms.Label();
-      this.label11 = new System.Windows.Forms.Label();
-      this.label10 = new System.Windows.Forms.Label();
       this.comboBoxDrive = new System.Windows.Forms.ComboBox();
+      this.labelFreeDiskspace = new System.Windows.Forms.Label();
       this.label9 = new System.Windows.Forms.Label();
+      this.labelTotalDiskSpace = new System.Windows.Forms.Label();
+      this.label10 = new System.Windows.Forms.Label();
+      this.label11 = new System.Windows.Forms.Label();
       this.tabPage4 = new System.Windows.Forms.TabPage();
       this.labelTSFolder = new System.Windows.Forms.Label();
       this.labelRecFormat = new System.Windows.Forms.Label();
@@ -379,8 +379,8 @@ namespace SetupTv.Sections
       this.textBoxFormat.Name = "textBoxFormat";
       this.textBoxFormat.Size = new System.Drawing.Size(328, 20);
       this.textBoxFormat.TabIndex = 3;
-      this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
       this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
+      this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
       // 
       // label6
       // 
@@ -432,6 +432,15 @@ namespace SetupTv.Sections
       this.tabPage3.Text = "Disk quota";
       this.tabPage3.UseVisualStyleBackColor = true;
       // 
+      // mpLabel5
+      // 
+      this.mpLabel5.AutoSize = true;
+      this.mpLabel5.Location = new System.Drawing.Point(302, 163);
+      this.mpLabel5.Name = "mpLabel5";
+      this.mpLabel5.Size = new System.Drawing.Size(79, 13);
+      this.mpLabel5.TabIndex = 10;
+      this.mpLabel5.Text = "MB free space.";
+      // 
       // enableDiskQuota
       // 
       this.enableDiskQuota.AccessibleName = "";
@@ -443,15 +452,6 @@ namespace SetupTv.Sections
       this.enableDiskQuota.Text = "Enable disk quota";
       this.enableDiskQuota.UseVisualStyleBackColor = true;
       this.enableDiskQuota.CheckedChanged += new System.EventHandler(this.enableDiskQuota_CheckedChanged);
-      // 
-      // mpLabel5
-      // 
-      this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(302, 163);
-      this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(79, 13);
-      this.mpLabel5.TabIndex = 10;
-      this.mpLabel5.Text = "MB free space.";
       // 
       // mpNumericTextBoxDiskQuota
       // 
@@ -472,6 +472,16 @@ namespace SetupTv.Sections
       this.label14.TabIndex = 6;
       this.label14.Text = "Delete recordings when there is less than";
       // 
+      // comboBoxDrive
+      // 
+      this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxDrive.FormattingEnabled = true;
+      this.comboBoxDrive.Location = new System.Drawing.Point(30, 43);
+      this.comboBoxDrive.Name = "comboBoxDrive";
+      this.comboBoxDrive.Size = new System.Drawing.Size(355, 21);
+      this.comboBoxDrive.TabIndex = 1;
+      this.comboBoxDrive.SelectedIndexChanged += new System.EventHandler(this.comboBoxDrive_SelectedIndexChanged);
+      // 
       // labelFreeDiskspace
       // 
       this.labelFreeDiskspace.AutoSize = true;
@@ -481,6 +491,15 @@ namespace SetupTv.Sections
       this.labelFreeDiskspace.TabIndex = 5;
       this.labelFreeDiskspace.Text = "Checking space...";
       // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(27, 24);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(35, 13);
+      this.label9.TabIndex = 0;
+      this.label9.Text = "Drive:";
+      // 
       // labelTotalDiskSpace
       // 
       this.labelTotalDiskSpace.AutoSize = true;
@@ -489,16 +508,6 @@ namespace SetupTv.Sections
       this.labelTotalDiskSpace.Size = new System.Drawing.Size(93, 13);
       this.labelTotalDiskSpace.TabIndex = 4;
       this.labelTotalDiskSpace.Text = "Checking space...";
-      // 
-      // label11
-      // 
-      this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(27, 134);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(82, 13);
-      this.label11.TabIndex = 3;
-      this.label11.Tag = "";
-      this.label11.Text = "Free diskspace:";
       // 
       // label10
       // 
@@ -510,24 +519,15 @@ namespace SetupTv.Sections
       this.label10.Tag = "";
       this.label10.Text = "Total diskspace:";
       // 
-      // comboBoxDrive
+      // label11
       // 
-      this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDrive.FormattingEnabled = true;
-      this.comboBoxDrive.Location = new System.Drawing.Point(30, 43);
-      this.comboBoxDrive.Name = "comboBoxDrive";
-      this.comboBoxDrive.Size = new System.Drawing.Size(355, 21);
-      this.comboBoxDrive.TabIndex = 1;
-      this.comboBoxDrive.SelectedIndexChanged += new System.EventHandler(this.comboBoxDrive_SelectedIndexChanged);
-      // 
-      // label9
-      // 
-      this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(27, 24);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(35, 13);
-      this.label9.TabIndex = 0;
-      this.label9.Text = "Drive:";
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(27, 134);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(82, 13);
+      this.label11.TabIndex = 3;
+      this.label11.Tag = "";
+      this.label11.Text = "Free diskspace:";
       // 
       // tabPage4
       // 
@@ -736,6 +736,7 @@ namespace SetupTv.Sections
       this.tvTagRecs.ShowRootLines = false;
       this.tvTagRecs.Size = new System.Drawing.Size(355, 236);
       this.tvTagRecs.TabIndex = 2;
+      this.tvTagRecs.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.tvTagRecs_AfterCheck);
       // 
       // lblRecFolders
       // 

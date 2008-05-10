@@ -663,6 +663,24 @@ namespace SetupTv.Sections
       }
     }
 
+
+    private void tvTagRecs_AfterCheck(object sender, TreeViewEventArgs e)
+    {
+      bool shouldImportSomething = false;
+      if (tvTagRecs.Nodes.Count > 0)
+      {        
+        foreach (TreeNode rec in tvTagRecs.Nodes)
+        {
+          if (rec.Checked)
+          {
+            shouldImportSomething = true;
+            break;
+          }
+        }       
+      }
+      btnImport.Enabled = shouldImportSomething;
+    }
+
     #endregion
 
     #region Recording retrieval
@@ -751,7 +769,15 @@ namespace SetupTv.Sections
               {
                 // only add those tags which specify a still valid filename
                 if (File.Exists(TagRec.FileName))
+                {
+                  if (TagRec.IdChannel == -1)
+                  {
+                    TagNode.ForeColor = SystemColors.GrayText;
+                    TagNode.Checked = false;
+                  }
+
                   tvTagRecs.Nodes.Add(TagNode);
+                }
               }
             }
           }
@@ -766,7 +792,7 @@ namespace SetupTv.Sections
         //  MessageBox.Show(string.Format("Error sorting tag recordings: \n{0}", ex.Message));
         //}
         tvTagRecs.EndUpdate();
-        btnImport.Enabled = (tvTagRecs.Nodes.Count > 0);
+        //btnImport.Enabled = (tvTagRecs.Nodes.Count > 0);
       }
       catch (Exception)
       {
@@ -938,11 +964,11 @@ namespace SetupTv.Sections
       try
       {
         SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
-        sb.AddConstraint(Operator.Equals, "displayName", aChannelName);
+        sb.AddConstraint(Operator.Like, "displayName", aChannelName);
         sb.SetRowLimit(1);
         SqlStatement stmt = sb.GetStatement(true);
         IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-        if (channels.Count == 1)
+        if (channels.Count > 0)
           channelId = ((Channel)channels[0]).IdChannel;
       }
       catch (Exception ex)
@@ -963,7 +989,7 @@ namespace SetupTv.Sections
         if (tagRec.Checked) // only import the recordings which the user has selected
         {
           Recording currentTagRec = tagRec.Tag as Recording;
-          if (currentTagRec != null)
+          if (currentTagRec != null && currentTagRec.IdChannel != -1)
           {
             //if (MessageBox.Show(this, string.Format("Import {0} now? \n{1}", currentTagRec.Title, currentTagRec.FileName), "Recording not found in DB", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             //{
