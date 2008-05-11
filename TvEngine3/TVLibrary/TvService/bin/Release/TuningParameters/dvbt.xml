@@ -355,15 +355,12 @@
   </country>
   <country name="Czech Republic - Brno" offset="125">
     <carrier frequency="626000" bandwidth="8"></carrier>
-    <carrier frequency="" bandwidth="8"></carrier>
   </country>
   <country name="Czech Republic - Domazlice" offset="125">
     <carrier frequency="610000" bandwidth="8"></carrier>
-    <carrier frequency="" bandwidth="8"></carrier>
   </country>
   <country name="Czech Republic - Ostrava" offset="125">
     <carrier frequency="618000" bandwidth="8"></carrier>
-    <carrier frequency="" bandwidth="8"></carrier>
   </country>
   <country name="Danmark - All Regions">
     <carrier frequency="506000" bandwidth="8"></carrier>
