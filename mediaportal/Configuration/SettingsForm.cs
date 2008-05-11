@@ -889,7 +889,7 @@ namespace MediaPortal.Configuration
       this.toolStripButtonSwitchAdvanced.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSwitchAdvanced.Image")));
       this.toolStripButtonSwitchAdvanced.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.toolStripButtonSwitchAdvanced.Name = "toolStripButtonSwitchAdvanced";
-      this.toolStripButtonSwitchAdvanced.Size = new System.Drawing.Size(125, 22);
+      this.toolStripButtonSwitchAdvanced.Size = new System.Drawing.Size(135, 22);
       this.toolStripButtonSwitchAdvanced.Text = "Switch to expert mode";
       this.toolStripButtonSwitchAdvanced.Click += new System.EventHandler(this.toolStripButtonSwitchAdvanced_Click);
       // 
