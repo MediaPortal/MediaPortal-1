@@ -162,6 +162,15 @@ namespace MediaPortal.Configuration
     public static bool AdvancedMode
     {
       get { return advancedMode; }
+      set
+      {
+        advancedMode = value;        
+        // Save the last state
+        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          xmlwriter.SetValueAsBool("general", "AdvancedConfigMode", advancedMode);
+        }
+      }
     }
 
     public static bool UseTvServer
@@ -187,7 +196,7 @@ namespace MediaPortal.Configuration
       Log.Info("SettingsForm constructor");
       // Required for Windows Form Designer support
       InitializeComponent();
-      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
+      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");      
       // Stop MCE services
       if (splashScreen != null)
         splashScreen.SetInformation("Stopping MCE services...");
@@ -199,7 +208,9 @@ namespace MediaPortal.Configuration
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
+        advancedMode = xmlreader.GetValueAsBool("general", "AdvancedConfigMode", false);
       }
+      toolStripButtonSwitchAdvanced.Text = AdvancedMode ? "Switch to standard mode" : "Switch to expert mode";
       GUILocalizeStrings.Load(strLanguage);
       // Register Bass.Net
       BassRegistration.BassRegistration.Register();
@@ -208,10 +219,6 @@ namespace MediaPortal.Configuration
         splashScreen.SetInformation("Adding project section...");
       Project project = new Project();
       AddSection(new ConfigPage(null, project, false));
-
-      Log.Info("add general section");
-      if (splashScreen != null)
-        splashScreen.SetInformation("Adding general section...");
 
       AddTabGeneral();
       AddTabMovies();
@@ -225,7 +232,8 @@ namespace MediaPortal.Configuration
       AddTabWeather();
       AddTabPlugins();
 
-      ToggleSectionVisibility(false);
+      // reset the last used state
+      ToggleSectionVisibility(advancedMode);
 
       // Select first item in the section tree
       if (sectionTree.Nodes.Count > 0)
@@ -275,7 +283,7 @@ namespace MediaPortal.Configuration
         splashScreen.SetInformation("Adding filters section...");
 
       FiltersSection filterSection = new FiltersSection();
-      AddSection(new ConfigPage(null, filterSection, false));
+      AddSection(new ConfigPage(null, filterSection, true));
 
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
       if (availableAudioFilters.Count > 0)
@@ -384,8 +392,7 @@ namespace MediaPortal.Configuration
 
       Log.Info("add DirectInput section");
       RemoteDirectInput dinputConf = new RemoteDirectInput();
-      AddSection(new ConfigPage(remote, dinputConf, false));
-
+      AddSection(new ConfigPage(remote, dinputConf, true));
       RemoteUSBUIRT usbuirtConf = new RemoteUSBUIRT();
       AddSection(new ConfigPage(remote, usbuirtConf, true));
       serialuir = new RemoteSerialUIR();
@@ -541,6 +548,10 @@ namespace MediaPortal.Configuration
 
     private void AddTabGeneral()
     {
+      Log.Info("add general section");
+      if (splashScreen != null)
+        splashScreen.SetInformation("Adding general section...");
+
       General general = new General();
       AddSection(new ConfigPage(null, general, false));
 
@@ -569,7 +580,8 @@ namespace MediaPortal.Configuration
 
     private void ToggleSectionVisibility(bool aShowAdvancedOptions)
     {
-      advancedMode = aShowAdvancedOptions;
+      // using property so setter updates values..
+      AdvancedMode = aShowAdvancedOptions;
 
       sectionTree.BeginUpdate();
       TreeNode currentSelected = (TreeNode)sectionTree.SelectedNode;
@@ -623,6 +635,7 @@ namespace MediaPortal.Configuration
             }
 
       }
+
       sectionTree.EndUpdate();
     }
 
@@ -1338,7 +1351,7 @@ namespace MediaPortal.Configuration
     private void toolStripButtonSwitchAdvanced_Click(object sender, EventArgs e)
     {
       ToggleSectionVisibility(toolStripButtonSwitchAdvanced.Checked);
-      toolStripButtonSwitchAdvanced.Text = toolStripButtonSwitchAdvanced.Checked ? "Switch to standard mode" : "Switch to expert mode";
+      toolStripButtonSwitchAdvanced.Text = AdvancedMode ? "Switch to standard mode" : "Switch to expert mode";
     }
   }
 }

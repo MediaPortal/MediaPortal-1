@@ -70,12 +70,13 @@ namespace MediaPortal.Configuration.Sections
 
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        int volumeStyle = reader.GetValueAsInt("volume", "handler", 3); // custom values are known to work for vista
+        int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
 
         _useClassicHandler.Checked = volumeStyle == 0;
         _useWindowsHandler.Checked = volumeStyle == 1;
         _useLogarithmicHandler.Checked = volumeStyle == 2;
         _useCustomHandler.Checked = volumeStyle == 3;
+        _useVistaHandler.Checked = volumeStyle == 4;
         _customText = reader.GetValueAsString("volume", "table", "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535");
 
         int startupStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
@@ -112,6 +113,8 @@ namespace MediaPortal.Configuration.Sections
           writer.SetValue("volume", "handler", 2);
         else if (_useCustomHandler.Checked)
           writer.SetValue("volume", "handler", 3);
+        else if (_useVistaHandler.Checked)
+          writer.SetValue("volume", "handler", 4);
 
         if (_useLastKnownLevel.Checked)
           writer.SetValue("volume", "startupstyle", 0);
@@ -181,7 +184,6 @@ namespace MediaPortal.Configuration.Sections
       try
       {
         StringBuilder builder = new StringBuilder();
-
         ArrayList valueArray = new ArrayList();
 
         foreach (string token in ((TextBox)sender).Text.Split(new char[] { ',', ';', ' ' }))
@@ -228,104 +230,90 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBoxScale = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this._customTextbox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this._useCustomHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this._useLogarithmicHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this._useWindowsHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this._useClassicHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.groupBoxVolumeOsd = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this._useVolumeOSD = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxMixerControl = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this._useWave = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useMasterVolume = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this._levelTextbox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this._useCustomLevel = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this._useSystemCurrent = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this._useLastKnownLevel = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.groupBoxMixerControl = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this._useWave = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this._useMasterVolume = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.groupBoxVolumeOsd = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this._useVolumeOSD = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxScale.SuspendLayout();
-      this.groupBox2.SuspendLayout();
-      this.groupBoxMixerControl.SuspendLayout();
+      this.groupBoxScale = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this._useVistaHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._customTextbox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this._useCustomHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useLogarithmicHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useWindowsHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useClassicHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBoxVolumeOsd.SuspendLayout();
+      this.groupBoxMixerControl.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      this.groupBoxScale.SuspendLayout();
       this.SuspendLayout();
       // 
-      // groupBoxScale
+      // groupBoxVolumeOsd
       // 
-      this.groupBoxScale.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxVolumeOsd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxScale.Controls.Add(this._customTextbox);
-      this.groupBoxScale.Controls.Add(this._useCustomHandler);
-      this.groupBoxScale.Controls.Add(this._useLogarithmicHandler);
-      this.groupBoxScale.Controls.Add(this._useWindowsHandler);
-      this.groupBoxScale.Controls.Add(this._useClassicHandler);
-      this.groupBoxScale.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxScale.Location = new System.Drawing.Point(0, 113);
-      this.groupBoxScale.Name = "groupBoxScale";
-      this.groupBoxScale.Size = new System.Drawing.Size(472, 128);
-      this.groupBoxScale.TabIndex = 1;
-      this.groupBoxScale.TabStop = false;
-      this.groupBoxScale.Text = "Scale";
+      this.groupBoxVolumeOsd.Controls.Add(this._useVolumeOSD);
+      this.groupBoxVolumeOsd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxVolumeOsd.Location = new System.Drawing.Point(0, 341);
+      this.groupBoxVolumeOsd.Name = "groupBoxVolumeOsd";
+      this.groupBoxVolumeOsd.Size = new System.Drawing.Size(472, 60);
+      this.groupBoxVolumeOsd.TabIndex = 3;
+      this.groupBoxVolumeOsd.TabStop = false;
+      this.groupBoxVolumeOsd.Text = "OSD";
       // 
-      // _customTextbox
+      // _useVolumeOSD
       // 
-      this._customTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this._useVolumeOSD.AutoSize = true;
+      this._useVolumeOSD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this._useVolumeOSD.Location = new System.Drawing.Point(16, 28);
+      this._useVolumeOSD.Name = "_useVolumeOSD";
+      this._useVolumeOSD.Size = new System.Drawing.Size(242, 17);
+      this._useVolumeOSD.TabIndex = 0;
+      this._useVolumeOSD.Text = "Show default Volume OSD for fullscreen video";
+      this._useVolumeOSD.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxMixerControl
+      // 
+      this.groupBoxMixerControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this._customTextbox.BorderColor = System.Drawing.Color.Empty;
-      this._customTextbox.Enabled = false;
-      this._customTextbox.Location = new System.Drawing.Point(168, 92);
-      this._customTextbox.Name = "_customTextbox";
-      this._customTextbox.Size = new System.Drawing.Size(288, 20);
-      this._customTextbox.TabIndex = 4;
-      this._customTextbox.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidateCustomTable);
+      this.groupBoxMixerControl.Controls.Add(this._useWave);
+      this.groupBoxMixerControl.Controls.Add(this._useMasterVolume);
+      this.groupBoxMixerControl.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMixerControl.Location = new System.Drawing.Point(0, 260);
+      this.groupBoxMixerControl.Name = "groupBoxMixerControl";
+      this.groupBoxMixerControl.Size = new System.Drawing.Size(472, 75);
+      this.groupBoxMixerControl.TabIndex = 2;
+      this.groupBoxMixerControl.TabStop = false;
+      this.groupBoxMixerControl.Text = "Control";
       // 
-      // _useCustomHandler
+      // _useWave
       // 
-      this._useCustomHandler.AutoSize = true;
-      this._useCustomHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useCustomHandler.Location = new System.Drawing.Point(16, 96);
-      this._useCustomHandler.Name = "_useCustomHandler";
-      this._useCustomHandler.Size = new System.Drawing.Size(62, 17);
-      this._useCustomHandler.TabIndex = 3;
-      this._useCustomHandler.Text = "C&ustom:";
-      this._useCustomHandler.UseVisualStyleBackColor = true;
-      this._useCustomHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
+      this._useWave.AutoSize = true;
+      this._useWave.Checked = true;
+      this._useWave.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this._useWave.Location = new System.Drawing.Point(16, 47);
+      this._useWave.Name = "_useWave";
+      this._useWave.Size = new System.Drawing.Size(53, 17);
+      this._useWave.TabIndex = 1;
+      this._useWave.TabStop = true;
+      this._useWave.Text = "&Wave";
+      this._useWave.UseVisualStyleBackColor = true;
       // 
-      // _useLogarithmicHandler
+      // _useMasterVolume
       // 
-      this._useLogarithmicHandler.AutoSize = true;
-      this._useLogarithmicHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useLogarithmicHandler.Location = new System.Drawing.Point(16, 72);
-      this._useLogarithmicHandler.Name = "_useLogarithmicHandler";
-      this._useLogarithmicHandler.Size = new System.Drawing.Size(78, 17);
-      this._useLogarithmicHandler.TabIndex = 2;
-      this._useLogarithmicHandler.Text = "&Logarithmic";
-      this._useLogarithmicHandler.UseVisualStyleBackColor = true;
-      this._useLogarithmicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
-      // 
-      // _useWindowsHandler
-      // 
-      this._useWindowsHandler.AutoSize = true;
-      this._useWindowsHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useWindowsHandler.Location = new System.Drawing.Point(16, 24);
-      this._useWindowsHandler.Name = "_useWindowsHandler";
-      this._useWindowsHandler.Size = new System.Drawing.Size(103, 17);
-      this._useWindowsHandler.TabIndex = 0;
-      this._useWindowsHandler.Text = "&Windows default";
-      this._useWindowsHandler.UseVisualStyleBackColor = true;
-      this._useWindowsHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
-      // 
-      // _useClassicHandler
-      // 
-      this._useClassicHandler.AutoSize = true;
-      this._useClassicHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useClassicHandler.Location = new System.Drawing.Point(16, 48);
-      this._useClassicHandler.Name = "_useClassicHandler";
-      this._useClassicHandler.Size = new System.Drawing.Size(57, 17);
-      this._useClassicHandler.TabIndex = 1;
-      this._useClassicHandler.Text = "&Classic";
-      this._useClassicHandler.UseVisualStyleBackColor = true;
-      this._useClassicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
+      this._useMasterVolume.AutoSize = true;
+      this._useMasterVolume.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this._useMasterVolume.Location = new System.Drawing.Point(16, 24);
+      this._useMasterVolume.Name = "_useMasterVolume";
+      this._useMasterVolume.Size = new System.Drawing.Size(94, 17);
+      this._useMasterVolume.TabIndex = 0;
+      this._useMasterVolume.Text = "&Master Volume";
+      this._useMasterVolume.UseVisualStyleBackColor = true;
       // 
       // groupBox2
       // 
@@ -338,7 +326,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 107);
+      this.groupBox2.Size = new System.Drawing.Size(472, 97);
       this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Startup";
@@ -349,7 +337,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this._levelTextbox.BorderColor = System.Drawing.Color.Empty;
       this._levelTextbox.Enabled = false;
-      this._levelTextbox.Location = new System.Drawing.Point(168, 72);
+      this._levelTextbox.Location = new System.Drawing.Point(168, 69);
       this._levelTextbox.Name = "_levelTextbox";
       this._levelTextbox.Size = new System.Drawing.Size(288, 20);
       this._levelTextbox.TabIndex = 3;
@@ -360,7 +348,7 @@ namespace MediaPortal.Configuration.Sections
       this._useCustomLevel.AutoSize = true;
       this._useCustomLevel.Enabled = false;
       this._useCustomLevel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useCustomLevel.Location = new System.Drawing.Point(16, 72);
+      this._useCustomLevel.Location = new System.Drawing.Point(16, 70);
       this._useCustomLevel.Name = "_useCustomLevel";
       this._useCustomLevel.Size = new System.Drawing.Size(59, 17);
       this._useCustomLevel.TabIndex = 2;
@@ -373,7 +361,7 @@ namespace MediaPortal.Configuration.Sections
       this._useSystemCurrent.AutoSize = true;
       this._useSystemCurrent.Enabled = false;
       this._useSystemCurrent.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useSystemCurrent.Location = new System.Drawing.Point(16, 48);
+      this._useSystemCurrent.Location = new System.Drawing.Point(16, 47);
       this._useSystemCurrent.Name = "_useSystemCurrent";
       this._useSystemCurrent.Size = new System.Drawing.Size(194, 17);
       this._useSystemCurrent.TabIndex = 1;
@@ -394,65 +382,97 @@ namespace MediaPortal.Configuration.Sections
       this._useLastKnownLevel.UseVisualStyleBackColor = true;
       this._useLastKnownLevel.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
-      // groupBoxMixerControl
+      // groupBoxScale
       // 
-      this.groupBoxMixerControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxScale.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxMixerControl.Controls.Add(this._useWave);
-      this.groupBoxMixerControl.Controls.Add(this._useMasterVolume);
-      this.groupBoxMixerControl.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxMixerControl.Location = new System.Drawing.Point(0, 247);
-      this.groupBoxMixerControl.Name = "groupBoxMixerControl";
-      this.groupBoxMixerControl.Size = new System.Drawing.Size(472, 88);
-      this.groupBoxMixerControl.TabIndex = 2;
-      this.groupBoxMixerControl.TabStop = false;
-      this.groupBoxMixerControl.Text = "Control";
+      this.groupBoxScale.Controls.Add(this._useVistaHandler);
+      this.groupBoxScale.Controls.Add(this._customTextbox);
+      this.groupBoxScale.Controls.Add(this._useCustomHandler);
+      this.groupBoxScale.Controls.Add(this._useLogarithmicHandler);
+      this.groupBoxScale.Controls.Add(this._useWindowsHandler);
+      this.groupBoxScale.Controls.Add(this._useClassicHandler);
+      this.groupBoxScale.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxScale.Location = new System.Drawing.Point(0, 103);
+      this.groupBoxScale.Name = "groupBoxScale";
+      this.groupBoxScale.Size = new System.Drawing.Size(472, 151);
+      this.groupBoxScale.TabIndex = 1;
+      this.groupBoxScale.TabStop = false;
+      this.groupBoxScale.Text = "Scale";
       // 
-      // _useWave
+      // _useVistaHandler
       // 
-      this._useWave.AutoSize = true;
-      this._useWave.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useWave.Location = new System.Drawing.Point(16, 56);
-      this._useWave.Name = "_useWave";
-      this._useWave.Size = new System.Drawing.Size(53, 17);
-      this._useWave.TabIndex = 1;
-      this._useWave.Text = "&Wave";
-      this._useWave.UseVisualStyleBackColor = true;
+      this._useVistaHandler.AutoSize = true;
+      this._useVistaHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this._useVistaHandler.Location = new System.Drawing.Point(16, 93);
+      this._useVistaHandler.Name = "_useVistaHandler";
+      this._useVistaHandler.Size = new System.Drawing.Size(50, 17);
+      this._useVistaHandler.TabIndex = 3;
+      this._useVistaHandler.Text = "V&ista:";
+      this._useVistaHandler.UseVisualStyleBackColor = true;
+      this._useVistaHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
-      // _useMasterVolume
+      // _customTextbox
       // 
-      this._useMasterVolume.AutoSize = true;
-      this._useMasterVolume.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useMasterVolume.Location = new System.Drawing.Point(16, 24);
-      this._useMasterVolume.Name = "_useMasterVolume";
-      this._useMasterVolume.Size = new System.Drawing.Size(94, 17);
-      this._useMasterVolume.TabIndex = 0;
-      this._useMasterVolume.Text = "&Master Volume";
-      this._useMasterVolume.UseVisualStyleBackColor = true;
-      // 
-      // groupBoxVolumeOsd
-      // 
-      this.groupBoxVolumeOsd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this._customTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxVolumeOsd.Controls.Add(this._useVolumeOSD);
-      this.groupBoxVolumeOsd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxVolumeOsd.Location = new System.Drawing.Point(0, 341);
-      this.groupBoxVolumeOsd.Name = "groupBoxVolumeOsd";
-      this.groupBoxVolumeOsd.Size = new System.Drawing.Size(472, 67);
-      this.groupBoxVolumeOsd.TabIndex = 3;
-      this.groupBoxVolumeOsd.TabStop = false;
-      this.groupBoxVolumeOsd.Text = "OSD";
+      this._customTextbox.BorderColor = System.Drawing.Color.Empty;
+      this._customTextbox.Enabled = false;
+      this._customTextbox.Location = new System.Drawing.Point(168, 115);
+      this._customTextbox.Name = "_customTextbox";
+      this._customTextbox.Size = new System.Drawing.Size(288, 20);
+      this._customTextbox.TabIndex = 5;
+      this._customTextbox.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidateCustomTable);
       // 
-      // _useVolumeOSD
+      // _useCustomHandler
       // 
-      this._useVolumeOSD.AutoSize = true;
-      this._useVolumeOSD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useVolumeOSD.Location = new System.Drawing.Point(16, 35);
-      this._useVolumeOSD.Name = "_useVolumeOSD";
-      this._useVolumeOSD.Size = new System.Drawing.Size(242, 17);
-      this._useVolumeOSD.TabIndex = 0;
-      this._useVolumeOSD.Text = "Show default Volume OSD for fullscreen video";
-      this._useVolumeOSD.UseVisualStyleBackColor = true;
+      this._useCustomHandler.AutoSize = true;
+      this._useCustomHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this._useCustomHandler.Location = new System.Drawing.Point(16, 116);
+      this._useCustomHandler.Name = "_useCustomHandler";
+      this._useCustomHandler.Size = new System.Drawing.Size(62, 17);
+      this._useCustomHandler.TabIndex = 4;
+      this._useCustomHandler.Text = "C&ustom:";
+      this._useCustomHandler.UseVisualStyleBackColor = true;
+      this._useCustomHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
+      // 
+      // _useLogarithmicHandler
+      // 
+      this._useLogarithmicHandler.AutoSize = true;
+      this._useLogarithmicHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this._useLogarithmicHandler.Location = new System.Drawing.Point(16, 70);
+      this._useLogarithmicHandler.Name = "_useLogarithmicHandler";
+      this._useLogarithmicHandler.Size = new System.Drawing.Size(78, 17);
+      this._useLogarithmicHandler.TabIndex = 2;
+      this._useLogarithmicHandler.Text = "&Logarithmic";
+      this._useLogarithmicHandler.UseVisualStyleBackColor = true;
+      this._useLogarithmicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
+      // 
+      // _useWindowsHandler
+      // 
+      this._useWindowsHandler.AutoSize = true;
+      this._useWindowsHandler.Checked = true;
+      this._useWindowsHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this._useWindowsHandler.Location = new System.Drawing.Point(16, 24);
+      this._useWindowsHandler.Name = "_useWindowsHandler";
+      this._useWindowsHandler.Size = new System.Drawing.Size(173, 17);
+      this._useWindowsHandler.TabIndex = 0;
+      this._useWindowsHandler.TabStop = true;
+      this._useWindowsHandler.Text = "&Windows XP - load from registry";
+      this._useWindowsHandler.UseVisualStyleBackColor = true;
+      this._useWindowsHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
+      // 
+      // _useClassicHandler
+      // 
+      this._useClassicHandler.AutoSize = true;
+      this._useClassicHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this._useClassicHandler.Location = new System.Drawing.Point(16, 47);
+      this._useClassicHandler.Name = "_useClassicHandler";
+      this._useClassicHandler.Size = new System.Drawing.Size(91, 17);
+      this._useClassicHandler.TabIndex = 1;
+      this._useClassicHandler.Text = "&Classic - linear";
+      this._useClassicHandler.UseVisualStyleBackColor = true;
+      this._useClassicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
       // GeneralVolume
       // 
@@ -462,14 +482,14 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.groupBoxScale);
       this.Name = "GeneralVolume";
       this.Size = new System.Drawing.Size(472, 408);
-      this.groupBoxScale.ResumeLayout(false);
-      this.groupBoxScale.PerformLayout();
-      this.groupBox2.ResumeLayout(false);
-      this.groupBox2.PerformLayout();
-      this.groupBoxMixerControl.ResumeLayout(false);
-      this.groupBoxMixerControl.PerformLayout();
       this.groupBoxVolumeOsd.ResumeLayout(false);
       this.groupBoxVolumeOsd.PerformLayout();
+      this.groupBoxMixerControl.ResumeLayout(false);
+      this.groupBoxMixerControl.PerformLayout();
+      this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
+      this.groupBoxScale.ResumeLayout(false);
+      this.groupBoxScale.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -497,6 +517,7 @@ namespace MediaPortal.Configuration.Sections
     #endregion Fields
     private MPGroupBox groupBoxVolumeOsd;
     private MPCheckBox _useVolumeOSD;
+    private MPRadioButton _useVistaHandler;
 
     private MPRadioButton _useSystemCurrent;
   }

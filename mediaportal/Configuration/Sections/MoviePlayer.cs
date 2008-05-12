@@ -39,7 +39,7 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MoviePlayer : MediaPortal.Configuration.SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxExternalPlayer;
     private MediaPortal.UserInterface.Controls.MPButton parametersButton;
     private MediaPortal.UserInterface.Controls.MPTextBox parametersTextBox;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
@@ -105,6 +105,9 @@ namespace MediaPortal.Configuration.Sections
         _init = true;
         LoadSettings();
       }
+      // Do always
+      autoDecoderSettings.Visible = SettingsForm.AdvancedMode;
+      groupBoxExternalPlayer.Visible = SettingsForm.AdvancedMode;
     }
 
     /// <summary>
@@ -257,7 +260,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxExternalPlayer = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.externalPlayerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.parametersButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.parametersTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -279,29 +282,29 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.wmvCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox1.SuspendLayout();
+      this.groupBoxExternalPlayer.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.wmvGroupBox.SuspendLayout();
       this.SuspendLayout();
       // 
-      // groupBox1
+      // groupBoxExternalPlayer
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxExternalPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.externalPlayerCheckBox);
-      this.groupBox1.Controls.Add(this.parametersButton);
-      this.groupBox1.Controls.Add(this.parametersTextBox);
-      this.groupBox1.Controls.Add(this.label2);
-      this.groupBox1.Controls.Add(this.fileNameButton);
-      this.groupBox1.Controls.Add(this.fileNameTextBox);
-      this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 239);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 112);
-      this.groupBox1.TabIndex = 1;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "External player";
+      this.groupBoxExternalPlayer.Controls.Add(this.externalPlayerCheckBox);
+      this.groupBoxExternalPlayer.Controls.Add(this.parametersButton);
+      this.groupBoxExternalPlayer.Controls.Add(this.parametersTextBox);
+      this.groupBoxExternalPlayer.Controls.Add(this.label2);
+      this.groupBoxExternalPlayer.Controls.Add(this.fileNameButton);
+      this.groupBoxExternalPlayer.Controls.Add(this.fileNameTextBox);
+      this.groupBoxExternalPlayer.Controls.Add(this.label1);
+      this.groupBoxExternalPlayer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxExternalPlayer.Location = new System.Drawing.Point(0, 239);
+      this.groupBoxExternalPlayer.Name = "groupBoxExternalPlayer";
+      this.groupBoxExternalPlayer.Size = new System.Drawing.Size(472, 112);
+      this.groupBoxExternalPlayer.TabIndex = 1;
+      this.groupBoxExternalPlayer.TabStop = false;
+      this.groupBoxExternalPlayer.Text = "External player";
       // 
       // externalPlayerCheckBox
       // 
@@ -520,11 +523,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.wmvGroupBox);
       this.Controls.Add(this.mpGroupBox1);
-      this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.groupBoxExternalPlayer);
       this.Name = "MoviePlayer";
       this.Size = new System.Drawing.Size(472, 408);
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
+      this.groupBoxExternalPlayer.ResumeLayout(false);
+      this.groupBoxExternalPlayer.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.wmvGroupBox.ResumeLayout(false);

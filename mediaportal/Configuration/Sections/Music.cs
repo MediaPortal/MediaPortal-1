@@ -220,9 +220,12 @@ namespace MediaPortal.Configuration.Sections
       GaplessPlaybackChkBox_CheckedChanged(null, null);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      audioPlayerComboBox.Enabled = SettingsForm.AdvancedMode;
+    }
+
     public override void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
