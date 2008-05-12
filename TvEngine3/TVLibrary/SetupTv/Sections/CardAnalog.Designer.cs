@@ -321,7 +321,6 @@ namespace SetupTv.Sections
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Quality Control";
       this.tabPage2.UseVisualStyleBackColor = true;
-      this.tabPage2.Leave += new System.EventHandler(this.tabPage2_Leave);
       // 
       // customSettingsGroup
       // 

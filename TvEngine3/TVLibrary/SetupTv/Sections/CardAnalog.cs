@@ -724,20 +724,5 @@ namespace SetupTv.Sections
         RemoteControl.Instance.StopCard(user);
       }
     }
-
-    private void tabPage2_Leave(object sender, EventArgs e)
-    {
-      if (_qualityControlSupported)
-      {
-      }
-      bitRateModeGroup.Enabled = false;
-      vbrPeakPlayback.Enabled = false;
-      vbrPeakRecord.Enabled = false;
-      bitRate.Enabled = false;
-      customSettingsGroup.Enabled = false;
-      customValue.Enabled = false;
-      customValuePeak.Enabled = false;
-      _qualityControlSupported = false;
-    }
   }
 }
