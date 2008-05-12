@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal - diehard2
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -42,6 +67,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
         if (_supported_BitRate)
         {
           _qualityType = value;
+          ApplyQuality();
         }
       }
     }
@@ -187,19 +213,24 @@ namespace TvLibrary.Implementations.Analog.QualityControl
         // Set new bit rate mode
         if (_supported_BitRateMode)
         {
+          Log.Log.WriteFile("analog: Encoder mode setting to {0}", _bitRateMode);
           int newMode = (int)_bitRateMode;
           object newBitRateModeO = newMode;
           Marshal.WriteInt32(newBitRateModeO, 0, newMode);
           hr = _videoEncoder.SetValue(PropSetID.ENCAPIPARAM_BitRateMode, ref newBitRateModeO);
           if (hr == 0)
           {
-            Log.Log.WriteFile("analog: Encoder mode setTo {0}", _bitRateMode);
+            Log.Log.WriteFile("analog: Encoder mode set to {0}", _bitRateMode);
+          } else
+          {
+            Log.Log.WriteFile("analog: Encoder mode setTo result: {0}", hr);
           }
         }
 
         if (_supported_BitRate)
         {
 
+          Log.Log.WriteFile("analog: Encoder BitRate setting to {0}", _qualityType);
           object valueMin, valueMax, steppingDelta;
           hr = _videoEncoder.GetParameterRange(PropSetID.ENCAPIPARAM_BitRate, out valueMin, out valueMax, out steppingDelta);
           if (hr == 0)
@@ -248,7 +279,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
             hr = _videoEncoder.SetValue(PropSetID.ENCAPIPARAM_BitRate, ref newQualityO);
             if (hr == 0)
             {
-              Log.Log.WriteFile("analog: Encoder BitRate setTo {0:D}", newQualityO);
+              Log.Log.WriteFile("analog: Encoder BitRate set to {0:D}", newQualityO);
             } else
             {
               Log.Log.WriteFile("analog: Range SetEncoder(BitRate) result: 0x{0:x}", hr);
