@@ -730,5 +730,19 @@ namespace SetupTv.Sections
       }
       OnSectionActivated();
     }
+
+    private void renumberChannelsBySIDToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in mpListView1.SelectedItems)
+      {
+        Channel channel = (Channel)item.Tag;
+        IList details = channel.ReferringTuningDetail();
+        foreach (TuningDetail detail in details)
+        {
+          detail.ChannelNumber = detail.ServiceId;
+          detail.Persist();
+        }
+      }
+    }
   }
 }

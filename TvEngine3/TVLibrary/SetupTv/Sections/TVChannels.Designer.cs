@@ -61,6 +61,7 @@ namespace SetupTv.Sections
       this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
+      this.renumberChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -93,8 +94,8 @@ namespace SetupTv.Sections
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
-      this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
+      this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
       // 
       // hdrhekje
@@ -134,9 +135,10 @@ namespace SetupTv.Sections
             this.editChannelToolStripMenuItem,
             this.toolStripMenuItem1,
             this.renameMarkedChannelsBySIDToolStripMenuItem,
-            this.addSIDInFrontOfNameToolStripMenuItem});
+            this.addSIDInFrontOfNameToolStripMenuItem,
+            this.renumberChannelsBySIDToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 120);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 164);
       // 
       // addToFavoritesToolStripMenuItem
       // 
@@ -365,6 +367,13 @@ namespace SetupTv.Sections
       this.mpButtonPreview.UseVisualStyleBackColor = true;
       this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
+      // renumberChannelsBySIDToolStripMenuItem
+      // 
+      this.renumberChannelsBySIDToolStripMenuItem.Name = "renumberChannelsBySIDToolStripMenuItem";
+      this.renumberChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.renumberChannelsBySIDToolStripMenuItem.Text = "Renumber channels by SID";
+      this.renumberChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renumberChannelsBySIDToolStripMenuItem_Click);
+      // 
       // TvChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -414,5 +423,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem addSIDInFrontOfNameToolStripMenuItem;
     private System.Windows.Forms.Label label1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonUncheckEncrypted;
+    private System.Windows.Forms.ToolStripMenuItem renumberChannelsBySIDToolStripMenuItem;
   }
 }
