@@ -565,7 +565,10 @@ namespace TvLibrary.Implementations.DVB
       {
         //get all EMM's (from CAT (pid 0x1))
         List<ECMEMM> emmList = channelInfo.caPMT.GetEMM();
-        if (emmList.Count <= 0) return;
+        //13.05.08 GEMX: pmt is not parsed correctly
+        //               This is just a quick fix. The pmt parsing has to be reworked
+        //               according to the changes made for TsWriter (PmtParser.cpp - bool CPmtParser::DecodePmt(...)
+        //if (emmList.Count <= 0) return;
         for (int i = 0; i < emmList.Count; ++i)
         {
           Log.Log.Info("EMM #{0} CA:0x{1:X} EMM:0x{2:X} ID:0x{3:X}",
