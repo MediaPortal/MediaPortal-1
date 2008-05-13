@@ -79,7 +79,6 @@ namespace SetupTv.Sections
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.label13 = new System.Windows.Forms.Label();
       this.textBoxFolder = new System.Windows.Forms.TextBox();
-      this.label12 = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
       this.tpRecordImport = new System.Windows.Forms.TabPage();
       this.btnRemoveInvalidFiles = new System.Windows.Forms.Button();
@@ -89,6 +88,7 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.groupBoxRecordSettings = new System.Windows.Forms.GroupBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -101,6 +101,7 @@ namespace SetupTv.Sections
       this.tabPage4.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tpRecordImport.SuspendLayout();
+      this.groupBoxRecordSettings.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -531,19 +532,7 @@ namespace SetupTv.Sections
       // 
       // tabPage4
       // 
-      this.tabPage4.Controls.Add(this.labelTSFolder);
-      this.tabPage4.Controls.Add(this.labelRecFormat);
-      this.tabPage4.Controls.Add(this.label23);
-      this.tabPage4.Controls.Add(this.comboBoxRecordingFormat);
-      this.tabPage4.Controls.Add(this.buttonTimeShiftBrowse);
-      this.tabPage4.Controls.Add(this.label22);
-      this.tabPage4.Controls.Add(this.textBoxTimeShiftFolder);
-      this.tabPage4.Controls.Add(this.pictureBox1);
-      this.tabPage4.Controls.Add(this.buttonBrowse);
-      this.tabPage4.Controls.Add(this.label13);
-      this.tabPage4.Controls.Add(this.textBoxFolder);
-      this.tabPage4.Controls.Add(this.label12);
-      this.tabPage4.Controls.Add(this.comboBoxCards);
+      this.tabPage4.Controls.Add(this.groupBoxRecordSettings);
       this.tabPage4.Location = new System.Drawing.Point(4, 22);
       this.tabPage4.Name = "tabPage4";
       this.tabPage4.Size = new System.Drawing.Size(457, 374);
@@ -553,8 +542,10 @@ namespace SetupTv.Sections
       // 
       // labelTSFolder
       // 
+      this.labelTSFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.labelTSFolder.AutoSize = true;
-      this.labelTSFolder.Location = new System.Drawing.Point(27, 298);
+      this.labelTSFolder.Location = new System.Drawing.Point(27, 261);
       this.labelTSFolder.Name = "labelTSFolder";
       this.labelTSFolder.Size = new System.Drawing.Size(358, 26);
       this.labelTSFolder.TabIndex = 25;
@@ -563,8 +554,10 @@ namespace SetupTv.Sections
       // 
       // labelRecFormat
       // 
+      this.labelRecFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.labelRecFormat.AutoSize = true;
-      this.labelRecFormat.Location = new System.Drawing.Point(30, 124);
+      this.labelRecFormat.Location = new System.Drawing.Point(20, 97);
       this.labelRecFormat.Name = "labelRecFormat";
       this.labelRecFormat.Size = new System.Drawing.Size(355, 26);
       this.labelRecFormat.TabIndex = 24;
@@ -574,7 +567,7 @@ namespace SetupTv.Sections
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(27, 75);
+      this.label23.Location = new System.Drawing.Point(20, 52);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(91, 13);
       this.label23.TabIndex = 23;
@@ -582,12 +575,14 @@ namespace SetupTv.Sections
       // 
       // comboBoxRecordingFormat
       // 
+      this.comboBoxRecordingFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxRecordingFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxRecordingFormat.FormattingEnabled = true;
       this.comboBoxRecordingFormat.Items.AddRange(new object[] {
             "Transport Stream (.ts)",
             "MPEG (.mpg)"});
-      this.comboBoxRecordingFormat.Location = new System.Drawing.Point(30, 94);
+      this.comboBoxRecordingFormat.Location = new System.Drawing.Point(23, 70);
       this.comboBoxRecordingFormat.Name = "comboBoxRecordingFormat";
       this.comboBoxRecordingFormat.Size = new System.Drawing.Size(355, 21);
       this.comboBoxRecordingFormat.TabIndex = 22;
@@ -595,7 +590,8 @@ namespace SetupTv.Sections
       // 
       // buttonTimeShiftBrowse
       // 
-      this.buttonTimeShiftBrowse.Location = new System.Drawing.Point(362, 265);
+      this.buttonTimeShiftBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonTimeShiftBrowse.Location = new System.Drawing.Point(355, 236);
       this.buttonTimeShiftBrowse.Name = "buttonTimeShiftBrowse";
       this.buttonTimeShiftBrowse.Size = new System.Drawing.Size(23, 20);
       this.buttonTimeShiftBrowse.TabIndex = 21;
@@ -606,7 +602,7 @@ namespace SetupTv.Sections
       // label22
       // 
       this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(27, 247);
+      this.label22.Location = new System.Drawing.Point(20, 218);
       this.label22.Name = "label22";
       this.label22.Size = new System.Drawing.Size(81, 13);
       this.label22.TabIndex = 20;
@@ -614,7 +610,9 @@ namespace SetupTv.Sections
       // 
       // textBoxTimeShiftFolder
       // 
-      this.textBoxTimeShiftFolder.Location = new System.Drawing.Point(30, 265);
+      this.textBoxTimeShiftFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTimeShiftFolder.Location = new System.Drawing.Point(23, 236);
       this.textBoxTimeShiftFolder.Name = "textBoxTimeShiftFolder";
       this.textBoxTimeShiftFolder.Size = new System.Drawing.Size(326, 20);
       this.textBoxTimeShiftFolder.TabIndex = 19;
@@ -623,7 +621,7 @@ namespace SetupTv.Sections
       // pictureBox1
       // 
       this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(30, 14);
+      this.pictureBox1.Location = new System.Drawing.Point(23, 19);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(33, 23);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -632,7 +630,8 @@ namespace SetupTv.Sections
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Location = new System.Drawing.Point(362, 209);
+      this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonBrowse.Location = new System.Drawing.Point(355, 186);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(23, 20);
       this.buttonBrowse.TabIndex = 4;
@@ -643,7 +642,7 @@ namespace SetupTv.Sections
       // label13
       // 
       this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(27, 191);
+      this.label13.Location = new System.Drawing.Point(20, 168);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(88, 13);
       this.label13.TabIndex = 3;
@@ -651,28 +650,23 @@ namespace SetupTv.Sections
       // 
       // textBoxFolder
       // 
-      this.textBoxFolder.Location = new System.Drawing.Point(30, 209);
+      this.textBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFolder.Location = new System.Drawing.Point(23, 186);
       this.textBoxFolder.Name = "textBoxFolder";
       this.textBoxFolder.Size = new System.Drawing.Size(326, 20);
       this.textBoxFolder.TabIndex = 2;
       this.textBoxFolder.TextChanged += new System.EventHandler(this.textBoxFolder_TextChanged);
       // 
-      // label12
-      // 
-      this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(69, 24);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(32, 13);
-      this.label12.TabIndex = 1;
-      this.label12.Text = "Card:";
-      // 
       // comboBoxCards
       // 
+      this.comboBoxCards.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCards.FormattingEnabled = true;
-      this.comboBoxCards.Location = new System.Drawing.Point(30, 43);
+      this.comboBoxCards.Location = new System.Drawing.Point(87, 0);
       this.comboBoxCards.Name = "comboBoxCards";
-      this.comboBoxCards.Size = new System.Drawing.Size(355, 21);
+      this.comboBoxCards.Size = new System.Drawing.Size(352, 21);
       this.comboBoxCards.TabIndex = 0;
       this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
       // 
@@ -763,6 +757,27 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // groupBoxRecordSettings
+      // 
+      this.groupBoxRecordSettings.Controls.Add(this.pictureBox1);
+      this.groupBoxRecordSettings.Controls.Add(this.labelTSFolder);
+      this.groupBoxRecordSettings.Controls.Add(this.comboBoxCards);
+      this.groupBoxRecordSettings.Controls.Add(this.labelRecFormat);
+      this.groupBoxRecordSettings.Controls.Add(this.label23);
+      this.groupBoxRecordSettings.Controls.Add(this.textBoxFolder);
+      this.groupBoxRecordSettings.Controls.Add(this.comboBoxRecordingFormat);
+      this.groupBoxRecordSettings.Controls.Add(this.label13);
+      this.groupBoxRecordSettings.Controls.Add(this.buttonTimeShiftBrowse);
+      this.groupBoxRecordSettings.Controls.Add(this.buttonBrowse);
+      this.groupBoxRecordSettings.Controls.Add(this.label22);
+      this.groupBoxRecordSettings.Controls.Add(this.textBoxTimeShiftFolder);
+      this.groupBoxRecordSettings.Location = new System.Drawing.Point(6, 3);
+      this.groupBoxRecordSettings.Name = "groupBoxRecordSettings";
+      this.groupBoxRecordSettings.Size = new System.Drawing.Size(445, 365);
+      this.groupBoxRecordSettings.TabIndex = 26;
+      this.groupBoxRecordSettings.TabStop = false;
+      this.groupBoxRecordSettings.Text = "Card settings";
+      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -784,10 +799,11 @@ namespace SetupTv.Sections
       this.tabPage3.ResumeLayout(false);
       this.tabPage3.PerformLayout();
       this.tabPage4.ResumeLayout(false);
-      this.tabPage4.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.tpRecordImport.ResumeLayout(false);
       this.tpRecordImport.PerformLayout();
+      this.groupBoxRecordSettings.ResumeLayout(false);
+      this.groupBoxRecordSettings.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -826,7 +842,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
     private System.Windows.Forms.TabPage tabPage4;
-    private System.Windows.Forms.Label label12;
     private System.Windows.Forms.ComboBox comboBoxCards;
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.Label label13;
@@ -854,5 +869,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label lblRecFolders;
     private System.Windows.Forms.ComboBox cbRecPaths;
     private System.Windows.Forms.Button btnRemoveInvalidFiles;
+    private System.Windows.Forms.GroupBox groupBoxRecordSettings;
   }
 }

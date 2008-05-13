@@ -663,12 +663,16 @@ namespace SetupTv.Sections
       }
     }
 
-
     private void tvTagRecs_AfterCheck(object sender, TreeViewEventArgs e)
+    {
+      SetImportButton();
+    }
+
+    private void SetImportButton()
     {
       bool shouldImportSomething = false;
       if (tvTagRecs.Nodes.Count > 0)
-      {        
+      {
         foreach (TreeNode rec in tvTagRecs.Nodes)
         {
           if (rec.Checked)
@@ -676,7 +680,7 @@ namespace SetupTv.Sections
             shouldImportSomething = true;
             break;
           }
-        }       
+        }
       }
       btnImport.Enabled = shouldImportSomething;
     }
@@ -792,7 +796,7 @@ namespace SetupTv.Sections
         //  MessageBox.Show(string.Format("Error sorting tag recordings: \n{0}", ex.Message));
         //}
         tvTagRecs.EndUpdate();
-        //btnImport.Enabled = (tvTagRecs.Nodes.Count > 0);
+        SetImportButton();
       }
       catch (Exception)
       {
