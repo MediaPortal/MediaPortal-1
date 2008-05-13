@@ -2043,6 +2043,7 @@ namespace TvDatabase
     #endregion // programs
 
     #region schedules
+
     public List<Schedule> GetConflictingSchedules(Schedule rec)
     {
       Log.Info("GetConflictingSchedules: Schedule = " + rec.ToString());
@@ -2332,9 +2333,11 @@ namespace TvDatabase
       if (schedules.Count == 0) return null;
       return (Schedule)schedules[0];
     }
+
     #endregion
 
     #region recordings
+
     public Recording GetRecordingByFileName(string fileName)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Recording));
@@ -2346,6 +2349,7 @@ namespace TvDatabase
         return null;
       return (Recording)recordings[0];
     }
+
     #endregion
 
     #region channelgroups
@@ -2360,6 +2364,27 @@ namespace TvDatabase
       if (groups.Count == 0) return null;
       return (RadioChannelGroup)groups[0];
     }
+
+    // Get group to import from xml
+    public ChannelGroup GetGroupByName(string aGroupName)
+    {
+      return GetGroupByName(aGroupName, -1);
+    }
+
+    public ChannelGroup GetGroupByName(string aGroupName, int aSortOrder)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelGroup));
+      sb.AddConstraint(Operator.Like, "groupName", aGroupName); // use like here since the user might have changed the casing
+      if (aSortOrder > -1)
+        sb.AddConstraint(Operator.Equals, "sortOrder", aSortOrder);
+      SqlStatement stmt = sb.GetStatement(true);
+      Log.Debug(stmt.Sql);
+      IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
+      if (groups == null) return null;
+      if (groups.Count == 0) return null;
+      return (ChannelGroup)groups[0];
+    }
+
     #endregion
 
     #region EPG Updating

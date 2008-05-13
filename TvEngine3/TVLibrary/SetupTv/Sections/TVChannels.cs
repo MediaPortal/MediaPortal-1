@@ -788,20 +788,24 @@ namespace SetupTv.Sections
       openFileDialog1.Multiselect = false;
       if (openFileDialog1.ShowDialog(this) != DialogResult.OK) return;
       NotifyForm dlg = new NotifyForm("Importing tv channels...", "This can take some time\n\nPlease be patient...");
-      dlg.Show();
-      dlg.WaitForDisplay();
-      CountryCollection collection = new CountryCollection();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      int channelCount = 0;
-      int scheduleCount = 0;
-      int channelGroupCount = 0;
       try
       {
+        dlg.Show();
+        dlg.WaitForDisplay();
+        CountryCollection collection = new CountryCollection();
+        TvBusinessLayer layer = new TvBusinessLayer();
+        bool mergeChannels = false; // every exported channel will be imported on its own.
+        int channelCount = 0;
+        int scheduleCount = 0;
+        int channelGroupCount = 0;
+
         if (layer.Channels.Count > 0)
         {
           // rtv: we could offer to set a "merge" property here so tuningdetails would be updated for existing channels.
-          MessageBox.Show("You cannot import an old channel backup as long as other channels exist! Aborting.", "Channels found", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          return;
+          if (MessageBox.Show("Existing channels detected! \nIf you continue to import your old backup then all identically named channels will be treated equal - there is a risk of duplicate entries. \nDo you really want to go on?", "Channels found", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
+            return;
+          else
+            mergeChannels = true;
         }
 
         XmlDocument doc = new XmlDocument();
@@ -817,6 +821,7 @@ namespace SetupTv.Sections
           try
           {
             channelCount++;
+            Channel dbChannel = null;
             XmlNodeList tuningList = nodeChannel.SelectNodes("TuningDetails/tune");
             XmlNodeList mappingList = nodeChannel.SelectNodes("mappings/map");
             string name = nodeChannel.Attributes["Name"].Value;
@@ -831,13 +836,19 @@ namespace SetupTv.Sections
             bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
             string displayName = GetNodeAttribute(nodeChannel, "DisplayName", name);
 
-            // Channel dbChannel = layer.AddChannel("", name);
             // rtv: since analog allows NOT to merge channels we need to take care of this. US users e.g. have multiple stations named "Sport" with different tuningdetails.
             // using AddChannel would incorrectly "merge" these totally different channels.
             // see this: http://forum.team-mediaportal.com/1-0-rc1-svn-builds-271/importing-exported-channel-list-groups-channels-39368/
 
             Log.Info("TvChannels: Adding {0}. channel: {1} ({2})", channelCount, name, displayName);
-            Channel dbChannel = layer.AddNewChannel(name);
+            if (mergeChannels)
+            {
+              dbChannel = layer.GetChannelByName(name);
+              if (dbChannel == null)
+                dbChannel = layer.AddChannel("", name);
+            }
+            else
+              dbChannel = layer.AddNewChannel(name);
 
             dbChannel.GrabEpg = grabEpg;
             dbChannel.IsRadio = isRadio;
@@ -1054,7 +1065,9 @@ namespace SetupTv.Sections
             channelGroupCount++;
             string groupName = nodeChannelGroup.Attributes["GroupName"].Value;
             int groupSortOrder = Int32.Parse(nodeChannelGroup.Attributes["SortOrder"].Value);
-            ChannelGroup group = new ChannelGroup(groupName, groupSortOrder);
+            ChannelGroup group = layer.GetGroupByName(groupName, groupSortOrder);
+            if (group == null)
+              group = new ChannelGroup(groupName, groupSortOrder);
             group.Persist();
             XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
             foreach (XmlNode nodeMap in mappingList)
@@ -1079,10 +1092,13 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        dlg.Close();
         MessageBox.Show(this, "Error while importing:\n\n" + ex.ToString() + " " + ex.StackTrace);
       }
-      OnSectionActivated();
+      finally
+      {
+        dlg.Close();
+        OnSectionActivated();
+      }
     }
 
     private void mpButtonUnmap_Click(object sender, EventArgs e)
