@@ -507,7 +507,7 @@ namespace MediaPortal.Player
         }
         if (h264videoCodecFilter != null)
         {
-          while (DirectShowUtil.ReleaseComObject(videoCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(h264videoCodecFilter) > 0) ;
           h264videoCodecFilter = null;
         }
         if (audioCodecFilter != null)
