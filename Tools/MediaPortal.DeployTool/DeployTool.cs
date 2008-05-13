@@ -128,6 +128,14 @@ namespace MediaPortal.DeployTool
         backButton.Visible = false;
         nextButton.Text = Localizer.Instance.GetString("MainWindow_buttonClose");
       }
+      if (InstallationProperties.Instance["Install_Dialog"] == "yes")
+      {
+        if (InstallationProperties.Instance["InstallType"] == "download_only")
+          nextButton.Text = Localizer.Instance.GetString("Install_buttonDownload");
+        else
+          nextButton.Text = Localizer.Instance.GetString("Install_buttonInstall");
+        InstallationProperties.Instance.Set("Install_Dialog", "no");
+      }
     }
 
     private void backButton_Click(object sender, EventArgs e)
@@ -136,6 +144,7 @@ namespace MediaPortal.DeployTool
       _currentDialog = DialogFlowHandler.Instance.GetPreviousDlg(ref isFirstDlg);
       if (isFirstDlg)
         backButton.Visible = false;
+      nextButton.Text = Localizer.Instance.GetString("MainWindow_nextButton");
       SwitchDialog(_currentDialog);
     }
   }

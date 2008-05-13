@@ -91,6 +91,7 @@ namespace MediaPortal.DeployTool
     #endregion
 
     #region Public members
+    
     public DeployDialog GetPreviousDlg(ref bool isFirstDlg)
     {
       if (_currentDlgIndex == 0)
@@ -99,7 +100,7 @@ namespace MediaPortal.DeployTool
       isFirstDlg = (_currentDlgIndex == 0);
       return _dlgs[_currentDlgIndex];
     }
-
+    
     public DeployDialog GetDialogInstance(DialogType dlgType)
     {
       DeployDialog dlg = FindDialog(dlgType);
@@ -153,11 +154,11 @@ namespace MediaPortal.DeployTool
         if (dlg != null)
         {
           _dlgs.Add(dlg);
-          _currentDlgIndex = _dlgs.Count - 1;
         }
       }
       else
         dlg.UpdateUI();
+      _currentDlgIndex++;
       return dlg;
     }
 

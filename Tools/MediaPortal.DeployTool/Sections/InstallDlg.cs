@@ -49,16 +49,14 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public override void UpdateUI()
     {
+      // This change the description of "Next" button to "Install" or "Download"
+      InstallationProperties.Instance.Set("Install_Dialog", "yes");
+
       if (InstallationProperties.Instance["InstallType"] == "download_only")
-      {
         labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingDownload");
-        buttonInstall.Text = Localizer.Instance.GetString("Install_buttonDownload");
-      }
       else
-      {
         labelHeading.Text = Localizer.Instance.GetString("Install_labelHeadingInstall");
-        buttonInstall.Text = Localizer.Instance.GetString("Install_buttonInstall");
-      }
+
       listView.Columns[0].Text = Localizer.Instance.GetString("Install_colApplication");
       listView.Columns[1].Text = Localizer.Instance.GetString("Install_colState");
       listView.Columns[2].Text = Localizer.Instance.GetString("Install_colAction");
@@ -66,6 +64,13 @@ namespace MediaPortal.DeployTool
     }
     public override DeployDialog GetNextDialog()
     {
+      foreach (ListViewItem item in listView.Items)
+      {
+        IInstallationPackage package = (IInstallationPackage)item.Tag;
+        if (!PerformPackageAction(package, item))
+          break;
+      }
+      PopulateListView();
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Finished);
     }
     public override bool SettingsValid()
@@ -207,12 +212,10 @@ namespace MediaPortal.DeployTool
           break;
 
       }
-      if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
-          InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1")
+      if ((InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
+          InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1") && InstallationProperties.Instance["InstallType"] != "download_only")
         AddPackageToListView(new WindowsFirewallChecker());
       listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-      if (InstallationComplete())
-        buttonInstall.Enabled = false;
     }
 
     private void RequirementsDlg_ParentChanged(object sender, EventArgs e)
@@ -307,16 +310,6 @@ namespace MediaPortal.DeployTool
         }
       }
       return true;
-    }
-    private void buttonInstall_Click(object sender, EventArgs e)
-    {
-      foreach (ListViewItem item in listView.Items)
-      {
-        IInstallationPackage package = (IInstallationPackage)item.Tag;
-        if (!PerformPackageAction(package, item))
-          break;
-      }
-      PopulateListView();
     }
   }
 }
