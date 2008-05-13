@@ -488,4 +488,7 @@ Fortsetzung erfolgt auf eigenes Risiko.</value>
 Bitte überprüfen sie die Verbindungs-Optionen des Internet Explorers.
 Einstellungsdatei ist beschädigt und wird gelöscht, falls vorhanden.</value>
   </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Windows Firewall für externen Zugriff auf den MediaPortal konfigurieren.</value>
+  </data>
 </root>
