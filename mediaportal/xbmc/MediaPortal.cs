@@ -677,12 +677,12 @@ public class MediaPortalApp : D3DApp, IRender
     //    startThread.Start();
   }
 
-  private void MediaPortalApp_Deactivate(object sender, EventArgs e)
+  private static void MediaPortalApp_Deactivate(object sender, EventArgs e)
   {
     GUIGraphicsContext.HasFocus = false;
   }
 
-  private void MediaPortalApp_Activated(object sender, EventArgs e)
+  private static void MediaPortalApp_Activated(object sender, EventArgs e)
   {
     GUIGraphicsContext.HasFocus = true;
   }
@@ -1174,18 +1174,18 @@ public class MediaPortalApp : D3DApp, IRender
       g_Player.Process();
       HandleMessage();
       FrameMove();
-      if (GUIGraphicsContext.UseSeparateRenderThread)
-      {
-        // the part of FullRender() [ from Render3DEnvironment(); ] which is needed on Resume...
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
-        {
-          RecoverDevice();
-        }
-      }
-      else
-      {
+      //if (GUIGraphicsContext.UseSeparateRenderThread)
+      //{
+      //  // the part of FullRender() [ from Render3DEnvironment(); ] which is needed on Resume...
+      //  if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+      //  {
+      //    RecoverDevice();
+      //  }
+      //}
+      //else
+      //{
         FullRender();
-      }
+      //}
       if (GUIGraphicsContext.Vmr9Active)
       {
         Thread.Sleep(50);
@@ -1756,10 +1756,10 @@ public class MediaPortalApp : D3DApp, IRender
           }
         }
       }
-      if (GUIGraphicsContext.UseSeparateRenderThread)
-      {
-        HandleCursor();
-      }
+      //if (GUIGraphicsContext.UseSeparateRenderThread)
+      //{
+      //  HandleCursor();
+      //}
     }
 #if !DEBUG
     catch (Exception ex)

@@ -50,14 +50,13 @@ using MediaPortal.Playlists;
 using MediaPortal.Util;
 using Caps = Microsoft.DirectX.Direct3D.Caps;
 using CreateFlags = Microsoft.DirectX.Direct3D.CreateFlags;
-using Timer = System.Windows.Forms.Timer;
 
 namespace MediaPortal
 {
   /// <summary>
   /// The base class for all the graphics (D3D) samples, it derives from windows forms
   /// </summary>
-  public class D3DApp : MediaPortal.UserInterface.Controls.MPForm
+  public class D3DApp : UserInterface.Controls.MPForm
   {
     private const int MILLI_SECONDS_TIMER = 1;
     protected string m_strSkin = "BlueTwo";
@@ -182,7 +181,6 @@ namespace MediaPortal
     private MenuItem menuItemContext;
     private MenuItem menuItem5;
     private MenuItem menuItemFullscreen;
-    private Timer timer;
     protected Rectangle oldBounds;
     protected PlayListPlayer playlistPlayer;
 
@@ -330,10 +328,6 @@ namespace MediaPortal
       clipCursorWhenFullscreen = true;
 #endif
       InitializeComponent();
-      if (!GUIGraphicsContext.UseSeparateRenderThread)
-        if (debugChangeDeviceHack)
-        {
-        }
 
       GUIGraphicsContext.IsVMR9Exclusive = useExclusiveDirectXMode;
       GUIGraphicsContext.IsEvr = useEnhancedVideoRenderer;
@@ -501,7 +495,7 @@ namespace MediaPortal
 
         if (GUIGraphicsContext._useScreenSelector)
         {
-          adapterInfo = FindAdapterForScreen(GUI.Library.GUIGraphicsContext.currentScreen);
+          adapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
           primaryDesktopDisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
         }
         foreach (GraphicsDeviceInfo deviceInfo in adapterInfo.DeviceInfoList)
@@ -1248,10 +1242,7 @@ namespace MediaPortal
 
       if (GUIGraphicsContext.Vmr9Active)
       {
-        if (!GUIGraphicsContext.UseSeparateRenderThread)
-        {
           HandleCursor();
-        }
 
         if ((ActiveForm != this) && (alwaysOnTop))
           this.Activate();
@@ -1295,10 +1286,7 @@ namespace MediaPortal
 #endif
       }
 
-      if (!GUIGraphicsContext.UseSeparateRenderThread)
-      {
         HandleCursor();
-      }
 
       if ((ActiveForm != this) && (alwaysOnTop))
         Activate();
@@ -1677,15 +1665,7 @@ namespace MediaPortal
 
     private void D3DApp_Load(object sender, EventArgs e)
     {
-      if (!GUIGraphicsContext.UseSeparateRenderThread)
-      {
-        Application.Idle += new EventHandler(Application_Idle);
-      }
-      else
-      {
-        this.timer.Enabled = false;
-        this.timer.Interval = 50;
-      }
+      Application.Idle += Application_Idle;
 
       Initialize();
       OnStartup();
@@ -1706,14 +1686,23 @@ namespace MediaPortal
       { }
       if (GUIGraphicsContext.UseSeparateRenderThread)
       {
-        Thread renderThread = new Thread(new ThreadStart(RenderWorkerThread));
-        renderThread.Name = "RenderThread";
-        renderThread.IsBackground = true;
-        renderThread.Start();
-        timer.Enabled = true;
+        Thread processThread = new Thread(ProcessLoop);
+        processThread.Name = "ProcessingThread";
+        processThread.IsBackground = true;
+        processThread.Start();
       }
 
       bool result = ShowLastActiveModule();
+    }
+
+    private void ProcessLoop()
+    {
+      while(true)
+      {
+        OnProcess();
+        FrameMove();
+        Thread.Sleep(100); 
+      }
     }
 
     private void TvDelayThread()
@@ -1952,7 +1941,6 @@ namespace MediaPortal
       this.contextMenu = new System.Windows.Forms.ContextMenu();
       this.menuItemContext = new System.Windows.Forms.MenuItem();
       this.menuItem5 = new System.Windows.Forms.MenuItem();
-      this.timer = new System.Windows.Forms.Timer(this.components);
       this.SuspendLayout();
       // 
       // menuStripMain
@@ -2071,11 +2059,6 @@ namespace MediaPortal
       // 
       this.menuItem5.Index = 0;
       this.menuItem5.Text = "";
-      // 
-      // timer
-      // 
-      this.timer.Enabled = true;
-      this.timer.Interval = 300;
       // 
       // D3DApp
       // 
@@ -2572,10 +2555,11 @@ namespace MediaPortal
     {
       do
       {
-        OnProcess();
-        FrameMove();
         if (!GUIGraphicsContext.UseSeparateRenderThread)
         {
+          OnProcess();
+          FrameMove();
+        }
           StartFrameClock();
           FullRender();
           // rtv: trying to unify the FPS-Handling for all modules despite VMR renderer
@@ -2602,7 +2586,6 @@ namespace MediaPortal
             loopCount = 1;
             WaitForFrameClock();
           }
-        }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
           break;
         // Suggested by gibman. Let's see if this works. Can't be bad  
@@ -2610,51 +2593,6 @@ namespace MediaPortal
         //Thread.Sleep(10); // 10 milliseconds - fixes sluggish GUI due to 100% cpu usage when turning TV off in a multiseat client and returning to the home screen or any other screen.
       }
       while (AppStillIdle());
-    }
-
-    void RenderWorkerThread()
-    {
-      float currentTime = 0.0f;
-      float lastSec = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-      int fps = 0;
-      int sleepTime = 1000 / GUIGraphicsContext.MaxFPS;
-      while (true)
-      {
-
-        if (GUIWindowManager.IsSwitchingToNewWindow == false)
-        {
-          FullRender();
-          fps++;
-        }
-        Thread.Sleep(sleepTime);
-        currentTime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-
-        if (currentTime - lastSec >= 1.0f)
-        {
-          // only regulate FPS when app is focused
-          // active == !(this.WindowState == FormWindowState.Minimized)
-          if (GUIGraphicsContext.HasFocus && active)
-          {
-            if (fps < GUIGraphicsContext.MaxFPS)
-            {
-              if (sleepTime > 1)
-                sleepTime--;
-            }
-            else if (fps > GUIGraphicsContext.MaxFPS)
-            {
-              if (sleepTime < 1000)
-                sleepTime++;
-            }
-          }
-          fps = 0;
-          lastSec = currentTime;
-        }
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-        {
-          Log.Warn("d3dapp: GUIGraphicsContext.CurrentState = STOPPING");
-          break;
-        }
-      }
     }
 
     protected void DoMinimizeOnStartup()
@@ -2672,12 +2610,6 @@ namespace MediaPortal
         return;
 
       mousedoubleclick(e);
-    }
-
-    private void timer_Tick(object sender, EventArgs e)
-    {
-      OnProcess();
-      FrameMove();
     }
 
     protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
