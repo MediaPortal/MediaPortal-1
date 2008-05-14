@@ -924,7 +924,7 @@ namespace MediaPortal.Configuration
       this.Controls.Add(this.sectionTree);
       this.Name = "SettingsForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "MediaPortal - Setup";
+      this.Text = "MediaPortal - Configuration";
       this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.toolStrip1.ResumeLayout(false);
