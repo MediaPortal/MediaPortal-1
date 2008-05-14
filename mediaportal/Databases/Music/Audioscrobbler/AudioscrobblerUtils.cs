@@ -29,6 +29,7 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Collections;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Xml;
@@ -65,7 +66,7 @@ namespace MediaPortal.Music.Database
     systemrecs,
   }
 
-  public enum offlineMode: int
+  public enum offlineMode : int
   {
     random = 0,
     timesplayed = 1,
@@ -148,7 +149,8 @@ namespace MediaPortal.Music.Database
     public delegate void ArtistInfoRequestHandler(ArtistInfoRequest request, Song song);
     public ArtistInfoRequestHandler ArtistInfoRequestCompleted;
 
-    public ArtistInfoRequest(string artistToSearch) : base(RequestType.GetArtistInfo)
+    public ArtistInfoRequest(string artistToSearch)
+      : base(RequestType.GetArtistInfo)
     {
       ArtistToSearch = artistToSearch;
     }
@@ -414,7 +416,7 @@ namespace MediaPortal.Music.Database
   }
 
   #endregion
-  
+
   public class AudioscrobblerUtils
   {
     #region Member variables
@@ -666,7 +668,7 @@ namespace MediaPortal.Music.Database
     #region Serialization
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))        
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         _doCoverLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
@@ -708,7 +710,7 @@ namespace MediaPortal.Music.Database
       _randomNessPercent = (tmpRand >= 25) ? tmpRand : 77;
       ArtistMatchPercent = 100 - (int)(0.9 * _randomNessPercent);
       _unwantedTags = buildTagBlacklist();
-      LookupLock = new object();      
+      LookupLock = new object();
     }
 
     #endregion
@@ -865,119 +867,119 @@ namespace MediaPortal.Music.Database
             // only accept other artists than the current playing but include current "tag" since some people tag just using the artist's name..
             //if (tmpArtist != excludeArtist_.ToLowerInvariant() || tmpArtist == currentTag_)
             //{
-              switch (filterType)
-              {
-                case songFilterType.Track:
+            switch (filterType)
+            {
+              case songFilterType.Track:
+                {
+                  Song dbSong = new Song();
+                  // The filename is unique so try if we get a 100% correct result first
+                  if (!string.IsNullOrEmpty(unfilteredList_[s].FileName))
+                    mdb.GetSongByFileName(unfilteredList_[s].FileName, ref dbSong);
+                  else
+                    mdb.GetSongByMusicTagInfo(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Album, unfilteredList_[s].Title, true, ref dbSong);
+
+                  if (!string.IsNullOrEmpty(dbSong.Artist))
                   {
-                    Song dbSong = new Song();
-                    // The filename is unique so try if we get a 100% correct result first
-                    if (!string.IsNullOrEmpty(unfilteredList_[s].FileName))
-                      mdb.GetSongByFileName(unfilteredList_[s].FileName, ref dbSong);
-                    else
-                      mdb.GetSongByMusicTagInfo(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Album, unfilteredList_[s].Title, true, ref dbSong);
+                    tmpSong = dbSong.Clone();
+                    // Log.Debug("Audioscrobber: Track filter for {1} found db song - {0}", tmpSong.FileName, unfilteredList_[s].Title);
+                    foundDoubleEntry = false;
 
-                    if (!string.IsNullOrEmpty(dbSong.Artist))
+                    if (onlyUniqueArtists)
                     {
-                      tmpSong = dbSong.Clone();
-                      // Log.Debug("Audioscrobber: Track filter for {1} found db song - {0}", tmpSong.FileName, unfilteredList_[s].Title);
-                      foundDoubleEntry = false;
-
-                      if (onlyUniqueArtists)
+                      // check and prevent entries from the same artist
+                      for (int j = 0 ; j < tmpSongs.Count ; j++)
                       {
-                        // check and prevent entries from the same artist
-                        for (int j = 0 ; j < tmpSongs.Count ; j++)
+                        if (tmpSong.Artist == tmpSongs[j].Artist)
                         {
-                          if (tmpSong.Artist == tmpSongs[j].Artist)
-                          {
-                            foundDoubleEntry = true;
-                            break;
-                          }
+                          foundDoubleEntry = true;
+                          break;
                         }
                       }
+                    }
 
+                    // new item therefore add it
+                    if (!foundDoubleEntry)
+                    {
+                      //if (currentTag_ != string.Empty)
+                      //  tmpSong.Genre = currentTag_;
+                      tmpSongs.Add(tmpSong);
+                    }
+                  }
+                  break;
+                }
+              case songFilterType.Artist:
+                {
+                  String[] artistArray = null;
+                  List<Song> dbArtists = new List<Song>();
+                  ArrayList artistsInDB = new ArrayList();
+                  if (mdb.GetArtists(4, unfilteredList_[s].Artist, ref artistsInDB))
+                  {
+                    artistArray = (String[])artistsInDB.ToArray(typeof(String));
+                    foreach (String singleArtist in artistArray)
+                    {
+                      Song addSong = new Song();
+                      addSong.Artist = singleArtist;
+                      dbArtists.Add(addSong);
+                    }
+                    // only use the first hit for now..
+                    if (dbArtists.Count > 0)
+                    {
+                      foundDoubleEntry = false;
+                      // check and prevent double entries 
+                      for (int j = 0 ; j < tmpSongs.Count ; j++)
+                      {
+                        if (dbArtists[0].Artist == (tmpSongs[j].Artist))
+                        {
+                          foundDoubleEntry = true;
+                          break;
+                        }
+                      }
                       // new item therefore add it
                       if (!foundDoubleEntry)
                       {
-                        //if (currentTag_ != string.Empty)
-                        //  tmpSong.Genre = currentTag_;
-                        tmpSongs.Add(tmpSong);
+                        tmpSongs.Add(unfilteredList_[s]);
                       }
                     }
-                    break;
                   }
-                case songFilterType.Artist:
+                  break;
+                }
+              case songFilterType.Album:
+                {
+                  AlbumInfo[] albumArray = null;
+                  List<Song> dbAlbums = new List<Song>();
+                  ArrayList albumsInDB = new ArrayList();
+                  if (mdb.GetAlbums(2, unfilteredList_[s].Album, ref albumsInDB))
                   {
-                    String[] artistArray = null;
-                    List<Song> dbArtists = new List<Song>();
-                    ArrayList artistsInDB = new ArrayList();
-                    if (mdb.GetArtists(4, unfilteredList_[s].Artist, ref artistsInDB))
+                    albumArray = (AlbumInfo[])albumsInDB.ToArray(typeof(AlbumInfo));
+                    foreach (AlbumInfo singleAlbum in albumArray)
                     {
-                      artistArray = (String[])artistsInDB.ToArray(typeof(String));
-                      foreach (String singleArtist in artistArray)
+                      Song addSong = new Song();
+                      addSong.Album = singleAlbum.Album;
+                      dbAlbums.Add(addSong);
+                    }
+                    // only use the first hit for now..
+                    if (dbAlbums.Count > 0)
+                    {
+                      foundDoubleEntry = false;
+                      // check and prevent double entries 
+                      for (int j = 0 ; j < tmpSongs.Count ; j++)
                       {
-                        Song addSong = new Song();
-                        addSong.Artist = singleArtist;
-                        dbArtists.Add(addSong);
+                        if (dbAlbums[0].Album == (tmpSongs[j].Album))
+                        {
+                          foundDoubleEntry = true;
+                          break;
+                        }
                       }
-                      // only use the first hit for now..
-                      if (dbArtists.Count > 0)
+                      // new item therefore add it
+                      if (!foundDoubleEntry)
                       {
-                        foundDoubleEntry = false;
-                        // check and prevent double entries 
-                        for (int j = 0 ; j < tmpSongs.Count ; j++)
-                        {
-                          if (dbArtists[0].Artist == (tmpSongs[j].Artist))
-                          {
-                            foundDoubleEntry = true;
-                            break;
-                          }
-                        }
-                        // new item therefore add it
-                        if (!foundDoubleEntry)
-                        {
-                          tmpSongs.Add(unfilteredList_[s]);
-                        }
+                        tmpSongs.Add(unfilteredList_[s]);
                       }
                     }
-                    break;
                   }
-                case songFilterType.Album:
-                  {
-                    AlbumInfo[] albumArray = null;
-                    List<Song> dbAlbums = new List<Song>();
-                    ArrayList albumsInDB = new ArrayList();
-                    if (mdb.GetAlbums(2, unfilteredList_[s].Album, ref albumsInDB))
-                    {
-                      albumArray = (AlbumInfo[])albumsInDB.ToArray(typeof(AlbumInfo));
-                      foreach (AlbumInfo singleAlbum in albumArray)
-                      {
-                        Song addSong = new Song();
-                        addSong.Album = singleAlbum.Album;
-                        dbAlbums.Add(addSong);
-                      }
-                      // only use the first hit for now..
-                      if (dbAlbums.Count > 0)
-                      {
-                        foundDoubleEntry = false;
-                        // check and prevent double entries 
-                        for (int j = 0 ; j < tmpSongs.Count ; j++)
-                        {
-                          if (dbAlbums[0].Album == (tmpSongs[j].Album))
-                          {
-                            foundDoubleEntry = true;
-                            break;
-                          }
-                        }
-                        // new item therefore add it
-                        if (!foundDoubleEntry)
-                        {
-                          tmpSongs.Add(unfilteredList_[s]);
-                        }
-                      }
-                    }
-                    break;
-                  }
-              }
+                  break;
+                }
+            }
             //}
             //else
             //  Log.Debug("AudioScrobblerUtils Artist {0} inadequate - skipping", tagTracks[s].Artist);
@@ -1063,7 +1065,7 @@ namespace MediaPortal.Music.Database
         //  }
         //}
         //else
-          failover = 0;
+        failover = 0;
 
       } while (failover != 0);
 
@@ -1085,7 +1087,7 @@ namespace MediaPortal.Music.Database
             {
               if (localSong.Artist.ToLowerInvariant() == AudioscrobblerBase.StripArtistPrefix(albumTracks[i].Artist).ToLowerInvariant() && localSong.Title.ToLowerInvariant() == albumTracks[i].Title.ToLowerInvariant())
                 albumTracks[i].URL = "local";
-            }            
+            }
           }
         }
       }
@@ -1141,7 +1143,7 @@ namespace MediaPortal.Music.Database
 
         if (randomPosition < tagTracks.Count - 1)
         {
-          for (int x = 0; x < _limitRandomListCount; x++)
+          for (int x = 0 ; x < _limitRandomListCount ; x++)
           {
             tmpGenre = tagTracks[randomPosition].Genre.ToLowerInvariant();
             // filter unwanted tags
@@ -1153,7 +1155,7 @@ namespace MediaPortal.Music.Database
               // if random picking doesn't lead to a result quit the randomness and pick the best
               if (x > tagTracks.Count * 3)
               {
-                for (int t = 0; t < tagTracks.Count; t++)
+                for (int t = 0 ; t < tagTracks.Count ; t++)
                 {
                   tmpGenre = tagTracks[t].Genre.ToLowerInvariant();
                   if (!_unwantedTags.Contains(tmpGenre.ToLowerInvariant()))
@@ -1288,7 +1290,7 @@ namespace MediaPortal.Music.Database
         PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
         List<Song> taggedArtists = new List<Song>(50);
         List<Song> randomTaggedArtists = new List<Song>(_limitRandomListCount);
-        
+
         int artistsAdded = 0;
         int randomPosition;
         int oldRandomLimit = 10;
@@ -1310,7 +1312,7 @@ namespace MediaPortal.Music.Database
             else
               randomPosition = rand.Next(0, minRandValue);
             // loop current list to find out if randomPos was already inserted
-            for (int j = 0; j < randomTaggedArtists.Count; j++)
+            for (int j = 0 ; j < randomTaggedArtists.Count ; j++)
             {
               if (randomTaggedArtists.Contains(taggedArtists[randomPosition]))
               {
@@ -1340,7 +1342,7 @@ namespace MediaPortal.Music.Database
             return filterForLocalSongs(taggedArtists, true, currentFilterType);
           else
             return taggedArtists;
-        }        
+        }
       }
       else
       {
@@ -1375,7 +1377,7 @@ namespace MediaPortal.Music.Database
             else
               randomPosition = rand.Next(0, minRandValue);
             // loop current list to find out if randomPos was already inserted
-            for (int j = 0; j < randomSimilarArtists.Count; j++)
+            for (int j = 0 ; j < randomSimilarArtists.Count ; j++)
             {
               if (randomSimilarArtists.Contains(similarArtists[randomPosition]))
               {
@@ -1454,65 +1456,65 @@ namespace MediaPortal.Music.Database
       if (imageUrl != "")
       {
         // do not download last.fm's placeholder
-        if ((imageUrl.IndexOf("no_album") <= 0) 
+        if ((imageUrl.IndexOf("no_album") <= 0)
          && (imageUrl.IndexOf("no_artist") <= 0)
          && (imageUrl.IndexOf(@"/noimage/") <= 0)
-         // almost useless because Last.fm currently has redundant images - TODO: image comparison algo
+          // almost useless because Last.fm currently has redundant images - TODO: image comparison algo
          && (!imageUrl.EndsWith(@"160/260045.jpg"))
          && (!imageUrl.EndsWith(@"160/2765129.gif"))
          && (!imageUrl.EndsWith(@"160/311112.gif")))
         {
           //Create the album subdir in thumbs if it does not exist.
-          if (!System.IO.Directory.Exists(thumbspath))
-            System.IO.Directory.CreateDirectory(thumbspath);
+          if (!Directory.Exists(thumbspath))
+            Directory.CreateDirectory(thumbspath);
 
-          string fullPath = System.IO.Path.Combine(thumbspath, fileName);
+          string fullPath = Path.Combine(thumbspath, fileName);
           string fullLargePath = Util.Utils.ConvertToLargeCoverArt(fullPath);
 
           Log.Debug("MyMusic: Trying to get thumb: {0}", imageUrl);
           // Here we get the image from the web and save it to disk
           try
           {
-              string tmpFile = System.IO.Path.GetTempFileName();
-              WebClient client = new WebClient();
-              //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-              //client.Headers.Add("user-agent", @"Mozilla/5.0 (X11; U; Linux i686; de-DE; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)");
-              client.DownloadFile(imageUrl, tmpFile);
+            string tmpFile = PathUtility.GetSecureTempFileName();
+            WebClient client = new WebClient();
+            //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+            //client.Headers.Add("user-agent", @"Mozilla/5.0 (X11; U; Linux i686; de-DE; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)");
+            client.DownloadFile(imageUrl, tmpFile);
 
-              //temp file downloaded - check if needed
-              if (System.IO.File.Exists(fullLargePath))
+            //temp file downloaded - check if needed
+            if (File.Exists(fullLargePath))
+            {
+              FileInfo oldFile = new FileInfo(fullLargePath);
+              FileInfo newFile = new FileInfo(tmpFile);
+
+              if (oldFile.Length >= newFile.Length)
               {
-                System.IO.FileInfo oldFile = new System.IO.FileInfo(fullLargePath);
-                System.IO.FileInfo newFile = new System.IO.FileInfo(tmpFile);
-
-                if (oldFile.Length >= newFile.Length)
-                {
-                  newFile.Delete();
-                  Log.Debug("MyMusic: better thumb {0} already exists - do not save", fullLargePath);
-                }
-                // temp thumb is "better" than old one
-                else
-                {
-                  try
-                  {
-                    Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-                    Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-                    Log.Debug("MyMusic: fetched better thumb {0} overwriting existing one", fullLargePath);
-                  }
-                  catch (System.IO.IOException ex)
-                  {
-                    newFile.Delete();
-                    Log.Debug("MyMusic: could not overwrite existing thumb {0} with better one", fileName, ex.Message);
-                  }                  
-                }
+                newFile.Delete();
+                Log.Debug("MyMusic: better thumb {0} already exists - do not save", fullLargePath);
               }
+              // temp thumb is "better" than old one
               else
               {
-                Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-                Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-                Log.Info("MyMusic: Thumb successfully downloaded: {0}", fullLargePath);
+                try
+                {
+                  Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+                  Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+                  Log.Debug("MyMusic: fetched better thumb {0} overwriting existing one", fullLargePath);
+                }
+                catch (IOException ex)
+                {
+                  newFile.Delete();
+                  Log.Debug("MyMusic: could not overwrite existing thumb {0} with better one", fileName, ex.Message);
+                }
               }
-              success = true;
+            }
+            else
+            {
+              Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+              Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+              Log.Info("MyMusic: Thumb successfully downloaded: {0}", fullLargePath);
+            }
+            success = true;
           }
           catch (Exception e)
           {
@@ -1532,7 +1534,7 @@ namespace MediaPortal.Music.Database
 
     private List<Song> fetchRandomTracks(offlineMode randomMode_)
     {
-      int addedSongs = 0;      
+      int addedSongs = 0;
       MusicDatabase dbs = MusicDatabase.Instance;
       List<Song> randomSongList = new List<Song>(_limitRandomListCount);
       Song randomSong = new Song();
@@ -1549,7 +1551,7 @@ namespace MediaPortal.Music.Database
         randomSong = lookupSong.Clone();
 
         bool found = false;
-        for (int i = 0; i < randomSongList.Count; i++)
+        for (int i = 0 ; i < randomSongList.Count ; i++)
           if (randomSongList[i].Artist == randomSong.Artist)
           {
             found = true;
@@ -1629,7 +1631,7 @@ namespace MediaPortal.Music.Database
               randomPosition = rand.Next(0, minRandValue);
 
             // loop current list to find out if randomPos was already inserted
-            for (int j = 0; j < myRandomNeighbours.Count; j++)
+            for (int j = 0 ; j < myRandomNeighbours.Count ; j++)
             {
               if (myRandomNeighbours.Contains(myNeighbours[randomPosition]))
               {
@@ -1646,7 +1648,7 @@ namespace MediaPortal.Music.Database
           }
           // now _limitRandomListCount random neighbours are added
           // get artists for these neighbours  
-          for (int n = 0; n < myRandomNeighbours.Count; n++)
+          for (int n = 0 ; n < myRandomNeighbours.Count ; n++)
           {
             myNeighboorsArtists = getAudioScrobblerFeed(_currentNeighbourMode, myRandomNeighbours[n].Artist);
 
@@ -1676,7 +1678,7 @@ namespace MediaPortal.Music.Database
                 else
                   randomPosition = rand.Next(0, minRandAValue);
 
-                for (int j = 0; j < myRandomNeighboorsArtists.Count; j++)
+                for (int j = 0 ; j < myRandomNeighboorsArtists.Count ; j++)
                 {
                   if (myRandomNeighboorsArtists.Contains(myNeighboorsArtists[randomPosition]))
                   {
@@ -1699,7 +1701,7 @@ namespace MediaPortal.Music.Database
         else
         // limit not reached - return all neighbours random artists          
         {
-          for (int i = 0; i < myNeighbours.Count; i++)
+          for (int i = 0 ; i < myNeighbours.Count ; i++)
           {
             // sort by match needed
             myNeighboorsArtists = getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist);
@@ -1730,7 +1732,7 @@ namespace MediaPortal.Music.Database
                 else
                   randomPosition = rand.Next(0, minRandAValue);
 
-                for (int j = 0; j < myNeighboorsArtists.Count; j++)
+                for (int j = 0 ; j < myNeighboorsArtists.Count ; j++)
                 {
                   if (myRandomNeighboorsArtists.Contains(myNeighboorsArtists[randomPosition]))
                   {
@@ -1755,7 +1757,7 @@ namespace MediaPortal.Music.Database
       else
       {
         if (myNeighbours.Count > 4)
-          for (int i = 0; i < 4; i++)
+          for (int i = 0 ; i < 4 ; i++)
             myNeighboorsArtists.AddRange(getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist));
         return myNeighboorsArtists;
       }
@@ -1834,7 +1836,7 @@ namespace MediaPortal.Music.Database
         artist_ = System.Web.HttpUtility.UrlDecode(artist_);
         string thumbPath = artist_ + "-" + tmpAlbum + Util.Utils.GetThumbExtension();
 
-        if (artist_.ToLowerInvariant() != tmpArtist.ToLowerInvariant())        
+        if (artist_.ToLowerInvariant() != tmpArtist.ToLowerInvariant())
         {
           string thumbPathAlternative = tmpArtist + "-" + tmpAlbum + Util.Utils.GetThumbExtension();
           Log.Warn("AudioScrobblerUtils: alternative album artist spelling detected - fetching both thumbs (MP: {0} / official: {1})", artist_, tmpArtist);
@@ -1867,7 +1869,7 @@ namespace MediaPortal.Music.Database
         {
           Song nodeSong = new Song();
           foreach (XmlNode mainchild in node.ChildNodes)
-          { 
+          {
             if (mainchild.Name == "name" && mainchild.ChildNodes.Count != 0)
               nodeSong.Album = DecodeUtf8String(mainchild.ChildNodes[0].Value);
             else if (mainchild.Name == "mbid" && mainchild.ChildNodes.Count != 0)
@@ -1911,7 +1913,7 @@ namespace MediaPortal.Music.Database
         if (!string.IsNullOrEmpty(nodes[0].Attributes["picture"].Value))
           artistInfo.WebImage = nodes[0].Attributes["picture"].Value;
         if (!string.IsNullOrEmpty(nodes[0].Attributes["mbid"].Value))
-          artistInfo.MusicBrainzID = nodes[0].Attributes["mbid"].Value;        
+          artistInfo.MusicBrainzID = nodes[0].Attributes["mbid"].Value;
       }
       catch
       {
@@ -1932,10 +1934,10 @@ namespace MediaPortal.Music.Database
 
         foreach (XmlNode node in nodes)
         {
-          Song nodeSong = new Song();          
+          Song nodeSong = new Song();
           foreach (XmlNode child in node.ChildNodes)
           {
-            if (child.Name == "name" && child.ChildNodes.Count != 0)            
+            if (child.Name == "name" && child.ChildNodes.Count != 0)
               nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
             else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
               nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
@@ -2235,17 +2237,17 @@ namespace MediaPortal.Music.Database
       {
         Log.Debug("AudioscrobblerUtils: Artist found with MusicBrainz: {0}", logSong.ToLastFMMatchString(false));
       }
-      
+
       return MbArtists.Count > 0 ? MbArtists[0] : new Song();
     }
 
     private List<Song> ParseMusicBrainzXML(string aLocation)
     {
       List<Song> RESTresults = new List<Song>(25);
-      
+
       try
       {
-        string tempFile = System.IO.Path.GetTempFileName();
+        string tempFile = PathUtility.GetSecureTempFileName();
         XmlDocument doc = new XmlDocument();
 
         doc.Load(aLocation);
@@ -2296,7 +2298,7 @@ namespace MediaPortal.Music.Database
                       }
                       catch (Exception)
                       {
-                      }                      
+                      }
                     }
                     else
                       if (reader.Name == "disambiguation")
@@ -2304,12 +2306,12 @@ namespace MediaPortal.Music.Database
                 break;
               default:
                 continue;
-                //break;
+              //break;
             }
-            
+
           } // <-- while reading
         }
-        System.IO.File.Delete(tempFile);
+        File.Delete(tempFile);
       }
       catch (Exception ex)
       {

@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration
 {
@@ -783,7 +784,7 @@ namespace MediaPortal.Configuration
 
     private void btnPreviewSat_Click(object sender, EventArgs e)
     {
-      string tempFile = Path.GetRandomFileName();
+      string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxSatURL.Text, tempFile);
       if (File.Exists(tempFile))
         pictureBoxPreviewSat.Image = new Bitmap(tempFile);
@@ -791,7 +792,7 @@ namespace MediaPortal.Configuration
 
     private void btnPreviewTemp_Click(object sender, EventArgs e)
     {
-      string tempFile = Path.GetRandomFileName();
+      string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxTempURL.Text, tempFile);
       if (File.Exists(tempFile))
         pictureBoxPreviewTemp.Image = new Bitmap(tempFile);
@@ -799,7 +800,7 @@ namespace MediaPortal.Configuration
 
     private void btnPreviewUV_Click(object sender, EventArgs e)
     {
-      string tempFile = Path.GetRandomFileName();
+      string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxUVURL.Text, tempFile);
       if (File.Exists(tempFile))
         pictureBoxPreviewUV.Image = new Bitmap(tempFile);
@@ -807,7 +808,7 @@ namespace MediaPortal.Configuration
 
     private void btnPreviewWinds_Click(object sender, EventArgs e)
     {
-      string tempFile = Path.GetRandomFileName();
+      string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxWindURL.Text, tempFile);
       if (File.Exists(tempFile))
         pictureBoxPreviewWinds.Image = new Bitmap(tempFile);
@@ -815,7 +816,7 @@ namespace MediaPortal.Configuration
 
     private void btnPreviewHumidity_Click(object sender, EventArgs e)
     {
-      string tempFile = Path.GetRandomFileName();
+      string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxHumURL.Text, tempFile);
       if (File.Exists(tempFile))
         pictureBoxPreviewHumidity.Image = new Bitmap(tempFile);
@@ -823,7 +824,7 @@ namespace MediaPortal.Configuration
 
     private void btnPreviewPrecip_Click(object sender, EventArgs e)
     {
-      string tempFile = Path.GetRandomFileName();
+      string tempFile = PathUtility.GetSecureTempFileName();
       Util.Utils.DownLoadImage(textBoxPrecURL.Text, tempFile);
       if (File.Exists(tempFile))
         pictureBoxPreviewPrecip.Image = new Bitmap(tempFile);
