@@ -339,10 +339,11 @@ namespace MediaPortal.GUI.Library
 
     public const int PLUGIN_IS_ENABLED = 25000;
 
+    public const int CONTROL_HAS_THUMB = 29997;
     public const int CONTROL_IS_VISIBLE = 29998;
     public const int CONTROL_GROUP_HAS_FOCUS = 29999;
     public const int CONTROL_HAS_FOCUS = 30000;
-    public const int BUTTON_SCROLLER_HAS_ICON = 30001;
+    public const int BUTTON_SCROLLER_HAS_ICON = 30001;    
 
     // static string VERSION_STRING = "2.0.0";
 
@@ -778,6 +779,12 @@ namespace MediaPortal.GUI.Library
           if (controlID != 0)
             return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_IS_VISIBLE : CONTROL_IS_VISIBLE, controlID, 0));
         }
+        else if (strTest.Substring(0, 17) == "control.hasthumb(")
+        {
+          int controlID = Int32.Parse(strTest.Substring(17, strTest.Length - 18));
+          if (controlID != 0)
+            return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_HAS_THUMB : CONTROL_HAS_THUMB, controlID, 0));
+        }
       }
       else if (strCategory == "facadeview")
       {
@@ -809,6 +816,7 @@ namespace MediaPortal.GUI.Library
 
       return bNegate ? -ret : ret;
     }
+
     static int AddMultiInfo(GUIInfo info)
     {
       // check to see if we have this info already
@@ -1331,6 +1339,19 @@ namespace MediaPortal.GUI.Library
           {
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
               bReturn = xmlreader.GetValueAsBool("plugins", info.m_stringData, false);
+          }
+          break;
+        case CONTROL_HAS_THUMB:
+          {
+            GUIWindow pWindow = null;// GUIWindowManager.GetWindow(dwContextWindow);
+            if (null == pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+            if (pWindow != null)
+            {
+              // Note: This'll only work for unique id's
+              GUIImage control = pWindow.GetControl(info.m_data1) as GUIImage;
+              if (control != null)
+                bReturn = (control.TextureHeight > 0 && control.TextureWidth > 0);
+            }
           }
           break;
         case CONTROL_IS_VISIBLE:
