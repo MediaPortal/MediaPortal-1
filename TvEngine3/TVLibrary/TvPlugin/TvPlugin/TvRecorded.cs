@@ -127,6 +127,7 @@ namespace TvPlugin
   public class TvRecorded : GUIWindow, IComparer<GUIListItem>
   {
     #region variables
+
     enum Controls
     {
       LABEL_PROGRAMTITLE = 13,
@@ -163,12 +164,18 @@ namespace TvPlugin
     //bool _creatingThumbNails = false;
     RecordingThumbCacher thumbworker = null;
 
-    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]     protected GUIButtonControl btnView = null;
-    [SkinControlAttribute(6)]     protected GUIButtonControl btnCleanup = null;
-    [SkinControlAttribute(10)]    protected GUIListControl listAlbums = null;
-    [SkinControlAttribute(11)]    protected GUIListControl listViews = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]
+    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]
+    protected GUIButtonControl btnView = null;
+    [SkinControlAttribute(6)]
+    protected GUIButtonControl btnCleanup = null;
+    [SkinControlAttribute(10)]
+    protected GUIListControl listAlbums = null;
+    [SkinControlAttribute(11)]
+    protected GUIListControl listViews = null;
 
     #endregion
 
@@ -209,6 +216,7 @@ namespace TvPlugin
     }
 
     #region Serialisation
+
     private void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -278,6 +286,7 @@ namespace TvPlugin
         xmlwriter.SetValueAsBool("tvrecorded", "sortascending", m_bSortAscending);
       }
     }
+
     #endregion
 
     /// <summary>
@@ -471,12 +480,10 @@ namespace TvPlugin
         OnSort();
       }
 
-
       if (control == btnCleanup)
       {
         OnCleanup();
       }
-
 
       if (control == listAlbums || control == listViews)
       {
@@ -555,9 +562,11 @@ namespace TvPlugin
     {
       TVHome.UpdateProgressPercentageBar();
     }
+
     #endregion
 
-    #region recording methods
+    #region private methods
+
     private void ShowViews()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -610,98 +619,64 @@ namespace TvPlugin
             try
             {
               bool add = true;
+
+              // combine recordings with the same name to a folder located on top
               foreach (GUIListItem item in itemlist)
               {
-                Recording rec2 = item.TVTag as Recording;
-                if (rec != null)
+                if (item.TVTag != null)
                 {
-                  if (rec.Title.Equals(rec2.Title))
+                  Recording rec2 = item.TVTag as Recording;
+                  if (rec2 != null)
                   {
-                    item.IsFolder = true;
-                    Utils.SetDefaultIcons(item);
-                    string strLogo = Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
-                    if (System.IO.File.Exists(strLogo))
+                    if (rec.Title.Equals(rec2.Title))
                     {
-                      item.ThumbnailImage = strLogo;
-                      item.IconImageBig = strLogo;
-                      item.IconImage = strLogo;
+                      item.IsFolder = true;
+                      Utils.SetDefaultIcons(item);
+                      string strLogo = Utils.GetCoverArt(Thumbs.TVShows, rec.Title);
+                      if (File.Exists(strLogo))
+                      {
+                        item.ThumbnailImage = strLogo;
+                        item.IconImageBig = strLogo;
+                        item.IconImage = strLogo;
+                      }
+                      add = false;
+                      break;
                     }
-                    add = false;
-                    break;
                   }
                 }
               }
               if (add)
               {
-                GUIListItem item = new GUIListItem();
-                item.Label = rec.Title;
-                item.TVTag = rec;
-                //string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
-                string strLogo = Utils.GetCoverArt(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Utils.GetThumbExtension())));
-
-                if (!System.IO.File.Exists(strLogo))
-                {
-                  strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
-                  if (!System.IO.File.Exists(strLogo))
-                  {
-                    strLogo = rec.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
-                  }
-                }
-                else
-                {
-                  string strLogoL = Utils.ConvertToLargeCoverArt(strLogo);
-                  if (System.IO.File.Exists(strLogoL))
-                    item.IconImageBig = strLogoL;
-                  else
-                    item.IconImageBig = strLogo;
-                }
-                item.ThumbnailImage = strLogo;
-                item.IconImage = strLogo;
-                itemlist.Add(item);
+                // Add new list item for this recording
+                GUIListItem item = BuildItemFromRecording(rec);
+                if (item != null)
+                  itemlist.Add(item);
               }
             }
             catch (Exception recex)
             {
-              Log.Info("TVRecorded: error processing recordings {0}", recex.Message);
+              Log.Error("TVRecorded: error processing recordings - {0}", recex.Message);
             }
           }
         }
         else
         {
-          GUIListItem item = new GUIListItem();
-          item.Label = "..";
+          GUIListItem item = new GUIListItem("..");
           item.IsFolder = true;
           Utils.SetDefaultIcons(item);
           itemlist.Add(item);
+
           foreach (Recording rec in recordings)
           {
-            if (rec.Title.Equals(currentShow))
+            if (!string.IsNullOrEmpty(rec.Title))
             {
-              item = new GUIListItem();
-              item.Label = rec.Title;
-              item.TVTag = rec;
-              //string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
-              string strLogo = Utils.GetCoverArt(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Utils.GetThumbExtension())));
-
-              if (!System.IO.File.Exists(strLogo))
+              if (rec.Title.Equals(currentShow))
               {
-                strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
-                if (!System.IO.File.Exists(strLogo))
-                {
-                  strLogo = rec.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
-                }
+                // Add new list item for this recording
+                GUIListItem item = BuildItemFromRecording(rec);
+                if (item != null)
+                  itemlist.Add(item);
               }
-              else
-              {
-                string strLogoL = Utils.ConvertToLargeCoverArt(strLogo);
-                if (System.IO.File.Exists(strLogoL))
-                  item.IconImageBig = strLogoL;
-                else
-                  item.IconImageBig = strLogo;
-              }
-              item.ThumbnailImage = strLogo;
-              item.IconImage = strLogo;
-              itemlist.Add(item);
             }
           }
         }
@@ -728,6 +703,45 @@ namespace TvPlugin
 
       OnSort();
       UpdateProperties();
+    }
+
+    private static GUIListItem BuildItemFromRecording(Recording aRecording)
+    {
+      GUIListItem item = null;
+      try
+      {
+        if (!string.IsNullOrEmpty(aRecording.Title))
+        {
+          item = new GUIListItem(aRecording.Title);
+          item.TVTag = aRecording;
+          string strLogo = Utils.GetCoverArt(Thumbs.TVRecorded, Utils.SplitFilename(Path.ChangeExtension(aRecording.FileName, Utils.GetThumbExtension())));
+
+          if (!File.Exists(strLogo))
+          {
+            strLogo = Utils.GetCoverArt(Thumbs.TVChannel, aRecording.ReferencedChannel().DisplayName);
+            if (!File.Exists(strLogo))
+              strLogo = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
+          }
+          else
+          {
+            string strLogoL = Utils.ConvertToLargeCoverArt(strLogo);
+            if (File.Exists(strLogoL))
+              item.IconImageBig = strLogoL;
+            else
+              item.IconImageBig = strLogo;
+          }
+          item.ThumbnailImage = strLogo;
+          item.IconImage = strLogo;
+        }
+        else
+          Log.Warn("TVRecorded: invalid recording title for {0}", aRecording.FileName);
+      }
+      catch (NullReferenceException singleex)
+      {
+        Log.Warn("TVRecorded: error building item from recording {0} - {1}", aRecording.FileName, singleex.Message);
+      }
+
+      return item;
     }
 
     private void UpdateButtonStates()
@@ -796,37 +810,44 @@ namespace TvPlugin
       SortMethod method = currentSortMethod;
       bool bAscending = m_bSortAscending;
 
-      for (int i = 0 ; i < listAlbums.Count ; ++i)
+      for (int i = 0; i < listAlbums.Count; ++i)
       {
-        GUIListItem item1 = listAlbums[i];
-        GUIListItem item2 = listViews[i];
-        if (item1.Label == "..") continue;
-        Recording rec = (Recording)item1.TVTag;
-        item1.Label = item2.Label = rec.Title;
-        TimeSpan ts = rec.EndTime - rec.StartTime;
-        string strTime = string.Format("{0} {1} ({2})",
-          Utils.GetShortDayString(rec.StartTime),
-          rec.StartTime.ToShortTimeString(),
-          Utils.SecondsToHMString((int)ts.TotalSeconds));
-        item1.Label2 = item2.Label2 = strTime;
-        if (currentViewMethod == ViewAs.Album)
+        try
         {
-          if (rec.Genre != "unknown")
-            item1.Label3 = item2.Label3 = rec.Genre;
+          GUIListItem item1 = listAlbums[i];
+          GUIListItem item2 = listViews[i];
+          if (item1.Label == "..") continue;
+          Recording rec = (Recording)item1.TVTag;
+          item1.Label = item2.Label = rec.Title;
+          TimeSpan ts = rec.EndTime - rec.StartTime;
+          string strTime = string.Format("{0} {1} ({2})",
+            Utils.GetShortDayString(rec.StartTime),
+            rec.StartTime.ToShortTimeString(),
+            Utils.SecondsToHMString((int)ts.TotalSeconds));
+          item1.Label2 = item2.Label2 = strTime;
+          if (currentViewMethod == ViewAs.Album)
+          {
+            if (rec.Genre != "unknown")
+              item1.Label3 = item2.Label3 = rec.Genre;
+            else
+              item1.Label3 = item2.Label3 = string.Empty;
+          }
           else
-            item1.Label3 = item2.Label3 = string.Empty;
+          {
+            if (currentSortMethod == SortMethod.Channel)
+              item1.Label2 = item2.Label2 = rec.ReferencedChannel().DisplayName;
+          }
+          if (rec.TimesWatched > 0)
+          {
+            if (!item1.IsFolder)
+              item1.IsPlayed = true;
+            if (!item2.IsFolder)
+              item2.IsPlayed = true;
+          }
         }
-        else
+        catch (Exception ex)
         {
-          if (currentSortMethod == SortMethod.Channel)
-            item1.Label2 = item2.Label2 = rec.ReferencedChannel().DisplayName;
-        }
-        if (rec.TimesWatched > 0)
-        {
-          if (!item1.IsFolder)
-            item1.IsPlayed = true;
-          if (!item2.IsFolder)
-            item2.IsPlayed = true;
+          Log.Warn("TVRecorded: error in SetLabels - {0}", ex.Message);
         }
       }
     }
