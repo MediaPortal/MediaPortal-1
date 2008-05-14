@@ -58,7 +58,7 @@ namespace SetupTv
         //
         // Set caption
         //
-        Text = "MediaPortal - TV Server management console";
+        Text = "MediaPortal - TV Server Configuration";
 
         //
         // Build options tree
