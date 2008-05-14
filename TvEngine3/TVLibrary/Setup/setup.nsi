@@ -36,10 +36,13 @@ SetCompressor /SOLID lzma
 !ifdef SVN_BUILD
   !define TVSERVER.BASE "..\TVServer.Base"
   !define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\bin\Release"
+  !define MEDIAPORTAL.BASE "..\..\..\mediaportal\MediaPortal.Base"
 !else
   !define TVSERVER.BASE "..\TVServer.Base"
   !define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\bin\Release"
+  !define MEDIAPORTAL.BASE "..\..\..\mediaportal\MediaPortal.Base"
 !endif
+
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"
 
@@ -237,6 +240,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; Tuning Parameter Directory
   SetOutPath $INSTDIR\TuningParameters
   File /r /x .svn "${TVSERVER.BASE}\TuningParameters\*"
+  File "${MEDIAPORTAL.BASE}\TuningParameters\*.dvbc"
+  File "${MEDIAPORTAL.BASE}\TuningParameters\dvbt.xml"
 
   ; The Plugin Directory
   SetOutPath $INSTDIR\Plugins
