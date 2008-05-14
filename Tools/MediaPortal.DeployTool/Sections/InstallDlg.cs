@@ -108,6 +108,7 @@ namespace MediaPortal.DeployTool
 
     private void AddPackageToListView(IInstallationPackage package)
     {
+      listView.SmallImageList = iconsList;
       ListViewItem item = listView.Items.Add(package.GetDisplayName());
       item.Tag = package;
       CheckResult result = package.CheckStatus();
@@ -116,7 +117,7 @@ namespace MediaPortal.DeployTool
         case CheckState.INSTALLED:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateInstalled"));
           item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
-          item.ForeColor = System.Drawing.Color.Green;
+          item.ImageIndex = 0;
           break;
         case CheckState.NOT_INSTALLED:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotInstalled"));
@@ -124,37 +125,37 @@ namespace MediaPortal.DeployTool
             item.SubItems.Add(Localizer.Instance.GetString("Install_actionDownloadInstall"));
           else
             item.SubItems.Add(Localizer.Instance.GetString("Install_actionInstall"));
-          item.ForeColor = System.Drawing.Color.Red;
+          item.ImageIndex = 1;
           break;
         case CheckState.CONFIGURED:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateConfigured"));
           item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
-          item.ForeColor = System.Drawing.Color.Green;
+          item.ImageIndex = 0;
           break;
         case CheckState.NOT_CONFIGURED:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotConfigured"));
           item.SubItems.Add(Localizer.Instance.GetString("Install_actionConfigure"));
-          item.ForeColor = System.Drawing.Color.Red;
+          item.ImageIndex = 1;
           break;
         case CheckState.REMOVED:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateRemoved"));
           item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
-          item.ForeColor = System.Drawing.Color.Green;
+          item.ImageIndex = 0;
           break;
         case CheckState.NOT_REMOVED:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateUninstall"));
           item.SubItems.Add(Localizer.Instance.GetString("Install_actionRemove"));
-          item.ForeColor = System.Drawing.Color.Red;
+          item.ImageIndex = 1;
           break;
         case CheckState.DOWNLOADED:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateDownloaded"));
           item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
-          item.ForeColor = System.Drawing.Color.Green;
+          item.ImageIndex = 0;
           break;
         case CheckState.NOT_DOWNLOADED:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotDownloaded"));
           item.SubItems.Add(Localizer.Instance.GetString("Install_actionDownload"));
-          item.ForeColor = System.Drawing.Color.Red;
+          item.ImageIndex = 1;
           break;
         case CheckState.VERSION_MISMATCH:
           item.SubItems.Add(Localizer.Instance.GetString("Install_stateVersionMismatch"));
@@ -162,7 +163,7 @@ namespace MediaPortal.DeployTool
             item.SubItems.Add(Localizer.Instance.GetString("Install_actionUninstallDownloadInstall"));
           else
             item.SubItems.Add(Localizer.Instance.GetString("Install_actionUninstallInstall"));
-          item.ForeColor = System.Drawing.Color.Purple;
+          item.ImageIndex = 2;
           break;
       }
     }
@@ -183,7 +184,7 @@ namespace MediaPortal.DeployTool
           if (InstallationProperties.Instance["DBMSType"] == "mysql")
             AddPackageToListView(new MySQLChecker());
           AddPackageToListView(new TvServerChecker());
-          AddPackageToListView(new TvPluginServerChecker());
+          AddPackageToListView(new TvPluginChecker());
           break;
 
         case "tvserver_master":
@@ -196,7 +197,7 @@ namespace MediaPortal.DeployTool
 
         case "client":
           AddPackageToListView(new MediaPortalChecker());
-          AddPackageToListView(new TvPluginServerChecker());
+          AddPackageToListView(new TvPluginChecker());
           break;
 
         case "mp_only":
@@ -208,7 +209,7 @@ namespace MediaPortal.DeployTool
           AddPackageToListView(new MSSQLExpressChecker());
           AddPackageToListView(new MySQLChecker());
           AddPackageToListView(new TvServerChecker());
-          AddPackageToListView(new TvPluginServerChecker());
+          AddPackageToListView(new TvPluginChecker());
           break;
 
       }

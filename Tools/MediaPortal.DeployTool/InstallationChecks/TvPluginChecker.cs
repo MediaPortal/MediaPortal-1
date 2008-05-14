@@ -33,7 +33,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool
 {
-  class TvPluginServerChecker : IInstallationPackage
+  class TvPluginChecker : IInstallationPackage
   {
     public string GetDisplayName()
     {
@@ -78,9 +78,15 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
+#if DEBUG
+      MessageBox.Show("TvPlugin - CheckStatus: " + "start");
+#endif
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("TvServer", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
+#if DEBUG
+        MessageBox.Show("TvPlugin - CheckStatus: " + "download_only");
+#endif
         if (result.needsDownload == false)
           result.state = CheckState.DOWNLOADED;
         else
@@ -88,20 +94,38 @@ namespace MediaPortal.DeployTool
         return result;
       }
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+#if DEBUG
+      MessageBox.Show("TvPlugin - CheckStatus: " + "registry open");
+#endif
       if (key == null)
       {
         result.state = CheckState.NOT_INSTALLED;
       }
       else
       {
+#if DEBUG
+        MessageBox.Show("TvPlugin - CheckStatus: " + "registry UninstallString");
+#endif
         string TV3Path = (string)key.GetValue("UninstallString");
+#if DEBUG
+        MessageBox.Show("TvPlugin - CheckStatus: " + "registry MementoSection_SecClient");
+#endif
         int clientInstalled = (int)key.GetValue("MementoSection_SecClient");
+#if DEBUG
+        MessageBox.Show("TvPlugin - CheckStatus: " + "registry DisplayVersion");
+#endif
         string version = (string)key.GetValue("DisplayVersion");
         key.Close();
+#if DEBUG
+        MessageBox.Show("TvPlugin - CheckStatus: " + "registry close");
+#endif
         if (TV3Path == null | !File.Exists(TV3Path))
           result.state = CheckState.NOT_INSTALLED;
         else
         {
+#if DEBUG
+          MessageBox.Show("TvPlugin - CheckStatus: " + "GetPackageVersion section");
+#endif
           if (clientInstalled == 1)
           {
             if (version == Utils.GetPackageVersion())

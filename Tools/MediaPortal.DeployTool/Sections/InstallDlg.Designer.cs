@@ -28,11 +28,14 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InstallDlg));
       this.labelHeading = new System.Windows.Forms.Label();
       this.listView = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.iconsList = new System.Windows.Forms.ImageList(this.components);
       this.SuspendLayout();
       // 
       // labelHeading
@@ -73,6 +76,14 @@ namespace MediaPortal.DeployTool
       // 
       this.columnHeader3.Text = "Action";
       // 
+      // iconsList
+      // 
+      this.iconsList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("iconsList.ImageStream")));
+      this.iconsList.TransparentColor = System.Drawing.Color.Transparent;
+      this.iconsList.Images.SetKeyName(0, "0_nothing_to_do.gif");
+      this.iconsList.Images.SetKeyName(1, "1_install_needed.ico");
+      this.iconsList.Images.SetKeyName(2, "2_version_mismatch.ico");
+      // 
       // InstallDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -98,5 +109,6 @@ namespace MediaPortal.DeployTool
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ColumnHeader columnHeader3;
+    private System.Windows.Forms.ImageList iconsList;
   }
 }
