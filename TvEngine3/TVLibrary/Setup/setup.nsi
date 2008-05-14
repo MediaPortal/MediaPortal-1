@@ -236,7 +236,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   #---------------------------- File Copy ----------------------
   ; Tuning Parameter Directory
   SetOutPath $INSTDIR\TuningParameters
-  File /r /x .svn ..\TvService\bin\Release\TuningParameters\*
+  File /r /x .svn "${TVSERVER.BASE}\TuningParameters\*"
 
   ; The Plugin Directory
   SetOutPath $INSTDIR\Plugins
