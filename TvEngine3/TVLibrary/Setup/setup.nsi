@@ -33,15 +33,9 @@
 Name "MediaPortal TV Server / Client"
 SetCompressor /SOLID lzma
 
-!ifdef SVN_BUILD
-  !define TVSERVER.BASE "..\TVServer.Base"
-  !define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\bin\Release"
-  !define MEDIAPORTAL.BASE "E:\checkout\mp1\MediaPortal.Base"
-!else
-  !define TVSERVER.BASE "..\TVServer.Base"
-  !define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\bin\Release"
-  !define MEDIAPORTAL.BASE "..\..\..\mediaportal\MediaPortal.Base"
-!endif
+!define TVSERVER.BASE "..\TVServer.Base"
+!define MEDIAPORTAL.FILTERBIN "..\..\..\DirectShowFilters\bin\Release"
+!define MEDIAPORTAL.BASE "..\..\..\mediaportal\MediaPortal.Base"
 
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"

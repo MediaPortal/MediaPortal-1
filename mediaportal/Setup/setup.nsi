@@ -35,13 +35,12 @@ SetCompressor /SOLID lzma
 
 !ifdef SVN_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
-  !define MEDIAPORTAL.FILTERBIN "..\..\DirectShowFilters\bin\Release"
-  !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !else
   !define MEDIAPORTAL.BASE "..\MediaPortal.Base"
-  !define MEDIAPORTAL.FILTERBIN "..\..\DirectShowFilters\bin\Release"
-  !define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
 !endif
+!define MEDIAPORTAL.FILTERBIN "..\..\DirectShowFilters\bin\Release"
+!define MEDIAPORTAL.XBMCBIN "..\xbmc\bin\Release"
+
 !define BUILD_TYPE "Release"
 ;!define BUILD_TYPE "Debug"
 
