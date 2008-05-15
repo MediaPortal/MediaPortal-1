@@ -75,9 +75,15 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
+#if DEBUG
+      MessageBox.Show("TvSever - CheckStatus: " + "start");
+#endif
       result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("TvServer", "FILE"));
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
+#if DEBUG
+        MessageBox.Show("TvSever - CheckStatus: " + "download_only");
+#endif
         if (result.needsDownload == false)
           result.state = CheckState.DOWNLOADED;
         else
@@ -91,14 +97,29 @@ namespace MediaPortal.DeployTool
       }
       else
       {
-        string TV3Path = (string)key.GetValue("UninstallString");
-        int serverInstalled = (int)key.GetValue("MementoSection_SecServer");
-        string version = (string)key.GetValue("DisplayVersion");
+#if DEBUG
+        MessageBox.Show("TvServer - CheckStatus: " + "registry UninstallString");
+#endif
+        string TV3Path = (string)key.GetValue("UninstallString", null);
+#if DEBUG
+        MessageBox.Show("TvServer - CheckStatus: " + "registry MementoSection_SecServer");
+#endif
+        int serverInstalled = (int)key.GetValue("MementoSection_SecServer", 0);
+#if DEBUG
+        MessageBox.Show("TvServer - CheckStatus: " + "registry DisplayVersion");
+#endif
+        string version = (string)key.GetValue("DisplayVersion", null);
         key.Close();
+#if DEBUG
+        MessageBox.Show("TvServer - CheckStatus: " + "registry close");
+#endif
         if (TV3Path == null | !File.Exists(TV3Path))
           result.state = CheckState.NOT_INSTALLED;
         else
         {
+#if DEBUG
+          MessageBox.Show("TvServer - CheckStatus: " + "GetPackageVersion section");
+#endif
           if (serverInstalled == 1)
           {
             if (version == Utils.GetPackageVersion())

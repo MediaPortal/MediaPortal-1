@@ -106,15 +106,15 @@ namespace MediaPortal.DeployTool
 #if DEBUG
         MessageBox.Show("TvPlugin - CheckStatus: " + "registry UninstallString");
 #endif
-        string TV3Path = (string)key.GetValue("UninstallString");
+        string TV3Path = (string)key.GetValue("UninstallString", null);
 #if DEBUG
         MessageBox.Show("TvPlugin - CheckStatus: " + "registry MementoSection_SecClient");
 #endif
-        int clientInstalled = (int)key.GetValue("MementoSection_SecClient");
+        int clientInstalled = (int)key.GetValue("MementoSection_SecClient", 0);
 #if DEBUG
         MessageBox.Show("TvPlugin - CheckStatus: " + "registry DisplayVersion");
 #endif
-        string version = (string)key.GetValue("DisplayVersion");
+        string version = (string)key.GetValue("DisplayVersion", null);
         key.Close();
 #if DEBUG
         MessageBox.Show("TvPlugin - CheckStatus: " + "registry close");

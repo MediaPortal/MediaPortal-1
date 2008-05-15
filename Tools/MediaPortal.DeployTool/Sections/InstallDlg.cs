@@ -75,36 +75,13 @@ namespace MediaPortal.DeployTool
     }
     public override bool SettingsValid()
     {
-      if (!InstallationComplete())
-      {
-        Utils.ErrorDlg(Localizer.Instance.GetString("Install_errAppsMissing"));
-        return false;
-      }
-      else
-        return true;
+      return true;
     }
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("finished", "yes");
     }
     #endregion
-
-    private bool InstallationComplete()
-    {
-      bool isComplete = true;
-      foreach (ListViewItem item in listView.Items)
-      {
-        IInstallationPackage package = (IInstallationPackage)item.Tag;
-        CheckResult result = package.CheckStatus();
-        if (result.state == CheckState.NOT_INSTALLED ||
-            result.state == CheckState.NOT_DOWNLOADED ||
-            result.state == CheckState.NOT_REMOVED ||
-            result.state == CheckState.NOT_CONFIGURED ||
-            result.state == CheckState.VERSION_MISMATCH)
-          isComplete = false;
-      }
-      return isComplete;
-    }
 
     private void AddPackageToListView(IInstallationPackage package)
     {
