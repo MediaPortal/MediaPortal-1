@@ -55,6 +55,8 @@ namespace TvEngine.PowerScheduler.Interfaces
     private int _preWakeupTime;
     private int _preNoShutdownTime;
     private int _checkInterval;
+    private int _allowedStart;
+    private int _allowedStop;
     private ShutdownMode _shutdownMode = ShutdownMode.StayOn;
     /// <summary>
     /// Placeholder for additional PowerScheduler settings
@@ -80,6 +82,8 @@ namespace TvEngine.PowerScheduler.Interfaces
       _checkInterval = s.CheckInterval;
       _shutdownMode = s.ShutdownMode;
       _settings = s._settings;
+      _allowedStart = s.AllowedStart;
+      _allowedStop = s.AllowedStop;
     }
     #endregion
 
@@ -225,6 +229,31 @@ namespace TvEngine.PowerScheduler.Interfaces
           throw new ArgumentException("CheckInterval cannot be smaller than 1");
         _checkInterval = value;
       }
+    }
+    /// <summary>
+    /// Controls the minimum start hour of suspends. 
+    /// </summary>
+    public int AllowedStart
+    {
+        get { return _allowedStart; }
+        set
+        {
+            if (value > _allowedStop )
+                throw new ArgumentException("AllowedStart cannot be greater than AllowedStop");
+            _allowedStart = value;
+        }
+    }    /// <summary>
+    /// Controls the maximum start hour for a suspend.
+    /// </summary>
+    public int AllowedStop
+    {
+        get { return _allowedStop; }
+        set
+        {
+            if (value < _allowedStart )
+                throw new ArgumentException("AllowedStop cannot be smaller than AllowedStart");
+            _allowedStop = value;
+        }
     }
     /// <summary>
     /// How should put the system into standby? suspend/hibernate/stayon

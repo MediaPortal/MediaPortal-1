@@ -109,6 +109,12 @@ namespace TvEngine.PowerScheduler
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.groupBox5 = new System.Windows.Forms.GroupBox();
+      this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
+      this.label8 = new System.Windows.Forms.Label();
+      this.label9 = new System.Windows.Forms.Label();
+      this.label10 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -126,6 +132,9 @@ namespace TvEngine.PowerScheduler
       this.panel1.SuspendLayout();
       this.tabPage4.SuspendLayout();
       this.groupBox4.SuspendLayout();
+      this.groupBox5.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -147,6 +156,7 @@ namespace TvEngine.PowerScheduler
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.groupBox5);
       this.tabPage1.Controls.Add(this.groupBox1);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -661,6 +671,81 @@ namespace TvEngine.PowerScheduler
       this.openFileDialog1.FileName = "openFileDialog1";
       this.openFileDialog1.Title = "Choose command";
       // 
+      // groupBox5
+      // 
+      this.groupBox5.Controls.Add(this.label10);
+      this.groupBox5.Controls.Add(this.label9);
+      this.groupBox5.Controls.Add(this.label8);
+      this.groupBox5.Controls.Add(this.numericUpDown6);
+      this.groupBox5.Controls.Add(this.numericUpDown5);
+      this.groupBox5.Location = new System.Drawing.Point(6, 170);
+      this.groupBox5.Name = "groupBox5";
+      this.groupBox5.Size = new System.Drawing.Size(391, 152);
+      this.groupBox5.TabIndex = 1;
+      this.groupBox5.TabStop = false;
+      this.groupBox5.Text = "Allowed Standby Hours";
+      // 
+      // numericUpDown5
+      // 
+      this.numericUpDown5.Location = new System.Drawing.Point(160, 42);
+      this.numericUpDown5.Maximum = new decimal(new int[] {
+            23,
+            0,
+            0,
+            0});
+      this.numericUpDown5.Name = "numericUpDown5";
+      this.numericUpDown5.Size = new System.Drawing.Size(48, 20);
+      this.numericUpDown5.TabIndex = 0;
+      // 
+      // numericUpDown6
+      // 
+      this.numericUpDown6.Location = new System.Drawing.Point(248, 42);
+      this.numericUpDown6.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      this.numericUpDown6.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDown6.Name = "numericUpDown6";
+      this.numericUpDown6.Size = new System.Drawing.Size(44, 20);
+      this.numericUpDown6.TabIndex = 1;
+      this.numericUpDown6.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // label8
+      // 
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(15, 49);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(139, 13);
+      this.label8.TabIndex = 2;
+      this.label8.Text = "Only allow standby between";
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(214, 49);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(28, 13);
+      this.label9.TabIndex = 3;
+      this.label9.Text = "and ";
+      // 
+      // label10
+      // 
+      this.label10.AutoSize = true;
+      this.label10.Location = new System.Drawing.Point(298, 49);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(39, 13);
+      this.label10.TabIndex = 4;
+      this.label10.Text = "hours. ";
+      // 
       // PowerSchedulerMasterSetup
       // 
       this.Controls.Add(this.tabControl1);
@@ -690,6 +775,10 @@ namespace TvEngine.PowerScheduler
       this.tabPage4.ResumeLayout(false);
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
+      this.groupBox5.ResumeLayout(false);
+      this.groupBox5.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -704,5 +793,11 @@ namespace TvEngine.PowerScheduler
     private System.Windows.Forms.Button button3;
     private System.Windows.Forms.TextBox tbEpgCmd;
     private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.GroupBox groupBox5;
+    private System.Windows.Forms.NumericUpDown numericUpDown6;
+    private System.Windows.Forms.NumericUpDown numericUpDown5;
+    private System.Windows.Forms.Label label9;
+    private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.Label label10;
   }
 }

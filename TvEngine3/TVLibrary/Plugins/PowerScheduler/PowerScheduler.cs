@@ -437,6 +437,8 @@ namespace TvEngine.PowerScheduler
       // test if shutdown is allowed
       bool disallow = DisAllowShutdown;
 
+
+
       Log.Info("PowerScheduler: Shutdown is allowed {0} ; forced: {1}", !disallow, force);
 
       if (disallow && !force)
@@ -742,6 +744,26 @@ namespace TvEngine.PowerScheduler
         LogVerbose("PowerScheduler: Shutdown mode set to {0}", _settings.ShutdownMode);
         changed = true;
       }
+
+      // Check allowed stop time
+      setting = Int32.Parse(layer.GetSetting("PowerSchedulerAllowedEnd", "5").Value);
+      if (_settings.AllowedStop != setting)
+      {
+        _settings.AllowedStop = setting;
+        LogVerbose("PowerScheduler: Allowed stop time set to: {0} hour", _settings.AllowedStop);
+        changed = true;
+      }
+
+      // Check configured allowed start time
+      setting = Int32.Parse(layer.GetSetting("PowerSchedulerAllowedStart", "0").Value);
+      if (_settings.AllowedStart != setting)
+      {
+          _settings.AllowedStart = setting;
+          LogVerbose("PowerScheduler: Allowed start time set to: {0} hour", _settings.AllowedStart);
+          changed = true;
+      }
+
+
 
       // Send message in case any setting has changed
       if (changed)
@@ -1193,6 +1215,7 @@ namespace TvEngine.PowerScheduler
       get
       {
         // at first ask the handlers
+
         foreach (IStandbyHandler handler in _standbyHandlers)
         {
           if (handler.DisAllowShutdown)
@@ -1214,8 +1237,19 @@ namespace TvEngine.PowerScheduler
           _currentDisAllowShutdown = true;
           return true;
         }
+      
+        //check if is allowed to sleep at this time. 
 
-        _currentDisAllowShutdown = false;
+        if (DateTime.Now.Hour < _settings.AllowedStart || _settings.AllowedStop <= DateTime.Now.Hour)
+        {
+            _currentDisAllowShutdownHandler = "NOT-ALLOWED-TIME";
+            LogVerbose("PowerScheduler.DisAllowShutdown: not allowed time");
+            _currentDisAllowShutdown = true;
+            _powerManager.PreventStandby();
+            return true;
+        }
+
+          _currentDisAllowShutdown = false;
         _currentDisAllowShutdownHandler = "";
         _powerManager.AllowStandby();
         return false;
