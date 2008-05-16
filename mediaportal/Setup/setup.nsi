@@ -45,11 +45,19 @@ SetCompressor /SOLID lzma
 ;!define BUILD_TYPE "Debug"
 
 #---------------------------------------------------------------------------
+# SPECIAL BUILDS
+#---------------------------------------------------------------------------
+; Uncomment the following line to create a special installer for "Heise Verlag" / ct' magazine
+;!define HEISE_BUILD
+
+#---------------------------------------------------------------------------
 # VARIABLES
 #---------------------------------------------------------------------------
 Var StartMenuGroup  ; Holds the Startmenu\Programs folder
 ; variables for commandline parameters for Installer
+!ifndef HEISE_BUILD
 Var noGabest
+!endif
 Var noDesktopSC
 Var noStartMenuSC
 Var DeployMode
@@ -158,7 +166,9 @@ Page custom PageReinstall PageLeaveReinstall
 #!insertmacro MUI_PAGE_LICENSE "..\Docs\svn-info.rtf"
 !endif
 
+!ifndef HEISE_BUILD
 !insertmacro MUI_PAGE_COMPONENTS
+!endif
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 
@@ -207,7 +217,9 @@ ShowUninstDetails show
 !macro SectionList MacroName
     ; This macro used to perform operation on multiple sections.
     ; List all of your components in following manner here.
+!ifndef HEISE_BUILD
     !insertmacro "${MacroName}" "SecGabest"
+!endif
 !macroend
 
 #---------------------------------------------------------------------------
@@ -629,6 +641,7 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\XPBurnComponent.dll"
 !macroend
 
+!ifndef HEISE_BUILD
 ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
   DetailPrint "Installing Gabest MPA/MPV decoder..."
 
@@ -676,6 +689,7 @@ ${MementoSectionEnd}
   ; remove the tool to adjust the merit
   Delete /REBOOTOK "$MPdir.Base\SetMerit.exe"
 !macroend
+!endif
 
 ${MementoSectionDone}
 
@@ -798,7 +812,9 @@ Function .onInit
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
+!ifndef HEISE_BUILD
   StrCpy $noGabest 0
+!endif
   StrCpy $noDesktopSC 0
   StrCpy $noStartMenuSC 0
   StrCpy $DeployMode 0
@@ -806,10 +822,12 @@ Function .onInit
   ; gets comandline parameter
   ${GetParameters} $R0
 
+!ifndef HEISE_BUILD
   ClearErrors
   ${GetOptions} $R0 "/noGabest" $R1
   IfErrors +2
   StrCpy $noGabest 1
+!endif
 
   ClearErrors
   ${GetOptions} $R0 "/noDesktopSC" $R1
@@ -830,10 +848,12 @@ Function .onInit
   ; reads components status for registry
   ${MementoSectionRestore}
 
+!ifndef HEISE_BUILD
   ; update the component status -> commandline parameters have higher priority than registry values
   ${If} $noGabest = 1
     !insertmacro UnselectSection ${SecGabest}
   ${EndIf}
+!endif
 
   ; check if old mp 0.2.2 is installed
   ${If} ${MP022IsInstalled}
@@ -989,6 +1009,8 @@ FunctionEnd
 #---------------------------------------------------------------------------
 # SECTION DECRIPTIONS     must be at the end
 #---------------------------------------------------------------------------
+!ifndef HEISE_BUILD
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SecGabest}  $(DESC_SecGabest)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
+!endif
