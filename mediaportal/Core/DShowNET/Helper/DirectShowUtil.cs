@@ -91,7 +91,56 @@ namespace DShowNET.Helper
     {
       try
       {
+        IPin pinOut = null;
+        IBaseFilter NewFilter = null;
+        IEnumFilters enumFilters;
+        HResult hr = new HResult(graphBuilder.EnumFilters(out enumFilters));
+        Log.Info("DirectShowUtils: First try to insert new audio renderer {0} ", strFilterName);
+        // next add the new one...
+        foreach (Filter filter in Filters.AudioRenderers)
+        {
+          if (String.Compare(filter.Name, strFilterName, true) == 0)
+          {
+            Log.Info("DirectShowUtils: Found audio renderer");
+            NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
+            hr.Set(graphBuilder.AddFilter(NewFilter, strFilterName));
+            if (hr < 0)
+            {
+              Log.Error("DirectShowUtils: unable to add filter:{0} to graph", strFilterName);
+              NewFilter = null;
+            }
+            else
+            {
+              Log.Debug("DirectShowUtils: added filter:{0} to graph", strFilterName);
+              if (pinOut != null)
+              {
+                hr.Set(graphBuilder.Render(pinOut));
+                if (hr == 0) 
+                  Log.Info(" pinout rendererd");
+                else 
+                  Log.Error(" failed: pinout render");
+              }
+              if (setAsReferenceClock)
+              {
+                hr.Set((graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock));
+                Log.Debug("setAsReferenceClock sync source " + hr.ToDXString());
+              }
+              return NewFilter;
+            }
+          }//if (String.Compare(filter.Name,strFilterName,true) ==0)
+        }//foreach (Filter filter in filters.AudioRenderers)
+        if (NewFilter == null)
+        {
+          Log.Error("DirectShowUtils: failed filter {0} not found", strFilterName);
+        }
+      }
+      catch
+      {
+      }
+      Log.Info("DirectShowUtils: First try to insert new audio renderer {0} failed ", strFilterName);
 
+      try
+      {
         IPin pinOut = null;
         IBaseFilter NewFilter = null;
         Log.Info("add filter:{0} to graph clock:{1}", strFilterName, setAsReferenceClock);
