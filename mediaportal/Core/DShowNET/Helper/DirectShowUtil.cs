@@ -800,8 +800,17 @@ namespace DShowNET.Helper
                   }
                   else
                   {
-                    Log.Error("  render {0} failed:{1:x}", pinInfo.name, hr);
-                    bAllConnected = false;
+                    Log.Error(" render {0} failed:{1:x}, trying alternative graph builder", pinInfo.name, hr);
+
+                    if ((hr = graphBuilder.Render(pins[0])) == 0)
+                    {
+                      Log.Info(" render ok");
+                    }
+                    else
+                    {
+                      Log.Error(" render failed:{0:x}", hr);
+                      bAllConnected = false;
+                    }
                   }
                   pinsRendered++;
                 }
