@@ -103,15 +103,7 @@ namespace TvService
     /// </summary>
     public TVController()
     {
-      if (Init() == false)
-      {
-        System.Threading.Thread.Sleep(5000);
-        if (Init() == false)
-        {
-          System.Threading.Thread.Sleep(5000);
-          Init();
-        }
-      }
+      Init();
     }
 
     public Dictionary<int, ITvCardHandler> CardCollection
@@ -241,13 +233,44 @@ namespace TvService
       _cards[user.CardId].Users.Unlock(user);
     }
 
+    private bool Init()
+    {
+      Log.Info("Controller: Initilizing TVServer");
+      bool result = false;
+
+      for (int i = 0 ; i < 5 && !result ; i++)
+      {
+        if (i != 0)
+        {
+          //Fresh start
+          try
+          {
+            DeInit();
+          }
+          catch (Exception) { }
+
+          System.Threading.Thread.Sleep(3000);
+        }
+        Log.Info("Controller: {0} init attempt", (i + 1));
+        result = InitController();
+      }
+
+      if (result)
+        Log.Info("Controller: TVServer initilized okay");
+      else
+        Log.Info("Controller: Failed to initilize TVServer");
+
+      return result;
+    }
+
+
     /// <summary>
     /// Initalizes the controller.
     /// It will update the database with the cards found on this system
     /// start the epg grabber and scheduler
     /// and check if its supposed to be a master or slave controller
     /// </summary>
-    bool Init()
+    bool InitController()
     {
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {
@@ -261,7 +284,7 @@ namespace TvService
         //  Thread.CurrentThread.Name = "TVController";
 
         //load the database connection string from the config file
-        Log.WriteFile(@"{0}\gentle.config", Log.GetPathName());
+        Log.Info(@"{0}\gentle.config", Log.GetPathName());
         string connectionString, provider;
         GetDatabaseConnectionString(out connectionString, out provider);
         string ConnectionLog = connectionString.Remove(connectionString.IndexOf(@"Password=") + 8);
@@ -274,13 +297,14 @@ namespace TvService
 
         _plugins = new PluginLoader();
         _plugins.Load();
+        Log.Info("Controller: plugins loaded");
 
         //log all local ip adresses, usefull for debugging problems
-        Log.Write("Controller: Started at {0}", Dns.GetHostName());
+        Log.Write("Controller: started at {0}", Dns.GetHostName());
         IPHostEntry local = Dns.GetHostEntry(Dns.GetHostName());
         foreach (IPAddress ipaddress in local.AddressList)
         {
-          Log.Write("Controller: local ip adress:{0}", ipaddress.ToString());
+          Log.Info("Controller: local ip adress:{0}", ipaddress.ToString());
         }
 
         //get all registered servers from the database
@@ -291,9 +315,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Error("!!!Controller:Unable to connect to database!!!");
-          Log.Error("Controller: database connection string:{0}", Utils.BlurConnectionStringPassword(Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString));
-          Log.Error("Sql error:{0}", Utils.BlurConnectionStringPassword(ex.Message));
+          Log.Error("Controller: Failed to fetch tv servers from database - {0}", Utils.BlurConnectionStringPassword(ex.Message));
           return false;
         }
 
@@ -302,30 +324,29 @@ namespace TvService
         {
           if (IsLocal(server.HostName))
           {
-            Log.WriteFile("Controller: server running on {0}", server.HostName);
+            Log.Info("Controller: server running on {0}", server.HostName);
             _ourServer = server;
             break;
           }
         }
 
-        //we dont exists yet?
+        //we do not exist yet?
         if (_ourServer == null)
         {
-          //then add ourselfs to the server
+          //then add ourself to the server
           if (servers.Count == 0)
           {
-            //there are no other servers
-            //so we are the master one.
-            Log.WriteFile("Controller: create new server in database");
+            //there are no other servers so we are the master one.
+            Log.Info("Controller: create new server in database");
             _ourServer = new Server(false, Dns.GetHostName());
             _ourServer.IsMaster = true;
             _isMaster = true;
             _ourServer.Persist();
-            Log.WriteFile("Controller: new server created for {0} master:{1} ", Dns.GetHostName(), _isMaster);
+            Log.Info("Controller: new server created for {0} master:{1} ", Dns.GetHostName(), _isMaster);
           }
           else
           {
-            Log.WriteFile("Controller: sorry, master/slave server setups are not supported. Since there is already another server in the db, we exit here.");
+            Log.Error("Controller: sorry, master/slave server setups are not supported. Since there is already another server in the db, we exit here.");
             return false;
           }
 
@@ -350,7 +371,7 @@ namespace TvService
           if (!found)
           {
             // card is not yet in the database, so add it
-            Log.WriteFile("Controller: add card:{0}", _localCardCollection.Cards[i].Name);
+            Log.Info("Controller: add card:{0}", _localCardCollection.Cards[i].Name);
             layer.AddCard(_localCardCollection.Cards[i].Name, _localCardCollection.Cards[i].DevicePath, _ourServer);
           }
         }
@@ -373,7 +394,7 @@ namespace TvService
             }
             if (!found)
             {
-              Log.WriteFile("Controller: card not found :{0}", dbsCard.Name);
+              Log.Info("Controller: card not found :{0}", dbsCard.Name);
 
               for (int i = 0 ; i < _localCardCollection.Cards.Count ; ++i)
               {
@@ -405,7 +426,7 @@ namespace TvService
           }
         }
 
-        Log.WriteFile("Controller: setup hybrid cards");
+        Log.Info("Controller: setup hybrid cards");
         IList cardgroups = CardGroup.ListAll();
         foreach (CardGroup group in cardgroups)
         {
@@ -440,23 +461,27 @@ namespace TvService
 
             foreach (string file in files)
             {
-              FileInfo fInfo = new FileInfo(file);
-              bool delFile = (fInfo.Extension.ToLower().IndexOf(".tsbuffer") == 0);
-
-              if (!delFile)
+              try
               {
-                delFile = (fInfo.Extension.ToLower().IndexOf(".ts") == 0) && (fInfo.Name.ToLower().IndexOf("tsbuffer") > 0);
+                FileInfo fInfo = new FileInfo(file);
+                bool delFile = (fInfo.Extension.ToLower().IndexOf(".tsbuffer") == 0);
+
+                if (!delFile)
+                {
+                  delFile = (fInfo.Extension.ToLower().IndexOf(".ts") == 0) && (fInfo.Name.ToLower().IndexOf("tsbuffer") > 0);
+                }
+                if (delFile) File.Delete(fInfo.FullName);
               }
-              if (delFile) File.Delete(fInfo.FullName);
+              catch (IOException) { }
             }
           }
-          catch (Exception)
+          catch (Exception exd)
           {
-            //ignore any errors encountered
+            Log.Info("Controller: Error cleaning old ts buffer - {0}", exd.Message);
           }
         }
 
-        Log.WriteFile("Controller: setup streaming");
+        Log.Info("Controller: setup streaming");
         _streamer = new RtspStreaming(_ourServer.HostName);
 
         if (_isMaster)
@@ -475,7 +500,7 @@ namespace TvService
             Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
             if (setting.Value == "true")
             {
-              Log.Info("Plugin:{0} started", plugin.Name);
+              Log.Info("Plugin: {0} started", plugin.Name);
               try
               {
                 plugin.Start(this);
@@ -483,13 +508,13 @@ namespace TvService
               }
               catch (Exception ex)
               {
-                Log.Info("Plugin:{0} failed to start", plugin.Name);
+                Log.Info("Plugin: {0} failed to start", plugin.Name);
                 Log.Write(ex);
               }
             }
             else
             {
-              Log.Info("Plugin:{0} disabled", plugin.Name);
+              Log.Info("Plugin: {0} disabled", plugin.Name);
             }
           }
         }
@@ -499,14 +524,14 @@ namespace TvService
         {
           if (plugin is ITvServerPluginStartedAll)
           {
-            Log.Info("Plugin:{0} started all", plugin.Name);
+            Log.Info("Plugin: {0} started all", plugin.Name);
             try
             {
               (plugin as ITvServerPluginStartedAll).StartedAll();
             }
             catch (Exception ex)
             {
-              Log.Info("Plugin:{0} failed to startedAll", plugin.Name);
+              Log.Info("Plugin: {0} failed to startedAll", plugin.Name);
               Log.Write(ex);
             }
           }
@@ -514,7 +539,7 @@ namespace TvService
 
         // setup heartbeat monitoring thread.
         // useful for kicking idle/dead clients.
-        Log.WriteFile("Controller: setup HeartBeat Monitor");
+        Log.Info("Controller: setup HeartBeat Monitor");
 
         //stop thread, just incase it is running.
         if (heartBeatMonitorThread != null)
@@ -534,16 +559,18 @@ namespace TvService
         Log.Write(ex);
         return false;
       }
-      Log.WriteFile("Controller: initalized");
+      Log.Info("Controller: initalized");
       return true;
     }
     #endregion
 
     #region MarshalByRefObject overrides
+
     public override object InitializeLifetimeService()
     {
       return null;
     }
+
     #endregion
 
     #region IDisposable Members
@@ -569,7 +596,11 @@ namespace TvService
           if (heartBeatMonitorThread.IsAlive)
           {
             Log.Info("Controller: HeartBeat monitor stopped...");
-            heartBeatMonitorThread.Abort();
+            try
+            {
+              heartBeatMonitorThread.Abort();
+            }
+            catch (Exception) { }
           }
         }
 
@@ -583,8 +614,7 @@ namespace TvService
             }
             catch (Exception ex)
             {
-              Log.Error("Controller: plugin:{0} failed to stop...", plugin.Name);
-              Log.Write(ex);
+              Log.Error("Controller: plugin: {0} failed to stop - {1}", plugin.Name, ex.Message);
             }
           }
           _pluginsStarted = new List<ITvServerPlugin>();
@@ -592,26 +622,26 @@ namespace TvService
         //stop the RTSP streamer server
         if (_streamer != null)
         {
-          Log.WriteFile("Controller: stop streamer...");
+          Log.Info("Controller: stop streamer...");
           _streamer.Stop();
           _streamer = null;
-          Log.WriteFile("Controller: streamer stopped...");
+          Log.Info("Controller: streamer stopped...");
         }
         //stop the recording scheduler
         if (_scheduler != null)
         {
-          Log.WriteFile("Controller: stop scheduler...");
+          Log.Info("Controller: stop scheduler...");
           _scheduler.Stop();
           _scheduler = null;
-          Log.WriteFile("Controller: scheduler stopped...");
+          Log.Info("Controller: scheduler stopped...");
         }
         //stop the epg grabber
         if (_epgGrabber != null)
         {
-          Log.WriteFile("Controller: stop epg grabber...");
+          Log.Info("Controller: stop epg grabber...");
           _epgGrabber.Stop();
           _epgGrabber = null;
-          Log.WriteFile("Controller: epg stopped...");
+          Log.Info("Controller: epg stopped...");
         }
 
         //clean up the tv cards
@@ -625,8 +655,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Error("TvController:Deinit() failed");
-        Log.Write(ex);
+        Log.Error("TvController: Deinit failed - {0}", ex.Message);
       }
     }
 
@@ -1646,7 +1675,7 @@ namespace TvService
             RtspStream stream = new RtspStream(streamName, recording.FileName, recording.Title);
             _streamer.AddStream(stream);
             string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
-            Log.WriteFile("Controller: streaming url:{0} file:{1}", url, recording.FileName);
+            Log.Info("Controller: streaming url:{0} file:{1}", url, recording.FileName);
             return url;
           }
         }
@@ -1674,7 +1703,7 @@ namespace TvService
         RtspStream stream = new RtspStream(streamName, fileName, streamName);
         _streamer.AddStream(stream);
         string url = String.Format("rtsp://{0}/{1}", _ourServer.HostName, streamName);
-        Log.WriteFile("Controller: streaming url:{0} file:{1}", url, fileName);
+        Log.Info("Controller: streaming url:{0} file:{1}", url, fileName);
         return url;
       }
       return "";
@@ -1684,6 +1713,7 @@ namespace TvService
     #endregion
 
     #region public interface
+
     /// <summary>
     /// Frees all resources occupied by the TV cards
     /// </summary>
@@ -1693,7 +1723,7 @@ namespace TvService
       while (enumerator.MoveNext())
       {
         KeyValuePair<int, ITvCardHandler> key = enumerator.Current;
-        Log.WriteFile("Controller:  dispose card:{0}", key.Value.CardName);
+        Log.Info("Controller: dispose card:{0}", key.Value.CardName);
         try
         {
           key.Value.Dispose();
@@ -2053,15 +2083,9 @@ namespace TvService
       try
       {
         DeInit();
-        if (Init() == false)
-        {
-          System.Threading.Thread.Sleep(5000);
-          if (Init() == false)
-          {
-            System.Threading.Thread.Sleep(5000);
-            Init();
-          }
-        }
+        //Give it a few secounds.
+        Thread.Sleep(5000);
+        Init();
       }
       catch (Exception ex)
       {
@@ -2118,7 +2142,7 @@ namespace TvService
         string fname = String.Format(@"{0}\gentle.config", Log.GetPathName());
         try
         {
-          System.IO.File.Copy(fname, "gentle.config", true);
+          File.Copy(fname, "gentle.config", true);
         }
         catch (Exception ex1)
         {
@@ -2127,6 +2151,8 @@ namespace TvService
         Gentle.Framework.ProviderFactory.ResetGentle(true);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
         DeInit();
+        //Give it a few seconds.
+        Thread.Sleep(3000);
         Init();
       }
       catch (Exception ex)
@@ -2412,7 +2438,8 @@ namespace TvService
     {
       if (ValidateTvControllerParams(cardId)) return false;
       IQuality qualityControl = _cards[cardId].Card.Quality;
-      if(qualityControl!=null){
+      if (qualityControl != null)
+      {
         return qualityControl.SupportsPeakBitRateMode();
       }
       return false;
@@ -2428,7 +2455,8 @@ namespace TvService
     {
       if (ValidateTvControllerParams(cardId)) return false;
       IQuality qualityControl = _cards[cardId].Card.Quality;
-      if(qualityControl!=null){
+      if (qualityControl != null)
+      {
         return qualityControl.SupportsBitRate();
       }
       return false;
@@ -2440,7 +2468,7 @@ namespace TvService
     /// <param name="cardId">Unique id of the card</param>
     public void ReloadQualityControlConfigration(int cardId)
     {
-      if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId)) return ;
+      if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId)) return;
       _cards[cardId].Card.ReloadQualityControlConfiguration();
     }
 
@@ -2452,11 +2480,9 @@ namespace TvService
 
     private void HeartBeatMonitor()
     {
-      Log.Write("Controller:   Heartbeat Monitor initiated; max timeout allowed is {0} sec.", HEARTBEAT_MAX_SECS_EXCEED_ALLOWED);
+      Log.Info("Controller: Heartbeat Monitor initiated, max timeout allowed is {0} sec.", HEARTBEAT_MAX_SECS_EXCEED_ALLOWED);
       while (true)
       {
-        //Log.Write("Controller:   Heartbeat Monitor ping");
-
         Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
 
         //for each card
@@ -2476,12 +2502,11 @@ namespace TvService
                 DateTime now = DateTime.Now;
                 TimeSpan ts = tmpUser.HeartBeat - now;
 
-                // more than 30 seconds have elapsed since last heartbeat was received.
-                // lets kick the client
+                // more than 30 seconds have elapsed since last heartbeat was received. lets kick the client
                 if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
                 {
-                  Log.Write("Controller:   Heartbeat Monitor (30+ sec. max idletime allowed)- kicking idle user {0}", tmpUser.Name);
-                  bool res = StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);
+                  Log.Write("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
+                  StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);
                 }
               }
             }
@@ -2573,7 +2598,7 @@ namespace TvService
         TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);
 
         RemoveUserFromOtherCards(user.CardId, user);
-        Log.Info("control1:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
+        Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId, user.SubChannel);
         return result;
       }
       finally
