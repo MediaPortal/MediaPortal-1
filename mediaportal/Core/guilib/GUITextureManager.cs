@@ -167,8 +167,7 @@ namespace MediaPortal.GUI.Library
         return newimage.FileName;
       }
 
-      if (!System.IO.File.Exists(fileName))
-      //if(!fileName.Contains("\\"))
+      if (!File.Exists(fileName))
       {
         if (fileName[1] != ':')
           return GUIGraphicsContext.Skin + @"\media\" + fileName;
@@ -265,13 +264,12 @@ namespace MediaPortal.GUI.Library
           }
         catch (Exception ex)
         {
-          Log.Error("TextureManager: exception loading texture {0}", fileName);
-          Log.Error(ex);
+          Log.Error("TextureManager: exception loading texture {0} - {1}", fileName, ex.Message);
         }
         return 0;
       }
 
-      if (System.IO.File.Exists(fileName))
+      if (File.Exists(fileName))
       {
         int width, height;
         Direct3D.Texture dxtexture = LoadGraphic(fileName, lColorKey, iMaxWidth, iMaxHeight, out width, out height);
@@ -290,9 +288,10 @@ namespace MediaPortal.GUI.Library
       }
       return 0;
     }
+
     public static int LoadFromMemory(System.Drawing.Image memoryImage, string name, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
-      Log.Info("load from memory:{0}", name);
+      Log.Info("TextureManager: load from memory: {0}", name);
       string cacheName = name;
       for (int i = 0; i < _cache.Count; ++i)
       {
@@ -342,8 +341,8 @@ namespace MediaPortal.GUI.Library
         memoryImage = null;
         _cache.Add(newCache);
 
-        Log.Info("TextureManager: added: memoryImage  " + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString()); return newCache.Frames;
-
+        Log.Info("TextureManager: added: memoryImage  " + " total: " + _cache.Count + " mem left: " + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+        return newCache.Frames;
       }
       catch (Exception ex)
       {
@@ -552,7 +551,7 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              Log.Error("TextureManage:GetImage({0}) ", fileName);
+              Log.Error("TextureManage: GetImage({0}) ", fileName);
               Log.Error(ex);
               return null;
             }
@@ -573,7 +572,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("TextureManage:GetImage({0})", fileName);
+        Log.Error("TextureManage: GetImage({0})", fileName);
         Log.Error(ex);
         return null;
       }
@@ -647,8 +646,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("TextureManage:ReleaseTexture({0})", fileName);
-        Log.Error(ex);
+        Log.Error("TextureManage: Error in ReleaseTexture({0}) - {1}", fileName, ex.Message);
       }
     }
 
@@ -667,7 +665,7 @@ namespace MediaPortal.GUI.Library
         {
           if (IsTemporary(cached.Name))
           {
-            //Log.Info("texturemanager:dispose:" + cached.Name + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+            Log.Debug("TextureManager: dispose: " + cached.Name + " total: " + _cache.Count + " mem left: " + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
             cached.Dispose();
           }
           else
@@ -680,8 +678,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("TextureManage:CleanupThumbs() ");
-        Log.Error(ex);
+        Log.Error("TextureManage: Error cleaning up Textures - {0}", ex.Message);
       }
     }
 
@@ -703,7 +700,7 @@ namespace MediaPortal.GUI.Library
 
       // Get fullpath and file name
       string fullFileName = fileName;
-      if (!System.IO.File.Exists(fileName))
+      if (!File.Exists(fileName))
       {
         if (fileName[1] != ':')
           fullFileName = GUIGraphicsContext.Skin + @"\media\" + fileName;

@@ -442,21 +442,6 @@ namespace MediaPortal.GUI.Music
           if (ImagePathContainer.Contains(ImagePath))
             return false;
 
-          //// check for placeholder
-          //int indexDel = 0;
-          //bool found = false;
-          //foreach (string pic in ImagePathContainer)
-          //{
-          //  indexDel++;
-          //  if (pic.IndexOf("missing_coverart.png") > 0)
-          //  {
-          //    found = true;
-          //    break;
-          //  }
-          //}
-          //if (found)
-          //  ImagePathContainer.RemoveAt(indexDel - 1);
-
           if (System.IO.File.Exists(ImagePath))
           {
             try
@@ -487,8 +472,7 @@ namespace MediaPortal.GUI.Music
         return;
 
       if (ImgCoverArt != null)
-      {
-        ImgCoverArt.FreeResources();
+      {        
         if (ImagePathContainer.Count > 0)
         {
           if (ImagePathContainer.Count > 1)
@@ -510,12 +494,13 @@ namespace MediaPortal.GUI.Music
           else
             ImgCoverArt.SetFileName(ImagePathContainer[0]);
         }
+        ImgCoverArt.FreeResources();
         ImgCoverArt.AllocResources();
       }
     }
 
     private void OnImageTimerTickEvent(object trash_, ElapsedEventArgs args_)
-    {
+    {      
       FlipPictures();
     }
 
@@ -1105,6 +1090,7 @@ namespace MediaPortal.GUI.Music
         }
 
         UpdateNextTrackInfo();
+        GUITextureManager.CleanupThumbs();
 
         _trackChanged = false;
       }

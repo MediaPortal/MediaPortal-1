@@ -794,6 +794,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private void OnLastFMSyncReceived(object trash, DateTime syncTime)
     {
       SetArtistThumb(string.Empty);
+      GUITextureManager.CleanupThumbs();
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", string.Empty);
 
@@ -1020,9 +1021,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", thumb);
 
       if (imgArtistArt != null)
-      {
-        imgArtistArt.FreeResources();
+      {        
         imgArtistArt.SetFileName(thumb);
+        imgArtistArt.FreeResources();
         imgArtistArt.AllocResources();
       }
     }

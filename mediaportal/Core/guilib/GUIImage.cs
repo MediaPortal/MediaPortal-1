@@ -226,6 +226,7 @@ namespace MediaPortal.GUI.Library
       }
       base.ScaleToScreenResolution();
     }
+
     /// <summary> 
     /// This function is called after all of the XmlSkinnable fields have been filled
     /// with appropriate data.
