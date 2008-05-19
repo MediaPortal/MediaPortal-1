@@ -81,6 +81,7 @@
   <satellite name="169.0°E Panamsat 2" url="http://joshyfun.peque.org/transponders/1690.ini"/>
   <satellite name="180.0°E Intelsat 701" url="http://joshyfun.peque.org/transponders/1800.ini"/>
   <satellite name="0.8°W Thor 2/3" url="http://en.kingofsat.net/dl.php?pos=0.8W"/>
+  <satellite name="0.8°W Thor 3/5" url=""/>
   <satellite name="1.0°W Intelsat 10-02/707" url="http://en.kingofsat.net/dl.php?pos=1.0W"/>
   <satellite name="4.0°W Amos 1/2" url="http://en.kingofsat.net/dl.php?pos=4.0W"/>
   <satellite name="5.0°W Atlantic Bird 3/Telecom 2C" url="http://en.kingofsat.net/dl.php?pos=5.0W"/>
