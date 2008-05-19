@@ -339,11 +339,12 @@ namespace MediaPortal.GUI.Library
 
     public const int PLUGIN_IS_ENABLED = 25000;
 
+    public const int CONTROL_HAS_TEXT = 29996;
     public const int CONTROL_HAS_THUMB = 29997;
     public const int CONTROL_IS_VISIBLE = 29998;
     public const int CONTROL_GROUP_HAS_FOCUS = 29999;
     public const int CONTROL_HAS_FOCUS = 30000;
-    public const int BUTTON_SCROLLER_HAS_ICON = 30001;    
+    public const int BUTTON_SCROLLER_HAS_ICON = 30001;
 
     // static string VERSION_STRING = "2.0.0";
 
@@ -393,7 +394,7 @@ namespace MediaPortal.GUI.Library
         // Have a boolean expression
         // Check if this was added before
 
-        for (int it = 0; it < m_CombinedValues.Count; it++)
+        for (int it = 0 ; it < m_CombinedValues.Count ; it++)
         {
           if (String.Compare(strCondition, m_CombinedValues[it].m_info, true) == 0)
             return m_CombinedValues[it].m_id;
@@ -785,6 +786,12 @@ namespace MediaPortal.GUI.Library
           if (controlID != 0)
             return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_HAS_THUMB : CONTROL_HAS_THUMB, controlID, 0));
         }
+        else if (strTest.Substring(0, 16) == "control.hastext(")
+        {
+          int controlID = Int32.Parse(strTest.Substring(16, strTest.Length - 17));
+          if (controlID != 0)
+            return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_HAS_TEXT : CONTROL_HAS_TEXT, controlID, 0));
+        }
       }
       else if (strCategory == "facadeview")
       {
@@ -820,7 +827,7 @@ namespace MediaPortal.GUI.Library
     static int AddMultiInfo(GUIInfo info)
     {
       // check to see if we have this info already
-      for (int i = 0; i < m_multiInfo.Count; i++)
+      for (int i = 0 ; i < m_multiInfo.Count ; i++)
         if (m_multiInfo[i] == info)
           return (int)i + MULTI_INFO_START;
       // return the new offset
@@ -831,7 +838,7 @@ namespace MediaPortal.GUI.Library
     static int ConditionalStringParameter(string parameter)
     {
       // check to see if we have this parameter already
-      for (int i = 0; i < m_stringParameters.Count; i++)
+      for (int i = 0 ; i < m_stringParameters.Count ; i++)
         if (parameter == m_stringParameters[i])
           return (int)i;
       // return the new offset
@@ -857,7 +864,7 @@ namespace MediaPortal.GUI.Library
 
       string operand = "";
 
-      for (int i = 0; i < expression.Length; i++)
+      for (int i = 0 ; i < expression.Length ; i++)
       {
         if (GetOperator(expression[i]) != 0)
         {
@@ -948,7 +955,7 @@ namespace MediaPortal.GUI.Library
       // stack to save our bool state as we go
       Stack<bool> save = new Stack<bool>();
 
-      for (int i = 0; i < expression.m_postfix.Count; ++i)
+      for (int i = 0 ; i < expression.m_postfix.Count ; ++i)
       {
         int expr = expression.m_postfix[i];
         if (expr == -OPERATOR_NOT)
@@ -1314,81 +1321,80 @@ namespace MediaPortal.GUI.Library
       switch (condition)
       {
         case SKIN_BOOL:
-          {
-            bReturn = SkinSettings.GetSkinBool(info.m_data1);
-          }
+          bReturn = SkinSettings.GetSkinBool(info.m_data1);
           break;
         case SKIN_STRING:
-          {
-            if (info.m_data2 != 0)
-              bReturn = SkinSettings.GetSkinString(info.m_data1).Equals(m_stringParameters[info.m_data2]);
-            else
-              bReturn = (SkinSettings.GetSkinString(info.m_data1).Length != 0);
-          }
+          if (info.m_data2 != 0)
+            bReturn = SkinSettings.GetSkinString(info.m_data1).Equals(m_stringParameters[info.m_data2]);
+          else
+            bReturn = (SkinSettings.GetSkinString(info.m_data1).Length != 0);
+
           break;
         case CONTROL_GROUP_HAS_FOCUS:
-          {
-            //GUIWindow pWindow = GUIWindowManager.GetWindow(dwContextWindow);
-            //if (null==pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            //if (pWindow!=null) 
-            //  bReturn = pWindow.ControlGroupHasFocus(info.m_data1, info.m_data2);
-            bReturn = false;
-          }
+          //GUIWindow pWindow = GUIWindowManager.GetWindow(dwContextWindow);
+          //if (null==pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+          //if (pWindow!=null) 
+          //  bReturn = pWindow.ControlGroupHasFocus(info.m_data1, info.m_data2);
+          bReturn = false;
+
           break;
         case PLUGIN_IS_ENABLED:
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+            bReturn = xmlreader.GetValueAsBool("plugins", info.m_stringData, false);
+          break;
+        case CONTROL_HAS_TEXT:
+          GUIWindow pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+          if (pWindow != null)
           {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
-              bReturn = xmlreader.GetValueAsBool("plugins", info.m_stringData, false);
+            // Note: This'll only work for unique id's
+            GUILabelControl control = pWindow.GetControl(info.m_data1) as GUILabelControl;
+            if (control != null)
+              bReturn = (control.TextWidth > 0);
+            else
+            {
+              GUIFadeLabel control2 = pWindow.GetControl(info.m_data1) as GUIFadeLabel;
+              if (control2 != null)
+                bReturn = control2.HasText;
+            }
           }
           break;
         case CONTROL_HAS_THUMB:
+          GUIWindow tWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+          if (tWindow != null)
           {
-            GUIWindow pWindow = null;// GUIWindowManager.GetWindow(dwContextWindow);
-            if (null == pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            if (pWindow != null)
-            {
-              // Note: This'll only work for unique id's
-              GUIImage control = pWindow.GetControl(info.m_data1) as GUIImage;
-              if (control != null)
-                bReturn = (control.TextureHeight > 0 && control.TextureWidth > 0);
-            }
+            // Note: This'll only work for unique id's
+            GUIImage control = tWindow.GetControl(info.m_data1) as GUIImage;
+            if (control != null)
+              bReturn = (control.TextureHeight > 0 && control.TextureWidth > 0);
           }
           break;
         case CONTROL_IS_VISIBLE:
+          GUIWindow vWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+          if (vWindow != null)
           {
-            GUIWindow pWindow = null;// GUIWindowManager.GetWindow(dwContextWindow);
-            if (null == pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            if (pWindow != null)
-            {
-              // Note: This'll only work for unique id's
-              GUIControl control = pWindow.GetControl(info.m_data1);
-              if (control != null)
-                bReturn = control.Visible;
-            }
+            // Note: This'll only work for unique id's
+            GUIControl control = vWindow.GetControl(info.m_data1);
+            if (control != null)
+              bReturn = control.Visible;
           }
           break;
         case CONTROL_HAS_FOCUS:
-          {
-            GUIWindow pWindow = null;// GUIWindowManager.GetWindow(dwContextWindow);
-            if (null == pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            if (pWindow != null)
-              bReturn = (pWindow.GetFocusControlId() == info.m_data1);
-          }
+          GUIWindow fWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+          if (fWindow != null)
+            bReturn = (fWindow.GetFocusControlId() == info.m_data1);
           break;
         case BUTTON_SCROLLER_HAS_ICON:
+          /*
+          GUIWindow pWindow = GUIWindowManager.GetWindow(dwContextWindow);
+          if (null==pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+          if (pWindow!=null)
           {
-            /*
-            GUIWindow pWindow = GUIWindowManager.GetWindow(dwContextWindow);
-            if (null==pWindow) pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-            if (pWindow!=null)
-            {
-              GUIControl *pControl = (GUIControl *)pWindow.GetControl(pWindow.GetFocusedControl());
-              if (pControl && pControl.GetControlType() == GUIControl::GUIControl_BUTTONBAR)
-                bReturn = ((CGUIButtonScroller *)pControl).GetActiveButtonID() == info.m_data1;
-            }
-             */
-            return false;
+            GUIControl *pControl = (GUIControl *)pWindow.GetControl(pWindow.GetFocusedControl());
+            if (pControl && pControl.GetControlType() == GUIControl::GUIControl_BUTTONBAR)
+              bReturn = ((CGUIButtonScroller *)pControl).GetActiveButtonID() == info.m_data1;
           }
+           */
+          return false;
         case WINDOW_NEXT:
           bReturn = (info.m_data1 == m_nextWindowID);
           break;
@@ -1441,7 +1447,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    
+
     /// \brief Obtains the filename of the image to show from whichever subsystem is needed
     public static string GetImage(int info, uint contextWindow)
     {

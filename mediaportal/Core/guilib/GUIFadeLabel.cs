@@ -609,6 +609,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public bool HasText
+    {
+      get { return _listLabels.Count > 0; }
+    }
+
     string GetShortenedText(string strLabel, int iMaxWidth, ref float fw)
     {
       if (strLabel == null) return string.Empty;

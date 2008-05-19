@@ -35,14 +35,10 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUILabelControl : GUIControl
   {
-    [XMLSkinElement("font")]
-    protected string _fontName = "";
-    [XMLSkinElement("label")]
-    protected string _labelText = "";
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("align")]
-    Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("font")]       protected string _fontName = "";
+    [XMLSkinElement("label")]      protected string _labelText = "";
+    [XMLSkinElement("textcolor")]  protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("align")]      Alignment _textAlignment = Alignment.ALIGN_LEFT;
 
     string _cachedTextLabel = "";
     bool _containsProperty = false;
