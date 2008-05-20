@@ -211,6 +211,11 @@ namespace MediaPortal
       /* Do Nothing */
     }
 
+    protected virtual void OnDeviceLost(System.Object sender, System.EventArgs e)
+    {
+      /* Do Nothing */
+    }
+
     protected virtual void OnDeviceReset(Object sender, EventArgs e)
     {
       /* Do Nothing */
@@ -231,7 +236,6 @@ namespace MediaPortal
       /* Do Nothing */
     }
 
-    //protected virtual void OnDeviceLost(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
     //protected virtual void OnDeviceDisposing(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
 
     protected virtual void OnStartup()
@@ -797,7 +801,8 @@ namespace MediaPortal
         return;
 
       // Temporary remove the handler
-      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
+      GUIGraphicsContext.DX9Device.DeviceLost -= new EventHandler(this.OnDeviceLost);
+      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);      
 
       if (bWindowed)
         Log.Debug("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
@@ -832,6 +837,7 @@ namespace MediaPortal
 
       }
       GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
+      GUIGraphicsContext.DX9Device.DeviceLost += new EventHandler(this.OnDeviceLost);
 
       if (windowed)
         TopMost = alwaysOnTop;
@@ -961,7 +967,7 @@ namespace MediaPortal
         }
 
         // Setup the event handlers for our device
-        //GUIGraphicsContext.DX9Device.DeviceLost += new System.EventHandler(this.OnDeviceLost);
+        GUIGraphicsContext.DX9Device.DeviceLost += new System.EventHandler(this.OnDeviceLost);
         GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
         //GUIGraphicsContext.DX9Device.Disposing += new System.EventHandler(this.OnDeviceDisposing);
         //GUIGraphicsContext.DX9Device.DeviceResizing += new System.ComponentModel.CancelEventHandler(this.EnvironmentResized);
@@ -1309,10 +1315,9 @@ namespace MediaPortal
         //Debugger.Launch();
         try
         {
-          //Log.Debug("d3dapp: RecoverDevice called");
+          Log.Debug("d3dapp: RecoverDevice called");
           // Test the cooperative level to see if it's okay to render
           GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-
         }
         catch (DeviceLostException)
         {
@@ -1321,8 +1326,7 @@ namespace MediaPortal
           isWindowActive = false;
           Log.Debug("d3dapp: DeviceLostException");
 
-          return;
-          //m_bNeedReset = true;
+          return;          
         }
         catch (DeviceNotResetException)
         {
@@ -1330,30 +1334,40 @@ namespace MediaPortal
           m_bNeedReset = true;
         }
         if (m_bNeedReset)
-        {
-          m_bNeedReset = false;
+        {          
           // Check if the device needs to be resized.
 
           // If we are windowed, read the desktop mode and use the same format for
           // the back buffer
           //Log.Info("app.TestCooperativeLevel()->app.DeviceNotResetException");
-          if (windowed)
-          {
-            Log.Debug("d3dapp: Windowed while need reset");
-            GraphicsAdapterInfo adapterInfo = graphicsSettings.AdapterInfo;
-            graphicsSettings.WindowedDisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
-            presentParams.BackBufferFormat = graphicsSettings.WindowedDisplayMode.Format;
-          }
+          //if (windowed)
+          //{
+          //  Log.Debug("d3dapp: Windowed while need reset");
+          //  GraphicsAdapterInfo adapterInfo = graphicsSettings.AdapterInfo;
+          //  graphicsSettings.WindowedDisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
+          //  presentParams.BackBufferFormat = graphicsSettings.WindowedDisplayMode.Format;
+          //}
+
+          BuildPresentParamsFromSettings(windowed);
 
           // Reset the device and resize it
           Log.Warn("d3dapp: Resetting DX9 device");
           try
           {
+            // For Bav: reset fails with invalid call if we do not clean up all resources
+            GUITextureManager.CleanupThumbs();
+            GUITextureManager.Dispose();
+            GUIFontManager.Dispose();
+
+            GUIGraphicsContext.DX9Device.EvictManagedResources();
+
             GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+            m_bNeedReset = false;
           }
           catch (Exception ex)
           {
-            Log.Error(ex);
+            Log.Error("d3dapp: Reset failed - {0},{1}", ex.Message, ex.ToString());
+            return;
           }
 
           Log.Debug("d3dapp: EnvironmentResized()");
@@ -1851,9 +1865,7 @@ namespace MediaPortal
           Win32API.EnableStartBar(false);
           Win32API.ShowStartBar(false);
         }
-        // Disable DeviceReset event handler, so it's not called when we resize
-        // (Event handler is reinstated in SwitchFullScreenOrWindowed)
-        GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
+
         this.FormBorderStyle = FormBorderStyle.None;
         this.MaximizeBox = false;
         this.MinimizeBox = false;

@@ -1492,6 +1492,12 @@ public class MediaPortalApp : D3DApp, IRender
     WorkingSet.Minimize();
   }
 
+  protected override void OnDeviceLost(object sender, EventArgs e)
+  {
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+    base.OnDeviceLost(sender, e);
+  }
+
   /// <summary>
   /// The device exists, but may have just been Reset().  Resources in
   /// Pool.Managed and any other device state that persists during
@@ -1583,7 +1589,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       catch (DeviceLostException ex)
       {
-        Log.Error(ex);
+        Log.Error("Main: Device lost - {0}", ex.ToString());
         //Log.Info("device lost exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);//remove
         g_Player.Stop();
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
