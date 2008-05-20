@@ -824,6 +824,8 @@ namespace MediaPortal.Player
         Log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
           width, height, arWidth, arHeight, _surfaceAdress, InRepaint, _debugStep,
           ex.Message, ex.Source, ex.StackTrace);
+        Log.Error(ex);
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
       }
       finally
       {

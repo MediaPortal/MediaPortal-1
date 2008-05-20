@@ -1351,7 +1351,10 @@ namespace MediaPortal
           {
             GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
           }
-          catch { }
+          catch (Exception ex)
+          {
+            Log.Error(ex);
+          }
 
           Log.Debug("d3dapp: EnvironmentResized()");
           EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());

@@ -1623,6 +1623,10 @@ public class MediaPortalApp : D3DApp, IRender
       if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
       {
         GUIGraphicsContext.IsFullScreenVideo = true;
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+        {
+          RecoverDevice();
+        }
       }
       GUIGraphicsContext.IsPlaying = true;
       GUIGraphicsContext.IsPlayingVideo = (g_Player.IsVideo || g_Player.IsTV);
