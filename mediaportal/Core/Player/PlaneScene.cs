@@ -541,8 +541,9 @@ namespace MediaPortal.Player
         InternalPresentImage(width, height, arWidth, arHeight, false);
         //			Log.Info("vmr9:present image() done");
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("Planescene: Error in PresentImage - {0}", ex.ToString());
       }
       return 0;
     }
@@ -600,9 +601,10 @@ namespace MediaPortal.Player
         }
         _vmr9Util.FrameCounter++;
         InternalPresentSurface(width, height, arWidth, arHeight, false);
-      }
-      catch (Exception)
+      }      
+      catch (Exception ex)
       {
+        Log.Error("Planescene: Error in PresentSurface - {0}", ex.ToString());
       }
       return 0;
     }
@@ -699,6 +701,11 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.EndScene();
         GUIGraphicsContext.DX9Device.Present();
         _debugStep = 20;
+      }
+      catch (DeviceLostException)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+        Log.Warn("Planescene caught DeviceLostException in InternalPresentImage");
       }
       catch (Exception ex)
       {
@@ -819,13 +826,17 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.Present();
         _debugStep = 17;
       }
+      catch (DeviceLostException)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+        Log.Warn("Planescene caught DeviceLostException in InternalPresentSurface");
+      }
       catch (Exception ex)
       {
         Log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
           width, height, arWidth, arHeight, _surfaceAdress, InRepaint, _debugStep,
           ex.Message, ex.Source, ex.StackTrace);
-        Log.Error(ex);
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+        Log.Error(ex.ToString());        
       }
       finally
       {

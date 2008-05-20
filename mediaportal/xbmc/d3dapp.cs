@@ -1359,14 +1359,14 @@ namespace MediaPortal
             GUITextureManager.Dispose();
             GUIFontManager.Dispose();
 
-            GUIGraphicsContext.DX9Device.EvictManagedResources();
+            // GUIGraphicsContext.DX9Device.EvictManagedResources();
 
             GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
             m_bNeedReset = false;
           }
           catch (Exception ex)
           {
-            Log.Error("d3dapp: Reset failed - {0},{1}", ex.Message, ex.ToString());
+            Log.Error("d3dapp: Reset failed - {0}/{1}", ex.Message, ex.InnerException.ToString());
             return;
           }
 

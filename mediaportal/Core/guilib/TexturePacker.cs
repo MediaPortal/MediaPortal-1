@@ -303,9 +303,17 @@ namespace MediaPortal.GUI.Library
       */
       //Determine maximum texture dimensions
       //We limit the max resolution to 2048x2048
-      Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
-      int iMaxWidth = d3dcaps.MaxTextureWidth;
-      int iMaxHeight = d3dcaps.MaxTextureHeight;
+
+      int iMaxWidth = 1920;
+      int iMaxHeight = 1080;
+      try
+      {
+        Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
+        iMaxWidth = d3dcaps.MaxTextureWidth;
+        iMaxHeight = d3dcaps.MaxTextureHeight;
+      }
+      catch (Exception) { }
+
       if (iMaxWidth > 2048) iMaxWidth = 2048;
       if (iMaxHeight > 2048) iMaxHeight = 2048;
 

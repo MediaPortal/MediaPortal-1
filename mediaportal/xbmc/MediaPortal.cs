@@ -1494,6 +1494,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void OnDeviceLost(object sender, EventArgs e)
   {
+    Log.Warn("Main: ***** OnDeviceLost *****");
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
     base.OnDeviceLost(sender, e);
   }
