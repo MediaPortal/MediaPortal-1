@@ -83,8 +83,8 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>640</posX>
-      <posY>648</posY>
+      <posX>415</posX>
+      <posY>500</posY>
       <texture>rec.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
