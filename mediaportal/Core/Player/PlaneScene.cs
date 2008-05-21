@@ -619,6 +619,10 @@ namespace MediaPortal.Player
         Log.Error("PlaneScene: re-entrancy in presentimage");
         return;
       }
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+      {
+        return;
+      }
       try
       {
         //Direct3D.Surface backBuffer=null;
@@ -709,9 +713,10 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
-          width, height, arWidth, arHeight, _textureAddress, isRepaint, _debugStep,
-          ex.Message, ex.Source, ex.StackTrace);
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+        Log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in:",
+                  width, height, arWidth, arHeight, _textureAddress, isRepaint, _debugStep);
+        Log.Error(ex);
       }
       finally
       {
@@ -729,6 +734,10 @@ namespace MediaPortal.Player
       if (_reEntrant)
       {
         Log.Error("PlaneScene: re-entrancy in PresentSurface");
+        return;
+      }
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+      {
         return;
       }
       try
@@ -829,14 +838,14 @@ namespace MediaPortal.Player
       catch (DeviceLostException)
       {
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-        Log.Warn("Planescene caught DeviceLostException in InternalPresentSurface");
+        Log.Warn("Planescene.InternalPresentSurface caught DeviceLostException in InternalPresentSurface");
       }
       catch (Exception ex)
       {
-        Log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
-          width, height, arWidth, arHeight, _surfaceAdress, InRepaint, _debugStep,
-          ex.Message, ex.Source, ex.StackTrace);
-        Log.Error(ex.ToString());        
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+        Log.Error("Planescene.InternalPresentSurface({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in",
+                  width, height, arWidth, arHeight, _surfaceAdress, InRepaint, _debugStep);
+        Log.Error(ex);
       }
       finally
       {

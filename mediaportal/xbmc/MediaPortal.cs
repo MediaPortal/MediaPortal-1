@@ -1556,6 +1556,10 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Error("Main: MediaPortal.Render() called while VMR9 active");
       return;
     }
+    if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+    {
+      return;
+    } 
     try
     {
       reentrant = true;
@@ -1591,7 +1595,6 @@ public class MediaPortalApp : D3DApp, IRender
       catch (DeviceLostException ex)
       {
         Log.Error("Main: Device lost - {0}", ex.ToString());
-        //Log.Info("device lost exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);//remove
         g_Player.Stop();
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
       }
@@ -1632,6 +1635,7 @@ public class MediaPortalApp : D3DApp, IRender
         GUIGraphicsContext.IsFullScreenVideo = true;
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
         {
+          if (GUIGraphicsContext.Fullscreen) g_Player.Stop();
           RecoverDevice();
         }
       }

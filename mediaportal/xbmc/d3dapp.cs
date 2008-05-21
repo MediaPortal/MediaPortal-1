@@ -1366,7 +1366,10 @@ namespace MediaPortal
           }
           catch (Exception ex)
           {
-            Log.Error("d3dapp: Reset failed - {0}/{1}", ex.Message, ex.InnerException.ToString());
+            Log.Error("d3dapp: Reset failed - {0}/{1}", ex.Message);
+            GUIGraphicsContext.DX9Device.DeviceLost -= new System.EventHandler(this.OnDeviceLost);
+            GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
+            InitializeEnvironment();
             return;
           }
 
