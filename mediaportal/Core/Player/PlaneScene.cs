@@ -113,6 +113,7 @@ namespace MediaPortal.Player
     static bool _reEntrant = false;
     bool _drawVideoAllowed = true;
     int _debugStep = 0;
+    int _renderDrop = 0;
     GUIImage _blackImage;
 
     FrameGrabber grabber = FrameGrabber.GetInstance();
@@ -413,17 +414,17 @@ namespace MediaPortal.Player
         if (_sourceRect.Width < 10) return false;
         if (_sourceRect.Height < 10) return false;
 
-        Log.Info("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
-        Log.Info("PlaneScene: crop L, R  : {0}, {1}", _cropSettings.Left, _cropSettings.Right);
+        Log.Debug("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
+        Log.Debug("PlaneScene: crop L, R  : {0}, {1}", _cropSettings.Left, _cropSettings.Right);
 
         Log.Info("PlaneScene: video WxH  : {0}x{1}", videoSize.Width, videoSize.Height);
-        Log.Info("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);
+        Log.Debug("PlaneScene: video AR   : {0}:{1}", _arVideoWidth, _arVideoHeight);
         Log.Info("PlaneScene: screen WxH : {0}x{1}", nw, nh);
-        Log.Info("PlaneScene: AR type    : {0}", GUIGraphicsContext.ARType);
-        Log.Info("PlaneScene: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-        Log.Info("PlaneScene: src        : ({0},{1})-({2},{3})",
+        Log.Debug("PlaneScene: AR type    : {0}", GUIGraphicsContext.ARType);
+        Log.Debug("PlaneScene: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
+        Log.Debug("PlaneScene: src        : ({0},{1})-({2},{3})",
           _sourceRect.X, _sourceRect.Y, _sourceRect.X + _sourceRect.Width, _sourceRect.Y + _sourceRect.Height);
-        Log.Info("PlaneScene: dst        : ({0},{1})-({2},{3})",
+        Log.Debug("PlaneScene: dst        : ({0},{1})-({2},{3})",
           _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width, _destinationRect.Y + _destinationRect.Height);
 
         if (_sourceRect.Y == 0)
@@ -477,7 +478,6 @@ namespace MediaPortal.Player
       if (_stopPainting) return;
       try
       {
-
         if (_textureAddress != 0)
         {
           if (!GUIGraphicsContext.InVmr9Render)
@@ -499,14 +499,11 @@ namespace MediaPortal.Player
         Log.Error("planescene:Unhandled exception in {0} {1} {2}",
             ex.Message, ex.Source, ex.StackTrace);
       }
-      //			Log.Info("scene.repaint done");
     }
-
 
     #endregion
 
     #region IVMR9Callback Members
-
 
     public int PresentImage(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pTex)
     {
@@ -601,7 +598,7 @@ namespace MediaPortal.Player
         }
         _vmr9Util.FrameCounter++;
         InternalPresentSurface(width, height, arWidth, arHeight, false);
-      }      
+      }
       catch (Exception ex)
       {
         Log.Error("Planescene: Error in PresentSurface - {0}", ex.ToString());
@@ -697,12 +694,19 @@ namespace MediaPortal.Player
 
         _debugStep = 5;
         GUIGraphicsContext.DX9Device.BeginScene();
-        if (!GUIGraphicsContext.BlankScreen)
+        try
         {
-          _renderFrame.RenderFrame(timePassed);
-          GUIFontManager.Present();
+          if (!GUIGraphicsContext.BlankScreen)
+          {
+            _renderFrame.RenderFrame(timePassed);
+            GUIFontManager.Present();
+          }
         }
-        GUIGraphicsContext.DX9Device.EndScene();
+        finally
+        {
+          GUIGraphicsContext.DX9Device.EndScene();
+        }
+
         GUIGraphicsContext.DX9Device.Present();
         _debugStep = 20;
       }
@@ -770,7 +774,6 @@ namespace MediaPortal.Player
             GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
         }
 
-
         _debugStep = 3;
         //				backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
         //first time, fade in the video in 12 steps
@@ -799,7 +802,6 @@ namespace MediaPortal.Player
           _diffuseColor = 0xFFffffff;
         }
 
-
         _debugStep = 4;
         //get desired video window
         Size nativeSize = new Size(width, height);
@@ -820,19 +822,38 @@ namespace MediaPortal.Player
         }
         _debugStep = 6;
         GUIGraphicsContext.DX9Device.BeginScene();
-        _debugStep = 7;
-
-        if (!GUIGraphicsContext.BlankScreen)
+        try
         {
-          if (_renderFrame != null)
+          _debugStep = 7;
+          if (!GUIGraphicsContext.BlankScreen)
           {
-            _debugStep = 8;
-            _renderFrame.RenderFrame(timePassed);
+            if (_renderFrame != null)
+            {
+              _debugStep = 8;
+              _renderFrame.RenderFrame(timePassed);
+            }            
+            GUIFontManager.Present();
           }
-          GUIFontManager.Present();
         }
-        GUIGraphicsContext.DX9Device.EndScene();
-        GUIGraphicsContext.DX9Device.Present();
+        // If BeginScene is called we must not return before calling EndScene or we will receive D3DERR_INVALIDCALL
+        finally
+        {
+          GUIGraphicsContext.DX9Device.EndScene();
+        }
+        // Present only if we are not "behind" > 17ms which corresponds to (1000ms / max 60FPS)
+        // If we loose more than 5 Frames however (because the system cannot cope with screens like EPG)
+        // we draw the GUI anyway to make sure the screen stays up to date.
+        if (timePassed < 0.17 || _renderDrop % 5 == 0)
+        {
+          GUIGraphicsContext.DX9Device.Present();
+          _renderDrop = 0;
+        }
+        else
+        {
+          _renderDrop += 1;
+          Log.Debug("Planescene.InternalPresentSurface: timePassed - {0} dropped {1} frame(s)", timePassed, _renderDrop);
+        }
+
         _debugStep = 17;
       }
       catch (DeviceLostException)
@@ -934,7 +955,7 @@ namespace MediaPortal.Player
           DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
         }
 
- 
+
 
         //Texture tt = TextureLoader.FromFile(GUIGraphicsContext.DX9Device, "C:\\test.bmp");
         //DrawTexture(tt, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
