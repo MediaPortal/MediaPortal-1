@@ -1635,7 +1635,6 @@ public class MediaPortalApp : D3DApp, IRender
         GUIGraphicsContext.IsFullScreenVideo = true;
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
         {
-          if (GUIGraphicsContext.Fullscreen) g_Player.Stop();
           RecoverDevice();
         }
       }

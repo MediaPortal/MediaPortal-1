@@ -1312,6 +1312,8 @@ namespace MediaPortal
     {
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
       {
+        if (g_Player.Playing) g_Player.Stop();
+        
         //Debugger.Launch();
         try
         {
