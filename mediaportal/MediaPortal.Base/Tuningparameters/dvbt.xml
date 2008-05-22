@@ -95,11 +95,11 @@
     <carrier frequency="585500" bandwidth="7"></carrier>
   </country>
   <country name="Australia - NSW - Coffs Harbour Mt Moombil" offset="125">
-    <carrier frequency="585500" bandwidth="7" />
-    <carrier frequency="564500" bandwidth="7" />
-    <carrier frequency="599500" bandwidth="7" />
-    <carrier frequency="606500" bandwidth="7" />
-    <carrier frequency="543500" bandwidth="7" />
+    <carrier frequency="585500" bandwidth="7"></carrier>
+    <carrier frequency="564500" bandwidth="7"></carrier>
+    <carrier frequency="599500" bandwidth="7"></carrier>
+    <carrier frequency="606500" bandwidth="7"></carrier>
+    <carrier frequency="543500" bandwidth="7"></carrier>
   </country>
   <country name="Australia - NSW - Newcastle" offset="125">
     <carrier frequency="585500" bandwidth="7"></carrier>
@@ -334,19 +334,19 @@
     <carrier frequency="522000" bandwidth="8"></carrier>
   </country>
   <country name="Croatia - Rijeka - Ucka" offset="125">
-    <carrier frequency="530000" bandwidth="8" />
+    <carrier frequency="530000" bandwidth="8"></carrier>
   </country>
   <country name="Croatia - Osijek - Josipovac" offset="125">
-    <carrier frequency="570000" bandwidth="8" />
+    <carrier frequency="570000" bandwidth="8"></carrier>
   </country>
   <country name="Croatia - Zadar - Ugljan" offset="125">
-    <carrier frequency="714000" bandwidth="8" />
+    <carrier frequency="714000" bandwidth="8"></carrier>
   </country>
   <country name="Croatia - Split - Labistica" offset="125">
-    <carrier frequency="594000" bandwidth="8" />
+    <carrier frequency="594000" bandwidth="8"></carrier>
   </country>
   <country name="Croatia - Dubrovnik - Srd" offset="125">
-    <carrier frequency="778000" bandwidth="8" />
+    <carrier frequency="778000" bandwidth="8"></carrier>
   </country>
   <country name="Czech Republic - Prague" offset="125">
     <carrier frequency="506000" bandwidth="8"></carrier>
@@ -1794,12 +1794,21 @@
     <carrier frequency="866000" bandwidth="8"></carrier>
   </country>
   <country name="Italy - Padova" offset="125">
-    <carrier frequency="490000" bandwidth="8" />
-    <carrier frequency="514000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="770000" bandwidth="8" />
-    <carrier frequency="818000" bandwidth="8" />
-    <carrier frequency="826000" bandwidth="8" />
+    <carrier frequency="490000" bandwidth="8"></carrier>
+    <carrier frequency="514000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
+    <carrier frequency="826000" bandwidth="8"></carrier>
+  </country>
+  <country name="Italy - Sorrento (Faito)" offset="125">
+    <carrier frequency="546000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="722000" bandwidth="8"></carrier>
+    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="810000" bandwidth="8"></carrier>
+    <carrier frequency="834000" bandwidth="8"></carrier>
   </country>
   <country name="Italy - Verona" offset="125">
     <carrier frequency="186000" bandwidth="7"></carrier>
@@ -1810,36 +1819,36 @@
     <carrier frequency="794000" bandwidth="8"></carrier>
   </country>
   <country name="Lithuania - Vilnius">
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
-    <carrier frequency="762000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="786000" bandwidth="8" />
-    <carrier frequency="818000" bandwidth="8" />
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="786000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
   </country>
   <country name="Lithuania - Kauans">
-    <carrier frequency="570000" bandwidth="8" />
-    <carrier frequency="658000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="786000" bandwidth="8" />
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="786000" bandwidth="8"></carrier>
   </country>
   <country name="Lithuania - Klaipeda">
-    <carrier frequency="594000" bandwidth="8" />
-    <carrier frequency="610000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
-    <carrier frequency="786000" bandwidth="8" />
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="786000" bandwidth="8"></carrier>
   </country>
   <country name="Lithuania - Siauliai">
-    <carrier frequency="594000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
-    <carrier frequency="762000" bandwidth="8" />
-    <carrier frequency="810000" bandwidth="8" />
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="810000" bandwidth="8"></carrier>
   </country>
   <country name="Lithuania - Panevezys">
-    <carrier frequency="546000" bandwidth="8" />
-    <carrier frequency="594000" bandwidth="8" />
-    <carrier frequency="770000" bandwidth="8" />
-    <carrier frequency="802000" bandwidth="8" />
+    <carrier frequency="546000" bandwidth="8"></carrier>
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="802000" bandwidth="8"></carrier>
   </country>
   <country name="Luxembourg - All Regions" offset="125">
     <carrier frequency="191500" bandwidth="7"></carrier>
@@ -1907,196 +1916,196 @@
     <carrier frequency="858000"></carrier>
   </country>
   <country name="New Zealand - All Regions" offset="0">
-    <carrier frequency="522000" bandwidth="8" />
-    <carrier frequency="530000" bandwidth="8" />
-    <carrier frequency="538000" bandwidth="8" />
-    <carrier frequency="546000" bandwidth="8" />
-    <carrier frequency="554000" bandwidth="8" />
-    <carrier frequency="562000" bandwidth="8" />
-    <carrier frequency="570000" bandwidth="8" />
-    <carrier frequency="578000" bandwidth="8" />
-    <carrier frequency="586000" bandwidth="8" />
-    <carrier frequency="594000" bandwidth="8" />
-    <carrier frequency="602000" bandwidth="8" />
-    <carrier frequency="610000" bandwidth="8" />
-    <carrier frequency="618000" bandwidth="8" />
-    <carrier frequency="626000" bandwidth="8" />
-    <carrier frequency="634000" bandwidth="8" />
-    <carrier frequency="642000" bandwidth="8" />
-    <carrier frequency="650000" bandwidth="8" />
-    <carrier frequency="658000" bandwidth="8" />
-    <carrier frequency="666000" bandwidth="8" />
-    <carrier frequency="674000" bandwidth="8" />
-    <carrier frequency="682000" bandwidth="8" />
-    <carrier frequency="690000" bandwidth="8" />
-    <carrier frequency="698000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="714000" bandwidth="8" />
-    <carrier frequency="722000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
-    <carrier frequency="738000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
-    <carrier frequency="754000" bandwidth="8" />
-    <carrier frequency="762000" bandwidth="8" />
-    <carrier frequency="770000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="786000" bandwidth="8" />
-    <carrier frequency="794000" bandwidth="8" />
+    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="538000" bandwidth="8"></carrier>
+    <carrier frequency="546000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="562000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="578000" bandwidth="8"></carrier>
+    <carrier frequency="586000" bandwidth="8"></carrier>
+    <carrier frequency="594000" bandwidth="8"></carrier>
+    <carrier frequency="602000" bandwidth="8"></carrier>
+    <carrier frequency="610000" bandwidth="8"></carrier>
+    <carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="634000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="658000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="722000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="738000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="754000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="770000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="786000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Auckland - Waiatarua" offset="0">
-    <carrier frequency="538000" bandwidth="8" />
-    <carrier frequency="570000" bandwidth="8" />
-    <carrier frequency="666000" bandwidth="8" />
-    <carrier frequency="698000" bandwidth="8" />
+    <carrier frequency="538000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Auckland - Infill" offset="0">
-    <carrier frequency="530000" bandwidth="8" />
-    <carrier frequency="562000" bandwidth="8" />
-    <carrier frequency="626000" bandwidth="8" />
-    <carrier frequency="722000" bandwidth="8" />
+    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="562000" bandwidth="8"></carrier>
+    <carrier frequency="626000" bandwidth="8"></carrier>
+    <carrier frequency="722000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Waikato - Te Aroha" offset="0">
-    <carrier frequency="666000" bandwidth="8" />
-    <carrier frequency="674000" bandwidth="8" />
-    <carrier frequency="690000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Waikato - Hamilton" offset="0">
-    <carrier frequency="698000" bandwidth="8" />
-    <carrier frequency="714000" bandwidth="8" />
-    <carrier frequency="682000" bandwidth="8" />
-    <carrier frequency="522000" bandwidth="8" />
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Tauranga - Kopukairua" offset="0">
-    <carrier frequency="698000" bandwidth="8" />
-    <carrier frequency="714000" bandwidth="8" />
-    <carrier frequency="642000" bandwidth="8" />
-    <carrier frequency="522000" bandwidth="8" />
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
+    <carrier frequency="522000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Hawkes Bay - Mt Erin" offset="0">
-    <carrier frequency="522000" bandwidth="8" />
-    <carrier frequency="554000" bandwidth="8" />
-    <carrier frequency="650000" bandwidth="8" />
-    <carrier frequency="682000" bandwidth="8" />
+    <carrier frequency="522000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="682000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Hawkes Bay - Hospital Hill" offset="0">
-    <carrier frequency="690000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Manawatu - Wharite" offset="0">
-    <carrier frequency="690000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
-    <carrier frequency="698000" bandwidth="8" />
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Kapiti - Ngarara" offset="0">
-    <carrier frequency="666000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
-    <carrier frequency="762000" bandwidth="8" />
-    <carrier frequency="570000" bandwidth="8" />
-    <carrier frequency="538000" bandwidth="8" />
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="538000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Wellington - Mt Kaukau" offset="0">
-    <carrier frequency="690000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
-    <carrier frequency="698000" bandwidth="8" />
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Wellington - Infill" offset="0">
-    <carrier frequency="714000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
-    <carrier frequency="762000" bandwidth="8" />
-    <carrier frequency="570000" bandwidth="8" />
-    <carrier frequency="538000" bandwidth="8" />
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="538000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Christchurch - Sugarloaf" offset="0">
-    <carrier frequency="682000" bandwidth="8" />
-    <carrier frequency="698000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="690000" bandwidth="8" />
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Christchurch - Infill" offset="0">
-    <carrier frequency="650000" bandwidth="8" />
-    <carrier frequency="666000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
-    <carrier frequency="786000" bandwidth="8" />
-    <carrier frequency="554000" bandwidth="8" />
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="786000" bandwidth="8"></carrier>
+    <carrier frequency="554000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Dunedin - Mt Cargill" offset="0">
-    <carrier frequency="650000" bandwidth="8" />
-    <carrier frequency="666000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
-    <carrier frequency="690000" bandwidth="8" />
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Dunedin - Infill" offset="0">
-    <carrier frequency="682000" bandwidth="8" />
-    <carrier frequency="738000" bandwidth="8" />
-    <carrier frequency="762000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="674000" bandwidth="8" />
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="738000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="674000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Whangarei - Horokaka" offset="0">
-    <carrier frequency="554000" bandwidth="8" />
-    <carrier frequency="666000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="794000" bandwidth="8" />
+    <carrier frequency="554000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Whangarei - Parahaki" offset="0">
-    <carrier frequency="570000" bandwidth="8" />
-    <carrier frequency="682000" bandwidth="8" />
-    <carrier frequency="690000" bandwidth="8" />
-    <carrier frequency="714000" bandwidth="8" />
+    <carrier frequency="570000" bandwidth="8"></carrier>
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Rotorua - Pukepoto" offset="0">
-    <carrier frequency="698000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
-    <carrier frequency="762000" bandwidth="8" />
-    <carrier frequency="794000" bandwidth="8" />
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Taupo - Tuhingamata" offset="0">
-    <carrier frequency="530000" bandwidth="8" />
-    <carrier frequency="682000" bandwidth="8" />
-    <carrier frequency="698000" bandwidth="8" />
-    <carrier frequency="722000" bandwidth="8" />
+    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="722000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Gisbourne - Whakapunake" offset="0">
-    <carrier frequency="690000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Taranaki - Mt Taranaki" offset="0">
-    <carrier frequency="690000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
-    <carrier frequency="778000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
-    <carrier frequency="698000" bandwidth="8" />
+    <carrier frequency="690000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
+    <carrier frequency="778000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Wanganui - Mt Jowett" offset="0">
-    <carrier frequency="666000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
-    <carrier frequency="762000" bandwidth="8" />
-    <carrier frequency="794000" bandwidth="8" />
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="762000" bandwidth="8"></carrier>
+    <carrier frequency="794000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Nelson - Gramians" offset="0">
-    <carrier frequency="530000" bandwidth="8" />
-    <carrier frequency="682000" bandwidth="8" />
-    <carrier frequency="698000" bandwidth="8" />
-    <carrier frequency="722000" bandwidth="8" />
+    <carrier frequency="530000" bandwidth="8"></carrier>
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="698000" bandwidth="8"></carrier>
+    <carrier frequency="722000" bandwidth="8"></carrier>
   </country>
   <country name="New Zealand - Southland - Hedgehope" offset="0">
-    <carrier frequency="650000" bandwidth="8" />
-    <carrier frequency="666000" bandwidth="8" />
-    <carrier frequency="730000" bandwidth="8" />
-    <carrier frequency="746000" bandwidth="8" />
-    <carrier frequency="706000" bandwidth="8" />
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="666000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
+    <carrier frequency="746000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
   </country>
   <country name="Norway - Oslo-Akershus - Tryvasshøgda" offset="0">
     <carrier frequency="674000" bandwidth="8"></carrier>
