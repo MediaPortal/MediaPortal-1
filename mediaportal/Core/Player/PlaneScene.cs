@@ -831,7 +831,7 @@ namespace MediaPortal.Player
             {
               _debugStep = 8;
               _renderFrame.RenderFrame(timePassed);
-            }            
+            }
             GUIFontManager.Present();
           }
         }
@@ -842,17 +842,16 @@ namespace MediaPortal.Player
         }
         // Present only if we are not "behind" > 17ms which corresponds to (1000ms / max 60FPS)
         // If we loose more than 5 Frames however (because the system cannot cope with screens like EPG)
-        // we draw the GUI anyway to make sure the screen stays up to date.
+        // we draw the GUI anyway to make sure the screen stays up to date.        
+        if (timePassed >= 0.17)
+          _renderDrop += 1;
         if (timePassed < 0.17 || _renderDrop % 5 == 0)
         {
           GUIGraphicsContext.DX9Device.Present();
           _renderDrop = 0;
         }
         else
-        {
-          _renderDrop += 1;
-          Log.Debug("Planescene.InternalPresentSurface: timePassed - {0} dropped {1} frame(s)", timePassed, _renderDrop);
-        }
+          Log.Debug("Planescene.InternalPresentSurface: timePassed = {0} - dropped {1} frame(s)", timePassed, _renderDrop);
 
         _debugStep = 17;
       }
