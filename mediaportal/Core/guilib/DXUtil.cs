@@ -58,8 +58,8 @@ public class DXUtil
   [System.Security.SuppressUnmanagedCodeSecurity] // We won't use this maliciously
   [DllImport("winmm.dll")]
   public static extern int timeGetTime();
-  private static bool isTimerInitialized = false;
-  private static bool m_bUsingQPF = false;
+  // Of course we want to use ACCURATE timing - see e.g this: http://www.geisswerks.com/ryan/FAQS/timing.html
+  private static bool m_bUsingQPF = true;
   private static bool m_bTimerStopped = true;
   private static long m_llQPFTicksPerSec = 0;
   private static long m_llStopTime = 0;
@@ -120,19 +120,17 @@ public class DXUtil
   /// </summary>
   public static float Timer(DirectXTimer command)
   {
-    if (!isTimerInitialized)
-    {
-      isTimerInitialized = true;
+    // Use QueryPerformanceFrequency() to get frequency of timer.  If QPF is
+    // not supported, we will timeGetTime() which returns milliseconds.
+    // rtv: we need to query the frequency everytime since it will change
+    // on Cool&Quiet enabled systems. Another case would be a threaded call 
+    // executed on another cpu core which uses a different clock speed.
+    long qwTicksPerSec = 0;
+    m_bUsingQPF = QueryPerformanceFrequency(ref qwTicksPerSec);
 
-      // Use QueryPerformanceFrequency() to get frequency of timer.  If QPF is
-      // not supported, we will timeGetTime() which returns milliseconds.
-      long qwTicksPerSec = 0;
-      m_bUsingQPF = QueryPerformanceFrequency(ref qwTicksPerSec);
-      if (m_bUsingQPF)
-        m_llQPFTicksPerSec = qwTicksPerSec;
-    }
     if (m_bUsingQPF)
     {
+      m_llQPFTicksPerSec = qwTicksPerSec;
       double time;
       double fElapsedTime;
       long qwTime = 0;
