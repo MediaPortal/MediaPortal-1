@@ -67,6 +67,9 @@ namespace SetupTv
         btnSave.Visible = false;
         btnDrop.Visible = true;
       }
+      // A user might want to save a "wrong" database name so TV-Server creates a new DB.
+      if (aStartMode == StartupMode.DbConfig)
+        btnSave.Enabled = true;
     }
 
     private void SetupDatabaseForm_Load(object sender, EventArgs e)
@@ -402,46 +405,53 @@ namespace SetupTv
     private void mpButtonTest_Click(object sender, EventArgs e)
     {
       btnTest.Enabled = false;
-      if (string.IsNullOrEmpty(tbUserID.Text))
+      try
       {
-        tbUserID.BackColor = Color.Red;
-        MessageBox.Show("Please specify a valid database user!", "Specify user", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        return;
+        if (string.IsNullOrEmpty(tbUserID.Text))
+        {
+          tbUserID.BackColor = Color.Red;
+          MessageBox.Show("Please specify a valid database user!", "Specify user", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+        if (string.IsNullOrEmpty(tbPassword.Text))
+        {
+          tbPassword.BackColor = Color.Red;
+          MessageBox.Show("Please specify a valid password for the database user!", "Specify password", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+        if (string.IsNullOrEmpty(tbDatabaseName.Text) || tbDatabaseName.Text.ToLower() == "mysql" || tbDatabaseName.Text.ToLower() == "master")
+        {
+          tbDatabaseName.BackColor = Color.Red;
+          MessageBox.Show("Please specify a valid schema name!", "Specify schema name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+
+        if (tbServerHostName.Text.ToLower().IndexOf("localhost") >= 0 || tbServerHostName.Text.ToLower().IndexOf("127.0.0.1") >= 0)
+        {
+          tbServerHostName.BackColor = Color.Red;
+          MessageBox.Show("Please specify a valid hostname or IP address for the server!", "Specify server name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+
+        CheckServiceName();
+
+        string TestDb = _dialogMode == StartupMode.Normal ? string.Empty : tbDatabaseName.Text;
+        bool TestSuccess = false;
+
+        if (rbSQLServer.Checked)
+          TestSuccess = AttemptMsSqlTestConnect(TestDb);
+        else
+          TestSuccess = AttemptMySqlTestConnect(TestDb);
+
+        // Do not allow to "use" incorrect data
+        if (_dialogMode != StartupMode.DbConfig)
+          btnSave.Enabled = btnDrop.Enabled = TestSuccess;
       }
-      if (string.IsNullOrEmpty(tbPassword.Text))
+      finally
       {
-        tbPassword.BackColor = Color.Red;
-        MessageBox.Show("Please specify a valid password for the database user!", "Specify password", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        return;
+        // Now the user can click again
+        btnTest.Enabled = true;
       }
-      if (string.IsNullOrEmpty(tbDatabaseName.Text) || tbDatabaseName.Text.ToLower() == "mysql" || tbDatabaseName.Text.ToLower() == "master")
-      {
-        tbDatabaseName.BackColor = Color.Red;
-        MessageBox.Show("Please specify a valid schema name!", "Specify schema name", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        return;
-      }
-
-      if (tbServerHostName.Text.ToLower().IndexOf("localhost") >= 0 || tbServerHostName.Text.ToLower().IndexOf("127.0.0.1") >= 0)
-      {
-        tbServerHostName.BackColor = Color.Red;
-        MessageBox.Show("Please specify a valid hostname or IP address for the server!", "Specify server name", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        return;
-      }
-
-      CheckServiceName();
-
-      string TestDb = _dialogMode == StartupMode.Normal ? string.Empty : tbDatabaseName.Text;
-      bool TestSuccess = false;
-
-      if (rbSQLServer.Checked)
-        TestSuccess = AttemptMsSqlTestConnect(TestDb);
-      else
-        TestSuccess = AttemptMySqlTestConnect(TestDb);
-
-      // Do not allow to "use" incorrect data
-      btnSave.Enabled = btnDrop.Enabled = TestSuccess;
-      // Now the user can click again
-      btnTest.Enabled = true;
     }
 
     private bool AttemptMySqlTestConnect(string aTestDb)
