@@ -80,7 +80,7 @@
       <spinPosY>370</spinPosY>
       <textXOff>50</textXOff>
       <PinIconXOff>45</PinIconXOff>
-      <PinIconYOff>7</PinIconYOff>
+      <PinIconYOff>3</PinIconYOff>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

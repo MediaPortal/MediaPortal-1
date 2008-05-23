@@ -110,16 +110,16 @@
         <id>10</id>
         <width>818</width>
         <height>493</height>
-        <textXOff>36</textXOff>
+        <textXOff>70</textXOff>
         <textYOff>2</textYOff>
         <textXOff2>777</textXOff2>
         <textYOff2>38</textYOff2>
         <textXOff3>177</textXOff3>
         <textYOff3>38</textYOff3>
-        <IconXOff>22</IconXOff>
+        <IconXOff>20</IconXOff>
         <IconYOff>10</IconYOff>
-        <PinIconXOff>45</PinIconXOff>
-        <PinIconYOff>19</PinIconYOff>
+        <PinIconXOff>80</PinIconXOff>
+        <PinIconYOff>20</PinIconYOff>
         <spinPosX>1000</spinPosX>
         <spinPosY>557</spinPosY>
         <itemWidth>46</itemWidth>
