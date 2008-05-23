@@ -1628,15 +1628,20 @@ public class MediaPortalApp : D3DApp, IRender
     Recorder.Process();
     g_Player.Process();
     // update playing status
+    if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+    {
+      RecoverDevice();
+    }
+
     if (g_Player.Playing)
     {
       if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
       {
         GUIGraphicsContext.IsFullScreenVideo = true;
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+        /*if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
         {
           RecoverDevice();
-        }
+        }*/
       }
       GUIGraphicsContext.IsPlaying = true;
       GUIGraphicsContext.IsPlayingVideo = (g_Player.IsVideo || g_Player.IsTV);
