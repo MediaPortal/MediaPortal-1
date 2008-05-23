@@ -237,26 +237,16 @@ namespace TvEngine.PowerScheduler.Interfaces
     public int AllowedSleepStartTime
     {
       get { return _allowedStart; }
-      set
-      {
-        if (value > _allowedStop)
-          //throw new ArgumentException("AllowedStart cannot be greater than AllowedStop");
-        _allowedStart = value;
-      }
-    } 
-    
+      set { _allowedStart = value; }
+    }
+
     /// <summary>
     /// Controls the maximum start hour for a suspend.
     /// </summary>
     public int AllowedSleepStopTime
     {
       get { return _allowedStop; }
-      set
-      {
-        if (value < _allowedStart)
-          //throw new ArgumentException("AllowedStop cannot be smaller than AllowedStart");
-        _allowedStop = value;
-      }
+      set { _allowedStop = value; }
     }
 
     /// <summary>
