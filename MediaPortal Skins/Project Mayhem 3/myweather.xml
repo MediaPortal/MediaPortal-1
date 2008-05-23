@@ -96,7 +96,7 @@
       <id>1</id>
       <posX>211</posX>
       <posY>310</posY>
-      <width>111</width>
+      <width>89</width>
       <height>198</height>
       <texture>blue_rectangle_weather.png</texture>
     </control>
@@ -104,9 +104,9 @@
       <description>logo image</description>
       <type>image</type>
       <id>1</id>
-      <posX>329</posX>
+      <posX>305</posX>
       <posY>310</posY>
-      <width>111</width>
+      <width>89</width>
       <height>198</height>
       <texture>blue_rectangle_weather.png</texture>
     </control>
@@ -114,9 +114,9 @@
       <description>logo image</description>
       <type>image</type>
       <id>1</id>
-      <posX>447</posX>
+      <posX>399</posX>
       <posY>310</posY>
-      <width>111</width>
+      <width>89</width>
       <height>198</height>
       <texture>blue_rectangle_weather.png</texture>
     </control>
@@ -124,9 +124,19 @@
       <description>logo image</description>
       <type>image</type>
       <id>1</id>
-      <posX>565</posX>
+      <posX>493</posX>
       <posY>310</posY>
-      <width>111</width>
+      <width>89</width>
+      <height>198</height>
+      <texture>blue_rectangle_weather.png</texture>
+    </control>
+    <control>
+      <description>logo image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>587</posX>
+      <posY>310</posY>
+      <width>89</width>
       <height>198</height>
       <texture>blue_rectangle_weather.png</texture>
     </control>
@@ -300,7 +310,7 @@
       <posY>310</posY>
       <align>center</align>
       <height>28</height>
-      <width>110</width>
+      <width>83</width>
       <label>-</label>
       <font>font10</font>
       <textcolor>White</textcolor>
@@ -310,7 +320,7 @@
       <type>label</type>
       <id>32</id>
       <align>center</align>
-      <width>110</width>
+      <width>83</width>
       <posX>211</posX>
       <posY>348</posY>
       <label>-</label>
@@ -324,7 +334,7 @@
       <posX>211</posX>
       <posY>370</posY>
       <align>center</align>
-      <width>110</width>
+      <width>83</width>
       <label>-</label>
       <font>font10</font>
       <textcolor>White</textcolor>
@@ -337,7 +347,7 @@
       <posY>475</posY>
       <align>center</align>
       <alignY>top</alignY>
-      <width>110</width>
+      <width>83</width>
       <label>-</label>
       <font>font10</font>
       <textcolor>White</textcolor>
@@ -346,10 +356,10 @@
       <description>day 0 icon</description>
       <type>image</type>
       <id>35</id>
-      <posX>243</posX>
+      <posX>232</posX>
       <posY>395</posY>
-      <height>64</height>
-      <width>64</width>
+      <height>51</height>
+      <width>51</width>
       <texture>background-myweather.png</texture>
     </control>
     <control>
@@ -357,9 +367,9 @@
       <type>button</type>
       <align>center</align>
       <height>28</height>
-      <width>110</width>
+      <width>83</width>
       <id>41</id>
-      <posX>329</posX>
+      <posX>305</posX>
       <posY>310</posY>
       <label>-</label>
       <font>font10</font>
@@ -368,9 +378,9 @@
       <description>day 1 Hi label</description>
       <type>label</type>
       <align>center</align>
-      <width>110</width>
+      <width>83</width>
       <id>42</id>
-      <posX>329</posX>
+      <posX>305</posX>
       <posY>348</posY>
       <label>-</label>
       <font>font10</font>
@@ -380,9 +390,9 @@
       <description>day 1 low label</description>
       <type>label</type>
       <align>center</align>
-      <width>110</width>
+      <width>83</width>
       <id>43</id>
-      <posX>329</posX>
+      <posX>305</posX>
       <posY>370</posY>
       <label>-</label>
       <font>font10</font>
@@ -393,9 +403,9 @@
       <type>label</type>
       <align>center</align>
       <aligny>top</aligny>
-      <width>110</width>
+      <width>83</width>
       <id>44</id>
-      <posX>329</posX>
+      <posX>305</posX>
       <posY>475</posY>
       <label>-</label>
       <font>font10</font>
@@ -405,10 +415,10 @@
       <description>day 1 icon</description>
       <type>image</type>
       <id>45</id>
-      <posX>361</posX>
+      <posX>326</posX>
       <posY>395</posY>
-      <height>64</height>
-      <width>64</width>
+      <height>51</height>
+      <width>51</width>
       <texture>background-myweather.png</texture>
     </control>
     <control>
@@ -416,9 +426,9 @@
       <type>button</type>
       <align>center</align>
       <height>28</height>
-      <width>110</width>
+      <width>83</width>
       <id>51</id>
-      <posX>447</posX>
+      <posX>399</posX>
       <posY>310</posY>
       <label>-</label>
       <font>font10</font>
@@ -428,9 +438,9 @@
       <description>day 2 Hi label</description>
       <type>label</type>
       <align>center</align>
-      <width>110</width>
+      <width>83</width>
       <id>52</id>
-      <posX>447</posX>
+      <posX>399</posX>
       <posY>348</posY>
       <label>-</label>
       <font>font10</font>
@@ -440,9 +450,9 @@
       <description>day 2 low label</description>
       <type>label</type>
       <align>center</align>
-      <width>110</width>
+      <width>83</width>
       <id>53</id>
-      <posX>447</posX>
+      <posX>399</posX>
       <posY>370</posY>
       <label>-</label>
       <font>font10</font>
@@ -453,9 +463,9 @@
       <type>label</type>
       <align>center</align>
       <aligny>top</aligny>
-      <width>110</width>
+      <width>83</width>
       <id>54</id>
-      <posX>447</posX>
+      <posX>399</posX>
       <posY>475</posY>
       <label>-</label>
       <font>font10</font>
@@ -465,10 +475,10 @@
       <description>day 2 icon</description>
       <type>image</type>
       <id>55</id>
-      <posX>480</posX>
+      <posX>421</posX>
       <posY>395</posY>
-      <height>64</height>
-      <width>64</width>
+      <height>51</height>
+      <width>51</width>
       <texture>background-myweather.png</texture>
     </control>
     <control>
@@ -476,9 +486,9 @@
       <type>button</type>
       <align>center</align>
       <height>28</height>
-      <width>110</width>
+      <width>83</width>
       <id>61</id>
-      <posX>565</posX>
+      <posX>493</posX>
       <posY>310</posY>
       <label>-</label>
       <font>font10</font>
@@ -488,9 +498,9 @@
       <description>day 3 Hi label</description>
       <type>label</type>
       <align>center</align>
-      <width>110</width>
+      <width>83</width>
       <id>62</id>
-      <posX>565</posX>
+      <posX>493</posX>
       <posY>348</posY>
       <label>-</label>
       <font>font10</font>
@@ -500,9 +510,9 @@
       <description>day 3 low label</description>
       <type>label</type>
       <align>center</align>
-      <width>110</width>
+      <width>83</width>
       <id>63</id>
-      <posX>565</posX>
+      <posX>493</posX>
       <posY>370</posY>
       <label>-</label>
       <font>font10</font>
@@ -513,9 +523,9 @@
       <type>label</type>
       <align>center</align>
       <aligny>top</aligny>
-      <width>110</width>
+      <width>83</width>
       <id>64</id>
-      <posX>565</posX>
+      <posX>493</posX>
       <posY>475</posY>
       <label>-</label>
       <font>font10</font>
@@ -525,13 +535,72 @@
       <description>day 3 icon</description>
       <type>image</type>
       <id>65</id>
-      <posX>596</posX>
+      <posX>515</posX>
       <posY>395</posY>
-      <height>64</height>
-      <width>64</width>
+      <height>51</height>
+      <width>51</width>
       <texture>background-myweather.png</texture>
     </control>
+     <control>
+      <description>day 4 label</description>
+      <type>button</type>
+      <align>center</align>
+      <height>28</height>
+      <width>83</width>
+      <id>71</id>
+      <posX>587</posX>
+      <posY>310</posY>
+      <label>-</label>
+      <font>font10</font>
+      <textcolor>White</textcolor>
+    </control>
     <control>
+      <description>day 4 Hi label</description>
+      <type>label</type>
+      <align>center</align>
+      <width>83</width>
+      <id>72</id>
+      <posX>587</posX>
+      <posY>348</posY>
+      <label>-</label>
+      <font>font10</font>
+      <textcolor>White</textcolor>
+    </control>
+    <control>
+      <description>day 4 low label</description>
+      <type>label</type>
+      <align>center</align>
+      <width>83</width>
+      <id>73</id>
+      <posX>587</posX>
+      <posY>370</posY>
+      <label>-</label>
+      <font>font10</font>
+      <textcolor>White</textcolor>
+    </control>
+    <control>
+      <description>day 4 general weather label</description>
+      <type>label</type>
+      <align>center</align>
+      <aligny>top</aligny>
+      <width>83</width>
+      <id>74</id>
+      <posX>587</posX>
+      <posY>475</posY>
+      <label>-</label>
+      <font>font10</font>
+      <textcolor>White</textcolor>
+    </control>
+    <control>
+      <description>day 4 icon</description>
+      <type>image</type>
+      <id>75</id>
+      <posX>599</posX>
+      <posY>395</posY>
+      <height>51</height>
+      <width>51</width>
+      <texture>background-myweather.png</texture>
+    </control>   <control>
       <description>Satellite image</description>
       <type>image</type>
       <id>1000</id>
