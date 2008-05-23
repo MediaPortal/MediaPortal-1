@@ -65,6 +65,12 @@ namespace TvEngine.PowerScheduler
       this.components = new System.ComponentModel.Container();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.groupBoxStandbyHours = new System.Windows.Forms.GroupBox();
+      this.label10 = new System.Windows.Forms.Label();
+      this.label9 = new System.Windows.Forms.Label();
+      this.label8 = new System.Windows.Forms.Label();
+      this.numUpDownStandbyAllowedEndHour = new System.Windows.Forms.NumericUpDown();
+      this.numUpDownStandbyAllowedStartHour = new System.Windows.Forms.NumericUpDown();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.label2 = new System.Windows.Forms.Label();
       this.comboBox1 = new System.Windows.Forms.ComboBox();
@@ -109,14 +115,12 @@ namespace TvEngine.PowerScheduler
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.groupBox5 = new System.Windows.Forms.GroupBox();
-      this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label9 = new System.Windows.Forms.Label();
-      this.label10 = new System.Windows.Forms.Label();
+      this.lblStandbyHoursDesc = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
+      this.groupBoxStandbyHours.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numUpDownStandbyAllowedEndHour)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numUpDownStandbyAllowedStartHour)).BeginInit();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
       this.tabPage2.SuspendLayout();
@@ -132,9 +136,6 @@ namespace TvEngine.PowerScheduler
       this.panel1.SuspendLayout();
       this.tabPage4.SuspendLayout();
       this.groupBox4.SuspendLayout();
-      this.groupBox5.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -156,7 +157,7 @@ namespace TvEngine.PowerScheduler
       // 
       // tabPage1
       // 
-      this.tabPage1.Controls.Add(this.groupBox5);
+      this.tabPage1.Controls.Add(this.groupBoxStandbyHours);
       this.tabPage1.Controls.Add(this.groupBox1);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -165,6 +166,82 @@ namespace TvEngine.PowerScheduler
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "General";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxStandbyHours
+      // 
+      this.groupBoxStandbyHours.Controls.Add(this.lblStandbyHoursDesc);
+      this.groupBoxStandbyHours.Controls.Add(this.label10);
+      this.groupBoxStandbyHours.Controls.Add(this.label9);
+      this.groupBoxStandbyHours.Controls.Add(this.label8);
+      this.groupBoxStandbyHours.Controls.Add(this.numUpDownStandbyAllowedEndHour);
+      this.groupBoxStandbyHours.Controls.Add(this.numUpDownStandbyAllowedStartHour);
+      this.groupBoxStandbyHours.Location = new System.Drawing.Point(6, 151);
+      this.groupBoxStandbyHours.Name = "groupBoxStandbyHours";
+      this.groupBoxStandbyHours.Size = new System.Drawing.Size(391, 151);
+      this.groupBoxStandbyHours.TabIndex = 1;
+      this.groupBoxStandbyHours.TabStop = false;
+      this.groupBoxStandbyHours.Text = "Allowed standby hours";
+      // 
+      // label10
+      // 
+      this.label10.AutoSize = true;
+      this.label10.Location = new System.Drawing.Point(223, 54);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(44, 13);
+      this.label10.TabIndex = 4;
+      this.label10.Text = "o\' clock";
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(140, 54);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(28, 13);
+      this.label9.TabIndex = 3;
+      this.label9.Text = "and ";
+      // 
+      // label8
+      // 
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(83, 30);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(139, 13);
+      this.label8.TabIndex = 2;
+      this.label8.Text = "Only allow standby between";
+      // 
+      // numUpDownStandbyAllowedEndHour
+      // 
+      this.numUpDownStandbyAllowedEndHour.Location = new System.Drawing.Point(173, 52);
+      this.numUpDownStandbyAllowedEndHour.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      this.numUpDownStandbyAllowedEndHour.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numUpDownStandbyAllowedEndHour.Name = "numUpDownStandbyAllowedEndHour";
+      this.numUpDownStandbyAllowedEndHour.Size = new System.Drawing.Size(44, 20);
+      this.numUpDownStandbyAllowedEndHour.TabIndex = 1;
+      this.numUpDownStandbyAllowedEndHour.Value = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      // 
+      // numUpDownStandbyAllowedStartHour
+      // 
+      this.numUpDownStandbyAllowedStartHour.Location = new System.Drawing.Point(86, 52);
+      this.numUpDownStandbyAllowedStartHour.Maximum = new decimal(new int[] {
+            23,
+            0,
+            0,
+            0});
+      this.numUpDownStandbyAllowedStartHour.Name = "numUpDownStandbyAllowedStartHour";
+      this.numUpDownStandbyAllowedStartHour.Size = new System.Drawing.Size(48, 20);
+      this.numUpDownStandbyAllowedStartHour.TabIndex = 0;
       // 
       // groupBox1
       // 
@@ -671,80 +748,14 @@ namespace TvEngine.PowerScheduler
       this.openFileDialog1.FileName = "openFileDialog1";
       this.openFileDialog1.Title = "Choose command";
       // 
-      // groupBox5
+      // lblStandbyHoursDesc
       // 
-      this.groupBox5.Controls.Add(this.label10);
-      this.groupBox5.Controls.Add(this.label9);
-      this.groupBox5.Controls.Add(this.label8);
-      this.groupBox5.Controls.Add(this.numericUpDown6);
-      this.groupBox5.Controls.Add(this.numericUpDown5);
-      this.groupBox5.Location = new System.Drawing.Point(6, 170);
-      this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(391, 152);
-      this.groupBox5.TabIndex = 1;
-      this.groupBox5.TabStop = false;
-      this.groupBox5.Text = "Allowed Standby Hours";
-      // 
-      // numericUpDown5
-      // 
-      this.numericUpDown5.Location = new System.Drawing.Point(160, 42);
-      this.numericUpDown5.Maximum = new decimal(new int[] {
-            23,
-            0,
-            0,
-            0});
-      this.numericUpDown5.Name = "numericUpDown5";
-      this.numericUpDown5.Size = new System.Drawing.Size(48, 20);
-      this.numericUpDown5.TabIndex = 0;
-      // 
-      // numericUpDown6
-      // 
-      this.numericUpDown6.Location = new System.Drawing.Point(248, 42);
-      this.numericUpDown6.Maximum = new decimal(new int[] {
-            24,
-            0,
-            0,
-            0});
-      this.numericUpDown6.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      this.numericUpDown6.Name = "numericUpDown6";
-      this.numericUpDown6.Size = new System.Drawing.Size(44, 20);
-      this.numericUpDown6.TabIndex = 1;
-      this.numericUpDown6.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-      // 
-      // label8
-      // 
-      this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(15, 49);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(139, 13);
-      this.label8.TabIndex = 2;
-      this.label8.Text = "Only allow standby between";
-      // 
-      // label9
-      // 
-      this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(214, 49);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(28, 13);
-      this.label9.TabIndex = 3;
-      this.label9.Text = "and ";
-      // 
-      // label10
-      // 
-      this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(298, 49);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(39, 13);
-      this.label10.TabIndex = 4;
-      this.label10.Text = "hours. ";
+      this.lblStandbyHoursDesc.Location = new System.Drawing.Point(83, 85);
+      this.lblStandbyHoursDesc.Name = "lblStandbyHoursDesc";
+      this.lblStandbyHoursDesc.Size = new System.Drawing.Size(227, 46);
+      this.lblStandbyHoursDesc.TabIndex = 5;
+      this.lblStandbyHoursDesc.Text = "Example: setting these values to 1 + 17 \r\nthe TV-Server will only use the configu" +
+          "red \r\nshutdown mode between 01:00 and 17:00.";
       // 
       // PowerSchedulerMasterSetup
       // 
@@ -754,6 +765,10 @@ namespace TvEngine.PowerScheduler
       this.Size = new System.Drawing.Size(467, 388);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
+      this.groupBoxStandbyHours.ResumeLayout(false);
+      this.groupBoxStandbyHours.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numUpDownStandbyAllowedEndHour)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numUpDownStandbyAllowedStartHour)).EndInit();
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
@@ -775,10 +790,6 @@ namespace TvEngine.PowerScheduler
       this.tabPage4.ResumeLayout(false);
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
-      this.groupBox5.ResumeLayout(false);
-      this.groupBox5.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -793,11 +804,12 @@ namespace TvEngine.PowerScheduler
     private System.Windows.Forms.Button button3;
     private System.Windows.Forms.TextBox tbEpgCmd;
     private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.GroupBox groupBox5;
-    private System.Windows.Forms.NumericUpDown numericUpDown6;
-    private System.Windows.Forms.NumericUpDown numericUpDown5;
+    private System.Windows.Forms.GroupBox groupBoxStandbyHours;
+    private System.Windows.Forms.NumericUpDown numUpDownStandbyAllowedEndHour;
+    private System.Windows.Forms.NumericUpDown numUpDownStandbyAllowedStartHour;
     private System.Windows.Forms.Label label9;
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.Label label10;
+    private System.Windows.Forms.Label lblStandbyHoursDesc;
   }
 }

@@ -55,11 +55,11 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerIdleTimeout", "5");
       numericUpDown1.Value = Convert.ToDecimal(setting.Value);
 
-      setting = _layer.GetSetting("PowerSchedulerAllowedStart", "0");
-      numericUpDown5.Value = Convert.ToDecimal(setting.Value);
+      setting = _layer.GetSetting("PowerSchedulerStandbyAllowedStart", "0");
+      numUpDownStandbyAllowedStartHour.Value = Convert.ToDecimal(setting.Value);
 
-      setting = _layer.GetSetting("PowerSchedulerAllowedEnd", "5");
-      numericUpDown6.Value = Convert.ToDecimal(setting.Value);
+      setting = _layer.GetSetting("PowerSchedulerStandbyAllowedEnd", "24");
+      numUpDownStandbyAllowedEndHour.Value = Convert.ToDecimal(setting.Value);
 
       setting = _layer.GetSetting("PowerSchedulerWakeupActive", "false");
       checkBox2.Checked = Convert.ToBoolean(setting.Value);
@@ -155,12 +155,12 @@ namespace TvEngine.PowerScheduler
       setting.Value = numericUpDown1.Value.ToString();
       setting.Persist();
 
-      setting = _layer.GetSetting("PowerSchedulerAllowedStart", "0");
-      setting.Value = numericUpDown5.Value.ToString();
+      setting = _layer.GetSetting("PowerSchedulerStandbyAllowedStart", "0");
+      setting.Value = numUpDownStandbyAllowedStartHour.Value.ToString();
       setting.Persist();
 
-      setting = _layer.GetSetting("PowerSchedulerAllowedEnd", "5");
-      setting.Value = numericUpDown6.Value.ToString();
+      setting = _layer.GetSetting("PowerSchedulerStandbyAllowedEnd", "24");
+      setting.Value = numUpDownStandbyAllowedEndHour.Value.ToString();
       setting.Persist();
 
       setting = _layer.GetSetting("PowerSchedulerWakeupActive", "false");

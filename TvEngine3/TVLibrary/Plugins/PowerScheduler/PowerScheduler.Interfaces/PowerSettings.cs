@@ -82,8 +82,8 @@ namespace TvEngine.PowerScheduler.Interfaces
       _checkInterval = s.CheckInterval;
       _shutdownMode = s.ShutdownMode;
       _settings = s._settings;
-      _allowedStart = s.AllowedStart;
-      _allowedStop = s.AllowedStop;
+      _allowedStart = s.AllowedSleepStartTime;
+      _allowedStop = s.AllowedSleepStopTime;
     }
     #endregion
 
@@ -230,31 +230,35 @@ namespace TvEngine.PowerScheduler.Interfaces
         _checkInterval = value;
       }
     }
+
     /// <summary>
     /// Controls the minimum start hour of suspends. 
     /// </summary>
-    public int AllowedStart
+    public int AllowedSleepStartTime
     {
-        get { return _allowedStart; }
-        set
-        {
-            if (value > _allowedStop )
-                throw new ArgumentException("AllowedStart cannot be greater than AllowedStop");
-            _allowedStart = value;
-        }
-    }    /// <summary>
+      get { return _allowedStart; }
+      set
+      {
+        if (value > _allowedStop)
+          //throw new ArgumentException("AllowedStart cannot be greater than AllowedStop");
+        _allowedStart = value;
+      }
+    } 
+    
+    /// <summary>
     /// Controls the maximum start hour for a suspend.
     /// </summary>
-    public int AllowedStop
+    public int AllowedSleepStopTime
     {
-        get { return _allowedStop; }
-        set
-        {
-            if (value < _allowedStart )
-                throw new ArgumentException("AllowedStop cannot be smaller than AllowedStart");
-            _allowedStop = value;
-        }
+      get { return _allowedStop; }
+      set
+      {
+        if (value < _allowedStart)
+          //throw new ArgumentException("AllowedStop cannot be smaller than AllowedStart");
+        _allowedStop = value;
+      }
     }
+
     /// <summary>
     /// How should put the system into standby? suspend/hibernate/stayon
     /// suspend uses S3, hibernate uses S4, stayon is for debugging purposes and

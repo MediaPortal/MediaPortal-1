@@ -412,7 +412,7 @@ namespace TvEngine.PowerScheduler
       data.that = this;
       data.how = (RestartOptions)how;
       data.force = force;
-      
+
       Thread suspendThread = new Thread(SuspendSystemThread);
       suspendThread.Name = "Powerscheduler Suspender";
       suspendThread.Start(data);
@@ -746,24 +746,22 @@ namespace TvEngine.PowerScheduler
       }
 
       // Check allowed stop time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerAllowedEnd", "5").Value);
-      if (_settings.AllowedStop != setting)
+      setting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyAllowedEnd", "24").Value);
+      if (_settings.AllowedSleepStopTime != setting)
       {
-        _settings.AllowedStop = setting;
-        LogVerbose("PowerScheduler: Allowed stop time set to: {0} hour", _settings.AllowedStop);
+        _settings.AllowedSleepStopTime = setting;
+        LogVerbose("PowerScheduler: Standby allowed until {0} o' clock", _settings.AllowedSleepStopTime);
         changed = true;
       }
 
       // Check configured allowed start time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerAllowedStart", "0").Value);
-      if (_settings.AllowedStart != setting)
+      setting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyAllowedStart", "0").Value);
+      if (_settings.AllowedSleepStartTime != setting)
       {
-          _settings.AllowedStart = setting;
-          LogVerbose("PowerScheduler: Allowed start time set to: {0} hour", _settings.AllowedStart);
-          changed = true;
+        _settings.AllowedSleepStartTime = setting;
+        LogVerbose("PowerScheduler: Standby allowed starting at {0} o' clock", _settings.AllowedSleepStartTime);
+        changed = true;
       }
-
-
 
       // Send message in case any setting has changed
       if (changed)
@@ -1237,19 +1235,23 @@ namespace TvEngine.PowerScheduler
           _currentDisAllowShutdown = true;
           return true;
         }
-      
-        //check if is allowed to sleep at this time. 
 
-        if (DateTime.Now.Hour < _settings.AllowedStart || _settings.AllowedStop <= DateTime.Now.Hour)
+        // get a save 24h hour regardless of the regional settings.
+        int Current24hHour = Convert.ToInt32(DateTime.Now.ToString("HH"));
+
+        //check if is allowed to sleep at this time. 
+        // e.g. 23:00 -> 07:00 or 01:00 -> 17:00
+        if ((Current24hHour < _settings.AllowedSleepStartTime) && (Current24hHour > _settings.AllowedSleepStopTime) ||
+            (Current24hHour > _settings.AllowedSleepStartTime) && (Current24hHour > _settings.AllowedSleepStopTime))
         {
-            _currentDisAllowShutdownHandler = "NOT-ALLOWED-TIME";
-            LogVerbose("PowerScheduler.DisAllowShutdown: not allowed time");
-            _currentDisAllowShutdown = true;
-            _powerManager.PreventStandby();
-            return true;
+          _currentDisAllowShutdownHandler = "NOT-ALLOWED-TIME";
+          LogVerbose("PowerScheduler.DisAllowShutdown: not allowed hour for standby {0}", Current24hHour);
+          _currentDisAllowShutdown = true;
+          _powerManager.PreventStandby();
+          return true;
         }
 
-          _currentDisAllowShutdown = false;
+        _currentDisAllowShutdown = false;
         _currentDisAllowShutdownHandler = "";
         _powerManager.AllowStandby();
         return false;
