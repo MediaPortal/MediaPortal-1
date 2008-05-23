@@ -19,7 +19,7 @@
       <description>row 1 label</description>
       <type>label</type>
       <id>10</id>
-      <posX>70</posX>
+      <posX>605</posX>
       <posY>55</posY>
       <label>-</label>
       <align>left</align>

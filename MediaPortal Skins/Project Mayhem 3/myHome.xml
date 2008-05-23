@@ -243,9 +243,10 @@
       <type>label</type>
       <id>200</id>
       <posX>595</posX>
-      <posY>77</posY>
+      <posY>75</posY>
       <label>#date</label>
       <align>right</align>
+      <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="800" delay="250">WindowOpen</animation>
       <animation effect="fade" time="800" delay="250">WindowClose</animation>
@@ -255,10 +256,10 @@
       <type>label</type>
       <id>1</id>
       <posX>599</posX>
-      <posY>76</posY>
+      <posY>75</posY>
       <label>|</label>
       <align>left</align>
-      <font>FONT13</font>
+      <font>font13</font>
       <textcolor>7A7979</textcolor>
       <animation effect="fade" time="800" delay="250">WindowOpen</animation>
       <animation effect="fade" time="800" delay="250">WindowClose</animation>
@@ -271,7 +272,7 @@
       <posY>75</posY>
       <label>#time</label>
       <align>left</align>
-      <font>font14</font>
+      <font>font13</font>
       <textcolor>7A7979</textcolor>
       <animation effect="fade" time="800" delay="250">WindowOpen</animation>
       <animation effect="fade" time="800" delay="250">WindowClose</animation>
