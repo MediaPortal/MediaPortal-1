@@ -478,20 +478,20 @@ namespace MediaPortal.Player
       if (_stopPainting) return;
       try
       {
-        if (_textureAddress != 0)
+        if (!GUIGraphicsContext.InVmr9Render)
         {
-          if (!GUIGraphicsContext.InVmr9Render)
+          if (_textureAddress != 0)
+          {
             InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, true);
-        }
-        else if (_surfaceAdress != 0)
-        {
-          if (!GUIGraphicsContext.InVmr9Render)
+          }
+          else if (_surfaceAdress != 0)
+          {
             InternalPresentSurface(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, true);
-        }
-        else
-        {
-          if (!GUIGraphicsContext.InVmr9Render)
+          }
+          else
+          {
             InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, true);
+          }
         }
       }
       catch (Exception ex)
