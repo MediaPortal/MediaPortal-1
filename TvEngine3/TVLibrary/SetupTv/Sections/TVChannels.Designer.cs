@@ -44,6 +44,7 @@ namespace SetupTv.Sections
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.renameMarkedChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.addSIDInFrontOfNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.renumberChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -61,7 +62,7 @@ namespace SetupTv.Sections
       this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
-      this.renumberChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -94,8 +95,8 @@ namespace SetupTv.Sections
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
-      this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
+      this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
       // 
       // hdrhekje
@@ -138,46 +139,53 @@ namespace SetupTv.Sections
             this.addSIDInFrontOfNameToolStripMenuItem,
             this.renumberChannelsBySIDToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 164);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(258, 142);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // deleteThisChannelToolStripMenuItem
       // 
       this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
-      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
       this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
       // 
       // editChannelToolStripMenuItem
       // 
       this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
-      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.editChannelToolStripMenuItem.Text = "Edit channel";
       this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
       // 
       // toolStripMenuItem1
       // 
       this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(252, 6);
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(254, 6);
       // 
       // renameMarkedChannelsBySIDToolStripMenuItem
       // 
       this.renameMarkedChannelsBySIDToolStripMenuItem.Name = "renameMarkedChannelsBySIDToolStripMenuItem";
-      this.renameMarkedChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.renameMarkedChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.renameMarkedChannelsBySIDToolStripMenuItem.Text = "Rename selected channel(s) by SID";
       this.renameMarkedChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renameMarkedChannelsBySIDToolStripMenuItem_Click);
       // 
       // addSIDInFrontOfNameToolStripMenuItem
       // 
       this.addSIDInFrontOfNameToolStripMenuItem.Name = "addSIDInFrontOfNameToolStripMenuItem";
-      this.addSIDInFrontOfNameToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.addSIDInFrontOfNameToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.addSIDInFrontOfNameToolStripMenuItem.Text = "Add SID in front of name";
       this.addSIDInFrontOfNameToolStripMenuItem.Click += new System.EventHandler(this.addSIDInFrontOfNameToolStripMenuItem_Click);
+      // 
+      // renumberChannelsBySIDToolStripMenuItem
+      // 
+      this.renumberChannelsBySIDToolStripMenuItem.Name = "renumberChannelsBySIDToolStripMenuItem";
+      this.renumberChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
+      this.renumberChannelsBySIDToolStripMenuItem.Text = "Renumber channels by SID";
+      this.renumberChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renumberChannelsBySIDToolStripMenuItem_Click);
       // 
       // imageList1
       // 
@@ -367,13 +375,6 @@ namespace SetupTv.Sections
       this.mpButtonPreview.UseVisualStyleBackColor = true;
       this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
-      // renumberChannelsBySIDToolStripMenuItem
-      // 
-      this.renumberChannelsBySIDToolStripMenuItem.Name = "renumberChannelsBySIDToolStripMenuItem";
-      this.renumberChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-      this.renumberChannelsBySIDToolStripMenuItem.Text = "Renumber channels by SID";
-      this.renumberChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renumberChannelsBySIDToolStripMenuItem_Click);
-      // 
       // TvChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -424,5 +425,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonUncheckEncrypted;
     private System.Windows.Forms.ToolStripMenuItem renumberChannelsBySIDToolStripMenuItem;
+    private System.Windows.Forms.SaveFileDialog saveFileDialog1;
   }
 }

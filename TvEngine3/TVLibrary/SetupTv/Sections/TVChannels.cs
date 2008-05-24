@@ -604,7 +604,7 @@ namespace SetupTv.Sections
       AddAttribute(node, tagName, tagValue.ToString());
     }
 
-    private void Export()
+    private void Export(string fileName)
     {
       XmlDocument xmlDoc = new XmlDocument();
       XmlNode rootElement = xmlDoc.CreateElement("tvserver");
@@ -759,13 +759,23 @@ namespace SetupTv.Sections
       }
       rootElement.AppendChild(nodeChannelGroups);
       xmlDoc.AppendChild(rootElement);
-      xmlDoc.Save(String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\export.xml", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
-      MessageBox.Show(this, "Channels, channel groups and schedules exported to 'export.xml'");
+      xmlDoc.Save(fileName);
+      MessageBox.Show(this, "Channels, channel groups and schedules exported to " + fileName);
     }
 
     private void mpButtonExpert_Click(object sender, EventArgs e)
     {
-      Export();
+      saveFileDialog1.CheckFileExists = false;
+      saveFileDialog1.DefaultExt = "xml";
+      saveFileDialog1.RestoreDirectory = true;
+      saveFileDialog1.Title = "Save channels, channel groups and schedules";
+      saveFileDialog1.InitialDirectory = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      saveFileDialog1.FileName = "export.xml";
+      saveFileDialog1.AddExtension = true;
+      if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
+      {
+        Export(saveFileDialog1.FileName);
+      }
     }
 
     private string GetNodeAttribute(XmlNode node, string attribute, string defaultValue)
