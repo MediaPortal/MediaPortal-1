@@ -121,7 +121,7 @@ namespace MediaPortal.Configuration.Sections
     {
       string[] lines = {
 								 "REDEYE SERIAL REMOTE for CABLE and SKY STB's",
-								 "http://www.redremote.com/serial",
+								 "http://www.redremote.co.uk/serial",
 								 "",
 								 "N.B. Make sure the ComPort in use by serialUIR is not set to the ComPort",
 								 "RedEye is using, you will get strange results even if serialUIR is not enabled for",
