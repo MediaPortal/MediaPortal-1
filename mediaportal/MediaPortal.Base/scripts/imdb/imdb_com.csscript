@@ -57,7 +57,7 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
               strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
               HTMLUtil htmlUtil = new HTMLUtil();
               htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-              MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(strURL, strTitle + " (imdb)", "IMDB");
+              MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(absoluteUri, strTitle + " (imdb_com)", "imdb_com");
               elements.Add(url);
             }
           }
@@ -188,9 +188,11 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
       int iCredits = strBody.IndexOf("Writer");
       int iGenre = strBody.IndexOf("Genre:");
       int iTagLine = strBody.IndexOf("Tagline:</h5>");
-      int iPlotOutline = strBody.IndexOf("Plot Outline:</h5>");
+	  int iPlotOutline = strBody.IndexOf("<h5>Plot:</h5>");
+	  if  (iPlotOutline<1)
+          iPlotOutline = strBody.IndexOf("Plot Outline:</h5>");
       int iPlotSummary = strBody.IndexOf("Plot Summary:</h5>");
-      int iPlot = strBody.IndexOf("<a href=\"plotsummary");
+      int iPlot = strBody.IndexOf(">full summary");
       int iImage = strBody.IndexOf("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"");
       if (iImage >= 0)
       {
@@ -286,7 +288,14 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
       }
       else
       {
-        iPlotOutline += "Plot Outline:</h5>".Length;
+ 		if (strBody.IndexOf("<h5>Plot:</h5>")>0)
+		{
+		    iPlotOutline += "<h5>Plot:</h5>".Length;
+		}
+		else
+		{
+           iPlotOutline += "Plot Outline:</h5>".Length;
+		}
         iEnd = strBody.IndexOf("<", iPlotOutline);
         movieDetails.PlotOutline = strBody.Substring(iPlotOutline, iEnd - iPlotOutline).Trim();
         movieDetails.PlotOutline = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.PlotOutline);
@@ -304,12 +313,11 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
       //plot
       if (iPlot >= 0)
       {
-        string strPlotURL = url.URL + "plotsummary";
+        string strPlotURL = "http://www.imdb.com/title/"+movieDetails.IMDBNumber + "/plotsummary";
         try
         {
           string absoluteUri;
           string strPlotHTML = GetPage(strPlotURL, "utf-8", out absoluteUri);
-
           if (0 != strPlotHTML.Length)
           {
 
