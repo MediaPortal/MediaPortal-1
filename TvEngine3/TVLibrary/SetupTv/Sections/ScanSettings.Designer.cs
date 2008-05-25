@@ -29,6 +29,14 @@ namespace SetupTv.Sections
     private void InitializeComponent()
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.tabPageApplication = new System.Windows.Forms.TabPage();
+      this.groupBox8 = new System.Windows.Forms.GroupBox();
+      this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.groupBox6 = new System.Windows.Forms.GroupBox();
+      this.label45 = new System.Windows.Forms.Label();
+      this.label44 = new System.Windows.Forms.Label();
+      this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
       this.tabPageScan = new System.Windows.Forms.TabPage();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.checkBoxEnableLinkageScanner = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -48,14 +56,6 @@ namespace SetupTv.Sections
       this.label4 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
-      this.tabPageApplication = new System.Windows.Forms.TabPage();
-      this.groupBox8 = new System.Windows.Forms.GroupBox();
-      this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.groupBox6 = new System.Windows.Forms.GroupBox();
-      this.label45 = new System.Windows.Forms.Label();
-      this.label44 = new System.Windows.Forms.Label();
-      this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
       this.tabPageEPG = new System.Windows.Forms.TabPage();
       this.groupBox9 = new System.Windows.Forms.GroupBox();
       this.textBox1 = new System.Windows.Forms.TextBox();
@@ -103,6 +103,10 @@ namespace SetupTv.Sections
       this.label19 = new System.Windows.Forms.Label();
       this.label18 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
+      this.tabPageApplication.SuspendLayout();
+      this.groupBox8.SuspendLayout();
+      this.groupBox6.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).BeginInit();
       this.tabPageScan.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -111,10 +115,6 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAT)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPAT)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).BeginInit();
-      this.tabPageApplication.SuspendLayout();
-      this.groupBox8.SuspendLayout();
-      this.groupBox6.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).BeginInit();
       this.tabPageEPG.SuspendLayout();
       this.groupBox9.SuspendLayout();
       this.groupBox7.SuspendLayout();
@@ -146,6 +146,131 @@ namespace SetupTv.Sections
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(484, 454);
       this.tabControl1.TabIndex = 15;
+      // 
+      // tabPageApplication
+      // 
+      this.tabPageApplication.Controls.Add(this.groupBox8);
+      this.tabPageApplication.Controls.Add(this.groupBox6);
+      this.tabPageApplication.Location = new System.Drawing.Point(4, 22);
+      this.tabPageApplication.Name = "tabPageApplication";
+      this.tabPageApplication.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageApplication.Size = new System.Drawing.Size(476, 428);
+      this.tabPageApplication.TabIndex = 1;
+      this.tabPageApplication.Text = "Application";
+      this.tabPageApplication.UseVisualStyleBackColor = true;
+      // 
+      // groupBox8
+      // 
+      this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox8.Controls.Add(this.lblPriority);
+      this.groupBox8.Controls.Add(this.mpComboBoxPrio);
+      this.groupBox8.Location = new System.Drawing.Point(6, 6);
+      this.groupBox8.Name = "groupBox8";
+      this.groupBox8.Size = new System.Drawing.Size(464, 50);
+      this.groupBox8.TabIndex = 81;
+      this.groupBox8.TabStop = false;
+      this.groupBox8.Text = "TVService";
+      // 
+      // lblPriority
+      // 
+      this.lblPriority.AutoSize = true;
+      this.lblPriority.Location = new System.Drawing.Point(6, 22);
+      this.lblPriority.Name = "lblPriority";
+      this.lblPriority.Size = new System.Drawing.Size(94, 13);
+      this.lblPriority.TabIndex = 76;
+      this.lblPriority.Text = "TVService Priority:";
+      // 
+      // mpComboBoxPrio
+      // 
+      this.mpComboBoxPrio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxPrio.FormattingEnabled = true;
+      this.mpComboBoxPrio.Items.AddRange(new object[] {
+            "Not Defined ",
+            "16 QAM ",
+            "32 QAM",
+            "64 QAM",
+            "80 QAM",
+            "96 QAM",
+            "112 QAM",
+            "128 QAM",
+            "160 QAM",
+            "192 QAM",
+            "224 QAM",
+            "256 QAM",
+            "320 QAM",
+            "384 QAM",
+            "448 QAM",
+            "512 QAM",
+            "640 QAM",
+            "768 QAM",
+            "896 QAM",
+            "1024 QAM",
+            "Qpsk",
+            "Bpsk",
+            "Oqpsk ",
+            "8Vsb ",
+            "16Vsb ",
+            "AnalogAmplitude ",
+            "AnalogFrequency ",
+            "8psk ",
+            "Rf ",
+            "16Apsk ",
+            "32Apsk",
+            "Qpsk2 ",
+            "8psk2 ",
+            "DirectTV  "});
+      this.mpComboBoxPrio.Location = new System.Drawing.Point(125, 19);
+      this.mpComboBoxPrio.Name = "mpComboBoxPrio";
+      this.mpComboBoxPrio.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBoxPrio.TabIndex = 77;
+      this.mpComboBoxPrio.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxPrio_SelectedIndexChanged);
+      // 
+      // groupBox6
+      // 
+      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox6.Controls.Add(this.label45);
+      this.groupBox6.Controls.Add(this.label44);
+      this.groupBox6.Controls.Add(this.delayDetectUpDown);
+      this.groupBox6.Location = new System.Drawing.Point(6, 62);
+      this.groupBox6.Name = "groupBox6";
+      this.groupBox6.Size = new System.Drawing.Size(464, 107);
+      this.groupBox6.TabIndex = 80;
+      this.groupBox6.TabStop = false;
+      this.groupBox6.Text = "Delay for TVcard detection";
+      // 
+      // label45
+      // 
+      this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label45.Location = new System.Drawing.Point(6, 16);
+      this.label45.Name = "label45";
+      this.label45.Size = new System.Drawing.Size(452, 46);
+      this.label45.TabIndex = 80;
+      this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
+          "by. Therefore use this option below to force a delay should it be required.";
+      // 
+      // label44
+      // 
+      this.label44.AutoSize = true;
+      this.label44.Location = new System.Drawing.Point(6, 67);
+      this.label44.Name = "label44";
+      this.label44.Size = new System.Drawing.Size(236, 13);
+      this.label44.TabIndex = 78;
+      this.label44.Text = "Delay in seconds before TVServer detects cards";
+      // 
+      // delayDetectUpDown
+      // 
+      this.delayDetectUpDown.Location = new System.Drawing.Point(257, 65);
+      this.delayDetectUpDown.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.delayDetectUpDown.Name = "delayDetectUpDown";
+      this.delayDetectUpDown.Size = new System.Drawing.Size(47, 20);
+      this.delayDetectUpDown.TabIndex = 79;
       // 
       // tabPageScan
       // 
@@ -385,131 +510,6 @@ namespace SetupTv.Sections
       this.label6.TabIndex = 6;
       this.label6.Text = "SDT/VCT:";
       // 
-      // tabPageApplication
-      // 
-      this.tabPageApplication.Controls.Add(this.groupBox8);
-      this.tabPageApplication.Controls.Add(this.groupBox6);
-      this.tabPageApplication.Location = new System.Drawing.Point(4, 22);
-      this.tabPageApplication.Name = "tabPageApplication";
-      this.tabPageApplication.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageApplication.Size = new System.Drawing.Size(476, 428);
-      this.tabPageApplication.TabIndex = 1;
-      this.tabPageApplication.Text = "Application";
-      this.tabPageApplication.UseVisualStyleBackColor = true;
-      // 
-      // groupBox8
-      // 
-      this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox8.Controls.Add(this.lblPriority);
-      this.groupBox8.Controls.Add(this.mpComboBoxPrio);
-      this.groupBox8.Location = new System.Drawing.Point(6, 6);
-      this.groupBox8.Name = "groupBox8";
-      this.groupBox8.Size = new System.Drawing.Size(464, 50);
-      this.groupBox8.TabIndex = 81;
-      this.groupBox8.TabStop = false;
-      this.groupBox8.Text = "TVService";
-      // 
-      // lblPriority
-      // 
-      this.lblPriority.AutoSize = true;
-      this.lblPriority.Location = new System.Drawing.Point(6, 22);
-      this.lblPriority.Name = "lblPriority";
-      this.lblPriority.Size = new System.Drawing.Size(94, 13);
-      this.lblPriority.TabIndex = 76;
-      this.lblPriority.Text = "TVService Priority:";
-      // 
-      // mpComboBoxPrio
-      // 
-      this.mpComboBoxPrio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxPrio.FormattingEnabled = true;
-      this.mpComboBoxPrio.Items.AddRange(new object[] {
-            "Not Defined ",
-            "16 QAM ",
-            "32 QAM",
-            "64 QAM",
-            "80 QAM",
-            "96 QAM",
-            "112 QAM",
-            "128 QAM",
-            "160 QAM",
-            "192 QAM",
-            "224 QAM",
-            "256 QAM",
-            "320 QAM",
-            "384 QAM",
-            "448 QAM",
-            "512 QAM",
-            "640 QAM",
-            "768 QAM",
-            "896 QAM",
-            "1024 QAM",
-            "Qpsk",
-            "Bpsk",
-            "Oqpsk ",
-            "8Vsb ",
-            "16Vsb ",
-            "AnalogAmplitude ",
-            "AnalogFrequency ",
-            "8psk ",
-            "Rf ",
-            "16Apsk ",
-            "32Apsk",
-            "Qpsk2 ",
-            "8psk2 ",
-            "DirectTV  "});
-      this.mpComboBoxPrio.Location = new System.Drawing.Point(125, 19);
-      this.mpComboBoxPrio.Name = "mpComboBoxPrio";
-      this.mpComboBoxPrio.Size = new System.Drawing.Size(179, 21);
-      this.mpComboBoxPrio.TabIndex = 77;
-      this.mpComboBoxPrio.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxPrio_SelectedIndexChanged);
-      // 
-      // groupBox6
-      // 
-      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox6.Controls.Add(this.label45);
-      this.groupBox6.Controls.Add(this.label44);
-      this.groupBox6.Controls.Add(this.delayDetectUpDown);
-      this.groupBox6.Location = new System.Drawing.Point(6, 62);
-      this.groupBox6.Name = "groupBox6";
-      this.groupBox6.Size = new System.Drawing.Size(464, 107);
-      this.groupBox6.TabIndex = 80;
-      this.groupBox6.TabStop = false;
-      this.groupBox6.Text = "Delay for TVcard detection";
-      // 
-      // label45
-      // 
-      this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.label45.Location = new System.Drawing.Point(6, 16);
-      this.label45.Name = "label45";
-      this.label45.Size = new System.Drawing.Size(452, 46);
-      this.label45.TabIndex = 80;
-      this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
-          "by. Therefore use this option below to force a delay should it be required.";
-      // 
-      // label44
-      // 
-      this.label44.AutoSize = true;
-      this.label44.Location = new System.Drawing.Point(6, 67);
-      this.label44.Name = "label44";
-      this.label44.Size = new System.Drawing.Size(236, 13);
-      this.label44.TabIndex = 78;
-      this.label44.Text = "Delay in seconds before TVServer detects cards";
-      // 
-      // delayDetectUpDown
-      // 
-      this.delayDetectUpDown.Location = new System.Drawing.Point(257, 65);
-      this.delayDetectUpDown.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
-      this.delayDetectUpDown.Name = "delayDetectUpDown";
-      this.delayDetectUpDown.Size = new System.Drawing.Size(47, 20);
-      this.delayDetectUpDown.TabIndex = 79;
-      // 
       // tabPageEPG
       // 
       this.tabPageEPG.Controls.Add(this.groupBox9);
@@ -679,7 +679,7 @@ namespace SetupTv.Sections
       this.checkBoxAlwaysUpdate.Name = "checkBoxAlwaysUpdate";
       this.checkBoxAlwaysUpdate.Size = new System.Drawing.Size(310, 17);
       this.checkBoxAlwaysUpdate.TabIndex = 11;
-      this.checkBoxAlwaysUpdate.Text = "Always try to update existing entries (migth raise CPU usage!)";
+      this.checkBoxAlwaysUpdate.Text = "Always try to update existing entries (might raise CPU usage!)";
       this.checkBoxAlwaysUpdate.UseVisualStyleBackColor = true;
       // 
       // checkBoxAlwaysFillHoles
@@ -1068,6 +1068,12 @@ namespace SetupTv.Sections
       this.Name = "ScanSettings";
       this.Size = new System.Drawing.Size(484, 454);
       this.tabControl1.ResumeLayout(false);
+      this.tabPageApplication.ResumeLayout(false);
+      this.groupBox8.ResumeLayout(false);
+      this.groupBox8.PerformLayout();
+      this.groupBox6.ResumeLayout(false);
+      this.groupBox6.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
       this.tabPageScan.ResumeLayout(false);
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
@@ -1078,12 +1084,6 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAT)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPAT)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).EndInit();
-      this.tabPageApplication.ResumeLayout(false);
-      this.groupBox8.ResumeLayout(false);
-      this.groupBox8.PerformLayout();
-      this.groupBox6.ResumeLayout(false);
-      this.groupBox6.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
       this.tabPageEPG.ResumeLayout(false);
       this.groupBox9.ResumeLayout(false);
       this.groupBox9.PerformLayout();
