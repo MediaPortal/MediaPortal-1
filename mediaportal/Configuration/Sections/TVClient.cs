@@ -347,7 +347,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpCheckBoxPrefAudioOverLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpCheckBoxPrefAudioOverLang.AutoSize = true;
-      this.mpCheckBoxPrefAudioOverLang.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.mpCheckBoxPrefAudioOverLang.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxPrefAudioOverLang.Location = new System.Drawing.Point(239, 28);
       this.mpCheckBoxPrefAudioOverLang.Name = "mpCheckBoxPrefAudioOverLang";
@@ -360,7 +359,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpCheckBoxPrefAC3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpCheckBoxPrefAC3.AutoSize = true;
-      this.mpCheckBoxPrefAC3.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.mpCheckBoxPrefAC3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxPrefAC3.Location = new System.Drawing.Point(9, 28);
       this.mpCheckBoxPrefAC3.Name = "mpCheckBoxPrefAC3";
@@ -558,7 +556,6 @@ namespace MediaPortal.Configuration.Sections
       // mpCheckBoxEnableTTXTSub
       // 
       this.mpCheckBoxEnableTTXTSub.AutoSize = true;
-      this.mpCheckBoxEnableTTXTSub.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.mpCheckBoxEnableTTXTSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxEnableTTXTSub.Location = new System.Drawing.Point(239, 28);
       this.mpCheckBoxEnableTTXTSub.Name = "mpCheckBoxEnableTTXTSub";
@@ -571,7 +568,6 @@ namespace MediaPortal.Configuration.Sections
       // mpCheckBoxEnableDVBSub
       // 
       this.mpCheckBoxEnableDVBSub.AutoSize = true;
-      this.mpCheckBoxEnableDVBSub.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.mpCheckBoxEnableDVBSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxEnableDVBSub.Location = new System.Drawing.Point(9, 28);
       this.mpCheckBoxEnableDVBSub.Name = "mpCheckBoxEnableDVBSub";
