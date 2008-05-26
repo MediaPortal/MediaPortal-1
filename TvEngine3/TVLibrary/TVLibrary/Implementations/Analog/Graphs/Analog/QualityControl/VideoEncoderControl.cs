@@ -34,6 +34,9 @@ using TvLibrary.Implementations.DVB;
 
 namespace TvLibrary.Implementations.Analog.QualityControl
 {
+  /// <summary>
+  /// Class which implements control of quality trough the use of the IVideoEncoder interface
+  /// </summary>
   public class VideoEncoderControl : IQuality
   {
     private IVideoEncoder _videoEncoder;
@@ -44,7 +47,12 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     private VIDEOENCODER_BITRATE_MODE _bitRateMode;
     private Configuration _configuration;
 
-    public VideoEncoderControl(Configuration configuration,IVideoEncoder videoEncoder)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:VideoEncoderControl"/> class.
+    /// </summary>
+    /// <param name="configuration">The encoder settings to use.</param>
+    /// <param name="videoEncoder">The IVideoEncoder interface to the filter that must be used to control the quality.</param>
+    public VideoEncoderControl(Configuration configuration, IVideoEncoder videoEncoder)
     {
       _configuration = configuration;
       _videoEncoder = videoEncoder;
@@ -153,29 +161,31 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       try
       {
         int hr;
-        Log.Log.WriteFile("analog: IVideoEncoder supported by: " + FilterGraphTools.GetFilterName(_videoEncoder as IBaseFilter) + "; Checking capabilities ");
+        Log.Log.Info("analog: IVideoEncoder supported by: " + FilterGraphTools.GetFilterName(_videoEncoder as IBaseFilter) + "; Checking capabilities ");
 
         // Can we set the encoding mode?
         //ENCAPIPARAM_BITRATE_MODE 	Specifies the bit-rate mode, as a VIDEOENCODER_BITRATE_MODE enumeration value (32-bit signed long).
         hr = _videoEncoder.IsSupported(PropSetID.ENCAPIPARAM_BitRateMode);
         _supported_BitRateMode = hr == 0;
-        Log.Log.WriteFile("analog: IVideoEncoder supports ENCAPIPARAM_BitRateMode");
+        if (_supported_BitRateMode)
+          Log.Log.Debug("analog: IVideoEncoder supports ENCAPIPARAM_BitRateMode");
 
         // Can we specify the bitrate?
         //ENCAPIPARAM_BITRATE 	Specifies the bit rate, in bits per second. In constant bit rate (CBR) mode, the value gives the constant bitrate. In either variable bit rate mode, it gives the average bit rate. The value is a 32-bit unsigned long.
         hr = _videoEncoder.IsSupported(PropSetID.ENCAPIPARAM_BitRate);
         _supported_BitRate = hr == 0;
-        Log.Log.WriteFile("analog: IVideoEncoder supports ENCAPIPARAM_BitRate");
+        if (_supported_BitRate)
+          Log.Log.Debug("analog: IVideoEncoder supports ENCAPIPARAM_BitRate");
 
         // Can we specify the peak bitrate for variable bit rate peak
         //ENCAPIPARAM_PEAK_BITRATE 	Secifies the peak bit rate. This parameter is relevant only when ENCAPIPARAM_BITRATE_MODE has been set to VariableBitRatePeak.
         hr = _videoEncoder.IsSupported(PropSetID.ENCAPIPARAM_PeakBitRate);
         _supported_PeakBitRate = hr == 0;
-        Log.Log.WriteFile("analog: IVideoEncoder supports ENCAPIPARAM_PeakBitRate");
+        if (_supported_PeakBitRate)
+          Log.Log.Debug("analog: IVideoEncoder supports ENCAPIPARAM_PeakBitRate");
       } catch (Exception e)
       {
-        Log.Log.WriteFile("analog: IVideEncoder CheckCapabilities", e);
-        Log.Log.Write(e);
+        Log.Log.Error("analog: IVideEncoder CheckCapabilities {0}", e);
       }
     }
     /// <summary>
@@ -213,24 +223,25 @@ namespace TvLibrary.Implementations.Analog.QualityControl
         // Set new bit rate mode
         if (_supported_BitRateMode)
         {
-          Log.Log.WriteFile("analog: Encoder mode setting to {0}", _bitRateMode);
+          Log.Log.Info("analog: Encoder mode setting to {0}", _bitRateMode);
           int newMode = (int)_bitRateMode;
           object newBitRateModeO = newMode;
           Marshal.WriteInt32(newBitRateModeO, 0, newMode);
           hr = _videoEncoder.SetValue(PropSetID.ENCAPIPARAM_BitRateMode, ref newBitRateModeO);
           if (hr == 0)
           {
-            Log.Log.WriteFile("analog: Encoder mode set to {0}", _bitRateMode);
-          } else
+            Log.Log.Info("analog: Encoder mode set to {0}", _bitRateMode);
+          }
+          else
           {
-            Log.Log.WriteFile("analog: Encoder mode setTo result: {0}", hr);
+            Log.Log.Debug("analog: Encoder mode setTo FAILresult: {0}", hr);
           }
         }
 
         if (_supported_BitRate)
         {
 
-          Log.Log.WriteFile("analog: Encoder BitRate setting to {0}", _qualityType);
+          Log.Log.Info("analog: Encoder BitRate setting to {0}", _qualityType);
           object valueMin, valueMax, steppingDelta;
           hr = _videoEncoder.GetParameterRange(PropSetID.ENCAPIPARAM_BitRate, out valueMin, out valueMax, out steppingDelta);
           if (hr == 0)
@@ -239,17 +250,15 @@ namespace TvLibrary.Implementations.Analog.QualityControl
             int valMax = Marshal.ReadInt32(valueMax, 0);
             int valStepDelta = Marshal.ReadInt32(steppingDelta, 0);
 
-            Log.Log.WriteFile("analog: Encoder BitRate Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
+            Log.Log.Info("analog: Encoder BitRate Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
 
             Int32 newBitrate = 50;
 
             switch (_qualityType)
             {
               case QualityType.Custom:
-                int qualityToSet;
-                TvBusinessLayer layer = new TvBusinessLayer();
-                String defaultRecordingQualityStr = layer.GetSetting("custom", "50").Value;
-                Int32.TryParse(defaultRecordingQualityStr, out qualityToSet);
+                int qualityToSet = _configuration.CustomQualityValue;
+                Log.Log.Info("analog: Encoder custom quality:{0}", qualityToSet);
                 newBitrate = CalcQualityBitrate(qualityToSet, valMin, valMax, valStepDelta);
                 break;
               case QualityType.Portable:
@@ -279,14 +288,14 @@ namespace TvLibrary.Implementations.Analog.QualityControl
             hr = _videoEncoder.SetValue(PropSetID.ENCAPIPARAM_BitRate, ref newQualityO);
             if (hr == 0)
             {
-              Log.Log.WriteFile("analog: Encoder BitRate set to {0:D}", newQualityO);
+              Log.Log.Info("analog: Encoder BitRate set to {0:D}", newQualityO);
             } else
             {
-              Log.Log.WriteFile("analog: Range SetEncoder(BitRate) result: 0x{0:x}", hr);
+              Log.Log.Debug("analog: Range SetEncoder(BitRate) FAILresult: 0x{0:x}", hr);
             }
           } else
           {
-            Log.Log.WriteFile("analog: Range GetParameterRange(BitRate) result: 0x{0:x}", hr);
+            Log.Log.Debug("analog: Range GetParameterRange(BitRate) FAILresult: 0x{0:x}", hr);
           }
 
           if (_bitRateMode == VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak && _supported_PeakBitRate)
@@ -298,17 +307,15 @@ namespace TvLibrary.Implementations.Analog.QualityControl
               int valMax = Marshal.ReadInt32(valueMax, 0);
               int valStepDelta = Marshal.ReadInt32(steppingDelta, 0);
 
-              Log.Log.WriteFile("analog: Encoder BitRatePeak Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
+              Log.Log.Info("analog: Encoder BitRatePeak Min {0:D} Max {1:D} Delta {2:D}", valMin, valMax, valStepDelta);
 
               Int32 newBitrate = 75;
 
               switch (_qualityType)
               {
                 case QualityType.Custom:
-                  int qualityToSet;
-                  TvBusinessLayer layer = new TvBusinessLayer();
-                  String defaultRecordingQualityStr = layer.GetSetting("customPeak", "75").Value;
-                  Int32.TryParse(defaultRecordingQualityStr, out qualityToSet);
+                  int qualityToSet = _configuration.CustomPeakQualityValue;
+                  Log.Log.Info("analog: Encoder custom quality:{0}", qualityToSet);
                   newBitrate = CalcQualityBitrate(qualityToSet, valMin, valMax, valStepDelta);
                   break;
                 case QualityType.Portable:
@@ -338,21 +345,21 @@ namespace TvLibrary.Implementations.Analog.QualityControl
               hr = _videoEncoder.SetValue(PropSetID.ENCAPIPARAM_PeakBitRate, ref newQualityO);
               if (hr == 0)
               {
-                Log.Log.WriteFile("analog: Encoder BitRatePeak setTo {0:D}", newQualityO);
+                Log.Log.Info("analog: Encoder BitRatePeak setTo {0:D}", newQualityO);
               } else
               {
-                Log.Log.WriteFile("analog: Range SetEncoder(BitRatePeak) result: 0x{0:x}", hr);
+                Log.Log.Debug("analog: Range SetEncoder(BitRatePeak) FAILresult: 0x{0:x}", hr);
               }
             } else
             {
-              Log.Log.WriteFile("analog: Range GetParameterRange(BitRatePeak) result: 0x{0:x}", hr);
+              Log.Log.Debug("analog: Range GetParameterRange(BitRatePeak) FAILresult: 0x{0:x}", hr);
             }
 
           }
         }
       } catch (Exception ex)
       {
-        Log.Log.WriteFile("analog: SetupCaptureFormat ERROR: " + ex.Message);
+        Log.Log.Error("analog: SetupCaptureFormat ERROR: {0}", ex.Message);
       }
     }
 

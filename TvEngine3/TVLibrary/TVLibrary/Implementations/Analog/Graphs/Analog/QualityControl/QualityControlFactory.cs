@@ -32,8 +32,14 @@ using DirectShowLib;
 
 namespace TvLibrary.Implementations.Analog.QualityControl
 {
+  /// <summary>
+  /// Class to create the object that implements the IQuality interface for a card or channel
+  /// </summary>
   public class QualityControlFactory
   {
+    /// <summary>
+    /// Creates the object that implements the IQuality interface
+    /// </summary>
     public static IQuality createQualityControl(Configuration configuration, IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
     {
       IVideoEncoder videoEncoder = null;
