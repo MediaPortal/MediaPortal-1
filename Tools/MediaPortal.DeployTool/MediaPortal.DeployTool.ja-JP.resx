@@ -118,125 +118,127 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
-    <value>MediaPortal ile televizyon izlemek istiyor musunuz ?</value>
+    <value>MediaPortalでテレビを観ますか？</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
-    <value>Evet - MediaPortal kullanarak televizyon izlemek istiyorum.</value>
+    <value>はい - MediaPortalでテレビを観ます。</value>
   </data>
   <data name="WatchTV_off" xml:space="preserve">
-    <value>Hayır - MediaPortal kullanarak televizyon izlemek istemiyorum.</value>
+    <value>いいえ - MediaPortalでテレビを観ません。</value>
   </data>
   <data name="WatchHDTv_labelSectionHeader" xml:space="preserve">
-    <value>MediaPortal ile HD yayınları izlemek istiyor musunuz ?</value>
+    <value>MediaPortalでHDコンテンツを観ますか？</value>
   </data>
   <data name="WatchHDTv_yes" xml:space="preserve">
-    <value>Evet - MediaPortal kullanarak HD yayınları izlemek istiyorum.</value>
+    <value>はい - MediaPortalでHDコンテンツを観ます。</value>
   </data>
   <data name="WatchHDTv_no" xml:space="preserve">
-    <value>Hayır - MediaPortal kullanarak HD yayın izlemek istemiyorum.</value>
+    <value>いいえ - MediaPortalでHDコンテンツを観ません。</value>
   </data>
   <data name="WatchHDTv_maybe" xml:space="preserve">
-    <value>HD yayının ne olduğunu bilmiyorum.</value>
+    <value>HDコンテンツの定義が分かりません。</value>
   </data>
   <data name="TvEngineType_labelSectionHeader" xml:space="preserve">
-    <value>Hangi televizyon-motorunu kullanmak istiyorsunuz ?</value>
+    <value>どのTVエンジンを利用しますか？</value>
   </data>
   <data name="TvEngineType_rbTvBuildIn" xml:space="preserve">
-    <value>MediaPortal 1.0'a ait dahili televizyon eklentisi</value>
+    <value>MediaPortal 1.0 内蔵のTV-Pluginを利用する。</value>
   </data>
   <data name="TvEngineType_rbTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Sunucu 1.0</value>
+    <value>MediaPortal TV-Server 1.0</value>
   </data>
   <data name="TvEngineType_labelTvEngine" xml:space="preserve">
-    <value>MediaPortal TV-Sunucu 1.0 ile MediaPortal 1.0'a ait dahili televizyon sunucusu arasındaki farklar:
-+DVB yayınlar için altyazı desteği
-+HD yayınlar (dvb-s2 / h.264) ve AAC ses (Norveç, Yeni Zelanda, Avustralya) desteği
-+Hibrit tuner desteği (DVB ve analog tuneri bir arada olan kartlar için)
-+Herhangi bir TV kartını otomatik olarak algılama (analog, DVB-C, -S, -S2, -T, ATSC)
-+ATSC QAM (Kablo TV) desteği
-+.mpg veya .ts formatında kayıt edebilme
-+Tek kart ile ATSC/DVB üzerinde tek transponderden farklı kanalları izleyebilme özelliği
-+Yerel ağ (LAN) üzerinde çoklu kullanıcılara televizyon sağlama özelliği
--MySQL veya MS-SQL gereksinimi (sisteminizde yoksa otomatik olarak yüklenecektir)
+    <value>TV-Server 1.0と内蔵TV-Plugin of MediaPortal 1.0の違い
+「+」→メリット
+「-」→デメリット
 
-TV-Sunucusu dahili televizyon eklentisi ile tamamen yer değiştirecek ve MediaPortal Kullanıcı
-Arayüzüne entegre olacaktır.</value>
++DVB-subtitleの完全サポート
++HD-TV (dvb-s2 / h.264) と AAC audio (ノルウェイ, ニュージーランド, オーストラリア)
++ハイブリッドチューナカードのサポート(DVBまたはアナログでチューナを共有するカード)
++TV-チューナカードの自動認識(アナログ, DVB-C, -S, -S2, -T, ATSC)
++ATSC QAM (ケーブルTV) のサポート
++.mpg 及び .ts 形式での録画が可能
++ATSC/DVBにより、ひとつのTVチューナカードのtransponder/mux内での複数チャンネル表示
++LAN経由で複数クライアントへのTV配信が可能
+-MySQLまたはMS-SQLが必要(必要に応じて自動インストール)
+
+TV-Serverは内蔵TV-Pluginを上書きし、MediaPortalに結合されます。</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
-    <value>Tüm gerekli uygulamalar varsayılan yerlere ve varsayılan ayarlarla kurulacaktır.</value>
+    <value>必須アプリケーションのインストールパスと設定は、全てデフォルト値で導入されます。</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
-    <value>Gelişmiş kurulum kurulum yerlerini ve diğer ayarları değiştirmenize izin verir.</value>
+    <value>上級者向けインストールでは、インストールパスや他の設定が可能です。</value>
   </data>
   <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
-    <value>Gelişmiş kurulum</value>
+    <value>上級者向けインストール</value>
   </data>
   <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
-    <value>Gelişmiş kurulum Sunucu/İstemci paketlerini kurmanıza ve kurulum yerleri ile diğer ayarları değiştirmenize izin verir.</value>
+    <value>上級者向けインストールでは、サーバ／クライアンのト設定やインストール先ディレクトリを自由に指定することができます。</value>
   </data>
   <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
-    <value>Tek tuşla kurulum</value>
+    <value>初心者向けインストール（ワンクリックインストール）</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Tüm gerekli uygulamalar varsayılan yerlere ve varsayılan ayarlarla kurulacaktır. Veritabanının şifresi "MediaPortal"dır.</value>
+    <value>必要アプリケーションのインストールパスと設定は、全てデフォルト値で導入されます。データベースのパスワードは、"MediaPortal"です。</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
-    <value>Gelişmiş kurulum gerçekleştir</value>
+    <value>上級者向けインストールを行なう</value>
   </data>
   <data name="BaseInstallation_rbOneClick" xml:space="preserve">
-    <value>Tek tuşla kurulum gerçekleştir</value>
+    <value>初心者向けインストールを行なう</value>
   </data>
   <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
-    <value>Lütfen hangi paketi kurmak istediğinizi seçiniz:</value>
+    <value>インストール方法を選択してください。</value>
   </data>
   <data name="CustomInstallation_rbClient" xml:space="preserve">
-    <value>MediaPortal İstemci</value>
+    <value>MediaPortalクライアント</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Bu paket sadece MediaPortal 1.0 kurulumunu yapacaktır. Televizyon izlemek için yerel ağınızda (LAN) bulunan TV-Sunucusu'na bağlanacaktır.</value>
+    <value>MediaPortal 1.0のみをインストールします。テレビを見るためには、TV-ServerをLANに接続してください。</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>Tekli kurulum</value>
+    <value>統合環境インストール</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>Eğer televizyon kartınızın takılı olduğu bilgisayarda MediaPortal'ı kullanacak ve televizyonu izleyecekseniz, sizin için uygun kurulum paketi budur.</value>
+    <value>TVチューナカードを装備したPCでMediaPortalを利用する場合は、こちらのインストールを選びます。</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
-    <value>TV-Sunucusu (Asil)</value>
+    <value>TV-Server（マスター）</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
-    <value>Sadece MediaPortal TV-Sunucusu'nu kuracaktır.
-Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer bilgisayarlara bilgi sağlayacaktır (veritabanı kurulumu gerekli)</value>
+    <value>MediaPortal TV-Serverのみをインストールします。
+このPCでLANに接続されたPCにテレビコンテンツを提供します。（データベースのインストールが必要）</value>
   </data>
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
-    <value>Gözat</value>
+    <value>ブラウズ</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Veritabanı sunucusuna harici erişime izin vermesi için Windows Güvenlik Duvarını yapılandırın.</value>
+    <value>データベースサーバへのアクセスができるよう、Windowsファイヤウォールの許可設定を行ないます。</value>
   </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
-    <value>SQL-Sunucusu kurulumu için geçerli bir kurulum dizini tanımlamalısınız.</value>
+    <value>SQL-Serverをインストールするためには、有効なパスを指定する必要はあります。</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>"sa" SQL-Sunucu kullanıcısı için bir şifre tanımlamalısınız.</value>
+    <value>SQL-Serverのユーザ"sa"のパスワードを指定する必要はあります。</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
-    <value>Lütfen SQL-Sunucusu kurulumu için gerekli seçenekleri ayarlayın:</value>
+    <value>SQL-Serverインストールのための必須設定項目を指定してください。</value>
   </data>
   <data name="DBMSSettings_labelInstDir" xml:space="preserve">
-    <value>Kurulum dizini</value>
+    <value>インストール先ディレクトリ</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>SQL-Sunucusu "sa" kullanıcısı için şifre</value>
+    <value>SQL-Serverのユーザ"sa"のパスワード</value>
   </data>
   <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(SQL-Sunucusu yöneticisi için şifre. Varsayılanı "MediaPortal"dır)</value>
+    <value>（SQL-Serverのユーザ"admin-user"のパスワードは、"MediaPortal"です）</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
-    <value>SQL-Sunucusu kurulumu için dizin seçin</value>
+    <value>SQLサーバのインストール先フォルダを指定してください。</value>
   </data>
   <data name="DBMSType_labelHeading" xml:space="preserve">
-    <value>Lütfen kullanmak istediğiniz SQL-Sunucusunu seçiniz:</value>
+    <value>利用するSQLサーバを選択してください。</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
     <value>Microsoft SQL-Server Express</value>
@@ -245,253 +247,251 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>MySQL 5</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
-    <value>Hali hazırda sisteminizde SQL-Sunucusu bulunmakta ve TV-Sunucusu için kullanılacaktır</value>
+    <value>すでにSQLサーバがインストールされているようです。TV-Serverは検出されたSQLサーバを利用します。</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
-    <value>Tebrikler !</value>
+    <value>インストールが完了しました！</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
-    <value>MediaPortal kurulumunu başarı ile tamamladınız</value>
+    <value>MediaPortalのセットアップが正常に終了しました。</value>
   </data>
   <data name="Finished_labelHeading3" xml:space="preserve">
-    <value>MediaPortal'ı kullanmak için yardımcı olacak bazı linkleri aşağıda bulabilirsiniz</value>
+    <value>以下は、MediaPortalを利用するうえで参考となるリンク集です。</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
-    <value>MediaPortal Forum</value>
+    <value>MediaPortal サポートフォーラム</value>
   </data>
   <data name="Finished_linkHomepage" xml:space="preserve">
-    <value>MediaPortal Anasayfası</value>
+    <value>MediaPortal 公式webサイト</value>
   </data>
   <data name="Finished_linkWiki" xml:space="preserve">
     <value>MediaPortal Wiki</value>
   </data>
   <data name="HTTPDownload_buttonCancel" xml:space="preserve">
-    <value>İptal</value>
+    <value>キャンセル</value>
   </data>
   <data name="HTTPDownload_errDownloadFailed" xml:space="preserve">
-    <value>İstenilen dosyanın indirilmesinde bir hata oluştu</value>
+    <value>ファイルのダウンロード中にエラーが発生しました。</value>
   </data>
   <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
-    <value>İndirme adresi:</value>
+    <value>ダウンロード URL:</value>
   </data>
   <data name="HTTPDownload_labelTargetFile" xml:space="preserve">
-    <value>Hedef:</value>
+    <value>対象ファイル:</value>
   </data>
   <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
-    <value>İndirme kullanıcı tarafından iptal edildi</value>
+    <value>ユーザにより中断されました。</value>
   </data>
   <data name="HTTPDownload_Title" xml:space="preserve">
-    <value>Dosyayı indiriyor...</value>
+    <value>ダウンロード中・・・</value>
   </data>
   <data name="Install_actionDownloadInstall" xml:space="preserve">
-    <value>İndir-&gt;Kur</value>
+    <value>ダウンロード -&gt; インストール</value>
   </data>
   <data name="Install_actionInstall" xml:space="preserve">
-    <value>Kur</value>
+    <value>インストール</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;no action&gt;</value>
+    <value>&lt;なにもしない&gt;</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
-    <value>Önceki sürümü kaldır -&gt; Yükle -&gt; Kur</value>
+    <value>旧バージョンアンインストール -&gt; ダウンロード -&gt; インストール</value>
   </data>
   <data name="Install_actionUninstallInstall" xml:space="preserve">
-    <value>Önceki sürümü kaldır -&gt; Kur</value>
+    <value>アンインストール -&gt; インストール</value>
   </data>
   <data name="Install_buttonInstall" xml:space="preserve">
-    <value>Kur</value>
+    <value>インストール</value>
   </data>
   <data name="Install_colAction" xml:space="preserve">
-    <value>Aksiyon</value>
+    <value>アクション</value>
   </data>
   <data name="Install_colApplication" xml:space="preserve">
-    <value>Uygulama</value>
+    <value>アプリケーション</value>
   </data>
   <data name="Install_colState" xml:space="preserve">
-    <value>Durum</value>
+    <value>状態</value>
   </data>
   <data name="Install_errAppsMissing" xml:space="preserve">
-    <value>Gerekli tüm uygulamalar kurulmadı.</value>
+    <value>一部のアプリケーションがインストールされませんでした。</value>
   </data>
   <data name="Install_errDownloadFailed" xml:space="preserve">
-    <value>Uygulamayı indirme başarısız [{0}]</value>
+    <value>[{0}] のダウンロードに失敗しました。</value>
   </data>
   <data name="Install_errInstallFailed" xml:space="preserve">
-    <value>Uygulamayı kurulumu başarısız [{0}]</value>
+    <value>[{0}] のインストールに失敗しました。</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Kurulum için gerekli tüm aksiyonları uygulamak için "Kur" düğmesine basınız</value>
+    <value>"インストール"ボタンをクリックするとインストール処理を開始します。</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
-    <value>İndiriyor....</value>
+    <value>ダウンロード中・・・</value>
   </data>
   <data name="Install_msgInstalling" xml:space="preserve">
-    <value>Kuruyor...</value>
+    <value>インストール中・・・</value>
   </data>
   <data name="Install_msgUninstalling" xml:space="preserve">
-    <value>Kaldırılıyor...</value>
+    <value>アンインストール中・・・</value>
   </data>
   <data name="Install_stateInstalled" xml:space="preserve">
-    <value>Kurdu</value>
+    <value>インストール済み</value>
   </data>
   <data name="Install_stateNotInstalled" xml:space="preserve">
-    <value>Kurulmadı</value>
+    <value>未インストール</value>
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
-    <value>Başka bir sürüm hali hazırda kurulu</value>
+    <value>別バージョンが既にインストールされています。</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
-    <value>MediaPortal Kurulum Aracı</value>
+    <value>MediaPortal インストールツール</value>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
-    <value>Geri</value>
+    <value>戻る</value>
   </data>
   <data name="MainWindow_buttonClose" xml:space="preserve">
-    <value>Çıkış</value>
+    <value>終了</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
-    <value>Bu uygulama sizi MediaPortal ve gerekli tüm bileşenlerin kurulumu süresinde yönlendirecektir.</value>
+    <value>このアプリケーションでは、MediaPortalと必要なコンポーネントのインストールを行ないます。</value>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
-    <value>İleri</value>
+    <value>次へ</value>
   </data>
   <data name="ManualDownload_buttonContinue" xml:space="preserve">
-    <value>Devam et</value>
+    <value>続行</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>İstenen dosya mevcut değil</value>
+    <value>必要なファイルが見つかりませんでした。</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>İstenilen dosyanın indirilmesi tamamlandığında "Devam et" tuşuna basın</value>
+    <value>ダウンロードが完了したら "続行" ボタンをクリックしてください。</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
-    <value>Aşağıdaki dosyayı elle indirmeniz gerekiyor</value>
+    <value>次のファイルは、自動的にダウンロードすることができません。ユーザ自身でダウンロードしてください。</value>
   </data>
   <data name="ManualDownload_linkDir" xml:space="preserve">
-    <value>Dizini aç</value>
+    <value>ディレクトリを開く</value>
   </data>
   <data name="ManualDownload_linkURL" xml:space="preserve">
-    <value>Link</value>
+    <value>リンク</value>
   </data>
   <data name="ManualDownload_Title" xml:space="preserve">
-    <value>Manual indir</value>
+    <value>手動ダウンロード</value>
   </data>
   <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Gözat</value>
+    <value>ブラウズ</value>
   </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
-    <value>MediaPortal'ın kurulumu için geçerli bir dizin tanımlamalısınız.</value>
+    <value>MediaPortalをインストールするためには、有効なインストールパスを指定する必要があります。</value>
   </data>
   <data name="MPSettings_labelHeading" xml:space="preserve">
-    <value>Lütfen MediaPortal kurulumu için gerekli seçenekleri ayarlayın:</value>
+    <value>インストールに必要なオプションを設定してください。</value>
   </data>
   <data name="MPSettings_labelInstDir" xml:space="preserve">
-    <value>MediaPortal kurulum klasörü:</value>
+    <value>MediaPortalインストール先:</value>
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
-    <value>MediaPortal kurulumu için dizini seçin</value>
+    <value>MediaPortalインストールフォルダを選択</value>
   </data>
   <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Gözat</value>
+    <value>ブラウズ</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
-    <value>TV-Sunucusuna harici erişime izin vermesi için Windows Güvenlik Duvarı'nı yapılandırın</value>
+    <value>Windowsファイヤウォールの設定を変更し、TV-Serverへの外部アクセスを有効にします。</value>
   </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
-    <value>TV-Sunucusu kurulumu için geçerli bir dizin tanımlamalısınız.</value>
+    <value>TV-Server をインストールするためには、有効なインストールパスを指定する必要があります。</value>
   </data>
   <data name="TvServerSettings_labelHeading" xml:space="preserve">
-    <value>TV-Sunucusu kurulumu için gerekli seçenekleri ayarlayın:</value>
+    <value>インストールに必要なオプションを設定してください。</value>
   </data>
   <data name="TvServerSettings_labelInstDir" xml:space="preserve">
-    <value>TV-Sunucusu kurulum dizini:</value>
+    <value>TV-Serverインストール先:</value>
   </data>
   <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
-    <value>TV-Sunucusu için kurulum dizini seçin</value>
+    <value>TV-Serverインストールフォルダを選択</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>MediaPortal'ı kullandığınız için teşekkür ederiz... ÜCRETSİZ OpenSource MediaCenter!</value>
+    <value>オープンソースで完全無料なメディアセンター、Media Portalをご利用いただきありがとうございます。</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
-    <value>Bu araç size kurulum boyunca yardım edecektir</value>
+    <value>このツールでは、インストール作業の補助をします。</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
-    <value>Devam etmeden önce kullandığınız dili seçin</value>
+    <value>まず、ご利用言語を選択してください。</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal BEDAVADIR - ebay'den satınaldıysanız kandırıldınız demektir!</value>
+    <value>MediaPortal は完全無料です。ネットオークション等で購入した場合は、騙されちゃってますよ！</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
-    <value>Yapılandır</value>
+    <value>設定する</value>
   </data>
   <data name="Install_actionRemove" xml:space="preserve">
-    <value>Kaldır</value>
+    <value>削除</value>
   </data>
   <data name="Install_errConfigureFailed" xml:space="preserve">
-    <value>Yapılandırma başarısız</value>
+    <value>設定失敗</value>
   </data>
   <data name="Install_errRemoveFailed" xml:space="preserve">
-    <value>Kaldırma başarız</value>
+    <value>削除失敗</value>
   </data>
   <data name="Install_msgConfiguring" xml:space="preserve">
-    <value>Yapılandırıyor</value>
+    <value>設定中・・・</value>
   </data>
   <data name="Install_stateConfigured" xml:space="preserve">
-    <value>Yapılandırdı</value>
+    <value>設定完了</value>
   </data>
   <data name="Install_stateNotConfigured" xml:space="preserve">
-    <value>Yapılandırılmadı</value>
+    <value>未設定</value>
   </data>
   <data name="Install_stateRemoved" xml:space="preserve">
-    <value>Kaldırıldı</value>
+    <value>削除完了</value>
   </data>
   <data name="Install_stateUninstall" xml:space="preserve">
-    <value>Kaldırıldı</value>
+    <value>アンインストール</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
-    <value>Kurulum süreci için internet bağlantısı gereklidir.
+    <value>インストールするためには、インターネット接続が必要です。
 
-Kurulum sürecini şimdi başlatmak istiyor musunuz veya kurulumu sonra gerçekleştirmek için 
-gerekli bileşenleri indirmek istiyor musunuz?
-(belki internet bağlantısı olmayan bir bilgisayarda kurulum için)</value>
+今ずぐ、インストール処理を開始しますか、それとも必要コンポー
+ネントのダウンロードのみ行い、あとでインストールしますか？</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
-    <value>Sadece gerekli bileşenleri indir</value>
+    <value>インストールに必要なコンポーネントのみをダウンロード</value>
   </data>
   <data name="DownloadOnly_yes" xml:space="preserve">
-    <value>Kurulumu şimdi başlat</value>
+    <value>インストールを今すぐ開始</value>
   </data>
   <data name="Install_buttonDownload" xml:space="preserve">
-    <value>İndir</value>
+    <value>ダウンロード</value>
   </data>
   <data name="Install_stateDownloaded" xml:space="preserve">
-    <value>İndirme tamamlandı</value>
+    <value>ダウンロード済み</value>
   </data>
   <data name="Install_actionDownload" xml:space="preserve">
-    <value>İndir</value>
+    <value>ダウンロード</value>
   </data>
   <data name="Install_stateNotDownloaded" xml:space="preserve">
-    <value>İndirilmedi</value>
+    <value>未ダウンロード</value>
   </data>
   <data name="Finished_labelHeading2_download" xml:space="preserve">
-    <value>Tüm MediaPortal bileşenlerini başarı ile indirdiniz.</value>
+    <value>MediaPortal に必要なコンポーネントのダウンロードが完了しました。</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Tüm gerekli bileşenlerin indirilmesini gerçekleştirmek için "indir" düğmesine basınız</value>
+    <value>必要コンポーネントをダウンロードするには、"ダウンロード"ボタンをクリックしてください。</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
-    <value>Özür dileriz, işletim sisteminiz MediaPortal tarafından şu anda desteklenmemektedir.</value>
+    <value>現在ご利用のOSはMediaPortal に対応していません。</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Microsoft gerekli bazı güncellemeleri yayınlamadığı için işletim sisteminiz desteklenmemektedir.
-Riski göze alarak devam edebilirsiniz.</value>
+    <value>マイクロソフト社から特定のホットフィックスがリリースされていないため、このOSはサポートされていません。継続する場合は、動作保証ができません。</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
-    <value>Seçenekler bilgisini içeren dosya indirilmedi.
-Internet Explorer yapılandırmasını gözden geçirin.
-Hasarlı yapılandırma dosyası, bulundu ise, şimdi silinecektir.</value>
+    <value>設定ファイルのダウンロードが失敗しました。
+Internet Explorerの設定をご確認ください。
+破損している設定ファイルを検知したら、削除します。</value>
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
-    <value>MediaPortal'a harici erişim izni vermek için Windows Güvenlik duvarını yapılandırın.</value>
+    <value>Windowsファイヤウォールの設定を変更し、Media Portalへの外部アクセスを有効にします。</value>
   </data>
 </root>
