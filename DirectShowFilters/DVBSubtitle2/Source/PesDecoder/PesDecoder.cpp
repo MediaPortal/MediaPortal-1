@@ -31,25 +31,25 @@ extern void LogDebug( const char *fmt, ... );
 
 CPesDecoder::CPesDecoder( CPesCallback* callback )
 {
-	//LogDebug("pes decoder ctor");
-	m_pid = -1;
-	m_pesBuffer = new byte[MAX_PES_PACKET];
-	m_iWritePos = 0;
-	m_pCallback = callback;
-	m_iStreamId = -1;
-	m_iPesHeaderLen = 0;
-	m_iPesLength = 0;
+  //LogDebug("pes decoder ctor");
+  m_pid = -1;
+  m_pesBuffer = new byte[MAX_PES_PACKET];
+  m_iWritePos = 0;
+  m_pCallback = callback;
+  m_iStreamId = -1;
+  m_iPesHeaderLen = 0;
+  m_iPesLength = 0;
 }
 
 CPesDecoder::~CPesDecoder( void )
 {
-	delete[] m_pesBuffer; 
+  delete[] m_pesBuffer; 
 }
 
 void CPesDecoder::Reset()
 {
-	m_iWritePos = 0;
-	m_iPesHeaderLen = 0;
+  m_iWritePos = 0;
+  m_iPesHeaderLen = 0;
 }
 
 int CPesDecoder::GetPid()
@@ -73,67 +73,67 @@ int	CPesDecoder::GetStreamId()
 
 bool CPesDecoder::OnTsPacket( byte* tsPacket )
 {
-	//LogDebug("PesDecoder::OnTsPacket %i", tsPacketCount++);
-	if (tsPacket==NULL)
+  //LogDebug("PesDecoder::OnTsPacket %i", tsPacketCount++);
+  if (tsPacket==NULL)
   {
-		LogDebug( "tsPacket null!" );	
-		return false;
-	}
+    LogDebug( "tsPacket null!" );	
+    return false;
+  }
 
-	assert( m_pid >= 0 );
+  assert( m_pid >= 0 );
 
-	CTsHeader header( tsPacket );
-	if ( header.Pid != m_pid )
+  CTsHeader header( tsPacket );
+  if ( header.Pid != m_pid )
   {
-		LogDebug( "Header Pid is %i, expected %i", header.Pid, m_pid );	
-		assert( false );
-		return false;
-	}
-	if (header.SyncByte != TS_PACKET_SYNC ) 
-	{
-		LogDebug( "pesdecoder pid:%x sync error", m_pid );
-		assert( false );
-		return false;
-	}
-	if (header.TransportError) 
-	{
-		m_bStart = false;
-		m_iWritePos = 0;
-		m_iPesLength = 0;
-		LogDebug( "pesdecoder pid:%x transport error", m_pid );
-		assert( false );
-		return false;
-	}
-
-	BOOL scrambled = ( header.TScrambling != 0 );
-	if ( scrambled )
+    LogDebug( "Header Pid is %i, expected %i", header.Pid, m_pid );	
+    assert( false );
+    return false;
+  }
+  if (header.SyncByte != TS_PACKET_SYNC ) 
   {
-		LogDebug("pesdecoder scrambled!");
-		assert( false );
-		return false; 
-	}
-	if ( header.AdaptionFieldOnly() ) 
-	{
-		LogDebug("pesdecoder AdaptionFieldOnly!");
-		assert( false );
-		return false;
-	}
+    LogDebug( "pesdecoder pid:%x sync error", m_pid );
+    assert( false );
+    return false;
+  }
+  if (header.TransportError) 
+  {
+    m_bStart = false;
+    m_iWritePos = 0;
+    m_iPesLength = 0;
+    LogDebug( "pesdecoder pid:%x transport error", m_pid );
+    assert( false );
+    return false;
+  }
 
-	//LogDebug("Ts packet count %i", ++tsPacketCount);
+  BOOL scrambled = ( header.TScrambling != 0 );
+  if ( scrambled )
+  {
+    LogDebug("pesdecoder scrambled!");
+    assert( false );
+    return false; 
+  }
+  if ( header.AdaptionFieldOnly() ) 
+  {
+    LogDebug("pesdecoder AdaptionFieldOnly!");
+    assert( false );
+    return false;
+  }
 
-	int pos = header.PayLoadStart; // where in the TS packet does the payload data start?
-	bool result = false;
- 
-	// if this header starts a new PES packet
+  //LogDebug("Ts packet count %i", ++tsPacketCount);
+
+  int pos = header.PayLoadStart; // where in the TS packet does the payload data start?
+  bool result = false;
+
+  // if this header starts a new PES packet
   if (header.PayloadUnitStart) 
-	{
-		if ( tsPacket[pos+0] == 0 && tsPacket[pos+1] == 0 && tsPacket[pos+2] == 1 )
-		{
-			if ( m_iStreamId < 0 )
+  {
+    if ( tsPacket[pos+0] == 0 && tsPacket[pos+1] == 0 && tsPacket[pos+2] == 1 )
+    {
+      if ( m_iStreamId < 0 )
       {
-		    LogDebug("PES decoder - no stream ID set!");
-			}
-			else 
+        LogDebug("PES decoder - no stream ID set!");
+      }
+      else 
       {
         int streamId = tsPacket[pos+3];
         // Stream ID should be the same or padding stream id
@@ -143,65 +143,70 @@ bool CPesDecoder::OnTsPacket( byte* tsPacket )
           {
             LogDebug("PES decoder - wrong stream ID received! - %d", streamId );
           }
-        return false;
+          return false;
         }
       }
 
-			// if we are receiving a new packet, the old one should already have been be delivered
-      assert( m_iWritePos == 0 ); 
-			m_iWritePos = 0;
+    // if we are receiving a new packet, the old one should already have been be delivered
+    assert( m_iWritePos == 0 ); 
+    m_iWritePos = 0;
 
-			m_iPesHeaderLen = tsPacket[pos+8] + 9;
-			memcpy( m_pesHeader, &tsPacket[pos], m_iPesHeaderLen );
-			pos += m_iPesHeaderLen;
-			m_bStart = true;
+    m_iPesHeaderLen = tsPacket[pos+8] + 9;
+    memcpy( m_pesHeader, &tsPacket[pos], m_iPesHeaderLen );
+    pos += m_iPesHeaderLen;
+    m_bStart = true;
 
-			// calculate expected actual payload length
-      m_iPesLength = ( m_pesHeader[4] << 8 ) + m_pesHeader[5] - ( m_iPesHeaderLen - 6); 
-			//LogDebug("  PES decoder - PES lenght %d", m_iPesLenght );
-		}
-	}
+    // calculate expected actual payload length
+    m_iPesLength = ( m_pesHeader[4] << 8 ) + m_pesHeader[5] - ( m_iPesHeaderLen - 6); 
+    //LogDebug("  PES decoder - PES lenght %d", m_iPesLenght );
+    }
+  }
 
-	if (m_iWritePos < 0)
+  if (m_iWritePos < 0)
   {
-		LogDebug("m_iWritePos < 0");
-		return false;
-	}
-	if (m_iStreamId <= 0)
+    LogDebug("m_iWritePos < 0");
+    return false;
+  }
+  if (m_iStreamId <= 0)
   {
-		LogDebug("m_iStreamId <= 0");
-		return false;
-	}
+    LogDebug("m_iStreamId <= 0");
+    return false;
+  }
 
 	//LogDebug("%i : adaption field length, data start %i", header.AdaptionFieldLength, header.PayLoadStart);
+  assert(m_iWritePos + 188-pos <= MAX_PES_PACKET );
 
-	assert( m_iWritePos + 188-pos <= MAX_PES_PACKET); // check that the buffer is not overrunning
+  if(  ( 188 - pos < 0 ) )
+  {
+    LogDebug( "sanity check failed! error in the stream? m_iWritePos %d pos %d", m_iWritePos, pos );
+    Reset();
+    return false;
+  }
 
-	memcpy( &m_pesBuffer[m_iWritePos], &tsPacket[pos], 188 - pos );
-	//LogDebug("Copied %i bytes of pes data into buffer ", 188-pos);
+  memcpy( &m_pesBuffer[m_iWritePos], &tsPacket[pos], 188 - pos );
+  //LogDebug("Copied %i bytes of pes data into buffer ", 188-pos);
 
-	m_iWritePos += ( 188 - pos );
+  m_iWritePos += ( 188 - pos );
 
   //LogDebug("write pos %i", m_iWritePos);
-	//LogDebug(" pes %x copy:%x len:%x maxlen:%x start:%d", m_iStreamId,m_iWritePos,(188-pos),m_iMaxLength,m_bStart);
-	//LogDebug( "m_iPesLenght %d  m_iWritePos %d  diff is %d", m_iPesLenght, m_iWritePos, m_iPesLenght - m_iWritePos );
+  //LogDebug(" pes %x copy:%x len:%x maxlen:%x start:%d", m_iStreamId,m_iWritePos,(188-pos),m_iMaxLength,m_bStart);
+  //LogDebug( "m_iPesLenght %d  m_iWritePos %d  diff is %d", m_iPesLenght, m_iWritePos, m_iPesLenght - m_iWritePos );
 
-	if ( m_iPesLength == m_iWritePos  ) // we have the expected data
-	{
-		if ( m_iWritePos>0 && m_pCallback != NULL )
-		{
-			//LogDebug(" pes %x start:%x", m_iStreamId,m_iWritePos);
-			int written = m_pCallback->OnNewPesPacket( m_iStreamId, m_pesHeader, m_iPesHeaderLen, m_pesBuffer, m_iWritePos, m_bStart);
+  if ( m_iPesLength == m_iWritePos  ) // we have the expected data
+  {
+    if ( m_iWritePos>0 && m_pCallback != NULL )
+      {
+      //LogDebug(" pes %x start:%x", m_iStreamId,m_iWritePos);
+      int written = m_pCallback->OnNewPesPacket( m_iStreamId, m_pesHeader, m_iPesHeaderLen, m_pesBuffer, m_iWritePos, m_bStart);
+      assert( written == 0 ); // we dont use the return value
 
-			assert( written == 0 ); // we dont use the return value
-
-			if ( written >= 0 )
-			{
-				//LogDebug(" pes %x written:%x", m_iStreamId,written);
-				m_bStart = false;
-				m_iWritePos = 0;
-			}
-		}
-	}
-	return result;
+      if ( written >= 0 )
+      {
+        //LogDebug(" pes %x written:%x", m_iStreamId,written);
+        m_bStart = false;
+        m_iWritePos = 0;
+      }
+    }
+  }
+  return result;
 }
