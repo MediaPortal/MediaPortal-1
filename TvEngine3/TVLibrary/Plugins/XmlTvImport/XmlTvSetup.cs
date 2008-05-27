@@ -198,7 +198,7 @@ namespace SetupTv.Sections
         // convert to Dictionary
         foreach (Channel ch in lstTvGuideChannels)
         {
-          string tName = ch.Name.Replace(" ", "").ToLower();
+          string tName = ch.DisplayName.Replace(" ", "").ToLower();
           if (!guideChannels.ContainsKey(tName))
             guideChannels.Add(tName, ch);
 
@@ -270,7 +270,7 @@ namespace SetupTv.Sections
           DataGridViewTextBoxCell providerCell = (DataGridViewTextBoxCell)gridRow.Cells["tuningChannel"];
           DataGridViewCheckBoxCell showInGuideCell = (DataGridViewCheckBoxCell)gridRow.Cells["ShowInGuide"];
 
-          channelCell.Value = ch.Name;
+          channelCell.Value = ch.DisplayName;
           idCell.Value = ch.IdChannel;
           showInGuideCell.Value = ch.VisibleInGuide;
 
@@ -291,7 +291,7 @@ namespace SetupTv.Sections
           // no externalid mapping available, try using the name
           if (matchingGuideChannel == null)
           {
-            string tName = ch.Name.Replace(" ", "").ToLower();
+            string tName = ch.DisplayName.Replace(" ", "").ToLower();
             if (guideChannels.ContainsKey(tName))
               matchingGuideChannel = (Channel)guideChannels[tName];
           }
@@ -313,7 +313,7 @@ namespace SetupTv.Sections
               if (checkBoxPartialMatch.Checked)
               {
                 // do a search using the first word(s) (skipping the last) of the channelname
-                name = ch.Name.Trim();
+                name = ch.DisplayName.Trim();
                 int spaceIdx = name.LastIndexOf(" ");
                 if (spaceIdx > 0)
                 {
@@ -363,13 +363,13 @@ namespace SetupTv.Sections
           {
             Channel guideChannel = (Channel)de.Value;
 
-            String itemText = guideChannel.Name + " (" + guideChannel.ExternalId + ")";
+            String itemText = guideChannel.DisplayName + " (" + guideChannel.ExternalId + ")";
 
             guideChannelComboBox.Items.Add(itemText);
 
             if (!gotMatch && matchingGuideChannel != null)
             {
-              if (guideChannel.Name.ToLower().Equals(matchingGuideChannel.Name.ToLower()))
+              if (guideChannel.DisplayName.ToLower().Equals(matchingGuideChannel.DisplayName.ToLower()))
               {
                 // set the matchtype row color according to the type of match(already mapped,exact, partial, none)
                 if (alreadyMapped)

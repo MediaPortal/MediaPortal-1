@@ -301,11 +301,11 @@ namespace TvEngine
                       }
 
                       ChannelPrograms newProgChan = new ChannelPrograms();
-                      newProgChan.Name = chan.Name;
+                      newProgChan.Name = chan.DisplayName;
                       newProgChan.ExternalId = chan.ExternalId;
                       Programs.Add(newProgChan);
 
-                      Log.WriteFile("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId, chan.Name, chan.IdChannel);
+                      Log.WriteFile("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId, chan.DisplayName, chan.IdChannel);
                       if (!guideChannels.ContainsKey(chan.IdChannel))
                       {
                         guideChannels.Add(chan.IdChannel, chan);
@@ -1110,7 +1110,7 @@ namespace TvEngine
 
       if (item1.IdChannel != item2.IdChannel)
       {
-        return String.Compare(item1.ReferencedChannel().Name, item2.ReferencedChannel().Name, true);
+        return String.Compare(item1.ReferencedChannel().DisplayName, item2.ReferencedChannel().DisplayName, true);
       }
       if (item1.StartTime > item2.StartTime) return 1;
       if (item1.StartTime < item2.StartTime) return -1;
