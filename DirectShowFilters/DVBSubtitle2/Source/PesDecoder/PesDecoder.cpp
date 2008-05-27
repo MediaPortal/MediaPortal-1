@@ -176,7 +176,7 @@ bool CPesDecoder::OnTsPacket( byte* tsPacket )
 	//LogDebug("%i : adaption field length, data start %i", header.AdaptionFieldLength, header.PayLoadStart);
   assert(m_iWritePos + 188-pos <= MAX_PES_PACKET );
 
-  if(  ( 188 - pos < 0 ) )
+  if( ( 188 - pos < 0 ) )
   {
     LogDebug( "sanity check failed! error in the stream? m_iWritePos %d pos %d", m_iWritePos, pos );
     Reset();
