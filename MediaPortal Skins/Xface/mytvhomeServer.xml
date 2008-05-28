@@ -50,8 +50,7 @@
       <control>
         <description>Active Recordings</description>
         <type>button</type>
-        <id>14</id>
-        <width>253</width>        
+        <id>14</id>        
         <label>200052</label>
         <onup>3</onup>
         <ondown>7</ondown>
