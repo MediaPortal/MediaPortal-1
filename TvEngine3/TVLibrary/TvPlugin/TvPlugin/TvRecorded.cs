@@ -1330,7 +1330,16 @@ namespace TvPlugin
       Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
 
-      if (filename.Substring(0, 4) == "rtsp") { filename = g_Player.currentFileName; };
+      if (filename.Substring(0, 4) == "rtsp") 
+      { 
+        filename = g_Player.currentFileName; 
+      }
+      else if (!TVHome.UseRTSP()) // only keep the filename
+      {
+        FileInfo f = new FileInfo(g_Player.currentFileName);
+        filename = f.Name;
+      }
+
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);
       if (stoptime >= g_Player.Duration) { stoptime = 0; }; //temporary workaround before end of stream get's properly implemented

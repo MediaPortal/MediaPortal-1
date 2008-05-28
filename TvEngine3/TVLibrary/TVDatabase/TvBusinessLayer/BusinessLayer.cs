@@ -2341,7 +2341,7 @@ namespace TvDatabase
     public Recording GetRecordingByFileName(string fileName)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Recording));
-      sb.AddConstraint(Operator.Equals, "fileName", fileName);
+      sb.AddConstraint(Operator.Like, "fileName", fileName);
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
       IList recordings = ObjectFactory.GetCollection(typeof(Recording), stmt.Execute());
