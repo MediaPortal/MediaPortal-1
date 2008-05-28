@@ -78,21 +78,20 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
 	byte* section=sections.Data;
 	int sectionLen=sections.section_length;
 
-	int start=0;
 	int table_id = sections.table_id;
 	if (table_id!=2) return false;
 	if (m_serviceId!=-1)
 		if (sections.table_id_extension!=m_serviceId) return false;
 
-	int section_syntax_indicator = (section[start+1]>>7) & 1;
-	int section_length = ((section[start+1]& 0xF)<<8) + section[start+2];
-	int program_number = (section[start+3]<<8)+section[start+4];
-	int version_number = ((section[start+5]>>1)&0x1F);
-	int current_next_indicator = section[start+5] & 1;
-	int section_number = section[start+6];
-	int last_section_number = section[start+7];
-	pcr_pid=((section[start+8]& 0x1F)<<8)+section[start+9];
-	int program_info_length = ((section[start+10] & 0xF)<<8)+section[start+11];
+	int section_syntax_indicator = (section[1]>>7) & 1;
+	int section_length = ((section[1]& 0xF)<<8) + section[2];
+	int program_number = (section[3]<<8)+section[4];
+	int version_number = ((section[5]>>1)&0x1F);
+	int current_next_indicator = section[5] & 1;
+	int section_number = section[6];
+	int last_section_number = section[7];
+	pcr_pid=((section[8]& 0x1F)<<8)+section[9];
+	int program_info_length = ((section[10] & 0xF)<<8)+section[11];
 	int len2 = program_info_length;
 	int pointer = 12;
 	int len1 = section_length -( 9 + program_info_length +4);
@@ -101,11 +100,12 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
 	// loop 1
 	while (len2 > 0)
 	{
-		int indicator=section[start+pointer];
-		int descriptorLen=section[start+pointer+1];
+		int indicator=section[pointer];
+		int descriptorLen=section[pointer+1];
 		len2 -= (descriptorLen+2);
 		pointer += (descriptorLen+2);
 	}
+	
 	// loop 2
 	int stream_type=0;
 	int elementary_PID=0;
@@ -118,9 +118,15 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
 	{
 		//if (start+pointer+4>=sectionLen+9) return ;
     int curSubtitle=-1;
-		stream_type = section[start+pointer];
-		elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
-		ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
+		stream_type = section[pointer];
+		elementary_PID = ((section[pointer+1]&0x1F)<<8)+section[pointer+2];
+		ES_info_length = ((section[pointer+3] & 0xF)<<8)+section[pointer+4];
+
+		if (pointer+ES_info_length>=sectionLen) 
+		{
+			LogDebug("pmt parser check 1");
+			return false;
+		}
 
 		PidInfo2 pidInfo2;
 		pidInfo2.fakePid=-1;
@@ -133,7 +139,7 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
 		pidInfo2.rawDescriptorSize=ES_info_length;
 
 		memset(pidInfo2.rawDescriptorData,0xFF,ES_info_length);
-		memcpy(pidInfo2.rawDescriptorData,&section[start+pointer+5],ES_info_length);
+		memcpy(pidInfo2.rawDescriptorData,&section[pointer+5],ES_info_length);
 
 	  pointer += 5;
 	  len1 -= 5;
@@ -142,12 +148,12 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
 		{
 			if (pointer+1>=sectionLen) 
 			{
-				LogDebug("pmt parser check1");
+				LogDebug("pmt parser check2");
 				return false;
 			}
 			x = 0;
-			int indicator=section[start+pointer];
-			x = section[start+pointer + 1] + 2;
+			int indicator=section[pointer];
+			x = section[pointer + 1] + 2;
 
 			if(indicator==DESCRIPTOR_DVB_AC3)
 				pidInfo2.logicalStreamType=SERVICE_TYPE_AUDIO_AC3;
