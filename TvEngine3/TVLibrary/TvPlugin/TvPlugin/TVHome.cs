@@ -126,6 +126,8 @@ namespace TvPlugin
     [SkinControlAttribute(99)]    protected GUIVideoControl videoWindow = null;
     [SkinControlAttribute(9)]     protected GUIButtonControl btnActiveStreams = null;
 
+    [SkinControlAttribute(14)]     protected GUIButtonControl btnActiveRecordings = null;
+
     static bool _connected = false;
     static protected TvServer _server;
 
@@ -880,7 +882,7 @@ namespace TvPlugin
         _playbackStopped = false;
       }
 
-      btnActiveStreams.Label = GUILocalizeStrings.Get(692);
+      btnActiveStreams.Label = GUILocalizeStrings.Get(692);      
 
       if (!RemoteControl.IsConnected)
       {
@@ -1191,6 +1193,12 @@ namespace TvPlugin
       {
         OnActiveStreams();
       }
+      
+      if (control == btnActiveRecordings && btnActiveRecordings != null)
+      {
+        OnActiveRecordings();
+      }
+
       if (control == btnTvOnOff)
       {
         if (TVHome.Card.IsTimeShifting && g_Player.IsTV && g_Player.Playing)
@@ -1411,6 +1419,150 @@ namespace TvPlugin
 
     public static void UpdateTimeShift()
     {
+    }
+
+    void OnActiveRecordings()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null) return;
+      
+      dlg.Reset();
+      dlg.SetHeading(200052); // Active Recordings
+      int selected = 0;
+
+      IList cards = TvDatabase.Card.ListAll();
+      List<Channel> channels = new List<Channel>();
+      int count = 0;
+      TvServer server = new TvServer();
+      List<User> _users = new List<User>();
+      foreach (Card card in cards)
+      {
+        if (card.Enabled == false) continue;
+        if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
+        User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        if (users == null) return;
+        for (int i = 0; i < users.Length; ++i)
+        {
+          User user = users[i];
+          if (card.IdCard != user.CardId)
+          {
+            continue;
+          }
+          bool isRecording;          
+          VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
+          isRecording = tvcard.IsRecording;
+          
+          if (isRecording)
+          {
+            int idChannel = tvcard.IdChannel;
+            user = tvcard.User;
+            Channel ch = Channel.Retrieve(idChannel);
+            channels.Add(ch);
+            GUIListItem item = new GUIListItem();
+            string channelName = ch.DisplayName;
+            string programTitle = ch.CurrentProgram.Title.Trim();// default is current EPG info
+
+            //retrive the EPG info from when the rec. was started.
+            IList schedulesList = Schedule.ListAll();
+            if (schedulesList != null)
+            {
+              Schedule rec = Schedule.Retrieve(tvcard.RecordingScheduleId);
+              if (rec != null)
+              {
+                foreach (Schedule s in schedulesList)
+                {
+                  if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
+                  {
+                    programTitle = s.ProgramName.Trim();
+                    break;
+                  }
+                }
+              }
+            }            
+
+            int totalLength = channelName.Length + programTitle.Length;
+            //scrolling would be better than truncating the string, but scrolling only seems to work on label1, not label2 ???
+            if (totalLength > 30)
+            {
+              programTitle = programTitle.Substring(0, 30 - channelName.Length);
+            }
+
+            item.Label = channelName;
+            item.Label2 = programTitle;            
+
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+            if (!System.IO.File.Exists(strLogo))
+            {
+              strLogo = "defaultVideoBig.png";
+            }
+            item.IconImage = strLogo;
+            if (isRecording)
+              item.PinImage = Thumbs.TvRecordingIcon;
+            else
+              item.PinImage = "";
+            dlg.Add(item);
+            _users.Add(user);
+            if (TVHome.Card != null && TVHome.Card.IdChannel == idChannel)
+            {
+              selected = count;
+            }
+            count++;
+          }
+        }
+      }
+      if (channels.Count == 0)
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        if (pDlgOK != null)
+        {
+          pDlgOK.SetHeading(200052);//my tv
+          pDlgOK.SetLine(1, GUILocalizeStrings.Get(200053)); // No Active recordings
+          pDlgOK.SetLine(2, "");
+          pDlgOK.DoModal(this.GetID);
+        }
+        return;
+      }
+      dlg.SelectedLabel = selected;
+      dlg.DoModal(this.GetID);
+      if (dlg.SelectedLabel < 0) return;
+
+
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      if (null == dlgYesNo) return;
+
+      dlgYesNo.SetDefaultToYes(false);
+      
+
+      dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?      
+      dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
+      dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
+      dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
+      dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+      if (dlgYesNo.IsConfirmed)
+      {
+        VirtualCard vCard = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);        
+
+        IList schedulesList = Schedule.ListAll();
+        if (schedulesList != null)
+        {
+          Schedule rec = Schedule.Retrieve(vCard.RecordingScheduleId);
+          if (rec != null)
+          {
+            foreach (Schedule s in schedulesList)
+            {
+              if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
+              {                
+                CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
+                schedule.Persist();
+                server.OnNewSchedule();
+                break;
+              }
+            }
+          }
+          server.StopRecordingSchedule(vCard.RecordingScheduleId);
+        }
+      }      
     }
 
     void OnActiveStreams()
@@ -3142,6 +3294,9 @@ namespace TvPlugin
       IList channels = CurrentGroup.ReferringGroupMap();
       if (channelNr >= 0)
       {
+
+Log.Debug("channels.Count {0}", channels.Count);
+
         bool found = false;
         int iCounter = 0;
         Channel chan;
@@ -3149,8 +3304,14 @@ namespace TvPlugin
         while (iCounter < channels.Count && found == false)
         {
           chan = (Channel)_channelList[iCounter];
+
+Log.Debug("chan {0}", chan.DisplayName);
+
           foreach (TuningDetail detail in chan.ReferringTuningDetail())
           {
+
+            Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
+
             if (detail.ChannelNumber == channelNr)
             {
               Log.Debug("find channel: iCounter {0}, detail.ChannelNumber {1}, detail.name {2}, channels.Count {3}", iCounter, detail.ChannelNumber, detail.Name, channels.Count);
