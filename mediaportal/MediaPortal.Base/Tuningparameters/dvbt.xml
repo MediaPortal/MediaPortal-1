@@ -286,6 +286,10 @@
     <carrier frequency="754000" bandwidth="8"></carrier>
     <carrier frequency="802000" bandwidth="8"></carrier>
   </country>
+  <country name="Austria - Graz">
+    <carrier frequency="490000" bandwidth="8"></carrier>
+    <carrier frequency="514000" bandwidth="8"></carrier>
+  </country>
   <country name="Austria - Kärnten">
     <carrier frequency="498000" bandwidth="8"></carrier>
     <carrier frequency="802000" bandwidth="8"></carrier>
@@ -1802,6 +1806,7 @@
     <carrier frequency="826000" bandwidth="8"></carrier>
   </country>
   <country name="Italy - Sorrento (Faito)" offset="125">
+  	<carrier frequency="212500" bandwidth="7"></carrier>
     <carrier frequency="546000" bandwidth="8"></carrier>
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="618000" bandwidth="8"></carrier>
