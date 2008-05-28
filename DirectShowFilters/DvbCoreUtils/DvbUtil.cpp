@@ -99,6 +99,8 @@ void CDvbUtil::getString468A(BYTE *b, int maxLen,char *text)
 	char em_ON = (char)0x86;
 	char em_OFF = (char)0x87;
 
+	bool threeByteEncoding = false; 
+
   if (maxLen< 1) return;
   if (text==NULL) return;
   if (b==NULL) return;
@@ -107,10 +109,35 @@ void CDvbUtil::getString468A(BYTE *b, int maxLen,char *text)
 	do
 	{
 		c = (char)b[i];
-	/*	if(c=='Ü')
-		{
-			int a=0;
-		}*/
+
+		// If first byte is 0x10 use three byte encoding (0x10 0x00 0xXX)
+    if ( i == 0 && (BYTE)c == 0x10 )
+    {
+			threeByteEncoding = true;
+      text[num] = 0x10;
+      text[num+1]=0;
+      num++;
+      goto cont;
+    }
+    if ( i == 1 && threeByteEncoding == true )
+    {
+			//NOTE: using 0x00 will mess up the string, so i use 0x10  as a dummy value instead
+      //      this value will be ignored by the DvbTextConverter.Convert() method anyway
+      text[num] = 0x10;
+      text[num+1]=0;
+      num++;
+      goto cont;
+    }
+    if ( i == 2 && threeByteEncoding == true )
+    {
+			// if this value is invalid, the DvbTextConverter.Convert() method will fall back to default charset
+      text[num] = c;
+            
+      text[num+1]=0;
+      num++;
+      goto cont;
+    } 
+
 		if ( (((BYTE)c) >= 0x80) && (((BYTE)c) <= 0x9F))
 		{
 			goto cont;
