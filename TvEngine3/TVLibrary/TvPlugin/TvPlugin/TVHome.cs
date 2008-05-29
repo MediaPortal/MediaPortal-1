@@ -1460,7 +1460,12 @@ namespace TvPlugin
             channels.Add(ch);
             GUIListItem item = new GUIListItem();
             string channelName = ch.DisplayName;
-            string programTitle = ch.CurrentProgram.Title.Trim();// default is current EPG info
+            string programTitle = "";
+            if (ch.CurrentProgram != null)
+            {
+              programTitle = ch.CurrentProgram.Title.Trim();// default is current EPG info
+            }
+
 
             //retrive the EPG info from when the rec. was started.
             IList schedulesList = Schedule.ListAll();
