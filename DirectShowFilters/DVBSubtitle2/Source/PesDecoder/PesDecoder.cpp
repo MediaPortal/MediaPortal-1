@@ -86,13 +86,11 @@ bool CPesDecoder::OnTsPacket( byte* tsPacket )
   if ( header.Pid != m_pid )
   {
     LogDebug( "Header Pid is %i, expected %i", header.Pid, m_pid );	
-    assert( false );
     return false;
   }
   if (header.SyncByte != TS_PACKET_SYNC ) 
   {
     LogDebug( "pesdecoder pid:%x sync error", m_pid );
-    assert( false );
     return false;
   }
   if (header.TransportError) 
@@ -101,7 +99,6 @@ bool CPesDecoder::OnTsPacket( byte* tsPacket )
     m_iWritePos = 0;
     m_iPesLength = 0;
     LogDebug( "pesdecoder pid:%x transport error", m_pid );
-    assert( false );
     return false;
   }
 
@@ -109,13 +106,11 @@ bool CPesDecoder::OnTsPacket( byte* tsPacket )
   if ( scrambled )
   {
     LogDebug("pesdecoder scrambled!");
-    assert( false );
     return false; 
   }
   if ( header.AdaptionFieldOnly() ) 
   {
     LogDebug("pesdecoder AdaptionFieldOnly!");
-    assert( false );
     return false;
   }
 
@@ -147,9 +142,12 @@ bool CPesDecoder::OnTsPacket( byte* tsPacket )
         }
       }
 
-    // if we are receiving a new packet, the old one should already have been be delivered
-    assert( m_iWritePos == 0 ); 
-    m_iWritePos = 0;
+    if( m_iWritePos != 0 )
+    {
+      LogDebug("PES decoder - start of the new PES packet received before the previuos packet was complete! Dropped data?");
+      Reset();
+      // do not return here so that the next PES packet is decoded from the beginning
+    }
 
     m_iPesHeaderLen = tsPacket[pos+8] + 9;
     memcpy( m_pesHeader, &tsPacket[pos], m_iPesHeaderLen );
