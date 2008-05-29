@@ -43,13 +43,14 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_bSeekingDone( true ),
   m_startTimestamp( -1 ),
   m_CurrentSeekPosition( 0 ),
-  m_prevSubtitleTimestamp( 0 )
+  m_prevSubtitleTimestamp( 0 ),
+  m_bBasePcrSet( false )
 {
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 17 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 18 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -116,8 +117,9 @@ CDVBSub::~CDVBSub()
 CBasePin * CDVBSub::GetPin( int n )
 {
   if( n == 0 )
-		return m_pSubtitlePin;
-
+  {
+    return m_pSubtitlePin;
+  }
   return NULL;
 }
 
@@ -276,8 +278,18 @@ STDMETHODIMP CDVBSub::SetSubtitlePid( LONG pPid )
 //
 STDMETHODIMP CDVBSub::SetFirstPcr( LONGLONG pPcr )
 {
-  m_basePCR = pPcr;
-  LogDebugPTS( "SetFirstPcr", pPcr ); 
+  if( !m_bBasePcrSet )
+  {
+    m_basePCR = pPcr;
+    m_bBasePcrSet = true;
+    LogDebugPTS( "m_basePCR set", pPcr ); 
+  }
+  else
+  {
+    LogDebugPTS( " m_basePCR already set", pPcr );
+    LogDebugPTS( "   new would have been", pPcr );
+  }
+    
   return S_OK;
 }
 
@@ -329,10 +341,10 @@ void CDVBSub::NotifySubtitle()
     // PTS to milliseconds ( 90khz )
     LONGLONG pts( 0 ); 
    
-    pts = ( pSubtitle->PTS() - m_currentTimeCompensation ) / 90;
+    pts = ( pSubtitle->PTS() - m_basePCR - m_currentTimeCompensation ) / 90;
 
     LogDebugPTS( "subtitlePTS               ", pSubtitle->PTS() ); 
-    LogDebugPTS( "m_basePCR (not used)      ", m_basePCR ); 
+    LogDebugPTS( "m_basePCR                 ", m_basePCR ); 
     LogDebugPTS( "timestamp                 ", pts * 90 ); 
     LogDebugPTS( "m_CurrentSeekPosition     ", m_CurrentSeekPosition ); 
     LogDebugPTS( "m_currentTimeCompensation ", m_currentTimeCompensation ); 

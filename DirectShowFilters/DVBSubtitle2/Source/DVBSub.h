@@ -114,6 +114,8 @@ private: // data
   LONGLONG            m_prevSubtitleTimestamp;
   CRefTime            m_currentTimeCompensation;
 
+  bool                m_bBasePcrSet;
+
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
   int                 (CALLBACK *m_pResetObserver) ();
   int                 (CALLBACK *m_pUpdateTimeoutObserver) (__int64* pTimeout);
