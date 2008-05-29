@@ -38,13 +38,16 @@
       this.lblLoopCountDesc = new System.Windows.Forms.Label();
       this.lblAvgDesc = new System.Windows.Forms.Label();
       this.lblAverageAccuracy = new System.Windows.Forms.Label();
+      this.lblIsHighRes = new System.Windows.Forms.Label();
+      this.lblAverageNetAccuracy = new System.Windows.Forms.Label();
+      this.lblAvgNetDesc = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.numLoopCount)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonStart
       // 
       this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonStart.Location = new System.Drawing.Point(321, 496);
+      this.buttonStart.Location = new System.Drawing.Point(597, 496);
       this.buttonStart.Name = "buttonStart";
       this.buttonStart.Size = new System.Drawing.Size(75, 23);
       this.buttonStart.TabIndex = 0;
@@ -61,13 +64,13 @@
       this.listBoxResults.FormattingEnabled = true;
       this.listBoxResults.Location = new System.Drawing.Point(12, 28);
       this.listBoxResults.Name = "listBoxResults";
-      this.listBoxResults.Size = new System.Drawing.Size(465, 455);
+      this.listBoxResults.Size = new System.Drawing.Size(741, 455);
       this.listBoxResults.TabIndex = 1;
       // 
       // buttonClose
       // 
       this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonClose.Location = new System.Drawing.Point(402, 496);
+      this.buttonClose.Location = new System.Drawing.Point(678, 496);
       this.buttonClose.Name = "buttonClose";
       this.buttonClose.Size = new System.Drawing.Size(75, 23);
       this.buttonClose.TabIndex = 2;
@@ -148,26 +151,59 @@
       // lblAvgDesc
       // 
       this.lblAvgDesc.AutoSize = true;
-      this.lblAvgDesc.Location = new System.Drawing.Point(238, 9);
+      this.lblAvgDesc.Location = new System.Drawing.Point(211, 9);
       this.lblAvgDesc.Name = "lblAvgDesc";
-      this.lblAvgDesc.Size = new System.Drawing.Size(97, 13);
+      this.lblAvgDesc.Size = new System.Drawing.Size(96, 13);
       this.lblAvgDesc.TabIndex = 8;
-      this.lblAvgDesc.Text = "Average accurary: ";
+      this.lblAvgDesc.Text = "Avg API accurary: ";
       this.lblAvgDesc.Visible = false;
       // 
       // lblAverageAccuracy
       // 
       this.lblAverageAccuracy.AutoSize = true;
-      this.lblAverageAccuracy.Location = new System.Drawing.Point(341, 9);
+      this.lblAverageAccuracy.Location = new System.Drawing.Point(314, 9);
       this.lblAverageAccuracy.Name = "lblAverageAccuracy";
       this.lblAverageAccuracy.Size = new System.Drawing.Size(0, 13);
       this.lblAverageAccuracy.TabIndex = 9;
+      // 
+      // lblIsHighRes
+      // 
+      this.lblIsHighRes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblIsHighRes.AutoSize = true;
+      this.lblIsHighRes.Location = new System.Drawing.Point(612, 9);
+      this.lblIsHighRes.Name = "lblIsHighRes";
+      this.lblIsHighRes.Size = new System.Drawing.Size(141, 13);
+      this.lblIsHighRes.TabIndex = 10;
+      this.lblIsHighRes.Text = "Using High Resolution Timer";
+      this.lblIsHighRes.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.lblIsHighRes.Visible = false;
+      // 
+      // lblAverageNetAccuracy
+      // 
+      this.lblAverageNetAccuracy.AutoSize = true;
+      this.lblAverageNetAccuracy.Location = new System.Drawing.Point(534, 9);
+      this.lblAverageNetAccuracy.Name = "lblAverageNetAccuracy";
+      this.lblAverageNetAccuracy.Size = new System.Drawing.Size(0, 13);
+      this.lblAverageNetAccuracy.TabIndex = 12;
+      // 
+      // lblAvgNetDesc
+      // 
+      this.lblAvgNetDesc.AutoSize = true;
+      this.lblAvgNetDesc.Location = new System.Drawing.Point(427, 9);
+      this.lblAvgNetDesc.Name = "lblAvgNetDesc";
+      this.lblAvgNetDesc.Size = new System.Drawing.Size(104, 13);
+      this.lblAvgNetDesc.TabIndex = 11;
+      this.lblAvgNetDesc.Text = "Avg .NET accurary: ";
+      this.lblAvgNetDesc.Visible = false;
       // 
       // FormMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(489, 531);
+      this.ClientSize = new System.Drawing.Size(765, 531);
+      this.Controls.Add(this.lblAverageNetAccuracy);
+      this.Controls.Add(this.lblAvgNetDesc);
+      this.Controls.Add(this.lblIsHighRes);
       this.Controls.Add(this.lblAverageAccuracy);
       this.Controls.Add(this.lblAvgDesc);
       this.Controls.Add(this.lblLoopCountDesc);
@@ -198,6 +234,9 @@
     private System.Windows.Forms.Label lblLoopCountDesc;
     private System.Windows.Forms.Label lblAvgDesc;
     private System.Windows.Forms.Label lblAverageAccuracy;
+    private System.Windows.Forms.Label lblIsHighRes;
+    private System.Windows.Forms.Label lblAverageNetAccuracy;
+    private System.Windows.Forms.Label lblAvgNetDesc;
   }
 }
 

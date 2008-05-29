@@ -1,3 +1,5 @@
+#region Usings
+
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -5,6 +7,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Diagnostics;
+
+#endregion
 
 namespace TimerTest
 {
@@ -30,19 +35,42 @@ namespace TimerTest
 
     #endregion
 
-    protected delegate void MethodListViewItems(string aItem);
+    #region Thread delegates
+
+    protected delegate void MethodListViewItems(CheckResults aItem);
+
+    #endregion
+
+    #region Result structs
+
+    public struct CheckResults
+    {
+      public string ResultOutput;
+      public double TimerResolution;
+      public double StopwatchResolution;
+    }
+
+    #endregion
+
+    #region Variables
 
     private double fMaxAccuracy = 1;
-    private object ExecLock = null;
-    private double fAverageCounter = 0;
+    private object fExecLock = null;
+    private Dictionary<int, CheckResults> fResultStrings = null;
 
-    private List<String> ResultStrings = null;
+    #endregion
+
+    #region Constructors
 
     public FormMain()
     {
       InitializeComponent();
-      ExecLock = new object();
+      fExecLock = new object();
     }
+
+    #endregion
+
+    #region Control events
 
     private void buttonClose_Click(object sender, EventArgs e)
     {
@@ -52,7 +80,11 @@ namespace TimerTest
     private void buttonStart_Click(object sender, EventArgs e)
     {
       buttonStart.Enabled = false;
-      ResultStrings = new List<string>((int)numLoopCount.Value);
+      lblAverageAccuracy.Text = "";
+      lblMaxAccurary.Text = "";
+      lblAverageNetAccuracy.Text = "";
+
+      fResultStrings = new Dictionary<int, CheckResults>((int)numLoopCount.Value);
 
       if (checkBoxClearValues.Checked)
         listBoxResults.Items.Clear();
@@ -63,11 +95,15 @@ namespace TimerTest
       ExecutionThread.Start();
     }
 
+    #endregion
+
+    #region Thread methods
+
     unsafe private void GetTimerFrequencyThread()
     {
       for (int j = 0 ; j < numLoopCount.Value ; j++)
       {
-        lock (ExecLock)
+        lock (fExecLock)
         {
           for (short i = 0 ; i < Environment.ProcessorCount ; i++)
           {
@@ -87,7 +123,10 @@ namespace TimerTest
 
     unsafe private void CheckTimer(object aCpuNo)
     {
-      string ResultString;
+      CheckResults ThreadSummary = new CheckResults();
+      ThreadSummary.TimerResolution = 0;
+      ThreadSummary.StopwatchResolution = 0;
+
       try
       {
         try
@@ -97,6 +136,12 @@ namespace TimerTest
 
           float MpAccuracy = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
           MpAccuracy = DXUtil.Timer(DirectXTimer.GetAbsoluteTime) - MpAccuracy;
+
+          Stopwatch TimerWatch = new Stopwatch();
+          TimerWatch.Start();
+          TimerWatch.Stop();
+          double NetAccuracyMs = ((double)TimerWatch.ElapsedTicks / (double)Stopwatch.Frequency) * 1000;
+          string NetAccuracyResult = NetAccuracyMs.ToString("N5");
 
           long TicksPerSec = 0;
           if (!QueryPerformanceFrequency(ref TicksPerSec))
@@ -120,45 +165,63 @@ namespace TimerTest
           if (SysAccuracyMs < fMaxAccuracy)
             fMaxAccuracy = SysAccuracyMs;
 
-          fAverageCounter += SysAccuracyMs;
+          ThreadSummary.ResultOutput = string.Format("CPU {0}: Ticks per second: {1} / MP accuracy: {2} / .NET accuracy: {3} / Approx. accurary in ms: {4}", currentCpu, TicksPerSec, MpAccuracy, NetAccuracyResult, SysAccuracyResult);
+          ThreadSummary.TimerResolution = SysAccuracyMs;
+          ThreadSummary.StopwatchResolution = NetAccuracyMs;
 
-          ResultString = string.Format("CPU {0}: Ticks per second: {1} / MP accuracy: {2} / Approx. accurary in ms: {3}", currentCpu, TicksPerSec, MpAccuracy, SysAccuracyResult);
           Thread.Sleep(0);
         }
-        catch (ThreadAbortException tae) { ResultString = tae.Message; }
-        catch (ThreadStateException tse) { ResultString = tse.Message; }
+        catch (ThreadAbortException tae) { ThreadSummary.ResultOutput = tae.Message; }
+        catch (ThreadStateException tse) { ThreadSummary.ResultOutput = tse.Message; }
 
         // Let the GUI thread add our result to the listbox
-        Invoke(new MethodListViewItems(ThreadedListItemAdder), new object[] { ResultString });
+        Invoke(new MethodListViewItems(ThreadedListItemAdder), new object[] { ThreadSummary });
       }
       catch (Exception) { }
     }
 
-    private void ThreadedListItemAdder(string aItem)
+    #endregion
+
+    #region GUI methods
+
+    private void ThreadedListItemAdder(CheckResults aItem)
     {
-      int resultCount = ResultStrings.Count + 1;
-      ResultStrings.Add(string.Format("{0} - {1}", resultCount, aItem));
+      int resultCount = fResultStrings.Count + 1;
+      fResultStrings.Add(resultCount, aItem);
 
-      lblMaxAccurary.Text = fMaxAccuracy.ToString("N9");
-      lblAverageAccuracy.Text = Convert.ToString((fAverageCounter / resultCount));
-
-      lblMaxDesc.Visible = lblMaxAccurary.Text.Length > 0;
-      lblAvgDesc.Visible = lblAverageAccuracy.Text.Length > 0;
-
-      // save some cycles
-      if (resultCount % 10 == 0)
-      {
-        lblAverageAccuracy.Refresh();
-        Thread.Sleep(0);
-      }
-
+      // Check whether the last result is currently being added
       if (resultCount == (Environment.ProcessorCount * numLoopCount.Value))
       {
         listBoxResults.BeginUpdate();
-        listBoxResults.Items.AddRange(ResultStrings.ToArray());
+
+        double TotalAccuracyVals = 0;
+        double TotalNetAccuracyVals = 0;
+        foreach (KeyValuePair<int, CheckResults> threadResult in fResultStrings)
+        {
+          // show 1 as 00001
+          listBoxResults.Items.Add(string.Format("{0} - {1}", threadResult.Key.ToString("d5"), threadResult.Value.ResultOutput));
+          TotalAccuracyVals += threadResult.Value.TimerResolution;
+          TotalNetAccuracyVals += threadResult.Value.StopwatchResolution;
+        }
+        // The sum of all latencies divided by the amount of checks
+        double AverageAccuracy = TotalAccuracyVals / fResultStrings.Count;
+        double AverageNetAccuracy = TotalNetAccuracyVals / fResultStrings.Count;
+
+        lblMaxAccurary.Text = fMaxAccuracy.ToString("N9");        
+        lblAverageAccuracy.Text = AverageAccuracy.ToString("N9");
+        lblAverageNetAccuracy.Text = AverageNetAccuracy.ToString("N9");
+
+        lblMaxDesc.Visible = lblMaxAccurary.Text.Length > 0;
+        lblAvgDesc.Visible = lblAverageAccuracy.Text.Length > 0;
+        lblAvgNetDesc.Visible = lblAverageNetAccuracy.Text.Length > 0;
+
+        lblIsHighRes.Visible = Stopwatch.IsHighResolution;
+
         buttonStart.Enabled = true;
         listBoxResults.EndUpdate();
       }
     }
+
+    #endregion
   }
 }
