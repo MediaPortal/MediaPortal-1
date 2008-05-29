@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace TimerTest
 {
@@ -33,6 +34,9 @@ namespace TimerTest
 
     private double fMaxAccuracy = 1;
     private object ExecLock = null;
+    private double fAverageCounter = 0;
+
+    private List<String> ResultStrings = null;
 
     public FormMain()
     {
@@ -48,6 +52,7 @@ namespace TimerTest
     private void buttonStart_Click(object sender, EventArgs e)
     {
       buttonStart.Enabled = false;
+      ResultStrings = new List<string>((int)numLoopCount.Value);
 
       if (checkBoxClearValues.Checked)
         listBoxResults.Items.Clear();
@@ -115,6 +120,8 @@ namespace TimerTest
           if (SysAccuracyMs < fMaxAccuracy)
             fMaxAccuracy = SysAccuracyMs;
 
+          fAverageCounter += SysAccuracyMs;
+
           ResultString = string.Format("CPU {0}: Ticks per second: {1} / MP accuracy: {2} / Approx. accurary in ms: {3}", currentCpu, TicksPerSec, MpAccuracy, SysAccuracyResult);
           Thread.Sleep(0);
         }
@@ -129,15 +136,25 @@ namespace TimerTest
 
     private void ThreadedListItemAdder(string aItem)
     {
-      listBoxResults.BeginUpdate();
-      int resultCount = listBoxResults.Items.Count + 1;
-      listBoxResults.Items.Add(string.Format("{0} - {1}", resultCount, aItem));
-      lblMaxAccurary.Text = fMaxAccuracy.ToString("N9");
-      lblMaxDesc.Visible = lblMaxAccurary.Text.Length > 0;
-      listBoxResults.EndUpdate();
+      int resultCount = ResultStrings.Count + 1;
+      ResultStrings.Add(string.Format("{0} - {1}", resultCount, aItem));
 
-      if (resultCount == Environment.ProcessorCount * numLoopCount.Value)
+      lblMaxAccurary.Text = fMaxAccuracy.ToString("N9");
+      lblAverageAccuracy.Text = Convert.ToString((fAverageCounter / resultCount));
+
+      lblMaxDesc.Visible = lblMaxAccurary.Text.Length > 0;
+      lblAvgDesc.Visible = lblAverageAccuracy.Text.Length > 0;
+
+      lblAverageAccuracy.Refresh();
+      Thread.Sleep(0);
+
+      if (resultCount == (Environment.ProcessorCount * numLoopCount.Value))
+      {
+        listBoxResults.BeginUpdate();
+        listBoxResults.Items.AddRange(ResultStrings.ToArray());
         buttonStart.Enabled = true;
+        listBoxResults.EndUpdate();
+      }
     }
   }
 }

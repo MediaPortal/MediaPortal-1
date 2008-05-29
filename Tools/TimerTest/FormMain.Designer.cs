@@ -36,6 +36,8 @@
       this.lblMaxAccurary = new System.Windows.Forms.Label();
       this.numLoopCount = new System.Windows.Forms.NumericUpDown();
       this.lblLoopCountDesc = new System.Windows.Forms.Label();
+      this.lblAvgDesc = new System.Windows.Forms.Label();
+      this.lblAverageAccuracy = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.numLoopCount)).BeginInit();
       this.SuspendLayout();
       // 
@@ -138,11 +140,31 @@
       this.lblLoopCountDesc.TabIndex = 7;
       this.lblLoopCountDesc.Text = "Run this many times";
       // 
+      // lblAvgDesc
+      // 
+      this.lblAvgDesc.AutoSize = true;
+      this.lblAvgDesc.Location = new System.Drawing.Point(238, 9);
+      this.lblAvgDesc.Name = "lblAvgDesc";
+      this.lblAvgDesc.Size = new System.Drawing.Size(97, 13);
+      this.lblAvgDesc.TabIndex = 8;
+      this.lblAvgDesc.Text = "Average accurary: ";
+      this.lblAvgDesc.Visible = false;
+      // 
+      // lblAverageAccuracy
+      // 
+      this.lblAverageAccuracy.AutoSize = true;
+      this.lblAverageAccuracy.Location = new System.Drawing.Point(341, 9);
+      this.lblAverageAccuracy.Name = "lblAverageAccuracy";
+      this.lblAverageAccuracy.Size = new System.Drawing.Size(0, 13);
+      this.lblAverageAccuracy.TabIndex = 9;
+      // 
       // FormMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(489, 531);
+      this.Controls.Add(this.lblAverageAccuracy);
+      this.Controls.Add(this.lblAvgDesc);
       this.Controls.Add(this.lblLoopCountDesc);
       this.Controls.Add(this.numLoopCount);
       this.Controls.Add(this.lblMaxAccurary);
@@ -169,6 +191,8 @@
     private System.Windows.Forms.Label lblMaxAccurary;
     private System.Windows.Forms.NumericUpDown numLoopCount;
     private System.Windows.Forms.Label lblLoopCountDesc;
+    private System.Windows.Forms.Label lblAvgDesc;
+    private System.Windows.Forms.Label lblAverageAccuracy;
   }
 }
 
