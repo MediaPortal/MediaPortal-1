@@ -130,6 +130,7 @@
       // 
       // lblLoopCountDesc
       // 
+      this.lblLoopCountDesc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.lblLoopCountDesc.AutoSize = true;
       this.lblLoopCountDesc.Location = new System.Drawing.Point(189, 501);
       this.lblLoopCountDesc.Name = "lblLoopCountDesc";
