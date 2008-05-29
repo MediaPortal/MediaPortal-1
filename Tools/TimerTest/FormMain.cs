@@ -83,6 +83,7 @@ namespace TimerTest
       lblAverageAccuracy.Text = "";
       lblMaxAccurary.Text = "";
       lblAverageNetAccuracy.Text = "";
+      lblCounter.Text = "";
 
       fResultStrings = new Dictionary<int, CheckResults>((int)numLoopCount.Value);
 
@@ -188,6 +189,12 @@ namespace TimerTest
     {
       int resultCount = fResultStrings.Count + 1;
       fResultStrings.Add(resultCount, aItem);
+
+      if (resultCount % 10 == 0)
+      {
+        lblCounter.Text = Convert.ToString(resultCount / Environment.ProcessorCount);
+        lblCounter.Refresh();
+      }
 
       // Check whether the last result is currently being added
       if (resultCount == (Environment.ProcessorCount * numLoopCount.Value))

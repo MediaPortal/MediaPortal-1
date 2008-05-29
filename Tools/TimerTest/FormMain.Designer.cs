@@ -41,6 +41,7 @@
       this.lblIsHighRes = new System.Windows.Forms.Label();
       this.lblAverageNetAccuracy = new System.Windows.Forms.Label();
       this.lblAvgNetDesc = new System.Windows.Forms.Label();
+      this.lblCounter = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.numLoopCount)).BeginInit();
       this.SuspendLayout();
       // 
@@ -196,11 +197,21 @@
       this.lblAvgNetDesc.Text = "Avg .NET accurary: ";
       this.lblAvgNetDesc.Visible = false;
       // 
+      // lblCounter
+      // 
+      this.lblCounter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblCounter.Location = new System.Drawing.Point(507, 501);
+      this.lblCounter.Name = "lblCounter";
+      this.lblCounter.Size = new System.Drawing.Size(84, 18);
+      this.lblCounter.TabIndex = 13;
+      this.lblCounter.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      // 
       // FormMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(765, 531);
+      this.Controls.Add(this.lblCounter);
       this.Controls.Add(this.lblAverageNetAccuracy);
       this.Controls.Add(this.lblAvgNetDesc);
       this.Controls.Add(this.lblIsHighRes);
@@ -237,6 +248,7 @@
     private System.Windows.Forms.Label lblIsHighRes;
     private System.Windows.Forms.Label lblAverageNetAccuracy;
     private System.Windows.Forms.Label lblAvgNetDesc;
+    private System.Windows.Forms.Label lblCounter;
   }
 }
 
