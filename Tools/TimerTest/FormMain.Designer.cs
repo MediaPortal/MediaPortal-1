@@ -109,6 +109,11 @@
       // numLoopCount
       // 
       this.numLoopCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.numLoopCount.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
       this.numLoopCount.Location = new System.Drawing.Point(119, 499);
       this.numLoopCount.Maximum = new decimal(new int[] {
             100000,
@@ -116,7 +121,7 @@
             0,
             0});
       this.numLoopCount.Minimum = new decimal(new int[] {
-            1,
+            10,
             0,
             0,
             0});

@@ -145,8 +145,12 @@ namespace TimerTest
       lblMaxDesc.Visible = lblMaxAccurary.Text.Length > 0;
       lblAvgDesc.Visible = lblAverageAccuracy.Text.Length > 0;
 
-      lblAverageAccuracy.Refresh();
-      Thread.Sleep(0);
+      // save some cycles
+      if (resultCount % 10 == 0)
+      {
+        lblAverageAccuracy.Refresh();
+        Thread.Sleep(0);
+      }
 
       if (resultCount == (Environment.ProcessorCount * numLoopCount.Value))
       {
