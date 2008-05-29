@@ -73,6 +73,7 @@ namespace TimerTest
         }
       }
       catch (ThreadAbortException) { }
+      catch (ThreadStateException) { }
     }
 
     unsafe private void CheckTimer(object aCpuNo)
@@ -114,6 +115,7 @@ namespace TimerTest
         Thread.Sleep(0);
       }
       catch (ThreadAbortException) { }
+      catch (ThreadStateException) { }
     }
 
     private void ThreadedListItemAdder(string aItem)
