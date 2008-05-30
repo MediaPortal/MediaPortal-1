@@ -29,7 +29,7 @@
 <Config>
   <!-- The Path were all the Config files are located (mediaportal.xml, etc.) -->
   <Dir id = "Config">
-    <Path>%ProgramData%\Team MediaPortal\Debug\MediaPortal\</Path>
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\</Path>
   </Dir>
   <!-- The Path were all the Plugins are located. Don't modify -->
   <Dir id = "Plugins">
@@ -37,11 +37,11 @@
   </Dir>
   <!-- The Path were the log files should be written to -->
   <Dir id = "Log">
-    <Path>%ProgramData%\Team MediaPortal\Debug\MediaPortal\Log\</Path>
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Log\</Path>
   </Dir>
       <!-- The Path were the Custom Inputdevice Mappings are located. -->
   <Dir id = "CustomInputDevice">
-    <Path>%ProgramData%\Team MediaPortal\Debug\MediaPortal\InputDeviceMappings\</Path>
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\InputDeviceMappings\</Path>
   </Dir>
   <!-- The Path were the Default Inputdevice Mappings are located. -->
   <Dir id = "CustomInputDefault">
@@ -57,11 +57,11 @@
   </Dir>
   <!-- The Path for the databases -->
   <Dir id = "Database">
-    <Path>%ProgramData%\Team MediaPortal\Debug\MediaPortal\Database\</Path>
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Database\</Path>
   </Dir>
   <!-- The Path for the Thumbs, like Music Cover Art, TV Logos, etc. -->
   <Dir id = "Thumbs">
-    <Path>%ProgramData%\Team MediaPortal\Debug\MediaPortal\Thumbs\</Path>
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Thumbs\</Path>
   </Dir>
   <!-- The Path were all the Weather related files are located. -->
   <Dir id = "Weather">
@@ -69,7 +69,7 @@
   </Dir>
   <!-- A Path holding cached information. Like Picture thumbs, modified skin files (packedgfx), etc. Files in there can be removed by the user -->
   <Dir id = "Cache">
-    <Path>%ProgramData%\Team MediaPortal\Debug\MediaPortal\Cache\</Path>
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal\Cache\</Path>
   </Dir>
   <!-- The path to CYGWIN files needed for the burner plugin -->
   <Dir id = "BurnerSupport">
