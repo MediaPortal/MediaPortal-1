@@ -984,8 +984,12 @@ namespace MediaPortal.GUI.Radio
               if (IsUrl(playlist[0].FileName))
                 playlistItem.Type = PlayListItem.PlayListItemType.AudioStream;
               else
-                playlistItem.Type = currentPlayList[0].Type;
-              
+              {
+                if (currentPlayList != null) 
+                  playlistItem.Type = currentPlayList[0].Type;
+                else
+                  playlistItem.Type = PlayListItem.PlayListItemType.Radio;
+              }
               playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
             }
           }
