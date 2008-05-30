@@ -623,13 +623,18 @@ namespace TvPlugin
 								}
 								break;
 							}
-						case 2: // Skip for conflicting episodes
+            case 2: // keep conflict
+					    {
+					      Log.Debug("TVProgramInfo.CreateProgram: Keep Conflict");
+					      break;
+					    }
+					  case 3: // Skip for conflicting episodes
 							{
 								Log.Debug("TVProgramInfo.CreateProgram: Skip conflicting episode(s)");
 							  skipConflictingEpisodes = true;
 							  break;
 							}
-						default: // Skipping new Recording
+            default: // Skipping new Recording
 							{
 								Log.Debug("TVProgramInfo.CreateProgram: Default => Skip new recording");
 								return;
