@@ -46,6 +46,7 @@ namespace MediaPortal.Dialogs
       HEADING = 4,
       BUTTON_NEW_REC = 11,
       BUTTON_CONFLICT_REC = 12,
+      BUTTON_KEEP_CONFLICT = 13,
       BUTTON_CONFLICT_EPISODE = 14
     };
     #endregion
@@ -163,9 +164,14 @@ namespace MediaPortal.Dialogs
             SelectedLabel = 1;
             PageDestroy();
           }
-          else if ((int)Controls.BUTTON_CONFLICT_EPISODE == iControl)
+          else if ((int)Controls.BUTTON_KEEP_CONFLICT == iControl)
           {
             SelectedLabel = 2;
+            PageDestroy();
+          }
+          else if ((int)Controls.BUTTON_CONFLICT_EPISODE == iControl)
+          {
+            SelectedLabel = 3;
             PageDestroy();
           }
           break;

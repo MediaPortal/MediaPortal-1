@@ -19,7 +19,7 @@
 			<posX>208</posX>
 			<posY>104</posY>
 			<width>950</width>
-			<height>600</height>
+			<height>653</height>
 			<texture>dialog_background.png</texture>
 			<animation>WindowOpen</animation>
 			<animation>WindowClose</animation>
@@ -30,7 +30,7 @@
 			<posX>208</posX>
 			<posY>104</posY>
 			<width>950</width>
-			<height>600</height>
+			<height>653</height>
 			<texture>dialog_background.png</texture>
 			<animation>WindowOpen</animation>
 			<animation>WindowClose</animation>
@@ -103,13 +103,24 @@
 		<control>
 			<description>Skip conflicting Episode</description>
 			<type>button</type>
-			<id>14</id>
+			<id>13</id>
 			<posX>493</posX>
 			<posY>566</posY>
 			<width>400</width>
-			<label>1113</label>
+			<label>1112</label>
 			<onup>12</onup>
-			<ondown>3</ondown>
+			<ondown>14</ondown>
 		</control>
+    <control>
+      <description>Skip conflicting Episode</description>
+      <type>button</type>
+      <id>14</id>
+      <posX>493</posX>
+      <posY>619</posY>
+      <width>400</width>
+      <label>1113</label>
+      <onup>13</onup>
+      <ondown>3</ondown>
+    </control>
 	</controls>
 </window>
