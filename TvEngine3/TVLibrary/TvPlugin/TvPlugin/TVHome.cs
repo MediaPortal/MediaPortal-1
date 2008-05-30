@@ -2217,7 +2217,7 @@ namespace TvPlugin
 
     public static bool ViewChannelAndCheck(Channel channel)
     {
-      _doingChannelChange = false;
+     _doingChannelChange = false;
       //System.Diagnostics.Debugger.Launch();
       try
       {
@@ -2228,6 +2228,12 @@ namespace TvPlugin
         }
         MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
 
+        //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
+        if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))
+        {
+          MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): Stop g_Player");
+          g_Player.Stop(true);
+        }
         // do we stop the player when changing channel ?
         // _userChannelChanged is true if user did interactively change the channel, like with mini ch. list. etc.
         if (!_userChannelChanged)
