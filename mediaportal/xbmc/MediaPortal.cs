@@ -835,6 +835,7 @@ public class MediaPortalApp : D3DApp, IRender
         Application.ExitThread();
         Application.Exit();
       }
+
       if (!PluginManager.WndProc(ref msg))
       {
         Action action;
@@ -3367,6 +3368,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   private void DoStartupJobs()
   {
+    FilterChecker.CheckInstalledVersions();
     // Stop MCE services
     Utils.StopMCEServices();
     EnableS3Trick();

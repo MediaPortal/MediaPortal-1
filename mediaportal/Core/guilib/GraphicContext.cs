@@ -35,6 +35,7 @@ using AMS.Profile;
 using System.Runtime.InteropServices;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
+using System.Runtime.CompilerServices;
 
 namespace MediaPortal.GUI.Library
 {
@@ -1235,13 +1236,14 @@ namespace MediaPortal.GUI.Library
 
     public static bool InVmr9Render
     {
+      [MethodImpl(MethodImplOptions.Synchronized)]
       get
       {
-        return vmr9RenderBusy;
+          return vmr9RenderBusy;
       }
       set
       {
-        vmr9RenderBusy = value;
+          vmr9RenderBusy = value;
       }
     }
 

@@ -61,6 +61,7 @@ namespace MediaPortal.GUI.Library
       _skinStringSettings[key] = newString;
       return key;
     }
+
     public static string GetSkinString(int key)
     {
       if (_skinStringSettings.ContainsKey(key)) return _skinStringSettings[key].Value;

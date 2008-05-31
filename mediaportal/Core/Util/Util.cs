@@ -2083,7 +2083,21 @@ namespace MediaPortal.Util
         }
       }
       catch (Exception) { }
+    }
 
+    public static bool UsingTvServer
+    {
+      get
+      {
+        try
+        {
+          return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"); 
+        }
+        catch (Exception)
+        {
+          return false;
+        }        
+      }
     }
 
     public static void StopMCEServices()
