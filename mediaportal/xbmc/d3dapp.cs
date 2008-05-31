@@ -818,7 +818,6 @@ namespace MediaPortal
           Log.Debug("D3D: Switched to windowed mode successfully");
         else
           Log.Debug("D3D: Switched to exclusive mode successfully");
-
       }
       catch (Exception ex)
       {
@@ -834,7 +833,6 @@ namespace MediaPortal
         }
         catch (Exception)
         { }
-
       }
       GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
       GUIGraphicsContext.DX9Device.DeviceLost += new EventHandler(this.OnDeviceLost);
@@ -1723,7 +1721,7 @@ namespace MediaPortal
       {
         OnProcess();
         FrameMove();
-        Thread.Sleep(100); 
+        Thread.Sleep(50); 
       }
     }
 
