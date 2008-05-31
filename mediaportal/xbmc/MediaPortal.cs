@@ -497,6 +497,8 @@ public class MediaPortalApp : D3DApp, IRender
         if (useRestartOptions)
         {
           Log.Info("Main: Exiting Windows - {0}", restartOptions);
+          if (File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.running")))
+            File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running")); 
           WindowsController.ExitWindows(restartOptions, false);
         }
         else
