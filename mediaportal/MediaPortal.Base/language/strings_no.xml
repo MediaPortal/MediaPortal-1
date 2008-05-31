@@ -799,6 +799,10 @@
     <String id="959">har blitt med i samtalen</String>
     <String id="960">har forlatt samtalen</String>
     <String id="961">MSN-status</String>
+    <String id="965">Konstant bit rate</String>
+    <String id="966">Variabel bit rate gjennomsnitt</String>
+    <String id="967">Variabel bit rate maks</String>
+    <String id="968">Udefinert</String>
     <String id="970">Forrige vindu</String>
     <String id="971">Gruppe</String>
     <String id="972">Alle Kanaler</String>
