@@ -540,7 +540,7 @@ namespace TvPlugin
 
         case 1048: // Settings
           TvRecordedInfo.CurrentProgram = rec;
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO, true);
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO);
           break;
 
         //case 830: // Reset watched status
