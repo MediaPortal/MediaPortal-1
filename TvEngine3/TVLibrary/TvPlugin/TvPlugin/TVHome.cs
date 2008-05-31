@@ -139,12 +139,12 @@ namespace TvPlugin
       try
       {
         m_navigator = new ChannelNavigator();
+        LoadSettings();
       }
       catch (Exception ex)
       {
-        MediaPortal.GUI.Library.Log.Error(ex);
-      }
-      LoadSettings();
+        Log.Error(ex);
+      }      
     }
 
     public TVHome()
@@ -509,7 +509,7 @@ namespace TvPlugin
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _preferAudioTypeOverLang = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
         _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
-        _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);        
+        _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
       }
     }
 
@@ -834,7 +834,7 @@ namespace TvPlugin
         _playbackStopped = false;
       }
 
-      btnActiveStreams.Label = GUILocalizeStrings.Get(692);      
+      btnActiveStreams.Label = GUILocalizeStrings.Get(692);
 
       if (!RemoteControl.IsConnected)
       {
@@ -1145,7 +1145,7 @@ namespace TvPlugin
       {
         OnActiveStreams();
       }
-      
+
       if (control == btnActiveRecordings && btnActiveRecordings != null)
       {
         OnActiveRecordings();
@@ -1377,7 +1377,7 @@ namespace TvPlugin
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
-      
+
       dlg.Reset();
       dlg.SetHeading(200052); // Active Recordings
       int selected = 0;
@@ -1393,17 +1393,17 @@ namespace TvPlugin
         if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
         User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (users == null) return;
-        for (int i = 0; i < users.Length; ++i)
+        for (int i = 0 ; i < users.Length ; ++i)
         {
           User user = users[i];
           if (card.IdCard != user.CardId)
           {
             continue;
           }
-          bool isRecording;          
+          bool isRecording;
           VirtualCard tvcard = new VirtualCard(user, RemoteControl.HostName);
           isRecording = tvcard.IsRecording;
-          
+
           if (isRecording)
           {
             int idChannel = tvcard.IdChannel;
@@ -1435,7 +1435,7 @@ namespace TvPlugin
                   }
                 }
               }
-            }            
+            }
 
             int totalLength = channelName.Length + programTitle.Length;
             //scrolling would be better than truncating the string, but scrolling only seems to work on label1, not label2 ???
@@ -1445,7 +1445,7 @@ namespace TvPlugin
             }
 
             item.Label = channelName;
-            item.Label2 = programTitle;            
+            item.Label2 = programTitle;
 
             string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
             if (!System.IO.File.Exists(strLogo))
@@ -1488,7 +1488,7 @@ namespace TvPlugin
       if (null == dlgYesNo) return;
 
       dlgYesNo.SetDefaultToYes(false);
-      
+
 
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?      
       dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
@@ -1498,7 +1498,7 @@ namespace TvPlugin
 
       if (dlgYesNo.IsConfirmed)
       {
-        VirtualCard vCard = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);        
+        VirtualCard vCard = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
 
         IList schedulesList = Schedule.ListAll();
         if (schedulesList != null)
@@ -1509,7 +1509,7 @@ namespace TvPlugin
             foreach (Schedule s in schedulesList)
             {
               if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
-              {                
+              {
                 CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
                 schedule.Persist();
                 server.OnNewSchedule();
@@ -1519,7 +1519,7 @@ namespace TvPlugin
           }
           server.StopRecordingSchedule(vCard.RecordingScheduleId);
         }
-      }      
+      }
     }
 
     void OnActiveStreams()
@@ -2169,7 +2169,7 @@ namespace TvPlugin
 
     public static bool ViewChannelAndCheck(Channel channel)
     {
-     _doingChannelChange = false;
+      _doingChannelChange = false;
       //System.Diagnostics.Debugger.Launch();
       try
       {
@@ -2801,9 +2801,6 @@ namespace TvPlugin
 
     #endregion
 
-    #region constants
-    #endregion
-
     #region Private members
 
     private List<Channel> _channelList = new List<Channel>();
@@ -2826,22 +2823,29 @@ namespace TvPlugin
     {
       // Load all groups
       //ServiceProvider services = GlobalServiceProvider.Instance;
-
-      MediaPortal.GUI.Library.Log.Info("ChannelNavigator::ctor()");
-      string ipadres = Dns.GetHostName();
+      Log.Debug("ChannelNavigator::ctor()");
+      string IpAddress = Dns.GetHostName();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        ipadres = xmlreader.GetValueAsString("tvservice", "hostname", "");
-        if (ipadres == "" || ipadres == "localhost")
+        IpAddress = xmlreader.GetValueAsString("tvservice", "hostname", "");
+        if (string.IsNullOrEmpty(IpAddress) || IpAddress == "localhost")
         {
-          ipadres = Dns.GetHostName();
-          MediaPortal.GUI.Library.Log.Info("Remote control: hostname not specified on mediaportal.xml!");
-          xmlreader.SetValue("tvservice", "hostname", ipadres);
-          ipadres = "localhost";
-          MediaPortal.Profile.Settings.SaveCache();
+          try
+          {
+            IpAddress = Dns.GetHostName();
+            Log.Info("TVHome: No valid hostname specified in mediaportal.xml!");
+            xmlreader.SetValue("tvservice", "hostname", IpAddress);
+            IpAddress = "localhost";
+            MediaPortal.Profile.Settings.SaveCache();
+          }
+          catch (Exception ex)
+          {
+            Log.Info("TVHome: Error resolving hostname - {0}", ex.Message);
+            return;
+          }
         }
       }
-      RemoteControl.HostName = ipadres;
+      RemoteControl.HostName = IpAddress;
       MediaPortal.GUI.Library.Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
 
       ReLoad();
@@ -3258,7 +3262,7 @@ namespace TvPlugin
       if (channelNr >= 0)
       {
 
-Log.Debug("channels.Count {0}", channels.Count);
+        Log.Debug("channels.Count {0}", channels.Count);
 
         bool found = false;
         int iCounter = 0;
@@ -3268,7 +3272,7 @@ Log.Debug("channels.Count {0}", channels.Count);
         {
           chan = (Channel)_channelList[iCounter];
 
-Log.Debug("chan {0}", chan.DisplayName);
+          Log.Debug("chan {0}", chan.DisplayName);
 
           foreach (TuningDetail detail in chan.ReferringTuningDetail())
           {
