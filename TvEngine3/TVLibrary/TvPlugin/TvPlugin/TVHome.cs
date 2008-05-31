@@ -82,7 +82,6 @@ namespace TvPlugin
     };
     //heartbeat related stuff
     private Thread heartBeatTransmitterThread = null;
-    private Thread filterCheckThread = null;
 
     static DateTime _updateProgressTimer = DateTime.MinValue;
     static ChannelNavigator m_navigator;
@@ -101,7 +100,6 @@ namespace TvPlugin
     static string _timeshiftingpath = "";
     static bool _preferAC3 = false;
     static bool _preferAudioTypeOverLang = false;
-    static bool _useDvbSubtitles = false;
     static bool _autoFullScreen = false;
     static bool _autoFullScreenOnly = false;
     static bool _resumed = false;
@@ -157,7 +155,6 @@ namespace TvPlugin
       Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
 
       startHeartBeatThread();
-      startFilterCheckThread();
     }
 
     #region Private methods
@@ -283,50 +280,6 @@ namespace TvPlugin
           heartBeatTransmitterThread.Abort();
         }
       }
-    }
-
-    private void LogRegisteredFilter(string aFilterName, bool aLogMissing)
-    {
-      // Search for aFilterName (e.g. TsReader.ax) on every installation
-      List<string> filterLocations = RegistryTools.GetRegisteredAssemblyPaths(aFilterName);
-      if (filterLocations.Count > 0)
-      {
-        foreach (string fullPath in filterLocations)
-        {
-          try
-          {
-            // Try to get the last change date as a best approach to get the install date.
-            FileInfo fi = new FileInfo(fullPath);
-            Log.Info("TVHome: FilterChecker found {0} from {1} located at {2}", aFilterName, fi.LastWriteTimeUtc.ToShortDateString(), fullPath);
-          }
-          catch (Exception) { }
-        }
-      }
-      else
-        if (aLogMissing)
-          Log.Error("TVHome: *** WARNING *** Unable to detect registered filter: {0}!", aFilterName);
-    }
-
-    private void FilterChecker()
-    {
-      LogRegisteredFilter("TsReader.ax", true);
-      if (_useDvbSubtitles)
-        LogRegisteredFilter("DVBsub2.ax", true);
-      LogRegisteredFilter("mdapifilter", false);
-    }
-
-    private void startFilterCheckThread()
-    {
-      if (filterCheckThread != null)
-        if (filterCheckThread.IsAlive)
-          return;
-        
-      Log.Debug("TVHome: Filter check started.");
-      filterCheckThread = new Thread(FilterChecker);
-      filterCheckThread.IsBackground = true;
-      filterCheckThread.Priority = ThreadPriority.BelowNormal;
-      filterCheckThread.Name = "FilterChecker";
-      filterCheckThread.Start();
     }
 
     #endregion
@@ -556,8 +509,7 @@ namespace TvPlugin
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _preferAudioTypeOverLang = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
         _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
-        _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
-        _useDvbSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
+        _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);        
       }
     }
 
