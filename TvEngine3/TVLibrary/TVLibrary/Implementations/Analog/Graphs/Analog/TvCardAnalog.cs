@@ -732,34 +732,33 @@ namespace TvLibrary.Implementations.Analog
         }
         //add the mpeg-2 demultiplexer filter
         AddMpeg2Demultiplexer();
-        //SetupCaptureFormat();
-        /*
-        //If a hauppauge analog card, set bitrate to default
-        //As the graph is stopped, we don't need to pass in the deviceID
-        //However, if we wish to change quality for a live graph, the deviceID must be passed in
-        if (_tunerDevice != null && _captureDevice != null)
-        {
-          if (_captureDevice.Name.Contains("Hauppauge"))
-          {
-            _haupPauge = new Hauppauge(_filterCapture, string.Empty);
-            _haupPauge.SetStream(103);
-            _haupPauge.SetAudioBitRate(384);
-            _haupPauge.SetVideoBitRate(6000, 8000, true);
-            int min, max;
-            bool vbr;
-            _haupPauge.GetVideoBitRate(out min, out max, out vbr);
-            Log.Log.Write("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
-            _haupPauge.Dispose();
-            _haupPauge = null;
-          }
-        }
-         */
+        SetupCaptureFormat();
         Log.Log.WriteFile("analog: Check quality control");
         _qualityControl = QualityControlFactory.createQualityControl(_configuration, _filterVideoEncoder, _filterCapture, _filterMultiplexer, _filterVideoCompressor);
         if (_qualityControl == null)
         {
           Log.Log.WriteFile("analog: No quality control support found");
+          //If a hauppauge analog card, set bitrate to default
+          //As the graph is stopped, we don't need to pass in the deviceID
+          //However, if we wish to change quality for a live graph, the deviceID must be passed in
+          if (_tunerDevice != null && _captureDevice != null)
+          {
+            if (_captureDevice.Name.Contains("Hauppauge"))
+            {
+              _haupPauge = new Hauppauge(_filterCapture, string.Empty);
+              _haupPauge.SetStream(103);
+              _haupPauge.SetAudioBitRate(384);
+              _haupPauge.SetVideoBitRate(6000, 8000, true);
+              int min, max;
+              bool vbr;
+              _haupPauge.GetVideoBitRate(out min, out max, out vbr);
+              Log.Log.Write("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
+              _haupPauge.Dispose();
+              _haupPauge = null;
+            }
+          }
         }
+
         //FilterGraphTools.SaveGraphFile(_graphBuilder, "hp.grf");
         if (!AddMpegMuxer())
         {

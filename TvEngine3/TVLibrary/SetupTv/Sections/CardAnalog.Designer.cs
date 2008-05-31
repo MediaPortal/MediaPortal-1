@@ -501,7 +501,7 @@ namespace SetupTv.Sections
       this.mpLabel8.Name = "mpLabel8";
       this.mpLabel8.Size = new System.Drawing.Size(157, 23);
       this.mpLabel8.TabIndex = 8;
-      this.mpLabel8.Text = "Variable bitrate peak";
+      this.mpLabel8.Text = "Variable bit rate peak";
       this.mpLabel8.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
       // mpLabel7
@@ -512,7 +512,7 @@ namespace SetupTv.Sections
       this.mpLabel7.Name = "mpLabel7";
       this.mpLabel7.Size = new System.Drawing.Size(157, 23);
       this.mpLabel7.TabIndex = 7;
-      this.mpLabel7.Text = "Variable bitrate average";
+      this.mpLabel7.Text = "Variable bit rate average";
       this.mpLabel7.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
       // mpLabel6
@@ -523,7 +523,7 @@ namespace SetupTv.Sections
       this.mpLabel6.Name = "mpLabel6";
       this.mpLabel6.Size = new System.Drawing.Size(157, 23);
       this.mpLabel6.TabIndex = 6;
-      this.mpLabel6.Text = "Constant bitrate";
+      this.mpLabel6.Text = "Constant bit rate";
       this.mpLabel6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
       // vbrPeakPlayback

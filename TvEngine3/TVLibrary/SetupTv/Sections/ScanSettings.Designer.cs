@@ -102,6 +102,9 @@ namespace SetupTv.Sections
       this.label17 = new System.Windows.Forms.Label();
       this.label19 = new System.Windows.Forms.Label();
       this.label18 = new System.Windows.Forms.Label();
+      this.numericUpDownAnalog = new System.Windows.Forms.NumericUpDown();
+      this.label21 = new System.Windows.Forms.Label();
+      this.label24 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPageApplication.SuspendLayout();
       this.groupBox8.SuspendLayout();
@@ -130,6 +133,7 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -274,7 +278,10 @@ namespace SetupTv.Sections
       // 
       // tabPageScan
       // 
+      this.tabPageScan.Controls.Add(this.numericUpDownAnalog);
+      this.tabPageScan.Controls.Add(this.label21);
       this.tabPageScan.Controls.Add(this.groupBox4);
+      this.tabPageScan.Controls.Add(this.label24);
       this.tabPageScan.Controls.Add(this.groupBox1);
       this.tabPageScan.Location = new System.Drawing.Point(4, 22);
       this.tabPageScan.Name = "tabPageScan";
@@ -287,7 +294,7 @@ namespace SetupTv.Sections
       // groupBox4
       // 
       this.groupBox4.Controls.Add(this.checkBoxEnableLinkageScanner);
-      this.groupBox4.Location = new System.Drawing.Point(6, 165);
+      this.groupBox4.Location = new System.Drawing.Point(6, 195);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(221, 46);
       this.groupBox4.TabIndex = 18;
@@ -325,7 +332,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.label6);
       this.groupBox1.Location = new System.Drawing.Point(6, 6);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(221, 153);
+      this.groupBox1.Size = new System.Drawing.Size(221, 183);
       this.groupBox1.TabIndex = 15;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Scanning";
@@ -1060,6 +1067,42 @@ namespace SetupTv.Sections
       this.label18.TabIndex = 15;
       this.label18.Text = "Minimum";
       // 
+      // numericUpDownAnalog
+      // 
+      this.numericUpDownAnalog.Location = new System.Drawing.Point(95, 155);
+      this.numericUpDownAnalog.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.numericUpDownAnalog.Name = "numericUpDownAnalog";
+      this.numericUpDownAnalog.Size = new System.Drawing.Size(88, 20);
+      this.numericUpDownAnalog.TabIndex = 22;
+      this.numericUpDownAnalog.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownAnalog.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+      // 
+      // label21
+      // 
+      this.label21.AutoSize = true;
+      this.label21.Location = new System.Drawing.Point(189, 157);
+      this.label21.Name = "label21";
+      this.label21.Size = new System.Drawing.Size(29, 13);
+      this.label21.TabIndex = 21;
+      this.label21.Text = "secs";
+      // 
+      // label24
+      // 
+      this.label24.AutoSize = true;
+      this.label24.Location = new System.Drawing.Point(12, 157);
+      this.label24.Name = "label24";
+      this.label24.Size = new System.Drawing.Size(43, 13);
+      this.label24.TabIndex = 20;
+      this.label24.Text = "Analog:";
+      // 
       // ScanSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1075,6 +1118,7 @@ namespace SetupTv.Sections
       this.groupBox6.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
       this.tabPageScan.ResumeLayout(false);
+      this.tabPageScan.PerformLayout();
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
       this.groupBox1.ResumeLayout(false);
@@ -1104,6 +1148,7 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -1184,6 +1229,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.GroupBox groupBox8;
     private System.Windows.Forms.GroupBox groupBox9;
     private System.Windows.Forms.TextBox textBox1;
+    private System.Windows.Forms.NumericUpDown numericUpDownAnalog;
+    private System.Windows.Forms.Label label21;
+    private System.Windows.Forms.Label label24;
 
   }
 }

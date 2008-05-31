@@ -31,6 +31,7 @@ using TvDatabase;
 using TvControl;
 using TvEngine.Events;
 using System.Threading;
+using TvLibrary.Interfaces;
 
 namespace TvService
 {
@@ -601,6 +602,18 @@ namespace TvService
         recording.Recording.Persist();
         _recordingsInProgressList.Add(recording);
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
+        int cardId = _user.CardId;
+        if (_controller.SupportsQualityControl(cardId))
+        {
+          if (recording.Schedule.BitRateMode != VIDEOENCODER_BITRATE_MODE.NotSet && _controller.SupportsBitRate(cardId))
+          {
+            _controller.SetQualityType(cardId, recording.Schedule.QualityType);
+          }
+          if (recording.Schedule.QualityType != QualityType.NotSet && _controller.SupportsBitRateModes(cardId) && _controller.SupportsPeakBitRateMode(cardId))
+          {
+            _controller.SetBitRateMode(cardId, recording.Schedule.BitRateMode);
+          }
+        }
         if (_createTagInfoXML)
         {
           MatroskaTagInfo info = new MatroskaTagInfo();

@@ -853,6 +853,35 @@ namespace TvControl
     /// </summary>
     /// <param name="cardId">Unique id of the card</param>
     void ReloadQualityControlConfigration(int cardId);
+
+    /// <summary>
+    /// Gets the current quality type
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>QualityType</returns>
+    QualityType GetQualityType(int cardId);
+
+    /// <summary>
+    /// Sets the quality type
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <param name="qualityType">The new quality type</param>
+    void SetQualityType(int cardId, QualityType qualityType);
+
+    /// <summary>
+    /// Gets the current bitrate mdoe
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>QualityType</returns>
+    VIDEOENCODER_BITRATE_MODE GetBitRateMode(int cardId);
+
+    /// <summary>
+    /// Sets the bitrate mode
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <param name="qualityType">The new bitrate mdoe</param>
+    void SetBitRateMode(int cardId, VIDEOENCODER_BITRATE_MODE bitRateMode);
+
     #endregion
   }
 }

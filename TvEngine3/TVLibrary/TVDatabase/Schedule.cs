@@ -7,6 +7,7 @@ using System.Collections;
 using Gentle.Common;
 using Gentle.Framework;
 using TvLibrary.Log;
+using TvLibrary.Interfaces;
 
 namespace TvDatabase
 {
@@ -33,14 +34,6 @@ namespace TvDatabase
   [TableName("Schedule")]
   public class Schedule : Persistent
   {
-    public enum QualityType
-    {
-      NotSet,
-      Portable,
-      Low,
-      Medium,
-      High
-    }
     public static DateTime MinSchedule = new DateTime(2000, 1, 1);
     public static readonly int HighestPriority = Int32.MaxValue;
     public static readonly int LowestPriority = 0;
@@ -97,7 +90,9 @@ namespace TvDatabase
       PostRecordInterval = 0;
       PreRecordInterval = 0;
       Priority = 0;
-      Quality = 0;
+      quality = 0;
+      BitRateMode = VIDEOENCODER_BITRATE_MODE.NotSet;
+      this.QualityType = QualityType.NotSet;
       ScheduleType = (int)ScheduleRecordingType.Once;
       Series = false;
       StartTime = startTime;
@@ -744,6 +739,31 @@ namespace TvDatabase
       
     }
 
+    public QualityType QualityType
+    {
+      get
+      {
+        return (QualityType) (quality / 10);
+      }
+      set
+      {
+        int type = ((int)value);
+        quality = (type*10) + (quality % 10);
+      }
+    }
+
+    public VIDEOENCODER_BITRATE_MODE BitRateMode
+    {
+      get
+      {
+        return (VIDEOENCODER_BITRATE_MODE)(quality % 10);
+      }
+      set
+      {
+        int mode = ((int)value);
+        quality = mode + ((quality / 10)*10);
+      }
+    }
 
     public override string ToString()
     {

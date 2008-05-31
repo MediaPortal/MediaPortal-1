@@ -634,6 +634,7 @@ namespace TvService
       settings.TimeOutCAT = Int32.Parse(layer.GetSetting("timeoutCAT", "5").Value);
       settings.TimeOutPMT = Int32.Parse(layer.GetSetting("timeoutPMT", "10").Value);
       settings.TimeOutSDT = Int32.Parse(layer.GetSetting("timeoutSDT", "20").Value);
+      settings.TimeOutAnalog = Int32.Parse(layer.GetSetting("timeoutAnalog", "20").Value);
       settings.UseDefaultLnbFrequencies = (layer.GetSetting("lnbDefault", "true").Value == "true");
       settings.LnbLowFrequency = Int32.Parse(layer.GetSetting("LnbLowFrequency", "0").Value);
       settings.LnbHighFrequency = Int32.Parse(layer.GetSetting("LnbHighFrequency", "0").Value);

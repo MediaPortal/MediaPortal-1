@@ -34,7 +34,8 @@ namespace TvLibrary.Interfaces
     Undefined = -1,
     ConstantBitRate = 0,
     VariableBitRateAverage,
-    VariableBitRatePeak
+    VariableBitRatePeak,
+    NotSet
   };
 
 
@@ -43,18 +44,20 @@ namespace TvLibrary.Interfaces
   /// </summary>
   public enum QualityType
   {
-    /// <summary>undefined/default quality</summary>
-    Default,
+    /// <summary>default quality</summary>
+    Default = 1,
     /// <summary>custom quality setting, defined in SetupTv</summary>
-    Custom,
+    Custom = 2,
     /// <summary>portable quality setting for those recordings that dont need to be close to perfect</summary>
-    Portable,
+    Portable = 3,
     /// <summary>low quality setting for those recordings that dont need to be close to perfect</summary>
-    Low,
+    Low = 4,
     /// <summary>medium quality but still quite a bit less diskspace needed than high</summary>
-    Medium,
+    Medium = 5,
     /// <summary>high quality setting will create larger files then the other options</summary>
-    High
+    High = 6,
+    /// <summary>undefined quality</summary>
+    NotSet = 7
   }
 
   /// <summary>

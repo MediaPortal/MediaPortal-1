@@ -1461,6 +1461,7 @@ namespace TvService
       settings.TimeOutCAT = Int32.Parse(layer.GetSetting("timeoutCAT", "5").Value);
       settings.TimeOutPMT = Int32.Parse(layer.GetSetting("timeoutPMT", "10").Value);
       settings.TimeOutSDT = Int32.Parse(layer.GetSetting("timeoutSDT", "20").Value);
+      settings.TimeOutAnalog = Int32.Parse(layer.GetSetting("timeoutAnalog", "20").Value);
       return _cards[cardId].Scanner.Scan(channel, settings);
     }
 
@@ -1475,6 +1476,7 @@ namespace TvService
       settings.TimeOutCAT = Int32.Parse(layer.GetSetting("timeoutCAT", "5").Value);
       settings.TimeOutPMT = Int32.Parse(layer.GetSetting("timeoutPMT", "10").Value);
       settings.TimeOutSDT = Int32.Parse(layer.GetSetting("timeoutSDT", "20").Value);
+      settings.TimeOutAnalog = Int32.Parse(layer.GetSetting("timeoutAnalog", "20").Value);
       return _cards[cardId].Scanner.ScanNIT(channel, settings);
     }
 
@@ -2470,6 +2472,67 @@ namespace TvService
     {
       if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId)) return;
       _cards[cardId].Card.ReloadQualityControlConfiguration();
+    }
+
+    /// <summary>
+    /// Gets the current quality type
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>QualityType</returns>
+    public QualityType GetQualityType(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId)) return QualityType.Default;
+      IQuality qualityControl = _cards[cardId].Card.Quality;
+      if (qualityControl != null)
+      {
+        return qualityControl.QualityType;
+      }
+      return QualityType.Default;
+    }
+    /// <summary>
+    /// Sets the quality type
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <param name="qualityType">The new quality type</param>
+    public void SetQualityType(int cardId,QualityType qualityType)
+    {
+      if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId)) return;
+      IQuality qualityControl = _cards[cardId].Card.Quality;
+      if (qualityControl != null)
+      {
+        qualityControl.QualityType = qualityType;
+      }
+    }
+
+    /// <summary>
+    /// Gets the current bitrate mdoe
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <returns>QualityType</returns>
+    public VIDEOENCODER_BITRATE_MODE GetBitRateMode(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId)) return VIDEOENCODER_BITRATE_MODE.Undefined;
+      IQuality qualityControl = _cards[cardId].Card.Quality;
+      if (qualityControl != null)
+      {
+        return qualityControl.BitRateMode;
+      }
+      return VIDEOENCODER_BITRATE_MODE.Undefined;
+    }
+
+    /// <summary>
+    /// Sets the bitrate mode
+    /// </summary>
+    /// <param name="cardId">Unique id of the card</param>
+    /// <param name="qualityType">The new bitrate mdoe</param>
+    public void SetBitRateMode(int cardId, VIDEOENCODER_BITRATE_MODE bitRateMode)
+    {
+      if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId)) return;
+      IQuality qualityControl = _cards[cardId].Card.Quality;
+      if (qualityControl != null)
+      {
+        qualityControl.BitRateMode = bitRateMode;
+      }
     }
 
     #endregion

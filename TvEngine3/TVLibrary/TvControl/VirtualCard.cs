@@ -1110,5 +1110,162 @@ namespace TvControl
     }
     #endregion
 
+    #region quality control
+    /// <summary>
+    /// Indicates, if the user is the owner of the card
+    /// </summary>
+    /// <returns>true/false</returns>
+    public bool IsOwner()
+    {
+      try
+      {
+        if (User.CardId < 0) return false;
+        RemoteControl.HostName = _server;
+        return RemoteControl.Instance.IsOwner(User.CardId, User);
+      } catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
+    }
+
+
+    /// <summary>
+    /// Indicates, if the card supports quality control
+    /// </summary>
+    /// <returns>true/false</returns>
+    public bool SupportsQualityControl()
+    {
+      try
+      {
+        if (User.CardId < 0) return false;
+        RemoteControl.HostName = _server;
+        return RemoteControl.Instance.SupportsQualityControl(User.CardId);
+      } catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Indicates, if the card supports bit rates
+    /// </summary>
+    /// <returns>true/false</returns>
+    public bool SupportsBitRate()
+    {
+      try
+      {
+        if (User.CardId < 0) return false;
+        RemoteControl.HostName = _server;
+        return RemoteControl.Instance.SupportsBitRate(User.CardId);
+      } catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Indicates, if the card supports bit rate modes 
+    /// </summary>
+    /// <returns>true/false</returns>
+    public bool SupportsBitRateModes()
+    {
+      try
+      {
+        if (User.CardId < 0) return false;
+        RemoteControl.HostName = _server;
+        return RemoteControl.Instance.SupportsBitRateModes(User.CardId);
+      } catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Indicates, if the card supports bit rate peak mode
+    /// </summary>
+    /// <returns>true/false</returns>
+    public bool SupportsPeakBitRateMode()
+    {
+      try
+      {
+        if (User.CardId < 0) return false;
+        RemoteControl.HostName = _server;
+        return RemoteControl.Instance.SupportsPeakBitRateMode(User.CardId);
+      } catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Gets/Sts the quality type
+    /// </summary>
+    public QualityType QualityType
+    {
+      get
+      {
+        try
+        {
+          if (User.CardId < 0) return QualityType.Default;
+          RemoteControl.HostName = _server;
+          return RemoteControl.Instance.GetQualityType(User.CardId);
+        } catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
+        return QualityType.Default;
+      }
+      set
+      {
+        try
+        {
+          if (User.CardId < 0) return ;
+          RemoteControl.HostName = _server;
+          RemoteControl.Instance.SetQualityType(User.CardId,value);
+        } catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets/Sts the bitrate mode
+    /// </summary>
+    public VIDEOENCODER_BITRATE_MODE BitRateMode
+    {
+      get
+      {
+        try
+        {
+          if (User.CardId < 0) return VIDEOENCODER_BITRATE_MODE.Undefined;
+          RemoteControl.HostName = _server;
+          return RemoteControl.Instance.GetBitRateMode(User.CardId);
+        } catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
+        return VIDEOENCODER_BITRATE_MODE.Undefined;
+      }
+      set
+      {
+        try
+        {
+          if (User.CardId < 0) return;
+          RemoteControl.HostName = _server;
+          RemoteControl.Instance.SetBitRateMode(User.CardId, value);
+        } catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
+      }
+    }
+
+    #endregion
   }
 }

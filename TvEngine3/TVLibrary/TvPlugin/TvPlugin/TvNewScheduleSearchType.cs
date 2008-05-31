@@ -359,8 +359,16 @@ namespace TvPlugin
       if (dlg.SelectedLabel == -1) return;
       int duration = (dlg.SelectedLabel + 1) * 30;
 
-      // Quality control is currently not implemented, so we don't want to confuse the user
-      //TvPriorities.OnSetQuality(rec);
+      IList details = Channel.Retrieve(rec.IdChannel).ReferringTuningDetail();
+      foreach (TuningDetail detail in details)
+      {
+        if (detail.ChannelType == 0)
+        {
+          TvPriorities.OnSetQuality(rec);
+          break;
+        }
+      }
+
 
       dtNow = DateTime.Now.AddDays(day);
       rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);

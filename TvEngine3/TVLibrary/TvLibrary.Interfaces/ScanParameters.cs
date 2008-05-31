@@ -34,6 +34,8 @@ namespace TvLibrary
     int _timeoutCAT = 5;
     int _timeoutPMT = 10;
     int _timeoutSDT = 20;
+    int _timeoutAnalog = 20;
+
     int _lnbLowFrequency = -1;
     int _lnbHighFrequency = -1;
     int _lnbSwitchFrequency = -1;
@@ -227,5 +229,19 @@ namespace TvLibrary
         _timeoutSDT = value;
       }
     }
+    /// <summary>
+    /// Gets or sets the time out Analog scanning.
+    /// </summary>
+    /// <value>The time out Analog scanning.</value>
+    public int TimeOutAnalog
+    {
+      get { 
+        return _timeoutAnalog;
+      }
+      set { 
+        _timeoutAnalog = value; 
+      }
+    }
+
   }
 }

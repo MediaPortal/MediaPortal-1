@@ -123,7 +123,7 @@ namespace TvLibrary.Implementations.Analog
               _event = new ManualResetEvent(false);
               _scanner.SetCallBack(this);
               _scanner.Start();
-              _event.WaitOne(settings.TimeOutSDT * 1000, true);
+              _event.WaitOne(settings.TimeOutAnalog * 1000, true);
 
               IntPtr serviceName;
               _scanner.GetChannel(out serviceName);

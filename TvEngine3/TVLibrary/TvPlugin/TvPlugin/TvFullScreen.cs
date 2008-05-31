@@ -1485,6 +1485,10 @@ namespace TvPlugin
       }
       dlg.AddLocalizedString(970);    // Previous window
 
+      if (TVHome.Card.IsOwner() && !TVHome.Card.IsRecording && TVHome.Card.SupportsQualityControl() && !g_Player.IsTVRecording)
+      {
+        dlg.AddLocalizedString(882);
+      }
       _isDialogVisible = true;
 
       dlg.DoModal(GetID);
@@ -1636,8 +1640,132 @@ namespace TvPlugin
         case 200041: // tuning details
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_TUNING_DETAILS);
           break;
+
+        case 882: // Quality settings
+          ShowQualitySettingsMenu();
+          break;
       }
     }
+
+    void ShowQualitySettingsMenu()
+    {
+      if (TVHome.Card.SupportsBitRateModes() && TVHome.Card.SupportsPeakBitRateMode())
+      {
+        if (dlg == null) return;
+        dlg.Reset();
+        dlg.SetHeading(882);
+
+        dlg.ShowQuickNumbers = true;
+        dlg.AddLocalizedString(965);
+        dlg.AddLocalizedString(966);
+        dlg.AddLocalizedString(967);
+        VIDEOENCODER_BITRATE_MODE _newBitRate = TVHome.Card.BitRateMode;
+        switch (_newBitRate)
+        {
+          case VIDEOENCODER_BITRATE_MODE.ConstantBitRate:
+            dlg.SelectedLabel = 0;
+            break;
+          case VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage:
+            dlg.SelectedLabel = 1;
+            break;
+          case VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak:
+            dlg.SelectedLabel = 2;
+            break;
+        }
+        _isDialogVisible = true;
+
+        dlg.DoModal(GetID);
+        _isDialogVisible = false;
+
+        if (dlg.SelectedLabel == -1) return;
+        switch (dlg.SelectedLabel)
+        {
+          case 0: // CBR
+            _newBitRate = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
+            break;
+
+          case 1: // VBR
+            _newBitRate = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
+            break;
+
+          case 2: // VBR Peak
+            _newBitRate = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
+            break;
+
+        }
+        Log.Info("Setting quality to: {0}", _newBitRate);
+        TVHome.Card.BitRateMode = _newBitRate;
+      }
+      if (TVHome.Card.SupportsBitRate())
+      {
+        if (dlg == null) return;
+        dlg.Reset();
+        dlg.SetHeading(882);
+
+        dlg.ShowQuickNumbers = true;
+        dlg.AddLocalizedString(886);//Default
+        dlg.AddLocalizedString(993); // Custom
+        dlg.AddLocalizedString(893);//Portable
+        dlg.AddLocalizedString(883);//Low
+        dlg.AddLocalizedString(884);//Medium
+        dlg.AddLocalizedString(885);//High
+        QualityType _newQuality = TVHome.Card.QualityType;
+        switch (_newQuality)
+        {
+          case QualityType.Default:
+            dlg.SelectedLabel = 0;
+            break;
+          case QualityType.Custom:
+            dlg.SelectedLabel = 1;
+            break;
+          case QualityType.Portable:
+            dlg.SelectedLabel = 2;
+            break;
+          case QualityType.Low:
+            dlg.SelectedLabel = 3;
+            break;
+          case QualityType.Medium:
+            dlg.SelectedLabel = 4;
+            break;
+          case QualityType.High:
+            dlg.SelectedLabel = 5;
+            break;
+        }
+        _isDialogVisible = true;
+
+        dlg.DoModal(GetID);
+        _isDialogVisible = false;
+
+        if (dlg.SelectedLabel == -1) return;
+        switch (dlg.SelectedLabel)
+        {
+          case 0: // Default
+            _newQuality = QualityType.Default;
+            break;
+
+          case 1: // Custom
+            _newQuality = QualityType.Custom;
+            break;
+
+          case 2: // Protable
+            _newQuality = QualityType.Portable;
+            break;
+
+          case 3: // Low
+            _newQuality = QualityType.Low;
+            break;
+
+          case 4: // Medium
+            _newQuality = QualityType.Medium;
+            break;
+
+          case 5: // High
+            _newQuality = QualityType.High;
+            break;
+        }
+        TVHome.Card.QualityType = _newQuality;
+      }
+    }    
 
     void ShowProgramInfo()
     {

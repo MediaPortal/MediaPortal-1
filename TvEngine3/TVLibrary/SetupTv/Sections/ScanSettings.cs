@@ -58,6 +58,7 @@ namespace SetupTv.Sections
       numericUpDownCAT.Value = Convert.ToDecimal(layer.GetSetting("timeoutCAT", "5").Value);
       numericUpDownPMT.Value = Convert.ToDecimal(layer.GetSetting("timeoutPMT", "10").Value);
       numericUpDownSDT.Value = Convert.ToDecimal(layer.GetSetting("timeoutSDT", "20").Value);
+      numericUpDownAnalog.Value = Convert.ToDecimal(layer.GetSetting("timeoutAnalog", "20").Value);
 
       delayDetectUpDown.Value = Convert.ToDecimal(layer.GetSetting("delayCardDetect", "0").Value);
 
@@ -121,6 +122,10 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("timeoutSDT", "20");
       s.Value = numericUpDownSDT.Value.ToString();
+      s.Persist();
+
+      s = layer.GetSetting("timeoutAnalog", "20");
+      s.Value = numericUpDownAnalog.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("generalEPGAlwaysFillHoles", "no");

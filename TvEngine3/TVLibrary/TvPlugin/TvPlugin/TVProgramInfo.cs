@@ -38,6 +38,7 @@ using MediaPortal.GUI.Library;
 
 using TvDatabase;
 using TvControl;
+using TvLibrary.Interfaces;
 
 
 namespace TvPlugin
@@ -191,14 +192,21 @@ namespace TvPlugin
           }
         }
       }
-      // Quality control is currently not implemented, so we don't want to confuse the user
-      btnQuality.Disabled = true;
       if (isRecording)
       {
         btnRecord.Label = GUILocalizeStrings.Get(1039);//dont record
         btnAdvancedRecord.Disabled = true;
         btnKeep.Disabled = false;
-        //btnQuality.Disabled = false;
+        btnQuality.Disabled = true;
+        IList details = Channel.Retrieve(currentProgram.IdChannel).ReferringTuningDetail();
+        foreach (TuningDetail detail in details)
+        {
+          if (detail.ChannelType == 0)
+          {
+            btnQuality.Disabled = false;
+            break;
+          }
+        }
         btnEpisodes.Disabled = !isSeries;
         btnPreRecord.Disabled = false;
         btnPostRecord.Disabled = false;
@@ -208,7 +216,7 @@ namespace TvPlugin
         btnRecord.Label = GUILocalizeStrings.Get(264);//record
         btnAdvancedRecord.Disabled = false;
         btnKeep.Disabled = true;
-        //btnQuality.Disabled = true;
+        btnQuality.Disabled = true;
         btnEpisodes.Disabled = true;
         btnPreRecord.Disabled = true;
         btnPostRecord.Disabled = true;
@@ -293,9 +301,9 @@ namespace TvPlugin
         OnPostRecordInterval();
       if (control == btnEpisodes)
         OnSetEpisodes();
-      // Quality control is currently not implemented, so we don't want to confuse the user
-      //if (control == btnQuality)
-      //  OnSetQuality();
+      //Quality control is currently not implemented, so we don't want to confuse the user
+      if (control == btnQuality)
+        OnSetQuality();
       if (control == btnKeep)
         OnKeep();
       if (control == btnRecord)
@@ -399,8 +407,132 @@ namespace TvPlugin
     {
       Schedule rec;
       if (false == IsRecordingProgram(currentProgram, out  rec, false)) return;
-      ///@
-      ///GUITVPriorities.OnSetQuality(rec);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(882);
+
+        dlg.ShowQuickNumbers = true;
+
+        dlg.AddLocalizedString(968);
+        dlg.AddLocalizedString(965);
+        dlg.AddLocalizedString(966);
+        dlg.AddLocalizedString(967);
+        VIDEOENCODER_BITRATE_MODE _newBitRate = rec.BitRateMode;
+        switch (_newBitRate)
+        {
+          case VIDEOENCODER_BITRATE_MODE.NotSet:
+            dlg.SelectedLabel = 0;
+            break;
+          case VIDEOENCODER_BITRATE_MODE.ConstantBitRate:
+            dlg.SelectedLabel = 1;
+            break;
+          case VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage:
+            dlg.SelectedLabel = 2;
+            break;
+          case VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak:
+            dlg.SelectedLabel = 3;
+            break;
+        }
+
+        dlg.DoModal(GetID);
+
+        if (dlg.SelectedLabel == -1) return;
+        switch (dlg.SelectedLabel)
+        {
+          case 0: // Not Set
+            _newBitRate = VIDEOENCODER_BITRATE_MODE.NotSet;
+            break;
+
+          case 1: // CBR
+            _newBitRate = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
+            break;
+
+          case 2: // VBR
+            _newBitRate = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
+            break;
+
+          case 3: // VBR Peak
+            _newBitRate = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
+            break;
+
+        }
+
+        rec.BitRateMode = _newBitRate;
+        rec.Persist();
+
+        dlg.Reset();
+        dlg.SetHeading(882);
+
+        dlg.ShowQuickNumbers = true;
+        dlg.AddLocalizedString(968);// NotSet
+        dlg.AddLocalizedString(886);//Default
+        dlg.AddLocalizedString(993); // Custom
+        dlg.AddLocalizedString(893);//Portable
+        dlg.AddLocalizedString(883);//Low
+        dlg.AddLocalizedString(884);//Medium
+        dlg.AddLocalizedString(885);//High
+        QualityType _newQuality = rec.QualityType;
+        switch (_newQuality)
+        {
+          case QualityType.NotSet:
+            dlg.SelectedLabel = 0;
+            break;
+          case QualityType.Default:
+            dlg.SelectedLabel = 1;
+            break;
+          case QualityType.Custom:
+            dlg.SelectedLabel = 2;
+            break;
+          case QualityType.Portable:
+            dlg.SelectedLabel = 3;
+            break;
+          case QualityType.Low:
+            dlg.SelectedLabel = 4;
+            break;
+          case QualityType.Medium:
+            dlg.SelectedLabel = 5;
+            break;
+          case QualityType.High:
+            dlg.SelectedLabel = 6;
+            break;
+        }
+
+        dlg.DoModal(GetID);
+
+        if (dlg.SelectedLabel == -1) return;
+        switch (dlg.SelectedLabel)
+        {
+          case 0: // Default
+            _newQuality = QualityType.Default;
+            break;
+
+          case 1: // Custom
+            _newQuality = QualityType.Custom;
+            break;
+
+          case 2: // Protable
+            _newQuality = QualityType.Portable;
+            break;
+
+          case 3: // Low
+            _newQuality = QualityType.Low;
+            break;
+
+          case 4: // Medium
+            _newQuality = QualityType.Medium;
+            break;
+
+          case 5: // High
+            _newQuality = QualityType.High;
+            break;
+        }
+
+        rec.QualityType = _newQuality;
+        rec.Persist();
+
+      }
       Update();
     }
 

@@ -686,11 +686,6 @@ namespace TvPlugin
         dlg.AddLocalizedString(979); //Play recording from beginning
         dlg.AddLocalizedString(980); //Play recording from live point
       }
-      // Quality control is currently not implemented, so we don't want to confuse the user
-      //else
-      //{
-      //  dlg.AddLocalizedString(882);//Quality settings
-      //}
       dlg.AddLocalizedString(1048); // settings
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
@@ -713,7 +708,7 @@ namespace TvPlugin
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
           return;
         case 882:////Quality settings
-          //GUITVPriorities.OnSetQuality(rec);
+          TvPriorities.OnSetQuality(rec);
           break;
 
         case 981: //Cancel this show

@@ -169,11 +169,32 @@ namespace TvLibrary.Implementations.Analog
           _configuration.CustomQualityValue = int.Parse(tempNode.Attributes["value"].Value);
           _configuration.CustomPeakQualityValue = int.Parse(tempNode.Attributes["peakValue"].Value);
           tempNode = node.SelectSingleNode("playback");
-          _configuration.PlaybackQualityMode = (VIDEOENCODER_BITRATE_MODE)int.Parse(tempNode.Attributes["mode"].Value);
-          _configuration.PlaybackQualityType = (QualityType)int.Parse(tempNode.Attributes["type"].Value);
+          int tempValue;
+          tempValue =int.Parse(tempNode.Attributes["mode"].Value);
+          if (tempValue < 0 || tempValue > 2)
+          {
+            tempValue = 0;
+          }
+          _configuration.PlaybackQualityMode = (VIDEOENCODER_BITRATE_MODE)tempValue;
+          tempValue = int.Parse(tempNode.Attributes["type"].Value);
+          if (tempValue < 1 || tempValue > 6)
+          {
+            tempValue = 1;
+          }
+          _configuration.PlaybackQualityType = (QualityType)tempValue;
           tempNode = node.SelectSingleNode("record");
-          _configuration.RecordQualityMode = (VIDEOENCODER_BITRATE_MODE)int.Parse(tempNode.Attributes["mode"].Value);
-          _configuration.RecordQualityType = (QualityType)int.Parse(tempNode.Attributes["type"].Value);
+          tempValue = int.Parse(tempNode.Attributes["mode"].Value);
+          if (tempValue < 0 || tempValue > 2)
+          {
+            tempValue = 0;
+          }
+          _configuration.RecordQualityMode = (VIDEOENCODER_BITRATE_MODE)tempValue;
+          tempValue = int.Parse(tempNode.Attributes["type"].Value);
+          if (tempValue < 1 || tempValue > 6)
+          {
+            tempValue = 1;
+          }
+          _configuration.RecordQualityType = (QualityType) tempValue;
         } catch (Exception e)
         {
           Log.Log.WriteFile("Error while reading analog card configuration file");

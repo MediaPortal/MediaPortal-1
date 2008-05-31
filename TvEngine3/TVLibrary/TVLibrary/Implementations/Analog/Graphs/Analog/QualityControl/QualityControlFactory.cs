@@ -42,6 +42,57 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// </summary>
     public static IQuality createQualityControl(Configuration configuration, IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
     {
+      ICodecAPI codecAPI = checkCodecAPI(filterVideoEncoder, filterCapture, filterMultiplexer, filterVideoCompressor);
+
+      if (codecAPI != null)
+      {
+        return new CodecAPIControl(configuration, codecAPI);
+      }
+
+      IVideoEncoder videoEncoder = checkVideoEncoder(filterVideoEncoder, filterCapture, filterMultiplexer, filterVideoCompressor);
+      if (videoEncoder != null)
+      {
+        return new VideoEncoderControl(configuration, videoEncoder);
+      }
+
+      IEncoderAPI encoderAPI = checkEncoderAPI(filterVideoEncoder, filterCapture, filterMultiplexer, filterVideoCompressor);
+      if (encoderAPI != null)
+      {
+        return new EncoderAPIControl(configuration, encoderAPI);
+      }
+
+      return null;
+    }
+
+    private static IEncoderAPI checkEncoderAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    {
+      IEncoderAPI videoEncoder = null;
+
+      if (filterVideoEncoder != null)
+      {
+        videoEncoder = filterVideoEncoder as IEncoderAPI;
+      }
+
+      if (videoEncoder == null && filterCapture != null)
+      {
+        videoEncoder = filterCapture as IEncoderAPI;
+      }
+
+      if (videoEncoder == null && filterMultiplexer != null)
+      {
+        videoEncoder = filterMultiplexer as IEncoderAPI;
+      }
+
+      if (videoEncoder == null && filterVideoCompressor != null)
+      {
+        videoEncoder = filterVideoCompressor as IEncoderAPI;
+      }
+
+      return videoEncoder;
+    }
+
+    private static IVideoEncoder checkVideoEncoder(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    {
       IVideoEncoder videoEncoder = null;
 
       if (filterVideoEncoder != null)
@@ -64,11 +115,35 @@ namespace TvLibrary.Implementations.Analog.QualityControl
         videoEncoder = filterVideoCompressor as IVideoEncoder;
       }
 
-      if (videoEncoder != null)
-      {
-        return new VideoEncoderControl(configuration, videoEncoder);
-      }
-      return null;
+      return videoEncoder;
     }
+
+    private static ICodecAPI checkCodecAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    {
+      ICodecAPI videoEncoder = null;
+
+      if (filterVideoEncoder != null)
+      {
+        videoEncoder = filterVideoEncoder as ICodecAPI;
+      }
+
+      if (videoEncoder == null && filterCapture != null)
+      {
+        videoEncoder = filterCapture as ICodecAPI;
+      }
+
+      if (videoEncoder == null && filterMultiplexer != null)
+      {
+        videoEncoder = filterMultiplexer as ICodecAPI;
+      }
+
+      if (videoEncoder == null && filterVideoCompressor != null)
+      {
+        videoEncoder = filterVideoCompressor as ICodecAPI;
+      }
+
+      return videoEncoder;
+    }
+
   }
 }

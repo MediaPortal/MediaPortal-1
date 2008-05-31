@@ -140,13 +140,13 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="fileName">timeshifting filename</param>
     protected override bool OnStartTimeShifting(string fileName)
     {
-      _timeshiftFileName = fileName;
-      Log.Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
-      Log.Log.WriteFile("analog:SetTimeShiftFileName: uses .ts");
       if (_card.SupportsQualityControl && !IsRecording)
       {
         _card.Quality.StartPlayback();
       }
+      _timeshiftFileName = fileName;
+      Log.Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
+      Log.Log.WriteFile("analog:SetTimeShiftFileName: uses .ts");
       ScanParameters _parameters = _card.Parameters;
       _mpRecord.SetVideoAudioObserver(this);
       _mpRecord.SetTimeShiftParams(_parameters.MinimumFiles, _parameters.MaximumFiles, _parameters.MaximumFileSize);
@@ -175,11 +175,11 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     protected override void OnStartRecording(bool transportStream, string fileName)
     {
-      Log.Log.WriteFile("analog:StartRecord({0})", fileName);
       if (_card.SupportsQualityControl)
       {
         _card.Quality.StartRecord();
       }
+      Log.Log.WriteFile("analog:StartRecord({0})", fileName);
       if (transportStream)
       {
         Log.Log.WriteFile("dvb:SetRecording: uses .ts");
