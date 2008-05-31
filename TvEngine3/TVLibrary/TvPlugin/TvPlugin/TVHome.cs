@@ -143,8 +143,8 @@ namespace TvPlugin
       }
       catch (Exception ex)
       {
-        Log.Error(ex);
-      }      
+        Log.Error("TVHome: Error occured in constructor: {0}", ex.Message);
+      }
     }
 
     public TVHome()
@@ -2823,8 +2823,9 @@ namespace TvPlugin
     {
       // Load all groups
       //ServiceProvider services = GlobalServiceProvider.Instance;
-      Log.Debug("ChannelNavigator::ctor()");
-      string IpAddress = Dns.GetHostName();
+      Log.Debug("ChannelNavigator: ctor()");
+      string IpAddress;
+
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         IpAddress = xmlreader.GetValueAsString("tvservice", "hostname", "");
@@ -2833,6 +2834,7 @@ namespace TvPlugin
           try
           {
             IpAddress = Dns.GetHostName();
+
             Log.Info("TVHome: No valid hostname specified in mediaportal.xml!");
             xmlreader.SetValue("tvservice", "hostname", IpAddress);
             IpAddress = "localhost";
@@ -2846,7 +2848,7 @@ namespace TvPlugin
         }
       }
       RemoteControl.HostName = IpAddress;
-      MediaPortal.GUI.Library.Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
+      Log.Info("Remote control:master server :{0}", RemoteControl.HostName);
 
       ReLoad();
     }
@@ -2965,7 +2967,7 @@ namespace TvPlugin
       }
       catch (Exception ex)
       {
-        MediaPortal.GUI.Library.Log.Error(ex);
+        Log.Error("TVHome: Error in Reload - {0}", ex.Message);
         //TVHome.Connected = false;
       }
     }
