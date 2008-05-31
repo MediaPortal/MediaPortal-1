@@ -670,8 +670,8 @@
     <String id="780">Select scheduling method</String>
     <String id="781">Quick record</String>
     <String id="782">Advanced record</String>
-    <String id="789">Now:</String>
-    <String id="790">Next:</String>
+    <String id="789">Now: </String>
+    <String id="790">Next: </String>
     <String id="798">low</String>
     <String id="799">high</String>
     <String id="800">Starts with</String>
