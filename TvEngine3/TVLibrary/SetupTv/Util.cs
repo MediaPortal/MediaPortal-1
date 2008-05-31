@@ -827,7 +827,7 @@ namespace SetupTv
 
           TvLibrary.Log.Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
           if (MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
-            Process.Start(@"http://wiki.team-mediaportal.com/TV-Engine_0.3/requirements");
+            Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
         }
         catch (Exception) { }
       }
