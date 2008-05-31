@@ -799,6 +799,10 @@
     <String id="959">has joined the conversation</String>
     <String id="960">has left the conversation</String>
     <String id="961">MSN Status</String>
+    <String id="965">Constant bit rate</String>
+    <String id="966">Variable bit rate average</String>
+    <String id="967">Variable bit rate peak</String>
+    <String id="968">Undefined</String>
     <String id="970">Previous window</String>
     <String id="971">Group</String>
     <String id="972">All Channels</String>
