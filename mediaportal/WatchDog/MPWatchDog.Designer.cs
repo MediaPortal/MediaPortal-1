@@ -1,6 +1,6 @@
 namespace MPTestTool
 {
-  partial class MPTestTool
+  partial class MPWatchDog
   {
     /// <summary>
     /// Required designer variable.
@@ -329,7 +329,7 @@ namespace MPTestTool
       this.tmrWatchdog.Interval = 1000;
       this.tmrWatchdog.Tick += new System.EventHandler(this.tmrWatchdog_Tick);
       // 
-      // MPTestTool
+      // MPWatchDog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -340,7 +340,7 @@ namespace MPTestTool
       this.Controls.Add(this.step1Group);
       this.Controls.Add(this.settingsGroup);
       this.Menu = this.mainMenu;
-      this.Name = "MPTestTool";
+      this.Name = "MPWatchDog";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MediaPortal Test Tool";
       this.settingsGroup.ResumeLayout(false);

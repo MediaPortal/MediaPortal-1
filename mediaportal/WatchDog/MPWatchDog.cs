@@ -38,7 +38,7 @@ using System.Threading;
 
 namespace MPTestTool
 {
-  public partial class MPTestTool : MPForm
+  public partial class MPWatchDog : MPForm
   {
     #region Variables
     string _tempDir = "";
@@ -57,7 +57,7 @@ namespace MPTestTool
     private void ShowUsage()
     {
       string usageText = "\n" +
-        "Usage: MPTestTool.exe [-auto] [-watchdog] [-zipFile <path+filename>] [-restartMP <delay in seconds>] \n" +
+        "Usage: MPWatchDog.exe [-auto] [-watchdog] [-zipFile <path+filename>] [-restartMP <delay in seconds>] \n" +
         "\n" +
         "auto     : Perform all actions automatically and start MediaPortal in between\n" +
         "watchdog : Used internally by MediaPortal to monitor MP\n" +
@@ -73,9 +73,9 @@ namespace MPTestTool
     }
     #endregion
 
-    public MPTestTool()
+    public MPWatchDog()
     {
-      Thread.CurrentThread.Name = "MPTestTool";
+      Thread.CurrentThread.Name = "MPWatchDog";
       InitializeComponent();
       _tempDir=Path.GetTempPath();
       if (!_tempDir.EndsWith("\\"))
