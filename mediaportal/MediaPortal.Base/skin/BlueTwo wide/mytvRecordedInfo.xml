@@ -12,8 +12,8 @@
       <type>group</type>
       <description>group element</description>
       <id>0</id>
-      <posX>561</posX>
-      <posY>261</posY>
+      <posX>113</posX>
+      <posY>129</posY>
       <width>264</width>
       <height>53</height>
       <layout>StackLayout</layout>
