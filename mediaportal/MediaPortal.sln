@@ -198,13 +198,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaller.Library", "MPIn
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTestTool2", "MPTestTool2\MPTestTool2.csproj", "{349F7518-F251-49BD-8887-07870812D4FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPImapiBurner", "XPImapiBurner\XPImapiBurner.csproj", "{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPImapiBurner", "XPImapiBurner\XPImapiBurner.csproj", "{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchDog", "WatchDog\WatchDog.csproj", "{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -416,14 +416,6 @@ Global
 		{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}.Release|x86.ActiveCfg = Release|x86
 		{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}.Release|x86.Build.0 = Release|x86
-		{349F7518-F251-49BD-8887-07870812D4FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{349F7518-F251-49BD-8887-07870812D4FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{349F7518-F251-49BD-8887-07870812D4FE}.Debug|x86.ActiveCfg = Debug|x86
-		{349F7518-F251-49BD-8887-07870812D4FE}.Debug|x86.Build.0 = Debug|x86
-		{349F7518-F251-49BD-8887-07870812D4FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{349F7518-F251-49BD-8887-07870812D4FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{349F7518-F251-49BD-8887-07870812D4FE}.Release|x86.ActiveCfg = Release|x86
-		{349F7518-F251-49BD-8887-07870812D4FE}.Release|x86.Build.0 = Release|x86
 		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Debug|x86.ActiveCfg = Debug|x86
@@ -432,6 +424,14 @@ Global
 		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Release|x86.ActiveCfg = Release|x86
 		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Release|x86.Build.0 = Release|x86
+		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Debug|x86.ActiveCfg = Debug|x86
+		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Debug|x86.Build.0 = Debug|x86
+		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Release|x86.ActiveCfg = Release|x86
+		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

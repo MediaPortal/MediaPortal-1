@@ -90,11 +90,11 @@ REM Copy All new files from base
 xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
 
 REM MPTestTool2
-xcopy /y %1\MPTestTool2\bin\%2\MPTestTool2.exe .
-xcopy /y %1\MPTestTool2\bin\%2\DaggerLib.dll .
-xcopy /y %1\MPTestTool2\bin\%2\DaggerLib.DSGraphEdit.dll .
-xcopy /y %1\MPTestTool2\bin\%2\DirectShowLib-2005.dll .
-xcopy /y %1\MPTestTool2\bin\%2\MediaFoundation.dll .
+xcopy /y %1\WatchDog\bin\%2\WatchDog.exe .
+xcopy /y %1\WatchDog\bin\%2\DaggerLib.dll .
+xcopy /y %1\WatchDog\bin\%2\DaggerLib.DSGraphEdit.dll .
+xcopy /y %1\WatchDog\bin\%2\DirectShowLib-2005.dll .
+xcopy /y %1\WatchDog\bin\%2\MediaFoundation.dll .
 
 REM MPInstaller
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.* .

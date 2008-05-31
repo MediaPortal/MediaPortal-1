@@ -265,7 +265,7 @@ public class MediaPortalApp : D3DApp, IRender
         mpTestTool.StartInfo.ErrorDialog = true;
         mpTestTool.StartInfo.UseShellExecute = true;
         mpTestTool.StartInfo.WorkingDirectory = Application.StartupPath;
-        mpTestTool.StartInfo.FileName = "MPTestTool2.exe";
+        mpTestTool.StartInfo.FileName = "WatchDog.exe";
         mpTestTool.StartInfo.Arguments = cmdargs;
         mpTestTool.Start();
       }

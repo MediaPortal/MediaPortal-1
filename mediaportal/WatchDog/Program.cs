@@ -39,7 +39,7 @@ namespace MPTestTool
     {
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new MPTestTool());
+      Application.Run(new MPWatchDog());
     }
   }
 }
