@@ -51,8 +51,9 @@ namespace TvLibrary.Implementations.DVB
   public class MDPlugs
   {
     #region variables
-    protected MDPlug [] _mDPlugs;
+    protected MDPlug [] _mDPlugsArray;
     protected int _instanceNumber=0;
+    protected String _cardFolder;
     #endregion
 
     #region ctor
@@ -78,18 +79,30 @@ namespace TvLibrary.Implementations.DVB
     private MDPlugs(string CardFolder, int InstanceNumber)
     {
       _instanceNumber = InstanceNumber;
-      Log.Log.Info("mdplugs: InstanceNumber = {0}", _instanceNumber);
-      _mDPlugs = new MDPlug[_instanceNumber];
-
-      for (int iplg = 0; iplg < _instanceNumber; iplg++)
-        _mDPlugs[iplg] = MDPlug.Create(CardFolder+iplg);
-
+      _cardFolder = CardFolder;
+      Log.Log.Info("mdplugs: InstanceNumber(s) = {0}", _instanceNumber);
     }
+
+    /// <summary>
+    /// Lazy Plugin creator
+    /// </summary>
+    private MDPlug[] getPlugins()
+    {
+        if (_mDPlugsArray == null)
+        {
+            _mDPlugsArray = new MDPlug[_instanceNumber];
+            for (int iplg = 0; iplg < _instanceNumber; iplg++)
+                _mDPlugsArray[iplg] = MDPlug.Create(_cardFolder + iplg);
+        }
+        return _mDPlugsArray;
+    }
+
     /// <summary>
     /// private MDPlug Destructor
     /// </summary>
     ~MDPlugs()
     {
+        Close();
     }
     #endregion
 
@@ -123,6 +136,8 @@ namespace TvLibrary.Implementations.DVB
           nodeCard.Attributes.Append(attr);
           attr = doc.CreateAttribute("EnableMdapi");
           attr.InnerText = "1";
+          //Fix null pointer problem on first run.
+          InstanceNumber = 1;
           nodeCard.Attributes.Append(attr);
           rootNode.AppendChild(nodeCard);
           doc.AppendChild(rootNode);
@@ -170,6 +185,8 @@ namespace TvLibrary.Implementations.DVB
             nodeNewCard.Attributes.Append(attr);
             attr = doc.CreateAttribute("EnableMdapi");
             attr.InnerText = "1";
+            //Fix null pointer problem on first run.
+            InstanceNumber = 1;
             nodeNewCard.Attributes.Append(attr);
             XmlNode rootNode = doc.SelectSingleNode("/cards");
             rootNode.AppendChild(nodeNewCard);
@@ -185,11 +202,30 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region public method
+
+    /// <summary>
+    /// Method release all the mdapi filters in ordinary fashion
+    /// </summary>
+    public void Close()
+    {
+       if(_mDPlugsArray != null){
+           for (int iplg = 0; iplg < _instanceNumber; iplg++)
+           {
+               if(_mDPlugsArray[iplg] != null){
+                   _mDPlugsArray[iplg].Close();
+                   _mDPlugsArray[iplg] = null;
+               }
+           }
+           _mDPlugsArray = null;
+       }
+    }
+
     /// <summary>
     /// Connect all mdapifilters between [inftee main] and [TIF MPEG2 Demultiplexer]
     /// </summary>
     public void Connectmdapifilter(IFilterGraph2 graphBuilder, ref IBaseFilter infTeeMain, ref IBaseFilter infTeeSecond, ref IBaseFilter filterMpeg2DemuxTif)
     {
+      MDPlug[] _mDPlugs = getPlugins();
       int iplg = 0;
       int hr = 0;
       string filtername;
@@ -263,11 +299,78 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("unable to connect [inftee2]->[demux]");
       }
     }
+
+    /// <summary>
+    /// Remove all mdapifilters between [inftee main] and [TIF MPEG2 Demultiplexer]
+    /// </summary>
+    public void Disconnectmdapifilter(IFilterGraph2 graphBuilder, ref IBaseFilter infTeeMain, ref IBaseFilter infTeeSecond, ref IBaseFilter filterMpeg2DemuxTif)
+    {
+          int iplg = 0;
+          int hr = 0;
+          string filtername;
+
+          MDPlug[] _mDPlugs = getPlugins();
+          Log.Log.Info("mdplugs: disconnect and reconnecting pins");
+
+          IPin mainTeeOut = DsFindPin.ByDirection(infTeeMain, PinDirection.Output, 0);
+          IPin mpegDemuxIn = DsFindPin.ByDirection(filterMpeg2DemuxTif, PinDirection.Input, 0);
+
+          IPin teeSecoundIn = DsFindPin.ByDirection(infTeeSecond, PinDirection.Input, 0);
+          IPin teeSecoundOut = DsFindPin.ByDirection(infTeeSecond, PinDirection.Output, 0);
+
+          Log.Log.Info("Disconnecting main pin");
+          graphBuilder.Disconnect(mainTeeOut);
+          Log.Log.Info("Disconnecting mpeg demux pin");
+          graphBuilder.Disconnect(mpegDemuxIn);
+          Log.Log.Info("Disconnecting secound tee");
+          graphBuilder.Disconnect(teeSecoundIn);
+          graphBuilder.Disconnect(teeSecoundOut);
+
+          Log.Log.Info("Reconnecting MainTee to MpegDemux");
+          hr = graphBuilder.Connect(mainTeeOut, mpegDemuxIn);
+          Release.ComObject("Releasing maintee out", mainTeeOut);
+          Release.ComObject("Releasing mpegdemux pinin", mpegDemuxIn);
+          Release.ComObject("Releasing teeSecound pinin", teeSecoundIn);
+          Release.ComObject("Releasing teeSecound  pinOut", teeSecoundOut);
+
+
+
+          //Last Part Remove Filters from Graph.
+          //capture -> maintee -> mdapi(n)-> secondtee -> demux
+          for (iplg = 0; iplg < _instanceNumber; iplg++)
+          {
+              filtername = "mdapifilter" + iplg;
+              Log.Log.Info("mdplugs: remove {0}", filtername);
+
+              IPin mdOut = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Output, 0);
+              IPin mdIn = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Input, 0);
+              graphBuilder.Disconnect(mdOut);
+              graphBuilder.Disconnect(mdIn);
+              Release.ComObject("Releasing  pinout", mdOut);
+              Release.ComObject("Releasing  pinin", mdIn);
+
+              hr = graphBuilder.RemoveFilter(_mDPlugs[iplg].mdapiFilter);
+              if (hr != 0)
+              {
+                  Log.Log.Error("mdplugs:Remove {0} returns:0x{1:X}", filtername, hr);
+                  throw new TvException("Unable to remove " + filtername);
+              }
+
+              Log.Log.Info("Filter should now be totally removed from graph hr :{0}", hr);
+          }
+          iplg = 0;
+          filtername = "mdapifilter" + iplg;
+
+          Log.Log.Info("Graph should be clean of MDAPI Filters..");
+    }
+
+
     /// <summary>
     /// Sends the current channel to the mdapifilter
     /// </summary>
     public void SetChannel(int SubCh, IChannel currentChannel, ChannelInfo channelInfo)
     {
+      MDPlug[] _mDPlugs = getPlugins();
       if( _mDPlugs[SubCh] != null)
         _mDPlugs[SubCh].SetChannel(currentChannel, channelInfo);
     }
@@ -449,12 +552,26 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     ~MDPlug()
     {
-      if (mdapiFilter != null)
-        Release.ComObject("mdapiFilter", mdapiFilter);
+        Close();
     }
     #endregion
 
     #region public method
+
+    /// <summary>
+    /// Method release the mdapi filter in ordinary fashion
+    /// </summary>
+    public void Close()
+    {
+        if (mdapiFilter != null)
+        {
+            Marshal.FinalReleaseComObject(mdapiFilter);
+        }
+        mdapiFilter = null;
+        _changeChannel = null;
+        _changeChannel_Ex = null;
+    }
+
     /// <summary>
     /// Sends the current channel to the mdapi filter
     /// </summary>
