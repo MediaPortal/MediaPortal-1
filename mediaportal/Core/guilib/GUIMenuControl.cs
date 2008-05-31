@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("spaceBetweenButtons")]       protected int     _spaceBetweenButtons  = 8;
     [XMLSkinElement("textcolor")]                 protected long    _textColor            = 0xFFFFFFFF;
     [XMLSkinElement("textColorNoFocus")]          protected long    _textColorNoFocus     = 0xFFFFFFFF;
-    //[XMLSkinElement("textAlign")]                Alignment        _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textAlign")]                Alignment        _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("buttonWidth")]               protected int     _buttonWidth          = 60;
     [XMLSkinElement("buttonHeight")]              protected int     _buttonHeight         = 30;
     [XMLSkinElement("buttonTextXOff")]            protected int     _buttonTextXOffset    = 10;
@@ -702,12 +702,14 @@ namespace MediaPortal.GUI.Library
             button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight, _textColor, _textColorNoFocus,
                                       (info.HoverName != "") ? info.HoverName : _textureButtonFocus,
                                       (info.NonFocusHoverName != "") ? info.NonFocusHoverName : _textureHoverNoFocus);
+            button.TextAlignment = _textAlignment;
           }
           else
           {
             button = new GUIButtonControl(GetID, controlID, buttonX, buttonY, _buttonWidth, _buttonHeight, _textColor, _textColorNoFocus,
                                       (info.FocusTextureName != "") ? info.FocusTextureName : _textureButtonFocus,
                                       (info.NonFocusTextureName != "") ? info.NonFocusTextureName : _textureButtonNoFocus);
+          	button.TextAlignment = _textAlignment;
           }
           button.Label = info.Text;
           button.Data = info;
