@@ -48,14 +48,14 @@ namespace TvPlugin
 
     public override void OnAction(Action action)
     {
-      switch (action.wID)
-      {
-        case Action.ActionType.ACTION_PREVIOUS_MENU:
-          {
-            GUIWindowManager.ShowPreviousWindow();
-            return;
-          }
-      }
+      //switch (action.wID)
+      //{
+      //  case Action.ActionType.ACTION_PREVIOUS_MENU:
+      //    {
+      //      GUIWindowManager.ShowPreviousWindow();
+      //      return;
+      //    }
+      //}
       base.OnAction(action);
     }
 
