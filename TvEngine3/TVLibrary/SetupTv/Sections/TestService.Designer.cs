@@ -39,6 +39,8 @@ namespace SetupTv.Sections
       this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label12 = new System.Windows.Forms.Label();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabelRecording = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelTimeShift = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButtonTimeShift = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonRec = new MediaPortal.UserInterface.Controls.MPButton();
@@ -54,8 +56,6 @@ namespace SetupTv.Sections
       this.buttonRestart = new System.Windows.Forms.Button();
       this.mpButtonReGrabEpg = new MediaPortal.UserInterface.Controls.MPButton();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.mpLabelTimeShift = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelRecording = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxChannels = new SetupControls.ComboBoxEx();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -147,10 +147,26 @@ namespace SetupTv.Sections
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Status:";
       // 
+      // mpLabelRecording
+      // 
+      this.mpLabelRecording.AutoSize = true;
+      this.mpLabelRecording.Location = new System.Drawing.Point(27, 152);
+      this.mpLabelRecording.Name = "mpLabelRecording";
+      this.mpLabelRecording.Size = new System.Drawing.Size(0, 13);
+      this.mpLabelRecording.TabIndex = 56;
+      // 
+      // mpLabelTimeShift
+      // 
+      this.mpLabelTimeShift.AutoSize = true;
+      this.mpLabelTimeShift.Location = new System.Drawing.Point(27, 129);
+      this.mpLabelTimeShift.Name = "mpLabelTimeShift";
+      this.mpLabelTimeShift.Size = new System.Drawing.Size(0, 13);
+      this.mpLabelTimeShift.TabIndex = 55;
+      // 
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(33, 204);
+      this.mpLabel1.Location = new System.Drawing.Point(9, 204);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(49, 13);
       this.mpLabel1.TabIndex = 55;
@@ -158,9 +174,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonTimeShift
       // 
-      this.mpButtonTimeShift.Location = new System.Drawing.Point(262, 199);
+      this.mpButtonTimeShift.Location = new System.Drawing.Point(221, 199);
       this.mpButtonTimeShift.Name = "mpButtonTimeShift";
-      this.mpButtonTimeShift.Size = new System.Drawing.Size(95, 23);
+      this.mpButtonTimeShift.Size = new System.Drawing.Size(115, 23);
       this.mpButtonTimeShift.TabIndex = 56;
       this.mpButtonTimeShift.Text = "TimeShift";
       this.mpButtonTimeShift.UseVisualStyleBackColor = true;
@@ -168,9 +184,10 @@ namespace SetupTv.Sections
       // 
       // mpButtonRec
       // 
-      this.mpButtonRec.Location = new System.Drawing.Point(363, 199);
+      this.mpButtonRec.Enabled = false;
+      this.mpButtonRec.Location = new System.Drawing.Point(343, 199);
       this.mpButtonRec.Name = "mpButtonRec";
-      this.mpButtonRec.Size = new System.Drawing.Size(95, 23);
+      this.mpButtonRec.Size = new System.Drawing.Size(115, 23);
       this.mpButtonRec.TabIndex = 57;
       this.mpButtonRec.Text = "Record";
       this.mpButtonRec.UseVisualStyleBackColor = true;
@@ -263,29 +280,13 @@ namespace SetupTv.Sections
       this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
       this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
-      // mpLabelTimeShift
-      // 
-      this.mpLabelTimeShift.AutoSize = true;
-      this.mpLabelTimeShift.Location = new System.Drawing.Point(27, 129);
-      this.mpLabelTimeShift.Name = "mpLabelTimeShift";
-      this.mpLabelTimeShift.Size = new System.Drawing.Size(0, 13);
-      this.mpLabelTimeShift.TabIndex = 55;
-      // 
-      // mpLabelRecording
-      // 
-      this.mpLabelRecording.AutoSize = true;
-      this.mpLabelRecording.Location = new System.Drawing.Point(27, 152);
-      this.mpLabelRecording.Name = "mpLabelRecording";
-      this.mpLabelRecording.Size = new System.Drawing.Size(0, 13);
-      this.mpLabelRecording.TabIndex = 56;
-      // 
       // mpComboBoxChannels
       // 
       this.mpComboBoxChannels.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxChannels.FormattingEnabled = true;
       this.mpComboBoxChannels.ImageList = null;
-      this.mpComboBoxChannels.Location = new System.Drawing.Point(95, 201);
+      this.mpComboBoxChannels.Location = new System.Drawing.Point(64, 201);
       this.mpComboBoxChannels.Name = "mpComboBoxChannels";
       this.mpComboBoxChannels.Size = new System.Drawing.Size(151, 21);
       this.mpComboBoxChannels.TabIndex = 54;

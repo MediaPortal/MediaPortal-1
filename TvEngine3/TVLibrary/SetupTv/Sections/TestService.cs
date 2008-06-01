@@ -84,6 +84,7 @@ namespace SetupTv.Sections
       mpListView1.Items.Clear();
 
       buttonRestart.Visible = false;
+      mpButtonRec.Enabled = false;
     }
 
     public override void OnSectionDeActivated()
@@ -113,6 +114,7 @@ namespace SetupTv.Sections
       if (card != null)
       {
         card.StopTimeShifting();
+        mpButtonRec.Enabled = false;
       }
       else
       {
@@ -159,6 +161,10 @@ namespace SetupTv.Sections
               break;
           }
         }
+        else
+        {
+          mpButtonRec.Enabled = true;
+        }
       }
     }
 
@@ -173,6 +179,8 @@ namespace SetupTv.Sections
       if (card != null)
       {
         card.StopRecording();
+        mpButtonRec.Enabled = false;
+        mpButtonTimeShift.Enabled = true;
       }
       else
       {
@@ -182,6 +190,7 @@ namespace SetupTv.Sections
           string fileName;
           fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
           card.StartRecording(ref fileName, true, 0);
+          mpButtonTimeShift.Enabled = false;
         }
       }
     }
@@ -191,16 +200,12 @@ namespace SetupTv.Sections
       if (!ServiceHelper.IsRunning)
       {
         buttonRestart.Text = "Start Service";
-        mpButtonTimeShift.Enabled = false;
-        mpButtonRec.Enabled = false;
         mpButtonReGrabEpg.Enabled = false;
         return;
       }
       buttonRestart.Text = "Stop Service";
       if (!buttonRestart.Visible)
         buttonRestart.Visible = true;
-      mpButtonTimeShift.Enabled = true;
-      mpButtonRec.Enabled = true;
       mpButtonReGrabEpg.Enabled = true;
       UpdateCardStatus();
 
@@ -220,14 +225,14 @@ namespace SetupTv.Sections
           progressBarLevel.Value = Math.Min(100, card.SignalLevel);
           progressBarQuality.Value = Math.Min(100, card.SignalQuality);
 
-         
+
           mpLabelRecording.Text = card.RecordingFileName;
 
-         
+
           mpLabelTimeShift.Text = card.TimeShiftFileName;
           mpLabelChannel.Text = card.Channel.ToString();
           if (card.IsRecording)
-            mpButtonRec.Text = "Stop Record";
+            mpButtonRec.Text = "Stop Rec/TimeShift";
           else
             mpButtonRec.Text = "Record";
 
@@ -235,8 +240,8 @@ namespace SetupTv.Sections
             mpButtonTimeShift.Text = "Stop TimeShift";
           else
             mpButtonTimeShift.Text = "Start TimeShift";
-          
-           return;
+
+          return;
         }
         else
         {
@@ -299,22 +304,22 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-						item.SubItems[6].Text = card.Name;
+            item.SubItems[6].Text = card.Name;
             off++;
             continue;
           }
 
-					if (!RemoteControl.Instance.CardPresent(card.IdCard))
-					{
-						item.SubItems[2].Text = "n/a";
-						item.SubItems[3].Text = "";
-						item.SubItems[4].Text = "";
-						item.SubItems[5].Text = "";
-						item.SubItems[6].Text = card.Name;
-						off++;
-						continue;
-					}
-					
+          if (!RemoteControl.Instance.CardPresent(card.IdCard))
+          {
+            item.SubItems[2].Text = "n/a";
+            item.SubItems[3].Text = "";
+            item.SubItems[4].Text = "";
+            item.SubItems[5].Text = "";
+            item.SubItems[6].Text = card.Name;
+            off++;
+            continue;
+          }
+
 
           User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null)
@@ -326,7 +331,7 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-						item.SubItems[6].Text = card.Name;
+            item.SubItems[6].Text = card.Name;
             off++;
             continue;
           }
@@ -339,7 +344,7 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-						item.SubItems[6].Text = card.Name;
+            item.SubItems[6].Text = card.Name;
             off++;
             continue;
           }
@@ -350,7 +355,8 @@ namespace SetupTv.Sections
             string tmp = "idle";
             // Check if the card id fits. Hybrid cards share the context and therefor have
             // the same users.
-            if (usersForCard[i].CardId != card.IdCard) {
+            if (usersForCard[i].CardId != card.IdCard)
+            {
               continue;
             }
             userFound = true;
@@ -362,7 +368,7 @@ namespace SetupTv.Sections
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
             if (vcard.IsTimeShifting && vcard.IsGrabbingEpg) tmp = " Timeshifting (Grabbing EPG)";
-						if (vcard.IsRecording && vcard.IsGrabbingEpg) tmp = " Recording (Grabbing EPG)";
+            if (vcard.IsRecording && vcard.IsGrabbingEpg) tmp = " Recording (Grabbing EPG)";
             item.SubItems[2].Text = tmp;
             if (vcard.IsScrambled) tmp = "yes";
             else tmp = "no";
@@ -390,12 +396,13 @@ namespace SetupTv.Sections
           }
           // If we haven't found a user that fits, than it is a hybrid card which is inactive
           // This means that the card is idle.
-          if (!userFound) {
+          if (!userFound)
+          {
             item.SubItems[2].Text = "idle";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-						item.SubItems[6].Text = card.Name;
+            item.SubItems[6].Text = card.Name;
             off++;
           }
         }
@@ -410,9 +417,9 @@ namespace SetupTv.Sections
           item.SubItems[5].Text = "";
           item.SubItems[6].Text = "";
         }
-      
-      if(oldheadsize != ColumnHeaderAutoResizeStyle.HeaderSize)
-		mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+
+        if (oldheadsize != ColumnHeaderAutoResizeStyle.HeaderSize)
+          mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       }
       catch (Exception ex)
       {
@@ -490,7 +497,7 @@ namespace SetupTv.Sections
           {
 
             VirtualCard vcard = new VirtualCard(usersForCard[i], RemoteControl.HostName);
-            if (vcard.IsTimeShifting )
+            if (vcard.IsTimeShifting)
             {
               vcard.RecordingFolder = card.RecordingFolder;
               return vcard;
