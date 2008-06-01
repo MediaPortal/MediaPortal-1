@@ -72,14 +72,20 @@ namespace MediaPortal.Util
             // Try to get the last change date as a best approach to get the install date.
             FileInfo fi = new FileInfo(fullPath);
             found = fi.Exists;
-            Log.Info("FilterChecker: Found {0} from {1} located at {2}", aFilterName, fi.LastWriteTimeUtc.ToShortDateString(), fullPath);
-            if (found && aDoVersionCheck)
+            if (found)
             {
-              if (CheckFileVersion(fullPath, out aParamVersion))
-                Log.Info("FilterChecker: Version of installed {0}: {1}", aFilterName, aParamVersion.ToString());
-              else
-                Log.Warn("FilterChecker: Could not determine version of installed {0}", aFilterName);
+              Log.Info("FilterChecker: Found {0} from {1} located at {2}", aFilterName, fi.LastWriteTimeUtc.ToShortDateString(), fullPath);
+
+              if (aDoVersionCheck)
+              {
+                if (CheckFileVersion(fullPath, out aParamVersion))
+                  Log.Info("FilterChecker: Version of installed {0}: {1}", aFilterName, aParamVersion.ToString());
+                else
+                  Log.Warn("FilterChecker: Could not determine version of installed {0}", aFilterName);
+              }
             }
+            else
+              Log.Debug("FilterChecker: Invalid path info for {0}", aFilterName);
           }
           catch (Exception) { }
         }
@@ -135,7 +141,8 @@ namespace MediaPortal.Util
 
     private static void FilterCheckThread()
     {
-      LogRegisteredFilter("quartz.dll", true, true);
+      // give MP some more time to startup
+      Thread.Sleep(3333);
       if (Util.Utils.UsingTvServer)
       {
         LogRegisteredFilter("TsReader.ax", true, false);
@@ -143,20 +150,28 @@ namespace MediaPortal.Util
           LogRegisteredFilter("DVBsub2.ax", true, false);
         LogRegisteredFilter("mdapifilter", false, true);
       }
+      LogRegisteredFilter("quartz.dll", true, true);
     }
 
     private static void startFilterCheckThread()
     {
-      if (fFilterCheckThread != null)
-        if (fFilterCheckThread.IsAlive)
-          return;
+      try
+      {
+        if (fFilterCheckThread != null)
+          if (fFilterCheckThread.IsAlive)
+            return;
 
-      Log.Debug("TVHome: Filter check started.");
-      fFilterCheckThread = new Thread(FilterCheckThread);
-      fFilterCheckThread.IsBackground = true;
-      fFilterCheckThread.Priority = ThreadPriority.BelowNormal;
-      fFilterCheckThread.Name = "FilterChecker";
-      fFilterCheckThread.Start();
+        Log.Debug("TVHome: Filter check started.");
+        fFilterCheckThread = new Thread(FilterCheckThread);
+        fFilterCheckThread.IsBackground = true;
+        fFilterCheckThread.Priority = ThreadPriority.BelowNormal;
+        fFilterCheckThread.Name = "FilterChecker";
+        fFilterCheckThread.Start();
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("TVHome: Error starting FilterChecker - {0}", ex.Message);
+      }
     }
   }
 }
