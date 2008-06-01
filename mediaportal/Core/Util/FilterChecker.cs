@@ -71,9 +71,9 @@ namespace MediaPortal.Util
           {
             // Try to get the last change date as a best approach to get the install date.
             FileInfo fi = new FileInfo(fullPath);
-            found = true;
+            found = fi.Exists;
             Log.Info("FilterChecker: Found {0} from {1} located at {2}", aFilterName, fi.LastWriteTimeUtc.ToShortDateString(), fullPath);
-            if (aDoVersionCheck)
+            if (found && aDoVersionCheck)
             {
               if (CheckFileVersion(fullPath, out aParamVersion))
                 Log.Info("FilterChecker: Version of installed {0}: {1}", aFilterName, aParamVersion.ToString());
