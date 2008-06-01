@@ -1,4 +1,4 @@
-﻿namespace MPTestTool
+﻿namespace WatchDog
 {
   partial class MPForm
   {

@@ -89,7 +89,7 @@ REM xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
 REM Copy All new files from base
 xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
 
-REM MPTestTool2
+REM mpWatchDog
 xcopy /y %1\WatchDog\bin\%2\WatchDog.exe .
 xcopy /y %1\WatchDog\bin\%2\DaggerLib.dll .
 xcopy /y %1\WatchDog\bin\%2\DaggerLib.DSGraphEdit.dll .

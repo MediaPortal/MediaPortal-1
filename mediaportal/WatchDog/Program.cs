@@ -26,8 +26,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using WatchDog;
 
-namespace MPTestTool
+namespace WatchDog
 {
   static class Program
   {

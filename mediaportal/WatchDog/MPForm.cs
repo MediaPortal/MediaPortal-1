@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MPTestTool
+namespace WatchDog
 {
   public partial class MPForm : Form
   {

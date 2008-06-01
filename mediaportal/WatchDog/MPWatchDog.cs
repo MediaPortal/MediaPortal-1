@@ -35,8 +35,9 @@ using System.Diagnostics;
 using DaggerLib.DSGraphEdit;
 using MediaPortal.Configuration;
 using System.Threading;
+using WatchDog;
 
-namespace MPTestTool
+namespace WatchDog
 {
   public partial class MPWatchDog : MPForm
   {
@@ -57,14 +58,14 @@ namespace MPTestTool
     private void ShowUsage()
     {
       string usageText = "\n" +
-        "Usage: MPWatchDog.exe [-auto] [-watchdog] [-zipFile <path+filename>] [-restartMP <delay in seconds>] \n" +
-        "\n" +
-        "auto     : Perform all actions automatically and start MediaPortal in between\n" +
-        "watchdog : Used internally by MediaPortal to monitor MP\n" +
-        "zipFile  : full path and filename to the zip where all logfiles will be included\n" +
-        "restartMP: automatically collects all logs, saves them as zip to desktop, restarts MP and closes\n" +
-        "           the delay is the time in where you can cancel the operation\n" +
-        "\n";
+                         "Usage: MPWatchDog.exe [-auto] [-watchdog] [-zipFile <path+filename>] [-restartMP <delay in seconds>] \n" +
+                         "\n" +
+                         "auto     : Perform all actions automatically and start MediaPortal in between\n" +
+                         "watchdog : Used internally by MediaPortal to monitor MP\n" +
+                         "zipFile  : full path and filename to the zip where all logfiles will be included\n" +
+                         "restartMP: automatically collects all logs, saves them as zip to desktop, restarts MP and closes\n" +
+                         "           the delay is the time in where you can cancel the operation\n" +
+                         "\n";
       MessageBox.Show(usageText,"MediaPortal test tool usage",MessageBoxButtons.OK,MessageBoxIcon.Information);
     }
     private void setStatus(string status)

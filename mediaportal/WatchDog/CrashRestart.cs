@@ -5,8 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using WatchDog;
 
-namespace MPTestTool
+namespace WatchDog
 {
   public partial class CrashRestartDlg : MPForm
   {

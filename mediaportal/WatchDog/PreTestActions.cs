@@ -29,71 +29,71 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 
-namespace MPTestTool
+namespace WatchDog
 {
-	/// <summary>
-	/// Performs actions necessary before doing MediaPortal tests.
-	/// </summary>
-	public class PreTestActions : ProgressDialog
-	{
-		private int totalActions = 2;
+  /// <summary>
+  /// Performs actions necessary before doing MediaPortal tests.
+  /// </summary>
+  public class PreTestActions : ProgressDialog
+  {
+    private int totalActions = 2;
 
     private static string[] logNames = { "Application", "System" };
 		
-		public PreTestActions()
-		{
-		}
+    public PreTestActions()
+    {
+    }
 	
-		private void updateProgress(int subActions)
-		{
-			int actionAmount = 100 / totalActions;
-			int subActionAmount = actionAmount / subActions;
-			base.setProgress(base.getProgress() + subActionAmount);
-		}
-		public bool PerformActions()
-		{
-  		ClearEventLog();
-  		ClearMPLogDir();
-			base.Done();
-			return true;
-		}
-		private void ClearEventLog()
-		{
-			base.setAction("Clearing EventLogs...");
+    private void updateProgress(int subActions)
+    {
+      int actionAmount = 100 / totalActions;
+      int subActionAmount = actionAmount / subActions;
+      base.setProgress(base.getProgress() + subActionAmount);
+    }
+    public bool PerformActions()
+    {
+      ClearEventLog();
+      ClearMPLogDir();
+      base.Done();
+      return true;
+    }
+    private void ClearEventLog()
+    {
+      base.setAction("Clearing EventLogs...");
       Update();
-			int subActions = logNames.Length;
-  		foreach (string strLogName in logNames)
-	  	{
-			  EventLog e = new EventLog(strLogName);
+      int subActions = logNames.Length;
+      foreach (string strLogName in logNames)
+      {
+        EventLog e = new EventLog(strLogName);
         try {
-				  e.Clear();
+          e.Clear();
         } catch (Exception) {}
-				updateProgress(subActions);
-  		}
-			if (subActions == 0)
-				updateProgress(1);
-		}
-		private void ClearDir(string strDir)
-		{
-			string[] files = Directory.GetFiles(strDir);
-			int subActions = files.Length;
-			foreach (string file in files)
-			{
-				if (File.Exists(file))
-				{
-					File.Delete(file);
-					updateProgress(subActions);
-				}
-			}
-			if (subActions == 0)
-				updateProgress(1);
+        updateProgress(subActions);
+      }
+      if (subActions == 0)
+        updateProgress(1);
+    }
+    private void ClearDir(string strDir)
+    {
+      string[] files = Directory.GetFiles(strDir);
+      int subActions = files.Length;
+      foreach (string file in files)
+      {
+        if (File.Exists(file))
+        {
+          File.Delete(file);
+          updateProgress(subActions);
+        }
+      }
+      if (subActions == 0)
+        updateProgress(1);
 
-		}
-		private void ClearMPLogDir()
-		{
-			base.setAction("Clearing MediaPortal log subdirectory...");
+    }
+    private void ClearMPLogDir()
+    {
+      base.setAction("Clearing MediaPortal log subdirectory...");
       Update();
       ClearDir(Config.GetFolder(Config.Dir.Log));
-		}
-	}
+    }
+  }
 }

@@ -60,15 +60,15 @@ namespace MediaPortal
       ExceptionLogger logger = new ExceptionLogger(ex);
       logger.CreateLogs(directory);
       Log.Info("MediaPortal: stop...");
-      // GEMX 08.04.08: The MPTestTool2 is now always started in the background and monitors MP itself
+      // GEMX 08.04.08: The WatchDog is now always started in the background and monitors MP itself
       /*
-      Process mpTestTool = new Process();
-      mpTestTool.StartInfo.ErrorDialog = true;
-      mpTestTool.StartInfo.UseShellExecute = true;
-      mpTestTool.StartInfo.WorkingDirectory = Application.StartupPath;
-      mpTestTool.StartInfo.FileName = "MPTestTool2.exe";
-      mpTestTool.StartInfo.Arguments = "-crashed";
-      mpTestTool.Start();
+      Process mpWatchDog = new Process();
+      mpWatchDog.StartInfo.ErrorDialog = true;
+      mpWatchDog.StartInfo.UseShellExecute = true;
+      mpWatchDog.StartInfo.WorkingDirectory = Application.StartupPath;
+      mpWatchDog.StartInfo.FileName = "WatchDog.exe";
+      mpWatchDog.StartInfo.Arguments = "-crashed";
+      mpWatchDog.Start();
        */
       Application.Exit();
     }

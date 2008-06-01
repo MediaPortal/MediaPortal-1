@@ -28,17 +28,17 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MPTestTool
+namespace WatchDog
 {
   class Utils
   {
     public static void WarningDlg(string text)
     {
-      MessageBox.Show(text, "MediaPortal Test Tool -- Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      MessageBox.Show(text, "MediaPortal WatchDog -- Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
     }
     public static void ErrorDlg(string text)
     {
-      MessageBox.Show(text, "MediaPortal Test Tool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      MessageBox.Show(text, "MediaPortal WatchDog -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
     public static void SleepNonBlocking(long milliseconds)
     {

@@ -35,8 +35,9 @@ using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Support;
 using System.Collections.Generic;
+using ProgressDialog=WatchDog.ProgressDialog;
 
-namespace MPTestTool
+namespace WatchDog
 {
   /// <summary>
   /// Performs actions necessary after doing MediaPortal tests.

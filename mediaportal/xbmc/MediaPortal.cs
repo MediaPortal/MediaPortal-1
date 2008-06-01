@@ -257,17 +257,17 @@ public class MediaPortalApp : D3DApp, IRender
           sw.WriteLine("running");
           sw.Close();
         }
-        Log.Info("Main: Starting MPTestTool as exception watchdog");
+        Log.Info("Main: Starting MPWatchDog");
         string cmdargs = "-watchdog";
         if (restartOnError)
           cmdargs += " -restartMP " + restartDelay.ToString();
-        Process mpTestTool = new Process();
-        mpTestTool.StartInfo.ErrorDialog = true;
-        mpTestTool.StartInfo.UseShellExecute = true;
-        mpTestTool.StartInfo.WorkingDirectory = Application.StartupPath;
-        mpTestTool.StartInfo.FileName = "WatchDog.exe";
-        mpTestTool.StartInfo.Arguments = cmdargs;
-        mpTestTool.Start();
+        Process mpWatchDog = new Process();
+        mpWatchDog.StartInfo.ErrorDialog = true;
+        mpWatchDog.StartInfo.UseShellExecute = true;
+        mpWatchDog.StartInfo.WorkingDirectory = Application.StartupPath;
+        mpWatchDog.StartInfo.FileName = "WatchDog.exe";
+        mpWatchDog.StartInfo.Arguments = cmdargs;
+        mpWatchDog.Start();
       }
 #endif
       Log.Info("Main: MediaPortal is starting up");

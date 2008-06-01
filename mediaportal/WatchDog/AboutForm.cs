@@ -23,7 +23,7 @@
 
 #endregion
 
-// AboutForm.cs: Shows "About" information for MPTestTool.
+// AboutForm.cs: Shows "About" information for MPWatchDog.
 // Copyright (C) 2005-2006  Michel Otte
 // 
 // This program is free software; you can redistribute it and/or
@@ -52,35 +52,35 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace MPTestTool
+namespace WatchDog
 {
-	/// <summary>
-	/// Description of AboutForm.
-	/// </summary>
+  /// <summary>
+  /// Description of AboutForm.
+  /// </summary>
   public class AboutForm : MPForm
-	{
-		private System.Windows.Forms.Label aboutLicense;
+  {
+    private System.Windows.Forms.Label aboutLicense;
     private System.Windows.Forms.Label aboutHeader;
     private System.Windows.Forms.Label thanks2Label;
-		private System.Windows.Forms.Label aboutAuthor;
-		private System.Windows.Forms.Button closeButton;
-		private System.Windows.Forms.Label thanksLabel;
-		private System.Windows.Forms.Label aboutForum;
-		public AboutForm()
-		{
-			//
-			// The InitializeComponent() call is required for Windows Forms designer support.
-			//
-			InitializeComponent();
-		}
+    private System.Windows.Forms.Label aboutAuthor;
+    private System.Windows.Forms.Button closeButton;
+    private System.Windows.Forms.Label thanksLabel;
+    private System.Windows.Forms.Label aboutForum;
+    public AboutForm()
+    {
+      //
+      // The InitializeComponent() call is required for Windows Forms designer support.
+      //
+      InitializeComponent();
+    }
 		
-		#region Windows Forms Designer generated code
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() {
+    #region Windows Forms Designer generated code
+    /// <summary>
+    /// This method is required for Windows Forms designer support.
+    /// Do not change the method contents inside the source code editor. The Forms designer might
+    /// not be able to load this method if it was changed manually.
+    /// </summary>
+    private void InitializeComponent() {
       this.aboutForum = new System.Windows.Forms.Label();
       this.thanksLabel = new System.Windows.Forms.Label();
       this.closeButton = new System.Windows.Forms.Button();
@@ -180,13 +180,13 @@ namespace MPTestTool
       this.Text = "About";
       this.ResumeLayout(false);
 
-		}
-		#endregion
+    }
+    #endregion
 		
-		void CloseButtonClick(object sender, System.EventArgs e)
-		{
-			this.Close();
-		}
+    void CloseButtonClick(object sender, System.EventArgs e)
+    {
+      this.Close();
+    }
 		
-	}
+  }
 }

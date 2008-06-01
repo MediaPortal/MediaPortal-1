@@ -50,33 +50,34 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using WatchDog;
 
-namespace MPTestTool
+namespace WatchDog
 {
-	/// <summary>
-	/// Shows the progress of the current action in a dialog.
-	/// </summary>
+  /// <summary>
+  /// Shows the progress of the current action in a dialog.
+  /// </summary>
   public class ProgressDialog : MPForm
-	{
+  {
     private System.Windows.Forms.Label actionLabel;
-		private System.Windows.Forms.Button okButton;
-		private System.Windows.Forms.ProgressBar progressBar;
-		private System.Windows.Forms.Label descLabel;
-		public ProgressDialog()
-		{
-			//
-			// The InitializeComponent() call is required for Windows Forms designer support.
-			//
-			InitializeComponent();
-		}
+    private System.Windows.Forms.Button okButton;
+    private System.Windows.Forms.ProgressBar progressBar;
+    private System.Windows.Forms.Label descLabel;
+    public ProgressDialog()
+    {
+      //
+      // The InitializeComponent() call is required for Windows Forms designer support.
+      //
+      InitializeComponent();
+    }
 		
-		#region Windows Forms Designer generated code
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() {
+    #region Windows Forms Designer generated code
+    /// <summary>
+    /// This method is required for Windows Forms designer support.
+    /// Do not change the method contents inside the source code editor. The Forms designer might
+    /// not be able to load this method if it was changed manually.
+    /// </summary>
+    private void InitializeComponent() {
       this.descLabel = new System.Windows.Forms.Label();
       this.progressBar = new System.Windows.Forms.ProgressBar();
       this.okButton = new System.Windows.Forms.Button();
@@ -137,52 +138,52 @@ namespace MPTestTool
       this.TopMost = true;
       this.ResumeLayout(false);
 
-		}
-		#endregion
+    }
+    #endregion
 		
-		public void setWindowTitle(string title)
-		{
-			this.Text = title;
-		}
-		public void setAction(string action)
-		{
-			this.actionLabel.Text = action;
-		}
-		public int getProgress()
-		{
-			return this.progressBar.Value;
-		}
-		public Form getForm()
-		{
-			return this;
-		}
-		public void setProgress(int value)
-		{
-			if ((value < 0) || (value > 100))
-				return;
-			if (value > this.progressBar.Value)
-			{
-				while (this.progressBar.Value < value)
-				{
-					this.progressBar.Value++;
-				}
-			} else if (value < this.progressBar.Value)
-			{
-				while (this.progressBar.Value > value)
-				{
-					this.progressBar.Value--;
-				}
-			}
-		}
-		public void Done()
-		{
-			this.progressBar.Value = 100;
-			setAction("Done!");
-			this.okButton.Enabled = true;
-		}
-		void OkButtonClick(object sender, System.EventArgs e)
-		{
-			this.Close();
-		}
-	}
+    public void setWindowTitle(string title)
+    {
+      this.Text = title;
+    }
+    public void setAction(string action)
+    {
+      this.actionLabel.Text = action;
+    }
+    public int getProgress()
+    {
+      return this.progressBar.Value;
+    }
+    public Form getForm()
+    {
+      return this;
+    }
+    public void setProgress(int value)
+    {
+      if ((value < 0) || (value > 100))
+        return;
+      if (value > this.progressBar.Value)
+      {
+        while (this.progressBar.Value < value)
+        {
+          this.progressBar.Value++;
+        }
+      } else if (value < this.progressBar.Value)
+      {
+        while (this.progressBar.Value > value)
+        {
+          this.progressBar.Value--;
+        }
+      }
+    }
+    public void Done()
+    {
+      this.progressBar.Value = 100;
+      setAction("Done!");
+      this.okButton.Enabled = true;
+    }
+    void OkButtonClick(object sender, System.EventArgs e)
+    {
+      this.Close();
+    }
+  }
 }
