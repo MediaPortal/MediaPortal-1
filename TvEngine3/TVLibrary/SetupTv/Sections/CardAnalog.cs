@@ -27,9 +27,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 using DirectShowLib;
-
 using TvDatabase;
-
 using TvControl;
 using TvLibrary;
 using TvLibrary.Log;
@@ -76,8 +74,6 @@ namespace SetupTv.Sections
       mpComboBoxSource.Items.Add(TunerInputType.Antenna);
       mpComboBoxSource.Items.Add(TunerInputType.Cable);
       mpComboBoxSource.SelectedIndex = 0;
-
-
     }
 
     void UpdateStatus()
@@ -117,6 +113,7 @@ namespace SetupTv.Sections
       SetBitRateModes();
       SetBitRate();
     }
+
     private void SetBitRateModes()
     {
       switch (_configuration.PlaybackQualityMode)
@@ -144,6 +141,7 @@ namespace SetupTv.Sections
           break;
       }
     }
+
     private void SetBitRate()
     {
       switch (_configuration.PlaybackQualityType)
@@ -190,7 +188,6 @@ namespace SetupTv.Sections
       }
     }
 
-
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
@@ -209,70 +206,82 @@ namespace SetupTv.Sections
 
     private void UpdateConfiguration()
     {
-      _configuration.CustomQualityValue = (int) customValue.Value;
-      _configuration.CustomPeakQualityValue = (int) customValuePeak.Value;
+      _configuration.CustomQualityValue = (int)customValue.Value;
+      _configuration.CustomPeakQualityValue = (int)customValuePeak.Value;
       if (cbrPlayback.Checked)
       {
         _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
-      } else if (vbrPlayback.Checked)
+      }
+      else if (vbrPlayback.Checked)
       {
         _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
-      } else if (vbrPeakPlayback.Checked)
+      }
+      else if (vbrPeakPlayback.Checked)
       {
         _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
       }
       if (cbrRecord.Checked)
       {
         _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
-      } else if (vbrRecord.Checked)
+      }
+      else if (vbrRecord.Checked)
       {
         _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
-      } else if (vbrPeakRecord.Checked)
+      }
+      else if (vbrPeakRecord.Checked)
       {
         _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
       }
-
       if (defaultPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Default;
-      } else if (customPlayback.Checked)
+      }
+      else if (customPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Custom;
-      } else if (portablePlayback.Checked)
+      }
+      else if (portablePlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Portable;
-      } else if (lowPlayback.Checked)
+      }
+      else if (lowPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Low;
-      } else if (mediumPlayback.Checked)
+      }
+      else if (mediumPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Medium;
-      } else if (highPlayback.Checked)
+      }
+      else if (highPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.High;
       }
-
       if (defaultRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Default;
-      } else if (customRecord.Checked)
+      }
+      else if (customRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Custom;
-      } else if (portableRecord.Checked)
+      }
+      else if (portableRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Portable;
-      } else if (lowRecord.Checked)
+      }
+      else if (lowRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Low;
-      } else if (mediumRecord.Checked)
+      }
+      else if (mediumRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Medium;
-      } else if (highRecord.Checked)
-      {
-        _configuration.RecordQualityType= QualityType.High;
       }
-
+      else if (highRecord.Checked)
+      {
+        _configuration.RecordQualityType = QualityType.High;
+      }
     }
+
     private void mpButtonScan_Click(object sender, EventArgs e)
     {
       if (_isScanning == false)
@@ -283,12 +292,12 @@ namespace SetupTv.Sections
         {
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
-        } else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        }
+        else if (!RemoteControl.Instance.CardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
           return;
         }
-
         // Check if the card is locked for scanning.
         User user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
@@ -299,11 +308,13 @@ namespace SetupTv.Sections
         Thread scanThread = new Thread(new ThreadStart(DoTvScan));
         scanThread.Name = "Analog TV scan thread";
         scanThread.Start();
-      } else
+      }
+      else
       {
         _stopScanning = true;
       }
     }
+
     void DoTvScan()
     {
       string buttonText = mpButtonScanTv.Text;
@@ -329,8 +340,15 @@ namespace SetupTv.Sections
         RemoteControl.Instance.Tune(ref user, new AnalogChannel(), -1);
         int minChannel = RemoteControl.Instance.MinChannel(_cardNumber);
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
-        if (maxChannel < 0) maxChannel = 128;
+        if (maxChannel < 0)
+        {
+          if (mpComboBoxSource.SelectedIndex == 0)
+            maxChannel = 69;
+          else
+            maxChannel = 125;
+        }
         if (minChannel < 0) minChannel = 1;
+        Log.Info("Min channel = {0}. Max channel = {1}", minChannel, maxChannel);
         for (int channelNr = minChannel; channelNr <= maxChannel; channelNr++)
         {
           if (_stopScanning) return;
@@ -348,19 +366,15 @@ namespace SetupTv.Sections
           channel.ChannelNumber = channelNr;
           channel.IsTv = true;
           channel.IsRadio = false;
-
-
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, channel);
           UpdateStatus();
           if (channels == null) continue;
           if (channels.Length == 0) continue;
-
           channel = (AnalogChannel)channels[0];
           if (channel.Name == "") channel.Name = String.Format(channel.ChannelNumber.ToString());
           ListViewItem item = mpListView1.Items.Add(channel.ChannelNumber.ToString());
           item.SubItems.Add(channel.Name);
           mpListView1.EnsureVisible(mpListView1.Items.Count - 1);
-
           Channel dbChannel;
           if (checkBoxNoMerge.Checked)
             dbChannel = new Channel(channel.Name, false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1), -1, true, "", true, channel.Name);
@@ -371,12 +385,11 @@ namespace SetupTv.Sections
           dbChannel.FreeToAir = true;
           dbChannel.Persist();
           layer.AddTuningDetails(dbChannel, channel);
-
           layer.MapChannelToCard(card, dbChannel, false);
           layer.AddChannelToGroup(dbChannel, "Analog");
         }
-
-      } finally
+      }
+      finally
       {
         User user = new User();
         user.CardId = _cardNumber;
@@ -405,7 +418,8 @@ namespace SetupTv.Sections
         {
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
-        } else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        }
+        else if (!RemoteControl.Instance.CardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
           return;
@@ -428,12 +442,12 @@ namespace SetupTv.Sections
         Thread scanThread = new Thread(new ThreadStart(DoRadioScan));
         scanThread.Name = "Analog Radio scan thread";
         scanThread.Start();
-      } else
+      }
+      else
       {
         _stopScanning = true;
       }
     }
-
     int SignalStrength(int sensitivity)
     {
       int i = 0;
@@ -447,6 +461,7 @@ namespace SetupTv.Sections
       }
       return ((i * 50) / sensitivity);
     }
+
     void DoRadioScan()
     {
       checkButton.Enabled = false;
@@ -456,23 +471,19 @@ namespace SetupTv.Sections
         case "High":
           sensitivity = 10;
           break;
-
         case "Medium":
           sensitivity = 2;
           break;
-
         case "Low":
           sensitivity = 1;
           break;
       }
-
       string buttonText = mpButtonScanRadio.Text;
       try
       {
         _isScanning = true;
         _stopScanning = false;
         mpButtonScanRadio.Text = "Cancel...";
-
         RemoteControl.Instance.EpgGrabberEnabled = false;
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -484,7 +495,6 @@ namespace SetupTv.Sections
         UpdateStatus();
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
-
         for (int freq = 87500000; freq < 108000000; freq += 100000)
         {
           if (_stopScanning) return;
@@ -511,8 +521,6 @@ namespace SetupTv.Sections
           {
             ListViewItem item = mpListView1.Items.Add(channel.Frequency.ToString());
             mpListView1.EnsureVisible(mpListView1.Items.Count - 1);
-
-
             channel.Name = String.Format("{0}", freq);
             Channel dbChannel = layer.AddChannel("", channel.Name);
             dbChannel.IsTv = channel.IsTv;
@@ -521,17 +529,16 @@ namespace SetupTv.Sections
             dbChannel.Persist();
             layer.AddChannelToGroup(dbChannel, "Analog channels");
             layer.AddTuningDetails(dbChannel, channel);
-
             layer.MapChannelToCard(card, dbChannel, false);
             freq += 300000;
           }
         }
-
-
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
-      } finally
+      }
+      finally
       {
         checkButton.Enabled = true;
         User user = new User();
@@ -552,7 +559,6 @@ namespace SetupTv.Sections
 
     private void mpBeveledLine1_Load(object sender, EventArgs e)
     {
-
     }
 
     private void mpButton1_Click(object sender, EventArgs e)
@@ -568,7 +574,6 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput1;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-
       dbChannel = layer.AddChannel("", "CVBS#2 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
@@ -578,7 +583,6 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-
       dbChannel = layer.AddChannel("", "CVBS#3 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
@@ -588,7 +592,6 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput3;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-
       dbChannel = layer.AddChannel("", "SVHS#1 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
@@ -598,7 +601,6 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput1;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-
       dbChannel = layer.AddChannel("", "SVHS#2 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
@@ -608,7 +610,6 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-
       dbChannel = layer.AddChannel("", "SVHS#3 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
@@ -618,7 +619,6 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput3;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-
       dbChannel = layer.AddChannel("", "RGB#1 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
@@ -628,7 +628,6 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput1;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-
       dbChannel = layer.AddChannel("", "RGB#2 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
@@ -638,7 +637,6 @@ namespace SetupTv.Sections
       tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput2;
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
-
       dbChannel = layer.AddChannel("", "RGB#3 on " + card.IdCard.ToString());
       dbChannel.IsTv = true;
       dbChannel.Persist();
@@ -649,7 +647,6 @@ namespace SetupTv.Sections
       layer.AddTuningDetails(dbChannel, tuningDetail);
       layer.MapChannelToCard(card, dbChannel, false);
       MessageBox.Show(this, "Channels added.");
-
     }
 
     private void checkButton_Click(object sender, EventArgs e)
@@ -663,12 +660,12 @@ namespace SetupTv.Sections
         {
           MessageBox.Show(this, "Card is disabled, please enable the card before checking quality control");
           return;
-        } else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        }
+        else if (!RemoteControl.Instance.CardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before checking quality control");
           return;
         }
-
         // Check if the card is locked for scanning.
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
@@ -680,12 +677,12 @@ namespace SetupTv.Sections
         RemoteControl.Instance.Tune(ref user, new AnalogChannel(), -1);
         if (RemoteControl.Instance.SupportsQualityControl(_cardNumber))
         {
-
           _qualityControlSupported = true;
           if (RemoteControl.Instance.SupportsBitRateModes(_cardNumber))
           {
             bitRateModeGroup.Enabled = true;
-          } else
+          }
+          else
           {
             bitRateModeGroup.Enabled = false;
           }
@@ -693,7 +690,8 @@ namespace SetupTv.Sections
           {
             vbrPeakPlayback.Enabled = true;
             vbrPeakRecord.Enabled = true;
-          } else
+          }
+          else
           {
             vbrPeakPlayback.Enabled = false;
             vbrPeakRecord.Enabled = false;
@@ -704,20 +702,22 @@ namespace SetupTv.Sections
             customSettingsGroup.Enabled = true;
             customValue.Enabled = true;
             customValuePeak.Enabled = true;
-          } else
+          }
+          else
           {
             bitRate.Enabled = false;
             customSettingsGroup.Enabled = false;
             customValue.Enabled = false;
             customValuePeak.Enabled = false;
           }
-
-        } else
+        }
+        else
         {
           Log.WriteFile("Card doesn't support quality control");
           MessageBox.Show("The used encoder doesn't support quality control.", "MediaPortal - TV Server management console", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-      } finally
+      }
+      finally
       {
         user = new User();
         user.CardId = _cardNumber;
