@@ -491,4 +491,7 @@ Proszę przejrzyj nastawienia Internet Explorer.
 Błędny plik konfiguracyjny, jeśli zostal znaleziony, nie będzie usunięty.
 </value>
   </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Skonfiguruj Windows Firewall tak aby MediaPortal mial kontakt z internetem</value>
+  </data>
 </root>
