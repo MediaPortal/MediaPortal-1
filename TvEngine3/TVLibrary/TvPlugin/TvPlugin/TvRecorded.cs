@@ -227,9 +227,15 @@ namespace TvPlugin
         strTmp = xmlreader.GetValueAsString("tvrecorded", "view", "list");
 
         if (strTmp == "album")
+        {
           currentViewMethod = ViewAs.Album;
+          if (listViews.Focus) listAlbums.Focus = true;
+        }
         else
+        {
           currentViewMethod = ViewAs.List;
+          if (listAlbums.Focus) listViews.Focus = true;
+        }
         //          else if (strTmp == "bigicon")
         //            currentViewMethod = ViewAs.BigIcon;
 
