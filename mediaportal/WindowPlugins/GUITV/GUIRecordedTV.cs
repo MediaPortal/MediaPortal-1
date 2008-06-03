@@ -139,9 +139,15 @@ namespace MediaPortal.GUI.TV
         if (strTmp != null)
         {
           if (strTmp == "album")
+          {
             currentViewMethod = ViewAs.Album;
-          else if (strTmp == "list")
+            if (listViews.Focus) listAlbums.Focus = true;
+          }
+          else
+          {
             currentViewMethod = ViewAs.List;
+            if (listAlbums.Focus) listViews.Focus = true;
+          }
 //          else if (strTmp == "bigicon")
 //            currentViewMethod = ViewAs.BigIcon;
         }
