@@ -903,23 +903,37 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 			{
 				if (m_tsHeader.AdaptionFieldLength && (tsPacket[5] & 0x80)) LogDebug("Pid %x : Discontinuity header bit set!", m_tsHeader.Pid);
 
-				// Check Ts packet continuity, remove duplicate frames.
-				if ((info.ccPrev!=255) && (m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
+				if (info.ccPrev!=255)
 				{
-					if (m_tsHeader.ContinuityCounter == info.ccPrev)
-					{	
-						int PayLoadLen = (m_tsHeader.HasPayload) ? (188-m_tsHeader.PayLoadStart) : 0 ;
-						if (PayLoadLen<0) PayLoadLen = 0 ;
-						if (((PayLoadLen) && (memcmp(info.m_Pkt+m_tsHeader.PayLoadStart, tsPacket+m_tsHeader.PayLoadStart, PayLoadLen)==0)) || (PayLoadLen==0)) 
+					// Do not check 1st packet after channel change.
+					if (m_tsHeader.HasPayload)
+					{
+						// Check Ts packet continuity with payload, remove duplicate frames.
+						if ((m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
 						{
-//							LogDebug("Pid %x Same ts packet...( removed ) %x, PayLoadLen : %d", m_tsHeader.Pid, info.ccPrev, PayLoadLen) ;
-							return ; 
+							if (m_tsHeader.ContinuityCounter == info.ccPrev)
+							{	
+								// May be duplicated....
+								int PayLoadLen = 188-m_tsHeader.PayLoadStart ;
+								if (PayLoadLen<0) PayLoadLen = 0 ;
+								if (((PayLoadLen) && (memcmp(info.m_Pkt+m_tsHeader.PayLoadStart, tsPacket+m_tsHeader.PayLoadStart, PayLoadLen)==0)) || (PayLoadLen==0)) 
+								{
+									LogDebug("Pid %x Same ts packet...( removed ) %x, PayLoadLen : %d", m_tsHeader.Pid, info.ccPrev, PayLoadLen) ;
+									return ; 
+								}
+								else
+									LogDebug("Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
+							}
+							else
+								LogDebug("Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
 						}
-						else
-							LogDebug("Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
 					}
 					else
-						LogDebug("Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
+					{
+						// Check Ts packet continuity without payload.
+						if (m_tsHeader.ContinuityCounter != info.ccPrev)
+								LogDebug("Pid %x , No PayLoad, Continuity Counter should be the same ! %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
+					}
 				}
 				info.ccPrev = m_tsHeader.ContinuityCounter ;
 
