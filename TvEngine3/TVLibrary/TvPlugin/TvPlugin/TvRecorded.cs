@@ -336,7 +336,7 @@ namespace TvPlugin
       g_Player.PlayBackStarted += new MediaPortal.Player.g_Player.StartedHandler(OnPlayRecordingBackStarted);
 
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvrecordedtv.xml");
-      LoadSettings();
+      //LoadSettings();
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
       Restore();
       PreInit();
