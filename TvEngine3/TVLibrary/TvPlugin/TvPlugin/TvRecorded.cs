@@ -1325,19 +1325,27 @@ namespace TvPlugin
     #endregion
 
     #region playback events
-    private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
-    {
+   private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
+   {
       Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
 
-      if (filename.Substring(0, 4) == "rtsp") 
-      { 
-        filename = g_Player.currentFileName; 
+      if (filename.Substring(0, 4) == "rtsp")
+      {
+        filename = g_Player.currentFileName;
       }
       else if (!TVHome.UseRTSP()) // only keep the filename
       {
-        FileInfo f = new FileInfo(g_Player.currentFileName);
-        filename = f.Name;
+        if (g_Player.currentFileName != "")
+        {
+          FileInfo f = new FileInfo(g_Player.currentFileName);
+          filename = f.Name;
+        }
+        else
+        {
+          FileInfo f = new FileInfo(filename);
+          filename = f.Name;
+        }
       }
 
       TvBusinessLayer layer = new TvBusinessLayer();
