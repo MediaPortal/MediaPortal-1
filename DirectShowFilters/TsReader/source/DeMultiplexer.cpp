@@ -227,7 +227,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
       break;
-    case SERVICE_TYPE_AUDIO_MPEG2:
+	case SERVICE_TYPE_AUDIO_MPEG2:
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
       pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
@@ -349,35 +349,58 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
 
 void CDeMultiplexer::FlushVideo()
 {
-  LogDebug("demux:flush video");
-  CAutoLock lock (&m_sectionVideo);
-  delete m_pCurrentVideoBuffer;
-  ivecBuffers it =m_vecVideoBuffers.begin();
-  while (it != m_vecVideoBuffers.end())
-  {
-    CBuffer* videoBuffer=*it;
-    delete videoBuffer;
-    it=m_vecVideoBuffers.erase(it);
-	/*m_outVideoBuffer++;*/
-  }
-  //if(this->pTeletextEventCallback != NULL){
-	 // this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
-  //}
-  m_pCurrentVideoBuffer = new CBuffer();
-}
+	LogDebug("demux:flush video");
+	CAutoLock lock (&m_sectionVideo);
+	delete m_pCurrentVideoBuffer;
+	ivecBuffers it =m_vecVideoBuffers.begin();
+	while (it != m_vecVideoBuffers.end())
+	{
+		CBuffer* videoBuffer=*it;
+    	delete videoBuffer;
+    	it=m_vecVideoBuffers.erase(it);
+		/*m_outVideoBuffer++;*/
+  	}
+	// Clear PES temporary queue.
+	it =m_t_vecVideoBuffers.begin();
+	while (it != m_t_vecVideoBuffers.end())
+	{
+		CBuffer* VideoBuffer=*it;
+		delete VideoBuffer;
+		it=m_t_vecVideoBuffers.erase(it);
+	}
+
+	//if(this->pTeletextEventCallback != NULL){
+	// this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
+	//}
+	m_VideoPrevCC = -1 ;
+	m_VideoValidPES = false ;
+	m_pCurrentVideoBuffer = new CBuffer();
+}   
+
 void CDeMultiplexer::FlushAudio()
 {
-  LogDebug("demux:flush audio");
-  CAutoLock lock (&m_sectionAudio);
-  delete m_pCurrentAudioBuffer;
-  ivecBuffers it =m_vecAudioBuffers.begin();
-  while (it != m_vecAudioBuffers.end())
-  {
-    CBuffer* AudioBuffer=*it;
-    delete AudioBuffer;
-    it=m_vecAudioBuffers.erase(it);
-  }
-  m_pCurrentAudioBuffer = new CBuffer();
+	LogDebug("demux:flush audio");
+	CAutoLock lock (&m_sectionAudio);
+	delete m_pCurrentAudioBuffer;
+	ivecBuffers it =m_vecAudioBuffers.begin();
+	while (it != m_vecAudioBuffers.end())
+	{
+		CBuffer* AudioBuffer=*it;
+		delete AudioBuffer;
+		it=m_vecAudioBuffers.erase(it);
+	}
+	// Clear PES temporary queue.
+	it =m_t_vecAudioBuffers.begin();
+	while (it != m_t_vecAudioBuffers.end())
+	{
+		CBuffer* AudioBuffer=*it;
+		delete AudioBuffer;
+		it=m_t_vecAudioBuffers.erase(it);
+	}
+	
+	m_AudioPrevCC = -1 ;
+	m_AudioValidPES = false ;
+	m_pCurrentAudioBuffer = new CBuffer();
 }
 
 void CDeMultiplexer::FlushSubtitle()
@@ -784,202 +807,280 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 /// ifso, it decodes the PES audio packet and stores it in the audio buffers
 void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 {
-  //LogDebug("FillAudio - audio PID %d", m_audioPid );
-  
-  if (m_iAudioStream<0 || m_iAudioStream>=m_audioStreams.size()) return;
-  m_audioPid= m_audioStreams[m_iAudioStream].pid;
-  if (m_audioPid==0 || m_audioPid != header.Pid) return;
-  if (m_filter.GetAudioPin()->IsConnected()==false) return;
-  if ( header.AdaptionFieldOnly() ) return;
-
+	//LogDebug("FillAudio - audio PID %d", m_audioPid );
+	
+	if (m_iAudioStream<0 || m_iAudioStream>=m_audioStreams.size()) return;
+	m_audioPid= m_audioStreams[m_iAudioStream].pid;
+	if (m_audioPid==0 || m_audioPid != header.Pid) return;
+	if (m_filter.GetAudioPin()->IsConnected()==false) return;
+	if ( header.AdaptionFieldOnly() ) return;
+	
+	if ((m_AudioPrevCC !=-1 ) && (m_AudioPrevCC != ((header.ContinuityCounter - 1) & 0x0F)))
+	{
+		LogDebug("Audio Continuity error... %x ( prev %x )", header.ContinuityCounter, m_AudioPrevCC) ;
+		m_AudioValidPES = false ;
+	}
+	m_AudioPrevCC = header.ContinuityCounter ;
+	
 	CAutoLock lock (&m_sectionAudio);
-  //does tspacket contain the start of a pes packet?
-  if (header.PayloadUnitStart)
-  {
-    //yes packet contains start of a pes packet.
-    //does current buffer hold any data ?
-    if (m_pCurrentAudioBuffer->Length() > 0)
-    {
-      //yes, then store current buffer
-      if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
-        m_vecAudioBuffers.erase(m_vecAudioBuffers.begin());
-      m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
-      //and create a new one
-      m_pCurrentAudioBuffer = new CBuffer();
-    }
-
-    int pos=header.PayLoadStart;
-    //check for PES start code
-    if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1) 
-    {
-      //get pts/dts from pes header
-      CPcr pts;
-      CPcr dts;
-      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pos,pts,dts))
-      {
-        m_pCurrentAudioBuffer->SetPts(pts);
-      }
-      //skip pes header
-      int headerLen=9+tsPacket[pos+8];  
-      pos+=headerLen;
-    }
-    if (m_bSetAudioDiscontinuity)
-    {
-      m_bSetAudioDiscontinuity=false;
-      m_pCurrentAudioBuffer->SetDiscontinuity();
-    }
-
-    //copy (rest) data in current buffer
-		if (pos>0 && pos < 188)
+	//does tspacket contain the start of a pes packet?
+	if (header.PayloadUnitStart)
+	{
+		//yes packet contains start of a pes packet.
+		//does current buffer hold any data ?
+		if (m_pCurrentAudioBuffer->Length() > 0)
 		{
-			m_pCurrentAudioBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
-			m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
+			m_t_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);   
+			m_pCurrentAudioBuffer = new CBuffer();
 		}
-  }
-  else //if (m_pCurrentAudioBuffer->Length()>0)
-  {	
-    //1111-1111-1-11-1-1100
-    int pos=header.PayLoadStart;
-    //packet contains rest of a pes packet
-    //does the entire data in this tspacket fit in the current buffer ?
-    if (m_pCurrentAudioBuffer->Length()+(188-pos)>=0x2000)
-    {
-      //no, then determine how many bytes do fit
-      int copyLen=0x2000-m_pCurrentAudioBuffer->Length();
-      //copy those bytes
-      m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
-      pos+=copyLen;
+	
+		if (m_t_vecAudioBuffers.size())
+		{
+			CBuffer *Cbuf=*m_t_vecAudioBuffers.begin() ;
+			byte *p = Cbuf->Data() ;
+			if ((p[0]==0) && (p[1]==0) && (p[2]==1))
+			{
+				//get pts/dts from pes header
+				CPcr pts;
+				CPcr dts;
+				if (CPcr::DecodeFromPesHeader(p,0,pts,dts))
+				{
+					Cbuf->SetPts(pts);
+					//skip pes header
+					int headerLen=9+p[8] ;  
+					int len = Cbuf->Length()-headerLen ;
+					if (len > 0)
+					{
+						byte *ps = p+headerLen ;
+						Cbuf->SetLength(len) ;
+						while(len--) *p++ = *ps++ ;		// memcpy could be not safe.
+					}
+					else
+					{
+						LogDebug(" No data") ;
+						m_AudioValidPES=false ;
+					}
+				}
+				else
+				{
+					LogDebug("No PTS/DTS") ;           // No PTS sounds stupid !
+					m_AudioValidPES=false ;
+				}
+			}
+			else
+			{
+				LogDebug("Pes header 0-0-1 fail") ;
+				m_AudioValidPES=false ;
+			}
 
-      if (m_bSetAudioDiscontinuity)
-      {
-        m_bSetAudioDiscontinuity=false;
-        m_pCurrentAudioBuffer->SetDiscontinuity();
-      }
-      //store current buffer since its now full
-      if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
-        m_vecAudioBuffers.erase(m_vecAudioBuffers.begin());
-      m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
-      
-      //and create a new one
-      m_pCurrentAudioBuffer = new CBuffer();
-    }
+			if (m_AudioValidPES)
+			{
+				if (m_bSetAudioDiscontinuity)
+				{
+					m_bSetAudioDiscontinuity=false;
+					Cbuf->SetDiscontinuity();
+				}
 
-    //copy (rest) data in current buffer
+				Cbuf->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
+
+				//yes, then move the full PES in main queue.
+				while (m_t_vecAudioBuffers.size())
+				{
+					ivecBuffers it ;
+					// Check if queue is no abnormally long..
+					if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
+					{
+						ivecBuffers it = m_vecAudioBuffers.begin() ;
+						delete *it ;
+						m_vecAudioBuffers.erase(it);
+					}
+					it = m_t_vecAudioBuffers.begin() ;
+					m_vecAudioBuffers.push_back(*it) ;
+					m_t_vecAudioBuffers.erase(it);
+				}
+			}
+			else
+			{
+				while (m_t_vecAudioBuffers.size())
+				{
+					ivecBuffers it ;
+					it = m_t_vecAudioBuffers.begin() ;
+					m_t_vecAudioBuffers.erase(it);
+				}
+				m_bSetAudioDiscontinuity=true ;
+			}
+		}
+		m_AudioValidPES = true ;
+	}
+
+	if (m_AudioValidPES)
+	{
+		int pos=header.PayLoadStart;
+		//packet contains rest of a pes packet
+		//does the entire data in this tspacket fit in the current buffer ?
+		if (m_pCurrentAudioBuffer->Length()+(188-pos)>=0x2000)
+		{
+			//no, then determine how many bytes do fit
+			int copyLen=0x2000-m_pCurrentAudioBuffer->Length();
+			//copy those bytes
+			m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
+			pos+=copyLen;
+
+			m_t_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+			//and create a new one
+			m_pCurrentAudioBuffer = new CBuffer();
+		}
+		//copy (rest) data in current buffer
 		if (pos>0 && pos < 188)
 		{
 			m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos); 
 		}
-  }
+	}
 }
 
 /// This method will check if the tspacket is an video packet
 /// ifso, it decodes the PES video packet and stores it in the video buffers
 void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 {
-  if (m_pids.VideoPid==0) return;
-  if (header.Pid!=m_pids.VideoPid) return;
-  if (m_filter.GetVideoPin()->IsConnected()==false) return;
+	if (m_pids.VideoPid==0) return;
+	if (header.Pid!=m_pids.VideoPid) return;
+	if (m_filter.GetVideoPin()->IsConnected()==false) return;
 	if ( header.AdaptionFieldOnly() ) return;
 
+	if ((m_VideoPrevCC !=-1 ) && (m_VideoPrevCC != ((header.ContinuityCounter - 1) & 0x0F)))
+	{
+		LogDebug("Video Continuity error... %x ( prev %x )", header.ContinuityCounter, m_VideoPrevCC) ;
+		m_VideoValidPES = false ;
+	}
+	m_VideoPrevCC = header.ContinuityCounter ;
+
 	CAutoLock lock (&m_sectionVideo);
-  //does tspacket contain the start of a pes packet?
-  if (header.PayloadUnitStart)
-  {
-    //yes packet contains start of a pes packet.
-    //does current buffer hold any data ?
-    if (m_pCurrentVideoBuffer->Length() > 0)
-    {
-      //yes, then store current buffer
-      if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
-        m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
-
-	  m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
-	 // m_inVideoBuffer++;
-	  /*if(this->pTeletextEventCallback != NULL){
-		  this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_IN_UPDATE,m_inVideoBuffer);
-	  }*/
-      //and create a new one
-      m_pCurrentVideoBuffer = new CBuffer();
-    }
-
-    int pos=header.PayLoadStart;
-    //check for PES start code
-    if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1) 
-    {
-      //get pts/dts from pes header
-      CPcr pts;
-      CPcr dts;
-      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pos,pts,dts))
-      {
-				double diff;
-				if (!m_lastVideoPTS.IsValid)
-					m_lastVideoPTS=pts;
-				if (m_lastVideoPTS>pts)
-					diff=m_lastVideoPTS.ToClock()-pts.ToClock();
-				else
-					diff=pts.ToClock()-m_lastVideoPTS.ToClock();
-				m_lastVideoPTS=pts;
-				if (diff>10.0)
-				{
-					LogDebug("DeMultiplexer::FillVideoVideo pts jump found, flushing video");
-					FlushVideo();
-				}
-        m_pCurrentVideoBuffer->SetPts(pts);
-      }
-      //skip pes header
-      int headerLen=9+tsPacket[pos+8];  
-      pos+=headerLen;
-    }
-    if (m_bSetVideoDiscontinuity)
-    {
-      m_bSetVideoDiscontinuity=false;
-      m_pCurrentVideoBuffer->SetDiscontinuity();
-    }
-
-    //copy (rest) data in current buffer
-		if (pos>0 && pos < 188)
+	//does tspacket contain the start of a pes packet?
+	if (header.PayloadUnitStart)
+	{
+		//yes packet contains start of a pes packet.
+		//does current buffer hold any data ?
+		if (m_pCurrentVideoBuffer->Length() > 0)
 		{
-			m_pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
-			m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos);
+			m_t_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
+			m_pCurrentVideoBuffer = new CBuffer();
 		}
-  }
-  else //if (m_pCurrentVideoBuffer->Length()>0)
-  {
-    int pos=header.PayLoadStart;
-    //packet contains rest of a pes packet
-    //does the entire data in this tspacket fit in the current buffer ?
-    if (m_pCurrentVideoBuffer->Length()+(188-pos)>=0x2000)
-    {
-      //no, then determine how many bytes do fit
-      int copyLen=0x2000-m_pCurrentVideoBuffer->Length();
-      //copy those bytes
-      m_pCurrentVideoBuffer->Add(&tsPacket[pos],copyLen);
-      pos+=copyLen;
 
-      if (m_bSetVideoDiscontinuity)
-      {
-        m_bSetVideoDiscontinuity=false;
-        m_pCurrentVideoBuffer->SetDiscontinuity();
-      }
+		if (m_t_vecVideoBuffers.size())
+		{
+			CBuffer *Cbuf=*m_t_vecVideoBuffers.begin() ;
+			byte *p = Cbuf->Data() ;
+			if ((p[0]==0) && (p[1]==0) && (p[2]==1))
+			{
+				//get pts/dts from pes header
+				CPcr pts;
+				CPcr dts;
+				if (CPcr::DecodeFromPesHeader(p,0,pts,dts))
+				{
+					double diff;
+					if (!m_lastVideoPTS.IsValid)
+						m_lastVideoPTS=pts;
+					if (m_lastVideoPTS>pts)
+						diff=m_lastVideoPTS.ToClock()-pts.ToClock();
+					else
+						diff=pts.ToClock()-m_lastVideoPTS.ToClock();
+					m_lastVideoPTS=pts;
+					if (diff>10.0)
+					{
+						LogDebug("DeMultiplexer::FillVideoVideo pts jump found, flushing video : %f %I64x, %I64x", (float) diff, pts.PcrReferenceBase, m_lastVideoPTS.PcrReferenceBase);
+//						FlushVideo(); // Not required 
+					}
+					Cbuf->SetPts(pts);
+					//skip pes header
+					int headerLen=9+p[8] ;  
+					int len = Cbuf->Length()-headerLen ;
+					if (len > 0)
+					{
+						byte *ps = p+headerLen ;
+						Cbuf->SetLength(len) ;
+						while(len--) *p++ = *ps++ ;		// memcpy could be not safe.
+					}
+					else
+					{
+						LogDebug(" No data") ;
+						m_VideoValidPES=false ;
+					}
+				}
+				else
+				{
+					LogDebug("No PTS/DTS") ;
+					m_VideoValidPES=false ;
+				}
+			}
+			else
+			{
+				LogDebug("Pes 0-0-1 fail") ;
+				m_VideoValidPES=false ;           // No PTS sounds stupid !
+			}
 
-      //store current buffer since its now full
-      if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
-        m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
-      m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
-   //   m_inVideoBuffer++;
-	  //if(this->pTeletextEventCallback != NULL){
-		 // this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_IN_UPDATE,m_inVideoBuffer);
-	  //}
-      //and create a new one
-      m_pCurrentVideoBuffer = new CBuffer();
-    }
+			if (m_VideoValidPES)
+			{
+				if (m_bSetVideoDiscontinuity)
+				{
+					m_bSetVideoDiscontinuity=false;
+					Cbuf->SetDiscontinuity();
+				}
 
-    //copy (rest) data in current buffer
+				Cbuf->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
+
+				//yes, then move the full PES in main queue.
+				while (m_t_vecVideoBuffers.size())
+				{
+					ivecBuffers it ;
+					// Check if queue is no abnormally long..
+					if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
+					{
+						ivecBuffers it = m_vecVideoBuffers.begin() ;
+						delete *it ;
+						m_vecVideoBuffers.erase(it);
+					}
+					it = m_t_vecVideoBuffers.begin() ;
+					m_vecVideoBuffers.push_back(*it) ;
+					m_t_vecVideoBuffers.erase(it);
+				}
+			}
+			else
+			{
+				while (m_t_vecVideoBuffers.size())
+				{
+					ivecBuffers it ;
+					it = m_t_vecVideoBuffers.begin() ;
+					m_t_vecVideoBuffers.erase(it);
+				}
+				m_bSetVideoDiscontinuity=true ;
+			}
+		}
+		m_VideoValidPES = true ;
+	}
+
+	if (m_VideoValidPES)
+	{
+		int pos=header.PayLoadStart;
+		//packet contains rest of a pes packet
+		//does the entire data in this tspacket fit in the current buffer ?
+		if (m_pCurrentVideoBuffer->Length()+(188-pos)>=0x2000)
+		{
+			//no, then determine how many bytes do fit
+			int copyLen=0x2000-m_pCurrentVideoBuffer->Length();
+			//copy those bytes
+			m_pCurrentVideoBuffer->Add(&tsPacket[pos],copyLen);
+			pos+=copyLen;
+			m_t_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
+			//and create a new one
+			m_pCurrentVideoBuffer = new CBuffer();
+		}
+
+		//copy (rest) data in current buffer
 		if (pos>0 && pos < 188)
 		{
 			m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos); 
 		}
-  }
+	}
 }
 
 /// This method will check if the tspacket is an subtitle packet
@@ -1019,7 +1120,10 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
     }
     if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
     {
-      m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
+        ivecBuffers it = m_vecSubtitleBuffers.begin() ;
+        CBuffer* subtitleBuffer=*it;
+        delete subtitleBuffer ;
+        m_vecSubtitleBuffers.erase(it);
     }
 
     m_pCurrentSubtitleBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());

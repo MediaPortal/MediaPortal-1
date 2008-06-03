@@ -57,6 +57,13 @@ public:
 	byte rawDescriptorData[400];
 	int rawDescriptorSize;
 	bool seenStart;
+	byte TsPktQ[4][188] ;
+	int  NPktQ ;
+	CTsHeader TsHeaderQ[4] ;
+	byte PesHeader[19] ;
+	int  PesHeaderLength ;
+	byte ccPrev ;
+	byte m_Pkt[188] ;
 }PidInfo2;
 
 typedef vector<stPidInfo2>::iterator ivecPidInfo2;

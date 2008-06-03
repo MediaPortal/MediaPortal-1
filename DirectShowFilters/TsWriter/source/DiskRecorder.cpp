@@ -33,9 +33,8 @@
 #include "..\..\shared\dvbutil.h"
 #include "..\..\shared\section.h"
 
-#define WRITE_BUFFER_SIZE 32900
+#define WRITE_BUFFER_SIZE (188*10)                  // Reduced from 175 packets ( 32900 ) to 10 for Radio startup ( Ambass )										
 #define IGNORE_AFTER_TUNE 25                        // how many TS packets to ignore after tuning
-#define TS_QUEUE_SIZE 50                           // how many TS packets fits in TS buffer
 
 #define PID_PAT                               0     // PID for PAT table
 #define TABLE_ID_PAT                          0     // TABLE ID for PAT
@@ -92,8 +91,6 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_pTimeShiftFile=NULL;
 
 	m_bStartPcrFound=false;
-//	m_startPcr.Reset();
-//	m_highestPcr.Reset();
 	m_bDetermineNewStartPcr=false;
 	m_iPatVersion=0;
 	m_iPmtVersion=0;
@@ -102,9 +99,8 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	else
 		m_pWriteBuffer = new byte[RECORD_BUFFER_SIZE];
 	m_iWriteBufferPos=0;
-  m_TsPacketCount=0;
-//	m_bIgnoreNextPcrJump=false;
-  m_bClearTsQueue=false;
+	m_TsPacketCount=0;
+	m_bClearTsQueue=false;
 	m_pPmtParser=new CPmtParser();
 	m_multiPlexer.SetFileWriterCallBack(this);
 	m_pVideoAudioObserver=NULL;
@@ -122,11 +118,6 @@ CDiskRecorder::~CDiskRecorder(void)
 	  m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
   }
 	delete [] m_pWriteBuffer;
-  for (int i=0; i < m_tsQueue.size();++i)
-  {
-    delete[] m_tsQueue[i];
-  }    
-  m_tsQueue.clear();
 	m_pPmtParser->Reset();
 	delete m_pPmtParser;
 }
@@ -141,9 +132,8 @@ void CDiskRecorder::SetFileName(char* pszFileName)
 		m_iPmtPid=-1;
 		m_pcrPid=-1;
 		m_vecPids.clear();
-//		m_startPcr.Reset();
+		m_AudioOrVideoSeen=false ;
 		m_bStartPcrFound=false;
-//		m_highestPcr.Reset();
 		m_bDetermineNewStartPcr=false;
 		m_multiPlexer.Reset();
 		strcpy(m_szFileName,pszFileName);
@@ -203,9 +193,7 @@ bool CDiskRecorder::Start()
 		m_iPmtContinuityCounter=-1;
 		m_iPatContinuityCounter=-1;
 		m_bDetermineNewStartPcr=false;
-//		m_startPcr.Reset();
 		m_bStartPcrFound=false;
-//		m_highestPcr.Reset();
 		m_mapLastPtsDts.clear();
 		m_iPacketCounter=0;
 		m_iWriteBufferPos=0;
@@ -289,14 +277,10 @@ void CDiskRecorder::Reset()
 		m_iPmtPid=-1;
 		m_pcrPid=-1;
 		m_bDetermineNewStartPcr=false;
-//		m_startPcr.Reset();
 		m_bStartPcrFound=false;
-//		m_highestPcr.Reset();
 		m_vecPids.clear();
+		m_AudioOrVideoSeen=false ;
 		m_pPmtParser->Reset();
-    m_tsQueue.clear();
-//    m_pcrHole.Reset();
-//    m_backwardsPcrHole.Reset();
 		DR_FAKE_NETWORK_ID   = 0x456;
 		DR_FAKE_TRANSPORT_ID = 0x4;
 		DR_FAKE_SERVICE_ID   = 0x89;
@@ -348,6 +332,7 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 	memcpy(section.Data,pmtData,pmtLength);
 	section.DecodeHeader();
 	m_vecPids.clear();
+	m_AudioOrVideoSeen=false ;
 	WriteLog("Old pids cleared");
 	WriteLog("got pmt - tableid: 0x%x section_length: %d sid: 0x%x",section.table_id,section.section_length,section.table_id_extension);
 	int pcrPid; vector<PidInfo2> pidInfos;
@@ -487,11 +472,6 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
      try
      {
         WriteLog("clear TS packet queue"); 
-        for (int i=0; i < m_tsQueue.size();++i)
-        {
-          delete[] m_tsQueue[i];
-        }
-        m_tsQueue.clear();
         m_bClearTsQueue = false;
         ZeroMemory(m_pWriteBuffer, WRITE_BUFFER_SIZE);
         m_iWriteBufferPos = 0;
@@ -591,11 +571,6 @@ void CDiskRecorder::WriteToTimeshiftFile(byte* buffer, int len)
      try
      {
         WriteLog("clear TS packet queue"); 
-        for (int i=0; i < m_tsQueue.size();++i)
-        {
-          delete[] m_tsQueue[i];
-        }
-        m_tsQueue.clear();
         m_bClearTsQueue = false;
         ZeroMemory(m_pWriteBuffer, WRITE_BUFFER_SIZE);
         m_iWriteBufferPos = 0;
@@ -604,61 +579,34 @@ void CDiskRecorder::WriteToTimeshiftFile(byte* buffer, int len)
       {
         WriteLog("Write exception - 1");
       }
-      return;
+      if (m_bPaused) return;							// If m_bPaused == false, this packet should be stored.
     }
     CEnterCriticalSection enter(m_section);
 
-    if (m_tsQueue.size() < TS_QUEUE_SIZE)
-    {
-      // Put all TS packets to the queue so we can drop some TS packets
-      // when tuning to new channel
-      try
+    try  
+    {      
+      // Copy first TS packet from the queue to the I/O buffer
+      if (m_iWriteBufferPos >= 0 && m_iWriteBufferPos+188 <= WRITE_BUFFER_SIZE)
       {
-        char* tmp = new char[len];
-        if (tmp!=NULL)
-        {
-          memcpy(tmp,buffer,len);
-          m_tsQueue.push_back(tmp);
-        }
+         memcpy(&m_pWriteBuffer[m_iWriteBufferPos], buffer,188);
+         m_iWriteBufferPos+=188;
       }
-      catch(...)
+      else
       {
-        WriteLog("Write exception - 2");
-        return;
+         WriteLog("Write m_iWriteBufferPos overflow!");
+         m_iWriteBufferPos=0;
       }
     }
-
-    if (m_tsQueue.size() >= TS_QUEUE_SIZE)
+    catch(...)
     {
-      try  
-      {      
-        // Copy first TS packet from the queue to the I/O buffer
-        if (m_iWriteBufferPos >= 0 && m_iWriteBufferPos+188 <= WRITE_BUFFER_SIZE)
-        {
-          vector<char*>::iterator it = m_tsQueue.begin();
-          char* tmp = *it;
-          m_tsQueue.erase(it);
-          memcpy(&m_pWriteBuffer[m_iWriteBufferPos], tmp,188);
-          delete[] tmp;
-          m_iWriteBufferPos+=188;
-        }
-        else
-        {
-           WriteLog("Write m_iWriteBufferPos overflow!");
-           m_iWriteBufferPos=0;
-        }
-      }
-      catch(...)
-      {
-        WriteLog("Write exception - 3");
-        return;
-      }
+      WriteLog("Write exception - 3");
+      return;
+    }
 
-      if (m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
-      {
-        Flush();
-      }
-    }  
+    if (m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
+    {
+      Flush();
+    }
   }
 
 void CDiskRecorder::WriteLog(const char* fmt,...)
@@ -680,38 +628,39 @@ void CDiskRecorder::WriteLog(const char* fmt,...)
 
 void CDiskRecorder::SetPcrPid(int pcrPid)
 {
-		CEnterCriticalSection enter(m_section);
-		WriteLog("pcr pid:0x%x",pcrPid); 
+	CEnterCriticalSection enter(m_section);
+	WriteLog("pcr pid:0x%x",pcrPid); 
     WriteLog("SetPcrPid clear old PIDs");
     m_vecPids.clear();
+	m_AudioOrVideoSeen=false ;
     m_bClearTsQueue=true;
     m_TsPacketCount=0;
 
-		if (m_bRunning)
-		{
-			WriteLog("determine new start pcr"); 
-			m_bDetermineNewStartPcr=true;
-//			m_bIgnoreNextPcrJump=true;
-   		m_mapLastPtsDts.clear();
-		}
-		m_pcrPid=pcrPid;
-		m_vecPids.clear();
-		DR_FAKE_NETWORK_ID   = 0x456;
-		DR_FAKE_TRANSPORT_ID = 0x4;
-		DR_FAKE_SERVICE_ID   = 0x89;
-		DR_FAKE_PMT_PID      = 0x20;
-		DR_FAKE_PCR_PID      = 0x30;//0x21;
-		DR_FAKE_VIDEO_PID    = 0x30;
-		DR_FAKE_AUDIO_PID    = 0x40;
-		DR_FAKE_SUBTITLE_PID = 0x50;
-		m_iPatVersion++;
-		if (m_iPatVersion>15) 
-			m_iPatVersion=0;
-		m_iPmtVersion++;
-		if (m_iPmtVersion>15) 
-			m_iPmtVersion=0;
-		if (m_streamMode==StreamMode::ProgramStream)
-			m_multiPlexer.SetPcrPid(pcrPid);
+	if (m_bRunning)
+	{
+		WriteLog("determine new start pcr"); 
+		m_bDetermineNewStartPcr=true;
+		m_mapLastPtsDts.clear();
+	}
+	m_pcrPid=pcrPid;
+	m_vecPids.clear();
+	m_AudioOrVideoSeen=false ;
+	DR_FAKE_NETWORK_ID   = 0x456;
+	DR_FAKE_TRANSPORT_ID = 0x4;
+	DR_FAKE_SERVICE_ID   = 0x89;
+	DR_FAKE_PMT_PID      = 0x20;
+	DR_FAKE_PCR_PID      = 0x30;//0x21;
+	DR_FAKE_VIDEO_PID    = 0x30;
+	DR_FAKE_AUDIO_PID    = 0x40;
+	DR_FAKE_SUBTITLE_PID = 0x50;
+	m_iPatVersion++;
+	if (m_iPatVersion>15) 
+		m_iPatVersion=0;
+	m_iPmtVersion++;
+	if (m_iPmtVersion>15) 
+		m_iPmtVersion=0;
+	if (m_streamMode==StreamMode::ProgramStream)
+		m_multiPlexer.SetPcrPid(pcrPid);
 }
 
 bool CDiskRecorder::IsStreamWanted(int stream_type)
@@ -744,6 +693,8 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
 	if (IsStreamWanted(pidInfo.logicalStreamType))
 	{
 		PidInfo2 pi;
+		pi.NPktQ=0 ;
+		pi.ccPrev=255;
 		pi.seenStart=false;
 		pi.fakePid=-1;
 		pi.elementaryPid=pidInfo.elementaryPid;
@@ -828,181 +779,263 @@ void CDiskRecorder::Flush()
 	}
 }
 
+
+int GetPesHeader(byte* tsPacket, CTsHeader& header, PidInfo2& PidInfo)
+{
+	int MaxLengthToCopy = 188 - header.PayLoadStart ;
+	if (header.PayloadUnitStart)
+	{
+		PidInfo.PesHeaderLength = 0 ;
+		PidInfo.NPktQ = 0 ;
+		PidInfo.PesHeaderLength = 0 ;
+	}
+	if (PidInfo.NPktQ>=4) 
+	{
+		LogDebug("PesHeader Pid %x Cannot decrypt PES ( splitted in more than 4 ts packets )",header.Pid ) ;
+		return 1 ; // therefore, write packets.
+	}
+		
+	memcpy(&PidInfo.TsPktQ[PidInfo.NPktQ][0], tsPacket, 188) ;
+	PidInfo.TsHeaderQ[PidInfo.NPktQ] = header ;
+	PidInfo.NPktQ++ ;
+
+	if (PidInfo.PesHeaderLength+MaxLengthToCopy > 19) MaxLengthToCopy = 19 - PidInfo.PesHeaderLength ;
+	memcpy(&PidInfo.PesHeader[PidInfo.PesHeaderLength], &tsPacket[header.PayLoadStart], MaxLengthToCopy) ;
+
+	PidInfo.PesHeaderLength += MaxLengthToCopy ;
+
+	if ((PidInfo.PesHeaderLength >= 7) && ((PidInfo.PesHeader[6] & 0xC0)!=0x80))
+	{
+//		LogDebug("PesHeader Pid %x ( No-PTS-DTS -4 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
+		return 0 ;	// Empty PES.
+	}
+
+	if (PidInfo.PesHeaderLength >= 8)
+	{
+		int RequiredLength = 8 ;
+		switch (PidInfo.PesHeader[7] & 0xC0)
+		{
+			case 0x80 :
+			case 0x40 : if (PidInfo.PesHeaderLength>=14)
+						{
+							if (PidInfo.NPktQ > 1)
+								LogDebug("PesHeader Pid %x ( Ready PTS or DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+							return 1 ;	// Ready to read.
+						}
+						else
+						{
+							LogDebug("PesHeader Pid %x ( Wait next - 1) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+							return 2 ;	// Not enough data.
+						}
+
+			case 0xC0 : if (PidInfo.PesHeaderLength>=19)
+						{
+							if (PidInfo.NPktQ > 1)
+								LogDebug("PesHeader Pid %x ( Ready : PTS+DTS ) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+							return 1 ;	// Ready to read.
+						}
+						else
+						{
+							LogDebug("PesHeader Pid %x ( Wait next - 2) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+							return 2 ;	// Not enough data.
+						}
+			default:
+			case 0x00 :	// no PTS-DTS 
+						{
+						LogDebug("PesHeader Pid %x ( No PTS-DTS - 3) Sz %d Length : %d %2.2x %2.2x, Q:%d",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[6],PidInfo.PesHeader[7],PidInfo.NPktQ) ;
+						return 0 ; // no PTS-DTS...
+						}
+		}
+	}
+	else
+	{
+		LogDebug("PesHeader Pid %x ( Wait next - 5 ) Sz %d Length : %d %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x",header.Pid, (PidInfo.PesHeader[4]<<8)+PidInfo.PesHeader[5],PidInfo.PesHeaderLength,PidInfo.PesHeader[0],PidInfo.PesHeader[1],PidInfo.PesHeader[2],PidInfo.PesHeader[3],PidInfo.PesHeader[4],PidInfo.PesHeader[5],PidInfo.PesHeader[6]) ;
+		return 2 ;	// Not enough data.
+	}
+}
+
+void UpdatePesHeader(PidInfo2& PidInfo)
+{
+	int i=0 ;
+	int pos = 0 ;
+	do
+	{
+		int lenH = 188-PidInfo.TsHeaderQ[i].PayLoadStart ;
+		if (lenH+pos > PidInfo.PesHeaderLength) lenH = PidInfo.PesHeaderLength - pos ;
+		if (lenH > 0)
+			memcpy(&PidInfo.TsPktQ[i][PidInfo.TsHeaderQ[i].PayLoadStart], &PidInfo.PesHeader[pos], lenH) ;
+		pos+=lenH ;
+		i++ ;
+	} while(i<PidInfo.NPktQ) ;
+}
+
 void CDiskRecorder::WriteTs(byte* tsPacket)
 {	  	  
 	CEnterCriticalSection enter(m_section);
 	try{
-	m_TsPacketCount++;
-  if( m_TsPacketCount < IGNORE_AFTER_TUNE ) return;
-  if (m_pcrPid<0 || m_vecPids.size()==0 || m_iPmtPid<0) return;
+		m_TsPacketCount++;
+		if( m_TsPacketCount < IGNORE_AFTER_TUNE ) return;
+		if (m_pcrPid<0 || m_vecPids.size()==0 || m_iPmtPid<0) return;
 
-	m_tsHeader.Decode(tsPacket);
-	if (m_tsHeader.TransportError) 
-		return;
+		m_tsHeader.Decode(tsPacket);
+		if (m_tsHeader.TScrambling)	return ;
+		if (m_tsHeader.TransportError) 	{ LogDebug("Pid %x : Transport error flag set!", m_tsHeader.Pid) ; return ; }
 
-	bool writeTS = true;
-	int start=0;
-
-	if (m_iPacketCounter>=100)
-	{
-		if (m_streamMode==StreamMode::TransportStream)
+		if (m_iPacketCounter>=100)
 		{
-			WriteFakePAT();
-			WriteFakePMT();
-		}
-		m_iPacketCounter=0;
-	}
-
-	int PayLoadUnitStart=0;
-	if (m_tsHeader.PayloadUnitStart) PayLoadUnitStart=1;
-
-	ivecPidInfo2 it=m_vecPids.begin();
-	ivecPidInfo2 itPcr=m_vecPids.end();
-	while (it!=m_vecPids.end())
-	{
-		PidInfo2 &info=*it;
-
-		if (m_tsHeader.Pid==info.elementaryPid)
-		{
-			// writeTS determines if a TS packet gets written to the timeshifting file or not.
-			// invalid headers are skipped, such as scrambled packets.				
-			writeTS = true; 
-			if (PayLoadUnitStart)
+			if (m_streamMode==StreamMode::TransportStream)
 			{
-			  byte pkt[200];
-			  memcpy(pkt,tsPacket,188);
-			  PatchPtsDts(pkt,m_tsHeader,info);					  					  
-			  start=m_tsHeader.PayLoadStart;
-			  if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) writeTS = false; 
+				WriteFakePAT();
+				WriteFakePMT();
 			}
-			if (writeTS)
-			{                  
+			m_iPacketCounter=0;
+		}
 
-    if (m_tsHeader.AdaptionFieldLength && (tsPacket[5] & 0x80))
-    {
-      LogDebug("Discontinuity !");
-    	LogDebug("tsheader:%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x%02.2x",
-					tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5],tsPacket[6],tsPacket[7],tsPacket[8],tsPacket[9]);
-    }
+		int PayLoadUnitStart=0;
+		if (m_tsHeader.PayloadUnitStart) PayLoadUnitStart=1;
 
+		ivecPidInfo2 it=m_vecPids.begin();
+		while (it!=m_vecPids.end())
+		{	
+			PidInfo2 &info=*it;
+
+			if (m_tsHeader.Pid==info.elementaryPid)
+			{
+				if (m_tsHeader.AdaptionFieldLength && (tsPacket[5] & 0x80)) LogDebug("Pid %x : Discontinuity header bit set!", m_tsHeader.Pid);
+
+				// Check Ts packet continuity, remove duplicate frames.
+				if ((info.ccPrev!=255) && (m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
+				{
+					if (m_tsHeader.ContinuityCounter == info.ccPrev)
+					{	
+						int PayLoadLen = (m_tsHeader.HasPayload) ? (188-m_tsHeader.PayLoadStart) : 0 ;
+						if (PayLoadLen<0) PayLoadLen = 0 ;
+						if (((PayLoadLen) && (memcmp(info.m_Pkt+m_tsHeader.PayLoadStart, tsPacket+m_tsHeader.PayLoadStart, PayLoadLen)==0)) || (PayLoadLen==0)) 
+						{
+//							LogDebug("Pid %x Same ts packet...( removed ) %x, PayLoadLen : %d", m_tsHeader.Pid, info.ccPrev, PayLoadLen) ;
+							return ; 
+						}
+						else
+							LogDebug("Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
+					}
+					else
+						LogDebug("Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
+				}
+				info.ccPrev = m_tsHeader.ContinuityCounter ;
+
+				memcpy(info.m_Pkt,tsPacket,188);
+	
 				if (info.streamType==SERVICE_TYPE_VIDEO_MPEG1 || info.streamType==SERVICE_TYPE_VIDEO_MPEG2||info.streamType==SERVICE_TYPE_VIDEO_MPEG4||info.streamType==SERVICE_TYPE_VIDEO_H264)
-			  {
-				  //video
-				  if (!info.seenStart) 
-				  {
-					  if (PayLoadUnitStart)
-					  {
-						  info.seenStart=true;
-						  WriteLog("start of video detected");
-              if(m_pVideoAudioObserver)
-								m_pVideoAudioObserver->OnNotify(PidType::Video);
-					  }
-				  }
-					if (!info.seenStart) return;
-				  byte pkt[200];
-				  memcpy(pkt,tsPacket,188);
-				  int pid=info.fakePid;
-				  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-				  pkt[2]=(pid&0xff);
-				  if (m_tsHeader.Pid==m_pcrPid)  
-						PatchPcr(pkt,m_tsHeader);
+				{
+					//video
+					if (!info.seenStart) 
+					{
+						if (PayLoadUnitStart)
+						{
+							info.seenStart=true;
+							m_AudioOrVideoSeen=true;
+							WriteLog("start of video detected");
+	              			if(m_pVideoAudioObserver) m_pVideoAudioObserver->OnNotify(PidType::Video);
+						}
+					else return ;
+					}
+				}
+	
+				if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2|| info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AAC || info.logicalStreamType==SERVICE_TYPE_AUDIO_LATM_AAC)
+				{
+					//audio
+					if (!info.seenStart)
+					{
+						if (PayLoadUnitStart)
+						{
+							info.seenStart=true;
+							m_AudioOrVideoSeen=true;
+							WriteLog("start of audio detected");
+	              			if(m_pVideoAudioObserver) m_pVideoAudioObserver->OnNotify(PidType::Audio);
+						}
+						else return ;
+					}
+				}
+	
+				if (info.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || info.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
+				{
+					// subtitles
+					if (!info.seenStart)
+					{
+						if (PayLoadUnitStart) info.seenStart=true;
+						else return ;
+					}                        
+				}
+	 
+				if (info.seenStart)
+				{
+				 	// Video / Audio / subtitles.
+					int pid=info.fakePid;
+					info.m_Pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+					info.m_Pkt[2]=(pid&0xff);
+					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(info.m_Pkt,m_tsHeader);
 
-				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-				  {						
-					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,info);					  					  												
-						Write(pkt,188);
-					  m_iPacketCounter++;
-				  }
-				  return;
-			  }
+	      	if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+					{						
+						if ((PayLoadUnitStart) || info.NPktQ)
+						{
+							int i=0 ;
+							switch(GetPesHeader(info.m_Pkt, m_tsHeader, info))
+							{
+								case 2:	break ;				// Wait for next ts packet
+								case 1:	PatchPtsDts(info.PesHeader, m_tsHeader, info) ;
+												UpdatePesHeader(info) ;
+								case 0:	do
+												{
+													Write(&info.TsPktQ[i++][0],188);
+													m_iPacketCounter++ ;	
+												} while (--info.NPktQ) ;
+							}
+						}
+						else
+						{
+							Write(info.m_Pkt,188);
+							m_iPacketCounter++;
+						}
+					}
+				}
+				else
+				{
+					//private pid...
+					int pid=info.fakePid;
+					info.m_Pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+					info.m_Pkt[2]=(pid&0xff);
+					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(info.m_Pkt,m_tsHeader);
 
-			  if (info.streamType==SERVICE_TYPE_AUDIO_MPEG1 || info.streamType==SERVICE_TYPE_AUDIO_MPEG2|| info.logicalStreamType==SERVICE_TYPE_AUDIO_AC3 || info.logicalStreamType==SERVICE_TYPE_AUDIO_AAC || info.logicalStreamType==SERVICE_TYPE_AUDIO_LATM_AAC)
-			  {
-				  //audio
-				  if (!info.seenStart)
-				  {
-					  if (PayLoadUnitStart)
-					  {
-						  info.seenStart=true;
-						  WriteLog("start of audio detected");
-              if(m_pVideoAudioObserver)
-								m_pVideoAudioObserver->OnNotify(PidType::Audio);
-					  }
-				  }
-				  if (!info.seenStart) return;
-
-				  byte pkt[200];
-				  memcpy(pkt,tsPacket,188);
-				  int pid=info.fakePid;
-				  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-				  pkt[2]=(pid&0xff);
-				  if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
-
-				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-				  {						  
-					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,info);					  					  							
-						Write(pkt,188);
-					  m_iPacketCounter++;
-				  }
-				  return;
-			  }
-
-			  if (info.logicalStreamType==SERVICE_TYPE_DVB_SUBTITLES1 || info.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
-			  {
-				  //subtitle pid...
-				  byte pkt[200];
-				  memcpy(pkt,tsPacket,188);
-				  int pid=info.fakePid;
-				  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-				  pkt[2]=(pid&0xff);
-				  if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
-
-				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-				  {						  						  
-					  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,info);					  					  												
-					  Write(pkt,188);
-					  m_iPacketCounter++;
-				  }
-				  return;
-			  }
-
-			  //private pid...
-			  byte pkt[200];
-			  memcpy(pkt,tsPacket,188);
-			  int pid=info.fakePid;
-			  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-			  pkt[2]=(pid&0xff);
-			  if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
-
-			  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-			  {							  
-				  Write(pkt,188);
-				  m_iPacketCounter++;
-			  }
+					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+				  	{							  
+						Write(info.m_Pkt,188);
+						m_iPacketCounter++;
+				  	}
+				}
+				return;
+			}
+			++it;
+		}
+	
+		if ((m_tsHeader.Pid==m_pcrPid) && m_AudioOrVideoSeen)
+		{
+			byte pkt[200];
+			memcpy(pkt,tsPacket,188);
+			int pid=DR_FAKE_PCR_PID;
+			PatchPcr(pkt,m_tsHeader);
+			pkt[1]=( (pid>>8) & 0x1f);
+			pkt[2]=(pid&0xff);
+			pkt[3]=(2<<4);// Adaption Field Control==adaptation field only, no payload
+			pkt[4]=0xb7;
+	
+			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+			{						
+				Write(pkt,188);
+				m_iPacketCounter++;
 			}
 			return;
 		}
-		++it;
-	}
-
-	if (m_tsHeader.Pid==m_pcrPid)
-	{
-		byte pkt[200];
-		memcpy(pkt,tsPacket,188);
-		int pid=DR_FAKE_PCR_PID;
-		PatchPcr(pkt,m_tsHeader);
-		pkt[1]=( (pid>>8) & 0x1f);
-		pkt[2]=(pid&0xff);
-		pkt[3]=(2<<4);// Adaption Field Control==adaptation field only, no payload
-		pkt[4]=0xb7;
-
-		if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-		{						
-			Write(pkt,188);
-			m_iPacketCounter++;
-		}
-		return;
-	}
 	} catch (...) { WriteLog("Exception in WriteTs");}
 }
 
@@ -1163,7 +1196,7 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 {
 	bool wr=false;
 	bool wjump=false;
-  bool verbose=false ;															// Debug verbosity(true) or Info (false)
+	bool verbose=false ;															// Debug verbosity(true) or Info (false)
 
 	if (header.PayLoadOnly()) return;
 	m_adaptionField.Decode(header,tsPacket);
@@ -1182,7 +1215,14 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 		m_PcrCompensation = (0x000000LL - (__int64) pcrNew.PcrReferenceBase) & 0x1FFFFFFFFLL ;  // Compensation to apply ( Expected fake PCR start - current PCR ) always modulo 33 bits.
 		m_prevPcr = pcrNew ;
 
-    wr=verbose ;      
+		if (m_streamMode==StreamMode::TransportStream)
+		{
+			WriteFakePAT();
+			WriteFakePMT();
+		}
+		m_iPacketCounter=0;
+
+		wr=verbose ;      
 		{                       // Info.
 			CPcr NextPcr ;
 			NextPcr.PcrReferenceBase = 0x1FFFFFFFF - pcrNew.PcrReferenceBase ;
@@ -1203,6 +1243,13 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 			m_PcrCompensation -= dt ;                   // Now it result as a "zero" delta on Fake PCR.
 			m_PcrCompensation += (__int64)m_PcrSpeed ;  // Increase it a bit with averaged delta should not be stupid.
 			m_prevPcr = pcrNew ;
+
+			if (m_streamMode==StreamMode::TransportStream)
+			{
+				WriteFakePAT();
+				WriteFakePMT();
+			}
+			m_iPacketCounter=0;
 
 			wr=verbose ;
 			{                       // Info.
@@ -1343,23 +1390,16 @@ void CDiskRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 
 void CDiskRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,PidInfo2& PidInfo)
 {
-	if (false==header.PayloadUnitStart) return;
-
 	DWORD TimeStamp = GetTickCount();
 	
-	int start=header.PayLoadStart;
-	if (start>169) 
-	{
-		LogDebug("ERROR: Cannot not patch pts-dts payload start>169. payloadStart=%d adaptionControl=%d adaptionFieldLength=%d Pid %x",start,header.AdaptionControl,header.AdaptionFieldLength,header.Pid) ;
-		return;
-	}
-	if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
+	if (tsPacket[0] !=0 || tsPacket[1] !=0 || tsPacket[2] !=1) return; 
 
-	byte* pesHeader=&tsPacket[start];
+	byte* pesHeader=tsPacket;
 	CPcr pts;
 	CPcr dts;
-	if (!CPcr::DecodeFromPesHeader(pesHeader,start,pts,dts))
+	if (!CPcr::DecodeFromPesHeader(pesHeader,0,pts,dts))
 	{
+		WriteLog("No PTS-DTS to decode, should not be detected here ! ") ;
 		return ;
 	}
 

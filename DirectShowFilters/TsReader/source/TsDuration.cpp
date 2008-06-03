@@ -125,7 +125,10 @@ void CTsDuration::UpdateDuration()
 
     Loop-- ;
     if(m_endPcr.PcrReferenceBase < m_startPcr.PcrReferenceBase)
+		{
       LogDebug("Abnormal start PCR, endPcr %I64d, startPcr %I64d",m_endPcr.PcrReferenceBase, m_startPcr.PcrReferenceBase);
+			Sleep(20) ;
+		}
   }
   while ((m_endPcr.PcrReferenceBase < m_startPcr.PcrReferenceBase) && Loop) ;
     // When startPcr > endPcr, it could be a result of wrong file used to find "startPcr".

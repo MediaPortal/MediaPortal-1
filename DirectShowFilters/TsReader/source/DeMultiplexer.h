@@ -127,8 +127,14 @@ private:
   CPidTable m_pids;
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;
+  vector<CBuffer*> m_t_vecVideoBuffers;
   vector<CBuffer*> m_vecAudioBuffers;
+  vector<CBuffer*> m_t_vecAudioBuffers;
   typedef vector<CBuffer*>::iterator ivecBuffers;
+	int  m_AudioPrevCC ;
+	int  m_VideoPrevCC ;
+	bool m_AudioValidPES ;
+	bool m_VideoValidPES ;
 
   CBuffer* m_pCurrentTeletextBuffer;
   CBuffer* m_pCurrentSubtitleBuffer;

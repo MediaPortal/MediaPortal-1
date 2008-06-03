@@ -132,8 +132,8 @@ private:
   int                  m_pcrPid;
 	int									 m_iServiceId;
 	vector<PidInfo2>		 m_vecPids;
-	bool								 m_bSeenAudioStart;
-	bool								 m_bSeenVideoStart;
+//	bool								 m_bSeenAudioStart;
+	bool								 m_AudioOrVideoSeen;
 	int									 m_iPmtContinuityCounter;
 	int									 m_iPatContinuityCounter;
   
@@ -156,7 +156,6 @@ private:
 	__int64         m_PcrFutureCompensation ;       // Future compensation computed during jump detection.
 	DWORD           m_prevTimeStamp ;               // TimeStamp of last PCR patching.
 
-  vector<char*>   m_tsQueue;
   bool            m_bClearTsQueue;
   unsigned long   m_TsPacketCount;
 
