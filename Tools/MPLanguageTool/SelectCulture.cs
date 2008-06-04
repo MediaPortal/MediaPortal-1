@@ -34,7 +34,7 @@ namespace MPLanguageTool
     public SelectCulture()
     {
       InitializeComponent();
-      CultureInfo[] cinfos=CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures);
+      CultureInfo[] cinfos = CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures);
       foreach (CultureInfo ci in cinfos)
         cbCulture.Items.Add(ci);
       cbCulture.SelectedItem = System.Threading.Thread.CurrentThread.CurrentCulture;

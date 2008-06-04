@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
+using System.Xml;
 
 namespace MPLanguageTool
 {
@@ -34,27 +35,22 @@ namespace MPLanguageTool
   {
     #region Variables
     NameValueCollection defaultTranslations;
-    CultureInfo culture=null;
+    CultureInfo culture = null;
+    bool DeployTool = false;
+    bool MediaPortal = false;
     #endregion
 
     public frmMain()
     {
       InitializeComponent();
-      defaultTranslations = ResxHandler.Load(null);
-      if (defaultTranslations == null)
-      {
-        MessageBox.Show("The file [MediaPortal.DeployTool.resx] could not be found.\nThe LanguageTool does not work without it.", "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        openToolStripMenuItem.Enabled = false;
-        saveToolStripMenuItem.Enabled = false;
-      }
     }
 
     private int GetUntranslatedCount()
     {
-      int count=0;
+      int count = 0;
       foreach (DataGridViewRow row in gv.Rows)
       {
-        if ((string)row.Cells[1].Value==null)
+        if ((string)row.Cells[1].Value == null)
           count++;
       }
       return count++;
@@ -73,17 +69,28 @@ namespace MPLanguageTool
           gv.Rows[e.RowIndex].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
         else
           gv.Rows[e.RowIndex].Cells[0].Style.ForeColor = System.Drawing.Color.Black;
-        toolStripStatusLabel1.Text = "Missing translations: " + GetUntranslatedCount().ToString();
+        ToolStripText(GetUntranslatedCount());
       }
     }
 
     #region Menu-events
-    private void openToolStripMenuItem_Click(object sender, EventArgs e)
+    private void openDeployToolToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      defaultTranslations = ResxHandler.Load(null);
+      if (defaultTranslations == null)
+      {
+        MessageBox.Show("The file [MediaPortal.DeployTool.resx] could not be found.\nThe LanguageTool does not work without it.", "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        openDeployToolToolStripMenuItem.Enabled = false;
+        saveToolStripMenuItem.Enabled = false;
+        Environment.Exit(-1);
+      }
+      DeployTool = true;
+      openMpToolStripMenuItem.Enabled = false;
+      openDeployToolToolStripMenuItem.Enabled = false;
       SelectCulture dlg = new SelectCulture();
-      if (dlg.ShowDialog()!=DialogResult.OK) return;
-      culture=dlg.GetSelectedCulture();
-      this.Text = "MPLanguageTool -- Current language: "+culture.NativeName;
+      if (dlg.ShowDialog() != DialogResult.OK) return;
+      culture = dlg.GetSelectedCulture();
+      this.Text = "MPLanguageTool -- Current language: " + culture.NativeName;
       NameValueCollection translations = ResxHandler.Load(culture.Name);
       int untranslated = 0;
       foreach (string key in defaultTranslations.AllKeys)
@@ -95,14 +102,49 @@ namespace MPLanguageTool
           untranslated++;
         }
       }
-      toolStripStatusLabel1.Text = "Missing translations: " + untranslated.ToString();
+      ToolStripText(untranslated);
     }
+
+    private void openMpToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      defaultTranslations = XmlHandler.Load(null);
+      if (defaultTranslations == null)
+      {
+        MessageBox.Show("The file [strings_en.xml] could not be found.\nThe LanguageTool does not work without it.", "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        openMpToolStripMenuItem.Enabled = false;
+        saveToolStripMenuItem.Enabled = false;
+        Environment.Exit(-2);
+      }
+      MediaPortal = true;
+      openMpToolStripMenuItem.Enabled = false;
+      openDeployToolToolStripMenuItem.Enabled = false;
+      SelectCulture dlg = new SelectCulture();
+      if (dlg.ShowDialog() != DialogResult.OK) return;
+      culture = dlg.GetSelectedCulture();
+      this.Text = "MPLanguageTool -- Current language: " + culture.NativeName;
+      NameValueCollection translations = XmlHandler.Load(culture.Name);
+      int untranslated = 0;
+      foreach (string key in defaultTranslations.AllKeys)
+      {
+        gv.Rows.Add(key, translations[key]);
+        if (translations[key] == null)
+        {
+          gv.Rows[gv.RowCount - 1].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
+          untranslated++;
+        }
+      }
+      ToolStripText(untranslated);
+    }
+
     private void saveToolStripMenuItem_Click(object sender, EventArgs e)
     {
       NameValueCollection translations = new NameValueCollection();
       foreach (DataGridViewRow row in gv.Rows)
         translations.Add((string)row.Cells[0].Value, (string)row.Cells[1].Value);
-      ResxHandler.Save(culture.Name, translations);
+      if (MediaPortal)
+        XmlHandler.Save(culture.Name, translations);
+      else
+        ResxHandler.Save(culture.Name, translations);
       MessageBox.Show("Your translations have been saved.", "MPLanguageTool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
     private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -116,5 +158,20 @@ namespace MPLanguageTool
     }
     #endregion
 
+    public void ToolStripText(int lines)
+    {
+      string AddTxt;
+      if (lines != 0)
+      {
+        toolStripStatusLabel1.ForeColor = System.Drawing.Color.Red;
+        AddTxt = ". Double click a row to edit text.";
+      }
+      else
+      {
+        toolStripStatusLabel1.ForeColor = System.Drawing.Color.Black;
+        AddTxt = null;
+      }
+      toolStripStatusLabel1.Text = "Missing translations: " + lines.ToString() + AddTxt;
+    }
   }
 }

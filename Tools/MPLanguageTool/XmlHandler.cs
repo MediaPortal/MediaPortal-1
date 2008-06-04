@@ -26,18 +26,24 @@ using System.Xml;
 using System.IO;
 using System.Resources;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace MPLanguageTool
 {
-  class ResxHandler
+  class XmlHandler
   {
     private static string BuildFileName(string languageID)
     {
-      if (languageID == null)
-        return AppDomain.CurrentDomain.BaseDirectory + "MediaPortal.DeployTool.resx";
-      else
-        return AppDomain.CurrentDomain.BaseDirectory + "MediaPortal.DeployTool." + languageID + ".resx";
+      string LangFileName = "strings_";
+      string LangExtension = ".xml";
+      string LangDefaultID = "en";
+      if (languageID != null)
+      {
+        LangDefaultID = languageID;
+      }
+      return AppDomain.CurrentDomain.BaseDirectory + LangFileName + LangDefaultID + LangExtension;
     }
+
     public static NameValueCollection Load(string languageID)
     {
       string xml = BuildFileName(languageID);
@@ -51,27 +57,41 @@ namespace MPLanguageTool
       NameValueCollection translations = new NameValueCollection();
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
-      XmlNodeList nodes = doc.SelectNodes("/root/data");
+      XmlNodeList nodes = doc.DocumentElement.SelectNodes("/Language/Section/String");
+      bool first = true;
       foreach (XmlNode keyNode in nodes)
-        translations.Add(keyNode.Attributes["name"].Value, keyNode.SelectSingleNode("value").InnerText);
+      {
+        if (first)
+        {
+          translations.Add("-", keyNode.Attributes["prefix"].Value);
+          first = false;
+        }
+        translations.Add(keyNode.Attributes["id"].Value, keyNode.InnerText);
+      }
       return translations;
     }
 
     public static void Save(string languageID, NameValueCollection translations)
     {
-      string stub = Resource1.ResourceManager.GetString("ResxTemplate");
+      //
+      // Need to find a way to add prefix when needed !!!
+      //
+      // This function need a complete rewrite to handle MP strings xml format !!!
+      //
+      MessageBox.Show("Save function for strings_*.xml will be available soon.", "Work in progress...");
+      return;
+
+
       string xml = BuildFileName(languageID);
       StreamWriter writer = new StreamWriter(xml, false, Encoding.UTF8);
-      writer.Write(stub);
       writer.Close();
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
-      XmlNode nRoot = doc.SelectSingleNode("/root");
+      XmlNode nRoot = doc.SelectSingleNode("/Language/Section/String");
       foreach (string key in translations.Keys)
       {
         if (translations[key] == null) continue;
         XmlNode nValue = doc.CreateElement("value");
-
         nValue.InnerText = translations[key];
         XmlNode nKey = doc.CreateElement("data");
         XmlAttribute attr = nKey.OwnerDocument.CreateAttribute("name");
