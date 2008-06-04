@@ -486,6 +486,7 @@ namespace MediaPortal.Configuration.Sections
             availableVideoDevices.RemoveAt(i);
             continue;
           }
+          /*
           //treat the TTPremium card as a general H/W card
           if (((string)(availableVideoDevices[i])) == "TechnoTrend SAA7146 Capture (WDM)")
           {
@@ -515,7 +516,7 @@ namespace MediaPortal.Configuration.Sections
             availableVideoDevices.RemoveAt(i);
             continue;
           }
-
+          */
           if (ccd.CaptureName == string.Empty) continue;
           if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
             ((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1))

@@ -291,8 +291,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Profiles\*"
   SetOutPath "$MPdir.Base\scripts"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\scripts\*"
-  SetOutPath "$MPdir.Base\TTPremiumBoot"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\TTPremiumBoot\*"
   SetOutPath "$MPdir.Base\Tuningparameters"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Tuningparameters\*"
   SetOutPath "$MPdir.Base\WebEPG"
@@ -439,8 +437,6 @@ Section "MediaPortal core files (required)" SecCore
   WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.rtsp"      "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
 
-  ##### not sure for what this is used
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${MEDIAPORTAL.FILTERBIN}\TTPremiumSource.ax"  "$MPdir.Base\TTPremiumSource.ax" "$MPdir.Base"
 SectionEnd
 !macro Remove_${SecCore}
   DetailPrint "Uninstalling MediaPortal core files..."
@@ -472,8 +468,6 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\shoutcastsource.ax"
   ; used for digital tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TsReader.ax"
-  ##### not sure for what this is used
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TTPremiumSource.ax"
 
   ; Config Files
   Delete /REBOOTOK "$MPdir.Config\CaptureCardDefinitions.xml"
@@ -490,7 +484,6 @@ SectionEnd
   RMDir /r /REBOOTOK "$MPdir.Base\osdskin-media"
   RMDir /r /REBOOTOK "$MPdir.Base\Profiles"
   RMDir /r /REBOOTOK "$MPdir.Base\scripts"
-  RMDir /r /REBOOTOK "$MPdir.Base\TTPremiumBoot"
   RMDir /r /REBOOTOK "$MPdir.Base\Tuningparameters"
   RMDir /r /REBOOTOK "$MPdir.Base\WebEPG"
   RMDir /r /REBOOTOK "$MPdir.Base\Wizards"

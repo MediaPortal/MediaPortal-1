@@ -771,10 +771,11 @@ namespace MediaPortal.Configuration.Sections
         cards.LoadCaptureCards();
         foreach (TVCaptureDevice dev in cards.captureCards)
         {
-          if (dev.Network == NetworkType.DVBS ||
+          if (dev.Network == NetworkType.DVBS)
+            /*||
             // HACK: This is a nasty hack until I can figure out a way
             // around this - Drak
-              dev.CardType == TVCapture.CardTypes.Digital_TTPremium)
+              dev.CardType == TVCapture.CardTypes.Digital_TTPremium)*/
           {
             _card = dev;
             break;

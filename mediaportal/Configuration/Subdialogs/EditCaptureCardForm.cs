@@ -270,7 +270,7 @@ namespace MediaPortal.Configuration
 
 
       bool ss2Added = false;
-      bool ttPremiumAdded = false;
+      //bool ttPremiumAdded = false;
       //enum all cards known in capturedefinitions.xml
       foreach (CaptureCardDefinition ccd in CaptureCardDefinitions.CaptureCards)
       {
@@ -310,7 +310,7 @@ namespace MediaPortal.Configuration
             //Rem'd below should fix SS2 cards with other DVB devices
             //if (addNewCard) break; // must not break in edit mode
           }
-
+          /*
           //treat the TTPremium DVB-S card as a general H/W card
           if (((string)(availableVideoDevices[i])) == "TechnoTrend SAA7146 Capture (WDM)")
           {
@@ -344,7 +344,7 @@ namespace MediaPortal.Configuration
             //Rem'd below should fix SS2 cards with other DVB devices
             //if (addNewCard) break; // must not break in edit mode
           }
-
+          */
 
           bool add = false;
           if (ccd.CaptureName != string.Empty)
@@ -2042,8 +2042,8 @@ namespace MediaPortal.Configuration
           if (checkBox5vAntennae.Visible)
             xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
         }
-        if (capture.CardType == TVCapture.CardTypes.Digital_SS2 ||
-            capture.CardType == TVCapture.CardTypes.Digital_TTPremium)
+        if (capture.CardType == TVCapture.CardTypes.Digital_SS2)/* ||
+            capture.CardType == TVCapture.CardTypes.Digital_TTPremium)*/
         {
           // save settings for get the filename in mp.xml
           using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))

@@ -59,12 +59,6 @@ REM Remotes
 xcopy /y %1\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\%2\HCWHelper.* .
 xcopy /y %1\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
 
-REM TTPremiumBoot
-xcopy /y %1\TTPremiumBoot\*.* TTPremiumBoot\
-xcopy /y %1\TTPremiumBoot\21\*.* TTPremiumBoot\21\
-xcopy /y %1\TTPremiumBoot\24\*.* TTPremiumBoot\24\
-xcopy /y %1\TTPremiumBoot\24Data\*.* TTPremiumBoot\24Data\
-
 REM Utils
 xcopy /y %1\Utils\bin\%2\Utils.dll .
 
