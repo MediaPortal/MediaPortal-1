@@ -176,18 +176,25 @@ namespace MediaPortal.Profile
 
       using (XmlReader reader = XmlReader.Create(filename, GetReaderSettings()))
       {
-        while (reader.Read())
+        try
         {
-          if (IsAtSection(reader))
+          while (reader.Read())
           {
-            section = reader.GetAttribute("name");
+            if (IsAtSection(reader))
+            {
+              section = reader.GetAttribute("name");
+            }
+            else if (IsAtEntry(reader))
+            {
+              entry = reader.GetAttribute("name");
+              value = reader.ReadString();
+              function.Invoke(section, entry, value);
+            }
           }
-          else if (IsAtEntry(reader))
-          {
-            entry = reader.GetAttribute("name");
-            value = reader.ReadString();
-            function.Invoke(section, entry, value);
-          }
+        }
+        catch (Exception ex)
+        {
+          return;
         }
       }
     }

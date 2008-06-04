@@ -207,7 +207,8 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Error("No write permissions to set registry keys for SVN installer");
       }
       //check if mediaportal has been configured
-      if (!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      System.IO.FileInfo fi = new System.IO.FileInfo(Config.GetFile(Config.Dir.Config, "mediaportal.xml"));
+      if ((!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml"))) || (fi.Length < 10000))
       {
         //no, then start configuration.exe in wizard form
         Log.Info("MediaPortal.xml not found. Launching configuration tool and exiting...");
