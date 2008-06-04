@@ -219,15 +219,15 @@ namespace WatchDog
       // mainMenu
       // 
       this.mainMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                             this.menuItem1,
-                                                                             this.menuItem3,
-                                                                             this.menuItem6});
+            this.menuItem1,
+            this.menuItem3,
+            this.menuItem6});
       // 
       // menuItem1
       // 
       this.menuItem1.Index = 0;
       this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                              this.menuItem2});
+            this.menuItem2});
       this.menuItem1.Text = "File";
       // 
       // menuItem2
@@ -240,9 +240,9 @@ namespace WatchDog
       // 
       this.menuItem3.Index = 1;
       this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                              this.menuItem4,
-                                                                              this.menuItem8,
-                                                                              this.menuItem5});
+            this.menuItem4,
+            this.menuItem8,
+            this.menuItem5});
       this.menuItem3.Text = "Action";
       // 
       // menuItem4
@@ -266,7 +266,7 @@ namespace WatchDog
       // 
       this.menuItem6.Index = 2;
       this.menuItem6.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                              this.menuItem7});
+            this.menuItem7});
       this.menuItem6.Text = "Help";
       // 
       // menuItem7
@@ -342,7 +342,7 @@ namespace WatchDog
       this.Menu = this.mainMenu;
       this.Name = "MPWatchDog";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "MediaPortal Test Tool";
+      this.Text = "MediaPortal Watchdog";
       this.settingsGroup.ResumeLayout(false);
       this.settingsGroup.PerformLayout();
       this.step2Group.ResumeLayout(false);
