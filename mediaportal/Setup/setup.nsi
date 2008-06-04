@@ -191,9 +191,9 @@ Page custom PageReinstall PageLeaveReinstall
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
 !if ${VER_BUILD} == 0
-  OutFile "Release\package-mediaportal.exe"
+  OutFile "Release\package-MediaPortal.exe"
 !else
-  OutFile "Release\MediaPortal-svn-.exe"
+  OutFile "Release\setup-MediaPortal-svn${VER_BUILD}.exe"
 !endif
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath

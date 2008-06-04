@@ -180,7 +180,7 @@ Page custom PageReinstall PageLeaveReinstall
 !if ${VER_BUILD} == 0
   OutFile "Release\package-tvengine.exe"
 !else
-  OutFile "Release\setup-tve3.exe"
+  OutFile "Release\setup-tvengine-svn${VER_BUILD}.exe"
 !endif
 InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
 InstallDirRegKey HKLM "${REG_UNINSTALL}" InstallPath
