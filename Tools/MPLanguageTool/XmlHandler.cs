@@ -59,49 +59,64 @@ namespace MPLanguageTool
       doc.Load(xml);
       XmlNodeList nodes = doc.DocumentElement.SelectNodes("/Language/Section/String");
       bool first = true;
+      string node_id;
       foreach (XmlNode keyNode in nodes)
       {
         if (first)
         {
-          translations.Add("-", keyNode.Attributes["prefix"].Value);
+          translations.Add("**", keyNode.Attributes["prefix"].Value);
           first = false;
         }
-        translations.Add(keyNode.Attributes["id"].Value, keyNode.InnerText);
+        if (keyNode.Attributes.Count == 2)
+          node_id = "**";
+        else
+          node_id = "";
+        translations.Add(keyNode.Attributes["id"].Value + node_id, keyNode.InnerText);
       }
       return translations;
     }
 
-    public static void Save(string languageID, NameValueCollection translations)
+    public static void Save(string languageID, string LanguageNAME, NameValueCollection translations)
     {
-      //
-      // Need to find a way to add prefix when needed !!!
-      //
-      // This function need a complete rewrite to handle MP strings xml format !!!
-      //
-      MessageBox.Show("Save function for strings_*.xml will be available soon.", "Work in progress...");
-      return;
-
-
       string xml = BuildFileName(languageID);
       StreamWriter writer = new StreamWriter(xml, false, Encoding.UTF8);
+      writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+      writer.Write("<Language name=\"" + LanguageNAME + "\" characters=\"255\">\n");
+      writer.Write("  <Section name=\"unmapped\">\n");
+      writer.Write("  </Section>\n");
+      writer.Write("</Language>\n");
       writer.Close();
       XmlDocument doc = new XmlDocument();
       doc.Load(xml);
-      XmlNode nRoot = doc.SelectSingleNode("/Language/Section/String");
+      XmlNode nRoot = doc.SelectSingleNode("/Language/Section");
+      bool isfirst = true;
+      string prefix = "";
       foreach (string key in translations.Keys)
       {
+        if (isfirst)
+        {
+          prefix = translations[key];
+          isfirst = false;
+          continue;
+        }
         if (translations[key] == null) continue;
         XmlNode nValue = doc.CreateElement("value");
         nValue.InnerText = translations[key];
-        XmlNode nKey = doc.CreateElement("data");
-        XmlAttribute attr = nKey.OwnerDocument.CreateAttribute("name");
-        attr.InnerText = key;
-        nKey.Attributes.Append(attr);
-        attr = nKey.OwnerDocument.CreateAttribute("xml:space");
-        attr.InnerText = "preserve";
-        nKey.Attributes.Append(attr);
-        nKey.AppendChild(nValue);
-        nRoot.AppendChild(nKey);
+        XmlAttribute attr = nValue.OwnerDocument.CreateAttribute("id");
+        if (key.EndsWith("**"))
+        {
+          attr.InnerText = key.Substring(0, key.Length - 2);
+          nValue.Attributes.Append(attr);
+          attr = nValue.OwnerDocument.CreateAttribute("prefix");
+          attr.InnerText = prefix;
+          nValue.Attributes.Append(attr);
+        }
+        else
+        {
+          attr.InnerText = key;
+          nValue.Attributes.Append(attr);
+        }
+        nRoot.AppendChild(nValue);
       }
       doc.Save(xml);
 

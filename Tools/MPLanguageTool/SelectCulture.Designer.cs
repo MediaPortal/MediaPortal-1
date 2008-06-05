@@ -65,6 +65,7 @@ namespace MPLanguageTool
       // 
       // cbCulture
       // 
+      this.cbCulture.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCulture.FormattingEnabled = true;
       this.cbCulture.Location = new System.Drawing.Point(76, 21);
       this.cbCulture.Name = "cbCulture";

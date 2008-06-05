@@ -103,6 +103,7 @@ namespace MPLanguageTool
         }
       }
       ToolStripText(untranslated);
+      saveToolStripMenuItem.Enabled = true;
     }
 
     private void openMpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -134,6 +135,7 @@ namespace MPLanguageTool
         }
       }
       ToolStripText(untranslated);
+      saveToolStripMenuItem.Enabled = true;
     }
 
     private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -142,8 +144,8 @@ namespace MPLanguageTool
       foreach (DataGridViewRow row in gv.Rows)
         translations.Add((string)row.Cells[0].Value, (string)row.Cells[1].Value);
       if (MediaPortal)
-        XmlHandler.Save(culture.Name, translations);
-      else
+        XmlHandler.Save(culture.Name, culture.EnglishName, translations);
+      if (DeployTool)
         ResxHandler.Save(culture.Name, translations);
       MessageBox.Show("Your translations have been saved.", "MPLanguageTool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }

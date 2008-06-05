@@ -56,10 +56,10 @@ namespace MPLanguageTool
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.gv = new System.Windows.Forms.DataGridView();
-      this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-      this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
       this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Translation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+      this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
       this.menuStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.gv)).BeginInit();
       this.statusStrip1.SuspendLayout();
@@ -103,6 +103,7 @@ namespace MPLanguageTool
       // 
       // saveToolStripMenuItem
       // 
+      this.saveToolStripMenuItem.Enabled = false;
       this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
       this.saveToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
       this.saveToolStripMenuItem.Text = "Save";
@@ -140,20 +141,6 @@ namespace MPLanguageTool
       this.gv.TabIndex = 1;
       this.gv.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gv_CellMouseDoubleClick);
       // 
-      // statusStrip1
-      // 
-      this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
-      this.statusStrip1.Location = new System.Drawing.Point(0, 347);
-      this.statusStrip1.Name = "statusStrip1";
-      this.statusStrip1.Size = new System.Drawing.Size(583, 22);
-      this.statusStrip1.TabIndex = 2;
-      // 
-      // toolStripStatusLabel1
-      // 
-      this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-      this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
-      // 
       // ID
       // 
       this.ID.HeaderText = "ID";
@@ -167,6 +154,20 @@ namespace MPLanguageTool
       this.Translation.Name = "Translation";
       this.Translation.ReadOnly = true;
       this.Translation.Width = 84;
+      // 
+      // statusStrip1
+      // 
+      this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+      this.statusStrip1.Location = new System.Drawing.Point(0, 347);
+      this.statusStrip1.Name = "statusStrip1";
+      this.statusStrip1.Size = new System.Drawing.Size(583, 22);
+      this.statusStrip1.TabIndex = 2;
+      // 
+      // toolStripStatusLabel1
+      // 
+      this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+      this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
       // 
       // frmMain
       // 
