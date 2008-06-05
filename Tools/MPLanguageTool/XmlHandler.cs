@@ -64,12 +64,16 @@ namespace MPLanguageTool
       {
         if (first)
         {
-          // "**" = row 0 prefix, used for all prefix
-          translations.Add("Common string prefix (*)", keyNode.Attributes["prefix"].Value);
+          //
+          // row 0 prefix  = prefix used for all rows with prefix
+          //
+          // Needs a fix ;(
+          //
+          translations.Add("Common string prefix" + PrefixIdentifier(), keyNode.Attributes["prefix"].Value);
           first = false;
         }
         if (keyNode.Attributes.Count == 2 && languageID == null)
-          node_id = "(*)";
+          node_id = PrefixIdentifier();
         else
           node_id = "";
         translations.Add(keyNode.Attributes["id"].Value + node_id, keyNode.InnerText);
@@ -101,12 +105,13 @@ namespace MPLanguageTool
           continue;
         }
         if (translations[key] == null) continue;
-        XmlNode nValue = doc.CreateElement("value");
+        XmlNode nValue = doc.CreateElement("String");
         nValue.InnerText = translations[key];
         XmlAttribute attr = nValue.OwnerDocument.CreateAttribute("id");
-        if (key.EndsWith("**"))
+
+        if (key.EndsWith(PrefixIdentifier()))
         {
-          attr.InnerText = key.Substring(0, key.Length - 2);
+          attr.InnerText = key.Substring(0, key.Length - PrefixIdentifier().Length);
           nValue.Attributes.Append(attr);
           attr = nValue.OwnerDocument.CreateAttribute("prefix");
           attr.InnerText = prefix;
@@ -121,6 +126,11 @@ namespace MPLanguageTool
       }
       doc.Save(xml);
 
+    }
+
+    private static string PrefixIdentifier()
+    {
+      return "(*)";
     }
   }
 }
