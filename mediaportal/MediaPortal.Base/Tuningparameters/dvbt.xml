@@ -20,6 +20,7 @@
 <!--   - Sweden   -->
 <!--   - Taiwan   -->
 <!--   - UK   -->
+<!--   - Ukraine   --> 
 <dvbt>
   <country name="Australia - All Regions" offset="125">
     <carrier frequency="177500" bandwidth="7"></carrier>
@@ -5896,5 +5897,12 @@
   <country name="UK - Winter Hill B" offset="167">
     <carrier frequency="626000" bandwidth="8"></carrier>
     <carrier frequency="650000" bandwidth="8"></carrier>
+  </country>
+  <country name="Ukraine - Kyiv" offset="0">
+    <carrier frequency="634000" bandwidth="8"></carrier>
+    <carrier frequency="650000" bandwidth="8"></carrier>
+    <carrier frequency="682000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="818000" bandwidth="8"></carrier>
   </country>
 </dvbt>
