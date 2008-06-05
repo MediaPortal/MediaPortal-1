@@ -64,11 +64,12 @@ namespace MPLanguageTool
       {
         if (first)
         {
-          translations.Add("**", keyNode.Attributes["prefix"].Value);
+          // "**" = row 0 prefix, used for all prefix
+          translations.Add("Common string prefix (*)", keyNode.Attributes["prefix"].Value);
           first = false;
         }
-        if (keyNode.Attributes.Count == 2)
-          node_id = "**";
+        if (keyNode.Attributes.Count == 2 && languageID == null)
+          node_id = "(*)";
         else
           node_id = "";
         translations.Add(keyNode.Attributes["id"].Value + node_id, keyNode.InnerText);

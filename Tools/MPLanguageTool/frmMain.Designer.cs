@@ -48,6 +48,7 @@ namespace MPLanguageTool
     /// </summary>
     private void InitializeComponent()
     {
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDeployToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,10 +57,10 @@ namespace MPLanguageTool
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.gv = new System.Windows.Forms.DataGridView();
-      this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.Translation = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
       this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+      this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.Translation = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.menuStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.gv)).BeginInit();
       this.statusStrip1.SuspendLayout();
@@ -141,20 +142,6 @@ namespace MPLanguageTool
       this.gv.TabIndex = 1;
       this.gv.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gv_CellMouseDoubleClick);
       // 
-      // ID
-      // 
-      this.ID.HeaderText = "ID";
-      this.ID.Name = "ID";
-      this.ID.ReadOnly = true;
-      this.ID.Width = 43;
-      // 
-      // Translation
-      // 
-      this.Translation.HeaderText = "Translation";
-      this.Translation.Name = "Translation";
-      this.Translation.ReadOnly = true;
-      this.Translation.Width = 84;
-      // 
       // statusStrip1
       // 
       this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -168,6 +155,22 @@ namespace MPLanguageTool
       // 
       this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
       this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
+      // 
+      // ID
+      // 
+      this.ID.HeaderText = "ID";
+      this.ID.Name = "ID";
+      this.ID.ReadOnly = true;
+      this.ID.Width = 43;
+      // 
+      // Translation
+      // 
+      dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
+      this.Translation.DefaultCellStyle = dataGridViewCellStyle1;
+      this.Translation.HeaderText = "Translation";
+      this.Translation.Name = "Translation";
+      this.Translation.ReadOnly = true;
+      this.Translation.Width = 84;
       // 
       // frmMain
       // 

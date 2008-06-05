@@ -125,10 +125,21 @@ namespace MPLanguageTool
       this.Text = "MPLanguageTool -- Current language: " + culture.NativeName;
       NameValueCollection translations = XmlHandler.Load(culture.Name);
       int untranslated = 0;
+      bool first = true;
+      string index = null;
       foreach (string key in defaultTranslations.AllKeys)
       {
-        gv.Rows.Add(key, translations[key]);
-        if (translations[key] == null)
+        if (first)
+        {
+          index = key;
+          first = false;
+        }
+        else
+        {
+          index = key.Split('(')[0];
+        }
+        gv.Rows.Add(key, translations[index]);
+        if (translations[index] == null)
         {
           gv.Rows[gv.RowCount - 1].Cells[0].Style.ForeColor = System.Drawing.Color.Red;
           untranslated++;
