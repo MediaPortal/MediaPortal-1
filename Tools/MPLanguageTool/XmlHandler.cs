@@ -69,7 +69,10 @@ namespace MPLanguageTool
           //
           // Needs a fix ;(
           //
-          translations.Add("Common string prefix" + PrefixIdentifier(), keyNode.Attributes["prefix"].Value);
+          string prefixValue = null;
+          if (keyNode.Attributes.Count == 2)
+            prefixValue = keyNode.Attributes["prefix"].Value;
+          translations.Add("Common string prefix" + PrefixIdentifier(), prefixValue);
           first = false;
         }
         if (keyNode.Attributes.Count == 2 && languageID == null)

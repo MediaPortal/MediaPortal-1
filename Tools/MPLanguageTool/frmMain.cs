@@ -90,7 +90,7 @@ namespace MPLanguageTool
       SelectCulture dlg = new SelectCulture();
       if (dlg.ShowDialog() != DialogResult.OK) return;
       culture = dlg.GetSelectedCulture();
-      this.Text = "MPLanguageTool -- Current language: " + culture.NativeName;
+      this.Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: MediaPortal.DeployTool." + culture.Name + ".resx";
       NameValueCollection translations = ResxHandler.Load(culture.Name);
       int untranslated = 0;
       foreach (string key in defaultTranslations.AllKeys)
@@ -122,7 +122,7 @@ namespace MPLanguageTool
       SelectCulture dlg = new SelectCulture();
       if (dlg.ShowDialog() != DialogResult.OK) return;
       culture = dlg.GetSelectedCulture();
-      this.Text = "MPLanguageTool -- Current language: " + culture.NativeName;
+      this.Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: strings_" + culture.Name + ".xml";
       NameValueCollection translations = XmlHandler.Load(culture.Name);
       int untranslated = 0;
       bool first = true;
