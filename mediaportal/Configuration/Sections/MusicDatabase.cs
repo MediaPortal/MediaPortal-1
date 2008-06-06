@@ -290,6 +290,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCreateFolderThumb.TabIndex = 9;
       this.checkBoxCreateFolderThumb.Text = "create missing folder.jpg";
       this.checkBoxCreateFolderThumb.UseVisualStyleBackColor = true;
+      this.checkBoxCreateFolderThumb.Visible = false;
       // 
       // checkBoxCreateArtist
       // 
@@ -426,9 +427,9 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox.Name = "sharesListBox";
       this.sharesListBox.Size = new System.Drawing.Size(440, 79);
       this.sharesListBox.TabIndex = 0;
-      this.sharesListBox.DoubleClick += new System.EventHandler(this.sharesListBox_DoubleClick);
       this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
+      this.sharesListBox.DoubleClick += new System.EventHandler(this.sharesListBox_DoubleClick);
       // 
       // groupBox2
       // 

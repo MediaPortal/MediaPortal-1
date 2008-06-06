@@ -456,17 +456,22 @@ namespace MediaPortal.Music.Database
         MyArgs.phase = "Scanning new files";
         OnDatabaseReorgChanged(MyArgs);
 
-        int GetFilesResult = GetFiles(10, 74, ref fileCount);
+        int GetFilesResult = GetFiles(10, 69, ref fileCount);
         Log.Info("Musicdatabasereorg: Add / Update files: {0} files added / updated", GetFilesResult);
 
+        if (_useFolderThumbs)
+          CreateFolderThumbs(70, 79, _shares);
+
         if (_createArtistPreviews)
-        {
-          CreateArtistThumbs(75, 85);
-        }
+          CreateArtistThumbs(80, 89);
 
         if (_createGenrePreviews)
+          CreateGenreThumbs(90, 94);
+
+        if (_createMissingFolderThumbs)
         {
-          CreateGenreThumbs(86, 94);
+          // implement sth like that:
+          // Util.Picture.CreateThumbnail(aThumbLocation, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
         }
       }
 
@@ -548,7 +553,7 @@ namespace MediaPortal.Music.Database
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
 
         string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
-        for (int i = 0; i < 20; i++)
+        for (int i = 0 ; i < 20 ; i++)
         {
           string strShareName = String.Format("sharename{0}", i);
           string strSharePath = String.Format("sharepath{0}", i);
@@ -591,7 +596,7 @@ namespace MediaPortal.Music.Database
       }
       int removed = 0;
       Log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", (int)results.Rows.Count);
-      for (int i = 0; i < results.Rows.Count; ++i)
+      for (int i = 0 ; i < results.Rows.Count ; ++i)
       {
         string strFileName = DatabaseUtility.Get(results, i, "tracks.strPath");
 
@@ -1220,17 +1225,18 @@ namespace MediaPortal.Music.Database
           catch (Exception) { }
         }
       }
+
       // no mp3 coverart - use folder art if present to get an album thumb
       if (_useFolderThumbs)
       {
         // Scan folders only one time per song
         if (string.IsNullOrEmpty(_previousNegHitDir) || (Path.GetDirectoryName(tag.FileName) != _previousNegHitDir))
         {
-          if (!System.IO.File.Exists(smallThumbPath))
+          if (!File.Exists(smallThumbPath))
           {
             // No Album thumb found - create one.
             string sharefolderThumb;
-            bool scanNow = false;
+            bool foundThumb = false;
 
             if (_useAllImages)
             {
@@ -1243,67 +1249,122 @@ namespace MediaPortal.Music.Database
               else
               {
                 _previousNegHitDir = string.Empty;
-                scanNow = true;
+                foundThumb = true;
               }
             }
             else
             {
               sharefolderThumb = Util.Utils.GetFolderThumb(tag.FileName);
               if (System.IO.File.Exists(sharefolderThumb))
-                scanNow = true;
+                foundThumb = true;
             }
 
-            if (scanNow)
+            if (foundThumb)
             {
               if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
                 Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
               if (!MediaPortal.Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
                 Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
-
-              CreateFolderThumbs(tag.FileName, smallThumbPath);
             }
           }
-          else
-          {
-            // Album thumb found - nevertheless we'll make sure there's a folder cache for it.
-            CreateFolderThumbs(tag.FileName, smallThumbPath);
-          }
+
         }
       }
-      else
-        // create the local folder thumb cache / and folder.jpg itself if not present
-        if (_createMissingFolderThumbs)
-          CreateFolderThumbs(tag.FileName, smallThumbPath);
+
     }
 
-    private void CreateFolderThumbs(string strSongPath, string strSmallThumb)
-    {
-      if (File.Exists(strSmallThumb) && !string.IsNullOrEmpty(strSongPath))
-      {
-        string folderThumb = Util.Utils.GetFolderThumb(strSongPath);
-        string localFolderThumb = Util.Utils.GetLocalFolderThumb(strSongPath);
-        string localFolderLThumb = localFolderThumb;
-        localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderLThumb);
+    //private void CreateAlbumThumbs(string strSongPath, string aThumbLocation)
+    //{
+    //  if (File.Exists(aThumbLocation) && !string.IsNullOrEmpty(strSongPath))
+    //  {
+    //    string folderThumb = Util.Utils.GetFolderThumb(strSongPath);
+    //    string localFolderThumb = Util.Utils.GetLocalFolderThumb(strSongPath);
+    //    string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderThumb);
 
+    //    try
+    //    {
+    //      if (!System.IO.File.Exists(folderThumb))
+    //      {
+    //        if (_createMissingFolderThumbs)
+    //          Util.Picture.CreateThumbnail(aThumbLocation, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+    //      }
+
+    //      if (!File.Exists(localFolderThumb))
+    //        Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+    //      if (!File.Exists(localFolderLThumb))
+    //      {
+    //        Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+    //      }
+    //    }
+    //    catch (Exception ex1)
+    //    {
+    //      Log.Warn("MusicDatabase: could not create folder thumb for {0} - {1}", strSongPath, ex1.Message);
+    //    }
+    //  }
+    //}
+
+    private void CreateFolderThumbs(int aProgressStart, int aProgressEnd, ArrayList aShareList)
+    {
+      DatabaseReorgEventArgs MyFolderArgs = new DatabaseReorgEventArgs();
+      foreach (string sharePath in aShareList)
+      {
         try
         {
-          // we've embedded art but no folder.jpg --> copy the large one for cache and create a small cache thumb
-          if (!System.IO.File.Exists(folderThumb))
-          {
-            if (_createMissingFolderThumbs)
-              Util.Picture.CreateThumbnail(strSmallThumb, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-          }
+          string[] coverFiles = Directory.GetFiles(sharePath, @"folder.jpg", SearchOption.AllDirectories);
 
-          if (!File.Exists(localFolderThumb))
-            Util.Picture.CreateThumbnail(folderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-          if (!File.Exists(localFolderLThumb))
+          for (int i = 0 ; i < coverFiles.Length ; i++)
           {
-            Util.Picture.CreateThumbnail(folderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+            string coverPath = coverFiles[i];
+            try
+            {
+              //string displayPath = Path.GetDirectoryName(coverPath);
+              //displayPath = displayPath.Remove(0, displayPath.LastIndexOf('\\'));
+              MyFolderArgs.phase = string.Format("Creating folder thumbs: {0}/{1}", Convert.ToString(i + 1), Convert.ToString(coverFiles.Length));
+              // range = 80-89
+              int folderProgress = aProgressStart + (((i + 1) / coverFiles.Length) * (aProgressEnd - aProgressStart));
+              MyFolderArgs.progress = folderProgress;
+              OnDatabaseReorgChanged(MyFolderArgs);
+
+              bool foundCover = false;
+              string sharefolderThumb;
+              // We add the slash to be able to use TryEverythingToGetFolderThumbByFilename and GetLocalFolderThumb
+              string currentPath = string.Format("{0}\\", Path.GetDirectoryName(coverPath));
+              string localFolderThumb = Util.Utils.GetLocalFolderThumb(currentPath);
+              string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderThumb);
+
+              if (_useAllImages)
+              {
+                sharefolderThumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(currentPath);
+                if (string.IsNullOrEmpty(sharefolderThumb))
+                  Log.Debug("MusicDatabase: No useable folder images found in {0}", currentPath);
+                else
+                  foundCover = true;
+              }
+              else
+              {
+                sharefolderThumb = Util.Utils.GetFolderThumb(currentPath);
+                if (File.Exists(sharefolderThumb))
+                  foundCover = true;
+              }
+
+              if (foundCover)
+              {
+                if (!Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                  Log.Info("MusicDatabase: Could not create folder thumb from folder {0}", sharePath);
+                if (!Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                  Log.Info("MusicDatabase: Could not create large folder thumb from folder {0}", sharePath);
+              }
+            }
+            catch (Exception ex2)
+            {
+              Log.Error("MusicDatabase: Error creating folder thumb of {0} - {1}", coverPath, ex2.Message);
+            }
+
           }
         }
-        catch (Exception ex1)
+        catch (Exception ex)
         {
-          Log.Warn("Database: could not create folder thumb for {0} - {1}", strSongPath, ex1.Message);
+          Log.Error("MusicDatabase: Error creating folder thumbs - {0}", ex.Message);
         }
       }
     }
@@ -1323,8 +1384,8 @@ namespace MediaPortal.Music.Database
           if (!string.IsNullOrEmpty(curArtist) && curArtist != "unknown")
           {
             MyArtistArgs.phase = string.Format("Creating artist preview thumbs: {1}/{2} - {0}", curArtist, Convert.ToString(i + 1), Convert.ToString(allArtists.Count));
-            // range = 80-90
-            int artistProgress = aProgressStart + (((i + 1) / allArtists.Count) * (aProgressEnd-aProgressStart));
+            // range = 80-89
+            int artistProgress = aProgressStart + (((i + 1) / allArtists.Count) * (aProgressEnd - aProgressStart));
             MyArtistArgs.progress = artistProgress;
             OnDatabaseReorgChanged(MyArtistArgs);
 
@@ -1593,7 +1654,7 @@ namespace MediaPortal.Music.Database
               {
                 BeginTransaction();
                 // We might have changed a Top directory, so we get a lot of path entries returned
-                for (int rownum = 0; rownum < results.Rows.Count; rownum++)
+                for (int rownum = 0 ; rownum < results.Rows.Count ; rownum++)
                 {
                   int idTrack = DatabaseUtility.GetAsInt(results, rownum, "tracks.idTrack");
                   string strTmpPath = DatabaseUtility.Get(results, rownum, "tracks.strPath");
@@ -1809,7 +1870,7 @@ namespace MediaPortal.Music.Database
 
       if (results.Rows.Count != 0)
       {
-        for (int i = 0; i < results.Rows.Count; i++)
+        for (int i = 0 ; i < results.Rows.Count ; i++)
           scrobbleUsers.Add(DatabaseUtility.Get(results, i, "strUsername"));
       }
       // what else?

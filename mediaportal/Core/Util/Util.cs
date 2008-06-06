@@ -1778,8 +1778,8 @@ namespace MediaPortal.Util
 
     public static string GetLocalFolderThumb(string strFile)
     {
-      if (strFile == null) return string.Empty;
-      if (strFile.Length == 0) return string.Empty;
+      if (string.IsNullOrEmpty(strFile))
+        return string.Empty;
 
       string strPath, strFileName;
       Utils.Split(strFile, out strPath, out strFileName);
