@@ -2969,8 +2969,8 @@ namespace TvPlugin
         foreach (ChannelGroup group in groups)
         {
           //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
-          if ((!hideAllChannelsGroup) || group.GroupName.Equals("All Channels"))
-            m_groups.Add(group);
+          if (hideAllChannelsGroup && group.GroupName.Equals("All Channels")) continue;
+          m_groups.Add(group);
         }
         MediaPortal.GUI.Library.Log.Info("loaded {0} tv groups", m_groups.Count);
 
