@@ -1090,11 +1090,11 @@ namespace MediaPortal.GUI.TV
       {
         hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
       }
-
+      
+      TVDatabase.GetChannels(ref channels); // Load all channels
       if (!hideAllChannelsGroup)
       {
         // Add a group containing all channels
-        TVDatabase.GetChannels(ref channels); // Load all channels
         TVGroup tvgroup = new TVGroup();
         tvgroup.GroupName = GUILocalizeStrings.Get(972); //all channels
         foreach (TVChannel channel in channels) tvgroup.TvChannels.Add(channel);
