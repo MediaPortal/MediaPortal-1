@@ -79,6 +79,18 @@ namespace SetupTv.Sections
       base.OnSectionActivated();
       Init();
       InitMapping();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      cbHideAllChannels.Checked = (layer.GetSetting("hideGroupAllChannles", "no").Value == "yes");
+    }
+
+    public override void OnSectionDeActivated()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting s = layer.GetSetting("hideGroupAllChannles", "no");
+      if (cbHideAllChannels.Checked) s.Value = "yes";
+      else s.Value = "no";
+      s.Persist();
+      base.OnSectionDeActivated();
     }
 
     private void Init()
@@ -495,5 +507,6 @@ namespace SetupTv.Sections
     {
       mpButtonUnmap_Click(sender, null);
     }
+
   }
 }

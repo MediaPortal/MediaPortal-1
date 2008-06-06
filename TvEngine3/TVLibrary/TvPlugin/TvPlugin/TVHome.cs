@@ -2880,11 +2880,11 @@ namespace TvPlugin
         Gentle.Framework.ProviderFactory.ResetGentle(true);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
         MediaPortal.GUI.Library.Log.Info("get channels from database");
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
         sb.AddConstraint(Operator.Equals, "isTv", 1);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
-        channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+        channels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
         MediaPortal.GUI.Library.Log.Info("found:{0} tv channels", channels.Count);
         TvNotifyManager.OnNotifiesChanged();
         m_groups.Clear();
@@ -2911,11 +2911,21 @@ namespace TvPlugin
 
         MediaPortal.GUI.Library.Log.Info("get all groups from database");
         bool found = false;
-        sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
+        sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
         sb.AddOrderByField(true, "groupName");
         stmt = sb.GetStatement(true);
-        IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
+        IList groups = ObjectFactory.GetCollection(typeof (ChannelGroup), stmt.Execute());
         IList allgroupMaps = GroupMap.ListAll();
+
+        bool hideAllChannelsGroup = false;
+        using (
+          MediaPortal.Profile.Settings xmlreader =
+            new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+        }
+
+
         found = false;
         foreach (ChannelGroup group in groups)
         {
@@ -2938,7 +2948,6 @@ namespace TvPlugin
               if (!groupContainsChannel)
               {
                 layer.AddChannelToGroup(channel, "All Channels");
-
               }
             }
             break;
@@ -2955,11 +2964,13 @@ namespace TvPlugin
           MediaPortal.GUI.Library.Log.Info(" group:{0} created", "All Channels");
         }
 
+
         groups = ChannelGroup.ListAll();
         foreach (ChannelGroup group in groups)
         {
           //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
-          m_groups.Add(group);
+          if ((!hideAllChannelsGroup) || group.GroupName.Equals("All Channels"))
+            m_groups.Add(group);
         }
         MediaPortal.GUI.Library.Log.Info("loaded {0} tv groups", m_groups.Count);
 
@@ -2971,6 +2982,7 @@ namespace TvPlugin
         //TVHome.Connected = false;
       }
     }
+
     #endregion
 
     #region Public properties
