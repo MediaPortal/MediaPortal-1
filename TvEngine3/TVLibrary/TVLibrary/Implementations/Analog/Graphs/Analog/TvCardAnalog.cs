@@ -736,7 +736,7 @@ namespace TvLibrary.Implementations.Analog
         }
         //add the mpeg-2 demultiplexer filter
         AddMpeg2Demultiplexer();
-        SetupCaptureFormat();
+        //SetupCaptureFormat();
         Log.Log.WriteFile("analog: Check quality control");
         _qualityControl = QualityControlFactory.createQualityControl(_configuration, _filterVideoEncoder, _filterCapture, _filterMultiplexer, _filterVideoCompressor);
         if (_qualityControl == null)
