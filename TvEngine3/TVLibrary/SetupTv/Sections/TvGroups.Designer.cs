@@ -55,7 +55,6 @@ namespace SetupTv.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxGroup = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbHideAllChannels = new System.Windows.Forms.CheckBox();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -78,7 +77,6 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
-      this.tabPage1.Controls.Add(this.cbHideAllChannels);
       this.tabPage1.Controls.Add(this.mpButtonRenameGroup);
       this.tabPage1.Controls.Add(this.buttonDown);
       this.tabPage1.Controls.Add(this.buttonUtp);
@@ -160,9 +158,9 @@ namespace SetupTv.Sections
       this.mpListViewGroups.FullRowSelect = true;
       this.mpListViewGroups.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewGroups.HideSelection = false;
-      this.mpListViewGroups.Location = new System.Drawing.Point(17, 32);
+      this.mpListViewGroups.Location = new System.Drawing.Point(17, 6);
       this.mpListViewGroups.Name = "mpListViewGroups";
-      this.mpListViewGroups.Size = new System.Drawing.Size(417, 266);
+      this.mpListViewGroups.Size = new System.Drawing.Size(417, 292);
       this.mpListViewGroups.TabIndex = 0;
       this.mpListViewGroups.UseCompatibleStateImageBehavior = false;
       this.mpListViewGroups.View = System.Windows.Forms.View.Details;
@@ -362,16 +360,6 @@ namespace SetupTv.Sections
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Group name:";
       // 
-      // cbHideAllChannels
-      // 
-      this.cbHideAllChannels.AutoSize = true;
-      this.cbHideAllChannels.Location = new System.Drawing.Point(23, 9);
-      this.cbHideAllChannels.Name = "cbHideAllChannels";
-      this.cbHideAllChannels.Size = new System.Drawing.Size(119, 17);
-      this.cbHideAllChannels.TabIndex = 8;
-      this.cbHideAllChannels.Text = "Hide \"All Channels\"";
-      this.cbHideAllChannels.UseVisualStyleBackColor = true;
-      // 
       // TvGroups
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -381,7 +369,6 @@ namespace SetupTv.Sections
       this.Size = new System.Drawing.Size(467, 388);
       this.mpTabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.tabPage2.PerformLayout();
       this.ResumeLayout(false);
@@ -415,6 +402,5 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader3;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbVisibleChannels;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbFtaChannels;
-    private System.Windows.Forms.CheckBox cbHideAllChannels;
   }
 }
