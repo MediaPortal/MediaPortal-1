@@ -371,7 +371,6 @@ namespace SetupTv.Sections
       this.cbHideAllChannels.TabIndex = 8;
       this.cbHideAllChannels.Text = "Hide \"All Channels\"";
       this.cbHideAllChannels.UseVisualStyleBackColor = true;
-      this.cbHideAllChannels.CheckedChanged += new System.EventHandler(this.cbHideAllChannels_CheckedChanged);
       // 
       // TvGroups
       // 
