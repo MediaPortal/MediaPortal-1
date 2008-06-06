@@ -66,6 +66,7 @@ namespace MediaPortal.Configuration.Sections
     private bool _itemsModified = false;
     private ListViewColumnSorter _columnSorter;
     private static bool _reloadList = false;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbHideAllChannels;
     private static bool _providerInit = false;
 
     public TVGroups()
@@ -132,6 +133,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeaderTvChannelsInGroup = new System.Windows.Forms.ColumnHeader();
       this.labelTvChannelGroup = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxTvChannelGroups = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.cbHideAllChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlTvGroups.SuspendLayout();
       this.tabPageTvChannelGroups.SuspendLayout();
       this.tabPageMapChannels.SuspendLayout();
@@ -153,6 +155,7 @@ namespace MediaPortal.Configuration.Sections
       // tabPageTvChannelGroups
       // 
       this.tabPageTvChannelGroups.AutoScroll = true;
+      this.tabPageTvChannelGroups.Controls.Add(this.cbHideAllChannels);
       this.tabPageTvChannelGroups.Controls.Add(this.buttonGroupDown);
       this.tabPageTvChannelGroups.Controls.Add(this.buttonGroupUp);
       this.tabPageTvChannelGroups.Controls.Add(this.buttonEditGroup);
@@ -169,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonGroupDown
       // 
       this.buttonGroupDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonGroupDown.Location = new System.Drawing.Point(376, 348);
+      this.buttonGroupDown.Location = new System.Drawing.Point(16, 350);
       this.buttonGroupDown.Name = "buttonGroupDown";
       this.buttonGroupDown.Size = new System.Drawing.Size(72, 22);
       this.buttonGroupDown.TabIndex = 5;
@@ -180,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonGroupUp
       // 
       this.buttonGroupUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonGroupUp.Location = new System.Drawing.Point(296, 348);
+      this.buttonGroupUp.Location = new System.Drawing.Point(16, 322);
       this.buttonGroupUp.Name = "buttonGroupUp";
       this.buttonGroupUp.Size = new System.Drawing.Size(72, 22);
       this.buttonGroupUp.TabIndex = 4;
@@ -191,7 +194,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonEditGroup
       // 
       this.buttonEditGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonEditGroup.Location = new System.Drawing.Point(216, 348);
+      this.buttonEditGroup.Location = new System.Drawing.Point(376, 335);
       this.buttonEditGroup.Name = "buttonEditGroup";
       this.buttonEditGroup.Size = new System.Drawing.Size(72, 22);
       this.buttonEditGroup.TabIndex = 3;
@@ -202,7 +205,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonDeleteGroup
       // 
       this.buttonDeleteGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDeleteGroup.Location = new System.Drawing.Point(136, 348);
+      this.buttonDeleteGroup.Location = new System.Drawing.Point(288, 335);
       this.buttonDeleteGroup.Name = "buttonDeleteGroup";
       this.buttonDeleteGroup.Size = new System.Drawing.Size(72, 22);
       this.buttonDeleteGroup.TabIndex = 2;
@@ -213,7 +216,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonAddGroup
       // 
       this.buttonAddGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonAddGroup.Location = new System.Drawing.Point(56, 348);
+      this.buttonAddGroup.Location = new System.Drawing.Point(195, 335);
       this.buttonAddGroup.Name = "buttonAddGroup";
       this.buttonAddGroup.Size = new System.Drawing.Size(72, 22);
       this.buttonAddGroup.TabIndex = 1;
@@ -233,14 +236,14 @@ namespace MediaPortal.Configuration.Sections
             this.columnHeaderPincode});
       this.listViewGroups.FullRowSelect = true;
       this.listViewGroups.HideSelection = false;
-      this.listViewGroups.Location = new System.Drawing.Point(16, 16);
+      this.listViewGroups.Location = new System.Drawing.Point(16, 44);
       this.listViewGroups.Name = "listViewGroups";
-      this.listViewGroups.Size = new System.Drawing.Size(432, 320);
+      this.listViewGroups.Size = new System.Drawing.Size(432, 260);
       this.listViewGroups.TabIndex = 0;
       this.listViewGroups.UseCompatibleStateImageBehavior = false;
       this.listViewGroups.View = System.Windows.Forms.View.Details;
-      this.listViewGroups.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewGroups_DragDrop);
       this.listViewGroups.DoubleClick += new System.EventHandler(this.listViewGroups_DoubleClick);
+      this.listViewGroups.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewGroups_DragDrop);
       this.listViewGroups.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewGroups_ColumnClick);
       // 
       // columnHeaderGroupName
@@ -370,8 +373,8 @@ namespace MediaPortal.Configuration.Sections
       this.listViewTVChannelsInGroup.TabIndex = 6;
       this.listViewTVChannelsInGroup.UseCompatibleStateImageBehavior = false;
       this.listViewTVChannelsInGroup.View = System.Windows.Forms.View.Details;
-      this.listViewTVChannelsInGroup.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewTVChannelsInGroup_DragDrop);
       this.listViewTVChannelsInGroup.DoubleClick += new System.EventHandler(this.listViewTVChannelsInGroup_DoubleClick);
+      this.listViewTVChannelsInGroup.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewTVChannelsInGroup_DragDrop);
       this.listViewTVChannelsInGroup.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTVChannelsInGroup_ColumnClick);
       // 
       // columnHeaderTvChannelsInGroup
@@ -392,6 +395,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxTvChannelGroups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxTvChannelGroups.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxTvChannelGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxTvChannelGroups.Location = new System.Drawing.Point(160, 20);
       this.comboBoxTvChannelGroups.Name = "comboBoxTvChannelGroups";
@@ -399,13 +403,25 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxTvChannelGroups.TabIndex = 1;
       this.comboBoxTvChannelGroups.SelectedIndexChanged += new System.EventHandler(this.comboBoxTvChannelGroups_SelectedIndexChanged);
       // 
-      // SectionTvGroups
+      // cbHideAllChannels
+      // 
+      this.cbHideAllChannels.AutoSize = true;
+      this.cbHideAllChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbHideAllChannels.Location = new System.Drawing.Point(21, 15);
+      this.cbHideAllChannels.Name = "cbHideAllChannels";
+      this.cbHideAllChannels.Size = new System.Drawing.Size(149, 17);
+      this.cbHideAllChannels.TabIndex = 6;
+      this.cbHideAllChannels.Text = "Hide \"All Channels\" Group";
+      this.cbHideAllChannels.UseVisualStyleBackColor = true;
+      // 
+      // TVGroups
       // 
       this.Controls.Add(this.tabControlTvGroups);
-      this.Name = "SectionTvGroups";
+      this.Name = "TVGroups";
       this.Size = new System.Drawing.Size(472, 408);
       this.tabControlTvGroups.ResumeLayout(false);
       this.tabPageTvChannelGroups.ResumeLayout(false);
+      this.tabPageTvChannelGroups.PerformLayout();
       this.tabPageMapChannels.ResumeLayout(false);
       this.tabPageMapChannels.PerformLayout();
       this.ResumeLayout(false);
@@ -415,11 +431,19 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+      }
       LoadGroups();
     }
 
     public override void SaveSettings()
     {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
+      }
       if (_reloadList)
       {
         LoadGroups();

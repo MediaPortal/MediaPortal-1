@@ -40,7 +40,9 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.Configuration;
 using System.Threading;
+using Config=MediaPortal.Configuration.Config;
 
 namespace MediaPortal.GUI.TV
 {
@@ -1063,6 +1065,7 @@ namespace MediaPortal.GUI.TV
     private TVChannel m_currentTvChannel = null;
     private List<TVChannel> channels = new List<TVChannel>();
     private bool reentrant = false;
+
     #endregion
 
 
@@ -1082,14 +1085,21 @@ namespace MediaPortal.GUI.TV
       TVDatabase.GetGroups(ref groups); // Put groups in a local variable to ensure the "All" group is first always
 
       channels.Clear();
+      bool hideAllChannelsGroup = false;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+      }
 
-      // Add a group containing all channels
-      TVDatabase.GetChannels(ref channels); // Load all channels
-      TVGroup tvgroup = new TVGroup();
-      tvgroup.GroupName = GUILocalizeStrings.Get(972); //all channels
-      foreach (TVChannel channel in channels)
-        tvgroup.TvChannels.Add(channel);
-      m_groups.Add(tvgroup);
+      if (!hideAllChannelsGroup)
+      {
+        // Add a group containing all channels
+        TVDatabase.GetChannels(ref channels); // Load all channels
+        TVGroup tvgroup = new TVGroup();
+        tvgroup.GroupName = GUILocalizeStrings.Get(972); //all channels
+        foreach (TVChannel channel in channels) tvgroup.TvChannels.Add(channel);
+        m_groups.Add(tvgroup);
+      }
 
       m_groups.AddRange(groups); // Add rest of the groups to the end of the list
 

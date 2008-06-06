@@ -53,6 +53,8 @@ namespace MediaPortal.Configuration.Sections
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
 		private ColumnHeader columnHeader4;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox5;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbHideAllChannels;
 		private ColumnHeader columnHeader3;    
 		
     #endregion
@@ -86,6 +88,7 @@ namespace MediaPortal.Configuration.Sections
 
 				mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
 				mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
+        cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
       }
 
       if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
@@ -225,29 +228,29 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string prefLangs = "";
-        xmlreader.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
-        xmlreader.SetValueAsBool("tvservice", "preferac3", mpCheckBoxPrefAC3.Checked);
-        xmlreader.SetValueAsBool("tvservice", "preferAudioTypeOverLang", mpCheckBoxPrefAudioOverLang.Checked);
+        xmlwriter.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
+        xmlwriter.SetValueAsBool("tvservice", "preferac3", mpCheckBoxPrefAC3.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "preferAudioTypeOverLang", mpCheckBoxPrefAudioOverLang.Checked);
 
-				xmlreader.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
-				xmlreader.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
-				        
-				
+				xmlwriter.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
+				xmlwriter.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
+        xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
+  
         foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
         {        
 					prefLangs += (string)item.Tag + ";";
         }
-				xmlreader.SetValue("tvservice", "preferredaudiolanguages", prefLangs);
+				xmlwriter.SetValue("tvservice", "preferredaudiolanguages", prefLangs);
 
 				prefLangs = "";
 				foreach (ListViewItem item in mpListViewPreferredSubLang.Items)
 				{					
 					prefLangs += (string)item.Tag + ";";
 				}
-				xmlreader.SetValue("tvservice", "preferredsublanguages", prefLangs);
+				xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
 				
       }
     }
@@ -289,6 +292,8 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.mpListViewAvailSubLang = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.mpGroupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbHideAllChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
@@ -298,6 +303,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageSubtitles.SuspendLayout();
       this.mpGroupBox4.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
+      this.mpGroupBox5.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpGroupBox2
@@ -380,6 +386,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageGeneralSettings
       // 
+      this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox5);
       this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox2);
       this.tabPageGeneralSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageGeneralSettings.Name = "tabPageGeneralSettings";
@@ -694,6 +701,28 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader3.Text = "Language";
       this.columnHeader3.Width = 150;
       // 
+      // mpGroupBox5
+      // 
+      this.mpGroupBox5.Controls.Add(this.cbHideAllChannels);
+      this.mpGroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox5.Location = new System.Drawing.Point(16, 91);
+      this.mpGroupBox5.Name = "mpGroupBox5";
+      this.mpGroupBox5.Size = new System.Drawing.Size(432, 53);
+      this.mpGroupBox5.TabIndex = 11;
+      this.mpGroupBox5.TabStop = false;
+      this.mpGroupBox5.Text = "TV-Group";
+      // 
+      // cbHideAllChannels
+      // 
+      this.cbHideAllChannels.AutoSize = true;
+      this.cbHideAllChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbHideAllChannels.Location = new System.Drawing.Point(22, 19);
+      this.cbHideAllChannels.Name = "cbHideAllChannels";
+      this.cbHideAllChannels.Size = new System.Drawing.Size(149, 17);
+      this.cbHideAllChannels.TabIndex = 0;
+      this.cbHideAllChannels.Text = "Hide \"All Channels\" Group";
+      this.cbHideAllChannels.UseVisualStyleBackColor = true;
+      // 
       // TVClient
       // 
       this.Controls.Add(this.tabControlTVGeneral);
@@ -713,6 +742,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox4.PerformLayout();
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
+      this.mpGroupBox5.ResumeLayout(false);
+      this.mpGroupBox5.PerformLayout();
       this.ResumeLayout(false);
 
     }
