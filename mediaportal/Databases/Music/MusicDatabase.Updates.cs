@@ -90,6 +90,7 @@ namespace MediaPortal.Music.Database
 
     private string _previousDirectory = null;
     private string _previousNegHitDir = null;
+    private string _previousPosHitDir = null;
     private MusicTag _previousMusicTag = null;
     private bool _foundVariousArtist = false;
 
@@ -1183,11 +1184,12 @@ namespace MediaPortal.Music.Database
       string smallThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
       string largeThumbPath = Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
 
-      if (tag.CoverArtImageBytes != null)
+      // Get the cover image directly out of the mp3 file's ID3 tag
+      if (_extractEmbededCoverArt)
       {
-        if (_extractEmbededCoverArt)
+        try
         {
-          try
+          if (tag.CoverArtImageBytes != null)
           {
             bool extractFile = false;
             if (!System.IO.File.Exists(smallThumbPath))
@@ -1222,20 +1224,21 @@ namespace MediaPortal.Music.Database
               }
             }
           }
-          catch (Exception) { }
         }
+        catch (Exception) { }
       }
 
-      // no mp3 coverart - use folder art if present to get an album thumb
-      if (_useFolderThumbs)
+      // Scan folders only one time per song
+      if (string.IsNullOrEmpty(_previousNegHitDir) || (Path.GetDirectoryName(tag.FileName) != _previousNegHitDir))
       {
-        // Scan folders only one time per song
-        if (string.IsNullOrEmpty(_previousNegHitDir) || (Path.GetDirectoryName(tag.FileName) != _previousNegHitDir))
+        string sharefolderThumb;
+        // no mp3 coverart - use folder art if present to get an album thumb
+        if (_useFolderThumbs)
         {
+          // Do not overwrite covers extracted from mp3 files.
           if (!File.Exists(smallThumbPath))
           {
-            // No Album thumb found - create one.
-            string sharefolderThumb;
+            // No Album thumb found - create one.            
             bool foundThumb = false;
 
             if (_useAllImages)
@@ -1268,6 +1271,24 @@ namespace MediaPortal.Music.Database
             }
           }
 
+        }
+
+        // MP has an album cover in the thumb cache (maybe downloaded from last.fm) but no folder.jpg in the shares - create it
+        if (_createMissingFolderThumbs)
+        {
+          if (string.IsNullOrEmpty(_previousPosHitDir) || (Path.GetDirectoryName(tag.FileName) != _previousPosHitDir))
+          {
+            sharefolderThumb = Util.Utils.GetFolderThumb(tag.FileName);
+            if (!File.Exists(sharefolderThumb))
+            {
+              if (File.Exists(smallThumbPath))
+              {
+                _previousPosHitDir = Path.GetDirectoryName(tag.FileName);
+                FolderThumbCreator newThumb = new FolderThumbCreator(tag.FileName, tag);
+                System.Threading.Thread.Sleep(0);
+              }
+            }
+          }
         }
       }
 

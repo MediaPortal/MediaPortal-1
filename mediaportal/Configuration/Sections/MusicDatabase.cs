@@ -290,7 +290,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCreateFolderThumb.TabIndex = 9;
       this.checkBoxCreateFolderThumb.Text = "create missing folder.jpg";
       this.checkBoxCreateFolderThumb.UseVisualStyleBackColor = true;
-      this.checkBoxCreateFolderThumb.Visible = false;
       // 
       // checkBoxCreateArtist
       // 
