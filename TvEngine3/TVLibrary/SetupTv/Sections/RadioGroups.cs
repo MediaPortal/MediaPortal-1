@@ -94,6 +94,15 @@ namespace SetupTv.Sections
 
     private void mpButtonDeleteGroup_Click(object sender, EventArgs e)
     {
+      string holder = String.Format("Are you sure you want to delete this group?");
+      if (mpListViewGroups.SelectedItems.Count > 1)
+      {
+        holder = String.Format("Are you sure you want to delete these groups?");
+      }
+      if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
+      {
+        return;
+      }
       foreach (ListViewItem item in mpListViewGroups.SelectedItems)
       {
         RadioChannelGroup group = (RadioChannelGroup)item.Tag;
@@ -204,6 +213,10 @@ namespace SetupTv.Sections
 
     private void mpButtonMap_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Mapping selected channels to group...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
+
       ComboGroup g = (ComboGroup)mpComboBoxGroup.SelectedItem;
 
       mpListViewChannels.BeginUpdate();
@@ -226,12 +239,17 @@ namespace SetupTv.Sections
       mpListViewMapped.Sort();
       mpListViewChannels.Sort();
       ReOrderMap();
+      dlg.Close();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
     }
 
     private void mpButtonUnmap_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Unmapping selected channels to group...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
+
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
       ListView.SelectedListViewItemCollection selectedItems = mpListViewMapped.SelectedItems;
@@ -253,6 +271,7 @@ namespace SetupTv.Sections
       }
       mpListViewMapped.Sort();
       mpListViewChannels.Sort();
+      dlg.Close();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
     }

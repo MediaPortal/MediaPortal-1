@@ -126,12 +126,25 @@ namespace SetupTv.Sections
 
     private void mpButtonDel_Click(object sender, EventArgs e)
     {
+      if (listView1.SelectedItems.Count > 0)
+      {
+        string holder = String.Format("Are you sure you want to remove these {0:d} channels?", listView1.SelectedItems.Count);
+
+        if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
+        {
+          return;
+        }
+      }
+
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0) return;
+      NotifyForm dlg = new NotifyForm("Removing tv channels from group...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
-        if (index > 0 && index + 1 < listView1.Items.Count)
+        if (index >= 0 && index < listView1.Items.Count)
         {
           ListViewItem item = listView1.Items[index];
           listView1.Items.RemoveAt(index);
@@ -139,6 +152,7 @@ namespace SetupTv.Sections
           map.Remove();
         }
       }
+      dlg.Close();
       ReOrder();
     }
 
@@ -149,12 +163,26 @@ namespace SetupTv.Sections
 
     private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      if (listView1.SelectedItems.Count > 0)
+      {
+        string holder = String.Format("Are you sure you want to delete these {0:d} channels?", listView1.SelectedItems.Count);
+
+        if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
+        {
+          return;
+        }
+      }
+
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0) return;
+
+      NotifyForm dlg = new NotifyForm("Deleting selected tv channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
-        if (index > 0 && index + 1 < listView1.Items.Count)
+        if (index >= 0 && index < listView1.Items.Count)
         {
           ListViewItem item = listView1.Items[index];
           listView1.Items.RemoveAt(index);
@@ -163,14 +191,26 @@ namespace SetupTv.Sections
           channel.Delete();
         }
       }
+      dlg.Close();
       ReOrder();
       OnActivated();
     }
 
     private void removeEntireGroupToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      string holder = String.Format("Are you sure you want to delete this group?");
+
+      if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
+      {
+        return;
+      }
+      NotifyForm dlg = new NotifyForm("Removing entire group...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
+
       Group.Delete();
       Group = null;
+      dlg.Close();
       OnActivated();
 
     }
@@ -182,7 +222,7 @@ namespace SetupTv.Sections
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
-        if (index > 0 && index + 1 < listView1.Items.Count)
+        if (index >= 0 && index < listView1.Items.Count)
         {
           ListViewItem item = listView1.Items[index];
           GroupMap map = (GroupMap)item.Tag;
@@ -214,8 +254,7 @@ namespace SetupTv.Sections
         listView1.Items.Insert(newIndex, item);
         ReOrder();
         e.CancelEdit = true;
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
     }

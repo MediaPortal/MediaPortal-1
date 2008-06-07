@@ -93,7 +93,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonRenameGroup
       // 
-      this.mpButtonRenameGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonRenameGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonRenameGroup.Location = new System.Drawing.Point(272, 314);
       this.mpButtonRenameGroup.Name = "mpButtonRenameGroup";
       this.mpButtonRenameGroup.Size = new System.Drawing.Size(75, 23);
@@ -126,7 +126,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonAddGroup
       // 
-      this.mpButtonAddGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonAddGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonAddGroup.Location = new System.Drawing.Point(181, 314);
       this.mpButtonAddGroup.Name = "mpButtonAddGroup";
       this.mpButtonAddGroup.Size = new System.Drawing.Size(75, 23);
@@ -137,7 +137,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonDeleteGroup
       // 
-      this.mpButtonDeleteGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonDeleteGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonDeleteGroup.Location = new System.Drawing.Point(359, 314);
       this.mpButtonDeleteGroup.Name = "mpButtonDeleteGroup";
       this.mpButtonDeleteGroup.Size = new System.Drawing.Size(75, 23);
@@ -245,9 +245,9 @@ namespace SetupTv.Sections
       // 
       this.mpButtonUnmap.Location = new System.Drawing.Point(200, 113);
       this.mpButtonUnmap.Name = "mpButtonUnmap";
-      this.mpButtonUnmap.Size = new System.Drawing.Size(42, 23);
+      this.mpButtonUnmap.Size = new System.Drawing.Size(43, 23);
       this.mpButtonUnmap.TabIndex = 15;
-      this.mpButtonUnmap.Text = "<";
+      this.mpButtonUnmap.Text = "<<";
       this.mpButtonUnmap.UseVisualStyleBackColor = true;
       this.mpButtonUnmap.Click += new System.EventHandler(this.mpButtonUnmap_Click);
       // 
@@ -255,9 +255,9 @@ namespace SetupTv.Sections
       // 
       this.mpButtonMap.Location = new System.Drawing.Point(200, 84);
       this.mpButtonMap.Name = "mpButtonMap";
-      this.mpButtonMap.Size = new System.Drawing.Size(42, 23);
+      this.mpButtonMap.Size = new System.Drawing.Size(43, 23);
       this.mpButtonMap.TabIndex = 14;
-      this.mpButtonMap.Text = ">";
+      this.mpButtonMap.Text = ">>";
       this.mpButtonMap.UseVisualStyleBackColor = true;
       this.mpButtonMap.Click += new System.EventHandler(this.mpButtonMap_Click);
       // 

@@ -63,14 +63,14 @@ namespace SetupTv.Sections
       this.listView1.LargeImageList = this.imageList1;
       this.listView1.Location = new System.Drawing.Point(0, 0);
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(457, 313);
+      this.listView1.Size = new System.Drawing.Size(439, 295);
       this.listView1.SmallImageList = this.imageList1;
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
       this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
-      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
       this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
+      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
       this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
       // 
       // columnHeader1
@@ -128,7 +128,7 @@ namespace SetupTv.Sections
       // buttonDown
       // 
       this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.Location = new System.Drawing.Point(12, 343);
+      this.buttonDown.Location = new System.Drawing.Point(12, 325);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(44, 23);
       this.buttonDown.TabIndex = 2;
@@ -139,7 +139,7 @@ namespace SetupTv.Sections
       // buttonUtp
       // 
       this.buttonUtp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonUtp.Location = new System.Drawing.Point(12, 319);
+      this.buttonUtp.Location = new System.Drawing.Point(12, 301);
       this.buttonUtp.Name = "buttonUtp";
       this.buttonUtp.Size = new System.Drawing.Size(44, 23);
       this.buttonUtp.TabIndex = 1;
@@ -150,7 +150,7 @@ namespace SetupTv.Sections
       // mpButtonDel
       // 
       this.mpButtonDel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonDel.Location = new System.Drawing.Point(62, 319);
+      this.mpButtonDel.Location = new System.Drawing.Point(62, 301);
       this.mpButtonDel.Name = "mpButtonDel";
       this.mpButtonDel.Size = new System.Drawing.Size(116, 23);
       this.mpButtonDel.TabIndex = 3;
@@ -161,7 +161,7 @@ namespace SetupTv.Sections
       // mpButtonPreview
       // 
       this.mpButtonPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonPreview.Location = new System.Drawing.Point(184, 319);
+      this.mpButtonPreview.Location = new System.Drawing.Point(184, 301);
       this.mpButtonPreview.Name = "mpButtonPreview";
       this.mpButtonPreview.Size = new System.Drawing.Size(63, 23);
       this.mpButtonPreview.TabIndex = 4;
@@ -180,7 +180,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.buttonUtp);
       this.Controls.Add(this.listView1);
       this.Name = "ChannelsInRadioGroupControl";
-      this.Size = new System.Drawing.Size(457, 374);
+      this.Size = new System.Drawing.Size(439, 356);
       this.Load += new System.EventHandler(this.ChannelsInGroupControl_Load);
       this.contextMenuStrip1.ResumeLayout(false);
       this.ResumeLayout(false);

@@ -104,6 +104,7 @@ namespace SetupTv.Sections
       this.buttonSetWestLimit = new System.Windows.Forms.Button();
       this.buttonMoveEast = new System.Windows.Forms.Button();
       this.buttonMoveWest = new System.Windows.Forms.Button();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.checkBoxCreateGroupsSat = new System.Windows.Forms.CheckBox();
       this.button1 = new System.Windows.Forms.Button();
@@ -113,14 +114,13 @@ namespace SetupTv.Sections
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.tabControl1.SuspendLayout();
       this.tabPage3.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.tabPage2.SuspendLayout();
-      this.tabPage1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      this.tabPage1.SuspendLayout();
       this.SuspendLayout();
       // 
       // progressBarQuality
@@ -170,7 +170,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonScanTv.Location = new System.Drawing.Point(326, 359);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(107, 23);
@@ -248,6 +248,9 @@ namespace SetupTv.Sections
       // 
       // groupBox1
       // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label17);
       this.groupBox1.Controls.Add(this.label16);
       this.groupBox1.Controls.Add(this.label15);
@@ -608,6 +611,8 @@ namespace SetupTv.Sections
       // 
       // groupBox2
       // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.checkEnableDVBS2);
       this.groupBox2.Location = new System.Drawing.Point(6, 290);
       this.groupBox2.Name = "groupBox2";
@@ -960,6 +965,17 @@ namespace SetupTv.Sections
       this.buttonMoveWest.UseVisualStyleBackColor = true;
       this.buttonMoveWest.Click += new System.EventHandler(this.buttonMoveWest_Click);
       // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = global::SetupTv.Properties.Resources.animation_SatDish;
+      this.pictureBox1.InitialImage = null;
+      this.pictureBox1.Location = new System.Drawing.Point(363, 71);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(60, 60);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.pictureBox1.TabIndex = 50;
+      this.pictureBox1.TabStop = false;
+      // 
       // tabPage1
       // 
       this.tabPage1.Controls.Add(this.checkBoxCreateGroupsSat);
@@ -994,7 +1010,7 @@ namespace SetupTv.Sections
       // 
       // button1
       // 
-      this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.button1.Location = new System.Drawing.Point(207, 359);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(113, 23);
@@ -1044,17 +1060,6 @@ namespace SetupTv.Sections
       this.mpLabel1.TabIndex = 66;
       this.mpLabel1.Text = "DiSEqC:";
       // 
-      // pictureBox1
-      // 
-      this.pictureBox1.Image = global::SetupTv.Properties.Resources.animation_SatDish;
-      this.pictureBox1.InitialImage = null;
-      this.pictureBox1.Location = new System.Drawing.Point(363, 71);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(60, 60);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.pictureBox1.TabIndex = 50;
-      this.pictureBox1.TabStop = false;
-      // 
       // CardDvbS
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1072,9 +1077,9 @@ namespace SetupTv.Sections
       this.groupBox2.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.tabPage2.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 

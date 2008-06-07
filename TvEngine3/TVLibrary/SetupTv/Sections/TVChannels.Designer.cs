@@ -268,7 +268,7 @@ namespace SetupTv.Sections
       this.mpButtonExpert.TabIndex = 8;
       this.mpButtonExpert.Text = "Export";
       this.mpButtonExpert.UseVisualStyleBackColor = true;
-      this.mpButtonExpert.Click += new System.EventHandler(this.mpButtonExpert_Click);
+      this.mpButtonExpert.Click += new System.EventHandler(this.mpButtonExport_Click);
       // 
       // mpButtonImport
       // 

@@ -125,9 +125,21 @@ namespace SetupTv.Sections
         item.Tag = group;
         item.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
         addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
-        TabPage page = new TabPage(group.GroupName);				
-        page.Controls.Add(new ChannelsInRadioGroupControl());
+        TabPage page = new TabPage(group.GroupName);
+        page.SuspendLayout();
+        ChannelsInRadioGroupControl channelsInRadioGroupControl = new ChannelsInRadioGroupControl();
+        channelsInRadioGroupControl.Location = new System.Drawing.Point(9, 9);
+        channelsInRadioGroupControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+        page.Controls.Add(channelsInRadioGroupControl);
         page.Tag = group;
+        page.Location = new System.Drawing.Point(4, 22);
+        page.Padding = new System.Windows.Forms.Padding(3);
+        page.Size = new System.Drawing.Size(457, 374);
+        page.UseVisualStyleBackColor = true;
+        page.PerformLayout();
+        page.ResumeLayout(false);
         tabControl1.TabPages.Add(page);
       }
       ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
@@ -345,6 +357,13 @@ namespace SetupTv.Sections
 
     private void mpButtonClear_Click(object sender, EventArgs e)
     {
+      string holder = String.Format("Are you sure you want to clear all radio channels?");
+
+      if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
+      {
+        return;
+      }
+
       NotifyForm dlg = new NotifyForm("Clearing all radio channels...", "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
@@ -398,35 +417,24 @@ namespace SetupTv.Sections
       OnSectionActivated();
     }
 
-    private void mpButtonClearEncrypted_Click(object sender, EventArgs e)
-    {
-      //@ TODO : does not work
-      IList channels = Channel.ListAll();
-
-      mpListView1.BeginUpdate();
-      for (int i = 0; i < channels.Count; ++i)
-      {
-        Channel ch = (Channel)channels[i];
-        if (ch.IsRadio)
-        {
-          for (int x = 0; x < ch.ReferringTuningDetail().Count; x++)
-          {
-            TuningDetail detail = (TuningDetail)ch.ReferringTuningDetail()[x];
-            if (detail.FreeToAir == false)
-            {
-              ch.Delete();
-              break;
-            }
-          }
-        }
-      }
-      mpListView1.EndUpdate();
-      OnSectionActivated();
-    }
-
     private void mpButtonDel_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
+
+      if (mpListView1.SelectedItems.Count > 0)
+      {
+        string holder = String.Format("Are you sure you want to delete these {0:d} radio channels?", mpListView1.SelectedItems.Count);
+
+        if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
+        {
+          mpListView1.EndUpdate();
+          return;
+        }
+      }
+      NotifyForm dlg = new NotifyForm("Deleting selected radio channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
+
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
@@ -445,6 +453,7 @@ namespace SetupTv.Sections
         channel.Delete();
         mpListView1.Items.Remove(item);
       }
+      dlg.Close();
       mpListView1.EndUpdate();
       ReOrder();
     }
@@ -626,12 +635,16 @@ namespace SetupTv.Sections
 
     private void mpButtonUncheckEncrypted_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Unchecking all scrambled tv channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (ListViewItem item in mpListView1.Items)
       {
         Channel channel = (Channel)item.Tag;
         if (!channel.FreeToAir)
           item.Checked = false;
       }
+      dlg.Close();
     }
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
@@ -701,6 +714,9 @@ namespace SetupTv.Sections
 
     private void renameSelectedChannelsBySIDToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Renaming selected tv channels by SID ...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
@@ -712,11 +728,15 @@ namespace SetupTv.Sections
           item.Tag = channel;
         }
       }
+      dlg.Close();
       OnSectionActivated();
     }
 
     private void addSIDInFrontOfNameToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Adding SID in front of name...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
@@ -728,11 +748,16 @@ namespace SetupTv.Sections
           item.Tag = channel;
         }
       }
+      dlg.Close();
       OnSectionActivated();
     }
 
     private void renumberChannelsBySIDToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Renumbering radio channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
+      
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
@@ -743,6 +768,7 @@ namespace SetupTv.Sections
           detail.Persist();
         }
       }
+      dlg.Close();
     }
   }
 }

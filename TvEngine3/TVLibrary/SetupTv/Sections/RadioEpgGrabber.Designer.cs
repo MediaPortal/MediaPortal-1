@@ -44,8 +44,8 @@ namespace SetupTv.Sections
       this.mpButtonAllChannels = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButtonAllGrouped = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SuspendLayout();
@@ -126,8 +126,6 @@ namespace SetupTv.Sections
       // 
       // mpLabel2
       // 
-      this.mpLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
       this.mpLabel2.AutoSize = true;
       this.mpLabel2.Location = new System.Drawing.Point(236, 3);
       this.mpLabel2.Name = "mpLabel2";
@@ -212,14 +210,6 @@ namespace SetupTv.Sections
       this.tabPage1.Text = "Radio Epg grabber";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
-      // mpLabelChannelCount
-      // 
-      this.mpLabelChannelCount.AutoSize = true;
-      this.mpLabelChannelCount.Location = new System.Drawing.Point(13, 14);
-      this.mpLabelChannelCount.Name = "mpLabelChannelCount";
-      this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
-      this.mpLabelChannelCount.TabIndex = 2;
-      // 
       // mpButtonAllGrouped
       // 
       this.mpButtonAllGrouped.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -230,6 +220,14 @@ namespace SetupTv.Sections
       this.mpButtonAllGrouped.Text = "All Grouped";
       this.mpButtonAllGrouped.UseVisualStyleBackColor = true;
       this.mpButtonAllGrouped.Click += new System.EventHandler(this.mpButtonAllGrouped_Click);
+      // 
+      // mpLabelChannelCount
+      // 
+      this.mpLabelChannelCount.AutoSize = true;
+      this.mpLabelChannelCount.Location = new System.Drawing.Point(13, 14);
+      this.mpLabelChannelCount.Name = "mpLabelChannelCount";
+      this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
+      this.mpLabelChannelCount.TabIndex = 2;
       // 
       // RadioEpgGrabber
       // 

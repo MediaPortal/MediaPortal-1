@@ -143,6 +143,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonScanTv
       // 
+      this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonScanTv.Location = new System.Drawing.Point(320, 320);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
@@ -153,6 +154,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonScanRadio
       // 
+      this.mpButtonScanRadio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonScanRadio.Location = new System.Drawing.Point(319, 349);
       this.mpButtonScanRadio.Name = "mpButtonScanRadio";
       this.mpButtonScanRadio.Size = new System.Drawing.Size(132, 23);
@@ -200,6 +202,9 @@ namespace SetupTv.Sections
       // 
       this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = true;
+      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
@@ -221,6 +226,8 @@ namespace SetupTv.Sections
       // 
       // progressBar1
       // 
+      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(9, 110);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(442, 10);
@@ -250,6 +257,7 @@ namespace SetupTv.Sections
       // 
       // mpButton1
       // 
+      this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButton1.Location = new System.Drawing.Point(132, 320);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(148, 23);
@@ -260,6 +268,7 @@ namespace SetupTv.Sections
       // 
       // checkBoxNoMerge
       // 
+      this.checkBoxNoMerge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxNoMerge.AutoSize = true;
       this.checkBoxNoMerge.Location = new System.Drawing.Point(9, 353);
       this.checkBoxNoMerge.Name = "checkBoxNoMerge";
@@ -324,7 +333,6 @@ namespace SetupTv.Sections
       // 
       // customSettingsGroup
       // 
-      this.customSettingsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.customSettingsGroup.Controls.Add(this.customValuePeak);
       this.customSettingsGroup.Controls.Add(this.customValue);
       this.customSettingsGroup.Controls.Add(this.mpLabel22);
@@ -576,14 +584,13 @@ namespace SetupTv.Sections
       this.mpLabel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.mpLabel5.Location = new System.Drawing.Point(6, 18);
       this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(348, 39);
+      this.mpLabel5.Size = new System.Drawing.Size(342, 39);
       this.mpLabel5.TabIndex = 0;
-      this.mpLabel5.Text = "Check for quality control support and for encoders changes:\r\n(configuration only " +
-          "available after check to avoid \r\nnon working scenario)";
+      this.mpLabel5.Text = "Check for quality control support and for encoder changes:\r\n(configuration only a" +
+          "vailable after check to avoid \r\nnon working scenario)";
       // 
       // bitRate
       // 
-      this.bitRate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.bitRate.Controls.Add(this.mpLabel10);
       this.bitRate.Controls.Add(this.panel1);
       this.bitRate.Controls.Add(this.mpLabel18);

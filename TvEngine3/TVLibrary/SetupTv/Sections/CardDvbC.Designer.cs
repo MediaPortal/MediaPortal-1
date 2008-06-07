@@ -54,6 +54,8 @@ namespace SetupTv.Sections
       // 
       // progressBarQuality
       // 
+      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarQuality.Location = new System.Drawing.Point(111, 210);
       this.progressBarQuality.Name = "progressBarQuality";
       this.progressBarQuality.Size = new System.Drawing.Size(328, 10);
@@ -61,6 +63,8 @@ namespace SetupTv.Sections
       // 
       // progressBarLevel
       // 
+      this.progressBarLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarLevel.Location = new System.Drawing.Point(111, 187);
       this.progressBarLevel.Name = "progressBarLevel";
       this.progressBarLevel.Size = new System.Drawing.Size(328, 10);
@@ -86,6 +90,8 @@ namespace SetupTv.Sections
       // 
       // progressBar1
       // 
+      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(16, 240);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(428, 10);
@@ -120,6 +126,8 @@ namespace SetupTv.Sections
       // 
       // mpBeveledLine1
       // 
+      this.mpBeveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpBeveledLine1.Location = new System.Drawing.Point(16, 3);
       this.mpBeveledLine1.Name = "mpBeveledLine1";
       this.mpBeveledLine1.Size = new System.Drawing.Size(423, 154);
@@ -147,6 +155,9 @@ namespace SetupTv.Sections
       // 
       // listViewStatus
       // 
+      this.listViewStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
       this.listViewStatus.Location = new System.Drawing.Point(16, 256);
@@ -163,6 +174,7 @@ namespace SetupTv.Sections
       // 
       // checkBoxCreateGroups
       // 
+      this.checkBoxCreateGroups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxCreateGroups.AutoSize = true;
       this.checkBoxCreateGroups.Location = new System.Drawing.Point(16, 384);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
