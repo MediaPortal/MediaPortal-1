@@ -618,7 +618,7 @@ namespace MediaPortal.Dialogs
           Key key = (Key)keyRow[i];
           int width = key.dwWidth;
           GUIGraphicsContext.ScaleHorizontal(ref width);
-          if (x >= fX + fWidthSum && x <= fX + fWidthSum + key.dwWidth)
+          if (x >= fX + fWidthSum && x <= fX + fWidthSum + width)
           {
             if (y >= fY && y < fY + _keyHeight)
             {
