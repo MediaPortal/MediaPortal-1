@@ -846,24 +846,19 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 				if (CPcr::DecodeFromPesHeader(p,0,pts,dts))
 				{
 					Cbuf->SetPts(pts);
-					//skip pes header
-					int headerLen=9+p[8] ;  
-					int len = Cbuf->Length()-headerLen ;
-					if (len > 0)
-					{
-						byte *ps = p+headerLen ;
-						Cbuf->SetLength(len) ;
-						while(len--) *p++ = *ps++ ;		// memcpy could be not safe.
-					}
-					else
-					{
-						LogDebug(" No data") ;
-						m_AudioValidPES=false ;
-					}
+				}
+				//skip pes header
+				int headerLen=9+p[8] ;  
+				int len = Cbuf->Length()-headerLen ;
+				if (len > 0)
+				{
+					byte *ps = p+headerLen ;
+					Cbuf->SetLength(len) ;
+					while(len--) *p++ = *ps++ ;		// memcpy could be not safe.
 				}
 				else
 				{
-					LogDebug("No PTS/DTS") ;           // No PTS sounds stupid !
+					LogDebug(" No data") ;
 					m_AudioValidPES=false ;
 				}
 			}
@@ -991,31 +986,26 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 //						FlushVideo(); // Not required 
 					}
 					Cbuf->SetPts(pts);
-					//skip pes header
-					int headerLen=9+p[8] ;  
-					int len = Cbuf->Length()-headerLen ;
-					if (len > 0)
-					{
-						byte *ps = p+headerLen ;
-						Cbuf->SetLength(len) ;
-						while(len--) *p++ = *ps++ ;		// memcpy could be not safe.
-					}
-					else
-					{
-						LogDebug(" No data") ;
-						m_VideoValidPES=false ;
-					}
+				}
+				//skip pes header
+				int headerLen=9+p[8] ;  
+				int len = Cbuf->Length()-headerLen ;
+				if (len > 0)
+				{
+					byte *ps = p+headerLen ;
+					Cbuf->SetLength(len) ;
+					while(len--) *p++ = *ps++ ;		// memcpy could be not safe.
 				}
 				else
 				{
-					LogDebug("No PTS/DTS") ;
+					LogDebug(" No data") ;
 					m_VideoValidPES=false ;
 				}
 			}
 			else
 			{
 				LogDebug("Pes 0-0-1 fail") ;
-				m_VideoValidPES=false ;           // No PTS sounds stupid !
+				m_VideoValidPES=false ;
 			}
 
 			if (m_VideoValidPES)
