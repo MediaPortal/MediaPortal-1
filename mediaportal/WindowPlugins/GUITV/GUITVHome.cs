@@ -1092,7 +1092,7 @@ namespace MediaPortal.GUI.TV
       }
       
       TVDatabase.GetChannels(ref channels); // Load all channels
-      if (!hideAllChannelsGroup)
+      if (!hideAllChannelsGroup || (m_groups.Count == 0))
       {
         // Add a group containing all channels
         TVGroup tvgroup = new TVGroup();
@@ -1102,7 +1102,7 @@ namespace MediaPortal.GUI.TV
       }
 
       m_groups.AddRange(groups); // Add rest of the groups to the end of the list
-
+      Log.Debug("ChannelNavigator.Reload: m_groups = {0}, channels = {1}", m_groups.Count, channels.Count);
     }
     #endregion
 
@@ -1574,6 +1574,7 @@ namespace MediaPortal.GUI.TV
         m_currentgroup = 0;
 
       m_currentTvChannel = GetTVChannel(m_currentchannel);
+      Log.Debug("ChannelNavigator.LoadSettings: currentGroup = {0}, currentChannel = {1}, m_groups = {2}", m_currentgroup, m_currentchannel, m_groups.Count);
       if (m_currentTvChannel == null)
       {
         TVGroup group = (TVGroup)m_groups[m_currentgroup];
