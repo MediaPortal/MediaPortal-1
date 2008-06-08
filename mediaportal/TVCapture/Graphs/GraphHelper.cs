@@ -385,22 +385,28 @@ namespace MediaPortal.TV.Recording
         {
           string locInfo = (string)subkey.GetValue("LocationInformation");
           if (locInfo == null) locInfo = string.Empty;
-          //Log.Info("        LocationInformation:{0}", locInfo);
+          Log.Info("        LocationInformation:{0}", locInfo);
 
-          int busPos, busEnd, devPos, devEnd = locInfo.Length;
+          int busPos, busEnd, devPos, devEnd = locInfo.Length - 1;
           // PCI function
-          while (!char.IsNumber(locInfo[--devEnd])) if (devEnd == 0) return string.Empty;
-          while (char.IsNumber(locInfo[--devEnd])) if (devEnd == 0) return string.Empty;
+          while (devEnd >= 0 && !char.IsNumber(locInfo[devEnd])) devEnd--;
+          if (devEnd == 0) return string.Empty;
+          while (devEnd >= 0 && char.IsNumber(locInfo[devEnd])) devEnd--;
+          if (devEnd == 0) return string.Empty;
           // PCI device
-          while (!char.IsNumber(locInfo[--devEnd])) if (devEnd == 0) return string.Empty;
+          while (devEnd >= 0 && !char.IsNumber(locInfo[devEnd])) devEnd--;
+          if (devEnd == 0) return string.Empty;
           devPos = devEnd;
-          while (char.IsNumber(locInfo[--devPos])) if (devPos == 0) return string.Empty;
+          while (devPos >= 0 && char.IsNumber(locInfo[devPos])) devPos--;
+          if (devPos == 0) return string.Empty;
           // PCI bus
           busEnd = devPos;
-          while (!char.IsNumber(locInfo[--busEnd])) if (busEnd == 0) return string.Empty;
+          while (busEnd >= 0 && !char.IsNumber(locInfo[busEnd])) busEnd--;
+          if (busEnd == 0) return string.Empty;
           busPos = busEnd;
-          while (char.IsNumber(locInfo[--busPos])) if (busPos == 0) return string.Empty;
+          while (busPos >= 0 && char.IsNumber(locInfo[--busPos])) busPos--;
           locInfo = "PCI bus " + locInfo.Substring(busPos + 1, busEnd - busPos) + ", device " + locInfo.Substring(devPos + 1, devEnd - devPos);
+          Log.Info("        LocationInformation:{0}", locInfo);
           return locInfo;
         }
       return string.Empty;
@@ -656,8 +662,7 @@ namespace MediaPortal.TV.Recording
             }
           }
         }//foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error(ex);
         return (false);
