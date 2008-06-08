@@ -250,8 +250,8 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>600</posX>
-      <posY>500</posY>
+      <posX>5</posX>
+      <posY>27</posY>
       <texture>rec.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>

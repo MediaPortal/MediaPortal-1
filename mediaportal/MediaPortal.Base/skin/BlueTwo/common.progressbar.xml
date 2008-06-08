@@ -5,9 +5,9 @@
       <description>progressbar background</description>
       <type>image</type>
       <id>104</id>
-      <posX>20</posX>
+      <posX>35</posX>
       <posY>20</posY>
-      <width>680</width>
+      <width>665</width>
       <height>40</height>
       <texture>osd_bg_top.png</texture>
       <visible>no</visible>
@@ -43,7 +43,7 @@
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>69</posX>
+      <posX>70</posX>
       <posY>40</posY>
       <label>#currentplaytime</label>
       <align>center</align>
