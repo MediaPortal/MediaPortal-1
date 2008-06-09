@@ -33,6 +33,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace MediaPortal.DeployTool
 {
@@ -107,6 +108,17 @@ namespace MediaPortal.DeployTool
     {
       if (nextButton.Text == Localizer.Instance.GetString("MainWindow_buttonClose"))
       {
+        //
+        // If in download_only mode, start explorer to show downloaded stuff
+        //
+        if (InstallationProperties.Instance["InstallType"] == "download_only")
+        {
+          Process process = new Process();
+          process.StartInfo.FileName = "explorer.exe";
+          process.StartInfo.Arguments = System.Environment.CurrentDirectory;
+          process.StartInfo.UseShellExecute = true;
+          process.Start();
+        }
         Close();
         return;
       }
