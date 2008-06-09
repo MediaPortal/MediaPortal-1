@@ -19,8 +19,18 @@
       </control>
       <control>
         <type>button</type>
+        <id>35</id>
+        <label>6036</label>
+      </control>
+      <control>
+        <type>button</type>
         <id>25</id>
         <label>6001</label>
+      </control>
+      <control>
+        <type>button</type>
+        <id>36</id>
+        <label>6039</label>
       </control>
       <control>
         <type>button</type>
@@ -72,7 +82,7 @@
       </control>
       <control>
         <type>button</type>
-        <id>35</id>
+        <id>37</id>
         <label>6010</label>
         <hyperlink>707</hyperlink>
       </control>

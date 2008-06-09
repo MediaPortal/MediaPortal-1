@@ -46,7 +46,7 @@
       <posY>240</posY>
       <width>240</width>
       <label>Select disk</label>
-      <font>font22</font>
+      <font>font14</font>
 	  <align>center</align>
       <textcolor>white</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>

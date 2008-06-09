@@ -71,7 +71,7 @@
           <onleft>6</onleft>
           <onright>50</onright>
           <onup>3</onup>
-          <ondown>9</ondown>
+          <ondown>12</ondown>
         </control>
         <control>
           <description>Play CD</description>
@@ -90,7 +90,7 @@
           <label>654</label>
           <onleft>13</onleft>
           <onright>50</onright>
-          <onup>9</onup>
+          <onup>12</onup>
           <ondown>11</ondown>
           <action>100</action>
         </control>

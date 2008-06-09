@@ -399,15 +399,17 @@
 		<!-- ********************** CURRENT VIEW ********************** -->
 		
 		<control>
-		    <type>label</type>
-			<description>Current View</description>
+		    <type>fadelabel</type>
+		    <description>Current View</description>
 		    <id>1</id>
-		    <posX>1115</posX>
-		    <posY>603</posY>
-		    <label>#TVSeries.CurrentView</label>
-		    <font>font14</font>
+		    <posX>45</posX>
+		    <posY>555</posY>
+		    <width>400</width>
+		    <height>20</height>
 		    <align>center</align>
-		    <textcolor>FFFFFF</textcolor>
+		    <label>#TVSeries.CurrentView</label>
+		    <font>font10</font>
+		    <textcolor>ffffff</textcolor>
 		</control>
 		
 		<!-- ********************** PROGRESS BAR ********************** -->
@@ -436,10 +438,10 @@
 			<type>image</type>
 			<description>Left Arrow</description>
 			<id>67</id>
-			<posX>1000</posX>
-			<posY>586</posY>
-			<height>30</height>
-			<width>30</width>
+			<posX>20</posX>
+			<posY>555</posY>
+			<height>20</height>
+			<width>20</width>
 			<zoom>true</zoom>
 			<keepaspectratio>yes</keepaspectratio>
 			<texture flipY="true">tvseries_arrow_left.png</texture>
@@ -449,10 +451,10 @@
 			<type>image</type>
 			<description>Right Arrow</description>
 			<id>67</id>
-			<posX>1199</posX>
-			<posY>586</posY>
-			<height>30</height>
-			<width>30</width>
+			<posX>440</posX>
+			<posY>555</posY>
+			<height>20</height>
+			<width>20</width>
 			<zoom>true</zoom>
 			<keepaspectratio>yes</keepaspectratio>
 			<texture flipY="true">tvseries_arrow_right.png</texture>
