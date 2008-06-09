@@ -304,16 +304,28 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             fTime/=1000.0f;
             LogDebug("aud:compensation:%03.3f",fTime);
             prevTime=-1;
+            m_bSubtitleCompensationSet=false;
 
             IDVBSubtitle* pDVBSubtitleFilter(m_pTsReaderFilter->GetSubtitleFilter());
             if( pDVBSubtitleFilter )
             {
-              pDVBSubtitleFilter->SetTimeCompensation( cRefTime );
+              pDVBSubtitleFilter->SetTimeCompensation(m_pTsReaderFilter->Compensation);
+              m_bSubtitleCompensationSet=true;
             }
           }
         }
         //adjust the timestamp with the compensation
         cRefTime -=m_pTsReaderFilter->Compensation;
+
+        if(!m_bSubtitleCompensationSet)
+        {
+          IDVBSubtitle* pDVBSubtitleFilter(m_pTsReaderFilter->GetSubtitleFilter());
+          if(pDVBSubtitleFilter)
+          {
+            pDVBSubtitleFilter->SetTimeCompensation(m_pTsReaderFilter->Compensation);
+            m_bSubtitleCompensationSet=true;
+          }
+        }
         //now we have the final timestamp, set timestamp in sample
         REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
         pSample->SetTime(&refTime,&refTime);  
@@ -368,11 +380,13 @@ HRESULT CAudioPin::ChangeStart()
   UpdateFromSeek();
 	return S_OK;
 }
+
 HRESULT CAudioPin::ChangeStop()
 {
   UpdateFromSeek();
 	return S_OK;
 }
+
 HRESULT CAudioPin::ChangeRate()
 {
   if( m_dRateSeeking <= 0 ) 

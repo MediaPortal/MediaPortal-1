@@ -289,7 +289,6 @@ bool CDeMultiplexer::GetCurrentSubtitleStream(__int32 &stream)
 
 bool CDeMultiplexer::GetSubtitleStreamLanguage(__int32 stream,char* szLanguage)
 {
-  
   if (stream <0 || stream>=m_subtitleStreams.size())
   {
     szLanguage[0]=szLanguage[1]=szLanguage[2]=0;
@@ -308,11 +307,12 @@ bool CDeMultiplexer::GetSubtitleStreamCount(__int32 &count)
   return S_OK;
 }
 
-bool CDeMultiplexer::SetSubtitleResetCallback( int (CALLBACK *cb)(int, void*, int*)){
-	//LogDebug("SetSubtitleResetCallback %X",cb);
-	pSubUpdateCallback = cb;
-	//(*pSubUpdateCallback)(SUBTITLESTREAM_EVENT_UPDATE,SUBTITLESTREAM_EVENTVALUE_NONE);
-	return S_OK;
+bool CDeMultiplexer::SetSubtitleResetCallback( int (CALLBACK *cb)(int, void*, int*))
+{
+  //LogDebug("SetSubtitleResetCallback %X",cb);
+  pSubUpdateCallback = cb;
+  //(*pSubUpdateCallback)(SUBTITLESTREAM_EVENT_UPDATE,SUBTITLESTREAM_EVENTVALUE_NONE);
+  return S_OK;
 }
 
 bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
@@ -349,32 +349,33 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
 
 void CDeMultiplexer::FlushVideo()
 {
-	LogDebug("demux:flush video");
-	CAutoLock lock (&m_sectionVideo);
-	delete m_pCurrentVideoBuffer;
-	ivecBuffers it =m_vecVideoBuffers.begin();
-	while (it != m_vecVideoBuffers.end())
-	{
-		CBuffer* videoBuffer=*it;
-    	delete videoBuffer;
-    	it=m_vecVideoBuffers.erase(it);
-		/*m_outVideoBuffer++;*/
-  	}
-	// Clear PES temporary queue.
-	it =m_t_vecVideoBuffers.begin();
-	while (it != m_t_vecVideoBuffers.end())
-	{
-		CBuffer* VideoBuffer=*it;
-		delete VideoBuffer;
-		it=m_t_vecVideoBuffers.erase(it);
-	}
+  LogDebug("demux:flush video");
+  CAutoLock lock (&m_sectionVideo);
+  delete m_pCurrentVideoBuffer;
+  ivecBuffers it =m_vecVideoBuffers.begin();
+  while (it != m_vecVideoBuffers.end())
+  {
+    CBuffer* videoBuffer=*it;
+    delete videoBuffer;
+    it=m_vecVideoBuffers.erase(it);
+    /*m_outVideoBuffer++;*/
+  }
+  // Clear PES temporary queue.
+  it =m_t_vecVideoBuffers.begin();
+  while (it != m_t_vecVideoBuffers.end())
+  {
+    CBuffer* VideoBuffer=*it;
+    delete VideoBuffer;
+    it=m_t_vecVideoBuffers.erase(it);
+  }
 
-	//if(this->pTeletextEventCallback != NULL){
-	// this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
-	//}
-	m_VideoPrevCC = -1 ;
-	m_VideoValidPES = false ;
-	m_pCurrentVideoBuffer = new CBuffer();
+  /*if(this->pTeletextEventCallback != NULL)
+  {
+    this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
+  }*/
+  m_VideoPrevCC = -1 ;
+  m_VideoValidPES = false ;
+  m_pCurrentVideoBuffer = new CBuffer();
 }   
 
 void CDeMultiplexer::FlushAudio()
@@ -1110,10 +1111,10 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
     }
     if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
     {
-        ivecBuffers it = m_vecSubtitleBuffers.begin() ;
-        CBuffer* subtitleBuffer=*it;
-        delete subtitleBuffer ;
-        m_vecSubtitleBuffers.erase(it);
+      ivecBuffers it = m_vecSubtitleBuffers.begin() ;
+      CBuffer* subtitleBuffer=*it;
+      delete subtitleBuffer ;
+      m_vecSubtitleBuffers.erase(it);
     }
 
     m_pCurrentSubtitleBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
@@ -1138,8 +1139,9 @@ void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
 	  //(*pTeletextEventCallback)(TELETEXT_EVENT_COMPENSATION_UPDATE,m_filter.Compensation.Millisecs() * 90);
 	  (*pTeletextEventCallback)(TELETEXT_EVENT_PACKET_PCR_UPDATE,m_streamPcr.PcrReferenceBase - m_duration.FirstStartPcr().PcrReferenceBase - (m_filter.Compensation.Millisecs() * 90 ));
   }
-  if(pTeletextPacketCallback != NULL){
-	(*pTeletextPacketCallback)(tsPacket,188);
+  if(pTeletextPacketCallback != NULL)
+  {
+	  (*pTeletextPacketCallback)(tsPacket,188);
   }
 }
 
@@ -1631,8 +1633,7 @@ HRESULT CDeMultiplexer::IsPlaying()
   }
   return S_FALSE;
 }
-bool CreateFilter(const WCHAR *Name, IBaseFilter **Filter,
-   REFCLSID FilterCategory)
+bool CreateFilter(const WCHAR *Name, IBaseFilter **Filter, REFCLSID FilterCategory)
 {
   HRESULT hr;    
 
@@ -1704,7 +1705,6 @@ bool AddFilter(IFilterGraph *Graph, const WCHAR *Name,
   return true;
 }   
 
-
 ///Returns whether the demuxer is allowed to block in GetAudio() or not
 bool CDeMultiplexer::HoldAudio()
 {
@@ -1717,6 +1717,7 @@ void CDeMultiplexer::SetHoldAudio(bool onOff)
   LogDebug("demux:set hold audio:%d", onOff);
 	m_bHoldAudio=onOff;
 }
+
 ///Returns whether the demuxer is allowed to block in GetVideo() or not
 bool CDeMultiplexer::HoldVideo()
 {
@@ -1748,6 +1749,7 @@ void CDeMultiplexer::SetTeletextEventCallback(int (CALLBACK *pTeletextEventCallb
 {
 	this->pTeletextEventCallback = pTeletextEventCallback;
 }
+
 void CDeMultiplexer::SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int))
 {
 	this->pTeletextPacketCallback = pTeletextPacketCallback;
@@ -1767,7 +1769,8 @@ void CDeMultiplexer::CallTeletextEventCallback(int eventCode,unsigned long int e
 	}
 }
 
-/*void CDeMultiplexer::SyncTeletext(){
+/*void CDeMultiplexer::SyncTeletext()
+{
 	if(pTeletextEventCallback!=NULL){
 		IMediaSeeking * ptrMediaPos;
 		LogDebug("StreamPCR %llu",m_streamPcr.PcrReferenceBase - m_duration.FirstStartPcr().PcrReferenceBase);

@@ -118,7 +118,7 @@ STDMETHODIMP CSubtitleInputPin::ReceiveCanBlock()
 STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 {
   CAutoLock lock( m_pReceiveLock );
-
+  //LogDebug( "CSubtitleInputPin::Receive" ); 
   HRESULT hr = CBaseInputPin::Receive( pSample );
   if( hr != S_OK ) 
   {

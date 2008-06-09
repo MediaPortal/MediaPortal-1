@@ -341,13 +341,13 @@ STDMETHODIMP CTsReaderFilter::SetRequestAudioChangeCallback(ITSReaderAudioChange
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 {
-	CRefTime runTime=tStart;
-	double msec=(double)runTime.Millisecs();
-	msec/=1000.0;
-	LogDebug("CTsReaderFilter::Run(%05.2f)",msec);
+  CRefTime runTime=tStart;
+  double msec=(double)runTime.Millisecs();
+  msec/=1000.0;
+  LogDebug("CTsReaderFilter::Run(%05.2f)",msec);
   CAutoLock cObjectLock(m_pLock);
 		 
-	if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(true);
+  if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(true);
 
   //are we using RTSP or local file
   if (m_fileDuration==NULL)
@@ -356,21 +356,19 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
     //stop pausing and continue streaming
     if (m_rtspClient.IsPaused())
     {
-	    LogDebug(" CTsReaderFilter::Run()  -->is paused,continue rtsp");
+      LogDebug(" CTsReaderFilter::Run()  -->is paused,continue rtsp");
       m_buffer.Clear();
       m_buffer.Run(true);
       m_rtspClient.Continue();
-
-	  m_demultiplexer.SetHoldAudio(false);
-      m_demultiplexer.SetHoldVideo(false);
-      m_demultiplexer.SetHoldSubtitle(false);
-
-	    LogDebug(" CTsReaderFilter::Run()  --> rtsp running");
+      LogDebug(" CTsReaderFilter::Run()  --> rtsp running");
     }
+    m_demultiplexer.SetHoldAudio(false);
+    m_demultiplexer.SetHoldVideo(false);
+    m_demultiplexer.SetHoldSubtitle(false);
   }
 
   //Set our StreamTime Reference offset to zero
-	HRESULT hr= CSource::Run(tStart);
+  HRESULT hr= CSource::Run(tStart);
 
   FindSubtitleFilter();
   LogDebug("CTsReaderFilter::Run(%05.2f)  -->done",msec);
@@ -379,7 +377,7 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 
 STDMETHODIMP CTsReaderFilter::Stop()
 {
-	LogDebug("CTsReaderFilter::Stop()");
+  LogDebug("CTsReaderFilter::Stop()");
 
   //guarantees that audio/video/subtitle pins dont block in the fillbuffer() method
   m_bSeeking=true;
@@ -395,16 +393,16 @@ STDMETHODIMP CTsReaderFilter::Stop()
   //stop duration thread
   StopThread();
 
-	LogDebug("CTsReaderFilter::Stop()  -stop source");
+  LogDebug("CTsReaderFilter::Stop()  -stop source");
   //stop filter
-	HRESULT hr=CSource::Stop();
+  HRESULT hr=CSource::Stop();
   LogDebug("CTsReaderFilter::Stop()  -stop source done");
   
   //are we using rtsp?
   if (m_fileDuration==NULL)
   { 
     //yep then stop streaming
-	  LogDebug("CTsReaderFilter::Stop()   -- stop rtsp");
+    LogDebug("CTsReaderFilter::Stop()   -- stop rtsp");
     m_buffer.Run(false);
     m_rtspClient.Stop();
   }
@@ -417,8 +415,8 @@ STDMETHODIMP CTsReaderFilter::Stop()
   m_demultiplexer.SetHoldSubtitle(false);
   m_demultiplexer.Flush();
   
-	LogDebug("CTsReaderFilter::Stop() done");
-	return hr;
+  LogDebug("CTsReaderFilter::Stop() done");
+  return hr;
 }
 bool CTsReaderFilter::IsTimeShifting()
 {
@@ -430,7 +428,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
   CAutoLock cObjectLock(m_pLock);
 
   //pause filter
-  HRESULT hr= CSource::Pause();
+  HRESULT hr=CSource::Pause();
 
   //are we using rtsp?
   if (m_fileDuration==NULL)
@@ -478,15 +476,15 @@ STDMETHODIMP CTsReaderFilter::Pause()
         //we are streaming at the moment.
         //pause the streaming
         LogDebug("  -- Pause()  ->pause rtsp");		
-		m_demultiplexer.Flush();
-		m_buffer.Clear();
-		m_demultiplexer.SetHoldAudio(true);
-		m_demultiplexer.SetHoldVideo(true);
-		m_demultiplexer.SetHoldSubtitle(true);
+	      m_demultiplexer.Flush();
+	      m_buffer.Clear();
+	      m_demultiplexer.SetHoldAudio(true);
+	      m_demultiplexer.SetHoldVideo(true);
+	      m_demultiplexer.SetHoldSubtitle(true);
 
         m_buffer.Run(false);
         m_rtspClient.Pause();
-     }
+      }
     }
 	else //we are seeking
 	{	  
@@ -813,7 +811,7 @@ void CTsReaderFilter::SeekDone(CRefTime& rtSeek)
 
   if (m_pDVBSubtitle)
   {
-    m_pDVBSubtitle->SetFirstPcr(m_duration.StartPcr().PcrReferenceBase);
+    m_pDVBSubtitle->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
     m_pDVBSubtitle->SeekDone(rtSeek);
   }
 }

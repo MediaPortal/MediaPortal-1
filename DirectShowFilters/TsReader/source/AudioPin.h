@@ -26,31 +26,31 @@
 class CAudioPin : public CSourceStream, public CSourceSeeking
 {
 public:
-	CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section);
-	~CAudioPin();
+  CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section);
+  ~CAudioPin();
 
-	STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
+  STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 
-	//CSourceStream
-	HRESULT GetMediaType(CMediaType *pMediaType);
-	HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
-	HRESULT CompleteConnect(IPin *pReceivePin);
+  //CSourceStream
+  HRESULT GetMediaType(CMediaType *pMediaType);
+  HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
+  HRESULT CompleteConnect(IPin *pReceivePin);
   HRESULT CheckConnect(IPin *pReceivePin);
-	HRESULT FillBuffer(IMediaSample *pSample);
+  HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
 
-	// CSourceSeeking
-	HRESULT ChangeStart();
-	HRESULT ChangeStop();
-	HRESULT ChangeRate();
+  // CSourceSeeking
+  HRESULT ChangeStart();
+  HRESULT ChangeStop();
+  HRESULT ChangeRate();
   STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
   STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
   STDMETHODIMP GetDuration(LONGLONG *pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
   STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
 
-	HRESULT OnThreadStartPlay();
-	void SetStart(CRefTime rtStartTime);
+  HRESULT OnThreadStartPlay();
+  void SetStart(CRefTime rtStartTime);
 
   bool IsConnected();
   void SetDiscontinuity(bool onOff);
@@ -62,16 +62,17 @@ protected:
   CTsReaderFilter *	const m_pTsReaderFilter;
   bool      m_binUpdateFromSeek;
   bool      m_bConnected;
-	CRefTime	m_refStartTime;
-	BOOL      m_bDiscontinuity;
-	CCritSec* m_section;
-	CCritSec  m_bufferLock;
-	bool	    m_bDropPackets;
+  CRefTime	m_refStartTime;
+  BOOL      m_bDiscontinuity;
+  CCritSec* m_section;
+  CCritSec  m_bufferLock;
+  bool	    m_bDropPackets;
   bool      m_bDropSeek;
   bool      m_bSeeking;
   DWORD     m_seekTimer;
   CRefTime  m_lastSeek;
   bool      m_bMeasureCompensation;
+  bool      m_bSubtitleCompensationSet;
   bool      m_bInFillBuffer;     
 };
 

@@ -50,7 +50,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   GetLogFile(filename);
   ::DeleteFile(filename);
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 19 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 1.2.0 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -310,8 +310,10 @@ STDMETHODIMP CDVBSub::SeekDone( CRefTime& rtSeek )
 //
 STDMETHODIMP CDVBSub::SetTimeCompensation( CRefTime& rtCompensation )
 {
-  m_currentTimeCompensation = rtCompensation.Millisecs() * 90;
-  LogDebugPTS( "SetTimeCompensation", m_currentTimeCompensation );
+  m_currentTimeCompensation = rtCompensation;
+  float fTime = (float)m_currentTimeCompensation.Millisecs();
+  fTime /= 1000.0f;
+  LogDebug( "SetTimeCompensation: %03.3f", fTime );
   return S_OK;
 }
 
@@ -341,13 +343,15 @@ void CDVBSub::NotifySubtitle()
     // PTS to milliseconds ( 90khz )
     LONGLONG pts( 0 ); 
    
-    pts = ( pSubtitle->PTS() - m_basePCR - m_currentTimeCompensation ) / 90;
+    pts = ( pSubtitle->PTS() - m_basePCR ) / 90 - m_currentTimeCompensation.Millisecs();
 
+    float fTime = (float)m_currentTimeCompensation.Millisecs();
+    fTime /= 1000.0f;
     LogDebugPTS( "subtitlePTS               ", pSubtitle->PTS() ); 
     LogDebugPTS( "m_basePCR                 ", m_basePCR ); 
     LogDebugPTS( "timestamp                 ", pts * 90 ); 
     LogDebugPTS( "m_CurrentSeekPosition     ", m_CurrentSeekPosition ); 
-    LogDebugPTS( "m_currentTimeCompensation ", m_currentTimeCompensation ); 
+    LogDebug( "m_currentTimeCompensation  %03.3f", fTime ); 
 
     pSubtitle->SetTimestamp( pts );
     m_prevSubtitleTimestamp = pSubtitle->PTS();

@@ -233,7 +233,6 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
       pSample->SetDiscontinuity(TRUE);
       m_bDiscontinuity=FALSE;
     }
-
     //LogDebug("sub: FillBuffer - start blocking the output pin...");
 
 	  while (buffer == NULL)
@@ -272,9 +271,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
         buffer=demux.GetSubtitle();
       }
 	  }
-
 	  //LogDebug("sub: SLEEPING DONE");
-
     if (buffer!=NULL)
     {
       BYTE* pSampleBuffer;
