@@ -218,7 +218,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Wybierz miejsce instalacji SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Wpisz hasło dla użytkownika "sa" bazy SQL-Server </value>
+    <value>Wpisz hasło dla użytkownika bazy SQL-Server </value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Wybierz opcje instalacji SQL-Server</value>
@@ -227,10 +227,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
     <value>Miejsce Instalacji</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Haslo dla użytkownika "sa" bazy SQL Server</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>( Hasło dla użytkownika admin-user bazy SQL-Server. Standart jest "MediaPortal")</value>
+    <value>Haslo dla użytkownika bazy SQL Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Proszę wybierz miejsce instalacji dla SQL-Server</value>

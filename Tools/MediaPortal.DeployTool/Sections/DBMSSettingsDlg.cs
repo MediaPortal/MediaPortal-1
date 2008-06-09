@@ -55,7 +55,6 @@ namespace MediaPortal.DeployTool
       buttonBrowse.Text = Localizer.Instance.GetString("DBMSSettings_buttonBrowse");
       checkBoxFirewall.Text = Localizer.Instance.GetString("DBMSSettings_checkBoxFirewall");
       labelPassword.Text = Localizer.Instance.GetString("DBMSSettings_labelPassword");
-      labelPasswordDesc.Text = Localizer.Instance.GetString("DBMSSettings_labelPasswordDesc");
     }
     public override DeployDialog GetNextDialog()
     {

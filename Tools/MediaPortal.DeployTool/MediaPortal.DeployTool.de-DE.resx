@@ -218,7 +218,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Sie müssen einen gültigen Installationspfad für den SQL-Server eintragen.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Sie müssen ein Passwort für den "sa" Benutzer des SQL-Servers eintragen.</value>
+    <value>Sie müssen ein Passwort für den Benutzer des SQL-Servers eintragen.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Bitte nehmen Sie die benötigten Einstellungen für die Installation des SQL-Servers vor</value>
@@ -227,10 +227,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Installationsverzeichnis</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Passwort des "sa" Benutzers im SQL Server</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Das Passwort des Datenbank-Administrators. Der Standardwert ist "MediaPortal")</value>
+    <value>Passwort des Benutzers im SQL Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Wählen Sie das Installationsverzeichnis für den SQL-Server aus.</value>

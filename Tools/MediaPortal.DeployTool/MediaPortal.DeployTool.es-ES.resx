@@ -216,7 +216,7 @@ El PC actuará como servidor dedicado de TV-Server y proveerá de TV otros PC 's
     <value>Tienes que suministrar una ruta válida para la instalación de SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Tienes que suministrar una contraseña para el usuario "sa" de SQL-Server.</value>
+    <value>Tienes que suministrar una contraseña para el usuario de SQL-Server.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Por favor, selecciona las opciones necesarias para la instalación de SQL-Server.</value>
@@ -225,10 +225,7 @@ El PC actuará como servidor dedicado de TV-Server y proveerá de TV otros PC 's
     <value>Directorio de instalación</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Contraseña para el usuario "sa" de SQL-Server</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(La contraseña para el admin-usuario de SQL-Server. Por defecto es "MediaPortal")</value>
+    <value>Contraseña para el usuario de SQL-Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Selecciona la carpeta de instalación de SQL-Server</value>

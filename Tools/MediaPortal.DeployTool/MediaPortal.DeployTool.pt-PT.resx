@@ -218,7 +218,7 @@ O PC será utilizado como um servidor de TV dedicado e fornece outros PC's na su
     <value>Tem que fornecer um caminho de instalação válido para o Servidor SQL.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Tem que fornecer uma palavra passe para o  utilizador "sa" do Servidor SQL.</value>
+    <value>Tem que fornecer uma palavra passe para o  utilizador do Servidor SQL.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Por favor acerte as opções necessária para a instalação do Servidor SQL:</value>
@@ -227,10 +227,7 @@ O PC será utilizado como um servidor de TV dedicado e fornece outros PC's na su
     <value>Directoria de instalação</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Palavra passe para o utilizador "sa" do Servidor SQL</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Palavra passe para o administrador-utilizador do Servidor SQL. Padrão é "MediaPortal)</value>
+    <value>Palavra passe para o utilizador do Servidor SQL</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Seleccione a pasta de instalação para o Servidor SQL</value>

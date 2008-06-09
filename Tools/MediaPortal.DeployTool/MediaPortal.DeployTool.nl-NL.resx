@@ -218,7 +218,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Uw moet een juist installatiepad opgeven voor de SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>U moet een een wachtwoord opgeven voor de "sa"  SQL-Server.</value>
+    <value>U moet een een wachtwoord opgeven voor de SQL-Server.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Selecteer s.v.p. de benodigde opties voor de SQL-Server installatie:</value>
@@ -227,10 +227,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Installatiemap</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Wachtwoord voor gebruiker "sa" van de SQL_Server</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Het wachtwoord voor gebruiker admin van de SQL_Server. Standaard is "MediaPortal")</value>
+    <value>Wachtwoord voor gebruiker van de SQL_Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Selecteer de installatiemap voor SQL-Server</value>

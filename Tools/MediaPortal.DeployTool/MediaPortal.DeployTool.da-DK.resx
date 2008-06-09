@@ -218,7 +218,7 @@ MediaPortals brugerflade.</value>
     <value>You have to supply a valid installation path for the SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>You have to supply a password for the sa SQL-Server user.</value>
+    <value>You have to supply a password for the SQL-Server user.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Vælg indstillinger for SQL-Server (database) installationen:</value>
@@ -227,10 +227,7 @@ MediaPortals brugerflade.</value>
     <value>Installations folder</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Password for "sa" brugeren på SQL Serveren</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Password for admin-brugeren i SQL-Serveren. Standard er "MediaPortal")</value>
+    <value>Password for brugeren på SQL Serveren</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Vælg installationsfolder for SQL-Serveren</value>

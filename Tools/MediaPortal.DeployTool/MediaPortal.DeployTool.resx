@@ -219,7 +219,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>You have to supply a valid installation path for the SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>You have to supply a password for the "sa" SQL-Server user.</value>
+    <value>You have to supply a password for the admin SQL-Server user.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Please set the needed options for the SQL-Server installation:</value>
@@ -228,10 +228,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
     <value>Installation directory</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Password for "sa" user of the SQL Server</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(The password for the admin-user of the SQL-Server. Default is "MediaPortal")</value>
+    <value>Password for admin user of the SQL Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Select the installation folder for the SQL-Server</value>

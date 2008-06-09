@@ -220,7 +220,7 @@ i ditt lokala nätverk. (databas installation behövs)</value>
     <value>Du måste välja en gillitig installationssökväg för SQL-Serven.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Du måste välja ett lösenord för "sa" SQL-Server användare.</value>
+    <value>Du måste välja ett lösenord för SQL-Server användare.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Välj önskade inställningar för SQL-Server installationen:</value>
@@ -229,10 +229,7 @@ i ditt lokala nätverk. (databas installation behövs)</value>
     <value>Installationsmapp</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Lösenord för "sa" användaren på SQL Servern</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Lösenordet för admin - användaren av SQL-Serven. Standard är "MediaPortal")</value>
+    <value>Lösenord för användaren på SQL Servern</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Välj installationsmapp för SQL-Serven</value>

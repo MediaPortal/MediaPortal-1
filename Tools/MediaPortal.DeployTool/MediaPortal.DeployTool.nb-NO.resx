@@ -219,7 +219,7 @@ PC-en vil da fungere som en TV-Server og gi andre PC-er på ditt nettverk tilgan
     <value>Du må sette en gyldig installasjons vei til SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Du må sette et passord for brukeren sa i SQL-Serveren .</value>
+    <value>Du må sette et passord for brukeren i SQL-Serveren .</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Vennligst utfør de nødvendige instillingene for SQL-Server installasjonen:</value>
@@ -228,10 +228,7 @@ PC-en vil da fungere som en TV-Server og gi andre PC-er på ditt nettverk tilgan
     <value>Innstallasjons folder</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Passord for brukeren "sa" i SQL Server</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Passordet for admin brukeren av SQL-Serveren. Vanlig er ”MediaPortal”)</value>
+    <value>Passord for brukeren i SQL Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Velg installasjons folder for SQL-Serveren</value>

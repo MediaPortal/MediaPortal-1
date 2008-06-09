@@ -217,7 +217,7 @@
     <value>Вы указали корректный путь для SQL сервера.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Вы указали пароль для пользователя "sa" SQL сервера</value>
+    <value>Вы указали пароль для пользователя SQL сервера</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Укажите необходимые параметры для устанвки SQL сервера:</value>
@@ -226,10 +226,7 @@
     <value>Папка установки</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Пароль для пользователя "sa" SQL сервера</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Пароль для администратора SQL сервера. По умолчанию - "MediaPortal" )</value>
+    <value>Пароль для пользователя SQL сервера</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Укажите путь для установки SQL Сервера</value>

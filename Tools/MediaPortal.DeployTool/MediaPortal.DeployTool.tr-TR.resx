@@ -218,7 +218,7 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>SQL-Sunucusu kurulumu için geçerli bir kurulum dizini tanımlamalısınız.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>"sa" SQL-Sunucu kullanıcısı için bir şifre tanımlamalısınız.</value>
+    <value>SQL-Sunucu kullanıcısı için bir şifre tanımlamalısınız.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Lütfen SQL-Sunucusu kurulumu için gerekli seçenekleri ayarlayın:</value>
@@ -227,10 +227,7 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>Kurulum dizini</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>SQL-Sunucusu "sa" kullanıcısı için şifre</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(SQL-Sunucusu yöneticisi için şifre. Varsayılanı "MediaPortal"dır)</value>
+    <value>SQL-Sunucusu kullanıcısı için şifre</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>SQL-Sunucusu kurulumu için dizin seçin</value>

@@ -219,7 +219,7 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>E' necessario fornire una cartella valida di installazione per SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>E' necessario inserire la password per l'utente "sa" di SQL-Server.</value>
+    <value>E' necessario inserire la password per l'utente di amministrazione di  SQL-Server.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Inserire le opzioni necessarie all'installazione di SQL-Server</value>
@@ -228,10 +228,7 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Cartella d'installazione</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Password per l'utente "sa" di SQL Server</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>(Password per l'utente amministrativo di SQL-Server. Default è "MediaPortal")</value>
+    <value>Password per l'utente di amministrazione di SQL Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Selezionare la cartella di installazione per SQL-Server</value>

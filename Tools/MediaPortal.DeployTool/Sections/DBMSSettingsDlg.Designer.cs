@@ -33,7 +33,6 @@ namespace MediaPortal.DeployTool
       this.textBoxDir = new System.Windows.Forms.TextBox();
       this.textBoxPassword = new System.Windows.Forms.TextBox();
       this.labelPassword = new System.Windows.Forms.Label();
-      this.labelPasswordDesc = new System.Windows.Forms.Label();
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.checkBoxFirewall = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
@@ -70,9 +69,9 @@ namespace MediaPortal.DeployTool
       // 
       // textBoxPassword
       // 
-      this.textBoxPassword.Location = new System.Drawing.Point(10, 123);
+      this.textBoxPassword.HideSelection = false;
+      this.textBoxPassword.Location = new System.Drawing.Point(7, 136);
       this.textBoxPassword.Name = "textBoxPassword";
-      this.textBoxPassword.PasswordChar = '*';
       this.textBoxPassword.Size = new System.Drawing.Size(132, 20);
       this.textBoxPassword.TabIndex = 8;
       this.textBoxPassword.Text = "MediaPortal";
@@ -81,21 +80,11 @@ namespace MediaPortal.DeployTool
       // 
       this.labelPassword.AutoSize = true;
       this.labelPassword.ForeColor = System.Drawing.Color.White;
-      this.labelPassword.Location = new System.Drawing.Point(7, 102);
+      this.labelPassword.Location = new System.Drawing.Point(7, 115);
       this.labelPassword.Name = "labelPassword";
-      this.labelPassword.Size = new System.Drawing.Size(70, 13);
+      this.labelPassword.Size = new System.Drawing.Size(56, 13);
       this.labelPassword.TabIndex = 7;
-      this.labelPassword.Text = "sa Password:";
-      // 
-      // labelPasswordDesc
-      // 
-      this.labelPasswordDesc.AutoSize = true;
-      this.labelPasswordDesc.ForeColor = System.Drawing.Color.White;
-      this.labelPasswordDesc.Location = new System.Drawing.Point(7, 153);
-      this.labelPasswordDesc.Name = "labelPasswordDesc";
-      this.labelPasswordDesc.Size = new System.Drawing.Size(374, 13);
-      this.labelPasswordDesc.TabIndex = 9;
-      this.labelPasswordDesc.Text = "(The password for the admin-user of the SQL-Server. Default is \"MediaPortal\")";
+      this.labelPassword.Text = "Password:";
       // 
       // buttonBrowse
       // 
@@ -128,23 +117,21 @@ namespace MediaPortal.DeployTool
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
       this.Controls.Add(this.checkBoxFirewall);
       this.Controls.Add(this.buttonBrowse);
-      this.Controls.Add(this.labelPasswordDesc);
-      this.Controls.Add(this.textBoxPassword);
       this.Controls.Add(this.labelPassword);
+      this.Controls.Add(this.textBoxPassword);
       this.Controls.Add(this.textBoxDir);
       this.Controls.Add(this.labelInstDir);
       this.Controls.Add(this.labelHeading);
       this.Name = "DBMSSettingsDlg";
       this.Size = new System.Drawing.Size(665, 224);
-      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.labelHeading, 0);
       this.Controls.SetChildIndex(this.labelInstDir, 0);
       this.Controls.SetChildIndex(this.textBoxDir, 0);
-      this.Controls.SetChildIndex(this.labelPassword, 0);
       this.Controls.SetChildIndex(this.textBoxPassword, 0);
-      this.Controls.SetChildIndex(this.labelPasswordDesc, 0);
+      this.Controls.SetChildIndex(this.labelPassword, 0);
       this.Controls.SetChildIndex(this.buttonBrowse, 0);
       this.Controls.SetChildIndex(this.checkBoxFirewall, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -157,7 +144,6 @@ namespace MediaPortal.DeployTool
     private System.Windows.Forms.TextBox textBoxDir;
     private System.Windows.Forms.TextBox textBoxPassword;
     private System.Windows.Forms.Label labelPassword;
-    private System.Windows.Forms.Label labelPasswordDesc;
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.CheckBox checkBoxFirewall;
   }

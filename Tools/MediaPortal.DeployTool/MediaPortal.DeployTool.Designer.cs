@@ -225,7 +225,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You have to supply a password for the &quot;sa&quot; SQL-Server user..
+        ///   Looks up a localized string similar to You have to supply a password for the admin SQL-Server user..
         /// </summary>
         internal static string DBMSSettings_errPasswordMissing {
             get {
@@ -252,20 +252,11 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password for &quot;sa&quot; user of the SQL Server.
+        ///   Looks up a localized string similar to Password for admin user of the SQL Server.
         /// </summary>
         internal static string DBMSSettings_labelPassword {
             get {
                 return ResourceManager.GetString("DBMSSettings_labelPassword", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to (The password for the admin-user of the SQL-Server. Default is &quot;MediaPortal&quot;).
-        /// </summary>
-        internal static string DBMSSettings_labelPasswordDesc {
-            get {
-                return ResourceManager.GetString("DBMSSettings_labelPasswordDesc", resourceCulture);
             }
         }
         
