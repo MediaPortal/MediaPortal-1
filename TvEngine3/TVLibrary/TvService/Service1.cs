@@ -117,8 +117,12 @@ namespace TvService
         }
       }
       Thread.CurrentThread.Name = "TVService";
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      string OS_ServicePackDesc = "";
+      if (os.OSServicePackMajor > 0)
+        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      Log.WriteFile("TV service V" + versionInfo.FileVersion + " starting");
+      Log.WriteFile("TVService v" + versionInfo.FileVersion + " on " + os.OSVersionString + OS_ServicePackDesc + " starting");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       Process currentProcess = Process.GetCurrentProcess();

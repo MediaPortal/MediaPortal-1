@@ -103,8 +103,12 @@ namespace SetupTv
     public static void Main(string[] arguments)
     {
       Thread.CurrentThread.Name = "SetupTv";
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      string OS_ServicePackDesc = "";
+      if (os.OSServicePackMajor > 0)
+        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      Log.Info("---- start setuptv V" + versionInfo.FileVersion + "----");
+      Log.Info("---- start SetupTv v" + versionInfo.FileVersion + " on " + os.OSVersionString + OS_ServicePackDesc + " ----");
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
 
       foreach (string param in arguments)

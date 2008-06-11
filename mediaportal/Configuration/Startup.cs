@@ -128,7 +128,11 @@ namespace MediaPortal.Configuration
     /// </summary>
     public void Start()
     {
-      Log.Info("Configuration is starting up");
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      string OS_ServicePackDesc = "";
+      if (os.OSServicePackMajor > 0)
+        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
+      Log.Info("Configuration is starting up on " + os.OSVersionString + OS_ServicePackDesc);
 
       bool exitConfiguration = false;
 

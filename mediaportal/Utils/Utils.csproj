@@ -118,6 +118,7 @@
     </Compile>
     <Compile Include="Configuration\ISettingsPrefetchable.cs" />
     <Compile Include="Configuration\ISettingsProvider.cs" />
+    <Compile Include="Configuration\OSVersion.cs" />
     <Compile Include="Configuration\PluginIconsAttribute.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Configuration\XmlSettingsProvider.cs" />

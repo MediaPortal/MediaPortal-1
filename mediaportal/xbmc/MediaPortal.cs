@@ -271,7 +271,11 @@ public class MediaPortalApp : D3DApp, IRender
         mpWatchDog.Start();
       }
 #endif
-      Log.Info("Main: MediaPortal is starting up");
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      string OS_ServicePackDesc = "";
+      if (os.OSServicePackMajor > 0)
+        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
+      Log.Info("Main: MediaPortal is starting up on " + os.OSVersionString + OS_ServicePackDesc);
       Log.Info("Main: Using Directories:");
       foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
       {
