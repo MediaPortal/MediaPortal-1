@@ -868,18 +868,6 @@ Function .onInit
     Abort
   ${EndIf}
 
-  !insertmacro __WinVer_DefineOSTest ${Test} 95
-  !insertmacro __WinVer_DefineOSTest ${Test} 98
-  !insertmacro __WinVer_DefineOSTest ${Test} ME
-  !insertmacro __WinVer_DefineOSTest ${Test} NT4
-  !insertmacro __WinVer_DefineOSTest ${Test} 2000
-  !insertmacro __WinVer_DefineOSTest ${Test} 2000Srv
-  !insertmacro __WinVer_DefineOSTest ${Test} XP
-  !insertmacro __WinVer_DefineOSTest ${Test} XP64
-  !insertmacro __WinVer_DefineOSTest ${Test} 2003
-  !insertmacro __WinVer_DefineOSTest ${Test} VISTA
-  !insertmacro __WinVer_DefineOSTest ${Test} 2008
-
   ; show error that the OS is not supported and abort the installation
   ${If} ${AtMostWin2000Srv}
     StrCpy $0 "OSabort"
