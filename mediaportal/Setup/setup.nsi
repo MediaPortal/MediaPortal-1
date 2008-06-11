@@ -101,7 +101,8 @@ BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
 !include LogicLib.nsh
 !include Library.nsh
 !include FileFunc.nsh
-!include WinVer.nsh
+;!include WinVer.nsh
+!define WinVer++
 !include Memento.nsh
 
 !include setup-AddRemovePage.nsh
@@ -867,19 +868,62 @@ Function .onInit
     Abort
   ${EndIf}
 
-  ; check if minimum Windows version is XP and STOP if not
-  ${If} ${AtMostWin2000}
+  !insertmacro __WinVer_DefineOSTest ${Test} 95
+  !insertmacro __WinVer_DefineOSTest ${Test} 98
+  !insertmacro __WinVer_DefineOSTest ${Test} ME
+  !insertmacro __WinVer_DefineOSTest ${Test} NT4
+  !insertmacro __WinVer_DefineOSTest ${Test} 2000
+  !insertmacro __WinVer_DefineOSTest ${Test} 2000Srv
+  !insertmacro __WinVer_DefineOSTest ${Test} XP
+  !insertmacro __WinVer_DefineOSTest ${Test} XP64
+  !insertmacro __WinVer_DefineOSTest ${Test} 2003
+  !insertmacro __WinVer_DefineOSTest ${Test} VISTA
+  !insertmacro __WinVer_DefineOSTest ${Test} 2008
+
+  ; show error that the OS is not supported and abort the installation
+  ${If} ${AtMostWin2000Srv}
+    StrCpy $0 "OSabort"
+  ${ElseIf} ${IsWinXP}
+
+    ${If} ${ServicePackIs} < 2
+      StrCpy $0 "OSabort"
+    ${ElseIf} ${ServicePackIs} == 2
+      StrCpy $0 "OSwarn"
+    ${Else}
+      StrCpy $0 "OSok"
+    ${EndIf}
+
+  ${ElseIf} ${IsWinXP64}
+    StrCpy $0 "OSabort"
+  ${ElseIf} ${IsWin2003}
+    StrCpy $0 "OSwarn"
+  ${ElseIf} ${IsWinVISTA}
+
+    ${If} ${ServicePackIs} == 0
+      StrCpy $0 "OSwarn"
+    ${Else}
+      StrCpy $0 "OSok"
+    ${EndIf}
+
+  ${ElseIf} ${IsWin2008}
+    StrCpy $0 "OSwarn"
+  ${Else}
+    StrCpy $0 "OSabort"
+  ${EndIf}
+
+  ; show warnings for some OS
+  ${If} $0 == "OSabort"
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
     ExecShell open "${WEB_REQUIREMENTS}"
     Abort
-  ${EndIf}
-
-  ${If} $DeployMode == 0
-    ${If} ${IsWin2003}
-    #${OrIf} ${IsWin2008}
+  ${ElseIf} $0 == "OSwarn"
+    ${If} $DeployMode == 0
       MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
       ExecShell open "${WEB_REQUIREMENTS}"
     ${EndIf}
+  ${Else}
+    MessageBox MB_OK "OS is fine"
+    ; do nothing
   ${EndIf}
 
   ; check if current user is admin
