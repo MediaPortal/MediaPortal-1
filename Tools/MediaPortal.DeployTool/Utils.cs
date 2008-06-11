@@ -205,113 +205,51 @@ namespace MediaPortal.DeployTool
 
     private static string GetUserAgentOsString()
     {
-      string OsVersion = CheckOSRequirement(false);
-      if (!string.IsNullOrEmpty(OsVersion))
-      {
-        if (OsVersion == "Windows Vista" || OsVersion == "Windows 2008")
-          return "Windows NT 6.0";
-        else
-          if (OsVersion == "Windows 2003 Server")
-            return "Windows NT 5.2";
-      }
-      return "Windows NT 5.1"; // XP
+      OsDetection.OperatingSystemVersion os = new OsDetection.OperatingSystemVersion();
+      return "Windows NT " + os.OSMajorVersion + "." + os.OSMinorVersion;
     }
 
     #region Operation System Version Check
-    [DllImport("kernel32.dll")]
-    private static extern bool GetVersionEx(ref OSVERSIONINFOEX osVersionInfo);
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct OSVERSIONINFOEX
+    public static void CheckPrerequisites()
     {
-      public int dwOSVersionInfoSize;
-      public int dwMajorVersion;
-      public int dwMinorVersion;
-      public int dwBuildNumber;
-      public int dwPlatformId;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public string szCSDVersion;
-      public short wServicePackMajor;
-      public short wServicePackMinor;
-      public short wSuiteMask;
-      public byte wProductType;
-      public byte wReserved;
-    }
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
 
-    public static string CheckOSRequirement(bool NotifyUnsupported)
-    {
-      bool OsSupport = false;
+      string OS_ServicePackDesc = "";
+      if (os.OSServicePackMajor > 0)
+        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
+      string MsgOsVersion = os.OSVersionString + OS_ServicePackDesc;
 
-      OsDetection.OperatingSystemVersion os = new OsDetection.OperatingSystemVersion();
-      string OsDesc = os.VersionString;
+      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
 
-      switch (os.OSMajorVersion)
+      if (ver < 51)
       {
-        case 4:                                       // 4.x = Win95,98,ME and NT 
-          OsSupport = false;
-          break;
-
-        case 5:
-          switch (os.OSMinorVersion)
+        MessageBox.Show(Localizer.Instance.GetString("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        Application.Exit();
+      }
+      switch ((int)(ver * 10))
+      {
+        case 51:
+          if (os.OSServicePackMajor < 2)
           {
-            case 0:                                   // 5.0 = Windows2000
-              OsSupport = false;
-              break;
-
-            case 1:                                   // 5.1 = WindowsXP 32bit
-
-              if (os.OSServicePackMajor < 2)
-              {
-                OsDesc = "Windows XP ServicePack 1";
-                OsSupport = false;
-              }
-              else
-              {
-                OsSupport = true;
-              }
-              break;
-
-            case 2:                                   // 5.2 = Windows2003 e WindowsXP 64bit
-              if (os.OSProductType == OsDetection.OSProductType.Workstation)
-              {
-                OsSupport = true;
-                OsDesc = "Windows XP 64bit";
-                DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                if (btn == DialogResult.Cancel) Environment.Exit(-1);
-              }
-              else
-              {
-                OsSupport = true;
-                OsDesc = "Windows 2003 Server";
-                DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                if (btn == DialogResult.Cancel) Environment.Exit(-1);
-              }
-              break;
+            MessageBox.Show(Localizer.Instance.GetString("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
           }
           break;
-
-        case 6:                                      // 6.0 = WindowsVista and Windows2008
+        case 52:
           if (os.OSProductType == OsDetection.OSProductType.Workstation)
           {
-            OsSupport = true;
-            OsDesc = "Windows Vista";
+            MessageBox.Show(Localizer.Instance.GetString("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
           }
-          else
+          MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          break;
+        case 60:
+          if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
           {
-            OsSupport = true;
-            OsDesc = "Windows 2008";
-            DialogResult btn = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), OsDesc, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (btn == DialogResult.Cancel) Environment.Exit(-1);
+            MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning);
           }
           break;
-
       }
-      if (!OsSupport && NotifyUnsupported)
-      {
-        MessageBox.Show(Localizer.Instance.GetString("OS_Support"), OsDesc, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        Environment.Exit(-1);
-      }
-      return OsDesc;
     }
     #endregion
 
@@ -325,8 +263,9 @@ namespace MediaPortal.DeployTool
 
     public static bool Check64bit()
     {
+      OsDetection.OperatingSystemVersion os = new OsDetection.OperatingSystemVersion();
       //IsWow64Process is not supported under Windows2000
-      if (CheckOSRequirement(false) == "Windows 2000") return false;
+      if ((os.OSMajorVersion * 10) + os.OSMinorVersion == 50) return false;
       Process p = Process.GetCurrentProcess();
       IntPtr handle = p.Handle;
       bool isWow64;

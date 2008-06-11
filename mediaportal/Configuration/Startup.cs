@@ -82,6 +82,9 @@ namespace MediaPortal.Configuration
       Thread.CurrentThread.Name = "Config Main";
       Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
 
+      // Added OS requirements checks
+      CheckPrerequisites();
+
       // Logger should write into Configuration.log
       Log.SetConfigurationMode();
       Log.BackupLogFile(LogType.Config);
@@ -249,5 +252,51 @@ namespace MediaPortal.Configuration
       }
       return true;
     }
+
+    private static void CheckPrerequisites()
+    {
+      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+
+      string MsgNotSupported = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
+      string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
+      string OS_ServicePackDesc = "";
+      if (os.OSServicePackMajor > 0)
+        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
+      string MsgOsVersion = os.OSVersionString + OS_ServicePackDesc;
+
+      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+
+      if (ver < 51)
+      {
+        MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        Application.Exit();
+      }
+      switch ((int)(ver * 10))
+      {
+        case 51:
+          if (os.OSServicePackMajor < 2)
+          {
+            MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
+          }
+          break;
+        case 52:
+          if (os.OSProductType == OsDetection.OSProductType.Workstation)
+          {
+            MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
+          }
+          MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          break;
+        case 60:
+          if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
+          {
+            MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          }
+          break;
+      }
+      return;
+    }
+
   }
 }

@@ -751,44 +751,46 @@ namespace SetupTv
     {
       OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
 
-      if (os.OSPlatformId == OsDetection.OSPlatformId.Win32s)
+      string MsgNotSupported = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
+      string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
+      string OS_ServicePackDesc = "";
+      if (os.OSServicePackMajor > 0)
+        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
+      string MsgOsVersion = os.OSVersionString + OS_ServicePackDesc;
+
+      int ver = (os.OSMajorVersion*10) + os.OSMinorVersion;
+
+      if (ver < 51)
       {
-        MessageBox.Show("Your platform is not supported! \nPlease check our Wiki's requirements page.", "Requirements not met!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
         Application.Exit();
       }
-
-      string MsgNotSupported = "Your platform is no longer supported by Microsoft and therefore lacks critical updates! \nPlease check our Wiki's requirements page.";
-      switch (os.OSMajorVersion)
+      switch ((int)(ver*10))
       {
-        case 3:                               // 3.x = NT 3.51
-          MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-          return;
-        case 4:                               // 4.x = NT 4.0
-          MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-          return;
-        case 5:
-          switch (os.OSMinorVersion)
+        case 51:
+          if (os.OSServicePackMajor < 2)
           {
-            case 0:                          // 5.0 = Windows2000
-              MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-              if (checkDvbFix)
-                CheckForDvbHotfix();
-              break;
-            case 1:                          // 5.1 = WindowsXP 32bit
-              if (checkDvbFix)
-                CheckForDvbHotfix();
-              break;
-            case 2:                          // 5.2 = Windows2003 & WindowsXP 64bit 
-              if (os.OSProductType != OsDetection.OSProductType.Workstation)
-                MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-              if (checkDvbFix)
-                CheckForDvbHotfix();
-              break;
+            MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
           }
+          if (checkDvbFix)
+            CheckForDvbHotfix();
           break;
-        case 6:                              // 6.0 = WindowsVista & Windows2008
-          if (os.OSProductType != OsDetection.OSProductType.Workstation)
-            MessageBox.Show(MsgNotSupported, os.OSVersionString + " is not supported!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        case 52:
+          if (os.OSProductType == OsDetection.OSProductType.Workstation)
+          {
+            MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
+          }
+          MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          if (checkDvbFix)
+            CheckForDvbHotfix();
+          break;
+        case 60:
+          if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
+          {
+            MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          }
           break;
       }
     }
