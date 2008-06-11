@@ -931,21 +931,6 @@ FunctionEnd
 	pop $0
 !macroend
 
-!macro __GetServicePack
-  Push $0
-  Push $1
-  System::Call '*(i 148,i,i,i,i,&t128,&i2,&i2,&i2,&i1,&i1)i.r1' ;BUGBUG: no error handling for mem alloc failure!
-  System::Call 'kernel32::GetVersionEx(i r1)'
-  System::Call '*$1(i,i,i,i,i,i,i.r0)'
-
-  MessageBox MB_OK|MB_ICONEXCLAMATION "Service Pack: $0"
-  ;IntCmpU $0 5 0 ${_WINVER_PARSEVER_OLDSYS} ;OSVERSIONINFOEX can be used on NT4SP6 and later, but we only use it on NT5+
-
-  System::Free $1
-  pop $1
-  pop $0
-!macroend
-
 !macro _IsNT _a _b _t _f
   !insertmacro _LOGICLIB_TEMP
   System::Call kernel32::GetVersion()i.s
@@ -995,6 +980,31 @@ FunctionEnd
 !insertmacro __WinVer_DefineOSTests AtLeast
 !insertmacro __WinVer_DefineOSTests Is
 !insertmacro __WinVer_DefineOSTests AtMost
+
+
+
+!macro GetServicePack _var
+
+  Push $0
+  Push $1
+  System::Call '*(i 148,i,i,i,i,&t128,&i2,&i2,&i2,&i1,&i1)i.r1' ;BUGBUG: no error handling for mem alloc failure!
+  System::Call 'kernel32::GetVersionEx(i r1)'
+
+  ; using the service pack major number
+  ;System::Call '*$1(i,i,i,i,i,&t128,&i2.r0)'
+
+  ; using the string "Service Pack #"
+  System::Call '*$1(i,i,i,i,i,&t128.r0)'
+  StrCpy ${_var} $0 "" -1
+
+  MessageBox MB_OK|MB_ICONEXCLAMATION "Service Pack: >${_var}<"
+  ;IntCmpU $0 5 0 ${_WINVER_PARSEVER_OLDSYS} ;OSVERSIONINFOEX can be used on NT4SP6 and later, but we only use it on NT5+
+
+  System::Free $1
+  pop $1
+  pop $0
+
+!macroend
 
 !endif # !___WINVER__NSH___
 
