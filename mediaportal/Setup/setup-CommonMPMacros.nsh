@@ -997,7 +997,7 @@ FunctionEnd
   System::Call '*$1(i,i,i,i,i,&t128.r0)'
   StrCpy ${_var} $0 "" -1
 
-  MessageBox MB_OK|MB_ICONEXCLAMATION "Service Pack: >${_var}<"
+  ;MessageBox MB_OK|MB_ICONEXCLAMATION "Service Pack: >${_var}<"
   ;IntCmpU $0 5 0 ${_WINVER_PARSEVER_OLDSYS} ;OSVERSIONINFOEX can be used on NT4SP6 and later, but we only use it on NT5+
 
   System::Free $1
