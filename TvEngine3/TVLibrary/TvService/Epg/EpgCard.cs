@@ -286,7 +286,8 @@ namespace TvService
         Log.Epg("Epg: card:{0} stop grab", _user.CardId);
         _tvController.StopGrabbingEpg(_user);
       }
-      _currentTransponder.InUse = false;
+      if (_currentTransponder!=null)
+        _currentTransponder.InUse = false;
 
       _epgTimer.Enabled = false;
       _isRunning = false;
