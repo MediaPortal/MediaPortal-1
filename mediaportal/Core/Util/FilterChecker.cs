@@ -65,8 +65,11 @@ namespace MediaPortal.Util
       List<string> filterLocations = RegistryTools.GetRegisteredAssemblyPaths(aFilterName);
       if (filterLocations.Count > 0)
       {
-        foreach (string fullPath in filterLocations)
+        foreach (string filterPath in filterLocations)
         {
+          string fullPath = filterPath;
+          if (!filterPath.Contains(":\\"))
+            fullPath = Environment.SystemDirectory + "\\" + filterPath;
           try
           {
             // Try to get the last change date as a best approach to get the install date.
@@ -132,6 +135,33 @@ namespace MediaPortal.Util
         }
 
         return false;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Checks if a file has the required version
+    /// </summary>
+    /// <param name="aFilePath">The full path to the file to check</param>
+    /// <param name="aMinimumVersion">The minimum version wanted</param>
+    /// <returns>True if the file's version is equal or higher than the given minimum</returns>
+    public static bool CheckFileVersion(string aFilePath, string aMinimumVersion, out Version aCurrentVersion)
+    {
+      aCurrentVersion = new Version(0, 0, 0, 0);
+      try
+      {
+        System.Version desiredVersion = new System.Version(aMinimumVersion);
+        FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
+        if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
+        {
+          aCurrentVersion = new System.Version(fileVersion.ProductVersion);
+          return aCurrentVersion >= desiredVersion;
+        }
+        else
+          return false;
       }
       catch (Exception)
       {

@@ -3377,6 +3377,19 @@ public class MediaPortalApp : D3DApp, IRender
   private void DoStartupJobs()
   {
     FilterChecker.CheckInstalledVersions();
+
+    System.Version aParamVersion;  
+    //
+    // 6.5.2600.3243 = KB941568,   6.5.2600.3024 = KB927544
+    //
+    if (!FilterChecker.CheckFileVersion(Environment.SystemDirectory + "\\quartz.dll", "6.5.2600.3024", out aParamVersion))
+    {
+      string ErrorMsg = string.Format("Your version {0} of quartz.dll has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion.ToString());
+      Log.Info("Util: quartz.dll error - {0}", ErrorMsg);
+      if (MessageBox.Show(ErrorMsg, "Microsoft VMR9 handler outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+        Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
+    }
+
     // Stop MCE services
     Utils.StopMCEServices();
     EnableS3Trick();
