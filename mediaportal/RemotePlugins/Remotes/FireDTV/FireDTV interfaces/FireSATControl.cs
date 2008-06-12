@@ -91,7 +91,7 @@ namespace MediaPortal.InputDevices.FireDTV
 
                 try
                 {
-                    FireDTVControl.SetDllDirectory(fullDllPath);
+                    FireDTVControl.SetDllDirectory(Path.GetDirectoryName(fullDllPath));
                 }
                 catch (Exception ex1)
                 {
