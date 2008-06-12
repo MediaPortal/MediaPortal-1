@@ -69,8 +69,9 @@ namespace TvService
     DateTime _grabStartTime;
     bool _isRunning;
     TVController _tvController;
-    List<Transponder> _transponders;
-    int _currentTransponderIndex = -1;
+
+    Transponder _currentTransponder;
+    
     TvServerEventHandler _eventHandler;
     bool _disposed = false;
     Card _card;
@@ -192,11 +193,7 @@ namespace TvService
           _state = EpgState.Idle;
           _tvController.StopGrabbingEpg(_user);
           _user.CardId = -1;
-          if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
-          {
-            _transponders[_currentTransponderIndex].InUse = false;
-            _currentTransponderIndex = -1;
-          }
+          _currentTransponder.InUse = false;
           return 0;
         }
 
@@ -210,13 +207,9 @@ namespace TvService
         {
           //no epg found for this transponder
           Log.Epg("Epg: card:{0} no epg found", _user.CardId);
-          if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
-          {
-            Transponder transponder = _transponders[_currentTransponderIndex];
-            transponder.OnTimeOut();
-            transponder.InUse = false;
-            _currentTransponderIndex = -1;
-          }
+          _currentTransponder.InUse = false;
+          _currentTransponder.OnTimeOut();
+
           _state = EpgState.Idle;
           _tvController.StopGrabbingEpg(_user);
           _tvController.StopCard(_user);
@@ -224,8 +217,7 @@ namespace TvService
           return 0;
         }
 
-        if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
-        {
+
           //create worker thread to update the database
           Log.Epg("Epg: card:{0} received epg for {1} channels", _user.CardId, epg.Count);
           _state = EpgState.Updating;
@@ -234,7 +226,7 @@ namespace TvService
           workerThread.IsBackground = true;
           workerThread.Name = "EPG Update thread";
           workerThread.Start();
-        }
+
       }
       catch (Exception ex)
       {
@@ -251,42 +243,26 @@ namespace TvService
     /// <param name="transponders">The transponders.</param>
     /// <param name="index">The index.</param>
     /// <param name="channel">The channel.</param>
-    public void GrabEpg(List<Transponder> transponders, int index, Channel channel)
+    public void GrabEpg()
     {
-
-      if (index < 0 || index >= transponders.Count)
-      {
-        Log.Error("epg:invalid transponder index");
-        return;
-      }
-      if (channel == null)
-      {
-        Log.Error("epg:invalid channel");
-        return;
-      }
-      if (transponders[index].Tuning == null)
-      {
-        Log.Error("epg:invalid tuning");
-        return;
-      }
-
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting s = layer.GetSetting("timeoutEPG", "10");
       if (Int32.TryParse(s.Value, out _epgTimeOut) == false)
       {
         _epgTimeOut = 10;
       }
+      _currentTransponder = TransponderList.Instance.CurrentTransponder;
+      Channel channel = _currentTransponder.CurrentChannel;
 
-      Log.Epg("grab epg card:#{0} transponder: #{1} ch:{2} ", _card.IdCard, index, channel.Name);
-      _transponders = transponders;
-      _currentTransponderIndex = index;
+      Log.Epg("grab epg card:#{0} transponder: #{1} ch:{2} ", _card.IdCard, TransponderList.Instance.CurrentIndex, channel.Name);
+
       _state = EpgState.Idle;
       _isRunning = true;
       _user = new User("epg", false, -1);
-      if (GrabEpgForChannel(channel, transponders[index].Tuning, _card))
+      if (GrabEpgForChannel(channel, _currentTransponder.Tuning, _card))
       {
-        Log.Epg("Epg: card:{0} start grab {1}", _user.CardId, transponders[index].Tuning.ToString());
-        transponders[index].InUse = true;
+        Log.Epg("Epg: card:{0} start grab {1}", _user.CardId, _currentTransponder.Tuning.ToString());
+        _currentTransponder.InUse = true;
         //succeeded, then wait for epg to be received
         _state = EpgState.Grabbing;
         _grabStartTime = DateTime.Now;
@@ -295,8 +271,8 @@ namespace TvService
       }
       else
       {
-        Log.Epg("unable to grab epg transponder: ch:{0} {1} started on {2}", index, channel.Name, _user.CardId);
-        Log.Epg("{0}", transponders[index].Tuning.ToString());
+        Log.Epg("unable to grab epg transponder: {0} ch: {1} started on {2}", TransponderList.Instance.CurrentIndex, channel.Name, _user.CardId);
+        Log.Epg("{0}", _currentTransponder.Tuning.ToString());
       }
     }
 
@@ -310,11 +286,8 @@ namespace TvService
         Log.Epg("Epg: card:{0} stop grab", _user.CardId);
         _tvController.StopGrabbingEpg(_user);
       }
-      if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
-      {
-        _transponders[_currentTransponderIndex].InUse = false;
-        _currentTransponderIndex = -1;
-      }
+      _currentTransponder.InUse = false;
+
       _epgTimer.Enabled = false;
       _isRunning = false;
     }
@@ -357,11 +330,7 @@ namespace TvService
               }
               _state = EpgState.Idle;
               _user.CardId = -1;
-              if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
-              {
-                _transponders[_currentTransponderIndex].InUse = false;
-                _currentTransponderIndex = -1;
-              }
+              _currentTransponder.InUse = false;
               _reEntrant = false;
               return;
             }
@@ -650,11 +619,7 @@ namespace TvService
       //if card is not idle anymore we return
       if (IsCardIdle(_user) == false)
       {
-        if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
-        {
-          _transponders[_currentTransponderIndex].InUse = false;
-          _currentTransponderIndex = -1;
-        }
+        _currentTransponder.InUse = false;
         return;
       }
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -690,13 +655,7 @@ namespace TvService
       {
         if (timeOut == false)
         {
-          if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
-          {
-            Transponder transponder = _transponders[_currentTransponderIndex];
-            transponder.OnTimeOut();
-            transponder.InUse = false;
-            _currentTransponderIndex = -1;
-          }
+          _currentTransponder.OnTimeOut();
         }
         if (_state != EpgState.Idle && _user.CardId >= 0)
         {
@@ -770,7 +729,8 @@ namespace TvService
     /// <returns></returns>
     Channel GetChannel(int idChannel)
     {
-      foreach (Transponder transponder in _transponders)
+
+      foreach (Transponder transponder in TransponderList.Instance)
       {
         foreach (Channel ch in transponder.Channels)
         {

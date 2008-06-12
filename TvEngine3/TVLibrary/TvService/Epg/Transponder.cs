@@ -84,12 +84,27 @@ namespace TvService
       {
         return _currentChannelIndex;
       }
-      set
+    }
+
+    public Channel CurrentChannel
+    {
+      get
       {
-        _currentChannelIndex = value;
+        return Channels[_currentChannelIndex];
       }
     }
 
+    public Channel GetNextChannel()
+    {
+      _currentChannelIndex++;
+      if (_currentChannelIndex == Channels.Count)
+      {
+        _currentChannelIndex = -1;
+        return null;
+      }
+      else
+        return Channels[_currentChannelIndex];
+    }
     /// <summary>
     /// Gets or sets the channels for this transponder
     /// </summary>
@@ -208,4 +223,119 @@ namespace TvService
       #endregion
 
     }
+
+  public class TransponderList : List<Transponder>
+  {
+    #region Singleton implementation
+    static readonly TransponderList _instance = new TransponderList();
+
+    static TransponderList()
+    {
+    }
+
+    public static TransponderList Instance
+    {
+      get
+      {
+        return _instance;
+      }
+    }
+    #endregion
+
+    private Transponder _currentTransponder=null;
+    private int _currentTransponderIndex = -1;
+
+    public Transponder CurrentTransponder
+    {
+      get
+      {
+        return _currentTransponder;
+      }
+    }
+    public int CurrentIndex
+    {
+      get
+      {
+        return _currentTransponderIndex;
+      }
+    }
+
+    /// <summary>
+    /// Clears the list
+    /// </summary>
+    public void Reset()
+    {
+      Clear();
+      _currentTransponder = null;
+      _currentTransponderIndex = -1;
+    }
+
+    /// <summary>
+    /// Gets the a list of all transponders
+    /// </summary>
+    public void RefreshTransponders()
+    {
+      Gentle.Common.CacheManager.Clear();
+      Reset();
+      //get all channels
+      IList channels = Channel.ListAll();
+      foreach (Channel channel in channels)
+      {
+        //if epg grabbing is enabled and channel is a radio or tv channel
+        if (channel.GrabEpg == false) continue;
+        if (channel.IsRadio == false && channel.IsTv == false) continue;
+
+        //for each tuning detail of the channel
+        foreach (TuningDetail detail in channel.ReferringTuningDetail())
+        {
+          //skip analog channels and webstream channels
+          if (detail.ChannelType == 0 || detail.ChannelType==5) continue;
+
+          //create a new transponder
+          Transponder t = new Transponder(detail);
+          bool found = false;
+
+          //check if transonder already exists
+          foreach (Transponder transponder in this)
+          {
+            if (transponder.Equals(t))
+            {
+              //yes, then simply add the channel to this transponder
+              found = true;
+              transponder.Channels.Add(channel);
+              break;
+            }
+          }
+
+          if (!found)
+          {
+            //new transponder, add the channel to this transponder
+            //and add the transponder to the transponder list
+            t.Channels.Add(channel);
+            Add(t);
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the next transponder from the list. Returns null if all transponders have been processed
+    /// </summary>
+    public Transponder GetNextTransponder()
+    {
+      _currentTransponderIndex++;
+      if (_currentTransponderIndex == this.Count)
+      {
+        _currentTransponder = null;
+        _currentTransponderIndex = -1;
+        return null;
+      }
+      else
+      {
+        _currentTransponder = this[_currentTransponderIndex];
+        return CurrentTransponder;
+      }
+    }
   }
+
+}
