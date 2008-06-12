@@ -56,7 +56,7 @@ namespace TvControl
     {
       _user = user;
       _server = server;
-      _recordingFolder = System.IO.Directory.GetCurrentDirectory();
+      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)); 
       _recordingFormat = recordingFormat;
     }
     /// <summary>
@@ -68,7 +68,7 @@ namespace TvControl
     {
       _user = user;
       _server = server;
-      _recordingFolder = System.IO.Directory.GetCurrentDirectory();
+      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)); 
     }
     /// <summary>
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
@@ -78,7 +78,7 @@ namespace TvControl
     {
       _user = user;
       _server = Dns.GetHostName();
-      _recordingFolder = System.IO.Directory.GetCurrentDirectory();
+      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)); 
     }
     #endregion
 
@@ -171,13 +171,13 @@ namespace TvControl
       {
         _recordingFolder = value;
         if (_recordingFolder == String.Empty)
-          _recordingFolder = System.IO.Directory.GetCurrentDirectory();
+          _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)); 
 
       }
     }
 
     /// <summary>
-    /// gets/sets the recording folder for the card
+    /// gets/sets the timeshifting folder for the card
     /// </summary>
     [XmlIgnore]
     public string TimeshiftFolder
@@ -190,7 +190,7 @@ namespace TvControl
       {
         _timeShiftFolder = value;
         if (_timeShiftFolder == String.Empty)
-          _timeShiftFolder = System.IO.Directory.GetCurrentDirectory();
+          _timeShiftFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
       }
     }

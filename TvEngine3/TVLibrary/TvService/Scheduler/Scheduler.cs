@@ -563,9 +563,9 @@ namespace TvService
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.StartRecording, new VirtualCard(_user), _user, recording.Schedule, null));
 
         if (cardInfo.Card.RecordingFolder == String.Empty)
-          cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
+          cardInfo.Card.RecordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)); 
         if (cardInfo.Card.TimeShiftFolder == String.Empty)
-          cardInfo.Card.TimeShiftFolder = System.IO.Directory.GetCurrentDirectory();
+          cardInfo.Card.TimeShiftFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
         Log.Write("Scheduler : record, first tune to channel");
         TvResult tuneResult = _controller.Tune(ref _user, cardInfo.TuningDetail, recording.Channel.IdChannel);

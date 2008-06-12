@@ -457,7 +457,18 @@ namespace TvService
           // remove any old timeshifting TS files	
           try
           {
-            string[] files = Directory.GetFiles(dbsCard.TimeShiftFolder);
+            string TimeShiftPath = dbsCard.TimeShiftFolder;
+            if (string.IsNullOrEmpty(dbsCard.TimeShiftFolder))
+            {
+              TimeShiftPath = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+              if(!Directory.Exists(TimeShiftPath))
+              {
+                Log.Info("Controller: creating timeshifting folder {0} for card \"{1}\"", TimeShiftPath, dbsCard.Name);
+                Directory.CreateDirectory(TimeShiftPath);
+              }
+            }
+
+            string[] files = Directory.GetFiles(TimeShiftPath);
 
             foreach (string file in files)
             {
@@ -1886,9 +1897,23 @@ namespace TvService
 
         //setup folders
         if (cardInfo.Card.RecordingFolder == String.Empty)
-          cardInfo.Card.RecordingFolder = System.IO.Directory.GetCurrentDirectory();
+        {
+          cardInfo.Card.RecordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+          if(!Directory.Exists(cardInfo.Card.RecordingFolder))
+          {
+            Log.Write("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder, cardInfo.Card.Name);
+            Directory.CreateDirectory(cardInfo.Card.RecordingFolder);
+          }
+        }
         if (cardInfo.Card.TimeShiftFolder == String.Empty)
-          cardInfo.Card.TimeShiftFolder = System.IO.Directory.GetCurrentDirectory();
+        {
+          cardInfo.Card.TimeShiftFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+          if(!Directory.Exists(cardInfo.Card.TimeShiftFolder))
+          {
+            Log.Write("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeShiftFolder, cardInfo.Card.Name);
+            Directory.CreateDirectory(cardInfo.Card.TimeShiftFolder);
+          }
+        }
 
         //tune to the new channel
         result = CardTune(ref user, tuneChannel, channel);
