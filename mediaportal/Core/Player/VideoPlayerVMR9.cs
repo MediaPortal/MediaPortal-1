@@ -109,6 +109,11 @@ namespace MediaPortal.Player
         //Manually add codecs based on file extension if not in auto-settings
         if (bAutoDecoderSettings == false)
         {
+          // add the VMR9 in the graph
+          Vmr9 = new VMR9Util();
+          Vmr9.AddVMR9(graphBuilder);
+          Vmr9.Enable(false);
+
           // switch back to directx fullscreen mode
           Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
@@ -255,10 +260,6 @@ namespace MediaPortal.Player
         }
         else
         {
-          // add the VMR9 in the graph
-          Vmr9 = new VMR9Util();
-          Vmr9.AddVMR9(graphBuilder);
-          Vmr9.Enable(false);
           // render
           hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
         }
