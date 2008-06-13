@@ -475,6 +475,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       updateListViewItem(listViewPlugins.FocusedItem);
+      listViewPlugins_Click(sender, e);
     }
 
     private void updateListViewItem(ListViewItem item)
