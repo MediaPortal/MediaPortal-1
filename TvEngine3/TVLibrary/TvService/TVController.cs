@@ -472,6 +472,7 @@ namespace TvService
               }
             }
 
+            Log.Debug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, TimeShiftPath);
             string[] files = Directory.GetFiles(TimeShiftPath);
 
             foreach (string file in files)
