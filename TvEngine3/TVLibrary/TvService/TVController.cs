@@ -238,7 +238,7 @@ namespace TvService
       Log.Info("Controller: Initilizing TVServer");
       bool result = false;
 
-      for (int i = 0 ; i < 5 && !result ; i++)
+      for (int i = 0; i < 5 && !result; i++)
       {
         if (i != 0)
         {
@@ -304,7 +304,11 @@ namespace TvService
         IPHostEntry local = Dns.GetHostEntry(Dns.GetHostName());
         foreach (IPAddress ipaddress in local.AddressList)
         {
-          Log.Info("Controller: local ip adress:{0}", ipaddress.ToString());
+          // Show only IPv4 family addresses
+          if (ipaddress.AddressFamily == AddressFamily.InterNetwork)
+          {
+            Log.Info("Controller: local ip address:{0}", ipaddress.ToString());
+          }
         }
 
         //get all registered servers from the database
@@ -355,7 +359,7 @@ namespace TvService
 
         //enumerate all tv cards in this pc...
         TvBusinessLayer layer = new TvBusinessLayer();
-        for (int i = 0 ; i < _localCardCollection.Cards.Count ; ++i)
+        for (int i = 0; i < _localCardCollection.Cards.Count; ++i)
         {
           //for each card, check if its already mentioned in the database
           bool found = false;
@@ -384,7 +388,7 @@ namespace TvService
           if (dbsCard.ReferencedServer().IdServer == _ourServer.IdServer)
           {
             bool found = false;
-            for (int cardNumber = 0 ; cardNumber < cardsInstalled ; ++cardNumber)
+            for (int cardNumber = 0; cardNumber < cardsInstalled; ++cardNumber)
             {
               if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
               {
@@ -396,7 +400,7 @@ namespace TvService
             {
               Log.Info("Controller: card not found :{0}", dbsCard.Name);
 
-              for (int i = 0 ; i < _localCardCollection.Cards.Count ; ++i)
+              for (int i = 0; i < _localCardCollection.Cards.Count; ++i)
               {
                 if (_localCardCollection.Cards[i].DevicePath == dbsCard.DevicePath)
                 {
@@ -415,7 +419,7 @@ namespace TvService
         {
           if (IsLocal(card.ReferencedServer().HostName))
           {
-            for (int x = 0 ; x < _localCardCollection.Cards.Count ; ++x)
+            for (int x = 0; x < _localCardCollection.Cards.Count; ++x)
             {
               if (_localCardCollection.Cards[x].DevicePath == card.DevicePath)
               {
@@ -461,7 +465,7 @@ namespace TvService
             if (string.IsNullOrEmpty(dbsCard.TimeShiftFolder))
             {
               TimeShiftPath = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-              if(!Directory.Exists(TimeShiftPath))
+              if (!Directory.Exists(TimeShiftPath))
               {
                 Log.Info("Controller: creating timeshifting folder {0} for card \"{1}\"", TimeShiftPath, dbsCard.Name);
                 Directory.CreateDirectory(TimeShiftPath);
@@ -782,7 +786,7 @@ namespace TvService
       if (devicePath.Length > 0)
       {
         // Remove it from the local card collection
-        for (int i = 0 ; i < _localCardCollection.Cards.Count ; i++)
+        for (int i = 0; i < _localCardCollection.Cards.Count; i++)
         {
           if (_localCardCollection.Cards[i].DevicePath == devicePath)
           {
@@ -985,7 +989,7 @@ namespace TvService
         User[] users = tvcard.Users.GetUsers();
         if (users == null) continue;
         if (users.Length == 0) continue;
-        for (int i = 0 ; i < users.Length ; ++i)
+        for (int i = 0; i < users.Length; ++i)
         {
           User user = users[i];
           if (tvcard.CurrentChannelName(ref user) == null) continue;
@@ -1782,7 +1786,7 @@ namespace TvService
             if (users != null)
             {
               //for each user
-              for (int i = 0 ; i < users.Length ; ++i)
+              for (int i = 0; i < users.Length; ++i)
               {
                 User tmpUser = users[i];
                 //is user timeshifting?
@@ -1858,7 +1862,7 @@ namespace TvService
             if (users != null)
             {
               //for each user
-              for (int i = 0 ; i < users.Length ; ++i)
+              for (int i = 0; i < users.Length; ++i)
               {
                 User tmpUser = users[i];
                 //is user timeshifting?
@@ -1899,7 +1903,7 @@ namespace TvService
         if (cardInfo.Card.RecordingFolder == String.Empty)
         {
           cardInfo.Card.RecordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-          if(!Directory.Exists(cardInfo.Card.RecordingFolder))
+          if (!Directory.Exists(cardInfo.Card.RecordingFolder))
           {
             Log.Write("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder, cardInfo.Card.Name);
             Directory.CreateDirectory(cardInfo.Card.RecordingFolder);
@@ -1908,7 +1912,7 @@ namespace TvService
         if (cardInfo.Card.TimeShiftFolder == String.Empty)
         {
           cardInfo.Card.TimeShiftFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-          if(!Directory.Exists(cardInfo.Card.TimeShiftFolder))
+          if (!Directory.Exists(cardInfo.Card.TimeShiftFolder))
           {
             Log.Write("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeShiftFolder, cardInfo.Card.Name);
             Directory.CreateDirectory(cardInfo.Card.TimeShiftFolder);
@@ -2356,7 +2360,7 @@ namespace TvService
         if (users == null || users.Length == 0)
           continue;
 
-        for (int i = 0 ; i < users.Length ; ++i)
+        for (int i = 0; i < users.Length; ++i)
         {
           User user = users[i];
           tmpChannel = tvcard.CurrentChannelName(ref user);
@@ -2519,7 +2523,7 @@ namespace TvService
     /// </summary>
     /// <param name="cardId">Unique id of the card</param>
     /// <param name="qualityType">The new quality type</param>
-    public void SetQualityType(int cardId,QualityType qualityType)
+    public void SetQualityType(int cardId, QualityType qualityType)
     {
       if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId)) return;
       IQuality qualityControl = _cards[cardId].Card.Quality;
@@ -2582,7 +2586,7 @@ namespace TvService
           if (users != null)
           {
             //for each user
-            for (int i = 0 ; i < users.Length ; ++i)
+            for (int i = 0; i < users.Length; ++i)
             {
               User tmpUser = users[i];
               if (tmpUser.HeartBeat > DateTime.MinValue)
@@ -2726,7 +2730,7 @@ namespace TvService
       {
         Log.Write(@"Controller: delete timeshift files {0}\{1}", folder, fileName);
         string[] files = System.IO.Directory.GetFiles(folder);
-        for (int i = 0 ; i < files.Length ; ++i)
+        for (int i = 0; i < files.Length; ++i)
         {
           if (files[i].IndexOf(fileName) >= 0)
           {
@@ -2816,7 +2820,7 @@ namespace TvService
           User[] users = _cards[cardId].Users.GetUsers();
           if (users != null)
           {
-            for (int i = 0 ; i < users.Length ; ++i)
+            for (int i = 0; i < users.Length; ++i)
             {
               if (_cards[cardId].Recorder.IsRecording(ref users[i]) || _cards[cardId].TimeShifter.IsTimeShifting(ref users[i]))
               {
