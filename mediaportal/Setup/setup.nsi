@@ -911,7 +911,6 @@ Function .onInit
       ExecShell open "${WEB_REQUIREMENTS}"
     ${EndIf}
   ${Else}
-    MessageBox MB_OK "OS is fine"
     ; do nothing
   ${EndIf}
 
