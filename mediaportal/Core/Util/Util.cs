@@ -1682,12 +1682,12 @@ namespace MediaPortal.Util
       return strRet;
     }
 
-    public static string TryEverythingToGetFolderThumbByFilename(string aSongPath)
+    public static string TryEverythingToGetFolderThumbByFilename(string aSongPath, bool aPreferOriginalShareFile)
     {
       string strThumb = string.Empty;
 
       strThumb = GetLocalFolderThumb(aSongPath);
-      if (File.Exists(strThumb))
+      if (File.Exists(strThumb) && !aPreferOriginalShareFile)
       {
         return strThumb;
       }
@@ -1738,6 +1738,9 @@ namespace MediaPortal.Util
           }
           if (File.Exists(strRemoteFolderThumb))
             return strRemoteFolderThumb;
+          // we came through here without finding anything so fallback to the cache finally
+          if (aPreferOriginalShareFile && File.Exists(strThumb))
+            return strThumb;
         }
       }
       return string.Empty;

@@ -1243,7 +1243,7 @@ namespace MediaPortal.Music.Database
 
             if (_useAllImages)
             {
-              sharefolderThumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(tag.FileName);
+              sharefolderThumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(tag.FileName, true);
               if (string.IsNullOrEmpty(sharefolderThumb))
               {
                 _previousNegHitDir = Path.GetDirectoryName(tag.FileName);
@@ -1281,10 +1281,17 @@ namespace MediaPortal.Music.Database
             sharefolderThumb = Util.Utils.GetFolderThumb(tag.FileName);
             if (!File.Exists(sharefolderThumb))
             {
-              if (File.Exists(smallThumbPath))
+              string sourceCover = Util.Utils.TryEverythingToGetFolderThumbByFilename(tag.FileName, true);
+              if (string.IsNullOrEmpty(sourceCover))
+                sourceCover = smallThumbPath;
+              if (File.Exists(Util.Utils.ConvertToLargeCoverArt(sourceCover)))
+                sourceCover = Util.Utils.ConvertToLargeCoverArt(sourceCover);
+              if (File.Exists(sourceCover))
               {
                 _previousPosHitDir = Path.GetDirectoryName(tag.FileName);
-                FolderThumbCreator newThumb = new FolderThumbCreator(tag.FileName, tag);
+                //FolderThumbCreator newThumb = new FolderThumbCreator(tag.FileName, tag);
+                if (!Util.Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                  Log.Info("MusicDatabase: Could not create missing folder thumb in share path {0}", sharefolderThumb);
                 System.Threading.Thread.Sleep(0);
               }
             }
@@ -1331,31 +1338,31 @@ namespace MediaPortal.Music.Database
       {
         try
         {
-          string[] coverFiles = Directory.GetFiles(sharePath, @"folder.jpg", SearchOption.AllDirectories);
+          string[] checkDirs = Directory.GetDirectories(sharePath, "*", SearchOption.AllDirectories);
 
-          for (int i = 0 ; i < coverFiles.Length ; i++)
+          for (int i = 0 ; i < checkDirs.Length ; i++)
           {
-            string coverPath = coverFiles[i];
+            string coverPath = checkDirs[i];
             try
             {
               //string displayPath = Path.GetDirectoryName(coverPath);
               //displayPath = displayPath.Remove(0, displayPath.LastIndexOf('\\'));
-              MyFolderArgs.phase = string.Format("Creating folder thumbs: {0}/{1}", Convert.ToString(i + 1), Convert.ToString(coverFiles.Length));
+              MyFolderArgs.phase = string.Format("Caching folder thumbs: {0}/{1}", Convert.ToString(i + 1), Convert.ToString(checkDirs.Length));
               // range = 80-89
-              int folderProgress = aProgressStart + (((i + 1) / coverFiles.Length) * (aProgressEnd - aProgressStart));
+              int folderProgress = aProgressStart + (((i + 1) / checkDirs.Length) * (aProgressEnd - aProgressStart));
               MyFolderArgs.progress = folderProgress;
               OnDatabaseReorgChanged(MyFolderArgs);
 
               bool foundCover = false;
               string sharefolderThumb;
               // We add the slash to be able to use TryEverythingToGetFolderThumbByFilename and GetLocalFolderThumb
-              string currentPath = string.Format("{0}\\", Path.GetDirectoryName(coverPath));
+              string currentPath = string.Format("{0}\\", coverPath);
               string localFolderThumb = Util.Utils.GetLocalFolderThumb(currentPath);
               string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(localFolderThumb);
 
               if (_useAllImages)
               {
-                sharefolderThumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(currentPath);
+                sharefolderThumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(currentPath, true);
                 if (string.IsNullOrEmpty(sharefolderThumb))
                   Log.Debug("MusicDatabase: No useable folder images found in {0}", currentPath);
                 else
@@ -1371,21 +1378,21 @@ namespace MediaPortal.Music.Database
               if (foundCover)
               {
                 if (!Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                  Log.Info("MusicDatabase: Could not create folder thumb from folder {0}", sharePath);
+                  Log.Info("MusicDatabase: Could not cache folder thumb from folder {0}", sharePath);
                 if (!Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-                  Log.Info("MusicDatabase: Could not create large folder thumb from folder {0}", sharePath);
+                  Log.Info("MusicDatabase: Could not cache large folder thumb from folder {0}", sharePath);
               }
             }
             catch (Exception ex2)
             {
-              Log.Error("MusicDatabase: Error creating folder thumb of {0} - {1}", coverPath, ex2.Message);
+              Log.Error("MusicDatabase: Error caching folder thumb of {0} - {1}", coverPath, ex2.Message);
             }
 
           }
         }
         catch (Exception ex)
         {
-          Log.Error("MusicDatabase: Error creating folder thumbs - {0}", ex.Message);
+          Log.Error("MusicDatabase: Error caching folder thumbs - {0}", ex.Message);
         }
       }
     }
@@ -1420,7 +1427,7 @@ namespace MediaPortal.Music.Database
                 for (int j = 0 ; j < groupedArtistSongs.Count ; j++)
                 {
                   bool foundDup = false;
-                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedArtistSongs[j].FileName);
+                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedArtistSongs[j].FileName, true);
                   if (!string.IsNullOrEmpty(coverArt))
                   {
                     foreach (string dupCheck in imageTracks)
@@ -1476,7 +1483,7 @@ namespace MediaPortal.Music.Database
                 for (int j = 0 ; j < groupedGenreSongs.Count ; j++)
                 {
                   bool foundDup = false;
-                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedGenreSongs[j].FileName);
+                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedGenreSongs[j].FileName, true);
                   if (!string.IsNullOrEmpty(coverArt))
                   {
                     foreach (string dupCheck in imageTracks)

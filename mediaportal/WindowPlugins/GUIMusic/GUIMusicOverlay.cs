@@ -542,7 +542,7 @@ namespace MediaPortal.GUI.Music
 
       // no succes with album cover try folder cache
       if (string.IsNullOrEmpty(thumb))
-        thumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName);      
+        thumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName, false);      
 
       if (isCurrent)
       {
