@@ -141,7 +141,7 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
       pidInfo2.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
       LogDebug("pmt parser set ITV HD video stream to H.264");
     }
-    else
+    if (pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
       pidInfo2.logicalStreamType=-1;
 		memset(pidInfo2.rawDescriptorData,0xFF,ES_info_length);
 		memcpy(pidInfo2.rawDescriptorData,&section[pointer+5],ES_info_length);
