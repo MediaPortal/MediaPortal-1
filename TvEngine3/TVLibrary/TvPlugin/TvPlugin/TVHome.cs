@@ -111,6 +111,12 @@ namespace TvPlugin
     private static bool _doingHandleServerNotConnected = false;
     private static bool _doingChannelChange = false;
     private static bool _ServerNotConnectedHandled = false;
+
+    // this var is used to block the user from hitting "record now" button multiple times
+    // the sideeffect is that the user is able to record the same show twice.
+    private static int lastActiveRecChannelId = 0;
+    private static DateTime lastRecordTime = DateTime.MinValue; // we need to reset the lastActiveRecChannelId based on how long since a rec. was initiated.
+
     //Stopwatch benchClock = null;
 
     [SkinControlAttribute(2)]     protected GUIButtonControl btnTvGuide = null;
@@ -1298,10 +1304,12 @@ namespace TvPlugin
       if (g_Player.Playing == false)
       {
         UpdateProgressPercentageBar();
+        UpdateStateOfButtons();
         //if (btnTuningDetails!=null)
         //  btnTuningDetails.Visible = false;
         if (btnTeletext.Visible)
           btnTeletext.Visible = false;
+        
         return;
       }
       //else
@@ -1331,7 +1339,7 @@ namespace TvPlugin
 
       UpdateStateOfButtons();
       UpdateProgressPercentageBar();
-      UpdateRecordingIndicator();
+      
       GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
@@ -1610,60 +1618,73 @@ namespace TvPlugin
       TvBusinessLayer layer = new TvBusinessLayer();
       TvServer server = new TvServer();
       VirtualCard card;
+
       if (false == server.IsRecording(Navigator.Channel.Name, out card))
       {
-        //no then start recording
-        Program prog = Navigator.Channel.CurrentProgram;
-        if (prog != null)
-        {
-          GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-          if (pDlgOK != null)
+        // check if we are already recording this channel
+        // simply using server.IsRecording, is not always enough - race condition.
+        bool alreadyRec = (lastActiveRecChannelId == Navigator.Channel.IdChannel);                
+        if (!alreadyRec)
+        {          
+          //no then start recording
+          Program prog = Navigator.Channel.CurrentProgram;
+          if (prog != null)
           {
-            pDlgOK.SetHeading(605);//my tv
-            pDlgOK.AddLocalizedString(875); //current program
-            pDlgOK.AddLocalizedString(876); //till manual stop
-            pDlgOK.DoModal(this.GetID);
-            switch (pDlgOK.SelectedId)
+            GUIDialogMenuBottomRight pDlgOK = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+            if (pDlgOK != null)
             {
-              case 875:
-                {
-                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, Navigator.Channel.CurrentProgram.Title,
-                            Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
-                  newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-                  newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  newSchedule.RecommendedCard = TVHome.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
+              pDlgOK.SetHeading(605);//my tv
+              pDlgOK.AddLocalizedString(875); //current program
+              pDlgOK.AddLocalizedString(876); //till manual stop
+              pDlgOK.DoModal(this.GetID);
+              switch (pDlgOK.SelectedId)
+              {
+                case 875:
+                  {
+                    Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, Navigator.Channel.CurrentProgram.Title,
+                              Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
+                    newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                    newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                    newSchedule.RecommendedCard = TVHome.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
-                  newSchedule.Persist();
-                  server.OnNewSchedule();
-                }
-                break;
+                    newSchedule.Persist();
+                    server.OnNewSchedule();
+                    lastActiveRecChannelId = Navigator.Channel.IdChannel;
+                    lastRecordTime = DateTime.Now;
+                  }
+                  break;
 
-              case 876:
-                {
-                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
-                                              DateTime.Now, DateTime.Now.AddDays(1));
-                  newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-                  newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  newSchedule.RecommendedCard = TVHome.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
+                case 876:
+                  {
+                    Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
+                                                DateTime.Now, DateTime.Now.AddDays(1));
+                    newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                    newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                    newSchedule.RecommendedCard = TVHome.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
-                  newSchedule.Persist();
-                  server.OnNewSchedule();
-                }
-                break;
+                    newSchedule.Persist();
+                    server.OnNewSchedule();
+                    lastActiveRecChannelId = Navigator.Channel.IdChannel;
+                    lastRecordTime = DateTime.Now;
+                  }
+                  break;
+              }
             }
           }
-        }
-        else
-        {
-          //manual record
-          Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
-                                      DateTime.Now, DateTime.Now.AddDays(1));
-          newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-          newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-          newSchedule.RecommendedCard = TVHome.Card.Id;
+          else
+          {
+            //manual record
+            Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
+                                        DateTime.Now, DateTime.Now.AddDays(1));
+            newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+            newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+            newSchedule.RecommendedCard = TVHome.Card.Id;
 
-          newSchedule.Persist();
-          server.OnNewSchedule();
+            newSchedule.Persist();
+            server.OnNewSchedule();
+            lastActiveRecChannelId = Navigator.Channel.IdChannel;
+            lastRecordTime = DateTime.Now;
+          }
         }
       }
       else
@@ -1685,10 +1706,8 @@ namespace TvPlugin
               }
             }
           }
-          server.StopRecordingSchedule(card.RecordingScheduleId);
+          server.StopRecordingSchedule(card.RecordingScheduleId);                    
         }
-
-
       }
       UpdateStateOfButtons();
     }
@@ -1743,9 +1762,13 @@ namespace TvPlugin
 
     private void UpdateRecordingIndicator()
     {
+      DateTime now = DateTime.Now;
+
       // if we're recording tv, update gui with info
-      if (TVHome.Connected && TVHome.Card.IsRecording)
+      if (TVHome.Connected && TVHome.Card.IsRecording)      
       {
+        lastRecordTime = now;
+
         //int card;
         int scheduleId = TVHome.Card.RecordingScheduleId;
         if (scheduleId > 0)
@@ -1763,6 +1786,19 @@ namespace TvPlugin
       }
       else
       {
+        // if Recording hasn't been active for over 5 sec. then reset the lastActiveRecChannelId var)
+        
+
+        if (lastRecordTime != DateTime.MinValue)        
+        {
+          TimeSpan ts = now - lastRecordTime;
+          if (ts.TotalSeconds > 5)
+          {
+            lastActiveRecChannelId = 0;
+            lastRecordTime = DateTime.MinValue;
+          }
+        }
+        
         imgRecordingIcon.IsVisible = false;
       }
     }
