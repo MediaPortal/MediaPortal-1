@@ -308,6 +308,11 @@ namespace MediaPortal.Configuration
             FiltersPowerDVD7Decoder pdvdConfig = new FiltersPowerDVD7Decoder();
             AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
+          if (filter.Equals("CyberLink Audio Decoder (PDVD8)"))
+          {
+            FiltersPowerDVD8Decoder pdvdConfig = new FiltersPowerDVD8Decoder();
+            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
+          }
           if (filter.Equals("MPA Decoder Filter"))
           {
             FiltersMPEG2DecAudio mpaConfig = new FiltersMPEG2DecAudio();
