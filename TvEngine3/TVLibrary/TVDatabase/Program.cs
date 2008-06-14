@@ -377,7 +377,7 @@ namespace TvDatabase
     /// </summary>
     /// <param name="title">Title we wanna look for</param>
     /// <returns></returns>
-    public static Program RetrieveByTitle(string title)
+    public static IList RetrieveByTitle(string title)
     {
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
@@ -389,7 +389,8 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return (Program)ObjectFactory.GetCollection(typeof(Program), stmt.Execute())[0];
+      //return (Program)ObjectFactory.GetCollection(typeof(Program), stmt.Execute())[0];
+      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );

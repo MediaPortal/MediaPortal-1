@@ -643,12 +643,36 @@ namespace TvPlugin
                   }
                 }
               }
-              if (add)
+              GUIListItem it = BuildItemFromRecording(rec);
+
+              if (it != null)
               {
-                // Add new list item for this recording
-                GUIListItem item = BuildItemFromRecording(rec);
-                if (item != null)
-                  itemlist.Add(item);
+                if (add)
+                {
+                  // Add new list item for this recording
+                  //GUIListItem item = BuildItemFromRecording(rec);                
+                  itemlist.Add(it);
+                }
+                else
+                {
+                  if (IsRecordingActual(rec))
+                  {
+                    int i = 0;
+                    foreach (GUIListItem obj in itemlist)
+                    {
+                      if (obj.Label.Equals(rec.Title) && obj.IsFolder)
+                      {
+                        it.IsFolder = true;
+                        Utils.SetDefaultIcons(it);                        
+
+                        itemlist.RemoveAt(i);
+                        itemlist.Insert(i, it);
+                        break;
+                      }
+                      i++;
+                    }
+                  }
+                }
               }
             }
             catch (Exception recex)
@@ -703,6 +727,37 @@ namespace TvPlugin
       UpdateProperties();
     }
 
+    private static bool IsRecordingActual(Recording aRecording)
+    {
+
+      TimeSpan tsRecording = aRecording.EndTime - aRecording.StartTime;
+
+      if (tsRecording.TotalSeconds == 0)
+      {        
+        TvServer server = new TvServer();
+        VirtualCard card;
+        bool isRec = server.IsRecording(aRecording.ReferencedChannel().Name, out card);
+
+        if (isRec)
+        {          
+          IList prgList = (IList)Program.RetrieveByTitle(aRecording.Title);
+
+          if (prgList.Count > 0)
+          {
+
+            foreach (Program prg in prgList)
+            {              
+              if (aRecording.StartTime <= prg.EndTime)
+              {
+                return true;
+              }
+            }                        
+          }          
+        }        
+      }
+      return false;     
+    }
+
     private static GUIListItem BuildItemFromRecording(Recording aRecording)
     {
       string strDefaultUnseenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoBig.png";
@@ -732,6 +787,13 @@ namespace TvPlugin
           }
           item.ThumbnailImage = strLogo;
           item.IconImage = strLogo;
+
+          //Mark the recording with a "rec. symbol" if it is an active recording.
+
+          if (IsRecordingActual(aRecording))
+          {
+            item.PinImage = Thumbs.TvRecordingIcon;
+          }          
         }
         else
           Log.Warn("TVRecorded: invalid recording title for {0}", aRecording.FileName);
@@ -1006,20 +1068,65 @@ namespace TvPlugin
 
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
-      if (rec.TimesWatched > 0) dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
-      else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
-      dlgYesNo.SetLine(1, rec.ReferencedChannel().DisplayName);
-      dlgYesNo.SetLine(2, rec.Title);
-      dlgYesNo.SetLine(3, string.Empty);
+
       dlgYesNo.SetDefaultToYes(false);
-      dlgYesNo.DoModal(GetID);
-
-      if (!dlgYesNo.IsConfirmed)
+      bool isRec = IsRecordingActual(rec);
+      TvServer server = new TvServer(); ;
+      if (isRec)
       {
-        return;
-      }
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
+        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
+        dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
+        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
+        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+        if (!dlgYesNo.IsConfirmed)
+        {
+          return;
+        }
 
-      TvServer server = new TvServer();
+        IList schedulesList = Schedule.ListAll();
+        if (schedulesList != null)
+        {          
+          if (rec != null)
+          {
+            foreach (Schedule s in schedulesList)
+            {
+              if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel)
+              {
+                TimeSpan ts = s.StartTime - rec.StartTime;
+
+                if (ts.Minutes == 0 || s.ProgramName.Equals(rec.Title))
+                {
+                  VirtualCard card;                  
+
+                  if (!server.IsRecording(rec.ReferencedChannel().Name, out card)) return;
+                  
+                  CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
+                  schedule.Persist();
+                  server.OnNewSchedule();
+
+                  server.StopRecordingSchedule(card.RecordingScheduleId);                  
+                }
+              }
+            }
+          }          
+        }
+
+      }
+      else
+      {
+        if (rec.TimesWatched > 0) dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
+        else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
+        dlgYesNo.SetLine(1, rec.ReferencedChannel().DisplayName);
+        dlgYesNo.SetLine(2, rec.Title);
+        dlgYesNo.SetLine(3, string.Empty);
+        dlgYesNo.DoModal(GetID);
+        if (!dlgYesNo.IsConfirmed)
+        {
+          return;
+        }
+      }                                    
+      
       server.DeleteRecording(rec.IdRecording);
 
       Gentle.Common.CacheManager.Clear();
@@ -1131,7 +1238,12 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", rec.Genre);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", rec.Description);
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
+
+      string strLogo = "";
+      if (rec.ReferencedChannel() != null)
+      {
+        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
+      }
       if (System.IO.File.Exists(strLogo))
       {
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
