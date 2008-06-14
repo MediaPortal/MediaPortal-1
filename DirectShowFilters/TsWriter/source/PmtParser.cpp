@@ -132,12 +132,17 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
 		pidInfo2.fakePid=-1;
 		pidInfo2.elementaryPid=elementary_PID;
 		pidInfo2.streamType=stream_type;
-		if (pidInfo2.streamType!=SERVICE_TYPE_DVB_SUBTITLES2)
-			pidInfo2.logicalStreamType=stream_type;
-		else
-			pidInfo2.logicalStreamType=-1;
-		pidInfo2.rawDescriptorSize=ES_info_length;
-
+    pidInfo2.rawDescriptorSize=ES_info_length;
+    if (pidInfo2.streamType!=SERVICE_TYPE_DVB_SUBTITLES2)
+      pidInfo2.logicalStreamType=stream_type;
+    if (pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && ES_info_length <= 3)
+    {
+      pidInfo2.streamType=SERVICE_TYPE_VIDEO_H264;
+      pidInfo2.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
+      LogDebug("pmt parser set ITV HD video stream to H.264");
+    }
+    else
+      pidInfo2.logicalStreamType=-1;
 		memset(pidInfo2.rawDescriptorData,0xFF,ES_info_length);
 		memcpy(pidInfo2.rawDescriptorData,&section[pointer+5],ES_info_length);
 
@@ -188,4 +193,3 @@ void CPmtParser::OnNewSection(CSection& sections)
 		m_pmtCallback2=NULL;
 	}
 }
-
