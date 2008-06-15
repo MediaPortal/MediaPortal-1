@@ -620,7 +620,7 @@ namespace TvService
           info.title = recording.Program.Title;
           info.description = recording.Program.Description;
           info.genre = recording.Program.Genre;
-          info.channelName = recording.Program.ReferencedChannel().DisplayName;
+          info.channelName = recording.Schedule.ReferencedChannel().DisplayName;
           MatroskaTagHandler.WriteTag(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
         }
         Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
