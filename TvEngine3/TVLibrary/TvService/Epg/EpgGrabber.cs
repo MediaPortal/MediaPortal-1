@@ -132,9 +132,10 @@ namespace TvService
 					RemoteControl.HostName = card.ReferencedServer().HostName;
 					if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
 					Log.Error("card: unable to connect to slave controller at:{0}", card.ReferencedServer().HostName);
+          Log.Error("EpbGrabber Exception: ", e);
 					continue;
 				}				        
 
