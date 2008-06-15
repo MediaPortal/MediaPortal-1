@@ -206,7 +206,7 @@ namespace MediaPortal.Player
         string url=filename.Remove(0,filename.LastIndexOf('/')+1);
         isTimeShiftStream=(url.Substring(0, 6) == "stream");
       }
-      return (filename.ToLower().IndexOf(".tsbuffer") < 0 && filename.ToLower().IndexOf("radio.tsbuffer") < 0 && !isTimeShiftStream);
+      return (filename.ToLower().IndexOf(".tsbuffer") < 0 && filename.ToLower().IndexOf("radio.tsbuffer") < 0 && !isTimeShiftStream && !IsTV);
     }
     protected void LoadMyTvFilterSettings(ref int intFilters,ref string strFilters,ref string strVideoCodec, ref string strAudioCodec, ref string strAACAudioCodec, ref string strH264VideoCodec, ref string strAudioRenderer, ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
     {
