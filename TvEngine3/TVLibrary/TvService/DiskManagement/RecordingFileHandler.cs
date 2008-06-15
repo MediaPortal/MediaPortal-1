@@ -45,7 +45,7 @@ namespace TvService
     /// If the above results in an empty folder, we also clean that one.
     /// </summary>
     /// <param name="rec">The recording we want to delete the files for.</param>
-    public void DeleteRecordingOnDisk(Recording rec)
+    public bool DeleteRecordingOnDisk(Recording rec)
     {
       if (System.IO.File.Exists(rec.FileName))
       {
@@ -73,8 +73,11 @@ namespace TvService
         catch (Exception ex)
         {
           Log.Error("RecordingFileHandler: Error while deleting a recording from disk: {0}", ex.Message);
+          return false; // file not deleted, return failure
         }
+        return true; // file deleted, return success
       }
+      return true; // no file to delete, return success
     }
 
     /// <summary>

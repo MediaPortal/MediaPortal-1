@@ -100,8 +100,11 @@ namespace TvService
 
         // Delete the file from disk and the recording entry from the database.
         RecordingFileHandler handler = new RecordingFileHandler();
-        handler.DeleteRecordingOnDisk(oldestEpisode);
-        oldestEpisode.Delete();
+        bool result = handler.DeleteRecordingOnDisk(oldestEpisode);
+        if (result)
+        {
+          oldestEpisode.Delete();
+        }
       }
     }
     #endregion

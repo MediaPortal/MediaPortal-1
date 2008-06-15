@@ -212,8 +212,11 @@ namespace TvService
         {
           // Delete the file from disk and the recording entry from the database.
           RecordingFileHandler handler = new RecordingFileHandler();
-          handler.DeleteRecordingOnDisk(fi.record);
-          fi.record.Delete();
+          bool result = handler.DeleteRecordingOnDisk(fi.record);
+          if (result)
+          {
+            fi.record.Delete();
+          }
         }
         recordings.RemoveAt(0);
       }

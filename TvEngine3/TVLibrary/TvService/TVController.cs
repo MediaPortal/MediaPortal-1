@@ -1554,8 +1554,11 @@ namespace TvService
 
         _streamer.RemoveFile(rec.FileName);
         RecordingFileHandler handler = new RecordingFileHandler();
-        handler.DeleteRecordingOnDisk(rec);
-        rec.Delete();
+        bool result = handler.DeleteRecordingOnDisk(rec);
+        if (result)
+        {
+          rec.Delete();
+        }
       }
       catch (Exception)
       {
