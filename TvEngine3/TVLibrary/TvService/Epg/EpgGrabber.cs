@@ -135,7 +135,7 @@ namespace TvService
 				catch (Exception e)
 				{
 					Log.Error("card: unable to connect to slave controller at:{0}", card.ReferencedServer().HostName);
-          Log.Error("EpbGrabber Exception: ", e);
+          Log.Write(e);
 					continue;
 				}				        
 
