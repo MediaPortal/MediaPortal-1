@@ -100,6 +100,12 @@ typedef TYPE_RET_VAL (*BDAAPICIREADPSIFASTWITHPMT)(HANDLE hOpen,BYTE   *pPMT,WOR
 typedef TYPE_RET_VAL (*BDAAPICIREADPSIFASTDRVDEMUX)(HANDLE hOpen,WORD   PNR);
 typedef HANDLE       (*BDAAPIOPENHWIDX) (DEVICE_CAT DevType,UINT        uiDevID);
 typedef TYPE_RET_VAL (*BDAAPICIMULTIDECODE)(HANDLE hOpen,WORD  *PNR,int    NrOfPnrs);
+// Info functions
+typedef TYPE_RET_VAL (*BDAAPIGETDEVNAMEANDFETYPE) (HANDLE hOpen, pTS_FilterNames FilterNames);
+typedef TYPE_RET_VAL (*BDAAPIGETPRODUCTSELLERID) (HANDLE hOpen, PRODUCT_SELLER &ps);
+//CI menu functions
+typedef TYPE_RET_VAL (*BDAAPICIENTERMODULEMENU) (HANDLE hOpen, BYTE nSlot);
+typedef TYPE_RET_VAL (*BDAAPICIMENUANSWER) (HANDLE hOpen, BYTE nSlot, BYTE Selection);
 
 //**************************************************************************************************
 //* ctor
@@ -109,7 +115,9 @@ CTechnotrend::CTechnotrend(LPUNKNOWN pUnk, HRESULT *phr)
 {
   m_hBdaApi = INVALID_HANDLE_VALUE;
   m_deviceType=UNKNOWN;
+	m_ciSlotAvailable=0;
   m_ciStatus=-1;
+	m_waitTimeout=0;
   m_dll=NULL;
 }
 
@@ -182,9 +190,19 @@ static void OnDisplayString(PVOID Context,BYTE  nSlot,char* pString,WORD  wLengt
 //**************************************************************************************************
 //* callback from driver to display the CI menu
 //**************************************************************************************************
-static void OnDisplayMenu(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
+/*static void OnDisplayMenu(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
 {
   LogDebug("TechnoTrend:OnDisplayMenu slot:%d", nSlot);
+}*/
+
+//**************************************************************************************************
+//* callback from driver to display the CI menu
+//**************************************************************************************************
+static void OnDisplayMenuCallback(PVOID Context,BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
+{
+  LogDebug("TechnoTrend:OnDisplayMenu slot:%d", nSlot);
+  CTechnotrend* technoTrend=(CTechnotrend*)Context;
+	technoTrend->OnDisplayMenu(nSlot,wItems,pStringArray,wLength);
 }
 
 //**************************************************************************************************
@@ -358,6 +376,11 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
     return S_OK;
   }
 
+	GetDrvVersion(deviceId);	// query some information from driver before CI open
+	GetDevNameAndFEType(); 
+	GetProductSellerID();
+
+
   memset(&m_technoTrendStructure,0,sizeof(m_technoTrendStructure));
   m_technoTrendStructure.p01Context=m_technoTrendStructure.p02Context=m_technoTrendStructure.p03Context=m_technoTrendStructure.p04Context=this;
   m_technoTrendStructure.p05Context=m_technoTrendStructure.p06Context=m_technoTrendStructure.p07Context=m_technoTrendStructure.p08Context=this;
@@ -366,7 +389,7 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
   m_technoTrendStructure.p01=OnSlotStatusCallback;
   m_technoTrendStructure.p02=OnCaStatusCallback;
   m_technoTrendStructure.p03=OnDisplayString;
-  m_technoTrendStructure.p04=OnDisplayMenu;
+  m_technoTrendStructure.p04=OnDisplayMenuCallback;
   m_technoTrendStructure.p05=OnDisplayList;
   m_technoTrendStructure.p06=OnSwitchOsdOff;
   m_technoTrendStructure.p07=OnInputRequest;
@@ -387,36 +410,20 @@ STDMETHODIMP CTechnotrend::SetTunerFilter(IBaseFilter* tunerFilter)
     if (result != RET_SUCCESS)
     {
       LogDebug("Technotrend: unable to open the CI:%d",result);
-      m_deviceType=UNKNOWN;  
+      m_ciSlotAvailable=0;
+			// don't set to unknown; this would lead to never execute SetAntennaPower or other functions checking m_deviceType
+			//m_deviceType=UNKNOWN;  
       return S_OK;
     }
+		m_ciSlotAvailable=1;
     LogDebug("Technotrend: bdaapiOpenCI succeeded");
-
-    BYTE v1,v2,v3,v4;
-    BDAAPIGETDRVVERSION getDrvVersion=(BDAAPIGETDRVVERSION)GetProcAddress(m_dll,"bdaapiGetDrvVersion");
-    if (getDrvVersion!=NULL)
-    {
-      result=getDrvVersion(m_hBdaApi,&v1,&v2,&v3,&v4);
-      if (result != RET_SUCCESS)
-      {
-        LogDebug("Technotrend: bdaapiGetDrvVersion failed %d",result);
-      }
-      else
-      {
-        LogDebug("Technotrend: initalized id:%x, driver version:%d.%d.%d.%d",deviceId,v1,v2,v3,v4);
-      }
-    }
-    else
-    {
-      LogDebug("Technotrend: unable to get proc adress of bdaapiGetDrvVersion");
-    }
+		// query status on init; try to avoid first time init problem
+		GetCISlotStatus();
   }
   else
   {
     LogDebug("Technotrend: unable to get proc adress of bdaapiOpenCI");
   }
-
-
   return S_OK;
 }
 
@@ -437,7 +444,7 @@ STDMETHODIMP CTechnotrend::IsTechnoTrend( BOOL* yesNo)
 STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
 {
   *yesNo=FALSE;
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK || m_slotStatus==CI_SLOT_CA_OK) // ||m_slotStatus==CI_SLOT_DBG_MSG)
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK) // ||m_slotStatus==CI_SLOT_DBG_MSG)
   {
     *yesNo=TRUE;
   }
@@ -515,17 +522,13 @@ STDMETHODIMP CTechnotrend::SetDisEqc(BYTE* diseqc, BYTE len, BYTE Repeat,BYTE To
 }
 
 //**************************************************************************************************
-//* DescrambleMultiple()
-//* Descrambles one or more programs
-//* pNrs           : array containing service ids
-//* NrOfOfPrograms : number of service ids in pNrs
-//* succeeded      : on return specifies if decoding succeeded or not
+//* GetCISlotStatus()
+//* Query state of CI slot;
+//* result is set asynchron in callback function from driver; time gap can be 0.2 sec
 //**************************************************************************************************
-STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)
+STDMETHODIMP CTechnotrend::GetCISlotStatus()
 {
   TYPE_RET_VAL hr;
-  *succeeded=FALSE;
-  BOOL enabled=FALSE;
   m_ciStatus=-1;
   LogDebug("TechnoTrend: Get CI Slot State");
   BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"bdaapiCIGetSlotStatus");
@@ -541,26 +544,51 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
   {
     LogDebug("Technotrend: unable to get proc adress of bdaapiCIGetSlotStatus");
   }
-  LogDebug("TechnoTrend: DescrambleMultiple:(%d)",NrOfOfPrograms);
+	return S_OK;
+}
+
+
+//**************************************************************************************************
+//* DescrambleMultiple()
+//* Descrambles one or more programs
+//* pNrs           : array containing service ids
+//* NrOfOfPrograms : number of service ids in pNrs
+//* succeeded      : on return specifies if decoding succeeded or not
+//**************************************************************************************************
+STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)
+{
+  TYPE_RET_VAL hr;
+  *succeeded=FALSE;
+  BOOL enabled=FALSE;
+  m_ciStatus=-1;
+
+	// if OpenCI failed, there's no CI ergo no CAM
+	if (m_ciSlotAvailable==0) {
+		LogDebug("TechnoTrend: DescrambleMultiple: no CI present");
+		*succeeded=TRUE;
+		return S_OK;
+	}
+
+	GetCISlotStatus();
+
+	LogDebug("TechnoTrend: DescrambleMultiple:(%d)",NrOfOfPrograms);
   for (int i=0; i < NrOfOfPrograms;++i)
   {
     LogDebug("TechnoTrend: DescrambleMultiple: serviceId:%d", pNrs[i]);
   }
-  /*
-	// Workaround for first time initialisation of ci slot
-	int iRetryLoop=0;
-	while (m_slotStatus==CI_SLOT_UNKNOWN_STATE && iRetryLoop<=20) {
-		//unknown status
-		LogDebug("TechnoTrend: unknown CI slot status :%d",m_slotStatus);
-		LogDebug("TechnoTrend: Wait for CI slot status, current slot status: %d; try %d; Sleep 100", m_slotStatus, iRetryLoop);
 
+	// Workaround for first time initialisation of ci slot
+	// Problem: may cause slow down of channel change, when no CI is available
+	int iRetryLoop=0;
+	while (m_waitTimeout==0 && m_slotStatus==CI_SLOT_UNKNOWN_STATE && iRetryLoop<=10) {
+		//unknown status
+		LogDebug("TechnoTrend: Wait for CI slot status, current slot status: %x; try %d; Sleep 100", m_slotStatus, iRetryLoop);
 		iRetryLoop++; 
 		Sleep(100);
 	}	// loop
-  */
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK || m_slotStatus==CI_SLOT_CA_OK) // || m_slotStatus==CI_SLOT_DBG_MSG)
-  {
 
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK) // || m_slotStatus==CI_SLOT_DBG_MSG)
+  {
     BDAAPICIMULTIDECODE readPSI=(BDAAPICIMULTIDECODE)GetProcAddress(m_dll,"bdaapiCIMultiDecode");
     if (readPSI!=NULL)
     {
@@ -592,6 +620,8 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
   }
   else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE || m_slotStatus==CI_SLOT_EMPTY)
   {
+		//still no valid state? don't try next time!
+		m_waitTimeout=1;
     //no CAM inserted
     LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
     *succeeded=TRUE;
@@ -611,22 +641,18 @@ STDMETHODIMP CTechnotrend::DescrambleService( BYTE* pmt, int PMTLength,BOOL* suc
   *succeeded=FALSE;
   BOOL enabled=FALSE;
   m_ciStatus=-1;
-  LogDebug("TechnoTrend: Get CI Slot State");
-  BDAAPICIGETSLOTSTATUS getSlotState=(BDAAPICIGETSLOTSTATUS)GetProcAddress(m_dll,"bdaapiCIGetSlotStatus");
-  if (getSlotState!=NULL)
-  {
-    hr=getSlotState(m_hBdaApi,0);
-    if (hr!=RET_SUCCESS)
-    {
-      LogDebug("Technotrend: bdaapiCIGetSlotStatus failed:%d", hr);
-    }
-  }
-  else
-  {
-    LogDebug("Technotrend: unable to get proc adress of bdaapiCIGetSlotStatus");
-  }
-  LogDebug("TechnoTrend: DescrambleService:(%d)",m_slotStatus);
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK || m_slotStatus==CI_SLOT_CA_OK) // || m_slotStatus==CI_SLOT_DBG_MSG)
+
+		// if OpenCI failed, there's no CI ergo no CAM
+	if (m_ciSlotAvailable==0) {
+		LogDebug("TechnoTrend: DescrambleService: no CI present");
+		*succeeded=TRUE;
+		return S_OK;
+	}
+
+	GetCISlotStatus();
+
+	LogDebug("TechnoTrend: DescrambleService:(%d)",m_slotStatus);
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK) // || m_slotStatus==CI_SLOT_DBG_MSG)
   {
     BDAAPICIREADPSIFASTWITHPMT readPSI=(BDAAPICIREADPSIFASTWITHPMT)GetProcAddress(m_dll,"bdaapiCIReadPSIFastWithPMT");
     //BDAAPICIREADPSIFASTDRVDEMUX readPSI=(BDAAPICIREADPSIFASTDRVDEMUX)GetProcAddress(m_dll,"_bdaapiCIReadPSIFastDrvDemux@8");
@@ -740,6 +766,7 @@ void CTechnotrend::OnCaChange(BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus)
           break;
         case ERR_NO_CA_RESOURCE:
           LogDebug("$ CI: ERROR::SetProgram failed !!! (no CA resource available)");
+          m_ciStatus=-1; // not ready
           break;
         case ERR_NONE:
           LogDebug("$ CI:    SetProgram OK");
@@ -791,3 +818,188 @@ void CTechnotrend::OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo)
     LogDebug("Technotrend: OnSlotChange() exception");  
   }
 }
+
+//**************************************************************************************************
+//* GetDrvVersion() [INFO] Shows the device driver version i.e. "5.0.0.12"
+//**************************************************************************************************
+STDMETHODIMP CTechnotrend::GetDrvVersion(UINT deviceId) {
+  TYPE_RET_VAL hr;
+  BYTE v1,v2,v3,v4;
+
+  BDAAPIGETDRVVERSION getDrvVersion=(BDAAPIGETDRVVERSION)GetProcAddress(m_dll,"bdaapiGetDrvVersion");
+  if (getDrvVersion!=NULL)
+  {
+    hr=getDrvVersion(m_hBdaApi,&v1,&v2,&v3,&v4);
+    if (hr != RET_SUCCESS)
+    {
+      LogDebug("Technotrend: bdaapiGetDrvVersion failed %d",hr);
+    }
+    else
+    {
+      LogDebug("Technotrend: initalized id:%x, driver version:%d.%d.%d.%d",deviceId,v1,v2,v3,v4);
+    }
+  }
+  else
+  {
+    LogDebug("Technotrend: unable to get proc adress of bdaapiGetDrvVersion");
+  }
+	return S_OK;
+}
+
+
+
+//**************************************************************************************************
+//* GetDevNameAndFEType() [INFO] Shows filter names and frontend-type
+//**************************************************************************************************
+STDMETHODIMP CTechnotrend::GetDevNameAndFEType() {
+	TS_FilterNames tsFilters;
+  TYPE_RET_VAL hr;
+
+    BDAAPIGETDEVNAMEANDFETYPE getDevName=(BDAAPIGETDEVNAMEANDFETYPE)GetProcAddress(m_dll,"bdaapiGetDevNameAndFEType");
+    if (getDevName!=NULL)
+    {
+				hr=getDevName(m_hBdaApi, &tsFilters);
+				if (hr!=RET_SUCCESS)
+				{
+					LogDebug("Technotrend: bdaapiGetDevNameAndFEType failed:%d", hr);
+				} else {
+					LogDebug("Technotrend: ProductName: %s", tsFilters.szProductName);
+					LogDebug("Technotrend: TunerFilterName: %s", tsFilters.szTunerFilterName);
+					LogDebug("Technotrend: TunerFilterName2: %s", tsFilters.szTunerFilterName2);
+					LogDebug("Technotrend: CaptureFilterName: %s", tsFilters.szCaptureFilterName);
+					LogDebug("Technotrend: AnlgTunerFilterName: %s", tsFilters.szAnlgTunerFilterName);
+					LogDebug("Technotrend: AnlgCaptureFilterName: %s", tsFilters.szAnlgCaptureFilterName);
+					switch ( tsFilters.FeType )
+					{
+							case TYPE_FE_UNKNOWN:
+									LogDebug("Technotrend: Frontend type unknown");
+									break;
+							case TYPE_FE_DVB_C:
+									LogDebug("Technotrend: Frontend type DVB-C");
+									break;
+							case TYPE_FE_DVB_S:
+									LogDebug("Technotrend: Frontend type DVB-S");
+									break;
+							case TYPE_FE_DVB_S2:
+									LogDebug("Technotrend: Frontend type DVB-S2");
+									break;
+							case TYPE_FE_DVB_T:
+									LogDebug("Technotrend: Frontend type DVB-T");
+									break;
+							case TYPE_FE_DVB_CT:
+									LogDebug(tsFilters.szTunerFilterName2);
+									LogDebug("Technotrend: Frontend type DVB-C / DVB-T (Hybrid)");
+									break;
+							default:
+									LogDebug("Technotrend: Frontend type unknown.");
+									break;
+        }
+				}
+		}
+  return S_OK;
+}
+
+//**************************************************************************************************
+//* GetProductSellerID() [INFO] Shows wheter card is from Technotrend, Technisat 
+//**************************************************************************************************
+STDMETHODIMP CTechnotrend::GetProductSellerID() {
+	PRODUCT_SELLER eProductSeller;
+  TYPE_RET_VAL hr;
+
+  BDAAPIGETPRODUCTSELLERID getProductSeller=(BDAAPIGETPRODUCTSELLERID)GetProcAddress(m_dll,"bdaapiGetProductSellerID");
+    if (getProductSeller!=NULL)
+    {
+				hr=getProductSeller(m_hBdaApi, eProductSeller);
+				if (hr!=RET_SUCCESS)
+				{
+					LogDebug("Technotrend: bdaapiGetProductSellerID failed:%d", hr);
+				} else {
+					//LogDebug("Technotrend: bdaapiGetProductSellerID ok.");
+					switch (eProductSeller) {
+						case PS_UNKNOWN: 
+							LogDebug("Technotrend: Unknown seller");
+							break;
+						case PS_TECHNOTREND: 
+							LogDebug("Technotrend: ProductSeller Technotrend");
+							break;
+						case PS_TECHNISAT: 
+							LogDebug("Technotrend: ProductSeller Technisat");
+							break;
+					}
+				}
+		}
+  return S_OK;
+}
+
+
+//**************************************************************************************************
+//* EnterModuleMenu() [CI MENU] Enter the CI Menu 
+//**************************************************************************************************
+STDMETHODIMP CTechnotrend::EnterModuleMenu () {
+  TYPE_RET_VAL hr;
+
+  BDAAPICIENTERMODULEMENU enterModuleMenu=(BDAAPICIENTERMODULEMENU)GetProcAddress(m_dll,"bdaapiCIEnterModuleMenu");
+  if (enterModuleMenu!=NULL)
+  {
+			hr=enterModuleMenu(m_hBdaApi, 0);
+			if (hr!=RET_SUCCESS)
+			{
+				LogDebug("Technotrend: bdaapiCIEnterModuleMenu failed:%d", hr);
+			} else {
+				LogDebug("Technotrend: bdaapiCIEnterModuleMenu ok.");
+			}
+	}
+	else
+  {
+    LogDebug("Technotrend: unable to get proc adress of bdaapiCIEnterModuleMenu");
+  }
+  return S_OK;
+}
+
+//**************************************************************************************************
+//* OnDisplayMenu() [CI MENU] callback from driver when entering the CI Menu
+//**************************************************************************************************
+void CTechnotrend::OnDisplayMenu(BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength)
+{
+  try
+  {
+    LogDebug("Technotrend: OnDisplayMenu ");
+
+    if (pStringArray!=NULL)
+    {
+      for (int i=0; i < wItems; ++i)
+      {
+				LogDebug("Technotrend: %d: %s ",i, pStringArray[i]);
+      }
+    }
+  }
+  catch(...)
+  {
+    LogDebug("Technotrend: OnDisplayMenu() exception");  
+  }
+}
+
+//**************************************************************************************************
+//* SendMenuAnswer() [CI MENU] Send answer to CI Menu 
+//**************************************************************************************************
+STDMETHODIMP CTechnotrend::SendMenuAnswer  (BYTE Selection)
+{
+  TYPE_RET_VAL hr;
+  BDAAPICIMENUANSWER sendMenuAnswer=(BDAAPICIMENUANSWER)GetProcAddress(m_dll,"bdaapiCIMenuAnswer");
+  if (sendMenuAnswer!=NULL)
+  {
+			hr=sendMenuAnswer(m_hBdaApi, 0, Selection);
+			if (hr!=RET_SUCCESS)
+			{
+				LogDebug("Technotrend: bdaapiCIMenuAnswer  failed:%d", hr);
+			} else {
+				LogDebug("Technotrend: bdaapiCIMenuAnswer  ok.");
+			}
+	}
+	else
+  {
+    LogDebug("Technotrend: unable to get proc adress of bdaapiCIMenuAnswer");
+  }
+  return S_OK;
+}
+

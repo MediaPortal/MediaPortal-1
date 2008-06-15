@@ -46,6 +46,7 @@ public:
   
   STDMETHODIMP SetTunerFilter(IBaseFilter* tunerFilter);
 	STDMETHODIMP IsTechnoTrend( BOOL* yesNo);
+	STDMETHODIMP GetCISlotStatus();
   STDMETHODIMP IsCamPresent( BOOL* yesNo);
 	STDMETHODIMP IsCamReady( BOOL* yesNo);
 	STDMETHODIMP SetAntennaPower( BOOL onOff);
@@ -53,8 +54,19 @@ public:
 	STDMETHODIMP DescrambleService( BYTE* PMT, int PMTLength,BOOL* succeeded);
 	STDMETHODIMP DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded);
 
+	// Info functions
+	STDMETHODIMP GetDevNameAndFEType();
+	STDMETHODIMP GetProductSellerID(); 
+	STDMETHODIMP GetDrvVersion(UINT deviceId);
+
+	// CI Menu functions
+	STDMETHODIMP EnterModuleMenu();
+	STDMETHODIMP SendMenuAnswer  (BYTE Selection);
+	void OnDisplayMenu(BYTE  nSlot,WORD  wItems,char* pStringArray,WORD  wLength);
+
   void OnCaChange(BYTE  nSlot,BYTE  nReplyTag,WORD  wStatus);
   void OnSlotChange(BYTE nSlot,BYTE nStatus,TYP_SLOT_INFO* csInfo);
+
 private:
   bool        GetDeviceID(IBaseFilter* tunerFilter, UINT& deviceId);
   void		  FreeTechnotrendLibrary();
@@ -63,5 +75,7 @@ private:
   DEVICE_CAT  m_deviceType;
   int         m_ciStatus;
   HMODULE     m_dll;
+	int					m_waitTimeout;
+	int					m_ciSlotAvailable;
   TS_CiCbFcnPointer m_technoTrendStructure;
 };
