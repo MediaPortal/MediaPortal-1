@@ -2370,12 +2370,11 @@ namespace TvPlugin
         else
         {
           //timeshifting new channel failed. 
-
-          if (g_Player.Duration == 0)
-          {
+          //if (g_Player.Duration == 0)
+          //{
             //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
             g_Player.Stop();
-          }
+          //}
         }
 
         //GUIWaitCursor.Hide();
