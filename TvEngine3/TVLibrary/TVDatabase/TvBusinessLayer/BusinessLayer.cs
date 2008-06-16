@@ -238,6 +238,21 @@ namespace TvDatabase
       return (TuningDetail)channels[0];
     }
 
+    public TuningDetail GetChannel(string provider, string name, int serviceId)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+      sb.AddConstraint(Operator.Equals, "name", name);
+      sb.AddConstraint(Operator.Equals, "provider", provider);
+      sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      if (details == null) return null;
+      if (details.Count == 0) return null;
+      TuningDetail detail = (TuningDetail)details[0];
+      return detail;
+    }
+
+
     public Channel GetChannel(int idChannel)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
@@ -316,7 +331,7 @@ namespace TvDatabase
       TuningDetail detail = (TuningDetail)details[0];
       return detail.ReferencedChannel();
     }
-
+    
     /// <summary>
     /// gets a value from the database table "Setting"
     /// </summary>

@@ -828,7 +828,8 @@ namespace SetupTv.Sections
         {
           Channel dbChannel;
           DVBSChannel channel = (DVBSChannel)channels[i];
-          TuningDetail currentDetail = layer.GetChannel(channel);
+          //TuningDetail currentDetail = layer.GetChannel(channel);
+          TuningDetail currentDetail = layer.GetChannel(channel.Provider, channel.Name, channel.ServiceId);
           if (currentDetail == null)
           {
             //add new channel
