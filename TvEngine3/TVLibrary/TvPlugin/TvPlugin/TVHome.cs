@@ -1528,6 +1528,8 @@ namespace TvPlugin
           server.StopRecordingSchedule(vCard.RecordingScheduleId);
         }
       }
+
+      OnActiveRecordings(); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
     }
 
     void OnActiveStreams()

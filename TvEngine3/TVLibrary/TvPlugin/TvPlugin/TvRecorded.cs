@@ -739,7 +739,12 @@ namespace TvPlugin
         bool isRec = server.IsRecording(aRecording.ReferencedChannel().Name, out card);
 
         if (isRec)
-        {          
+        {
+          if (aRecording.Title.Equals("manual"))
+          {
+            return true;
+          }
+
           IList prgList = (IList)Program.RetrieveByTitle(aRecording.Title);
 
           if (prgList.Count > 0)
@@ -1069,8 +1074,12 @@ namespace TvPlugin
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
 
+      FileInfo fInfo = new FileInfo(g_Player.currentFileName);
+      bool isRecPlaying = (rec.FileName.IndexOf(fInfo.Name) > -1);
+
       dlgYesNo.SetDefaultToYes(false);
       bool isRec = IsRecordingActual(rec);
+      bool activeRecDeleted = false;
       TvServer server = new TvServer(); ;
       if (isRec)
       {
@@ -1095,17 +1104,26 @@ namespace TvPlugin
               {
                 TimeSpan ts = s.StartTime - rec.StartTime;
 
-                if (ts.Minutes == 0 || s.ProgramName.Equals(rec.Title))
+                ScheduleRecordingType scheduleType = (ScheduleRecordingType)s.ScheduleType;
+
+                bool isManual = (scheduleType == ScheduleRecordingType.Once);
+
+                if (ts.Minutes == 0 || s.ProgramName.Equals(rec.Title) || isManual)
                 {
                   VirtualCard card;                  
 
-                  if (!server.IsRecording(rec.ReferencedChannel().Name, out card)) return;
-                  
+                  if (!server.IsRecording(rec.ReferencedChannel().Name, out card)) return;                  
+                  if (isRecPlaying)
+                  {
+                    g_Player.Stop();
+                  }      
+
                   CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
                   schedule.Persist();
                   server.OnNewSchedule();
 
-                  server.StopRecordingSchedule(card.RecordingScheduleId);                  
+                  server.StopRecordingSchedule(card.RecordingScheduleId);
+                  activeRecDeleted = true;
                 }
               }
             }
@@ -1125,7 +1143,27 @@ namespace TvPlugin
         {
           return;
         }
-      }                                    
+        if (isRecPlaying)
+        {
+          g_Player.Stop();
+        }      
+      }
+
+      // we have to make sure that the recording process on the server has indeed stopped, otherwise we are not able to delete the 
+      // recording file.
+      // we will max. wait 5 sec.
+      if (activeRecDeleted)
+      {
+        DateTime now = DateTime.Now;
+        bool timeOut = false;
+        VirtualCard card;
+        while (server.IsRecording(rec.ReferencedChannel().Name, out card) && !timeOut)
+        {
+          TimeSpan ts = (DateTime.Now - now);
+          timeOut = ts.TotalSeconds > 5; //5 sec, then timeout
+          Thread.Sleep(1000);
+        }        
+      }
       
       server.DeleteRecording(rec.IdRecording);
 
