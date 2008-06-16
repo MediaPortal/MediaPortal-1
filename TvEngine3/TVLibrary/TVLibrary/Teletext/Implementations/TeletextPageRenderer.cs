@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,12 +20,14 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TvLibrary.Teletext
-{
+namespace TvLibrary.Teletext {
   public class TeletextPageRenderer {
     #region constants
     const int MAX_ROWS = 50;
@@ -112,14 +116,14 @@ namespace TvLibrary.Teletext
 	{ 'Ä', 'Ö', 'Ü', '^', '_', '°' },{ '°', 'ç','\u2192','\u2191', '#', 'ù' },
 	{ 'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161' },{ '\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119' },
 	{ 'á', 'é', 'í', 'ó', 'ú', '¿' },{ 'Â', '\u015E', '\u01CD', 'Î', '\u0131', '\u0163' },
-	{ '\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D' },{ 'Ä', 'Ö', 'Å', 'Ü', '_', 'é' },
+	{ '\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D' },{ 'Æ', 'Ø', 'Å', 'Ü', '_', 'é' },
 	{ '\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131' }};
 
     char[,] m_charTableD = new char[,]{{ 'á', '\u011B', 'ú', '\u0161' },{ '¼','\u2016', '¾', '÷' },
 	{ 'ä', 'ö', '\u017E', 'ü' },{ 'â', 'ô', 'û', 'ç' },{ 'ä', 'ö', 'ü', 'ß' },
 	{ 'à', 'ò', 'è', 'ì' },{ '\u0105', '\u0173', '\u017E', '\u012F' },{ '\u017C', '\u015B', '\u0142', '\u017A' },
 	{ 'ü', 'ñ', 'è', 'à' },{ 'â', '\u015F', '\u01CE', 'î' },{ '\u0107', '\u017E', '\u0111', '\u0161' },
-	{ 'ä', 'ö', 'å', 'ü' },{ '\u015F', 'ö', 'ç', 'ü' }};
+	{ 'æ', 'ø', 'å', 'ü' },{ '\u015F', 'ö', 'ç', 'ü' }};
     char[] m_charTableE = new char[] { '\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190', '\u2190' };
 
     #endregion
@@ -135,7 +139,7 @@ namespace TvLibrary.Teletext
         Clear();
       }
     }
-
+  
     /// <summary>
     /// Height of the bitmap
     /// </summary>
@@ -158,7 +162,7 @@ namespace TvLibrary.Teletext
         _hiddenMode = value;
       }
     }
-
+ 
     /// <summary>
     /// Draw the background transparent, only allowed in combination with fullscreen
     /// </summary>
@@ -594,7 +598,7 @@ namespace TvLibrary.Teletext
       // Detect if it's a boxed page. Boxed Page = subtitle and/or newsflash bit is set
       bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
       bool isNewsflash = Hamming.IsNewsflash(0, ref byPage);
-      isBoxed = isNewsflash | isSubtitlePage;
+      isBoxed = isNewsflash | isSubtitlePage;      
 
       // Determine if the header or toptext line sould be displayed.
       bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (isBoxed && _selectedPageText.IndexOf("-") != -1)
