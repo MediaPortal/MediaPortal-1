@@ -1322,8 +1322,9 @@ namespace TvService
 
     public bool StopTimeShifting(ref User user, TvStoppedReason reason)
     {
-      if (ValidateTvControllerParams(user)) return false;
-      return this.StopTimeShifting(ref user);
+      if (ValidateTvControllerParams(user)) return false;          										
+			_cards[user.CardId].Users.SetTvStoppedReason(user, reason);			
+			return this.StopTimeShifting(ref user);		
     }
 
     public TvStoppedReason GetTvStoppedReason(User user)
