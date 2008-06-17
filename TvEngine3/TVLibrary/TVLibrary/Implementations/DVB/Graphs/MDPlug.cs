@@ -51,8 +51,9 @@ namespace TvLibrary.Implementations.DVB
   public class MDPlugs
   {
     #region variables
-    protected MDPlug [] _mDPlugs;
+    protected MDPlug [] _mDPlugsArray;
     protected int _instanceNumber=0;
+    protected String _cardFolder;
     #endregion
 
     #region ctor
@@ -78,18 +79,30 @@ namespace TvLibrary.Implementations.DVB
     private MDPlugs(string CardFolder, int InstanceNumber)
     {
       _instanceNumber = InstanceNumber;
-      Log.Log.Info("mdplugs: InstanceNumber = {0}", _instanceNumber);
-      _mDPlugs = new MDPlug[_instanceNumber];
-
-      for (int iplg = 0; iplg < _instanceNumber; iplg++)
-        _mDPlugs[iplg] = MDPlug.Create(CardFolder+iplg);
-
+      _cardFolder = CardFolder;
+      Log.Log.Info("mdplugs: InstanceNumber(s) = {0}", _instanceNumber);
     }
+
+    /// <summary>
+    /// Lazy initializing plugins
+    /// </summary>
+    private MDPlug[] getPlugins()
+    {
+        if (_mDPlugsArray == null)
+        {
+            _mDPlugsArray = new MDPlug[_instanceNumber];
+            for (int iplg = 0; iplg < _instanceNumber; iplg++)
+                _mDPlugsArray[iplg] = MDPlug.Create(_cardFolder + iplg);
+        }
+        return _mDPlugsArray;
+    }
+
     /// <summary>
     /// private MDPlug Destructor
     /// </summary>
     ~MDPlugs()
     {
+        Close();
     }
     #endregion
 
@@ -123,6 +136,8 @@ namespace TvLibrary.Implementations.DVB
           nodeCard.Attributes.Append(attr);
           attr = doc.CreateAttribute("EnableMdapi");
           attr.InnerText = "1";
+          //Fix null pointer problem on first run.
+          InstanceNumber = 1;
           nodeCard.Attributes.Append(attr);
           rootNode.AppendChild(nodeCard);
           doc.AppendChild(rootNode);
@@ -170,6 +185,8 @@ namespace TvLibrary.Implementations.DVB
             nodeNewCard.Attributes.Append(attr);
             attr = doc.CreateAttribute("EnableMdapi");
             attr.InnerText = "1";
+            //Fix null pointer problem on first run.
+            InstanceNumber = 1;
             nodeNewCard.Attributes.Append(attr);
             XmlNode rootNode = doc.SelectSingleNode("/cards");
             rootNode.AppendChild(nodeNewCard);
@@ -185,11 +202,30 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region public method
+
+    /// <summary>
+    /// Method release all the mdapi filters in ordinary fashion
+    /// </summary>
+    public void Close()
+    {
+       if(_mDPlugsArray != null){
+           for (int iplg = 0; iplg < _instanceNumber; iplg++)
+           {
+               if(_mDPlugsArray[iplg] != null){
+                   _mDPlugsArray[iplg].Close();
+                   _mDPlugsArray[iplg] = null;
+               }
+           }
+           _mDPlugsArray = null;
+       }
+    }
+
     /// <summary>
     /// Connect all mdapifilters between [inftee main] and [TIF MPEG2 Demultiplexer]
     /// </summary>
     public void Connectmdapifilter(IFilterGraph2 graphBuilder, ref IBaseFilter infTeeMain, ref IBaseFilter infTeeSecond, ref IBaseFilter filterMpeg2DemuxTif)
     {
+      MDPlug[] _mDPlugs = getPlugins();
       int iplg = 0;
       int hr = 0;
       string filtername;
@@ -263,13 +299,78 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("unable to connect [inftee2]->[demux]");
       }
     }
+
+    /// <summary>
+    /// Remove all mdapifilters between [inftee main] and [TIF MPEG2 Demultiplexer]
+    /// </summary>
+    public void Disconnectmdapifilter(IFilterGraph2 graphBuilder, ref IBaseFilter infTeeMain, ref IBaseFilter infTeeSecond, ref IBaseFilter filterMpeg2DemuxTif)
+    {
+          int iplg = 0;
+          int hr = 0;
+          string filtername;
+
+          MDPlug[] plugins = getPlugins();
+          Log.Log.Info("mdplugs: disconnect and reconnecting pins");
+
+          IPin mainTeeOut = DsFindPin.ByDirection(infTeeMain, PinDirection.Output, 0);
+          IPin mpegDemuxIn = DsFindPin.ByDirection(filterMpeg2DemuxTif, PinDirection.Input, 0);
+
+          IPin teeSecoundIn = DsFindPin.ByDirection(infTeeSecond, PinDirection.Input, 0);
+          IPin teeSecoundOut = DsFindPin.ByDirection(infTeeSecond, PinDirection.Output, 0);
+
+          Log.Log.Info("Disconnecting main pin");
+          graphBuilder.Disconnect(mainTeeOut);
+          Log.Log.Info("Disconnecting mpeg demux pin");
+          graphBuilder.Disconnect(mpegDemuxIn);
+          Log.Log.Info("Disconnecting secound tee");
+          graphBuilder.Disconnect(teeSecoundIn);
+          graphBuilder.Disconnect(teeSecoundOut);
+
+          Log.Log.Info("Reconnecting MainTee to MpegDemux");
+          hr = graphBuilder.Connect(mainTeeOut, mpegDemuxIn);
+          Release.ComObject("Releasing maintee out", mainTeeOut);
+          Release.ComObject("Releasing mpegdemux pinin", mpegDemuxIn);
+          Release.ComObject("Releasing teeSecound pinin", teeSecoundIn);
+          Release.ComObject("Releasing teeSecound  pinOut", teeSecoundOut);
+
+          //Last Part Remove Filters from Graph.
+          //capture -> maintee -> mdapi(n)-> secondtee -> demux
+          for (iplg = 0; iplg < _instanceNumber; iplg++)
+          {
+              filtername = "mdapifilter" + iplg;
+              Log.Log.Info("mdplugs: remove {0}", filtername);
+
+              IPin mdOut = DsFindPin.ByDirection(plugins[iplg].mdapiFilter, PinDirection.Output, 0);
+              IPin mdIn = DsFindPin.ByDirection(plugins[iplg].mdapiFilter, PinDirection.Input, 0);
+              graphBuilder.Disconnect(mdOut);
+              graphBuilder.Disconnect(mdIn);
+              Release.ComObject("Releasing  pinout", mdOut);
+              Release.ComObject("Releasing  pinin", mdIn);
+
+              hr = graphBuilder.RemoveFilter(plugins[iplg].mdapiFilter);
+              if (hr != 0)
+              {
+                  Log.Log.Error("mdplugs:Remove {0} returns:0x{1:X}", filtername, hr);
+                  throw new TvException("Unable to remove " + filtername);
+              }
+
+              Log.Log.Info("Filter should now be totally removed from graph hr :{0}", hr);
+          }
+          iplg = 0;
+          filtername = "mdapifilter" + iplg;
+
+          Log.Log.Info("Graph should be clean of MDAPI Filters..");
+    }
+
+
     /// <summary>
     /// Sends the current channel to the mdapifilter
     /// </summary>
     public void SetChannel(int SubCh, IChannel currentChannel, ChannelInfo channelInfo)
     {
-      if( _mDPlugs[SubCh] != null)
-        _mDPlugs[SubCh].SetChannel(currentChannel, channelInfo);
+      MDPlug[] plugins = getPlugins();
+      if( plugins[SubCh] != null)
+        plugins[SubCh].SetChannel(currentChannel, channelInfo);
     }
     #endregion
   }
@@ -449,12 +550,26 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     ~MDPlug()
     {
-      if (mdapiFilter != null)
-        Release.ComObject("mdapiFilter", mdapiFilter);
+        Close();
     }
     #endregion
 
     #region public method
+
+    /// <summary>
+    /// Method release the mdapi filter in ordinary fashion
+    /// </summary>
+    public void Close()
+    {
+        if (mdapiFilter != null)
+        {
+            Marshal.FinalReleaseComObject(mdapiFilter);
+        }
+        mdapiFilter = null;
+        _changeChannel = null;
+        _changeChannel_Ex = null;
+    }
+
     /// <summary>
     /// Sends the current channel to the mdapi filter
     /// </summary>
@@ -584,6 +699,18 @@ namespace TvLibrary.Implementations.DVB
         }
 
 
+        //Clearing OLD Values...
+        for (int y = 0; y < _mDPlugTProg82.CA_System82.Length; y++)
+        {
+            
+                _mDPlugTProg82.CA_System82[y].CA_Typ = 0;
+                _mDPlugTProg82.CA_System82[y].ECM = 0;
+                _mDPlugTProg82.CA_System82[y].EMM = 0;
+                _mDPlugTProg82.CA_System82[y].Provider_Id = 0;
+            
+        }
+
+
         _mDPlugTProg82.CA_Nr = (ushort)ecmList.Count;
         int count = 0;
         for (int x = 0; x < ecmList.Count; ++x)
@@ -594,6 +721,7 @@ namespace TvLibrary.Implementations.DVB
           _mDPlugTProg82.CA_System82[x].Provider_Id = (uint)ecmList[x].ProviderId;
           count++;
         }
+
 
         for (int i = 0; i < emmList.Count; ++i)
         {
@@ -617,10 +745,19 @@ namespace TvLibrary.Implementations.DVB
           }
         }
 
+
+
+
         _mDPlugTProg82.CA_ID = (byte)0;
         _mDPlugTProg82.CA_Nr = (ushort)count;
-        _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[0].ECM;
-
+        if (count == 0)
+        {
+            _mDPlugTProg82.ECM_PID = 0;
+        }
+        else
+        {
+            _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[0].ECM;
+        }
         //find preferred ECM from preferred MDAPIProvID.xml file and pointing CA_ID on the right CA_System82 row
         //first search in channel list for individual match, else search for provider ID match else search for CA_Typ match
         string xmlFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPIProvID.xml";
@@ -635,6 +772,20 @@ namespace TvLibrary.Implementations.DVB
             int i;
             XmlDocument doc = new XmlDocument();
             doc.Load(xmlFile);
+
+            XmlNode mainNode = doc.SelectSingleNode("/mdapi");
+            bool filloutXMLFile = false;
+            if (!(mainNode as XmlElement).HasAttribute("fillout"))
+            {
+                XmlAttribute fillout = doc.CreateAttribute("fillout");
+                fillout.Value = "" + false;
+                mainNode.Attributes.Append(fillout);
+            }
+
+            Boolean.TryParse(mainNode.Attributes["fillout"].Value, out filloutXMLFile);
+
+            Log.Log.Info("mdplug: MDAPIProvID.xml Filling out MDAPIProvID {0} ", filloutXMLFile);
+              
             XmlNodeList channelList = doc.SelectNodes("/mdapi/channels/channel");
             Tp_id = String.Format("{0:D}", _mDPlugTProg82.Tp_id);
             SID_pid = String.Format("{0:D}", _mDPlugTProg82.SID_pid);
@@ -653,6 +804,11 @@ namespace TvLibrary.Implementations.DVB
                   {
                     _mDPlugTProg82.CA_ID = (byte)i;
                     _mDPlugTProg82.ECM_PID = _mDPlugTProg82.CA_System82[i].ECM;
+
+                    if( ( nodechannel as XmlElement).HasAttribute("emm_pid") ){
+                        _mDPlugTProg82.CA_System82[i].EMM = UInt16.Parse(( nodechannel as XmlElement).GetAttribute("emm_pid"));
+                    }
+
                     channelfound = true;
                     break;
                   }
@@ -681,6 +837,7 @@ namespace TvLibrary.Implementations.DVB
                   break;
               }
             }
+
             if (!channelfound && !providfound)
             {
               XmlNodeList catypList = doc.SelectNodes("/mdapi/CA_Types/CA_Type");
@@ -705,6 +862,136 @@ namespace TvLibrary.Implementations.DVB
                     channelfound,
                     providfound,
                     catypfound);
+
+
+            if (!channelfound)
+            {
+                try
+                {
+                    Log.Log.Info("mdapi: Attempting to add entry to MDAPIProvID.xml");
+
+                    XmlNode node;
+                    if (filloutXMLFile && ecmList.Count > 0)
+                    {
+                        node = doc.SelectSingleNode("/mdapi/channels");
+
+                        String comment = "";
+
+                        XmlNode cnode = doc.CreateElement("channel");
+
+                        comment += "Channel Name : " + dvbChannel.Name + " ";
+
+                        XmlAttribute tpid = doc.CreateAttribute("tp_id");
+                        tpid.Value = "" + dvbChannel.TransportId;
+                        cnode.Attributes.Append(tpid);
+                        XmlAttribute sid = doc.CreateAttribute("sid");
+                        sid.Value = "" + dvbChannel.ServiceId;
+                        cnode.Attributes.Append(sid);
+                        XmlAttribute pmt_pid = doc.CreateAttribute("pmt_pid");
+                        pmt_pid.Value = "" + dvbChannel.PmtPid;
+                        cnode.Attributes.Append(pmt_pid);
+                        //CA_ID
+                        //_mDPlugTProg82.CA_System82[0].ECM;
+                        XmlAttribute ecm_pid = doc.CreateAttribute("ecm_pid");
+                        ecm_pid.Value = "" + _mDPlugTProg82.ECM_PID;
+                        cnode.Attributes.Append(ecm_pid);
+
+                        String possibleValues = "";
+                        for (int x = 0; x < ecmList.Count; ++x)
+                        {
+                            if (x != 0) possibleValues += ", ";
+                            possibleValues += "" + ecmList[x].Pid;
+                            //possibleValues += "(" + ecmList[x].CaId + ")";
+                            // ecmList[x].CaId;
+                            // ecmList[x].Pid;
+                            // ecmList[x].ProviderId;
+                        }
+
+                        comment += "Possible ECM values ( " + possibleValues + " )";
+
+
+                        node.AppendChild(doc.CreateComment(comment));
+                        node.AppendChild(cnode);
+
+                        node = doc.SelectSingleNode("/mdapi/providers");
+
+                        if(node != null){
+
+                           
+                            for (int x = 0; x < ecmList.Count; ++x)
+                            {
+                                bool found = false;
+                                XmlNodeList providList = doc.SelectNodes("/mdapi/providers/provider");
+                                foreach (XmlNode nodeprovid in providList)
+                                {
+                                    String value = nodeprovid.Attributes["ID"].Value;
+                                     if (Int32.Parse(value).CompareTo(ecmList[x].ProviderId) == 0)
+                                     {
+                                         found = true;
+                                         break;
+                                     }
+                                }
+
+                                if (!found && ecmList[x].ProviderId != 0)
+                                {
+
+                                    XmlNode d = doc.CreateElement("provider");
+                                     XmlAttribute r = doc.CreateAttribute("ID");
+                                     r.Value = "" + ecmList[x].ProviderId;
+                                     d.Attributes.Append(r);
+                                     node.AppendChild(d);
+                                 }
+
+
+                            }
+
+                     
+                        }
+
+
+                        node = doc.SelectSingleNode("/mdapi/CA_Types");
+                        if (node != null)
+                        {
+                                     for (int x = 0; x < ecmList.Count; ++x)
+                                     {
+                                         bool found = false;
+                                         XmlNodeList providList = doc.SelectNodes("/mdapi/CA_Types/CA_Type");
+                                         foreach (XmlNode nodeprovid in providList)
+                                         {
+                                             String value = nodeprovid.Attributes["ID"].Value;
+                                             if (Int32.Parse(value).CompareTo(ecmList[x].CaId) == 0)
+                                             {
+                                                 found = true;
+                                                 break;
+                                             }
+                                         }
+                                         if (!found)
+                                         {
+
+                                             XmlNode d = doc.CreateElement("CA_Type");
+                                             XmlAttribute r = doc.CreateAttribute("ID");
+                                             r.Value = "" + ecmList[x].CaId;
+                                             d.Attributes.Append(r);
+                                             node.AppendChild(d);
+                                         }
+
+                                     }
+
+                        }
+
+                        doc.Save(xmlFile);
+
+                    }
+
+                }
+                catch (Exception g)
+                {
+                    Log.Log.Write(g);
+                }
+
+            }
+
+
           }
           catch (Exception) { }
         }

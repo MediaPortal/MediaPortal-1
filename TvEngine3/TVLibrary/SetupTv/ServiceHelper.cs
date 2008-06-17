@@ -61,6 +61,18 @@ namespace SetupTv
     {
       get
       {
+          //Patch to be able to use the TvServer Configuration 
+          //when running in debug mode
+          try{
+              //Try an call something to see if the server is alive.
+              //
+             int serverId = TvControl.RemoteControl.Instance.IdServer;
+             return true;
+          }
+          catch(Exception g){
+                return false;
+          }
+          /**
         ServiceController[] services = ServiceController.GetServices();
         foreach (ServiceController service in services)
         {
@@ -70,6 +82,7 @@ namespace SetupTv
             return false;
           }
         }
+          */
         return false;
       }
     }

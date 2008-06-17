@@ -1074,6 +1074,15 @@ namespace TvLibrary.Implementations.DVB
       // Decompose the graph
       hr = (_graphBuilder as IMediaControl).StopWhenReady();
       //hr = (_graphBuilder as IMediaControl).Stop();
+
+      //In case MDPlugs exists then close and release them
+      if (_mdplugs != null)
+      {
+          Log.Log.Info("  Closing MDAPI Plugins");
+          _mdplugs.Close();
+          _mdplugs = null;
+      }
+
       Log.Log.WriteFile("  remove all filters");
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
       Log.Log.WriteFile("  free...");
