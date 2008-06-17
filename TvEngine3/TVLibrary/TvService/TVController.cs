@@ -1531,25 +1531,25 @@ namespace TvService
     /// Deletes the recording from database and disk
     /// </summary>
     /// <param name="idRecording">The id recording.</param>
-    public void DeleteRecording(int idRecording)
+    public bool DeleteRecording(int idRecording)
     {
       try
       {
         Recording rec = Recording.Retrieve(idRecording);
-        if (rec == null) return;
+        if (rec == null) return false;
 
         if (!IsLocal(rec.ReferencedServer().HostName))
         {
           try
           {
             RemoteControl.HostName = rec.ReferencedServer().HostName;
-            RemoteControl.Instance.DeleteRecording(rec.IdRecording);
+            return RemoteControl.Instance.DeleteRecording(rec.IdRecording);
           }
           catch (Exception)
           {
             Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
           }
-          return;
+          return false;
         }
 
         _streamer.RemoveFile(rec.FileName);
@@ -1558,11 +1558,13 @@ namespace TvService
         if (result)
         {
           rec.Delete();
+          return true;
         }
       }
       catch (Exception)
       {
       }
+      return false;
     }
     /// <summary>
     /// Checks if the files of a recording still exist

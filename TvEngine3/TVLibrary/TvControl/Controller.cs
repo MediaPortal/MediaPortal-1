@@ -323,7 +323,7 @@ namespace TvControl
     /// Deletes the recording from database and disk
     /// </summary>
     /// <param name="idRecording">The id recording.</param>
-    void DeleteRecording(int idRecording);
+    bool DeleteRecording(int idRecording);
 
     /// <summary>
     /// Checks if the files of a recording still exist

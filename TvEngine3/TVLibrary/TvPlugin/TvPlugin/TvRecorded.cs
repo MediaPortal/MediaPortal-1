@@ -1164,8 +1164,20 @@ namespace TvPlugin
           Thread.Sleep(1000);
         }        
       }
-      
-      server.DeleteRecording(rec.IdRecording);
+
+      //somehow we were unable to delete the file, notify the user.
+      if (!server.DeleteRecording(rec.IdRecording))
+      {
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+
+        if (dlgOk != null)
+        {
+          dlgOk.SetHeading(257);
+          dlgOk.SetLine(1, GUILocalizeStrings.Get(200054));
+          dlgOk.SetLine(2, rec.Title);
+          dlgOk.DoModal(GetID);
+        }
+      }
 
       Gentle.Common.CacheManager.Clear();
 

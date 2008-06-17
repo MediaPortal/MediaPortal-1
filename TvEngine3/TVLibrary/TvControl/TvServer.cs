@@ -83,16 +83,17 @@ namespace TvControl
     /// Deletes the recording at the tvserver
     /// </summary>
     /// <param name="idRecording">The id of the recording.</param>
-    public void DeleteRecording(int idRecording)
+    public bool DeleteRecording(int idRecording)
     {
       try
       {
-        RemoteControl.Instance.DeleteRecording(idRecording);
+        return RemoteControl.Instance.DeleteRecording(idRecording);
       }
       catch (Exception ex)
       {
         HandleFailure(ex);
       }
+      return false;
     }
     /// <summary>
     /// Checks if the files of a recording still exist
