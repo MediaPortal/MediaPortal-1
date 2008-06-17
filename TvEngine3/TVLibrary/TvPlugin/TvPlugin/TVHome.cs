@@ -237,6 +237,12 @@ namespace TvPlugin
 
             if (pDlgOK != null)
             {
+              
+              if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+              {
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV, true);
+              }              
+
               pDlgOK.SetHeading(GUILocalizeStrings.Get(605) + " - " + TVHome.Navigator.CurrentChannel);//my tv
               errMsg = errMsg.Replace("\\r", "\r");
               string[] lines = errMsg.Split('\r');
@@ -249,9 +255,10 @@ namespace TvPlugin
               }
               pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
             }
-            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+            Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);            
             GUIGraphicsContext.OnAction(keyAction);
             _playbackStopped = true;
+            
           }
         }
         Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
