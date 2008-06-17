@@ -1699,7 +1699,7 @@
         <String id="200050">Dette vil slette dine optagelser fra harddisken</String>		
         <String id="200051">Slet dette program?</String>
         <String id="200052">Aktive optagelser</String>
-        <String id="200053">Ingen aktive optagelser</String>
-        
+        <String id="200053">Ingen aktive optagelser</String>        
+        <String id="200054">Kunne ikke slette TV optagelse.</String>        
     </Section>
 </Language>

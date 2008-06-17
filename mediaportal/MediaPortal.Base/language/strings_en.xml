@@ -1741,6 +1741,7 @@
     <String id="200050">This will delete your recordings from harddisc</String>		        
     <String id="200051">Delete this episode?</String>
     <String id="200052">Active recordings</String>
-    <String id="200053">No active recordings</String>
+    <String id="200053">No active recordings</String>    
+    <String id="200054">Could not delete TV recording.</String>
   </Section>
 </Language>
