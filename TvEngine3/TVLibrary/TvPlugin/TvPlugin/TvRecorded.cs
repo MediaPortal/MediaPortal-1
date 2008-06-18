@@ -399,6 +399,20 @@ namespace TvPlugin
     {
       base.OnPageLoad();
 
+
+      string skinPath = GUIGraphicsContext.Skin;
+      string recIconPath = skinPath + "\\media\\" + Thumbs.TvRecordingIcon;
+      FileInfo fI = new FileInfo(recIconPath);
+      if (fI.Exists)
+      {
+        System.Drawing.Image img = System.Drawing.Image.FromFile(recIconPath);
+
+        int factor = 75 / img.Width;
+
+        listAlbums.PinIconWidth = Convert.ToInt32(img.Width * factor);
+        listAlbums.PinIconHeight = Convert.ToInt32(img.Height * factor);
+      }
+
       //DiskManagement.ImportDvrMsFiles();
       LoadSettings();
       LoadDirectory();
@@ -796,8 +810,8 @@ namespace TvPlugin
           //Mark the recording with a "rec. symbol" if it is an active recording.
 
           if (IsRecordingActual(aRecording))
-          {
-            item.PinImage = Thumbs.TvRecordingIcon;
+          {            
+            item.PinImage = Thumbs.TvRecordingIcon;                        
           }          
         }
         else
