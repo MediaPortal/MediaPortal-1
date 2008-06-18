@@ -94,6 +94,8 @@
       <spinPosY>570</spinPosY>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
+      <PinIconXOff>45</PinIconXOff>
+      <PinIconYOff>0</PinIconYOff>
     </control>
   </controls>
 </window>

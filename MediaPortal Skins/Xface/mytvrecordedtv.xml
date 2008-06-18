@@ -222,6 +222,8 @@
         <itemHeight>95</itemHeight>
         <textureFocus>recording_background_focus.png</textureFocus>
         <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+        <PinIconXOff>85</PinIconXOff>
+        <PinIconYOff>35</PinIconYOff>
       </control>
       <control>
         <type>listcontrol</type>
@@ -238,9 +240,11 @@
         <itemHeight>37</itemHeight>
          <textXOff2>830</textXOff2>
         <textYOff2>5</textYOff2>
-        <IconYOff>4</IconYOff>
-         <textureFocus>recording_background_focus.png</textureFocus>
+        <IconYOff>4</IconYOff>        
+        <textureFocus>recording_background_focus.png</textureFocus>
         <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+        <PinIconXOff>45</PinIconXOff>
+        <PinIconYOff>5</PinIconYOff>
       </control>
       <control>
         <type>fadelabel</type>
