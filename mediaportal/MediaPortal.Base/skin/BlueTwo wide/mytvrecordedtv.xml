@@ -200,6 +200,8 @@
         <textureHeight>132</textureHeight>
         <keepaspectratio>yes</keepaspectratio>
         <spinPosX>1185</spinPosX>
+        <PinIconXOff>95</PinIconXOff>
+        <PinIconYOff>35</PinIconYOff>
       </control>
       <control>
         <type>listcontrol</type>
@@ -212,6 +214,8 @@
         <ondown>2</ondown>
         <textureHeight>42</textureHeight>
         <textYOff2>5</textYOff2>
+        <PinIconXOff>40</PinIconXOff>
+        <PinIconYOff>10</PinIconYOff>
       </control>
       <control>
         <type>fadelabel</type>
