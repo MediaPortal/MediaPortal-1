@@ -60,7 +60,7 @@ namespace TvService
   public class EpgGrabber
   {
     #region variables
-    int _epgReGrabAfter = 4*60;//hours
+    int _epgReGrabAfter = 4 * 60;//hours
     System.Timers.Timer _epgTimer = new System.Timers.Timer();
 
     bool _isRunning;
@@ -121,23 +121,20 @@ namespace TvService
       _isRunning = true;
       IList cards = Card.ListAll();
       _epgCards = new List<EpgCard>();
-			
+
 
       foreach (Card card in cards)
-      {				
-        if (!card.Enabled||!card.GrabEPG) continue;
-
-				try
-				{
-					RemoteControl.HostName = card.ReferencedServer().HostName;
-					if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
-				}
-				catch (Exception e)
-				{
-					Log.Error("card: unable to connect to slave controller at:{0}", card.ReferencedServer().HostName);
-          Log.Write(e);
-					continue;
-				}				        
+      {
+        if (!card.Enabled || !card.GrabEPG) continue;
+        try
+        {
+          RemoteControl.HostName = card.ReferencedServer().HostName;
+          if (!_tvController.CardPresent(card.IdCard)) continue;
+        }
+        catch (Exception e)
+        {
+          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name, card.ReferencedServer().HostName);
+        }
 
         EpgCard epgCard = new EpgCard(_tvController, card);
         _epgCards.Add(epgCard);
@@ -177,7 +174,7 @@ namespace TvService
     {
       //security check, dont allow re-entrancy here
       if (_reEntrant) return;
-      if (_epgTimer.Interval==1000)
+      if (_epgTimer.Interval == 1000)
         _epgTimer.Interval = 30000;
       try
       {
@@ -209,9 +206,9 @@ namespace TvService
     {
       CardType type = _tvController.Type(epgCard.Card.IdCard);
       //skip analog and webstream cards 
-      if (type == CardType.Analog || type==CardType.RadioWebStream) return;
-      
-      while (TransponderList.Instance.GetNextTransponder()!=null)
+      if (type == CardType.Analog || type == CardType.RadioWebStream) return;
+
+      while (TransponderList.Instance.GetNextTransponder() != null)
       {
         //skip transponders which are in use
         if (TransponderList.Instance.CurrentTransponder.InUse) continue;
@@ -223,7 +220,7 @@ namespace TvService
         if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 4) continue;
 
         //find next channel to grab
-        while (TransponderList.Instance.CurrentTransponder.GetNextChannel()!=null)
+        while (TransponderList.Instance.CurrentTransponder.GetNextChannel() != null)
         {
           //check if its time to grab the epg for this channel
           TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime;
@@ -235,7 +232,7 @@ namespace TvService
           if (epgCard.Card.canTuneTvChannel(ch.IdChannel))
           {
             Log.Epg("epg:Grab for card:#{0} transponder #{1}/{2} channel: {3}",
-                      epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex+1, TransponderList.Instance.Count,ch.DisplayName);
+                      epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.DisplayName);
             //start grabbing
             epgCard.GrabEpg();
             return;
