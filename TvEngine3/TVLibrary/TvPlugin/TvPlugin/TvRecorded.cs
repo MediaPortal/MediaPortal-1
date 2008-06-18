@@ -407,7 +407,7 @@ namespace TvPlugin
       {
         System.Drawing.Image img = System.Drawing.Image.FromFile(recIconPath);
 
-        int factor = 75 / img.Width;
+        double factor = 75.0 / img.Width;
 
         listAlbums.PinIconWidth = Convert.ToInt32(img.Width * factor);
         listAlbums.PinIconHeight = Convert.ToInt32(img.Height * factor);
