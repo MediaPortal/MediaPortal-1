@@ -40,12 +40,14 @@
       <height>393</height>
       <textXOff>24</textXOff>
       <textYOff>24</textYOff>
-      <textXOff2>815</textXOff2>
+      <textXOff2>775</textXOff2>
       <textYOff2>15</textYOff2>
       <textXOff3>75</textXOff3>
       <textYOff3>1</textYOff3>
       <IconXOff>22</IconXOff>
       <IconYOff>5</IconYOff>
+      <PinIconXOff>790</PinIconXOff>
+      <PinIconYOff>5</PinIconYOff>
       <spinPosX>1033</spinPosX>
       <spinPosY>592</spinPosY>
       <spinWidth>21</spinWidth>
