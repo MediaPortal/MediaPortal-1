@@ -49,6 +49,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\deps\Gentle.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="MySql.Data, Version=1.0.7.30072, Culture=neutral, PublicKeyToken=c5687fc88969c44d" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -70,12 +71,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmConnectionTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmConnectionTest.Designer.cs">
+      <DependentUpon>frmConnectionTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExternalPlayer.cs" />
     <Compile Include="frmEPG.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmEPG.Designer.cs">
       <DependentUpon>frmEPG.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SetupDatabaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SetupDatabaseForm.Designer.cs">
+      <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="frmExternalPlayerConfig.cs">
@@ -98,6 +111,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="frmConnectionTest.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>frmConnectionTest.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmEPG.resx">
       <SubType>Designer</SubType>
       <DependentUpon>frmEPG.cs</DependentUpon>
@@ -117,6 +134,10 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SetupDatabaseForm.resx">
+      <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -141,6 +162,12 @@
       <ProductName>.NET Framework 2.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo.MSSQL.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo.MySQL.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

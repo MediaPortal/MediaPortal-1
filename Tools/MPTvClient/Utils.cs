@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -64,6 +89,7 @@ namespace MPTvClient
     public static string serverHostname = "";
     public static bool useOverride = false;
     public static string overrideURL = "";
+    public static bool alwaysPerformConnectionChecks;
     public static int frmLeft;
     public static int frmTop;
     public static int frmWidth;
@@ -83,6 +109,7 @@ namespace MPTvClient
       serverHostname = (string)key.GetValue("ServerHostname", "");
       useOverride = ((string)key.GetValue("UseOverride", "0") == "1");
       overrideURL = (string)key.GetValue("OverrideURL", "");
+      alwaysPerformConnectionChecks=((int)key.GetValue("AlwaysPerfomConnectionChecks",1)==1);
       frmLeft = (int)key.GetValue("Left", 0);
       frmTop = (int)key.GetValue("Top", 0);
       frmWidth = (int)key.GetValue("Width", 0);
@@ -101,6 +128,10 @@ namespace MPTvClient
         key.SetValue("UseOverride", "1");
       else
         key.SetValue("UseOverride", "0");
+      if (alwaysPerformConnectionChecks)
+        key.SetValue("AlwaysPerformConnectionChecks", 1);
+      else
+        key.SetValue("AlwaysPerformConnectionChecks", 0);
       key.SetValue("OverrideURL", overrideURL);
       key.SetValue("Left", frmLeft);
       key.SetValue("Top", frmTop);

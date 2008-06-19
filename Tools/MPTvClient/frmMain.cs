@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,6 +48,7 @@ namespace MPTvClient
       serverIntf = new ServerInterface();
       extPlayer = new ExternalPlayer();
       ClientSettings.Load();
+      miAlwaysPerformConnectionChecks.Checked = ClientSettings.alwaysPerformConnectionChecks;
     }
     private void SetDisconected()
     {
@@ -99,6 +125,28 @@ namespace MPTvClient
       {
         MessageBox.Show("The settings are invalid.\nPlease check the configuration.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
+      }
+      string connStr; string provider;
+      if (!serverIntf.GetDatabaseConnectionString(out connStr, out provider))
+      {
+        SetupDatabaseForm frm = new SetupDatabaseForm();
+        frm.ShowDialog();
+        return;
+      }
+      if (ClientSettings.alwaysPerformConnectionChecks)
+      {
+        StBarLabel.Text = "Running connection test...";
+        StBar.Update();
+        frmConnectionTest connTest = new frmConnectionTest();
+        connTest.RunChecks(ClientSettings.serverHostname, provider);
+        if (connTest.GetFailedCount() > 0)
+        {
+          if (MessageBox.Show("Some ports on the TvServer machine are not reachable.\n\nDo you want to try to connect nevertheless?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+          {
+            StBarLabel.Text = "Not connected";
+            return;
+          }
+        }
       }
       StBarLabel.Text = "Connecting to TvServer and loading groups/channels...";
       StBar.Update();
@@ -386,27 +434,17 @@ namespace MPTvClient
         this.Height = ClientSettings.frmHeight;
       }
     }
-    private bool Test()
+
+    private void databaseSettingsToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      bool yes = false;
-      try
-      {
-        yes = true;
-        return yes;
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show("Exception");
-      }
-      finally
-      {
-        MessageBox.Show("finally");
-      }
-      return false;
+      SetupDatabaseForm frm = new SetupDatabaseForm();
+      frm.ShowDialog();
     }
-    private void button1_Click(object sender, EventArgs e)
+
+    private void miAlwaysPerformConnectionChecks_CheckedChanged(object sender, EventArgs e)
     {
-      MessageBox.Show("Returned: "+Test().ToString());
+      ClientSettings.alwaysPerformConnectionChecks = miAlwaysPerformConnectionChecks.Checked;
+      ClientSettings.Save();
     }
   }
 }

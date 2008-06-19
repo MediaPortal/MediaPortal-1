@@ -29,14 +29,14 @@ namespace MPTvClient
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
+          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
           System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
           System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
           System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
           this.btnConnect = new System.Windows.Forms.Button();
           this.StBar = new System.Windows.Forms.StatusStrip();
           this.StBarLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -48,7 +48,9 @@ namespace MPTvClient
           this.menuStrip1 = new System.Windows.Forms.MenuStrip();
           this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
           this.serverConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+          this.databaseSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.externalPlayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+          this.miAlwaysPerformConnectionChecks = new System.Windows.Forms.ToolStripMenuItem();
           this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.tmrRefresh = new System.Windows.Forms.Timer(this.components);
@@ -99,7 +101,6 @@ namespace MPTvClient
           this.colStatus = new System.Windows.Forms.ColumnHeader();
           this.colChannel = new System.Windows.Forms.ColumnHeader();
           this.colUser = new System.Windows.Forms.ColumnHeader();
-          this.button1 = new System.Windows.Forms.Button();
           this.StBar.SuspendLayout();
           this.panel1.SuspendLayout();
           this.menuStrip1.SuspendLayout();
@@ -149,7 +150,6 @@ namespace MPTvClient
           // 
           // panel1
           // 
-          this.panel1.Controls.Add(this.button1);
           this.panel1.Controls.Add(this.prQuality);
           this.panel1.Controls.Add(this.label3);
           this.panel1.Controls.Add(this.prLevel);
@@ -213,7 +213,9 @@ namespace MPTvClient
           // 
           this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.serverConnectionToolStripMenuItem,
-            this.externalPlayerToolStripMenuItem});
+            this.databaseSettingsToolStripMenuItem,
+            this.externalPlayerToolStripMenuItem,
+            this.miAlwaysPerformConnectionChecks});
           this.toolStripMenuItem1.Name = "toolStripMenuItem1";
           this.toolStripMenuItem1.Size = new System.Drawing.Size(84, 20);
           this.toolStripMenuItem1.Text = "Configuration";
@@ -221,16 +223,31 @@ namespace MPTvClient
           // serverConnectionToolStripMenuItem
           // 
           this.serverConnectionToolStripMenuItem.Name = "serverConnectionToolStripMenuItem";
-          this.serverConnectionToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+          this.serverConnectionToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
           this.serverConnectionToolStripMenuItem.Text = "Server connection";
           this.serverConnectionToolStripMenuItem.Click += new System.EventHandler(this.serverConnectionToolStripMenuItem_Click);
+          // 
+          // databaseSettingsToolStripMenuItem
+          // 
+          this.databaseSettingsToolStripMenuItem.Name = "databaseSettingsToolStripMenuItem";
+          this.databaseSettingsToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
+          this.databaseSettingsToolStripMenuItem.Text = "Database settings";
+          this.databaseSettingsToolStripMenuItem.Click += new System.EventHandler(this.databaseSettingsToolStripMenuItem_Click);
           // 
           // externalPlayerToolStripMenuItem
           // 
           this.externalPlayerToolStripMenuItem.Name = "externalPlayerToolStripMenuItem";
-          this.externalPlayerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+          this.externalPlayerToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
           this.externalPlayerToolStripMenuItem.Text = "External player";
           this.externalPlayerToolStripMenuItem.Click += new System.EventHandler(this.externalPlayerToolStripMenuItem_Click);
+          // 
+          // miAlwaysPerformConnectionChecks
+          // 
+          this.miAlwaysPerformConnectionChecks.CheckOnClick = true;
+          this.miAlwaysPerformConnectionChecks.Name = "miAlwaysPerformConnectionChecks";
+          this.miAlwaysPerformConnectionChecks.Size = new System.Drawing.Size(250, 22);
+          this.miAlwaysPerformConnectionChecks.Text = "Always perform connection checks";
+          this.miAlwaysPerformConnectionChecks.CheckedChanged += new System.EventHandler(this.miAlwaysPerformConnectionChecks_CheckedChanged);
           // 
           // viewToolStripMenuItem
           // 
@@ -409,9 +426,9 @@ namespace MPTvClient
           this.gridTVChannels.Name = "gridTVChannels";
           this.gridTVChannels.ReadOnly = true;
           this.gridTVChannels.RowHeadersVisible = false;
-          dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-          dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.gridTVChannels.RowsDefaultCellStyle = dataGridViewCellStyle2;
+          dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+          dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.gridTVChannels.RowsDefaultCellStyle = dataGridViewCellStyle10;
           this.gridTVChannels.RowTemplate.Height = 30;
           this.gridTVChannels.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
           this.gridTVChannels.Size = new System.Drawing.Size(697, 111);
@@ -438,8 +455,8 @@ namespace MPTvClient
           // Column2
           // 
           this.Column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-          dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.Column2.DefaultCellStyle = dataGridViewCellStyle1;
+          dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.Column2.DefaultCellStyle = dataGridViewCellStyle9;
           this.Column2.HeaderText = "Time";
           this.Column2.Name = "Column2";
           this.Column2.ReadOnly = true;
@@ -482,9 +499,9 @@ namespace MPTvClient
           this.gridRadioChannels.Name = "gridRadioChannels";
           this.gridRadioChannels.ReadOnly = true;
           this.gridRadioChannels.RowHeadersVisible = false;
-          dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-          dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.gridRadioChannels.RowsDefaultCellStyle = dataGridViewCellStyle4;
+          dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+          dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.gridRadioChannels.RowsDefaultCellStyle = dataGridViewCellStyle11;
           this.gridRadioChannels.RowTemplate.Height = 30;
           this.gridRadioChannels.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
           this.gridRadioChannels.Size = new System.Drawing.Size(697, 160);
@@ -518,8 +535,8 @@ namespace MPTvClient
           // dataGridViewTextBoxColumn3
           // 
           this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-          dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle3;
+          dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle2;
           this.dataGridViewTextBoxColumn3.HeaderText = "Time";
           this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
           this.dataGridViewTextBoxColumn3.ReadOnly = true;
@@ -562,9 +579,9 @@ namespace MPTvClient
           this.gridRecordings.Name = "gridRecordings";
           this.gridRecordings.ReadOnly = true;
           this.gridRecordings.RowHeadersVisible = false;
-          dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-          dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.gridRecordings.RowsDefaultCellStyle = dataGridViewCellStyle6;
+          dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+          dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.gridRecordings.RowsDefaultCellStyle = dataGridViewCellStyle12;
           this.gridRecordings.RowTemplate.Height = 30;
           this.gridRecordings.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
           this.gridRecordings.Size = new System.Drawing.Size(697, 160);
@@ -583,8 +600,8 @@ namespace MPTvClient
           // dataGridViewTextBoxColumn7
           // 
           this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-          dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle5;
+          dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle4;
           this.dataGridViewTextBoxColumn7.HeaderText = "Time";
           this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
           this.dataGridViewTextBoxColumn7.ReadOnly = true;
@@ -642,9 +659,9 @@ namespace MPTvClient
           this.gridSchedules.Name = "gridSchedules";
           this.gridSchedules.ReadOnly = true;
           this.gridSchedules.RowHeadersVisible = false;
-          dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-          dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.gridSchedules.RowsDefaultCellStyle = dataGridViewCellStyle8;
+          dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+          dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.gridSchedules.RowsDefaultCellStyle = dataGridViewCellStyle13;
           this.gridSchedules.RowTemplate.Height = 30;
           this.gridSchedules.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
           this.gridSchedules.Size = new System.Drawing.Size(697, 160);
@@ -662,8 +679,8 @@ namespace MPTvClient
           // dataGridViewTextBoxColumn10
           // 
           this.dataGridViewTextBoxColumn10.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-          dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.dataGridViewTextBoxColumn10.DefaultCellStyle = dataGridViewCellStyle7;
+          dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.dataGridViewTextBoxColumn10.DefaultCellStyle = dataGridViewCellStyle6;
           this.dataGridViewTextBoxColumn10.HeaderText = "Start time";
           this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
           this.dataGridViewTextBoxColumn10.ReadOnly = true;
@@ -740,16 +757,6 @@ namespace MPTvClient
           // 
           this.colUser.Text = "User";
           // 
-          // button1
-          // 
-          this.button1.Location = new System.Drawing.Point(474, 32);
-          this.button1.Name = "button1";
-          this.button1.Size = new System.Drawing.Size(75, 23);
-          this.button1.TabIndex = 11;
-          this.button1.Text = "button1";
-          this.button1.UseVisualStyleBackColor = true;
-          this.button1.Click += new System.EventHandler(this.button1_Click);
-          // 
           // frmMain
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -761,7 +768,7 @@ namespace MPTvClient
           this.MainMenuStrip = this.menuStrip1;
           this.Name = "frmMain";
           this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-          this.Text = "MP TV Client V1.2.5";
+          this.Text = "MP TV Client V1.3";
           this.Shown += new System.EventHandler(this.frmMain_Shown);
           this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
           this.StBar.ResumeLayout(false);
@@ -856,7 +863,8 @@ namespace MPTvClient
       private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
       private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
       private System.Windows.Forms.Button btnShowEPG;
-      private System.Windows.Forms.Button button1;
+      private System.Windows.Forms.ToolStripMenuItem databaseSettingsToolStripMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem miAlwaysPerformConnectionChecks;
     }
 }
 
