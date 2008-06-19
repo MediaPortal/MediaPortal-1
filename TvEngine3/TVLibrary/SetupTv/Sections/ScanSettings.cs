@@ -71,9 +71,9 @@ namespace SetupTv.Sections
       checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
       numericUpDownTSEpgTimeout.Value = Convert.ToDecimal(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value);
 
-      numericUpDownMinFiles.Value = Convert.ToDecimal(layer.GetSetting("timeshiftMinFiles", "6").Value);
-      numericUpDownMaxFiles.Value = Convert.ToDecimal(layer.GetSetting("timeshiftMaxFiles", "20").Value);
-      numericUpDownMaxFileSize.Value = Convert.ToDecimal(layer.GetSetting("timeshiftMaxFileSize", "256").Value);
+      numericUpDownMinFiles.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMinFiles", "6").Value), 3, 100);
+      numericUpDownMaxFiles.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFiles", "20").Value), 3, 100);
+      numericUpDownMaxFileSize.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFileSize", "256").Value), 20, 1024);
 
       checkBoxEnableLinkageScanner.Checked = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
 
@@ -97,8 +97,8 @@ namespace SetupTv.Sections
       edTitleTemplate.Text = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
       edDescriptionTemplate.Text = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
 
-      numericUpDownWaitTimeshifting.Value = Convert.ToDecimal(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
-      numericUpDownWaitUnscrambled.Value = Convert.ToDecimal(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value);
+      numericUpDownWaitTimeshifting.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value), 1, 30);
+      numericUpDownWaitUnscrambled.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value), 1, 30);
     }
     public override void OnSectionDeActivated()
     {
@@ -302,6 +302,15 @@ namespace SetupTv.Sections
       defaults.Add("%NEWLINE%", Environment.NewLine);
       edTitleTest.Text = EvalTemplate(edTitleTemplate.Text, defaults);
       edDescriptionTest.Text = EvalTemplate(edDescriptionTemplate.Text, defaults);
+    }
+
+    private decimal ValueSanityCheck(decimal Value, int Min, int Max)
+    {
+      if (Value < Min)
+        return Min;
+      if (Value > Max)
+        return Max;
+      return Value;
     }
   }
 }
