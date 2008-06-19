@@ -643,8 +643,6 @@ namespace TvService
         _user.CardId = recording.CardInfo.Id;
         _user.Name = string.Format("scheduler{0}", recording.Schedule.IdSchedule);
         _user.IsAdmin = true;
-        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
-        _controller.StopRecording(ref _user);
 
         if (_controller.SupportsSubChannels(recording.CardInfo.Id) == false)
         {
@@ -676,6 +674,9 @@ namespace TvService
           _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
         }
 				_recordingsInProgressList.Remove(recording); //only remove recording from the list, if we are succesful       
+
+        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime, recording.Schedule.ProgramName);
+        _controller.StopRecording(ref _user);
       }
       catch (Exception ex)
       {
