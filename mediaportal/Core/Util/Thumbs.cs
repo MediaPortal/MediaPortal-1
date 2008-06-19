@@ -66,6 +66,11 @@ namespace MediaPortal.Util
     public static readonly string TvConflictRecordingIcon = "tvguide_recordconflict_button.png";
     public static readonly string TvConflictRecordingSeriesIcon = "tvguide_recordserie_conflict_button.png";
 
+    public static readonly string TvIsRecordingIcon = "tv_is_recording.png";
+    public static readonly string TvIsTimeshiftingIcon = "tv_is_timeshifting.png";
+    public static readonly string TvIsAvailableIcon = "tv_is_available.png";
+    public static readonly string TvIsUnavailableIcon = "tv_is_unavailable.png";
+
     public static readonly string MusicFolder = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Folder");
     public static readonly string MusicAlbum = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Albums");
     public static readonly string MusicArtists = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Artists");
