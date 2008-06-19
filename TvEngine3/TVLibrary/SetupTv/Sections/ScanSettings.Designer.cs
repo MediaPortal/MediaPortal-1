@@ -38,8 +38,11 @@ namespace SetupTv.Sections
       this.label44 = new System.Windows.Forms.Label();
       this.delayDetectUpDown = new System.Windows.Forms.NumericUpDown();
       this.tabPageScan = new System.Windows.Forms.TabPage();
+      this.numericUpDownAnalog = new System.Windows.Forms.NumericUpDown();
+      this.label21 = new System.Windows.Forms.Label();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.checkBoxEnableLinkageScanner = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.label24 = new System.Windows.Forms.Label();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.numericUpDownSDT = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownPMT = new System.Windows.Forms.NumericUpDown();
@@ -102,15 +105,13 @@ namespace SetupTv.Sections
       this.label17 = new System.Windows.Forms.Label();
       this.label19 = new System.Windows.Forms.Label();
       this.label18 = new System.Windows.Forms.Label();
-      this.numericUpDownAnalog = new System.Windows.Forms.NumericUpDown();
-      this.label21 = new System.Windows.Forms.Label();
-      this.label24 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPageApplication.SuspendLayout();
       this.groupBox8.SuspendLayout();
       this.groupBox6.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).BeginInit();
       this.tabPageScan.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).BeginInit();
       this.groupBox4.SuspendLayout();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSDT)).BeginInit();
@@ -133,7 +134,6 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -291,6 +291,33 @@ namespace SetupTv.Sections
       this.tabPageScan.Text = "Scan";
       this.tabPageScan.UseVisualStyleBackColor = true;
       // 
+      // numericUpDownAnalog
+      // 
+      this.numericUpDownAnalog.Location = new System.Drawing.Point(95, 155);
+      this.numericUpDownAnalog.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.numericUpDownAnalog.Name = "numericUpDownAnalog";
+      this.numericUpDownAnalog.Size = new System.Drawing.Size(88, 20);
+      this.numericUpDownAnalog.TabIndex = 22;
+      this.numericUpDownAnalog.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownAnalog.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+      // 
+      // label21
+      // 
+      this.label21.AutoSize = true;
+      this.label21.Location = new System.Drawing.Point(189, 157);
+      this.label21.Name = "label21";
+      this.label21.Size = new System.Drawing.Size(29, 13);
+      this.label21.TabIndex = 21;
+      this.label21.Text = "secs";
+      // 
       // groupBox4
       // 
       this.groupBox4.Controls.Add(this.checkBoxEnableLinkageScanner);
@@ -312,6 +339,15 @@ namespace SetupTv.Sections
       this.checkBoxEnableLinkageScanner.TabIndex = 17;
       this.checkBoxEnableLinkageScanner.Text = "Enabled";
       this.checkBoxEnableLinkageScanner.UseVisualStyleBackColor = true;
+      // 
+      // label24
+      // 
+      this.label24.AutoSize = true;
+      this.label24.Location = new System.Drawing.Point(12, 157);
+      this.label24.Name = "label24";
+      this.label24.Size = new System.Drawing.Size(43, 13);
+      this.label24.TabIndex = 20;
+      this.label24.Text = "Analog:";
       // 
       // groupBox1
       // 
@@ -901,7 +937,12 @@ namespace SetupTv.Sections
       // 
       this.numericUpDownWaitTimeshifting.Location = new System.Drawing.Point(153, 123);
       this.numericUpDownWaitTimeshifting.Maximum = new decimal(new int[] {
-            3600,
+            30,
+            0,
+            0,
+            0});
+      this.numericUpDownWaitTimeshifting.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
@@ -919,7 +960,12 @@ namespace SetupTv.Sections
       // 
       this.numericUpDownWaitUnscrambled.Location = new System.Drawing.Point(153, 97);
       this.numericUpDownWaitUnscrambled.Maximum = new decimal(new int[] {
-            3600,
+            30,
+            0,
+            0,
+            0});
+      this.numericUpDownWaitUnscrambled.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
@@ -937,7 +983,12 @@ namespace SetupTv.Sections
       // 
       this.numericUpDownMaxFileSize.Location = new System.Drawing.Point(153, 71);
       this.numericUpDownMaxFileSize.Maximum = new decimal(new int[] {
-            1000,
+            1024,
+            0,
+            0,
+            0});
+      this.numericUpDownMaxFileSize.Minimum = new decimal(new int[] {
+            20,
             0,
             0,
             0});
@@ -954,6 +1005,11 @@ namespace SetupTv.Sections
       // numericUpDownMaxFiles
       // 
       this.numericUpDownMaxFiles.Location = new System.Drawing.Point(153, 45);
+      this.numericUpDownMaxFiles.Minimum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
       this.numericUpDownMaxFiles.Name = "numericUpDownMaxFiles";
       this.numericUpDownMaxFiles.Size = new System.Drawing.Size(87, 20);
       this.numericUpDownMaxFiles.TabIndex = 31;
@@ -967,6 +1023,11 @@ namespace SetupTv.Sections
       // numericUpDownMinFiles
       // 
       this.numericUpDownMinFiles.Location = new System.Drawing.Point(153, 19);
+      this.numericUpDownMinFiles.Minimum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
       this.numericUpDownMinFiles.Name = "numericUpDownMinFiles";
       this.numericUpDownMinFiles.Size = new System.Drawing.Size(87, 20);
       this.numericUpDownMinFiles.TabIndex = 30;
@@ -1067,42 +1128,6 @@ namespace SetupTv.Sections
       this.label18.TabIndex = 15;
       this.label18.Text = "Minimum";
       // 
-      // numericUpDownAnalog
-      // 
-      this.numericUpDownAnalog.Location = new System.Drawing.Point(95, 155);
-      this.numericUpDownAnalog.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
-      this.numericUpDownAnalog.Name = "numericUpDownAnalog";
-      this.numericUpDownAnalog.Size = new System.Drawing.Size(88, 20);
-      this.numericUpDownAnalog.TabIndex = 22;
-      this.numericUpDownAnalog.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.numericUpDownAnalog.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-      // 
-      // label21
-      // 
-      this.label21.AutoSize = true;
-      this.label21.Location = new System.Drawing.Point(189, 157);
-      this.label21.Name = "label21";
-      this.label21.Size = new System.Drawing.Size(29, 13);
-      this.label21.TabIndex = 21;
-      this.label21.Text = "secs";
-      // 
-      // label24
-      // 
-      this.label24.AutoSize = true;
-      this.label24.Location = new System.Drawing.Point(12, 157);
-      this.label24.Name = "label24";
-      this.label24.Size = new System.Drawing.Size(43, 13);
-      this.label24.TabIndex = 20;
-      this.label24.Text = "Analog:";
-      // 
       // ScanSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1119,6 +1144,7 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.delayDetectUpDown)).EndInit();
       this.tabPageScan.ResumeLayout(false);
       this.tabPageScan.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).EndInit();
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
       this.groupBox1.ResumeLayout(false);
@@ -1148,7 +1174,6 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFiles)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinFiles)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnalog)).EndInit();
       this.ResumeLayout(false);
 
     }
