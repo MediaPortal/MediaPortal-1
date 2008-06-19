@@ -125,6 +125,12 @@ namespace MPTvClient
             tbServerHostName.Text = keyValue[1];
           }
         }
+        if (tbServerHostName.Text == "")
+        {
+          tbServerHostName.Text = ClientSettings.serverHostname;
+          if (rbSQLServer.Checked)
+            tbServerHostName.Text += "\\SQLEXPRESS";
+        }
       }
       catch (Exception ex)
       {
@@ -416,6 +422,11 @@ namespace MPTvClient
           OnDBTypeSelected();
           tbUserID.Text = "root";
         }
+        if (tbServerHostName.Text.EndsWith("\\SQLEXPRESS"))
+        {
+          OnDBTypeSelected();
+          tbServerHostName.Text = tbServerHostName.Text.Remove(tbServerHostName.Text.IndexOf("\\SQLEXPRESS"), 11);
+        }
       }
     }
 
@@ -427,6 +438,11 @@ namespace MPTvClient
         {
           OnDBTypeSelected();
           tbUserID.Text = "sa";
+        }
+        if (!tbServerHostName.Text.EndsWith("\\SQLEXPRESS"))
+        {
+          OnDBTypeSelected();
+          tbServerHostName.Text += "\\SQLEXPRESS";
         }
       }
     }

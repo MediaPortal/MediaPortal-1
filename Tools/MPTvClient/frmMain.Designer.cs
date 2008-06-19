@@ -31,12 +31,12 @@ namespace MPTvClient
           this.components = new System.ComponentModel.Container();
           System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
           System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
           System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
           System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
           System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
           System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-          System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
           this.btnConnect = new System.Windows.Forms.Button();
           this.StBar = new System.Windows.Forms.StatusStrip();
           this.StBarLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -73,6 +73,16 @@ namespace MPTvClient
           this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
           this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
           this.tpRadio = new System.Windows.Forms.TabPage();
+          this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+          this.btnShowRadioEPG = new System.Windows.Forms.Button();
+          this.cbRadioGroups = new System.Windows.Forms.ComboBox();
+          this.label4 = new System.Windows.Forms.Label();
+          this.gridRadioChannels = new System.Windows.Forms.DataGridView();
+          this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+          this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+          this.Type = new System.Windows.Forms.DataGridViewTextBoxColumn();
+          this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+          this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
           this.tpRecordings = new System.Windows.Forms.TabPage();
           this.gridRecordings = new System.Windows.Forms.DataGridView();
           this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -95,16 +105,6 @@ namespace MPTvClient
           this.colStatus = new System.Windows.Forms.ColumnHeader();
           this.colChannel = new System.Windows.Forms.ColumnHeader();
           this.colUser = new System.Windows.Forms.ColumnHeader();
-          this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-          this.btnShowRadioEPG = new System.Windows.Forms.Button();
-          this.cbRadioGroups = new System.Windows.Forms.ComboBox();
-          this.label4 = new System.Windows.Forms.Label();
-          this.gridRadioChannels = new System.Windows.Forms.DataGridView();
-          this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-          this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-          this.Type = new System.Windows.Forms.DataGridViewTextBoxColumn();
-          this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-          this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
           this.StBar.SuspendLayout();
           this.panel1.SuspendLayout();
           this.menuStrip1.SuspendLayout();
@@ -119,14 +119,14 @@ namespace MPTvClient
           this.splitContainer2.SuspendLayout();
           ((System.ComponentModel.ISupportInitialize)(this.gridTVChannels)).BeginInit();
           this.tpRadio.SuspendLayout();
-          this.tpRecordings.SuspendLayout();
-          ((System.ComponentModel.ISupportInitialize)(this.gridRecordings)).BeginInit();
-          this.tpSchedules.SuspendLayout();
-          ((System.ComponentModel.ISupportInitialize)(this.gridSchedules)).BeginInit();
           this.splitContainer3.Panel1.SuspendLayout();
           this.splitContainer3.Panel2.SuspendLayout();
           this.splitContainer3.SuspendLayout();
           ((System.ComponentModel.ISupportInitialize)(this.gridRadioChannels)).BeginInit();
+          this.tpRecordings.SuspendLayout();
+          ((System.ComponentModel.ISupportInitialize)(this.gridRecordings)).BeginInit();
+          this.tpSchedules.SuspendLayout();
+          ((System.ComponentModel.ISupportInitialize)(this.gridSchedules)).BeginInit();
           this.SuspendLayout();
           // 
           // btnConnect
@@ -489,6 +489,125 @@ namespace MPTvClient
           this.tpRadio.Text = "Radio";
           this.tpRadio.UseVisualStyleBackColor = true;
           // 
+          // splitContainer3
+          // 
+          this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+          this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+          this.splitContainer3.IsSplitterFixed = true;
+          this.splitContainer3.Location = new System.Drawing.Point(3, 3);
+          this.splitContainer3.Name = "splitContainer3";
+          this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+          // 
+          // splitContainer3.Panel1
+          // 
+          this.splitContainer3.Panel1.Controls.Add(this.btnShowRadioEPG);
+          this.splitContainer3.Panel1.Controls.Add(this.cbRadioGroups);
+          this.splitContainer3.Panel1.Controls.Add(this.label4);
+          // 
+          // splitContainer3.Panel2
+          // 
+          this.splitContainer3.Panel2.Controls.Add(this.gridRadioChannels);
+          this.splitContainer3.Size = new System.Drawing.Size(697, 160);
+          this.splitContainer3.SplitterDistance = 45;
+          this.splitContainer3.TabIndex = 13;
+          // 
+          // btnShowRadioEPG
+          // 
+          this.btnShowRadioEPG.Location = new System.Drawing.Point(307, 11);
+          this.btnShowRadioEPG.Name = "btnShowRadioEPG";
+          this.btnShowRadioEPG.Size = new System.Drawing.Size(130, 23);
+          this.btnShowRadioEPG.TabIndex = 10;
+          this.btnShowRadioEPG.Text = "Show EPG for Group";
+          this.btnShowRadioEPG.UseVisualStyleBackColor = true;
+          this.btnShowRadioEPG.Click += new System.EventHandler(this.btnShowEPG_Click);
+          // 
+          // cbRadioGroups
+          // 
+          this.cbRadioGroups.FormattingEnabled = true;
+          this.cbRadioGroups.Location = new System.Drawing.Point(45, 12);
+          this.cbRadioGroups.Name = "cbRadioGroups";
+          this.cbRadioGroups.Size = new System.Drawing.Size(255, 21);
+          this.cbRadioGroups.TabIndex = 9;
+          this.cbRadioGroups.SelectedIndexChanged += new System.EventHandler(this.cbRadioGroups_SelectedIndexChanged);
+          // 
+          // label4
+          // 
+          this.label4.AutoSize = true;
+          this.label4.Location = new System.Drawing.Point(4, 15);
+          this.label4.Name = "label4";
+          this.label4.Size = new System.Drawing.Size(39, 13);
+          this.label4.TabIndex = 8;
+          this.label4.Text = "Group:";
+          // 
+          // gridRadioChannels
+          // 
+          this.gridRadioChannels.AllowUserToAddRows = false;
+          this.gridRadioChannels.AllowUserToDeleteRows = false;
+          this.gridRadioChannels.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+          this.gridRadioChannels.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn2,
+            this.Type,
+            this.dataGridViewTextBoxColumn3,
+            this.dataGridViewTextBoxColumn4});
+          this.gridRadioChannels.ContextMenuStrip = this.contextMenuStrip1;
+          this.gridRadioChannels.Dock = System.Windows.Forms.DockStyle.Fill;
+          this.gridRadioChannels.Location = new System.Drawing.Point(0, 0);
+          this.gridRadioChannels.Name = "gridRadioChannels";
+          this.gridRadioChannels.ReadOnly = true;
+          this.gridRadioChannels.RowHeadersVisible = false;
+          dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+          dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.gridRadioChannels.RowsDefaultCellStyle = dataGridViewCellStyle4;
+          this.gridRadioChannels.RowTemplate.Height = 30;
+          this.gridRadioChannels.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+          this.gridRadioChannels.Size = new System.Drawing.Size(697, 111);
+          this.gridRadioChannels.TabIndex = 12;
+          this.gridRadioChannels.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridRadioChannels_CellDoubleClick);
+          // 
+          // dataGridViewTextBoxColumn1
+          // 
+          this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+          this.dataGridViewTextBoxColumn1.HeaderText = "ChannelID";
+          this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+          this.dataGridViewTextBoxColumn1.ReadOnly = true;
+          this.dataGridViewTextBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+          this.dataGridViewTextBoxColumn1.Width = 82;
+          // 
+          // dataGridViewTextBoxColumn2
+          // 
+          this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+          this.dataGridViewTextBoxColumn2.HeaderText = "Channel";
+          this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+          this.dataGridViewTextBoxColumn2.ReadOnly = true;
+          this.dataGridViewTextBoxColumn2.Width = 71;
+          // 
+          // Type
+          // 
+          this.Type.HeaderText = "Type";
+          this.Type.Name = "Type";
+          this.Type.ReadOnly = true;
+          this.Type.Width = 70;
+          // 
+          // dataGridViewTextBoxColumn3
+          // 
+          this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+          dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+          this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle3;
+          this.dataGridViewTextBoxColumn3.HeaderText = "Time";
+          this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+          this.dataGridViewTextBoxColumn3.ReadOnly = true;
+          this.dataGridViewTextBoxColumn3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+          this.dataGridViewTextBoxColumn3.Width = 55;
+          // 
+          // dataGridViewTextBoxColumn4
+          // 
+          this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+          this.dataGridViewTextBoxColumn4.HeaderText = "Description";
+          this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+          this.dataGridViewTextBoxColumn4.ReadOnly = true;
+          this.dataGridViewTextBoxColumn4.Width = 85;
+          // 
           // tpRecordings
           // 
           this.tpRecordings.Controls.Add(this.gridRecordings);
@@ -695,125 +814,6 @@ namespace MPTvClient
           // 
           this.colUser.Text = "User";
           // 
-          // splitContainer3
-          // 
-          this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-          this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-          this.splitContainer3.IsSplitterFixed = true;
-          this.splitContainer3.Location = new System.Drawing.Point(3, 3);
-          this.splitContainer3.Name = "splitContainer3";
-          this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
-          // 
-          // splitContainer3.Panel1
-          // 
-          this.splitContainer3.Panel1.Controls.Add(this.btnShowRadioEPG);
-          this.splitContainer3.Panel1.Controls.Add(this.cbRadioGroups);
-          this.splitContainer3.Panel1.Controls.Add(this.label4);
-          // 
-          // splitContainer3.Panel2
-          // 
-          this.splitContainer3.Panel2.Controls.Add(this.gridRadioChannels);
-          this.splitContainer3.Size = new System.Drawing.Size(697, 160);
-          this.splitContainer3.SplitterDistance = 45;
-          this.splitContainer3.TabIndex = 13;
-          // 
-          // btnShowRadioEPG
-          // 
-          this.btnShowRadioEPG.Location = new System.Drawing.Point(307, 11);
-          this.btnShowRadioEPG.Name = "btnShowRadioEPG";
-          this.btnShowRadioEPG.Size = new System.Drawing.Size(130, 23);
-          this.btnShowRadioEPG.TabIndex = 10;
-          this.btnShowRadioEPG.Text = "Show EPG for Group";
-          this.btnShowRadioEPG.UseVisualStyleBackColor = true;
-          this.btnShowRadioEPG.Click += new System.EventHandler(this.btnShowEPG_Click);
-          // 
-          // cbRadioGroups
-          // 
-          this.cbRadioGroups.FormattingEnabled = true;
-          this.cbRadioGroups.Location = new System.Drawing.Point(45, 12);
-          this.cbRadioGroups.Name = "cbRadioGroups";
-          this.cbRadioGroups.Size = new System.Drawing.Size(255, 21);
-          this.cbRadioGroups.TabIndex = 9;
-          this.cbRadioGroups.SelectedIndexChanged += new System.EventHandler(this.cbRadioGroups_SelectedIndexChanged);
-          // 
-          // label4
-          // 
-          this.label4.AutoSize = true;
-          this.label4.Location = new System.Drawing.Point(4, 15);
-          this.label4.Name = "label4";
-          this.label4.Size = new System.Drawing.Size(39, 13);
-          this.label4.TabIndex = 8;
-          this.label4.Text = "Group:";
-          // 
-          // gridRadioChannels
-          // 
-          this.gridRadioChannels.AllowUserToAddRows = false;
-          this.gridRadioChannels.AllowUserToDeleteRows = false;
-          this.gridRadioChannels.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-          this.gridRadioChannels.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn2,
-            this.Type,
-            this.dataGridViewTextBoxColumn3,
-            this.dataGridViewTextBoxColumn4});
-          this.gridRadioChannels.ContextMenuStrip = this.contextMenuStrip1;
-          this.gridRadioChannels.Dock = System.Windows.Forms.DockStyle.Fill;
-          this.gridRadioChannels.Location = new System.Drawing.Point(0, 0);
-          this.gridRadioChannels.Name = "gridRadioChannels";
-          this.gridRadioChannels.ReadOnly = true;
-          this.gridRadioChannels.RowHeadersVisible = false;
-          dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-          dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.gridRadioChannels.RowsDefaultCellStyle = dataGridViewCellStyle4;
-          this.gridRadioChannels.RowTemplate.Height = 30;
-          this.gridRadioChannels.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-          this.gridRadioChannels.Size = new System.Drawing.Size(697, 111);
-          this.gridRadioChannels.TabIndex = 12;
-          this.gridRadioChannels.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridRadioChannels_CellDoubleClick);
-          // 
-          // dataGridViewTextBoxColumn1
-          // 
-          this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-          this.dataGridViewTextBoxColumn1.HeaderText = "ChannelID";
-          this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-          this.dataGridViewTextBoxColumn1.ReadOnly = true;
-          this.dataGridViewTextBoxColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-          this.dataGridViewTextBoxColumn1.Width = 82;
-          // 
-          // dataGridViewTextBoxColumn2
-          // 
-          this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-          this.dataGridViewTextBoxColumn2.HeaderText = "Channel";
-          this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-          this.dataGridViewTextBoxColumn2.ReadOnly = true;
-          this.dataGridViewTextBoxColumn2.Width = 71;
-          // 
-          // Type
-          // 
-          this.Type.HeaderText = "Type";
-          this.Type.Name = "Type";
-          this.Type.ReadOnly = true;
-          this.Type.Width = 70;
-          // 
-          // dataGridViewTextBoxColumn3
-          // 
-          this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-          dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-          this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle3;
-          this.dataGridViewTextBoxColumn3.HeaderText = "Time";
-          this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-          this.dataGridViewTextBoxColumn3.ReadOnly = true;
-          this.dataGridViewTextBoxColumn3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-          this.dataGridViewTextBoxColumn3.Width = 55;
-          // 
-          // dataGridViewTextBoxColumn4
-          // 
-          this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-          this.dataGridViewTextBoxColumn4.HeaderText = "Description";
-          this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-          this.dataGridViewTextBoxColumn4.ReadOnly = true;
-          this.dataGridViewTextBoxColumn4.Width = 85;
-          // 
           // frmMain
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -825,7 +825,7 @@ namespace MPTvClient
           this.MainMenuStrip = this.menuStrip1;
           this.Name = "frmMain";
           this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-          this.Text = "MP TV Client V1.3";
+          this.Text = "MP TV Client V1.3.1";
           this.Shown += new System.EventHandler(this.frmMain_Shown);
           this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
           this.StBar.ResumeLayout(false);
@@ -846,15 +846,15 @@ namespace MPTvClient
           this.splitContainer2.ResumeLayout(false);
           ((System.ComponentModel.ISupportInitialize)(this.gridTVChannels)).EndInit();
           this.tpRadio.ResumeLayout(false);
-          this.tpRecordings.ResumeLayout(false);
-          ((System.ComponentModel.ISupportInitialize)(this.gridRecordings)).EndInit();
-          this.tpSchedules.ResumeLayout(false);
-          ((System.ComponentModel.ISupportInitialize)(this.gridSchedules)).EndInit();
           this.splitContainer3.Panel1.ResumeLayout(false);
           this.splitContainer3.Panel1.PerformLayout();
           this.splitContainer3.Panel2.ResumeLayout(false);
           this.splitContainer3.ResumeLayout(false);
           ((System.ComponentModel.ISupportInitialize)(this.gridRadioChannels)).EndInit();
+          this.tpRecordings.ResumeLayout(false);
+          ((System.ComponentModel.ISupportInitialize)(this.gridRecordings)).EndInit();
+          this.tpSchedules.ResumeLayout(false);
+          ((System.ComponentModel.ISupportInitialize)(this.gridSchedules)).EndInit();
           this.ResumeLayout(false);
           this.PerformLayout();
 
