@@ -50,7 +50,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   GetLogFile(filename);
   ::DeleteFile(filename);
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 1.2.0 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 1.2.1 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -404,7 +404,7 @@ void CDVBSub::UpdateSubtitleTimeout( uint64_t pTimeout )
   {
     // Calculate the timeout
     __int64 timeOut( 0 ); 
-    timeOut = pTimeout + m_currentTimeCompensation - m_prevSubtitleTimestamp;
+    timeOut = pTimeout + m_currentTimeCompensation.Millisecs() - m_prevSubtitleTimestamp;
     timeOut = timeOut/90;
 
     LogDebug("Calling update timeout observer - timeout = %lld ms", timeOut );
