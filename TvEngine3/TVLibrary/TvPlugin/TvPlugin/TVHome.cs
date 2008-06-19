@@ -1389,9 +1389,9 @@ namespace TvPlugin
     }
 
     void OnActiveRecordings()
-    {
+    {      
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      if (dlg == null) return;            
 
       dlg.Reset();
       dlg.SetHeading(200052); // Active Recordings
@@ -1467,7 +1467,10 @@ namespace TvPlugin
             {
               strLogo = "defaultVideoBig.png";
             }
+
             item.IconImage = strLogo;
+            item.IconImageBig = strLogo;
+            
             if (isRecording)
               item.PinImage = Thumbs.TvRecordingIcon;
             else
@@ -2212,6 +2215,135 @@ namespace TvPlugin
       return idx;
     }
 
+    private static void ChannelTuneFailedNotifyUser(TvResult succeeded, bool wasPlaying, Channel channel)
+    {
+      string errorMessage = GUILocalizeStrings.Get(1500);
+      switch (succeeded)
+      {
+        case TvResult.CardIsDisabled:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1501) + "\r";
+          break;
+        case TvResult.AllCardsBusy:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1502) + "\r";
+          break;
+        case TvResult.ChannelIsScrambled:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1503) + "\r";
+          break;
+        case TvResult.NoVideoAudioDetected:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1504) + "\r";
+          break;
+        case TvResult.UnableToStartGraph:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1505) + "\r";
+          break;
+        case TvResult.UnknownError:
+          // this error can also happen if we have no connection to the server.
+          if (!TVHome.Connected || !RemoteControl.IsConnected)
+          {
+            errorMessage += "\r" + GUILocalizeStrings.Get(1510) + "\r"; // Connection to TV server lost
+          }
+          else
+          {
+            errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
+          }
+          break;
+        case TvResult.UnknownChannel:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1507) + "\r";
+          break;
+        case TvResult.ChannelNotMappedToAnyCard:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1508) + "\r";
+          break;
+        case TvResult.NoTuningDetails:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1509) + "\r";
+          break;
+        default:
+          // this error can also happen if we have no connection to the server.
+          if (!TVHome.Connected || !RemoteControl.IsConnected)
+          {
+            errorMessage += "\r" + GUILocalizeStrings.Get(1510) + "\r"; // Connection to TV server lost
+          }
+          else
+          {
+            errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
+          }
+          break;
+      }
+      if (wasPlaying) //show yes no dialogue
+      {
+        GUIDialogYesNo pDlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+        string[] lines = errorMessage.Split('\r');
+        string caption = GUILocalizeStrings.Get(605) + " - " + GUILocalizeStrings.Get(1512);
+        pDlgYesNo.SetHeading(caption);//my tv
+        pDlgYesNo.SetLine(1, channel.DisplayName);
+        pDlgYesNo.SetLine(2, lines[0]);
+        if (lines.Length > 1)
+          pDlgYesNo.SetLine(3, lines[1]);
+        else
+          pDlgYesNo.SetLine(3, "");
+        if (lines.Length > 2)
+          pDlgYesNo.SetLine(4, lines[2]);
+        else
+          pDlgYesNo.SetLine(4, "");
+
+        //pDlgYesNo.SetLine(5, "Tune previous channel?"); //Tune previous channel?            
+
+        /*if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+        {
+          g_Player.FullScreen = false;
+        }*/
+        if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+        {
+          pDlgYesNo.DoModal((int)GUIWindowManager.ActiveWindowEx);
+          // If failed and wasPlaying TV, fallback to the last viewed channel. 
+
+          if (pDlgYesNo.IsConfirmed)
+          {
+            ViewChannelAndCheck(Navigator.Channel);
+            GUIWaitCursor.Hide();
+          }
+        }
+        else
+        {
+          ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
+          Thread showDlgThread = new Thread(pThread);
+
+          //GUIWaitCursor.Hide();						
+          // show the dialog asynch.
+          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+          showDlgThread.Start(pDlgYesNo);
+        }
+      }
+      else //show ok
+      {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        string[] lines = errorMessage.Split('\r');
+        pDlgOK.SetHeading(605);//my tv
+        pDlgOK.SetLine(1, channel.DisplayName);
+        pDlgOK.SetLine(2, lines[0]);
+        if (lines.Length > 1)
+          pDlgOK.SetLine(3, lines[1]);
+        else
+          pDlgOK.SetLine(3, "");
+        if (lines.Length > 2)
+          pDlgOK.SetLine(4, lines[2]);
+        else
+          pDlgOK.SetLine(4, "");
+
+        if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+        {
+          pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+        }
+        else
+        {
+          ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
+          Thread showDlgThread = new Thread(pThread);
+
+          // show the dialog asynch.
+          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+          showDlgThread.Start(pDlgOK);
+        }
+      }
+    }
+
     public static bool ViewChannelAndCheck(Channel channel)
     {
       _doingChannelChange = false;
@@ -2224,6 +2356,14 @@ namespace TvPlugin
           return false;
         }
         MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
+
+        //if a channel is untunable, then there is no reason to carry on or even stop playback.
+        int CurrentChanState = (int)TVHome.TvServer.GetChannelState(channel.IdChannel, TVHome.Card.User);
+        if (CurrentChanState == (int)ChannelState.nottunable)
+        {
+          ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+          return false;
+        }
 
         //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
         if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))
@@ -2285,8 +2425,7 @@ namespace TvPlugin
           if (Navigator.LastViewedChannel.IsWebstream())
             g_Player.Stop();
         }*/
-
-        string errorMessage;
+        
         TvResult succeeded;
         if (TVHome.Card != null)
         {
@@ -2388,131 +2527,8 @@ namespace TvPlugin
 
         //if (pDlgOK != null && pDlgYesNo != null)
 
-        errorMessage = GUILocalizeStrings.Get(1500);
-        switch (succeeded)
-        {
-          case TvResult.CardIsDisabled:
-            errorMessage += "\r" + GUILocalizeStrings.Get(1501) + "\r";
-            break;
-          case TvResult.AllCardsBusy:
-            errorMessage += "\r" + GUILocalizeStrings.Get(1502) + "\r";
-            break;
-          case TvResult.ChannelIsScrambled:
-            errorMessage += "\r" + GUILocalizeStrings.Get(1503) + "\r";
-            break;
-          case TvResult.NoVideoAudioDetected:
-            errorMessage += "\r" + GUILocalizeStrings.Get(1504) + "\r";
-            break;
-          case TvResult.UnableToStartGraph:
-            errorMessage += "\r" + GUILocalizeStrings.Get(1505) + "\r";
-            break;
-          case TvResult.UnknownError:
-            // this error can also happen if we have no connection to the server.
-            if (!TVHome.Connected || !RemoteControl.IsConnected)
-            {
-              errorMessage += "\r" + GUILocalizeStrings.Get(1510) + "\r"; // Connection to TV server lost
-            }
-            else
-            {
-              errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
-            }
-            break;
-          case TvResult.UnknownChannel:
-            errorMessage += "\r" + GUILocalizeStrings.Get(1507) + "\r";
-            break;
-          case TvResult.ChannelNotMappedToAnyCard:
-            errorMessage += "\r" + GUILocalizeStrings.Get(1508) + "\r";
-            break;
-          case TvResult.NoTuningDetails:
-            errorMessage += "\r" + GUILocalizeStrings.Get(1509) + "\r";
-            break;
-          default:
-            // this error can also happen if we have no connection to the server.
-            if (!TVHome.Connected || !RemoteControl.IsConnected)
-            {
-              errorMessage += "\r" + GUILocalizeStrings.Get(1510) + "\r"; // Connection to TV server lost
-            }
-            else
-            {
-              errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
-            }
-            break;
-        }
-        if (wasPlaying) //show yes no dialogue
-        {
-          GUIDialogYesNo pDlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-          string[] lines = errorMessage.Split('\r');
-          string caption = GUILocalizeStrings.Get(605) + " - " + GUILocalizeStrings.Get(1512);
-          pDlgYesNo.SetHeading(caption);//my tv
-          pDlgYesNo.SetLine(1, channel.DisplayName);
-          pDlgYesNo.SetLine(2, lines[0]);
-          if (lines.Length > 1)
-            pDlgYesNo.SetLine(3, lines[1]);
-          else
-            pDlgYesNo.SetLine(3, "");
-          if (lines.Length > 2)
-            pDlgYesNo.SetLine(4, lines[2]);
-          else
-            pDlgYesNo.SetLine(4, "");
-
-          //pDlgYesNo.SetLine(5, "Tune previous channel?"); //Tune previous channel?            
-
-          /*if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-          {
-            g_Player.FullScreen = false;
-          }*/
-          if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-          {
-            pDlgYesNo.DoModal((int)GUIWindowManager.ActiveWindowEx);
-            // If failed and wasPlaying TV, fallback to the last viewed channel. 
-
-            if (pDlgYesNo.IsConfirmed)
-            {
-              ViewChannelAndCheck(Navigator.Channel);
-              GUIWaitCursor.Hide();
-            }
-          }
-          else
-          {
-            ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
-            Thread showDlgThread = new Thread(pThread);
-
-            //GUIWaitCursor.Hide();						
-            // show the dialog asynch.
-            // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-            showDlgThread.Start(pDlgYesNo);
-          }
-        }
-        else //show ok
-        {
-          GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-          string[] lines = errorMessage.Split('\r');
-          pDlgOK.SetHeading(605);//my tv
-          pDlgOK.SetLine(1, channel.DisplayName);
-          pDlgOK.SetLine(2, lines[0]);
-          if (lines.Length > 1)
-            pDlgOK.SetLine(3, lines[1]);
-          else
-            pDlgOK.SetLine(3, "");
-          if (lines.Length > 2)
-            pDlgOK.SetLine(4, lines[2]);
-          else
-            pDlgOK.SetLine(4, "");
-
-          if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-          {
-            pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-          }
-          else
-          {
-            ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
-            Thread showDlgThread = new Thread(pThread);
-
-            // show the dialog asynch.
-            // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-            showDlgThread.Start(pDlgOK);
-          }
-        }
+        ChannelTuneFailedNotifyUser(succeeded, wasPlaying, channel);
+        
         _doingChannelChange = false;
         return false;
       }
