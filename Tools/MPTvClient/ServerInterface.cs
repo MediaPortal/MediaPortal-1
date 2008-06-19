@@ -41,6 +41,7 @@ namespace MPTvClient
   public class ServerInterface
   {
     IList groups;
+    IList radioGroups;
     IList channels;
     IList mappings;
     IList cards;
@@ -85,6 +86,7 @@ namespace MPTvClient
         me = new User();
         me.IsAdmin = true;
         groups = ChannelGroup.ListAll();
+        radioGroups = RadioChannelGroup.ListAll();
         channels = Channel.ListAll();
         mappings = GroupMap.ListAll();
         cards = Card.ListAll();
@@ -274,6 +276,23 @@ namespace MPTvClient
       }
       return lGroups;
     }
+    public List<string> GetRadioGroupNames()
+    {
+      if (!RemoteControl.IsConnected)
+        return null;
+      List<string> lGroups = new List<string>();
+      try
+      {
+        foreach (RadioChannelGroup group in radioGroups)
+          lGroups.Add(group.GroupName);
+      }
+      catch (Exception ex)
+      {
+        lastException = ex;
+        return null;
+      }
+      return lGroups;
+    }
     public List<ChannelInfo> GetChannelInfosForGroup(string groupName)
     {
       List<ChannelInfo> refChannelInfos = new List<ChannelInfo>();
@@ -286,6 +305,49 @@ namespace MPTvClient
             IList maps = group.ReferringGroupMap();
             TvDatabase.Program epg;
             foreach (GroupMap map in maps)
+            {
+              ChannelInfo channelInfo = new ChannelInfo();
+              channelInfo.channelID = map.ReferencedChannel().IdChannel.ToString();
+              channelInfo.name = map.ReferencedChannel().DisplayName;
+              epg = map.ReferencedChannel().CurrentProgram;
+              channelInfo.epgNow = new ProgrammInfo();
+              if (epg != null)
+              {
+                channelInfo.epgNow.timeInfo = epg.StartTime.ToShortTimeString() + "-" + epg.EndTime.ToShortTimeString();
+                channelInfo.epgNow.description = epg.Title;
+              }
+              epg = map.ReferencedChannel().NextProgram;
+              channelInfo.epgNext = new ProgrammInfo();
+              if (epg != null)
+              {
+                channelInfo.epgNext.timeInfo = epg.StartTime.ToShortTimeString() + "-" + epg.EndTime.ToShortTimeString();
+                channelInfo.epgNext.description = epg.Title;
+              }
+              refChannelInfos.Add(channelInfo);
+            }
+            break;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        lastException = ex;
+        return null;
+      }
+      return refChannelInfos;
+    }
+    public List<ChannelInfo> GetChannelInfosForRadioGroup(string groupName)
+    {
+      List<ChannelInfo> refChannelInfos = new List<ChannelInfo>();
+      try
+      {
+        foreach (RadioChannelGroup group in radioGroups)
+        {
+          if (group.GroupName == groupName)
+          {
+            IList maps = group.ReferringRadioGroupMap();
+            TvDatabase.Program epg;
+            foreach (RadioGroupMap map in maps)
             {
               ChannelInfo channelInfo = new ChannelInfo();
               channelInfo.channelID = map.ReferencedChannel().IdChannel.ToString();

@@ -77,13 +77,15 @@ namespace MPTvClient
     }
     private void UpdateRadioChannels()
     {
-      StBarLabel.Text = "Loading radio channels...";
+      if (cbRadioGroups.SelectedIndex == -1)
+        return;
+      StBarLabel.Text = "Loading referenced radio channels...";
       StBar.Update();
-      List<ChannelInfo> channelInfos = serverIntf.GetRadioChannels();
-      if (channelInfos == null)
+      List<ChannelInfo> refChannelInfos = serverIntf.GetChannelInfosForRadioGroup(cbRadioGroups.SelectedItem.ToString());
+      if (refChannelInfos == null)
         SetDisconected();
       gridRadioChannels.Rows.Clear();
-      foreach (ChannelInfo chanInfo in channelInfos)
+      foreach (ChannelInfo chanInfo in refChannelInfos)
       {
         string type = "DVB";
         if (chanInfo.isWebStream)
@@ -167,6 +169,19 @@ namespace MPTvClient
         cbGroups.Items.Add(group);
       if (cbGroups.Items.Count > 0)
         cbGroups.SelectedIndex = 0;
+
+      cbRadioGroups.Items.Clear();
+      List<string> radioGroups = serverIntf.GetRadioGroupNames();
+      if (radioGroups == null)
+      {
+        SetDisconected();
+        return;
+      }
+      foreach (string group in radioGroups)
+        cbRadioGroups.Items.Add(group);
+      if (cbRadioGroups.Items.Count > 0)
+        cbRadioGroups.SelectedIndex = 0;      
+
       StBarLabel.Text = "";
       tmrRefresh.Enabled = true;
       btnConnect.Visible = false;
@@ -413,7 +428,11 @@ namespace MPTvClient
     private void btnShowEPG_Click(object sender, EventArgs e)
     {
       List<ChannelInfo> infos=new List<ChannelInfo>();
-      foreach (DataGridViewRow row in gridTVChannels.Rows)
+      DataGridView grid = gridTVChannels;
+      Button btn = (Button)sender;
+      if (btn != btnShowEPG)
+        grid = gridRadioChannels;
+      foreach (DataGridViewRow row in grid.Rows)
       {
         ChannelInfo info=new ChannelInfo();
         info.channelID=row.Cells[0].Value.ToString();
@@ -445,6 +464,11 @@ namespace MPTvClient
     {
       ClientSettings.alwaysPerformConnectionChecks = miAlwaysPerformConnectionChecks.Checked;
       ClientSettings.Save();
+    }
+
+    private void cbRadioGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      UpdateRadioChannels();
     }
   }
 }
