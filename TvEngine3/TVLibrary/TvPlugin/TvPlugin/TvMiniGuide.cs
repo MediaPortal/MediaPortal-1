@@ -351,6 +351,21 @@ namespace TvPlugin
     {
       benchClock = Stopwatch.StartNew();
       Log.Debug("miniguide: onpageload");
+
+      /*
+      string skinPath = GUIGraphicsContext.Skin;
+      string recIconPath = skinPath + "\\media\\" + Thumbs.TvRecordingIcon;
+      FileInfo fI = new FileInfo(recIconPath);
+      if (fI.Exists)
+      {
+        System.Drawing.Image img = System.Drawing.Image.FromFile(recIconPath);        
+        double factor = 50.0 / img.Width;
+
+        lstChannels.PinIconWidth = Convert.ToInt32(img.Width * factor);
+        lstChannels.PinIconHeight = Convert.ToInt32(img.Height * factor);
+      }
+      */
+
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
@@ -508,7 +523,7 @@ namespace TvPlugin
           {
             item.IconImageBig = string.Empty;
             item.IconImage = string.Empty;
-          }
+          }          
 
           if (DisplayStatusInfo)
           {
@@ -520,21 +535,25 @@ namespace TvPlugin
 
             switch (CurrentChanState)
             {
-              case 0:
+              case 0: //not avail.
                 sb.Append(" ");
                 sb.Append(local1056);
                 item.IsPlayed = true;
+                item.PinImage = Thumbs.TvIsUnavailableIcon;
                 break;
-              case 2:
+              case 2: // timeshifting
                 sb.Append(" ");
                 sb.Append(local1055);
+                item.PinImage = Thumbs.TvIsTimeshiftingIcon;
                 break;
-              case 3:
+              case 3: // recording
                 sb.Append(" ");
-                sb.Append(local1054);
+                sb.Append(local1054);                
+                item.PinImage = Thumbs.TvIsRecordingIcon;                          
                 break;
               default:
                 item.IsPlayed = false;
+                item.PinImage = Thumbs.TvIsAvailableIcon;
                 break;
             }
           }
