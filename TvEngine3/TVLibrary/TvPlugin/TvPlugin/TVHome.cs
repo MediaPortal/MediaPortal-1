@@ -2274,7 +2274,7 @@ namespace TvPlugin
         string caption = GUILocalizeStrings.Get(605) + " - " + GUILocalizeStrings.Get(1512);
         pDlgYesNo.SetHeading(caption);//my tv
         pDlgYesNo.SetLine(1, channel.DisplayName);
-        pDlgYesNo.SetLine(2, lines[0]);
+        pDlgYesNo.SetLine(2, lines[0]);                
         if (lines.Length > 1)
           pDlgYesNo.SetLine(3, lines[1]);
         else
@@ -2345,7 +2345,8 @@ namespace TvPlugin
     }
 
     public static bool ViewChannelAndCheck(Channel channel)
-    {
+    {      
+      GUIWaitCursor.Show();
       _doingChannelChange = false;
       //System.Diagnostics.Debugger.Launch();
       try
@@ -2353,6 +2354,7 @@ namespace TvPlugin
         if (channel == null)
         {
           MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
+          GUIWaitCursor.Hide();
           return false;
         }
         MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
@@ -2362,6 +2364,7 @@ namespace TvPlugin
         if (CurrentChanState == (int)ChannelState.nottunable)
         {
           ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+          GUIWaitCursor.Hide();
           return false;
         }
 
@@ -2375,13 +2378,18 @@ namespace TvPlugin
         // _userChannelChanged is true if user did interactively change the channel, like with mini ch. list. etc.
         if (!_userChannelChanged)
         {
-          if (g_Player.IsTVRecording) return true;
+          if (g_Player.IsTVRecording)
+          {
+            GUIWaitCursor.Hide();
+            return true;
+          }
           if (!_autoTurnOnTv) //respect the autoturnontv setting.
           {
-            if (g_Player.IsVideo) return true;
-            if (g_Player.IsDVD) return true;
-            if (g_Player.IsMusic) return true;
-            //if (g_Player.IsRadio) return true;
+            if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)
+            {
+              GUIWaitCursor.Hide();
+              return true;
+            }
           }
           else
           {
@@ -2433,6 +2441,7 @@ namespace TvPlugin
             //if we're already watching this channel, then simply return
             if (TVHome.Card.IsTimeShifting == true && TVHome.Card.IdChannel == channel.IdChannel)
             {
+              GUIWaitCursor.Hide();
               return true;
             }
         }
@@ -2444,23 +2453,19 @@ namespace TvPlugin
         {
           user.CardId = TVHome.Card.Id;
         }
-
-        //GUIWaitCursor.Show();
+        
         bool wasPlaying = (g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio);
 
         //Start timeshifting the new tv channel
         TvServer server = new TvServer();
-        VirtualCard card;
-        //bool _return = false;			
-
+        VirtualCard card;        
+        bool cardChanged = false;        
         if (wasPlaying)
         {
           // we need to stop player HERE if card has changed.        
           int newCardId = server.TimeShiftingWouldUseCard(ref user, channel.IdChannel);
 
-          //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
-          bool cardChanged = false;
-
+          //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player.           
           if (newCardId == -1)
           {
             cardChanged = false;
@@ -2476,13 +2481,15 @@ namespace TvPlugin
             {
               MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", TVHome.Card.Id, newCardId, TVHome.Card.RTSPUrl);
               MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", TVHome.Card.TimeShiftFileName);
-              g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
+              //g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
+              //server.StopTimeShifting(ref user);              
               MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (card changed) - timeshifting continueing.");
             }
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
           }
           else
           {
+            // PauseGraph & ContinueGraph does add a bit overhead to channel change times
             g_Player.PauseGraph();
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
             SeekToEnd(true);
@@ -2496,12 +2503,12 @@ namespace TvPlugin
 
         if (succeeded == TvResult.Succeeded)
         {
-          //timeshifting succeeded					          
+          //timeshifting succeeded					                    
+          MediaPortal.GUI.Library.Log.Info("succeeded:{0} {1}", succeeded, card);
+          
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
-          MediaPortal.GUI.Library.Log.Info("succeeded:{0} {1}", succeeded, card);
-
-          if (!g_Player.Playing)
+          if (!g_Player.Playing || cardChanged)
           {
             StartPlay();
           }
@@ -2511,6 +2518,7 @@ namespace TvPlugin
           //GUIWaitCursor.Hide();
           _doingChannelChange = false;
           _ServerNotConnectedHandled = false;
+          GUIWaitCursor.Hide();
           return true;
         }
         else
@@ -2527,6 +2535,7 @@ namespace TvPlugin
 
         //if (pDlgOK != null && pDlgYesNo != null)
 
+        GUIWaitCursor.Hide();
         ChannelTuneFailedNotifyUser(succeeded, wasPlaying, channel);
         
         _doingChannelChange = false;
