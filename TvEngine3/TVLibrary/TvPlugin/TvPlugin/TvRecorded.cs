@@ -1146,7 +1146,7 @@ namespace TvPlugin
 
                 bool isManual = (scheduleType == ScheduleRecordingType.Once);
 
-                if (ts.Minutes == 0 || s.ProgramName.Equals(rec.Title) || isManual)
+                if ((ts.Minutes == 0 && isManual) || (s.ProgramName.Equals(rec.Title) && isManual) || (isManual))
                 {
                   VirtualCard card;
 
@@ -1156,11 +1156,13 @@ namespace TvPlugin
                     g_Player.Stop();
                   }
 
+                  TVHome.DeleteRecordingSchedule(s);
+                  /*
                   CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
                   schedule.Persist();
                   server.OnNewSchedule();
-
-                  server.StopRecordingSchedule(card.RecordingScheduleId);
+                  server.StopRecordingSchedule(s.IdSchedule);
+                  */
                   activeRecDeleted = true;
                 }
               }

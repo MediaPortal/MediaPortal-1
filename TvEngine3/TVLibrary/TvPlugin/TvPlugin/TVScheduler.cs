@@ -731,10 +731,13 @@ namespace TvPlugin
 
             if (deleteRec)
             {              
-              server.StopRecordingSchedule(schedId);
+            	TVHome.DeleteRecordingSchedule(Schedule.Retrieve(rec.IdSchedule));
+            	
+              /*server.StopRecordingSchedule(schedId);
               CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
               schedule.Persist();
               server.OnNewSchedule();                            
+              */
               LoadDirectory();
             }
           }
@@ -756,18 +759,20 @@ namespace TvPlugin
             if (isRecSchedule || isRec)
             {
               if (PromptDeleteRecordingInProgress(false))
-              {
-                server.StopRecordingSchedule(card.RecordingScheduleId);
+              {              	              	
+                /*server.StopRecordingSchedule(card.RecordingScheduleId);
                 rec = Schedule.Retrieve(rec.IdSchedule);
                 if (rec != null)
                 {
                   rec.Delete();
                 }
+                */
+                TVHome.DeleteRecordingSchedule(Schedule.Retrieve(card.RecordingScheduleId));
                 LoadDirectory();
               }                                                            
             }
             else if (PromptDeleteEpisode(rec.ProgramName))
-            {
+            {            	            	
               server.StopRecordingSchedule(rec.IdSchedule);
               rec = Schedule.Retrieve(rec.IdSchedule);
               if (rec != null)
@@ -775,6 +780,7 @@ namespace TvPlugin
                 rec.Delete();
               }        
               server.OnNewSchedule();              
+              
 
               if (showSeries && !item.IsFolder)
               {

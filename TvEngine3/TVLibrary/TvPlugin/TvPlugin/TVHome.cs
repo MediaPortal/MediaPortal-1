@@ -325,6 +325,74 @@ namespace TvPlugin
 
     #region Public static methods
 
+    /// <summary>
+    /// Deletes a schedule (not an episode schedule).
+    /// If the schedule is currently recording, then this is stopped also.
+    /// </summary>
+    /// <param name="Schedule">schedule to be deleted</param>
+    /// <returns></returns>
+    public static void DeleteRecordingSchedule(Schedule s)
+    {
+      if (s != null)
+      {
+        TvServer server = new TvServer();
+        int parentScheduleId = s.IdSchedule;
+
+        VirtualCard card;
+        if (!server.IsRecording(s.ReferencedChannel().Name, out card)) return;        
+
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)s.ScheduleType;
+        bool isManual = (scheduleType == ScheduleRecordingType.Once);
+
+        IList schedulesList = Schedule.ListAll();
+
+        if (!isManual)
+        {          
+          if (schedulesList != null)
+          {
+            foreach (Schedule sched in schedulesList)
+            {
+              if (sched.ReferencedChannel().IdChannel == s.ReferencedChannel().IdChannel)
+              {
+                ScheduleRecordingType schedType = (ScheduleRecordingType)sched.ScheduleType;
+                bool isSchedManual = (schedType == ScheduleRecordingType.Once);
+
+                if (isSchedManual && s.ProgramName.Equals(sched.ProgramName))
+                {
+                  s = sched;
+                }
+              }
+            }
+          }
+        }
+        else 
+        {
+          if (schedulesList != null)
+          {
+            foreach (Schedule sched in schedulesList)
+            {
+              if (sched.ReferencedChannel().IdChannel == s.ReferencedChannel().IdChannel)
+              {
+                ScheduleRecordingType schedType = (ScheduleRecordingType)sched.ScheduleType;
+                bool isSchedManual = (schedType == ScheduleRecordingType.Once);
+
+                if (!isSchedManual && s.ProgramName.Equals(sched.ProgramName))
+                {
+                  parentScheduleId = sched.IdSchedule;
+                }
+              }
+            }
+          }
+        }
+
+        CanceledSchedule scheduleCanceled = new CanceledSchedule(s.IdSchedule, s.StartTime);
+        scheduleCanceled.IdSchedule = parentScheduleId;
+        scheduleCanceled.Persist();
+        server.OnNewSchedule();
+        server.StopRecordingSchedule(s.IdSchedule);
+      }
+    }
+
     public static bool UseRTSP()
     {
       return _usertsp;
@@ -713,7 +781,8 @@ namespace TvPlugin
           }//if (false == server.IsRecording(channel, out Card))
           else
           {
-            server.StopRecordingSchedule(card.RecordingScheduleId);
+            DeleteRecordingSchedule(Schedule.Retrieve(card.RecordingScheduleId));
+            //server.StopRecordingSchedule(card.RecordingScheduleId);
           }
           break;
 
@@ -1402,6 +1471,9 @@ namespace TvPlugin
       int count = 0;
       TvServer server = new TvServer();
       List<User> _users = new List<User>();
+
+      List <Schedule> recordingSchedules = new List<Schedule>();
+
       foreach (Card card in cards)
       {
         if (card.Enabled == false) continue;
@@ -1443,9 +1515,13 @@ namespace TvPlugin
               {
                 foreach (Schedule s in schedulesList)
                 {
-                  if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
+                  ScheduleRecordingType scheduleType = (ScheduleRecordingType) s.ScheduleType;
+                  bool isManual = (scheduleType == ScheduleRecordingType.Once);
+
+                  if (isManual && s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
                   {
                     programTitle = s.ProgramName.Trim();
+                    recordingSchedules.Add(s);
                     break;
                   }
                 }
@@ -1516,27 +1592,20 @@ namespace TvPlugin
 
       if (dlgYesNo.IsConfirmed)
       {
-        VirtualCard vCard = new VirtualCard(_users[dlg.SelectedLabel], RemoteControl.HostName);
-
-        IList schedulesList = Schedule.ListAll();
-        if (schedulesList != null)
+        if (recordingSchedules.Count >= dlg.SelectedLabel + 1)
         {
-          Schedule rec = Schedule.Retrieve(vCard.RecordingScheduleId);
-          if (rec != null)
+          Schedule s = recordingSchedules[dlg.SelectedLabel];
+
+          DeleteRecordingSchedule(s);
+          /*
+          if (s != null)
           {
-            foreach (Schedule s in schedulesList)
-            {
-              if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
-              {
-                CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
-                schedule.Persist();
-                server.OnNewSchedule();
-                break;
-              }
-            }
-          }
-          server.StopRecordingSchedule(vCard.RecordingScheduleId);
-        }
+            CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
+            schedule.Persist();
+            server.OnNewSchedule();
+            server.StopRecordingSchedule(s.IdSchedule);
+          }*/
+        }       
       }
 
       OnActiveRecordings(); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
@@ -1701,25 +1770,7 @@ namespace TvPlugin
       }
       else
       {
-        IList schedulesList = Schedule.ListAll();
-        if (schedulesList != null)
-        {
-          Schedule rec = Schedule.Retrieve(card.RecordingScheduleId);
-          if (rec != null)
-          {
-            foreach (Schedule s in schedulesList)
-            {
-              if (s.ReferencedChannel().IdChannel == rec.ReferencedChannel().IdChannel && s.StartTime == rec.StartTime)
-              {
-                CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
-                schedule.Persist();
-                server.OnNewSchedule();
-                break;
-              }
-            }
-          }
-          server.StopRecordingSchedule(card.RecordingScheduleId);                    
-        }
+        DeleteRecordingSchedule(Schedule.Retrieve(card.RecordingScheduleId));        
       }
       UpdateStateOfButtons();
     }
