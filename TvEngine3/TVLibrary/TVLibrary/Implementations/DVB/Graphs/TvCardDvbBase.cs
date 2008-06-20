@@ -180,10 +180,10 @@ namespace TvLibrary.Implementations.DVB
         _interfaceEpgGrabber.Reset();
       }
 
-      Log.Log("dvb:Submit tunerequest calling put_TuneRequest");
+      Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
       int hr = 0;
       hr = (_filterNetworkProvider as ITuner).put_TuneRequest(tuneRequest);
-      Log.Log("dvb:Submit tunerequest done calling put_TuneRequest");
+      Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
       if (hr != 0)
       {
         Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X}", hr);
