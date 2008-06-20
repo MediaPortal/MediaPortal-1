@@ -164,12 +164,18 @@ namespace TvPlugin
     //bool _creatingThumbNails = false;
     RecordingThumbCacher thumbworker = null;
 
-    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]     protected GUIButtonControl btnView = null;
-    [SkinControlAttribute(6)]     protected GUIButtonControl btnCleanup = null;
-    [SkinControlAttribute(10)]    protected GUIListControl listAlbums = null;
-    [SkinControlAttribute(11)]    protected GUIListControl listViews = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]
+    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]
+    protected GUIButtonControl btnView = null;
+    [SkinControlAttribute(6)]
+    protected GUIButtonControl btnCleanup = null;
+    [SkinControlAttribute(10)]
+    protected GUIListControl listAlbums = null;
+    [SkinControlAttribute(11)]
+    protected GUIListControl listViews = null;
 
     #endregion
 
@@ -677,7 +683,7 @@ namespace TvPlugin
                       if (obj.Label.Equals(rec.Title) && obj.IsFolder)
                       {
                         it.IsFolder = true;
-                        Utils.SetDefaultIcons(it);                        
+                        Utils.SetDefaultIcons(it);
 
                         itemlist.RemoveAt(i);
                         itemlist.Insert(i, it);
@@ -744,23 +750,24 @@ namespace TvPlugin
     private static bool IsRecordingActual(Recording aRecording)
     {
 
-      TimeSpan tsRecording = aRecording.EndTime - aRecording.StartTime;      
+      TimeSpan tsRecording = (aRecording.EndTime - aRecording.StartTime);
       DateTime now = DateTime.Now;
 
-      bool recStartEndSame = tsRecording.TotalSeconds == 0;
-      bool recWithInCurrentTime = false;
+      bool recStartEndSame = (tsRecording.TotalSeconds == 0);
 
+      /*
+      bool recWithInCurrentTime = false;
       if (recStartEndSame)
       {
         recWithInCurrentTime = (aRecording.StartTime <= now);
       }
-      else      
+      else
       {
         recWithInCurrentTime = (aRecording.StartTime <= now && aRecording.EndTime >= now);
       }
-
-      if (recStartEndSame && recWithInCurrentTime)
-      {        
+      */
+      if (recStartEndSame)
+      {
         TvServer server = new TvServer();
         VirtualCard card;
         bool isRec = server.IsRecording(aRecording.ReferencedChannel().Name, out card);
@@ -778,16 +785,16 @@ namespace TvPlugin
           {
 
             foreach (Program prg in prgList)
-            {              
+            {
               if (aRecording.StartTime <= prg.EndTime)
               {
                 return true;
               }
-            }                        
-          }          
-        }        
+            }
+          }
+        }
       }
-      return false;     
+      return false;
     }
 
     private static GUIListItem BuildItemFromRecording(Recording aRecording)
@@ -823,9 +830,9 @@ namespace TvPlugin
           //Mark the recording with a "rec. symbol" if it is an active recording.
 
           if (IsRecordingActual(aRecording))
-          {            
-            item.PinImage = Thumbs.TvRecordingIcon;                        
-          }          
+          {
+            item.PinImage = Thumbs.TvRecordingIcon;
+          }
         }
         else
           Log.Warn("TVRecorded: invalid recording title for {0}", aRecording.FileName);
@@ -1126,7 +1133,7 @@ namespace TvPlugin
 
         IList schedulesList = Schedule.ListAll();
         if (schedulesList != null)
-        {          
+        {
           if (rec != null)
           {
             foreach (Schedule s in schedulesList)
@@ -1141,13 +1148,13 @@ namespace TvPlugin
 
                 if (ts.Minutes == 0 || s.ProgramName.Equals(rec.Title) || isManual)
                 {
-                  VirtualCard card;                  
+                  VirtualCard card;
 
-                  if (!server.IsRecording(rec.ReferencedChannel().Name, out card)) return;                  
+                  if (!server.IsRecording(rec.ReferencedChannel().Name, out card)) return;
                   if (isRecPlaying)
                   {
                     g_Player.Stop();
-                  }      
+                  }
 
                   CanceledSchedule schedule = new CanceledSchedule(s.IdSchedule, s.StartTime);
                   schedule.Persist();
@@ -1158,7 +1165,7 @@ namespace TvPlugin
                 }
               }
             }
-          }          
+          }
         }
 
       }
@@ -1177,7 +1184,7 @@ namespace TvPlugin
         if (isRecPlaying)
         {
           g_Player.Stop();
-        }      
+        }
       }
 
       // we have to make sure that the recording process on the server has indeed stopped, otherwise we are not able to delete the 
@@ -1193,7 +1200,7 @@ namespace TvPlugin
           TimeSpan ts = (DateTime.Now - now);
           timeOut = ts.TotalSeconds > 5; //5 sec, then timeout
           Thread.Sleep(1000);
-        }        
+        }
       }
 
       //somehow we were unable to delete the file, notify the user.
@@ -1524,8 +1531,8 @@ namespace TvPlugin
     #endregion
 
     #region playback events
-   private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
-   {
+    private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
+    {
       Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
 
