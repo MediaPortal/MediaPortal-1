@@ -744,9 +744,10 @@ namespace TvPlugin
     private static bool IsRecordingActual(Recording aRecording)
     {
 
-      TimeSpan tsRecording = aRecording.EndTime - aRecording.StartTime;
+      TimeSpan tsRecording = aRecording.EndTime - aRecording.StartTime;      
+      DateTime now = DateTime.Now;
 
-      if (tsRecording.TotalSeconds == 0)
+      if (tsRecording.TotalSeconds == 0 && aRecording.StartTime <= now && aRecording.EndTime >= now)
       {        
         TvServer server = new TvServer();
         VirtualCard card;
@@ -1088,8 +1089,12 @@ namespace TvPlugin
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
 
-      FileInfo fInfo = new FileInfo(g_Player.currentFileName);
-      bool isRecPlaying = (rec.FileName.IndexOf(fInfo.Name) > -1);
+      bool isRecPlaying = false;
+      if (g_Player.currentFileName.Length > 0 && g_Player.IsTVRecording && g_Player.Playing)
+      {
+        FileInfo fInfo = new FileInfo(g_Player.currentFileName);
+        isRecPlaying = (rec.FileName.IndexOf(fInfo.Name) > -1);
+      }
 
       dlgYesNo.SetDefaultToYes(false);
       bool isRec = IsRecordingActual(rec);
