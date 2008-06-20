@@ -747,7 +747,19 @@ namespace TvPlugin
       TimeSpan tsRecording = aRecording.EndTime - aRecording.StartTime;      
       DateTime now = DateTime.Now;
 
-      if (tsRecording.TotalSeconds == 0 && aRecording.StartTime <= now && aRecording.EndTime >= now)
+      bool recStartEndSame = tsRecording.TotalSeconds == 0;
+      bool recWithInCurrentTime = false;
+
+      if (recStartEndSame)
+      {
+        recWithInCurrentTime = (aRecording.StartTime <= now);
+      }
+      else      
+      {
+        recWithInCurrentTime = (aRecording.StartTime <= now && aRecording.EndTime >= now);
+      }
+
+      if (recStartEndSame && recWithInCurrentTime)
       {        
         TvServer server = new TvServer();
         VirtualCard card;
