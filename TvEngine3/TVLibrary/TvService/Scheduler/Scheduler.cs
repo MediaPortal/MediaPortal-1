@@ -640,18 +640,18 @@ namespace TvService
     {
       try
       {
+        recording.Recording.EndTime = DateTime.Now;
+        recording.Recording.Persist();
+
         _user.CardId = recording.CardInfo.Id;
         _user.Name = string.Format("scheduler{0}", recording.Schedule.IdSchedule);
-        _user.IsAdmin = true;
+        _user.IsAdmin = true;        
 
         if (_controller.SupportsSubChannels(recording.CardInfo.Id) == false)
         {
           _controller.StopTimeShifting(ref _user);
         }
-
-
-        recording.Recording.EndTime = DateTime.Now;
-        recording.Recording.Persist();
+       
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
         
         //DatabaseManager.Instance.SaveChanges();

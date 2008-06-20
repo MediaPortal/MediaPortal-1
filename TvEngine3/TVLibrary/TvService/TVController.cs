@@ -1145,22 +1145,26 @@ namespace TvService
     public TvResult Tune(ref User user, IChannel channel, int idChannel)
     {
       if (ValidateTvControllerParams(user) || ValidateTvControllerParams(channel)) return TvResult.UnknownError;
+      int cardId = -1;
       try
       {
         //if (user == null) return TvResult.UnknownError;
         //if (channel == null) return TvResult.UnknownError;
         //if (user.CardId < 0) return TvResult.CardIsDisabled;
 
-        int cardId = user.CardId;
+        cardId = user.CardId;
         if (_cards[cardId].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
         //if (!CardPresent(cardId)) return TvResult.CardIsDisabled;
-        RemoveUserFromOtherCards(cardId, user);
+        
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
-        return _cards[cardId].Tuner.Tune(ref user, channel, idChannel);
+        TvResult res = _cards[cardId].Tuner.Tune(ref user, channel, idChannel);        
+        return res;
+
       }
       finally
       {
         Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
+        RemoveUserFromOtherCards(cardId, user);
       }
     }
 
@@ -2639,7 +2643,7 @@ namespace TvService
     /// <param name="cardId">The card id.</param>
     /// <param name="user">The user.</param>
     public void RemoveUserFromOtherCards(int cardId, User user)
-    {
+    {      
       if (ValidateTvControllerParams(user) || ValidateTvControllerParams(cardId))
       {
         return;
@@ -2694,15 +2698,14 @@ namespace TvService
         if (_cards[user.CardId].DataBaseCard.Enabled == false) return TvResult.CardIsDisabled;
         //if (!CardPresent(user.CardId)) return TvResult.CardIsDisabled;
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
-        TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);
-
-        RemoveUserFromOtherCards(user.CardId, user);
+        TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);        
         Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId, user.SubChannel);
         return result;
       }
       finally
       {
         Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
+        RemoveUserFromOtherCards(user.CardId, user);
       }
     }
 
