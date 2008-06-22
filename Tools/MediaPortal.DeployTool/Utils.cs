@@ -213,11 +213,12 @@ namespace MediaPortal.DeployTool
     public static void CheckPrerequisites()
     {
       OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      DialogResult res;
 
-      string OS_ServicePackDesc = "";
-      if (os.OSServicePackMajor > 0)
-        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
-      string MsgOsVersion = os.OSVersionString + OS_ServicePackDesc;
+      string ServicePack = "";
+      if (!string.IsNullOrEmpty(os.OSCSDVersion))
+        ServicePack = " (" + os.OSCSDVersion + ")";
+      string MsgOsVersion = os.OSVersionString + ServicePack;
 
       int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
 
@@ -241,14 +242,21 @@ namespace MediaPortal.DeployTool
             MessageBox.Show(Localizer.Instance.GetString("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }
-          MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          res = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+          if (res == DialogResult.Cancel) Application.Exit();
           break;
         case 60:
           if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
           {
-            MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            res = MessageBox.Show(Localizer.Instance.GetString("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            if (res == DialogResult.Cancel) Application.Exit();
           }
           break;
+      }
+      if (os.OSServicePackBuild != 0)
+      {
+        res = MessageBox.Show("OS_Beta", MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        if (res == DialogResult.Cancel) Application.Exit();
       }
     }
     #endregion

@@ -66,7 +66,7 @@ namespace TvService
     /// Initializes a new instance of the <see cref="Service1"/> class.
     /// </summary>
     public Service1()
-    {      
+    {
       string applicationPath = System.Windows.Forms.Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
@@ -101,7 +101,7 @@ namespace TvService
     {
       if (_started)
         return;
-      
+
       // apply process priority on initial service start.
       if (!_priorityApplied)
       {
@@ -117,12 +117,14 @@ namespace TvService
         }
       }
       Thread.CurrentThread.Name = "TVService";
+
       OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
-      string OS_ServicePackDesc = "";
-      if (os.OSServicePackMajor > 0)
-        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      Log.WriteFile("TVService v" + versionInfo.FileVersion + " on " + os.OSVersionString + OS_ServicePackDesc + " starting");
+      string ServicePack = "";
+      if (!String.IsNullOrEmpty(os.OSCSDVersion))
+        ServicePack = " (" + os.OSCSDVersion + ")";
+      Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack);
+
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       Process currentProcess = Process.GetCurrentProcess();
@@ -153,7 +155,7 @@ namespace TvService
     {
       if (!_started)
         return;
-           
+
       Log.WriteFile("TV service stopping");
 
       StopRemoting();
@@ -176,11 +178,11 @@ namespace TvService
 
       if (!Environment.HasShutdownStarted)
       {
-          Utils.RestartMCEServices();
-          GC.Collect();
-          GC.Collect();
-          GC.Collect();
-          GC.Collect(); 
+        Utils.RestartMCEServices();
+        GC.Collect();
+        GC.Collect();
+        GC.Collect();
+        GC.Collect();
       }
       _started = false;
       Log.WriteFile("TV service stopped");

@@ -272,10 +272,12 @@ public class MediaPortalApp : D3DApp, IRender
       }
 #endif
       OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
-      string OS_ServicePackDesc = "";
-      if (os.OSServicePackMajor > 0)
-        OS_ServicePackDesc = " (SP" + os.OSServicePackMajor.ToString() + ")";
-      Log.Info("Main: MediaPortal is starting up on " + os.OSVersionString + OS_ServicePackDesc);
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      string ServicePack = "";
+      if (!String.IsNullOrEmpty(os.OSCSDVersion))
+        ServicePack = " (" + os.OSCSDVersion + ")";
+      Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack);
+
       Log.Info("Main: Using Directories:");
       foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
       {
@@ -347,7 +349,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (_startupDelay > 0)
         {
           Log.Info("Main: Waiting {0} second(s) before startup", _startupDelay);
-          for (int i = _startupDelay ; i > 0 ; i--)
+          for (int i = _startupDelay; i > 0; i--)
           {
             if (splashScreen != null)
               splashScreen.SetInformation("Waiting " + i.ToString() + " second(s) before startup...");
@@ -369,7 +371,7 @@ public class MediaPortalApp : D3DApp, IRender
                 if (strVersion.Length > 0)
                 {
                   string strTmp = "";
-                  for (int i = 0 ; i < strVersion.Length ; ++i)
+                  for (int i = 0; i < strVersion.Length; ++i)
                   {
                     if (Char.IsDigit(strVersion[i]))
                     {
@@ -395,7 +397,7 @@ public class MediaPortalApp : D3DApp, IRender
                 if (strVersionMng.Length > 0)
                 {
                   string strTmp = "";
-                  for (int i = 0 ; i < strVersionMng.Length ; ++i)
+                  for (int i = 0; i < strVersionMng.Length; ++i)
                   {
                     if (Char.IsDigit(strVersionMng[i]))
                     {
@@ -438,43 +440,43 @@ public class MediaPortalApp : D3DApp, IRender
         try
         {
 #endif
-          Application.DoEvents();
-          if (splashScreen != null)
-            splashScreen.SetInformation("Initializing DirectX...");
+        Application.DoEvents();
+        if (splashScreen != null)
+          splashScreen.SetInformation("Initializing DirectX...");
 
-          MediaPortalApp app = new MediaPortalApp();
-          Log.Info("Main: Initializing DirectX");
-          if (app.CreateGraphicsSample())
+        MediaPortalApp app = new MediaPortalApp();
+        Log.Info("Main: Initializing DirectX");
+        if (app.CreateGraphicsSample())
+        {
+          IMessageFilter filter = new ThreadMessageFilter(app);
+          Application.AddMessageFilter(filter);
+          // Initialize Input Devices
+          if (splashScreen != null)
+            splashScreen.SetInformation("Initializing input devices...");
+          InputDevices.Init();
+          try
           {
-            IMessageFilter filter = new ThreadMessageFilter(app);
-            Application.AddMessageFilter(filter);
-            // Initialize Input Devices
-            if (splashScreen != null)
-              splashScreen.SetInformation("Initializing input devices...");
-            InputDevices.Init();
-            try
-            {
-              //app.PreRun();
-              Log.Info("Main: Running");
-              GUIGraphicsContext.BlankScreen = false;
-              Application.Run(app);
-              app.Focus();
-              Debug.WriteLine("after Application.Run");
-            }
-            //#if !DEBUG
-            catch (Exception ex)
-            {
-              Log.Error(ex);
-              Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-              _mpCrashed = true;
-            }
-            //#endif
-            finally
-            {
-              Application.RemoveMessageFilter(filter);
-            }
-            app.OnExit();
+            //app.PreRun();
+            Log.Info("Main: Running");
+            GUIGraphicsContext.BlankScreen = false;
+            Application.Run(app);
+            app.Focus();
+            Debug.WriteLine("after Application.Run");
           }
+          //#if !DEBUG
+          catch (Exception ex)
+          {
+            Log.Error(ex);
+            Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+            _mpCrashed = true;
+          }
+          //#endif
+          finally
+          {
+            Application.RemoveMessageFilter(filter);
+          }
+          app.OnExit();
+        }
 #if !DEBUG
         }
         catch (Exception ex)
@@ -503,7 +505,7 @@ public class MediaPortalApp : D3DApp, IRender
         {
           Log.Info("Main: Exiting Windows - {0}", restartOptions);
           if (File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.running")))
-            File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running")); 
+            File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
           WindowsController.ExitWindows(restartOptions, false);
         }
         else
@@ -3378,7 +3380,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     FilterChecker.CheckInstalledVersions();
 
-    System.Version aParamVersion;  
+    System.Version aParamVersion;
     //
     // 6.5.2600.3243 = KB941568,   6.5.2600.3024 = KB927544
     //

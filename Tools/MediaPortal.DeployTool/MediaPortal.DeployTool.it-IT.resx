@@ -483,7 +483,7 @@ poi eseguire l'installazione sucessivamente ?
   </data>
   <data name="OS_Warning" xml:space="preserve">
     <value>Il vostro Sistema Operativo non è supportato a causa di molti hotfixes mancanti da parte di Microsoft.
-Preseguire l'installazione è un vostro rischio.</value>
+Proseguire l'installazione è un vostro rischio.</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
     <value>Download del file di configurazione fallito.
@@ -492,5 +492,9 @@ Se esiste un file corrotto, verrà cancellato ora.</value>
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Configurare il Firewall di Windows per permettere accessi esterni a MediaPortal</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>E' installata una versione beta del Service Pack, il vostro sistema non è supportato.
+Proseguire l'installazione è un vostro rischio.</value>
   </data>
 </root>

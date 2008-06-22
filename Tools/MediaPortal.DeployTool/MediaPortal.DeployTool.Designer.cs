@@ -934,6 +934,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Beta version of SP detected, your system is not supported...\nContinue at your own risk!.
+        /// </summary>
+        internal static string OS_Beta {
+            get {
+                return ResourceManager.GetString("OS_Beta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry your OS is not currently supported by MediaPortal !.
         /// </summary>
         internal static string OS_Support {
