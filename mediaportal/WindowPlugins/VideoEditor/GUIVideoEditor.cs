@@ -130,13 +130,8 @@ namespace WindowPlugins.VideoEditor
 				joiningList = new List<System.IO.FileInfo>();
 				progressBar.Visible = false;
 
-				if (currentFolder == "")
-				{
-					LoadShares();
-					LoadDrives();
-				}
-				else
-					LoadListControl(currentFolder, extensions);
+				
+				LoadListControl(currentFolder, extensions);
 				CheckHasMencoder();
 			}
 			catch (Exception ex)
@@ -574,8 +569,14 @@ namespace WindowPlugins.VideoEditor
 		{
 			try
 			{
-				if (folder != null && folder != "")
-					folder = MediaPortal.Util.Utils.RemoveTrailingSlash(folder);
+        if (folder == "" || !System.IO.File.Exists(folder))
+        {
+          LoadShares();
+          LoadDrives();
+        }
+        else
+				  if (folder != null && folder != "")
+					  folder = MediaPortal.Util.Utils.RemoveTrailingSlash(folder);
 				
 				//directory;
 				ArrayList itemlist;

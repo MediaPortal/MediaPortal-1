@@ -348,17 +348,29 @@ namespace WindowPlugins.VideoEditor
       }
       if (control == forwardBtn)
       {
-        g_Player.SeekAbsolute(g_Player.CurrentPosition + 1.3); //org 1.5
+        double newPos = g_Player.CurrentPosition + 1.3; //org 1.5
+        if (newPos > g_Player.Duration - 0.5)
+          g_Player.SeekAbsolute(g_Player.Duration - 0.5);
+        else
+          g_Player.SeekAbsolute(newPos);
+        
         positionSld.Percentage = (int) ((100/durationOld)*(g_Player.CurrentPosition + 1.0));
+        g_Player.Pause();
       }
       if (control == backwardBtn)
       {
         g_Player.SeekAbsolute(g_Player.CurrentPosition - 1.0); //org 1.0
         positionSld.Percentage = (int) ((100/durationOld)*g_Player.CurrentPosition);
+        g_Player.Pause();
       }
       if (control == positionSld)
       {
-        g_Player.SeekAbsolute((durationOld/100)*positionSld.Percentage);
+        double newPos = (durationOld / 100) * positionSld.Percentage;
+        if (newPos >= g_Player.Duration - 0.5)
+          g_Player.SeekAbsolute(g_Player.Duration - 0.5);
+        else
+          g_Player.SeekAbsolute(newPos);
+        g_Player.Pause();
       }
       if (control == cutListCtrl)
       {
@@ -376,6 +388,7 @@ namespace WindowPlugins.VideoEditor
           goToStartPoint = false;
           lastIndexedCutPoint = cutListCtrl.SelectedListItemIndex;
           positionSld.Percentage = (int) ((100/durationOld)*cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
+          g_Player.Pause();
         }
         else
         {
@@ -383,6 +396,7 @@ namespace WindowPlugins.VideoEditor
           goToStartPoint = true;
           lastIndexedCutPoint = cutListCtrl.SelectedListItemIndex;
           positionSld.Percentage = (int) ((100/durationOld)*cutPointsList[cutListCtrl.SelectedListItemIndex].EndTime);
+          g_Player.Pause();
         }
       }
       //positionSld.Percentage = (int)((100 / durationOld) * g_Player.CurrentPosition);
