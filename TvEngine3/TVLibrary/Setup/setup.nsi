@@ -713,6 +713,11 @@ Function .onInit
       MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
       ExecShell open "${WEB_REQUIREMENTS}"
     ${EndIf}
+  ${ElseIf} $0 == "OSwarnBetaSP"
+    ${If} $DeployMode == 0
+      MessageBox MB_YESNO|MB_ICONEXCLAMATION "You are using a beta Service Pack! $(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
+      ExecShell open "${WEB_REQUIREMENTS}"
+    ${EndIf}
   ${Else}
     ; do nothing
   ${EndIf}
