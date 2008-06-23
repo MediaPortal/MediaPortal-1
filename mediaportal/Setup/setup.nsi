@@ -873,7 +873,9 @@ Function .onInit
     StrCpy $0 "OSabort"
   ${ElseIf} ${IsWinXP}
     !insertmacro GetServicePack $R1 $R2
-    ${If} $R1 < 2
+    ${If} $R2 > 0
+      StrCpy $0 "OSwarnBetaSP"
+    ${ElseIf} $R1 < 2
       StrCpy $0 "OSabort"
     ${Else}
       StrCpy $0 "OSok"
@@ -887,7 +889,9 @@ Function .onInit
 
   ${ElseIf} ${IsWinVISTA}
     !insertmacro GetServicePack $R1 $R2
-    ${If} $R1 < 1
+    ${If} $R2 > 0
+      StrCpy $0 "OSwarnBetaSP"
+    ${ElseIf} $R1 < 1
       StrCpy $0 "OSwarn"
     ${Else}
       StrCpy $0 "OSok"
