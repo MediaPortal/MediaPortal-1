@@ -71,10 +71,20 @@ namespace TvControl
           if (_tvControl != null)
             return _tvControl;
 
-          IDictionary t = new Hashtable();
-          t.Add("timeout", _timeOut); 
-          TcpClientChannel clientChannel = new TcpClientChannel(t, null);
-          ChannelServices.RegisterChannel(clientChannel);
+#if !DEBUG //only use timeouts when (build=release)
+          try
+          {
+            IDictionary t = new Hashtable();
+            t.Add("timeout", _timeOut);
+            TcpClientChannel clientChannel = new TcpClientChannel(t, null);
+            ChannelServices.RegisterChannel(clientChannel);
+          }
+          catch (Exception e)
+          {
+            Log.Error("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
+            //ignore
+          }
+#endif
 
           _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
           // int card = _tvControl.Cards;
