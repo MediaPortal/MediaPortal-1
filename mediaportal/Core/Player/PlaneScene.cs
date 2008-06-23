@@ -123,7 +123,6 @@ namespace MediaPortal.Player
     #region ctor
     public PlaneScene(IRender renderer, VMR9Util util)
     {
-
       //	Log.Info("PlaneScene: ctor()");
 
       _surfaceAdress = 0;
@@ -840,19 +839,30 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.DX9Device.EndScene();
         }
-        // Present only if we are not "behind" > 17ms which corresponds to (1000ms / max 60FPS)
-        // If we loose more than 5 Frames however (because the system cannot cope with screens like EPG)
-        // we draw the GUI anyway to make sure the screen stays up to date.        
-        if (timePassed >= 0.17)
-          _renderDrop += 1;
-        if (timePassed < 0.17 || _renderDrop % 5 == 0)
+        // for DVD menus ( Mantis bug: 1399 )
+        if (GUIGraphicsContext.IsPlayingVideo && GUIGraphicsContext.Vmr9FPS == 0f)
         {
-          GUIGraphicsContext.DX9Device.Present();
-          _renderDrop = 0;
+          GUIGraphicsContext.DX9Device.Present(); 
         }
-        else
-          Log.Debug("Planescene.InternalPresentSurface: timePassed = {0} - dropped {1} frame(s)", timePassed, _renderDrop);
-
+        else 
+        {
+          // Present only if we are not "behind" > 17ms which corresponds to (1000ms / max 60FPS)
+          // If we loose more than 5 Frames however (because the system cannot cope with screens like EPG)
+          // we draw the GUI anyway to make sure the screen stays up to date.        
+          if (timePassed >= 0.17)
+          {
+            _renderDrop += 1;
+          }
+          if (timePassed < 0.17 || _renderDrop % 5 == 0)
+          {
+            GUIGraphicsContext.DX9Device.Present();
+            _renderDrop = 0;
+          }
+          else
+          {
+            Log.Debug("Planescene.InternalPresentSurface: timePassed = {0} - dropped {1} frame(s)", timePassed, _renderDrop);
+          }
+        }
         _debugStep = 17;
       }
       catch (DeviceLostException)
@@ -901,7 +911,6 @@ namespace MediaPortal.Player
       _vertexBuffer.Unlock();
       unsafe
       {
-
         IntPtr ptr = new IntPtr(texAddr);
         FontEngineSetTexture(ptr.ToPointer());
         GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, false);
@@ -917,7 +926,6 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
 
-
         // unset the texture and palette or the texture caching crashes because the runtime still has a reference
         GUIGraphicsContext.DX9Device.SetTexture(0, null);
       }
@@ -932,7 +940,6 @@ namespace MediaPortal.Player
         FontEngineDrawSurface(_sourceRect.Left, _sourceRect.Top, _sourceRect.Width, _sourceRect.Height,
                               _destinationRect.Left, _destinationRect.Top, _destinationRect.Width, _destinationRect.Height,
                                 ptr.ToPointer());
-
       }
     }
 
@@ -953,8 +960,6 @@ namespace MediaPortal.Player
         {
           DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
         }
-
-
 
         //Texture tt = TextureLoader.FromFile(GUIGraphicsContext.DX9Device, "C:\\test.bmp");
         //DrawTexture(tt, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
