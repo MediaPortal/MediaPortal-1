@@ -26,6 +26,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using TvControl;
 using TvLibrary.Log;
+using System.Collections;
 
 namespace TvControl
 {
@@ -36,6 +37,7 @@ namespace TvControl
   {
     static IController _tvControl;
     static string _hostName = "localhost";
+    private static uint _timeOut = 15000; // specified in ms (currently all remoting calls are aborted if processing takes more than 15 sec)
 
     /// <summary>
     /// Gets or sets the name the hostname of the master tv-server.
@@ -69,6 +71,11 @@ namespace TvControl
           if (_tvControl != null)
             return _tvControl;
 
+          IDictionary t = new Hashtable();
+          t.Add("timeout", _timeOut); 
+          TcpClientChannel clientChannel = new TcpClientChannel(t, null);
+          ChannelServices.RegisterChannel(clientChannel);
+
           _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
           // int card = _tvControl.Cards;
           return _tvControl;
@@ -90,10 +97,10 @@ namespace TvControl
           {
           }
         }
-     //   catch (RemotingException exr)
-     //   {
-     //     Log.Error("RemoteControl: Error getting server Instance - {0}", exr.Message);
-     //   }
+        //   catch (RemotingException exr)
+        //   {
+        //     Log.Error("RemoteControl: Error getting server Instance - {0}", exr.Message);
+        //   }
         catch (Exception exg)
         {
           Log.Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
