@@ -872,7 +872,7 @@ Function .onInit
   ${If} ${AtMostWin2000Srv}
     StrCpy $0 "OSabort"
   ${ElseIf} ${IsWinXP}
-    !insertmacro GetServicePack $R1
+    !insertmacro GetServicePack $R1 $R2
     ${If} $R1 < 2
       StrCpy $0 "OSabort"
     ${Else}
@@ -886,7 +886,7 @@ Function .onInit
     StrCpy $0 "OSwarn"
 
   ${ElseIf} ${IsWinVISTA}
-    !insertmacro GetServicePack $R1
+    !insertmacro GetServicePack $R1 $R2
     ${If} $R1 < 1
       StrCpy $0 "OSwarn"
     ${Else}

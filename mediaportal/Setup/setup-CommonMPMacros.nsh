@@ -983,24 +983,43 @@ FunctionEnd
 
 
 
-!macro GetServicePack _var
+!macro GetServicePack _major _minor
 
   Push $0
   Push $1
+  Push $2
+  Push $3
   System::Call '*(i 148,i,i,i,i,&t128,&i2,&i2,&i2,&i1,&i1)i.r1' ;BUGBUG: no error handling for mem alloc failure!
   System::Call 'kernel32::GetVersionEx(i r1)'
 
   ; using the service pack major number
   ;System::Call '*$1(i,i,i,i,i,&t128,&i2.r0)'
 
-  ; using the string "Service Pack #"
+  ; result is:
+  ; "Service Pack 3" for final Service Packs
+  ; "Service Pack 3, v.33311" for beta Service Packs
   System::Call '*$1(i,i,i,i,i,&t128.r0)'
-  StrCpy ${_var} $0 "" -1
+
+  ; read and save the length of the string to var $2
+  StrLen $2 $0
+  ; check the length of the string
+  ; if = 14 then final
+  ; otherwise it is beta
+  ${If} $2 == "14"
+    StrCpy ${_major} $0 "" 13
+    StrCpy ${_minor} 0
+  ${Else}
+    StrCpy ${_major} $0 1 13
+    StrCpy ${_minor} $0 "" 18
+  ${EndIf}
+  
 
   ;MessageBox MB_OK|MB_ICONEXCLAMATION "Service Pack: >${_var}<"
   ;IntCmpU $0 5 0 ${_WINVER_PARSEVER_OLDSYS} ;OSVERSIONINFOEX can be used on NT4SP6 and later, but we only use it on NT5+
 
   System::Free $1
+  pop $3
+  pop $2
   pop $1
   pop $0
 
