@@ -252,7 +252,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; Rest of Files
   SetOutPath $INSTDIR
   File ..\DirectShowLib\bin\Release\DirectShowLib.dll
-  File ..\dvblib.dll
   File ..\Plugins\PluginBase\bin\Release\PluginBase.dll
   File ..\Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Release\PowerScheduler.Interfaces.dll
   File "..\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Release\Blaster.exe"
@@ -276,6 +275,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File ..\SetupControls\bin\Release\SetupControls.dll
 
   ; 3rd party assemblys
+  File "${TVSERVER.BASE}\dvblib.dll"
   File "${TVSERVER.BASE}\dxerr9.dll"
   File "${TVSERVER.BASE}\hauppauge.dll"
   File "${TVSERVER.BASE}\hcwWinTVCI.dll"
