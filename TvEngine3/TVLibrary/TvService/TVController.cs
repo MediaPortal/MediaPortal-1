@@ -973,6 +973,68 @@ namespace TvService
     }
 
     /// <summary>
+    /// Determines if any card is currently busy recording or timeshifting
+    /// </summary>
+    /// <param name="userTS">timeshifting user</param>
+    /// <param name="isUserTS">true if the specified user is timeshifting</param>
+    /// <param name="isAnyUserTS">true if any user (except for the userTS) is timeshifting</param>
+    /// <param name="isRec">true if recording</param>
+    /// <returns>
+    /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
+    /// </returns>
+    public bool IsAnyCardRecordingOrTimeshifting(User userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
+    {     
+      isUserTS = false;
+      isAnyUserTS = false;
+      isRec = false;
+
+      Dictionary<int, ITvCardHandler>.Enumerator en = _cards.GetEnumerator();
+      while (en.MoveNext())
+      {
+        ITvCardHandler card = en.Current.Value;
+        User user = new User();
+        user.CardId = card.DataBaseCard.IdCard;
+
+        if (!isRec)
+        {
+          isRec = card.Recorder.IsAnySubChannelRecording;
+        }
+        if (!isUserTS)
+        {
+          isUserTS = card.TimeShifter.IsTimeShifting(ref userTS);
+          if (isUserTS)
+          {
+            isUserTS = true;
+          }
+        }
+
+        User[] users = card.Users.GetUsers();
+        if (users == null) continue;
+        if (users.Length == 0) continue;
+        for (int i = 0; i < users.Length; ++i)
+        {
+          User anyUser = users[i];
+
+          if (anyUser.Name != userTS.Name)
+          {
+            if (!isAnyUserTS)
+            {
+              isAnyUserTS = card.TimeShifter.IsTimeShifting(ref anyUser);
+              break;
+            }
+          }
+        }       
+      }
+
+      if (isRec || isUserTS || isAnyUserTS)
+      {
+        return true;
+      }
+
+      return false;
+    }
+
+    /// <summary>
     /// Determines whether the specified channel name is recording.
     /// </summary>
     /// <param name="channelName">Name of the channel.</param>
@@ -1003,6 +1065,63 @@ namespace TvService
             }
           }
         }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Determines whether the specified channel name is recording.
+    /// </summary>
+    /// <param name="channelName">Name of the channel.</param>
+    /// <param name="vcard">The vcard.</param>    
+    /// <param name="isTS">timeshifting.</param>    
+    /// <param name="isREC">recording</param>    
+    /// <returns>
+    /// 	<c>true</c> if the specified channel name is recording or timeshifting; otherwise, <c>false</c>.
+    /// </returns>
+    public bool IsRecordingTimeshifting(string channelName, out VirtualCard card, out bool isTS, out bool isREC)
+    {
+      isREC = false;
+      isTS = false;
+      card = null;
+      Dictionary<int, ITvCardHandler>.Enumerator en = _cards.GetEnumerator();
+      ITvCardHandler tvcard = null;
+      User recUser = null;
+      while (en.MoveNext())
+      {
+        tvcard = en.Current.Value;
+        User[] users = tvcard.Users.GetUsers();
+        if (users == null) continue;
+        if (users.Length == 0) continue;
+        for (int i = 0; i < users.Length; ++i)
+        {
+          User user = users[i];
+          if (tvcard.CurrentChannelName(ref user) == null) continue;
+          if (tvcard.CurrentChannelName(ref user) == channelName)
+          {
+            if (!isREC)
+            {
+              isREC = tvcard.Recorder.IsRecording(ref user);
+              if (isREC)
+              {
+                recUser = user;
+              }
+            }
+            if (!isTS)
+            {
+              isTS = tvcard.TimeShifter.IsTimeShifting(ref user);
+            }            
+          }
+        }
+      }
+
+      if (isREC || isTS)
+      {
+        if (recUser != null)
+        {
+          card = GetVirtualCard(recUser);
+        }
+        return true;
       }
       return false;
     }
@@ -2355,10 +2474,15 @@ namespace TvService
     /// </summary>
     /// <param name="currentRecChannels"></param>
     /// <param name="currentTSChannels"></param>
-    public void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels)
+    /// <param name="currentUnavailChannels"></param>
+    /// <param name="currentAvailChannels"></param>
+    public void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels, out List<int> currentUnavailChannels, out List<int> currentAvailChannels)
     {
       currentRecChannels = new List<int>();
       currentTSChannels = new List<int>();
+      currentUnavailChannels = new List<int>();
+      currentAvailChannels = new List<int>();
+
       Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
 
       while (enumerator.MoveNext())
@@ -2380,14 +2504,61 @@ namespace TvService
           else
           {
             if (tvcard.Recorder.IsRecording(ref user))
+            {
               currentRecChannels.Add(tvcard.CurrentDbChannel(ref user));
-            else
-              if (tvcard.TimeShifter.IsTimeShifting(ref user))
+            }
+            else if (tvcard.TimeShifter.IsTimeShifting(ref user))
+            {
                 currentTSChannels.Add(tvcard.CurrentDbChannel(ref user));
+            }
+            else 
+            {
+              ChannelState cState = GetChannelState (tvcard.CurrentDbChannel(ref user),user);
+              if (cState == ChannelState.tunable)
+              {
+                currentAvailChannels.Add(tvcard.CurrentDbChannel(ref user));
+              }
+              else
+              {
+                currentUnavailChannels.Add(tvcard.CurrentDbChannel(ref user));
+              }
+            }
           }
         }
       }
     }
+
+
+    /// <summary>
+    /// Fetches all channel states for a specific group
+    /// </summary>
+    /// <param name="idGroup"></param>    
+    /// <param name="user"></param>        
+    public Dictionary<int, ChannelState> GetAllChannelStatesForGroup(int idGroup, User user)
+    {            
+      if (idGroup < 1)
+      {        
+        return null;
+      }
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
+
+      if (tvChannelList == null || tvChannelList.Count == 0) return null;
+
+      Dictionary<int, ChannelState> channelStates;
+
+      channelStates = new Dictionary<int, ChannelState>();
+      ICardAllocation allocation = CardAllocationFactory.Create(true);
+
+      if (allocation != null)
+      {
+        channelStates = allocation.GetChannelStates(_cards, tvChannelList, ref user, true);
+      }
+      return channelStates;      
+    }
+    
+
 
     /// <summary>
     /// Checks if a channel is tunable/tuned or not...
@@ -2412,7 +2583,7 @@ namespace TvService
         chanState = ChannelState.tunable;
       else
         chanState = ChannelState.nottunable;
-
+      
       return chanState;
     }
     #endregion

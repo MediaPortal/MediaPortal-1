@@ -357,7 +357,17 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StartTimeShifting(string fileName)
     {
-      return OnStartTimeShifting(fileName);
+      try
+      {
+        return OnStartTimeShifting(fileName);
+      }
+      catch (Exception e)
+      {
+        //cleanup
+        Log.Log.WriteFile("StartTimeShifting failed, cleaning up {0}", e.Message);
+        StopTimeShifting();
+      }
+      return false;
     }
 
     /// <summary>
@@ -367,9 +377,12 @@ namespace TvLibrary.Implementations
     public bool StopTimeShifting()
     {
       OnStopTimeShifting();
-      _startTimeShifting = false;
-      _dateTimeShiftStarted = DateTime.MinValue;
+      _startTimeShifting = false;      
       _graphState = GraphState.Created;
+
+      _timeshiftFileName = "";      
+      _dateTimeShiftStarted = DateTime.MinValue;
+
       return true;
     }
 
@@ -381,12 +394,23 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StartRecording(bool transportStream, string fileName)
     {
-      Log.Log.WriteFile("StartRecording to {0}", fileName);
-      OnStartRecording(transportStream, fileName);
-      _isRecordingsTransportStream = transportStream;
-      _recordingFileName = fileName;
-      Log.Log.WriteFile("Analog:Started recording");
-      _graphState = GraphState.Recording;
+      try
+      {
+        Log.Log.WriteFile("StartRecording to {0}", fileName);
+        OnStartRecording(transportStream, fileName);
+        _isRecordingsTransportStream = transportStream;
+        _recordingFileName = fileName;
+        Log.Log.WriteFile("Analog:Started recording");
+        _graphState = GraphState.Recording;
+      }
+      catch (Exception e)
+      {
+        Log.Log.WriteFile("StartRecording failed, cleaning up {0}", e.Message );
+        //cleanup
+        StopRecording();
+        return false;
+      }
+
       return true;
     }
 

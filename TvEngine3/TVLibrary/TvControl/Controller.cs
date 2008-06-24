@@ -357,6 +357,17 @@ namespace TvControl
     /// </returns>
     bool IsAnyCardRecording();
 
+/// <summary>
+    /// Determines if any card is currently busy recording or timeshifting
+    /// </summary>
+    /// <param name="userTS">timeshifting user</param>
+    /// <param name="isUserTS">true if the specified user is timeshifting</param>
+    /// <param name="isAnyUserTS">true if any user (except for the userTS) is timeshifting</param>
+    /// <param name="isRec">true if recording</param>
+    /// <returns>
+    /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
+    /// </returns>
+    bool IsAnyCardRecordingOrTimeshifting(User userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec);
         /// <summary>
     /// Determines if any card is not locked by a user
     /// </summary>
@@ -417,6 +428,15 @@ namespace TvControl
     /// </returns>
     bool IsCardInUse(int cardId, out User user);
 
+
+
+    /// <summary>
+    /// Fetches all channel states for a specific group
+    /// </summary>
+    /// <param name="idGroup"></param>    
+    /// <param name="user"></param>        
+    Dictionary<int, ChannelState> GetAllChannelStatesForGroup(int idGroup, User user);
+
     /// <summary>
     /// Finds out whether a channel is currently tuneable or not
     /// </summary>
@@ -425,12 +445,14 @@ namespace TvControl
     /// <returns>an enum indicating tunable/timeshifting/recording</returns>
     ChannelState GetChannelState(int idChannel, User user);
 
-    /// <summary>
+/// <summary>
     /// Fetches all channels with backbuffer
     /// </summary>
     /// <param name="currentRecChannels"></param>
     /// <param name="currentTSChannels"></param>
-    void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels);
+    /// <param name="currentUnavailChannels"></param>
+    /// <param name="currentAvailChannels"></param>
+    void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels, out List<int> currentUnavailChannels, out List<int> currentAvailChannels);
 
     /// <summary>
     /// Returns a list of all ip adresses on the server.

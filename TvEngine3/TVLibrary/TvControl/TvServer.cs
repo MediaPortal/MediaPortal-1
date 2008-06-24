@@ -163,6 +163,33 @@ namespace TvControl
 
       return false;
     }
+    /// <summary>
+    /// Determines if any card is currently busy recording or timeshifting
+    /// </summary>
+    /// <param name="userTS">timeshifting user</param>
+    /// <param name="isUserTS">true if the specified user is timeshifting</param>
+    /// <param name="isAnyUserTS">true if any user (except for the userTS) is timeshifting</param>
+    /// <param name="isRec">true if recording</param>
+    /// <returns>
+    /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
+    /// </returns>
+    public bool IsAnyCardRecordingOrTimeshifting(User userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
+    {
+      isUserTS = false;
+      isAnyUserTS = false;
+      isRec = false;
+
+      try
+      {
+        if (RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(userTS, out isUserTS, out isAnyUserTS, out isRec)) return true;
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }
+
+      return false;
+    }
 
     /// <summary>
     /// Determines if any card is not locked by a user
@@ -217,7 +244,7 @@ namespace TvControl
       card = null;
       try
       {
-        TvResult result = RemoteControl.Instance.StartTimeShifting(ref user,idChannel, out card);
+        TvResult result = RemoteControl.Instance.StartTimeShifting(ref user,idChannel, out card);        
         return result;
       }
       catch (Exception ex)
@@ -365,6 +392,26 @@ namespace TvControl
       return "";
     }
 
+
+
+    /// <summary>
+    /// Fetches all channel states for a specific group
+    /// </summary>
+    /// <param name="idGroup"></param>    
+    /// <param name="user"></param>        
+    public Dictionary<int, ChannelState> GetAllChannelStatesForGroup(int idGroup, User user)
+    {
+      try
+      {
+        return RemoteControl.Instance.GetAllChannelStatesForGroup(idGroup, user);
+      }
+      catch (Exception ex)
+      {
+        HandleFailure(ex);
+      }      
+      return null;
+    }
+
     /// <summary>
     /// Finds out whether a channel is currently tuneable or not
     /// </summary>
@@ -389,13 +436,17 @@ namespace TvControl
     /// </summary>
     /// <param name="currentRecChannels"></param>
     /// <param name="currentTSChannels"></param>
-    public void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels)
+    /// <param name="currentUnavailChannels"></param>
+    /// <param name="currentAvailChannels"></param>
+    public void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels, out List<int> currentUnavailChannels, out List<int> currentAvailChannels)
     {
       currentRecChannels = null;
       currentTSChannels = null;
+      currentUnavailChannels = null;
+      currentAvailChannels = null;
       try
       {
-        RemoteControl.Instance.GetAllRecordingChannels(out currentRecChannels, out currentTSChannels);
+        RemoteControl.Instance.GetAllRecordingChannels(out currentRecChannels, out currentTSChannels, out currentUnavailChannels, out currentAvailChannels);
       }
       catch (Exception ex)
       {
