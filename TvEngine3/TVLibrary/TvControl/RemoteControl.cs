@@ -37,7 +37,7 @@ namespace TvControl
   {
     static IController _tvControl;
     static string _hostName = "localhost";
-    private static uint _timeOut = 15000; // specified in ms (currently all remoting calls are aborted if processing takes more than 15 sec)
+    private static uint _timeOut = 30000; // specified in ms (currently all remoting calls are aborted if processing takes more than 30 sec)
 
     /// <summary>
     /// Gets or sets the name the hostname of the master tv-server.
@@ -81,11 +81,10 @@ namespace TvControl
           }
           catch (Exception e)
           {
-            Log.Error("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
+            //Log.Debug("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
             //ignore
           }
-#endif
-
+#endif          
           _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
           // int card = _tvControl.Cards;
           return _tvControl;
