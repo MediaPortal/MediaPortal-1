@@ -62,6 +62,8 @@ namespace TvPlugin
     int _parentWindowID = 0;
     GUIWindow _parentWindow = null;
     List<Channel> _tvChannelList = null;
+    List<ChannelState> _channelStates = null;
+    
     List<ChannelGroup> _channelGroupList = null;
     Channel _selectedChannel;
     bool _zap = true;
@@ -428,7 +430,8 @@ namespace TvPlugin
       benchClock.Start();
       ///_tvChannelList = (List<Channel>)TVHome.Navigator.CurrentGroup.ReferringTvGuideChannels();      
       TvBusinessLayer layer = new TvBusinessLayer();
-      _tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
+      _tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);      
+
       benchClock.Stop();
       string BenchGroupChannels = benchClock.ElapsedMilliseconds.ToString();
       benchClock.Reset();
@@ -439,8 +442,8 @@ namespace TvPlugin
       Channel CurrentChan = null;
       GUIListItem item = null;
       string ChannelLogo = "";
-      List<int> RecChannels = null;
-      List<int> TSChannels = null;
+      //List<int> RecChannels = null;
+      //List<int> TSChannels = null;
       int SelectedID = 0;
       int CurrentChanState = 0;
       int CurrentId = 0;
@@ -457,45 +460,65 @@ namespace TvPlugin
       string local1055 = GUILocalizeStrings.Get(1055); // (timeshifting)
       string local1056 = GUILocalizeStrings.Get(1056); // (unavailable)
 
-      if (!CheckChannelState)
-        Log.Debug("miniguide: not checking channel state");
-      else
+      bool RECorTS = false;
+      bool isUserTS = false;
+      bool isAnyUserTS = false;
+      bool isRec = false;
+     
+      RECorTS = TVHome.TvServer.IsAnyCardRecordingOrTimeshifting(TVHome.Card.User, out isUserTS, out isAnyUserTS, out isRec);
+
+      if (RECorTS) // someone is timeshifting or recording, lets find out the details.
+      {
+        if (isRec || isAnyUserTS) //some other user is timeshifting or a rec. is ongoing.
+        {
+          CheckChannelState = true;
+        }
+        else
+        {
+          Log.Debug("miniguide: assume we're the only current timeshifting user - switching to fast channel check mode");
+          CheckChannelState = false;
+        }        
+      }
+      else //no TS-rec activity at all.
+      {
+        CheckChannelState = false;
+      }
+                 
+      benchClock.Reset();
+      benchClock.Start();
+
+      Dictionary<int, ChannelState> tvChannelStatesList = null;                    
+
+      if (CheckChannelState)
       {
         benchClock.Reset();
         benchClock.Start();
-        TVHome.TvServer.GetAllRecordingChannels(out RecChannels, out TSChannels);
+        tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup, TVHome.Card.User);
         benchClock.Stop();
-        Log.Debug("miniguide: FillChannelList - currently ts: {0}, rec: {1} / GetChans: {2}ms, NowNextSQL: {3}ms, GetAllRecs: {4}ms", Convert.ToString(TSChannels.Count), Convert.ToString(RecChannels.Count), BenchGroupChannels, BenchNowNext, benchClock.ElapsedMilliseconds.ToString());
-      }
-
-      if (RecChannels.Count == 0)
-      {
-        // not using cards at all - assume tuneability (why else should the user have this channel added..)
-        if (TSChannels.Count == 0)
-          CheckChannelState = false;
-        else
+        if (tvChannelStatesList != null)
         {
-          // note: it could be possible we're watching a stream another user is timeshifting...
-          // TODO: add user check
-          if (TSChannels.Count == 1 && g_Player.IsTV && g_Player.Playing)
-          {
-            CheckChannelState = false;
-            Log.Debug("miniguide: assume we're the only current timeshifting user - switching to fast channel check mode");
-          }
+          Log.Debug("miniguide: FillChannelList - channel states returned : {0} - {1} ms", Convert.ToString(tvChannelStatesList.Count), benchClock.ElapsedMilliseconds.ToString());
         }
       }
+      else
+      {
+        Log.Debug("miniguide: not checking channel state");
+      }
 
-      benchClock.Reset();
-      benchClock.Start();
       for (int i = 0 ; i < _tvChannelList.Count ; i++)
       {
-        CurrentChan = _tvChannelList[i];
+        CurrentChan = _tvChannelList[i];        
         CurrentId = CurrentChan.IdChannel;
-        if (CheckChannelState)
-          CurrentChanState = (int)TVHome.TvServer.GetChannelState(CurrentId, TVHome.Card.User);
-        else
-          CurrentChanState = (int)ChannelState.tunable;
 
+        if (tvChannelStatesList != null && tvChannelStatesList.ContainsKey(CurrentId))
+        {
+          CurrentChanState = (int)tvChannelStatesList[CurrentId];
+        }
+        else
+        {
+          CurrentChanState = (int)ChannelState.tunable;
+        }
+      
         if (CurrentChan.VisibleInGuide)
         {
           StringBuilder sb = new StringBuilder();
@@ -512,6 +535,12 @@ namespace TvPlugin
           {
             item.IsRemote = true;
             SelectedID = lstChannels.Count;
+
+            if (isUserTS && !CheckChannelState && CurrentChanState != (int)ChannelState.recording)
+            {
+              CurrentChanState = (int)ChannelState.timeshifting;
+            }
+
           }
 
           if (System.IO.File.Exists(ChannelLogo))
@@ -526,27 +555,21 @@ namespace TvPlugin
           }          
 
           if (DisplayStatusInfo)
-          {
-            if (RecChannels.Contains(CurrentId))
-              CurrentChanState = (int)ChannelState.recording;
-            else
-              if (TSChannels.Contains(CurrentId))
-                CurrentChanState = (int)ChannelState.timeshifting;
-
+          {           
             switch (CurrentChanState)
             {
-              case 0: //not avail.
+              case (int)ChannelState.nottunable: //not avail.
                 sb.Append(" ");
                 sb.Append(local1056);
                 item.IsPlayed = true;
                 item.PinImage = Thumbs.TvIsUnavailableIcon;
                 break;
-              case 2: // timeshifting
+              case (int)ChannelState.timeshifting: // timeshifting
                 sb.Append(" ");
                 sb.Append(local1055);
                 item.PinImage = Thumbs.TvIsTimeshiftingIcon;
                 break;
-              case 3: // recording
+              case (int)ChannelState.recording: // recording
                 sb.Append(" ");
                 sb.Append(local1054);                
                 item.PinImage = Thumbs.TvIsRecordingIcon;                          
