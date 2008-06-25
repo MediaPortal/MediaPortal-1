@@ -61,8 +61,9 @@ namespace TvPlugin
     bool _running = false;
     int _parentWindowID = 0;
     GUIWindow _parentWindow = null;
-    List<Channel> _tvChannelList = null;
+    //List<Channel> _tvChannelList = null;
     List<ChannelState> _channelStates = null;
+    Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
     
     List<ChannelGroup> _channelGroupList = null;
     Channel _selectedChannel;
@@ -269,7 +270,11 @@ namespace TvPlugin
                   string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
                   if ((TVHome.Navigator.CurrentChannel != selectedChan) || g_Player.IsTVRecording)
                   {
-                    changeChannel = (Channel)_tvChannelList[lstChannels.SelectedListItemIndex];
+                    List<Channel> tvChannelList = GetChannelListByGroup();
+                    if (tvChannelList != null)
+                    {
+                      changeChannel = (Channel)tvChannelList[lstChannels.SelectedListItemIndex];
+                    }
                   }
                 }
                 _canceled = false;
@@ -420,23 +425,55 @@ namespace TvPlugin
       Log.Debug("miniguide: FillGroupList finished after {0}ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
+    private List<Channel> GetChannelListByGroup()
+    {
+      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
+
+      if (_tvGroupChannelListCache == null)
+      {
+        _tvGroupChannelListCache = new Dictionary<int,List<Channel>>();
+      }
+
+      if (_tvGroupChannelListCache.ContainsKey(idGroup)) //already in cache ? then return it.
+      {
+        Log.Debug("miniguide: GetChannelListByGroup returning cached version of channels.");        
+        return _tvGroupChannelListCache[idGroup];        
+      }
+      else //not in cache, fetch it and update cache, then return.
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
+
+        if (tvChannelList != null)
+        {
+          Log.Debug("miniguide: GetChannelListByGroup caching channels from db.");
+          _tvGroupChannelListCache.Add(idGroup, tvChannelList);
+          return tvChannelList;
+        }
+      }
+      return new List<Channel>();
+    }
+
+
     /// <summary>
     /// Fill the list with channels
     /// </summary>
     public void FillChannelList()
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
       lstChannels.Visible = false;
       benchClock.Reset();
-      benchClock.Start();
+      benchClock.Start();      
       ///_tvChannelList = (List<Channel>)TVHome.Navigator.CurrentGroup.ReferringTvGuideChannels();      
-      TvBusinessLayer layer = new TvBusinessLayer();
-      _tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);      
+      //_tvChannelList = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
+
+      List<Channel> tvChannelList = GetChannelListByGroup();
 
       benchClock.Stop();
       string BenchGroupChannels = benchClock.ElapsedMilliseconds.ToString();
       benchClock.Reset();
-      benchClock.Start();
-      Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext(_tvChannelList);
+      benchClock.Start();      
+      Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext(tvChannelList);
       benchClock.Stop();
       string BenchNowNext = benchClock.ElapsedMilliseconds.ToString();
       Channel CurrentChan = null;
@@ -505,9 +542,9 @@ namespace TvPlugin
         Log.Debug("miniguide: not checking channel state");
       }
 
-      for (int i = 0 ; i < _tvChannelList.Count ; i++)
+      for (int i = 0 ; i < tvChannelList.Count ; i++)
       {
-        CurrentChan = _tvChannelList[i];        
+        CurrentChan = tvChannelList[i];        
         CurrentId = CurrentChan.IdChannel;
 
         if (tvChannelStatesList != null && tvChannelStatesList.ContainsKey(CurrentId))
@@ -595,7 +632,7 @@ namespace TvPlugin
           if (_showChannelNumber == true)
           {
             string chanNumbers = " - ";
-            foreach (TuningDetail detail in _tvChannelList[i].ReferringTuningDetail())
+            foreach (TuningDetail detail in tvChannelList[i].ReferringTuningDetail())
               chanNumbers = chanNumbers + detail.ChannelNumber + " - ";
             // strip trailing " - "
             chanNumbers = chanNumbers.Remove(chanNumbers.Length - 3);
