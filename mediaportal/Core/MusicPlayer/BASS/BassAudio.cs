@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
@@ -275,6 +276,7 @@ namespace MediaPortal.Player
     bool NeedUpdate = true;
     bool NotifyPlaying = true;
 
+    private string _cdDriveLetters;               // Contains the Druve letters of all available CD Drives
     private bool _isCDDAFile = false;
     private bool _useASIO = false;
     private string _asioDevice = string.Empty;
@@ -787,6 +789,7 @@ namespace MediaPortal.Player
         InitializeControls();
         LoadAudioDecoderPlugins();
         LoadDSPPlugins();
+        GetCDDrives();
         Log.Info("BASS: Initializing BASS environment done.");
 
         _Initialized = true;
@@ -1412,6 +1415,19 @@ namespace MediaPortal.Player
       }
     }
 
+    private void GetCDDrives()
+    {
+      // Get the number of CD/DVD drives
+      int driveCount = BassCd.BASS_CD_GetDriveCount();
+      StringBuilder builderDriveLetter = new StringBuilder();
+      // Get Drive letters assigned
+      for (int i = 0; i < driveCount; i++)
+      {
+        builderDriveLetter.Append(BassCd.BASS_CD_GetDriveLetterChar(i));
+      }
+      _cdDriveLetters = builderDriveLetter.ToString();
+    }
+
     /// <summary>
     /// Starts Playback of the given file
     /// </summary>
@@ -1520,7 +1536,11 @@ namespace MediaPortal.Player
           if (MediaPortal.Util.Utils.IsCDDA(filePath))
           {
             _isCDDAFile = true;
-            stream = BassCd.BASS_CD_StreamCreateFile(filePath, streamFlags);
+
+            // StreamCreateFile causes problems with Multisession disks, so use StreamCreate with driveindex and track index
+            int driveindex = _cdDriveLetters.IndexOf(filePath.Substring(0, 1));
+            int tracknum = Convert.ToInt16(filePath.Substring(filePath.IndexOf(".cda") - 2, 2));
+            stream = BassCd.BASS_CD_StreamCreate(driveindex, tracknum, streamFlags);
             if (stream == 0)
               Log.Error("BASS: CD: {0}.", Enum.GetName(typeof(BASSErrorCode), Bass.BASS_ErrorGetCode()));
           }
