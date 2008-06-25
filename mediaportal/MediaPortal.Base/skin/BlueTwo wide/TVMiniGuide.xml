@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>3009</id>
   <defaultcontrol>35</defaultcontrol>
@@ -45,9 +45,9 @@
       <textXOff3>75</textXOff3>
       <textYOff3>1</textYOff3>
       <IconXOff>22</IconXOff>
-      <IconYOff>5</IconYOff>
+      <IconYOff>3</IconYOff>
       <PinIconXOff>845</PinIconXOff>
-      <PinIconYOff>5</PinIconYOff>
+      <PinIconYOff>3</PinIconYOff>
       <spinPosX>1100</spinPosX>
       <spinPosY>592</spinPosY>
       <spinWidth>21</spinWidth>
