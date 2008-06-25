@@ -780,6 +780,7 @@ namespace TvLibrary.Implementations.DVB
                 XmlAttribute fillout = doc.CreateAttribute("fillout");
                 fillout.Value = "" + false;
                 mainNode.Attributes.Append(fillout);
+                doc.Save(xmlFile);
             }
 
             Boolean.TryParse(mainNode.Attributes["fillout"].Value, out filloutXMLFile);
