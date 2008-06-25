@@ -1118,6 +1118,8 @@ namespace TvPlugin
 
       _onPageLoadDone = true;
       _resumed = false;
+
+      doProcess();
       //GUIWaitCursor.Hide();
     }
 
@@ -1351,19 +1353,28 @@ namespace TvPlugin
     }
 
     public override void Process()
-    {
+    {      
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return;
+
+      if (!TVHome.Card.IsTimeShifting) return;
 
       // BAV, 02.03.08: a channel change should not be delayed by rendering.
       //                by moving thisthe 1 min delays in zapping should be fixed
       // Let the navigator zap channel if needed
       Navigator.CheckChannelChange();
-
-      //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
-
+      
       if (GUIGraphicsContext.InVmr9Render) return;
 
+      doProcess();
+      
+      _updateTimer = DateTime.Now;
+    }
+
+    #endregion
+
+    private void doProcess()
+    {
       UpdateRecordingIndicator();
       if (btnChannel.Disabled != false)
         btnChannel.Disabled = false;
@@ -1385,7 +1396,7 @@ namespace TvPlugin
         //  btnTuningDetails.Visible = false;
         if (btnTeletext.Visible)
           btnTeletext.Visible = false;
-        
+
         return;
       }
       //else
@@ -1415,14 +1426,11 @@ namespace TvPlugin
 
       UpdateStateOfButtons();
       UpdateProgressPercentageBar();
-      
+
       GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
-      _updateTimer = DateTime.Now;
     }
-
-    #endregion
 
     /// <summary>
     /// This function replaces g_player.ShowFullScreenWindowTV
