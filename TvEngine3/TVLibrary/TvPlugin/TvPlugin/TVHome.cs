@@ -2357,7 +2357,7 @@ namespace TvPlugin
           if (pDlgYesNo.IsConfirmed)
           {
             ViewChannelAndCheck(Navigator.Channel);
-            GUIWaitCursor.Hide();
+            //GUIWaitCursor.Hide();
           }
         }
         else
@@ -2405,7 +2405,7 @@ namespace TvPlugin
 
     public static bool ViewChannelAndCheck(Channel channel)
     {      
-      GUIWaitCursor.Show();
+      //GUIWaitCursor.Show();
       _doingChannelChange = false;
       //System.Diagnostics.Debugger.Launch();
       try
@@ -2413,7 +2413,7 @@ namespace TvPlugin
         if (channel == null)
         {
           MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
-          GUIWaitCursor.Hide();
+          //GUIWaitCursor.Hide();
           return false;
         }
         MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
@@ -2423,7 +2423,7 @@ namespace TvPlugin
         if (CurrentChanState == (int)ChannelState.nottunable)
         {
           ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
-          GUIWaitCursor.Hide();
+          //GUIWaitCursor.Hide();
           return false;
         }
 
@@ -2439,14 +2439,14 @@ namespace TvPlugin
         {
           if (g_Player.IsTVRecording)
           {
-            GUIWaitCursor.Hide();
+            //GUIWaitCursor.Hide();
             return true;
           }
           if (!_autoTurnOnTv) //respect the autoturnontv setting.
           {
             if (g_Player.IsVideo || g_Player.IsDVD || g_Player.IsMusic)
             {
-              GUIWaitCursor.Hide();
+              //GUIWaitCursor.Hide();
               return true;
             }
           }
@@ -2500,7 +2500,7 @@ namespace TvPlugin
             //if we're already watching this channel, then simply return
             if (TVHome.Card.IsTimeShifting == true && TVHome.Card.IdChannel == channel.IdChannel)
             {
-              GUIWaitCursor.Hide();
+              //GUIWaitCursor.Hide();
               return true;
             }
         }
@@ -2577,7 +2577,7 @@ namespace TvPlugin
           //GUIWaitCursor.Hide();
           _doingChannelChange = false;
           _ServerNotConnectedHandled = false;
-          GUIWaitCursor.Hide();
+          //GUIWaitCursor.Hide();
           return true;
         }
         else
@@ -2594,7 +2594,7 @@ namespace TvPlugin
 
         //if (pDlgOK != null && pDlgYesNo != null)
 
-        GUIWaitCursor.Hide();
+        //GUIWaitCursor.Hide();
         ChannelTuneFailedNotifyUser(succeeded, wasPlaying, channel);
         
         _doingChannelChange = false;
