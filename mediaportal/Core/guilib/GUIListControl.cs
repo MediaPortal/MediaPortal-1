@@ -67,7 +67,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textYOff3")]            protected int _textOffsetY3;
 
     [XMLSkinElement("itemWidth")]            protected int _imageWidth = 16;
-    [XMLSkinElement("itemHeight")]           protected int _imageHeight = 16;
+    [XMLSkinElement("itemHeight")]           protected int _imageHeight = 16;        
+
     protected bool _upDownControlVisible = true;
     [XMLSkinElement("textalign")]            protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
 
@@ -92,8 +93,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textvisible3")]         protected bool _text3Visible = true;
     [XMLSkinElement("PinIconXOff")]          protected int _xOffsetPinIcon = 100;
     [XMLSkinElement("PinIconYOff")]          protected int _yOffsetPinIcon = 10;
-    protected int _widthPinIcon = 0;
-    protected int _heightPinIcon = 0;
+    [XMLSkinElement("PinIconWidth")]         protected int _widthPinIcon = 0;
+    [XMLSkinElement("PinIconHeight")]        protected int _heightPinIcon = 0;
+    
     protected bool _refresh = false;
     protected string _textLine;
     protected string _textLine2;
@@ -263,6 +265,7 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref _iconOffsetY);
       GUIGraphicsContext.ScaleHorizontal(ref _xOffsetPinIcon);
       GUIGraphicsContext.ScaleVertical(ref _yOffsetPinIcon);
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _widthPinIcon, ref _heightPinIcon);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _imageWidth, ref _imageHeight);
     }
 
@@ -434,7 +437,8 @@ namespace MediaPortal.GUI.Library
         GUIImage pinImage = pItem.PinIcon;
         if (null == pinImage)
         {
-          pinImage = new GUIImage(0, 0, 0, 0, 0, 0, pItem.PinImage, 0x0);
+          //pinImage = new GUIImage(0, 0, 0, 0, 0, 0, pItem.PinImage, 0x0);
+          pinImage = new GUIImage(0, 0, 0, 0, _widthPinIcon, _heightPinIcon, pItem.PinImage, 0x0);
           pinImage.ParentControl = this;
           pinImage.KeepAspectRatio = _keepAspectRatio;
           pinImage.AllocResources();
