@@ -462,8 +462,8 @@ namespace OsDetection
 
         string Minor = _CSDVersion.Substring("Service Pack ".Length);
         if (Minor.Length != 1)
-          // example: "Service Pack 3 v.3311"
-          return Convert.ToInt16(Minor.Split('.'));
+          // example: "Service Pack 3, v.3311"
+          return Convert.ToInt16(Minor.Split('.')[1]);
         else
           // example: "Service Pack 3"
           return 0;
