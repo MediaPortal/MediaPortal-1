@@ -30,10 +30,49 @@
       <ondown>35</ondown>
       <onup>34</onup>
     </control>
+        
     <control>
-      <description>list to show channels</description>
+      <description>list to show channels without channel state logos</description>
       <type>listcontrol</type>
       <id>35</id>
+      <posX>276</posX>
+      <posY>230</posY>
+      <width>840</width>
+      <height>393</height>
+      <textXOff>24</textXOff>
+      <textYOff>24</textYOff>
+      <textXOff2>815</textXOff2>
+      <textYOff2>15</textYOff2>
+      <textXOff3>75</textXOff3>
+      <textYOff3>1</textYOff3>
+      <IconXOff>22</IconXOff>
+      <IconYOff>5</IconYOff>
+
+
+      <spinPosX>1033</spinPosX>
+      <spinPosY>592</spinPosY>
+      <spinWidth>21</spinWidth>
+      <spinHeight>21</spinHeight>
+      <itemWidth>40</itemWidth>
+      <itemHeight>40</itemHeight>
+      <textureFocus>recording_background_focus.png</textureFocus>
+      <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+      <spaceBetweenItems>1</spaceBetweenItems>
+      <textureHeight>50</textureHeight>
+      <keepaspectratio>no</keepaspectratio>
+      <font>font11</font>
+      <font2>font11</font2>
+      <font3>font12</font3>
+      <remoteColor>ffffffff</remoteColor>
+      <!-- used for selected channel -->
+      <onleft>36</onleft>
+      <onright>34</onright>
+    </control>
+    
+    <control>
+      <description>list to show channels with channel state logos</description>
+      <type>listcontrol</type>
+      <id>37</id>
       <posX>246</posX>
       <posY>230</posY>
       <width>825</width>
@@ -69,6 +108,8 @@
       <onleft>36</onleft>
       <onright>34</onright>
     </control>
+    
+    
     <control>
       <description>groups spin control</description>
       <type>spincontrol</type>
