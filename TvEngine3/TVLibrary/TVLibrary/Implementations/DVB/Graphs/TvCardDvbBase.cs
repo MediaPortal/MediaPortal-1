@@ -797,7 +797,7 @@ namespace TvLibrary.Implementations.DVB
       _mdplugs = MDPlugs.Create(dv);
       if (_mdplugs != null)
       {
-        _cardUsesRealCAM = false;
+        _cardUsesRealCAM = true;
         Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
         _infTeeSecond = (IBaseFilter)new InfTee();
         hr = _graphBuilder.AddFilter(_infTeeSecond, "Inf Tee 2");
