@@ -54,15 +54,16 @@ namespace TvPlugin
   {
     // Member variables                                  
     [SkinControlAttribute(34)]    protected GUIButtonControl cmdExit = null;
-    [SkinControlAttribute(35)]    protected GUIListControl lstChannels = null;
+    [SkinControlAttribute(35)]    protected GUIListControl lstChannelsNoStateIcons = null;
     [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
+    [SkinControlAttribute(37)]    protected GUIListControl lstChannelsWithStateIcons = null;
+
+    protected GUIListControl lstChannels = null;
 
     bool _canceled = false;
     bool _running = false;
     int _parentWindowID = 0;
-    GUIWindow _parentWindow = null;
-    //List<Channel> _tvChannelList = null;
-    List<ChannelState> _channelStates = null;
+    GUIWindow _parentWindow = null;    
     Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
     
     List<ChannelGroup> _channelGroupList = null;
@@ -100,7 +101,7 @@ namespace TvPlugin
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_MINI_GUIDE, this);
       Restore();
       PreInit();
-      ResetAllControls();
+      ResetAllControls();      
     }
 
     public override bool SupportsDelayedLoad
@@ -380,9 +381,62 @@ namespace TvPlugin
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       benchClock.Stop();
       Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
+
+      ApplyChannelStateIcons();
+
       FillChannelList();
       FillGroupList();
       base.OnPageLoad();
+    }
+
+    private void ApplyChannelStateIcons()
+    {
+      if (lstChannels != null) return; //already set, leave.
+
+      if (TVHome.ShowChannelStateIcons() && lstChannelsWithStateIcons != null) 
+      {
+        lstChannels = lstChannelsWithStateIcons;
+        lstChannelsNoStateIcons.IsVisible = false;
+        lstChannelsWithStateIcons.IsVisible = true;
+      }
+      else if (!TVHome.ShowChannelStateIcons() && lstChannelsNoStateIcons != null)
+      {
+        lstChannels = lstChannelsNoStateIcons;
+        lstChannelsNoStateIcons.IsVisible = true;
+
+        if (lstChannelsWithStateIcons != null)
+        {
+          lstChannelsWithStateIcons.IsVisible = false;
+        }
+      }
+
+      //set default objects just in case
+      if (lstChannels == null)
+      {
+        if (lstChannelsNoStateIcons != null)
+        {
+          lstChannels = lstChannelsNoStateIcons;
+          lstChannelsNoStateIcons.IsVisible = true;
+
+          if (lstChannelsWithStateIcons != null)
+          {
+            lstChannelsWithStateIcons.IsVisible = false;
+          }
+        }
+        else
+        {
+          lstChannels = lstChannelsWithStateIcons;
+
+          if (lstChannelsWithStateIcons != null)
+          {
+            lstChannelsWithStateIcons.IsVisible = true;
+          }
+          if (lstChannelsNoStateIcons != null)
+          {
+            lstChannelsNoStateIcons.IsVisible = false;
+          }
+        }
+      }
     }
 
     private void OnGroupChanged()
@@ -592,28 +646,30 @@ namespace TvPlugin
           }          
 
           if (DisplayStatusInfo)
-          {           
+          {          
+            bool showChannelStateIcons = TVHome.ShowChannelStateIcons();
+
             switch (CurrentChanState)
             {
               case (int)ChannelState.nottunable: //not avail.
                 sb.Append(" ");
                 sb.Append(local1056);
                 item.IsPlayed = true;
-                item.PinImage = Thumbs.TvIsUnavailableIcon;
+                if (showChannelStateIcons) item.PinImage = Thumbs.TvIsUnavailableIcon;
                 break;
               case (int)ChannelState.timeshifting: // timeshifting
                 sb.Append(" ");
                 sb.Append(local1055);
-                item.PinImage = Thumbs.TvIsTimeshiftingIcon;
+                if (showChannelStateIcons) item.PinImage = Thumbs.TvIsTimeshiftingIcon;
                 break;
               case (int)ChannelState.recording: // recording
                 sb.Append(" ");
-                sb.Append(local1054);                
-                item.PinImage = Thumbs.TvIsRecordingIcon;                          
+                sb.Append(local1054);
+                if (showChannelStateIcons) item.PinImage = Thumbs.TvIsRecordingIcon;                          
                 break;
               default:
                 item.IsPlayed = false;
-                item.PinImage = Thumbs.TvIsAvailableIcon;
+                if (showChannelStateIcons) item.PinImage = Thumbs.TvIsAvailableIcon;
                 break;
             }
           }

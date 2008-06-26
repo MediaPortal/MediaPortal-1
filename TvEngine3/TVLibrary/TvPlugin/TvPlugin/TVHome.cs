@@ -108,6 +108,7 @@ namespace TvPlugin
     static bool _playbackStopped = false;
     static bool _onPageLoadDone = false;
     static bool _userChannelChanged = false;
+    static bool _showChannelStateIcons = true;
     private static bool _doingHandleServerNotConnected = false;
     private static bool _doingChannelChange = false;
     private static bool _ServerNotConnectedHandled = false;
@@ -398,6 +399,11 @@ namespace TvPlugin
       return _usertsp;
     }
 
+    public static bool ShowChannelStateIcons()
+    {
+      return _showChannelStateIcons;
+    }
+
     public static string RecordingPath()
     {
       return _recordingpath;
@@ -591,6 +597,8 @@ namespace TvPlugin
         _preferAudioTypeOverLang = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
         _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
         _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
+        _showChannelStateIcons = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
+        
       }
     }
 
