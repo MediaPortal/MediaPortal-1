@@ -404,21 +404,7 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-
-
-      string skinPath = GUIGraphicsContext.Skin;
-      string recIconPath = skinPath + "\\media\\" + Thumbs.TvRecordingIcon;
-      FileInfo fI = new FileInfo(recIconPath);
-      if (fI.Exists)
-      {
-        System.Drawing.Image img = System.Drawing.Image.FromFile(recIconPath);
-
-        double factor = 75.0 / img.Width;
-
-        listAlbums.PinIconWidth = Convert.ToInt32(img.Width * factor);
-        listAlbums.PinIconHeight = Convert.ToInt32(img.Height * factor);
-      }
-
+     
       //DiskManagement.ImportDvrMsFiles();
       LoadSettings();
       LoadDirectory();
