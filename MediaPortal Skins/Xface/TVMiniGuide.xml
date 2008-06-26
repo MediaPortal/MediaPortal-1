@@ -48,6 +48,8 @@
       <IconYOff>5</IconYOff>
       <PinIconXOff>810</PinIconXOff>
       <PinIconYOff>5</PinIconYOff>
+      <PinIconWidth>44</PinIconWidth>
+      <PinIconHeight>40</PinIconHeight>
       <spinPosX>1000</spinPosX>
       <spinPosY>672</spinPosY>
       <spinWidth>38</spinWidth>

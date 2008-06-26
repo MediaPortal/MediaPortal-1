@@ -99,7 +99,9 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
       <PinIconXOff>45</PinIconXOff>
-      <PinIconYOff>0</PinIconYOff>
+      <PinIconYOff>23</PinIconYOff>
+      <PinIconWidth>20</PinIconWidth>
+      <PinIconHeight>20</PinIconHeight>
     </control>
   </controls>
 </window>
