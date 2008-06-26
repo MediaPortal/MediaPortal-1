@@ -457,6 +457,9 @@ namespace OsDetection
     {
       get
       {
+        // No Service Pack Installed
+        if (String.IsNullOrEmpty(_CSDVersion)) return 0;
+
         string Minor = _CSDVersion.Substring("Service Pack ".Length);
         if (Minor.Length != 1)
           // example: "Service Pack 3 v.3311"

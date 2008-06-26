@@ -762,12 +762,13 @@ namespace SetupTv
 
       int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
 
+      // Disable OS if < XP
       if (ver < 51)
       {
         MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
         Application.Exit();
       }
-      switch ((int)(ver * 10))
+      switch (ver)
       {
         case 51:
           if (os.OSServicePackMajor < 2)

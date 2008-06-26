@@ -269,12 +269,13 @@ namespace MediaPortal.Configuration
 
       int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
 
+      // Disable OS if < XP
       if (ver < 51)
       {
         MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
         Application.Exit();
       }
-      switch ((int)(ver * 10))
+      switch (ver)
       {
         case 51:
           if (os.OSServicePackMajor < 2)
@@ -302,7 +303,7 @@ namespace MediaPortal.Configuration
       }
       if (os.OSServicePackBuild != 0)
       {
-        res = MessageBox.Show(MsgBetaServicePack, MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(String.Format(MsgBetaServicePack, os.OSServicePackMajor), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }
