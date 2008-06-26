@@ -81,6 +81,8 @@
       <textXOff>50</textXOff>
       <PinIconXOff>45</PinIconXOff>
       <PinIconYOff>3</PinIconYOff>
+      <PinIconWidth>20</PinIconWidth>
+      <PinIconHeight>20</PinIconHeight>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <PinIconXOff>45</PinIconXOff>

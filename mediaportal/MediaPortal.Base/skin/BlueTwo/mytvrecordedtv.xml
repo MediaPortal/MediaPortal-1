@@ -207,7 +207,9 @@
         <spinPosX>596</spinPosX>
         <spinPosY>520</spinPosY>
         <PinIconXOff>75</PinIconXOff>
-        <PinIconYOff>25</PinIconYOff>
+        <PinIconYOff>20</PinIconYOff>
+        <PinIconWidth>50</PinIconWidth>
+      	<PinIconHeight>50</PinIconHeight>
       </control>
       <control>
         <type>listcontrol</type>
@@ -219,8 +221,10 @@
         <ondown>2</ondown>
         <font>font13</font>
         <spinColor>FFFFFFFF</spinColor>
-        <PinIconXOff>15</PinIconXOff>
+        <PinIconXOff>20</PinIconXOff>
         <PinIconYOff>10</PinIconYOff>
+        <PinIconWidth>10</PinIconWidth>
+      	<PinIconHeight>10</PinIconHeight>
       </control>
       <control>
         <type>fadelabel</type>

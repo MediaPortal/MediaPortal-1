@@ -82,6 +82,8 @@
       <textXOff>50</textXOff>
       <PinIconXOff>45</PinIconXOff>
       <PinIconYOff>7</PinIconYOff>
+      <PinIconWidth>20</PinIconWidth>
+      <PinIconHeight>20</PinIconHeight>
       <itemHeight>40</itemHeight>
     	<itemWidth>40</itemWidth>
     	<IconXOff>10</IconXOff>

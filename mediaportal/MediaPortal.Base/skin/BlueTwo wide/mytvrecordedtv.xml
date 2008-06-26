@@ -202,6 +202,8 @@
         <spinPosX>1185</spinPosX>
         <PinIconXOff>95</PinIconXOff>
         <PinIconYOff>35</PinIconYOff>
+        <PinIconWidth>80</PinIconWidth>
+      	<PinIconHeight>80</PinIconHeight>
       </control>
       <control>
         <type>listcontrol</type>
@@ -216,6 +218,8 @@
         <textYOff2>5</textYOff2>
         <PinIconXOff>40</PinIconXOff>
         <PinIconYOff>10</PinIconYOff>
+        <PinIconWidth>20</PinIconWidth>
+      	<PinIconHeight>20</PinIconHeight>
       </control>
       <control>
         <type>fadelabel</type>
