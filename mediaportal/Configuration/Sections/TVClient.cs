@@ -55,6 +55,8 @@ namespace MediaPortal.Configuration.Sections
 		private ColumnHeader columnHeader4;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox5;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbHideAllChannels;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox6;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbShowChannelStateIcons;
 		private ColumnHeader columnHeader3;    
 		
     #endregion
@@ -89,6 +91,7 @@ namespace MediaPortal.Configuration.Sections
 				mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
 				mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
         cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+        cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
       }
 
       if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
@@ -238,6 +241,7 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
 				xmlwriter.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
         xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
+        xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);        
   
         foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
         {        
@@ -265,6 +269,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxPrefAC3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlTVGeneral = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageGeneralSettings = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.mpGroupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbHideAllChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPageAudioLanguages = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -292,18 +298,19 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.mpListViewAvailSubLang = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.mpGroupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbHideAllChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpGroupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbShowChannelStateIcons = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
       this.tabPageGeneralSettings.SuspendLayout();
+      this.mpGroupBox5.SuspendLayout();
       this.tabPageAudioLanguages.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.tabPageSubtitles.SuspendLayout();
       this.mpGroupBox4.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
-      this.mpGroupBox5.SuspendLayout();
+      this.mpGroupBox6.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpGroupBox2
@@ -386,6 +393,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageGeneralSettings
       // 
+      this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox6);
       this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox5);
       this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox2);
       this.tabPageGeneralSettings.Location = new System.Drawing.Point(4, 22);
@@ -395,6 +403,28 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageGeneralSettings.TabIndex = 0;
       this.tabPageGeneralSettings.Text = "General settings";
       this.tabPageGeneralSettings.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox5
+      // 
+      this.mpGroupBox5.Controls.Add(this.cbHideAllChannels);
+      this.mpGroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox5.Location = new System.Drawing.Point(16, 91);
+      this.mpGroupBox5.Name = "mpGroupBox5";
+      this.mpGroupBox5.Size = new System.Drawing.Size(432, 53);
+      this.mpGroupBox5.TabIndex = 11;
+      this.mpGroupBox5.TabStop = false;
+      this.mpGroupBox5.Text = "TV-Group";
+      // 
+      // cbHideAllChannels
+      // 
+      this.cbHideAllChannels.AutoSize = true;
+      this.cbHideAllChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbHideAllChannels.Location = new System.Drawing.Point(22, 19);
+      this.cbHideAllChannels.Name = "cbHideAllChannels";
+      this.cbHideAllChannels.Size = new System.Drawing.Size(149, 17);
+      this.cbHideAllChannels.TabIndex = 0;
+      this.cbHideAllChannels.Text = "Hide \"All Channels\" Group";
+      this.cbHideAllChannels.UseVisualStyleBackColor = true;
       // 
       // tabPageAudioLanguages
       // 
@@ -701,27 +731,29 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader3.Text = "Language";
       this.columnHeader3.Width = 150;
       // 
-      // mpGroupBox5
+      // mpGroupBox6
       // 
-      this.mpGroupBox5.Controls.Add(this.cbHideAllChannels);
-      this.mpGroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox5.Location = new System.Drawing.Point(16, 91);
-      this.mpGroupBox5.Name = "mpGroupBox5";
-      this.mpGroupBox5.Size = new System.Drawing.Size(432, 53);
-      this.mpGroupBox5.TabIndex = 11;
-      this.mpGroupBox5.TabStop = false;
-      this.mpGroupBox5.Text = "TV-Group";
+      this.mpGroupBox6.Controls.Add(this.cbShowChannelStateIcons);
+      this.mpGroupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox6.Location = new System.Drawing.Point(16, 161);
+      this.mpGroupBox6.Name = "mpGroupBox6";
+      this.mpGroupBox6.Size = new System.Drawing.Size(432, 53);
+      this.mpGroupBox6.TabIndex = 12;
+      this.mpGroupBox6.TabStop = false;
+      this.mpGroupBox6.Text = "Mini Guide";
       // 
-      // cbHideAllChannels
+      // cbShowChannelStateIcons
       // 
-      this.cbHideAllChannels.AutoSize = true;
-      this.cbHideAllChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbHideAllChannels.Location = new System.Drawing.Point(22, 19);
-      this.cbHideAllChannels.Name = "cbHideAllChannels";
-      this.cbHideAllChannels.Size = new System.Drawing.Size(149, 17);
-      this.cbHideAllChannels.TabIndex = 0;
-      this.cbHideAllChannels.Text = "Hide \"All Channels\" Group";
-      this.cbHideAllChannels.UseVisualStyleBackColor = true;
+      this.cbShowChannelStateIcons.AutoSize = true;
+      this.cbShowChannelStateIcons.Checked = true;
+      this.cbShowChannelStateIcons.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbShowChannelStateIcons.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbShowChannelStateIcons.Location = new System.Drawing.Point(22, 19);
+      this.cbShowChannelStateIcons.Name = "cbShowChannelStateIcons";
+      this.cbShowChannelStateIcons.Size = new System.Drawing.Size(226, 17);
+      this.cbShowChannelStateIcons.TabIndex = 0;
+      this.cbShowChannelStateIcons.Text = "Show channel state icons (on supp. skins))";
+      this.cbShowChannelStateIcons.UseVisualStyleBackColor = true;
       // 
       // TVClient
       // 
@@ -734,6 +766,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.PerformLayout();
       this.tabControlTVGeneral.ResumeLayout(false);
       this.tabPageGeneralSettings.ResumeLayout(false);
+      this.mpGroupBox5.ResumeLayout(false);
+      this.mpGroupBox5.PerformLayout();
       this.tabPageAudioLanguages.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
@@ -742,8 +776,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox4.PerformLayout();
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
-      this.mpGroupBox5.ResumeLayout(false);
-      this.mpGroupBox5.PerformLayout();
+      this.mpGroupBox6.ResumeLayout(false);
+      this.mpGroupBox6.PerformLayout();
       this.ResumeLayout(false);
 
     }
