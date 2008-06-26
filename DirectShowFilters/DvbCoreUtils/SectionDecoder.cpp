@@ -196,6 +196,13 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 					if (m_pCallback!=NULL)
 						m_pCallback->OnNewSection(header.Pid,m_section.table_id,m_section);
 				}
+        else
+        {
+          // If the section is complete and the CRC fails, then this section is crap!
+          m_section.Reset();
+          return;
+        }
+
         m_section.Reset();
       }
       pointer_field=0;
@@ -216,4 +223,5 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 void CSectionDecoder::OnNewSection(CSection& section)
 {
 }
+
 
