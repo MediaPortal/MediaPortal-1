@@ -64,7 +64,7 @@ DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
 		) = 0;		        
 			virtual HRESULT STDMETHODCALLTYPE SetRequestAudioChangeCallback( 
 								ITSReaderAudioChange* pCallback) = 0;
-		  virtual HRESULT STDMETHODCALLTYPE GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,int &interlaced) PURE;
+		  virtual HRESULT STDMETHODCALLTYPE GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced) PURE;
   };
 
 class CTsReaderFilter : public CSource, 
@@ -125,7 +125,7 @@ public:
 	// ITSReader
 	STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
 	STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
-	STDMETHODIMP    GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,int &interlaced);
+	STDMETHODIMP    GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced);
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);

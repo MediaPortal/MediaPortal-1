@@ -106,19 +106,19 @@ int CDeMultiplexer::GetVideoServiceType()
   return m_pids.videoServiceType;
 }
 
-void CDeMultiplexer::GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,int &interlaced)
+void CDeMultiplexer::GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced)
 {
 	if (m_mpeg2VideoInfo.hdr.dwReserved2!=0)
 		return;
-	width=m_mpeg2VideoInfo.hdr.rcSource.right;
-	height=m_mpeg2VideoInfo.hdr.rcSource.bottom;
-	aspectRatioX=m_mpeg2VideoInfo.hdr.dwPictAspectRatioX;
-	aspectRatioY=m_mpeg2VideoInfo.hdr.dwPictAspectRatioY;
-	bitrate=m_mpeg2VideoInfo.hdr.dwBitRate;
+	*width=m_mpeg2VideoInfo.hdr.rcSource.right;
+	*height=m_mpeg2VideoInfo.hdr.rcSource.bottom;
+	*aspectRatioX=m_mpeg2VideoInfo.hdr.dwPictAspectRatioX;
+	*aspectRatioY=m_mpeg2VideoInfo.hdr.dwPictAspectRatioY;
+	*bitrate=m_mpeg2VideoInfo.hdr.dwBitRate;
 	if ((m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced)==AMINTERLACE_IsInterlaced)
-		interlaced=1;
+		*interlaced=1;
 	else
-		interlaced=0;
+		*interlaced=0;
 }
 
 void CDeMultiplexer::GetVideoMedia(CMediaType *pmt)
@@ -1503,7 +1503,8 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   m_iAudioStream = 0;
 
   LogDebug ("Setting initial audio index to : %i", m_iAudioStream);
-  
+  bool audioChanged=false;
+
   //get the new audio format
   int newAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
@@ -1518,6 +1519,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     if (m_filter.GetAudioPin()->IsConnected())
     {	 
       changed=true;
+			audioChanged=true;
     }	
   }
 
@@ -1535,10 +1537,16 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 		{
 			// notify the ITSReaderCallback. MP will then rebuild the graph
 			LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
-			m_filter.OnMediaTypeChanged(3);
+			m_filter.OnMediaTypeChanged(1);
 		}
 		#else
+		if (audioChanged && videoChanged)
 			m_filter.OnMediaTypeChanged(3);
+		else
+			if (audioChanged)
+				m_filter.OnMediaTypeChanged(1);
+			else
+				m_filter.OnMediaTypeChanged(2);
 		#endif
   }
 

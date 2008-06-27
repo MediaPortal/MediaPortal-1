@@ -222,7 +222,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
     //we dont try to read any packets, but simply return...
     if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	  {
-      LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
+			LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
 		  Sleep(20);
       pSample->SetTime(NULL,NULL); 
 	    pSample->SetActualDataLength(0);

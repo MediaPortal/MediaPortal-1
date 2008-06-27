@@ -210,7 +210,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     //we dont try to read any packets, but simply return...
     if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	  {
-      LogDebug("aud:isseeking");
+			LogDebug("aud:isseeking");
 		  Sleep(20);
       pSample->SetTime(NULL,NULL); 
 	    pSample->SetActualDataLength(0);

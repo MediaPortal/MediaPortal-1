@@ -56,6 +56,7 @@ public:
   void SetDiscontinuity(bool onOff);
   bool IsSeeking();
 
+
 protected:
   void      UpdateFromSeek();
   
@@ -74,6 +75,7 @@ protected:
   bool      m_bMeasureCompensation;
   bool      m_bSubtitleCompensationSet;
   bool      m_bInFillBuffer;     
+
 };
 
 #endif

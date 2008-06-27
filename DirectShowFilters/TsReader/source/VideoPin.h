@@ -57,6 +57,7 @@ public:
   bool IsSeeking();
   void SetDiscontinuity(bool onOff);
 
+
 protected:
   void    UpdateFromSeek();
   
