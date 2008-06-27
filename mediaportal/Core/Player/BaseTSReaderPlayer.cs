@@ -47,7 +47,9 @@ namespace MediaPortal.Player
   public interface ITSReaderCallback
   {
     [PreserveSig]
-    int OnMediaTypeChanged();
+    int OnMediaTypeChanged(int mediaType);
+    [PreserveSig]
+    int OnVideoFormatChanged();
   }
 
   [ComVisible(true), ComImport,
@@ -69,6 +71,8 @@ namespace MediaPortal.Player
       int SetTsReaderCallback(ITSReaderCallback callback);
       [PreserveSig]
       int SetRequestAudioChangeCallback(ITSReaderCallbackAudioChange callback);
+      [PreserveSig]
+      int GetVideoFormat([In, Out] ref int width,[In, Out] ref int height,[In, Out] ref int aspectRatioX,[In, Out] ref int aspectRatioY,[In, Out] ref int bitrate,[In, Out] ref int interlaced);
     }
 
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
@@ -159,6 +163,7 @@ namespace MediaPortal.Player
     protected bool _startingUp;
     protected bool _isRadio = false;
     protected g_Player.MediaType _mediaType;
+    protected int iChangedMediaTypes;
     #endregion
 
     #region ctor/dtor
@@ -1327,9 +1332,18 @@ namespace MediaPortal.Player
 
     bool _bMediaTypeChanged;
     bool _bRequestAudioChange;
-    public int OnMediaTypeChanged()
+    public int OnMediaTypeChanged(int mediaType)
     {
       _bMediaTypeChanged = true;
+      iChangedMediaTypes = mediaType;
+      return 0;
+    }
+    public int OnVideoFormatChanged()
+    {
+      Log.Info("TsReaderPlayer: OnVideoFormatChanged triggered. Getting new format");
+      //int width = 0; int height = 0; int arX = 0; int arY = 0; int bitrate = 0; int isInterlaced = 0;
+      //((ITSReader)_fileSource).GetVideoFormat(ref width,ref height,ref arX,ref arY,ref bitrate,ref isInterlaced);
+      //Log.Debug("TsReaderPlayer: Current video format - {0}x{1} aspect ratio={2}:{3} bitrate={4} isInterlaced={5}", width, height, arX, arY, bitrate, (isInterlaced == 1));
       return 0;
     }
 
@@ -1415,12 +1429,44 @@ namespace MediaPortal.Player
           if (needRebuild)
           {
             Log.Info("Doing full graph rebuild.");
-            DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource, true);
+            IPin pAudio = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Audio");
+            IPin pVideo = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
+            FilterInfo fInfo;
+            _fileSource.QueryFilterInfo(out fInfo);
+            switch (iChangedMediaTypes)
+            {
+              case 1: // audio changed
+                pAudio.Disconnect();
+                DirectShowUtil.TryConnect(_graphBuilder, fInfo.achName, pAudio, true);
+                break;
+              case 2: // video changed
+                pVideo.Disconnect();
+                DirectShowUtil.TryConnect(_graphBuilder, fInfo.achName, pVideo, true);
+                break;
+              case 3: // both changed
+                DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource, true);
+                break;
+            }
+            //DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource, true);
           }
           else
           {
             Log.Info("Reconnecting all pins of base filter.");
-            DirectShowUtil.ReConnectAll(_graphBuilder, _fileSource);
+            IPin pAudio = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Audio");
+            IPin pVideo = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
+            switch (iChangedMediaTypes)
+            {
+              case 1: // audio changed
+                _graphBuilder.Reconnect(pAudio);
+                break;
+              case 2: // video changed
+                _graphBuilder.Reconnect(pVideo);
+                break;
+              case 3: // both changed
+                DirectShowUtil.ReConnectAll(_graphBuilder, _fileSource);
+                break;
+            }
+            //DirectShowUtil.ReConnectAll(_graphBuilder, _fileSource);
           }
           _mediaCtrl.Run();
         }

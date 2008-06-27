@@ -666,7 +666,7 @@ namespace DShowNET.Helper
       }
     }
 
-    private static bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, bool TryNewFilters)
+    public static bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, bool TryNewFilters)
     {
       int hr;
       Log.Info("----------------TryConnect-------------");
