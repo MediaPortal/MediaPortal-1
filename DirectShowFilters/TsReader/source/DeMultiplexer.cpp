@@ -1522,17 +1522,17 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   if (changed)
   {
 		// if we have a video stream and it's format changed, let the mpeg parser trigger the OnMediaTypeChanged
-		if (m_pids.VideoPid>0x1 && videoChanged)  
-		{
-			LogDebug("DeMultiplexer: We detected a media type change at least in video, so we let the mpegParser trigger the event");
-			m_mpegParserTriggerFormatChange=true;
-		}
-		else
-		{
+		//if (m_pids.VideoPid>0x1 && videoChanged)  
+		//{
+		//	LogDebug("DeMultiplexer: We detected a media type change at least in video, so we let the mpegParser trigger the event");
+		//	m_mpegParserTriggerFormatChange=true;
+		//}
+		//else
+		//{
 			//notify the ITSReaderCallback. MP will then rebuild the graph
-			LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
-			m_filter.OnMediaTypeChanged(1);
-		}
+			//LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
+			m_filter.OnMediaTypeChanged(3);
+		//}
   }
 
   //if we have more than 1 audio track available, tell host application that we are ready 
