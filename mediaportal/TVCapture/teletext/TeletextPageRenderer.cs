@@ -33,11 +33,24 @@ namespace MediaPortal.TV.Teletext
 {
   public class TeletextPageRenderer
   {
+    #region constructors
+
+    public TeletextPageRenderer()
+    {
+      _isRegionalDK = (System.Globalization.RegionInfo.CurrentRegion.Equals("DK"));
+    }
+
+    #endregion
+
     #region constants
     const int MAX_ROWS = 50;
     #endregion
 
     #region variables
+
+    //regional stuff
+    bool _isRegionalDK = false;
+
     Bitmap _pageBitmap = null;
     Graphics _renderGraphics = null;
     Font _fontTeletext = null;
@@ -130,14 +143,19 @@ namespace MediaPortal.TV.Teletext
 	{ 'Ä', 'Ö', 'Ü', '^', '_', '°' },{ '°', 'ç','\u2192','\u2191', '#', 'ù' },
 	{ 'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161' },{ '\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119' },
 	{ 'á', 'é', 'í', 'ó', 'ú', '¿' },{ 'Â', '\u015E', '\u01CD', 'Î', '\u0131', '\u0163' },
-	{ '\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D' },{ 'Æ', 'Ø', 'Å', 'Ü', '_', 'é' },
-	{ '\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131' }};
+	{ '\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D' },
+    { 'Ä', 'Ö', 'Å', 'Ü', '_', 'é' },
+ 	{ '\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131' },
+    { 'Æ', 'Ø', 'Å', 'Ü', '_', 'é' }
+    };
 
     char[,] m_charTableD = new char[,]{{ 'á', '\u011B', 'ú', '\u0161' },{ '¼','\u2016', '¾', '÷' },
 	{ 'ä', 'ö', '\u017E', 'ü' },{ 'â', 'ô', 'û', 'ç' },{ 'ä', 'ö', 'ü', 'ß' },
 	{ 'à', 'ò', 'è', 'ì' },{ '\u0105', '\u0173', '\u017E', '\u012F' },{ '\u017C', '\u015B', '\u0142', '\u017A' },
 	{ 'ü', 'ñ', 'è', 'à' },{ 'â', '\u015F', '\u01CE', 'î' },{ '\u0107', '\u017E', '\u0111', '\u0161' },
-	{ 'æ', 'ø', 'å', 'ü' },{ '\u015F', 'ö', 'ç', 'ü' }};
+	{ 'ä', 'ö', 'å', 'ü' },{ '\u015F', 'ö', 'ç', 'ü' },
+    { 'æ', 'ø', 'å', 'ü' }
+    };
     char[] m_charTableE = new char[] { '\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190', '\u2190' };
 
     #endregion
@@ -965,7 +983,8 @@ namespace MediaPortal.TV.Teletext
         case 1:
           return 4;
         case 2:
-          return 11;
+            if (_isRegionalDK) return 13;
+            return 11;
         case 3:
           return 5;
         case 4:
