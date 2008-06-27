@@ -82,7 +82,12 @@ namespace MediaPortal.DeployTool
       dlg.Description = Localizer.Instance.GetString("TvServerSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
-        textBoxDir.Text = dlg.SelectedPath;
+      {
+        if (dlg.SelectedPath.EndsWith("\\"))
+          textBoxDir.Text = dlg.SelectedPath + "MediaPortal TV Server";
+        else
+          textBoxDir.Text = dlg.SelectedPath + "\\MediaPortal TV Server";
+      }
     }
   }
 }

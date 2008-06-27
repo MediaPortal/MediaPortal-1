@@ -56,7 +56,7 @@ namespace MediaPortal.DeployTool
     public override DeployDialog GetNextDialog()
     {
       if (InstallationProperties.Instance["InstallType"] == "client" ||
-          InstallationProperties.Instance["InstallType"] == "mp_only" )
+          InstallationProperties.Instance["InstallType"] == "mp_only")
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       else
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
@@ -86,7 +86,12 @@ namespace MediaPortal.DeployTool
       dlg.Description = Localizer.Instance.GetString("MPSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
-        textBoxDir.Text = dlg.SelectedPath;
+      {
+        if (dlg.SelectedPath.EndsWith("\\"))
+          textBoxDir.Text = dlg.SelectedPath + "MediaPortal";
+        else
+          textBoxDir.Text = dlg.SelectedPath + "\\MediaPortal";
+      }
     }
   }
 }
