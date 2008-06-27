@@ -55,7 +55,7 @@ public:
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
   void       FillTeletext(CTsHeader& header, byte* tsPacket);
-  void		 SetEndOfFile(bool bEndOfFile);
+  void			 SetEndOfFile(bool bEndOfFile);
   CPidTable  GetPidTable();
 
   bool       SetAudioStream(__int32 stream);
@@ -73,7 +73,6 @@ public:
   bool       GetCurrentSubtitleStream(__int32 &stream);
   bool       GetSubtitleStreamLanguage(__int32 stream, char* szLanguage);
   bool			 SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
-	void       SetVideoFormatChangedCallback(void(CALLBACK *pCallback)());
 
   bool       EndOfFile();
 	bool			 HoldAudio();
@@ -178,7 +177,6 @@ private:
    int (CALLBACK *pTeletextPacketCallback)(byte*, int);
    int (CALLBACK *pTeletextEventCallback)(int,DWORD64);
    int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
-	 void (CALLBACK *pVideoFormatChangedCallback)();
 
     // used to sync teletext packets with video
 	//DWORD64 m_inVideoBuffer;

@@ -43,10 +43,10 @@ private:
 	
 	void SetAspectRatio(int aspectRatioIndex,MPEG2VIDEOINFO &mpeg2VideoInfo);
 	void ParseVideoExtensionHeader(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
-	void ParseMpeg2Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
-	void ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
-	void ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
+	bool ParseMpeg2Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
+	bool ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
+	bool ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo);
 public:
-	void OnTsPacket(byte* tsPacket,CTsHeader header,MPEG2VIDEOINFO &mpeg2VideoInfo);
+	bool OnTsPacket(byte* tsPacket,CTsHeader header,MPEG2VIDEOINFO &mpeg2VideoInfo);
 };
 

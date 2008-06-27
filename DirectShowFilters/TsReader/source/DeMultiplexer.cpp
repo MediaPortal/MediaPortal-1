@@ -39,6 +39,10 @@ extern void LogDebug(const char *fmt, ...) ;
 
 #define READ_SIZE (1316*30)
 
+// *** UNCOMMENT THE NEXT LINE TO ENABLE DYNAMIC VIDEO PIN HANDLING!!!! ******
+//#define USE_DYNAMIC_PINS
+
+
 CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 :m_duration(duration)
 ,m_filter(filter)
@@ -656,11 +660,13 @@ void CDeMultiplexer::Start()
     if (dwBytesProcessed>5000000 || GetAudioStreamCount()>0)
     {
 			// dynamic pins are currently disabled
-			/*if ((m_mpeg2VideoInfo.hdr.dwReserved2!=0 && m_pids.VideoPid>1) && dwBytesProcessed<5000000)
+			#ifdef USE_DYNAMIC_PINS
+			if ((m_mpeg2VideoInfo.hdr.dwReserved2!=0 && m_pids.VideoPid>1) && dwBytesProcessed<5000000)
 			{
 				dwBytesProcessed+=READ_SIZE;
 				continue;
-			}*/
+			}
+			#endif
       m_reader->SetFilePointer(0,FILE_BEGIN);
       Flush();
       m_streamPcr.Reset();
@@ -785,7 +791,8 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   CTsHeader header(tsPacket);
 
 	// dynmic pins are currently disabled 
-	/*int lastVidResX=m_mpeg2VideoInfo.hdr.rcSource.right;
+	#ifdef USE_DYNAMIC_PINS
+	int lastVidResX=m_mpeg2VideoInfo.hdr.rcSource.right;
 	int lastVidResY=m_mpeg2VideoInfo.hdr.rcSource.bottom;
 	m_mpegPesParser.OnTsPacket(tsPacket,header,m_mpeg2VideoInfo);
 	if (lastVidResX!=m_mpeg2VideoInfo.hdr.rcSource.right || lastVidResY!=m_mpeg2VideoInfo.hdr.rcSource.bottom)
@@ -797,14 +804,10 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 			m_filter.OnMediaTypeChanged(3);
 			m_mpegParserTriggerFormatChange=false;
 		}
-		if (this->pVideoFormatChangedCallback!=NULL)
-		{
-			LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
-			this->pVideoFormatChangedCallback();
-		}
-		else
-			LogDebug("DeMultiplexer: no callback registered for OnVideoFormatChanged");
-	}*/
+		LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
+		m_filter.OnVideoFormatChanged();
+	}
+	#endif
 
   m_patParser.OnTsPacket(tsPacket);
 	
@@ -1521,18 +1524,22 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   //did audio/video format change?
   if (changed)
   {
+		#ifdef USE_DYNAMIC_PINS
 		// if we have a video stream and it's format changed, let the mpeg parser trigger the OnMediaTypeChanged
-		//if (m_pids.VideoPid>0x1 && videoChanged)  
-		//{
-		//	LogDebug("DeMultiplexer: We detected a media type change at least in video, so we let the mpegParser trigger the event");
-		//	m_mpegParserTriggerFormatChange=true;
-		//}
-		//else
-		//{
-			//notify the ITSReaderCallback. MP will then rebuild the graph
-			//LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
+		if (m_pids.VideoPid>0x1 && videoChanged)  
+		{
+			LogDebug("DeMultiplexer: We detected a new media type change which has a video stream, so we let the mpegParser trigger the event");
+			m_mpegParserTriggerFormatChange=true;
+		}
+		else
+		{
+			// notify the ITSReaderCallback. MP will then rebuild the graph
+			LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
 			m_filter.OnMediaTypeChanged(3);
-		//}
+		}
+		#else
+			m_filter.OnMediaTypeChanged(3);
+		#endif
   }
 
   //if we have more than 1 audio track available, tell host application that we are ready 

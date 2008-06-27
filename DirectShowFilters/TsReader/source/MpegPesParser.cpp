@@ -136,13 +136,13 @@ void CMpegPesParser::ParseVideoExtensionHeader(byte* tsPacket,int offset,MPEG2VI
 	}
 }
 
-void CMpegPesParser::ParseMpeg2Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo)
+bool CMpegPesParser::ParseMpeg2Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo)
 {
 	//LogDebug("Found MPEG2 VIDEO");
 	int width=((tsPacket[offset]<<8) + tsPacket[offset + 1]) >> 4;
 	int height=((tsPacket[offset+1]<<8)+tsPacket[offset+2])& 0x0FFF;
 	if (width<100 || height<100)
-		return;
+		return false;
 	offset+=3;
 	int frameRateIndex = tsPacket[offset] & 0x0F;
   int aspectRatioIndex = (tsPacket[offset] & 0xF0) >> 4;
@@ -178,6 +178,7 @@ void CMpegPesParser::ParseMpeg2Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &m
 	}
 	mpeg2VideoInfo.hdr.rcTarget.left=0;
 	//LogDebug("res=%dx%d aspectRatio=%d:%d bitrate=%d isInterlaced=%d",mpeg2VideoInfo.hdr.rcSource.right,mpeg2VideoInfo.hdr.rcSource.bottom,mpeg2VideoInfo.hdr.dwPictAspectRatioX,mpeg2VideoInfo.hdr.dwPictAspectRatioY,mpeg2VideoInfo.hdr.dwBitRate,(mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
+	return true;
 }
 
 byte GetNextBit(byte* tsPacket,int &bit)
@@ -227,7 +228,7 @@ int GetNextExpGolomb(byte *tsPacket,int &curBitPos)
   return codeNum;
 }
 
-void CMpegPesParser::ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo)
+bool CMpegPesParser::ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo)
 {
 	//LogDebug("FOUND H264 VIDEO");
 	// get the width first
@@ -250,7 +251,7 @@ void CMpegPesParser::ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mp
   GetNextBit(tsPacket,curBitPos);
 	// Header did not fit in packet
 	if (curBitPos==0)
-		return;
+		return false;
 	int width = GetNextExpGolomb(tsPacket,curBitPos);
   width++;
   width <<= 4;
@@ -258,7 +259,7 @@ void CMpegPesParser::ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mp
   height++;
   height <<= 4;
 	if (width<100 || height<100)
-		return;
+		return false;
 	mpeg2VideoInfo.hdr.rcSource.right=width;
 	mpeg2VideoInfo.hdr.rcSource.bottom=height;
 	//set to progressive as default
@@ -282,14 +283,15 @@ void CMpegPesParser::ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mp
 	mpeg2VideoInfo.hdr.dwBitRate=15000000;
 	mpeg2VideoInfo.hdr.dwReserved2=0;
 	mpeg2VideoInfo.hdr.rcTarget.left=0;
+	return true;
 }
 
-void CMpegPesParser::ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo)
+bool CMpegPesParser::ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo)
 {
 	//LogDebug("Found VIDEO");
 	int off=SearchSequence(tsPacket,offset,MPEG2_SEQ_CODE);
 	if (off!=-1)
-		ParseMpeg2Video(tsPacket,off+4,mpeg2VideoInfo);
+		return ParseMpeg2Video(tsPacket,off+4,mpeg2VideoInfo);
 	          
 	int marker = 0xffffffff;
   for (; offset < 188; offset++)
@@ -303,17 +305,18 @@ void CMpegPesParser::ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2V
 		}
   }
 	if (offset<185)
-		ParseH264Video(tsPacket,offset+1,mpeg2VideoInfo);
+		return ParseH264Video(tsPacket,offset+1,mpeg2VideoInfo);
+	return false;
 }
 
-void CMpegPesParser::OnTsPacket(byte *tsPacket, CTsHeader header, MPEG2VIDEOINFO &mpeg2VideoInfo)
+bool CMpegPesParser::OnTsPacket(byte *tsPacket, CTsHeader header, MPEG2VIDEOINFO &mpeg2VideoInfo)
 {
 	if (!header.HasPayload || !header.PayloadUnitStart)
-		return;
+		return false;
 	int offset=header.PayLoadStart;
 	// Is an mpeg header following?
 	if (tsPacket[offset]!=0 || tsPacket[offset+1]!=0 || tsPacket[offset+2]!=1)
-		return;
+		return false;
 	
 	int marker=tsPacket[offset+3];
 	offset+=4;
@@ -321,7 +324,6 @@ void CMpegPesParser::OnTsPacket(byte *tsPacket, CTsHeader header, MPEG2VIDEOINFO
 	switch (marker)
 	{
 		case PES_VIDEO:
-			ParseVideo(tsPacket,offset,mpeg2VideoInfo);
-			break;
+			return ParseVideo(tsPacket,offset,mpeg2VideoInfo);
 	}
 }
