@@ -162,7 +162,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_rtspClient(m_buffer),
   m_pDVBSubtitle(NULL),
   m_pCallback(NULL),
-  m_pRequestAudioCallback(NULL)
+  m_pRequestAudioCallback(NULL),
+	m_pVideoFormatChangedCallback(NULL)
 {
  // use the following line if u r having trouble setting breakpoints
  // #pragma comment( lib, "strmbasd" )
@@ -315,14 +316,20 @@ int CTsReaderFilter::GetPinCount()
   return 3;
 }
 
-void CTsReaderFilter::OnMediaTypeChanged()
+void CTsReaderFilter::OnMediaTypeChanged(int mediaTypes)
 {
-	if ( m_pCallback ) m_pCallback->OnMediaTypeChanged();
+	if ( m_pCallback ) m_pCallback->OnMediaTypeChanged(mediaTypes);
 }
 
 void CTsReaderFilter::OnRequestAudioChange()
 {
 	if ( m_pRequestAudioCallback ) m_pRequestAudioCallback->OnRequestAudioChange();
+}
+
+void CTsReaderFilter::OnVideoFormatChanged()
+{
+	if ( m_pVideoFormatChangedCallback ) 
+		m_pVideoFormatChangedCallback->OnVideoFormatChanged();
 }
 
 STDMETHODIMP CTsReaderFilter::SetGraphCallback(ITSReaderCallback* pCallback)
@@ -336,6 +343,13 @@ STDMETHODIMP CTsReaderFilter::SetRequestAudioChangeCallback(ITSReaderAudioChange
 {
 	LogDebug("SetRequestAudioChangeCallback SET");
 	m_pRequestAudioCallback = pCallback;
+	return S_OK;
+}
+
+STDMETHODIMP CTsReaderFilter::SetVideoFormatChangedCallback(ITSReaderVideoFormatChanged* pCallback)
+{
+	LogDebug("VideoFormatChangeCallback SET");
+	m_pVideoFormatChangedCallback = pCallback;
 	return S_OK;
 }
 
@@ -526,6 +540,12 @@ STDMETHODIMP CTsReaderFilter::GetDuration(REFERENCE_TIME *dur)
 
 	return NOERROR;
 }
+STDMETHODIMP CTsReaderFilter::GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,BOOL &interlaced)
+{
+	m_demultiplexer.GetVideoFormat(width,height,aspectRatioX,aspectRatioY,bitrate,interlaced);
+	return NOERROR;
+}
+
 STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
 	LogDebug("CTsReaderFilter::Load()");

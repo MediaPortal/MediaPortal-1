@@ -273,6 +273,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\MpegPesParser.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\MultiFileReader.cpp"
 				>
 			</File>
@@ -375,6 +379,10 @@
 			</File>
 			<File
 				RelativePath=".\source\MemorySink.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\MpegPesParser.h"
 				>
 			</File>
 			<File

@@ -33,6 +33,8 @@
 #include "..\..\shared\Pcr.h"
 #include <vector>
 #include <map>
+#include <dvdmedia.h>
+#include "MpegPesParser.h"
 using namespace std;
 class CTsReaderFilter;
 class CDeMultiplexer : public CPacketSync, public IPatParserCallback
@@ -70,7 +72,8 @@ public:
   bool       GetSubtitleStreamCount(__int32 &count);
   bool       GetCurrentSubtitleStream(__int32 &stream);
   bool       GetSubtitleStreamLanguage(__int32 stream, char* szLanguage);
-  bool		 SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
+  bool			 SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
+	void       SetVideoFormatChangedCallback(void(CALLBACK *pCallback)());
 
   bool       EndOfFile();
 	bool			 HoldAudio();
@@ -86,6 +89,8 @@ public:
   void       FlushTeletext();
   //void		 SyncTeletext();
   int        GetVideoServiceType();  
+	void			 GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,BOOL &interlaced);
+
 
   void SetTeletextEventCallback(int (CALLBACK *pTeletextResetCallback)(int,DWORD64));
   void SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int));
@@ -108,6 +113,7 @@ private:
 
   vector<struct stAudioStream> m_audioStreams;
   vector<struct stSubtitleStream> m_subtitleStreams;
+	void ResetMpeg2VideoInfo();
   void GetVideoMedia(CMediaType *pmt);
   void GetH264Media(CMediaType *pmt);
   void GetMpeg4Media(CMediaType *pmt);
@@ -124,6 +130,7 @@ private:
   CCritSec m_sectionRead;
 	FileReader* m_reader;
   CPatParser m_patParser;
+	CMpegPesParser m_mpegPesParser;
   CPidTable m_pids;
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;
@@ -160,6 +167,8 @@ private:
   int m_iAudioIdx;
   int m_iPatVersion;
 
+	MPEG2VIDEOINFO m_mpeg2VideoInfo;
+	bool m_mpegParserTriggerFormatChange;
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
   CPcr m_subtitlePcr;  
@@ -169,6 +178,7 @@ private:
    int (CALLBACK *pTeletextPacketCallback)(byte*, int);
    int (CALLBACK *pTeletextEventCallback)(int,DWORD64);
    int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
+	 void (CALLBACK *pVideoFormatChangedCallback)();
 
     // used to sync teletext packets with video
 	//DWORD64 m_inVideoBuffer;
