@@ -89,7 +89,7 @@ public:
   void       FlushTeletext();
   //void		 SyncTeletext();
   int        GetVideoServiceType();  
-	void			 GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,BOOL &interlaced);
+	void			 GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,int &interlaced);
 
 
   void SetTeletextEventCallback(int (CALLBACK *pTeletextResetCallback)(int,DWORD64));

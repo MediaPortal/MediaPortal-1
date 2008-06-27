@@ -532,7 +532,7 @@ STDMETHODIMP CTsReaderFilter::GetDuration(REFERENCE_TIME *dur)
 
 	return NOERROR;
 }
-STDMETHODIMP CTsReaderFilter::GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,BOOL &interlaced)
+STDMETHODIMP CTsReaderFilter::GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,int &interlaced)
 {
 	m_demultiplexer.GetVideoFormat(width,height,aspectRatioX,aspectRatioY,bitrate,interlaced);
 	return NOERROR;

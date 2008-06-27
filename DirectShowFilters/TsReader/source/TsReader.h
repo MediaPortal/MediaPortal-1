@@ -125,7 +125,7 @@ public:
 	// ITSReader
 	STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
 	STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
-	STDMETHODIMP    GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,BOOL &interlaced);
+	STDMETHODIMP    GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,int &interlaced);
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);

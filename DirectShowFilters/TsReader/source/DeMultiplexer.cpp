@@ -102,7 +102,7 @@ int CDeMultiplexer::GetVideoServiceType()
   return m_pids.videoServiceType;
 }
 
-void CDeMultiplexer::GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,BOOL &interlaced)
+void CDeMultiplexer::GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,int &interlaced)
 {
 	if (m_mpeg2VideoInfo.hdr.dwReserved2!=0)
 		return;
@@ -111,7 +111,10 @@ void CDeMultiplexer::GetVideoFormat(int &width,int &height, int &aspectRatioX,in
 	aspectRatioX=m_mpeg2VideoInfo.hdr.dwPictAspectRatioX;
 	aspectRatioY=m_mpeg2VideoInfo.hdr.dwPictAspectRatioY;
 	bitrate=m_mpeg2VideoInfo.hdr.dwBitRate;
-	interlaced=((m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced)==AMINTERLACE_IsInterlaced);
+	if ((m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced)==AMINTERLACE_IsInterlaced)
+		interlaced=1;
+	else
+		interlaced=0;
 }
 
 void CDeMultiplexer::GetVideoMedia(CMediaType *pmt)
