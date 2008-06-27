@@ -505,9 +505,12 @@ namespace TvControl
       {
         try
         {
-          if (User.CardId < 0) return false;
+          //if (User.CardId < 0) return false;
           RemoteControl.HostName = _server;
-          return RemoteControl.Instance.IsRecording(ref _user);
+          //return RemoteControl.Instance.IsRecording(ref _user); //we will never get anything useful out of this, since the rec user is called schedulerxyz and not ex. user.name = htpc
+          VirtualCard vc;
+          bool isRec = RemoteControl.Instance.IsRecording(this.ChannelName, out vc);          
+          return (isRec && vc.Id == this.Id);
         }
         catch (Exception ex)
         {

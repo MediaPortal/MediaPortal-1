@@ -258,7 +258,7 @@ namespace TvPlugin
       {
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
-            if (message.SenderControlId == 35) // listbox
+            if (message.SenderControlId == 35 || message.SenderControlId == 37) // listbox
             {
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
@@ -651,25 +651,46 @@ namespace TvPlugin
 
             switch (CurrentChanState)
             {
-              case (int)ChannelState.nottunable: //not avail.
-                sb.Append(" ");
-                sb.Append(local1056);
+              case (int)ChannelState.nottunable: //not avail.                
                 item.IsPlayed = true;
-                if (showChannelStateIcons) item.PinImage = Thumbs.TvIsUnavailableIcon;
+                if (showChannelStateIcons)
+                {
+                  item.PinImage = Thumbs.TvIsUnavailableIcon;
+                }
+                else
+                {
+                  sb.Append(" ");
+                  sb.Append(local1056);
+                }
                 break;
-              case (int)ChannelState.timeshifting: // timeshifting
-                sb.Append(" ");
-                sb.Append(local1055);
-                if (showChannelStateIcons) item.PinImage = Thumbs.TvIsTimeshiftingIcon;
+              case (int)ChannelState.timeshifting: // timeshifting                
+                if (showChannelStateIcons)
+                {
+                  item.PinImage = Thumbs.TvIsTimeshiftingIcon;
+                }
+                else
+                {
+                  sb.Append(" ");
+                  sb.Append(local1055);
+                }
                 break;
-              case (int)ChannelState.recording: // recording
-                sb.Append(" ");
-                sb.Append(local1054);
-                if (showChannelStateIcons) item.PinImage = Thumbs.TvIsRecordingIcon;                          
+              case (int)ChannelState.recording: // recording                
+                if (showChannelStateIcons)
+                {
+                  item.PinImage = Thumbs.TvIsRecordingIcon;
+                }
+                else
+                {
+                  sb.Append(" ");
+                  sb.Append(local1054);
+                }
                 break;
               default:
                 item.IsPlayed = false;
-                if (showChannelStateIcons) item.PinImage = Thumbs.TvIsAvailableIcon;
+                if (showChannelStateIcons)
+                {
+                  item.PinImage = Thumbs.TvIsAvailableIcon;
+                }
                 break;
             }
           }

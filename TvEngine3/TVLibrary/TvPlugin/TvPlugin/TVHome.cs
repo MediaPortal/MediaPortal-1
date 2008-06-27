@@ -935,7 +935,8 @@ namespace TvPlugin
         }
         else
         {
-          bool res = HandleServerNotConnected();
+          bool res = HandleServerNotConnected();          
+
           UpdateStateOfButtons();
           UpdateProgressPercentageBar();
           UpdateRecordingIndicator();
@@ -1067,7 +1068,8 @@ namespace TvPlugin
           }
 
           ViewChannelAndCheck(channel);
-        }
+        }        
+
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.DisplayName);
       }
@@ -1123,6 +1125,20 @@ namespace TvPlugin
           GUIWindowManager.ShowPreviousWindow();
         }
       }
+
+      /*
+      string currentChannel = TVHome.Navigator.CurrentChannel;
+      if (currentChannel != null && currentChannel.Length > 0)
+      {
+        TvServer server = new TvServer();
+        VirtualCard vc;
+        server.IsRecording(currentChannel, out vc);
+        if (vc != null)
+        {
+          TVHome.Card = vc;
+        }
+      }      
+      */
 
       _onPageLoadDone = true;
       _resumed = false;
@@ -1365,6 +1381,9 @@ namespace TvPlugin
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return;
 
+      UpdateRecordingIndicator();
+      UpdateStateOfButtons();
+
       if (!TVHome.Card.IsTimeShifting) return;
 
       // BAV, 02.03.08: a channel change should not be delayed by rendering.
@@ -1382,8 +1401,7 @@ namespace TvPlugin
     #endregion
 
     private void doProcess()
-    {
-      UpdateRecordingIndicator();
+    {      
       if (btnChannel.Disabled != false)
         btnChannel.Disabled = false;
       //if (btnGroup.Disabled != false)
@@ -1431,8 +1449,7 @@ namespace TvPlugin
       string currchan = Navigator.CurrentChannel;		// Remember current channel
       Navigator.UpdateCurrentChannel();
       bool channelchanged = currchan != Navigator.CurrentChannel;
-
-      UpdateStateOfButtons();
+      
       UpdateProgressPercentageBar();
 
       GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
@@ -1780,7 +1797,7 @@ namespace TvPlugin
             newSchedule.Persist();
             server.OnNewSchedule();
             lastActiveRecChannelId = Navigator.Channel.IdChannel;
-            lastRecordTime = DateTime.Now;
+            lastRecordTime = DateTime.Now;            
           }
         }
       }
@@ -1814,14 +1831,15 @@ namespace TvPlugin
       {
         btnTeletext.IsVisible = hasTeletext;
       }
-      //are we recording a tv program?
-      VirtualCard card;
+      //are we recording a tv program?      
       if (Navigator.Channel != null && TVHome.Card != null)
-      {
+      {                          
+        string label;        
         TvServer server = new TvServer();
-        string label;
-        if (server.IsRecording(Navigator.Channel.Name, out card))
+        VirtualCard vc;
+        if (server.IsRecording(TVHome.Navigator.CurrentChannel, out vc))
         {
+          TVHome.Card = vc;
           //yes then disable the timeshifting on/off buttons
           //and change the Record Now button into Stop Record
           label = GUILocalizeStrings.Get(629);//stop record
@@ -1836,6 +1854,7 @@ namespace TvPlugin
         {
           btnRecord.Label = label;
         }
+        
       }
     }
 
