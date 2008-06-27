@@ -47,16 +47,12 @@ DEFINE_GUID(IID_ITSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0
 DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
 {
 	STDMETHOD(OnMediaTypeChanged) (int mediaTypes)PURE;	
+	STDMETHOD(OnVideoFormatChanged) (THIS_)PURE;	
 };
 
 DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
 {	
 	STDMETHOD(OnRequestAudioChange) (THIS_)PURE;
-};
-
-DECLARE_INTERFACE_(ITSReaderVideoFormatChanged, IUnknown)
-{
-	STDMETHOD(OnVideoFormatChanged) (THIS_)PURE;	
 };
 
   MIDL_INTERFACE("b9559486-e1bb-45d3-a2a2-9a7afe49b24f")
@@ -68,8 +64,6 @@ DECLARE_INTERFACE_(ITSReaderVideoFormatChanged, IUnknown)
 		) = 0;		        
 			virtual HRESULT STDMETHODCALLTYPE SetRequestAudioChangeCallback( 
 								ITSReaderAudioChange* pCallback) = 0;
-			virtual HRESULT STDMETHODCALLTYPE SetVideoFormatChangedCallback( 
-								ITSReaderVideoFormatChanged* pCallback) = 0;
 		  virtual HRESULT STDMETHODCALLTYPE GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,int &interlaced) PURE;
   };
 
@@ -131,7 +125,6 @@ public:
 	// ITSReader
 	STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
 	STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
-	STDMETHODIMP	  SetVideoFormatChangedCallback(ITSReaderVideoFormatChanged* pCallback);
 	STDMETHODIMP    GetVideoFormat(int &width,int &height, int &aspectRatioX,int &aspectRatioY,int &bitrate,BOOL &interlaced);
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
@@ -187,6 +180,5 @@ private:
   IDVBSubtitle*   m_pDVBSubtitle;
   ITSReaderCallback* m_pCallback;
   ITSReaderAudioChange* m_pRequestAudioCallback;
-	ITSReaderVideoFormatChanged* m_pVideoFormatChangedCallback;
 };
 

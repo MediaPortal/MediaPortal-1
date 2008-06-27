@@ -162,8 +162,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_rtspClient(m_buffer),
   m_pDVBSubtitle(NULL),
   m_pCallback(NULL),
-  m_pRequestAudioCallback(NULL),
-	m_pVideoFormatChangedCallback(NULL)
+  m_pRequestAudioCallback(NULL)
 {
  // use the following line if u r having trouble setting breakpoints
  // #pragma comment( lib, "strmbasd" )
@@ -328,8 +327,8 @@ void CTsReaderFilter::OnRequestAudioChange()
 
 void CTsReaderFilter::OnVideoFormatChanged()
 {
-	if ( m_pVideoFormatChangedCallback ) 
-		m_pVideoFormatChangedCallback->OnVideoFormatChanged();
+	if ( m_pCallback ) 
+		m_pCallback->OnVideoFormatChanged();
 }
 
 STDMETHODIMP CTsReaderFilter::SetGraphCallback(ITSReaderCallback* pCallback)
@@ -343,13 +342,6 @@ STDMETHODIMP CTsReaderFilter::SetRequestAudioChangeCallback(ITSReaderAudioChange
 {
 	LogDebug("SetRequestAudioChangeCallback SET");
 	m_pRequestAudioCallback = pCallback;
-	return S_OK;
-}
-
-STDMETHODIMP CTsReaderFilter::SetVideoFormatChangedCallback(ITSReaderVideoFormatChanged* pCallback)
-{
-	LogDebug("VideoFormatChangeCallback SET");
-	m_pVideoFormatChangedCallback = pCallback;
 	return S_OK;
 }
 
