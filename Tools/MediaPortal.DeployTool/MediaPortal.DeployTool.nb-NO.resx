@@ -490,4 +490,12 @@ Den ødelagte oppsett filen vil nå bli slettet, hvis den finnes.</value>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Stille inn Windows Firewall til å akseptere ekstern tilkobling for MediaPortal</value>
   </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Beta versjon av en Service pakke funnet, ditt system er derfor ikke støttet...
+Fortsett på egen risiko!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Programmet vil nå avslutte å deretter åpne folderen "MediaPortal Installation".
+Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaPortal.DeployTool.ee"</value>
+  </data>
 </root>
