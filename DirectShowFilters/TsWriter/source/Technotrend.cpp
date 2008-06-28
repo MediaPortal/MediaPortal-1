@@ -444,7 +444,7 @@ STDMETHODIMP CTechnotrend::IsTechnoTrend( BOOL* yesNo)
 STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
 {
   *yesNo=FALSE;
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK) // ||m_slotStatus==CI_SLOT_DBG_MSG)
+  if (m_ciSlotAvailable == 1 && m_slotStatus==CI_SLOT_CA_OK) // || m_slotStatus==CI_SLOT_MODULE_OK ||m_slotStatus==CI_SLOT_DBG_MSG)
   {
     *yesNo=TRUE;
   }
@@ -459,7 +459,7 @@ STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
 STDMETHODIMP CTechnotrend::IsCamPresent( BOOL* yesNo)
 {
   *yesNo=TRUE;
-  if (m_slotStatus==CI_SLOT_EMPTY || m_slotStatus==CI_SLOT_UNKNOWN_STATE)
+  if (m_ciSlotAvailable == 0 || m_slotStatus==CI_SLOT_EMPTY || m_slotStatus==CI_SLOT_UNKNOWN_STATE)
   {
     *yesNo=FALSE;
   }
