@@ -394,39 +394,37 @@ namespace TvPlugin
       if (lstChannels != null) return; //already set, leave.
 
       if (TVHome.ShowChannelStateIcons() && lstChannelsWithStateIcons != null) 
-      {
-        lstChannels = lstChannelsWithStateIcons;
+      {        
         lstChannelsNoStateIcons.IsVisible = false;
         lstChannelsWithStateIcons.IsVisible = true;
+        lstChannels = lstChannelsWithStateIcons;
       }
       else if (!TVHome.ShowChannelStateIcons() && lstChannelsNoStateIcons != null)
-      {
-        lstChannels = lstChannelsNoStateIcons;
+      {        
         lstChannelsNoStateIcons.IsVisible = true;
 
         if (lstChannelsWithStateIcons != null)
         {
           lstChannelsWithStateIcons.IsVisible = false;
         }
+        lstChannels = lstChannelsNoStateIcons;
       }
 
       //set default objects just in case
       if (lstChannels == null)
       {
         if (lstChannelsNoStateIcons != null)
-        {
-          lstChannels = lstChannelsNoStateIcons;
+        {          
           lstChannelsNoStateIcons.IsVisible = true;
 
           if (lstChannelsWithStateIcons != null)
           {
             lstChannelsWithStateIcons.IsVisible = false;
           }
+          lstChannels = lstChannelsNoStateIcons;
         }
         else
-        {
-          lstChannels = lstChannelsWithStateIcons;
-
+        {          
           if (lstChannelsWithStateIcons != null)
           {
             lstChannelsWithStateIcons.IsVisible = true;
@@ -435,6 +433,7 @@ namespace TvPlugin
           {
             lstChannelsNoStateIcons.IsVisible = false;
           }
+          lstChannels = lstChannelsWithStateIcons;
         }
       }
     }
