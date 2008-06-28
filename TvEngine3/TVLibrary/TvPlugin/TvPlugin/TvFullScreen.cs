@@ -1449,6 +1449,10 @@ namespace TvPlugin
       //dlg.AddLocalizedString(915); // TV Channels
       dlg.AddLocalizedString(4); // TV Guide
 
+      GUIListItem item=new GUIListItem("Show AudioDualMonoMode");
+      item.ItemId=999;
+      dlg.Add(item);
+
       TvBusinessLayer layer = new TvBusinessLayer();
       IList linkages = layer.GetLinkagesForChannel(TVHome.Navigator.Channel);
       if (linkages != null)
@@ -1471,6 +1475,10 @@ namespace TvPlugin
       if (g_Player.AudioStreams > 0)
       {
         dlg.AddLocalizedString(492); // Audio language menu
+      }
+      if (g_Player.GetSupportedAudioDualMonoMode() == eAVDecAudioDualMono.IsDualMono)
+      {
+        dlg.AddLocalizedString(200059); // Audio dual mono mode menu
       }
       dlg.AddLocalizedString(11000);  // Crop settings
 
@@ -1587,6 +1595,10 @@ namespace TvPlugin
 
         case 492: // Show audio language menu
           ShowAudioLanguageMenu();
+          break;
+
+        case 200059: 
+          ShowAudioDualMonoModeMenu();
           break;
 
         case 12902: // MSN Messenger
@@ -1913,7 +1925,29 @@ namespace TvPlugin
       {        
         g_Player.CurrentAudioStream = dlg.SelectedLabel;               
       }
-    }    
+    }
+
+    void ShowAudioDualMonoModeMenu()
+    {
+      if (dlg == null) return;
+      dlg.Reset();
+      dlg.SetHeading(200059); // audio dual mono mode 
+
+      dlg.AddLocalizedString(200060); // stereo 
+      dlg.AddLocalizedString(200061); //Left channel to the left and right speakers
+      dlg.AddLocalizedString(200062); //Right channel to the left and right speakers
+      dlg.AddLocalizedString(200063); //Mix both
+
+      eAVDecAudioDualMonoReproMode mode = g_Player.GetAudioDualMonoMode();
+      dlg.SelectedLabel = (int)mode;
+      _isDialogVisible = true;
+
+      dlg.DoModal(GetID);
+
+      _isDialogVisible = false;
+      if (dlg.SelectedLabel < 0) return;
+        g_Player.SetAudioDualMonoMode((eAVDecAudioDualMonoReproMode)dlg.SelectedLabel);
+    }
 
     void ShowLinkedChannelsMenu(IList linkages)
     {
