@@ -1449,10 +1449,6 @@ namespace TvPlugin
       //dlg.AddLocalizedString(915); // TV Channels
       dlg.AddLocalizedString(4); // TV Guide
 
-      GUIListItem item=new GUIListItem("Show AudioDualMonoMode");
-      item.ItemId=999;
-      dlg.Add(item);
-
       TvBusinessLayer layer = new TvBusinessLayer();
       IList linkages = layer.GetLinkagesForChannel(TVHome.Navigator.Channel);
       if (linkages != null)
