@@ -37,7 +37,7 @@ namespace TvControl
   {
     static IController _tvControl;
     static string _hostName = "localhost";
-    private static uint _timeOut = 30000; // specified in ms (currently all remoting calls are aborted if processing takes more than 30 sec)
+    private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
 
     /// <summary>
     /// Gets or sets the name the hostname of the master tv-server.
