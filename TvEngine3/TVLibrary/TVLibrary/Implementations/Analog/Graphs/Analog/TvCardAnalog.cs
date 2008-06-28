@@ -2377,6 +2377,14 @@ namespace TvLibrary.Implementations.Analog
                   isTsFilter = false;
                   break;
                 }
+
+                // NVTV dual tuner needs this one to make it work so dont skip it
+                if (mediaTypes[media].majorType == MediaType.Video &&
+                    mediaTypes[media].subType == new Guid("be626472-fe7c-4a21-9f0b-d8f18b5ab441")) /*MediaSubType.?? */
+                {
+                  isTsFilter = false;
+                  break;
+                }
               }
             }
           }
