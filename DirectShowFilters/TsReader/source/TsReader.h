@@ -47,7 +47,7 @@ DEFINE_GUID(IID_ITSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0
 DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
 {
 	STDMETHOD(OnMediaTypeChanged) (int mediaTypes)PURE;	
-	STDMETHOD(OnVideoFormatChanged) (THIS_)PURE;	
+	STDMETHOD(OnVideoFormatChanged) (int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced)PURE;	
 };
 
 DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
@@ -64,7 +64,7 @@ DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
 		) = 0;		        
 			virtual HRESULT STDMETHODCALLTYPE SetRequestAudioChangeCallback( 
 								ITSReaderAudioChange* pCallback) = 0;
-		  virtual HRESULT STDMETHODCALLTYPE GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced) PURE;
+		  //virtual HRESULT STDMETHODCALLTYPE GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced) PURE;
   };
 
 class CTsReaderFilter : public CSource, 
@@ -125,7 +125,6 @@ public:
 	// ITSReader
 	STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
 	STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
-	STDMETHODIMP    GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced);
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
@@ -148,7 +147,7 @@ public:
   CRefTime        Compensation;
   void				    OnMediaTypeChanged(int mediaTypes);
   void				    OnRequestAudioChange();
-	void						OnVideoFormatChanged();
+	void						OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced);
   bool			      IsStreaming();
 protected:
   void ThreadProc();

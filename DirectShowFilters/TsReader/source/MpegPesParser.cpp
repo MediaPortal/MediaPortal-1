@@ -159,6 +159,8 @@ bool CMpegPesParser::ParseMpeg2Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &m
 
 	mpeg2VideoInfo.hdr.dwBitRate=bitRate;
 	SetAspectRatio(aspectRatioIndex,mpeg2VideoInfo);
+		// set the video stream type
+	mpeg2VideoInfo.hdr.dwReserved1=1;
 	mpeg2VideoInfo.hdr.dwReserved2=0;
 
 	mpeg2VideoInfo.hdr.bmiHeader.biSize=40;
@@ -281,6 +283,8 @@ bool CMpegPesParser::ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mp
 		}
 	}
 	mpeg2VideoInfo.hdr.dwBitRate=15000000;
+	// set the video stream type
+	mpeg2VideoInfo.hdr.dwReserved1=2;
 	mpeg2VideoInfo.hdr.dwReserved2=0;
 	mpeg2VideoInfo.hdr.rcTarget.left=0;
 	return true;

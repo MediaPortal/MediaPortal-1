@@ -325,10 +325,10 @@ void CTsReaderFilter::OnRequestAudioChange()
 	if ( m_pRequestAudioCallback ) m_pRequestAudioCallback->OnRequestAudioChange();
 }
 
-void CTsReaderFilter::OnVideoFormatChanged()
+void CTsReaderFilter::OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced)
 {
 	if ( m_pCallback ) 
-		m_pCallback->OnVideoFormatChanged();
+		m_pCallback->OnVideoFormatChanged(streamType,width,height,aspectRatioX,aspectRatioY,bitrate,isInterlaced);
 }
 
 STDMETHODIMP CTsReaderFilter::SetGraphCallback(ITSReaderCallback* pCallback)
@@ -530,11 +530,6 @@ STDMETHODIMP CTsReaderFilter::GetDuration(REFERENCE_TIME *dur)
 	CAutoLock lock (&m_CritSecDuration);
   *dur = (REFERENCE_TIME)m_duration.Duration();
 
-	return NOERROR;
-}
-STDMETHODIMP CTsReaderFilter::GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced)
-{
-	m_demultiplexer.GetVideoFormat(width,height,aspectRatioX,aspectRatioY,bitrate,interlaced);
 	return NOERROR;
 }
 

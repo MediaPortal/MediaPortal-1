@@ -40,7 +40,7 @@ extern void LogDebug(const char *fmt, ...) ;
 #define READ_SIZE (1316*30)
 
 // *** UNCOMMENT THE NEXT LINE TO ENABLE DYNAMIC VIDEO PIN HANDLING!!!! ******
-//#define USE_DYNAMIC_PINS
+#define USE_DYNAMIC_PINS
 
 
 CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
@@ -104,21 +104,6 @@ void CDeMultiplexer::ResetMpeg2VideoInfo()
 int CDeMultiplexer::GetVideoServiceType()
 {
   return m_pids.videoServiceType;
-}
-
-void CDeMultiplexer::GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced)
-{
-	if (m_mpeg2VideoInfo.hdr.dwReserved2!=0)
-		return;
-	*width=m_mpeg2VideoInfo.hdr.rcSource.right;
-	*height=m_mpeg2VideoInfo.hdr.rcSource.bottom;
-	*aspectRatioX=m_mpeg2VideoInfo.hdr.dwPictAspectRatioX;
-	*aspectRatioY=m_mpeg2VideoInfo.hdr.dwPictAspectRatioY;
-	*bitrate=m_mpeg2VideoInfo.hdr.dwBitRate;
-	if ((m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced)==AMINTERLACE_IsInterlaced)
-		*interlaced=1;
-	else
-		*interlaced=0;
 }
 
 void CDeMultiplexer::GetVideoMedia(CMediaType *pmt)
@@ -795,6 +780,8 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 	int lastVidResX=m_mpeg2VideoInfo.hdr.rcSource.right;
 	int lastVidResY=m_mpeg2VideoInfo.hdr.rcSource.bottom;
 	m_mpegPesParser.OnTsPacket(tsPacket,header,m_mpeg2VideoInfo);
+	int streamType=m_mpeg2VideoInfo.hdr.dwReserved1;
+	m_mpeg2VideoInfo.hdr.dwReserved1=0;
 	if (lastVidResX!=m_mpeg2VideoInfo.hdr.rcSource.right || lastVidResY!=m_mpeg2VideoInfo.hdr.rcSource.bottom)
 	{
 		LogDebug("DeMultiplexer: video format changed: res=%dx%d aspectRatio=%d:%d bitrate=%d isInterlaced=%d",m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
@@ -805,7 +792,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 			m_mpegParserTriggerFormatChange=false;
 		}
 		LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
-		m_filter.OnVideoFormatChanged();
+		m_filter.OnVideoFormatChanged(streamType,m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
 	}
 	#endif
 
