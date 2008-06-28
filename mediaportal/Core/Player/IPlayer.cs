@@ -81,6 +81,21 @@ namespace MediaPortal.Player
     }
   }
 
+  public enum eAVDecAudioDualMono
+  {
+    IsNotDualMono = 0,
+    IsDualMono = 1,
+    UnSpecified = 2,
+    UNSUPPORTED=3
+  }
+  public enum eAVDecAudioDualMonoReproMode
+  {
+    STEREO = 0,
+    LEFT_MONO = 1,
+    RIGHT_MONO = 2,
+    MIX_MONO = 3,
+    UNSUPPORTED=4
+  }; 
 
   /// <summary>
   /// This class holds the IPlayer interface which must be implemented by any interal player like
@@ -677,6 +692,19 @@ namespace MediaPortal.Player
     public virtual VideoStreamFormat GetVideoFormat()
     {
       return new VideoStreamFormat();
+    }
+
+    public virtual eAVDecAudioDualMono GetSupportedAudioDualMonoMode()
+    {
+      return eAVDecAudioDualMono.UNSUPPORTED;
+    }
+    public virtual eAVDecAudioDualMonoReproMode GetAudioDualMonoMode()
+    {
+      return eAVDecAudioDualMonoReproMode.UNSUPPORTED;
+    }
+    public virtual bool SetAudioDualMonoMode(eAVDecAudioDualMonoReproMode mode)
+    {
+      return false;
     }
 
 

@@ -2148,17 +2148,18 @@ namespace DirectShowLib
   [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
   Guid("901db4c7-31ce-41a2-85dc-8fa0bf41b8da"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+
   public interface ICodecAPI
   {
     [PreserveSig]
     int IsSupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
 
     [PreserveSig]
-    int IsModifiable([In] Guid Api);
+    int IsModifiable([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
 
     [PreserveSig]
     int GetParameterRange(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [Out] out object ValueMin,
         [Out] out object ValueMax,
         [Out] out object SteppingDelta
@@ -2166,44 +2167,44 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetParameterValues(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [Out] out object[] Values,
         [Out] out int ValuesCount
         );
 
     [PreserveSig]
     int GetDefaultValue(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [Out] out object Value
         );
 
     [PreserveSig]
     int GetValue(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [Out] out object Value
         );
 
     [PreserveSig]
     int SetValue(
-        [In] Guid Api,
-        [In] object Value
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+        [In] ref object Value
         );
 
     [PreserveSig]
     int RegisterForEvent(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [In] IntPtr userData
         );
 
     [PreserveSig]
-    int UnregisterForEvent([In] Guid Api);
+    int UnregisterForEvent([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
 
     [PreserveSig]
     int SetAllDefaults();
 
     [PreserveSig]
     int SetValueWithNotify(
-        [In] Guid Api,
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [In] object Value,
         [Out] out Guid[] ChangedParam,
         [Out] int ChangedParamCount
@@ -2236,7 +2237,7 @@ namespace DirectShowLib
 #else
 [In] IStream pStream,
 #endif
- [Out] out Guid[] ChangedParam,
+ [Out, MarshalAs(UnmanagedType.LPStruct)] out Guid[] ChangedParam,
  [Out] out int ChangedParamCount
  );
   }

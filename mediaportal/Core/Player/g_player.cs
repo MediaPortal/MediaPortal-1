@@ -1675,6 +1675,28 @@ namespace MediaPortal.Player
         return _player.GetVideoFormat();
     }
 
+    public static eAVDecAudioDualMono GetSupportedAudioDualMonoMode()
+    {
+      if (_player == null)
+        return eAVDecAudioDualMono.UNSUPPORTED;
+      else
+        return _player.GetSupportedAudioDualMonoMode();
+    }
+    public static eAVDecAudioDualMonoReproMode GetAudioDualMonoMode()
+    {
+      if (_player == null)
+        return eAVDecAudioDualMonoReproMode.UNSUPPORTED;
+      else
+        return _player.GetAudioDualMonoMode();
+    }
+    public static bool SetAudioDualMonoMode(eAVDecAudioDualMonoReproMode mode)
+    {
+      if (_player == null)
+        return false;
+      else
+        return _player.SetAudioDualMonoMode(mode);
+    }
+
     #region subtitle/audio stream selection
 
     /// <summary>

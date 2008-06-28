@@ -181,6 +181,7 @@ namespace MediaPortal.Player
       _mediaType = type;
       _videoFormat = new VideoStreamFormat();
     }
+
     #endregion
 
     #region public members
@@ -1224,6 +1225,117 @@ namespace MediaPortal.Player
     {
       return _videoFormat;
     }
+
+    public override eAVDecAudioDualMono GetSupportedAudioDualMonoMode()
+    {
+      Guid CODECAPI_AVDecAudioDualMono = new Guid(0x4a52cda8, 0x30f8, 0x4216, 0xbe, 0x0f, 0xba, 0x0b, 0x20, 0x25, 0x92, 0x1d);
+      IPin inPin = null;
+      IEnumPins pinEnum;
+      _audioCodecFilter.EnumPins(out pinEnum);
+      IPin[] pins = new IPin[1];
+      int fetched;
+      while (pinEnum.Next(1, pins, out fetched) == 0)
+      {
+        PinDirection pinDir;
+        pins[0].QueryDirection(out pinDir);
+        if (pinDir == PinDirection.Input)
+        {
+          inPin = pins[0];
+          break;
+        }
+      }
+      
+      if (inPin == null)
+      {
+        Log.Error("TsReaderPlayer: Failed to retrieve input pin of audio codec filter");
+        return eAVDecAudioDualMono.UNSUPPORTED;
+      }
+      ICodecAPI codecApi = null;
+      try
+      {
+        codecApi = inPin as ICodecAPI;
+      }
+      catch (Exception)
+      {
+        Log.Error("TsReaderPlayer: ICodecAPI interface not supported by audio codec filter's input pin");
+        return eAVDecAudioDualMono.UNSUPPORTED;
+      }
+      if (codecApi == null)
+      {
+        Log.Error("TsReaderPlayer: ICodecAPI interface not supported by audio codec filter's input pin");
+        return eAVDecAudioDualMono.UNSUPPORTED;
+      }
+      object oMode;
+      int hr = codecApi.GetValue(CODECAPI_AVDecAudioDualMono, out oMode);
+      if (hr != 0)
+      {
+        Log.Info("TsReaderPlayer: GetSupportedAudioDualMonoMode failed 0x{1:X}",  hr);
+        return eAVDecAudioDualMono.UNSUPPORTED;
+      }
+      int iMode = Marshal.ReadInt32(oMode, 0);
+      eAVDecAudioDualMono mode = (eAVDecAudioDualMono)iMode;
+      Log.Info("TsReaderPlayer: GetSupportedAudioDualMonoMode mode={0} succeeded", mode.ToString(), hr);
+      return mode;
+    }
+    public override eAVDecAudioDualMonoReproMode GetAudioDualMonoMode()
+    {
+      Guid CODECAPI_AVDecAudioDualMonoReproMode = new Guid(0xa5106186, 0xcc94, 0x4bc9, 0x8c, 0xd9, 0xaa, 0x2f, 0x61, 0xf6, 0x80, 0x7e);
+      ICodecAPI codecApi = null;
+      try
+      {
+        codecApi = _audioCodecFilter as ICodecAPI;
+      }
+      catch (Exception)
+      {
+        Log.Error("TsReaderPlayer: ICodecAPI interface not supported by audio codec filter");
+        return eAVDecAudioDualMonoReproMode.UNSUPPORTED;
+      }
+      if (codecApi == null)
+      {
+        Log.Error("TsReaderPlayer: ICodecAPI interface not supported by audio codec filter");
+        return eAVDecAudioDualMonoReproMode.UNSUPPORTED;
+      }
+      object oMode;
+      int hr = codecApi.GetValue(CODECAPI_AVDecAudioDualMonoReproMode, out oMode);
+      if (hr != 0)
+      {
+        Log.Info("TsReaderPlayer: GetAudioDualMonoMode failed 0x{0:X}", hr);
+        return eAVDecAudioDualMonoReproMode.UNSUPPORTED;
+      }
+      int iMode = Marshal.ReadInt32(oMode, 0);
+      eAVDecAudioDualMonoReproMode mode = (eAVDecAudioDualMonoReproMode)iMode;
+      Log.Info("TsReaderPlayer: SetAudioDualMonoMode mode={0} succeeded", mode.ToString(), hr);
+      return mode;
+    }
+    public override bool SetAudioDualMonoMode(eAVDecAudioDualMonoReproMode mode)
+    {
+      Guid CODECAPI_AVDecAudioDualMonoReproMode = new Guid(0xa5106186, 0xcc94, 0x4bc9, 0x8c, 0xd9, 0xaa, 0x2f, 0x61, 0xf6, 0x80, 0x7e);
+      ICodecAPI codecApi = null;
+      try
+      {
+        codecApi = _audioCodecFilter as ICodecAPI;
+      }
+      catch (Exception)
+      {
+        Log.Error("TsReaderPlayer: ICodecAPI interface not supported by audio codec filter");
+        return false;
+      }
+      if (codecApi == null)
+      {
+        Log.Error("TsReaderPlayer: ICodecAPI interface not supported by audio codec filter");
+        return false;
+      }
+      object oMode = (int)mode;
+      Marshal.WriteInt32(oMode, 0, (int)mode);
+      int hr = codecApi.SetValue(CODECAPI_AVDecAudioDualMonoReproMode, ref oMode);
+      if (hr != 0)
+      {
+        Log.Info("TsReaderPlayer: SetAudioDualMonoMode mode={0} failed 0x{1:X}", mode.ToString(), hr);
+      }
+      else
+        Log.Info("TsReaderPlayer: SetAudioDualMonoMode mode={0} succeeded", mode.ToString(), hr);
+      return (hr == 0);
+    }	
     #endregion
 
     #region private/protected members
