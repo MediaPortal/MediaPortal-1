@@ -27,5 +27,10 @@
     <String id="34003">Neighbor:</String>
     <String id="34048">My neighbor's radio</String>
 	<String id="200051">Invalid video file</String>
+	<String id="200059">Audio Dual Mono Mode</String>
+	<String id="200060">Stereo</String>
+	<String id="200061">Left channel to the left and right speakers</String>
+	<String id="200062">Right channel to the left and right speakers</String>
+	<String id="200063">Mix both</String>		
   </Section>
 </Language>

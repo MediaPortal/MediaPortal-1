@@ -1743,5 +1743,10 @@
     <String id="200051">Videodatei ist ungültig</String>
     <String id="200052">Laufende Aufnahmen</String>
     <String id="200053">Keine laufenden Aufnahmen</String>
+	<String id="200059">Audio Dual Mono Mode</String>
+	<String id="200060">Stereo</String>
+	<String id="200061">Linker Kanal auf beide</String>
+	<String id="200062">Rechter Kanal auf beide</String>
+	<String id="200063">Beide Kanäle mischen</String>
   </Section>
 </Language>

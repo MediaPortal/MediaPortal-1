@@ -1092,6 +1092,9 @@ namespace MediaPortal.GUI.Video
       if (g_Player.AudioStreams > 1)
         dlg.AddLocalizedString(492);
 
+      if (g_Player.GetSupportedAudioDualMonoMode() == eAVDecAudioDualMono.IsDualMono)
+        dlg.AddLocalizedString(200059); // Audio dual mono mode menu
+
       // SubTitle stream selection, show only when there exists any streams,
       //    dialog shows then the streams and an item to disable them
       if (g_Player.SubtitleStreams > 0)
@@ -1129,6 +1132,9 @@ namespace MediaPortal.GUI.Video
         // Add audio stream selection to be able to switch audio streams in .ts recordings
         case 492:
           ShowAudioStreamsMenu();
+          break;
+        case 200059:
+          ShowAudioDualMonoModeMenu();
           break;
         case 462:
           ShowSubtitleStreamsMenu();
@@ -1206,6 +1212,25 @@ namespace MediaPortal.GUI.Video
       if (dlg.SelectedId == -1) return;
       if (dlg.SelectedLabel != g_Player.CurrentAudioStream)
         g_Player.CurrentAudioStream = dlg.SelectedLabel;
+    }
+    void ShowAudioDualMonoModeMenu()
+    {
+      if (dlg == null) return;
+      dlg.Reset();
+      dlg.SetHeading(200059); // audio dual mono mode 
+
+      dlg.AddLocalizedString(200060); // stereo 
+      dlg.AddLocalizedString(200061); //Left channel to the left and right speakers
+      dlg.AddLocalizedString(200062); //Right channel to the left and right speakers
+      dlg.AddLocalizedString(200063); //Mix both
+
+      eAVDecAudioDualMonoReproMode mode = g_Player.GetAudioDualMonoMode();
+      dlg.SelectedLabel = (int)mode;
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedLabel < 0) return;
+      g_Player.SetAudioDualMonoMode((eAVDecAudioDualMonoReproMode)dlg.SelectedLabel);
     }
 
     void ShowSubtitleStreamsMenu()
