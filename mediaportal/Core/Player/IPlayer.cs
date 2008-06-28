@@ -30,6 +30,58 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
 {
+  public enum VideoStreamType
+  {
+    MPEG2=1,
+    H264=2,
+    MPEG4
+  }
+  public class VideoFormat
+  {
+    public VideoStreamType streamType;
+    public int width;
+    public int height;
+    public int arX;
+    public int arY;
+    public int bitrate;
+    public bool isInterlaced;
+
+    private bool _valid;
+
+    public bool IsValid
+    {
+      get
+      {
+        return _valid;
+      }
+      set
+      {
+        _valid = value;
+      }
+    }
+
+    public VideoFormat()
+    {
+      IsValid=false;
+    }
+    public VideoFormat(VideoStreamType streamType, int width, int height, int arX, int arY, int bitrate, bool isInterlaced)
+    {
+      IsValid = true;
+      this.streamType = streamType;
+      this.width = width;
+      this.height = height;
+      this.arX = arX;
+      this.arY = arY;
+      this.bitrate = bitrate;
+      this.isInterlaced = isInterlaced;
+    }
+    public override string ToString()
+    {
+      return String.Format("streamtype={0} resolution={1}x{2} aspect ratio={3}:{4} bitrate={5} isInterlaced={6}",streamType.ToString(), width, height, arX,arY, bitrate, isInterlaced);
+    }
+  }
+
+
   /// <summary>
   /// This class holds the IPlayer interface which must be implemented by any interal player like
   /// - audio players
@@ -621,6 +673,12 @@ namespace MediaPortal.Player
         return false;
       }
     }
+
+    public virtual VideoFormat GetVideoFormat()
+    {
+      return new VideoFormat();
+    }
+
 
     #region IDisposable Members
     public virtual void Release()

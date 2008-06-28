@@ -1667,6 +1667,14 @@ namespace MediaPortal.Player
       }
     }
 
+    public static VideoFormat GetVideoFormat()
+    {
+      if (_player == null)
+        return new VideoFormat();
+      else
+        return _player.GetVideoFormat();
+    }
+
     #region subtitle/audio stream selection
 
     /// <summary>

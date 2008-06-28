@@ -49,7 +49,7 @@ namespace MediaPortal.Player
     [PreserveSig]
     int OnMediaTypeChanged(int mediaType);
     [PreserveSig]
-    int OnVideoFormatChanged();
+    int OnVideoFormatChanged(int streamType,int width, int height, int aspectRatioX, int aspectRatioY, int bitrate, int isInterlaced);
   }
 
   [ComVisible(true), ComImport,
@@ -71,8 +71,6 @@ namespace MediaPortal.Player
       int SetTsReaderCallback(ITSReaderCallback callback);
       [PreserveSig]
       int SetRequestAudioChangeCallback(ITSReaderCallbackAudioChange callback);
-      [PreserveSig]
-      int GetVideoFormat([In, Out] ref int width,[In, Out] ref int height,[In, Out] ref int aspectRatioX,[In, Out] ref int aspectRatioY,[In, Out] ref int bitrate,[In, Out] ref int interlaced);
     }
 
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
@@ -164,12 +162,14 @@ namespace MediaPortal.Player
     protected bool _isRadio = false;
     protected g_Player.MediaType _mediaType;
     protected int iChangedMediaTypes;
+    protected VideoFormat _videoFormat;
     #endregion
 
     #region ctor/dtor
     public BaseTSReaderPlayer()
     {
       _mediaType = g_Player.MediaType.Video;
+      _videoFormat = new VideoFormat();
     }
     public BaseTSReaderPlayer(g_Player.MediaType type)
     {
@@ -179,6 +179,7 @@ namespace MediaPortal.Player
         _isRadio = true;
       }
       _mediaType = type;
+      _videoFormat = new VideoFormat();
     }
     #endregion
 
@@ -1218,6 +1219,11 @@ namespace MediaPortal.Player
     {
       get { return (_isRadio == false); }
     }
+
+    public override VideoFormat GetVideoFormat()
+    {
+      return _videoFormat;
+    }
     #endregion
 
     #region private/protected members
@@ -1338,12 +1344,17 @@ namespace MediaPortal.Player
       iChangedMediaTypes = mediaType;
       return 0;
     }
-    public int OnVideoFormatChanged()
+    public int OnVideoFormatChanged(int streamType,int width, int height, int aspectRatioX, int aspectRatioY, int bitrate, int isInterlaced)
     {
-      Log.Info("TsReaderPlayer: OnVideoFormatChanged triggered. Getting new format");
-      //int width = 0; int height = 0; int arX = 0; int arY = 0; int bitrate = 0; int isInterlaced = 0;
-      //((ITSReader)_fileSource).GetVideoFormat(ref width,ref height,ref arX,ref arY,ref bitrate,ref isInterlaced);
-      //Log.Debug("TsReaderPlayer: Current video format - {0}x{1} aspect ratio={2}:{3} bitrate={4} isInterlaced={5}", width, height, arX, arY, bitrate, (isInterlaced == 1));
+      _videoFormat.IsValid = true;
+      _videoFormat.streamType = (VideoStreamType)streamType;
+      _videoFormat.width = width;
+      _videoFormat.height = height;
+      _videoFormat.arX = aspectRatioX;
+      _videoFormat.arY = aspectRatioY;
+      _videoFormat.bitrate = bitrate;
+      _videoFormat.isInterlaced = (isInterlaced==1);
+      Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}",_videoFormat.ToString());
       return 0;
     }
 
@@ -1356,6 +1367,7 @@ namespace MediaPortal.Player
     //check if the pin connections can be kept, or if a graph rebuilding is necessary!
     private bool GraphNeedsRebuild()
     {
+
       IEnumPins pinEnum;
       int hr = _fileSource.EnumPins(out pinEnum);
       if (hr != 0 || pinEnum == null) return true;
@@ -1397,7 +1409,6 @@ namespace MediaPortal.Player
 
     public void DoGraphRebuild()
     {
-      Log.Info("TSReaderPlayer:OnMediaTypeChanged()");
       bool needRebuild = GraphNeedsRebuild();
       if (_mediaCtrl != null)
       {
@@ -1409,22 +1420,7 @@ namespace MediaPortal.Player
             Log.Error("Error stopping graph: ({0:x})", hr);
           }
           FilterState state;
-          for (; ; )
-          {
-            hr = _mediaCtrl.GetState(200, out state);
-            if (hr != 0)
-            {
-              Log.Info("GetState failed: {0:x}", hr);
-            }
-            else if (state == FilterState.Stopped)
-            {
-              break;
-            }
-            Log.Info("TSReaderPlayer:OnMediaTypeChanged(): Graph not yet stopped, waiting some more.");
-            _mediaCtrl.Stop();
-            System.Threading.Thread.Sleep(100);
-
-          }
+          hr = _mediaCtrl.GetState(System.Threading.Timeout.Infinite, out state);
           Log.Info("Graph stopped.");
           if (needRebuild)
           {
@@ -1447,32 +1443,32 @@ namespace MediaPortal.Player
                 DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource, true);
                 break;
             }
-            //DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource, true);
           }
           else
           {
-            Log.Info("Reconnecting all pins of base filter.");
             IPin pAudio = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Audio");
             IPin pVideo = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
             switch (iChangedMediaTypes)
             {
               case 1: // audio changed
+                Log.Info("Reconnecting audio pin of base filter.");
                 _graphBuilder.Reconnect(pAudio);
                 break;
               case 2: // video changed
+                Log.Info("Reconnecting video pin of base filter.");
                 _graphBuilder.Reconnect(pVideo);
                 break;
               case 3: // both changed
+                Log.Info("Reconnecting all pins of base filter.");
                 DirectShowUtil.ReConnectAll(_graphBuilder, _fileSource);
                 break;
             }
-            //DirectShowUtil.ReConnectAll(_graphBuilder, _fileSource);
           }
           _mediaCtrl.Run();
+          Log.Info("Reconfigure graph done");
+          return;
         }
-        Log.Info("Reconfigure graph done");
       }
-      return;
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
