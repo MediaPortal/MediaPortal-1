@@ -1667,10 +1667,10 @@ namespace MediaPortal.Player
       }
     }
 
-    public static VideoFormat GetVideoFormat()
+    public static VideoStreamFormat GetVideoFormat()
     {
       if (_player == null)
-        return new VideoFormat();
+        return new VideoStreamFormat();
       else
         return _player.GetVideoFormat();
     }

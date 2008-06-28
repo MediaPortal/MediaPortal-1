@@ -36,7 +36,7 @@ namespace MediaPortal.Player
     H264=2,
     MPEG4
   }
-  public class VideoFormat
+  public class VideoStreamFormat
   {
     public VideoStreamType streamType;
     public int width;
@@ -60,11 +60,11 @@ namespace MediaPortal.Player
       }
     }
 
-    public VideoFormat()
+    public VideoStreamFormat()
     {
       IsValid=false;
     }
-    public VideoFormat(VideoStreamType streamType, int width, int height, int arX, int arY, int bitrate, bool isInterlaced)
+    public VideoStreamFormat(VideoStreamType streamType, int width, int height, int arX, int arY, int bitrate, bool isInterlaced)
     {
       IsValid = true;
       this.streamType = streamType;
@@ -674,9 +674,9 @@ namespace MediaPortal.Player
       }
     }
 
-    public virtual VideoFormat GetVideoFormat()
+    public virtual VideoStreamFormat GetVideoFormat()
     {
-      return new VideoFormat();
+      return new VideoStreamFormat();
     }
 
 

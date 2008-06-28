@@ -162,14 +162,14 @@ namespace MediaPortal.Player
     protected bool _isRadio = false;
     protected g_Player.MediaType _mediaType;
     protected int iChangedMediaTypes;
-    protected VideoFormat _videoFormat;
+    protected VideoStreamFormat _videoFormat;
     #endregion
 
     #region ctor/dtor
     public BaseTSReaderPlayer()
     {
       _mediaType = g_Player.MediaType.Video;
-      _videoFormat = new VideoFormat();
+      _videoFormat = new VideoStreamFormat();
     }
     public BaseTSReaderPlayer(g_Player.MediaType type)
     {
@@ -179,7 +179,7 @@ namespace MediaPortal.Player
         _isRadio = true;
       }
       _mediaType = type;
-      _videoFormat = new VideoFormat();
+      _videoFormat = new VideoStreamFormat();
     }
     #endregion
 
@@ -1220,7 +1220,7 @@ namespace MediaPortal.Player
       get { return (_isRadio == false); }
     }
 
-    public override VideoFormat GetVideoFormat()
+    public override VideoStreamFormat GetVideoFormat()
     {
       return _videoFormat;
     }
