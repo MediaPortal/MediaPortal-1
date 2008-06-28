@@ -252,7 +252,7 @@ O PC atuará como um servidor dedicado de TV e proverá a outros PCs na sua rede
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Você instalou com sucesso o MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Abaixo você pode encontrar alguns links úteis que te ajudará a iniciar o uso do MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">

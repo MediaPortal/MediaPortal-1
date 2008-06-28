@@ -251,7 +251,7 @@ PC-en vil da fungere som en TV-Server og gi andre PC-er på ditt nettverk tilgan
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Under her finner du hjelpe lenker for bruk/oppsett av MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>MediaPortal Forum</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">

@@ -250,7 +250,7 @@ MediaPortals brugerflade.</value>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Du har nu færdig med installationen af MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_intall" xml:space="preserve">
     <value>Nedenfor finder du nogle nyttige links til at hjælpe dig i gang med MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">

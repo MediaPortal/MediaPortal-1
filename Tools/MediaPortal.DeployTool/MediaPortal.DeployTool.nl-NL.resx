@@ -250,7 +250,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>U heeft de installatie van MediaPortal succesvol afgerond</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Hieronder vindt u enkele handige links die u helpen bij het beginnen met MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">

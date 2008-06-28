@@ -250,7 +250,7 @@ Ten komputerem będzie pełnił tylko rolę servera oraz będzie dostarczał pro
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Zakończyłeś z sukcesem instalację MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Poniżej znajduje sie parę linków ktore mogą być pomocne przy uruchamianiu MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">

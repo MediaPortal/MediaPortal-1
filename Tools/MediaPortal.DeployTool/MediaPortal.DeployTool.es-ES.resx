@@ -248,7 +248,7 @@ El PC actuará como servidor dedicado de TV-Server y proveerá de TV otros PC 's
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Has completado correctamente la configuración de MediaPortal </value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Debajo encontrarás unos accesos que te ayudarán para comenzar a usar MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">

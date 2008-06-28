@@ -251,7 +251,7 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Avete completato con successo l'installazione di MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Qui sotto potete trovare alcuni link utili per ricevere l'aiuto iniziale su MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
@@ -496,5 +496,9 @@ Se esiste un file corrotto, verrà cancellato ora.</value>
   <data name="OS_Beta" xml:space="preserve">
     <value>E' installata una versione beta del Service Pack, il vostro sistema non è supportato.
 Proseguire l'installazione è un vostro rischio.</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Questo programma adesso si chiuderà e aprirà la cartella "MediaPortal Installation".
+Copiate questa cartella sul vostro HTPC. Cominciate l'installazione lanciando "MediaPortal.Deploy.exe".</value>
   </data>
 </root>

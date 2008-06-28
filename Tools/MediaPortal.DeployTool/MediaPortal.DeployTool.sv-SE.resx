@@ -252,7 +252,7 @@ i ditt lokala nätverk. (databas installation behövs)</value>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Du har nu felfritt slutfört din installation av MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Nedan hittar du några användbara länkar som hjälper dig komma igång med MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">

@@ -250,7 +250,7 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>MediaPortal kurulumunu başarı ile tamamladınız</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>MediaPortal'ı kullanmak için yardımcı olacak bazı linkleri aşağıda bulabilirsiniz</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">

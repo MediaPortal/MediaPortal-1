@@ -250,7 +250,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Die Installation von MediaPortal war erfolgreich.</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Hier finden Sie weiterführende Links, die Sie beim Einstieg in MediaPortal unterstützen.</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">

@@ -251,7 +251,7 @@ The PC will then act as dedicated TV-Server and provide other PC's in your LAN w
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>You successfully completed the setup of MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Below you can find some useful links that will help you getting started with MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
@@ -498,5 +498,9 @@ Corrupted config file, if found, will now be deleted.</value>
   <data name="OS_Beta" xml:space="preserve">
     <value>Beta version of SP detected, your system is not supported...
 Continue at your own risk!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>This application will now close and open the folder "MediaPortal Installation". 
+Transfer this folder to your HTPC. Start installation running "MediaPortal.Deploy.exe".</value>
   </data>
 </root>

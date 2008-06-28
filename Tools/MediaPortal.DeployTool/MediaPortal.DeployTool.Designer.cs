@@ -385,11 +385,21 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This application will now close and open the folder &quot;MediaPortal Installation&quot;. 
+        ///Transfer this folder to your HTPC. Start installation running &quot;MediaPortal.Deploy.exe&quot;..
+        /// </summary>
+        internal static string Finished_labelHeading3_download {
+            get {
+                return ResourceManager.GetString("Finished_labelHeading3_download", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Below you can find some useful links that will help you getting started with MediaPortal.
         /// </summary>
-        internal static string Finished_labelHeading3 {
+        internal static string Finished_labelHeading3_install {
             get {
-                return ResourceManager.GetString("Finished_labelHeading3", resourceCulture);
+                return ResourceManager.GetString("Finished_labelHeading3_install", resourceCulture);
             }
         }
         
@@ -934,7 +944,8 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Beta version of SP detected, your system is not supported...\nContinue at your own risk!.
+        ///   Looks up a localized string similar to Beta version of SP detected, your system is not supported...
+        ///Continue at your own risk!.
         /// </summary>
         internal static string OS_Beta {
             get {
@@ -953,7 +964,7 @@ namespace MediaPortal.DeployTool {
         
         /// <summary>
         ///   Looks up a localized string similar to Your OS is unsupported because Microsoft did not release several required hotfixes for it.
-        ///Continue at your own risk.
+        ///Continue at your own risk!.
         /// </summary>
         internal static string OS_Warning {
             get {
