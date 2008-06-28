@@ -381,7 +381,7 @@ namespace TvPlugin
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       benchClock.Stop();
       Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
-
+      
       ApplyChannelStateIcons();
 
       FillChannelList();
@@ -391,51 +391,28 @@ namespace TvPlugin
 
     private void ApplyChannelStateIcons()
     {
-      if (lstChannels != null) return; //already set, leave.
+      if (lstChannels != null)
+      {        
+        return; //already set, leave.
+      }
+
+      if (lstChannelsWithStateIcons != null)
+      {
+        lstChannelsWithStateIcons.IsVisible = false;
+      }
+      if (lstChannelsNoStateIcons != null)
+      {
+        lstChannelsNoStateIcons.IsVisible = false;
+      }
 
       if (TVHome.ShowChannelStateIcons() && lstChannelsWithStateIcons != null) 
-      {        
-        lstChannelsNoStateIcons.IsVisible = false;
-        lstChannelsWithStateIcons.IsVisible = true;
+      {                
         lstChannels = lstChannelsWithStateIcons;
       }
-      else if (!TVHome.ShowChannelStateIcons() && lstChannelsNoStateIcons != null)
-      {        
-        lstChannelsNoStateIcons.IsVisible = true;
-
-        if (lstChannelsWithStateIcons != null)
-        {
-          lstChannelsWithStateIcons.IsVisible = false;
-        }
-        lstChannels = lstChannelsNoStateIcons;
-      }
-
-      //set default objects just in case
-      if (lstChannels == null)
+      else
       {
-        if (lstChannelsNoStateIcons != null)
-        {          
-          lstChannelsNoStateIcons.IsVisible = true;
-
-          if (lstChannelsWithStateIcons != null)
-          {
-            lstChannelsWithStateIcons.IsVisible = false;
-          }
-          lstChannels = lstChannelsNoStateIcons;
-        }
-        else
-        {          
-          if (lstChannelsWithStateIcons != null)
-          {
-            lstChannelsWithStateIcons.IsVisible = true;
-          }
-          if (lstChannelsNoStateIcons != null)
-          {
-            lstChannelsNoStateIcons.IsVisible = false;
-          }
-          lstChannels = lstChannelsWithStateIcons;
-        }
-      }
+        lstChannels = lstChannelsNoStateIcons;
+      }            
     }
 
     private void OnGroupChanged()
@@ -742,6 +719,12 @@ namespace TvPlugin
       Log.Debug("miniguide: state check + filling completed after {0}ms", benchClock.ElapsedMilliseconds.ToString());
       lstChannels.SelectedListItemIndex = SelectedID;
       lstChannels.Visible = true;
+
+      if (lstChannels.GetID == 37)
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, 37, 0, 0, null);
+        OnMessage(msg);
+      }
     }
 
     /// <summary>

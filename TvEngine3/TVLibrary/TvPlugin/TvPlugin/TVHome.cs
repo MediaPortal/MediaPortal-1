@@ -681,12 +681,18 @@ namespace TvPlugin
     {
       // when we are watching TV and suddenly decides to watch a audio/video etc., we want to make sure that the TV is stopped on server.
       GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+
+      if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
+      {
+        UpdateGUIonPlaybackStateChange();
+      }
+
       if (currentWindow.IsTv) return;
       if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_RADIO) return;
 
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
       if (TVHome.Connected)
-        TVHome.Card.StopTimeShifting();
+        TVHome.Card.StopTimeShifting();      
     }
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
@@ -702,7 +708,14 @@ namespace TvPlugin
       if (TVHome.Card.IsRecording == true) return;
       TVHome.Card.User.Name = new User().Name;
       TVHome.Card.StopTimeShifting();
-      _playbackStopped = true;
+
+      if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
+      {
+       // doProcess();
+        UpdateGUIonPlaybackStateChange();
+      }
+
+      _playbackStopped = true;      
     }
 
     public override void OnAction(Action action)
@@ -935,9 +948,9 @@ namespace TvPlugin
         }
         else
         {
-          bool res = HandleServerNotConnected();          
+          bool res = HandleServerNotConnected();
 
-          UpdateStateOfButtons();
+          UpdateStateOfRecButton();
           UpdateProgressPercentageBar();
           UpdateRecordingIndicator();
         }
@@ -1143,6 +1156,7 @@ namespace TvPlugin
       _onPageLoadDone = true;
       _resumed = false;
 
+      UpdateGUIonPlaybackStateChange();
       doProcess();
       //GUIWaitCursor.Hide();
     }
@@ -1243,7 +1257,7 @@ namespace TvPlugin
 
       if (HandleServerNotConnected())
       {
-        UpdateStateOfButtons();
+        UpdateStateOfRecButton();
         UpdateProgressPercentageBar();
         UpdateRecordingIndicator();
         return;
@@ -1308,7 +1322,7 @@ namespace TvPlugin
           ViewChannelAndCheck(currentChannel);
         }
 
-        UpdateStateOfButtons();
+        UpdateStateOfRecButton();
         UpdateProgressPercentageBar();
         benchClock.Stop();
         Log.Warn("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
@@ -1382,7 +1396,7 @@ namespace TvPlugin
       if (ts.TotalMilliseconds < 1000) return;
 
       UpdateRecordingIndicator();
-      UpdateStateOfButtons();
+      UpdateStateOfRecButton();
 
       if (!TVHome.Card.IsTimeShifting) return;
 
@@ -1400,46 +1414,28 @@ namespace TvPlugin
 
     #endregion
 
+    private void UpdateGUIonPlaybackStateChange()
+    {
+      bool isTimeShiftingTV = (TVHome.Connected && TVHome.Card.IsTimeShifting && g_Player.IsTV);
+
+      if (btnTvOnOff.Selected != isTimeShiftingTV)
+      {
+        btnTvOnOff.Selected = isTimeShiftingTV;
+      }
+
+      UpdateProgressPercentageBar();      
+
+      bool hasTeletext = (!TVHome.Connected || TVHome.Card.HasTeletext) && (isTimeShiftingTV);                            
+      btnTeletext.IsVisible = hasTeletext;                    
+    }
+
     private void doProcess()
     {      
-      if (btnChannel.Disabled != false)
-        btnChannel.Disabled = false;
-      //if (btnGroup.Disabled != false)
-      //btnGroup.Disabled = false;
-      if (btnRecord.Disabled != false)
-        btnRecord.Disabled = false;
-      //btnTeletext.Visible = false;
-      bool isTimeShifting = !TVHome.Connected || TVHome.Card.IsTimeShifting;
-      if (btnTvOnOff.Selected != (g_Player.Playing && g_Player.IsTV && isTimeShifting))
+      if (!g_Player.Playing)
       {
-        btnTvOnOff.Selected = (g_Player.Playing && g_Player.IsTV && isTimeShifting);
-      }
-      if (g_Player.Playing == false)
-      {
-        UpdateProgressPercentageBar();
-        UpdateStateOfButtons();
-        //if (btnTuningDetails!=null)
-        //  btnTuningDetails.Visible = false;
-        if (btnTeletext.Visible)
-          btnTeletext.Visible = false;
-
         return;
       }
-      //else
-      //  if (btnTuningDetails!=null)
-      //    btnTuningDetails.Visible = true;
-      if (btnChannel.Disabled != false)
-        btnChannel.Disabled = false;
-      //if (btnGroup.Disabled != false)
-      // btnGroup.Disabled = false;
-      if (btnRecord.Disabled != false)
-        btnRecord.Disabled = false;
-
-      bool hasTeletext = !TVHome.Connected || TVHome.Card.HasTeletext;
-      if (btnTeletext.IsVisible != hasTeletext)
-      {
-        btnTeletext.IsVisible = hasTeletext;
-      }
+     
       // BAV, 02.03.08
       //Navigator.CheckChannelChange();
 
@@ -1805,16 +1801,14 @@ namespace TvPlugin
       {
         DeleteRecordingSchedule(Schedule.Retrieve(card.RecordingScheduleId));        
       }
-      UpdateStateOfButtons();
+      UpdateStateOfRecButton();
     }
 
     /// <summary>
-    /// Update the state of the following buttons
-    /// - tv on/off
-    /// - timeshifting on/off
+    /// Update the state of the following buttons    
     /// - record now
     /// </summary>
-    private void UpdateStateOfButtons()
+    private void UpdateStateOfRecButton()
     {
       if (!TVHome.Connected)
       {
@@ -1822,24 +1816,19 @@ namespace TvPlugin
         return;
       }
       bool isTimeShifting = TVHome.Card.IsTimeShifting;
-      if (btnTvOnOff.Selected != (g_Player.Playing && g_Player.IsTV && isTimeShifting))
-      {
-        btnTvOnOff.Selected = (g_Player.Playing && g_Player.IsTV && isTimeShifting);
-      }
-      bool hasTeletext = TVHome.Card.HasTeletext;
-      if (btnTeletext.IsVisible != hasTeletext)
-      {
-        btnTeletext.IsVisible = hasTeletext;
-      }
+      
       //are we recording a tv program?      
       if (Navigator.Channel != null && TVHome.Card != null)
       {                          
         string label;        
         TvServer server = new TvServer();
         VirtualCard vc;
-        if (server.IsRecording(TVHome.Navigator.CurrentChannel, out vc))
+        if (server.IsRecording(TVHome.Navigator.Channel.Name , out vc))
         {
-          TVHome.Card = vc;
+          if (!isTimeShifting)
+          {
+            TVHome.Card = vc;
+          }
           //yes then disable the timeshifting on/off buttons
           //and change the Record Now button into Stop Record
           label = GUILocalizeStrings.Get(629);//stop record
@@ -1865,7 +1854,12 @@ namespace TvPlugin
       // if we're recording tv, update gui with info
       if (TVHome.Connected && TVHome.Card.IsRecording)      
       {
-        lastRecordTime = now;
+        /*if (lastRecordTime == DateTime.MinValue)
+        {
+          lastRecordTime = now;
+          
+        }
+        */
 
         //int card;
         int scheduleId = TVHome.Card.RecordingScheduleId;
@@ -1884,10 +1878,8 @@ namespace TvPlugin
       }
       else
       {
-        // if Recording hasn't been active for over 5 sec. then reset the lastActiveRecChannelId var)
-        
-
-        if (lastRecordTime != DateTime.MinValue)        
+        // if Recording hasn't been active for over 5 sec. then reset the lastActiveRecChannelId var)        
+        if (lastRecordTime != DateTime.MinValue && lastActiveRecChannelId > 1)        
         {
           TimeSpan ts = now - lastRecordTime;
           if (ts.TotalSeconds > 5)
@@ -1895,8 +1887,7 @@ namespace TvPlugin
             lastActiveRecChannelId = 0;
             lastRecordTime = DateTime.MinValue;
           }
-        }
-        
+        }        
         imgRecordingIcon.IsVisible = false;
       }
     }
