@@ -248,9 +248,9 @@ MediaPortals brugerflade.</value>
     <value>Tillykke!</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
-    <value>Du har nu færdig med installationen af MediaPortal</value>
+    <value>Du er nu færdig med installationen af MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3_intall" xml:space="preserve">
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
     <value>Nedenfor finder du nogle nyttige links til at hjælpe dig i gang med MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
@@ -489,5 +489,13 @@ Nu slettes en eventuel korrupt konfigurations fil.</value>
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Konfigurer Windows Firewall til at tillade ekstern adgang til MediaPortal</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Beta version af windows service pack detekteret.
+Fortsæt for egen risiko!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Denne applikation vil nu lukke, og åbne folderen "MediaPortal Installation".
+Overfør folderen til din HTPC. Start installationen ved at køre "MediaPortal.DeployTool.exe".</value>
   </data>
 </root>
