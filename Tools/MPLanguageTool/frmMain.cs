@@ -87,7 +87,7 @@ namespace MPLanguageTool
       DeployTool = true;
       openMpToolStripMenuItem.Enabled = false;
       openDeployToolToolStripMenuItem.Enabled = false;
-      SelectCulture dlg = new SelectCulture();
+      SelectCulture dlg = new SelectCulture("DeployTool");
       if (dlg.ShowDialog() != DialogResult.OK) return;
       culture = dlg.GetSelectedCulture();
       this.Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: MediaPortal.DeployTool." + culture.Name + ".resx";
@@ -119,7 +119,7 @@ namespace MPLanguageTool
       MediaPortal = true;
       openMpToolStripMenuItem.Enabled = false;
       openDeployToolToolStripMenuItem.Enabled = false;
-      SelectCulture dlg = new SelectCulture();
+      SelectCulture dlg = new SelectCulture("MediaPortal");
       if (dlg.ShowDialog() != DialogResult.OK) return;
       culture = dlg.GetSelectedCulture();
       this.Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: strings_" + culture.Name + ".xml";

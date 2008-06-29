@@ -31,13 +31,26 @@ namespace MPLanguageTool
 {
   public partial class SelectCulture : Form
   {
-    public SelectCulture()
+    public SelectCulture(string Source)
     {
       InitializeComponent();
       CultureInfo[] cinfos = CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures);
       foreach (CultureInfo ci in cinfos)
+      {
         cbCulture.Items.Add(ci);
-      cbCulture.SelectedItem = System.Threading.Thread.CurrentThread.CurrentCulture;
+      }
+      CultureInfo current = System.Threading.Thread.CurrentThread.CurrentCulture;
+      if ((current.CultureTypes & CultureTypes.SpecificCultures) != 0 && Source == "MediaPortal")
+      {
+        // Select neutral culture like "it"
+        cbCulture.SelectedItem = current.Parent;
+      }
+      else
+      {
+        // Select specific culture like "it-IT"
+        cbCulture.SelectedItem = current;
+      }
+
     }
     public CultureInfo GetSelectedCulture()
     {
