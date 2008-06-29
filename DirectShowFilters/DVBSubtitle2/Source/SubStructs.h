@@ -17,7 +17,8 @@ struct SUBTITLE
   int         firstScanLine;
 };
 
-struct TEXT_SUBTITLE{
+struct TEXT_SUBTITLE
+{
 	int character_table;
 	LPCSTR language;
 	int page;
@@ -31,11 +32,13 @@ struct TEXT_SUBTITLE{
 	
 };
 
-struct DVBLANG{
-	DVBLANG(){
-	
+struct DVBLANG
+{
+	DVBLANG()
+  {
 	}
-	DVBLANG(byte b1, byte b2, byte b3){
+	DVBLANG(byte b1, byte b2, byte b3)
+  {
 		lang[0] = b1;	
 		lang[1] = b2;
 		lang[2] = b3;
