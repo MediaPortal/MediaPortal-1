@@ -218,7 +218,7 @@ O PC será utilizado como um servidor de TV dedicado e fornece outros PC's na su
     <value>Tem que fornecer um caminho de instalação válido para o Servidor SQL.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Tem que fornecer uma palavra passe para o  utilizador do Servidor SQL.</value>
+    <value>Tem que fornecer uma palavra passe para o utilizador administrador do Servidor SQL.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Por favor acerte as opções necessária para a instalação do Servidor SQL:</value>
@@ -227,7 +227,7 @@ O PC será utilizado como um servidor de TV dedicado e fornece outros PC's na su
     <value>Directoria de instalação</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Palavra passe para o utilizador do Servidor SQL</value>
+    <value>Palavra passe para o utilizador administrador do Servidor SQL</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Seleccione a pasta de instalação para o Servidor SQL</value>
@@ -251,7 +251,7 @@ O PC será utilizado como um servidor de TV dedicado e fornece outros PC's na su
     <value>Concluiu com sucesso a configuração do MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3_install" xml:space="preserve">
-    <value>Em baixo encontrará alguns links úteis que o ajudará a começar com o MediaPortal</value>
+    <value>Em baixo encontrará alguns links úteis que o ajudarão no início do MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
     <value>Forum do MediaPortal</value>
@@ -494,5 +494,14 @@ Ficheiro de configuração corrompido, se for encontrado, será agora apagado.
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Configura a Firewall do Windows para permitir acesso externo ao MediaPortal</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Versão Beta do SP detectado, o seu sistema não é suportado...
+Continue sob a sua responsabilidade e risco!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Esta aplicação irá fechar agora e abrir a pasta"Instalação do MediaPortal".
+Transfira esta pasta para o seu HTPC. Comece a instalação correndo "MediaPortal.DeployTool.exe".
+</value>
   </data>
 </root>
