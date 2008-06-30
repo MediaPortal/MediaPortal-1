@@ -486,6 +486,7 @@ CREATE TABLE "Setting" (
 --
 CREATE TABLE "Timespan" (
   "idTimespan" int(11) NOT NULL auto_increment,
+  "idKeyword" int(11) NOT NULL,
   "startTime" datetime NOT NULL,
   "endTime" datetime NOT NULL,
   "dayOfWeek" int(11) NOT NULL,
@@ -577,7 +578,7 @@ CREATE TABLE "Version" (
 -- Dumping data for table "Version"
 --
 INSERT INTO "Version" ("idVersion","versionNumber") VALUES 
- (1,37);
+ (1,38);
 
 
 

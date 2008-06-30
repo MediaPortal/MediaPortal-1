@@ -105,6 +105,7 @@ GO
 
 CREATE TABLE Timespan(
 	idTimespan int IDENTITY(1,1) NOT NULL,
+	idKeyword int NOT NULL,
 	startTime datetime NOT NULL,
 	endTime datetime NOT NULL,
 	dayOfWeek int NOT NULL,
@@ -161,7 +162,7 @@ CREATE TABLE Version(
 )
 GO
 
-INSERT INTO Version (versionNumber) VALUES (37)
+INSERT INTO Version (versionNumber) VALUES (38)
 GO
 
 
