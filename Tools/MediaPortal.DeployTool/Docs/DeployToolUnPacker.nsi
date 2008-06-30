@@ -20,6 +20,12 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+!define ROOT "..\..\.."
+!define DEPLOY.BIN "..\bin\Release"
+
+
+ !execute '"${NSISDIR}\makensis.exe" "${ROOT}\mediaportal\Setup\setup.nsi"'
+ !execute '"${NSISDIR}\makensis.exe" "${ROOT}\TvEngine3\TVLibrary\Setup\setup.nsi"'
 
 #endregion
 Name "MediaPortal Unpacker"
@@ -39,16 +45,13 @@ XPStyle on
 RequestExecutionLevel admin
 ShowInstDetails show
 
-!define DEPLOY.BIN "..\bin\Release"
-!define DEPLOY.BASE "..\bin\deploy"
 
 Section
   SetOutPath $INSTDIR
   File /r /x .svn /x *.pdb /x *.vshost.exe "${DEPLOY.BIN}\*"
 
   SetOutPath $INSTDIR\deploy
-  File "${DEPLOY.BASE}\package-mediaportal.exe"
-  File "${DEPLOY.BASE}\package-tvengine.exe"
-  File "${DEPLOY.BASE}\SVN*"
+  File "${ROOT}\mediaportal\Setup\Release\package-mediaportal.exe"
+  File "${ROOT}\TvEngine3\TVLibrary\Setup\Release\package-tvengine.exe"
 
 SectionEnd
