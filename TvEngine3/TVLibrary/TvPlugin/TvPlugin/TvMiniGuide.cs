@@ -58,7 +58,7 @@ namespace TvPlugin
     [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
     [SkinControlAttribute(37)]    protected GUIListControl lstChannelsWithStateIcons = null;
 
-    protected GUIListControl lstChannels = null;
+    //protected GUIListControl lstChannels = null;
 
     bool _canceled = false;
     bool _running = false;
@@ -263,18 +263,18 @@ namespace TvPlugin
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 // switching logic
-                SelectedChannel = (Channel)lstChannels.SelectedListItem.MusicTag;
+                SelectedChannel = (Channel)getChannelList().SelectedListItem.MusicTag;
 
                 Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
+                  string selectedChan = (string)getChannelList().SelectedListItem.TVTag;
                   if ((TVHome.Navigator.CurrentChannel != selectedChan) || g_Player.IsTVRecording)
                   {
                     List<Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
                     {
-                      changeChannel = (Channel)tvChannelList[lstChannels.SelectedListItemIndex];
+                      changeChannel = (Channel)tvChannelList[getChannelList().SelectedListItemIndex];
                     }
                   }
                 }
@@ -359,20 +359,7 @@ namespace TvPlugin
     {
       benchClock = Stopwatch.StartNew();
       Log.Debug("miniguide: onpageload");
-
-      /*
-      string skinPath = GUIGraphicsContext.Skin;
-      string recIconPath = skinPath + "\\media\\" + Thumbs.TvRecordingIcon;
-      FileInfo fI = new FileInfo(recIconPath);
-      if (fI.Exists)
-      {
-        System.Drawing.Image img = System.Drawing.Image.FromFile(recIconPath);        
-        double factor = 50.0 / img.Width;
-
-        lstChannels.PinIconWidth = Convert.ToInt32(img.Width * factor);
-        lstChannels.PinIconHeight = Convert.ToInt32(img.Height * factor);
-      }
-      */
+     
 
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
@@ -380,46 +367,34 @@ namespace TvPlugin
       AllocResources();
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       benchClock.Stop();
-      Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
-      
-      ApplyChannelStateIcons();
+      Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());      
 
       FillChannelList();
       FillGroupList();
       base.OnPageLoad();
     }
 
-    private void ApplyChannelStateIcons()
+    private GUIListControl getChannelList()
     {
-      if (lstChannels != null)
-      {        
-        return; //already set, leave.
-      }
+      GUIListControl lstChannels = null;
 
-      if (lstChannelsWithStateIcons != null)
+      if (TVHome.ShowChannelStateIcons() && lstChannelsWithStateIcons != null)
       {
-        lstChannelsWithStateIcons.IsVisible = false;
-      }
-      if (lstChannelsNoStateIcons != null)
-      {
-        lstChannelsNoStateIcons.IsVisible = false;
-      }
-
-      if (TVHome.ShowChannelStateIcons() && lstChannelsWithStateIcons != null) 
-      {                
         lstChannels = lstChannelsWithStateIcons;
       }
       else
       {
         lstChannels = lstChannelsNoStateIcons;
-      }            
-    }
+      }
 
+      return lstChannels;
+    }
+   
     private void OnGroupChanged()
     {
       GUIWaitCursor.Show();
       TVHome.Navigator.SetCurrentGroup(spinGroup.Value);
-      lstChannels.Clear();
+      getChannelList().Clear();
       FillChannelList();
       GUIWaitCursor.Hide();
     }
@@ -491,7 +466,9 @@ namespace TvPlugin
     public void FillChannelList()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      lstChannels.Visible = false;
+      getChannelList().Visible = false;
+      lstChannelsWithStateIcons.Visible = false;
+
       benchClock.Reset();
       benchClock.Start();      
       ///_tvChannelList = (List<Channel>)TVHome.Navigator.CurrentGroup.ReferringTvGuideChannels();      
@@ -601,7 +578,7 @@ namespace TvPlugin
           if (TVHome.Navigator.Channel.IdChannel == CurrentId)
           {
             item.IsRemote = true;
-            SelectedID = lstChannels.Count;
+            SelectedID = getChannelList().Count;
 
             if (isUserTS && !CheckChannelState && CurrentChanState != (int)ChannelState.recording)
             {
@@ -712,15 +689,15 @@ namespace TvPlugin
           item.Label2 = sb.ToString();
           item.Label = local790 + tmpString;
 
-          lstChannels.Add(item);
+          getChannelList().Add(item);
         }
       }
       benchClock.Stop();
       Log.Debug("miniguide: state check + filling completed after {0}ms", benchClock.ElapsedMilliseconds.ToString());
-      lstChannels.SelectedListItemIndex = SelectedID;
-      lstChannels.Visible = true;
+      getChannelList().SelectedListItemIndex = SelectedID;
+      getChannelList().Visible = true;
 
-      if (lstChannels.GetID == 37)
+      if (getChannelList().GetID == 37)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, 37, 0, 0, null);
         OnMessage(msg);
