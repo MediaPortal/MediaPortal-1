@@ -22,12 +22,11 @@
 
 enum eAudioDualMonoMode
 {
-	eAudioDualMonoMode_DISABLED=0,
-	eAudioDualMonoMode_STEREO=1,
-	eAudioDualMonoMode_LEFT_MONO=2,
-	eAudioDualMonoMode_RIGHT_MONO=3,
-	eAudioDualMonoMode_MIXED=4,
-	eAudioDualMonoMode_UNSUPPORTED=5
+	eAudioDualMonoMode_STEREO=0,
+	eAudioDualMonoMode_LEFT_MONO=1,
+	eAudioDualMonoMode_RIGHT_MONO=2,
+	eAudioDualMonoMode_MIXED=3,
+	eAudioDualMonoMode_UNSUPPORTED=4
 };
 
 [uuid("A575A6D8-6F52-4598-9507-6542EBB67677")]

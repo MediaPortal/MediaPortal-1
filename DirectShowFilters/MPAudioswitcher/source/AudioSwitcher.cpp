@@ -553,11 +553,9 @@ STDMETHODIMP CAudioSwitcherFilter::GetAudioDualMonoMode(ULONG* mode)
 {
 	LogDebug("GetAudioDualMonoMode...");
 	LogDebug("CustomChannelMappingEnabled=%d",m_fCustomChannelMapping);
-	*mode=eAudioDualMonoMode_UNSUPPORTED;
+	*mode=eAudioDualMonoMode_STEREO;
 	if (!m_fCustomChannelMapping)
-		*mode=eAudioDualMonoMode_DISABLED;
-	else if (m_pSpeakerToChannelMap[0][0]==0)
-			*mode=eAudioDualMonoMode_STEREO;
+		*mode=eAudioDualMonoMode_STEREO;
 	else if (m_pSpeakerToChannelMap[0][0]==1)
 			*mode=eAudioDualMonoMode_LEFT_MONO;
 	else if (m_pSpeakerToChannelMap[0][0]==2)
@@ -567,6 +565,15 @@ STDMETHODIMP CAudioSwitcherFilter::GetAudioDualMonoMode(ULONG* mode)
 	LogDebug("Result=%d",*mode);
 	LogDebug("=======================");
 	return S_OK;
+}
+
+void SetChannelMapping(DWORD mapping[18][18],DWORD value)
+{
+	for (int y=0;y<18;y++)
+	{
+		for (int x=0;x<18;x++)
+			mapping[y][x]=value;
+	}
 }
 
 STDMETHODIMP CAudioSwitcherFilter::SetAudioDualMonoMode(ULONG mode)
@@ -581,24 +588,21 @@ STDMETHODIMP CAudioSwitcherFilter::SetAudioDualMonoMode(ULONG mode)
 	bool bEnabled=true;
 	switch (mode)
 	{
-		case eAudioDualMonoMode_DISABLED:
+		case eAudioDualMonoMode_STEREO:
+			memset(newMapping, 0, sizeof(newMapping));
 			bEnabled=false;
-			LogDebug("- disabled");
+			LogDebug("STEREO");
 			break;
 		case eAudioDualMonoMode_LEFT_MONO:
-			memset(newMapping, 1, sizeof(newMapping));
+			SetChannelMapping(newMapping,1);
 			LogDebug("LEFT_MONO");
 			break;
 		case eAudioDualMonoMode_RIGHT_MONO:
-			memset(newMapping, 2, sizeof(newMapping));
+			SetChannelMapping(newMapping,2);
 			LogDebug("RIGHT MONO");
 			break;
-		case eAudioDualMonoMode_STEREO:
-			memset(newMapping, 3, sizeof(newMapping));
-			LogDebug("STEREO");
-			break;
 		case eAudioDualMonoMode_MIXED:
-			memset(newMapping, 3, sizeof(newMapping));
+			SetChannelMapping(newMapping,3);
 			LogDebug("MIXED");
 			break;
 	}

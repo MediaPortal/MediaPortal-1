@@ -639,19 +639,19 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath="Audio.h"
+				RelativePath=".\source\Audio.h"
 				>
 			</File>
 			<File
-				RelativePath="AudioSwitcher.h"
+				RelativePath=".\source\AudioSwitcher.h"
 				>
 			</File>
 			<File
-				RelativePath="stdafx.h"
+				RelativePath=".\source\stdafx.h"
 				>
 			</File>
 			<File
-				RelativePath=".\StreamSwitcher.h"
+				RelativePath=".\source\StreamSwitcher.h"
 				>
 			</File>
 		</Filter>
