@@ -1425,20 +1425,22 @@ namespace MediaPortal.Player
           Log.Info("Graph stopped.");
           if (needRebuild)
           {
-            Log.Info("Doing full graph rebuild.");
-            IPin pAudio = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Audio");
-            IPin pVideo = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
+            Log.Info("Doing full graph rebuild for {0}.", iChangedMediaTypes);
             FilterInfo fInfo;
             _fileSource.QueryFilterInfo(out fInfo);
             switch (iChangedMediaTypes)
             {
               case 1: // audio changed
-                pAudio.Disconnect();
+                IPin pAudio = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Audio");
+                DirectShowUtil.DisconnectPin(_graphBuilder, pAudio);
                 DirectShowUtil.TryConnect(_graphBuilder, fInfo.achName, pAudio, true);
+                DirectShowUtil.ReleaseComObject(pAudio);
                 break;
               case 2: // video changed
-                pVideo.Disconnect();
+                IPin pVideo = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
+                DirectShowUtil.DisconnectPin(_graphBuilder, pVideo);
                 DirectShowUtil.TryConnect(_graphBuilder, fInfo.achName, pVideo, true);
+                DirectShowUtil.ReleaseComObject(pVideo);
                 break;
               case 3: // both changed
                 DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource, true);
@@ -1447,17 +1449,19 @@ namespace MediaPortal.Player
           }
           else
           {
-            IPin pAudio = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Audio");
-            IPin pVideo = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
             switch (iChangedMediaTypes)
             {
               case 1: // audio changed
                 Log.Info("Reconnecting audio pin of base filter.");
+                IPin pAudio = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Audio");
                 _graphBuilder.Reconnect(pAudio);
+                DirectShowUtil.ReleaseComObject(pAudio);
                 break;
               case 2: // video changed
+                IPin pVideo = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
                 Log.Info("Reconnecting video pin of base filter.");
                 _graphBuilder.Reconnect(pVideo);
+                DirectShowUtil.ReleaseComObject(pVideo);
                 break;
               case 3: // both changed
                 Log.Info("Reconnecting all pins of base filter.");
