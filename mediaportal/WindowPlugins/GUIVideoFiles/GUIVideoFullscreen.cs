@@ -1092,7 +1092,8 @@ namespace MediaPortal.GUI.Video
       if (g_Player.AudioStreams > 1)
         dlg.AddLocalizedString(492);
 
-      if (g_Player.GetSupportedAudioDualMonoMode() == eAVDecAudioDualMono.IsDualMono)
+      eAudioDualMonoMode dualMonoMode = g_Player.GetAudioDualMonoMode();
+      if (dualMonoMode!=eAudioDualMonoMode.UNSUPPORTED)
         dlg.AddLocalizedString(200059); // Audio dual mono mode menu
 
       // SubTitle stream selection, show only when there exists any streams,
@@ -1134,7 +1135,7 @@ namespace MediaPortal.GUI.Video
           ShowAudioStreamsMenu();
           break;
         case 200059:
-          ShowAudioDualMonoModeMenu();
+          ShowAudioDualMonoModeMenu(dualMonoMode);
           break;
         case 462:
           ShowSubtitleStreamsMenu();
@@ -1213,7 +1214,7 @@ namespace MediaPortal.GUI.Video
       if (dlg.SelectedLabel != g_Player.CurrentAudioStream)
         g_Player.CurrentAudioStream = dlg.SelectedLabel;
     }
-    void ShowAudioDualMonoModeMenu()
+    void ShowAudioDualMonoModeMenu(eAudioDualMonoMode dualMonoMode)
     {
       if (dlg == null) return;
       dlg.Reset();
@@ -1224,13 +1225,12 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(200062); //Right channel to the left and right speakers
       dlg.AddLocalizedString(200063); //Mix both
 
-      eAVDecAudioDualMonoReproMode mode = g_Player.GetAudioDualMonoMode();
-      dlg.SelectedLabel = (int)mode;
+      dlg.SelectedLabel = (int)dualMonoMode;
 
       dlg.DoModal(GetID);
 
       if (dlg.SelectedLabel < 0) return;
-      g_Player.SetAudioDualMonoMode((eAVDecAudioDualMonoReproMode)dlg.SelectedLabel);
+      g_Player.SetAudioDualMonoMode((eAudioDualMonoMode)dlg.SelectedLabel);
     }
 
     void ShowSubtitleStreamsMenu()

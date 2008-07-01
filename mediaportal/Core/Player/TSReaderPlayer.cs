@@ -144,6 +144,7 @@ namespace MediaPortal.Player
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
     IPin _pinVideo = null;
+    protected IBaseFilter _audioSwitcherFilter = null;
     protected IAudioStream _audioStream = null;
     protected ISubtitleStream _subtitleStream = null;
     protected TeletextReceiver _ttxtReceiver = null;
@@ -197,6 +198,53 @@ namespace MediaPortal.Player
     {
     }
     #endregion
+
+    public override eAudioDualMonoMode GetAudioDualMonoMode()
+    {
+      if (_audioSwitcherFilter == null)
+      {
+        Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
+        return eAudioDualMonoMode.UNSUPPORTED;
+      }
+      IMPAudioSwitcherFilter mpSwitcher = _audioSwitcherFilter as IMPAudioSwitcherFilter;
+      if (mpSwitcher == null)
+      {
+        Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
+        return eAudioDualMonoMode.UNSUPPORTED;
+      }
+      uint iMode = 0;
+      int hr=mpSwitcher.GetAudioDualMonoMode(out iMode);
+      if (hr != 0)
+      {
+        Log.Info("TsReaderPlayer: GetAudioDualMonoMode failed 0x{0:X}", hr);
+        return eAudioDualMonoMode.UNSUPPORTED;
+      }
+      eAudioDualMonoMode mode = (eAudioDualMonoMode)iMode;
+      Log.Info("TsReaderPlayer: GetAudioDualMonoMode mode={0} succeeded", iMode.ToString(), hr);
+      return mode;
+    }
+    public override bool SetAudioDualMonoMode(eAudioDualMonoMode mode)
+    {
+      if (_audioSwitcherFilter == null)
+      {
+        Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
+        return false;
+      }
+      IMPAudioSwitcherFilter mpSwitcher = _audioSwitcherFilter as IMPAudioSwitcherFilter;
+      if (mpSwitcher == null)
+      {
+        Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
+        return false;
+      }
+      int hr=mpSwitcher.SetAudioDualMonoMode((uint)mode);
+      if (hr != 0)
+      {
+        Log.Info("TsReaderPlayer: SetAudioDualMonoMode mode={0} failed 0x{1:X}", mode.ToString(), hr);
+      }
+      else
+        Log.Info("TsReaderPlayer: SetAudioDualMonoMode mode={0} succeeded", mode.ToString(), hr);
+      return (hr == 0);
+    }	
 
     protected bool IsVideoFile(string filename)
     {
@@ -381,6 +429,15 @@ namespace MediaPortal.Player
         for (int i = 0; i < intFilters; i++)
         {
           customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+        }
+        #endregion
+
+        #region add AudioSwitcher
+        Log.Info("Adding audio switcher to graph");
+        _audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
+        if (_audioSwitcherFilter == null)
+        {
+          Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
         }
         #endregion
 
