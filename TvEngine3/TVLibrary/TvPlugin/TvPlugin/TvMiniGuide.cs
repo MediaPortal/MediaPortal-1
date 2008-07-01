@@ -467,7 +467,10 @@ namespace TvPlugin
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       getChannelList().Visible = false;
-      lstChannelsWithStateIcons.Visible = false;
+      if (lstChannelsWithStateIcons != null)
+      {
+        lstChannelsWithStateIcons.Visible = false;
+      }
 
       benchClock.Reset();
       benchClock.Start();      
@@ -600,7 +603,7 @@ namespace TvPlugin
 
           if (DisplayStatusInfo)
           {          
-            bool showChannelStateIcons = TVHome.ShowChannelStateIcons();
+            bool showChannelStateIcons = (TVHome.ShowChannelStateIcons() && lstChannelsWithStateIcons != null);
 
             switch (CurrentChanState)
             {
