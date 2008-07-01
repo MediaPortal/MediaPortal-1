@@ -187,7 +187,13 @@ namespace TvService
                 }
 
                 //check if cam is capable of descrambling an extra channel
-                if (camDecrypting < keyPair.Value.DataBaseCard.DecryptLimit || ch.FreeToAir || (checkCam == false))
+                bool canDecrypt = true;
+                int dbDecryptLimit = keyPair.Value.DataBaseCard.DecryptLimit;
+                if (dbDecryptLimit > 0)
+                {
+                  canDecrypt = (camDecrypting < dbDecryptLimit);
+                }
+                if (canDecrypt || ch.FreeToAir || (checkCam == false))
                 {
                   //it is.. we can really use this card
                   Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
@@ -418,7 +424,13 @@ namespace TvService
               }
 
               //check if cam is capable of descrambling an extra channel
-              if (camDecrypting < keyPair.Value.DataBaseCard.DecryptLimit || dbChannel.FreeToAir || (checkCam == false))
+              bool canDecrypt = true;
+              int dbDecryptLimit = keyPair.Value.DataBaseCard.DecryptLimit;
+              if (dbDecryptLimit > 0)
+              {
+                canDecrypt = (camDecrypting < dbDecryptLimit);
+              }
+              if (canDecrypt || dbChannel.FreeToAir || (checkCam == false))
               {
                 //it is.. we can really use this card
                 Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
