@@ -1472,10 +1472,11 @@ namespace TvPlugin
       {
         dlg.AddLocalizedString(492); // Audio language menu
       }
-      if (g_Player.GetSupportedAudioDualMonoMode() == eAVDecAudioDualMono.IsDualMono)
-      {
+
+      eAudioDualMonoMode dualMonoMode = g_Player.GetAudioDualMonoMode();
+      if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
         dlg.AddLocalizedString(200059); // Audio dual mono mode menu
-      }
+
       dlg.AddLocalizedString(11000);  // Crop settings
 
       if (!g_Player.IsTVRecording)
@@ -1593,8 +1594,8 @@ namespace TvPlugin
           ShowAudioLanguageMenu();
           break;
 
-        case 200059: 
-          ShowAudioDualMonoModeMenu();
+        case 200059:
+          ShowAudioDualMonoModeMenu(dualMonoMode);
           break;
 
         case 12902: // MSN Messenger
@@ -1923,7 +1924,7 @@ namespace TvPlugin
       }
     }
 
-    void ShowAudioDualMonoModeMenu()
+    void ShowAudioDualMonoModeMenu(eAudioDualMonoMode dualMonoMode)
     {
       if (dlg == null) return;
       dlg.Reset();
@@ -1934,15 +1935,12 @@ namespace TvPlugin
       dlg.AddLocalizedString(200062); //Right channel to the left and right speakers
       dlg.AddLocalizedString(200063); //Mix both
 
-      eAVDecAudioDualMonoReproMode mode = g_Player.GetAudioDualMonoMode();
-      dlg.SelectedLabel = (int)mode;
-      _isDialogVisible = true;
+      dlg.SelectedLabel = (int)dualMonoMode;
 
       dlg.DoModal(GetID);
 
-      _isDialogVisible = false;
       if (dlg.SelectedLabel < 0) return;
-        g_Player.SetAudioDualMonoMode((eAVDecAudioDualMonoReproMode)dlg.SelectedLabel);
+      g_Player.SetAudioDualMonoMode((eAudioDualMonoMode)dlg.SelectedLabel);
     }
 
     void ShowLinkedChannelsMenu(IList linkages)
