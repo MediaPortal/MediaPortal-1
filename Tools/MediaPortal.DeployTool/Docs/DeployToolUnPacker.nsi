@@ -20,31 +20,30 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 !define ROOT "..\..\.."
 !define DEPLOY.BIN "..\bin\Release"
 
+!execute '"${NSISDIR}\makensis.exe" "${ROOT}\mediaportal\Setup\setup.nsi"'
+!execute '"${NSISDIR}\makensis.exe" "${ROOT}\TvEngine3\TVLibrary\Setup\setup.nsi"'
 
- !execute '"${NSISDIR}\makensis.exe" "${ROOT}\mediaportal\Setup\setup.nsi"'
- !execute '"${NSISDIR}\makensis.exe" "${ROOT}\TvEngine3\TVLibrary\Setup\setup.nsi"'
-
-#endregion
 Name "MediaPortal Unpacker"
 ;SetCompressor /SOLID lzma
+Icon "${ROOT}\Tools\MediaPortal.DeployTool\Install.ico"
 
 OutFile "MediaPortal Setup 1.0preRC2 (SVN_test).exe"
-
-InstallDir $DESKTOP\MpDeployToolTemp
+InstallDir "$TEMP\MediaPortal Installation"
 
 Page directory
 Page instfiles
 
-;InstallDir "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
-;InstallDirRegKey HKLM "${REG_NINSTALL}" InstallPath
 CRCCheck on
 XPStyle on
 RequestExecutionLevel admin
 ShowInstDetails show
-
+AutoCloseWindow true
 
 Section
   SetOutPath $INSTDIR
@@ -55,3 +54,7 @@ Section
   File "${ROOT}\TvEngine3\TVLibrary\Setup\Release\package-tvengine.exe"
 
 SectionEnd
+
+Function .onInstSuccess
+  Exec "$INSTDIR\MediaPortal.DeployTool.exe"
+FunctionEnd
