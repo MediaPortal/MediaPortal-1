@@ -1524,6 +1524,7 @@ namespace TvPlugin
           {
             int idChannel = tvcard.IdChannel;
             user = tvcard.User;
+            if (!user.IsAdmin) continue; // a scheduler user is always an admin 
             Channel ch = Channel.Retrieve(idChannel);
             channels.Add(ch);
             GUIListItem item = new GUIListItem();
@@ -1879,7 +1880,7 @@ namespace TvPlugin
       else
       {
         // if Recording hasn't been active for over 5 sec. then reset the lastActiveRecChannelId var)        
-        if (lastRecordTime != DateTime.MinValue && lastActiveRecChannelId > 1)        
+        if (lastRecordTime != DateTime.MinValue && lastActiveRecChannelId > 0)        
         {
           TimeSpan ts = now - lastRecordTime;
           if (ts.TotalSeconds > 5)
