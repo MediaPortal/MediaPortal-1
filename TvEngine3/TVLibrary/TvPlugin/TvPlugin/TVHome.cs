@@ -2421,6 +2421,24 @@ namespace TvPlugin
       }
     }
 
+    /*
+    // for joboehl
+    private static bool isChannelAnalogue(Channel ch)
+    {
+      if (ch.ReferringTuningDetail() != null)
+      {
+        foreach (TuningDetail td in ch.ReferringTuningDetail())
+        {
+          if (td.ChannelType == 0)
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    */
+
     public static bool ViewChannelAndCheck(Channel channel)
     {      
       //GUIWaitCursor.Show();
@@ -2437,13 +2455,19 @@ namespace TvPlugin
         MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
 
         //if a channel is untunable, then there is no reason to carry on or even stop playback.
-        int CurrentChanState = (int)TVHome.TvServer.GetChannelState(channel.IdChannel, TVHome.Card.User);
-        if (CurrentChanState == (int)ChannelState.nottunable)
-        {
-          ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
-          //GUIWaitCursor.Hide();
-          return false;
-        }
+
+
+
+        //if (!isChannelAnalogue(channel))
+        //{
+          int CurrentChanState = (int)TVHome.TvServer.GetChannelState(channel.IdChannel, TVHome.Card.User);
+          if (CurrentChanState == (int)ChannelState.nottunable)
+          {
+            ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+            //GUIWaitCursor.Hide();
+            return false;
+          }
+        //}
 
         //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
         if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))
@@ -2575,7 +2599,7 @@ namespace TvPlugin
         }
         else
         {
-          succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+          succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);          
         }
 
         if (succeeded == TvResult.Succeeded)
@@ -2588,6 +2612,11 @@ namespace TvPlugin
           if (!g_Player.Playing || cardChanged)
           {
             StartPlay();
+          }
+
+          if (!wasPlaying)
+          {
+            SeekToEnd(true);
           }
 
           _playbackStopped = false;

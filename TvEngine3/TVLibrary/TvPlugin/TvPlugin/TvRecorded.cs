@@ -997,6 +997,32 @@ namespace TvPlugin
         dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
         if (!dlgYesNo.IsConfirmed) stoptime = 0;
       }
+
+      else if (m_bIsLiveRecording)
+      {
+
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg != null)
+        {
+          dlg.Reset();
+          dlg.SetHeading(rec.Title);
+          dlg.AddLocalizedString(979); //Play recording from beginning
+          dlg.AddLocalizedString(980); //Play recording from live point
+          dlg.DoModal(GetID);
+          if (dlg.SelectedId == 979)
+          {
+          }
+          else if (dlg.SelectedId == 980)
+          {
+            TVHome.ViewChannelAndCheck(rec.ReferencedChannel());
+            if (g_Player.Playing)
+              g_Player.ShowFullScreenWindow();
+            return true;
+          }
+        }
+      }
+
+
       /*
         IMDBMovie movieDetails = new IMDBMovie();
         VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
