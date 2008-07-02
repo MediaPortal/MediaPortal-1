@@ -1575,12 +1575,9 @@ namespace TvPlugin
             }
 
             item.IconImage = strLogo;
-            item.IconImageBig = strLogo;
-            
-            if (isRecording)
-              item.PinImage = Thumbs.TvRecordingIcon;
-            else
-              item.PinImage = "";
+            item.IconImageBig = strLogo;                        
+            item.PinImage = "";
+
             dlg.Add(item);
             _users.Add(user);
             if (TVHome.Card != null && TVHome.Card.IdChannel == idChannel)
