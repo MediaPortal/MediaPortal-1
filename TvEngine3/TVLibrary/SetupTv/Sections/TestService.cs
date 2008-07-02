@@ -364,7 +364,7 @@ namespace SetupTv.Sections
             item.SubItems[0].Text = cardNo.ToString();
             item.SubItems[1].Text = vcard.Type.ToString();
             if (vcard.IsTimeShifting) tmp = "Timeshifting";
-            if (vcard.IsRecording) tmp = "Recording";
+            if (vcard.IsRecording && vcard.User.IsAdmin) tmp = "Recording";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
             if (vcard.IsTimeShifting && vcard.IsGrabbingEpg) tmp = " Timeshifting (Grabbing EPG)";
