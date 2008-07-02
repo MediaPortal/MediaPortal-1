@@ -256,7 +256,7 @@ namespace MediaPortal.DeployTool
       }
       if (os.OSServicePackBuild != 0)
       {
-        res = MessageBox.Show("OS_Beta", MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(Localizer.Instance.GetString("OS_Beta"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }
