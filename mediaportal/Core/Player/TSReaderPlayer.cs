@@ -151,6 +151,7 @@ namespace MediaPortal.Player
     protected ITeletextSource _teletextSource = null;
     bool enableDVBBitmapSubtitles = false;
     bool enableDVBTtxtSubtitles = false;
+    bool enableMPAudioSwitcher = false;
     #endregion
 
     [Guid("558D9EA6-B177-4c30-9ED5-BF2D714BCBCA"),
@@ -278,6 +279,7 @@ namespace MediaPortal.Player
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
+        enableMPAudioSwitcher=xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if (strValue.Equals("zoom"))
           GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -317,6 +319,7 @@ namespace MediaPortal.Player
         strAudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
+        enableMPAudioSwitcher=xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
       }
     }
 
@@ -433,11 +436,14 @@ namespace MediaPortal.Player
         #endregion
 
         #region add AudioSwitcher
-        Log.Info("Adding audio switcher to graph");
-        _audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
-        if (_audioSwitcherFilter == null)
+        if (enableMPAudioSwitcher)
         {
-          Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
+          Log.Info("Adding audio switcher to graph");
+          _audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
+          if (_audioSwitcherFilter == null)
+          {
+            Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
+          }
         }
         #endregion
 

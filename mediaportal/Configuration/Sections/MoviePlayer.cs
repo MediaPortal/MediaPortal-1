@@ -62,6 +62,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox wmvGroupBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox wmvCheckBox;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPCheckBox enableAudioDualMonoModes;
     bool _init = false;
 
     public MoviePlayer()
@@ -133,6 +134,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         autoDecoderSettings.Checked = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
+        enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
         UpdateDecoderSettings();
         fileNameTextBox.Text = xmlreader.GetValueAsString("movieplayer", "path", "");
         parametersTextBox.Text = xmlreader.GetValueAsString("movieplayer", "arguments", "");
@@ -226,6 +228,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("movieplayer", "autodecodersettings", autoDecoderSettings.Checked);
+        xmlwriter.SetValueAsBool("movieplayer", "audiodualmono", enableAudioDualMonoModes.Checked);
         xmlwriter.SetValue("movieplayer", "path", fileNameTextBox.Text);
         xmlwriter.SetValue("movieplayer", "arguments", parametersTextBox.Text);
         xmlwriter.SetValueAsBool("movieplayer", "internal", !externalPlayerCheckBox.Checked);
@@ -282,6 +285,7 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.wmvCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.enableAudioDualMonoModes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxExternalPlayer.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.wmvGroupBox.SuspendLayout();
@@ -299,7 +303,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxExternalPlayer.Controls.Add(this.fileNameTextBox);
       this.groupBoxExternalPlayer.Controls.Add(this.label1);
       this.groupBoxExternalPlayer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxExternalPlayer.Location = new System.Drawing.Point(0, 239);
+      this.groupBoxExternalPlayer.Location = new System.Drawing.Point(0, 273);
       this.groupBoxExternalPlayer.Name = "groupBoxExternalPlayer";
       this.groupBoxExternalPlayer.Size = new System.Drawing.Size(472, 112);
       this.groupBoxExternalPlayer.TabIndex = 1;
@@ -380,6 +384,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.enableAudioDualMonoModes);
       this.mpGroupBox1.Controls.Add(this.autoDecoderSettings);
       this.mpGroupBox1.Controls.Add(this.mpLabel1);
       this.mpGroupBox1.Controls.Add(this.h264videoCodecComboBox);
@@ -392,7 +397,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 165);
+      this.mpGroupBox1.Size = new System.Drawing.Size(472, 203);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Codec Settings (internal player)";
@@ -402,7 +407,7 @@ namespace MediaPortal.Configuration.Sections
       this.autoDecoderSettings.AutoSize = true;
       this.autoDecoderSettings.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
       this.autoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 129);
+      this.autoDecoderSettings.Location = new System.Drawing.Point(19, 127);
       this.autoDecoderSettings.Name = "autoDecoderSettings";
       this.autoDecoderSettings.Size = new System.Drawing.Size(309, 30);
       this.autoDecoderSettings.TabIndex = 0;
@@ -493,7 +498,7 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox.Controls.Add(this.mpLabel2);
       this.wmvGroupBox.Controls.Add(this.wmvCheckBox);
       this.wmvGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.wmvGroupBox.Location = new System.Drawing.Point(0, 171);
+      this.wmvGroupBox.Location = new System.Drawing.Point(0, 209);
       this.wmvGroupBox.Name = "wmvGroupBox";
       this.wmvGroupBox.Size = new System.Drawing.Size(472, 62);
       this.wmvGroupBox.TabIndex = 7;
@@ -518,6 +523,19 @@ namespace MediaPortal.Configuration.Sections
       this.wmvCheckBox.TabIndex = 0;
       this.wmvCheckBox.Text = "Use 5.1 audio playback for WMV movie files";
       this.wmvCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // enableAudioDualMonoModes
+      // 
+      this.enableAudioDualMonoModes.AutoSize = true;
+      this.enableAudioDualMonoModes.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
+      this.enableAudioDualMonoModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(19, 162);
+      this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
+      this.enableAudioDualMonoModes.Size = new System.Drawing.Size(442, 30);
+      this.enableAudioDualMonoModes.TabIndex = 10;
+      this.enableAudioDualMonoModes.Text = "Enable AudioDualMono mode switching\r\n(If 1 audio stream contains e.g. LEFT=SWE,RI" +
+          "GHT=ENG you can switch between them)";
+      this.enableAudioDualMonoModes.UseVisualStyleBackColor = true;
       // 
       // MoviePlayer
       // 
