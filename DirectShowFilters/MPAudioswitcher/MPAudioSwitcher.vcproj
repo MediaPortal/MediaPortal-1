@@ -20,7 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug Unicode|Win32"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\Debug"
+			IntermediateDirectory=".\Debug"
 			ConfigurationType="2"
 			UseOfMFC="1"
 			CharacterSet="1"
@@ -42,8 +43,16 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\..\include"
-				PreprocessorDefinitions="REGISTER_FILTER;WIN32;_DEBUG;_USRDLL"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;  &quot;$(WINDOWS_SDK)Include\&quot;; &quot;$(DXSDK_DIR)Include&quot;"
+				PreprocessorDefinitions="REGISTER_FILTER;WIN32;_DEBUG;_USRDLL;WINVER=0x400;_CRT_SECURE_NO_DEPRECATE"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="1"
+				AssemblerListingLocation=".\Debug/"
+				ObjectFile=".\Debug/"
+				ProgramDataBaseFileName=".\Debug/"
+				WarningLevel="3"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -58,11 +67,16 @@
 				Name="VCLinkerTool"
 				RegisterOutput="true"
 				AdditionalDependencies="strmbaseDU.lib Winmm.lib"
-				OutputFile="$(OutDir)\$(ProjectName).ax"
-				AdditionalLibraryDirectories="..\..\..\..\lib"
+				OutputFile=".\Debug/MPAudioSwitcher.ax"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\..\..\..\lib;&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
+				ManifestFile="Debug\MPAudioSwitcher.intermediate.manifest"
+				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="AudioSwitcher.def"
 				DelayLoadDLLs=""
+				GenerateDebugInformation="true"
 				SubSystem="2"
+				ImportLibrary=".\Debug/MPAudioSwitcher.lib"
 				TargetMachine="1"
 			/>
 			<Tool

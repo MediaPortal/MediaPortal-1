@@ -127,8 +127,8 @@ Global
 		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Debug Unicode lib|Win32.Build.0 = Debug Unicode lib|Win32
 		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Debug Unicode|Win32.ActiveCfg = Debug Unicode|Win32
 		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Debug Unicode|Win32.Build.0 = Debug Unicode|Win32
-		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Debug|Win32.ActiveCfg = Debug Unicode lib|Win32
-		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Debug|Win32.Build.0 = Debug Unicode lib|Win32
+		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Debug|Win32.ActiveCfg = Debug Unicode|Win32
+		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Debug|Win32.Build.0 = Debug Unicode|Win32
 		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Release Unicode lib|Win32.ActiveCfg = Release Unicode lib|Win32
 		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Release Unicode lib|Win32.Build.0 = Release Unicode lib|Win32
 		{D8DB3E7E-D50E-4EC3-A9B9-DAD18F5FE466}.Release Unicode|Win32.ActiveCfg = Release Unicode|Win32
