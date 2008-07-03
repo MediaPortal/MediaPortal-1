@@ -60,7 +60,7 @@ Var RemoveAll       ; Set, when the user decided to uninstall everything
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 
-!define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/GeneralRequirements#head-eaa9d7e8a8aada3eae077e27fce4af0df9d2297e"
+!define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/GeneralRequirements/OperatingSystems"
 
 
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
