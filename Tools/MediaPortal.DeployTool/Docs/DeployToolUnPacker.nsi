@@ -23,11 +23,34 @@
 
 #endregion
 
+# DEFINES
 !define ROOT "..\..\.."
+!define MPtrunk "${ROOT}\mediaportal"
+!define TVServertrunk "${ROOT}\TvEngine3\TVLibrary"
+
 !define DEPLOY.BIN "..\bin\Release"
 
+
+# BUILD MediaPortal
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${MPtrunk}\DeployVersionSVN\DeployVersionSVN.sln"'
+
+!system '"${MPtrunk}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${MPtrunk}"'
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${MPtrunk}\MediaPortal.sln"'
+!system '"${MPtrunk}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${MPtrunk}"  /revert'
+
+# BUILD TVServer
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${TVServertrunk}\DeployVersionSVN\DeployVersionSVN.sln"'
+
+!system '"${MPtrunk}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${TVServertrunk}"'
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${TVServertrunk}\TvLibrary.sln"'
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${TVServertrunk}\TvPlugin\TvPlugin.sln"'
+!system '"${MPtrunk}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${TVServertrunk}"  /revert'
+
+# BUILD installer
 !execute '"${NSISDIR}\makensis.exe" "${ROOT}\mediaportal\Setup\setup.nsi"'
 !execute '"${NSISDIR}\makensis.exe" "${ROOT}\TvEngine3\TVLibrary\Setup\setup.nsi"'
+
+
 
 Name "MediaPortal Unpacker"
 ;SetCompressor /SOLID lzma
