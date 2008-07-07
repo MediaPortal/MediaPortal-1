@@ -1431,19 +1431,18 @@ namespace MediaPortal.Player
             switch (iChangedMediaTypes)
             {
               case 1: // audio changed
-                IPin pAudio = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Audio");
-                DirectShowUtil.DisconnectPin(_graphBuilder, pAudio);
-                DirectShowUtil.TryConnect(_graphBuilder, fInfo.achName, pAudio, true);
-                DirectShowUtil.ReleaseComObject(pAudio);
+                Log.Info("Rerendering audio pin of tsreader filter.");
+                ReRenderPin(fInfo.achName, "Audio");
                 break;
               case 2: // video changed
-                IPin pVideo = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
-                DirectShowUtil.DisconnectPin(_graphBuilder, pVideo);
-                DirectShowUtil.TryConnect(_graphBuilder, fInfo.achName, pVideo, true);
-                DirectShowUtil.ReleaseComObject(pVideo);
+                Log.Info("Rerendering video pin of tsreader filter.");
+                ReRenderPin(fInfo.achName, "Video");
                 break;
               case 3: // both changed
-                DirectShowUtil.ReRenderAll(_graphBuilder, _fileSource, true);
+                Log.Info("Rerendering audio pin of tsreader filter.");
+                ReRenderPin(fInfo.achName, "Audio");
+                Log.Info("Rerendering video pin of tsreader filter.");
+                ReRenderPin(fInfo.achName, "Video");
                 break;
             }
           }
@@ -1452,20 +1451,18 @@ namespace MediaPortal.Player
             switch (iChangedMediaTypes)
             {
               case 1: // audio changed
-                Log.Info("Reconnecting audio pin of base filter.");
-                IPin pAudio = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Audio");
-                _graphBuilder.Reconnect(pAudio);
-                DirectShowUtil.ReleaseComObject(pAudio);
+                Log.Info("Reconnecting audio pin of tsreader filter.");
+                ReConnectPin("Audio");
                 break;
               case 2: // video changed
-                IPin pVideo = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
-                Log.Info("Reconnecting video pin of base filter.");
-                _graphBuilder.Reconnect(pVideo);
-                DirectShowUtil.ReleaseComObject(pVideo);
+                Log.Info("Reconnecting video pin of tsreader filter.");
+                ReConnectPin("Video");
                 break;
               case 3: // both changed
-                Log.Info("Reconnecting all pins of base filter.");
-                DirectShowUtil.ReConnectAll(_graphBuilder, _fileSource);
+                Log.Info("Reconnecting audio pin of tsreader filter.");
+                ReConnectPin("Audio");
+                Log.Info("Reconnecting video pin of tsreader filter.");
+                ReConnectPin("Video");
                 break;
             }
           }
@@ -1782,6 +1779,20 @@ namespace MediaPortal.Player
         _mediaCtrl.StopWhenReady();
         _elapsedTimer = DateTime.Now;
       }
+    }
+
+    private void ReRenderPin(string filterName, string pinName)
+    {
+      IPin pPin = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, pinName);
+      DirectShowUtil.DisconnectPin(_graphBuilder, pPin);
+      DirectShowUtil.TryConnect(_graphBuilder, filterName, pPin, false);
+      DirectShowUtil.ReleaseComObject(pPin);
+    }
+    private void ReConnectPin(string pinName)
+    {
+      IPin pPin = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, pinName);
+      _graphBuilder.Reconnect(pPin);
+      DirectShowUtil.ReleaseComObject(pPin);
     }
     #endregion
 
