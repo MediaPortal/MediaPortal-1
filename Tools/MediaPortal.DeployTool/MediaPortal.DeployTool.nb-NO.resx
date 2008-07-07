@@ -495,7 +495,7 @@ Den ødelagte oppsett filen vil nå bli slettet, hvis den finnes.</value>
 Fortsett på egen risiko!</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
-    <value>Programmet vil nå avslutte å deretter åpne folderen "MediaPortal Installation".
-Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaPortal.DeployTool.ee"</value>
+    <value>Programmet vil nå avslutte, for deretter å åpne folderen "MediaPortal Installation".
+Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaPortal.DeployTool.exe"</value>
   </data>
 </root>
