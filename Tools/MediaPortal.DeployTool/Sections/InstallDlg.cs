@@ -287,6 +287,7 @@ namespace MediaPortal.DeployTool
             break;
         }
       }
+      item.ImageIndex = 0;
       return true;
     }
   }
