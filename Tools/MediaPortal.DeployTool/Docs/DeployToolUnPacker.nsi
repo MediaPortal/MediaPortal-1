@@ -25,26 +25,37 @@
 
 # DEFINES
 !define ROOT "..\..\.."
-!define MPtrunk "${ROOT}\mediaportal"
-!define TVServertrunk "${ROOT}\TvEngine3\TVLibrary"
+!define trunk_MP "${ROOT}\mediaportal"
+!define trunk_TVServer "${ROOT}\TvEngine3\TVLibrary"
+!define trunk_DeployTool "${ROOT}\Tools\MediaPortal.DeployTool"
 
 !define DEPLOY.BIN "..\bin\Release"
 
+!define MIN_FRA_MAJOR "2"
+!define MIN_FRA_MINOR "0"
+!define MIN_FRA_BUILD "*"
+
+# INCLUDE
+!include "CheckDotNetFramework.nsh"
+
 
 # BUILD MediaPortal
-!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${MPtrunk}\DeployVersionSVN\DeployVersionSVN.sln"'
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${trunk_MP}\DeployVersionSVN\DeployVersionSVN.sln"'
 
-!system '"${MPtrunk}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${MPtrunk}"'
-!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${MPtrunk}\MediaPortal.sln"'
-!system '"${MPtrunk}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${MPtrunk}"  /revert'
+!system '"${trunk_MP}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${trunk_MP}"'
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${trunk_MP}\MediaPortal.sln"'
+!system '"${trunk_MP}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${trunk_MP}"  /revert'
 
 # BUILD TVServer
-!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${TVServertrunk}\DeployVersionSVN\DeployVersionSVN.sln"'
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "${trunk_TVServer}\DeployVersionSVN\DeployVersionSVN.sln"'
 
-!system '"${MPtrunk}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${TVServertrunk}"'
-!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${TVServertrunk}\TvLibrary.sln"'
-!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${TVServertrunk}\TvPlugin\TvPlugin.sln"'
-!system '"${MPtrunk}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${TVServertrunk}"  /revert'
+!system '"${trunk_MP}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${trunk_TVServer}"'
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${trunk_TVServer}\TvLibrary.sln"'
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release|x86" "${trunk_TVServer}\TvPlugin\TvPlugin.sln"'
+!system '"${trunk_MP}\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${trunk_TVServer}"  /revert'
+
+# BUILD DeployTool
+!system '"$%ProgramFiles%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "Release" "${trunk_DeployTool}\MediaPortal.DeployTool.sln"'
 
 # BUILD installer
 !execute '"${NSISDIR}\makensis.exe" "${ROOT}\mediaportal\Setup\setup.nsi"'
@@ -77,6 +88,10 @@ Section
   File "${ROOT}\TvEngine3\TVLibrary\Setup\Release\package-tvengine.exe"
 
 SectionEnd
+
+Function .onInit
+  Call AbortIfBadFramework
+FunctionEnd
 
 Function .onInstSuccess
   Exec "$INSTDIR\MediaPortal.DeployTool.exe"
