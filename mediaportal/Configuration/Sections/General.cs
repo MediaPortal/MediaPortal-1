@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
           settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
         }
 
-        loglevel = xmlreader.GetValueAsString("general", "loglevel", "2");
+        loglevel = xmlreader.GetValueAsString("general", "loglevel", "3");  // set loglevel to Debug
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
         screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
 
