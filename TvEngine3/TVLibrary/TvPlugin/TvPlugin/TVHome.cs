@@ -2631,7 +2631,14 @@ namespace TvPlugin
           //if (g_Player.Duration == 0)
           //{
             //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
+          if (!cardChanged)
+          {
             g_Player.Stop();
+          }
+          else
+          {
+            wasPlaying = false;
+          }
           //}
         }
 

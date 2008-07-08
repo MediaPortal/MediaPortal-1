@@ -58,7 +58,7 @@ namespace TvPlugin
     [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
     [SkinControlAttribute(37)]    protected GUIListControl lstChannelsWithStateIcons = null;
 
-    //protected GUIListControl lstChannels = null;
+    protected GUIListControl lstChannels = null;
 
     bool _canceled = false;
     bool _running = false;
@@ -263,18 +263,18 @@ namespace TvPlugin
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 // switching logic
-                SelectedChannel = (Channel)getChannelList().SelectedListItem.MusicTag;
+                SelectedChannel = (Channel)lstChannels.SelectedListItem.MusicTag;
 
                 Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  string selectedChan = (string)getChannelList().SelectedListItem.TVTag;
+                  string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
                   if ((TVHome.Navigator.CurrentChannel != selectedChan) || g_Player.IsTVRecording)
                   {
                     List<Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
                     {
-                      changeChannel = (Channel)tvChannelList[getChannelList().SelectedListItemIndex];
+                      changeChannel = (Channel)tvChannelList[lstChannels.SelectedListItemIndex];
                     }
                   }
                 }
@@ -367,7 +367,15 @@ namespace TvPlugin
       AllocResources();
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
       benchClock.Stop();
-      Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());      
+      Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
+      
+      lstChannels = getChannelList();
+
+      if (lstChannelsWithStateIcons != null)
+      {
+        lstChannelsWithStateIcons.Visible = false;
+      }
+      lstChannels.Visible = true;
 
       FillChannelList();
       FillGroupList();
@@ -394,7 +402,7 @@ namespace TvPlugin
     {
       GUIWaitCursor.Show();
       TVHome.Navigator.SetCurrentGroup(spinGroup.Value);
-      getChannelList().Clear();
+      lstChannels.Clear();
       FillChannelList();
       GUIWaitCursor.Hide();
     }
@@ -466,11 +474,11 @@ namespace TvPlugin
     public void FillChannelList()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      getChannelList().Visible = false;
+      /*getChannelList().Visible = false;
       if (lstChannelsWithStateIcons != null)
       {
         lstChannelsWithStateIcons.Visible = false;
-      }
+      }*/
 
       benchClock.Reset();
       benchClock.Start();      
@@ -581,7 +589,7 @@ namespace TvPlugin
           if (TVHome.Navigator.Channel.IdChannel == CurrentId)
           {
             item.IsRemote = true;
-            SelectedID = getChannelList().Count;
+            SelectedID = lstChannels.Count;
 
             if (isUserTS && !CheckChannelState && CurrentChanState != (int)ChannelState.recording)
             {
@@ -692,15 +700,14 @@ namespace TvPlugin
           item.Label2 = sb.ToString();
           item.Label = local790 + tmpString;
 
-          getChannelList().Add(item);
+          lstChannels.Add(item);
         }
       }
       benchClock.Stop();
       Log.Debug("miniguide: state check + filling completed after {0}ms", benchClock.ElapsedMilliseconds.ToString());
-      getChannelList().SelectedListItemIndex = SelectedID;
-      getChannelList().Visible = true;
+      lstChannels.SelectedListItemIndex = SelectedID;      
 
-      if (getChannelList().GetID == 37)
+      if (lstChannels.GetID == 37)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, 37, 0, 0, null);
         OnMessage(msg);
