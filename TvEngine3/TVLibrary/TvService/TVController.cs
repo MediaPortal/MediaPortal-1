@@ -1276,14 +1276,20 @@ namespace TvService
         //if (!CardPresent(cardId)) return TvResult.CardIsDisabled;
         
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
-        TvResult res = _cards[cardId].Tuner.Tune(ref user, channel, idChannel);        
+        TvResult res = _cards[cardId].Tuner.Tune(ref user, channel, idChannel);
+        
+        
+        /*if (res == TvResult.Succeeded)
+        {
+          RemoveUserFromOtherCards(cardId, user);
+        }
+        */
         return res;
 
       }
       finally
       {
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
-        RemoveUserFromOtherCards(cardId, user);
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));        
       }
     }
 
@@ -2049,7 +2055,7 @@ namespace TvService
           }
         }
 
-        //tune to the new channel
+        //tune to the new channel        
         result = CardTune(ref user, tuneChannel, channel);
         if (result != TvResult.Succeeded)
         {
@@ -2078,6 +2084,7 @@ namespace TvService
         }
         Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", user.CardId, timeshiftFileName);
         card = GetVirtualCard(user);
+        RemoveUserFromOtherCards(card.Id, user); //only remove user from other cards if new tuning was a success
         return TvResult.Succeeded;
       }
       catch (Exception ex)
@@ -2871,12 +2878,18 @@ namespace TvService
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
         TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);        
         Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId, user.SubChannel);
+        
+        /*
+        if (result == TvResult.Succeeded)
+        {
+          RemoveUserFromOtherCards(user.CardId, user);
+        }
+        */
         return result;
       }
       finally
       {
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
-        RemoveUserFromOtherCards(user.CardId, user);
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));        
       }
     }
 
