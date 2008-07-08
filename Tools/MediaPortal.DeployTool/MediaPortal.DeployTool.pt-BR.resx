@@ -253,7 +253,7 @@ O PC atuará como um servidor dedicado de TV e proverá a outros PCs na sua rede
     <value>Você instalou com sucesso o MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3_install" xml:space="preserve">
-    <value>Abaixo você pode encontrar alguns links úteis que te ajudará a iniciar o uso do MediaPortal</value>
+    <value>Abaixo você vai encontrar alguns links uteis que te ajudarão a utilizar o MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
     <value>Forum do MediaPortal</value>
@@ -496,5 +496,13 @@ O arquivo de configuração corrompido será apagado.
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Configure o Firewall do Windows para permitir acesso externo ao MediaPortal</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Beta versão do SP detectado, seu sistema não é suportado...
+Continue e assuma os riscos!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Esta aplicação vai agora encerrar e abrir o diretório "MediaPortal Installation".
+Mova esse diretório para o seu HTPC. Inicie a instalação executando "MediaPortal.DeployTool.exe".</value>
   </data>
 </root>

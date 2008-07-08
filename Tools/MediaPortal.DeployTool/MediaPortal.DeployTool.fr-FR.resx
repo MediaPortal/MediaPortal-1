@@ -491,4 +491,12 @@ Si un fichier de configuration corrompu est trouvé, il sera supprimé.</value>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Configurer le Pare-Feu Windows pour permettre l'accès à MediaPortal depuis les autres PC</value>
   </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Une version Beta de SP est détecté. Votre système n'est pas supporté...
+Continuer à vos risques et périls!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Cette application va maintenant se fermer et ouvrir le dossier "MediaPortal Installation".
+Transférer se dossier dans votre HTPC. Commencer l'installation, en éxecutant "MediaPortal.DeployTool.exe".</value>
+  </data>
 </root>
