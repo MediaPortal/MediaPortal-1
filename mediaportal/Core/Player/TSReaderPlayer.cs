@@ -614,8 +614,15 @@ namespace MediaPortal.Player
               if (count > 20)
               {
                 Log.Debug("TSReaderPlayer: no vmr9 connection. Maybe we have a radio recording but expect video too so we suppose it's ok.");
-                return true;
-                //g_Player.Stop();
+                if (g_Player.IsRadio)
+                {
+                  return true;
+                }
+                else
+                {
+                  g_Player.Stop();
+                  return false;
+                }
                 //Cleanup();
                 //return false;
               }

@@ -458,7 +458,7 @@ namespace MediaPortal.Player
     }
 
     public static void Stop(bool keepExclusiveModeOn)
-    {
+    {      
       Log.Info("g_Player.Stop() - keepExclusiveModeOn = {0}" ,keepExclusiveModeOn);
       if (keepExclusiveModeOn)
       {
@@ -953,7 +953,10 @@ namespace MediaPortal.Player
           if (!bResult)
           {
             Log.Info("player:ended");
-            _player.Release();
+            if (_player != null)
+            {
+              _player.Release();
+            }
             _player = null;
             _subs = null;
             GC.Collect(); GC.Collect(); GC.Collect();
