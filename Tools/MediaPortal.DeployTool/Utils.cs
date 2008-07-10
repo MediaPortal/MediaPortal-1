@@ -240,6 +240,7 @@ namespace MediaPortal.DeployTool
         case 52:
           if (os.OSProductType == OsDetection.OSProductType.Workstation)
           {
+            MsgOsVersion = MsgOsVersion + " [64bit]";
             MessageBox.Show(Localizer.Instance.GetString("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }

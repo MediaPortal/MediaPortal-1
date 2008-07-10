@@ -782,6 +782,7 @@ namespace SetupTv
         case 52:
           if (os.OSProductType == OsDetection.OSProductType.Workstation)
           {
+            MsgOsVersion = MsgOsVersion + " [64bit]";
             MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }
