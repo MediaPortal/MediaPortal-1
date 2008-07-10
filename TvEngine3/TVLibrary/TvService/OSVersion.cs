@@ -460,12 +460,13 @@ namespace OsDetection
         // No Service Pack Installed
         if (String.IsNullOrEmpty(_CSDVersion)) return 0;
 
-        string Minor = _CSDVersion.Substring("Service Pack ".Length);
-        if (Minor.Length != 1)
-          // example: "Service Pack 3, v.3311"
-          return Convert.ToInt16(Minor.Split('.')[1]);
+        string[] words = _CSDVersion.Split('.');
+
+        if (words.Length == 2)
+          // ex. "Service Pack 3, v.3311": 1="Service Pack 3, v." , 2="3311"
+          return Convert.ToInt16(words[1]);
         else
-          // example: "Service Pack 3"
+          // ex. "Service Pack 3": 1="Service Pack 3"
           return 0;
       }
     }
