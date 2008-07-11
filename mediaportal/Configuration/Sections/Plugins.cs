@@ -481,6 +481,8 @@ namespace MediaPortal.Configuration.Sections
         //
         LoadPlugins();
 
+
+        CheckPowerScheduler();
         //
         // Populate our list
         //
@@ -490,5 +492,26 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private void CheckPowerScheduler()
+    {
+      Log.Info("CheckPowerScheduler");
+      foreach (ItemTag tag in loadedPlugins)
+      {
+        if (tag.SetupForm.PluginName().Equals("PowerScheduler client plugin"))
+        {
+          for (int i = 0; i < loadedPlugins.Count; i++)
+          {
+            ItemTag item = (ItemTag)loadedPlugins[i];
+            if (item.SetupForm.PluginName().Equals("PowerScheduler") &&
+                item.SetupForm.Author().Equals("Bavarian"))
+            {
+              loadedPlugins.RemoveAt(i);
+              Log.Info("Hiding inbuild PowerScheduler");
+              return;
+            } 
+          }
+        }
+      }
+    }
   }
 }
