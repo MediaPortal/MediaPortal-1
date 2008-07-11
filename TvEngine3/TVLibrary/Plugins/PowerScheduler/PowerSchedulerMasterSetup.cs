@@ -191,7 +191,7 @@ namespace TvEngine.PowerScheduler
       setting.Value = numericUpDown3.Value.ToString();
       setting.Persist();
 
-      setting = _layer.GetSetting("PowerSchedulerReinitializeController", "60");
+      setting = _layer.GetSetting("PowerSchedulerReinitializeController", "false");
       setting.Value = checkBox5.Checked.ToString();
       setting.Persist();
 
