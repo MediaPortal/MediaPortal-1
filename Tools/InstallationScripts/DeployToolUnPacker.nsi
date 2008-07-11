@@ -38,7 +38,7 @@
 
 
 # INCLUDE
-!include "CheckDotNetFramework.nsh"
+!include "include-DotNetFramework.nsh"
 
 
 # BUILD sources  , comment to disable the preBuild
