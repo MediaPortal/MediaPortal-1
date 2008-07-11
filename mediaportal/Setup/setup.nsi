@@ -26,10 +26,17 @@
 
 # DEFINES
 !define svn_ROOT "..\.."
-!define svn_MP "${svn_ROOT}\mediaportal"
-!define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
-!define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
-!define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
+!if ${VER_BUILD} == 0       # we are on a private machine
+  !define svn_MP "${svn_ROOT}\mediaportal"
+  !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
+  !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
+  !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
+!else                       # we are on Team MediaPortal's svn server
+  !define svn_MP "${svn_ROOT}\mediaportal"
+  !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
+  !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
+  !define svn_InstallScripts "."
+!endif
 
 #**********************************************************************************************************#
 #
@@ -113,8 +120,8 @@ BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
 !define WinVer++
 !include Memento.nsh
 
-!include "${svn_InstallScripts}\setup-AddRemovePage.nsh"
-!include "${svn_InstallScripts}\setup-CommonMPMacros.nsh"
+!include "${svn_InstallScripts}\include-AddRemovePage.nsh"
+!include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
 !include setup-languages.nsh
 
 ; FileFunc macros
