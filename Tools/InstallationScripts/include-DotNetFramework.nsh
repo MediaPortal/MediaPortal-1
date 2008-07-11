@@ -25,19 +25,25 @@
 
 #**********************************************************************************************************#
 #
-# code for file association was taken from:
-#                         http://nsis.sourceforge.net/File_Association
+#                         .NET Framework Detection
+#
+# code was taken from:
+#                         http://nsis.sourceforge.net/How_to_Detect_any_.NET_Framework
 #
 #**********************************************************************************************************#
-;;USAGE:
+
+# USAGE:
+
 ;!define MIN_FRA_MAJOR "3"
 ;!define MIN_FRA_MINOR "0"
 ;!define MIN_FRA_BUILD "*"
-;
 ;;NB Use an asterisk to match anything.
 ;Call AbortIfBadFramework
 ;; No pops. It just aborts inside the function, or returns if all is well.
 ;; Change this if you like.
+
+#**********************************************************************************************************#
+
 Function AbortIfBadFramework
  
   ;Save the variables in case something else is using them
