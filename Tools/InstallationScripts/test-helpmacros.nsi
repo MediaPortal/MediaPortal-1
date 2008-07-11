@@ -1,3 +1,39 @@
+#region Copyright (C) 2005-2008 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2008 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
+
+# DEFINES
+!define svn_ROOT "..\.."
+!define svn_MP "${svn_ROOT}\mediaportal"
+!define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
+!define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
+!define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
+
+
+
+
 ; TEST APP FOR MP STUFF
 
 ; The name of the installer
@@ -11,10 +47,12 @@ InstallDir $DESKTOP\Example1
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel user
+ShowInstDetails show
 
 ;--------------------------------
 
 Page license
+Page instfiles 
 
 ;--------------------------------
 
@@ -31,7 +69,7 @@ Page license
 
 !include LogicLib.nsh
 
-!include setup-CommonMPMacros.nsh
+!include include-CommonMPMacros.nsh
 
 ;--------------------------------
 
@@ -46,36 +84,36 @@ SectionEnd ; end the section
 
   ${If} ${MP023IsInstalled}
     !insertmacro MP_GET_INSTALL_DIR $R0
-    MessageBox MB_ICONINFORMATION|MB_OK "MP_GET_INSTALL_DIR: $R0"
+    DetailPrint "MP_GET_INSTALL_DIR: $R0"
   ${Else}
-    MessageBox MB_ICONINFORMATION|MB_OK "no MP023IsInstalled"
+    DetailPrint "no MP023IsInstalled"
   ${EndIf}
 
   ${If} ${MPIsInstalled}
     !insertmacro MP_GET_INSTALL_DIR $R0
-    MessageBox MB_ICONINFORMATION|MB_OK "MP_GET_INSTALL_DIR: $R0"
+    DetailPrint "MP_GET_INSTALL_DIR: $R0"
   ${Else}
-    MessageBox MB_ICONINFORMATION|MB_OK "no MPIsInstalled"
+    DetailPrint "no MPIsInstalled"
   ${EndIf}
 
   ${If} ${TVServerIsInstalled}
     !insertmacro TVSERVER_GET_INSTALL_DIR $R0
-    MessageBox MB_ICONINFORMATION|MB_OK "TVSERVER_GET_INSTALL_DIR: $R0"
+    DetailPrint "TVSERVER_GET_INSTALL_DIR: $R0"
   ${Else}
-    MessageBox MB_ICONINFORMATION|MB_OK "no TVServerIsInstalled"
+    DetailPrint "no TVServerIsInstalled"
   ${EndIf}
 
 
   ${If} ${MSI_TVServerIsInstalled}
-    MessageBox MB_ICONINFORMATION|MB_OK "MSI_TVServerIsInstalled"
+    DetailPrint "MSI_TVServerIsInstalled"
   ${Else}
-    MessageBox MB_ICONINFORMATION|MB_OK "no MSI_TVServerIsInstalled"
+    DetailPrint "no MSI_TVServerIsInstalled"
   ${EndIf}
 
   ${If} ${MSI_TVClientIsInstalled}
-    MessageBox MB_ICONINFORMATION|MB_OK "MSI_TVClientIsInstalled"
+    DetailPrint "MSI_TVClientIsInstalled"
   ${Else}
-    MessageBox MB_ICONINFORMATION|MB_OK "no MSI_TVClientIsInstalled"
+    DetailPrint "no MSI_TVClientIsInstalled"
   ${EndIf}
 
 !macroend
@@ -84,13 +122,13 @@ SectionEnd ; end the section
 
   ; show error that the OS is not supported and abort the installation
   ${If} ${AtMostWin2000Srv}
-    MessageBox MB_ICONINFORMATION|MB_OK "AtMostWin2000Srv"
+    DetailPrint "AtMostWin2000Srv"
     StrCpy $0 "OSabort"
   ${ElseIf} ${IsWinXP}
-    MessageBox MB_ICONINFORMATION|MB_OK "IsWinXP"
+    DetailPrint "IsWinXP"
     !insertmacro GetServicePack $R1 $R2
-    MessageBox MB_ICONINFORMATION|MB_OK "SP major: $R1"
-    MessageBox MB_ICONINFORMATION|MB_OK "SP minor: $R2"
+    DetailPrint "SP major: $R1"
+    DetailPrint "SP minor: $R2"
     ${If} $R2 > 0
       StrCpy $0 "OSwarnBetaSP"
     ${ElseIf} $R1 < 2
@@ -100,18 +138,18 @@ SectionEnd ; end the section
     ${EndIf}
 
   ${ElseIf} ${IsWinXP64}
-    MessageBox MB_ICONINFORMATION|MB_OK "IsWinXP64"
+    DetailPrint "IsWinXP64"
     StrCpy $0 "OSabort"
 
   ${ElseIf} ${IsWin2003}
-    MessageBox MB_ICONINFORMATION|MB_OK "IsWin2003"
+    DetailPrint "IsWin2003"
     StrCpy $0 "OSwarn"
 
   ${ElseIf} ${IsWinVISTA}
-    MessageBox MB_ICONINFORMATION|MB_OK "IsWinVISTA"
+    DetailPrint "IsWinVISTA"
     !insertmacro GetServicePack $R1 $R2
-    MessageBox MB_ICONINFORMATION|MB_OK "SP major: $R1"
-    MessageBox MB_ICONINFORMATION|MB_OK "SP minor: $R2"
+    DetailPrint "SP major: $R1"
+    DetailPrint "SP minor: $R2"
     ${If} $R2 > 0
       StrCpy $0 "OSwarnBetaSP"
     ${ElseIf} $R1 < 1
@@ -121,11 +159,11 @@ SectionEnd ; end the section
     ${EndIf}
 
   ${ElseIf} ${IsWin2008}
-    MessageBox MB_ICONINFORMATION|MB_OK "IsWin2008"
+    DetailPrint "IsWin2008"
     StrCpy $0 "OSwarn"
 
   ${Else}
-    MessageBox MB_ICONINFORMATION|MB_OK "unknown OS"
+    DetailPrint "unknown OS"
     StrCpy $0 "OSabort"
   ${EndIf}
 
@@ -150,81 +188,60 @@ SectionEnd ; end the section
 
 !macroend
 
-Function .onInit
+Section
   ${LOG_OPEN}
 
 
-  MessageBox MB_ICONINFORMATION|MB_YESNO "Do OS detection checks?" IDNO noOperationSystemChecks
-    !insertmacro OperationSystemChecks
-
-  noOperationSystemChecks:
-
-
-
-  MessageBox MB_ICONINFORMATION|MB_YESNO "Do vcr InstallCheck?" IDNO novcrInstallCheck
+  !insertmacro OperationSystemChecks
 
   ${If} ${VCRedistIsInstalled}
-    MessageBox MB_ICONINFORMATION|MB_OK "vcr IsInstalled"
+    DetailPrint "vcr IsInstalled"
   ${Else}
-    MessageBox MB_ICONINFORMATION|MB_OK "no vcr IsInstalled"
+    DetailPrint "no vcr IsInstalled"
   ${EndIf}
-
-  novcrInstallCheck:
-
-
-
-  MessageBox MB_ICONINFORMATION|MB_YESNO "Do MP InstallChecks?" IDNO noInstallChecks
-    !insertmacro DoInstallChecks
-
-  noInstallChecks:
+  
+  !insertmacro DoInstallChecks
 
 
-
+  
+  
   MessageBox MB_ICONINFORMATION|MB_YESNO "Do kill process test?" IDNO noKillProcess
 
   ${KILLPROCESS} "MPInstaller.exe"
   ${KILLPROCESS} "makensisw.exe"
   ${KILLPROCESS} "Input Service Configuration.exe"
 
-  MessageBox MB_ICONINFORMATION|MB_OK "KillProcess FINISHED"
+  DetailPrint "KillProcess FINISHED"
 
   noKillProcess:
 
 
-
-  MessageBox MB_ICONINFORMATION|MB_YESNO "DoXmlTests?" IDNO noXmlTests
-
+  
+  
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
-    MessageBox MB_ICONINFORMATION|MB_OK "no MPIsInstalled"
+    DetailPrint "no MPIsInstalled"
   ${else}
     !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
     ${ReadMediaPortalDirs} $MPdir.Base
   ${EndIf}
 
-      MessageBox MB_ICONINFORMATION|MB_OK "Found the following Entries: \
-      $\r$\nBase:  $MPdir.Base$\r$\n \
-      $\r$\nConfig:  $MPdir.Config \
-      $\r$\nPlugins: $MPdir.Plugins \
-      $\r$\nLog: $MPdir.Log \
-      $\r$\nCustomInputDevice: $MPdir.CustomInputDevice \
-      $\r$\nCustomInputDefault: $MPdir.CustomInputDefault \
-      $\r$\nSkin: $MPdir.Skin \
-      $\r$\nLanguage: $MPdir.Language \
-      $\r$\nDatabase: $MPdir.Database \
-      $\r$\nThumbs: $MPdir.Thumbs \
-      $\r$\nWeather: $MPdir.Weather \
-      $\r$\nCache: $MPdir.Cache \
-      $\r$\nBurnerSupport: $MPdir.BurnerSupport \
-      "
+  DetailPrint "Found the following Entries:"
+  DetailPrint "    Base:  $MPdir.Base"
+  DetailPrint "    Config:  $MPdir.Config"
+  DetailPrint "    Plugins: $MPdir.Plugins"
+  DetailPrint "    Log: $MPdir.Log"
+  DetailPrint "    CustomInputDevice: $MPdir.CustomInputDevice"
+  DetailPrint "    CustomInputDefault: $MPdir.CustomInputDefault"
+  DetailPrint "    Skin: $MPdir.Skin"
+  DetailPrint "    Language: $MPdir.Language"
+  DetailPrint "    Database: $MPdir.Database"
+  DetailPrint "    Thumbs: $MPdir.Thumbs"
+  DetailPrint "    Weather: $MPdir.Weather"
+  DetailPrint "    Cache: $MPdir.Cache"
+  DetailPrint "    BurnerSupport: $MPdir.BurnerSupport"
 
-  noXmlTests:
-
-
-
-  Abort
-
-FunctionEnd
+SectionEnd
 
 Function .onInstFailed
   ${LOG_CLOSE}
