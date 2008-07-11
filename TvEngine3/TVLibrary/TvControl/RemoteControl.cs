@@ -26,7 +26,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using TvControl;
 using TvLibrary.Log;
-using System.Collections;
+// Reverted mantis #1409: using System.Collections;
 
 namespace TvControl
 {
@@ -37,7 +37,7 @@ namespace TvControl
   {
     static IController _tvControl;
     static string _hostName = "localhost";
-    private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
+    // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
 
     /// <summary>
     /// Gets or sets the name the hostname of the master tv-server.
@@ -71,20 +71,21 @@ namespace TvControl
           if (_tvControl != null)
             return _tvControl;
 
-#if !DEBUG //only use timeouts when (build=release)
-          try
-          {
-            IDictionary t = new Hashtable();
-            t.Add("timeout", _timeOut);
-            TcpClientChannel clientChannel = new TcpClientChannel(t, null);
-            ChannelServices.RegisterChannel(clientChannel);
-          }
-          catch (Exception e)
-          {
-            //Log.Debug("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
-            //ignore
-          }
-#endif          
+// Reverted mantis #1409: 
+//#if !DEBUG //only use timeouts when (build=release)
+//          try
+//          {
+//            IDictionary t = new Hashtable();
+//            t.Add("timeout", _timeOut);
+//            TcpClientChannel clientChannel = new TcpClientChannel(t, null);
+//            ChannelServices.RegisterChannel(clientChannel);
+//          }
+//          catch (Exception e)
+//          {
+//            //Log.Debug("RemoteControl: could not set timeout on Remoting framework - {0}", e.Message);
+//            //ignore
+//          }
+//#endif          
           _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
           // int card = _tvControl.Cards;
           return _tvControl;
