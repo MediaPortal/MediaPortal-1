@@ -996,26 +996,23 @@ FunctionEnd
   ;System::Call '*$1(i,i,i,i,i,&t128,&i2.r0)'
 
   ; result is:
-  ; "Service Pack 3" for final Service Packs
-  ; "Service Pack 3, v.33311" for beta Service Packs
+  ; "Service Pack 3"         for final Service Packs
+  ; "Service Pack 3, v.3311" for beta  Service Packs
   System::Call '*$1(i,i,i,i,i,&t128.r0)'
 
-  ; read and save the length of the string to var $2
-  StrLen $2 $0
-  ; check the length of the string
-  ; if = 14 then final
-  ; otherwise it is beta
-  ${If} $2 == "14"
-    StrCpy ${_major} $0 "" 13
-    StrCpy ${_minor} 0
+  Push $0
+  Push "."
+  Call StrTok
+  Pop $R0
+  Pop $R1
+  StrCpy ${_minor} $R1
+  ${If} $R0 == ""
+  	StrCpy ${_major} $0 1 -1   ;  "Service Pack 3"
+  	StrCpy ${_minor} 0
   ${Else}
-    StrCpy ${_major} $0 1 13
-    StrCpy ${_minor} $0 "" 18
+    StrCpy ${_major} $R0 1 -4  ;  "Service Pack 3, v"
   ${EndIf}
-  
-
-  ;MessageBox MB_OK|MB_ICONEXCLAMATION "Service Pack: >${_var}<"
-  ;IntCmpU $0 5 0 ${_WINVER_PARSEVER_OLDSYS} ;OSVERSIONINFOEX can be used on NT4SP6 and later, but we only use it on NT5+
+  ;MessageBox MB_OK|MB_ICONEXCLAMATION "Service Pack: >${_major}< >${_minor}<"
 
   System::Free $1
   pop $3
@@ -1024,6 +1021,71 @@ FunctionEnd
   pop $0
 
 !macroend
+
+;author bigmac666 - http://nsis.sourceforge.net/wiki/StrTok_function
+Function StrTok
+  Exch $R1
+  Exch 1
+  Exch $R0
+  Push $R2
+  Push $R3
+  Push $R4
+  Push $R5
+ 
+  ;R0 fullstring
+  ;R1 tokens
+  ;R2 len of fullstring
+  ;R3 len of tokens
+  ;R4 char from string
+  ;R5 testchar
+ 
+  StrLen $R2 $R0
+  IntOp $R2 $R2 + 1
+ 
+  loop1:
+    IntOp $R2 $R2 - 1
+    IntCmp $R2 0 exit
+ 
+    StrCpy $R4 $R0 1 -$R2
+ 
+    StrLen $R3 $R1
+    IntOp $R3 $R3 + 1
+ 
+    loop2:
+      IntOp $R3 $R3 - 1
+      IntCmp $R3 0 loop1
+ 
+      StrCpy $R5 $R1 1 -$R3
+ 
+      StrCmp $R4 $R5 Found
+    Goto loop2
+  Goto loop1
+ 
+  exit:
+  ;Not found!!!
+  StrCpy $R1 ""
+  StrCpy $R0 ""
+  Goto Cleanup
+ 
+  Found:
+  StrLen $R3 $R0
+  IntOp $R3 $R3 - $R2
+  StrCpy $R1 $R0 $R3
+ 
+  IntOp $R2 $R2 - 1
+  IntOp $R3 $R3 + 1
+  StrCpy $R0 $R0 $R2 $R3
+ 
+  Cleanup:
+  Pop $R5
+  Pop $R4
+  Pop $R3
+  Pop $R2
+  Exch $R0
+  Exch 1
+  Exch $R1
+ 
+FunctionEnd
 
 !endif # !___WINVER__NSH___
 
