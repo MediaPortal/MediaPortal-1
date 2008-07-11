@@ -26,17 +26,10 @@
 
 # DEFINES
 !define svn_ROOT "..\.."
-!if ${VER_BUILD} == 0       # we are on a private machine
-  !define svn_MP "${svn_ROOT}\mediaportal"
-  !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
-  !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
-  !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
-!else                       # we are on Team MediaPortal's svn server
-  !define svn_MP "${svn_ROOT}\mediaportal"
-  !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
-  !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
-  !define svn_InstallScripts "."
-!endif
+!define svn_MP "${svn_ROOT}\mediaportal"
+!define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
+!define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
+!define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
 
 #**********************************************************************************************************#
 #
