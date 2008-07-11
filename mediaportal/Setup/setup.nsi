@@ -23,6 +23,14 @@
 
 #endregion
 
+
+# DEFINES
+!define svn_ROOT "..\.."
+!define svn_MP "${svn_ROOT}\mediaportal"
+!define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
+!define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
+!define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
+
 #**********************************************************************************************************#
 #
 #   For building the installer on your own you need:
@@ -105,8 +113,8 @@ BrandingText "$(^Name) ${VERSION} by ${COMPANY}"
 !define WinVer++
 !include Memento.nsh
 
-!include setup-AddRemovePage.nsh
-!include setup-CommonMPMacros.nsh
+!include "${svn_InstallScripts}\setup-AddRemovePage.nsh"
+!include "${svn_InstallScripts}\setup-CommonMPMacros.nsh"
 !include setup-languages.nsh
 
 ; FileFunc macros
