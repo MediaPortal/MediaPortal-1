@@ -43,30 +43,31 @@ namespace MediaPortal.DeployTool
     private void PrepareMyIni(string iniFile)
     {
       WritePrivateProfileString("client", "port", "3306", iniFile);
-      WritePrivateProfileString("mysql", "default-character-set", "latin1", iniFile);
+      WritePrivateProfileString("mysql", "default-character-set", "utf8", iniFile);
       WritePrivateProfileString("mysqld", "port", "3306", iniFile);
       WritePrivateProfileString("mysqld", "basedir", "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
       WritePrivateProfileString("mysqld", "datadir", "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/Data/\"", iniFile);
-      WritePrivateProfileString("mysqld", "default-character-set", "latin1", iniFile);
-      WritePrivateProfileString("mysqld", "default-storage-engine", "INNODB", iniFile);
+      WritePrivateProfileString("mysqld", "default-character-set", "utf8", iniFile);
+      WritePrivateProfileString("mysqld", "default-storage-engine", "myisam", iniFile);
       WritePrivateProfileString("mysqld", "sql-mode", "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
       WritePrivateProfileString("mysqld", "max_connections", "100", iniFile);
-      WritePrivateProfileString("mysqld", "query_cache_size", "0", iniFile);
-      WritePrivateProfileString("mysqld", "table_cache", "256", iniFile);
-      WritePrivateProfileString("mysqld", "tmp_table", "9M", iniFile);
-      WritePrivateProfileString("mysqld", "thread_cache_size", "8", iniFile);
+      WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
+      WritePrivateProfileString("mysqld", "table_cache", "64", iniFile);
+      WritePrivateProfileString("mysqld", "tmp_table", "18M", iniFile);
+      WritePrivateProfileString("mysqld", "thread_cache_size", "4", iniFile);
+      WritePrivateProfileString("mysqld", "thread_concurrency", "4", iniFile);
       WritePrivateProfileString("mysqld", "myisam_max_sort_file_size", "100G", iniFile);
       WritePrivateProfileString("mysqld", "myisam_max_extra_sort_file_size", "100G", iniFile);
-      WritePrivateProfileString("mysqld", "myisam_sort_buffer_size", "17M", iniFile);
-      WritePrivateProfileString("mysqld", "key_buffer_size", "10M", iniFile);
-      WritePrivateProfileString("mysqld", "read_buffer_size", "64K", iniFile);
-      WritePrivateProfileString("mysqld", "read_rnd_buffer_size", "256K", iniFile);
-      WritePrivateProfileString("mysqld", "sort_buffer_size", "256K", iniFile);
+      WritePrivateProfileString("mysqld", "myisam_sort_buffer_size", "64M", iniFile);
+      WritePrivateProfileString("mysqld", "key_buffer_size", "16M", iniFile);
+      WritePrivateProfileString("mysqld", "read_buffer_size", "2M", iniFile);
+      WritePrivateProfileString("mysqld", "read_rnd_buffer_size", "16M", iniFile);
+      WritePrivateProfileString("mysqld", "sort_buffer_size", "2M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_additional_mem_pool_size", "2M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_flush_log_at_trx_commit", "1", iniFile);
       WritePrivateProfileString("mysqld", "innodb_log_buffer_size", "1M", iniFile);
-      WritePrivateProfileString("mysqld", "innodb_buffer_pool_size", "17M", iniFile);
-      WritePrivateProfileString("mysqld", "innodb_log_file_size", "10M", iniFile);
+      WritePrivateProfileString("mysqld", "innodb_buffer_pool_size", "96M", iniFile);
+      WritePrivateProfileString("mysqld", "innodb_log_file_size", "50M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_thread_concurrency", "8", iniFile);
     }
 
@@ -125,11 +126,11 @@ namespace MediaPortal.DeployTool
       {
         return false;
       }
-      System.Threading.Thread.Sleep(2000);
-      cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
-      Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
-      mysqladmin.WaitForExit();
-      System.Threading.Thread.Sleep(2000);
+      for (int i = 1; i < 5; i++)
+      {
+        if (ctrl.Status == ServiceControllerStatus.Running) break;
+        System.Threading.Thread.Sleep(1000 * i);
+      }
       cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" + InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
       Process mysql = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
       try
