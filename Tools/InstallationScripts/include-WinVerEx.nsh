@@ -234,7 +234,8 @@
     StrCpy ${_minor} 0
   ${Else}
     StrCpy ${_major} 0
-    StrCpy ${_minor} $0 4 -4   ;  "Service Pack 3, v.3311"
+    ;split again, and use the second word as minorVer
+    ${WordFind} "$0" "." "+2" ${_minor}  ;  "Service Pack 3, v.3311"
   ${EndIf}
 
   ;MessageBox MB_OK|MB_ICONEXCLAMATION "Service Pack: >${_major}< >${_minor}<"
