@@ -63,8 +63,6 @@ Page instfiles
 #!include LogicLib.nsh
 #!include Library.nsh
 #!include FileFunc.nsh
-;!include WinVer.nsh
-!define WinVer++
 #!include Memento.nsh
 
 !include LogicLib.nsh
@@ -120,52 +118,61 @@ SectionEnd ; end the section
 
 !macro OperationSystemChecks
 
-  ; show error that the OS is not supported and abort the installation
-  ${If} ${AtMostWin2000Srv}
-    DetailPrint "AtMostWin2000Srv"
-    StrCpy $0 "OSabort"
-  ${ElseIf} ${IsWinXP}
-    DetailPrint "IsWinXP"
-    !insertmacro GetServicePack $R1 $R2
-    DetailPrint "SP major: $R1"
-    DetailPrint "SP minor: $R2"
-    ${If} $R2 > 0
-      StrCpy $0 "OSwarnBetaSP"
-    ${ElseIf} $R1 < 2
+  GetVersion::WindowsName
+  Pop $R0
+  DetailPrint "GetVersion::WindowsName: $R0"
+
+  !insertmacro GetServicePack $R1 $R2
+    DetailPrint "GetServicePack major: $R1"
+    DetailPrint "GetServicePack minor: $R2"
+
+  ${Switch} $R0
+
+    ${Case} 'Win32s'
+    ${Case} '95 OSR2'
+    ${Case} '95'
+    ${Case} '98 SE'
+    ${Case} '98'
+    ${Case} 'ME'
+    ${Case} 'NT'
+    ${Case} 'CE'
+    ${Case} '2000'
+    ${Case} 'XP x64'
       StrCpy $0 "OSabort"
-    ${Else}
-      StrCpy $0 "OSok"
-    ${EndIf}
+      ${Break}
 
-  ${ElseIf} ${IsWinXP64}
-    DetailPrint "IsWinXP64"
-    StrCpy $0 "OSabort"
-
-  ${ElseIf} ${IsWin2003}
-    DetailPrint "IsWin2003"
-    StrCpy $0 "OSwarn"
-
-  ${ElseIf} ${IsWinVISTA}
-    DetailPrint "IsWinVISTA"
-    !insertmacro GetServicePack $R1 $R2
-    DetailPrint "SP major: $R1"
-    DetailPrint "SP minor: $R2"
-    ${If} $R2 > 0
-      StrCpy $0 "OSwarnBetaSP"
-    ${ElseIf} $R1 < 1
+    ${Case} 'Server 2003'
+    ${Case} 'Server 2003 R2'
+    ${Case} 'Server Longhorn'   ; Server 2008
       StrCpy $0 "OSwarn"
-    ${Else}
-      StrCpy $0 "OSok"
-    ${EndIf}
+      ${Break}
 
-  ${ElseIf} ${IsWin2008}
-    DetailPrint "IsWin2008"
-    StrCpy $0 "OSwarn"
+    ${Case} 'XP'
+      ${If} $R2 > 0
+        StrCpy $0 "OSwarnBetaSP"
+      ${ElseIf} $R1 < 2
+        StrCpy $0 "OSabort"
+      ${Else}
+        StrCpy $0 "OSok"
+      ${EndIf}
+      ${Break}
 
-  ${Else}
-    DetailPrint "unknown OS"
-    StrCpy $0 "OSabort"
-  ${EndIf}
+    ${Case} 'Vista'
+      ${If} $R2 > 0
+        StrCpy $0 "OSwarnBetaSP"
+      ${ElseIf} $R1 < 1
+        StrCpy $0 "OSwarn"
+      ${Else}
+        StrCpy $0 "OSok"
+      ${EndIf}
+      ${Break}
+
+    ${Default}
+      DetailPrint "unknown OS"
+      StrCpy $0 "OSabort"
+      ${Break}
+
+  ${EndSwitch}
 
   ; show warnings for some OS
   ${If} $0 == "OSabort"
