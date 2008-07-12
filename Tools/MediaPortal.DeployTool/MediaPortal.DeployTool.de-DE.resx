@@ -488,4 +488,12 @@ Einstellungsdatei ist beschädigt und wird gelöscht, falls vorhanden.</value>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Windows Firewall für externen Zugriff auf den MediaPortal konfigurieren.</value>
   </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Beta Version des SP gefunden, Ihr Betriebsystem wird nicht unterstützt...
+Fortsetzung erfolgt auf eigenes Risiko!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Diese Anwendung wird jetzt beendet und das Verzeichnis "MediaPortal Installation" wird geöffnet.
+Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployTool.exe" um die Installation durchzuführen.</value>
+  </data>
 </root>

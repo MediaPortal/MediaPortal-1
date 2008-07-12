@@ -151,18 +151,18 @@
     <value>Verschillen tussen TV-Server 1.0 en ingebouwde TV-plugin van MediaPortal 1.0:
 + volledige ondersteuning van DVB-ondertiteling
 + ondersteuning voor HDTV (dvb-s2/h.264) en AAC audio (Noorwegen, Nw Zeeland, Australië)
-+ ondersteuning hybride tuners (DVB en analoog)
++ ondersteuning voor hybride tuners (DVB en analoog)
 + automatische herkenning van alle TV-kaarten (analoog, DVB-C/S/S2/T, ATSC)
 + ondersteuning van ATSC QAM (kabel-TV)
 + opnemen in .mp of .ts formaat
 + ATSC/DVB ondersteunt tuning van meerdere kanalen binnen één transponder/mux van een kaart
 + biedt TV voor meerdere cliënts in uw netwerk
-- vereist MySQL od MS-SQL (wordt geïnstalleerd indien nog niet aanwezig op uw system)
+- vereist MySQL of MS-SQL (wordt geïnstalleerd indien nog niet aanwezig op uw systeem)
 
 TV-Server vervangt de ingebouwde TV-plugin volledig en wordt naadloos geïntegreerd in de interface van MediaPortal.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
-    <value>Alle benodige programma's worden in hun standaard locaties en met standaardinstellingen geïnstalleerd. </value>
+    <value>Alle benodigde programma's worden in hun standaard locaties en met standaardinstellingen geïnstalleerd. </value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
     <value>De gevorderde installatie maakt het mogelijk om de locatie van de installatie en andere instellingen aan te passen.</value>
@@ -171,10 +171,10 @@ TV-Server vervangt de ingebouwde TV-plugin volledig en wordt naadloos geïntegre
     <value>Gevorderde installatie</value>
   </data>
   <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
-    <value>De gevorderde installatie maakt het mogelijk om een Server/Cliënt installatie en de locatie van de installatie in te stellen en andere opties te wijzigen.</value>
+    <value>De gevorderde installatie maakt een Server/Client configuratie mogelijk, ook kan de locatie van de installatie samen met andere opties aangepast worden.</value>
   </data>
   <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
-    <value>One Click installatie</value>
+    <value>Een Klik installatie</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
     <value>Alle benodige programma's worden in hun standaard locaties en met standaardinstellingen geïnstalleerd. Het databasewachtwoord is "MediaPortal".</value>
@@ -212,28 +212,28 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Zoeken</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Configureer uw firewall, zodat deze toegang geeft tot de database server</value>
+    <value>Configureer uw firewall zodat deze verbinding met de database server toestaat</value>
   </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
-    <value>Uw moet een juist installatiepad opgeven voor de SQL-Server.</value>
+    <value>U moet een juist installatiepad opgeven voor de SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>U moet een een wachtwoord opgeven voor de SQL-Server.</value>
+    <value>U moet een een wachtwoord opgeven voor de beheerder van de  SQL-Server.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
-    <value>Selecteer s.v.p. de benodigde opties voor de SQL-Server installatie:</value>
+    <value>Selecteer de benodigde opties voor de SQL-Server installatie:</value>
   </data>
   <data name="DBMSSettings_labelInstDir" xml:space="preserve">
     <value>Installatiemap</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Wachtwoord voor gebruiker van de SQL_Server</value>
+    <value>Wachtwoord voor de beheerder van de SQL Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Selecteer de installatiemap voor SQL-Server</value>
   </data>
   <data name="DBMSType_labelHeading" xml:space="preserve">
-    <value>Selecteer a.u.b. de SQL-Server die u wilt gebruiken:</value>
+    <value>Selecteer de SQL-Server die u wilt gebruiken:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
     <value>Microsoft SQL-Server Express</value>
@@ -242,7 +242,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>MySQL 5</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
-    <value>SQL-Server is al geïnstalleerd en wordt gebruikt voor TV-Server</value>
+    <value>SQL-Server is reeds geïnstalleerd en zal gebruikt worden door TV-Server</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
     <value>Gefeliciteerd !</value>
@@ -251,7 +251,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>U heeft de installatie van MediaPortal succesvol afgerond</value>
   </data>
   <data name="Finished_labelHeading3_install" xml:space="preserve">
-    <value>Hieronder vindt u enkele handige links die u helpen bij het beginnen met MediaPortal</value>
+    <value>Onderaan kunt u enkele nuttige links vinden die u kunnen begeleiden bij het eerste gebruik van MediaPortal.</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
     <value>MediaPortal Forum</value>
@@ -338,10 +338,10 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Een andere versie is al geïnstalleerd</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
-    <value>MediaPortal Installation Tool</value>
+    <value>MediaPortal Installatie</value>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
-    <value>Terug</value>
+    <value>Vorige</value>
   </data>
   <data name="MainWindow_buttonClose" xml:space="preserve">
     <value>Sluiten</value>
@@ -380,7 +380,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>U moet een bestaand installatiepad opgeven voor MediaPortal</value>
   </data>
   <data name="MPSettings_labelHeading" xml:space="preserve">
-    <value>Selecteer a.u.b. de benodigde opties voor de MediaPortal installatie:</value>
+    <value>Selecteer de benodigde opties voor de MediaPortal installatie:</value>
   </data>
   <data name="MPSettings_labelInstDir" xml:space="preserve">
     <value>MediaPortal installatiemap:</value>
@@ -389,16 +389,16 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Selecteer de installatiemap voor MediaPortal</value>
   </data>
   <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Zoeken</value>
+    <value>Bladeren</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Configureer uw firewall, zodat deze toegang geeft tot TV-Server</value>
+    <value>Configureer Windows Firewall zodat deze verbinding met TV-Server toestaat</value>
   </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
     <value>U moet een bestaand installatiepad opgeven voor TV-Server.</value>
   </data>
   <data name="TvServerSettings_labelHeading" xml:space="preserve">
-    <value>Selecteer a.u.b. de benodigde opties voor de TV-Server installatie:</value>
+    <value>Selecteer de benodigde opties voor de TV-Server installatie:</value>
   </data>
   <data name="TvServerSettings_labelInstDir" xml:space="preserve">
     <value>TV-Server installatiemap:</value>
@@ -413,7 +413,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Dit programma helpt u bij het installatieproces</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
-    <value>Selecteer a.u.b. de taal</value>
+    <value>Selecteer uw taal alvorens verder te gaan</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
     <value>MediaPortal is GRATIS - als u het gekocht heeft via eBay dan bent u opgelicht!</value>
@@ -446,10 +446,10 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Deïnstalleren</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
-    <value>Een internetverbinding is nodig voor het installatieproces
+    <value>Een internetverbinding is vereist om verder te gaan met het installatieproces.
 
 Wilt u nu met het installatieproces beginnen of wilt u de
-benodigde onderdelen nu downloaden om de
+benodigde onderdelen eerst downloaden om de
 installatie later uit te voeren?
 (mogelijk op een PC zonder internetverbinding)</value>
   </data>
@@ -472,24 +472,32 @@ installatie later uit te voeren?
     <value>Niet gedownload</value>
   </data>
   <data name="Finished_labelHeading2_download" xml:space="preserve">
-    <value>U heeft succesvol alle MediaPortal onderdelen gedownload</value>
+    <value>Alle MediaPortal onderdelen werden succesvol gedownload.</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
     <value>Klik op "Download" om alle benodigde onderdelen te downloaden</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
-    <value>Sorry, uw OS wordt momenteel niet ondersteund door MediaPortal !</value>
+    <value>Sorry, uw besturingssysteem wordt momenteel niet ondersteund door MediaPortal !</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Uw OS wordt niet ondersteund, omdat Microsoft bepaalde hotfixes niet heeft uitgegeven.
+    <value>Uw besturingssysteem wordt niet ondersteund, omdat Microsoft bepaalde hotfixes niet heeft uitgegeven.
 Doorgaan is op eigen risico.</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
     <value>Download van instellingenbestand is mislukt.
-Kijk a.u.b. de instellingen van uw browser na.
-Het beschadigde bestand wordt nu, indien aanwezig, verwijderd.</value>
+Kijk de instellingen van uw browser na om dit probleem in de toekomst te vermijden.
+Het beschadigde bestand wordt nu verwijderd.</value>
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Configureer uw firewall, zodat deze toegang geeft tot MediaPortal</value>
+    <value>Configureer Windows Firewall zodat deze toegang tot MediaPortal toestaat.</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Er werd een beta versie van een Service Pack gedetecteerd, uw configuratie wordt niet ondersteund...
+Doorgaan is op eigen verantwoordelijkheid!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Het programma zal nu sluiten en de map "MediaPortal Installation" openen.
+Verplaats dit bestand naar uw HTPC en start de installatie met "MediaPortal.DeployTool.exe".</value>
   </data>
 </root>
