@@ -78,45 +78,53 @@ SectionEnd ; end the section
 
 ;--------------------------------
 
-!macro DoInstallChecks
+!macro MediaPortalInstallation
+    DetailPrint ""
+    DetailPrint "--------------------------------------"
+    DetailPrint "- MediaPortal Installation"
+    DetailPrint "--------------------------------------"
 
   ${If} ${MP023IsInstalled}
     !insertmacro MP_GET_INSTALL_DIR $R0
-    DetailPrint "MP_GET_INSTALL_DIR: $R0"
+    DetailPrint "X  MP 0.2.3.0 InstDir: $R0"
   ${Else}
-    DetailPrint "no MP023IsInstalled"
+    DetailPrint "!  MP 0.2.3.0 is not installed"
   ${EndIf}
 
   ${If} ${MPIsInstalled}
     !insertmacro MP_GET_INSTALL_DIR $R0
-    DetailPrint "MP_GET_INSTALL_DIR: $R0"
+    DetailPrint "X  MediaPortal InstDir: $R0"
   ${Else}
-    DetailPrint "no MPIsInstalled"
+    DetailPrint "!  MediaPortal is not installed"
   ${EndIf}
 
   ${If} ${TVServerIsInstalled}
     !insertmacro TVSERVER_GET_INSTALL_DIR $R0
-    DetailPrint "TVSERVER_GET_INSTALL_DIR: $R0"
+    DetailPrint "X  TVServer InstDir: $R0"
   ${Else}
-    DetailPrint "no TVServerIsInstalled"
+    DetailPrint "!  TVServer is not installed"
   ${EndIf}
 
 
   ${If} ${MSI_TVServerIsInstalled}
-    DetailPrint "MSI_TVServerIsInstalled"
+    DetailPrint "X  old MSI-based TVServer is installed"
   ${Else}
-    DetailPrint "no MSI_TVServerIsInstalled"
+    DetailPrint "!  old MSI-based TVServer is not installed"
   ${EndIf}
 
   ${If} ${MSI_TVClientIsInstalled}
-    DetailPrint "MSI_TVClientIsInstalled"
+    DetailPrint "X  old MSI-based TVClient is installed"
   ${Else}
-    DetailPrint "no MSI_TVClientIsInstalled"
+    DetailPrint "!  old MSI-based TVClient is not installed"
   ${EndIf}
 
 !macroend
 
-!macro OperationSystemChecks
+!macro OperationSystemInformation
+    DetailPrint ""
+    DetailPrint "--------------------------------------"
+    DetailPrint "- Operation System Information"
+    DetailPrint "--------------------------------------"
 
   GetVersion::WindowsName
   Pop $R0
@@ -195,36 +203,25 @@ SectionEnd ; end the section
 
 !macroend
 
-Section
-  ${LOG_OPEN}
-
-
-  !insertmacro OperationSystemChecks
+!macro AdditionalInformation
+    DetailPrint ""
+    DetailPrint "--------------------------------------"
+    DetailPrint "- Additional Information"
+    DetailPrint "--------------------------------------"
 
   ${If} ${VCRedistIsInstalled}
-    DetailPrint "vcr IsInstalled"
+    DetailPrint "X  Visual C++ Redistributable is installed"
   ${Else}
-    DetailPrint "no vcr IsInstalled"
+    DetailPrint "!  Visual C++ Redistributable is not installed"
   ${EndIf}
-  
-  !insertmacro DoInstallChecks
+!macroend
 
+!macro MediaPortalDirs
+    DetailPrint ""
+    DetailPrint "--------------------------------------"
+    DetailPrint "- Read MediaPortal directories"
+    DetailPrint "--------------------------------------"
 
-  
-  
-  MessageBox MB_ICONINFORMATION|MB_YESNO "Do kill process test?" IDNO noKillProcess
-
-  ${KILLPROCESS} "MPInstaller.exe"
-  ${KILLPROCESS} "makensisw.exe"
-  ${KILLPROCESS} "Input Service Configuration.exe"
-
-  DetailPrint "KillProcess FINISHED"
-
-  noKillProcess:
-
-
-  
-  
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
     DetailPrint "no MPIsInstalled"
@@ -247,6 +244,37 @@ Section
   DetailPrint "    Weather: $MPdir.Weather"
   DetailPrint "    Cache: $MPdir.Cache"
   DetailPrint "    BurnerSupport: $MPdir.BurnerSupport"
+
+!macroend
+
+
+
+
+Section
+  ${LOG_OPEN}
+
+  !insertmacro OperationSystemInformation
+  !insertmacro AdditionalInformation
+
+  !insertmacro MediaPortalInstallation
+  !insertmacro MediaPortalDirs
+
+
+  
+  
+  MessageBox MB_ICONINFORMATION|MB_YESNO "Do kill process test?" IDNO noKillProcess
+
+  ${KILLPROCESS} "MPInstaller.exe"
+  ${KILLPROCESS} "makensisw.exe"
+  ${KILLPROCESS} "Input Service Configuration.exe"
+
+  DetailPrint "KillProcess FINISHED"
+
+  noKillProcess:
+
+
+  
+  
 
 SectionEnd
 
